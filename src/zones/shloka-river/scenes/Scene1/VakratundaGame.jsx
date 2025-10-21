@@ -13,29 +13,31 @@ const VakratundaGame = ({
   onGameComplete,
   profileName,
   WaterSprayComponent,
-  
-  // Assets specific to Vakratunda game
-  getLotusImage,
+
+  // ✅ BUG 6 & 8 FIX: Assets specific to Vakratunda game (BOTH initial and reward)
+  getBudImage,              // Initial state (bud)
+  getLotusImage,            // Reward state (lotus)
   getBabyElephantImage,
-  
+
   // Mode control - ⭐ NEW
   selectedMode,
   skipModeSelection,
-  
+
   // Reload support
   isReload,
   savedGameState,
   onSaveGameState
 }) => {
-  
+
   // Get Vakratunda config from your gameConfigs.js
   const gameConfig = getGameConfig('vakratunda');
-  
-  // Map your asset getters to match config expectations
-  // These names MUST match what's in your gameConfig's assetGetter fields
+
+  // ✅ BUG 6 & 8: Map BOTH initial and reward asset getters
+  // These names MUST match gameConfig's assetGetterInitial and assetGetterReward fields
   const assetGetters = {
-    getLotusImage,           // matches: gameConfig.elements.singer.assetGetter = 'getLotusImage'
-    getBabyElephantImage     // matches: gameConfig.elements.clicker.assetGetter = 'getBabyElephantImage'
+    getBudImage,             // matches: gameConfig.elements.singer.assetGetterInitial
+    getLotusImage,           // matches: gameConfig.elements.singer.assetGetterReward
+    getBabyElephantImage     // matches: gameConfig.elements.clicker.assetGetter
   };
 
   // Validation: Make sure config exists

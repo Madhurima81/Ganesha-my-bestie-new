@@ -1,5 +1,10 @@
 // zones/shloka-river/core/ManualRoundMode.jsx
-// Manual round selection mode - Based on SimplifiedMemoryGame pattern
+// Manual round selection mode - FIXED VERSION
+// ✅ BUG 1: Added exit options (Finish & Return, Hear Full Mantra)
+// ✅ BUG 2: Removed redundant "Play Round X" button
+// ✅ BUG 3: Lock rounds during ALL gameplay phases
+// ✅ BUG 4: Added circle highlight from Auto mode
+// ✅ BUG 5: Direct start after round selection
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useSafeClick } from './hooks/useSafeClick';
@@ -13,15 +18,18 @@ const ManualRoundMode = ({
   profileName,
   WaterSprayComponent,
   onSaveGameState,
+  onPhaseComplete,
+  onGameComplete,
+  onSwitchToAuto, // NEW: callback to switch to auto mode
   isReload,
   savedGameState
 }) => {
-  
+
   const { safeClick } = useSafeClick(300);
-  
+
   // State
-  const [selectedRound, setSelectedRound] = useState(savedGameState?.currentRound || 1);
-  const [gameState, setGameState] = useState('idle');
+  const [gameState, setGameState] = useState('roundSelection');
+  const [selectedRound, setSelectedRound] = useState(null);
   const [currentSequence, setCurrentSequence] = useState([]);
   const [playerInput, setPlayerInput] = useState([]);
   const [isSequencePlaying, setIsSequencePlaying] = useState(false);
@@ -29,7 +37,9 @@ const ManualRoundMode = ({
   const [visualRewards, setVisualRewards] = useState({});
   const [activatedElephants, setActivatedElephants] = useState({});
   const [roundClicks, setRoundClicks] = useState({});
-  
+  const [completedRounds, setCompletedRounds] = useState([]);
+  const [learnedSyllables, setLearnedSyllables] = useState([]);
+
   const timeoutsRef = useRef([]);
   const isComponentMountedRef = useRef(true);
 
@@ -49,23 +59,18 @@ const ManualRoundMode = ({
     };
   }, []);
 
-  // Initialize sequence when round changes
-  useEffect(() => {
-    if (isActive && gameConfig) {
-      const sequence = gameConfig.syllables[selectedRound] || [];
-      setCurrentSequence(sequence);
-      setPlayerInput([]);
-      setGameState('idle');
-      setRoundClicks({});
-    }
-  }, [selectedRound, isActive, gameConfig]);
+  // Console logging
+  console.log('[Mode] Manual Round Mode active');
+  console.log('[Round] Selected round:', selectedRound);
+  console.log('[Phase] Current phase:', gameState);
+  console.log('[Visual] Learned syllables:', learnedSyllables);
 
   // Audio
   const playSyllableAudio = (syllable) => {
     try {
       const fileName = gameConfig.audio.syllableFileMap[syllable];
       if (!fileName) return;
-      
+
       const audioPath = `${gameConfig.audio.syllableFolder}${fileName}.mp3`;
       const audio = new Audio(audioPath);
       audio.volume = 0.8;
@@ -75,16 +80,28 @@ const ManualRoundMode = ({
     }
   };
 
-  // Round selection
+  // ✅ BUG 5 FIX: Direct start after round selection (removed intermediate button)
   const handleRoundSelect = (round) => {
     safeClick(() => {
-      if (gameState === 'playing' || isSequencePlaying) {
-        console.log('⏸️ Finish current attempt first!');
+      // ✅ BUG 3 FIX: Don't allow switching during ANY active gameplay
+      if (gameState !== 'roundSelection') {
+        console.log('⏸️ Finish current round first!');
         return;
       }
-      
+
+      console.log(`[Round] Starting round: ${round}`);
       setSelectedRound(round);
-      
+
+      const sequence = gameConfig.syllables[round] || [];
+      setCurrentSequence(sequence);
+      setPlayerInput([]);
+      setRoundClicks({});
+
+      // ✅ BUG 5: Start playing immediately
+      safeSetTimeout(() => {
+        playSequence(sequence);
+      }, 500);
+
       if (onSaveGameState) {
         onSaveGameState({
           currentRound: round,
@@ -96,30 +113,23 @@ const ManualRoundMode = ({
   };
 
   // Play sequence
-  const handlePlaySequence = () => {
-    safeClick(() => {
-      if (currentSequence.length === 0) return;
-      playSequence();
-    }, 2000);
-  };
-
-  const playSequence = () => {
+  const playSequence = (sequence) => {
     setIsSequencePlaying(true);
     setGameState('playing');
     setPlayerInput([]);
     setRoundClicks({});
     setSingingSyllable(null);
-    
-    currentSequence.forEach((syllable, index) => {
+
+    sequence.forEach((syllable, index) => {
       safeSetTimeout(() => {
         setSingingSyllable(syllable);
         playSyllableAudio(syllable);
-        
+
         safeSetTimeout(() => {
           setSingingSyllable(null);
         }, 600);
-        
-        if (index === currentSequence.length - 1) {
+
+        if (index === sequence.length - 1) {
           safeSetTimeout(() => {
             setIsSequencePlaying(false);
             setGameState('listening');
@@ -133,42 +143,88 @@ const ManualRoundMode = ({
   const handleElephantClick = (syllableIndex) => {
     safeClick(() => {
       if (gameState !== 'listening' || isSequencePlaying) return;
-      
+
       const clickedSyllable = currentSequence[syllableIndex];
       if (!clickedSyllable) return;
-      
+
       if (roundClicks[`elephant-${clickedSyllable}`]) return;
-      
+
       const expectedIndex = playerInput.length;
       if (syllableIndex !== expectedIndex) return;
-      
+
       playSyllableAudio(clickedSyllable);
-      
+
       const newPlayerInput = [...playerInput, clickedSyllable];
       setPlayerInput(newPlayerInput);
       setRoundClicks(prev => ({ ...prev, [`elephant-${clickedSyllable}`]: true }));
       setActivatedElephants(prev => ({ ...prev, [`elephant-${clickedSyllable}`]: true }));
       setVisualRewards(prev => ({ ...prev, [`visual-${clickedSyllable}`]: true }));
-      
+
+      // Track learned syllables
+      if (!learnedSyllables.includes(clickedSyllable)) {
+        setLearnedSyllables(prev => [...prev, clickedSyllable]);
+      }
+
       if (newPlayerInput.length === currentSequence.length) {
-        setGameState('success');
-        safeSetTimeout(() => {
-          setGameState('idle');
-          setPlayerInput([]);
-          setRoundClicks({});
-        }, 2500);
+        handleRoundSuccess();
       }
     });
   };
 
-  // Render elephant (simplified)
+  // Round success
+  const handleRoundSuccess = () => {
+    setGameState('success');
+
+    // Track completed round
+    if (!completedRounds.includes(selectedRound)) {
+      setCompletedRounds(prev => [...prev, selectedRound]);
+    }
+
+    console.log(`[Round] Round ${selectedRound} complete!`);
+
+    safeSetTimeout(() => {
+      setGameState('roundSelection');
+      setSelectedRound(null);
+      setPlayerInput([]);
+      setRoundClicks({});
+    }, 2500);
+  };
+
+  // ✅ BUG 1 FIX: Finish & Return button handler
+  const handleFinishGame = () => {
+    console.log('[Mode] Finishing game with learned syllables:', learnedSyllables);
+
+    // Trigger word celebration if any syllables were learned
+    if (learnedSyllables.length > 0 && onPhaseComplete) {
+      onPhaseComplete(gameConfig.id);
+    } else if (onGameComplete) {
+      onGameComplete();
+    }
+  };
+
+  // ✅ BUG 1 FIX: Hear Full Mantra button handler
+  const handleSwitchToAutoMode = () => {
+    console.log('[Mode] Switching to Auto Mode from Manual');
+
+    if (onSwitchToAuto) {
+      onSwitchToAuto({
+        learnedSyllables,
+        visualRewards,
+        activatedElephants
+      });
+    }
+  };
+
+  // Render elephant with ✅ BUG 4 FIX: Added circle highlight
   const renderElephant = (syllable, index) => {
     const position = gameConfig.elements.clicker.positions[index];
     const getterName = gameConfig.elements.clicker.assetGetter;
     const getImage = assetGetters[getterName];
     const clickable = gameState === 'listening' && !isSequencePlaying && index === playerInput.length;
     const clicked = index < playerInput.length;
-    
+    const isSinging = singingSyllable === syllable;
+    const isNext = clickable;
+
     return (
       <button
         key={`clicker-${syllable}-${index}`}
@@ -184,7 +240,8 @@ const ManualRoundMode = ({
           opacity: clickable ? 1 : 0.7,
           transition: 'all 0.3s ease',
           zIndex: 20,
-          filter: singingSyllable === syllable ? 'brightness(1.4)' : 'brightness(1)'
+          filter: isSinging ? 'brightness(1.4)' : 'brightness(1)',
+          transform: isSinging ? 'scale(1.1)' : 'scale(1)'
         }}
         onClick={() => handleElephantClick(index)}
         disabled={!clickable}
@@ -196,7 +253,24 @@ const ManualRoundMode = ({
             style={{ width: '100%', height: '100%', objectFit: 'contain' }}
           />
         )}
-        
+
+        {/* ✅ BUG 4 FIX: Golden pulse circle highlight (from Auto mode) */}
+        {isNext && !clicked && (
+          <div style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '85%',
+            height: '85%',
+            border: '3px solid #FFD700',
+            borderRadius: '50%',
+            animation: 'goldenPulse 2s ease-in-out infinite',
+            pointerEvents: 'none',
+            zIndex: -1
+          }} />
+        )}
+
         <div style={{
           position: 'absolute',
           bottom: '-30px',
@@ -215,14 +289,23 @@ const ManualRoundMode = ({
     );
   };
 
-  // Render singer (simplified)
+  // ✅ BUG 6 & 8 FIX: Render singer with proper initial vs reward state
   const renderSinger = (syllable, index) => {
     const position = gameConfig.elements.singer.positions[index];
-    const getterName = gameConfig.elements.singer.assetGetter;
-    const getImage = assetGetters[getterName];
     const isSinging = singingSyllable === syllable;
     const isReward = visualRewards[`visual-${syllable}`];
-    
+
+    // ✅ BUG 6 & 8: Use different getter based on reward state
+    const getterName = isReward
+      ? gameConfig.elements.singer.assetGetterReward
+      : gameConfig.elements.singer.assetGetterInitial;
+    const getImage = assetGetters[getterName];
+
+    if (!getImage) {
+      console.warn(`[Visual] Asset getter not found: ${getterName}`);
+      return null;
+    }
+
     return (
       <div
         key={`singer-${syllable}-${index}`}
@@ -239,12 +322,21 @@ const ManualRoundMode = ({
           opacity: isReward ? 1 : 0.7
         }}
       >
-        {getImage && (
-          <img
-            src={getImage(index)}
-            alt={`${gameConfig.elements.singer.type} ${syllable}`}
-            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-          />
+        <img
+          src={getImage(index)}
+          alt={`${gameConfig.elements.singer.type} ${syllable}`}
+          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+        />
+        {isReward && (
+          <div style={{
+            position: 'absolute',
+            top: '-10px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            fontSize: '18px'
+          }}>
+            ✨
+          </div>
         )}
       </div>
     );
@@ -254,89 +346,138 @@ const ManualRoundMode = ({
 
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 20 }}>
-      
-      {/* Round Selection Buttons */}
-      {!hideElements && (
+
+      {/* ✅ BUG 1 FIX: Round Selection with EXIT OPTIONS */}
+      {!hideElements && gameState === 'roundSelection' && (
         <div style={{
-          position: 'absolute',
-          top: '20px',
-          left: '20px',
-          background: 'rgba(255,255,255,0.95)',
-          borderRadius: '15px',
-          padding: '15px',
-          zIndex: 50,
-          boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          background: 'rgba(0,0,0,0.75)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 100
         }}>
-          <div style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '8px', color: '#333' }}>
-            Choose Round:
-          </div>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            {[1, 2, 3].map(round => (
+          <div style={{
+            background: 'white',
+            borderRadius: '30px',
+            padding: '40px',
+            maxWidth: '500px',
+            textAlign: 'center',
+            boxShadow: '0 25px 70px rgba(0,0,0,0.4)'
+          }}>
+            <h2 style={{
+              fontSize: '28px',
+              fontWeight: 'bold',
+              color: gameConfig.theme.primaryColor,
+              marginBottom: '20px'
+            }}>
+              Choose Round:
+            </h2>
+
+            {/* Round Buttons */}
+            <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginBottom: '30px' }}>
+              {[1, 2, 3].map(round => (
+                <button
+                  key={round}
+                  onClick={() => handleRoundSelect(round)}
+                  style={{
+                    width: '80px',
+                    height: '80px',
+                    borderRadius: '15px',
+                    border: completedRounds.includes(round)
+                      ? '3px solid #4CAF50'
+                      : `2px solid ${gameConfig.theme.primaryColor}`,
+                    background: completedRounds.includes(round)
+                      ? '#4CAF50'
+                      : 'white',
+                    color: completedRounds.includes(round) ? 'white' : gameConfig.theme.primaryColor,
+                    fontSize: '32px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  {completedRounds.includes(round) ? '✓' : round}
+                </button>
+              ))}
+            </div>
+
+            {/* ✅ BUG 1 FIX: EXIT OPTIONS - ALWAYS VISIBLE */}
+            <div style={{
+              borderTop: '2px solid #E0E0E0',
+              paddingTop: '25px',
+              marginTop: '10px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px'
+            }}>
               <button
-                key={round}
-                onClick={() => handleRoundSelect(round)}
-                disabled={gameState === 'playing' || isSequencePlaying}
+                className="btn-finish primary"
+                onClick={handleFinishGame}
                 style={{
-                  width: '45px',
-                  height: '45px',
-                  borderRadius: '10px',
-                  border: selectedRound === round ? `3px solid ${gameConfig.theme.primaryColor}` : '2px solid #ddd',
-                  background: selectedRound === round ? gameConfig.theme.primaryColor : 'white',
-                  color: selectedRound === round ? 'white' : '#333',
-                  fontSize: '18px',
+                  width: '100%',
+                  padding: '18px',
+                  background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)',
+                  border: 'none',
+                  borderRadius: '15px',
+                  color: 'white',
+                  fontSize: '17px',
                   fontWeight: 'bold',
-                  cursor: (gameState === 'playing' || isSequencePlaying) ? 'not-allowed' : 'pointer',
-                  opacity: (gameState === 'playing' || isSequencePlaying) ? 0.5 : 1,
-                  transition: 'all 0.2s ease'
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 15px rgba(76, 175, 80, 0.4)',
+                  minHeight: '60px'
                 }}
               >
-                {round}
+                🏁 Finish & Return
+                <div style={{ fontSize: '12px', opacity: 0.9, marginTop: '4px' }}>
+                  Save progress and return to scene
+                </div>
               </button>
-            ))}
+
+              <button
+                className="btn-auto-mode secondary"
+                onClick={handleSwitchToAutoMode}
+                style={{
+                  width: '100%',
+                  padding: '18px',
+                  background: 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)',
+                  border: 'none',
+                  borderRadius: '15px',
+                  color: 'white',
+                  fontSize: '17px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 15px rgba(33, 150, 243, 0.4)',
+                  minHeight: '60px'
+                }}
+              >
+                🎵 Hear Full Mantra
+                <div style={{ fontSize: '12px', opacity: 0.9, marginTop: '4px' }}>
+                  Switch to Auto Play from Round 1
+                </div>
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Play Button */}
-      {!hideElements && gameState === 'idle' && (
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          zIndex: 60
-        }}>
-          <button
-            onClick={handlePlaySequence}
-            style={{
-              background: `linear-gradient(135deg, ${gameConfig.theme.primaryColor} 0%, ${gameConfig.theme.accentColor} 100%)`,
-              border: 'none',
-              borderRadius: '20px',
-              padding: '20px 40px',
-              color: 'white',
-              fontSize: '18px',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
-              animation: 'pulse 2s infinite'
-            }}
-          >
-            ▶️ Play Round {selectedRound}
-          </button>
-        </div>
-      )}
+      {/* ✅ BUG 2 & 5 FIX: Removed "Play Round X" intermediate button */}
 
       {/* Status Message */}
-      {!hideElements && gameState !== 'idle' && (
+      {!hideElements && gameState !== 'roundSelection' && (
         <div style={{
           position: 'absolute',
           top: '20px',
           left: '50%',
           transform: 'translateX(-50%)',
-          background: gameState === 'playing' 
-            ? 'rgba(33, 150, 243, 0.95)' 
-            : gameState === 'success' 
-            ? 'rgba(76, 175, 80, 0.95)' 
+          background: gameState === 'playing'
+            ? 'rgba(33, 150, 243, 0.95)'
+            : gameState === 'success'
+            ? 'rgba(76, 175, 80, 0.95)'
             : 'rgba(255, 152, 0, 0.95)',
           color: 'white',
           padding: '12px 24px',
@@ -345,14 +486,14 @@ const ManualRoundMode = ({
           fontWeight: 'bold',
           zIndex: 50
         }}>
-          {gameState === 'playing' && 'Listen carefully...'}
+          {gameState === 'playing' && `Round ${selectedRound}: Listen carefully...`}
           {gameState === 'listening' && `Click to repeat! (${playerInput.length}/${currentSequence.length})`}
-          {gameState === 'success' && '✨ Perfect! Try another round!'}
+          {gameState === 'success' && '✨ Perfect! Choose another round!'}
         </div>
       )}
 
       {/* Game Elements */}
-      {!hideElements && (
+      {!hideElements && gameState !== 'roundSelection' && (
         <>
           {currentSequence.map((syllable, index) => renderSinger(syllable, index))}
           {currentSequence.map((syllable, index) => renderElephant(syllable, index))}
@@ -360,9 +501,10 @@ const ManualRoundMode = ({
       )}
 
       <style>{`
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.05); }
+        /* ✅ BUG 4 FIX: Golden pulse animation from Auto mode */
+        @keyframes goldenPulse {
+          0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
+          50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
         }
       `}</style>
     </div>

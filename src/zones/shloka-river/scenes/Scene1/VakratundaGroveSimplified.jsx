@@ -452,7 +452,9 @@ const handleMissionComplete = () => {
   onPhaseComplete={() => handlePhaseComplete('vakratunda')}
   onGameComplete={() => {}}
   profileName={profileName}
-  getLotusImage={getBudImage}
+  // ✅ BUG 6 & 8 FIX: Pass BOTH initial (bud) and reward (lotus) asset getters
+  getBudImage={getBudImage}
+  getLotusImage={getLotusImage}
   getBabyElephantImage={getBabyElephantImage}
   selectedMode={sceneState.vakratundaMode}  // ⭐ Mode from scene modal
   skipModeSelection={true}  // ⭐ ALWAYS skip - scene handles mode selection
@@ -471,7 +473,9 @@ const handleMissionComplete = () => {
   onPhaseComplete={() => handlePhaseComplete('mahakaya')}
   onGameComplete={() => {}}
   profileName={profileName}
-  getStoneImage={getSeedImage}
+  // ✅ BUG 6 & 8 FIX: Pass BOTH initial (seed) and reward (flower) asset getters
+  getSeedImage={getSeedImage}
+  getFlowerImage={getFlowerImage}
   getAdultElephantImage={getAdultElephantImage}
   selectedMode={sceneState.mahakayaMode}  // ⭐ Mode from scene modal
   skipModeSelection={true}  // ⭐ ALWAYS skip - scene handles mode selection

@@ -69,11 +69,28 @@ const MemoryGameEngine = ({
     console.log(`🎮 ${gameConfig.displayName}: Mode selected: ${mode}`);
     setSelectedMode(mode);
     setShowModeModal(false);
-    
+
     if (onSaveGameState) {
-      onSaveGameState({ 
+      onSaveGameState({
         savedGameMode: mode,
-        gameId: gameConfig.id 
+        gameId: gameConfig.id
+      });
+    }
+  };
+
+  // ✅ BUG 1 FIX: Handle mode switching from Manual to Auto
+  const handleSwitchToAuto = (manualState) => {
+    console.log('[Mode] Switching from Manual to Auto mode');
+    console.log('[Mode] Preserving learned syllables:', manualState?.learnedSyllables);
+    setSelectedMode('auto');
+
+    if (onSaveGameState) {
+      onSaveGameState({
+        savedGameMode: 'auto',
+        gameId: gameConfig.id,
+        // Preserve learned syllables from manual mode
+        visualRewards: manualState?.visualRewards,
+        activatedElephants: manualState?.activatedElephants
       });
     }
   };
@@ -128,6 +145,7 @@ const MemoryGameEngine = ({
       {selectedMode === 'manual' && (
         <ManualRoundMode
           {...commonProps}
+          onSwitchToAuto={handleSwitchToAuto}  // ✅ BUG 1: Pass mode switch callback
           isReload={isReload}
           savedGameState={savedGameState}
         />

@@ -286,31 +286,16 @@ const AutoPlayMode = ({
     }
   };
 
-  // Initialize game
+  // ✅ BUG 7 FIX: Auto Mode ALWAYS starts from Round 1
   useEffect(() => {
     if (!isActive || !gameConfig) return;
 
-    if (isReload && savedGameState?.currentSequence?.length > 0) {
-      console.log('📂 Restoring game state');
-      
-      setCurrentRound(savedGameState.currentRound || 1);
-      setCurrentSequence(savedGameState.currentSequence || []);
-      setPlayerInput(savedGameState.playerInput || []);
-      setGamePhase(savedGameState.gamePhase || 'waiting');
-      setVisualRewards(savedGameState.visualRewards || {});
-      setActivatedElephants(savedGameState.activatedElephants || {});
-      
-      const clicks = {};
-      (savedGameState.playerInput || []).forEach(syllable => {
-        clicks[`elephant-${syllable}`] = true;
-      });
-      setRoundClicks(clicks);
-      
-    } else {
-      console.log('🆕 Starting fresh game');
-      startNewRound(1);
-    }
-  }, [isActive, isReload, gameConfig]);
+    console.log('🎮 [Mode] Auto Mode initializing - ALWAYS starting from Round 1');
+
+    // ✅ BUG 7: ALWAYS start fresh from Round 1 in Auto Mode
+    // Don't restore saved round - auto mode plays full sequence every time
+    startNewRound(1);
+  }, [isActive, gameConfig]);
 
   // Auto-start countdown
   useEffect(() => {
@@ -509,17 +494,23 @@ const AutoPlayMode = ({
     );
   };
 
-  // Render initial visual (bud/seed)
+  // ✅ BUG 6 & 8 FIX: Render initial visual (bud/seed) - uses assetGetterInitial
   const renderInitialVisual = (syllable, index) => {
     const position = getPosition('visual', index);
     const isTransformed = isVisualRewardActive(syllable);
-    
+
     if (isTransformed) return null;
-    
-    const getterName = gameConfig.elements.singer.assetGetter;
+
+    // ✅ BUG 6 & 8: Use assetGetterInitial for unrewarded state
+    const getterName = gameConfig.elements.singer.assetGetterInitial;
     const getImage = assetGetters[getterName];
-    
-    if (!getImage) return null;
+
+    if (!getImage) {
+      console.warn(`[Visual] Initial asset getter not found: ${getterName}`);
+      return null;
+    }
+
+    console.log(`[Visual] Rendering initial visual for ${syllable} (index ${index})`);
 
     return (
       <div
@@ -544,20 +535,24 @@ const AutoPlayMode = ({
     );
   };
 
-  // Render visual reward (lotus/flower)
+  // ✅ BUG 6 & 8 FIX: Render visual reward (lotus/flower) - uses assetGetterReward
   const renderVisualReward = (syllable, index) => {
     const position = getPosition('visual', index);
     const isVisible = isVisualRewardActive(syllable);
-    
+
     if (!isVisible) return null;
-    
-    // For rewards, we need different getter - but config only has one
-    // So we assume parent passes transformed version
-    const getterName = gameConfig.elements.singer.assetGetter;
+
+    // ✅ BUG 6 & 8: Use assetGetterReward for rewarded state
+    const getterName = gameConfig.elements.singer.assetGetterReward;
     const getImage = assetGetters[getterName];
-    
-    if (!getImage) return null;
-    
+
+    if (!getImage) {
+      console.warn(`[Visual] Reward asset getter not found: ${getterName}`);
+      return null;
+    }
+
+    console.log(`[Visual] Lotus bloomed for ${syllable}! (index ${index})`);
+
     return (
       <div
         key={`reward-${syllable}`}
@@ -577,7 +572,7 @@ const AutoPlayMode = ({
           alt={`Reward ${syllable}`}
           style={{ width: '100%', height: '100%', objectFit: 'contain' }}
         />
-        
+
         <div style={{
           position: 'absolute',
           top: '-10px',

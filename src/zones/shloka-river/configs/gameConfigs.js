@@ -30,7 +30,9 @@ export const GAME_CONFIGS = {
           { left: '45%', top: '60%' },
           { left: '75%', top: '50%' }
         ],
-        assetGetter: 'getLotusImage'
+        // ✅ BUG 6 & 8 FIX: Separate getters for initial (bud) vs reward (lotus) states
+        assetGetterInitial: 'getBudImage',  // Shows when syllable NOT learned
+        assetGetterReward: 'getLotusImage'   // Shows when syllable IS learned
       },
       clicker: {
         type: 'baby-elephant',
@@ -97,7 +99,9 @@ export const GAME_CONFIGS = {
           { left: '60%', top: '58%' },
           { left: '80%', top: '62%' }
         ],
-        assetGetter: 'getStoneImage'
+        // ✅ BUG 6 & 8 FIX: Separate getters for initial (seed) vs reward (flower) states
+        assetGetterInitial: 'getSeedImage',   // Shows when syllable NOT learned
+        assetGetterReward: 'getFlowerImage'    // Shows when syllable IS learned
       },
       clicker: {
         type: 'adult-elephant',
