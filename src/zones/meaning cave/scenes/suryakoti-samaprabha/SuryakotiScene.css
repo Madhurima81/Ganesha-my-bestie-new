@@ -44,6 +44,60 @@
   --healing-glow: 0 0 10px rgba(255, 105, 180, 0.3);
 }
 
+/* ==================== PHASE HEADER - Always-visible instructions ==================== */
+
+.suryakoti-phase-header {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #8B4513, #D2691E);
+  color: white;
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-size: 18px;
+  font-weight: bold;
+  z-index: 100;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  text-align: center;
+  white-space: nowrap;
+  border: 3px solid #FFD700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  animation: gentle-bounce 3s ease-in-out infinite;
+}
+
+@keyframes gentle-bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-5px); }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .suryakoti-phase-header {
+    font-size: 14px;
+    padding: 10px 20px;
+    top: 60px;
+    max-width: 90vw;
+    white-space: normal;
+    line-height: 1.3;
+  }
+}
+
+@media (max-width: 480px) {
+  .suryakoti-phase-header {
+    font-size: 12px;
+    padding: 8px 16px;
+    top: 50px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .suryakoti-phase-header {
+    animation: none !important;
+  }
+}
+
 /* 🌞 SUN COLLECTION AREA - Container for SunCollectionGame component */
 .sun-collection-area {
   position: absolute;
@@ -301,127 +355,226 @@
   font-weight: 600;
   color: var(--cave-brown-dark);
 }
+/* ==================== HEALING GAME - CLICK-BASED ==================== */
 
-/* Center draggable suns styling */
-.center-sun-draggable:hover {
-  transform: translate(calc(-50% + var(--x-pos, 0px)), calc(-50% + var(--y-pos, 0px))) scale(1.1) !important;
-  border-color: #FFD700;
-  box-shadow: 0 0 25px rgba(255, 69, 0, 1), 0 0 50px rgba(255, 215, 0, 0.8);
-}
-
-.center-sun-draggable:active {
-  cursor: grabbing;
-  transform: translate(calc(-50% + var(--x-pos, 0px)), calc(-50% + var(--y-pos, 0px))) scale(0.95) !important;
-}
-
-/* Healing Game Area */
 .healing-game-area {
   position: relative;
   width: 100%;
   height: 100%;
+  z-index: 5;
 }
 
-/* Central Orb - Simple center positioning */
+/* Central Orb */
 .central-healing-orb {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 200px;
-  height: 200px;
-  z-index: 10;
+  width: 150px;
+  height: 150px;
+  z-index: 6;
+  animation: centralOrbPulse 3s ease-in-out infinite;
 }
 
-/* Simple Sun Positioning - Like ModakScene modaks */
-.healing-sun-1 {
+@keyframes centralOrbPulse {
+  0%, 100% { 
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.4));
+  }
+  50% { 
+    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.6));
+  }
+}
+
+/* Clickable Suns Around Orb */
+.healing-sun {
   position: absolute;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 7;
+  animation: sunFloat 3s ease-in-out infinite;
+}
+
+.healing-sun:hover {
+  transform: scale(1.15);
+  filter: brightness(1.4) drop-shadow(0 0 15px gold);
+}
+
+.healing-sun:active {
+  transform: scale(0.95);
+}
+
+.healing-sun img {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Sun Positions */
+.healing-sun-1 {
   top: 30%;
-  left: 40%;
-  width: 40px;
-  height: 40px;
-  z-index: 15;
+  left: 35%;
+  animation-delay: 0s;
 }
 
 .healing-sun-2 {
-  position: absolute;
-  top: 25%;
-  left: 60%;
-  width: 40px;
-  height: 40px;
-  z-index: 15;
+  top: 30%;
+  right: 35%;
+  animation-delay: 1s;
 }
 
 .healing-sun-3 {
-  position: absolute;
-  top: 45%;
-  left: 70%;
-  width: 40px;
-  height: 40px;
-  z-index: 15;
-}
-
-.healing-sun-4 {
-  position: absolute;
-  top: 65%;
-  left: 60%;
-  width: 40px;
-  height: 40px;
-  z-index: 15;
-}
-
-.healing-sun-5 {
-  position: absolute;
-  top: 45%;
+  bottom: 35%;
   left: 30%;
-  width: 40px;
-  height: 40px;
-  z-index: 15;
+  animation-delay: 2s;
 }
 
-/* Simple Child Positioning */
-.healing-child-1 {
+@keyframes sunFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Children Faces */
+.healing-child-1, 
+.healing-child-2, 
+.healing-child-3 {
   position: absolute;
-  top: 20%;
-  left: 15%;
   width: 80px;
   height: 80px;
-  z-index: 20;
+  z-index: 8;
+  transition: all 0.5s ease;
+}
+
+.healing-child-1 {
+  top: 15%;
+  left: 20%;
 }
 
 .healing-child-2 {
-  position: absolute;
-  top: 25%;
-  right: 15%;
-  width: 80px;
-  height: 80px;
-  z-index: 20;
+  top: 15%;
+  right: 20%;
 }
 
 .healing-child-3 {
-  position: absolute;
-  top: 60%;
-  left: 5%;
-  width: 80px;
-  height: 80px;
-  z-index: 20;
+  bottom: 25%;
+  left: 15%;
 }
 
-.healing-child-4 {
-  position: absolute;
-  top: 55%;
-  right: 10%;
-  width: 80px;
-  height: 80px;
-  z-index: 20;
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .central-healing-orb {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .healing-sun {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .healing-child-1, 
+  .healing-child-2, 
+  .healing-child-3 {
+    width: 70px;
+    height: 70px;
+  }
 }
 
-.healing-child-5 {
-  position: absolute;
-  top: 5%;
-  left: 70%;
-  width: 80px;
-  height: 80px;
-  z-index: 20;
+/* Touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .healing-sun {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .healing-child-1, 
+  .healing-child-2, 
+  .healing-child-3 {
+    width: 90px;
+    height: 90px;
+  }
+}
+
+/* ==================== SYMBOL CELEBRATION ANIMATIONS ==================== */
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes symbolAppear {
+  0% { 
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  100% { 
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes symbolGlow {
+  0% { 
+    filter: drop-shadow(0 0 30px currentColor) brightness(1);
+    transform: scale(1);
+  }
+  100% { 
+    filter: drop-shadow(0 0 60px currentColor) brightness(1.4);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes textPulse {
+  0%, 100% { 
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes powerPulse {
+  0%, 100% { 
+    transform: scale(1);
+  }
+  50% { 
+    transform: scale(1.08);
+  }
+}
+
+/* Text animation for Million Suns / Equal Brilliance */
+@keyframes textFloat {
+  0% {
+    transform: translateY(20px) scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(-10px) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes textGrow {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* ✅ CAVE THEME: Loading state */

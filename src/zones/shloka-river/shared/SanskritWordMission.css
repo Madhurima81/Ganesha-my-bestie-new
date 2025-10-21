@@ -1,0 +1,279 @@
+/* zones/shloka-river/shared/SanskritWordMission.css */
+
+.sanskrit-word-mission {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mission-scene-container {
+  position: relative;
+  background: linear-gradient(135deg, #FFF9E6 0%, #FFEAA7 100%);
+  border-radius: 25px;
+  padding: 35px;
+  max-width: 520px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.mission-animal-wrapper {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.mission-animal {
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+  object-fit: contain;
+  border-radius: 20px;
+  border: 4px solid #FFD700;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  display: block;
+  margin: 0 auto;
+}
+
+.mission-animal.action {
+  filter: brightness(1.2) drop-shadow(0 8px 25px rgba(255, 215, 0, 0.5));
+}
+
+.mission-animal.success {
+  animation: rescueBounce 0.8s ease-in-out infinite;
+}
+
+.mission-speech-bubble {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: white;
+  border-radius: 20px;
+  padding: 10px 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 180px;
+  z-index: 10;
+}
+
+.mission-speech-bubble.success {
+  background: #90EE90;
+}
+
+.speech-text {
+  font-size: 13px;
+  color: #8B4513;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.mission-speech-bubble.success .speech-text {
+  color: #2F4F2F;
+}
+
+.speech-pointer {
+  position: absolute;
+  bottom: -8px;
+  left: 20px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid white;
+}
+
+.mission-speech-bubble.success .speech-pointer {
+  border-top: 8px solid #90EE90;
+}
+
+.chant-instruction {
+  font-size: 17px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  margin-bottom: 22px;
+}
+
+.syllable-chant-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.syllable-chant-btn {
+  background: white;
+  color: #333;
+  border: 3px solid #E0E0E0;
+  padding: 14px 22px;
+  border-radius: 15px;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 75px;
+}
+
+.syllable-chant-btn.active {
+  border-color: #1565C0;
+  background: #E3F2FD;
+  transform: scale(1.05);
+  animation: btnPulse 0.5s ease-in-out;
+}
+
+.syllable-chant-btn.completed {
+  background: #4CAF50;
+  color: white;
+  border-color: #4CAF50;
+}
+
+.syllable-chant-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.power-flowing-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: powerPulse 2s ease-in-out infinite;
+}
+
+.power-app-image {
+  width: 120px;
+  height: 120px;
+  position: relative;
+  z-index: 2;
+  animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+}
+
+.power-glow {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  animation: glowPulse 2s ease-in-out infinite;
+  z-index: 1;
+}
+
+@keyframes powerPulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.2);
+  }
+}
+
+.mission-complete-btn {
+  background: linear-gradient(45deg, #4CAF50, #45a049);
+  color: white;
+  border: none;
+  padding: 14px 35px;
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+  transition: transform 0.2s ease;
+  display: block;
+  margin: 0 auto;
+}
+
+.mission-complete-btn:hover {
+  transform: translateY(-2px);
+}
+
+.mission-cancel-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 1001;
+  transition: background 0.2s ease;
+}
+
+.mission-cancel-btn:hover {
+  background: rgba(255, 255, 255, 1);
+}
+
+/* Animations */
+@keyframes rescueBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes btnPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes particleFloat {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(
+      calc((var(--delay) - 0.5s) * 100px), 
+      calc((var(--delay) - 0.5s) * -100px)
+    ) scale(0.5);
+  }
+}
+
+@media (max-width: 768px) {
+  .mission-scene-container {
+    padding: 25px;
+    max-width: 90vw;
+  }
+  
+  .mission-animal {
+    max-width: 220px;
+  }
+  
+  .syllable-chant-btn {
+    padding: 12px 18px;
+    font-size: 16px;
+    min-width: 60px;
+  }
+}

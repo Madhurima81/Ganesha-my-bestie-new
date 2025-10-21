@@ -1,6 +1,8 @@
-/* Enhanced ModakScene.css - Complete visual collection system with animations */
+/* Enhanced ModakScene.css - Click-based interaction system */
 
-/* Define CSS variables */
+/* ===========================
+   CSS VARIABLES
+   =========================== */
 :root {
   /* Spacing variables */
   --spacing-xs: 0.25rem;
@@ -49,7 +51,9 @@
   --transition-slow: 0.5s;
 }
 
-/* Main container styles */
+/* ===========================
+   MAIN CONTAINER STYLES
+   =========================== */
 .modak-scene-container {
   width: 100vw !important;
   height: 100vh !important;
@@ -69,319 +73,359 @@
   padding: 0 !important;
 }
 
-/* 🌟 ENHANCED: Ganesha Statue - Large & Centered */
-.ganesha-statue-container {
-  position: absolute;
-  top: 20%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 200px;
-  height: 220px;
-  z-index: 10;
-  transition: all 0.8s ease-out;
-}
-
-.ganesha-statue-container img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 4px 12px rgba(255, 140, 0, 0.3));
-}
-
-.ganesha-statue-container.breathing {
-  animation: ganeshaBreathing 4s ease-in-out infinite;
-}
-
-.ganesha-statue-container.accepting-offering {
-  animation: acceptingOffering 2s ease-out;
-}
-
-@keyframes ganeshaBreathing {
-  0%, 100% { 
-    transform: translateX(-50%) scale(1);
-    filter: drop-shadow(0 4px 12px rgba(255, 140, 0, 0.3));
+/* ===========================
+   NEW: STORY INTRODUCTION
+   =========================== */
+@keyframes gentle-glow {
+  0%, 100% {
+    opacity: 0.8;
+    filter: brightness(1);
   }
-  50% { 
-    transform: translateX(-50%) scale(1.02);
-    filter: drop-shadow(0 6px 16px rgba(255, 140, 0, 0.5));
+  50% {
+    opacity: 1;
+    filter: brightness(1.2);
   }
 }
 
-@keyframes acceptingOffering {
-  0% { 
-    transform: translateX(-50%) scale(1);
+@keyframes gentle-breathe {
+  0%, 100% {
+    transform: scale(1);
   }
-  50% { 
-    transform: translateX(-50%) scale(1.1);
-    filter: drop-shadow(0 8px 20px rgba(255, 215, 0, 0.8));
-  }
-  100% { 
-    transform: translateX(-50%) scale(1);
-  }
-}
-
-/* 🍯 ENHANCED: Visual Collection Basket System */
-.basket-collection-container {
-  position: absolute;
-  left: 12%;        /* ✅ Move left to avoid path */
-  top: 40%;         /* ✅ Better vertical position */
-  width: 170px;     /* ✅ Slightly bigger */
-  height: 150px;    /* ✅ More height */
-  z-index: 8;
-  transition: all 0.3s ease;
-}
-
-.basket-main {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.basket-main img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.basket-collection-area {
-  position: absolute;
-  top: 0%;          
-  left: 0%;         
-  width: 100%;      
-  height: 100%;     
-  padding: 0;       
-  /* Remove all grid properties */
-}
-
-/* ✅ OLD: Keep for backward compatibility but not used in new approach */
-.collected-modak {
-  position: absolute;  
-  width: 32px;
-  height: 32px;
-  opacity: 0;
-  transform: scale(0);
-  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-  transform-origin: center center;
-}
-
-.collected-modak.visible {
-  opacity: 1;
-  transform: scale(1);
-}
-
-/* ✅ NEW: Simple positioning for collected modaks (like phase 2 modaks) */
-.collected-modak-scene {
-  position: absolute;
-  width: 32px;
-  height: 32px;
-  z-index: 15;
-  transition: all 0.3s ease;
-  opacity: 1;
-  transform: scale(1);
-}
-
-/* ✅ NEW: Make collected modaks identical to Phase 2 modaks */
-.modak-collected-1 { 
-  position: absolute;
-  width: 64px;    /* ✅ Same size as .modak */
-  height: 64px;   /* ✅ Same size as .modak */
-  top: 42%; 
-  left: 15%; 
-}
-
-.modak-collected-2 { 
-  position: absolute;
-  width: 64px;
-  height: 64px;
-  top: 47%; 
-  left: 18%; 
-}
-
-.modak-collected-3 { 
-  position: absolute;
-  width: 64px;
-  height: 64px;
-  top: 44%; 
-  left: 21%; 
-}
-
-.modak-collected-4 { 
-  position: absolute;
-  width: 64px;
-  height: 64px;
-  top: 49%; 
-  left: 16%; 
-}
-
-.modak-collected-5 { 
-  position: absolute;
-  width: 64px;
-  height: 64px;
-  top: 46%; 
-  left: 19%; 
-}
-
-/* ✅ OLD: Keeping for backward compatibility */
-.collected-modak:nth-child(1) { 
-  top: 20%; 
-  left: 30%; 
-}
-
-.collected-modak:nth-child(1).visible { 
-  transform: scale(1);
-  opacity: 1;
-}
-
-.collected-modak:nth-child(2) { 
-  top: 35%; 
-  left: 55%; 
-}
-
-.collected-modak:nth-child(2).visible { 
-  transform: scale(1);
-  opacity: 1;
-}
-
-.collected-modak:nth-child(3) { 
-  top: 25%; 
-  left: 70%; 
-}
-
-.collected-modak:nth-child(3).visible { 
-  transform: scale(1);
-  opacity: 1;
-}
-
-.collected-modak:nth-child(4) { 
-  bottom: 25%; 
-  left: 20%; 
-}
-
-.collected-modak:nth-child(4).visible { 
-  transform: scale(1);
-  opacity: 1;
-}
-
-.collected-modak:nth-child(5) { 
-  bottom: 30%; 
-  left: 60%; 
-}
-
-.collected-modak:nth-child(5).visible { 
-  transform: scale(1);
-  opacity: 1;
-}
-
-/* ✅ Staggered appearance timing */
-.collected-modak:nth-child(1) { transition-delay: 0.1s; }
-.collected-modak:nth-child(2) { transition-delay: 0.2s; }
-.collected-modak:nth-child(3) { transition-delay: 0.3s; }
-.collected-modak:nth-child(4) { transition-delay: 0.4s; }
-.collected-modak:nth-child(5) { transition-delay: 0.5s; }
-
-.collected-modak img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: brightness(1.1) saturate(1.2);
-}
-
-/* Basket full state animation */
-.basket-collection-container.full {
-  animation: basketFullGlow 2s ease-in-out;
-}
-
-@keyframes basketFullGlow {
-  0%, 100% { 
-    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.4));
-  }
-  50% { 
-    filter: drop-shadow(0 0 16px rgba(255, 215, 0, 0.8));
+  50% {
     transform: scale(1.05);
   }
 }
 
-.basket-counter {
+/* ===========================
+   NEW: GOLDEN CIRCLE HIGHLIGHTS
+   =========================== */
+.golden-highlight {
+  position: relative;
+  animation: goldenPulse 2s ease-in-out infinite;
+}
+
+.golden-highlight::before {
+  content: '';
   position: absolute;
-  top: -15px;       /* ✅ Higher position */
-  right: -15px;     /* ✅ More visible */
-  background: linear-gradient(135deg, #ffd700, #ffb347);
-  border: 3px solid white;  /* ✅ Thicker border */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120%;
+  height: 120%;
+  border: 3px solid #FFD700;
   border-radius: 50%;
-  width: 35px;      /* ✅ Bigger */
-  height: 35px;     /* ✅ Bigger */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;  /* ✅ Bigger text */
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+  z-index: -1;
+  animation: goldenGlow 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes goldenPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes goldenGlow {
+  0%, 100% { 
+    opacity: 0.6;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+  }
+  50% { 
+    opacity: 1;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 1);
+  }
+}
+
+/* ===========================
+   MUD MOUNDS
+   =========================== */
+.mud-mound {
+  position: absolute;
+  width: 70px;
+  height: 50px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  z-index: 4;
+}
+
+.mud-mound:hover {
+  transform: scale(1.05);
+}
+
+.mud-mound:active {
+  transform: scale(0.95);
+}
+
+.mound-1 { top: 45%; left: 25%; }
+.mound-2 { top: 55%; left: 75%; }
+.mound-3 { top: 60%; left: 30%; }
+.mound-4 { top: 60%; left: 50%; }
+.mound-5 { top: 60%; left: 60%; }
+
+.mud-mound.fade-out {
+  animation: moundFadeOut 1s ease-out forwards;
+}
+
+@keyframes moundFadeOut {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.9); }
+  100% { opacity: 0; transform: scale(0.8); pointer-events: none; }
+}
+
+.simple-help-button {
+  animation: gentleBounce 3s ease-in-out infinite;
+}
+
+@keyframes gentleBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* ===========================
+   SIMPLE HINT SYSTEM
+   =========================== */
+
+
+@keyframes gentle-pulse {
+  0%, 100% { 
+    transform: scale(1);
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.6));
+  }
+  50% { 
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 1));
+  }
+}
+
+/* Character Hint - Level 2 */
+@keyframes bounce-in {
+  0% { 
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+  }
+  60% {
+    transform: translateY(-5px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.phase-header {
+  position: fixed;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgb(183, 139, 28);
+  color: white;
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-size: 18px;
+  font-weight: bold;
+  z-index: 100;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+/* Hint speech - make it gold/orange */
+.hint-bubble {
+  background: white;
+  border: 3px solid #FFA500; /* Orange instead of pink */
+  border-radius: 15px;
+  padding: 12px 10px;
+  font-size: 16px; /* Bigger than story speech */
   font-weight: bold;
   color: #333;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);  /* ✅ Stronger shadow */
+  box-shadow: 0 4px 15px rgba(255, 165, 0, 0.3);
 }
 
-@keyframes counterPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
+.hint-glow {
+  animation: strong-pulse 1.5s ease-in-out infinite !important;
+  filter: drop-shadow(0 0 25px rgba(255, 215, 0, 1)) !important;
+  /* REMOVE: position: relative; */
+  z-index: 20;
 }
 
+
+.hint-glow::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: glow-expand 1.5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes strong-pulse {
+  0%, 100% { 
+    transform: scale(1);
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+  }
+  50% { 
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 35px rgba(255, 215, 0, 1));
+  }
+}
+
+@keyframes glow-expand {
+  0%, 100% { 
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% { 
+    transform: scale(1.3);
+    opacity: 1;
+  }
+}
+
+/*.ganesha-speech-bubble {
+  position: absolute;
+  bottom: 110%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 15px;
+  z-index: 50;
+  animation: speechBubbleAppear 0.5s ease-out;
+  pointer-events: none;
+}
+
+.speech-content.ganesha-speech {
+  background: white;  /* Clean white, no gradient 
+  border: 3px solid #FF8C00;  /* Keep orange border for Ganesha's identity 
+  border-radius: 20px;
+  padding: 10px 18px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #8B4513;
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3);
+}*/
+
+.ganesha-speech-bubble {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 10px;
+  z-index: 50;
+  animation: speechBubbleAppear 0.3s ease-out, speechBubbleBounce 2s ease-in-out infinite 0.3s;
+  pointer-events: none;
+}
+
+.speech-content {
+  background: white;
+  border: 3px solid #ff69b4;
+  border-radius: 20px;
+  padding: 8px 15px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.speech-arrow.ganesha-arrow {
+  border-top-color: #FF8C00;
+}
+
+.speech-arrow.ganesha-arrow::before {
+  border-top-color: #fff;
+}
+
+@keyframes modakToBasket {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(-180deg);
+  }
+  60% {
+    transform: scale(1.1) rotate(10deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.modak.unlocked {
+  animation: modakMagicalAppear 2s ease-out;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+}
+
+@keyframes modakMagicalAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(-360deg);
+    filter: grayscale(100%) brightness(0.5) drop-shadow(0 0 0px transparent);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2) rotate(0deg);
+    filter: grayscale(50%) brightness(0.8) drop-shadow(0 0 20px rgba(255, 215, 0, 1));
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    filter: grayscale(0%) brightness(1) drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+  }
+}
+
+@keyframes symbolAppear {
+  0% { 
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  100% { 
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes symbolGlow {
+  0% { 
+    filter: drop-shadow(0 0 20px currentColor) brightness(1);
+  }
+  100% { 
+    filter: drop-shadow(0 0 40px currentColor) brightness(1.3);
+  }
+}
+
+/* ===========================
+   MOOSHIKA (STATIC - NO DRAG)
+   =========================== */
 .mooshika-container {
   position: absolute;
-  top: var(--mooshika-top, 45%);     /* ✅ Use CSS custom property */
-  left: var(--mooshika-left, 25%);   /* ✅ Use CSS custom property */
   width: 60px;
   height: 60px;
   z-index: 15;
   transition: all 0.3s ease;
   transform-origin: center center;
-  
-  /* ✅ CRITICAL: Ensure proper cursor positioning */
-  cursor: grab;
+  cursor: default; /* Not draggable in click version */
 }
 
+/* REMOVED: Drag-specific styles
 .mooshika-container.dragging {
   transform: scale(1.1);
-  transform-origin: center center;
-  pointer-events: auto;
   cursor: grabbing;
   z-index: 100;
-  
-  /* ✅ Remove transition during drag to prevent offset */
   transition: none;
 }
-
-/* 🧪 TESTING: Visible drop zones (we'll hide these later) */
-.mooshika-basket-visit-zone,
-.mooshika-ganesha-visit-zone {
-  transition: all 0.3s ease;
-  opacity: 0.8;
-}
-
-/* Hover effects for drop zones */
-.mooshika-basket-visit-zone:hover {
-  background: rgba(255, 105, 180, 0.25) !important;
-  border-color: rgba(255, 105, 180, 0.7) !important;
-  opacity: 1;
-  transform: scale(1.02);
-}
-
-.mooshika-ganesha-visit-zone:hover {
-  background: rgba(255, 140, 0, 0.25) !important;
-  border-color: rgba(255, 140, 0, 0.7) !important;
-  opacity: 1;
-  transform: scale(1.02);
-}
-
+*/
 
 .mooshika-container img {
   width: 100%;
   height: 100%;
   object-fit: contain;
-    pointer-events: none;
+  pointer-events: none;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
-
 }
 
 .mooshika-container.breathing {
@@ -405,7 +449,6 @@
     transform: scale(1.05);
     filter: drop-shadow(0 4px 12px rgba(255, 105, 180, 0.5));
   }
-
 }
 
 @keyframes mooshikaHappy {
@@ -438,123 +481,70 @@
   }
 }
 
-.mooshika-text {
+/* REMOVED: Drag sparkle trail
+.mooshika-container.dragging::after {
+  content: '';
   position: absolute;
-  top: 30%;
-  left: 35%;
-  font-size: 24px;
-  font-weight: bold;
-  color: #FF69B4;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-  animation: textFloat 3s ease-out forwards;
-  z-index: 15;
+  ...sparkle trail...
 }
+*/
 
-.modak-text {
-  position: absolute;
-  top: 45%;
-  right: 30%;
-  font-size: 24px;
-  font-weight: bold;
-  color: #FFD700;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-  animation: textGrow 3s ease-out forwards;
-  z-index: 15;
-}
-
-.belly-text {
-  position: absolute;
-  top: 65%;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 24px;
-  font-weight: bold;
-  color: #FF8C42;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-  animation: textBounce 3s ease-out forwards;
-  z-index: 15;
-}
-
-@keyframes textFloat {
-  0% {
-    transform: translateY(20px) scale(0);
-    opacity: 0;
-  }
-  50% {
-    transform: translateY(-10px) scale(1.1);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes textGrow {
-  0% {
-    transform: scale(0);
-    opacity: 0;
-  }
-  50% {
-    transform: scale(1.3);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes textBounce {
-  0% {
-    transform: translateX(-50%) translateY(30px) scale(0);
-    opacity: 0;
-  }
-  50% {
-    transform: translateX(-50%) translateY(-15px) scale(1.2);
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(-50%) translateY(0) scale(1);
-    opacity: 1;
-  }
-}
-
-/* Mooshika Speech Bubble */
+/* ===========================
+   MOOSHIKA SPEECH BUBBLE
+   =========================== */
 .mooshika-speech-bubble {
   position: absolute;
-  bottom: 100%; /* Appears above Mooshika */
+  top: -100px; /* More space above */
   left: 50%;
   transform: translateX(-50%);
-  margin-bottom: 10px;
-  z-index: 50;
-  animation: speechBubbleAppear 0.3s ease-out;
-  pointer-events: none; /* Don't interfere with dragging */
+  background: linear-gradient(135deg, #FFD93D, #FFC107); /* Yellow gradient like GameCoach */
+  border: 3px solid white;
+  border-radius: 20px;
+  padding: 15px 25px; /* More horizontal padding */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  max-width: 300px; /* Wider */
+  min-width: 250px; /* Ensure minimum width */
+  min-height: 60px; /* Ensure height for 2 lines */
+  z-index: 20;
+  white-space: normal; /* Changed from pre-line */
+  word-wrap: break-word; /* Force wrapping */
+  animation: bounce 0.5s ease-out;
 }
 
 .speech-content {
-  background: white;
-  border: 3px solid #ff69b4;
-  border-radius: 20px;
-  padding: 8px 15px;
   font-size: 14px;
-  font-weight: bold;
-  color: #333;
-  white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  position: relative;
+  color: #8B4513;
+  font-weight: 700; /* Bolder */
+  line-height: 1.6; /* More spacing */
+  text-align: center;
+  display: block;
 }
 
 .speech-arrow {
   position: absolute;
-  top: 100%;
+  bottom: -10px;
   left: 50%;
   transform: translateX(-50%);
   width: 0;
   height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-top: 10px solid #ff69b4;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 12px solid #FFD93D;
+}
+
+@keyframes bounce {
+  0% { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+  100% { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
+.speech-content.encouraging {
+  background: linear-gradient(135deg, #fff, #f0f8ff);
+  border-color: #4ecdc4;
+}
+
+.speech-content.excited {
+  background: linear-gradient(135deg, #fff, #fffacd);
+  border-color: #ffd700;
 }
 
 .speech-arrow::before {
@@ -569,7 +559,6 @@
   border-top: 7px solid white;
 }
 
-/* Appear animation */
 @keyframes speechBubbleAppear {
   0% {
     opacity: 0;
@@ -581,11 +570,6 @@
   }
 }
 
-/* Gentle bounce animation while visible */
-.mooshika-speech-bubble {
-  animation: speechBubbleAppear 0.3s ease-out, speechBubbleBounce 2s ease-in-out infinite 0.3s;
-}
-
 @keyframes speechBubbleBounce {
   0%, 100% {
     transform: translateX(-50%) translateY(0);
@@ -595,38 +579,29 @@
   }
 }
 
-/* Ear twitch animation */
-.mooshika-container.ear-twitch::before {
-  content: '';
-  position: absolute;
-  top: 10%;
-  left: 15%;
-  width: 8px;
-  height: 8px;
-  background: var(--mooshika-pink);
-  border-radius: 50% 0;
-  opacity: 0.7;
-  animation: earTwitch 4s ease-in-out infinite;
-}
-
-/* ✅ NEW: Ear twitch animation without rotation */
-@keyframes earTwitchNoRotation {
-  0%, 90%, 100% { 
-    transform: scale(1);
-    opacity: 0.7;
-  }
-  5%, 15% { 
-    transform: scale(1.2);
+@keyframes textPulse {
+  0%, 100% { 
     opacity: 1;
+    transform: scale(1);
   }
-  10% { 
-    transform: scale(0.8);
-    opacity: 0.9;
+  50% { 
+    opacity: 0.8;
+    transform: scale(1.1);
   }
 }
 
+@keyframes powerPulse {
+  0%, 100% { 
+    transform: scale(1);
+  }
+  50% { 
+    transform: scale(1.08);
+  }
+}
 
-/* 🍯 MODAK POSITIONS - Adjusted for better layout */
+/* ===========================
+   MODAKS (CLICK-BASED)
+   =========================== */
 .modak {
   position: absolute;
   width: 64px;
@@ -636,56 +611,27 @@
   z-index: 12;
 }
 
-.modak-1 {
-  top: 45%;
-  left: 70%;
-}
-
-.modak-2 {
-  top: 45%;
-  left: 30%;
-}
-
-.modak-3 {
-  top: 55%;
-  left: 75%;
-}
-
-.modak-4 {
-  top: 65%;
-  left: 65%;
-}
-
-.modak-5 {
-  top: 60%;
-  left: 55%;
-}
+.modak-1 { top: 45%; left: 70%; }
+.modak-2 { top: 45%; left: 30%; }
+.modak-3 { top: 55%; left: 75%; }
+.modak-4 { top: 65%; left: 65%; }
+.modak-5 { top: 60%; left: 55%; }
 
 .modak:hover {
   transform: scale(1.05);
   filter: brightness(1.1);
 }
 
+.modak:active {
+  transform: scale(0.95);
+}
+
+/* REMOVED: Drag collection animation
 .modak.collecting {
   animation: modakCollecting 0.8s ease-out forwards;
 }
+*/
 
-@keyframes modakCollecting {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(0.3);
-    opacity: 0;
-  }
-}
-
-/* Modak glow when unlocked */
 .modak.unlocked {
   animation: modakUnlock 1.5s ease-out;
   filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
@@ -702,72 +648,98 @@
   }
 }
 
-/* Sparkle trail while dragging Mooshika */
-.mooshika-container.dragging::after {
-  content: '';
+/* ===========================
+   BASKET (CLICK-BASED)
+   =========================== */
+.basket-collection-container {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100px;
-  height: 100px;
-  background: 
-    radial-gradient(circle at 20% 30%, rgba(255, 105, 180, 0.8) 2px, transparent 3px),
-    radial-gradient(circle at 70% 20%, rgba(255, 182, 193, 0.6) 1.5px, transparent 2.5px),
-    radial-gradient(circle at 40% 70%, rgba(255, 105, 180, 0.9) 1px, transparent 2px),
-    radial-gradient(circle at 80% 60%, rgba(255, 182, 193, 0.7) 1.5px, transparent 2.5px),
-    radial-gradient(circle at 15% 80%, rgba(255, 105, 180, 0.6) 1px, transparent 2px);
-  transform: translate(-50%, -50%);
-  animation: sparkleTrail 0.6s ease-in-out infinite;
-  z-index: 5;
-  pointer-events: none;
+  left: 12%;
+  top: 40%;
+  width: 170px;
+  height: 150px;
+  z-index: 8;
+  transition: all 0.3s ease;
+  cursor: default; /* Default - not clickable until ready */
 }
 
-@keyframes sparkleTrail {
+.basket-collection-container.full {
+  animation: basketFullGlow 2s ease-in-out;
+}
+
+/* NEW: Basket ready to click pulse */
+.basket-collection-container.pulse {
+  cursor: pointer;
+  animation: basketReadyPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes basketFullGlow {
   0%, 100% { 
-    opacity: 0.8;
-    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.4));
   }
   50% { 
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.2) rotate(180deg);
+    filter: drop-shadow(0 0 16px rgba(255, 215, 0, 0.8));
+    transform: scale(1.05);
   }
 }
-/* 🔥 OFFERING RITUAL ENHANCEMENTS */
-.offering-plate-container {
-  position: absolute;
-  left: 45%;
-  top: 55%;
-  width: 100px;
-  height: 80px;
-  z-index: 12;
-  transition: all 1s ease-out;
-}
 
-.offering-plate-container.transforming {
-  animation: plateTransform 2s ease-out;
-}
-
-@keyframes plateTransform {
-  0% {
-    transform: scale(1) rotate(0deg);
+@keyframes basketReadyPulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
   }
   50% {
-    transform: scale(1.2) rotate(180deg);
-    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 1));
-  }
-  100% {
-    transform: scale(1) rotate(360deg);
-    filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.8));
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.9));
   }
 }
 
-/* 🪨 ROCK/BELLY CONTAINER - Updated positioning */
+.basket-main {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.basket-main img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.basket-counter {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  background: linear-gradient(135deg, #ffd700, #ffb347);
+  border: 3px solid white;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* REMOVED: Drag drop zones
+.mooshika-basket-visit-zone,
+.mooshika-ganesha-visit-zone {
+  transition: all 0.3s ease;
+  opacity: 0.8;
+}
+*/
+
+/* ===========================
+   ROCK/BELLY (CLICK-BASED)
+   =========================== */
 .rock-container {
   position: absolute;
-  left: 75%;        /* ✅ Better centered */
-  top: 15%;         /* ✅ Higher position */
-  width: 180px;     /* ✅ Even bigger */
-  height: auto;     /* ✅ Proportionate */
+  left: 75%;
+  top: 15%;
+  width: 180px;
+  height: auto;
   cursor: pointer;
   transition: all 0.5s ease;
   z-index: 8;
@@ -775,6 +747,25 @@
 
 .rock-container:hover {
   transform: scale(1.02);
+}
+
+.rock-container:active {
+  transform: scale(0.98);
+}
+
+.rock-container.breathing {
+  animation: ganeshaBreathing 4s ease-in-out infinite;
+}
+
+@keyframes ganeshaBreathing {
+  0%, 100% { 
+    transform: scale(1);
+    filter: drop-shadow(0 4px 12px rgba(255, 140, 0, 0.3));
+  }
+  50% { 
+    transform: scale(1.02);
+    filter: drop-shadow(0 6px 16px rgba(255, 140, 0, 0.5));
+  }
 }
 
 /* Rock glow levels as it's fed */
@@ -792,7 +783,6 @@
   50% { transform: scale(1.05); }
 }
 
-/* Rock to belly transformation */
 .rock-container.transforming {
   animation: rockToBelly 2s ease-in-out forwards;
 }
@@ -820,143 +810,28 @@
   }
 }
 
-/* 🐭 Mooshika dragging effects */
-.mooshika-container.dragging {
-  transform: scale(1.1);
-  filter: drop-shadow(0 0 15px rgba(255, 105, 180, 0.6));
-  z-index: 100;
-}
-
-.mooshika-container.dragging img {
-  animation: mooshikaDragPulse 0.5s ease-in-out infinite alternate;
-}
-
-@keyframes mooshikaDragPulse {
-  0% { 
-    filter: brightness(1.1) saturate(1.2);
-  }
-  100% { 
-    filter: brightness(1.3) saturate(1.5);
-  }
-}
-
-/* 🌟 CULTURAL ENHANCEMENT: Rangoli Patterns */
-.rangoli-pattern {
+.rock-feed-count {
   position: absolute;
-  width: 100px;
-  height: 100px;
+  top: 10px;
+  left: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #ff6347;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 215, 0, 0.2) 0%, transparent 70%);
-  border: 2px dashed rgba(255, 140, 0, 0.3);
-  z-index: 1;
-  animation: rangoliFade 3s ease-in-out infinite;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 10;
 }
 
-@keyframes rangoliFade {
-  0%, 100% { opacity: 0.3; transform: rotate(0deg); }
-  50% { opacity: 0.7; transform: rotate(180deg); }
-}
-
-/* MUD MOUNDS - Keep existing positioning */
-.mud-mound {
-  position: absolute;
-  width: 70px;
-  height: 50px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  z-index: 4;
-}
-
-.mud-mound:hover {
-  transform: scale(1.05);
-}
-
-.mound-1 { top: 45%; left: 25%; }
-.mound-2 { top: 55%; left: 75%; }
-.mound-3 { top: 60%; left: 30%; }
-.mound-4 { top: 60%; left: 50%; }
-.mound-5 { top: 60%; left: 60%; }
-
-.mud-mound.fade-out {
-  animation: moundFadeOut 1s ease-out forwards;
-}
-
-@keyframes moundFadeOut {
-  0% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.9); }
-  100% { opacity: 0; transform: scale(0.8); pointer-events: none; }
-}
-
-/* 🔧 REPLACE your fed modak CSS with this semicircle arrangement */
-
-/* ✅ Fed modaks in semicircle around Ganesha statue - SAME SIZE AS ORIGINALS */
-.fed-modak-1 { 
-  position: absolute;
-  top: 50%;     /* Upper left of semicircle */
-  left: 60%;    /* Close to statue */
-  width: 64px;  /* Same size as original modaks */
-  height: 64px; /* Same size as original modaks */
-  z-index: 9;
-}
-
-.fed-modak-2 { 
-  position: absolute;
-  top: 55%;     /* Upper right of semicircle */
-  left: 63%;    /* Close to statue */
-  width: 64px;  /* Same size as original modaks */
-  height: 64px; /* Same size as original modaks */
-  z-index: 9;
-}
-
-.fed-modak-3 { 
-  position: absolute;
-  top: 60%;     /* Left side of semicircle */
-  left: 69%;    /* Closer to statue */
-  width: 64px;  /* Same size as original modaks */
-  height: 64px; /* Same size as original modaks */
-  z-index: 9;
-}
-
-.fed-modak-4 { 
-  position: absolute;
-  top: 58%;     /* Right side of semicircle */
-  left: 75%;    /* Closer to statue */
-  width: 64px;  /* Same size as original modaks */
-  height: 64px; /* Same size as original modaks */
-  z-index: 9;
-}
-
-.fed-modak-5 { 
-  position: absolute;
-  top: 53%;     /* Bottom center of semicircle */
-  left: 80%;    /* Directly in front of statue */
-  width: 64px;  /* Same size as original modaks */
-  height: 64px; /* Same size as original modaks */
-  z-index: 9;
-}
-
-/* ✅ Base fed modak class - SAME SIZE AS ORIGINALS */
-.fed-modak {
-  position: absolute;
-  width: 64px;  /* Same size as original modaks */
-  height: 64px; /* Same size as original modaks */
-  pointer-events: none;
-  z-index: 9;
-}
-
-.fed-modak img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: brightness(1.1) saturate(1.2);
-}
-
-/* Add breathing animation to rock-container */
-.rock-container.breathing {
-  animation: ganeshaBreathing 4s ease-in-out infinite;
-}
-
-/* MODAK COUNTER - Updated position */
+/* ===========================
+   MODAK COUNTER
+   =========================== */
 .modak-counter {
   position: absolute;
   top: 15px;
@@ -1008,7 +883,97 @@
   object-fit: contain;
 }
 
-/* SPARKLE ANIMATIONS */
+/* ===========================
+   SYMBOL LEARNING TEXT
+   =========================== */
+.mooshika-text {
+  position: absolute;
+  top: 30%;
+  left: 35%;
+  font-size: 32px;
+  font-weight: bold;
+  color: #FF69B4;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  animation: textFloat 3s ease-out forwards;
+  z-index: 15;
+  pointer-events: none;
+}
+
+.modak-text {
+  position: absolute;
+  top: 45%;
+  right: 30%;
+  font-size: 32px;
+  font-weight: bold;
+  color: #FFD700;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  animation: textGrow 3s ease-out forwards;
+  z-index: 15;
+  pointer-events: none;
+}
+
+.belly-text {
+  position: absolute;
+  top: 65%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 32px;
+  font-weight: bold;
+  color: #FF8C42;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  animation: textBounce 3s ease-out forwards;
+  z-index: 15;
+  pointer-events: none;
+}
+
+@keyframes textFloat {
+  0% {
+    transform: translateY(20px) scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(-10px) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes textGrow {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes textBounce {
+  0% {
+    transform: translateX(-50%) translateY(30px) scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: translateX(-50%) translateY(-15px) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* ===========================
+   SPARKLE ANIMATIONS
+   =========================== */
 .all-modaks-sparkle {
   position: absolute;
   top: 20%;
@@ -1028,63 +993,9 @@
   pointer-events: none;
 }
 
-/* POPUP AND OVERLAY STYLES */
-.popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.popup-container {
-  max-width: 80%;
-  max-height: 80%;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transform-origin: center;
-  transition: all 0.4s ease-out;
-  background-color: white;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  overflow: auto;
-  padding: 30px;
-}
-
-.popup-image {
-  max-width: 100%;
-  max-height: 70vh;
-  border-radius: 15px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-.close-button {
-  margin-top: 20px;
-  padding: 12px 25px;
-  background-color: #6a4c93;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 18px;
-  font-weight: bold;
-  transition: all 0.3s ease;
-}
-
-.close-button:hover {
-  background-color: #8a65c5;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* ERROR BOUNDARY STYLES */
+/* ===========================
+   ERROR BOUNDARY
+   =========================== */
 .error-boundary {
   display: flex;
   flex-direction: column;
@@ -1124,58 +1035,37 @@
   background-color: #0056b3;
 }
 
-/* NAVIGATION Z-INDEX HIERARCHY */
+/* ===========================
+   NAVIGATION Z-INDEX
+   =========================== */
 .forest-background { position: relative; z-index: 1; }
 .interactive-hint, .hint-bubble { z-index: 90; }
 .scene-navigation-bar { z-index: 100; }
 .popup-overlay, .celebration-overlay { z-index: 1000; }
 
-/* GAMECOACH POSITIONING 
-.game-coach {
-  position: fixed !important;
-  top: 80px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  right: auto !important;
-  bottom: auto !important;
-  z-index: 200 !important;
-}
-
-.coach-container {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.message-bubble {
-background: #FF6B6B !important;   
-border: 3px solid #4ECDC4 !important;
-  border-radius: 20px !important;
-  padding: 15px 20px !important;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
-  font-size: 16px !important;
-  color: white !important;
-  max-width: 300px !important;
-  text-align: center !important;
-}
-
-/* CONFETTI ANIMATION */
+/* ===========================
+   CONFETTI ANIMATION
+   =========================== */
 @keyframes confettiFall {
   to {
     transform: translateY(100vh) rotate(720deg);
   }
 }
 
-/* RESPONSIVE DESIGN */
+/* ===========================
+   RESPONSIVE DESIGN
+   =========================== */
 @media (max-width: 768px) {
-  .ganesha-statue-container {
-    width: 160px;
-    height: 180px;
+  .rock-container {
+    width: 140px;
+    left: 70%;
+    top: 20%;
   }
   
   .basket-collection-container {
     width: 120px;
     height: 100px;
+    left: 10%;
   }
   
   .modak {
@@ -1188,11 +1078,6 @@ border: 3px solid #4ECDC4 !important;
     height: 50px;
   }
   
-  .rock-container {
-    width: 85px;
-    height: 70px;
-  }
-  
   .modak-counter {
     width: 160px;
     height: 36px;
@@ -1201,16 +1086,7 @@ border: 3px solid #4ECDC4 !important;
     left: 10px;
   }
 
-  /* ✅ NEW: Responsive positioning for collected modaks */
-  .modak-collected-1 { top: 45%; left: 8%; }
-  .modak-collected-2 { top: 50%; left: 12%; }
-  .modak-collected-3 { top: 47%; left: 15%; }
-  .modak-collected-4 { top: 52%; left: 10%; }
-  .modak-collected-5 { top: 49%; left: 13%; }
-
-}
-
-.speech-content {
+  .speech-content {
     font-size: 12px;
     padding: 6px 12px;
   }
@@ -1218,25 +1094,12 @@ border: 3px solid #4ECDC4 !important;
   .mooshika-speech-bubble {
     margin-bottom: 8px;
   }
-
-
-/* Different message styles */
-.speech-content.encouraging {
-  background: linear-gradient(135deg, #fff, #f0f8ff);
-  border-color: #4ecdc4;
 }
 
-.speech-content.excited {
-  background: linear-gradient(135deg, #fff, #fffacd);
-  border-color: #ffd700;
-}
-
-/* PORTRAIT ORIENTATION ADJUSTMENTS */
 @media (orientation: portrait) {
-  .ganesha-statue-container {
-    top: 15%;
-    width: 160px;
-    height: 180px;
+  .rock-container {
+    left: 70%;
+    top: 25%;
   }
   
   .basket-collection-container {
@@ -1249,17 +1112,4 @@ border: 3px solid #4ECDC4 !important;
   .modak-3 { top: 55%; left: 70%; }
   .modak-4 { top: 65%; left: 60%; }
   .modak-5 { top: 70%; left: 20%; }
-  
-  .rock-container {
-    left: 70%;
-    top: 30%;
-  }
-
-  /* ✅ NEW: Portrait positioning for collected modaks */
-  .modak-collected-1 { top: 52%; left: 8%; }
-  .modak-collected-2 { top: 57%; left: 12%; }
-  .modak-collected-3 { top: 54%; left: 15%; }
-  .modak-collected-4 { top: 59%; left: 10%; }
-  .modak-collected-5 { top: 56%; left: 13%; }
 }
-

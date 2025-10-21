@@ -1,4 +1,4 @@
-// lib/components/cave/DoorComponent.jsx - COMPLETE FIXED VERSION
+// lib/components/cave/DoorComponent.jsx - COMPLETE PROTECTED VERSION
 import React, { useState, useEffect, useRef } from 'react';
 import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation';
 import './DoorComponentV1.css';
@@ -48,8 +48,16 @@ const DoorComponent = ({
   // Visual customization
   primaryColor = '#FFD700',
   secondaryColor = '#FF8C42',
-  errorColor = '#FF4444'
+  errorColor = '#FF4444',
+  
+  // 🛡️ Protection props
+  modalOpen = false  // ✅ NEW: Blocks clicks when modals open
 }) => {
+
+  // ========== 🛡️ CLICK PROTECTION STATE ==========
+  const lastClickTimeRef = useRef(0);        // Track last click time for cooldown
+  const isProcessingClickRef = useRef(false); // Prevent race conditions
+  const activeTouchesRef = useRef(0);        // Track iPad multi-touch
 
   // ✅ FIXED: Initialize syllables with CONSISTENT positions using helper function
   const [floatingSyllables, setFloatingSyllables] = useState(() => {
@@ -166,20 +174,57 @@ const DoorComponent = ({
     }
   }, [floatingSyllables, allSyllablesPlaced, isCompleted, syllables.length]);
 
-  // Handle syllable clicks
+  // ========== 🛡️ PROTECTED SYLLABLE CLICK HANDLER ==========
   const handleSyllableClick = (syllableId) => {
+    const now = Date.now();
+    
+    // ========== 🛡️ PROTECTION LAYER 1: COOLDOWN ==========
+    // Prevents rapid clicking (300ms between clicks)
+    if (now - lastClickTimeRef.current < 300) {
+      console.log('🚫 DOOR BLOCKED: Click too fast! Wait 300ms between clicks');
+      return;
+    }
+    
+    // ========== 🛡️ PROTECTION LAYER 2: RACE CONDITION ==========
+    // Prevents simultaneous processing (multi-touch on iPad)
+    if (isProcessingClickRef.current) {
+      console.log('🚫 DOOR BLOCKED: Already processing another syllable!');
+      return;
+    }
+    
+    // ========== 🛡️ PROTECTION LAYER 3: MULTI-TOUCH ==========
+    // Prevents iPad 2-finger taps
+    if (activeTouchesRef.current > 1) {
+      console.log('🚫 DOOR BLOCKED: Multi-touch detected! (' + activeTouchesRef.current + ' fingers)');
+      return;
+    }
+    
+    // ========== 🛡️ PROTECTION LAYER 4: MODAL CHECK ==========
+    // Prevents clicks when modals are open
+    if (modalOpen) {
+      console.log('🚫 DOOR BLOCKED: Modal is open!');
+      return;
+    }
+    
+    // ========== 🛡️ PROTECTION LAYER 5: COMPLETION CHECK ==========
     if (isCompleted) {
       console.log('🚫 Door already completed - ignoring syllable click');
       return;
     }
     
+    // ========== 🛡️ PROTECTION LAYER 6: SYLLABLE VALIDATION ==========
     const syllable = floatingSyllables.find(s => s.id === syllableId);
     if (!syllable || syllable.placed) {
       console.log('🚫 Syllable not found or already placed:', syllableId);
       return;
     }
-
-    console.log('🎯 Syllable clicked:', syllable.text, 'Expected:', expectedSyllable || syllables[currentStep]);
+    
+    // ========== ✅ ALL CHECKS PASSED - PROCESS CLICK ==========
+    console.log('✅ Syllable click APPROVED:', syllable.text, 'Expected:', expectedSyllable || syllables[currentStep]);
+    
+    // Record this click and lock processing
+    lastClickTimeRef.current = now;
+    isProcessingClickRef.current = true;
 
     // Educational mode logic
     if (educationalMode) {
@@ -196,6 +241,7 @@ const DoorComponent = ({
         const timer = setTimeout(() => {
           setErrorFeedback(false);
           setShowSparkles(false);
+          isProcessingClickRef.current = false;  // ✅ Release lock
         }, 1000);
         timersRef.current.push(timer);
         
@@ -229,6 +275,7 @@ const DoorComponent = ({
     
     const timer = setTimeout(() => {
       setShowSparkles(false);
+      isProcessingClickRef.current = false;  // ✅ Release lock after animation
     }, 800);
     timersRef.current.push(timer);
 
@@ -304,7 +351,8 @@ const DoorComponent = ({
     floatingSyllables: floatingSyllables.map(s => ({ text: s.text, placed: s.placed, position: s.position })),
     placedSyllables,
     isResuming,
-    initialSetupDone
+    initialSetupDone,
+    modalOpen
   });
 
   return (
@@ -348,29 +396,52 @@ const DoorComponent = ({
           className="door-image"
         />
 
-        {/* Floating Syllables - All should render with CONSISTENT positions */}
-        {floatingSyllables.map((syllable) => (
-          <div
-            key={`syllable-${syllable.id}`}
-            ref={el => syllableRefs.current[syllable.id] = el}
-            className={`floating-syllable ${syllable.placed ? 'placed' : 'floating'} ${
-              shouldHighlightSyllable(syllable) ? 'highlighted' : ''
-            } ${
-              isSyllableDisabled(syllable) ? 'disabled' : ''
-            }`}
-            style={{
-              left: `${syllable.position.x}%`,
-              top: `${syllable.position.y}%`,
-              animationDelay: `${syllable.id * 0.5}s`,
-              display: syllable.placed ? 'none' : 'block'
-            }}
-            onClick={() => handleSyllableClick(syllable.id)}
-          >
-            <div className="syllable-text">
-              {syllable.text}
+        {/* ========== 🛡️ PROTECTED FLOATING SYLLABLES CONTAINER ========== */}
+        <div
+          className="syllables-container"
+          // ✅ Multi-touch protection for iPad
+          onTouchStart={(e) => {
+            activeTouchesRef.current = e.touches.length;
+            if (e.touches.length > 1) {
+              console.log('🚫 DOOR MULTI-TOUCH BLOCKED: Detected ' + e.touches.length + ' fingers');
+              e.preventDefault();
+            }
+          }}
+          onTouchEnd={() => {
+            activeTouchesRef.current = 0;
+          }}
+        >
+          {/* Floating Syllables - All should render with CONSISTENT positions */}
+          {floatingSyllables.map((syllable) => (
+            <div
+              key={`syllable-${syllable.id}`}
+              ref={el => syllableRefs.current[syllable.id] = el}
+              className={`floating-syllable ${syllable.placed ? 'placed' : 'floating'} ${
+                shouldHighlightSyllable(syllable) ? 'highlighted' : ''
+              } ${
+                isSyllableDisabled(syllable) ? 'disabled' : ''
+              }`}
+              style={{
+                left: `${syllable.position.x}%`,
+                top: `${syllable.position.y}%`,
+                animationDelay: `${syllable.id * 0.5}s`,
+                display: syllable.placed ? 'none' : 'block'
+              }}
+              onClick={() => {
+                // ✅ Multi-touch check before processing
+                if (activeTouchesRef.current > 1) {
+                  console.log('🚫 Syllable click blocked: Multi-touch detected');
+                  return;
+                }
+                handleSyllableClick(syllable.id);
+              }}
+            >
+              <div className="syllable-text">
+                {syllable.text}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
 
         {/* Placed Syllables Display */}
         <div className="placed-syllables-display">
@@ -458,8 +529,6 @@ const DoorComponent = ({
           </div>
         )}
       </div>
-
-    
     </div>
   );
 };

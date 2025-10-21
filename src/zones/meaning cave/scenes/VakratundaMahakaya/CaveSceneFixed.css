@@ -40,6 +40,66 @@
   --cave-glow: 0 0 20px rgba(255, 215, 0, 0.3);
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   CAVE PHASE HEADER - Sanskrit themed
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════
+   PHASE HEADER - Always-visible instructions
+   ═══════════════════════════════════════════════════════════════ */
+
+.phase-header {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #8B4513, #D2691E);
+  color: white;
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-size: 18px;
+  font-weight: bold;
+  z-index: 100;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  text-align: center;
+  white-space: nowrap;
+  border: 3px solid #FFD700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  animation: gentle-bounce 3s ease-in-out infinite;
+}
+
+@keyframes gentle-bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-5px); }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .phase-header {
+    font-size: 14px;
+    padding: 10px 20px;
+    top: 60px;
+    max-width: 90vw;
+    white-space: normal;
+    line-height: 1.3;
+  }
+}
+
+@media (max-width: 480px) {
+  .phase-header {
+    font-size: 12px;
+    padding: 8px 16px;
+    top: 50px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .phase-header {
+    animation: none !important;
+  }
+}
+
 /* 🎮 TRACING GAME STYLES - Add to CaveSceneFixed.css */
 
 /* 🎮 GAME 1: ENHANCED INTERACTIVE TRACING AREA STYLES */
@@ -916,4 +976,54 @@ div.pond-scene-container div.mini-ganesha-container.mighty img {
   75% { transform: scale(1.3) rotate(3deg); }
   100% { transform: scale(1); }
 }
+}
+
+/* Add to the end of CaveSceneFixed.css */
+
+/* ==================== SYMBOL CELEBRATION ANIMATIONS ==================== */
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes symbolAppear {
+  0% { 
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  100% { 
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes symbolGlow {
+  0% { 
+    filter: drop-shadow(0 0 30px currentColor) brightness(1);
+    transform: scale(1);
+  }
+  100% { 
+    filter: drop-shadow(0 0 60px currentColor) brightness(1.4);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes textPulse {
+  0%, 100% { 
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes powerPulse {
+  0%, 100% { 
+    transform: scale(1);
+  }
+  50% { 
+    transform: scale(1.08);
+  }
 }

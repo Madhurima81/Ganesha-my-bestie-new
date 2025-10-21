@@ -1,5 +1,5 @@
 /* zones/meaning-cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvada.css */
-/* ENGAGING VERSION WITH CHARACTER INTERACTIONS + 4 SYMBOLS */
+/* CLEAN VERSION - NO DUPLICATES */
 
 /* ===================================
    BASE SCENE CONTAINER
@@ -47,7 +47,7 @@
 }
 
 /* ===================================
-   âœ… NEW: HELPER BADGE
+   🎯 HELPER BADGE
    =================================== */
 .helper-badge {
   position: absolute;
@@ -77,7 +77,7 @@
 }
 
 /* ===================================
-   âœ… UPDATED: TWO-DOOR SYSTEM
+   🚪 DOOR SYSTEM
    =================================== */
 
 /* Door 1 Area - Sarvakaryeshu */
@@ -130,7 +130,7 @@
 }
 
 /* ===================================
-   CLEAN CHARACTER SELECTION - NO BROWN BOXES
+   👦👧 CHARACTER SELECTION - CLEAN
    =================================== */
 
 .character-selection-clean {
@@ -146,7 +146,6 @@
 }
 
 .character-title-cave {
-  /* Remove any background or border */
   background: none !important;
   border: none !important;
   box-shadow: none !important;
@@ -160,7 +159,6 @@
   font-weight: bold;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
   margin: 0;
-  /* Remove any background styling */
   background: none !important;
   border: none !important;
   padding: 0;
@@ -171,7 +169,6 @@
   gap: 50px;
   align-items: center;
   justify-content: center;
-  /* Remove any background styling */
   background: none !important;
   border: none !important;
   box-shadow: none !important;
@@ -182,10 +179,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: - 12px;
+  gap: 12px;
   cursor: pointer;
   transition: transform 0.3s ease;
-  /* Remove all background styling */
   background: none !important;
   border: none !important;
   box-shadow: none !important;
@@ -202,8 +198,8 @@
   border-radius: 50%;
   box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
   transition: all 0.3s ease;
-  /* Remove any additional styling */
   background: none !important;
+  border: 4px solid #FFD700 !important;
 }
 
 .character-option-clean:hover img {
@@ -217,330 +213,15 @@
   font-size: 20px;
   font-weight: bold;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-  /* Remove any background styling */
   background: none !important;
   border: none !important;
   padding: 0;
 }
 
-/* Override any existing brown/golden box styling */
-.character-selection-clean * {
-  background-color: transparent !important;
-  background-image: none !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-/* Keep only the character image borders */
-.character-option-clean img {
-  border: 4px solid #FFD700 !important;
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.6) !important;
-}
-
-@keyframes fadeInSelection {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) scale(1);
-  }
-}
-
 /* ===================================
-   CLEAN SYMBOL GRID LAYOUT
+   🎯 SCENARIO WINDOW SYSTEM (GAME 1 & 2)
    =================================== */
 
-.symbols-grid {
-  position: absolute;
-  bottom: 140px; /* Above helper text */
-  left: 50%;
-  transform: translateX(-50%);
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2x2 grid */
-  grid-template-rows: repeat(2, 1fr);
-  gap: 20px;
-  padding: 20px;
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 15px;
-  backdrop-filter: blur(5px);
-  width: 300px;
-  z-index: 10;
-}
-
-.symbol-grid-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.3s ease;
-}
-
-.symbol-grid-item.clickable:hover {
-  transform: scale(1.05);
-}
-
-.symbol-item-clean {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 10px;
-  border-radius: 10px;
-  transition: all 0.3s ease;
-  cursor: grab;
-}
-
-.symbol-item-clean img {
-  width: 60px;
-  height: 60px;
-  border-radius: 8px;
-}
-
-.symbol-name {
-  font-size: 12px;
-  font-weight: bold;
-  color: #333;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-.wise-symbol {
-  background: rgba(76, 175, 80, 0.1);
-  border: 2px solid rgba(76, 175, 80, 0.3);
-}
-
-.unwise-symbol {
-  background: rgba(244, 67, 54, 0.1);
-  border: 2px solid rgba(244, 67, 54, 0.3);
-}
-
-/* Visibility states */
-.symbol-grid-item.faint {
-  opacity: 0.4;
-  filter: blur(2px);
-}
-
-.symbol-grid-item.clear {
-  opacity: 1;
-  filter: none;
-}
-
-.symbol-grid-item.unclickable {
-  pointer-events: none;
-}
-
-/* ===================================
-   CLEAR DROP ZONE VISUAL
-   =================================== */
-
-.scenario-drop-zone {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90%;
-  height: 90%;
-  border: 3px dashed rgba(255, 215, 0, 0.5);
-  border-radius: 15px;
-  background: rgba(255, 215, 0, 0.05);
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding-bottom: 20px;
-  transition: all 0.3s ease;
-  z-index: 5;
-}
-
-.scenario-drop-zone:hover,
-.scenario-drop-zone.drag-over {
-  border-color: #FFD700;
-  background: rgba(255, 215, 0, 0.1);
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-}
-
-.scenario-drop-zone::after {
-  content: 'Drop wise choices here â†‘';
-  font-size: 14px;
-  font-weight: bold;
-  color: rgba(255, 215, 0, 0.8);
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-}
-
-/* ===================================
-   CHARACTER SPEECH BUBBLES
-   =================================== */
-.character-speech-bubble {
-  position: absolute;
-  top: -60px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: white;
-  border: 3px solid var(--cave-gold);
-  border-radius: 20px;
-  padding: 12px 18px;
-  max-width: 300px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  z-index: 15;
-  animation: speechBubbleAppear 0.5s ease-out;
-}
-
-.character-speech-bubble::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-top: 15px solid white;
-}
-
-.character-speech-bubble p {
-  margin: 0;
-  font-size: 14px;
-  font-weight: bold;
-  color: #333;
-  text-align: center;
-}
-
-@keyframes speechBubbleAppear {
-  from { opacity: 0; transform: translateX(-50%) scale(0.5); }
-  to { opacity: 1; transform: translateX(-50%) scale(1); }
-}
-
-/* ===================================
-   HELPER BADGE & INSTRUCTIONS
-   =================================== */
-.helper-badge {
-  position: absolute;
-  top: 20px;
-  right: 120px;
-  background: linear-gradient(45deg, #FFD700, #FFA500);
-  color: white;
-  padding: 10px 20px;
-  border-radius: 25px;
-  font-weight: bold;
-  z-index: 25;
-  animation: helperGlow 3s ease-in-out infinite;
-}
-
-@keyframes helperGlow {
-  0%, 100% { box-shadow: 0 4px 15px rgba(255, 165, 0, 0.4); }
-  50% { box-shadow: 0 6px 25px rgba(255, 215, 0, 0.6); }
-}
-
-.helper-instruction {
-  position: absolute;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255, 215, 0, 0.9);
-  border: 2px solid #FF8C00;
-  border-radius: 20px;
-  padding: 10px 20px; /* âœ… SMALLER padding */
-  max-width: 60%; /* âœ… SHORTER width */
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-  z-index: 20;
-  animation: helperInstructionAppear 0.6s ease-out;
-}
-
-.helper-instruction p {
-  margin: 0;
-  font-size: 14px; /* âœ… SMALLER font */
-  font-weight: bold;
-  color: #333;
-  text-align: center;
-}
-
-.scene-instruction-overlay {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(255, 215, 0, 0.9);
-  color: #333;
-  padding: 10px 20px;
-  border-radius: 15px;
-  font-weight: bold;
-  font-size: 16px;
-  z-index: 15;
-  pointer-events: none;
-
-}
-
-/*@keyframes gentlePulse {
-  0%, 100% { opacity: 0.9; }
-  50% { opacity: 1; }
-}*/
-
-/* âœ… Subtle click indicators on symbols */
-.cave-symbol-item::after {
-  content: '👆';
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  font-size: 14px;
-  opacity: 0.6;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: subtleFloat 3s ease-in-out infinite;
-  pointer-events: none;
-}
-
-/* Hide click icon when symbol is selected */
-.cave-symbol-item.selected::after {
-  display: none;
-}
-
-/* Subtle floating animation */
-@keyframes subtleFloat {
-  0%, 100% { 
-    transform: translateY(0px); 
-    opacity: 0.6; 
-  }
-  50% { 
-    transform: translateY(-3px); 
-    opacity: 0.9; 
-  }
-}
-
-/* Only show on clickable symbols */
-.cave-symbol-individual.unclickable .cave-symbol-item::after {
-  display: none;
-}
-
-.simple-click-instruction {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255, 215, 0, 0.9);
-  color: #000;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-weight: bold;
-  font-size: 14px;
-  z-index: 10;
-  animation: gentle-bounce 1.5s ease-in-out infinite;
-}
-
-@keyframes gentle-bounce {
-  0%, 100% { transform: translateX(-50%) translateY(0px); }
-  50% { transform: translateX(-50%) translateY(-5px); }
-}
-/* ===================================
-  UPDATED: CENTRAL SCENARIO WINDOW WITH CHARACTER ENGAGEMENT
-   =================================== */
 .scenario-window {
   position: absolute;
   top: 15%;
@@ -549,10 +230,16 @@
   width: 400px;
   height: 250px;
   border-radius: 15px;
-  overflow: visible; /* âœ… Changed for speech bubbles */
+  overflow: visible;
   border: 4px solid var(--cave-gold);
   box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
   z-index: 12;
+}
+
+/* Game 2 Scenario Window Variation */
+.scenario-window.game2-style {
+  border-color: #FF8C42;
+  box-shadow: 0 8px 25px rgba(255, 140, 66, 0.4);
 }
 
 .scenario-image {
@@ -560,7 +247,7 @@
   height: 100%;
   object-fit: cover;
   transition: all 1s ease-in-out;
-  border-radius: 11px; /* Slightly smaller to fit border */
+  border-radius: 11px;
 }
 
 .scenario-image.uncertain {
@@ -575,22 +262,92 @@
   filter: brightness(1.2) contrast(1.1);
 }
 
-/* âœ… FIXED: More specific selector for dimmed state */
-.scenario-window .scenario-image.dimmed {
+.scenario-image.dimmed {
   filter: brightness(0.4) grayscale(0.6) contrast(0.8) !important;
   transition: all 0.5s ease;
 }
 
-/* âœ… NEW: Character Speech Bubble */
+.helper-on-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: helperAppear 0.5s ease-out;
+}
+
+@keyframes helperAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.helper-speech-bubble {
+  position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 12px 16px;
+  border-radius: 18px;
+  border: 2px solid #FFD700;
+  margin-top: 10px;
+  max-width: 200px;
+  font-size: 14px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.speech-arrow {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #FFD700;
+}
+
+.speech-arrow::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: -6px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid rgba(255, 255, 255, 0.95);
+}
+
+.send-helper-button {
+  background: linear-gradient(135deg, #FF8C42, #FFD700);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+}
+
+/* ===================================
+   💬 CHARACTER SPEECH BUBBLES
+   =================================== */
+
 .character-speech-bubble {
   position: absolute;
-  top: 20px;
+  top: -60px;
   left: 50%;
   transform: translateX(-50%);
   background: white;
   border: 3px solid var(--cave-gold);
-  border-radius: 20px;
-  padding: 12px 18px;
+  padding: 8px 12px !important; /* ← FORCE SMALLER PADDING */
+  border-radius: 15px !important; /* ← SMALLER RADIUS */
   max-width: 300px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   z-index: 15;
@@ -644,76 +401,366 @@
   }
 }
 
-/* âœ… NEW: Character Mood Indicator */
-.character-mood {
+.character-speech-bubble.grateful {
+  background: linear-gradient(45deg, #FFD700, #FF8C42);
+  color: white;
+  border: 2px solid #DAA520;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
+}
+
+.character-speech-bubble.wise-choice {
+  background: linear-gradient(45deg, #4CAF50, #66BB6A);
+  color: white;
+  border: 2px solid #4CAF50;
+  box-shadow: 0 0 20px rgba(76, 175, 80, 0.4);
+}
+
+/* Problem Declaration Bubbles */
+.character-problem-speech {
   position: absolute;
-  top: -30px;
-  right: -15px;
-  font-size: 28px;
-  z-index: 14;
-  animation: moodFloat 2s ease-in-out infinite;
-}
-
-.character-mood.confused::before { content: "ðŸ˜Ÿ"; }
-.character-mood.hopeful::before { content: "ðŸ¤”"; }
-.character-mood.uncertain::before { content: "ðŸ˜•"; }
-.character-mood.happy::before { content: "ðŸ˜Š"; }
-.character-mood.grateful::before { content: "ðŸ™"; }
-
-@keyframes moodFloat {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-3px); }
-}
-
-/* Window Uncertainty Overlay */
-.window-uncertainty-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 13;
-  pointer-events: none;
-  border-radius: 11px;
-  overflow: hidden;
-}
-
-.window-cloudy-effect {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: 
-    radial-gradient(circle at 30% 40%, rgba(100, 100, 100, 0.6) 20%, transparent 25%),
-    radial-gradient(circle at 70% 60%, rgba(120, 120, 120, 0.5) 15%, transparent 20%);
-  filter: blur(1px);
-  animation: windowCloudDrift 8s ease-in-out infinite;
-}
-
-@keyframes windowCloudDrift {
-  0%, 100% { transform: translateX(0px) translateY(0px); }
-  50% { transform: translateX(5px) translateY(-3px); }
-}
-
-/* Drop Zone Over Window */
-.scenario-drop-zone {
-  position: absolute;
-  top: 15%;
+  top: 25%;
   left: 50%;
   transform: translateX(-50%);
-  width: 400px;
-  height: 250px;
-  background: transparent;
-  border: none;
-  border-radius: 15px;
-  z-index: 15;
+  background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+  color: white;
+  border: 3px solid #FF4757;
+  border-radius: 25px;
+  padding: 15px 25px;
+  max-width: 400px;
+  box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
+  z-index: 16;
+  animation: problemSpeechAppear 0.8s ease-out;
+  text-align: center;
 }
 
+.person-problem-speech {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 15px 20px;
+  border-radius: 20px;
+  border: 2px solid #FF8C42;
+  max-width: 300px;
+  font-size: 14px;
+  color: #333;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  animation: fadeInDown 0.5s ease-out;
+  z-index: 10;
+}
+
+.character-problem-speech::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 15px solid #FF4757;
+}
+
+.character-problem-speech p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  line-height: 1.3;
+}
+
+@keyframes problemSpeechAppear {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.5) translateY(-20px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.05) translateY(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1) translateY(0px);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
 
 /* ===================================
-   GANESHA CAVE POSITIONING
+   🎮 UNIVERSAL SYMBOL SYSTEM (GAME 1 & 2)
    =================================== */
+
+/* Base classes for both Game 1 and Game 2 symbols */
+.cave-symbol-individual,
+.helper-symbol {
+  position: absolute;
+  transition: all 0.5s ease;
+  z-index: 14;
+}
+
+.cave-symbol-individual.faint,
+.helper-symbol.faint {
+  opacity: 0.4;
+  filter: grayscale(0.7) blur(1px);
+  pointer-events: none;
+}
+
+.cave-symbol-individual.clear,
+.helper-symbol.clear {
+  opacity: 1;
+  filter: grayscale(0) blur(0px);
+  pointer-events: all;
+  animation: symbolReveal 1s ease-out;
+}
+
+.cave-symbol-individual.none,
+.helper-symbol.none {
+  display: none;
+}
+
+@keyframes symbolReveal {
+  from {
+    opacity: 0.4;
+    filter: grayscale(0.7) blur(1px);
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    filter: grayscale(0) blur(0px);
+    transform: scale(1);
+  }
+}
+
+/* Universal positioning (used by both games) */
+.cave-symbol-individual.position-1,
+.helper-symbol.position-1 {
+  bottom: 60%;
+  left: 15%;
+}
+
+.cave-symbol-individual.position-2,
+.helper-symbol.position-2 {
+  bottom: 30%;
+  left: 15%;
+}
+
+.cave-symbol-individual.position-3,
+.helper-symbol.position-3 {
+  bottom: 60%;
+  right: 15%;
+}
+
+.cave-symbol-individual.position-4 {
+  bottom: 30%;
+  right: 15%;
+}
+
+/* Universal symbol item styling */
+.cave-symbol-item,
+.helper-symbol-item {
+  width: 90px;
+  height: 90px;
+  border-radius: 18px;
+  border: 4px solid var(--cave-gold);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: visible;
+  backdrop-filter: blur(5px);
+}
+
+/* Game 1 specific styling */
+.cave-symbol-item {
+  background: rgba(139, 69, 19, 0.85);
+}
+
+/* Game 2 specific styling */
+.helper-symbol-item {
+  background: linear-gradient(135deg, #FFD700, #FF8C42);
+  border: 3px solid #DAA520;
+}
+
+.cave-symbol-item img,
+.helper-symbol-item img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.cave-symbol-item:hover,
+.helper-symbol-item:hover {
+  transform: scale(1.1);
+  border-color: var(--cave-amber);
+  box-shadow: 0 10px 30px rgba(255, 165, 0, 0.7);
+}
+
+.helper-symbol-item:hover {
+  background: linear-gradient(135deg, #FFA500, #FF6B42);
+  box-shadow: 0 10px 30px rgba(255, 140, 66, 0.7);
+}
+
+.cave-symbol-item.selected,
+.helper-symbol-item.selected {
+  border-color: #FFD700 !important;
+  background: rgba(255, 215, 0, 0.3) !important;
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.8) !important;
+}
+
+.helper-symbol-item.selected {
+  background: linear-gradient(135deg, #FFD700, #FFA500) !important;
+}
+
+/* Symbol names styling */
+.symbol-name-text,
+.helper-symbol-item span {
+  font-size: 11px;
+  font-weight: bold;
+  text-align: center;
+  padding: 4px 8px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  max-width: 80px;
+  line-height: 1.2;
+  word-wrap: break-word;
+}
+
+.symbol-name-text {
+  color: #333;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.helper-symbol-item span {
+  color: white;
+
+}
+
+.wise-symbol .symbol-name-text,
+.unwise-symbol .symbol-name-text {
+  background: rgba(225, 200, 8, 0.929);
+  color: white;
+}
+
+/* Game 1 specific animations */
+.cave-symbol-item.wise-choice {
+  animation: caveWiseChoice 2s ease-out;
+  border-color: #00FF00;
+  background: rgba(0, 255, 0, 0.3);
+}
+
+@keyframes caveWiseChoice {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.3); box-shadow: 0 0 40px rgba(0, 255, 0, 0.8); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.cave-symbol-item.unwise-choice {
+  animation: unwiseChoice 1s ease-out;
+  border-color: #FF4444;
+  background: rgba(255, 68, 68, 0.2);
+}
+
+@keyframes unwiseChoice {
+  0% { transform: scale(1); }
+  25% { transform: scale(0.9); filter: brightness(0.7); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+.cave-symbol-item.tried-symbol {
+  opacity: 0.5;
+  filter: grayscale(70%);
+  transform: scale(0.95);
+  transition: all 0.3s ease;
+}
+
+/* ===================================
+   🎮 GAME 2: HELPER POPUP SYSTEM
+   =================================== */
+
+.helper-popup-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  cursor: pointer;
+}
+
+.helper-popup-content {
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  border: 3px solid #FFD700;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  max-width: 300px;
+  animation: helperPopupAppear 0.6s ease-out;
+}
+
+.helper-popup-content img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 15px;
+}
+
+.helper-popup-content h3 {
+  margin: 10px 0;
+  color: #333;
+  font-size: 18px;
+}
+
+.helper-popup-content p {
+  margin: 10px 0 0 0;
+  color: #666;
+  font-size: 14px;
+}
+
+@keyframes helperPopupAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translateY(-30px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.05) translateY(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0px);
+  }
+}
+
+/* ===================================
+   🕉️ GANESHA POSITIONING & EMERGENCE
+   =================================== */
+
 .ganesha-cave-position {
   position: absolute;
   top: 12%;
@@ -753,309 +800,6 @@
   100% { opacity: 1; transform: scale(1.1); }
 }
 
-/* Personal speech bubble styling */
-.personal-instruction-bubble {
-  position: absolute;
-  top: 8%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #FFF8DC;        /* Warm cream color */
-  color: #8B4513;             /* Warm brown text */
-  padding: 14px 20px;
-  border-radius: 20px;
-  font-style: italic;         /* Thoughtful feeling */
-  font-size: 16px;
-  font-weight: 500;
-  z-index: 15;
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-  border: 2px solid #FFD700;
-  max-width: 280px;
-  animation: gentle-float 3s ease-in-out infinite;
-}
-
-/* Speech bubble tail pointing down */
-.personal-instruction-bubble:after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border: 10px solid transparent;
-  border-top-color: #FFF8DC;
-  border-bottom: none;
-}
-
-/* Gentle floating animation */
-@keyframes gentle-float {
-  0%, 100% { 
-    transform: translateX(-50%) translateY(0px);
-  }
-  50% { 
-    transform: translateX(-50%) translateY(-3px);
-  }
-}
-
-/* Hover effect for warmth */
-.personal-instruction-bubble:hover {
-  background: #FFFACD;
-  box-shadow: 0 6px 16px rgba(255, 215, 0, 0.3);
-}
-
-/* Visual feedback for tried symbols */
-.cave-symbol-item.tried-symbol {
-  opacity: 0.5;
-  filter: grayscale(70%);
-  transform: scale(0.95);
-  transition: all 0.3s ease;
-}
-
-.cave-symbol-item.tried-symbol:hover {
-  opacity: 0.7;
-  filter: grayscale(50%);
-  transform: scale(0.98);
-}
-
-/* Keep selected symbol highlighted even if tried */
-.cave-symbol-item.tried-symbol.selected {
-  opacity: 0.8;
-  filter: grayscale(30%);
-  transform: scale(1);
-  border: 2px solid #FFD700;
-}
-
-.symbol-selection-instruction {
-  position: absolute;
-  top: 8%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255, 215, 0, 0.9);
-  color: #000;
-  padding: 10px 20px;
-  border-radius: 25px;
-  font-weight: bold;
-  font-size: 16px;
-  z-index: 15;
-  text-align: center;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-  animation: gentle-glow 2s ease-in-out infinite;
-}
-
-@keyframes gentle-glow {
-  0%, 100% { 
-    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-    transform: translateX(-50%) scale(1);
-  }
-  50% { 
-    box-shadow: 0 5px 15px rgba(255,215,0,0.5);
-    transform: translateX(-50%) scale(1.02);
-  }
-}
-
-/* ===================================
-   âœ… UPDATED: INDIVIDUAL SYMBOLS - 4 POSITIONS ONLY
-   =================================== */
-.cave-symbol-individual {
-  position: absolute;
-  transition: all 0.5s ease;
-  z-index: 14;
-}
-
-.cave-symbol-individual.faint {
-  opacity: 0.4;
-  filter: grayscale(0.7) blur(1px);
-  pointer-events: none;
-}
-
-.cave-symbol-individual.clear {
-  opacity: 1;
-  filter: grayscale(0) blur(0px);
-  pointer-events: all;
-  animation: symbolReveal 1s ease-out;
-}
-
-@keyframes symbolReveal {
-  from {
-    opacity: 0.4;
-    filter: grayscale(0.7) blur(1px);
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    filter: grayscale(0) blur(0px);
-    transform: scale(1);
-  }
-}
-
-/* âœ… UPDATED: 4 Symbol Positions Only (2x2 layout) */
-.cave-symbol-individual.position-1 {
-  bottom: 60%;
-  left: 15%;
-}
-
-.cave-symbol-individual.position-2 {
-  bottom: 30%;
-  left: 15%;
-}
-
-.cave-symbol-individual.position-3 {
-  bottom: 60%;
-  right: 15%;
-}
-
-.cave-symbol-individual.position-4 {
-  bottom: 30%;
-  right: 15%;
-}
-
-/* âœ… UPDATED: Cave Symbol Items with Tooltips */
-.cave-symbol-item {
-  width: 90px; /* âœ… Slightly larger for 4 symbols */
-  height: 90px;
-  border-radius: 18px;
-  border: 4px solid var(--cave-gold);
-  background: rgba(139, 69, 19, 0.85);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: visible; /* âœ… For tooltips */
-  backdrop-filter: blur(5px);
-}
-
-.cave-symbol-item img {
-  width: 70px; /* âœ… Larger for visibility */
-  height: 70px;
-  object-fit: contain;
-}
-
-.cave-symbol-item:hover {
-  transform: scale(1.1);
-  border-color: var(--cave-amber);
-  background: rgba(255, 165, 0, 0.4);
-  box-shadow: 0 10px 30px rgba(255, 165, 0, 0.7);
-}
-
-/* âœ… NEW: Symbol Tooltips */
-.symbol-tooltip {
-  position: absolute;
-  bottom: -40px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 6px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: bold;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.3s ease;
-  z-index: 20;
-}
-
-.cave-symbol-item:hover .symbol-tooltip {
-  opacity: 1;
-  transform: translateX(-50%) translateY(-5px);
-}
-
-.cave-symbol-item.wise-choice {
-  animation: caveWiseChoice 2s ease-out;
-  border-color: #00FF00;
-  background: rgba(0, 255, 0, 0.3);
-}
-
-@keyframes caveWiseChoice {
-  0% { transform: scale(1); }
-  25% { transform: scale(1.3); box-shadow: 0 0 40px rgba(0, 255, 0, 0.8); }
-  50% { transform: scale(1.15); }
-  100% { transform: scale(1); }
-}
-
-.cave-symbol-item.unwise-choice {
-  animation: unwiseChoice 1s ease-out;
-  border-color: #FF4444;
-  background: rgba(255, 68, 68, 0.2);
-}
-
-@keyframes unwiseChoice {
-  0% { transform: scale(1); }
-  25% { transform: scale(0.9); filter: brightness(0.7); }
-  50% { transform: scale(0.95); }
-  100% { transform: scale(1); filter: brightness(1); }
-}
-
-/* ===================================
-   SYMBOL NAME TEXT
-   =================================== */
-
-.cave-symbol-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap:  - 12px;
-  padding: 10px;
-  border-radius: 10px;
-  transition: all 0.3s ease;
-  cursor: grab;
-}
-
-.cave-symbol-item img {
-  width: 60px;
-  height: 60px;
-  border-radius: 8px;
-}
-
-.symbol-name-text {
-  font-size: 11px;
-  font-weight: bold;
-  color: #333;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 4px 8px;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  max-width: 80px;
-  line-height: 1.2;
-  word-wrap: break-word;
-}
-
-.wise-symbol .symbol-name-text {
-  background: rgba(225, 200, 8, 0.929);
-  color: white;
-}
-
-.unwise-symbol .symbol-name-text {
-  background: rgba(225, 200, 8, 0.929);
-  color: white;
-}
-
-/* Adjust symbol container height for text */
-.cave-symbol-individual {
-  padding: 10px;
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  backdrop-filter: blur(3px);
-  transition: all 0.3s ease;
-  min-height: 100px; /* âœ… ADD: Make room for text */
-}
-
-.cave-symbol-item.selected {
-  border-color: #FFD700 !important;
-  background: rgba(255, 215, 0, 0.3) !important;
-  transform: scale(1.1);
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.8) !important;
-}
-
-/* ===================================
-   âœ… ADD TO SarvakaryeshuSarvada.css: GANESHA EMERGENCE SYSTEM
-   =================================== */
-
 .ganesha-emergence {
   position: absolute;
   top: 50%;
@@ -1087,28 +831,9 @@
   z-index: 1;
 }
 
-.emerging-ganesha.emerging {
-  animation: ganeshaEmerge 2s ease-out;
-}
-
 .emerging-ganesha.blessing {
   animation: ganeshaBlessing 3s ease-in-out infinite;
   box-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
-}
-
-@keyframes ganeshaEmerge {
-  0% {
-    opacity: 0;
-    transform: scale(0.3) translateY(50px);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.2) translateY(-10px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
 }
 
 @keyframes ganeshaBlessing {
@@ -1129,8 +854,8 @@
   transform: translateX(-50%);
   background: linear-gradient(45deg, #FFD700, #FFA500);
   color: white;
-  padding: 12px 20px;
-  border-radius: 20px;
+padding: 8px 12px !important; /* ← SMALLER */
+  border-radius: 15px !important; /* ← SMALLER */
   border: 2px solid #FFD700;
   box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
   animation: divineMessage 2s ease-in-out infinite alternate;
@@ -1157,84 +882,6 @@
   100% { transform: translateX(-50%) scale(1.02); }
 }
 
-/* ===================================
-   âœ… ENHANCED DIMMING SYSTEM
-   =================================== */
-
-/* Wrong Choice - Character feels lost */
-.scenario-image.character-uncertain {
-  filter: brightness(0.3) contrast(0.6) saturate(0.4) !important;
-  transform: scale(0.95);
-  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.6);
-  transition: all 1s ease-out;
-}
-
-/* Right Choice - Divine blessing */
-.scenario-image.divine-blessed {
-  filter: brightness(1.4) contrast(1.2) saturate(1.3) !important;
-  transform: scale(1.05);
-  box-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
-  transition: all 1.5s ease-out;
-}
-
-/* Character mood states */
-.scenario-image.brightening {
-  filter: brightness(1.1) contrast(1.1);
-  transition: all 1s ease-out;
-}
-
-.scenario-image.blessed {
-  filter: brightness(1.3) contrast(1.2) saturate(1.2);
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
-  transition: all 1s ease-out;
-}
-
-/* Scene lighting states */
-.scene-container[data-lighting="dark"] .scene-background {
-  background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), var(--original-background);
-}
-
-.scene-container[data-lighting="golden"] .scene-background {
-  background: linear-gradient(rgba(255,215,0,0.2), rgba(255,140,66,0.1)), var(--original-background);
-}
-
-/* Character speech bubble states */
-.character-speech-bubble.uncertain {
-  background: #666;
-  color: #ccc;
-  border: 2px solid #444;
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
-}
-
-.character-speech-bubble.divine-blessing {
-  background: linear-gradient(45deg, #FFD700, #FFA500);
-  color: white;
-  border: 2px solid #FFD700;
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
-  animation: divineGlow 2s ease-in-out infinite alternate;
-}
-
-.character-speech-bubble.grateful {
-  background: linear-gradient(45deg, #FFD700, #FF8C42);
-  color: white;
-  border: 2px solid #DAA520;
-  box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
-}
-
-.character-speech-bubble.wise-choice {
-  background: linear-gradient(45deg, #4CAF50, #66BB6A);
-  color: white;
-  border: 2px solid #4CAF50;
-  box-shadow: 0 0 20px rgba(76, 175, 80, 0.4);
-}
-
-/* Thought bubble glow states */
-.thought-bubble.faded {
-  opacity: 0.4;
-  filter: grayscale(0.8);
-}
-
-/* Enhanced divine glow animation */
 @keyframes divineGlow {
   0% { 
     transform: scale(1);
@@ -1247,1182 +894,141 @@
 }
 
 /* ===================================
-   THOUGHT BUBBLES AROUND CHARACTER
+   💭 INSTRUCTION BUBBLES
    =================================== */
 
-.thought-bubbles-container {
+.personal-instruction-bubble {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 600px;
-  height: 400px;
-  z-index: 15;
-  pointer-events: none;
-}
-
-.thought-bubble {
-  position: absolute;
-  width: 120px;
-  height: 120px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 3px solid #FFD700;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  transition: all 0.5s ease;
-  pointer-events: auto;
-}
-
-.thought-bubble.hidden {
-  opacity: 0;
-  transform: scale(0.3);
-}
-
-.thought-bubble.visible {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.thought-bubble.divine-glow {
-  background: rgba(255, 215, 0, 0.9);
-  border-color: #FF8C00;
-  box-shadow: 0 0 25px rgba(255, 215, 0, 0.8);
-  animation: divineGlow 2s ease-in-out infinite alternate;
-}
-
-.thought-bubble.clickable:hover {
-  transform: scale(1.1);
-  cursor: grab;
-}
-
-.thought-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  text-align: center;
-}
-
-.thought-content img {
-  width: 50px;
-  height: 50px;
-  border-radius: 6px;
-}
-
-.thought-text {
-  font-size: 10px;
-  font-weight: bold;
-  color: #333;
-  line-height: 1.1;
-}
-
-.character-consideration-zone {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 200px;
-  height: 200px;
-  border: 2px dashed rgba(255, 215, 0, 0.5);
-  border-radius: 50%;
-  background: rgba(255, 215, 0, 0.05);
-  z-index: 10;
-}
-
-@keyframes divineGlow {
-  0% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
-  100% { box-shadow: 0 0 35px rgba(255, 215, 0, 1); }
-}
-
-/* ðŸŽ­ FIXED: Correct class names to match JSX */
-.thought-bubble.bubble-position-1 { 
-  top: 10%;           /* Above character's head */
-  left: 50%;
-  transform: translate(-50%, -100%);
-}
-
-.thought-bubble.bubble-position-2 { 
-  top: 30%;           /* Upper right of character */
-  right: -10%;
-  transform: translate(100%, -50%);
-}
-
-.thought-bubble.bubble-position-3 { 
-  bottom: 10%;        /* Lower right of character */
-  right: -10%;
-  transform: translate(100%, 100%);
-}
-
-.thought-bubble.bubble-position-4 { 
-  top: 30%;           /* Upper left of character */
-  left: -10%;
-  transform: translate(-100%, -50%);
-}
-
-/* âœ… ADD THIS: Character Problem Declaration */
-.character-problem-speech {
-  position: absolute;
-  top: 25%; /* Below scenario window */
+  top: 8%;
   left: 50%;
   transform: translateX(-50%);
-  background: linear-gradient(45deg, #FF6B6B, #FF8E53);
-  color: white;
-  border: 3px solid #FF4757;
-  border-radius: 25px;
-  padding: 15px 25px;
-  max-width: 400px;
-  box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
-  z-index: 16;
-  animation: problemSpeechAppear 0.8s ease-out;
+  background: #FFF8DC;
+  color: #8B4513;
+  padding: 14px 20px;
+  border-radius: 20px;
+  font-style: italic;
+  font-size: 16px;
+  font-weight: 500;
+  z-index: 15;
   text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  border: 2px solid #FFD700;
+  max-width: 280px;
+  animation: gentle-float 3s ease-in-out infinite;
 }
 
-.character-problem-speech::before {
+.personal-instruction-bubble:after {
   content: '';
   position: absolute;
-  top: -12px;
+  bottom: -10px;
   left: 50%;
   transform: translateX(-50%);
   width: 0;
   height: 0;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-bottom: 15px solid #FF4757;
-}
-
-.character-problem-speech p {
-  margin: 0;
-  font-size: 16px;
-  font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  line-height: 1.3;
-}
-
-@keyframes problemSpeechAppear {
-  0% {
-    opacity: 0;
-    transform: translateX(-50%) scale(0.5) translateY(-20px);
-  }
-  60% {
-    opacity: 1;
-    transform: translateX(-50%) scale(1.05) translateY(0px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(-50%) scale(1) translateY(0px);
-  }
-}
-
-/* Problem speech bubble mobile responsiveness */
-@media (max-width: 768px) {
-  .character-problem-speech {
-    max-width: 300px;
-    padding: 12px 20px;
-    font-size: 14px;
-    top: 70%;
-  }
-}
-
-/* ✅ NEW: Game 2 Helper Academy Styles */
-
-.golden-helper-transformation {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 20;
-}
-
-.transformation-glow {
-  position: absolute;
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, rgba(255,215,0,0.8) 0%, transparent 70%);
-  border-radius: 50%;
-  animation: glow-pulse 2s ease-in-out infinite;
-}
-
-.transformation-text {
-  text-align: center;
-  color: #FFD700;
-  z-index: 21;
-}
-
-.transformation-text h2 {
-  font-size: 28px;
-  margin-bottom: 10px;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-}
-
-.transformation-text p {
-  font-size: 18px;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
-}
-
-.mission-intro-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0,0,0,0.5);
-  z-index: 15;
-}
-
-.mission-intro-card {
-  background: linear-gradient(135deg, #FFD700, #FF8C42);
-  border-radius: 20px;
-  padding: 30px;
-  text-align: center;
-  color: white;
-  max-width: 400px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-}
-
-.mission-intro-card h3 {
-  font-size: 24px;
-  margin-bottom: 15px;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-}
-
-.mission-intro-card p {
-  font-size: 16px;
-  margin-bottom: 20px;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-}
-
-.mission-counter {
-  background: rgba(255,255,255,0.2);
-  border-radius: 15px;
-  padding: 10px;
-  font-weight: bold;
-}
-
-.helper-mission-window {
-  position: absolute;
-  top: 15%;
-  left: 25%;
-  width: 50%;
-  height: 60%;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-  z-index: 10;
-}
-
-.mission-background {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: all 1s ease-in-out;
-}
-
-.mission-background.transitioning {
-  filter: brightness(1.3) saturate(1.2);
-}
-
-.mission-gratitude-bubble {
-  position: absolute;
-  top: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: white;
-  border-radius: 15px;
-  padding: 15px 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  max-width: 80%;
-  text-align: center;
-  animation: bubble-appear 0.5s ease;
-}
-
-.mission-gratitude-bubble::before {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
   border: 10px solid transparent;
-  border-top-color: white;
+  border-top-color: #FFF8DC;
+  border-bottom: none;
 }
 
-.helper-selection-area {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 12;
+@keyframes gentle-float {
+  0%, 100% { 
+    transform: translateX(-50%) translateY(0px);
+  }
+  50% { 
+    transform: translateX(-50%) translateY(-3px);
+  }
 }
 
-.golden-child-helper {
+.simple-click-instruction {
   position: absolute;
-  bottom: 20%;
+  top: 10px;
   left: 50%;
   transform: translateX(-50%);
-  text-align: center;
-}
-
-.golden-child-avatar {
-  position: relative;
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 10px;
-}
-
-.golden-child-avatar img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 3px solid #FFD700;
-}
-
-.golden-helper-aura {
-  position: absolute;
-  top: -10px;
-  left: -10px;
-  right: -10px;
-  bottom: -10px;
-  background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, transparent 70%);
-  border-radius: 50%;
-  animation: aura-pulse 2s ease-in-out infinite;
-}
-
-.helper-instruction p {
-  color: #FFD700;
+  background: rgba(255, 215, 0, 0.9);
+  color: #000;
+  padding: 8px 16px;
+  border-radius: 20px;
   font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-  font-size: 16px;
-}
-
-.available-helpers {
-  position: absolute;
-  top: 30%;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 30px;
-  z-index: 13;
-}
-
-.helper-character {
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.helper-character:hover {
-  transform: scale(1.1);
-}
-
-.helper-placeholder {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 10px;
-  border: 3px solid white;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  transition: all 0.3s ease;
-}
-
-.helper-character:hover .helper-placeholder {
-  box-shadow: 0 0 20px rgba(255,215,0,0.6);
-}
-
-.helper-icon {
-  font-size: 32px;
-}
-
-.helper-name {
-  display: block;
-  color: white;
-  font-weight: bold;
-  font-size: 12px;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-}
-
-.helper-interaction-zone {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 15;
-}
-
-.selected-helper-large {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.helper-large-placeholder {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 20px;
-  border: 4px solid white;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-  animation: gentle-bounce 2s ease-in-out infinite;
-}
-
-.helper-large-icon {
-  font-size: 48px;
-}
-
-.selected-helper-large h3 {
-  color: #FFD700;
-  font-size: 24px;
-  margin-bottom: 10px;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-}
-
-.helper-phrase {
-  color: white;
-  font-size: 16px;
-  font-style: italic;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
-}
-
-.interaction-instruction {
-  text-align: center;
-}
-
-.interaction-instruction p {
-  color: #FFD700;
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-}
-
-.interaction-button {
-  background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
-  border-radius: 25px;
-  padding: 15px 30px;
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-.interaction-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
-}
-
-.helper-activated-zone {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 15;
-}
-
-.activated-helper {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.helper-activated-placeholder {
-  position: relative;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 20px;
-  border: 4px solid white;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-}
-
-.activation-glow {
-  position: absolute;
-  top: -15px;
-  left: -15px;
-  right: -15px;
-  bottom: -15px;
-  background: radial-gradient(circle, rgba(0,255,0,0.4) 0%, transparent 70%);
-  border-radius: 50%;
-  animation: activation-pulse 1.5s ease-in-out infinite;
-}
-
-.helper-activated-icon {
-  font-size: 40px;
-  z-index: 2;
-}
-
-.activation-message {
-  color: #00FF00;
-  font-size: 18px;
-  font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-}
-
-.drag-instruction {
-  text-align: center;
-}
-
-.drag-instruction p {
-  color: #FFD700;
-  font-size: 16px;
-  margin-bottom: 20px;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-}
-
-.send-helper-button {
-  background: linear-gradient(135deg, #32CD32, #228B22);
-  border-radius: 25px;
-  padding: 15px 30px;
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-.send-helper-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
-}
-
-@keyframes glow-pulse {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.1); }
-}
-
-@keyframes aura-pulse {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.6; }
+  font-size: 14px;
+  z-index: 10;
+  animation: gentle-bounce 1.5s ease-in-out infinite;
 }
 
 @keyframes gentle-bounce {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes activation-pulse {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.1); }
-}
-
-@keyframes bubble-appear {
-  0% { opacity: 0; transform: translateX(-50%) scale(0.8); }
-  100% { opacity: 1; transform: translateX(-50%) scale(1); }
+  0%, 100% { transform: translateX(-50%) translateY(0px); }
+  50% { transform: translateX(-50%) translateY(-5px); }
 }
 
 /* ===================================
-   🎭 GAME 2 HELPER SELECTION STYLES
+   ✨ ANIMATED TEXT PHASES
    =================================== */
 
-.helper-selection-area {
+.in-all-tasks-text {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: 40px 20px;
-  z-index: 13;
-}
-
-.golden-child-helper {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.golden-child-avatar {
-  position: relative;
-  width: 100px;
-  height: 100px;
-  margin: 0 auto 15px;
-}
-
-.golden-child-avatar img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 4px solid #FFD700;
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
-}
-
-.golden-helper-aura {
-  position: absolute;
-  top: -15px;
-  left: -15px;
-  right: -15px;
-  bottom: -15px;
-  background: radial-gradient(circle, rgba(255,215,0,0.4) 0%, transparent 70%);
-  border-radius: 50%;
-  animation: aura-pulse 2s ease-in-out infinite;
-}
-
-@keyframes aura-pulse {
-  0%, 100% { 
-    opacity: 0.4; 
-    transform: scale(1);
-  }
-  50% { 
-    opacity: 0.8; 
-    transform: scale(1.1);
-  }
-}
-
-.helper-instruction {
-  background: rgba(255, 215, 0, 0.9);
-  border-radius: 20px;
-  padding: 12px 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-.helper-instruction p {
-  color: #333;
-  font-weight: bold;
-  font-size: 16px;
-  margin: 0;
-  text-shadow: none;
-}
-
-/* ===================================
-   🎨 AVAILABLE HELPERS LAYOUT
-   =================================== */
-
-.available-helpers {
-  display: flex;
-  gap: 40px;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  max-width: 600px;
-}
-
-.helper-character {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  padding: 15px;
-  border-radius: 15px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(5px);
-  border: 2px solid transparent;
-}
-
-.helper-character:hover {
-  transform: scale(1.1);
-  background: rgba(255, 255, 255, 0.2);
-  border-color: #FFD700;
-  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
-}
-
-.helper-image-container {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 3px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  transition: all 0.3s ease;
-}
-
-.helper-character:hover .helper-image-container {
-  border-color: #FFD700;
-  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
-  transform: scale(1.05);
-}
-
-.helper-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: all 0.3s ease;
-}
-
-.helper-character:hover .helper-image {
-  transform: scale(1.1);
-}
-
-.helper-name {
-  color: #FFD700;
-  font-weight: bold;
-  font-size: 14px;
-  text-align: center;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-  max-width: 100px;
-  line-height: 1.2;
-}
-
-/* ===================================
-   🌟 HELPER INTERACTION STATES
-   =================================== */
-
-.helper-character.selected {
-  transform: scale(1.2);
-  background: rgba(255, 215, 0, 0.3);
-  border-color: #FFD700;
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
-}
-
-.helper-character.selected .helper-image-container {
-  border-color: #FFD700;
-  box-shadow: 0 0 25px rgba(255, 215, 0, 1);
-}
-
-.helper-character.activated {
-  animation: helper-activation 1s ease-in-out;
-}
-
-@keyframes helper-activation {
-  0% { 
-    transform: scale(1.1); 
-  }
-  50% { 
-    transform: scale(1.3); 
-    filter: brightness(1.3);
-    box-shadow: 0 0 40px rgba(0, 255, 0, 0.8);
-  }
-  100% { 
-    transform: scale(1.1); 
-    filter: brightness(1);
-  }
-}
-
-/* ===================================
-   📱 RESPONSIVE DESIGN FOR HELPERS
-   =================================== */
-
-@media (max-width: 768px) {
-  .helper-selection-area {
-    padding: 20px 10px;
-  }
-  
-  .available-helpers {
-    gap: 25px;
-    max-width: 100%;
-  }
-  
-  .helper-character {
-    padding: 12px;
-    gap: 8px;
-  }
-  
-  .helper-image-container {
-    width: 70px;
-    height: 70px;
-  }
-  
-  .golden-child-avatar {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .helper-instruction p {
-    font-size: 14px;
-  }
-  
-  .helper-name {
-    font-size: 12px;
-    max-width: 80px;
-  }
-}
-
-@media (max-width: 480px) {
-  .available-helpers {
-    gap: 20px;
-    flex-direction: column;
-  }
-  
-  .helper-character {
-    flex-direction: row;
-    gap: 15px;
-    width: 100%;
-    max-width: 250px;
-    justify-content: flex-start;
-  }
-  
-  .helper-image-container {
-    width: 60px;
-    height: 60px;
-    flex-shrink: 0;
-  }
-  
-  .helper-name {
-    text-align: left;
-    max-width: none;
-    flex: 1;
-  }
-}
-
-/* ===================================
-   🎯 MISSION BACKGROUND STYLING
-   =================================== */
-
-.helper-mission-window {
-  position: absolute;
-  top: 15%;
-  left: 25%;
-  width: 50%;
-  height: 60%;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-  z-index: 10;
-  border: 4px solid #FFD700;
-}
-
-.mission-background {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: all 1s ease-in-out;
-}
-
-.mission-background.before {
-  filter: brightness(0.8) saturate(0.9);
-}
-
-.mission-background.after {
-  filter: brightness(1.2) saturate(1.2);
-  box-shadow: inset 0 0 50px rgba(255, 215, 0, 0.3);
-}
-
-.mission-background.transitioning {
-  filter: brightness(1.3) saturate(1.3);
-  transform: scale(1.02);
-}
-
-/* ===================================
-   💬 MISSION GRATITUDE STYLING
-   =================================== */
-
-.mission-gratitude-bubble {
-  position: absolute;
-  top: 10%;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
-  background: linear-gradient(135deg, #FFD700, #FF8C42);
-  color: white;
-  border-radius: 20px;
-  padding: 15px 25px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-  max-width: 80%;
-  text-align: center;
-  animation: bubble-appear 0.8s ease;
-  border: 2px solid rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  font-size: 32px;
+  font-weight: bold;
+  color: #FFD700;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  animation: textGlowIn 3s ease-out forwards;
   z-index: 15;
 }
 
-.mission-gratitude-bubble::before {
-  content: '';
+.always-text {
   position: absolute;
-  bottom: -12px;
-  left: 50%;
+  top: 65%;
+  left: 70%;
   transform: translateX(-50%);
-  border: 12px solid transparent;
-  border-top-color: #FFD700;
-}
-
-.mission-gratitude-bubble p {
-  margin: 0;
+  font-size: 24px;
   font-weight: bold;
-  font-size: 16px;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  color: #FF8C42;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  animation: textGrowIn 2s ease-out forwards;
+  z-index: 15;
 }
 
-@keyframes bubble-appear {
-  0% { 
-    opacity: 0; 
-    transform: translateX(-50%) scale(0.5) translateY(-20px); 
-  }
-  60% { 
-    opacity: 1; 
-    transform: translateX(-50%) scale(1.05) translateY(0px); 
-  }
-  100% { 
-    opacity: 1; 
-    transform: translateX(-50%) scale(1) translateY(0px); 
-  }
-}
-
-/* ===================================
-   ⭐ HELPER GLOW EFFECTS
-   =================================== */
-
-.helper-character::before {
-  content: '';
-  position: absolute;
-  top: -5px;
-  left: -5px;
-  right: -5px;
-  bottom: -5px;
-  background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.3), transparent);
-  border-radius: 20px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: -1;
-}
-
-.helper-character:hover::before {
-  opacity: 1;
-  animation: helper-glow 2s ease-in-out infinite;
-}
-
-@keyframes helper-glow {
-  0%, 100% { 
-    opacity: 0.3; 
-    transform: scale(1);
-  }
-  50% { 
-    opacity: 0.6; 
-    transform: scale(1.02);
-  }
-}
-
-/* Add to SarvakaryeshuSarvada.css: */
-@keyframes helperWorking {
-  0%, 100% { 
-    transform: scale(1) rotate(0deg);
-    box-shadow: 0 0 20px rgba(255,215,0,0.4);
-  }
-  50% { 
-    transform: scale(1.1) rotate(5deg);
-    box-shadow: 0 0 30px rgba(255,215,0,0.8);
-  }
-}
-
-@keyframes solvingGlow {
-  0%, 100% { opacity: 0.2; }
-  50% { opacity: 0.6; }
-}
-
-@keyframes happyGlow {
-  0% { opacity: 0; }
-  50% { opacity: 0.8; }
-  100% { opacity: 0.3; }
-}
-
-/* Add to SarvakaryeshuSarvada.css: */
-@keyframes helperJourney {
+@keyframes textGlowIn {
   0% {
-    transform: translateX(0) translateY(0) scale(1);
-    opacity: 1;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8) rotateY(-20deg);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
   }
   50% {
-    transform: translateX(200px) translateY(-50px) scale(0.8);
-    opacity: 0.8;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1) rotateY(0deg);
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 2px 2px 4px rgba(0,0,0,0.7);
   }
   100% {
-    transform: translateX(400px) translateY(-100px) scale(1.2);
     opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotateY(0deg);
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.4), 2px 2px 4px rgba(0,0,0,0.7);
   }
 }
 
-@keyframes trailSparkle {
-  0% { opacity: 0; width: 0px; }
-  50% { opacity: 0.8; width: 200px; }
-  100% { opacity: 0; width: 300px; }
-}
-
-/* Add to SarvakaryeshuSarvada.css: */
-
-.helper-around-scene {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  padding: 15px;
-  border-radius: 15px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(5px);
-  border: 2px solid transparent;
-  z-index: 15;
-}
-
-.helper-around-scene:hover {
-  transform: scale(1.1);
-  background: rgba(255, 255, 255, 0.2);
-  border-color: #FFD700;
-  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
-}
-
-.helper-around-scene.position-1 {
-  top: 20%;        /* Closer to window */
-  left: 20%;       /* Closer to window */
-}
-
-.helper-around-scene.position-2 {
-  top: 20%;        /* Closer to window */
-  right: 20%;      /* Closer to window */
-}
-
-.helper-around-scene.position-3 {
-  position: fixed !important;  /* Force it to be visible */
-  bottom: 80px !important;     /* Above the Sanskrit sidebar */
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  z-index: 25 !important;
-}
-
-.helper-image-container {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 3px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  transition: all 0.3s ease;
-}
-
-.helper-around-scene:hover .helper-image-container {
-  border-color: #FFD700;
-  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
-  transform: scale(1.05);
-}
-
-.helper-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.helper-name {
-  color: #FFD700;
-  font-weight: bold;
-  font-size: 14px;
-  text-align: center;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-  max-width: 100px;
-  line-height: 1.2;
-}
-
-/* Desktop/Landscape Layout (Image 2) */
-@media (min-width: 769px) {
-  .helper-around-scene.position-1 {
-    top: 10%;
-    left: 15%;
+@keyframes textGrowIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.5);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
   }
-
-  .helper-around-scene.position-2 {
-    top: 10%;
-    right: 15%;
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.2);
+    text-shadow: 0 0 20px rgba(255, 140, 66, 0.8), 2px 2px 4px rgba(0,0,0,0.7);
   }
-
-  .helper-around-scene.position-3 {
-    bottom: 12%;        /* ✅ Higher up for landscape */
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 20;
-  }
-}
-
-/* Mobile/Portrait Layout (Image 1) */
-@media (max-width: 768px) {
-  .helper-around-scene.position-1 {
-    top: 8%;
-    left: 10%;
-  }
-
-  .helper-around-scene.position-2 {
-    top: 8%;
-    right: 10%;
-  }
-
-  .helper-around-scene.position-3 {
-    bottom: 8%;         /* ✅ Works for portrait */
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 20;
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+    text-shadow: 0 0 10px rgba(255, 140, 66, 0.4), 2px 2px 4px rgba(0,0,0,0.7);
   }
 }
 
 /* ===================================
-   âœ… ADD: ENHANCED DIMMING SYSTEM
+   📢 PROGRESS COUNTER
    =================================== */
 
-/* Wrong Choice - Character feels lost */
-.scenario-image.character-uncertain {
-  filter: brightness(0.3) contrast(0.6) saturate(0.4) !important;
-  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.6);
-  transition: all 1s ease-out;
-}
-
-/* Right Choice - Divine blessing */
-.scenario-image.divine-blessed {
-  filter: brightness(1.4) contrast(1.2) saturate(1.3) !important;
-  box-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
-  transition: all 1.5s ease-out;
-}
-
-/* Scene lighting states */
-.scene-container[data-lighting="dark"] {
-  background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4));
-}
-
-.scene-container[data-lighting="golden"] {
-  background: linear-gradient(rgba(255,215,0,0.2), rgba(255,140,66,0.1));
-}
-
-/* Character speech bubble states */
-.character-speech-bubble.uncertain {
-  background: #666;
-  color: #ccc;
-  border: 2px solid #444;
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
-}
-
-.character-speech-bubble.divine-blessing {
-  background: linear-gradient(45deg, #FFD700, #FFA500);
-  color: white;
-  border: 2px solid #FFD700;
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
-  animation: divineGlow 2s ease-in-out infinite alternate;
-}
-
-@keyframes divineGlow {
-  0% { transform: scale(1); }
-  100% { transform: scale(1.02); }
-}
-
-
-
-/* ===================================
-   âœ… ADDED: PROGRESS COUNTER
-   =================================== */
 .scene-counter {
   position: absolute;
   top: 15px;
@@ -2470,41 +1076,9 @@
 }
 
 /* ===================================
-   âœ… ADDED: PHASE-SPECIFIC VISIBILITY
+   ✨ SPARKLE CONTAINER
    =================================== */
 
-/* Door 1 Visibility */
-.scene-container[data-phase="door1_active"] .door1-area,
-.scene-container[data-phase="door1_complete"] .door1-area {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* Door 2 Visibility */
-.scene-container[data-phase="door2_active"] .door2-area,
-.scene-container[data-phase="door2_complete"] .door2-area {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* Character Selection Visibility */
-.scene-container[data-phase="character_select"] .character-selection-clean {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* Game Phases Visibility */
-.scene-container[data-phase="scenario_uncertainty"] .scenario-window,
-.scene-container[data-phase="scenario_clarity"] .scenario-window,
-.scene-container[data-phase="scenario_choosing"] .scenario-window,
-.scene-container[data-phase="scenario_success"] .scenario-window {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* ===================================
-   âœ… ADDED: PREMIUM SPARKLE EFFECTS
-   =================================== */
 .sparkle-container {
   position: absolute;
   top: 0;
@@ -2515,51 +1089,166 @@
   pointer-events: none;
 }
 
-.door-sparkle {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  background: radial-gradient(circle, var(--cave-gold) 0%, var(--cave-amber) 100%);
-  border-radius: 50%;
-  animation: doorSparkle 2s ease-in-out infinite alternate;
-  box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+/* ===================================
+   📱 RESPONSIVE DESIGN
+   =================================== */
+
+@media (max-width: 768px) {
+  .door1-area,
+  .door2-area {
+    top: 15%;
+    transform: translateX(-50%) scale(0.8);
+  }
+  
+  .character-options-cave {
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  .character-option-clean img {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .character-title-cave h2 {
+    font-size: 24px;
+    padding: 12px 20px;
+  }
+  
+  .scenario-window {
+    width: 300px;
+    height: 190px;
+    top: 20%;
+  }
+  
+  .cave-symbol-item,
+  .helper-symbol-item {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .cave-symbol-item img,
+  .helper-symbol-item img {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .cave-symbol-individual.position-1,
+  .helper-symbol.position-1 { 
+    bottom: 45%; 
+    left: 8%; 
+  }
+  
+  .cave-symbol-individual.position-2,
+  .helper-symbol.position-2 { 
+    bottom: 25%; 
+    left: 8%; 
+  }
+  
+  .cave-symbol-individual.position-3,
+  .helper-symbol.position-3 { 
+    bottom: 45%; 
+    right: 8%; 
+  }
+  
+  .cave-symbol-individual.position-4 { 
+    bottom: 25%; 
+    right: 15%; 
+  }
+  
+  .helper-popup-content {
+    max-width: 280px;
+    padding: 20px;
+  }
+  
+  .helper-popup-content img {
+    width: 60px;
+    height: 60px;
+  }
 }
 
-@keyframes doorSparkle {
-  0% { opacity: 0.3; transform: scale(0.8); }
-  100% { opacity: 1; transform: scale(1.2); }
-}
-
-.character-sparkle {
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  background: radial-gradient(circle, var(--cave-gold) 0%, white 100%);
-  border-radius: 50%;
-  animation: characterSparkle 1.5s ease-in-out infinite alternate;
-}
-
-@keyframes characterSparkle {
-  0% { opacity: 0.5; transform: scale(0.8) rotate(0deg); }
-  100% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+@media (max-width: 480px) {
+  .character-title-cave h2 {
+    font-size: 20px;
+    padding: 10px 15px;
+  }
+  
+  .cave-symbol-item,
+  .helper-symbol-item {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .cave-symbol-item img,
+  .helper-symbol-item img {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .scenario-window {
+    width: 280px;
+    height: 170px;
+  }
+  
+  .helper-popup-content {
+    max-width: 260px;
+    padding: 15px;
+  }
 }
 
 /* ===================================
-   âœ… ADDED: DOOR COMPLETION ANIMATIONS
+   🎯 ACCESSIBILITY & PREMIUM FEATURES
    =================================== */
-.door-completion-fade {
-  animation: doorFadeOut 3s ease-out forwards;
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .cave-symbol-item,
+  .helper-symbol-item {
+    min-width: 80px;
+    min-height: 80px;
+    padding: 8px;
+  }
+  
+  .character-option-clean {
+    min-width: 140px;
+    min-height: 180px;
+    padding: 25px;
+  }
 }
 
-@keyframes doorFadeOut {
-  0% { opacity: 1; transform: scale(1); }
-  70% { opacity: 0.3; transform: scale(0.9); }
-  100% { opacity: 0; transform: scale(0.8) translateY(-20px); }
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .scene-container {
+    background: #000000;
+  }
+  
+  .cave-symbol-item,
+  .helper-symbol-item,
+  .character-option-clean {
+    border: 3px solid #FFFFFF;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .scene-container *,
+  .helper-badge {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .cave-symbol-item:hover,
+  .helper-symbol-item:hover,
+  .character-option-clean:hover {
+    transform: none !important;
+    opacity: 0.8;
+  }
 }
 
 /* ===================================
-   LOADING AND ERROR STATES
+   🔧 ERROR STATES
    =================================== */
+
 .loading {
   position: absolute;
   top: 50%;
@@ -2600,226 +1289,4 @@
   cursor: pointer;
   font-weight: bold;
   margin-top: 15px;
-}
-
-.error-boundary button:hover {
-  background: var(--cave-gold-dark);
-}
-
-/* ===================================
-   âœ… UPDATED: RESPONSIVE DESIGN
-   =================================== */
-@media (max-width: 768px) {
-  .door1-area,
-  .door2-area {
-    top: 15%;
-    transform: translateX(-50%) scale(0.8);
-  }
-  
-  .sarvakaryeshu-door,
-  .sarvada-door {
-    transform: scale(0.6);
-  }
-  
-  .character-options-cave {
-    flex-direction: column;
-    gap: 30px;
-  }
-  
-  .character-option-clean img {
-    width: 100px;
-    height: 100px;
-  }
-  
-  .character-title-cave h2 {
-    font-size: 24px;
-    padding: 12px 20px;
-  }
-  
-  .character-selection-clean {
-    top: 15%;
-  }
-  
-  .scenario-window {
-    width: 300px;
-    height: 190px;
-    top: 20%;
-  }
-  
-  .scenario-drop-zone {
-    width: 300px;
-    height: 190px;
-    top: 20%;
-  }
-  
-  .cave-symbol-item {
-    width: 70px;
-    height: 70px;
-  }
-  
-  .cave-symbol-item img {
-    width: 55px;
-    height: 55px;
-  }
-  
-  .ganesha-cave-position {
-    width: 70px;
-    height: 70px;
-    top: 15%;
-    right: 8%;
-  }
-  
-  .scene-counter {
-    width: 160px;
-    height: 36px;
-    padding: 6px 12px;
-    top: 10px;
-    left: 10px;
-  }
-  
-  .helper-badge {
-    top: 15px;
-    right: 15px;
-    padding: 8px 15px;
-    font-size: 14px;
-  }
-  
-  /* âœ… UPDATED: 4 symbol positions for mobile */
-  .cave-symbol-individual.position-1 { bottom: 45%; left: 8%; }
-  .cave-symbol-individual.position-2 { bottom: 25%; left: 15%; }
-  .cave-symbol-individual.position-3 { bottom: 45%; right: 8%; }
-  .cave-symbol-individual.position-4 { bottom: 25%; right: 15%; }
-  
-  .character-speech-bubble {
-    max-width: 250px;
-    top: -50px;
-    font-size: 12px;
-  }
-  
-  .helper-instruction {
-    bottom: 12%;
-    padding: 12px 20px;
-    font-size: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .character-title-cave h2 {
-    font-size: 20px;
-    padding: 10px 15px;
-  }
-  
-  .character-options-cave {
-    gap: 20px;
-  }
-  
-  .character-option-clean {
-    padding: 15px;
-  }
-  
-  .cave-symbol-item {
-    width: 60px;
-    height: 60px;
-  }
-  
-  .cave-symbol-item img {
-    width: 45px;
-    height: 45px;
-  }
-  
-  .scenario-window {
-    width: 280px;
-    height: 170px;
-  }
-  
-  .scenario-drop-zone {
-    width: 280px;
-    height: 170px;
-  }
-  
-  .helper-instruction {
-    font-size: 14px;
-    padding: 10px 15px;
-  }
-  
-  .character-speech-bubble {
-    max-width: 200px;
-    padding: 8px 12px;
-  }
-}
-
-@media (orientation: portrait) {
-  .door1-area,
-  .door2-area {
-    top: 15%;
-    left: 50%;
-  }
-  
-  .scene-counter {
-    top: 5px;
-    left: 5px;
-    width: 180px;
-  }
-  
-  .character-selection-clean {
-    top: 25%;
-  }
-}
-
-/* ===================================
-   âœ… ADDED: ACCESSIBILITY & PREMIUM FEATURES
-   =================================== */
-
-/* Touch device optimizations */
-@media (hover: none) and (pointer: coarse) {
-  .cave-symbol-item {
-    min-width: 80px;
-    min-height: 80px;
-    padding: 8px;
-  }
-  
-  .character-option-clean {
-    min-width: 140px;
-    min-height: 180px;
-    padding: 25px;
-  }
-  
-  /* Show tooltips on touch */
-  .cave-symbol-item .symbol-tooltip {
-    opacity: 0.8;
-  }
-}
-
-/* High contrast mode */
-@media (prefers-contrast: high) {
-  .scene-container {
-    background: #000000;
-  }
-  
-  .cave-symbol-item,
-  .character-option-clean {
-    border: 3px solid #FFFFFF;
-  }
-  
-  .scene-counter .counter-progress-fill {
-    background: #FFFF00 !important;
-  }
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  .scene-container *,
-  .door-sparkle,
-  .character-sparkle,
-  .helper-badge,
-  .helper-instruction {
-    animation: none !important;
-    transition: none !important;
-  }
-  
-  .cave-symbol-item:hover,
-  .character-option-clean:hover {
-    transform: none !important;
-    opacity: 0.8;
-  }
 }

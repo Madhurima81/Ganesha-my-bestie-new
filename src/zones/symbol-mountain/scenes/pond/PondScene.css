@@ -173,6 +173,8 @@
   justify-content: center !important;
   transition: none !important;
   z-index: 5;
+    opacity: 1 !important;  /* ← ADD THIS LINE */
+
 }
 
 /* Ensure contained images maintain center position */
@@ -182,6 +184,8 @@
   object-fit: contain !important;
   object-position: center center !important;
   transition: opacity 0.3s ease !important;
+    opacity: 1 !important;  /* ← ADD THIS LINE */
+
 }
 
 /* Override interactive element transforms */
@@ -695,5 +699,304 @@
   .lotus-counter {
     top: 10px;
     left: 10px;
+  }
+}
+
+/* SIMPLE HINT GLOW - Just light pulse */
+.hint-glow {
+  animation: simple-glow-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes simple-glow-pulse {
+  0%, 100% { 
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+  }
+  50% { 
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 1));
+  }
+}
+
+/* ============================================
+   POND SCENE UPGRADES - ADD TO END OF FILE
+   New features: Phase Headers, Power Modal, Symbol Celebrations
+   ============================================ */
+
+/* ==================== PHASE HEADER ==================== */
+/* Always-visible instructions at top of screen */
+.phase-header {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #1565C0, #42A5F5);
+  color: white;
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-size: 18px;
+  font-weight: bold;
+  z-index: 100;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  text-align: center;
+  white-space: nowrap;
+}
+
+@keyframes gentle-bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-5px); }
+}
+
+/* ==================== ENHANCED HINT GLOW ==================== */
+/* More dramatic glow when hints appear - replaces simple-glow-pulse 
+.hint-glow {
+  animation: hintGlowPulse 2s ease-in-out infinite !important;
+  position: relative;
+  z-index: 10;
+}
+
+@keyframes hintGlowPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 10px #FFD700) brightness(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 25px #FFD700) brightness(1.2);
+  }
+}
+
+/* ==================== OPENING MODAL ANIMATIONS ==================== */
+@keyframes gentle-glow {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+@keyframes gentle-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* ==================== SYMBOL CELEBRATION ANIMATIONS ==================== */
+/* 5-second centered symbol display */
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes symbolAppear {
+  0% { 
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  100% { 
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes symbolGlow {
+  0% { 
+    filter: drop-shadow(0 0 30px currentColor) brightness(1);
+    transform: scale(1);
+  }
+  100% { 
+    filter: drop-shadow(0 0 60px currentColor) brightness(1.4);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes textPulse {
+  0%, 100% { 
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+/* ==================== POWER MODAL ANIMATION ==================== */
+@keyframes powerPulse {
+  0%, 100% { 
+    transform: scale(1);
+  }
+  50% { 
+    transform: scale(1.08);
+  }
+}
+
+/* ==================== RESPONSIVE UPDATES ==================== */
+@media (max-width: 768px) {
+  .phase-header {
+    font-size: 14px;
+    padding: 10px 20px;
+    top: 60px;
+    max-width: 90vw;
+    white-space: normal;
+    line-height: 1.3;
+  }
+}
+
+@media (max-width: 480px) {
+  .phase-header {
+    font-size: 12px;
+    padding: 8px 16px;
+    top: 50px;
+  }
+}
+
+/* ==================== OPTIONAL: ENHANCED LOTUS COUNTER ==================== */
+/* If you want the counter to glow when active (optional upgrade) */
+.lotus-counter.active {
+  animation: counterGlow 1s ease-in-out infinite;
+}
+
+@keyframes counterGlow {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    box-shadow: 0 4px 16px rgba(255, 158, 189, 0.4);
+  }
+}
+
+/* ==================== LOADING & ERROR STATES ==================== */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 24px;
+  color: #1565C0;
+  font-weight: bold;
+  background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+}
+
+.error-boundary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding: 20px;
+  text-align: center;
+  background: #FFF5F5;
+}
+
+.error-boundary h2 {
+  color: #FF5252;
+  margin-bottom: 20px;
+  font-size: 28px;
+}
+
+.error-boundary details {
+  margin: 20px 0;
+  text-align: left;
+  max-width: 600px;
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #FFE0E0;
+}
+
+.error-boundary button {
+  background: #1565C0;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  margin-top: 20px;
+}
+
+.error-boundary button:hover {
+  background: #0D47A1;
+}
+
+/* ==================== Z-INDEX FIX FOR MODALS ==================== */
+/* Ensure power modal and mission appear above everything */
+.power-modal-overlay,
+.mission-modal-overlay {
+  z-index: 500 !important;
+}
+
+/* Ensure phase header stays below modals */
+.phase-header {
+  z-index: 100;
+}
+
+/* Ensure sparkles stay visible during celebrations */
+.sparkle-container {
+  z-index: 201;
+  pointer-events: none;
+}
+
+/* ==================== SMOOTH TRANSITIONS ==================== */
+/* Add smooth transitions for all interactive elements */
+.lotus img,
+.golden-lotus-container img,
+.elephant-partial img {
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+/* Add hover effect for better feedback */
+.lotus:hover img,
+.golden-lotus-container:hover img,
+.elephant-partial:hover img {
+  filter: brightness(1.1);
+}
+
+/* ==================== CELEBRATION CONFETTI ==================== */
+/* For the real confetti in symbol celebration */
+@keyframes confettiFall {
+  to {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.confetti-piece {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  animation: confettiFall 3s linear forwards;
+}
+
+/* ==================== ACCESSIBILITY IMPROVEMENTS ==================== */
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .phase-header {
+    background: #000;
+    border: 2px solid #FFF;
+  }
+  
+  .hint-glow {
+    outline: 3px solid #FFD700;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .phase-header,
+  .hint-glow,
+  .lotus,
+  .elephant-partial {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .golden-lotus-container.blooming img {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* ==================== PRINT STYLES ==================== */
+@media print {
+  .phase-header,
+  .lotus-counter,
+  .hint-glow,
+  .sparkle-container {
+    display: none !important;
   }
 }

@@ -11,11 +11,11 @@ const ProgressiveHintSystem = forwardRef(({
   characterImage,
   
   // Customization options
-  initialDelay = 8000,       // Time before button starts pulsing (ms)
-  hintDisplayTime = 5000,    // How long hints stay visible (ms)
-  position = 'bottom-left',  // Button position
-  iconSize = 50,             // Button size in pixels
-  zIndex = 1000,             // Z-index for layering
+  initialDelay = 8000,
+  hintDisplayTime = 5000,
+  position = 'bottom-left',
+  iconSize = 50,
+  zIndex = 1000,
   
   // Callbacks
   onHintShown = () => {},
@@ -25,6 +25,7 @@ const ProgressiveHintSystem = forwardRef(({
   
   // Enable/disable
   enabled = true,
+  disabledMessage = "Great job!", // NEW: Message to show when disabled
 }, ref) => {
   const [showHint, setShowHint] = useState(false);
   const [hintLevel, setHintLevel] = useState(0);
@@ -76,7 +77,6 @@ const ProgressiveHintSystem = forwardRef(({
       setIsPulsing(false);
     };
     
-    // Listen for user interaction
     window.addEventListener('click', resetActivity);
     window.addEventListener('touchstart', resetActivity);
     window.addEventListener('mousemove', resetActivity);
@@ -92,42 +92,36 @@ const ProgressiveHintSystem = forwardRef(({
   }, [enabled, initialDelay, isPulsing]);
   
   // Find the appropriate hint based on scene state
-  // Find the appropriate hint based on scene state
-useEffect(() => {
-  if (!enabled || !sceneState || !hintConfigs || !showHint) return;
-  
-  // Find matching hint based on current scene state
-  const matchingHint = hintConfigs.find(hint => 
-    typeof hint.condition === 'function' && hint.condition(sceneState, hintLevel)
-  );
-  
-  if (matchingHint) {
-    setCurrentHint(matchingHint);
-  } else {
-    // Default hint if no condition matches
-    setCurrentHint(null);
-  }
-}, [enabled, sceneState, hintConfigs, showHint, hintLevel]);
+  useEffect(() => {
+    if (!enabled || !sceneState || !hintConfigs || !showHint) return;
+    
+    const matchingHint = hintConfigs.find(hint => 
+      typeof hint.condition === 'function' && hint.condition(sceneState, hintLevel)
+    );
+    
+    if (matchingHint) {
+      setCurrentHint(matchingHint);
+    } else {
+      setCurrentHint(null);
+    }
+  }, [enabled, sceneState, hintConfigs, showHint, hintLevel]);
 
   // Show hint handler
-  // Show hint handler
-const handleShowHint = (level = 0) => {  // DEFAULT TO 0, NOT hintLevel
-  if (!enabled) return;
-  
-  // Clear any existing hide timer
-  if (hideTimerRef.current) {
-    clearTimeout(hideTimerRef.current);
-  }
-  
-  setHintLevel(level);
-  setShowHint(true);
-  onHintShown(level);
-  
-  // Auto-hide hint after display time
-  hideTimerRef.current = setTimeout(() => {
-    handleHideHint();
-  }, hintDisplayTime);
-};
+  const handleShowHint = (level = 0) => {
+    if (!enabled) return;
+    
+    if (hideTimerRef.current) {
+      clearTimeout(hideTimerRef.current);
+    }
+    
+    setHintLevel(level);
+    setShowHint(true);
+    onHintShown(level);
+    
+    hideTimerRef.current = setTimeout(() => {
+      handleHideHint();
+    }, hintDisplayTime);
+  };
   
   // Hide hint handler
   const handleHideHint = () => {
@@ -141,105 +135,35 @@ const handleShowHint = (level = 0) => {  // DEFAULT TO 0, NOT hintLevel
   };
   
   // Handle hint button click
-const handleHintButtonClick = () => {
-  onHintButtonClick();
-  
-  // Start at level 0, then progress to level 1, then cycle back
-  const nextLevel = hintLevel === 0 ? 1 : 0; 
-  setHintLevel(nextLevel);
-  onHintLevelChange(nextLevel);
-  
-  // Show hint
-  handleShowHint(nextLevel);
-};
-  
-  // Get hint content based on level
-  /*const renderHintContent = () => {
-    if (!currentHint) return null;
+  const handleHintButtonClick = () => {
+    if (!enabled) return; // Don't do anything when disabled
     
-    switch (hintLevel) {
-      case 0: // Visual arrow hint
-        return (
-          <div className="visual-hint">
-            <div 
-              className="hint-arrow"
-              style={{
-                transform: `rotate(${getArrowRotation(currentHint.position)}deg)`
-              }}
-            />
-          </div>
-        );
-        
-      case 1: // Character with simple hint
-        return (
-          <div className="character-hint">
-            <img src={characterImage} alt="Hint" className="hint-character" />
-            <div className="hint-bubble">
-              <p>{currentHint.message || "Try exploring!"}</p>
-            </div>
-          </div>
-        );
-        
-      case 2: // Explicit guidance
-        return (
-          <div className="explicit-hint">
-            <img src={characterImage} alt="Hint" className="hint-character" />
-            <div className="hint-bubble">
-              <p>{currentHint.explicitMessage || currentHint.message || "Click here to proceed!"}</p>
-            </div>
-            {currentHint.element && (
-              <div className="hint-target-highlight" />
-            )}
-          </div>
-        );
-        
-      default:
-        return null;
-    }
-  };*/
+    onHintButtonClick();
+    
+    const nextLevel = hintLevel === 0 ? 1 : 0; 
+    setHintLevel(nextLevel);
+    onHintLevelChange(nextLevel);
+    
+    handleShowHint(nextLevel);
+  };
 
   // Get hint content based on level
-const renderHintContent = () => {
-  if (!currentHint) return null;
-  
-  // Always show character with speech bubble (remove arrow level)
-  return (
-    <div className="character-hint">
-      <img src={characterImage} alt="Hint" className="hint-character" />
-      <div className="hint-bubble">
-        <p>
-          {hintLevel === 0 
-            ? currentHint.message || "Try exploring!"
-            : currentHint.explicitMessage || currentHint.message || "Click here to proceed!"
-          }
-        </p>
+  const renderHintContent = () => {
+    if (!currentHint) return null;
+    
+    return (
+      <div className="character-hint">
+        <img src={characterImage} alt="Hint" className="hint-character" />
+        <div className="hint-bubble">
+          <p>
+            {hintLevel === 0 
+              ? currentHint.message || "Try exploring!"
+              : currentHint.explicitMessage || currentHint.message || "Click here to proceed!"
+            }
+          </p>
+        </div>
       </div>
-    </div>
-  );
-};
-  
-  // Helper to calculate arrow rotation based on position
-  const getArrowRotation = (position) => {
-    if (!position) return 0;
-    
-    // Calculate rotation based on position props
-    if (position.top && position.left) {
-      const top = typeof position.top === 'string' 
-        ? parseInt(position.top) 
-        : position.top;
-        
-      const left = typeof position.left === 'string'
-        ? parseInt(position.left)
-        : position.left;
-      
-      // Return angle based on position
-      if (top < 50 && left < 50) return 135; // top-left
-      if (top < 50 && left > 50) return 225; // top-right
-      if (top > 50 && left < 50) return 45;  // bottom-left
-      if (top > 50 && left > 50) return 315; // bottom-right
-    }
-    
-    return 0; // default
+    );
   };
   
   // Get button position styles
@@ -266,8 +190,91 @@ const renderHintContent = () => {
     return currentHint.position;
   };
   
-  if (!enabled) return null;
+  // DISABLED STATE - Show grayed out button with checkmark
+  if (!enabled) {
+    return (
+      <div 
+        className="progressive-hint-button disabled"
+        style={{
+          ...getButtonPositionStyle(),
+          width: `${iconSize}px`,
+          height: `${iconSize}px`,
+          zIndex: zIndex,
+          opacity: 0.6,
+          cursor: 'not-allowed',
+          position: 'fixed',
+          background: 'rgba(200, 200, 200, 0.8)',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+        }}
+      >
+        <div style={{
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <img 
+            src={characterImage} 
+            alt="Hint disabled" 
+            style={{
+              width: '70%',
+              height: '70%',
+              filter: 'grayscale(100%)',
+              opacity: 0.5
+            }}
+          />
+          <div style={{
+            position: 'absolute',
+            top: '-5px',
+            right: '-5px',
+            width: '20px',
+            height: '20px',
+            background: '#4CAF50',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+          }}>
+            ✓
+          </div>
+        </div>
+        
+        {/* Optional tooltip */}
+        {disabledMessage && (
+          <div style={{
+            position: 'absolute',
+            left: position.includes('left') ? '110%' : 'auto',
+            right: position.includes('right') ? '110%' : 'auto',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            background: 'white',
+            padding: '8px 12px',
+            borderRadius: '8px',
+            fontSize: '12px',
+            fontWeight: '600',
+            color: '#333',
+            whiteSpace: 'nowrap',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            pointerEvents: 'none'
+          }}>
+            {disabledMessage}
+          </div>
+        )}
+      </div>
+    );
+  }
   
+  // ENABLED STATE - Normal functioning button
   return (
     <>
       {/* Hint Button */}

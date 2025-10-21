@@ -900,6 +900,26 @@
     height: 25px;
   }
 }
+
+@keyframes gentle-glow {
+  0%, 100% {
+    opacity: 0.8;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes gentle-breathe {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
 /* ================================
    Z-INDEX HIERARCHY
    ================================ */

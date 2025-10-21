@@ -1,3 +1,4 @@
+// lib/components/missions/SaveAnimalMission.jsx - MODAL STYLE REDESIGN
 import React, { useState, useEffect } from 'react';
 import HelperSignatureAnimation from '../animation/HelperSignatureAnimation';
 import './SaveAnimalMission.css';
@@ -11,10 +12,8 @@ const SaveAnimalMission = ({
   smartwatchBase,
   smartwatchScreen,
   appImage,
-  boyCharacter,
   onComplete,
   onCancel,
-  hideExternalElements = true,
   
   // Reload support props
   isReload = false,
@@ -25,22 +24,6 @@ const SaveAnimalMission = ({
 }) => {
   const [rescuePhase, setRescuePhase] = useState('problem');
   const [showParticles, setShowParticles] = useState(false);
-
-  // SIMPLIFIED: Just detect device type for conditional logic
-  const [deviceType, setDeviceType] = useState('mobile');
-  
-  useEffect(() => {
-    const updateDeviceType = () => {
-      const width = window.innerWidth;
-      if (width >= 1024) setDeviceType('desktop');
-      else if (width >= 768) setDeviceType('tablet');
-      else setDeviceType('mobile');
-    };
-
-    updateDeviceType();
-    window.addEventListener('resize', updateDeviceType);
-    return () => window.removeEventListener('resize', updateDeviceType);
-  }, []);
 
   // Handle reload state restoration
   useEffect(() => {
@@ -145,12 +128,57 @@ const SaveAnimalMission = ({
   };
 
   return (
-    <div className={`save-animal-mission ${deviceType}`}>
-      {/* Scene Darkening Effect */}
-      <div className="mission-overlay" />
+  <div className="save-animal-mission">
+    
+    {/* Main Container - Wide Gradient Box */}
+    <div className="mission-container">
       
-      {/* Animal Scene Content - CSS handles all responsive scaling */}
-      <div className="mission-content">
+      {/* LEFT SIDE - Smartwatch + App */}
+      <div className="mission-left-side">
+        
+        {/* Smartwatch */}
+        <div className="mission-smartwatch">
+          <img 
+            src={smartwatchBase}
+            alt="Smartwatch Base"
+            className="smartwatch-base"
+          />
+          
+          <img 
+            src={smartwatchScreen}
+            alt="Screen"
+            className="smartwatch-screen"
+          />
+          
+          <img 
+            src={appImage}
+            alt="Power App"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (rescuePhase === 'problem') {
+                handleRescueAction();
+              }
+            }}
+            className={`smartwatch-app ${rescuePhase === 'problem' ? 'pulsing' : ''}`}
+            style={{
+              filter: rescuePhase === 'problem' 
+                ? `drop-shadow(0 0 15px ${powerConfig?.color || '#FFD700'}) brightness(1.4)` 
+                : 'none'
+            }}
+          />
+        </div>
+        
+        {/* Instruction Bubble - Shows during problem phase */}
+        {rescuePhase === 'problem' && (
+          <div className="instruction-bubble">
+            Tap your {powerConfig?.name || 'Power'} app!
+            <div className="instruction-pointer" />
+          </div>
+        )}
+      </div>
+
+      {/* RIGHT SIDE - Animal Scene */}
+      <div className="mission-right-side">
         
         {rescuePhase === 'problem' && (
           <div className="mission-scene">
@@ -212,67 +240,23 @@ const SaveAnimalMission = ({
               </div>
               <div className="speech-pointer" />
             </div>
-            
-            <button 
-              className="mission-complete-btn"
-              onClick={handleRescueComplete}
-            >
-              {buttonTexts[word] || "Continue!"}
-            </button>
           </div>
         )}
       </div>
 
-      {/* Boy Character */}
-      <div className="mission-boy-character">
-        <img 
-          src={boyCharacter}
-          alt="Boy character"
-          className="boy-image"
-        />
-      </div>
+      {/* BOTTOM SECTION - Complete Button */}
+      {rescuePhase === 'success' && (
+        <div className="mission-bottom-section">
+          <button 
+            className="mission-complete-btn"
+            onClick={handleRescueComplete}
+          >
+            {buttonTexts[word] || "Continue!"}
+          </button>
+        </div>
+      )}
 
-      {/* Smartwatch */}
-      <div className="mission-smartwatch">
-        <img 
-          src={smartwatchBase}
-          alt="Smartwatch Base"
-          className="smartwatch-base"
-        />
-        
-        <img 
-          src={smartwatchScreen}
-          alt="Screen"
-          className="smartwatch-screen"
-        />
-        
-        <img 
-          src={appImage}
-          alt="Power App"
-          onClick={(e) => {
-            e.stopPropagation();
-            console.log('App clicked!', rescuePhase);
-            if (rescuePhase === 'problem') {
-              handleRescueAction();
-            }
-          }}
-          className={`smartwatch-app ${rescuePhase === 'problem' ? 'pulsing' : ''}`}
-          style={{
-            filter: rescuePhase === 'problem' 
-              ? `drop-shadow(0 0 15px ${powerConfig?.color || '#FFD700'}) brightness(1.4)` 
-              : 'none'
-          }}
-        />
-        
-        {rescuePhase === 'problem' && (
-          <div className="instruction-bubble">
-            Tap your {powerConfig?.name || 'Power'} app!
-            <div className="instruction-pointer" />
-          </div>
-        )}
-      </div>
-
-      {/* Power Particles */}
+      {/* Power Particles Effect */}
       {showParticles && (
         <div className="power-particles">
           {Array.from({length: 8}).map((_, i) => (
@@ -294,13 +278,14 @@ const SaveAnimalMission = ({
       {rescuePhase === 'problem' && onCancel && (
         <button 
           className="mission-cancel-btn" 
-          onClick={handleCancel}
+          onClick={onCancel}
         >
           ✕
         </button>
       )}
     </div>
-  );
+  </div>
+);
 };
 
 export default SaveAnimalMission;

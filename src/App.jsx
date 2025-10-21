@@ -32,7 +32,7 @@ const SCENE_MAPPING = {
   'shloka-river': {
     'vakratunda-grove': () => import('./zones/shloka-river/scenes/Scene1/VakratundaGroveV2'),
     'suryakoti-bank': () => import('./zones/shloka-river/scenes/Scene2/SuryakotiBank'),
-    'nirvighnam-chant': () => import('./zones/shloka-river/scenes/Scene3/NirvighnamChant'),
+    'nirvighnam-chant': () => import('./zones/shloka-river/scenes/Scene3/NirvighnamChantSimplified.jsx'),
     'sarvakaryeshu-chant': () => import('./zones/shloka-river/scenes/scene4/SarvakaryeshuChant'),
     'shloka-river-finale': () => import('./zones/shloka-river/scenes/scene5/ShlokaRiverFinale')
   },

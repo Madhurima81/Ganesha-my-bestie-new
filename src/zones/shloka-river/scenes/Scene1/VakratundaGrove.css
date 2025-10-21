@@ -382,20 +382,21 @@ button.adult-elephant {
 }
 
 /* ENHANCED: Ganesha States with VISIBLE Glows */
+/* SIMPLIFIED: Ganesha States - NO Overwhelming Glow */
 .ganesha-avatar.welcome {
   transform: scale(1) rotate(0deg);
-  filter: brightness(1.3) drop-shadow(0 0 40px #FFD700) drop-shadow(0 0 80px rgba(255, 215, 0, 0.6));
+  /*filter: brightness(1.1);  /* No glow at all */
 }
 
 .ganesha-avatar.blessing {
   transform: scale(1.1) rotate(2deg);
-  filter: brightness(1.5) drop-shadow(0 0 60px #FFD700) drop-shadow(0 0 120px rgba(255, 215, 0, 0.8));
+  filter: brightness(1.2);  /* Just brightness, no glow */
   animation: divine-blessing 3s ease-in-out infinite;
 }
 
 .ganesha-avatar.transfer {
   transform: scale(1.2) rotate(-2deg);
-  filter: brightness(1.7) drop-shadow(0 0 80px #FFD700) drop-shadow(0 0 160px rgba(255, 215, 0, 1));
+  filter: brightness(1.3) drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));  /* Very subtle glow */
   animation: power-transfer 2s ease-in-out infinite;
 }
 

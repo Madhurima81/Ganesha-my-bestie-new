@@ -1,0 +1,323 @@
+/* SymbolSidebar.css */
+
+.symbol-sidebar {
+  position: fixed;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px 10px;
+  background: linear-gradient(135deg, rgba(156, 39, 176, 0.95), rgba(123, 31, 162, 0.95));
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(156, 39, 176, 0.4);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  text-align: center;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 5px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  margin-bottom: 5px;
+}
+
+.symbol-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  transition: all 0.3s ease;
+  position: relative;
+  border: 3px solid transparent;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.symbol-icon.unlocked {
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+}
+
+.symbol-icon.unlocked:hover {
+  transform: scale(1.15) rotate(5deg);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.5);
+}
+
+.symbol-icon.locked {
+  opacity: 0.4;
+  filter: grayscale(1);
+}
+
+.symbol-icon.glow-pulse {
+  animation: glowPulse 1s ease-out;
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+  25% {
+    transform: scale(1.2);
+    box-shadow: 0 0 25px gold, 0 0 50px gold;
+  }
+  50% {
+    transform: scale(1.3) rotate(10deg);
+    box-shadow: 0 0 30px gold, 0 0 60px gold;
+  }
+  75% {
+    transform: scale(1.2) rotate(-5deg);
+    box-shadow: 0 0 25px gold, 0 0 50px gold;
+  }
+}
+
+.symbol-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(8px);
+}
+
+.symbol-popup-content {
+  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+  border-radius: 25px;
+  padding: 35px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+  animation: popupBounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes popupBounceIn {
+  0% {
+    transform: scale(0.3) translateY(100px);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05) translateY(-10px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.popup-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: rgba(255, 68, 68, 0.1);
+  border: 2px solid rgba(255, 68, 68, 0.3);
+  border-radius: 50%;
+  font-size: 24px;
+  color: #ff4444;
+  cursor: pointer;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.popup-close-btn:hover {
+  background: rgba(255, 68, 68, 0.2);
+  transform: rotate(90deg);
+}
+
+/* Meaning Card - Similar to Image 2 */
+.meaning-card {
+  background: white;
+  border: 4px solid #FFD700;
+  border-radius: 20px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.sanskrit-word {
+  font-size: 48px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+  font-family: 'Noto Sans Devanagari', serif;
+}
+
+.transliteration {
+  font-size: 18px;
+  font-weight: 600;
+  color: #666;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+
+.meaning-section {
+  background: linear-gradient(135deg, #fff9e6, #fffbf0);
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.meaning-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+}
+
+.meaning-text {
+  font-size: 22px;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.kid-explanation {
+  background: linear-gradient(135deg, #e3f2fd, #f1f8ff);
+  border-left: 4px solid #2196F3;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 12px;
+  text-align: left;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.fun-fact {
+  background: linear-gradient(135deg, #fff3e0, #fffaf0);
+  border-left: 4px solid #FF9800;
+  border-radius: 10px;
+  padding: 12px;
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #555;
+}
+
+.emoji {
+  font-size: 20px;
+  margin-right: 8px;
+}
+
+/* Practice Section */
+.practice-section {
+  margin-bottom: 20px;
+}
+
+.practice-label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+.syllable-practice {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.syllable-btn {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  border: none;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 3px 10px rgba(76, 175, 80, 0.3);
+}
+
+.syllable-btn:hover {
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 5px 15px rgba(76, 175, 80, 0.5);
+}
+
+.syllable-btn:active {
+  transform: scale(0.95);
+}
+
+.word-practice-btn {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border: none;
+  color: white;
+  padding: 14px 30px;
+  border-radius: 30px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+}
+
+.word-practice-btn:hover {
+  transform: scale(1.05) translateY(-3px);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+}
+
+.word-practice-btn:active {
+  transform: scale(0.98);
+}
+
+.popup-continue-btn {
+  background: linear-gradient(135deg, #FF6B35, #FF8C42);
+  border: none;
+  color: white;
+  padding: 14px 35px;
+  border-radius: 30px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+}
+
+.popup-continue-btn:hover {
+  transform: scale(1.05) translateY(-3px);
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.6);
+}
+
+.popup-continue-btn:active {
+  transform: scale(0.98);
+}
+
+/* Scrollbar styling */
+.symbol-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.symbol-sidebar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.symbol-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+}
+
+.symbol-sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}

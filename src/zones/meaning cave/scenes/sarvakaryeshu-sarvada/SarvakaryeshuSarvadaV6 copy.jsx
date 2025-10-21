@@ -1,0 +1,1613 @@
+// zones/cave-of-secrets/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvada.jsx
+import React, { useState, useEffect, useRef } from 'react';
+import './SarvakaryeshuSarvada.css';
+
+// Import scene management components
+import SceneManager from "../../../../lib/components/scenes/SceneManager";
+import MessageManager from "../../../../lib/components/scenes/MessageManager";
+import { ClickableElement } from "../../../../lib/components/scenes/InteractionManager";
+import InteractionManager from "../../../../lib/components/scenes/InteractionManager";
+import GameStateManager from "../../../../lib/services/GameStateManager";
+import ProgressManager from '../../../../lib/services/ProgressManager';
+import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
+
+// UI Components
+import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
+import CulturalCelebrationModal from '../../../../lib/components/progress/CulturalCelebrationModal';
+import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
+import Fireworks from '../../../../lib/components/feedback/Fireworks';
+import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
+import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
+
+// Scene-specific components
+import SymbolSidebar from '../../components/SymbolSidebar';
+import DoorComponent from '../../components/DoorComponent';
+import RescueModal from '../../components/RescueModal';
+import { RESCUE_CONFIGS } from '../../config/RescueConfigs';
+import HelperSignatureAnimation from './HelperSignatureAnimation';
+
+
+import useSceneReset from '../../../../lib/hooks/useSceneReset';
+import { getSceneResetConfig } from '../../../../lib/config/SceneResetConfigs';
+import BackToMapButton from '../../../../lib/components/navigation/BackToMapButton';
+
+// Import assets
+import sceneBackground from './assets/images/scene-background.png';
+import doorImage from './assets/images/door-image.png';
+import boyPreview from './assets/images/boy-preview.png';
+import girlPreview from './assets/images/girl-preview.png';
+import ganeshaIcon from './assets/images/ganesha-icon.png';
+import mooshikaCoach from './assets/images/mooshika-coach.png';
+
+// Symbol images for celebrations
+import sarvakaryeshuSymbol from '../../assets/images/symbols/sarvakaryeshu-symbol.png';
+import sarvadaSymbol from '../../assets/images/symbols/sarvada-symbol.png';
+
+// Game 1 Background imports - 6 scenarios
+import homeworkWorriedBoy from './assets/images/game 1/backgrounds/homework_child_worried_boy.png';
+import homeworkWorriedGirl from './assets/images/game 1/backgrounds/homework_child_worried_girl.png';
+import homeworkSuccessBoy from './assets/images/game 1/backgrounds/homework_child_success_boy.png';
+import homeworkSuccessGirl from './assets/images/game 1/backgrounds/homework_child_success_girl.png';
+
+import sportsWorriedBoy from './assets/images/game 1/backgrounds/sports_worried_boy.png';
+import sportsDiscouragedGirl from './assets/images/game 1/backgrounds/sports_child_discouraged_girl.png';
+import sportsSuccessBoy from './assets/images/game 1/backgrounds/sports_success_boy.png';
+import sportsVictoryGirl from './assets/images/game 1/backgrounds/sports_child_victory_girl.png';
+
+import shoelacesWorriedBoy from './assets/images/game 1/backgrounds/shoelaces_worried_boy.png';
+import shoelaceFrustratedGirl from './assets/images/game 1/backgrounds/shoelace_child_frustrated_girl.png';
+import shoelacesSuccessBoy from './assets/images/game 1/backgrounds/shoelaces_success_boy.png';
+import shoelaceSuccessGirl from './assets/images/game 1/backgrounds/shoelace_child_success_girl.png';
+
+import broketoyWorriedBoy from './assets/images/game 1/backgrounds/broketoy_child_worried_boy.png';
+import broketoyWorriedGirl from './assets/images/game 1/backgrounds/broketoy_child_worried_girl.png';
+import broketoyJoyBoy from './assets/images/game 1/backgrounds/broketoy_child_joy_boy.png';
+import broketoyJoyGirl from './assets/images/game 1/backgrounds/broketoy_child_joy_girl.png';
+
+import sharingWorriedBoy from './assets/images/game 1/backgrounds/sharing_worried_boy.png';
+import sharingGreedGirl from './assets/images/game 1/backgrounds/sharing_child_greed_girl.png';
+import sharingSuccessBoy from './assets/images/game 1/backgrounds/sharing_success_boy.png';
+import sharingGiveGirl from './assets/images/game 1/backgrounds/sharing_child_give_girl.png';
+
+import bikeFearBoy from './assets/images/game 1/backgrounds/bike_child_fear_boy.png';
+import bikeFearGirl from './assets/images/game 1/backgrounds/bike_child_fear_girl.png';
+import bikeVictoryBoy from './assets/images/game 1/backgrounds/bike_child_victory_boy.png';
+import bikeVictoryGirl from './assets/images/game 1/backgrounds/bike_child_victory_girl.png';
+
+// Game 1 Symbol imports
+import homeworkSymbolPatience from './assets/images/game 1/symbols/homework_symbol_patience.png';
+import homeworkSymbolStepbook from './assets/images/game 1/symbols/homework_symbol_stepbook.png';
+import homeworkSymbolGaming from './assets/images/game 1/symbols/homework_symbol_gaming.png';
+import homeworkSymbolGiveup from './assets/images/game 1/symbols/homework_symbol_giveup.png';
+
+import sportsSymbolTry from './assets/images/game 1/symbols/sports_symbol_try.png';
+import sportsSymbolRelax from './assets/images/game 1/symbols/sports_symbol_relax.png';
+import sportsSymbolScared from './assets/images/game 1/symbols/sports_symbol_toohard.png';
+import sportsSymbolHide from './assets/images/game 1/symbols/sports_symbol_hide.png';
+
+import shoelaceSymbolPatient from './assets/images/game 1/symbols/shoelace_symbol_patient.png';
+import shoelacesSymbolMethod from './assets/images/game 1/symbols/shoelaces_symbol_method.png';
+import shoelaceSymbolAngry from './assets/images/game 1/symbols/shoelace_symbol_angry.png';
+import shoelaceSymbolSlipOn from './assets/images/game 1/symbols/shoelace_symbol_slipon.png';
+
+import brokenSymbolSorry from './assets/images/game 1/symbols/broken_symbol_sorry.png';
+import brokenSymbolHelp from './assets/images/game 1/symbols/broken_symbol_help.png';
+import brokenSymbolBlame from './assets/images/game 1/symbols/broken_symbol_blame.png';
+import brokenSymbolHide from './assets/images/game 1/symbols/broken_symbol_hide.png';
+
+import sharingSymbolGenerosity from './assets/images/game 1/symbols/sharing_symbol_generosity.png';
+import sharingSymbolJoy from './assets/images/game 1/symbols/sharing_symbol_joy.png';
+import sharingSymbolAngry from './assets/images/game 1/symbols/sharing_symbol_anger.png';
+import sharingSymbolEscape from './assets/images/game 1/symbols/sharing_symbol_escape.png';
+
+import bikeSymbolFocus from './assets/images/game 1/symbols/bike_symbol_focus.png';
+import bikeSymbolRelax from './assets/images/game 1/symbols/bike_symbol_relax.png';
+import bikeSymbolFear from './assets/images/game 1/symbols/bike_symbol_fear.png';
+import bikeSymbolGiveUp from './assets/images/game 1/symbols/bike_symbol_giveup.png';
+
+// Game 2 Background imports
+import grandparentsBefore from './assets/images/game 2/backgrounds/grandparents-tech-before.png';
+import grandparentsAfter from './assets/images/game 2/backgrounds/grandparents-tech-after.png';
+import dogBefore from './assets/images/game 2/backgrounds/dog-scared-before.png';
+import dogAfter from './assets/images/game 2/backgrounds/dog-scared-after.png';
+import constructionBefore from './assets/images/game 2/backgrounds/construction-worker-before.png';
+import constructionAfter from './assets/images/game 2/backgrounds/construction-worker-after.png';
+import momBefore from './assets/images/game 2/backgrounds/mom-kitchen-before.png';
+import momAfter from './assets/images/game 2/backgrounds/mom-kitchen-after.png';
+import siblingsBefore from './assets/images/game 2/backgrounds/siblings-fight-before.png';
+import siblingsAfter from './assets/images/game 2/backgrounds/siblings-fight-after.png';
+import parkBefore from './assets/images/game 2/backgrounds/park-litter-before.png';
+import parkAfter from './assets/images/game 2/backgrounds/park-litter-after.png';
+
+// Game 2 Helper imports
+import grandparentsTimmytime from './assets/images/game 2/helpers/grandparents_timmytime.png';
+import grandparentsClearolens from './assets/images/game 2/helpers/grandparents_clearolens.png';
+import grandparentsMemoleaf from './assets/images/game 2/helpers/grandparents_memoleaf.png';
+import grandparentsSnuggyshawl from './assets/images/game 2/helpers/grandparents_snuggyshawl.png';
+
+import dogSnuggyblanket from './assets/images/game 2/helpers/dog_snuggyblanket.png';
+import dogAquabuddy from './assets/images/game 2/helpers/dog_aquabuddy.png';
+import dogHappytail from './assets/images/game 2/helpers/dog_happytail.png';
+import dogBrighttorch from './assets/images/game 2/helpers/dog_brighttorch.png';
+
+import constructionMelodymug from './assets/images/game 2/helpers/construction_melodymug.png';
+import constructionRhythmoradio from './assets/images/game 2/helpers/construction_rhythmoradio.png';
+import constructionHammerhero from './assets/images/game 2/helpers/construction_hammerhero.png';
+import constructionSunnyspark from './assets/images/game 2/helpers/construction_sunnyspark.png';
+
+import momChefchintu from './assets/images/game 2/helpers/mom_chefchintu.png';
+import momBubblybottle from './assets/images/game 2/helpers/mom_bubblybottle.png';
+import momGigglesspoon from './assets/images/game 2/helpers/mom_gigglesspoon.png';
+import momPeacemittens from './assets/images/game 2/helpers/mom_peacemittens.png';
+
+import siblingsGigglebox from './assets/images/game 2/helpers/siblings_gigglebox.png';
+import siblingsPeaceballoon from './assets/images/game 2/helpers/siblings_peaceballoon.png';
+import siblingsHuggypillow from './assets/images/game 2/helpers/siblings_huggypillow.png';
+import siblingsSharebear from './assets/images/game 2/helpers/siblings_sharebear.png';
+
+import parkLeafyfriend from './assets/images/game 2/helpers/park_leafyfriend.png';
+import parkCleaniebucket from './assets/images/game 2/helpers/park_cleaniebucket.png';
+import parkBloomyflower from './assets/images/game 2/helpers/park_bloomyflower.png';
+import parkSparklestar from './assets/images/game 2/helpers/park_sparklestar.png';
+
+import meaningJournal from '../../assets/images/meaning-journal.png';
+
+// All 8 app images
+import appVakratunda from '../../assets/images/apps/app-Vakratunda.png';
+import appMahakaya from '../../assets/images/apps/app-mahakaya.png';
+import appSuryakoti from "../../assets/images/apps/app-suryakoti.png";
+import appSamaprabha from "../../assets/images/apps/app-samaprabha.png";
+import appNirvighnam from "../../assets/images/apps/app-nirvighnam.png";
+import appKurumedeva from "../../assets/images/apps/app-kurumedeva.png";
+import appSarvakaryeshu from "../../assets/images/apps/app-sarvakaryeshu.png";
+import appSarvada from "../../assets/images/apps/app-sarvada.png";
+
+// Power configuration for celebrations
+const powerConfig = {
+  sarvakaryeshu: { 
+    name: 'All Tasks Wisdom', 
+    image: sarvakaryeshuSymbol,
+    color: '#FFD700' 
+  },
+  sarvada: { 
+    name: 'Always Helper Power', 
+    image: sarvadaSymbol,
+    color: '#FF8C42' 
+  }
+};
+
+const SCENE_PHASES = {
+  DOOR1_ACTIVE: 'door1_active',           
+  DOOR1_COMPLETE: 'door1_complete',
+  CHARACTER_SELECT: 'character_select',    
+  GAME1_INTRO: 'game1_intro',
+  SCENARIO_CHOOSING: 'scenario_choosing',
+  SCENARIO_SUCCESS: 'scenario_success',
+  SARVAKARYESHU_LEARNING: 'sarvakaryeshu_learning',
+  DOOR2_ACTIVE: 'door2_active',           
+  DOOR2_COMPLETE: 'door2_complete',
+  GAME2_INTRO: 'game2_intro',
+  HELPER_CHOOSING: 'helper_choosing',
+  HELPER_SUCCESS: 'helper_success',
+  SCENE_CELEBRATION: 'scene_celebration',
+  COMPLETE: 'complete'
+};
+
+// Game 1 Scenario configuration
+const SCENARIOS = {
+  homework: {
+    id: 'homework',
+    name: 'Homework Challenge',    
+    problemDeclaration: "This math homework is so hard! I don't know what to do!",
+    backgrounds: {
+      worried: { boy: homeworkWorriedBoy, girl: homeworkWorriedGirl },
+      success: { boy: homeworkSuccessBoy, girl: homeworkSuccessGirl }
+    },
+    symbols: {
+      wise: [
+        { id: 'patience', image: homeworkSymbolPatience, name: 'Take Your Time' },
+        { id: 'stepbook', image: homeworkSymbolStepbook, name: 'Step by Step' }
+      ],
+      unwise: [
+        { id: 'gaming', image: homeworkSymbolGaming, name: 'Play Games Instead' },
+        { id: 'giveup', image: homeworkSymbolGiveup, name: 'Give Up' }
+      ]
+    },
+    characterReactions: {
+      patience: "Oh! Taking my time sounds much better! 📚",
+      stepbook: "Step by step! That's perfect! 📖",
+      gaming: "But playing games won't help me learn... 🎮",
+      giveup: "Giving up won't solve my problem... 😔"
+    },
+    gratitude: 'Thank you for helping me be patient! 📚✨'
+  },
+  sports: {
+    id: 'sports',
+    name: 'Sports Challenge',     
+    problemDeclaration: "I keep missing these shots! This is so frustrating!",
+    backgrounds: {
+      worried: { boy: sportsWorriedBoy, girl: sportsDiscouragedGirl },
+      success: { boy: sportsSuccessBoy, girl: sportsVictoryGirl }
+    },
+    symbols: {
+      wise: [
+        { id: 'try', image: sportsSymbolTry, name: 'Keep Trying' },
+        { id: 'relax', image: sportsSymbolRelax, name: 'Stay Calm' }
+      ],
+      unwise: [
+        { id: 'scared', image: sportsSymbolScared, name: 'Get Scared' },
+        { id: 'hide', image: sportsSymbolHide, name: 'Hide Away' }
+      ]
+    },
+    characterReactions: {
+      try: "Yes! I'll keep trying! Practice makes perfect! ⚽",
+      relax: "Staying calm will help me focus better! 🧘‍♂️",
+      scared: "Being scared won't help me get better... 😰",
+      hide: "Hiding won't make me a better player... 🙈"
+    },
+    gratitude: 'Thank you for teaching me to stay brave! ⚽✨'
+  },
+  shoelaces: {
+    id: 'shoelaces',
+    name: 'Shoelace Challenge',    
+    problemDeclaration: "These shoelaces are all tangled! I'm getting so frustrated!",
+    backgrounds: {
+      worried: { boy: shoelacesWorriedBoy, girl: shoelaceFrustratedGirl },
+      success: { boy: shoelacesSuccessBoy, girl: shoelaceSuccessGirl }
+    },
+    symbols: {
+      wise: [
+        { id: 'patient', image: shoelaceSymbolPatient, name: 'Be Patient' },
+        { id: 'method', image: shoelacesSymbolMethod, name: 'Use Method' }
+      ],
+      unwise: [
+        { id: 'angry', image: shoelaceSymbolAngry, name: 'Get Angry' },
+        { id: 'slipon', image: shoelaceSymbolSlipOn, name: 'Use Slip-ons' }
+      ]
+    },
+    characterReactions: {
+      patient: "Being patient is much better! 👟",
+      method: "Using a method will help! 🧵",
+      angry: "Getting angry will make it worse... 😤",
+      slipon: "That's avoiding the problem... 🤔"
+    },
+    gratitude: 'Thank you for teaching me patience! 👟✨'
+  },
+  broketoy: {
+    id: 'broketoy',
+    name: 'Broken Toy Challenge',    
+    problemDeclaration: "Oh no! I broke my toy! What am I going to do?",
+    backgrounds: {
+      worried: { boy: broketoyWorriedBoy, girl: broketoyWorriedGirl },
+      success: { boy: broketoyJoyBoy, girl: broketoyJoyGirl }
+    },
+    symbols: {
+      wise: [
+        { id: 'sorry', image: brokenSymbolSorry, name: 'Say Sorry' },
+        { id: 'help', image: brokenSymbolHelp, name: 'Ask for Help' }
+      ],
+      unwise: [
+        { id: 'blame', image: brokenSymbolBlame, name: 'Blame Others' },
+        { id: 'hide', image: brokenSymbolHide, name: 'Hide It' }
+      ]
+    },
+    characterReactions: {
+      sorry: "I should say sorry for breaking it! 😊",
+      help: "Asking for help is much better! 🤝",
+      blame: "Blaming others won't fix it... 😔",
+      hide: "Hiding will make things worse... 🙈"
+    },
+    gratitude: 'Thank you for helping me be brave! 🧸✨'
+  },
+  sharing: {
+    id: 'sharing',
+    name: 'Sharing Challenge',        
+    problemDeclaration: "I want to keep all my toys! But my friend wants to play too...",
+    backgrounds: {
+      worried: { boy: sharingWorriedBoy, girl: sharingGreedGirl },
+      success: { boy: sharingSuccessBoy, girl: sharingGiveGirl }
+    },
+    symbols: {
+      wise: [
+        { id: 'generosity', image: sharingSymbolGenerosity, name: 'Be Generous' },
+        { id: 'joy', image: sharingSymbolJoy, name: 'Share Joy' }
+      ],
+      unwise: [
+        { id: 'angry', image: sharingSymbolAngry, name: 'Get Angry' },
+        { id: 'escape', image: sharingSymbolEscape, name: 'Run Away' }
+      ]
+    },
+    characterReactions: {
+      generosity: "Being generous makes me feel warm! 🤗",
+      joy: "Sharing joy is so much better! 😊",
+      angry: "Getting angry won't help... 😠",
+      escape: "Running away means no friends... 🏃‍♂️"
+    },
+    gratitude: 'Thank you for teaching me to share! 🎁✨'
+  },
+  bike: {
+    id: 'bike',
+    name: 'Bike Challenge',
+    problemDeclaration: "Learning to ride this bike is scary! I'm afraid I'll fall!",
+    backgrounds: {
+      worried: { boy: bikeFearBoy, girl: bikeFearGirl },
+      success: { boy: bikeVictoryBoy, girl: bikeVictoryGirl }
+    },
+    symbols: {
+      wise: [
+        { id: 'focus', image: bikeSymbolFocus, name: 'Stay Focused' },
+        { id: 'relax', image: bikeSymbolRelax, name: 'Stay Calm' }
+      ],
+      unwise: [
+        { id: 'fear', image: bikeSymbolFear, name: 'Give in to Fear' },
+        { id: 'giveup', image: bikeSymbolGiveUp, name: 'Give Up' }
+      ]
+    },
+    characterReactions: {
+      focus: "Staying focused will help me balance! 🚴‍♂️",
+      relax: "Being calm makes me feel braver! 😌",
+      fear: "Giving in to fear won't help... 😰",
+      giveup: "Giving up means I'll never learn... 🚴‍♂️"
+    },
+    gratitude: 'Thank you for helping me be brave! 🚴‍♂️✨'
+  }
+};
+
+// Game 2 scenarios configuration  
+const GAME2_SCENARIOS = {
+  grandparents: {
+    id: 'grandparents',
+    name: 'Help Grandparents with Technology',
+    problemDeclaration: "This tablet is so confusing! We can't figure out video calling!",
+    backgrounds: {
+      before: grandparentsBefore,
+      after: grandparentsAfter
+    },
+    helpers: [
+      { id: 'timmytime', image: grandparentsTimmytime, name: 'Take Time' },
+      { id: 'clearolens', image: grandparentsClearolens, name: 'Clear Instructions' },
+      { id: 'memoleaf', image: grandparentsMemoleaf, name: 'Help Remember' },
+      { id: 'snuggyshawl', image: grandparentsSnuggyshawl, name: 'Comfort' }
+    ],
+    gratitude: "Thank you for being so patient! Now we can call family! 📱✨",
+    ganeshaBlessing: "You showed patience and kindness!"
+  },
+  dog: {
+    id: 'dog',
+    name: 'Comfort Scared Dog',
+    problemDeclaration: "I'm so scared of the thunder! Help me feel safe!",
+    backgrounds: { 
+      before: dogBefore, 
+      after: dogAfter 
+    },
+    helpers: [
+      { id: 'snuggyblanket', image: dogSnuggyblanket, name: 'Cozy Comfort' },
+      { id: 'aquabuddy', image: dogAquabuddy, name: 'Calm Friend' },
+      { id: 'happytail', image: dogHappytail, name: 'Bring Joy' },
+      { id: 'brighttorch', image: dogBrighttorch, name: 'Light Way' }
+    ],
+    gratitude: "Woof! Thank you for making me feel safe! 🐕✨",
+    ganeshaBlessing: "You brought comfort to the frightened!"
+  },
+  construction: {
+    id: 'construction',
+    name: 'Help Tired Construction Worker',
+    problemDeclaration: "This work is so hard and loud! I need energy!",
+    backgrounds: { 
+      before: constructionBefore, 
+      after: constructionAfter 
+    },
+    helpers: [
+      { id: 'melodymug', image: constructionMelodymug, name: 'Peaceful Music' },
+      { id: 'rhythmoradio', image: constructionRhythmoradio, name: 'Good Rhythm' },
+      { id: 'hammerhero', image: constructionHammerhero, name: 'Work Spirit' },
+      { id: 'sunnyspark', image: constructionSunnyspark, name: 'Bright Energy' }
+    ],
+    gratitude: "Thank you for helping me work with joy! 🔨✨",
+    ganeshaBlessing: "You brought energy to the weary!"
+  },
+  mom: {
+    id: 'mom',
+    name: 'Help Busy Mom in Kitchen',
+    problemDeclaration: "I have so much cooking to do! I could use help!",
+    backgrounds: { 
+      before: momBefore, 
+      after: momAfter 
+    },
+    helpers: [
+      { id: 'chefchintu', image: momChefchintu, name: 'Cooking Help' },
+      { id: 'bubblybottle', image: momBubblybottle, name: 'Happy Spirit' },
+      { id: 'gigglesspoon', image: momGigglesspoon, name: 'Joyful Work' },
+      { id: 'peacemittens', image: momPeacemittens, name: 'Calm Hands' }
+    ],
+    gratitude: "Thank you for making cooking fun! 🍳✨",
+    ganeshaBlessing: "You brought joy to daily work!"
+  },
+  siblings: {
+    id: 'siblings',
+    name: 'Help Fighting Siblings',
+    problemDeclaration: "We're fighting! Help us make peace!",
+    backgrounds: { 
+      before: siblingsBefore, 
+      after: siblingsAfter 
+    },
+    helpers: [
+      { id: 'gigglebox', image: siblingsGigglebox, name: 'Share Fun' },
+      { id: 'peaceballoon', image: siblingsPeaceballoon, name: 'Float Peace' },
+      { id: 'huggypillow', image: siblingsHuggypillow, name: 'Hug Time' },
+      { id: 'sharebear', image: siblingsSharebear, name: 'Share Bear' }
+    ],
+    gratitude: "Thank you for helping us be friends! 👫✨",
+    ganeshaBlessing: "You created harmony from chaos!"
+  },
+  park: {
+    id: 'park',
+    name: 'Clean Up Littered Park',
+    problemDeclaration: "This beautiful park is so messy!",
+    backgrounds: { 
+      before: parkBefore, 
+      after: parkAfter 
+    },
+    helpers: [
+      { id: 'leafyfriend', image: parkLeafyfriend, name: 'Nature Friend' },
+      { id: 'cleaniebucket', image: parkCleaniebucket, name: 'Clean Up' },
+      { id: 'bloomyflower', image: parkBloomyflower, name: 'Bloom Beauty' },
+      { id: 'sparklestar', image: parkSparklestar, name: 'Shine Bright' }
+    ],
+    gratitude: "Thank you for making our park beautiful! 🌳✨",
+    ganeshaBlessing: "You cared for nature and community!"
+  }
+};
+
+// Error Boundary
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("Scene 4 Error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="error-boundary">
+          <h2>Something went wrong</h2>
+          <button onClick={() => window.location.reload()}>Reload</button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+const SarvakaryeshuSarvada = ({ onComplete, onNavigate, zoneId = 'cave-of-secrets', sceneId = 'sarvakaryeshu-sarvada' }) => {
+  return (
+    <ErrorBoundary>
+      <SceneManager
+        zoneId={zoneId}
+        sceneId={sceneId}
+        initialState={{
+          phase: SCENE_PHASES.DOOR1_ACTIVE,
+          selectedCharacter: null,
+          
+          // Door states
+          door1Completed: false,
+          door1CurrentStep: 0,
+          door1SyllablesPlaced: [],
+          door1Syllables: ['Sar', 'va', 'kar', 'ye', 'shu'],
+          
+          door2Completed: false,
+          door2CurrentStep: 0,
+          door2SyllablesPlaced: [],
+          door2Syllables: ['Sar', 'va', 'da'],
+          
+          // Game 1
+          currentGame: 1,
+          selectedScenarios: [],
+          currentScenario: 0,
+          scenariosCompleted: 0,
+          game1Completed: false,
+          currentBackground: 'worried',
+
+            symbolsVisible: 'none',
+  symbolsClickable: false,  // ← ADD THIS
+          
+    
+// Game 2
+game2Scenarios: [],
+currentGame2Scenario: 0,
+game2ScenariosCompleted: 0,
+game2Completed: false,
+game2Background: 'before',
+selectedHelper: null,          // ← ADD THIS
+showHelperAnimation: false,    // ← ADD THIS
+          
+          // Sanskrit learning
+          learnedWords: {
+            vakratunda: { learned: true, scene: 1 },
+            mahakaya: { learned: true, scene: 1 },
+            suryakoti: { learned: true, scene: 2 },
+            samaprabha: { learned: true, scene: 2 },
+            nirvighnam: { learned: true, scene: 3 },
+            kurumedeva: { learned: true, scene: 3 },
+            sarvakaryeshu: { learned: false, scene: 4 },
+            sarvada: { learned: false, scene: 4 }
+          },
+          
+          stars: 0,
+          completed: false,
+          showingCompletionScreen: false
+        }}
+      >
+        {({ sceneState, sceneActions, isReload }) => (
+          <SarvakaryeshuSarvadaContent
+            sceneState={sceneState}
+            sceneActions={sceneActions}
+            isReload={isReload}
+            onComplete={onComplete}
+            onNavigate={onNavigate}
+            zoneId={zoneId}
+            sceneId={sceneId}
+          />
+        )}
+      </SceneManager>
+    </ErrorBoundary>
+  );
+};
+
+const SarvakaryeshuSarvadaContent = ({
+  sceneState,
+  sceneActions,
+  isReload,
+  onComplete,
+  onNavigate,
+  zoneId,
+  sceneId
+}) => {
+  // GameCoach removed - stub functions
+  const hideCoach = () => {};
+  const clearManualCloseTracking = () => {};
+
+  const { resetScene } = useSceneReset(
+    sceneActions, 
+    'cave-of-secrets', 
+    'sarvakaryeshu-sarvada', 
+    getSceneResetConfig('sarvakaryeshu-sarvada')
+  );
+  
+  // State management
+  const [showSparkle, setShowSparkle] = useState(null);
+  const [showSceneCompletion, setShowSceneCompletion] = useState(false);
+  const [showCulturalCelebration, setShowCulturalCelebration] = useState(false);
+
+  // NEW: Celebration states
+  const [showCenteredSymbol, setShowCenteredSymbol] = useState(null);
+  const [showPowerModal, setShowPowerModal] = useState(false);
+  const [currentMissionSymbol, setCurrentMissionSymbol] = useState(null);
+  const [showRescueModal, setShowRescueModal] = useState(false);
+  const [currentRescueWord, setCurrentRescueWord] = useState(null);
+
+  const timeoutsRef = useRef([]);
+  const progressiveHintRef = useRef(null);
+
+  const activeProfile = GameStateManager.getActiveProfile();
+  const profileName = activeProfile?.name || 'little explorer';
+
+  const safeSetTimeout = (callback, delay) => {
+    const id = setTimeout(callback, delay);
+    timeoutsRef.current.push(id);
+    return id;
+  };
+
+  const generateRandomScenarios = () => {
+    const keys = Object.keys(SCENARIOS);
+    return [...keys].sort(() => 0.5 - Math.random()).slice(0, 3);
+  };
+
+  const generateRandomGame2Scenarios = () => {
+    const keys = Object.keys(GAME2_SCENARIOS);
+    return [...keys].sort(() => 0.5 - Math.random()).slice(0, 3);
+  };
+
+  const getCurrentScenario = () => {
+    if (!sceneState.selectedScenarios || sceneState.currentScenario >= sceneState.selectedScenarios.length) {
+      return SCENARIOS.homework;
+    }
+    const key = sceneState.selectedScenarios[sceneState.currentScenario];
+    return SCENARIOS[key] || SCENARIOS.homework;
+  };
+
+  const getCurrentGame2Scenario = () => {
+    if (!sceneState.game2Scenarios || sceneState.currentGame2Scenario >= sceneState.game2Scenarios.length) {
+      return GAME2_SCENARIOS.grandparents;
+    }
+    const key = sceneState.game2Scenarios[sceneState.currentGame2Scenario];
+    return GAME2_SCENARIOS[key] || GAME2_SCENARIOS.grandparents;
+  };
+
+  const getCurrentHelperPosition = (helperId) => {
+  const scenario = getCurrentGame2Scenario();
+  const helperIndex = scenario.helpers.findIndex(h => h.id === helperId);
+  
+  const positions = [
+    { x: 8, y: 25 },   // position-1
+    { x: 8, y: 75 },   // position-2
+    { x: 92, y: 25 },  // position-3
+    { x: 92, y: 75 }   // position-4
+  ];
+  
+  return positions[helperIndex] || positions[0];
+};
+
+  const getCurrentScenarioImage = () => {
+    if (sceneState.currentGame === 2) {
+      const scenario = getCurrentGame2Scenario();
+      return scenario.backgrounds[sceneState.game2Background || 'before'];
+    } else {
+      const scenario = getCurrentScenario();
+      const char = sceneState.selectedCharacter || 'boy';
+      const bg = sceneState.currentBackground || 'worried';
+      return scenario.backgrounds[bg][char];
+    }
+  };
+
+  // Door 1
+  const handleDoor1SyllablePlaced = (syllable) => {
+    const expected = sceneState.door1Syllables?.[sceneState.door1CurrentStep || 0];
+    if (syllable === expected) {
+      const newStep = (sceneState.door1CurrentStep || 0) + 1;
+      sceneActions.updateState({
+        door1SyllablesPlaced: [...(sceneState.door1SyllablesPlaced || []), syllable],
+        door1CurrentStep: newStep
+      });
+      if (newStep >= 5) {
+        setTimeout(() => handleDoor1Complete(), 1000);
+      }
+    }
+  };
+
+  const handleDoor1Complete = () => {
+    setShowSparkle('door1-completing');
+    sceneActions.updateState({
+      door1Completed: true,
+      phase: SCENE_PHASES.CHARACTER_SELECT,
+      stars: 2
+    });
+    setTimeout(() => setShowSparkle(null), 3000);
+  };
+
+  // Character Selection
+  const handleCharacterSelect = (character) => {
+    setShowSparkle('character-selected');
+    sceneActions.updateState({
+      selectedCharacter: character,
+      phase: SCENE_PHASES.GAME1_INTRO,
+      selectedScenarios: generateRandomScenarios(),
+      currentScenario: 0,
+      stars: 3
+    });
+    setTimeout(() => {
+      setShowSparkle(null);
+      startScenario(0);
+    }, 2000);
+  };
+
+const startScenario = (index) => {
+  sceneActions.updateState({
+    currentScenario: index,
+    phase: SCENE_PHASES.SCENARIO_CHOOSING,
+    showProblemDeclaration: true,
+    symbolsVisible: 'none', // Start hidden
+    symbolsClickable: false,
+    currentBackground: 'worried',
+    characterMessage: null,
+    unwiseChoicesTried: [] // ← Reset tried symbols
+  });
+  
+  // ✅ After 3 seconds: Hide problem, show symbols
+  setTimeout(() => {
+    sceneActions.updateState({
+      showProblemDeclaration: false,
+      symbolsVisible: 'clear', // Show symbols
+      symbolsClickable: true   // Enable clicking
+    });
+  }, 3000);
+};
+
+const handleSymbolClick = (symbolId, isWise) => {
+  const scenario = getCurrentScenario();
+  const reaction = scenario.characterReactions[symbolId];
+  
+  console.log('🎯 Clicked:', symbolId, 'Reaction:', reaction);
+  
+  setShowSparkle(isWise ? 'wise-choice' : 'unwise-choice');
+  
+  if (isWise) {
+    // ✅ CORRECT CLICK: Show success, keep symbols visible
+    sceneActions.updateState({
+      currentBackground: 'success',
+      characterMessage: reaction,
+      symbolsClickable: false // Prevent more clicks during success
+    });
+    
+    setTimeout(() => {
+      setShowSparkle(null);
+      completeCurrentScenario();
+    }, 2000);
+    
+  } else {
+    // ✅ WRONG CLICK: Grey out symbol, keep others clickable
+    sceneActions.updateState({
+      unwiseChoicesTried: [...(sceneState.unwiseChoicesTried || []), symbolId],
+      characterMessage: reaction,
+      symbolsClickable: false // Prevent clicks during message
+    });
+    
+    setTimeout(() => {
+      sceneActions.updateState({
+        characterMessage: null,
+        symbolsClickable: true // Re-enable for retry
+      });
+      setShowSparkle(null);
+    }, 2000);
+  }
+};
+
+const completeCurrentScenario = () => {
+  const nextScenario = (sceneState.currentScenario || 0) + 1;
+  const completed = (sceneState.scenariosCompleted || 0) + 1;
+  
+  sceneActions.updateState({
+    scenariosCompleted: completed,
+    characterMessage: null // Clear message
+  });
+  
+  if (completed >= 3) {
+    setTimeout(() => {
+      // ✅ Hide game before celebration
+      sceneActions.updateState({
+        symbolsVisible: 'none',
+        phase: SCENE_PHASES.SARVAKARYESHU_LEARNING
+      });
+      completeGame1();
+    }, 1000);
+  } else {
+    setTimeout(() => {
+      startScenario(nextScenario);
+    }, 1000);
+  }
+};
+
+  const completeGame1 = () => {
+    console.log('🌟 Sarvakaryeshu learned - FULL CELEBRATION');
+    
+    setShowCenteredSymbol('sarvakaryeshu');
+    
+    setTimeout(() => {
+      setShowCenteredSymbol(null);
+      setShowSparkle('sarvakaryeshu-to-sidebar');
+      
+      sceneActions.updateState({
+        game1Completed: true,
+        learnedWords: {
+          ...sceneState.learnedWords,
+          sarvakaryeshu: { learned: true, scene: 4 }
+        }
+      });
+      
+      setTimeout(() => {
+        setShowSparkle(null);
+        setCurrentMissionSymbol('sarvakaryeshu');
+        setShowPowerModal(true);
+      }, 2000);
+    }, 5000);
+  };
+
+  // Door 2
+  const handleDoor2SyllablePlaced = (syllable) => {
+    const expected = sceneState.door2Syllables?.[sceneState.door2CurrentStep || 0];
+    if (syllable === expected) {
+      const newStep = (sceneState.door2CurrentStep || 0) + 1;
+      sceneActions.updateState({
+        door2SyllablesPlaced: [...(sceneState.door2SyllablesPlaced || []), syllable],
+        door2CurrentStep: newStep
+      });
+      if (newStep >= 3) {
+        setTimeout(() => handleDoor2Complete(), 1000);
+      }
+    }
+  };
+
+  const handleDoor2Complete = () => {
+    setShowSparkle('door2-completing');
+    sceneActions.updateState({
+      door2Completed: true,
+      stars: 7
+    });
+    
+    setTimeout(() => {
+      setShowSparkle(null);
+      startGame2();
+    }, 1000);
+  };
+
+  // Game 2
+  const startGame2 = () => {
+    sceneActions.updateState({
+      currentGame: 2,
+      phase: SCENE_PHASES.GAME2_INTRO,
+      game2Scenarios: generateRandomGame2Scenarios(),
+      currentGame2Scenario: 0
+    });
+    
+    setTimeout(() => startGame2Scenario(0), 2000);
+  };
+
+  const startGame2Scenario = (index) => {
+    sceneActions.updateState({
+      currentGame2Scenario: index,
+      phase: SCENE_PHASES.HELPER_CHOOSING,
+      showProblemDeclaration: true,
+      symbolsVisible: 'none',
+      game2Background: 'before',
+          characterMessage: null  // ← ADD THIS LINE
+
+    });
+    
+    setTimeout(() => {
+      sceneActions.updateState({
+        showProblemDeclaration: false,
+        symbolsVisible: 'clear'
+      });
+    }, 3000);
+  };
+
+
+const handleHelperAnimationComplete = () => {
+  const scenario = getCurrentGame2Scenario();
+  
+  sceneActions.updateState({
+    showHelperAnimation: false,
+    game2Background: 'after',
+    characterMessage: scenario.gratitude
+  });
+  
+  setTimeout(() => completeGame2Scenario(), 2000);
+};
+
+  const completeGame2Scenario = () => {
+    const nextScenario = (sceneState.currentGame2Scenario || 0) + 1;
+    const completed = (sceneState.game2ScenariosCompleted || 0) + 1;
+    
+    sceneActions.updateState({
+      game2ScenariosCompleted: completed
+    });
+    
+    if (completed >= 3) {
+      setTimeout(() => completeGame2(), 3000);
+    } else {
+      setTimeout(() => {
+        setShowSparkle(null);
+        startGame2Scenario(nextScenario);
+      }, 3000);
+    }
+  };
+
+  const completeGame2 = () => {
+    console.log('🌟 Sarvada learned - FULL CELEBRATION');
+    
+    setShowCenteredSymbol('sarvada');
+    
+    setTimeout(() => {
+      setShowCenteredSymbol(null);
+      setShowSparkle('sarvada-to-sidebar');
+      
+      sceneActions.updateState({
+        game2Completed: true,
+        learnedWords: {
+          ...sceneState.learnedWords,
+          sarvada: { learned: true, scene: 4 }
+        }
+      });
+      
+      setTimeout(() => {
+        setShowSparkle(null);
+        setCurrentMissionSymbol('sarvada');
+        setShowPowerModal(true);
+      }, 2000);
+    }, 5000);
+  };
+
+  // Power Modal Actions
+  const handleSaveAnimal = () => {
+    setShowPowerModal(false);
+    setCurrentRescueWord(currentMissionSymbol);
+    setShowRescueModal(true);
+  };
+
+  const handleContinueLearning = () => {
+    setShowPowerModal(false);
+    
+    if (currentMissionSymbol === 'sarvakaryeshu') {
+      setTimeout(() => {
+        sceneActions.updateState({ phase: SCENE_PHASES.DOOR2_ACTIVE });
+      }, 500);
+    } else if (currentMissionSymbol === 'sarvada') {
+      setTimeout(() => showFinalCelebration(), 500);
+    }
+  };
+
+  const getNextDiscoveryText = (symbol) => {
+    return symbol === 'sarvakaryeshu' ? '🚪 Discover Sarvada' : '✨ Complete Scene';
+  };
+
+  const handleRescueComplete = (success) => {
+    if (!success) return;
+    
+    setShowRescueModal(false);
+    
+    if (currentRescueWord === 'sarvakaryeshu') {
+      setTimeout(() => {
+        sceneActions.updateState({ phase: SCENE_PHASES.DOOR2_ACTIVE });
+      }, 500);
+    } else if (currentRescueWord === 'sarvada') {
+      setTimeout(() => showFinalCelebration(), 500);
+    }
+    
+    setCurrentRescueWord(null);
+  };
+
+  const showFinalCelebration = () => {
+    sceneActions.updateState({
+      showingCompletionScreen: true,
+      phase: SCENE_PHASES.COMPLETE,
+      stars: 8,
+      completed: true
+    });
+    
+    setShowSparkle('final-fireworks');
+  };
+
+  const hideActiveHints = () => {
+    if (progressiveHintRef.current?.hideHint) {
+      progressiveHintRef.current.hideHint();
+    }
+  };
+
+  useEffect(() => {
+    return () => timeoutsRef.current.forEach(id => clearTimeout(id));
+  }, []);
+
+  if (!sceneState) return <div>Loading...</div>;
+
+  return (
+    <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
+      <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
+        <div className="scene-container" data-phase={sceneState.phase}>
+          <div className="scene-background" style={{ backgroundImage: `url(${sceneBackground})` }}>
+            
+            {/* Phase Headers */}
+            {!showPowerModal && !showRescueModal && !showCenteredSymbol && (
+              <>
+                {sceneState.phase === SCENE_PHASES.DOOR1_ACTIVE && !sceneState.door1Completed && (
+                  <div className="phase-header">
+                    🔤 SPELL SARVAKARYESHU! Click syllables in order!
+                  </div>
+                )}
+                
+                {sceneState.phase === SCENE_PHASES.SCENARIO_CHOOSING && (
+                  <div className="phase-header">
+                    🎯 CLICK A SYMBOL to make your choice!
+                  </div>
+                )}
+                
+                {sceneState.phase === SCENE_PHASES.DOOR2_ACTIVE && !sceneState.door2Completed && (
+                  <div className="phase-header">
+                    🔤 SPELL SARVADA! Click syllables in order!
+                  </div>
+                )}
+                
+                {sceneState.currentGame === 2 && sceneState.phase === SCENE_PHASES.HELPER_CHOOSING && (
+                  <div className="phase-header">
+                    ✨ CLICK A HELPER to send help!
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Door 1 */}
+            {sceneState.phase === SCENE_PHASES.DOOR1_ACTIVE && (
+              <div className="door1-area">
+                <DoorComponent
+                  syllables={['Sar', 'va', 'kar', 'ye', 'shu']}
+                  completedWord="Sarvakaryeshu"
+                  onDoorComplete={handleDoor1Complete}
+                  onSyllablePlaced={handleDoor1SyllablePlaced}
+                  sceneTheme="cave-of-secrets"
+                  doorImage={doorImage}
+                  className="sarvakaryeshu-door"
+                  educationalMode={true}
+                  showTargetWord={true}
+                  currentStep={sceneState.door1CurrentStep || 0}
+                  expectedSyllable={sceneState.door1Syllables?.[sceneState.door1CurrentStep || 0]}
+                  isCompleted={sceneState.door1Completed}
+                  placedSyllables={sceneState.door1SyllablesPlaced || []}
+                />
+              </div>
+            )}
+
+            {/* Character Selection */}
+            {sceneState.phase === SCENE_PHASES.CHARACTER_SELECT && (
+              <div className="character-selection-clean">
+                <h2>Choose Your Character</h2>
+                <div className="character-options-cave">
+                  <ClickableElement id="select-boy" onClick={() => handleCharacterSelect('boy')}>
+                    <div className="character-option-clean">
+                      <img src={boyPreview} alt="Boy" />
+                      <span>Boy</span>
+                    </div>
+                  </ClickableElement>
+                  <ClickableElement id="select-girl" onClick={() => handleCharacterSelect('girl')}>
+                    <div className="character-option-clean">
+                      <img src={girlPreview} alt="Girl" />
+                      <span>Girl</span>
+                    </div>
+                  </ClickableElement>
+                </div>
+              </div>
+            )}
+
+            {/* Game 1 - Scenario Window */}
+            {sceneState.currentGame === 1 && sceneState.phase === SCENE_PHASES.SCENARIO_CHOOSING && (
+              <>
+                <div className="scenario-window">
+                  <img src={getCurrentScenarioImage()} alt="Scenario" />
+                  {sceneState.showProblemDeclaration && (
+                    <div className="character-problem-speech">
+                      <p>{getCurrentScenario().problemDeclaration}</p>
+                    </div>
+                  )}
+                  {sceneState.characterMessage && (
+                    <div className="character-speech-bubble">
+                      <p>{sceneState.characterMessage}</p>
+                    </div>
+                  )}
+                </div>
+
+{/* Game 1 Symbols */}
+      {sceneState.symbolsVisible === 'clear' && (() => {
+  const scenario = getCurrentScenario();
+  const symbols = [
+    scenario.symbols.wise[0],
+    scenario.symbols.unwise[0],
+    scenario.symbols.wise[1],
+    scenario.symbols.unwise[1]
+  ];
+  
+  return symbols.map((symbol, index) => {
+    const isWise = scenario.symbols.wise.includes(symbol);
+    return (
+      <div 
+        key={symbol.id} 
+        className={`cave-symbol-individual ${sceneState.symbolsVisible} position-${index + 1}`}
+        //                                   ↑ CHANGE THIS - use state value
+        style={{ 
+          position: 'absolute',
+          zIndex: 14,
+          pointerEvents: 'all',
+          cursor: 'pointer'
+        }}
+      >
+                      <ClickableElement 
+  id={`symbol-${symbol.id}`} 
+  onClick={() => handleSymbolClick(symbol.id, isWise)}
+  disabled={!sceneState.symbolsClickable}  // ← ADD THIS
+>
+                          <div className="cave-symbol-item">
+                            <img src={symbol.image} alt={symbol.name} />
+                            <span className="symbol-name-text">{symbol.name}</span>
+                          </div>
+                        </ClickableElement>
+                      </div>
+                    );
+                  });
+                })()}
+              </>
+            )}
+
+            {/* Door 2 */}
+            {sceneState.phase === SCENE_PHASES.DOOR2_ACTIVE && (
+              <div className="door2-area">
+                <DoorComponent
+                  syllables={['Sar', 'va', 'da']}
+                  completedWord="Sarvada"
+                  onDoorComplete={handleDoor2Complete}
+                  onSyllablePlaced={handleDoor2SyllablePlaced}
+                  sceneTheme="cave-of-secrets"
+                  doorImage={doorImage}
+                  className="sarvada-door"
+                  educationalMode={true}
+                  showTargetWord={true}
+                  currentStep={sceneState.door2CurrentStep || 0}
+                  expectedSyllable={sceneState.door2Syllables?.[sceneState.door2CurrentStep || 0]}
+                  isCompleted={sceneState.door2Completed}
+                  placedSyllables={sceneState.door2SyllablesPlaced || []}
+                />
+              </div>
+            )}
+
+            {/* Game 2 - Helper Window */}
+            {sceneState.currentGame === 2 && sceneState.phase === SCENE_PHASES.HELPER_CHOOSING && (
+              <>
+                <div className="scenario-window game2-style">
+                  <img src={getCurrentScenarioImage()} alt="Helper mission" />
+                  {sceneState.showProblemDeclaration && (
+                    <div className="person-problem-speech">
+                      <p>{getCurrentGame2Scenario().problemDeclaration}</p>
+                    </div>
+                  )}
+                  {sceneState.characterMessage && (
+                    <div className="character-speech-bubble">
+                      <p>{sceneState.characterMessage}</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Game 2 Helper Symbols */}
+                {sceneState.symbolsVisible === 'clear' && 
+                  getCurrentGame2Scenario().helpers.map((helper, index) => (
+                    <div key={helper.id} className={`helper-symbol position-${index + 1}`}>
+                      <ClickableElement id={`helper-${helper.id}`} onClick={() => handleHelperClick(helper.id)}>
+                        <div className="helper-symbol-item">
+                          <img src={helper.image} alt={helper.name} />
+                          <span>{helper.name}</span>
+                        </div>
+                      </ClickableElement>
+                    </div>
+                  ))
+                }
+              </>
+            )}
+
+            {/* Helper Animation */}
+{sceneState.showHelperAnimation && sceneState.selectedHelper && (
+  <HelperSignatureAnimation
+    helperId={sceneState.selectedHelper}
+    fromPosition={{ 
+      x: getCurrentHelperPosition(sceneState.selectedHelper).x, 
+      y: getCurrentHelperPosition(sceneState.selectedHelper).y 
+    }}
+    toPosition={{ x: 50, y: 40 }}
+    onAnimationComplete={handleHelperAnimationComplete}
+    onAnimationStart={(id, name) => console.log(`🎭 ${name} started`)}
+  />
+)}
+
+            {/* Centered Symbol Celebration */}
+            {showCenteredSymbol && (
+              <>
+                <div style={{
+                  position: 'fixed',
+                  top: 0, left: 0, right: 0, bottom: 0,
+                  background: 'rgba(0, 0, 0, 0.7)',
+                  backdropFilter: 'blur(3px)',
+                  zIndex: 199
+                }} />
+                
+                <div style={{
+                  position: 'fixed',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  zIndex: 200,
+                  textAlign: 'center'
+                }}>
+                  <img 
+                    src={powerConfig[showCenteredSymbol]?.image}
+                    alt={showCenteredSymbol}
+                    style={{
+                      width: '180px',
+                      height: '180px',
+                      filter: `drop-shadow(0 0 40px ${powerConfig[showCenteredSymbol]?.color})`,
+                      animation: 'symbolGlow 2s ease-in-out infinite alternate',
+                      marginBottom: '25px'
+                    }}
+                  />
+                  
+                  <div style={{
+                    fontSize: '36px',
+                    fontWeight: 'bold',
+                    color: 'white',
+                    textShadow: `3px 3px 6px ${powerConfig[showCenteredSymbol]?.color}`
+                  }}>
+                    {powerConfig[showCenteredSymbol]?.name}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Power Modal */}
+            {showPowerModal && (
+              <div style={{
+                position: 'fixed',
+                top: 0, left: 0, right: 0, bottom: 0,
+                background: 'rgba(0, 0, 0, 0.7)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 500
+              }}>
+                <div style={{
+                  background: 'linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%)',
+                  borderRadius: '25px',
+                  padding: '40px',
+                  maxWidth: '500px',
+                  textAlign: 'center',
+                  boxShadow: '0 10px 40px rgba(0,0,0,0.3)'
+                }}>
+                  <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1565C0', marginBottom: '25px' }}>
+                    {powerConfig[currentMissionSymbol]?.name} Unlocked!
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
+                    <div style={{ flex: 1, textAlign: 'left' }}>
+                      <div style={{ fontSize: '16px', color: '#666', marginBottom: '15px' }}>
+                        You can now use this power to help animals!
+                      </div>
+                    </div>
+
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '15px', alignItems: 'center' }}>
+                      <img 
+                        src={powerConfig[currentMissionSymbol]?.image}
+                        alt="power"
+                        style={{ width: '100px', height: '100px', marginBottom: '10px' }}
+                      />
+                      
+                      <button 
+                        onClick={handleSaveAnimal}
+                        style={{
+                          background: 'linear-gradient(135deg, #FF6B6B, #FF8E53)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '12px 25px',
+                          borderRadius: '25px',
+                          fontSize: '16px',
+                          fontWeight: 'bold',
+                          cursor: 'pointer',
+                          width: '100%'
+                        }}
+                      >
+                        🐾 Save an Animal
+                      </button>
+                      
+                      <button 
+                        onClick={handleContinueLearning}
+                        style={{
+                          background: 'linear-gradient(135deg, #4ECDC4, #44A08D)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '12px 25px',
+                          borderRadius: '25px',
+                          fontSize: '16px',
+                          fontWeight: 'bold',
+                          cursor: 'pointer',
+                          width: '100%'
+                        }}
+                      >
+                        {getNextDiscoveryText(currentMissionSymbol)}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Rescue Modal */}
+            <RescueModal
+              key={currentRescueWord} // ✅ ADD THIS LINE - Forces remount for each word
+
+         show={showRescueModal}
+              wordData={currentRescueWord ? RESCUE_CONFIGS[currentRescueWord] : null}
+              onComplete={handleRescueComplete}
+              profileName={profileName}
+            />
+
+            {/* Symbol Sidebar */}
+            {!sceneState.showingCompletionScreen && !showSceneCompletion && (
+              <div style={{ filter: 'none' }}>
+                <SymbolSidebar
+                  unlockedSymbols={{
+                    vakratunda: sceneState.learnedWords?.vakratunda?.learned || false,
+                    mahakaya: sceneState.learnedWords?.mahakaya?.learned || false,
+                    suryakoti: sceneState.learnedWords?.suryakoti?.learned || false,
+                    samaprabha: sceneState.learnedWords?.samaprabha?.learned || false,
+                    nirvighnam: sceneState.learnedWords?.nirvighnam?.learned || false,
+                    kurumedeva: sceneState.learnedWords?.kurumedeva?.learned || false,
+                    sarvakaryeshu: sceneState.learnedWords?.sarvakaryeshu?.learned || false,
+                    sarvada: sceneState.learnedWords?.sarvada?.learned || false
+                  }}
+                  onSymbolClick={(symbolId) => console.log(`Symbol: ${symbolId}`)}
+                />
+              </div>
+            )}
+
+            {/* Sparkles */}
+            {showSparkle && (
+              <div className="sparkle-container">
+                <SparkleAnimation
+                  type="magic"
+                  count={20}
+                  color="#FFD700"
+                  size={10}
+                  duration={2000}
+                  fadeOut={true}
+                  area="full"
+                />
+              </div>
+            )}
+
+            {/* Final Fireworks */}
+            {showSparkle === 'final-fireworks' && (
+              <Fireworks
+                show={true}
+                duration={8000}
+                count={25}
+                colors={['#FFD700', '#FF8C00', '#FFA500']}
+                onComplete={() => {
+                  setShowSparkle(null);
+                  setShowSceneCompletion(true);
+                }}
+              />
+            )}
+
+            {/* Scene Completion */}
+            <SceneCompletionCelebration
+              show={showSceneCompletion}
+              sceneName="Cave of Secrets - Complete"
+              sceneNumber={4}
+              totalScenes={4}
+              starsEarned={8}
+              totalStars={8}
+              discoveredSymbols={['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha', 'nirvighnam', 'kurumedeva', 'sarvakaryeshu', 'sarvada']}
+              containerType="journal"
+              containerImage={meaningJournal}
+              meaningCards={{
+                vakratunda: { sanskrit: "वक्रतुण्ड", meaning: "Curved Trunk" },
+                mahakaya: { sanskrit: "महाकाय", meaning: "Great Body" },
+                suryakoti: { sanskrit: "सूर्यकोटि", meaning: "Million Suns" },
+                samaprabha: { sanskrit: "समप्रभ", meaning: "Equal Radiance" },
+                nirvighnam: { sanskrit: "निर्विघ्नम्", meaning: "Without Obstacles" },
+                kurumedeva: { sanskrit: "कुरुमे देव", meaning: "Please Bless" },
+                sarvakaryeshu: { sanskrit: "सर्वकार्येषु", meaning: "In All Tasks" },
+                sarvada: { sanskrit: "सर्वदा", meaning: "Always" }
+              }}
+              appImages={{
+                vakratunda: appVakratunda,
+                mahakaya: appMahakaya,
+                suryakoti: appSuryakoti,
+                samaprabha: appSamaprabha,
+                nirvighnam: appNirvighnam,
+                kurumedeva: appKurumedeva,
+                sarvakaryeshu: appSarvakaryeshu,
+                sarvada: appSarvada
+              }}
+              isFinalScene={true}
+              sceneId="sarvakaryeshu-sarvada"
+              onComplete={onComplete}
+              onReplay={() => {
+                setShowSceneCompletion(false);
+                resetScene();
+              }}
+              onContinue={() => {
+                const profileId = localStorage.getItem('activeProfileId');
+                if (profileId) {
+                  ProgressManager.updateSceneCompletion(profileId, 'cave-of-secrets', 'sarvakaryeshu-sarvada', {
+                    completed: true,
+                    stars: 8,
+                    symbols: {},
+                    sanskritWords: { sarvakaryeshu: true, sarvada: true },
+                    learnedWords: sceneState.learnedWords || {},
+                    chants: { sarvakaryeshu: true, sarvada: true }
+                  });
+                }
+                onNavigate?.('scene-complete-continue');
+              }}
+            />
+
+            <BackToMapButton onNavigate={onNavigate} hideCoach={hideCoach} clearManualCloseTracking={clearManualCloseTracking} />
+
+            {/* Navigation */}
+            <TocaBocaNav
+              onHome={() => onNavigate?.('home')}
+              onProgress={() => setShowCulturalCelebration(true)}
+              onZonesClick={() => onNavigate?.('zones')}
+              onStartFresh={() => resetScene()}
+              currentProgress={{
+                stars: sceneState.stars || 0,
+                completed: sceneState.completed ? 1 : 0,
+                total: 1
+              }}
+            />
+
+            <CulturalCelebrationModal
+              show={showCulturalCelebration}
+              onClose={() => setShowCulturalCelebration(false)}
+            />
+
+            {/*<style>{`
+              @keyframes symbolGlow {
+                0%, 100% { filter: brightness(1); }
+                50% { filter: brightness(1.4); }
+              }
+              
+              .phase-header {
+                position: absolute;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(255, 215, 0, 0.95);
+                color: #333;
+                padding: 12px 30px;
+                border-radius: 25px;
+                font-size: 18px;
+                font-weight: bold;
+                z-index: 100;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+                animation: bounce 2s infinite;
+                border: 3px solid #FF8C42;
+              }
+              
+              @keyframes bounce {
+                0%, 100% { transform: translateX(-50%) translateY(0); }
+                50% { transform: translateX(-50%) translateY(-10px); }
+              }
+              
+              .cave-symbol-individual {
+                position: absolute;
+                transition: all 0.3s ease;
+              }
+              
+           .cave-symbol-individual.position-1 { top: 30%; left: 12%; }
+.cave-symbol-individual.position-2 { bottom: 30%; left: 12%; }
+.cave-symbol-individual.position-3 { top: 30%; right: 12%; }
+.cave-symbol-individual.position-4 { bottom: 30%; right: 12%; }
+              
+              .cave-symbol-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 10px;
+                background: rgba(255, 255, 255, 0.9);
+                border-radius: 15px;
+                border: 2px solid #FFD700;
+                cursor: pointer;
+                transition: all 0.3s ease;
+              }
+              
+              .cave-symbol-item:hover {
+                transform: scale(1.1);
+                box-shadow: 0 4px 15px rgba(255, 215, 0, 0.5);
+              }
+              
+              .cave-symbol-item img {
+                width: 60px;
+                height: 60px;
+                margin-bottom: 5px;
+              }
+              
+              .helper-symbol {
+                position: absolute;
+              }
+              
+          /* Helper symbols - same positioning 
+.helper-symbol.position-1 { top: 30%; left: 12%; }
+.helper-symbol.position-2 { bottom: 30%; left: 12%; }
+.helper-symbol.position-3 { top: 30%; right: 12%; }
+.helper-symbol.position-4 { bottom: 30%; right: 12%; }
+              
+              .helper-symbol-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 10px;
+                background: rgba(255, 255, 255, 0.9);
+                border-radius: 15px;
+                border: 2px solid #FF8C42;
+                cursor: pointer;
+                transition: all 0.3s ease;
+              }
+              
+              .helper-symbol-item:hover {
+                transform: scale(1.1);
+              }
+              
+              .helper-symbol-item img {
+                width: 60px;
+                height: 60px;
+                margin-bottom: 5px;
+              }
+              
+              .scenario-window {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 50%;
+                max-width: 600px;
+                border: 4px solid #FFD700;
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+              }
+              
+              .scenario-window img {
+                width: 100%;
+                display: block;
+              }
+              
+              .character-problem-speech,
+              .person-problem-speech,
+              .character-speech-bubble {
+                position: absolute;
+                top: 10%;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(255, 255, 255, 0.95);
+                padding: 15px 20px;
+                border-radius: 20px;
+                max-width: 80%;
+                text-align: center;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+                z-index: 10;
+              }
+              
+              .character-selection-clean {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                text-align: center;
+              }
+              
+              .character-options-cave {
+                display: flex;
+                gap: 40px;
+                margin-top: 20px;
+              }
+              
+              .character-option-clean {
+                background: white;
+                padding: 20px;
+                border-radius: 20px;
+                border: 3px solid #FFD700;
+                cursor: pointer;
+                transition: all 0.3s ease;
+              }
+              
+              .character-option-clean:hover {
+                transform: scale(1.1);
+                box-shadow: 0 8px 25px rgba(255, 215, 0, 0.5);
+              }
+              
+              .character-option-clean img {
+                width: 150px;
+                height: 150px;
+                object-fit: contain;
+              }
+            `}</style>*/}
+
+          </div>
+        </div>
+      </MessageManager>
+    </InteractionManager>
+  );
+};
+
+export default SarvakaryeshuSarvada;

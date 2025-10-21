@@ -1,15 +1,17 @@
 // zones/symbol-mountain/scenes/symbol/components/EyesTelescopeGame.jsx
-// 🔭 INLINE telescope instrument discovery game component
+// 🔭 INLINE telescope game with accessibility fallback
 
 import React, { useState, useEffect, useRef } from 'react';
 import FreeDraggableItem from '../../../../lib/components/interactive/FreeDraggableItem';
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
+import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
 
 // Import your actual musical instrument images
 import musicalTabla from './assets/images/musical-tabla-colored.png';
 import musicalFlute from './assets/images/musical-flute-colored.png';
 import musicalBells from './assets/images/musical-bells-colored.png';
 import musicalCymbals from './assets/images/musical-cymbals-colored.png';
+import mooshikaCoach from './assets/images/mooshika-coach.png';
 
 // Enhanced Divine Telescope SVG
 const telescope = `data:image/svg+xml;base64,${btoa(`
@@ -71,7 +73,6 @@ const EyesTelescopeGame = ({
   onAllInstrumentsFound,
   onClose,
   profileName = 'little explorer',
-  // ✅ ADD THESE 3 LINES:
   initialDiscoveredInstruments = {},
   initialFoundInstruments = [],
   isReload = false
@@ -81,13 +82,22 @@ const EyesTelescopeGame = ({
   // Game states
   const [telescopePosition, setTelescopePosition] = useState({ top: '50%', left: '50%' });
   const [telescopeDragging, setTelescopeDragging] = useState(false);
-  const [foundInstruments, setFoundInstruments] = useState([]);
-  const [discoveredInstruments, setDiscoveredInstruments] = useState({});
+  const [foundInstruments, setFoundInstruments] = useState(initialFoundInstruments);
+  const [discoveredInstruments, setDiscoveredInstruments] = useState(initialDiscoveredInstruments);
   const [showSparkle, setShowSparkle] = useState(null);
   const [gameComplete, setGameComplete] = useState(false);
+  
+  // Stuck detection states
+  const [lastDiscoveryTime, setLastDiscoveryTime] = useState(Date.now());
+  const [showInstrumentGlow, setShowInstrumentGlow] = useState(false);
+  
+  // Accessibility fallback states
+  const [clickableFallbackEnabled, setClickableFallbackEnabled] = useState(false);
+  const [gameStartTime, setGameStartTime] = useState(Date.now());
 
   // Refs
   const timeoutsRef = useRef([]);
+  const progressiveHintRef = useRef(null);
 
   // Safe timeout
   const safeSetTimeout = (callback, delay) => {
@@ -96,63 +106,78 @@ const EyesTelescopeGame = ({
     return timeout;
   };
 
-  // EyesTelescopeGame.jsx - Add these props
-const EyesTelescopeGame = ({ 
-  isActive, 
-  instrumentPositions, 
-  discoveryRadius,
-  profileName,
-  // ✅ ADD THESE RELOAD PROPS:
-  initialDiscoveredInstruments = {},  // Reload discovered state
-  initialFoundInstruments = [],       // Reload found list
-  onInstrumentFound, 
-  onAllInstrumentsFound, 
-  onClose 
-}) => {
-
-  // ✅ INITIALIZE WITH RELOAD DATA:
-  const [discoveredInstruments, setDiscoveredInstruments] = useState(initialDiscoveredInstruments);
-  const [foundInstruments, setFoundInstruments] = useState(initialFoundInstruments);
-
-  // ✅ ADD RELOAD EFFECT:
+  // Reset game when activated - WITH RELOAD SUPPORT
   useEffect(() => {
-    // If we have initial data, we're reloading mid-game
-    if (Object.keys(initialDiscoveredInstruments).length > 0) {
-      console.log('🔄 EYES GAME RELOAD: Restoring progress', {
-        discovered: initialDiscoveredInstruments,
-        found: initialFoundInstruments
-      });
+    if (isActive) {
+      if (isReload && initialFoundInstruments.length > 0) {
+        console.log('🔄 RELOAD: Restoring telescope progress:', initialFoundInstruments);
+        setFoundInstruments(initialFoundInstruments);
+        setDiscoveredInstruments(initialDiscoveredInstruments);
+        setGameComplete(initialFoundInstruments.length === 4);
+        setShowSparkle(null);
+        setLastDiscoveryTime(Date.now());
+        setShowInstrumentGlow(false);
+        setGameStartTime(Date.now());
+        setClickableFallbackEnabled(false);
+      } else {
+        console.log('🔭 Resetting inline telescope game');
+        setFoundInstruments([]);
+        setDiscoveredInstruments({});
+        setGameComplete(false);
+        setShowSparkle(null);
+        setTelescopePosition({ top: '50%', left: '50%' });
+        setLastDiscoveryTime(Date.now());
+        setShowInstrumentGlow(false);
+        setGameStartTime(Date.now());
+        setClickableFallbackEnabled(false);
+      }
+    }
+  }, [isActive, isReload]);
+
+  // Stuck detection - show glow after 20 seconds of no discoveries
+  useEffect(() => {
+    if (gameComplete || foundInstruments.length === 0 || foundInstruments.length === 4) {
+      setShowInstrumentGlow(false);
+      return;
+    }
+    
+    const checkStuckTimer = setInterval(() => {
+      const timeSinceLastDiscovery = Date.now() - lastDiscoveryTime;
       
-      setDiscoveredInstruments(initialDiscoveredInstruments);
-      setFoundInstruments(initialFoundInstruments);
-    }
-  }, []);
+      // If stuck for 20 seconds and haven't found all instruments
+      if (timeSinceLastDiscovery > 20000 && foundInstruments.length > 0 && foundInstruments.length < 4) {
+        console.log('🌟 Kid might be stuck - showing instrument glow');
+        setShowInstrumentGlow(true);
+      }
+    }, 1000);
+    
+    return () => clearInterval(checkStuckTimer);
+  }, [lastDiscoveryTime, foundInstruments.length, gameComplete]);
 
-  // Rest of your EyesTelescopeGame logic...
-}
-
-  // Reset game when activated
-// Reset game when activated - WITH RELOAD SUPPORT
-useEffect(() => {
-  if (isActive) {
-    if (isReload && initialFoundInstruments.length > 0) {
-      // Reload case - restore progress but don't reset position
-      console.log('🔄 RELOAD: Restoring telescope progress:', initialFoundInstruments);
-      setFoundInstruments(initialFoundInstruments);
-      setDiscoveredInstruments(initialDiscoveredInstruments);
-      setGameComplete(initialFoundInstruments.length === 4);
-      setShowSparkle(null); // Clear any sparkles
-    } else {
-      // Your original working logic - UNCHANGED
-      console.log('🔭 Resetting inline telescope game');
-      setFoundInstruments([]);
-      setDiscoveredInstruments({});
-      setGameComplete(false);
-      setShowSparkle(null);
-      setTelescopePosition({ top: '50%', left: '50%' });
+  // Accessibility fallback - enable click after 60 seconds with no progress
+  useEffect(() => {
+    if (gameComplete || foundInstruments.length === 4) {
+      return;
     }
-  }
-}, [isActive, isReload]); // ✅ Add isReload to dependency array
+    
+    const fallbackTimer = setInterval(() => {
+      const timeSinceGameStart = Date.now() - gameStartTime;
+      
+      // Enable click fallback after 60 seconds with zero progress
+      if (timeSinceGameStart > 60000 && foundInstruments.length === 0 && !clickableFallbackEnabled) {
+        console.log('♿ Enabling accessibility fallback - instruments now clickable');
+        setClickableFallbackEnabled(true);
+        setShowInstrumentGlow(true); // Show glow to indicate they're now clickable
+        
+        // Update hint to reflect new interaction method
+        if (progressiveHintRef.current?.hideHint) {
+          progressiveHintRef.current.hideHint();
+        }
+      }
+    }, 1000);
+    
+    return () => clearInterval(fallbackTimer);
+  }, [gameStartTime, foundInstruments.length, gameComplete, clickableFallbackEnabled]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -161,7 +186,7 @@ useEffect(() => {
     };
   }, []);
 
-  // Check for instrument discovery
+  // Check for instrument discovery (via telescope drag)
   const checkInstrumentDiscovery = (telescopeX, telescopeY) => {
     Object.keys(instrumentPositions).forEach(instrumentId => {
       const instrumentPos = instrumentPositions[instrumentId];
@@ -180,6 +205,10 @@ useEffect(() => {
   const discoverInstrument = (instrumentType, instrumentId) => {
     console.log(`🎵 Instrument ${instrumentType} discovered!`);
     
+    // Reset stuck timer
+    setLastDiscoveryTime(Date.now());
+    //setShowInstrumentGlow(false);
+    
     const newFoundInstruments = [...foundInstruments, instrumentType];
     const newDiscoveredInstruments = {
       ...discoveredInstruments,
@@ -189,6 +218,11 @@ useEffect(() => {
     setFoundInstruments(newFoundInstruments);
     setDiscoveredInstruments(newDiscoveredInstruments);
     setShowSparkle(`instrument-${instrumentType}-found`);
+    
+    // Hide hint when first instrument found
+    if (progressiveHintRef.current?.hideHint) {
+      progressiveHintRef.current.hideHint();
+    }
     
     // Clear sparkle after animation
     safeSetTimeout(() => {
@@ -202,6 +236,7 @@ useEffect(() => {
     
     // Check if all instruments found
     if (newFoundInstruments.length === 4) {
+      setShowInstrumentGlow(false);
       safeSetTimeout(() => {
         handleGameComplete(newFoundInstruments, newDiscoveredInstruments);
       }, 1500);
@@ -213,6 +248,8 @@ useEffect(() => {
     console.log('🔭 All instruments discovered - game complete!');
     setGameComplete(true);
     setShowSparkle('all-instruments-found');
+    setShowInstrumentGlow(false);
+    setClickableFallbackEnabled(false);
     
     safeSetTimeout(() => {
       if (onAllInstrumentsFound) {
@@ -221,6 +258,20 @@ useEffect(() => {
     }, 2000);
   };
 
+  // Hint configuration for ProgressiveHintSystem
+  const getHintConfigs = () => [
+    {
+      id: 'telescope-drag-hint',
+      message: clickableFallbackEnabled 
+        ? 'Click the instruments to discover them!' 
+        : 'Drag the telescope to explore!',
+      position: { bottom: '25%', left: '50%', transform: 'translateX(-50%)' },
+      condition: (state) => {
+        return state?.foundInstruments?.length === 0;
+      }
+    }
+  ];
+
   if (!isActive) {
     return null;
   }
@@ -228,19 +279,31 @@ useEffect(() => {
   return (
     <div className="eyes-telescope-game-inline" style={inlineContainerStyle}>
       
-    
-      
       {/* Progress counter in scene */}
       <div style={inlineProgressStyle}>
         🎵 Instruments Found: {foundInstruments.length} / 4
       </div>
       
-      {/* Game status message 
-      <div style={inlineStatusStyle}>
-        {foundInstruments.length === 0 && '🔍 Start exploring with the telescope!'}
-        {foundInstruments.length > 0 && foundInstruments.length < 4 && `✨ Great! Found: ${foundInstruments.join(', ')}`}
-        {foundInstruments.length === 4 && '🎉 All instruments discovered! Divine vision achieved!'}
-      </div>
+      {/* Accessibility fallback notice */}
+      {clickableFallbackEnabled && foundInstruments.length === 0 && (
+        <div style={{
+          position: 'absolute',
+          top: '100px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: 'rgba(76, 175, 80, 0.95)',
+          color: 'white',
+          padding: '10px 20px',
+          borderRadius: '20px',
+          fontSize: '14px',
+          fontWeight: 'bold',
+          zIndex: 30,
+          textAlign: 'center',
+          maxWidth: '300px'
+        }}>
+          Click the glowing instruments to discover them!
+        </div>
+      )}
       
       {/* Draggable Telescope - Main game element */}
       <FreeDraggableItem
@@ -259,6 +322,11 @@ useEffect(() => {
         onDragStart={() => {
           console.log('🔭 Telescope drag started');
           setTelescopeDragging(true);
+          
+          // Hide hint when user starts dragging
+          if (progressiveHintRef.current?.hideHint) {
+            progressiveHintRef.current.hideHint();
+          }
         }}
         onDragEnd={() => {
           console.log('🔭 Telescope drag ended');
@@ -269,7 +337,8 @@ useEffect(() => {
         style={{
           width: '80px',
           height: '80px',
-          zIndex: 25
+          zIndex: 25,
+          opacity: clickableFallbackEnabled ? 0.5 : 1 // Fade telescope when fallback active
         }}
         bounds={{ top: 5, left: 5, right: 90, bottom: 90 }}
       >
@@ -279,9 +348,9 @@ useEffect(() => {
           style={{ 
             width: '100%', 
             height: '100%',
-      filter: telescopeDragging 
-  ? 'brightness(1.2) drop-shadow(0 0 12px rgba(135, 206, 235, 0.6))' 
-  : 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.4))',
+            filter: telescopeDragging 
+              ? 'brightness(1.2) drop-shadow(0 0 12px rgba(135, 206, 235, 0.6))' 
+              : 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.4))',
             pointerEvents: 'none',
             userSelect: 'none',
             transition: 'filter 0.2s ease'
@@ -295,7 +364,8 @@ useEffect(() => {
           left: '50%',
           width: '160px',
           height: '160px',
-border: telescopeDragging ? '2px dashed rgba(135, 206, 235, 0.6)' : 'none',          borderRadius: '50%',
+          border: telescopeDragging ? '2px dashed rgba(135, 206, 235, 0.6)' : 'none',
+          borderRadius: '50%',
           transform: 'translate(-50%, -50%)',
           pointerEvents: 'none',
           transition: 'border 0.3s ease'
@@ -307,23 +377,30 @@ border: telescopeDragging ? '2px dashed rgba(135, 206, 235, 0.6)' : 'none',     
         {Object.keys(instrumentPositions).map(instrumentId => {
           const instrumentData = instrumentPositions[instrumentId];
           const isDiscovered = foundInstruments.includes(instrumentData.type);
+          const shouldGlow = !isDiscovered && showInstrumentGlow;
+          const isClickable = !isDiscovered && clickableFallbackEnabled;
           
           return (
             <div 
               key={instrumentId}
-              className={`discovered-instrument instrument-${instrumentData.type} ${isDiscovered ? 'discovered' : ''}`}
+              className={`discovered-instrument instrument-${instrumentData.type} ${isDiscovered ? 'discovered' : ''} ${shouldGlow ? 'glowing-hint' : ''} ${isClickable ? 'clickable-fallback' : ''}`}
               style={{
                 position: 'absolute',
                 top: `${instrumentData.y}%`,
                 left: `${instrumentData.x}%`,
-              width: isDiscovered ? '90px' : '40px',
-height: isDiscovered ? '90px' : '40px',
-                opacity: isDiscovered ? 1 : 0,
+                width: isDiscovered ? '90px' : (shouldGlow ? '50px' : '40px'),
+                height: isDiscovered ? '90px' : (shouldGlow ? '50px' : '40px'),
+                opacity: isDiscovered ? 1 : (shouldGlow ? 0.4 : 0),
                 transition: 'all 0.5s ease',
-  transform: 'translate(-50%, -50%) rotate(0deg)',  // ← CHANGE THIS LINE
+                transform: 'translate(-50%, -50%) rotate(0deg)',
                 zIndex: 15,
-                pointerEvents: 'none'
+                pointerEvents: isClickable ? 'auto' : 'none',
+                cursor: isClickable ? 'pointer' : 'default'
               }}
+              onClick={isClickable ? () => {
+                console.log(`♿ Accessibility click: ${instrumentData.type}`);
+                discoverInstrument(instrumentData.type, parseInt(instrumentId));
+              } : undefined}
             >
               <img 
                 src={musicalInstruments[instrumentData.type].image} 
@@ -331,17 +408,23 @@ height: isDiscovered ? '90px' : '40px',
                 style={{ 
                   width: '100%', 
                   height: '100%',
-filter: 'brightness(1.2) drop-shadow(0 0 6px rgba(255, 255, 255, 0.5))',
-  transform: 'rotate(0deg) scale(1)',  // ← ADD THIS LINE
-    objectFit: 'contain'  // ← AND THIS LINE               
-     }}
+                  filter: isDiscovered 
+                    ? 'brightness(1.2) drop-shadow(0 0 6px rgba(255, 255, 255, 0.5))'
+                    : shouldGlow 
+                    ? 'brightness(1.3) drop-shadow(0 0 12px rgba(255, 215, 0, 0.8))'
+                    : 'none',
+                  transform: isClickable ? 'rotate(0deg) scale(1.1)' : 'rotate(0deg) scale(1)',
+                  objectFit: 'contain',
+                  transition: 'all 0.3s ease'
+                }}
               />
               
               {showSparkle === `instrument-${instrumentData.type}-found` && (
                 <SparkleAnimation
                   type="star"
                   count={15}
-color="rgba(135, 206, 235, 0.8)"                  size={8}
+                  color="rgba(135, 206, 235, 0.8)"
+                  size={8}
                   duration={1500}
                   fadeOut={true}
                   area="full"
@@ -352,38 +435,56 @@ color="rgba(135, 206, 235, 0.8)"                  size={8}
         })}
       </div>
       
-      {/* Found Instruments Summary 
-      {foundInstruments.length > 0 && (
-        <div style={foundInstrumentsSummaryStyle}>
-          <div style={{ marginBottom: '5px', fontSize: '12px', fontWeight: 'bold' }}>✨ Discovered:</div>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap' }}>
-            {foundInstruments.map(instrumentType => (
-              <div key={instrumentType} style={foundInstrumentItemStyle}>
-                <img 
-                  src={musicalInstruments[instrumentType].image}
-                  alt={musicalInstruments[instrumentType].name}
-                  style={{ width: '24px', height: '24px', marginBottom: '2px' }}
-                />
-                <div style={{ fontSize: '10px' }}>{musicalInstruments[instrumentType].name}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-      
       {/* All instruments found sparkle */}
       {showSparkle === 'all-instruments-found' && (
         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
           <SparkleAnimation
             type="glitter"
             count={40}
-color="rgba(135, 206, 235, 0.8)"            size={12}
+            color="rgba(135, 206, 235, 0.8)"
+            size={12}
             duration={3000}
             fadeOut={true}
             area="full"
           />
         </div>
       )}
+
+      {/* Persistent instruction header */}
+<div style={{
+  position: 'absolute',
+  top: '15px',
+  left: '50%',
+  transform: 'translateX(-50%)',
+  background: 'rgba(255, 255, 255, 0.95)',
+  padding: '12px 24px',
+  borderRadius: '20px',
+  fontSize: '18px',
+  fontWeight: 'bold',
+  color: '#333',
+  zIndex: 30,
+  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+  textAlign: 'center'
+}}>
+  🔭 Drag the telescope to find instruments!
+</div>
+
+      {/* Progressive Hint System 
+      <ProgressiveHintSystem
+        ref={progressiveHintRef}
+        sceneId="telescope-game"
+        sceneState={{ foundInstruments }}
+        hintConfigs={getHintConfigs()}
+        characterImage={mooshikaCoach}
+        initialDelay={0}
+        hintDisplayTime={99999}
+        position="bottom-center"
+        iconSize={60}
+        zIndex={30}
+        enabled={!gameComplete && foundInstruments.length === 0}
+        disabledMessage="Great exploring!"
+        onHintShown={() => console.log('Telescope hint shown')}
+      />
       
       {/* Close Button */}
       {onClose && (
@@ -396,40 +497,88 @@ color="rgba(135, 206, 235, 0.8)"            size={12}
       )}
       
       {/* CSS Animations */}
-     <style>{`
-  .telescope-container {
-    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
-    transition: all 0.3s ease;
-  }
-  
-  .telescope-container.dragging {
-    filter: drop-shadow(0 0 12px rgba(135, 206, 235, 0.6)) brightness(1.2);
-    animation: telescopePulse 1s ease-in-out infinite;
-  }
-  
-  @keyframes telescopePulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-  }
-  
-  .discovered-instrument.discovered {
-    animation: instrumentGlow 2s infinite;
-  }
-  
-  @keyframes instrumentGlow {
-    0%, 100% { 
-      filter: brightness(1.2) drop-shadow(0 0 6px rgba(255, 255, 255, 0.5));
-    }
-    50% { 
-      filter: brightness(1.3) drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
-    }
-  }
-`}</style>
+      <style>{`
+        .telescope-container {
+          filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
+          transition: all 0.3s ease;
+        }
+        
+        .telescope-container.dragging {
+          filter: drop-shadow(0 0 12px rgba(135, 206, 235, 0.6)) brightness(1.2);
+          animation: telescopePulse 1s ease-in-out infinite;
+        }
+        
+        @keyframes telescopePulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+        }
+        
+        .discovered-instrument.discovered {
+          animation: instrumentGlow 2s infinite;
+        }
+        
+        @keyframes instrumentGlow {
+          0%, 100% { 
+            filter: brightness(1.2) drop-shadow(0 0 6px rgba(255, 255, 255, 0.5));
+          }
+          50% { 
+            filter: brightness(1.3) drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+          }
+        }
+        
+        /* Stuck help - subtle golden glow for undiscovered instruments */
+        .discovered-instrument.glowing-hint {
+          animation: undiscoveredGlow 2s ease-in-out infinite;
+        }
+        
+        @keyframes undiscoveredGlow {
+          0%, 100% { 
+            opacity: 0.3;
+            filter: brightness(1.2) drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+          }
+          50% { 
+            opacity: 0.5;
+            filter: brightness(1.4) drop-shadow(0 0 16px rgba(255, 215, 0, 1));
+          }
+        }
+        
+        /* Clickable fallback - stronger pulse to indicate clickability */
+        .discovered-instrument.clickable-fallback {
+          animation: clickablePulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes clickablePulse {
+          0%, 100% { 
+            opacity: 0.6;
+            transform: translate(-50%, -50%) scale(1);
+            filter: brightness(1.3) drop-shadow(0 0 12px rgba(76, 175, 80, 0.8));
+          }
+          50% { 
+            opacity: 0.8;
+            transform: translate(-50%, -50%) scale(1.15);
+            filter: brightness(1.5) drop-shadow(0 0 20px rgba(76, 175, 80, 1));
+          }
+        }
+        
+        .discovered-instrument.clickable-fallback:hover {
+          transform: translate(-50%, -50%) scale(1.2) !important;
+          filter: brightness(1.6) drop-shadow(0 0 25px rgba(76, 175, 80, 1)) !important;
+        }
+
+        .telescope-container {
+  animation: gentlePulse 2s ease-in-out infinite;
+}
+
+@keyframes gentlePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+      `}</style>
     </div>
   );
 };
 
-// ✅ INLINE STYLES - No overlays, renders within scene bounds
+// INLINE STYLES - No overlays, renders within scene bounds
 const inlineContainerStyle = {
   position: 'absolute',
   top: 0,
@@ -438,23 +587,6 @@ const inlineContainerStyle = {
   height: '100%',
   zIndex: 20,
   pointerEvents: 'auto'
-};
-
-const inlineInstructionsStyle = {
-  position: 'absolute',
-  top: '15px',
-  left: '50%',
-  transform: 'translateX(-50%)',
-  background: 'rgba(255, 255, 255, 0.95)',
-  padding: '12px 20px',
-  borderRadius: '15px',
-  fontSize: '14px',
-  fontWeight: 'bold',
-  color: '#01579b',
-  zIndex: 30,
-  maxWidth: '400px',
-  textAlign: 'center',
-  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
 };
 
 const inlineProgressStyle = {
@@ -469,46 +601,6 @@ const inlineProgressStyle = {
   fontSize: '16px',
   fontWeight: 'bold',
   zIndex: 30
-};
-
-const inlineStatusStyle = {
-  position: 'absolute',
-  top: '100px',
-  left: '50%',
-  transform: 'translateX(-50%)',
-  background: 'rgba(76, 175, 80, 0.9)',
-  color: 'white',
-  padding: '6px 14px',
-  borderRadius: '12px',
-  fontSize: '12px',
-  fontWeight: 'bold',
-  zIndex: 30,
-  maxWidth: '350px',
-  textAlign: 'center'
-};
-
-const foundInstrumentsSummaryStyle = {
-  position: 'absolute',
-  bottom: '20px',
-  left: '50%',
-  transform: 'translateX(-50%)',
-  background: 'rgba(76, 175, 80, 0.9)',
-  color: 'white',
-  padding: '10px 15px',
-  borderRadius: '15px',
-  zIndex: 30,
-  textAlign: 'center'
-};
-
-const foundInstrumentItemStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  background: 'rgba(255, 255, 255, 0.9)',
-  padding: '6px',
-  borderRadius: '8px',
-  minWidth: '40px',
-  color: '#333'
 };
 
 const inlineCloseStyle = {

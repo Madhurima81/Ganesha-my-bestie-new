@@ -7,6 +7,8 @@ const SanskritVoiceRecorder = ({
   word = "",
   onComplete,
   onSkip,
+   appIcon = null, // NEW
+  appColor = null, // NEW
   
   // Optional props
   show = true,
@@ -363,15 +365,30 @@ const SanskritVoiceRecorder = ({
         overflow: 'auto'
       }}>
         
-        {/* Header */}
-        <div style={{ marginBottom: '20px' }}>
-          <h3 style={{ 
-            margin: '0 0 10px 0', 
-            fontSize: '20px',
-            color: currentTheme.text 
-          }}>
-            {title}
-          </h3>
+     {/* Header */}
+<div style={{ marginBottom: '20px' }}>
+  {/* NEW: App Icon */}
+  {appIcon && (
+    <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+      <img 
+        src={appIcon} 
+        alt={word}
+        style={{
+          width: '80px',
+          height: '80px',
+          filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.2))'
+        }}
+      />
+    </div>
+  )}
+  
+  <h3 style={{ 
+    margin: '0 0 10px 0', 
+    fontSize: '20px',
+    color: currentTheme.text 
+  }}>
+    {title}
+  </h3>
           <p style={{ 
             margin: '0 0 15px 0', 
             fontSize: '16px',

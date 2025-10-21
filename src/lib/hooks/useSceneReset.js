@@ -36,6 +36,14 @@ const useSceneReset = (sceneActions, zoneId, sceneId, resetConfig = {}, customRe
             window.simplifiedMemoryGame.isForceReset = true;
           }
           break;
+
+              case 'simplifiedCombined':  // ADD THIS NEW CASE
+      if (window.simplifiedCombinedMemoryGame) {
+        window.simplifiedCombinedMemoryGame.visualRewards = {};
+        window.simplifiedCombinedMemoryGame.activatedSingers = {};
+        window.simplifiedCombinedMemoryGame.isForceReset = true;
+      }
+      break;
           
         case 'sanskrit':
           if (window.sanskritMemoryGame) {

@@ -1,0 +1,347 @@
+/* SunCollectionGame.css - Cave Integrated Version */
+/* ✅ Minimal styling - most layout is inline in JSX */
+
+/* ===========================================
+   CAVE GAME CONTAINER
+   =========================================== */
+
+.sun-collection-area {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Don't block scene interactions */
+  z-index: 8;
+}
+
+/* ===========================================
+   FLOATING OBJECTS (Cave bounds only)
+   =========================================== */
+
+/* Ensure images render cleanly */
+.sun-collection-area img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Clickable objects get subtle outline on focus */
+.sun-collection-area [style*="cursor: pointer"] {
+  outline: 2px solid transparent;
+  transition: outline 0.2s ease;
+}
+
+.sun-collection-area [style*="cursor: pointer"]:focus {
+  outline: 2px solid rgba(255, 215, 0, 0.8);
+  outline-offset: 4px;
+}
+
+/* ===========================================
+   ANIMATIONS
+   =========================================== */
+
+/* Sun glow effect (20+ seconds) */
+@keyframes sunGlow {
+  0%, 100% { 
+    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.9)) brightness(1.3);
+  }
+  50% { 
+    filter: drop-shadow(0 0 25px rgba(255, 215, 0, 1)) brightness(1.5);
+  }
+}
+
+/* Bright sun glow for fallback mode */
+@keyframes sunGlowBright {
+  0%, 100% { 
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 1)) brightness(1.4);
+  }
+  50% { 
+    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 1)) brightness(1.6);
+  }
+}
+
+/* Fade in for fallback objects */
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: scale(0); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+}
+
+/* Slide down for fallback hint text */
+@keyframes slideDown {
+  from { 
+    opacity: 0; 
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Victory pop animation */
+@keyframes victoryPop {
+  0% { 
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  100% { 
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Sun collection into orb animation */
+@keyframes simpleSunAppear {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Orb pulse when collecting */
+@keyframes orbPulse {
+  0%, 100% { 
+    transform: scale(1);
+    filter: drop-shadow(0 0 6px rgba(218, 165, 32, 0.3));
+  }
+  50% { 
+    transform: scale(1.02);
+    filter: drop-shadow(0 0 8px rgba(218, 165, 32, 0.4));
+  }
+}
+
+/* Orb completion celebration */
+@keyframes orbComplete {
+  0% { 
+    transform: scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 6px rgba(218, 165, 32, 0.4));
+  }
+  50% { 
+    transform: scale(1.1) rotate(180deg);
+    filter: drop-shadow(0 0 12px rgba(218, 165, 32, 0.6)) brightness(1.2);
+  }
+  100% { 
+    transform: scale(1) rotate(360deg);
+    filter: drop-shadow(0 0 8px rgba(218, 165, 32, 0.5)) brightness(1.1);
+  }
+}
+
+/* ===========================================
+   OPTIONAL: DEBUG MODE
+   =========================================== */
+
+/* Show cave boundaries in debug mode */
+.sun-collection-area[data-debug="true"] > div:first-child {
+  border: 3px dashed yellow !important;
+  background: rgba(255, 255, 0, 0.1) !important;
+}
+
+.sun-collection-area[data-debug="true"] > div:first-child::after {
+  content: 'CAVE PLAY AREA';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: yellow;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 14px;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ===========================================
+   RESPONSIVE ADJUSTMENTS
+   =========================================== */
+
+@media (max-width: 768px) {
+  /* Slightly smaller objects on mobile */
+  .sun-collection-area [style*="width:"] {
+    max-width: 60px;
+    max-height: 60px;
+  }
+  
+  /* Adjust orb position for mobile */
+  .sun-collection-area > div[style*="right: 10%"] {
+    right: 5% !important;
+    top: 15% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Even smaller on very small screens */
+  .sun-collection-area [style*="width:"] {
+    max-width: 50px;
+    max-height: 50px;
+  }
+  
+  /* Text smaller on small screens */
+  .sun-collection-area [style*="fontSize"] {
+    font-size: 14px !important;
+  }
+}
+
+/* ===========================================
+   ACCESSIBILITY & PERFORMANCE
+   =========================================== */
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .sun-collection-area *,
+  .sun-collection-area [style*="animation"] {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  /* Keep hover effects for usability */
+  .sun-collection-area [style*="cursor: pointer"]:hover {
+    transform: scale(1.1) !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .sun-collection-area [style*="cursor: pointer"] {
+    outline: 3px solid currentColor;
+  }
+  
+  .sun-collection-area [style*="cursor: pointer"]:hover {
+    outline: 4px solid yellow;
+  }
+}
+
+/* Performance: Hardware acceleration for animations */
+.sun-collection-area img,
+.sun-collection-area [style*="animation"] {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* ===========================================
+   PRINT STYLES (hide game during print)
+   =========================================== */
+
+@media print {
+  .sun-collection-area {
+    display: none !important;
+  }
+}
+
+/* ===========================================
+   LOADING STATE (optional)
+   =========================================== */
+
+.sun-collection-area[data-loading="true"]::before {
+  content: 'Loading game...';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: #DAA520;
+  padding: 15px 30px;
+  border-radius: 10px;
+  font-weight: bold;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ===========================================
+   FALLBACK STYLES (for older browsers)
+   =========================================== */
+
+/* If CSS filters not supported, use basic styling */
+@supports not (filter: drop-shadow(0 0 10px rgba(255, 215, 0, 1))) {
+  .sun-collection-area img {
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  }
+}
+
+/* If backdrop-filter not supported, use solid background */
+@supports not (backdrop-filter: blur(5px)) {
+  .sun-collection-area [style*="backdrop-filter"] {
+    background: rgba(0, 0, 0, 0.5) !important;
+  }
+}
+
+/* ===========================================
+   UTILITY CLASSES (optional)
+   =========================================== */
+
+/* Temporarily hide game (e.g., during pause) */
+.sun-collection-area.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* Pause game animations */
+.sun-collection-area.paused * {
+  animation-play-state: paused !important;
+}
+
+/* Slow motion mode (for debugging) */
+.sun-collection-area.slow-motion * {
+  animation-duration: calc(var(--duration, 1s) * 3) !important;
+  transition-duration: calc(var(--duration, 0.3s) * 3) !important;
+}
+
+/* ===========================================
+   DARK MODE SUPPORT (if needed)
+   =========================================== */
+
+@media (prefers-color-scheme: dark) {
+  /* Game already has dark cave theme, no changes needed */
+  /* But you can add overrides here if necessary */
+}
+
+/* ===========================================
+   COMMENTS FOR DEVELOPERS
+   =========================================== */
+
+/*
+  USAGE NOTES:
+  
+  1. This CSS is minimal by design - most styling is inline in JSX
+  2. Animations are defined here for reusability
+  3. Enable debug mode by adding data-debug="true" to container
+  4. All positioning is handled via caveBounds prop
+  5. Performance optimized with will-change and backface-visibility
+  
+  CUSTOMIZATION:
+  
+  - Adjust animation speeds in @keyframes blocks
+  - Modify glow colors (currently gold #FFD700)
+  - Change responsive breakpoints in @media queries
+  - Add custom animations as needed
+  
+  TROUBLESHOOTING:
+  
+  - Objects spawning outside cave? Check caveBounds prop
+  - Animations not smooth? Check browser hardware acceleration
+  - Images blurry? Verify image-rendering settings
+  - Touch not working? Check pointer-events: auto on clickable elements
+*/

@@ -98,6 +98,10 @@ console.log('🎵 EarsRhythmGame inline render:', {
   const [playingInstrument, setPlayingInstrument] = useState(null);
   const [sequenceItemsShown, setSequenceItemsShown] = useState(0);
 
+  // Add these to your state declarations at the top:
+const [countdown, setCountdown] = useState(0);
+const [isCountingDown, setIsCountingDown] = useState(false);
+
   // Audio context ref
   const audioContextRef = useRef(null);
   const timeoutsRef = useRef([]);
@@ -114,6 +118,8 @@ console.log('🎵 EarsRhythmGame inline render:', {
     timeoutsRef.current.push(timeout);
     return timeout;
   };
+
+
 
   // Initialize audio context
   useEffect(() => {
@@ -261,6 +267,15 @@ setSequenceItemsShown(initialSequenceItemsShown);
     };
   }, []);
 
+  // Add this useEffect after your other useEffects:
+useEffect(() => {
+  if (gamePhase === 'waiting' && currentSequence.length > 0 && !isCountingDown) {
+    safeSetTimeout(() => {
+      startCountdown();
+    }, 1000); // Wait 1 second, then start countdown
+  }
+}, [gamePhase, currentSequence, isCountingDown]);
+
   // Play sound function
   const playInstrumentSound = async (instrumentType) => {
     if (!audioContextRef.current) {
@@ -328,6 +343,28 @@ setSequenceItemsShown(initialSequenceItemsShown);
       }
     }
   };
+
+const startCountdown = () => {
+  setIsCountingDown(true);
+  setCountdown(3);
+  
+  // Countdown: 3
+  safeSetTimeout(() => {
+    setCountdown(2);
+    
+    // Countdown: 2
+    safeSetTimeout(() => {
+      setCountdown(1);
+      
+      // Countdown: 1
+      safeSetTimeout(() => {
+        setCountdown(0);
+        setIsCountingDown(false);
+        handlePlaySequence(); // Auto-play after countdown
+      }, 800);
+    }, 800);
+  }, 800);
+};
 
   // Play the sequence
   const handlePlaySequence = async () => {
@@ -433,31 +470,55 @@ if (window.saveEarsGameState) {
     }
   };
 
-  // Handle correct sequence completion
-  const handleSequenceSuccess = () => {
-    console.log(`🎉 Sequence for ${currentNote} completed successfully!`);
-    setGamePhase('success');
-    setCanPlayerClick(false);
+// Handle correct sequence completion
+const handleSequenceSuccess = () => {
+  console.log(`🎉 Sequence for ${currentNote} completed successfully!`);
+  setGamePhase('success');
+  setCanPlayerClick(false);
 
-     // ✅ ENHANCED: Save post-sequence state
+  // Save post-sequence state
   if (window.saveEarsGameState) {
     window.saveEarsGameState({
       gamePhase: 'success',
-      playerInput: playerInput,                    
-      currentSequence: currentSequence,           
-      sequenceItemsShown: sequenceItemsShown,     
-      sequenceJustCompleted: true,        // ← ADD: Mark as just completed
-      readyForNextNote: true,             // ← ADD: Ready for next
-      lastCompletedNote: currentNote      // ← ADD: Which note was completed
+      playerInput: playerInput,
+      currentSequence: currentSequence,
+      sequenceItemsShown: sequenceItemsShown,
+      sequenceJustCompleted: true,
+      readyForNextNote: true,
+      lastCompletedNote: currentNote
     });
   }
-    
-    safeSetTimeout(() => {
-      if (onSequenceComplete) {
-        onSequenceComplete(currentNote);
-      }
-    }, 1500);
-  };
+  
+  // Immediately notify parent that this round is complete
+  if (onSequenceComplete) {
+    onSequenceComplete(currentNote);
+  }
+};
+  // Handle replaying the current round
+const replayRound = (noteNumber) => {
+  console.log(`🔄 Replaying round: note${noteNumber}`);
+  
+  // Generate new random sequence for the same note
+  const sequence = generateRandomSequence(discoveredInstruments, `note${noteNumber}`);
+  setCurrentSequence(sequence);
+  setPlayerInput([]);
+  setGamePhase('waiting');
+  setCanPlayerClick(false);
+  setSequenceItemsShown(0);
+  clearAllTimeouts();
+  
+  console.log(`🔄 Replay sequence for note${noteNumber}:`, sequence);
+};
+
+// Continue to next round
+const continueToNextRound = () => {
+  console.log('➡️ Continuing to next round');
+  
+  // Let the parent component handle progression
+  if (onSequenceComplete) {
+    onSequenceComplete(currentNote);
+  }
+};
 
   // Handle wrong input
   const handleSequenceError = () => {
@@ -479,57 +540,161 @@ if (window.saveEarsGameState) {
   return (
     <div className="ears-rhythm-game-inline" style={inlineContainerStyle}>
       
-      {/* Game Status */}
-      <div style={inlineStatusStyle}>
-        {gamePhase === 'waiting' && '🎵 Ready to play sacred sequence'}
-        {gamePhase === 'playing' && '👂 Listen carefully...'}
-        {gamePhase === 'listening' && `🎮 Repeat the sequence! (${playerInput.length}/${currentSequence.length})`}
-        {gamePhase === 'success' && '🎉 Perfect! Sacred harmony achieved!'}
-        {gamePhase === 'error' && '💫 Try again, listen more carefully...'}
+<div style={inlineStatusStyle}>
+  {isCountingDown && `Get Ready... ${countdown}`}
+  {!isCountingDown && gamePhase === 'waiting' && 'Ready to learn the pattern?'}
+  {gamePhase === 'playing' && '👀 Watch & Listen...'}
+{gamePhase === 'listening' && `👆 Click the Instruments!`}  {gamePhase === 'success' && '🎉 Perfect! You Did It!'}
+  {gamePhase === 'error' && '💫 Try again - Listen carefully!'}
+</div>
+
+{/* Round Progress Indicator */}
+<div style={{
+  position: 'absolute',
+  top: '15px',
+  right: '15px',
+  display: 'flex',
+  gap: '8px',
+  zIndex: 40
+}}>
+  {['note1', 'note2', 'note3'].map((note, index) => {
+    const roundNum = index + 1;
+    const isCompleted = note < currentNote; // Completed if we're past this note
+    const isCurrent = note === currentNote;
+    const isLocked = note > currentNote;
+    
+    return (
+      <div
+        key={note}
+        style={{
+          width: '32px',
+          height: '32px',
+          borderRadius: '50%',
+          background: isCompleted
+            ? '#4CAF50'  // Green (completed)
+            : isCurrent 
+              ? '#FFD700'  // Gold (current)
+              : '#E0E0E0', // Gray (locked)
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '14px',
+          fontWeight: 'bold',
+          color: isCompleted || isCurrent ? 'white' : '#999',
+          border: isCurrent ? '3px solid #FF9800' : 'none',
+          boxShadow: isCurrent ? '0 0 10px rgba(255, 152, 0, 0.5)' : 'none',
+          transition: 'all 0.3s ease'
+        }}
+      >
+        {isCompleted ? '✓' : roundNum}
       </div>
+    );
+  })}
+</div>
       
-      {/* Play Sequence Button */}
-      {(gamePhase === 'waiting' || gamePhase === 'error') && (
-        <button 
-          style={inlinePlayButtonStyle}
-          onClick={handlePlaySequence}
-          disabled={isSequencePlaying}
-        >
-          🔊 Play Sacred Sequence
-        </button>
-      )}
+{/* Play Sequence Button - ONLY on very first round */}
+{gamePhase === 'waiting' && currentNote === 'note1' && playerInput.length === 0 && !isCountingDown && (
+  <button 
+    style={inlinePlayButtonStyle}
+    onClick={handlePlaySequence}
+    disabled={isSequencePlaying}
+  >
+    🔊 Play Pattern
+  </button>
+)}
+
+{/* Countdown display */}
+{isCountingDown && (
+  <div style={{
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    fontSize: '80px',
+    fontWeight: 'bold',
+    color: '#FFD700',
+    textShadow: '0 0 30px rgba(255, 215, 0, 0.8)',
+    zIndex: 100,
+    animation: 'countdownPulse 0.8s ease-in-out'
+  }}>
+    {countdown}
+  </div>
+)}
       
-      {/* Sequence Display - Progressive revelation */}
-      {sequenceItemsShown > 0 && (
-        <div style={inlineSequenceDisplayStyle}>
-          <div style={{ fontSize: '12px', marginBottom: '8px', color: '#666' }}>
-            Sacred Sequence:
+{/* Sequence Display - Horizontal numbered tracker */}
+{sequenceItemsShown > 0 && (
+  <div style={inlineSequenceTrackerStyle}>
+    <div style={inlineTrackerLabelStyle}>
+  📋 Steps:
+    </div>
+    
+    <div style={inlineTrackerItemsStyle}>
+      {currentSequence.slice(0, sequenceItemsShown).map((instrument, index) => {
+        const isCurrentStep = index === playerInput.length && canPlayerClick;
+        const isCompleted = index < playerInput.length;
+        const isCorrect = playerInput[index] === instrument;
+        
+        return (
+     <div style={{
+  ...inlineTrackerItemStyle,
+  border: isCurrentStep 
+    ? '3px solid #FFD700'
+    : isCompleted
+      ? (isCorrect ? '3px solid #4CAF50' : '3px solid #F44336')
+      : '2px solid #999',
+  background: isCurrentStep 
+    ? 'rgba(255, 235, 59, 0.2)'
+    : 'white',
+  cursor: 'default',  // ← ADD: Shows it's not clickable
+  pointerEvents: 'none'  // ← ADD: Prevents clicking
+}}
+>
+           {/* Step number badge */}
+<div style={{
+  position: 'absolute',
+  bottom: '-30px',
+  left: '50%',
+  transform: 'translateX(-50%)',
+  width: '24px',
+  height: '24px',
+  borderRadius: '50%',
+  background: isCompleted 
+    ? (isCorrect ? '#4CAF50' : '#F44336')
+    : isCurrentStep ? '#FFD700' : '#FFC107',
+  color: 'white',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontWeight: 'bold',
+  fontSize: '13px',
+  border: '2px solid white',
+  zIndex: 2
+}}>
+  {isCompleted ? (isCorrect ? '✓' : '✗') : index + 1}
+</div>
+            
+            {/* Instrument image */}
+            <img 
+              src={musicalInstruments[instrument].image}
+              alt={musicalInstruments[instrument].name}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+            
+    
           </div>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap' }}>
-            {currentSequence.slice(0, sequenceItemsShown).map((instrument, index) => (
-              <div 
-                key={index}
-                style={{
-                  ...inlineSequenceItemStyle,
-                  backgroundColor: index < playerInput.length 
-                    ? (playerInput[index] === instrument ? '#4caf50' : '#f44336')
-                    : '#e0e0e0'
-                }}
-              >
-                <img 
-                  src={musicalInstruments[instrument].image}
-                  alt={musicalInstruments[instrument].name}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+        );
+      })}
+    </div>
+  </div>
+)}
+
+
 
       {/* Musical Instruments in their discovered positions */}
-      <div className="discovered-instruments-clickable">
-        {Object.keys(discoveredInstruments).map(instrumentType => {
+
+<div className="discovered-instruments-clickable" style={{ 
+  pointerEvents: gamePhase === 'playing' ? 'none' : 'auto' 
+}}>        {Object.keys(discoveredInstruments).map(instrumentType => {
           const instrument = musicalInstruments[instrumentType];
           const isPlaying = playingInstrument === instrumentType;
           const isClickable = canPlayerClick;
@@ -547,24 +712,35 @@ if (window.saveEarsGameState) {
           return (
             <button
               key={instrumentType}
-              style={{
-                position: 'absolute',
-                top: `${position.y}%`,
-                left: `${position.x}%`,
-                width: '70px',
-                height: '70px',
-                border: isClickable ? '3px solid #ffd700' : '2px solid #ccc',
-                borderRadius: '50%',
-                overflow: 'hidden',
-                transition: 'all 0.3s ease',
-                background: 'white',
-                cursor: isClickable ? 'pointer' : 'default',
-                opacity: isClickable ? 1 : 0.7,
-                transform: `translate(-50%, -50%) ${isPlaying ? 'scale(1.2)' : 'scale(1)'}`,
-                boxShadow: isPlaying ? `0 0 25px ${instrument.color}` : isClickable ? '0 0 15px #ffd700' : '0 4px 12px rgba(0,0,0,0.2)',
-                filter: isPlaying ? 'brightness(1.3)' : 'brightness(1)',
-                zIndex: 30
-              }}
+             // REPLACE with:
+style={{
+  position: 'absolute',
+  top: `${position.y}%`,
+  left: `${position.x}%`,
+  width: '90px',  // ← BIGGER
+  height: '90px', // ← BIGGER
+  border: isPlaying 
+    ? '6px solid #FFD700'  // ← THICKER when playing
+    : isClickable 
+      ? '4px solid #4CAF50'  // ← GREEN when clickable
+      : '3px solid #ccc',
+  borderRadius: '50%',
+  overflow: 'visible', // ← CHANGED from 'hidden' to show animations
+  transition: 'all 0.3s ease',
+  background: 'white',
+  cursor: isClickable ? 'pointer' : 'default',
+  opacity: isClickable || isPlaying ? 1 : 0.7,
+  transform: `translate(-50%, -50%) ${isPlaying ? 'scale(1.5) rotate(5deg)' : 'scale(1)'}`, // ← BIGGER scale
+  boxShadow: isPlaying 
+    ? `0 0 60px ${instrument.color}, 
+       0 0 120px ${instrument.color},
+       inset 0 0 40px rgba(255, 255, 255, 0.8)` // ← MEGA GLOW
+    : isClickable 
+      ? '0 0 20px #4CAF50, 0 4px 15px rgba(0,0,0,0.3)' // ← GREEN glow
+      : '0 4px 12px rgba(0,0,0,0.2)',
+  filter: isPlaying ? 'brightness(1.3)' : 'brightness(1)',
+  zIndex: isPlaying ? 35 : 30
+}}
               onClick={() => handleInstrumentClick(instrumentType)}
               disabled={!isClickable}
             >
@@ -597,7 +773,7 @@ if (window.saveEarsGameState) {
                   top: '-20px',
                   left: '50%',
                   transform: 'translateX(-50%)',
-                  background: 'rgba(33, 150, 243, 0.9)',
+background: 'rgba(76, 175, 80, 0.95)', // ← NEW GREEN
                   color: 'white',
                   padding: '2px 8px',
                   borderRadius: '10px',
@@ -607,7 +783,8 @@ if (window.saveEarsGameState) {
                   Click!
                 </div>
               )}
-            </button>
+            </button>   
+               
           );
         })}
       </div>
@@ -618,6 +795,97 @@ if (window.saveEarsGameState) {
           Progress: {playerInput.length} / {currentSequence.length}
         </div>
       )}
+
+      {/* Celebration Screen - After completing a round */}
+{gamePhase === 'success' && (
+  <div style={{
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    background: 'rgba(255, 255, 255, 0.98)',
+    padding: '30px 40px',
+    borderRadius: '25px',
+    textAlign: 'center',
+    zIndex: 100,
+    boxShadow: '0 8px 30px rgba(0,0,0,0.2)',
+    minWidth: '300px'
+  }}>
+    {/* Success message */}
+    <div style={{
+      fontSize: '24px',
+      fontWeight: 'bold',
+      color: '#4CAF50',
+      marginBottom: '10px'
+    }}>
+      🎉 Round {currentNote === 'note1' ? '1' : currentNote === 'note2' ? '2' : '3'} Complete!
+    </div>
+    
+    <div style={{
+      fontSize: '14px',
+      color: '#666',
+      marginBottom: '25px'
+    }}>
+      Great job! What would you like to do?
+    </div>
+    
+    {/* Action buttons */}
+    <div style={{
+      display: 'flex',
+      gap: '15px',
+      justifyContent: 'center'
+    }}>
+      <button 
+        onClick={() => replayRound(parseInt(currentNote.replace('note', '')))}
+        style={{
+          background: 'rgba(33, 150, 243, 0.9)',
+          color: 'white',
+          border: 'none',
+          padding: '12px 20px',
+          borderRadius: '15px',
+          fontSize: '14px',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          transition: 'all 0.3s ease'
+        }}
+      >
+        🔄 Practice Again
+      </button>
+      
+      <button 
+        onClick={continueToNextRound}
+        style={{
+          background: 'rgba(76, 175, 80, 0.9)',
+          color: 'white',
+          border: 'none',
+          padding: '12px 20px',
+          borderRadius: '15px',
+          fontSize: '14px',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          transition: 'all 0.3s ease'
+        }}
+      >
+        ➡️ Next Challenge
+      </button>
+    </div>
+    
+    {/* Auto-advance hint */}
+    <div style={{
+      fontSize: '11px',
+      color: '#999',
+      marginTop: '15px'
+    }}>
+      Auto-advancing in 5 seconds...
+    </div>
+  </div>
+)}
       
       {/* Close Button */}
       {onClose && (
@@ -628,28 +896,58 @@ if (window.saveEarsGameState) {
           ✕
         </button>
       )}
+
       
-      {/* CSS Animations */}
-      <style>{`
-        .ears-rhythm-game-inline button:hover {
-          transform: scale(1.05);
-        }
-        
-        .ears-rhythm-game-inline button:active {
-          transform: scale(0.98);
-        }
-        
-        @keyframes clickPulse {
-          0%, 100% { 
-            opacity: 0.7;
-            transform: translateX(-50%) scale(1);
-          }
-          50% { 
-            opacity: 1;
-            transform: translateX(-50%) scale(1.1);
-          }
-        }
-      `}</style>
+<style>{`
+  .ears-rhythm-game-inline button:hover {
+    transform: scale(1.05);
+  }
+  
+  .ears-rhythm-game-inline button:active {
+    transform: scale(0.98);
+  }
+  
+  @keyframes clickPulse {
+    0%, 100% { 
+      opacity: 0.7;
+      transform: translateX(-50%) scale(1);
+    }
+    50% { 
+      opacity: 1;
+      transform: translateX(-50%) scale(1.1);
+    }
+  }
+  
+  @keyframes soundWave {
+    0% {
+      width: 90px;
+      height: 90px;
+      opacity: 1;
+    }
+    100% {
+      width: 200px;
+      height: 200px;
+      opacity: 0;
+    }
+  }
+  
+  /* ⭐ ADD THIS NEW ANIMATION */
+  @keyframes bounceHand {
+    0%, 100% { 
+      transform: translateX(-50%) translateY(0); 
+    }
+    50% { 
+      transform: translateX(-50%) translateY(5px); 
+    }
+  }
+
+  // Add to your <style> block:
+@keyframes countdownPulse {
+  0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+  50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+}
+`}</style>
     </div>
   );
 };
@@ -751,6 +1049,44 @@ const inlineCloseStyle = {
   cursor: 'pointer',
   color: '#666',
   zIndex: 35
+};
+
+const inlineSequenceTrackerStyle = {
+  position: 'absolute',
+  top: '220px',
+  left: '50%',
+  transform: 'translateX(-50%)',
+  background: 'rgba(255, 255, 255, 0.95)',
+  padding: '12px 18px',
+  borderRadius: '15px',
+  zIndex: 30,
+  display: 'flex',
+  alignItems: 'center',
+  gap: '12px',
+  boxShadow: '0 3px 15px rgba(0, 0, 0, 0.15)'
+};
+
+const inlineTrackerLabelStyle = {
+  fontSize: '14px',
+  fontWeight: 'bold',
+  color: '#654321',
+  whiteSpace: 'nowrap'
+};
+
+const inlineTrackerItemsStyle = {
+  display: 'flex',
+  gap: '10px',
+  alignItems: 'center'
+};
+
+const inlineTrackerItemStyle = {
+  position: 'relative',
+  width: '50px',
+  height: '50px',
+  borderRadius: '50%',
+  overflow: 'visible',  // ← CHANGED to 'visible'
+  transition: 'all 0.3s ease',
+  background: 'white'
 };
 
 export default EarsRhythmGame;

@@ -1921,7 +1921,7 @@ const startKurumedevaLearning = () => {
 
             {/* ✨ NEW: Nirvighnam Animated Texts */}
 
-{/* Nirvighnam - Without Obstacles Text (after crystal fog clearing) */}
+{/* Nirvighnam - Without Obstacles Text (after crystal fog clearing) 
 {sceneState.showObstacleText && (
   <div className="obstacle-text" style={{
     position: 'absolute',
@@ -1938,7 +1938,7 @@ const startKurumedevaLearning = () => {
   </div>
 )}
 
-{/* Kurume Deva - Divine Help Text (after bridge building) */}
+{/* Kurume Deva - Divine Help Text (after bridge building) 
 {sceneState.showDivineHelpText && (
   <div className="divine-help-text" style={{
     position: 'absolute',

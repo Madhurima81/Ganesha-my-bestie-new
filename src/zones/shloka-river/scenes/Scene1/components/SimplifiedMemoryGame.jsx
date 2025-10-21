@@ -397,6 +397,20 @@ forceReset = false // ADD THIS LINE
     };
   }, [isActive, startMahakayaPhase]);
 
+  // Expose game phase for parent UI updates (like EarsRhythmGame)
+useEffect(() => {
+  if (!isActive) return;
+  
+  if (!window.simplifiedMemoryGame) {
+    window.simplifiedMemoryGame = {};
+  }
+  
+  // Expose current game phase
+  window.simplifiedMemoryGame.gamePhase = gamePhase;
+  
+  console.log('📊 Game phase exposed:', gamePhase);
+}, [isActive, gamePhase]);
+
 // Initialize game
 useEffect(() => {
   if (!isActive) return;
