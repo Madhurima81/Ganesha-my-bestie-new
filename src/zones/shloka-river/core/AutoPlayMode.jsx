@@ -245,10 +245,12 @@ const AutoPlayMode = ({
       console.log(`Clicked elephant: ${clickedSyllable}`);
       playSyllableAudio(clickedSyllable);
 
-      // ✅ FIX 2: Water spray animation at elephant position
-      const position = gameConfig.elements.clicker.positions[syllableIndex];
-      setWaterSprayPosition({ left: position.left, top: position.top });
-      safeSetTimeout(() => setWaterSprayPosition(null), 1000);
+      // ✅ Water spray animation - ONLY for Scene 1 (vakratunda, mahakaya)
+      if (gameConfig.id === 'vakratunda' || gameConfig.id === 'mahakaya') {
+        const position = gameConfig.elements.clicker.positions[syllableIndex];
+        setWaterSprayPosition({ left: position.left, top: position.top });
+        safeSetTimeout(() => setWaterSprayPosition(null), 1000);
+      }
 
       const newPlayerInput = [...playerInput, clickedSyllable];
       setPlayerInput(newPlayerInput);
@@ -443,27 +445,24 @@ const AutoPlayMode = ({
           }} />
         )}
 
-        {/* ✅ FIX 3: "Tap Here!" bouncing hint text */}
+        {/* ✅ "Tap Here!" hint - Simple version */}
         {isNext && !hasBeenClicked && (
           <div style={{
             position: 'absolute',
-            top: '-60px',
+            top: '-40px',
             left: '50%',
             transform: 'translateX(-50%)',
-            background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+            background: '#FFD700',
             color: 'white',
-            padding: '8px 16px',
-            borderRadius: '12px',
-            fontSize: '1.3rem',
-            fontWeight: 'bold',
-            border: '3px solid #FFD700',
-            boxShadow: '0 4px 15px rgba(255, 215, 0, 0.5)',
-            animation: 'tapHereBounce 1.5s ease-in-out infinite',
+            padding: '4px 10px',
+            borderRadius: '8px',
+            fontSize: '0.85rem',
+            fontWeight: '600',
             whiteSpace: 'nowrap',
             zIndex: 30,
             pointerEvents: 'none'
           }}>
-            👆 Tap Here!
+            👆 Tap Here
           </div>
         )}
 
@@ -853,13 +852,7 @@ const AutoPlayMode = ({
           50% { opacity: 0.5; transform: translateX(-50%) scale(1.2); }
         }
 
-        /* ✅ FIX 3: Tap Here bouncing animation */
-        @keyframes tapHereBounce {
-          0%, 100% { transform: translateX(-50%) translateY(0); }
-          50% { transform: translateX(-50%) translateY(-10px); }
-        }
-
-        /* ✅ FIX 2: Water splash animation */
+        /* ✅ Water splash animation */
         @keyframes waterSplash {
           0% { transform: translate(-50%, -100%) scale(0.5); opacity: 1; }
           50% { transform: translate(-50%, -150%) scale(1.2); opacity: 0.8; }
