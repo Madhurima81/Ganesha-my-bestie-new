@@ -296,7 +296,7 @@ const KurumeDevaGame = ({
       const syllableFileMap = {
         'kuru': 'kurumedeva-kuru',
         'me': 'kurumedeva-me',
-        'da': 'kurumedeva-da',
+        'de': 'kurumedeva-de',
         'va': 'kurumedeva-va'
       };
       

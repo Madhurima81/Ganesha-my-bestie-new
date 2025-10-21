@@ -233,12 +233,12 @@ const ManualRoundMode = ({
     }, 2500);
   };
 
-  // ✅ BUG 1 FIX: Finish & Return button handler
+  // ✅ BUG 3 FIX: Finish & Return button handler - works even with 0 rounds completed
   const handleFinishGame = () => {
     console.log('[Mode] Finishing game with learned syllables:', learnedSyllables);
 
-    // Trigger word celebration if any syllables were learned
-    if (learnedSyllables.length > 0 && onPhaseComplete) {
+    // Always trigger phase complete to return to scene, regardless of rounds completed
+    if (onPhaseComplete) {
       onPhaseComplete(gameConfig.id);
     } else if (onGameComplete) {
       onGameComplete();
