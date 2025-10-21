@@ -454,8 +454,8 @@ const handleMissionComplete = () => {
   profileName={profileName}
   getLotusImage={getBudImage}
   getBabyElephantImage={getBabyElephantImage}
-  selectedMode={sceneState.vakratundaMode}  // ⭐ CRITICAL
-  skipModeSelection={!!sceneState.vakratundaMode}  // ⭐ Only skip if mode exists
+  selectedMode={sceneState.vakratundaMode}  // ⭐ Mode from scene modal
+  skipModeSelection={true}  // ⭐ ALWAYS skip - scene handles mode selection
   isReload={isReload}
   savedGameState={sceneState.vakratundaGameState}
   onSaveGameState={(state) => {
@@ -473,8 +473,8 @@ const handleMissionComplete = () => {
   profileName={profileName}
   getStoneImage={getSeedImage}
   getAdultElephantImage={getAdultElephantImage}
-  selectedMode={sceneState.mahakayaMode}  // ⭐ CRITICAL
-  skipModeSelection={!!sceneState.mahakayaMode}  // ⭐ Only skip if mode exists
+  selectedMode={sceneState.mahakayaMode}  // ⭐ Mode from scene modal
+  skipModeSelection={true}  // ⭐ ALWAYS skip - scene handles mode selection
   isReload={isReload}
   savedGameState={sceneState.mahakayaGameState}
   onSaveGameState={(state) => {
@@ -660,7 +660,7 @@ onClick={() => {
         flexDirection: 'column'
       }}>
         {/* AUTO PLAY BUTTON */}
-        <button 
+        <button
           className="mission-start-btn"
           style={{
             background: 'linear-gradient(135deg, #4CAF50 0%, #81C784 100%)',
@@ -669,23 +669,17 @@ onClick={() => {
           }}
           onClick={() => {
             console.log(`🎮 Mode selected: AUTO for ${modeForPhase}`);
-            
-            // Set mode FIRST
-            const modeKey = `${modeForPhase}Mode`;
-            sceneActions.updateState({ 
-              [modeKey]: 'auto'
-            });
-            
+
             // Mark as selected to prevent loop
             setModeSelected(true);
-            
-            // Wait for state to update, THEN start game
-            setTimeout(() => {
-              setShowModeSelection(false);
-              sceneActions.updateState({ 
-                phase: modeForPhase === 'vakratunda' ? PHASES.VAKRATUNDA_GAME : PHASES.MAHAKAYA_GAME
-              });
-            }, 100);
+            setShowModeSelection(false);
+
+            // ⭐ FIX: Set mode AND phase in SINGLE update to prevent race condition
+            const modeKey = `${modeForPhase}Mode`;
+            sceneActions.updateState({
+              [modeKey]: 'auto',
+              phase: modeForPhase === 'vakratunda' ? PHASES.VAKRATUNDA_GAME : PHASES.MAHAKAYA_GAME
+            });
           }}
         >
           <div style={{ fontSize: '24px', marginBottom: '8px' }}>▶️ Auto Play</div>
@@ -695,7 +689,7 @@ onClick={() => {
         </button>
         
         {/* MANUAL BUTTON */}
-        <button 
+        <button
           className="mission-start-btn"
           style={{
             background: 'linear-gradient(135deg, #2196F3 0%, #64B5F6 100%)',
@@ -704,23 +698,17 @@ onClick={() => {
           }}
           onClick={() => {
             console.log(`🎮 Mode selected: MANUAL for ${modeForPhase}`);
-            
-            // Set mode FIRST
-            const modeKey = `${modeForPhase}Mode`;
-            sceneActions.updateState({ 
-              [modeKey]: 'manual'
-            });
-            
+
             // Mark as selected to prevent loop
             setModeSelected(true);
-            
-            // Wait for state to update, THEN start game
-            setTimeout(() => {
-              setShowModeSelection(false);
-              sceneActions.updateState({ 
-                phase: modeForPhase === 'vakratunda' ? PHASES.VAKRATUNDA_GAME : PHASES.MAHAKAYA_GAME
-              });
-            }, 100);
+            setShowModeSelection(false);
+
+            // ⭐ FIX: Set mode AND phase in SINGLE update to prevent race condition
+            const modeKey = `${modeForPhase}Mode`;
+            sceneActions.updateState({
+              [modeKey]: 'manual',
+              phase: modeForPhase === 'vakratunda' ? PHASES.VAKRATUNDA_GAME : PHASES.MAHAKAYA_GAME
+            });
           }}
         >
           <div style={{ fontSize: '24px', marginBottom: '8px' }}>🎯 Choose a Round</div>

@@ -52,11 +52,18 @@ const MemoryGameEngine = ({
       setSelectedMode(savedGameState.savedGameMode);
       setShowModeModal(false);
     } else if (!isReload) {
-      console.log('🆕 Fresh start - showing mode selection');
-      setSelectedMode(null);
-      setShowModeModal(true);
+      // ⭐ FIX: Respect skipModeSelection and preSelectedMode flags
+      if (skipModeSelection || preSelectedMode) {
+        console.log('🎮 Mode pre-selected or skipped:', preSelectedMode);
+        setSelectedMode(preSelectedMode);
+        setShowModeModal(false);
+      } else {
+        console.log('🆕 Fresh start - showing mode selection');
+        setSelectedMode(null);
+        setShowModeModal(true);
+      }
     }
-  }, [isActive, isReload, savedGameState]);
+  }, [isActive, isReload, savedGameState, skipModeSelection, preSelectedMode]);
 
   const handleModeSelection = (mode) => {
     console.log(`🎮 ${gameConfig.displayName}: Mode selected: ${mode}`);
