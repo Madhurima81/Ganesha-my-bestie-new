@@ -268,11 +268,13 @@ const AutoPlayMode = ({
   const handleRoundSuccess = () => {
     setCanPlayerClick(false);
     setGamePhase('celebration');
-    
+
     console.log(`Round ${currentRound} complete!`);
-    
+
     safeSetTimeout(() => {
-      if (currentRound < 3) {
+      // ⭐ DYNAMIC: Support 2-round and 3-round games
+      const maxRound = Object.keys(gameConfig.syllables).length;
+      if (currentRound < maxRound) {
         startNewRound(currentRound + 1);
       } else {
         handlePhaseComplete();

@@ -445,7 +445,8 @@ const ManualRoundMode = ({
 
             {/* Round Buttons */}
             <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginBottom: '30px' }}>
-              {[1, 2, 3].map(round => (
+              {/* ⭐ DYNAMIC: Support 2-round and 3-round games */}
+              {Array.from({ length: Object.keys(gameConfig.syllables).length }, (_, i) => i + 1).map(round => (
                 <button
                   key={round}
                   onClick={() => handleRoundSelect(round)}
