@@ -208,14 +208,207 @@ export const GAME_CONFIGS = {
     }
   },
 
-  // Template for remaining 5 games
-  // Just copy this structure and modify:
-  // - syllables
-  // - element types and positions
-  // - audio file mappings
-  // - theme colors
-  // - celebration messages
+  // Game 5: Nirvighnam (Scene 3 - Dual reward system)
+  nirvighnam: {
+    id: 'nirvighnam',
+    displayName: 'Nirvighnam',
+    theme: {
+      primaryColor: '#4CAF50',
+      accentColor: '#8BC34A',
+      backgroundColor: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+    },
 
+    syllables: {
+      1: ['nir', 'vigh'],
+      2: ['nir', 'vigh', 'nam']
+    },
+
+    elements: {
+      singer: {
+        type: 'rescue-items',
+        count: 3,
+        ids: ['rescue-nir', 'rescue-vigh', 'rescue-nam'],
+        positions: [
+          { left: '25%', top: '50%' },
+          { left: '40%', top: '45%' },
+          { left: '60%', top: '50%' }
+        ],
+        assetGetters: {
+          nir: 'getLeafRirImage',
+          vigh: 'getDrumVighImage',
+          nam: 'getFeatherNamImage'
+        }
+      },
+      clicker: {
+        type: 'animals',
+        count: 3,
+        ids: ['animal-nir', 'animal-vigh', 'animal-nam'],
+        // Initial positions - animals on stones
+        positions: [
+          { left: '25%', top: '25%' },
+          { left: '40%', top: '20%' },
+          { left: '60%', top: '25%' }
+        ],
+        assetGetters: {
+          nir: 'getFrogNirImage',
+          vigh: 'getSnailVighImage',
+          nam: 'getTurtleNamImage'
+        }
+      },
+      // Dual reward system - unique to nirvighnam
+      rewards: {
+        animals: {
+          // Animals move to water
+          positions: [
+            { left: '18%', top: '75%' },
+            { left: '38%', top: '70%' },
+            { left: '58%', top: '75%' }
+          ],
+          assetGetters: {
+            nir: 'getFrogNirImage',  // Same image, new position
+            vigh: 'getSnailVighImage',
+            nam: 'getTurtleNamImage'
+          }
+        },
+        stones: {
+          // Plain stones (initial)
+          positionsInitial: [
+            { left: '25%', top: '25%' },
+            { left: '40%', top: '20%' },
+            { left: '60%', top: '25%' }
+          ],
+          // Colored stones (reward)
+          positionsReward: [
+            { left: '28%', top: '30%' },
+            { left: '48%', top: '25%' },
+            { left: '68%', top: '30%' }
+          ],
+          assetGettersInitial: {
+            nir: 'getStone1NirImage',
+            vigh: 'getStone2VighImage',
+            nam: 'getStone3NamImage'
+          },
+          assetGettersReward: {
+            nir: 'getStone1NirColImage',
+            vigh: 'getStone2VighColImage',
+            nam: 'getStone3NamColImage'
+          }
+        }
+      }
+    },
+
+    audio: {
+      syllableFolder: '/audio/syllables/',
+      syllableFileMap: {
+        'nir': 'nirvighnam-nir',
+        'vigh': 'nirvighnam-vigh',
+        'nam': 'nirvighnam-nam'
+      },
+      completeWordFile: '/audio/words/nirvighnam.mp3'
+    },
+
+    waterSpray: {
+      enabled: false  // No water spray for Scene 3
+    },
+
+    celebration: {
+      emoji: '🐸',
+      message: 'Path cleared! Animals safe!'
+    }
+  },
+
+  // Game 6: KurumeDeva (Scene 3)
+  kurumedeva: {
+    id: 'kurumedeva',
+    displayName: 'Kurume Deva',
+    theme: {
+      primaryColor: '#FF9800',
+      accentColor: '#FFB74D',
+      backgroundColor: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
+    },
+
+    syllables: {
+      1: ['kuru', 'me'],
+      2: ['kuru', 'me', 'de'],
+      3: ['kuru', 'me', 'de', 'va']
+    },
+
+    elements: {
+      singer: {
+        type: 'animals',
+        count: 4,
+        ids: ['animal-kuru', 'animal-me', 'animal-de', 'animal-va'],
+        positions: [
+          { left: '70%', top: '35%' },
+          { left: '80%', top: '75%' },
+          { left: '35%', top: '80%' },
+          { left: '15%', top: '80%' }
+        ],
+        assetGetters: {
+          kuru: 'getAnimal1KuImage',
+          me: 'getAnimal3MeImage',
+          de: 'getAnimal4DeImage',
+          va: 'getAnimal2RuImage'
+        }
+      },
+      clicker: {
+        type: 'items-in-bubbles',
+        count: 4,
+        ids: ['item-kuru', 'item-me', 'item-de', 'item-va'],
+        positions: [
+          { left: '60%', top: '25%' },
+          { left: '50%', top: '25%' },
+          { left: '80%', top: '25%' },
+          { left: '25%', top: '60%' }
+        ],
+        assetGetters: {
+          kuru: 'getItem1KuImage',
+          me: 'getItem3MeImage',
+          de: 'getItem4DeImage',
+          va: 'getItem2RuImage'
+        }
+      },
+      rewards: {
+        type: 'decorations',
+        count: 4,
+        ids: ['decor-kuru', 'decor-me', 'decor-de', 'decor-va'],
+        positions: [
+          { left: '50%', top: '45%' },
+          { left: '50%', top: '60%' },
+          { left: '80%', top: '60%' },
+          { left: '50%', top: '40%' }
+        ],
+        assetGetters: {
+          kuru: 'getDecor1KuImage',
+          me: 'getDecor3MeImage',
+          de: 'getDecor4DeImage',
+          va: 'getDecor2RuImage'
+        }
+      }
+    },
+
+    audio: {
+      syllableFolder: '/audio/syllables/',
+      syllableFileMap: {
+        'kuru': 'kurumedeva-kuru',
+        'me': 'kurumedeva-me',
+        'de': 'kurumedeva-de',
+        'va': 'kurumedeva-va'
+      },
+      completeWordFile: '/audio/words/kurumedava.mp3'
+    },
+
+    waterSpray: {
+      enabled: false  // No water spray for Scene 3
+    },
+
+    celebration: {
+      emoji: '🎨',
+      message: 'Divine decoration complete!'
+    }
+  },
+
+  // Template for remaining games
   game4: {
     id: 'game4',
     displayName: 'Game 4 Name',
