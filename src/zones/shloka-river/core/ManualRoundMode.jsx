@@ -40,7 +40,15 @@ const ManualRoundMode = ({
   const [completedRounds, setCompletedRounds] = useState([]);
   const [learnedSyllables, setLearnedSyllables] = useState([]);
 
+  // ✅ FIX 1: Countdown state (like Auto mode)
+  const [countdown, setCountdown] = useState(0);
+  const [isCountingDown, setIsCountingDown] = useState(false);
+
+  // ✅ FIX 2: Water spray state
+  const [waterSprayPosition, setWaterSprayPosition] = useState(null);
+
   const timeoutsRef = useRef([]);
+  const intervalsRef = useRef([]);
   const isComponentMountedRef = useRef(true);
 
   const safeSetTimeout = (callback, delay) => {
@@ -51,11 +59,20 @@ const ManualRoundMode = ({
     return timeout;
   };
 
+  const safeSetInterval = (callback, delay) => {
+    const interval = setInterval(() => {
+      if (isComponentMountedRef.current) callback();
+    }, delay);
+    intervalsRef.current.push(interval);
+    return interval;
+  };
+
   useEffect(() => {
     isComponentMountedRef.current = true;
     return () => {
       isComponentMountedRef.current = false;
       timeoutsRef.current.forEach(t => clearTimeout(t));
+      intervalsRef.current.forEach(i => clearInterval(i));
     };
   }, []);
 
@@ -80,7 +97,26 @@ const ManualRoundMode = ({
     }
   };
 
-  // ✅ BUG 5 FIX: Direct start after round selection (removed intermediate button)
+  // ✅ FIX 1: Countdown system (like Auto mode)
+  const startCountdown = (sequence) => {
+    setIsCountingDown(true);
+    setCountdown(3);
+    setGameState('countdown');
+
+    const countdownInterval = safeSetInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(countdownInterval);
+          setIsCountingDown(false);
+          playSequence(sequence);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 800);
+  };
+
+  // ✅ FIX 1: Start with countdown after round selection
   const handleRoundSelect = (round) => {
     safeClick(() => {
       // ✅ BUG 3 FIX: Don't allow switching during ANY active gameplay
@@ -97,9 +133,9 @@ const ManualRoundMode = ({
       setPlayerInput([]);
       setRoundClicks({});
 
-      // ✅ BUG 5: Start playing immediately
+      // ✅ FIX 1: Start with countdown (3-2-1)
       safeSetTimeout(() => {
-        playSequence(sequence);
+        startCountdown(sequence);
       }, 500);
 
       if (onSaveGameState) {
@@ -153,6 +189,11 @@ const ManualRoundMode = ({
       if (syllableIndex !== expectedIndex) return;
 
       playSyllableAudio(clickedSyllable);
+
+      // ✅ FIX 2: Water spray animation at elephant position
+      const position = gameConfig.elements.clicker.positions[syllableIndex];
+      setWaterSprayPosition({ left: position.left, top: position.top });
+      safeSetTimeout(() => setWaterSprayPosition(null), 1000);
 
       const newPlayerInput = [...playerInput, clickedSyllable];
       setPlayerInput(newPlayerInput);
@@ -269,6 +310,30 @@ const ManualRoundMode = ({
             pointerEvents: 'none',
             zIndex: -1
           }} />
+        )}
+
+        {/* ✅ FIX 3: "Tap Here!" bouncing hint text */}
+        {isNext && !clicked && (
+          <div style={{
+            position: 'absolute',
+            top: '-60px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+            color: 'white',
+            padding: '8px 16px',
+            borderRadius: '12px',
+            fontSize: '1.3rem',
+            fontWeight: 'bold',
+            border: '3px solid #FFD700',
+            boxShadow: '0 4px 15px rgba(255, 215, 0, 0.5)',
+            animation: 'tapHereBounce 1.5s ease-in-out infinite',
+            whiteSpace: 'nowrap',
+            zIndex: 30,
+            pointerEvents: 'none'
+          }}>
+            👆 Tap Here!
+          </div>
         )}
 
         <div style={{
@@ -467,8 +532,42 @@ const ManualRoundMode = ({
 
       {/* ✅ BUG 2 & 5 FIX: Removed "Play Round X" intermediate button */}
 
+      {/* ✅ FIX 1: Countdown Display (like Auto mode) */}
+      {!hideElements && isCountingDown && (
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          fontSize: '100px',
+          fontWeight: 'bold',
+          color: gameConfig.theme.primaryColor,
+          textShadow: `0 0 30px ${gameConfig.theme.primaryColor}80`,
+          zIndex: 100,
+          animation: 'countdownPulse 0.8s ease-in-out'
+        }}>
+          {countdown}
+        </div>
+      )}
+
+      {/* ✅ FIX 2: Water Spray Animation */}
+      {!hideElements && waterSprayPosition && (
+        <div style={{
+          position: 'absolute',
+          left: waterSprayPosition.left,
+          top: waterSprayPosition.top,
+          transform: 'translate(-50%, -100%)',
+          fontSize: '48px',
+          animation: 'waterSplash 1s ease-out',
+          zIndex: 100,
+          pointerEvents: 'none'
+        }}>
+          💦
+        </div>
+      )}
+
       {/* Status Message */}
-      {!hideElements && gameState !== 'roundSelection' && (
+      {!hideElements && gameState !== 'roundSelection' && gameState !== 'countdown' && (
         <div style={{
           position: 'absolute',
           top: '20px',
@@ -505,6 +604,26 @@ const ManualRoundMode = ({
         @keyframes goldenPulse {
           0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
           50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        /* ✅ FIX 3: Tap Here bouncing animation */
+        @keyframes tapHereBounce {
+          0%, 100% { transform: translateX(-50%) translateY(0); }
+          50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        /* ✅ FIX 1: Countdown pulse animation */
+        @keyframes countdownPulse {
+          0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+          50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+          100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+        }
+
+        /* ✅ FIX 2: Water splash animation */
+        @keyframes waterSplash {
+          0% { transform: translate(-50%, -100%) scale(0.5); opacity: 1; }
+          50% { transform: translate(-50%, -150%) scale(1.2); opacity: 0.8; }
+          100% { transform: translate(-50%, -200%) scale(1.5); opacity: 0; }
         }
       `}</style>
     </div>

@@ -55,7 +55,10 @@ const AutoPlayMode = ({
   // Animation state
   const [countdown, setCountdown] = useState(0);
   const [isCountingDown, setIsCountingDown] = useState(false);
-  
+
+  // ✅ FIX 2: Water spray state
+  const [waterSprayPosition, setWaterSprayPosition] = useState(null);
+
   // Wait banner
   const [waitBannerMessage, setWaitBannerMessage] = useState('');
   const [showWaitBanner, setShowWaitBanner] = useState(false);
@@ -241,12 +244,17 @@ const AutoPlayMode = ({
       
       console.log(`Clicked elephant: ${clickedSyllable}`);
       playSyllableAudio(clickedSyllable);
-      
+
+      // ✅ FIX 2: Water spray animation at elephant position
+      const position = gameConfig.elements.clicker.positions[syllableIndex];
+      setWaterSprayPosition({ left: position.left, top: position.top });
+      safeSetTimeout(() => setWaterSprayPosition(null), 1000);
+
       const newPlayerInput = [...playerInput, clickedSyllable];
       setPlayerInput(newPlayerInput);
       setRoundClicks(prev => ({ ...prev, [`elephant-${clickedSyllable}`]: true }));
       setActivatedElephants(prev => ({ ...prev, [`elephant-${clickedSyllable}`]: true }));
-      
+
       // Transform visual reward
       setVisualRewards(prev => ({ ...prev, [`visual-${clickedSyllable}`]: true }));
       
@@ -432,7 +440,31 @@ const AutoPlayMode = ({
             pointerEvents: 'none'
           }} />
         )}
-        
+
+        {/* ✅ FIX 3: "Tap Here!" bouncing hint text */}
+        {isNext && !hasBeenClicked && (
+          <div style={{
+            position: 'absolute',
+            top: '-60px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+            color: 'white',
+            padding: '8px 16px',
+            borderRadius: '12px',
+            fontSize: '1.3rem',
+            fontWeight: 'bold',
+            border: '3px solid #FFD700',
+            boxShadow: '0 4px 15px rgba(255, 215, 0, 0.5)',
+            animation: 'tapHereBounce 1.5s ease-in-out infinite',
+            whiteSpace: 'nowrap',
+            zIndex: 30,
+            pointerEvents: 'none'
+          }}>
+            👆 Tap Here!
+          </div>
+        )}
+
         {isActivated && !hasBeenClicked && (
           <div style={{
             position: 'absolute',
@@ -720,6 +752,22 @@ const AutoPlayMode = ({
         </div>
       )}
 
+      {/* ✅ FIX 2: Water Spray Animation */}
+      {!hideElements && waterSprayPosition && (
+        <div style={{
+          position: 'absolute',
+          left: waterSprayPosition.left,
+          top: waterSprayPosition.top,
+          transform: 'translate(-50%, -100%)',
+          fontSize: '48px',
+          animation: 'waterSplash 1s ease-out',
+          zIndex: 100,
+          pointerEvents: 'none'
+        }}>
+          💦
+        </div>
+      )}
+
       {/* Game elements */}
       {!hideElements && (
         <>
@@ -801,6 +849,19 @@ const AutoPlayMode = ({
         @keyframes sparkle {
           0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
           50% { opacity: 0.5; transform: translateX(-50%) scale(1.2); }
+        }
+
+        /* ✅ FIX 3: Tap Here bouncing animation */
+        @keyframes tapHereBounce {
+          0%, 100% { transform: translateX(-50%) translateY(0); }
+          50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        /* ✅ FIX 2: Water splash animation */
+        @keyframes waterSplash {
+          0% { transform: translate(-50%, -100%) scale(0.5); opacity: 1; }
+          50% { transform: translate(-50%, -150%) scale(1.2); opacity: 0.8; }
+          100% { transform: translate(-50%, -200%) scale(1.5); opacity: 0; }
         }
       `}</style>
     </div>
