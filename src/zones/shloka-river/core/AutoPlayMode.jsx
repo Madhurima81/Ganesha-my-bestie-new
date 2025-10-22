@@ -384,11 +384,20 @@ const AutoPlayMode = ({
       elephantStyle.opacity = 0.6;
     }
 
-    const getterName = gameConfig.elements.clicker.assetGetter;
-    const getImage = assetGetters[getterName];
-    
+    // ⭐ Handle both single assetGetter and assetGetters object patterns
+    let getImage;
+    if (gameConfig.elements.clicker.assetGetter) {
+      // Pattern 1: Single getter function (vakratunda, mahakaya, etc.)
+      const getterName = gameConfig.elements.clicker.assetGetter;
+      getImage = assetGetters[getterName];
+    } else if (gameConfig.elements.clicker.assetGetters) {
+      // Pattern 2: Object with syllable mappings (nirvighnam, kurumedeva)
+      const getterName = gameConfig.elements.clicker.assetGetters[syllable];
+      getImage = assetGetters[getterName];
+    }
+
     if (!getImage) {
-      console.error(`Asset getter not found: ${getterName}`);
+      console.error('[Clicker] Asset getter not found for syllable:', syllable);
       return null;
     }
 
@@ -535,11 +544,20 @@ const AutoPlayMode = ({
     if (isTransformed) return null;
 
     // ✅ BUG 6 & 8: Use assetGetterInitial for unrewarded state
-    const getterName = gameConfig.elements.singer.assetGetterInitial;
-    const getImage = assetGetters[getterName];
+    // ⭐ Handle both single assetGetterInitial and assetGetters object patterns
+    let getImage;
+    if (gameConfig.elements.singer.assetGetterInitial) {
+      // Pattern 1: Single getter function (vakratunda, mahakaya, etc.)
+      const getterName = gameConfig.elements.singer.assetGetterInitial;
+      getImage = assetGetters[getterName];
+    } else if (gameConfig.elements.singer.assetGetters) {
+      // Pattern 2: Object with syllable mappings (nirvighnam, kurumedeva)
+      const getterName = gameConfig.elements.singer.assetGetters[syllable];
+      getImage = assetGetters[getterName];
+    }
 
     if (!getImage) {
-      console.warn(`[Visual] Initial asset getter not found: ${getterName}`);
+      console.warn(`[Visual] Initial asset getter not found for syllable: ${syllable}`);
       return null;
     }
 
@@ -646,11 +664,20 @@ const AutoPlayMode = ({
     if (!isVisible) return null;
 
     // ✅ BUG 6 & 8: Use assetGetterReward for rewarded state
-    const getterName = gameConfig.elements.singer.assetGetterReward;
-    const getImage = assetGetters[getterName];
+    // ⭐ Handle both single assetGetterReward and assetGetters object patterns
+    let getImage;
+    if (gameConfig.elements.singer.assetGetterReward) {
+      // Pattern 1: Single getter function (vakratunda, mahakaya, etc.)
+      const getterName = gameConfig.elements.singer.assetGetterReward;
+      getImage = assetGetters[getterName];
+    } else if (gameConfig.elements.singer.assetGetters) {
+      // Pattern 2: Object with syllable mappings - for nirvighnam, this is the singer (rescue items)
+      const getterName = gameConfig.elements.singer.assetGetters[syllable];
+      getImage = assetGetters[getterName];
+    }
 
     if (!getImage) {
-      console.warn(`[Visual] Reward asset getter not found: ${getterName}`);
+      console.warn(`[Visual] Reward asset getter not found for syllable: ${syllable}`);
       return null;
     }
 
