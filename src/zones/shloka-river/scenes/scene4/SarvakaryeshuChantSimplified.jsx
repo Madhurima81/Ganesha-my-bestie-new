@@ -24,7 +24,7 @@ import SceneCompletionCelebration from '../../../../lib/components/celebration/S
 
 import SarvakaryeshuSarvadaGame from './components/SarvakaryeshuSarvadaGame';
 import SanskritVoiceRecorder from '../../../../lib/components/audio/SanskritVoiceRecorder';
-import SmartwatchWidget from '../Scene1/components/SmartwatchWidget';
+import SmartwatchWidget from '../Scene1/prev codes/SmartwatchWidget';
 import HelperSignatureAnimation from '../../../../lib/components/animation/HelperSignatureAnimation';
 
 import AppSidebar from "../../shared/AppSidebar";

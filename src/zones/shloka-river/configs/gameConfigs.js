@@ -141,58 +141,131 @@ export const GAME_CONFIGS = {
     }
   },
 
-  // Game 3: Ekadanta (example structure for your other games)
-  ekadanta: {
-    id: 'ekadanta',
-    displayName: 'Ekadanta',
+  // Game 3: Suryakoti (Solar Clarity)
+  suryakoti: {
+    id: 'suryakoti',
+    displayName: 'Suryakoti',
     theme: {
-      primaryColor: '#9C27B0',
-      accentColor: '#BA68C8',
-      backgroundColor: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+      primaryColor: '#FFD700', // Gold/Solar Color
+      accentColor: '#FFA500',  // Orange/Sun Color
+      backgroundColor: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)'
     },
     
     syllables: {
-      1: ['e', 'ka'],
-      2: ['e', 'ka', 'dan'],
-      3: ['e', 'ka', 'dan', 'ta']
+      1: ['sur', 'ya'],
+      2: ['sur', 'ya', 'ko'],
+      3: ['sur', 'ya', 'ko', 'ti']
     },
     
     elements: {
+      // Singer/Reward: Flowers (closed -> open)
       singer: {
-        type: 'crystal',
+        type: 'flower',
         count: 4,
-        ids: ['crystal-e', 'crystal-ka', 'crystal-dan', 'crystal-ta'],
+        ids: ['flower-sur', 'flower-ya', 'flower-ko', 'flower-ti'],
         positions: [
-          { left: '22%', top: '48%' },
-          { left: '38%', top: '52%' },
-          { left: '48%', top: '58%' },
-          { left: '78%', top: '48%' }
+          { left: '20%', top: '55%' },
+          { left: '40%', top: '50%' },
+          { left: '60%', top: '55%' },
+          { left: '80%', top: '50%' }
         ],
-        assetGetter: 'getCrystalImage'
+        assetGetterInitial: 'getClosedFlowerImage',   // Shows when syllable NOT learned
+        assetGetterReward: 'getOpenFlowerImage'      // Shows when syllable IS learned
       },
+      // Clicker: Sun Orbs
       clicker: {
-        type: 'mouse',
+        type: 'sun-orb',
         count: 4,
-        ids: ['mouse-e', 'mouse-ka', 'mouse-dan', 'mouse-ta'],
+        ids: ['orb-sur', 'orb-ya', 'orb-ko', 'orb-ti'],
         positions: [
-          { left: '15%', top: '68%' },
-          { left: '35%', top: '38%' },
-          { left: '55%', top: '33%' },
-          { left: '65%', top: '31%' }
+          { left: '10%', top: '35%' },
+          { left: '30%', top: '40%' },
+          { left: '50%', top: '45%' },
+          { left: '70%', top: '40%' }
         ],
-        assetGetter: 'getMouseImage'
+        assetGetter: 'getSunOrbImage'
       }
     },
     
     audio: {
       syllableFolder: '/audio/syllables/',
       syllableFileMap: {
-        'e': 'ekadanta-e',
-        'ka': 'ekadanta-ka',
-        'dan': 'ekadanta-dan',
-        'ta': 'ekadanta-ta'
+        'sur': 'suryakoti-sur',
+        'ya': 'suryakoti-ya',
+        'ko': 'suryakoti-ko',
+        'ti': 'suryakoti-ti'
       },
-      completeWordFile: '/audio/words/Ekadanta.mp3'
+      completeWordFile: '/audio/words/Suryakoti.mp3'
+    },
+    
+    waterSpray: {
+      enabled: true,
+      dropCount: 20,
+      duration: 1500,
+      color: '#FF9800'
+    },
+    
+    celebration: {
+      emoji: '🌻',
+      message: 'Solar power unlocked! The flower blooms.'
+    }
+  },
+
+  // Game 4: Samaprabha (Radiant Light)
+  samaprabha: {
+    id: 'samaprabha',
+    displayName: 'Samaprabha',
+    theme: {
+      primaryColor: '#9400D3', // Dark Violet/Radiant Light Color
+      accentColor: '#BA68C8',  // Light Purple
+      backgroundColor: 'linear-gradient(135deg, #9400D3 0%, #BA68C8 100%)'
+    },
+    
+    syllables: {
+      1: ['sa', 'ma'],
+      2: ['sa', 'ma', 'pra'],
+      3: ['sa', 'ma', 'pra', 'bha']
+    },
+    
+    elements: {
+      // Singer/Reward: Animals (sad -> happy)
+      singer: {
+        type: 'animal',
+        count: 4,
+        ids: ['animal-sa', 'animal-ma', 'animal-pra', 'animal-bha'],
+        positions: [
+          { left: '15%', top: '68%' },
+          { left: '35%', top: '72%' },
+          { left: '55%', top: '68%' },
+          { left: '75%', top: '72%' }
+        ],
+        assetGetterInitial: 'getSadAnimalImage',   // Shows when syllable NOT learned
+        assetGetterReward: 'getHappyAnimalImage'  // Shows when syllable IS learned
+      },
+      // Clicker: Rainbows
+      clicker: {
+        type: 'rainbow',
+        count: 4,
+        ids: ['rainbow-sa', 'rainbow-ma', 'rainbow-pra', 'rainbow-bha'],
+        positions: [
+          { left: '18%', top: '25%' },
+          { left: '38%', top: '30%' },
+          { left: '58%', top: '25%' },
+          { left: '78%', top: '30%' }
+        ],
+        assetGetter: 'getRainbowImage'
+      }
+    },
+    
+    audio: {
+      syllableFolder: '/audio/syllables/',
+      syllableFileMap: {
+        'sa': 'samaprabha-sa',
+        'ma': 'samaprabha-ma',
+        'pra': 'samaprabha-pra',
+        'bha': 'samaprabha-bha'
+      },
+      completeWordFile: '/audio/words/Samaprabha.mp3'
     },
     
     waterSpray: {
@@ -203,47 +276,276 @@ export const GAME_CONFIGS = {
     },
     
     celebration: {
-      emoji: '💎',
-      message: 'Crystal radiates brilliance!'
+      emoji: '🌈',
+      message: 'Radiant light achieved! The animal is happy.'
     }
   },
 
-  // Template for remaining 5 games
-  // Just copy this structure and modify:
-  // - syllables
-  // - element types and positions
-  // - audio file mappings
-  // - theme colors
-  // - celebration messages
-
-  game4: {
-    id: 'game4',
-    displayName: 'Game 4 Name',
-    // ... same structure as above
+  // Game 5: Nirvighnam (Sacred Wisdom)
+  nirvighnam: {
+    id: 'nirvighnam',
+    displayName: 'Nirvighnam',
+    theme: {
+      primaryColor: '#DAA520', // Sacred Wisdom Gold
+      accentColor: '#8B4513',  // Earthy Brown
+      backgroundColor: 'linear-gradient(135deg, #DAA520 0%, #8B4513 100%)'
+    },
+    
+    syllables: {
+      1: ['nir'],
+      2: ['nir', 'vigh'],
+      3: ['nir', 'vigh', 'nam']
+    },
+    
+    elements: {
+      // Singer/Reward: Stone (Plain -> Colored)
+      singer: {
+        type: 'stone',
+        count: 3,
+        ids: ['stone-nir', 'stone-vigh', 'stone-nam'],
+        positions: [
+          { left: '20%', top: '55%' },
+          { left: '50%', top: '60%' },
+          { left: '80%', top: '55%' }
+        ],
+        assetGetterInitial: 'getPlainStoneImage',   // Shows when syllable NOT learned
+        assetGetterReward: 'getColoredStoneImage'  // Shows when syllable IS learned
+      },
+      // Clicker: Animal (Frog, Snail, Turtle)
+      clicker: {
+        type: 'animal',
+        count: 3,
+        ids: ['animal-nir', 'animal-vigh', 'animal-nam'],
+        positions: [
+          { left: '15%', top: '75%' },
+          { left: '45%', top: '70%' },
+          { left: '75%', top: '75%' }
+        ],
+        assetGetter: 'getNirvighnamAnimalImage'
+      }
+    },
+    
+    audio: {
+      syllableFolder: '/audio/syllables/',
+      syllableFileMap: {
+        'nir': 'nirvighnam-nir',
+        'vigh': 'nirvighnam-vigh',
+        'nam': 'nirvighnam-nam'
+      },
+      completeWordFile: '/audio/words/Nirvighnam.mp3'
+    },
+    
+    waterSpray: {
+      enabled: true,
+      dropCount: 15,
+      duration: 1500,
+      color: '#DAA520'
+    },
+    
+    celebration: {
+      emoji: '🪨',
+      message: 'Sacred stone path is cleared!'
+    }
   },
 
-  game5: {
-    id: 'game5',
-    displayName: 'Game 5 Name',
-    // ... same structure as above
+  // Game 6: Kurumedeva (Divine Grace - CORRECTED to 4 Syllables)
+  kurumedeva: {
+    id: 'kurumedeva',
+    displayName: 'Kurumedeva',
+    theme: {
+      primaryColor: '#9370DB', // Divine Grace Purple
+      accentColor: '#BA68C8',  // Light Purple
+      backgroundColor: 'linear-gradient(135deg, #9370DB 0%, #BA68C8 100%)'
+    },
+    
+    syllables: {
+      1: ['ku', 'ru'],
+      2: ['ku', 'ru', 'me'],
+      3: ['ku', 'ru', 'me', 'va'] // Corrected: 'de' and 'va' combined/simplified, assuming the learning state is the source of truth for syllables
+    },
+    
+    elements: {
+      // Singer/Reward: Decoration (Plain -> Colored)
+      singer: {
+        type: 'decoration',
+        count: 4, // Corrected from 5 to 4
+        ids: ['decor-ku', 'decor-ru', 'decor-me', 'decor-va'],
+        positions: [
+          { left: '20%', top: '50%' },
+          { left: '40%', top: '55%' },
+          { left: '60%', top: '55%' },
+          { left: '80%', top: '50%' }
+        ],
+        assetGetterInitial: 'getKurumedevaPlainDecorImage', 
+        assetGetterReward: 'getKurumedevaColoredDecorImage'
+      },
+      // Clicker: Item
+      clicker: {
+        type: 'item',
+        count: 4, // Corrected from 5 to 4
+        ids: ['item-ku', 'item-ru', 'item-me', 'item-va'],
+        positions: [
+          { left: '15%', top: '70%' },
+          { left: '35%', top: '65%' },
+          { left: '55%', top: '65%' },
+          { left: '75%', top: '70%' }
+        ],
+        assetGetter: 'getKurumedevaItemImage'
+      }
+    },
+    
+    audio: {
+      syllableFolder: '/audio/syllables/',
+      syllableFileMap: {
+        'ku': 'kurumedeva-ku',
+        'ru': 'kurumedeva-ru',
+        'me': 'kurumedeva-me',
+        'va': 'kurumedeva-va' // Corrected: Use 'va' as the 4th syllable mapping
+      },
+      completeWordFile: '/audio/words/Kurumedeva.mp3'
+    },
+    
+    waterSpray: {
+      enabled: true,
+      dropCount: 18, // Reduced from 22 to 18 for 4 elements
+      color: '#9370DB'
+    },
+    
+    celebration: {
+      emoji: '🔮',
+      message: 'Divine decoration complete!'
+    }
   },
 
-  game6: {
-    id: 'game6',
-    displayName: 'Game 6 Name',
-    // ... same structure as above
+  // Game 7: Sarvakaryeshu (Divine Action - 4 Syllables - Corrected)
+  sarvakaryeshu: {
+    id: 'sarvakaryeshu',
+    displayName: 'Sarvakaryeshu',
+    theme: {
+      primaryColor: '#008080', // Teal/Pond Color
+      accentColor: '#40E0D0',  // Turquoise
+      backgroundColor: 'linear-gradient(135deg, #008080 0%, #40E0D0 100%)'
+    },
+    
+    syllables: {
+      1: ['sar', 'va'],
+      2: ['sar', 'va', 'kar'],
+      3: ['sar', 'va', 'kar', 'yeshu'] // Corrected to 4 syllables
+    },
+    
+    elements: {
+      singer: {
+        type: 'animal',
+        count: 4, // Corrected from 5 to 4
+        ids: ['animal-sar', 'animal-va', 'animal-kar', 'animal-yeshu'],
+        positions: [
+          { left: '20%', top: '60%' },
+          { left: '40%', top: '65%' },
+          { left: '60%', top: '65%' },
+          { left: '80%', top: '60%' }
+        ],
+        assetGetterInitial: 'getSarvakaryeshuSadAnimalImage', 
+        assetGetterReward: 'getSarvakaryeshuHappyAnimalImage'
+      },
+      clicker: {
+        type: 'helper-animal',
+        count: 4, // Corrected from 5 to 4
+        ids: ['helper-sar', 'helper-va', 'helper-kar', 'helper-yeshu'],
+        positions: [
+          { left: '15%', top: '40%' },
+          { left: '35%', top: '35%' },
+          { left: '55%', top: '35%' },
+          { left: '75%', top: '40%' }
+        ],
+        assetGetter: 'getSarvakaryeshuHelperImage'
+      }
+    },
+    
+    audio: {
+      syllableFolder: '/audio/syllables/',
+      syllableFileMap: {
+        'sar': 'sarvakaryeshu-sar',
+        'va': 'sarvakaryeshu-va',
+        'kar': 'sarvakaryeshu-kar',
+        'yeshu': 'sarvakaryeshu-yeshu'
+      },
+      completeWordFile: '/audio/words/Sarvakaryeshu.mp3'
+    },
+    
+    waterSpray: {
+      enabled: true,
+      dropCount: 20,
+      color: '#40E0D0'
+    },
+    
+    celebration: {
+      emoji: '🦚',
+      message: 'Divine action unlocked! The path is blessed.'
+    }
   },
 
-  game7: {
-    id: 'game7',
-    displayName: 'Game 7 Name',
-    // ... same structure as above
-  },
-
-  game8: {
-    id: 'game8',
-    displayName: 'Game 8 Name',
-    // ... same structure as above
+  // Game 8: Sarvada (Eternal Blessing, 3 Syllables)
+  sarvada: {
+    id: 'sarvada',
+    displayName: 'Sarvada',
+    theme: {
+      primaryColor: '#7B68EE', // MediumSlateBlue/Final Power Color
+      accentColor: '#9370DB',  // MediumPurple
+      backgroundColor: 'linear-gradient(135deg, #7B68EE 0%, #9370DB 100%)'
+    },
+    
+    syllables: {
+      1: ['sar', 'va'],
+      2: ['sar', 'va', 'da'] // 3 Syllables
+    },
+    
+    elements: {
+      singer: {
+        type: 'animal',
+        count: 3,
+        ids: ['animal-sar', 'animal-va', 'animal-da'],
+        positions: [
+          { left: '25%', top: '40%' },
+          { left: '50%', top: '50%' },
+          { left: '75%', top: '40%' }
+        ],
+        assetGetterInitial: 'getSarvadaSadAnimalImage',
+        assetGetterReward: 'getSarvadaHappyAnimalImage'
+      },
+      clicker: {
+        type: 'helper-animal',
+        count: 3,
+        ids: ['helper-sar', 'helper-va', 'helper-da'],
+        positions: [
+          { left: '20%', top: '25%' },
+          { left: '45%', top: '20%' },
+          { left: '70%', top: '25%' }
+        ],
+        assetGetter: 'getSarvadaHelperImage'
+      }
+    },
+    
+    audio: {
+      syllableFolder: '/audio/syllables/',
+      syllableFileMap: {
+        'sar': 'sarvada-sar',
+        'va': 'sarvada-va',
+        'da': 'sarvada-da'
+      },
+      completeWordFile: '/audio/words/Sarvada.mp3'
+    },
+    
+    waterSpray: {
+      enabled: true,
+      dropCount: 15,
+      duration: 1500,
+      color: '#9370DB'
+    },
+    
+    celebration: {
+      emoji: '✨',
+      message: 'The final star shines brightly!'
+    }
   }
 };
 

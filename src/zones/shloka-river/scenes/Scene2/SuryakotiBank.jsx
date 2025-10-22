@@ -24,7 +24,7 @@ import SimplifiedCombinedMemoryGame from './components/SimplifiedCombinedMemoryG
 import SunRayArc from './components/SunRayArc';
 //import SparkleTrailComponent from './components/SparkleTrailComponent'; // Add this component
 import SanskritVoiceRecorder from '../../../../lib/components/audio/SanskritVoiceRecorder';
-import SmartwatchWidget from '../Scene1/components/SmartwatchWidget';
+import SmartwatchWidget from '../Scene1/prev codes/SmartwatchWidget';
 import HelperSignatureAnimation from '../../../../lib/components/animation/HelperSignatureAnimation';
 
 import AppSidebar from "../../shared/AppSidebar";

@@ -4,7 +4,6 @@ import './App.css';
 
 
 //Shloka river - old flow
-import VakratundaGroveV2 from './zones/shloka-river/scenes/Scene1/VakratundaGroveV2.jsx';
 import SuryakotiBank from './zones/shloka-river/scenes/Scene2/SuryakotiBank.jsx';
 import NirvighnamChant from './zones/shloka-river/scenes/Scene3/NirvighnamChantSimplified.jsx';
 import SarvakaryeshuChant from './zones/shloka-river/scenes/scene4/SarvakaryeshuChantSimplified.jsx';
@@ -226,7 +225,7 @@ function App() {
 
       {/* Elephant Grove Scene */}
       <GameCoachProvider>
-        <VakratundaGroveSimplified //NirvighnamSceneV4 //SarvakaryeshuSarvadaV6 //NirvighnamSceneV4 //SuryakotiSceneV3 //CaveSceneFixedV1 //SarvakaryeshuChantSimplified //SuryakotiBankSimplified //NirvighnamChantSimplified //VakratundaGroveSimplified  
+       <NirvighnamChantSimplified  //SarvakaryeshuSarvadaV6 //NirvighnamSceneV4 //SuryakotiSceneV3 //CaveSceneFixedV1 //SarvakaryeshuChantSimplified //SuryakotiBankSimplified //NirvighnamChantSimplified //VakratundaGroveSimplified  
         // SuryakotiBankSimplified //SuryakotiBank //VakratundaGroveSimplified   //NirvighnamChant 
         // //NewModakSceneV5 //FestivalPianoGame //FestivalRangoliGame //ModakCookingGame  //FestivalPianoGame MandapDecorationGame
           key={reloadKey}
