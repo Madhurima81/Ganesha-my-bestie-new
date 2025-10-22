@@ -544,14 +544,18 @@ const AutoPlayMode = ({
     if (isTransformed) return null;
 
     // ✅ BUG 6 & 8: Use assetGetterInitial for unrewarded state
-    // ⭐ Handle both single assetGetterInitial and assetGetters object patterns
+    // ⭐ Handle multiple patterns: single function, syllable mappings, or assetGettersInitial
     let getImage;
     if (gameConfig.elements.singer.assetGetterInitial) {
-      // Pattern 1: Single getter function (vakratunda, mahakaya, etc.)
+      // Pattern 1: Single getter function (vakratunda, mahakaya)
       const getterName = gameConfig.elements.singer.assetGetterInitial;
       getImage = assetGetters[getterName];
+    } else if (gameConfig.elements.singer.assetGettersInitial) {
+      // Pattern 2: assetGettersInitial object (kurumedeva)
+      const getterName = gameConfig.elements.singer.assetGettersInitial[syllable];
+      getImage = assetGetters[getterName];
     } else if (gameConfig.elements.singer.assetGetters) {
-      // Pattern 2: Object with syllable mappings (nirvighnam, kurumedeva)
+      // Pattern 3: assetGetters object (not used for initials, but kept for compatibility)
       const getterName = gameConfig.elements.singer.assetGetters[syllable];
       getImage = assetGetters[getterName];
     }
@@ -658,20 +662,31 @@ const AutoPlayMode = ({
 
   // ✅ BUG 6 & 8 FIX: Render visual reward (lotus/flower) - uses assetGetterReward
   const renderVisualReward = (syllable, index) => {
-    const position = getPosition('visual', index);
+    // ⭐ Check for different reward positions (kurumedeva has positionsReward)
+    let position;
+    if (gameConfig.elements.singer.positionsReward) {
+      position = gameConfig.elements.singer.positionsReward[index];
+    } else {
+      position = getPosition('visual', index);
+    }
+
     const isVisible = isVisualRewardActive(syllable);
 
     if (!isVisible) return null;
 
     // ✅ BUG 6 & 8: Use assetGetterReward for rewarded state
-    // ⭐ Handle both single assetGetterReward and assetGetters object patterns
+    // ⭐ Handle multiple patterns: single function, syllable mappings, or assetGettersReward
     let getImage;
     if (gameConfig.elements.singer.assetGetterReward) {
-      // Pattern 1: Single getter function (vakratunda, mahakaya, etc.)
+      // Pattern 1: Single getter function (vakratunda, mahakaya)
       const getterName = gameConfig.elements.singer.assetGetterReward;
       getImage = assetGetters[getterName];
+    } else if (gameConfig.elements.singer.assetGettersReward) {
+      // Pattern 2: assetGettersReward object (kurumedeva)
+      const getterName = gameConfig.elements.singer.assetGettersReward[syllable];
+      getImage = assetGetters[getterName];
     } else if (gameConfig.elements.singer.assetGetters) {
-      // Pattern 2: Object with syllable mappings - for nirvighnam, this is the singer (rescue items)
+      // Pattern 3: assetGetters object (not typically used for rewards, but kept for compatibility)
       const getterName = gameConfig.elements.singer.assetGetters[syllable];
       getImage = assetGetters[getterName];
     }
@@ -681,7 +696,7 @@ const AutoPlayMode = ({
       return null;
     }
 
-    console.log(`[Visual] Lotus bloomed for ${syllable}! (index ${index})`);
+    console.log(`[Visual] Reward appeared for ${syllable}! (index ${index})`);
 
     return (
       <div

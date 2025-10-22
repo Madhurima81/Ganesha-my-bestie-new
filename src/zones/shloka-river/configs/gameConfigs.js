@@ -224,7 +224,8 @@ export const GAME_CONFIGS = {
     },
 
     elements: {
-      singer: {
+      // ⭐ CLICKERS = Rescue items (drum, leaf, feather) - these SING and you CLICK them
+      clicker: {
         type: 'rescue-items',
         count: 3,
         ids: ['rescue-nir', 'rescue-vigh', 'rescue-nam'],
@@ -237,22 +238,6 @@ export const GAME_CONFIGS = {
           nir: 'getLeafRirImage',
           vigh: 'getDrumVighImage',
           nam: 'getFeatherNamImage'
-        }
-      },
-      clicker: {
-        type: 'animals',
-        count: 3,
-        ids: ['animal-nir', 'animal-vigh', 'animal-nam'],
-        // Initial positions - animals on stones
-        positions: [
-          { left: '25%', top: '25%' },
-          { left: '40%', top: '20%' },
-          { left: '60%', top: '25%' }
-        ],
-        assetGetters: {
-          nir: 'getFrogNirImage',
-          vigh: 'getSnailVighImage',
-          nam: 'getTurtleNamImage'
         }
       },
       // Dual reward system - unique to nirvighnam
@@ -334,7 +319,8 @@ export const GAME_CONFIGS = {
     },
 
     elements: {
-      singer: {
+      // ⭐ CLICKERS = Animals - these SING and you CLICK them
+      clicker: {
         type: 'animals',
         count: 4,
         ids: ['animal-kuru', 'animal-me', 'animal-de', 'animal-va'],
@@ -351,34 +337,32 @@ export const GAME_CONFIGS = {
           va: 'getAnimal2RuImage'
         }
       },
-      clicker: {
-        type: 'items-in-bubbles',
+      // ⭐ SINGER = Visual elements (items → decorations)
+      singer: {
+        type: 'items-to-decorations',
         count: 4,
-        ids: ['item-kuru', 'item-me', 'item-de', 'item-va'],
+        ids: ['visual-kuru', 'visual-me', 'visual-de', 'visual-va'],
+        // Initial state - items in bubbles
         positions: [
           { left: '60%', top: '25%' },
           { left: '50%', top: '25%' },
           { left: '80%', top: '25%' },
           { left: '25%', top: '60%' }
         ],
-        assetGetters: {
+        assetGettersInitial: {
           kuru: 'getItem1KuImage',
           me: 'getItem3MeImage',
           de: 'getItem4DeImage',
           va: 'getItem2RuImage'
-        }
-      },
-      rewards: {
-        type: 'decorations',
-        count: 4,
-        ids: ['decor-kuru', 'decor-me', 'decor-de', 'decor-va'],
-        positions: [
+        },
+        // Reward state - decorations on wall
+        positionsReward: [
           { left: '50%', top: '45%' },
           { left: '50%', top: '60%' },
           { left: '80%', top: '60%' },
           { left: '50%', top: '40%' }
         ],
-        assetGetters: {
+        assetGettersReward: {
           kuru: 'getDecor1KuImage',
           me: 'getDecor3MeImage',
           de: 'getDecor4DeImage',

@@ -366,20 +366,31 @@ const ManualRoundMode = ({
 
   // ✅ BUG 6 & 8 FIX: Render singer with proper initial vs reward state
   const renderSinger = (syllable, index) => {
-    const position = gameConfig.elements.singer.positions[index];
-    const isSinging = singingSyllable === syllable;
+    // ⭐ Check for different positions (kurumedeva has positionsReward for rewards)
+    let position;
     const isReward = visualRewards[`visual-${syllable}`];
+    if (isReward && gameConfig.elements.singer.positionsReward) {
+      position = gameConfig.elements.singer.positionsReward[index];
+    } else {
+      position = gameConfig.elements.singer.positions[index];
+    }
+
+    const isSinging = singingSyllable === syllable;
 
     // ✅ BUG 6 & 8: Use different getter based on reward state
-    // ⭐ Handle both single assetGetter and assetGetters object patterns
+    // ⭐ Handle multiple patterns for asset getters
     let getImage;
     if (isReward) {
       if (gameConfig.elements.singer.assetGetterReward) {
         // Pattern 1: Single getter function
         const getterName = gameConfig.elements.singer.assetGetterReward;
         getImage = assetGetters[getterName];
+      } else if (gameConfig.elements.singer.assetGettersReward) {
+        // Pattern 2: assetGettersReward object (kurumedeva)
+        const getterName = gameConfig.elements.singer.assetGettersReward[syllable];
+        getImage = assetGetters[getterName];
       } else if (gameConfig.elements.singer.assetGetters) {
-        // Pattern 2: Object with syllable mappings
+        // Pattern 3: assetGetters object (compatibility)
         const getterName = gameConfig.elements.singer.assetGetters[syllable];
         getImage = assetGetters[getterName];
       }
@@ -388,8 +399,12 @@ const ManualRoundMode = ({
         // Pattern 1: Single getter function
         const getterName = gameConfig.elements.singer.assetGetterInitial;
         getImage = assetGetters[getterName];
+      } else if (gameConfig.elements.singer.assetGettersInitial) {
+        // Pattern 2: assetGettersInitial object (kurumedeva)
+        const getterName = gameConfig.elements.singer.assetGettersInitial[syllable];
+        getImage = assetGetters[getterName];
       } else if (gameConfig.elements.singer.assetGetters) {
-        // Pattern 2: Object with syllable mappings
+        // Pattern 3: assetGetters object (compatibility)
         const getterName = gameConfig.elements.singer.assetGetters[syllable];
         getImage = assetGetters[getterName];
       }
