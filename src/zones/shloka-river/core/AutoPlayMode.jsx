@@ -538,6 +538,11 @@ const AutoPlayMode = ({
 
   // ✅ BUG 6 & 8 FIX: Render initial visual (bud/seed) - uses assetGetterInitial
   const renderInitialVisual = (syllable, index) => {
+    // ⭐ Check if singer element exists (nirvighnam doesn't have singer, only clicker + dual rewards)
+    if (!gameConfig.elements.singer || !gameConfig.elements.singer.positions) {
+      return null;
+    }
+
     const position = getPosition('visual', index);
     const isTransformed = isVisualRewardActive(syllable);
 
@@ -601,14 +606,12 @@ const AutoPlayMode = ({
       return null;
     }
 
-    // Render animal on plain stone (initial state)
-    const clicker = gameConfig.elements.clicker;
-    const animalPosition = clicker.positions[index];
-    const animalGetterName = clicker.assetGetters[syllable];
+    // ⭐ FIX: Animals should be at STONE positions initially (sitting on stones)
+    const stonePosition = rewards.stones.positionsInitial[index];
+    const animalGetterName = rewards.animals.assetGetters[syllable];
     const getAnimalImage = assetGetters[animalGetterName];
 
     // Render plain stone underneath
-    const stonePosition = rewards.stones.positionsInitial[index];
     const stoneGetterName = rewards.stones.assetGettersInitial[syllable];
     const getStoneImage = assetGetters[stoneGetterName];
 
@@ -636,13 +639,13 @@ const AutoPlayMode = ({
           </div>
         )}
 
-        {/* Animal on stone */}
+        {/* Animal on stone - at same position as stone */}
         {getAnimalImage && (
           <div
             style={{
               position: 'absolute',
-              left: animalPosition.left,
-              top: animalPosition.top,
+              left: stonePosition.left,
+              top: stonePosition.top,
               width: '70px',
               height: '70px',
               zIndex: 11,
@@ -662,6 +665,11 @@ const AutoPlayMode = ({
 
   // ✅ BUG 6 & 8 FIX: Render visual reward (lotus/flower) - uses assetGetterReward
   const renderVisualReward = (syllable, index) => {
+    // ⭐ Check if singer element exists (nirvighnam doesn't have singer, only clicker + dual rewards)
+    if (!gameConfig.elements.singer || !gameConfig.elements.singer.positions) {
+      return null;
+    }
+
     // ⭐ Check for different reward positions (kurumedeva has positionsReward)
     let position;
     if (gameConfig.elements.singer.positionsReward) {

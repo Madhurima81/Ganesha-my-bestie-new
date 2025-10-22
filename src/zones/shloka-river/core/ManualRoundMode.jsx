@@ -366,6 +366,11 @@ const ManualRoundMode = ({
 
   // ✅ BUG 6 & 8 FIX: Render singer with proper initial vs reward state
   const renderSinger = (syllable, index) => {
+    // ⭐ Check if singer element exists (nirvighnam doesn't have singer, only clicker + dual rewards)
+    if (!gameConfig.elements.singer || !gameConfig.elements.singer.positions) {
+      return null;
+    }
+
     // ⭐ Check for different positions (kurumedeva has positionsReward for rewards)
     let position;
     const isReward = visualRewards[`visual-${syllable}`];
