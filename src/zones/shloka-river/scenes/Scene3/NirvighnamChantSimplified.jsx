@@ -54,22 +54,19 @@ import stone1NirCol from './assets/images/nirvighnam/stone1-col.png';
 import stone2VighCol from './assets/images/nirvighnam/stone2-col.png';
 import stone3NamCol from './assets/images/nirvighnam/stone3-col.png';
 
-// Kurumedeva game assets - Animals, Items, Decorations
+// Kurumedeva game assets - Animals, Items, Decorations (4 syllables: kuru, me, de, va)
 import animal1Ku from './assets/images/Kurumedeva/animal1-ku.png';
 import animal2Ru from './assets/images/Kurumedeva/animal2-ru.png';
 import animal3Me from './assets/images/Kurumedeva/animal3-me.png';
 import animal4De from './assets/images/Kurumedeva/animal4-de.png';
-import animal5Va from './assets/images/Kurumedeva/animal5-va.png';
 import item1Ku from './assets/images/Kurumedeva/item1-ku.png';
 import item2Ru from './assets/images/Kurumedeva/item2-ru.png';
 import item3Me from './assets/images/Kurumedeva/item3-me.png';
 import item4De from './assets/images/Kurumedeva/item4-de.png';
-import item5Va from './assets/images/Kurumedeva/item5-va.png';
 import decor1Ku from './assets/images/Kurumedeva/decor1-ku.png';
 import decor2Ru from './assets/images/Kurumedeva/decor2-ru.png';
 import decor3Me from './assets/images/Kurumedeva/decor3-me.png';
 import decor4De from './assets/images/Kurumedeva/decor4-de.png';
-import decor5Va from './assets/images/Kurumedeva/decor5-va.png';
 
 import ganeshaWithHeadphones from '../assets/images/ganesha_with_headphones.png';
 import smartwatchBase from '../assets/images/smartwatch-base.png';
@@ -193,7 +190,11 @@ const NirvighnamChant = ({
           },
 
           unlockedApps: {},
-          
+
+          // ⭐ Mode selection (like Scene 2)
+          nirvighnamMode: null,      // 'auto' or 'manual'
+          kurumedevaMode: null,      // 'auto' or 'manual'
+
           // UNIFIED: Combined state for both games
      // UPDATED: Combined state for both games in one component
 combinedGameState: null,
@@ -305,7 +306,11 @@ const [showPowerModal, setShowPowerModal] = useState(false);
     const [rescuePhase, setRescuePhase] = useState('problem');
 
       const [showMission, setShowMission] = useState(false);
-    
+
+  // ⭐ Mode selection state (like Scene 2)
+  const [showModeSelection, setShowModeSelection] = useState(false);
+  const [modeForPhase, setModeForPhase] = useState(null); // 'nirvighnam' or 'kurumedeva'
+  const [modeSelected, setModeSelected] = useState(false); // Prevent loops
 
 
   // Safe setTimeout function
@@ -811,19 +816,19 @@ const resetScene = (showConfirm = true) => {
   }
 };
 
-  // Image getter functions for Kurumedeva game (divine decoration)
+  // Image getter functions for Kurumedeva game (4 syllables: kuru, me, de, va)
   const getKurumedevaAnimalImage = (index) => {
-    const images = [animal1Ku, animal2Ru, animal3Me, animal4De, animal5Va];
+    const images = [animal1Ku, animal3Me, animal4De, animal2Ru];
     return images[index];
   };
 
   const getKurumedevaItemImage = (index, singing) => {
-    const images = [item1Ku, item2Ru, item3Me, item4De, item5Va];
+    const images = [item1Ku, item3Me, item4De, item2Ru];
     return images[index];
   };
 
   const getKurumedevaDecorImage = (index, activated) => {
-    const images = [decor1Ku, decor2Ru, decor3Me, decor4De, decor5Va];
+    const images = [decor1Ku, decor3Me, decor4De, decor2Ru];
     return images[index];
   };
 
@@ -1360,17 +1365,96 @@ const combinedGameReloadProps = sceneState.combinedGameState ? {
       <p className="nirvighnam-mission-description">
         First, learn to chant <strong>NIRVIGHNAM</strong> to unlock Sacred Wisdom and help animals!
       </p>
-      <button 
+      <button
         className="nirvighnam-mission-start-btn"
         onClick={() => {
-          sceneActions.updateState({ 
-            welcomeShown: true,
-            phase: PHASES.NIRVIGHNAM_GAME_ACTIVE 
-          });
+          console.log('🎮 Opening mode selection for NIRVIGHNAM');
+          sceneActions.updateState({ welcomeShown: true });
+          setModeForPhase('nirvighnam');
+          setShowModeSelection(true);
+          setModeSelected(false);
         }}
       >
         Start Learning!
       </button>
+    </div>
+  </div>
+)}
+
+{/* ⭐ MODE SELECTION MODAL - Shows BEFORE game starts */}
+{showModeSelection && !modeSelected && (
+  <div className="nirvighnam-mission-modal-overlay">
+    <div className="nirvighnam-mission-modal">
+      <h2 className="nirvighnam-mission-title">🎮 How do you want to play?</h2>
+      <p className="nirvighnam-mission-description">
+        Choose your learning style for <strong>{modeForPhase?.toUpperCase()}</strong>
+      </p>
+
+      <div style={{
+        display: 'flex',
+        gap: '20px',
+        marginTop: '20px',
+        justifyContent: 'center',
+        flexWrap: 'wrap'
+      }}>
+        {/* AUTO PLAY BUTTON */}
+        <button
+          className="nirvighnam-mission-start-btn"
+          style={{
+            flex: '1',
+            minWidth: '200px',
+            maxWidth: '300px',
+            background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)'
+          }}
+          onClick={() => {
+            console.log(`🎮 Mode selected: AUTO for ${modeForPhase}`);
+            setModeSelected(true);
+            setShowModeSelection(false);
+
+            // ⭐ Single state update: mode + phase
+            const modeKey = `${modeForPhase}Mode`;
+            const phaseKey = modeForPhase === 'nirvighnam' ? PHASES.NIRVIGHNAM_GAME_ACTIVE : PHASES.KURUMEDEVA_GAME_ACTIVE;
+            sceneActions.updateState({
+              [modeKey]: 'auto',
+              phase: phaseKey
+            });
+          }}
+        >
+          <div>▶️ Auto Play</div>
+          <div style={{ fontSize: '14px', opacity: 0.9, marginTop: '5px' }}>
+            Start from Round 1 and learn step by step
+          </div>
+        </button>
+
+        {/* MANUAL BUTTON */}
+        <button
+          className="nirvighnam-mission-start-btn"
+          style={{
+            flex: '1',
+            minWidth: '200px',
+            maxWidth: '300px',
+            background: 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)'
+          }}
+          onClick={() => {
+            console.log(`🎮 Mode selected: MANUAL for ${modeForPhase}`);
+            setModeSelected(true);
+            setShowModeSelection(false);
+
+            // ⭐ Single state update: mode + phase
+            const modeKey = `${modeForPhase}Mode`;
+            const phaseKey = modeForPhase === 'nirvighnam' ? PHASES.NIRVIGHNAM_GAME_ACTIVE : PHASES.KURUMEDEVA_GAME_ACTIVE;
+            sceneActions.updateState({
+              [modeKey]: 'manual',
+              phase: phaseKey
+            });
+          }}
+        >
+          <div>🎯 Choose a Round</div>
+          <div style={{ fontSize: '14px', opacity: 0.9, marginTop: '5px' }}>
+            Pick any round you want to practice
+          </div>
+        </button>
+      </div>
     </div>
   </div>
 )}
@@ -1394,19 +1478,11 @@ const combinedGameReloadProps = sceneState.combinedGameState ? {
       <button
         className="nirvighnam-mission-start-btn"
         onClick={() => {
+          console.log('🎮 Opening mode selection for KURUMEDEVA');
           setShowKurumedevaStory(false);
-          
-          sceneActions.updateState({ 
-            phase: PHASES.KURUMEDEVA_GAME_ACTIVE,
-            currentPopup: null,
-            combinedGameState: null
-          });
-
-          setTimeout(() => {
-            if (window.simplifiedNirvighnamKurumedevaGame?.startKurumedevaPhase) {
-              window.simplifiedNirvighnamKurumedevaGame.startKurumedevaPhase();
-            }
-          }, 200);
+          setModeForPhase('kurumedeva');
+          setShowModeSelection(true);
+          setModeSelected(false);
         }}
       >
         Start Learning!
