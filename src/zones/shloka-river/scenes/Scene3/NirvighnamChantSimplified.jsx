@@ -18,10 +18,9 @@ import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimat
 import Fireworks from '../../../../lib/components/feedback/Fireworks';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 
-// Import the actual game components
-//import NirvighnamGame from './components/NirvighnamGame';
-//import KurumeDevaGame from './components/KurumeDevaGame';
-import SimplifiedNirvighnamKurumedevaGame from './components/SimplifiedNirvighnamKurumedevaGame';
+// Import the thin wrapper game components
+import NirvighnamGame from './NirvighnamGame';
+import KurumeDevaGame from './KurumeDevaGame';
 import SanskritVoiceRecorder from '../../../../lib/components/audio/SanskritVoiceRecorder';
 import SmartwatchWidget from '../Scene1/components/SmartwatchWidget';
 import HelperSignatureAnimation from '../../../../lib/components/animation/HelperSignatureAnimation';
@@ -194,10 +193,6 @@ const NirvighnamChant = ({
           // ⭐ Mode selection (like Scene 2)
           nirvighnamMode: null,      // 'auto' or 'manual'
           kurumedevaMode: null,      // 'auto' or 'manual'
-
-          // UNIFIED: Combined state for both games
-     // UPDATED: Combined state for both games in one component
-combinedGameState: null,
           missionState: {
             rescuePhase: 'problem',
             showParticles: false,
@@ -250,7 +245,8 @@ const NirvighnamChantContent = ({
 console.log('ðŸ•‰ï¸ NirvighnamChantContent render', { 
   sceneState: sceneState?.phase, 
   isReload, 
-  combinedGameState: !!sceneState?.combinedGameState,
+  nirvighnamMode: sceneState?.nirvighnamMode,
+  kurumedevaMode: sceneState?.kurumedevaMode,
   missionState: sceneState?.missionState 
 });
 
@@ -458,23 +454,6 @@ useEffect(() => {
     sceneActions.updateState(updatedState);
   };
 
-      const handleSaveCombinedGameState = (gameState) => {
-  console.log('ðŸ’¾ Saving combined game state:', gameState);
-  
-  sceneActions.updateState({
-    combinedGameState: gameState
-  });
-};
-
-useEffect(() => {
-  window.simplifiedNirvighnamKurumedevaGame = {};
-  return () => {
-    if (window.simplifiedNirvighnamKurumedevaGame) {
-      delete window.simplifiedNirvighnamKurumedevaGame;
-    }
-  };
-}, []);
-
   // Set up communication for the scene itself
   useEffect(() => {
     window.nirvighnamChant = {
@@ -482,7 +461,7 @@ useEffect(() => {
         setShowKurumedevaStory(true);
       }
     };
-    
+
     return () => {
       if (window.nirvighnamChant) {
         delete window.nirvighnamChant;
@@ -1076,25 +1055,8 @@ const backgroundImage = (
   sceneState?.phase === PHASES.RESCUE_MISSION_KURUMEDEVA
 ) ? kuruBg : nirvighnamChantBg;
 
+  // ⭐ Simplified hint configs for new wrapper-based architecture
   const getHintConfigs = () => [
-    {
-      id: 'sequence-listening-hint',
-      message: 'Listen to the magical objects singing!',
-      explicitMessage: 'Wait for the sequence to finish, then click the animals in the same order to clear the path!',
-      position: { bottom: '60%', left: '50%', transform: 'translateX(-50%)' },
-      condition: (sceneState) => {
-  return sceneState?.combinedGameState?.gamePhase === 'playing' && !showRecording;
-      }
-    },
-    {
-      id: 'animal-clicking-hint', 
-      message: 'Click the animals to clear the objects from stones!',
-      explicitMessage: 'Click the animals in the order you heard: nir-vigh-nam!',
-      position: { bottom: '60%', left: '50%', transform: 'translateX(-50%)' },
-      condition: (sceneState) => {
-  return sceneState?.combinedGameState?.gamePhase === 'listening' && !showRecording;
-      }
-    },
     {
       id: 'recording-hint',
       message: 'Try chanting the sacred word you just learned!',
@@ -1242,18 +1204,6 @@ sceneActions.updateState({
     return 'locked';
   };*/
 
-// Extract reload props for combined component
-const combinedGameReloadProps = sceneState.combinedGameState ? {
-  isReload: isReload,
-  initialGamePhase: sceneState.combinedGameState.gamePhase || 'waiting',
-  initialCurrentPhase: sceneState.combinedGameState.currentPhase || 'nirvighnam',
-  initialCurrentRound: sceneState.combinedGameState.currentRound || 1,
-  initialPlayerInput: sceneState.combinedGameState.playerInput || [],
-  initialCurrentSequence: sceneState.combinedGameState.currentSequence || [],
-  initialVisualRewards: sceneState.combinedGameState.visualRewards || {},
-  initialActivatedSingers: sceneState.combinedGameState.activatedSingers || {},
-} : {};
-
   const missionReloadProps = sceneState.missionState ? {
     isReload: isReload && !!sceneState.missionState.word,
     initialRescuePhase: sceneState.missionState.rescuePhase || 'problem',
@@ -1297,57 +1247,66 @@ const combinedGameReloadProps = sceneState.combinedGameState ? {
   }}
 >
 
-<SimplifiedNirvighnamKurumedevaGame
-  isActive={sceneState.phase === PHASES.NIRVIGHNAM_GAME_ACTIVE || 
-           sceneState.phase === PHASES.KURUMEDEVA_GAME_ACTIVE ||
-           sceneState.phase === PHASES.NIRVIGHNAM_COMPLETE ||
-           sceneState.phase === PHASES.KURUMEDEVA_COMPLETE}
-  hideElements={isTransitioning || 
-    showGaneshaBlessing || showKurumedevaStory || 
-    sceneState.phase === PHASES.NIRVIGHNAM_COMPLETE || 
-    sceneState.phase === PHASES.KURUMEDEVA_COMPLETE ||
-    sceneState.phase === PHASES.SCENE_COMPLETE}
+{/* ⭐ NIRVIGHNAM GAME - Scene-controlled mode */}
+<NirvighnamGame
+  isActive={sceneState.phase === PHASES.NIRVIGHNAM_GAME_ACTIVE}
+  hideElements={isTransitioning || showGaneshaBlessing || sceneState.phase === PHASES.NIRVIGHNAM_COMPLETE}
   onPhaseComplete={handlePhaseComplete}
   onGameComplete={handleGameComplete}
   profileName={profileName}
-    forceReset={forceMemoryGameReset} // ADD THIS LINE
 
   // Nirvighnam asset functions
-  getDrumVighImage={() => drumVigh}
   getLeafRirImage={() => leafNir}
+  getDrumVighImage={() => drumVigh}
   getFeatherNamImage={() => featherNam}
   getFrogNirImage={() => frogNir}
   getSnailVighImage={() => snailVigh}
   getTurtleNamImage={() => turtleNam}
+  getStone1NirImage={() => stone1Nir}
+  getStone2VighImage={() => stone2Vigh}
+  getStone3NamImage={() => stone3Nam}
   getStone1NirColImage={() => stone1NirCol}
   getStone2VighColImage={() => stone2VighCol}
   getStone3NamColImage={() => stone3NamCol}
 
-  // ADD THESE THREE NEW LINES HERE:
-  getStone1NirImage={() => stone1Nir}
-  getStone2VighImage={() => stone2Vigh}
-  getStone3NamImage={() => stone3Nam}
-  
-  // Kurumedeva asset functions
-  getAnimal1KuImage={() => animal1Ku}
-  getAnimal2RuImage={() => animal2Ru}
-  getAnimal3MeImage={() => animal3Me}
-  getAnimal4DeImage={() => animal4De}
-  getItem1KuImage={() => item1Ku}
-  getItem2RuImage={() => item2Ru}
-  getItem3MeImage={() => item3Me}
-  getItem4DeImage={() => item4De}
-  getDecor1KuImage={() => decor1Ku}
-  getDecor2RuImage={() => decor2Ru}
-  getDecor3MeImage={() => decor3Me}
-  getDecor4DeImage={() => decor4De}
-  
+  // ⭐ Mode control - scene manages the modal, game gets the selection
+  selectedMode={sceneState.nirvighnamMode}
+  skipModeSelection={true}
+
+  // Audio
   isAudioOn={isAudioOn}
   playAudio={playAudio}
-  onSaveGameState={handleSaveCombinedGameState}
-  powerGained={nirvighnamPowerGained}
-  
-  {...combinedGameReloadProps}
+/>
+
+{/* ⭐ KURUMEDEVA GAME - Scene-controlled mode */}
+<KurumeDevaGame
+  isActive={sceneState.phase === PHASES.KURUMEDEVA_GAME_ACTIVE}
+  hideElements={isTransitioning || showGaneshaBlessing || sceneState.phase === PHASES.KURUMEDEVA_COMPLETE}
+  onPhaseComplete={handlePhaseComplete}
+  onGameComplete={handleGameComplete}
+  profileName={profileName}
+
+  // Kurumedeva asset functions
+  getAnimal1KuImage={() => animal1Ku}
+  getAnimal3MeImage={() => animal3Me}
+  getAnimal4DeImage={() => animal4De}
+  getAnimal2RuImage={() => animal2Ru}
+  getItem1KuImage={() => item1Ku}
+  getItem3MeImage={() => item3Me}
+  getItem4DeImage={() => item4De}
+  getItem2RuImage={() => item2Ru}
+  getDecor1KuImage={() => decor1Ku}
+  getDecor3MeImage={() => decor3Me}
+  getDecor4DeImage={() => decor4De}
+  getDecor2RuImage={() => decor2Ru}
+
+  // ⭐ Mode control - scene manages the modal, game gets the selection
+  selectedMode={sceneState.kurumedevaMode}
+  skipModeSelection={true}
+
+  // Audio
+  isAudioOn={isAudioOn}
+  playAudio={playAudio}
 />
       {/* OPENING MISSION MODAL */}
 {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (

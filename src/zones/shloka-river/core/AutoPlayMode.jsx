@@ -568,6 +568,76 @@ const AutoPlayMode = ({
     );
   };
 
+  // ⭐ NEW: Render initial animals + plain stones for nirvighnam dual-reward system
+  const renderDualInitials = (syllable, index) => {
+    const isTransformed = isVisualRewardActive(syllable);
+    if (isTransformed) return null;
+
+    const rewards = gameConfig.elements.rewards;
+    if (!rewards || !rewards.animals || !rewards.stones) {
+      console.warn('[Dual Initials] Invalid dual reward config');
+      return null;
+    }
+
+    // Render animal on plain stone (initial state)
+    const clicker = gameConfig.elements.clicker;
+    const animalPosition = clicker.positions[index];
+    const animalGetterName = clicker.assetGetters[syllable];
+    const getAnimalImage = assetGetters[animalGetterName];
+
+    // Render plain stone underneath
+    const stonePosition = rewards.stones.positionsInitial[index];
+    const stoneGetterName = rewards.stones.assetGettersInitial[syllable];
+    const getStoneImage = assetGetters[stoneGetterName];
+
+    return (
+      <React.Fragment key={`dual-initial-${syllable}`}>
+        {/* Plain stone */}
+        {getStoneImage && (
+          <div
+            style={{
+              position: 'absolute',
+              left: stonePosition.left,
+              top: stonePosition.top,
+              width: '60px',
+              height: '60px',
+              zIndex: 10,
+              transform: 'translate(-50%, -50%)',
+              opacity: 0.8
+            }}
+          >
+            <img
+              src={getStoneImage(index)}
+              alt={`Stone ${syllable}`}
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            />
+          </div>
+        )}
+
+        {/* Animal on stone */}
+        {getAnimalImage && (
+          <div
+            style={{
+              position: 'absolute',
+              left: animalPosition.left,
+              top: animalPosition.top,
+              width: '70px',
+              height: '70px',
+              zIndex: 11,
+              transform: 'translate(-50%, -50%)'
+            }}
+          >
+            <img
+              src={getAnimalImage(index)}
+              alt={`Animal ${syllable}`}
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            />
+          </div>
+        )}
+      </React.Fragment>
+    );
+  };
+
   // ✅ BUG 6 & 8 FIX: Render visual reward (lotus/flower) - uses assetGetterReward
   const renderVisualReward = (syllable, index) => {
     const position = getPosition('visual', index);
@@ -617,6 +687,85 @@ const AutoPlayMode = ({
           ✨
         </div>
       </div>
+    );
+  };
+
+  // ⭐ NEW: Render dual rewards for nirvighnam (animals move + stones transform)
+  const renderDualRewards = (syllable, index) => {
+    const isVisible = isVisualRewardActive(syllable);
+    if (!isVisible) return null;
+
+    const rewards = gameConfig.elements.rewards;
+    if (!rewards || !rewards.animals || !rewards.stones) {
+      console.warn('[Dual Rewards] Invalid dual reward config');
+      return null;
+    }
+
+    // Render animal reward (frog/snail/turtle moves to water)
+    const animalPosition = rewards.animals.positions[index];
+    const animalGetterName = rewards.animals.assetGetters[syllable];
+    const getAnimalImage = assetGetters[animalGetterName];
+
+    // Render stone reward (stone transforms to colored version)
+    const stonePosition = rewards.stones.positionsReward[index];
+    const stoneGetterName = rewards.stones.assetGettersReward[syllable];
+    const getStoneImage = assetGetters[stoneGetterName];
+
+    return (
+      <React.Fragment key={`dual-reward-${syllable}`}>
+        {/* Animal in water */}
+        {getAnimalImage && (
+          <div
+            style={{
+              position: 'absolute',
+              left: animalPosition.left,
+              top: animalPosition.top,
+              width: '80px',
+              height: '80px',
+              zIndex: 15,
+              animation: 'rewardAppear 1s ease-out',
+              transform: 'translate(-50%, -50%)'
+            }}
+          >
+            <img
+              src={getAnimalImage(index)}
+              alt={`Animal ${syllable}`}
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            />
+            <div style={{
+              position: 'absolute',
+              top: '-10px',
+              right: '-10px',
+              fontSize: '16px',
+              animation: 'sparkle 2s ease-in-out infinite'
+            }}>
+              ✨
+            </div>
+          </div>
+        )}
+
+        {/* Colored stone */}
+        {getStoneImage && (
+          <div
+            style={{
+              position: 'absolute',
+              left: stonePosition.left,
+              top: stonePosition.top,
+              width: '60px',
+              height: '60px',
+              zIndex: 12,
+              animation: 'rewardAppear 1s ease-out, rewardGlow 2s ease-in-out infinite 1s',
+              transform: 'translate(-50%, -50%)'
+            }}
+          >
+            <img
+              src={getStoneImage(index)}
+              alt={`Stone ${syllable}`}
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            />
+          </div>
+        )}
+      </React.Fragment>
     );
   };
 
@@ -772,14 +921,33 @@ const AutoPlayMode = ({
       {/* Game elements */}
       {!hideElements && (
         <>
-          {currentSequence.map((syllable, index) => 
-            renderInitialVisual(syllable, index)
-          )}
-          {currentSequence.map((syllable, index) => 
-            renderElephant(syllable, index)
-          )}
-          {currentSequence.map((syllable, index) => 
-            renderVisualReward(syllable, index)
+          {/* ⭐ Check if dual-reward system (nirvighnam) or regular system */}
+          {gameConfig.elements.rewards?.animals && gameConfig.elements.rewards?.stones ? (
+            <>
+              {/* Dual-reward system: animals on stones initially, then animals move + stones transform */}
+              {currentSequence.map((syllable, index) =>
+                renderDualInitials(syllable, index)
+              )}
+              {currentSequence.map((syllable, index) =>
+                renderElephant(syllable, index)
+              )}
+              {currentSequence.map((syllable, index) =>
+                renderDualRewards(syllable, index)
+              )}
+            </>
+          ) : (
+            <>
+              {/* Regular system: buds → lotus or seeds → flowers */}
+              {currentSequence.map((syllable, index) =>
+                renderInitialVisual(syllable, index)
+              )}
+              {currentSequence.map((syllable, index) =>
+                renderElephant(syllable, index)
+              )}
+              {currentSequence.map((syllable, index) =>
+                renderVisualReward(syllable, index)
+              )}
+            </>
           )}
         </>
       )}
