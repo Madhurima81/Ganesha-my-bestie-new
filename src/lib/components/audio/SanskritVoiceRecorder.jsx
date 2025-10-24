@@ -1,5 +1,6 @@
-// Enhanced SanskritVoiceRecorder.jsx with multiple recording saves
+// Enhanced SanskritVoiceRecorder.jsx with DELETE, PROGRESS BARS, KID-FRIENDLY UI, and SAFE CLICK
 import React, { useState, useRef, useEffect } from 'react';
+import useSafeClick from '../../../zones/shloka-river/core/hooks/useSafeClick';
 
 const SanskritVoiceRecorder = ({
   // Required props
@@ -7,8 +8,8 @@ const SanskritVoiceRecorder = ({
   word = "",
   onComplete,
   onSkip,
-   appIcon = null, // NEW
-  appColor = null, // NEW
+  appIcon = null,
+  appColor = null,
   
   // Optional props
   show = true,
@@ -17,9 +18,10 @@ const SanskritVoiceRecorder = ({
   autoStart = false,
   maxRecordingTime = 30,
   
-  // NEW: Multi-recording props
-  savedRecordings = {}, // { vakratunda: [recording1, recording2], mahakaya: [recording1] }
-  onSaveRecording, // Callback to save recording to parent state
+  // Multi-recording props
+  savedRecordings = {},
+  onSaveRecording,
+  onDeleteRecording, // NEW: Delete callback
   
   // Styling props
   containerStyle = {},
@@ -33,26 +35,37 @@ const SanskritVoiceRecorder = ({
   const [hasRecorded, setHasRecorded] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   
-  // NEW: Multi-recording state
+  // Multi-recording state
   const [currentRecordingIndex, setCurrentRecordingIndex] = useState(null);
   const [playingRecordingId, setPlayingRecordingId] = useState(null);
+  
+  // NEW: Progress tracking state
+  const [audioProgress, setAudioProgress] = useState(0);
+  const [audioDuration, setAudioDuration] = useState(0);
+  const [currentPlayingAudio, setCurrentPlayingAudio] = useState(null);
   
   // Refs
   const mediaRecorderRef = useRef(null);
   const timerRef = useRef(null);
   const audioRef = useRef(null);
   const streamRef = useRef(null);
+  const progressIntervalRef = useRef(null);
   
-  // Theme styles
+  // NEW: Safe Click Hook - prevents rapid clicking
+  const { safeClick, lock, unlock, isLocked } = useSafeClick(300);
+  
+  // Theme styles - MORE KID FRIENDLY!
   const themes = {
     sanskrit: {
-      background: 'rgba(255, 248, 220, 0.95)',
-      border: '2px solid #D2B48C',
+      background: 'linear-gradient(135deg, #FFF8DC 0%, #FFE4B5 100%)',
+      border: '3px solid #FFD700',
       text: '#8B4513',
       primary: '#FF6B35',
       secondary: '#4ECDC4',
       danger: '#E55934',
-      accent: '#FFD700'
+      accent: '#FFD700',
+      success: '#4CAF50',
+      playful: '#FF69B4'
     }
   };
   
@@ -73,12 +86,20 @@ const SanskritVoiceRecorder = ({
     if (timerRef.current) {
       clearInterval(timerRef.current);
     }
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+    }
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
     }
     if (recordedAudio) {
       URL.revokeObjectURL(recordedAudio);
     }
+    if (currentPlayingAudio) {
+      currentPlayingAudio.pause();
+      currentPlayingAudio.currentTime = 0;
+    }
+    unlock();
   };
   
   // Format time as MM:SS
@@ -90,41 +111,102 @@ const SanskritVoiceRecorder = ({
   
   // Helper function to get syllables for a word
   const getSyllablesForWord = (word) => {
-   const syllableMap = {
-        'vakratunda':    ['va', 'kra', 'tun', 'da'],
-        'mahakaya':      ['ma', 'ha', 'ka', 'ya'],
-        'suryakoti':     ['sur', 'ya', 'ko', 'ti'],
-        'samaprabha':    ['sa', 'ma', 'pra', 'bha'],
-        'nirvighnam':    ['nir', 'vigh', 'nam'],
-        'kurumedeva':    ['ku', 'ru', 'me', 'de', 'va'],
-        'sarvakaryeshu': ['sar', 'va', 'kar', 'ye', 'shu'],
-        'sarvada':       ['sar', 'va', 'da']
-      };
+    const syllableMap = {
+      'vakratunda':    ['va', 'kra', 'tun', 'da'],
+      'mahakaya':      ['ma', 'ha', 'ka', 'ya'],
+      'suryakoti':     ['sur', 'ya', 'ko', 'ti'],
+      'samaprabha':    ['sa', 'ma', 'pra', 'bha'],
+      'nirvighnam':    ['nir', 'vigh', 'nam'],
+      'kurumedeva':    ['ku', 'ru', 'me', 'de', 'va'],
+      'sarvakaryeshu': ['sar', 'va', 'kar', 'ye', 'shu'],
+      'sarvada':       ['sar', 'va', 'da']
+    };
     return syllableMap[word.toLowerCase()] || [word];
   };
   
-  // Play audio function for reference sounds
-  const playAudio = (audioSrc) => {
-    try {
-      const audio = new Audio(audioSrc);
-      audio.volume = 0.8;
-      audio.play().catch(e => {
-        console.log('Audio file not found, using speech synthesis:', e);
-        
-        const soundName = audioSrc.split('/').pop().replace('.mp3', '');
-        
-        if ('speechSynthesis' in window) {
-          speechSynthesis.cancel();
-          const utterance = new SpeechSynthesisUtterance(soundName);
-          utterance.rate = 0.7;
-          utterance.pitch = 1.2;
-          utterance.volume = 0.8;
-          speechSynthesis.speak(utterance);
-        }
-      });
-    } catch (error) {
-      console.log('Audio not available:', error);
+  // NEW: Start progress tracking
+  const startProgressTracking = (audio) => {
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
     }
+    
+    progressIntervalRef.current = setInterval(() => {
+      if (audio && !audio.paused) {
+        setAudioProgress(audio.currentTime);
+        setAudioDuration(audio.duration || 0);
+      }
+    }, 100);
+  };
+  
+  // NEW: Stop progress tracking
+  const stopProgressTracking = () => {
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+    setAudioProgress(0);
+    setAudioDuration(0);
+  };
+  
+  // NEW: Enhanced play audio with progress tracking and safe click
+  const playAudioSafe = (audioSrc) => {
+    safeClick(() => {
+      // Stop any currently playing audio
+      if (currentPlayingAudio) {
+        currentPlayingAudio.pause();
+        currentPlayingAudio.currentTime = 0;
+        stopProgressTracking();
+      }
+      
+      try {
+        const audio = new Audio(audioSrc);
+        audio.volume = 0.8;
+        setCurrentPlayingAudio(audio);
+        
+        // Lock during playback
+        lock();
+        startProgressTracking(audio);
+        
+        audio.addEventListener('ended', () => {
+          stopProgressTracking();
+          unlock();
+          setCurrentPlayingAudio(null);
+        });
+        
+        audio.addEventListener('error', (e) => {
+          console.log('Audio file not found, using speech synthesis');
+          stopProgressTracking();
+          unlock();
+          setCurrentPlayingAudio(null);
+          
+          const soundName = audioSrc.split('/').pop().replace('.mp3', '');
+          if ('speechSynthesis' in window) {
+            speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(soundName);
+            utterance.rate = 0.7;
+            utterance.pitch = 1.2;
+            utterance.volume = 0.8;
+            
+            utterance.addEventListener('end', () => {
+              unlock();
+            });
+            
+            speechSynthesis.speak(utterance);
+          }
+        });
+        
+        audio.play().catch(err => {
+          console.log('Playback error:', err);
+          stopProgressTracking();
+          unlock();
+          setCurrentPlayingAudio(null);
+        });
+        
+      } catch (error) {
+        console.log('Audio not available:', error);
+        unlock();
+      }
+    });
   };
   
   // Request microphone permission
@@ -154,65 +236,67 @@ const SanskritVoiceRecorder = ({
     }
   };
   
-  // Start recording
+  // Start recording with safe click
   const startRecording = async () => {
-    let stream = streamRef.current;
-    
-    if (!stream) {
-      stream = await getMicrophonePermission();
-      if (!stream) return;
-    }
-    
-    setRecordingTime(0);
-    setIsRecording(true);
-    setHasRecorded(false);
-    
-    // Start timer
-    timerRef.current = setInterval(() => {
-      setRecordingTime(prevTime => {
-        const newTime = prevTime + 1;
-        if (newTime >= maxRecordingTime) {
-          stopRecording();
-        }
-        return newTime;
-      });
-    }, 1000);
-    
-    try {
-      const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4'
-      });
-      mediaRecorderRef.current = mediaRecorder;
+    safeClick(async () => {
+      let stream = streamRef.current;
       
-      const audioChunks = [];
+      if (!stream) {
+        stream = await getMicrophonePermission();
+        if (!stream) return;
+      }
       
-      mediaRecorder.addEventListener("dataavailable", (event) => {
-        if (event.data.size > 0) {
-          audioChunks.push(event.data);
-        }
-      });
+      setRecordingTime(0);
+      setIsRecording(true);
+      setHasRecorded(false);
       
-      mediaRecorder.addEventListener("stop", () => {
-        try {
-          const audioBlob = new Blob(audioChunks, { 
-            type: mediaRecorder.mimeType || 'audio/webm' 
-          });
-          const audioUrl = URL.createObjectURL(audioBlob);
-          setRecordedAudio(audioUrl);
-          setHasRecorded(true);
-        } catch (err) {
-          console.error('Error creating audio blob:', err);
-          alert('Recording failed. Please try again.');
-          setIsRecording(false);
-        }
-      });
+      // Start timer
+      timerRef.current = setInterval(() => {
+        setRecordingTime(prevTime => {
+          const newTime = prevTime + 1;
+          if (newTime >= maxRecordingTime) {
+            stopRecording();
+          }
+          return newTime;
+        });
+      }, 1000);
       
-      mediaRecorder.start(100);
-    } catch (error) {
-      console.error('Failed to start recording:', error);
-      alert('Could not start recording. Please check your microphone permissions.');
-      setIsRecording(false);
-    }
+      try {
+        const mediaRecorder = new MediaRecorder(stream, {
+          mimeType: MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4'
+        });
+        mediaRecorderRef.current = mediaRecorder;
+        
+        const audioChunks = [];
+        
+        mediaRecorder.addEventListener("dataavailable", (event) => {
+          if (event.data.size > 0) {
+            audioChunks.push(event.data);
+          }
+        });
+        
+        mediaRecorder.addEventListener("stop", () => {
+          try {
+            const audioBlob = new Blob(audioChunks, { 
+              type: mediaRecorder.mimeType || 'audio/webm' 
+            });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            setRecordedAudio(audioUrl);
+            setHasRecorded(true);
+          } catch (err) {
+            console.error('Error creating audio blob:', err);
+            alert('Recording failed. Please try again.');
+            setIsRecording(false);
+          }
+        });
+        
+        mediaRecorder.start(100);
+      } catch (error) {
+        console.error('Failed to start recording:', error);
+        alert('Could not start recording. Please check your microphone permissions.');
+        setIsRecording(false);
+      }
+    });
   };
   
   // Stop recording
@@ -227,115 +311,167 @@ const SanskritVoiceRecorder = ({
     }
   };
   
-  // NEW: Save current recording
+  // Save current recording
   const saveCurrentRecording = () => {
-    if (recordedAudio && onSaveRecording) {
-      const recordingData = {
-        id: Date.now(),
-        url: recordedAudio,
-        duration: recordingTime,
-        word: word.toLowerCase(),
-        timestamp: new Date().toLocaleString()
-      };
-      
-      onSaveRecording(recordingData);
-      
-      // Clear current recording
-      setRecordedAudio(null);
-      setHasRecorded(false);
-      setRecordingTime(0);
-    }
+    safeClick(() => {
+      if (recordedAudio && onSaveRecording) {
+        const recordingData = {
+          id: Date.now(),
+          url: recordedAudio,
+          duration: recordingTime,
+          word: word.toLowerCase(),
+          timestamp: new Date().toLocaleString()
+        };
+        
+        onSaveRecording(recordingData);
+        
+        // Clear current recording
+        setRecordedAudio(null);
+        setHasRecorded(false);
+        setRecordingTime(0);
+      }
+    });
   };
   
-  // NEW: Play saved recording
+  // NEW: Delete recording with safe click
+  const deleteRecording = (recordingId) => {
+    safeClick(() => {
+      if (onDeleteRecording && window.confirm('Delete this recording?')) {
+        onDeleteRecording(recordingId, word.toLowerCase());
+        
+        // Stop if currently playing
+        if (playingRecordingId === recordingId) {
+          if (currentPlayingAudio) {
+            currentPlayingAudio.pause();
+            currentPlayingAudio.currentTime = 0;
+          }
+          setPlayingRecordingId(null);
+          setIsPlaying(false);
+          stopProgressTracking();
+          unlock();
+        }
+      }
+    });
+  };
+  
+  // Play saved recording with safe click and progress
   const playSavedRecording = (recording) => {
-    // Stop any currently playing audio
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-    }
-    
-    if (playingRecordingId === recording.id) {
-      setPlayingRecordingId(null);
-      setIsPlaying(false);
-      return;
-    }
-    
-    const audio = new Audio(recording.url);
-    audioRef.current = audio;
-    
-    audio.addEventListener('ended', () => {
-      setPlayingRecordingId(null);
-      setIsPlaying(false);
-    });
-    
-    audio.play().then(() => {
-      setPlayingRecordingId(recording.id);
-      setIsPlaying(true);
-    }).catch(err => {
-      console.error('Error playing saved recording:', err);
-    });
-  };
-  
-  // NEW: Play all recordings for this word in sequence
-  const playAllRecordings = () => {
-    if (currentWordRecordings.length === 0) return;
-    
-    let currentIndex = 0;
-    
-    const playNext = () => {
-      if (currentIndex >= currentWordRecordings.length) {
+    safeClick(() => {
+      // Stop any currently playing audio
+      if (currentPlayingAudio) {
+        currentPlayingAudio.pause();
+        currentPlayingAudio.currentTime = 0;
+        stopProgressTracking();
+      }
+      
+      if (playingRecordingId === recording.id) {
         setPlayingRecordingId(null);
         setIsPlaying(false);
+        unlock();
         return;
       }
       
-      const recording = currentWordRecordings[currentIndex];
       const audio = new Audio(recording.url);
+      setCurrentPlayingAudio(audio);
+      
+      // Lock during playback
+      lock();
+      startProgressTracking(audio);
       
       audio.addEventListener('ended', () => {
-        currentIndex++;
-        setTimeout(playNext, 500); // Small gap between recordings
+        setPlayingRecordingId(null);
+        setIsPlaying(false);
+        stopProgressTracking();
+        unlock();
       });
       
-      setPlayingRecordingId(recording.id);
-      audio.play();
-    };
-    
-    setIsPlaying(true);
-    playNext();
+      audio.play().then(() => {
+        setPlayingRecordingId(recording.id);
+        setIsPlaying(true);
+      }).catch(err => {
+        console.error('Error playing saved recording:', err);
+        unlock();
+        stopProgressTracking();
+      });
+    });
+  };
+  
+  // Play all recordings with safe click
+  const playAllRecordings = () => {
+    safeClick(() => {
+      if (currentWordRecordings.length === 0) return;
+      
+      lock(); // Lock for entire sequence
+      let currentIndex = 0;
+      
+      const playNext = () => {
+        if (currentIndex >= currentWordRecordings.length) {
+          setPlayingRecordingId(null);
+          setIsPlaying(false);
+          stopProgressTracking();
+          unlock();
+          return;
+        }
+        
+        const recording = currentWordRecordings[currentIndex];
+        const audio = new Audio(recording.url);
+        setCurrentPlayingAudio(audio);
+        
+        startProgressTracking(audio);
+        
+        audio.addEventListener('ended', () => {
+          currentIndex++;
+          stopProgressTracking();
+          setTimeout(playNext, 500);
+        });
+        
+        setPlayingRecordingId(recording.id);
+        audio.play();
+      };
+      
+      setIsPlaying(true);
+      playNext();
+    });
   };
   
   // Clear recording to try again
   const clearRecording = () => {
-    if (recordedAudio) {
-      URL.revokeObjectURL(recordedAudio);
-    }
-    setRecordedAudio(null);
-    setHasRecorded(false);
-    setRecordingTime(0);
-    setIsPlaying(false);
+    safeClick(() => {
+      if (recordedAudio) {
+        URL.revokeObjectURL(recordedAudio);
+      }
+      setRecordedAudio(null);
+      setHasRecorded(false);
+      setRecordingTime(0);
+      setIsPlaying(false);
+    });
   };
   
   // Handle continue
   const handleComplete = () => {
-    cleanup();
-    onComplete && onComplete({
-      hasRecording: hasRecorded,
-      recordingUrl: recordedAudio,
-      word: word,
-      recordingDuration: recordingTime,
-      totalSavedRecordings: currentWordRecordings.length
+    safeClick(() => {
+      cleanup();
+      onComplete && onComplete({
+        hasRecording: hasRecorded,
+        recordingUrl: recordedAudio,
+        word: word,
+        recordingDuration: recordingTime,
+        totalSavedRecordings: currentWordRecordings.length
+      });
     });
   };
   
   // Handle skip
   const handleSkip = () => {
-    cleanup();
-    onSkip && onSkip();
+    safeClick(() => {
+      cleanup();
+      onSkip && onSkip();
+    });
   };
   
   if (!show) return null;
+  
+  const locked = isLocked();
   
   return (
     <div style={{
@@ -354,92 +490,144 @@ const SanskritVoiceRecorder = ({
       <div style={{
         background: currentTheme.background,
         border: currentTheme.border,
-        borderRadius: '15px',
-        padding: '25px',
-        maxWidth: '500px',
+        borderRadius: '20px',
+        padding: '30px',
+        maxWidth: '550px',
         width: '90%',
         textAlign: 'center',
-        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
+        boxShadow: '0 15px 40px rgba(0, 0, 0, 0.4)',
         color: currentTheme.text,
         maxHeight: '90vh',
-        overflow: 'auto'
+        overflow: 'auto',
+        position: 'relative'
       }}>
         
-     {/* Header */}
-<div style={{ marginBottom: '20px' }}>
-  {/* NEW: App Icon */}
-  {appIcon && (
-    <div style={{ textAlign: 'center', marginBottom: '15px' }}>
-      <img 
-        src={appIcon} 
-        alt={word}
-        style={{
-          width: '80px',
-          height: '80px',
-          filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.2))'
-        }}
-      />
-    </div>
-  )}
-  
-  <h3 style={{ 
-    margin: '0 0 10px 0', 
-    fontSize: '20px',
-    color: currentTheme.text 
-  }}>
-    {title}
-  </h3>
+        {/* Close Button (X) at top-right */}
+        <button
+          onClick={handleComplete}
+          style={{
+            position: 'absolute',
+            top: '15px',
+            right: '15px',
+            background: currentTheme.danger,
+            color: 'white',
+            border: 'none',
+            borderRadius: '50%',
+            width: '35px',
+            height: '35px',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
+            transition: 'all 0.3s ease',
+            zIndex: 10
+          }}
+          onMouseOver={(e) => {
+            e.target.style.transform = 'scale(1.1)';
+            e.target.style.background = currentTheme.playful;
+          }}
+          onMouseOut={(e) => {
+            e.target.style.transform = 'scale(1)';
+            e.target.style.background = currentTheme.danger;
+          }}
+        >
+          ×
+        </button>
+        
+        {/* Header - KID FRIENDLY! */}
+        <div style={{ marginBottom: '25px' }}>
+          {appIcon && (
+            <div style={{ 
+              textAlign: 'center', 
+              marginBottom: '15px',
+              animation: 'bounce 1s ease-in-out'
+            }}>
+              <img 
+                src={appIcon} 
+                alt={word}
+                style={{
+                  width: '100px',
+                  height: '100px',
+                  filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.3))',
+                  transition: 'transform 0.3s ease'
+                }}
+              />
+            </div>
+          )}
+          
+          <h3 style={{ 
+            margin: '0 0 10px 0', 
+            fontSize: '24px',
+            color: currentTheme.primary,
+            fontWeight: 'bold',
+            textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
+          }}>
+            {title} 🎵
+          </h3>
+          
           <p style={{ 
-            margin: '0 0 15px 0', 
-            fontSize: '16px',
+            margin: '0 0 20px 0', 
+            fontSize: '18px',
             color: currentTheme.text,
-            opacity: 0.8
+            opacity: 0.9
           }}>
             {prompt}: <strong style={{ 
               color: currentTheme.accent,
-              fontSize: '18px' 
+              fontSize: '22px',
+              textShadow: '1px 1px 2px rgba(0,0,0,0.1)'
             }}>
               {word.toUpperCase()}
             </strong>
           </p>
           
-          {/* Audio Reference Section */}
+          {/* Audio Reference Section - BIGGER & MORE PLAYFUL */}
           <div style={{
-            background: 'rgba(0, 0, 0, 0.05)',
-            borderRadius: '10px',
-            padding: '15px',
-            marginBottom: '10px'
+            background: 'rgba(255, 255, 255, 0.7)',
+            borderRadius: '15px',
+            padding: '20px',
+            marginBottom: '15px',
+            border: '2px dashed ' + currentTheme.secondary
           }}>
             <p style={{ 
-              margin: '0 0 10px 0', 
-              fontSize: '14px',
+              margin: '0 0 15px 0', 
+              fontSize: '16px',
               color: currentTheme.text,
-              opacity: 0.7
+              fontWeight: 'bold'
             }}>
-              Listen first to practice:
+              👂 Listen first to practice:
             </p>
             
             <div style={{ 
               display: 'flex', 
-              gap: '8px', 
+              gap: '10px', 
               justifyContent: 'center',
               flexWrap: 'wrap',
-              marginBottom: '10px'
+              marginBottom: '15px'
             }}>
               {getSyllablesForWord(word).map((syllable, index) => (
                 <button
                   key={index}
-                  onClick={() => playAudio(`/audio/syllables/${word.toLowerCase()}-${syllable}.mp3`)}
+                  onClick={() => playAudioSafe(`/audio/syllables/${word.toLowerCase()}-${syllable}.mp3`)}
+                  disabled={locked}
                   style={{
-                    background: currentTheme.secondary,
+                    background: locked ? '#ccc' : currentTheme.secondary,
                     color: 'white',
                     border: 'none',
-                    borderRadius: '6px',
-                    padding: '8px 12px',
-                    fontSize: '12px',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease'
+                    borderRadius: '12px',
+                    padding: '12px 18px',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    cursor: locked ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.3s ease',
+                    transform: locked ? 'scale(0.95)' : 'scale(1)',
+                    boxShadow: locked ? 'none' : '0 4px 8px rgba(0,0,0,0.2)',
+                    opacity: locked ? 0.5 : 1
                   }}
+                  onMouseOver={(e) => !locked && (e.target.style.transform = 'scale(1.1)')}
+                  onMouseOut={(e) => !locked && (e.target.style.transform = 'scale(1)')}
                 >
                   {syllable.toUpperCase()}
                 </button>
@@ -447,83 +635,207 @@ const SanskritVoiceRecorder = ({
             </div>
             
             <button
-              onClick={() => playAudio(`/audio/words/${word.toLowerCase()}.mp3`)}
+              onClick={() => playAudioSafe(`/audio/words/${word.toLowerCase()}.mp3`)}
+              disabled={locked}
               style={{
-                background: currentTheme.accent,
+                background: locked ? '#ccc' : currentTheme.accent,
                 color: currentTheme.text,
                 border: 'none',
-                borderRadius: '8px',
-                padding: '10px 20px',
-                fontSize: '14px',
+                borderRadius: '15px',
+                padding: '15px 30px',
+                fontSize: '18px',
                 fontWeight: 'bold',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
+                cursor: locked ? 'not-allowed' : 'pointer',
+                transition: 'all 0.3s ease',
+                boxShadow: locked ? 'none' : '0 6px 12px rgba(0,0,0,0.3)',
+                opacity: locked ? 0.5 : 1
               }}
+              onMouseOver={(e) => !locked && (e.target.style.background = currentTheme.playful)}
+              onMouseOut={(e) => !locked && (e.target.style.background = currentTheme.accent)}
             >
               🔊 Hear Complete Word
             </button>
+            
+            {/* NEW: Progress Bar for Audio Playback */}
+            {locked && audioDuration > 0 && !playingRecordingId && (
+              <div style={{ marginTop: '15px' }}>
+                <div style={{
+                  width: '100%',
+                  height: '8px',
+                  background: 'rgba(0,0,0,0.1)',
+                  borderRadius: '4px',
+                  overflow: 'hidden',
+                  marginBottom: '5px'
+                }}>
+                  <div style={{
+                    width: `${(audioProgress / audioDuration) * 100}%`,
+                    height: '100%',
+                    background: currentTheme.primary,
+                    transition: 'width 0.1s linear',
+                    borderRadius: '4px'
+                  }} />
+                </div>
+                <p style={{ 
+                  fontSize: '12px', 
+                  margin: 0,
+                  color: currentTheme.text,
+                  opacity: 0.7
+                }}>
+                  {formatTime(Math.floor(audioProgress))} / {formatTime(Math.floor(audioDuration))}
+                </p>
+              </div>
+            )}
           </div>
         </div>
         
-        {/* NEW: Saved Recordings Section */}
+        {/* Saved Recordings Section - WITH DELETE! */}
         {currentWordRecordings.length > 0 && (
           <div style={{
-            background: 'rgba(0, 0, 0, 0.05)',
-            borderRadius: '10px',
-            padding: '15px',
-            marginBottom: '15px'
+            background: 'rgba(255, 255, 255, 0.7)',
+            borderRadius: '15px',
+            padding: '20px',
+            marginBottom: '20px',
+            border: '2px solid ' + currentTheme.success
           }}>
-            <h4 style={{ margin: '0 0 10px 0', fontSize: '14px' }}>
-              Your {word} Recordings ({currentWordRecordings.length})
+            <h4 style={{ 
+              margin: '0 0 15px 0', 
+              fontSize: '18px',
+              color: currentTheme.success,
+              fontWeight: 'bold'
+            }}>
+              🎤 Your {word} Recordings ({currentWordRecordings.length})
             </h4>
             
             <div style={{ 
               display: 'flex', 
               flexDirection: 'column', 
-              gap: '8px',
-              marginBottom: '10px'
+              gap: '12px',
+              marginBottom: '15px'
             }}>
               {currentWordRecordings.map((recording, index) => (
                 <div key={recording.id} style={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  background: 'rgba(255, 255, 255, 0.5)',
-                  padding: '8px 12px',
-                  borderRadius: '6px'
+                  background: playingRecordingId === recording.id 
+                    ? 'rgba(255, 215, 0, 0.3)' 
+                    : 'rgba(255, 255, 255, 0.8)',
+                  padding: '12px 15px',
+                  borderRadius: '12px',
+                  border: playingRecordingId === recording.id 
+                    ? '2px solid ' + currentTheme.accent 
+                    : '2px solid transparent',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
                 }}>
-                  <span style={{ fontSize: '12px' }}>
-                    Recording {index + 1} ({formatTime(recording.duration)})
+                  <span style={{ 
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    color: currentTheme.text
+                  }}>
+                    🎵 Recording {index + 1} 
+                    <span style={{ opacity: 0.7, marginLeft: '5px' }}>
+                      ({formatTime(recording.duration)})
+                    </span>
                   </span>
-                  <button
-                    onClick={() => playSavedRecording(recording)}
-                    style={{
-                      background: playingRecordingId === recording.id ? currentTheme.danger : currentTheme.primary,
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      padding: '4px 8px',
-                      fontSize: '10px',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    {playingRecordingId === recording.id ? '⏸️' : '▶️'}
-                  </button>
+                  
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    {/* Play/Pause Button */}
+                    <button
+                      onClick={() => playSavedRecording(recording)}
+                      disabled={locked && playingRecordingId !== recording.id}
+                      style={{
+                        background: playingRecordingId === recording.id 
+                          ? currentTheme.danger 
+                          : currentTheme.primary,
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '8px 12px',
+                        fontSize: '14px',
+                        cursor: (locked && playingRecordingId !== recording.id) ? 'not-allowed' : 'pointer',
+                        transition: 'all 0.2s ease',
+                        opacity: (locked && playingRecordingId !== recording.id) ? 0.5 : 1,
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      {playingRecordingId === recording.id ? '⏸️' : '▶️'}
+                    </button>
+                    
+                    {/* NEW: Delete Button */}
+                    <button
+                      onClick={() => deleteRecording(recording.id)}
+                      disabled={locked}
+                      style={{
+                        background: locked ? '#ccc' : currentTheme.danger,
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '8px 12px',
+                        fontSize: '14px',
+                        cursor: locked ? 'not-allowed' : 'pointer',
+                        transition: 'all 0.2s ease',
+                        opacity: locked ? 0.5 : 1
+                      }}
+                      title="Delete recording"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                  
+                  {/* NEW: Progress Bar for Individual Recording */}
+                  {playingRecordingId === recording.id && audioDuration > 0 && (
+                    <div style={{ 
+                      width: '100%', 
+                      marginTop: '8px',
+                      gridColumn: '1 / -1'
+                    }}>
+                      <div style={{
+                        width: '100%',
+                        height: '6px',
+                        background: 'rgba(0,0,0,0.1)',
+                        borderRadius: '3px',
+                        overflow: 'hidden'
+                      }}>
+                        <div style={{
+                          width: `${(audioProgress / audioDuration) * 100}%`,
+                          height: '100%',
+                          background: currentTheme.accent,
+                          transition: 'width 0.1s linear',
+                          borderRadius: '3px'
+                        }} />
+                      </div>
+                      <p style={{ 
+                        fontSize: '11px', 
+                        margin: '4px 0 0 0',
+                        color: currentTheme.text,
+                        opacity: 0.7
+                      }}>
+                        {formatTime(Math.floor(audioProgress))} / {formatTime(Math.floor(audioDuration))}
+                      </p>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
             
+            {/* Play All Button */}
             {currentWordRecordings.length > 1 && (
               <button
                 onClick={playAllRecordings}
+                disabled={locked}
                 style={{
-                  background: currentTheme.secondary,
+                  background: locked ? '#ccc' : currentTheme.secondary,
                   color: 'white',
                   border: 'none',
-                  borderRadius: '6px',
-                  padding: '8px 12px',
-                  fontSize: '12px',
-                  cursor: 'pointer'
+                  borderRadius: '12px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  cursor: locked ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: locked ? 'none' : '0 4px 8px rgba(0,0,0,0.2)',
+                  opacity: locked ? 0.5 : 1
                 }}
               >
                 🎵 Play All {currentWordRecordings.length} Recordings
@@ -535,8 +847,12 @@ const SanskritVoiceRecorder = ({
         {/* Permission Section */}
         {!permission ? (
           <div style={{ marginBottom: '20px' }}>
-            <p style={{ marginBottom: '15px', fontSize: '14px' }}>
-              Allow microphone access to record your voice
+            <p style={{ 
+              marginBottom: '20px', 
+              fontSize: '16px',
+              fontWeight: 'bold'
+            }}>
+              🎤 Allow microphone access to record your voice
             </p>
             <button 
               onClick={getMicrophonePermission}
@@ -544,43 +860,52 @@ const SanskritVoiceRecorder = ({
                 background: currentTheme.primary,
                 color: 'white',
                 border: 'none',
-                padding: '12px 20px',
-                borderRadius: '8px',
-                fontSize: '16px',
+                padding: '15px 30px',
+                borderRadius: '15px',
+                fontSize: '18px',
+                fontWeight: 'bold',
                 cursor: 'pointer',
-                transition: 'all 0.3s ease'
+                transition: 'all 0.3s ease',
+                boxShadow: '0 6px 12px rgba(0,0,0,0.3)'
               }}
+              onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+              onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
             >
-              Enable Microphone
+              ✅ Enable Microphone
             </button>
           </div>
         ) : (
           <div>
-            {/* Recording Status */}
+            {/* Recording Status - MORE VISUAL! */}
             {isRecording && (
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                marginBottom: '20px',
-                fontSize: '18px',
-                color: currentTheme.danger
+                marginBottom: '25px',
+                fontSize: '20px',
+                fontWeight: 'bold',
+                color: currentTheme.danger,
+                background: 'rgba(229, 89, 52, 0.1)',
+                padding: '15px',
+                borderRadius: '12px',
+                border: '2px solid ' + currentTheme.danger
               }}>
                 <div style={{
-                  width: '12px',
-                  height: '12px',
+                  width: '15px',
+                  height: '15px',
                   backgroundColor: currentTheme.danger,
                   borderRadius: '50%',
-                  marginRight: '8px',
+                  marginRight: '10px',
                   animation: 'pulse 1s infinite'
                 }} />
-                Recording: {formatTime(recordingTime)}
+                🎙️ Recording: {formatTime(recordingTime)}
               </div>
             )}
             
             {/* Current Recording Playback */}
             {recordedAudio && !isRecording && (
-              <div style={{ marginBottom: '20px' }}>
+              <div style={{ marginBottom: '25px' }}>
                 <audio 
                   ref={audioRef}
                   src={recordedAudio} 
@@ -588,17 +913,19 @@ const SanskritVoiceRecorder = ({
                 />
                 
                 <div style={{
-                  background: 'rgba(0, 0, 0, 0.1)',
-                  borderRadius: '10px',
-                  padding: '15px',
-                  marginBottom: '15px'
+                  background: 'rgba(76, 175, 80, 0.1)',
+                  borderRadius: '15px',
+                  padding: '20px',
+                  marginBottom: '15px',
+                  border: '2px solid ' + currentTheme.success
                 }}>
                   <p style={{ 
-                    margin: '0 0 10px 0', 
-                    fontSize: '14px',
-                    opacity: 0.8 
+                    margin: '0 0 15px 0', 
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    color: currentTheme.success
                   }}>
-                    New recording ({formatTime(recordingTime)}):
+                    ✨ New recording ({formatTime(recordingTime)}):
                   </p>
                   
                   <button
@@ -614,19 +941,23 @@ const SanskritVoiceRecorder = ({
                       }
                     }}
                     style={{
-                      background: isPlaying ? currentTheme.danger : currentTheme.secondary,
+                      background: isPlaying ? currentTheme.danger : currentTheme.success,
                       color: 'white',
                       border: 'none',
                       borderRadius: '50%',
-                      width: '50px',
-                      height: '50px',
+                      width: '70px',
+                      height: '70px',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       margin: '0 auto',
-                      transition: 'all 0.3s ease'
+                      transition: 'all 0.3s ease',
+                      fontSize: '30px',
+                      boxShadow: '0 6px 12px rgba(0,0,0,0.3)'
                     }}
+                    onMouseOver={(e) => e.target.style.transform = 'scale(1.1)'}
+                    onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
                   >
                     {isPlaying ? '⏸️' : '▶️'}
                   </button>
@@ -634,21 +965,27 @@ const SanskritVoiceRecorder = ({
               </div>
             )}
             
-            {/* Recording Controls */}
-            <div style={{ marginBottom: '20px' }}>
+            {/* Recording Controls - BIGGER & MORE PLAYFUL! */}
+            <div style={{ marginBottom: '25px' }}>
               {!isRecording && !hasRecorded && (
                 <button 
                   onClick={startRecording}
+                  disabled={locked}
                   style={{
-                    background: currentTheme.primary,
+                    background: locked ? '#ccc' : currentTheme.primary,
                     color: 'white',
                     border: 'none',
-                    padding: '15px 25px',
-                    borderRadius: '25px',
-                    fontSize: '16px',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
+                    padding: '20px 40px',
+                    borderRadius: '20px',
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                    cursor: locked ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: locked ? 'none' : '0 8px 16px rgba(0,0,0,0.3)',
+                    opacity: locked ? 0.5 : 1
                   }}
+                  onMouseOver={(e) => !locked && (e.target.style.transform = 'scale(1.05)')}
+                  onMouseOut={(e) => !locked && (e.target.style.transform = 'scale(1)')}
                 >
                   🎤 Start Recording
                 </button>
@@ -661,11 +998,14 @@ const SanskritVoiceRecorder = ({
                     background: currentTheme.danger,
                     color: 'white',
                     border: 'none',
-                    padding: '15px 25px',
-                    borderRadius: '25px',
-                    fontSize: '16px',
+                    padding: '20px 40px',
+                    borderRadius: '20px',
+                    fontSize: '20px',
+                    fontWeight: 'bold',
                     cursor: 'pointer',
-                    transition: 'all 0.3s ease'
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 8px 16px rgba(0,0,0,0.3)',
+                    animation: 'pulse 1.5s infinite'
                   }}
                 >
                   ⏹️ Stop Recording
@@ -675,20 +1015,25 @@ const SanskritVoiceRecorder = ({
               {hasRecorded && !isRecording && (
                 <div style={{ 
                   display: 'flex', 
-                  gap: '10px', 
+                  gap: '12px', 
                   justifyContent: 'center',
                   flexWrap: 'wrap'
                 }}>
                   <button 
                     onClick={clearRecording}
+                    disabled={locked}
                     style={{
-                      background: currentTheme.secondary,
+                      background: locked ? '#ccc' : currentTheme.secondary,
                       color: 'white',
                       border: 'none',
-                      padding: '12px 20px',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      cursor: 'pointer'
+                      padding: '15px 25px',
+                      borderRadius: '12px',
+                      fontSize: '16px',
+                      fontWeight: 'bold',
+                      cursor: locked ? 'not-allowed' : 'pointer',
+                      transition: 'all 0.3s ease',
+                      boxShadow: locked ? 'none' : '0 4px 8px rgba(0,0,0,0.2)',
+                      opacity: locked ? 0.5 : 1
                     }}
                   >
                     🔄 Try Again
@@ -696,14 +1041,19 @@ const SanskritVoiceRecorder = ({
                   
                   <button 
                     onClick={saveCurrentRecording}
+                    disabled={locked}
                     style={{
-                      background: currentTheme.primary,
+                      background: locked ? '#ccc' : currentTheme.success,
                       color: 'white',
                       border: 'none',
-                      padding: '12px 20px',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      cursor: 'pointer'
+                      padding: '15px 25px',
+                      borderRadius: '12px',
+                      fontSize: '16px',
+                      fontWeight: 'bold',
+                      cursor: locked ? 'not-allowed' : 'pointer',
+                      transition: 'all 0.3s ease',
+                      boxShadow: locked ? 'none' : '0 4px 8px rgba(0,0,0,0.2)',
+                      opacity: locked ? 0.5 : 1
                     }}
                   >
                     💾 Save Recording
@@ -711,15 +1061,19 @@ const SanskritVoiceRecorder = ({
                   
                   <button 
                     onClick={handleComplete}
+                    disabled={locked}
                     style={{
-                      background: currentTheme.accent,
+                      background: locked ? '#ccc' : currentTheme.accent,
                       color: currentTheme.text,
                       border: 'none',
-                      padding: '12px 20px',
-                      borderRadius: '8px',
-                      fontSize: '14px',
+                      padding: '15px 25px',
+                      borderRadius: '12px',
+                      fontSize: '16px',
                       fontWeight: 'bold',
-                      cursor: 'pointer'
+                      cursor: locked ? 'not-allowed' : 'pointer',
+                      transition: 'all 0.3s ease',
+                      boxShadow: locked ? 'none' : '0 4px 8px rgba(0,0,0,0.2)',
+                      opacity: locked ? 0.5 : 1
                     }}
                   >
                     ✅ Continue
@@ -733,25 +1087,29 @@ const SanskritVoiceRecorder = ({
         {/* Skip Option */}
         {allowSkip && (
           <div style={{ 
-            borderTop: `1px solid ${currentTheme.border}`,
-            paddingTop: '15px',
-            marginTop: '15px'
+            borderTop: `2px dashed ${currentTheme.border}`,
+            paddingTop: '20px',
+            marginTop: '20px'
           }}>
             <button 
               onClick={handleSkip}
+              disabled={locked}
               style={{
                 background: 'transparent',
                 color: currentTheme.text,
-                border: `1px solid ${currentTheme.text}`,
-                padding: '8px 16px',
-                borderRadius: '6px',
-                fontSize: '12px',
-                cursor: 'pointer',
-                opacity: 0.7,
-                transition: 'all 0.3s ease'
+                border: `2px solid ${currentTheme.text}`,
+                padding: '10px 20px',
+                borderRadius: '10px',
+                fontSize: '14px',
+                cursor: locked ? 'not-allowed' : 'pointer',
+                opacity: locked ? 0.3 : 0.7,
+                transition: 'all 0.3s ease',
+                fontWeight: 'bold'
               }}
+              onMouseOver={(e) => !locked && (e.target.style.opacity = '1')}
+              onMouseOut={(e) => !locked && (e.target.style.opacity = '0.7')}
             >
-              Skip Recording
+              ⏭️ Skip Recording
             </button>
           </div>
         )}
@@ -760,7 +1118,11 @@ const SanskritVoiceRecorder = ({
           {`
             @keyframes pulse {
               0%, 100% { opacity: 1; transform: scale(1); }
-              50% { opacity: 0.5; transform: scale(1.1); }
+              50% { opacity: 0.6; transform: scale(1.05); }
+            }
+            @keyframes bounce {
+              0%, 100% { transform: translateY(0); }
+              50% { transform: translateY(-10px); }
             }
           `}
         </style>

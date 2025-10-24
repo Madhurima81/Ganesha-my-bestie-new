@@ -1,49 +1,33 @@
-// Simple App.jsx - Elephant Grove Scene Test
+// Simple App.jsx - Scene Switcher for Testing
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
+// Symbol Mountain Scenes
+import NewModakSceneV5 from './zones/symbol-mountain/scenes/modak/NewModakSceneV5';
+import PondSceneSimplifiedV3 from './zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV3';
+import SymbolMountainSceneV3 from './zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3';
+import SacredAssemblySceneV8 from './zones/symbol-mountain/scenes/final scene/SacredAssemblySceneV8';
 
-//Shloka river - old flow
-import VakratundaGroveV2 from './zones/shloka-river/scenes/Scene1/VakratundaGroveV2.jsx';
-import SuryakotiBank from './zones/shloka-river/scenes/Scene2/SuryakotiBank.jsx';
-import NirvighnamChant from './zones/shloka-river/scenes/Scene3/NirvighnamChantSimplified.jsx';
-import SarvakaryeshuChant from './zones/shloka-river/scenes/scene4/SarvakaryeshuChantSimplified.jsx';
-import ShlokaRiverFinale from './zones/shloka-river/scenes/scene5/ShlokaRiverFinale.jsx';
+// Cave of Secrets Scenes
+import CaveSceneFixedV1 from './zones/meaning cave/scenes/VakratundaMahakaya/CaveSceneFixedV1';
+import SuryakotiSceneV2 from './zones/meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV2';
+import NirvighnamSceneV3 from './zones/meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV3';
+import SarvakaryeshuSarvadaV5 from './zones/meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV5.jsx';
 
-//Festival Zone
+// Shloka River Scenes
+import VakratundaGroveSimplified from './zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx';
+import SuryakotiBankSimplified from './zones/shloka-river/scenes/Scene2/SuryakotiBankSimplified.jsx';
+import NirvighnamChantSimplified from './zones/shloka-river/scenes/Scene3/NirvighnamChantSimplified.jsx';
+import SarvakaryeshuChantSimplified from './zones/shloka-river/scenes/scene4/SarvakaryeshuChantSimplified.jsx';
+import ShlokaRiverFinale from './zones/shloka-river/scenes/scene5/ShlokaRiverFinale';
+
+// Festival Square Games
 import FestivalPianoGame from './zones/festival-square/Game1-piano/FestivalPianoGame.jsx';
-import RangoliArtBooth from './zones/festival-square/Game2-Rangoli/RangoliArtBooth.jsx';
 import FestivalRangoliGame from './zones/festival-square/Game2-Rangoli/FestivalRangoliGame.jsx';
-import GaneshaColoringActivity from './lib/components/games/GaneshaColoringActivity.jsx';
 import ModakCookingGame from './zones/festival-square/game3-cooking/ModakCookingGame.jsx';
 import MandapDecorationGame from './zones/festival-square/Game4-mandapdecor/MandapDecorationGame.jsx';
 
-// Symbol Mountain
-import NewModakSceneV5  from './zones/symbol-mountain/scenes/modak/NewModakSceneV5';
-
-// Shloka river - new flow- oct
-import VakratundaGroveSimplified from './zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx';
-    import SuryakotiBankSimplified from './zones/shloka-river/scenes/Scene2/SuryakotiBankSimplified.jsx';
-    import NirvighnamChantSimplified from './zones/shloka-river/scenes/Scene3/NirvighnamChantSimplified.jsx';
-    import SarvakaryeshuChantSimplified from './zones/shloka-river/scenes/scene4/SarvakaryeshuChantSimplified.jsx';
-
-//Cave of secrets - new flow - oct
-        import CaveSceneFixedV1 from './zones/meaning cave/scenes/VakratundaMahakaya/CaveSceneFixedV1.jsx';
-            import SuryakotiSceneV3 from './zones/meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV3.jsx';
-
-        import NirvighnamSceneV4 from './zones/meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV4.jsx';
-                import SarvakaryeshuSarvadaV6 from './zones/meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV6.jsx';
-
-
-
-
-
-
-
-
-
-
-// Import GameCoach Provider
+// Import GameCoach Provider (needed by some scenes)
 import { GameCoachProvider } from './lib/components/coach/GameCoach.jsx';
 
 // Mock GameStateManager for testing
@@ -69,8 +53,139 @@ const MockGameStateManager = {
 // Add mocks to window
 window.MockGameStateManager = MockGameStateManager;
 
+// 🎯 SCENE CONFIGURATION - Organized by Zone
+const SCENES = {
+  // 🏔️ SYMBOL MOUNTAIN
+  'symbol-modak': {
+    name: '🍬 Modak Scene',
+    zone: 'Symbol Mountain',
+    component: NewModakSceneV5,
+    zoneId: 'symbol-mountain',
+    sceneId: 'modak'
+  },
+  'symbol-pond': {
+    name: '🌊 Pond Scene',
+    zone: 'Symbol Mountain',
+    component: PondSceneSimplifiedV3,
+    zoneId: 'symbol-mountain',
+    sceneId: 'pond'
+  },
+  'symbol-tusk': {
+    name: '🐘 Tusk/Symbol Scene',
+    zone: 'Symbol Mountain',
+    component: SymbolMountainSceneV3,
+    zoneId: 'symbol-mountain',
+    sceneId: 'symbol'
+  },
+  'symbol-final': {
+    name: '✨ Sacred Assembly',
+    zone: 'Symbol Mountain',
+    component: SacredAssemblySceneV8,
+    zoneId: 'symbol-mountain',
+    sceneId: 'final-scene'
+  },
+
+  // 🕉️ CAVE OF SECRETS
+  'cave-vakratunda': {
+    name: '🕉️ Vakratunda Mahakaya',
+    zone: 'Cave of Secrets',
+    component: CaveSceneFixedV1,
+    zoneId: 'cave-of-secrets',
+    sceneId: 'vakratunda-mahakaya'
+  },
+  'cave-suryakoti': {
+    name: '☀️ Suryakoti Samaprabha',
+    zone: 'Cave of Secrets',
+    component: SuryakotiSceneV2,
+    zoneId: 'cave-of-secrets',
+    sceneId: 'suryakoti-samaprabha'
+  },
+  'cave-nirvighnam': {
+    name: '🙏 Nirvighnam Kurumedeva',
+    zone: 'Cave of Secrets',
+    component: NirvighnamSceneV3,
+    zoneId: 'cave-of-secrets',
+    sceneId: 'nirvighnam-kurumedeva'
+  },
+  'cave-sarvakaryeshu': {
+    name: '🌟 Sarvakaryeshu Sarvada',
+    zone: 'Cave of Secrets',
+    component: SarvakaryeshuSarvadaV5,
+    zoneId: 'cave-of-secrets',
+    sceneId: 'sarvakaryeshu-sarvada'
+  },
+
+  // 🌊 SHLOKA RIVER
+  'shloka-vakratunda': {
+    name: '🐘 Vakratunda Grove',
+    zone: 'Shloka River',
+    component: VakratundaGroveSimplified,
+    zoneId: 'shloka-river',
+    sceneId: 'vakratunda-grove'
+  },
+  'shloka-suryakoti': {
+    name: '☀️ Suryakoti Bank',
+    zone: 'Shloka River',
+    component: SuryakotiBankSimplified,
+    zoneId: 'shloka-river',
+    sceneId: 'suryakoti-bank'
+  },
+  'shloka-nirvighnam': {
+    name: '✨ Nirvighnam Chant',
+    zone: 'Shloka River',
+    component: NirvighnamChantSimplified,
+    zoneId: 'shloka-river',
+    sceneId: 'nirvighnam-chant'
+  },
+  'shloka-sarvakaryeshu': {
+    name: '🎵 Sarvakaryeshu Chant',
+    zone: 'Shloka River',
+    component: SarvakaryeshuChantSimplified,
+    zoneId: 'shloka-river',
+    sceneId: 'sarvakaryeshu-chant'
+  },
+  'shloka-finale': {
+    name: '🎊 Shloka River Finale',
+    zone: 'Shloka River',
+    component: ShlokaRiverFinale,
+    zoneId: 'shloka-river',
+    sceneId: 'shloka-river-finale'
+  },
+
+  // 🎪 FESTIVAL SQUARE
+  /*'festival-piano': {
+    name: '🎹 Piano Game',
+    zone: 'Festival Square',
+    component: FestivalPianoGame,
+    zoneId: 'festival-square',
+    sceneId: 'game1'
+  },
+  'festival-rangoli': {
+    name: '🎨 Rangoli Game',
+    zone: 'Festival Square',
+    component: FestivalRangoliGame,
+    zoneId: 'festival-square',
+    sceneId: 'game2'
+  },
+  'festival-cooking': {
+    name: '👨‍🍳 Modak Cooking',
+    zone: 'Festival Square',
+    component: ModakCookingGame,
+    zoneId: 'festival-square',
+    sceneId: 'game3'
+  },
+  'festival-mandap': {
+    name: '🏛️ Mandap Decoration',
+    zone: 'Festival Square',
+    component: MandapDecorationGame,
+    zoneId: 'festival-square',
+    sceneId: 'game4'
+  }*/
+};
+
 function App() {
   const [reloadKey, setReloadKey] = useState(0);
+  const [activeScene, setActiveScene] = useState('symbol-pond'); // Default scene
 
   // Set up test profile
   useEffect(() => {
@@ -81,18 +196,18 @@ function App() {
   const handleNavigate = (destination) => {
     console.log('🧭 Navigation:', destination);
     if (destination === 'next-scene') {
-      console.log('🦋 Would navigate to Firefly Garden scene');
+      console.log('🦋 Would navigate to next scene');
     }
   };
 
   // Simple completion handler
   const handleComplete = (sceneId, data) => {
-    console.log('🎉 Elephant Grove Complete:', { sceneId, data });
+    console.log('🎉 Scene Complete:', { sceneId, data });
   };
 
   // Simple reload function
   const reloadScene = () => {
-    console.log('🔄 Reloading Elephant Grove');
+    console.log('🔄 Reloading Scene');
     
     // Clear all localStorage
     localStorage.clear();
@@ -104,136 +219,118 @@ function App() {
     setReloadKey(prev => prev + 1);
   };
 
-  // Test state manipulation
-  const testVakratundaComplete = () => {
-    console.log('🐘 Testing Vakratunda Complete - Jump to Mahakaya');
-    
-    // Simulate Scene 1A completion
-    const testState = {
-      phase: 'scene_1b',
-      scene1aComplete: true,
-      activatedElephants: ['va', 'kra', 'tun', 'da'],
-      playedSyllables: ['Va', 'Kra', 'Tun', 'Da'],
-      progress: { percentage: 50, starsEarned: 4, completed: false }
-    };
-    
-    localStorage.setItem('temp_session_test-profile_shloka-river_elephant-grove', JSON.stringify(testState));
-    setReloadKey(prev => prev + 1);
-  };
+  // Get current scene config
+  const currentScene = SCENES[activeScene];
+  const SceneComponent = currentScene.component;
 
-  const testFullCompletion = () => {
-    console.log('🎊 Testing Full Scene Completion');
-    
-    // Simulate full completion
-    const testState = {
-      phase: 'complete',
-      scene1aComplete: true,
-      scene1bComplete: true,
-      activatedElephants: ['va', 'kra', 'tun', 'da', 'ma', 'ha', 'ka', 'ya'],
-      playedSyllables: ['Va', 'Kra', 'Tun', 'Da', 'Ma', 'Ha', 'Ka', 'Ya'],
-      recordings: ['mock-recording-1.wav', 'mock-recording-2.wav'],
-      completed: true,
-      stars: 8,
-      progress: { percentage: 100, starsEarned: 8, completed: true },
-      currentPopup: 'final_fireworks'
-    };
-    
-    localStorage.setItem('temp_session_test-profile_shloka-river_elephant-grove', JSON.stringify(testState));
-    setReloadKey(prev => prev + 1);
-  };
+  // Group scenes by zone for organized dropdown
+  const scenesByZone = Object.entries(SCENES).reduce((acc, [key, scene]) => {
+    if (!acc[scene.zone]) acc[scene.zone] = [];
+    acc[scene.zone].push({ key, ...scene });
+    return acc;
+  }, {});
 
   return (
     <div className="App">
-      {/* Simple Reload Button 
-      <button 
-        onClick={reloadScene}
-        style={{
-          position: 'fixed',
-          top: '10px',
-          left: '10px',
-          zIndex: 9999,
-          padding: '8px 16px',
-          background: '#ff4444',
-          color: 'white',
-          border: 'none',
-          borderRadius: '8px',
-          cursor: 'pointer',
-          fontWeight: 'bold'
-        }}
-      >
-        🔄 Reload Elephant Grove
-      </button>
-
-      {/* Test State Buttons 
+      {/* 🎛️ SCENE SWITCHER CONTROL */}
       <div style={{
         position: 'fixed',
-        top: '60px',
+        top: '10px',
         left: '10px',
         zIndex: 9999,
         display: 'flex',
-        flexDirection: 'column',
-        gap: '8px'
+        gap: '10px',
+        alignItems: 'center',
+        background: 'rgba(0, 0, 0, 0.9)',
+        padding: '12px 16px',
+        borderRadius: '12px',
+        //boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+        //border: '2px solid rgba(78, 205, 196, 0.3)'
       }}>
-        <button 
-          onClick={testVakratundaComplete}
+        {/* Scene Selector Dropdown with Grouped Options */}
+        <select 
+          value={activeScene}
+          onChange={(e) => {
+            setActiveScene(e.target.value);
+            reloadScene(); // Auto-reload when switching
+          }}
           style={{
-            padding: '6px 12px',
-            background: '#4ECDC4',
+            padding: '10px 14px',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             color: 'white',
             border: 'none',
-            borderRadius: '6px',
+            borderRadius: '8px',
             cursor: 'pointer',
-            fontSize: '12px',
-            fontWeight: 'bold'
+            minWidth: '250px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
           }}
         >
-          🐘 Test Scene 1B
-        </button>
-        
+          {Object.entries(scenesByZone).map(([zone, scenes]) => (
+            <optgroup key={zone} label={`${zone}`}>
+              {scenes.map(scene => (
+                <option key={scene.key} value={scene.key}>
+                  {scene.name}
+                </option>
+              ))}
+            </optgroup>
+          ))}
+        </select>
+
+        {/* Reload Button */}
         <button 
-          onClick={testFullCompletion}
+          onClick={reloadScene}
           style={{
-            padding: '6px 12px',
-            background: '#9B59B6',
+            padding: '10px 18px',
+            background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
             color: 'white',
             border: 'none',
-            borderRadius: '6px',
+            borderRadius: '8px',
             cursor: 'pointer',
-            fontSize: '12px',
-            fontWeight: 'bold'
+            fontWeight: 'bold',
+            fontSize: '14px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+            transition: 'transform 0.1s',
           }}
+          onMouseDown={(e) => e.target.style.transform = 'scale(0.95)'}
+          onMouseUp={(e) => e.target.style.transform = 'scale(1)'}
         >
-          🎊 Test Complete
+          🔄 Reload
         </button>
       </div>
 
-      {/* Audio Test Info 
+      {/* Scene Info Display 
       <div style={{
         position: 'fixed',
         bottom: '20px',
         left: '20px',
-        background: 'rgba(0,0,0,0.8)',
+        background: 'rgba(0, 0, 0, 0.9)',
         color: 'white',
-        padding: '10px',
-        borderRadius: '8px',
+        padding: '12px 16px',
+        borderRadius: '10px',
         fontSize: '12px',
-        zIndex: 100
+        zIndex: 100,
+        border: '2px solid rgba(78, 205, 196, 0.3)',
+        backdropFilter: 'blur(10px)'
       }}>
-        🎵 Audio: Web Speech API<br/>
-        🎤 Recording: Browser microphone<br/>
-        💧 Animations: CSS keyframes
+        <div style={{ marginBottom: '6px', fontSize: '14px' }}>
+          <strong>{currentScene.name}</strong>
+        </div>
+        <div style={{ opacity: 0.8 }}>
+          📍 Zone: {currentScene.zone}<br/>
+          🎮 Scene ID: {currentScene.sceneId}
+        </div>
       </div>
 
-      {/* Elephant Grove Scene */}
+      {/* Active Scene - With GameCoach wrapper */}
       <GameCoachProvider>
-        <VakratundaGroveSimplified //NirvighnamSceneV4 //SarvakaryeshuSarvadaV6 //NirvighnamSceneV4 //SuryakotiSceneV3 //CaveSceneFixedV1 //SarvakaryeshuChantSimplified //SuryakotiBankSimplified //NirvighnamChantSimplified //VakratundaGroveSimplified  
-        // SuryakotiBankSimplified //SuryakotiBank //VakratundaGroveSimplified   //NirvighnamChant 
-        // //NewModakSceneV5 //FestivalPianoGame //FestivalRangoliGame //ModakCookingGame  //FestivalPianoGame MandapDecorationGame
+        <SceneComponent
           key={reloadKey}
           onComplete={handleComplete}
           onNavigate={handleNavigate}
-          zoneId="shloka-river"
-          sceneId="vakratunda-grove"
+          zoneId={currentScene.zoneId}
+          sceneId={currentScene.sceneId}
         />
       </GameCoachProvider>
     </div>

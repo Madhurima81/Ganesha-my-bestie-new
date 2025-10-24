@@ -3,50 +3,69 @@ import React, { useState, useEffect, useRef } from 'react';
 import './VakratundaGrove.css';
 
 // Import scene management components
-import SceneManager from "../../../../lib/components/scenes/SceneManager";
-import MessageManager from "../../../../lib/components/scenes/MessageManager";
-import InteractionManager from "../../../../lib/components/scenes/InteractionManager";
-import GameStateManager from "../../../../lib/services/GameStateManager";
-import { useGameCoach } from '../../../../lib/components/coach/GameCoach';
-import ProgressManager from '../../../../lib/services/ProgressManager';
-import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
+import SceneManager from "../../../../../lib/components/scenes/SceneManager";
+import MessageManager from "../../../../../lib/components/scenes/MessageManager";
+import InteractionManager from "../../../../../lib/components/scenes/InteractionManager";
+import GameStateManager from "../../../../../lib/services/GameStateManager";
+import { useGameCoach } from '../../../../../lib/components/coach/GameCoach';
+import ProgressManager from '../../../../../lib/services/ProgressManager';
+import SimpleSceneManager from '../../../../../lib/services/SimpleSceneManager';
 import mooshikaCoach from "./assets/images/mooshika-coach.png";
 
 // UI Components
-import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
-import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
-import Fireworks from '../../../../lib/components/feedback/Fireworks';
-import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
+import TocaBocaNav from '../../../../../lib/components/navigation/TocaBocaNav';
+import SparkleAnimation from '../../../../../lib/components/animation/SparkleAnimation';
+import Fireworks from '../../../../../lib/components/feedback/Fireworks';
+import SceneCompletionCelebration from '../../../../../lib/components/celebration/SceneCompletionCelebration';
 
 // NEW: Import water spray and updated memory game components
-import SanskritMemoryGame from './components/SanskritMemoryGame';
-import WaterSprayArc from './components/WaterSprayArc';
-import SanskritVoiceRecorder from '../../../../lib/components/audio/SanskritVoiceRecorder';
-import SmartwatchWidget from './components/SmartwatchWidget';
-import HelperSignatureAnimation from '../../../../lib/components/animation/HelperSignatureAnimation';
+import SanskritMemoryGame from './SanskritMemoryGame';
+import SimplifiedMemoryGame from '../components/SimplifiedMemoryGame';
+import WaterSprayArc from './WaterSprayArc';
+import SanskritVoiceRecorder from '../../../../../lib/components/audio/SanskritVoiceRecorder';
+import SmartwatchWidget from './SmartwatchWidget';
+import HelperSignatureAnimation from '../../../../../lib/components/animation/HelperSignatureAnimation';
 
-import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
-import SanskritRiverProgress from './components/SanskritRiverProgress';
-import SaveAnimalMission from '../../../../lib/components/missions/SaveAnimalMission';
+import ProgressiveHintSystem from '../../../../../lib/components/interactive/ProgressiveHintSystem';
+import SanskritRiverProgress from './SanskritRiverProgress';
+import SaveAnimalMission from '../../../../../lib/components/missions/SaveAnimalMission';
 
 // Images - River scene assets
 import riverBackground from './assets/images/elephant-grove-bg.png';
-import lotusVa from './assets/images/lotus-va.png';
-import lotusKra from './assets/images/lotus-kra.png';
-import lotusTun from './assets/images/lotus-tun.png';
-import lotusDa from './assets/images/lotus-da.png';
-import stoneMa from './assets/images/stone-ma.png';
-import stoneHa from './assets/images/stone-ha.png';
-import stoneKa from './assets/images/stone-ka.png';
-import stoneYa from './assets/images/stone-ya.png';
-import elephantBabyVa from './assets/images/elephant-baby-va.png';
-import elephantBabyKra from './assets/images/elephant-baby-kra.png';
-import elephantBabyTun from './assets/images/elephant-baby-tun.png';
-import elephantBabyDa from './assets/images/elephant-baby-da.png';
-import elephantHa from './assets/images/elephant-ha.png';
-import elephantKa from './assets/images/elephant-ka.png';
-import elephantMa from './assets/images/elephant-ma.png';
-import elephantYa from './assets/images/elephant-ya.png';
+//import lotusVa from './assets/images/lotus-va.png';
+//import lotusKra from './assets/images/lotus-kra.png';
+//import lotusTun from './assets/images/lotus-tun.png';
+//import lotusDa from './assets/images/lotus-da.png';
+
+import elephantBabyVa from './assets/images/vakratunda/elephant-baby-va.png';
+import elephantBabyKra from './assets/images/vakratunda/elephant-baby-kra.png';
+import elephantBabyTun from './assets/images/vakratunda/elephant-baby-tun.png';
+import elephantBabyDa from './assets/images/vakratunda/elephant-baby-da.png';
+import elephantHa from './assets/images/mahakaya/elephant-ha.png';
+import elephantKa from './assets/images/mahakaya/elephant-ka.png';
+import elephantMa from './assets/images/mahakaya/elephant-ma.png';
+import elephantYa from './assets/images/mahakaya/elephant-ya.png';
+
+// SINGERS: Bud images for vakratunda
+import budVa from './assets/images/vakratunda/va-bud.png';
+import budKra from './assets/images/vakratunda/kra-bud.png';
+import budTun from './assets/images/vakratunda/tun-bud.png';
+import budDa from './assets/images/vakratunda/da-bud.png';
+
+// SINGERS: Seed image for mahakaya (same seed.png used 4 times)
+import seedImage from './assets/images/mahakaya/seed.png';
+
+// REWARDS: Lotus images for vakratunda (from vakratunda folder)
+import lotusVa from './assets/images/vakratunda/va-lotus.png';
+import lotusKra from './assets/images/vakratunda/kra-lotus.png';
+import lotusTun from './assets/images/vakratunda/tun-lotus.png';
+import lotusDa from './assets/images/vakratunda/da-lotus.png';
+
+// REWARDS: Flower images for mahakaya
+import flowerMa from './assets/images/mahakaya/ma-flower.png';
+import flowerHa from './assets/images/mahakaya/ha-flower.png';
+import flowerKa from './assets/images/mahakaya/ka-flower.png';
+import flowerYa from './assets/images/mahakaya/ya-flower.png';
 
 import ganeshaWithHeadphones from '../assets/images/ganesha_with_headphones.png';
 import smartwatchBase from '../assets/images/smartwatch-base.png';
@@ -190,7 +209,7 @@ const VakratundaGroveContent = ({
   zoneId,
   sceneId
 }) => {
-  console.log('ðŸŽ® VakratundaGroveContent render', { 
+  console.log('Ã°Å¸Å½Â® VakratundaGroveContent render', { 
     sceneState: sceneState?.phase, 
     isReload, 
     memoryGameState: !!sceneState?.memoryGameState,
@@ -241,11 +260,13 @@ const VakratundaGroveContent = ({
 
   const [showMahakayaStory, setShowMahakayaStory] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isAudioOn, setIsAudioOn] = useState(true);
+
 
   // Add power configuration
   const powerConfig = {
-    vakratunda: { name: 'Flexibility', icon: 'ðŸŒ€', color: '#FFD700' },
-    mahakaya: { name: 'Inner Strength', icon: 'ðŸ’ª', color: '#FF6B35' }
+    vakratunda: { name: 'Flexibility', icon: 'Ã°Å¸Å’â‚¬', color: '#FFD700' },
+    mahakaya: { name: 'Inner Strength', icon: 'Ã°Å¸â€™Âª', color: '#FF6B35' }
   };
 
   // Safe setTimeout function
@@ -255,6 +276,41 @@ const VakratundaGroveContent = ({
     return id;
   };
 
+  const playAudio = (audioPath, volume = 1.0) => {
+  if (!isAudioOn) return Promise.resolve(); // Skip if muted
+  
+  try {
+    const audio = new Audio(audioPath);
+    audio.volume = volume;
+    return audio.play().catch(e => {
+      console.log(`Audio not found: ${audioPath}`);
+      return Promise.resolve();
+    });
+  } catch (error) {
+    console.log(`Audio error: ${error.message}`);
+    return Promise.resolve();
+  }
+};
+
+const toggleAudio = () => {
+  const newAudioState = !isAudioOn;
+  setIsAudioOn(newAudioState);
+  
+  // Save preference to localStorage
+  localStorage.setItem('sanskritGameAudio', newAudioState.toString());
+  
+  // Stop all currently playing audio if muting
+  if (!newAudioState) {
+    // Stop all audio elements
+    document.querySelectorAll('audio').forEach(audio => {
+      audio.pause();
+      audio.currentTime = 0;
+    });
+  }
+  
+  console.log(`Audio ${newAudioState ? 'enabled' : 'muted'}`);
+};
+
   // Cleanup timeouts on unmount
   useEffect(() => {
     return () => {
@@ -262,14 +318,22 @@ const VakratundaGroveContent = ({
     };
   }, []);
 
+  // 3. Load audio preference on component mount
+useEffect(() => {
+  const savedAudioPreference = localStorage.getItem('sanskritGameAudio');
+  if (savedAudioPreference !== null) {
+    setIsAudioOn(savedAudioPreference === 'true');
+  }
+}, []);
+
   // UNIFIED: Single state saving function for both components
   const handleSaveComponentState = (componentType, componentState) => {
-    console.log(`ðŸ’¾ Saving ${componentType} state:`, componentState);
+    console.log(`Ã°Å¸â€™Â¾ Saving ${componentType} state:`, componentState);
     
     // Prevent double calls by debouncing
     if (handleSaveComponentState.lastCall && 
         Date.now() - handleSaveComponentState.lastCall < 100) {
-      console.log('ðŸš« Debounced duplicate save call');
+      console.log('Ã°Å¸Å¡Â« Debounced duplicate save call');
       return;
     }
     handleSaveComponentState.lastCall = Date.now();
@@ -284,7 +348,7 @@ const VakratundaGroveContent = ({
       })
     };
     
-    console.log(`âœ… Updating scene state with ${componentType}:`, updatedState);
+    console.log(`Ã¢Å“â€¦ Updating scene state with ${componentType}:`, updatedState);
     sceneActions.updateState(updatedState);
   };
 
@@ -376,47 +440,119 @@ const VakratundaGroveContent = ({
       break;
       
     case PHASES.MEMORY_GAME_ACTIVE:
-      console.log('🔄 SANSKRIT: Memory game active - letting component handle itself');
-      break;
+  console.log('🔄 SANSKRIT: Memory game active - letting component handle itself');
+  // ADD THIS CONDITION:
+  if (sceneState.learnedWords?.vakratunda === true) {
+    setVakratundaPowerGained(true);
+  }
+  break;
       
     case PHASES.VAKRATUNDA_COMPLETE:
       console.log('🔄 SANSKRIT: Resuming Vakratunda completion');
       setBlessingWord('vakratunda');
       setCurrentPracticeWord('vakratunda');
       setShowWordCelebration(true);
+      // FIX 1: Trigger sparkle animation for Vakratunda
+      setShowSparkle('vakratunda-complete');
+      
+      // FIX 1: Set timer to continue the sequence
+      setTimeout(() => {
+        setShowSparkle(null);
+        setShowWordCelebration(false);
+        sceneActions.updateState({
+          phase: PHASES.GANESHA_BLESSING_VAKRATUNDA
+        });
+        setBlessingPhase('welcome');
+        setShowGaneshaBlessing(true);
+      }, 4000);
+      break;
+      
+    case PHASES.MAHAKAYA_COMPLETE:
+      console.log('🔄 SANSKRIT: Resuming Mahakaya completion');
+      setBlessingWord('mahakaya');
+      setCurrentPracticeWord('mahakaya');
+      setShowWordCelebration(true);
+      // FIX 1: Trigger sparkle animation for Mahakaya
+      setShowSparkle('mahakaya-complete');
+      
+      // FIX 1: Set timer to continue the sequence (this was missing!)
+      setTimeout(() => {
+        setShowSparkle(null);
+        setShowWordCelebration(false);
+        sceneActions.updateState({
+          phase: PHASES.GANESHA_BLESSING_MAHAKAYA
+        });
+        setBlessingPhase('welcome');
+        setShowGaneshaBlessing(true);
+      }, 4000);
       break;
       
    case PHASES.GANESHA_BLESSING_VAKRATUNDA:
-  console.log('🔄 SANSKRIT: Resuming Ganesha blessing for Vakratunda');
-  setBlessingWord('vakratunda');
-  setCurrentPracticeWord('vakratunda');
-  
-  // Hide conflicting elements
-  setShowChoiceButtons(false);
-  setShowWordCelebration(false);
-  setShowRescueMission(false);
-  setShowRecording(false);
-  
-  // Show only Ganesha blessing
-  setShowGaneshaBlessing(true);
-  setBlessingPhase('welcome');
-  break;
+      console.log('🔄 SANSKRIT: Resuming Ganesha blessing for Vakratunda');
+      setBlessingWord('vakratunda');
+      setCurrentPracticeWord('vakratunda');
       
- case PHASES.CHOICE_BUTTONS_VAKRATUNDA:
-  console.log('🔄 SANSKRIT: Resuming choice buttons for Vakratunda');
-  setCurrentPracticeWord('vakratunda');
-  
-  // Hide all conflicting UI elements
-  setShowGaneshaBlessing(false);
-  setShowWordCelebration(false);
-  setShowRescueMission(false);
-  setShowMahakayaStory(false);
-  setShowRecording(false);
-  setBlessingPhase('complete');
-  
-  // Show only choice buttons
-  setShowChoiceButtons(true);
-  break;
+      // Hide conflicting elements
+      setShowChoiceButtons(false);
+      setShowWordCelebration(false);
+      setShowRescueMission(false);
+      setShowRecording(false);
+      
+      // Show only Ganesha blessing
+      setShowGaneshaBlessing(true);
+      setBlessingPhase('welcome'); // FIX 4: Always start at welcome phase
+      break;
+      
+   case PHASES.GANESHA_BLESSING_MAHAKAYA:
+      console.log('🔄 SANSKRIT: Resuming Ganesha blessing for Mahakaya');
+      setBlessingWord('mahakaya');
+      setCurrentPracticeWord('mahakaya');
+        setVakratundaPowerGained(true); // ADD THIS LINE
+
+      
+      // Hide conflicting elements
+      setShowChoiceButtons(false);
+      setShowWordCelebration(false);
+      setShowRescueMission(false);
+      setShowRecording(false);
+      
+      // Show only Ganesha blessing
+      setShowGaneshaBlessing(true);
+      setBlessingPhase('welcome'); // FIX 4: Always start at welcome phase
+      break;
+      
+    case PHASES.CHOICE_BUTTONS_VAKRATUNDA:
+      console.log('🔄 SANSKRIT: Resuming choice buttons for Vakratunda');
+      setCurrentPracticeWord('vakratunda');
+      
+      // Hide all conflicting UI elements
+      setShowGaneshaBlessing(false);
+      setShowWordCelebration(false);
+      setShowRescueMission(false);
+      setShowMahakayaStory(false);
+      setShowRecording(false);
+      setBlessingPhase('complete');
+      
+      // Show only choice buttons
+      setShowChoiceButtons(true);
+      break;
+      
+    case PHASES.CHOICE_BUTTONS_MAHAKAYA:
+      console.log('🔄 SANSKRIT: Resuming choice buttons for Mahakaya');
+      setCurrentPracticeWord('mahakaya');
+        setVakratundaPowerGained(true); // ADD THIS LINE
+      
+      // Hide all conflicting UI elements
+      setShowGaneshaBlessing(false);
+      setShowWordCelebration(false);
+      setShowRescueMission(false);
+      setShowMahakayaStory(false);
+      setShowRecording(false);
+      setBlessingPhase('complete');
+      
+      // Show only choice buttons
+      setShowChoiceButtons(true);
+      break;
       
     case PHASES.RESCUE_MISSION_VAKRATUNDA:
       console.log('🔄 SANSKRIT: Resuming rescue mission for Vakratunda');
@@ -425,52 +561,27 @@ const VakratundaGroveContent = ({
       break;
       
     case PHASES.MAHAKAYA_STORY:
-      console.log('🔄 SANSKRIT: Resuming Mahakaya story');
-      setShowMahakayaStory(true);
-      break;
-      
-    case PHASES.MAHAKAYA_COMPLETE:
-      console.log('🔄 SANSKRIT: Resuming Mahakaya completion');
-      setBlessingWord('mahakaya');
-      setCurrentPracticeWord('mahakaya');
-      setShowWordCelebration(true);
-      break;
-      
-    case PHASES.GANESHA_BLESSING_MAHAKAYA:
-      console.log('🔄 SANSKRIT: Resuming Ganesha blessing for Mahakaya');
-      setBlessingWord('mahakaya');
-      setCurrentPracticeWord('mahakaya');
-      setShowGaneshaBlessing(true);
-      setBlessingPhase('welcome');
-      break;
-      
-  case PHASES.CHOICE_BUTTONS_MAHAKAYA:
-  console.log('🔄 SANSKRIT: Resuming choice buttons for Mahakaya');
-  setCurrentPracticeWord('mahakaya');
-  
-  // Hide all conflicting UI elements
-  setShowGaneshaBlessing(false);
-  setShowWordCelebration(false);
-  setShowRescueMission(false);
-  setShowMahakayaStory(false);
-  setShowRecording(false);
-  setBlessingPhase('complete');
-  
-  // Show only choice buttons
-  setShowChoiceButtons(true);
+  console.log('🔄 SANSKRIT: Resuming Mahakaya story');
+  setVakratundaPowerGained(true);  // ← ADD THIS LINE
+  setShowMahakayaStory(true);
   break;
       
     case PHASES.RESCUE_MISSION_MAHAKAYA:
       console.log('🔄 SANSKRIT: Resuming rescue mission for Mahakaya');
       setCurrentRescueWord('mahakaya');
+        setVakratundaPowerGained(true); // ADD THIS LINE
       setShowRescueMission(true);
       break;
       
     case PHASES.SCENE_COMPLETE:
-      console.log('🔄 SANSKRIT: Resuming scene complete - triggering fireworks');
-      setTimeout(() => {
-        setShowSparkle('final-fireworks');
-      }, 500);
+      console.log('🔄 SANSKRIT: Resuming scene complete');
+      // FIX 3: Check if we're in the middle of fireworks
+      if (!sceneState.showingCompletionScreen) {
+        console.log('🔄 SANSKRIT: Triggering fireworks on reload');
+        setTimeout(() => {
+          setShowSparkle('final-fireworks');
+        }, 500);
+      }
       break;
       
     default:
@@ -483,7 +594,7 @@ const VakratundaGroveContent = ({
   /*useEffect(() => {
     if (!isReload || !sceneState) return;
     
-    console.log('ðŸ”„ SANSKRIT RELOAD: Starting unified reload sequence', {
+    console.log('Ã°Å¸â€â€ž SANSKRIT RELOAD: Starting unified reload sequence', {
       currentPopup: sceneState.currentPopup,
       showingCompletionScreen: sceneState.showingCompletionScreen,
       completed: sceneState.completed,
@@ -506,7 +617,7 @@ const VakratundaGroveContent = ({
     );
     
     if (isFreshRestartAfterPlayAgain) {
-      console.log('ðŸ”„ SANSKRIT RELOAD: Detected fresh restart after Play Again');
+      console.log('Ã°Å¸â€â€ž SANSKRIT RELOAD: Detected fresh restart after Play Again');
       
       if (playAgainRequested === 'true') {
         localStorage.removeItem(playAgainKey);
@@ -536,7 +647,7 @@ const VakratundaGroveContent = ({
       
       // Handle popup states
       if (sceneState.currentPopup) {
-        console.log('ðŸ”„ SANSKRIT: Resuming popup:', sceneState.currentPopup);
+        console.log('Ã°Å¸â€â€ž SANSKRIT: Resuming popup:', sceneState.currentPopup);
         
         switch(sceneState.currentPopup) {
           case 'final_fireworks':
@@ -554,7 +665,7 @@ const VakratundaGroveContent = ({
               return;
             }
             
-            console.log('ðŸŽ¯ SANSKRIT: Resuming final fireworks');
+            console.log('Ã°Å¸Å½Â¯ SANSKRIT: Resuming final fireworks');
             setShowSparkle('final-fireworks');
             sceneActions.updateState({
               gameCoachState: null,
@@ -590,11 +701,11 @@ const VakratundaGroveContent = ({
 
       // UNIFIED: Restore component states if available
       if (sceneState.memoryGameState) {
-        console.log('ðŸ”„ Restoring memory game state:', sceneState.memoryGameState);
+        console.log('Ã°Å¸â€â€ž Restoring memory game state:', sceneState.memoryGameState);
       }
       
       if (sceneState.missionState && sceneState.missionState.word) {
-        console.log('ðŸ”„ Restoring mission state:', sceneState.missionState);
+        console.log('Ã°Å¸â€â€ž Restoring mission state:', sceneState.missionState);
         setCurrentRescueWord(sceneState.missionState.word);
         if (sceneState.missionState.rescuePhase !== 'problem') {
           setShowRescueMission(true);
@@ -610,30 +721,42 @@ const VakratundaGroveContent = ({
     
   }, [isReload]);*/
 
-  // Get element images
-  const getLotusImage = (index) => {
-    const images = [lotusVa, lotusKra, lotusTun, lotusDa];
-    return images[index];
-  };
+// SINGERS: Buds for vakratunda
+const getBudImage = (index) => {
+  const images = [budVa, budKra, budTun, budDa];
+  return images[index];
+};
 
-  const getStoneImage = (index) => {
-    const images = [stoneMa, stoneHa, stoneKa, stoneYa];
-    return images[index];
-  };
+const getSeedImage = (index) => {
+  return seedImage; // Always returns the same seed.png file
+};
 
-  const getBabyElephantImage = (index) => {
-    const images = [elephantBabyVa, elephantBabyKra, elephantBabyTun, elephantBabyDa];
-    return images[index];
-  };
+// CLICKERS: Keep existing elephant functions unchanged
+const getBabyElephantImage = (index) => {
+  const images = [elephantBabyVa, elephantBabyKra, elephantBabyTun, elephantBabyDa];
+  return images[index];
+};
 
-  const getAdultElephantImage = (index) => {
-    const images = [elephantMa, elephantHa, elephantKa, elephantYa];
-    return images[index];
-  };
+const getAdultElephantImage = (index) => {
+  const images = [elephantMa, elephantHa, elephantKa, elephantYa];
+  return images[index];
+};
+
+// REWARDS: Lotus for vakratunda (keep existing)
+const getLotusImage = (index) => {
+  const images = [lotusVa, lotusKra, lotusTun, lotusDa];
+  return images[index];
+};
+
+// REWARDS: Flowers for mahakaya  
+const getFlowerImage = (index) => {
+  const images = [flowerMa, flowerHa, flowerKa, flowerYa];
+  return images[index];
+};
 
  // Updated handleSaveAnimal function - replace the entire function
 const handleSaveAnimal = () => {
-  console.log('🐱 RESCUE MISSION: Starting animal rescue');
+  console.log('ðŸ± RESCUE MISSION: Starting animal rescue');
   
   setShowChoiceButtons(false);
   setCurrentRescueWord(currentPracticeWord || blessingWord);
@@ -658,7 +781,7 @@ const handleSaveAnimal = () => {
 
  // Updated handleRescueComplete function - replace the entire function
 const handleRescueComplete = () => {
-  console.log('✅ Rescue complete for:', currentRescueWord);
+  console.log('âœ… Rescue complete for:', currentRescueWord);
   
   // UNIFIED: Save completion state
   handleSaveComponentState('mission', {
@@ -810,7 +933,6 @@ const handlePhaseComplete = (phase) => {
     setTimeout(() => setShowSparkle(null), 2000);
   };
 
-// Updated handleContinueLearning function - replace the entire function
 const handleContinueLearning = () => {
   console.log('Continue Learning clicked for:', currentPracticeWord);
   
@@ -818,10 +940,14 @@ const handleContinueLearning = () => {
   
   if (currentPracticeWord === 'vakratunda') {
     console.log('Vakratunda continue - showing Mahakaya story first');
+
+    // FORCE HIDE EVERYTHING FIRST
+    setIsTransitioning(true);
     
     // Update to specific story phase
     sceneActions.updateState({
-      phase: PHASES.MAHAKAYA_STORY
+      phase: PHASES.MAHAKAYA_STORY,
+      memoryGameState: null
     });
     
     setIsTransitioning(true);
@@ -834,8 +960,16 @@ const handleContinueLearning = () => {
       setIsTransitioning(false);
       setShowMahakayaStory(true);
     }, 100);
+    
   } else if (currentPracticeWord === 'mahakaya') {
     console.log('Mahakaya continue - ending scene');
+    
+    // ✅ Properly clear all UI states before fireworks
+    setShowGaneshaBlessing(false);
+    setShowChoiceButtons(false);
+    setShowRecording(false);
+    setShowWordCelebration(false);
+    
     sceneActions.updateState({
       phase: PHASES.SCENE_COMPLETE,
       stars: 5,
@@ -848,7 +982,6 @@ const handleContinueLearning = () => {
     }, 500);
   }
 };
-
   const handleAppClick = (appType) => {
     setCurrentPracticeWord(appType);
     setShowAudioPractice(true);
@@ -863,32 +996,35 @@ const handleContinueLearning = () => {
     console.log('Memory game complete! Both words learned.');
   };
 
-  const handleSyllablePlay = (syllable) => {
-    const syllableFileMap = {
-      'va': 'vakratunda-va',
-      'kra': 'vakratunda-kra', 
-      'tun': 'vakratunda-tun',
-      'da': 'vakratunda-da',
-      'ma': 'mahakaya-ma',
-      'ha': 'mahakaya-ha',
-      'ka': 'mahakaya-ka',
-      'ya': 'mahakaya-ya'
-    };
-    
-    const fileName = syllableFileMap[syllable] || syllable;
-    const audio = new Audio(`/audio/syllables/${fileName}.mp3`);
-    audio.play().catch(e => console.log('Audio not found'));
+// Replace the handleSyllablePlay function:
+const handleSyllablePlay = (syllable) => {
+  if (!isAudioOn) return;
+  
+  const syllableFileMap = {
+    'va': 'vakratunda-va',
+    'kra': 'vakratunda-kra', 
+    'tun': 'vakratunda-tun',
+    'da': 'vakratunda-da',
+    'ma': 'mahakaya-ma',
+    'ha': 'mahakaya-ha',
+    'ka': 'mahakaya-ka',
+    'ya': 'mahakaya-ya'
   };
+  
+  const fileName = syllableFileMap[syllable] || syllable;
+  playAudio(`/audio/syllables/${fileName}.mp3`);
+};
 
-  const handleWordPlay = (word) => {
-    if (word === 'complete') {
-      const audio = new Audio('/audio/words/vakratunda-mahakaya-complete.mp3');
-      audio.play().catch(e => console.log('Complete shloka audio not found'));
-    } else {
-      const audio = new Audio(`/audio/words/${word}.mp3`);
-      audio.play().catch(e => console.log('Word audio not found'));
-    }
-  };
+ // Replace the handleWordPlay function:
+const handleWordPlay = (word) => {
+  if (!isAudioOn) return;
+  
+  if (word === 'complete') {
+    playAudio('/audio/words/vakratunda-mahakaya-complete.mp3');
+  } else {
+    playAudio(`/audio/words/${word}.mp3`);
+  }
+};
 
   const startPracticeRound = (word, round) => {
     console.log(`Starting practice: ${word} round ${round}`);
@@ -902,6 +1038,8 @@ const handleContinueLearning = () => {
       currentPopup: null
     });
   };
+
+  
 
   const getHintConfigs = () => [
     {
@@ -949,7 +1087,7 @@ const handleContinueLearning = () => {
     
     return (
       <div className="syllable-counter">
-        <div className="counter-icon">ðŸŒ¸</div>
+        <div className="counter-icon">Ã°Å¸Å’Â¸</div>
         <div className="counter-progress">
           <div
             className="counter-progress-fill"
@@ -982,29 +1120,17 @@ const handleContinueLearning = () => {
     continueAfterRecording();
   };
 
-  const continueAfterRecording = () => {
-    if (currentRecordingWord === 'vakratunda') {
-      console.log('=== CALLING startBlessingAnimation for vakratunda ===');
-      startBlessingAnimation();
-      
-    } else if (currentRecordingWord === 'mahakaya') {
-      console.log('MAHAKAYA RECORDING COMPLETE - TRIGGERING FINAL FIREWORKS!');
-      
-      setShowSparkle(null);
-      
-      sceneActions.updateState({
-        phase: PHASES.SCENE_COMPLETE,
-        stars: 5,
-        completed: true,
-        currentPopup: 'final_fireworks',
-        progress: { percentage: 100, starsEarned: 5, completed: true }
-      });
-      
-      setTimeout(() => {
-        setShowSparkle('final-fireworks');
-      }, 500);
-    }
-  };
+const continueAfterRecording = () => {
+  if (currentRecordingWord === 'vakratunda') {
+    console.log('=== CALLING startBlessingAnimation for vakratunda ===');
+    startBlessingAnimation();
+    
+  } else if (currentRecordingWord === 'mahakaya') {
+    console.log('=== CALLING startBlessingAnimation for mahakaya ===');
+    // ✅ Fix: Use the same blessing flow as vakratunda
+    startBlessingAnimation();
+  }
+};
 
 // Updated startBlessingAnimation function - add phase update after setShowChoiceButtons
 const startBlessingAnimation = async () => {
@@ -1103,14 +1229,21 @@ const startBlessingAnimation = async () => {
     initialMistakeCount: sceneState.memoryGameState.mistakeCount || 0,
     phaseJustCompleted: sceneState.memoryGameState.phaseJustCompleted || false,
     lastCompletedPhase: sceneState.memoryGameState.lastCompletedPhase || null,
-    gameJustCompleted: sceneState.memoryGameState.gameJustCompleted || false
+    gameJustCompleted: sceneState.memoryGameState.gameJustCompleted || false,
+    initialIsCountingDown: sceneState.memoryGameState.isCountingDown || false,  // ADD THIS
+  initialCountdown: sceneState.memoryGameState.countdown || 0,                // ADD THIS
+      forcePhase: sceneState.phase === PHASES.MEMORY_GAME_ACTIVE && 
+              sceneState.learnedWords?.vakratunda === true && 
+              sceneState.learnedWords?.mahakaya === false ? 'mahakaya' : null
   } : {};
 
   const missionReloadProps = sceneState.missionState ? {
     isReload: isReload && !!sceneState.missionState.word,
     initialRescuePhase: sceneState.missionState.rescuePhase || 'problem',
     initialShowParticles: sceneState.missionState.showParticles || false,
-    missionJustCompleted: sceneState.missionState.missionJustCompleted || false
+    missionJustCompleted: sceneState.missionState.missionJustCompleted || false,
+    // FIX 2: Add special flag for Mahakaya reload detection
+
   } : {};
 
   // Hide active hints
@@ -1152,11 +1285,17 @@ const startBlessingAnimation = async () => {
               onGameComplete={handleGameComplete}
               profileName={profileName}
               
-              // Asset getters
-              getLotusImage={getLotusImage}
-              getStoneImage={getStoneImage}
-              getBabyElephantImage={getBabyElephantImage}
-              getAdultElephantImage={getAdultElephantImage}
+             // NEW: 3-element system asset getters
+  getBudImage={getBudImage}           // Singers for vakratunda
+  getSeedImage={getSeedImage}         // Singers for mahakaya
+  getBabyElephantImage={getBabyElephantImage}  // Clickers for vakratunda
+  getAdultElephantImage={getAdultElephantImage} // Clickers for mahakaya
+  getLotusImage={getLotusImage}       // Rewards for vakratunda
+  getFlowerImage={getFlowerImage}     // Rewards for mahakaya
+
+
+              isAudioOn={isAudioOn}
+  playAudio={playAudio}
               
               // Pass WaterSprayArc component
               WaterSprayComponent={WaterSprayArc}
@@ -1170,6 +1309,8 @@ const startBlessingAnimation = async () => {
               // Reload support props
               {...memoryGameReloadProps}
             />
+
+            
 
             {/* Story Introduction - Show immediately when scene starts */}
             {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
@@ -1305,25 +1446,34 @@ const startBlessingAnimation = async () => {
                   </div>
                   
                   <button
-                    onClick={() => {
-                      console.log('Begin Stone Awakening clicked - starting Mahakaya properly');
-                      
-                      setIsTransitioning(true);
-                      setShowMahakayaStory(false);
-                      
-                      setTimeout(() => {
-                        sceneActions.updateState({ 
-                          phase: PHASES.MEMORY_GAME_ACTIVE,
-                          currentPopup: null 
-                        });
-                        
-                        if (window.sanskritMemoryGame?.startMahakayaPhase) {
-                          window.sanskritMemoryGame.startMahakayaPhase();
-                        }
-                        
-                        setIsTransitioning(false);
-                      }, 100);
-                    }}
+onClick={() => {
+  console.log('Begin Stone Awakening clicked - starting Mahakaya properly');
+  
+  setIsTransitioning(true);
+  setShowMahakayaStory(false);
+  
+  setTimeout(() => {
+    // This logic was WORKING - don't change it
+    sceneActions.updateState({ 
+      phase: PHASES.MEMORY_GAME_ACTIVE,
+      currentPopup: null,
+      memoryGameState: null  // Clear old Vakratunda state
+    });
+    
+    // Start Mahakaya immediately - this was working
+    setTimeout(() => {
+      if (window.sanskritMemoryGame?.startMahakayaPhase) {
+        window.sanskritMemoryGame.startMahakayaPhase();
+      }
+    }, 200);
+    
+    // ONLY TIMING FIX: Keep transitioning longer to hide flash
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 400); // Was 100ms, now 400ms - hides the brief flash
+    
+  }, 100);
+}}
                     style={{
                       background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
                       border: 'none',
@@ -1441,7 +1591,7 @@ const startBlessingAnimation = async () => {
                             color: powerConfig[currentPracticeWord]?.color || '#FFD700'
                           }}
                         >
-                          {powerConfig[currentPracticeWord]?.icon || 'âœ¨'}
+                          {powerConfig[currentPracticeWord]?.icon || 'Ã¢Å“Â¨'}
                         </div>
                       ))}
                     </div>
@@ -1494,7 +1644,7 @@ const startBlessingAnimation = async () => {
                     zIndex: 25 
                   }}>
                     <button className="record-blessing-btn" onClick={handleGaneshaRecord}>
-                      ðŸŽ¤ Chant Now
+                      Chant Now
                     </button>
                     <button className="skip-blessing-btn" onClick={handleGaneshaSkip}>
                       Chant Later
@@ -1545,7 +1695,7 @@ const startBlessingAnimation = async () => {
                     }
                   </div>
                   <button className="word-practice-btn" onClick={() => handleWordPlay(currentPracticeWord)}>
-                    ðŸŽµ {currentPracticeWord.toUpperCase()}
+                    Ã°Å¸Å½Âµ {currentPracticeWord.toUpperCase()}
                   </button>
                   <button className="practice-close-btn" onClick={handleAudioPracticeClose}>
                     Close
@@ -1558,10 +1708,10 @@ const startBlessingAnimation = async () => {
             {showChoiceButtons && (
               <div className="power-choice-buttons">
                 <button className="choice-btn save-animal-btn" onClick={handleSaveAnimal}>
-                  ðŸ± Save an Animal
+                  Save an Animal
                 </button>
                 <button className="choice-btn continue-learning-btn" onClick={handleContinueLearning}>
-                  {currentPracticeWord === 'mahakaya' ? 'âœ¨ End Scene' : 'âž¡ï¸ Continue Learning'}
+                  {currentPracticeWord === 'mahakaya' ? 'End Scene' : 'Continue Learning'}
                 </button>
               </div>
             )}
@@ -1682,7 +1832,7 @@ const startBlessingAnimation = async () => {
             </>
           )}
         
-          {/* Final Fireworks */}
+          {/* Final Fireworks 
           {showSparkle === 'final-fireworks' && (
             <Fireworks
               show={true}
@@ -1690,7 +1840,7 @@ const startBlessingAnimation = async () => {
               count={15}
               colors={['#FFD700', '#FF1493', '#00CED1', '#98FB98', '#FF6347', '#9370DB']}
               onComplete={() => {
-                console.log('ðŸŽ¯ FIREWORKS COMPLETION HANDLER CALLED');
+                console.log('Ã°Å¸Å½Â¯ FIREWORKS COMPLETION HANDLER CALLED');
                 
                 try {
                   setShowSparkle(null);
@@ -1706,17 +1856,17 @@ const startBlessingAnimation = async () => {
                         phase: 'complete',
                         timestamp: Date.now()
                       });
-                      console.log('âœ… Game state saved successfully');
+                      console.log('Ã¢Å“â€¦ Game state saved successfully');
                     } catch (saveError) {
-                      console.warn('âš ï¸ Error saving game state:', saveError);
+                      console.warn('Ã¢Å¡ Ã¯Â¸Â Error saving game state:', saveError);
                     }
 
                     try {
                       localStorage.removeItem(`temp_session_${profileId}_shloka-river_vakratunda-grove`);
                       SimpleSceneManager.clearCurrentScene();
-                      console.log('âœ… Temp session cleared');
+                      console.log('Ã¢Å“â€¦ Temp session cleared');
                     } catch (clearError) {
-                      console.warn('âš ï¸ Error clearing session:', clearError);
+                      console.warn('Ã¢Å¡ Ã¯Â¸Â Error clearing session:', clearError);
                     }
                   }
 
@@ -1727,18 +1877,49 @@ const startBlessingAnimation = async () => {
                     stars: 5,
                     completed: true
                   });
-                  console.log('ðŸŽ¯ Scene state updated');
+                  console.log('Ã°Å¸Å½Â¯ Scene state updated');
 
                   setShowSceneCompletion(true);
-                  console.log('ðŸŽ¯ setShowSceneCompletion(true) called');
+                  console.log('Ã°Å¸Å½Â¯ setShowSceneCompletion(true) called');
                   
                 } catch (error) {
-                  console.error('ðŸ’¥ Error in fireworks completion:', error);
+                  console.error('Ã°Å¸â€™Â¥ Error in fireworks completion:', error);
                   setShowSceneCompletion(true);
                 }
               }}
             />
-          )}
+          )}*/}
+
+           {/* Final Fireworks */}
+                      {showSparkle === 'final-fireworks' && (
+                        <Fireworks
+                          show={true}
+                          duration={8000}
+                          count={25}
+                          colors={['#FFD700', '#FF8C00', '#FFA500', '#DAA520', '#B8860B']}
+                          onComplete={() => {
+                            console.log('🎯 Vakratunda chant fireworks complete');
+                            setShowSparkle(null);
+                            
+                            const profileId = localStorage.getItem('activeProfileId');
+                            if (profileId) {
+                        GameStateManager.saveGameState('shloka-river', 'vakratunda-grove', {
+                        completed: true,
+                        stars: 5,
+                        syllables: sceneState?.learnedSyllables || {},
+                        words: sceneState?.learnedWords || {},
+                        phase: 'complete',
+                        timestamp: Date.now()
+                      });
+                      localStorage.removeItem(`temp_session_${profileId}_shloka-river_vakratunda-grove`);
+                              SimpleSceneManager.clearCurrentScene();
+                              console.log('✅ vakratunda chant: Completion saved and temp session cleared');
+                            }
+                            
+                            setShowSceneCompletion(true);
+                          }}
+                        />
+                      )}
           
           <SceneCompletionCelebration
             show={showSceneCompletion}
@@ -1750,7 +1931,7 @@ const startBlessingAnimation = async () => {
             discoveredSymbols={Object.keys(sceneState.learnedSyllables || {}).filter(syl =>
               sceneState.learnedSyllables?.[syl]
             )}
-            nextSceneName="Firefly Garden"
+            nextSceneName="Suryakoti Bank"
             sceneId="vakratunda-grove"
             completionData={{
               stars: 5,
@@ -1816,7 +1997,7 @@ const startBlessingAnimation = async () => {
               }
 
               setTimeout(() => {
-                SimpleSceneManager.setCurrentScene('shloka-river', 'firefly-garden', false, false);
+                SimpleSceneManager.setCurrentScene('shloka-river', 'suryakoti-bank', false, false);
                 console.log('SANSKRIT CONTINUE: Next scene (firefly-garden) set for resume tracking');
                 
                 onNavigate?.('scene-complete-continue');
@@ -1865,7 +2046,7 @@ const startBlessingAnimation = async () => {
             fontSize: '12px',
             fontWeight: 'bold'
           }} onClick={() => {
-            console.log('ðŸ§ª TESTING: Quick completion test clicked');
+            console.log('Ã°Å¸Â§Âª TESTING: Quick completion test clicked');
             
             sceneActions.updateState({
               learnedSyllables: {
@@ -1900,6 +2081,114 @@ const startBlessingAnimation = async () => {
             COMPLETE SANSKRIT
           </div>
 
+          // 6. Add visual mute indicator (optional - add this to the JSX)
+{!isAudioOn && (
+  <div style={{
+    position: 'fixed',
+    top: '50px',
+    left: '20%',
+    transform: 'translateX(-50%)',
+    background: 'rgba(0, 0, 0, 0.8)',
+    color: 'white',
+    padding: '8px 16px',
+    borderRadius: '20px',
+    fontSize: '14px',
+    fontWeight: 'bold',
+    zIndex: 1000,
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px'
+  }}>
+    🔇 Audio Muted
+  </div>
+)}
+
+          // Add this test button near your other test buttons in the JSX return
+
+{/* TESTING: Skip to Mahakaya Story Button */}
+<div style={{
+  position: 'fixed',
+  top: '200px',
+  right: '60px',
+  zIndex: 9999,
+  background: '#FF6B35',
+  color: 'white',
+  padding: '8px 12px',
+  borderRadius: '5px',
+  cursor: 'pointer',
+  fontSize: '12px',
+  fontWeight: 'bold'
+}} onClick={() => {
+  console.log('🧪 TESTING: Skip to Mahakaya Story clicked');
+  
+  // Clear all UI states first
+  setShowSparkle(null);
+  setShowRecording(false);
+  setShowSceneCompletion(false);
+  setShowGaneshaBlessing(false);
+  setShowChoiceButtons(false);
+  setShowWordCelebration(false);
+  setShowRescueMission(false);
+  setCurrentRecordingWord('');
+  setBlessingWord('');
+  setCurrentPracticeWord('');
+  
+  // Set Vakratunda as completed
+  setVakratundaPowerGained(true);
+  
+  // Update scene state to simulate Vakratunda completion
+  sceneActions.updateState({
+    // Mark Vakratunda as fully learned
+    learnedSyllables: {
+      va: true, kra: true, tun: true, da: true,
+      ma: false, ha: false, ka: false, ya: false  // Mahakaya not learned yet
+    },
+    learnedWords: {
+      vakratunda: true,   // Vakratunda complete
+      mahakaya: false     // Mahakaya not learned yet
+    },
+    
+    // Set to Mahakaya story phase
+    phase: PHASES.MAHAKAYA_STORY,
+    
+    // Clear any conflicting popup/UI states
+    currentPopup: null,
+    showingCompletionScreen: false,
+    gameCoachState: null,
+    isReloadingGameCoach: false,
+    
+    // Clear memory game state to avoid contamination
+    memoryGameState: null,
+    
+    // Reset mission state
+    missionState: {
+      rescuePhase: 'problem',
+      showParticles: false,
+      word: null,
+      missionJustCompleted: false
+    },
+    
+    // Progress shows Vakratunda complete
+    stars: 3,
+    completed: false,  // Scene not fully complete yet
+    progress: { percentage: 50, starsEarned: 3, completed: false },
+    
+    // Story flags
+    welcomeShown: true,
+    vakratundaWisdomShown: true,
+    mahakayaWisdomShown: false
+  });
+  
+  // Show the Mahakaya story after brief delay
+  setTimeout(() => {
+    setShowMahakayaStory(true);
+  }, 500);
+  
+  console.log('✅ State set for Mahakaya story - should show "Begin Stone Awakening" button');
+}}>
+  SKIP TO MAHAKAYA
+</div>
+
           {/* TESTING: Reload test button */}
           <div style={{
             position: 'fixed',
@@ -1914,7 +2203,7 @@ const startBlessingAnimation = async () => {
             fontSize: '12px',
             fontWeight: 'bold'
           }} onClick={() => {
-            console.log('ðŸ§ª TESTING: Reload test clicked');
+            console.log('Ã°Å¸Â§Âª TESTING: Reload test clicked');
             console.log('Current sceneState:', sceneState);
             console.log('Memory game state:', sceneState?.memoryGameState);
             console.log('Mission state:', sceneState?.missionState);

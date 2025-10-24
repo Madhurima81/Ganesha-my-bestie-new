@@ -647,35 +647,14 @@ const SymbolMountainSceneContent = ({
             {/* STORY INTRODUCTION */}
             {sceneState.phase === PHASES.EYES_GAME && !sceneState.welcomeShown && (
               <>
-                <div style={{
-                  position: 'absolute',
-                  top: '25%',
-                  left: '20%',
-                  animation: 'gentle-glow 3s ease-in-out infinite',
-                  zIndex: 5
-                }}>
-                  <img src={ganeshaEyes} alt="Divine Eyes" style={{width: '80px', opacity: 0.8}} />
-                </div>
-                
-                <div style={{
-                  position: 'absolute',
-                  top: '35%',
-                  right: '15%',
-                  animation: 'gentle-breathe 4s ease-in-out infinite',
-                  zIndex: 5
-                }}>
-                  <img src={ganeshaTusk} alt="Sacred Tusk" style={{width: '70px', opacity: 0.9}} />
-                </div>
-
-                <div style={{
-                  position: 'absolute',
-                  bottom: '30%',
-                  left: '15%',
-                  animation: 'gentle-glow 3.5s ease-in-out infinite',
-                  zIndex: 5
-                }}>
-                  <img src={musicalTabla} alt="Musical Instrument" style={{width: '60px', opacity: 0.85}} />
-                </div>
+                    {/* NEW: Dark overlay for the welcome screen */}
+    <div style={{
+      position: 'fixed',
+      top: 0, left: 0, right: 0, bottom: 0,
+      background: 'rgba(0, 0, 0, 0.7)', // Dark semi-transparent background
+      zIndex: 2, // High Z-index to cover the scene
+      animation: 'fadeIn 0.3s ease-out'
+    }} />
 
                 <div style={{
                   position: 'absolute',
@@ -772,7 +751,7 @@ const SymbolMountainSceneContent = ({
             )}
 
             {/* Eyes Symbol */}
-            {!sceneState.discoveredSymbols?.eyes && (
+            {sceneState.welcomeShown && !sceneState.discoveredSymbols?.eyes && ( // <--- ADD sceneState.welcomeShown
               <div 
                 className={`eyes-symbol-container ${
                   sceneState.eyesGameComplete ? 'completed' : 'active'
@@ -1053,12 +1032,12 @@ const SymbolMountainSceneContent = ({
               </div>
             )}
 
-            <BackToMapButton 
-              onNavigate={onNavigate}
-              hideCoach={hideCoach}
-              clearManualCloseTracking={clearManualCloseTracking}
-              position="bottom-left"
-            />
+    {sceneState.welcomeShown && (
+              <BackToMapButton onNavigate={onNavigate} hideCoach={hideCoach} clearManualCloseTracking={clearManualCloseTracking} />
+            )}
+
+                 {/* PROGRESSIVE HINT SYSTEM with disabled state */}
+            {sceneState.welcomeShown && ( // <--- WRAP ENTIRE BLOCK
 
             <ProgressiveHintSystem
               ref={progressiveHintRef}
@@ -1073,7 +1052,7 @@ const SymbolMountainSceneContent = ({
               zIndex={2000}
               enabled={shouldEnableHints()}
               disabledMessage="Great job!"
-            />
+            /> )}
 
             <TocaBocaNav
               onHome={() => {
@@ -1111,6 +1090,8 @@ const SymbolMountainSceneContent = ({
           </div>
 
           {/* ⚠️ CRITICAL: Sidebar MUST come before modals in DOM order */}
+          {sceneState.welcomeShown && (
+
           <SymbolSidebar 
             discoveredSymbols={{
               mooshika: true,
@@ -1123,7 +1104,7 @@ const SymbolMountainSceneContent = ({
             onSymbolClick={(symbolId) => {
               console.log(`Sidebar symbol clicked: ${symbolId}`);
             }}
-          />
+          />)}
 
           {/* ⚠️ MODALS MUST COME LAST - This ensures they render on top */}
           
@@ -1312,6 +1293,21 @@ const SymbolMountainSceneContent = ({
               </div>
             </div>
           )}
+
+                    {/* START OF NEW OVERLAY BLOCK for SymbolPowerMission */}
+{showPowerMission && (
+  // Dark background overlay for SymbolPowerMission
+  <div style={{
+    position: 'fixed',
+    top: 0, left: 0, right: 0, bottom: 0,
+    background: 'rgba(0, 0, 0, 0.7)',
+    backdropFilter: 'blur(3px)',
+    zIndex: 499, // Lower than the Power Modal (500) but higher than the scene (e.g. 200)
+    animation: 'fadeIn 0.3s ease-out'
+  }} />
+)}
+{/* END OF NEW OVERLAY BLOCK */}
+
 
           {/* Symbol Power Mission */}
           <SymbolPowerMission

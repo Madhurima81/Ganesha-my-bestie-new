@@ -3,69 +3,50 @@ import React, { useState, useEffect, useRef } from 'react';
 import './VakratundaGrove.css';
 
 // Import scene management components
-import SceneManager from "../../../../lib/components/scenes/SceneManager";
-import MessageManager from "../../../../lib/components/scenes/MessageManager";
-import InteractionManager from "../../../../lib/components/scenes/InteractionManager";
-import GameStateManager from "../../../../lib/services/GameStateManager";
-import { useGameCoach } from '../../../../lib/components/coach/GameCoach';
-import ProgressManager from '../../../../lib/services/ProgressManager';
-import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
+import SceneManager from "../../../../../lib/components/scenes/SceneManager";
+import MessageManager from "../../../../../lib/components/scenes/MessageManager";
+import InteractionManager from "../../../../../lib/components/scenes/InteractionManager";
+import GameStateManager from "../../../../../lib/services/GameStateManager";
+import { useGameCoach } from '../../../../../lib/components/coach/GameCoach';
+import ProgressManager from '../../../../../lib/services/ProgressManager';
+import SimpleSceneManager from '../../../../../lib/services/SimpleSceneManager';
 import mooshikaCoach from "./assets/images/mooshika-coach.png";
 
 // UI Components
-import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
-import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
-import Fireworks from '../../../../lib/components/feedback/Fireworks';
-import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
+import TocaBocaNav from '../../../../../lib/components/navigation/TocaBocaNav';
+import SparkleAnimation from '../../../../../lib/components/animation/SparkleAnimation';
+import Fireworks from '../../../../../lib/components/feedback/Fireworks';
+import SceneCompletionCelebration from '../../../../../lib/components/celebration/SceneCompletionCelebration';
 
 // NEW: Import water spray and updated memory game components
-import SanskritMemoryGame from './components/SanskritMemoryGame';
-import SimplifiedMemoryGame from './components/SimplifiedMemoryGame';
-import WaterSprayArc from './components/WaterSprayArc';
-import SanskritVoiceRecorder from '../../../../lib/components/audio/SanskritVoiceRecorder';
-import SmartwatchWidget from './components/SmartwatchWidget';
-import HelperSignatureAnimation from '../../../../lib/components/animation/HelperSignatureAnimation';
+import SanskritMemoryGame from './SanskritMemoryGame';
+import WaterSprayArc from './WaterSprayArc';
+import SanskritVoiceRecorder from '../../../../../lib/components/audio/SanskritVoiceRecorder';
+import SmartwatchWidget from './SmartwatchWidget';
+import HelperSignatureAnimation from '../../../../../lib/components/animation/HelperSignatureAnimation';
 
-import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
-import SanskritRiverProgress from './components/SanskritRiverProgress';
-import SaveAnimalMission from '../../../../lib/components/missions/SaveAnimalMission';
+import ProgressiveHintSystem from '../../../../../lib/components/interactive/ProgressiveHintSystem';
+import SanskritRiverProgress from './SanskritRiverProgress';
+import SaveAnimalMission from '../../../../../lib/components/missions/SaveAnimalMission';
 
 // Images - River scene assets
 import riverBackground from './assets/images/elephant-grove-bg.png';
-//import lotusVa from './assets/images/lotus-va.png';
-//import lotusKra from './assets/images/lotus-kra.png';
-//import lotusTun from './assets/images/lotus-tun.png';
-//import lotusDa from './assets/images/lotus-da.png';
-
-import elephantBabyVa from './assets/images/vakratunda/elephant-baby-va.png';
-import elephantBabyKra from './assets/images/vakratunda/elephant-baby-kra.png';
-import elephantBabyTun from './assets/images/vakratunda/elephant-baby-tun.png';
-import elephantBabyDa from './assets/images/vakratunda/elephant-baby-da.png';
-import elephantHa from './assets/images/mahakaya/elephant-ha.png';
-import elephantKa from './assets/images/mahakaya/elephant-ka.png';
-import elephantMa from './assets/images/mahakaya/elephant-ma.png';
-import elephantYa from './assets/images/mahakaya/elephant-ya.png';
-
-// SINGERS: Bud images for vakratunda
-import budVa from './assets/images/vakratunda/va-bud.png';
-import budKra from './assets/images/vakratunda/kra-bud.png';
-import budTun from './assets/images/vakratunda/tun-bud.png';
-import budDa from './assets/images/vakratunda/da-bud.png';
-
-// SINGERS: Seed image for mahakaya (same seed.png used 4 times)
-import seedImage from './assets/images/mahakaya/seed.png';
-
-// REWARDS: Lotus images for vakratunda (from vakratunda folder)
-import lotusVa from './assets/images/vakratunda/va-lotus.png';
-import lotusKra from './assets/images/vakratunda/kra-lotus.png';
-import lotusTun from './assets/images/vakratunda/tun-lotus.png';
-import lotusDa from './assets/images/vakratunda/da-lotus.png';
-
-// REWARDS: Flower images for mahakaya
-import flowerMa from './assets/images/mahakaya/ma-flower.png';
-import flowerHa from './assets/images/mahakaya/ha-flower.png';
-import flowerKa from './assets/images/mahakaya/ka-flower.png';
-import flowerYa from './assets/images/mahakaya/ya-flower.png';
+import lotusVa from './assets/images/lotus-va.png';
+import lotusKra from './assets/images/lotus-kra.png';
+import lotusTun from './assets/images/lotus-tun.png';
+import lotusDa from './assets/images/lotus-da.png';
+import stoneMa from './assets/images/stone-ma.png';
+import stoneHa from './assets/images/stone-ha.png';
+import stoneKa from './assets/images/stone-ka.png';
+import stoneYa from './assets/images/stone-ya.png';
+import elephantBabyVa from './assets/images/elephant-baby-va.png';
+import elephantBabyKra from './assets/images/elephant-baby-kra.png';
+import elephantBabyTun from './assets/images/elephant-baby-tun.png';
+import elephantBabyDa from './assets/images/elephant-baby-da.png';
+import elephantHa from './assets/images/elephant-ha.png';
+import elephantKa from './assets/images/elephant-ka.png';
+import elephantMa from './assets/images/elephant-ma.png';
+import elephantYa from './assets/images/elephant-ya.png';
 
 import ganeshaWithHeadphones from '../assets/images/ganesha_with_headphones.png';
 import smartwatchBase from '../assets/images/smartwatch-base.png';
@@ -721,38 +702,26 @@ useEffect(() => {
     
   }, [isReload]);*/
 
-// SINGERS: Buds for vakratunda
-const getBudImage = (index) => {
-  const images = [budVa, budKra, budTun, budDa];
-  return images[index];
-};
+  // Get element images
+  const getLotusImage = (index) => {
+    const images = [lotusVa, lotusKra, lotusTun, lotusDa];
+    return images[index];
+  };
 
-const getSeedImage = (index) => {
-  return seedImage; // Always returns the same seed.png file
-};
+  const getStoneImage = (index) => {
+    const images = [stoneMa, stoneHa, stoneKa, stoneYa];
+    return images[index];
+  };
 
-// CLICKERS: Keep existing elephant functions unchanged
-const getBabyElephantImage = (index) => {
-  const images = [elephantBabyVa, elephantBabyKra, elephantBabyTun, elephantBabyDa];
-  return images[index];
-};
+  const getBabyElephantImage = (index) => {
+    const images = [elephantBabyVa, elephantBabyKra, elephantBabyTun, elephantBabyDa];
+    return images[index];
+  };
 
-const getAdultElephantImage = (index) => {
-  const images = [elephantMa, elephantHa, elephantKa, elephantYa];
-  return images[index];
-};
-
-// REWARDS: Lotus for vakratunda (keep existing)
-const getLotusImage = (index) => {
-  const images = [lotusVa, lotusKra, lotusTun, lotusDa];
-  return images[index];
-};
-
-// REWARDS: Flowers for mahakaya  
-const getFlowerImage = (index) => {
-  const images = [flowerMa, flowerHa, flowerKa, flowerYa];
-  return images[index];
-};
+  const getAdultElephantImage = (index) => {
+    const images = [elephantMa, elephantHa, elephantKa, elephantYa];
+    return images[index];
+  };
 
  // Updated handleSaveAnimal function - replace the entire function
 const handleSaveAnimal = () => {
@@ -1285,14 +1254,11 @@ const startBlessingAnimation = async () => {
               onGameComplete={handleGameComplete}
               profileName={profileName}
               
-             // NEW: 3-element system asset getters
-  getBudImage={getBudImage}           // Singers for vakratunda
-  getSeedImage={getSeedImage}         // Singers for mahakaya
-  getBabyElephantImage={getBabyElephantImage}  // Clickers for vakratunda
-  getAdultElephantImage={getAdultElephantImage} // Clickers for mahakaya
-  getLotusImage={getLotusImage}       // Rewards for vakratunda
-  getFlowerImage={getFlowerImage}     // Rewards for mahakaya
-
+              // Asset getters
+              getLotusImage={getLotusImage}
+              getStoneImage={getStoneImage}
+              getBabyElephantImage={getBabyElephantImage}
+              getAdultElephantImage={getAdultElephantImage}
 
               isAudioOn={isAudioOn}
   playAudio={playAudio}
@@ -1309,8 +1275,6 @@ const startBlessingAnimation = async () => {
               // Reload support props
               {...memoryGameReloadProps}
             />
-
-            
 
             {/* Story Introduction - Show immediately when scene starts */}
             {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
@@ -1644,7 +1608,7 @@ onClick={() => {
                     zIndex: 25 
                   }}>
                     <button className="record-blessing-btn" onClick={handleGaneshaRecord}>
-                      Chant Now
+                      Ã°Å¸Å½Â¤ Chant Now
                     </button>
                     <button className="skip-blessing-btn" onClick={handleGaneshaSkip}>
                       Chant Later
@@ -1708,10 +1672,10 @@ onClick={() => {
             {showChoiceButtons && (
               <div className="power-choice-buttons">
                 <button className="choice-btn save-animal-btn" onClick={handleSaveAnimal}>
-                  Save an Animal
+                  Ã°Å¸ÂÂ± Save an Animal
                 </button>
                 <button className="choice-btn continue-learning-btn" onClick={handleContinueLearning}>
-                  {currentPracticeWord === 'mahakaya' ? 'End Scene' : 'Continue Learning'}
+                  {currentPracticeWord === 'mahakaya' ? 'Ã¢Å“Â¨ End Scene' : 'Ã¢Å¾Â¡Ã¯Â¸Â Continue Learning'}
                 </button>
               </div>
             )}

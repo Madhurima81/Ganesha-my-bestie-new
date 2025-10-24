@@ -1,4 +1,4 @@
-// zones/shloka-river/scenes/Scene5/SarvakaryeshuChant.jsx - Scene 5 with Divine Games (REFRACTORED to use individual game components)
+// zones/shloka-river/scenes/Scene5/SarvakaryeshuChant.jsx - Scene 5 with Divine Games
 import React, { useState, useEffect, useRef } from 'react';
 import './SarvakaryeshuChantSimplified.css';
 
@@ -18,9 +18,10 @@ import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimat
 import Fireworks from '../../../../lib/components/feedback/Fireworks';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 
-// ⭐ NEW: Import the individual game components
+// Import the actual game components
 import SarvakaryeshuGame from './SarvakaryeshuGame';
 import SarvadaGame from './SarvadaGame';
+// import SarvakaryeshuSarvadaGame from './components/SarvakaryeshuSarvadaGame';
 
 import SanskritVoiceRecorder from '../../../../lib/components/audio/SanskritVoiceRecorder';
 import SmartwatchWidget from '../Scene1/components/SmartwatchWidget';
@@ -71,7 +72,7 @@ import appVakratunda from '../assets/images/apps/app-Vakratunda.png';
 import appMahakaya from '../assets/images/apps/app-mahakaya.png';
 import appSuryakoti from '../assets/images/apps/app-suryakoti.png';
 import appSamaprabha from '../assets/images/apps/app-samaprabha.png';
-import appNirvighnam from '../assets/images/apps/app-nirvighnam.png';
+import appsarvakaryeshu from '../assets/images/apps/app-sarvakaryeshu.png';
 import appKurumedeva from '../assets/images/apps/app-kurumedeva.png';
 import appSarvakaryeshu from '../assets/images/apps/app-sarvakaryeshu.png';
 import appSarvada from '../assets/images/apps/app-sarvada.png';
@@ -83,16 +84,15 @@ import sarvakaryeshuAfter from './assets/images/sarvakaryeshu/sarvakaryeshu-afte
 import sarvadaBefore from './assets/images/sarvada/sarvada-before.png'; 
 import sarvadaAfter from './assets/images/sarvada/sarvada-after.png';
 
-// Updated PHASES constant for separate game approach
 const PHASES = {
   INITIAL: 'initial',
   SARVAKARYESHU_GAME_ACTIVE: 'sarvakaryeshu_game_active',
   SARVAKARYESHU_COMPLETE: 'sarvakaryeshu_complete',
-  SARVAKARYESHU_POWER: 'sarvakaryeshu_power',  
+  SARVAKARYESHU_POWER: 'sarvakaryeshu_power',  // ✅ ADD THIS
   SARVADA_STORY: 'sarvada_story',
   SARVADA_GAME_ACTIVE: 'sarvada_game_active',
   SARVADA_COMPLETE: 'sarvada_complete',
-  SARVADA_POWER: 'sarvada_power',  
+  SARVADA_POWER: 'sarvada_power',  // ✅ ADD THIS
   SCENE_COMPLETE: 'scene_complete'
 };
 
@@ -151,7 +151,7 @@ const SarvakaryeshuChant = ({
           // Learning progress (for progress tracking)
           learnedSyllables: {
             sar: false, va: false, kar: false, yeshu: false, // Sarvakaryeshu
-            sarvada_sar: false, sarvada_va: false, da: false // Sarvada (Using distinct keys for Sarvada's shared syllables)
+            da: false // Sarvada
           },
           learnedWords: {
             sarvakaryeshu: false,
@@ -160,14 +160,10 @@ const SarvakaryeshuChant = ({
 
           unlockedApps: {},
           
-          // ⭐ NEW: Mode selection state
+             // ⭐ Mode selection (like VakratundaGrove)
           sarvakaryeshuMode: null,      // 'auto' or 'manual'
-          sarvadaMode: null,            // 'auto' or 'manual'
+          sarvadaMode: null,     // 'auto' or 'manual'
 
-          // ⭐ NEW: Individual game states
-          sarvakaryeshuGameState: null,
-          sarvadaGameState: null,
-          
           missionState: {
             rescuePhase: 'problem',
             showParticles: false,
@@ -218,7 +214,7 @@ const SarvakaryeshuChantContent = ({
   sceneId
 }) => {
   console.log('🎨 SarvakaryeshuChantContent render', { 
-    phase: sceneState?.phase, 
+    sceneState: sceneState?.phase, 
     isReload, 
     sarvakaryeshuGameState: !!sceneState?.sarvakaryeshuGameState,
     sarvadaGameState: !!sceneState?.sarvadaGameState,
@@ -232,12 +228,7 @@ const SarvakaryeshuChantContent = ({
 
   const [showSparkle, setShowSparkle] = useState(null);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
-
-  // ⭐ NEW: Mode selection state
-  const [showModeSelection, setShowModeSelection] = useState(false);
-  const [modeForPhase, setModeForPhase] = useState(null); // 'sarvakaryeshu' or 'sarvada'
-  const [modeSelected, setModeSelected] = useState(false); // Prevent loops
-
+  
   // Timeouts ref for cleanup
   const timeoutsRef = useRef([]);
 
@@ -251,7 +242,7 @@ const SarvakaryeshuChantContent = ({
 
   const progressiveHintRef = useRef(null);
   const [hintUsed, setHintUsed] = useState(false);
-  // removed unused local variable 'previousVisibilityRef'
+  const previousVisibilityRef = useRef(false);
 
   const [showGaneshaBlessing, setShowGaneshaBlessing] = useState(false);
   const [showAudioPractice, setShowAudioPractice] = useState(false);
@@ -277,14 +268,19 @@ const SarvakaryeshuChantContent = ({
   const [isAudioOn, setIsAudioOn] = useState(true);
 
   const [showCenteredWord, setShowCenteredWord] = useState(null);
-  const [showPowerModal, setShowPowerModal] = useState(false);
-  const [showMission, setShowMission] = useState(false);
-  const [currentWord, setCurrentWord] = useState(null);
+const [showPowerModal, setShowPowerModal] = useState(false);
+const [showMission, setShowMission] = useState(false);
+const [currentWord, setCurrentWord] = useState(null);
 
-  const [forceMemoryGameReset, setForceMemoryGameReset] = useState(false); 
+// Mode selection state
+const [showModeSelection, setShowModeSelection] = useState(false);
+const [modeForPhase, setModeForPhase] = useState(null); // 'vakratunda' or 'mahakaya'
+const [modeSelected, setModeSelected] = useState(false); // Prevent loops
+
+     const [forceMemoryGameReset, setForceMemoryGameReset] = useState(false); // ADD THIS LINE
   const [rescuePhase, setRescuePhase] = useState('problem');
 
-// Power configuration
+// ✅ REPLACE with this format:
 const powerConfig = {
   sarvakaryeshu: { 
     name: 'Divine Action', 
@@ -302,7 +298,7 @@ const powerConfig = {
   }
 };
 
-// Mission images mapping
+// ✅ ADD mission images mapping:
 const missionImages = {
   sarvakaryeshu: { before: sarvakaryeshuBefore, after: sarvakaryeshuAfter },
   sarvada: { before: sarvadaBefore, after: sarvadaAfter }
@@ -331,6 +327,8 @@ const missionImages = {
     }
   };
 
+  // Add this around line 380-400 (after playAudio function)
+
 const playSyllable = (syllable) => {
   const map = {
     // Sarvakaryeshu syllables (4 syllables)
@@ -339,9 +337,9 @@ const playSyllable = (syllable) => {
     'kar': 'sarvakaryeshu-kar',
     'yeshu': 'sarvakaryeshu-yeshu',
     
-    // Sarvada syllables (3 syllables) - Mapped to simpler file names
-    'sarvada_sar': 'sarvada-sar', 
-    'sarvada_va': 'sarvada-va',   
+    // Sarvada syllables (3 syllables) - DIFFERENT from Sarvakaryeshu
+    'sav': 'sarvada-sar',  // Different SAR
+    'vad': 'sarvada-va',   // Different VA
     'da': 'sarvada-da'
   };
   playAudio(`/audio/syllables/${map[syllable] || syllable}.mp3`);
@@ -351,7 +349,157 @@ const playWord = (word) => {
   playAudio(`/audio/words/${word}.mp3`);
 };
 
-  // Cleanup timers on unmount
+  // Add this reusable resetScene function inside your SarvakaryeshuChantContent component
+const resetScene = (showConfirm = true) => {
+  if (showConfirm && !confirm('Start this scene from the beginning? You will lose current progress.')) {
+    return;
+  }
+
+  console.log('🔥 Sarvakaryeshu Scene reset: User chose to start fresh');
+  
+  // STEP 1: Set force reset flag for the combined game component
+  if (window.sarvakaryeshuSarvadaGame) {
+    window.sarvakaryeshuSarvadaGame.isForceReset = true;
+  }
+  
+  // STEP 2: Clear all timeouts first to prevent conflicts
+  timeoutsRef.current.forEach(id => clearTimeout(id));
+  timeoutsRef.current = [];
+  
+  // STEP 3: Clear ALL local React state variables immediately
+  setShowSparkle(null);
+  setShowRecording(false);
+  setShowSceneCompletion(false);
+  setCurrentRecordingWord('');
+  setShowAudioTracker(true);
+  
+  // Clear Ganesha-related states
+  setShowGaneshaBlessing(false);
+  setBlessingPhase('welcome');
+  setCurrentPracticeWord('');
+  setShowChoiceButtons(false);
+  setShowAudioPractice(false);
+  setBlessingWord('');
+  
+  // Clear power and blessing states
+  setShowParticles(false);
+  setShowPulseRings(false);
+  setShowCenteredApp(null);
+  setUnlockedApps([]);
+  setSarvakaryeshuPowerGained(false);
+  
+  // Clear rescue mission states
+  setShowRescueMission(false);
+  setCurrentRescueWord('');
+  setShowWordCelebration(false);
+  
+  // Clear story and transition states
+  setShowSarvadaStory(false);
+  setIsTransitioning(false);
+  
+  // Clear hint states
+  setHintUsed(false);
+  if (progressiveHintRef.current && typeof progressiveHintRef.current.hideHint === 'function') {
+    progressiveHintRef.current.hideHint();
+  }
+  
+  // STEP 4: Hide GameCoach immediately
+  if (hideCoach) hideCoach();
+  if (clearManualCloseTracking) clearManualCloseTracking();
+  
+  // STEP 5: Clear combined game completion state
+  if (window.sarvakaryeshuSarvadaGame && window.sarvakaryeshuSarvadaGame.clearCompletionState) {
+    window.sarvakaryeshuSarvadaGame.clearCompletionState();
+  }
+  
+  // STEP 6: Force combined game reset
+  const forceCombinedGameReset = () => {
+    if (window.sarvakaryeshuSarvadaGame) {
+      window.sarvakaryeshuSarvadaGame.visualRewards = {};
+      window.sarvakaryeshuSarvadaGame.activatedSingers = {};
+      window.sarvakaryeshuSarvadaGame.isForceReset = true;
+    }
+  };
+  
+  forceCombinedGameReset();
+  
+  // STEP 7: Reset scene state
+  setTimeout(() => {
+    sceneActions.updateState({
+      // Reset syllable learning progress for Sarvakaryeshu + Sarvada
+      learnedSyllables: {
+        sar: false, va: false, kar: false, yeshu: false, // Sarvakaryeshu
+        da: false // Sarvada
+      },
+      
+      // Reset word learning progress
+      learnedWords: {
+        sarvakaryeshu: false,
+        sarvada: false
+      },
+
+      // Clear game states
+      combinedGameState: null,
+      unlockedApps: {},
+      
+      // Reset mission state
+      missionState: {
+        rescuePhase: 'problem',
+        showParticles: false,
+        word: null,
+        missionJustCompleted: false
+      },
+      
+      // Reset phase to beginning
+      phase: PHASES.INITIAL,
+      
+      // Reset message flags
+      welcomeShown: false,
+      sarvakaryeshuWisdomShown: false,
+      sarvadaWisdomShown: false,
+      
+      // Clear system state
+      currentPopup: null,
+      showingCompletionScreen: false,
+      gameCoachState: null,
+      isReloadingGameCoach: false,
+      
+      // Reset progress
+      stars: 0,
+      completed: false,
+      progress: { percentage: 0, starsEarned: 0, completed: false }
+    });
+    
+    // Clear the force reset flag after a delay
+    setTimeout(() => {
+      if (window.sarvakaryeshuSarvadaGame) {
+        window.sarvakaryeshuSarvadaGame.isForceReset = false;
+      }
+    }, 1000);
+    
+    console.log('✅ Sarvakaryeshu scene state reset complete');
+  }, 150);
+};
+
+  const toggleAudio = () => {
+    const newAudioState = !isAudioOn;
+    setIsAudioOn(newAudioState);
+    
+    // Save preference to localStorage
+    localStorage.setItem('sanskritGameAudio', newAudioState.toString());
+    
+    // Stop all currently playing audio if muting
+    if (!newAudioState) {
+      document.querySelectorAll('audio').forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
+      });
+    }
+    
+    console.log(`Audio ${newAudioState ? 'enabled' : 'muted'}`);
+  };
+
+  // Cleanup timeouts on unmount
   useEffect(() => {
     return () => {
       timeoutsRef.current.forEach(id => clearTimeout(id));
@@ -366,7 +514,7 @@ const playWord = (word) => {
       delete window.playSanskritAudio;
       delete window.playSanskritWord;
     };
-  }, [isAudioOn]); 
+  }, [isAudioOn]); // Re-attach if audio setting changes
   
 
   // Load audio preference on component mount
@@ -377,7 +525,6 @@ const playWord = (word) => {
     }
   }, []);
 
-// ⭐ REFACTORED STATE SAVING: Use separate keys
 const handleSaveComponentState = (componentType, componentState) => {
   console.log(`💾 Saving ${componentType} state:`, componentState);
   
@@ -388,17 +535,8 @@ const handleSaveComponentState = (componentType, componentState) => {
   }
   handleSaveComponentState.lastCall = Date.now();
   
- const updatedState = {
-  ...(componentType === 'sarvakaryeshuGame' && { 
-    sarvakaryeshuGameState: componentState,
-    // ⭐ FIX: Update mode if it changed
-    ...(componentState.savedGameMode && { sarvakaryeshuMode: componentState.savedGameMode })
-  }),
-  ...(componentType === 'sarvadaGame' && { 
-    sarvadaGameState: componentState,
-    // ⭐ FIX: Update mode if it changed
-    ...(componentState.savedGameMode && { sarvadaMode: componentState.savedGameMode })
-  }),
+  const updatedState = {
+    ...(componentType === 'combinedGame' && { combinedGameState: componentState }),
     ...(componentType === 'mission' && { 
       missionState: {
         ...sceneState.missionState,
@@ -411,35 +549,236 @@ const handleSaveComponentState = (componentType, componentState) => {
   sceneActions.updateState(updatedState);
 };
 
-// Asset Getters for Sarvakaryeshu (Game 7)
-const getSarvakaryeshuSadAnimalImage = (index) => {
-    const images = [sarSquirrelSad, vaBirdSad, karDuckSad, yeshuRabbitSad];
-    return images[index];
-};
-const getSarvakaryeshuHappyAnimalImage = (index) => {
-    const images = [sarSquirrelHappy, vaBirdHappy, karDuckHappy, yeshuRabbitHappy];
-    return images[index];
-};
-const getSarvakaryeshuHelperImage = (index) => {
-    const images = [sarSquirrelHelper, vaBirdHelper, karDuckHelper, yeshuRabbitHelper];
-    return images[index];
+useEffect(() => {
+  window.sarvakaryeshuSarvadaGame = {};
+  return () => {
+    if (window.sarvakaryeshuSarvadaGame) {
+      delete window.sarvakaryeshuSarvadaGame;
+    }
+  };
+}, []);
+
+  // Set up communication for the scene itself
+  useEffect(() => {
+    window.sarvakaryeshuChant = {
+      showSarvadaStory: () => {
+        setShowSarvadaStory(true);
+      }
+    };
+    
+    return () => {
+      if (window.sarvakaryeshuChant) {
+        delete window.sarvakaryeshuChant;
+      }
+    };
+  }, []);
+
+useEffect(() => {
+  if (sarvakaryeshuPowerGained && 
+      window.sarvakaryeshuSarvadaGame?.startSarvadaPhase) {
+    window.sarvakaryeshuSarvadaGame.startSarvadaPhase();
+  }
+}, [sarvakaryeshuPowerGained]);
+
+  // Master Restorer for the SarvakaryeshuChant scene
+  useEffect(() => {
+    if (!isReload || !sceneState) return;
+    
+    console.log('🔄 SARVAKARYESHU RELOAD: Starting reload', {
+      phase: sceneState.phase,
+      showingCompletionScreen: sceneState.showingCompletionScreen,
+      completed: sceneState.completed
+    });
+
+    // Handle "Play Again" requests
+    const profileId = localStorage.getItem('activeProfileId');
+    const playAgainKey = `play_again_${profileId}_${zoneId}_${sceneId}`;
+    const playAgainRequested = localStorage.getItem(playAgainKey);
+    
+    if (playAgainRequested === 'true') {
+      console.log('🔄 SARVAKARYESHU: Fresh restart after Play Again');
+      localStorage.removeItem(playAgainKey);
+      sceneActions.updateState({ 
+        phase: PHASES.INITIAL,
+        showingCompletionScreen: false,
+        completed: false,
+        stars: 0,
+        welcomeShown: false,
+    combinedGameState: null,
+      });
+      return;
+    }
+
+    // Handle completion screen reload
+    if (sceneState.showingCompletionScreen) {
+      console.log('🔄 SARVAKARYESHU: Resuming completion screen');
+      setShowSceneCompletion(true);
+      return;
+    }
+
+    // Phase-specific reload logic
+    switch (sceneState.phase) {
+      case PHASES.INITIAL:
+        console.log('🔄 SARVAKARYESHU: Resuming initial welcome');
+        break;
+        
+      case PHASES.SARVAKARYESHU_GAME_ACTIVE:
+        console.log('🔄 SARVAKARYESHU: Sarvakaryeshu game active - letting component handle itself');
+        break;
+
+      case PHASES.SARVADA_GAME_ACTIVE:
+        console.log('🔄 SARVAKARYESHU: Sarvada game active - letting component handle itself');
+        setSarvakaryeshuPowerGained(true);
+        break;
+        
+      case PHASES.SARVAKARYESHU_COMPLETE:
+        console.log('🔄 SARVAKARYESHU: Resuming Sarvakaryeshu completion celebration');
+        setBlessingWord('sarvakaryeshu');
+        setCurrentPracticeWord('sarvakaryeshu');
+        setShowWordCelebration(true);
+        setShowSparkle('sarvakaryeshu-complete');
+        
+        setTimeout(() => {
+          setShowSparkle(null);
+          setShowWordCelebration(false);
+          sceneActions.updateState({
+            phase: PHASES.GANESHA_BLESSING_SARVAKARYESHU
+          });
+          setBlessingPhase('welcome');
+          setShowGaneshaBlessing(true);
+        }, 4000);
+        break;
+        
+      case PHASES.SARVADA_COMPLETE:
+        console.log('🔄 SARVAKARYESHU: Resuming Sarvada completion celebration');
+        setBlessingWord('sarvada');
+        setCurrentPracticeWord('sarvada');
+        setShowWordCelebration(true);
+        setShowSparkle('sarvada-complete');
+        
+        setTimeout(() => {
+          setShowSparkle(null);
+          setShowWordCelebration(false);
+          sceneActions.updateState({
+            phase: PHASES.GANESHA_BLESSING_SARVADA
+          });
+          setBlessingPhase('welcome');
+          setShowGaneshaBlessing(true);
+        }, 4000);
+        break;
+        
+      case PHASES.GANESHA_BLESSING_SARVAKARYESHU:
+        console.log('🔄 SARVAKARYESHU: Resuming Ganesha blessing for Sarvakaryeshu');
+        setBlessingWord('sarvakaryeshu');
+        setCurrentPracticeWord('sarvakaryeshu');
+        setShowChoiceButtons(false);
+        setShowWordCelebration(false);
+        setShowRescueMission(false);
+        setShowRecording(false);
+        setShowGaneshaBlessing(true);
+        setBlessingPhase('welcome');
+        break;
+
+      case PHASES.GANESHA_BLESSING_SARVADA:
+        console.log('🔄 SARVAKARYESHU: Resuming Ganesha blessing for Sarvada');
+        setBlessingWord('sarvada');
+        setCurrentPracticeWord('sarvada');
+        setShowChoiceButtons(false);
+        setShowWordCelebration(false);
+        setShowRescueMission(false);
+        setShowRecording(false);
+        setShowGaneshaBlessing(true);
+        setBlessingPhase('welcome');
+        break;
+        
+      case PHASES.CHOICE_BUTTONS_SARVAKARYESHU:
+        console.log('🔄 SARVAKARYESHU: Resuming choice buttons for Sarvakaryeshu');
+        setCurrentPracticeWord('sarvakaryeshu');
+        setShowGaneshaBlessing(false);
+        setShowWordCelebration(false);
+        setShowRescueMission(false);
+        setShowSarvadaStory(false);
+        setShowRecording(false);
+        setBlessingPhase('complete');
+        setShowChoiceButtons(true);
+        break;
+        
+      case PHASES.CHOICE_BUTTONS_SARVADA:
+        console.log('🔄 SARVAKARYESHU: Resuming choice buttons for Sarvada');
+        setCurrentPracticeWord('sarvada');
+        setShowGaneshaBlessing(false);
+        setShowWordCelebration(false);
+        setShowRescueMission(false);
+        setShowSarvadaStory(false);
+        setShowRecording(false);
+        setBlessingPhase('complete');
+        setShowChoiceButtons(true);
+        break;
+        
+      case PHASES.RESCUE_MISSION_SARVAKARYESHU:
+        console.log('🔄 SARVAKARYESHU: Resuming rescue mission for Sarvakaryeshu');
+        setCurrentRescueWord('sarvakaryeshu');
+        setShowRescueMission(true);
+        break;
+        
+      case PHASES.SARVADA_STORY:
+        console.log('🔄 SARVAKARYESHU: Resuming Sarvada story');
+        setSarvakaryeshuPowerGained(true);
+        setShowSarvadaStory(true);
+        break;
+        
+      case PHASES.RESCUE_MISSION_SARVADA:
+        console.log('🔄 SARVAKARYESHU: Resuming rescue mission for Sarvada');
+        setCurrentRescueWord('sarvada');
+        setSarvakaryeshuPowerGained(true);
+        setShowRescueMission(true);
+        break;
+        
+      case PHASES.SCENE_COMPLETE:
+        console.log('🔄 SARVAKARYESHU: Resuming scene complete');
+        if (!sceneState.showingCompletionScreen) {
+          setTimeout(() => {
+            setShowSparkle('final-fireworks');
+          }, 500);
+        }
+        break;
+        
+      default:
+        console.log('🔄 SARVAKARYESHU: No specific reload needed for phase:', sceneState.phase);
+    }
+  }, [isReload]);
+
+/*const getSarvakaryeshuAnimalImage = (index) => {
+  const images = [sarSquirrelHelper, vaBirdHelper, karDuckHelper, yeshuRabbitHelper];
+  return images[index];
 };
 
-// Asset Getters for Sarvada (Game 8)
-const getSarvadaSadAnimalImage = (index) => {
-    const images = [savButterflySad, vaFawnSad, daHedgehogSad];
-    return images[index];
-};
-const getSarvadaHappyAnimalImage = (index) => {
-    const images = [savButterflyHappy, vaFawnHappy, daHedgehogHappy];
-    return images[index];
-};
-const getSarvadaHelperImage = (index) => {
-    const images = [savButterflyHelper, vaFawnHelper, daHedgehogHelper];
-    return images[index];
+const getSarvakaryeshuItemImage = (index, singing) => {
+  const images = [sarSquirrelSad, vaBirdSad, karDuckSad, yeshuRabbitSad];
+  return images[index];
 };
 
+const getSarvakaryeshuDecorImage = (index, activated) => {
+  const images = [sarSquirrelHappy, vaBirdHappy, karDuckHappy, yeshuRabbitHappy];
+  return images[index];
+};
 
+const getSarvadaAnimalImage = (index) => {
+  const images = [savButterflyHelper, vaFawnHelper, daHedgehogHelper];
+  return images[index];
+};
+
+const getSarvadaItemImage = (index, singing) => {
+  const images = [savButterflySad, vaFawnSad, daHedgehogSad];
+  return images[index];
+};
+
+const getSarvadaDecorImage = (index, activated) => {
+  const images = [savButterflyHappy, vaFawnHappy, daHedgehogHappy];
+  return images[index];
+};*/
+
+// ✅ REPLACE with clean versions:
 const handleSaveAnimal = () => {
   setShowPowerModal(false);
   setShowMission(true);
@@ -488,19 +827,69 @@ const handleMissionComplete = () => {
   }
 };
 
-// ⭐ REFACTORED handlePhaseComplete
+  const handleRoundJump = (round) => {
+    console.log(`Jumping to round ${round} in main scene`);
+    sceneActions.updateState({
+      currentRound: round
+    });
+  };
+
+  const handleRescueComplete = () => {
+    console.log('✅ Rescue complete for:', currentRescueWord);
+    
+    handleSaveComponentState('mission', {
+      rescuePhase: 'success',
+      word: currentRescueWord,
+      missionJustCompleted: true
+    });
+    
+    setShowRescueMission(false);
+    
+    if (currentRescueWord === 'sarvakaryeshu') {
+      console.log('Sarvakaryeshu rescue complete - showing Sarvada story now');
+      
+      setShowChoiceButtons(false);
+      setShowGaneshaBlessing(false);
+      setSarvakaryeshuPowerGained(true);
+      
+      sceneActions.updateState({
+        phase: PHASES.SARVADA_STORY
+      });
+      
+      setTimeout(() => {
+        setShowSarvadaStory(true);
+      }, 500);
+      
+    } else if (currentRescueWord === 'sarvada') {
+      console.log('Sarvada rescue complete - FINAL FIREWORKS NOW!');
+      
+      setShowChoiceButtons(false);
+      setShowGaneshaBlessing(false);
+      
+      sceneActions.updateState({
+        phase: PHASES.SCENE_COMPLETE,
+        stars: 5,
+        completed: true,
+        progress: { percentage: 100, starsEarned: 5, completed: true }
+      });
+      
+      setTimeout(() => {
+        setShowSparkle('final-fireworks');
+      }, 500);
+    }
+  };
+
+// ✅ REPLACE with VakratundaGrove pattern:
 const handlePhaseComplete = (word) => {
   console.log(`${word} learned!`);
   
-  const syllableUpdates = word === 'sarvakaryeshu' 
-    ? { sar: true, va: true, kar: true, yeshu: true }
-    : { sarvada_sar: true, sarvada_va: true, da: true }; // Use specific keys for Sarvada
-
   sceneActions.updateState({
     learnedWords: { ...sceneState.learnedWords, [word]: true },
     learnedSyllables: {
       ...sceneState.learnedSyllables,
-      ...syllableUpdates
+      ...(word === 'sarvakaryeshu' 
+        ? { sar: true, va: true, kar: true, yeshu: true }
+        : { sar: true, va: true, da: true })
     },
     phase: word === 'sarvakaryeshu' ? PHASES.SARVAKARYESHU_COMPLETE : PHASES.SARVADA_COMPLETE
   });
@@ -531,16 +920,99 @@ const handlePhaseComplete = (word) => {
   }, 5000);
 };
 
-// ⭐ ADDED: Missing hint system functions
-const handleHintShown = (level) => {
-    console.log(`Divine hint level ${level} shown`);
-    setHintUsed(true);
-};
+  const handleGaneshaRecord = () => {
+    setCurrentRecordingWord(currentPracticeWord);
+    setShowRecording(true);
+  };
 
-const handleHintButtonClick = () => {
-    console.log("Divine hint button clicked");
-};
+  const handleGaneshaSkip = () => {
+    startBlessingAnimation();
+  };
 
+  const startBlessingSequence = async () => {
+    try {
+      setBlessingPhase('welcome');
+      await new Promise(resolve => safeSetTimeout(resolve, 2000));
+
+      setBlessingPhase('blessing');
+      await new Promise(resolve => safeSetTimeout(resolve, 3000));
+
+      setBlessingPhase('transfer');
+      setShowParticles(true);
+      await new Promise(resolve => safeSetTimeout(resolve, 4000));
+      setShowParticles(false);
+
+      setBlessingPhase('recording');
+      setShowPulseRings(true);
+      setShowGaneshaBlessing(false);
+      setCurrentRecordingWord(currentPracticeWord);
+      setShowRecording(true);
+
+    } catch (error) {
+      console.error('Blessing sequence error:', error);
+      setShowGaneshaBlessing(false);
+      setCurrentRecordingWord(currentPracticeWord);
+      setShowRecording(true);
+    }
+  };
+
+  const handlePowerTransfer = (word) => {
+    setUnlockedApps(prev => [...prev, word]);
+    setShowChoiceButtons(true);
+    setShowSparkle(`${word}-power-gained`);
+    setTimeout(() => setShowSparkle(null), 2000);
+  };
+
+  const handleAppClick = (appType) => {
+    setCurrentPracticeWord(appType);
+    setShowAudioPractice(true);
+  };
+
+  const handleAudioPracticeClose = () => {
+    setShowAudioPractice(false);
+  };
+
+  const handleGameComplete = () => {
+    console.log('Memory game complete! Both words learned.');
+  };
+
+  // Plays the correct audio for syllables
+  const handleSyllablePlay = (syllable) => {
+    if (!isAudioOn) return;
+    
+    const syllableFileMap = {
+      // Syllables for Sarvakaryeshu
+      'sar': 'sarvakaryeshu-sar',
+      'va': 'sarvakaryeshu-va', 
+      'kar': 'sarvakaryeshu-ka',
+      'yeshu': 'sarvakaryeshu-shu',
+
+      // Syllables for Sarvada
+      'da': 'sarvada-da'
+    };
+    
+    const fileName = syllableFileMap[syllable.toLowerCase()] || syllable;
+    playAudio(`/audio/syllables/${fileName}.mp3`);
+  };
+
+  // Plays the correct audio for words
+  const handleWordPlay = (word) => {
+    if (!isAudioOn) return;
+    playAudio(`/audio/words/${word}.mp3`);
+  };
+
+  const startPracticeRound = (word, round) => {
+    console.log(`Starting practice: ${word} round ${round}`);
+    
+    if (window.sanskritMemoryGame && window.sanskritMemoryGame.startPracticeMode) {
+      window.sanskritMemoryGame.startPracticeMode(word, round);
+    }
+    
+    sceneActions.updateState({
+      phase: PHASES.MEMORY_GAME_ACTIVE,
+      currentPopup: null
+    });
+  };
 
   // GET CURRENT BACKGROUND FUNCTION
   const getCurrentBackground = () => {
@@ -548,7 +1020,9 @@ const handleHintButtonClick = () => {
                               sceneState.phase === PHASES.SARVADA_STORY ||
                               sceneState.phase === PHASES.SARVADA_GAME_ACTIVE ||
                               sceneState.phase === PHASES.SARVADA_COMPLETE ||
-                              sceneState.phase === PHASES.SARVADA_POWER ||
+                              sceneState.phase === PHASES.GANESHA_BLESSING_SARVADA ||
+                              sceneState.phase === PHASES.CHOICE_BUTTONS_SARVADA ||
+                              sceneState.phase === PHASES.RESCUE_MISSION_SARVADA ||
                               sceneState.learnedWords?.sarvakaryeshu;
     
     return shouldUseSarvadaBg ? sarvadaBg : sarvakaryeshuBg;
@@ -561,18 +1035,16 @@ const handleHintButtonClick = () => {
       explicitMessage: 'Wait for the sequence to finish, then click the animals in the same order to create divine decorations!',
       position: { bottom: '60%', left: '50%', transform: 'translateX(-50%)' },
       condition: (sceneState) => {
-        const gameActive = sceneState.phase === PHASES.SARVAKARYESHU_GAME_ACTIVE ? sceneState.sarvakaryeshuGameState : sceneState.sarvadaGameState;
-        return gameActive?.gamePhase === 'playing';
+  return sceneState?.combinedGameState?.gamePhase === 'playing';
       }
     },
     {
       id: 'animal-clicking-hint', 
       message: 'Click the animals to activate divine decorations!',
-      explicitMessage: 'Click the animals in the order you heard: sar-va-kar-yeshu! (or sar-va-da!)',
+      explicitMessage: 'Click the animals in the order you heard: sar-va-kar-yeshu!',
       position: { bottom: '60%', left: '50%', transform: 'translateX(-50%)' },
       condition: (sceneState) => {
-        const gameActive = sceneState.phase === PHASES.SARVAKARYESHU_GAME_ACTIVE ? sceneState.sarvakaryeshuGameState : sceneState.sarvadaGameState;
-        return gameActive?.gamePhase === 'listening';
+        return sceneState?.sarvakaryeshuGameState?.gamePhase === 'animal_clicking' && !showRecording;
       }
     },
     {
@@ -586,66 +1058,19 @@ const handleHintButtonClick = () => {
     }
   ];
 
-// ⭐ RELOAD LOGIC: Update to handle individual game states
-useEffect(() => {
-  if (!isReload || !sceneState) return;
-  
-  // Check for Play Again flag
-  const profileId = localStorage.getItem('activeProfileId');
-  const playAgainKey = `play_again_${profileId}_${zoneId}_${sceneId}`;
-  const playAgainRequested = localStorage.getItem(playAgainKey);
-  
-  if (playAgainRequested === 'true') {
-    // Already handled in resetScene, ensures clean component re-render
-    return; 
-  }
-
-  // Set power gained state for correct background display
-  if (sceneState.learnedWords?.sarvakaryeshu === true) {
-    setSarvakaryeshuPowerGained(true);
-  }
-
-  // Resume UI based on saved phase
-  switch (sceneState.phase) {
-    case PHASES.SARVAKARYESHU_POWER:
-      // If we land here, the word is learned, but the modal may have been dismissed
-      setCurrentWord('sarvakaryeshu');
-      setShowPowerModal(true);
-      break;
-
-    case PHASES.SARVADA_GAME_ACTIVE:
-      // If we jump straight to game 2, ensure transition state is set
-      setSarvakaryeshuPowerGained(true);
-      break;
-      
-    case PHASES.SARVADA_POWER:
-      setCurrentWord('sarvada');
-      setShowPowerModal(true);
-      break;
-
-    case PHASES.SCENE_COMPLETE:
-      setShowSparkle('final-fireworks');
-      break;
-      
-    default:
-      // For game active states, the individual game components handle their own reload via savedGameState
-      break;
-  }
-}, [isReload]);
-
-  // Auto-start mode selection after welcome
+  // Auto-start memory game after welcome
   useEffect(() => {
-    if (sceneState?.phase === PHASES.INITIAL && sceneState?.welcomeShown && !modeSelected) {
-      console.log('Starting Sarvakaryeshu mode selection');
-      setModeForPhase('sarvakaryeshu');
-      setShowModeSelection(true);
+    if (sceneState?.phase === PHASES.INITIAL && sceneState?.welcomeShown) {
+      console.log('Starting Sarvakaryeshu memory game');
+      safeSetTimeout(() => {
+        sceneActions.updateState({ phase: PHASES.SARVAKARYESHU_GAME_ACTIVE });
+      }, 1000);
     }
-  }, [sceneState?.phase, sceneState?.welcomeShown, modeSelected]);
+  }, [sceneState?.phase, sceneState?.welcomeShown]);
 
   // Progress counter for syllables
   const renderProgressCounter = () => {
-    // Sarvakaryeshu (4) + Sarvada (3) = 7 syllables
-    const totalSyllables = 7; 
+    const totalSyllables = 7; // 4 + 3 syllables
     const learnedCount = Object.values(sceneState?.learnedSyllables || {}).filter(Boolean).length;
 
     return (
@@ -664,6 +1089,54 @@ useEffect(() => {
         <div className="counter-label">Divine Sounds</div>
       </div>
     );
+  };
+
+  
+  const getSyllableState = (syllable) => {
+    const learned = sceneState.learnedSyllables?.[syllable.toLowerCase()];
+    if (learned) return 'learned';
+    
+    const currentWord = sceneState.learnedWords?.sarvakaryeshu ? 'sarvada' : 'sarvakaryeshu';
+    
+    const phaseSyllables = currentWord === 'sarvakaryeshu'
+      ? ['sar', 'va', 'kar', 'yeshu']
+      : ['sar', 'va', 'da'];
+    
+    if (phaseSyllables.includes(syllable.toLowerCase())) return 'current';
+    return 'locked';
+  };
+
+const combinedGameReloadProps = sceneState.combinedGameState ? {
+  isReload: isReload,
+  initialGamePhase: sceneState.combinedGameState.gamePhase || 'waiting',
+  initialCurrentPhase: sceneState.combinedGameState.currentPhase || 'sarvada',
+  initialCurrentRound: sceneState.combinedGameState.currentRound || 1,
+  initialPlayerInput: sceneState.combinedGameState.playerInput || [],
+  initialCurrentSequence: sceneState.combinedGameState.currentSequence || [],
+  initialVisualRewards: sceneState.combinedGameState.visualRewards || {},
+  initialActivatedSingers: sceneState.combinedGameState.activatedSingers || {},
+} : {};
+
+  const missionReloadProps = sceneState.missionState ? {
+    isReload: isReload && !!sceneState.missionState.word,
+    initialRescuePhase: sceneState.missionState.rescuePhase || 'problem',
+    initialShowParticles: sceneState.missionState.showParticles || false,
+    missionJustCompleted: sceneState.missionState.missionJustCompleted || false,
+  } : {};
+
+  const hideActiveHints = () => {
+    if (progressiveHintRef.current && typeof progressiveHintRef.current.hideHint === 'function') {
+      progressiveHintRef.current.hideHint();
+    }
+  };
+
+  const handleHintShown = (level) => {
+    console.log(`Divine hint level ${level} shown`);
+    setHintUsed(true);
+  };
+
+  const handleHintButtonClick = () => {
+    console.log("Divine hint button clicked");
   };
 
   if (!sceneState) {
@@ -689,11 +1162,11 @@ useEffect(() => {
 
             {/* Opening Mission Modal */}
 {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
-  <div className="sarvakaryeshu-mission-modal-overlay">  
-    <div className="sarvakaryeshu-mission-modal"> 
-      <div className="sarvakaryeshu-modal-character"> 
+  <div className="sarvakaryeshu-mission-modal-overlay">  {/* ⭐ ADD PREFIX */}
+    <div className="sarvakaryeshu-mission-modal">  {/* ⭐ ADD PREFIX */}
+      <div className="sarvakaryeshu-modal-character">  {/* ⭐ ADD PREFIX */}
         <img src={ganeshaHeadphones} alt="Ganesha" className="sarvakaryeshu-character-img" />
-        <div className="sarvakaryeshu-character-speech-bubble"> 
+        <div className="sarvakaryeshu-character-speech-bubble">  {/* ⭐ ADD PREFIX */}
           Let's create divine decorations! ✨
         </div>
       </div>
@@ -705,10 +1178,10 @@ useEffect(() => {
       </p>
       <button 
         className="sarvakaryeshu-mission-start-btn"
-        onClick={() => {
-          console.log('🎮 Opening mode selection for SARVAKARYESHU');
+    onClick={() => {
+          console.log('🎮 Opening mode selection forSARVAKARYESHU');
           sceneActions.updateState({ welcomeShown: true });
-          setModeForPhase('sarvakaryeshu');
+          setModeForPhase('sarvakaryeshu')
           setShowModeSelection(true);
           setModeSelected(false);
         }}
@@ -718,43 +1191,6 @@ useEffect(() => {
     </div>
   </div>
 )}
-
-{/* Sarvada Story Modal */}
-{showSarvadaStory && (
-  <div className="sarvakaryeshu-story-modal-overlay"> 
-    <div className="sarvakaryeshu-story-modal"> 
-      <div className="sarvakaryeshu-modal-character">
-        <img src={ganeshaHeadphones} alt="Ganesha" className="sarvakaryeshu-character-img" />
-        <div className="sarvakaryeshu-character-speech-bubble">
-          One more divine word! 💪
-        </div>
-      </div>
-      
-      <h2 className="sarvakaryeshu-story-title">Great Work!</h2>
-      <div className="sarvakaryeshu-story-subtitle">Now unlock eternal blessing!</div>
-      <p className="sarvakaryeshu-story-description">
-        Learn to chant <strong>SARVADA</strong> to unlock eternal blessing power and save animals!
-      </p>
- <button
-        className="sarvakaryeshu-story-continue-btn"
-        onClick={() => {
-          console.log('🎮 Opening mode selection for SARVADA');
-          setSarvakaryeshuPowerGained(true);
-          setIsTransitioning(true);
-          setShowSarvadaStory(false);
-          setModeForPhase('sarvada');
-          setShowModeSelection(true);
-          setModeSelected(false);
-
-          setTimeout(() => setIsTransitioning(false), 500);
-        }}
-      >
-        Start Learning
-      </button>
-    </div>
-  </div>
-)}
-
 
 {/* ⭐ MODE SELECTION MODAL - Shows BEFORE game starts */}
 {showModeSelection && !modeSelected && (
@@ -774,7 +1210,7 @@ useEffect(() => {
       }}>
         {/* AUTO PLAY BUTTON */}
         <button
-              className="sarvakaryeshu-mission-start-btn"
+        className="sarvakaryeshu-start-btn"
           style={{
             flex: '1',
             minWidth: '200px',
@@ -788,7 +1224,7 @@ useEffect(() => {
 
             // ⭐ Single state update: mode + phase
             const modeKey = `${modeForPhase}Mode`;
-            const phaseKey = modeForPhase === 'sarvakaryeshu' ? PHASES.SARVAKARYESHU_GAME_ACTIVE : PHASES.SARVADA_GAME_ACTIVE;
+            const phaseKey = modeForPhase === 'sarvakaryeshu' ? PHASES.sarvakaryeshu_GAME_ACTIVE : PHASES.KURUMEDEVA_GAME_ACTIVE;
             sceneActions.updateState({
               [modeKey]: 'auto',
               phase: phaseKey
@@ -803,7 +1239,7 @@ useEffect(() => {
 
         {/* MANUAL BUTTON */}
         <button
-                 className="sarvakaryeshu-mission-start-btn"
+          className="sarvakaryeshu-start-btn"
           style={{
             flex: '1',
             minWidth: '200px',
@@ -817,7 +1253,7 @@ useEffect(() => {
 
             // ⭐ Single state update: mode + phase
             const modeKey = `${modeForPhase}Mode`;
-            const phaseKey = modeForPhase === 'sarvakaryeshu' ? PHASES.SARVAKARYESHU_GAME_ACTIVE : PHASES.SARVADA_GAME_ACTIVE;
+            const phaseKey = modeForPhase === 'sarvakaryeshu' ? PHASES.sarvakaryeshu_GAME_ACTIVE : PHASES.KURUMEDEVA_GAME_ACTIVE;
             sceneActions.updateState({
               [modeKey]: 'manual',
               phase: phaseKey
@@ -834,55 +1270,85 @@ useEffect(() => {
   </div>
 )}
 
+{/* Sarvada Story Modal */}
+{showSarvadaStory && (
+  <div className="sarvakaryeshu-story-modal-overlay">  {/* ⭐ ADD PREFIX */}
+    <div className="sarvakaryeshu-story-modal">  {/* ⭐ ADD PREFIX */}
+      <div className="sarvakaryeshu-modal-character">
+        <img src={ganeshaHeadphones} alt="Ganesha" className="sarvakaryeshu-character-img" />
+        <div className="sarvakaryeshu-character-speech-bubble">
+          One more divine word! 💪
+        </div>
+      </div>
+      
+      <h2 className="sarvakaryeshu-story-title">Great Work!</h2>
+      <div className="sarvakaryeshu-story-subtitle">Now unlock eternal blessing!</div>
+      <p className="sarvakaryeshu-story-description">
+        Learn to chant <strong>SARVADA</strong> to unlock eternal blessing power and save animals!
+      </p>
+ <button
+        className="sarvakaryeshu-story-continue-btn"
+    onClick={() => {
+          console.log('🎮 Opening mode selection for SARVADA');
+          setShowKurumedevaStory(false);
+          setModeForPhase('sarvada');
+          setShowModeSelection(true);
+          setModeSelected(false);
+        }}
+      >
+        Start Learning
+      </button>
+    </div>
+  </div>
+)}
 
-{/* ⭐ SARVAKARYESHU GAME (Game 7) */}
-<SarvakaryeshuGame
-  isActive={sceneState.phase === PHASES.SARVAKARYESHU_GAME_ACTIVE}
-  hideElements={isTransitioning || showGaneshaBlessing || sceneState.phase === PHASES.SARVAKARYESHU_COMPLETE}
-  selectedMode={sceneState.sarvakaryeshuMode}
-  skipModeSelection={true} 
-  isAudioOn={isAudioOn} // ⭐ ADDED
+
+
+
+<SarvakaryeshuSarvadaGame
+  isActive={sceneState.phase === PHASES.SARVAKARYESHU_GAME_ACTIVE || 
+           sceneState.phase === PHASES.SARVADA_GAME_ACTIVE ||
+           sceneState.phase === PHASES.SARVAKARYESHU_COMPLETE ||
+           sceneState.phase === PHASES.SARVADA_COMPLETE}
+  hideElements={isTransitioning || 
+    showGaneshaBlessing || showSarvadaStory || 
+    sceneState.phase === PHASES.SARVAKARYESHU_COMPLETE || 
+    sceneState.phase === PHASES.SARVADA_COMPLETE ||
+    sceneState.phase === PHASES.SCENE_COMPLETE}
+  onPhaseComplete={handlePhaseComplete}
+  onGameComplete={handleGameComplete}
   
-  // Assets
-  getSarvakaryeshuSadAnimalImage={getSarvakaryeshuSadAnimalImage}
-  getSarvakaryeshuHappyAnimalImage={getSarvakaryeshuHappyAnimalImage}
-  getSarvakaryeshuHelperImage={getSarvakaryeshuHelperImage}
+  // Phase 1 - Sarvakaryeshu assets
+  getSarSquirrelHelperImage={() => sarSquirrelHelper}
+  getVaBirdHelperImage={() => vaBirdHelper}
+  getKarDuckHelperImage={() => karDuckHelper}
+  getYeshuRabbitHelperImage={() => yeshuRabbitHelper}
+  getSarSquirrelSadImage={() => sarSquirrelSad}
+  getVaBirdSadImage={() => vaBirdSad}
+  getKarDuckSadImage={() => karDuckSad}
+  getYeshuRabbitSadImage={() => yeshuRabbitSad}
+  getSarSquirrelHappyImage={() => sarSquirrelHappy}
+  getVaBirdHappyImage={() => vaBirdHappy}
+  getKarDuckHappyImage={() => karDuckHappy}
+  getYeshuRabbitHappyImage={() => yeshuRabbitHappy}
   
-  // Scene integration
-  onPhaseComplete={() => handlePhaseComplete('sarvakaryeshu')}
-  // onGameComplete={() => handleGameComplete('sarvakaryeshu')} // Not needed as phase complete does the job
-  profileName={profileName}
+  // Phase 2 - Sarvada assets  
+  getSavButterflyHelperImage={() => savButterflyHelper}
+  getVaFawnHelperImage={() => vaFawnHelper}
+  getDaHedgehogHelperImage={() => daHedgehogHelper}
+  getSavButterflySadImage={() => savButterflySad}
+  getVaFawnSadImage={() => vaFawnSad}
+  getDaHedgehogSadImage={() => daHedgehogSad}
+  getSavButterflyHappyImage={() => savButterflyHappy}
+  getVaFawnHappyImage={() => vaFawnHappy}
+  getDaHedgehogHappyImage={() => daHedgehogHappy}
   
-  // Reload support
-  isReload={isReload}
-  savedGameState={sceneState.sarvakaryeshuGameState}
-  onSaveGameState={(gameState) => handleSaveComponentState('sarvakaryeshuGame', gameState)}
+  isAudioOn={isAudioOn}
+  playAudio={playAudio}
+  onSaveGameState={(gameState) => handleSaveComponentState('combinedGame', gameState)}
+  powerGained={sarvakaryeshuPowerGained}
+  {...combinedGameReloadProps}
 />
-
-{/* ⭐ SARVADA GAME (Game 8) */}
-<SarvadaGame
-  isActive={sceneState.phase === PHASES.SARVADA_GAME_ACTIVE}
-  hideElements={isTransitioning || showGaneshaBlessing || sceneState.phase === PHASES.SARVADA_COMPLETE}
-  selectedMode={sceneState.sarvadaMode}
-  skipModeSelection={true} 
-  isAudioOn={isAudioOn} // ⭐ ADDED
-  
-  // Assets
-  getSarvadaSadAnimalImage={getSarvadaSadAnimalImage}
-  getSarvadaHappyAnimalImage={getSarvadaHappyAnimalImage}
-  getSarvadaHelperImage={getSarvadaHelperImage}
-  
-  // Scene integration
-  onPhaseComplete={() => handlePhaseComplete('sarvada')}
-  // onGameComplete={() => handleGameComplete('sarvada')} // Not needed as phase complete does the job
-  profileName={profileName}
-  
-  // Reload support
-  isReload={isReload}
-  savedGameState={sceneState.sarvadaGameState}
-  onSaveGameState={(gameState) => handleSaveComponentState('sarvadaGame', gameState)}
-/>
-
 
          
 
@@ -892,13 +1358,13 @@ useEffect(() => {
     mahakaya: true,        // From Scene 1
     suryakoti: true,       // From Scene 2
     samaprabha: true,      // From Scene 2
-    nirvighnam: true,      // From Scene 3 (Assuming this data comes from global state)
-    kurumedeva: true,      // From Scene 3 (Assuming this data comes from global state)
+    sarvakaryeshu: true,      // From Scene 3
+    kurumedeva: true,      // From Scene 3
     ...(sceneState.unlockedApps || {})  // sarvakaryeshu, sarvada
   }}
   onAppClick={(app) => {
     setCurrentPracticeWord(app.id);
-    // setShowAudioPractice(true); // Assuming this opens a separate modal for practice
+    setShowAudioPractice(true);
   }}
   isReload={isReload}
   onSaveAppState={(appState) => {
@@ -987,20 +1453,20 @@ useEffect(() => {
   }}
 />
           
-            {/* Progressive Hints System 
+            {/* Progressive Hints System */}
             <ProgressiveHintSystem
               ref={progressiveHintRef}
               sceneId={sceneId}
               sceneState={sceneState}
               hintConfigs={getHintConfigs()}
-              characterImage={mooshikaCoach}
+              //characterImage={mooshikaCoach}
               initialDelay={20000}        
               hintDisplayTime={10000}    
               position="bottom-right"
               iconSize={60}
               zIndex={2000}
-              onHintShown={handleHintShown} 
-              onHintButtonClick={handleHintButtonClick} 
+              onHintShown={handleHintShown}
+              onHintButtonClick={handleHintButtonClick}
               enabled={true}
             />
 
@@ -1076,7 +1542,65 @@ useEffect(() => {
             </>
           )}
         
-                      {/* Final Fireworks */}
+          {/* Final Fireworks 
+          {showSparkle === 'final-fireworks' && (
+            <Fireworks
+              show={true}
+              duration={4000}
+              count={15}
+              colors={['#FFD700', '#4B0082', '#FF69B4', '#32CD32', '#FF8C00', '#9370DB']}
+              onComplete={() => {
+                console.log('🎯 FIREWORKS COMPLETION HANDLER CALLED');
+                
+                try {
+                  setShowSparkle(null);
+                  
+                  const profileId = localStorage.getItem('activeProfileId');
+                  if (profileId) {
+                    try {
+                      GameStateManager.saveGameState('shloka-river', 'sarvakaryeshu-chant', {
+                        completed: true,
+                        stars: 5,
+                        syllables: sceneState?.learnedSyllables || {},
+                        words: sceneState?.learnedWords || {},
+                        phase: 'complete',
+                        timestamp: Date.now()
+                      });
+                      console.log('✅ Game state saved successfully');
+                    } catch (saveError) {
+                      console.warn('⚠️ Error saving game state:', saveError);
+                    }
+
+                    try {
+                      localStorage.removeItem(`temp_session_${profileId}_shloka-river_sarvakaryeshu-chant`);
+                      SimpleSceneManager.clearCurrentScene();
+                      console.log('✅ Temp session cleared');
+                    } catch (clearError) {
+                      console.warn('⚠️ Error clearing session:', clearError);
+                    }
+                  }
+
+                  sceneActions.updateState({
+                    showingCompletionScreen: true,
+                    currentPopup: null,
+                    phase: PHASES.SCENE_COMPLETE,
+                    stars: 5,
+                    completed: true
+                  });
+                  console.log('🎯 Scene state updated');
+
+                  setShowSceneCompletion(true);
+                  console.log('🎯 setShowSceneCompletion(true) called');
+                  
+                } catch (error) {
+                  console.error('💥 Error in fireworks completion:', error);
+                  setShowSceneCompletion(true);
+                }
+              }}
+            />
+          )}
+
+                        {/* Final Fireworks */}
                       {showSparkle === 'final-fireworks' && (
                         <Fireworks
                           show={true}
@@ -1099,7 +1623,7 @@ useEffect(() => {
                       });
                       localStorage.removeItem(`temp_session_${profileId}_shloka-river_sarvakaryeshu-chant`);
                               SimpleSceneManager.clearCurrentScene();
-                              console.log('✅ sarvakaryeshu chant: Completion saved and temp session cleared');
+                              console.log('✅ vakratunda chant: Completion saved and temp session cleared');
                             }
                             
                             setShowSceneCompletion(true);
@@ -1114,7 +1638,7 @@ useEffect(() => {
             totalScenes={5}
             starsEarned={5}
             totalStars={5}
-discoveredSymbols={['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha', 'nirvighnam', 'kurumedeva', 'sarvakaryeshu', 'sarvada']}
+discoveredSymbols={['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha', 'sarvakaryeshu', 'kurumedeva', 'sarvakaryeshu', 'sarvada']}
   containerType="smartwatch"
   containerImage={smartwatchBase}
   containerScreenImage={smartwatchScreen}
@@ -1124,7 +1648,7 @@ appImages={{
   mahakaya: appMahakaya,
   suryakoti: appSuryakoti,
   samaprabha: appSamaprabha,
-  nirvighnam: appNirvighnam,
+  sarvakaryeshu: appsarvakaryeshu,
   kurumedeva: appKurumedeva,
   sarvakaryeshu: appSarvakaryeshu,
   sarvada: appSarvada,
@@ -1140,7 +1664,7 @@ appImages={{
             onComplete={onComplete}
    onReplay={() => {
   console.log('🔀 INSTANT REPLAY: Garden Adventure restart');
-  // ⭐ The resetScene must be fixed to be safe with individual game states (omitted here for brevity)
+  resetScene(false);  // No confirm dialog for replay
 }}
         
             onContinue={() => {
@@ -1216,6 +1740,9 @@ appImages={{
   allSyllables.forEach(syl => completedSyllables[syl] = true);
   allWords.forEach(word => completedWords[word] = true);
   
+  console.log('Completing syllables:', completedSyllables);
+  console.log('Completing words:', completedWords);
+  
   sceneActions.updateState({
     learnedSyllables: completedSyllables,
     learnedWords: completedWords,
@@ -1273,9 +1800,7 @@ appImages={{
               if (clearManualCloseTracking) clearManualCloseTracking();
               setTimeout(() => onNavigate?.('zones'), 100);
             }}
-                          onStartFresh={() => {
-                                      // ⭐ The resetScene must be fixed to be safe with individual game states (omitted here for brevity)
-                          }}  // Add this if TocaBoca has reset option
+                          onStartFresh={() => resetScene(true)}  // Add this if TocaBoca has reset option
 
             currentProgress={{
               stars: sceneState.stars || 0,
@@ -1320,7 +1845,7 @@ appImages={{
             sceneActions.updateState({
               learnedSyllables: {
                 sar: true, va: true, kar: true, yeshu: true,  // Sarvakaryeshu complete
-                sarvada_sar: false, sarvada_va: false, da: false // Sarvada not learned yet
+                da: false  // Sarvada not learned yet
               },
               learnedWords: {
                 sarvakaryeshu: true,    // Sarvakaryeshu complete
@@ -1389,8 +1914,7 @@ appImages={{
                 sceneActions.updateState({
                   learnedSyllables: {},
                   learnedWords: {},
-                 sarvakaryeshuGameState: null, // ⭐ UPDATED
-                 sarvadaGameState: null, // ⭐ UPDATED
+                 combinedGameState: null,
                   missionState: {
                     rescuePhase: 'problem',
                     showParticles: false,

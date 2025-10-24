@@ -18,14 +18,13 @@ import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimat
 import Fireworks from '../../../../lib/components/feedback/Fireworks';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 
-// NEW: Import game wrappers (like VakratundaGame pattern)
-import SuryakotiGame from './components/SuryakotiGame';
-import SamaprabhaGame from './components/SamaprabhaGame';
+// NEW: Import combined memory game component and animations
+import SimplifiedCombinedMemoryGame from './components/SimplifiedCombinedMemoryGame';
 
 import SunRayArc from './components/SunRayArc';
 //import SparkleTrailComponent from './components/SparkleTrailComponent'; // Add this component
 import SanskritVoiceRecorder from '../../../../lib/components/audio/SanskritVoiceRecorder';
-import SmartwatchWidget from '../Scene1/components/SmartwatchWidget';
+import SmartwatchWidget from '../Scene1/prev codes/SmartwatchWidget';
 import HelperSignatureAnimation from '../../../../lib/components/animation/HelperSignatureAnimation';
 
 import AppSidebar from "../../shared/AppSidebar";
@@ -79,11 +78,11 @@ import suryakotiAfter from './assets/images/Suryakoti/suryakoti-after.png';
 import samaprabhaBefore from './assets/images/Samaprabha/samaprabha-before.png'; 
 import samaprabhaAfter from './assets/images/Samaprabha/samaprabha-after.png';
 
-// Updated PHASES constant for separate game approach (like VakratundaGrove)
+// Updated PHASES constant for combined memory game approach
+// Updated PHASES constant for combined memory game approach
 const PHASES = {
   INITIAL: 'initial',
-  MEMORY_GAME_ACTIVE: 'memory_game_active', // ⚠️ Deprecated - kept for compatibility
-  SURYAKOTI_GAME_ACTIVE: 'suryakoti_game_active',  // ⭐ NEW
+  MEMORY_GAME_ACTIVE: 'memory_game_active',
   SURYAKOTI_COMPLETE: 'suryakoti_complete',
   GANESHA_BLESSING_SURYAKOTI: 'ganesha_blessing_suryakoti',
   CHOICE_BUTTONS_SURYAKOTI: 'choice_buttons_suryakoti',
@@ -91,7 +90,6 @@ const PHASES = {
   SURYAKOTI_POWER: 'suryakoti_power',  // ✅ ADD THIS
 
   SAMAPRABHA_STORY: 'samaprabha_story',
-  SAMAPRABHA_GAME_ACTIVE: 'samaprabha_game_active',  // ⭐ NEW
   SAMAPRABHA_COMPLETE: 'samaprabha_complete',
   GANESHA_BLESSING_SAMAPRABHA: 'ganesha_blessing_samaprabha',
   CHOICE_BUTTONS_SAMAPRABHA: 'choice_buttons_samaprabha',
@@ -164,13 +162,9 @@ const SuryakotiBank = ({
 
           unlockedApps: {},
 
-          // ⭐ Mode selection (like VakratundaGrove)
-          suryakotiMode: null,      // 'auto' or 'manual'
-          samaprabhaMode: null,     // 'auto' or 'manual'
-
-          // UNIFIED: State for each game
-          suryakotiGameState: null,
-          samaprabhaGameState: null,
+          
+          // UNIFIED: Combined state for memory game (like VakratundaGrove)
+          memoryGameState: null,
           missionState: {
             rescuePhase: 'problem',
             showParticles: false,
@@ -234,12 +228,7 @@ const SuryakotiBankContent = ({
 
   const [showSparkle, setShowSparkle] = useState(null);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
-
-  // ⭐ Mode selection state (like VakratundaGrove)
-  const [showModeSelection, setShowModeSelection] = useState(false);
-  const [modeForPhase, setModeForPhase] = useState(null); // 'suryakoti' or 'samaprabha'
-  const [modeSelected, setModeSelected] = useState(false); // Prevent loops
-
+  
   // Timeouts ref for cleanup
   const timeoutsRef = useRef([]);
 
@@ -1121,28 +1110,27 @@ const handlePhaseComplete = (word) => {
           <div className="river-background" style={{ backgroundImage: `url(${suryakotiBankBg})` }}>
 
             {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
-              <div className="suryakoti-mission-modal-overlay">
-                <div className="suryakoti-mission-modal">
-                  <div className="suryakoti-modal-character">
-                    <img src={ganeshaHeadphones} alt="Ganesha" className="suryakoti-character-img" />
-                    <div className="suryakoti-character-speech-bubble">
+              <div className="mission-modal-overlay">
+                <div className="mission-modal">
+                  <div className="modal-character">
+                    <img src={ganeshaHeadphones} alt="Ganesha" className="character-img" />
+                    <div className="character-speech-bubble">
                       Let's save the forest! 🌳
                     </div>
                   </div>
                   
-                  <h2 className="suryakoti-mission-title">Help Ganesha Save the River!</h2>
-                  <div className="suryakoti-mission-subtitle">2 magical words have special powers!</div>
-                  <p className="suryakoti-mission-description">
+                  <h2 className="mission-title">Help Ganesha Save the River!</h2>
+                  <div className="mission-subtitle">2 magical words have special powers!</div>
+                  <p className="mission-description">
                     First, learn to chant <strong>SURYAKOTI</strong> to unlock solar power and rescue trapped animals!
                   </p>
-                  <button
-                    className="suryakoti-mission-start-btn"
+                  <button 
+                    className="mission-start-btn"
                     onClick={() => {
-                      console.log('🎮 Opening mode selection for SURYAKOTI');
-                      sceneActions.updateState({ welcomeShown: true });
-                      setModeForPhase('suryakoti');
-                      setShowModeSelection(true);
-                      setModeSelected(false);
+                      sceneActions.updateState({ 
+                        welcomeShown: true,
+                        phase: PHASES.MEMORY_GAME_ACTIVE 
+                      });
                     }}
                   >
                     Start Learning!
@@ -1152,28 +1140,32 @@ const handlePhaseComplete = (word) => {
             )}
 
             {sceneState.phase === PHASES.SAMAPRABHA_STORY && (
-  <div className="suryakoti-mission-modal-overlay">
-    <div className="suryakoti-mission-modal">
-      <div className="suryakoti-modal-character">
-        <img src={ganeshaHeadphones} alt="Ganesha" className="suryakoti-character-img" />
-        <div className="suryakoti-character-speech-bubble">
+  <div className="mission-modal-overlay">
+    <div className="mission-modal">
+      <div className="modal-character">
+        <img src={ganeshaHeadphones} alt="Ganesha" className="character-img" />
+        <div className="character-speech-bubble">
           One more to learn! 💪
         </div>
       </div>
       
-      <h2 className="suryakoti-mission-title">Great Work!</h2>
-      <div className="suryakoti-mission-subtitle">Now unlock the second power!</div>
-      <p className="suryakoti-mission-description">
+      <h2 className="mission-title">Great Work!</h2>
+      <div className="mission-subtitle">Now unlock the second power!</div>
+      <p className="mission-description">
         Learn to chant <strong>SAMAPRABHA</strong> to unlock radiant light and save more animals!
       </p>
      <button
-        className="suryakoti-mission-start-btn"
+        className="mission-start-btn"
         onClick={() => {
-          console.log('🎮 Opening mode selection for SAMAPRABHA');
-          setSuryakotiPowerGained(true); // ⭐ Keep this - makes Samaprabha visible
-          setModeForPhase('samaprabha');
-          setShowModeSelection(true);
-          setModeSelected(false);
+          // ⭐ ADD THIS LINE - Critical for making Samaprabha visible!
+          setSuryakotiPowerGained(true);
+          
+          sceneActions.updateState({ phase: PHASES.MEMORY_GAME_ACTIVE });
+          safeSetTimeout(() => {
+            if (window.simplifiedCombinedMemoryGame?.startSamaprabhaPhase) {
+              window.simplifiedCombinedMemoryGame.startSamaprabhaPhase();
+            }
+          }, 200);
         }}
       >
         Start Learning!
@@ -1182,136 +1174,42 @@ const handlePhaseComplete = (word) => {
   </div>
 )}
 
-{/* ⭐ MODE SELECTION MODAL - Shows BEFORE game starts */}
-{showModeSelection && !modeSelected && (
-  <div className="suryakoti-mission-modal-overlay">
-    <div className="suryakoti-mission-modal mode-selection-modal">
-      <h2 className="suryakoti-mission-title">🎮 How do you want to play?</h2>
-      <p className="suryakoti-mission-description">
-        Choose your learning style for <strong>{modeForPhase?.toUpperCase()}</strong>
-      </p>
-
-      <div style={{
-        display: 'flex',
-        gap: '20px',
-        marginTop: '30px',
-        flexDirection: 'column'
-      }}>
-        {/* AUTO PLAY BUTTON */}
-        <button
-          className="suryakoti-mission-start-btn"
-          style={{
-            background: 'linear-gradient(135deg, #4CAF50 0%, #81C784 100%)',
-            padding: '20px',
-            fontSize: '16px'
-          }}
-          onClick={() => {
-            console.log(`🎮 Mode selected: AUTO for ${modeForPhase}`);
-            setModeSelected(true);
-            setShowModeSelection(false);
-
-            // ⭐ Single state update: mode + phase
-            const modeKey = `${modeForPhase}Mode`;
-            const phaseKey = modeForPhase === 'suryakoti' ? PHASES.SURYAKOTI_GAME_ACTIVE : PHASES.SAMAPRABHA_GAME_ACTIVE;
-            sceneActions.updateState({
-              [modeKey]: 'auto',
-              phase: phaseKey
-            });
-          }}
-        >
-          <div style={{ fontSize: '24px', marginBottom: '8px' }}>▶️ Auto Play</div>
-          <div style={{ fontSize: '13px', opacity: 0.9 }}>
-            Start from Round 1 and learn step by step
-          </div>
-        </button>
-
-        {/* MANUAL BUTTON */}
-        <button
-          className="suryakoti-mission-start-btn"
-          style={{
-            background: 'linear-gradient(135deg, #2196F3 0%, #64B5F6 100%)',
-            padding: '20px',
-            fontSize: '16px'
-          }}
-          onClick={() => {
-            console.log(`🎮 Mode selected: MANUAL for ${modeForPhase}`);
-            setModeSelected(true);
-            setShowModeSelection(false);
-
-            // ⭐ Single state update: mode + phase
-            const modeKey = `${modeForPhase}Mode`;
-            const phaseKey = modeForPhase === 'suryakoti' ? PHASES.SURYAKOTI_GAME_ACTIVE : PHASES.SAMAPRABHA_GAME_ACTIVE;
-            sceneActions.updateState({
-              [modeKey]: 'manual',
-              phase: phaseKey
-            });
-          }}
-        >
-          <div style={{ fontSize: '24px', marginBottom: '8px' }}>🎯 Choose a Round</div>
-          <div style={{ fontSize: '13px', opacity: 0.9 }}>
-            Pick any round you want to practice
-          </div>
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
-            {/* ⭐ SURYAKOTI GAME - Separate component like VakratundaGame */}
-            <SuryakotiGame
-              isActive={sceneState.phase === PHASES.SURYAKOTI_GAME_ACTIVE}
-              hideElements={isTransitioning || sceneState.phase === PHASES.SURYAKOTI_COMPLETE}
-              selectedMode={sceneState.suryakotiMode}  // ⭐ Mode from scene modal
-              skipModeSelection={true}  // ⭐ Scene handles mode selection
-
-              // Assets
-              getClosedFlowerImage={getClosedFlowerImage}
-              getOpenFlowerImage={getOpenFlowerImage}
-              getSunOrbImage={getSunOrbImage}
-
-              // Scene integration
-              onPhaseComplete={() => handlePhaseComplete('suryakoti')}
-              onGameComplete={() => handleGameComplete('suryakoti')}
+            {/* UNIFIED: Combined Memory Game Component */}
+<SimplifiedCombinedMemoryGame
+              isActive={isCombinedGameActive}
+              hideElements={isTransitioning || 
+                showSamaprabhaStory || 
+                sceneState.phase === PHASES.SURYAKOTI_COMPLETE || 
+                sceneState.phase === PHASES.SAMAPRABHA_COMPLETE ||
+                sceneState.phase === PHASES.SCENE_COMPLETE}
+              powerGained={suryakotiPowerGained}
+              onPhaseComplete={handlePhaseComplete}
+              onGameComplete={handleGameComplete}
               profileName={profileName}
-
-              // Components
+                forceReset={forceMemoryGameReset} // ADD THIS LINE
+              
+              // Animation components
               SunRayComponent={SunRayArc}
-
-              // Audio
-              isAudioOn={isAudioOn}
-              playAudio={playAudio}
-
-              // Reload support
-              isReload={isReload}
-              savedGameState={sceneState.suryakotiGameState}
-              onSaveGameState={(gameState) => handleSaveComponentState('suryakotiGame', gameState)}
-            />
-
-            {/* ⭐ SAMAPRABHA GAME - Separate component like MahakayaGame */}
-            <SamaprabhaGame
-              isActive={sceneState.phase === PHASES.SAMAPRABHA_GAME_ACTIVE}
-              hideElements={isTransitioning || sceneState.phase === PHASES.SAMAPRABHA_COMPLETE}
-              selectedMode={sceneState.samaprabhaMode}  // ⭐ Mode from scene modal
-              skipModeSelection={true}  // ⭐ Scene handles mode selection
-
-              // Assets
-              getSadAnimalImage={getSadAnimalImage}
-              getHappyAnimalImage={getHappyAnimalImage}
+              
+              // Asset getters - consolidated for both phases
+              getSunOrbImage={getSunOrbImage}
+           getWiltedFlowerImage={getClosedFlowerImage}    // Same function, different name
+getBloomedFlowerImage={getOpenFlowerImage}     // Same function, different name
               getRainbowImage={getRainbowImage}
-
-              // Scene integration
-              onPhaseComplete={() => handlePhaseComplete('samaprabha')}
-              onGameComplete={() => handleGameComplete('samaprabha')}
-              profileName={profileName}
-
-              // Audio
+              getFruitImage={getFruitImage}
+              getAnimalImage={getAnimalImage}
+ getSadAnimalImage={getSadAnimalImage}      // ⭐ Direct reference
+getHappyAnimalImage={getHappyAnimalImage}  // ⭐ Direct reference
+              
               isAudioOn={isAudioOn}
               playAudio={playAudio}
-
-              // Reload support
-              isReload={isReload}
-              savedGameState={sceneState.samaprabhaGameState}
-              onSaveGameState={(gameState) => handleSaveComponentState('samaprabhaGame', gameState)}
+              
+              // UNIFIED: State saving for reload support
+              onSaveGameState={(gameState) => handleSaveComponentState('memoryGame', gameState)}
+              onCleanup={() => console.log('Combined memory game cleaned up')}
+              
+              // Reload support props
+              {...simplifiedCombinedMemoryGameReloadProps}
             />
 
             {/* Story Introduction - Show immediately when scene starts 

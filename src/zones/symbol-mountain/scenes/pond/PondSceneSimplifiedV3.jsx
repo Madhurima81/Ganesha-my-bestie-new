@@ -338,6 +338,7 @@ const PondSceneContent = ({
   const handleSaveAnimal = () => {
     setShowPowerModal(false);
     setShowPowerMission(true);
+
   };
 
 const handleContinueLearning = () => {
@@ -686,6 +687,15 @@ const handleContinueLearning = () => {
             {/* STORY INTRODUCTION */}
             {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
               <>
+                    {/* NEW: Dark overlay for the welcome screen */}
+    <div style={{
+      position: 'fixed',
+      top: 0, left: 0, right: 0, bottom: 0,
+      background: 'rgba(0, 0, 0, 0.7)', // Dark semi-transparent background
+      zIndex: 2, // High Z-index to cover the scene
+      animation: 'fadeIn 0.3s ease-out'
+    }} />
+
                 <div style={{
                   position: 'absolute',
                   left: '35%',
@@ -947,12 +957,12 @@ const handleContinueLearning = () => {
               </div>
             )}
 
-            <BackToMapButton 
-              onNavigate={onNavigate}
-              hideCoach={hideCoach}
-              clearManualCloseTracking={clearManualCloseTracking}
-              position="bottom-left"
-            />
+        {sceneState.welcomeShown && (
+              <BackToMapButton onNavigate={onNavigate} hideCoach={hideCoach} clearManualCloseTracking={clearManualCloseTracking} />
+            )}
+
+                 {/* PROGRESSIVE HINT SYSTEM with disabled state */}
+            {sceneState.welcomeShown && ( // <--- WRAP ENTIRE BLOCK
 
             <ProgressiveHintSystem
               ref={progressiveHintRef}
@@ -969,7 +979,7 @@ const handleContinueLearning = () => {
               disabledMessage="Great job!"
               onHintShown={() => setShowHintGlow(true)}
               onHintHidden={() => setShowHintGlow(false)}
-            />
+            />  )}
           </div>
 
           {/* Centered Symbol Celebration */}
@@ -1158,6 +1168,21 @@ const handleContinueLearning = () => {
             </div>
           )}
 
+          {/* START OF NEW OVERLAY BLOCK for SymbolPowerMission */}
+{showPowerMission && (
+  // Dark background overlay for SymbolPowerMission
+  <div style={{
+    position: 'fixed',
+    top: 0, left: 0, right: 0, bottom: 0,
+    background: 'rgba(0, 0, 0, 0.7)',
+    backdropFilter: 'blur(3px)',
+    zIndex: 499, // Lower than the Power Modal (500) but higher than the scene (e.g. 200)
+    animation: 'fadeIn 0.3s ease-out'
+  }} />
+)}
+{/* END OF NEW OVERLAY BLOCK */}
+
+
           {/* Symbol Power Mission */}
           <SymbolPowerMission
             show={showPowerMission}
@@ -1286,6 +1311,8 @@ const handleContinueLearning = () => {
             onClose={() => setShowCulturalCelebration(false)}
           />
 
+           {sceneState.welcomeShown && ( // <--- WRAP ENTIRE BLOCK
+
           <SymbolSidebar
             discoveredSymbols={{
               mooshika: true,
@@ -1296,7 +1323,8 @@ const handleContinueLearning = () => {
             onSymbolClick={(symbolId) => {
               console.log(`Sidebar symbol clicked: ${symbolId}`);
             }}
-          />
+          /> )}
+
         </div>      
       </MessageManager>
     </InteractionManager>

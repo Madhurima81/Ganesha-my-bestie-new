@@ -36,6 +36,8 @@ import MahakayaGame from './MahakayaGame';
 // Optional: WaterSpray if you have it
 // import WaterSpray from './components/WaterSpray';
 
+import useSafeClick from '../../core/hooks/useSafeClick';
+
 // Character images
 import boyNamaste from './assets/images/boy-namaste.png';
 import ganeshaHeadphones from './assets/images/ganesha_with_headphones.png';
@@ -163,8 +165,21 @@ const VakratundaGroveSimplified = ({
           completed: false,
           progress: { percentage: 0, starsEarned: 0, completed: false },
             vakratundaGameState: null,  // ⭐ ADD THIS
-  mahakayaGameState: null     // ⭐ ADD THIS
+  mahakayaGameState: null  ,   // ⭐ ADD THIS
+       // ⭐ Mode selection (like Scene 2)
+          vakratundaMode: null,      // 'auto' or 'manual'
+          mahakayaMode: null,      // 'auto' or 'manual'
+          missionState: {
+            rescuePhase: 'problem',
+            showParticles: false,
+            word: null,
+            missionJustCompleted: false
+          },
+        
         }}
+
+        
+     
       >
         {({ sceneState, sceneActions, isReload }) => (
           <VakratundaGroveContent
@@ -275,6 +290,32 @@ useEffect(() => {
     }
   };
 
+    // UNIFIED: Single state saving function (like VakratundaGrove)
+  const handleSaveComponentState = (componentType, componentState) => {
+    console.log(`💾 Saving ${componentType} state:`, componentState);
+    
+    // Prevent double calls by debouncing
+    if (handleSaveComponentState.lastCall && 
+        Date.now() - handleSaveComponentState.lastCall < 100) {
+      console.log('🚫 Debounced duplicate save call');
+      return;
+    }
+    handleSaveComponentState.lastCall = Date.now();
+    
+    const updatedState = {
+      ...(componentType === 'memoryGame' && { memoryGameState: componentState }),
+      ...(componentType === 'mission' && { 
+        missionState: {
+          ...sceneState.missionState,
+          ...componentState
+        }
+      })
+    };
+    
+    console.log(`⚡ Updating scene state with ${componentType}:`, updatedState);
+    sceneActions.updateState(updatedState);
+  };
+
   // Handle saving a new recording
 const handleSaveRecording = (recordingData) => {
   setSavedRecordings(prev => {
@@ -286,7 +327,25 @@ const handleSaveRecording = (recordingData) => {
   });
 };
 
+const onSaveAppRecording = (recordingData) => {
+  setSavedRecordings(prev => ({
+    ...prev,
+    [recordingData.word]: [
+      ...(prev[recordingData.word] || []),
+      recordingData
+    ]
+  }));
+};
 
+const onDeleteAppRecording = (recordingId, word) => {
+  setSavedRecordings(prev => {
+    const wordRecordings = prev[word] || [];
+    return {
+      ...prev,
+      [word]: wordRecordings.filter(rec => rec.id !== recordingId)
+    };
+  });
+};
 
   const playSyllable = (syllable) => {
     const map = {
@@ -414,22 +473,22 @@ const handleMissionComplete = () => {
           <div className="river-background" style={{ backgroundImage: `url(${riverBackground})` }}>
 
 {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
-  <div className="mission-modal-overlay">
-    <div className="mission-modal">
-      <div className="modal-character">
-        <img src={ganeshaHeadphones} alt="Ganesha" className="character-img" />
-        <div className="character-speech-bubble">
+  <div className="vakratunda-mission-modal-overlay">
+    <div className="vakratunda-mission-modal">
+      <div className="vakratunda-modal-character">
+        <img src={ganeshaHeadphones} alt="Ganesha" className="vakratunda-character-img" />
+        <div className="vakratunda-character-speech-bubble">
           Let's save the forest! 🌳
         </div>
       </div>
       
-      <h2 className="mission-title">Help Ganesha Save the Forest!</h2>
-      <div className="mission-subtitle">2 magical words have special powers!</div>
-      <p className="mission-description">
+      <h2 className="vakratunda-mission-title">Help Ganesha Save the Forest!</h2>
+      <div className="vakratunda-mission-subtitle">2 magical words have special powers!</div>
+      <p className="vakratunda-mission-description">
         First, learn to chant <strong>VAKRATUNDA</strong> to unlock flexibility power and rescue trapped animals!
       </p>
       <button 
-        className="mission-start-btn"
+        className="vakratunda-mission-start-btn"
   onClick={() => {
   sceneActions.updateState({ 
     welcomeShown: true
@@ -460,9 +519,7 @@ const handleMissionComplete = () => {
   skipModeSelection={true}  // ⭐ ALWAYS skip - scene handles mode selection
   isReload={isReload}
   savedGameState={sceneState.vakratundaGameState}
-  onSaveGameState={(state) => {
-    sceneActions.updateState({ vakratundaGameState: state });
-  }}
+onSaveGameState={(state) => handleSaveComponentState('vakratundaGame', state)}
 />
 
 {/* MAHAKAYA MEMORY GAME */}
@@ -481,9 +538,8 @@ const handleMissionComplete = () => {
   skipModeSelection={true}  // ⭐ ALWAYS skip - scene handles mode selection
   isReload={isReload}
   savedGameState={sceneState.mahakayaGameState}
-  onSaveGameState={(state) => {
-    sceneActions.updateState({ mahakayaGameState: state });
-  }}
+onSaveGameState={(state) => handleSaveComponentState('Game', state)}
+
 />
 
 
@@ -508,8 +564,8 @@ const handleMissionComplete = () => {
 {/* PERSISTENT BOY CHARACTER - Always visible once game starts */}
 {sceneState.welcomeShown && 
  !showSceneCompletion && (
-  <div className="companion-boy">
-    <img src={boyNamaste} alt="Learning with you" className="boy-companion" />
+  <div className="vakratunda-companion-boy">
+    <img src={boyNamaste} alt="Learning with you" className="vakratunda-boy-companion" />
   </div>
 )}
 
@@ -527,22 +583,22 @@ const handleMissionComplete = () => {
 )}*/}
 
        {sceneState.phase === PHASES.MAHAKAYA_STORY && (
-  <div className="mission-modal-overlay">
-    <div className="mission-modal">
-      <div className="modal-character">
-        <img src={ganeshaHeadphones} alt="Ganesha" className="character-img" />
-        <div className="character-speech-bubble">
+  <div className="vakratunda-mission-modal-overlay">
+    <div className="vakratunda-mission-modal">
+      <div className="vakratunda-modal-character">
+        <img src={ganeshaHeadphones} alt="Ganesha" className="vakratunda-character-img" />
+        <div className="vakratunda-character-speech-bubble">
           One more to learn! 💪
         </div>
       </div>
       
-      <h2 className="mission-title">Great Work!</h2>
-      <div className="mission-subtitle">Now unlock the second power!</div>
-      <p className="mission-description">
+      <h2 className="vakratunda-mission-title">Great Work!</h2>
+      <div className="vakratunda-mission-subtitle">Now unlock the second power!</div>
+      <p className="vakratunda-mission-description">
         Learn to chant <strong>MAHAKAYA</strong> to unlock inner strength and save more animals!
       </p>
       <button
-        className="story-continue-btn"
+        className="vakratunda-story-continue-btn"
 onClick={() => {
   // Show mode selection INSTEAD of starting game
   setModeForPhase('mahakaya');
@@ -556,20 +612,86 @@ onClick={() => {
   </div>
 )}
 
-            {/* 5-SECOND WORD CELEBRATION */}
+         
+
+{/* SPARKLES BEFORE GANESHA APPEARS */}
+{showSparkle === 'vakratunda-ganesha-incoming' && (
+  <div className="vakratunda-ganesha-sparkle-position">
+    <SparkleAnimation
+      type="burst"
+      count={20}
+      color="#FFD700"
+      size={15}
+      duration={1500}
+      fadeOut={true}
+    />
+  </div>
+)}
+
+{/* GANESHA CELEBRATION - Fades in next to persistent boy */}
+{showGaneshaCelebration && (
+  <div className="vakratunda-ganesha-celebration-enter">
+    <img src={ganeshaHeadphones} alt="Ganesha" className="vakratunda-ganesha-slides-in" />
+    <div className="vakratunda-ganesha-celebration-bubble">
+      {showGaneshaCelebration === 'vakratunda' ? 'Great job! 🎉' : 'Amazing! ⭐'}
+    </div>
+  </div>
+)}
+          {/* POWER MODAL - POND STYLE */}
+{showPowerModal && (
+  <div className="vakratunda-power-modal-overlay">
+    <div className="vakratunda-power-modal">
+      {/* Affirmation section - NO TITLE */}
+      <div className="vakratunda-power-affirmation-row">
+        <img 
+          src={powerConfig[currentWord]?.image}
+          alt={currentWord}
+          className="vakratunda-affirmation-icon"
+        />
+        <div className="vakratunda-affirmation-content">
+          <div className="vakratunda-affirmation-text">"{powerConfig[currentWord]?.affirmation}"</div>
+          <div className="vakratunda-affirmation-description">{powerConfig[currentWord]?.description}</div>
+        </div>
+      </div>
+      
+      <div className="vakratunda-power-modal-content">
+        <div className="vakratunda-power-modal-left">
+          <p className="vakratunda-power-modal-text">
+            You can now use this power to help animals in need!
+          </p>
+          <p className="vakratunda-power-modal-subtext">Choose your next action:</p>
+        </div>
+        
+        <div className="vakratunda-power-modal-right">
+          {/* NO ICON HERE - removed duplicate */}
+          
+          <button className="vakratunda-power-modal-btn save-btn" onClick={handleSaveAnimal}>
+            🐾 Save an Animal
+          </button>
+          
+          <button className="vakratunda-power-modal-btn continue-btn" onClick={handleContinueLearning}>
+            {currentWord === 'vakratunda' ? '🎵 Discover Mahakaya' : '✨ End Scene'}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+   {/* 5-SECOND WORD CELEBRATION */}
             {showCenteredWord && (
               <>
-                <div className="celebration-overlay" />
-                <div className="centered-word-celebration">
+                <div className="vakratunda-celebration-overlay" />
+                <div className="vakratunda-centered-word-celebration">
                   <img 
                     src={powerConfig[showCenteredWord]?.image}
                     alt={showCenteredWord}
-                    className="celebration-app-icon"
+                    className="vakratunda-celebration-app-icon"
                   />
-                  <div className="celebration-word-text">
+                  <div className="vakratunda-celebration-word-text">
                     {showCenteredWord.toUpperCase()}
                   </div>
-                  <div className="celebration-sparkles">
+                  <div className="vakratunda-celebration-sparkles">
                     <SparkleAnimation
                       type="glitter"
                       count={30}
@@ -584,76 +706,12 @@ onClick={() => {
               </>
             )}
 
-{/* SPARKLES BEFORE GANESHA APPEARS */}
-{showSparkle === 'ganesha-incoming' && (
-  <div className="ganesha-sparkle-position">
-    <SparkleAnimation
-      type="burst"
-      count={20}
-      color="#FFD700"
-      size={15}
-      duration={1500}
-      fadeOut={true}
-    />
-  </div>
-)}
-
-{/* GANESHA CELEBRATION - Fades in next to persistent boy */}
-{showGaneshaCelebration && (
-  <div className="ganesha-celebration-enter">
-    <img src={ganeshaHeadphones} alt="Ganesha" className="ganesha-slides-in" />
-    <div className="ganesha-celebration-bubble">
-      {showGaneshaCelebration === 'vakratunda' ? 'Great job! 🎉' : 'Amazing! ⭐'}
-    </div>
-  </div>
-)}
-          {/* POWER MODAL - POND STYLE */}
-{showPowerModal && (
-  <div className="power-modal-overlay">
-    <div className="power-modal">
-      {/* Affirmation section - NO TITLE */}
-      <div className="power-affirmation-row">
-        <img 
-          src={powerConfig[currentWord]?.image}
-          alt={currentWord}
-          className="affirmation-icon"
-        />
-        <div className="affirmation-content">
-          <div className="affirmation-text">"{powerConfig[currentWord]?.affirmation}"</div>
-          <div className="affirmation-description">{powerConfig[currentWord]?.description}</div>
-        </div>
-      </div>
-      
-      <div className="power-modal-content">
-        <div className="power-modal-left">
-          <p className="power-modal-text">
-            You can now use this power to help animals in need!
-          </p>
-          <p className="power-modal-subtext">Choose your next action:</p>
-        </div>
-        
-        <div className="power-modal-right">
-          {/* NO ICON HERE - removed duplicate */}
-          
-          <button className="power-modal-btn save-btn" onClick={handleSaveAnimal}>
-            🐾 Save an Animal
-          </button>
-          
-          <button className="power-modal-btn continue-btn" onClick={handleContinueLearning}>
-            {currentWord === 'vakratunda' ? '🎵 Discover Mahakaya' : '✨ End Scene'}
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
-
 {/* MODE SELECTION MODAL - Shows BEFORE game starts */}
 {showModeSelection && !modeSelected && (
-  <div className="mission-modal-overlay">
-    <div className="mission-modal mode-selection-modal">
-      <h2 className="mission-title">🎮 How do you want to play?</h2>
-      <p className="mission-description">
+  <div className="vakratunda-mission-modal-overlay">
+    <div className="vakratunda-mission-modal mode-selection-modal">
+      <h2 className="vakratunda-mission-title">🎮 How do you want to play?</h2>
+      <p className="vakratunda-mission-description">
         Choose your learning style for <strong>{modeForPhase?.toUpperCase()}</strong>
       </p>
       
@@ -665,7 +723,7 @@ onClick={() => {
       }}>
         {/* AUTO PLAY BUTTON */}
         <button
-          className="mission-start-btn"
+          className="vakratunda-mission-start-btn"
           style={{
             background: 'linear-gradient(135deg, #4CAF50 0%, #81C784 100%)',
             padding: '20px',
@@ -694,7 +752,7 @@ onClick={() => {
         
         {/* MANUAL BUTTON */}
         <button
-          className="mission-start-btn"
+          className="vakratunda-mission-start-btn"
           style={{
             background: 'linear-gradient(135deg, #2196F3 0%, #64B5F6 100%)',
             padding: '20px',
@@ -741,12 +799,11 @@ onClick={() => {
   }}
 />
 
-<AppSidebar 
+<AppSidebar
   unlockedApps={sceneState.unlockedApps || {}}
-  onAppClick={(app) => {
-    setPracticeWord(app.id);
-    setShowRecorder(true); // Direct to recorder
-  }}
+  savedRecordings={savedRecordings}
+  onSaveRecording={onSaveAppRecording}
+  onDeleteRecording={onDeleteAppRecording}  // NEW!
   isReload={isReload}
   onSaveAppState={(appState) => {
     sceneActions.updateState({ unlockedApps: appState });
@@ -833,9 +890,9 @@ onClick={() => {
 
 {/* FINAL CELEBRATION - Ganesha appears BEFORE completion screen */}
 {showFinalGanesha && !showSceneCompletion && (
-  <div className="final-ganesha-appears">
-    <img src={ganeshaHeadphones} alt="Ganesha" className="ganesha-final-enters" />
-    <div className="ganesha-final-bubble">
+  <div className="vakratunda-final-ganesha-appears">
+    <img src={ganeshaHeadphones} alt="Ganesha" className="vakratunda-ganesha-final-enters" />
+    <div className="vakratunda-ganesha-final-bubble">
       You're a hero! 🌟
     </div>
   </div>

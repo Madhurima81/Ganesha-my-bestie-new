@@ -18,11 +18,12 @@ import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimat
 import Fireworks from '../../../../lib/components/feedback/Fireworks';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 
-// Import the thin wrapper game components
-import NirvighnamGame from './NirvighnamGame';
-import KurumeDevaGame from './KurumeDevaGame';
+// Import the actual game components
+//import NirvighnamGame from './components/NirvighnamGame';
+//import KurumeDevaGame from './components/KurumeDevaGame';
+import SimplifiedNirvighnamKurumedevaGame from './components/SimplifiedNirvighnamKurumedevaGame';
 import SanskritVoiceRecorder from '../../../../lib/components/audio/SanskritVoiceRecorder';
-import SmartwatchWidget from '../Scene1/components/SmartwatchWidget';
+import SmartwatchWidget from '../Scene1/prev codes/SmartwatchWidget';
 import HelperSignatureAnimation from '../../../../lib/components/animation/HelperSignatureAnimation';
 
 import AppSidebar from "../../shared/AppSidebar";
@@ -53,19 +54,22 @@ import stone1NirCol from './assets/images/nirvighnam/stone1-col.png';
 import stone2VighCol from './assets/images/nirvighnam/stone2-col.png';
 import stone3NamCol from './assets/images/nirvighnam/stone3-col.png';
 
-// Kurumedeva game assets - Animals, Items, Decorations (4 syllables: kuru, me, de, va)
+// Kurumedeva game assets - Animals, Items, Decorations
 import animal1Ku from './assets/images/Kurumedeva/animal1-ku.png';
 import animal2Ru from './assets/images/Kurumedeva/animal2-ru.png';
 import animal3Me from './assets/images/Kurumedeva/animal3-me.png';
 import animal4De from './assets/images/Kurumedeva/animal4-de.png';
+import animal5Va from './assets/images/Kurumedeva/animal5-va.png';
 import item1Ku from './assets/images/Kurumedeva/item1-ku.png';
 import item2Ru from './assets/images/Kurumedeva/item2-ru.png';
 import item3Me from './assets/images/Kurumedeva/item3-me.png';
 import item4De from './assets/images/Kurumedeva/item4-de.png';
+import item5Va from './assets/images/Kurumedeva/item5-va.png';
 import decor1Ku from './assets/images/Kurumedeva/decor1-ku.png';
 import decor2Ru from './assets/images/Kurumedeva/decor2-ru.png';
 import decor3Me from './assets/images/Kurumedeva/decor3-me.png';
 import decor4De from './assets/images/Kurumedeva/decor4-de.png';
+import decor5Va from './assets/images/Kurumedeva/decor5-va.png';
 
 import ganeshaWithHeadphones from '../assets/images/ganesha_with_headphones.png';
 import smartwatchBase from '../assets/images/smartwatch-base.png';
@@ -189,10 +193,10 @@ const NirvighnamChant = ({
           },
 
           unlockedApps: {},
-
-          // ⭐ Mode selection (like Scene 2)
-          nirvighnamMode: null,      // 'auto' or 'manual'
-          kurumedevaMode: null,      // 'auto' or 'manual'
+          
+          // UNIFIED: Combined state for both games
+     // UPDATED: Combined state for both games in one component
+combinedGameState: null,
           missionState: {
             rescuePhase: 'problem',
             showParticles: false,
@@ -245,8 +249,7 @@ const NirvighnamChantContent = ({
 console.log('ðŸ•‰ï¸ NirvighnamChantContent render', { 
   sceneState: sceneState?.phase, 
   isReload, 
-  nirvighnamMode: sceneState?.nirvighnamMode,
-  kurumedevaMode: sceneState?.kurumedevaMode,
+  combinedGameState: !!sceneState?.combinedGameState,
   missionState: sceneState?.missionState 
 });
 
@@ -302,11 +305,7 @@ const [showPowerModal, setShowPowerModal] = useState(false);
     const [rescuePhase, setRescuePhase] = useState('problem');
 
       const [showMission, setShowMission] = useState(false);
-
-  // ⭐ Mode selection state (like Scene 2)
-  const [showModeSelection, setShowModeSelection] = useState(false);
-  const [modeForPhase, setModeForPhase] = useState(null); // 'nirvighnam' or 'kurumedeva'
-  const [modeSelected, setModeSelected] = useState(false); // Prevent loops
+    
 
 
   // Safe setTimeout function
@@ -454,6 +453,23 @@ useEffect(() => {
     sceneActions.updateState(updatedState);
   };
 
+      const handleSaveCombinedGameState = (gameState) => {
+  console.log('ðŸ’¾ Saving combined game state:', gameState);
+  
+  sceneActions.updateState({
+    combinedGameState: gameState
+  });
+};
+
+useEffect(() => {
+  window.simplifiedNirvighnamKurumedevaGame = {};
+  return () => {
+    if (window.simplifiedNirvighnamKurumedevaGame) {
+      delete window.simplifiedNirvighnamKurumedevaGame;
+    }
+  };
+}, []);
+
   // Set up communication for the scene itself
   useEffect(() => {
     window.nirvighnamChant = {
@@ -461,7 +477,7 @@ useEffect(() => {
         setShowKurumedevaStory(true);
       }
     };
-
+    
     return () => {
       if (window.nirvighnamChant) {
         delete window.nirvighnamChant;
@@ -469,6 +485,309 @@ useEffect(() => {
     };
   }, []);
 
+  // Master Restorer for the Nirvighnam Chant scene
+  /*useEffect(() => {
+    if (!isReload || !sceneState) return;
+    
+    console.log('ðŸ”„ NIRVIGHNAM RELOAD: Starting reload', {
+      phase: sceneState.phase,
+      showingCompletionScreen: sceneState.showingCompletionScreen,
+      completed: sceneState.completed
+    });
+
+    // Handle "Play Again" requests
+    const profileId = localStorage.getItem('activeProfileId');
+    const playAgainKey = `play_again_${profileId}_${zoneId}_${sceneId}`;
+    const playAgainRequested = localStorage.getItem(playAgainKey);
+    
+    if (playAgainRequested === 'true') {
+      console.log('ðŸ”„ NIRVIGHNAM: Fresh restart after Play Again');
+      localStorage.removeItem(playAgainKey);
+      sceneActions.updateState({ 
+        phase: PHASES.INITIAL,
+        showingCompletionScreen: false,
+        completed: false,
+        stars: 0,
+        welcomeShown: false,
+        nirvighnamGameState: null,
+        kurumedevaGameState: null,
+      });
+      return;
+    }
+
+    // Handle completion screen reload
+    if (sceneState.showingCompletionScreen) {
+      console.log('ðŸ”„ NIRVIGHNAM: Resuming completion screen');
+      setShowSceneCompletion(true);
+      return;
+    }
+
+    // Phase-specific reload logic
+    switch (sceneState.phase) {
+      case PHASES.INITIAL:
+        console.log('ðŸ”„ NIRVIGHNAM: Resuming initial welcome');
+        break;
+        
+      case PHASES.NIRVIGHNAM_GAME_ACTIVE:
+        console.log('ðŸ”„ NIRVIGHNAM: Nirvighnam game active - letting component handle itself');
+        break;
+
+      case PHASES.KURUMEDEVA_GAME_ACTIVE:
+        console.log('ðŸ”„ NIRVIGHNAM: Kurumedeva game active - letting component handle itself');
+        setNirvighnamPowerGained(true);
+        break;
+        
+      case PHASES.NIRVIGHNAM_COMPLETE:
+        console.log('ðŸ”„ NIRVIGHNAM: Resuming Nirvighnam completion celebration');
+        setBlessingWord('nirvighnam');
+        setCurrentPracticeWord('nirvighnam');
+        setShowWordCelebration(true);
+        setShowSparkle('nirvighnam-complete');
+        
+        setTimeout(() => {
+          setShowSparkle(null);
+          setShowWordCelebration(false);
+          sceneActions.updateState({
+            phase: PHASES.GANESHA_BLESSING_NIRVIGHNAM
+          });
+          setBlessingPhase('welcome');
+          setShowGaneshaBlessing(true);
+        }, 4000);
+        break;
+        
+      case PHASES.KURUMEDEVA_COMPLETE:
+        console.log('ðŸ”„ NIRVIGHNAM: Resuming Kurumedeva completion celebration');
+        setBlessingWord('kurumedeva');
+        setCurrentPracticeWord('kurumedeva');
+        setShowWordCelebration(true);
+        setShowSparkle('kurumedeva-complete');
+        
+        setTimeout(() => {
+          setShowSparkle(null);
+          setShowWordCelebration(false);
+          sceneActions.updateState({
+            phase: PHASES.GANESHA_BLESSING_KURUMEDEVA
+          });
+          setBlessingPhase('welcome');
+          setShowGaneshaBlessing(true);
+        }, 4000);
+        break;
+        
+      case PHASES.GANESHA_BLESSING_NIRVIGHNAM:
+        console.log('ðŸ”„ NIRVIGHNAM: Resuming Ganesha blessing for Nirvighnam');
+        setBlessingWord('nirvighnam');
+        setCurrentPracticeWord('nirvighnam');
+        setShowChoiceButtons(false);
+        setShowWordCelebration(false);
+        setShowRescueMission(false);
+        setShowRecording(false);
+        setShowGaneshaBlessing(true);
+        setBlessingPhase('welcome');
+        break;
+
+      case PHASES.GANESHA_BLESSING_KURUMEDEVA:
+        console.log('ðŸ”„ NIRVIGHNAM: Resuming Ganesha blessing for Kurumedeva');
+        setBlessingWord('kurumedeva');
+        setCurrentPracticeWord('kurumedeva');
+        setShowChoiceButtons(false);
+        setShowWordCelebration(false);
+        setShowRescueMission(false);
+        setShowRecording(false);
+        setShowGaneshaBlessing(true);
+        setBlessingPhase('welcome');
+        break;
+        
+      case PHASES.CHOICE_BUTTONS_NIRVIGHNAM:
+        console.log('ðŸ”„ NIRVIGHNAM: Resuming choice buttons for Nirvighnam');
+        setCurrentPracticeWord('nirvighnam');
+        setShowGaneshaBlessing(false);
+        setShowWordCelebration(false);
+        setShowRescueMission(false);
+        setShowKurumedevaStory(false);
+        setShowRecording(false);
+        setBlessingPhase('complete');
+        setShowChoiceButtons(true);
+        break;
+        
+      case PHASES.CHOICE_BUTTONS_KURUMEDEVA:
+        console.log('ðŸ”„ NIRVIGHNAM: Resuming choice buttons for Kurumedeva');
+        setCurrentPracticeWord('kurumedeva');
+        setShowGaneshaBlessing(false);
+        setShowWordCelebration(false);
+        setShowRescueMission(false);
+        setShowKurumedevaStory(false);
+        setShowRecording(false);
+        setBlessingPhase('complete');
+        setShowChoiceButtons(true);
+        break;
+        
+      case PHASES.RESCUE_MISSION_NIRVIGHNAM:
+        console.log('ðŸ”„ NIRVIGHNAM: Resuming rescue mission for Nirvighnam');
+        setCurrentRescueWord('nirvighnam');
+        setShowRescueMission(true);
+        break;
+        
+      case PHASES.KURUMEDEVA_STORY:
+        console.log('ðŸ”„ NIRVIGHNAM: Resuming Kurumedeva story');
+        setNirvighnamPowerGained(true);
+        setShowKurumedevaStory(true);
+        break;
+        
+      case PHASES.RESCUE_MISSION_KURUMEDEVA:
+        console.log('ðŸ”„ NIRVIGHNAM: Resuming rescue mission for Kurumedeva');
+        setCurrentRescueWord('kurumedeva');
+        setNirvighnamPowerGained(true);
+        setShowRescueMission(true);
+        break;
+        
+      case PHASES.SCENE_COMPLETE:
+        console.log('ðŸ”„ NIRVIGHNAM: Resuming scene complete');
+        if (!sceneState.showingCompletionScreen) {
+          setTimeout(() => {
+            setShowSparkle('final-fireworks');
+          }, 500);
+        }
+        break;
+        
+      default:
+        console.log('ðŸ”„ NIRVIGHNAM: No specific reload needed for phase:', sceneState.phase);
+    }
+  }, [isReload]);
+
+  // Add this reusable resetScene function inside your NirvighnamChantContent component
+const resetScene = (showConfirm = true) => {
+  if (showConfirm && !confirm('Start this scene from the beginning? You will lose current progress.')) {
+    return;
+  }
+
+      setForceMemoryGameReset(true);
+
+
+  console.log('🔥 Nirvighnam Scene reset: User chose to start fresh');
+  
+  // STEP 1: Set force reset flag for the combined game component
+  if (window.simplifiedNirvighnamKurumedevaGame) {
+    window.simplifiedNirvighnamKurumedevaGame.isForceReset = true;
+  }
+  
+  // STEP 2: Clear all timeouts first to prevent conflicts
+  timeoutsRef.current.forEach(id => clearTimeout(id));
+  timeoutsRef.current = [];
+  
+  // STEP 3: Clear ALL local React state variables immediately
+  setShowSparkle(null);
+  setShowRecording(false);
+  setShowSceneCompletion(false);
+  setCurrentRecordingWord('');
+  setShowAudioTracker(true);
+  
+  // Clear Ganesha-related states
+  setShowGaneshaBlessing(false);
+  setBlessingPhase('welcome');
+  setCurrentPracticeWord('');
+  setShowChoiceButtons(false);
+  setShowAudioPractice(false);
+  setBlessingWord('');
+  
+  // Clear power and blessing states
+  setShowParticles(false);
+  setShowPulseRings(false);
+  setShowCenteredApp(null);
+  setUnlockedApps([]);
+  setNirvighnamPowerGained(false);
+  
+  // Clear rescue mission states
+  setShowRescueMission(false);
+  setCurrentRescueWord('');
+  //setShowWordCelebration(false);
+  
+  // Clear story and transition states
+  setShowKurumedevaStory(false);
+  setIsTransitioning(false);
+  
+  // Clear hint states
+  setHintUsed(false);
+  if (progressiveHintRef.current && typeof progressiveHintRef.current.hideHint === 'function') {
+    progressiveHintRef.current.hideHint();
+  }
+  
+  // STEP 4: Hide GameCoach immediately
+  if (hideCoach) hideCoach();
+  if (clearManualCloseTracking) clearManualCloseTracking();
+  
+  // STEP 5: Clear combined game completion state
+  if (window.simplifiedNirvighnamKurumedevaGame && window.simplifiedNirvighnamKurumedevaGame.clearCompletionState) {
+    window.simplifiedNirvighnamKurumedevaGame.clearCompletionState();
+  }
+  
+  // STEP 6: Force combined game reset
+  const forceCombinedGameReset = () => {
+    if (window.simplifiedNirvighnamKurumedevaGame) {
+      window.simplifiedNirvighnamKurumedevaGame.visualRewards = {};
+      window.simplifiedNirvighnamKurumedevaGame.activatedSingers = {};
+      window.simplifiedNirvighnamKurumedevaGame.isForceReset = true;
+    }
+  };
+  
+  forceCombinedGameReset();
+  
+  // STEP 7: Reset scene state
+  setTimeout(() => {
+    sceneActions.updateState({
+      // Reset syllable learning progress
+      learnedSyllables: {
+        nir: false, vigh: false, nam: false,
+        kuru: false, me: false, de: false, va: false
+      },
+      
+      // Reset word learning progress
+      learnedWords: {
+        nirvighnam: false,
+        kurumedeva: false
+      },
+
+      // Clear game states
+      combinedGameState: null,
+      unlockedApps: {},
+      
+      // Reset mission state
+      missionState: {
+        rescuePhase: 'problem',
+        showParticles: false,
+        word: null,
+        missionJustCompleted: false
+      },
+      
+      // Reset phase to beginning
+      phase: PHASES.INITIAL,
+      
+      // Reset message flags
+      welcomeShown: false,
+      nirvighnamWisdomShown: false,
+      kurumedevaWisdomShown: false,
+      
+      // Clear system state
+      currentPopup: null,
+      showingCompletionScreen: false,
+      gameCoachState: null,
+      isReloadingGameCoach: false,
+      
+      // Reset progress
+      stars: 0,
+      completed: false,
+      progress: { percentage: 0, starsEarned: 0, completed: false }
+    });
+    
+    // Clear the force reset flag after a delay
+    setTimeout(() => {
+      if (window.simplifiedNirvighnamKurumedevaGame) {
+        window.simplifiedNirvighnamKurumedevaGame.isForceReset = false;
+      }
+    }, 1000);
+    
+    console.log('✅ Nirvighnam scene state reset complete');
+  }, 150);
+};*/
 
   // Image getter functions for Nirvighnam game (stone clearing)
   const getNirvighnamAnimalImage = (index) => {
@@ -492,19 +811,19 @@ useEffect(() => {
   }
 };
 
-  // Image getter functions for Kurumedeva game (4 syllables: kuru, me, de, va)
+  // Image getter functions for Kurumedeva game (divine decoration)
   const getKurumedevaAnimalImage = (index) => {
-    const images = [animal1Ku, animal3Me, animal4De, animal2Ru];
+    const images = [animal1Ku, animal2Ru, animal3Me, animal4De, animal5Va];
     return images[index];
   };
 
   const getKurumedevaItemImage = (index, singing) => {
-    const images = [item1Ku, item3Me, item4De, item2Ru];
+    const images = [item1Ku, item2Ru, item3Me, item4De, item5Va];
     return images[index];
   };
 
   const getKurumedevaDecorImage = (index, activated) => {
-    const images = [decor1Ku, decor3Me, decor4De, decor2Ru];
+    const images = [decor1Ku, decor2Ru, decor3Me, decor4De, decor5Va];
     return images[index];
   };
 
@@ -752,8 +1071,25 @@ const backgroundImage = (
   sceneState?.phase === PHASES.RESCUE_MISSION_KURUMEDEVA
 ) ? kuruBg : nirvighnamChantBg;
 
-  // ⭐ Simplified hint configs for new wrapper-based architecture
   const getHintConfigs = () => [
+    {
+      id: 'sequence-listening-hint',
+      message: 'Listen to the magical objects singing!',
+      explicitMessage: 'Wait for the sequence to finish, then click the animals in the same order to clear the path!',
+      position: { bottom: '60%', left: '50%', transform: 'translateX(-50%)' },
+      condition: (sceneState) => {
+  return sceneState?.combinedGameState?.gamePhase === 'playing' && !showRecording;
+      }
+    },
+    {
+      id: 'animal-clicking-hint', 
+      message: 'Click the animals to clear the objects from stones!',
+      explicitMessage: 'Click the animals in the order you heard: nir-vigh-nam!',
+      position: { bottom: '60%', left: '50%', transform: 'translateX(-50%)' },
+      condition: (sceneState) => {
+  return sceneState?.combinedGameState?.gamePhase === 'listening' && !showRecording;
+      }
+    },
     {
       id: 'recording-hint',
       message: 'Try chanting the sacred word you just learned!',
@@ -901,6 +1237,18 @@ sceneActions.updateState({
     return 'locked';
   };*/
 
+// Extract reload props for combined component
+const combinedGameReloadProps = sceneState.combinedGameState ? {
+  isReload: isReload,
+  initialGamePhase: sceneState.combinedGameState.gamePhase || 'waiting',
+  initialCurrentPhase: sceneState.combinedGameState.currentPhase || 'nirvighnam',
+  initialCurrentRound: sceneState.combinedGameState.currentRound || 1,
+  initialPlayerInput: sceneState.combinedGameState.playerInput || [],
+  initialCurrentSequence: sceneState.combinedGameState.currentSequence || [],
+  initialVisualRewards: sceneState.combinedGameState.visualRewards || {},
+  initialActivatedSingers: sceneState.combinedGameState.activatedSingers || {},
+} : {};
+
   const missionReloadProps = sceneState.missionState ? {
     isReload: isReload && !!sceneState.missionState.word,
     initialRescuePhase: sceneState.missionState.rescuePhase || 'problem',
@@ -944,66 +1292,57 @@ sceneActions.updateState({
   }}
 >
 
-{/* ⭐ NIRVIGHNAM GAME - Scene-controlled mode */}
-<NirvighnamGame
-  isActive={sceneState.phase === PHASES.NIRVIGHNAM_GAME_ACTIVE}
-  hideElements={isTransitioning || showGaneshaBlessing || sceneState.phase === PHASES.NIRVIGHNAM_COMPLETE}
+<SimplifiedNirvighnamKurumedevaGame
+  isActive={sceneState.phase === PHASES.NIRVIGHNAM_GAME_ACTIVE || 
+           sceneState.phase === PHASES.KURUMEDEVA_GAME_ACTIVE ||
+           sceneState.phase === PHASES.NIRVIGHNAM_COMPLETE ||
+           sceneState.phase === PHASES.KURUMEDEVA_COMPLETE}
+  hideElements={isTransitioning || 
+    showGaneshaBlessing || showKurumedevaStory || 
+    sceneState.phase === PHASES.NIRVIGHNAM_COMPLETE || 
+    sceneState.phase === PHASES.KURUMEDEVA_COMPLETE ||
+    sceneState.phase === PHASES.SCENE_COMPLETE}
   onPhaseComplete={handlePhaseComplete}
   onGameComplete={handleGameComplete}
   profileName={profileName}
+    forceReset={forceMemoryGameReset} // ADD THIS LINE
 
   // Nirvighnam asset functions
-  getLeafRirImage={() => leafNir}
   getDrumVighImage={() => drumVigh}
+  getLeafRirImage={() => leafNir}
   getFeatherNamImage={() => featherNam}
   getFrogNirImage={() => frogNir}
   getSnailVighImage={() => snailVigh}
   getTurtleNamImage={() => turtleNam}
-  getStone1NirImage={() => stone1Nir}
-  getStone2VighImage={() => stone2Vigh}
-  getStone3NamImage={() => stone3Nam}
   getStone1NirColImage={() => stone1NirCol}
   getStone2VighColImage={() => stone2VighCol}
   getStone3NamColImage={() => stone3NamCol}
 
-  // ⭐ Mode control - scene manages the modal, game gets the selection
-  selectedMode={sceneState.nirvighnamMode}
-  skipModeSelection={true}
-
-  // Audio
-  isAudioOn={isAudioOn}
-  playAudio={playAudio}
-/>
-
-{/* ⭐ KURUMEDEVA GAME - Scene-controlled mode */}
-<KurumeDevaGame
-  isActive={sceneState.phase === PHASES.KURUMEDEVA_GAME_ACTIVE}
-  hideElements={isTransitioning || showGaneshaBlessing || sceneState.phase === PHASES.KURUMEDEVA_COMPLETE}
-  onPhaseComplete={handlePhaseComplete}
-  onGameComplete={handleGameComplete}
-  profileName={profileName}
-
+  // ADD THESE THREE NEW LINES HERE:
+  getStone1NirImage={() => stone1Nir}
+  getStone2VighImage={() => stone2Vigh}
+  getStone3NamImage={() => stone3Nam}
+  
   // Kurumedeva asset functions
   getAnimal1KuImage={() => animal1Ku}
+  getAnimal2RuImage={() => animal2Ru}
   getAnimal3MeImage={() => animal3Me}
   getAnimal4DeImage={() => animal4De}
-  getAnimal2RuImage={() => animal2Ru}
   getItem1KuImage={() => item1Ku}
+  getItem2RuImage={() => item2Ru}
   getItem3MeImage={() => item3Me}
   getItem4DeImage={() => item4De}
-  getItem2RuImage={() => item2Ru}
   getDecor1KuImage={() => decor1Ku}
+  getDecor2RuImage={() => decor2Ru}
   getDecor3MeImage={() => decor3Me}
   getDecor4DeImage={() => decor4De}
-  getDecor2RuImage={() => decor2Ru}
-
-  // ⭐ Mode control - scene manages the modal, game gets the selection
-  selectedMode={sceneState.kurumedevaMode}
-  skipModeSelection={true}
-
-  // Audio
+  
   isAudioOn={isAudioOn}
   playAudio={playAudio}
+  onSaveGameState={handleSaveCombinedGameState}
+  powerGained={nirvighnamPowerGained}
+  
+  {...combinedGameReloadProps}
 />
       {/* OPENING MISSION MODAL */}
 {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
@@ -1021,96 +1360,17 @@ sceneActions.updateState({
       <p className="nirvighnam-mission-description">
         First, learn to chant <strong>NIRVIGHNAM</strong> to unlock Sacred Wisdom and help animals!
       </p>
-      <button
+      <button 
         className="nirvighnam-mission-start-btn"
         onClick={() => {
-          console.log('🎮 Opening mode selection for NIRVIGHNAM');
-          sceneActions.updateState({ welcomeShown: true });
-          setModeForPhase('nirvighnam');
-          setShowModeSelection(true);
-          setModeSelected(false);
+          sceneActions.updateState({ 
+            welcomeShown: true,
+            phase: PHASES.NIRVIGHNAM_GAME_ACTIVE 
+          });
         }}
       >
         Start Learning!
       </button>
-    </div>
-  </div>
-)}
-
-{/* ⭐ MODE SELECTION MODAL - Shows BEFORE game starts */}
-{showModeSelection && !modeSelected && (
-  <div className="nirvighnam-mission-modal-overlay">
-    <div className="nirvighnam-mission-modal">
-      <h2 className="nirvighnam-mission-title">🎮 How do you want to play?</h2>
-      <p className="nirvighnam-mission-description">
-        Choose your learning style for <strong>{modeForPhase?.toUpperCase()}</strong>
-      </p>
-
-      <div style={{
-        display: 'flex',
-        gap: '20px',
-        marginTop: '20px',
-        justifyContent: 'center',
-        flexWrap: 'wrap'
-      }}>
-        {/* AUTO PLAY BUTTON */}
-        <button
-          className="nirvighnam-mission-start-btn"
-          style={{
-            flex: '1',
-            minWidth: '200px',
-            maxWidth: '300px',
-            background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)'
-          }}
-          onClick={() => {
-            console.log(`🎮 Mode selected: AUTO for ${modeForPhase}`);
-            setModeSelected(true);
-            setShowModeSelection(false);
-
-            // ⭐ Single state update: mode + phase
-            const modeKey = `${modeForPhase}Mode`;
-            const phaseKey = modeForPhase === 'nirvighnam' ? PHASES.NIRVIGHNAM_GAME_ACTIVE : PHASES.KURUMEDEVA_GAME_ACTIVE;
-            sceneActions.updateState({
-              [modeKey]: 'auto',
-              phase: phaseKey
-            });
-          }}
-        >
-          <div>▶️ Auto Play</div>
-          <div style={{ fontSize: '14px', opacity: 0.9, marginTop: '5px' }}>
-            Start from Round 1 and learn step by step
-          </div>
-        </button>
-
-        {/* MANUAL BUTTON */}
-        <button
-          className="nirvighnam-mission-start-btn"
-          style={{
-            flex: '1',
-            minWidth: '200px',
-            maxWidth: '300px',
-            background: 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)'
-          }}
-          onClick={() => {
-            console.log(`🎮 Mode selected: MANUAL for ${modeForPhase}`);
-            setModeSelected(true);
-            setShowModeSelection(false);
-
-            // ⭐ Single state update: mode + phase
-            const modeKey = `${modeForPhase}Mode`;
-            const phaseKey = modeForPhase === 'nirvighnam' ? PHASES.NIRVIGHNAM_GAME_ACTIVE : PHASES.KURUMEDEVA_GAME_ACTIVE;
-            sceneActions.updateState({
-              [modeKey]: 'manual',
-              phase: phaseKey
-            });
-          }}
-        >
-          <div>🎯 Choose a Round</div>
-          <div style={{ fontSize: '14px', opacity: 0.9, marginTop: '5px' }}>
-            Pick any round you want to practice
-          </div>
-        </button>
-      </div>
     </div>
   </div>
 )}
@@ -1134,11 +1394,19 @@ sceneActions.updateState({
       <button
         className="nirvighnam-mission-start-btn"
         onClick={() => {
-          console.log('🎮 Opening mode selection for KURUMEDEVA');
           setShowKurumedevaStory(false);
-          setModeForPhase('kurumedeva');
-          setShowModeSelection(true);
-          setModeSelected(false);
+          
+          sceneActions.updateState({ 
+            phase: PHASES.KURUMEDEVA_GAME_ACTIVE,
+            currentPopup: null,
+            combinedGameState: null
+          });
+
+          setTimeout(() => {
+            if (window.simplifiedNirvighnamKurumedevaGame?.startKurumedevaPhase) {
+              window.simplifiedNirvighnamKurumedevaGame.startKurumedevaPhase();
+            }
+          }, 200);
         }}
       >
         Start Learning!
@@ -1190,7 +1458,7 @@ sceneActions.updateState({
   beforeImage={missionImages[currentPracticeWord]?.before}
   afterImage={missionImages[currentPracticeWord]?.after}
   powerConfig={powerConfig[currentPracticeWord]}
-      isFinalWordInScene={currentPracticeWord=== 'kurumedeva'}  // ⭐ ADD THIS LINE
+      isFinalWordInScene={currentWord === 'kurumedeva'}  // ⭐ ADD THIS LINE
 
   onComplete={handleMissionComplete}
   onCancel={() => {
@@ -1216,6 +1484,72 @@ sceneActions.updateState({
     sceneActions.updateState({ unlockedApps: appState });
   }}
 />
+
+
+            {/* Save Animal Mission 
+            <SaveAnimalMission
+              show={showRescueMission}
+              word={currentRescueWord}
+
+              beforeImage={currentRescueWord === 'nirvighnam' ? nirvighnamBefore : kurumedevaBefore}
+              afterImage={currentRescueWord === 'nirvighnam' ? nirvighnamAfter : kurumedevaAfter}
+              
+              powerConfig={powerConfig[currentRescueWord]}
+              smartwatchBase={smartwatchBase}
+              smartwatchScreen={smartwatchScreen}
+              
+              appImage={currentRescueWord === 'nirvighnam' ? appNirvighnam : appKurumedeva}
+              
+              boyCharacter={boyNamaste}
+              onComplete={handleRescueComplete}
+              onCancel={() => setShowRescueMission(false)}
+              
+              {...missionReloadProps}
+              onSaveMissionState={(missionState) => handleSaveComponentState('mission', missionState)}
+            />
+
+            {/* Audio Practice Popup 
+            {showAudioPractice && (
+              <div className="audio-practice-popup">
+                <div className="audio-practice-content">
+                  <div className="practice-title">Practice {currentPracticeWord}</div>
+                  <div className="syllable-buttons">
+                    {currentPracticeWord === 'nirvighnam' ? 
+                      ['NIR', 'VIGH', 'NAM'].map(syl => (
+                        <button key={syl} className="syllable-practice-btn" 
+                                onClick={() => handleSyllablePlay(syl.toLowerCase())}>
+                          {syl}
+                        </button>
+                      )) :
+                      ['KU', 'RU', 'ME', 'DE', 'VA'].map(syl => (
+                        <button key={syl} className="syllable-practice-btn" 
+                                onClick={() => handleSyllablePlay(syl.toLowerCase())}>
+                          {syl}
+                        </button>
+                      ))
+                    }
+                  </div>
+                  <button className="word-practice-btn" onClick={() => handleWordPlay(currentPracticeWord)}>
+                    ðŸ”µ {currentPracticeWord.toUpperCase()}
+                  </button>
+                  <button className="practice-close-btn" onClick={handleAudioPracticeClose}>
+                    Close
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Choice Buttons 
+            {showChoiceButtons && (
+              <div className="power-choice-buttons">
+                <button className="choice-btn save-animal-btn" onClick={handleSaveAnimal}>
+                  ðŸ˜ Save a Sacred Animal
+                </button>
+                <button className="choice-btn continue-learning-btn" onClick={handleContinueLearning}>
+                  {currentPracticeWord === 'kurumedeva' ? 'âœ¨ End Scene' : 'ðŸª· Continue Learning'}
+                </button>
+              </div>
+            )}
 
        {/* 5-SECOND WORD CELEBRATION */}
 {showCenteredWord && (

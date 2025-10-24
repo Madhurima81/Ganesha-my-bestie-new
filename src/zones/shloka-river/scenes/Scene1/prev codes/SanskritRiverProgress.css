@@ -1,0 +1,582 @@
+/* SanskritRiverProgress.css - Child-friendly river progress bar */
+
+.sanskrit-river-progress {
+  position: fixed;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 85%;
+  max-width: 900px;
+  height: 60px;
+  font-family: 'Noto Sans Devanagari', 'Arial Unicode MS', sans-serif;
+  z-index: 1000;
+  pointer-events: none; /* Allow clicks only on interactive elements */
+}
+
+/* River background path */
+.river-path {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.river-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  transform: scaleY(0.7);
+}
+
+.river-curve {
+  filter: drop-shadow(0 2px 4px rgba(0, 123, 255, 0.3));
+  animation: riverFlow 8s ease-in-out infinite;
+}
+
+@keyframes riverFlow {
+  0%, 100% { 
+    stroke-width: 8;
+    filter: drop-shadow(0 2px 4px rgba(0, 123, 255, 0.3));
+  }
+  50% { 
+    stroke-width: 10;
+    filter: drop-shadow(0 3px 6px rgba(0, 123, 255, 0.4));
+  }
+}
+
+/* Connecting bridges between learned words */
+.word-bridge {
+  position: absolute;
+  height: 3px;
+  background: linear-gradient(90deg, #FFD700, #FFA500, #FFD700);
+  border-radius: 2px;
+  animation: bridgeShimmer 3s ease-in-out infinite;
+  z-index: 1;
+  box-shadow: 0 1px 3px rgba(255, 215, 0, 0.5);
+}
+
+@keyframes bridgeShimmer {
+  0%, 100% { opacity: 0.8; transform: scaleY(1); }
+  50% { opacity: 1; transform: scaleY(1.2); }
+}
+
+/* Word islands */
+.word-island {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  pointer-events: auto;
+  z-index: 10;
+}
+
+/* Island base with water effects */
+.island-base {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #E8F5E8, #C8E6C9);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.island-shadow {
+  position: absolute;
+  bottom: -8px;
+  left: 10%;
+  width: 80%;
+  height: 15px;
+  background: radial-gradient(ellipse, rgba(0, 123, 255, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: shadowBob 4s ease-in-out infinite;
+}
+
+.water-reflection {
+  position: absolute;
+  bottom: -20px;
+  left: 15%;
+  width: 70%;
+  height: 30px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: reflectionRipple 3s ease-in-out infinite;
+}
+
+@keyframes shadowBob {
+  0%, 100% { transform: scale(1) translateY(0); opacity: 0.3; }
+  50% { transform: scale(1.1) translateY(2px); opacity: 0.2; }
+}
+
+@keyframes reflectionRipple {
+  0%, 100% { transform: scaleX(1); opacity: 0.4; }
+  50% { transform: scaleX(1.2); opacity: 0.6; }
+}
+
+/* Word content */
+.word-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), transparent 70%);
+  overflow: hidden;
+}
+
+.sanskrit-text {
+  font-size: 10px;
+  font-weight: bold;
+  color: #2E7D32;
+  text-align: center;
+  line-height: 1;
+  margin-bottom: 1px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.transliteration-text {
+  font-size: 5px;
+  font-weight: 600;
+  color: #1B5E20;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  opacity: 0.8;
+}
+
+/* Scene indicator */
+.scene-indicator {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  font-size: 7px;
+  font-weight: bold;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.scene-1 { background: linear-gradient(135deg, #FF6B9D, #FF8E9B); }
+.scene-2 { background: linear-gradient(135deg, #4FC3F7, #29B6F6); }
+.scene-3 { background: linear-gradient(135deg, #66BB6A, #4CAF50); }
+
+/* Progress fill for partial learning */
+.progress-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(180deg, rgba(255, 215, 0, 0.6), rgba(255, 193, 7, 0.8));
+  border-radius: 0 0 50% 50%;
+  transition: height 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation: progressPulse 2s ease-in-out infinite;
+}
+
+@keyframes progressPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.9; }
+}
+
+/* Word states */
+.word-island.locked {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(60%);
+}
+
+.word-island.locked .island-base {
+  background: linear-gradient(145deg, #F5F5F5, #E0E0E0);
+}
+
+.word-island.locked .sanskrit-text {
+  color: #9E9E9E;
+}
+
+.word-island.available {
+  opacity: 0.8;
+}
+
+.word-island.current {
+  transform: translate(-50%, -50%) scale(1.2);
+  z-index: 15;
+}
+
+.word-island.current .island-base {
+  background: linear-gradient(145deg, #E3F2FD, #BBDEFB);
+  box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+}
+
+.word-island.current .sanskrit-text {
+  color: #1976D2;
+}
+
+.word-island.learned {
+  transform: translate(-50%, -50%) scale(1.1);
+  z-index: 12;
+}
+
+.word-island.learned .island-base {
+  background: linear-gradient(145deg, #FFF8E1, #FFECB3);
+  box-shadow: 0 8px 25px rgba(255, 193, 7, 0.5);
+}
+
+.word-island.learned .sanskrit-text {
+  color: #F57F17;
+}
+
+/* Learned word glow effect */
+.learned-glow {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: learnedPulse 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes learnedPulse {
+  0%, 100% { 
+    transform: scale(1); 
+    opacity: 0.6; 
+  }
+  50% { 
+    transform: scale(1.2); 
+    opacity: 0.9; 
+  }
+}
+
+/* Locked indicator */
+.locked-indicator {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: 14px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+/* Wobble animation for current words */
+.word-island.wobble {
+  animation: gentleWobble 4s ease-in-out infinite;
+}
+
+@keyframes gentleWobble {
+  0%, 100% { transform: translate(-50%, -50%) scale(1.3) rotate(0deg); }
+  25% { transform: translate(-50%, -50%) scale(1.3) rotate(1deg); }
+  75% { transform: translate(-50%, -50%) scale(1.3) rotate(-1deg); }
+}
+
+/* Hover sparkles for learned words */
+.hover-sparkles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.word-island.learned:hover .hover-sparkles {
+  opacity: 1;
+}
+
+.sparkle {
+  position: absolute;
+  font-size: 12px;
+  animation: sparkleFloat 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.sparkle-0 { top: 10%; left: 20%; animation-delay: 0s; }
+.sparkle-1 { top: 20%; right: 15%; animation-delay: 0.3s; }
+.sparkle-2 { bottom: 25%; left: 15%; animation-delay: 0.6s; }
+.sparkle-3 { bottom: 15%; right: 20%; animation-delay: 0.9s; }
+.sparkle-4 { top: 50%; left: 10%; animation-delay: 1.2s; }
+.sparkle-5 { top: 40%; right: 10%; animation-delay: 1.5s; }
+
+@keyframes sparkleFloat {
+  0%, 100% { 
+    transform: translateY(0) scale(1); 
+    opacity: 0.7; 
+  }
+  50% { 
+    transform: translateY(-8px) scale(1.3); 
+    opacity: 1; 
+  }
+}
+
+/* Tap ripple effect */
+.tap-ripple {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.6) 0%, transparent 70%);
+  transform: translate(-50%, -50%) scale(0);
+  animation: rippleExpand 0.6s ease-out forwards;
+  pointer-events: none;
+  z-index: 50;
+}
+
+@keyframes rippleExpand {
+  0% { 
+    transform: translate(-50%, -50%) scale(0); 
+    opacity: 1; 
+  }
+  100% { 
+    transform: translate(-50%, -50%) scale(3); 
+    opacity: 0; 
+  }
+}
+
+/* Hover effects */
+.word-island:not(.locked):hover {
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
+.word-island.current:hover {
+  transform: translate(-50%, -50%) scale(1.3);
+}
+
+.word-island.learned:hover {
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+/* Word popup */
+.word-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: popupFadeIn 0.3s ease-out;
+}
+
+@keyframes popupFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.word-popup-content {
+  background: white;
+  border-radius: 25px;
+  padding: 30px;
+  max-width: 400px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  border: 3px solid #FFD700;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  animation: popupSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes popupSlideIn {
+  from { 
+    transform: scale(0.8) translateY(50px); 
+    opacity: 0; 
+  }
+  to { 
+    transform: scale(1) translateY(0); 
+    opacity: 1; 
+  }
+}
+
+.popup-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 35px;
+  height: 35px;
+  border: none;
+  background: #FF6B6B;
+  color: white;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  box-shadow: 0 3px 8px rgba(255, 107, 107, 0.3);
+}
+
+.popup-close-btn:hover {
+  background: #FF5252;
+  transform: scale(1.1);
+}
+
+.popup-word-display {
+  margin-bottom: 25px;
+  padding: 20px;
+  background: linear-gradient(135deg, #FFF8E1, #FFECB3);
+  border-radius: 15px;
+  border: 2px solid #FFD700;
+}
+
+.popup-sanskrit-text {
+  font-size: 42px;
+  font-weight: bold;
+  color: #F57F17;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 4px rgba(245, 127, 23, 0.3);
+}
+
+.popup-transliteration {
+  font-size: 18px;
+  color: #FF8F00;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.popup-title {
+  font-size: 24px;
+  color: #F57F17;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.popup-meaning {
+  font-size: 20px;
+  color: #3E2723;
+  margin-bottom: 15px;
+  line-height: 1.4;
+  padding: 15px;
+  background: #F9F9F9;
+  border-radius: 10px;
+  border-left: 4px solid #FFD700;
+}
+
+.popup-scene-info {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 25px;
+  font-style: italic;
+}
+
+.popup-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.popup-audio-btn {
+  background: linear-gradient(135deg, #4CAF50, #45A049);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.popup-audio-btn:hover {
+  background: linear-gradient(135deg, #45A049, #4CAF50);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+}
+
+.popup-continue-btn {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #8B4513;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+.popup-continue-btn:hover {
+  background: linear-gradient(135deg, #FFA500, #FFD700);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 215, 0, 0.4);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .sanskrit-river-progress {
+    width: 95%;
+    height: 50px;
+  }
+  
+  .word-island {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .word-island.current {
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+  
+  .word-island.learned {
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  
+  .sanskrit-text {
+    font-size: 8px;
+  }
+  
+  .transliteration-text {
+    font-size: 4px;
+  }
+  
+  .scene-indicator {
+    width: 10px;
+    height: 10px;
+    font-size: 6px;
+  }
+  
+  .popup-sanskrit-text {
+    font-size: 32px;
+  }
+  
+  .popup-actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .word-island {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .sanskrit-text {
+    font-size: 7px;
+  }
+  
+  .transliteration-text {
+    font-size: 3px;
+  }
+}

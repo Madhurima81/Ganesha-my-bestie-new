@@ -1,0 +1,67 @@
+// zones/shloka-river/scenes/Scene3/NirvighnamGame.jsx
+// Thin wrapper for Game 5 - connects config to engine
+
+import React from 'react';
+import MemoryGameEngine from '../../core/MemoryGameEngine';
+import { getGameConfig } from '../../configs/gameConfigs';
+
+const NirvighnamGame = ({
+  isActive,
+  hideElements,
+  powerGained,
+  onPhaseComplete,
+  onGameComplete,
+  profileName,
+  WaterSprayComponent,
+
+  // ⭐ CHANGED: Assets specific to Nirvighnam game (must match assetGetter names in gameConfigs.js)
+  getPlainStoneImage,      // Initial state (plain stone) -> matches assetGetterInitial
+  getColoredStoneImage,    // Reward state (colored stone) -> matches assetGetterReward
+  getNirvighnamAnimalImage, // Clicker (animal) -> matches assetGetter
+
+  // Mode control
+  selectedMode,
+  skipModeSelection,
+
+  // Reload support
+  isReload,
+  savedGameState,
+  onSaveGameState
+}) => {
+
+  // ⭐ CHANGED: Get Nirvighnam config
+  const gameConfig = getGameConfig('nirvighnam');
+
+  // ⭐ CHANGED: Map asset getters to config names
+  const assetGetters = {
+    getPlainStoneImage,       // matches: gameConfig.elements.singer.assetGetterInitial
+    getColoredStoneImage,     // matches: gameConfig.elements.singer.assetGetterReward
+    getNirvighnamAnimalImage  // matches: gameConfig.elements.clicker.assetGetter
+  };
+
+  if (!gameConfig) {
+    console.error('❌ NirvighnamGame: Config not found for "nirvighnam"');
+    return null;
+  }
+  
+  return (
+    <MemoryGameEngine
+      gameConfig={gameConfig}
+      assetGetters={assetGetters}
+      isActive={isActive}
+      hideElements={hideElements}
+      powerGained={powerGained}
+      onPhaseComplete={onPhaseComplete}
+      onGameComplete={onGameComplete}
+      profileName={profileName}
+      WaterSprayComponent={WaterSprayComponent}
+      selectedMode={selectedMode}          
+      skipModeSelection={skipModeSelection} 
+      isReload={isReload}
+      savedGameState={savedGameState}
+      onSaveGameState={onSaveGameState}
+    />
+  );
+};
+
+export default NirvighnamGame;

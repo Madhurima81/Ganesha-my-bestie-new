@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './AppSidebar.css';
 import SanskritVoiceRecorder from '../../../lib/components/audio/SanskritVoiceRecorder';
-
+// Import gray and colored app icons
 import appVakratundaGray from '../scenes/assets/images/apps/app-gray-vakratunda.png';
 import appVakratunda from '../scenes/assets/images/apps/app-Vakratunda.png';
 import appMahakayaGray from '../scenes/assets/images/apps/app-gray-mahakaya.png';
@@ -87,7 +87,7 @@ const appInfo = {
   }
 };
 
-const AppSidebar = ({ unlockedApps = {}, onAppClick, className = '', savedRecordings = {}, onSaveRecording }) => {
+const AppSidebar = ({ unlockedApps = {}, onAppClick, className = '', savedRecordings = {}, onSaveRecording, onDeleteRecording }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedApp, setSelectedApp] = useState(null);
   const [animatingApp, setAnimatingApp] = useState(null);
@@ -169,6 +169,7 @@ const AppSidebar = ({ unlockedApps = {}, onAppClick, className = '', savedRecord
               appColor={appInfo[selectedApp].power.color}
               savedRecordings={savedRecordings}
               onSaveRecording={onSaveRecording}
+              onDeleteRecording={onDeleteRecording}
               allowSkip={false}
               title="Practice Chanting"
               prompt={`Try saying ${selectedApp.toUpperCase()}`}

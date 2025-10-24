@@ -8,32 +8,24 @@
   right: 0;
   bottom: 0;
   z-index: 1000;
+  background: rgba(0, 0, 0, 0.8); /* Darker overlay like Image 3 */
   display: flex;
   align-items: center;
   justify-content: center;
-  pointer-events: none; /* Don't block clicks */
 }
 
 .mission-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  z-index: 1000;
-  pointer-events: none; /* Overlay doesn't block clicks */
+  /* Remove this - we're using parent background now */
+  display: none;
 }
 
 .mission-scene-container {
   position: relative;
   background: linear-gradient(135deg, #FFE5B4 0%, #FFCCCB 100%);
   border-radius: 25px;
-  padding: 30px 40px;
-  max-width: 600px;
+  padding: 30px 40px; /* Less vertical padding */
+  max-width: 600px; /* Wider */
   box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-  z-index: 1001; /* Above overlay */
-  pointer-events: all; /* Content IS clickable */
 }
 
 .mission-animal-wrapper {
@@ -197,7 +189,7 @@
   height: 40px;
   font-size: 20px;
   cursor: pointer;
-  z-index: 1002;
+  z-index: 1001;
   transition: background 0.2s ease;
 }
 

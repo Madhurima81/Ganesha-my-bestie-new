@@ -703,7 +703,7 @@ const getHintConfigs = () => [
   };
 
   const renderCounter = () => {
-    if (!sceneState.modaksUnlocked || !sceneState.welcomeShown) return null;
+    if (!sceneState.modaksUnlocked) return null;
     
     const collectedCount = sceneState?.collectedModaks?.length || 0;
     
@@ -731,7 +731,7 @@ const getHintConfigs = () => [
             {renderCounter()}
 
             {/* Phase Headers - Always Visible */}
-{!showChoiceButtons && !showPowerMission && sceneState.welcomeShown && ( // <--- ADD sceneState.welcomeShown
+{!showChoiceButtons && !showPowerMission && (
   <>
     {sceneState.phase === PHASES.MOOSHIKA_SEARCH && (
       <div className="phase-header">
@@ -756,16 +756,25 @@ const getHintConfigs = () => [
    {/* STORY INTRODUCTION */}
 {sceneState.phase === PHASES.MOOSHIKA_SEARCH && !sceneState.welcomeShown && (
   <>
-      {/* NEW: Dark overlay for the welcome screen */}
     <div style={{
-      position: 'fixed',
-      top: 0, left: 0, right: 0, bottom: 0,
-      background: 'rgba(0, 0, 0, 0.7)', // Dark semi-transparent background
-      zIndex: 2, // High Z-index to cover the scene
-      animation: 'fadeIn 0.3s ease-out'
-    }} />
-
-
+      position: 'absolute',
+      left: '20%',
+      top: '50%',
+      animation: 'gentle-glow 3s ease-in-out infinite',
+      zIndex: 5
+    }}>
+      <img src={mudMound} alt="Mysterious Mound" style={{width: '70px', opacity: 0.8}} />
+    </div>
+    
+    <div style={{
+      position: 'absolute',
+      right: '25%',
+      top: '45%',
+      animation: 'gentle-breathe 4s ease-in-out infinite',
+      zIndex: 5
+    }}>
+      <img src={modak1} alt="Golden Modak" style={{width: '50px', opacity: 0.9}} />
+    </div>
 
     <div style={{
       position: 'absolute',
@@ -834,7 +843,7 @@ const getHintConfigs = () => [
 )}
             
             {/* MUD MOUNDS */}
-       {sceneState.welcomeShown && !sceneState.moundsVanished && [1, 2, 3, 4, 5].map((index) => (
+       {!sceneState.moundsVanished && [1, 2, 3, 4, 5].map((index) => (
   <div 
     className={`mud-mound mound-${index} 
       ${sceneState.moundsVanishing ? 'fade-out' : ''} 
@@ -1187,9 +1196,8 @@ const getHintConfigs = () => [
               </div>
             )}*/}
 
-     {sceneState.welcomeShown && (
-              <BackToMapButton onNavigate={onNavigate} hideCoach={hideCoach} clearManualCloseTracking={clearManualCloseTracking} />
-            )}
+            <BackToMapButton onNavigate={onNavigate} hideCoach={hideCoach} clearManualCloseTracking={clearManualCloseTracking} />
+
             {/* COMPLETION TEST BUTTON */}
             <div style={{
               position: 'fixed',
@@ -1240,7 +1248,6 @@ const getHintConfigs = () => [
             </div>
 
             {/* PROGRESSIVE HINT SYSTEM with disabled state */}
-            {sceneState.welcomeShown && ( // <--- WRAP ENTIRE BLOCK
 
 <ProgressiveHintSystem
   ref={progressiveHintRef}
@@ -1257,8 +1264,7 @@ const getHintConfigs = () => [
   disabledMessage="Great job!"
   onHintShown={() => setShowHintGlow(true)}  // NEW
   onHintHidden={() => setShowHintGlow(false)} // NEW
-/>             )}
-
+/>
           </div>
 
           {/* FIREWORKS */}
@@ -1558,20 +1564,58 @@ const getHintConfigs = () => [
   </div>
 )}
 
-    {/* START OF NEW OVERLAY BLOCK for SymbolPowerMission */}
-{showPowerMission && (
-  // Dark background overlay for SymbolPowerMission
+          {/* Choice Buttons 
+{showChoiceButtons && (
   <div style={{
     position: 'fixed',
-    top: 0, left: 0, right: 0, bottom: 0,
-    background: 'rgba(0, 0, 0, 0.7)',
-    backdropFilter: 'blur(3px)',
-    zIndex: 499, // Lower than the Power Modal (500) but higher than the scene (e.g. 200)
-    animation: 'fadeIn 0.3s ease-out'
-  }} />
-)}
-{/* END OF NEW OVERLAY BLOCK */}
-     
+    bottom: '20%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    display: 'flex',
+    gap: '20px',
+    zIndex: 1000
+  }}>
+    <button 
+      onClick={handleSaveAnimal}
+      style={{
+        background: 'linear-gradient(135deg, #FF6B6B, #FF8E53)',
+        color: 'white',
+        border: 'none',
+        padding: '15px 30px',
+        borderRadius: '30px',
+        fontSize: '18px',
+        fontWeight: 'bold',
+        cursor: 'pointer',
+        boxShadow: '0 6px 20px rgba(255,107,107,0.4)',
+        transition: 'transform 0.2s ease'
+      }}
+      onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+      onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+    >
+      🐾 Save an Animal
+    </button>
+    
+    <button 
+      onClick={handleContinueLearning}
+      style={{
+        background: 'linear-gradient(135deg, #4ECDC4, #44A08D)',
+        color: 'white',
+        border: 'none',
+        padding: '15px 30px',
+        borderRadius: '30px',
+        fontSize: '18px',
+        fontWeight: 'bold',
+        cursor: 'pointer',
+        boxShadow: '0 6px 20px rgba(78,205,196,0.4)',
+        transition: 'transform 0.2s ease'
+      }}
+      onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+      onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+    >
+  {currentMissionSymbol === 'belly' ? '✨ End Scene' : '➡️ Continue Learning'}
+    </button>
+  </div>
+)}*/}
 
 <SymbolPowerMission
   show={showPowerMission}
@@ -1620,15 +1664,12 @@ const getHintConfigs = () => [
             {...CulturalProgressExtractor.getCulturalProgressData()}
           />
 
-           {sceneState.welcomeShown && ( // <--- WRAP ENTIRE BLOCK
-            <SymbolSidebar 
-              discoveredSymbols={sceneState.discoveredSymbols || {}}
-              onSymbolClick={(symbolId) => {
-                console.log(`Sidebar symbol clicked: ${symbolId}`);
-              }}
-            />
-          )}
-        
+          <SymbolSidebar 
+            discoveredSymbols={sceneState.discoveredSymbols || {}}
+            onSymbolClick={(symbolId) => {
+              console.log(`Sidebar symbol clicked: ${symbolId}`);
+            }}
+          />
         </div>       
       </MessageManager>
     </InteractionManager>

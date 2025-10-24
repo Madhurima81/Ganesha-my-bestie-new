@@ -288,62 +288,45 @@ export const GAME_CONFIGS = {
     },
     
     syllables: {
-      1: ['nir', 'vigh'],           // Round 1: 2 syllables
-      2: ['nir', 'vigh', 'nam']     // Round 2: 3 syllables
+      1: ['nir'],
+      2: ['nir', 'vigh'],
+      3: ['nir', 'vigh', 'nam']
     },
     
     elements: {
-      // NO singer element for nirvighnam - clicker doubles as singer
-      clicker: {
-        type: 'rescue-item',
+      singer: {
+        type: 'stone',
         count: 3,
-        ids: ['leaf-nir', 'drum-vigh', 'feather-nam'],
+        ids: ['stone-nir', 'stone-vigh', 'stone-nam'],
         positions: [
-          { left: '25%', top: '50%' },  // leaf (nir)
-          { left: '50%', top: '50%' },  // drum (vigh)
-          { left: '75%', top: '50%' }   // feather (nam)
+          { left: '20%', top: '55%' },
+          { left: '50%', top: '60%' },
+          { left: '80%', top: '55%' }
         ],
-        assetGetters: {
-          'nir': 'getLeafRirImage',
-          'vigh': 'getDrumVighImage',
-          'nam': 'getFeatherNamImage'
+        assetGettersInitial: {
+          'nir': 'getStone1NirImage',
+          'vigh': 'getStone2VighImage',
+          'nam': 'getStone3NamImage'
+        },
+        assetGettersReward: {
+          'nir': 'getStone1NirColImage',
+          'vigh': 'getStone2VighColImage',
+          'nam': 'getStone3NamColImage'
         }
       },
-      // ⭐ Dual reward system - AutoPlayMode will detect this!
-      rewards: {
-        animals: {
-          positions: [  // Animals in water (reward position)
-            { left: '20%', top: '75%' },  // frog in water
-            { left: '50%', top: '75%' },  // snail in water
-            { left: '80%', top: '75%' }   // turtle in water
-          ],
-          assetGetters: {
-            'nir': 'getFrogNirImage',
-            'vigh': 'getSnailVighImage',
-            'nam': 'getTurtleNamImage'
-          }
-        },
-        stones: {
-          positionsInitial: [  // Plain stones with animals on top (initial)
-            { left: '25%', top: '25%' },
-            { left: '50%', top: '25%' },
-            { left: '75%', top: '25%' }
-          ],
-          positionsReward: [  // Colored stones (reward position)
-            { left: '25%', top: '25%' },
-            { left: '50%', top: '25%' },
-            { left: '75%', top: '25%' }
-          ],
-          assetGettersInitial: {
-            'nir': 'getStone1NirImage',
-            'vigh': 'getStone2VighImage',
-            'nam': 'getStone3NamImage'
-          },
-          assetGettersReward: {
-            'nir': 'getStone1NirColImage',
-            'vigh': 'getStone2VighColImage',
-            'nam': 'getStone3NamColImage'
-          }
+      clicker: {
+        type: 'animal',
+        count: 3,
+        ids: ['animal-nir', 'animal-vigh', 'animal-nam'],
+        positions: [
+          { left: '15%', top: '75%' },
+          { left: '45%', top: '70%' },
+          { left: '75%', top: '75%' }
+        ],
+        assetGetters: {
+          'nir': 'getFrogNirImage',
+          'vigh': 'getSnailVighImage',
+          'nam': 'getTurtleNamImage'
         }
       }
     },
@@ -382,51 +365,36 @@ export const GAME_CONFIGS = {
     },
     
     syllables: {
-      1: ['kuru', 'me'],
-      2: ['kuru', 'me', 'de'],
-      3: ['kuru', 'me', 'de', 'va'] 
+      1: ['ku', 'ru'],
+      2: ['ku', 'ru', 'me'],
+      3: ['ku', 'ru', 'me', 'va'] 
     },
     
     elements: {
       singer: {
         type: 'decoration',
         count: 4, 
-        ids: ['decor-kuru', 'decor-me', 'decor-de', 'decor-va'],
+        ids: ['decor-ku', 'decor-ru', 'decor-me', 'decor-va'],
         positions: [
           { left: '20%', top: '50%' },
           { left: '40%', top: '55%' },
           { left: '60%', top: '55%' },
           { left: '80%', top: '50%' }
         ],
-  assetGettersInitial: {
-  'kuru': 'getItem1KuImage',
-  'me': 'getItem3MeImage',
-  'de': 'getItem4DeImage',
-  'va': 'getItem2RuImage'
-},
-assetGettersReward: {
-  'kuru': 'getDecor1KuImage',
-  'me': 'getDecor3MeImage',
-  'de': 'getDecor4DeImage',
-  'va': 'getDecor2RuImage'
-}
+        assetGetterInitial: 'getKurumedevaPlainDecorImage', 
+        assetGetterReward: 'getKurumedevaColoredDecorImage'
       },
       clicker: {
-        type: 'animal',
+        type: 'item',
         count: 4, 
-        ids: ['animal-ku', 'animal-ru', 'animal-me', 'animal-va'],
+        ids: ['item-ku', 'item-ru', 'item-me', 'item-va'],
         positions: [
           { left: '15%', top: '70%' },
           { left: '35%', top: '65%' },
           { left: '55%', top: '65%' },
           { left: '75%', top: '70%' }
         ],
-  assetGetters: {
-  'kuru': 'getAnimal1KuImage',
-  'me': 'getAnimal3MeImage',
-  'de': 'getAnimal4DeImage',
-  'va': 'getAnimal2RuImage'
-}
+        assetGetter: 'getKurumedevaItemImage'
       }
     },
     

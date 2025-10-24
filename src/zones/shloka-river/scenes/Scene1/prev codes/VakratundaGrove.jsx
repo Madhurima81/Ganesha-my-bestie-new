@@ -3,21 +3,21 @@ import React, { useState, useEffect, useRef } from 'react';
 import './VakratundaGrove.css';
 
 // Import scene management components
-import SceneManager from "../../../../lib/components/scenes/SceneManager";
-import MessageManager from "../../../../lib/components/scenes/MessageManager";
-import { ClickableElement } from "../../../../lib/components/scenes/InteractionManager";
-import InteractionManager from "../../../../lib/components/scenes/InteractionManager";
-import GameStateManager from "../../../../lib/services/GameStateManager";
-import { useGameCoach, TriggerCoach } from '../../../../lib/components/coach/GameCoach';
-import ProgressManager from '../../../../lib/services/ProgressManager';
-import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
+import SceneManager from "../../../../../lib/components/scenes/SceneManager";
+import MessageManager from "../../../../../lib/components/scenes/MessageManager";
+import { ClickableElement } from "../../../../../lib/components/scenes/InteractionManager";
+import InteractionManager from "../../../../../lib/components/scenes/InteractionManager";
+import GameStateManager from "../../../../../lib/services/GameStateManager";
+import { useGameCoach, TriggerCoach } from '../../../../../lib/components/coach/GameCoach';
+import ProgressManager from '../../../../../lib/services/ProgressManager';
+import SimpleSceneManager from '../../../../../lib/services/SimpleSceneManager';
 
 // UI Components
-import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
-import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
-import Fireworks from '../../../../lib/components/feedback/Fireworks';
-import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
-import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
+import TocaBocaNav from '../../../../../lib/components/navigation/TocaBocaNav';
+import SparkleAnimation from '../../../../../lib/components/animation/SparkleAnimation';
+import Fireworks from '../../../../../lib/components/feedback/Fireworks';
+import ProgressiveHintSystem from '../../../../../lib/components/interactive/ProgressiveHintSystem';
+import SceneCompletionCelebration from '../../../../../lib/components/celebration/SceneCompletionCelebration';
 
 
 // Images - River scene assets

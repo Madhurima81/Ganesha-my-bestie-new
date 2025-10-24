@@ -104,9 +104,9 @@
 .nirvighnam-mission-title {
   font-size: 26px;
   font-weight: bold;
-  color: var(--solar-orange); /* THEME */
+  color: #8B4513;
   margin-bottom: 18px;
-
+  line-height: 1.3;
 }
 
 .nirvighnam-mission-subtitle {
@@ -144,28 +144,41 @@
 
 /* Character in modals */
 .nirvighnam-modal-character {
+  position: relative;
   margin-bottom: 20px;
 }
 
 .nirvighnam-character-img {
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 10px;
-  display: block;
+  width: 120px;
+  height: auto;
+  animation: bounceIn 0.6s ease-out;
 }
 
 .nirvighnam-character-speech-bubble {
-  background: #FFF9E6;
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  transform: translateY(-50%);
+  margin-left: 15px;
+  background: white;
   padding: 8px 16px;
-  border-radius: 15px;
-  border: 2px solid #FFD700;
+  border-radius: 20px;
+  border: 3px solid #FF6B35;
   font-size: 14px;
-  font-weight: 600;
-  color: #8B4513;
-  display: inline-block;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  white-space: nowrap;
 }
 
-
+.nirvighnam-character-speech-bubble::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 8px solid transparent;
+  border-right-color: #FF6B35;
+}
 
 @keyframes bounceIn {
   0% {

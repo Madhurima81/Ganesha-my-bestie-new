@@ -3,31 +3,31 @@ import React, { useState, useEffect, useRef } from 'react';
 import './VakratundaGrove.css';
 
 // Import scene management components
-import SceneManager from "../../../../lib/components/scenes/SceneManager";
-import MessageManager from "../../../../lib/components/scenes/MessageManager";
-import InteractionManager from "../../../../lib/components/scenes/InteractionManager";
-import GameStateManager from "../../../../lib/services/GameStateManager";
-import { useGameCoach } from '../../../../lib/components/coach/GameCoach';
-import ProgressManager from '../../../../lib/services/ProgressManager';
-import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
+import SceneManager from "../../../../../lib/components/scenes/SceneManager";
+import MessageManager from "../../../../../lib/components/scenes/MessageManager";
+import InteractionManager from "../../../../../lib/components/scenes/InteractionManager";
+import GameStateManager from "../../../../../lib/services/GameStateManager";
+import { useGameCoach } from '../../../../../lib/components/coach/GameCoach';
+import ProgressManager from '../../../../../lib/services/ProgressManager';
+import SimpleSceneManager from '../../../../../lib/services/SimpleSceneManager';
 import mooshikaCoach from "./assets/images/mooshika-coach.png";
 
 
 // UI Components
-import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
-import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
-import Fireworks from '../../../../lib/components/feedback/Fireworks';
-import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
+import TocaBocaNav from '../../../../../lib/components/navigation/TocaBocaNav';
+import SparkleAnimation from '../../../../../lib/components/animation/SparkleAnimation';
+import Fireworks from '../../../../../lib/components/feedback/Fireworks';
+import SceneCompletionCelebration from '../../../../../lib/components/celebration/SceneCompletionCelebration';
 
 // NEW: Import water spray and updated memory game components
-import SanskritMemoryGame from './components/SanskritMemoryGame';
-import WaterSprayArc from './components/WaterSprayArc';
-import SanskritVoiceRecorder from '../../../../lib/components/audio/SanskritVoiceRecorder';
-import SmartwatchWidget from './components/SmartwatchWidget';
-import HelperSignatureAnimation from '../../../../lib/components/animation/HelperSignatureAnimation';
+import SanskritMemoryGame from './SanskritMemoryGame';
+import WaterSprayArc from './WaterSprayArc';
+import SanskritVoiceRecorder from '../../../../../lib/components/audio/SanskritVoiceRecorder';
+import SmartwatchWidget from './SmartwatchWidget';
+import HelperSignatureAnimation from '../../../../../lib/components/animation/HelperSignatureAnimation';
 
-import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
-import SanskritRiverProgress from './components/SanskritRiverProgress';
+import ProgressiveHintSystem from '../../../../../lib/components/interactive/ProgressiveHintSystem';
+import SanskritRiverProgress from './SanskritRiverProgress';
 
 // Images - River scene assets
 import riverBackground from './assets/images/elephant-grove-bg.png';

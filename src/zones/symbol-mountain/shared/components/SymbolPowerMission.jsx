@@ -59,8 +59,7 @@ const SymbolPowerMission = ({
 
   return (
     <div className="symbol-power-mission">
-      {/* Darkening overlay */}
-      <div className="mission-overlay" />
+   
       
       {/* Main content */}
       <div className="mission-scene-container">
@@ -123,6 +122,9 @@ const SymbolPowerMission = ({
             Continue Adventure
           </button>
         )}
+
+           {/* Darkening overlay 
+      <div className="mission-overlay" />
 
         {/* Cancel Button */}
         {rescuePhase === 'problem' && onCancel && (
