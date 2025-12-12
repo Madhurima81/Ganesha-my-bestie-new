@@ -2,18 +2,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './CaveSceneFixed.css';
 
-// Import scene management components (PROVEN FROM POND)
+// Import scene management components
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
 import MessageManager from "../../../../lib/components/scenes/MessageManager";
 import { ClickableElement } from "../../../../lib/components/scenes/InteractionManager";
 import InteractionManager from "../../../../lib/components/scenes/InteractionManager";
 import GameStateManager from "../../../../lib/services/GameStateManager";
-//import { useGameCoach, TriggerCoach } from '../../../../lib/components/coach/GameCoach';
+//import { useGameCoach, TriggerCoach } from '../../../../lib/components/coach/GameCoach'; // Coach removed
 import ProgressManager from '../../../../lib/services/ProgressManager';
 import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
 import CurvedPathTracer from './CurvedPathTracer';
 
-// UI Components (PROVEN FROM POND)
+// UI Components
 import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
 import CulturalCelebrationModal from '../../../../lib/components/progress/CulturalCelebrationModal';
 import CulturalProgressExtractor from '../../../../lib/services/CulturalProgressExtractor';
@@ -37,9 +37,11 @@ import mooshikaTracing from './assets/images/mooshika-tracing.png';
 // Cave-specific components
 import SanskritSidebar from '../../../../lib/components/feedback/SanskritSidebar';
 import doorImage from './assets/images/door-image.png';
+
+import DoorUnlockedModal from '../../components/DoorUnlockedModal';
+
 import DoorComponent from '../../components/DoorComponent';
 import ganeshaComplete from './assets/images/ganesha-complete.png';
-
 
 // Cave images
 import caveBackground from './assets/images/cave-background.png';
@@ -50,6 +52,7 @@ import stoneHead from './assets/images/stone-head.png';
 import stoneTrunk from './assets/images/stone-trunk.png';
 import stoneBody from './assets/images/stone-body.png';
 import stoneLegs from './assets/images/stone-legs.png';
+import ganeshaCharacterCave from './assets/images/ganesha-character-cave.png'; // Added character image
 
 // Journal container image
 import meaningJournal from '../../assets/images/meaning-journal.png';
@@ -59,6 +62,7 @@ import appVakratunda from '../../assets/images/apps/app-Vakratunda.png';
 import appMahakaya from '../../assets/images/apps/app-mahakaya.png';
 
 // Add these imports with your other image imports
+
 import vakratundaSymbol from '../../assets/images/symbols/vakratunda-symbol.png';
 import mahakayaSymbol from '../../assets/images/symbols/mahakaya-symbol.png';
 
@@ -66,9 +70,7 @@ import mahakayaSymbol from '../../assets/images/symbols/mahakaya-symbol.png';
 const preloadedMooshikaImage = new Image();
 preloadedMooshikaImage.src = mooshikaTracing;
 
-
 const CAVE_PHASES = {
-    STORY_INTRO: 'story_intro', // ← ADD THIS LINE
   // Part 1: Vakratunda Learning
   DOOR1_ACTIVE: 'door1_active',
   DOOR1_COMPLETE: 'door1_complete',
@@ -89,44 +91,20 @@ const CAVE_PHASES = {
   COMPLETE: 'complete'
 };
 
-// Story modal data
-const STORY_MODALS = {
-  vakratunda: {
-    icon: ganeshaComplete, // Using ganeshaComplete image
-    speech: "Let's discover my divine form! 🐘",
-    title: "Learn Ganesha's Sacred Features!",
-    subtitle: "2 divine words to master!",
-    description: "First, learn to chant VAKRATUNDA to unlock my curved trunk power and save animals!",
-    buttonText: "Start Learning!",
-    buttonColor: "linear-gradient(135deg, #FFD700, #FFA500)"
-  },
-  mahakaya: {
-    icon: ganeshaComplete,
-    speech: "Now discover my mighty form! 💪",
-    title: "Great Work!",
-    subtitle: "Unlock the great body power!",
-    description: "Learn to chant MAHAKAYA to unlock my cosmic body power and save animals!",
-    buttonText: "Continue Learning!",
-    buttonColor: "linear-gradient(135deg, #9C27B0, #E91E63)"
-  }
-};
-
-// Add this AFTER CAVE_PHASES constant definition
-
 const powerConfig = {
   vakratunda: { 
     name: 'Curved Trunk Power', 
-    image: vakratundaSymbol,  // ✅ CHANGED: Use symbol instead of card
+    image: vakratundaSymbol,
     color: '#FFD700' 
   },
   mahakaya: { 
     name: 'Mighty Form Power', 
-    image: mahakayaSymbol,  // ✅ CHANGED: Use symbol instead of card
+    image: mahakayaSymbol,
     color: '#FF8C42' 
   }
 };
 
-// Error Boundary (PROVEN FROM POND)
+// Error Boundary
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -167,59 +145,56 @@ const CaveSceneFixed = ({
   zoneId = 'cave-of-secrets',
   sceneId = 'vakratunda-mahakaya'
 }) => {
-  console.log('CaveSceneFixed props:', { onComplete, onNavigate, zoneId, sceneId });
-
   return (
     <ErrorBoundary>
       <SceneManager
         zoneId={zoneId}
         sceneId={sceneId}
         initialState={{
-      // Door 1 state (Va-kra-tun-da)
-door1State: 'waiting',
-door1SyllablesPlaced: [],
-door1Completed: false,
-door1CurrentStep: 0,
-door1Syllables: ['Va', 'kra', 'tun', 'da'],
+          // Door 1 state (Va-kra-tun-da)
+          door1State: 'waiting',
+          door1SyllablesPlaced: [],
+          door1Completed: false,
+          door1CurrentStep: 0,
+          door1Syllables: ['Va', 'kra', 'tun', 'da'],
 
-// Door 2 state (Ma-ha-ka-ya)  
-door2State: 'waiting',
-door2SyllablesPlaced: [],
-door2Completed: false,
-door2CurrentStep: 0,
-door2Syllables: ['Ma', 'ha', 'ka', 'ya'],
+          // Door 2 state (Ma-ha-ka-ya)  
+          door2State: 'waiting',
+          door2SyllablesPlaced: [],
+          door2Completed: false,
+          door2CurrentStep: 0,
+          door2Syllables: ['Ma', 'ha', 'ka', 'ya'],
 
-// Game 1: Tracing state (EXACT from VakratundaV4)
-tracingStarted: false,
-tracedPoints: [],
-traceProgress: 0,
-traceQuality: 'good',
-tracingCompleted: false,
-trunkPosition: { x: 50, y: 100 },
-canResumeTracing: false,
+          // Game 1: Tracing state
+          tracingStarted: false,
+          tracedPoints: [],
+          traceProgress: 0,
+          traceQuality: 'good',
+          tracingCompleted: false,
+          trunkPosition: { x: 50, y: 100 },
+          canResumeTracing: false,
 
-// ✅ NEW: Sequential path validation
-currentPathSegment: 0,        // Which segment user must reach next (0-5)
-segmentsCompleted: [],        // Array of completed segments
-mustFollowSequence: true,     // Force sequential progress
+          // Sequential path validation
+          currentPathSegment: 0,
+          segmentsCompleted: [],
+          mustFollowSequence: true,
 
-// ✅ NEW: Mini Ganesha always visible
-ganeshaVisible: false,
+          // Mini Ganesha
+          ganeshaVisible: false,
+          ganeshaAnimation: 'breathing',
+          ganeshaSize: 0.8,
+          ganeshaGlow: 0.2,
 
-ganeshaAnimation: 'breathing',
-ganeshaSize: 0.8,
-ganeshaGlow: 0.2,
-
-// Game 2: Growing Ganesha state
-growingStarted: false,
-stonesClicked: 0,
-floatingStones: [
-  { id: 1, clicked: false, x: 20, y: 30 },  // Head stone
-  { id: 2, clicked: false, x: 70, y: 20 },  // Trunk stone
-  { id: 3, clicked: false, x: 30, y: 60 },  // Body stone
-  { id: 4, clicked: false, x: 80, y: 50 }   // Legs stone
-],
-growingCompleted: false,
+          // Game 2: Growing Ganesha state
+          growingStarted: false,
+          stonesClicked: 0,
+          floatingStones: [
+            { id: 1, clicked: false, x: 20, y: 30 },
+            { id: 2, clicked: false, x: 70, y: 20 },
+            { id: 3, clicked: false, x: 30, y: 60 },
+            { id: 4, clicked: false, x: 80, y: 50 }
+          ],
+          growingCompleted: false,
           
           // Sanskrit learning
           learnedWords: {
@@ -228,20 +203,19 @@ growingCompleted: false,
           },
           
           // Scene progression  
-phase: 'STORY_INTRO', // Start with modal
+          phase: CAVE_PHASES.DOOR1_ACTIVE, // Start at Door 1
           currentFocus: 'door1',
           
-          // Discovery and popup states (PROVEN SYSTEM)
+          // Discovery and popup states
           discoveredSymbols: {},
           currentPopup: null,
           symbolDiscoveryState: null,
           sidebarHighlightState: null,
-            //showCurvedText: false,
-  //showMightyText: false,
           
-   
+          // Welcome state
+          welcomeShown: false,
           
-          // Progress tracking (PROVEN SYSTEM)
+          // Progress tracking
           stars: 0,
           completed: false,
           progress: {
@@ -250,7 +224,7 @@ phase: 'STORY_INTRO', // Start with modal
             completed: false
           },
           
-          // UI states (PROVEN SYSTEM)
+          // UI states
           showingCompletionScreen: false,
           fireworksCompleted: false
         }}
@@ -280,728 +254,285 @@ const CaveSceneContent = ({
   zoneId,
   sceneId
 }) => {
-  console.log('CaveSceneContent render', { sceneState, isReload, zoneId, sceneId });
-
   if (!sceneState?.phase) sceneActions.updateState({ phase: CAVE_PHASES.DOOR1_ACTIVE });
-  //if (!sceneState?.phase) sceneActions.updateState({ phase: CAVE_PHASES.TRACE_INTRO });
 
-  // Access GameCoach functionality (PROVEN FROM POND)
-// GameCoach removed - using direct navigation
-const hideCoach = () => {};
-const clearManualCloseTracking = () => {};
+  // Access GameCoach functionality
+  const hideCoach = () => {};
+  const clearManualCloseTracking = () => {};
 
   const { resetScene } = useSceneReset(
-  sceneActions, 
-  'cave-of-secrets', 
-  'vakratunda-mahakaya', 
-  getSceneResetConfig('vakratunda-mahakaya')
-);
+    sceneActions, 
+    'cave-of-secrets', 
+    'vakratunda-mahakaya', 
+    getSceneResetConfig('vakratunda-mahakaya')
+  );
 
-  // State management (PROVEN FROM POND)
+  // State management
   const [showSparkle, setShowSparkle] = useState(null);
-  const [currentSourceElement, setCurrentSourceElement] = useState(null);
-  const [showPopupBook, setShowPopupBook] = useState(false);
-  const [popupBookContent, setPopupBookContent] = useState({});
-  const [showMagicalCard, setShowMagicalCard] = useState(false);
-  const [cardContent, setCardContent] = useState({});
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
   const [showCulturalCelebration, setShowCulturalCelebration] = useState(false);
-const [isManualReset, setIsManualReset] = useState(false);
+  const [isManualReset, setIsManualReset] = useState(false);
 
-const [showRescueModal, setShowRescueModal] = useState(false);
-const [currentRescueWord, setCurrentRescueWord] = useState(null);
+  const [showRescueModal, setShowRescueModal] = useState(false);
+  const [currentRescueWord, setCurrentRescueWord] = useState(null);
 
-// Add after your existing useState declarations (around line 190)
-const [showCenteredSymbol, setShowCenteredSymbol] = useState(null);
-const [showPowerModal, setShowPowerModal] = useState(false);
-const [currentMissionSymbol, setCurrentMissionSymbol] = useState(null);
-
-const [showStoryModal, setShowStoryModal] = useState(null); // 'vakratunda' or 'mahakaya'
-
-// ========== 🛡️ CLICK PROTECTION STATE ==========
-const [clickLocked, setClickLocked] = useState(false);  // Prevents clicks during animations
-const lastClickTime = useRef(0);  // Tracks last click time for cooldown
-const activeTouches = useRef(0);  // Tracks simultaneous touches (iPad)
-const isProcessingClick = useRef(false);  // Prevents race conditions
+  const [showCenteredSymbol, setShowCenteredSymbol] = useState(null);
+  const [showPowerModal, setShowPowerModal] = useState(false);
+  const [showPowerMission, setShowPowerMission] = useState(false); // Can be used if needed
+  const [currentMissionSymbol, setCurrentMissionSymbol] = useState(null);
 
 
-  // Refs (PROVEN FROM POND)
+  // Refs
   const timeoutsRef = useRef([]);
   const progressiveHintRef = useRef(null);
-  const [hintUsed, setHintUsed] = useState(false);
+  const lastClickTime = useRef(0);
+  const activeTouches = useRef(0);
 
   // Get profile name
   const activeProfile = GameStateManager.getActiveProfile();
   const profileName = activeProfile?.name || 'little explorer';
 
-// Show first modal on mount - ONLY if no progress exists
-useEffect(() => {
-  const hasAnyProgress = (
-    sceneState.door1Completed ||
-    sceneState.tracingStarted ||
-    sceneState.currentPathSegment > 0 ||
-    sceneState.door1CurrentStep > 0
-  );
-  
-  const shouldShowModal = (
-    sceneState.phase === 'STORY_INTRO' && 
-    !showStoryModal && 
-    !hasAnyProgress  // ✅ Don't show if ANY progress exists
-  );
-  
-  if (shouldShowModal) {
-    console.log('📖 Showing opening story modal (no progress found)');
-    setTimeout(() => {
-      setShowStoryModal('vakratunda');
-    }, 500);
-  } else if (sceneState.phase === 'STORY_INTRO' && hasAnyProgress) {
-    console.log('🔧 Has progress but phase is STORY_INTRO - fixing phase');
-    // Determine correct phase based on progress
-    if (sceneState.tracingStarted) {
-      sceneActions.updateState({ phase: CAVE_PHASES.TRACE_ACTIVE });
-    } else if (sceneState.door1Completed) {
-      sceneActions.updateState({ phase: CAVE_PHASES.TRACE_INTRO });
-    } else if (sceneState.door1CurrentStep > 0) {
-      sceneActions.updateState({ phase: CAVE_PHASES.DOOR1_ACTIVE });
-    }
-  }
-}, [sceneState.phase, sceneState.door1Completed, sceneState.tracingStarted, sceneState.currentPathSegment, sceneState.door1CurrentStep]);
+  // Preload images
+  useEffect(() => {
+    const img = new Image();
+    img.src = mooshikaTracing;
+  }, []);
 
-// ✅ Preload images on component mount
-useEffect(() => {
-  const img = new Image();
-  img.src = mooshikaTracing;
-  img.onload = () => console.log('🐭 Mooshika preloaded!');
-}, []);
-
-  // Safe setTimeout function (PROVEN FROM POND)
+  // Safe setTimeout function
   const safeSetTimeout = (callback, delay) => {
     const id = setTimeout(callback, delay);
     timeoutsRef.current.push(id);
     return id;
   };
 
-  const stoneImages = [
-  stoneHead,   // Stone 1 - Head stone
-  stoneTrunk,  // Stone 2 - Trunk stone  
-  stoneBody,   // Stone 3 - Body stone
-  stoneLegs    // Stone 4 - Legs stone
-];
-
-const getGaneshaAnimationClass = () => {
-  console.log('🐘 Animation Debug:', {
-    ganeshaVisible: sceneState.ganeshaVisible,
-    ganeshaAnimation: sceneState.ganeshaAnimation,
-    currentState: sceneState
-  });
-  
-  if (!sceneState.ganeshaVisible) {
-    console.log('🐘 Returning empty - ganeshaVisible is false');
-    return '';
-  }
-  if (sceneState.ganeshaAnimation === 'happy') return 'happy';
-  if (sceneState.ganeshaAnimation === 'growing') {
-    console.log('🐘 Returning growing class');
-    return 'growing';
-  }
-  if (sceneState.ganeshaAnimation === 'mighty') return 'mighty breathing';
-  console.log('🐘 Returning default breathing');
-  return 'breathing'; // Default animation
-};
-
-// Clear local storage function
-const clearLocalStorage = () => {
-  if (window.confirm('Are you sure you want to clear all saved progress? This cannot be undone.')) {
+  const playAudio = (audioPath, volume = 1.0) => {
     try {
-      const keysToRemove = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && (
-          key.includes('gameState_') ||
-          key.includes('activeProfileId') ||
-          key.includes('profiles_') ||
-          key.includes('temp_session_') ||
-          key.includes('scene_progress_') ||
-          key.includes('user_progress_')
-        )) {
-          keysToRemove.push(key);
-        }
-      }
-      
-      keysToRemove.forEach(key => localStorage.removeItem(key));
-      
-      console.log('🗑️ Local storage cleared:', keysToRemove.length, 'keys removed');
-      alert('Local storage cleared! The page will reload.');
-      window.location.reload();
+      const audio = new Audio(audioPath);
+      audio.volume = volume;
+      audio.play().catch(() => {});
     } catch (error) {
-      console.error('Error clearing localStorage:', error);
-      alert('Error clearing local storage. Check console for details.');
+      console.warn('Audio failed:', error);
     }
-  }
-};
+  };
 
-const renderTracingPath = () => {
-  if (sceneState.phase !== CAVE_PHASES.TRACE_ACTIVE && 
-      sceneState.phase !== CAVE_PHASES.TRACE_INTRO && 
-      sceneState.phase !== CAVE_PHASES.TRACE_COMPLETE) {
-    return null;
-  }
+  const playSyllable = (syllable) => {
+    const map = {
+      'va': 'vakratunda-va',
+      'kra': 'vakratunda-kra',
+      'tun': 'vakratunda-tun',
+      'da': 'vakratunda-da',
+      'ma': 'mahakaya-ma',
+      'ha': 'mahakaya-ha',
+      'ka': 'mahakaya-ka',
+      'ya': 'mahakaya-ya'
+    };
+    playAudio(`/audio/syllables/${map[syllable] || syllable}.mp3`);
+  };
 
-  return (
-    <div className="tracing-area" id="tracing-area">
-      <ClickDotsPathGame
-        mooshikaImage={mooshikaTracing}
-        ganeshaImage={ganeshaComplete}
-        onComplete={() => {
-          console.log('🎉 Dots completed!');
-          completeTracing();
-        }}
-        onProgress={(progressPercent, currentDot) => {
-          sceneActions.updateState({
-            traceProgress: progressPercent,
-            currentPathSegment: currentDot
-          });
-        }}
-        disabled={false}
-        showDebug={true}  // Set to true to see progress
-         // ✅ ADD THESE 3 LINES - This is what you're missing!
-  initialDot={sceneState.currentPathSegment || 0}
-  initialProgress={sceneState.traceProgress || 0}
-  isResuming={isReload && sceneState.tracingStarted && !sceneState.tracingCompleted}
-      />
-    </div>
-  );
-};
+  const stoneImages = [stoneHead, stoneTrunk, stoneBody, stoneLegs];
 
-const renderGrowingGame = () => {
-  // ✅ ADD: Hide if not in growing phase or if modals open
-  if (!sceneState.growingStarted) return null;
-  
-  // ✅ ADD: Hide during celebrations
-  if (showCenteredSymbol || showPowerModal || showRescueModal || showStoryModal) {
-    return null;
-  }
-  return (
-    <div className="growing-area" id="grow-area">
-     <div 
-  className="floating-stones"
-  // ✅ ADD: Touch protection for iPad
-  onTouchStart={(e) => {
-    activeTouches.current = e.touches.length;
-    if (e.touches.length > 1) {
-      console.log('🚫 MULTI-TOUCH BLOCKED: Detected ' + e.touches.length + ' fingers');
-      e.preventDefault();
+  const getGaneshaAnimationClass = () => {
+    if (!sceneState.ganeshaVisible) return '';
+    if (sceneState.ganeshaAnimation === 'happy') return 'happy';
+    if (sceneState.ganeshaAnimation === 'growing') return 'growing';
+    if (sceneState.ganeshaAnimation === 'mighty') return 'mighty breathing';
+    return 'breathing';
+  };
+
+  // Helper functions
+  const getPowerDescription = (symbolKey) => {
+    const descriptions = {
+      vakratunda: "You chanted 'Vakratunda'!\nIt means 'Curved Trunk' - the power to handle any challenge!",
+      mahakaya: "You chanted 'Mahakaya'!\nIt means 'Great Body' - the power of infinite strength!"
+    };
+    return descriptions[symbolKey] || 'You unlocked a special power!';
+  };
+
+  const getNextDiscoveryText = (currentSymbol) => {
+    const nextActions = {
+      vakratunda: '🗣️ Learn Mahakaya',
+      mahakaya: '✨ Complete Scene'
+    };
+    return nextActions[currentSymbol] || '➡️ Continue';
+  };
+
+  const renderTracingPath = () => {
+    if (sceneState.phase !== CAVE_PHASES.TRACE_ACTIVE && 
+        sceneState.phase !== CAVE_PHASES.TRACE_INTRO && 
+        sceneState.phase !== CAVE_PHASES.TRACE_COMPLETE) {
+      return null;
     }
-  }}
-  onTouchEnd={() => {
-    activeTouches.current = 0;
-  }}
->
-  {sceneState.floatingStones.map((stone, index) => (
-    <div
-      key={stone.id}
-      className={`floating-stone ${stone.clicked ? 'clicked' : ''}`}
-      style={{ 
-        left: `${stone.x}%`, 
-        top: `${stone.y}%`,
-        display: stone.clicked ? 'none' : 'block'
-      }}
-      onClick={() => {
-        // ✅ ADD: Multi-touch check
-        if (activeTouches.current > 1) {
-          console.log('🚫 Stone click blocked: Multi-touch detected');
-          return;
-        }
-        handleStoneClick(stone.id);
-      }}
-    >
-      <img src={stoneImages[index]} alt={`Stone ${stone.id}`} />
-      {showSparkle === `stone-${stone.id}-clicked` && (
-        <SparkleAnimation
-          type="magic"
-          count={10}
-          color="#ffd700"
-          size={8}
-          duration={1000}
-          fadeOut={true}
-          area="full"
+
+    return (
+      <div className="tracing-area" id="tracing-area">
+        <ClickDotsPathGame
+          mooshikaImage={mooshikaTracing}
+          ganeshaImage={ganeshaComplete}
+          onComplete={() => {
+            console.log('🎉 Dots completed!');
+            completeTracing();
+          }}
+          onProgress={(progressPercent, currentDot) => {
+            sceneActions.updateState({
+              traceProgress: progressPercent,
+              currentPathSegment: currentDot
+            });
+          }}
+          disabled={false}
+          showDebug={true}
+          initialDot={sceneState.currentPathSegment || 0}
+          initialProgress={sceneState.traceProgress || 0}
+          isResuming={isReload && sceneState.tracingStarted && !sceneState.tracingCompleted}
         />
-      )}
-    </div>
-  ))}
-</div>
       </div>
-    
-  );
-};
+    );
+  };
 
-  // Cleanup timeouts on unmount (PROVEN FROM POND)
+  const renderGrowingGame = () => {
+    if (!sceneState.growingStarted) return null;
+    if (showCenteredSymbol || showPowerModal || showRescueModal) return null;
+    
+    return (
+      <div className="growing-area" id="grow-area">
+       <div 
+          className="floating-stones"
+          onTouchStart={(e) => {
+            activeTouches.current = e.touches.length;
+            if (e.touches.length > 1) {
+              e.preventDefault();
+            }
+          }}
+          onTouchEnd={() => {
+            activeTouches.current = 0;
+          }}
+        >
+          {sceneState.floatingStones.map((stone, index) => (
+            <div
+              key={stone.id}
+              className={`floating-stone ${stone.clicked ? 'clicked' : ''}`}
+              style={{ 
+                left: `${stone.x}%`, 
+                top: `${stone.y}%`,
+                display: stone.clicked ? 'none' : 'block'
+              }}
+              onClick={() => handleStoneClick(stone.id)}
+            >
+              <img src={stoneImages[index]} alt={`Stone ${stone.id}`} />
+              {showSparkle === `stone-${stone.id}-clicked` && (
+                <SparkleAnimation
+                  type="magic"
+                  count={10}
+                  color="#ffd700"
+                  size={8}
+                  duration={1000}
+                  fadeOut={true}
+                  area="full"
+                />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  // Cleanup timeouts
   useEffect(() => {
     return () => {
       timeoutsRef.current.forEach(id => clearTimeout(id));
     };
   }, []);
 
-  // GameCoach messages (ADAPTED FOR CAVE)
-  /*const caveGameCoachMessages = [
+  const getHintConfigs = () => [
     {
-      id: 'cave_welcome',
-      message: `Welcome to the Cave of Secrets, ${profileName}! Ancient Sanskrit wisdom awaits your discovery!`,
-      timing: 500,
-      condition: () => sceneState?.phase === CAVE_PHASES.DOOR1_ACTIVE && !sceneState?.welcomeShown && !sceneState?.isReloadingGameCoach
+      id: 'door1-hint',
+      message: 'Try arranging the Sanskrit syllables in order!',
+      position: { bottom: '60%', left: '30%', transform: 'translateX(-50%)' },
+      condition: (sceneState) => {
+        if (!sceneState) return false;
+        return sceneState?.phase === CAVE_PHASES.DOOR1_ACTIVE && 
+               !sceneState?.door1Completed &&
+               !showPowerModal;
+      }
     },
     {
-      id: 'vakratunda_wisdom',
-      message: `Magnificent, ${profileName}! You've unlocked Vakratunda - the curved trunk of wisdom!`,
-      timing: 1000,
-      condition: () => sceneState?.learnedWords?.vakratunda?.learned && !sceneState?.vakratundaWisdomShown && sceneState?.readyForWisdom && !sceneState?.isReloadingGameCoach
+      id: 'trace-hint', 
+      message: 'Trace the curved path like Ganesha\'s trunk!',
+      position: { bottom: '60%', left: '30%', transform: 'translateX(-50%)' },
+      condition: (sceneState) => {
+        if (!sceneState) return false;
+        return (sceneState?.phase === CAVE_PHASES.TRACE_ACTIVE) &&
+               !sceneState?.tracingCompleted &&
+               !showPowerModal;
+      }
     },
-
     {
-  id: 'tracing_intro',
-  message: `🐭 Help Mooshika reach Ganesha through his curved trunk! 🐘`,
-  timing: 500,
-  condition: () => sceneState?.phase === CAVE_PHASES.TRACE_INTRO && !sceneState?.tracingIntroShown
-},
-
-    /*{
-      id: 'mahakaya_wisdom',
-      message: `Wonderful, ${profileName}! You've mastered Mahakaya - the mighty form of divine strength!`,
-      timing: 1000,
-      condition: () => sceneState?.learnedWords?.mahakaya?.learned && !sceneState?.mahakayaWisdomShown && sceneState?.readyForWisdom && !sceneState?.isReloadingGameCoach
-    }
-  ];*/
-
-// ✅ REPLACE the getHintConfigs function in CaveSceneFixed.jsx with this:
-
-const getHintConfigs = () => [
-  {
-    id: 'door1-hint',
-    message: 'Try arranging the Sanskrit syllables in order!',
-    explicitMessage: 'Drag Va-kra-tun-da syllables to spell Vakratunda!',
-    position: { bottom: '60%', left: '30%', transform: 'translateX(-50%)' },
-    condition: (sceneState, hintLevel) => {
-      if (!sceneState) return false;
-      return sceneState?.phase === CAVE_PHASES.DOOR1_ACTIVE && 
-             !sceneState?.door1Completed &&
-             !showMagicalCard && !isVisible && !showPopupBook;
-    }
-  },
-  {
-    id: 'trace-hint', 
-    message: 'Trace the curved path like Ganesha\'s trunk!',
-    explicitMessage: 'Start at the green circle and follow the orange path!',
-    position: { bottom: '60%', left: '30%', transform: 'translateX(-50%)' },
-    condition: (sceneState, hintLevel) => {
-      if (!sceneState) return false;
-
-      
-       // ✅ SIMPLE: Show during any tracing phase
-    return (sceneState?.phase === 'trace_intro' || 
-            sceneState?.phase === CAVE_PHASES.TRACE_INTRO ||
-            sceneState?.phase === CAVE_PHASES.TRACE_ACTIVE) &&
-           !sceneState?.tracingCompleted &&
-           !showMagicalCard && 
-           !isVisible && 
-           !showPopupBook;
-    }
-  },
-  {
-    id: 'door2-hint',
-    message: 'Arrange the Sanskrit syllables for Mahakaya!',
-    explicitMessage: 'Drag Ma-ha-ka-ya syllables to spell Mahakaya!',
-    position: { bottom: '60%', left: '30%', transform: 'translateX(-50%)' },
-    condition: (sceneState, hintLevel) => {
-      if (!sceneState) return false;
-      return sceneState?.phase === CAVE_PHASES.DOOR2_ACTIVE && 
-             !sceneState?.door2Completed &&
-             !showMagicalCard && !isVisible && !showPopupBook;
-    }
-  },
-  {
-    id: 'grow-hint',
-    message: 'Click the floating stones to make Ganesha grow!',
-    explicitMessage: 'Tap each sacred stone to make Ganesha mighty!',
-    position: { bottom: '60%', left: '30%', transform: 'translateX(-50%)' },
-    condition: (sceneState, hintLevel) => {
-      if (!sceneState) return false;
-      return sceneState?.phase === CAVE_PHASES.GROW_ACTIVE &&
-             sceneState?.stonesClicked < 4 &&
-             !showMagicalCard && !isVisible && !showPopupBook;
-    }
-  }
-];
-
-
-
-  // CAVE SCENE RELOAD LOGIC - Add this useEffect to CaveSceneFixed.jsx
-// Place this after your other useEffects, before the handler functions
-
-useEffect(() => {
-  if (!isReload || !sceneState) return;
-
-    // BLOCK reload logic during manual reset
-  if (isManualReset) {
-    console.log('🚫 RELOAD BLOCKED: Manual reset in progress');
-    return;
-  }
- 
-  console.log('🔄 CAVE RELOAD: Starting comprehensive reload sequence', {
-    currentPopup: sceneState.currentPopup,
-    showingCompletionScreen: sceneState.showingCompletionScreen,
-    completed: sceneState.completed,
-    phase: sceneState.phase,
-    door1Completed: sceneState.door1Completed,
-    door2Completed: sceneState.door2Completed,
-    tracingCompleted: sceneState.tracingCompleted,
-    growingCompleted: sceneState.growingCompleted
-  });
-
-  // ✅ ENHANCED: Check for Play Again flag first
-  const profileId = localStorage.getItem('activeProfileId');
-  const playAgainKey = `play_again_${profileId}_${zoneId}_${sceneId}`;
-  const playAgainRequested = localStorage.getItem(playAgainKey);
-  
-  const isFreshRestartAfterPlayAgain = (
-    playAgainRequested === 'true' ||
-    (sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE && 
-     sceneState.completed === false && 
-     sceneState.stars === 0 && 
-     (sceneState.currentPopup === 'final_fireworks' || sceneState.showingCompletionScreen))
-  );
-  
-// ✅ FIX: Check for mid-game reload FIRST
-const hasMidGameProgress = (
-  sceneState.tracingStarted && 
-  !sceneState.completed &&
-  sceneState.currentPathSegment > 0
-);
-
-if (hasMidGameProgress) {
-  console.log('🔄 CAVE: Mid-game reload detected - NOT showing story modal');
-  sceneActions.updateState({ 
-    isReloadingGameCoach: false,
-    phase: CAVE_PHASES.TRACE_ACTIVE  // ✅ Keep at correct phase
-  });
-  return;
-}
-
-if (isFreshRestartAfterPlayAgain) {
-  console.log('🔄 CAVE RELOAD: Detected fresh restart after Play Again - showing story modal');
-  
-  if (playAgainRequested === 'true') {
-    localStorage.removeItem(playAgainKey);
-    console.log('✅ CLEARED: Cave Play Again storage flag');
-  }
-  
-  sceneActions.updateState({ 
-    isReloadingGameCoach: false,
-    showingCompletionScreen: false,
-    currentPopup: null,
-    completed: false,
-    phase: CAVE_PHASES.STORY_INTRO
-  });
-  
-  // ✅ NEW: Trigger story modal
-  setTimeout(() => {
-    setShowStoryModal('vakratunda');
-  }, 200);
-  
-  return;
-}
-
-  // IMMEDIATELY block GameCoach normal flow
-  sceneActions.updateState({ isReloadingGameCoach: true });
- 
-  setTimeout(() => {
-   
-    // 🔥 PRIORITY 1: Handle active symbol discovery states first
-    if (sceneState.symbolDiscoveryState) {
-      console.log('🔄 CAVE: Resuming symbol discovery:', sceneState.symbolDiscoveryState);
-     
-      switch(sceneState.symbolDiscoveryState) {
-        case 'vakratunda_discovering':
-          setPopupBookContent({
-            title: "Vakratunda - The Curved Trunk",
-            symbolImage: vakratundaCard,
-            description: `Vakratunda means "curved trunk", ${profileName}! You traced the curved path like Ganesha's wise trunk. Ganesha's trunk can reach anywhere to help!`
-          });
-          setCurrentSourceElement('tracing-area');
-          setShowPopupBook(true);
-          sceneActions.updateState({
-            currentPopup: 'vakratunda_info',
-            isReloadingGameCoach: false
-          });
-          break;
-         
-        case 'mahakaya_discovering':
-          setPopupBookContent({
-            title: "Mahakaya - The Mighty Form",
-            symbolImage: mahakayaCard,
-            description: `Mahakaya means "mighty form", ${profileName}! You made Ganesha grow from tiny to mighty and golden. Ganesha is strong enough to help with any challenge!`
-          });
-          setCurrentSourceElement('grow-area');
-          setShowPopupBook(true);
-          sceneActions.updateState({
-            currentPopup: 'mahakaya_info',
-            isReloadingGameCoach: false
-          });
-          break;
+      id: 'door2-hint',
+      message: 'Arrange the Sanskrit syllables for Mahakaya!',
+      position: { bottom: '60%', left: '30%', transform: 'translateX(-50%)' },
+      condition: (sceneState) => {
+        if (!sceneState) return false;
+        return sceneState?.phase === CAVE_PHASES.DOOR2_ACTIVE && 
+               !sceneState?.door2Completed &&
+               !showPowerModal;
       }
-      return;
-    }
-   
-    // 🔥 PRIORITY 2: Handle sidebar highlight states
-    else if (sceneState.sidebarHighlightState) {
-      console.log('🔄 CAVE: Resuming sidebar highlight:', sceneState.sidebarHighlightState);
-     
-      setTimeout(() => {
-        const symbolType = sceneState.sidebarHighlightState === 'vakratunda_highlighting' ? 'vakratunda' : 'mahakaya';
-        console.log(`🌟 CAVE: Resuming ${symbolType} celebration after sidebar highlight`);
-        showSanskritCelebration(symbolType);
-      }, 1000);
-     
-      sceneActions.updateState({ isReloadingGameCoach: false });
-      return;
-    }
-
-    // 🔥 PRIORITY 3: Handle explicit popup states
-    else if (sceneState.currentPopup) {
-      console.log('🔄 CAVE: Resuming popup:', sceneState.currentPopup);
-     
-      switch(sceneState.currentPopup) {
-       
-  
-        case 'final_fireworks':
-          // ✅ CHECK: Is this a Play Again reset using storage?
-          const profileId = localStorage.getItem('activeProfileId');
-          const playAgainKey = `play_again_${profileId}_cave-of-secrets_vakratunda-mahakaya`;
-          const playAgainRequested = localStorage.getItem(playAgainKey);
-          
-          if (playAgainRequested === 'true') {
-            console.log('🚫 CAVE FIREWORKS BLOCKED: Play Again was clicked (from storage)');
-            
-            // Clear the flag
-            localStorage.removeItem(playAgainKey);
-            
-            sceneActions.updateState({
-              currentPopup: null,
-              showingCompletionScreen: false,
-              completed: false,
-              phase: CAVE_PHASES.DOOR1_ACTIVE,
-              stars: 0
-            });
-            return;
-          }
-          
-          // ✅ LEGITIMATE: Real fireworks reload
-          console.log('🎆 CAVE: Resuming final fireworks');
-          setShowSparkle('final-fireworks');
-          sceneActions.updateState({
-         
-            phase: CAVE_PHASES.COMPLETE,
-            stars: 8,
-            completed: true,
-            progress: {
-              percentage: 100,
-              starsEarned: 8,
-              completed: true
-            }
-          });
-          
-          setTimeout(() => {
-            setShowSparkle('final-fireworks');
-          }, 500);
-          return;
+    },
+    {
+      id: 'grow-hint',
+      message: 'Click the floating stones to make Ganesha grow!',
+      position: { bottom: '60%', left: '30%', transform: 'translateX(-50%)' },
+      condition: (sceneState) => {
+        if (!sceneState) return false;
+        return sceneState?.phase === CAVE_PHASES.GROW_ACTIVE &&
+               sceneState?.stonesClicked < 4 &&
+               !showPowerModal;
       }
-      return;
     }
+  ];
 
-    // 3.5. HANDLE COMPLETION SCREEN RELOAD
-    if (sceneState.showingCompletionScreen) {
-      // ✅ CHECK: Is this a Play Again reset using storage?
-      const profileId = localStorage.getItem('activeProfileId');
-      const playAgainKey = `play_again_${profileId}_cave-of-secrets_vakratunda-mahakaya`;
-      const playAgainRequested = localStorage.getItem(playAgainKey);
-      
-      if (playAgainRequested === 'true') {
-        console.log('🚫 CAVE COMPLETION BLOCKED: Play Again was clicked');
-        
-        // Clear the flag
-        localStorage.removeItem(playAgainKey);
-        
-        sceneActions.updateState({
-          currentPopup: null,
-          showingCompletionScreen: false,
-          completed: false,
-          phase: CAVE_PHASES.DOOR1_ACTIVE,
-          stars: 0,
-          isReloadingGameCoach: false
-        });
-        return;
-      }
-      
-      // ✅ LEGITIMATE: Real completion screen reload
-      console.log('🔄 CAVE: Resuming completion screen');
-      setShowSceneCompletion(true);
-      return;
-    }
-
-
-
-    // 🔥 PRIORITY 5: Handle mid-game states that need special attention
-
-    // ✅ ADD THIS ENTIRE BLOCK FIRST:
-if (sceneState.phase === CAVE_PHASES.DOOR2_ACTIVE || 
-    sceneState.phase === CAVE_PHASES.GROW_ACTIVE ||
-    sceneState.phase === CAVE_PHASES.GROW_COMPLETE ||
-    sceneState.phase === CAVE_PHASES.MAHAKAYA_LEARNING ||
-    sceneState.phase === CAVE_PHASES.COMPLETE) {
-  console.log('🔄 CAVE: In later phase, skipping tracing reload logic');
-  return;
-}
-
-// 🔍 DEBUG: Add this logging to see what's happening
-console.log('🔍 DOOR 2 RELOAD DEBUG:', {
-  door2Completed: sceneState.door2Completed,
-  growingStarted: sceneState.growingStarted,
-  phase: sceneState.phase,
-  symbolDiscoveryState: sceneState.symbolDiscoveryState,
-  currentPopup: sceneState.currentPopup,
-  currentTime: Date.now()
-});
-
-// ✅ ADD: Handle Door 2 completed but growing not started
-if (sceneState.door2Completed && !sceneState.growingStarted) {
-  console.log('✅ DOOR 2 RELOAD: Condition matched! Starting growing game');
-  sceneActions.updateState({
-    phase: CAVE_PHASES.GROW_ACTIVE,
-    growingStarted: true,
-    ganeshaVisible: true,
-    ganeshaAnimation: 'breathing',
-  });
-  return;
-}
-
-// ✅ ADD THIS ENTIRE BLOCK - Handle incomplete Door 1 completion and tracing start
-else if (sceneState.door1Completed && !sceneState.tracingStarted && 
-         sceneState.phase !== CAVE_PHASES.TRACE_INTRO && 
-         sceneState.phase !== CAVE_PHASES.TRACE_ACTIVE &&
-         !sceneState.symbolDiscoveryState && !sceneState.currentPopup) {
-  console.log('🔄 CAVE: Door 1 completed but tracing not started - resuming tracing intro');
-  sceneActions.updateState({
-    phase: CAVE_PHASES.TRACE_INTRO,
-  });
-  return;
-}
-
-// ✅ ADD THIS ENTIRE BLOCK - Handle mid-tracing resume (THIS IS THE MISSING PIECE!)
-else if (sceneState.tracingStarted && !sceneState.tracingCompleted && 
-         sceneState.traceProgress > 0 && sceneState.traceProgress < 100 &&
-         (sceneState.phase === CAVE_PHASES.TRACE_INTRO || 
-          sceneState.phase === CAVE_PHASES.TRACE_ACTIVE)) {
-  console.log('🔄 CAVE: Resuming mid-tracing with progress:', sceneState.traceProgress);
-  
-  // Ensure we're in the right phase and Ganesha is visible
-  sceneActions.updateState({ 
-    phase: CAVE_PHASES.TRACE_ACTIVE,
-    ganeshaVisible: true,
-    ganeshaAnimation: 'breathing',
-  });
-  return;
-}
-
-// ✅ ADD THIS ENTIRE BLOCK - Handle incomplete tracing completion
-else if (sceneState.tracingCompleted && !sceneState.learnedWords?.vakratunda?.learned &&
-         !sceneState.symbolDiscoveryState && !sceneState.currentPopup) {
-  console.log('🔄 CAVE: Tracing completed but vakratunda discovery not started - triggering discovery');
-  sceneActions.updateState({
-    symbolDiscoveryState: 'vakratunda_discovering',
-    currentPopup: 'vakratunda_info',
-    phase: CAVE_PHASES.VAKRATUNDA_LEARNING,
-  });
-  
-  setPopupBookContent({
-    title: "Vakratunda - The Curved Trunk",
-    symbolImage: vakratundaCard,
-    description: `Vakratunda means "curved trunk", ${profileName}! You traced the curved path like Ganesha's wise trunk. Ganesha's trunk can reach anywhere to help!`
-  });
-  setCurrentSourceElement('tracing-area');
-  setShowPopupBook(true);
-  return;
-}
-
-// ✅ ADD: Handle animated text states in Cave scene
-/*else if (sceneState.showCurvedText || 
-         (sceneState.learnedWords?.vakratunda?.learned && 
-          sceneState.phase === CAVE_PHASES.VAKRATUNDA_LEARNING)) {
-  console.log('🔄 CAVE: Resuming during Vakratunda text animation - skipping to Door 2');
-  sceneActions.updateState({
-    showCurvedText: false, // Clear the text
-    phase: CAVE_PHASES.DOOR2_ACTIVE,
-    isReloadingGameCoach: false
-  });
-  return;
-}
-
-else if (sceneState.showMightyText || 
-         (sceneState.learnedWords?.mahakaya?.learned && 
-          sceneState.phase === CAVE_PHASES.MAHAKAYA_LEARNING)) {
-  console.log('🔄 CAVE: Resuming during Mahakaya text animation - skipping to fireworks');
-  sceneActions.updateState({
-    showMightyText: false, // Clear the text
-    isReloadingGameCoach: false
-  });
-  // Skip to final celebration
-  setTimeout(() => showFinalCelebration(), 500);
-  return;
-}*/
-
-    else {
-      console.log('🔄 CAVE: No special reload needed, clearing flags');
-      setTimeout(() => {
-        sceneActions.updateState({ isReloadingGameCoach: false });
-      }, 1500);
-    }
+  // Reload Logic
+  useEffect(() => {
+    if (!isReload || !sceneState) return;
+    if (isManualReset) return;
    
-  }, 500);
- 
-}, [isReload]);
+    // Check for mid-game reload
+    const hasMidGameProgress = (
+      sceneState.tracingStarted && 
+      !sceneState.completed &&
+      sceneState.currentPathSegment > 0
+    );
 
-  // Door 1 handlers
+    if (hasMidGameProgress) {
+      sceneActions.updateState({ 
+        isReloadingGameCoach: false,
+        phase: CAVE_PHASES.TRACE_ACTIVE
+      });
+      return;
+    }
+
+    if (sceneState.door2Completed && !sceneState.growingStarted) {
+      sceneActions.updateState({
+        phase: CAVE_PHASES.GROW_ACTIVE,
+        growingStarted: true,
+        ganeshaVisible: true,
+        ganeshaAnimation: 'breathing',
+      });
+      return;
+    }
+    
+    // Normal reload state clearing
+    sceneActions.updateState({ isReloadingGameCoach: false });
+  }, [isReload]);
+
+
 const handleDoor1SyllablePlaced = (syllable) => {
   const now = Date.now();
+  if (now - lastClickTime.current < 300) return;
+  if (sceneState.phase !== CAVE_PHASES.DOOR1_ACTIVE) return;
+  if (sceneState.door1Completed) return;
+  if (showPowerModal || showRescueModal || showCenteredSymbol) return; // ✅ No showDoor1Modal here
   
-  // ========== 🛡️ DOOR PROTECTION ==========
-  // Cooldown between syllables
-  if (now - lastClickTime.current < 300) {
-    console.log('🚫 DOOR 1 BLOCKED: Too fast!');
-    return;
-  }
-  
-  // Check phase
-  if (sceneState.phase !== CAVE_PHASES.DOOR1_ACTIVE) {
-    console.log('🚫 DOOR 1 BLOCKED: Wrong phase!');
-    return;
-  }
-  
-  // Check if door already completed
-  if (sceneState.door1Completed) {
-    console.log('🚫 DOOR 1 BLOCKED: Already completed!');
-    return;
-  }
-  
-  // Check modals
-  if (showPowerModal || showRescueModal || showStoryModal || showCenteredSymbol) {
-    console.log('🚫 DOOR 1 BLOCKED: Modal open!');
-    return;
-  }
-  
-  // ✅ APPROVED
   lastClickTime.current = now;
-  hideActiveHints();
-  
-  console.log(`Door 1 syllable placed: ${syllable}`);
   
   const expectedSyllable = sceneState.door1Syllables?.[sceneState.door1CurrentStep || 0] || 'Va';
   const isCorrect = syllable === expectedSyllable;
@@ -1010,646 +541,229 @@ const handleDoor1SyllablePlaced = (syllable) => {
     const newStep = (sceneState.door1CurrentStep || 0) + 1;
     const newSyllablesPlaced = [...(sceneState.door1SyllablesPlaced || []), syllable];
     
-    console.log(`✅ Correct! Step ${newStep-1} -> ${newStep}`);
-    
     sceneActions.updateState({
       door1SyllablesPlaced: newSyllablesPlaced,
       door1CurrentStep: newStep
     });
     
-    if (newStep >= 4) {
-      setTimeout(() => {
-        handleDoor1Complete();
-      }, 1000);
-    }
-  } else {
-    console.log(`❌ Wrong! Expected "${expectedSyllable}", got "${syllable}"`);
+    // ✅ NO modal trigger - DoorComponent handles everything!
   }
 };
 
 const handleDoor1Complete = () => {
-  console.log('🚪 Door 1 completed - starting game IMMEDIATELY!');
+  console.log('🚪 Door 1 complete - starting tracing game!');
   
-  // ✅ FIX: Start game immediately with all states set at once
+  // Start game
   sceneActions.updateState({
     door1Completed: true,
-    phase: CAVE_PHASES.TRACE_ACTIVE,  // ← Skip INTRO, go directly to ACTIVE
-    tracingStarted: true,              // ← Set this immediately
+    phase: CAVE_PHASES.TRACE_ACTIVE,
+    tracingStarted: true,
     currentPathSegment: 0,
     ganeshaVisible: true,
     ganeshaAnimation: 'breathing'
   });
   
-  // Show sparkles (doesn't block game)
   setShowSparkle('door1-completing');
   setTimeout(() => setShowSparkle(null), 3000);
 };
 
-const handleDoor2SyllablePlaced = (syllable) => {
-  const now = Date.now();
-  
-  // ========== 🛡️ DOOR PROTECTION ==========
-  if (now - lastClickTime.current < 300) {
-    console.log('🚫 DOOR 2 BLOCKED: Too fast!');
-    return;
-  }
-  
-  if (sceneState.phase !== CAVE_PHASES.DOOR2_ACTIVE) {
-    console.log('🚫 DOOR 2 BLOCKED: Wrong phase!');
-    return;
-  }
-  
-  if (sceneState.door2Completed) {
-    console.log('🚫 DOOR 2 BLOCKED: Already completed!');
-    return;
-  }
-  
-  if (showPowerModal || showRescueModal || showStoryModal || showCenteredSymbol) {
-    console.log('🚫 DOOR 2 BLOCKED: Modal open!');
-    return;
-  }
-  
-  // ✅ APPROVED
-  lastClickTime.current = now;
-  hideActiveHints();
-  
-  console.log(`Door 2 syllable placed: ${syllable}`);
-  
-  const expectedSyllable = sceneState.door2Syllables?.[sceneState.door2CurrentStep || 0] || 'Ma';
-  const isCorrect = syllable === expectedSyllable;
-  
-  if (isCorrect) {
-    const newStep = (sceneState.door2CurrentStep || 0) + 1;
-    const newSyllablesPlaced = [...(sceneState.door2SyllablesPlaced || []), syllable];
+  const handleDoor2SyllablePlaced = (syllable) => {
+    const now = Date.now();
+    if (now - lastClickTime.current < 300) return;
+    if (sceneState.phase !== CAVE_PHASES.DOOR2_ACTIVE) return;
+    if (sceneState.door2Completed) return;
+    if (showPowerModal || showRescueModal || showCenteredSymbol) return;
     
-    sceneActions.updateState({
-      door2SyllablesPlaced: newSyllablesPlaced,
-      door2CurrentStep: newStep
-    });
+    lastClickTime.current = now;
     
-    if (newStep >= 4) {
-      setTimeout(() => {
-        handleDoor2Complete();
-      }, 1000);
+    const expectedSyllable = sceneState.door2Syllables?.[sceneState.door2CurrentStep || 0] || 'Ma';
+    const isCorrect = syllable === expectedSyllable;
+    
+    if (isCorrect) {
+      const newStep = (sceneState.door2CurrentStep || 0) + 1;
+      const newSyllablesPlaced = [...(sceneState.door2SyllablesPlaced || []), syllable];
+      
+      sceneActions.updateState({
+        door2SyllablesPlaced: newSyllablesPlaced,
+        door2CurrentStep: newStep
+      });
     }
-  } else {
-    console.log(`❌ Wrong!`);
-  }
-};
-
-const handleDoor2Complete = () => {
-  console.log('🚪 Door 2 completed - starting sparkle fade!');
-  
-  // ✅ STEP 1: Add sparkles immediately
-  setShowSparkle('door2-completing');
-  
-  // ✅ STEP 2: Add fade class to door
-  const doorElement = document.querySelector('.mahakaya-door .door-container');
-  if (doorElement) {
-    doorElement.classList.add('completing');
-  }
-  
-  // ✅ STEP 3: Mark as completed but DON'T change phase yet
-  sceneActions.updateState({
-    door2Completed: true
-    // ✅ REMOVED: Don't change phase here!
-  });
-  
- // ✅ STEP 4: Start game IMMEDIATELY, clear sparkles later
-sceneActions.updateState({
-  phase: CAVE_PHASES.GROW_ACTIVE,
-  growingStarted: true
-});
-
-// Clear sparkles after they finish, but game already running
-setTimeout(() => {
-  setShowSparkle(null);
-}, 3000);
-};
-
-const handleStartTracing = () => {
-  console.log('🐘 Starting trunk tracing game!');
-  
-  sceneActions.updateState({
-    tracingStarted: true,
-    phase: CAVE_PHASES.TRACE_ACTIVE,
-    traceProgress: 0,
-    canResumeTracing: false,
-    // ✅ ADD: Initialize tracking arrays
-    tracedPoints: [],
-    currentPathSegment: 0,
-    segmentsCompleted: [],
-    ganeshaVisible: true,
-    ganeshaAnimation: 'breathing'
-  });
-};
-
-const handleTraceProgress = (progress, position) => {
-  sceneActions.updateState({
-    traceProgress: progress,
-    trunkPosition: position
-  });
-  
-  if (progress >= 95) {
-    completeTracing();
-  }
-};
-
-const completeTracing = () => {
-  console.log('🌟 Tracing completed - starting Vakratunda celebration!');
-  
-  sceneActions.updateState({
-    tracingCompleted: true,
-    phase: CAVE_PHASES.TRACE_COMPLETE
-  });
-
-  // ✅ IMMEDIATE: Start symbol celebration (no delay)
-  safeSetTimeout(() => {
-    completeSymbolLearning('vakratunda');
-  }, 500);  // ✅ Much shorter delay
-};
-
-const handleStartGrowing = () => {
-  console.log('🌱 Starting growing Ganesha game!');
-  
-  sceneActions.updateState({
-    growingStarted: true,
-    phase: CAVE_PHASES.GROW_ACTIVE,
-      ganeshaVisible: true,  // ✅ ADD THIS LINE!
-    ganeshaAnimation: 'breathing'  // ✅ ADD THIS LINE!
-  });
-
-};
-
-
-const handleStoneClick = (stoneId) => {
-  const now = Date.now();
-  
-  // ========== 🛡️ PROTECTION LAYER 1: COOLDOWN ==========
-  // Prevents rapid clicking (kid mashing screen)
-  if (now - lastClickTime.current < 400) {
-    console.log('🚫 BLOCKED: Click too fast! Wait 400ms between clicks');
-    return;
-  }
-  
-  // ========== 🛡️ PROTECTION LAYER 2: ANIMATION LOCK ==========
-  // Prevents clicks during sparkle animations
-  if (clickLocked) {
-    console.log('🚫 BLOCKED: Animation playing, clicks locked!');
-    return;
-  }
-  
-  // ========== 🛡️ PROTECTION LAYER 3: RACE CONDITION ==========
-  // Prevents simultaneous processing (multi-touch on iPad)
-  if (isProcessingClick.current) {
-    console.log('🚫 BLOCKED: Already processing another click!');
-    return;
-  }
-  
-  // ========== 🛡️ PROTECTION LAYER 4: PHASE VALIDATION ==========
-  // Only allow clicks during growing phase
-  if (sceneState.phase !== CAVE_PHASES.GROW_ACTIVE) {
-    console.log('🚫 BLOCKED: Not in growing phase!');
-    return;
-  }
-  
-  // ========== 🛡️ PROTECTION LAYER 5: ALREADY CLICKED ==========
-  // Prevent clicking same stone twice
-  const stone = sceneState.floatingStones.find(s => s.id === stoneId);
-  if (!stone || stone.clicked) {
-    console.log('🚫 BLOCKED: Stone already clicked or not found!');
-    return;
-  }
-  
-  // ========== 🛡️ PROTECTION LAYER 6: MODAL CHECK ==========
-  // Prevent clicks when any modal is open
-  if (showPowerModal || showRescueModal || showStoryModal || showCenteredSymbol) {
-    console.log('🚫 BLOCKED: Modal is open!');
-    return;
-  }
-  
-  // ========== ✅ ALL CHECKS PASSED - PROCESS CLICK ==========
-  console.log(`✅ Stone ${stoneId} click APPROVED!`);
-  
-  // Record this click
-  lastClickTime.current = now;
-  setClickLocked(true);
-  isProcessingClick.current = true;
-  
-  hideActiveHints();
-  
-  const updatedStones = sceneState.floatingStones.map(s => 
-    s.id === stoneId ? { ...s, clicked: true } : s
-  );
-  
-  const newStonesClicked = sceneState.stonesClicked + 1;
-  const scalingSizes = [1.1, 1.5, 2.0, 3.2];
-  const glowSizes = [0.3, 0.6, 1.0, 1.5];
-  
-  const newSize = scalingSizes[newStonesClicked - 1] || 0.8;
-  const newGlow = glowSizes[newStonesClicked - 1] || 0.2;
-  
-  sceneActions.updateState({
-    floatingStones: updatedStones,
-    stonesClicked: newStonesClicked,
-    ganeshaSize: newSize,
-    ganeshaGlow: newGlow,
-    ganeshaAnimation: 'growing',
-  });
-  
-  setShowSparkle(`stone-${stoneId}-clicked`);
-  
-  // ========== 🔓 UNLOCK AFTER ANIMATION ==========
-  setTimeout(() => {
-    setShowSparkle(null);
-    setClickLocked(false);
-    isProcessingClick.current = false;
-    console.log('🔓 Click protection released');
-  }, 1000);
-  
-  if (newStonesClicked >= 4) {
-    safeSetTimeout(() => {
-      completeGrowing();
-    }, 2000);
-  }
-};
-
-const completeGrowing = () => {
-  console.log('🗿 Growing completed - starting Mahakaya celebration!');
-  
-  sceneActions.updateState({
-    growingCompleted: true,
-    phase: CAVE_PHASES.GROW_COMPLETE
-  });
-
-  // ✅ IMMEDIATE: Start symbol celebration (no delay)
-  safeSetTimeout(() => {
-    completeSymbolLearning('mahakaya');
-  }, 500);  // ✅ Much shorter delay
-};
-
-// ADD NEW FUNCTION - Symbol Learning Flow with 5 second celebration
-const completeSymbolLearning = (symbolKey) => {
-  console.log(`${symbolKey} symbol learned - FULL CELEBRATION`);
-  
-  // Step 1: Show big centered symbol + text (5 seconds)
-  setShowCenteredSymbol(symbolKey);
-  
-  setTimeout(() => {
-    // Step 2: Hide centered, start fly animation to sidebar
-    setShowCenteredSymbol(null);
-    setShowSparkle(`${symbolKey}-to-sidebar`);
-    
-    // ✅ UPDATE: Mark symbol as learned
-    sceneActions.updateState({
-      learnedWords: {
-        ...sceneState.learnedWords,
-        [symbolKey]: { learned: true, scene: 1 }
-      }
-    });
-    
-    setTimeout(() => {
-      // Step 3: Symbol in sidebar, show power modal
-      setShowSparkle(null);
-      setCurrentMissionSymbol(symbolKey);
-      setShowPowerModal(true);
-    }, 2000);
-  }, 5000);
-};
-
-// ADD NEW HANDLERS - Power Modal Actions
-const handleSaveAnimal = () => {
-  setShowPowerModal(false);
-  setCurrentRescueWord(currentMissionSymbol);
-  setShowRescueModal(true);
-};
-
-const handleContinueLearning = () => {
-  setShowPowerModal(false);
-  
-  if (currentMissionSymbol === 'vakratunda') {
-    // Show second story modal before Door 2
-    setShowStoryModal('mahakaya');
-  } else if (currentMissionSymbol === 'mahakaya') {
-    // Go to final celebration
-    setTimeout(() => showFinalCelebration(), 500);
-  }
-};
-
-// Helper function for button text
-const getNextDiscoveryText = (currentSymbol) => {
-  const nextActions = {
-    vakratunda: '🚪 Discover Mahakaya',
-    mahakaya: '✨ Complete Cave'
-  };
-  return nextActions[currentSymbol] || '➡️ Continue';
-};
-
-const handleRescueComplete = (success) => {
-  if (!success) return;
-  
-  setShowRescueModal(false);
-  
-  if (currentRescueWord === 'vakratunda') {
-    setTimeout(() => {
-      setShowStoryModal('mahakaya');  // ✅ Show second story modal
-    }, 500);
-  } else if (currentRescueWord === 'mahakaya') {
-    setTimeout(() => {
-      showFinalCelebration();
-    }, 500);
-  }
-  
-  setCurrentRescueWord(null);
-};
-
-const startMahakayaLearning = () => {
-  console.log('📜 Mahakaya learned - updating sidebar only');
-  
-  // Show brief sparkle effect
-  setShowSparkle('mahakaya-to-sidebar');
-  
-  // Update learned words (sidebar will highlight automatically)
-  sceneActions.updateState({
-    learnedWords: {
-      ...sceneState.learnedWords,
-      mahakaya: { learned: true, scene: 1 }
-    },
-    phase: CAVE_PHASES.MAHAKAYA_LEARNING
-  });
-
-  // Auto-transition to final celebration
-  setTimeout(() => {
-    setShowSparkle(null);
-    showFinalCelebration();
-  }, 3000);
-};
-
-const completeVakratundaLearning = () => {
-  console.log('📜 Vakratunda learned - updating sidebar only');
-  
-  // Show brief sparkle effect
-  setShowSparkle('vakratunda-to-sidebar');
-  
-  // Update learned words (sidebar will highlight automatically)
-  sceneActions.updateState({
-    learnedWords: {
-      ...sceneState.learnedWords,
-      vakratunda: { learned: true, scene: 1 }
-    },
-    phase: CAVE_PHASES.VAKRATUNDA_LEARNING
-  });
-
-  // Auto-transition to Door 2 after brief celebration
-  setTimeout(() => {
-    setShowSparkle(null);
-    sceneActions.updateState({
-      phase: CAVE_PHASES.DOOR2_ACTIVE
-    });
-  }, 3000);
-};
-
-  // SIMPLE CAVE GAMES
-
-  // Simple Game 1: Click the crystal to learn Vakratunda
-  /*const handleCrystalClick = () => {
-    console.log('💎 Crystal clicked - starting Vakratunda learning!');
-    hideActiveHints();
-    
-    // Show sparkle effect
-    setShowSparkle('crystal-clicked');
-    setTimeout(() => setShowSparkle(null), 1500);
-    
-    sceneActions.updateState({
-      door1Completed: true,
-      phase: CAVE_PHASES.DOOR1_COMPLETE,
-      symbolDiscoveryState: 'vakratunda_discovering',
-      currentPopup: 'vakratunda_info'
-    });
-
-    setPopupBookContent({
-      title: "Vakratunda - The Curved Trunk",
-      symbolImage: vakratundaCard,
-      description: `Vakratunda means "curved trunk", ${profileName}! You clicked the magical crystal and discovered Ganesha's wise curved trunk that can reach anywhere to help!`
-    });
-
-    setCurrentSourceElement('crystal-area');
-    
-    // Delay showing popup to let sparkle play
-    setTimeout(() => {
-      setShowPopupBook(true);
-    }, 1000);
   };
 
-  // Simple Game 2: Click the golden stone to learn Mahakaya
-  const handleStoneClick = () => {
-    console.log('🪨 Golden stone clicked - starting Mahakaya learning!');
-    hideActiveHints();
+  const handleDoor2Complete = () => {
+    console.log('🚪 Door 2 completed!');
     
-    // Show sparkle effect
-    setShowSparkle('stone-clicked');
-    setTimeout(() => setShowSparkle(null), 1500);
+    setShowSparkle('door2-completing');
+    
+    const doorElement = document.querySelector('.mahakaya-door .door-container');
+    if (doorElement) {
+      doorElement.classList.add('completing');
+    }
     
     sceneActions.updateState({
       door2Completed: true,
-      phase: CAVE_PHASES.DOOR2_COMPLETE,
-      symbolDiscoveryState: 'mahakaya_discovering',
-      currentPopup: 'mahakaya_info'
+      phase: CAVE_PHASES.GROW_ACTIVE,
+      growingStarted: true
     });
 
-    setPopupBookContent({
-      title: "Mahakaya - The Mighty Form",
-      symbolImage: mahakayaCard,
-      description: `Mahakaya means "mighty form", ${profileName}! You clicked the golden stone and discovered Ganesha's mighty powerful presence that gives strength!`
-    });
-
-    setCurrentSourceElement('stone-area');
-    
-    // Delay showing popup to let sparkle play
     setTimeout(() => {
-      setShowPopupBook(true);
-    }, 1000);
-  };*/
+      setShowSparkle(null);
+    }, 3000);
+  };
 
-  // Symbol info close handler (PROVEN FROM POND)
- const handleSymbolInfoClose = () => {
-  console.log('🔍 Closing Sanskrit learning popup');
-  setShowPopupBook(false);
-  setPopupBookContent({});
-  setCurrentSourceElement(null);
-  sceneActions.updateState({ currentPopup: null });
-
-  // ❌ COMMENT OUT ALL THIS CELEBRATION LOGIC:
-  /*
-  if (popupBookContent.title?.includes("Sacred Lotus") || popupBookContent.title?.includes("Vakratunda")) {
-    console.log('📜 Lotus info closed - highlighting sidebar first');
+  const completeTracing = () => {
+    console.log('🌟 Tracing completed!');
     
     sceneActions.updateState({
-      discoveredSymbols: {
-        ...sceneState.learnedWords,
-        vakratunda: { learned: true, scene: 1 }
-      },
-      learnedWords: {
-        ...sceneState.learnedWords,
-        vakratunda: { learned: true, scene: 1 }
-      },
-      symbolDiscoveryState: null,
-      sidebarHighlightState: 'vakratunda_highlighting',
+      tracingCompleted: true,
+      phase: CAVE_PHASES.TRACE_COMPLETE
     });
 
     safeSetTimeout(() => {
-      console.log('🎉 Showing vakratunda celebration after sidebar highlight');
-      showSanskritCelebration('vakratunda');
-    }, 1000);
-
-  } else if (popupBookContent.title?.includes("Sacred Elephant") || popupBookContent.title?.includes("Mahakaya")) {
-    console.log('📜 Elephant info closed - highlighting sidebar first');
-    
-    sceneActions.updateState({
-      discoveredSymbols: {
-        ...sceneState.learnedWords,
-        mahakaya: { learned: true, scene: 1 }
-      },
-      learnedWords: {
-        ...sceneState.learnedWords,
-        mahakaya: { learned: true, scene: 1 }
-      },
-      symbolDiscoveryState: null,
-      sidebarHighlightState: 'mahakaya_highlighting'
-    });
-
-    safeSetTimeout(() => {
-      console.log('🎉 Showing mahakaya celebration after sidebar highlight');
-      showSanskritCelebration('mahakaya');
-    }, 1000);
-  }
-  */
-};
-
-// ❌ COMMENT OUT THIS ENTIRE FUNCTION:
-/*
-const showSanskritCelebration = (word) => {
-  let title = "";
-  let image = null;
-  let stars = 0;
-
-  console.log(`🎉 Showing Sanskrit celebration for: ${word}`);
-
-  if (sceneState?.isReloadingGameCoach) {
-    console.log('🚫 Skipping celebration during reload');
-    return;
-  }
-
-  switch(word) {
-    case 'vakratunda':
-      title = `You've learned Vakratunda, ${profileName}!`;
-      image = vakratundaCard;
-      stars = 3;
-      
-      sceneActions.updateState({
-        symbolDiscoveryState: null,
-        sidebarHighlightState: null,
-        currentPopup: 'vakratunda_card'
-      });
-      
-      setCardContent({ title, image, stars });
-      setShowMagicalCard(true);
-      break;
-
-    case 'mahakaya':
-      title = `You've learned Mahakaya, ${profileName}!`;
-      image = mahakayaCard;
-      stars = 3;
-      
-      sceneActions.updateState({
-        symbolDiscoveryState: null,
-        sidebarHighlightState: null,
-        currentPopup: 'mahakaya_card'
-      });
-      
-      setCardContent({ title, image, stars });
-      setShowMagicalCard(true);
-      break;
-  }
-};
-*/
-
-// ❌ COMMENT OUT THIS ENTIRE FUNCTION:
-/*
-const handleCloseCard = () => {
-  setShowMagicalCard(false);
-  sceneActions.updateState({ currentPopup: null });
-
-  if (cardContent.title?.includes("Lotus Symbol") || cardContent.title?.includes("Vakratunda")) {
-    console.log('📜 Lotus card closed - triggering GameCoach wisdom');
-    
-    setTimeout(() => {
-      sceneActions.updateState({
-        readyForWisdom: true,
-        gameCoachState: 'vakratunda_wisdom'
-      });
+      completeSymbolLearning('vakratunda');
     }, 500);
+  };
 
-  } else if (cardContent.title?.includes("Trunk Symbol") || cardContent.title?.includes("Mahakaya")) {
-    console.log('📜 Trunk card closed - triggering final GameCoach wisdom');
+  const handleStoneClick = (stoneId) => {
+    const stone = sceneState.floatingStones.find(s => s.id === stoneId);
+    if (!stone || stone.clicked) return;
     
-    setTimeout(() => {
-      sceneActions.updateState({
-        readyForWisdom: true,
-        gameCoachState: 'mahakaya_wisdom'
-      });
-    }, 500);
-  }
-};
-*/
-
-const showFinalCelebration = () => {
-  console.log('🎊 Starting final cave celebration');
-  
-  setShowMagicalCard(false);
-  setShowPopupBook(false);
-  setShowSparkle(null);
-  setCardContent({});
-  setPopupBookContent({});
-
-  // ✅ ENHANCED: Hide Sanskrit Sidebar during ALL completion phases
-  const sidebarElement = document.querySelector('.sanskrit-sidebar');
-  if (sidebarElement) {
-    sidebarElement.style.opacity = '0';
-    sidebarElement.style.pointerEvents = 'none';
-    sidebarElement.style.transition = 'opacity 0.5s ease';
-  }
-
-  sceneActions.updateState({
-    showingCompletionScreen: true,
-    currentPopup: 'final_fireworks',
-    phase: CAVE_PHASES.COMPLETE,
-    stars: 8,
-    completed: true,
-    progress: {
-      percentage: 100,
-      starsEarned: 8,
-      completed: true
+    if (progressiveHintRef.current?.hideHint) {
+      progressiveHintRef.current.hideHint();
     }
-  });
+    
+    const updatedStones = sceneState.floatingStones.map(s => 
+      s.id === stoneId ? { ...s, clicked: true } : s
+    );
+    
+    const newStonesClicked = sceneState.stonesClicked + 1;
+    const scalingSizes = [1.1, 1.5, 2.0, 3.2];
+    const glowSizes = [0.3, 0.6, 1.0, 1.5];
+    
+    sceneActions.updateState({
+      floatingStones: updatedStones,
+      stonesClicked: newStonesClicked,
+      ganeshaSize: scalingSizes[newStonesClicked - 1] || 0.8,
+      ganeshaGlow: glowSizes[newStonesClicked - 1] || 0.2,
+      ganeshaAnimation: 'growing',
+    });
+    
+    setShowSparkle(`stone-${stoneId}-clicked`);
+    
+    setTimeout(() => {
+      setShowSparkle(null);
+    }, 800);
+    
+    if (newStonesClicked >= 4) {
+      setTimeout(() => {
+        completeGrowing();
+      }, 1500);
+    }
+  };
 
-  setShowSparkle('final-fireworks');
-};
+  const completeGrowing = () => {
+    console.log('🗿 Growing completed!');
+    
+    sceneActions.updateState({
+      growingCompleted: true,
+      phase: CAVE_PHASES.GROW_COMPLETE
+    });
+
+    safeSetTimeout(() => {
+      completeSymbolLearning('mahakaya');
+    }, 500);
+  };
+
+  // Symbol Learning Flow
+  const completeSymbolLearning = (symbolKey) => {
+    console.log(`${symbolKey} symbol learned`);
+    
+    setShowCenteredSymbol(symbolKey);
+    
+    setTimeout(() => {
+      setShowCenteredSymbol(null);
+      setShowSparkle(`${symbolKey}-to-sidebar`);
+      
+      sceneActions.updateState({
+        learnedWords: {
+          ...sceneState.learnedWords,
+          [symbolKey]: { learned: true, scene: 1 }
+        }
+      });
+      
+      setTimeout(() => {
+        setShowSparkle(null);
+        setCurrentMissionSymbol(symbolKey);
+        setShowPowerModal(true);
+      }, 2000);
+    }, 5000);
+  };
+
+  // Power Modal Handlers
+  const handleSaveAnimal = () => {
+    setShowPowerModal(false);
+    setCurrentRescueWord(currentMissionSymbol);
+    setShowRescueModal(true);
+  };
+
+  const handleContinueLearning = () => {
+    setShowPowerModal(false);
+    
+    if (currentMissionSymbol === 'vakratunda') {
+      // Direct transition to Door 2
+      sceneActions.updateState({
+        phase: CAVE_PHASES.DOOR2_ACTIVE
+      });
+    } else if (currentMissionSymbol === 'mahakaya') {
+      // Finish scene
+      setTimeout(() => showFinalCelebration(), 500);
+    }
+  };
+
+  const handleRescueComplete = (success) => {
+    if (!success) return;
+    
+    setShowRescueModal(false);
+    
+    if (currentRescueWord === 'vakratunda') {
+      setTimeout(() => {
+        sceneActions.updateState({
+          phase: CAVE_PHASES.DOOR2_ACTIVE
+        });
+      }, 500);
+    } else if (currentRescueWord === 'mahakaya') {
+      setTimeout(() => {
+        showFinalCelebration();
+      }, 500);
+    }
+    
+    setCurrentRescueWord(null);
+  };
+
+  const showFinalCelebration = () => {
+    console.log('🎊 Final celebration');
+    
+    setShowSparkle('final-fireworks');
+    
+    sceneActions.updateState({
+      showingCompletionScreen: true,
+      currentPopup: 'final_fireworks',
+      phase: CAVE_PHASES.COMPLETE,
+      stars: 8,
+      completed: true,
+      progress: {
+        percentage: 100,
+        starsEarned: 8,
+        completed: true
+      }
+    });
+  };
 
   // Hide active hints
   const hideActiveHints = () => {
-    if (progressiveHintRef.current && typeof progressiveHintRef.current.hideHint === 'function') {
+    if (progressiveHintRef.current?.hideHint) {
       progressiveHintRef.current.hideHint();
     }
-  };
-
-  const handleHintShown = (level) => {
-    console.log(`Cave hint level ${level} shown`);
-    setHintUsed(true);
-  };
-
-  const handleHintButtonClick = () => {
-    console.log("Cave hint button clicked");
   };
 
   if (!sceneState) {
@@ -1658,1361 +772,547 @@ const showFinalCelebration = () => {
 
   return (
     <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
-      <MessageManager
-        messages={[]}
-        sceneState={sceneState}
-        sceneActions={sceneActions}
-      >
-        <div className="pond-scene-container" data-phase={sceneState.phase}>  {/* USING PROVEN POND CSS CLASSES */}
+      <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
+        <div className="pond-scene-container" data-phase={sceneState.phase}>
           <div className="pond-background" style={{ backgroundImage: `url(${caveBackground})` }}>
 
-{/* Phase Headers - Always Visible */}
-{!showPowerModal && !showRescueModal && !showCenteredSymbol && !showStoryModal && ( <>
-    {/* Door 1 Active */}
-    {sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE && 
-     !sceneState.door1Completed && (
-      <div className="phase-header">
-        🔱 SPELL VAKRATUNDA! Drag the syllables in order!
-      </div>
-    )}
-    
-    {/* Tracing Game 
-    {(sceneState.phase === CAVE_PHASES.TRACE_INTRO || 
-      sceneState.phase === CAVE_PHASES.TRACE_ACTIVE) && 
-     !sceneState.tracingCompleted && (
-      <div className="phase-header">
-        🐭 TRACE THE CURVED TRUNK! Follow the path!
-      </div>
-    )}
-    
-    {/* Door 2 Active */}
-    {sceneState.phase === CAVE_PHASES.DOOR2_ACTIVE && 
-     !sceneState.door2Completed && (
-      <div className="phase-header">
-        🔱 SPELL MAHAKAYA! Arrange the syllables!
-      </div>
-    )}
-    
-    {/* Growing Ganesha Game */}
-    {sceneState.phase === CAVE_PHASES.GROW_ACTIVE && 
-     sceneState.stonesClicked < 4 && (
-      <div className="phase-header">
-        💎 CLICK THE SACRED STONES! Make Ganesha mighty!
-      </div>
-    )}
-  </>
-)}       
-            {/* Divine light for GameCoach 
-            {showSparkle === 'divine-light' && (
+            {/* OPENING INSTRUCTION SCREEN */}
+            {sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE && !sceneState.welcomeShown && (
+              <div className="cave-instructions-overlay">
+                {/* Sparkles */}
+                <div className="cave-sparkles">
+                  <div className="cave-sparkle"></div>
+                  <div className="cave-sparkle"></div>
+                  <div className="cave-sparkle"></div>
+                  <div className="cave-sparkle"></div>
+                </div>
+
+                <div className="cave-instructions-content">
+                  {/* Character - Left Side */}
+                  <div className="cave-instructions-ganesha">
+                    <img 
+                      src={ganeshaCharacterCave} 
+                      alt="Ganesha Character"
+                      style={{maxWidth: '450px'}}
+                    />
+                  </div>
+                  
+                  {/* Instruction Card - Right Side */}
+                  <div className="cave-instructions-card">
+                    <h1 className="cave-instructions-title">
+                      Unlock the Cave of Secrets!
+                    </h1>
+                    
+                    <p className="cave-instructions-subtitle">
+                      2 sacred Sanskrit chants are hidden here!
+                    </p>
+                    
+                    {/* Icons showing what to find */}
+                    <div className="cave-instructions-icons">
+                      <div className="cave-instruction-icon-item">
+                        <img src={vakratundaSymbol} alt="Vakratunda" />
+                        <span className="cave-instruction-icon-label">Curved Trunk</span>
+                      </div>
+                      <div className="cave-instruction-icon-item">
+                        <img src={mahakayaSymbol} alt="Mahakaya" />
+                        <span className="cave-instruction-icon-label">Great Body</span>
+                      </div>
+                    </div>
+                    
+                    <button
+                      className="cave-instructions-button"
+                      onClick={() => {
+                        sceneActions.updateState({ welcomeShown: true });
+                      }}
+                    >
+                      Enter the Cave
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Phase Headers - Always Visible */}
+            {!showPowerModal && !showRescueModal && !showCenteredSymbol && sceneState.welcomeShown && (
+              <>
+                {sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE && !sceneState.door1Completed && (
+                  <div className="phase-header">
+                    🔱 SPELL VAKRATUNDA! Drag the syllables in order!
+                  </div>
+                )}
+                
+                {sceneState.phase === CAVE_PHASES.TRACE_ACTIVE && !sceneState.tracingCompleted && (
+                  <div className="phase-header">
+                    🐭 TRACE THE CURVED TRUNK! Follow the path!
+                  </div>
+                )}
+                
+                {sceneState.phase === CAVE_PHASES.DOOR2_ACTIVE && !sceneState.door2Completed && (
+                  <div className="phase-header">
+                    🔱 SPELL MAHAKAYA! Arrange the syllables!
+                  </div>
+                )}
+                
+                {sceneState.phase === CAVE_PHASES.GROW_ACTIVE && sceneState.stonesClicked < 4 && (
+                  <div className="phase-header">
+                    💎 CLICK THE SACRED STONES! Make Ganesha mighty!
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Vakratunda to Sidebar Effect */}
+            {showSparkle === 'vakratunda-to-sidebar' && (
               <div style={{
-                position: 'fixed',
-                top: '20px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: '400px',
+                position: 'absolute',
+                top: '30%',
+                left: '30%',
+                width: '300px',
                 height: '200px',
-                zIndex: 199,
+                zIndex: 15,
                 pointerEvents: 'none'
               }}>
                 <SparkleAnimation
-                  type="glitter"
-                  count={80}
-                  color="#FFD700" 
-                  size={3}
-                  duration={2000}
+                  type="stream"
+                  count={20}
+                  color="#FFD700"
+                  size={10}
+                  duration={3000}
                   fadeOut={true}
                   area="full"
                 />
               </div>
             )}
 
-            {/* ✨ NEW: Vakratunda to Sidebar Effect */}
-{showSparkle === 'vakratunda-to-sidebar' && (
-  <div style={{
-    position: 'absolute',
-    top: '30%',
-    left: '30%',
-    width: '300px',
-    height: '200px',
-    zIndex: 15,
-    pointerEvents: 'none'
-  }}>
-    <SparkleAnimation
-      type="stream"
-      count={20}
-      color="#FFD700"
-      size={10}
-      duration={3000}
-      fadeOut={true}
-      area="full"
-    />
-
-  </div>
-)}
-
-{/* ✨ NEW: Mahakaya to Sidebar Effect */}
-{showSparkle === 'mahakaya-to-sidebar' && (
-  <div style={{
-    position: 'absolute',
-    top: '30%',
-    right: '30%',
-    width: '300px',
-    height: '200px',
-    zIndex: 15,
-    pointerEvents: 'none'
-  }}>
-    <SparkleAnimation
-      type="stream"
-      count={20}
-      color="#FF8C42"
-      size={10}
-      duration={3000}
-      fadeOut={true}
-      area="full"
-    />
-
-  </div>
-)}
-
-
-{/* Start Growing Test Button 
-<div style={{
-  position: 'fixed',
-  top: '320px',
-  left: '20px',
-  zIndex: 9999,
-  background: '#9B59B6',
-  color: 'white',
-  padding: '8px 12px',
-  borderRadius: '5px',
-  cursor: 'pointer',
-  fontSize: '12px',
-  fontWeight: 'bold'
-}} onClick={() => {
-  console.log('🌱 GROW TEST - Starting growing game');
-  
-  sceneActions.updateState({
-    phase: CAVE_PHASES.GROW_ACTIVE,
-    growingStarted: true,
-    growingCompleted: false,
-    stonesClicked: 0,
-    ganeshaSize: 0.8,
-    ganeshaGlow: 0.2
-  });
-}}>
-  🌱 START GROW
-</div>
-
-{/* Debug Tracing State 
-<div style={{
-  position: 'fixed',
-  top: '120px',
-  left: '20px',
-  background: 'rgba(0,255,255,0.8)',
-  color: 'black',
-  padding: '10px',
-  borderRadius: '5px',
-  fontSize: '12px',
-  zIndex: 9999
-}}>
-  <div><strong>Tracing Debug:</strong></div>
-  <div>Progress: {sceneState.traceProgress || 0}%</div>
-  <div>Started: {String(sceneState.tracingStarted)}</div>
-  <div>Completed: {String(sceneState.tracingCompleted)}</div>
-  <div>Segment: {sceneState.currentPathSegment || 0}</div>
-  <div>Points: {(sceneState.tracedPoints || []).length}</div>
-  <div>Phase: {sceneState.phase}</div>
-</div>
-
-{/* Clear Storage Button 
-<button 
-  className="clear-storage-button"
-  onClick={clearLocalStorage}
-  style={{
-    position: 'absolute',
-    top: '15px',
-    right: '15px',
-    background: '#ff4444',
-    color: 'white',
-    border: 'none',
-    padding: '8px 12px',
-    borderRadius: '6px',
-    fontSize: '12px',
-    cursor: 'pointer',
-    zIndex: 100,
-    boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
-  }}
-  title="Clear all saved progress"
->
-  🗑️ Clear Storage
-</button>
-
-       {/* Perfect Test Complete Button */}
-<div style={{
-  position: 'fixed',
-  top: '170px',
-  left: '20px',
-  zIndex: 9999,
-  background: 'linear-gradient(45deg, #FF6B6B, #4ECDC4)',
-  color: 'white',
-  padding: '12px 16px',
-  borderRadius: '8px',
-  cursor: 'pointer',
-  fontSize: '14px',
-  fontWeight: 'bold',
-  boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-  border: '2px solid #FFD700'
-}} onClick={() => {
-  console.log('🧪 PERFECT TEST: Setting all completion states');
-  
-  // Close any open popups first
-  setShowMagicalCard(false);
-  setShowPopupBook(false);
-  setShowSparkle(null);
-  setCardContent({});
-  setPopupBookContent({});
-  
-  // Set ALL completion states
-  sceneActions.updateState({
-    // Door states
-    door1Completed: true,
-    door1CurrentStep: 4,
-    door1SyllablesPlaced: ['Va', 'kra', 'tun', 'da'],
-    
-    door2Completed: true,
-    door2CurrentStep: 4,
-    door2SyllablesPlaced: ['Ma', 'ha', 'ka', 'ya'],
-    
-    // Game completion states
-    tracingCompleted: true,
-    tracingStarted: true,
-    traceProgress: 100,
-    currentPathSegment: 16,
-    
-    growingCompleted: true,
-    growingStarted: true,
-    stonesClicked: 4,
-    floatingStones: [
-      { id: 1, clicked: true, x: 20, y: 30 },
-      { id: 2, clicked: true, x: 70, y: 20 },
-      { id: 3, clicked: true, x: 30, y: 60 },
-      { id: 4, clicked: true, x: 80, y: 50 }
-    ],
-    
-    // Ganesha states
-    ganeshaVisible: true,
-    ganeshaAnimation: 'mighty',
-    ganeshaSize: 3.2,
-    ganeshaGlow: 1.5,
-    
-    // Learning states
-    learnedWords: {
-      vakratunda: { learned: true, scene: 1 },
-      mahakaya: { learned: true, scene: 1 }
-    },
-    
-    // Clear any blocking states
-    symbolDiscoveryState: null,
-    sidebarHighlightState: null,
-    currentPopup: null,
- 
-    
-    // Final completion states
-    phase: CAVE_PHASES.COMPLETE,
-    completed: true,
-    stars: 8,
-    progress: {
-      percentage: 100,
-      starsEarned: 8,
-      completed: true
-    }
-  });
-  
-  // Trigger final celebration after state is set
-  setTimeout(() => {
-    console.log('🎆 PERFECT TEST: Triggering final celebration');
-    showFinalCelebration();
-  }, 500);
-  
-  console.log('✅ PERFECT TEST: All states set, fireworks should start!');
-}}>
-  🎆 PERFECT TEST
-</div>
-
-            {/* Start Tracing Test Button 
-<div style={{
-  position: 'fixed',
-  top: '270px',
-  left: '20px',
-  zIndex: 9999,
-  background: '#4ECDC4',
-  color: 'white',
-  padding: '8px 12px',
-  borderRadius: '5px',
-  cursor: 'pointer',
-  fontSize: '12px',
-  fontWeight: 'bold'
-}} onClick={() => {
-  console.log('🐘 TRACE TEST - Going directly to tracing phase');
-  
-  sceneActions.updateState({
-    phase: CAVE_PHASES.TRACE_ACTIVE,
-    tracingStarted: true,
-    tracingCompleted: false,
-    traceProgress: 0
-  });
-  
-  console.log('🎯 Ready to test tracing!');
-}}>
-  🐘 START TRACE
-</div>
-
-{/* Door 1 Test Button 
-<div style={{
-  position: 'fixed',
-  top: '370px',
-  left: '20px',
-  zIndex: 9999,
-  background: '#E74C3C',
-  color: 'white',
-  padding: '8px 12px',
-  borderRadius: '5px',
-  cursor: 'pointer',
-  fontSize: '12px',
-  fontWeight: 'bold'
-}} onClick={() => {
-  console.log('🚪 DOOR 1 TEST');
-  sceneActions.updateState({
-    phase: CAVE_PHASES.DOOR1_ACTIVE,
-    door1Completed: false,
-    door1CurrentStep: 0,
-    door1SyllablesPlaced: []
-  });
-}}>
-  🚪 DOOR 1
-</div>
-
-{/* Debug Animation Class 
-<div style={{
-  position: 'fixed',
-  top: '160px',
-  left: '20px',
-  background: 'rgba(0,255,0,0.8)',
-  color: 'white',
-  padding: '10px',
-  borderRadius: '5px',
-  fontSize: '12px',
-  zIndex: 9999
-}}>
-  <div>ganeshaAnimation: {sceneState.ganeshaAnimation}</div>
-  <div>animClass: {getGaneshaAnimationClass()}</div>
-</div>
-
-{/* DEBUG: Trace Hint State 
-<div style={{
-  position: 'fixed',
-  top: '120px',
-  left: '20px',
-  background: 'rgba(255,0,0,0.8)',
-  color: 'white',
-  padding: '10px',
-  borderRadius: '5px',
-  fontSize: '12px',
-  zIndex: 9999
-}}>
-  <div>phase: {sceneState.phase}</div>
-  <div>tracingStarted: {String(sceneState.tracingStarted)}</div>
-  <div>tracingCompleted: {String(sceneState.tracingCompleted)}</div>
-  <div>showMagicalCard: {String(showMagicalCard)}</div>
-  <div>isVisible: {String(isVisible)}</div>
-</div>
-
-{/* Door 2 Test Button 
-<div style={{
-  position: 'fixed',
-  top: '420px',
-  left: '20px',
-  zIndex: 9999,
-  background: '#8E44AD',
-  color: 'white',
-  padding: '8px 12px',
-  borderRadius: '5px',
-  cursor: 'pointer',
-  fontSize: '12px',
-  fontWeight: 'bold'
-}} onClick={() => {
-  console.log('🚪 DOOR 2 TEST');
-  sceneActions.updateState({
-    phase: CAVE_PHASES.DOOR2_ACTIVE,
-    door2Completed: false,
-    door2CurrentStep: 0,
-    door2SyllablesPlaced: []
-  });
-}}>
-  🚪 DOOR 2
-</div>
-
-{/* Debug Ganesha State 
-<div style={{
-  position: 'fixed',
-  top: '60px',
-  left: '20px',
-  background: 'rgba(0,0,0,0.8)',
-  color: 'white',
-  padding: '10px',
-  borderRadius: '5px',
-  fontSize: '12px',
-  zIndex: 9999
-}}>
-  <div>ganeshaVisible: {String(sceneState.ganeshaVisible)}</div>
-  <div>phase: {sceneState.phase}</div>
-  <div>tracingStarted: {String(sceneState.tracingStarted)}</div>
-</div>
-
-            {/* Show Stone Button 
-            <div style={{
-              position: 'fixed',
-              top: '220px',
-              left: '20px',
-              zIndex: 9999,
-              background: 'orange',
-              color: 'white',
-              padding: '8px 12px',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              fontSize: '12px',
-              fontWeight: 'bold'
-            }} onClick={() => {
-              console.log('🪨 SHOW STONE: Forcing Door 2 phase');
-              
-              sceneActions.updateState({
-                phase: CAVE_PHASES.DOOR2_ACTIVE
-              });
-              
-              console.log('🪨 Stone should now be visible');
-            }}>
-              🪨 SHOW STONE
-            </div>
-
-            {/* Simple Game 1: Magical Crystal (Vakratunda) 
-            {(sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE || sceneState.phase === CAVE_PHASES.DOOR1_COMPLETE) && (
-              <div className="crystal-area" id="crystal-area">
-                <ClickableElement
-                  id="magical-crystal"
-                  onClick={handleCrystalClick}
-                  completed={sceneState.door1Completed}
-                  zone="crystal-zone"
-                >
-                  <div className="magical-crystal">
-                    💎
-                    <div className="crystal-glow"></div>
-                  </div>
-                </ClickableElement>
-                {showSparkle === 'crystal-clicked' && (
-                  <SparkleAnimation
-                    type="magic"
-                    count={15}
-                    color="#ff9ebd"
-                    size={10}
-                    duration={1500}
-                    fadeOut={true}
-                    area="full"
-                  />
-                )}
-              </div>
-            )}*/}
-
-            <BackToMapButton onNavigate={onNavigate} hideCoach={hideCoach} clearManualCloseTracking={clearManualCloseTracking} />
-
-{/* Working Start Fresh Button */}
-<div 
-  style={{
-    position: 'fixed',
-    top: '70px',
-    left: '40px',
-    zIndex: 10000,
-    background: 'linear-gradient(135deg, #2ECC71 0%, #27AE60 100%)',
-    color: 'white',
-    padding: '14px 18px',
-    borderRadius: '10px',
-    cursor: 'pointer',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    boxShadow: '0 6px 20px rgba(46,204,113,0.4)',
-    border: '3px solid white',
-    transition: 'all 0.3s ease',
-    userSelect: 'none',
-    textAlign: 'center',
-    minWidth: '140px'
-  }}
-  onClick={() => {
-    if (window.confirm('🔄 Start Fresh?\n\nReset this Cave scene to the very beginning?')) {
-      console.log('🔄 BLOCKING RELOAD and resetting...');
-      
-      // 1. BLOCK the reload logic first
-      setIsManualReset(true);
-      
-      // 2. Clear all UI
-      setShowMagicalCard(false);
-      setShowPopupBook(false);
-      setShowSceneCompletion(false);
-      setShowSparkle(null);
-      setCardContent({});
-      setPopupBookContent({});
-      
-      // 4. Clear storage to prevent restore
-      const profileId = localStorage.getItem('activeProfileId');
-      if (profileId) {
-        localStorage.removeItem(`temp_session_${profileId}_cave-of-secrets_vakratunda-mahakaya`);
-        localStorage.removeItem(`play_again_${profileId}_cave-of-secrets_vakratunda-mahakaya`);
-      }
-      
-      // 5. Apply reset after a small delay
-setTimeout(() => {
-  sceneActions.updateState({
-    phase: CAVE_PHASES.STORY_INTRO,  // ✅ CHANGED: Start with story modal
-    currentFocus: 'door1',
-    
-    // Door states
-    door1State: 'waiting',
-    door1SyllablesPlaced: [],
-    door1Completed: false,
-    door1CurrentStep: 0,
-    door2State: 'waiting',
-    door2SyllablesPlaced: [],
-    door2Completed: false,
-    door2CurrentStep: 0,
-    
-    // Game states
-    tracingStarted: false,
-    tracingCompleted: false,
-    traceProgress: 0,
-    currentPathSegment: 0,
-    segmentsCompleted: [],
-    tracedPoints: [],
-    growingStarted: false,
-    growingCompleted: false,
-    stonesClicked: 0,
-    floatingStones: [
-      { id: 1, clicked: false, x: 20, y: 30 },
-      { id: 2, clicked: false, x: 70, y: 20 },
-      { id: 3, clicked: false, x: 30, y: 60 },
-      { id: 4, clicked: false, x: 80, y: 50 }
-    ],
-    
-    // Ganesha
-    ganeshaVisible: false,
-    ganeshaAnimation: 'breathing',
-    ganeshaSize: 0.8,
-    ganeshaGlow: 0.2,
-    
-    // Learning
-    learnedWords: {
-      vakratunda: { learned: false, scene: 1 },
-      mahakaya: { learned: false, scene: 1 }
-    },
-    
-    // UI states
-    currentPopup: null,
-    symbolDiscoveryState: null,
-    sidebarHighlightState: null,
-    showCurvedText: false,
-    showMightyText: false,
-    showingCompletionScreen: false,
-    
-    // Progress
-    stars: 0,
-    completed: false,
-    progress: { percentage: 0, starsEarned: 0, completed: false }
-  });
-  
-  // ✅ NEW: Trigger story modal after reset
-  setTimeout(() => {
-    console.log('📖 Showing story modal after Start Fresh');
-    setShowStoryModal('vakratunda');
-  }, 200);
-  
-  // 6. Unblock reload logic after reset is applied
-  setTimeout(() => {
-    setIsManualReset(false);
-    console.log('✅ Reset complete, reload logic unblocked');
-  }, 500);
-  
-}, 100);
-    }
-  }}
-  title="Reset to Door 1"
->
-  🔄 START<br/>FRESH
-</div>
-
-
-            {/* Door 1 Component */}
-{(sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE || sceneState.phase === CAVE_PHASES.DOOR1_COMPLETE) && (
-  <div className="door1-area" id="door1-area">
-    <DoorComponent 
-    key={`door1-${sceneState.door1CurrentStep}-${sceneState.door1Completed}`} // ← ADD THIS
-      syllables={['Va', 'kra', 'tun', 'da']}
-      completedWord="Vakratunda"
-      onDoorComplete={handleDoor1Complete}
-      onSyllablePlaced={handleDoor1SyllablePlaced}
-      sceneTheme="cave-of-secrets"
-      doorImage={doorImage}
-      className="vakratunda-door"
-      educationalMode={true}
-      showTargetWord={true}
-      currentStep={sceneState.door1CurrentStep || 0}
-      expectedSyllable={sceneState.door1Syllables?.[sceneState.door1CurrentStep || 0]}
-      targetWordTitle="VAKRATUNDA "
-      primaryColor="#FFD700"
-      secondaryColor="#FF8C42"
-      errorColor="#FF4444"
-
-       isCompleted={sceneState.door1Completed}
-      placedSyllables={sceneState.door1SyllablesPlaced || []}
-      isResuming={isReload}
-
-       // ✅ ADD: Modal awareness
-  modalOpen={showPowerModal || showRescueModal || showStoryModal || showCenteredSymbol}
-    />
-  </div>
-)}
-
-{/* Door 1 Completion Sparkles */}
-{showSparkle === 'door1-completing' && (
-  <div style={{
-    position: 'absolute',
-    top: '5%',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    width: '400px',
-    height: '500px',
-    zIndex: 21,
-    pointerEvents: 'none'
-  }}>
-    <SparkleAnimation
-      type="magic"
-      count={25}
-      color="#ffd700"
-      size={12}
-      duration={3000}
-      fadeOut={true}
-      area="full"
-    />
-  </div>
-)}
-
-{/* Door 2 Component */}
-{(sceneState.phase === CAVE_PHASES.DOOR2_ACTIVE || sceneState.phase === CAVE_PHASES.DOOR2_COMPLETE) && (
-  <div className="door2-area" id="door2-area">
-    <DoorComponent
-      key={`door2-${sceneState.door2CurrentStep}-${sceneState.door2Completed}`} // ← ADD THIS
-      syllables={['Ma', 'ha', 'ka', 'ya']}
-      completedWord="Mahakaya"
-      onDoorComplete={handleDoor2Complete}
-      onSyllablePlaced={handleDoor2SyllablePlaced}
-      sceneTheme="cave-of-secrets"
-      doorImage={doorImage}
-      className="mahakaya-door"
-      educationalMode={true}
-      showTargetWord={true}
-      currentStep={sceneState.door2CurrentStep || 0}
-      expectedSyllable={sceneState.door2Syllables?.[sceneState.door2CurrentStep || 0]}
-      targetWordTitle=" MAHAKAYA "
-      primaryColor="#FFD700"
-      secondaryColor="#FF8C42"
-      errorColor="#FF4444"
-
-      
-      isCompleted={sceneState.door2Completed}
-      placedSyllables={sceneState.door2SyllablesPlaced || []}
-      isResuming={isReload}
-    />
-  </div>
-)}
-
-{/* Door 2 Completion Sparkles */}
-{showSparkle === 'door2-completing' && sceneState.phase === CAVE_PHASES.DOOR2_ACTIVE && (
-  <div style={{
-    position: 'absolute',
-    top: '5%',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    width: '400px',
-    height: '500px',
-    zIndex: 21,
-    pointerEvents: 'none'
-  }}>
-    <SparkleAnimation
-      type="magic"
-      count={25}
-      color="#ff8c42" // ✅ DIFFERENT: Orange color for Mahakaya
-      size={12}
-      duration={2500}
-      fadeOut={true}
-      area="full"
-    />
-  </div>
-)}
-
-{/* Tracing Game - Click the Dots */}
-{/* Tracing Game - Click the Dots */}
-{/* ✅ HIDE during celebrations and modals */}
-{(sceneState.phase === CAVE_PHASES.TRACE_INTRO || 
-  sceneState.phase === CAVE_PHASES.TRACE_ACTIVE || 
-  sceneState.phase === CAVE_PHASES.TRACE_COMPLETE) && 
-  !showCenteredSymbol && 
-  !showPowerModal && 
-  !showRescueModal && 
-  !showStoryModal && 
-  !showSceneCompletion && (
-    renderTracingPath()
-)}
-
-
-          {/* Growing Ganesha Game - Game 2 */}
-{/* ✅ HIDE during celebrations and modals */}
-{!showCenteredSymbol && 
- !showPowerModal && 
- !showRescueModal && 
- !showStoryModal && 
- !showSceneCompletion && 
- renderGrowingGame()}
-
-            {/* Simple Game 2: Golden Stone (Mahakaya) 
-            {(sceneState.phase === CAVE_PHASES.DOOR2_ACTIVE || sceneState.phase === CAVE_PHASES.DOOR2_COMPLETE) && (
-              <div className="stone-area" id="stone-area">
-                <ClickableElement
-                  id="golden-stone"
-                  onClick={handleStoneClick}
-                  completed={sceneState.door2Completed}
-                  zone="stone-zone"
-                >
-                  <div className="golden-stone">
-                    🪨
-                    <div className="stone-glow"></div>
-                  </div>
-                </ClickableElement>
-                {showSparkle === 'stone-clicked' && (
-                  <SparkleAnimation
-                    type="star"
-                    count={20}
-                    color="#ffd700"
-                    size={12}
-                    duration={1500}
-                    fadeOut={true}
-                    area="full"
-                  />
-                )}
+            {/* Mahakaya to Sidebar Effect */}
+            {showSparkle === 'mahakaya-to-sidebar' && (
+              <div style={{
+                position: 'absolute',
+                top: '30%',
+                right: '30%',
+                width: '300px',
+                height: '200px',
+                zIndex: 15,
+                pointerEvents: 'none'
+              }}>
+                <SparkleAnimation
+                  type="stream"
+                  count={20}
+                  color="#FF8C42"
+                  size={10}
+                  duration={3000}
+                  fadeOut={true}
+                  area="full"
+                />
               </div>
             )}
 
- {/* ✅ FIXED: Show Ganesha from tracing through final completion */}
-{(sceneState.phase === CAVE_PHASES.TRACE_INTRO || 
-  sceneState.phase === CAVE_PHASES.TRACE_ACTIVE || 
-  sceneState.phase === CAVE_PHASES.TRACE_COMPLETE ||
-  sceneState.phase === CAVE_PHASES.VAKRATUNDA_LEARNING ||
-  sceneState.phase === CAVE_PHASES.GROW_ACTIVE ||
-  sceneState.phase === CAVE_PHASES.GROW_COMPLETE ||
-  sceneState.phase === CAVE_PHASES.MAHAKAYA_LEARNING ||
-  sceneState.phase === CAVE_PHASES.SCENE_CELEBRATION ||
-  sceneState.phase === CAVE_PHASES.COMPLETE ||
-  sceneState.showingCompletionScreen ||
-  showSparkle === 'final-fireworks') && (
-      <div 
-    className={`mini-ganesha-container ${getGaneshaAnimationClass()}`}
-    style={{
-      position: 'absolute',
-      top: '40%',
-      left: '55%',
-      transform: `translate(-50%, -50%) scale(${sceneState.ganeshaSize || 0.8})`,
-      zIndex: 8,
-    filter: `brightness(${1 + (sceneState.ganeshaGlow || 0.2)})`
-    }}
-  >
-    <img 
-      src={ganeshaComplete}
-      alt="Mini Ganesha" 
-      style={{ 
-        width: '100px', 
-        height: '100px',
-        userSelect: 'none',
-        pointerEvents: 'none',
-         // ✅ ADD these to remove borders:
-    border: 'none',
-    outline: 'none',
-    boxShadow: 'none',
-     // ✅ FORCE INLINE ANIMATION
- animation: sceneState.ganeshaAnimation === 'breathing' ? 'ganeshaBreathing 3s ease-in-out infinite' :
-           sceneState.ganeshaAnimation === 'growing' ? 'ganeshaBreathing 3s ease-in-out infinite' :
-           sceneState.ganeshaAnimation === 'happy' ? 'ganeshaBreathing 3s ease-in-out infinite' :
-           sceneState.ganeshaAnimation === 'mighty' ? 'ganeshaMighty 5s ease-out' : 'none'
-  
-      }}
-    />
-  </div>
-)}
-
-{/* ✨ NEW: Separate Animated Texts */}
-
-{/* Vakratunda - Curved Trunk Text (after tracing) 
-{sceneState.showCurvedText && (
-  <div className="curved-text" style={{
-    position: 'absolute',
-    top: '65%',
-    left: '30%',
-    fontSize: '24px',
-    fontWeight: 'bold',
-    color: '#4ECDC4',
-    textShadow: '2px 2px 4px rgba(0,0,0,0.7)',
-    animation: 'curvedFlow 3s ease-out forwards',
-    zIndex: 15
-  }}>
-    Curved Trunk
-  </div>
-)}
-
-{/* Mahakaya - Big Body Text (after growing) 
-{sceneState.showMightyText && (
-  <div className="mighty-text" style={{
-    position: 'absolute',
-    top: '65%',
-    left: '55%',
-    transform: 'translateX(-50%)',
-    fontSize: '24px',
-    fontWeight: 'bold',
-    color: '#FFD700',
-    textShadow: '2px 2px 4px rgba(0,0,0,0.7)',
-    animation: 'textGrow 2s ease-out forwards',
-    zIndex: 15
-  }}>
-    Big Body
-  </div>
-)}
-
-{/* ========== STORY MODAL ========== */}
-{showStoryModal && (
-  <div style={{
-    position: 'fixed',
-    top: 0, left: 0, right: 0, bottom: 0,
-    background: 'rgba(0, 0, 0, 0.85)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 200
-  }}>
-    {/* ✅ ADD: Click blocker BENEATH modal content */}
-    <div 
-      style={{
-        position: 'fixed',
-        top: 0, left: 0, right: 0, bottom: 0,
-        zIndex: 199,
-        pointerEvents: 'all'
-      }}
-      onClick={(e) => {
-        e.stopPropagation();
-        console.log('🛡️ Click blocked by story modal shield');
-      }}
-    />
-    <div style={{
-      background: 'linear-gradient(135deg, #F5E6D3 0%, #E8D4B8 100%)',
-      borderRadius: '25px',
-      padding: '35px 40px',
-      maxWidth: '500px',
-      textAlign: 'center',
-      boxShadow: '0 10px 50px rgba(0,0,0,0.5)',
-      border: '4px solid #8B4513',
-      animation: 'modalAppear 0.5s ease-out',
-            position: 'relative',  // ✅ ADD THIS
-      zIndex: 201  // ✅ ADD THIS - keeps content above blocker
-
-    }}>
-      {/* Ganesha Icon */}
-      <img 
-        src={STORY_MODALS[showStoryModal].icon}
-        alt="Ganesha"
-        style={{
-          width: '80px',
-          height: '80px',
-          marginBottom: '15px',
-          filter: 'drop-shadow(0 0 20px rgba(255, 215, 0, 0.6))'
-        }}
-      />
-      
-      {/* Speech Bubble */}
-      <div style={{
-        background: '#FFF8DC',
-        border: '3px solid #FFD700',
-        borderRadius: '18px',
-        padding: '12px 20px',
-        marginBottom: '20px',
-        fontSize: '16px',
-        color: '#8B4513',
-        fontWeight: 'bold'
-      }}>
-        {STORY_MODALS[showStoryModal].speech}
-      </div>
-      
-      {/* Title */}
-      <h1 style={{
-        color: '#8B4513',
-        fontSize: '28px',
-        margin: '15px 0',
-        textShadow: '2px 2px 4px rgba(0,0,0,0.2)'
-      }}>
-        {STORY_MODALS[showStoryModal].title}
-      </h1>
-      
-      {/* Subtitle */}
-      <h2 style={{
-        color: '#D2691E',
-        fontSize: '20px',
-        margin: '12px 0'
-      }}>
-        {STORY_MODALS[showStoryModal].subtitle}
-      </h2>
-      
-      {/* Description */}
-      <p style={{
-        color: '#5D4E37',
-        fontSize: '16px',
-        lineHeight: '1.5',
-        margin: '15px 0 30px 0'
-      }}>
-        {STORY_MODALS[showStoryModal].description}
-      </p>
-      
-      {/* Start Button */}
-      <button
-        onClick={() => {
-          setShowStoryModal(null);
-          // Continue to appropriate phase
-          if (showStoryModal === 'vakratunda') {
-            sceneActions.updateState({ phase: CAVE_PHASES.DOOR1_ACTIVE });
-          } else {
-            sceneActions.updateState({ phase: CAVE_PHASES.DOOR2_ACTIVE });
-          }
-        }}
-        style={{
-          background: STORY_MODALS[showStoryModal].buttonColor,
-          color: 'white',
-          border: 'none',
-          padding: '15px 40px',
-          borderRadius: '25px',
-          fontSize: '18px',
-          fontWeight: 'bold',
-          cursor: 'pointer',
-          boxShadow: '0 6px 20px rgba(0,0,0,0.3)',
-          transition: 'transform 0.2s ease'
-        }}
-        onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
-        onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
-      >
-        {STORY_MODALS[showStoryModal].buttonText}
-      </button>
-    </div>
-  </div>
-)}
-
-{/* Add this AFTER mini-ganesha-container and BEFORE SanskritSidebar */}
-
-{/* ========== CENTERED SYMBOL CELEBRATION ========== */}
-{showCenteredSymbol && (
-  <>
-    <div style={{
-      position: 'fixed',
-      top: 0, left: 0, right: 0, bottom: 0,
-      background: 'rgba(0, 0, 0, 0.7)',
-      backdropFilter: 'blur(3px)',
-      zIndex: 199,
-      animation: 'fadeIn 0.3s ease-out',
-      pointerEvents: 'all'  // ✅ ADD THIS - blocks all clicks!
-    }} 
-    onClick={(e) => {
-      e.stopPropagation();
-      console.log('🛡️ Click blocked during symbol celebration');
-    }}
-    />
-    
-    
-    <div style={{
-      position: 'fixed',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      zIndex: 200,
-      textAlign: 'center',
-      animation: 'symbolAppear 0.5s ease-out'
-    }}>
-      <img 
-        src={powerConfig[showCenteredSymbol]?.image}
-        alt={showCenteredSymbol}
-        style={{
-          width: '180px',
-          height: '180px',
-          filter: `drop-shadow(0 0 40px ${powerConfig[showCenteredSymbol]?.color})`,
-          animation: 'symbolGlow 2s ease-in-out infinite alternate',
-          marginBottom: '25px'
-        }}
-      />
-      
-      <div style={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '300px',
-        height: '300px',
-        pointerEvents: 'none'
-      }}>
-        <SparkleAnimation
-          type="glitter"
-          count={30}
-          color={powerConfig[showCenteredSymbol]?.color}
-          size={12}
-          duration={3000}
-          fadeOut={true}
-          area="full"
-        />
-      </div>
-      
-      <div style={{
-        fontSize: '36px',
-        fontWeight: 'bold',
-        color: 'white',
-        textShadow: `3px 3px 6px ${powerConfig[showCenteredSymbol]?.color}`,
-        animation: 'textPulse 1.5s ease-in-out infinite',
-        letterSpacing: '2px'
-      }}>
-        {powerConfig[showCenteredSymbol]?.name}
-      </div>
-    </div>
-  </>
-)}
-
-{/* ========== POWER MODAL (CHOICE SCREEN) ========== */}
-{showPowerModal && (
-  <div style={{
-    position: 'fixed',
-    top: 0, left: 0, right: 0, bottom: 0,
-    background: 'rgba(0, 0, 0, 0.7)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 500
-  }}>
-     {/* ✅ ADD: Click blocker */}
-    <div 
-      style={{
-        position: 'fixed',
-        top: 0, left: 0, right: 0, bottom: 0,
-        zIndex: 499,
-        pointerEvents: 'all'
-      }}
-      onClick={(e) => {
-        e.stopPropagation();
-        console.log('🛡️ Click blocked by power modal shield');
-      }}
-    />
-    <div style={{
-      background: 'linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%)',
-      borderRadius: '25px',
-      padding: '40px',
-      maxWidth: '500px',
-      textAlign: 'center',
-      boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
-      position: 'relative',
-            zIndex: 501  // ✅ ADD
-
-    }}>
-      <div style={{ 
-        fontSize: '24px', 
-        fontWeight: 'bold', 
-        color: '#1565C0', 
-        marginBottom: '25px' 
-      }}>
-        {powerConfig[currentMissionSymbol]?.name} Unlocked!
-      </div>
-
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: '30px'
-      }}>
-        <div style={{ flex: 1, textAlign: 'left' }}>
-          <div style={{ 
-            fontSize: '16px', 
-            color: '#666', 
-            marginBottom: '15px',
-            lineHeight: '1.6'
-          }}>
-            You can now use this power to help animals in need!
-          </div>
-          <div style={{
-            fontSize: '14px',
-            color: '#888',
-            fontStyle: 'italic'
-          }}>
-            Choose your next action:
-          </div>
-        </div>
-
-        <div style={{ 
-          flex: 1, 
-          display: 'flex', 
-          flexDirection: 'column', 
-          gap: '15px', 
-          alignItems: 'center' 
-        }}>
-          <img 
-            src={powerConfig[currentMissionSymbol]?.image}
-            alt="power symbol"
-            style={{
-              width: '100px',
-              height: '100px',
-              filter: `drop-shadow(0 0 20px ${powerConfig[currentMissionSymbol]?.color})`,
-              animation: 'powerPulse 2s ease-in-out infinite',
-              marginBottom: '10px'
-            }}
-          />
-          
-          <button 
-            onClick={handleSaveAnimal}
-            style={{
-              background: 'linear-gradient(135deg, #FF6B6B, #FF8E53)',
-              color: 'white',
-              border: 'none',
-              padding: '12px 25px',
-              borderRadius: '25px',
-              fontSize: '16px',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              boxShadow: '0 4px 15px rgba(255,107,107,0.4)',
-              width: '100%',
-              transition: 'transform 0.2s ease'
-            }}
-            onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
-            onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
-          >
-            🐾 Save an Animal
-          </button>
-          
-          <button 
-            onClick={handleContinueLearning}
-            style={{
-              background: 'linear-gradient(135deg, #4ECDC4, #44A08D)',
-              color: 'white',
-              border: 'none',
-              padding: '12px 25px',
-              borderRadius: '25px',
-              fontSize: '16px',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              boxShadow: '0 4px 15px rgba(78,205,196,0.4)',
-              width: '100%',
-              transition: 'transform 0.2s ease'
-            }}
-            onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
-            onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
-          >
-            {getNextDiscoveryText(currentMissionSymbol)}
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
-
-{/* Symbol Sidebar Test Button */}
-<div style={{
-  position: 'fixed',
-  top: '470px',
-  left: '20px',
-  zIndex: 9999,
-  background: '#9C27B0',
-  color: 'white',
-  padding: '8px 12px',
-  borderRadius: '5px',
-  cursor: 'pointer',
-  fontSize: '12px',
-  fontWeight: 'bold'
-}} onClick={() => {
-  console.log('🔮 SIDEBAR TEST: Unlocking Vakratunda');
-  sceneActions.updateState({
-    learnedWords: {
-      ...sceneState.learnedWords,
-      vakratunda: { learned: true, scene: 1 }
-    }
-  });
-}}>
-  🔮 UNLOCK VAKRATUNDA
-</div>
-
-{/* Test Symbol Unlock Button */}
-<div style={{
-  position: 'fixed',
-  top: '520px',
-  left: '20px',
-  zIndex: 9999,
-  background: '#9C27B0',
-  color: 'white',
-  padding: '8px 12px',
-  borderRadius: '5px',
-  cursor: 'pointer',
-  fontSize: '12px',
-  fontWeight: 'bold'
-}} onClick={() => {
-  console.log('🔮 TEST: Unlocking all symbols');
-  sceneActions.updateState({
-    learnedWords: {
-      vakratunda: { learned: true, scene: 1 },
-      mahakaya: { learned: true, scene: 1 },
-      suryakoti: { learned: true, scene: 2 },
-      samaprabha: { learned: true, scene: 2 },
-      nirvighnam: { learned: true, scene: 3 },
-      kurumedeva: { learned: true, scene: 3 },
-      sarvakaryeshu: { learned: true, scene: 4 },
-      sarvada: { learned: true, scene: 4 }
-    }
-  });
-}}>
-  🔮 UNLOCK ALL
-</div>
-
-{/* DEBUG: Check if sidebar condition is true 
-{!sceneState.showingCompletionScreen && !showCenteredSymbol && !showPowerModal && (
-  <div style={{
-    position: 'fixed',
-    left: '20px',
-    top: '100px',
-    background: 'red',
-    color: 'white',
-    padding: '10px',
-    zIndex: 10000,
-    fontSize: '12px'
-  }}>
-    ✅ SIDEBAR SHOULD BE HERE!
-    <div>showingCompletionScreen: {String(sceneState.showingCompletionScreen)}</div>
-    <div>showCenteredSymbol: {String(!!showCenteredSymbol)}</div>
-    <div>showPowerModal: {String(showPowerModal)}</div>
-  </div>
-)}*/}
-
-<div style={{ filter: 'none' }}>
-  <SymbolSidebar
-    unlockedSymbols={{
-      vakratunda: sceneState.learnedWords?.vakratunda?.learned || false,
-      mahakaya: sceneState.learnedWords?.mahakaya?.learned || false,
-      suryakoti: false,
-      samaprabha: false,
-      nirvighnam: false,
-      kurumedeva: false,
-      sarvakaryeshu: false,
-      sarvada: false
-    }}
-    onSymbolClick={(symbolId) => {
-      console.log(`Symbol clicked: ${symbolId}`);
-    }}
-  />
-</div>
-
-            {/* Sanskrit Sidebar 
-                        {!sceneState.showingCompletionScreen && (
-            <SanskritSidebar
-              learnedWords={sceneState.learnedWords || {}}
-              currentScene={1}
-  unlockedScenes={[1]}       // ← ADD Scene 2 here!
-              mode="meanings"
-              onWordClick={(wordId, wordData) => {
-                console.log(`Sanskrit word clicked: ${wordId}`, wordData);
-              }}
-              highlightState={sceneState.sidebarHighlightState}
-            />     )}*/}
-
-        {/* ❌ REMOVE: Symbol Information Popup */}
-{/*
-<SymbolSceneIntegration
-  show={showPopupBook}
-  symbolImage={popupBookContent.symbolImage}
-  title={popupBookContent.title}
-  description={popupBookContent.description}
-  sourceElement={currentSourceElement}
-  onClose={handleSymbolInfoClose}
-/>
-*/}
-
-{/* ❌ REMOVE: Sanskrit Learning Cards */}
-{/*
-<MagicalCardFlip
-  show={showMagicalCard}
-  backImage={cardContent.image}
-  title={cardContent.title}
-  stars={cardContent.stars}
-  onClose={handleCloseCard}
-  autoFlip={false}
-  autoFlipDelay={5000}
-  animationDuration={6000}
-/>
-*/}
-
-            {/* Confetti during card celebrations */}
-            {showMagicalCard && (cardContent.title?.includes("Vakratunda") || cardContent.title?.includes("Mahakaya")) && (
-              <div style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                width: '100vw',
-                height: '100vh',
-                zIndex: 9998,
-                pointerEvents: 'none',
-                overflow: 'hidden'
-              }}>
-                {Array.from({ length: 50 }).map((_, i) => (
-                  <div
-                    key={i}
+            {/* Centered Symbol Celebration */}
+            {showCenteredSymbol && (
+              <>
+                <div style={{
+                  position: 'fixed',
+                  top: 0, left: 0, right: 0, bottom: 0,
+                  background: 'rgba(26, 18, 8, 0.7)',
+                  backdropFilter: 'blur(3px)',
+                  zIndex: 199,
+                  animation: 'fadeIn 0.3s ease-out'
+                }} />
+                
+                <div style={{
+                  position: 'fixed',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  zIndex: 200,
+                  textAlign: 'center',
+                  animation: 'symbolAppear 0.5s ease-out'
+                }}>
+                  <img 
+                    src={powerConfig[showCenteredSymbol]?.image}
+                    alt={showCenteredSymbol}
                     style={{
-                      position: 'absolute',
-                      top: '-10px',
-                      left: `${Math.random() * 100}%`,
-                      width: '10px',
-                      height: '10px',
-                      backgroundColor: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#fd79a8'][Math.floor(Math.random() * 6)],
-                      animation: `confettiFall ${2 + Math.random() * 3}s linear infinite`,
-                      animationDelay: `${Math.random() * 2}s`,
-                      transform: `rotate(${Math.random() * 360}deg)`
+                      width: '180px',
+                      height: '180px',
+                      filter: `drop-shadow(0 0 40px ${powerConfig[showCenteredSymbol]?.color})`,
+                      animation: 'symbolGlow 2s ease-in-out infinite alternate',
+                      marginBottom: '25px'
                     }}
                   />
-                ))}
+                  
+                  <div style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '300px',
+                    height: '300px',
+                    pointerEvents: 'none'
+                  }}>
+                    <SparkleAnimation
+                      type="glitter"
+                      count={30}
+                      color={powerConfig[showCenteredSymbol]?.color}
+                      size={12}
+                      duration={3000}
+                      fadeOut={true}
+                      area="full"
+                    />
+                  </div>
+                  
+                  <div style={{
+                    fontSize: '36px',
+                    fontWeight: 'bold',
+                    color: 'white',
+                    textShadow: `3px 3px 6px ${powerConfig[showCenteredSymbol]?.color}`,
+                    animation: 'textPulse 1.5s ease-in-out infinite',
+                    letterSpacing: '2px'
+                  }}>
+                    {powerConfig[showCenteredSymbol]?.name}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Power Modal (Cave Theme) */}
+            {showPowerModal && (
+              <div className="cave-power-overlay">
+                <div className="cave-power-card">
+                  <h1 className="cave-power-title">
+                    {powerConfig[currentMissionSymbol]?.name} Unlocked!
+                  </h1>
+
+                  <img 
+                    src={powerConfig[currentMissionSymbol]?.image}
+                    alt="power symbol"
+                    className="cave-power-icon"
+                  />
+
+                  <p className="cave-power-description">
+                    {getPowerDescription(currentMissionSymbol)}
+                  </p>
+
+                  <button 
+                    className="cave-power-primary-button"
+                    onClick={() => {
+                      setShowPowerModal(false);
+                      handleSaveAnimal();
+                    }}
+                  >
+                    Save an Animal
+                  </button>
+
+                  <div className="cave-power-secondary-buttons">
+                    <button 
+                      className="cave-power-secondary-button"
+                      onClick={() => {
+                        console.log(`🔄 Play Again: Restarting ${currentMissionSymbol}`);
+                        setShowPowerModal(false);
+                        
+                        if (currentMissionSymbol === 'vakratunda') {
+                          sceneActions.updateState({ 
+                            phase: CAVE_PHASES.DOOR1_ACTIVE,
+                            door1Completed: false,
+                            door1CurrentStep: 0,
+                            door1SyllablesPlaced: [],
+                            tracingCompleted: false,
+                            tracingStarted: false
+                          });
+                        } else if (currentMissionSymbol === 'mahakaya') {
+                          sceneActions.updateState({ 
+                            phase: CAVE_PHASES.DOOR2_ACTIVE,
+                            door2Completed: false,
+                            door2CurrentStep: 0,
+                            door2SyllablesPlaced: [],
+                            growingCompleted: false,
+                            growingStarted: false,
+                            stonesClicked: 0
+                          });
+                        }
+                      }}
+                    >
+                      Play Again
+                    </button>
+                    
+                    <button 
+                      className="cave-power-secondary-button"
+                      onClick={() => {
+                        setShowPowerModal(false);
+                        handleContinueLearning();
+                      }}
+                    >
+                      {getNextDiscoveryText(currentMissionSymbol)}
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
 
-            <style>{`
-              @keyframes confettiFall {
-                to {
-                  transform: translateY(100vh) rotate(720deg);
+
+
+
+
+            {/* Back Button */}
+            {sceneState.welcomeShown && (
+              <BackToMapButton onNavigate={onNavigate} hideCoach={hideCoach} clearManualCloseTracking={clearManualCloseTracking} />
+            )}
+
+            {/* Start Fresh Button */}
+            <div 
+              style={{
+                position: 'fixed',
+                top: '70px',
+                left: '40px',
+                zIndex: 10000,
+                background: 'linear-gradient(135deg, #2ECC71 0%, #27AE60 100%)',
+                color: 'white',
+                padding: '14px 18px',
+                borderRadius: '10px',
+                cursor: 'pointer',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                boxShadow: '0 6px 20px rgba(46,204,113,0.4)',
+                border: '3px solid white',
+                transition: 'all 0.3s ease',
+                userSelect: 'none',
+                textAlign: 'center',
+                minWidth: '140px'
+              }}
+              onClick={() => {
+                if (window.confirm('🔄 Start Fresh?\n\nReset this Cave scene to the very beginning?')) {
+                  setIsManualReset(true);
+                  
+                  // Clear all UI
+                  setShowSceneCompletion(false);
+                  setShowSparkle(null);
+                  
+                  // Reset state
+                  setTimeout(() => {
+                    sceneActions.updateState({
+                      phase: CAVE_PHASES.DOOR1_ACTIVE,
+                      door1State: 'waiting',
+                      door1SyllablesPlaced: [],
+                      door1Completed: false,
+                      door1CurrentStep: 0,
+                      door2State: 'waiting',
+                      door2SyllablesPlaced: [],
+                      door2Completed: false,
+                      door2CurrentStep: 0,
+                      tracingStarted: false,
+                      tracingCompleted: false,
+                      growingStarted: false,
+                      growingCompleted: false,
+                      welcomeShown: false,
+                      stars: 0,
+                      completed: false
+                    });
+                    
+                    setTimeout(() => {
+                      setIsManualReset(false);
+                    }, 500);
+                  }, 100);
                 }
-              }
-                /* Blocked click shake animation */
-@keyframes blockedShake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
-}
+              }}
+            >
+              🔄 START FRESH
+            </div>
 
-.floating-stone.blocked {
-  animation: blockedShake 0.3s ease;
-}
-            `}</style>
+            {/* Door 1 Component */}
+            {(sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE || sceneState.phase === CAVE_PHASES.DOOR1_COMPLETE) && (
+              <div className="door1-area" id="door1-area">
+<DoorComponent 
+  key={`door1-${sceneState.door1CurrentStep}-${sceneState.door1Completed}`}
+  syllables={['Va', 'kra', 'tun', 'da']}
+  completedWord="Vakratunda"
+  onDoorComplete={handleDoor1Complete}  // ❌ NOT called by DoorComponent
 
-{/* ========== RESCUE MODAL ========== */}
-<RescueModal
-  key={currentRescueWord} // ✅ ADD THIS LINE - Forces remount for each word
-  show={showRescueModal}
-  wordData={currentRescueWord ? RESCUE_CONFIGS[currentRescueWord] : null}
-  onComplete={handleRescueComplete}
-  profileName={profileName}
-/>
+  onSyllablePlaced={handleDoor1SyllablePlaced}
+  onSyllableAudio={playSyllable}
+  sceneTheme="cave-of-secrets"
+  doorImage={doorImage}
+  className="vakratunda-door"
+  educationalMode={true}
+  showTargetWord={true}
+  currentStep={sceneState.door1CurrentStep || 0}
+  expectedSyllable={sceneState.door1Syllables?.[sceneState.door1CurrentStep || 0]}
+  targetWordTitle="VAKRATUNDA "
+  primaryColor="#FFD700"
+  secondaryColor="#FF8C42"
+  errorColor="#FF4444"
+  isCompleted={sceneState.door1Completed}
+  placedSyllables={sceneState.door1SyllablesPlaced || []}
+  isResuming={isReload}
+modalOpen={showPowerModal || showRescueModal || showCenteredSymbol}
+showModal={true}
+modalTitle="Door Unlocked!"
+modalSymbolImage={vakratundaSymbol}
+modalDescription="You chanted VAKRATUNDA! Now trace the curved trunk to discover its power."
+modalButtonText="Start Tracing"
+modalTitleColor="#FF6B35"
+modalButtonColor="#FFA500"
+modalButtonTextColor="#FFFFFF"
+modalCardBorderColor="#FFA500"
+/>        </div>
+            )}
+
+            {/* Door 1 Sparkles */}
+            {showSparkle === 'door1-completing' && (
+              <div style={{
+                position: 'absolute',
+                top: '5%',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: '400px',
+                height: '500px',
+                zIndex: 21,
+                pointerEvents: 'none'
+              }}>
+                <SparkleAnimation
+                  type="magic"
+                  count={25}
+                  color="#ffd700"
+                  size={12}
+                  duration={3000}
+                  fadeOut={true}
+                  area="full"
+                />
+              </div>
+            )}
+
+            {/* Door 2 Component */}
+            {(sceneState.phase === CAVE_PHASES.DOOR2_ACTIVE || sceneState.phase === CAVE_PHASES.DOOR2_COMPLETE) && (
+              <div className="door2-area" id="door2-area">
+                <DoorComponent
+                  key={`door2-${sceneState.door2CurrentStep}-${sceneState.door2Completed}`}
+                  syllables={['Ma', 'ha', 'ka', 'ya']}
+                  completedWord="Mahakaya"
+                  onDoorComplete={handleDoor2Complete}
+                  onSyllablePlaced={handleDoor2SyllablePlaced}
+                  onSyllableAudio={playSyllable}
+                  sceneTheme="cave-of-secrets"
+                  doorImage={doorImage}
+                  className="mahakaya-door"
+                  educationalMode={true}
+                  showTargetWord={true}
+                  currentStep={sceneState.door2CurrentStep || 0}
+                  expectedSyllable={sceneState.door2Syllables?.[sceneState.door2CurrentStep || 0]}
+                  targetWordTitle=" MAHAKAYA "
+                  primaryColor="#FFD700"
+                  secondaryColor="#FF8C42"
+                  errorColor="#FF4444"
+                  isCompleted={sceneState.door2Completed}
+                  placedSyllables={sceneState.door2SyllablesPlaced || []}
+                  isResuming={isReload}
+                    modalOpen={showPowerModal || showRescueModal || showCenteredSymbol}
+
+                     // ✅ Door 2 modal props
+  showModal={true}
+  modalTitle="Door Unlocked!"
+  modalSymbolImage={mahakayaSymbol}
+  modalDescription="You chanted MAHAKAYA! Click the sacred stones to make Ganesha grow mighty."
+  modalButtonText="Start Growing"
+  modalTitleColor="#FF8C00"
+  modalButtonColor="#FFD700"
+  modalButtonTextColor="#5A4A3A"
+  modalCardBorderColor="#FFD700"
+
+                />
+              </div>
+            )}
+
+            {/* Door 2 Sparkles */}
+            {showSparkle === 'door2-completing' && sceneState.phase === CAVE_PHASES.DOOR2_ACTIVE && (
+              <div style={{
+                position: 'absolute',
+                top: '5%',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: '400px',
+                height: '500px',
+                zIndex: 21,
+                pointerEvents: 'none'
+              }}>
+                <SparkleAnimation
+                  type="magic"
+                  count={25}
+                  color="#ff8c42"
+                  size={12}
+                  duration={2500}
+                  fadeOut={true}
+                  area="full"
+                />
+              </div>
+            )}
+
+            {/* Tracing Game */}
+            {(sceneState.phase === CAVE_PHASES.TRACE_INTRO || 
+              sceneState.phase === CAVE_PHASES.TRACE_ACTIVE || 
+              sceneState.phase === CAVE_PHASES.TRACE_COMPLETE) && 
+              !showCenteredSymbol && 
+              !showPowerModal && 
+              !showRescueModal && 
+              !showSceneCompletion && (
+                renderTracingPath()
+            )}
+
+            {/* Growing Game */}
+            {!showCenteredSymbol && 
+             !showPowerModal && 
+             !showRescueModal && 
+             !showSceneCompletion && 
+             renderGrowingGame()}
+
+            {/* Ganesha Animation */}
+            {(sceneState.phase === CAVE_PHASES.TRACE_INTRO || 
+              sceneState.phase === CAVE_PHASES.TRACE_ACTIVE || 
+              sceneState.phase === CAVE_PHASES.TRACE_COMPLETE ||
+              sceneState.phase === CAVE_PHASES.VAKRATUNDA_LEARNING ||
+              sceneState.phase === CAVE_PHASES.GROW_ACTIVE ||
+              sceneState.phase === CAVE_PHASES.GROW_COMPLETE ||
+              sceneState.phase === CAVE_PHASES.MAHAKAYA_LEARNING ||
+              sceneState.phase === CAVE_PHASES.SCENE_CELEBRATION ||
+              sceneState.phase === CAVE_PHASES.COMPLETE ||
+              sceneState.showingCompletionScreen ||
+              showSparkle === 'final-fireworks') && (
+              <div 
+                className={`mini-ganesha-container ${getGaneshaAnimationClass()}`}
+                style={{
+                  position: 'absolute',
+                  top: '40%',
+                  left: '55%',
+                  transform: `translate(-50%, -50%) scale(${sceneState.ganeshaSize || 0.8})`,
+                  zIndex: 8,
+                  filter: `brightness(${1 + (sceneState.ganeshaGlow || 0.2)})`
+                }}
+              >
+                <img 
+                  src={ganeshaComplete}
+                  alt="Mini Ganesha" 
+                  style={{ 
+                    width: '100px', 
+                    height: '100px',
+                    userSelect: 'none',
+                    pointerEvents: 'none',
+                    border: 'none',
+                    outline: 'none',
+                    boxShadow: 'none',
+                    animation: sceneState.ganeshaAnimation === 'breathing' ? 'ganeshaBreathing 3s ease-in-out infinite' :
+                              sceneState.ganeshaAnimation === 'growing' ? 'ganeshaBreathing 3s ease-in-out infinite' :
+                              sceneState.ganeshaAnimation === 'happy' ? 'ganeshaBreathing 3s ease-in-out infinite' :
+                              sceneState.ganeshaAnimation === 'mighty' ? 'ganeshaMighty 5s ease-out' : 'none'
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Rescue Modal */}
+            <RescueModal
+              key={currentRescueWord}
+              show={showRescueModal}
+              wordData={currentRescueWord ? RESCUE_CONFIGS[currentRescueWord] : null}
+              onComplete={handleRescueComplete}
+              profileName={profileName}
+            />
 
             {/* Final Fireworks */}
             {showSparkle === 'final-fireworks' && (
@@ -3022,7 +1322,6 @@ setTimeout(() => {
                 count={25}
                 colors={['#FFD700', '#FF8C00', '#FFA500', '#DAA520', '#B8860B']}
                 onComplete={() => {
-                  console.log('🎯 Cave fireworks complete');
                   setShowSparkle(null);
                   
                   const profileId = localStorage.getItem('activeProfileId');
@@ -3031,14 +1330,13 @@ setTimeout(() => {
                       completed: true,
                       stars: 8,
                       sanskritWords: { vakratunda: true, mahakaya: true },
-                        learnedWords: sceneState.learnedWords || {},          // ← ADD: Scene's learned words
+                      learnedWords: sceneState.learnedWords || {},
                       phase: 'complete',
                       timestamp: Date.now()
                     });
                     
                     localStorage.removeItem(`temp_session_${profileId}_cave-of-secrets_vakratunda-mahakaya`);
                     SimpleSceneManager.clearCurrentScene();
-                    console.log('✅ CAVE: Completion saved and temp session cleared');
                   }
                   
                   setShowSceneCompletion(true);
@@ -3054,116 +1352,103 @@ setTimeout(() => {
               totalScenes={4}
               starsEarned={sceneState.progress?.starsEarned || 8}
               totalStars={8}
-    discoveredSymbols={['vakratunda', 'mahakaya']}
-containerType="journal"
-containerImage={meaningJournal}
-meaningCards={{
-  vakratunda: { sanskrit: "वक्रतुण्ड", meaning: "Curved Trunk" },
-  mahakaya: { sanskrit: "महाकाय", meaning: "Great Body" }
-}}
-appImages={{
-  vakratunda: appVakratunda,
-  mahakaya: appMahakaya
-}}
+              discoveredSymbols={['vakratunda', 'mahakaya']}
+              containerType="journal"
+              containerImage={meaningJournal}
+              meaningCards={{
+                vakratunda: { sanskrit: "वक्रतुण्ड", meaning: "Curved Trunk" },
+                mahakaya: { sanskrit: "महाकाय", meaning: "Great Body" }
+              }}
+              appImages={{
+                vakratunda: appVakratunda,
+                mahakaya: appMahakaya
+              }}
               nextSceneName="Million Suns Chamber"
               sceneId="vakratunda-mahakaya"
               completionData={{
                 stars: 8,
-                  symbols: {},  // ← ADD: Empty symbols for Cave
+                symbols: {},
                 sanskritWords: { vakratunda: true, mahakaya: true },
-                 learnedWords: sceneState.learnedWords || {},  // ← ADD: Scene learned words
-  chants: { vakratuna: true, mahakaya: true },  // ← ADD: For CulturalProgressExtractor
+                learnedWords: sceneState.learnedWords || {},
+                chants: { vakratunda: true, mahakaya: true },
                 completed: true,
                 totalStars: 8
               }}
               onComplete={onComplete}
+              onReplay={() => {
+                setShowSceneCompletion(false);
+                resetScene();
+              }}
+              onContinue={() => {
+                if (clearManualCloseTracking) clearManualCloseTracking();
+                if (hideCoach) hideCoach();
+                
+                const profileId = localStorage.getItem('activeProfileId');
+                if (profileId) {
+                  ProgressManager.updateSceneCompletion(profileId, 'cave-of-secrets', 'vakratunda-mahakaya', {
+                    completed: true,
+                    stars: 8,
+                    symbols: {},
+                    sanskritWords: { vakratunda: true, mahakaya: true },
+                    learnedWords: sceneState.learnedWords || {},
+                    chants: { vakratunda: true, mahakaya: true }
+                  });
+                }
 
-          // ADD THIS TO SceneCompletionCelebration:
-        onReplay={() => {
-  console.log('🔄 INSTANT REPLAY: Garden Adventure restart');
-  setShowSceneCompletion(false);
-  resetScene();
-}}
-        
-// ADD THIS TO SceneCompletionCelebration:
-onContinue={() => {
-  console.log('🔧 CONTINUE: Vakratunda scene to next scene');
-  
-  // 1. Clear GameCoach
-  if (clearManualCloseTracking) clearManualCloseTracking();
-  if (hideCoach) hideCoach();
-  
-  setTimeout(() => {
-    if (clearManualCloseTracking) clearManualCloseTracking();
-  }, 500);
-  
-  // 2. Save completion data - CHANT FORMAT
-  const profileId = localStorage.getItem('activeProfileId');
-  if (profileId) {
-    ProgressManager.updateSceneCompletion(profileId, 'cave-of-secrets', 'vakratunda-mahakaya', {
-      completed: true,
-      stars: 8,
-      symbols: {},  // ← Cave scenes don't learn symbols
-      sanskritWords: { vakratunda: true, mahakaya: true },
-      learnedWords: sceneState.learnedWords || {},
-      chants: { vakratunda: true, mahakaya: true }
-    });
-    
-    GameStateManager.saveGameState('cave-of-secrets', 'vakratunda-mahakaya', {
-      completed: true,
-      stars: 8,
-      sanskritWords: { vakratunda: true, mahakaya: true },
-      learnedWords: sceneState.learnedWords || {}
-    });
-    
-    console.log('✅ CONTINUE: Vakratunda completion data saved');
-  }
-
-  // 3. Set next scene for resume tracking
-  setTimeout(() => {
-    SimpleSceneManager.setCurrentScene('cave-of-secrets', 'suryakoti-samaprabha', false, false);
-    console.log('✅ CONTINUE: Next scene (suryakoti-samaprabha) set for resume tracking');
-    
-    onNavigate?.('scene-complete-continue');
-  }, 100);
-}}
+                setTimeout(() => {
+                  SimpleSceneManager.setCurrentScene('cave-of-secrets', 'suryakoti-samaprabha', false, false);
+                  onNavigate?.('scene-complete-continue');
+                }, 100);
+              }}
             />
 
-            {/* Progressive Hints System */}
-            <ProgressiveHintSystem
-              ref={progressiveHintRef}
-              sceneId={sceneId}
-              sceneState={sceneState}
-              hintConfigs={getHintConfigs()}
-              characterImage={mooshikaCoach}
-              initialDelay={20000}        
-              hintDisplayTime={10000}    
-              position="bottom-right"
-              iconSize={60}
-              zIndex={2000}
-              onHintShown={handleHintShown}
-              onHintButtonClick={handleHintButtonClick}
-              enabled={true}
-            />
+            {/* Progressive Hints */}
+            {sceneState.welcomeShown && (
+              <ProgressiveHintSystem
+                ref={progressiveHintRef}
+                sceneId={sceneId}
+                sceneState={sceneState}
+                hintConfigs={getHintConfigs()}
+                characterImage={mooshikaCoach}
+                initialDelay={20000}        
+                hintDisplayTime={10000}    
+                position="bottom-right"
+                iconSize={60}
+                zIndex={2000}
+                onHintShown={() => setHintUsed(true)}
+                enabled={!showPowerModal && !showRescueModal}
+              />
+            )}
 
-    {/* Navigation - Always on top */}
+            {/* Symbol Sidebar */}
+            <div style={{ filter: 'none' }}>
+              <SymbolSidebar
+                unlockedSymbols={{
+                  vakratunda: sceneState.learnedWords?.vakratunda?.learned || false,
+                  mahakaya: sceneState.learnedWords?.mahakaya?.learned || false,
+                  suryakoti: false,
+                  samaprabha: false,
+                  nirvighnam: false,
+                  kurumedeva: false,
+                  sarvakaryeshu: false,
+                  sarvada: false
+                }}
+                onSymbolClick={(symbolId) => {
+                  console.log(`Symbol clicked: ${symbolId}`);
+                }}
+              />
+            </div>
+
+            {/* Navigation */}
             <div style={{ position: 'relative', zIndex: 10000 }}>
               <TocaBocaNav
-                onHome={() => {
-                  onNavigate?.('home');
-                }}
-                onProgress={() => {
-                  const name = activeProfile?.name || 'little explorer';
-                  console.log(`Great Sanskrit progress, ${name}!`);
-                  setShowCulturalCelebration(true);
-                }}
+                onHome={() => onNavigate?.('home')}
+                onProgress={() => setShowCulturalCelebration(true)}
                 onHelp={() => console.log('Show help')}
                 onParentMenu={() => console.log('Parent menu')}
                 isAudioOn={true}
                 onAudioToggle={() => console.log('Toggle audio')}
-                onZonesClick={() => {
-                  onNavigate?.('zones');
-                }}
+                onZonesClick={() => onNavigate?.('zones')}
                 onStartFresh={() => resetScene()}
                 currentProgress={{
                   stars: sceneState.stars || 0,
@@ -3173,7 +1458,6 @@ onContinue={() => {
               />
             </div>
 
-            {/* Cultural Celebration Modal */}
             <CulturalCelebrationModal
               show={showCulturalCelebration}
               onClose={() => setShowCulturalCelebration(false)}

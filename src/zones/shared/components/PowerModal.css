@@ -1,0 +1,170 @@
+/* ====================================================== */
+/* SHARED POWER MODAL STYLES (Universal Reward Screen)    */
+/* ====================================================== */
+
+:root {
+  /* Default Theme Variables (Override in JSX) */
+  --power-overlay-bg: rgba(0, 0, 0, 0.7);
+  --power-card-bg: #FFF9E6;
+  --power-text-primary: #5D2E0F;
+  --power-text-secondary: #333333;
+  --power-btn-primary-bg: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+  --power-btn-secondary-bg: linear-gradient(135deg, #4ECDC4, #44A08D);
+  --power-glow-color: rgba(255, 140, 0, 0.5);
+}
+
+.power-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--power-overlay-bg);
+  z-index: 2100; /* Higher than Opening Modal */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: powerFadeIn 0.3s ease-out;
+}
+
+.power-modal-card {
+  background: var(--power-card-bg);
+  border-radius: 30px;
+  padding: 40px;
+  max-width: 600px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: powerScaleIn 0.4s ease-out;
+}
+
+/* --- Content --- */
+.power-modal-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--power-text-primary);
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.power-modal-icon {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 20px;
+  object-fit: contain;
+  /* Premium Glow Pulse */
+  animation: powerIconPulse 2s ease-in-out infinite;
+}
+
+.power-modal-description {
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  color: var(--power-text-secondary);
+  margin-bottom: 30px;
+  line-height: 1.4;
+  max-width: 90%;
+}
+
+/* --- Buttons --- */
+.power-modal-btn-primary {
+  font-family: 'Baloo 2', cursive;
+  background: var(--power-btn-primary-bg);
+  border: none;
+  color: white;
+  padding: 15px 50px;
+  font-size: 22px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  box-shadow: 0 6px 20px var(--power-glow-color);
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.power-modal-btn-group {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+  justify-content: center;
+}
+
+.power-modal-btn-secondary {
+  font-family: 'Nunito', sans-serif;
+  background: var(--power-btn-secondary-bg);
+  border: none;
+  color: white;
+  padding: 12px 25px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  flex: 1;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.power-modal-btn-primary:active, .power-modal-btn-secondary:active {
+  transform: scale(0.98);
+}
+
+/* --- Animations --- */
+@keyframes powerFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes powerScaleIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+@keyframes powerIconPulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px var(--power-glow-color)); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 25px var(--power-glow-color)); }
+}
+
+/* ====================================================== */
+/* RESPONSIVE FIXES (The "Magic" Logic)                   */
+/* ====================================================== */
+
+/* 1. MOBILE LANDSCAPE (iPhone SE, Pixel 7) - THE CRITICAL FIX */
+/* If height is small, switch to SIDE-BY-SIDE layout so nothing gets cut off */
+@media (max-height: 500px) and (orientation: landscape) {
+  .power-modal-card {
+    flex-direction: row; /* <--- KEY CHANGE: Horizontal Layout */
+    padding: 20px;
+    max-width: 700px;
+    text-align: left;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .power-modal-icon {
+    width: 100px;
+    height: 100px;
+    margin: 0; /* Remove auto margin */
+    flex: 0 0 100px;
+  }
+
+  /* Right side wrapper for text and buttons */
+  .power-content-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .power-modal-title { font-size: 22px; margin-bottom: 10px; }
+  .power-modal-description { font-size: 14px; margin-bottom: 15px; margin-left: 0; }
+  
+  .power-modal-btn-primary { 
+    padding: 8px 30px; font-size: 18px; margin-bottom: 10px; 
+  }
+  .power-modal-btn-secondary { 
+    padding: 8px 15px; font-size: 14px; 
+  }
+}
+
+/* 2. iPAD PORTRAIT (Tablet Vertical) */
+@media (min-width: 768px) and (min-height: 1000px) {
+  .power-modal-card { padding: 60px; max-width: 650px; }
+  .power-modal-title { font-size: 42px; margin-bottom: 30px; }
+  .power-modal-icon { width: 180px; height: 180px; margin-bottom: 30px; }
+  .power-modal-description { font-size: 22px; margin-bottom: 40px; }
+  .power-modal-btn-primary { font-size: 28px; padding: 20px; }
+  .power-modal-btn-secondary { font-size: 20px; padding: 15px; }
+}

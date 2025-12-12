@@ -10,9 +10,10 @@ import SacredAssemblySceneV8 from './zones/symbol-mountain/scenes/final scene/Sa
 
 // Cave of Secrets Scenes
 import CaveSceneFixedV1 from './zones/meaning cave/scenes/VakratundaMahakaya/CaveSceneFixedV1';
-import SuryakotiSceneV2 from './zones/meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV2';
-import NirvighnamSceneV3 from './zones/meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV3';
-import SarvakaryeshuSarvadaV5 from './zones/meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV5.jsx';
+import SuryakotiSceneV3 from './zones/meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV3.jsx';
+import NirvighnamSceneV4 from './zones/meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV4';
+import SarvakaryeshuSarvadaV6 from './zones/meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV6.jsx';
+import CaveScene5MemoryFinale from './zones/meaning cave/scenes/final meaning scene/CaveScene5MemoryFinale';
 
 // Shloka River Scenes
 import VakratundaGroveSimplified from './zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx';
@@ -27,6 +28,13 @@ import FestivalRangoliGame from './zones/festival-square/Game2-Rangoli/FestivalR
 import ModakCookingGame from './zones/festival-square/game3-cooking/ModakCookingGame.jsx';
 import MandapDecorationGame from './zones/festival-square/Game4-mandapdecor/MandapDecorationGame.jsx';
 
+// About Me Hut
+import Familytreegame from './zones/about-me-hut/family-tree/Familytreegame.jsx';
+import Favoritefoodgame  from './zones/about-me-hut/food/Favoritefoodgame.jsx';
+import ObstacleRemoverGame from './zones/about-me-hut/enjoy/ObstacleRemoverGame.jsx';
+import NameBirthdayGame from './zones/about-me-hut/name/Namebirthdaygame.jsx';
+
+
 // Import GameCoach Provider (needed by some scenes)
 import { GameCoachProvider } from './lib/components/coach/GameCoach.jsx';
 
@@ -35,7 +43,7 @@ const MockGameStateManager = {
   getActiveProfile: () => ({
     id: 'test-profile',
     name: 'Maya',
-    avatar: '🐘',
+    avatar: '😊',
     color: '#4A90E2'
   }),
   
@@ -96,27 +104,34 @@ const SCENES = {
   'cave-suryakoti': {
     name: '☀️ Suryakoti Samaprabha',
     zone: 'Cave of Secrets',
-    component: SuryakotiSceneV2,
+    component: SuryakotiSceneV3,
     zoneId: 'cave-of-secrets',
     sceneId: 'suryakoti-samaprabha'
   },
   'cave-nirvighnam': {
     name: '🙏 Nirvighnam Kurumedeva',
     zone: 'Cave of Secrets',
-    component: NirvighnamSceneV3,
+    component: NirvighnamSceneV4,
     zoneId: 'cave-of-secrets',
     sceneId: 'nirvighnam-kurumedeva'
   },
   'cave-sarvakaryeshu': {
     name: '🌟 Sarvakaryeshu Sarvada',
     zone: 'Cave of Secrets',
-    component: SarvakaryeshuSarvadaV5,
+    component: SarvakaryeshuSarvadaV6,
     zoneId: 'cave-of-secrets',
     sceneId: 'sarvakaryeshu-sarvada'
   },
 
+  'cave-finale': {
+    name: '🎊 Memory Finale',
+    zone: 'Cave of Secrets',
+    component: CaveScene5MemoryFinale,
+    zoneId: 'cave-of-secrets',
+    sceneId: 'memory-finale'
+  },
   // 🌊 SHLOKA RIVER
-  'shloka-vakratunda': {
+ /* 'shloka-vakratunda': {
     name: '🐘 Vakratunda Grove',
     zone: 'Shloka River',
     component: VakratundaGroveSimplified,
@@ -143,7 +158,7 @@ const SCENES = {
     component: SarvakaryeshuChantSimplified,
     zoneId: 'shloka-river',
     sceneId: 'sarvakaryeshu-chant'
-  },
+  },*/
   'shloka-finale': {
     name: '🎊 Shloka River Finale',
     zone: 'Shloka River',
@@ -153,7 +168,7 @@ const SCENES = {
   },
 
   // 🎪 FESTIVAL SQUARE
-  /*'festival-piano': {
+  'festival-piano': {
     name: '🎹 Piano Game',
     zone: 'Festival Square',
     component: FestivalPianoGame,
@@ -180,12 +195,42 @@ const SCENES = {
     component: MandapDecorationGame,
     zoneId: 'festival-square',
     sceneId: 'game4'
-  }*/
+  },
+
+  // 🏠 ABOUT ME HUT
+  'family-tree': {
+    name: '🌳 Family Tree',
+    zone: 'About Me Hut',
+    component: Familytreegame,
+    zoneId: 'about-me-hut',
+    sceneId: 'game1'
+  },
+  'favourite-food': {
+    name: '🍬 Favorite Food',
+    zone: 'About Me Hut',
+    component: Favoritefoodgame,
+    zoneId: 'about-me-hut',
+    sceneId: 'game2'
+  },
+  'obstacle-remover': {
+    name: '🪔 Obstacle Remover',
+    zone: 'About Me Hut',
+    component: ObstacleRemoverGame,
+    zoneId: 'about-me-hut',
+    sceneId: 'game3'
+  },
+  'name-birthday': {
+    name: '🎈 Name & Birthday',
+    zone: 'About Me Hut',
+    component: NameBirthdayGame,
+    zoneId: 'about-me-hut',
+    sceneId: 'game4'
+  }
 };
 
 function App() {
   const [reloadKey, setReloadKey] = useState(0);
-  const [activeScene, setActiveScene] = useState('symbol-pond'); // Default scene
+  const [activeScene, setActiveScene] = useState('family-tree'); // Default to Family Tree
 
   // Set up test profile
   useEffect(() => {
@@ -244,8 +289,6 @@ function App() {
         background: 'rgba(0, 0, 0, 0.9)',
         padding: '12px 16px',
         borderRadius: '12px',
-        //boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
-        //border: '2px solid rgba(78, 205, 196, 0.3)'
       }}>
         {/* Scene Selector Dropdown with Grouped Options */}
         <select 
@@ -298,29 +341,6 @@ function App() {
         >
           🔄 Reload
         </button>
-      </div>
-
-      {/* Scene Info Display 
-      <div style={{
-        position: 'fixed',
-        bottom: '20px',
-        left: '20px',
-        background: 'rgba(0, 0, 0, 0.9)',
-        color: 'white',
-        padding: '12px 16px',
-        borderRadius: '10px',
-        fontSize: '12px',
-        zIndex: 100,
-        border: '2px solid rgba(78, 205, 196, 0.3)',
-        backdropFilter: 'blur(10px)'
-      }}>
-        <div style={{ marginBottom: '6px', fontSize: '14px' }}>
-          <strong>{currentScene.name}</strong>
-        </div>
-        <div style={{ opacity: 0.8 }}>
-          📍 Zone: {currentScene.zone}<br/>
-          🎮 Scene ID: {currentScene.sceneId}
-        </div>
       </div>
 
       {/* Active Scene - With GameCoach wrapper */}

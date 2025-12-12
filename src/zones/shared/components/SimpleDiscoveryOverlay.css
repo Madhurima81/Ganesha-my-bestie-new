@@ -1,0 +1,428 @@
+/* SimpleDiscoveryOverlay.css - Clean, story-focused discovery overlay */
+
+/* Main container */
+.discovery-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.discovery-overlay.visible {
+  opacity: 1;
+}
+
+/* Backdrop - Different opacity per stage */
+.discovery-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  transition: all 0.5s ease;
+}
+
+.celebration-backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+}
+
+.power-backdrop {
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+}
+
+/* Content container - NO WHITE CARD, overlay style */
+.discovery-content {
+  position: relative;
+  width: 90%;
+  max-width: 600px;
+  background: transparent; /* No white card! */
+  border-radius: 0;
+  padding: 50px 40px;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+  text-align: center;
+  animation: contentFadeIn 0.5s ease-out;
+}
+
+/* Celebration stage - lighter, ethereal */
+.celebration-stage {
+  gap: 20px;
+}
+
+.power-stage {
+  gap: 30px;
+  max-width: 700px;
+  pointer-events: none; /* Don't block clicks */
+}
+
+.power-stage > * {
+  pointer-events: auto; /* But allow button clicks when visible */
+}
+
+
+
+.mission-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #FFD700; /* Gold to match title */
+  margin-top: 15px;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+/* Title - with strong shadow for visibility on overlay */
+.discovery-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.8);
+  color: white;
+}
+
+.celebration-title {
+  color: #90EE90; /* Light green for celebration */
+  animation: celebrationBounce 0.6s ease;
+}
+
+.power-title {
+  color: #FFD700; /* Gold for power */
+  animation: powerShine 2s ease infinite;
+  font-size: 2.8rem;
+}
+
+/* Image containers - larger for overlay */
+.discovery-image-container,
+.discovery-icon-container {
+  width: 220px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.discovery-image,
+.discovery-icon {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.5));
+}
+
+.celebration-image {
+  animation: celebrationFloat 2s ease-in-out infinite;
+}
+
+.power-icon {
+  animation: powerFloat 3s ease-in-out infinite;
+  width: 200px;
+  height: 200px;
+}
+
+/* Power glow effect - stronger for overlay */
+.power-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.6) 0%, transparent 70%);
+  animation: glowPulse 2s ease infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Text - with shadow for visibility */
+.discovery-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.3rem;
+  line-height: 1.8;
+  color: white;
+  max-width: 500px;
+  margin: 0;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+.celebration-text {
+  font-size: 1.2rem;
+  line-height: 1.6;
+}
+
+.power-text {
+  font-size: 1.4rem;
+  line-height: 1.9;
+  max-width: 600px;
+}
+
+/* Continue Button */
+.discovery-button {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.4rem;
+  font-weight: 600;
+  padding: 16px 48px;
+  background: linear-gradient(135deg, #ff9800 0%, #ff6b00 100%);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  animation: buttonAppear 0.5s ease 0.3s both;
+}
+
+.discovery-button:hover {
+  transform: scale(1.05) translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.6);
+}
+
+.discovery-button:active {
+  transform: scale(0.98) translateY(0);
+}
+
+/* Tap anywhere hint */
+.tap-hint {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.1rem;
+  color: white;
+  margin: 10px 0 0 0;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+  animation: blinkSoft 2s ease-in-out infinite;
+  opacity: 0.9;
+}
+
+/* Stage indicator (dots) - more visible on overlay */
+.stage-indicator {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.stage-indicator .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  transition: all 0.3s ease;
+}
+
+.stage-indicator .dot.active {
+  background: #ff9800;
+  border-color: #ff9800;
+  transform: scale(1.3);
+  box-shadow: 0 0 15px rgba(255, 152, 0, 0.8);
+}
+
+/* Sparkles */
+.discovery-sparkles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+  overflow: hidden;
+}
+
+.sparkle {
+  position: absolute;
+  font-size: 1.5rem;
+  animation: sparkleFloat 2s ease-out forwards;
+  opacity: 0;
+}
+
+/* Distribute sparkles */
+.sparkle-0 { top: 10%; left: 15%; animation-delay: 0s; }
+.sparkle-1 { top: 15%; left: 85%; animation-delay: 0.1s; }
+.sparkle-2 { top: 25%; left: 10%; animation-delay: 0.2s; }
+.sparkle-3 { top: 30%; left: 90%; animation-delay: 0.15s; }
+.sparkle-4 { top: 45%; left: 5%; animation-delay: 0.25s; }
+.sparkle-5 { top: 50%; left: 95%; animation-delay: 0.3s; }
+.sparkle-6 { top: 65%; left: 8%; animation-delay: 0.2s; }
+.sparkle-7 { top: 70%; left: 92%; animation-delay: 0.35s; }
+.sparkle-8 { top: 85%; left: 12%; animation-delay: 0.1s; }
+.sparkle-9 { top: 90%; left: 88%; animation-delay: 0.4s; }
+.sparkle-10 { top: 50%; left: 50%; animation-delay: 0.05s; }
+.sparkle-11 { top: 20%; left: 50%; animation-delay: 0.3s; }
+.sparkle-12 { top: 80%; left: 50%; animation-delay: 0.25s; }
+.sparkle-13 { top: 40%; left: 30%; animation-delay: 0.15s; }
+.sparkle-14 { top: 60%; left: 70%; animation-delay: 0.35s; }
+
+/* Animations */
+@keyframes contentFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes celebrationBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+@keyframes celebrationFloat {
+  0%, 100% { 
+    transform: translateY(0); 
+  }
+  50% { 
+    transform: translateY(-15px); 
+  }
+}
+
+@keyframes powerShine {
+  0%, 100% { 
+    filter: brightness(1) drop-shadow(0 0 20px rgba(255, 215, 0, 0.6)); 
+  }
+  50% { 
+    filter: brightness(1.3) drop-shadow(0 0 30px rgba(255, 215, 0, 0.9)); 
+  }
+}
+
+@keyframes powerFloat {
+  0%, 100% { 
+    transform: translateY(0); 
+  }
+  50% { 
+    transform: translateY(-10px); 
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% { 
+    opacity: 0.3; 
+    transform: translate(-50%, -50%) scale(1); 
+  }
+  50% { 
+    opacity: 0.6; 
+    transform: translate(-50%, -50%) scale(1.1); 
+  }
+}
+
+@keyframes buttonAppear {
+  from { 
+    transform: translateY(20px); 
+    opacity: 0; 
+  }
+  to { 
+    transform: translateY(0); 
+    opacity: 1; 
+  }
+}
+
+@keyframes blinkSoft {
+  0%, 100% { 
+    opacity: 0.9; 
+  }
+  50% { 
+    opacity: 0.4; 
+  }
+}
+
+@keyframes sparkleFloat {
+  0% { 
+    transform: translateY(0) scale(0); 
+    opacity: 0;
+  }
+  20% { 
+    opacity: 1;
+  }
+  100% { 
+    transform: translateY(-120px) scale(1) rotate(180deg); 
+    opacity: 0;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .discovery-content {
+    width: 95%;
+    padding: 40px 30px;
+    gap: 20px;
+  }
+
+  .discovery-title {
+    font-size: 1.8rem;
+  }
+
+  .discovery-image-container,
+  .discovery-icon-container {
+    width: 160px;
+    height: 160px;
+  }
+
+  .discovery-text {
+    font-size: 1.1rem;
+  }
+
+  .discovery-button {
+    font-size: 1.2rem;
+    padding: 14px 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .discovery-content {
+    padding: 35px 25px;
+    gap: 18px;
+  }
+
+  .discovery-title {
+    font-size: 1.6rem;
+  }
+
+  .discovery-image-container,
+  .discovery-icon-container {
+    width: 140px;
+    height: 140px;
+  }
+
+  .discovery-text {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .discovery-button {
+    font-size: 1.1rem;
+    padding: 12px 32px;
+  }
+}
+
+/* Accessibility - Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .discovery-overlay,
+  .discovery-content,
+  .discovery-image,
+  .discovery-icon,
+  .discovery-button,
+  .sparkle {
+    animation: none !important;
+    transition: opacity 0.2s ease !important;
+  }
+  
+  .power-glow {
+    animation: none !important;
+    opacity: 0.4 !important;
+  }
+}

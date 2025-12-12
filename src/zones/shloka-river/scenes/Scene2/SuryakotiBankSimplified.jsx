@@ -24,7 +24,7 @@ import SamaprabhaGame from './components/SamaprabhaGame';
 
 import SunRayArc from './components/SunRayArc';
 //import SparkleTrailComponent from './components/SparkleTrailComponent'; // Add this component
-import SanskritVoiceRecorder from '../../../../lib/components/audio/SanskritVoiceRecorder';
+import SanskritVoiceRecorder from '../../../../lib/components/audio/SanskritVoiceRecorder.jsx';
 import SmartwatchWidget from '../Scene1/components/SmartwatchWidget';
 import HelperSignatureAnimation from '../../../../lib/components/animation/HelperSignatureAnimation';
 
@@ -286,6 +286,9 @@ const [currentWord, setCurrentWord] = useState(null);  // ⭐ ADD THIS LINE
     const [forceMemoryGameReset, setForceMemoryGameReset] = useState(false); // ADD THIS LINE
   const [rescuePhase, setRescuePhase] = useState('problem');
 
+  const [savedRecordings, setSavedRecordings] = useState({});
+
+
 
   // Add power configuration for Scene 2
 // ✅ REPLACE the existing powerConfig with:
@@ -456,6 +459,28 @@ const resetScene = (showConfirm = true) => {
     
     console.log(`Audio ${newAudioState ? 'enabled' : 'muted'}`);
   };
+
+  const onSaveAppRecording = (recordingData) => {
+  console.log('💾 Saving recording:', recordingData);
+  setSavedRecordings(prev => ({
+    ...prev,
+    [recordingData.word]: [
+      ...(prev[recordingData.word] || []),
+      recordingData
+    ]
+  }));
+};
+
+const onDeleteAppRecording = (recordingId, word) => {
+  console.log('🗑️ Deleting recording:', recordingId, word);
+  setSavedRecordings(prev => {
+    const wordRecordings = prev[word] || [];
+    return {
+      ...prev,
+      [word]: wordRecordings.filter(rec => rec.id !== recordingId)
+    };
+  });
+};
 
   // Cleanup timeouts on unmount
   useEffect(() => {
@@ -1437,11 +1462,37 @@ const handlePhaseComplete = (word) => {
           <p className="suryakoti-power-modal-subtext">Choose your next action:</p>
         </div>
         
-        <div className="suryakoti-power-modal-right">
-          <button className="suryakoti-power-modal-btn suryakoti-save-btn" onClick={handleSaveAnimal}>
-            🾠Save an Animal
-          </button>
-          
+   <div className="suryakoti-power-modal-right">
+  
+  {/* ⭐ NEW: Play Again button */}
+  <button 
+    className="suryakoti-power-modal-btn suryakoti-play-again-btn" 
+    onClick={() => {
+      console.log(`🔄 Play Again: Restarting ${currentWord} game`);
+      setShowPowerModal(false);
+      
+      // Reset to game phase for the current word
+      if (currentWord === 'suryakoti') {
+        setModeForPhase('suryakoti');
+        setShowModeSelection(true);
+        setModeSelected(false);
+      } else if (currentWord === 'samaprabha') {
+        setModeForPhase('samaprabha');
+        setShowModeSelection(true);
+        setModeSelected(false);
+      }
+    }}
+    style={{
+      background: 'linear-gradient(135deg, #9C27B0 0%, #BA68C8 100%)',
+      marginBottom: '10px'
+    }}
+  >
+    🔄 Play Again
+  </button>
+
+  <button className="suryakoti-power-modal-btn suryakoti-save-btn" onClick={handleSaveAnimal}>
+    🌟Save an Animal
+  </button>
           <button className="suryakoti-power-modal-btn suryakoti-continue-btn" onClick={handleContinueLearning}>
             {currentWord === 'suryakoti' ? '🎵 Discover Samaprabha' : '✨ End Scene'}
           </button>
@@ -1483,15 +1534,18 @@ const handlePhaseComplete = (word) => {
 
          
 
-<AppSidebar 
+<AppSidebar
   unlockedApps={{
-    vakratunda: true,      // From Scene 1
-    mahakaya: true,        // From Scene 1
-    ...(sceneState.unlockedApps || {})  // suryakoti, samaprabha
+    vakratunda: true,
+    mahakaya: true,
+    ...(sceneState.unlockedApps || {})
   }}
+  savedRecordings={savedRecordings}              // ADD THIS
+  onSaveRecording={onSaveAppRecording}           // ADD THIS
+  onDeleteRecording={onDeleteAppRecording}       // ADD THIS
   onAppClick={(app) => {
     setCurrentPracticeWord(app.id);
-    setShowAudioPractice(true);
+    setShowAudioRecorder(true);
   }}
   isReload={isReload}
   onSaveAppState={(appState) => {

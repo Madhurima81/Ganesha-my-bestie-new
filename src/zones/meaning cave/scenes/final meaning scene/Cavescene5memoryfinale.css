@@ -1,0 +1,708 @@
+/* Cave Scene 5 - Memory Finale Styles - ENHANCED VERSION */
+
+.cave-scene5-memory {
+  width: 100%;
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  position: relative;
+  overflow-y: auto;
+}
+
+/* ===== OPENING SCREEN STYLES ===== */
+.cave-opening-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* FIX 1: Removed overflow-y and max-height to prevent scrollbar */
+.opening-message {
+  position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 25px 40px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  animation: openingSlideIn 0.8s ease-out;
+}
+
+.opening-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.opening-ganesha {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 5px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.opening-content h2 {
+  color: #8B4513;
+  font-size: 22px;
+  font-weight: bold;
+  margin: 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.opening-content p {
+  color: #1565C0;
+  font-size: 15px;
+  margin: 3px 0;
+  line-height: 1.4;
+}
+
+.opening-hint {
+  font-size: 14px !important;
+  color: #666 !important;
+  font-style: italic;
+  margin-top: 5px !important;
+}
+
+.play-game-button {
+  background: linear-gradient(135deg, #8B4513, #A0522D);
+  color: white;
+  border: none;
+  padding: 12px 35px;
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  margin-top: 8px;
+}
+
+.play-game-button:hover {
+  background: linear-gradient(135deg, #A0522D, #8B4513);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes openingSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== HEADER ===== */
+.scene-header {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.back-button {
+  background: rgba(139, 69, 19, 0.9);
+  color: white;
+  border: 2px solid #8B4513;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-button:hover {
+  background: rgba(139, 69, 19, 1);
+  transform: scale(1.05);
+}
+
+.round-indicator {
+  background: rgba(255, 215, 0, 0.9);
+  color: #8B4513;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Progress Indicator - Thin bar at top */
+.progress-indicator-top {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  display: inline-block;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.memory-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 10px;
+  max-width: 700px;
+  width: 80%;
+  margin: 60px auto 0 auto;  /* ← ADD 80px top margin */
+  perspective: 1000px;
+  padding: 10px;
+  position: relative;
+  z-index: 10;
+}
+
+/* Memory Card - FIXED DIMENSIONS - SMALLER for landscape */
+.memory-card {
+  aspect-ratio: 3/4;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.3s ease;
+  width: 100%;
+  height: auto;
+  max-height: 140px;
+  /* Prevent any layout shifts */
+  transform-style: preserve-3d;
+}
+
+.memory-card:hover:not(.matched) {
+  transform: scale(1.05);
+}
+
+.memory-card.matched {
+  cursor: default;
+  opacity: 0.7;
+  animation: matchPulse 0.6s ease;
+}
+
+@keyframes matchPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* Sparkle effect for matched cards */
+.sparkle-effect {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  font-size: 32px;
+  z-index: 100;
+  animation: sparkleAnimation 0.6s ease-out;
+  pointer-events: none;
+}
+
+@keyframes sparkleAnimation {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.5) rotate(180deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Card Inner (for flip effect) - CRITICAL FIX */
+.card-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.memory-card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+/* Card Faces - BOTH MUST HAVE IDENTICAL STRUCTURE */
+.card-back,
+.card-front {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 15px;
+  border: 3px solid #b8975a;
+  overflow: hidden;
+  box-shadow: 
+    inset 0 2px 10px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 10px rgba(0, 0, 0, 0.2),
+    0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.card-back {
+  background: linear-gradient(135deg, #f4e4c1 0%, #e8d4a8 50%, #d4b896 100%);
+  z-index: 2;
+  transform: rotateY(0deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-back::before {
+  content: '?';
+  font-size: 48px;
+  font-weight: bold;
+  color: #b8975a;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  z-index: 5;
+}
+
+/* Card back gems */
+.card-back::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 12px 12px, #ffd700 8px, transparent 8px),
+    radial-gradient(circle at calc(100% - 12px) 12px, #ffd700 8px, transparent 8px),
+    radial-gradient(circle at 12px calc(100% - 12px), #ffd700 8px, transparent 8px),
+    radial-gradient(circle at calc(100% - 12px) calc(100% - 12px), #ffd700 8px, transparent 8px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.card-front {
+  transform: rotateY(180deg);
+  background: linear-gradient(135deg, #f4e4c1 0%, #e8d4a8 50%, #d4b896 100%);
+  z-index: 1;
+}
+
+/* FIX 2: Reduced gem size from 35px to 20px to not overpower content */
+.gem {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle at 30% 30%, #ffd700, #ffb347, #ff8c00);
+  border-radius: 5px;
+  transform: rotate(45deg);
+  box-shadow: 
+    inset 1px 1px 3px rgba(255, 255, 255, 0.6),
+    inset -1px -1px 3px rgba(0, 0, 0, 0.3),
+    0 1px 3px rgba(0, 0, 0, 0.4);
+  z-index: 2;
+}
+
+.gem::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 1px;
+}
+
+.gem-top-left {
+  top: 8px;
+  left: 8px;
+}
+
+.gem-top-right {
+  top: 8px;
+  right: 8px;
+}
+
+.gem-bottom-left {
+  bottom: 8px;
+  left: 8px;
+}
+
+.gem-bottom-right {
+  bottom: 8px;
+  right: 8px;
+}
+
+.card-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+/* ENHANCEMENT: Increased symbol image size from 45% width to 60% */
+.card-symbol {
+  width: 60%;              /* Changed from 45% */
+  height: auto;
+  max-height: 55%;         /* Changed from 40% */
+  object-fit: contain;
+  margin-bottom: 5px;
+  filter: drop-shadow(0 2px 4px rgba(139, 69, 19, 0.3));
+  display: block;
+}
+
+/* ENHANCEMENT: Increased Sanskrit word font size from 14px to 18px */
+.sanskrit-word {
+  font-size: 18px;         /* Changed from 14px */
+  font-weight: bold;
+  color: #8b4513;
+  text-align: center;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  font-family: Georgia, serif;
+  letter-spacing: 0.3px;
+}
+
+/* ENHANCEMENT: Increased English meaning font size from 16px to 20px */
+.meaning-word {
+  font-size: 20px;         /* Changed from 16px */
+  font-weight: bold;
+  color: #654321;
+  text-align: center;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  font-family: Georgia, serif;
+  padding: 8px;
+  line-height: 1.2;
+}
+
+.helper-text {
+  position: fixed;
+  top: 20px;                    /* ← CHANGE from bottom: 100px */
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);  /* ← White background */
+  color: #8B4513;
+  padding: 10px 30px;           /* ← Reduced padding */
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);  /* ← Lighter shadow */
+  z-index: 1000;
+    animation: fadeIn 0.3s ease;  /* ← Change from slideUp */
+
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+
+}
+
+/* Round Complete Screen */
+.round-complete-screen {
+  width: 100%;
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* FIX 3: Removed overflow-y and max-height to show all buttons */
+.round-complete-content {
+  background: white;
+  border-radius: 20px;
+  padding: 30px 35px;
+  max-width: 600px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  animation: bounceIn 0.6s ease;
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.round-complete-title {
+  color: #8B4513;
+  font-size: 26px;
+  margin: 0 0 10px 0;
+}
+
+.round-complete-message {
+  color: #654321;
+  font-size: 15px;
+  margin: 0 0 20px 0;
+}
+
+.matched-pairs-display {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.matched-pair-item {
+  background: linear-gradient(135deg, #FFF8DC, #F5DEB3);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.matched-pair-item img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.matched-text {
+  text-align: left;
+  flex: 1;
+}
+
+.matched-word {
+  font-weight: bold;
+  color: #8B4513;
+  font-size: 14px;
+}
+
+.matched-meaning {
+  color: #654321;
+  font-size: 12px;
+}
+
+/* Action Buttons Container */
+.round-action-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+/* Continue Button - Brown/Orange */
+.final-continue-button {
+  background: linear-gradient(135deg, #8B4513, #A0522D);
+  color: white;
+  border: 4px solid white;
+  padding: 14px 32px;
+  border-radius: 30px;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+  flex: 1;
+  min-width: 160px;
+  max-width: 220px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.final-continue-button:hover {
+  background: linear-gradient(135deg, #A0522D, #8B4513);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Play Again Button - Blue */
+.play-again-button {
+  background: linear-gradient(135deg, #1565C0, #1976D2);
+  color: white;
+  border: 4px solid white;
+  padding: 14px 32px;
+  border-radius: 30px;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+  flex: 1;
+  min-width: 160px;
+  max-width: 220px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.play-again-button:hover {
+  background: linear-gradient(135deg, #1976D2, #1565C0);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Error Boundary Styles */
+.error-boundary {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #f5f5f5;
+  padding: 20px;
+  text-align: center;
+}
+
+.error-boundary h2 {
+  color: #d32f2f;
+  margin-bottom: 20px;
+}
+
+.error-boundary button {
+  background: #1976D2;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.error-boundary button:hover {
+  background: #1565C0;
+}
+
+/* Loading state */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 24px;
+  color: #8B4513;
+  font-weight: bold;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .memory-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    max-width: 100%;
+  }
+
+  .opening-message {
+    padding: 30px 35px;
+    max-width: 90%;
+  }
+
+  .opening-content h2 {
+    font-size: 24px;
+  }
+
+  .opening-content p {
+    font-size: 16px;
+  }
+
+  .opening-ganesha {
+    width: 100px;
+    height: 100px;
+  }
+
+  .play-game-button {
+    font-size: 20px;
+    padding: 15px 35px;
+  }
+
+  .round-complete-title {
+    font-size: 28px;
+  }
+
+  .round-complete-message {
+    font-size: 16px;
+  }
+
+  .matched-pairs-display {
+    grid-template-columns: 1fr;
+  }
+
+  /* Adjust card content for tablets */
+  .card-symbol {
+    width: 70%;
+    max-height: 50%;
+  }
+
+  .sanskrit-word {
+    font-size: 16px;
+  }
+
+  .meaning-word {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .memory-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .card-symbol {
+    width: 80%;
+    max-height: 50%;
+  }
+
+  .sanskrit-word {
+    font-size: 14px;
+  }
+
+  .meaning-word {
+    font-size: 16px;
+  }
+
+  .round-indicator {
+    font-size: 14px;
+    padding: 8px 15px;
+  }
+
+  .opening-message {
+    padding: 25px 30px;
+  }
+
+  .opening-content h2 {
+    font-size: 20px;
+  }
+
+  .opening-content p {
+    font-size: 14px;
+  }
+
+  .opening-ganesha {
+    width: 80px;
+    height: 80px;
+  }
+
+  .play-game-button {
+    font-size: 18px;
+    padding: 12px 30px;
+  }
+}

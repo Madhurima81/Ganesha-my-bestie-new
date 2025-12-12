@@ -816,3 +816,190 @@
 ::-webkit-scrollbar-thumb:hover {
   background: var(--sacred-primary);
 }
+
+/* ===========================
+   SCENE 4 THEME: SACRED ASSEMBLY
+   Palette: Golden Cream, Warm Brown, Gold
+   =========================== */
+
+/* ===========================
+   INSTRUCTION MODAL - Opening Screen
+   =========================== */
+.assembly-instructions-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 2000; /* High z-index to sit above everything */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: assembly-fadeIn 0.3s ease-out;
+}
+
+/* Sparkles container */
+.assembly-sparkles {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  pointer-events: none;
+  z-index: 101;
+  animation: assembly-sparklesFadeOut 0.8s ease-out forwards;
+}
+
+.assembly-sparkle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #FFE9A9; /* Golden Glow */
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  animation: assembly-sparkleFloat 0.8s ease-out forwards;
+  box-shadow: 0 0 15px rgba(255, 233, 169, 0.9);
+}
+
+.assembly-sparkle:nth-child(1) { top: 20%; left: 50%; animation-delay: 0s; transform: translate(-50%, -50%) scale(0); }
+.assembly-sparkle:nth-child(2) { top: 50%; left: 80%; animation-delay: 0.1s; transform: translate(-50%, -50%) scale(0); }
+.assembly-sparkle:nth-child(3) { top: 80%; left: 50%; animation-delay: 0.2s; transform: translate(-50%, -50%) scale(0); }
+.assembly-sparkle:nth-child(4) { top: 50%; left: 20%; animation-delay: 0.15s; transform: translate(-50%, -50%) scale(0); }
+
+.assembly-instructions-content {
+  position: relative;
+  width: 95%;
+  max-width: 1400px;
+  height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  padding: 0 60px;
+  animation: assembly-contentFadeIn 0.5s ease-out 0.5s both;
+}
+
+.assembly-instructions-ganesha {
+  flex: 0 0 40%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  animation: assembly-slideInLeft 0.6s ease-out 0.8s both;
+}
+
+.assembly-instructions-ganesha img {
+  width: 100%;
+  max-width: 450px;
+  height: auto;
+  filter: drop-shadow(0 0 30px rgba(244, 178, 54, 0.6)); /* Gold Aura */
+  transform: scaleX(1); /* No flip needed for Ganesha Divine usually */
+}
+
+.assembly-instructions-card {
+  flex: 0 0 45%;
+  background: #FFF7E1; /* Golden Cream BG */
+  border-radius: 30px;
+  padding: 50px;
+  box-shadow: 0 10px 40px rgba(200, 150, 80, 0.28); /* Warm Shadow */
+  animation: assembly-slideInRight 0.6s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 4px solid #FFFFFF;
+}
+
+.assembly-instructions-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 48px;
+  font-weight: 700;
+  color: #5A3B1E; /* Warm Celebratory Brown */
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.assembly-instructions-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 24px;
+  color: #8B6F4A; /* Golden Brown */
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
+
+.assembly-instructions-icons {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  margin-bottom: 45px;
+  width: 100%;
+}
+
+.assembly-instruction-icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.assembly-instruction-icon-item img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+}
+
+.assembly-instruction-icon-label {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #5A3B1E;
+}
+
+.assembly-instructions-button {
+  font-family: 'Baloo 2', cursive;
+  background: linear-gradient(135deg, #F4B236 0%, #DAA520 100%); /* Gold Gradient */
+  border: none;
+  color: white;
+  padding: 20px 70px;
+  font-size: 28px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(244, 178, 54, 0.4);
+  text-transform: capitalize;
+}
+
+.assembly-instructions-button:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(244, 178, 54, 0.6);
+}
+
+.assembly-instructions-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Animations */
+@keyframes assembly-fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes assembly-slideInLeft { from { opacity: 0; transform: translateX(-100px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes assembly-slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes assembly-contentFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+@keyframes assembly-sparklesFadeOut { 0% { opacity: 1; } 60% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes assembly-sparkleFloat { 
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .assembly-instructions-content { flex-direction: column; height: auto; padding: 20px; gap: 20px; }
+  .assembly-instructions-ganesha { flex: 0 0 auto; }
+  .assembly-instructions-ganesha img { max-width: 250px; }
+  .assembly-instructions-card { flex: 0 0 auto; padding: 30px 25px; }
+  .assembly-instructions-title { font-size: 28px; }
+  .assembly-instructions-subtitle { font-size: 16px; }
+  .assembly-instruction-icon-item img { width: 55px; height: 55px; }
+  .assembly-instructions-button { font-size: 20px; padding: 14px 40px; }
+}

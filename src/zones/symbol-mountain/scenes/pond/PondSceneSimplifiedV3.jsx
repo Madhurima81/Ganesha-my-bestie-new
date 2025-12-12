@@ -1,8 +1,9 @@
-// zones/symbol-mountain/scenes/pond/PondSceneUpgraded.jsx
+// zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV3.jsx
 // Complete feature implementation matching Modak scene
 
 import React, { useState, useEffect, useRef } from 'react';
 import './PondScene.css';
+import '../../../shared/components/OpeningModal.css';
 
 // Import scene management components
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
@@ -44,11 +45,12 @@ import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.p
 import symbolLotusColored from '../../shared/images/icons/symbol-lotus-colored.png';
 import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-colored.png';
 
-// Mission images (you need to add these)
+// Mission images
 import lotusBefore from './assets/images/lotus-before.png';
 import lotusAfter from './assets/images/lotus-after.png';
 import trunkBefore from './assets/images/trunk-before.png';
 import trunkAfter from './assets/images/trunk-after.png';
+import ganeshaCharacter from './assets/images/ganesha-character.png'; // Added import
 
 const PHASES = {
   INITIAL: 'initial',
@@ -77,6 +79,21 @@ const powerConfig = {
 const missionImages = {
   lotus: { before: lotusBefore, after: lotusAfter },
   trunk: { before: trunkBefore, after: trunkAfter }
+};
+
+const discoveryConfig = {
+  lotus: {
+    foundTitle: "You Bloomed All Lotuses!",
+    foundSubtitle: "Something magical appears...",
+    powerName: "Sacred Purity",
+    image: symbolLotusColored
+  },
+  trunk: {
+    foundTitle: "The Pond is Full!",
+    foundSubtitle: "Ganesha's trunk reveals its power...",
+    powerName: "Divine Blessing",
+    image: symbolTrunkColored
+  }
 };
 
 // Error Boundary Component
@@ -114,7 +131,7 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-const PondSceneUpgraded = ({
+const PondSceneSimplifiedV3 = ({
   onComplete,
   onNavigate,
   zoneId = 'symbol-mountain',
@@ -191,8 +208,18 @@ const PondSceneContent = ({
   const [showPowerMission, setShowPowerMission] = useState(false);
   const [currentMissionSymbol, setCurrentMissionSymbol] = useState(null);
 
+  // Discovery overlay states
+const [discoveryStep, setDiscoveryStep] = useState('hidden');
+const [isDiscoveryFading, setIsDiscoveryFading] = useState(false);
+const [discoveryItem, setDiscoveryItem] = useState(null);
+
+// Resume popup states
+const [showResumePopup, setShowResumePopup] = useState(false);
+const [resumeMessage, setResumeMessage] = useState('');
+
   const timeoutsRef = useRef([]);
   const progressiveHintRef = useRef(null);
+  const reloadHandledRef = useRef(false);
   const activeDropsRef = useRef(new Set());
   const MAX_WATER_DROPS = 15;
 
@@ -205,14 +232,15 @@ const PondSceneContent = ({
     return id;
   };
 
-  useEffect(() => {
-    return () => {
-      timeoutsRef.current.forEach(id => clearTimeout(id));
-      activeDropsRef.current.clear();
-    };
-  }, []);
+useEffect(() => {
+  return () => {
+    timeoutsRef.current.forEach(id => clearTimeout(id));
+    activeDropsRef.current.clear();
+    reloadHandledRef.current = false;
+  };
+}, []);
 
-  // Auto-glow effect - triggers 20 seconds after welcomeShown
+  // Auto-glow effect
   useEffect(() => {
     const glowPhases = [
       PHASES.INITIAL,
@@ -235,24 +263,69 @@ const PondSceneContent = ({
     }
   }, [sceneState?.phase, sceneState?.welcomeShown, showPowerModal, showPowerMission]);
 
-  // Completion message
-  /*useEffect(() => {
-    if (!sceneState || !showMessage) return;
-    
-    if (sceneState.phase === PHASES.COMPLETE && !sceneState.masteryShown) {
-      const timer = setTimeout(() => {
-        showMessage(`Amazing work, ${profileName}! You've discovered the Sacred Lotus and Divine Blessing!`, {
-          duration: 8000,
-          animation: 'bounce',
-          position: 'top-right',
-          source: 'scene',
-          messageType: 'celebration'
-        });
-        sceneActions.updateState({ masteryShown: true });
-      }, 1000);
-      return () => clearTimeout(timer);
+  // Reload continuation - prevents freezing
+useEffect(() => {
+  if (!isReload || reloadHandledRef.current || !sceneState.welcomeShown) {
+    return;
+  }
+
+  console.log('🔄 RELOAD DETECTED - Resuming from phase:', sceneState.phase);
+  reloadHandledRef.current = true;
+
+  const shouldShowLotusModal = 
+    sceneState.phase === PHASES.ALL_BLOOMED;
+
+  const shouldShowTrunkModal = 
+    sceneState.phase === PHASES.ELEPHANT_TRANSFORMED;
+
+  if (shouldShowLotusModal) {
+    setTimeout(() => {
+      setCurrentMissionSymbol('lotus');
+      setShowPowerModal(true);
+    }, 500);
+  } 
+  else if (shouldShowTrunkModal) {
+    setTimeout(() => {
+      setCurrentMissionSymbol('trunk');
+      setShowPowerModal(true);
+    }, 500);
+  }
+  else if (sceneState.phase === PHASES.INITIAL || sceneState.phase === PHASES.SOME_BLOOMED) {
+    const bloomed = sceneState.lotusStates?.filter(s => s === 1).length || 0;
+    setResumeMessage(`Continue blooming lotuses! You have ${bloomed}/3 bloomed!`);
+    setShowResumePopup(true);
+    setTimeout(() => setShowResumePopup(false), 5000);
+  }
+  else if (sceneState.phase === PHASES.ELEPHANT_VISIBLE) {
+    setResumeMessage("Click the elephant's trunk to spray water!");
+    setShowResumePopup(true);
+    setTimeout(() => setShowResumePopup(false), 5000);
+  }
+  else if (sceneState.phase === PHASES.COMPLETE) {
+    if (!sceneState.showingCompletionScreen) {
+      setTimeout(() => {
+        setShowSceneCompletion(true);
+      }, 500);
     }
-  }, [sceneState?.phase, sceneState?.masteryShown, showMessage]);*/
+  }
+
+}, [isReload, sceneState.phase, sceneState.welcomeShown]);
+
+// Completion message
+useEffect(() => {
+  if (!sceneState) return;
+  
+  if (sceneState.phase === PHASES.COMPLETE && !sceneState.masteryShown) {
+    const timer = setTimeout(() => {
+      setResumeMessage(`Amazing work, ${profileName}! You've discovered the Sacred Lotus and Divine Trunk!`);
+      setShowResumePopup(true);
+      setTimeout(() => setShowResumePopup(false), 4000);
+      
+      sceneActions.updateState({ masteryShown: true });
+    }, 1000);
+    return () => clearTimeout(timer);
+  }
+}, [sceneState?.phase, sceneState?.masteryShown, profileName]);
 
   // Water Drop Creation
   const createWaterDrop = () => {
@@ -297,35 +370,54 @@ const PondSceneContent = ({
     }, newDrop.duration * 1000 + 500);
   };
 
-  // Symbol Learning Flow - 5 second celebration
-  const completeSymbolLearning = (symbolKey, symbolData) => {
-    console.log(`${symbolKey} symbol learned - FULL CELEBRATION`);
-    
-    // Step 1: Show big centered symbol + text (5 seconds)
-    setShowCenteredSymbol(symbolKey);
+  const triggerDiscoverySequence = (itemKey, delay = 500) => {
+  setDiscoveryItem(itemKey);
+  
+  setTimeout(() => {
+    setDiscoveryStep('found'); 
+  }, delay);
+
+  setTimeout(() => {
+    setDiscoveryStep('symbol'); 
+    setShowSparkle('symbol-reveal');
+  }, delay + 3000);
+
+  setTimeout(() => {
+    setIsDiscoveryFading(true);
     
     setTimeout(() => {
-      // Step 2: Hide centered, start fly animation to sidebar
-      setShowCenteredSymbol(null);
-      setShowSparkle(`${symbolKey}-to-sidebar`);
-      
-      sceneActions.updateState({
-        discoveredSymbols: {
-          ...sceneState.discoveredSymbols,
-          [symbolKey]: true
-        }
-      });
-      
-      setTimeout(() => {
-        // Step 3: Symbol in sidebar, show power modal immediately
-        setShowSparkle(null);
-        setCurrentMissionSymbol(symbolKey);
-        setShowPowerModal(true);
-      }, 2000);
-    }, 5000); // 5 seconds for celebration
-  };
+      setDiscoveryStep('hidden');
+      setIsDiscoveryFading(false);
+      completeSymbolLearning(itemKey, { name: discoveryConfig[itemKey].powerName });
+    }, 500); 
+  }, delay + 6000);
+};
 
-  // Get next action text
+  // Symbol Learning Flow
+const completeSymbolLearning = (symbolKey, symbolData) => {
+  console.log(`${symbolKey} symbol learned - FULL CELEBRATION`);
+  
+  // Step 1: Update state (Add to inventory)
+  sceneActions.updateState({
+    discoveredSymbols: {
+      ...sceneState.discoveredSymbols,
+      [symbolKey]: true
+    }
+  });
+
+  // Step 2: Trigger Sidebar Sparkles (Visual feedback for "Collection")
+  setShowSparkle(`${symbolKey}-to-sidebar`);
+  
+  // Step 3: Open the Power Modal
+  // (Just enough delay for the Overlay to finish fading out)
+  setTimeout(() => {
+    setShowSparkle(null);
+    setCurrentMissionSymbol(symbolKey);
+    setShowPowerModal(true);
+  }, 800);
+};
+
+  // Helper functions
   const getNextDiscoveryText = (currentSymbol) => {
     const nextActions = {
       lotus: '🐘 Discover Trunk',
@@ -334,111 +426,112 @@ const PondSceneContent = ({
     return nextActions[currentSymbol] || '➡️ Continue';
   };
 
+  const getPowerDescription = (symbolKey) => {
+    const descriptions = {
+      lotus: 'The Sacred Lotus represents purity.\nIt blooms beautifully even in muddy water!',
+      trunk: 'The Curved Trunk represents adaptability.\nGanesha uses it to remove obstacles!'
+    };
+    return descriptions[symbolKey] || 'You unlocked a special power!';
+  };
+
   // Handler functions
   const handleSaveAnimal = () => {
     setShowPowerModal(false);
     setShowPowerMission(true);
-
   };
 
-const handleContinueLearning = () => {
-  setShowPowerModal(false);
-  const symbolKey = currentMissionSymbol;
-  
-  if (symbolKey === 'lotus') {
-    // Show golden lotus with sparkles
-    setTimeout(() => {
-      setShowSparkle('all-lotuses');
-    }, 500);
+  const handleContinueLearning = () => {
+    setShowPowerModal(false);
+    const symbolKey = currentMissionSymbol;
     
-    setTimeout(() => {
-      sceneActions.updateState({
-        goldenLotusVisible: true,
-        phase: PHASES.GOLDEN_VISIBLE,
-        currentFocus: 'golden'
-      });
-      setShowSparkle('golden-lotus');
-      setTimeout(() => setShowSparkle(null), 2000);
-    }, 1500);
-    
-  } else if (symbolKey === 'trunk') {
-    // Bloom golden lotus
-    setShowSparkle('golden-lotus-bloom');
-    
-    setTimeout(() => {
-      sceneActions.updateState({
-        goldenLotusBloom: true,
-        phase: PHASES.GOLDEN_BLOOM
-      });
-      setShowSparkle(null);
+    if (symbolKey === 'lotus') {
+      setTimeout(() => {
+        setShowSparkle('all-lotuses');
+      }, 500);
       
       setTimeout(() => {
-        // ✅ STREAMLINED: Go straight to fireworks!
         sceneActions.updateState({
-          phase: PHASES.COMPLETE,
-          stars: 5,
-          completed: true,
-          currentPopup: 'final_fireworks',
-          progress: {
-            percentage: 100,
-            starsEarned: 5,
-            completed: true
-          }
+          goldenLotusVisible: true,
+          phase: PHASES.GOLDEN_VISIBLE,
+          currentFocus: 'golden'
         });
-        setTimeout(() => setShowSparkle('final-fireworks'), 500);
-      }, 800); // Just 800ms delay - much faster!
-    }, 500);
-  }
-};
-
+        setShowSparkle('golden-lotus');
+        setTimeout(() => setShowSparkle(null), 2000);
+      }, 1500);
+      
+    } else if (symbolKey === 'trunk') {
+      setShowSparkle('golden-lotus-bloom');
+      
+      setTimeout(() => {
+        sceneActions.updateState({
+          goldenLotusBloom: true,
+          phase: PHASES.GOLDEN_BLOOM
+        });
+        setShowSparkle(null);
+        
+        setTimeout(() => {
+          sceneActions.updateState({
+            phase: PHASES.COMPLETE,
+            stars: 5,
+            completed: true,
+            currentPopup: 'final_fireworks',
+            progress: {
+              percentage: 100,
+              starsEarned: 5,
+              completed: true
+            }
+          });
+          setTimeout(() => setShowSparkle('final-fireworks'), 500);
+        }, 800);
+      }, 500);
+    }
+  };
 
   const handleMissionComplete = (symbolKey) => {
-  console.log('Mission complete for:', symbolKey);
-  setShowPowerMission(false);
-  
-  if (symbolKey === 'lotus') {
-    setTimeout(() => {
-      setShowSparkle('all-lotuses');
-    }, 500);
+    setShowPowerMission(false);
     
-    setTimeout(() => {
-      sceneActions.updateState({
-        goldenLotusVisible: true,
-        phase: PHASES.GOLDEN_VISIBLE,
-        currentFocus: 'golden'
-      });
-      setShowSparkle('golden-lotus');
-      setTimeout(() => setShowSparkle(null), 2000);
-    }, 1500);
-    
-  } else if (symbolKey === 'trunk') {
-    setShowSparkle('golden-lotus-bloom');
-    
-    setTimeout(() => {
-      sceneActions.updateState({
-        goldenLotusBloom: true,
-        phase: PHASES.GOLDEN_BLOOM
-      });
-      setShowSparkle(null);
+    if (symbolKey === 'lotus') {
+      setTimeout(() => {
+        setShowSparkle('all-lotuses');
+      }, 500);
       
       setTimeout(() => {
-        // ✅ STREAMLINED: Go straight to fireworks!
         sceneActions.updateState({
-          phase: PHASES.COMPLETE,
-          stars: 5,
-          completed: true,
-          currentPopup: 'final_fireworks',
-          progress: {
-            percentage: 100,
-            starsEarned: 5,
-            completed: true
-          }
+          goldenLotusVisible: true,
+          phase: PHASES.GOLDEN_VISIBLE,
+          currentFocus: 'golden'
         });
-        setTimeout(() => setShowSparkle('final-fireworks'), 500);
-      }, 800); // Just 800ms delay - much faster!
-    }, 500);
-  }
-};
+        setShowSparkle('golden-lotus');
+        setTimeout(() => setShowSparkle(null), 2000);
+      }, 1500);
+      
+    } else if (symbolKey === 'trunk') {
+      setShowSparkle('golden-lotus-bloom');
+      
+      setTimeout(() => {
+        sceneActions.updateState({
+          goldenLotusBloom: true,
+          phase: PHASES.GOLDEN_BLOOM
+        });
+        setShowSparkle(null);
+        
+        setTimeout(() => {
+          sceneActions.updateState({
+            phase: PHASES.COMPLETE,
+            stars: 5,
+            completed: true,
+            currentPopup: 'final_fireworks',
+            progress: {
+              percentage: 100,
+              starsEarned: 5,
+              completed: true
+            }
+          });
+          setTimeout(() => setShowSparkle('final-fireworks'), 500);
+        }, 800);
+      }, 500);
+    }
+  };
 
   // Lotus Click Handler
   const handleLotusClick = (index) => {
@@ -468,22 +561,29 @@ const handleContinueLearning = () => {
     
     const bloomedCount = lotusStates.filter(s => s === 1).length;
     
-    if (bloomedCount === 3) {
-      sceneActions.updateState({
-        lotusStates,
-        phase: PHASES.ALL_BLOOMED,
-        currentFocus: 'waiting-for-golden',
-        progress: {
-          ...sceneState.progress,
-          percentage: 30,
-          starsEarned: 1
-        }
-      });
-      
-      // Trigger symbol learning
-      safeSetTimeout(() => {
-        completeSymbolLearning('lotus', { name: 'Sacred Purity' });
-      }, 1000);
+if (bloomedCount === 3) {
+  // First update - show 3/3 in header
+  sceneActions.updateState({
+    lotusStates,
+    phase: PHASES.SOME_BLOOMED, // ⬅️ Keep header visible to show 3/3
+    progress: {
+      ...sceneState.progress,
+      percentage: 30,
+      starsEarned: 1
+    }
+  });
+  
+  // Then after 1 second, mark as complete and trigger discovery
+  setTimeout(() => {
+    sceneActions.updateState({ 
+      phase: PHASES.ALL_BLOOMED,
+      currentFocus: 'waiting-for-golden',
+      goldenLotusVisible: true
+    });
+    
+    triggerDiscoverySequence('lotus', 1000);
+  }, 1000); // ⬅️ Give 1 second to see 3/3
+
     } else {
       sceneActions.updateState({
         lotusStates,
@@ -567,7 +667,7 @@ const handleContinueLearning = () => {
             safeSetTimeout(() => {
               sceneActions.updateState({ trunkActive: false });
               setShowSparkle(null);
-              completeSymbolLearning('trunk', { name: 'Divine Blessing' });
+triggerDiscoverySequence('trunk', 2000);
             }, 1000);
             return;
           }
@@ -660,116 +760,117 @@ const handleContinueLearning = () => {
           <div className="pond-background" style={{ backgroundImage: `url(${pondBackground})` }}>
             {renderCounter()}
 
-            {/* Phase Headers - Always Visible */}
-            {!showPowerModal && !showPowerMission && sceneState?.welcomeShown && (
-              <>
-                {(sceneState.phase === PHASES.INITIAL || sceneState.phase === PHASES.SOME_BLOOMED) && 
-                 !sceneState.lotusStates?.every(state => state === 1) && (
-                  <div className="phase-header">
-                    BLOOM THE LOTUSES! Click the flower buds!
-                  </div>
-                )}
-                
-                {sceneState.goldenLotusVisible && !sceneState.elephantVisible && (
-                  <div className="phase-header">
+      {/* Phase Headers */}
+{!showPowerModal && !showPowerMission && sceneState.welcomeShown && (
+  <>
+    {/* Lotus Blooming Header */}
+    {(sceneState.phase === PHASES.INITIAL || sceneState.phase === PHASES.SOME_BLOOMED) && (
+      <div className="pond-game-phase-header">
+        <div style={{ fontSize: '28px', marginBottom: '8px' }}>
+          BLOOM THE LOTUSES! Click to open them!
+        </div>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '15px',
+          justifyContent: 'center'
+        }}>
+          <div style={{
+            width: '200px',
+            height: '20px',
+            background: 'rgba(255,255,255,0.3)',
+            borderRadius: '10px',
+            border: '2px solid #8B4513',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              width: `${((sceneState.lotusStates?.filter(s => s === 1).length || 0) / 3) * 100}%`,
+              height: '100%',
+              background: 'linear-gradient(90deg, #4ECDC4, #FFD700)',
+              transition: 'width 0.5s ease-out'
+            }} />
+          </div>
+          <div style={{
+            fontSize: '24px',
+            fontWeight: 'bold',
+            color: 'white',
+            textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
+          }}>
+            {sceneState.lotusStates?.filter(s => s === 1).length || 0}/3
+          </div>
+        </div>
+      </div>
+    )}
+
+              {sceneState.goldenLotusVisible && !sceneState.elephantVisible && (
+                  <div className="pond-game-phase-header">
                     CLICK THE GOLDEN LOTUS!
                   </div>
                 )}
-                
-                {sceneState.elephantVisible && !sceneState.elephantTransformed && (
-                  <div className="phase-header">
-                    CLICK THE ELEPHANT!
-                  </div>
-                )}
-              </>
-            )}
 
-            {/* STORY INTRODUCTION */}
+    {/* Elephant Spraying Header */}
+    {sceneState.phase === PHASES.ELEPHANT_VISIBLE && (
+      <div className="pond-game-phase-header">
+        HELP THE ELEPHANT! Click trunk to spray water!
+      </div>
+    )}
+  </>
+)}
+
+            {/* OPENING INSTRUCTION SCREEN (Updated) */}
             {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
-              <>
-                    {/* NEW: Dark overlay for the welcome screen */}
-    <div style={{
-      position: 'fixed',
-      top: 0, left: 0, right: 0, bottom: 0,
-      background: 'rgba(0, 0, 0, 0.7)', // Dark semi-transparent background
-      zIndex: 2, // High Z-index to cover the scene
-      animation: 'fadeIn 0.3s ease-out'
-    }} />
-
-                <div style={{
-                  position: 'absolute',
-                  left: '35%',
-                  top: '45%',
-                  animation: 'gentle-glow 3s ease-in-out infinite',
-                  zIndex: 5
-                }}>
-                  <img src={lotusClosed} alt="Mysterious Lotus" style={{width: '15%', opacity: 0.8}} />
+              <div className="pond-instructions-overlay">
+                {/* Sparkles */}
+                <div className="pond-sparkles">
+                  <div className="pond-sparkle"></div>
+                  <div className="pond-sparkle"></div>
+                  <div className="pond-sparkle"></div>
+                  <div className="pond-sparkle"></div>
                 </div>
 
-                <div style={{
-                  position: 'absolute',
-                  top: '35%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  textAlign: 'center',
-                  background: 'rgba(255, 255, 255, 0.95)',
-                  padding: '30px 40px',
-                  borderRadius: '20px',
-                  boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
-                  zIndex: 100,
-                  maxWidth: '480px'
-                }}>
-                  <div style={{
-                    fontSize: '26px',
-                    fontWeight: 'bold',
-                    color: '#1565C0',
-                    marginBottom: '12px',
-                    textShadow: '1px 1px 2px rgba(0,0,0,0.1)'
-                  }}>
-                    Ganesha's Sacred Pond
+                <div className="pond-instructions-content">
+                  {/* Character - Left Side */}
+                  <div className="pond-instructions-ganesha">
+                    <img 
+                      src={ganeshaCharacter} 
+                      alt="Character"
+                      style={{maxWidth: '450px'}}
+                    />
                   </div>
                   
-                  <div style={{
-                    fontSize: '16px',
-                    color: '#4CAF50',
-                    marginBottom: '15px',
-                    fontWeight: '600'
-                  }}>
-                    2 magical symbols have special powers!
+                  {/* Instruction Card - Right Side */}
+                  <div className="pond-instructions-card">
+                    <h1 className="pond-instructions-title">
+                      Explore the Sacred Pond!
+                    </h1>
+                    
+                    <p className="pond-instructions-subtitle">
+                      2 magical symbols are hidden here!
+                    </p>
+                    
+                    {/* Icons showing what to find */}
+                    <div className="pond-instructions-icons">
+                      <div className="pond-instruction-icon-item">
+                        <img src={symbolLotusColored} alt="Lotus" />
+                        <span className="pond-instruction-icon-label">Lotus</span>
+                      </div>
+                      <div className="pond-instruction-icon-item">
+                        <img src={symbolTrunkColored} alt="Trunk" />
+                        <span className="pond-instruction-icon-label">Trunk</span>
+                      </div>
+                    </div>
+                    
+                    <button
+                      className="pond-instructions-button"
+                      onClick={() => {
+                        sceneActions.updateState({ welcomeShown: true });
+                      }}
+                    >
+                      Begin Adventure!
+                    </button>
                   </div>
-                  
-                  <div style={{
-                    fontSize: '14px',
-                    color: '#666',
-                    marginBottom: '25px',
-                    lineHeight: '1.5'
-                  }}>
-                    Discover <strong>Lotus & Trunk</strong> to unlock their magic and rescue trapped animals
-                  </div>
-                  
-                  <button
-                    onClick={() => {
-                      sceneActions.updateState({ welcomeShown: true });
-                    }}
-                    style={{
-                      background: 'linear-gradient(135deg, #1565C0 0%, #42A5F5 100%)',
-                      border: 'none',
-                      color: 'white',
-                      padding: '14px 30px',
-                      fontSize: '18px',
-                      fontWeight: 'bold',
-                      borderRadius: '25px',
-                      cursor: 'pointer',
-                      transition: 'transform 0.2s ease',
-                      boxShadow: '0 4px 15px rgba(21, 101, 192, 0.3)'
-                    }}
-                    onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
-                    onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
-                  >
-                    Start Mission!
-                  </button>
                 </div>
-              </>
+              </div>
             )}
 
             {/* Lotus flowers */}
@@ -957,38 +1058,35 @@ const handleContinueLearning = () => {
               </div>
             )}
 
-        {sceneState.welcomeShown && (
-              <BackToMapButton onNavigate={onNavigate} hideCoach={hideCoach} clearManualCloseTracking={clearManualCloseTracking} />
+
+            {/* PROGRESSIVE HINT SYSTEM with disabled state */}
+            {sceneState.welcomeShown && (
+              <ProgressiveHintSystem
+                ref={progressiveHintRef}
+                sceneId={sceneId}
+                sceneState={sceneState}
+                hintConfigs={getHintConfigs()}
+                characterImage={mooshikaCoach}
+                initialDelay={12000}
+                hintDisplayTime={10000}
+                position="bottom-right"
+                iconSize={60}
+                zIndex={2000}
+                enabled={shouldEnableHints()}
+                disabledMessage="Great job!"
+                onHintShown={() => setShowHintGlow(true)}
+                onHintHidden={() => setShowHintGlow(false)}
+              />
             )}
-
-                 {/* PROGRESSIVE HINT SYSTEM with disabled state */}
-            {sceneState.welcomeShown && ( // <--- WRAP ENTIRE BLOCK
-
-            <ProgressiveHintSystem
-              ref={progressiveHintRef}
-              sceneId={sceneId}
-              sceneState={sceneState}
-              hintConfigs={getHintConfigs()}
-              characterImage={mooshikaCoach}
-              initialDelay={12000}
-              hintDisplayTime={10000}
-              position="bottom-right"
-              iconSize={60}
-              zIndex={2000}
-              enabled={shouldEnableHints()}
-              disabledMessage="Great job!"
-              onHintShown={() => setShowHintGlow(true)}
-              onHintHidden={() => setShowHintGlow(false)}
-            />  )}
           </div>
 
-          {/* Centered Symbol Celebration */}
+          {/* Centered Symbol Celebration 
           {showCenteredSymbol && (
             <>
               <div style={{
                 position: 'fixed',
                 top: 0, left: 0, right: 0, bottom: 0,
-                background: 'rgba(0, 0, 0, 0.7)',
+                background: 'rgba(86, 84, 79, 0.7)',
                 backdropFilter: 'blur(3px)',
                 zIndex: 199,
                 animation: 'fadeIn 0.3s ease-out'
@@ -1049,139 +1147,155 @@ const handleContinueLearning = () => {
             </>
           )}
 
-          {/* Power Modal */}
+          {/* Discovery Overlay */}
+{discoveryStep !== 'hidden' && discoveryItem && (
+  <div className={`discovery-overlay ${isDiscoveryFading ? 'fading-out' : ''}`}>
+    <h1 className="discovery-title" style={{
+      textShadow: discoveryStep === 'symbol' 
+        ? '0 0 30px #FFD700, 0 4px 0 #fff' 
+        : '0 4px 0 #fff, 0 0 20px rgba(255, 255, 255, 0.8)'
+    }}>
+      {discoveryStep === 'found' 
+        ? discoveryConfig[discoveryItem].foundTitle 
+        : `${discoveryConfig[discoveryItem].powerName} Power!`}
+    </h1>
+
+    {discoveryStep === 'found' && (
+      <p className="discovery-subtitle">
+        {discoveryConfig[discoveryItem].foundSubtitle}
+      </p>
+    )}
+
+    <div className="discovery-hero">
+      <img
+        src={discoveryConfig[discoveryItem].image}
+        alt={discoveryItem}
+        className="discovery-hero-img"
+        style={{
+          animation: discoveryStep === 'symbol' 
+            ? 'pond-game-powerPulse 2s infinite' 
+            : 'pond-game-heroFloat 3s infinite ease-in-out',
+          filter: discoveryStep === 'symbol'
+            ? 'drop-shadow(0 0 50px gold)'
+            : 'drop-shadow(0 15px 30px rgba(0,0,0,0.3))'
+        }}
+      />
+    </div>
+  </div>
+)}
+
+{/* Resume Popup */}
+{showResumePopup && (
+  <div style={{
+    position: 'fixed',
+    top: '20%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+    padding: '30px 50px',
+    borderRadius: '20px',
+    boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
+    zIndex: 9999,
+    fontFamily: 'Baloo 2, cursive',
+    fontSize: '28px',
+    fontWeight: 'bold',
+    color: '#5D2E0F',
+    textAlign: 'center',
+    maxWidth: '80%',
+    border: '4px solid #FF8C00'
+  }}>
+    {resumeMessage}
+  </div>
+)}
+
+          {/* Power Modal (Updated to match Modak style) */}
           {showPowerModal && (
-            <div style={{
-              position: 'fixed',
-              top: 0, left: 0, right: 0, bottom: 0,
-              background: 'rgba(0, 0, 0, 0.7)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              zIndex: 500
-            }}>
-              <div style={{
-                background: 'linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%)',
-                borderRadius: '25px',
-                padding: '40px',
-                maxWidth: '500px',
-                textAlign: 'center',
-                boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
-                position: 'relative'
-              }}>
-                <div style={{ 
-                  fontSize: '24px', 
-                  fontWeight: 'bold', 
-                  color: '#1565C0', 
-                  marginBottom: '25px' 
-                }}>
+            <div className="pond-power-overlay">
+              <div className="pond-power-card">
+                <h1 className="pond-power-title">
                   {powerConfig[currentMissionSymbol]?.name} Power Unlocked!
-                </div>
+                </h1>
 
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '30px'
-                }}>
-                  <div style={{ flex: 1, textAlign: 'left' }}>
-                    <div style={{ 
-                      fontSize: '16px', 
-                      color: '#666', 
-                      marginBottom: '15px',
-                      lineHeight: '1.6'
-                    }}>
-                      You can now use this power to help animals in need!
-                    </div>
-                    <div style={{
-                      fontSize: '14px',
-                      color: '#888',
-                      fontStyle: 'italic'
-                    }}>
-                      Choose your next action:
-                    </div>
-                  </div>
+                <img 
+                  src={powerConfig[currentMissionSymbol]?.image}
+                  alt="power symbol"
+                  className="pond-power-icon"
+                />
 
-                  <div style={{ 
-                    flex: 1, 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    gap: '15px', 
-                    alignItems: 'center' 
-                  }}>
-                    <img 
-                      src={powerConfig[currentMissionSymbol]?.image}
-                      alt="power symbol"
-                      style={{
-                        width: '100px',
-                        height: '100px',
-                        filter: `drop-shadow(0 0 20px ${powerConfig[currentMissionSymbol]?.color})`,
-                        animation: 'powerPulse 2s ease-in-out infinite',
-                        marginBottom: '10px'
-                      }}
-                    />
-                    
-                    <button 
-                      onClick={handleSaveAnimal}
-                      style={{
-                        background: 'linear-gradient(135deg, #FF6B6B, #FF8E53)',
-                        color: 'white',
-                        border: 'none',
-                        padding: '12px 25px',
-                        borderRadius: '25px',
-                        fontSize: '16px',
-                        fontWeight: 'bold',
-                        cursor: 'pointer',
-                        boxShadow: '0 4px 15px rgba(255,107,107,0.4)',
-                        width: '100%',
-                        transition: 'transform 0.2s ease'
-                      }}
-                      onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
-                      onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
-                    >
-                      🐾 Save an Animal
-                    </button>
-                    
-                    <button 
-                      onClick={handleContinueLearning}
-                      style={{
-                        background: 'linear-gradient(135deg, #4ECDC4, #44A08D)',
-                        color: 'white',
-                        border: 'none',
-                        padding: '12px 25px',
-                        borderRadius: '25px',
-                        fontSize: '16px',
-                        fontWeight: 'bold',
-                        cursor: 'pointer',
-                        boxShadow: '0 4px 15px rgba(78,205,196,0.4)',
-                        width: '100%',
-                        transition: 'transform 0.2s ease'
-                      }}
-                      onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
-                      onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
-                    >
-                      {getNextDiscoveryText(currentMissionSymbol)}
-                    </button>
-                  </div>
+                <p className="pond-power-description">
+                  {getPowerDescription(currentMissionSymbol)}
+                </p>
+
+                {/* Primary Action - Save an Animal */}
+                <button 
+                  className="pond-power-primary-button"
+                  onClick={() => {
+                    setShowPowerModal(false);
+                    handleSaveAnimal();
+                  }}
+                >
+                  Save an Animal
+                </button>
+
+                {/* Secondary Actions */}
+                <div className="pond-power-secondary-buttons">
+                  <button 
+                    className="pond-power-secondary-button"
+                    onClick={() => {
+                      console.log(`🔄 Play Again: Restarting ${currentMissionSymbol} discovery`);
+                      setShowPowerModal(false);
+                      
+                      // Reset to the appropriate phase for the current symbol
+                      if (currentMissionSymbol === 'lotus') {
+                        sceneActions.updateState({ 
+                          phase: PHASES.INITIAL,
+                          lotusStates: [0, 0, 0],
+                          goldenLotusVisible: false,
+                          goldenLotusBloom: false
+                        });
+                      } else if (currentMissionSymbol === 'trunk') {
+                        sceneActions.updateState({ 
+                          phase: PHASES.GOLDEN_VISIBLE,
+                          lotusStates: [1, 1, 1],
+                          goldenLotusVisible: true,
+                          goldenLotusBloom: false,
+                          elephantVisible: false,
+                          elephantTransformed: false,
+                          trunkActive: false,
+                          waterDrops: [],
+                          currentFocus: 'lotus'
+                        });
+                      }
+                    }}
+                  >
+                    Play Again
+                  </button>
+                  
+                  <button 
+                    className="pond-power-secondary-button"
+                    onClick={() => {
+                      setShowPowerModal(false);
+                      handleContinueLearning();
+                    }}
+                  >
+                    {getNextDiscoveryText(currentMissionSymbol)}
+                  </button>
                 </div>
               </div>
             </div>
           )}
 
-          {/* START OF NEW OVERLAY BLOCK for SymbolPowerMission */}
-{showPowerMission && (
-  // Dark background overlay for SymbolPowerMission
-  <div style={{
-    position: 'fixed',
-    top: 0, left: 0, right: 0, bottom: 0,
-    background: 'rgba(0, 0, 0, 0.7)',
-    backdropFilter: 'blur(3px)',
-    zIndex: 499, // Lower than the Power Modal (500) but higher than the scene (e.g. 200)
-    animation: 'fadeIn 0.3s ease-out'
-  }} />
-)}
-{/* END OF NEW OVERLAY BLOCK */}
-
+          {/* New Overlay Block for SymbolPowerMission */}
+          {showPowerMission && (
+            <div style={{
+              position: 'fixed',
+              top: 0, left: 0, right: 0, bottom: 0,
+              background: 'rgba(0, 0, 0, 0.7)',
+              backdropFilter: 'blur(3px)',
+              zIndex: 499,
+              animation: 'fadeIn 0.3s ease-out'
+            }} />
+          )}
 
           {/* Symbol Power Mission */}
           <SymbolPowerMission
@@ -1279,6 +1393,11 @@ const handleContinueLearning = () => {
             />
           )}
 
+          
+            {sceneState.welcomeShown && (
+              <BackToMapButton onNavigate={onNavigate} hideCoach={hideCoach} clearManualCloseTracking={clearManualCloseTracking} />
+            )}
+
           <TocaBocaNav
             onHome={() => {
               if (hideCoach) hideCoach();
@@ -1311,19 +1430,19 @@ const handleContinueLearning = () => {
             onClose={() => setShowCulturalCelebration(false)}
           />
 
-           {sceneState.welcomeShown && ( // <--- WRAP ENTIRE BLOCK
-
-          <SymbolSidebar
-            discoveredSymbols={{
-              mooshika: true,
-              modak: true,
-              belly: true,
-              ...(sceneState.discoveredSymbols || {})
-            }}
-            onSymbolClick={(symbolId) => {
-              console.log(`Sidebar symbol clicked: ${symbolId}`);
-            }}
-          /> )}
+           {sceneState.welcomeShown && (
+            <SymbolSidebar
+              discoveredSymbols={{
+                mooshika: true,
+                modak: true,
+                belly: true,
+                ...(sceneState.discoveredSymbols || {})
+              }}
+              onSymbolClick={(symbolId) => {
+                console.log(`Sidebar symbol clicked: ${symbolId}`);
+              }}
+            />
+          )}
 
         </div>      
       </MessageManager>
@@ -1331,4 +1450,4 @@ const handleContinueLearning = () => {
   );
 };
 
-export default PondSceneUpgraded;
+export default PondSceneSimplifiedV3;

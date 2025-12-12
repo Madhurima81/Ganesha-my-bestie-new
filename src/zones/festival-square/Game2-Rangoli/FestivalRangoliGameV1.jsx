@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import './FestivalRangoliGame.css';
+import './FestivalRangoliGameV1.css';
 
 const GAME_PHASES = {
   PATTERN_SELECTION: 'pattern_selection',

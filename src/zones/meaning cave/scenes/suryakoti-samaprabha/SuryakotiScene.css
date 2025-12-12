@@ -1001,3 +1001,279 @@
 
   
 }
+/* ===========================
+   SCENE 2 THEME: MILLION SUNS (Suryakoti Samaprabha)
+   Palette: Saffron, Gold, Warm Light
+   =========================== */
+
+/* ===========================
+   INSTRUCTION MODAL - Opening Screen
+   =========================== */
+.suryakoti-instructions-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(26, 18, 8, 0.9); /* Dark Cave Shadow */
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: suryakoti-fadeIn 0.3s ease-out;
+}
+
+/* Sparkles */
+.suryakoti-sparkles {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  pointer-events: none;
+  z-index: 101;
+}
+
+.suryakoti-sparkle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #FFD700;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  animation: suryakoti-sparkleFloat 0.8s ease-out forwards;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+}
+
+.suryakoti-sparkle:nth-child(1) { top: 20%; left: 50%; animation-delay: 0s; }
+.suryakoti-sparkle:nth-child(2) { top: 50%; left: 80%; animation-delay: 0.1s; }
+.suryakoti-sparkle:nth-child(3) { top: 80%; left: 50%; animation-delay: 0.2s; }
+.suryakoti-sparkle:nth-child(4) { top: 50%; left: 20%; animation-delay: 0.15s; }
+
+.suryakoti-instructions-content {
+  position: relative;
+  width: 95%;
+  max-width: 1400px;
+  height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  padding: 0 60px;
+  animation: suryakoti-contentFadeIn 0.5s ease-out 0.5s both;
+}
+
+.suryakoti-instructions-ganesha {
+  flex: 0 0 40%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  animation: suryakoti-slideInLeft 0.6s ease-out 0.8s both;
+}
+
+.suryakoti-instructions-ganesha img {
+  width: 100%;
+  max-width: 450px;
+  height: auto;
+  filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.6)); /* Sun Aura */
+  transform: scaleX(1); 
+}
+
+.suryakoti-instructions-card {
+  flex: 0 0 45%;
+  background: #FFFBE6; /* Light Yellow Parchment */
+  border-radius: 30px;
+  padding: 50px;
+  box-shadow: 0 10px 40px rgba(255, 140, 0, 0.3);
+  animation: suryakoti-slideInRight 0.6s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 4px solid #FFA500;
+}
+
+.suryakoti-instructions-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 48px;
+  font-weight: 700;
+  color: #D35400; /* Burnt Orange */
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.suryakoti-instructions-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 24px;
+  color: #8B4513;
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
+
+.suryakoti-instructions-icons {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  margin-bottom: 45px;
+  width: 100%;
+}
+
+.suryakoti-instruction-icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.suryakoti-instruction-icon-item img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(255, 165, 0, 0.4));
+}
+
+.suryakoti-instruction-icon-label {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #D35400;
+}
+
+.suryakoti-instructions-button {
+  font-family: 'Baloo 2', cursive;
+  background: linear-gradient(135deg, #FFC107 0%, #FF9800 100%); /* Amber Gradient */
+  border: 2px solid #FFF;
+  color: white;
+  padding: 20px 70px;
+  font-size: 28px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+  text-transform: capitalize;
+}
+
+.suryakoti-instructions-button:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.6);
+}
+
+/* ===========================
+   POWER & MISSION MODAL (Suryakoti Theme)
+   =========================== */
+.suryakoti-power-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 600;
+  animation: suryakoti-fadeIn 0.3s ease-out;
+}
+
+.suryakoti-power-card {
+  background: #FFFBE6;
+  border-radius: 30px;
+  padding: 50px;
+  max-width: 600px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  position: relative;
+  animation: suryakoti-scaleIn 0.4s ease-out;
+  border: 4px solid #FFA500;
+}
+
+.suryakoti-power-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 38px;
+  font-weight: 700;
+  color: #D35400;
+  margin-bottom: 30px;
+}
+
+.suryakoti-power-icon {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 25px;
+  object-fit: contain;
+  animation: suryakoti-powerPulse 2s ease-in-out infinite;
+}
+
+.suryakoti-power-description {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: #5D4037;
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
+
+.suryakoti-power-primary-button {
+  font-family: 'Baloo 2', cursive;
+  background: linear-gradient(135deg, #FFC107 0%, #FF9800 100%);
+  border: 2px solid #FFF;
+  color: white;
+  padding: 18px 60px;
+  font-size: 24px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.suryakoti-power-secondary-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.suryakoti-power-secondary-button {
+  font-family: 'Nunito', sans-serif;
+  background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+  border: none;
+  color: white;
+  padding: 14px 35px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  flex: 1;
+}
+
+/* Animations */
+@keyframes suryakoti-fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes suryakoti-scaleIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+@keyframes suryakoti-slideInLeft { from { opacity: 0; transform: translateX(-100px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes suryakoti-slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes suryakoti-contentFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+@keyframes suryakoti-sparklesFadeOut { 0% { opacity: 1; } 60% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes suryakoti-sparkleFloat { 
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+}
+@keyframes suryakoti-powerPulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.5)); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 25px rgba(255, 193, 7, 0.8)); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .suryakoti-instructions-content { flex-direction: column; height: auto; padding: 20px; gap: 20px; }
+  .suryakoti-instructions-ganesha { flex: 0 0 auto; }
+  .suryakoti-instructions-ganesha img { max-width: 250px; }
+  .suryakoti-instructions-card { flex: 0 0 auto; padding: 30px 25px; }
+  .suryakoti-instructions-title { font-size: 28px; }
+  
+  .suryakoti-power-card { padding: 35px 25px; }
+  .suryakoti-power-title { font-size: 30px; }
+  .suryakoti-power-icon { width: 110px; height: 110px; }
+}

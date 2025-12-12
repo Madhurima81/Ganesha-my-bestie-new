@@ -36,7 +36,7 @@ const BackToMapButton = ({
   const getPositionStyle = () => {
     const baseStyle = {
       position: 'fixed',
-      zIndex: 9999,
+      zIndex: 99999,
       background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)',
       color: 'white',
       padding: '12px 20px',

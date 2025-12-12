@@ -24,7 +24,7 @@ static ZONES = {
       'suryakoti-samaprabha', 
       'nirvighnam-kurumedeva',
       'sarvakaryeshu-sarvada',
-      'mantra-assembly'
+      'final-meaning-scene'
     ]
   },
   'shloka-river': {
@@ -38,6 +38,12 @@ static ZONES = {
     id: 4,
     name: 'Festival Square',
     icon: '🎉',
+    scenes: ['game1', 'game2', 'game3', 'game4']
+  },
+  'about-me-hut': {
+    id: 5,
+    name: 'About Me Hut',
+    icon: '🏡',
     scenes: ['game1', 'game2', 'game3', 'game4']
   }
   // ✅ REMOVE: All the placeholder zones (ocean-depths, sky-kingdom, etc.)
@@ -863,12 +869,54 @@ getCompletionHistory(profileId = null) {
         lastPlayed: null,
         unlocked: progress.zones[zoneId].scenes[sceneId].unlocked // Preserve unlock status
       };
-      
+
       // Recalculate totals
       this.recalculateTotals(progress);
       localStorage.setItem(`${this.activeProfileId}_gameProgress`, JSON.stringify(progress));
     }
   }
+
+/**
+ * Clear scene state for fresh start (used when "Continue Adventure" from completion screen)
+ * This only clears the mid-game state, NOT the completion progress
+ */
+clearSceneState(zoneId, sceneId) {
+  if (!this.activeProfileId) return;
+  
+  // Clear ALL possible storage keys for this scene
+  const profileId = this.activeProfileId;
+  
+  // 1. Regular scene state
+  const sceneKey = `${profileId}_${zoneId}_${sceneId}_state`;
+  localStorage.removeItem(sceneKey);
+  
+  // 2. Temp keys
+  const tempKey = `${profileId}_${zoneId}_${sceneId}_temp`;
+  localStorage.removeItem(tempKey);
+  
+  // 3. ✅ NEW: SceneManager's temp_session keys (THIS IS THE KEY ONE!)
+  const tempSessionKey = `temp_session_${profileId}_${zoneId}_${sceneId}`;
+  localStorage.removeItem(tempSessionKey);
+  
+  // 4. ✅ NEW: SceneManager's replay_session keys
+  const replaySessionKey = `replay_session_${profileId}_${zoneId}_${sceneId}`;
+  localStorage.removeItem(replaySessionKey);
+  
+  // 5. Clear from sessionStorage too
+  sessionStorage.removeItem(sceneKey);
+  sessionStorage.removeItem(tempKey);
+  sessionStorage.removeItem(tempSessionKey);
+  sessionStorage.removeItem(replaySessionKey);
+  
+  console.log(`🔄 Cleared ALL scene states for fresh start: ${zoneId}/${sceneId}`);
+  console.log(`   - Cleared: ${sceneKey}`);
+  console.log(`   - Cleared: ${tempKey}`);
+  console.log(`   - Cleared: ${tempSessionKey}`);
+  console.log(`   - Cleared: ${replaySessionKey}`);
+  
+  // NOTE: This does NOT clear completion status from gameProgress
+  // Scene will still show as completed in zone map, but will start fresh when opened
+}
 
   // Reset current profile's game
   resetGame() {

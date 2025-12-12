@@ -13,19 +13,21 @@ import GameStateManager from './lib/services/GameStateManager';
 import { GameCoachProvider } from './lib/components/coach/GameCoach';
 import ProgressManager from './lib/services/ProgressManager';
 import SimpleSceneManager from './lib/services/SimpleSceneManager';
+import { initializeSounds } from './lib/utils/SoundManager';
 
 const SCENE_MAPPING = {
   'symbol-mountain': {
-    'modak': () => import('./zones/symbol-mountain/scenes/modak/NewModakSceneV5'),
-    'pond': () => import('./zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV3'),
+    'modak': () => import('./zones/symbol-mountain/scenes/modak/NewModakSceneV6'),
+    'pond': () => import('./zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx'),
     'symbol': () => import('./zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3'),
     'final-scene': () => import('./zones/symbol-mountain/scenes/final scene/SacredAssemblySceneV8'),
   },
   'cave-of-secrets': {
     'vakratunda-mahakaya': () => import('./zones/meaning cave/scenes/VakratundaMahakaya/CaveSceneFixedV1'),
-    'suryakoti-samaprabha': () => import('./zones/meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV2'), 
-    'nirvighnam-kurumedeva': () => import('./zones/meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV3'),
-    'sarvakaryeshu-sarvada': () => import('./zones/meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV5.jsx'),
+    'suryakoti-samaprabha': () => import('./zones/meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV3'), 
+    'nirvighnam-kurumedeva': () => import('./zones/meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV4'),
+    'sarvakaryeshu-sarvada': () => import('./zones/meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV6.jsx'),
+    'final-meaning-scene': () => import('./zones/meaning cave/scenes/final meaning scene/Cavescene5memoryfinale.jsx'),
 
   },
   // ✅ ADD: Shloka River scenes
@@ -41,6 +43,13 @@ const SCENE_MAPPING = {
     'game2': () => import('./zones/festival-square/Game2-Rangoli/FestivalRangoliGame.jsx'), 
     'game3': () => import('./zones/festival-square/game3-cooking/ModakCookingGame.jsx'),
     'game4': () => import('./zones/festival-square/Game4-mandapdecor/MandapDecorationGame.jsx')
+  },
+  // ✅ NEW: About Me Hut - Zone 5
+  'about-me-hut': {
+    'game1': () => import('./zones/about-me-hut/family-tree/Familytreegame.jsx'),
+    'game2': () => import('./zones/about-me-hut/food/Favoritefoodgame.jsx'),
+    'game3': () => import('./zones/about-me-hut/enjoy/ObstacleRemoverGame.jsx'),
+    'game4': () => import('./zones/about-me-hut/name/Namebirthdaygame.jsx')
   }
 
 };
@@ -54,6 +63,8 @@ function App() {
   const [currentScene, setCurrentScene] = useState(null);
   const [currentProfile, setCurrentProfile] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0); // ADD THIS LINE
+const [loadingStep, setLoadingStep] = useState(''); // ADD THIS LINE
   
   console.log('🌟 Clean App rendering - current view:', currentView);
   console.log('🎯 Current zone:', currentZone, 'Current scene:', currentScene);
@@ -236,38 +247,116 @@ useEffect(() => {
   }
 };*/
 
-const initializeApp = () => {
+const initializeApp = async () => {
   try {
-    if (!GameStateManager) {
-      console.error('GameStateManager is not imported correctly');
-      setCurrentView('error');
-      return;
-    }
+    console.log('🌟 Initializing app...');
+    setCurrentView('loading');
+    setLoadingProgress(0);
+    setLoadingStep('Starting your adventure...');
     
-    console.log('🌟 GameStateManager initialized successfully');
+    // Step 1: Initialize Sound System (20%)
+    await initializeSounds();
+    setLoadingProgress(20);
+    setLoadingStep('Loading magical sounds...');
+    await new Promise(resolve => setTimeout(resolve, 300));
     
+    // Step 2: Verify managers are loaded (40%)
+    console.log('📦 Managers loaded and ready');
+    setLoadingProgress(40);
+    setLoadingStep('Preparing your journey...');
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Step 2.5: Preload critical images (50%)
+    const criticalImages = [
+      '/images/welcome-background.png',
+      '/images/welcome-board.png',
+      '/images/welcome-ganesha.png',
+      '/images/welcome-mooshika.png'
+    ];
+
+    const imagePromises = criticalImages.map(src => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          console.log(`✅ Loaded: ${src}`);
+          resolve();
+        };
+        img.onerror = () => {
+          console.warn(`⚠️ Failed to load: ${src}`);
+          resolve(); // Continue even if image fails
+        };
+        img.src = src;
+      });
+    });
+
+    await Promise.all(imagePromises);
+    setLoadingProgress(50);
+    setLoadingStep('Loading magical images...');
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    // Step 3: Check for active profile (60%)
+    console.log('📊 Checking for active profile...');
     const activeProfileId = localStorage.getItem('activeProfileId');
     if (activeProfileId) {
-      // ✅ SIMPLE: Check if user should resume a scene
-      const resumeLocation = SimpleSceneManager.shouldResumeScene();
-      
-      if (resumeLocation) {
-        console.log('🔄 SIMPLE: Resuming scene directly');
-        setCurrentZone(resumeLocation.zone);
-        setCurrentScene(resumeLocation.scene);
-  setCurrentView('profile-welcome'); // ✅ Go to welcome first
-      } else {
-        console.log('🌟 SIMPLE: Going to profile welcome');
-        setCurrentView('profile-welcome');
+      console.log('👤 Active profile ID:', activeProfileId);
+      // Try to get profile safely
+      try {
+        const profile = GameStateManager.getProfile?.(activeProfileId);
+        if (profile) {
+          setCurrentProfile(profile);
+          console.log('👤 Active profile loaded:', profile);
+        }
+      } catch (err) {
+        console.warn('⚠️ Could not load profile:', err);
       }
-    } else {
-      console.log('🌟 No active profile, starting with main welcome');
-      setCurrentView('main-welcome');
-    }      
+    }
+    setLoadingProgress(60);
+    setLoadingStep('Loading your progress...');
+    await new Promise(resolve => setTimeout(resolve, 300));
     
+    // Step 4: Scene Manager ready (80%)
+    console.log('🎬 Scene Manager ready');
+    setLoadingProgress(80);
+    setLoadingStep('Setting up the world...');
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    // Step 5: Check for existing profiles in localStorage (90%)
+    let hasExistingProfiles = false;
+    try {
+      // Check localStorage for profiles instead of calling GameStateManager
+      const profileKeys = Object.keys(localStorage).filter(key => key.startsWith('profile_'));
+      hasExistingProfiles = profileKeys.length > 0;
+      console.log('👥 Found profile keys:', profileKeys.length);
+    } catch (err) {
+      console.warn('⚠️ Could not check profiles:', err);
+    }
+    setLoadingProgress(90);
+    setLoadingStep('Almost ready...');
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    // Step 6: Complete (100%)
+    setLoadingProgress(100);
+    setLoadingStep('Welcome to Ganesha\'s World!');
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    console.log('✅ App initialization complete');
     setIsInitialized(true);
+    
+    // Determine starting view
+    if (hasExistingProfiles && activeProfileId) {
+      console.log('🎮 Existing profile found, going to map');
+setCurrentView('profile-welcome');
+    } else if (hasExistingProfiles) {
+      console.log('👤 Profiles exist but none active, going to profile selection');
+      setCurrentView('profile-welcome');
+    } else {
+      console.log('🆕 No profiles found, showing main welcome');
+      setCurrentView('main-welcome');
+    }
+    
   } catch (error) {
-    console.error('Error initializing app:', error);
+    console.error('❌ App initialization failed:', error);
+    setLoadingStep('Oops! Something went wrong...');
     setCurrentView('error');
   }
 };
@@ -700,22 +789,63 @@ const handleSceneComplete = (sceneId, result) => {
       image: 'images/ganesha-character.png',
       position: 'top-right'
     }}>
- {currentView === 'loading' && (
+{currentView === 'loading' && (
   <div className="enhanced-loading-screen">
-    <div className="lotus-spinner large">
-      <div className="petal petal-1"></div>
-      <div className="petal petal-2"></div>
-      <div className="petal petal-3"></div>
-      <div className="petal petal-4"></div>
-      <div className="center-dot"></div>
+    {/* Ganesha Character */}
+    <div className="loading-ganesha-container">
+      <div className="loading-ganesha-glow"></div>
+      <img 
+        src="/images/welcome-ganesha.png" 
+        alt="Ganesha"
+        className="loading-ganesha"
+      />
     </div>
-    <div className="loading-text large">
-      <span className="loading-word">Loading magical adventure</span>
-      <span className="loading-dots">
-        <span>.</span><span>.</span><span>.</span>
-      </span>
+    
+    {/* Mooshika Scurrying */}
+    <div className="loading-mooshika-container">
+      <img 
+        src="/images/welcome-mooshika.png" 
+        alt="Mooshika"
+        className="loading-mooshika"
+      />
     </div>
-    <div className="welcome-subtitle">Preparing your Sanskrit journey...</div>
+    
+    {/* Loading Text */}
+    <div className="loading-text-container">
+      <div className="loading-title">
+        Welcome to Ganesha's World
+        <span className="loading-dots">
+          <span>.</span><span>.</span><span>.</span>
+        </span>
+      </div>
+      <div className="loading-subtitle">
+        {loadingStep || 'Getting everything ready for your adventure!'}
+      </div>
+    </div>
+    
+    {/* Accurate Progress Bar */}
+    <div className="loading-progress-container">
+      <div 
+        className="loading-progress-bar"
+        style={{ width: `${loadingProgress}%` }}
+      >
+        <span className="progress-percentage">{loadingProgress}%</span>
+      </div>
+    </div>
+    
+    {/* Magical Particles */}
+    <div className="loading-particles">
+      {[...Array(8)].map((_, i) => (
+        <div 
+          key={i} 
+          className="loading-particle"
+          style={{
+            animationDelay: `${i * 0.5}s`,
+            left: `${10 + Math.random() * 80}%`,
+          }}
+        />
+      ))}
+    </div>
   </div>
 )}
       {currentView === 'error' && (
@@ -747,6 +877,7 @@ const handleSceneComplete = (sceneId, result) => {
                   <div className="view-transition">
         <CleanMapZone 
           onZoneSelect={handleZoneSelect}
+                onBackToWelcome={() => setCurrentView('profile-welcome')}
           currentZone={currentZone}
           highlightedScene={currentScene}
         />

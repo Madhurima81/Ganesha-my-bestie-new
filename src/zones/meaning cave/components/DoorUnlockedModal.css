@@ -1,0 +1,215 @@
+/* zones/cave-of-secrets/components/DoorUnlockedModal.css */
+
+/* Overlay */
+.door-unlocked-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: doorUnlockedFadeIn 0.3s ease-out;
+}
+
+/* Card Container */
+.door-unlocked-card {
+  background: linear-gradient(135deg, #FFFEF7 0%, #FFF9E6 100%);
+  border-radius: 30px;
+  border: 5px solid #FFA500;
+  padding: 40px 50px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+  animation: doorUnlockedSlideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 30px rgba(255, 165, 0, 0.6), 
+              0 0 60px rgba(255, 165, 0, 0.3);
+}
+
+/* Title */
+.door-unlocked-title {
+  font-family: 'Baloo', cursive;
+  font-size: 48px;
+  font-weight: 800;
+  color: #FF6B35;
+  margin: 0 0 30px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  letter-spacing: 1px;
+}
+
+/* Icon Container */
+.door-unlocked-icon-container {
+  margin: 20px 0 30px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Icon/Symbol */
+.door-unlocked-icon {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  animation: doorUnlockedIconBounce 1s ease-in-out infinite;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+}
+
+/* Description Text */
+.door-unlocked-description {
+  font-family: 'Nunito', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: #5A4A3A;
+  line-height: 1.5;
+  margin: 0 0 35px 0;
+  padding: 0 10px;
+}
+
+/* Start Button */
+.door-unlocked-button {
+  font-family: 'Baloo', cursive;
+  font-size: 28px;
+  font-weight: 700;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+  border: none;
+  border-radius: 50px;
+  padding: 18px 60px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 165, 0, 0.4);
+  text-transform: capitalize;
+  letter-spacing: 0.5px;
+}
+
+.door-unlocked-button:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(255, 165, 0, 0.6);
+}
+
+.door-unlocked-button:active {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 3px 10px rgba(255, 165, 0, 0.5);
+}
+
+/* Animations */
+@keyframes doorUnlockedFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes doorUnlockedSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes doorUnlockedIconBounce {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(5deg);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .door-unlocked-card {
+    padding: 30px 35px;
+    max-width: 90%;
+    border-radius: 25px;
+  }
+
+  .door-unlocked-title {
+    font-size: 36px;
+    margin-bottom: 20px;
+  }
+
+  .door-unlocked-icon {
+    width: 100px;
+    height: 100px;
+  }
+
+  .door-unlocked-description {
+    font-size: 18px;
+    margin-bottom: 25px;
+  }
+
+  .door-unlocked-button {
+    font-size: 24px;
+    padding: 15px 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .door-unlocked-card {
+    padding: 25px 25px;
+    border-radius: 20px;
+  }
+
+  .door-unlocked-title {
+    font-size: 32px;
+    margin-bottom: 15px;
+  }
+
+  .door-unlocked-icon {
+    width: 90px;
+    height: 90px;
+  }
+
+  .door-unlocked-description {
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+
+  .door-unlocked-button {
+    font-size: 22px;
+    padding: 14px 40px;
+  }
+}
+
+/* Landscape Mode (iPad Pro, tablets) */
+@media (orientation: landscape) and (max-height: 600px) {
+  .door-unlocked-card {
+    padding: 20px 40px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .door-unlocked-title {
+    font-size: 32px;
+    margin-bottom: 15px;
+  }
+
+  .door-unlocked-icon {
+    width: 80px;
+    height: 80px;
+  }
+
+  .door-unlocked-icon-container {
+    margin: 10px 0 15px 0;
+  }
+
+  .door-unlocked-description {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+
+  .door-unlocked-button {
+    font-size: 22px;
+    padding: 12px 40px;
+  }
+}

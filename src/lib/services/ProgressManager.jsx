@@ -18,8 +18,8 @@ class ProgressManager {
       'vakratunda-mahakaya', 
       'suryakoti-samaprabha', 
       'nirvighnam-kurumedeva',
-      'sarvakaryeshu-sarvada',    // ✅ Scene 4
-      'mantra-assembly'           // ✅ Scene 5 (final)
+      'sarvakaryeshu-sarvada',
+      'final-meaning-scene'
     ],    
       totalScenes: 5,
       order: 2
@@ -30,36 +30,18 @@ class ProgressManager {
     totalScenes: 5,
     order: 3
   },
-    'obstacle-forest': {
-      name: 'Obstacle Forest', 
-      scenes: ['forest', 'logs', 'leaves', 'mud'],
-      totalScenes: 4,
-      order: 3
-    },
-    'shloka-river': {
-      name: 'Shloka River',
-      scenes: ['river', 'boat', 'lotus'],
-      totalScenes: 3,
-      order: 4
-    },
-    'about-me-hut': {
-      name: 'About Me Hut',
-      scenes: ['mud-hut'],
-      totalScenes: 1,
-      order: 5
-    },
-    'story-treehouse': {
-      name: 'Story Treehouse',
-      scenes: ['tree', 'tree-house', 'books'],
-      totalScenes: 3,
-      order: 6
-    },
    'festival-square': {
   name: 'Festival Square',
-  scenes: ['game1', 'game2', 'game3', 'game4'], // ✅ CHANGE: Match App.jsx
+  scenes: ['game1', 'game2', 'game3', 'game4'],
   totalScenes: 4,
-  order: 7
-}
+  order: 4
+},
+    'about-me-hut': {
+      name: 'About Me Hut',
+      scenes: ['game1', 'game2', 'game3', 'game4'],
+      totalScenes: 4,
+      order: 5
+    }
   };
 
 static SCENE_METADATA = {
@@ -73,7 +55,13 @@ static SCENE_METADATA = {
   'suryakoti-samaprabha': { name: 'Surya Koti Samaprabha', maxStars: 8, order: 2 },
   'nirvighnam-kurumedeva': { name: 'Nirvighnam Kurume Deva', maxStars: 8, order: 3 },
   'sarvakaryeshu-sarvada': { name: 'Sarvakaryeshu Sarvada', maxStars: 8, order: 4 },
-  'mantra-assembly': { name: 'Sacred Mantra Assembly', maxStars: 8, order: 5 },
+  'final-meaning-scene': { name: 'Memory Match Finale', maxStars: 8, order: 5 },
+  
+  // About Me Hut scenes
+  'game1': { name: 'Family Tree', maxStars: 4, order: 1 },
+  'game2': { name: 'My Favorite Things', maxStars: 2, order: 2 },
+  'game3': { name: 'Obstacle Remover', maxStars: 3, order: 3 },
+  'game4': { name: 'Name & Birthday', maxStars: 2, order: 4 },
   
   'crystal-cave': { name: 'Crystal Cave Exploration', maxStars: 5, order: 1 },
   'treasure-chamber': { name: 'Treasure Chamber Adventure', maxStars: 6, order: 2 },

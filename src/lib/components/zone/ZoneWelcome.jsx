@@ -4,14 +4,11 @@
 import React, { useState, useEffect } from 'react';
 import './ZoneWelcome.css';
 import GameStateManager from '../../services/GameStateManager';
-import CulturalProgressExtractor from '../../services/CulturalProgressExtractor'; // ← ADD THIS LINE
-import GameCoachSessionManager from '../../services/GameCoachSessionManager';
-import SparkleAnimation from '../../components/animation/SparkleAnimation'; // ✅ ADD THIS
+import CulturalProgressExtractor from '../../services/CulturalProgressExtractor';
 
 
 //import ProgressManager from '../../services/ProgressManager';
 // In ZoneWelcome.jsx
-import { useGameCoach } from '../coach/GameCoach';
 
 // ✅ ZONE CONTENT CONFIGURATION
 const ZONE_CONTENT_TYPES = {
@@ -19,40 +16,12 @@ const ZONE_CONTENT_TYPES = {
   'shloka-river': ['chants'],
   'story-treehouse': ['stories'], 
   'festival-square': [], // ✅ CHANGE: Empty array since it's pure fun games
-  'about-me-hut': ['stories'],
+  'about-me-hut': [],
   'cave-of-secrets': ['chants'],
   'obstacle-forest': ['symbols']
 };
 
 // ✅ ENHANCED: More specific color mapping
-const getZoneMessageType = (messageType, trigger, data = {}) => {
-  switch(messageType) {
-    case 'welcome': 
-      return 'welcome';
-      
-    case 'celebration':
-      // Different celebration colors based on what was completed
-      if (data.progressData?.newCompletions?.includes('pond')) {
-        return 'celebration-pond';    // Blue-teal for pond
-      } else if (data.progressData?.newCompletions?.includes('modak')) {
-        return 'celebration-modak';   // Orange-gold for modak
-      } else {
-        return 'celebration';         // Default gold
-      }
-      
-    case 'mastery': 
-      return 'mastery';
-      
-    case 'encouragement': 
-      return 'encouragement';
-      
-    case 'cultural': 
-      return 'cultural';
-      
-    default: 
-      return 'welcome';
-  }
-};
 
 
 const ZoneWelcome = ({ 
@@ -69,7 +38,6 @@ const ZoneWelcome = ({
 
   // Add this near the top of ZoneWelcome component:
   const [highlightedScene, setHighlightedScene] = useState(null);
-  const [showSparkle, setShowSparkle] = useState(null); // ✅ ADD THIS
 
 
 // ✅ ADD THIS: Track zone entry time for quick navigation detection
@@ -106,119 +74,11 @@ const ZoneWelcome = ({
   }, [zoneData]);
 
   // Add this line:
-const { showMessage, hideCoach, clearManualCloseTracking } = useGameCoach();
 
 const [welcomeMessageShown, setWelcomeMessageShown] = useState(false);
 
 // Import the session manager at the top
 
-useEffect(() => {
-  if (!zoneData || Object.keys(sceneProgress).length === 0) return;
-  
-  let timeouts = [];
-  let isComponentMounted = true; // ✅ Track component mount status
-  
-  const handleSmartGameCoach = () => {
-    if (!isComponentMounted) return; // ✅ Early exit if unmounted
-    
-    // Clear any scene messages when entering zone welcome
-    const clearEvent = new CustomEvent('clearGameCoach', {
-      detail: { source: 'zone-welcome', zoneId: zoneData.id }
-    });
-    window.dispatchEvent(clearEvent);
-    
-    // Get current profile
-    const profileId = localStorage.getItem('activeProfileId');
-    if (!profileId) return;
-    
-    // Check if GameCoach should show
-    const decision = GameCoachSessionManager.shouldShowMessage(
-      profileId, 
-      zoneData.id, 
-      sceneProgress,
-      {
-        totalScenes: zoneData.scenes?.length || 4,
-        quickNavigation: false
-      }
-    );
-    
-    console.log('🎭 ZoneWelcome GameCoach Decision:', decision);
-    
-    if (decision.shouldShow && isComponentMounted) {
-      const activeProfile = GameStateManager.getActiveProfile();
-      const profileName = activeProfile?.name || '';
-      
-      const message = GameCoachSessionManager.getMessage(
-        decision.messageType, 
-        decision.trigger, 
-        decision,
-        profileName
-      );
-      
-      console.log('🎭 ZoneWelcome will show message:', message);
-      
-      // ✅ STEP 1: Show sparkle effect first
-      const sparkleTimeout = setTimeout(() => {
-        if (!isComponentMounted) return; // ✅ Check mount status
-        
-        let sparkleType = 'divine-light';
-        switch(decision.messageType) {
-          case 'welcome': sparkleType = 'divine-light-welcome'; break;
-          case 'celebration': sparkleType = 'divine-light-celebration'; break;
-          case 'encouragement': sparkleType = 'divine-light-encourage'; break;
-          case 'mastery': sparkleType = 'divine-light-mastery'; break;
-          default: sparkleType = 'divine-light';
-        }
-        
-        setShowSparkle(sparkleType);
-        
-        // ✅ STEP 2: Show GameCoach message after sparkle
-        const messageTimeout = setTimeout(() => {
-          if (!isComponentMounted) return; // ✅ Check mount status again
-          
-          setShowSparkle(null);
-          
-          console.log('🎭 ZoneWelcome showing GameCoach message now');
-          
-          showMessage(message, {
-            duration: 8000,
-            animation: 'bounce',
-            source: 'zone',
-            priority: 5,
-            messageType: getZoneMessageType(decision.messageType, decision.trigger, decision)
-          });
-          
-          // Mark as shown
-          GameCoachSessionManager.markMessageShown(
-            profileId, 
-            zoneData.id, 
-            decision.messageType
-          );
-          
-        }, 2000); // 2 seconds for sparkle
-        
-        timeouts.push(messageTimeout);
-        
-      }, 1500); // Initial delay
-      
-      timeouts.push(sparkleTimeout);
-    }
-  };
-  
-  const initialTimer = setTimeout(handleSmartGameCoach, 500);
-  timeouts.push(initialTimer);
-  
-  // ✅ CLEANUP: Only clear timeouts, don't hide active messages
-  return () => {
-    isComponentMounted = false; // ✅ Mark as unmounted
-    console.log('🧹 ZoneWelcome: Clearing timeouts but preserving active messages');
-    timeouts.forEach(timeout => clearTimeout(timeout));
-    
-    // ✅ ONLY hide coach if navigating away (not during normal operation)
-    // The actual cleanup will happen in navigation handlers
-  };
-  
-}, [zoneData, sceneProgress, showMessage]);
 
 
 // ✨ DISNEY PATTERN: Load cultural progress data
@@ -575,6 +435,12 @@ if (tempData) {
   const checkSceneUnlocked = (scene) => {
     if (!zoneData || !zoneData.scenes) return false;
     
+    // ✅ NEW: Check if scene has explicit unlocked flag in ZoneConfig (for zones like About Me Hut & Festival Square)
+    if (scene.unlocked === true) {
+      console.log(`🔓 ZONE CONFIG: Scene ${scene.id} explicitly unlocked in ZoneConfig`);
+      return true;
+    }
+    
     // ✅ DISNEY PATH 1: First scene is always unlocked
     if (scene.order === 1) {
       console.log(`🔓 DISNEY: Scene ${scene.id} unlocked (first scene)`);
@@ -641,41 +507,10 @@ if (tempData) {
 
  const handleSceneClick = (scene, action = 'default') => {
 
-   // ✅ SIMPLE: Clean GameCoach before navigation (same as TocaBocaNav)
-  console.log('🧹 ZONE: Cleaning GameCoach before scene navigation');
-  // ✅ NOW we aggressively clean because we're actually navigating
-  if (hideCoach) {
-    hideCoach();
-    console.log('✅ ZoneWelcome: GameCoach hidden for navigation');
-  }
-  if (clearManualCloseTracking) {
-    clearManualCloseTracking();
-  }
-
-  // ✅ ADD THIS: Track quick navigation for GameCoach
-  const profileId = localStorage.getItem('activeProfileId');
-  const clickTime = Date.now();
-  
-  // Check if this is a quick click (within 3 seconds of zone entry)
-  const zoneEntryTime = sessionStorage.getItem(`zone_entry_${zoneData.id}`);
-  const isQuickClick = zoneEntryTime && (clickTime - parseInt(zoneEntryTime)) < 3000;
-  
-  if (isQuickClick) {
-    console.log('⚡ Quick navigation detected - GameCoach will stay silent');
-    // Store this info for GameCoach decision
-    sessionStorage.setItem(`quick_nav_${profileId}_${zoneData.id}`, clickTime.toString());
-  }
-  
-  // ✅ KEEP ALL EXISTING LOGIC BELOW:
   const status = getSceneStatus(scene);
   
   if (status.status === 'locked') {
     console.log('🔒 DISNEY: Scene locked, showing feedback:', scene.name);
-    showMessage(`Complete "${getPreviousSceneName(scene)}" first to unlock this scene!`, {
-      duration: 3000,
-      animation: 'bounce',
-      priority: 5
-    });
     return;
   }
   
@@ -753,6 +588,7 @@ if (tempData) {
   return (
     <div 
       className="zone-welcome-container"
+      data-zone={zoneData.id}
       style={{
         backgroundImage: `url('${zoneData.background}')`,
         backgroundSize: 'cover',
@@ -798,35 +634,6 @@ if (tempData) {
   🔍 DEBUG STATUS
 </button>
 
-{/* Add this after your existing debug button */}
-<button 
-  onClick={() => {
-    const profileId = localStorage.getItem('activeProfileId');
-    if (profileId && zoneData?.id) {
-      const session = GameCoachSessionManager.debugSession(profileId, zoneData.id);
-      console.log('🎭 Current GameCoach Session:', session);
-      
-      // Force reset for testing
-      if (confirm('Reset GameCoach session for testing?')) {
-        GameCoachSessionManager.resetSession(profileId, zoneData.id);
-        window.location.reload();
-      }
-    }
-  }}
-  style={{
-    position: 'fixed',
-    top: '50px',
-    right: '10px',
-    background: 'purple',
-    color: 'white',
-    padding: '10px',
-    borderRadius: '5px',
-    zIndex: 9999
-  }}
->
-  🎭 DEBUG GC
-</button>
-
       {/* Back to Map Button */}
       <button className="zone-back-button" onClick={handleBackToMap}>
         ← Back to Map
@@ -835,57 +642,122 @@ if (tempData) {
     {/* Centered Zone Title */}
 <div className="zone-title-centered">
   <div className="zone-icon-large">{zoneData.icon}</div>
-  <h1 className="zone-name-centered">{zoneData.name}</h1>
+  <div className="zone-title-complete">
+    <h1 className="zone-name-centered">{zoneData.name}</h1>
+    {(() => {
+      const allCompleted = zoneData.scenes.every(scene => {
+        const status = getSceneStatus(scene);
+        return status.status === 'completed';
+      });
+      
+      return allCompleted ? (
+        <div className="zone-complete-badge">
+          <span className="zone-complete-check">✓</span>
+          COMPLETE
+        </div>
+      ) : null;
+    })()}
+  </div>
 </div>
  
 
+    {/* ✨ Instructional Header - Dynamic Guidance with Personalization */}
+    {(() => {
+      // Get profile name
+      const activeProfile = GameStateManager.getActiveProfile();
+      const profileName = activeProfile?.name || '';
+      
+      // Find first available or in-progress scene
+      const nextScene = zoneData.scenes.find(scene => {
+        const status = getSceneStatus(scene);
+        return status.status === 'available' || status.status === 'in-progress';
+      });
+      
+      // Check if all scenes completed
+      const allCompleted = zoneData.scenes.every(scene => {
+        const status = getSceneStatus(scene);
+        return status.status === 'completed';
+      });
+      
+      // Determine header message
+      let headerClass = '';
+      let icon = '🎯';
+      let message = '';
+      
+      if (allCompleted) {
+        headerClass = 'complete-all';
+        icon = '🎉';
+        message = profileName 
+          ? `Amazing, ${profileName}! You mastered ${zoneData.name}!`
+          : `Amazing! You mastered ${zoneData.name}!`;
+      } else if (nextScene) {
+        const nextStatus = getSceneStatus(nextScene);
+        if (nextStatus.status === 'in-progress') {
+          headerClass = 'success';
+          icon = '▶️';
+          message = profileName ? (
+            <>
+              Keep going, {profileName}! Continue <span className="zone-instruction-scene-name">{nextScene.name}</span>!
+            </>
+          ) : (
+            <>
+              Keep going! Continue <span className="zone-instruction-scene-name">{nextScene.name}</span>!
+            </>
+          );
+        } else {
+          headerClass = '';
+          icon = '🎯';
+          message = profileName ? (
+            <>
+              {profileName}, click <span className="zone-instruction-scene-name">{nextScene.name}</span> to begin!
+            </>
+          ) : (
+            <>
+              Click <span className="zone-instruction-scene-name">{nextScene.name}</span> to start your adventure!
+            </>
+          );
+        }
+      }
+      
+      return message ? (
+        <div className={`zone-instruction-header ${headerClass}`}>
+          <p className="zone-instruction-text">
+            <span className="zone-instruction-icon">{icon}</span>
+            {message}
+          </p>
+        </div>
+      ) : null;
+    })()}
+ 
+
       {/* Scene Icons Grid */}
-      <div className="zone-scenes-container">
-        {/* ✨ NEW: Horizontal Container */}
+      <div className="zone-scenes-container" data-zone={zoneData.id}>
+        {/* ✨ NEW: Horizontal Container with Grid */}
         <div className="scenes-horizontal-container">
           {zoneData.scenes.map((scene, index) => {
             const status = getSceneStatus(scene);
+            
+            // Determine if this is the next recommended scene
+            const nextScene = zoneData.scenes.find(s => {
+              const st = getSceneStatus(s);
+              return st.status === 'available' || st.status === 'in-progress';
+            });
+            const isNextScene = nextScene && nextScene.id === scene.id;
             
             return (
               <div
                 key={scene.id}
                 className={`zone-scene-card ${status.status} ${
                   highlightedScene === scene.id ? 'highlighted' : ''
-                } ${status.status === 'locked' ? 'locked-scene' : 'unlocked-scene'}`}
+                } ${status.status === 'locked' ? 'locked-scene' : 'unlocked-scene'} ${
+                  isNextScene ? 'next-scene' : ''
+                }`}
                 style={{
                   cursor: status.status === 'locked' ? 'not-allowed' : 'pointer'
                 }}
                 onClick={() => handleSceneClick(scene)}
               >
-                {/* ✨ Divine Light Effect for GameCoach Entrance - Different Colors */}
-                {showSparkle?.includes('divine-light') && (
-                  <div style={{
-                    position: 'fixed',
-                    top: '20px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: '400px',
-                    height: '200px',
-                    zIndex: 199,
-                    pointerEvents: 'none'
-                  }}>
-                    <SparkleAnimation
-                      type="glitter"
-                      count={80}
-                      color={
-                        showSparkle === 'divine-light-welcome' ? '#FF6B6B' :     // Coral for welcome
-                        showSparkle === 'divine-light-celebration' ? '#FFD700' : // Gold for celebration
-                        showSparkle === 'divine-light-encourage' ? '#87CEEB' :   // Sky blue for encouragement
-                        showSparkle === 'divine-light-mastery' ? '#9370DB' :     // Purple for mastery
-                        '#FFD700' // Default gold
-                      }
-                      size={3}
-                      duration={2000}
-                      fadeOut={true}
-                      area="full"
-                    />
-                  </div>
-                )}
+              
 
                 {/* Order indicator */}
                 <div className="scene-order-indicator">
@@ -901,9 +773,31 @@ if (tempData) {
 
                 {/* ✨ NEW: Scene Icon Area (Top) */}
                 <div className="scene-icon-area">
-                  <div className="scene-emoji" style={{
-                    filter: status.status === 'locked' ? 'grayscale(100%)' : 'none'
-                  }}>
+                  {scene.iconImage ? (
+                    <img 
+                      src={scene.iconImage}
+                      alt={scene.name}
+                      className="scene-icon-img"
+                      style={{
+                        filter: status.status === 'locked' ? 'grayscale(100%) opacity(0.5)' : 'none'
+                      }}
+                      onError={(e) => {
+                        console.warn(`Failed to load image for ${scene.id}, falling back to emoji`);
+                        e.target.style.display = 'none';
+                        if (e.target.nextElementSibling) {
+                          e.target.nextElementSibling.style.display = 'block';
+                        }
+                      }}
+                    />
+                  ) : null}
+                  
+                  <div 
+                    className="scene-emoji"
+                    style={{
+                      filter: status.status === 'locked' ? 'grayscale(100%)' : 'none',
+                      display: scene.iconImage ? 'none' : 'block'
+                    }}
+                  >
                     {scene.emoji}
                   </div>
                   
@@ -942,7 +836,7 @@ Continue
                           handleSceneClick(scene, 'replay');
                         }}
                       >
-                        🎮
+                        Replay
                       </button>
                     </div>
                   ) : (
@@ -954,9 +848,9 @@ Continue
                         handleSceneClick(scene);
                       }}
                     >
-                      {status.status === 'available' && '🚀 Start Adventure'}
-                      {status.status === 'completed' && '🎮 Play Again'}
-                      {status.status === 'locked' && '🔒 Complete Previous'}
+                      {status.status === 'available' && 'Start'}
+                      {status.status === 'completed' && 'Replay'}
+                      {status.status === 'locked' && 'Complete Previous'}
                     </button>
                   )}
                 </div>

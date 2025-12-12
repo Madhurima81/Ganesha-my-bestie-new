@@ -570,7 +570,7 @@ const ClickDotsPathGame = ({
           </div>
         )}
 
-        {/* Debug Info */}
+        {/* Debug Info 
         {showDebug && (
           <div style={{
             position: 'absolute',
@@ -590,7 +590,7 @@ const ClickDotsPathGame = ({
             <div>Touches: {activeTouchesRef.current}</div>
             <div>Resuming: {String(isResuming)}</div>
           </div>
-        )}
+        )}*/}
       </div>
 
       {/* Reset Button */}

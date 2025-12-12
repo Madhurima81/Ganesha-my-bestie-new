@@ -9,6 +9,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSafeClick } from './hooks/useSafeClick';
 
+import UniversalPauseButton from './UniversalPauseButton';
+import PauseModal from './PauseModal';
+
 const ManualRoundMode = ({
   gameConfig,
   assetGetters,
@@ -47,6 +50,8 @@ const ManualRoundMode = ({
   // ✅ FIX 2: Water spray state
   const [waterSprayPosition, setWaterSprayPosition] = useState(null);
 
+  const [showPauseModal, setShowPauseModal] = useState(false);
+
   const timeoutsRef = useRef([]);
   const intervalsRef = useRef([]);
   const isComponentMountedRef = useRef(true);
@@ -75,6 +80,14 @@ const ManualRoundMode = ({
       intervalsRef.current.forEach(i => clearInterval(i));
     };
   }, []);
+
+  // ⭐ NEW: Clear timers when paused
+useEffect(() => {
+  if (showPauseModal) {
+    console.log('⏸️ Manual mode paused - clearing timers');
+    clearAllTimers();
+  }
+}, [showPauseModal]);
 
   // Console logging
   console.log('[Mode] Manual Round Mode active');
@@ -116,37 +129,60 @@ const ManualRoundMode = ({
     }, 800);
   };
 
-  // ✅ FIX 1: Start with countdown after round selection
-  const handleRoundSelect = (round) => {
-    safeClick(() => {
-      // ✅ BUG 3 FIX: Don't allow switching during ANY active gameplay
-      if (gameState !== 'roundSelection') {
-        console.log('⏸️ Finish current round first!');
-        return;
-      }
+  // Clear all running timers
+const clearAllTimers = () => {
+  console.log('🧹 Clearing all Manual mode timers');
+  timeoutsRef.current.forEach(t => clearTimeout(t));
+  intervalsRef.current.forEach(i => clearInterval(i));
+  timeoutsRef.current = [];
+  intervalsRef.current = [];
+};
 
-      console.log(`[Round] Starting round: ${round}`);
-      setSelectedRound(round);
+// ⭐ NEW: Just SELECT the round (don't start game)
+const handleRoundSelect = (round) => {
+  safeClick(() => {
+    // Only allow selecting when in round selection mode
+    if (gameState !== 'roundSelection') {
+      console.log('⏸️ Finish current round first!');
+      return;
+    }
 
-      const sequence = gameConfig.syllables[round] || [];
-      setCurrentSequence(sequence);
-      setPlayerInput([]);
-      setRoundClicks({});
+    console.log(`[Round] Selected round: ${round}`);
+    setSelectedRound(round);
+  });
+};
 
-      // ✅ FIX 1: Start with countdown (3-2-1)
-      safeSetTimeout(() => {
-        startCountdown(sequence);
-      }, 500);
+// ⭐ NEW: START the selected round
+const handleStartRound = () => {
+  safeClick(() => {
+    if (!selectedRound) {
+      console.log('⚠️ No round selected!');
+      return;
+    }
 
-      if (onSaveGameState) {
-        onSaveGameState({
-          currentRound: round,
-          gameMode: 'manual',
-          gameId: gameConfig.id
-        });
-      }
-    });
-  };
+    console.log(`[Round] Starting round: ${selectedRound}`);
+    
+    const sequence = gameConfig.syllables[selectedRound] || [];
+    setCurrentSequence(sequence);
+    setPlayerInput([]);
+    setRoundClicks({});
+    setVisualRewards({});
+setActivatedElephants({});
+
+    // Start with countdown (3-2-1)
+    safeSetTimeout(() => {
+      startCountdown(sequence);
+    }, 500);
+
+    if (onSaveGameState) {
+      onSaveGameState({
+        currentRound: selectedRound,
+        gameMode: 'manual',
+        gameId: gameConfig.id
+      });
+    }
+  });
+};
 
   // Play sequence
   const playSequence = (sequence) => {
@@ -226,10 +262,14 @@ const ManualRoundMode = ({
     console.log(`[Round] Round ${selectedRound} complete!`);
 
     safeSetTimeout(() => {
+          setWaterSprayPosition(null); // ⭐ ADD THIS LINE
+
       setGameState('roundSelection');
       setSelectedRound(null);
       setPlayerInput([]);
       setRoundClicks({});
+      setVisualRewards({});
+setActivatedElephants({});
     }, 2500);
   };
 
@@ -257,6 +297,51 @@ const ManualRoundMode = ({
       });
     }
   };
+
+  const handlePause = () => {
+  setShowPauseModal(true);
+};
+
+const handleContinue = () => {
+  console.log('▶️ Resuming Manual mode');
+  setShowPauseModal(false);
+  
+  if (gameState === 'listening') {
+    console.log('▶️ Resuming listening phase');
+  } else if (gameState === 'countdown') {
+    console.log('▶️ Restarting countdown');
+    startCountdown(currentSequence);
+  } else if (gameState === 'playing') {
+    console.log('▶️ Restarting sequence');
+    playSequence(currentSequence);
+  } else if (gameState === 'success') {
+    // ⭐ NEW: Handle resume from success phase
+    console.log('▶️ Resuming from success - showing round selection');
+    safeSetTimeout(() => {
+      setGameState('roundSelection');
+      setSelectedRound(null);
+      setPlayerInput([]);
+      setRoundClicks({});
+    }, 500);
+  }
+};
+
+const handleExitToMenu = () => {
+  setShowPauseModal(false);
+  
+  // ⭐ CLEAR COUNTDOWN STATE
+  clearAllTimers();
+  setIsCountingDown(false);
+  setCountdown(0);
+    setWaterSprayPosition(null); // ⭐ ADD THIS LINE
+
+  setGameState('roundSelection');
+  setSelectedRound(null);
+  setPlayerInput([]);
+  setRoundClicks({});
+  setSingingSyllable(null);
+  setIsSequencePlaying(false);
+};
 
   // Render elephant with ✅ BUG 4 FIX: Added circle highlight
   const renderElephant = (syllable, index) => {
@@ -295,7 +380,9 @@ const ManualRoundMode = ({
           transition: 'all 0.3s ease',
           zIndex: 20,
           filter: isSinging ? 'brightness(1.4)' : 'brightness(1)',
-          transform: isSinging ? 'scale(1.1)' : 'scale(1)'
+        transform: isSinging 
+      ? 'translate(-50%, -50%) scale(1.1)'  // ✅ Added translate!
+      : 'translate(-50%, -50%) scale(1)'    // ✅ Added translate!
         }}
         onClick={() => handleElephantClick(index)}
         disabled={!clickable}
@@ -307,6 +394,22 @@ const ManualRoundMode = ({
             style={{ width: '100%', height: '100%', objectFit: 'contain' }}
           />
         )}
+
+        {/* 👑 Crown for clicked elephants (like Auto mode) */}
+{activatedElephants[`elephant-${syllable}`] && (
+  <div style={{
+    position: 'absolute',
+    top: '-10px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    fontSize: '24px',
+    animation: 'crownFloat 2s ease-in-out infinite',
+    zIndex: 10,
+    pointerEvents: 'none'
+  }}>
+    👑
+  </div>
+)}
 
         {/* ✅ BUG 4 FIX: Golden pulse circle highlight (from Auto mode) */}
         {isNext && !clicked && (
@@ -608,6 +711,19 @@ const ManualRoundMode = ({
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 20 }}>
 
+
+    {/* ⭐ ADD PAUSE BUTTON */}
+    {!hideElements && gameState !== 'roundSelection' && (
+      <UniversalPauseButton onPause={handlePause} />
+    )}
+
+    {/* ⭐ ADD PAUSE MODAL */}
+    <PauseModal
+      isOpen={showPauseModal}
+      onContinue={handleContinue}
+      onExit={handleExitToMenu}
+    />
+
       {/* ✅ BUG 1 FIX: Round Selection with EXIT OPTIONS */}
       {!hideElements && gameState === 'roundSelection' && (
         <div style={{
@@ -620,7 +736,7 @@ const ManualRoundMode = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          zIndex: 100
+          zIndex: 150
         }}>
           <div style={{
             background: 'white',
@@ -642,31 +758,90 @@ const ManualRoundMode = ({
             {/* Round Buttons */}
             <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginBottom: '30px' }}>
               {/* ⭐ DYNAMIC: Support 2-round and 3-round games */}
-              {Array.from({ length: Object.keys(gameConfig.syllables).length }, (_, i) => i + 1).map(round => (
-                <button
-                  key={round}
-                  onClick={() => handleRoundSelect(round)}
-                  style={{
-                    width: '80px',
-                    height: '80px',
-                    borderRadius: '15px',
-                    border: completedRounds.includes(round)
-                      ? '3px solid #4CAF50'
-                      : `2px solid ${gameConfig.theme.primaryColor}`,
-                    background: completedRounds.includes(round)
-                      ? '#4CAF50'
-                      : 'white',
-                    color: completedRounds.includes(round) ? 'white' : gameConfig.theme.primaryColor,
-                    fontSize: '32px',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  {completedRounds.includes(round) ? '✓' : round}
-                </button>
-              ))}
+{Array.from({ length: Object.keys(gameConfig.syllables).length }, (_, i) => i + 1).map(round => {
+  const isCompleted = completedRounds.includes(round);
+  
+  return (
+    <button
+      key={round}
+      onClick={() => handleRoundSelect(round)}
+      style={{
+        width: '80px',
+        height: '80px',
+        borderRadius: '15px',
+    border: completedRounds.includes(round)
+  ? '3px solid #4CAF50'
+  : selectedRound === round
+  ? `4px solid ${gameConfig.theme.primaryColor}`
+  : `2px solid ${gameConfig.theme.primaryColor}`,
+    background: completedRounds.includes(round)
+  ? '#4CAF50'
+  : selectedRound === round
+  ? `${gameConfig.theme.primaryColor}15`
+  : 'white',
+        color: completedRounds.includes(round) ? 'white' : gameConfig.theme.primaryColor,
+        fontSize: '32px',
+        fontWeight: 'bold',
+        cursor: 'pointer',
+        transition: 'all 0.3s ease',
+        position: 'relative',  // ⭐ ADD THIS
+        display: 'flex',       // ⭐ ADD THIS
+        alignItems: 'center',  // ⭐ ADD THIS
+        justifyContent: 'center' // ⭐ ADD THIS
+      }}
+    >
+      {/* ⭐ ALWAYS SHOW NUMBER */}
+      {round}
+      
+      {/* ⭐ SHOW TICK BADGE IF COMPLETED */}
+      {completedRounds.includes(round) && (
+        <div style={{
+          position: 'absolute',
+          top: '-5px',
+          right: '-5px',
+          width: '24px',
+          height: '24px',
+          borderRadius: '50%',
+          background: '#FFD700',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '14px',
+          fontWeight: 'bold',
+          color: '#4CAF50',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+          animation: 'checkmarkAppear 0.5s ease-out'
+        }}>
+          ✓
+        </div>
+      )}
+   </button>
+  );
+})}
             </div>
+
+            {/* ⭐ NEW: START ROUND BUTTON */}
+            {selectedRound && (
+              <button
+                onClick={handleStartRound}
+                style={{
+                  width: '100%',
+                  padding: '20px',
+                  marginTop: '20px',
+                  background: `linear-gradient(135deg, ${gameConfig.theme.primaryColor} 0%, ${gameConfig.theme.primaryColor}CC 100%)`,
+                  border: 'none',
+                  borderRadius: '15px',
+                  color: 'white',
+                  fontSize: '20px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  boxShadow: `0 6px 20px ${gameConfig.theme.primaryColor}40`,
+                  animation: 'pulseButton 1.5s ease-in-out infinite'
+                }}
+              >
+                ▶️ START ROUND {selectedRound}
+              </button>
+            )}
 
             {/* ✅ BUG 1 FIX: EXIT OPTIONS - ALWAYS VISIBLE */}
             <div style={{
@@ -730,7 +905,7 @@ const ManualRoundMode = ({
       {/* ✅ BUG 2 & 5 FIX: Removed "Play Round X" intermediate button */}
 
       {/* ✅ FIX 1: Countdown Display (like Auto mode) */}
-      {!hideElements && isCountingDown && (
+{!hideElements && isCountingDown && gameState !== 'roundSelection' && (
         <div style={{
           position: 'absolute',
           top: '50%',
@@ -846,6 +1021,11 @@ const ManualRoundMode = ({
           0%, 100% { opacity: 1; transform: scale(1); }
           50% { opacity: 0.5; transform: scale(1.2); }
         }
+
+        @keyframes pulseButton {
+  0%, 100% { transform: scale(1); box-shadow: 0 6px 20px ${gameConfig.theme.primaryColor}40; }
+  50% { transform: scale(1.05); box-shadow: 0 8px 25px ${gameConfig.theme.primaryColor}60; }
+}
       `}</style>
     </div>
   );

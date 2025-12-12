@@ -662,17 +662,43 @@ onClick={() => {
           <p className="vakratunda-power-modal-subtext">Choose your next action:</p>
         </div>
         
-        <div className="vakratunda-power-modal-right">
-          {/* NO ICON HERE - removed duplicate */}
-          
-          <button className="vakratunda-power-modal-btn save-btn" onClick={handleSaveAnimal}>
-            🐾 Save an Animal
-          </button>
-          
-          <button className="vakratunda-power-modal-btn continue-btn" onClick={handleContinueLearning}>
-            {currentWord === 'vakratunda' ? '🎵 Discover Mahakaya' : '✨ End Scene'}
-          </button>
-        </div>
+  <div className="vakratunda-power-modal-right">
+  {/* NO ICON HERE - removed duplicate */}
+  
+  {/* ⭐ NEW: Play Again button */}
+  <button 
+    className="vakratunda-power-modal-btn play-again-btn" 
+    onClick={() => {
+      console.log(`🔄 Play Again: Restarting ${currentWord} game`);
+      setShowPowerModal(false);
+      
+      // Reset to game phase for the current word
+      if (currentWord === 'vakratunda') {
+        setModeForPhase('vakratunda');
+        setShowModeSelection(true);
+        setModeSelected(false);
+      } else if (currentWord === 'mahakaya') {
+        setModeForPhase('mahakaya');
+        setShowModeSelection(true);
+        setModeSelected(false);
+      }
+    }}
+    style={{
+      background: 'linear-gradient(135deg, #9C27B0 0%, #BA68C8 100%)',
+      marginBottom: '10px'
+    }}
+  >
+    🔄 Play Again
+  </button>
+  
+  <button className="vakratunda-power-modal-btn save-btn" onClick={handleSaveAnimal}>
+    🐾 Save an Animal
+  </button>
+  
+  <button className="vakratunda-power-modal-btn continue-btn" onClick={handleContinueLearning}>
+    {currentWord === 'vakratunda' ? '🎵 Discover Mahakaya' : '✨ End Scene'}
+  </button>
+</div>
       </div>
     </div>
   </div>
@@ -865,28 +891,6 @@ onClick={() => {
   />
 )}
 
-            {/* TEMPORARY TEST - Remove after debugging 
-<button 
-  onClick={() => {
-    console.log('Forcing modal show');
-    sceneActions.updateState({ phase: PHASES.INITIAL, welcomeShown: false });
-  }}
-  style={{
-    position: 'fixed',
-    top: '100px',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    zIndex: 99999,
-    background: 'red',
-    color: 'white',
-    padding: '10px 20px',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer'
-  }}
->
-  FORCE SHOW MODAL
-</button>
 
 {/* FINAL CELEBRATION - Ganesha appears BEFORE completion screen */}
 {showFinalGanesha && !showSceneCompletion && (

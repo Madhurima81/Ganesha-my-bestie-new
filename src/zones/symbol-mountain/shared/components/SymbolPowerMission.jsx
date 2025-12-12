@@ -55,84 +55,121 @@ const SymbolPowerMission = ({
     }
   };
 
+  const titles = {
+    mooshika: {
+      problem: "❤️ This Animal Needs Your Help!",
+      success: "🎉 You Saved the Animal!"
+    },
+    modak: {
+      problem: "❤️ This Animal Needs Your Help!",
+      success: "🎉 You Saved the Animal!"
+    },
+    belly: {
+      problem: "❤️ This Animal Needs Your Help!",
+      success: "🎉 You Saved the Animal!"
+    }
+  };
+
+  const descriptions = {
+    mooshika: {
+      problem: "They're lost and need guidance. Use your Divine Guidance to help.",
+      success: "They found their way home — great job!"
+    },
+    modak: {
+      problem: "They're tired and hungry. Use your Sweet Blessing to help.",
+      success: "They feel energized again — great job!"
+    },
+    belly: {
+      problem: "They can't carry all their treasures! Use your Cosmic Container to help.",
+      success: "Everything fits perfectly — great job!"
+    }
+  };
+
   const currentMessages = messages[symbolKey] || messages.mooshika;
+  const currentTitles = titles[symbolKey] || titles.mooshika;
+  const currentDescriptions = descriptions[symbolKey] || descriptions.mooshika;
 
   return (
-    <div className="symbol-power-mission">
-   
-      
-      {/* Main content */}
-      <div className="mission-scene-container">
+    <div className="symbol-mission-overlay">
+      {/* Main Card */}
+      <div className="symbol-mission-card">
         
-        {/* Animal Image */}
-        <div className="mission-animal-wrapper">
-          <img 
-            src={rescuePhase === 'success' ? afterImage : beforeImage}
-            alt="Animal"
-            className={`mission-animal ${rescuePhase}`}
-          />
-          
-          {/* Speech Bubble */}
-          <div className={`mission-speech-bubble ${rescuePhase}`}>
-            <div className="speech-text">
-              {currentMessages[rescuePhase]}
-            </div>
-            <div className="speech-pointer" />
-          </div>
-        </div>
-
-        {/* Symbol Power Display */}
-        {rescuePhase === 'problem' && (
-          <div className="symbol-power-display" onClick={handleUsePower}>
-            <img 
-              src={powerConfig.image}
-              alt={powerConfig.name}
-              className="power-symbol pulsing"
-            />
-            <div className="power-instruction">
-              Tap to use {powerConfig.name}!
-            </div>
-          </div>
-        )}
-
-        {/* Power Particles */}
-        {showParticles && (
-          <div className="power-particles">
-            {Array.from({length: 8}).map((_, i) => (
-              <img
-                key={i}
-                src={powerConfig.image}
-                alt="particle"
-                className="particle"
-                style={{ 
-                  '--delay': `${i * 0.3}s`,
-                  filter: `drop-shadow(0 0 10px ${powerConfig.color})`
-                }}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Complete Button */}
-        {rescuePhase === 'success' && (
-          <button 
-            className="mission-complete-btn"
-            onClick={handleComplete}
-          >
-            Continue Adventure
-          </button>
-        )}
-
-           {/* Darkening overlay 
-      <div className="mission-overlay" />
-
         {/* Cancel Button */}
         {rescuePhase === 'problem' && onCancel && (
           <button 
-            className="mission-cancel-btn" 
+            className="symbol-mission-btn-close" 
             onClick={onCancel}
+            aria-label="Close"
           >
             ✕
+          </button>
+        )}
+
+        {/* Title */}
+        <h1 className="symbol-mission-title">
+          {currentTitles[rescuePhase === 'success' ? 'success' : 'problem']}
+        </h1>
+        
+        {/* Animal Image Section */}
+        <div className="symbol-mission-image-wrapper">
+            <div className="symbol-mission-image-container">
+              <img 
+                src={rescuePhase === 'success' ? afterImage : beforeImage}
+                alt="Animal"
+                className="symbol-mission-img"
+              />
+              
+              {/* Speech Bubble */}
+              <div className="symbol-mission-bubble">
+                <div className="symbol-mission-bubble-text">
+                  {currentMessages[rescuePhase]}
+                </div>
+              </div>
+            </div>
+        </div>
+
+        {/* Description Text */}
+        <p className="symbol-mission-desc">
+          {currentDescriptions[rescuePhase === 'success' ? 'success' : 'problem']}
+        </p>
+
+        {/* Power Particles */}
+    {/* Power Particles Container */}
+{showParticles && (
+  <div className="symbol-power-particles">
+    {Array.from({length: 12}).map((_, i) => ( /* Increased to 12 particles for more effect */
+      <div
+        key={i}
+        className="symbol-particle"
+        style={{ 
+          '--delay': `${i * 0.15}s` /* Faster sequence */
+        }}
+      >
+         <img src={powerConfig.image} alt="particle" />
+      </div>
+    ))}
+  </div>
+)}
+
+        {/* Action Button - Problem State */}
+        {rescuePhase === 'problem' && (
+          <button 
+            className="symbol-mission-btn-action"
+            onClick={handleUsePower}
+          >
+            <span>👍</span> Use {powerConfig.name}!
+          </button>
+        )}
+
+        {/* Complete Button - Success State */}
+{/* Complete Button - Success State */}
+        {rescuePhase === 'success' && (
+          <button 
+            className="symbol-mission-btn-success"
+            onClick={handleComplete}
+          >
+            {/* If it's the Belly (last mission), show End Scene, otherwise Continue */}
+            {symbolKey === 'belly' ? "Level Complete" : "Continue Adventure"}
           </button>
         )}
       </div>

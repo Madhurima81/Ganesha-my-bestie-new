@@ -1,37 +1,29 @@
-// CleanProfileSelector.jsx - NO conflicts, clean state management
+// CleanProfileSelector.jsx - FIXED: Delete Modal Bug
 import React, { useState, useEffect } from 'react';
 import GameStateManager from '../../services/GameStateManager';
 import './CleanProfileSelector.css';
 
-const CleanProfileSelector = ({ onProfileSelect, onClose, profiles: initialProfiles }) => {
-  console.log('🌟 CleanProfileSelector rendering');
-  
+const CleanProfileSelector = ({ 
+  onProfileSelect, 
+  profiles: initialProfiles
+}) => {
   const [profiles, setProfiles] = useState(initialProfiles || {});
   const [showCreateProfile, setShowCreateProfile] = useState(false);
   const [newProfileName, setNewProfileName] = useState('');
-  const [selectedAvatar, setSelectedAvatar] = useState('owl');
+  const [selectedAvatar, setSelectedAvatar] = useState('monkey');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
+  const [showInfo, setShowInfo] = useState(false);
 
-  // Animal avatar options
+  // 🎨 Animal Config: Matches Image 1 Colors
   const animalAvatars = [
-    { id: 'owl', name: 'Wise Owl', emoji: '🦉', personality: 'Thoughtful and clever' },
-    { id: 'panda', name: 'Gentle Panda', emoji: '🐼', personality: 'Kind and peaceful' },
-    { id: 'tiger', name: 'Brave Tiger', emoji: '🐯', personality: 'Bold and adventurous' },
-    { id: 'mouse', name: 'Quick Mouse', emoji: '🐭', personality: 'Swift and curious' }
+    { id: 'monkey', name: 'Monkey', labelColor: '#FF9800' },   // Orange
+    { id: 'peacock', name: 'Peacock', labelColor: '#00BCD4' }, // Cyan
+    { id: 'squirrel', name: 'Squirrel', labelColor: '#8D6E63' }, // Brown
+    { id: 'tiger', name: 'Tiger', labelColor: '#4CAF50' }      // Green
   ];
 
-  const defaultColor = '#8B4513'; // Forest Brown
-
-  // Clean initialization
   useEffect(() => {
-    if (!initialProfiles) {
-      loadProfiles();
-    }
-    
-    // Cleanup function
-    return () => {
-      console.log('🧹 CleanProfileSelector cleanup');
-    };
+    if (!initialProfiles) loadProfiles();
   }, [initialProfiles]);
 
   const loadProfiles = () => {
@@ -45,77 +37,38 @@ const CleanProfileSelector = ({ onProfileSelect, onClose, profiles: initialProfi
   };
 
   const handleCreateProfile = () => {
-    console.log('🎯 Creating profile:', { newProfileName, selectedAvatar });
-    
-    if (!newProfileName.trim()) {
-      return;
-    }
+    if (!newProfileName.trim()) return;
 
     try {
       const selectedAnimal = animalAvatars.find(animal => animal.id === selectedAvatar);
-      const avatarEmoji = selectedAnimal?.emoji || '🦉';
-      
       const newProfile = GameStateManager.createProfile(
         newProfileName.trim(),
-        avatarEmoji,
-        defaultColor
+        selectedAnimal?.id || 'monkey', 
+        '#000000'
       );
       
       if (newProfile && newProfile.id) {
-        // Reset form
         setNewProfileName('');
-        setSelectedAvatar('owl');
+        setSelectedAvatar('monkey');
         setShowCreateProfile(false);
-        
-        // Reload profiles
         loadProfiles();
-        
-        // Select the new profile
         onProfileSelect(newProfile.id);
-      } else {
-        console.error('Failed to create profile');
-        alert('Failed to create profile. Please try again.');
       }
     } catch (error) {
       console.error('Error creating profile:', error);
-      alert('Error creating profile. Please try again.');
     }
-  };
-
-  const handleSelectProfile = (profileId) => {
-    console.log('🎯 Selecting profile:', profileId);
-    onProfileSelect(profileId);
   };
 
   const confirmDelete = (profileId) => {
-    try {
-      GameStateManager.deleteProfile(profileId);
-      loadProfiles();
-      setShowDeleteConfirm(null);
-    } catch (error) {
-      console.error('Error deleting profile:', error);
-    }
+    GameStateManager.deleteProfile(profileId);
+    loadProfiles();
+    setShowDeleteConfirm(null);
   };
 
   const getAnimalId = (avatarData) => {
-    if (typeof avatarData === 'string') {
-      if (['owl', 'panda', 'tiger', 'mouse'].includes(avatarData)) {
-        return avatarData;
-      }
-      
-      const emojiToAnimal = {
-        '🦉': 'owl',
-        '🐼': 'panda', 
-        '🐯': 'tiger',
-        '🐭': 'mouse'
-      };
-      
-      if (emojiToAnimal[avatarData]) {
-        return emojiToAnimal[avatarData];
-      }
-    }
-    
-    return 'owl'; // Default fallback
+    if (['monkey', 'peacock', 'squirrel', 'tiger'].includes(avatarData)) return avatarData;
+    const map = { '🐵': 'monkey', '🦚': 'peacock', '🐿️': 'squirrel', '🐯': 'tiger' };
+    return map[avatarData] || 'monkey';
   };
 
   const profileArray = Object.values(profiles || {});
@@ -123,134 +76,30 @@ const CleanProfileSelector = ({ onProfileSelect, onClose, profiles: initialProfi
 
   return (
     <div className="clean-profile-overlay">
-      {/* Forest background */}
       <div className="clean-forest-background"></div>
       
-      {/* Floating particles */}
-      <div className="clean-floating-particles">
-        {[...Array(8)].map((_, i) => (
-          <div 
-            key={i} 
-            className="clean-particle"
-            style={{
-              animationDelay: `${i * 0.8}s`,
-              left: `${Math.random() * 100}%`,
-              animationDuration: `${3 + Math.random() * 2}s`
-            }}
-          />
-        ))}
-      </div>
-
       <div className="clean-profile-container">
-        <h2 className="clean-profile-title">Choose Your Forest Friend</h2>
-        <p className="clean-profile-subtitle">Who will join Ganesha on this magical journey?</p>
         
-        <div className="clean-profiles-grid">
-          {profileArray.map((profile) => {
-            const animalId = getAnimalId(profile.avatar);
-            const animalData = animalAvatars.find(a => a.id === animalId) || animalAvatars[0];
-            
-            return (
-              <div 
-                key={profile.id}
-                className="clean-profile-card"
-                onClick={() => handleSelectProfile(profile.id)}
-              >
-                {/* Animal avatar image */}
-                <div className="clean-animal-avatar-container">
-                  <img 
-                    src={`/images/new-explorer-${animalId}.png`}
-                    alt={animalData.name}
-                    className="clean-animal-avatar-image"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      const fallback = e.target.nextElementSibling;
-                      if (fallback) fallback.style.display = 'block';
-                    }}
-                  />
-                  <div 
-                    className="clean-emoji-fallback" 
-                    style={{
-                      display: 'none',
-                      fontSize: '60px',
-                      textAlign: 'center',
-                      lineHeight: '90px',
-                      color: '#fff'
-                    }}
-                  >
-                    {profile.avatar}
-                  </div>
-                </div>
-                
-                <div className="clean-profile-content">
-                  <div className="clean-profile-name">{profile.name}</div>
-                  <div className="clean-animal-name">{animalData.name}</div>
-                  <div className="clean-profile-stats">
-                    <span>⭐ {profile.totalStars || 0}</span>
-                    <span>🎯 {profile.completedScenes || 0}</span>
-                  </div>
-                </div>
-                
-                <button 
-                  className="clean-delete-profile-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowDeleteConfirm(profile.id);
-                  }}
-                >
-                  ×
-                </button>
-                
-                {showDeleteConfirm === profile.id && (
-                  <div className="clean-delete-confirm-popup">
-                    <p>Say goodbye to {profile.name}'s adventure?</p>
-                    <div className="clean-confirm-buttons">
-                      <button onClick={() => confirmDelete(profile.id)} className="clean-confirm-yes">Yes</button>
-                      <button onClick={() => setShowDeleteConfirm(null)} className="clean-confirm-no">Keep</button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-          
-          {[...Array(emptySlots)].map((_, index) => (
-            <div 
-              key={`empty-${index}`}
-              className="clean-profile-card empty"
-              onClick={() => setShowCreateProfile(true)}
-            >
-              <div className="clean-add-profile">
-                <div className="clean-add-icon">✨</div>
-                <div className="clean-add-text">New Explorer</div>
-                <div className="clean-add-subtext">Join the adventure!</div>
-              </div>
-            </div>
-          ))}
-        </div>
-        
+        {/* ✨ CREATE PROFILE MODAL */}
         {showCreateProfile && (
-          <div className="clean-create-profile-modal">
-            <h3>Create Your Forest Friend</h3>
-            <p className="clean-modal-subtitle">Choose your companion for the magical journey ahead!</p>
-            
-            <input
-              type="text"
-              placeholder="What's your name, explorer?"
-              value={newProfileName}
-              onChange={(e) => setNewProfileName(e.target.value)}
-              maxLength={12}
-              className="clean-name-input"
-              autoFocus
-              onKeyPress={(e) => {
-                if (e.key === 'Enter' && newProfileName.trim()) {
-                  handleCreateProfile();
-                }
-              }}
-            />
-            
-            <div className="clean-avatar-selection">
-              <p>Choose your forest animal guide:</p>
+          <div className="clean-modal-overlay">
+            <div className="clean-create-card">
+              
+              <h2 className="modal-title">Create Your Explorer!</h2>
+              <p className="modal-subtitle">Pick your name and your forest friend</p>
+              
+              <input
+                type="text"
+                placeholder="Enter your name"
+                value={newProfileName}
+                onChange={(e) => setNewProfileName(e.target.value)}
+                maxLength={12}
+                className="clean-text-input"
+                autoFocus
+              />
+              
+              <h3 className="section-label">Pick your Forest Friend</h3>
+              
               <div className="clean-avatar-grid">
                 {animalAvatars.map((animal) => (
                   <div
@@ -258,43 +107,146 @@ const CleanProfileSelector = ({ onProfileSelect, onClose, profiles: initialProfi
                     className={`clean-avatar-option ${selectedAvatar === animal.id ? 'selected' : ''}`}
                     onClick={() => setSelectedAvatar(animal.id)}
                   >
+                    {selectedAvatar === animal.id && (
+                      <div className="checkmark-badge">✓</div>
+                    )}
                     <img 
                       src={`/images/new-explorer-${animal.id}.png`}
                       alt={animal.name}
-                      className="clean-avatar-image"
+                      className="clean-avatar-img"
                     />
-                    <div className="clean-animal-info">
-                      <div className="clean-animal-name-small">{animal.name}</div>
-                      <div className="clean-animal-personality">{animal.personality}</div>
+                    <div 
+                      className="animal-label-pill"
+                      style={{ backgroundColor: animal.labelColor }}
+                    >
+                      {animal.name}
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
-            
-            <div className="clean-create-profile-buttons">
+              
               <button 
                 onClick={handleCreateProfile}
-                className="clean-create-btn"
+                className="btn-primary-blue"
                 disabled={!newProfileName.trim()}
               >
-                Begin Adventure ✨
+                Start Adventure!
               </button>
+              
               <button 
                 onClick={() => setShowCreateProfile(false)}
-                className="clean-cancel-btn"
+                className="btn-text-back"
               >
-                Maybe Later
+                Back
               </button>
+
             </div>
           </div>
         )}
-        
-        {onClose && (
-          <button className="clean-close-selector" onClick={onClose}>
-            ×
-          </button>
+
+        {/* MAIN SCREEN */}
+        {!showCreateProfile && (
+          <>
+            <div className="clean-profile-header">
+              <h2 className="clean-profile-title">Who's Playing?</h2>
+              {/* ✅ Info Button */}
+              <button 
+                className="clean-info-btn"
+                onClick={() => setShowInfo(true)}
+              >
+                ℹ️
+              </button>
+            </div>
+            
+            <div className="clean-profiles-grid">
+              {profileArray.map((profile) => {
+                const animalId = getAnimalId(profile.avatar);
+                return (
+                  <div 
+                    key={profile.id}
+                    className="clean-profile-card"
+                    onClick={() => onProfileSelect(profile.id)}
+                  >
+                    <div className="clean-animal-avatar-container">
+                      <img 
+                        src={`/images/new-explorer-${animalId}.png`}
+                        alt="Profile"
+                        className="clean-animal-avatar-image"
+                      />
+                    </div>
+                    <div className="clean-profile-name">{profile.name}</div>
+                    
+                    <button 
+                      className="clean-delete-trigger"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowDeleteConfirm(profile.id);
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                );
+              })}
+              
+              {/* EMPTY SLOTS */}
+              {[...Array(emptySlots)].map((_, index) => (
+                <div 
+                  key={`empty-${index}`}
+                  className="clean-profile-card empty"
+                  onClick={() => setShowCreateProfile(true)}
+                >
+                  <div className="clean-add-profile">
+                    <div className="clean-add-icon">+</div>
+                    <div className="clean-add-text">New</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* ✅ FIXED: DELETE MODAL - Moved OUTSIDE profiles grid */}
+            {showDeleteConfirm && (
+              <div className="clean-modal-overlay" onClick={() => setShowDeleteConfirm(null)}>
+                <div className="clean-delete-card" onClick={(e) => e.stopPropagation()}>
+                  <h3 className="modal-title-small">Delete Profile?</h3>
+                  <p className="modal-text">
+                    Are you sure you want to delete <strong>{profiles[showDeleteConfirm]?.name}</strong>?
+                  </p>
+                  <button 
+                    className="btn-danger-red" 
+                    onClick={() => confirmDelete(showDeleteConfirm)}
+                  >
+                    Yes, Delete
+                  </button>
+                  <button 
+                    className="btn-text-cancel" 
+                    onClick={() => setShowDeleteConfirm(null)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
         )}
+
+        {/* ✅ INFO MODAL */}
+        {showInfo && (
+          <div className="clean-modal-overlay" onClick={() => setShowInfo(false)}>
+            <div className="clean-create-card" onClick={(e) => e.stopPropagation()}>
+              <h2 className="modal-title">Help & Guide</h2>
+              <p className="modal-text" style={{textAlign:'left', padding:'0 10px'}}>
+                👋 Welcome to Ganesha's World!<br/><br/>
+                <strong>1. Create a Profile:</strong> Tap "New" to start.<br/>
+                <strong>2. Pick a Friend:</strong> Choose an animal avatar.<br/>
+                <strong>3. Play:</strong> Tap your profile to continue.<br/>
+                <strong>4. Manage:</strong> You can have up to 4 profiles. Tap "×" to delete one.
+              </p>
+              <button className="btn-primary-blue" onClick={() => setShowInfo(false)}>Got it!</button>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );

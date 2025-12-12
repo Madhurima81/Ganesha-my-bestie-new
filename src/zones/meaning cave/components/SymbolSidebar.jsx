@@ -11,239 +11,188 @@ import kurumedevaSymbol from '../assets/images/symbols/kurumedeva-symbol.png';
 import sarvakaryeshuSymbol from '../assets/images/symbols/sarvakaryeshu-symbol.png';
 import sarvadaSymbol from '../assets/images/symbols/sarvada-symbol.png';
 
-// App information for popups (like symbolInfo in SymbolSidebar)
-const appInfo = {
+// Mantra Information
+const mantraInfo = {
   vakratunda: {
-    title: "वक्रतुण्ड - Vakratunda",
-    description: "Vakratunda means 'Curved Trunk'. Ganesha's trunk is curved like a hook! It can pick up tiny things and big things too. His curved trunk makes him super special!",
+    title: "Vakratunda — Curved Trunk!",
+    description: "A curvy trunk that lifts anything — tiny or huge! Powerful yet gentle — just like Ganesha. ✨",
     colorIcon: vakratundaSymbol,
-    grayIcon: vakratundaSymbol,  // CSS will grayscale it
-    syllables: ['VA', 'KRA', 'TUN', 'DA'],
-    power: { name: 'Curved Trunk', icon: '🐘', color: '#FFD700' }
+    grayIcon: vakratundaSymbol,
+    audioKey: 'vakratunda',
   },
   mahakaya: {
-    title: "महाकाय - Mahakaya", 
-    description: "Mahakaya means 'Great Body'. Ganesha has a BIG, strong body! He's powerful and can help with big problems. Even though he's big, he's super gentle!",
+    title: "Mahakaya — Mighty Form!", 
+    description: "Ganesha’s body is big, strong and steady like a mountain! A powerful protector with a warm, loving heart. ❤️",
     colorIcon: mahakayaSymbol,
     grayIcon: mahakayaSymbol,
-    syllables: ['MA', 'HA', 'KA', 'YA'],
-    power: { name: 'Great Body', icon: '💪', color: '#FF6B35' }
+    audioKey: 'mahakaya',
   },
   suryakoti: {
-    title: "सूर्यकोटि - Suryakoti",
-    description: "Suryakoti means 'Million Suns'. Ganesha shines as bright as a MILLION suns! He brings light and happiness. Imagine a million suns - that's how bright!",
+    title: "Suryakoti — Brighter Than Suns!",
+    description: "Ganesha shines brighter than millions of suns! His light removes fear and fills us with joy. ☀️",
     colorIcon: suryakotiSymbol,
     grayIcon: suryakotiSymbol,
-    syllables: ['SUR', 'YA', 'KO', 'TI'],
-    power: { name: 'Million Suns', icon: '☀️', color: '#FFC107' }
+    audioKey: 'suryakoti',
   },
   samaprabha: {
-    title: "समप्रभ - Samaprabha",
-    description: "Samaprabha means 'Equal Radiance'. Ganesha's light shines the same for EVERYONE! He treats everyone fairly. He loves everyone equally - including you!",
+    title: "Samaprabha — Radiant Glow!",
+    description: "A divine glow that brightens everything around him! Where Ganesha is, light and happiness follow. ✨",
     colorIcon: samaprabhaSymbol,
     grayIcon: samaprabhaSymbol,
-    syllables: ['SA', 'MA', 'PRA', 'BHA'],
-    power: { name: 'Equal Radiance', icon: '🌟', color: '#2196F3' }
-  },
-  nirvighnam: {
-    title: "निर्विघ्नं - Nirvighnam",
-    description: "Nirvighnam means 'Without Obstacles'. Ganesha removes all the blocks in your way! He helps you finish things smoothly. Call on him when things get tough!",
-    colorIcon: nirvighnamSymbol,
-    grayIcon: nirvighnamSymbol,
-    syllables: ['NIR', 'VIGH', 'NAM'],
-    power: { name: 'Clear Path', icon: '🌈', color: '#9C27B0' }
+    audioKey: 'samaprabha',
   },
   kurumedeva: {
-    title: "कुरुमेदेव - Kurumedeva",
-    description: "Kurumedeva means 'Please Do for Me, O Divine One'. When we ask Ganesha nicely, he helps us! It's like saying 'Please help me!'. Always remember to say please!",
+    title: "Kurumedeva — O Lord, Please Guide Me!",
+    description: "We ask Ganesha to help us learn and move ahead. With effort + blessings, great things happen. 🧡",
     colorIcon: kurumedevaSymbol,
     grayIcon: kurumedevaSymbol,
-    syllables: ['KU', 'RU', 'ME', 'DEVA'],
-    power: { name: 'Protection', icon: '🛡️', color: '#4CAF50' }
+    audioKey: 'kurumedeva',
+  },
+  nirvighnam: {
+    title: "Sarva-Vighnam — Remove All Obstacles!",
+    description: "Ganesha clears the path when things get tough. Try bravely — he helps us move forward. 🚧➡️✨",
+    colorIcon: nirvighnamSymbol,
+    grayIcon: nirvighnamSymbol,
+    audioKey: 'nirvighnam',
   },
   sarvakaryeshu: {
-    title: "सर्वकार्येषु - Sarvakaryeshu", 
-    description: "Sarvakaryeshu means 'In All Tasks'. In EVERYTHING you do - homework, play, eating - Ganesha can help! Every task becomes easier with Ganesha!",
+    title: "Sarva-Karyeshu — In All Tasks!", 
+    description: "For every work — big or small — he is with us. We try with focus, he supports with grace. 🌿",
     colorIcon: sarvakaryeshuSymbol,
     grayIcon: sarvakaryeshuSymbol,
-    syllables: ['SAR', 'VA', 'KAR', 'YE', 'SHU'],
-    power: { name: 'Success', icon: '🏆', color: '#795548' }
+    audioKey: 'sarvakaryeshu',
   },
   sarvada: {
-    title: "सर्वदा - Sarvada",
-    description: "Sarvada means 'Always'. Ganesha is ALWAYS there for you! Morning, afternoon, night - he never leaves. He's your forever friend!",
+    title: "Sarvada — Always!",
+    description: "Ganesha’s love and blessings stay always with us. Forever guiding, forever protecting. 💛",
     colorIcon: sarvadaSymbol,
     grayIcon: sarvadaSymbol,
-    syllables: ['SAR', 'VA', 'DA'],
-    power: { name: 'Generosity', icon: '🎁', color: '#FF9800' }
+    audioKey: 'sarvada',
   }
 };
 
-const AppSidebar = ({ unlockedSymbols = {}, onAppClick, className = '' }) => {
+const SymbolSidebar = ({ unlockedSymbols = {}, onAppClick, className = '' }) => {
   const [showPopup, setShowPopup] = useState(false);
-  const [selectedApp, setSelectedApp] = useState(null);
-  const [animatingApp, setAnimatingApp] = useState(null);
-
-  // App order for display (matching scene progression)
-  const appOrder = ['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha', 'nirvighnam', 'kurumedeva','sarvakaryeshu', 'sarvada'];
-
-const handleAppClick = (appId) => {
-  if (unlockedSymbols[appId]) {  // ← CHANGED!
-    setSelectedApp(appId);
-    setShowPopup(true);
-    // Remove onAppClick to prevent second popup
-  }
-};
-
-// Add these new functions (replace the placeholder ones):
-const handleSyllableClick = (syllable, appId) => {
-  console.log(`Playing syllable: ${syllable} for app: ${appId}`);
+  const [selectedMantra, setSelectedMantra] = useState(null);
   
-  // Use the same audio logic as VakratundaGrove
-  const syllableFileMap = {
-    'VA': 'vakratunda-va',
-    'KRA': 'vakratunda-kra', 
-    'TUN': 'vakratunda-tun',
-    'DA': 'vakratunda-da',
-    'MA': 'mahakaya-ma',
-    'HA': 'mahakaya-ha',
-    'KA': 'mahakaya-ka',
-    'YA': 'mahakaya-ya',
-    'SUR': 'suryakoti-sur',
-    'YA': 'suryakoti-ya',
-    'KO': 'suryakoti-ko',
-    'TI': 'suryakoti-ti',
-    'SA': 'samaprabha-sa',
-    'MA': 'samaprabha-ma',
-    'PRA': 'samaprabha-pra',
-    'BHA': 'samaprabha-bha',
-    'NIR': 'nirvighnam-nir',
-    'VIGH': 'nirvighnam-vigh',
-    'NAM': 'nirvighnam-nam',
-    'KU': 'kurumedeva-ku',
-    'RU': 'kurumedeva-ru',
-    'ME': 'kurumedeva-me',
-    'DEVA': 'kurumedeva-deva',
-    'SAR': 'sarvada-sar',
-    'VA': 'sarvada-va',
-    'DA': 'sarvada-da',
-    'KAR': 'sarvakaryeshu-kar',
-    'YE': 'sarvakaryeshu-ye',
-    'SHU': 'sarvakaryeshu-shu'
+  // State to track which item is currently animating
+  const [animatingMantra, setAnimatingMantra] = useState(null);
+  // State to remember which items we have ALREADY animated so we don't loop
+  const [animatedSet, setAnimatedSet] = useState(new Set());
+
+  // Order for display
+  const mantraOrder = ['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha', 'kurumedeva', 'nirvighnam', 'sarvakaryeshu', 'sarvada'];
+
+  const handleSymbolClick = (mantraId) => {
+    if (unlockedSymbols[mantraId]) {
+      setSelectedMantra(mantraId);
+      setShowPopup(true);
+    }
   };
-  
-  const fileName = syllableFileMap[syllable] || `${appId}-${syllable.toLowerCase()}`;
-  playAudio(`/audio/syllables/${fileName}.mp3`);
-};
 
-const handleWordPlay = (appId) => {
-  console.log(`Playing word: ${appId}`);
-  playAudio(`/audio/words/${appId}.mp3`);
-};
+  const handleWordPlay = (mantraId) => {
+    console.log(`Playing full mantra word: ${mantraId}`);
+    playAudio(`/audio/words/${mantraId}.mp3`);
+  };
 
-// Add the playAudio function (copy from VakratundaGrove):
-const playAudio = (audioPath, volume = 1.0) => {
-  try {
-    const audio = new Audio(audioPath);
-    audio.volume = volume;
-    return audio.play().catch(e => {
-      console.log(`Audio not found: ${audioPath}`);
-      return Promise.resolve();
-    });
-  } catch (error) {
-    console.log(`Audio error: ${error.message}`);
-    return Promise.resolve();
-  }
-};
+  const playAudio = (audioPath) => {
+    try {
+      const audio = new Audio(audioPath);
+      audio.volume = 1.0;
+      audio.play().catch(e => console.log("Audio play error:", e));
+    } catch (error) {
+      console.log("Audio error:", error);
+    }
+  };
 
   const closePopup = () => {
     setShowPopup(false);
-    setSelectedApp(null);
+    setSelectedMantra(null);
   };
 
-useEffect(() => {
-  const newlyUnlocked = appOrder.find(app => 
-    unlockedSymbols[app] && !animatingApp
-  );
-    
+  // --- FIXED ANIMATION LOGIC ---
+  useEffect(() => {
+    // Find the first symbol that is Unlocked AND has NOT been animated yet
+    const newlyUnlocked = mantraOrder.find(id => 
+      unlockedSymbols[id] && !animatedSet.has(id)
+    );
+      
     if (newlyUnlocked) {
-      setAnimatingApp(newlyUnlocked);
+      // Start animation
+      setAnimatingMantra(newlyUnlocked);
+      
+      // Add to our "Already Animated" list immediately so we don't find it again next render
+      setAnimatedSet(prev => new Set(prev).add(newlyUnlocked));
+
+      // Stop animation after 1 second
       setTimeout(() => {
-        setAnimatingApp(null);
+        setAnimatingMantra(null);
       }, 1000);
     }
-}, [unlockedSymbols, animatingApp]);
+  }, [unlockedSymbols, animatedSet]); 
+
   return (
     <>
-      <div className={`app-sidebar ${className}`}>
-        {appOrder.map((appId) => {
-          const app = appInfo[appId];
-const isUnlocked = unlockedSymbols[appId];
-          const isAnimating = animatingApp === appId;
+      <div className={`mantra-cave-sidebar ${className}`}>
+        {mantraOrder.map((mantraId) => {
+          const info = mantraInfo[mantraId];
+          const isUnlocked = unlockedSymbols[mantraId];
+          const isAnimating = animatingMantra === mantraId;
           
           return (
             <div
-              key={appId}
-              className={`app-icon ${isUnlocked ? 'unlocked' : 'locked'} ${isAnimating ? 'star-burst' : ''}`}
-              onClick={() => handleAppClick(appId)}
+              key={mantraId}
+              // RENAMED CLASS: 'mantra-cave-animate' to avoid global conflict
+              className={`mantra-cave-icon ${isUnlocked ? 'unlocked' : 'locked'} ${isAnimating ? 'mantra-cave-animate' : ''}`}
+              onClick={() => handleSymbolClick(mantraId)}
               style={{
-                backgroundImage: `url(${isUnlocked ? app.colorIcon : app.grayIcon})`,
-                cursor: isUnlocked ? 'pointer' : 'not-allowed'
+                backgroundImage: `url(${isUnlocked ? info.colorIcon : info.grayIcon})`,
               }}
-              title={isUnlocked ? app.title : 'App not yet unlocked'}
+              title={isUnlocked ? info.title : 'Locked'}
             />
           );
         })}
       </div>
 
-      {/* App Information Popup (like SymbolSidebar popup) */}
-      {showPopup && selectedApp && (
-        <div className="app-popup-overlay" onClick={closePopup}>
-          <div className="app-popup-content" onClick={(e) => e.stopPropagation()}>
-            <button className="popup-close-btn" onClick={closePopup}>×</button>
+      {/* Mantra Popup */}
+      {showPopup && selectedMantra && (
+        <div className="mantra-cave-popup-overlay" onClick={closePopup}>
+          <div className="mantra-cave-popup-content" onClick={(e) => e.stopPropagation()}>
+            <button className="mantra-cave-close-x" onClick={closePopup}>×</button>
             
-            <div className="popup-app-icon">
+            <div className="mantra-cave-popup-img-container">
               <img 
-                src={appInfo[selectedApp].colorIcon} 
-                alt={appInfo[selectedApp].title}
-                className="popup-app-image"
+                src={mantraInfo[selectedMantra].colorIcon} 
+                alt={mantraInfo[selectedMantra].title}
+                className="mantra-cave-popup-img"
               />
             </div>
             
-            <h2 className="popup-title">{appInfo[selectedApp].title}</h2>
-            <p className="popup-description">{appInfo[selectedApp].description}</p>
+            <h2 className="mantra-cave-popup-title">
+              {mantraInfo[selectedMantra].title.split('—')[0]}
+            </h2>
+            <p className="mantra-cave-popup-desc">
+              {mantraInfo[selectedMantra].description}
+            </p>
             
-{/* Syllable Practice Buttons */}
-<div className="syllable-practice">
-  {appInfo[selectedApp].syllables.map(syllable => (
-    <button 
-      key={syllable} 
-      className="syllable-btn"
-      onClick={() => handleSyllableClick(syllable, selectedApp)}
-    >
-      {syllable}
-    </button>
-  ))}
-</div>
+            <div className="mantra-cave-btn-group">
+              <button 
+                className="mantra-cave-audio-btn"
+                onClick={() => handleWordPlay(selectedMantra)}
+              >
+                🎵 {selectedMantra.toUpperCase()}
+              </button>
 
-{/* Add Word Practice Button */}
-<button 
-  className="word-practice-btn"
-  onClick={() => handleWordPlay(selectedApp)}
->
-  🎵 {selectedApp.toUpperCase()}
-</button>
+              <button className="mantra-cave-action-close-btn" onClick={closePopup}>
+                Close
+              </button>
+            </div>
             
-       <button className="popup-continue-btn" onClick={closePopup}>
-  Close
-</button>
           </div>
         </div>
       )}
-
-
     </>
   );
 };
 
-export default AppSidebar;
+export default SymbolSidebar;

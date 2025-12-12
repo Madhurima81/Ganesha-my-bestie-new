@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './AppSidebar.css';
-import SanskritVoiceRecorder from '../../../lib/components/audio/SanskritVoiceRecorder';
+import SanskritVoiceRecorder from '../../../lib/components/audio/SanskritVoiceRecorder.jsx';
+
 
 import appVakratundaGray from '../scenes/assets/images/apps/app-gray-vakratunda.png';
 import appVakratunda from '../scenes/assets/images/apps/app-Vakratunda.png';

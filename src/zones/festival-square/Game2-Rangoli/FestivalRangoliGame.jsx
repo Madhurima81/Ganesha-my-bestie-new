@@ -1,9 +1,128 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './FestivalRangoliGame.css';
+import '../../shared/components/OpeningModal.css'; // <--- SHARED MODAL IMPORT
+
 import FestivalSquareCompletion from '../components/FestivalSquareCompletion';
 import rangoliArtistBadge from './assets/images/rangoli-badge.png';
 import ganeshaCompletion from './assets/images/ganesha-artist.png';
 import ganeshaArtist from './assets/images/ganesha-artist.png';
+// In FestivalPianoGame.jsx (or any game inside Game1-piano folder)
+import GamePauseMenu from '../components/GamePauseMenu';
+import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
+
+// 🎨 DESIGN COMPLETION OVERLAY COMPONENT
+const DesignCompletionOverlay = ({ 
+  show, 
+  designName, 
+  starsEarned, 
+  onPlayAgain,
+  onCreateAnother
+}) => {
+  if (!show) return null;
+
+  return (
+    <div className="mission-completion-overlay">
+      <div className="completion-sparkles">
+        {Array.from({ length: 20 }).map((_, i) => (
+          <div 
+            key={i} 
+            className="completion-sparkle"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 2}s`
+            }}
+          >
+            ⭐
+          </div>
+        ))}
+      </div>
+      
+      <div className="completion-card">
+        <div 
+          className="completion-ganesha"
+          style={{ backgroundImage: `url(${ganeshaCompletion})` }}
+        />
+        
+        <div className="completion-message">
+          <h1 className="completion-title">🎨 Rangoli Complete! 🎨</h1>
+          <p className="completion-subtitle">{designName}</p>
+          
+          <div className="completion-stars">
+            {Array.from({ length: starsEarned }).map((_, i) => (
+              <span key={i} className="star-earned">⭐</span>
+            ))}
+          </div>
+          
+          <p className="completion-blessing">
+            "Beautiful artwork, little artist! Your rangoli shines bright!"
+          </p>
+        </div>
+        
+        <div className="completion-buttons">
+          <button className="completion-btn play-again" onClick={onPlayAgain}>
+            <span className="btn-icon">🔄</span>
+            <span className="btn-text">Play Again!</span>
+          </button>
+          
+          <button className="completion-btn create-another" onClick={onCreateAnother}>
+            <span className="btn-icon">🎨</span>
+            <span className="btn-text">Create Another!</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Opening Modal Component for Rangoli
+const OpeningModal = ({ show, onStart }) => {
+  if (!show) return null;
+
+  return (
+    <div className="game-modal-overlay">
+      <div className="game-modal-content">
+        {/* Character - Left Side */}
+        <div className="game-modal-character">
+          <img 
+            src={ganeshaArtist}
+            alt="Ganesha"
+          />
+        </div>
+
+        {/* Card - Right Side */}
+        <div className="game-modal-card">
+          <h1 className="game-modal-title">Rangoli Time! 🎨</h1>
+          <p className="game-modal-subtitle">
+            Let's create beautiful festival art together!
+          </p>
+
+          {/* Icons Grid */}
+          <div className="game-modal-icons">
+            <div className="game-modal-icon-item">
+              <img src="/assets/festival-square/icons/learn-icon.png" alt="Learn" />
+              <span className="game-modal-icon-label">Learn</span>
+            </div>
+            <div className="game-modal-icon-item">
+              <img src="/assets/festival-square/icons/draw-icon.png" alt="Draw" />
+              <span className="game-modal-icon-label">Draw</span>
+            </div>
+            <div className="game-modal-icon-item">
+              <img src="/assets/festival-square/icons/design-icon.png" alt="Design" />
+              <span className="game-modal-icon-label">Design</span>
+            </div>
+          </div>
+
+          {/* Let's Play Button */}
+          <button className="game-modal-button" onClick={onStart}>
+            Let's Create!
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 
 // Game phases for progression
 const PHASES = {
@@ -57,9 +176,11 @@ const FestivalRangoliGame = ({ onComplete, onNavigate }) => {
     totalSections: 0,
     celebrationStarted: false,
     gameStartTime: Date.now(),
-    stars: 0,
+ stars: 0,
     completed: false,
-    showDoneButton: false
+    showDoneButton: false,
+    showDesignComplete: false,
+    completedDesignData: null
   });
 
   // Saved progress for each design
@@ -76,6 +197,14 @@ const FestivalRangoliGame = ({ onComplete, onNavigate }) => {
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
   const [ganeshaMessage, setGaneshaMessage] = useState('');
   const [showGaneshaMessage, setShowGaneshaMessage] = useState(false);
+
+  const [showPauseMenu, setShowPauseMenu] = useState(false);
+
+const [showDesignConfirmation, setShowDesignConfirmation] = useState(false);
+const [pendingDesign, setPendingDesign] = useState(null);
+const [lastWorkedDesign, setLastWorkedDesign] = useState(null); // Track which design they were working on
+
+
 
   const timeoutsRef = useRef([]);
 
@@ -102,6 +231,19 @@ const FestivalRangoliGame = ({ onComplete, onNavigate }) => {
       }, 1000);
     }
   }, [gameState.phase]);
+
+  // Add this useEffect in your component (around line 200-300, after other useEffects)
+
+useEffect(() => {
+  const handleKeyPress = (e) => {
+    if (e.key === 'Escape' && !gameState.completed) {
+      setShowPauseMenu(prev => !prev);
+    }
+  };
+  
+  window.addEventListener('keydown', handleKeyPress);
+  return () => window.removeEventListener('keydown', handleKeyPress);
+}, [gameState.completed]);
 
   // Start rangoli game from introduction
   const startRangoliGame = () => {
@@ -186,21 +328,57 @@ const FestivalRangoliGame = ({ onComplete, onNavigate }) => {
     safeSetTimeout(() => setShowCulturalNote(null), 4000);
   };
 
-  // Handle design selection
-  const handleDesignSelection = (design) => {
-    console.log(`Selected design: ${design.name}`);
-    initializeColoringState(design);
-  };
+const handleDesignSelection = (design) => {
+  const savedProgress = savedDesigns[design.id];
+  const hasProgress = savedProgress && savedProgress.progress.coloredSections > 0;
+  
+  // Check if they're selecting the same design they were just working on
+  const isSameAsLastWorked = lastWorkedDesign && lastWorkedDesign.id === design.id;
+  
+  if (isSameAsLastWorked && hasProgress) {
+    // Show confirmation modal - they're picking the same design again
+    setPendingDesign(design);
+    setShowDesignConfirmation(true);
+  } else {
+    // Different design or no progress - proceed normally
+    proceedWithDesign(design, false);
+    setLastWorkedDesign(null); // Clear the tracker
+  }
+};
 
-  // Go back to selection (saves progress)
-  const goBackToSelection = () => {
-    saveCurrentProgress();
-    setGameState(prev => ({
-      ...prev,
-      phase: PHASES.SELECTION,
-      selectedDesign: null
-    }));
-  };
+const proceedWithDesign = (design, startFresh = false) => {
+  console.log(`Starting design: ${design.name}, Fresh: ${startFresh}`);
+  
+  setGameState(prev => ({
+    ...prev,
+    phase: PHASES.COLORING,
+    selectedDesign: design,
+    totalSections: design.sections
+  }));
+
+  if (startFresh) {
+    // Clear saved progress and start fresh
+    setSavedDesigns(prev => {
+      const updated = { ...prev };
+      delete updated[design.id];
+      return updated;
+    });
+    initializeColoringState(design, true);
+  } else {
+    // Load saved progress or start fresh
+    initializeColoringState(design, false);
+  }
+
+  // Clear the last worked design tracker
+  setLastWorkedDesign(null);
+
+  setShowCulturalNote({
+    design: design.name,
+    note: design.culturalNote
+  });
+
+  safeSetTimeout(() => setShowCulturalNote(null), 4000);
+};
 
   // Start over current design (clears only current design)
   const startOverCurrentDesign = () => {
@@ -249,6 +427,25 @@ const FestivalRangoliGame = ({ onComplete, onNavigate }) => {
     if (newProgress.celebrationStarted && !gameState.celebrationStarted) {
       safeSetTimeout(() => triggerGentleCelebration(), 1000);
     }
+
+    // Check if ALL sections are now colored (100% complete)
+    if (newProgress.coloredSections >= gameState.totalSections) {
+      console.log('🎨 ALL SECTIONS COLORED! Auto-triggering completion modal...');
+      
+      // Wait a moment for the last sparkle animation, then show completion
+      safeSetTimeout(() => {
+        const designData = {
+          name: gameState.selectedDesign.name,
+          starsEarned: newProgress.stars
+        };
+
+        setGameState(prev => ({
+          ...prev,
+          showDesignComplete: true,
+          completedDesignData: designData
+        }));
+      }, 1200); // Give time for final sparkle to show
+    }
   };
 
   // Trigger gentle celebration
@@ -263,25 +460,20 @@ const FestivalRangoliGame = ({ onComplete, onNavigate }) => {
     }, 3000);
   };
 
-  // Handle manual completion
-  const handleManualCompletion = () => {
-    console.log('Manual completion triggered');
-    
-    setGameState(prev => ({
-      ...prev,
-      phase: PHASES.COMPLETE,
-      completed: true,
-      stars: Math.max(8, prev.stars)
-    }));
-
-    // Show completion badge briefly
-    setShowCompletionBadge(true);
-
-    safeSetTimeout(() => {
-      setShowCompletionBadge(false);
-      setShowSceneCompletion(true);
-    }, 3000);
+const handleManualCompletion = () => {
+  console.log('Manual completion triggered');
+  
+  const designData = {
+    name: gameState.selectedDesign.name,
+    starsEarned: gameState.stars
   };
+
+  setGameState(prev => ({
+    ...prev,
+    showDesignComplete: true,
+    completedDesignData: designData
+  }));
+};
 
   // Reset everything
   const resetToSelection = () => {
@@ -548,40 +740,23 @@ const FestivalRangoliGame = ({ onComplete, onNavigate }) => {
     <div className="festival-rangoli-container">
       {/* Background */}
       <div className="rangoli-background" />
+
+      {/* ADD PAUSE BUTTON HERE */}
+<button 
+  className="game-pause-button"
+  onClick={() => setShowPauseMenu(true)}
+  aria-label="Pause Game"
+>
+  ⏸️
+</button>
       
-      {/* Simple Ganesha Character - Only show during main game phases, not during introduction */}
-      {gameState.phase !== PHASES.INTRODUCTION && (
-        <div className="ganesha-simple">
-          <img src={ganeshaArtist} alt="Ganesha Artist" className="ganesha-simple-image" />
-          {showGaneshaMessage && (
-            <div className="ganesha-simple-bubble">
-              {ganeshaMessage}
-            </div>
-          )}
-        </div>
-      )}
       
-      {/* Introduction Scene */}
+      {/* Opening Modal - Replaces Introduction Scene */}
       {gameState.phase === PHASES.INTRODUCTION && (
-        <div className="introduction-scene">
-          <div className="introduction-content">
-            <div className="ganesha-welcome">
-              <img src={ganeshaArtist} alt="Ganesha Artist" className="ganesha-welcome-image" />
-              {showGaneshaMessage && (
-                <div className="ganesha-welcome-bubble">
-                  {ganeshaMessage}
-                </div>
-              )}
-            </div>
-            <div 
-              className="lets-begin-button"
-              onClick={startRangoliGame}
-            >
-              <span>🎨</span>
-              <span>Let's Begin!</span>
-            </div>
-          </div>
-        </div>
+        <OpeningModal 
+          show={true}
+          onStart={startRangoliGame}
+        />
       )}
       
       {/* Selection Screen */}
@@ -680,7 +855,12 @@ const FestivalRangoliGame = ({ onComplete, onNavigate }) => {
               )}
             </div>
 
-            {/* Action Buttons */}
+            {/* Action Buttons - Completion is automatic at 100% */}
+            <div className="coloring-actions">
+              {/* Modal shows automatically when all sections colored */}
+            </div>
+
+            {/* Action Buttons 
             <div className="coloring-actions">
               <button 
                 className="back-to-selection-btn"
@@ -704,10 +884,106 @@ const FestivalRangoliGame = ({ onComplete, onNavigate }) => {
                   ✨ I'm Done Creating!
                 </button>
               )}
-            </div>
+            </div>*/}
           </div>
         </div>
       )}
+
+    
+{/* Game Pause Menu */}
+<GamePauseMenu
+  show={showPauseMenu}
+  gameName="Rangoli Artistry"
+  currentStars={gameState.stars}
+  hasDesignOption={true}
+
+  onResume={() => setShowPauseMenu(false)}
+  
+  onRestart={() => {
+    setShowPauseMenu(false);
+    startOverCurrentDesign();
+  }}
+
+    // 3. "Change Mode" -> ALWAYS goes to the main menu
+  onBackToModes={() => {
+
+  setShowPauseMenu(false);
+  
+  // IMPORTANT: Save current progress FIRST
+  saveCurrentProgress();
+  
+  // Save which design they were working on
+  setLastWorkedDesign(gameState.selectedDesign);
+  
+  // Go back to selection
+  setGameState(prev => ({
+    ...prev,
+    phase: PHASES.SELECTION
+  }));
+}}
+  
+  onComplete={() => {
+    setShowPauseMenu(false);
+    handleManualCompletion();
+  }}
+/>
+
+
+{/* Design Confirmation Modal - Simplified */}
+{showDesignConfirmation && pendingDesign && (
+  <div className="design-confirmation-overlay">
+    <div className="design-confirmation-modal-simple">
+      
+      {/* Close X button */}
+      <button 
+        className="modal-close-x"
+        onClick={() => {
+          setShowDesignConfirmation(false);
+          setPendingDesign(null);
+        }}
+      >
+        ×
+      </button>
+
+      {/* Header */}
+      <div className="modal-header-simple">
+        <div className="modal-icon-simple">
+          {pendingDesign.id === 'lotus' && '🪷'}
+          {pendingDesign.id === 'peacock' && '🦚'}
+          {pendingDesign.id === 'mandala' && '🌟'}
+        </div>
+        <h3 className="modal-title-simple">Continue or Start Fresh?</h3>
+        <p className="modal-subtitle-simple">You were working on {pendingDesign.name}</p>
+      </div>
+
+      {/* 2 Buttons Side by Side */}
+      <div className="modal-buttons-row">
+        <button
+          className="modal-btn-simple continue-btn"
+          onClick={() => {
+            setShowDesignConfirmation(false);
+            proceedWithDesign(pendingDesign, false); // Resume
+          }}
+        >
+          <span className="modal-btn-icon-simple">▶️</span>
+          <span className="modal-btn-text-simple">Continue</span>
+        </button>
+
+        <button
+          className="modal-btn-simple fresh-btn"
+          onClick={() => {
+            setShowDesignConfirmation(false);
+            proceedWithDesign(pendingDesign, true); // Start fresh
+          }}
+        >
+          <span className="modal-btn-icon-simple">✨</span>
+          <span className="modal-btn-text-simple">Start Fresh</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+)}
 
       {/* Cultural Note Popup */}
       {showCulturalNote && (
@@ -734,6 +1010,59 @@ const FestivalRangoliGame = ({ onComplete, onNavigate }) => {
         </div>
       )}
 
+      {/* Design Completion Overlay */}
+<DesignCompletionOverlay
+  show={gameState.showDesignComplete}
+  designName={gameState.completedDesignData?.name}
+  starsEarned={gameState.completedDesignData?.starsEarned || 0}
+  
+  onPlayAgain={() => {
+    // Replay the SAME design - clear its colors and start fresh
+    const currentDesign = gameState.selectedDesign;
+    
+    setGameState(prev => ({
+      ...prev,
+      showDesignComplete: false,
+      completedDesignData: null,
+      coloredSections: 0,
+      stars: 0,
+      celebrationStarted: false,
+      showDoneButton: false
+    }));
+    
+    // Clear the colors for this design
+    const freshColors = {};
+    for (let i = 1; i <= currentDesign.sections; i++) {
+      freshColors[`section-${i}`] = 'white';
+    }
+    setColors(freshColors);
+    
+    // Clear saved progress for this design
+    setSavedDesigns(prev => {
+      const updated = { ...prev };
+      delete updated[currentDesign.id];
+      return updated;
+    });
+  }}
+  
+  onCreateAnother={() => {
+    // Go back to design selection to pick a different design
+    setGameState(prev => ({
+      ...prev,
+      showDesignComplete: false,
+      completedDesignData: null,
+      phase: PHASES.SELECTION,
+      selectedDesign: null,
+      coloredSections: 0,
+      totalSections: 0,
+      stars: 0,
+      showDoneButton: false
+    }));
+    setColors({});
+    setSelectedColor('#FF6B6B');
+  }}
+/>
+
       {/* Festival Square Completion */}
       {showSceneCompletion && (
         <FestivalSquareCompletion
@@ -752,29 +1081,112 @@ const FestivalRangoliGame = ({ onComplete, onNavigate }) => {
           }}
           nextSceneName="Festival Cooking"
           childName="little artist"
+
           onContinue={() => {
-            console.log('Continue to next festival activity');
-            if (onComplete) {
-              onComplete({
-                stars: gameState.stars,
-                completed: true,
-                badges: ['artist'],
-                designUsed: gameState.selectedDesign?.id,
-                sectionsColored: gameState.coloredSections
-              });
-            }
-          }}
-          onReplay={() => {
-            resetToSelection();
-            setShowSceneCompletion(false);
-          }}
-          onHome={() => {
-            if (onNavigate) {
-              onNavigate('home');
-            }
-          }}
+  console.log('🎨 RANGOLI CONTINUE: Going to next game + preserving resume');
+  
+  const profileId = localStorage.getItem('activeProfileId');
+  if (profileId) {
+    ProgressManager.updateSceneCompletion(profileId, 'festival-square', 'game2', {
+      completed: true,
+      stars: gameState.stars,
+      badges: { artist: true }
+    });
+    
+    GameStateManager.saveGameState('festival-square', 'game2', {
+      completed: true,
+      stars: gameState.stars,
+      badges: { artist: true },
+      designUsed: gameState.selectedDesign?.id,
+      sectionsColored: gameState.coloredSections
+    });
+    
+    console.log('✅ RANGOLI CONTINUE: Completion data saved');
+  }
+  
+  // Set next scene for resume
+  setTimeout(() => {
+    SimpleSceneManager.setCurrentScene('festival-square', 'game3', false, false);
+    console.log('✅ RANGOLI CONTINUE: Next game (game3) set for resume tracking');
+    
+    onNavigate?.('scene-complete-continue');
+  }, 100);
+}}
+
+onReplay={() => {
+  console.log('🎮 RANGOLI REPLAY: Play Again');
+  
+  const profileId = localStorage.getItem('activeProfileId');
+  if (profileId) {
+    // Clear ALL storage
+    localStorage.removeItem(`temp_session_${profileId}_festival-square_game2`);
+    localStorage.removeItem(`replay_session_${profileId}_festival-square_game2`);
+    localStorage.removeItem(`play_again_${profileId}_festival-square_game2`);
+    
+    SimpleSceneManager.setCurrentScene('festival-square', 'game2', false, false);
+    console.log('🗑️ RANGOLI: All storage cleared');
+  }
+  
+  // Reset to selection screen
+  resetToSelection();
+  setShowSceneCompletion(false);
+  
+  console.log('🔄 RANGOLI: Game reset to selection');
+}}
+
+onBackToMap={() => {
+  console.log('🗺️ RANGOLI MAP: Back to Festival Square');
+  
+  // Clear current scene tracking
+  SimpleSceneManager.clearCurrentScene();
+  
+  if (onNavigate) {
+    onNavigate('zone-welcome'); // Goes to Festival Square zone welcome
+  }
+}}
+
+onHome={() => {
+  if (onNavigate) {
+    onNavigate('home');
+  }
+}}
         />
       )}
+
+      {/* ADD TOCA BOCA NAV HERE */}
+      <TocaBocaNav
+        onHome={() => onNavigate?.('home')}
+        onProgress={() => {
+          // Show progress/cultural celebration if you have it
+          console.log('Show festival progress');
+        }}
+        onHelp={() => console.log('Show help')}
+        onParentMenu={() => console.log('Parent menu')}
+        isAudioOn={true}
+        onAudioToggle={() => console.log('Toggle audio')}
+        onZonesClick={() => onNavigate?.('zones')}
+        onStartFresh={() => {
+          // Reset ENTIRE game - back to introduction
+          setGameState({
+            phase: PHASES.INTRODUCTION,
+            selectedDesign: null,
+            coloredSections: 0,
+            totalSections: 0,
+            celebrationStarted: false,
+            gameStartTime: Date.now(),
+            stars: 0,
+            completed: false,
+            showDoneButton: false
+          });
+          setSavedDesigns({});
+          setColors({});
+        }}
+        currentProgress={{
+          stars: gameState.stars || 0,
+          completed: gameState.completed ? 1 : 0,
+          total: 1
+        }}
+      />
     </div>
   );
 };

@@ -1,0 +1,352 @@
+import React, { useState, useEffect } from 'react';
+import './FamilyTreeGame.css';
+import AboutMeCompletion from "../components/Aboutmecompletion";
+// Import images
+import familyTreeBg from './assets/images/family tree bg.png';
+import familyTree from './assets/images/family-tree.png';
+import babyGaneshaImg from './assets/images/baby-ganesha.png';
+import shivaImg from './assets/images/shiva.png';
+import parvatiImg from './assets/images/parvati.png';
+import kartikeyaImg from './assets/images/kartikeya.png';
+
+// Badge images (add your actual badge image imports here if you have them)
+// import familyBadge from './assets/images/family-badge.png';
+
+const FamilyTreeGame = ({ onComplete, onBack, onNavigate }) => {
+  const [gamePhase, setGamePhase] = useState('intro'); // intro, playing, celebration, scene-complete
+  const [placedMembers, setPlacedMembers] = useState(new Set());
+  const [selectedMember, setSelectedMember] = useState(null);
+  const [flippedCard, setFlippedCard] = useState(null);
+  const [showSceneCompletion, setShowSceneCompletion] = useState(false);
+  const [gameState, setGameState] = useState({
+    stars: 4, // All family members placed = 4 stars
+    completed: false
+  });
+
+  const familyMembers = [
+    {
+      id: 'shiva',
+      name: 'Shiva Ji',
+      role: 'Father',
+      image: shivaImg,
+      info: 'My wise father who teaches me meditation',
+      position: { top: '20%', left: '15%' }
+    },
+    {
+      id: 'parvati',
+      name: 'Parvati Mata',
+      role: 'Mother',
+      image: parvatiImg,
+      info: 'My loving mother who makes modaks',
+      position: { top: '20%', right: '15%' }
+    },
+    {
+      id: 'kartikeya',
+      name: 'Kartikeya Bhai',
+      role: 'Brother',
+      image: kartikeyaImg,
+      info: 'My brave brother, we play together',
+      position: { bottom: '25%', left: '15%' }
+    },
+    {
+      id: 'ganesha',
+      name: 'Baby Ganesha',
+      role: 'Me!',
+      image: babyGaneshaImg,
+      info: "That's me! I remove obstacles!",
+      position: { bottom: '25%', right: '15%' }
+    }
+  ];
+
+  // Start game after intro
+  const handleStartGame = () => {
+    setGamePhase('playing');
+  };
+
+  // Handle character placement
+  const handlePlaceMember = (memberId) => {
+    if (placedMembers.has(memberId)) return;
+
+    const newPlaced = new Set(placedMembers);
+    newPlaced.add(memberId);
+    setPlacedMembers(newPlaced);
+    setSelectedMember(memberId);
+
+    // Check if all placed - trigger celebration
+    if (newPlaced.size === familyMembers.length) {
+      setTimeout(() => {
+        setGamePhase('celebration');
+        setGameState(prev => ({ ...prev, completed: true }));
+        
+        // Show scene completion after brief celebration
+        setTimeout(() => {
+          setShowSceneCompletion(true);
+        }, 2500);
+      }, 800);
+    }
+  };
+
+  // Handle flip card
+  const handleFlipCard = (memberId) => {
+    if (!placedMembers.has(memberId) || flippedCard === memberId) return;
+    setFlippedCard(memberId);
+
+    // Auto-flip back after 4 seconds
+    setTimeout(() => {
+      setFlippedCard(null);
+    }, 4000);
+  };
+
+  // Close flip card manually
+  const handleCloseFlip = (e, memberId) => {
+    e.stopPropagation();
+    if (flippedCard === memberId) {
+      setFlippedCard(null);
+    }
+  };
+
+  const availableMembers = familyMembers.filter(m => !placedMembers.has(m.id));
+
+  return (
+    <div className="family-tree-game">
+      {/* Background Image */}
+      <img src={familyTreeBg} alt="Hut Background" className="tree-background" />
+
+      {/* Intro Screen Overlay */}
+      {gamePhase === 'intro' && (
+        <div className="intro-overlay">
+          <img 
+            src={babyGaneshaImg} 
+            alt="Baby Ganesha" 
+            className="intro-ganesha bounce"
+          />
+          <div className="intro-speech">
+            <p className="intro-text">Let's complete my family tree!</p>
+            <button className="start-btn" onClick={handleStartGame}>
+              Start! 🌟
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Game Playing Phase */}
+      {gamePhase === 'playing' && (
+        <>
+          {/* Back Button & Progress */}
+          <button className="back-btn" onClick={onBack}>← Back</button>
+          <div className="progress-dots">
+            {familyMembers.map((m, i) => (
+              <span 
+                key={i} 
+                className={`progress-dot ${placedMembers.has(m.id) ? 'filled' : ''}`}
+              >
+                ●
+              </span>
+            ))}
+          </div>
+
+          {/* Tree Overlay */}
+          <img src={familyTree} alt="Family Tree" className="tree-overlay" />
+
+          {/* Empty Circle Spots */}
+          {familyMembers.map(member => !placedMembers.has(member.id) && (
+            <div
+              key={`spot-${member.id}`}
+              className="circle-spot glow-pulse"
+              style={member.position}
+            />
+          ))}
+
+          {/* Placed Family Members */}
+          {familyMembers.map(member => placedMembers.has(member.id) && (
+            <div
+              key={`placed-${member.id}`}
+              className={`placed-member ${selectedMember === member.id ? 'pop-in' : ''}`}
+              style={member.position}
+              onClick={() => handleFlipCard(member.id)}
+            >
+              {/* Front - Character */}
+              {flippedCard !== member.id && (
+                <div className="member-front">
+                  <div className="member-circle">
+                    <img src={member.image} alt={member.name} className="member-image" />
+                  </div>
+                  <div className="member-label">
+                    <div className="member-name">{member.name}</div>
+                    <div className="member-role">{member.role}</div>
+                  </div>
+                </div>
+              )}
+
+              {/* Back - Info (Simplified flip) */}
+              {flippedCard === member.id && (
+                <div className="member-info">
+                  <button 
+                    className="close-info-btn" 
+                    onClick={(e) => handleCloseFlip(e, member.id)}
+                  >
+                    ×
+                  </button>
+                  <div className="info-emoji">💫</div>
+                  <p className="info-text">{member.info}</p>
+                </div>
+              )}
+            </div>
+          ))}
+
+          {/* Bottom Tray - Available Characters */}
+          {availableMembers.length > 0 && (
+            <div className="members-tray">
+              <p className="tray-instruction">
+                {placedMembers.size === 0 
+                  ? "Tap a family member to place them on the tree!" 
+                  : `Great! ${placedMembers.size} placed! Keep going!`}
+              </p>
+              <div className="members-list">
+                {availableMembers.map(member => (
+                  <button
+                    key={member.id}
+                    className="member-card bounce-gentle"
+                    onClick={() => handlePlaceMember(member.id)}
+                  >
+                    <img src={member.image} alt={member.name} className="member-card-image" />
+                    <div className="member-card-name">{member.name}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Celebration Phase */}
+      {gamePhase === 'celebration' && !showSceneCompletion && (
+        <div className="celebration-overlay">
+          {/* Tree stays visible */}
+          <img src={familyTree} alt="Family Tree" className="tree-overlay" />
+          
+          {/* All placed members visible */}
+          {familyMembers.map(member => (
+            <div
+              key={`celebrate-${member.id}`}
+              className="placed-member"
+              style={member.position}
+            >
+              <div className="member-front">
+                <div className="member-circle">
+                  <img src={member.image} alt={member.name} className="member-image" />
+                </div>
+                <div className="member-label">
+                  <div className="member-name">{member.name}</div>
+                  <div className="member-role">{member.role}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {/* Celebration sparkles */}
+          <div className="celebration-sparkles">
+            {Array.from({ length: 20 }).map((_, i) => (
+              <div
+                key={i}
+                className="sparkle"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 0.5}s`
+                }}
+              >
+                ✨
+              </div>
+            ))}
+            <div className="celebration-message">
+              Beautiful Family! 🌟
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* About Me Completion Screen */}
+      {showSceneCompletion && (
+        <AboutMeCompletion
+          show={showSceneCompletion}
+          sceneName="Family Tree"
+          sceneNumber={1}
+          totalScenes={4}
+          starsEarned={gameState.stars}
+          totalStars={4}
+          discoveredBadges={['family-explorer', 'tree-builder', 'love-care', 'memory-keeper']}
+          badgeImages={{
+            // Add your badge images here if you have them
+            // 'family-explorer': familyBadge
+          }}
+          characterImages={{
+            babyGanesha: babyGaneshaImg
+          }}
+          nextSceneName="My Favorite Things"
+          childName="little one"
+          
+          onContinue={() => {
+            console.log('🏡 FAMILY TREE CONTINUE: Moving to next game');
+            
+            const profileId = localStorage.getItem('activeProfileId');
+            if (profileId) {
+              // Save completion data
+              // ProgressManager.updateSceneCompletion(profileId, 'about-me-hut', 'game1', {
+              //   completed: true,
+              //   stars: gameState.stars,
+              //   badges: { 'family-explorer': true, 'tree-builder': true }
+              // });
+              
+              console.log('✅ FAMILY TREE: Completion data saved');
+            }
+            
+            // Navigate to next game
+            setTimeout(() => {
+              if (onNavigate) {
+                onNavigate('game2'); // Next game in About Me Hut
+              } else if (onComplete) {
+                onComplete();
+              }
+            }, 100);
+          }}
+          
+          onReplay={() => {
+            console.log('🎮 FAMILY TREE REPLAY: Play Again');
+            
+            // Reset all game state
+            setGamePhase('intro');
+            setPlacedMembers(new Set());
+            setSelectedMember(null);
+            setFlippedCard(null);
+            setShowSceneCompletion(false);
+            setGameState({
+              stars: 4,
+              completed: false
+            });
+            
+            console.log('🔄 FAMILY TREE: Game reset complete');
+          }}
+          
+          onBackToMap={() => {
+            console.log('🗺️ FAMILY TREE MAP: Back to About Me Hut');
+            
+            if (onNavigate) {
+              onNavigate('zone-welcome'); // Goes to About Me Hut zone welcome
+            } else if (onBack) {
+              onBack();
+            }
+          }}
+          
+          onHome={() => {
+            if (onNavigate) {
+              onNavigate('home');
+            }
+          }}
+        />
+      )}
+    </div>
+  );
+};
+
+export default FamilyTreeGame;

@@ -1,0 +1,988 @@
+/* Main Game Container */
+.mandap-decoration-container {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #FF9A56 0%, #FFAD56 50%, #FFCC70 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+/* Background Elements - UPDATED TO SUPPORT mandap-bg.png */
+.mandap-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+/* For a bigger, more centered mandap */
+.mandap-structure {
+  position: absolute;
+  top: 13%;              /* Higher on screen */
+  left: 40%;            /* More to the left */
+  transform: translateX(-50%);
+  width: 90%;           /* Bigger mandap */
+  height: 95%;          /* Taller mandap */
+  z-index: 2;
+}
+
+.mandap-base-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+/* Clickable Zones */
+.mandap-zone {
+  position: absolute;
+  border: 3px solid transparent;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  z-index: 3;
+}
+
+.mandap-zone:not(.highlighted) {
+  pointer-events: none; /* Only disable when NOT highlighted for placement */
+}
+
+.mandap-zone.highlighted {
+  border-color: #FFD700;
+  background-color: rgba(255, 215, 0, 0.2);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+  animation: gentle-pulse 1.5s ease-in-out infinite;
+  pointer-events: auto; /* Always enable when highlighted for placement */
+}
+
+/* Option 2: Just blur the background (my recommendation) */
+.mode-selector-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.mode-selector-container {
+  text-align: center;
+  max-width: 900px;
+  padding: 40px;
+}
+
+.mode-selector-container h1 {
+  color: white;
+  font-size: 3rem;
+  margin-bottom: 50px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.mode-buttons {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+}
+
+.mode-button {
+  background: white;
+  border: none;
+  border-radius: 25px;
+  padding: 40px 50px;
+  min-width: 280px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.mode-button:hover {
+  transform: translateY(-10px) scale(1.05);
+}
+
+.mode-icon {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.mode-button h3 {
+  font-size: 1.8rem;
+  color: #667eea;
+  margin: 10px 0;
+}
+
+.mode-button p {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+/* Mission Carousel */
+.mission-carousel-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  overflow-y: auto;
+}
+
+.mission-carousel-container {
+  max-width: 1200px;
+  padding: 40px;
+  text-align: center;
+}
+
+.mission-carousel-container h2 {
+  color: white;
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+}
+
+.mission-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.mission-card {
+  background: white;
+  border-radius: 20px;
+  padding: 35px 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.mission-card:hover {
+  transform: translateY(-10px) scale(1.05);
+}
+
+.mission-icon {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.mission-card h3 {
+  font-size: 1.6rem;
+  color: #333;
+  margin: 15px 0;
+}
+
+.mission-card p {
+  font-size: 1rem;
+  color: #666;
+}
+
+.back-button {
+  background: white;
+  color: #f5576c;
+  border: 2px solid white;
+  border-radius: 50px;
+  padding: 15px 40px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  background: transparent;
+  color: white;
+}
+
+/* Pause Button */
+.game-pause-button {
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  width: 50px !important;
+  height: 50px !important;
+  background: linear-gradient(135deg, #fff8e1, #ffe0b2) !important;
+  border: 3px solid #ff6f00 !important;
+  border-radius: 50% !important;
+  font-size: 24px !important;
+  cursor: pointer !important;
+  z-index: 99999 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+  transition: all 0.3s ease !important;
+  pointer-events: auto !important;
+}
+
+.game-pause-button:hover {
+  transform: scale(1.1) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+.game-pause-button:active {
+  transform: scale(0.95) !important;
+}
+
+/* Update in MandapDecorationGame.css */
+
+/* Decoration tray stays at lower z-index */
+.decoration-categories,
+.decoration-items {
+  z-index: 8; /* Keep as is */
+}
+
+/* Draggable decorations need higher z-index */
+.free-draggable-item {
+  z-index: 25 !important; /* Higher than decoration tray */
+  pointer-events: auto !important;
+}
+
+/* When dragging, go even higher */
+.free-draggable-item.dragging {
+  z-index: 9999 !important;
+}
+
+/* Ensure decoration tray doesn't block pointer events */
+.decoration-categories,
+.decoration-items {
+  z-index: 8;
+  pointer-events: auto; /* Only for the tray itself */
+}
+
+/* Make sure tray content doesn't interfere */
+.category-button,
+.item-button {
+  z-index: 9; /* Slightly higher than tray background */
+  pointer-events: auto;
+}
+
+@keyframes gentle-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+    transform: scale(1.02);
+  }
+}
+
+.mandap-zone.highlighted:hover {
+  border-color: #FFA500;
+  background-color: rgba(255, 165, 0, 0.3);
+  box-shadow: 0 0 25px rgba(255, 165, 0, 0.8);
+}
+
+/* Placed Decorations */
+.placed-decoration {
+  position: absolute;
+  z-index: 34;
+  animation: decoration-appear 0.6s ease-out;
+}
+
+@keyframes decoration-appear {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5) rotate(-10deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
+}
+
+.decoration-image {
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.decoration-image.glowing {
+  filter: 
+    drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))
+    drop-shadow(0 0 10px rgba(255, 215, 0, 0.6));
+  animation: gentle-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes gentle-glow {
+  0% { filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)) drop-shadow(0 0 10px rgba(255, 215, 0, 0.6)); }
+  100% { filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.9)); }
+}
+
+/* Simple Ganesha Character - Peaceful Observer */
+.ganesha-simple {
+  position: absolute;
+  top: 45%;
+  right: 55%;
+  width: 100px;
+  height: 120px;
+  z-index: 25;
+  opacity: 0.8;
+}
+
+.ganesha-simple-image {
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  animation: gentle-presence 4s ease-in-out infinite;
+}
+
+@keyframes gentle-presence {
+  0%, 100% { 
+    transform: translateY(0) scale(1); 
+    opacity: 0.8;
+  }
+  50% { 
+    transform: translateY(-3px) scale(1.02); 
+    opacity: 0.9;
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .ganesha-simple {
+    width: 80px;
+    height: 95px;
+    top: 12%;
+    right: 6%;
+  }
+}
+
+@media (max-width: 480px) {
+  .ganesha-simple {
+    width: 65px;
+    height: 80px;
+    top: 10%;
+    right: 4%;
+  }
+}
+
+/* Start Over Button */
+.start-over-button {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #FF5722, #E64A19);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 3px 8px rgba(255, 87, 34, 0.3);
+  transition: all 0.2s ease;
+  z-index: 9;
+}
+
+.start-over-button:hover {
+  transform: translateY(-2px) scale(1.05);
+  background: linear-gradient(135deg, #E64A19, #D84315);
+  box-shadow: 0 4px 12px rgba(255, 87, 34, 0.4);
+}
+
+/* Cultural Note Display */
+.cultural-note-display {
+  position: absolute;
+  background: rgba(139, 69, 19, 0.9);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  max-width: 200px;
+  z-index: 12;
+  animation: cultural-note-appear 0.4s ease-out;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes cultural-note-appear {
+  0% { opacity: 0; transform: translate(-50%, -100%) scale(0.8); }
+  100% { opacity: 1; transform: translate(-50%, -100%) scale(1); }
+}
+
+/* Add these to your MandapDecorationGame.css */
+
+/* Deletion warning animation */
+.decoration-image.deletion-warning {
+  animation: deletionWarning 0.5s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.7));
+}
+
+@keyframes deletionWarning {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+}
+
+/* ADD THIS to your CSS file for smoother deletion */
+.free-draggable-item {
+  transition: opacity 0.2s ease-out;
+}
+
+.free-draggable-item.deleting {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.2s ease-out;
+}
+
+.decoration-image.deletion-warning {
+  animation: gentleWarning 1s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 8px rgba(255, 100, 100, 0.6));
+}
+
+@keyframes gentleWarning {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.05);
+    opacity: 0.85;
+  }
+}
+
+.delete-zone-boundaries {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.delete-zone-right {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 150px; /* Wider than the tray */
+  background: rgba(255, 100, 100, 0.4);
+  border-left: 3px dashed #ff6666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+  writing-mode: vertical-rl;
+}
+
+.mandap-decoration-container.dragging-active .delete-zone-right {
+  opacity: 1;
+}
+
+.delete-zone-text {
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+  padding: 15px 10px;
+  background: rgba(255, 0, 0, 0.7);
+  border-radius: 15px;
+  font-family: 'Comic Sans MS', cursive;
+  transform: rotate(180deg);
+}
+
+.delete-zone-warning {
+  position: absolute;
+  top: 50%;
+  right: 80px;
+  transform: translateY(-50%);
+  background: rgba(255, 0, 0, 0.9);
+  color: white;
+  padding: 10px 15px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  animation: warning-pulse 1s ease-in-out infinite alternate;
+  z-index: 20;
+}
+
+@keyframes warning-pulse {
+  0% { opacity: 0.8; transform: translateY(-50%) scale(1); }
+  100% { opacity: 1; transform: translateY(-50%) scale(1.05); }
+}
+
+/* Optional: Visual deletion boundary indicator */
+.mandap-decoration-container::before {
+  content: '';
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  right: 5%;
+  bottom: 5%;
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mandap-decoration-container.dragging-active::before {
+  opacity: 1;
+}
+
+/* Trash zone indicator (optional) */
+.trash-zone-indicator {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 0, 0, 0.2);
+  border: 2px dashed #ff4444;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 30;
+}
+
+.mandap-decoration-container.dragging-active .trash-zone-indicator {
+  opacity: 1;
+}
+
+/* Enhanced dragging feedback */
+.decoration-image {
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+.decoration-image:hover {
+  filter: brightness(1.1);
+  transform: scale(1.05);
+}
+
+/* INVENTORY TRAY - RIGHT SIDE VERTICAL LAYOUT */
+.inventory-tray {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 140px;
+  height: 400px;
+  padding: 15px 10px;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+/* DRAGGING STATE - MAKE TRAY TRANSPARENT TO TOUCH EVENTS */
+.inventory-tray.dragging-active {
+  pointer-events: none !important;
+}
+
+.inventory-tray.dragging-active * {
+  pointer-events: none !important;
+}
+
+@keyframes inventory-appear {
+  0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.categories-title {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #8B4513;
+  margin-bottom: 8px;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.category-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  max-width: 120px;
+  max-height: 300px;
+}
+
+.category-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 6px;
+  background: linear-gradient(135deg, rgba(255, 224, 130, 0.9), rgba(255, 213, 79, 0.9));
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 55px;
+  user-select: none;
+  border: 2px solid rgba(255, 193, 7, 0.5);
+  backdrop-filter: blur(5px);
+}
+
+.category-button:hover {
+  transform: translateY(-2px) scale(1.05);
+  background: linear-gradient(135deg, rgba(255, 213, 79, 0.95), rgba(255, 193, 7, 0.95));
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+  border-color: #FFC107;
+}
+
+.category-icon {
+  font-size: 20px;
+  margin-bottom: 3px;
+}
+
+.category-name {
+  font-size: 10px;
+  font-weight: 600;
+  color: #8B4513;
+  text-align: center;
+  line-height: 1.1;
+  text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.7);
+}
+
+/* Items Mode Styling - RIGHT SIDE VERTICAL */
+.inventory-tray.items-mode {
+  width: 160px;
+  height: 450px;
+}
+
+.items-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 10px;
+}
+
+.back-button {
+  background: #FF5722;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.back-button:hover {
+  background: #E64A19;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.items-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #8B4513;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.item-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  justify-content: center;
+  max-width: 140px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.item-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 4px;
+  background: linear-gradient(135deg, rgba(225, 245, 254, 0.9), rgba(179, 229, 252, 0.9));
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 60px;
+  border: 2px solid rgba(41, 182, 246, 0.3);
+  backdrop-filter: blur(5px);
+}
+
+.item-button:hover {
+  transform: translateY(-2px) scale(1.05);
+  background: linear-gradient(135deg, rgba(179, 229, 252, 0.95), rgba(129, 212, 250, 0.95));
+  border-color: #29B6F6;
+  box-shadow: 0 4px 8px rgba(41, 182, 246, 0.3);
+}
+
+.item-button.selected {
+  border-color: #FFD700;
+  background: linear-gradient(135deg, rgba(255, 249, 196, 0.95), rgba(255, 241, 118, 0.95));
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+  transform: scale(1.1);
+}
+
+.item-image {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  margin-bottom: 3px;
+}
+
+.item-name {
+  font-size: 9px;
+  font-weight: 600;
+  color: #8B4513;
+  text-align: center;
+  line-height: 1.1;
+  max-width: 55px;
+  word-wrap: break-word;
+  text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.7);
+}
+
+/* Progress Display */
+.progress-display {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 9;
+}
+
+.progress-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 12px;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.progress-icon {
+  font-size: 16px;
+}
+
+.progress-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #8B4513;
+}
+
+/* Done Decorating Button */
+.done-decorating-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #4CAF50, #8BC34A);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+  transition: all 0.2s ease;
+  z-index: 9;
+  animation: done-button-appear 0.5s ease-out;
+}
+
+@keyframes done-button-appear {
+  0% { opacity: 0; transform: translateY(-20px) scale(0.8); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.done-decorating-button:hover {
+  transform: translateY(-2px) scale(1.05);
+  background: linear-gradient(135deg, #66BB6A, #9CCC65);
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+}
+
+/* Sparkle Effects */
+.sparkle-effects {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.zone-sparkles {
+  position: absolute;
+  pointer-events: none;
+}
+
+.sparkle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(circle, #FFD700, #FFA500);
+  border-radius: 50%;
+  animation: sparkle-dance 0.6s ease-out;
+}
+
+@keyframes sparkle-dance {
+  0% { 
+    opacity: 0; 
+    transform: scale(0.5) rotate(0deg);
+  }
+  50% { 
+    opacity: 1; 
+    transform: scale(1.2) rotate(180deg);
+  }
+  100% { 
+    opacity: 0; 
+    transform: scale(0.8) rotate(360deg);
+  }
+}
+
+/* MILESTONE SPARKLES - NEW */
+.milestone-sparkle-effects {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 7;
+}
+
+.celebration-sparkle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle, #FFD700, #FF8C00);
+  border-radius: 50%;
+  animation: celebration-sparkle 3s ease-out infinite;
+}
+
+@keyframes celebration-sparkle {
+  0% { 
+    opacity: 0; 
+    transform: scale(0.3) translateY(0) rotate(0deg);
+  }
+  20% { 
+    opacity: 1; 
+    transform: scale(1.2) translateY(-20px) rotate(72deg);
+  }
+  80% { 
+    opacity: 1; 
+    transform: scale(1) translateY(-40px) rotate(288deg);
+  }
+  100% { 
+    opacity: 0; 
+    transform: scale(0.5) translateY(-60px) rotate(360deg);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .mandap-structure {
+    width: 85%;
+    height: 75%;
+    left: 40%;
+  }
+  
+  .inventory-tray {
+    right: 10px;
+    width: 120px;
+    height: 350px;
+    padding: 10px 8px;
+  }
+  
+  .inventory-tray.items-mode {
+    width: 140px;
+    height: 400px;
+  }
+  
+  .category-button {
+    min-width: 45px;
+    padding: 6px 4px;
+  }
+  
+  .category-icon {
+    font-size: 18px;
+  }
+  
+  .category-name {
+    font-size: 9px;
+  }
+  
+  .progress-display {
+    top: 15px;
+    left: 15px;
+  }
+  
+  .done-decorating-button {
+    top: 15px;
+    left: 15px;
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mandap-structure {
+    width: 90%;
+    height: 70%;
+    left: 45%;
+  }
+  
+  .inventory-tray {
+    right: 5px;
+    width: 100px;
+    height: 300px;
+  }
+  
+  .inventory-tray.items-mode {
+    width: 120px;
+    height: 350px;
+  }
+  
+  .item-button {
+    min-width: 40px;
+  }
+  
+  .item-image {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .done-decorating-button {
+    left: 10px;
+    top: 10px;
+  }
+}

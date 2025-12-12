@@ -1,0 +1,532 @@
+/* AboutMeCompletion.css - Cozy Hut themed completion screen */
+
+/* Sparkle Effects - Gentle and warm */
+.hut-sparkles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 499;
+  overflow: hidden;
+}
+
+.floating-heart {
+  position: absolute;
+  animation: heartFloat 4s linear forwards;  
+  pointer-events: none;
+  filter: drop-shadow(0 0 8px rgba(255, 182, 193, 0.6));
+}
+
+@keyframes heartFloat {
+  0% {
+    transform: translateY(100vh) scale(0.5);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(90vh) scale(1);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(-10vh) scale(1);
+  }
+  100% {
+    transform: translateY(-20vh) scale(0.5);
+    opacity: 0;
+  }
+}
+
+/* Card sparkles */
+.card-sparkles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.card-sparkle {
+  position: absolute;
+  font-size: 20px;
+  color: #FFD700;
+  animation: cardSparkleShine 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8));
+}
+
+@keyframes cardSparkleShine {
+  0%, 100% { 
+    opacity: 0.3; 
+    transform: scale(0.5) rotate(0deg); 
+  }
+  50% { 
+    opacity: 1; 
+    transform: scale(1.3) rotate(180deg); 
+  }
+}
+
+/* Hut backdrop */
+.hut-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 500;
+}
+
+/* Main hut card */
+.hut-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px;
+  height: 400px;
+  background: linear-gradient(145deg, #8B6F47, #A0826D, #8B6F47);
+  border: 4px solid #654321;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3), inset 0 2px 10px rgba(255,255,255,0.1);
+  z-index: 501;
+  box-sizing: border-box;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* COZY HUT INTERIOR CONTAINER STYLES */
+.cozy-hut-interior {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: linear-gradient(180deg, 
+    rgba(139, 90, 43, 0.9) 0%,
+    rgba(160, 130, 109, 0.8) 50%,
+    rgba(101, 67, 33, 0.9) 100%
+  );
+  border-radius: 15px;
+  border: 3px solid #654321;
+  overflow: hidden;
+  box-shadow: inset 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.hut-wooden-walls {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    repeating-linear-gradient(
+      90deg,
+      rgba(101, 67, 33, 0.3) 0px,
+      rgba(101, 67, 33, 0.3) 2px,
+      transparent 2px,
+      transparent 40px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(139, 90, 43, 0.2) 0px,
+      rgba(139, 90, 43, 0.2) 1px,
+      transparent 1px,
+      transparent 8px
+    );
+}
+
+.hut-lantern-glow {
+  position: absolute;
+  top: 10%;
+  right: 10%;
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, rgba(255, 193, 7, 0.4) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: lanternFlicker 3s ease-in-out infinite;
+}
+
+@keyframes lanternFlicker {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.1); }
+}
+
+.hut-floor {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 25%;
+  background: linear-gradient(135deg, #654321, #8B6F47);
+  border-top: 2px solid #FFD700;
+}
+
+.hut-window {
+  position: absolute;
+  top: 15%;
+  left: 5%;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #87CEEB, #B0E0E6);
+  border: 3px solid #654321;
+  border-radius: 8px;
+  box-shadow: inset 0 2px 8px rgba(255, 255, 255, 0.5);
+}
+
+.hut-badges-wall {
+  position: absolute;
+  top: 35%;
+  left: 5%;
+  right: 5%;
+  bottom: 30%;
+  pointer-events: none;
+}
+
+.wall-badge {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  animation: badgeHang 0.8s ease-out both;
+  z-index: 10;
+}
+
+.badge-frame {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #D4AF37, #FFD700);
+  border: 3px solid #8B6F47;
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge-img {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.badge-emoji {
+  font-size: 48px;
+  display: block;
+  animation: badgePulse 2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes badgeHang {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(5px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* BABY GANESHA AND SPEECH BUBBLE - Hut themed */
+.hut-ganesha-container {
+  position: absolute;
+  right: 120px;
+  top: 20px;
+  width: 250px;
+  height: 250px;
+}
+
+.hut-ganesha {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 120px;
+  height: 120px;
+  animation: ganeshaAppear 1s ease-out;
+  z-index: 10;
+}
+
+.hut-ganesha img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 20px rgba(0,0,0,0.2));
+  animation: ganeshaWiggle 3s ease-in-out infinite;
+}
+
+.speech-bubble {
+  position: absolute;
+  top: 0;
+  left: 100px;
+  width: 220px;
+  background: var(--bubble-color, #FF8C69);
+  border: 3px solid var(--bubble-border, #CD5C5C);
+  border-radius: 25px;
+  padding: 18px 20px;
+  box-shadow: 0 8px 20px rgba(205, 92, 92, 0.3);
+  animation: bubbleAppear 0.8s ease-out 0.5s both;
+  z-index: 5;
+  transition: all 0.6s ease-in-out;
+}
+
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 30px;
+  border: 12px solid transparent;
+  border-top-color: var(--bubble-border, #CD5C5C);
+}
+
+.bubble-title {
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: white !important;
+  margin-bottom: 5px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+}
+
+.bubble-text {
+  font-family: 'Georgia', serif;
+  font-size: 13px;
+  color: white !important;
+  line-height: 1.3;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+}
+
+.speech-bubble.stage-actions-ready {
+  animation: bubbleAppear 0.8s ease-out 0.5s both, warmGlow 2s ease-in-out infinite alternate 1s;
+}
+
+@keyframes warmGlow {
+  0% { 
+    box-shadow: 0 8px 20px rgba(205, 92, 92, 0.3);
+  }
+  100% { 
+    box-shadow: 0 8px 20px rgba(205, 92, 92, 0.3), 0 0 25px rgba(255, 182, 193, 0.6);
+  }
+}
+
+/* ACTION BUTTONS - Hut themed */
+.action-buttons {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  animation: buttonsSlideUp 0.8s ease-out;
+  width: 85%;
+  justify-content: center;
+}
+
+.action-btn {
+  padding: 18px 20px;
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Georgia', serif;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  min-width: 130px;
+  flex: 1;
+  max-width: 180px;
+  border: 2px solid transparent;
+}
+
+.continue-btn {
+  background: linear-gradient(135deg, #FF8C69, #FF6347);
+  color: white;
+  border-color: #CD5C5C;
+}
+
+.continue-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(255, 140, 105, 0.4);
+  background: linear-gradient(135deg, #FF6347, #CD5C5C);
+}
+
+.replay-btn {
+  background: linear-gradient(135deg, #DEB887, #D2691E);
+  color: white;
+  border-color: #8B4513;
+}
+
+.replay-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(222, 184, 135, 0.4);
+  background: linear-gradient(135deg, #D2691E, #8B4513);
+}
+
+.map-btn {
+  background: linear-gradient(135deg, #8B6F47, #654321);
+  color: white;
+  border-color: #654321;
+}
+
+.map-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(139, 111, 71, 0.4);
+  background: linear-gradient(135deg, #654321, #4A3520);
+}
+
+.btn-text {
+  text-align: center;
+}
+
+.btn-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 3px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.btn-subtitle {
+  font-size: 11px;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+/* ANIMATIONS - Hut themed */
+@keyframes bubbleAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes ganeshaAppear {
+  0% {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes ganeshaWiggle {
+  0%, 100% { 
+    transform: translateY(0) rotate(-1deg); 
+  }
+  33% { 
+    transform: translateY(-3px) rotate(1deg); 
+  }
+  66% { 
+    transform: translateY(-1px) rotate(-0.5deg); 
+  }
+}
+
+@keyframes buttonsSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+  .hut-card {
+    width: 95%;
+    height: 350px;
+    padding: 20px;
+  }
+
+  .cozy-hut-interior {
+    width: 280px !important;
+    height: 220px !important;
+    left: 10px !important;
+  }
+
+  .hut-ganesha-container {
+    right: 20px;
+    top: 20px;
+    width: 180px;
+    height: 180px;
+  }
+
+  .hut-ganesha {
+    width: 80px;
+    height: 80px;
+  }
+
+  .speech-bubble {
+    padding: 12px 15px;
+    width: 180px;
+  }
+
+  .bubble-title {
+    font-size: 14px;
+  }
+
+  .bubble-text {
+    font-size: 12px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 10px;
+    bottom: 20px;
+    width: 70%;
+  }
+
+  .action-btn {
+    padding: 14px 20px;
+    min-width: 100px;
+  }
+
+  .wall-badge {
+    width: 32px;
+    height: 32px;
+  }
+
+  .badge-emoji {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hut-card {
+    width: 95%;
+    height: 320px;
+  }
+
+  .action-buttons {
+    gap: 8px;
+  }
+
+  .action-btn {
+    padding: 12px 18px;
+    font-size: 12px;
+  }
+
+  .wall-badge {
+    width: 28px;
+    height: 28px;
+  }
+
+  .badge-emoji {
+    font-size: 20px;
+  }
+}

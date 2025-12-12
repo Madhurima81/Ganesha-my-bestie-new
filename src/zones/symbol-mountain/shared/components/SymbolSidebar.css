@@ -1,7 +1,8 @@
 /* SymbolSidebar.css */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;700;800&display=swap');
 
-/* Sidebar container - Vertical layout on the right side */
-.symbol-sidebar {
+/* Sidebar container */
+.ganesha-sidebar {
   position: fixed;
   right: 20px;
   top: 50%;
@@ -22,8 +23,8 @@
   overflow-y: auto;
 }
 
-/* Individual symbol icons */
-.symbol-icon {
+/* Individual icons */
+.ganesha-icon {
   width: 50px;
   height: 50px;
   background-size: contain;
@@ -34,23 +35,23 @@
   padding: 5px;
 }
 
-.symbol-icon.undiscovered {
+.ganesha-icon.undiscovered {
   opacity: 0.5;
   filter: grayscale(100%);
 }
 
-.symbol-icon.discovered {
+.ganesha-icon.discovered {
   opacity: 1;
   filter: none;
 }
 
-.symbol-icon.discovered:hover {
+.ganesha-icon.discovered:hover {
   transform: scale(1.1);
   box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
 }
 
-/* Star burst animation when symbol is discovered */
-@keyframes star-burst {
+/* Star burst animation */
+@keyframes ganesha-star-burst {
   0% { 
     transform: scale(0.8);
     opacity: 0.5;
@@ -67,169 +68,220 @@
   }
 }
 
-.star-burst {
-  animation: star-burst 0.8s ease-out forwards;
+.ganesha-star-burst-anim {
+  animation: ganesha-star-burst 0.8s ease-out forwards;
 }
 
+/* --- POPUP STYLING --- */
+
 /* Popup overlay */
-.symbol-popup-overlay {
+.ganesha-popup-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  animation: fadeIn 0.3s ease;
+  animation: ganesha-fadeIn 0.3s ease;
+  backdrop-filter: blur(4px);
 }
 
-/* Popup content */
-.symbol-popup-content {
-  background: white;
-  border-radius: 20px;
-  padding: 30px;
-  max-width: 400px;
+/* Popup content card */
+.ganesha-popup-content {
+  background: #FFF8E7; /* Cream background */
+  border-radius: 35px;
+  padding: 40px; 
+  max-width: 550px; /* Balanced Width */
   width: 90%;
   position: relative;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.3s ease;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+  animation: ganesha-slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   text-align: center;
+  border: 5px solid #fff;
 }
 
 /* Close button */
-.popup-close-btn {
+.ganesha-popup-close-btn {
   position: absolute;
-  top: 15px;
-  right: 15px;
-  width: 30px;
-  height: 30px;
+  top: 20px;
+  right: 25px;
+  width: 35px;
+  height: 35px;
   border: none;
   background: transparent;
-  font-size: 24px;
-  color: #999;
+  font-size: 32px; 
+  font-weight: 800;
+  color: #C6AFA0;
   cursor: pointer;
-  border-radius: 50%;
+  line-height: 1;
   transition: all 0.2s ease;
 }
 
-.popup-close-btn:hover {
-  background: #f0f0f0;
-  color: #333;
+.ganesha-popup-close-btn:hover {
+  color: #8D6E63;
+  transform: scale(1.1);
 }
 
-/* Popup symbol icon */
-.popup-symbol-icon {
+/* Popup image container */
+.ganesha-popup-img-container {
   width: 100%;
-  max-width: 300px;
-  height: 200px;
-  margin: 0 auto 20px;
+  max-width: 280px; 
+  height: 200px;    /* Balanced height */
+  margin: 10px auto 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
-.popup-symbol-icon img,
-.popup-custom-image {
-  width: 100%;
+/* Animation for the image pulse and glow */
+@keyframes ganesha-pulse {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.5));
+  }
+  50% {
+    transform: scale(1.08); 
+    filter: drop-shadow(0 0 30px rgba(255, 193, 7, 0.8)) brightness(1.1);
+  }
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.5));
+  }
+}
+
+.ganesha-popup-img-container img,
+.ganesha-popup-custom-img {
+  width: auto;
   height: 100%;
+  max-height: 100%;
   object-fit: contain;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  animation: ganesha-pulse 2.5s infinite ease-in-out;
+}
+
+/* Sparkles (Pseudo-elements) */
+.ganesha-popup-img-container::before,
+.ganesha-popup-img-container::after {
+  content: '✦';
+  position: absolute;
+  color: #FFC107;
+  font-size: 32px; 
+  animation: ganesha-twinkle 1.5s infinite alternate;
+}
+
+.ganesha-popup-img-container::before {
+  top: 5%;
+  left: 15%;
+  animation-delay: 0.2s;
+}
+
+.ganesha-popup-img-container::after {
+  bottom: 10%;
+  right: 15%;
+  transform: scale(0.8);
+}
+
+@keyframes ganesha-twinkle {
+  from { opacity: 0.4; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1.2); }
 }
 
 /* Popup title */
-.popup-title {
-  font-size: 24px;
-  color: #5d4037;
+.ganesha-popup-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 34px; 
+  color: #4E342E;
   margin-bottom: 15px;
-  font-weight: bold;
+  font-weight: 800;
+  line-height: 1.1;
 }
 
 /* Popup description */
-.popup-description {
-  font-size: 16px;
-  color: #666;
+.ganesha-popup-description {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: #3E2723;
   line-height: 1.5;
-  margin-bottom: 25px;
+  margin-bottom: 30px;
+  font-weight: 700;
+  padding: 0 15px;
 }
 
 /* Continue button */
-.popup-continue-btn {
-  background: #8bc34a;
+.ganesha-popup-continue-btn {
+  background: #FF8F00;
   color: white;
   border: none;
-  padding: 12px 30px;
-  border-radius: 25px;
-  font-size: 16px;
-  font-weight: bold;
+  padding: 14px 45px;
+  border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 22px; 
+  font-weight: 800;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  box-shadow: 0 5px 0 #E65100;
+  margin-bottom: 10px;
 }
 
-.popup-continue-btn:hover {
-  background: #7cb342;
+.ganesha-popup-continue-btn:hover {
+  background: #FFA000;
   transform: translateY(-2px);
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 7px 0 #E65100;
 }
 
-/* Animations */
-@keyframes fadeIn {
+.ganesha-popup-continue-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #E65100;
+}
+
+/* Animation Definitions */
+@keyframes ganesha-fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-@keyframes slideUp {
+@keyframes ganesha-slideUp {
   from {
     opacity: 0;
-    transform: translateY(50px);
+    transform: scale(0.8) translateY(20px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: scale(1) translateY(0);
   }
 }
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {
-  .symbol-sidebar {
+  .ganesha-sidebar {
     right: 10px;
     width: 60px;
     padding: 12px 8px;
   }
   
-  .symbol-icon {
-    width: 40px;
-    height: 40px;
+  .ganesha-popup-content {
+    padding: 30px 20px;
+    max-width: 90%;
   }
   
-  .symbol-popup-content {
-    padding: 20px;
-    max-width: 350px;
+  .ganesha-popup-title {
+    font-size: 26px;
   }
   
-  .popup-title {
+  .ganesha-popup-description {
+    font-size: 18px;
+  }
+  
+  .ganesha-popup-img-container {
+    height: 160px;
+  }
+  
+  .ganesha-popup-continue-btn {
     font-size: 20px;
-  }
-  
-  .popup-description {
-    font-size: 14px;
-  }
-}
-
-/* Portrait/mobile orientation - keep on the right side */
-@media (orientation: portrait) {
-  .symbol-sidebar {
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    flex-direction: column;
-    width: 60px;
-    height: auto;
-    padding: 12px 8px;
-  }
-  
-  .symbol-icon {
-    width: 40px;
-    height: 40px;
+    padding: 12px 35px;
   }
 }

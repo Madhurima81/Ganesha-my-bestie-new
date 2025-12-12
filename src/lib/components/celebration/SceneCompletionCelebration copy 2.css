@@ -1,0 +1,665 @@
+/* SceneCompletionCelebration.css - Updated with Journal Support */
+
+/* Sparkle Effects */
+.sparkle-effects {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 499;
+  overflow: hidden;
+}
+
+.floating-sparkle {
+  position: absolute;
+  animation: sparkleFloat 3s linear 5s forwards;  
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.8));
+}
+
+@keyframes sparkleFloat {
+  0% {
+    transform: translateY(100vh) rotate(0deg) scale(0.5);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(90vh) rotate(36deg) scale(1);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(-10vh) rotate(324deg) scale(1);
+  }
+  100% {
+    transform: translateY(-20vh) rotate(360deg) scale(0.5);
+    opacity: 0;
+  }
+}
+
+/* Card sparkles */
+.card-sparkles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.card-sparkle {
+  position: absolute;
+  font-size: 18px;
+  color: #FFD700;
+  animation: cardSparkleShine 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.8));
+}
+
+@keyframes cardSparkleShine {
+  0%, 100% { 
+    opacity: 0.2; 
+    transform: scale(0.5) rotate(0deg); 
+  }
+  50% { 
+    opacity: 1; 
+    transform: scale(1.2) rotate(180deg); 
+  }
+}
+
+/* Celebration backdrop */
+.celebration-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 500;
+}
+
+/* Main celebration card */
+.celebration-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px;
+  height: 400px;
+  background: linear-gradient(145deg, #fef7e0, #f5e6b8);
+  border: 3px solid #d4a574;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  z-index: 501;
+  box-sizing: border-box;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* BACKPACK CONTAINER STYLES */
+.backpack-container {
+  position: absolute;
+  left: 60px;
+  top: 20px;
+  width: 260px;
+  height: 280px;
+}
+
+.backpack {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.backpack-image {
+  width: 300px;
+  height: 260px;
+  object-fit: contain;
+  margin: 0 auto;
+  display: block;
+}
+
+.backpack-symbols-overlay {
+  position: absolute;
+  top: 90px;
+  left: 30px;
+  right: 35px;
+  bottom: 50px;
+  pointer-events: none;
+}
+
+.backpack-symbol {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  animation: symbolPop 0.6s ease-out both;
+  z-index: 10;
+}
+
+.symbol-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(255,215,0,0.6));
+  border-radius: 3px;
+}
+
+.symbol-emoji {
+  font-size: 42px;
+  display: block;
+  filter: drop-shadow(0 0 8px rgba(255,215,0,0.6));
+}
+
+/* SMARTWATCH CONTAINER STYLES */
+.smartwatch-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.smartwatch-screen {
+  position: absolute;
+  top: 40px;
+  left: 60px;
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  z-index: 2;
+}
+
+.smartwatch-apps-overlay {
+  position: absolute;
+  top: 60px;
+  left: 80px;
+  width: 160px;
+  height: 160px;
+  display: grid;
+  grid-Template-Columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 6px;
+  align-items: center;
+  justify-items: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.smartwatch-app {
+  width: 36px;
+  height: 36px;
+  animation: symbolPop 0.6s ease-out both;
+}
+
+.app-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  filter: drop-shadow(0 0 8px rgba(255,215,0,0.6));
+}
+
+.app-emoji {
+  font-size: 28px;
+  filter: drop-shadow(0 0 8px rgba(255,215,0,0.6));
+}
+
+/* JOURNAL CONTAINER STYLES */
+.journal-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.journal-base {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 360px;
+  height: 280px;
+  object-fit: contain;
+  z-index: 1;
+}
+
+.journal-pages-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+.journal-page {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.journal-page.left-page {
+  top: 40px;
+  left: 30px;
+  width: 140px;
+  height: 180px;
+}
+
+.journal-page.right-page {
+  top: 40px;
+  right: 30px;
+  width: 140px;
+  height: 180px;
+}
+
+.meaning-card:nth-child(1) { top: 10px; }
+.meaning-card:nth-child(2) { top: 65px; }
+.meaning-card:nth-child(3) { top: 120px; }
+.meaning-card:nth-child(4) { top: 175px; }
+
+.meaning-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 4px 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  animation: meaningCardAppear 0.8s ease-out both;
+}
+
+.meaning-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.meaning-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.meaning-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.meaning-text {
+  flex: 1;
+  min-width: 0; /* Allows text to shrink */
+}
+
+.sanskrit-text {
+  font-size: 12px !important; /* Increase from 10px */
+  font-weight: bold;
+  color: #8B4513;
+  margin-bottom: 2px;
+}
+
+.english-meaning {
+  font-size: 10px !important; /* Increase from 8px */
+  color: #2E7D32; /* Darker green for better contrast */
+  font-weight: 500;
+}
+
+/* GANESHA AND SPEECH BUBBLE */
+.trekker-container {
+  position: absolute;
+  right: 120px;
+  top: 20px;
+  width: 250px;
+  height: 250px;
+}
+
+.trekker-ganesha {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 120px;
+  height: 120px;
+  animation: trekkerAppear 1s ease-out;
+  z-index: 10;
+}
+
+.trekker-ganesha img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 20px rgba(0,0,0,0.2));
+  animation: trekkerWalk 3s ease-in-out infinite;
+}
+
+.speech-bubble {
+  position: absolute;
+  top: 0;
+  left: 100px;
+  width: 220px;
+  background: var(--bubble-color, #FF6B6B);
+  border: 3px solid var(--bubble-border, #E55A5A);
+  border-radius: 25px;
+  padding: 18px 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  animation: bubbleAppear 0.8s ease-out 0.5s both;
+  z-index: 5;
+  transition: all 0.6s ease-in-out;
+}
+
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 30px;
+  border: 12px solid transparent;
+  border-top-color: var(--bubble-border, #E55A5A);
+}
+
+.bubble-title {
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: white !important;
+  margin-bottom: 5px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+}
+
+.bubble-text {
+  font-family: 'Georgia', serif;
+  font-size: 13px;
+  color: white !important;
+  line-height: 1.3;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+}
+
+.speech-bubble.stage-actions-ready {
+  animation: bubbleAppear 0.8s ease-out 0.5s both, gentleGlow 2s ease-in-out infinite alternate 1s;
+}
+
+@keyframes gentleGlow {
+  0% { 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  }
+  100% { 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1), 0 0 25px rgba(78, 205, 196, 0.4);
+  }
+}
+
+/* ACTION BUTTONS */
+.action-buttons {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  animation: buttonsSlideUp 0.8s ease-out;
+  width: 85%;
+  justify-content: center;
+}
+
+.action-btn {
+  padding: 18px 20px;
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Georgia', serif;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  min-width: 130px;
+  flex: 1;
+  max-width: 180px;
+  border: 2px solid transparent;
+}
+
+.explore-btn {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  border-color: #388e3c;
+}
+
+.explore-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+  background: linear-gradient(135deg, #45a049, #388e3c);
+}
+
+.replay-btn {
+  background: linear-gradient(135deg, #FFD700, #FFC107);
+  color: #8B4513;
+  border-color: #FFC107;
+}
+
+.replay-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+  background: linear-gradient(135deg, #FFC107, #FF8F00);
+}
+
+.home-btn {
+  background: linear-gradient(135deg, #2196F3, #1976d2);
+  color: white;
+  border-color: #1565c0;
+}
+
+.home-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+  background: linear-gradient(135deg, #1976d2, #1565c0);
+}
+
+.continue-btn {
+  background: linear-gradient(135deg, #20B2AA, #008B8B);
+  color: white;
+}
+
+.continue-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(32, 178, 170, 0.3);
+}
+
+.map-btn {
+  background: linear-gradient(135deg, #1e3a5f, #2F4F4F);
+  color: white;
+}
+
+.map-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(47, 79, 79, 0.4);
+}
+
+.btn-text {
+  text-align: center;
+}
+
+.btn-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 3px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.btn-subtitle {
+  font-size: 11px;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+/* ANIMATIONS */
+@keyframes symbolPop {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(-180deg);
+  }
+  70% {
+    transform: scale(1.2) rotate(0deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes meaningCardAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(10px);
+  }
+  60% {
+    transform: scale(1.05) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes bubbleAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes trekkerAppear {
+  0% {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes trekkerWalk {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-5px) rotate(2deg); }
+}
+
+@keyframes buttonsSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+  .celebration-card {
+    width: 95%;
+    height: 350px;
+    padding: 20px;
+  }
+
+  .container-holder.journal {
+    width: 280px !important;
+    height: 220px !important;
+    left: 10px !important;
+  }
+
+  .journal-base {
+    width: 280px;
+    height: 220px;
+  }
+
+.journal-page.left-page,
+.journal-page.right-page {
+  top: 35px !important; /* Move up slightly */
+  width: 150px !important; /* Wider pages */
+  height: 200px !important; /* Taller pages */
+}
+
+.journal-page.left-page {
+  left: 20px !important;
+}
+
+.journal-page.right-page {
+  right: 20px !important;
+}
+
+.meaning-card {
+  height: 45px !important; /* Increase from 35px */
+  padding: 6px 8px !important; /* More padding */
+  margin-bottom: 8px; /* Add spacing between cards */
+}
+
+.meaning-content {
+  gap: 10px !important; /* More space between icon and text */
+}
+
+.meaning-icon {
+  width: 28px !important; /* Increase from 20px */
+  height: 28px !important;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+  .sanskrit-text {
+    font-size: 8px;
+  }
+
+  .english-meaning {
+    font-size: 7px;
+  }
+
+  .trekker-container {
+    right: 20px;
+    top: 20px;
+    width: 180px;
+    height: 180px;
+  }
+
+  .trekker-ganesha {
+    width: 80px;
+    height: 80px;
+  }
+
+  .speech-bubble {
+    padding: 12px 15px;
+    width: 180px;
+  }
+
+  .bubble-title {
+    font-size: 14px;
+  }
+
+  .bubble-text {
+    font-size: 12px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 10px;
+    bottom: 20px;
+    width: 70%;
+  }
+
+  .action-btn {
+    padding: 14px 20px;
+    min-width: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .celebration-card {
+    width: 95%;
+    height: 320px;
+  }
+
+  .action-buttons {
+    gap: 8px;
+  }
+
+  .action-btn {
+    padding: 12px 18px;
+    font-size: 12px;
+  }
+}

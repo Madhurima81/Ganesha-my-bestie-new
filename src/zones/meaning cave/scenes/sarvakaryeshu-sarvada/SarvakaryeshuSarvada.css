@@ -265,6 +265,137 @@
 }
 
 /* ===================================
+   🎮 GAME 2 SPLIT LAYOUT - IMAGE LEFT, WHEEL RIGHT
+   =================================== */
+
+.game2-split-layout {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 40px;
+  gap: 40px;
+  z-index: 12;
+}
+
+/* LEFT SIDE: Scenario Image */
+.game2-left-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  max-width: 50%;
+}
+
+.scenario-window-left {
+  width: 100%;
+  max-width: 500px;
+  border: 4px solid #FF8C42;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(255, 140, 66, 0.4);
+}
+
+.scenario-window-left img {
+  width: 100%;
+  display: block;
+  transition: all 1s ease-in-out;
+}
+
+.person-problem-speech-left {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 15px 20px;
+  border-radius: 20px;
+  max-width: 80%;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  border: 3px solid #FF8C42;
+}
+
+.person-problem-speech-left p {
+  margin: 0;
+  font-size: 18px;
+  color: #2C3E50;
+  font-weight: 600;
+}
+
+.character-speech-bubble-left {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 12px 18px;
+  border-radius: 18px;
+  max-width: 80%;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  border: 3px solid #4ECDC4;
+}
+
+.character-speech-bubble-left p {
+  margin: 0;
+  font-size: 16px;
+  color: #2C3E50;
+  font-weight: 600;
+}
+
+/* RIGHT SIDE: Spinning Wheel */
+.game2-right-side {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 50%;
+  position: relative;
+}
+
+/* ===================================
+   📱 RESPONSIVE FOR GAME 2 SPLIT LAYOUT
+   =================================== */
+@media (max-width: 768px) {
+  .game2-split-layout {
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+  }
+
+  .game2-left-side,
+  .game2-right-side {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .scenario-window-left {
+    max-width: 350px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 600px) {
+  .game2-split-layout {
+    padding: 20px;
+    gap: 20px;
+  }
+
+  .scenario-window-left {
+    max-width: 350px;
+  }
+}
+
+
+/* ===================================
    💬 CHARACTER SPEECH BUBBLES - SMALLER
    =================================== */
 
@@ -1326,4 +1457,281 @@
   cursor: pointer;
   font-weight: bold;
   margin-top: 15px;
+}
+/* ===========================
+   SCENE 4 THEME: DIVINE TASKS (Sarvakaryeshu Sarvada)
+   Palette: Royal Gold, Deep Orange, Cream
+   =========================== */
+
+/* ===========================
+   INSTRUCTION MODAL - Opening Screen
+   =========================== */
+.sarvakaryeshu-instructions-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(44, 24, 16, 0.9); /* Dark Brown Shadow */
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: sarvakaryeshu-fadeIn 0.3s ease-out;
+}
+
+/* Sparkles */
+.sarvakaryeshu-sparkles {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  pointer-events: none;
+  z-index: 101;
+}
+
+.sarvakaryeshu-sparkle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #FFD700;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  animation: sarvakaryeshu-sparkleFloat 0.8s ease-out forwards;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+}
+
+.sarvakaryeshu-sparkle:nth-child(1) { top: 20%; left: 50%; animation-delay: 0s; }
+.sarvakaryeshu-sparkle:nth-child(2) { top: 50%; left: 80%; animation-delay: 0.1s; }
+.sarvakaryeshu-sparkle:nth-child(3) { top: 80%; left: 50%; animation-delay: 0.2s; }
+.sarvakaryeshu-sparkle:nth-child(4) { top: 50%; left: 20%; animation-delay: 0.15s; }
+
+.sarvakaryeshu-instructions-content {
+  position: relative;
+  width: 95%;
+  max-width: 1400px;
+  height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  padding: 0 60px;
+  animation: sarvakaryeshu-contentFadeIn 0.5s ease-out 0.5s both;
+}
+
+.sarvakaryeshu-instructions-ganesha {
+  flex: 0 0 40%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  animation: sarvakaryeshu-slideInLeft 0.6s ease-out 0.8s both;
+}
+
+.sarvakaryeshu-instructions-ganesha img {
+  width: 100%;
+  max-width: 450px;
+  height: auto;
+  filter: drop-shadow(0 0 30px rgba(255, 140, 66, 0.6)); /* Orange Aura */
+  transform: scaleX(1); 
+}
+
+.sarvakaryeshu-instructions-card {
+  flex: 0 0 45%;
+  background: #FFF8E1; /* Cream BG */
+  border-radius: 30px;
+  padding: 50px;
+  box-shadow: 0 10px 40px rgba(139, 69, 19, 0.4);
+  animation: sarvakaryeshu-slideInRight 0.6s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 4px solid #FF8C42;
+}
+
+.sarvakaryeshu-instructions-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 48px;
+  font-weight: 700;
+  color: #E65100; /* Deep Orange */
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.sarvakaryeshu-instructions-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 24px;
+  color: #5D4037;
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
+
+.sarvakaryeshu-instructions-icons {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  margin-bottom: 45px;
+  width: 100%;
+}
+
+.sarvakaryeshu-instruction-icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.sarvakaryeshu-instruction-icon-item img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(255, 140, 66, 0.4));
+}
+
+.sarvakaryeshu-instruction-icon-label {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #E65100;
+}
+
+.sarvakaryeshu-instructions-button {
+  font-family: 'Baloo 2', cursive;
+  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%); /* Orange Gradient */
+  border: 2px solid #FFF;
+  color: white;
+  padding: 20px 70px;
+  font-size: 28px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(230, 81, 0, 0.4);
+  text-transform: capitalize;
+}
+
+.sarvakaryeshu-instructions-button:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(230, 81, 0, 0.6);
+}
+
+/* ===========================
+   POWER & MISSION MODAL (Sarvakaryeshu Theme)
+   =========================== */
+.sarvakaryeshu-power-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(44, 24, 16, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 600;
+  animation: sarvakaryeshu-fadeIn 0.3s ease-out;
+}
+
+.sarvakaryeshu-power-card {
+  background: #FFF8E1;
+  border-radius: 30px;
+  padding: 50px;
+  max-width: 600px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(139, 69, 19, 0.5);
+  position: relative;
+  animation: sarvakaryeshu-scaleIn 0.4s ease-out;
+  border: 4px solid #FF8C42;
+}
+
+.sarvakaryeshu-power-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 38px;
+  font-weight: 700;
+  color: #E65100;
+  margin-bottom: 30px;
+}
+
+.sarvakaryeshu-power-icon {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 25px;
+  object-fit: contain;
+  animation: sarvakaryeshu-powerPulse 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(255, 140, 66, 0.4));
+}
+
+.sarvakaryeshu-power-description {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: #5D4037;
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
+
+.sarvakaryeshu-power-primary-button {
+  font-family: 'Baloo 2', cursive;
+  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+  border: 2px solid #FFF;
+  color: white;
+  padding: 18px 60px;
+  font-size: 24px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(230, 81, 0, 0.4);
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.sarvakaryeshu-power-secondary-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.sarvakaryeshu-power-secondary-button {
+  font-family: 'Nunito', sans-serif;
+  background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+  border: none;
+  color: white;
+  padding: 14px 35px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  flex: 1;
+}
+
+/* Animations */
+@keyframes sarvakaryeshu-fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes sarvakaryeshu-scaleIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+@keyframes sarvakaryeshu-slideInLeft { from { opacity: 0; transform: translateX(-100px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes sarvakaryeshu-slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes sarvakaryeshu-contentFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+@keyframes sarvakaryeshu-sparklesFadeOut { 0% { opacity: 1; } 60% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes sarvakaryeshu-sparkleFloat { 
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+}
+@keyframes sarvakaryeshu-powerPulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(255, 140, 66, 0.5)); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 25px rgba(255, 140, 66, 0.8)); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sarvakaryeshu-instructions-content { flex-direction: column; height: auto; padding: 20px; gap: 20px; }
+  .sarvakaryeshu-instructions-ganesha { flex: 0 0 auto; }
+  .sarvakaryeshu-instructions-ganesha img { max-width: 250px; }
+  .sarvakaryeshu-instructions-card { flex: 0 0 auto; padding: 30px 25px; }
+  .sarvakaryeshu-instructions-title { font-size: 28px; }
+  
+  .sarvakaryeshu-power-card { padding: 35px 25px; }
+  .sarvakaryeshu-power-title { font-size: 30px; }
+  .sarvakaryeshu-power-icon { width: 110px; height: 110px; }
 }

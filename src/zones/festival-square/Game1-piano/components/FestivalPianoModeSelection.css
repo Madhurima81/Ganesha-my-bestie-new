@@ -1,0 +1,207 @@
+/* FestivalPianoModeSelection.css - SIMPLE INLINE VERSION */
+/* Matches Rangoli design card style */
+
+.mode-selection-simple {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #ff9a56 0%, #ffcc70 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+/* Welcome Section */
+.welcome-section {
+  text-align: center;
+  margin-bottom: 40px;
+  animation: fadeInDown 0.6s ease-out;
+}
+
+.ganesha-welcome-image {
+  width: 120px;
+  height: 120px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin: 0 auto 20px;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.2));
+}
+
+.welcome-title {
+  font-size: 36px;
+  color: #8B4513;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(255,255,255,0.5);
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+
+.welcome-subtitle {
+  font-size: 20px;
+  color: #654321;
+  font-weight: 600;
+}
+
+/* Mode Options - Similar to Rangoli Cards */
+.mode-options {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+/* Individual Option Card */
+.mode-option-card {
+  position: relative;
+  background: white;
+  border: 4px solid transparent;
+  border-radius: 20px;
+  padding: 30px 25px;
+  width: 280px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.mode-option-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+}
+
+.free-play-card {
+  border-color: #FFB84D;
+}
+
+.free-play-card:hover {
+  border-color: #FFA500;
+  background: linear-gradient(to bottom, #FFF9E6, white);
+}
+
+.challenge-card {
+  border-color: #90EE90;
+}
+
+.challenge-card:hover {
+  border-color: #32CD32;
+  background: linear-gradient(to bottom, #F0FFF0, white);
+}
+
+/* Challenge Badge */
+.challenge-badge {
+  position: absolute;
+  top: -12px;
+  right: 20px;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 13px;
+  box-shadow: 0 3px 10px rgba(255, 165, 0, 0.4);
+}
+
+/* Option Icon */
+.option-icon {
+  font-size: 60px;
+  margin-bottom: 15px;
+}
+
+.mode-option-card h3 {
+  font-size: 24px;
+  color: #8B4513;
+  margin-bottom: 10px;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+
+.option-description {
+  font-size: 15px;
+  color: #666;
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+/* Difficulty Badge */
+.option-badge {
+  display: inline-block;
+  padding: 6px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: white;
+}
+
+.easy-badge {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.advanced-badge {
+  background: linear-gradient(135deg, #fa709a, #fee140);
+}
+
+/* Sections Count */
+.option-sections {
+  font-size: 16px;
+  font-weight: bold;
+  color: #FF8C00;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid rgba(255, 140, 0, 0.4);
+  border-radius: 15px;
+  padding: 8px 16px;
+  display: inline-block;
+}
+
+/* Animations */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .mode-options {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .mode-option-card {
+    width: 260px;
+  }
+
+  .welcome-title {
+    font-size: 28px;
+  }
+
+  .welcome-subtitle {
+    font-size: 18px;
+  }
+
+  .ganesha-welcome-image {
+    width: 80px;
+    height: 80px;
+  }
+}

@@ -1,0 +1,349 @@
+/* ZonePreviewModal.css - Styling for zone preview cards */
+
+.zone-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.zone-modal-card {
+  position: relative;
+  background: linear-gradient(135deg, #FFF9E6 0%, #FFEFC1 100%);
+  border-radius: 30px;
+  padding: 40px 35px 30px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 4px solid #FFD54F;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Ganesha Character */
+.zone-modal-character {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  margin-top: -60px;
+}
+
+.zone-modal-ganesha {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
+  animation: bobFloat 2s ease-in-out infinite;
+}
+
+@keyframes bobFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.zone-modal-sparkles {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 60px;
+  pointer-events: none;
+}
+
+.sparkle {
+  font-size: 24px;
+  animation: sparkleFloat 2s ease-in-out infinite;
+  opacity: 0.8;
+}
+
+.sparkle:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.sparkle:nth-child(2) {
+  animation-delay: 0.6s;
+}
+
+.sparkle:nth-child(3) {
+  animation-delay: 1.2s;
+}
+
+@keyframes sparkleFloat {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(-15px) scale(1.2);
+    opacity: 1;
+  }
+}
+
+/* Zone Type Badge */
+.zone-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.zone-type-badge.learning {
+  background: linear-gradient(135deg, #6B5FCD, #8B7FDD);
+  color: white;
+}
+
+.zone-type-badge.fun {
+  background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+  color: white;
+}
+
+.zone-type-icon {
+  font-size: 18px;
+}
+
+/* Zone Title */
+.zone-modal-title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #6B4423;
+  margin: 0 0 8px 0;
+  text-align: center;
+  text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.5);
+}
+
+.zone-modal-tagline {
+  font-size: 16px;
+  color: #8B5A3C;
+  margin: 0 0 25px 0;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Zone Description */
+.zone-modal-description {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 2px solid rgba(255, 213, 79, 0.3);
+}
+
+.zone-modal-feature {
+  font-size: 16px;
+  color: #5D4037;
+  margin: 12px 0;
+  padding-left: 8px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.zone-modal-feature:first-child {
+  margin-top: 0;
+}
+
+.zone-modal-feature:last-child {
+  margin-bottom: 0;
+}
+
+/* Progress Section */
+.zone-modal-progress {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 15px;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 2px solid #FFD54F;
+}
+
+.progress-label {
+  font-size: 14px;
+  color: #6B4423;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 12px;
+  background: #E0E0E0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #8BC34A);
+  border-radius: 10px;
+  transition: width 0.6s ease;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+}
+
+.current-stars {
+  font-size: 14px;
+  color: #FF9800;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 8px;
+}
+
+/* Fun Zone Notice */
+.zone-modal-fun-notice {
+  background: linear-gradient(135deg, #FFE082, #FFD54F);
+  border-radius: 15px;
+  padding: 15px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #6B4423;
+  margin-bottom: 20px;
+  border: 2px solid #FFC107;
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+}
+
+/* Action Buttons */
+.zone-modal-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.zone-modal-button {
+  width: 100%;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  font-family: inherit;
+}
+
+.zone-modal-button:active {
+  transform: scale(0.95);
+}
+
+.zone-modal-button.primary {
+  background: linear-gradient(135deg, #FF8A00, #FF6B00);
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.zone-modal-button.primary:hover {
+  background: linear-gradient(135deg, #FF9500, #FF7700);
+  box-shadow: 0 8px 20px rgba(255, 107, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+.zone-modal-button.secondary {
+  background: rgba(255, 255, 255, 0.9);
+  color: #6B4423;
+  border: 2px solid #D4AF37;
+}
+
+.zone-modal-button.secondary:hover {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .zone-modal-card {
+    padding: 35px 25px 25px;
+    max-width: 90%;
+  }
+
+  .zone-modal-ganesha {
+    width: 100px;
+    height: 100px;
+  }
+
+  .zone-modal-title {
+    font-size: 26px;
+  }
+
+  .zone-modal-tagline {
+    font-size: 14px;
+  }
+
+  .zone-modal-feature {
+    font-size: 14px;
+  }
+
+  .zone-modal-button {
+    font-size: 16px;
+    padding: 14px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .zone-modal-card {
+    padding: 30px 20px 20px;
+  }
+
+  .zone-modal-ganesha {
+    width: 90px;
+    height: 90px;
+  }
+
+  .zone-modal-title {
+    font-size: 24px;
+  }
+
+  .zone-modal-feature {
+    font-size: 13px;
+  }
+}
+
+/* Scrollbar styling */
+.zone-modal-card::-webkit-scrollbar {
+  width: 8px;
+}
+
+.zone-modal-card::-webkit-scrollbar-track {
+  background: rgba(255, 213, 79, 0.2);
+  border-radius: 10px;
+}
+
+.zone-modal-card::-webkit-scrollbar-thumb {
+  background: #FFD54F;
+  border-radius: 10px;
+}
+
+.zone-modal-card::-webkit-scrollbar-thumb:hover {
+  background: #FFC107;
+}

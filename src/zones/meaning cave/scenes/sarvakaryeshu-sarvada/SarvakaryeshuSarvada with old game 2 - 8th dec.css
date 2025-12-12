@@ -1,0 +1,1606 @@
+/* zones/cave-of-secrets/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvada.css */
+/* COMPLETE CONSOLIDATED VERSION - NO INLINE STYLES NEEDED */
+
+/* ===================================
+   BASE SCENE CONTAINER
+   =================================== */
+.scene-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+.scene-background {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin: 0;
+  padding: 0;
+  background-color: #1a1208;
+  transition: all 1s ease-in-out;
+}
+
+/* ===================================
+   CSS VARIABLES
+   =================================== */
+:root {
+  --cave-gold: #ffd700;
+  --cave-amber: #ffb347;
+  --cave-glow: 0 0 20px rgba(255, 215, 0, 0.3);
+  --cave-brown-dark: #2c1810;
+  --cave-brown-medium: #4a2c1a;
+  --cave-brown-light: #8b4513;
+  --cave-gold-dark: #daa520;
+  --cave-crystal: #e6e6fa;
+  --sanskrit-saffron: #ff9933;
+  --premium-cream: #FFF8DC;
+  --soft-gold: #DAA520;
+  --elegant-brown: rgba(139, 69, 19, 0.85);
+}
+
+/* ===================================
+   🎯 HELPER BADGE
+   =================================== */
+.helper-badge {
+  position: absolute;
+  top: 20px;
+  right: 120px;
+  background: linear-gradient(45deg, #FFD700, #FFA500);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-weight: bold;
+  font-size: 16px;
+  box-shadow: 0 4px 15px rgba(255, 165, 0, 0.4);
+  z-index: 25;
+  border: 2px solid #DAA520;
+}
+
+/* ===================================
+   🚪 DOOR SYSTEM
+   =================================== */
+
+/* Door 1 Area - Sarvakaryeshu */
+.door1-area {
+  position: absolute;
+  top: -10%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.sarvakaryeshu-door .door-container {
+  transition: all 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.sarvakaryeshu-door .door-container.completing {
+  opacity: 0;
+  transform: scale(0.8) translateY(-20px);
+}
+
+/* Door 2 Area - Sarvada */
+.door2-area {
+  position: absolute;
+  top: -10%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.sarvada-door .door-container {
+  transition: all 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.sarvada-door .door-container.completing {
+  opacity: 0;
+  transform: scale(0.8) translateY(-20px);
+}
+
+/* Door Completion Sparkles */
+.door1-completing,
+.door2-completing {
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 500px;
+  z-index: 21;
+  pointer-events: none;
+}
+
+/* ===================================
+   👦👧 CHARACTER SELECTION - CLEAN
+   =================================== */
+
+.character-selection-clean {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  z-index: 20;
+}
+
+.character-title-cave {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 20px 40px;
+  text-align: center;
+}
+
+.character-title-cave h2 {
+  color: #FFD700;
+  font-size: 28px;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  margin: 0;
+  background: none !important;
+  border: none !important;
+  padding: 0;
+}
+
+.character-options-cave {
+  display: flex;
+  gap: 50px;
+  align-items: center;
+  justify-content: center;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0;
+}
+
+.character-option-clean {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 20px;
+}
+
+.character-option-clean:hover {
+  transform: scale(1.05);
+}
+
+.character-option-clean img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+  transition: all 0.3s ease;
+  background: none !important;
+  border: 4px solid #FFD700 !important;
+}
+
+.character-option-clean:hover img {
+  border-color: #FFA500;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+  transform: scale(1.1);
+}
+
+.character-option-clean span {
+  color: #FFD700;
+  font-size: 20px;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  background: none !important;
+  border: none !important;
+  padding: 0;
+}
+
+/* ===================================
+   🎯 SCENARIO WINDOW SYSTEM (GAME 1 & 2)
+   =================================== */
+
+.scenario-window {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  max-width: 600px;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 4px solid var(--cave-gold);
+  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+  z-index: 12;
+}
+
+/* Game 2 Scenario Window Variation */
+.scenario-window.game2-style {
+  border-color: #FF8C42;
+  box-shadow: 0 8px 25px rgba(255, 140, 66, 0.4);
+}
+
+.scenario-window img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: all 1s ease-in-out;
+  border-radius: 16px;
+}
+
+.scenario-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all 1s ease-in-out;
+  border-radius: 11px;
+}
+
+.scenario-image.uncertain {
+  filter: brightness(0.6) grayscale(0.3);
+}
+
+.scenario-image.clear {
+  filter: brightness(1) grayscale(0);
+}
+
+.scenario-image.success {
+  filter: brightness(1.2) contrast(1.1);
+}
+
+.scenario-image.dimmed {
+  filter: brightness(0.4) grayscale(0.6) contrast(0.8) !important;
+  transition: all 0.5s ease;
+}
+
+/* ===================================
+   💬 CHARACTER SPEECH BUBBLES - SMALLER
+   =================================== */
+
+.character-speech-bubble {
+  position: fixed !important;
+  top: 15% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 100 !important;
+
+  background: white;
+  border: 3px solid var(--cave-gold);
+  padding: 10px 16px !important;
+  border-radius: 15px !important;
+  max-width: 300px !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  animation: speechBubbleAppear 0.5s ease-out;
+}
+
+.character-speech-bubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-top: 15px solid white;
+}
+
+.character-speech-bubble::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 18px solid transparent;
+  border-right: 18px solid transparent;
+  border-top: 18px solid var(--cave-gold);
+  z-index: -1;
+}
+
+.character-speech-bubble p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  line-height: 1.3;
+}
+
+@keyframes speechBubbleAppear {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+.character-speech-bubble.grateful {
+  background: linear-gradient(45deg, #FFD700, #FF8C42);
+  color: white;
+  border: 2px solid #DAA520;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
+}
+
+.character-speech-bubble.grateful p {
+  color: white;
+}
+
+.character-speech-bubble.wise-choice {
+  background: linear-gradient(45deg, #4CAF50, #66BB6A);
+  color: white;
+  border: 2px solid #4CAF50;
+  box-shadow: 0 0 20px rgba(76, 175, 80, 0.4);
+}
+
+.character-speech-bubble.wise-choice p {
+  color: white;
+}
+
+/* Problem Declaration Bubbles */
+.character-problem-speech {
+  position: fixed !important;
+  top: 15% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 100 !important;
+
+  background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+  color: white;
+  border: 3px solid #FF4757;
+  border-radius: 25px;
+  padding: 12px 20px !important;
+  max-width: 350px !important;
+  box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
+  animation: problemSpeechAppear 0.8s ease-out;
+  text-align: center;
+}
+
+.person-problem-speech {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 12px 18px !important;
+  border-radius: 18px !important;
+  border: 2px solid #FF8C42;
+  max-width: 300px !important;
+  font-size: 14px;
+  color: #333;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  animation: fadeInDown 0.5s ease-out;
+  z-index: 10;
+}
+
+.person-problem-speech p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.character-problem-speech::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 15px solid #FF4757;
+}
+
+.character-problem-speech p {
+  margin: 0;
+  font-size: 15px;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  line-height: 1.3;
+}
+
+@keyframes problemSpeechAppear {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.5) translateY(-20px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.05) translateY(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1) translateY(0px);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ===================================
+   🎮 UNIVERSAL SYMBOL SYSTEM - 2 PER SIDE
+   =================================== */
+
+/* Base classes for both Game 1 and Game 2 symbols */
+.cave-symbol-individual,
+.helper-symbol {
+  position: absolute;
+  transition: all 0.5s ease;
+  z-index: 14;
+}
+
+.cave-symbol-individual.faint,
+.helper-symbol.faint {
+  opacity: 0.4;
+  filter: grayscale(0.7) blur(1px);
+  pointer-events: none;
+}
+
+.cave-symbol-individual.clear,
+.helper-symbol.clear {
+  opacity: 1;
+  filter: grayscale(0) blur(0px);
+  pointer-events: all;
+  animation: symbolReveal 1s ease-out;
+}
+
+.cave-symbol-individual.none,
+.helper-symbol.none {
+  display: none;
+}
+
+@keyframes symbolReveal {
+  from {
+    opacity: 0.4;
+    filter: grayscale(0.7) blur(1px);
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    filter: grayscale(0) blur(0px);
+    transform: scale(1);
+  }
+}
+
+/* ===================================
+   📍 POSITIONING - 2 PER SIDE (VERTICAL)
+   =================================== */
+
+/* LEFT SIDE - Top and Bottom */
+.cave-symbol-individual.position-1,
+.helper-symbol.position-1 {
+  top: 15% !important;
+  left: 12% !important;
+  right: auto !important;
+  bottom: auto !important;
+}
+
+.cave-symbol-individual.position-2,
+.helper-symbol.position-2 {
+  top: 50% !important;
+  left: 12% !important;
+  right: auto !important;
+  bottom: auto !important;
+}
+
+/* RIGHT SIDE - Top and Bottom */
+.cave-symbol-individual.position-3,
+.helper-symbol.position-3 {
+  top: 15% !important;
+  right: 12% !important;
+  left: auto !important;
+  bottom: auto !important;
+}
+
+.cave-symbol-individual.position-4,
+.helper-symbol.position-4 {
+  top: 50% !important;
+  right: 12% !important;
+  left: auto !important;
+  bottom: auto !important;
+}
+
+/* ===================================
+   🎨 SYMBOL STYLING - GLOW ONLY, NO BOUNCE
+   =================================== */
+
+.cave-symbol-item,
+.helper-symbol-item {
+  width: 90px;
+  height: 90px;
+  border-radius: 18px;
+  border: 4px solid var(--cave-gold);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: visible;
+  backdrop-filter: blur(5px);
+}
+
+/* Game 1 specific styling */
+.cave-symbol-item {
+  background: rgba(139, 69, 19, 0.85);
+}
+
+/* Game 2 specific styling */
+.helper-symbol-item {
+  background: linear-gradient(135deg, #FFD700, #FF8C42);
+  border: 3px solid #DAA520;
+}
+
+.cave-symbol-item img,
+.helper-symbol-item img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+/* HOVER - Only Glow Effect, NO BOUNCE */
+.cave-symbol-item:hover,
+.helper-symbol-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.9);
+  filter: brightness(1.2);
+}
+
+.helper-symbol-item:hover {
+  background: linear-gradient(135deg, #FFA500, #FF6B42);
+  box-shadow: 0 0 25px rgba(255, 140, 66, 0.9);
+}
+
+.cave-symbol-item.selected,
+.helper-symbol-item.selected {
+  border-color: #FFD700 !important;
+  background: rgba(255, 215, 0, 0.3) !important;
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.8) !important;
+}
+
+.helper-symbol-item.selected {
+  background: linear-gradient(135deg, #FFD700, #FFA500) !important;
+}
+
+/* Symbol names styling */
+.symbol-name-text,
+.helper-symbol-item span {
+  font-size: 11px;
+  font-weight: bold;
+  text-align: center;
+  padding: 4px 8px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  max-width: 80px;
+  line-height: 1.2;
+  word-wrap: break-word;
+}
+
+.symbol-name-text {
+  color: #333;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.helper-symbol-item span {
+  color: white;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.wise-symbol .symbol-name-text,
+.unwise-symbol .symbol-name-text {
+  background: rgba(225, 200, 8, 0.929);
+  color: white;
+}
+
+/* Game 1 specific animations */
+.cave-symbol-item.wise-choice {
+  animation: caveWiseChoice 2s ease-out;
+  border-color: #00FF00;
+  background: rgba(0, 255, 0, 0.3);
+}
+
+@keyframes caveWiseChoice {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.3); box-shadow: 0 0 40px rgba(0, 255, 0, 0.8); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.cave-symbol-item.unwise-choice {
+  animation: unwiseChoice 1s ease-out;
+  border-color: #FF4444;
+  background: rgba(255, 68, 68, 0.2);
+}
+
+@keyframes unwiseChoice {
+  0% { transform: scale(1); }
+  25% { transform: scale(0.9); filter: brightness(0.7); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+.cave-symbol-item.tried-symbol {
+  opacity: 0.5;
+  filter: grayscale(70%);
+  transform: scale(0.95);
+  transition: all 0.3s ease;
+}
+
+/* ===================================
+   🎮 GAME 2: HELPER ON SCREEN
+   =================================== */
+
+.helper-on-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: helperAppear 0.5s ease-out;
+}
+
+@keyframes helperAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.helper-speech-bubble {
+  position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 12px 16px;
+  border-radius: 18px;
+  border: 2px solid #FFD700;
+  margin-top: 10px;
+  max-width: 200px;
+  font-size: 14px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.helper-speech-bubble p {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.3;
+}
+
+.speech-arrow {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #FFD700;
+}
+
+.speech-arrow::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: -6px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid rgba(255, 255, 255, 0.95);
+}
+
+.send-helper-button {
+  background: linear-gradient(135deg, #FF8C42, #FFD700);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 15px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(255, 140, 66, 0.4);
+}
+
+.send-helper-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(255, 140, 66, 0.6);
+}
+
+/* ===================================
+   🕉️ GANESHA POSITIONING - NO BOUNCE
+   =================================== */
+
+.ganesha-cave-position {
+  position: absolute;
+  top: 12%;
+  right: 12%;
+  width: 90px;
+  height: 90px;
+  cursor: pointer;
+  z-index: 20;
+  transition: transform 0.3s ease;
+}
+
+.ganesha-cave-position:hover {
+  transform: scale(1.05);
+}
+
+.ganesha-cave-position img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4px solid var(--cave-gold);
+}
+
+.ganesha-cave-glow {
+  position: absolute;
+  top: -15px;
+  left: -15px;
+  right: -15px;
+  bottom: -15px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, transparent 70%);
+}
+
+.ganesha-emergence {
+  position: absolute;
+  top: 50%;
+  right: 20%;
+  transform: translateY(-50%);
+  z-index: 25;
+  transition: all 2s ease-out;
+}
+
+.ganesha-emergence-glow {
+  position: absolute;
+  top: -30px;
+  left: -30px;
+  right: -30px;
+  bottom: -30px;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.6) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: divineGlow 3s ease-in-out infinite;
+}
+
+.emerging-ganesha {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid #FFD700;
+  background: rgba(255, 255, 255, 0.9);
+  transition: all 2s ease-out;
+  position: relative;
+  z-index: 1;
+}
+
+.emerging-ganesha.blessing {
+  animation: ganeshaBlessing 3s ease-in-out infinite;
+  box-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
+}
+
+.emerging-ganesha img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+@keyframes ganeshaBlessing {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 50px rgba(255, 215, 0, 1);
+  }
+}
+
+.divine-blessing-speech {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(45deg, #FFD700, #FFA500);
+  color: white;
+  padding: 10px 16px !important;
+  border-radius: 15px !important;
+  border: 2px solid #FFD700;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+  animation: divineMessage 2s ease-in-out infinite alternate;
+  min-width: 200px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+  z-index: 2;
+}
+
+.divine-blessing-speech p {
+  margin: 0;
+  color: white;
+}
+
+.divine-blessing-speech::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 12px solid #FFD700;
+}
+
+@keyframes divineMessage {
+  0% { transform: translateX(-50%) scale(1); }
+  100% { transform: translateX(-50%) scale(1.02); }
+}
+
+@keyframes divineGlow {
+  0% { 
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+  }
+  100% { 
+    transform: scale(1.02);
+    box-shadow: 0 0 35px rgba(255, 215, 0, 1);
+  }
+}
+
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes ganeshaFloat {
+  0%, 100% { 
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+  50% { 
+    transform: translateY(-5px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-10px) rotate(-2deg);
+  }
+}
+
+@keyframes ganeshaGlow {
+  0% {
+    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.6));
+    transform: scale(1);
+  }
+  100% {
+    filter: drop-shadow(0 0 50px rgba(255, 215, 0, 1));
+    transform: scale(1.05);
+  }
+}
+
+@keyframes ganeshaBlessing {
+  0% {
+    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.8));
+    transform: scale(1) rotate(-2deg);
+  }
+  100% {
+    filter: drop-shadow(0 0 60px rgba(255, 215, 0, 1));
+    transform: scale(1.08) rotate(2deg);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+/* ===================================
+   💭 INSTRUCTION BUBBLES
+   =================================== */
+
+.personal-instruction-bubble {
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #FFF8DC;
+  color: #8B4513;
+  padding: 14px 20px;
+  border-radius: 20px;
+  font-style: italic;
+  font-size: 16px;
+  font-weight: 500;
+  z-index: 15;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  border: 2px solid #FFD700;
+  max-width: 280px;
+}
+
+.personal-instruction-bubble:after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border: 10px solid transparent;
+  border-top-color: #FFF8DC;
+  border-bottom: none;
+}
+
+.simple-click-instruction {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 215, 0, 0.9);
+  color: #000;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 14px;
+  z-index: 10;
+}
+
+/* ===================================
+   📢 PHASE HEADER
+   =================================== */
+
+.phase-header {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 215, 0, 0.95);
+  color: #333;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: bold;
+  z-index: 100;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border: 3px solid #FF8C42;
+}
+
+/* ===================================
+   ✨ ANIMATED TEXT PHASES
+   =================================== */
+
+.in-all-tasks-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 32px;
+  font-weight: bold;
+  color: #FFD700;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  animation: textGlowIn 3s ease-out forwards;
+  z-index: 15;
+}
+
+.always-text {
+  position: absolute;
+  top: 65%;
+  left: 70%;
+  transform: translateX(-50%);
+  font-size: 24px;
+  font-weight: bold;
+  color: #FF8C42;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  animation: textGrowIn 2s ease-out forwards;
+  z-index: 15;
+}
+
+@keyframes textGlowIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8) rotateY(-20deg);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1) rotateY(0deg);
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 2px 2px 4px rgba(0,0,0,0.7);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotateY(0deg);
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.4), 2px 2px 4px rgba(0,0,0,0.7);
+  }
+}
+
+@keyframes textGrowIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.5);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.2);
+    text-shadow: 0 0 20px rgba(255, 140, 66, 0.8), 2px 2px 4px rgba(0,0,0,0.7);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+    text-shadow: 0 0 10px rgba(255, 140, 66, 0.4), 2px 2px 4px rgba(0,0,0,0.7);
+  }
+}
+
+/* ===================================
+   📢 PROGRESS COUNTER
+   =================================== */
+
+.scene-counter {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 25px;
+  padding: 8px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 180px;
+  height: 40px;
+}
+
+.scene-counter .counter-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.scene-counter .counter-icon div {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, var(--cave-gold), var(--cave-amber));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scene-counter .counter-progress {
+  flex: 1;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.scene-counter .counter-progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, var(--cave-gold), var(--cave-amber));
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+/* ===================================
+   ✨ SPARKLE CONTAINER
+   =================================== */
+
+.sparkle-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 30;
+  pointer-events: none;
+}
+
+/* ===================================
+   📱 RESPONSIVE DESIGN
+   =================================== */
+
+@media (max-width: 768px) {
+  .door1-area,
+  .door2-area {
+    top: 15%;
+    transform: translateX(-50%) scale(0.8);
+  }
+  
+  .character-options-cave {
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  .character-option-clean img {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .character-title-cave h2 {
+    font-size: 24px;
+    padding: 12px 20px;
+  }
+  
+  .scenario-window {
+    width: 80%;
+    max-width: 400px;
+    top: 20%;
+  }
+  
+  .cave-symbol-item,
+  .helper-symbol-item {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .cave-symbol-item img,
+  .helper-symbol-item img {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .cave-symbol-individual.position-1,
+  .helper-symbol.position-1 { 
+    top: 20%;
+    left: 5%;
+  }
+  
+  .cave-symbol-individual.position-2,
+  .helper-symbol.position-2 { 
+    bottom: 20%;
+    left: 5%;
+  }
+  
+  .cave-symbol-individual.position-3,
+  .helper-symbol.position-3 { 
+    top: 20%;
+    right: 5%;
+  }
+  
+  .cave-symbol-individual.position-4,
+  .helper-symbol.position-4 { 
+    bottom: 20%;
+    right: 5%;
+  }
+}
+
+@media (max-width: 480px) {
+  .character-title-cave h2 {
+    font-size: 20px;
+    padding: 10px 15px;
+  }
+  
+  .cave-symbol-item,
+  .helper-symbol-item {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .cave-symbol-item img,
+  .helper-symbol-item img {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .scenario-window {
+    width: 90%;
+    max-width: 320px;
+  }
+}
+
+/* ===================================
+   🎯 ACCESSIBILITY & PREMIUM FEATURES
+   =================================== */
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .cave-symbol-item,
+  .helper-symbol-item {
+    min-width: 80px;
+    min-height: 80px;
+    padding: 8px;
+  }
+  
+  .character-option-clean {
+    min-width: 140px;
+    min-height: 180px;
+    padding: 25px;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .scene-container {
+    background: #000000;
+  }
+  
+  .cave-symbol-item,
+  .helper-symbol-item,
+  .character-option-clean {
+    border: 3px solid #FFFFFF;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .cave-symbol-item:hover,
+  .helper-symbol-item:hover,
+  .character-option-clean:hover {
+    transform: none !important;
+    opacity: 0.8;
+  }
+}
+
+/* ===================================
+   🔧 ERROR STATES
+   =================================== */
+
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--cave-gold);
+  font-size: 24px;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  z-index: 50;
+}
+
+.error-boundary {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 0, 0, 0.9);
+  color: white;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  z-index: 100;
+  max-width: 80%;
+}
+
+.error-boundary h2 {
+  margin-top: 0;
+  color: var(--cave-gold);
+}
+
+.error-boundary button {
+  background: var(--cave-gold);
+  color: black;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 15px;
+}
+/* ===========================
+   SCENE 4 THEME: DIVINE TASKS (Sarvakaryeshu Sarvada)
+   Palette: Royal Gold, Deep Orange, Cream
+   =========================== */
+
+/* ===========================
+   INSTRUCTION MODAL - Opening Screen
+   =========================== */
+.sarvakaryeshu-instructions-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(44, 24, 16, 0.9); /* Dark Brown Shadow */
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: sarvakaryeshu-fadeIn 0.3s ease-out;
+}
+
+/* Sparkles */
+.sarvakaryeshu-sparkles {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  pointer-events: none;
+  z-index: 101;
+}
+
+.sarvakaryeshu-sparkle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #FFD700;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  animation: sarvakaryeshu-sparkleFloat 0.8s ease-out forwards;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+}
+
+.sarvakaryeshu-sparkle:nth-child(1) { top: 20%; left: 50%; animation-delay: 0s; }
+.sarvakaryeshu-sparkle:nth-child(2) { top: 50%; left: 80%; animation-delay: 0.1s; }
+.sarvakaryeshu-sparkle:nth-child(3) { top: 80%; left: 50%; animation-delay: 0.2s; }
+.sarvakaryeshu-sparkle:nth-child(4) { top: 50%; left: 20%; animation-delay: 0.15s; }
+
+.sarvakaryeshu-instructions-content {
+  position: relative;
+  width: 95%;
+  max-width: 1400px;
+  height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  padding: 0 60px;
+  animation: sarvakaryeshu-contentFadeIn 0.5s ease-out 0.5s both;
+}
+
+.sarvakaryeshu-instructions-ganesha {
+  flex: 0 0 40%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  animation: sarvakaryeshu-slideInLeft 0.6s ease-out 0.8s both;
+}
+
+.sarvakaryeshu-instructions-ganesha img {
+  width: 100%;
+  max-width: 450px;
+  height: auto;
+  filter: drop-shadow(0 0 30px rgba(255, 140, 66, 0.6)); /* Orange Aura */
+  transform: scaleX(1); 
+}
+
+.sarvakaryeshu-instructions-card {
+  flex: 0 0 45%;
+  background: #FFF8E1; /* Cream BG */
+  border-radius: 30px;
+  padding: 50px;
+  box-shadow: 0 10px 40px rgba(139, 69, 19, 0.4);
+  animation: sarvakaryeshu-slideInRight 0.6s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 4px solid #FF8C42;
+}
+
+.sarvakaryeshu-instructions-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 48px;
+  font-weight: 700;
+  color: #E65100; /* Deep Orange */
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.sarvakaryeshu-instructions-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 24px;
+  color: #5D4037;
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
+
+.sarvakaryeshu-instructions-icons {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  margin-bottom: 45px;
+  width: 100%;
+}
+
+.sarvakaryeshu-instruction-icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.sarvakaryeshu-instruction-icon-item img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(255, 140, 66, 0.4));
+}
+
+.sarvakaryeshu-instruction-icon-label {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #E65100;
+}
+
+.sarvakaryeshu-instructions-button {
+  font-family: 'Baloo 2', cursive;
+  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%); /* Orange Gradient */
+  border: 2px solid #FFF;
+  color: white;
+  padding: 20px 70px;
+  font-size: 28px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(230, 81, 0, 0.4);
+  text-transform: capitalize;
+}
+
+.sarvakaryeshu-instructions-button:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(230, 81, 0, 0.6);
+}
+
+/* ===========================
+   POWER & MISSION MODAL (Sarvakaryeshu Theme)
+   =========================== */
+.sarvakaryeshu-power-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(44, 24, 16, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 600;
+  animation: sarvakaryeshu-fadeIn 0.3s ease-out;
+}
+
+.sarvakaryeshu-power-card {
+  background: #FFF8E1;
+  border-radius: 30px;
+  padding: 50px;
+  max-width: 600px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(139, 69, 19, 0.5);
+  position: relative;
+  animation: sarvakaryeshu-scaleIn 0.4s ease-out;
+  border: 4px solid #FF8C42;
+}
+
+.sarvakaryeshu-power-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 38px;
+  font-weight: 700;
+  color: #E65100;
+  margin-bottom: 30px;
+}
+
+.sarvakaryeshu-power-icon {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 25px;
+  object-fit: contain;
+  animation: sarvakaryeshu-powerPulse 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(255, 140, 66, 0.4));
+}
+
+.sarvakaryeshu-power-description {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: #5D4037;
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
+
+.sarvakaryeshu-power-primary-button {
+  font-family: 'Baloo 2', cursive;
+  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+  border: 2px solid #FFF;
+  color: white;
+  padding: 18px 60px;
+  font-size: 24px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(230, 81, 0, 0.4);
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.sarvakaryeshu-power-secondary-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.sarvakaryeshu-power-secondary-button {
+  font-family: 'Nunito', sans-serif;
+  background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+  border: none;
+  color: white;
+  padding: 14px 35px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  flex: 1;
+}
+
+/* Animations */
+@keyframes sarvakaryeshu-fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes sarvakaryeshu-scaleIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+@keyframes sarvakaryeshu-slideInLeft { from { opacity: 0; transform: translateX(-100px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes sarvakaryeshu-slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes sarvakaryeshu-contentFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+@keyframes sarvakaryeshu-sparklesFadeOut { 0% { opacity: 1; } 60% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes sarvakaryeshu-sparkleFloat { 
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+}
+@keyframes sarvakaryeshu-powerPulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(255, 140, 66, 0.5)); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 25px rgba(255, 140, 66, 0.8)); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sarvakaryeshu-instructions-content { flex-direction: column; height: auto; padding: 20px; gap: 20px; }
+  .sarvakaryeshu-instructions-ganesha { flex: 0 0 auto; }
+  .sarvakaryeshu-instructions-ganesha img { max-width: 250px; }
+  .sarvakaryeshu-instructions-card { flex: 0 0 auto; padding: 30px 25px; }
+  .sarvakaryeshu-instructions-title { font-size: 28px; }
+  
+  .sarvakaryeshu-power-card { padding: 35px 25px; }
+  .sarvakaryeshu-power-title { font-size: 30px; }
+  .sarvakaryeshu-power-icon { width: 110px; height: 110px; }
+}

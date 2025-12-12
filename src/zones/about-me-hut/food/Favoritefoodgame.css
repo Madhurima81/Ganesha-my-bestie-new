@@ -1,0 +1,636 @@
+/* FavoriteFoodGame.css - Raw images, no cards! */
+
+.favorite-food-game {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.food-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* Back Button */
+.back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 12px 24px;
+  background: rgba(139, 111, 71, 0.9);
+  color: white;
+  border: 2px solid #654321;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 100;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background: rgba(101, 67, 33, 0.9);
+  transform: scale(1.05);
+}
+
+/* INTRO OVERLAY */
+.intro-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.intro-ganesha {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  margin-bottom: 30px;
+}
+
+.intro-speech {
+  background: linear-gradient(135deg, #FF8C69, #FFB6C1);
+  border: 3px solid #CD5C5C;
+  border-radius: 25px;
+  padding: 30px 40px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.intro-text {
+  font-family: 'Georgia', serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.start-btn {
+  padding: 15px 40px;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #654321;
+  border: none;
+  border-radius: 15px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.start-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(255, 215, 0, 0.4);
+}
+
+/* CHOICE SCREEN */
+.choice-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+}
+
+.ganesha-waiting {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+}
+
+.ganesha-small {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.speech-bubble {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border: 3px solid #FF8C00;
+  border-radius: 20px;
+  padding: 15px 25px;
+  font-family: 'Georgia', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #654321;
+  text-align: center;
+  z-index: 15;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: bubbleBounce 0.6s ease-out;
+}
+
+/* CHOICES CONTAINER - NO CARDS! */
+.choices-container {
+  position: absolute;
+  bottom: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 60px;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* CHOICE BUTTONS - Just the image! */
+.choice-card {
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  animation: popIn 0.5s ease-out both;
+}
+
+.choice-card:hover {
+  transform: scale(1.15) translateY(-10px);
+}
+
+.choice-card:active {
+  transform: scale(1.05) translateY(-5px);
+}
+
+.choice-image-container {
+  width: 150px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+}
+
+.choice-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.choice-name {
+  font-family: 'Georgia', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  text-align: center;
+  margin-top: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* SHAKE ANIMATION for wrong answers */
+.shake {
+  animation: shake 0.5s ease-in-out;
+  position: relative;
+}
+
+.shake::after {
+  content: '✖';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 80px;
+  color: #FF0000;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+  animation: redXAppear 0.5s ease-out;
+  z-index: 100;
+}
+
+@keyframes redXAppear {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+  20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
+/* WRONG CHOICE - Red border and fade */
+.choice-card.wrong {
+  pointer-events: none;
+  animation: wrongFadeOut 1s ease-out forwards;
+  border: 4px solid #FF0000 !important;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+}
+
+@keyframes wrongFadeOut {
+  0% {
+    opacity: 1;
+    filter: drop-shadow(0 8px 16px rgba(255, 0, 0, 0.6));
+  }
+  100% {
+    opacity: 0.2;
+    filter: grayscale(100%) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+  }
+}
+
+/* DISABLED STATE - can't be clicked */
+.choice-card.disabled {
+  pointer-events: none;
+  opacity: 0.2;
+  filter: grayscale(100%);
+}
+
+/* CORRECT SCREEN */
+.correct-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 30;
+}
+
+.ganesha-happy {
+  position: absolute;
+  top: 30%;
+  left: 35%;
+  transform: translate(-50%, -50%);
+}
+
+.ganesha-celebrate {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  animation: celebrate 1s ease-in-out infinite;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+}
+
+.correct-food {
+  position: absolute;
+  top: 30%;
+  right: 30%;
+  transform: translate(50%, -50%);
+}
+
+.correct-food img {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 20px rgba(255, 215, 0, 0.6));
+}
+
+.friends-together {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 40px;
+  align-items: center;
+}
+
+.ganesha-with-friend {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+}
+
+.friend-character {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+}
+
+/* CELEBRATION SPARKLES */
+.celebration-sparkles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 25;
+}
+
+.sparkle {
+  position: absolute;
+  font-size: 30px;
+  animation: sparkleFloat 2s ease-in-out infinite;
+}
+
+.sparkle.heart {
+  font-size: 35px;
+}
+
+@keyframes sparkleFloat {
+  0%, 100% {
+    opacity: 0;
+    transform: translateY(0) scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-20px) scale(1);
+  }
+}
+
+.success-message {
+  position: absolute;
+  bottom: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border: 3px solid #FF8C00;
+  border-radius: 20px;
+  padding: 20px 40px;
+  font-family: 'Georgia', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #654321;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  animation: popIn 0.6s ease-out;
+}
+
+/* ENDING SCREEN */
+.ending-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 30;
+}
+
+.final-display {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  justify-content: center;
+}
+
+.ganesha-final {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+}
+
+.final-food {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(255, 215, 0, 0.5));
+}
+
+.final-friend {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+}
+
+.final-message {
+  position: absolute;
+  bottom: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.final-title {
+  font-family: 'Georgia', serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: #FFD700;
+  margin-bottom: 10px;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+}
+
+.final-text {
+  font-family: 'Georgia', serif;
+  font-size: 20px;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.badge-container {
+  position: absolute;
+  bottom: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.badge-earned {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border: 3px solid #FF8C00;
+  border-radius: 15px;
+  padding: 15px 35px;
+  font-family: 'Georgia', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #654321;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* ANIMATIONS */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bubbleBounce {
+  0% {
+    transform: translateX(-50%) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: translateX(-50%) scale(1.1);
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes celebrate {
+  0%, 100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+}
+
+.bounce {
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+.bounce-gentle {
+  animation: bounceGentle 2s ease-in-out infinite;
+}
+
+@keyframes bounceGentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.pop-in {
+  animation: popIn 0.6s ease-out;
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+  .intro-ganesha {
+    width: 150px;
+    height: 150px;
+  }
+
+  .intro-text {
+    font-size: 20px;
+  }
+
+  .start-btn {
+    font-size: 18px;
+    padding: 12px 30px;
+  }
+
+  .ganesha-small {
+    width: 90px;
+    height: 90px;
+  }
+
+  .speech-bubble {
+    font-size: 18px;
+    padding: 12px 20px;
+  }
+
+  .choices-container {
+    gap: 30px;
+    bottom: 20%;
+  }
+
+  .choice-image-container {
+    width: 100px;
+    height: 100px;
+  }
+
+  .choice-name {
+    font-size: 16px;
+  }
+
+  .ganesha-celebrate {
+    width: 150px;
+    height: 150px;
+  }
+
+  .correct-food img {
+    width: 130px;
+    height: 130px;
+  }
+
+  .ganesha-with-friend {
+    width: 130px;
+    height: 130px;
+  }
+
+  .friend-character {
+    width: 110px;
+    height: 110px;
+  }
+
+  .success-message {
+    font-size: 20px;
+    padding: 15px 30px;
+  }
+
+  .final-title {
+    font-size: 28px;
+  }
+
+  .final-text {
+    font-size: 18px;
+  }
+
+  .ganesha-final {
+    width: 130px;
+    height: 130px;
+  }
+
+  .final-food {
+    width: 90px;
+    height: 90px;
+  }
+
+  .final-friend {
+    width: 100px;
+    height: 100px;
+  }
+
+  .badge-earned {
+    font-size: 18px;
+    padding: 12px 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .choices-container {
+    flex-direction: column;
+    gap: 20px;
+    bottom: 15%;
+  }
+
+  .choice-image-container {
+    width: 80px;
+    height: 80px;
+  }
+
+  .friends-together {
+    gap: 20px;
+  }
+
+  .final-display {
+    flex-direction: column;
+    gap: 15px;
+  }
+}

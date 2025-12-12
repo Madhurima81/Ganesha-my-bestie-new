@@ -1,5 +1,6 @@
 // lib/components/cave/DoorComponent.jsx - COMPLETE PROTECTED VERSION
 import React, { useState, useEffect, useRef } from 'react';
+import ReactDOM from 'react-dom';
 import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation';
 import './DoorComponentV1.css';
 
@@ -23,6 +24,7 @@ const DoorComponent = ({
   completedWord = 'Vakratunda',
   onDoorComplete,
   onSyllablePlaced,
+  onAudioComplete,  // ✅ Keep this for backward compatibility
   sceneTheme = 'cave-of-secrets',
   doorImage,
   className = '',
@@ -49,9 +51,22 @@ const DoorComponent = ({
   primaryColor = '#FFD700',
   secondaryColor = '#FF8C42',
   errorColor = '#FF4444',
+
+  onSyllableAudio = null,
   
   // 🛡️ Protection props
-  modalOpen = false  // ✅ NEW: Blocks clicks when modals open
+  modalOpen = false,  // ✅ Blocks clicks when modals open
+  
+  // ✅ NEW: Modal props (replaces Start Challenge button)
+  showModal = true,              // Show modal instead of button
+  modalTitle = "Door Unlocked!",
+  modalDescription = "You completed the word! Click to continue.",
+  modalButtonText = "Start Challenge!",
+  modalSymbolImage = null,       // Symbol to show in modal
+  modalTitleColor = "#FF6B35",
+  modalButtonColor = "#FFA500",
+  modalButtonTextColor = "#FFFFFF",
+  modalCardBorderColor = "#FFA500"
 }) => {
 
   // ========== 🛡️ CLICK PROTECTION STATE ==========
@@ -89,6 +104,11 @@ const DoorComponent = ({
   const [allSyllablesPlaced, setAllSyllablesPlaced] = useState(isCompleted);
   const [errorFeedback, setErrorFeedback] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
+  // ✅ Audio and modal state
+  const [wordAudioComplete, setWordAudioComplete] = useState(false);
+  const [showDoorModal, setShowDoorModal] = useState(false); // ✅ NEW: Internal modal state
+  const audioRef = useRef(null);
+  const hasPlayedWordAudioRef = useRef(false);  // Prevent duplicate audio playback
   
   // Track if initial setup is done to prevent useEffect conflicts
   const [initialSetupDone, setInitialSetupDone] = useState(false);
@@ -133,49 +153,144 @@ const DoorComponent = ({
     setInitialSetupDone(true);
   }, [isResuming, placedSyllables]);
 
-  // ✅ FIXED: Position animation uses SAME positions as initial state
-  useEffect(() => {
-    // Only animate on NEW games, not reloads - but use SAME final positions
-    if (initialSetupDone && !isResuming && !isCompleted) {
-      const timer = setTimeout(() => {
-        setFloatingSyllables(prev => prev.map((syllable, index) => {
-          if (syllable.placed) return syllable;  // Don't move placed syllables
-          
-          // ✅ CRITICAL: Use the SAME position function as initial state
-          return {
-            ...syllable,
-            position: getSyllablePosition(index)  // Consistent with initial state
-          };
-        }));
-      }, 300); // Reduced from 500ms for faster feel
-      
-      timersRef.current.push(timer);
-      return () => clearTimeout(timer);
-    }
-  }, [initialSetupDone, isResuming, isCompleted]);
+useEffect(() => {
+  if (initialSetupDone) {
+    console.log('🔄 Syllables changed - resetting audio states');
+    setAllSyllablesPlaced(false);
+    setWordAudioComplete(false);
+    hasPlayedWordAudioRef.current = false;
+  }
+}, [syllables, initialSetupDone]);
 
-  // Completion check
-  useEffect(() => {
-    const allPlaced = floatingSyllables.every(s => s.placed);
+// ✅ FIXED: Completion check with DELAYED word audio
+useEffect(() => {
+  const allPlaced = floatingSyllables.every(s => s.placed);
+  
+  console.log('🔍 DoorComponent useEffect:', {
+    allPlaced,
+    allSyllablesPlaced,
+    isCompleted,
+    hasPlayedAudio: hasPlayedWordAudioRef.current,
+    syllablesLength: syllables.length
+  });
+  
+if (allPlaced && !allSyllablesPlaced && !isCompleted && syllables.length > 0 && !hasPlayedWordAudioRef.current) {
+      console.log('🎯 DoorComponent: All syllables placed - WILL PLAY AUDIO');
     
-    if (allPlaced && !allSyllablesPlaced && !isCompleted && syllables.length > 0) {
-      console.log('🎯 DoorComponent: All syllables placed, triggering completion');
+    hasPlayedWordAudioRef.current = true;  // ✅ SET IMMEDIATELY FIRST
+    setAllSyllablesPlaced(true);
+    setSparkleType('completion');
+    setShowSparkles(true);
+
+    // ✅ WAIT 1.5 seconds before playing word - STORE the timeout
+    const wordAudioTimeout = setTimeout(() => {
+      console.log('🎵 Now playing word audio after syllable finished');
       
-      setAllSyllablesPlaced(true);
-      
-      const timer = setTimeout(() => {
-        setIsCompleting(true);
-        setSparkleType('completion');
-        setShowSparkles(true);
-        handleDoorComplete();
-      }, 100);
-      
-      timersRef.current.push(timer);
+      if (completedWord) {
+      // ✅ SAFETY: Stop any existing audio before creating new one
+      if (audioRef.current) {
+        console.log('⚠️ Stopping existing audio before playing');
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+
+        const wordMap = {
+          'Vakratunda': 'vakratunda',
+          'Mahakaya': 'mahakaya',
+          'Suryakoti': 'suryakoti',
+          'Samaprabha': 'samaprabha',
+          'Nirvighnam': 'nirvighnam',
+          'Kurume Deva': 'kurumedeva'
+        };
+        const audioFile = wordMap[completedWord] || completedWord.toLowerCase();
+        
+        audioRef.current = new Audio(`/audio/words/${audioFile}.mp3`);
+        
+        audioRef.current.addEventListener('ended', () => {
+          console.log('🎵 Word audio finished - showing modal');
+          setWordAudioComplete(true);
+          
+          // ✅ Show modal after audio finishes
+          if (showModal) {
+            setTimeout(() => {
+              setShowDoorModal(true);
+            }, 300);
+          }
+          
+          // ✅ Keep onAudioComplete for backward compatibility
+          if (onAudioComplete) {
+            onAudioComplete();
+          }
+        });
+        
+        audioRef.current.addEventListener('error', () => {
+          console.warn('⚠️ Word audio failed to load - showing modal anyway');
+          setWordAudioComplete(true);
+          
+          // ✅ Show modal even on error
+          if (showModal) {
+            setTimeout(() => {
+              setShowDoorModal(true);
+            }, 300);
+          }
+          
+          // ✅ Keep onAudioComplete for backward compatibility
+          if (onAudioComplete) {
+            onAudioComplete();
+          }
+        });
+        
+        audioRef.current.play().catch((error) => {
+          console.warn('⚠️ Audio playback failed:', error);
+          setWordAudioComplete(true);
+          
+          // ✅ Show modal even on playback error
+          if (showModal) {
+            setTimeout(() => {
+              setShowDoorModal(true);
+            }, 300);
+          }
+          
+          // ✅ Keep onAudioComplete for backward compatibility
+          if (onAudioComplete) {
+            onAudioComplete();
+          }
+        });
+      } else {
+        setWordAudioComplete(true);
+        
+        // ✅ Show modal even when no audio file
+        if (showModal) {
+          setTimeout(() => {
+            setShowDoorModal(true);
+          }, 300);
+        }
+        
+        // ✅ Keep onAudioComplete for backward compatibility
+        if (onAudioComplete) {
+          onAudioComplete();
+        }
+      }
+    }, 1500); // ✅ KEY FIX: Wait 1.5 seconds for syllable audio to finish completely
+    
+    // ✅ CRITICAL: Store timeout so it can be cleaned up on unmount
+    timersRef.current.push(wordAudioTimeout);
+  }
+}, [floatingSyllables, allSyllablesPlaced, isCompleted, syllables.length, completedWord]);
+
+  // ✅ Modal button handler
+  const handleModalButtonClick = () => {
+    console.log('🚀 Modal button clicked - calling onDoorComplete');
+    setShowDoorModal(false);
+    
+    // Call the parent's onDoorComplete
+    if (onDoorComplete) {
+      onDoorComplete();
     }
-  }, [floatingSyllables, allSyllablesPlaced, isCompleted, syllables.length]);
+  };
 
   // ========== 🛡️ PROTECTED SYLLABLE CLICK HANDLER ==========
-  const handleSyllableClick = (syllableId) => {
+  /*const handleSyllableClick = (syllableId) => {
     const now = Date.now();
     
     // ========== 🛡️ PROTECTION LAYER 1: COOLDOWN ==========
@@ -283,7 +398,106 @@ const DoorComponent = ({
     if (onSyllablePlaced) {
       onSyllablePlaced(syllable.text);
     }
-  };
+  };*/
+
+  // handleStartChallenge removed - we use modal instead
+
+ const handleSyllableClick = (syllableId) => {
+  // ========== 🛡️ PROTECTION CHECKS ==========
+  
+  // Check if already processing (prevent double-clicks)
+  if (isProcessingClickRef.current) {
+    console.log('🚫 Already processing a syllable click');
+    return;
+  }
+  
+  if (isCompleted) {
+    console.log('Door already completed');
+    return;
+  }
+  
+  const syllable = floatingSyllables.find(s => s.id === syllableId);
+  if (!syllable || syllable.placed) {
+    console.log('Syllable not found or already placed');
+    return;
+  }
+  
+  if (modalOpen) {
+    console.log('Modal is open');
+    return;
+  }
+  
+  console.log('✅ Processing syllable:', syllable.text);
+
+  // ✅ LOCK processing to prevent next click
+  isProcessingClickRef.current = true;
+
+  // Educational mode logic
+  if (educationalMode) {
+    const expectedSyllableText = expectedSyllable || syllables[currentStep];
+    const isCorrect = syllable.text === expectedSyllableText;
+    
+    if (!isCorrect) {
+      console.log(`Wrong! Expected "${expectedSyllableText}", got "${syllable.text}"`);
+      
+      setErrorFeedback(true);
+      setSparkleType('error');
+      setShowSparkles(true);
+      
+      if (onWrongClick) {
+        onWrongClick(syllable.text, expectedSyllableText);
+      }
+      
+      setTimeout(() => {
+        setErrorFeedback(false);
+        setShowSparkles(false);
+        isProcessingClickRef.current = false; // ✅ Unlock after error
+      }, 800);
+      
+      return;
+    }
+    
+    console.log('✅ Correct syllable clicked!');
+    if (onCorrectClick) {
+      onCorrectClick(syllable.text);
+    }
+  }
+  
+// Place syllable
+  setFloatingSyllables(prev => prev.map(s => 
+    s.id === syllableId ? { ...s, placed: true, floating: false } : s
+  ));
+  
+  setSparkleType('placement');
+  setShowSparkles(true);
+  
+  if (onSyllablePlaced) {
+    onSyllablePlaced(syllable.text);
+  }
+
+  // ✅ NEW: Play syllable audio using parent's callback AND wait before unlocking
+  if (onSyllableAudio) {
+    // Call parent's audio function
+    onSyllableAudio(syllable.text.toLowerCase());
+    
+    // Estimate audio duration and wait before unlocking
+    // Most syllable audios are ~0.5-1 second
+    const audioDelay = 500; // 1 second for audio to play
+    const bufferDelay = 200;  // Additional 500ms buffer
+    
+    setTimeout(() => {
+      setShowSparkles(false);
+      isProcessingClickRef.current = false; // ✅ Unlock next syllable
+      console.log('🔓 Next syllable unlocked after audio delay');
+    }, audioDelay + bufferDelay);
+  } else {
+    // No audio callback provided - unlock after sparkles
+    setTimeout(() => {
+      setShowSparkles(false);
+      isProcessingClickRef.current = false;
+    }, 800);
+  }
+};
 
   const handleDoorComplete = () => {
     if (isCompleted) {
@@ -305,10 +519,10 @@ const DoorComponent = ({
         if (onDoorComplete) {
           onDoorComplete();
         }
-      }, 1500);
+      }, 1000);
       
       timersRef.current.push(timer2);
-    }, 1000);
+    }, 800);
     
     timersRef.current.push(timer1);
   };
@@ -335,11 +549,16 @@ const DoorComponent = ({
     return syllable.text !== expectedSyllableText && !syllable.placed;
   };
 
-  useEffect(() => {
-    return () => {
-      timersRef.current.forEach(timer => clearTimeout(timer));
-    };
-  }, []);
+useEffect(() => {
+  return () => {
+    timersRef.current.forEach(timer => clearTimeout(timer));
+    // ✅ Cleanup audio
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+  };
+}, []);
 
   if (doorState === 'dissolved' || isCompleted) {
     return null;
@@ -427,14 +646,8 @@ const DoorComponent = ({
                 animationDelay: `${syllable.id * 0.5}s`,
                 display: syllable.placed ? 'none' : 'block'
               }}
-              onClick={() => {
-                // ✅ Multi-touch check before processing
-                if (activeTouchesRef.current > 1) {
-                  console.log('🚫 Syllable click blocked: Multi-touch detected');
-                  return;
-                }
-                handleSyllableClick(syllable.id);
-              }}
+       onClick={() => handleSyllableClick(syllable.id)}
+
             >
               <div className="syllable-text">
                 {syllable.text}
@@ -462,17 +675,218 @@ const DoorComponent = ({
             ))}
         </div>
 
-        {/* Completed Word Display */}
-        {allSyllablesPlaced && (
-          <div className="completed-word-display">
-            <div className="sanskrit-word" style={{ 
-              color: primaryColor,
-              textShadow: `0 0 15px ${primaryColor}, 0 0 30px ${primaryColor}80`
-            }}>
-              {completedWord}
-            </div>
-            <div className="word-meaning">The door recognizes your wisdom!</div>
+        {/* ✅ REMOVED: Start Challenge button - using modal instead
+        {allSyllablesPlaced && showStartButton && doorState !== 'dissolved' && (
+          <div className="start-challenge-container" style={{
+            position: 'absolute',
+            top: '70%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 100
+          }}>
+            <button
+              onClick={handleStartChallenge}
+              className="start-challenge-button"
+              style={{
+                padding: '10px 25px',
+                fontSize: '22px',
+                fontWeight: 'bold',
+                background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
+                border: `4px solid ${primaryColor}`,
+                borderRadius: '10px',
+                color: '#2C1810',
+                cursor: 'pointer',
+                boxShadow: '0 8px 20px rgba(0,0,0,0.3)',
+                transition: 'all 0.3s ease',
+                animation: 'fadeInBounce 0.6s ease-out'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = 'scale(1.1)';
+                e.target.style.boxShadow = '0 12px 30px rgba(0,0,0,0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = 'scale(1)';
+                e.target.style.boxShadow = '0 8px 20px rgba(0,0,0,0.3)';
+              }}
+            >
+              🚀 Start Challenge!
+            </button>
           </div>
+        )}
+        */}
+
+{/* ✅ NEW: Completed Word Display - shows while audio plays 
+{allSyllablesPlaced && !showStartButton && (
+  <div className="completed-word-display">
+    <div className="sanskrit-word" style={{ 
+      color: primaryColor,
+      textShadow: `0 0 15px ${primaryColor}, 0 0 30px ${primaryColor}80`
+    }}>
+      {completedWord}
+    </div>
+    <div className="word-meaning">🎵 Listen to the word...</div>
+  </div>
+)}
+
+{/* ✅ NEW: START CHALLENGE BUTTON - appears after audio completes 
+{showStartButton && (
+  <div className="start-challenge-container" style={{
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    zIndex: 100,
+    animation: 'bounceIn 0.6s ease-out'
+  }}>
+    <div className="completed-word-display" style={{ marginBottom: '20px' }}>
+      <div className="sanskrit-word" style={{ 
+        color: primaryColor,
+        textShadow: `0 0 15px ${primaryColor}, 0 0 30px ${primaryColor}80`,
+        fontSize: '48px',
+        marginBottom: '10px'
+      }}>
+        {completedWord}
+      </div>
+    </div>
+    
+    <button
+      onClick={handleStartChallenge}
+      className="start-challenge-button"
+      style={{
+        padding: '20px 40px',
+        fontSize: '24px',
+        fontWeight: 'bold',
+        background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
+        border: `4px solid ${primaryColor}`,
+        borderRadius: '20px',
+        color: '#2C1810',
+        cursor: 'pointer',
+        boxShadow: '0 8px 20px rgba(0,0,0,0.3)',
+        transition: 'all 0.3s ease',
+        animation: 'pulse 1.5s infinite'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.transform = 'scale(1.1)';
+        e.target.style.boxShadow = '0 12px 30px rgba(0,0,0,0.4)';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.transform = 'scale(1)';
+        e.target.style.boxShadow = '0 8px 20px rgba(0,0,0,0.3)';
+      }}
+    >
+      🚀 Start Challenge!
+    </button>
+  </div>
+)}*/}
+
+        {/* ✅ Portal Modal - renders at document root for perfect centering */}
+        {showDoorModal && showModal && ReactDOM.createPortal(
+          <div 
+            className="door-unlocked-overlay"
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0, 0, 0, 0.85)',
+              zIndex: 1000,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              animation: 'fadeIn 0.3s ease-out'
+            }}
+          >
+            <div 
+              className="door-unlocked-card"
+              style={{
+                background: 'linear-gradient(135deg, #FFFEF7 0%, #FFF9E6 100%)',
+                borderRadius: '30px',
+                border: `5px solid ${modalCardBorderColor}`,
+                padding: '40px 50px',
+                maxWidth: '500px',
+                width: '90%',
+                textAlign: 'center',
+                position: 'relative',
+                animation: 'slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                boxShadow: `0 0 30px ${modalCardBorderColor}99, 0 0 60px ${modalCardBorderColor}66`
+              }}
+            >
+              {/* Title */}
+              <h1 style={{
+                fontFamily: "'Baloo', cursive",
+                fontSize: '48px',
+                fontWeight: '800',
+                color: modalTitleColor,
+                margin: '0 0 30px 0',
+                textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
+                letterSpacing: '1px'
+              }}>
+                {modalTitle}
+              </h1>
+              
+              {/* Symbol Icon */}
+              {modalSymbolImage && (
+                <div style={{ margin: '20px 0 30px 0' }}>
+                  <img 
+                    src={modalSymbolImage} 
+                    alt="symbol" 
+                    style={{
+                      width: '120px',
+                      height: '120px',
+                      objectFit: 'contain',
+                      animation: 'iconBounce 1s ease-in-out infinite',
+                      filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15))'
+                    }}
+                  />
+                </div>
+              )}
+              
+              {/* Description */}
+              <p style={{
+                fontFamily: "'Nunito', sans-serif",
+                fontSize: '22px',
+                fontWeight: '600',
+                color: '#5A4A3A',
+                lineHeight: '1.5',
+                margin: '0 0 35px 0',
+                padding: '0 10px'
+              }}>
+                {modalDescription}
+              </p>
+              
+              {/* Button */}
+              <button 
+                onClick={handleModalButtonClick}
+                style={{
+                  fontFamily: "'Baloo', cursive",
+                  fontSize: '28px',
+                  fontWeight: '700',
+                  color: modalButtonTextColor,
+                  background: `linear-gradient(135deg, ${modalButtonColor} 0%, ${modalButtonColor}DD 100%)`,
+                  border: 'none',
+                  borderRadius: '50px',
+                  padding: '18px 60px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: `0 4px 15px ${modalButtonColor}66`,
+                  textTransform: 'capitalize',
+                  letterSpacing: '0.5px'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.transform = 'translateY(-3px) scale(1.05)';
+                  e.target.style.boxShadow = `0 6px 20px ${modalButtonColor}99`;
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = 'translateY(0) scale(1)';
+                  e.target.style.boxShadow = `0 4px 15px ${modalButtonColor}66`;
+                }}
+              >
+                {modalButtonText}
+              </button>
+            </div>
+          </div>,
+          document.body  // ✅ Render at document root, not inside door-component
         )}
 
         {/* Success Sparkles */}
@@ -529,8 +943,68 @@ const DoorComponent = ({
           </div>
         )}
       </div>
+
+      {/* ✅ Animations */}
+      <style>{`
+        @keyframes pulse {
+          0%, 100% {
+            transform: scale(1);
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+          }
+          50% {
+            transform: scale(1.05);
+            box-shadow: 0 12px 30px rgba(255, 215, 0, 0.6);
+          }
+        }
+        
+        @keyframes bounceIn {
+          0% {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.3);
+          }
+          50% {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.1);
+          }
+          100% {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+          }
+        }
+        
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(50px) scale(0.9);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+        
+        @keyframes iconBounce {
+          0%, 100% {
+            transform: translateY(0) rotate(0deg);
+          }
+          50% {
+            transform: translateY(-10px) rotate(5deg);
+          }
+        }
+
+        .start-challenge-button:active {
+          transform: scale(0.95) !important;
+        }
+      `}</style>
     </div>
   );
+    
+  
 };
 
 export default DoorComponent;

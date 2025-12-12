@@ -1,230 +1,205 @@
-// CleanMapZone.jsx - Simplified for zone selection only
-// Path: pages/CleanMapZone.jsx
-
+// CleanMapZone.jsx - Positions controlled by CSS Media Queries
 import React, { useState, useEffect } from 'react';
 import './CleanMapZone.css';
-import { getAllZones, calculateZoneProgress } from '../lib/components/zone/ZoneConfig';
 import GameStateManager from '../lib/services/GameStateManager';
+import ZonePreviewModal from './components/ZonePreviewModal';
 
-console.log('🗺️ CleanMapZone loaded - Simplified version');
+console.log('🗺️ CleanMapZone loaded - CSS Positioning Enabled');
+
+// Hardcoded zone data - 5 active zones
+const ZONES_DATA = [
+  {
+    id: 'about-me-hut',
+    name: 'About Me Hut',
+    sequence: 5,
+    scenes: [
+      { id: 'game1', name: 'Family Tree' },
+      { id: 'game2', name: 'Profile' },
+      { id: 'game3', name: 'Avatar' }
+    ]
+  },
+  {
+    id: 'symbol-mountain',
+    name: 'Symbol Mountain',
+    sequence: 1,
+    scenes: [
+      { id: 'scene1', name: 'Introduction' },
+      { id: 'scene2', name: 'Symbol Quiz' },
+      { id: 'scene3', name: 'Matching Game' },
+      { id: 'scene4', name: 'Final Challenge' }
+    ]
+  },
+  {
+    id: 'cave-of-secrets',
+    name: 'Cave of Secrets',
+    sequence: 2,
+    scenes: [
+      { id: 'scene1', name: 'Word Learning' },
+      { id: 'scene2', name: 'Practice' },
+      { id: 'scene3', name: 'Memory Game' },
+      { id: 'scene4', name: 'Quiz' }
+    ]
+  },
+  {
+    id: 'shloka-river',
+    name: 'Shloka River',
+    sequence: 3,
+    scenes: [
+      { id: 'shloka-river-intro', name: 'Introduction' },
+      { id: 'shloka-river-learn', name: 'Learn Shloka' },
+      { id: 'shloka-river-practice', name: 'Practice' },
+      { id: 'shloka-river-finale', name: 'Final Performance' }
+    ]
+  },
+  {
+    id: 'festival-square',
+    name: 'Festival Square',
+    sequence: 4,
+    scenes: [
+      { id: 'piano', name: 'Piano Game' },
+      { id: 'rangoli', name: 'Rangoli Art' },
+      { id: 'modak', name: 'Modak Cooking' },
+      { id: 'mandap', name: 'Mandap Decoration' }
+    ]
+  }
+];
 
 // Zone images mapping
 const zoneImages = {
-  'about-me-hut': '/images/about-me-hut.png',
-  'story-treehouse': '/images/story-treehouse.png',
-  'symbol-mountain': '/images/symbol-mountain.png',
-  'cave-of-secrets': '/images/cave-of-secrets.png',
-  'obstacle-forest': '/images/obstacle-forest.png',
-  'festival-square': '/images/festival-square.png',
-  'shloka-river': '/images/shloka-river.png'
+  'about-me-hut': '/images/about-me-hut-map-icon.png',
+  'symbol-mountain': '/images/symbol-mountain-map-icon.png',
+  'cave-of-secrets': '/images/cave-of-secrets-map-icon.png',
+  'festival-square': '/images/festival-square-map-icon.png',
+  'shloka-river': '/images/shloka-river-map-icon.png'
 };
 
 // Zone emojis as fallback
 const zoneEmojis = {
-  'about-me-hut': '🌲',
-  'story-treehouse': '🏜️',
-  'symbol-mountain': '🏔️',
-  'cave-of-secrets': '🌈',
-  'obstacle-forest': '🌊',
-  'festival-square': '❄️',
-  'shloka-river': '☁️'
+  'about-me-hut': '🏠',
+  'symbol-mountain': '⛰️',
+  'cave-of-secrets': '🕳️',
+  'festival-square': '🎡',
+  'shloka-river': '🌊'
 };
 
-// Zone positions on the map
-const pathZonePositions = {
-  'about-me-hut': {
-    landscape: { x: 12, y: 70 },
-    portrait: { x: 15, y: 75 }
-  },
-  'story-treehouse': {
-    landscape: { x: 35, y: 55 },
-    portrait: { x: 40, y: 60 }
-  },
-  'symbol-mountain': {
-    landscape: { x: 25, y: 25 },
-    portrait: { x: 30, y: 30 }
-  },
-  'cave-of-secrets': {
-    landscape: { x: 50, y: 20 },
-    portrait: { x: 55, y: 25 }
-  },
-  'obstacle-forest': {
-    landscape: { x: 70, y: 35 },
-    portrait: { x: 70, y: 40 }
-  },
-  'festival-square': {
-    landscape: { x: 85, y: 60 },
-    portrait: { x: 80, y: 65 }
-  },
-  'shloka-river': {
-    landscape: { x: 75, y: 15 },
-    portrait: { x: 75, y: 20 }
-  }
-};
-
-const CleanMapZone = ({ onZoneSelect, currentZone, highlightedScene }) => {
-  console.log('🗺️ CleanMapZone rendered with onZoneSelect:', typeof onZoneSelect);
-  
-  const [zones, setZones] = useState([]);
+const CleanMapZone = ({ onZoneSelect, onBackToWelcome }) => {
+  const [zones] = useState(ZONES_DATA);
   const [zoneProgress, setZoneProgress] = useState({});
   const [overallProgress, setOverallProgress] = useState({ 
     earnedStars: 0, 
-    totalStars: 105,
+    totalStars: 60, 
     percentage: 0 
   });
-  const [orientation, setOrientation] = useState('landscape');
-  const [selectedZone, setSelectedZone] = useState(null);
-
-  // Initialize zones and load progress
-  useEffect(() => {
-    console.log('🗺️ Initializing CleanMapZone...');
-    initializeZones();
-    loadZoneProgress();
-    
-    return () => {
-      console.log('🧹 CleanMapZone cleanup');
-    };
-  }, []);
   
-  // Detect orientation changes
+  const [selectedZone, setSelectedZone] = useState(null);
+  const [showZoneModal, setShowZoneModal] = useState(false);
+  const [animationsEnabled, setAnimationsEnabled] = useState(false);
+
+  // Initialize and load progress
   useEffect(() => {
-    const checkOrientation = () => {
-      setOrientation(window.innerHeight > window.innerWidth ? 'portrait' : 'landscape');
-    };
+    loadBasicProgress();
     
-    window.addEventListener('resize', checkOrientation);
-    checkOrientation();
+    // Enable animations after component mounts
+    const timer = setTimeout(() => {
+      setAnimationsEnabled(true);
+    }, 300);
     
-    return () => window.removeEventListener('resize', checkOrientation);
+    return () => clearTimeout(timer);
   }, []);
 
-  const initializeZones = () => {
-    try {
-      const allZones = getAllZones();
-      console.log('🗺️ Loaded zones:', allZones.length);
-      setZones(allZones);
-    } catch (error) {
-      console.error('Error loading zones:', error);
-      setZones([]);
-    }
-  };
-
-  const loadZoneProgress = () => {
+  const loadBasicProgress = () => {
     try {
       const progressData = {};
-      let totalEarnedStars = 0;
-      let totalPossibleStars = 0;
-
-      const allZones = getAllZones();
+      let totalEarned = 0;
       
-      allZones.forEach(zone => {
-        const sceneProgressData = {};
+      ZONES_DATA.forEach(zone => {
+        let completedScenes = 0;
+        let totalStars = 0;
         
-        // Load progress for each scene in the zone
         zone.scenes.forEach(scene => {
           const progress = GameStateManager.getSceneProgress(zone.id, scene.id);
-          sceneProgressData[scene.id] = progress || { completed: false, stars: 0 };
+          if (progress?.completed) {
+            completedScenes++;
+            totalStars += progress.stars || 0;
+          }
         });
         
-        // Calculate zone progress
-        const zoneProgressCalc = calculateZoneProgress(zone.id, sceneProgressData);
         progressData[zone.id] = {
-          ...zoneProgressCalc,
-          sceneProgress: sceneProgressData
+          completedScenes: completedScenes,
+          totalScenes: zone.scenes.length,
+          stars: totalStars,
+          percentage: Math.round((completedScenes / zone.scenes.length) * 100)
         };
         
-        totalEarnedStars += zoneProgressCalc.stars;
-        totalPossibleStars += zone.totalStars || (zone.scenes.length * 3);
+        totalEarned += totalStars;
       });
       
       setZoneProgress(progressData);
-      setOverallProgress({
-        earnedStars: totalEarnedStars,
-        totalStars: totalPossibleStars,
-        percentage: Math.round((totalEarnedStars / totalPossibleStars) * 100) || 0
-      });
+      setOverallProgress(prev => ({
+        ...prev,
+        earnedStars: totalEarned,
+        percentage: Math.min(100, Math.round((totalEarned / prev.totalStars) * 100))
+      }));
       
-      console.log('📊 Zone progress loaded:', progressData);
-      console.log('📊 Overall progress:', { totalEarnedStars, totalPossibleStars });
     } catch (error) {
-      console.error('Error loading zone progress:', error);
-      setZoneProgress({});
+      console.error('Error loading progress:', error);
     }
   };
   
   const handleZoneClick = (zone) => {
-    console.log('🎯 Zone clicked:', zone.id);
     setSelectedZone(zone);
-    
-    // Simple navigation - just pass zone ID to parent
+    setShowZoneModal(true);
+  };
+
+  const handleStartZone = (zone) => {
     if (onZoneSelect) {
       onZoneSelect(zone.id);
     }
   };
 
-  /*const isZoneUnlocked = (zone) => {
-    // For now, keep the simple unlock logic
-    if (zone.id === 'about-me-hut' || zone.id === 'story-treehouse' || zone.id === 'symbol-mountain') {
-      return true;
-    }
-    
-    // Check if zone meets star requirements
-    return overallProgress.earnedStars >= (zone.requiredStars || 0);
-  };*/
+  const isZoneUnlocked = (zone) => true; // All unlocked
 
-  const isZoneUnlocked = (zone) => {
-  // All zones unlocked for child exploration
-  return true;
-};
-
-  const getZoneStars = (zoneId) => {
-    const progress = zoneProgress[zoneId];
-    return progress ? progress.stars : 0;
-  };
-
-  const getZoneCompletionPercentage = (zoneId) => {
-    const progress = zoneProgress[zoneId];
-    return progress ? progress.percentage : 0;
-  };
-  
   return (
-    <div className={`clean-map-container ${orientation}`}>
+    <div className={`clean-map-container ${animationsEnabled ? 'animations-enabled' : ''}`}>
       {/* Map Background */}
       <div className="clean-map-background">
         <img 
           src="/images/map-background.png" 
           alt="Map Background"
           className="map-background-image"
-          onError={(e) => {
-            e.target.style.display = 'none';
-          }}
+        />
+        <img 
+          src="/images/fun zone gate.png" 
+          alt="Fun Zone Gate"
+          className="fun-zone-gate"
         />
       </div>
       
       {/* Zone Markers */}
-      {zones.map(zone => {
-        const position = pathZonePositions[zone.id]?.[orientation] || { x: 50, y: 50 };
+      {zones.map((zone, index) => {
         const isUnlocked = isZoneUnlocked(zone);
-        const zoneStars = getZoneStars(zone.id);
-        const completionPercentage = getZoneCompletionPercentage(zone.id);
+        const progress = zoneProgress[zone.id];
+        const zoneStars = progress ? progress.stars : 0;
+        const completionPercentage = progress ? progress.percentage : 0;
         const isCompleted = completionPercentage >= 100;
         
         return (
           <div
             key={zone.id}
-            className={`clean-zone-marker ${isUnlocked ? 'unlocked' : 'locked'} ${isCompleted ? 'completed' : ''} ${selectedZone?.id === zone.id ? 'selected' : ''}`}
+            // IMPORTANT: specific class `zone-${zone.id}` added here for CSS positioning
+            className={`clean-zone-marker zone-${zone.id} ${isUnlocked ? 'unlocked' : 'locked'} ${isCompleted ? 'completed' : ''} ${selectedZone?.id === zone.id ? 'selected' : ''}`}
+            // IMPORTANT: No 'left' or 'top' here anymore. Only animation delay.
             style={{
-              left: `${position.x}%`,
-              top: `${position.y}%`
+              animationDelay: animationsEnabled ? `${index * 0.2}s` : '0s'
             }}
             onClick={() => isUnlocked && handleZoneClick(zone)}
           >
-            {/* Zone Sequence Number */}
+            {/* Sequence Number */}
             <div className="zone-sequence-number">
               {zone.sequence}
             </div>
 
-            {/* Zone Icon */}
+            {/* Icon */}
             <div className="clean-zone-icon-wrapper">
               <img 
                 src={zoneImages[zone.id]} 
@@ -239,7 +214,6 @@ const CleanMapZone = ({ onZoneSelect, currentZone, highlightedScene }) => {
                 {zoneEmojis[zone.id]}
               </div>
               
-              {/* Lock overlay for locked zones */}
               {!isUnlocked && (
                 <div className="clean-lock-overlay">
                   <span className="clean-lock-icon">🔒</span>
@@ -247,20 +221,18 @@ const CleanMapZone = ({ onZoneSelect, currentZone, highlightedScene }) => {
               )}
             </div>
             
-            {/* Zone Label */}
+            {/* Label & Stars */}
             <div className="clean-zone-integrated-label">
               <span className="clean-zone-name">{zone.name}</span>
               {isUnlocked && (
                 <div className="clean-zone-stars">
-                  {'⭐'.repeat(Math.min(zoneStars, 3))} {'☆'.repeat(Math.max(0, 3 - zoneStars))}
-                  {zoneStars > 3 && (
-                    <span className="extra-stars"> +{zoneStars - 3}</span>
-                  )}
+                  {'⭐'.repeat(Math.min(zoneStars, 3))}
+                  {zoneStars > 3 && <span className="extra-stars"> +{zoneStars - 3}</span>}
                 </div>
               )}
             </div>
 
-            {/* Zone Progress Indicator */}
+            {/* Mini Progress Bar */}
             {isUnlocked && completionPercentage > 0 && (
               <div className="zone-progress-indicator">
                 <div 
@@ -282,9 +254,44 @@ const CleanMapZone = ({ onZoneSelect, currentZone, highlightedScene }) => {
           />
         </div>
         <span className="clean-progress-text">
-          Journey Progress: {overallProgress.earnedStars} / {overallProgress.totalStars} Stars ({overallProgress.percentage}%)
+          Journey Progress: {overallProgress.earnedStars} / {overallProgress.totalStars} Stars
         </span>
       </div>
+
+      {/* Ganesha Decoration */}
+      <div className="map-ganesha-character">
+        <img 
+          src="/images/welcome-ganesha.png" 
+          alt="Ganesha"
+          className="map-ganesha-image"
+        />
+      </div>
+
+      {/* Back Button */}
+      <button 
+        className="map-back-button" 
+        onClick={onBackToWelcome}
+      >
+        ← Back
+      </button>
+
+      {/* Header */}
+      <div className="map-header">
+        <h1 className="map-header-text">Click on any zone to begin! 🗺️</h1>
+      </div>
+
+      {/* Preview Modal */}
+      {showZoneModal && selectedZone && (
+        <ZonePreviewModal
+          zone={selectedZone}
+          onClose={() => {
+            setShowZoneModal(false);
+            setSelectedZone(null);
+          }}
+          onStartZone={handleStartZone}
+          progress={zoneProgress[selectedZone.id]}
+        />
+      )}
     </div>
   );
 };

@@ -4,6 +4,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useSafeClick } from './hooks/useSafeClick';
+import UniversalPauseButton from './UniversalPauseButton';
+import PauseModal from './PauseModal';
 
 const AutoPlayMode = ({
   // Config and assets
@@ -62,6 +64,9 @@ const AutoPlayMode = ({
   // Wait banner
   const [waitBannerMessage, setWaitBannerMessage] = useState('');
   const [showWaitBanner, setShowWaitBanner] = useState(false);
+
+  // ⭐ NEW: Pause state
+const [showPauseModal, setShowPauseModal] = useState(false);
   
   // Refs for cleanup
   const timeoutsRef = useRef([]);
@@ -211,6 +216,109 @@ const AutoPlayMode = ({
     setShowWaitBanner(true);
     safeSetTimeout(() => setShowWaitBanner(false), 1500);
   };
+
+  // ⭐ NEW: Pause handlers
+const handlePause = () => {
+  console.log('🎮 Pause clicked in auto mode');
+  setShowPauseModal(true);
+  clearAllTimers();
+};
+
+const handleContinue = () => {
+  console.log('🎮 Continuing auto mode');
+  setShowPauseModal(false);
+  
+  if (gamePhase === 'listening') {
+    console.log('🎮 Resuming listening phase - re-enabling clicks');
+    setCanPlayerClick(true);
+    setIsSequencePlaying(false);
+  } else if (gamePhase === 'waiting') {
+    console.log('🎮 Resuming from waiting - starting countdown');
+    startCountdown();
+  } else if (gamePhase === 'playing') {
+    console.log('🎮 Resuming from playing - replaying sequence');
+    playSequence();
+    } else if (gamePhase === 'celebration') {
+  console.log('🎮 Resuming from celebration - checking if round complete');
+  
+  if (playerInput.length === currentSequence.length) {
+    console.log('🎮 Round complete - advancing');
+    
+    const maxRound = Object.keys(gameConfig.syllables).length;
+    if (currentRound < maxRound) {
+      safeSetTimeout(() => {
+        startNewRound(currentRound + 1);
+      }, 500);
+    } else {
+      safeSetTimeout(() => {
+        handlePhaseComplete();
+      }, 500);
+    }
+  } else {
+    console.log('⚠️ Round not complete, returning to listening');
+    setGamePhase('listening');
+    setCanPlayerClick(true);
+  }
+  } else if (gamePhase === 'success') {
+    // ⭐ NEW: Handle resume from success phase
+    console.log('🎮 Resuming from success - advancing to next round');
+    if (currentRound < 3) {
+      // More rounds to go - start next round
+      safeSetTimeout(() => {
+        startNewRound(currentRound + 1);
+        safeSetTimeout(() => startCountdown(), 500);
+      }, 500);
+    } else {
+      // All rounds complete - trigger game complete
+      safeSetTimeout(() => {
+        setGamePhase('phase_complete');
+        if (onPhaseComplete) {
+          onPhaseComplete({
+            learnedSyllables: Object.keys(activatedElephants),
+            gameId: gameConfig.id
+          });
+        }
+      }, 500);
+    }
+  }
+};
+
+const handleExitToMenu = () => {
+  console.log('🎮 Exiting auto-play - back to mode selection');
+  
+  // Save progress
+  if (onSaveGameState) {
+    onSaveGameState({
+      gamePhase,
+      currentRound,
+      visualRewards,
+      activatedElephants,
+      savedAt: Date.now(),
+      gameId: gameConfig.id
+    });
+  }
+  
+  // Close modal
+  setShowPauseModal(false);
+  
+  // Reset auto mode to initial state
+  setGamePhase('waiting');
+  setCurrentRound(1);
+  setCurrentSequence([]);
+  setPlayerInput([]);
+  setCanPlayerClick(false);
+  setIsSequencePlaying(false);
+  
+  // Tell parent we're exiting (parent will show mode selection again)
+  if (onPhaseComplete) {
+    onPhaseComplete({
+      learnedSyllables: Object.keys(visualRewards).map(key => key.replace('visual-', '')),
+      visualRewards,
+      activatedElephants,
+      isEarlyExit: true // ← Flag that we didn't complete all rounds
+    });
+  }
+};
 
   // 🛡️ Enhanced elephant click with safety
   const handleElephantClick = (syllableIndex) => {
@@ -839,6 +947,21 @@ const AutoPlayMode = ({
       height: '100%',
       zIndex: 20
     }}>
+
+        {/* ⭐ NEW: Pause Button */}
+    {!hideElements && (
+      <UniversalPauseButton 
+        onPause={handlePause}
+        disabled={gamePhase === 'phase_complete'}
+      />
+    )}
+
+    {/* ⭐ NEW: Pause Modal */}
+    <PauseModal
+      isOpen={showPauseModal}
+      onContinue={handleContinue}
+      onExit={handleExitToMenu}
+    />
       
       {/* Progress indicator */}
       {!hideElements && (

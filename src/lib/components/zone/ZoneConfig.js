@@ -1,4 +1,4 @@
-// ZoneConfig.js - Updated to ensure temple unlocks after pond
+// ZoneConfig.js - Updated with scene icon image paths
 // Path: lib/components/zone/ZoneConfig.js
 
 export const ZONE_CONFIGS = {
@@ -17,335 +17,278 @@ export const ZONE_CONFIGS = {
         id: 'modak',
         name: 'Modak Forest',
         emoji: '🍯',
+        iconImage: '/images/zones/symbol-mountain/modak-icon.png',
         description: 'Help Mooshika collect sweet modaks',
         unlocked: true,
-        order: 1,  // ✅ FIRST SCENE
+        order: 1,
         position: { top: 25, left: 25 }
       },
       {
         id: 'pond',
         name: 'Sacred Pond',
         emoji: '🪷',
+        iconImage: '/images/zones/symbol-mountain/pond-icon.png',
         description: 'Find lotus flowers and meet the elephant',
-        unlocked: false,  // Will be unlocked after modak
-        order: 2,  // ✅ SECOND SCENE
-        position: { top: 25, left: 75 }
-      },
-      
-      {
-  id: 'symbol',
-  name: 'Sacred Tusk',
-  emoji: '🐘',
-  description: 'Master the musical tusk assembly',
-  unlocked: false,
-  order: 3,
-  position: { top: 25, left: 50 }
-},
-    {
-  id: 'final-scene',
-  name: 'Sacred Assembly',
-  emoji: '🕉️', 
-  description: 'Assemble all sacred symbols to awaken Ganesha',
-  unlocked: false,
-  order: 4,
-  position: { top: 75, left: 30 }
-}
-    ]
-  },
-
-'cave-of-secrets': {
-  id: 'cave-of-secrets',
-  name: 'Cave of Secrets',
-  icon: '🕳️',
-  background: '/images/cave-of-secrets-background.png',
-  description: 'Discover the complete Vakratunda Mahakaya mantra through mystical cave adventures.',
-  unlocked: false,
-  totalStars: 40,  // 5 scenes × 8 stars each
-  requiredStars: 12, // Unlock after completing Symbol Mountain
-  sequence: 4,
-  scenes: [
-    {
-      id: 'vakratunda-mahakaya',
-      name: 'Vakratunda Mahakaya',
-      emoji: '🐘',
-      description: 'Learn about Ganesha\'s curved trunk and mighty form',
-      unlocked: false,
-      order: 1,
-      position: { top: 25, left: 20 }
-    },
-    {
-      id: 'suryakoti-samaprabha', 
-      name: 'Surya Koti Samaprabha',
-      emoji: '☀️',
-      description: 'Awaken a million suns and discover divine brilliance',
-      unlocked: false,
-      order: 2,
-      position: { top: 35, left: 45 }
-    },
-    {
-      id: 'nirvighnam-kurumedeva',
-      name: 'Nirvighnam Kurume Deva',
-      emoji: '🛤️', 
-      description: 'Clear obstacles with divine power and build bridges',
-      unlocked: false,
-      order: 3,
-      position: { top: 60, left: 25 }
-    },
-    {
-      id: 'sarvakaryeshu-sarvada',
-      name: 'Sarvakaryeshu Sarvada',
-      emoji: '🌟',
-      description: 'Experience divine presence in all daily activities',
-      unlocked: false,
-      order: 4,
-      position: { top: 70, left: 55 }
-    },
-    {
-      id: 'mantra-assembly',
-      name: 'Sacred Mantra Assembly',
-      emoji: '🕉️',
-      description: 'Assemble the complete Vakratunda Mahakaya mantra',
-      unlocked: false,
-      order: 5,
-      position: { top: 45, left: 75 }
-    }
-  ]
-},
-
-  'obstacle-forest': {
-    id: 'obstacle-forest',
-    name: 'Obstacle Forest',
-    icon: '🌊',
-    background: '/images/obstacle-forest.png',
-    description: 'Navigate through challenges with courage and wit.',
-    unlocked: false,
-    totalStars: 12,
-    requiredStars: 25,
-    sequence: 5,
-    scenes: [
-      {
-        id: 'fallen-logs',
-        name: 'Fallen Logs',
-        emoji: '🪵',
-        description: 'Cross the river using fallen logs',
-        unlocked: false,
-        order: 1,
-        position: { top: 50, left: 25 }
-      },
-      {
-        id: 'thorny-maze',
-        name: 'Thorny Maze',
-        emoji: '🌿',
-        description: 'Find your way through the thorny maze',
         unlocked: false,
         order: 2,
-        position: { top: 35, left: 65 }
+        position: { top: 25, left: 75 }
       },
       {
-        id: 'muddy-path',
-        name: 'Muddy Path',
-        emoji: '🥾',
-        description: 'Navigate the slippery muddy trail',
+        id: 'symbol',
+        name: 'Sacred Tusk',
+        emoji: '😀',
+        iconImage: '/images/zones/symbol-mountain/tusk-icon.png',
+        description: 'Master the musical tusk assembly',
         unlocked: false,
         order: 3,
-        position: { top: 70, left: 45 }
+        position: { top: 25, left: 50 }
       },
       {
-        id: 'rope-bridge',
-        name: 'Rope Bridge',
-        emoji: '🌉',
-        description: 'Cross the dangerous rope bridge',
+        id: 'final-scene',
+        name: 'Sacred Assembly',
+        emoji: '🕉️',
+        iconImage: '/images/zones/symbol-mountain/assembly-icon.png',
+        description: 'Assemble all sacred symbols to awaken Ganesha',
         unlocked: false,
         order: 4,
-        position: { top: 25, left: 40 }
+        position: { top: 75, left: 30 }
       }
     ]
   },
 
-  // Add this to your ZoneConfig.js
-'shloka-river': {
-  id: 'shloka-river',
-  name: 'Shloka River',
-  icon: '🌊',
-  emoji: '🌊', 
-  background: 'images/shloka-river-bg.png', // Your background image
-  description: 'Learn sacred Sanskrit shlokas by the flowing river of wisdom',
-  theme: 'water-wisdom',
-  difficulty: 'intermediate',
-  learningFocus: 'Sanskrit shloka recitation',
-  
-  // ✅ Your 5 scenes in order
-  scenes: [
-    {
-      id: 'vakratunda-grove',
-      name: 'Vakratunda Grove',
-      emoji: '🌳',
-      order: 1,
-      description: 'Learn the opening verse in the sacred grove'
-    },
-    {
-      id: 'suryakoti-bank', 
-      name: 'Suryakoti Bank',
-      emoji: '☀️',
-      order: 2,
-      description: 'Discover the radiance verse by the river bank'
-    },
-    {
-      id: 'nirvighnam-chant',
-      name: 'Nirvighnam Chant', 
-      emoji: '🎵',
-      order: 3,
-      description: 'Master the obstacle-removing chant'
-    },
-    {
-      id: 'sarvakaryeshu-chant',
-      name: 'Sarvakaryeshu Chant',
-      emoji: '🕉️', 
-      order: 4,
-      description: 'Learn the all-accomplishing verse'
-    },
-    {
-      id: 'shloka-river-finale',
-      name: 'Shloka River Finale',
-      emoji: '🎊',
-      order: 5, 
-      description: 'Complete the full shloka by the sacred waters'
-    }
-  ]
-},
+  'cave-of-secrets': {
+    id: 'cave-of-secrets',
+    name: 'Cave of Secrets',
+    icon: '🕳️',
+    background: '/images/cave-of-secrets-background.png',
+    description: 'Discover the complete Vakratunda Mahakaya mantra through mystical cave adventures.',
+    unlocked: false,
+    totalStars: 40,
+    requiredStars: 12,
+    sequence: 4,
+    scenes: [
+      {
+        id: 'vakratunda-mahakaya',
+        name: 'Vakratunda Mahakaya',
+        emoji: '😀',
+        iconImage: '/images/zones/cave-of-secrets/vakratunda-icon.png',
+        description: 'Learn about Ganesha\'s curved trunk and mighty form',
+        unlocked: false,
+        order: 1,
+        position: { top: 25, left: 20 }
+      },
+      {
+        id: 'suryakoti-samaprabha', 
+        name: 'Surya Koti Samaprabha',
+        emoji: '☀️',
+        iconImage: '/images/zones/cave-of-secrets/suryakoti-icon.png',
+        description: 'Awaken a million suns and discover divine brilliance',
+        unlocked: false,
+        order: 2,
+        position: { top: 35, left: 45 }
+      },
+      {
+        id: 'nirvighnam-kurumedeva',
+        name: 'Nirvighnam Kurume Deva',
+        emoji: '🛤️',
+        iconImage: '/images/zones/cave-of-secrets/nirvighnam-icon.png',
+        description: 'Clear obstacles with divine power and build bridges',
+        unlocked: false,
+        order: 3,
+        position: { top: 60, left: 25 }
+      },
+      {
+        id: 'sarvakaryeshu-sarvada',
+        name: 'Sarvakaryeshu Sarvada',
+        emoji: '🌟',
+        iconImage: '/images/zones/cave-of-secrets/sarvakaryeshu-icon.png',
+        description: 'Experience divine presence in all daily activities',
+        unlocked: false,
+        order: 4,
+        position: { top: 70, left: 55 }
+      },
+      {
+        id: 'final-meaning-scene',
+        name: 'Memory Match Finale',
+        emoji: '🎴',
+        iconImage: '/images/zones/cave-of-secrets/finale-icon.png',
+        description: 'Match symbols with meanings in the final challenge',
+        unlocked: false,
+        order: 5,
+        position: { top: 80, left: 35 }
+      }
+    ]
+  },
+
+  'shloka-river': {
+    id: 'shloka-river',
+    name: 'Shloka River',
+    icon: '🌊',
+    emoji: '🌊', 
+    background: 'images/shloka-river-bg.png',
+    description: 'Learn sacred Sanskrit shlokas by the flowing river of wisdom',
+    theme: 'water-wisdom',
+    difficulty: 'intermediate',
+    learningFocus: 'Sanskrit shloka recitation',
+    scenes: [
+      {
+        id: 'vakratunda-grove',
+        name: 'Vakratunda Grove',
+        emoji: '🌳',
+        iconImage: '/images/zones/shloka-river/vakratunda-grove-icon.png',
+        order: 1,
+        description: 'Learn the opening verse in the sacred grove'
+      },
+      {
+        id: 'suryakoti-bank', 
+        name: 'Suryakoti Bank',
+        emoji: '☀️',
+        iconImage: '/images/zones/shloka-river/suryakoti-bank-icon.png',
+        order: 2,
+        description: 'Discover the radiance verse by the river bank'
+      },
+      {
+        id: 'nirvighnam-chant',
+        name: 'Nirvighnam Chant', 
+        emoji: '🎵',
+        iconImage: '/images/zones/shloka-river/nirvighnam-chant-icon.png',
+        order: 3,
+        description: 'Master the obstacle-removing chant'
+      },
+      {
+        id: 'sarvakaryeshu-chant',
+        name: 'Sarvakaryeshu Chant',
+        emoji: '🕉️',
+        iconImage: '/images/zones/shloka-river/sarvakaryeshu-chant-icon.png',
+        order: 4,
+        description: 'Learn the all-accomplishing verse'
+      },
+      {
+        id: 'shloka-river-finale',
+        name: 'Shloka River Finale',
+        emoji: '🎊',
+        iconImage: '/images/zones/shloka-river/finale-icon.png',
+        order: 5, 
+        description: 'Complete the full shloka by the sacred waters'
+      }
+    ]
+  },
+
+  'festival-square': {
+    id: 'festival-square',
+    name: 'Festival Square',
+    icon: '🎉',
+    background: '/images/festivalsquare-bg.png',
+    description: 'Celebrate with music, art, cooking, and decoration games!',
+    unlocked: true,
+    totalStars: 24,
+    requiredStars: 40,
+    sequence: 6,
+    scenes: [
+      {
+        id: 'game1',
+        name: 'Festival Piano',
+        emoji: '🎹',
+        iconImage: '/images/zones/festival-square/piano-icon.png',
+        description: 'Play beautiful melodies on the festival piano',
+        unlocked: true,
+        order: 1,
+        position: { top: 35, left: 25 }
+      },
+      {
+        id: 'game2',
+        name: 'Rangoli Art Booth',
+        emoji: '🎨',
+        iconImage: '/images/zones/festival-square/rangoli-icon.png',
+        description: 'Create colorful rangoli patterns',
+        unlocked: true,
+        order: 2,
+        position: { top: 50, left: 60 }
+      },
+      {
+        id: 'game3',
+        name: 'Modak Cooking',
+        emoji: '🍯',
+        iconImage: '/images/zones/festival-square/modak-cooking-icon.png',
+        description: 'Cook delicious modaks for the festival',
+        unlocked: true,
+        order: 3,
+        position: { top: 70, left: 40 }
+      },
+      {
+        id: 'game4',
+        name: 'Mandap Decoration',
+        emoji: '🛕',
+        iconImage: '/images/zones/festival-square/mandap-icon.png',
+        description: 'Decorate the beautiful festival mandap',
+        unlocked: true,
+        order: 4,
+        position: { top: 25, left: 55 }
+      }
+    ]
+  },
 
   'about-me-hut': {
     id: 'about-me-hut',
     name: 'About Me Hut',
-    icon: '🌲',
-    background: '/images/about-me-hut.png',
-    description: 'Start your journey! Discover your inner self and personal growth.',
+    icon: '🏡',
+    emoji: '🏡',
+    background: '/images/about-me-hut-bg.png',
+    description: 'Get to know baby Ganesha through fun interactive games!',
+    theme: 'personal-discovery',
+    difficulty: 'beginner',
+    learningFocus: 'Self-introduction and family relationships',
     unlocked: true,
-    totalStars: 9,
+    totalStars: 11,
     requiredStars: 0,
-    sequence: 1,
+    sequence: 5,
     scenes: [
       {
-        id: 'mirror-room',
-        name: 'Mirror Room',
-        emoji: '🪞',
-        description: 'Look into the magical mirror and discover yourself',
+        id: 'game1',
+        name: 'Family Tree',
+        emoji: '👨‍👩‍👦',
+        iconImage: '/images/zones/about-me-hut/family-tree-icon.png',
+        description: 'Help Ganesha complete his family tree',
         unlocked: true,
         order: 1,
-        position: { top: 40, left: 35 }
+        totalStars: 4,
+        position: { top: 30, left: 25 }
       },
       {
-        id: 'memory-chest',
-        name: 'Memory Chest',
-        emoji: '📦',
-        description: 'Open the chest and explore your memories',
-        unlocked: false,
-        order: 2,
-        position: { top: 65, left: 65 }
-      },
-      {
-        id: 'dream-cloud',
-        name: 'Dream Cloud',
-        emoji: '☁️',
-        description: 'Float on the cloud and share your dreams',
-        unlocked: false,
-        order: 3,
-        position: { top: 25, left: 60 }
-      }
-    ]
-  },
-
-  'story-treehouse': {
-    id: 'story-treehouse',
-    name: 'Story Treehouse',
-    icon: '🏜️',
-    background: '/images/story-treehouse.png',
-    description: 'Listen to magical tales from ancient times.',
-    unlocked: true,
-    totalStars: 21,
-    requiredStars: 0,
-    sequence: 2,
-    scenes: [
-      {
-        id: 'magic-tree',
-        name: 'Magic Tree',
-        emoji: '🌳',
-        description: 'Climb the ancient storytelling tree',
+        id: 'game2',
+        name: 'My Favorite Things',
+        emoji: '�',
+        iconImage: '/images/zones/about-me-hut/favorite-things-icon.png',
+        description: 'Find Ganesha\'s favorite food and best friend',
         unlocked: true,
-        order: 1,
-        position: { top: 55, left: 30 }
-      },
-      {
-        id: 'book-nook',
-        name: 'Book Nook',
-        emoji: '📚',
-        description: 'Read magical stories in the cozy nook',
-        unlocked: false,
         order: 2,
-        position: { top: 35, left: 65 }
+        totalStars: 2,
+        position: { top: 50, left: 60 }
       },
       {
-        id: 'story-stage',
-        name: 'Story Stage',
-        emoji: '🎭',
-        description: 'Perform your own stories on the stage',
-        unlocked: false,
+        id: 'game3',
+        name: 'Obstacle Remover',
+        emoji: '🪔',
+        iconImage: '/images/zones/about-me-hut/obstacle-remover-icon.png',
+        description: 'Clear obstacles with joy, peace, and love',
+        unlocked: true,
         order: 3,
-        position: { top: 70, left: 55 }
+        totalStars: 3,
+        position: { top: 70, left: 35 }
+      },
+      {
+        id: 'game4',
+        name: 'Name & Birthday',
+        emoji: '🎈',
+        iconImage: '/images/zones/about-me-hut/name-birthday-icon.png',
+        description: 'Spell GANESHA and find his birthday festival',
+        unlocked: true,
+        order: 4,
+        totalStars: 2,
+        position: { top: 40, left: 70 }
       }
     ]
-  },
-
- 'festival-square': {
-  id: 'festival-square',
-  name: 'Festival Square',
-  icon: '🎉',
-  background: '/images/festivalsquare-bg.png',
-  description: 'Celebrate with music, art, cooking, and decoration games!',
-  unlocked: true,
-  totalStars: 24, // 4 games × 6 stars each
-  requiredStars: 40,
-  sequence: 6,
-  scenes: [
-    {
-      id: 'game1', // ✅ Match App.jsx scene IDs
-      name: 'Festival Piano',
-      emoji: '🎹',
-      description: 'Play beautiful melodies on the festival piano',
-      unlocked: true, // ✅ All games unlocked from start
-      order: 1,
-      position: { top: 35, left: 25 }
-    },
-    {
-      id: 'game2', // ✅ Match App.jsx scene IDs  
-      name: 'Rangoli Art Booth',
-      emoji: '🎨',
-      description: 'Create colorful rangoli patterns',
-      unlocked: true, // ✅ All games unlocked from start
-      order: 2,
-      position: { top: 50, left: 60 }
-    },
-    {
-      id: 'game3', // ✅ Match App.jsx scene IDs
-      name: 'Modak Cooking',
-      emoji: '🍯',
-      description: 'Cook delicious modaks for the festival',
-      unlocked: true, // ✅ All games unlocked from start
-      order: 3,
-      position: { top: 70, left: 40 }
-    },
-    {
-      id: 'game4', // ✅ Match App.jsx scene IDs
-      name: 'Mandap Decoration',
-      emoji: '🏛️',
-      description: 'Decorate the beautiful festival mandap',
-      unlocked: true, // ✅ All games unlocked from start
-      order: 4,
-      position: { top: 25, left: 55 }
-    }
-  ]
-}
-  
+  }
 };
 
 // Helper functions for zone management
@@ -370,9 +313,8 @@ export const getSceneById = (zoneId, sceneId) => {
 export const getUnlockedScenes = (zoneId, progressData = {}) => {
   const scenes = getZoneScenes(zoneId);
   return scenes.filter(scene => {
-    if (scene.order === 1) return true; // First scene always unlocked
+    if (scene.order === 1) return true;
     
-    // Check if previous scene is completed
     const previousScene = scenes.find(s => s.order === scene.order - 1);
     if (!previousScene) return false;
     

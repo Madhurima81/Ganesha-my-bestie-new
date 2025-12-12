@@ -1,0 +1,1135 @@
+/* FestivalPianoGame.css - Enhanced with Challenge Mode */
+
+/* Base container */
+.festival-piano-game {
+  width: 100vw;
+  height: 100vh;
+  background: url('./assets/images/pianogame-bg.png') center/cover no-repeat;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ===== MODE SELECTION SCREEN ===== */
+.mode-selection-screen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.mode-title {
+  font-size: 3.5rem;
+  color: #fff;
+  margin: 0 0 10px 0;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+  animation: float 3s ease-in-out infinite;
+}
+
+.mode-subtitle {
+  font-size: 1.5rem;
+  color: #f0f0f0;
+  margin: 0 0 50px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.mode-cards {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.mode-card {
+  background: white;
+  border-radius: 25px;
+  padding: 25px 20px;
+  width: 280px;
+  max-height: 450px;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.mode-card:hover {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+.mode-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+.mode-card h2 {
+  font-size: 2rem;
+  color: #333;
+  margin: 0 0 15px 0;
+}
+
+.mode-card p {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0 0 25px 0;
+}
+
+.mode-features {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.mode-features span {
+  font-size: 0.95rem;
+  color: #555;
+  padding: 8px;
+  background: #f5f5f5;
+  border-radius: 10px;
+}
+
+.mode-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.mode-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.5);
+}
+
+.challenge-button {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.challenge-button:hover {
+  box-shadow: 0 5px 15px rgba(245, 87, 108, 0.5);
+}
+
+.progress-summary {
+  display: flex;
+  gap: 60px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 25px 60px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.summary-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.stat-icon {
+  font-size: 2.5rem;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #f0f0f0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ===== SIMPLIFIED SONG SELECTION (2x2 Grid) ===== */
+.simple-song-selection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.simple-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 30px;
+}
+
+.simple-back {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+  border: 2px solid white;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 15px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.simple-title {
+  font-size: 2.5rem;
+  color: white;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.simple-stars {
+  background: white;
+  color: #f5576c;
+  padding: 10px 20px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-radius: 15px;
+}
+
+.songs-grid-simple {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 20px;
+  max-width: 800px;
+  max-height: 600px;
+  width: 100%;
+}
+
+.song-card-simple {
+  background: white;
+  border-radius: 20px;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+  min-height: 250px;
+}
+
+.song-card-simple:hover:not(.locked) {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.song-card-simple.completed {
+  border: 3px solid #4CAF50;
+  background: linear-gradient(135deg, #fff 0%, #e8f5e9 100%);
+}
+
+.song-card-simple.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.song-icon-big {
+  font-size: 4rem;
+  margin-bottom: 15px;
+}
+
+.song-name-simple {
+  font-size: 1.5rem;
+  color: #333;
+  margin: 0 0 8px 0;
+  text-align: center;
+}
+
+.song-type-simple {
+  font-size: 0.95rem;
+  color: #666;
+  margin: 0 0 15px 0;
+  text-align: center;
+}
+
+.song-difficulty-simple {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.star-filled {
+  font-size: 1.2rem;
+}
+
+.completed-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #4CAF50;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.locked-badge {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lock {
+  font-size: 3rem;
+}
+
+/* ===== SIMPLIFIED CHALLENGE HEADER (2 Buttons Only) ===== */
+.challenge-header-simple {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 20px 30px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  backdrop-filter: blur(10px);
+}
+
+.song-title-simple {
+  font-size: 1.8rem;
+  color: #333;
+  margin: 0 0 15px 0;
+}
+
+.simple-controls {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.simple-play-button,
+.simple-record-button {
+  background: white;
+  color: #333;
+  border: 2px solid #4CAF50;
+  padding: 12px 25px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.simple-play-button:hover:not(:disabled) {
+  background: #4CAF50;
+  color: white;
+  transform: scale(1.05);
+}
+
+.simple-record-button {
+  border-color: #f44336;
+  color: #f44336;
+}
+
+.simple-record-button:hover:not(:disabled) {
+  background: #f44336;
+  color: white;
+  transform: scale(1.05);
+}
+
+.simple-record-button.recording {
+  background: #f44336;
+  color: white;
+  animation: pulse-record 1.5s ease-in-out infinite;
+}
+
+.simple-play-button:disabled,
+.simple-record-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.progress-dots-simple {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.progress-dots-simple .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ddd;
+  transition: all 0.3s ease;
+}
+
+.progress-dots-simple .dot.done {
+  background: #4CAF50;
+  transform: scale(1.2);
+}
+
+.progress-dots-simple .dot.now {
+  background: #f5576c;
+  transform: scale(1.4);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+/* ===== SONG SELECTION SCREEN ===== */
+.challenge-mode {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.song-selection-screen {
+  width: 100%;
+  height: 100%;
+  padding: 40px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.challenge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  padding: 0 20px;
+}
+
+.challenge-header h1 {
+  font-size: 3rem;
+  color: white;
+  margin: 0;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.back-button {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+  border: 2px solid white;
+  padding: 12px 25px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  backdrop-filter: blur(5px);
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(1.05);
+}
+
+.challenge-stars {
+  background: white;
+  color: #f5576c;
+  padding: 12px 25px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-radius: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.songs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-bottom: 100px;
+}
+
+.song-card {
+  background: white;
+  border-radius: 20px;
+  padding: 25px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.song-card:hover:not(.locked) {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.song-card.completed {
+  border: 3px solid #4CAF50;
+  background: linear-gradient(135deg, #fff 0%, #e8f5e9 100%);
+}
+
+.song-card.locked {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.song-icon {
+  font-size: 3.5rem;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.song-name {
+  font-size: 1.5rem;
+  color: #333;
+  margin: 0 0 8px 0;
+  text-align: center;
+}
+
+.song-festival {
+  font-size: 1rem;
+  color: #666;
+  margin: 0 0 15px 0;
+  text-align: center;
+  font-weight: 600;
+}
+
+.song-description {
+  font-size: 0.9rem;
+  color: #777;
+  margin: 0 0 20px 0;
+  text-align: center;
+  min-height: 40px;
+}
+
+.song-difficulty {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 15px;
+}
+
+.difficulty-star {
+  font-size: 1.3rem;
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+}
+
+.difficulty-star.filled {
+  opacity: 1;
+}
+
+.completion-badge-small {
+  background: #4CAF50;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.locked-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.lock-icon {
+  font-size: 3rem;
+}
+
+.unlock-text {
+  color: white;
+  font-size: 0.95rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.piano-base {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  max-width: 1000px;
+  height: 200px;
+}
+
+.piano-keys-frame-simple {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 150px;
+  background: linear-gradient(180deg, rgba(101, 67, 33, 0.8) 0%, rgba(139, 90, 43, 0.9) 100%);
+  border-radius: 15px 15px 0 0;
+  box-shadow: inset 0 -5px 20px rgba(0, 0, 0, 0.3);
+  border: 3px solid rgba(101, 67, 33, 0.9);
+}
+
+.piano-key {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.instrument-icon {
+  width: 100%;
+  height: 100%;
+  background-size: 60%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Add icon backgrounds for each instrument */
+.icon-bells { background-image: url('./assets/images/bell-icon.png'); }
+.icon-cymbals { background-image: url('./assets/images/cymbal-icon.png'); }
+.icon-shehnai { background-image: url('./assets/images/shehnai-icon.png'); }
+.icon-dhol { background-image: url('./assets/images/dhol-icon.png'); }
+.icon-drum { background-image: url('./assets/images/drum-icon.png'); }
+
+/* ===== GAME HEADER ===== */
+.game-header {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+}
+
+.challenge-info {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px 30px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.challenge-info h2 {
+  margin: 0 0 10px 0;
+  font-size: 1.8rem;
+  color: #333;
+}
+
+.song-cultural-note {
+  font-size: 0.95rem;
+  color: #666;
+  font-style: italic;
+  margin: 0 0 15px 0;
+  max-width: 500px;
+  line-height: 1.4;
+}
+
+.demo-recording-controls {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 15px 0;
+  flex-wrap: wrap;
+}
+
+.demo-button,
+.record-button,
+.playback-button,
+.clear-button {
+  background: white;
+  color: #333;
+  border: 2px solid #ddd;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.demo-button:hover:not(:disabled),
+.playback-button:hover:not(:disabled) {
+  background: #4CAF50;
+  color: white;
+  border-color: #4CAF50;
+  transform: scale(1.05);
+}
+
+.record-button {
+  border-color: #f44336;
+  color: #f44336;
+}
+
+.record-button:hover:not(:disabled) {
+  background: #f44336;
+  color: white;
+  transform: scale(1.05);
+}
+
+.record-button.recording {
+  background: #f44336;
+  color: white;
+  animation: pulse-record 1.5s ease-in-out infinite;
+}
+
+.clear-button {
+  border-color: #ff9800;
+  color: #ff9800;
+}
+
+.clear-button:hover:not(:disabled) {
+  background: #ff9800;
+  color: white;
+  transform: scale(1.05);
+}
+
+.give-up-button {
+  background: white;
+  color: #9C27B0;
+  border: 2px solid #9C27B0;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.give-up-button:hover:not(:disabled) {
+  background: #9C27B0;
+  color: white;
+  transform: scale(1.05);
+}
+
+.recording-status {
+  color: #f44336;
+  font-size: 0.95rem;
+  font-weight: bold;
+  margin: 10px 0;
+  padding: 8px 15px;
+  background: rgba(244, 67, 54, 0.1);
+  border-radius: 10px;
+  animation: pulse-record 1.5s ease-in-out infinite;
+}
+
+.demo-button:disabled,
+.record-button:disabled,
+.playback-button:disabled,
+.clear-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.recording-indicator {
+  color: #f44336;
+  font-weight: bold;
+  animation: pulse-record 1.5s ease-in-out infinite;
+}
+
+.progress-dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.progress-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ddd;
+  transition: all 0.3s ease;
+}
+
+.progress-dot.completed {
+  background: #4CAF50;
+  transform: scale(1.2);
+}
+
+.progress-dot.current {
+  background: #f5576c;
+  transform: scale(1.4);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+/* ===== PIANO INTERFACE ===== */
+.piano-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.instrument-key-wrapper {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.instrument-key {
+  width: 120px;
+  height: 120px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+  position: relative;
+  border: 4px solid rgba(255, 255, 255, 0.5);
+}
+
+.instrument-key:hover {
+  transform: scale(1.1);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+}
+
+.instrument-key.active {
+  transform: scale(0.95);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.instrument-key.highlighted-next {
+  animation: pulse-glow 1s ease-in-out infinite;
+  border: 4px solid white;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.key-label {
+  color: white;
+  font-weight: bold;
+  font-size: 0.9rem;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  padding: 0 10px;
+}
+
+.key-label-indian {
+  color: white;
+  font-weight: bold;
+  font-size: 2rem;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  margin-bottom: 5px;
+}
+
+.key-label-english {
+  color: white;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-align: center;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  opacity: 0.9;
+}
+
+.discovery-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  font-size: 1.5rem;
+  animation: sparkle 1s ease-in-out infinite;
+}
+
+.next-key-glow {
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  border-radius: 25px;
+  background: radial-gradient(circle, rgba(255,255,255,0.6) 0%, transparent 70%);
+  animation: pulse-glow 1s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Dancing animals */
+.dancing-animal {
+  position: absolute;
+  bottom: 130px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2.5rem;
+  animation: dance 1s ease-in-out infinite;
+}
+
+/* Sparkle effects */
+.sparkle-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.sparkle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  animation: sparkle-burst 0.6s ease-out forwards;
+}
+
+/* Cultural note popup */
+.cultural-note {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 15px 20px;
+  border-radius: 15px;
+  font-size: 1rem;
+  color: #333;
+  max-width: 250px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  animation: fadeInOut 2s ease-in-out forwards;
+  z-index: 1000;
+  transform: translateX(-50%);
+}
+
+/* Progress counter */
+.progress-counter {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 15px 25px;
+  border-radius: 20px;
+  display: flex;
+  gap: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+}
+
+.progress-counter > div {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.challenge-progress {
+  color: #f5576c;
+}
+
+/* Celebration overlay */
+.celebration-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.celebration-message {
+  background: white;
+  padding: 50px 70px;
+  border-radius: 30px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: scaleIn 0.5s ease-out;
+}
+
+.celebration-message h2 {
+  font-size: 2.5rem;
+  color: #4CAF50;
+  margin: 0 0 15px 0;
+}
+
+.celebration-message p {
+  font-size: 1.5rem;
+  color: #666;
+  margin: 0;
+}
+
+.celebration-confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #FFD700;
+  animation: confetti-fall 3s linear forwards;
+}
+
+/* Wrong feedback */
+.wrong-feedback {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 82, 82, 0.9);
+  color: white;
+  padding: 30px 50px;
+  border-radius: 20px;
+  font-size: 1.8rem;
+  font-weight: bold;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  z-index: 2000;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes pulse-record {
+  0%, 100% { 
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1.4); opacity: 1; }
+  50% { transform: scale(1.6); opacity: 0.8; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 8px 16px rgba(0, 0, 0, 0.3);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(255, 255, 255, 1), 0 12px 24px rgba(0, 0, 0, 0.4);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes dance {
+  0%, 100% { transform: translateX(-50%) rotate(-5deg); }
+  50% { transform: translateX(-50%) rotate(5deg); }
+}
+
+@keyframes sparkle {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.2) rotate(180deg); }
+}
+
+@keyframes sparkle-burst {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--tx, 0), var(--ty, -50px)) scale(0);
+  }
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+  20% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  80% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.5); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes confetti-fall {
+  0% {
+    top: -10%;
+    transform: translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    top: 110%;
+    transform: translateX(var(--tx, 100px)) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translate(-50%, -50%) translateX(0); }
+  25% { transform: translate(-50%, -50%) translateX(-10px); }
+  75% { transform: translate(-50%, -50%) translateX(10px); }
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .mode-cards {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .mode-card {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .songs-grid {
+    grid-template-columns: 1fr;
+    padding: 0 20px 100px 20px;
+  }
+
+  .instrument-key {
+    width: 90px;
+    height: 90px;
+  }
+
+  .key-label {
+    font-size: 0.75rem;
+  }
+
+  .dancing-animal {
+    font-size: 2rem;
+    bottom: 100px;
+  }
+}

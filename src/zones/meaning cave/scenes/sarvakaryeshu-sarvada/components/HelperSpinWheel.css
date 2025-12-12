@@ -1,0 +1,375 @@
+/* zones/cave-of-secrets/scenes/sarvakaryeshu-sarvada/HelperSpinWheel.css */
+
+/* ===================================
+   HELPER SPIN WHEEL CONTAINER
+   =================================== */
+.helper-spin-wheel-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* ===================================
+   INSTRUCTION BANNER
+   =================================== */
+.wheel-instruction-banner {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  padding: 15px 30px;
+  border-radius: 25px;
+  box-shadow: 0 4px 15px rgba(255, 165, 0, 0.4);
+  animation: bannerBounce 2s ease-in-out infinite;
+  z-index: 10;
+}
+
+.wheel-instruction-banner h3 {
+  margin: 0;
+  color: white;
+  font-size: 24px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes bannerBounce {
+  0%, 100% { 
+    transform: translateX(-50%) translateY(0); 
+  }
+  50% { 
+    transform: translateX(-50%) translateY(-8px); 
+  }
+}
+
+/* ===================================
+   WHEEL WRAPPER
+   =================================== */
+.wheel-wrapper {
+  position: relative;
+  width: 400px;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+/* ✨ NEW: WHEEL VANISHING ANIMATION */
+.wheel-wrapper.vanishing {
+  animation: wheelVanish 0.5s ease-out forwards;
+}
+
+@keyframes wheelVanish {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+/* ===================================
+   POINTER ARROW
+   =================================== */
+.wheel-pointer {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 40px;
+  color: #FF6B9D;
+  filter: drop-shadow(0 4px 8px rgba(255, 107, 157, 0.6));
+  z-index: 20;
+  animation: pointerBounce 1s ease-in-out infinite;
+}
+
+@keyframes pointerBounce {
+  0%, 100% { 
+    transform: translateX(-50%) translateY(0); 
+  }
+  50% { 
+    transform: translateX(-50%) translateY(5px); 
+  }
+}
+
+/* ===================================
+   WHEEL CIRCLE
+   =================================== */
+.wheel-circle {
+  position: relative;
+  width: 350px;
+  height: 350px;
+  border-radius: 50%;
+  border: 8px solid white;
+  box-shadow: 
+    0 0 0 4px #FFD700,
+    0 8px 30px rgba(0, 0, 0, 0.3),
+    inset 0 0 50px rgba(255, 215, 0, 0.2);
+  overflow: visible; /* Allow helper images to be visible */
+}
+
+.wheel-circle.spinning {
+  /* Transition handled by inline style */
+}
+
+/* Slice borders for clear division */
+.wheel-slice-borders {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.slice-border {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform-origin: top center;
+}
+
+/* ===================================
+   CENTER ICON
+   =================================== */
+.wheel-center-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 60px;
+  z-index: 15;
+  filter: drop-shadow(0 4px 12px rgba(255, 215, 0, 0.8));
+  animation: centerGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes centerGlow {
+  0% { 
+    filter: drop-shadow(0 4px 12px rgba(255, 215, 0, 0.6));
+  }
+  100% { 
+    filter: drop-shadow(0 4px 20px rgba(255, 215, 0, 1));
+  }
+}
+
+/* ===================================
+   SLICE CONTENT - HELPER IMAGES + TEXT
+   =================================== */
+.slice-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.slice-helper-image {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+  background: white;
+  border-radius: 50%;
+  padding: 5px;
+}
+
+.slice-helper-name {
+  font-size: 13px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  text-shadow: 
+    1px 1px 2px rgba(0, 0, 0, 0.8),
+    -1px -1px 2px rgba(0, 0, 0, 0.8),
+    1px -1px 2px rgba(0, 0, 0, 0.8),
+    -1px 1px 2px rgba(0, 0, 0, 0.8);
+  margin: 0;
+  max-width: 90px;
+  line-height: 1.2;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px 8px;
+  border-radius: 10px;
+}
+
+/* ===================================
+   SPIN BUTTON
+   =================================== */
+.spin-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FF6B9D, #FFD700);
+  border: 6px solid white;
+  box-shadow: 
+    0 0 0 3px #FF6B9D,
+    0 8px 25px rgba(255, 107, 157, 0.5);
+  cursor: pointer;
+  z-index: 25;
+  transition: all 0.3s ease;
+  animation: buttonPulse 2s ease-in-out infinite;
+}
+
+.spin-button:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+  box-shadow: 
+    0 0 0 3px #FF6B9D,
+    0 12px 35px rgba(255, 107, 157, 0.7);
+}
+
+.spin-button:active {
+  transform: translate(-50%, -50%) scale(0.95);
+}
+
+.spin-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@keyframes buttonPulse {
+  0%, 100% { 
+    box-shadow: 
+      0 0 0 3px #FF6B9D,
+      0 8px 25px rgba(255, 107, 157, 0.5);
+  }
+  50% { 
+    box-shadow: 
+      0 0 0 3px #FF6B9D,
+      0 12px 35px rgba(255, 215, 0, 0.7);
+  }
+}
+
+.spin-button-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 5px;
+}
+
+.spin-icon {
+  font-size: 40px;
+}
+
+.spin-text {
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+  margin: 0;
+}
+
+/* ===================================
+   SPINNING MESSAGE
+   =================================== */
+.spinning-message {
+  position: absolute;
+  bottom: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #4ECDC4, #44A08D);
+  padding: 10px 25px;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+  animation: messagePulse 1s ease-in-out infinite;
+}
+
+.spinning-message p {
+  margin: 0;
+  color: white;
+  font-size: 20px;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes messagePulse {
+  0%, 100% { 
+    transform: translateX(-50%) scale(1);
+  }
+  50% { 
+    transform: translateX(-50%) scale(1.05);
+  }
+}
+
+/* ===================================
+   RESPONSIVE DESIGN
+   =================================== */
+@media (max-width: 768px) {
+  .wheel-wrapper {
+    width: 300px;
+    height: 300px;
+  }
+
+  .wheel-circle {
+    width: 280px;
+    height: 280px;
+  }
+
+  .wheel-instruction-banner h3 {
+    font-size: 18px;
+  }
+
+  .spin-button {
+    width: 100px;
+    height: 100px;
+  }
+
+  .spin-icon {
+    font-size: 32px;
+  }
+
+  .spin-text {
+    font-size: 14px;
+  }
+
+  .slice-helper-image {
+    width: 40px;
+    height: 40px;
+  }
+
+  .slice-helper-name {
+    font-size: 10px;
+  }
+}
+
+/* ===================================
+   ACCESSIBILITY
+   =================================== */
+@media (prefers-reduced-motion: reduce) {
+  .wheel-circle {
+    transition: transform 1s linear !important;
+  }
+
+  .bannerBounce,
+  .pointerBounce,
+  .buttonPulse,
+  .messagePulse,
+  .centerGlow {
+    animation: none !important;
+  }
+  
+  /* Keep vanishing animation but make it faster */
+  .wheel-wrapper.vanishing {
+    animation-duration: 0.3s !important;
+  }
+}
+
+.spin-button:focus {
+  outline: 3px solid #4ECDC4;
+  outline-offset: 4px;
+}

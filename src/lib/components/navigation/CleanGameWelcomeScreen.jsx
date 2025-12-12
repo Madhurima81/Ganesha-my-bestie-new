@@ -643,27 +643,35 @@ const handleContinue = () => {
 })()}        
        
 
-  {/* ✨ ENHANCED: Better profile layout */}
+ {/* ✨ ENHANCED: Better profile layout */}
         <div className="enhanced-profile-section">
           <div className="profile-header">
             <div className="profile-avatar-container">
               {(() => {
                 const getAnimalId = (avatarData) => {
-                  // If it's already an animal name, use it
-                  if (typeof avatarData === 'string' && ['owl', 'panda', 'tiger', 'mouse'].includes(avatarData)) {
+                  console.log('🔍 Avatar data in Welcome Screen:', avatarData);
+                  
+                  // If it's already an animal ID from CleanProfileSelector
+                  if (typeof avatarData === 'string' && ['monkey', 'peacock', 'squirrel', 'tiger'].includes(avatarData)) {
+                    console.log('✅ Using animal ID directly:', avatarData);
                     return avatarData;
                   }
                   
-                  // Convert emoji to animal name
+                  // Convert emoji to animal ID (for backwards compatibility)
                   const emojiToAnimal = {
-                    '🦉': 'owl', 
-                    '🐼': 'panda', 
-                    '🐯': 'tiger', 
-                    '🐭': 'mouse',
-                    '😃': 'owl' // Default smiley to owl
+                    '🐵': 'monkey',
+                    '🦚': 'peacock', 
+                    '🐿️': 'squirrel',
+                    '🐯': 'tiger'
                   };
                   
-                  return emojiToAnimal[avatarData] || 'owl';
+                  if (emojiToAnimal[avatarData]) {
+                    console.log('✅ Converted emoji to animal:', emojiToAnimal[avatarData]);
+                    return emojiToAnimal[avatarData];
+                  }
+                  
+                  console.log('⚠️ Fallback to monkey');
+                  return 'monkey';
                 };
 
                 const animalId = getAnimalId(currentProfile.avatar);
@@ -688,121 +696,94 @@ const handleContinue = () => {
             
             <div className="profile-info">
               <h2 className="profile-name-large">{currentProfile.name}</h2>
-              <div className="profile-role">Explorer of Symbol Mountain</div>
+              {/*<div className="profile-role">
+                Explorer of {currentProfile.selectedZone?.name || 'Symbol Mountain'}
+              </div>*/}
             </div>
           </div>
           
-          <button 
-            className="change-explorer-btn"
-            onClick={handleBackToProfiles}
-          >
-            <span className="btn-icon">🔄</span>
-            Choose Different Explorer
-          </button>
+          {/* ONLY SHOW "Choose Different Explorer" button for RETURNING users */}
+          {hasProgress && (
+            <button 
+              className="change-explorer-btn"
+              onClick={handleBackToProfiles}
+            >
+              <span className="btn-icon">🔄</span>
+              Choose Different Explorer
+            </button>
+          )}
         </div>
         
         {/* ✨ NEW: Recent Achievement Banner */}
         <RecentAchievementBanner achievement={getRecentAchievement()} />
         
-        {/* 🔍 DEBUG: Show progress detection (remove in production) 
-        <div className="debug-info">
-          DEBUG: hasProgress = {hasProgress ? 'TRUE' : 'FALSE'} | 
-          Cultural Level: {culturalProgress.level} ({culturalProgress.levelName}) | 
-          Symbols: {culturalProgress.symbols} | Stories: {culturalProgress.stories} | Chants: {culturalProgress.chants}
-        </div>
-        
-        {/* 🌟 ALWAYS show both options when profile is selected */}
-        <div className="overall-progress">
-<h3>{getWelcomeMessage().progressTitle}</h3>          
-          {hasProgress && (
+        {/* PROGRESS CARD - Brown Box (Only for RETURNING users) */}
+        {hasProgress && (
+          <div className="overall-progress">
+            <h3>{getWelcomeMessage().progressTitle}</h3>
+            
+            <div className="compact-stats-container">
+              <div className="level-green-card">
+                <span className="level-header">LEVEL {culturalProgress.level}</span>
+                <div className="level-divider"></div>
+                <div className="level-icon-center">❂</div>
+                <span className="level-role-name">{culturalProgress.levelName}</span>
+              </div>
+
+              <div className="stats-list-vertical">
+                <div className="stat-clean-row">
+                  <span className="stat-icon-clean">⭐</span>
+                  <span className="stat-text-clean">{culturalProgress.symbols} Sacred Symbols</span>
+                </div>
+                <div className="stat-clean-row">
+                  <span className="stat-icon-clean">📜</span>
+                  <span className="stat-text-clean">{culturalProgress.stories} Stories Learned</span>
+                </div>
+                <div className="stat-clean-row">
+                  <span className="stat-icon-clean">🎵</span>
+                  <span className="stat-text-clean">{culturalProgress.chants} Sanskrit Chants</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="progress-bar-large">
+              <div 
+                className="progress-fill-large"
+                style={{width: `${culturalProgress.percentage}%`}}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* ACTION BUTTONS - Different for NEW vs RETURNING users */}
+        <div className="welcome-actions">
+          {hasProgress ? (
+            // RETURNING USER: Continue Journey + Explore Scenes
             <>
-              {/* 🎒 CULTURAL ADVENTURE BACKPACK SECTION */}
-              <div className="cultural-backpack-section">
-                <div className="backpack-header">
-                  <img 
-                    className="mooshika-celebration"
-                    src="/images/mooshika-coach.png"
-                    alt="Mooshika celebrating"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                    }}
-                  />
-                  <div className="cultural-level-badge">
-                    <span className="level-emoji">🌟</span>
-                    <span className="level-text">Level {culturalProgress.level}</span>
-                    <span className="level-name">{culturalProgress.levelName}</span>
-                  </div>
-                </div>
-                
-                <div className="adventure-backpack">
-                  <img 
-                    className="backpack-image"
-                    src="/images/symbol-backpack.png"
-                    alt="Adventure Backpack"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                    }}
-                  />
-                  <div className="backpack-contents">
-                    <div className="cultural-stat">
-                      <span className="cultural-stat-value">{culturalProgress.symbols}</span>
-                      <span className="cultural-stat-label">🕉 Sacred Symbols</span>
-                    </div>
-                    <div className="cultural-stat">
-                      <span className="cultural-stat-value">{culturalProgress.stories}</span>
-                      <span className="cultural-stat-label">📜 Stories Learned</span>
-                    </div>
-                    <div className="cultural-stat">
-                      <span className="cultural-stat-value">{culturalProgress.chants}</span>
-                      <span className="cultural-stat-label">🎵 Sanskrit Chants</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <button className="primary-btn enhanced-btn" onClick={handleContinue}>
+                {getWelcomeMessage().buttonText.main}
+                <span className="sub-text">{getWelcomeMessage().buttonText.sub}</span>
+              </button>
               
-              <div className="progress-bar-large">
-                <div 
-                  className="progress-fill-large"
-                  style={{width: `${culturalProgress.percentage}%`}}
-                />
-              </div>
+              <button className="secondary-btn" onClick={handleNewGame}>
+                Explore Scenes
+                <span className="sub-text">Replay any scene</span>
+              </button>
+            </>
+          ) : (
+            // NEW USER: Start Adventure + Choose Different Explorer
+            <>
+              <button className="primary-btn enhanced-btn" onClick={handleContinue}>
+                Start Adventure
+                {/*<span className="sub-text">Begin your magical journey</span>*/}
+              </button>
+              
+              <button className="secondary-btn" onClick={handleBackToProfiles}>
+                Choose Different Explorer
+                {/*<span className="sub-text">Pick another character</span>*/}
+              </button>
             </>
           )}
-          
-          {!hasProgress && (
-            <div className="no-progress-adventure">
-              <img 
-                className="excited-mooshika"
-                src="/images/mooshika-coach.png"
-                alt="Excited Mooshika"
-                onError={(e) => { e.target.style.display = 'none'; }}
-              />
-              <p className="adventure-invitation">
-                Welcome, young explorer! Your cultural adventure backpack is ready to be filled with sacred symbols, ancient stories, and beautiful Sanskrit chants!
-              </p>
-            </div>
-          )}
-        </div>
-        
-        {/* ✨ ENHANCED: Action buttons with smarter text */}
-        <div className="welcome-actions">
-          
-            {(() => {
-  const welcomeMsg = getWelcomeMessage();
-  return (
-    <button className="primary-btn enhanced-btn" onClick={handleContinue}>
-      {welcomeMsg.buttonText.main}
-      <span className="sub-text">{welcomeMsg.buttonText.sub}</span>
-    </button>
-  );
-})()}
-          
-          <button className="secondary-btn" onClick={handleNewGame}>
-            {hasProgress ? 'Choose Scene' : 'Explore Scenes'}
-            <span className="sub-text">
-              {hasProgress ? 'Pick any scene to play or replay' : 'Select which scene to start with'}
-            </span>
-          </button>
         </div>
       </div>
       

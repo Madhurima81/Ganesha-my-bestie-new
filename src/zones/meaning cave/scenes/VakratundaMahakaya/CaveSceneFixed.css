@@ -1027,3 +1027,316 @@ div.pond-scene-container div.mini-ganesha-container.mighty img {
     transform: scale(1.08);
   }
 }
+
+/* ===========================
+   SCENE 1 THEME: CAVE OF SECRETS (Vakratunda Mahakaya)
+   Palette: Saffron, Earth Brown, Ancient Stone
+   =========================== */
+
+/* ===========================
+   INSTRUCTION MODAL - Opening Screen
+   =========================== */
+.cave-instructions-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(26, 18, 8, 0.85); /* Dark Cave Shadow */
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: cave-fadeIn 0.3s ease-out;
+}
+
+/* Sparkles container */
+.cave-sparkles {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  pointer-events: none;
+  z-index: 101;
+  animation: cave-sparklesFadeOut 0.8s ease-out forwards;
+}
+
+.cave-sparkle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #FF9933; /* Saffron Sparkle */
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  animation: cave-sparkleFloat 0.8s ease-out forwards;
+  box-shadow: 0 0 15px rgba(255, 153, 51, 0.8);
+}
+
+.cave-sparkle:nth-child(1) { top: 20%; left: 50%; animation-delay: 0s; transform: translate(-50%, -50%) scale(0); }
+.cave-sparkle:nth-child(2) { top: 50%; left: 80%; animation-delay: 0.1s; transform: translate(-50%, -50%) scale(0); }
+.cave-sparkle:nth-child(3) { top: 80%; left: 50%; animation-delay: 0.2s; transform: translate(-50%, -50%) scale(0); }
+.cave-sparkle:nth-child(4) { top: 50%; left: 20%; animation-delay: 0.15s; transform: translate(-50%, -50%) scale(0); }
+
+.cave-instructions-content {
+  position: relative;
+  width: 95%;
+  max-width: 1400px;
+  height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  padding: 0 60px;
+  animation: cave-contentFadeIn 0.5s ease-out 0.5s both;
+}
+
+.cave-instructions-ganesha {
+  flex: 0 0 40%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  animation: cave-slideInLeft 0.6s ease-out 0.8s both;
+}
+
+.cave-instructions-ganesha img {
+  width: 100%;
+  max-width: 450px;
+  height: auto;
+  filter: drop-shadow(0 0 30px rgba(255, 153, 51, 0.5)); /* Saffron Aura */
+  transform: scaleX(1); 
+}
+
+.cave-instructions-card {
+  flex: 0 0 45%;
+  background: #FFF8E7; /* Ancient Parchment */
+  border-radius: 30px;
+  padding: 50px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  animation: cave-slideInRight 0.6s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 4px solid #8B4513; /* Earth Border */
+}
+
+.cave-instructions-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 48px;
+  font-weight: 700;
+  color: #5D4037; /* Dark Earth */
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.cave-instructions-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 24px;
+  color: #8D6E63; /* Stone Brown */
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
+
+.cave-instructions-icons {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  margin-bottom: 45px;
+  width: 100%;
+}
+
+.cave-instruction-icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.cave-instruction-icon-item img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.cave-instruction-icon-label {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #5D4037;
+}
+
+.cave-instructions-button {
+  font-family: 'Baloo 2', cursive;
+  background: linear-gradient(135deg, #D35400 0%, #A04000 100%); /* Burnt Orange/Rust */
+  border: 2px solid #FFD700;
+  color: white;
+  padding: 20px 70px;
+  font-size: 28px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(211, 84, 0, 0.4);
+  text-transform: capitalize;
+}
+
+.cave-instructions-button:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(211, 84, 0, 0.6);
+  background: linear-gradient(135deg, #E67E22 0%, #BA4A00 100%);
+}
+
+.cave-instructions-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ===========================
+   POWER UNLOCK CELEBRATION MODAL (Cave Theme)
+   =========================== */
+.cave-power-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 600;
+  animation: cave-fadeIn 0.3s ease-out;
+}
+
+.cave-power-card {
+  background: #FFF8E7; /* Ancient Parchment */
+  border-radius: 30px;
+  padding: 50px;
+  max-width: 600px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  position: relative;
+  animation: cave-scaleIn 0.4s ease-out;
+  border: 4px solid #8B4513;
+}
+
+.cave-power-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 38px;
+  font-weight: 700;
+  color: #5D4037;
+  margin-bottom: 30px;
+  line-height: 1.2;
+}
+
+.cave-power-icon {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 25px;
+  object-fit: contain;
+  animation: cave-powerPulse 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(255, 153, 51, 0.4));
+}
+
+.cave-power-description {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: #5D4037;
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
+
+.cave-power-primary-button {
+  font-family: 'Baloo 2', cursive;
+  background: linear-gradient(135deg, #D35400 0%, #A04000 100%);
+  border: 2px solid #FFD700;
+  color: white;
+  padding: 18px 60px;
+  font-size: 24px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(211, 84, 0, 0.4);
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.cave-power-primary-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(211, 84, 0, 0.6);
+  background: linear-gradient(135deg, #E67E22 0%, #BA4A00 100%);
+}
+
+.cave-power-primary-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.cave-power-secondary-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.cave-power-secondary-button {
+  font-family: 'Nunito', sans-serif;
+  background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%); /* Teal Accent */
+  border: none;
+  color: white;
+  padding: 14px 35px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+  flex: 1;
+}
+
+.cave-power-secondary-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(78, 205, 196, 0.6);
+}
+
+.cave-power-secondary-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Animations */
+@keyframes cave-fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cave-scaleIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+@keyframes cave-slideInLeft { from { opacity: 0; transform: translateX(-100px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes cave-slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes cave-contentFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+@keyframes cave-sparklesFadeOut { 0% { opacity: 1; } 60% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes cave-sparkleFloat { 
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+}
+@keyframes cave-powerPulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(255, 153, 51, 0.5)); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 25px rgba(255, 153, 51, 0.8)); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cave-instructions-content { flex-direction: column; height: auto; padding: 20px; gap: 20px; }
+  .cave-instructions-ganesha { flex: 0 0 auto; }
+  .cave-instructions-ganesha img { max-width: 250px; }
+  .cave-instructions-card { flex: 0 0 auto; padding: 30px 25px; }
+  .cave-instructions-title { font-size: 28px; }
+  .cave-instructions-subtitle { font-size: 16px; }
+  .cave-instruction-icon-item img { width: 55px; height: 55px; }
+  .cave-instructions-button { font-size: 20px; padding: 14px 40px; }
+  
+  .cave-power-card { padding: 35px 25px; }
+  .cave-power-title { font-size: 30px; }
+  .cave-power-icon { width: 110px; height: 110px; }
+  .cave-power-description { font-size: 18px; }
+  .cave-power-primary-button { font-size: 20px; padding: 16px 45px; }
+  .cave-power-secondary-buttons { flex-direction: column; }
+  .cave-power-secondary-button { font-size: 16px; padding: 12px 30px; }
+}

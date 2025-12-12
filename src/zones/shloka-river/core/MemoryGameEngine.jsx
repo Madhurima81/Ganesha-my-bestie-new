@@ -99,59 +99,91 @@ const MemoryGameEngine = ({
     return null;
   }
 
-  // Common props for both modes
-  const commonProps = {
-    gameConfig,
-    isActive,
-    hideElements,
-    powerGained,
-    onPhaseComplete,
-    onGameComplete,
-    profileName,
-    WaterSprayComponent,
-    assetGetters,
-    onSaveGameState: (state) => {
-      if (onSaveGameState) {
-        onSaveGameState({ 
-          ...state, 
-          savedGameMode: selectedMode,
-          gameId: gameConfig.id 
-        });
-      }
+const handleEarlyExit = () => {
+  console.log('[Engine] Early exit from auto - switching to manual mode');
+  
+  // Switch to manual mode (which shows round selection)
+  setSelectedMode('manual');
+  setShowModeModal(false);
+  
+  // ⭐ CLEAR saved game state to prevent auto-restart
+  if (onSaveGameState) {
+    onSaveGameState({
+      savedGameMode: 'manual',
+      gameId: gameConfig.id,
+      // ⭐ Clear all game state
+      currentRound: null,
+      gamePhase: null,
+      playerInput: [],
+      visualRewards: {},
+      activatedElephants: {}
+    });
+  }
+};
+
+// Common props for both modes
+const commonProps = {
+  gameConfig,
+  isActive,
+  hideElements,
+  powerGained,
+  onPhaseComplete: (data) => {
+    // Handle early exit from pause
+    if (data?.isEarlyExit) {
+      handleEarlyExit();
+      return;
     }
-  };
+    // Normal completion
+    if (onPhaseComplete) {
+      onPhaseComplete(data);
+    }
+  },
+  onGameComplete,
+  profileName,
+  WaterSprayComponent,
+  assetGetters,
+  onSaveGameState: (state) => {
+    if (onSaveGameState) {
+      onSaveGameState({ 
+        ...state, 
+        savedGameMode: selectedMode,
+        gameId: gameConfig.id 
+      });
+    }
+  }
+};
 
-  return (
-    <>
-      {/* Mode Selection Modal - themed with game colors */}
-      <ModeSelectionModal
-        isOpen={showModeModal}
-        onSelectMode={handleModeSelection}
-        profileName={profileName}
-        gameName={gameConfig.displayName}
-        theme={gameConfig.theme}
+return (
+  <>
+    {/* Mode Selection Modal */}
+    <ModeSelectionModal
+      isOpen={showModeModal}
+      onSelectMode={handleModeSelection}
+      profileName={profileName}
+      gameName={gameConfig.displayName}
+      theme={gameConfig.theme}
+    />
+
+    {/* Auto Play Mode */}
+    {selectedMode === 'auto' && (
+      <AutoPlayMode
+        {...commonProps}
+        isReload={isReload}
+        savedGameState={savedGameState}
       />
+    )}
 
-      {/* Auto Play Mode */}
-      {selectedMode === 'auto' && (
-        <AutoPlayMode
-          {...commonProps}
-          isReload={isReload}
-          savedGameState={savedGameState}
-        />
-      )}
-
-      {/* Manual Round Mode */}
-      {selectedMode === 'manual' && (
-        <ManualRoundMode
-          {...commonProps}
-          onSwitchToAuto={handleSwitchToAuto}  // ✅ BUG 1: Pass mode switch callback
-          isReload={isReload}
-          savedGameState={savedGameState}
-        />
-      )}
-    </>
-  );
+    {/* Manual Round Mode */}
+    {selectedMode === 'manual' && (
+      <ManualRoundMode
+        {...commonProps}
+        onSwitchToAuto={handleSwitchToAuto}
+        isReload={isReload}
+        savedGameState={savedGameState}
+      />
+    )}
+  </>
+);
 };
 
 // ⭐ CRITICAL: Default export (not named export)

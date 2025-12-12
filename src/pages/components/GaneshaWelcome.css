@@ -1,0 +1,323 @@
+/* GaneshaWelcome.css - Welcome message styling */
+
+.ganesha-welcome-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: welcomeFadeIn 0.5s ease;
+}
+
+@keyframes welcomeFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.ganesha-welcome-card {
+  position: relative;
+  background: linear-gradient(135deg, #FFF9E6 0%, #FFEFC1 100%);
+  border-radius: 30px;
+  padding: 40px 35px 30px;
+  max-width: 550px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+  animation: welcomeSlideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 5px solid #FFD54F;
+}
+
+@keyframes welcomeSlideUp {
+  from {
+    transform: translateY(100px) scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Ganesha Character */
+.ganesha-welcome-character {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 25px;
+  margin-top: -70px;
+  position: relative;
+  z-index: 10;
+}
+
+.ganesha-welcome-image {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.3));
+  animation: ganeshaWelcomeBounce 2s ease-in-out infinite;
+}
+
+.ganesha-welcome-emoji {
+  font-size: 100px;
+  animation: ganeshaWelcomeBounce 2s ease-in-out infinite;
+  filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.3));
+}
+
+@keyframes ganeshaWelcomeBounce {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-15px) scale(1.05);
+  }
+}
+
+/* Decorative Sparkles */
+.welcome-sparkles {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.welcome-sparkle {
+  font-size: 28px;
+  animation: welcomeSparkle 2.5s ease-in-out infinite;
+}
+
+.welcome-sparkle:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.welcome-sparkle:nth-child(2) {
+  animation-delay: 0.6s;
+}
+
+.welcome-sparkle:nth-child(3) {
+  animation-delay: 1.2s;
+}
+
+.welcome-sparkle:nth-child(4) {
+  animation-delay: 1.8s;
+}
+
+@keyframes welcomeSparkle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg) scale(1.3);
+    opacity: 1;
+  }
+}
+
+/* Speech Bubble */
+.ganesha-speech-bubble {
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 20px;
+  padding: 25px;
+  margin-bottom: 25px;
+  border: 3px solid #FFD54F;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+
+/* Speech bubble pointer (optional) */
+.ganesha-speech-bubble::before {
+  content: '';
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 15px solid #FFD54F;
+}
+
+.ganesha-greeting {
+  font-size: 28px;
+  font-weight: bold;
+  color: #6B4423;
+  margin: 0 0 15px 0;
+  text-align: center;
+  text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.5);
+}
+
+.ganesha-message {
+  font-size: 18px;
+  color: #5D4037;
+  line-height: 1.6;
+  margin: 0 0 15px 0;
+  text-align: center;
+}
+
+.ganesha-instruction {
+  font-size: 16px;
+  color: #6B4423;
+  line-height: 1.6;
+  margin: 0 0 20px 0;
+  text-align: center;
+  background: linear-gradient(135deg, #FFE082, #FFD54F);
+  padding: 15px;
+  border-radius: 12px;
+  border: 2px solid #FFC107;
+}
+
+/* Tips Section */
+.ganesha-tips {
+  background: rgba(255, 235, 205, 0.6);
+  border-radius: 15px;
+  padding: 15px;
+  margin-top: 15px;
+}
+
+.tip-item {
+  font-size: 14px;
+  color: #5D4037;
+  margin: 10px 0;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.tip-item:first-child {
+  margin-top: 0;
+}
+
+.tip-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Action Button */
+.ganesha-welcome-button {
+  width: 100%;
+  padding: 18px 24px;
+  border: none;
+  border-radius: 25px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  background: linear-gradient(135deg, #FF8A00, #FF6B00);
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 20px rgba(255, 107, 0, 0.4);
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.ganesha-welcome-button:hover {
+  background: linear-gradient(135deg, #FF9500, #FF7700);
+  box-shadow: 0 10px 30px rgba(255, 107, 0, 0.5);
+  transform: translateY(-3px) scale(1.02);
+}
+
+.ganesha-welcome-button:active {
+  transform: translateY(-1px) scale(0.98);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .ganesha-welcome-card {
+    padding: 35px 25px 25px;
+  }
+
+  .ganesha-welcome-image {
+    width: 120px;
+    height: 120px;
+  }
+
+  .ganesha-welcome-emoji {
+    font-size: 80px;
+  }
+
+  .ganesha-greeting {
+    font-size: 24px;
+  }
+
+  .ganesha-message {
+    font-size: 16px;
+  }
+
+  .ganesha-instruction {
+    font-size: 15px;
+  }
+
+  .ganesha-welcome-button {
+    font-size: 18px;
+    padding: 16px 20px;
+  }
+
+  .welcome-sparkle {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ganesha-welcome-card {
+    padding: 30px 20px 20px;
+  }
+
+  .ganesha-welcome-image {
+    width: 100px;
+    height: 100px;
+  }
+
+  .ganesha-welcome-emoji {
+    font-size: 70px;
+  }
+
+  .ganesha-greeting {
+    font-size: 22px;
+  }
+
+  .ganesha-message {
+    font-size: 15px;
+  }
+
+  .ganesha-instruction {
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  .tip-item {
+    font-size: 13px;
+  }
+
+  .ganesha-welcome-button {
+    font-size: 16px;
+  }
+
+  .welcome-sparkle {
+    font-size: 20px;
+  }
+}
+
+/* Scrollbar styling */
+.ganesha-welcome-card::-webkit-scrollbar {
+  width: 8px;
+}
+
+.ganesha-welcome-card::-webkit-scrollbar-track {
+  background: rgba(255, 213, 79, 0.2);
+  border-radius: 10px;
+}
+
+.ganesha-welcome-card::-webkit-scrollbar-thumb {
+  background: #FFD54F;
+  border-radius: 10px;
+}
+
+.ganesha-welcome-card::-webkit-scrollbar-thumb:hover {
+  background: #FFC107;
+}

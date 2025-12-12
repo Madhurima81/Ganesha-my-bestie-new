@@ -920,6 +920,407 @@
     transform: scale(1.05);
   }
 }
+
+/* ===========================
+   SCENE 3 THEME: MUSICAL MOUNTAIN (SACRED TUSK)
+   Palette: Clay Cream, Earth Brown, Clay Orange
+   =========================== */
+
+/* ===========================
+   INSTRUCTION MODAL - Opening Screen
+   =========================== */
+.mountain-instructions-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: mountain-fadeIn 0.3s ease-out;
+}
+
+/* Sparkles container */
+.mountain-sparkles {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  pointer-events: none;
+  z-index: 101;
+  animation: mountain-sparklesFadeOut 0.8s ease-out forwards;
+}
+
+.mountain-sparkle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #FFDFAA; /* Amber Sparkle */
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  animation: mountain-sparkleFloat 0.8s ease-out forwards;
+  box-shadow: 0 0 10px rgba(255, 223, 170, 0.8);
+}
+
+.mountain-sparkle:nth-child(1) { top: 20%; left: 50%; animation-delay: 0s; transform: translate(-50%, -50%) scale(0); }
+.mountain-sparkle:nth-child(2) { top: 50%; left: 80%; animation-delay: 0.1s; transform: translate(-50%, -50%) scale(0); }
+.mountain-sparkle:nth-child(3) { top: 80%; left: 50%; animation-delay: 0.2s; transform: translate(-50%, -50%) scale(0); }
+.mountain-sparkle:nth-child(4) { top: 50%; left: 20%; animation-delay: 0.15s; transform: translate(-50%, -50%) scale(0); }
+
+.mountain-instructions-content {
+  position: relative;
+  width: 95%;
+  max-width: 1400px;
+  height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  padding: 0 60px;
+  animation: mountain-contentFadeIn 0.5s ease-out 0.5s both;
+}
+
+.mountain-instructions-ganesha {
+  flex: 0 0 40%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  animation: mountain-slideInLeft 0.6s ease-out 0.8s both;
+}
+
+.mountain-instructions-ganesha img {
+  width: 100%;
+  max-width: 450px;
+  height: auto;
+  filter: drop-shadow(0 8px 20px rgba(232, 154, 87, 0.4)); /* Clay Orange Glow */
+  transform: scaleX(-1);
+}
+
+.mountain-instructions-card {
+  flex: 0 0 45%;
+  background: #FFF4E6; /* Clay Cream BG */
+  border-radius: 30px;
+  padding: 50px;
+  box-shadow: 0 10px 40px rgba(180, 120, 60, 0.28); /* Earthy Shadow */
+  animation: mountain-slideInRight 0.6s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 4px solid #fff;
+}
+
+.mountain-instructions-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 48px;
+  font-weight: 700;
+  color: #4A2E1A; /* Deep Earth Brown */
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.mountain-instructions-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 24px;
+  color: #7C6249; /* Earth Brown */
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
+
+.mountain-instructions-icons {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  margin-bottom: 45px;
+  width: 100%;
+}
+
+.mountain-instruction-icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.mountain-instruction-icon-item img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+}
+
+.mountain-instruction-icon-label {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #4A2E1A;
+}
+
+.mountain-instructions-button {
+  font-family: 'Baloo 2', cursive;
+  background: linear-gradient(135deg, #E89A57 0%, #D88A47 100%); /* Clay Orange Gradient */
+  border: none;
+  color: white;
+  padding: 20px 70px;
+  font-size: 28px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(232, 154, 87, 0.4);
+  text-transform: capitalize;
+}
+
+.mountain-instructions-button:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(232, 154, 87, 0.6);
+}
+
+.mountain-instructions-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ===========================
+   POWER UNLOCK CELEBRATION MODAL (Scene 3)
+   =========================== */
+.mountain-power-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 600; /* Higher Z-index for Scene 3 due to games */
+  animation: mountain-fadeIn 0.3s ease-out;
+}
+
+.mountain-power-card {
+  background: #FFF4E6; /* Clay Cream */
+  border-radius: 30px;
+  padding: 50px;
+  max-width: 600px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(180, 120, 60, 0.28);
+  position: relative;
+  animation: mountain-scaleIn 0.4s ease-out;
+  border: 4px solid #fff;
+}
+
+.mountain-power-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 38px;
+  font-weight: 700;
+  color: #4A2E1A; /* Deep Earth Brown */
+  margin-bottom: 30px;
+  line-height: 1.2;
+}
+
+.mountain-power-icon {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 25px;
+  object-fit: contain;
+  animation: mountain-powerPulse 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(232, 154, 87, 0.4));
+}
+
+.mountain-power-description {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: #7C6249; /* Earth Brown */
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
+
+.mountain-power-primary-button {
+  font-family: 'Baloo 2', cursive;
+  background: linear-gradient(135deg, #E89A57 0%, #D88A47 100%); /* Clay Orange */
+  border: none;
+  color: white;
+  padding: 18px 60px;
+  font-size: 24px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(232, 154, 87, 0.4);
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.mountain-power-primary-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(232, 154, 87, 0.6);
+}
+
+.mountain-power-primary-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.mountain-power-secondary-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.mountain-power-secondary-button {
+  font-family: 'Nunito', sans-serif;
+  background: linear-gradient(135deg, #7BB46A 0%, #6AA45A 100%); /* Forest Green Accent */
+  border: none;
+  color: white;
+  padding: 14px 35px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(123, 180, 106, 0.4);
+  flex: 1;
+}
+
+.mountain-power-secondary-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(123, 180, 106, 0.6);
+}
+
+.mountain-power-secondary-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Animations */
+@keyframes mountain-fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes mountain-scaleIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+@keyframes mountain-slideInLeft { from { opacity: 0; transform: translateX(-100px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes mountain-slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes mountain-contentFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+@keyframes mountain-sparklesFadeOut { 0% { opacity: 1; } 60% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes mountain-sparkleFloat { 
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+}
+@keyframes mountain-powerPulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(232, 154, 87, 0.5)); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 25px rgba(232, 154, 87, 0.8)); }
+}
+
+/* ==================== DISCOVERY OVERLAY ==================== */
+.discovery-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  
+  /* GLASS EFFECT: Blurs the mountain background */
+  background: rgba(255, 253, 230, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  
+  animation: discoveryFadeIn 0.5s ease-out forwards;
+}
+
+.discovery-overlay.fading-out {
+  animation: discoveryFadeOut 0.5s ease-in forwards;
+}
+
+.discovery-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 64px;
+  color: #004D40;
+  margin-bottom: 10px;
+  
+  text-shadow: 
+    0 4px 0 #fff, 
+    0 0 20px rgba(255, 255, 255, 0.8);
+  
+  line-height: 1.1;
+  transform: scale(1);
+  animation: textPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.discovery-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 28px;
+  color: #004D40;
+  margin-bottom: 30px;
+  font-weight: 800;
+  text-shadow: 0 2px 0 rgba(255,255,255,0.6);
+}
+
+.discovery-hero {
+  width: 300px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.discovery-hero-img {
+  width: 280px;
+  height: 280px;
+  object-fit: contain;
+  animation: heroFloat 3s infinite ease-in-out;
+  filter: drop-shadow(0 15px 30px rgba(0,0,0,0.3));
+}
+
+/* Animations */
+@keyframes discoveryFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes discoveryFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .discovery-title { font-size: 42px; padding: 0 10px; }
+  .discovery-subtitle { font-size: 20px; padding: 0 20px; }
+  .discovery-hero-img { width: 200px; height: 200px; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .mountain-instructions-content { flex-direction: column; height: auto; padding: 20px; gap: 20px; }
+  .mountain-instructions-ganesha { flex: 0 0 auto; }
+  .mountain-instructions-ganesha img { max-width: 250px; }
+  .mountain-instructions-card { flex: 0 0 auto; padding: 30px 25px; }
+  .mountain-instructions-title { font-size: 28px; }
+  .mountain-instructions-subtitle { font-size: 16px; }
+  .mountain-instruction-icon-item img { width: 55px; height: 55px; }
+  .mountain-instructions-button { font-size: 20px; padding: 14px 40px; }
+  
+  .mountain-power-card { padding: 35px 25px; }
+  .mountain-power-title { font-size: 30px; }
+  .mountain-power-icon { width: 110px; height: 110px; }
+  .mountain-power-description { font-size: 18px; }
+  .mountain-power-primary-button { font-size: 20px; padding: 16px 45px; }
+  .mountain-power-secondary-buttons { flex-direction: column; }
+  .mountain-power-secondary-button { font-size: 16px; padding: 12px 30px; }
+}
 /* ================================
    Z-INDEX HIERARCHY
    ================================ */
@@ -937,3 +1338,4 @@
 .scene-navigation-bar { z-index: 100; }
 .popup-overlay, .celebration-overlay { z-index: 1000; }
 .game-overlay { z-index: 2000; }
+

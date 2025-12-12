@@ -21,7 +21,7 @@ import SceneCompletionCelebration from '../../../../lib/components/celebration/S
 // Import the thin wrapper game components
 import NirvighnamGame from './NirvighnamGame';
 import KurumeDevaGame from './KurumeDevaGame';
-import SanskritVoiceRecorder from '../../../../lib/components/audio/SanskritVoiceRecorder';
+import SanskritVoiceRecorder from '../../../../lib/components/audio/SanskritVoiceRecorder.jsx';
 import SmartwatchWidget from '../Scene1/components/SmartwatchWidget';
 import HelperSignatureAnimation from '../../../../lib/components/animation/HelperSignatureAnimation';
 
@@ -741,16 +741,32 @@ const handleContinueLearning = () => {
   };
 
 // Add this simple logic - no complex function calls
-const backgroundImage = (
-  sceneState?.learnedWords?.nirvighnam || 
-  nirvighnamPowerGained ||
-  sceneState?.phase === PHASES.KURUMEDEVA_STORY ||
-  sceneState?.phase === PHASES.KURUMEDEVA_GAME_ACTIVE ||
-  sceneState?.phase === PHASES.KURUMEDEVA_COMPLETE ||
-  sceneState?.phase === PHASES.GANESHA_BLESSING_KURUMEDEVA ||
-  sceneState?.phase === PHASES.CHOICE_BUTTONS_KURUMEDEVA ||
-  sceneState?.phase === PHASES.RESCUE_MISSION_KURUMEDEVA
-) ? kuruBg : nirvighnamChantBg;
+const backgroundImage = (() => {
+  // ⭐ NEW: Check which game is currently being played
+  const isPlayingNirvighnam = sceneState?.phase === PHASES.NIRVIGHNAM_GAME_ACTIVE ||
+                              modeForPhase === 'nirvighnam';
+  
+  const isPlayingKurumedeva = sceneState?.phase === PHASES.KURUMEDEVA_GAME_ACTIVE ||
+                              sceneState?.phase === PHASES.KURUMEDEVA_STORY ||
+                              sceneState?.phase === PHASES.KURUMEDEVA_COMPLETE ||
+                              sceneState?.phase === PHASES.GANESHA_BLESSING_KURUMEDEVA ||
+                              sceneState?.phase === PHASES.CHOICE_BUTTONS_KURUMEDEVA ||
+                              sceneState?.phase === PHASES.RESCUE_MISSION_KURUMEDEVA ||
+                              modeForPhase === 'kurumedeva' ||
+                              modeForPhase === 'kurume';
+  
+  // ⭐ Priority: If actively playing Nirvighnam, use its background
+  if (isPlayingNirvighnam) {
+    return nirvighnamChantBg;
+  }
+  
+  // ⭐ Otherwise check if should use Kurumedeva background
+  const shouldUseKuruBg = isPlayingKurumedeva ||
+                         sceneState?.learnedWords?.nirvighnam || 
+                         nirvighnamPowerGained;
+  
+  return shouldUseKuruBg ? kuruBg : nirvighnamChantBg;
+})();
 
   // ⭐ Simplified hint configs for new wrapper-based architecture
   const getHintConfigs = () => [
@@ -1269,10 +1285,52 @@ sceneActions.updateState({
           <p className="nirvighnam-power-modal-subtext">Choose your next action:</p>
         </div>
         
-        <div className="nirvighnam-power-modal-right">
-          <button className="nirvighnam-power-modal-btn nirvighnam-save-btn" onClick={handleSaveAnimal}>
-            🐾 Save an Animal
-          </button>
+       <div className="nirvighnam-power-modal-right">
+  
+  {/* ⭐ NEW: Play Again button */}
+  <button 
+    className="nirvighnam-power-modal-btn nirvighnam-play-again-btn" 
+onClick={() => {
+  console.log(`🔄 Play Again: Restarting ${currentPracticeWord} game`);
+  
+  // ⭐ UPDATE PHASE FIRST (before closing modal)
+  if (currentPracticeWord === 'nirvighnam') {
+    sceneActions.updateState({ 
+      phase: PHASES.NIRVIGHNAM_GAME_ACTIVE  // ⭐ Set phase FIRST
+    });
+    setModeForPhase('nirvighnam');
+    setShowModeSelection(true);
+    setModeSelected(false);
+  } else if (currentPracticeWord === 'kurumedeva') {
+    sceneActions.updateState({ 
+      phase: PHASES.KURUMEDEVA_GAME_ACTIVE  // ⭐ Set phase FIRST
+    });
+    setModeForPhase('kurumedeva');
+    setShowModeSelection(true);
+    setModeSelected(false);
+  } else if (currentPracticeWord === 'kurume') {
+    sceneActions.updateState({ 
+      phase: PHASES.KURUMEDEVA_GAME_ACTIVE  // ⭐ Set phase FIRST
+    });
+    setModeForPhase('kurume');
+    setShowModeSelection(true);
+    setModeSelected(false);
+  }
+  
+  // ⭐ Close power modal AFTER phase update
+  setShowPowerModal(false);
+}}
+    style={{
+      background: 'linear-gradient(135deg, #9C27B0 0%, #BA68C8 100%)',
+      marginBottom: '10px'
+    }}
+  >
+    🔄 Play Again
+  </button>
+
+  <button className="nirvighnam-power-modal-btn nirvighnam-save-btn" onClick={handleSaveAnimal}>
+    🐾 Save an Animal
+  </button>
           
           <button className="nirvighnam-power-modal-btn nirvighnam-continue-btn" onClick={handleContinueLearning}>
             {currentPracticeWord === 'kurumedeva' ? '✨ End Scene' : '🪷 Discover Kurumedeva'}

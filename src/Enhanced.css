@@ -1,29 +1,212 @@
-/* ENHANCED APP STYLES - Best of Flipbook */
+/* ENHANCED APP STYLES - Production Ready */
 
-/* Beautiful Loading Animations */
-.elegant-scene-loader,
+/* ========================================== */
+/* 1. CHARACTER-BASED LOADING SCREEN          */
+/*    Theme: Deep Orange Sunset (Image 2)     */
+/* ========================================== */
+
 .enhanced-loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  /* ✨ CHANGE: Use the new background image */
+  background: url('/images/loading-bg.png') no-repeat center center;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+/* ===================================== */
+/* GANESHA LOADING CHARACTER (Line Art)  */
+/* ===================================== */
+.loading-ganesha-container {
+  position: relative;
+  width: 220px; /* Slightly larger for line art */
+  height: 220px;
+  margin-bottom: 10px;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-ganesha {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* ✨ TRICK: Force use of outline SVG via CSS */
+  content: url('/images/ganesha-character.png'); 
+  filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.4)); /* Golden Glow */
+  animation: ganeshaFloat 4s ease-in-out infinite;
+}
+
+@keyframes ganeshaFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Hide legacy elements */
+.loading-ganesha-glow, 
+.loading-mooshika-container,
+.enhanced-loading-screen::before {
+  display: none; 
+}
+
+/* ===================================== */
+/* LOADING TEXT (New Fonts)              */
+/* ===================================== */
+.loading-text-container {
+  text-align: center;
+  z-index: 2;
+  margin-top: 10px;
+}
+
+.loading-title {
+  /* ✨ FONT: Baloo 2, Semi-bold */
+  font-family: 'Baloo 2', cursive, sans-serif;
+  font-weight: 600;
+  font-size: 48px;
+  color: #FFFFFF; /* White text */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  margin-bottom: 0;
+  line-height: 1.2;
+}
+
+.loading-subtitle {
+  /* ✨ FONT: Nunito, Medium */
+  font-family: 'Nunito', sans-serif;
+  font-weight: 500;
+  font-size: 22px;
+  color: #FFD700; /* Golden Yellow */
+  margin-top: 5px;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* Animated dots */
+.loading-dots span {
+  animation: dotBounce 1.4s ease-in-out infinite;
+  display: inline-block;
+  color: #FFD700;
+}
+.loading-dots span:nth-child(1) { animation-delay: 0s; }
+.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes dotBounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-6px); }
+}
+
+/* ===================================== */
+/* MAGICAL PARTICLES (Sunset Style)      */
+/* ===================================== */
+.loading-particles {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.loading-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #FFD700; /* Gold particles */
+  border-radius: 50%;
+  animation: particleRise 5s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+  opacity: 0.6;
+}
+
+@keyframes particleRise {
+  0% { opacity: 0; transform: translateY(100vh) scale(0); }
+  20% { opacity: 0.8; transform: translateY(80vh) scale(1); }
+  80% { opacity: 0.8; transform: translateY(20vh) scale(0.8); }
+  100% { opacity: 0; transform: translateY(0) scale(0); }
+}
+
+/* ===================================== */
+/* PROGRESS BAR (Warm Theme)             */
+/* ===================================== */
+.loading-progress-container {
+  position: relative;
+  width: 320px;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.3); /* Dark track */
+  border-radius: 10px;
+  margin-top: 25px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 2;
+}
+
+.loading-progress-bar {
+  height: 100%;
+  /* ✨ GOLDEN SUNSET GRADIENT */
+  background: linear-gradient(90deg, #FFC107 0%, #FF9800 100%); 
+  border-radius: 10px;
+  transition: width 0.3s ease-out;
+  box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 5px;
+}
+
+/* Shimmer Effect */
+.loading-progress-bar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Progress Text */
+.progress-percentage {
+  /* ✨ FONT: Nunito, Bold */
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 9px;
+  color: #5d4037; /* Dark brown text on yellow bar */
+  opacity: 0.8;
+}
+
+/* ========================================== */
+/* 2. SCENE LOADER (Lotus Spinner)            */
+/* ========================================== */
+
+.elegant-scene-loader {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background: linear-gradient(135deg, #FFF8DC 0%, #FFEAA7 100%);
   position: relative;
   overflow: hidden;
 }
 
-.enhanced-loading-screen::before,
 .elegant-scene-loader::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   background: 
     radial-gradient(circle at 25% 25%, rgba(255, 193, 7, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 75% 75%, rgba(0, 123, 255, 0.1) 0%, transparent 50%);
+    radial-gradient(circle at 75% 75%, rgba(255, 107, 53, 0.1) 0%, transparent 50%);
   animation: backgroundFloat 8s ease-in-out infinite;
 }
 
@@ -40,12 +223,6 @@
   margin-bottom: 30px;
 }
 
-.lotus-spinner.large {
-  width: 100px;
-  height: 100px;
-  margin-bottom: 40px;
-}
-
 .petal {
   position: absolute;
   width: 20px;
@@ -55,11 +232,6 @@
   transform-origin: center bottom;
 }
 
-.lotus-spinner.large .petal {
-  width: 25px;
-  height: 50px;
-}
-
 .petal-1 { top: 0; left: 50%; transform: translateX(-50%) rotate(0deg); animation: petalSpin 2s ease-in-out infinite; }
 .petal-2 { top: 50%; right: 0; transform: translateY(-50%) rotate(90deg); animation: petalSpin 2s ease-in-out infinite 0.5s; }
 .petal-3 { bottom: 0; left: 50%; transform: translateX(-50%) rotate(180deg); animation: petalSpin 2s ease-in-out infinite 1s; }
@@ -67,19 +239,13 @@
 
 .center-dot {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   width: 16px;
   height: 16px;
   background: #FF5733;
   border-radius: 50%;
   animation: centerPulse 2s ease-in-out infinite;
-}
-
-.lotus-spinner.large .center-dot {
-  width: 20px;
-  height: 20px;
 }
 
 @keyframes petalSpin {
@@ -92,7 +258,7 @@
   50% { transform: translate(-50%, -50%) scale(1.3); }
 }
 
-/* Loading Text */
+/* Loading Text for Scene Loader */
 .loading-text {
   font-size: 1.2rem;
   color: #6c757d;
@@ -101,27 +267,12 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  font-family: 'Comic Sans MS', 'Bubblegum Sans', cursive;
+  font-family: 'Nunito', sans-serif; /* Updated to new font */
 }
 
-.loading-text.large {
-  font-size: 1.5rem;
-  margin-bottom: 30px;
-}
+.loading-word { color: #D4691B; }
 
-.loading-dots span {
-  animation: dotBounce 1.4s ease-in-out infinite both;
-}
-
-.loading-dots span:nth-child(1) { animation-delay: -0.32s; }
-.loading-dots span:nth-child(2) { animation-delay: -0.16s; }
-
-@keyframes dotBounce {
-  0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
-  40% { transform: scale(1); opacity: 1; }
-}
-
-/* Progress Ring */
+/* Progress Ring for Scene Loader */
 .progress-ring {
   width: 80px;
   height: 6px;
@@ -144,53 +295,23 @@
   100% { width: 100%; transform: translateX(100%); }
 }
 
-/* Welcome Subtitle */
-.welcome-subtitle {
-  font-size: 1rem;
-  color: #8e9ba7;
-  font-style: italic;
-  margin-top: 20px;
-  text-align: center;
-  opacity: 0.8;
-}
+/* ========================================== */
+/* 3. VIEW TRANSITIONS                        */
+/* ========================================== */
 
-/* Smooth View Transitions */
 .view-transition {
   animation: fadeIn 0.6s ease-out;
 }
 
 @keyframes fadeIn {
-  from { 
-    opacity: 0; 
-    transform: translateY(20px); 
-  }
-  to { 
-    opacity: 1; 
-    transform: translateY(0); 
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Enhanced Scene Placeholder */
-.scene-placeholder {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  transition: all 0.3s ease;
-}
+/* ========================================== */
+/* 4. ERROR SCREENS                           */
+/* ========================================== */
 
-.scene-placeholder:hover {
-  background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
-}
-
-.scene-placeholder button {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.scene-placeholder button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-}
-
-/* Error Screen Enhancement */
 .error-screen,
 .unknown-view-error {
   background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
@@ -207,7 +328,7 @@
 .unknown-view-error h2 {
   color: #e53e3e;
   margin-bottom: 20px;
-  font-family: 'Comic Sans MS', 'Bubblegum Sans', cursive;
+  font-family: 'Baloo 2', cursive; /* Updated font */
 }
 
 .error-screen button,
@@ -222,117 +343,45 @@
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 20px;
+  font-family: 'Nunito', sans-serif;
 }
 
-.error-screen button:hover,
-.unknown-view-error button:hover {
+.error-screen button:hover {
   background: linear-gradient(45deg, #c53030, #9c2a2a);
   transform: translateY(-2px);
 }
 
-/* Mobile Optimizations */
-@media (max-width: 768px) {
-  .lotus-spinner {
-    width: 60px;
-    height: 60px;
-  }
-  
-  .lotus-spinner.large {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .loading-text {
-    font-size: 1rem;
-  }
-  
-  .loading-text.large {
-    font-size: 1.3rem;
-  }
-  
-  .welcome-subtitle {
-    font-size: 0.9rem;
-    padding: 0 20px;
-  }
-  
-  .progress-ring {
-    width: 60px;
-  }
+/* Enhanced Scene Placeholder */
+.scene-placeholder {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  transition: all 0.3s ease;
 }
 
-@media (max-width: 480px) {
-  .enhanced-loading-screen,
-  .elegant-scene-loader {
-    padding: 20px;
-  }
-  
-  .lotus-spinner {
-    width: 50px;
-    height: 50px;
-    margin-bottom: 20px;
-  }
-  
-  .lotus-spinner.large {
-    width: 70px;
-    height: 70px;
-    margin-bottom: 30px;
-  }
-  
-  .loading-text {
-    font-size: 0.9rem;
-    margin-bottom: 15px;
-  }
-  
-  .loading-text.large {
-    font-size: 1.1rem;
-    margin-bottom: 20px;
-  }
-  
-  .scene-placeholder {
-    padding: 15px;
-  }
+/* ========================================== */
+/* 5. RESPONSIVE DESIGN                       */
+/* ========================================== */
+
+/* Mobile Portrait */
+@media (max-width: 600px) {
+  .loading-ganesha-container { width: 180px; height: 180px; }
+  .loading-title { font-size: 32px; }
+  .loading-subtitle { font-size: 18px; }
+  .loading-progress-container { width: 280px; }
 }
 
-/* Performance Optimizations */
-.lotus-spinner,
-.petal,
-.center-dot,
-.progress-fill {
-  will-change: transform;
-  contain: layout style paint;
+/* Tablets */
+@media (min-width: 768px) and (max-width: 1366px) {
+  .loading-ganesha-container { width: 300px; height: 300px; }
+  .loading-title { font-size: 56px; }
+  .loading-subtitle { font-size: 28px; }
+  .loading-progress-container { width: 450px; height: 12px; }
 }
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
-  .lotus-spinner,
-  .petal,
-  .center-dot,
-  .progress-fill,
-  .view-transition {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-}
-
-/* Focus indicators for keyboard navigation */
-button:focus {
-  outline: 3px solid #FF9933;
-  outline-offset: 2px;
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  .lotus-spinner .petal {
-    background: linear-gradient(45deg, #000000, #333333);
-  }
-  
-  .center-dot {
-    background: #000000;
-  }
-  
-  .loading-text {
-    color: #000000;
-    font-weight: 700;
   }
 }
