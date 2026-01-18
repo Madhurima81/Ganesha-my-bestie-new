@@ -9,7 +9,10 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "check-ui": "node scripts/ui-consistency-checker.cjs",
+    "check-ui:interactive": "node scripts/ui-consistency-checker.cjs --interactive",
+    "check-ui:fix": "node scripts/ui-consistency-checker.cjs --auto-fix"
   },
   
   "dependencies": {
