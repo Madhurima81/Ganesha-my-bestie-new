@@ -1,0 +1,495 @@
+/* lib/components/animation/AnimationWrapper.css */
+/* Universal Animation System - Import Once, Use Everywhere! */
+
+/* ================================================
+   BASE ANIMATION WRAPPER
+   ================================================ */
+
+.animation-wrapper {
+  animation-duration: var(--anim-duration, 1s);
+  animation-delay: var(--anim-delay, 0s);
+  animation-fill-mode: both;
+  animation-timing-function: ease-out;
+}
+
+.animation-wrapper.anim-infinite {
+  animation-iteration-count: infinite;
+}
+
+.animation-wrapper.anim-active {
+  /* Animation will play when this class is added */
+}
+
+/* ================================================
+   ENTRANCE ANIMATIONS
+   ================================================ */
+
+/* Fade In */
+.anim-fadeIn.anim-active {
+  animation-name: fadeIn;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Pop In (Bounce Scale) */
+.anim-popIn.anim-active {
+  animation-name: popIn;
+  animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0) rotate(-180deg);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* Zoom In */
+.anim-zoomIn.anim-active {
+  animation-name: zoomIn;
+}
+
+@keyframes zoomIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Slide In Right */
+.anim-slideInRight.anim-active {
+  animation-name: slideInRight;
+  animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes slideInRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Slide In Left */
+.anim-slideInLeft.anim-active {
+  animation-name: slideInLeft;
+  animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes slideInLeft {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Slide In Up */
+.anim-slideInUp.anim-active {
+  animation-name: slideInUp;
+}
+
+@keyframes slideInUp {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Slide In Down */
+.anim-slideInDown.anim-active {
+  animation-name: slideInDown;
+}
+
+@keyframes slideInDown {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Spin In */
+.anim-spinIn.anim-active {
+  animation-name: spinIn;
+  animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes spinIn {
+  0% {
+    transform: scale(0) rotate(-360deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.1) rotate(20deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* ================================================
+   ATTENTION ANIMATIONS (Great for Infinite Loop)
+   ================================================ */
+
+/* Pulse */
+.anim-pulse.anim-active {
+  animation-name: pulse;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+/* Heartbeat */
+.anim-heartbeat.anim-active {
+  animation-name: heartbeat;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.15); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.15); }
+  56% { transform: scale(1); }
+}
+
+/* Wiggle */
+.anim-wiggle.anim-active {
+  animation-name: wiggle;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+
+/* Shake */
+.anim-shake.anim-active {
+  animation-name: shake;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+/* Bounce */
+.anim-bounce.anim-active {
+  animation-name: bounce;
+  animation-timing-function: cubic-bezier(0.280, 0.840, 0.420, 1);
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+/* Jiggle */
+.anim-jiggle.anim-active {
+  animation-name: jiggle;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes jiggle {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+
+/* Glow */
+.anim-glow.anim-active {
+  animation-name: glow;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes glow {
+  0%, 100% { 
+    box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(138, 43, 226, 1);
+  }
+}
+
+/* Tada (Big Celebration) */
+.anim-tada.anim-active {
+  animation-name: tada;
+}
+
+@keyframes tada {
+  0% { transform: scale(1) rotate(0deg); }
+  10%, 20% { transform: scale(0.9) rotate(-3deg); }
+  30%, 50%, 70%, 90% { transform: scale(1.1) rotate(3deg); }
+  40%, 60%, 80% { transform: scale(1.1) rotate(-3deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+/* ================================================
+   MOVEMENT ANIMATIONS (Great for Background)
+   ================================================ */
+
+/* Float */
+.anim-float.anim-active {
+  animation-name: float;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+}
+
+/* Bob */
+.anim-bob.anim-active {
+  animation-name: bob;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes bob {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg); 
+  }
+  25% { 
+    transform: translateY(-5px) rotate(2deg); 
+  }
+  75% { 
+    transform: translateY(5px) rotate(-2deg); 
+  }
+}
+
+/* Sway */
+.anim-sway.anim-active {
+  animation-name: sway;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+
+/* Swing */
+.anim-swing.anim-active {
+  animation-name: swing;
+  animation-timing-function: ease-in-out;
+  transform-origin: top center;
+}
+
+@keyframes swing {
+  20% { transform: rotate(15deg); }
+  40% { transform: rotate(-10deg); }
+  60% { transform: rotate(5deg); }
+  80% { transform: rotate(-5deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* ================================================
+   EXIT ANIMATIONS
+   ================================================ */
+
+/* Fade Out */
+.anim-fadeOut.anim-active {
+  animation-name: fadeOut;
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Zoom Out */
+.anim-zoomOut.anim-active {
+  animation-name: zoomOut;
+}
+
+@keyframes zoomOut {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+/* Slide Out Left */
+.anim-slideOutLeft.anim-active {
+  animation-name: slideOutLeft;
+  animation-timing-function: ease-in;
+}
+
+@keyframes slideOutLeft {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+/* Slide Out Right */
+.anim-slideOutRight.anim-active {
+  animation-name: slideOutRight;
+  animation-timing-function: ease-in;
+}
+
+@keyframes slideOutRight {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Spin Out */
+.anim-spinOut.anim-active {
+  animation-name: spinOut;
+}
+
+@keyframes spinOut {
+  0% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* ================================================
+   SPECIAL ANIMATIONS
+   ================================================ */
+
+/* Flip 3D */
+.anim-flip3D.anim-active {
+  animation-name: flip3D;
+  transform-style: preserve-3d;
+}
+
+@keyframes flip3D {
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
+}
+
+/* Rotate 360 */
+.anim-rotate360.anim-active {
+  animation-name: rotate360;
+}
+
+@keyframes rotate360 {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Rainbow Glow */
+.anim-rainbow.anim-active {
+  animation-name: rainbow;
+}
+
+@keyframes rainbow {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+/* Elastic */
+.anim-elastic.anim-active {
+  animation-name: elastic;
+  animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes elastic {
+  0% { transform: scale(1, 1); }
+  30% { transform: scale(1.25, 0.75); }
+  40% { transform: scale(0.75, 1.25); }
+  50% { transform: scale(1.15, 0.85); }
+  65% { transform: scale(0.95, 1.05); }
+  75% { transform: scale(1.05, 0.95); }
+  100% { transform: scale(1, 1); }
+}
+
+/* ================================================
+   RESPONSIVE ADJUSTMENTS
+   ================================================ */
+
+@media (max-width: 768px) {
+  .animation-wrapper {
+    /* Slightly faster animations on mobile for better performance */
+    animation-duration: calc(var(--anim-duration, 1s) * 0.8);
+  }
+}
+
+/* ================================================
+   UTILITY CLASSES (Use without AnimationWrapper)
+   ================================================ */
+
+/* Direct CSS classes you can apply to any element */
+
+.pulse-always {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.float-always {
+  animation: float 3s ease-in-out infinite;
+}
+
+.glow-always {
+  animation: glow 1.5s ease-in-out infinite;
+}
+
+.wiggle-always {
+  animation: wiggle 0.5s ease-in-out 3;
+}
+
+.bounce-hover:hover {
+  animation: bounce 0.3s ease-out;
+}
+
+.grow-hover:hover {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+
+.spin-hover:hover {
+  animation: rotate360 0.5s ease-out;
+}

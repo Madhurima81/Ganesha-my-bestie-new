@@ -1,0 +1,707 @@
+/* zones/shloka-river/scenes/Scene5/ShlokaRiverFinale.css */
+
+.shloka-river-finale {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+
+.finale-background {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Raft Container with gentle rocking */
+.raft-container {
+  position: absolute;
+  bottom: 25%;
+  left: 70%;
+  transform: translateX(-50%);
+  width: 250px;
+  height: 200px;
+  z-index: 10;
+  animation: raftRocking 8s ease-in-out infinite; /* Gentle water movement */
+}
+
+.raft-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+}
+
+/* Animal positions on raft - Remove fixed sizes, let individual sizes apply */
+.animal-on-raft {
+  position: absolute;
+  animation: boardRaft 0.8s ease-out forwards;
+  z-index: 15;
+  transition: none; /* Remove any transitions */
+}
+
+/* BREATHING ANIMATION for raft animals */
+.raft-animal-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  animation: gentleBreathing 3s ease-in-out infinite; /* ADD breathing to raft */
+}
+
+/* Individual animal sizes preserved on raft */
+.animal-on-raft.position-1 { width: 70px !important; height: 70px !important; } /* Vakratunda */
+.animal-on-raft.position-2 { width: 75px !important; height: 75px !important; } /* Mahakaya */
+.animal-on-raft.position-3 { width: 55px !important; height: 55px !important; } /* Samaprabha */
+.animal-on-raft.position-4 { width: 60px !important; height: 60px !important; } /* Suryakoti */
+.animal-on-raft.position-5 { width: 50px !important; height: 50px !important; } /* Nirvighnam */
+.animal-on-raft.position-6 { width: 80px !important; height: 80px !important; } /* Kurumedeva */
+.animal-on-raft.position-7 { width: 65px !important; height: 65px !important; } /* Sarvakaryeshu */
+.animal-on-raft.position-8 { width: 60px !important; height: 60px !important; } /* Sarvada */
+
+/* Raft positions for 8 animals */
+.position-1 { top: 20%; left: 15%; }
+.position-2 { top: 30%; left: 35%; }
+.position-3 { top: 40%; left: 20%; }
+.position-4 { top: 50%; left: 40%; }
+.position-5 { top: 20%; left: 60%; }
+.position-6 { top: 30%; left: 80%; }
+.position-7 { top: 40%; left: 65%; }
+.position-8 { top: 50%; left: 85%; }
+
+/* Riverbank animals */
+.riverbank-animal {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  animation: animalAppear 0.6s ease-out forwards;
+  z-index: 5;
+}
+
+.riverbank-animal:hover {
+  transform: scale(1.1);
+}
+
+.riverbank-animal:hover .animal-glow {
+  opacity: 1;
+}
+
+/* BREATHING ANIMATION for riverbank animals */
+.riverbank-animal-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.2));
+  transition: filter 0.3s ease;
+  animation: gentleBreathing 4s ease-in-out infinite; /* Keep on riverbank */
+}
+
+/* INDIVIDUAL ANIMAL ANIMATIONS */
+.animal-vakratunda .riverbank-animal-image,
+.animal-mahakaya .riverbank-animal-image {
+  animation: elephantSway 5s ease-in-out infinite; /* Elephants sway */
+}
+
+.animal-samaprabha .riverbank-animal-image {
+  animation: kittenTwitch 6s ease-in-out infinite; /* Kitten ear twitch */
+}
+
+.animal-suryakoti .riverbank-animal-image {
+  animation: fairyFloat 4s ease-in-out infinite; /* Fairy floats */
+}
+
+.animal-nirvighnam .riverbank-animal-image {
+  animation: snailBreathe 8s ease-in-out infinite; /* Slow snail breathing */
+}
+
+.animal-kurumedeva .riverbank-animal-image {
+  animation: peacockPreen 7s ease-in-out infinite; /* Peacock preening */
+}
+
+.animal-sarvakaryeshu .riverbank-animal-image {
+  animation: duckBob 3s ease-in-out infinite; /* Duck head bob */
+}
+
+.animal-sarvada .riverbank-animal-image {
+  animation: fawnNuzzle 5s ease-in-out infinite; /* Fawn gentle movement */
+}
+
+.animal-glow {
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  background: radial-gradient(circle, rgba(255,215,0,0.6) 0%, transparent 70%);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+/* Animal positioning on riverbank with individual sizes */
+.animal-vakratunda { 
+  top: 15%; 
+  left: 8%;
+  width: 70px;
+  height: 70px;
+}
+
+.animal-mahakaya { 
+  top: 20%;
+  left: 88%;
+  width: 75px;
+  height: 75px;
+}
+
+.animal-samaprabha { 
+  top: 50%;
+  left: 3%;
+  width: 55px;
+  height: 55px;
+}
+
+.animal-suryakoti { 
+  top: 30%;
+  left: 18%;
+  width: 60px;
+  height: 60px;
+}
+
+.animal-nirvighnam { 
+  top: 60%;
+  left: 92%;
+  width: 50px;
+  height: 50px;
+}
+
+.animal-kurumedeva { 
+  top: 70%;
+  left: 8%;
+  width: 80px;
+  height: 80px;
+}
+
+.animal-sarvakaryeshu { 
+  top: 78%;
+  left: 85%;
+  width: 65px;
+  height: 65px;
+}
+
+.animal-sarvada { 
+  top: 88%;
+  left: 30%;
+  width: 60px;
+  height: 60px;
+}
+
+/* VALIDATION FEEDBACK ELEMENTS */
+.golden-ring-indicator {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  right: -8px;
+  bottom: -8px;
+  border: 4px solid #FFD700;
+  border-radius: 50%;
+  animation: goldenRingPulse 1.5s ease-in-out infinite;
+  pointer-events: none;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+}
+
+.wrong-click-feedback {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(244, 67, 54, 0.9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: bold;
+  animation: feedbackBounce 1.5s ease-out;
+  z-index: 100;
+}
+
+.correct-click-sparkles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.correct-click-sparkles .sparkle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 20px;
+  animation: sparkleOrbit 1.2s ease-out forwards;
+  transform-origin: 0 0;
+  color: #FFD700;
+  text-shadow: 0 0 10px #FFD700;
+}
+
+/* SPEECH BUBBLE */
+.speech-bubble {
+  position: absolute;
+  left: 50%;
+  top: 20%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid #FFD700;
+  border-radius: 20px;
+  padding: 12px 20px;
+  font-Size: 18px;
+  font-weight: bold;
+  color: #8B4513;
+  z-index: 150;
+  animation: speechBubblePop 0.3s ease-out, speechBubbleFade 2s ease-out forwards;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  font-family: serif;
+}
+
+/* WATER RIPPLES */
+.water-ripple {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border: 2px solid rgba(100, 200, 255, 0.5);
+  border-radius: 50%;
+  animation: rippleExpand 2s ease-out forwards;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* Welcome Message */
+.welcome-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px 40px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  z-index: 100;
+  animation: messageSlideIn 0.8s ease-out;
+}
+
+.welcome-content h2 {
+  color: #8B4513;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.welcome-content p {
+  color: #1565C0;
+  font-size: 16px;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.welcome-content p:last-child {
+  font-size: 14px;
+  color: #666;
+  font-style: italic;
+}
+
+/* Mid Celebration */
+.mid-celebration {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #DAA520, #FFD700);
+  color: white;
+  padding: 20px 30px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(218, 165, 32, 0.4);
+  z-index: 50;
+  animation: celebrationPulse 0.6s ease-out;
+}
+
+.celebration-content h3 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.celebration-content p {
+  font-size: 14px;
+  margin: 0;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+/* Final Celebration */
+.final-celebration {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #9370DB, #8A2BE2);
+  color: white;
+  padding: 25px 35px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(147, 112, 219, 0.4);
+  z-index: 50;
+  animation: finalCelebrationGlow 1s ease-out;
+}
+
+.final-celebration h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.final-celebration p {
+  font-size: 16px;
+  margin: 0;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+/* Progress Counter */
+.progress-counter {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px 20px;
+  border-radius: 25px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  z-index: 20;
+}
+
+.counter-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.counter-icon {
+  font-size: 20px;
+}
+
+.counter-text {
+  font-size: 16px;
+  font-weight: bold;
+  color: #8B4513;
+}
+
+/* Error Boundary */
+.error-boundary {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  z-index: 200;
+}
+
+.error-boundary h2 {
+  color: #d32f2f;
+  margin-bottom: 20px;
+}
+
+.error-boundary button {
+  background: #8B4513;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Loading state */
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  color: #8B4513;
+  font-weight: bold;
+}
+
+/* ALL ANIMATIONS */
+@keyframes raftRocking {
+  0%, 100% { transform: translateX(-50%) rotate(0deg); }
+  25% { transform: translateX(-50%) rotate(0.5deg); }
+  75% { transform: translateX(-50%) rotate(-0.5deg); }
+}
+
+@keyframes gentleBreathing {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+/* Individual animal animations */
+@keyframes elephantSway {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.02) rotate(-1deg); }
+  75% { transform: scale(1.02) rotate(1deg); }
+}
+
+@keyframes kittenTwitch {
+  0%, 95% { transform: scale(1); }
+  5% { transform: scale(1.05) rotate(-2deg); }
+  10% { transform: scale(1.02) rotate(1deg); }
+}
+
+@keyframes fairyFloat {
+  0%, 100% { transform: scale(1) translateY(0px); }
+  50% { transform: scale(1.03) translateY(-3px); }
+}
+
+@keyframes snailBreathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.01); }
+}
+
+@keyframes peacockPreen {
+  0%, 90% { transform: scale(1); }
+  5% { transform: scale(1.04) rotate(2deg); }
+  10% { transform: scale(1.02) rotate(-1deg); }
+}
+
+@keyframes duckBob {
+  0%, 100% { transform: scale(1) translateY(0px); }
+  30% { transform: scale(1.02) translateY(-2px); }
+  60% { transform: scale(1.01) translateY(-1px); }
+}
+
+@keyframes fawnNuzzle {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  40% { transform: scale(1.03) rotate(-1deg); }
+  80% { transform: scale(1.02) rotate(1deg); }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes rippleExpand {
+  0% { 
+    width: 10px; 
+    height: 10px; 
+    opacity: 0.8; 
+    border-width: 3px; 
+  }
+  100% { 
+    width: 60px; 
+    height: 60px; 
+    opacity: 0; 
+    border-width: 1px; 
+  }
+}
+
+@keyframes speechBubblePop {
+  0% { transform: translateX(-50%) scale(0.5); opacity: 0; }
+  100% { transform: translateX(-50%) scale(1); opacity: 1; }
+}
+
+@keyframes speechBubbleFade {
+  0%, 70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes goldenRingPulse {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+    border-width: 4px;
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+    border-width: 6px;
+  }
+}
+
+@keyframes feedbackBounce {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px) scale(0.8);
+  }
+  20% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-5px) scale(1.1);
+  }
+  80% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-5px) scale(0.9);
+  }
+}
+
+@keyframes animalAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes sparkleOrbit {
+  0% {
+    opacity: 0;
+    transform: rotate(var(--angle)) translateX(20px) scale(0.5);
+  }
+  25% {
+    opacity: 1;
+    transform: rotate(var(--angle)) translateX(35px) scale(1);
+  }
+  75% {
+    opacity: 1;
+    transform: rotate(var(--angle)) translateX(40px) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--angle)) translateX(50px) scale(0.8);
+  }
+}
+
+@keyframes boardRaft {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes celebrationPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes finalCelebrationGlow {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+    box-shadow: 0 8px 25px rgba(147, 112, 219, 0.4);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 12px 35px rgba(147, 112, 219, 0.6);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    box-shadow: 0 8px 25px rgba(147, 112, 219, 0.4);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .raft-container {
+    width: 250px;
+    height: 180px;
+    bottom: 20%;
+  }
+  
+  .riverbank-animal {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .animal-on-raft.position-1 { width: 60px !important; height: 60px !important; }
+  .animal-on-raft.position-2 { width: 65px !important; height: 65px !important; }
+  .animal-on-raft.position-3 { width: 45px !important; height: 45px !important; }
+  .animal-on-raft.position-4 { width: 50px !important; height: 50px !important; }
+  .animal-on-raft.position-5 { width: 40px !important; height: 40px !important; }
+  .animal-on-raft.position-6 { width: 70px !important; height: 70px !important; }
+  .animal-on-raft.position-7 { width: 55px !important; height: 55px !important; }
+  .animal-on-raft.position-8 { width: 50px !important; height: 50px !important; }
+  
+  .welcome-message {
+    padding: 20px 25px;
+    max-width: 90%;
+  }
+  
+  .welcome-content h2 {
+    font-size: 20px;
+  }
+  
+  .welcome-content p {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .raft-container {
+    width: 200px;
+    height: 150px;
+  }
+  
+  .riverbank-animal {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .animal-on-raft.position-1 { width: 50px !important; height: 50px !important; }
+  .animal-on-raft.position-2 { width: 55px !important; height: 55px !important; }
+  .animal-on-raft.position-3 { width: 40px !important; height: 40px !important; }
+  .animal-on-raft.position-4 { width: 45px !important; height: 45px !important; }
+  .animal-on-raft.position-5 { width: 35px !important; height: 35px !important; }
+  .animal-on-raft.position-6 { width: 60px !important; height: 60px !important; }
+  .animal-on-raft.position-7 { width: 50px !important; height: 50px !important; }
+  .animal-on-raft.position-8 { width: 45px !important; height: 45px !important; }
+  
+  .welcome-content h2 {
+    font-size: 18px;
+  }
+  
+  .celebration-content h3 {
+    font-size: 18px;
+  }
+  
+  .final-celebration h2 {
+    font-size: 20px;
+  }
+}

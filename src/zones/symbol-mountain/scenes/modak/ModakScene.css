@@ -39,8 +39,7 @@
 }
 
 /* ===========================
-   POWER UNLOCK CELEBRATION MODAL 
-   (This is the END game reward - Keep this here!)
+   POWER UNLOCK & OVERLAYS
    =========================== */
 .modak-game-power-overlay {
   position: fixed;
@@ -49,7 +48,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 500;
+  z-index: 2500;
   animation: modak-game-fadeIn 0.3s ease-out;
 }
 
@@ -134,23 +133,6 @@
   flex: 1;
 }
 
-.modak-game-power-secondary-button:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 6px 20px rgba(78, 205, 196, 0.6);
-}
-
-.modak-game-power-secondary-button:active { transform: translateY(0) scale(0.98); }
-
-@keyframes modak-game-scaleIn {
-  from { opacity: 0; transform: scale(0.8); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes modak-game-powerPulse {
-  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(255, 140, 0, 0.5)); }
-  50% { transform: scale(1.08); filter: drop-shadow(0 0 25px rgba(255, 140, 0, 0.8)); }
-}
-
 /* ===========================
    ANIMATIONS & SPARKLES
    =========================== */
@@ -180,6 +162,8 @@
 .modak-game-sparkle:nth-child(3) { top: 80%; left: 50%; animation-delay: 0.2s; transform: translate(-50%, -50%) scale(0); }
 .modak-game-sparkle:nth-child(4) { top: 50%; left: 20%; animation-delay: 0.15s; transform: translate(-50%, -50%) scale(0); }
 
+@keyframes modak-game-scaleIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+@keyframes modak-game-powerPulse { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(255, 140, 0, 0.5)); } 50% { transform: scale(1.08); filter: drop-shadow(0 0 25px rgba(255, 140, 0, 0.8)); } }
 @keyframes modak-game-fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes modak-game-sparklesFadeOut { 0% { opacity: 1; } 60% { opacity: 1; } 100% { opacity: 0; } }
 @keyframes modak-game-sparkleFloat { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0); } 50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); } }
@@ -216,7 +200,7 @@
 }
 
 /* ===========================
-   HINTS & UI
+   PHASE HEADER & PROGRESS BARS
    =========================== */
 .modak-game-phase-header {
   position: fixed;
@@ -232,8 +216,77 @@
   z-index: 100;
   box-shadow: 0 4px 15px rgba(0,0,0,0.2);
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 }
 
+.modak-header-content-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 5px;
+}
+
+.modak-progress-track {
+  width: 200px;
+  max-width: 40vw; 
+  height: 20px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 10px;
+  border: 2px solid #8B4513;
+  overflow: hidden;
+}
+
+.modak-progress-fill {
+  height: 100%;
+  transition: width 0.5s ease-out;
+}
+
+.modak-progress-fill.modak-collection {
+  background: linear-gradient(90deg, #FF1493, #FFD700);
+}
+
+.modak-progress-fill.rock-feeding {
+  background: linear-gradient(90deg, #FF8C00, #FFD700);
+}
+
+.modak-progress-text {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+/* ===========================
+   RESUME POPUP
+   =========================== */
+.modak-resume-popup {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  padding: 30px 50px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  z-index: 9999;
+  font-family: 'Baloo 2', cursive;
+  font-size: 28px;
+  font-weight: bold;
+  color: #5D2E0F;
+  text-align: center;
+  max-width: 80%;
+  border: 4px solid #FF8C00;
+  animation: slideDown 0.5s ease-out;
+}
+
+/* ===========================
+   HINTS & MOOSHIKA SPEECH
+   =========================== */
 .modak-game-hint-glow {
   animation: modak-game-strongPulse 1.5s ease-in-out infinite !important;
   filter: drop-shadow(0 0 25px rgba(255, 215, 0, 1)) !important;
@@ -243,10 +296,7 @@
 .modak-game-hint-glow::before {
   content: '';
   position: absolute;
-  top: -10px;
-  left: -10px;
-  right: -10px;
-  bottom: -10px;
+  top: -10px; left: -10px; right: -10px; bottom: -10px;
   background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
   border-radius: 50%;
   animation: modak-game-glowExpand 1.5s ease-in-out infinite;
@@ -264,29 +314,31 @@
   50% { transform: scale(1.3); opacity: 1; }
 }
 
-.modak-game-speech-content {
-  background: white;
-  border: 3px solid #ff69b4;
-  border-radius: 20px;
-  padding: 8px 15px;
-  font-size: 14px;
-  font-weight: bold;
-  color: #333;
-  white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  position: relative;
+.modak-game-mooshika-speech-bubble {
+  position: absolute;
+  bottom: 100%; left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 20px;
+  background: #FFF9E6; border: 3px solid #FFD700; border-radius: 20px;
+  padding: 15px 25px;
+  width: 260px;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0, 60, 0, 0.2);
+  z-index: 100;
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.modak-game-speech-arrow {
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 12px solid transparent;
-  border-right: 12px solid transparent;
-  border-top: 12px solid #FFD93D;
+.modak-game-speech-content {
+  font-family: 'Baloo 2', cursive;
+  font-size: 18px; color: #004D40; line-height: 1.3;
+  white-space: pre-wrap;
+}
+
+.modak-game-speech-arrow { display: none; }
+
+@keyframes popIn {
+  0% { transform: translateX(-50%) scale(0.5); opacity: 0; }
+  100% { transform: translateX(-50%) scale(1); opacity: 1; }
 }
 
 @keyframes modak-game-modakToBasket {
@@ -296,12 +348,11 @@
 }
 
 /* ===========================
-   MOOSHIKA
+   MOOSHIKA CHARACTER
    =========================== */
 .modak-game-mooshika-container {
   position: absolute;
-  width: 60px;
-  height: 60px;
+  width: 60px; height: 60px;
   z-index: 15;
   transition: all 0.3s ease;
   transform-origin: center center;
@@ -309,13 +360,8 @@
 }
 
 .modak-game-mooshika-container img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  pointer-events: none;
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
+  width: 100%; height: 100%; object-fit: contain;
+  pointer-events: none; user-select: none;
 }
 
 .modak-game-mooshika-container.breathing { animation: modak-game-mooshikaBreathing 3s ease-in-out infinite; }
@@ -326,65 +372,11 @@
 }
 
 /* ===========================
-   NEW: CELEBRATION CARD (Replaces Speech Bubble)
-   =========================== */
-.modak-game-mooshika-speech-bubble {
-  position: absolute;
-  /* Float above the character */
-  bottom: 100%; 
-  left: 50%;
-  transform: translateX(-50%);
-  margin-bottom: 20px; /* Spacing from character head */
-  
-  /* Card Styling */
-  background: #FFF9E6; /* Cream background */
-  border: 3px solid #FFD700; /* Gold border */
-  border-radius: 20px;
-  padding: 15px 25px;
-  
-  /* Sizing - Starts small for Mobile */
-  width: 260px;
-  text-align: center;
-  box-shadow: 0 8px 25px rgba(0, 60, 0, 0.2); /* Deep premium shadow */
-  z-index: 100;
-  
-  /* Animation */
-  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.modak-game-speech-content {
-  /* Reset old bubble styles */
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-  
-  /* Typography */
-  font-family: 'Baloo 2', cursive;
-  font-size: 18px; /* Base size */
-  color: #004D40; /* Deep Teal (Premium look) */
-  line-height: 1.3;
-  white-space: pre-wrap; /* Allows the \n to create a new line */
-}
-
-/* Hide the old arrow tail */
-.modak-game-speech-arrow {
-  display: none; 
-}
-
-/* The Pop Animation */
-@keyframes popIn {
-  0% { transform: translateX(-50%) scale(0.5); opacity: 0; }
-  100% { transform: translateX(-50%) scale(1); opacity: 1; }
-}
-
-/* ===========================
    MODAKS
    =========================== */
 .modak-game-modak {
   position: absolute;
-  width: 64px;
-  height: 64px;
+  width: 64px; height: 64px;
   cursor: pointer;
   transition: all 0.3s ease;
   z-index: 12;
@@ -398,14 +390,15 @@
 .modak-game-modak:active { transform: scale(0.95); }
 
 /* ===========================
-   BASKET
+   BASKET (Updated Size)
    =========================== */
 .modak-game-basket-container {
   position: absolute;
-  left: 12%;
+  left: 10%;
   top: 40%;
-  width: 170px;
-  height: 150px;
+  /* Increased Base Size */
+  width: 220px; 
+  height: 190px;
   z-index: 8;
   transition: all 0.3s ease;
   cursor: default;
@@ -424,47 +417,34 @@
   50% { transform: scale(1.08); filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.9)); }
 }
 
-.modak-game-basket-main {
-  position: relative;
-  width: 100%;
-  height: 100%;
+.modak-game-basket-main { position: relative; width: 100%; height: 100%; }
+.modak-game-basket-main img { width: 100%; height: 100%; object-fit: contain; }
+
+/* Counter removed per request */
+
+/* ===========================
+   COLLECTED MODAKS (Fix Size)
+   =========================== */
+/* Targets collected items to prevent them from shrinking */
+div[class*="modak-game-modak-collected"] {
+  /* Force same size as ground modaks */
+  width: 80px !important; 
+  height: 80px !important;
+  z-index: 9;
 }
 
-.modak-game-basket-main img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.modak-game-basket-counter {
-  position: absolute;
-  top: -15px;
-  right: -15px;
-  background: linear-gradient(135deg, #ffd700, #ffb347);
-  border: 3px solid white;
-  border-radius: 50%;
-  width: 35px;
-  height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-weight: bold;
-  color: #333;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-}
+/* Specific positions to stack inside the larger basket */
+.modak-game-modak-collected-1 { top: 45% !important; left: 15% !important; }
+.modak-game-modak-collected-2 { top: 40% !important; left: 18% !important; }
+.modak-game-modak-collected-3 { top: 45% !important; left: 22% !important; }
 
 /* ===========================
    ROCK/BELLY
    =========================== */
 .modak-game-rock-container {
-  position: absolute;
-  left: 75%;
-  top: 15%;
-  width: 180px;
-  height: auto;
-  cursor: pointer;
-  transition: all 0.5s ease;
+  position: absolute; left: 75%; top: 15%;
+  width: 180px; height: auto;
+  cursor: pointer; transition: all 0.5s ease;
   z-index: 8;
 }
 
@@ -477,471 +457,417 @@
   50% { transform: scale(1.02); filter: drop-shadow(0 6px 16px rgba(255, 140, 0, 0.5)); }
 }
 
-.modak-game-rock-feed-count {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 2px solid #ff6347;
-  border-radius: 50%;
-  width: 35px;
-  height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-weight: bold;
-  color: #333;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  z-index: 10;
-}
+/* Counter removed per request */
 
 /* ===========================
-   MODAK COUNTER
+   COUNTERS & OVERLAYS
    =========================== */
 .modak-game-counter {
-  position: absolute;
-  top: 15px;
-  left: 75px;
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 25px;
+  position: absolute; top: 15px; left: 75px;
+  background-color: rgba(255, 255, 255, 0.9); border-radius: 25px;
   padding: 8px 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   z-index: 10;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 180px;
-  height: 40px;
+  display: flex; align-items: center; gap: 12px;
+  width: 180px; height: 40px;
 }
 
 .modak-game-counter-progress {
-  flex: 1;
-  height: 6px;
-  background-color: rgba(0, 0, 0, 0.1);
-  border-radius: 3px;
-  overflow: hidden;
+  flex: 1; height: 6px;
+  background-color: rgba(0, 0, 0, 0.1); border-radius: 3px; overflow: hidden;
 }
 
 .modak-game-counter-progress-fill {
-  height: 100%;
-  background: linear-gradient(to right, #ffd700, #ffb347);
-  border-radius: 3px;
-  transition: width 0.5s ease;
+  height: 100%; background: linear-gradient(to right, #ffd700, #ffb347);
+  border-radius: 3px; transition: width 0.5s ease;
 }
 
 .modak-game-counter-display {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; font-weight: 600; color: #333;
 }
 
 .modak-game-counter-icon { width: 24px; height: 24px; }
 .modak-game-counter-icon img { width: 100%; height: 100%; object-fit: contain; }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
+@keyframes slideDown { from { opacity: 0; transform: translateX(-50%) translateY(-20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+/* ===========================
+   DISCOVERY OVERLAY
+   =========================== */
+.discovery-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255, 253, 230, 0.4); 
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  z-index: 3000;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  animation: discoveryFadeIn 0.5s ease-out forwards;
 }
 
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
+.discovery-overlay.fading-out { animation: discoveryFadeOut 0.5s ease-in forwards; }
+
+.discovery-title {
+  font-family: 'Baloo 2', cursive; font-size: 64px; color: #004D40;
+  margin-bottom: 10px;
+  text-shadow: 0 4px 0 #fff, 0 0 20px rgba(255, 255, 255, 0.8);
+  line-height: 1.1; transform: scale(1);
+  animation: textPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
+
+.discovery-subtitle {
+  font-family: 'Nunito', sans-serif; font-size: 28px; color: #004D40;
+  margin-bottom: 30px; font-weight: 800; text-shadow: 0 2px 0 rgba(255,255,255,0.6);
+}
+
+.discovery-hero-img {
+  width: 280px; height: 280px; object-fit: contain;
+  animation: heroFloat 3s infinite ease-in-out;
+  filter: drop-shadow(0 15px 30px rgba(0,0,0,0.3));
+}
+
+@keyframes discoveryFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes discoveryFadeOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes heroFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+@keyframes textPop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
 /* ========================================== */
-/* RESPONSIVE DESIGN - MEDIA QUERIES          */
+/* RESPONSIVE DESIGN - USE IN ALL SCENES */
 /* ========================================== */
 
 /* === 1. BACKGROUND RESPONSIVE === */
 @media (max-aspect-ratio: 9/16) {
-  .modak-game-background { background-size: auto 100% !important; }
+  .modak-game-background {
+    background-size: auto 100% !important;
+  }
 }
 
 @media (min-aspect-ratio: 16/9) {
-  .modak-game-background { background-size: 100% auto !important; }
+  .modak-game-background {
+    background-size: 100% auto !important;
+  }
 }
 
 /* === 2. MOBILE PORTRAIT (Phones) === */
 @media (max-width: 600px) {
-  /* --- Game Elements --- */
   .modak-game-mud-mound { width: 50px; height: 35px; }
   .modak-game-modak { width: 45px; height: 45px; }
   .modak-game-mooshika-container { width: 45px; height: 45px; }
-  .modak-game-basket-container { width: 110px; height: 95px; left: 8%; top: 45%; }
+  .modak-game-basket-container { width: 140px; height: 120px; left: 8%; top: 45%; }
+  div[class*="modak-game-modak-collected"] { width: 45px !important; height: 45px !important; }
+  
   .modak-game-rock-container { width: 120px; left: 65%; top: 20%; }
   .modak-game-counter { width: 150px; height: 32px; left: 10px; top: 10px; }
   .modak-game-phase-header { font-size: 14px; padding: 8px 15px; width: 90%; top: 60px; }
   
+  .modak-progress-track { width: 120px; height: 14px; }
+  .modak-progress-text { font-size: 18px; }
   .modak-game-power-card { padding: 25px; }
   .modak-game-power-icon { width: 100px; height: 100px; }
+  .discovery-title { font-size: 42px; padding: 0 10px; }
+  .discovery-subtitle { font-size: 20px; padding: 0 20px; }
+  .discovery-hero-img { width: 200px; height: 200px; }
+  .modak-resume-popup { font-size: 20px; padding: 20px 30px; width: 90%; }
 }
 
-/* === 3. MOBILE LANDSCAPE (Short screens: iPhone SE, Pixel 7, Galaxy) === */
-/* Logic: If height is less than 600px, it is a Phone in Landscape */
-@media (max-height: 600px) and (orientation: landscape) {
-  
-  /* --- Game Elements --- */
+/* === 3. MOBILE LANDSCAPE (Phones horizontal) === */
+@media (min-width: 568px) and (max-width: 1019px) and (orientation: landscape) {
   .modak-game-mud-mound { width: 95px; height: auto; }
   .modak-game-modak { width: 50px; height: 50px; }
   .modak-game-mound-1 { top: 40%; }
   .modak-game-mound-2 { top: 50%; }
   .modak-game-mound-3 { top: 55%; }
   
-  .modak-game-basket-container { width: 130px; height: 110px; top: 35%; }
+  .modak-game-basket-container { width: 160px; height: 140px; top: 35%; }
+  div[class*="modak-game-modak-collected"] { width: 50px !important; height: 50px !important; }
+  
   .modak-game-rock-container { width: 140px; top: 10%; }
-
-  /* --- HEADER FIX: AGGRESSIVE SHRINK --- */
   .modak-game-phase-header { 
-    font-size: 20px !important;     /* Force smaller text */
-    padding: 8px 20px !important;   /* Force tight padding */
-    top: 30px !important;           /* Push to very top */
-    width: auto;
-    max-width: 80%;                 /* Don't span the whole screen */
-    white-space: nowrap;            /* Single line */
-    border-radius: 20px;            /* Smaller corners */
-    line-height: 1.2;
+    font-size: 18px !important; padding: 5px 20px !important; top: 15px !important;           
+    width: auto; max-width: 80%; line-height: 1.2;
+    flex-direction: row; gap: 15px;
   }
+  .modak-progress-track { width: 100px; height: 12px; }
+  .modak-progress-text { font-size: 18px; }
 }
 
-  /* 2. OVERRIDE: If screen height is small (iPhone SE is ~375px high) */
-  @media (max-height: 400px) {
-    .modak-game-phase-header { 
-      font-size: 13px;     /* Shrink for SE */
-      padding: 5px 12px;   /* Tight padding */
-      top: 10px;           /* Push higher up */
-    }
-  }
-
-
-/* === 4. iPAD ALL (Portrait + Landscape) === */
-/* Covers iPad Mini, Air, Pro 11" */
-@media (min-width: 768px) and (min-height: 768px) and (max-width: 1366px) {
+/* === 4. iPAD ALL / TABLET MEDIUM (Portrait + Landscape) === */
+/* Includes iPad Mini, iPad Air, Standard Tablet */
+@media (min-width: 768px) and (min-height: 768px) and (max-width: 1250px) {
   
-  /* --- 1. GAME ELEMENTS: MAKE THEM CHUNKY --- */
-  /* Fix: Increased size so they look like main game objects, not pebbles */
-  .modak-game-mud-mound { width: 140px; height: auto; } /* Up from 90px/65px */
-  .modak-game-modak { width: 105px; height: 105px; }    /* Up from 85px */
-  .modak-game-mooshika-container { width: 100px; height: 100px; }
-  
-  .modak-game-basket-container { width: 200px; height: 175px; } /* Bigger basket */
-  .modak-game-rock-container { width: 220px; }
-  
-  .modak-game-counter { width: 240px; height: 50px; font-size: 18px; }
-
-  /* --- 2. HEADER: STRONGER PRESENCE --- */
+  /* 1. HEADER: Increased Size (Balanced) */
   .modak-game-phase-header { 
-    font-size: 24px;       /* Up from 22px */
-    padding: 18px 50px;    /* More padding = bigger impact */
-    top: 50px;             /* Move down slightly to clear bezel visual weight */
-    white-space: nowrap;   
-    width: auto;
-    max-width: 90%;
-  }
-
-  /* Inside @media (min-width: 768px)... */
-.modak-game-mooshika-speech-bubble {
-  width: 400px; /* Wider card */
-  padding: 25px;
-  margin-bottom: 30px;
-}
-.modak-game-speech-content {
-  font-size: 24px; /* Bigger text */
-}
-}
-
-/* === 5. iPAD PORTRAIT (Tablet Vertical) === */
-/* Covers iPad Mini, Air, Pro 11" in Portrait Mode */
-@media (min-width: 768px) and (min-height: 1000px) and (orientation: portrait) {
-  
-  /* --- 1. BIGGER GAME ELEMENTS --- */
-  .modak-game-mud-mound { width: 160px; height: auto; } 
-  .modak-game-modak { width: 120px; height: 120px; }
-  .modak-game-mooshika-container { width: 110px; height: 110px; }
-  
-  /* --- 2. POSITIONING: ZIG-ZAG DOWN THE SCREEN --- */
-  /* We define all 5 to ensure no overlaps with the new big size */
-  
-  /* Top Left */
-  .modak-game-mound-1 { top: 45%; left: 38%; } 
-  
-  /* Top Right */
-  .modak-game-mound-2 { top: 45%; left: 65%; } 
-  
-  /* Middle Left */
-  .modak-game-mound-3 { top: 55%; left: 20%; } 
-  
-  /* Bottom Center */
-  .modak-game-mound-4 { top: 68%; left: 50%; transform: translateX(-50%); } 
-  
-  /* Bottom Right */
-  .modak-game-mound-5 { top: 60%; left: 55%; }
-
-  /* --- 3. UI ELEMENTS --- */
-  .modak-game-basket-container { width: 220px; height: 190px; top: 42%; left: 5%; }
-  .modak-game-rock-container { width: 240px; top: 18%; left: 70%; }
-  
-  .modak-game-phase-header { 
-    font-size: 26px;
-    padding: 18px 45px;
-    top: 80px;
-    width: auto;
-    max-width: 90%;
+    font-size: 20px !important;      /* Increased from 16px */
+    padding: 12px 35px !important;   /* More padding = premium look */
+    top: 35px !important;            /* Moved down slightly */
+    border-radius: 30px;
+    max-width: 85%;
     white-space: nowrap;
   }
-}
   
-  .modak-game-counter { 
-    width: 250px; 
-    height: 55px; 
-    font-size: 20px; 
-    top: 20px; 
-    left: 20px; 
-  }
+  /* Make the counter text inside matches */
+  .modak-progress-text { font-size: 20px; }
+  .modak-progress-track { width: 140px; height: 14px; }
 
-  /* Inside @media (min-width: 768px) and (orientation: portrait)... */
-.modak-game-mooshika-speech-bubble {
-  width: 450px;
-  padding: 30px;
-  margin-bottom: 40px;
-}
-.modak-game-speech-content {
-  font-size: 28px;
-}
-
-/* === 6. iPAD PRO 12.9" (The Giant Screen - Portrait) === */
-/* Targeted specifically for 1024x1366 resolution */
-@media (min-width: 1024px) and (min-height: 1366px) {
-  
-  /* --- 1. SUPER-SIZE GAME ELEMENTS --- */
-  .modak-game-mud-mound { width: 150px; height: 110px; }
-  
-  /* Ground Modaks */
-  .modak-game-modak { width: 130px; height: 130px; }
-  
-  /* Mooshika (Hero Size) */
-  .modak-game-mooshika-container { 
-    width: 160px; 
-    height: 160px; 
-  }
-  
-  /* --- 2. BASKET & CONTENT FIX --- */
+  /* 2. BASKET SIZE & POSITION */
   .modak-game-basket-container { 
-    width: 320px;  /* Increased from 260px */
-    height: 270px; /* Increased from 220px */
-    top: 42%;      /* Position it nicely */
-    left: 8%;
+    width: 200px;
+    height: 170px;
+    left: 10%;
+    top: 42%;
+    /* Ensure the scaled image doesn't get cut off */
+    overflow: visible; 
   }
-  
-  /* Force Collected Modaks to be Big (Override JS inline styles) */
+
+  /* 3. SCALE THE BASKET IMAGE ONLY (Visual Pop) */
+  .modak-game-basket-main img {
+    transform: scale(1.25);       /* Makes image 25% bigger */
+    transform-origin: bottom center; /* Grows upwards/outwards so it holds modaks better */
+  }
+
+  /* 4. GROUND ELEMENTS (Tablet Size) */
+  .modak-game-mud-mound { width: 110px; height: auto; }
+  .modak-game-modak { width: 85px; height: 85px; }
+  .modak-game-mooshika-container { width: 80px; height: 80px; }
+  .modak-game-rock-container { width: 240px; top: 38%; left: 60%; }
+
+  /* 5. COLLECTED MODAKS - MATCH GROUND SIZE */
   div[class*="modak-game-modak-collected"] {
-    width: 120px !important; 
-    height: 120px !important;
+    width: 85px !important;  
+    height: 85px !important; 
   }
 
-  /* Fine-tune positions inside the Giant Basket */
-  .modak-game-modak-collected-1 { top: 52% !important; left: 10% !important; }
-  .modak-game-modak-collected-2 { top: 50% !important; left: 15% !important; }
-  .modak-game-modak-collected-3 { top: 52% !important; left: 20% !important; }
+  /* 6. ADJUST POSITIONS (Snug fit) */
+  /* Red Modak (Left) */
+  .modak-game-modak-collected-1 { 
+    top: 42% !important;  
+    left: 15% !important; 
+  }
 
-  /* --- 3. UI & ROCK --- */
-  .modak-game-rock-container { width: 300px; }
+  /* Yellow Modak (Top Center) */
+  .modak-game-modak-collected-2 { 
+    top: 41% !important; 
+    left: 19% !important; 
+  }
+
+  /* Blue Modak (Right) */
+  .modak-game-modak-collected-3 { 
+    top: 42% !important; 
+    left: 13% !important; 
+  }
   
-  .modak-game-counter { width: 320px; height: 65px; font-size: 24px; }
+  .modak-game-counter { width: 200px; height: 45px; font-size: 16px; top: 20px; left: 20px; }
+}
+
+/* ============================================================
+   5. PORTRAIT MODE SPECIFIC RANGES (3 TIERS)
+   ============================================================ */
+
+/* === 5a. TIER 1: iPAD MINI (768px - 809px width) === */
+@media (min-width: 768px) and (max-width: 809px) and (orientation: portrait) {
   
+  /* Header & Progress */
+  .modak-game-phase-header { 
+    font-size: 22px !important; padding: 12px 35px !important; top: 50px !important; max-width: 90%;
+  }
+  .modak-progress-track { width: 140px; height: 14px; }
+  
+  /* Ground Mounds */
+  .modak-game-mud-mound { width: 130px !important; height: auto; }
+  .modak-game-mound-1 { top: 45%; left: 30%; } 
+  .modak-game-mound-2 { top: 45%; left: 70%; } 
+  .modak-game-mound-3 { top: 56%; left: 18%; } 
+  .modak-game-mound-4 { top: 65%; left: 50%; transform: translateX(-50%) !important; } 
+  .modak-game-mound-5 { top: 60%; left: 70%; }
+
+  /* --- BASKET POSITION --- */
+  .modak-game-basket-container { 
+    width: 240px; 
+    height: 200px; 
+    top: 55%;   /* Ensure this matches your desired basket height */
+    left: 8%;   
+  }
+
+  /* --- COLLECTED MODAKS FIX (Specific Selector) --- */
+  /* We use div[...] to force priority over generic classes */
+  div[class*="modak-game-modak-collected"] { 
+    width: 80px !important; 
+    height: 80px !important; 
+    z-index: 20 !important; /* Ensure they sit ON TOP of the basket front */
+  }
+
+  /* Red Modak (Left) - MOVED UP & RIGHT */
+  .modak-game-modak-collected-1 { 
+    top: 56% !important;  /* Moved UP from 65% to sit in basket */
+    left: 14% !important; /* Moved RIGHT to get inside rim */
+  }
+
+  /* Yellow Modak (Top/Center) */
+  .modak-game-modak-collected-2 { 
+    top: 51% !important;  /* Higher up to stack on top */
+    left: 19% !important; 
+  }
+
+  /* Blue Modak (Right) */
+  .modak-game-modak-collected-3 { 
+    top: 56% !important; 
+    left: 24% !important; 
+  }
+
+  /* Ground Modaks (Keep 100px) */
+  .modak-game-modak { width: 100px; height: 100px; }
+  
+  .modak-game-rock-container { width: 220px; top: 22%; left: 65%; }
+}
+
+/* === 5b. TIER 2: iPAD AIR (810px - 1023px width) === */
+/* NEW! Boosted sizes for the Air so it doesn't look empty */
+@media (min-width: 810px) and (max-width: 1023px) and (orientation: portrait) {
+  
+  /* 1. HEADER: Bigger than Mini, Smaller than Pro */
+  .modak-game-phase-header { 
+    font-size: 26px !important;      /* Bump up */
+    padding: 15px 40px !important;   
+    top: 55px !important;            
+    border-radius: 35px;
+    max-width: 88%;
+  }
+  .modak-progress-track { width: 160px; height: 16px; }
+
+  /* 2. MOUNDS: Beefed up */
+  .modak-game-mud-mound { 
+    width: 160px !important;  /* Up from 130px */
+    height: auto; 
+  }
+
+  /* 3. POSITIONS: Slightly wider spread than Mini */
+  .modak-game-mound-1 { top: 45%; left: 32%; } 
+  .modak-game-mound-2 { top: 45%; left: 68%; } 
+  .modak-game-mound-3 { top: 58%; left: 20%; } 
+  .modak-game-mound-4 { top: 58%; left: 50%; transform: translateX(-50%); } 
+  .modak-game-mound-5 { top: 67%; left: 70%; }
+
+  /* 4. BASKET: Bigger */
+  .modak-game-basket-container { 
+    width: 280px;   /* Up from 240px */
+    height: 240px; 
+    top: 65%; 
+    left: 8%; 
+  }
+  
+  /* Items */
+  .modak-game-modak { width: 120px; height: 120px; }
+  .modak-game-mooshika-container { width: 115px; height: 115px; }
+
+  /* Collected Modaks */
+  div[class*="modak-game-modak-collected"] { width: 120px !important; height: 120px !important; }
+  .modak-game-modak-collected-1 { top: 65% !important; left: 1% !important; }
+  .modak-game-modak-collected-2 { top: 45% !important; left: 19% !important; }
+  .modak-game-modak-collected-3 { top: 50% !important; left: 23% !important; }
+
+  /* Rock */
+  .modak-game-rock-container { width: 250px; top: 20%; left: 65%; }
+}
+
+/* === 5c. TIER 3: iPAD PRO (1024px+ width) === */
+/* Keeps the GIANT sizes */
+@media (min-width: 1024px) and (orientation: portrait) {
+  .modak-game-phase-header { 
+    font-size: 32px !important;
+    padding: 20px 50px !important;
+    top: 60px !important;
+  }
+  .modak-game-mud-mound { width: 190px !important; }
+  
+  .modak-game-mound-1 { top: 45%; left: 35%; } 
+  .modak-game-mound-2 { top: 45%; left: 68%; } 
+  .modak-game-mound-3 { top: 58%; left: 18%; } 
+  .modak-game-mound-4 { top: 70%; left: 50%; transform: translateX(-50%); } 
+  .modak-game-mound-5 { top: 62%; left: 70%; }
+
+  .modak-game-basket-container { width: 320px; height: 280px; top: 65%; left: 15%; }
+  .modak-game-modak { width: 140px; height: 140px; }
+  
+  .modak-game-rock-container { width: 360px; top: 30%; left: 45%; }
+}
+
+ /* Collected Modaks */
+  div[class*="modak-game-modak-collected"] { width: 140px !important; height: 140px !important; }
+  .modak-game-modak-collected-1 { top: 65% !important; left: 17% !important; }
+  .modak-game-modak-collected-2 { top: 65% !important; left: 22% !important; }
+  .modak-game-modak-collected-3 { top: 65% !important; left: 27% !important; }
+
+/* === 6. iPAD PRO 12.9" & DESKTOP (Large Screens) === */
+@media (min-width: 1251px) {
+  
+  /* 1. GIANT HEADER */
   .modak-game-phase-header { 
     font-size: 28px;
     padding: 18px 50px;
     top: 50px;
-    width: auto;
-    max-width: 90%;
-    white-space: nowrap;
   }
-}
+  .modak-progress-track { width: 200px; height: 20px; }
+  .modak-progress-text { font-size: 24px; }
 
-/* === 6b. iPAD PRO 12.9" LANDSCAPE ONLY (Balanced Version) === */
-/* Targeted specifically for 1366x1024 resolution */
-@media (min-width: 1300px) and (min-height: 1000px) and (orientation: landscape) {
-  
-  /* --- 1. GAME ELEMENTS (Big, but not crazy) --- */
-  .modak-game-mud-mound { width: 130px; height: 95px; }
-  
-  /* Ground Modaks */
-  .modak-game-modak { width: 110px; height: 110px; }
-  
-  .modak-game-mooshika-container { width: 100px; height: 100px; }
-  
-  /* --- BASKET & COLLECTED ITEMS FIX --- */
-.modak-game-basket-container { 
-    width: 340px; 
-    height: 290px; 
-    /* Ensure basket position is solid */
-    top: 40%; 
+  /* 2. GIANT BASKET */
+  .modak-game-basket-container { 
+    width: 300px; 
+    height: 250px; 
+    top: 42%; 
     left: 10%;
-  }
-  
-  /* --- FIX MODAK POSITIONS IN BASKET --- */
-  /* We use !important to override the inline JS styles */
-  
-  /* 1st Modak (Left) */
-  .modak-game-modak-collected-1 {
-    width: 110px !important; height: 110px !important;
-    top: 45% !important; /* Push down into basket */
-    left: 15% !important; /* Adjust horizontal */
+        overflow: visible; 
+
   }
 
-  /* 2nd Modak (Center) */
-  .modak-game-modak-collected-2 {
-    width: 110px !important; height: 110px !important;
-    top: 46% !important; /* Slightly higher for stacking look */
-    left: 18% !important;
+  .modak-game-basket-main img {
+    transform: scale(1.25);
+    transform-origin: bottom center;
   }
 
-  /* 3rd Modak (Right) */
-  .modak-game-modak-collected-3 {
-    width: 110px !important; height: 110px !important;
-    top: 45% !important;
-    left: 22% !important;
-  }
-  
-  /* 2. Force Collected Modaks to match Ground Modak Size */
-  /* We use the attribute selector to target any collected modak div */
+  /* 3. GIANT GROUND ITEMS */
+  .modak-game-mud-mound { width: 150px; height: 110px; }
+  .modak-game-modak { width: 130px; height: 130px; }
+  .modak-game-mooshika-container { width: 160px; height: 160px; }
+  .modak-game-rock-container { width: 300px; top: 38%; left: 60%; }
+
+  /* 4. GIANT COLLECTED MODAKS */
   div[class*="modak-game-modak-collected"] {
-    width: 110px !important;  /* Force override inline 64px */
-    height: 110px !important; /* Force override inline 64px */
+    width: 130px !important; 
+    height: 130px !important;
   }
 
-  .modak-game-rock-container { width: 250px; }
+  /* Spaced Out Stacking Positions */
+  .modak-game-modak-collected-1 { top: 42% !important; left: 12% !important; }
+  .modak-game-modak-collected-2 { top: 43% !important; left: 15% !important; }
+  .modak-game-modak-collected-3 { top: 42% !important; left: 19% !important; }
   
-  .modak-game-phase-header { font-size: 38px; padding: 18px 50px; top: 50px; white-space: nowrap; }
-  .modak-game-counter { width: 280px; height: 55px; font-size: 20px; }
-
-  /* --- 2. MODAL: PERFECT FIT LAYOUT --- */
-  .modak-game-instructions-content {
-    width: 85%;
-    max-width: 1300px; 
-    height: auto;
-    max-height: 85vh;
-    gap: 40px;
-    flex-direction: row; 
-    align-items: center;
-  }
-
-  .modak-game-instructions-ganesha { flex: 0 0 45%; justify-content: flex-end; }
-  .modak-game-instructions-ganesha img { max-width: 450px; max-height: 60vh; }
-
-  .modak-game-instructions-card {
-    flex: 0 0 45%;
-    padding: 50px; 
-    border-radius: 35px;
-  }
-
-  .modak-game-instructions-title { font-size: 52px; margin-bottom: 20px; }
-  .modak-game-instructions-subtitle { font-size: 26px; margin-bottom: 30px; }
-  
-  .modak-game-instructions-icons { gap: 40px; margin-bottom: 40px; }
-  .modak-game-instruction-icon-item img { width: 90px; height: 90px; }
-  .modak-game-instruction-icon-label { font-size: 18px; }
-  
-  .modak-game-instructions-button { font-size: 28px; padding: 18px 60px; border-radius: 50px; }
+  /* 5. COUNTER */
+  .modak-game-counter { width: 320px; height: 65px; font-size: 24px; }
 }
 
-/* === 7. LAPTOPS/CHROMEBOOKS === */
+/* === 7. LAPTOPS/CHROMEBOOKS (Standard) === */
 @media (min-width: 1366px) and (max-height: 900px) {
   .modak-game-container { max-width: 1600px; margin: 0 auto; }
-  /* Standard sizes usually work well here, defined in base CSS */
 }
+
 
 /* ===========================
-   NEW: DISCOVERY OVERLAY (Immersive / Direct on BG)
+   FIX: DISCOVERY OVERLAY TWEAKS
    =========================== */
-.discovery-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  
-  /* GLASS EFFECT: This blurs the forest background behind the text */
-  background: rgba(255, 253, 230, 0.4); /* Very subtle warm tint */
-  backdrop-filter: blur(12px);           /* Strong blur to make text readable */
-  -webkit-backdrop-filter: blur(12px);   /* Safari support */
-  
-  z-index: 2000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  
-  animation: discoveryFadeIn 0.5s ease-out forwards;
+
+/* 1. Force the Button to Center */
+/* We target the button inside the discovery overlay */
+div[class*="Discovery"] button,
+div[class*="discovery"] button {
+  margin-left: auto !important;
+  margin-right: auto !important;
+  display: block !important; /* Ensures margins work */
 }
 
-.discovery-overlay.fading-out {
-  animation: discoveryFadeOut 0.5s ease-in forwards;
-}
-
-.discovery-title {
-  font-family: 'Baloo 2', cursive;
-  font-size: 64px;
-  color: #004D40; /* Deep Teal from your reference */
-  margin-bottom: 10px;
-  
-  /* White outline to ensure it pops against any background color */
-  text-shadow: 
-    0 4px 0 #fff, 
-    0 0 20px rgba(255, 255, 255, 0.8);
-  
-  line-height: 1.1;
-  transform: scale(1);
-  animation: textPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.discovery-subtitle {
-  font-family: 'Nunito', sans-serif;
-  font-size: 28px;
-  color: #004D40;
-  margin-bottom: 30px;
-  font-weight: 800;
-  text-shadow: 0 2px 0 rgba(255,255,255,0.6);
-}
-
-.discovery-hero-img {
-  width: 280px;
-  height: 280px;
-  object-fit: contain;
-  /* Float Animation */
-  animation: heroFloat 3s infinite ease-in-out;
-  filter: drop-shadow(0 15px 30px rgba(0,0,0,0.3));
-}
-
-/* --- ANIMATIONS --- */
-@keyframes discoveryFadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes discoveryFadeOut { from { opacity: 1; } to { opacity: 0; } }
-
-@keyframes heroFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
-}
-
-@keyframes textPop {
-  0% { transform: scale(0.8); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-/* --- RESPONSIVE --- */
-@media (max-width: 768px) {
-  .discovery-title { font-size: 42px; padding: 0 10px; }
-  .discovery-subtitle { font-size: 20px; padding: 0 20px; }
-  .discovery-hero-img { width: 200px; height: 200px; }
+/* 2. Reduce the Yellow Glow */
+/* Currently it's likely 50px, we reduce it to 15px for a softer look */
+div[class*="Discovery"] img,
+div[class*="discovery"] img {
+  filter: drop-shadow(0 0 15px #FFD700) !important; /* Reduced from 50px */
 }

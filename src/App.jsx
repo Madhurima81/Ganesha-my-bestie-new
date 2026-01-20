@@ -23,10 +23,10 @@ const SCENE_MAPPING = {
     'final-scene': () => import('./zones/symbol-mountain/scenes/final scene/SacredAssemblySceneV8'),
   },
   'cave-of-secrets': {
-    'vakratunda-mahakaya': () => import('./zones/meaning cave/scenes/VakratundaMahakaya/CaveSceneFixedV1'),
-    'suryakoti-samaprabha': () => import('./zones/meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV3'), 
-    'nirvighnam-kurumedeva': () => import('./zones/meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV4'),
-    'sarvakaryeshu-sarvada': () => import('./zones/meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV6.jsx'),
+    'vakratunda-mahakaya': () => import('./zones/meaning cave/scenes/VakratundaMahakaya/CaveSceneFixedV2'),
+    'suryakoti-samaprabha': () => import('./zones/meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV4'), 
+    'nirvighnam-kurumedeva': () => import('./zones/meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV5'),
+    'sarvakaryeshu-sarvada': () => import('./zones/meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV7.jsx'),
     'final-meaning-scene': () => import('./zones/meaning cave/scenes/final meaning scene/Cavescene5memoryfinale.jsx'),
 
   },
@@ -36,6 +36,7 @@ const SCENE_MAPPING = {
     'suryakoti-bank': () => import('./zones/shloka-river/scenes/Scene2/SuryakotiBankSimplified.jsx'),
     'nirvighnam-chant': () => import('./zones/shloka-river/scenes/Scene3/NirvighnamChantSimplified.jsx'),
     'sarvakaryeshu-chant': () => import('./zones/shloka-river/scenes/scene4/SarvakaryeshuChantSimplified.jsx'),
+    
     'shloka-river-finale': () => import('./zones/shloka-river/scenes/scene5/ShlokaRiverFinale')
   },
   'festival-square': {
@@ -534,7 +535,7 @@ const getNextScene = (zoneId, currentSceneId) => {
       'suryakoti-samaprabha', 
       'nirvighnam-kurumedeva',
       'sarvakaryeshu-sarvada',
-      'mantra-assembly'
+      'Cave of Secrets'
     ],
     // ✅ ADD: Shloka River progression - Sanskrit chant learning journey
     'shloka-river': [
@@ -710,7 +711,10 @@ const handleSceneComplete = (sceneId, result) => {
     if (activeProfileId && currentZone && result?.stars) {
       
       console.log('🧪 APP: About to call ProgressManager.updateSceneCompletion with:');
-      console.log('🧪 symbols:', result?.symbols || {});
+console.log('🧪 symbols:', result?.symbols || {});
+console.log('🧪 chants:', result?.chants);
+console.log('🧪 chantedVerses:', result?.chantedVerses);
+console.log('🧪 WILL SAVE chants as:', result?.chants || result?.chantedVerses || {});
       
       const updatedZoneProgress = ProgressManager.updateSceneCompletion(
         activeProfileId, 
@@ -724,7 +728,7 @@ const handleSceneComplete = (sceneId, result) => {
            // ✅ ADD THESE LINES - Save chant data for Cave scenes
     sanskritWords: result?.sanskritWords || result?.learnedWords || {},
     learnedWords: result?.learnedWords || {},
-    chants: result?.chants || {},
+chants: result?.chants || result?.chantedVerses || {},
     mantras: result?.mantras || {}
         }
       );

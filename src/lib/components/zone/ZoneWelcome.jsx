@@ -17,7 +17,7 @@ const ZONE_CONTENT_TYPES = {
   'story-treehouse': ['stories'], 
   'festival-square': [], // ✅ CHANGE: Empty array since it's pure fun games
   'about-me-hut': [],
-  'cave-of-secrets': ['chants'],
+  'cave-of-secrets': ['meanings'], // ✅ FIXED: Cave teaches Sanskrit word meanings
   'obstacle-forest': ['symbols']
 };
 
@@ -251,16 +251,19 @@ const getZoneStats = () => {
   let symbols = 0;
   let stories = 0;
   let chants = 0;
+  let meanings = 0; // ✅ ADD: For Cave of Secrets
 
   if (zoneId === 'symbol-mountain') {
     symbols = culturalData?.symbolsCount || 0;
   } else if (zoneId === 'story-treehouse') {
     stories = culturalData?.storiesCount || 0;
-} else if (zoneId === 'shloka-river' || zoneId === 'cave-of-secrets') {
+  } else if (zoneId === 'shloka-river') {
     chants = culturalData?.chantsCount || 0;
+  } else if (zoneId === 'cave-of-secrets') {
+    meanings = culturalData?.meaningsCount || 0; // ✅ FIXED: Cave shows meanings
   }
 
-  return { symbols, stories, chants, completed, total: zoneData.scenes.length };
+  return { symbols, stories, chants, meanings, completed, total: zoneData.scenes.length };
 };
 
 // ✅ NEW: Render individual card
@@ -290,6 +293,15 @@ const renderStatCard = (cardType, stats) => {
           <div className="stat-icon">🎵</div>
           <div className="stat-number">{stats.chants}</div>
           <div className="stat-label">Chants</div>
+        </div>
+      );
+      
+    case 'meanings': // ✅ ADD: For Cave of Secrets Sanskrit words
+      return (
+        <div key="meanings" className="stat-card meanings">
+          <div className="stat-icon">📖</div>
+          <div className="stat-number">{stats.meanings}</div>
+          <div className="stat-label">Meanings</div>
         </div>
       );
       

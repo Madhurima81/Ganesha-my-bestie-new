@@ -1,0 +1,721 @@
+/* FestivalPianoGame.css - Enhanced with Challenge Mode AND Restored Free Play Aesthetics */
+
+/* Base container */
+.festival-piano-game {
+  width: 100vw;
+  height: 100vh;
+  background: url('./assets/images/pianogame-bg.png') center/cover no-repeat;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+
+/* ===== INTRO WELCOME SCREEN (Inspired by Rangoli Game) ===== */
+
+.intro-screen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.intro-ganesha {
+  width: 150px;
+  height: 180px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 2;
+  margin-top: -100px; /* Pull Ganesha up */
+  animation: gentle-float 4s ease-in-out infinite;
+}
+
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+.intro-speech-bubble {
+  position: relative;
+  background: #fff3c4; /* Creamy yellow from Rangoli */
+  border-radius: 20px;
+  padding: 20px 25px;
+  max-width: 450px;
+  text-align: center;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-size: 1.5rem;
+  color: #a5682a;
+  line-height: 1.4;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  border: 3px solid white;
+  margin-top: -30px; /* Overlap with Ganesha's head */
+  margin-bottom: 40px; /* Space before the button */
+  z-index: 1;
+  animation: scale-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.intro-speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -21px; /* Position the tail */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 22px solid #fff3c4; /* Match bubble color */
+}
+
+.intro-begin-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 15px 40px;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white;
+  background-color: #4caf50; /* Vibrant green from Rangoli */
+  border-radius: 50px; /* Pill shape */
+  border: 4px solid white;
+  box-shadow: 0 6px 0 #2e7d32, 0 8px 15px rgba(0,0,0,0.3); /* 3D effect */
+  cursor: pointer;
+  transition: all 0.1s ease-out;
+  animation: pulse-button 2s ease-in-out infinite;
+}
+
+.intro-begin-button:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #2e7d32, 0 4px 8px rgba(0,0,0,0.3);
+}
+
+@keyframes pulse-button {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes scale-in {
+  from { transform: scale(0.5); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Add to CSS: */
+.free-play-recording-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 100;
+}
+
+.free-record-btn,
+.free-play-btn,
+.free-download-btn {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #4CAF50;
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.free-record-btn.recording {
+  background: #f44336;
+  color: white;
+  border-color: #f44336;
+  animation: pulse-record 1.5s ease-in-out infinite;
+}
+
+.free-download-btn {
+  border-color: #2196F3;
+}
+
+.free-play-btn:hover,
+.free-download-btn:hover {
+  transform: scale(1.05);
+}
+
+/* Pause Button */
+.game-pause-button {
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  width: 50px !important;
+  height: 50px !important;
+  background: linear-gradient(135deg, #fff8e1, #ffe0b2) !important;
+  border: 3px solid #ff6f00 !important;
+  border-radius: 50% !important;
+  font-size: 24px !important;
+  cursor: pointer !important;
+  z-index: 999999 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+  transition: all 0.3s ease !important;
+  pointer-events: auto !important;
+}
+
+.game-pause-button:hover {
+  transform: scale(1.1) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+.game-pause-button:active {
+  transform: scale(0.95) !important;
+}
+
+/* ===== MODE SELECTION SCREEN (Re-styled to match Rangoli Game) ===== */
+
+.mode-selection-screen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Title: "Choose your musical adventure!" */
+.mode-subtitle {
+  font-family: 'Comic Sans MS', cursive, sans-serif; /* Keeping the fun font */
+  font-size: 2.5rem;
+  color: #8c5b3c; /* A warm brown, like the Rangoli text */
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+  font-weight: bold;
+}
+
+/* Hide the big "Festival Piano" title to match the cleaner Rangoli look */
+.mode-title {
+  display: none;
+}
+
+/* This is the container for the two cards */
+.mode-cards {
+  display: flex;
+  gap: 20px;
+  align-items: stretch; /* Ensures cards are same height */
+}
+
+/* Main styling for the cards */
+.mode-card {
+  width: 270px; /* A good, compact width */
+  background: rgba(255, 248, 230, 0.95); /* A creamy, off-white color */
+  border-radius: 25px;
+  padding: 20px 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border: 3px solid #FFD54F; /* A warm yellow border */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Pushes button to bottom */
+}
+
+.mode-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border-color: #FFA726; /* A brighter orange on hover */
+}
+
+/* The 🎵 and 🎯 icons */
+.mode-icon {
+  font-size: 3rem; /* A good size for the icon */
+  margin-bottom: 10px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* "Free Play" & "Festival Challenge" title */
+.mode-card h2 {
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-size: 1.8rem;
+  color: #c57545; /* Darker, rustic orange color for titles */
+  margin: 0 0 8px 0;
+  font-weight: bold;
+}
+
+/* "Explore and create..." description */
+.mode-card p {
+  font-family: sans-serif; /* A cleaner font for readability */
+  font-size: 1rem;
+  color: #a1887f; /* A soft, muted brown */
+  line-height: 1.4;
+  margin: 0 0 15px 0;
+  flex-grow: 1; /* Allows this element to take up extra space, pushing button down */
+}
+
+/* The main action buttons */
+.mode-button {
+  border: none;
+  padding: 12px 25px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 20px; /* Rounded corners like the tags */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  width: 80%;
+  margin: 0 auto; /* Center the button */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Specific button colors to match the Rangoli tags */
+.mode-button.free-play-card { /* Let's add a class to the button for easier targeting */
+  background-color: #b39ddb; /* Lavender color */
+  color: white;
+}
+
+.mode-button.challenge-button {
+  background-color: #81c784; /* A nice green color */
+  color: white;
+}
+
+.mode-button:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+/* Hide the old summary stats section for the cleaner look */
+.progress-summary {
+  display: none;
+}
+
+/* ===== SIMPLIFIED SONG SELECTION (Ultra-Compact 2x2 Grid) ===== */
+
+.simple-song-selection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px; /* CHANGED: Tighter screen padding */
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.simple-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 95vw; /* Use viewport width for max flexibility */
+  margin-bottom: 15px; /* CHANGED: Less space */
+}
+
+.simple-back, .simple-stars {
+  padding: 8px 12px; /* CHANGED: Smaller buttons/display */
+  font-size: 0.9rem;
+  border-radius: 12px;
+}
+.simple-stars {
+    font-size: 1.1rem;
+}
+
+.simple-title {
+  font-size: 1.8rem; /* CHANGED: Smaller title */
+  color: #8c5b3c;
+  margin: 0 10px;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+  white-space: nowrap; /* Prevent title from wrapping */
+}
+
+.songs-grid-simple {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 10px; /* CHANGED: Tighter gap between cards */
+  max-width: 500px; /* CHANGED: Much narrower grid */
+  width: 100%;
+}
+
+/* Main Card - MUCH SMALLER */
+.song-card-simple {
+  background: rgba(255, 248, 230, 0.95);
+  border: 2px solid #FFD54F;
+  border-radius: 20px;
+  padding: 15px 10px; /* CHANGED: Very compact padding */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between; /* This is key for layout */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  min-height: 160px; /* CHANGED: Significantly shorter cards */
+}
+
+.song-card-simple:hover:not(.locked) {
+  transform: translateY(-5px);
+  border-color: #FFA726;
+}
+
+.song-card-simple.completed { border-color: #81c784; background: #f1f8e9; }
+.song-card-simple.locked { opacity: 0.6; cursor: not-allowed; filter: grayscale(50%); }
+
+/* ✅ KEY CHANGE: Remove the large icon as requested */
+.song-icon-big {
+  display: none;
+}
+
+/* Compact Text */
+.song-name-simple {
+  font-size: 1.1rem; /* CHANGED: Much smaller title */
+  color: #c57545;
+  margin: 0;
+  text-align: center;
+  font-weight: bold;
+}
+
+.song-type-simple {
+  font-size: 0.75rem; /* CHANGED: Much smaller subtitle */
+  color: #a1887f;
+  margin: 4px 0 8px 0;
+  text-align: center;
+}
+
+.song-difficulty-simple { display: flex; gap: 4px; }
+.star-filled { font-size: 0.9rem; color: #ffb300; }
+
+/* Smaller Badges */
+.completed-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #4CAF50;
+  color: white;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.locked-badge {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+}
+
+.lock {
+  font-size: 2rem; /* CHANGED: Smaller lock icon */
+  color: rgba(255,255,255,0.8);
+}
+/* ===== GAME & CHALLENGE HEADER ===== */
+.game-header { position: absolute; top: 20px; left: 20px; z-index: 100; }
+.back-button { background: rgba(255, 255, 255, 0.3); color: white; border: 2px solid white; padding: 12px 25px; font-size: 1.1rem; font-weight: bold; border-radius: 20px; cursor: pointer; transition: all 0.3s ease; font-family: inherit; backdrop-filter: blur(5px); }
+.back-button:hover { background: rgba(255, 255, 255, 0.5); transform: scale(1.05); }
+.challenge-header-simple { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(255, 255, 255, 0.95); padding: 15px 25px; border-radius: 20px; text-align: center; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); z-index: 100; backdrop-filter: blur(10px); }
+.song-title-simple { font-size: 1.5rem; color: #333; margin: 0 0 15px 0; }
+.progress-dots-simple { display: flex; gap: 8px; justify-content: center; }
+.progress-dots-simple .dot { width: 12px; height: 12px; border-radius: 50%; background: #ddd; transition: all 0.3s ease; }
+.progress-dots-simple .dot.done { background: #4CAF50; transform: scale(1.2); }
+.progress-dots-simple .dot.now { background: #f5576c; transform: scale(1.4); animation: pulse 1s ease-in-out infinite; }
+
+/* ===== FREE PLAY AESTHETICS (Animals & 3D Keys) ===== */
+
+/* Simple Ganesha Character */
+.ganesha-simple { position: absolute; top: 8%; right: 5%; width: 80px; height: 100px; z-index: 25; opacity: 0.8; }
+.ganesha-simple-image { width: 100%; height: 100%; background-size: contain; background-repeat: no-repeat; background-position: center; animation: gentle-presence 4s ease-in-out infinite; }
+@keyframes gentle-presence { 0%, 100% { transform: translateY(0) scale(1); opacity: 0.8; } 50% { transform: translateY(-3px) scale(1.02); opacity: 0.9; } }
+
+/* Dancing Animals Container */
+.dancing-animals { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 25; }
+.animal-character { position: absolute; width: 80px; height: 80px; background-size: contain; background-repeat: no-repeat; background-position: center; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)); transition: all 0.3s ease; }
+.animal-peacock { top: 15%; left: 15%; background-image: url('./assets/images/animal-peacock.png'); }
+.animal-monkey { top: 20%; right: 20%; background-image: url('./assets/images/animal-monkey.png'); }
+.animal-elephant { bottom: 35%; left: 8%; background-image: url('./assets/images/animal-elephant.png'); }
+.animal-squirrel { bottom: 30%; right: 12%; background-image: url('./assets/images/animal-squirrel.png'); }
+.animal-bunny { top: 45%; left: 5%; background-image: url('./assets/images/animal-bunny.png'); }
+.animal-dancing { animation-duration: 1.2s; animation-timing-function: ease-in-out; animation-iteration-count: 1; transform-origin: center bottom; }
+.animal-peacock.animal-dancing { animation-name: peacock-spread-dance; }
+.animal-monkey.animal-dancing { animation-name: monkey-jump-dance; }
+.animal-elephant.animal-dancing { animation-name: elephant-trunk-dance; }
+.animal-squirrel.animal-dancing { animation-name: squirrel-acrobatic-dance; }
+.animal-bunny.animal-dancing { animation-name: bunny-hop-dance; }
+.animal-sparkles { position: absolute; top: -10px; left: -10px; width: calc(100% + 20px); height: calc(100% + 20px); pointer-events: none; }
+.animal-sparkle { position: absolute; width: 8px; height: 8px; background: #FFD700; border-radius: 50%; animation: animal-sparkle-dance 1s ease-out forwards; box-shadow: 0 0 6px #FFD700; }
+.dance-floor-effect { position: absolute; bottom: 0; left: 0; width: 100%; height: 30%; background: linear-gradient(180deg, transparent 0%, rgba(255, 215, 0, 0.1) 50%, rgba(255, 215, 0, 0.2) 100%); pointer-events: none; z-index: 20; opacity: 0; animation: dance-floor-pulse 1.5s ease-in-out; }
+
+/* Piano Base & Keys Frame */
+.piano-base { position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); width: 80%; max-width: 1000px; height: 200px; }
+.piano-keys-frame-simple { position: absolute; bottom: 0; left: 0; right: 0; height: 150px; background: linear-gradient(180deg, rgba(101, 67, 33, 0.8) 0%, rgba(139, 90, 43, 0.9) 100%); border-radius: 15px 15px 0 0; box-shadow: inset 0 -5px 20px rgba(0, 0, 0, 0.3); border: 3px solid rgba(101, 67, 33, 0.9); }
+
+/* 3D Piano Keys */
+.piano-key { position: absolute; width: 100px; height: 120px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; user-select: none; z-index: 51; overflow: hidden; box-shadow: 0 8px 16px rgba(0,0,0,0.3), 0 4px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.2); border: 2px solid rgba(0,0,0,0.2); transform: scale(1) translateY(0); }
+.piano-key:hover { transform: translateY(-2px) !important; box-shadow: 0 12px 20px rgba(0,0,0,0.4), 0 6px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -1px 0 rgba(0,0,0,0.3); }
+.piano-key.active { transform: scale(0.95) translateY(2px) !important; box-shadow: 0 4px 8px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3), inset 0 2px 4px rgba(0,0,0,0.2), inset 0 -1px 0 rgba(255,255,255,0.2); }
+.piano-key.discovered { box-shadow: 0 8px 16px rgba(0,0,0,0.3), 0 4px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.2), 0 0 10px rgba(255, 215, 0, 0.5); }
+.piano-key.highlighted-next { animation: pulse-glow 1s ease-in-out infinite; border: 4px solid white; box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 8px 16px rgba(0, 0, 0, 0.3); }
+.key-dhol { background: linear-gradient(145deg, #FF4444, #CC3333); }
+.key-cymbals { background: linear-gradient(145deg, #FFDD00, #CCAA00); }
+.key-bells { background: linear-gradient(145deg, #4488FF, #3366CC); }
+.key-shehnai { background: linear-gradient(145deg, #FF8800, #DD6600); }
+.key-drum { background: linear-gradient(145deg, #44FF44, #33CC33); }
+
+/* Instrument Icons for 3D Keys */
+.instrument-icon { width: 60px; height: 60px; background-size: contain; background-repeat: no-repeat; background-position: center; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+.icon-dhol { background-image: url('./assets/images/red-drum.png'); }
+.icon-cymbals { background-image: url('./assets/images/yellow-cymbals.png'); }
+.icon-bells { background-image: url('./assets/images/blue-bells.png'); }
+.icon-shehnai { background-image: url('./assets/images/orange-shehnai.png'); }
+.icon-drum { background-image: url('./assets/images/green-dhol.png'); }
+.key-sparkles { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+.sparkle { position: absolute; width: 6px; height: 6px; background: white; border-radius: 50%; animation: sparkle-burst 0.6s ease-out forwards; }
+
+
+/* ===== UI & FEEDBACK ELEMENTS ===== */
+.cultural-note { position: absolute; background: rgba(255, 255, 255, 0.95); padding: 15px 20px; border-radius: 15px; font-size: 1rem; color: #333; max-width: 250px; text-align: center; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); animation: fadeInOut 2s ease-in-out forwards; z-index: 1000; transform: translateX(-50%); }
+.progress-counter { position: absolute; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.9); padding: 15px 25px; border-radius: 20px; display: flex; gap: 20px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); backdrop-filter: blur(10px); z-index: 100; }
+.progress-counter > div { font-size: 1.2rem; font-weight: bold; color: #333; }
+.challenge-progress { color: #f5576c; }
+.celebration-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.3); display: flex; align-items: center; justify-content: center; z-index: 2000; animation: fadeIn 0.3s ease-in; }
+.celebration-message { background: white; padding: 50px 70px; border-radius: 30px; text-align: center; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); animation: scaleIn 0.5s ease-out; }
+.celebration-message h2 { font-size: 2.5rem; color: #4CAF50; margin: 0 0 15px 0; }
+.celebration-message p { font-size: 1.5rem; color: #666; margin: 0; }
+.wrong-feedback { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #FF5252; color: white; padding: 25px 45px; border-radius: 20px; font-size: 2rem; font-weight: bold; box-shadow: 0 8px 24px rgba(255, 82, 82, 0.4); z-index: 2000; animation: fadeIn 0.2s ease-in; border: 3px solid white; }
+
+/* "I'm Done" Button for Free Play */
+.done-playing-button { position: absolute; bottom: 5%; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #FFD700, #FFA500); color: white; padding: 15px 30px; border-radius: 25px; cursor: pointer; font-size: 18px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); box-shadow: 0 6px 15px rgba(255, 165, 0, 0.4); border: 3px solid white; z-index: 100; animation: button-glow 2s ease-in-out infinite; display: flex; align-items: center; gap: 10px; transition: all 0.3s ease; }
+.done-playing-button:hover { transform: translateX(-50%) scale(1.05); box-shadow: 0 8px 20px rgba(255, 165, 0, 0.6); }
+.done-playing-button:active { transform: translateX(-50%) scale(0.95); }
+
+
+/* ===== ANIMATIONS ===== */
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+@keyframes pulse { 0%, 100% { transform: scale(1.4); opacity: 1; } 50% { transform: scale(1.6); opacity: 0.8; } }
+@keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 8px 16px rgba(0, 0, 0, 0.3); } 50% { box-shadow: 0 0 40px rgba(255, 255, 255, 1), 0 12px 24px rgba(0, 0, 0, 0.4); } }
+@keyframes sparkle-burst { 0% { opacity: 1; transform: translate(0, 0) scale(1); } 100% { opacity: 0; transform: translate(var(--tx, 0), var(--ty, -50px)) scale(0); } }
+@keyframes fadeInOut { 0% { opacity: 0; transform: translateX(-50%) translateY(-10px); } 20% { opacity: 1; transform: translateX(-50%) translateY(0); } 80% { opacity: 1; transform: translateX(-50%) translateY(0); } 100% { opacity: 0; transform: translateX(-50%) translateY(-10px); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes scaleIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+@keyframes button-glow { 0%, 100% { box-shadow: 0 6px 15px rgba(255, 165, 0, 0.4); } 50% { box-shadow: 0 8px 25px rgba(255, 165, 0, 0.7); } }
+
+/* Animal Dance Animations */
+@keyframes peacock-spread-dance { 0% { transform: scale(1) rotate(0deg); } 25% { transform: scale(1.2) rotate(-5deg); } 50% { transform: scale(1.3) rotate(5deg); } 75% { transform: scale(1.2) rotate(-3deg); } 100% { transform: scale(1) rotate(0deg); } }
+@keyframes monkey-jump-dance { 0% { transform: translateY(0) scale(1); } 25% { transform: translateY(-20px) scale(1.1) rotate(-10deg); } 50% { transform: translateY(-30px) scale(1.2) rotate(10deg); } 75% { transform: translateY(-15px) scale(1.1) rotate(-5deg); } 100% { transform: translateY(0) scale(1); } }
+@keyframes elephant-trunk-dance { 0% { transform: translateY(0) rotate(0deg); } 20% { transform: translateY(-10px) rotate(-10deg); } 40% { transform: translateY(-5px) rotate(10deg); } 60% { transform: translateY(-15px) rotate(-5deg); } 80% { transform: translateY(-8px) rotate(8deg); } 100% { transform: translateY(0) rotate(0deg); } }
+@keyframes squirrel-acrobatic-dance { 0% { transform: translateY(0) rotate(0deg) scale(1); } 20% { transform: translateY(-15px) rotate(90deg) scale(1.1); } 40% { transform: translateY(-25px) rotate(180deg) scale(1.2); } 60% { transform: translateY(-20px) rotate(270deg) scale(1.1); } 80% { transform: translateY(-10px) rotate(360deg) scale(1.05); } 100% { transform: translateY(0) rotate(360deg) scale(1); } }
+@keyframes bunny-hop-dance { 0% { transform: translateY(0) scale(1) rotate(0deg); } 15% { transform: translateY(-12px) scale(1.1) rotate(-3deg); } 30% { transform: translateY(-2px) scale(0.95) rotate(0deg); } 45% { transform: translateY(-18px) scale(1.15) rotate(3deg); } 60% { transform: translateY(-5px) scale(0.9) rotate(0deg); } 75% { transform: translateY(-15px) scale(1.1) rotate(-2deg); } 90% { transform: translateY(-3px) scale(0.98) rotate(0deg); } 100% { transform: translateY(0) scale(1) rotate(0deg); } }
+@keyframes animal-sparkle-dance { 0% { opacity: 1; transform: scale(1) rotate(0deg); } 50% { opacity: 0.8; transform: scale(1.5) rotate(180deg); } 100% { opacity: 0; transform: scale(0.5) rotate(360deg); } }
+@keyframes dance-floor-pulse { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
+/* ===== MISSION/SONG COMPLETION OVERLAY ===== */
+
+.mission-completion-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.completion-sparkles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.completion-sparkle {
+  position: absolute;
+  font-size: 20px;
+  animation: float-sparkle 3s ease-in-out infinite;
+}
+
+@keyframes float-sparkle {
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  50% { transform: translateY(-30px) rotate(180deg); opacity: 0.5; }
+}
+
+.completion-card {
+  background: linear-gradient(135deg, #FFF8DC, #FFE4B5);
+  border-radius: 25px;
+  padding: 25px 30px;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  border: 4px solid #FFD700;
+  animation: scaleIn 0.4s ease-out;
+  position: relative;
+  z-index: 1001;
+}
+
+.completion-ganesha {
+  width: 100px;
+  height: 100px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin: -10px auto 5px;
+  animation: bounce 1s ease-in-out infinite;
+}
+
+.completion-title {
+  font-size: 1.5rem;
+  color: #FF6B35;
+  margin: 0 0 5px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  font-family: 'Comic Sans MS', cursive;
+}
+
+.completion-subtitle {
+  font-size: 1.2rem;
+  color: #8B4513;
+  margin: 0 0 15px;
+  font-weight: 600;
+}
+
+.completion-stars {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 15px 0;
+}
+
+.star-earned {
+  font-size: 25px;
+  animation: popIn 0.4s ease-out backwards;
+}
+
+.star-earned:nth-child(1) { animation-delay: 0.3s; }
+.star-earned:nth-child(2) { animation-delay: 0.4s; }
+.star-earned:nth-child(3) { animation-delay: 0.5s; }
+.star-earned:nth-child(4) { animation-delay: 0.6s; }
+.star-earned:nth-child(5) { animation-delay: 0.7s; }
+.star-earned:nth-child(6) { animation-delay: 0.8s; }
+
+@keyframes popIn {
+  from { transform: scale(0) rotate(0deg); opacity: 0; }
+  to { transform: scale(1) rotate(360deg); opacity: 1; }
+}
+
+.completion-blessing {
+  font-size: 1rem;
+  color: #654321;
+  font-style: italic;
+  margin: 15px 0;
+  line-height: 1.4;
+}
+
+.completion-time {
+  font-size: 0.9rem;
+  color: #FF8C00;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.completion-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.completion-btn {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 15px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.completion-btn.play-again {
+  background: linear-gradient(135deg, #4CAF50, #8BC34A);
+  color: white;
+}
+
+.completion-btn.try-another {
+  background: linear-gradient(135deg, #FF9800, #FFC107);
+  color: white;
+}
+
+.completion-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.completion-btn .btn-icon {
+  font-size: 1.5rem;
+}
+
+.completion-btn .btn-text {
+  font-size: 0.9rem;
+}
+
+/* Three-button layout for completion modal - COMPACT SINGLE ROW */
+.completion-buttons-three {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+.completion-buttons-three .completion-btn {
+  flex: 0 1 auto;
+  min-width: 95px;
+  max-width: 110px;
+  padding: 10px 12px;
+  font-size: 0.85rem;
+}
+
+.completion-buttons-three .completion-btn .btn-icon {
+  font-size: 1.3rem;
+}
+
+.completion-buttons-three .completion-btn .btn-text {
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.completion-btn.hear-my-song {
+  background: linear-gradient(135deg, #9C27B0, #BA68C8);
+  color: white;
+}
+
+/* Disabled state for completion buttons */
+.completion-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.completion-btn:disabled:hover {
+  transform: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}

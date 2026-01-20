@@ -1,0 +1,3396 @@
+/* Family Tree Game - Enhanced Styles */
+.family-tree-game {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'Nunito', sans-serif;
+}
+
+.tree-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* Part Indicator */
+.part-indicator {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-family: 'Baloo', cursive;
+  font-size: 1.1rem;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  z-index: 100;
+  animation: slide-down 0.5s ease-out;
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ====================================================== */
+/* SCENE SPECIFIC OVERRIDE: FAMILY TREE (Love & Bonding)  */
+/* ====================================================== */
+
+/* ========================================================= */
+/* SCENE SPECIFIC OVERRIDE: FAMILY TREE (Love & Bonding) */
+/* ========================================================= */
+
+#family-tree-intro {
+
+  /* 1. BUTTON: Warm peach → coral (less pink, more premium) */
+--modal-btn-bg: linear-gradient(
+  180deg,
+  #f49271 0%,   /* light peach highlight */
+  #FF8A65 100% /* deeper coral base */
+);
+
+  --modal-btn-text: #FFFFFF;
+--modal-btn-shadow:
+  0 6px 14px rgba(255, 138, 101, 0.35),
+  inset 0 1px 0 rgba(255, 255, 255, 0.4);
+
+  --modal-btn-hover-shadow:
+  0 8px 18px rgba(255, 138, 101, 0.45);
+
+  /* 2. TEXT */
+  --modal-text-primary: #7A4A1D;   /* Title ONLY (keep emotional pink) */
+  --modal-text-secondary: #6B3E26; /* Story + labels (warm brown) */
+
+  /* 3. CARD: Soft parchment blush (NOT pinky) */
+  --modal-card-bg: #FFF7F2;        /* warm off-white */
+  --modal-card-border: none;       /* REMOVE pink border */
+
+  /* 4. SHADOWS: Natural depth */
+  --modal-shadow-color: rgba(60, 20, 10, 0.18);
+
+  
+}
+
+#family-tree-intro .game-modal-icon-label {
+  /* Use the Warm Brown variable you defined */
+  color: var(--modal-text-secondary) !important; 
+  
+  /* Optional: Adjust font size/weight if needed */
+  font-family: 'Baloo 2', cursive; /* Match the title font for cuteness */
+  font-weight: 900;
+  font-size: 1.5rem; 
+}
+/* Buttons */
+.back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: white;
+  border: none;
+  padding: 12px 25px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.back-btn:hover {
+  background: #f8f9fa;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+/* --- DELETE the old .progress-dots and .instruction-text classes --- */
+/* Instruction Text */
+/* ========================================
+   INSTRUCTION TEXT (Fixed Visibility)
+   ======================================== */
+.instruction-text {
+  /* 1. POSITIONING (Required to show up!) */
+  position: absolute; 
+  top: 6%;  /* Moves it down from the top edge */
+  left: 50%; /* Centers it horizontally */
+  z-index: 100; /* High z-index to sit ON TOP of the tree */
+
+  /* 2. VISUAL STYLES */
+  background: #FFE9B8; /* warm cream-yellow */
+  padding: 6px 26px;
+  border-radius: 18px;
+  border: 2px solid #F2C56B;
+
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #6A3F1E;
+
+  box-shadow:
+    0 3px 0 #E3B35C,
+    0 10px 18px rgba(0, 0, 0, 0.14);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none; /* Allows clicks to pass through to tree */
+  white-space: nowrap; /* Keeps text on one line */
+
+  /* 3. ANIMATION */
+  /* Combine fade-in and float into one simple animation */
+  animation: instructionFloat 3s ease-in-out infinite;
+}
+
+/* Float animation that keeps it centered */
+@keyframes instructionFloat {
+  0%   { transform: translate(-50%, 0); opacity: 0; } /* Start invisible */
+  10%  { opacity: 1; } /* Fade in quickly */
+  50%  { transform: translate(-50%, -6px); opacity: 1; } /* Float up */
+  100% { transform: translate(-50%, 0); opacity: 1; } /* Float down */
+}
+
+.instruction-text {
+  animation: instruction-float 3s ease-in-out infinite;
+}
+
+@keyframes instruction-float {
+  0%   { transform: translate(-50%, 0); }
+  50%  { transform: translate(-50%, -4px); }
+  100% { transform: translate(-50%, 0); }
+}
+/* UNIFIED GAME HEADER (HUD) */
+.game-header-hud {
+  position: absolute;
+  top: 40px; /* Lowered slightly */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 90;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  
+  width: 100%;
+  pointer-events: none; /* Let clicks pass through */
+}
+
+/* ========================================
+   BOTTOM TRAY DONE BUTTON
+   ======================================== */
+.tray-done-btn {
+  /* 1. VISUAL STYLE (Matches your .continue-btn reference) */
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  
+  font-family: 'Baloo', cursive;
+  font-size: 1.3rem;
+  font-weight: 600;
+  
+  box-shadow: 0 8px 20px rgba(67, 233, 123, 0.4);
+  transition: all 0.3s ease;
+
+  /* 2. SIZE & POSITIONING (Thinner & Right-Aligned) */
+  padding: 10px 40px;  /* Thinner top/bottom padding */
+  white-space: nowrap; /* Prevents text from wrapping */
+  cursor: pointer;
+  z-index: 200;
+
+  /* Flexbox magic to push it to the far right of the tray */
+  margin-left: auto; 
+  align-self: center;
+}
+
+/* Hover State */
+.tray-done-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(67, 233, 123, 0.5);
+}
+
+/* Click/Active State */
+.tray-done-btn:active {
+  transform: translateY(-1px);
+}
+
+/* Game Instruction Header (System Capsule) */
+.hud-instruction-bubble {
+  background: #FFE9B8; /* warm cream-yellow */
+  
+  padding: 12px 26px;
+  border-radius: 18px;
+
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #6A3F1E;
+
+  border: 2px solid #F2C56B;
+
+  box-shadow:
+    0 3px 0 #E3B35C,
+    0 10px 18px rgba(0, 0, 0, 0.14);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 50;
+
+  /* Gentle entry */
+  animation: header-fade-in 0.35s ease-out;
+}
+
+/* Entry animation */
+@keyframes header-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hud-instruction-bubble .icon {
+  animation: gentle-bounce 2s infinite ease-in-out;
+}
+
+@keyframes gentle-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+
+/* 2. The Heart Container */
+.hud-hearts-row {
+  display: flex;
+  gap: 15px; /* Space between hearts */
+  background: rgba(255, 255, 255, 0.3); /* Subtle backdrop */
+  padding: 8px 20px;
+  border-radius: 30px;
+  backdrop-filter: blur(4px);
+}
+
+/* 3. The Big Hearts */
+.heart-icon {
+  font-size: 2.5rem; /* BIGGER as requested */
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  opacity: 0.5; /* Dim when empty */
+  transform: scale(0.9);
+}
+
+.heart-icon.filled {
+  opacity: 1;
+  transform: scale(1.2); /* Pop up when filled */
+  filter: drop-shadow(0 0 10px rgba(255, 50, 50, 0.6));
+  animation: heartBeat 0.5s ease-in-out;
+}
+
+@keyframes heartBeat {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+  100% { transform: scale(1.2); }
+}
+
+
+/* INTRO */
+.intro-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  animation: fade-in 0.5s ease-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.intro-ganesha {
+  width: 180px;
+  height: auto;
+  margin-bottom: 30px;
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+}
+
+.bounce {
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.intro-speech {
+  background: white;
+  border-radius: 30px;
+  padding: 40px 50px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+  text-align: center;
+  max-width: 600px;
+  animation: pop-in 0.6s ease-out 0.3s backwards;
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.intro-title {
+  font-family: 'Baloo', cursive;
+  font-size: 2.5rem;
+  color: #2d3436;
+  margin: 0 0 20px 0;
+}
+
+.intro-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.3rem;
+  color: #636e72;
+  margin: 0 0 30px 0;
+  line-height: 1.6;
+}
+
+.start-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 15px 50px;
+  font-family: 'Baloo', cursive;
+  font-size: 1.3rem;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease;
+}
+
+.start-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(102, 126, 234, 0.5);
+}
+
+/* GANESHA'S TREE */
+/* 2. THE TREE IMAGE */
+.tree-overlay {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  position: relative; /* Relative to wrapper */
+  top: auto; left: auto; /* Reset old absolute positioning */
+  transform: none; 
+  z-index: 1;
+  pointer-events: none;
+  transform-origin: bottom center;
+  animation: treeSway 6s ease-in-out infinite alternate;
+}
+
+/* Circle spots with labels */
+/* UPDATED: Allows the card to pop out */
+.circle-spot-with-label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  overflow: visible !important; /* CRITICAL FIX */
+}
+
+.empty-circle {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+
+  /* softer, organic ring */
+  border: 3px dashed rgba(180, 220, 180, 0.7);
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(220, 255, 220, 0.35) 0%,
+      rgba(180, 230, 180, 0.18) 55%,
+      rgba(120, 180, 120, 0.08) 100%
+    );
+
+  box-shadow:
+    0 0 0 4px rgba(255, 255, 255, 0.15),
+    0 8px 20px rgba(60, 90, 60, 0.35);
+
+  transition: transform 0.3s ease;
+}
+
+
+.glow-pulse {
+  animation: glow-pulse 2.6s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 4px rgba(255, 255, 255, 0.12),
+      0 8px 20px rgba(60, 90, 60, 0.35);
+    transform: scale(1);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 6px rgba(255, 255, 255, 0.22),
+      0 12px 28px rgba(80, 130, 80, 0.45);
+    transform: scale(1.035);
+  }
+}
+
+
+.circle-label {
+  background: #FFEFE6; /* warm cream */
+  color: #6A3B2C;      /* bark brown */
+
+  padding: 6px 16px;
+  border-radius: 999px;
+
+  font-family: 'Baloo', cursive;
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  box-shadow: 0 2px 6px rgba(106, 59, 44, 0.2);
+}
+
+
+
+.circle-spot-with-label.filled .empty-circle {
+  border: none;
+  background: none;
+  box-shadow: none;
+}
+
+
+/* ========================================= */
+/* PLACED DEITY & CARD FLIP LOGIC (UPDATED)  */
+/* ========================================= */
+
+.placed-deity {
+  width: 120px;
+  height: 120px;
+  position: relative;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+/* THE FLIPPED STATE: Becomes a Rectangular Card */
+.placed-deity.flipped {
+  /* Rotate to show back AND scale up/center */
+  transform: translate(-50%, -50%) scale(1.1) rotateY(180deg);
+  
+  /* Break out of circle flow */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  
+  /* Card Dimensions */
+  width: 220px;
+  height: auto;
+  min-height: 140px;
+  
+  /* Card Styling */
+  border-radius: 20px;
+  z-index: 100;
+  
+  /* Note: Background handled by .deity-back, but we add shadow here */
+  box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+}
+
+.deity-front, .deity-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 50%; /* Front is circle */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* When parent is flipped, back needs to match the rectangle shape */
+.placed-deity.flipped .deity-back {
+  border-radius: 20px; /* Become a rounded rectangle */
+  width: 100%;
+  height: 100%;
+  min-height: 140px;
+}
+
+.deity-front {
+  transform: rotateY(0deg);
+  border-radius: 50%;
+}
+
+.deity-back {
+  transform: rotateY(180deg);
+
+  /* Softer blush-paper background */
+  background: linear-gradient(
+    135deg,
+    #FFE9E2 0%,
+    #FFD3C4 100%
+  );
+
+  padding: 22px;
+
+  /* Much softer depth */
+  box-shadow:
+    inset 0 0 12px rgba(255, 255, 255, 0.6),
+    0 8px 20px rgba(0, 0, 0, 0.18);
+
+  border: 2px solid rgba(255, 255, 255, 0.8);
+
+  border-radius: 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deity-back::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 18px;
+  background: #FFD3C4;
+  border-radius: 50%;
+  filter: blur(6px);
+  opacity: 0.6;
+}
+
+
+/* Text inside the card */
+.flip-fun-fact {
+  color: #6A3B2E; /* Warm brown instead of white */
+  text-align: center;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flip-fun-fact p {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  margin: 0;
+
+  font-weight: 700;
+
+  /* Remove heavy shadow – keep it story-like */
+  text-shadow: none;
+}
+
+
+.deity-circle {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: white;
+  padding: 8px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deity-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.deity-emoji {
+  font-size: 4rem;
+}
+
+/* MODALS */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  animation: fade-in 0.3s ease-out;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 200, 170, 0.6);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 2rem;
+  color: rgb(237, 113, 113);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.5);
+  transform: rotate(90deg);
+}
+
+/* Choice Modal */
+/* ========================================= */
+/* CHOICE MODAL (Positioning Fixes Applied)  */
+/* ========================================= */
+
+.choice-modal {
+  background: linear-gradient(
+    180deg,
+    #f7efd8 0%,
+    #FFF2EA 100%
+  );
+  border-radius: 32px;
+  padding: 36px 40px;
+  max-width: 680px;
+  width: 90%;
+
+  box-shadow:
+    0 12px 28px rgba(90, 45, 35, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+
+  animation: modal-bounce-in 0.55s ease-out;
+  position: relative;
+}
+
+
+@keyframes modal-bounce-in {
+  0% { opacity: 0; transform: scale(0.7) translateY(-50px); }
+  60% { transform: scale(1.05) translateY(0); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.choice-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.85rem;
+  color: #6A3B2C;
+  text-align: center;
+  margin: 0 0 18px 0;
+}
+
+
+.choice-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.choice-card {
+  background: linear-gradient(
+    180deg,
+    #FFF7F0 0%,
+    #FFF1E6 100%
+  );
+
+  border-radius: 26px;
+  cursor: pointer;
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+
+  padding: 26px 14px 22px;
+
+  box-shadow:
+    0 6px 14px rgba(90, 45, 35, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.choice-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 18px rgba(90, 45, 35, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.choice-card:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 4px 10px rgba(90, 45, 35, 0.18);
+}
+
+
+/* ========================================= */
+/* CHOICE CARD - HOVER & STATES              */
+/* ========================================= */
+
+/* Normal hover - only when NOT disabled and NOT wrong */
+.choice-card:hover:not(:disabled):not(.choice-card-wrong) {
+  transform: translateY(-4px);
+  border-color: #E6A18A; /* warm pink-brown */
+  box-shadow: 0 8px 22px rgba(122, 62, 46, 0.25);
+}
+
+/* Disabled state - general */
+.choice-card:disabled {
+  opacity: 0.4;                      /* More faded */
+  cursor: not-allowed;
+  pointer-events: none;              /* Block all interaction */
+}
+
+/* Wrong shake animation - temporary */
+.choice-card.wrong-shake {
+  animation: gentle-wobble 0.5s ease-in-out;
+  /* No border/background changes during shake */
+}
+
+/* Wrong state - AFTER shake completes */
+.choice-card.choice-card-wrong {
+  opacity: 0.4;                      /* Faded */
+  filter: grayscale(80%);            /* Desaturated */
+  pointer-events: none;              /* Can't click */
+  cursor: not-allowed;
+  transition: opacity 0.3s ease, filter 0.3s ease; /* Smooth fade */
+}
+
+/* Remove hover effects when wrong */
+.choice-card.choice-card-wrong:hover {
+  transform: none !important;        /* No lift */
+  border-color: inherit !important;  /* No border change */
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15) !important; /* Keep normal shadow */
+}
+
+/* Shake animation - ONLY horizontal movement */
+@keyframes gentle-wobble {
+  0%, 100% { 
+    transform: translateX(0); 
+  }
+  25% { 
+    transform: translateX(-8px);     /* Left */
+  }
+  75% { 
+    transform: translateX(8px);      /* Right */
+  }
+}
+
+.choice-image {
+  width: 80px;  /* Ensure a fixed box for the image */
+  height: 80px;
+  padding: 5px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  animation: gentle-breathe 4.5s ease-in-out infinite;
+}
+
+@keyframes gentle-breathe {
+  0% {
+    transform: scale(1) translateY(0);
+  }
+  50% {
+    transform: scale(1.04) translateY(-2px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+.choice-image::before {
+  content: '';
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+
+  background: radial-gradient(
+    circle,
+    rgba(255, 214, 150, 0.35) 0%,
+    rgba(255, 214, 150, 0.18) 40%,
+    rgba(255, 214, 150, 0.05) 65%,
+    transparent 70%
+  );
+
+  filter: blur(6px);
+  z-index: -1;
+
+  animation: glow-pulse 4.5s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0% {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+}
+
+.choice-card:active .choice-image,
+.choice-card.selected .choice-image {
+  animation: none;
+}
+
+.choice-card.selected .choice-image::before {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+
+.choice-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+
+.choice-emoji {
+  font-size: 4.5rem; /* Slightly adjusted to fit new box size */
+}
+
+.family-choice-name {
+  font-family: 'Nunito', sans-serif;
+    font-size: 1.3rem;
+  color: #6B3E26 !important; 
+  text-shadow: none !important; 
+  margin: 0 0 5px 0;
+  font-weight: 700;
+}
+
+.choice-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  color: #8D6E63 !important;
+  text-shadow: none !important;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.wrong-feedback {
+  margin-top: 20px;
+  padding: 14px 18px;
+  background: #FFE4D6;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(122, 62, 46, 0.25);
+}
+
+.wrong-feedback p {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.05rem;
+  color: #7A3E2E;
+  margin: 0;
+}
+
+
+
+/* Add this safely at the end */
+.family-tree-game img {
+  max-width: 100%;
+  display: block;
+}
+
+
+/* Fun Fact Modal */
+.fun-fact-modal {
+  /* 1. Size Control */
+  width: 90%;
+  max-width: 700px;     /* Wide enough */
+  min-height: 600px;    /* <--- FORCE TALLER HEIGHT HERE */
+
+  /* 2. Center Content Vertically */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  /* 3. Appearance */
+  background: linear-gradient(135deg, #fff4eb 0%, #ffe0cf 100%);
+  border-radius: 40px;
+  padding: 20px; /* Generous padding */
+  
+  box-shadow:
+    0 20px 50px rgba(90, 59, 46, 0.35),
+    inset 0 0 0 2px rgba(255, 200, 170, 0.6);
+
+  position: relative;
+  text-align: center;
+  
+  /* Animation */
+  animation: modal-bounce-in 0.6s ease-out;
+}
+
+
+.modal-deity-image {
+  width: 180px;
+  height: 180px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: #fffaf6;
+  padding: 12px;
+
+  box-shadow:
+    0 10px 30px rgba(120, 70, 40, 0.3),
+    inset 0 0 0 3px rgba(255, 180, 140, 0.6);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.modal-deity-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.modal-deity-emoji {
+  font-size: 5rem;
+}
+
+.modal-title {
+  font-family: 'Baloo', cursive;
+  font-size: 3rem;
+  margin-bottom: 6px;
+  color: #c25a3a; /* soft coral */
+}
+
+.modal-name {
+  font-family: 'Baloo', cursive;
+  font-size: 2.1rem;
+  margin-bottom: 16px;
+  color: #7a3e2b;
+}
+
+.modal-fun-fact {
+  font-family: 'Nunito', sans-serif;
+  font-size: 2rem;
+  line-height: 1.6;
+  color: #6b4a3a;
+}
+
+
+.modal-emoji {
+  font-size: 2.5rem;
+  opacity: 0.8;
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Body Text inside the Info Modal */
+.modal-fact-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.8rem;       /* Much bigger text */
+  font-weight: 700;        /* Bold and clear */
+  color: #6D4C41;          /* Dark brown for contrast */
+  margin-bottom: 35px;     /* Space between text and button */
+  line-height: 1.4;        /* Nice spacing between lines */
+}
+
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* TRANSITION */
+.transition-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 245, 235, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  animation: fade-in 0.4s ease-out;
+}
+
+.transition-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 120px rgba(0,0,0,0.12);
+  pointer-events: none;
+}
+
+
+.transition-ganesha {
+  width: 180px;
+  height: auto;
+  margin-bottom: 30px;
+}
+
+.transition-speech {
+  background: rgb(242, 240, 235);
+  border-radius: 30px;
+  padding: 40px 50px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+  text-align: center;
+  max-width: 600px;
+  animation: pop-in 0.6s ease-out;
+}
+
+.transition-title {
+  font-family: 'Baloo', cursive;
+  font-size: 2.5rem;
+  color: #2d3436;
+  margin: 0 0 20px 0;
+}
+
+.transition-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.3rem;
+  color: #636e72;
+  margin: 0 0 30px 0;
+  line-height: 1.6;
+}
+
+
+
+.continue-btn {
+  
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  color: white;
+  border: none;
+  padding: 15px 50px;
+  font-family: 'Baloo', cursive;
+  font-size: 1.3rem;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(67, 233, 123, 0.4);
+  transition: all 0.3s ease;
+}
+
+.continue-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(67, 233, 123, 0.5);
+}
+
+/* ----- SceneReturnTransition helpers ----- */
+/* ========================================= */
+/* SCENE RETURN TRANSITION (The Juice)       */
+/* ========================================= */
+
+/* 1. Card Scaling */
+.transition-speech {
+  transition: transform 160ms cubic-bezier(.2,.9,.2,1);
+  will-change: transform;
+}
+.transition-speech.scene-return-scale {
+  transform: scale(0.95);
+}
+
+/* 2. Fade the OVERLAY container */
+.transition-overlay {
+  transition: opacity 300ms ease-out;
+  opacity: 1;
+  z-index: 50; /* Must be on top of game */
+}
+.transition-overlay.overlay-fade {
+  opacity: 0;
+  pointer-events: none; /* Allows clicks to pass through to the game below */
+}
+
+/* 3. Bottom Tray Animation */
+.members-tray { 
+  transform: translateY(100%); /* Start hidden down */
+  opacity: 0;
+  transition: transform 400ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 300ms ease-out;
+}
+
+/* When this class is added, it slides up */
+.members-tray.tray-visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* 4. Tree Blur/Snap */
+.tree-overlay {
+  transition: filter 0.3s ease;
+}
+.tree-overlay.blurred {
+  filter: blur(8px); /* Strong blur during transition */
+  transform: scale(1.02); /* Slight zoom to hide blur edges */
+}
+.tree-overlay.sharp {
+  filter: none;
+  transform: scale(1);
+}
+/* ========================================= */
+/* ANIMATION CLASSES (No Wrapper Needed)     */
+/* ========================================= */
+
+/* 1. Floating Animation (for Ganesha) */
+.floating-anim {
+  animation: gentleFloat 3.5s ease-in-out infinite;
+}
+
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+/* 2. Pulse Animation (for Button) */
+.pulse-anim {
+  animation: pulseBig 2s ease-in-out infinite;
+}
+
+@keyframes pulseBig {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* 3. Entrance Animation (for the Speech Card) */
+.transition-speech {
+  /* This makes the card slide up when it first appears */
+  animation: slideInUp 0.6s ease-out;
+  /* Existing transition for the scaling effect */
+  transition: transform 160ms cubic-bezier(.2,.9,.2,1); 
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(50px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 4. Scaling Logic (Used in JS state) */
+.transition-speech.scene-return-scale {
+  transform: scale(0.95) !important;
+}
+
+
+/* CHILD'S FAMILY TREE (3 rows) */
+.child-family-tree {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 85%;
+  max-width: 800px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  align-items: center;
+}
+
+.family-row {
+  display: flex;
+  gap: 25px;
+  flex-wrap: wrap;
+  justify-content: center;
+  position: relative;
+}
+
+.row-1 { order: 1; } /* Grandparents */
+.row-2 { order: 2; } /* Parents */
+.row-3 { order: 3; } /* Siblings + Pets */
+
+.tree-member-small {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  animation: pop-in 0.5s ease-out;
+  position: relative;
+}
+
+.member-avatar-small {
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden; /* Keeps image inside the circle */
+  padding: 12px;    /* Adds space so the image doesn't touch the edges */
+  position: relative;
+
+  /* Soft lift from background */
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.18),
+    inset 0 2px 4px rgba(255, 255, 255, 0.35),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.15);
+
+  /* Subtle surface highlight */
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.35),
+    rgba(255, 255, 255, 0)
+  );
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.member-avatar-small:active {
+  transform: scale(0.96);
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.2),
+    inset 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.member-avatar-small:hover {
+  transform: scale(1.05);
+}
+
+.member-name-small {
+  background: #fffaf6; /* warm off-white, not stark white */
+  padding: 6px 14px;
+  border-radius: 16px;
+
+  font-family: 'Baloo 2', cursive;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #5a3a2a; /* warm brown, matches hut/tree */
+
+ 
+
+    border: 1.5px solid rgba(180, 140, 110, 0.25);
+
+
+  pointer-events: none; /* label should never steal taps */
+}
+
+.member-name-small {
+  transform: translateY(2px);
+}
+
+/* Ensure the image scales perfectly inside */
+.member-avatar-small img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none; /* Ensures clicks pass through to the circle */
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); /* Slight shadow for pop */
+}
+
+/* Jiggle animation when Long Pressed */
+.shaking {
+  animation: jiggleMode 0.3s ease-in-out infinite;
+  border: 3px solid #FF6B6B !important; /* Add a red border to show it is selected */
+  box-shadow: 0 0 15px rgba(255, 107, 107, 0.6);
+}
+
+@keyframes jiggleMode {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+
+/* Highlights the avatar when clicked (friendly selection) */
+.member-avatar-small.selected-mode {
+  transform: scale(1.08);
+  box-shadow:
+    0 0 0 4px rgba(255, 255, 255, 0.6),
+    0 8px 20px rgba(0, 0, 0, 0.25);
+  z-index: 10;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.selected-mode {
+  animation: selectPop 0.2s ease-out;
+}
+
+@keyframes selectPop {
+  0% { transform: scale(1); }
+  60% { transform: scale(1.12); }
+  100% { transform: scale(1.08); }
+}
+
+
+/* Make sure the X button sits on top */
+/* Delete button (appears only when selected) */
+.delete-member-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #FF6B6B; /* soft coral red */
+  color: white;
+  border: 2px solid white;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+  line-height: 1;
+  opacity: 0;
+  transform: scale(0.7);
+  transition: all 0.2s ease;
+}
+
+/* Show delete ONLY when selected */
+.member-avatar-small.selected-mode .delete-member-btn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.delete-member-btn:hover {
+  background: #FF8787;
+  transform: scale(1.15);
+}
+
+
+
+/* Bottom Tray */
+.members-tray {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.6) 100%);
+  padding: 25px 20px;
+  z-index: 40;
+  animation: slide-up 0.5s ease-out;
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.members-list {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.member-card {
+  background: white;
+  border: none;
+  border-radius: 15px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 90px;
+  height: auto;
+  padding: 10px 8px;
+}
+
+/* Specific style for the image inside the tray card */
+.member-card img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  margin-bottom: 5px;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1));
+}
+
+.member-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+.member-card-emoji {
+  font-size: 2.5rem;
+}
+
+.member-card-label {
+  font-family: 'Baloo', cursive;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2d3436;
+}
+
+.done-tray-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 40px;
+  font-family: 'Baloo', cursive;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease;
+  display: block;
+  margin: 0 auto;
+}
+
+.done-tray-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+/* ========================================
+   BOTTOM TRAY - BIG ICONS / NO BOX
+   ======================================== */
+
+/* 1. Reset the Button (Remove white box, border, and shadow) */
+.bottom-member-tray .member-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  min-width: 100px !important; /* Give it enough width */
+  overflow: visible !important; /* Let image pop out */
+  margin-top: -20px; /* Pull them up slightly if needed */
+}
+
+/* 2. Target the Image Container (Make it BIG) */
+.bottom-member-tray .member-card > div:first-child {
+  width: 110px !important;  /* Much bigger width */
+  height: 110px !important; /* Much bigger height */
+  margin-bottom: -5px !important; /* Pull text closer to image */
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* 3. Style the Image itself */
+.bottom-member-tray .member-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* Add a drop shadow to the image so it stands out against the floor */
+  filter: drop-shadow(0 8px 15px rgba(0,0,0,0.3)); 
+}
+
+/* 4. Hover Effect (Pop up) */
+.bottom-member-tray .member-card:hover > div:first-child {
+  transform: translateY(-15px) scale(1.1);
+}
+
+/* 5. Fix the Text Label (Make it readable on the floor) */
+.bottom-member-tray .member-card > div:last-child {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1rem !important;
+  color: #5D4037;
+  font-weight: 800 !important;
+  
+  /* Add a small white pill background so text is readable */
+  background: rgba(241, 229, 161, 0.9);
+  padding: 4px 14px;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  
+  /* Center it */
+  position: relative;
+  z-index: 10;
+}
+
+/* ========================================
+   BOTTOM TRAY ANIMATIONS (Breathing & Bounce)
+   ======================================== */
+
+/* 1. Define the Motion (Float Up + Breathe) */
+@keyframes trayIdleMotion {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-8px) scale(1.05); /* Float Up & Grow slightly */
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 2. Apply Animation to the Image Container */
+.bottom-member-tray .member-card > div:first-child {
+  /* Use the animation we defined above */
+  animation: trayIdleMotion 3.5s ease-in-out infinite;
+  
+  /* Ensure the hover transition we added earlier still works smoothly */
+  transition: all 0.3s ease; 
+}
+
+/* 3. Stagger the animations (So they wave organically, not robotic) */
+/* This makes some start later than others */
+.bottom-member-tray .member-card:nth-child(1) > div:first-child { animation-delay: 0s; }
+.bottom-member-tray .member-card:nth-child(2) > div:first-child { animation-delay: 0.5s; }
+.bottom-member-tray .member-card:nth-child(3) > div:first-child { animation-delay: 1.0s; }
+.bottom-member-tray .member-card:nth-child(4) > div:first-child { animation-delay: 0.2s; }
+.bottom-member-tray .member-card:nth-child(5) > div:first-child { animation-delay: 0.7s; }
+.bottom-member-tray .member-card:nth-child(6) > div:first-child { animation-delay: 1.2s; }
+.bottom-member-tray .member-card:nth-child(7) > div:first-child { animation-delay: 0.3s; }
+.bottom-member-tray .member-card:nth-child(8) > div:first-child { animation-delay: 0.8s; }
+
+/* 4. Hover State Override */
+/* When hovering, pause the breathing and snap to the "Big Pop" state */
+.bottom-member-tray .member-card:hover > div:first-child {
+  animation: none; /* Stop the idle bounce */
+  transform: translateY(-15px) scale(1.15) !important; /* Force the big pop */
+  filter: drop-shadow(0 15px 25px rgba(0,0,0,0.4)); /* Bigger shadow */
+}
+
+/* Name Input Modal */
+/* ========================================= */
+/* NAME INPUT MODAL — Storybook Tree Theme   */
+/* ========================================= */
+
+.name-input-modal {
+  background: #FFF7F0; /* Warm parchment */
+  border: 4px solid #E6B89C; /* Soft clay border */
+  border-radius: 30px;
+  padding: 40px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 50px rgba(90, 60, 40, 0.25);
+  animation: modal-bounce-in 0.6s ease-out;
+  position: relative;
+  text-align: center;
+}
+
+/* Character Emoji */
+.modal-emoji-large {
+  /* Remove font-size: 5rem; */
+  width: 110px;        /* Fixed size */
+  height: 110px;       /* Fixed size */
+  margin: 0 auto 15px; /* Center it */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-emoji-large img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  animation: gentleFloat 3s ease-in-out infinite; /* Keep the float animation */
+}
+
+/* Question Text */
+.modal-question {
+  font-family: 'Baloo 2', cursive;
+  font-size: 2rem;
+  color: #6B3E26; /* Warm tree-bark brown */
+  margin: 0 0 28px 0;
+  line-height: 1.25;
+}
+
+.input-with-voice {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 26px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Text Input */
+.name-input {
+  flex: 1;
+  padding: 16px 20px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #6B3E26;
+  background: #FFFFFF;
+  border: 3px solid #D8B08C; /* Soft wood tone */
+  border-radius: 22px;
+  outline: none;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.06);
+}
+
+.name-input::placeholder {
+  color: #C7B6A8;
+}
+
+/* Focus = gentle leaf glow */
+.name-input:focus {
+  border-color: #7DBA7D;
+  box-shadow: 0 0 0 4px rgba(125, 186, 125, 0.25);
+  transform: translateY(-1px);
+}
+
+.voice-btn {
+  background: linear-gradient(135deg, #BFE8C2 0%, #7FD3A6 100%);
+  color: #1F5C3A;
+  border: none;
+  width: 56px;
+  height: 56px;
+  font-size: 1.4rem;
+  border-radius: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 5px 12px rgba(127, 211, 166, 0.4);
+  transition: all 0.25s ease;
+}
+
+.voice-btn:hover {
+  transform: scale(1.06);
+  box-shadow: 0 7px 18px rgba(127, 211, 166, 0.55);
+}
+
+/* Recording state = warm but calm */
+.voice-btn.recording {
+  background: linear-gradient(135deg, #FFB385 0%, #FF8A65 100%);
+  animation: gentlePulse 1.1s ease-in-out infinite;
+}
+
+@keyframes gentlePulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+
+.submit-name-btn {
+background: linear-gradient(135deg, #4CAF50, #66BB6A);
+  color: #054D3B;
+  border: none;
+  padding: 16px 50px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.3rem;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(67, 233, 123, 0.4);
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.submit-name-btn:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 25px rgba(67, 233, 123, 0.6);
+}
+
+.submit-name-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  filter: grayscale(0.4);
+}
+
+
+/* =========================================
+   SIDE-BY-SIDE COMPARISON - UPDATED STYLE
+   Matches Favorite Food Game aesthetic
+   ========================================= */
+
+.side-by-side-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+  /* UPDATED: Darker, more visible overlay */
+  background: linear-gradient(
+    180deg,
+    rgba(255, 235, 200, 0.92) 0%,
+    rgba(255, 220, 180, 0.88) 50%,
+    rgba(255, 200, 150, 0.85) 100%
+  );
+  backdrop-filter: blur(8px);
+  
+  overflow-y: auto;
+  padding: 30px 20px 80px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ========================================= */
+/* HEADER SECTION                            */
+/* ========================================= */
+
+.reveal-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 42px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: #ff8a00;
+  text-align: center;
+  text-shadow: 
+    0 3px 0 #fff2cc,
+    0 5px 15px rgba(0,0,0,0.15);
+  margin: 0 0 8px 0;
+  animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.reveal-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 19px;
+  color: #8B4513;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* ========================================= */
+/* CARDS CONTAINER                           */
+/* ========================================= */
+
+.two-trees-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 25px;
+  max-width: 1100px;
+  width: 100%;
+  margin-bottom: 25px;
+  position: relative;
+  transform: scale(1.15);
+  transform-origin: top center;
+}
+
+/* ========================================= */
+/* TREE CARDS                                */
+/* ========================================= */
+
+.tree-column {
+  flex: 1;
+  min-width: 380px;
+  max-width: 480px;
+  
+  background: rgba(255, 255, 255, 0.95);
+  
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  
+  border-radius: 24px;
+  
+  box-shadow: 
+    0 12px 35px rgba(120, 90, 20, 0.25),
+    inset 0 0 0 3px rgba(255, 255, 255, 0.8);
+  
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tree-column:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 15px 40px rgba(120, 90, 20, 0.3),
+    inset 0 0 0 3px rgba(255, 255, 255, 1);
+}
+
+.tree-column::before,
+.tree-column:hover::after {
+  display: none;
+}
+
+.tree-heading {
+  font-family: 'Baloo 2', cursive;
+  font-size: 20px;
+  font-weight: 900;
+  color: #654321;
+  text-align: center;
+  margin: 0 0 8px 0;
+  text-shadow: none;
+}
+
+.tree-column p {
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  color: #8B4513;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/* ========================================= */
+/* TREE VISUAL CONTAINER                     */
+/* ========================================= */
+
+.tree-visual {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.reveal-tree-img {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 10px;
+}
+
+.tree-member-mini {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.mini-image {
+  width: 45px;
+  height: 45px;
+  object-fit: contain;
+  border-radius: 50%;
+  background: white;
+  padding: 3px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.mini-name {
+  font-family: 'Baloo 2', cursive;
+  font-size: 11px;
+  font-weight: 700;
+  color: #654321;
+  text-align: center;
+  background: rgba(255,255,255,0.9);
+  padding: 2px 6px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.reveal-row {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 10px;
+  position: absolute;
+  width: 100%;
+}
+
+.reveal-row-1 { top: 15%; }
+.reveal-row-2 { top: 45%; }
+.reveal-row-3 { bottom: 20%; }
+
+.reveal-member {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.reveal-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+.reveal-name {
+  font-family: 'Baloo 2', cursive;
+  font-size: 11px;
+  font-weight: 700;
+  color: #654321;
+  text-align: center;
+  background: rgba(255,255,255,0.9);
+  padding: 2px 8px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+/* ========================================= */
+/* CONNECTOR - Hearts Column                 */
+/* ========================================= */
+
+.magic-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 80px;
+  gap: 10px;
+}
+
+.connector-heart {
+  font-size: 28px;
+  animation: pulse 1.6s infinite ease-in-out;
+  filter: none;
+}
+
+.connector-heart:nth-child(2) { 
+  animation-delay: 0.3s; 
+}
+
+.connector-heart:nth-child(3) { 
+  animation-delay: 0.6s; 
+}
+
+/* ========================================= */
+/* ACHIEVEMENT BADGE                         */
+/* ========================================= */
+
+.family-achievement-badge {
+  background: linear-gradient(180deg, #ffd86b 0%, #ffb703 100%);
+  border-radius: 50px;
+  padding: 12px 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  box-shadow: 
+    0 8px 0 #e09b00,
+    0 18px 30px rgba(0,0,0,0.25);
+  margin-bottom: 25px;
+  margin-top: 15px;
+  animation: badgePop 0.6s ease-out 0.5s backwards;
+  z-index: 10;
+}
+
+.family-achievement-badge-text {
+  font-family: 'Baloo 2', cursive;
+  font-size: 22px;
+  font-weight: 900;
+  color: #5c2d00;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ========================================= */
+/* ACTION BUTTONS                            */
+/* ========================================= */
+
+.action-buttons {
+  display: flex;
+  gap: 20px;
+  z-index: 60;
+  margin-top: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.make-another-btn {
+  background: linear-gradient(180deg, #5fd068, #3bb54a);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 14px 40px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 22px;
+  font-weight: 800;
+  box-shadow: 
+    0 8px 0 #2e8f3a,
+    0 15px 30px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.make-another-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 10px 0 #2e8f3a,
+    0 17px 35px rgba(0,0,0,0.3);
+}
+
+.make-another-btn:active {
+  transform: translateY(6px);
+  box-shadow: 0 2px 0 #2e8f3a;
+}
+
+.end-game-btn {
+  background: linear-gradient(180deg, #ffd86b 0%, #ffb703 100%);
+  color: #5c2d00;
+  border: none;
+  border-radius: 20px;
+  padding: 14px 40px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 22px;
+  font-weight: 800;
+  box-shadow: 
+    0 8px 0 #e09b00,
+    0 15px 30px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.end-game-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 10px 0 #e09b00,
+    0 17px 35px rgba(0,0,0,0.3);
+}
+
+.end-game-btn:active {
+  transform: translateY(6px);
+  box-shadow: 0 2px 0 #e09b00;
+}
+
+/* ========================================= */
+/* DECORATIVE SPARKLES                       */
+/* ========================================= */
+
+.final-sparkle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #FFD700;
+  border-radius: 50%;
+  animation: sparkleTwinkle 3s ease-in-out infinite;
+  box-shadow: 
+    0 0 12px rgba(255, 215, 0, 0.9),
+    0 0 20px rgba(255, 165, 0, 0.6);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 100;
+}
+
+.sparkle-bee {
+  position: absolute;
+  font-size: 35px;
+  animation: beeFloat 4s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 25;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+/* ========================================= */
+/* ANIMATIONS                                */
+/* ========================================= */
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes badgePop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  70% {
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+@keyframes sparkleTwinkle {
+  0%, 100% { 
+    transform: scale(0) rotate(0deg); 
+    opacity: 0; 
+  }
+  50% { 
+    transform: scale(1.5) rotate(180deg);
+    opacity: 1; 
+  }
+}
+
+@keyframes beeFloat {
+  0%, 100% { 
+    transform: translateY(0) rotate(-5deg); 
+  }
+  50% { 
+    transform: translateY(-20px) rotate(5deg); 
+  }
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0); 
+  }
+  50% { 
+    transform: translateY(-8px); 
+  }
+}
+
+/* ========================================= */
+/* RESPONSIVE - TABLET                       */
+/* ========================================= */
+
+@media (max-width: 1024px) {
+  .reveal-title {
+    font-size: 36px;
+  }
+  
+  .two-trees-container {
+    transform: scale(1.05);
+    max-width: 900px;
+  }
+  
+  .tree-column {
+    min-width: 340px;
+    max-width: 420px;
+    padding: 20px;
+  }
+  
+  .reveal-tree-img {
+    max-width: 250px;
+  }
+}
+
+/* ========================================= */
+/* RESPONSIVE - MOBILE                       */
+/* ========================================= */
+
+@media (max-width: 768px) {
+  .side-by-side-screen {
+    padding: 20px 15px 60px;
+  }
+  
+  .reveal-title {
+    font-size: 28px;
+  }
+  
+  .reveal-subtitle {
+    font-size: 16px;
+  }
+  
+  .two-trees-container {
+    transform: scale(1);
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .magic-connector {
+    flex-direction: row;
+    padding-top: 0;
+    padding: 15px 0;
+    gap: 12px;
+  }
+  
+  .tree-column {
+    width: 100%;
+    min-width: unset;
+    max-width: 100%;
+    padding: 15px;
+  }
+  
+  .reveal-tree-img {
+    max-width: 220px;
+  }
+  
+  .family-achievement-badge-text {
+    font-size: 16px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .make-another-btn,
+  .end-game-btn {
+    width: 100%;
+    font-size: 18px;
+    padding: 12px 30px;
+  }
+}
+
+/* ========================================= */
+/* CELEBRATION (End Screen)                  */
+/* ========================================= */
+.celebration-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fade-in 1s ease-out;
+}
+
+.celebration-content {
+  text-align: center;
+  color: white;
+  max-width: 700px;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 40px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.celebration-title {
+  font-family: 'Baloo', cursive;
+  font-size: 3.5rem;
+  margin: 0 0 20px 0;
+  text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.celebration-icon {
+  font-size: 7rem;
+  margin-bottom: 20px;
+  display: block;
+  animation: rotate-scale 3s ease-in-out infinite;
+}
+
+.celebration-message {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.6rem;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.confetti-piece {
+  position: absolute;
+  animation: fall-confetti 4s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes fall-confetti {
+  0% { opacity: 0; transform: translateY(-100px) rotate(0deg); }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(110vh) rotate(720deg); }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .intro-title, .transition-title { font-size: 2rem; }
+  .choice-options { grid-template-columns: 1fr; }
+  .choice-card { padding: 15px; }
+  .tree-overlay { width: 85%; }
+  .child-family-tree { width: 90%; gap: 25px; }
+  .member-avatar-small { width: 60px; height: 60px; font-size: 2rem; }
+  .bonding-message { flex-direction: column; text-align: center; }
+}
+
+@media (max-width: 480px) {
+  .intro-speech, .transition-speech { padding: 25px; margin: 0 15px; }
+  .choice-modal, .name-input-modal { padding: 25px; }
+  .input-with-voice { flex-direction: column; }
+  .voice-btn { width: 100%; }
+  .members-list { gap: 10px; }
+  .member-card { min-width: 70px; padding: 10px; }
+  .member-card-emoji { font-size: 2rem; }
+}
+
+/* ========================================= */
+/* 🎬 THE JUICE: CORRECT ANSWER SEQUENCE     */
+/* ========================================= */
+
+/* ① CORRECT CARD FEEDBACK (0-200ms) */
+.correct-card-hit {
+  animation: correctCardPop 200ms ease-out forwards;
+  box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7);
+  border-color: #4CAF50 !important; /* Green border override */
+  background-color: #E8F5E9 !important; /* Light green bg */
+  z-index: 10;
+}
+
+@keyframes correctCardPop {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
+  50% { transform: scale(1.08); box-shadow: 0 0 20px 10px rgba(255, 215, 0, 0.5); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+}
+
+/* ② TREE AVATAR APPEAR (200-600ms) */
+.tree-avatar-appear {
+  animation: treeAvatarPop 400ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes treeAvatarPop {
+  0% { opacity: 0; transform: scale(0.5); }
+  60% { opacity: 1; transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+/* ③ SPARKLE BURST (Updated for Visibility) */
+.tree-sparkle-burst {
+  position: absolute;
+  top: 50%; 
+  left: 50%;
+  transform: translate(-50%, -50%) translateZ(50px); /* 1. Force it IN FRONT of the 3D card */
+  width: 200%; /* 2. Make container huge so sparkles don't get cut off */
+  height: 200%;
+  pointer-events: none;
+  z-index: 999; /* 3. Extreme Z-Index */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sparkle-dot {
+  position: absolute;
+  width: 15px; /* 4. Bigger dots */
+  height: 15px;
+  background: radial-gradient(circle, #FFD700 20%, rgba(255, 215, 0, 0) 70%);
+  border-radius: 50%;
+  box-shadow: 0 0 10px #FFD700; /* 5. Add Glow */
+  animation: sparkleFloat 0.6s ease-out forwards;
+}
+
+/* Spread them out more */
+.sparkle-dot:nth-child(1) { top: 30%; left: 50%; animation-delay: 0ms; }
+.sparkle-dot:nth-child(2) { top: 70%; left: 20%; animation-delay: 50ms; }
+.sparkle-dot:nth-child(3) { top: 70%; left: 80%; animation-delay: 100ms; }
+.sparkle-dot:nth-child(4) { top: 40%; left: 20%; animation-delay: 150ms; }
+.sparkle-dot:nth-child(5) { top: 40%; left: 80%; animation-delay: 200ms; }
+
+@keyframes sparkleFloat {
+  0% { opacity: 0; transform: scale(0.5) translateY(0); }
+  40% { opacity: 1; transform: scale(1.2) translateY(-10px); }
+  100% { opacity: 0; transform: scale(0) translateY(-60px); } /* Move higher */
+}
+
+/* Ensure parents don't clip the explosion */
+.placed-deity, .circle-spot-with-label {
+  overflow: visible !important;
+}
+
+/* ========================================
+   CORRECT ANSWER SEQUENCE ANIMATIONS
+   ======================================== */
+
+/* Green Checkmark Overlay */
+.correct-checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(76, 175, 80, 0.9);
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  animation: checkmarkAppear 0.4s ease-out;
+}
+
+.checkmark-circle {
+  width: 80px;
+  height: 80px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: checkmarkPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.checkmark-icon {
+  font-size: 50px;
+  color: #4CAF50;
+  font-weight: bold;
+  animation: checkmarkDraw 0.3s ease-out 0.2s backwards;
+}
+
+@keyframes checkmarkAppear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes checkmarkPop {
+  0% {
+    transform: scale(0) rotate(-180deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes checkmarkDraw {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Card Fade Out */
+.choice-card.correct-selected {
+  animation: cardFadeOut 0.5s ease-out 0.5s forwards;
+}
+
+@keyframes cardFadeOut {
+  to {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+/* Small Sparkles Around Card */
+.choice-card-wrapper {
+  position: relative;
+}
+
+.card-sparkles {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  pointer-events: none;
+  z-index: 20; /* CHANGED from 5 to 20 - above everything */
+}
+
+.card-sparkles .sparkle {
+  position: absolute;
+  font-size: 24px; /* Bigger */
+  animation: sparkleFloat 1.2s ease-out forwards;
+  filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.8)); /* Glow */
+}
+
+.sparkle-1 {
+  top: -10px;
+  left: -10px;
+  animation-delay: 0.1s;
+}
+
+.sparkle-2 {
+  top: -10px;
+  right: -10px;
+  animation-delay: 0.2s;
+}
+
+.sparkle-3 {
+  bottom: -10px;
+  left: -10px;
+  animation-delay: 0.15s;
+}
+
+.sparkle-4 {
+  bottom: -10px;
+  right: -10px;
+  animation-delay: 0.25s;
+}
+
+@keyframes sparkleFloat {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.5) rotate(180deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(360deg) translateY(-20px);
+    opacity: 0;
+  }
+}
+
+/* Circle Pulse & Glow */
+.just-placed-glow {
+  animation: circlePulseGlow 2s ease-in-out;
+}
+
+@keyframes circlePulseGlow {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 0px rgba(255, 215, 0, 0));
+  }
+  25%, 75% {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 1));
+  }
+  50% {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 40px rgba(255, 215, 0, 1));
+  }
+}
+
+/* Sparkles Around Circle */
+.circle-celebration-sparkles {
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  top: -25%;
+  left: -25%;
+  pointer-events: none;
+}
+
+.circle-sparkle {
+  position: absolute;
+  font-size: 30px;
+  animation: circleSparkleOrbit 2s ease-out;
+}
+
+.cs-1 {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-delay: 0s;
+}
+
+.cs-2 {
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  animation-delay: 0.2s;
+}
+
+.cs-3 {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-delay: 0.4s;
+}
+
+.cs-4 {
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  animation-delay: 0.6s;
+}
+
+@keyframes circleSparkleOrbit {
+  0% {
+    transform: translate(-50%, -50%) scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  20% {
+    transform: translate(-50%, -50%) scale(1.5) rotate(90deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* "You got it!" - Stays longer, bigger */
+.you-got-it-text {
+  position: absolute;
+  top: -70px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  animation: youGotItPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  pointer-events: none;
+}
+
+.you-got-it-bubble {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: #FFFFFF; /* Pure white */
+  padding: 12px 25px;
+  border-radius: 25px;
+  font-family: 'Baloo', cursive;
+  font-size: 1.4rem;
+  font-weight: 900; /* Bolder */
+  box-shadow: 
+    0 6px 20px rgba(255, 215, 0, 0.6),
+    0 0 0 3px rgba(255, 255, 255, 0.3), /* White outline */
+    inset 0 2px 0 rgba(255, 255, 255, 0.5); /* Inner shine */
+  white-space: nowrap;
+  position: relative;
+  animation: gentlePulse 1.5s ease-in-out infinite;
+  text-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 0 10px rgba(255, 215, 0, 0.8); /* Glow behind text */
+}
+
+/* Speech bubble arrow */
+.you-got-it-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 12px solid #FFA500;
+}
+
+@keyframes youGotItPop {
+  0% {
+    transform: translateX(-50%) scale(0) translateY(20px);
+    opacity: 0;
+  }
+  60% {
+    transform: translateX(-50%) scale(1.15) translateY(-5px);
+  }
+  100% {
+    transform: translateX(-50%) scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes gentlePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Checkmark - Appears slower */
+.correct-checkmark {
+  animation: checkmarkAppear 0.6s ease-out; /* Slower */
+}
+
+@keyframes checkmarkAppear {
+  from { 
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to { 
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.checkmark-circle {
+  animation: checkmarkPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Slower */
+}
+
+@keyframes checkmarkPop {
+  0% { 
+    transform: scale(0) rotate(-180deg);
+  }
+  70% {
+    transform: scale(1.1) rotate(10deg);
+  }
+  100% { 
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* Card fades slower */
+.correct-card-hit {
+  animation: cardFadeOut 0.8s ease-out 0.6s forwards; /* Slower fade */
+}
+
+@keyframes cardFadeOut {
+  to {
+    opacity: 0;
+    transform: scale(0.85) translateY(10px);
+  }
+}
+
+/* Sparkles appear slower, stay longer */
+@keyframes sparkleFloat {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  30% {
+    transform: scale(1.3) rotate(90deg);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(1.2) rotate(270deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.8) rotate(360deg) translateY(-20px);
+    opacity: 0;
+  }
+}
+
+.card-sparkles .sparkle {
+  animation-duration: 1.2s; /* Slower sparkles */
+}
+
+/* Circle Pulse & Glow - Longer, more visible */
+.just-placed-glow {
+  animation: circlePulseGlow 2.5s ease-in-out;
+}
+
+@keyframes circlePulseGlow {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 0px rgba(255, 215, 0, 0));
+  }
+  15% {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+  }
+  30%, 70% {
+    transform: scale(1.12);
+    filter: drop-shadow(0 0 35px rgba(255, 215, 0, 1));
+  }
+  85% {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+  }
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.3));
+  }
+}
+
+/* Sparkles around circle - appear with glow */
+.circle-celebration-sparkles {
+  position: absolute;
+  width: 160%;
+  height: 160%;
+  top: -30%;
+  left: -30%;
+  pointer-events: none;
+}
+
+.circle-sparkle {
+  position: absolute;
+  font-size: 35px;
+  animation: circleSparkleOrbit 2.5s ease-out;
+}
+
+.cs-1 {
+  top: 0;
+  left: 50%;
+  animation-delay: 0s;
+}
+
+.cs-2 {
+  top: 50%;
+  right: 0;
+  animation-delay: 0.3s;
+}
+
+.cs-3 {
+  bottom: 0;
+  left: 50%;
+  animation-delay: 0.6s;
+}
+
+.cs-4 {
+  top: 50%;
+  left: 0;
+  animation-delay: 0.9s;
+}
+
+@keyframes circleSparkleOrbit {
+  0% {
+    transform: translate(-50%, -50%) scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  25% {
+    transform: translate(-50%, -50%) scale(1.5) rotate(120deg);
+    opacity: 1;
+  }
+  75% {
+    transform: translate(-50%, -50%) scale(1.2) rotate(300deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(0.8) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* ========================================
+   SMOOTH MODAL FROM CIRCLE ANIMATION
+   ======================================== */
+
+/* Overlay fades in */
+.modal-overlay-fade {
+  animation: overlayFadeIn 0.3s ease-out;
+}
+
+@keyframes overlayFadeIn {
+  from {
+    background: rgba(0, 0, 0, 0);
+  }
+  to {
+    background: rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* Modal slides from circle position */
+.fun-fact-modal-slide {
+  animation: modalSlideFromCircle 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalSlideFromCircle {
+  0% {
+    transform: scale(0.3) translateY(-100px);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.05) translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* During sequence, show subtle loading indicator on circles */
+.circle-spot-with-label.blocked {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ========================================
+   BIG FLIP CARD OVERLAY
+   ======================================== */
+
+/* Dark overlay */
+.flip-card-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  animation: overlayFadeIn 0.3s ease-out;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Big card */
+.flip-card-big {
+  background: linear-gradient(135deg, #FFF5E6 0%, #FFECD1 100%);
+  border-radius: 30px;
+  padding: 40px;
+  max-width: 500px;
+  width: 85%;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.3),
+    0 0 0 8px rgba(255, 215, 0, 0.3),
+    inset 0 2px 0 rgba(255, 255, 255, 0.5);
+  animation: cardZoomIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  position: relative;
+}
+
+@keyframes cardZoomIn {
+  0% {
+    transform: scale(0.3) rotate(-10deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.05) rotate(2deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* Deity image at top */
+.flip-card-deity {
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 30px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border: 6px solid #FFD700;
+}
+
+.flip-card-deity img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+}
+
+.flip-card-emoji {
+  font-size: 80px;
+}
+
+/* Content */
+.flip-card-content {
+  text-align: center;
+}
+
+.flip-card-title {
+  font-family: 'Baloo', cursive;
+  font-size: 2rem;
+  color: #8B4513;
+  margin: 0 0 20px 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.flip-card-fact {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.3rem;
+  color: #5D4037;
+  line-height: 1.6;
+  margin: 0;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 20px;
+  border-radius: 15px;
+}
+
+/* Hint at bottom */
+.flip-card-hint {
+  text-align: center;
+  margin-top: 25px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  color: #999;
+  font-style: italic;
+}
+
+/* Subtle tap hint on circles */
+/* ========================================= */
+/* TAP HINT BADGE (Moved to Top)             */
+/* ========================================= */
+
+.tap-to-learn {
+  position: absolute;
+  
+  /* 1. MOVE TO TOP (Fixes the overlap) */
+  top: -14px;      /* Sits on the top edge */
+  bottom: auto;    /* IMPORTANT: Resets the old 'bottom' value */
+  
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;     /* Ensures it sits on top of the image */
+
+  /* 2. REFINED STYLING */
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+  
+  /* Make it pop (Orange badge) or keep it dark brown #5D4037 */
+  background: #FF9800; 
+  border: 2px solid white; /* Adds nice separation from the image */
+  
+  padding: 4px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+  
+  /* Shadow for depth */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  
+  /* Keep the pulse animation */
+  animation: tapHintPulse 2s ease-in-out infinite;
+}
+
+@keyframes tapHintPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .flip-card-big {
+    padding: 30px 25px;
+  }
+  
+  .flip-card-deity {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .flip-card-title {
+    font-size: 1.6rem;
+  }
+  
+  .flip-card-fact {
+    font-size: 1.1rem;
+  }
+}
+
+/* ========================================
+   TREE DONE BUTTON (Green & Visible)
+   ======================================== */
+.tree-done-btn {
+  /* Use absolute to keep it inside the game area */
+  position: absolute; 
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000; /* High Z-index to sit on top of everything */
+  
+  /* Green Gradient */
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+  border: none;
+  padding: 18px 45px;
+  
+  font-family: 'Baloo', cursive;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  
+  /* Green Shadow */
+  box-shadow: 
+    0 8px 25px rgba(76, 175, 80, 0.4),
+    0 0 0 0 rgba(76, 175, 80, 0.5);
+  
+  transition: all 0.3s ease;
+  white-space: nowrap; /* Prevents text wrapping */
+}
+
+.tree-done-btn:hover {
+  transform: translateX(-50%) translateY(-3px);
+  box-shadow: 
+    0 12px 30px rgba(76, 175, 80, 0.5),
+    0 0 0 0 rgba(76, 175, 80, 0.5);
+}
+
+.tree-done-btn:active {
+  transform: translateX(-50%) translateY(-1px);
+}
+
+/* Pulse Animation */
+.done-btn-pulse {
+  animation: donePulseGreen 2s ease-in-out infinite;
+}
+
+@keyframes donePulseGreen {
+  0%, 100% {
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    box-shadow: 0 8px 35px rgba(76, 175, 80, 0.6);
+    transform: translateX(-50%) scale(1.05); /* Slight grow effect */
+  }
+}
+
+/* ========================================
+   TREE SPARKLES
+   ======================================== */
+
+/* Container that holds sparkles */
+/* Individual sparkle */
+.tree-sparkle {
+  position: absolute;
+  width: 10px;  /* Slightly bigger */
+  height: 10px;
+  border-radius: 50%;
+  
+  /* Brighter Gradient */
+  background: radial-gradient(circle, #fff 10%, #FFD700 60%, transparent 70%);
+  
+  /* KEY CHANGES HERE: */
+  /* 1. Duration increased to 2s (slower) */
+  /* 2. 'infinite' makes them keep going */
+  /* 3. 'linear' ensures smooth continuous flow */
+  animation: sparkleFloat 2s linear infinite;
+  
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.9);
+}
+
+/* Sparkle motion */
+@keyframes sparkleFloat {
+  0% {
+    transform: scale(0.5) translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1) translateY(-20px) rotate(45deg);
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    /* Float much higher */
+    transform: scale(0.2) translateY(-100px) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+/* ========================================
+   SMOOTH TRANSITION OVERLAY FADE
+   ======================================== */
+
+/* All-complete celebration overlay */
+.celebration-overlay {
+  animation: celebrationFadeIn 1s ease-out forwards;
+}
+
+@keyframes celebrationFadeIn {
+  0% {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+  }
+}
+
+/* ========================================= */
+/* COOL BUTTON (JUMBO SIZE)                  */
+/* ========================================= */
+
+.modal-cool-btn {
+  /* 1. Positioning */
+  display: block;
+  margin: 15px auto 0; /* Little space from text */
+  
+  /* 2. MASSIVE SIZE */
+  width: 40%;           /* Takes up half the modal width */
+  min-width: 280px;     /* Never gets too small on phones */
+  padding: 22px 0;      /* Tall and chunky */
+  
+  /* 3. BIG TEXT */
+  font-family: 'Baloo', cursive;
+  font-size: 2.2rem;    /* Very large text */
+  font-weight: 800;
+  letter-spacing: 1px;  /* Spacing for readability */
+  text-align: center;
+  
+  /* 4. Colors & 3D Look */
+  color: #5D4037;       /* Dark Brown text */
+  background: linear-gradient(135deg, #FFC107 0%, #FF9800 100%);
+  border: none;
+  border-radius: 99px;  /* Perfect pill shape */
+  cursor: pointer;
+  
+  /* 5. Shadows */
+  box-shadow: 
+    0 10px 25px rgba(255, 152, 0, 0.4),
+    inset 0 3px 0 rgba(255, 255, 255, 0.4); /* Shiny top lip */
+    
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-cool-btn:hover {
+  transform: scale(1.05) translateY(-4px); /* Grows bigger on hover */
+  box-shadow: 0 15px 35px rgba(255, 152, 0, 0.5);
+}
+
+.modal-cool-btn:active {
+  transform: scale(0.98) translateY(2px);
+}
+
+/* ========================================
+   SIMPLIFIED TRANSITION
+   ======================================== */
+
+/* Simple transition modal */
+.transition-modal-simple {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+background: rgba(255, 245, 235, 0.6);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Floating Ganesha */
+.transition-ganesha-float {
+  width: 180px;
+  height: auto;
+  margin-bottom: 30px;
+  animation: gentleFloat 3s ease-in-out infinite;
+}
+
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+/* Card */
+.transition-card-simple {
+  background: white;
+  padding: 40px;
+  border-radius: 30px;
+  max-width: 600px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.transition-title {
+  font-family: 'Baloo', cursive;
+  font-size: 2.5rem;
+  color: #8B4513;
+  margin: 0 0 20px 0;
+}
+
+.transition-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.2rem;
+  color: #5D4037;
+  line-height: 1.6;
+  margin: 0 0 30px 0;
+}
+
+/* Simple button - no red! */
+.continue-btn-simple {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+
+  border: none;
+  padding: 8px 45px;
+  font-family: 'Baloo', cursive;
+  font-size: 2.2rem;
+  font-weight: 700;
+  border-radius: 20px;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.continue-btn-simple:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 30px rgba(76, 175, 80, 0.5);
+}
+
+.continue-btn-simple:active {
+  transform: translateY(-1px);
+  /* NO background change */
+}
+
+/* ========================================
+   CHILD INPUT SCENE FADE IN
+   ======================================== */
+
+.child-input-scene {
+  animation: sceneGradualFadeIn 0.8s ease-out forwards;
+}
+
+@keyframes sceneGradualFadeIn {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0px);
+  }
+}
+
+/* Bottom tray slides up */
+.bottom-member-tray {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  /*background: rgba(255, 255, 255, 0.95);*/
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  
+  /* Start hidden below screen */
+  transform: translateY(100%);
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Slide up when visible */
+.bottom-member-tray.tray-visible {
+  transform: translateY(0);
+}

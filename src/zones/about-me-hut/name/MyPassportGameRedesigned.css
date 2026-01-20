@@ -1,0 +1,628 @@
+/* zones/about-me-hut/scenes/scene3/ObstacleRemoverGameRedesigned.css */
+
+.obstacle-remover-game-redesigned {
+  font-family: 'Nunito', sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+  padding: 20px;
+  position: relative;
+}
+
+.back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: white;
+  border: 3px solid #2196F3;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-family: 'Baloo', cursive;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+/* ========================================
+   OPENING MODAL - Uses OpeningModal.css
+   ======================================== */
+
+/* ========================================
+   SECTION HEADERS
+   ======================================== */
+
+.section-title {
+  font-family: 'Baloo', cursive;
+  font-size: 2.5rem;
+  color: #1565C0;
+  text-align: center;
+  margin: 80px 0 10px 0;
+}
+
+.section-subtitle {
+  font-size: 1.3rem;
+  color: #424242;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+/* ========================================
+   LEARN SECTION (Ganesha's Examples)
+   ======================================== */
+
+.learn-section {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.ganesha-examples {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.example-divider {
+  text-align: center;
+  font-family: 'Baloo', cursive;
+  font-size: 1.5rem;
+  color: #757575;
+  margin: 20px 0;
+}
+
+.example-divider span {
+  background: white;
+  padding: 10px 30px;
+  border-radius: 30px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.learn-complete {
+  text-align: center;
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+.learn-message {
+  font-family: 'Baloo', cursive;
+  font-size: 1.5rem;
+  color: #2E7D32;
+  margin: 0 0 25px 0;
+}
+
+.continue-btn {
+  background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  border-radius: 40px;
+  font-family: 'Baloo', cursive;
+  font-size: 1.3rem;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+  transition: all 0.3s ease;
+}
+
+.continue-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.6);
+}
+
+/* ========================================
+   BEFORE/AFTER SCENE
+   ======================================== */
+
+.before-after-scene {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+.scene-title {
+  font-family: 'Baloo', cursive;
+  font-size: 1.8rem;
+  color: #1565C0;
+  text-align: center;
+  margin: 0 0 20px 0;
+}
+
+.scene-container {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  border-radius: 15px;
+  overflow: hidden;
+  cursor: grab;
+  margin-bottom: 25px;
+}
+
+.scene-container:active {
+  cursor: grabbing;
+}
+
+.scene-before,
+.scene-after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+.scene-emoji {
+  font-size: 80px;
+  margin-bottom: 20px;
+}
+
+.scene-description {
+  font-size: 1.2rem;
+  text-align: center;
+  color: #424242;
+  max-width: 80%;
+  line-height: 1.6;
+}
+
+.ganesha-appears {
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  font-size: 60px;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.5); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.slider-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: white;
+  transform: translateX(-50%);
+  z-index: 10;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.handle-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  cursor: grab;
+}
+
+.handle-circle:active {
+  cursor: grabbing;
+}
+
+.scene-label {
+  position: absolute;
+  top: 15px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  z-index: 5;
+}
+
+.before-label {
+  left: 15px;
+}
+
+.after-label {
+  right: 15px;
+}
+
+.slider-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: hintPulse 1.5s ease-in-out infinite;
+  z-index: 15;
+  text-align: center;
+  pointer-events: none;
+}
+
+.hint-pointer {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.hint-text {
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 1.1rem;
+}
+
+@keyframes hintPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.8; }
+}
+
+.scene-controls {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.shloka-btn,
+.next-obstacle-btn {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 30px;
+  font-family: 'Baloo', cursive;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+.shloka-btn {
+  background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+  color: white;
+}
+
+.next-obstacle-btn {
+  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+  color: white;
+}
+
+.shloka-btn:hover,
+.next-obstacle-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+}
+
+.shloka-text {
+  text-align: center;
+  font-style: italic;
+  font-size: 1rem;
+  color: #5D4037;
+  padding: 15px;
+  background: #FFF8E1;
+  border-radius: 10px;
+}
+
+/* ========================================
+   INPUT SECTION
+   ======================================== */
+
+.input-section {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.progress-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.progress-dot {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #E0E0E0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Baloo', cursive;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #999;
+  transition: all 0.3s ease;
+}
+
+.progress-dot.active {
+  background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.5);
+}
+
+.input-form {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+.form-field {
+  margin-bottom: 30px;
+}
+
+.form-field label {
+  display: block;
+  font-family: 'Baloo', cursive;
+  font-size: 1.3rem;
+  color: #424242;
+  margin-bottom: 15px;
+}
+
+.quick-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.quick-option {
+  background: #E3F2FD;
+  border: 2px solid #2196F3;
+  padding: 10px 18px;
+  border-radius: 20px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.quick-option:hover {
+  background: #2196F3;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.form-field input,
+.form-field textarea {
+  width: 100%;
+  padding: 15px;
+  border: 3px solid #BBDEFB;
+  border-radius: 15px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.1rem;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: #2196F3;
+  box-shadow: 0 0 10px rgba(33, 150, 243, 0.3);
+}
+
+.submit-obstacle-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+  color: white;
+  border: none;
+  padding: 18px;
+  border-radius: 40px;
+  font-family: 'Baloo', cursive;
+  font-size: 1.4rem;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+
+.submit-obstacle-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.6);
+}
+
+/* ========================================
+   VIEW SECTION
+   ======================================== */
+
+.view-section {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ========================================
+   POWER PLAN SECTION
+   ======================================== */
+
+.power-plan-section {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.power-plan-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.obstacles-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+.obstacle-card {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  display: flex;
+  gap: 20px;
+}
+
+.obstacle-number {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Baloo', cursive;
+  font-size: 1.5rem;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.obstacle-info {
+  flex: 1;
+}
+
+.obstacle-title {
+  font-family: 'Baloo', cursive;
+  font-size: 1.5rem;
+  color: #1565C0;
+  margin: 0 0 15px 0;
+}
+
+.obstacle-transformation {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.before-state,
+.after-state {
+  flex: 1;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.before-state {
+  background: #FFEBEE;
+}
+
+.after-state {
+  background: #E8F5E9;
+}
+
+.state-label {
+  display: block;
+  font-family: 'Baloo', cursive;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.before-state .state-label {
+  color: #D32F2F;
+}
+
+.after-state .state-label {
+  color: #388E3C;
+}
+
+.obstacle-transformation p {
+  margin: 0;
+  font-size: 1rem;
+  color: #424242;
+  line-height: 1.4;
+}
+
+.arrow {
+  font-size: 2rem;
+  color: #2196F3;
+  font-weight: bold;
+}
+
+.power-message {
+  background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+  color: white;
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(76, 175, 80, 0.4);
+}
+
+.power-text {
+  font-size: 1.3rem;
+  line-height: 1.8;
+  margin: 0 0 30px 0;
+}
+
+.complete-game-btn {
+  background: white;
+  color: #4CAF50;
+  border: none;
+  padding: 18px 50px;
+  border-radius: 50px;
+  font-family: 'Baloo', cursive;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+}
+
+.complete-game-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 2rem;
+  }
+
+  .scene-container {
+    height: 300px;
+  }
+
+  .scene-emoji {
+    font-size: 60px;
+  }
+
+  .scene-description {
+    font-size: 1rem;
+  }
+
+  .obstacle-transformation {
+    flex-direction: column;
+  }
+
+  .arrow {
+    transform: rotate(90deg);
+  }
+
+  .quick-options {
+    flex-direction: column;
+  }
+
+  .quick-option {
+    width: 100%;
+  }
+}

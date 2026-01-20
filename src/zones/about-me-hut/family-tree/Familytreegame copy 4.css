@@ -1,0 +1,1474 @@
+/* Family Tree Game - Enhanced Styles */
+.family-tree-game {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'Nunito', sans-serif;
+}
+
+.tree-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* Part Indicator */
+.part-indicator {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-family: 'Baloo', cursive;
+  font-size: 1.1rem;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  z-index: 100;
+  animation: slide-down 0.5s ease-out;
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ====================================================== */
+/* SCENE SPECIFIC OVERRIDE: FAMILY TREE (Love & Bonding)  */
+/* ====================================================== */
+
+/* ========================================================= */
+/* SCENE SPECIFIC OVERRIDE: FAMILY TREE (Love & Bonding) */
+/* ========================================================= */
+
+#family-tree-intro {
+
+  /* 1. BUTTON: Warm peach → coral (less pink, more premium) */
+--modal-btn-bg: linear-gradient(
+  180deg,
+  #f49271 0%,   /* light peach highlight */
+  #FF8A65 100% /* deeper coral base */
+);
+
+  --modal-btn-text: #FFFFFF;
+--modal-btn-shadow:
+  0 6px 14px rgba(255, 138, 101, 0.35),
+  inset 0 1px 0 rgba(255, 255, 255, 0.4);
+
+  --modal-btn-hover-shadow:
+  0 8px 18px rgba(255, 138, 101, 0.45);
+
+  /* 2. TEXT */
+  --modal-text-primary: #C2185B;   /* Title ONLY (keep emotional pink) */
+  --modal-text-secondary: #6B3E26; /* Story + labels (warm brown) */
+
+  /* 3. CARD: Soft parchment blush (NOT pinky) */
+  --modal-card-bg: #FFF7F2;        /* warm off-white */
+  --modal-card-border: none;       /* REMOVE pink border */
+
+  /* 4. SHADOWS: Natural depth */
+  --modal-shadow-color: rgba(60, 20, 10, 0.18);
+
+  
+}
+
+#family-tree-intro .game-modal-icon-label {
+  /* Use the Warm Brown variable you defined */
+  color: var(--modal-text-secondary) !important; 
+  
+  /* Optional: Adjust font size/weight if needed */
+  font-family: 'Baloo 2', cursive; /* Match the title font for cuteness */
+  font-weight: 900;
+  font-size: 1.5rem; 
+}
+/* Buttons */
+.back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: white;
+  border: none;
+  padding: 12px 25px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.back-btn:hover {
+  background: #f8f9fa;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+/* Progress Dots */
+.progress-dots {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 100;
+}
+
+.progress-dot {
+  font-size: 1.5rem;
+  opacity: 0.3;
+  transition: all 0.3s ease;
+}
+
+.progress-dot.filled {
+  opacity: 1;
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8));
+}
+
+/* Instruction Text */
+.instruction-text {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 15px 30px;
+  border-radius: 25px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  z-index: 90;
+}
+
+.instruction-text p {
+  font-family: 'Baloo', cursive;
+  font-size: 1.2rem;
+  color: #2d3436;
+  margin: 0;
+}
+
+/* INTRO */
+.intro-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  animation: fade-in 0.5s ease-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.intro-ganesha {
+  width: 180px;
+  height: auto;
+  margin-bottom: 30px;
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+}
+
+.bounce {
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.intro-speech {
+  background: white;
+  border-radius: 30px;
+  padding: 40px 50px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+  text-align: center;
+  max-width: 600px;
+  animation: pop-in 0.6s ease-out 0.3s backwards;
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.intro-title {
+  font-family: 'Baloo', cursive;
+  font-size: 2.5rem;
+  color: #2d3436;
+  margin: 0 0 20px 0;
+}
+
+.intro-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.3rem;
+  color: #636e72;
+  margin: 0 0 30px 0;
+  line-height: 1.6;
+}
+
+.start-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 15px 50px;
+  font-family: 'Baloo', cursive;
+  font-size: 1.3rem;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease;
+}
+
+.start-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(102, 126, 234, 0.5);
+}
+
+/* GANESHA'S TREE */
+/* 2. THE TREE IMAGE */
+.tree-overlay {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  position: relative; /* Relative to wrapper */
+  top: auto; left: auto; /* Reset old absolute positioning */
+  transform: none; 
+  z-index: 1;
+  pointer-events: none;
+  transform-origin: bottom center;
+  animation: treeSway 6s ease-in-out infinite alternate;
+}
+
+/* Circle spots with labels */
+/* UPDATED: Allows the card to pop out */
+.circle-spot-with-label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  overflow: visible !important; /* CRITICAL FIX */
+}
+
+.empty-circle {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+
+  /* softer, organic ring */
+  border: 3px dashed rgba(180, 220, 180, 0.7);
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(220, 255, 220, 0.35) 0%,
+      rgba(180, 230, 180, 0.18) 55%,
+      rgba(120, 180, 120, 0.08) 100%
+    );
+
+  box-shadow:
+    0 0 0 4px rgba(255, 255, 255, 0.15),
+    0 8px 20px rgba(60, 90, 60, 0.35);
+
+  transition: transform 0.3s ease;
+}
+
+
+.glow-pulse {
+  animation: glow-pulse 2.6s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 4px rgba(255, 255, 255, 0.12),
+      0 8px 20px rgba(60, 90, 60, 0.35);
+    transform: scale(1);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 6px rgba(255, 255, 255, 0.22),
+      0 12px 28px rgba(80, 130, 80, 0.45);
+    transform: scale(1.035);
+  }
+}
+
+
+.circle-label {
+  background: #FFEFE6; /* warm cream */
+  color: #6A3B2C;      /* bark brown */
+
+  padding: 6px 16px;
+  border-radius: 999px;
+
+  font-family: 'Baloo', cursive;
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  box-shadow: 0 2px 6px rgba(106, 59, 44, 0.2);
+}
+
+
+
+.circle-spot-with-label.filled .empty-circle {
+  border: none;
+  background: none;
+  box-shadow: none;
+}
+
+
+/* ========================================= */
+/* PLACED DEITY & CARD FLIP LOGIC (UPDATED)  */
+/* ========================================= */
+
+.placed-deity {
+  width: 120px;
+  height: 120px;
+  position: relative;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+/* THE FLIPPED STATE: Becomes a Rectangular Card */
+.placed-deity.flipped {
+  /* Rotate to show back AND scale up/center */
+  transform: translate(-50%, -50%) scale(1.1) rotateY(180deg);
+  
+  /* Break out of circle flow */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  
+  /* Card Dimensions */
+  width: 220px;
+  height: auto;
+  min-height: 140px;
+  
+  /* Card Styling */
+  border-radius: 20px;
+  z-index: 100;
+  
+  /* Note: Background handled by .deity-back, but we add shadow here */
+  box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+}
+
+.deity-front, .deity-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 50%; /* Front is circle */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* When parent is flipped, back needs to match the rectangle shape */
+.placed-deity.flipped .deity-back {
+  border-radius: 20px; /* Become a rounded rectangle */
+  width: 100%;
+  height: 100%;
+  min-height: 140px;
+}
+
+.deity-front {
+  transform: rotateY(0deg);
+  border-radius: 50%;
+}
+
+.deity-back {
+  transform: rotateY(180deg);
+
+  /* Softer blush-paper background */
+  background: linear-gradient(
+    135deg,
+    #FFE9E2 0%,
+    #FFD3C4 100%
+  );
+
+  padding: 22px;
+
+  /* Much softer depth */
+  box-shadow:
+    inset 0 0 12px rgba(255, 255, 255, 0.6),
+    0 8px 20px rgba(0, 0, 0, 0.18);
+
+  border: 2px solid rgba(255, 255, 255, 0.8);
+
+  border-radius: 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deity-back::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 18px;
+  background: #FFD3C4;
+  border-radius: 50%;
+  filter: blur(6px);
+  opacity: 0.6;
+}
+
+
+/* Text inside the card */
+.flip-fun-fact {
+  color: #6A3B2E; /* Warm brown instead of white */
+  text-align: center;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flip-fun-fact p {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  margin: 0;
+
+  font-weight: 700;
+
+  /* Remove heavy shadow – keep it story-like */
+  text-shadow: none;
+}
+
+
+.deity-circle {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: white;
+  padding: 8px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deity-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.deity-emoji {
+  font-size: 4rem;
+}
+
+/* MODALS */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  animation: fade-in 0.3s ease-out;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 200, 170, 0.6);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 2rem;
+  color: rgb(237, 113, 113);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.5);
+  transform: rotate(90deg);
+}
+
+/* Choice Modal */
+/* ========================================= */
+/* CHOICE MODAL (Positioning Fixes Applied)  */
+/* ========================================= */
+
+.choice-modal {
+  background: #FFF8F5; /* warm cream */
+  border-radius: 28px;
+  padding: 40px;
+  max-width: 700px;
+  width: 90%;
+  box-shadow: 0 16px 40px rgba(90, 45, 35, 0.35);
+  animation: modal-bounce-in 0.6s ease-out;
+  position: relative;
+}
+
+@keyframes modal-bounce-in {
+  0% { opacity: 0; transform: scale(0.7) translateY(-50px); }
+  60% { transform: scale(1.05) translateY(0); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.choice-title {
+  font-family: 'Baloo', cursive;
+  font-size: 2rem;
+  color: #6A3B2C; /* warm brown */
+  text-align: center;
+  
+  /* POSITION CHANGE: Reduced margin to move title up */
+  margin: 0 0 15px 0; 
+}
+
+.choice-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.choice-card {
+  background: #fff7f0; /* warm cream */
+  border-radius: 22px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: center;
+
+  /* LAYOUT CHANGES: Use Flexbox to control internal spacing */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* Starts items at the top */
+  gap: 10px; /* Controls space between Image and Text */
+  
+  /* PADDING CHANGE: Specific padding to keep text inside */
+  padding: 25px 10px 20px 10px; 
+
+  /* Always-on affordance */
+  box-shadow:
+    0 6px 0 rgba(139, 94, 60, 0.15),   
+    0 10px 24px rgba(0, 0, 0, 0.12);
+}
+
+.choice-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 10px 0 rgba(139, 94, 60, 0.18),
+    0 18px 32px rgba(0, 0, 0, 0.18);
+}
+
+.choice-card:active {
+  transform: translateY(2px);
+  box-shadow:
+    0 4px 0 rgba(139, 94, 60, 0.15),
+    0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+.choice-card:hover:not(:disabled) {
+  transform: translateY(-4px);
+  border-color: #E6A18A; /* warm pink-brown */
+  box-shadow: 0 8px 22px rgba(122, 62, 46, 0.25);
+}
+
+.choice-card:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.choice-card.wrong-shake {
+  animation: gentle-wobble 0.5s ease-in-out;
+  border-color: #E6A18A;
+  background: #FFE4D6;
+}
+
+@keyframes gentle-wobble {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+.choice-image {
+  /* SIZE CHANGE: Slightly smaller to prevent overflow */
+  width: 80px; 
+  height: 80px;
+  
+  /* MARGIN CHANGE: Removed bottom margin (handled by gap now) */
+  margin: 0 auto;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.choice-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.choice-emoji {
+  font-size: 4.5rem; /* Slightly adjusted to fit new box size */
+}
+
+.choice-name {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.3rem;
+  color: #6B3E26 !important; 
+  text-shadow: none !important; 
+  margin: 0 0 5px 0;
+  font-weight: 700;
+}
+
+.choice-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  color: #8D6E63 !important;
+  text-shadow: none !important;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.wrong-feedback {
+  margin-top: 20px;
+  padding: 14px 18px;
+  background: #FFE4D6;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(122, 62, 46, 0.25);
+}
+
+.wrong-feedback p {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.05rem;
+  color: #7A3E2E;
+  margin: 0;
+}
+
+
+/* Fun Fact Modal */
+.fun-fact-modal {
+  background: linear-gradient(
+    135deg,
+    #fff4eb 0%,
+    #ffe0cf 100%
+  );
+  color: #5a3b2e; /* warm brown */
+  border-radius: 30px;
+  padding: 40px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+
+  box-shadow:
+    0 20px 50px rgba(90, 59, 46, 0.35),
+    inset 0 0 0 2px rgba(255, 200, 170, 0.6);
+
+  animation: modal-bounce-in 0.6s ease-out;
+  position: relative;
+}
+
+
+.modal-deity-image {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: #fffaf6;
+  padding: 12px;
+
+  box-shadow:
+    0 10px 30px rgba(120, 70, 40, 0.3),
+    inset 0 0 0 3px rgba(255, 180, 140, 0.6);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.modal-deity-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.modal-deity-emoji {
+  font-size: 5rem;
+}
+
+.modal-title {
+  font-family: 'Baloo', cursive;
+  font-size: 1.4rem;
+  margin-bottom: 6px;
+  color: #c25a3a; /* soft coral */
+}
+
+.modal-name {
+  font-family: 'Baloo', cursive;
+  font-size: 2.1rem;
+  margin-bottom: 16px;
+  color: #7a3e2b;
+}
+
+.modal-fun-fact {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: #6b4a3a;
+}
+
+
+.modal-emoji {
+  font-size: 2.5rem;
+  opacity: 0.8;
+  animation: float 3s ease-in-out infinite;
+}
+
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* TRANSITION */
+.transition-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 245, 235, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  animation: fade-in 0.4s ease-out;
+}
+
+.transition-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 120px rgba(0,0,0,0.12);
+  pointer-events: none;
+}
+
+
+.transition-ganesha {
+  width: 180px;
+  height: auto;
+  margin-bottom: 30px;
+}
+
+.transition-speech {
+  background: rgb(242, 240, 235);
+  border-radius: 30px;
+  padding: 40px 50px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+  text-align: center;
+  max-width: 600px;
+  animation: pop-in 0.6s ease-out;
+}
+
+.transition-title {
+  font-family: 'Baloo', cursive;
+  font-size: 2.5rem;
+  color: #2d3436;
+  margin: 0 0 20px 0;
+}
+
+.transition-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.3rem;
+  color: #636e72;
+  margin: 0 0 30px 0;
+  line-height: 1.6;
+}
+
+.continue-btn {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  color: white;
+  border: none;
+  padding: 15px 50px;
+  font-family: 'Baloo', cursive;
+  font-size: 1.3rem;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(67, 233, 123, 0.4);
+  transition: all 0.3s ease;
+}
+
+.continue-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(67, 233, 123, 0.5);
+}
+
+/* CHILD'S FAMILY TREE (3 rows) */
+.child-family-tree {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 85%;
+  max-width: 800px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  align-items: center;
+}
+
+.family-row {
+  display: flex;
+  gap: 25px;
+  flex-wrap: wrap;
+  justify-content: center;
+  position: relative;
+}
+
+.row-1 { order: 1; } /* Grandparents */
+.row-2 { order: 2; } /* Parents */
+.row-3 { order: 3; } /* Siblings + Pets */
+
+.tree-member-small {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  animation: pop-in 0.5s ease-out;
+  position: relative;
+}
+
+.member-avatar-small {
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  border: 4px solid white;
+  position: relative;
+}
+
+.member-name-small {
+  background: white;
+  padding: 8px 16px;
+  border-radius: 18px;
+  font-family: 'Baloo', cursive;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3436;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Delete button on tree members */
+.delete-member-btn {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #e74c3c;
+  color: white;
+  border: 2px solid white;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  transition: all 0.2s ease;
+  line-height: 1;
+  padding: 0;
+}
+
+.delete-member-btn:hover {
+  background: #c0392b;
+  transform: scale(1.1);
+}
+
+/* Bottom Tray */
+.members-tray {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.6) 100%);
+  padding: 25px 20px;
+  z-index: 40;
+  animation: slide-up 0.5s ease-out;
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.members-list {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.member-card {
+  background: white;
+  border: none;
+  border-radius: 15px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 80px;
+}
+
+.member-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+.member-card-emoji {
+  font-size: 2.5rem;
+}
+
+.member-card-label {
+  font-family: 'Baloo', cursive;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2d3436;
+}
+
+.done-tray-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 40px;
+  font-family: 'Baloo', cursive;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease;
+  display: block;
+  margin: 0 auto;
+}
+
+.done-tray-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+/* Name Input Modal */
+.name-input-modal {
+  background: white;
+  border-radius: 30px;
+  padding: 40px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  animation: modal-bounce-in 0.6s ease-out;
+  position: relative;
+  text-align: center;
+}
+
+.modal-emoji-large {
+  font-size: 5rem;
+  margin-bottom: 20px;
+}
+
+.modal-question {
+  font-family: 'Baloo', cursive;
+  font-size: 1.8rem;
+  color: #2d3436;
+  margin: 0 0 30px 0;
+}
+
+.input-with-voice {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.name-input {
+  flex: 1;
+  padding: 15px 20px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.2rem;
+  border: 3px solid #dfe6e9;
+  border-radius: 15px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.name-input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.voice-btn {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 15px 25px;
+  font-size: 1.5rem;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.voice-btn:hover {
+  background: #5568d3;
+  transform: scale(1.05);
+}
+
+.voice-btn.recording {
+  background: #e74c3c;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.audio-recorded {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  color: #27ae60;
+  font-weight: 600;
+  margin: -10px 0 20px 0;
+}
+
+.submit-name-btn {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  color: white;
+  border: none;
+  padding: 15px 50px;
+  font-family: 'Baloo', cursive;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(67, 233, 123, 0.4);
+  transition: all 0.3s ease;
+}
+
+.submit-name-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(67, 233, 123, 0.5);
+}
+
+.submit-name-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* SIDE BY SIDE & CELEBRATION - Keeping same as before */
+.side-by-side-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, #ffd89b 0%, #19547b 100%);
+  overflow-y: auto;
+  padding: 80px 20px 40px;
+  z-index: 50;
+}
+
+.reveal-title {
+  font-family: 'Baloo', cursive;
+  font-size: 3rem;
+  color: white;
+  text-align: center;
+  margin: 0 0 10px 0;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.reveal-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.5rem;
+  color: white;
+  text-align: center;
+  margin: 0 0 40px 0;
+  text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.two-trees-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  max-width: 1000px;
+  margin: 0 auto 40px;
+}
+
+.tree-column {
+  background: white;
+  border-radius: 30px;
+  padding: 30px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+.tree-heading {
+  font-family: 'Baloo', cursive;
+  font-size: 1.8rem;
+  color: #2d3436;
+  text-align: center;
+  margin: 0 0 20px 0;
+}
+
+.tree-visual {
+  position: relative;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.tree-image {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  opacity: 0.3;
+}
+
+.tree-member-mini {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.mini-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: white;
+  padding: 5px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  margin-bottom: 5px;
+}
+
+.mini-emoji {
+  font-size: 3rem;
+}
+
+.mini-name {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.8rem;
+  color: #2d3436;
+  font-weight: 600;
+  margin: 0;
+  background: white;
+  padding: 4px 8px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.child-tree {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Child tree reveal (side-by-side) - tree layout */
+.child-tree-reveal {
+  position: relative;
+  min-height: 400px;
+}
+
+.reveal-row {
+  position: absolute;
+  width: 100%;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.reveal-row-1 { top: 15%; }  /* Grandparents */
+.reveal-row-2 { top: 45%; }  /* Parents */
+.reveal-row-3 { top: 75%; }  /* Siblings + Pets */
+
+.reveal-member {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.reveal-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  border: 3px solid white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.reveal-name {
+  background: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-family: 'Baloo', cursive;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #2d3436;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.make-another-btn, .end-game-btn {
+  padding: 15px 40px;
+  font-family: 'Baloo', cursive;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+.make-another-btn {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  color: white;
+}
+
+.make-another-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(67, 233, 123, 0.4);
+}
+
+.end-game-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.end-game-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(102, 126, 234, 0.4);
+}
+
+.tree-location {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.1rem;
+  color: #636e72;
+  text-align: center;
+  margin: 20px 0 0 0;
+  font-weight: 600;
+}
+
+.bonding-message {
+  background: white;
+  border-radius: 30px;
+  padding: 30px;
+  max-width: 700px;
+  margin: 0 auto 30px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.bonding-ganesha {
+  width: 100px;
+  height: auto;
+  flex-shrink: 0;
+}
+
+.bonding-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.2rem;
+  color: #2d3436;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.continue-adventure-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 18px 60px;
+  font-family: 'Baloo', cursive;
+  font-size: 1.5rem;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+  transition: all 0.3s ease;
+  display: block;
+  margin: 0 auto;
+}
+
+.continue-adventure-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(102, 126, 234, 0.6);
+}
+
+/* CELEBRATION */
+.celebration-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.celebration-content {
+  text-align: center;
+  color: white;
+  max-width: 600px;
+  padding: 40px;
+}
+
+.celebration-title {
+  font-family: 'Baloo', cursive;
+  font-size: 3rem;
+  margin: 0 0 30px 0;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.celebration-icon {
+  font-size: 6rem;
+  margin-bottom: 30px;
+  animation: rotate-scale 2s ease-in-out infinite;
+}
+
+@keyframes rotate-scale {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.2); }
+}
+
+.celebration-message {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.5rem;
+  line-height: 1.6;
+  margin: 0 0 20px 0;
+}
+
+.celebration-next {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.3rem;
+  line-height: 1.6;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.confetti-piece {
+  position: absolute;
+  animation: fall-confetti 3s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes fall-confetti {
+  0% {
+    opacity: 0;
+    transform: translateY(-100px) rotate(0deg);
+  }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% {
+    opacity: 0;
+    transform: translateY(100vh) rotate(720deg);
+  }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .intro-title, .transition-title { font-size: 2rem; }
+  .choice-options { grid-template-columns: 1fr; }
+  .choice-card { padding: 15px; }
+  .tree-overlay { width: 85%; }
+  .child-family-tree { width: 90%; gap: 25px; }
+  .member-avatar-small { width: 60px; height: 60px; font-size: 2rem; }
+  .bonding-message { flex-direction: column; text-align: center; }
+}
+
+@media (max-width: 480px) {
+  .intro-speech, .transition-speech { padding: 25px; margin: 0 15px; }
+  .choice-modal, .name-input-modal { padding: 25px; }
+  .input-with-voice { flex-direction: column; }
+  .voice-btn { width: 100%; }
+  .members-list { gap: 10px; }
+  .member-card { min-width: 70px; padding: 10px; }
+  .member-card-emoji { font-size: 2rem; }
+}

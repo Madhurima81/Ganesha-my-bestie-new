@@ -33,7 +33,8 @@ const GamePauseMenu = ({
             <span className="pause-btn-icon">▶️</span>
             <div className="pause-btn-content">
               <span className="pause-btn-label">Keep Playing</span>
-              <span className="pause-btn-subtitle">Resume game</span>
+              <span className="pause-btn-subtitle">Continue decorating
+</span>
             </div>
           </button>
 
@@ -42,7 +43,8 @@ const GamePauseMenu = ({
             <span className="pause-btn-icon">🔄</span>
             <div className="pause-btn-content">
               <span className="pause-btn-label">Start Fresh</span>
-              <span className="pause-btn-subtitle">Restart this game</span>
+              <span className="pause-btn-subtitle">Clear decorations & restart
+</span>
             </div>
           </button>
 
@@ -51,8 +53,8 @@ const GamePauseMenu = ({
             <button className="pause-button design" onClick={onBackToModes}>
               <span className="pause-btn-icon">🎨</span>
               <div className="pause-btn-content">
-                <span className="pause-btn-label">Change Mode</span>
-                <span className="pause-btn-subtitle">Choose a different activity</span>
+                <span className="pause-btn-label">Choose an Activity</span>
+                <span className="pause-btn-subtitle">Free play or challenges</span>
               </div>
             </button>
           )}

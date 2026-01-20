@@ -33,7 +33,6 @@ const SceneCompletionCelebration = ({
     size: `${15 + Math.random() * 20}px`
   })));
 
-  const { clearManualCloseTracking } = useGameCoach();
 
   useEffect(() => {
     if (!show) {
@@ -48,13 +47,16 @@ const SceneCompletionCelebration = ({
     });
   }, [show, discoveredSymbols]);
 
-  const handleAction = (callback, skipComplete = false) => {
-    if (clearManualCloseTracking) clearManualCloseTracking();
-    if (!skipComplete && onComplete && completionData) {
-      onComplete(sceneId, completionData);
-    }
-    callback?.();
-  };
+const handleAction = (callback, skipComplete = false) => {
+  if (!skipComplete && onComplete && completionData) {
+    console.log('🎯 SceneCompletion handleAction called');
+    console.log('🎯 sceneId:', sceneId);
+    console.log('🎯 completionData:', completionData);
+    console.log('🎯 completionData.chantedVerses:', completionData.chantedVerses);
+    onComplete(sceneId, completionData);
+  }
+  callback?.();
+};
 
   if (!show) return null;
 

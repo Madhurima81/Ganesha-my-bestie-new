@@ -5,58 +5,39 @@ import React from 'react';
 import MemoryGameEngine from '../../core/MemoryGameEngine';
 import { getGameConfig } from '../../configs/gameConfigs';
 
+// Nirvighnam game assets - Animals, Objects, Stones
+import frogNir from './assets/images/nirvighnam/nir-frog.png';
+import snailVigh from './assets/images/nirvighnam/nir-snail.png';
+import turtleNam from './assets/images/nirvighnam/nir-turtle.png';
+
+import stone1Nir from './assets/images/nirvighnam/stone1.png';
+import stone2Vigh from './assets/images/nirvighnam/stone2.png';
+import stone3Nam from './assets/images/nirvighnam/stone3.png';
+import stone1NirCol from './assets/images/nirvighnam/stone1-col.png';
+import stone2VighCol from './assets/images/nirvighnam/stone2-col.png';
+import stone3NamCol from './assets/images/nirvighnam/stone3-col.png';
+
 const NirvighnamGame = ({
-  isActive,
-  hideElements,
-  onPhaseComplete,
-  onGameComplete,
-  profileName,
-
-  // Assets for Nirvighnam (singers, clickers, dual rewards)
-  getLeafRirImage,       // Singer for 'nir'
-  getDrumVighImage,      // Singer for 'vigh'
-  getFeatherNamImage,    // Singer for 'nam'
-  getFrogNirImage,       // Clicker/reward for 'nir'
-  getSnailVighImage,     // Clicker/reward for 'vigh'
-  getTurtleNamImage,     // Clicker/reward for 'nam'
-  getStone1NirImage,     // Stone initial for 'nir'
-  getStone2VighImage,    // Stone initial for 'vigh'
-  getStone3NamImage,     // Stone initial for 'nam'
-  getStone1NirColImage,  // Stone reward for 'nir'
-  getStone2VighColImage, // Stone reward for 'vigh'
-  getStone3NamColImage,  // Stone reward for 'nam'
-
-  // Mode control
-  selectedMode,
-  skipModeSelection,
-
-  // Reload support
-  isReload,
-  savedGameState,
-  onSaveGameState,
-
-  // Audio
-  isAudioOn,
-  playAudio
+  selectedMode, skipModeSelection, isActive, isReload, savedGameState,
+  onSaveGameState, onPhaseComplete, onGameComplete, hideElements,
+  isAudioOn, playAudio, profileName, RainbowComponent
 }) => {
-
-  // Get Nirvighnam config
   const gameConfig = getGameConfig('nirvighnam');
 
   // Map all asset getters
-  const assetGetters = {
-    getLeafRirImage,
-    getDrumVighImage,
-    getFeatherNamImage,
-    getFrogNirImage,
-    getSnailVighImage,
-    getTurtleNamImage,
-    getStone1NirImage,
-    getStone2VighImage,
-    getStone3NamImage,
-    getStone1NirColImage,
-    getStone2VighColImage,
-    getStone3NamColImage
+ const assetGetters = {
+    // Clickers
+    getFrogNirImage: () => frogNir,
+    getSnailVighImage: () => snailVigh,
+    getTurtleNamImage: () => turtleNam,
+
+    // Rewards
+    getStone1NirImage: () => stone1Nir,
+    getStone1NirColImage: () => stone1NirCol,
+    getStone2VighImage: () => stone2Vigh,
+    getStone2VighColImage: () => stone2VighCol,
+    getStone3NamImage: () => stone3Nam,
+    getStone3NamColImage: () => stone3NamCol,
   };
 
   // Validation
@@ -65,22 +46,23 @@ const NirvighnamGame = ({
     return null;
   }
 
-  return (
+return (
     <MemoryGameEngine
       gameConfig={gameConfig}
       assetGetters={assetGetters}
-      isActive={isActive}
-      hideElements={hideElements}
-      onPhaseComplete={onPhaseComplete}
-      onGameComplete={onGameComplete}
-      profileName={profileName}
       selectedMode={selectedMode}
       skipModeSelection={skipModeSelection}
+      isActive={isActive}
       isReload={isReload}
       savedGameState={savedGameState}
       onSaveGameState={onSaveGameState}
+      onPhaseComplete={onPhaseComplete}
+      onGameComplete={onGameComplete}
+      hideElements={hideElements}
       isAudioOn={isAudioOn}
       playAudio={playAudio}
+      profileName={profileName}
+      WaterSprayComponent={RainbowComponent}
     />
   );
 };

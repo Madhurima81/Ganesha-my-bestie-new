@@ -1,3 +1,4 @@
+
 // zones/symbol-mountain/scenes/symbol/components/EarsRhythmGame.jsx
 // 🎵 INLINE rhythm listening game component - WITH RANDOM SEQUENCES
 
@@ -276,6 +277,34 @@ useEffect(() => {
   }
 }, [gamePhase, currentSequence, isCountingDown]);
 
+// Auto-hint glow after 20 seconds of inactivity
+useEffect(() => {
+  if (gamePhase !== 'listening' || !canPlayerClick) return;
+  
+  const hintTimer = setTimeout(() => {
+    console.log('💡 Showing hint glow for sequence:', currentSequence);
+    
+    // Show glowing hints for each instrument in sequence
+    currentSequence.forEach((inst, idx) => {
+      setTimeout(() => {
+        const elements = document.querySelectorAll(`[data-instrument="${inst}"]`);
+        elements.forEach(element => {
+          element.style.filter = 'drop-shadow(0 0 20px gold)';
+          element.style.transform = 'scale(1.15)';
+          element.style.transition = 'all 0.5s ease';
+          
+          setTimeout(() => {
+            element.style.filter = '';
+            element.style.transform = '';
+          }, 1000);
+        });
+      }, idx * 1200); // Stagger each glow
+    });
+  }, 20000); // 20 seconds
+  
+  return () => clearTimeout(hintTimer);
+}, [gamePhase, canPlayerClick, currentSequence]);
+
   // Play sound function
   const playInstrumentSound = async (instrumentType) => {
     if (!audioContextRef.current) {
@@ -472,28 +501,21 @@ if (window.saveEarsGameState) {
 
 // Handle correct sequence completion
 const handleSequenceSuccess = () => {
-  console.log(`🎉 Sequence for ${currentNote} completed successfully!`);
+  console.log('✅ Sequence matched!');
   setGamePhase('success');
   setCanPlayerClick(false);
-
-  // Save post-sequence state
-  if (window.saveEarsGameState) {
-    window.saveEarsGameState({
-      gamePhase: 'success',
-      playerInput: playerInput,
-      currentSequence: currentSequence,
-      sequenceItemsShown: sequenceItemsShown,
-      sequenceJustCompleted: true,
-      readyForNextNote: true,
-      lastCompletedNote: currentNote
-    });
-  }
   
-  // Immediately notify parent that this round is complete
-  if (onSequenceComplete) {
-    onSequenceComplete(currentNote);
-  }
+  // ✨ Show celebration for 2 seconds before completing
+  safeSetTimeout(() => {
+    if (onSequenceComplete) {
+      onSequenceComplete(currentNote);
+    }
+    if (onGameComplete) {
+      onGameComplete();
+    }
+  }, 2000); // 2 second celebration pause
 };
+
   // Handle replaying the current round
 const replayRound = (noteNumber) => {
   console.log(`🔄 Replaying round: note${noteNumber}`);
@@ -539,14 +561,151 @@ const continueToNextRound = () => {
 
   return (
     <div className="ears-rhythm-game-inline" style={inlineContainerStyle}>
-      
-<div style={inlineStatusStyle}>
-  {isCountingDown && `Get Ready... ${countdown}`}
-  {!isCountingDown && gamePhase === 'waiting' && 'Ready to learn the pattern?'}
-  {gamePhase === 'playing' && '👀 Watch & Listen...'}
-{gamePhase === 'listening' && `👆 Click the Instruments!`}  {gamePhase === 'success' && '🎉 Perfect! You Did It!'}
-  {gamePhase === 'error' && '💫 Try again - Listen carefully!'}
+
+     {/* Dynamic Header - Shows game phase and pattern */}
+<div style={{
+  position: 'absolute',
+  top: '140px',
+  left: '50%',
+  transform: 'translateX(-50%)',
+  background: 'linear-gradient(135deg, rgba(255, 248, 220, 0.95), rgba(255, 228, 181, 0.95))',
+  padding: '15px 30px',
+  borderRadius: '20px',
+  border: '3px solid #D2691E',
+  boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+  zIndex: 30,
+  fontFamily: 'Baloo 2'
+}}>
+  <div style={{
+    fontSize: '24px',
+    fontWeight: 'bold',
+    color: '#8B4513',
+    textAlign: 'center'
+  }}>
+    {/* Get Ready Phase */}
+    {isCountingDown && countdown > 0 && (
+      <span>Get Ready... {countdown}</span>
+    )}
+    
+    {/* Waiting Phase */}
+    {!isCountingDown && gamePhase === 'waiting' && (
+      <span>Ready to learn the pattern?</span>
+    )}
+    
+    {/* Watching Phase - Show instrument images */}
+    {gamePhase === 'playing' && isSequencePlaying && (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'center' }}>
+        <span>👀 Watch:</span>
+        {currentSequence.map((inst, idx) => {
+          const isShown = idx < sequenceItemsShown;
+          const instrument = musicalInstruments[inst];
+          
+          return (
+            <div key={idx} style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              border: '2px solid #8B4513',
+              background: 'white',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              opacity: isShown ? 1 : 0.3,
+              transition: 'opacity 0.3s'
+            }}>
+              <img 
+                src={instrument.image} 
+                alt={instrument.name}
+                style={{
+                  width: '30px',
+                  height: '30px',
+                  objectFit: 'contain'
+                }}
+              />
+            </div>
+          );
+        })}
+      </div>
+    )}
+    
+    {/* Tapping Phase - Show instrument images with checkmarks */}
+    {gamePhase === 'listening' && canPlayerClick && (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'center' }}>
+        <span>👆 Tap:</span>
+        {currentSequence.map((inst, idx) => {
+          const isCompleted = playerInput.length > idx;
+          const instrument = musicalInstruments[inst];
+          
+          return (
+            <div key={idx} style={{
+              position: 'relative',
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              border: isCompleted ? '3px solid #4CAF50' : '2px solid #8B4513',
+              background: 'white',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <img 
+                src={instrument.image} 
+                alt={instrument.name}
+                style={{
+                  width: '30px',
+                  height: '30px',
+                  objectFit: 'contain',
+                  opacity: isCompleted ? 0.5 : 1
+                }}
+              />
+              {isCompleted && (
+                <div style={{
+                  position: 'absolute',
+                  top: '-5px',
+                  right: '-5px',
+                  background: '#4CAF50',
+                  borderRadius: '50%',
+                  width: '20px',
+                  height: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '14px',
+                  color: 'white',
+                  fontWeight: 'bold'
+                }}>
+                  ✓
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    )}
+    
+{/* Success Phase - Different messages per round */}
+{gamePhase === 'success' && (
+  <div style={{ textAlign: 'center' }}>
+    <div style={{ fontSize: '36px', marginBottom: '10px' }}>
+      {currentNote === 'note1' ? '🎉' : 
+       currentNote === 'note2' ? '🌟' : 
+       '✨🎊✨'}
+    </div>
+    <div>
+      {currentNote === 'note1' ? 'Awesome! You got it!' : 
+       currentNote === 'note2' ? 'Great job! One more to go!' : 
+       'Amazing! All rounds complete!'}
+    </div>
+  </div>
+)}
+    
+    {/* Error Phase */}
+    {gamePhase === 'error' && (
+      <span>💫 Try again - Listen carefully!</span>
+    )}
+  </div>
 </div>
+      
 
 {/* Round Progress Indicator */}
 <div style={{
@@ -621,72 +780,8 @@ const continueToNextRound = () => {
   </div>
 )}
       
-{/* Sequence Display - Horizontal numbered tracker */}
-{sequenceItemsShown > 0 && (
-  <div style={inlineSequenceTrackerStyle}>
-    <div style={inlineTrackerLabelStyle}>
-  📋 Steps:
-    </div>
-    
-    <div style={inlineTrackerItemsStyle}>
-      {currentSequence.slice(0, sequenceItemsShown).map((instrument, index) => {
-        const isCurrentStep = index === playerInput.length && canPlayerClick;
-        const isCompleted = index < playerInput.length;
-        const isCorrect = playerInput[index] === instrument;
-        
-        return (
-     <div style={{
-  ...inlineTrackerItemStyle,
-  border: isCurrentStep 
-    ? '3px solid #FFD700'
-    : isCompleted
-      ? (isCorrect ? '3px solid #4CAF50' : '3px solid #F44336')
-      : '2px solid #999',
-  background: isCurrentStep 
-    ? 'rgba(255, 235, 59, 0.2)'
-    : 'white',
-  cursor: 'default',  // ← ADD: Shows it's not clickable
-  pointerEvents: 'none'  // ← ADD: Prevents clicking
-}}
->
-           {/* Step number badge */}
-<div style={{
-  position: 'absolute',
-  bottom: '-30px',
-  left: '50%',
-  transform: 'translateX(-50%)',
-  width: '24px',
-  height: '24px',
-  borderRadius: '50%',
-  background: isCompleted 
-    ? (isCorrect ? '#4CAF50' : '#F44336')
-    : isCurrentStep ? '#FFD700' : '#FFC107',
-  color: 'white',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  fontWeight: 'bold',
-  fontSize: '13px',
-  border: '2px solid white',
-  zIndex: 2
-}}>
-  {isCompleted ? (isCorrect ? '✓' : '✗') : index + 1}
-</div>
-            
-            {/* Instrument image */}
-            <img 
-              src={musicalInstruments[instrument].image}
-              alt={musicalInstruments[instrument].name}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-            
-    
-          </div>
-        );
-      })}
-    </div>
-  </div>
-)}
+
+
 
 
 
@@ -712,6 +807,7 @@ const continueToNextRound = () => {
           return (
             <button
               key={instrumentType}
+                data-instrument={instrumentType}  // ← ADD THIS LINE
              // REPLACE with:
 style={{
   position: 'absolute',
@@ -765,138 +861,12 @@ style={{
               }}>
                 {instrument.name}
               </div>
-              
-              {/* Click indicator when ready */}
-              {isClickable && (
-                <div style={{
-                  position: 'absolute',
-                  top: '-20px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-background: 'rgba(76, 175, 80, 0.95)', // ← NEW GREEN
-                  color: 'white',
-                  padding: '2px 8px',
-                  borderRadius: '10px',
-                  fontSize: '10px',
-                  animation: 'clickPulse 2s infinite'
-                }}>
-                  Click!
-                </div>
-              )}
             </button>   
                
           );
         })}
       </div>
       
-      {/* Player Progress Indicator */}
-      {canPlayerClick && (
-        <div style={inlineProgressIndicatorStyle}>
-          Progress: {playerInput.length} / {currentSequence.length}
-        </div>
-      )}
-
-      {/* Celebration Screen - After completing a round */}
-{gamePhase === 'success' && (
-  <div style={{
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    background: 'rgba(255, 255, 255, 0.98)',
-    padding: '30px 40px',
-    borderRadius: '25px',
-    textAlign: 'center',
-    zIndex: 100,
-    boxShadow: '0 8px 30px rgba(0,0,0,0.2)',
-    minWidth: '300px'
-  }}>
-    {/* Success message */}
-    <div style={{
-      fontSize: '24px',
-      fontWeight: 'bold',
-      color: '#4CAF50',
-      marginBottom: '10px'
-    }}>
-      🎉 Round {currentNote === 'note1' ? '1' : currentNote === 'note2' ? '2' : '3'} Complete!
-    </div>
-    
-    <div style={{
-      fontSize: '14px',
-      color: '#666',
-      marginBottom: '25px'
-    }}>
-      Great job! What would you like to do?
-    </div>
-    
-    {/* Action buttons */}
-    <div style={{
-      display: 'flex',
-      gap: '15px',
-      justifyContent: 'center'
-    }}>
-      <button 
-        onClick={() => replayRound(parseInt(currentNote.replace('note', '')))}
-        style={{
-          background: 'rgba(33, 150, 243, 0.9)',
-          color: 'white',
-          border: 'none',
-          padding: '12px 20px',
-          borderRadius: '15px',
-          fontSize: '14px',
-          fontWeight: 'bold',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          transition: 'all 0.3s ease'
-        }}
-      >
-        🔄 Practice Again
-      </button>
-      
-      <button 
-        onClick={continueToNextRound}
-        style={{
-          background: 'rgba(76, 175, 80, 0.9)',
-          color: 'white',
-          border: 'none',
-          padding: '12px 20px',
-          borderRadius: '15px',
-          fontSize: '14px',
-          fontWeight: 'bold',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          transition: 'all 0.3s ease'
-        }}
-      >
-        ➡️ Next Challenge
-      </button>
-    </div>
-    
-    {/* Auto-advance hint */}
-    <div style={{
-      fontSize: '11px',
-      color: '#999',
-      marginTop: '15px'
-    }}>
-      Auto-advancing in 5 seconds...
-    </div>
-  </div>
-)}
-      
-      {/* Close Button */}
-      {onClose && (
-        <button 
-          style={inlineCloseStyle}
-          onClick={onClose}
-        >
-          ✕
-        </button>
-      )}
-
       
 <style>{`
   .ears-rhythm-game-inline button:hover {

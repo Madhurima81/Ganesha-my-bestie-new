@@ -907,7 +907,7 @@ const handleDoor1Complete = () => {
               </div>
             )}
 
-            {/* Centered Symbol Celebration */}
+            {/* Centered Symbol Celebration 
             {showCenteredSymbol && (
               <>
                 <div style={{
@@ -974,7 +974,7 @@ const handleDoor1Complete = () => {
               </>
             )}
 
-            {/* Power Modal (Cave Theme) */}
+            {/* Power Modal (Cave Theme) 
             {showPowerModal && (
               <div className="cave-power-overlay">
                 <div className="cave-power-card">
@@ -1380,8 +1380,7 @@ modalCardBorderColor="#FFA500"
                 resetScene();
               }}
               onContinue={() => {
-                if (clearManualCloseTracking) clearManualCloseTracking();
-                if (hideCoach) hideCoach();
+          
                 
                 const profileId = localStorage.getItem('activeProfileId');
                 if (profileId) {

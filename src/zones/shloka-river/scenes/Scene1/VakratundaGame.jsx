@@ -5,6 +5,20 @@ import React from 'react';
 import MemoryGameEngine from '../../core/MemoryGameEngine';
 import { getGameConfig } from '../../configs/gameConfigs';
 
+import elephantBabyVa from './assets/images/vakratunda/elephant-baby-va.png';
+import elephantBabyKra from './assets/images/vakratunda/elephant-baby-kra.png';
+import elephantBabyTun from './assets/images/vakratunda/elephant-baby-tun.png';
+import elephantBabyDa from './assets/images/vakratunda/elephant-baby-da.png';
+
+import budVa from './assets/images/vakratunda/va-bud.png';
+import budKra from './assets/images/vakratunda/kra-bud.png';
+import budTun from './assets/images/vakratunda/tun-bud.png';
+import budDa from './assets/images/vakratunda/da-bud.png';
+import lotusVa from './assets/images/vakratunda/va-lotus.png';
+import lotusKra from './assets/images/vakratunda/kra-lotus.png';
+import lotusTun from './assets/images/vakratunda/tun-lotus.png';
+import lotusDa from './assets/images/vakratunda/da-lotus.png';
+
 const VakratundaGame = ({
   isActive,
   hideElements,
@@ -34,10 +48,20 @@ const VakratundaGame = ({
 
   // ✅ BUG 6 & 8: Map BOTH initial and reward asset getters
   // These names MUST match gameConfig's assetGetterInitial and assetGetterReward fields
-  const assetGetters = {
-    getBudImage,             // matches: gameConfig.elements.singer.assetGetterInitial
-    getLotusImage,           // matches: gameConfig.elements.singer.assetGetterReward
-    getBabyElephantImage     // matches: gameConfig.elements.clicker.assetGetter
+const assetGetters = {
+    // Clickers
+    getElephantVaImage: () => elephantBabyVa,
+    getElephantKraImage: () => elephantBabyKra,
+    getElephantTunImage: () => elephantBabyTun,
+    getElephantDaImage: () => elephantBabyDa,
+
+    // Round Rewards
+    getBudVaImage: () => budVa,
+    getLotusVaImage: () => lotusVa,
+    getBudTunImage: () => budTun,
+    getLotusTunImage: () => lotusTun,
+    getBudKraImage: () => budKra,
+    getLotusKraImage: () => lotusKra,
   };
 
   // Validation: Make sure config exists
@@ -62,6 +86,7 @@ const VakratundaGame = ({
       isReload={isReload}
       savedGameState={savedGameState}
       onSaveGameState={onSaveGameState}
+      gamePrefix="vakratunda"
     />
   );
 };

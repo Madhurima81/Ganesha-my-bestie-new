@@ -1,0 +1,205 @@
+/* StoryProgressHeader.css - Memory Ribbon with Images */
+
+.story-strip {
+  position: absolute;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 10px 18px;
+  border-radius: 999px;
+
+  background: rgba(255, 248, 220, 0.88);
+  box-shadow:
+    0 6px 20px rgba(139, 115, 85, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+
+  z-index: 5;
+  animation: storyStripFadeIn 0.5s ease-out forwards;
+}
+
+/* Story strip item container */
+.story-strip-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Icon images */
+.story-strip-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: cover; /* Changed from contain to cover */
+  border-radius: 6px;
+  border: 2px solid #8B4513;
+  background: white; /* White background so we can see if image loads */
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+}
+
+
+/* Emoji fallback */
+.story-strip-emoji {
+  font-size: 24px;
+  line-height: 1;
+}
+
+/* Text inside the strip */
+.story-strip-text {
+  font-family: "Nunito", "Baloo 2", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #6b3f1d;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+
+/* Arrow separator */
+.story-strip-arrow {
+  font-size: 16px;
+  color: #c98b2f;
+  opacity: 0.85;
+}
+
+/* Gentle appear animation */
+@keyframes storyStripFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Tablet landscape */
+@media (max-width: 1024px) {
+  .story-strip {
+    top: 60px;
+    padding: 8px 16px;
+    gap: 10px;
+  }
+
+  .story-strip-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .story-strip-emoji {
+    font-size: 20px;
+  }
+
+  .story-strip-text {
+    font-size: 14px;
+  }
+
+  .story-strip-arrow {
+    font-size: 14px;
+  }
+}
+
+/* Mobile portrait */
+@media (max-width: 768px) {
+  .story-strip {
+    top: 50px;
+    padding: 6px 14px;
+    gap: 8px;
+  }
+
+  .story-strip-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .story-strip-emoji {
+    font-size: 18px;
+  }
+
+  .story-strip-text {
+    font-size: 13px;
+  }
+
+  .story-strip-arrow {
+    font-size: 13px;
+  }
+}
+
+/* ===========================
+   CHILD MODE - Warmer & Brighter
+   =========================== */
+
+.story-strip.child-mode {
+  background: rgba(255, 245, 200, 0.95); /* More golden */
+  
+  /* Warm glow */
+  box-shadow:
+    0 6px 20px rgba(255, 215, 0, 0.4),
+    0 0 30px rgba(255, 200, 100, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  
+  /* Slightly larger for emphasis */
+  transform: translateX(-50%) scale(1.05);
+  
+  animation: childStripGlow 0.6s ease-out forwards;
+}
+
+/* Brighter icons in child mode */
+.story-strip.child-mode .story-strip-icon {
+  width: 45px;
+  height: 45px;
+  filter: 
+    drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15))
+    brightness(1.15)
+    saturate(1.2);
+}
+
+/* Brighter emoji in child mode */
+.story-strip.child-mode .story-strip-emoji {
+  filter: brightness(1.2) saturate(1.3);
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+}
+
+/* Warmer text in child mode */
+.story-strip.child-mode .story-strip-text {
+  color: #5a2d0a; /* Darker brown for contrast */
+  text-shadow: 0 1px 2px rgba(255, 215, 0, 0.3);
+}
+
+/* Glowing arrow in child mode */
+.story-strip.child-mode .story-strip-arrow {
+  color: #ffa500;
+  opacity: 1;
+  filter: drop-shadow(0 0 3px rgba(255, 165, 0, 0.5));
+}
+
+/* Special glow animation for child mode */
+@keyframes childStripGlow {
+  0% {
+    box-shadow:
+      0 6px 20px rgba(255, 215, 0, 0.2),
+      0 0 20px rgba(255, 200, 100, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+  50% {
+    box-shadow:
+      0 6px 20px rgba(255, 215, 0, 0.6),
+      0 0 40px rgba(255, 200, 100, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+  100% {
+    box-shadow:
+      0 6px 20px rgba(255, 215, 0, 0.4),
+      0 0 30px rgba(255, 200, 100, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+}
+
+/* Drawing thumbnails in story strip - make them bigger and visible */
+
+/* Child mode - even bigger */

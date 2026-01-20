@@ -1,10 +1,5 @@
 // zones/shloka-river/core/ManualRoundMode.jsx
-// Manual round selection mode - FIXED VERSION
-// ✅ BUG 1: Added exit options (Finish & Return, Hear Full Mantra)
-// ✅ BUG 2: Removed redundant "Play Round X" button
-// ✅ BUG 3: Lock rounds during ALL gameplay phases
-// ✅ BUG 4: Added circle highlight from Auto mode
-// ✅ BUG 5: Direct start after round selection
+// FIXED: Initialize state directly from props to prevent losing progress
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useSafeClick } from './hooks/useSafeClick';
@@ -12,9 +7,44 @@ import { useSafeClick } from './hooks/useSafeClick';
 import UniversalPauseButton from './UniversalPauseButton';
 import PauseModal from './PauseModal';
 
+// Helper: Get dynamic instruction text based on clicker type
+const getClickInstruction = (clickerType) => {
+  const instructions = {
+    'baby-elephant': 'Click the baby elephants!',
+    'adult-elephant': 'Click the elephants!',
+    'sun-orb': 'Click the suns!',
+    'rainbow': 'Click the rainbows!',
+    'animal': 'Click the animals!',
+    'helper-animal': 'Click the helpers!'
+  };
+  return instructions[clickerType] || 'Click to play!';
+};
+
+const getHeaderClassName = (gameConfig) => {
+  const classNames = {
+    'vakratunda': 'vakratunda-game-phase-header',
+    'mahakaya': 'mahakaya-game-phase-header',
+    'suryakoti': 'suryakoti-game-phase-header',
+    'samaprabha': 'samaprabha-game-phase-header',
+    'nirvighnam': 'nirvighnam-game-phase-header',
+    'kurumedeva': 'kurumedeva-game-phase-header',
+    'sarvakaryeshu': 'sarvakaryeshu-game-phase-header',
+    'sarvada': 'sarvada-game-phase-header'
+  };
+  return classNames[gameConfig.id] || 'vakratunda-game-phase-header';
+};
+
+// Helper: Get round word name from syllables
+const getRoundWord = (gameConfig, roundNumber) => {
+  const syllables = gameConfig.syllables[roundNumber];
+  if (!syllables) return '';
+  return syllables.join('').toUpperCase();
+};
+
 const ManualRoundMode = ({
   gameConfig,
   assetGetters,
+  gamePrefix = 'default',
   isActive,
   hideElements,
   powerGained,
@@ -23,38 +53,109 @@ const ManualRoundMode = ({
   onSaveGameState,
   onPhaseComplete,
   onGameComplete,
-  onSwitchToAuto, // NEW: callback to switch to auto mode
+  onSwitchToAuto,
   isReload,
-  savedGameState
+  savedGameState,
+  onExit
 }) => {
 
   const { safeClick } = useSafeClick(300);
 
-  // State
-  const [gameState, setGameState] = useState('roundSelection');
-  const [selectedRound, setSelectedRound] = useState(null);
-  const [currentSequence, setCurrentSequence] = useState([]);
+  // ⭐ RELOAD LOGIC: Only auto-restart if we were actively playing
+  /*const shouldReloadRound = isReload && 
+    savedGameState?.currentRound && 
+    savedGameState?.gameMode === 'manual' &&
+    (savedGameState?.gameState === 'playing' || 
+     savedGameState?.gameState === 'listening' || 
+     savedGameState?.gameState === 'countdown') &&
+    !savedGameState?.completedRounds?.includes(savedGameState.currentRound);
+
+  // ⭐ INITIALIZATION: Initialize DIRECTLY from savedGameState to prevent data loss
+  const [gameState, setGameState] = useState(shouldReloadRound ? 'initializing' : 'roundSelection');
+  const [selectedRound, setSelectedRound] = useState(shouldReloadRound ? savedGameState.currentRound : null);
+  const [currentSequence, setCurrentSequence] = useState(
+    shouldReloadRound ? (gameConfig.syllables[savedGameState.currentRound] || []) : []
+  );*/
+
+  // DELETE lines 29-36 (the const shouldReloadRound)
+// DELETE lines 39-43 (conditional initialization)
+
+
+  // ⭐ INITIAL CHECK: Calculate once for useState initialization
+  const shouldReloadRoundInitial = isReload && 
+    savedGameState?.currentRound && 
+    savedGameState?.gameMode === 'manual' &&
+    (savedGameState?.gameState === 'playing' || 
+     savedGameState?.gameState === 'listening' || 
+     savedGameState?.gameState === 'countdown');
+
+  // ⭐ INITIALIZATION: Initialize directly to prevent Choose Modal flash
+  const [gameState, setGameState] = useState(shouldReloadRoundInitial ? 'initializing' : 'roundSelection');
+  const [selectedRound, setSelectedRound] = useState(shouldReloadRoundInitial ? savedGameState.currentRound : null);
+  const [currentSequence, setCurrentSequence] = useState(
+    shouldReloadRoundInitial ? (gameConfig.syllables[savedGameState.currentRound] || []) : []
+  );
+  
+  // ✅ FIX: Initialize Progress directly so it never flashes empty
+  const [completedRounds, setCompletedRounds] = useState(savedGameState?.completedRounds || []);
+  const [learnedSyllables, setLearnedSyllables] = useState(savedGameState?.learnedSyllables || []);
+  const [visualRewards, setVisualRewards] = useState(savedGameState?.visualRewards || {});
+  const [activatedElephants, setActivatedElephants] = useState(savedGameState?.activatedElephants || {});
+
   const [playerInput, setPlayerInput] = useState([]);
   const [isSequencePlaying, setIsSequencePlaying] = useState(false);
   const [singingSyllable, setSingingSyllable] = useState(null);
-  const [visualRewards, setVisualRewards] = useState({});
-  const [activatedElephants, setActivatedElephants] = useState({});
   const [roundClicks, setRoundClicks] = useState({});
-  const [completedRounds, setCompletedRounds] = useState([]);
-  const [learnedSyllables, setLearnedSyllables] = useState([]);
-
-  // ✅ FIX 1: Countdown state (like Auto mode)
   const [countdown, setCountdown] = useState(0);
   const [isCountingDown, setIsCountingDown] = useState(false);
-
-  // ✅ FIX 2: Water spray state
   const [waterSprayPosition, setWaterSprayPosition] = useState(null);
-
   const [showPauseModal, setShowPauseModal] = useState(false);
+
+  // ⭐ NEW: Central synthesis states
+  const [centralElementGlowing, setCentralElementGlowing] = useState(false);
+  const [centralBloomProgress, setCentralBloomProgress] = useState(0); // 0 to 100
 
   const timeoutsRef = useRef([]);
   const intervalsRef = useRef([]);
   const isComponentMountedRef = useRef(true);
+
+  // ⭐ RESTORE PROGRESS (Double check on updates)
+  useEffect(() => {
+    if (savedGameState) {
+      console.log('📂 [Manual] Syncing state:', savedGameState);
+      
+      // Update state if props are newer (prevents stale closures)
+      if (savedGameState.completedRounds) setCompletedRounds(savedGameState.completedRounds);
+      if (savedGameState.learnedSyllables) setLearnedSyllables(savedGameState.learnedSyllables);
+      if (savedGameState.visualRewards) setVisualRewards(savedGameState.visualRewards);
+      if (savedGameState.activatedElephants) setActivatedElephants(savedGameState.activatedElephants);
+
+      // ⭐ RECALCULATE: Fresh calculation with updated savedGameState
+     // ⭐ RECALCULATE: Fresh calculation with updated savedGameState
+const shouldReloadRound = isReload && 
+  savedGameState?.gameId === gameConfig.id &&  // ⭐ ADDED: Validate game ID
+  savedGameState?.currentRound && 
+  savedGameState?.gameMode === 'manual' &&
+  (savedGameState?.gameState === 'playing' || 
+   savedGameState?.gameState === 'listening' || 
+   savedGameState?.gameState === 'countdown');
+
+      // Handle Gameplay Reload
+      if (shouldReloadRound) {
+        console.log('🔄 [Manual] Reloading directly into round:', savedGameState.currentRound);
+        setPlayerInput([]);
+        setRoundClicks({});
+        
+        safeSetTimeout(() => {
+          startCountdown(gameConfig.syllables[savedGameState.currentRound]);
+        }, 500);
+      } else if (isReload) {
+        // Force Menu if we shouldn't be playing
+        setGameState('roundSelection');
+        setSelectedRound(null);
+      }
+    }
+  }, [savedGameState, isReload]);
 
   const safeSetTimeout = (callback, delay) => {
     const timeout = setTimeout(() => {
@@ -81,26 +182,16 @@ const ManualRoundMode = ({
     };
   }, []);
 
-  // ⭐ NEW: Clear timers when paused
-useEffect(() => {
-  if (showPauseModal) {
-    console.log('⏸️ Manual mode paused - clearing timers');
-    clearAllTimers();
-  }
-}, [showPauseModal]);
+  useEffect(() => {
+    if (showPauseModal) {
+      clearAllTimers();
+    }
+  }, [showPauseModal]);
 
-  // Console logging
-  console.log('[Mode] Manual Round Mode active');
-  console.log('[Round] Selected round:', selectedRound);
-  console.log('[Phase] Current phase:', gameState);
-  console.log('[Visual] Learned syllables:', learnedSyllables);
-
-  // Audio
   const playSyllableAudio = (syllable) => {
     try {
       const fileName = gameConfig.audio.syllableFileMap[syllable];
       if (!fileName) return;
-
       const audioPath = `${gameConfig.audio.syllableFolder}${fileName}.mp3`;
       const audio = new Audio(audioPath);
       audio.volume = 0.8;
@@ -110,7 +201,6 @@ useEffect(() => {
     }
   };
 
-  // ✅ FIX 1: Countdown system (like Auto mode)
   const startCountdown = (sequence) => {
     setIsCountingDown(true);
     setCountdown(3);
@@ -129,62 +219,61 @@ useEffect(() => {
     }, 800);
   };
 
-  // Clear all running timers
-const clearAllTimers = () => {
-  console.log('🧹 Clearing all Manual mode timers');
-  timeoutsRef.current.forEach(t => clearTimeout(t));
-  intervalsRef.current.forEach(i => clearInterval(i));
-  timeoutsRef.current = [];
-  intervalsRef.current = [];
-};
+  const clearAllTimers = () => {
+    timeoutsRef.current.forEach(t => clearTimeout(t));
+    intervalsRef.current.forEach(i => clearInterval(i));
+    timeoutsRef.current = [];
+    intervalsRef.current = [];
+  };
 
-// ⭐ NEW: Just SELECT the round (don't start game)
-const handleRoundSelect = (round) => {
+ const handleRoundSelect = (round) => {
   safeClick(() => {
-    // Only allow selecting when in round selection mode
+    console.log('🎯 Round select clicked:', { round, gameState, currentState: gameState });
     if (gameState !== 'roundSelection') {
-      console.log('⏸️ Finish current round first!');
+      console.warn('⚠️ Cannot select round - gameState is', gameState, 'not roundSelection');
       return;
     }
-
-    console.log(`[Round] Selected round: ${round}`);
     setSelectedRound(round);
+    console.log('✅ Round selected:', round);
   });
 };
 
-// ⭐ NEW: START the selected round
 const handleStartRound = () => {
   safeClick(() => {
+    console.log('▶️ Start round clicked:', { selectedRound, gameState });
     if (!selectedRound) {
-      console.log('⚠️ No round selected!');
+      console.warn('⚠️ No round selected!');
       return;
     }
+      const sequence = gameConfig.syllables[selectedRound] || [];
+      setCurrentSequence(sequence);
+      setPlayerInput([]);
+      setRoundClicks({});
+      
+      // ⭐ NEW: Reset central synthesis states
+      setCentralElementGlowing(false);
+      setCentralBloomProgress(0);
+      
+      safeSetTimeout(() => {
+        startCountdown(sequence);
+      }, 500);
 
-    console.log(`[Round] Starting round: ${selectedRound}`);
-    
-    const sequence = gameConfig.syllables[selectedRound] || [];
-    setCurrentSequence(sequence);
-    setPlayerInput([]);
-    setRoundClicks({});
-    setVisualRewards({});
-setActivatedElephants({});
+      // Save "Playing" state
+      if (onSaveGameState) {
+        onSaveGameState({
+          currentRound: selectedRound,
+          gameMode: 'manual',
+          gameId: gameConfig.id,
+          gameState: 'playing', 
+          completedRounds,
+          learnedSyllables,
+          visualRewards,
+          activatedElephants
+        });
+      }
+    });
+  };
 
-    // Start with countdown (3-2-1)
-    safeSetTimeout(() => {
-      startCountdown(sequence);
-    }, 500);
-
-    if (onSaveGameState) {
-      onSaveGameState({
-        currentRound: selectedRound,
-        gameMode: 'manual',
-        gameId: gameConfig.id
-      });
-    }
-  });
-};
-
-  // Play sequence
   const playSequence = (sequence) => {
     setIsSequencePlaying(true);
     setGameState('playing');
@@ -196,11 +285,7 @@ setActivatedElephants({});
       safeSetTimeout(() => {
         setSingingSyllable(syllable);
         playSyllableAudio(syllable);
-
-        safeSetTimeout(() => {
-          setSingingSyllable(null);
-        }, 600);
-
+        safeSetTimeout(() => { setSingingSyllable(null); }, 600);
         if (index === sequence.length - 1) {
           safeSetTimeout(() => {
             setIsSequencePlaying(false);
@@ -211,22 +296,17 @@ setActivatedElephants({});
     });
   };
 
-  // Elephant click
-  const handleElephantClick = (syllableIndex) => {
+  /*const handleElephantClick = (syllableIndex) => {
     safeClick(() => {
       if (gameState !== 'listening' || isSequencePlaying) return;
-
       const clickedSyllable = currentSequence[syllableIndex];
       if (!clickedSyllable) return;
-
       if (roundClicks[`elephant-${clickedSyllable}`]) return;
-
       const expectedIndex = playerInput.length;
       if (syllableIndex !== expectedIndex) return;
 
       playSyllableAudio(clickedSyllable);
 
-      // ✅ Water spray animation - ONLY for Scene 1 (vakratunda, mahakaya)
       if (gameConfig.id === 'vakratunda' || gameConfig.id === 'mahakaya') {
         const position = gameConfig.elements.clicker.positions[syllableIndex];
         setWaterSprayPosition({ left: position.left, top: position.top });
@@ -239,7 +319,6 @@ setActivatedElephants({});
       setActivatedElephants(prev => ({ ...prev, [`elephant-${clickedSyllable}`]: true }));
       setVisualRewards(prev => ({ ...prev, [`visual-${clickedSyllable}`]: true }));
 
-      // Track learned syllables
       if (!learnedSyllables.includes(clickedSyllable)) {
         setLearnedSyllables(prev => [...prev, clickedSyllable]);
       }
@@ -248,49 +327,201 @@ setActivatedElephants({});
         handleRoundSuccess();
       }
     });
+  };*/
+
+  const handleElephantClick = (syllableIndex) => {
+    safeClick(() => {
+      // ... (existing validation checks) ...
+      if (gameState !== 'listening' || isSequencePlaying) return;
+      const clickedSyllable = currentSequence[syllableIndex];
+      if (!clickedSyllable) return;
+      if (roundClicks[`elephant-${clickedSyllable}`]) return;
+      const expectedIndex = playerInput.length;
+      if (syllableIndex !== expectedIndex) return;
+
+      // Play audio & animation
+      playSyllableAudio(clickedSyllable);
+
+      // Trigger Water Spray
+      if (gameConfig.id === 'vakratunda' || gameConfig.id === 'mahakaya') {
+        const position = gameConfig.elements.clicker.positions[syllableIndex];
+        setWaterSprayPosition({ left: position.left, top: position.top });
+        safeSetTimeout(() => setWaterSprayPosition(null), 1000);
+      }
+
+      // Update State (Inputs, Visuals, Crowns)
+      const newPlayerInput = [...playerInput, clickedSyllable];
+      setPlayerInput(newPlayerInput);
+      setRoundClicks(prev => ({ ...prev, [`elephant-${clickedSyllable}`]: true }));
+      setActivatedElephants(prev => ({ ...prev, [`elephant-${clickedSyllable}`]: true }));
+      setVisualRewards(prev => ({ ...prev, [`visual-${clickedSyllable}`]: true }));
+
+      // Update learned list
+      if (!learnedSyllables.includes(clickedSyllable)) {
+        setLearnedSyllables(prev => [...prev, clickedSyllable]);
+      }
+
+      // ⭐ NEW: Update central bloom progress instead of auto-completing
+      if (newPlayerInput.length === currentSequence.length) {
+        // Calculate final bloom percentage (just before glow state)
+        const totalSyllables = currentSequence.length;
+        const finalBloomBeforeGlow = totalSyllables === 2 ? 75 : 
+                                      totalSyllables === 3 ? 75 : 
+                                      90; // For 4 syllables
+        
+        setCentralBloomProgress(finalBloomBeforeGlow);
+        
+        // Make it glow and clickable
+        safeSetTimeout(() => {
+          setCentralElementGlowing(true);
+        }, 500);
+      } else {
+        // Incremental bloom progress for each elephant click
+        const totalSyllables = currentSequence.length;
+        const progressPerClick = totalSyllables === 2 ? 50 : 
+                                  totalSyllables === 3 ? 33 : 
+                                  25; // For 4 syllables
+        setCentralBloomProgress(newPlayerInput.length * progressPerClick);
+      }
+    });
   };
 
-  // Round success
+  // ⭐ NEW: Handle central synthesis element click
+  const handleCentralElementClick = () => {
+    safeClick(() => {
+      if (!centralElementGlowing) return; // Only clickable when glowing
+      
+      console.log('🌸 Central element clicked - playing complete word audio');
+      
+      // ✅ Update playerInput to include lotus click (shows X/X progress)
+      setPlayerInput([...currentSequence, 'lotus']);
+      
+      // Play complete word audio
+      const completeWordAudio = gameConfig.audio.completeWordFile;
+      if (completeWordAudio) {
+        const audio = new Audio(completeWordAudio);
+        audio.play().catch(e => console.error('Audio play error:', e));
+      }
+      
+      // Bloom to 100%
+      setCentralBloomProgress(100);
+      setCentralElementGlowing(false);
+      
+      // Wait for audio/animation, then complete round
+      safeSetTimeout(() => {
+        handleRoundSuccess();
+      }, 1500);
+    });
+  };
+
   const handleRoundSuccess = () => {
     setGameState('success');
 
-    // Track completed round
+    let newCompletedRounds = completedRounds;
     if (!completedRounds.includes(selectedRound)) {
-      setCompletedRounds(prev => [...prev, selectedRound]);
+      newCompletedRounds = [...completedRounds, selectedRound];
+      setCompletedRounds(newCompletedRounds);
     }
 
-    console.log(`[Round] Round ${selectedRound} complete!`);
+    if (onSaveGameState) {
+      onSaveGameState({
+        gameMode: 'manual',
+        gameId: gameConfig.id,
+        gameState: 'success', 
+        completedRounds: newCompletedRounds,
+        learnedSyllables,
+        visualRewards,
+        activatedElephants
+      });
+    }
 
     safeSetTimeout(() => {
-          setWaterSprayPosition(null); // ⭐ ADD THIS LINE
-
+      setWaterSprayPosition(null);
       setGameState('roundSelection');
       setSelectedRound(null);
       setPlayerInput([]);
       setRoundClicks({});
-      setVisualRewards({});
-setActivatedElephants({});
+      
+      // ⭐ SAVE "AT MENU" STATE
+      if (onSaveGameState) {
+        onSaveGameState({
+          gameMode: 'manual',
+          gameId: gameConfig.id,
+          gameState: 'roundSelection', 
+          currentRound: null,
+          completedRounds: newCompletedRounds,
+          learnedSyllables,
+          visualRewards,
+          activatedElephants
+        });
+      }
     }, 2500);
   };
 
-  // ✅ BUG 3 FIX: Finish & Return button handler - works even with 0 rounds completed
-  const handleFinishGame = () => {
-    console.log('[Mode] Finishing game with learned syllables:', learnedSyllables);
+const handleFinishGame = () => {
+  if (onPhaseComplete) {
+    onPhaseComplete(gameConfig.id);
+  } else if (onGameComplete) {
+    onGameComplete();
+  }
+};
 
-    // Always trigger phase complete to return to scene, regardless of rounds completed
-    if (onPhaseComplete) {
-      onPhaseComplete(gameConfig.id);
-    } else if (onGameComplete) {
-      onGameComplete();
+  const handleSwitchToAutoMode = () => {
+    if (onSwitchToAuto) {
+      onSwitchToAuto({
+        learnedSyllables,
+        visualRewards,
+        activatedElephants,
+        completedRounds // ✅ PASS PROGRESS
+      });
     }
   };
 
-  // ✅ BUG 1 FIX: Hear Full Mantra button handler
-  const handleSwitchToAutoMode = () => {
-    console.log('[Mode] Switching to Auto Mode from Manual');
+  const handlePause = () => {
+    setShowPauseModal(true);
+  };
 
-    if (onSwitchToAuto) {
-      onSwitchToAuto({
+  const handleContinue = () => {
+    setShowPauseModal(false);
+    if (gameState === 'countdown') {
+      startCountdown(currentSequence);
+    } else if (gameState === 'playing') {
+      playSequence(currentSequence);
+    } else if (gameState === 'success') {
+      safeSetTimeout(() => {
+        setGameState('roundSelection');
+        setSelectedRound(null);
+        setPlayerInput([]);
+        setRoundClicks({});
+      }, 500);
+    }
+  };
+
+  const handleExitToMenu = () => {
+    setShowPauseModal(false);
+    clearAllTimers();
+    setIsCountingDown(false);
+    setCountdown(0);
+    setWaterSprayPosition(null);
+
+    setGameState('roundSelection');
+    setSelectedRound(null);
+    setPlayerInput([]);
+    setRoundClicks({});
+    setSingingSyllable(null);
+    setIsSequencePlaying(false);
+
+    // ⭐ KEY: Trigger exit via Engine (which handles save)
+    if (onExit) {
+      onExit();
+    } else if (onSaveGameState) {
+      // Fallback save if Engine handler missing
+      onSaveGameState({
+        gameMode: 'manual',
+        gameId: gameConfig.id,
+        gameState: 'roundSelection',
+        currentRound: null,
+        completedRounds, // ✅ Keep current progress
         learnedSyllables,
         visualRewards,
         activatedElephants
@@ -298,66 +529,45 @@ setActivatedElephants({});
     }
   };
 
-  const handlePause = () => {
-  setShowPauseModal(true);
-};
+  // ... Render functions (Elephant, Singer, Duals) ...
+  // (Paste the exact same render functions from previous response here)
+  // Included below for completeness
 
-const handleContinue = () => {
-  console.log('▶️ Resuming Manual mode');
-  setShowPauseModal(false);
-  
-  if (gameState === 'listening') {
-    console.log('▶️ Resuming listening phase');
-  } else if (gameState === 'countdown') {
-    console.log('▶️ Restarting countdown');
-    startCountdown(currentSequence);
-  } else if (gameState === 'playing') {
-    console.log('▶️ Restarting sequence');
-    playSequence(currentSequence);
-  } else if (gameState === 'success') {
-    // ⭐ NEW: Handle resume from success phase
-    console.log('▶️ Resuming from success - showing round selection');
-    safeSetTimeout(() => {
-      setGameState('roundSelection');
-      setSelectedRound(null);
-      setPlayerInput([]);
-      setRoundClicks({});
-    }, 500);
-  }
-};
+const renderElephant = (syllable, index) => {
+    // --- 🔍 DEBUG START ---
+    console.group(`🐘 Rendering Elephant: ${syllable} (Index: ${index})`);
+    
+    // 1. Check if we have the specific map
+    const specificMap = gameConfig.elements.clicker.assetGetters;
+    console.log('1. Specific Map exists?', !!specificMap, specificMap);
 
-const handleExitToMenu = () => {
-  setShowPauseModal(false);
-  
-  // ⭐ CLEAR COUNTDOWN STATE
-  clearAllTimers();
-  setIsCountingDown(false);
-  setCountdown(0);
-    setWaterSprayPosition(null); // ⭐ ADD THIS LINE
-
-  setGameState('roundSelection');
-  setSelectedRound(null);
-  setPlayerInput([]);
-  setRoundClicks({});
-  setSingingSyllable(null);
-  setIsSequencePlaying(false);
-};
-
-  // Render elephant with ✅ BUG 4 FIX: Added circle highlight
-  const renderElephant = (syllable, index) => {
-    const position = gameConfig.elements.clicker.positions[index];
-
-    // ⭐ Handle both single assetGetter and assetGetters object patterns
     let getImage;
-    if (gameConfig.elements.clicker.assetGetter) {
-      // Pattern 1: Single getter function (vakratunda, mahakaya, etc.)
-      const getterName = gameConfig.elements.clicker.assetGetter;
-      getImage = assetGetters[getterName];
-    } else if (gameConfig.elements.clicker.assetGetters) {
-      // Pattern 2: Object with syllable mappings (nirvighnam, kurumedeva)
-      const getterName = gameConfig.elements.clicker.assetGetters[syllable];
-      getImage = assetGetters[getterName];
+    let lookupKey;
+
+    if (specificMap) {
+      // 2. Try to find the function name for this syllable
+      // Try exact match first, then lowercase
+      lookupKey = specificMap[syllable] || specificMap[syllable.toLowerCase()];
+      console.log(`2. Looking for syllable '${syllable}' -> Found Key name:`, lookupKey);
+      
+      if (lookupKey) {
+        // 3. Try to find the actual function in the props
+        getImage = assetGetters[lookupKey];
+        console.log(`3. Looking for function '${lookupKey}' in props -> Found?`, !!getImage);
+      } else {
+        console.error(`❌ Mismatch! Config has keys [${Object.keys(specificMap)}] but Game asked for '${syllable}'`);
+      }
+    } else if (gameConfig.elements.clicker.assetGetter) {
+        // Fallback logic
+        console.log('Using generic assetGetter:', gameConfig.elements.clicker.assetGetter);
+        getImage = assetGetters[gameConfig.elements.clicker.assetGetter];
     }
+    
+    console.groupEnd();
+  
+
+const position = gameConfig.elements.clicker?.positions?.[index] || { left: '50%', top: '50%' };
+  
 
     const clickable = gameState === 'listening' && !isSequencePlaying && index === playerInput.length;
     const clicked = index < playerInput.length;
@@ -367,190 +577,284 @@ const handleExitToMenu = () => {
     return (
       <button
         key={`clicker-${syllable}-${index}`}
+          className={`${gamePrefix}-clicker-element`}  // ← ADD THIS
+
         style={{
           position: 'absolute',
-          left: position.left,
-          top: position.top,
-          width: '120px',
-          height: '120px',
-          border: 'none',
-          background: 'transparent',
+          //left: position.left,
+          //top: position.top,
+          //width: '120px', height: '120px',
+          border: 'none', background: 'transparent',
           cursor: clickable ? 'pointer' : 'default',
+          zIndex: 20, borderRadius: '50%',
           opacity: clickable ? 1 : 0.7,
           transition: 'all 0.3s ease',
-          zIndex: 20,
           filter: isSinging ? 'brightness(1.4)' : 'brightness(1)',
-        transform: isSinging 
-      ? 'translate(-50%, -50%) scale(1.1)'  // ✅ Added translate!
-      : 'translate(-50%, -50%) scale(1)'    // ✅ Added translate!
+transform: isSinging ? 'scale(1.1)' : 'scale(1)'
         }}
         onClick={() => handleElephantClick(index)}
         disabled={!clickable}
       >
-        {getImage && (
-          <img
-            src={getImage(index)}
-            alt={`${gameConfig.elements.clicker.type} ${syllable}`}
-            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-          />
+        {getImage && <img src={getImage(index)} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />}
+        {activatedElephants[`elephant-${syllable}`] && <div style={{ position: 'absolute', top: '-10px', left: '50%', transform: 'translateX(-50%)', fontSize: '24px', animation: 'crownFloat 2s infinite', zIndex: 10 }}>👑</div>}
+        {isNext && !clicked && <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '85%', height: '85%', border: '3px solid #FFD700', borderRadius: '50%', animation: 'goldenPulse 2s infinite', zIndex: -1 }} />}
+        {isNext && !clicked && <div style={{ position: 'absolute', top: '-40px', left: '50%', transform: 'translateX(-50%)', background: '#FFD700', color: 'white', padding: '4px 10px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '600', zIndex: 30 }}>👆 Tap Here</div>}
+        <div style={{ position: 'absolute', bottom: '-30px', left: '50%', transform: 'translateX(-50%)', background: clicked ? '#4CAF50' : clickable ? '#FF9800' : '#999', color: 'white', padding: '4px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 'bold' }}>{syllable.toUpperCase()}</div>
+      </button>
+    );
+  };
+
+  const renderSinger = (syllable, index) => {
+    if (!gameConfig.elements.singer?.positions) return null;
+    let position;
+    const isReward = visualRewards[`visual-${syllable}`];
+    position = (isReward && gameConfig.elements.singer.positionsReward) ? gameConfig.elements.singer.positionsReward[index] : gameConfig.elements.singer.positions[index];
+    const isSinging = singingSyllable === syllable;
+    let getImage;
+    if (isReward) {
+        if (gameConfig.elements.singer.assetGetterReward) getImage = assetGetters[gameConfig.elements.singer.assetGetterReward];
+        else if (gameConfig.elements.singer.assetGettersReward) getImage = assetGetters[gameConfig.elements.singer.assetGettersReward[syllable]];
+    } else {
+        if (gameConfig.elements.singer.assetGetterInitial) getImage = assetGetters[gameConfig.elements.singer.assetGetterInitial];
+        else if (gameConfig.elements.singer.assetGettersInitial) getImage = assetGetters[gameConfig.elements.singer.assetGettersInitial[syllable]];
+    }
+    if (!getImage) return null;
+
+    return (
+      <div key={`singer-${syllable}-${index}`} style={{ position: 'absolute', left: position.left, top: position.top, width: isReward ? '80px' : '60px', height: isReward ? '80px' : '60px', transition: 'all 0.3s ease', zIndex: 10, transform: 'translate(-50%, -50%)', filter: isSinging ? 'brightness(1.6)' : isReward ? 'brightness(1.3)' : 'brightness(0.8)', opacity: isReward ? 1 : 0.7 }}>
+        <img src={getImage(index)} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+        {isReward && <div style={{ position: 'absolute', top: '-10px', left: '50%', transform: 'translateX(-50%)', fontSize: '18px' }}>✨</div>}
+      </div>
+    );
+  };
+
+  const renderDualInitials = (syllable, index) => {
+    if (visualRewards[`visual-${syllable}`]) return null;
+    if (!gameConfig.elements.rewards?.animals) return null;
+    const stonePos = gameConfig.elements.rewards.stones.positionsInitial[index];
+    const getStone = assetGetters[gameConfig.elements.rewards.stones.assetGettersInitial[syllable]];
+    const getAnimal = assetGetters[gameConfig.elements.rewards.animals.assetGetters[syllable]];
+    return (
+      <React.Fragment key={`dual-init-${syllable}`}>
+        {getStone && <div style={{ position: 'absolute', left: stonePos.left, top: stonePos.top, width: '60px', height: '60px', zIndex: 10, transform: 'translate(-50%, -50%)', opacity: 0.8 }}><img src={getStone(index)} style={{ width: '100%' }} /></div>}
+        {getAnimal && <div style={{ position: 'absolute', left: stonePos.left, top: stonePos.top, width: '70px', height: '70px', zIndex: 11, transform: 'translate(-50%, -50%)' }}><img src={getAnimal(index)} style={{ width: '100%' }} /></div>}
+      </React.Fragment>
+    );
+  };
+
+  const renderDualRewards = (syllable, index) => {
+    if (!visualRewards[`visual-${syllable}`]) return null;
+    if (!gameConfig.elements.rewards?.animals) return null;
+    const animalPos = gameConfig.elements.rewards.animals.positions[index];
+    const getAnimal = assetGetters[gameConfig.elements.rewards.animals.assetGetters[syllable]];
+    const stonePos = gameConfig.elements.rewards.stones.positionsReward[index];
+    const getStone = assetGetters[gameConfig.elements.rewards.stones.assetGettersReward[syllable]];
+    return (
+      <React.Fragment key={`dual-rew-${syllable}`}>
+        {getAnimal && <div style={{ position: 'absolute', left: animalPos.left, top: animalPos.top, width: '80px', height: '80px', zIndex: 15, animation: 'rewardAppear 1s', transform: 'translate(-50%, -50%)' }}><img src={getAnimal(index)} style={{ width: '100%' }} /><div style={{position:'absolute',top:'-10px',right:'-10px'}}>✨</div></div>}
+        {getStone && <div style={{ position: 'absolute', left: stonePos.left, top: stonePos.top, width: '60px', height: '60px', zIndex: 12, animation: 'rewardAppear 1s', transform: 'translate(-50%, -50%)' }}><img src={getStone(index)} style={{ width: '100%' }} /></div>}
+      </React.Fragment>
+    );
+  };
+
+  // ⭐ NEW: Render previous completed central elements
+const renderPreviousCentralElements = () => {
+  if (!gameConfig.elements.centralSynthesis?.showPreviousRounds) return null;
+  if (!selectedRound || selectedRound === 1) return null;
+  
+  const previousElements = [];
+  
+  for (let round = 1; round < selectedRound; round++) {
+    const position = gameConfig.elements.centralSynthesis.positions[round - 1];
+    
+    // Get the reward image for this round
+    let getRewardImage;
+    const rewardGetters = gameConfig.elements.centralSynthesis.assetGettersReward;
+    
+    if (typeof rewardGetters === 'object' && rewardGetters[round]) {
+      // Round-specific getter (Kurumedeva)
+      getRewardImage = assetGetters[rewardGetters[round]];
+    } else if (typeof rewardGetters === 'string') {
+      // Single getter for all (other games)
+      getRewardImage = assetGetters[rewardGetters];
+    }
+    
+    if (!getRewardImage || !position) continue;
+    
+    previousElements.push(
+      <div
+        key={`prev-reward-${round}`}
+        style={{
+          position: 'absolute',
+          left: position.left,
+          top: position.top,
+          width: '100px',
+          height: '100px',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 18,
+          opacity: 0.9
+        }}
+      >
+        <img 
+          src={getRewardImage(0)} 
+          style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
+          alt={`Round ${round} reward`} 
+        />
+      </div>
+    );
+  }
+  
+  return previousElements;
+};
+
+  // ⭐ NEW: Render central synthesis element
+  const renderCentralSynthesis = () => {
+    if (!gameConfig.elements.centralSynthesis?.enabled) return null;
+    if (!selectedRound || gameState === 'roundSelection' || gameState === 'initializing') return null;
+
+    const position = gameConfig.elements.centralSynthesis.positions[selectedRound - 1];
+    if (!position) return null;
+
+    // Get asset getters
+// Get asset getters (Check for Round Specifics first)
+    let initialKey = gameConfig.elements.centralSynthesis.assetGetterInitial;
+    let rewardKey = gameConfig.elements.centralSynthesis.assetGetterReward;
+
+    // ⭐ If this round has specific assets, use them!
+    if (gameConfig.elements.centralSynthesis.assetGettersByRound && 
+        gameConfig.elements.centralSynthesis.assetGettersByRound[selectedRound]) {
+        
+        initialKey = gameConfig.elements.centralSynthesis.assetGettersByRound[selectedRound].initial;
+        rewardKey = gameConfig.elements.centralSynthesis.assetGettersByRound[selectedRound].reward;
+    }
+
+    const getInitialImage = assetGetters[initialKey];
+    const getRewardImage = assetGetters[rewardKey];
+    if (!getInitialImage || !getRewardImage) return null;
+
+    // Determine which image to show based on bloom progress
+    const isFullyBloomed = centralBloomProgress === 100;
+    const isPartiallyBloomed = centralBloomProgress > 0 && centralBloomProgress < 100;
+    
+    // Use first index (0) for central element
+    const budImage = getInitialImage(0);
+    const bloomImage = getRewardImage(0);
+
+    return (
+      <div
+        className={`${gamePrefix}-central-synthesis`}  // ← ADD THIS
+
+        onClick={centralElementGlowing ? handleCentralElementClick : undefined}
+        style={{
+          position: 'absolute',
+          //left: position.left,
+          //top: position.top,
+          //width: '120px',
+          //height: '120px',
+          //transform: 'translate(-50%, -50%)',
+          zIndex: 20,
+          cursor: centralElementGlowing ? 'pointer' : 'default',
+          transition: 'all 0.5s ease',
+          pointerEvents: centralElementGlowing ? 'auto' : 'none'
+        }}
+      >
+        {/* Bud layer (fades out as blooms) */}
+        <div style={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          opacity: isFullyBloomed ? 0 : (1 - centralBloomProgress / 100),
+          transition: 'opacity 0.5s ease'
+        }}>
+          <img src={budImage} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="bud" />
+        </div>
+
+        {/* Bloom layer (fades in as blooms) */}
+        <div style={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          opacity: centralBloomProgress / 100,
+          transform: `scale(${0.6 + (centralBloomProgress / 100) * 0.4})`,
+          transition: 'all 0.5s ease'
+        }}>
+          <img src={bloomImage} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="bloom" />
+        </div>
+
+        {/* Glow effect when ready */}
+        {centralElementGlowing && (
+          <>
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              width: '140px',
+              height: '140px',
+              transform: 'translate(-50%, -50%)',
+              borderRadius: '50%',
+              background: `radial-gradient(circle, ${gameConfig.theme.primaryColor}40, transparent)`,
+              animation: 'goldenPulse 1.5s ease-in-out infinite',
+              zIndex: -1
+            }} />
+            
+            {/* Tap Here indicator */}
+            <div style={{
+              position: 'absolute',
+              top: '-40px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              background: '#FFD700',
+              color: 'white',
+              padding: '4px 10px',
+              borderRadius: '8px',
+              fontSize: '0.85rem',
+              fontWeight: '600',
+              zIndex: 30,
+              whiteSpace: 'nowrap'
+            }}>
+              👆 Tap Here
+            </div>
+
+            {/* Golden pulse ring */}
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%,-50%)',
+              width: '85%',
+              height: '85%',
+              border: '2px solid #FFD700',
+              borderRadius: '50%',
+              animation: 'goldenPulse 2s infinite'
+            }} />
+          </>
         )}
 
-        {/* 👑 Crown for clicked elephants (like Auto mode) */}
-{activatedElephants[`elephant-${syllable}`] && (
-  <div style={{
-    position: 'absolute',
-    top: '-10px',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    fontSize: '24px',
-    animation: 'crownFloat 2s ease-in-out infinite',
-    zIndex: 10,
-    pointerEvents: 'none'
-  }}>
-    👑
-  </div>
-)}
-
-        {/* ✅ BUG 4 FIX: Golden pulse circle highlight (from Auto mode) */}
-        {isNext && !clicked && (
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '85%',
-            height: '85%',
-            border: '3px solid #FFD700',
-            borderRadius: '50%',
-            animation: 'goldenPulse 2s ease-in-out infinite',
-            pointerEvents: 'none',
-            zIndex: -1
-          }} />
-        )}
-
-        {/* ✅ "Tap Here!" hint - Simple version */}
-        {isNext && !clicked && (
-          <div style={{
-            position: 'absolute',
-            top: '-40px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            background: '#FFD700',
-            color: 'white',
-            padding: '4px 10px',
-            borderRadius: '8px',
-            fontSize: '0.85rem',
-            fontWeight: '600',
-            whiteSpace: 'nowrap',
-            zIndex: 30,
-            pointerEvents: 'none'
-          }}>
-            👆 Tap Here
-          </div>
-        )}
-
+        {/* Word label at bottom */}
         <div style={{
           position: 'absolute',
           bottom: '-30px',
           left: '50%',
           transform: 'translateX(-50%)',
-          background: clicked ? '#4CAF50' : clickable ? '#FF9800' : '#999',
+          background: centralElementGlowing ? '#FFD700' : isFullyBloomed ? '#4CAF50' : '#999',
           color: 'white',
           padding: '4px 8px',
-          borderRadius: '8px',
+          borderRadius: '12px',
           fontSize: '12px',
-          fontWeight: 'bold'
+          fontWeight: 'bold',
+          whiteSpace: 'nowrap'
         }}>
-          {syllable.toUpperCase()}
+          {currentSequence.join('').toUpperCase()}
         </div>
-      </button>
-    );
-  };
 
-  // ✅ BUG 6 & 8 FIX: Render singer with proper initial vs reward state
-  const renderSinger = (syllable, index) => {
-    // ⭐ Check if singer element exists (nirvighnam doesn't have singer, only clicker + dual rewards)
-    if (!gameConfig.elements.singer || !gameConfig.elements.singer.positions) {
-      return null;
-    }
-
-    // ⭐ Check for different positions (kurumedeva has positionsReward for rewards)
-    let position;
-    const isReward = visualRewards[`visual-${syllable}`];
-    if (isReward && gameConfig.elements.singer.positionsReward) {
-      position = gameConfig.elements.singer.positionsReward[index];
-    } else {
-      position = gameConfig.elements.singer.positions[index];
-    }
-
-    const isSinging = singingSyllable === syllable;
-
-    // ✅ BUG 6 & 8: Use different getter based on reward state
-    // ⭐ Handle multiple patterns for asset getters
-    let getImage;
-    if (isReward) {
-      if (gameConfig.elements.singer.assetGetterReward) {
-        // Pattern 1: Single getter function
-        const getterName = gameConfig.elements.singer.assetGetterReward;
-        getImage = assetGetters[getterName];
-      } else if (gameConfig.elements.singer.assetGettersReward) {
-        // Pattern 2: assetGettersReward object (kurumedeva)
-        const getterName = gameConfig.elements.singer.assetGettersReward[syllable];
-        getImage = assetGetters[getterName];
-      } else if (gameConfig.elements.singer.assetGetters) {
-        // Pattern 3: assetGetters object (compatibility)
-        const getterName = gameConfig.elements.singer.assetGetters[syllable];
-        getImage = assetGetters[getterName];
-      }
-    } else {
-      if (gameConfig.elements.singer.assetGetterInitial) {
-        // Pattern 1: Single getter function
-        const getterName = gameConfig.elements.singer.assetGetterInitial;
-        getImage = assetGetters[getterName];
-      } else if (gameConfig.elements.singer.assetGettersInitial) {
-        // Pattern 2: assetGettersInitial object (kurumedeva)
-        const getterName = gameConfig.elements.singer.assetGettersInitial[syllable];
-        getImage = assetGetters[getterName];
-      } else if (gameConfig.elements.singer.assetGetters) {
-        // Pattern 3: assetGetters object (compatibility)
-        const getterName = gameConfig.elements.singer.assetGetters[syllable];
-        getImage = assetGetters[getterName];
-      }
-    }
-
-    if (!getImage) {
-      console.warn(`[Visual] Asset getter not found for syllable: ${syllable}`);
-      return null;
-    }
-
-    return (
-      <div
-        key={`singer-${syllable}-${index}`}
-        style={{
-          position: 'absolute',
-          left: position.left,
-          top: position.top,
-          width: isReward ? '80px' : '60px',
-          height: isReward ? '80px' : '60px',
-          transition: 'all 0.3s ease',
-          zIndex: 10,
-          transform: 'translate(-50%, -50%)',
-          filter: isSinging ? 'brightness(1.6)' : isReward ? 'brightness(1.3)' : 'brightness(0.8)',
-          opacity: isReward ? 1 : 0.7
-        }}
-      >
-        <img
-          src={getImage(index)}
-          alt={`${gameConfig.elements.singer.type} ${syllable}`}
-          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-        />
-        {isReward && (
+        {/* Sparkles when fully bloomed */}
+        {isFullyBloomed && (
           <div style={{
             position: 'absolute',
             top: '-10px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            fontSize: '18px'
+            right: '-10px',
+            fontSize: '24px',
+            animation: 'sparkle 1s ease-in-out infinite'
           }}>
             ✨
           </div>
@@ -559,474 +863,116 @@ const handleExitToMenu = () => {
     );
   };
 
-  // ⭐ NEW: Render initial animals + plain stones for nirvighnam dual-reward system
-  const renderDualInitials = (syllable, index) => {
-    const isTransformed = visualRewards[`visual-${syllable}`];
-    if (isTransformed) return null;
-
-    const rewards = gameConfig.elements.rewards;
-    if (!rewards || !rewards.animals || !rewards.stones) {
-      console.warn('[Dual Initials] Invalid dual reward config');
-      return null;
-    }
-
-    // Animals at stone positions initially (sitting on stones)
-    const stonePosition = rewards.stones.positionsInitial[index];
-    const animalGetterName = rewards.animals.assetGetters[syllable];
-    const getAnimalImage = assetGetters[animalGetterName];
-
-    // Plain stone underneath
-    const stoneGetterName = rewards.stones.assetGettersInitial[syllable];
-    const getStoneImage = assetGetters[stoneGetterName];
-
-    return (
-      <React.Fragment key={`dual-initial-${syllable}`}>
-        {/* Plain stone */}
-        {getStoneImage && (
-          <div
-            style={{
-              position: 'absolute',
-              left: stonePosition.left,
-              top: stonePosition.top,
-              width: '60px',
-              height: '60px',
-              zIndex: 10,
-              transform: 'translate(-50%, -50%)',
-              opacity: 0.8
-            }}
-          >
-            <img
-              src={getStoneImage(index)}
-              alt={`Stone ${syllable}`}
-              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-            />
-          </div>
-        )}
-
-        {/* Animal on stone */}
-        {getAnimalImage && (
-          <div
-            style={{
-              position: 'absolute',
-              left: stonePosition.left,
-              top: stonePosition.top,
-              width: '70px',
-              height: '70px',
-              zIndex: 11,
-              transform: 'translate(-50%, -50%)'
-            }}
-          >
-            <img
-              src={getAnimalImage(index)}
-              alt={`Animal ${syllable}`}
-              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-            />
-          </div>
-        )}
-      </React.Fragment>
-    );
-  };
-
-  // ⭐ NEW: Render dual rewards for nirvighnam (animals move + stones transform)
-  const renderDualRewards = (syllable, index) => {
-    const isVisible = visualRewards[`visual-${syllable}`];
-    if (!isVisible) return null;
-
-    const rewards = gameConfig.elements.rewards;
-    if (!rewards || !rewards.animals || !rewards.stones) {
-      console.warn('[Dual Rewards] Invalid dual reward config');
-      return null;
-    }
-
-    // Render animal reward (frog/snail/turtle moves to water)
-    const animalPosition = rewards.animals.positions[index];
-    const animalGetterName = rewards.animals.assetGetters[syllable];
-    const getAnimalImage = assetGetters[animalGetterName];
-
-    // Render stone reward (stone transforms to colored version)
-    const stonePosition = rewards.stones.positionsReward[index];
-    const stoneGetterName = rewards.stones.assetGettersReward[syllable];
-    const getStoneImage = assetGetters[stoneGetterName];
-
-    return (
-      <React.Fragment key={`dual-reward-${syllable}`}>
-        {/* Animal in water */}
-        {getAnimalImage && (
-          <div
-            style={{
-              position: 'absolute',
-              left: animalPosition.left,
-              top: animalPosition.top,
-              width: '80px',
-              height: '80px',
-              zIndex: 15,
-              animation: 'rewardAppear 1s ease-out',
-              transform: 'translate(-50%, -50%)'
-            }}
-          >
-            <img
-              src={getAnimalImage(index)}
-              alt={`Animal ${syllable}`}
-              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-            />
-            <div style={{
-              position: 'absolute',
-              top: '-10px',
-              right: '-10px',
-              fontSize: '16px',
-              animation: 'sparkle 2s ease-in-out infinite'
-            }}>
-              ✨
-            </div>
-          </div>
-        )}
-
-        {/* Colored stone */}
-        {getStoneImage && (
-          <div
-            style={{
-              position: 'absolute',
-              left: stonePosition.left,
-              top: stonePosition.top,
-              width: '60px',
-              height: '60px',
-              zIndex: 12,
-              animation: 'rewardAppear 1s ease-out',
-              transform: 'translate(-50%, -50%)'
-            }}
-          >
-            <img
-              src={getStoneImage(index)}
-              alt={`Stone ${syllable}`}
-              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-            />
-          </div>
-        )}
-      </React.Fragment>
-    );
-  };
-
   if (!isActive || !gameConfig) return null;
 
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 20 }}>
-
-
-    {/* ⭐ ADD PAUSE BUTTON */}
-    {!hideElements && gameState !== 'roundSelection' && (
-      <UniversalPauseButton onPause={handlePause} />
-    )}
-
-    {/* ⭐ ADD PAUSE MODAL */}
-    <PauseModal
-      isOpen={showPauseModal}
-      onContinue={handleContinue}
-      onExit={handleExitToMenu}
-    />
-
-      {/* ✅ BUG 1 FIX: Round Selection with EXIT OPTIONS */}
-      {!hideElements && gameState === 'roundSelection' && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          background: 'rgba(0,0,0,0.75)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 150
-        }}>
-          <div style={{
-            background: 'white',
-            borderRadius: '30px',
-            padding: '40px',
-            maxWidth: '500px',
-            textAlign: 'center',
-            boxShadow: '0 25px 70px rgba(0,0,0,0.4)'
-          }}>
-            <h2 style={{
-              fontSize: '28px',
-              fontWeight: 'bold',
-              color: gameConfig.theme.primaryColor,
-              marginBottom: '20px'
-            }}>
-              Choose Round:
-            </h2>
-
-            {/* Round Buttons */}
-            <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginBottom: '30px' }}>
-              {/* ⭐ DYNAMIC: Support 2-round and 3-round games */}
-{Array.from({ length: Object.keys(gameConfig.syllables).length }, (_, i) => i + 1).map(round => {
-  const isCompleted = completedRounds.includes(round);
-  
-  return (
-    <button
-      key={round}
-      onClick={() => handleRoundSelect(round)}
-      style={{
-        width: '80px',
-        height: '80px',
-        borderRadius: '15px',
-    border: completedRounds.includes(round)
-  ? '3px solid #4CAF50'
-  : selectedRound === round
-  ? `4px solid ${gameConfig.theme.primaryColor}`
-  : `2px solid ${gameConfig.theme.primaryColor}`,
-    background: completedRounds.includes(round)
-  ? '#4CAF50'
-  : selectedRound === round
-  ? `${gameConfig.theme.primaryColor}15`
-  : 'white',
-        color: completedRounds.includes(round) ? 'white' : gameConfig.theme.primaryColor,
-        fontSize: '32px',
-        fontWeight: 'bold',
-        cursor: 'pointer',
-        transition: 'all 0.3s ease',
-        position: 'relative',  // ⭐ ADD THIS
-        display: 'flex',       // ⭐ ADD THIS
-        alignItems: 'center',  // ⭐ ADD THIS
-        justifyContent: 'center' // ⭐ ADD THIS
-      }}
-    >
-      {/* ⭐ ALWAYS SHOW NUMBER */}
-      {round}
-      
-      {/* ⭐ SHOW TICK BADGE IF COMPLETED */}
-      {completedRounds.includes(round) && (
-        <div style={{
-          position: 'absolute',
-          top: '-5px',
-          right: '-5px',
-          width: '24px',
-          height: '24px',
-          borderRadius: '50%',
-          background: '#FFD700',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '14px',
-          fontWeight: 'bold',
-          color: '#4CAF50',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-          animation: 'checkmarkAppear 0.5s ease-out'
-        }}>
-          ✓
-        </div>
+      {!hideElements && gameState !== 'roundSelection' && gameState !== 'initializing' && (
+        <UniversalPauseButton onPause={handlePause} />
       )}
-   </button>
-  );
-})}
+      <PauseModal isOpen={showPauseModal} onContinue={handleContinue} onExit={handleExitToMenu} />
+
+      {!hideElements && gameState === 'roundSelection' && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 150 }}>
+          <div style={{ background: 'white', borderRadius: '30px', padding: '40px', maxWidth: '500px', textAlign: 'center', boxShadow: '0 25px 70px rgba(0,0,0,0.4)' }}>
+            <h2 style={{ fontSize: '28px', fontWeight: 'bold', color: gameConfig.theme.primaryColor, marginBottom: '20px' }}>Choose Round:</h2>
+            <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginBottom: '30px' }}>
+              {Array.from({ length: Object.keys(gameConfig.syllables).length }, (_, i) => i + 1).map(round => {
+                const isCompleted = completedRounds.includes(round);
+                return (
+                  <button key={round} onClick={() => handleRoundSelect(round)}
+                    style={{ width: '80px', height: '80px', borderRadius: '15px', border: isCompleted ? '3px solid #4CAF50' : selectedRound === round ? `4px solid ${gameConfig.theme.primaryColor}` : `2px solid ${gameConfig.theme.primaryColor}`, background: isCompleted ? '#4CAF50' : selectedRound === round ? `${gameConfig.theme.primaryColor}15` : 'white', color: isCompleted ? 'white' : gameConfig.theme.primaryColor, fontSize: '32px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.3s ease', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {round}
+                    {isCompleted && <div style={{ position: 'absolute', top: '-5px', right: '-5px', width: '24px', height: '24px', borderRadius: '50%', background: '#FFD700', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 'bold', color: '#4CAF50', boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>✓</div>}
+                  </button>
+                );
+              })}
             </div>
-
-            {/* ⭐ NEW: START ROUND BUTTON */}
-            {selectedRound && (
-              <button
-                onClick={handleStartRound}
-                style={{
-                  width: '100%',
-                  padding: '20px',
-                  marginTop: '20px',
-                  background: `linear-gradient(135deg, ${gameConfig.theme.primaryColor} 0%, ${gameConfig.theme.primaryColor}CC 100%)`,
-                  border: 'none',
-                  borderRadius: '15px',
-                  color: 'white',
-                  fontSize: '20px',
-                  fontWeight: 'bold',
-                  cursor: 'pointer',
-                  boxShadow: `0 6px 20px ${gameConfig.theme.primaryColor}40`,
-                  animation: 'pulseButton 1.5s ease-in-out infinite'
-                }}
-              >
-                ▶️ START ROUND {selectedRound}
-              </button>
-            )}
-
-            {/* ✅ BUG 1 FIX: EXIT OPTIONS - ALWAYS VISIBLE */}
-            <div style={{
-              borderTop: '2px solid #E0E0E0',
-              paddingTop: '25px',
-              marginTop: '10px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px'
-            }}>
-              <button
-                className="btn-finish primary"
-                onClick={handleFinishGame}
-                style={{
-                  width: '100%',
-                  padding: '18px',
-                  background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)',
-                  border: 'none',
-                  borderRadius: '15px',
-                  color: 'white',
-                  fontSize: '17px',
-                  fontWeight: 'bold',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 15px rgba(76, 175, 80, 0.4)',
-                  minHeight: '60px'
-                }}
-              >
-                🏁 Finish & Return
-                <div style={{ fontSize: '12px', opacity: 0.9, marginTop: '4px' }}>
-                  Save progress and return to scene
-                </div>
-              </button>
-
-              <button
-                className="btn-auto-mode secondary"
-                onClick={handleSwitchToAutoMode}
-                style={{
-                  width: '100%',
-                  padding: '18px',
-                  background: 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)',
-                  border: 'none',
-                  borderRadius: '15px',
-                  color: 'white',
-                  fontSize: '17px',
-                  fontWeight: 'bold',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 15px rgba(33, 150, 243, 0.4)',
-                  minHeight: '60px'
-                }}
-              >
-                🎵 Hear Full Mantra
-                <div style={{ fontSize: '12px', opacity: 0.9, marginTop: '4px' }}>
-                  Switch to Auto Play from Round 1
-                </div>
-              </button>
+            {selectedRound && <button onClick={handleStartRound} style={{ width: '100%', padding: '20px', marginTop: '20px', background: `linear-gradient(135deg, ${gameConfig.theme.primaryColor} 0%, ${gameConfig.theme.primaryColor}CC 100%)`, border: 'none', borderRadius: '15px', color: 'white', fontSize: '20px', fontWeight: 'bold', cursor: 'pointer', boxShadow: `0 6px 20px ${gameConfig.theme.primaryColor}40`, animation: 'pulseButton 1.5s ease-in-out infinite' }}>▶️ START ROUND {selectedRound}</button>}
+            <div style={{ borderTop: '2px solid #E0E0E0', paddingTop: '25px', marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <button className="btn-finish primary" onClick={handleFinishGame} style={{ width: '100%', padding: '18px', background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)', border: 'none', borderRadius: '15px', color: 'white', fontSize: '17px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 15px rgba(76, 175, 80, 0.4)', minHeight: '60px' }}>
+                🏁 Finish & Return<div style={{ fontSize: '12px', opacity: 0.9, marginTop: '4px' }}>Save progress and return to scene</div></button>
+              <button className="btn-auto-mode secondary" onClick={handleSwitchToAutoMode} style={{ width: '100%', padding: '18px', background: 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)', border: 'none', borderRadius: '15px', color: 'white', fontSize: '17px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 15px rgba(33, 150, 243, 0.4)', minHeight: '60px' }}>🎵 Hear Full Mantra<div style={{ fontSize: '12px', opacity: 0.9, marginTop: '4px' }}>Switch to Auto Play from Round 1</div></button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ✅ BUG 2 & 5 FIX: Removed "Play Round X" intermediate button */}
+      {/* Other render elements (status bar, countdown, etc.) */}
+      {!hideElements && isCountingDown && (
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '100px', fontWeight: 'bold', color: gameConfig.theme.primaryColor, textShadow: `0 0 30px ${gameConfig.theme.primaryColor}80`, zIndex: 100, animation: 'countdownPulse 0.8s ease-in-out' }}>{countdown}</div>
+      )}
+      {!hideElements && waterSprayPosition && <div style={{ position: 'absolute', left: waterSprayPosition.left, top: waterSprayPosition.top, transform: 'translate(-50%, -100%)', fontSize: '48px', animation: 'waterSplash 1s ease-out', zIndex: 100, pointerEvents: 'none' }}>💦</div>}
 
-      {/* ✅ FIX 1: Countdown Display (like Auto mode) */}
-{!hideElements && isCountingDown && gameState !== 'roundSelection' && (
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          fontSize: '100px',
-          fontWeight: 'bold',
-          color: gameConfig.theme.primaryColor,
-          textShadow: `0 0 30px ${gameConfig.theme.primaryColor}80`,
-          zIndex: 100,
-          animation: 'countdownPulse 0.8s ease-in-out'
-        }}>
-          {countdown}
+      {!hideElements && gameState !== 'roundSelection' && gameState !== 'countdown' && gameState !== 'initializing' && (
+<div className={getHeaderClassName(gameConfig)}>
+          <div style={{ 
+            fontSize: '28px', 
+            marginBottom: gameState === 'listening' ? '8px' : '0',
+            color: (centralElementGlowing || playerInput.length >= currentSequence.length) ? '#FFD700' : 'white'
+          }}>
+            {gameState === 'playing' ? 'Listen carefully...' : 
+gameState === 'listening' && (centralElementGlowing || playerInput.length >= currentSequence.length) ? gameConfig.uiText.finalInstruction :
+             gameState === 'listening' ? `${getRoundWord(gameConfig, selectedRound)}! ${getClickInstruction(gameConfig.elements.clicker.type)}` : 
+             gameState === 'success' ? 'Awesome! Choose another round!' : ''}
+          </div>
+          
+          {gameState === 'listening' && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '15px',
+              justifyContent: 'center'
+            }}>
+              <div style={{
+                width: '200px',
+                height: '20px',
+                background: 'rgba(255,255,255,0.3)',
+                borderRadius: '10px',
+                border: '2px solid #8B4513',
+                overflow: 'hidden'
+              }}>
+                <div style={{
+                  width: `${(playerInput.length / (currentSequence.length + 1)) * 100}%`,
+                  height: '100%',
+                  background: 'linear-gradient(90deg, #4ECDC4, #FFD700)',
+                  transition: 'width 0.5s ease-out'
+                }} />
+              </div>
+              <div style={{
+                fontSize: '24px',
+                fontWeight: 'bold',
+                color: 'white',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
+              }}>
+                {playerInput.length}/{currentSequence.length + 1}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
-      {/* ✅ FIX 2: Water Spray Animation */}
-      {!hideElements && waterSprayPosition && (
-        <div style={{
-          position: 'absolute',
-          left: waterSprayPosition.left,
-          top: waterSprayPosition.top,
-          transform: 'translate(-50%, -100%)',
-          fontSize: '48px',
-          animation: 'waterSplash 1s ease-out',
-          zIndex: 100,
-          pointerEvents: 'none'
-        }}>
-          💦
-        </div>
-      )}
-
-      {/* Status Message */}
-      {!hideElements && gameState !== 'roundSelection' && gameState !== 'countdown' && (
-        <div style={{
-          position: 'absolute',
-          top: '20px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          background: gameState === 'playing'
-            ? 'rgba(33, 150, 243, 0.95)'
-            : gameState === 'success'
-            ? 'rgba(76, 175, 80, 0.95)'
-            : 'rgba(255, 152, 0, 0.95)',
-          color: 'white',
-          padding: '12px 24px',
-          borderRadius: '25px',
-          fontSize: '15px',
-          fontWeight: 'bold',
-          zIndex: 50
-        }}>
-          {gameState === 'playing' && `Round ${selectedRound}: Listen carefully...`}
-          {gameState === 'listening' && `Click to repeat! (${playerInput.length}/${currentSequence.length})`}
-          {gameState === 'success' && '✨ Perfect! Choose another round!'}
-        </div>
-      )}
-
-      {/* Game Elements */}
-      {!hideElements && gameState !== 'roundSelection' && (
+      {!hideElements && gameState !== 'roundSelection' && gameState !== 'initializing' && (
         <>
-          {/* ⭐ Check if dual-reward system (nirvighnam) or regular system */}
-          {gameConfig.elements.rewards?.animals && gameConfig.elements.rewards?.stones ? (
+          {gameConfig.elements.rewards?.animals ? (
             <>
-              {/* Dual-reward system: animals on stones initially, then animals move + stones transform */}
-              {currentSequence.map((syllable, index) =>
-                renderDualInitials(syllable, index)
-              )}
-              {currentSequence.map((syllable, index) =>
-                renderElephant(syllable, index)
-              )}
-              {currentSequence.map((syllable, index) =>
-                renderDualRewards(syllable, index)
-              )}
+              {currentSequence.map((s, i) => renderDualInitials(s, i))}
+              {currentSequence.map((s, i) => renderElephant(s, i))}
+              {currentSequence.map((s, i) => renderDualRewards(s, i))}
             </>
           ) : (
             <>
-              {/* Regular system: buds → lotus or seeds → flowers or items → decorations */}
-              {currentSequence.map((syllable, index) => renderSinger(syllable, index))}
-              {currentSequence.map((syllable, index) => renderElephant(syllable, index))}
+              {/* Don't render individual singers - use central synthesis instead */}
+              {currentSequence.map((s, i) => renderElephant(s, i))}
             </>
           )}
+      {/* Previous round rewards */}
+{renderPreviousCentralElements()}
+{/* Current round central synthesis */}
+{renderCentralSynthesis()}
         </>
       )}
-
-      <style>{`
-        /* ✅ BUG 4 FIX: Golden pulse animation from Auto mode */
-        @keyframes goldenPulse {
-          0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
-          50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
-        }
-
-        /* ✅ FIX 1: Countdown pulse animation */
-        @keyframes countdownPulse {
-          0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-          50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
-          100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-        }
-
-        /* ✅ FIX 2: Water splash animation */
-        @keyframes waterSplash {
-          0% { transform: translate(-50%, -100%) scale(0.5); opacity: 1; }
-          50% { transform: translate(-50%, -150%) scale(1.2); opacity: 0.8; }
-          100% { transform: translate(-50%, -200%) scale(1.5); opacity: 0; }
-        }
-
-        /* ⭐ Dual-reward animations */
-        @keyframes rewardAppear {
-          0% { transform: translate(-50%, -50%) scale(0) rotate(-180deg); opacity: 0; }
-          100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
-        }
-
-        @keyframes sparkle {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.5; transform: scale(1.2); }
-        }
-
-        @keyframes pulseButton {
-  0%, 100% { transform: scale(1); box-shadow: 0 6px 20px ${gameConfig.theme.primaryColor}40; }
-  50% { transform: scale(1.05); box-shadow: 0 8px 25px ${gameConfig.theme.primaryColor}60; }
-}
-      `}</style>
+      <style>{`@keyframes goldenPulse { 0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); } 50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); } } @keyframes countdownPulse { 0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; } 50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; } } @keyframes waterSplash { 0% { transform: translate(-50%, -100%) scale(0.5); opacity: 1; } 50% { transform: translate(-50%, -150%) scale(1.2); opacity: 0.8; } 100% { transform: translate(-50%, -200%) scale(1.5); opacity: 0; } } @keyframes rewardAppear { 0% { transform: translate(-50%, -50%) scale(0) rotate(-180deg); opacity: 0; } 100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; } } @keyframes sparkle { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.2); } } @keyframes pulseButton { 0%, 100% { transform: scale(1); box-shadow: 0 6px 20px ${gameConfig.theme.primaryColor}40; } 50% { transform: scale(1.05); box-shadow: 0 8px 25px ${gameConfig.theme.primaryColor}60; } }`}</style>
     </div>
   );
 };

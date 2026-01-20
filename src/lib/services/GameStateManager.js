@@ -432,7 +432,7 @@ if (existingScene && existingScene.completed &&
   // ✅ 3. Update scene data while preserving existing properties
   //const existingScene = gameProgress.zones[zoneId].scenes[sceneId] || {};
 
-gameProgress.zones[zoneId].scenes[sceneId] = {
+/*gameProgress.zones[zoneId].scenes[sceneId] = {
   // Only preserve the unlocked flag from existing data
   unlocked: existingScene.unlocked || false,
   
@@ -442,8 +442,37 @@ gameProgress.zones[zoneId].scenes[sceneId] = {
   symbols: sceneState.symbols || {},
   lastPlayed: Date.now(),
   completedAt: sceneState.completed ? Date.now() : null
-};
+};*/
+
+// ✅ 3. Update scene data while preserving existing properties
+  // (No need to redeclare existingScene, we use the one from the top)
   
+// ✅ UPDATED CODE (add ALL missing properties):
+gameProgress.zones[zoneId].scenes[sceneId] = {
+  unlocked: existingScene?.unlocked || false,
+  completed: sceneState.completed || false,
+  stars: sceneState.stars || 0,
+  
+  // Symbol Mountain properties
+  symbols: sceneState.symbols || {},
+  
+  // Cave of Secrets properties
+  sanskritWords: sceneState.sanskritWords || {},
+  learnedWords: sceneState.learnedWords || {},
+  
+  // Shloka River properties
+  syllables: sceneState.syllables || {},
+  words: sceneState.words || {},
+  chantedVerses: sceneState.chantedVerses || {},  // 🎯 ADD THIS!
+  apps: sceneState.apps || {},
+  
+  // Timing properties
+  lastPlayed: Date.now(),
+  completedAt: sceneState.completed ? Date.now() : null,
+  
+  // Phase tracking
+  phase: sceneState.phase || null
+};
   console.log('💾 CUMULATIVE: Scene data updated:', gameProgress.zones[zoneId].scenes[sceneId]);
   
   // ✅ 4. FIXED: Calculate totals for ALL zones (not just current zone)

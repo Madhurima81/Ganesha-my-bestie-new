@@ -5,58 +5,42 @@ import React from 'react';
 import MemoryGameEngine from '../../core/MemoryGameEngine';
 import { getGameConfig } from '../../configs/gameConfigs';
 
+// Kurumedeva game assets - Animals, Items, Decorations (4 syllables: kuru, me, de, va)
+import animal1Ku from './assets/images/Kurumedeva/animal1-ku.png';
+import animal2Ru from './assets/images/Kurumedeva/animal2-ru.png';
+import animal3Me from './assets/images/Kurumedeva/animal3-me.png';
+import animal4De from './assets/images/Kurumedeva/animal4-de.png';
+
+import decor1Ku from './assets/images/Kurumedeva/decor1-ku.png';
+import decor2Ru from './assets/images/Kurumedeva/decor2-ru.png';
+import decor3Me from './assets/images/Kurumedeva/decor3-me.png';
+import decor4De from './assets/images/Kurumedeva/decor4-de.png';
+
 const KurumeDevaGame = ({
-  isActive,
-  hideElements,
-  onPhaseComplete,
-  onGameComplete,
-  profileName,
-
-  // Assets for KurumeDeva (singers: animals, clickers: items, rewards: decorations)
-  getAnimal1KuImage,    // Singer for 'kuru'
-  getAnimal3MeImage,    // Singer for 'me'
-  getAnimal4DeImage,    // Singer for 'de'
-  getAnimal2RuImage,    // Singer for 'va'
-  getItem1KuImage,      // Clicker/initial for 'kuru'
-  getItem3MeImage,      // Clicker/initial for 'me'
-  getItem4DeImage,      // Clicker/initial for 'de'
-  getItem2RuImage,      // Clicker/initial for 'va'
-  getDecor1KuImage,     // Reward for 'kuru'
-  getDecor3MeImage,     // Reward for 'me'
-  getDecor4DeImage,     // Reward for 'de'
-  getDecor2RuImage,     // Reward for 'va'
-
-  // Mode control
-  selectedMode,
-  skipModeSelection,
-
-  // Reload support
-  isReload,
-  savedGameState,
-  onSaveGameState,
-
-  // Audio
-  isAudioOn,
-  playAudio
+  selectedMode, skipModeSelection, isActive, isReload, savedGameState,
+  onSaveGameState, onPhaseComplete, onGameComplete, hideElements,
+  isAudioOn, playAudio, profileName, RainbowComponent
 }) => {
 
   // Get KurumeDeva config
   const gameConfig = getGameConfig('kurumedeva');
 
   // Map all asset getters
-  const assetGetters = {
-    getAnimal1KuImage,
-    getAnimal3MeImage,
-    getAnimal4DeImage,
-    getAnimal2RuImage,
-    getItem1KuImage,
-    getItem3MeImage,
-    getItem4DeImage,
-    getItem2RuImage,
-    getDecor1KuImage,
-    getDecor3MeImage,
-    getDecor4DeImage,
-    getDecor2RuImage
+ const assetGetters = {
+    // Clickers -> Animals
+    getAnimalKuImage: () => animal1Ku,
+    getAnimalRuImage: () => animal2Ru,
+    getAnimalMeImage: () => animal3Me,
+    getAnimalDeImage: () => animal4De,
+    
+    // ✅ Added VA (Mapped to Ru image for now, or change to whatever image you want)
+    getAnimalVaImage: () => animal2Ru, 
+
+    // Rewards -> Decors
+    getDecorKuImage: () => decor1Ku,
+    getDecorRuImage: () => decor2Ru,
+    getDecorMeImage: () => decor3Me,
+    getDecorDeImage: () => decor4De,
   };
 
   // Validation
@@ -65,24 +49,24 @@ const KurumeDevaGame = ({
     return null;
   }
 
-  return (
+return (
     <MemoryGameEngine
       gameConfig={gameConfig}
       assetGetters={assetGetters}
-      isActive={isActive}
-      hideElements={hideElements}
-      onPhaseComplete={onPhaseComplete}
-      onGameComplete={onGameComplete}
-      profileName={profileName}
       selectedMode={selectedMode}
       skipModeSelection={skipModeSelection}
+      isActive={isActive}
       isReload={isReload}
       savedGameState={savedGameState}
       onSaveGameState={onSaveGameState}
+      onPhaseComplete={onPhaseComplete}
+      onGameComplete={onGameComplete}
+      hideElements={hideElements}
       isAudioOn={isAudioOn}
       playAudio={playAudio}
+      profileName={profileName}
+      WaterSprayComponent={RainbowComponent}
     />
   );
 };
-
 export default KurumeDevaGame;

@@ -17,6 +17,11 @@ import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
 import CulturalCelebrationModal from '../../../../lib/components/progress/CulturalCelebrationModal';
 import CulturalProgressExtractor from '../../../../lib/services/CulturalProgressExtractor';
 import FreeDraggableItem from '../../../../lib/components/interactive/FreeDraggableItem';
+import MenuButton from '../../../../lib/components/navigation/MenuButton';
+
+import HelpMenu from '../../../../lib/components/help/HelpMenu';
+import { modakHelpConfig } from './helpConfig';
+
 
 // UI Components
 import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
@@ -243,6 +248,9 @@ const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false);
 const [showDiscoveryFlip3, setShowDiscoveryFlip3] = useState(false);
 
 const [showDiscovery1, setShowDiscovery1] = useState(false);
+  const [showSlideMenu, setShowSlideMenu] = useState(false);  // ← NEW!
+  const [showHelpMenu, setShowHelpMenu] = useState(false);
+const [isAudioOn, setIsAudioOn] = useState(true);
 
 // Configuration for the Overlay Text/Images
 const discoveryConfig = {
@@ -717,6 +725,23 @@ useEffect(() => {
         moundsVanishing: true
       });
 
+        // 3. AUTO-PARK: After 1.5 seconds, run him to the Basket!
+  setTimeout(() => {
+    sceneActions.updateState({
+      // Move him to the left/center (Near where basket appears)
+      // We use a fixed position that is safe on iPad Mini & Pro
+      mooshikaPosition: { top: '48%', left: '45%' } 
+    });
+    
+    // Optional: Make him say something when he arrives
+    setTimeout(() => {
+      setMooshikaSpeechMessage("I'll wait here! Find the Modaks!");
+      setShowMooshikaSpeech(true);
+      setTimeout(() => setShowMooshikaSpeech(false), 3000);
+    }, 500);
+    
+  }, 1500); 
+
 // --- NEW 2-STAGE SEQUENCE ---
 
 //triggerDiscoverySequence('mooshika', 800);
@@ -1053,7 +1078,7 @@ const completeSymbolLearning = (symbolKey, symbolData) => {
     return modakImages[index] || modak1;
   };
 
-  const renderCounter = () => {
+  /*const renderCounter = () => {
     if (!sceneState.modaksUnlocked || !sceneState.welcomeShown) return null;
     const collectedCount = sceneState?.collectedModaks?.length || 0;
     
@@ -1071,107 +1096,102 @@ const completeSymbolLearning = (symbolKey, symbolData) => {
         <div className="modak-game-counter-display">{collectedCount}/3</div>
       </div>
     );
-  };
+  };*/
 
   return (
     <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
       <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
         <div className="modak-game-container">
           <div className="modak-game-background" style={{ backgroundImage: `url(${forestBackground})` }}>
-            {renderCounter()}
-
-            {/* Phase Headers */}
-            {!showChoiceButtons && !showPowerMission && sceneState.welcomeShown && ( 
-              <>
-                {sceneState.phase === PHASES.MOOSHIKA_SEARCH && (
-                  <div className="modak-game-phase-header">
-                    WHERE IS MOOSHIKA? Click the mounds!
-                  </div>
-                )}
-                
-         {/* Modak Collection Header - stays visible throughout collection */}
-{(sceneState.phase === PHASES.MODAKS_UNLOCKED || sceneState.phase === PHASES.SOME_COLLECTED) && !sceneState.basketFull && (
-  <div className="modak-game-phase-header">
-    <div style={{ fontSize: '28px', marginBottom: '8px' }}>
-      HELP MOOSHIKA! Click modaks to collect!
-    </div>
-    <div style={{ 
-      display: 'flex', 
-      alignItems: 'center', 
-      gap: '15px',
-      justifyContent: 'center'
-    }}>
-      {/* Progress Bar */}
-      <div style={{
-        width: '200px',
-        height: '20px',
-        background: 'rgba(255,255,255,0.3)',
-        borderRadius: '10px',
-        border: '2px solid #8B4513',
-        overflow: 'hidden'
-      }}>
-        <div style={{
-          width: `${((sceneState.collectedModaks?.length || 0) / 3) * 100}%`,
-          height: '100%',
-          background: 'linear-gradient(90deg, #FF1493, #FFD700)',
-          transition: 'width 0.5s ease-out'
-        }} />
+            {/*{renderCounter()}
+{/* Phase Headers */}
+{!showChoiceButtons && !showPowerMission && sceneState.welcomeShown && ( 
+  <>
+    {/* 1. SEARCH PHASE */}
+    {sceneState.phase === PHASES.MOOSHIKA_SEARCH && (
+      <div className="modak-game-phase-header">
+        WHERE IS MOOSHIKA? Click the mounds!
       </div>
-      {/* Counter */}
-      <div style={{
-        fontSize: '24px',
-        fontWeight: 'bold',
-        color: 'white',
-        textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
-      }}>
-        {sceneState.collectedModaks?.length || 0}/3
-      </div>
-    </div>
+    )}
+    
+    {/* 2. MODAK COLLECTION PHASE */}
+    {(sceneState.phase === PHASES.MODAKS_UNLOCKED || sceneState.phase === PHASES.SOME_COLLECTED) && !sceneState.basketFull && (
+      <div className="modak-game-phase-header">
+        <div>HELP MOOSHIKA! Click modaks to collect!</div>
+        
+        <div className="modak-header-content-row">
+          {/* Progress Bar 
+          <div className="modak-progress-track">
+            <div 
+              className="modak-progress-fill modak-collection"
+              style={{
+                width: `${((sceneState.collectedModaks?.length || 0) / 3) * 100}%`
+              }} 
+            />
+          </div>
+          {/* Hearts Display */}
+{/* Hearts Display and Counter in one row */}
+<div className="flex flex-row gap-3 justify-center items-center mb-4">
+  {[1, 2, 3].map((heart) => (
+    <span
+      key={heart}
+      className={`text-5xl transition-all duration-500 ${
+        (sceneState.collectedModaks?.length || 0) >= heart ? 'opacity-100' : 'opacity-30'
+      }`}
+    >
+      {(sceneState.collectedModaks?.length || 0) >= heart ? '❤️' : '🤍'}
+    </span>
+  ))}
+  <div className="modak-progress-text ml-3">
+    {sceneState.collectedModaks?.length || 0}/3
   </div>
-)}
+</div>
+          {/* Counter */}
+          <div className="modak-progress-text">
+            {sceneState.collectedModaks?.length || 0}/3
+          </div>
+        </div>
+      </div>
+    )}
 
-{/* Rock Feeding Header - stays visible throughout feeding */}
-{(sceneState.phase === PHASES.ROCK_VISIBLE || sceneState.phase === PHASES.ROCK_FEEDING) && !sceneState.rockTransformed && (
-  <div className="modak-game-phase-header">
-    <div style={{ fontSize: '28px', marginBottom: '8px' }}>
-      FEED GANESHA! Click modaks from basket!
+    {/* 3. ROCK FEEDING PHASE */}
+    {(sceneState.phase === PHASES.ROCK_VISIBLE || sceneState.phase === PHASES.ROCK_FEEDING) && !sceneState.rockTransformed && (
+      <div className="modak-game-phase-header">
+        <div>FEED GANESHA! Click modaks from basket!</div>
+        
+        <div className="modak-header-content-row">
+          {/* Progress Bar 
+          <div className="modak-progress-track">
+            <div 
+              className="modak-progress-fill rock-feeding"
+              style={{
+                width: `${((sceneState.rockFeedCount || 0) / 3) * 100}%`
+              }} 
+            />
+          </div>
+          {/* Hearts Display */}
+<div className="flex flex-row gap-3 justify-center items-center mb-4">
+    {[1, 2, 3].map((heart) => (
+    <div
+      key={heart}
+      className={`text-5xl transition-all duration-500 ${
+        (sceneState.rockFeedCount || 0) >= heart ? 'opacity-100' : 'opacity-30'
+      }`}
+    >
+      {(sceneState.rockFeedCount || 0) >= heart ? '❤️' : '🤍'}
     </div>
-    <div style={{ 
-      display: 'flex', 
-      alignItems: 'center', 
-      gap: '15px',
-      justifyContent: 'center'
-    }}>
-      {/* Progress Bar */}
-      <div style={{
-        width: '200px',
-        height: '20px',
-        background: 'rgba(255,255,255,0.3)',
-        borderRadius: '10px',
-        border: '2px solid #8B4513',
-        overflow: 'hidden'
-      }}>
-        <div style={{
-          width: `${((sceneState.rockFeedCount || 0) / 3) * 100}%`,
-          height: '100%',
-          background: 'linear-gradient(90deg, #FF8C00, #FFD700)',
-          transition: 'width 0.5s ease-out'
-        }} />
+  ))}
+</div>
+          {/* Counter */}
+          <div className="modak-progress-text">
+            {sceneState.rockFeedCount || 0}/3
+          </div>
+        </div>
       </div>
-      {/* Counter */}
-      <div style={{
-        fontSize: '24px',
-        fontWeight: 'bold',
-        color: 'white',
-        textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
-      }}>
-        {sceneState.rockFeedCount || 0}/3
-      </div>
-    </div>
-  </div>
+    )}
+  </>
 )}
-              </>
-            )}
+          
 
             {/* --- UPDATED OPENING MODAL USING SHARED CSS AND VARIABLES --- */}
             {sceneState.phase === PHASES.MOOSHIKA_SEARCH && !sceneState.welcomeShown && (
@@ -1412,28 +1432,28 @@ const completeSymbolLearning = (symbolKey, symbolData) => {
                     style={{ width: '100%', height: '100%' }}
                   />
                   
-                  <div className="modak-game-basket-counter">
-                    {sceneState.collectedModaks?.length || 0}/3
-                  </div>
+                  
                 </div>
               </div>
             )}
-
-            {sceneState.collectedModaks?.map((modakIndex, displayIndex) => (
-              <div 
-                key={`collected-${modakIndex}-${displayIndex}`}
-                className={`modak-game-modak modak-game-modak-collected-${displayIndex + 1} 
-                  ${showHintGlow && sceneState.rockVisible ? 'modak-game-hint-glow' : ''}`}
-                style={{
-                  position: 'absolute',
-                  width: '64px',
-                  height: '64px',
-                  top: `${42 + displayIndex * 3}%`,
-                  left: `${14 + displayIndex * 2}%`,
-                  zIndex: 15,
-                  cursor: sceneState.rockVisible ? 'pointer' : 'default',
-                  animation: 'modak-game-modakToBasket 0.8s ease-out'
-                }}
+{sceneState.collectedModaks?.map((modakIndex, displayIndex) => (
+  <div 
+    key={`collected-${modakIndex}-${displayIndex}`}
+    className={`modak-game-modak modak-game-modak-collected-${displayIndex + 1} 
+      ${showHintGlow && sceneState.rockVisible ? 'modak-game-hint-glow' : ''}`}
+    style={{
+      position: 'absolute',
+      // width: '64px',  <-- REMOVED (Handled by CSS now)
+      // height: '64px', <-- REMOVED (Handled by CSS now)
+      
+      // We keep these only as fallbacks, but CSS !important will override them for better positioning
+      top: `${42 + displayIndex * 3}%`,
+      left: `${14 + displayIndex * 2}%`,
+      
+      zIndex: 15,
+      cursor: sceneState.rockVisible ? 'pointer' : 'default',
+      animation: 'modak-game-modakToBasket 0.8s ease-out'
+    }}
                 onClick={() => {
                   if (sceneState.rockVisible && sceneState.rockFeedCount < 3) {
                     handleModakInBasketClick(modakIndex);
@@ -1463,45 +1483,44 @@ const completeSymbolLearning = (symbolKey, symbolData) => {
               </div>
             ))}
 
-            {/* ROCK/BELLY */}
-            {sceneState.rockVisible && (
-              <div className="modak-game-rock-container breathing">
-                <ClickableElement
-                  id="feeding-rock"
-                  onClick={() => {}}
-                  completed={sceneState.rockTransformed}
-                  zone="rock-zone"
-                >
-                  <img 
-                    src={sceneState.rockTransformed ? belly : rock}
-                    alt={sceneState.rockTransformed ? "Ganesha's Belly" : "Sacred Rock"}
-                    style={{ 
-                      width: '100%', 
-                      height: '100%',
-                      cursor: 'default',
-                      transform: `scale(${1 + (sceneState.rockBellySize / 100) * 0.3})`,
-                      transition: 'transform 0.8s ease-out'
-                    }}
-                  />
+     {/* ROCK/BELLY */}
+{sceneState.rockVisible && (
+  <div className="modak-game-rock-container breathing">
+    <ClickableElement
+      id="feeding-rock"
+      onClick={() => {}}
+      completed={sceneState.rockTransformed}
+      zone="rock-zone"
+    >
+      <img 
+        src={sceneState.rockTransformed ? belly : rock}
+        alt={sceneState.rockTransformed ? "Ganesha's Belly" : "Sacred Rock"}
+        style={{ 
+          width: '100%', 
+          height: '100%',
+          cursor: 'default',
+          transform: `scale(${1 + (sceneState.rockBellySize / 100) * 0.3})`,
+          transition: 'transform 0.8s ease-out'
+        }}
+      />
 
-                  <div className="modak-game-rock-feed-count">
-                    {sceneState.rockFeedCount || 0}/3
-                  </div>
-                </ClickableElement>
+      {/* DELETE THE FEED COUNT DIV THAT WAS HERE */}
 
-                {(showSparkle === 'rock-feeding' || showSparkle === 'belly-transform') && (
-                  <SparkleAnimation
-                    type={showSparkle === 'belly-transform' ? 'glitter' : 'magic'}
-                    count={25}
-                    color={showSparkle === 'belly-transform' ? 'gold' : '#ff6347'}
-                    size={12}
-                    duration={2000}
-                    fadeOut={true}
-                    area="full"
-                  />
-                )}
-              </div>
-            )}
+    </ClickableElement>
+
+    {(showSparkle === 'rock-feeding' || showSparkle === 'belly-transform') && (
+      <SparkleAnimation
+        type={showSparkle === 'belly-transform' ? 'glitter' : 'magic'}
+        count={25}
+        color={showSparkle === 'belly-transform' ? 'gold' : '#ff6347'}
+        size={12}
+        duration={2000}
+        fadeOut={true}
+        area="full"
+      />
+    )}
+  </div>
+)}
 
             {/* SYMBOL LEARNING SPARKLES */}
             {showSparkle === 'mooshika-to-sidebar' && (
@@ -1610,31 +1629,14 @@ const completeSymbolLearning = (symbolKey, symbolData) => {
               </div>
             )}
 
-            {/* Resume Popup */}
+{/* Resume Popup */}
 {showResumePopup && (
-  <div style={{
-    position: 'fixed',
-    top: '20%',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-    padding: '30px 50px',
-    borderRadius: '20px',
-    boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
-    zIndex: 9999,
-    fontFamily: "'Baloo 2', cursive",
-    fontSize: '28px',
-    fontWeight: 'bold',
-    color: '#5D2E0F',
-    textAlign: 'center',
-    maxWidth: '80%',
-    border: '4px solid #FF8C00'
-  }}>
+  <div className="modak-resume-popup">
     {resumeMessage}
   </div>
 )}
 
-{/* TEST BUTTON */}
+{/* TEST BUTTON 
 <button
   onClick={() => {
     console.log('🧪 Test clicked');
@@ -1655,7 +1657,7 @@ const completeSymbolLearning = (symbolKey, symbolData) => {
   }}
 >
   TEST POPUP
-</button>
+</button>*/}
 
         {sceneState.welcomeShown && !showSceneCompletion && (
   <BackToMapButton onNavigate={onNavigate} />
@@ -2095,7 +2097,7 @@ onComplete={() => {
             }}
           />
 
-          {/* NAVIGATION */}
+          {/* NAVIGATION 
           <TocaBocaNav
             onHome={() => {
               setTimeout(() => onNavigate?.('home'), 100);
@@ -2118,7 +2120,47 @@ onComplete={() => {
               completed: sceneState.phase === PHASES.COMPLETE ? 1 : 0,
               total: 1
             }}
-          />
+          />*/}
+
+{/* ==================== MENU BUTTON (Top-Right) ==================== */}
+        <MenuButton
+          onClick={() => setShowSlideMenu(true)}  // ← Opens menu
+          zoneId={zoneId}
+        />
+
+        {/* ==================== SLIDE MENU ==================== */}
+        <TocaBocaNav
+          show={showSlideMenu}                      // ← NEW!
+          onClose={() => setShowSlideMenu(false)}   // ← NEW!
+          zoneId="symbol-mountain"
+          onHome={() => {
+            // Optional: close menu first, then navigate
+            setShowSlideMenu(false);
+            setTimeout(() => onNavigate?.('home'), 100);
+          }}
+onHelp={() => {
+  setShowSlideMenu(false);
+  setShowHelpMenu(true);  // ← Opens help menu
+}}
+          onStartFresh={resetScene}
+          isAudioOn={isAudioOn}
+          onAudioToggle={() => setIsAudioOn(!isAudioOn)}
+          onParentMenu={() => console.log('Parent')}
+        />
+
+
+{/* ADD THIS WHOLE BLOCK ↓ */}
+<HelpMenu
+  show={showHelpMenu}
+  onClose={() => setShowHelpMenu(false)}
+  onNavigate={onNavigate}
+  resetScene={resetScene}
+  helpConfig={modakHelpConfig}
+  sceneState={sceneState}
+  onSoundToggle={() => setIsAudioOn(!isAudioOn)}
+  isAudioOn={isAudioOn}
+  zoneId="symbol-mountain"
+/>
 
           <CulturalCelebrationModal
             show={showCulturalCelebration}

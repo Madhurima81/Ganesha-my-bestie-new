@@ -1,0 +1,1729 @@
+/* ========================================
+   DREAMS & WISHES GAME STYLES
+======================================== */
+
+.dreams-wishes-game {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.dreams-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* Back Button */
+.back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 12px 24px;
+  background: rgba(139, 111, 71, 0.9);
+  color: white;
+  border: 2px solid #654321;
+  border-radius: 12px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 100;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background: rgba(101, 67, 33, 0.9);
+  transform: scale(1.05);
+}
+
+/* ========================================= */
+/* DREAMY / WISH INTRO THEME                 */
+/* ========================================= */
+
+/* 1. The Card (Soft & Magical) */
+.dream-card {
+  background: linear-gradient(180deg, #FFFBF0 0%, #FFF3E0 100%); /* Soft Cream to Warm White */
+  border-radius: 40px;
+  padding: 50px 40px 40px 40px;
+  text-align: center;
+  position: relative;
+  max-width: 600px;
+  width: 90%;
+  
+  /* Soft Golden Glow Shadow */
+  box-shadow: 
+    0 20px 50px rgba(122, 74, 29, 0.15), 
+    inset 0 0 0 3px rgba(255, 255, 255, 0.8),
+    0 0 0 4px rgba(244, 196, 48, 0.3); /* Faint Gold Ring */
+    
+  animation: dreamFloatIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* 2. Title (Warm Golden Brown) */
+.dream-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 3rem;
+  font-weight: 800;
+  color: #7A4A1D; /* Specified Golden Brown */
+  margin-bottom: 15px;
+  text-shadow: 0 2px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* 3. Body Text (Soft Cocoa Brown) */
+.dream-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.3rem;
+  color: #5A3A1E; /* Specified Cocoa Brown */
+  line-height: 1.6;
+  margin-bottom: 25px;
+  font-weight: 700;
+}
+
+/* 4. The Icon Arc (Earth, Heart, Leaf) */
+.dream-icon-row {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  margin-bottom: 35px;
+  padding-top: 10px; /* Space for the arc top */
+}
+
+.dream-icon-item {
+  width: 70px;
+  height: 70px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  
+  /* Soft Sticker Look */
+  box-shadow: 0 6px 15px rgba(90, 58, 30, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  
+  transition: transform 0.3s ease;
+}
+
+/* Create the "Gentle Arc" */
+.dream-icon-item:nth-child(1) { transform: rotate(-10deg) translateY(10px); } /* Left down */
+.dream-icon-item:nth-child(2) { transform: translateY(-5px); }               /* Center up */
+.dream-icon-item:nth-child(3) { transform: rotate(10deg) translateY(10px); }  /* Right down */
+
+/* Hover Effect */
+.dream-icon-item:hover {
+  transform: scale(1.1) translateY(-5px) !important; /* Popping up */
+}
+
+/* 5. The CTA Button (Dream Coral) */
+.dream-btn {
+  background: linear-gradient(135deg, #FF8A65 0%, #FF7043 100%); /* Peach/Coral */
+  color: #FFF7ED; /* Soft Cream Text */
+  border: none;
+  padding: 16px 45px;
+  border-radius: 50px;
+  
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.5rem;
+  font-weight: 800;
+  cursor: pointer;
+  
+  /* Soft Glow */
+  box-shadow: 
+    0 10px 25px rgba(255, 138, 101, 0.4),
+    inset 0 2px 0 rgba(255, 255, 255, 0.3);
+    
+  transition: all 0.2s ease;
+}
+
+.dream-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(255, 138, 101, 0.5);
+}
+
+.dream-btn:active {
+  transform: translateY(1px);
+}
+
+/* Animation */
+@keyframes dreamFloatIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ========================================
+   WISH SPECIFIC INTRO STYLES
+   (Cream Card + Pink Button)
+======================================== */
+
+
+/* 2. The Text */
+.wish-intro-text {
+  font-family: 'Baloo 2', cursive;
+  font-size: 26px;
+  font-weight: 700;
+  
+  /* Warm Cocoa Brown */
+  color: #6A3E1F;
+  
+  text-shadow: none; /* Clean text */
+  line-height: 1.5;
+  margin-bottom: 30px;
+}
+
+/* 3. The Pink Action Button */
+.wish-action-btn {
+  background: #F58FB1; /* Soft Dream Pink */
+  color: #FFF7ED;     /* Creamy White Text */
+  
+  border: none;
+  border-radius: 50px;
+  padding: 16px 45px;
+  
+  font-family: 'Baloo 2', cursive;
+  font-size: 22px;
+  font-weight: 800;
+  cursor: pointer;
+  
+  /* Soft Pink Glow */
+  box-shadow: 0 8px 20px rgba(245, 143, 177, 0.4);
+  transition: all 0.2s ease;
+}
+
+.wish-action-btn:hover {
+  background: #EE7CA3;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 25px rgba(245, 143, 177, 0.5);
+}
+
+.wish-action-btn:active {
+  transform: translateY(1px);
+}
+
+/* ========================================
+   INTRO OVERLAY
+======================================== */
+
+/* 1. SLOW DOWN THE BACKGROUND FADE */
+.intro-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  
+  /* CHANGED: Increased from 0.5s to 1.2s for a dreamy entry */
+  animation: fadeIn 1.2s ease-out forwards; 
+}
+
+/* 2. DELAY THE CARD POP-UP (So background fades first) */
+.wish-intro-card {
+  background: #FFF6E8;
+  border: 3px solid #F0E0C0;
+  border-radius: 35px;
+  padding: 45px 50px;
+  text-align: center;
+  max-width: 550px;
+  box-shadow: 
+    0 15px 40px rgba(106, 62, 31, 0.15), 
+    inset 0 0 0 2px #FFFFFF;
+  position: relative;
+  
+  /* CHANGED: Added 0.5s delay so it doesn't slam in immediately */
+  animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.5s backwards;
+}
+
+/* Ensure the fadeIn keyframe is simple */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.intro-ganesha {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  margin-bottom: 30px;
+}
+
+.intro-speech {
+  background: linear-gradient(135deg, #FFD93D, #FF9800);
+  border: 4px solid #FF8C00;
+  border-radius: 25px;
+  padding: 30px 40px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+}
+
+.intro-text {
+  font-family: 'Baloo 2', cursive;
+  font-size: 24px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  line-height: 1.4;
+}
+
+.start-btn {
+  padding: 15px 40px;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.start-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+}
+
+
+/* ========================================
+   WISH SCREENS
+======================================== */
+
+.wish-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+}
+
+.ganesha-watching {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+}
+
+.ganesha-small {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+
+/* ========================================= */
+/* YELLOW SPEECH BUBBLE – POLISHED VERSION   */
+/* ========================================= */
+
+.wish-instruction-bubble {
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+
+  /* Warm honey-yellow (not neon) */
+  background: linear-gradient(
+    180deg,
+    #FFE7A3 0%,
+    #FFD36A 100%
+  );
+
+  border: 2px solid #F2C35B;
+  border-radius: 28px;
+
+  padding: 14px 32px;
+  min-width: 240px;
+  text-align: center;
+
+  font-family: 'Baloo 2', cursive;
+  font-size: 18px;
+  font-weight: 700;
+  color: #5A3A1E; /* Deep warm brown for readability */
+  line-height: 1.35;
+
+  box-shadow:
+    0 10px 24px rgba(120, 70, 20, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+
+  z-index: 20;
+  animation: bubblePop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+}
+
+.wish-instruction-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 22px;
+  height: 12px;
+
+  background: #FFD36A;
+  border-radius: 0 0 12px 12px;
+
+  box-shadow:
+    0 3px 6px rgba(120, 70, 20, 0.2);
+}
+
+
+
+
+.speech-bubble-large {
+  position: absolute;
+  bottom: 180px; /* Moved higher so it doesn't cover button */
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border: 3px solid #FF8C00;
+  border-radius: 20px;
+  padding: 20px 35px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 22px;
+  font-weight: 600;
+  color: #654321;
+  text-align: center;
+  z-index: 15;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  max-width: 700px;
+  line-height: 1.5;
+}
+
+.wish-interactive-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+/* ========================================
+   WISH 1: EARTH & HAPPINESS (Fixed)
+======================================== */
+
+/* 1. Main Interactive Container */
+.wish-interactive-container {
+  position: absolute;
+  top: 55%; /* Move down slightly to clear text */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  
+  /* Flexbox to center everything */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  width: 100%;
+  height: auto;
+}
+
+/* 2. Earth Container (Size Control) */
+.earth-container {
+  position: relative;
+  width: 280px;  /* <--- CHANGE EARTH SIZE HERE */
+  height: 280px; /* <--- KEEP SAME AS WIDTH */
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.earth-container:active {
+  transform: scale(0.95);
+}
+
+/* 3. The Images (Sad & Happy) */
+.earth-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: opacity 0.8s ease;
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+}
+
+/* 4. Faces Container (Layer on top) */
+.faces-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Let clicks pass through to Earth */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 5. Individual Faces */
+.face-emoji {
+  position: absolute;
+  font-size: 45px; /* <--- CHANGE SMILEY SIZE HERE */
+  
+  /* Centered by default, then moved by transform in JS */
+  top: 50%;
+  left: 50%;
+  margin-top: -22px;  /* Half of font-size to center perfectly */
+  margin-left: -22px;
+  
+  transition: all 0.6s ease;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+/* Glow Effect for Completion */
+.complete-glow-pulse {
+  animation: earthPulse 2s infinite ease-in-out;
+  filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.8));
+}
+
+@keyframes earthPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* ========================================
+   WISH 2: BOWLS & SHARING (Huge Size Fix)
+======================================== */
+
+.bowls-container {
+  position: absolute;
+  top: 60%;           /* Move down slightly to clear the text bubble */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+  display: flex;
+  gap: 20px;          /* Tighter gap so big bowls fit on screen */
+  align-items: center;
+  justify-content: center;
+  
+  width: 100%;        /* Take full width to avoid squishing */
+  z-index: 20;
+}
+
+.bowl {
+  /* MASSIVE SIZE INCREASE */
+  width: 220px;       
+  height: 220px;
+  
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  
+  /* Ensure they don't shrink */
+  flex-shrink: 0; 
+}
+
+.bowl:hover {
+  transform: scale(1.05);
+}
+
+.bowl-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 15px 25px rgba(0,0,0,0.3));
+  transition: all 0.3s ease;
+}
+
+/* Bounce Effect */
+.bowl-glow-bounce {
+  filter: brightness(1.2) drop-shadow(0 0 30px rgba(255, 215, 0, 0.8));
+  animation: bigBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes bigBounce {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.25); } /* Big pop! */
+  100% { transform: scale(1); }
+}
+
+/* Food Particles */
+.bowl-food {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 60px;    /* Giant icons */
+  animation: popIn 0.4s ease-out;
+  width: 100%;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* Hearts Rain (Unchanged) */
+.hearts-rain {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.heart-fall {
+  position: absolute;
+  font-size: 40px;
+  animation: heartRain 3s linear infinite;
+}
+
+@keyframes heartRain {
+  0% { transform: translateY(-100px); opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+/* ========================================
+   WISH 3: PARK & NATURE (Fixed Stacking)
+======================================== */
+
+.park-scene {
+  /* Positioning the container */
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+
+  /* Size */
+  width: 550px;
+  height: 380px;
+  
+  cursor: pointer;
+  border-radius: 30px;
+  overflow: hidden; /* Keeps images inside rounded corners */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  border: 4px solid #fff;
+  background: #E0E0E0; /* Fallback color */
+}
+
+/* KEY FIX: Images must float on top of each other */
+.park-ground-image {
+  position: absolute; 
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.8s ease; /* Smooth fade */
+}
+
+.park-ground-image.dry {
+  z-index: 1; /* Bottom layer */
+}
+
+.park-ground-image.green {
+  z-index: 2; /* Top layer */
+}
+
+/* Layer for Flowers/Butterflies above the grass */
+.flowers-container,
+.butterflies-container,
+.playground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Individual Elements */
+.flower {
+  position: absolute;
+  font-size: 45px;
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards;
+  filter: drop-shadow(0 4px 4px rgba(0,0,0,0.2));
+}
+
+.butterfly {
+  position: absolute;
+  font-size: 40px;
+  animation: flutter 3s ease-in-out infinite;
+}
+
+.playground {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+}
+
+.playground-item {
+  font-size: 80px;
+  animation: popIn 0.6s ease backwards;
+  filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
+}
+
+/* ========================================
+   WISH COMPLETE SCREENS
+======================================== */
+
+.wish-complete-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+}
+
+.ganesha-celebrate {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  margin-bottom: 30px;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+}
+
+.success-message-large {
+  font-family: 'Baloo 2', cursive;
+  font-size: 36px;
+  font-weight: 700;
+  color: #FFD700;
+  text-align: center;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.wish-checkmark {
+  font-family: 'Nunito', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #4CAF50;
+  background: white;
+  padding: 15px 30px;
+  border-radius: 25px;
+  border: 3px solid #45a049;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+}
+
+.celebration-elements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 25;
+}
+
+.floating-element {
+  position: absolute;
+  font-size: 40px;
+  animation: floatUp 3s ease-in-out infinite;
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* ========================================
+   WISH COMPLETE SUBLINE (Emotional)
+======================================== */
+
+.soft-thank-you {
+  margin-top: 6px;
+  font-size: 20px; /* Slightly larger for readability */
+  font-weight: 500;
+  color: #725521; /* Warm gold/brown */
+  opacity: 0;     /* Start hidden for animation */
+  text-align: center;
+  letter-spacing: 0.2px;
+  font-family: 'Nunito', sans-serif;
+  
+  /* Animation */
+  animation: fadeInSoft 0.8s ease-out forwards;
+  animation-delay: 0.5s; /* Wait for main title */
+}
+
+@keyframes fadeInSoft {
+  to { opacity: 0.95; }
+}
+
+/* ========================================
+   DREAM SCREENS
+======================================== */
+
+/* ========================================= */
+/* DREAM INSTRUCTION BOX (Specific Fix)      */
+/* ========================================= */
+
+.dream-instruction-box {
+  position: absolute;
+  /* 1. Move it UP (Higher than before) */
+  top: 8%; 
+  left: 50%;
+  transform: translateX(-50%);
+
+  /* 2. Visual Style (Cream & Brown to match Dream Frame) */
+  background: #FFF9F0; 
+  border: 4px solid #8B4513; 
+  border-radius: 25px;
+  
+  /* 3. Sizing & Text */
+  padding: 20px 40px;
+  width: 90%;
+  max-width: 600px;
+  
+  font-family: 'Baloo 2', cursive;
+  font-size: 22px;
+  font-weight: 600;
+  color: #5D4037;
+  text-align: center;
+  line-height: 1.5;
+
+  /* 4. Shadow for pop */
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  z-index: 20;
+}
+
+/* Highlight text inside */
+.dream-instruction-box strong {
+  color: #D35400; /* Burnt Orange for emphasis */
+  font-weight: 800;
+}
+
+.drawing-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Dream Screen - Single Interactive Layout */
+.dream-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+}
+
+.dream-container {
+  position: relative;
+  width: 600px;
+  height: 400px;
+  background: white;
+  border: 6px solid #8B4513;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  overflow: visible; /* Allow Ganesha to extend outside */
+}
+
+/* Dream Drawing Display */
+.dream-drawing-display {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F8F8F8;
+  border-radius: 15px;
+}
+
+.dream-image {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+}
+
+/* Clouds Container */
+.clouds-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.dream-cloud {
+  position: absolute;
+  transition: all 0.8s ease;
+  animation: cloudFloat 4s ease-in-out infinite;
+}
+
+.cloud-icon {
+  width: 140px;
+  height: 100px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.15));
+}
+
+/* Cloud Positions */
+.cloud-1 {
+  top: 10%;
+  left: 12%;
+}
+
+.cloud-2 {
+  top: 40%;
+  right: 15%;
+}
+
+.cloud-3 {
+  bottom: 18%;
+  left: 30%;
+}
+
+/* Cloud Float */
+@keyframes cloudFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* Cloud Fade Away When Tapped */
+.cloud-fade {
+  animation: cloudBlowAway 1s ease-out forwards !important;
+}
+
+@keyframes cloudBlowAway {
+  0% {
+    opacity: 1;
+    transform: translateX(0) translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-180px) translateY(-120px) scale(0.2) rotate(-25deg);
+  }
+}
+
+/* Ganesha Helper - Bottom Right, Outside Container */
+.ganesha-helper {
+  position: absolute;
+  bottom: -60px;
+  right: -70px;
+  z-index: 10;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.ganesha-helper:hover {
+  transform: scale(1.08);
+}
+
+.ganesha-helper:active {
+  transform: scale(0.95);
+}
+
+.ganesha-trunk {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 15px rgba(0, 0, 0, 0.25));
+}
+
+/* Ganesha Blowing Animation */
+.ganesha-blowing .ganesha-trunk {
+  animation: trunkBlow 0.4s ease-out;
+}
+
+@keyframes trunkBlow {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-8deg) scale(1.05); }
+}
+
+/* Wind Puff Effect */
+.wind-puff {
+  position: absolute;
+  top: 20%;
+  left: -30px;
+  font-size: 40px;
+  animation: puffOut 0.6s ease-out;
+  pointer-events: none;
+}
+
+@keyframes puffOut {
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: translateX(-80px) scale(1.5); opacity: 0; }
+}
+
+/* Golden Success Puff */
+.golden-puff {
+  position: absolute;
+  top: 15%;
+  left: -40px;
+  font-size: 50px;
+  animation: goldenPuff 1.2s ease-out;
+  pointer-events: none;
+}
+
+@keyframes goldenPuff {
+  0% { transform: scale(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateX(-100px) translateY(-50px) scale(2) rotate(360deg); opacity: 0; }
+}
+
+/* Speech Bubble - Larger, More Prominent */
+.speech-bubble-large {
+background: #FFF7E6;   /* warm cream */
+border: 3px solid #F5C04A;
+color: #6B3E1E; /* warm brown */
+  font-family: 'Baloo 2', 'Nunito', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  padding: 25px 40px;
+  border-radius: 25px;
+  border: 4px solid #8B4513;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  max-width: 650px;
+  text-align: center;
+  line-height: 1.5;
+  z-index: 5;
+}
+
+.speech-bubble-large strong {
+color: #F59E0B;   /* warm marigold */
+font-weight: 700;
+  font-size: 26px;
+}
+
+/* Tap Counter - Big and Bold */
+.tap-counter-big {
+  font-family: 'Baloo 2', cursive;
+  font-size: 24px;
+color: #F59E0B;   /* warm marigold */
+font-weight: 700;
+  margin-top: 10px;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.15);
+  animation: counterPulse 0.6s ease-out;
+}
+
+@keyframes counterPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .dream-container {
+    width: 500px;
+    height: 340px;
+  }
+  
+  .cloud-icon {
+    width: 110px;
+    height: 80px;
+  }
+  
+  .ganesha-trunk {
+    width: 110px;
+    height: 110px;
+  }
+  
+  .speech-bubble-large {
+    font-size: 20px;
+    max-width: 550px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dream-container {
+    width: 90%;
+    max-width: 400px;
+    height: 280px;
+  }
+  
+  .cloud-icon {
+    width: 85px;
+    height: 65px;
+  }
+  
+  .ganesha-helper {
+    bottom: -50px;
+    right: -50px;
+  }
+  
+  .ganesha-trunk {
+    width: 90px;
+    height: 90px;
+  }
+  
+  .speech-bubble-large {
+    font-size: 18px;
+    max-width: 90%;
+    padding: 20px 30px;
+  }
+  
+  .tap-counter-big {
+    font-size: 36px;
+  }
+}
+
+/* ========================================
+   DREAM REVEALED
+======================================== */
+
+.dream-revealed-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+}
+
+.dream-glow-container {
+  position: relative;
+  width: 500px;
+  height: 350px;
+  margin-bottom: 40px;
+}
+
+.dream-image-glowing {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border: 5px solid #FFD700;
+  border-radius: 20px;
+  box-shadow: 0 0 40px rgba(255, 215, 0, 0.8),
+              0 0 60px rgba(255, 215, 0, 0.6),
+              0 0 80px rgba(255, 215, 0, 0.4);
+  animation: dreamGlow 2s ease-in-out infinite;
+}
+
+@keyframes dreamGlow {
+  0%, 100% {
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.8),
+                0 0 60px rgba(255, 215, 0, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 60px rgba(255, 215, 0, 1),
+                0 0 80px rgba(255, 215, 0, 0.8);
+  }
+}
+
+.sparkles-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.sparkle-float {
+  position: absolute;
+  font-size: 30px;
+  animation: sparkleFloat 2s ease-in-out infinite;
+}
+
+@keyframes sparkleFloat {
+  0%, 100% {
+    opacity: 0;
+    transform: translateY(0) scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-30px) scale(1);
+  }
+}
+
+.ganesha-proud {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  margin-bottom: 30px;
+}
+
+/* Intro Wish Icons */
+.intro-wish-icon {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+  transition: transform 0.3s ease;
+}
+
+.intro-wish-icon:hover {
+  transform: scale(1.1);
+}
+
+
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .earth-icon,
+  .park-scene {
+    width: 180px;
+    height: 180px;
+  }
+  
+  .bowl {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .smiley {
+    font-size: 20px;
+  }
+}
+
+/* ========================================= */
+/* NEW COMPARISON OVERLAY (Magical & Transparent) */
+/* ========================================= */
+
+/* 1. The Overlay (Replaces the solid screen) */
+.friendship-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+  /* The Warm Vignette Gradient - See-through! */
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 244, 224, 0.85) 0%,    /* Bright center */
+    rgba(255, 236, 210, 0.75) 45%,   /* Warm mid */
+    rgba(255, 220, 180, 0.6) 100%    /* Transparent edges */
+  );
+  
+  /* Blurs the game room behind it slightly */
+  backdrop-filter: blur(4px); 
+  z-index: 50;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto; /* Allow scrolling on small screens */
+  padding: 40px 20px;
+}
+
+/* 2. Title Section */
+.friendship-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 42px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: #ff8a00; /* Warm Orange */
+  text-align: center;
+  text-shadow:
+    0 2px 0 #fff2cc,
+    0 6px 14px rgba(255, 140, 0, 0.35);
+  margin: 0 0 10px 0;
+  animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.friendship-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: #8B4513; /* Dark Wood Brown */
+  font-weight: 700;
+  margin-bottom: 30px;
+  text-shadow: 0 1px 4px rgba(255, 255, 255, 0.6);
+}
+
+/* 3. The Layout Grid (2 Columns + Center) */
+.friendship-grid {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Align tops */
+  gap: 30px;
+  margin-bottom: 40px;
+  width: 100%;
+  max-width: 900px;
+}
+
+/* 4. The Glass Columns */
+.friend-column {
+  flex: 1;
+  /* Semi-transparent white card */
+  background: rgba(255, 255, 255, 0.65); 
+  border-radius: 24px;
+  padding: 25px;
+  
+  /* Soft Glass Shadow */
+  box-shadow:
+    0 10px 30px rgba(120, 90, 20, 0.15),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.6);
+    
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.column-header-image {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  margin-bottom: 5px;
+  filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
+}
+
+.child-avatar-display {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4ECDC4, #44A08D);
+  border: 4px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Baloo 2', cursive;
+  font-size: 40px;
+  color: white;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  margin-bottom: 5px;
+}
+
+.column-label {
+  font-family: 'Baloo 2', cursive;
+  font-size: 24px;
+  font-weight: 900;
+  color: #654321;
+  margin-bottom: 10px;
+}
+
+/* 5. The Items (Floating Tiles) */
+.friend-items-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  width: 100%;
+}
+
+.friend-item {
+  background: #FFFFFF;
+  border-radius: 18px;
+  padding: 15px 10px;
+  
+  /* Floating Effect */
+  box-shadow: 0 6px 14px rgba(139, 69, 19, 0.12);
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.25s ease;
+  min-height: 110px; /* Ensure uniform height */
+}
+
+.friend-item:hover {
+  transform: translateY(-4px);
+}
+
+.friend-item-label {
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  color: #9E9E9E;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.friend-item-img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.friend-item-text {
+  font-family: 'Baloo 2', cursive;
+  font-size: 16px;
+  font-weight: 700;
+  color: #5D4037;
+  text-align: center;
+  line-height: 1.1;
+}
+
+/* 6. Center Connector */
+.friend-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 100px; /* Push down to align with cards */
+  gap: 8px;
+}
+
+.connector-text {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-family: 'Baloo 2', cursive;
+  font-size: 20px;
+  font-weight: 900;
+  color: #FF5A5A;
+  letter-spacing: 4px;
+}
+
+.connector-heart {
+  font-size: 28px;
+  animation: pulse 1.6s infinite ease-in-out;
+}
+
+/* 7. Badge Strip (Unlocked) */
+.badge-strip {
+  background: linear-gradient(180deg, #ffd86b 0%, #ffb703 100%);
+  border-radius: 50px;
+  padding: 15px 40px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  
+  box-shadow:
+    0 8px 0 #e09b00,
+    0 18px 30px rgba(0,0,0,0.25);
+    
+  margin-bottom: 30px;
+  animation: badgePop 0.6s ease-out 0.5s backwards;
+}
+
+.badge-text {
+  font-family: 'Baloo 2', cursive;
+  font-size: 22px;
+  font-weight: 900;
+  color: #5c2d00;
+  text-transform: uppercase;
+}
+
+/* 8. Primary CTA Button */
+.primary-cta {
+  background: linear-gradient(180deg, #5fd068, #3bb54a);
+  border: none;
+  border-radius: 20px;
+  padding: 16px 50px;
+  
+  font-family: 'Baloo 2', cursive;
+  font-size: 22px;
+  font-weight: 800;
+  color: white;
+  
+  box-shadow: 0 8px 0 #2e8f3a, 0 15px 30px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.primary-cta:active {
+  transform: translateY(6px);
+  box-shadow: 0 2px 0 #2e8f3a;
+}
+
+/* Animations */
+@keyframes pulse {
+  0%,100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.25); opacity: 1; }
+}
+
+@keyframes badgePop {
+  0% { transform: scale(0); }
+  80% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .friendship-grid { flex-direction: column; align-items: center; }
+  .friend-connector { flex-direction: row; padding: 0; margin: 20px 0; }
+  .connector-text { writing-mode: horizontal-tb; letter-spacing: 2px; }
+}
+
+/* ========================================= */
+/* UPDATED WISH CARDS (Like Image 2)         */
+/* ========================================= */
+
+/* Container for the list */
+.wishes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px; /* Space between cards */
+  width: 100%;
+  max-width: 280px; /* Limit width so they look like nice cards */
+}
+
+/* Individual Card */
+.wish-item {
+  background: #FFFFFF;
+  border: 4px solid #8B4513; /* Thick warm brown border */
+  border-radius: 20px;       /* Rounded corners */
+  padding: 12px 20px;
+  
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Spreads Icon - Text - Check */
+  
+  box-shadow: 0 6px 15px rgba(139, 69, 19, 0.15); /* Soft shadow */
+  transition: transform 0.2s ease;
+  
+  /* Animation */
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards;
+}
+
+.wish-item:hover {
+  transform: scale(1.03);
+}
+
+/* Icon (Left) */
+.wish-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+/* Text (Center) */
+.wish-text {
+  font-family: 'Baloo 2', cursive;
+  font-size: 19px;
+  font-weight: 800;
+  color: #654321; /* Dark Brown */
+  text-align: left;
+  flex: 1;
+  padding-left: 15px;
+}
+
+/* Checkmark (Right) */
+.wish-check {
+  font-size: 24px;
+  color: #4CAF50; /* Success Green */
+  font-weight: 900;
+}
+
+/* Sparkle Background Layer */
+.overlay-sparkles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Let clicks pass through */
+  z-index: 0; /* Behind content */
+  overflow: hidden;
+}
+
+.bg-sparkle {
+  position: absolute;
+  font-size: 20px;
+  animation: twinkleFloat 4s infinite ease-in-out;
+  opacity: 0.6;
+}
+
+@keyframes twinkleFloat {
+  0%, 100% { transform: translateY(0) scale(0.8); opacity: 0.4; }
+  50% { transform: translateY(-20px) scale(1.2); opacity: 0.9; }
+}
+
+/* ========================================
+   ENDING SCREEN
+======================================== */
+
+.ending-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+}
+
+.ganesha-final {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  margin-bottom: 30px;
+}
+
+.final-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 48px;
+  font-weight: 900;
+  color: #FFD700;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+}
+
+/* ========================================
+   ANIMATIONS
+======================================== */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bubbleBounce {
+  0% {
+    transform: translateX(-50%) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: translateX(-50%) scale(1.1);
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes celebrate-scale {
+  0%, 100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+}
+
+.celebrate-scale {
+  animation: celebrate-scale 1s ease-in-out infinite;
+}
+
+.bounce {
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+.bounce-gentle {
+  animation: bounceGentle 2s ease-in-out infinite;
+}
+
+@keyframes bounceGentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.pop-in {
+  animation: popIn 0.6s ease-out;
+}
+
+.pulse {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+.glow-text {
+  animation: glowText 2s ease-in-out infinite;
+}
+
+@keyframes glowText {
+  0%, 100% {
+    text-shadow: 3px 3px 0 #FFD700,
+                 0 0 20px rgba(255, 215, 0, 0.5);
+  }
+  50% {
+    text-shadow: 3px 3px 0 #FFD700,
+                 0 0 40px rgba(255, 215, 0, 0.8);
+  }
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 768px) {
+  .intro-speech {
+    padding: 20px 30px;
+    max-width: 90%;
+  }
+
+  .intro-text {
+    font-size: 20px;
+  }
+
+  .earth-icon {
+    width: 200px;
+    height: 200px;
+  }
+
+  .earth-emoji {
+    font-size: 140px;
+  }
+
+  .bowls-container {
+    gap: 20px;
+  }
+
+  .park-scene {
+    width: 350px;
+    height: 250px;
+  }
+
+  .dream-container {
+    width: 90%;
+    height: 300px;
+  }
+
+  .dreams-comparison-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .comparison-divider {
+    flex-direction: row;
+    margin: 20px 0;
+  }
+
+  .divider-text {
+    writing-mode: horizontal-tb;
+  }
+}

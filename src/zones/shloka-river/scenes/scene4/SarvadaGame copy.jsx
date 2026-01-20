@@ -1,12 +1,11 @@
-
-// zones/shloka-river/scenes/Scene2/SamaprabhaGame.jsx
-// Thin wrapper for Game 4 - connects config to engine
+// zones/shloka-river/scenes/Scene5/SarvadaGame.jsx
+// Thin wrapper for Game 8 - connects config to engine
 
 import React from 'react';
 import MemoryGameEngine from '../../core/MemoryGameEngine';
 import { getGameConfig } from '../../configs/gameConfigs';
 
-const SamaprabhaGame = ({
+const SarvadaGame = ({
   isActive,
   hideElements,
   powerGained,
@@ -15,10 +14,10 @@ const SamaprabhaGame = ({
   profileName,
   WaterSprayComponent,
 
-  // ⭐ CHANGED: Assets specific to Samaprabha game (must match assetGetter names in gameConfigs.js)
-  getSadAnimalImage,      // Initial state (sad animal) -> matches assetGetterInitial
-  getHappyAnimalImage,    // Reward state (happy animal) -> matches assetGetterReward
-  getRainbowImage,        // Clicker (rainbow) -> matches assetGetter
+  // ⭐ CHANGED: Assets specific to Sarvada game
+  getSarvadaSadAnimalImage,    // Initial state (sad animal)
+  getSarvadaHappyAnimalImage,  // Reward state (happy animal)
+  getSarvadaHelperImage,       // Clicker (helper animal)
 
   // Mode control
   selectedMode,
@@ -30,18 +29,18 @@ const SamaprabhaGame = ({
   onSaveGameState
 }) => {
 
-  // ⭐ CHANGED: Get Samaprabha config
-  const gameConfig = getGameConfig('samaprabha');
+  // ⭐ CHANGED: Get Sarvada config
+  const gameConfig = getGameConfig('sarvada');
 
   // ⭐ CHANGED: Map asset getters to config names
   const assetGetters = {
-    getSadAnimalImage,      // matches: gameConfig.elements.singer.assetGetterInitial
-    getHappyAnimalImage,    // matches: gameConfig.elements.singer.assetGetterReward
-    getRainbowImage         // matches: gameConfig.elements.clicker.assetGetter
+    getSarvadaSadAnimalImage,   // matches: gameConfig.elements.singer.assetGetterInitial
+    getSarvadaHappyAnimalImage, // matches: gameConfig.elements.singer.assetGetterReward
+    getSarvadaHelperImage       // matches: gameConfig.elements.clicker.assetGetter
   };
 
   if (!gameConfig) {
-    console.error('❌ SamaprabhaGame: Config not found for "samaprabha"');
+    console.error('❌ SarvadaGame: Config not found for "sarvada"');
     return null;
   }
   
@@ -65,4 +64,4 @@ const SamaprabhaGame = ({
   );
 };
 
-export default SamaprabhaGame;
+export default SarvadaGame;

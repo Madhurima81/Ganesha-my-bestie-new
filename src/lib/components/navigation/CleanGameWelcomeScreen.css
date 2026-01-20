@@ -235,6 +235,77 @@
   flex: 1;
   max-width: 130px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: visible;
+}
+
+.stat-clean-row:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border: 2px solid #0288D1;
+}
+
+/* Completion badge for completed zones (8/8) */
+.stat-clean-row.completed {
+  background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%);
+  border: 2px solid #FFD700;
+  box-shadow: 0 4px 16px rgba(255, 215, 0, 0.4);
+  animation: gentleGlow 3s ease-in-out infinite;
+}
+
+@keyframes gentleGlow {
+  0%, 100% {
+    box-shadow: 0 4px 16px rgba(255, 215, 0, 0.4);
+  }
+  50% {
+    box-shadow: 0 6px 24px rgba(255, 215, 0, 0.6);
+  }
+}
+
+.completion-badge {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: rotateBadge 4s ease-in-out infinite;
+  z-index: 10;
+}
+
+@keyframes rotateBadge {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-10deg) scale(1.1);
+  }
+  75% {
+    transform: rotate(10deg) scale(1.1);
+  }
+}
+
+.star-icon {
+  font-size: 24px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 .stat-icon-clean {
@@ -744,6 +815,17 @@
 
   .stat-text-clean {
     font-size: 14px;
+  }
+
+  .completion-badge {
+    width: 36px;
+    height: 36px;
+    top: -10px;
+    right: -10px;
+  }
+
+  .star-icon {
+    font-size: 20px;
   }
 
   .primary-btn,

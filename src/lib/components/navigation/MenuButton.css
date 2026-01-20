@@ -1,0 +1,131 @@
+/* lib/components/navigation/MenuButton.css */
+/* Zone-themed menu button */
+
+.menu-button-trigger {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 95;
+  
+  /* Size */
+  width: 56px;
+  height: 56px;
+  
+  /* Beautiful rounded style */
+  border-radius: 50%;
+  border: 3px solid;
+  
+  /* Shadow and depth */
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+  
+  /* Cursor */
+  cursor: pointer;
+  
+  /* Transitions */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Center content */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Remove default button styles */
+  padding: 0;
+  outline: none;
+  
+  /* Frosted glass effect */
+  backdrop-filter: blur(10px);
+}
+
+/* Hover effect */
+.menu-button-trigger:hover {
+  transform: scale(1.1);
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+}
+
+/* Active/pressed effect */
+.menu-button-trigger:active {
+  transform: scale(0.95);
+  box-shadow: 
+    0 3px 10px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+/* Hamburger bars */
+.menu-button-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 24px;
+  height: 18px;
+  justify-content: center;
+}
+
+.menu-button-bars span {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Animation when menu is open */
+.menu-button-trigger.menu-open .menu-button-bars span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.menu-button-trigger.menu-open .menu-button-bars span:nth-child(2) {
+  opacity: 0;
+  transform: translateX(10px);
+}
+
+.menu-button-trigger.menu-open .menu-button-bars span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Pulse animation to draw attention (first time only) */
+@keyframes menuPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+.menu-button-trigger.first-time {
+  animation: menuPulse 2s ease-in-out 3;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .menu-button-trigger {
+    top: 15px;
+    right: 15px;
+    width: 50px;
+    height: 50px;
+  }
+  
+  .menu-button-bars {
+    width: 22px;
+    height: 16px;
+  }
+  
+  .menu-button-bars span {
+    height: 2.5px;
+  }
+}
+
+/* Ensure it doesn't overlap with header */
+@media (max-height: 600px) {
+  .menu-button-trigger {
+    top: 12px;
+    right: 12px;
+  }
+}

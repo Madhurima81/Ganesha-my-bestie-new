@@ -33,7 +33,9 @@ const SunCollectionGame = ({
     left: '15%', 
     width: '70%',
     height: '70%'
-  }
+  },
+    onInteraction = null  // ✅ ADD THIS
+
 }) => {
   // Object types with actual images
   const objectTypes = [
@@ -358,6 +360,8 @@ const isProcessingClick = useRef(false);
   };
 
 const handleObjectClick = (object, isStatic = false) => {
+    onInteraction?.();
+
   const now = Date.now();
   
   // 🛡️ PROTECTION LAYERS

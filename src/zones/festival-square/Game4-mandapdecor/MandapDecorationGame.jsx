@@ -36,43 +36,44 @@ const MissionCompletionOverlay = ({
         ))}
       </div>
       
-      <div className="completion-card">
-        <div 
-          className="completion-ganesha"
-          style={{ backgroundImage: `url(${ganeshaImage})` }}
-        />
-        
-        <div className="completion-message">
-          <h1 className="completion-title"> Mission Complete!</h1>
-          <p className="completion-subtitle">{missionName}</p>
-          
-          <div className="completion-stars">
-            {Array.from({ length: starsEarned }).map((_, i) => (
-              <span key={i} className="star-earned">⭐</span>
-            ))}
-          </div>
-          
-          <p className="completion-blessing">
-            "Well done, little decorator! Your devotion shines bright!"
-          </p>
-          
-          {totalTime && (
-            <p className="completion-time">⏱️ Time: {totalTime}s</p>
-          )}
-        </div>
-        
-        <div className="completion-buttons">
-          <button className="completion-btn play-again" onClick={onPlayAgain}>
-            <span className="btn-icon">🔄</span>
-            <span className="btn-text">Play Again!</span>
-          </button>
-          
-          <button className="completion-btn try-another" onClick={onTryAnother}>
-            <span className="btn-icon">🎯</span>
-            <span className="btn-text">Try Another!</span>
-          </button>
-        </div>
-      </div>
+  <div className="decor-completion-card">
+  <div 
+    className="completion-ganesha"
+    style={{ backgroundImage: `url(${ganeshaImage})` }}
+  />
+  
+  <div className="completion-message">
+    <h1 className="completion-title">Mission Complete!</h1>
+    <p className="completion-subtitle">{missionName}</p>
+    
+    <div className="completion-stars">
+      {Array.from({ length: starsEarned }).map((_, i) => (
+        <span key={i} className="star-earned">⭐</span>
+      ))}
+    </div>
+    
+    <p className="completion-blessing">
+      "Well done, little decorator! Your devotion shines bright!"
+    </p>
+    
+    {totalTime && (
+      <p className="completion-time">⏱️ Time: {totalTime}s</p>
+    )}
+  </div>
+  
+  <div className="completion-buttons">
+    {/* NEW CLASS NAMES HERE */}
+    <button className="decor-btn-green" onClick={onTryAnother}>
+      <span className="btn-icon">🔄</span>
+      <span className="btn-text">Try Another!</span>
+    </button>
+    
+    <button className="decor-btn-orange" onClick={onPlayAgain}>
+      <span className="btn-icon">🎯</span>
+      <span className="btn-text">Play Again!</span>
+    </button>
+  </div>
+</div>
     </div>
   );
 };
@@ -233,7 +234,7 @@ const MISSIONS = [
       category: 'FLOWERS',
       zone: 'altar-left-flowers',  // ✅ NEW ZONE
       instruction: "Place flowers on the left altar",
-      successMessage: "Beautiful! Flowers make Ganesha happy!",
+      successMessage: "“So pretty! Ganesha loves these flowers!”",
       culturalNote: "Marigolds are sacred flowers in Hindu pujas",
       emoji: '🌸'
     },
@@ -243,17 +244,17 @@ const MISSIONS = [
       category: 'OFFERINGS',
       zone: 'altar-left-coconut',  // ✅ NEW ZONE (below flowers)
       instruction: "Add coconut to the left altar",
-      successMessage: "Perfect! Coconuts represent purity!",
+      successMessage: "“Yay! The coconut is ready for puja!”",
       culturalNote: "Breaking coconut removes obstacles",
       emoji: '🥥'
     },
     {
       step: 3,
-      item: 'clay_traditional',
+        item: 'golden_ornate',
       category: 'LIGHTS',
       zone: 'altar-center-diya',  // ✅ NEW ZONE (next to Ganesha)
       instruction: "Light the diya next to Ganesha",
-      successMessage: "Wonderful! The diya represents wisdom!",
+      successMessage: "“Lovely! The diya is shining bright!”",
       culturalNote: "Diyas guide the gods to our prayers",
       emoji: '🪔'
     },
@@ -263,7 +264,7 @@ const MISSIONS = [
       category: 'OFFERINGS',
       zone: 'altar-center-modak',  // ✅ NEW ZONE (next to diya)
       instruction: "Place modaks in the center",
-      successMessage: "Yummy! Ganesha LOVES modaks!",
+      successMessage: "Yummy! Ganesha loves modaks!",
       culturalNote: "Modak is Ganesha's favorite food",
       emoji: '🍬'
     },
@@ -273,7 +274,7 @@ const MISSIONS = [
       category: 'SPECIAL',
       zone: 'base-floor',  // ✅ Floor zone
       instruction: "Create rangoli on the floor",
-      successMessage: "Amazing! The puja space is ready!",
+      successMessage: "Amazing! Everything is ready for Ganesha!",
       culturalNote: "Rangoli welcomes guests with colors",
       emoji: '🌈'
     }
@@ -282,16 +283,16 @@ const MISSIONS = [
   // Keep your other missions the same
 {
   id: 'fix-mandap',
-  name: 'Fix the Mandap',
+  name: 'Mandap Mix-Up',
   icon: '🔧',
   description: 'Wind blew decorations everywhere!',
   difficulty: 2,
     unlocked: true,  // ✅ CHANGE FROM false TO true
   type: 'fix',
   wrongPlacements: [
-    { id: 'marigold_bunch', wrongZone: 'base-floor', correctZone: 'pillar-left' },
-    { id: 'clay_traditional', wrongZone: 'roof-center', correctZone: 'altar-center-diya' },
-    { id: 'coconut', wrongZone: 'pillar-right', correctZone: 'altar-left-coconut' },
+    { id: 'string_festival', wrongZone: 'base-floor', correctZone: 'pillar-left' },
+    { id: 'painted_decorative', wrongZone: 'roof-center', correctZone: 'altar-center-diya' },
+    { id: 'fruits_plate', wrongZone: 'pillar-right', correctZone: 'altar-left-coconut' },
     { id: 'jasmine_garland', wrongZone: 'altar-right', correctZone: 'entrance-arch' },
     { id: 'rose_petals', wrongZone: 'roof-left', correctZone: 'pillar-right' }
   ]
@@ -452,7 +453,7 @@ const DECORATION_CATEGORIES = {
     items: [
       {
         id: 'marigold_bunch',
-        name: 'Marigold Bunch',
+        name: 'Marigold Flowers',
         image: 'flower_marigold_bunch.png',
         culturalNote: 'Marigolds bring prosperity and joy!',
         childFriendly: 'Sunshine flowers!',
@@ -468,7 +469,7 @@ const DECORATION_CATEGORIES = {
       },
       {
         id: 'lotus_single',
-        name: 'Sacred Lotus',
+        name: 'Lotus Flower',
         image: 'flower_lotus_single.png',
         culturalNote: 'Lotus represents purity and enlightenment!',
         childFriendly: 'Magic water flower!',
@@ -476,7 +477,7 @@ const DECORATION_CATEGORIES = {
       },
       {
         id: 'flower_petals',
-        name: 'Mixed Petals',
+        name: 'Colorful Petals',
         image: 'flower_petals.png',
         culturalNote: 'Beautiful mixed petals create rainbow colors!',
         childFriendly: 'Rainbow petals!',
@@ -492,7 +493,7 @@ const DECORATION_CATEGORIES = {
     items: [
       {
         id: 'flower_leaf_mix',
-        name: 'Nature Mix Garland',
+        name: 'Flower & Leaf Garland',
         image: 'garland_flower_leaf_mix.png',
         culturalNote: 'Nature\'s beautiful combination of flowers and leaves!',
         childFriendly: 'Garden party chains!',
@@ -508,7 +509,7 @@ const DECORATION_CATEGORIES = {
       },
       {
         id: 'fabric_flowers_toran',
-        name: 'Festive Fabric Toran',
+        name: 'Festive Toran',
         image: 'toran_fabric_flowers.png',
         culturalNote: 'Colorful decorations mark joyous celebrations!',
         childFriendly: 'Party streamers!',
@@ -516,7 +517,7 @@ const DECORATION_CATEGORIES = {
       },
       {
         id: 'mixed_chain',
-        name: 'Rainbow Flower Chain',
+        name: 'Rainbow Flower Garland',
         image: 'garland_mixed_chain.png',
         culturalNote: 'Mixed flowers celebrate all of nature!',
         childFriendly: 'Rainbow flowers!',
@@ -532,7 +533,7 @@ const DECORATION_CATEGORIES = {
     items: [
       {
         id: 'clay_traditional',
-        name: 'Traditional Clay Diya',
+        name: 'Clay Diya',
         image: 'diya_clay_traditional.png',
         culturalNote: 'Ancient tradition of light defeating darkness!',
         childFriendly: 'Magic lamp!',
@@ -559,7 +560,7 @@ const DECORATION_CATEGORIES = {
       },
       {
         id: 'string_festival',
-        name: 'Festival String Lights',
+        name: 'String Lights',
         image: 'lights_string_festival.png',
         culturalNote: 'Modern lights spread joy throughout celebrations!',
         childFriendly: 'Twinkle lights!',
@@ -568,7 +569,7 @@ const DECORATION_CATEGORIES = {
       },
       {
         id: 'paper_lanterns',
-        name: 'Colorful Paper Lanterns',
+        name: 'Paper Lanterns',
         image: 'lights_paper_lanterns.png',
         culturalNote: 'Lanterns create magical festive atmosphere!',
         childFriendly: 'Party balloons that glow!',
@@ -580,12 +581,12 @@ const DECORATION_CATEGORIES = {
 
   OFFERINGS: {
     id: 'offerings',
-    name: 'Offerings',
+    name: 'Puja Items',
     icon: '🥥',
     items: [
       {
         id: 'coconut',
-        name: 'Sacred Coconut',
+        name: 'Coconut',
         image: 'offering_coconut.png',
         culturalNote: 'Coconut represents purity and prosperity!',
         childFriendly: 'Special treasure nut!',
@@ -593,7 +594,7 @@ const DECORATION_CATEGORIES = {
       },
       {
         id: 'fruits_plate',
-        name: 'Fresh Fruits Plate',
+        name: 'Fruits Plate',
         image: 'offering_fruits_plate.png',
         culturalNote: 'Fresh fruits show gratitude to the divine!',
         childFriendly: 'Yummy fruit platter!',
@@ -609,7 +610,7 @@ const DECORATION_CATEGORIES = {
       },
       {
         id: 'incense_sticks',
-        name: 'Fragrant Incense',
+        name: 'Incense Sticks',
         image: 'offering_incense_sticks.png',
         culturalNote: 'Incense carries our prayers to heaven!',
         childFriendly: 'Magic smoke sticks!',
@@ -620,12 +621,12 @@ const DECORATION_CATEGORIES = {
 
   FUN_CELEBRATION: {
     id: 'fun_celebration',
-    name: 'Fun Celebration',
+    name: 'Fun Party Decor',
     icon: '🎉',
     items: [
       {
         id: 'bunting_colorful',
-        name: 'Colorful Bunting',
+        name: 'Party Flags',
         image: 'fun_bunting_colorful.png',
         culturalNote: 'Bright decorations spread joy everywhere!',
         childFriendly: 'Party flags!',
@@ -633,7 +634,7 @@ const DECORATION_CATEGORIES = {
       },
       {
         id: 'balloons_cluster',
-        name: 'Balloon Cluster',
+        name: 'Balloons',
         image: 'fun_balloons_cluster.png',
         culturalNote: 'Balloons lift our spirits to celebrate!',
         childFriendly: 'Happy balloons!',
@@ -641,7 +642,7 @@ const DECORATION_CATEGORIES = {
       },
       {
         id: 'streamers_flowing',
-        name: 'Flowing Streamers',
+        name: 'Party Streamers',
         image: 'fun_streamers_flowing.png',
         culturalNote: 'Flowing decorations dance with joy!',
         childFriendly: 'Dancing ribbons!',
@@ -649,7 +650,7 @@ const DECORATION_CATEGORIES = {
       },
       {
         id: 'confetti_scatter',
-        name: 'Confetti Scatter',
+        name: 'Confetti',
         image: 'fun_confetti_scatter.png',
         culturalNote: 'Confetti celebrates special moments!',
         childFriendly: 'Party sparkles!',
@@ -660,12 +661,12 @@ const DECORATION_CATEGORIES = {
 
   SPECIAL: {
     id: 'special',
-    name: 'Special',
+    name: 'Special Decor',
     icon: '🎨',
     items: [
       {
         id: 'fabric_draping',
-        name: 'Royal Fabric Draping',
+        name: 'Decorative Cloth',
         image: 'special_fabric_draping.png',
         culturalNote: 'Beautiful cloth shows respect for our divine guest!',
         childFriendly: 'Princess curtains!',
@@ -673,7 +674,7 @@ const DECORATION_CATEGORIES = {
       },
       {
         id: 'peacock_feathers',
-        name: 'Beautiful Peacock Feathers',
+        name: 'Peacock Feathers',
         image: 'special_peacock_feathers.png',
         culturalNote: 'Peacock feathers represent divine beauty and grace!',
         childFriendly: 'Royal bird feathers!',
@@ -681,7 +682,7 @@ const DECORATION_CATEGORIES = {
       },
       {
         id: 'kalash_pot',
-        name: 'Sacred Kalash Pot',
+        name: 'Kalash Pot',
         image: 'special_kalash_pot.png',
         culturalNote: 'Kalash represents abundance and prosperity!',
         childFriendly: 'Treasure pot!',
@@ -689,7 +690,7 @@ const DECORATION_CATEGORIES = {
       },
       {
         id: 'rangoli_base',
-        name: 'Sacred Floor Rangoli',
+        name: 'Rangoli Design',
         image: 'special_rangoli_base.png',
         culturalNote: 'Rangoli patterns welcome good fortune!',
         childFriendly: 'Magic floor drawing!',
@@ -697,6 +698,15 @@ const DECORATION_CATEGORIES = {
       }
     ]
   }
+};
+
+// Fixed positions for Puja Prep items
+const PUJA_PREP_POSITIONS = {
+  'marigold_bunch': { left: '38%', top: '72%' },      // Left side near pillar
+  'coconut': { left: '58%', top: '72%' },             // Center altar left
+  'golden_ornate': { left: '42%', top: '69%' },    // Center altar middle
+  'sweets_modak': { left: '62%', top: '63%' },        // Center altar right
+  'rangoli_base': { left: '50%', top: '78%' }         // Floor center
 };
 
 const MANDAP_ZONES = {
@@ -709,17 +719,13 @@ const MANDAP_ZONES = {
   'pillar-left': { x: 20, y: 25, width: 12, height: 35 },
   'pillar-right': { x: 68, y: 25, width: 12, height: 35 },
   
-  // LEFT ALTAR - Split into 2 zones
-  'altar-left-flowers': { x: 20, y: 48, width: 14, height: 10 },   // Marigold here
-  'altar-left-coconut': { x: 20, y: 60, width: 14, height: 10 },   // Coconut here
-  
-  // CENTER ALTAR - Split into 2 zones  
-  'altar-center-diya': { x: 37, y: 54, width: 12, height: 10 },    // Diya next to Ganesha
-  'altar-center-modak': { x: 51, y: 54, width: 12, height: 10 },   // Modak next to diya
-  
+  // Glow positions match item placement positions
+  'altar-left-flowers': { x: 40, y: 72, width: 10, height: 10 },      // Left pillar
+  'altar-left-coconut': { x: 62, y: 72, width: 10, height: 10 },      // Center left
+  'altar-center-diya': { x: 47, y: 58, width: 10, height: 10 },       // Center middle
+  'altar-center-modak': { x: 57, y: 58, width: 10, height: 10 },      // Center right
   'altar-right': { x: 66, y: 50, width: 14, height: 15 },
-  
-  'base-floor': { x: 30, y: 72, width: 40, height: 15 }
+  'base-floor': { x: 55, y: 73, width: 10, height: 10 }               // Floor
 };
 
 const MandapDecorationGame = ({ onComplete, onNavigate }) => {
@@ -791,6 +797,11 @@ const [timerActive, setTimerActive] = useState(false);
 const [showMissionComplete, setShowMissionComplete] = useState(false);
 const [completedMissionData, setCompletedMissionData] = useState(null);
 
+const [isTrayCollapsed, setIsTrayCollapsed] = useState(false);
+const [showStartSpot, setShowStartSpot] = useState(true);
+const [headerTip, setHeaderTip] = useState(null); // stores temporary message
+const [sparklePositions, setSparklePositions] = useState(new Map()); // Track sparkles
+
   // Get decoration size function
   const getDecorationSize = (imageName) => {
     const sizes = {
@@ -832,8 +843,7 @@ const [completedMissionData, setCompletedMissionData] = useState(null);
       'special_rangoli_base.png': '95px'
     };
     
-    return sizes[imageName] || '60px'; // Default size if not in list
-  };
+return sizes[imageName] ? `${parseInt(sizes[imageName]) + 25}px` : '85px';  };
 
   // Audio management
   const audioContextRef = useRef(null);
@@ -997,6 +1007,13 @@ const resetMissionState = () => {
   setShowSparkle(null);
 };
 
+// Auto-expand tray when entering a new category
+  useEffect(() => {
+    if (gameState.selectedCategory) {
+      setIsTrayCollapsed(false);
+    }
+  }, [gameState.selectedCategory]);
+
 
   // Play placement sound
   const playPlacementSound = (decoration) => {
@@ -1096,8 +1113,8 @@ const isNonEcoItem = (itemId) => {
 };
 
 
-const handleZoneClick = (zoneId) => {
-  // ===== FIX MODE HANDLING =====
+const handleZoneClick = (zoneId, event) => {
+    // ===== FIX MODE HANDLING =====
   if (selectedMission?.type === 'fix' && selectedWrongItem) {
     if (zoneId !== selectedWrongItem.correctZone) {
       setGuidanceMessage(`Not there! Tap the GREEN glowing spot!`);
@@ -1181,8 +1198,13 @@ if (newFixedCount >= 5) {
   }
   
   // ===== REGULAR PLACEMENT MODE =====
-  if (!gameState.selectedDecoration || !highlightedZones.has(zoneId)) return;
-  
+// ===== REGULAR PLACEMENT MODE =====
+if (!gameState.selectedDecoration) return;
+
+// In missions, check if zone is valid
+if (currentMode === GAME_MODES.CHALLENGE && selectedMission && !highlightedZones.has(zoneId)) {
+  return;
+}  
   const decoration = gameState.selectedDecoration;
   
   // ===== PUJA PREP VALIDATION =====
@@ -1321,62 +1343,189 @@ if (newLightsPlaced >= (selectedMission.items?.length || 5)) {
   // Continue to placement
 }
   
-  // ===== PLACE DECORATION =====
-  const newPlacements = new Map(gameState.placedDecorations);
-  const existingInZone = newPlacements.get(zoneId) || [];
-  existingInZone.push(decoration);
+
+// ===== PLACE DECORATION =====
+const newPlacements = new Map(gameState.placedDecorations);
+const existingInZone = newPlacements.get(zoneId) || [];
+
+// PUJA PREP MODE - Perfect Timing Sequence
+// PUJA PREP MODE - Perfect Timing Sequence
+if (selectedMission?.id === 'puja-prep' && decoration.id) {
+  const fixedPosition = PUJA_PREP_POSITIONS[decoration.id];
+  const uniqueKey = `${decoration.id}-${Date.now()}`;
+  
+  const decorationWithPosition = {
+    ...decoration,
+    customPosition: fixedPosition || { left: '50%', top: '50%' },
+    uniqueKey: uniqueKey,
+        hasLightEffect: false,  // ⬅️ ADD THIS HERE - turn off glow from the start!
+
+    
+    // 💥 POOF ANIMATION
+    animationStyle: {
+      animation: 'poof-appear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
+      transformOrigin: 'center center'
+    }
+  };
+  existingInZone.push(decorationWithPosition);
   newPlacements.set(zoneId, existingInZone);
   
+  // ✅ IMMEDIATELY: Update state & hide glow
   setGameState(prev => ({
     ...prev,
     placedDecorations: newPlacements,
     selectedDecoration: null,
     selectedCategory: null
   }));
-
-  // ===== PUJA PREP - UPDATE PROGRESS =====
-  if (selectedMission?.id === 'puja-prep' && selectedMission.steps) {
-    const currentStepData = selectedMission.steps[currentStep - 1];
-    setLastCompletedStep(currentStepData);
-    
-    setShowStepSuccess(true);
-    setShowSparkle(zoneId);
-    safeSetTimeout(() => {
-      setShowSparkle(null);
-      setShowStepSuccess(false);
-    }, 2000);
-    
-    const newCompletedSteps = [...completedSteps, currentStep];
-    setCompletedSteps(newCompletedSteps);
-    
-    if (currentStep < selectedMission.steps.length) {
-      safeSetTimeout(() => {
-        setCurrentStep(currentStep + 1);
-        const nextStepData = selectedMission.steps[currentStep];
-        setGuidanceMessage(nextStepData.instruction);
-      }, 2500);
-} else {
-  // Mission complete!
-  safeSetTimeout(() => {
-    const starsEarned = 5;
-    setMissionStars(prev => prev + starsEarned);
-    setCompletedMissions(prev => ({ ...prev, [selectedMission.id]: true }));
-    
-    // Show completion overlay
-    setCompletedMissionData({
-      name: selectedMission.name,
-      starsEarned: starsEarned
-    });
-    setShowMissionComplete(true);
-  }, 2000);
-}
-  } else {
-    // Free play or other missions - just show sparkle
-    setShowSparkle(zoneId);
-    safeSetTimeout(() => setShowSparkle(null), 1000);
-  }
   
   clearHighlights();
+  
+  // ✨ SPARKLE BURST (0.0s - with poof)
+  const posX = parseFloat(fixedPosition?.left || '50');
+  const posY = parseFloat(fixedPosition?.top || '50');
+  const sparkleKey = `sparkle-${Date.now()}`;
+  setSparklePositions(prev => new Map(prev).set(sparkleKey, { x: posX, y: posY }));
+  
+  // Remove sparkles (1.0s)
+  safeSetTimeout(() => {
+    setSparklePositions(prev => {
+      const updated = new Map(prev);
+      updated.delete(sparkleKey);
+      return updated;
+    });
+  }, 1500);
+  
+  // 🖼️ ADD STICKER EFFECT FIRST (0.6s - right after poof)
+// 🖼️ ADD STICKER EFFECT FIRST (0.6s - right after poof)
+safeSetTimeout(() => {
+  console.log('🖼️ Attempting to add sticker at 0.6s'); // DEBUG
+  
+  setGameState(prev => {
+    const updatedMap = new Map(prev.placedDecorations);
+    const items = updatedMap.get(zoneId);
+    
+    console.log('📍 Zone:', zoneId, 'Items:', items); // DEBUG
+    
+    if (items) {
+      const finalItems = items.map(i => {
+        console.log('🔍 Checking:', i.id, 'uniqueKey:', i.uniqueKey, 'vs', uniqueKey); // DEBUG
+        console.log('🎨 Has light effect?', i.hasLightEffect); // DEBUG
+        
+        if (i.uniqueKey === uniqueKey) {
+          console.log('✅ MATCH! Adding sticker to:', i.id); // DEBUG
+          
+          return { 
+            ...i,
+            animationStyle: null,  // Remove poof
+                hasLightEffect: false,  // ⬅️ ADD THIS LINE (turns off glowing)
+
+            stickerStyle: {  // Add sticker
+              filter: `
+                drop-shadow(2px 0 0 white) 
+                drop-shadow(-2px 0 0 white) 
+                drop-shadow(0 2px 0 white) 
+                drop-shadow(0 -2px 0 white)
+                drop-shadow(0 0 8px rgba(255, 255, 255, 0.8))
+                drop-shadow(0 6px 12px rgba(0,0,0,0.3))
+              `,
+              // Force important to override any other styles
+              WebkitFilter: `
+                drop-shadow(2px 0 0 white) 
+                drop-shadow(-2px 0 0 white) 
+                drop-shadow(0 2px 0 white) 
+                drop-shadow(0 -2px 0 white)
+                drop-shadow(0 0 8px rgba(255, 255, 255, 0.8))
+                drop-shadow(0 6px 12px rgba(0,0,0,0.3))
+              `
+            }
+          };
+        }
+        return i;
+      });
+      
+      console.log('📦 Final items after sticker:', finalItems); // DEBUG
+      
+      updatedMap.set(zoneId, finalItems);
+      return {
+        ...prev,
+        placedDecorations: updatedMap
+      };
+    }
+    return prev;
+  });
+}, 1000);
+  
+  // ✅ SUCCESS MESSAGE APPEARS AFTER STICKER (0.8s delay)
+  safeSetTimeout(() => {
+    const currentStepData = selectedMission.steps[currentStep - 1];
+    setLastCompletedStep(currentStepData);
+    setShowStepSuccess(true);
+    setShowSparkle(zoneId);
+  }, 1500);
+  
+  // 🎨 HIDE SUCCESS MESSAGE (3.0s total - shown for 2.2s)
+  safeSetTimeout(() => {
+    setShowSparkle(null);
+    setShowStepSuccess(false);
+  }, 4000);
+  
+  // 📝 UPDATE SIDEBAR TO GREEN (0.9s - just after popup appears)
+  safeSetTimeout(() => {
+    setCompletedSteps(prev => [...prev, currentStep]);
+  }, 1600);
+  
+  // 🎯 MOVE TO NEXT STEP (3.2s - after popup fades)
+  if (currentStep < selectedMission.steps.length) {
+    safeSetTimeout(() => {
+      setCurrentStep(currentStep + 1);
+      const nextStepData = selectedMission.steps[currentStep];
+      setGuidanceMessage(nextStepData.instruction);
+    }, 4500);
+  } else {
+    // 🎉 MISSION COMPLETE (3.2s)
+    safeSetTimeout(() => {
+      const starsEarned = 5;
+      setMissionStars(prev => prev + starsEarned);
+      setCompletedMissions(prev => ({ ...prev, [selectedMission.id]: true }));
+      
+      setCompletedMissionData({
+        name: selectedMission.name,
+        starsEarned: starsEarned
+      });
+      setShowMissionComplete(true);
+    }, 4500);
+  }
+  
+  return; // EXIT
+}
+
+  // 🔴 1. INSERT THIS BLOCK HERE (For the Smart Header Tip) 🔴
+  if (currentMode === GAME_MODES.FREE_PLAY) {
+    setHeaderTip("✨ Drag items to move them! ✨");
+    setTimeout(() => {
+      setHeaderTip(null);
+    }, 2500); // Disappear after 2.5 seconds
+  }
+
+// ===== OTHER MISSIONS - Simple sparkle =====
+if (selectedMission?.type === 'eco' || selectedMission?.type === 'light' || selectedMission?.type === 'fix') {
+  setShowSparkle(zoneId);
+  safeSetTimeout(() => setShowSparkle(null), 1000);
+}
+
+// ===== FREE PLAY - Simple sparkle =====
+if (currentMode === GAME_MODES.FREE_PLAY) {
+  setShowSparkle(zoneId);
+  safeSetTimeout(() => setShowSparkle(null), 1000);
+  
+  setHeaderTip("✨ Drag items to move them! ✨");
+  setTimeout(() => {
+    setHeaderTip(null);
+  }, 2500);
+}
+
+// Note: Puja Prep timing is handled in the placement block above
+clearHighlights();
 };
 
   const isOutsideMandapArea = (position) => {
@@ -1403,6 +1552,125 @@ if (newLightsPlaced >= (selectedMission.items?.length || 5)) {
     setNearDeleteZone(left > 75); // Trigger when 75% from left
   };
 
+  // --- DYNAMIC HEADER LOGIC ---
+// --- SMART HEADER LOGIC ---
+// --- SMART HEADER LOGIC ---
+// --- SMART HEADER LOGIC ---
+  const getHeaderContent = () => {
+    
+    // --- 1. FIX THE MANDAP MISSION ---
+    if (selectedMission?.type === 'fix') {
+      if (selectedWrongItem) {
+        return (
+          <div className="header-content-row">
+            <span>Tap the </span>
+            <span style={{color: '#FFA000', fontWeight: 'bold', margin: '0 5px'}}>glowing spot</span>
+            <span>! ✨</span>
+          </div>
+        );
+      }
+      return (
+        <div className="header-content-row">
+          <span>“Tap items to put them in the right place”</span>
+        </div>
+      );
+    }
+
+    // --- 2. PUJA PREP MISSION (UPDATED WITH IMAGE & COLOR) ---
+    if (selectedMission?.id === 'puja-prep' && selectedMission.steps) {
+      const currentStepData = selectedMission.steps[currentStep - 1];
+      
+      // Step A: Item is selected (in hand) -> Guide to Mandap
+      if (gameState.selectedDecoration) {
+        return (
+          <div className="header-content-row">
+            <span>Tap the glowing spot! ⭐</span>
+          </div>
+        );
+      }
+      
+      // Step B: Item NOT selected -> Guide to Menu (Color + Image)
+      
+      // 1. Find the item details to get the image
+      const allItems = Object.values(DECORATION_CATEGORIES).flatMap(cat => cat.items);
+      const targetItem = allItems.find(i => i.id === currentStepData.item);
+const itemName = targetItem ? targetItem.name : 'item'; // Use full name
+
+      // 2. Define colors for visual linking
+      const ITEM_COLORS = {
+        'marigold_bunch': '#EF6C00',   // Bright Orange
+        'coconut': '#558B2F',          // Natural Green
+        'clay_traditional': '#FFD700', // Gold
+        'sweets_modak': '#D84315',     // Deep Orange
+        'rangoli_base': '#9C27B0'      // Purple
+      };
+      
+      const targetColor = ITEM_COLORS[currentStepData.item] || '#D84315'; // Default fallback
+
+      return (
+        <div className="header-content-row">
+          <span>Tap the </span>
+          
+          {/* COLOR-CODED TEXT WITH PULSE */}
+          <span className="header-target-word" style={{ color: targetColor }}>
+            {itemName}
+          </span>
+          
+          {/* ACTUAL ITEM IMAGE */}
+          {targetItem && (
+            <img 
+              src={DECORATION_IMAGES[targetItem.image]} 
+              alt="icon" 
+              className="header-mini-icon"
+            />
+          )}
+
+        </div>
+      );
+    }
+
+    // --- 3. FREE PLAY MODE ---
+    if (isDragging) {
+      return (
+        <div className="header-content-row">
+          <span>Drag to decorate! ✨</span>
+        </div>
+      );
+    }
+
+    if (gameState.selectedDecoration) {
+      return (
+        <div className="header-content-row">
+          <span>Tap to place</span>
+          <span style={{color: '#D84315', fontWeight: 'bold', marginLeft: '6px'}}>
+            {gameState.selectedDecoration.name.split(' ')[0]}
+          </span>
+          <img 
+            src={DECORATION_IMAGES[gameState.selectedDecoration.image]} 
+            alt="icon" 
+            className="header-mini-icon"
+          />
+        </div>
+      );
+    }
+
+    if (gameState.selectedCategory) {
+      const catName = DECORATION_CATEGORIES[gameState.selectedCategory.toUpperCase()]?.name;
+      return (
+        <div className="header-content-row">
+          <span>Choose your {catName} 🎨</span>
+        </div>
+      );
+    }
+
+    // Default
+    return (
+      <div className="header-content-row">
+        <span>Let's decorate the Mandap! 🌸</span>
+      </div>
+    );
+  };
+
   // Show intro screen first with OpeningModal
 if (currentMode === GAME_MODES.INTRO) {
   return (
@@ -1419,79 +1687,121 @@ if (currentMode === GAME_MODES.INTRO) {
   );
 }
 // Show mode selection screen
+// Show mode selection screen
 if (currentMode === GAME_MODES.SELECTION) {
   return (
     <div className="mandap-game-container">
-      <div className="mode-selection-screen">
-        <h2 className="mode-subtitle">Choose Your Decoration Adventure!</h2>
-        <h1 className="mode-title">🏛️ Mandap Decoration 🏛️</h1>
+      
+      {/* New Container for the specific Mandap Look */}
+      <div className="mandap-selection-popup">
         
-        <div className="mode-cards">
-      <div className="mode-card" onClick={() => {
-  resetMissionState(); // Clear mission decorations
-  setCurrentMode(GAME_MODES.FREE_PLAY);
-}}>
-            <div className="mode-icon">🎨</div>
+        {/* Title with decorative flowers */}
+        <h1 className="mandap-popup-title">
+          <span className="title-deco">✿</span> Decorate the Mandap! <span className="title-deco">✿</span>
+        </h1>
+        
+        <div className="mandap-mode-options">
+          {/* Free Play Card - Purple Theme */}
+          <div 
+            className="mandap-option-card card-free" 
+            onClick={() => {
+              resetMissionState(); 
+              setCurrentMode(GAME_MODES.FREE_PLAY);
+            }}
+          >
+            <div className="option-icon-circle">
+              <span className="option-icon">🎨</span>
+            </div>
             <h2>Free Play</h2>
-            <p>Decorate the mandap however you like!</p>
-            <button className="mode-button free-play-btn">Let's Decorate!</button>
+            <p>Decorate however you like</p>
+            <button className="mandap-action-btn btn-free">Decorate Freely</button>
           </div>
           
-          <div className="mode-card" onClick={() => setCurrentMode(GAME_MODES.CHALLENGE)}>
-            <div className="mode-icon">🎯</div>
+          {/* Challenge Mode Card - Green Theme */}
+          <div 
+            className="mandap-option-card card-challenge" 
+            onClick={() => setCurrentMode(GAME_MODES.CHALLENGE)}
+          >
+             <div className="option-icon-circle">
+              <span className="option-icon">🎯</span>
+            </div>
             <h2>Challenge Mode</h2>
-            <p>Complete special decoration missions!</p>
-            <button className="mode-button challenge-btn">Start Challenge!</button>
+            <p>Complete festival missions</p>
+            <button className="mandap-action-btn btn-challenge">Start Challenge</button>
           </div>
         </div>
+
       </div>
     </div>
   );
 }
 
 // Show mission selection when in Challenge mode
+// Show mission selection when in Challenge mode
+// Show mission selection when in Challenge mode
 if (currentMode === GAME_MODES.CHALLENGE && !selectedMission) {
   return (
     <div className="mandap-game-container">
-      <div className="mission-selection-screen">
-        <div className="mission-header">
+      {/* 1. Dark Overlay */}
+      <div className="mandap-popup-overlay" />
+
+      {/* 2. Central Popup Card */}
+      <div className="mandap-selection-popup mission-popup-size">
+        
+        {/* Header: Back Button + Title */}
+        <div className="mission-popup-header">
           <button 
-            className="mission-back" 
+            className="popup-back-pill" 
             onClick={() => setCurrentMode(GAME_MODES.SELECTION)}
           >
             ← Back
           </button>
-          <h1 className="mission-title">🎯 Decoration Missions</h1>
-          <div className="mission-stars">⭐ {missionStars}</div>
+          
+          <div className="mission-header-text">
+            <h1 className="mission-popup-title">
+              <span className="icon-bounce">🎯</span> Decoration Missions ✿
+            </h1>
+            <p className="mission-popup-subtitle">Complete fun challenges to earn stars!</p>
+          </div>
+          
+          {/* Invisible spacer to balance the header (keeps title centered) */}
+          <div style={{width: '80px'}}></div> 
         </div>
-        
-        <div className="missions-grid">
-          {MISSIONS.map(mission => {
-  const isUnlocked = true;  // ✅ ALL MISSIONS ALWAYS UNLOCKED
+
+        {/* 3. The 2x2 Grid */}
+        <div className="mission-grid-refined">
+          {MISSIONS.map((mission) => {
             const isCompleted = completedMissions[mission.id];
             
+            // Assign colors based on Mission ID
+            let colorClass = "theme-pink"; 
+            if (mission.id === 'fix-mandap') colorClass = "theme-yellow";
+            if (mission.id === 'eco-mandap') colorClass = "theme-green";
+            if (mission.id === 'light-challenge') colorClass = "theme-orange";
+
             return (
               <div
                 key={mission.id}
-className={`mission-card ${isCompleted ? 'completed' : ''}`}
-onClick={() => {
-  resetMissionState();
-  setSelectedMission(mission);
-  setShowMissionIntro(true);
-}}
+                className={`mission-refined-card ${colorClass} ${isCompleted ? 'completed-glow' : ''}`}
+                onClick={() => {
+                  resetMissionState();
+                  setSelectedMission(mission);
+                  setShowMissionIntro(true);
+                }}
               >
-                <div className="mission-icon">{mission.icon}</div>
-                <h3 className="mission-name">{mission.name}</h3>
-                <p className="mission-description">{mission.description}</p>
+                {/* Checkmark Badge if done */}
+                {isCompleted && <div className="mission-check-badge">✓</div>}
+
+                <div className="mission-card-icon">{mission.icon}</div>
+                <h3 className="mission-card-title">{mission.name}</h3>
+                <p className="mission-card-desc">{mission.description}</p>
                 
-                <div className="mission-difficulty">
-                  {Array.from({ length: mission.difficulty }).map((_, i) => (
-                    <span key={i} className="star-filled">⭐</span>
+                {/* Star Rating */}
+                <div className="mission-card-stars">
+                   {Array.from({ length: 3 }).map((_, i) => (
+                    <span key={i} className={`star-icon ${i < mission.difficulty ? 'filled' : 'empty'}`}>⭐</span>
                   ))}
                 </div>
-                
-                {isCompleted && <div className="mission-completed-badge">✓</div>}
-            {/* Lock removed - all missions available */}
               </div>
             );
           })}
@@ -1500,6 +1810,7 @@ onClick={() => {
     </div>
   );
 }
+
 
 // Show Mission Intro Overlay
 if (showMissionIntro && selectedMission) {
@@ -1513,7 +1824,7 @@ if (showMissionIntro && selectedMission) {
           />
 <div className="mission-intro-speech">
   {selectedMission.type === 'fix' 
-    ? "Oh no! The wind blew decorations to wrong spots! Can you fix them? Tap the RED items, then tap the GREEN spots!"
+    ? "Oh! Something feels messy…Can you help me fix it?"
     : selectedMission.type === 'eco'
     ? "Let's protect Mother Earth! Choose only natural, eco-friendly decorations. Avoid plastic and artificial items! 🌿"
     : selectedMission.type === 'light'
@@ -1564,6 +1875,29 @@ const currentStepData = (isInMission && selectedMission.type !== 'fix' && select
         }}
       />
 
+{/* --- DYNAMIC HEADER PILL --- */}
+      {/* Show in Free Play OR Puja Prep OR Fix Mode */}
+      {(currentMode === GAME_MODES.FREE_PLAY || selectedMission?.id === 'puja-prep' || selectedMission?.type === 'fix') && (
+        <div className="game-header-container">
+          <div className="dynamic-header-pill header-bounce">
+            
+            <div className="header-text">
+              {headerTip ? (
+                 <div className="header-content-row" style={{ color: '#E65100' }}>
+                   {headerTip}
+                 </div>
+              ) : (
+                 getHeaderContent()
+              )}
+            </div>
+            
+            <div className="header-decoration">
+              ✿ ✿ ✿
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ADD PAUSE BUTTON HERE */}
 <button 
   className="game-pause-button"
@@ -1576,60 +1910,18 @@ const currentStepData = (isInMission && selectedMission.type !== 'fix' && select
 
 
 {/* Minimal Mission Header */}
-{isInMission && (() => {
-// Determine progress count based on mission type
-const progressCount = selectedMission?.type === 'fix' 
-  ? fixedCount 
-  : selectedMission?.type === 'eco' 
-  ? (ecoCount || 0)
-  : selectedMission?.type === 'light' 
-  ? (lightsPlaced || 0)
-   : completedSteps.length;  // ✅ Use completed steps count
-
-
-const missionData = getMissionData(
-  selectedMission, 
-  currentStep, 
-  progressCount
-);
-  return (
-    <div className="mission-minimal-header">
-      <div className="mission-instruction-minimal">
-        <span className="instruction-icon">{missionData.emoji}</span>
-        <span className="instruction-text">
-          {missionData.type === 'fix' && selectedWrongItem 
-            ? 'Tap the green spot!' 
-            : missionData.instruction.split('!')[0]}
-        </span>
-      </div>
-      <div className="mission-progress-minimal">
-   <span className="progress-count">
-  {missionData.currentProgress}/{missionData.totalSteps}
-  {selectedMission?.type === 'eco' && ' 🌿'}
-  {selectedMission?.type === 'light' && ' 💡'}
-</span>
-        <div className="progress-dots-minimal">
-            {(() => {
-    console.log('🔍 Dots Debug:', {
-      missionType: selectedMission?.type,
-      lightsPlaced: lightsPlaced,
-      currentProgress: missionData.currentProgress,
-      totalSteps: missionData.totalSteps
-    });
-    return null;
-  })()}
-          {Array.from({ length: missionData.totalSteps }).map((_, i) => (
-            <span 
-              key={i} 
-           // Replace line 1496:
-className={`dot-mini ${i < missionData.currentProgress ? 'filled' : ''}`}
-            />
-          ))}
-        </div>
+{/* Simple Mission Progress 
+{isInMission && selectedMission && selectedMission.id === 'puja-prep' && (  <div className="simple-mission-panel">
+    <div className="mission-icon">{selectedMission.icon}</div>
+    <div className="mission-info">
+      <div className="mission-name">{selectedMission.name}</div>
+      <div className="mission-progress">
+        {completedSteps.length}/{selectedMission.steps?.length || 5}
       </div>
     </div>
-  );
-})()}
+  </div>
+)}
+
 
 {/* Bottom Instruction Bar 
 {isInMission && guidanceMessage && (
@@ -1654,14 +1946,47 @@ className={`dot-mini ${i < missionData.currentProgress ? 'filled' : ''}`}
   </div>
 )}*/}
 
-  {showStepSuccess && lastCompletedStep && (
-  <div className="step-success-overlay" onClick={() => setShowStepSuccess(false)}>
-    <div className="step-success-message">
-      <h2>✨ {lastCompletedStep.emoji} Perfect!</h2>
-      <p>{lastCompletedStep.successMessage}</p>
+{showStepSuccess && lastCompletedStep && (
+    <div className="step-success-overlay" onClick={() => setShowStepSuccess(false)}>
+      
+      {/* 1. CONFETTI LAYER (New) */}
+      <div className="confetti-container">
+        {/* Create 30 pieces of confetti */}
+        {Array.from({ length: 30 }).map((_, i) => (
+          <div 
+            key={i} 
+            className="confetti-piece"
+            style={{
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 1.5}s`,
+              animationDuration: `${2 + Math.random() * 2}s`
+            }}
+          />
+        ))}
+      </div>
+
+      {/* 2. SUCCESS CARD */}
+      <div className="step-success-message">
+        {/* Success Icon/Image */}
+        {lastCompletedStep.item ? (
+           <img 
+             src={DECORATION_IMAGES[
+               Object.values(DECORATION_CATEGORIES)
+                 .flatMap(cat => cat.items)
+                 .find(i => i.id === lastCompletedStep.item)?.image
+             ]} 
+             alt="Success"
+             className="success-popup-img"
+           />
+        ) : (
+           <div style={{fontSize: '60px'}}>✨</div>
+        )}
+
+        <h2>Perfect!</h2>
+        <p>{lastCompletedStep.successMessage}</p>
+      </div>
     </div>
-  </div>
-)}
+  )}
       
       {/* Main Mandap Structure */}
       <div className="mandap-structure">
@@ -1671,68 +1996,110 @@ className={`dot-mini ${i < missionData.currentProgress ? 'filled' : ''}`}
           className="mandap-base-image"
         />
         
-{/* Clickable zones */}
+{/* Clickable zones & Ghosts */}
 {Object.entries(MANDAP_ZONES).map(([zoneId, zone]) => {
   const isInMission = currentMode === GAME_MODES.CHALLENGE && selectedMission;
-  const isFixMode = selectedMission?.type === 'fix';
-  const isEcoMode = selectedMission?.type === 'eco';
-  const isLightMode = selectedMission?.type === 'light';
   
-  // Get mission data for zone validation
-  const missionData = isInMission 
-    ? getMissionData(selectedMission, currentStep, fixedCount)
-    : null;
-    
-  const isCorrectZone = !isFixMode && zoneId === missionData?.currentStepData?.zone;
-  const hasDecorations = gameState.placedDecorations.has(zoneId);
+  // 1. FREE PLAY MODE CHECK
+  if (currentMode === GAME_MODES.FREE_PLAY) {
+    if (zoneId !== 'roof-left') return null;
+    zone = { x: 0, y: 0, width: 100, height: 100 };
+  }
+  
+  // 2. SETUP VARIABLES
+  const isFixMode = selectedMission?.type === 'fix';
+  const isPujaPrep = selectedMission?.id === 'puja-prep';
+  
+  const isFixTarget = isFixMode && selectedWrongItem?.correctZone === zoneId;
   const isHighlighted = highlightedZones.has(zoneId);
   
-  // Only hide zones for Puja Prep (step-based missions)
-  if (isInMission && !isFixMode && !isEcoMode && !isLightMode && !isCorrectZone) {
+  // 3. GHOST ITEM LOGIC (The Magic Part)
+  let ghostImage = null;
+  
+  // Only show ghost if: It's Puja Prep AND it's the current step AND zone is highlighted
+  if (isPujaPrep && isHighlighted) {
+    const currentStepData = selectedMission.steps[currentStep - 1];
+    if (currentStepData && currentStepData.zone === zoneId) {
+      // Find the image for the current step's item
+      const allItems = Object.values(DECORATION_CATEGORIES).flatMap(c => c.items);
+      const targetItem = allItems.find(i => i.id === currentStepData.item);
+      if (targetItem) {
+        ghostImage = DECORATION_IMAGES[targetItem.image];
+      }
+    }
+  }
+
+  // 4. CLASS LOGIC
+  let zoneClass = 'mandap-zone';
+  if (isFixTarget) zoneClass += ' zone-target';
+  else if (isHighlighted) zoneClass += ' highlighted'; // Glows yellow
+  
+  // Hide irrelevant zones in missions
+  if (isInMission && !isFixMode && !isHighlighted && selectedMission?.type !== 'light' && selectedMission?.type !== 'eco') {
     return null;
   }
   
   return (
     <div
       key={zoneId}
-      className={`mandap-zone 
-        ${isHighlighted ? 'highlighted' : ''}
-        ${selectedWrongItem?.correctZone === zoneId ? 'zone-target' : ''}`}
-      onClick={() => handleZoneClick(zoneId)}
+      className={zoneClass}
+      onClick={(event) => handleZoneClick(zoneId, event)}
       style={{
         left: `${zone.x}%`,
         top: `${zone.y}%`,
         width: `${zone.width}%`,
         height: `${zone.height}%`,
-        pointerEvents: hasDecorations && !isHighlighted ? 'none' : 'auto'
+        pointerEvents: 'auto'
       }}
-    />
+    >
+      {/* 👻 RENDER THE GHOST HERE */}
+      {ghostImage && (
+        <img src={ghostImage} alt="ghost" className="ghost-item" />
+      )}
+    </div>
   );
 })}
         {/* Placed Decorations - WITH DRAGGING */}
+     {/* Placed Decorations - WITH DRAGGING */}
         {Array.from(gameState.placedDecorations.entries()).map(([zoneId, decorations]) => {
           const decorationsArray = Array.isArray(decorations) ? decorations : [decorations];
           return decorationsArray.map((decoration, index) => {
             const zone = MANDAP_ZONES[zoneId];
             const decorationKey = `decoration-${zoneId}-${index}`;
             
-            // Get current position (from state or calculate initial)
-            const currentPosition = gameState.decorationPositions?.get(decorationKey) || {
-              top: `${zone.y + zone.height/2 + Math.floor(index / 3) * 3}%`,
-              left: `${zone.x + zone.width/2 + (index % 3) * 3}%`
-            };
+            // Position Logic
+            const currentPosition = decoration.customPosition || 
+              gameState.decorationPositions?.get(decorationKey) || {
+                top: `${zone.y + zone.height/2 + Math.floor(index / 3) * 3}%`,
+                left: `${zone.x + zone.width/2 + (index % 3) * 3}%`
+              };
+
+            // FIX MODE STATE LOGIC
+            const isFixMode = selectedMission?.type === 'fix';
+            const isWrong = isFixMode && decoration.isWrong && !decoration.isFixed;
+            const isSelected = isFixMode && selectedWrongItem?.fixId === decoration.fixId;
+            const isFixed = isFixMode && decoration.isFixed;
+
+            // ANIMATION CONFLICT FIX:
+            // Only apply 'glowing' if the item is NOT wrong. 
+            // If it is wrong, we want the 'wiggle' animation to win.
+            let className = 'decoration-image';
+            if (decoration.hasLightEffect && !isWrong) className += ' glowing';
+            if (isWrong) className += ' decoration-wrong';
+            if (isSelected) className += ' decoration-selected';
+            if (isFixed) className += ' decoration-fixed';
             
             return (
-              <FreeDraggableItem
-                key={decorationKey}
-                id={decorationKey}
-                position={currentPosition}
-                dragDelay={150}
-                style={{ zIndex: 25 }}
-                onPositionChange={(newPosition) => updateDecorationPosition(decorationKey, newPosition)}
-                onDragStart={() => setIsDragging(true)}
-                onDragEnd={() => setIsDragging(false)}
-              >
+<FreeDraggableItem
+  key={decorationKey}
+  id={decorationKey}
+  position={currentPosition}
+  dragDelay={150}
+  style={{ zIndex: 25 }}
+  onPositionChange={(newPosition) => updateDecorationPosition(decorationKey, newPosition)}
+  onDragStart={() => setIsDragging(true)}
+  onDragEnd={() => setIsDragging(false)}
+>
 <img 
   src={DECORATION_IMAGES[decoration.image]}
   alt={decoration.name}
@@ -1744,7 +2111,15 @@ className={`dot-mini ${i < missionData.currentProgress ? 'filled' : ''}`}
   style={{ 
     width: getDecorationSize(decoration.image), 
     height: getDecorationSize(decoration.image), 
-    pointerEvents: selectedMission?.type === 'fix' ? 'auto' : 'none'
+    pointerEvents: selectedMission?.type === 'fix' ? 'auto' : 'none',
+    display: 'block',
+    opacity: 1,
+    
+    // 💥 APPLY INLINE ANIMATION if it exists
+    ...(decoration.animationStyle || {}),
+    
+    // 🖼️ APPLY STICKER EFFECT if it exists
+    ...(decoration.stickerStyle || {})
   }}
   onClick={(e) => {
     if (selectedMission?.type === 'fix' && decoration.isWrong && !decoration.isFixed) {
@@ -1753,7 +2128,7 @@ className={`dot-mini ${i < missionData.currentProgress ? 'filled' : ''}`}
     }
   }}
 />
-              </FreeDraggableItem>
+</FreeDraggableItem>
             );
           });
         })}
@@ -1802,6 +2177,29 @@ className={`dot-mini ${i < missionData.currentProgress ? 'filled' : ''}`}
         )}
       </div>
 
+      {/* Sparkle Burst Effects on Item Placement */}
+{sparklePositions.size > 0 && (
+  <>
+    {Array.from(sparklePositions.entries()).map(([key, pos]) => (
+      <div 
+        key={key}
+        className="sparkle-effect"
+        style={{
+          left: `${pos.x}%`,
+          top: `${pos.y}%`,
+          position: 'absolute',
+          pointerEvents: 'none',
+          zIndex: 30
+        }}
+      >
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="sparkle-star" />
+        ))}
+      </div>
+    ))}
+  </>
+)}
+
       {/* Simple Ganesha Character - Peaceful Observer */}
 <div className="ganesha-simple">
   <div 
@@ -1829,91 +2227,132 @@ className={`dot-mini ${i < missionData.currentProgress ? 'filled' : ''}`}
   const missionData = getMissionData(selectedMission, currentStep, fixedCount);
   
   if (missionData.type === 'fix') {
-    // FIX MODE SIDEBAR
+
+// FIX MODE SIDEBAR (New Separate Styles)
     return (
-      <div className="mission-steps-panel">
-        <div className="panel-title">🔧 Fix Items</div>
-        {selectedMission.wrongPlacements.map((item, index) => {
-          const fixId = `fix-${index}`;
-          const wrongItem = wrongItemsMap.get(fixId);
-          const isFixed = wrongItem?.isFixed || false;
-          const isSelected = selectedWrongItem?.fixId === fixId;
-          
-          const decorationData = Object.values(DECORATION_CATEGORIES)
-            .flatMap(cat => cat.items)
-            .find(i => i.id === item.id);
-          
-          return (
-            <div
-              key={fixId}
-              className={`step-item ${isFixed ? 'completed' : ''} ${isSelected ? 'current' : ''}`}
-            >
-              <div className="step-status">
-                {isFixed ? '✅' : isSelected ? '🔵' : '❌'}
+      <div className="inventory-tray items-mode">
+        
+        {/* Title */}
+        <div className="items-title" style={{marginBottom: '15px'}}>
+          Fix Items 🔧
+        </div>
+
+        {/* Vertical List using NEW classes */}
+        <div className="fix-steps-list">
+          {selectedMission.wrongPlacements.map((item, index) => {
+            const fixId = `fix-${index}`;
+            const wrongItem = wrongItemsMap.get(fixId);
+            const isFixed = wrongItem?.isFixed || false;
+            const isSelected = selectedWrongItem?.fixId === fixId;
+            
+            const decorationData = Object.values(DECORATION_CATEGORIES)
+              .flatMap(cat => cat.items)
+              .find(i => i.id === item.id);
+            
+            return (
+              <div
+                key={fixId}
+                // USE NEW CLASS: fix-item-pill
+                className={`fix-item-pill ${isFixed ? 'completed' : ''} ${isSelected ? 'active' : ''}`}
+                onClick={() => {
+                  if (!isFixed && wrongItem) {
+                    handleWrongItemClick(wrongItem);
+                  }
+                }}
+              >
+                {/* 1. Icon Circle (Left) - USE NEW CLASS: fix-icon-circle */}
+                <div className="fix-icon-circle">
+                  {decorationData && (
+                    <img 
+                      src={DECORATION_IMAGES[decorationData.image]} 
+                      alt={decorationData.name}
+                      className="fix-icon-img" // NEW CLASS
+                    />
+                  )}
+                  
+                  {/* Status Badges */}
+                  {isFixed ? (
+                    <div className="mini-check-badge">✓</div>
+                  ) : (
+                    <div className="mini-cross-badge">✖</div>
+                  )}
+                </div>
+
+                {/* 2. Text (Right) - USE NEW CLASSES */}
+                <div className="fix-text-col">
+                  <span className="fix-item-name">
+                    {decorationData ? decorationData.name : 'Item'}
+                  </span>
+                  <span className="fix-item-sub">
+                    {isFixed ? 'Fixed!' : isSelected ? 'Tap glowing spot!' : 'In wrong spot'}
+                  </span>
+                </div>
               </div>
-              <div className="step-image">
-                {decorationData && (
-                  <img 
-                    src={DECORATION_IMAGES[decorationData.image]} 
-                    alt={decorationData.name}
-                  />
-                )}
-              </div>
-              <div className="step-label">
-                <span className="step-text">
-                  {isFixed ? 'Fixed!' : isSelected ? 'Tap zone!' : 'Fix this!'}
-                </span>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     );
-  } else if (selectedMission?.id === 'puja-prep' && selectedMission.steps) {
-    // PUJA PREP MODE SIDEBAR
+  
+} else if (selectedMission?.id === 'puja-prep' && selectedMission.steps) {
+    // PUJA PREP SIDEBAR (Styled like Item List)
     return (
-      <div className="mission-steps-panel">
-        <div className="panel-title">🙏 Puja Steps</div>
-        {selectedMission.steps.map((step, index) => {
-          const stepNumber = index + 1;
-          const isCompleted = completedSteps.includes(stepNumber);
-          const isCurrent = stepNumber === currentStep;
-          const isPending = stepNumber > currentStep;
-          
-          const decorationData = Object.values(DECORATION_CATEGORIES)
-            .flatMap(cat => cat.items)
-            .find(item => item.id === step.item);
-          
-          return (
-            <div
-              key={step.step}
-              className={`step-item ${isCompleted ? 'completed' : ''} ${isCurrent ? 'current' : ''} ${isPending ? 'pending' : ''}`}
-              onClick={() => {
-                if (isCurrent && decorationData) {
-                  handleDecorationSelect(decorationData);
-                  setHighlightedZones(new Set([step.zone]));
-                }
-              }}
-            >
-              <div className="step-status">
-                {isCompleted ? '✅' : isCurrent ? '▶️' : '⭕'}
+      <div className="inventory-tray items-mode"> 
+        
+        {/* Title */}
+        <div className="items-title" style={{marginBottom: '15px'}}>
+          Puja Steps 🌸
+        </div>
+
+        {/* Vertical Steps List */}
+        <div className="puja-steps-list">
+          {selectedMission.steps.map((step, index) => {
+            const stepNumber = index + 1;
+            const isCompleted = completedSteps.includes(stepNumber);
+            const isCurrent = stepNumber === currentStep;
+            const isFuture = !isCompleted && !isCurrent;
+            
+            const decorationData = Object.values(DECORATION_CATEGORIES)
+              .flatMap(cat => cat.items)
+              .find(item => item.id === step.item);
+            
+            return (
+              <div
+                key={step.step}
+                className={`puja-item-pill ${isCompleted ? 'completed' : ''} ${isCurrent ? 'active' : ''} ${isFuture ? 'locked' : ''}`}
+                onClick={() => {
+                  if (isCurrent && decorationData) {
+                    handleDecorationSelect(decorationData);
+                    setHighlightedZones(new Set([step.zone]));
+                  }
+                }}
+              >
+                {/* 1. Icon Circle (Left) */}
+                <div className="puja-icon-circle">
+                  {decorationData && (
+                    <img 
+                      src={DECORATION_IMAGES[decorationData.image]} 
+                      alt={decorationData.name}
+                      className="puja-icon-img"
+                    />
+                  )}
+                  {/* Small Checkmark Badge if done */}
+                  {isCompleted && <div className="mini-check-badge">✓</div>}
+                </div>
+
+                {/* 2. Text (Right) */}
+                <div className="puja-text-col">
+                  <span className="puja-item-name">
+{decorationData ? decorationData.name : 'Item'}
+                  </span>
+                  <span className="puja-item-sub">
+                    {isCompleted ? 'Done!' : isCurrent ? 'Tap to place' : 'Coming Next...'}
+                  </span>
+                </div>
               </div>
-              <div className="step-image">
-                {decorationData && (
-                  <img 
-                    src={DECORATION_IMAGES[decorationData.image]} 
-                    alt={decorationData.name}
-                  />
-                )}
-              </div>
-              <div className="step-label">
-                <span className="step-text">
-                  {isCompleted ? 'Done!' : isCurrent ? 'Tap!' : 'Next'}
-                </span>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     );
   }
@@ -1965,7 +2404,8 @@ className={`dot-mini ${i < missionData.currentProgress ? 'filled' : ''}`}
 {/* ECO MISSION TRAY - Items */}
 {isInMission && selectedMission?.type === 'eco' && gameState.selectedCategory && (
   <div className={`inventory-tray ${isDragging ? 'dragging-active' : ''}`}>
-    <div className="items-header">
+<div className="items-header">
+      {/* 1. New Circular Back Button with Arrow Icon */}
       <button 
         className="back-button"
         onClick={() => {
@@ -1977,8 +2417,14 @@ className={`dot-mini ${i < missionData.currentProgress ? 'filled' : ''}`}
           clearHighlights();
         }}
       >
-        ← Back
+        ←
       </button>
+
+      {/* 2. Title */}
+      <div className="items-title">
+        {DECORATION_CATEGORIES[gameState.selectedCategory.toUpperCase()]?.name}
+      </div>
+    
       <div className="items-title">
         {DECORATION_CATEGORIES[gameState.selectedCategory.toUpperCase()]?.name}
       </div>
@@ -2015,7 +2461,7 @@ className={`dot-mini ${i < missionData.currentProgress ? 'filled' : ''}`}
               className="item-image"
             />
             <span className="item-name">
-              {item.name.split(' ')[0]}
+              {item.name} {/* <--- NOW IT SHOWS FULL NAME */}
               {isEco && ' ✓'}
               {isNonEco && ' ✗'}
             </span>
@@ -2073,7 +2519,7 @@ onClick={() => handleCategorySelect('lights_diyas')}
   </div>
 )}
 
-{/* Inventory Tray - Items (for Free Play) */}
+{/* Inventory Tray - Items (for Free Play) 
 {gameState.selectedCategory && gameState.phase !== PHASES.COMPLETE && !isInMission && (
   <div 
     className={`inventory-tray ${isDragging ? 'dragging-active' : ''}`}
@@ -2113,7 +2559,71 @@ onClick={() => handleCategorySelect('lights_diyas')}
       ))}
     </div>
   </div>
+)}*/}
+
+{/* Inventory Tray - Items (for Free Play) */}
+{gameState.selectedCategory && gameState.phase !== PHASES.COMPLETE && !isInMission && (
+  <div 
+    className={`inventory-tray items-mode ${isTrayCollapsed ? 'collapsed' : ''} ${isDragging ? 'dragging-active' : ''}`}
+  >
+    
+    {/* 1. TOGGLE HANDLE (The Tab on the side) */}
+    <div 
+      className="tray-toggle"
+      onClick={() => setIsTrayCollapsed(!isTrayCollapsed)}
+    >
+      {isTrayCollapsed ? '◀' : '▶'}
+    </div>
+
+    {/* 2. HEADER */}
+    <div className="items-header">
+      <button 
+        className="back-button"
+        onClick={() => {
+          setGameState(prev => ({
+            ...prev,
+            selectedCategory: null,
+            selectedDecoration: null
+          }));
+          clearHighlights();
+          setIsTrayCollapsed(false); // Reset to full width
+        }}
+      >
+←
+      </button>
+
+      {/* Title - Fades out when collapsed */}
+      <div className={`items-title ${isTrayCollapsed ? 'fade-out' : ''}`}>
+        {DECORATION_CATEGORIES[gameState.selectedCategory.toUpperCase()]?.name}
+      </div>
+    </div>
+
+    {/* 3. ITEM LIST */}
+    <div className="item-buttons">
+      {DECORATION_CATEGORIES[gameState.selectedCategory.toUpperCase()]?.items.map((item) => (
+        <div
+          key={item.id}
+          className={`item-button ${gameState.selectedDecoration?.id === item.id ? 'selected' : ''}`}
+          onClick={() => handleDecorationSelect(item)}
+        >
+          <img 
+            src={DECORATION_IMAGES[item.image]} 
+            alt={item.name}
+            className="item-image"
+          />
+          
+          {/* Hide text when collapsed */}
+          {!isTrayCollapsed && (
+            <span className="item-name">
+              {item.name} {/* <--- NOW IT SHOWS FULL NAME */}
+            </span>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
 )}
+
 
       {/* Delete Zone */}
       {isDragging && nearDeleteZone && (

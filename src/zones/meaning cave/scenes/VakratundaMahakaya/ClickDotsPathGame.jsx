@@ -19,7 +19,9 @@ const ClickDotsPathGame = ({
   // ✅ NEW: Reload/Resume props
   initialDot = 0,           // Which dot to start from (for reload)
   initialProgress = 0,      // Progress percentage (for display)
-  isResuming = false        // Is this a reload/resume?
+  isResuming = false,        // Is this a reload/resume?
+    onInteraction = null  // ✅ ADD THIS
+
 }) => {
   const svgRef = useRef(null);
   
@@ -108,6 +110,8 @@ const ClickDotsPathGame = ({
 
   // ========== 🛡️ PROTECTED DOT CLICK HANDLER ==========
   const handleDotClick = (index) => {
+      onInteraction?.();
+
     const now = Date.now();
     
     // ========== 🛡️ PROTECTION LAYER 1: DISABLED CHECK ==========

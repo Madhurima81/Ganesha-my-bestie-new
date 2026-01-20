@@ -43,76 +43,170 @@ import symbolEyesColored from './assets/images/symbol-eyes-colored.png';
 import symbolEarsColored from './assets/images/symbol-ear-colored.png';
 import symbolTuskColored from './assets/images/symbol-tusk-colored.png';
 
+// Body Part Overlays - ADD THESE
+import ganeshaFaded from './assets/images/ganesha-faded.png';
+import ganeshaEyes from './assets/images/ganesha-eyes-colored.png';
+import ganeshaEars from './assets/images/ganesha-ears-colored.png';
+import ganeshaTrunk from './assets/images/ganesha-trunk-colored.png';
+import ganeshaTusk from './assets/images/ganesha-tusk-colored.png';
+import ganeshaLeftHand from './assets/images/ganesha-left-hand-colored.png';
+import ganeshaRightHand from './assets/images/ganesha-right-hand-colored.png';
+import ganeshaBelly from './assets/images/ganesha-belly-colored.png';
+import ganeshaBase from './assets/images/ganesha-mouse-colored.png';
+
+// Association Icons (create placeholder icons for now, or use emojis)
+// We'll use simple colored circles as placeholders - you can replace with actual icons later
+
 // Coach image (for hints only)
 import mooshikaCoach from "../pond/assets/images/mooshika-coach.png";
+
+// Temporary Icon Placeholders (replace with actual images later)
+const createIconDataURL = (emoji, color) => {
+  const canvas = document.createElement('canvas');
+  canvas.width = 120;
+  canvas.height = 120;
+  const ctx = canvas.getContext('2d');
+  
+  // Background circle
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(60, 60, 50, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Emoji
+  ctx.font = '50px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(emoji, 60, 60);
+  
+  return canvas.toDataURL();
+};
+
+// Icon placeholders (you can replace these with actual icon imports later)
+const iconTarget = '🎯';
+const iconHeadphones = '🎧';
+const iconRoadblock = '🚧';
+const iconHammer = '🔨';
+const iconHoney = '🍯';
+const iconLightbulb = '💡';
+const iconUniverse = '🌌';
+const iconPath = '🛤️';
 
 // Sacred Assembly Game Configuration
 const SACRED_SYMBOLS = [
   { 
-    id: 'mooshika', 
-    name: 'Mooshika', 
-    emoji: '🐭', 
-    image: symbolMooshikaColored,
-    blessing: "Mooshika, Ganesha's divine vehicle awakens! May wisdom guide your every journey, dear child.",
-    bodyPart: 'base'
-  },
-  { 
-    id: 'modak', 
-    name: 'Modak', 
-    emoji: '🍯', 
-    image: symbolModakColored,
-    blessing: "Ganesha's blessing hand awakens! May sweetness and abundance fill your life.",
-    bodyPart: 'left-hand'
-  },
-  { 
-    id: 'belly', 
-    name: 'Belly', 
-    emoji: '🫄', 
-    image: symbolBellyColored,
-    blessing: "Ganesha's sacred belly awakens! May you hold the universe's love within you.",
-    bodyPart: 'belly'
-  },
-  { 
-    id: 'lotus', 
-    name: 'Lotus', 
-    emoji: '🪷', 
-    image: symbolLotusColored,
-    blessing: "Ganesha's wisdom hand comes alive! May purity and enlightenment guide you.",
-    bodyPart: 'right-hand'
-  },
-  { 
-    id: 'trunk', 
-    name: 'Trunk', 
-    emoji: '🐘', 
-    image: symbolTrunkColored,
-    blessing: "Ganesha's mighty trunk awakens! May all obstacles be removed from your path.",
-    bodyPart: 'trunk'
-  },
-  { 
-    id: 'eyes', 
+    id: 'eyes',
     name: 'Eyes', 
     emoji: '👁️', 
     image: symbolEyesColored,
+    associationIcon: iconTarget,
+    associationText: "Ganesha's eyes see the truth in all things!",
+    bodyPartImage: ganeshaEyes,
     blessing: "Ganesha's divine eyes awaken! May you see truth in all things.",
-    bodyPart: 'eyes'
+    bodyPart: 'eyes',
+    correctZone: 'eyes',
+    wrongZones: ['belly', 'base', 'left-hand', 'trunk']
   },
   { 
-    id: 'ears', 
+    id: 'ears',
     name: 'Ears', 
     emoji: '👂', 
     image: symbolEarsColored,
+    associationIcon: iconHeadphones,
+    associationText: "Ganesha's sacred ears hear every prayer with compassion!",
+    bodyPartImage: ganeshaEars,
     blessing: "Ganesha's sacred ears come alive! May you listen with wisdom and compassion.",
-    bodyPart: 'ears'
+    bodyPart: 'ears',
+    correctZone: 'ears',
+    wrongZones: ['trunk', 'right-hand', 'base', 'tusk']
   },
   { 
-    id: 'tusk', 
+    id: 'trunk',
+    name: 'Trunk', 
+    emoji: '🐘', 
+    image: symbolTrunkColored,
+    associationIcon: iconRoadblock,
+    associationText: "Ganesha's mighty trunk clears all obstacles from your path!",
+    bodyPartImage: ganeshaTrunk,
+    blessing: "Ganesha's mighty trunk awakens! May all obstacles be removed from your path.",
+    bodyPart: 'trunk',
+    correctZone: 'trunk',
+    wrongZones: ['eyes', 'belly', 'right-hand', 'base']
+  },
+  { 
+    id: 'tusk',
     name: 'Tusk', 
     emoji: '🦷', 
     image: symbolTuskColored,
+    associationIcon: iconHammer,
+    associationText: "Ganesha's powerful tusk breaks through any challenge!",
+    bodyPartImage: ganeshaTusk,
     blessing: "Ganesha's powerful tusk glows! May you break through any challenge with determination.",
-    bodyPart: 'tusk'
+    bodyPart: 'tusk',
+    correctZone: 'tusk',
+    wrongZones: ['ears', 'left-hand', 'belly', 'trunk']
+  },
+  { 
+    id: 'modak',
+    name: 'Modak', 
+    emoji: '🍯', 
+    image: symbolModakColored,
+    associationIcon: iconHoney,
+    associationText: "Ganesha's blessing hand brings sweetness and abundance!",
+    bodyPartImage: ganeshaLeftHand,
+    blessing: "Ganesha's blessing hand awakens! May sweetness and abundance fill your life.",
+    bodyPart: 'left-hand',
+    correctZone: 'left-hand',
+    wrongZones: ['right-hand', 'ears', 'base', 'belly']
+  },
+  { 
+    id: 'lotus',
+    name: 'Lotus', 
+    emoji: '🪷', 
+    image: symbolLotusColored,
+    associationIcon: iconLightbulb,
+    associationText: "Ganesha's wisdom hand holds purity and enlightenment!",
+    bodyPartImage: ganeshaRightHand,
+    blessing: "Ganesha's wisdom hand comes alive! May purity and enlightenment guide you.",
+    bodyPart: 'right-hand',
+    correctZone: 'right-hand',
+    wrongZones: ['left-hand', 'trunk', 'tusk', 'eyes']
+  },
+  { 
+    id: 'belly',
+    name: 'Belly', 
+    emoji: '🫄', 
+    image: symbolBellyColored,
+    associationIcon: iconUniverse,
+    associationText: "Ganesha's sacred belly holds the entire universe's love!",
+    bodyPartImage: ganeshaBelly,
+    blessing: "Ganesha's sacred belly awakens! May you hold the universe's love within you.",
+    bodyPart: 'belly',
+    correctZone: 'belly',
+    wrongZones: ['trunk', 'eyes', 'left-hand', 'right-hand']
+  },
+  { 
+    id: 'mooshika',
+    name: 'Mooshika', 
+    emoji: '🐭', 
+    image: symbolMooshikaColored,
+    associationIcon: iconPath,
+    associationText: "Mooshika, Ganesha's divine vehicle, guides every journey with wisdom!",
+    bodyPartImage: ganeshaBase,
+    blessing: "Mooshika, Ganesha's divine vehicle awakens! May wisdom guide your every journey, dear child.",
+    bodyPart: 'base',
+    correctZone: 'base',
+    wrongZones: ['belly', 'trunk', 'ears', 'eyes']
   }
 ];
+
+
+// DEBUG: Verify SACRED_SYMBOLS is correct
+console.log('🔍 SACRED_SYMBOLS check:', {
+  count: SACRED_SYMBOLS.length,
+  ids: SACRED_SYMBOLS.map(s => s.id),
+  hasDuplicates: SACRED_SYMBOLS.map(s => s.id).length !== new Set(SACRED_SYMBOLS.map(s => s.id)).size
+});
 
 // Individual styling for placed symbols
 const PLACED_SYMBOL_CONFIGS = {
@@ -179,40 +273,49 @@ const SacredAssemblyScene = ({
     <SceneManager
       zoneId={zoneId}
       sceneId={sceneId}
-      initialState={{
-        placedSymbols: {},           
-        ganeshaState: GANESHA_STATES.STONE,
-        selectedSymbol: null,        
-        highlightedZone: null,       
-        placementAnimation: null,    
-        currentBlessing: null,
-        blessingsHeard: [],
-        finalBlessingShown: false,
-        phase: 'initial',
-        currentFocus: 'assembly',
-        discoveredSymbols: {
-          mooshika: true, modak: true, belly: true, lotus: true,
-          trunk: true, eyes: true, ear: true, tusk: true
-        },
-        welcomeShown: false,
-        assemblyWisdomShown: false,
-        masteryShown: false,
-        readyForWisdom: false,
-        gameCoachState: null,
-        lastGameCoachTime: 0,
-        isReloadingGameCoach: false,
-        currentPopup: null,
-        showingCompletionScreen: false,
-        showingZoneCompletion: false,
-        celebrationActive: false,    
-        stars: 0,
-        completed: false,
-        progress: {
-          percentage: 0,
-          starsEarned: 0,
-          completed: false
-        }
-      }}
+initialState={{
+  placedSymbols: {},           
+  ganeshaState: GANESHA_STATES.STONE,
+  selectedSymbol: null,        
+  highlightedZone: null,       
+  
+  // NEW: Association Challenge State
+  currentRound: 0,
+  currentAssociationSymbol: null,
+  glowingZones: [],
+  wrongAttempts: 0,
+  showingAssociationCard: false,
+  symbolQueue: [],
+  
+  placementAnimation: null,    
+  currentBlessing: null,
+  blessingsHeard: [],
+  finalBlessingShown: false,
+  phase: 'initial',
+  currentFocus: 'assembly',
+  discoveredSymbols: {
+    mooshika: true, modak: true, belly: true, lotus: true,
+    trunk: true, eyes: true, ear: true, tusk: true
+  },
+  welcomeShown: false,
+  assemblyWisdomShown: false,
+  masteryShown: false,
+  readyForWisdom: false,
+  gameCoachState: null,
+  lastGameCoachTime: 0,
+  isReloadingGameCoach: false,
+  currentPopup: null,
+  showingCompletionScreen: false,
+  showingZoneCompletion: false,
+  celebrationActive: false,    
+  stars: 0,
+  completed: false,
+  progress: {
+    percentage: 0,
+    starsEarned: 0,
+    completed: false
+  }
+}}
     >
       {({ sceneState, sceneActions, isReload }) => (
         <SacredAssemblyContent
@@ -262,6 +365,9 @@ const SacredAssemblyContent = ({
   const highlightedZone = sceneState?.highlightedZone ? 
     BODY_PART_ZONES.find(z => z.id === sceneState.highlightedZone) : null;
 
+     const [flyingSymbol, setFlyingSymbol] = useState(null); // Stores data for the flying animation
+  const [ganeshaReaction, setGaneshaReaction] = useState(''); // 'happy'
+
   const safeSetTimeout = (callback, delay) => {
     const id = setTimeout(callback, delay);
     timeoutsRef.current.push(id);
@@ -278,6 +384,20 @@ const SacredAssemblyContent = ({
       clearAllTimeouts();
     };
   }, []);
+
+   const playSound = (type) => {
+    // Simple sound effects (you can replace URLs later)
+    const sounds = {
+      pop: 'https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-click-1112.mp3',
+      success: 'https://assets.mixkit.co/sfx/preview/mixkit-magical-coin-win-193.mp3',
+      wrong: 'https://assets.mixkit.co/sfx/preview/mixkit-cartoon-negative-sound-2273.mp3'
+    };
+    try {
+      const audio = new Audio(sounds[type]);
+      audio.volume = 0.5;
+      audio.play().catch(e => console.log("Audio play blocked", e));
+    } catch (e) { console.log("Audio error"); }
+  };
 
   const handleSymbolClick = (symbol) => {
     if (!sceneState || !sceneActions) return;
@@ -311,20 +431,367 @@ const SacredAssemblyContent = ({
     }
   };
 
-  const handleDropZoneClick = (zone) => {
-    if (!sceneState || !sceneActions) return;
+  // NEW: Initialize random symbol queue when game starts
+// REPLACE LINES 409-430 in SacredAssemblySceneV8.jsx with this:
+
+// NEW: Initialize random symbol queue when game starts
+// NEW: Initialize random symbol queue when game starts
+useEffect(() => {
+  if (sceneState?.phase === 'initial' && 
+      sceneState?.welcomeShown && 
+      (!sceneState?.symbolQueue || sceneState.symbolQueue.length === 0)) {
     
-    const selectedSymbolId = sceneState.selectedSymbol;
-    if (!selectedSymbolId) return;
-
-    if (!zone.acceptTypes.includes(selectedSymbolId)) return;
-
-    handleSymbolPlacement({ 
-      id: selectedSymbolId, 
-      zone: zone.id,
-      data: SACRED_SYMBOLS.find(s => s.id === selectedSymbolId)
+    console.log('🎮 Initializing symbol queue...'); // DEBUG
+    
+    // Create array of all symbol IDs (should be exactly 8)
+    const allSymbolIds = SACRED_SYMBOLS.map(s => s.id);
+    console.log('📋 All symbol IDs:', allSymbolIds, 'Count:', allSymbolIds.length); // DEBUG
+    
+    // Fisher-Yates shuffle for better randomization
+    const shuffledSymbols = [...allSymbolIds];
+    for (let i = shuffledSymbols.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledSymbols[i], shuffledSymbols[j]] = [shuffledSymbols[j], shuffledSymbols[i]];
+    }
+    
+    console.log('🎲 Symbol queue created:', shuffledSymbols); // DEBUG
+    console.log('✅ Queue length:', shuffledSymbols.length, 'Should be 8'); // DEBUG
+    
+    // Verify no duplicates
+    const uniqueSymbols = [...new Set(shuffledSymbols)];
+    if (uniqueSymbols.length !== 8) {
+      console.error('❌ DUPLICATE SYMBOLS IN QUEUE!', shuffledSymbols); // DEBUG
+    }
+    
+    sceneActions.updateState({
+      symbolQueue: shuffledSymbols,
+      currentRound: 0
     });
+  }
+}, [sceneState?.phase, sceneState?.welcomeShown, sceneState?.symbolQueue]);
+
+// NEW: Separate useEffect to start first round AFTER symbolQueue is set
+// NEW: Separate useEffect to start first round AFTER symbolQueue is set
+useEffect(() => {
+  // Check if any symbols are already placed
+  const placedCount = Object.keys(sceneState?.placedSymbols || {}).length;
+
+  if (sceneState?.symbolQueue && 
+      sceneState.symbolQueue.length > 0 && 
+      sceneState.currentRound === 0 &&
+      placedCount === 0 && // <--- ADD THIS LINE
+      !sceneState.currentAssociationSymbol &&
+      !sceneState.showingAssociationCard) {
+    
+    console.log('🚀 Starting first round with queue:', sceneState.symbolQueue); // DEBUG
+    
+    // Start first round after brief delay
+    safeSetTimeout(() => {
+      startNextRound(0);
+    }, 500);
+  }
+}, [
+  sceneState?.symbolQueue, 
+  sceneState?.currentRound, 
+  sceneState?.currentAssociationSymbol,
+  sceneState?.placedSymbols // <--- ADD THIS to the dependency array
+]);
+
+// ADD THIS NEW useEffect AFTER the other useEffects (around line 470)
+// This will help us see when state changes:
+
+// DEBUG: Monitor association card state
+useEffect(() => {
+  console.log('🔍 Association Card State Changed:', {
+    showingAssociationCard: sceneState?.showingAssociationCard,
+    currentAssociationSymbol: sceneState?.currentAssociationSymbol,
+    glowingZones: sceneState?.glowingZones,
+    currentRound: sceneState?.currentRound,
+    symbolQueue: sceneState?.symbolQueue
+  });
+}, [
+  sceneState?.showingAssociationCard, 
+  sceneState?.currentAssociationSymbol, 
+  sceneState?.glowingZones,
+  sceneState?.currentRound,
+  sceneState?.symbolQueue
+]);
+
+// NEW: Start next round function
+// UPDATE the startNextRound function (lines 432-471)
+// Add console.log statements for debugging:
+
+// NEW: Start next round function
+const startNextRound = (roundNumber = null) => {
+  if (!sceneState || !sceneActions) {
+    console.log('❌ No sceneState or sceneActions'); // DEBUG
+    return;
+  }
+  
+  // Use provided round number or fall back to state
+  const currentRound = roundNumber !== null ? roundNumber : (sceneState.currentRound || 0);
+  const symbolQueue = sceneState.symbolQueue || [];
+  
+  console.log('📍 startNextRound called - Round:', currentRound, 'Queue:', symbolQueue); // DEBUG
+  
+  // Check if all symbols placed
+  if (currentRound >= 8) {
+    console.log('✅ All symbols placed! Triggering celebration'); // DEBUG
+    triggerFinalCelebration();
+    return;
+  }
+  
+  // Get current symbol to quiz
+// Get current symbol to quiz
+const currentSymbolId = symbolQueue[currentRound];
+console.log('🎲 Round:', currentRound, '| Queue index:', currentRound, '| Symbol ID from queue:', currentSymbolId); // DEBUG
+console.log('📜 Full queue:', symbolQueue); // DEBUG
+
+const currentSymbol = SACRED_SYMBOLS.find(s => s.id === currentSymbolId);
+
+if (!currentSymbol) {
+  console.log('❌ No symbol found for ID:', currentSymbolId); // DEBUG
+  return;
+}
+
+console.log('🎯 Current symbol:', currentSymbol.name, '(' + currentSymbol.id + ')'); // DEBUG
+  
+  // Pick 2 random wrong zones from the symbol's wrongZones array
+  const wrongZoneOptions = [...currentSymbol.wrongZones];
+  const shuffledWrong = wrongZoneOptions.sort(() => Math.random() - 0.5);
+  const selectedWrongZones = shuffledWrong.slice(0, 2);
+  
+  // Combine correct zone + 2 wrong zones and shuffle
+  const allGlowingZones = [
+    currentSymbol.correctZone,
+    ...selectedWrongZones
+  ].sort(() => Math.random() - 0.5);
+  
+  console.log('💡 Glowing zones:', allGlowingZones); // DEBUG
+  console.log('📝 Setting showingAssociationCard to TRUE'); // DEBUG
+  
+  // Update state to show association card and glow zones
+  sceneActions.updateState({
+    currentAssociationSymbol: currentSymbolId,
+    glowingZones: allGlowingZones,
+    showingAssociationCard: true,
+    wrongAttempts: 0,
+    selectedSymbol: null,
+    highlightedZone: null
+  });
+  
+  console.log('✨ State updated - card should show!'); // DEBUG
+};
+
+// NEW: Handle zone click
+const handleZoneClick = (zoneId) => {
+  if (!sceneState || !sceneActions) return;
+  
+  const currentSymbolId = sceneState.currentAssociationSymbol;
+  const currentSymbol = SACRED_SYMBOLS.find(s => s.id === currentSymbolId);
+  
+  if (!currentSymbol) return;
+  
+  // Check if clicked zone is correct
+  const isCorrect = zoneId === currentSymbol.correctZone;
+  
+  if (isCorrect) {
+    handleCorrectPlacement(currentSymbol);
+  } else {
+    handleWrongPlacement(zoneId);
+  }
+};
+
+// NEW: Handle correct placement with MAGIC & FUN
+// NEW: Handle correct placement with MAGIC & FUN
+/*const handleCorrectPlacement = (symbol) => {
+  if (!sceneState || !sceneActions) return;
+  
+  clearAllTimeouts();
+
+  // 1. Play Success Sound
+  playSound('success');
+
+  // 2. Trigger Flying Animation
+  // --- FIX: CALCULATE COORDINATES CORRECTLY ---
+  const targetZone = BODY_PART_ZONES.find(z => z.id === symbol.correctZone);
+  
+  // Default to 50% if not found
+  let tTop = targetZone?.position?.top || '50%';
+  let tLeft = targetZone?.position?.left;
+
+  // Fix: If zone uses 'right' instead of 'left', calculate the left position
+  if (!tLeft && targetZone?.position?.right) {
+     tLeft = `calc(100% - ${targetZone.position.right})`; 
+  }
+  // Fallback
+  if (!tLeft) tLeft = '50%'; 
+
+  console.log(`✈️ Flying to: Top ${tTop}, Left ${tLeft}`); // Debug log
+
+  setFlyingSymbol({
+    image: symbol.image,
+    targetTop: tTop,
+    targetLeft: tLeft
+  });
+  // --------------------------------------------
+
+  // 3. Wait for flight to finish (0.9s), THEN update game state
+  safeSetTimeout(() => {
+    // A. Trigger Ganesha Wiggle Reaction
+    setGaneshaReaction('happy');
+    safeSetTimeout(() => setGaneshaReaction(''), 800);
+
+    // B. Clear Flying Symbol
+    setFlyingSymbol(null);
+
+    // C. ACTUAL LOGIC
+    const newPlacedSymbols = {
+      ...sceneState.placedSymbols,
+      [symbol.id]: true
+    };
+    
+    const placedCount = Object.keys(newPlacedSymbols).length;
+    const percentage = Math.round((placedCount / 8) * 100);
+    
+    // Update state
+    sceneActions.updateState({
+      placedSymbols: newPlacedSymbols,
+      showingAssociationCard: false,
+      glowingZones: [],
+      currentAssociationSymbol: null,
+      stars: placedCount,
+      progress: {
+        percentage: percentage,
+        starsEarned: placedCount,
+        completed: placedCount === 8
+      }
+    });
+    
+    // Show sparkle celebration
+    setShowSparkle(`symbol-placed-${symbol.id}`);
+    safeSetTimeout(() => setShowSparkle(null), 2000);
+    
+    // Check completion
+    if (placedCount === 8) {
+      safeSetTimeout(() => triggerFinalCelebration(), 1500);
+    } else {
+      // Move to next round
+      const nextRound = (sceneState.currentRound || 0) + 1;
+      safeSetTimeout(() => {
+        sceneActions.updateState({ currentRound: nextRound });
+        safeSetTimeout(() => {
+          playSound('pop'); 
+          startNextRound(nextRound);
+        }, 300);
+      }, 1000); 
+    }
+  }, 900); // 0.9s delay matches the flight animation time
+};*/
+
+// NEW: Handle correct placement
+// NEW: Handle correct placement
+const handleCorrectPlacement = (symbol) => {
+  if (!sceneState || !sceneActions) return;
+  
+  clearAllTimeouts();
+  
+  console.log('🎊 STARTING CELEBRATION FOR:', symbol.name); // DEBUG
+  
+  // Show big celebration effects
+  setShowSparkle(`celebration-${symbol.id}`);
+  
+  // DO NOT clear sparkle immediately - let it show for 2 seconds
+  safeSetTimeout(() => {
+    console.log('🎊 CLEARING CELEBRATION'); // DEBUG
+    setShowSparkle(null);
+  }, 2000);
+  
+  const newPlacedSymbols = {
+    ...sceneState.placedSymbols,
+    [symbol.id]: true
   };
+  
+  const placedCount = Object.keys(newPlacedSymbols).length;
+  const percentage = Math.round((placedCount / 8) * 100);
+  
+  console.log('✅ Symbol placed:', symbol.name, '| Total placed:', placedCount);
+  
+  // Add exit animation to card (wait a bit so celebration is visible)
+  safeSetTimeout(() => {
+    const cardElement = document.querySelector('.association-card');
+    if (cardElement) {
+      cardElement.style.animation = 'cardSlideOutLeft 0.5s ease-in forwards';
+    }
+  }, 500);
+  
+  // Update state after a brief delay
+  safeSetTimeout(() => {
+    sceneActions.updateState({
+      placedSymbols: newPlacedSymbols,
+      showingAssociationCard: false,
+      glowingZones: [],
+      currentAssociationSymbol: null,
+      stars: placedCount,
+      progress: {
+        percentage: percentage,
+        starsEarned: placedCount,
+        completed: placedCount === 8
+      }
+    });
+  }, 600);
+  
+  // Check if game is complete
+  if (placedCount === 8) {
+    console.log('🎉 All 8 symbols placed! Starting celebration!');
+    safeSetTimeout(() => {
+      triggerFinalCelebration();
+    }, 2500);
+  } else {
+    console.log('➡️ Moving to next round...');
+    const nextRound = (sceneState.currentRound || 0) + 1;
+    safeSetTimeout(() => {
+      sceneActions.updateState({
+        currentRound: nextRound
+      });
+      
+      safeSetTimeout(() => {
+        startNextRound(nextRound);
+      }, 100);
+    }, 2500);
+  }
+};
+
+// NEW: Handle wrong placement
+const handleWrongPlacement = (clickedZoneId) => {
+  if (!sceneState || !sceneActions) return;
+  
+  const newWrongAttempts = (sceneState.wrongAttempts || 0) + 1;
+  
+  // Show shake animation on wrong zone
+  setShowSparkle(`wrong-zone-${clickedZoneId}`);
+  safeSetTimeout(() => setShowSparkle(null), 800);
+  
+  // Update wrong attempts count
+  sceneActions.updateState({
+    wrongAttempts: newWrongAttempts
+  });
+  
+  // After 2 wrong attempts, show hint
+  if (newWrongAttempts >= 2 && progressiveHintRef.current?.showHint) {
+    const currentSymbol = SACRED_SYMBOLS.find(
+      s => s.id === sceneState.currentAssociationSymbol
+    );
+    
+    if (currentSymbol) {
+      progressiveHintRef.current.showHint({
+        message: `Think about it: ${currentSymbol.associationText}`,
+        explicitMessage: `The correct answer is the ${currentSymbol.name} area!`
+      });
+    }
+  }
+};
+
 
   // COMMENTED OUT: Auto-welcome trigger
   /*
@@ -521,9 +988,11 @@ const SacredAssemblyContent = ({
                     Awaken the Divine Ganesha!
                   </h1>
                   
-                  <p className="assembly-instructions-subtitle">
-                    You have collected all 8 sacred symbols. Place them correctly to bring Ganesha to life!
-                  </p>
+              <p className="assembly-instructions-subtitle">
+  You have learned all 8 sacred symbols! Now prove your knowledge by 
+  matching each symbol's meaning to the correct part of Ganesha's form. 
+  Watch him come to life as you succeed!
+</p>
                   
                   {/* Icons showing what to find */}
                   <div className="assembly-instructions-icons">
@@ -554,6 +1023,78 @@ const SacredAssemblyContent = ({
             </div>
           )}
 
+          {/* HEARTS PROGRESS BAR */}
+{sceneState.welcomeShown && (
+  <div className="hearts-progress-container">
+    <div className="hearts-row">
+      {[0, 1, 2, 3, 4, 5, 6, 7].map((index) => {
+        const isCompleted = Object.keys(sceneState.placedSymbols || {}).length > index;
+        const isJustCompleted = Object.keys(sceneState.placedSymbols || {}).length - 1 === index;
+        
+        return (
+          <div 
+            key={`heart-${index}`}
+            className={`progress-heart ${isCompleted ? 'filled' : 'empty'} ${isJustCompleted ? 'just-completed' : ''}`}
+          >
+            💜
+            {isJustCompleted && (
+              <div className="heart-sparkle-burst">
+                <SparkleAnimation
+                  type="star"
+                  count={8}
+                  color="#8A2BE2"
+                  size={4}
+                  duration={1000}
+                  fadeOut={true}
+                  area="contained"
+                />
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+    <div className="progress-text">
+      {Object.keys(sceneState.placedSymbols || {}).length}/8 Symbols Awakened
+    </div>
+  </div>
+)}
+
+          {/* ASSOCIATION CHALLENGE CARD */}
+{sceneState.showingAssociationCard && sceneState.currentAssociationSymbol && (
+  <div className="association-card-overlay">
+    <div className="association-card">
+      {/* Icon Display */}
+     <div className="association-icon-container">
+  <div className="association-icon-emoji">
+    {SACRED_SYMBOLS.find(s => s.id === sceneState.currentAssociationSymbol)?.associationIcon}
+  </div>
+</div>
+      
+      {/* Association Text */}
+      <p className="association-text">
+        {SACRED_SYMBOLS.find(s => s.id === sceneState.currentAssociationSymbol)?.associationText}
+      </p>
+      
+      {/* Round Counter */}
+      <div className="round-counter">
+        Round {(sceneState.currentRound || 0) + 1} of 8
+      </div>
+      
+      {/* Sparkle Decoration */}
+      <SparkleAnimation
+        type="star"
+        count={6}
+        color={SACRED_COLOR_PALETTE.primary}
+        size={4}
+        duration={3000}
+        fadeOut={false}
+        area="contained"
+      />
+    </div>
+  </div>
+)}
+
           {/* SimpleGameCoach COMMENTED OUT 
           <SimpleGameCoach
             config={{...}}
@@ -582,198 +1123,199 @@ const SacredAssemblyContent = ({
               />
             </div>
 
-            {/* Ganesha Sacred Form Container */}
-            <div className="ganesha-assembly-container" style={{ pointerEvents: 'none' }}>
-              {/* Ganesha Progressive Awakening */}
-              <div className="ganesha-awakening-container">
-                <img 
-                  src={ganeshaStone}
-                  alt="Ganesha Outline"
-                  className="ganesha-outline"
-                  style={{
-                    opacity: 0.2,
-                    filter: 'brightness(1.5) contrast(0.8)'
-                  }}
-                />
-                
-                <img 
-                  src={ganeshaDivine}
-                  alt="Ganesha Divine Form"
-                  className={`ganesha-divine ${getGaneshaAwakeningClass()}`}
-                  style={{
-                    position: 'absolute',
-                    top: '10%',
-                    left: '10%',
-                    transform: 'translateX(-50%)',
-                    width: '90%',
-                    height: '90%',
-                    opacity: getGaneshaOpacity(),
-                    transition: 'all 1s ease'
-                  }}
-                />
-              </div>
+           {/* Ganesha Progressive Fill Container */}
+{/* UPDATE THIS LINE */}
+<div className={`ganesha-assembly-container ${ganeshaReaction}`} style={{ pointerEvents: 'none' }}>  {/* Base Faded Ganesha (Always Visible) */}
+  <div className="ganesha-base-layer">
+    <img 
+      src={ganeshaFaded}
+      alt="Ganesha Outline"
+      className="ganesha-faded"
+      style={{
+        width: '100%',
+        height: '100%',
+        opacity: 1,
+        position: 'relative'
+      }}
+    />
+  </div>
+  
+  {/* Colored Body Part Overlays (Reveal as Placed) */}
+  <div className="ganesha-colored-layers">
+    {SACRED_SYMBOLS.map(symbol => {
+      const isPlaced = sceneState.placedSymbols?.[symbol.id];
+      
+      if (!isPlaced) return null;
+      
+      return (
+        <img 
+          key={`colored-${symbol.id}`}
+          src={symbol.bodyPartImage}
+          alt={`${symbol.name} colored`}
+          className={`ganesha-part-colored ganesha-part-${symbol.id}`}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            opacity: 1,
+            animation: 'fadeInColorPart 1s ease-in-out',
+            pointerEvents: 'none'
+          }}
+        />
+      );
+    })}
+  </div>
 
-              {/* CLICK-BASED DROP ZONES */}
-              {BODY_PART_ZONES.map(zone => {
-                const isHighlighted = sceneState.highlightedZone === zone.id;
-                const hasSymbol = Object.keys(sceneState.placedSymbols || {}).find(symbolId => {
-                  return zone.acceptTypes.includes(symbolId);
-                });
+  {/* CLICKABLE GLOWING ZONES */}
+  {sceneState.glowingZones && sceneState.glowingZones.length > 0 && (
+    BODY_PART_ZONES.map(zone => {
+      const isGlowing = sceneState.glowingZones.includes(zone.id);
+      
+      if (!isGlowing) return null;
+      
+      return (
+        <div
+          key={`glow-zone-${zone.id}`}
+          data-zone-id={zone.id}
+          className="glowing-clickable-zone"
+          style={{
+            position: 'absolute',
+            ...zone.position,
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            zIndex: 100,
+            borderRadius: '50%',
+            pointerEvents: 'auto',
+            backgroundColor: SACRED_COLOR_PALETTE.highlight,
+            border: `4px solid ${SACRED_COLOR_PALETTE.primary}`,
+            boxShadow: `
+              0 0 20px ${SACRED_COLOR_PALETTE.glow},
+              0 0 40px ${SACRED_COLOR_PALETTE.glow},
+              inset 0 0 20px ${SACRED_COLOR_PALETTE.highlight}
+            `,
+            animation: 'pulseGlow 1.5s ease-in-out infinite'
+          }}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleZoneClick(zone.id);
+          }}
+        >
+          {/* Glow Ring Animation */}
+          <div className="zone-glow-ring"></div>
+          
+          {/* Hint Text (show after 1 wrong attempt) */}
+          {sceneState.wrongAttempts >= 1 && (
+            <div className="zone-hint-text">{zone.hint}</div>
+          )}
+        </div>
+      );
+    })
+  )}
 
-                return (
-                  <div
-                    key={zone.id}
-                    data-zone-id={zone.id}
-                    className={`click-drop-zone ${isHighlighted ? 'highlighted' : ''} ${hasSymbol ? 'filled' : ''}`}
-                    style={{
-                      position: 'absolute',
-                      ...zone.position,
-                      cursor: isHighlighted ? 'pointer' : 'default',
-                      transition: 'all 0.3s ease',
-                      zIndex: isHighlighted ? 999 : 40,
-                      borderRadius: '8px',
-                      pointerEvents: 'auto',
-                      backgroundColor: isHighlighted ? SACRED_COLOR_PALETTE.highlight : 'transparent',
-                      border: isHighlighted ? `3px solid ${SACRED_COLOR_PALETTE.primary}` : '1px solid transparent',
-                      minWidth: '60px',
-                      minHeight: '60px'
-                    }}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      if (isHighlighted) {
-                        handleDropZoneClick(zone);
-                      }
-                    }}
-                  >
-                    {isHighlighted && (
-                      <div className="zone-highlight-v8">
-                        <div className="glow-border-v8"></div>
-                        <div className="hint-text-v8">{zone.hint}</div>
-                        <div className="tap-here-v8">Tap here!</div>
-                      </div>
-                    )}
-                    
-                    {hasSymbol && !sceneState?.masteryShown && (
-                      <div className={`placed-symbol-v8 ${sceneState?.masteryShown ? 'fading-out' : ''}`}>
-                        <div 
-                          className="symbol-aura-v8"
-                          style={{
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            width: '100px',
-                            height: '100px',
-                            background: `radial-gradient(circle, ${SACRED_COLOR_PALETTE.aura} 0%, transparent 70%)`,
-                            borderRadius: '50%',
-                            animation: 'divineGlowV8 3s ease-in-out infinite',
-                            zIndex: 0,
-                            pointerEvents: 'none'
-                          }}
-                        />
-                        <img 
-                          src={SACRED_SYMBOLS.find(s => s.id === hasSymbol)?.image}
-                          alt="Placed symbol"
-                          className={`placed-symbol-img placed-symbol-${hasSymbol}`}
-                          data-symbol={hasSymbol}
-                        />
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+  {/* Wrong Click Feedback */}
+  {showSparkle?.startsWith('wrong-zone-') && (
+    <div className="wrong-zone-feedback">
+      <div className="shake-animation">❌</div>
+      <p className="try-again-text">Try again, little explorer!</p>
+    </div>
+  )}
 
-              {/* Placed Symbol Sparkles */}
-              {Object.keys(sceneState.placedSymbols || {}).map(symbolId => {
-                const zone = BODY_PART_ZONES.find(z => z.acceptTypes.includes(symbolId));
-                if (sceneState?.masteryShown) return null;
-                
-                return (
-                  <div
-                    key={`sparkle-${symbolId}`}
-                    className="placed-symbol-sparkle"
-                    style={{
-                      position: 'absolute',
-                      ...zone.position,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      pointerEvents: 'none',
-                      zIndex: 60
-                    }}
-                  >
-                    <SparkleAnimation
-                      type="star"
-                      count={8}
-                      color={SACRED_COLOR_PALETTE.primary}
-                      size={4}
-                      duration={3000}
-                      fadeOut={false}
-                      area="contained"
-                      key={`sparkle-${symbolId}-${Date.now()}`}
-                    />
-                  </div>
-                );
-              })}
-            </div>
+{/* CORRECT ANSWER CELEBRATION */}
+{showSparkle?.startsWith('celebration-') && (
+  <div className="celebration-container">
+    {/* Giant Sparkle Burst */}
+    <div className="mega-sparkle-explosion">
+      {[...Array(12)].map((_, i) => (
+        <div 
+          key={`sparkle-${i}`}
+          className="mega-sparkle"
+          style={{
+            transform: `rotate(${i * 30}deg)`,
+            animationDelay: `${i * 0.08}s`
+          }}
+        >
+          ✨
+        </div>
+      ))}
+    </div>
+    
+    {/* Radiating Impact Rings */}
+    <div className="impact-rings">
+      <div className="impact-ring ring-1"></div>
+      <div className="impact-ring ring-2"></div>
+      <div className="impact-ring ring-3"></div>
+    </div>
+    
+    {/* Confetti Burst */}
+    <div className="confetti-burst">
+      {[...Array(30)].map((_, i) => {
+        const randomX = Math.random();
+        const randomY = Math.random() * 0.5 + 0.5;
+        
+        return (
+          <div 
+            key={`confetti-${i}`}
+            className="confetti-piece"
+            style={{
+              left: '50%',
+              top: '50%',
+              backgroundColor: ['#8A2BE2', '#FF6B6B', '#4ECDC4', '#FFD93D', '#95E1D3'][i % 5],
+              animationDelay: `${i * 0.05}s`,
+              '--random-x': randomX,
+              '--random-y': randomY
+            }}
+          />
+        );
+      })}
+    </div>
+    
+    {/* Success Text Float */}
+    <div className="success-text-float">
+      <div className="success-icon">🎉</div>
+      <div className="success-message">Perfect!</div>
+      <div className="plus-one">+1</div>
+    </div>
+  </div>
+)}
 
-            {/* CLICK-BASED FLOATING SYMBOLS */}
-            {SACRED_SYMBOLS.map((symbol, index) => {
-              const isPlaced = sceneState.placedSymbols?.[symbol.id];
-              const isSelected = sceneState.selectedSymbol === symbol.id;
-              const isAnimating = sceneState.placementAnimation?.symbolId === symbol.id;
-              
-              if (isPlaced || isAnimating) return null;
+  {/* Placed Symbol Sparkles */}
+  {Object.keys(sceneState.placedSymbols || {}).map(symbolId => {
+    const zone = BODY_PART_ZONES.find(z => z.acceptTypes.includes(symbolId));
+    if (sceneState?.masteryShown) return null;
+    
+    return (
+      <div
+        key={`sparkle-${symbolId}`}
+        className="placed-symbol-sparkle"
+        style={{
+          position: 'absolute',
+          ...zone.position,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          pointerEvents: 'none',
+          zIndex: 60
+        }}
+      >
+        <SparkleAnimation
+          type="star"
+          count={8}
+          color={SACRED_COLOR_PALETTE.primary}
+          size={4}
+          duration={3000}
+          fadeOut={false}
+          area="contained"
+          key={`sparkle-${symbolId}-${Date.now()}`}
+        />
+      </div>
+    );
+  })}
+</div>
 
-              return (
-                <div
-                  key={symbol.id}
-                  data-symbol-id={symbol.id}
-                  className={`click-floating-symbol ${isSelected ? 'selected' : ''}`}
-                  style={{
-                    position: 'absolute',
-                    ...SYMBOL_POSITIONS[index],
-                    transform: 'translate(-50%, -50%)',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    zIndex: isSelected ? 100 : 50,
-                    userSelect: 'none',
-                    WebkitTapHighlightColor: 'transparent',
-                    pointerEvents: 'auto'
-                  }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleSymbolClick(symbol);
-                  }}
-                >
-                  <div className={`symbol-container-v8 ${isSelected ? 'pulse-glow-v8' : ''}`}>
-                    <img 
-                      src={symbol.image} 
-                      alt={symbol.name}
-                      style={{
-                        width: '60px',
-                        height: '60px',
-                        borderRadius: '50%',
-                        border: isSelected ? `3px solid ${SACRED_COLOR_PALETTE.primary}` : '2px solid rgba(255,255,255,0.3)',
-                        boxShadow: isSelected 
-                          ? `0 0 20px ${SACRED_COLOR_PALETTE.glow}, 0 0 40px ${SACRED_COLOR_PALETTE.glow}` 
-                          : '0 4px 8px rgba(0,0,0,0.2)',
-                        transform: isSelected ? 'scale(1.1)' : 'scale(1)',
-                        transition: 'all 0.3s ease'
-                      }}
-                    />
-                    {isSelected && (
-                      <div className="selection-indicator-v8">
-                        <div className="pulse-ring-v8"></div>
-                        <div className="tap-instruction-v8">Now tap where it belongs!</div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+    
 
             {/* Symbol placement sparkles */}
             {showSparkle?.startsWith('symbol-placed-') && (
@@ -860,7 +1402,7 @@ const SacredAssemblyContent = ({
               />
             )}
 
-            {/* Test buttons */}
+            {/* Test buttons *
             <div style={{
               position: 'fixed',
               top: '40px',
@@ -970,6 +1512,8 @@ const SacredAssemblyContent = ({
               🔄 Start Fresh
             </div>
           </div>
+
+
 
           <BackToMapButton 
             onNavigate={onNavigate}

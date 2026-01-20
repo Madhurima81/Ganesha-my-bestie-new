@@ -1,0 +1,320 @@
+/* DrawOrWritePad.css - Child-friendly drawing and text input */
+
+.draw-or-write-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.draw-or-write-modal {
+  background: linear-gradient(135deg, #FFF8DC, #FFEFD5);
+  border: 4px solid #8B4513;
+  border-radius: 25px;
+  padding: 30px;
+  max-width: 700px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s ease-out;
+}
+
+/* Header */
+.draw-or-write-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.draw-or-write-prompt {
+  font-family: 'Baloo 2', 'Nunito', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #8B4513;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+}
+
+/* Tabs */
+.draw-or-write-tabs {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.tab-button {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  padding: 12px 30px;
+  border: 3px solid #8B4513;
+  border-radius: 15px;
+  background: white;
+  color: #8B4513;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tab-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.tab-button.active {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border-color: #FF8C00;
+  color: #654321;
+  transform: scale(1.05);
+}
+
+/* Content Area */
+.draw-or-write-content {
+  background: white;
+  border: 3px solid #8B4513;
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Drawing Area - Wrapper for embedded DrawingPad */
+.drawing-area-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* Style the embedded DrawingPad overlay to fit nicely */
+.drawing-area-wrapper .drawing-overlay {
+  position: relative !important;
+  background: transparent !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drawing-area-wrapper .drawing-pad {
+  max-width: 100%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Text Area */
+.text-area {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.text-input {
+  font-family: 'Baloo 2', 'Nunito', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #654321;
+  padding: 20px;
+  border: 3px solid #D2B48C;
+  border-radius: 12px;
+  background: #FFFAF0;
+  resize: none;
+  height: 340px;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.text-input:focus {
+  border-color: #FFD700;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.3);
+}
+
+.text-input::placeholder {
+  color: #C19A6B;
+  opacity: 0.7;
+}
+
+.text-counter {
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #8B4513;
+  text-align: right;
+  padding-right: 10px;
+}
+
+/* Action Buttons */
+.draw-or-write-actions {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.cancel-btn,
+.save-btn {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  padding: 15px 40px;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.cancel-btn {
+  background: linear-gradient(135deg, #DC143C, #FF6347);
+  color: white;
+  border: 2px solid #8B0000;
+}
+
+.cancel-btn:hover {
+  background: linear-gradient(135deg, #FF1493, #FF69B4);
+  transform: scale(1.05);
+}
+
+.save-btn {
+  background: linear-gradient(135deg, #32CD32, #00FF00);
+  color: white;
+  border: 2px solid #228B22;
+}
+
+.save-btn:hover:not(.disabled) {
+  background: linear-gradient(135deg, #00FF00, #7FFF00);
+  transform: scale(1.05);
+}
+
+.save-btn.disabled {
+  background: #CCCCCC;
+  color: #666666;
+  cursor: not-allowed;
+  opacity: 0.6;
+  border-color: #999999;
+}
+
+.save-btn:active:not(.disabled),
+.cancel-btn:active {
+  transform: scale(0.98);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Tablet Responsive */
+@media (max-width: 1024px) {
+  .draw-or-write-modal {
+    max-width: 600px;
+    padding: 25px;
+  }
+
+  .draw-or-write-prompt {
+    font-size: 24px;
+  }
+
+  .tab-button {
+    font-size: 18px;
+    padding: 10px 25px;
+  }
+
+  .text-input {
+    font-size: 20px;
+    height: 300px;
+  }
+
+  .drawing-canvas {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .draw-or-write-modal {
+    max-width: 95%;
+    padding: 20px;
+  }
+
+  .draw-or-write-prompt {
+    font-size: 20px;
+  }
+
+  .tab-button {
+    font-size: 16px;
+    padding: 8px 20px;
+  }
+
+  .draw-or-write-content {
+    min-height: 300px;
+    padding: 15px;
+  }
+
+  .text-input {
+    font-size: 18px;
+    height: 250px;
+    padding: 15px;
+  }
+
+  .cancel-btn,
+  .save-btn {
+    font-size: 18px;
+    padding: 12px 30px;
+  }
+
+  .drawing-canvas {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* Portrait Mobile */
+@media (max-width: 480px) {
+  .draw-or-write-tabs {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .tab-button {
+    width: 100%;
+  }
+
+  .draw-or-write-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cancel-btn,
+  .save-btn {
+    width: 100%;
+  }
+}

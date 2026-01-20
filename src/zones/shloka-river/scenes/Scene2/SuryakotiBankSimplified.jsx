@@ -1,6 +1,8 @@
 // zones/shloka-river/scenes/Scene2/SuryakotiBank.jsx - Updated with Combined Memory Game
 import React, { useState, useEffect, useRef } from 'react';
 import './SuryakotiBankSimplified.css';
+// ... existing imports
+import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
 
 // Import scene management components
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
@@ -82,22 +84,11 @@ import samaprabhaAfter from './assets/images/Samaprabha/samaprabha-after.png';
 // Updated PHASES constant for separate game approach (like VakratundaGrove)
 const PHASES = {
   INITIAL: 'initial',
-  MEMORY_GAME_ACTIVE: 'memory_game_active', // ⚠️ Deprecated - kept for compatibility
-  SURYAKOTI_GAME_ACTIVE: 'suryakoti_game_active',  // ⭐ NEW
-  SURYAKOTI_COMPLETE: 'suryakoti_complete',
-  GANESHA_BLESSING_SURYAKOTI: 'ganesha_blessing_suryakoti',
-  CHOICE_BUTTONS_SURYAKOTI: 'choice_buttons_suryakoti',
-  RESCUE_MISSION_SURYAKOTI: 'rescue_mission_suryakoti',
-  SURYAKOTI_POWER: 'suryakoti_power',  // ✅ ADD THIS
-
-  SAMAPRABHA_STORY: 'samaprabha_story',
-  SAMAPRABHA_GAME_ACTIVE: 'samaprabha_game_active',  // ⭐ NEW
-  SAMAPRABHA_COMPLETE: 'samaprabha_complete',
-  GANESHA_BLESSING_SAMAPRABHA: 'ganesha_blessing_samaprabha',
-  CHOICE_BUTTONS_SAMAPRABHA: 'choice_buttons_samaprabha',
-  RESCUE_MISSION_SAMAPRABHA: 'rescue_mission_samaprabha',
-  SAMAPRABHA_POWER: 'samaprabha_power',  // ✅ ADD THIS
-SCENE_COMPLETE: 'scene_complete'
+  SURYAKOTI_GAME_ACTIVE: 'suryakoti_game_active',
+  SURYAKOTI_LEARNING: 'suryakoti_learning',   // ⭐ NEW: Triggers Discovery 1
+  SAMAPRABHA_GAME_ACTIVE: 'samaprabha_game_active',
+  SAMAPRABHA_LEARNING: 'samaprabha_learning', // ⭐ NEW: Triggers Discovery 2
+  COMPLETE: 'complete'
 };
 
 // Simple Error Boundary Component
@@ -151,7 +142,8 @@ const SuryakotiBank = ({
         initialState={{
           // Simplified state - combined memory game handles its own logic
           phase: PHASES.INITIAL,
-          
+              chantedVerses: {}, 
+
           // Learning progress (for progress tracking)
           learnedSyllables: {
             sur: false, ya: false, ko: false, ti: false,
@@ -287,6 +279,12 @@ const [currentWord, setCurrentWord] = useState(null);  // ⭐ ADD THIS LINE
   const [rescuePhase, setRescuePhase] = useState('problem');
 
   const [savedRecordings, setSavedRecordings] = useState({});
+
+  // Add these with your other useState hooks
+const [showDiscoveryFlip1, setShowDiscoveryFlip1] = useState(false);
+const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false);
+
+const reloadHandledRef = useRef(false);
 
 
 
@@ -519,16 +517,27 @@ const onDeleteAppRecording = (recordingId, word) => {
       return;
     }
     handleSaveComponentState.lastCall = Date.now();
+
+    if (componentState === null || componentState?.cleared) {
+  const updatedState = {
+    ...(componentType === 'suryakotiGame' && { suryakotiGameState: null }),
+    ...(componentType === 'samaprabhaGame' && { samaprabhaGameState: null })
+  };
+  sceneActions.updateState(updatedState);
+  return;
+}
     
-    const updatedState = {
-      ...(componentType === 'memoryGame' && { memoryGameState: componentState }),
-      ...(componentType === 'mission' && { 
-        missionState: {
-          ...sceneState.missionState,
-          ...componentState
-        }
-      })
-    };
+const updatedState = {
+  ...(componentType === 'memoryGame' && { memoryGameState: componentState }),
+  ...(componentType === 'suryakotiGame' && { suryakotiGameState: componentState }),
+  ...(componentType === 'samaprabhaGame' && { samaprabhaGameState: componentState }),
+  ...(componentType === 'mission' && { 
+    missionState: {
+      ...sceneState.missionState,
+      ...componentState
+    }
+  })
+};
     
     console.log(`⚡ Updating scene state with ${componentType}:`, updatedState);
     sceneActions.updateState(updatedState);
@@ -559,8 +568,60 @@ const onDeleteAppRecording = (recordingId, word) => {
     };
   }, []);
 
-  // COMPREHENSIVE RELOAD LOGIC - Based on VakratundaGrove pattern
+
+ // ==================== RELOAD LOGIC ====================
+
   useEffect(() => {
+    if (!isReload || reloadHandledRef.current) return;
+    
+    console.log('🔄 RELOAD DETECTED - Phase:', sceneState.phase);
+    reloadHandledRef.current = true;
+
+    // -----------------------------------------------------
+    // ⭐ NEW: RELOAD DURING MODE SELECTION
+    // -----------------------------------------------------
+    
+    // 1. First Game (Suryakoti): Phase is Initial, Welcome is done, but Mode is missing
+    if (sceneState.phase === PHASES.INITIAL && !sceneState.suryakotiMode) {
+      console.log('📌 Reload: Restoring Suryakoti Mode Selection');
+      setModeForPhase('suryakoti');
+      setShowModeSelection(true);
+      return;
+    }
+
+    // 2. Second Game (Samaprabha): Phase is Active (set by discovery), but Mode is missing
+    if (sceneState.phase === PHASES.SAMAPRABHA_GAME_ACTIVE && !sceneState.samaprabhaMode) {
+      console.log('📌 Reload: Restoring Samaprabha Mode Selection');
+      setModeForPhase('samaprabha');
+      setShowModeSelection(true);
+      return;
+    }
+    // -----------------------------------------------------
+
+    // Discovery 1
+    if (sceneState.phase === PHASES.SURYAKOTI_LEARNING) {
+      setTimeout(() => setShowDiscoveryFlip1(true), 500);
+      return;
+    }
+
+    // Discovery 2
+    if (sceneState.phase === PHASES.SAMAPRABHA_LEARNING) {
+      setTimeout(() => setShowDiscoveryFlip2(true), 500);
+      return;
+    }
+
+    // Complete Phase
+    if (sceneState.phase === PHASES.COMPLETE) {
+      if (!sceneState.showingCompletionScreen) {
+        setTimeout(() => setShowSceneCompletion(true), 500);
+      }
+      return;
+    }
+
+  }, [isReload, sceneState.phase, sceneState.welcomeShown]); // Added welcomeShown dependency
+
+  // COMPREHENSIVE RELOAD LOGIC - Based on VakratundaGrove pattern
+  /*useEffect(() => {
     if (!isReload || !sceneState) return;
     
     console.log('🔄 SURYAKOTI RELOAD: Starting reload', {
@@ -741,7 +802,7 @@ const onDeleteAppRecording = (recordingId, word) => {
       default:
         console.log('🔄 SURYAKOTI: No specific reload needed for phase:', sceneState.phase);
     }
-  }, [isReload]);
+  }, [isReload]);*/
 
   // Add this around line 380-400 (after playAudio function)
 
@@ -842,11 +903,11 @@ const handleMissionComplete = () => {
   setShowMission(false);
   
   if (currentWord === 'suryakoti') {
-    safeSetTimeout(() => {
-      sceneActions.updateState({ phase: PHASES.SAMAPRABHA_STORY });
-    }, 500);
+    // Mission 1 Done: Prepare for Game 2 (Samaprabha)
+    // The Discovery Overlay 1 logic (Step 7) handles the phase change,
+    // so here we just ensure the modal closes.
   } else {
-    // Complete scene - SAME AS handleContinueLearning
+    // Mission 2 Done: Scene Complete
     sceneActions.updateState({
       phase: PHASES.COMPLETE,
       stars: 5,
@@ -855,6 +916,10 @@ const handleMissionComplete = () => {
     });
     
     setShowSparkle('final-fireworks');
+    
+    safeSetTimeout(() => {
+      setShowSceneCompletion(true);
+    }, 3000);
   }
 };
 
@@ -911,45 +976,41 @@ const handleMissionComplete = () => {
     }
   };
 
-// ✅ REPLACE with VakratundaGrove pattern:
 const handlePhaseComplete = (word) => {
   console.log(`${word} learned!`);
+
+  // ✅ DEFINE KEY: Matches CulturalProgressExtractor keys
+  const chantKey = word === 'suryakoti' ? 'suryakoti-chant' : 'samaprabha-chant';
   
+  // 1. Update progress
   sceneActions.updateState({
     learnedWords: { ...sceneState.learnedWords, [word]: true },
+    // ✅ ADD THIS: Save the specific chant for this phase
+    chantedVerses: { 
+      ...sceneState.chantedVerses, 
+      [chantKey]: true 
+    },
     learnedSyllables: {
       ...sceneState.learnedSyllables,
       ...(word === 'suryakoti' 
         ? { sur: true, ya: true, ko: true, ti: true }
         : { sa: true, ma: true, pra: true, bha: true })
     },
-    phase: word === 'suryakoti' ? PHASES.SURYAKOTI_COMPLETE : PHASES.SAMAPRABHA_COMPLETE
+    unlockedApps: { ...sceneState.unlockedApps, [word]: true },
+    // 2. Move to LEARNING phase
+    phase: word === 'suryakoti' ? PHASES.SURYAKOTI_LEARNING : PHASES.SAMAPRABHA_LEARNING
   });
 
-  // Step 1: Show 5-second celebration
-  setShowCenteredWord(word);
-  setShowSparkle(`${word}-celebration`);
-  playAudio(`/audio/words/${word}.mp3`);
+  playWord(word);
   
+  // 3. Trigger Discovery Overlay after a brief moment
   safeSetTimeout(() => {
-    // Step 2: Hide centered, fly to sidebar
-    setShowCenteredWord(null);
-    setShowSparkle(`${word}-to-sidebar`);
-    
-    sceneActions.updateState({
-      unlockedApps: { ...sceneState.unlockedApps, [word]: true }
-    });
-    
-    safeSetTimeout(() => {
-      // Step 3: Show power modal IMMEDIATELY
-      setShowSparkle(null);
-      setCurrentWord(word);
-      setShowPowerModal(true);
-      sceneActions.updateState({
-        phase: word === 'suryakoti' ? PHASES.SURYAKOTI_POWER : PHASES.SAMAPRABHA_POWER
-      });
-    }, 2000);
-  }, 5000);
+    if (word === 'suryakoti') {
+      setShowDiscoveryFlip1(true);
+    } else {
+      setShowDiscoveryFlip2(true);
+    }
+  }, 1500);
 };
 
 
@@ -1090,7 +1151,7 @@ const handlePhaseComplete = (word) => {
                              sceneState.phase === PHASES.SAMAPRABHA_COMPLETE;
 
   // UNIFIED: Extract reload props for combined memory game (like VakratundaGrove)
-  const simplifiedCombinedMemoryGameReloadProps = sceneState.memoryGameState ? {
+  /*const simplifiedCombinedMemoryGameReloadProps = sceneState.memoryGameState ? {
     isReload: isReload,
     initialGamePhase: sceneState.memoryGameState.gamePhase || 'waiting',
     initialCurrentPhase: sceneState.memoryGameState.currentPhase || 'suryakoti',
@@ -1117,7 +1178,7 @@ const handlePhaseComplete = (word) => {
     initialRescuePhase: sceneState.missionState.rescuePhase || 'problem',
     initialShowParticles: sceneState.missionState.showParticles || false,
     missionJustCompleted: sceneState.missionState.missionJustCompleted || false,
-  } : {};
+  } : {};*/
 
   // Hide active hints
   const hideActiveHints = () => {
@@ -1145,38 +1206,60 @@ const handlePhaseComplete = (word) => {
         <div className="suryakoti-bank-container">
           <div className="river-background" style={{ backgroundImage: `url(${suryakotiBankBg})` }}>
 
-            {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
-              <div className="suryakoti-mission-modal-overlay">
-                <div className="suryakoti-mission-modal">
-                  <div className="suryakoti-modal-character">
-                    <img src={ganeshaHeadphones} alt="Ganesha" className="suryakoti-character-img" />
-                    <div className="suryakoti-character-speech-bubble">
-                      Let's save the forest! 🌳
-                    </div>
-                  </div>
-                  
-                  <h2 className="suryakoti-mission-title">Help Ganesha Save the River!</h2>
-                  <div className="suryakoti-mission-subtitle">2 magical words have special powers!</div>
-                  <p className="suryakoti-mission-description">
-                    First, learn to chant <strong>SURYAKOTI</strong> to unlock solar power and rescue trapped animals!
-                  </p>
-                  <button
-                    className="suryakoti-mission-start-btn"
-                    onClick={() => {
-                      console.log('🎮 Opening mode selection for SURYAKOTI');
-                      sceneActions.updateState({ welcomeShown: true });
-                      setModeForPhase('suryakoti');
-                      setShowModeSelection(true);
-                      setModeSelected(false);
-                    }}
-                  >
-                    Start Learning!
-                  </button>
-                </div>
-              </div>
-            )}
+   {/* ==================== SHLOKA RIVER INSTRUCTION MODAL ==================== */}
+{sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
+  <div className="river-instructions-overlay">
+    {/* Background Sparkles */}
+    <div className="river-sparkles">
+      <div className="river-sparkle"></div>
+      <div className="river-sparkle"></div>
+      <div className="river-sparkle"></div>
+    </div>
 
-            {sceneState.phase === PHASES.SAMAPRABHA_STORY && (
+    <div className="river-instructions-content">
+      {/* Left: Character */}
+      <div className="river-instructions-ganesha">
+        <img src={ganeshaHeadphones} alt="Ganesha Character" />
+      </div>
+
+      {/* Right: Instruction Card */}
+      <div className="river-instructions-card">
+        <h1 className="river-instructions-title">Welcome to Suryakoti Bank!</h1>
+        <p className="river-instructions-subtitle">River of Light</p>
+        <p className="river-instructions-text">
+          The sun flowers are sleeping! Chant magical sounds to wake them up with golden rays and find your inner energy.
+        </p>
+
+        {/* Icons Area */}
+        <div className="river-instructions-icons">
+          <div className="river-icon-item">
+            <img src={appSuryakoti} alt="Suryakoti" />
+            <span className="river-icon-label">Energy</span>
+          </div>
+          <div className="river-icon-item">
+            <img src={appSamaprabha} alt="Samaprabha" />
+            <span className="river-icon-label">Kindness</span>
+          </div>
+        </div>
+
+        {/* Call to Action */}
+        <button
+          className="river-instructions-button"
+          onClick={() => {
+            sceneActions.updateState({ welcomeShown: true });
+            setModeForPhase('suryakoti');
+            setShowModeSelection(true);
+            setModeSelected(false);
+          }}
+        >
+          Let's Chant!
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+           {/*} {sceneState.phase === PHASES.SAMAPRABHA_STORY && (
   <div className="suryakoti-mission-modal-overlay">
     <div className="suryakoti-mission-modal">
       <div className="suryakoti-modal-character">
@@ -1285,7 +1368,7 @@ const handlePhaseComplete = (word) => {
             {/* ⭐ SURYAKOTI GAME - Separate component like VakratundaGame */}
             <SuryakotiGame
               isActive={sceneState.phase === PHASES.SURYAKOTI_GAME_ACTIVE}
-              hideElements={isTransitioning || sceneState.phase === PHASES.SURYAKOTI_COMPLETE}
+hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || showMission}
               selectedMode={sceneState.suryakotiMode}  // ⭐ Mode from scene modal
               skipModeSelection={true}  // ⭐ Scene handles mode selection
 
@@ -1315,14 +1398,19 @@ const handlePhaseComplete = (word) => {
             {/* ⭐ SAMAPRABHA GAME - Separate component like MahakayaGame */}
             <SamaprabhaGame
               isActive={sceneState.phase === PHASES.SAMAPRABHA_GAME_ACTIVE}
-              hideElements={isTransitioning || sceneState.phase === PHASES.SAMAPRABHA_COMPLETE}
+hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || showMission}
               selectedMode={sceneState.samaprabhaMode}  // ⭐ Mode from scene modal
               skipModeSelection={true}  // ⭐ Scene handles mode selection
 
               // Assets
               getSadAnimalImage={getSadAnimalImage}
               getHappyAnimalImage={getHappyAnimalImage}
-              getRainbowImage={getRainbowImage}
+              /*getRainbowImage={getRainbowImage}
+
+               getRainbowSaImage={() => rainbowRed} 
+    getRainbowMaImage={() => rainbowBlue}
+    getRainbowPraImage={() => rainbowGreen}
+    getRainbowBhaImage={() => rainbowPurple}*/
 
               // Scene integration
               onPhaseComplete={() => handlePhaseComplete('samaprabha')}
@@ -1410,7 +1498,7 @@ const handlePhaseComplete = (word) => {
 
 
 
-            {/* ✅ ADD: 5-SECOND WORD CELEBRATION - SAME AS VAKRATUNDA */}
+            {/* ✅ ADD: 5-SECOND WORD CELEBRATION - SAME AS VAKRATUNDA 
 {showCenteredWord && (
   <>
     <div className="suryakoti-celebration-overlay" />
@@ -1438,7 +1526,7 @@ const handlePhaseComplete = (word) => {
   </>
 )}
 
-{/* ✅ ADD: POWER MODAL - SAME AS VAKRATUNDA */}
+{/* ✅ ADD: POWER MODAL - SAME AS VAKRATUNDA 
 {showPowerModal && (
   <div className="suryakoti-power-modal-overlay">
     <div className="suryakoti-power-modal">
@@ -1464,7 +1552,7 @@ const handlePhaseComplete = (word) => {
         
    <div className="suryakoti-power-modal-right">
   
-  {/* ⭐ NEW: Play Again button */}
+  {/* ⭐ NEW: Play Again button 
   <button 
     className="suryakoti-power-modal-btn suryakoti-play-again-btn" 
     onClick={() => {
@@ -1500,6 +1588,70 @@ const handlePhaseComplete = (word) => {
       </div>
     </div>
   </div>
+)}
+
+{/* ==================== DISCOVERY 1: SURYAKOTI (Energy) ==================== */}
+{showDiscoveryFlip1 && (
+  <SimpleDiscoveryOverlay
+    // STAGE 1: Discovery
+    celebrationTitle="Surya Koti Chanted!"
+    celebrationText="You touched the sun and made the world bloom! Sur-ya Ko-ti means bright light lives inside you."
+    celebrationImage={appSuryakoti}
+    
+    // STAGE 2: Power Unlock
+    powerTitle="I Am Full of Energy!"
+    powerText="Your energy helps you play, learn, and smile. You bring excitement wherever you go!"
+    powerIcon={appSuryakoti}
+    
+    buttonText="Share My Light!"
+    onComplete={() => {
+      console.log("Discovery 1: Suryakoti complete!");
+      setShowDiscoveryFlip1(false);
+      
+      // Update sidebar + set phase for NEXT game (Samaprabha)
+      sceneActions.updateState({ 
+        phase: PHASES.SAMAPRABHA_GAME_ACTIVE,
+        unlockedApps: { ...sceneState.unlockedApps, suryakoti: true }
+      });
+
+      // Trigger mode selection for next game
+      setTimeout(() => {
+        setModeForPhase('samaprabha');
+        setShowModeSelection(true);
+        setModeSelected(false);
+      }, 500);
+    }}
+    showSparkles={true}
+  />
+)}
+
+{/* ==================== DISCOVERY 2: SAMAPRABHA (Kindness) ==================== */}
+{showDiscoveryFlip2 && (
+  <SimpleDiscoveryOverlay
+    // STAGE 1: Discovery
+    celebrationTitle="Samaprabha Chanted!"
+    celebrationText="The rainbow shared treats with everyone! Sa-ma-pra-bha means sharing your light with all."
+    celebrationImage={appSamaprabha}
+    
+    // STAGE 2: Power Unlock
+    powerTitle="I Am Kind to Everyone!"
+    powerText="You treat everyone the same. Your kindness makes others feel happy and safe."
+    powerIcon={appSamaprabha}
+    
+    buttonText="Kindness Complete!"
+    onComplete={() => {
+      console.log("Discovery 2: Samaprabha complete!");
+      setShowDiscoveryFlip2(false);
+      
+      // Update sidebar
+      sceneActions.updateState({ 
+        unlockedApps: { ...sceneState.unlockedApps, samaprabha: true }
+      });
+    setShowSparkle('final-fireworks');
+    }}
+
+    showSparkles={true}
+  />
 )}
 
 {/* ✅ REPLACE SaveAnimalMission with SanskritWordMission */}
@@ -1553,23 +1705,21 @@ const handlePhaseComplete = (word) => {
   }}
 />
 
-            <SaveAnimalMission
-              show={showRescueMission}
-              word={currentRescueWord}
-              beforeImage={currentRescueWord === 'suryakoti' ? suryakotiBefore : samaprabhaBefore}
-              afterImage={currentRescueWord === 'suryakoti' ? suryakotiAfter : samaprabhaAfter}
-              powerConfig={powerConfig[currentRescueWord]}
-              smartwatchBase={smartwatchBase}
-              smartwatchScreen={smartwatchScreen}
-              appImage={currentRescueWord === 'suryakoti' ? appSuryakoti : appSamaprabha}
-              boyCharacter={boyNamaste}
-              onComplete={handleRescueComplete}
-              onCancel={() => setShowRescueMission(false)}
-              
-              // The reload support props
-              {...missionReloadProps}
-              onSaveMissionState={(missionState) => handleSaveComponentState('mission', missionState)}
-            />
+          {/* SAVE ANIMAL MISSION - REUSABLE COMPONENT */}
+<SanskritWordMission
+  show={showMission}
+  word={currentWord}
+  beforeImage={missionImages[currentWord]?.before}
+  afterImage={missionImages[currentWord]?.after}
+  powerConfig={powerConfig[currentWord]}
+      isFinalWordInScene={currentWord === 'samaprabha'}  // ⭐ ADD THIS LINE
+
+  onComplete={handleMissionComplete}
+  onCancel={() => {
+    setShowMission(false);
+    setShowPowerModal(true);
+  }}
+/>
 
 
             {/* Progressive Hints System */}
@@ -1663,113 +1813,121 @@ const handlePhaseComplete = (word) => {
             </>
           )}
 
-          {/* Final Fireworks */}
-          {showSparkle === 'final-fireworks' && (
-            <Fireworks
-              show={true}
-              duration={8000}
-              count={25}
-              colors={['#FFD700', '#FF8C00', '#FFA500', '#DAA520', '#B8860B']}
+       {/* ✅ FIREWORKS: Save & Cleanup (Enables Replay) */}
+            {showSparkle === 'final-fireworks' && (
+              <Fireworks
+                show={true}
+                duration={8000}
+                count={25}
+                colors={['#FFD700', '#FF8C00', '#FFA500', '#DAA520', '#B8860B']}
+                onComplete={() => {
+                  console.log('🎯 suryakoti-bank fireworks complete');
+                  setShowSparkle(null);
+                  
+                  const profileId = localStorage.getItem('activeProfileId');
+                  if (profileId) {
+                    console.log('💾 FIREWORKS: Saving Permanent Data...');
+                    
+                    const finalChants = { 
+                      'suryakoti-chant': true, 
+                      'samaprabha-chant': true 
+                    };
+
+                    // 1. Save to GameStateManager
+                    GameStateManager.saveGameState('shloka-river', 'suryakoti-bank', {
+                      completed: true,
+                      stars: 5,
+                      phase: 'complete',
+                      words: sceneState.learnedWords || {},
+                      syllables: sceneState.learnedSyllables || {},
+                      chantedVerses: finalChants,
+                      apps: sceneState.unlockedApps || {},
+                      timestamp: Date.now()
+                    });
+
+                    // 2. Clear Session (REQUIRED for "Replay" button to show)
+                    localStorage.removeItem(`temp_session_${profileId}_shloka-river_suryakoti-bank`);
+                    SimpleSceneManager.clearCurrentScene();
+                    console.log('✅ FIREWORKS: Data Saved & Session Cleared');
+                  }
+                  
+                  setShowSceneCompletion(true);
+                }}
+              />
+            )}
+          
+  {/* ✅ CELEBRATION: Double-Lock Save on Continue */}
+            <SceneCompletionCelebration
+              show={showSceneCompletion}
+              sceneName="Suryakoti Bank"
+              sceneNumber={2}
+              totalScenes={5}
+              starsEarned={5}
+              totalStars={5}
+              // Adjust discovered symbols as per your design (accumulated or current)
+              discoveredSymbols={['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha']}
+              containerType="smartwatch"
+              containerScreenImage={smartwatchScreen}
+              appImages={{
+                vakratunda: appVakratunda,
+                mahakaya: appMahakaya,
+                suryakoti: appSuryakoti,
+                samaprabha: appSamaprabha,
+              }}
+              nextSceneName="Nirvighnam Chant"
+              sceneId="suryakoti-bank"
+              completionData={{
+                stars: 5,
+                syllables: sceneState.learnedSyllables,
+                words: sceneState.learnedWords,
+                chantedVerses: { 'suryakoti-chant': true, 'samaprabha-chant': true },
+                completed: true
+              }}
+              // 1. EXPLORE ZONES FIX: Pass data manually to App.jsx
               onComplete={() => {
-                console.log('🎯 suryakoti-bank fireworks complete');
-                setShowSparkle(null);
+                if (onComplete) {
+                  onComplete({
+                    completed: true,
+                    stars: 5,
+                    chantedVerses: { 'suryakoti-chant': true, 'samaprabha-chant': true },
+                    words: { suryakoti: true, samaprabha: true }
+                  });
+                }
+              }}
+              // 2. REPLAY FIX: Reset scene
+              onReplay={() => {
+                console.log('🔄 INSTANT REPLAY');
+                setShowSceneCompletion(false);
+                resetScene(false);
+              }}
+              // 3. CONTINUE FIX: Force Save & Navigate
+              onContinue={() => {
+                console.log('💾 CONTINUE: Force-Saving data to prevent Auto-Save wipe...');
                 
                 const profileId = localStorage.getItem('activeProfileId');
                 if (profileId) {
+                  // ✅ RE-SAVE DATA RIGHT BEFORE EXIT
                   GameStateManager.saveGameState('shloka-river', 'suryakoti-bank', {
                     completed: true,
                     stars: 5,
-                    syllables: sceneState?.learnedSyllables || {},
-                    words: sceneState?.learnedWords || {},
                     phase: 'complete',
+                    words: { suryakoti: true, samaprabha: true },
+                    // Hardcoded syllables for safety (Su, Rya, Ko, Ti, Sa, Ma, Pra, Bha)
+                    syllables: { su: true, rya: true, ko: true, ti: true, sa: true, ma: true, pra: true, bha: true },
+                    chantedVerses: { 'suryakoti-chant': true, 'samaprabha-chant': true },
+                    apps: { suryakoti: true, samaprabha: true },
                     timestamp: Date.now()
                   });
-                  localStorage.removeItem(`temp_session_${profileId}_shloka-river_suryakoti-bank`);
-                  SimpleSceneManager.clearCurrentScene();
-                  console.log('✅ suryakoti-bank : Completion saved and temp session cleared');
                 }
+
+                if (clearManualCloseTracking) clearManualCloseTracking();
                 
-                setShowSceneCompletion(true);
+                setTimeout(() => {
+                  SimpleSceneManager.setCurrentScene('shloka-river', 'nirvighnam-chant', false, false);
+                  onNavigate?.('scene-complete-continue');
+                }, 100);
               }}
-            />
-          )}
-          
-          <SceneCompletionCelebration
-            show={showSceneCompletion}
-            sceneName="Suryakoti Bank"
-            sceneNumber={2}
-            totalScenes={5}
-            starsEarned={5}
-            totalStars={5}
-         discoveredSymbols={['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha']}
-  containerType="smartwatch"
-  containerScreenImage={smartwatchScreen}
-  appImages={{
-    vakratunda: appVakratunda,
-    mahakaya: appMahakaya,
-    suryakoti: appSuryakoti,
-    samaprabha: appSamaprabha,
-  }}
-
-            nextSceneName="Nirvighnam Chant"
-            sceneId="suryakoti-bank"
-            completionData={{
-              stars: 5,
-              syllables: sceneState.learnedSyllables,
-              words: sceneState.learnedWords,
-              completed: true
-            }}
-            onComplete={onComplete}
-onReplay={() => {
-  console.log('🔀 INSTANT REPLAY: Garden Adventure restart');
-  resetScene(false);  // No confirm dialog for replay
-}}
-            onContinue={() => {
-              console.log('SANSKRIT CONTINUE: Going to next scene + preserving resume');
-              
-              if (clearManualCloseTracking) {
-                clearManualCloseTracking();
-                console.log('SANSKRIT CONTINUE: GameCoach manual tracking cleared');
-              }
-              if (hideCoach) {
-                hideCoach();
-                console.log('SANSKRIT CONTINUE: GameCoach hidden');
-              }
-              
-              setTimeout(() => {
-                console.log('SANSKRIT CONTINUE: Forcing GameCoach fresh start for next scene');
-                if (clearManualCloseTracking) {
-                  clearManualCloseTracking();
-                }
-              }, 500);
-              
-              const profileId = localStorage.getItem('activeProfileId');
-              if (profileId) {
-                ProgressManager.updateSceneCompletion(profileId, 'shloka-river', 'suryakoti-bank', {
-                  completed: true,
-                  stars: 5,
-                  syllables: sceneState.learnedSyllables,
-                  words: sceneState.learnedWords
-                });
-                
-                GameStateManager.saveGameState('shloka-river', 'suryakoti-bank', {
-                  completed: true,
-                  stars: 5,
-                  syllables: sceneState.learnedSyllables,
-                  words: sceneState.learnedWords
-                });
-                
-                console.log('SANSKRIT CONTINUE: Completion data saved');
-              }
-
-              setTimeout(() => {
-                SimpleSceneManager.setCurrentScene('shloka-river', 'nirvighnam-chant', false, false);
-                console.log('SANSKRIT CONTINUE: Next scene (nirvighnam-chant) set for resume tracking');
-                
-                onNavigate?.('scene-complete-continue');
-              }, 100);
-            }}
-          />        
+            />     
           
           {/* Navigation */}
           <TocaBocaNav
@@ -1803,7 +1961,7 @@ onReplay={() => {
           <BackToMapButton onNavigate={onNavigate} hideCoach={hideCoach} clearManualCloseTracking={clearManualCloseTracking} />
 
 
-          {/* Emergency Reset Button */}
+          {/* Emergency Reset Button 
           <div style={{
             position: 'fixed',
             bottom: '20px',
@@ -1858,7 +2016,7 @@ onReplay={() => {
             }
           }}>
             Start Fresh
-          </div>
+          </div>*/}
         </div>
       </MessageManager>
     </InteractionManager>

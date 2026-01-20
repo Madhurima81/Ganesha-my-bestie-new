@@ -3,6 +3,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import './VakratundaGroveSimplified.css';
+import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
+
 
 // Scene management
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
@@ -83,12 +85,9 @@ import flowerYa from './assets/images/mahakaya/ya-flower.png';
 const PHASES = {
   INITIAL: 'initial',
   VAKRATUNDA_GAME: 'vakratunda_game',
-  VAKRATUNDA_COMPLETE: 'vakratunda_complete',
-  VAKRATUNDA_POWER: 'vakratunda_power',
-  MAHAKAYA_STORY: 'mahakaya_story',
+  VAKRATUNDA_LEARNING: 'vakratunda_learning',  // NEW
   MAHAKAYA_GAME: 'mahakaya_game',
-  MAHAKAYA_COMPLETE: 'mahakaya_complete',
-  MAHAKAYA_POWER: 'mahakaya_power',
+  MAHAKAYA_LEARNING: 'mahakaya_learning',      // NEW
   COMPLETE: 'complete'
 };
 
@@ -152,6 +151,8 @@ const VakratundaGroveSimplified = ({
         sceneId={sceneId}
         initialState={{
           phase: PHASES.INITIAL,
+              chantedVerses: {}, 
+
           learnedWords: { vakratunda: false, mahakaya: false },
           learnedSyllables: {
             va: false, kra: false, tun: false, da: false,
@@ -235,6 +236,15 @@ const [practiceWord, setPracticeWord] = useState(null);
 const [showRecorder, setShowRecorder] = useState(false);
 const [savedRecordings, setSavedRecordings] = useState({}); // { vakratunda: [...], mahakaya: [...] }
 
+// Discovery overlays
+const [showDiscoveryFlip1, setShowDiscoveryFlip1] = useState(false);
+const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false);
+
+const [showResumePopup, setShowResumePopup] = useState(false);
+const [resumeMessage, setResumeMessage] = useState('');
+const resumePopupTimeoutRef = useRef(null);
+const reloadHandledRef = useRef(false);
+
   const timeoutsRef = useRef([]);
   const progressiveHintRef = useRef(null);
   const activeProfile = GameStateManager.getActiveProfile();
@@ -278,6 +288,86 @@ useEffect(() => {
   }
 }, [sceneState.phase, sceneState.completed, showSceneCompletion, showSparkle]);
 
+// ==================== RELOAD LOGIC ====================
+
+  useEffect(() => {
+    // 1. Guard clause: Stop if not reloading OR if we already handled it
+    if (!isReload || reloadHandledRef.current) return;
+    
+    // ❌ REMOVED: reloadHandledRef.current = true; (Don't mark as handled yet!)
+
+    console.log('🔄 RELOAD CHECK - Phase:', sceneState.phase, 'Welcome:', sceneState.welcomeShown);
+
+    // -----------------------------------------------------
+    // ⭐ NEW: RELOAD DURING MODE SELECTION (Game 1 - Vakratunda)
+    // -----------------------------------------------------
+    // If we are at Initial phase, Welcome IS shown, but Mode IS NOT picked
+    if (sceneState.phase === PHASES.INITIAL && sceneState.welcomeShown && !sceneState.vakratundaMode) {
+      console.log('📌 Reload: Restoring Vakratunda Mode Selection');
+      reloadHandledRef.current = true; // ✅ Mark handled NOW
+      setModeForPhase('vakratunda');
+      setShowModeSelection(true);
+      return;
+    }
+
+    // -----------------------------------------------------
+    // ⭐ NEW: RELOAD DURING MODE SELECTION (Game 2 - Mahakaya)
+    // -----------------------------------------------------
+    // If we are in Mahakaya Game phase but Mode IS NOT picked
+    if (sceneState.phase === PHASES.MAHAKAYA_GAME && !sceneState.mahakayaMode) {
+      console.log('📌 Reload: Restoring Mahakaya Mode Selection');
+      reloadHandledRef.current = true; // ✅ Mark handled NOW
+      setModeForPhase('mahakaya');
+      setShowModeSelection(true);
+      return;
+    }
+
+    // -----------------------------------------------------
+    // EXISTING LOGIC (With 'reloadHandledRef.current = true' added inside)
+    // -----------------------------------------------------
+
+    // Discovery 1
+    if (sceneState.phase === PHASES.VAKRATUNDA_LEARNING) {
+      reloadHandledRef.current = true; // ✅ Mark handled
+      console.log('📌 Reload: Discovery 1');
+      setTimeout(() => setShowDiscoveryFlip1(true), 500);
+      return;
+    }
+
+    // Discovery 2
+    if (sceneState.phase === PHASES.MAHAKAYA_LEARNING) {
+      reloadHandledRef.current = true; // ✅ Mark handled
+      console.log('📌 Reload: Discovery 2');
+      setTimeout(() => setShowDiscoveryFlip2(true), 500);
+      return;
+    }
+
+    // Vakratunda Game - Component handles its own reload
+    if (sceneState.phase === PHASES.VAKRATUNDA_GAME && sceneState.vakratundaMode) {
+      reloadHandledRef.current = true; // ✅ Mark handled
+      console.log('📌 Reload: Vakratunda game (component handles)');
+      return;
+    }
+
+    // Mahakaya Game - Component handles its own reload
+    if (sceneState.phase === PHASES.MAHAKAYA_GAME && sceneState.mahakayaMode) {
+      reloadHandledRef.current = true; // ✅ Mark handled
+      console.log('📌 Reload: Mahakaya game (component handles)');
+      return;
+    }
+
+    // Complete
+    if (sceneState.phase === PHASES.COMPLETE) {
+      reloadHandledRef.current = true; // ✅ Mark handled
+      console.log('📌 Reload: Complete phase');
+      if (!sceneState.showingCompletionScreen) {
+        setTimeout(() => setShowSceneCompletion(true), 500);
+      }
+      return;
+    }
+
+  }, [isReload, sceneState.phase, sceneState.welcomeShown]); // ✅ Added welcomeShown dependency
+
   // Audio functions
   const playAudio = (audioPath, volume = 1.0) => {
     if (!isAudioOn) return Promise.resolve();
@@ -301,16 +391,27 @@ useEffect(() => {
       return;
     }
     handleSaveComponentState.lastCall = Date.now();
+
+    if (componentState === null || componentState?.cleared) {
+  const updatedState = {
+    ...(componentType === 'vakratundaGame' && { vakratundaGameState: null }),
+    ...(componentType === 'mahakayaGame' && { mahakayaGameState: null })
+  };
+  sceneActions.updateState(updatedState);
+  return;
+}
     
-    const updatedState = {
-      ...(componentType === 'memoryGame' && { memoryGameState: componentState }),
-      ...(componentType === 'mission' && { 
-        missionState: {
-          ...sceneState.missionState,
-          ...componentState
-        }
-      })
-    };
+const updatedState = {
+  ...(componentType === 'memoryGame' && { memoryGameState: componentState }),
+  ...(componentType === 'vakratundaGame' && { vakratundaGameState: componentState }),
+  ...(componentType === 'mahakayaGame' && { mahakayaGameState: componentState }),
+  ...(componentType === 'mission' && { 
+    missionState: {
+      ...sceneState.missionState,
+      ...componentState
+    }
+  })
+};
     
     console.log(`⚡ Updating scene state with ${componentType}:`, updatedState);
     sceneActions.updateState(updatedState);
@@ -361,46 +462,39 @@ const onDeleteAppRecording = (recordingId, word) => {
     playAudio(`/audio/words/${word}.mp3`);
   };
 
-
-// Memory game completion - MATCHES POND PATTERN
 const handlePhaseComplete = (word) => {
   console.log(`${word} learned!`);
+
+   // ✅ DEFINE THE CHANT KEY BASED ON THE WORD
+  const chantKey = word === 'vakratunda' ? 'vakratunda-chant' : 'mahakaya-chant';
   
   sceneActions.updateState({
     learnedWords: { ...sceneState.learnedWords, [word]: true },
+     // ✅ IMMEDIATE UPDATE: Add this specific chant to the list
+    chantedVerses: { 
+      ...sceneState.chantedVerses, 
+      [chantKey]: true 
+    },
     learnedSyllables: {
       ...sceneState.learnedSyllables,
       ...(word === 'vakratunda' 
         ? { va: true, kra: true, tun: true, da: true }
         : { ma: true, ha: true, ka: true, ya: true })
     },
-    phase: word === 'vakratunda' ? PHASES.VAKRATUNDA_COMPLETE : PHASES.MAHAKAYA_COMPLETE
+    unlockedApps: { ...sceneState.unlockedApps, [word]: true },
+    phase: word === 'vakratunda' ? PHASES.VAKRATUNDA_LEARNING : PHASES.MAHAKAYA_LEARNING
   });
 
-  // Step 1: Show 5-second celebration
-  setShowCenteredWord(word);
-  setShowSparkle(`${word}-celebration`);
   playWord(word);
   
+  // Trigger discovery overlay
   safeSetTimeout(() => {
-    // Step 2: Hide centered, fly to sidebar
-    setShowCenteredWord(null);
-    setShowSparkle(`${word}-to-sidebar`);
-    
-    sceneActions.updateState({
-      unlockedApps: { ...sceneState.unlockedApps, [word]: true }
-    });
-    
-    safeSetTimeout(() => {
-      // Step 3: Show power modal IMMEDIATELY (like Pond)
-      setShowSparkle(null);
-      setCurrentWord(word);
-      setShowPowerModal(true);
-      sceneActions.updateState({
-        phase: word === 'vakratunda' ? PHASES.VAKRATUNDA_POWER : PHASES.MAHAKAYA_POWER
-      });
-    }, 2000);
-  }, 5000);
+    if (word === 'vakratunda') {
+      setShowDiscoveryFlip1(true);
+    } else {
+      setShowDiscoveryFlip2(true);
+    }
+  }, 1500);
 };
 
   // Power modal handlers
@@ -438,11 +532,10 @@ const handleMissionComplete = () => {
   setShowMission(false);
   
   if (currentWord === 'vakratunda') {
-    safeSetTimeout(() => {
-      sceneActions.updateState({ phase: PHASES.MAHAKAYA_STORY });
-    }, 500);
+    // ✅ Already in MAHAKAYA_GAME phase (set by Discovery 1)
+    // Mission done, game will start automatically
   } else {
-    // Complete scene - SAME AS handleContinueLearning
+    // Complete scene
     sceneActions.updateState({
       phase: PHASES.COMPLETE,
       stars: 5,
@@ -450,9 +543,11 @@ const handleMissionComplete = () => {
       progress: { percentage: 100, starsEarned: 5, completed: true }
     });
     
-    // Show Ganesha AND fireworks together
-    setShowFinalGanesha(true);
     setShowSparkle('final-fireworks');
+    
+    safeSetTimeout(() => {
+      setShowSceneCompletion(true);
+    }, 3000);
   }
 };
 
@@ -472,34 +567,69 @@ const handleMissionComplete = () => {
         <div className="vakratunda-simplified-container">
           <div className="river-background" style={{ backgroundImage: `url(${riverBackground})` }}>
 
+{/* ==================== SHLOKA RIVER INSTRUCTION MODAL ==================== */}
 {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
-  <div className="vakratunda-mission-modal-overlay">
-    <div className="vakratunda-mission-modal">
-      <div className="vakratunda-modal-character">
-        <img src={ganeshaHeadphones} alt="Ganesha" className="vakratunda-character-img" />
-        <div className="vakratunda-character-speech-bubble">
-          Let's save the forest! 🌳
-        </div>
+  <div className="river-instructions-overlay">
+    {/* Background Sparkles/Bubbles */}
+    <div className="river-sparkles">
+      <div className="river-sparkle"></div>
+      <div className="river-sparkle"></div>
+      <div className="river-sparkle"></div>
+      <div className="river-sparkle"></div>
+    </div>
+
+    <div className="river-instructions-content">
+      {/* Left: Character */}
+      <div className="river-instructions-ganesha">
+        <img
+          src={ganeshaHeadphones}
+          alt="Ganesha Character"
+        />
       </div>
-      
-      <h2 className="vakratunda-mission-title">Help Ganesha Save the Forest!</h2>
-      <div className="vakratunda-mission-subtitle">2 magical words have special powers!</div>
-      <p className="vakratunda-mission-description">
-        First, learn to chant <strong>VAKRATUNDA</strong> to unlock flexibility power and rescue trapped animals!
-      </p>
-      <button 
-        className="vakratunda-mission-start-btn"
-  onClick={() => {
-  sceneActions.updateState({ 
-    welcomeShown: true
-  });
-  setModeForPhase('vakratunda');
-  setShowModeSelection(true);
-    setModeSelected(false);
-}}
-      >
-        Start Learning!
-      </button>
+
+      {/* Right: Instruction Card */}
+      <div className="river-instructions-card">
+        <h1 className="river-instructions-title">
+          Welcome to Shloka River!
+        </h1>
+
+        <p className="river-instructions-subtitle">
+          Words of Power
+        </p>
+
+        <p className="river-instructions-text">
+          Every sound you chant grows a new power inside you! Help the baby and adult elephants bloom their flowers to find your inner strength.
+        </p>
+
+        {/* Icons Area */}
+        <div className="river-instructions-icons">
+          <div className="river-icon-item">
+            <img src={appVakratunda} alt="Vakratunda" />
+            <span className="river-icon-label">Vakratunda</span>
+          </div>
+          <div className="river-icon-item">
+            <img src={appMahakaya} alt="Mahakaya" />
+            <span className="river-icon-label">Mahakaya</span>
+          </div>
+        </div>
+
+        {/* Call to Action */}
+        <button
+          className="river-instructions-button"
+          onClick={() => {
+            // 1. Mark welcome as shown
+            sceneActions.updateState({
+              welcomeShown: true
+            });
+            // 2. Setup Mode Selection for Vakratunda (same logic as before)
+            setModeForPhase('vakratunda');
+            setShowModeSelection(true);
+            setModeSelected(false);
+          }}
+        >
+          Let's Chant!
+        </button>
+      </div>
     </div>
   </div>
 )}
@@ -525,7 +655,7 @@ onSaveGameState={(state) => handleSaveComponentState('vakratundaGame', state)}
 {/* MAHAKAYA MEMORY GAME */}
 <MahakayaGame
   isActive={sceneState.phase === PHASES.MAHAKAYA_GAME}
-  hideElements={showCenteredWord || showPowerModal || showMission}
+hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || showMission}
   powerGained={sceneState.learnedWords?.vakratunda}
   onPhaseComplete={() => handlePhaseComplete('mahakaya')}
   onGameComplete={() => {}}
@@ -538,7 +668,7 @@ onSaveGameState={(state) => handleSaveComponentState('vakratundaGame', state)}
   skipModeSelection={true}  // ⭐ ALWAYS skip - scene handles mode selection
   isReload={isReload}
   savedGameState={sceneState.mahakayaGameState}
-onSaveGameState={(state) => handleSaveComponentState('Game', state)}
+onSaveGameState={(state) => handleSaveComponentState('mahakayaGame', state)}
 
 />
 
@@ -582,7 +712,7 @@ onSaveGameState={(state) => handleSaveComponentState('Game', state)}
   </div>
 )}*/}
 
-       {sceneState.phase === PHASES.MAHAKAYA_STORY && (
+       {/*{sceneState.phase === PHASES.MAHAKAYA_STORY && (
   <div className="vakratunda-mission-modal-overlay">
     <div className="vakratunda-mission-modal">
       <div className="vakratunda-modal-character">
@@ -610,7 +740,7 @@ onClick={() => {
       </button>
     </div>
   </div>
-)}
+)}*/}
 
          
 
@@ -637,11 +767,13 @@ onClick={() => {
     </div>
   </div>
 )}
-          {/* POWER MODAL - POND STYLE */}
+
+
+          {/* POWER MODAL - POND STYLE 
 {showPowerModal && (
   <div className="vakratunda-power-modal-overlay">
     <div className="vakratunda-power-modal">
-      {/* Affirmation section - NO TITLE */}
+      {/* Affirmation section - NO TITLE 
       <div className="vakratunda-power-affirmation-row">
         <img 
           src={powerConfig[currentWord]?.image}
@@ -665,7 +797,7 @@ onClick={() => {
   <div className="vakratunda-power-modal-right">
   {/* NO ICON HERE - removed duplicate */}
   
-  {/* ⭐ NEW: Play Again button */}
+  {/* ⭐ NEW: Play Again button 
   <button 
     className="vakratunda-power-modal-btn play-again-btn" 
     onClick={() => {
@@ -704,7 +836,7 @@ onClick={() => {
   </div>
 )}
 
-   {/* 5-SECOND WORD CELEBRATION */}
+   {/* 5-SECOND WORD CELEBRATION 
             {showCenteredWord && (
               <>
                 <div className="vakratunda-celebration-overlay" />
@@ -809,6 +941,106 @@ onClick={() => {
   </div>
 )}
 
+{/* ==================== DISCOVERY 1: VAKRATUNDA (Adaptability) ==================== */}
+{showDiscoveryFlip1 && (
+  <SimpleDiscoveryOverlay
+    // STAGE 1: Discovery Moment
+    celebrationTitle="Vakratunda Revealed!"
+    celebrationText="The baby elephants helped the lotus bloom! Saying Va-Kra-Tun-Da opens your mind—just like a flower opening to the sun."
+    celebrationImage={appVakratunda}
+    
+    // STAGE 2: Adaptability Power Reveal
+    powerTitle="I Can Bend & Try Again!"
+    powerText="Like a lotus that bends with the water, you can handle changes and keep going with a happy heart."
+    powerIcon={appVakratunda}
+    
+    buttonText="Let’s Grow Bigger! (Go to Mahakaya)"
+    onComplete={() => {
+      console.log("Discovery 1: Vakratunda learned!");
+      setShowDiscoveryFlip1(false);
+      
+      // 1. Update sidebar symbols so the checkmark appears
+      sceneActions.updateState({ 
+        discoveredSymbols: {
+          ...sceneState.discoveredSymbols,
+          vakratunda: true
+        }
+      });
+
+      // 2. Trigger Mode Selection for Mahakaya (just like the old flow)
+      // This asks "Auto vs Manual" -> THEN starts the game
+      setTimeout(() => {
+        setModeForPhase('mahakaya'); // Set target to Mahakaya
+        setModeSelected(false);      // Reset selection lock
+        setShowModeSelection(true);  // Show the choice modal
+      }, 300);
+    }}
+    
+    showSparkles={true}
+  />
+)}
+
+{/* ==================== DISCOVERY 2: MAHAKAYA (Inner Strength) ==================== */}
+{showDiscoveryFlip2 && (
+  <SimpleDiscoveryOverlay
+    // STAGE 1: Discovery Moment
+    celebrationTitle="Mahakaya Revealed!"
+    celebrationText="Look at the lily grow! The elephants used Ma-Ha-Ka-Ya to turn a tiny seed into a strong flower."
+      celebrationImage={appMahakaya}
+    
+    // STAGE 2: Inner Strength Power Reveal
+    powerTitle="I Am Strong Inside!"
+    powerText="You may look small, but you have big strength inside. You can stand tall and face big things."
+      powerIcon={appMahakaya}
+    
+    buttonText="⭐ Feel the Power!"
+    onComplete={() => {
+      console.log("Discovery 2: Mahakaya learned! 🎆");
+      setShowDiscoveryFlip2(false);
+      
+      // Update sidebar + complete scene
+      sceneActions.updateState({ 
+        phase: PHASES.COMPLETE,
+        completed: true,
+        discoveredSymbols: {
+          vakratunda: true,
+          mahakaya: true
+        }
+      });
+
+        setShowSparkle('final-fireworks');
+
+      
+   
+    }}
+    
+    showSparkles={true}
+  />
+)}
+
+{/* Resume Popup */}
+{showResumePopup && (
+  <div style={{
+    position: 'fixed',
+    top: '20%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    zIndex: 1000,
+    background: 'linear-gradient(135deg, #4ECDC4 0%, #FF6B35 100%)',
+    color: 'white',
+    padding: '20px 40px',
+    borderRadius: '15px',
+    fontFamily: "'Baloo 2', cursive",
+    fontSize: '1.4rem',
+    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.3)',
+    border: '3px solid #FFD700',
+    textAlign: 'center',
+    animation: 'slideDown 0.3s ease'
+  }}>
+    {resumeMessage}
+  </div>
+)}
+
 {/* SAVE ANIMAL MISSION - REUSABLE COMPONENT */}
 <SanskritWordMission
   show={showMission}
@@ -856,128 +1088,121 @@ onClick={() => {
   allowSkip={true}
 />
 
-{showSparkle === 'final-fireworks' && (
-  <Fireworks
-    show={true}
-    duration={6000}
-    count={20}
-    colors={['#FFD700', '#FF8C00', '#FFA500']}
-  onComplete={() => {
-  setShowSparkle(null);
-  setShowFinalGanesha(false);
-  
-  // Save and show completion immediately
-  const profileId = localStorage.getItem('activeProfileId');
-  if (profileId) {
-    try {
-      GameStateManager.saveGameState(zoneId, sceneId, {
-        completed: true,
-        stars: 5,
-        phase: PHASES.COMPLETE,
-        words: sceneState.learnedWords || {},
-        syllables: sceneState.learnedSyllables || {},
-        apps: sceneState.unlockedApps || {},
-        timestamp: Date.now()
-      });
-          localStorage.removeItem(`temp_session_${profileId}_${zoneId}_${sceneId}`);
-          SimpleSceneManager.clearCurrentScene();
-        } catch (error) {
-          console.error('Error saving game state:', error);
-        }
-      }
-      
-      setShowSceneCompletion(true);
-    }}
-  />
-)}
+{/* ✅ FIREWORKS: SAVE DATA & MARK COMPLETE */}
+.
 
+            {showSparkle === 'final-fireworks' && (
+              <Fireworks
+                show={true}
+                duration={6000}
+                onComplete={() => {
+                  setShowSparkle(null);
+                  setShowFinalGanesha(false);
+                  
+                  const profileId = localStorage.getItem('activeProfileId');
+                  if (profileId) {
+                    console.log('💾 FIREWORKS: Saving Permanent Data (GameStateManager ONLY)...');
+                    
+                    // ✅ 1. HARDCODED CHANTS (Ensures data is never empty)
+                    const finalChants = { 
+                      'vakratunda-chant': true, 
+                      'mahakaya-chant': true 
+                    };
+                    
+                    // ✅ 2. SAVE ONLY VIA GAMESTATEMANAGER (Like Modak Scene)
+                    // We REMOVED ProgressManager here because it was overwriting/erasing the chants
+                    GameStateManager.saveGameState(zoneId, sceneId, {
+                      completed: true,
+                      stars: 5,
+                      phase: PHASES.COMPLETE,
+                      words: sceneState.learnedWords || {},
+                      syllables: sceneState.learnedSyllables || {},
+                      chantedVerses: finalChants, // <--- Crucial Data
+                      apps: sceneState.unlockedApps || {},
+                      timestamp: Date.now()
+                    });
 
-{/* FINAL CELEBRATION - Ganesha appears BEFORE completion screen */}
-{showFinalGanesha && !showSceneCompletion && (
-  <div className="vakratunda-final-ganesha-appears">
-    <img src={ganeshaHeadphones} alt="Ganesha" className="vakratunda-ganesha-final-enters" />
-    <div className="vakratunda-ganesha-final-bubble">
-      You're a hero! 🌟
-    </div>
-  </div>
-)}
+                    // 3. Clear Temp Session
+                    localStorage.removeItem(`temp_session_${profileId}_${zoneId}_${sceneId}`);
+                    SimpleSceneManager.clearCurrentScene();
+                    
+                    console.log('✅ FIREWORKS: Saved successfully with chants:', finalChants);
+                  }
+                  
+                  setShowSceneCompletion(true);
+                }}
+              />
+            )}
 
-          <SceneCompletionCelebration
-            show={showSceneCompletion}
-            sceneName="Vakratunda Grove"
-            sceneNumber={1}
-            totalScenes={5}
-            starsEarned={5}
-            totalStars={5}
-discoveredSymbols={['vakratunda', 'mahakaya']}
-containerType="smartwatch"
-//containerImage={smartwatchBase}
-containerScreenImage={smartwatchScreen}
-appImages={{
-  vakratunda: appVakratunda,
-  mahakaya: appMahakaya,
-  // Add other apps as you create them
-}}
-            nextSceneName="Suryakoti Bank"
-            sceneId="vakratunda-grove"
-            completionData={{
-              stars: 5,
-              syllables: sceneState.learnedSyllables,
-              words: sceneState.learnedWords,
-              completed: true
-            }}
-            onComplete={onComplete}
-        onReplay={() => {
-  console.log('🔄 INSTANT REPLAY: Garden Adventure restart');
-  setShowSceneCompletion(false);
-  resetScene();
-}}
-            onContinue={() => {
-              console.log('SANSKRIT CONTINUE: Going to next scene + preserving resume');
-              
-              if (clearManualCloseTracking) {
-                clearManualCloseTracking();
-                console.log('SANSKRIT CONTINUE: GameCoach manual tracking cleared');
-              }
-              if (hideCoach) {
-                hideCoach();
-                console.log('SANSKRIT CONTINUE: GameCoach hidden');
-              }
-              
-              setTimeout(() => {
-                console.log('SANSKRIT CONTINUE: Forcing GameCoach fresh start for next scene');
-                if (clearManualCloseTracking) {
-                  clearManualCloseTracking();
+            {showFinalGanesha && !showSceneCompletion && (
+              <div className="vakratunda-final-ganesha-appears">
+                <img src={ganeshaHeadphones} alt="Ganesha" className="vakratunda-ganesha-final-enters" />
+                <div className="vakratunda-ganesha-final-bubble">You're a hero! 🌟</div>
+              </div>
+            )}
+
+           {/* ✅ CELEBRATION: Force Pass Data to App.jsx */}
+            <SceneCompletionCelebration
+              show={showSceneCompletion}
+              sceneName="Vakratunda Grove"
+              sceneNumber={1}
+              totalScenes={5}
+              starsEarned={5}
+              totalStars={5}
+              discoveredSymbols={['vakratunda', 'mahakaya']}
+              containerType="smartwatch"
+              containerScreenImage={smartwatchScreen}
+              appImages={{ vakratunda: appVakratunda, mahakaya: appMahakaya }}
+              nextSceneName="Suryakoti Bank"
+              sceneId="vakratunda-grove"
+              // Visual Data only
+              completionData={{
+                stars: 5,
+                syllables: { va: true, kra: true, tun: true, da: true, ma: true, ha: true, ka: true, ya: true },
+                words: { vakratunda: true, mahakaya: true },
+                chantedVerses: { 'vakratunda-chant': true, 'mahakaya-chant': true },
+                completed: true
+              }}
+              // 1. EXPLORE ZONES FIX: Manually pass data to App.jsx handler
+              onComplete={() => {
+                if (onComplete) {
+                  onComplete({
+                    completed: true,
+                    stars: 5,
+                    chantedVerses: { 'vakratunda-chant': true, 'mahakaya-chant': true },
+                    words: { vakratunda: true, mahakaya: true }
+                  });
                 }
-              }, 500);
-              
-              const profileId = localStorage.getItem('activeProfileId');
-              if (profileId) {
-                ProgressManager.updateSceneCompletion(profileId, 'shloka-river', 'vakratunda-grove', {
-                  completed: true,
-                  stars: 5,
-                  syllables: sceneState.learnedSyllables,
-                  words: sceneState.learnedWords
-                });
+              }}
+              // 2. REPLAY FIX: Reset scene
+              onReplay={() => {
+                setShowSceneCompletion(false);
+                resetScene();
+              }}
+              // 3. CONTINUE FIX: Force save & Navigate
+              onContinue={() => {
+                console.log('➡️ CONTINUE: Force-Saving & Navigating...');
                 
-                GameStateManager.saveGameState('shloka-river', 'vakratunda-grove', {
-                  completed: true,
-                  stars: 5,
-                  syllables: sceneState.learnedSyllables,
-                  words: sceneState.learnedWords
-                });
-                
-                console.log('SANSKRIT CONTINUE: Completion data saved');
-              }
+                // Double-Save just in case
+                const profileId = localStorage.getItem('activeProfileId');
+                if (profileId) {
+                   GameStateManager.saveGameState(zoneId, sceneId, {
+                      completed: true,
+                      stars: 5,
+                      phase: PHASES.COMPLETE,
+                      chantedVerses: { 'vakratunda-chant': true, 'mahakaya-chant': true },
+                      timestamp: Date.now()
+                   });
+                }
 
-              setTimeout(() => {
-                SimpleSceneManager.setCurrentScene('shloka-river', 'suryakoti-bank', false, false);
-                console.log('SANSKRIT CONTINUE: Next scene (firefly-garden) set for resume tracking');
+                if (clearManualCloseTracking) clearManualCloseTracking();
                 
-                onNavigate?.('scene-complete-continue');
-              }, 100);
-            }}
-          />    
+                setTimeout(() => {
+                  // No setCurrentScene, just navigate
+                  onNavigate?.('scene-complete-continue');
+                }, 100);
+              }}
+            />
 
             {/* NAVIGATION */}
             <TocaBocaNav
@@ -999,11 +1224,10 @@ appImages={{
               }}
             />
 
-            <BackToMapButton 
-              onNavigate={onNavigate}
-              hideCoach={hideCoach}
-              clearManualCloseTracking={clearManualCloseTracking}
-            />
+           {/* Back Button */}
+         {sceneState.welcomeShown && !showSceneCompletion && (
+  <BackToMapButton onNavigate={onNavigate} />
+)}
 
             <ProgressiveHintSystem
               ref={progressiveHintRef}

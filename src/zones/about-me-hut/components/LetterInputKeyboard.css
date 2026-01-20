@@ -1,0 +1,193 @@
+/* Letter Input Keyboard - Reusable Component */
+
+.letter-input-keyboard {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Hidden system keyboard input */
+.system-keyboard-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 1px;
+  height: 1px;
+}
+
+/* Letter display */
+.friend-name-display {
+  display: flex;
+  gap: 10px;
+  min-height: 80px;
+  padding: 15px 25px;
+  background: rgba(255, 248, 220, 0.9);
+  border: 4px solid #D2B48C;
+  border-radius: 20px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  min-width: 300px;
+}
+
+.name-placeholder {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: #C19A6B;
+  font-style: italic;
+}
+
+.friend-letter {
+  font-family: 'Baloo 2', cursive;
+  font-size: 36px;
+  font-weight: 700;
+  color: #654321;
+  background: white;
+  border: 3px solid #FFD700;
+  border-radius: 12px;
+  width: 50px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pop-in {
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Control buttons */
+.friend-controls {
+  display: flex;
+  gap: 20px;
+}
+
+.friend-backspace-btn,
+.friend-confirm-btn {
+  font-family: 'Baloo 2', cursive;
+  font-size: 20px;
+  font-weight: 700;
+  padding: 15px 35px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.friend-backspace-btn {
+  background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+  color: white;
+}
+
+.friend-backspace-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #FF5252, #FF7B7B);
+  transform: translateY(-2px);
+}
+
+.friend-backspace-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.friend-confirm-btn {
+  background: linear-gradient(135deg, #4CAF50, #66BB6A);
+  color: white;
+}
+
+.friend-confirm-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #45A049, #5CB860);
+  transform: translateY(-2px);
+}
+
+.friend-confirm-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Virtual keyboard */
+.friend-keyboard {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 8px;
+  max-width: 600px;
+  padding: 20px;
+  background: rgba(255, 248, 220, 0.5);
+  border-radius: 20px;
+}
+
+.friend-letter-tile {
+  font-family: 'Baloo 2', cursive;
+  font-size: 20px;
+  font-weight: 700;
+  color: #654321;
+  background: #FFF8DC;
+  border: 3px solid #D2B48C;
+  border-radius: 12px;
+  width: 55px;
+  height: 55px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.friend-letter-tile:hover:not(:disabled) {
+  background: #FFE4B5;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.friend-letter-tile:active:not(:disabled) {
+  transform: translateY(0);
+  background: #FFD700;
+}
+
+.friend-letter-tile:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Helper hint */
+.keyboard-hint {
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  color: #8B7355;
+  text-align: center;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .friend-keyboard {
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    max-width: 100%;
+  }
+
+  .friend-letter-tile {
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+  }
+
+  .friend-letter {
+    width: 40px;
+    height: 50px;
+    font-size: 28px;
+  }
+}

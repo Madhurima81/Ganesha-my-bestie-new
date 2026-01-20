@@ -1,43 +1,61 @@
 // zones/shloka-river/core/AutoPlayMode.jsx
-// Config-driven auto-play mode - Converted from SimplifiedMemoryGame.jsx
-// Pattern: Elephants sing → Player clicks same elephants → Visual rewards transform
+// FIXED: Preserves Manual Mode progress (completedRounds) and passes it back on exit
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useSafeClick } from './hooks/useSafeClick';
 import UniversalPauseButton from './UniversalPauseButton';
 import PauseModal from './PauseModal';
 
+const getHeaderClassName = (gameConfig) => {
+  const classNames = {
+    'vakratunda': 'vakratunda-game-phase-header',
+    'mahakaya': 'mahakaya-game-phase-header',
+    'suryakoti': 'suryakoti-game-phase-header',
+    'samaprabha': 'samaprabha-game-phase-header',
+    'nirvighnam': 'nirvighnam-game-phase-header',
+    'kurumedeva': 'kurumedeva-game-phase-header',
+    'sarvakaryeshu': 'sarvakaryeshu-game-phase-header',
+    'sarvada': 'sarvada-game-phase-header'
+  };
+  return classNames[gameConfig.id] || 'vakratunda-game-phase-header';
+};
+
+// Helper: Get dynamic instruction text based on clicker type
+const getClickInstruction = (clickerType) => {
+  const instructions = {
+    'baby-elephant': 'Click the baby elephants!',
+    'adult-elephant': 'Click the elephants!',
+    'sun-orb': 'Click the suns!',
+    'rainbow': 'Click the rainbows!',
+    'animal': 'Click the animals!',
+    'helper-animal': 'Click the helpers!'
+  };
+  return instructions[clickerType] || 'Click to play!';
+};
+
+// Helper: Get round word name from syllables
+const getRoundWord = (gameConfig, roundNumber) => {
+  const syllables = gameConfig.syllables[roundNumber];
+  if (!syllables) return '';
+  return syllables.join('').toUpperCase();
+};
+
 const AutoPlayMode = ({
-  // Config and assets
-  gameConfig,           // ⭐ The game configuration object
-  assetGetters,         // ⭐ Dynamic asset getters
-  
-  // Core props
+  gameConfig,
+  assetGetters,
+  gamePrefix = 'default',
   isActive = false,
   hideElements = false,
   powerGained = false,
   onPhaseComplete,
   onGameComplete,
   profileName = 'little explorer',
-  
-  // Components
   WaterSprayComponent,
-  
-  // Reload support
   isReload = false,
   savedGameState = null,
   onSaveGameState
 }) => {
 
-  console.log('AutoPlayMode render:', { 
-    isActive, 
-    hideElements,
-    isReload,
-    gameConfig: gameConfig?.id,
-    powerGained
-  });
-
-  // 🛡️ Safety hook
   const { safeClick } = useSafeClick(300);
 
   // Core game state
@@ -49,7 +67,7 @@ const AutoPlayMode = ({
   const [canPlayerClick, setCanPlayerClick] = useState(false);
   const [singingSyllable, setSingingSyllable] = useState(null);
   
-  // Visual state - handles both bud→lotus and seed→flower
+  // Visual state
   const [visualRewards, setVisualRewards] = useState({});
   const [activatedElephants, setActivatedElephants] = useState({});
   const [roundClicks, setRoundClicks] = useState({});
@@ -57,115 +75,121 @@ const AutoPlayMode = ({
   // Animation state
   const [countdown, setCountdown] = useState(0);
   const [isCountingDown, setIsCountingDown] = useState(false);
-
-  // ✅ FIX 2: Water spray state
   const [waterSprayPosition, setWaterSprayPosition] = useState(null);
-
-  // Wait banner
   const [waitBannerMessage, setWaitBannerMessage] = useState('');
   const [showWaitBanner, setShowWaitBanner] = useState(false);
-
-  // ⭐ NEW: Pause state
-const [showPauseModal, setShowPauseModal] = useState(false);
+  const [showPauseModal, setShowPauseModal] = useState(false);
   
-  // Refs for cleanup
+  // ⭐ NEW: Central synthesis states
+  const [centralElementGlowing, setCentralElementGlowing] = useState(false);
+  const [centralBloomProgress, setCentralBloomProgress] = useState(0); // 0 to 100
+  
+  // Refs
   const timeoutsRef = useRef([]);
   const intervalsRef = useRef([]);
   const isComponentMountedRef = useRef(true);
+  const hasInitializedRef = useRef(false);
 
-  // Comprehensive timer cleanup
+  // ⭐ NEW: Ref to hold Manual Mode progress so it doesn't get lost
+  const manualProgressRef = useRef({
+    completedRounds: [],
+    learnedSyllables: []
+  });
+
+  // ⭐ NEW: Centralized Save Helper
+  // This ensures we NEVER wipe out the completedRounds when saving Auto Mode state
+  const saveGameStateHelper = (updates = {}) => {
+    if (!onSaveGameState) return;
+
+    const stateToSave = {
+      gamePhase,
+      currentRound,
+      currentSequence,
+      playerInput,
+      visualRewards,
+      activatedElephants,
+      gameId: gameConfig.id,
+      // ⭐ PASSTHROUGH: Always include the manual progress we captured
+      completedRounds: manualProgressRef.current.completedRounds,
+      learnedSyllables: manualProgressRef.current.learnedSyllables,
+      ...updates
+    };
+
+    onSaveGameState(stateToSave);
+  };
+
   const clearAllTimers = () => {
-    console.log('🧹 Clearing all timers');
     timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
     intervalsRef.current.forEach(interval => clearInterval(interval));
     timeoutsRef.current = [];
     intervalsRef.current = [];
   };
 
-  // Safe timeout with cleanup
   const safeSetTimeout = (callback, delay) => {
     const timeout = setTimeout(() => {
-      if (isComponentMountedRef.current) {
-        callback();
-      }
+      if (isComponentMountedRef.current) callback();
     }, delay);
     timeoutsRef.current.push(timeout);
     return timeout;
   };
 
-  // Safe interval with cleanup
   const safeSetInterval = (callback, delay) => {
     const interval = setInterval(() => {
-      if (isComponentMountedRef.current) {
-        callback();
-      }
+      if (isComponentMountedRef.current) callback();
     }, delay);
     intervalsRef.current.push(interval);
     return interval;
   };
 
-  // Cleanup on unmount
   useEffect(() => {
     isComponentMountedRef.current = true;
     return () => {
-      console.log('🧹 AutoPlayMode: Component unmounting');
       isComponentMountedRef.current = false;
       clearAllTimers();
     };
   }, []);
 
-  // Audio functions (config-driven)
+  // Audio
   const playSyllableAudio = (syllable) => {
     try {
       const fileName = gameConfig.audio.syllableFileMap[syllable];
       if (!fileName) return;
-      
       const audioPath = `${gameConfig.audio.syllableFolder}${fileName}.mp3`;
       const audio = new Audio(audioPath);
       audio.volume = 0.8;
-      audio.play().catch(e => {
-        console.log('Audio fallback:', e);
-      });
+      audio.play().catch(e => console.log('Audio fallback:', e));
     } catch (error) {
       console.log('Audio error:', error);
     }
   };
 
-  // Get sequence for current round
-  const getSequenceForRound = (round) => {
-    return gameConfig.syllables[round] || [];
-  };
+  const getSequenceForRound = (round) => gameConfig.syllables[round] || [];
 
-  // Start new round
   const startNewRound = (roundNumber) => {
     const sequence = getSequenceForRound(roundNumber);
     setCurrentRound(roundNumber);
     setCurrentSequence(sequence);
     setPlayerInput([]);
-    setRoundClicks({}); // Reset round clicks but keep permanent state
+    setRoundClicks({});
     setGamePhase('waiting');
     setCanPlayerClick(false);
     
-    console.log(`Starting ${gameConfig.displayName} round ${roundNumber}:`, sequence);
+    // ⭐ NEW: Reset central synthesis states
+    setCentralElementGlowing(false);
+    setCentralBloomProgress(0);
     
-    if (onSaveGameState) {
-      onSaveGameState({
-        gamePhase: 'waiting',
-        currentRound: roundNumber,
-        currentSequence: sequence,
-        playerInput: [],
-        visualRewards,
-        activatedElephants,
-        gameId: gameConfig.id
-      });
-    }
+    // ⭐ UPDATED: Use helper to save
+    saveGameStateHelper({
+      gamePhase: 'waiting',
+      currentRound: roundNumber,
+      currentSequence: sequence,
+      playerInput: [],
+    });
   };
 
-  // Countdown system
   const startCountdown = () => {
     setIsCountingDown(true);
     setCountdown(3);
-    
     const countdownInterval = safeSetInterval(() => {
       setCountdown(prev => {
         if (prev <= 1) {
@@ -179,10 +203,8 @@ const [showPauseModal, setShowPauseModal] = useState(false);
     }, 800);
   };
 
-  // Play sequence
   const playSequence = () => {
     if (currentSequence.length === 0) return;
-    
     setIsSequencePlaying(true);
     setGamePhase('playing');
     setCanPlayerClick(false);
@@ -193,167 +215,87 @@ const [showPauseModal, setShowPauseModal] = useState(false);
       safeSetTimeout(() => {
         setSingingSyllable(syllable);
         playSyllableAudio(syllable);
-        
-        safeSetTimeout(() => {
-          setSingingSyllable(null);
-        }, 600);
-        
+        safeSetTimeout(() => setSingingSyllable(null), 600);
         if (index === currentSequence.length - 1) {
           safeSetTimeout(() => {
             setIsSequencePlaying(false);
             setGamePhase('listening');
             setCanPlayerClick(true);
-            console.log('Sequence complete - ready for clicks');
           }, 800);
         }
       }, index * 1200);
     });
   };
 
-  // Wait banner trigger
   const triggerWaitBanner = (message) => {
     setWaitBannerMessage(message);
     setShowWaitBanner(true);
     safeSetTimeout(() => setShowWaitBanner(false), 1500);
   };
 
-  // ⭐ NEW: Pause handlers
-const handlePause = () => {
-  console.log('🎮 Pause clicked in auto mode');
-  setShowPauseModal(true);
-  clearAllTimers();
-};
+  const handlePause = () => {
+    setShowPauseModal(true);
+    clearAllTimers();
+  };
 
-const handleContinue = () => {
-  console.log('🎮 Continuing auto mode');
-  setShowPauseModal(false);
-  
-  if (gamePhase === 'listening') {
-    console.log('🎮 Resuming listening phase - re-enabling clicks');
-    setCanPlayerClick(true);
-    setIsSequencePlaying(false);
-  } else if (gamePhase === 'waiting') {
-    console.log('🎮 Resuming from waiting - starting countdown');
-    startCountdown();
-  } else if (gamePhase === 'playing') {
-    console.log('🎮 Resuming from playing - replaying sequence');
-    playSequence();
-    } else if (gamePhase === 'celebration') {
-  console.log('🎮 Resuming from celebration - checking if round complete');
-  
-  if (playerInput.length === currentSequence.length) {
-    console.log('🎮 Round complete - advancing');
+  const handleContinue = () => {
+    setShowPauseModal(false);
+    if (gamePhase === 'listening') {
+      setCanPlayerClick(true);
+      setIsSequencePlaying(false);
+    } else if (gamePhase === 'waiting') {
+      startCountdown();
+    } else if (gamePhase === 'playing') {
+      playSequence();
+    } else if (gamePhase === 'celebration' || gamePhase === 'success') {
+       if (currentRound < Object.keys(gameConfig.syllables).length) {
+          startNewRound(currentRound + 1);
+          safeSetTimeout(() => startCountdown(), 500);
+       } else {
+          handlePhaseComplete();
+       }
+    }
+  };
+
+  const handleExitToMenu = () => {
+    console.log('🎮 Exiting auto-play - returning progress:', manualProgressRef.current.completedRounds);
     
-    const maxRound = Object.keys(gameConfig.syllables).length;
-    if (currentRound < maxRound) {
-      safeSetTimeout(() => {
-        startNewRound(currentRound + 1);
-      }, 500);
-    } else {
-      safeSetTimeout(() => {
-        handlePhaseComplete();
-      }, 500);
+    setShowPauseModal(false);
+    clearAllTimers();
+    
+    // Reset local auto state
+    setGamePhase('waiting');
+    setCurrentRound(1);
+    setCurrentSequence([]);
+    setPlayerInput([]);
+    
+    if (onPhaseComplete) {
+      onPhaseComplete({
+        // Return everything current
+        learnedSyllables: Object.keys(visualRewards).map(key => key.replace('visual-', '')),
+        visualRewards: visualRewards,
+        activatedElephants: activatedElephants,
+        // ⭐ CRITICAL: Pass the manual rounds back!
+        completedRounds: manualProgressRef.current.completedRounds,
+        isEarlyExit: true 
+      });
     }
-  } else {
-    console.log('⚠️ Round not complete, returning to listening');
-    setGamePhase('listening');
-    setCanPlayerClick(true);
-  }
-  } else if (gamePhase === 'success') {
-    // ⭐ NEW: Handle resume from success phase
-    console.log('🎮 Resuming from success - advancing to next round');
-    if (currentRound < 3) {
-      // More rounds to go - start next round
-      safeSetTimeout(() => {
-        startNewRound(currentRound + 1);
-        safeSetTimeout(() => startCountdown(), 500);
-      }, 500);
-    } else {
-      // All rounds complete - trigger game complete
-      safeSetTimeout(() => {
-        setGamePhase('phase_complete');
-        if (onPhaseComplete) {
-          onPhaseComplete({
-            learnedSyllables: Object.keys(activatedElephants),
-            gameId: gameConfig.id
-          });
-        }
-      }, 500);
-    }
-  }
-};
+  };
 
-const handleExitToMenu = () => {
-  console.log('🎮 Exiting auto-play - back to mode selection');
-  
-  // Save progress
-  if (onSaveGameState) {
-    onSaveGameState({
-      gamePhase,
-      currentRound,
-      visualRewards,
-      activatedElephants,
-      savedAt: Date.now(),
-      gameId: gameConfig.id
-    });
-  }
-  
-  // Close modal
-  setShowPauseModal(false);
-  
-  // Reset auto mode to initial state
-  setGamePhase('waiting');
-  setCurrentRound(1);
-  setCurrentSequence([]);
-  setPlayerInput([]);
-  setCanPlayerClick(false);
-  setIsSequencePlaying(false);
-  
-  // Tell parent we're exiting (parent will show mode selection again)
-  if (onPhaseComplete) {
-    onPhaseComplete({
-      learnedSyllables: Object.keys(visualRewards).map(key => key.replace('visual-', '')),
-      visualRewards,
-      activatedElephants,
-      isEarlyExit: true // ← Flag that we didn't complete all rounds
-    });
-  }
-};
-
-  // 🛡️ Enhanced elephant click with safety
   const handleElephantClick = (syllableIndex) => {
     safeClick(() => {
-      // Block during countdown
-      if (isCountingDown) {
-        triggerWaitBanner('Wait! Get ready... ⏰');
-        return;
-      }
-      
-      if (!canPlayerClick || isSequencePlaying) {
-        triggerWaitBanner('Listen first! 👂');
-        return;
-      }
+      if (isCountingDown) { triggerWaitBanner('Wait! Get ready... ⏰'); return; }
+      if (!canPlayerClick || isSequencePlaying) { triggerWaitBanner('Listen first! 👂'); return; }
       
       const clickedSyllable = currentSequence[syllableIndex];
       if (!clickedSyllable) return;
+      if (roundClicks[`elephant-${clickedSyllable}`]) { triggerWaitBanner('Already clicked! 🐘'); return; }
       
-      // Check if already clicked this round
-      if (roundClicks[`elephant-${clickedSyllable}`]) {
-        triggerWaitBanner('Already clicked! 🐘');
-        return;
-      }
-      
-      // Sequential clicking - must click in order
       const expectedIndex = playerInput.length;
-      if (syllableIndex !== expectedIndex) {
-        triggerWaitBanner('Click in order! 🎯');
-        return;
-      }
+      if (syllableIndex !== expectedIndex) { triggerWaitBanner('Click in order! 🎯'); return; }
       
-      console.log(`Clicked elephant: ${clickedSyllable}`);
       playSyllableAudio(clickedSyllable);
 
-      // ✅ Water spray animation - ONLY for Scene 1 (vakratunda, mahakaya)
       if (gameConfig.id === 'vakratunda' || gameConfig.id === 'mahakaya') {
         const position = gameConfig.elements.clicker.positions[syllableIndex];
         setWaterSprayPosition({ left: position.left, top: position.top });
@@ -364,25 +306,73 @@ const handleExitToMenu = () => {
       setPlayerInput(newPlayerInput);
       setRoundClicks(prev => ({ ...prev, [`elephant-${clickedSyllable}`]: true }));
       setActivatedElephants(prev => ({ ...prev, [`elephant-${clickedSyllable}`]: true }));
-
-      // Transform visual reward
       setVisualRewards(prev => ({ ...prev, [`visual-${clickedSyllable}`]: true }));
       
+      // ⭐ NEW: Update central bloom progress instead of auto-completing
       if (newPlayerInput.length === currentSequence.length) {
-        handleRoundSuccess();
+        // Calculate final bloom percentage (just before glow state)
+        const totalSyllables = currentSequence.length;
+        const finalBloomBeforeGlow = totalSyllables === 2 ? 75 : 
+                                      totalSyllables === 3 ? 75 : 
+                                      90; // For 4 syllables
+        
+        setCentralBloomProgress(finalBloomBeforeGlow);
+        
+        // Make it glow and clickable
+        safeSetTimeout(() => {
+          setCentralElementGlowing(true);
+        }, 500);
+      } else {
+        // Incremental bloom progress for each elephant click
+        const totalSyllables = currentSequence.length;
+        const progressPerClick = totalSyllables === 2 ? 50 : 
+                                  totalSyllables === 3 ? 33 : 
+                                  25; // For 4 syllables
+        setCentralBloomProgress(newPlayerInput.length * progressPerClick);
       }
     });
   };
 
-  // Round success
+  // ⭐ NEW: Handle central synthesis element click
+  const handleCentralElementClick = () => {
+    safeClick(() => {
+      if (!centralElementGlowing) return; // Only clickable when glowing
+      
+      console.log('🌸 Central element clicked - playing complete word audio');
+      
+      // ✅ Update playerInput to include lotus click (shows X/X progress)
+      setPlayerInput([...currentSequence, 'lotus']);
+      
+      // Play complete word audio
+      const completeWordAudio = gameConfig.audio.completeWordFile;
+      if (completeWordAudio) {
+        const audio = new Audio(completeWordAudio);
+        audio.play().catch(e => console.error('Audio play error:', e));
+      }
+      
+      // Bloom to 100%
+      setCentralBloomProgress(100);
+      setCentralElementGlowing(false);
+      
+      // Wait for audio/animation, then complete round
+      safeSetTimeout(() => {
+        handleRoundSuccess();
+      }, 1500);
+    });
+  };
+
   const handleRoundSuccess = () => {
     setCanPlayerClick(false);
     setGamePhase('celebration');
-
-    console.log(`Round ${currentRound} complete!`);
+    
+    // Save progress on success (using helper)
+    saveGameStateHelper({
+        gamePhase: 'celebration',
+        visualRewards,
+        activatedElephants
+    });
 
     safeSetTimeout(() => {
-      // ⭐ DYNAMIC: Support 2-round and 3-round games
       const maxRound = Object.keys(gameConfig.syllables).length;
       if (currentRound < maxRound) {
         startNewRound(currentRound + 1);
@@ -392,813 +382,542 @@ const handleExitToMenu = () => {
     }, 2000);
   };
 
-  // Phase complete
-  const handlePhaseComplete = () => {
-    setGamePhase('phase_complete');
-    console.log(`${gameConfig.displayName} completed!`);
-    
-    if (onPhaseComplete) {
-      onPhaseComplete(gameConfig.id);
-    }
-    
-    if (onGameComplete) {
-      onGameComplete();
-    }
-  };
+/*const handlePhaseComplete = () => {
+  setGamePhase('phase_complete');
+  if (onPhaseComplete) onPhaseComplete(gameConfig.id);
+  if (onGameComplete) onGameComplete();
+  
+  // Keep completion data for CulturalProgressExtractor
+  if (onSaveGameState) {
+    onSaveGameState({
+      gameId: gameConfig.id,
+      gameMode: 'auto',
+      gameState: null,
+      currentRound: null,
+      completedRounds: completedRounds,  // ⭐ KEEP
+      learnedSyllables: learnedSyllables,  // ⭐ KEEP
+      visualRewards: visualRewards  // ⭐ KEEP
+    });
+  }
+};*/
 
-  // ✅ BUG 7 FIX: Auto Mode ALWAYS starts from Round 1
+const handlePhaseComplete = () => {
+  setGamePhase('phase_complete');
+  if (onPhaseComplete) onPhaseComplete(gameConfig.id);
+  if (onGameComplete) onGameComplete();
+};
+
+// Initialization Effect
   useEffect(() => {
     if (!isActive || !gameConfig) return;
+    if (hasInitializedRef.current) return;
 
-    console.log('🎮 [Mode] Auto Mode initializing - ALWAYS starting from Round 1');
+    // ⭐ KEY: Capture manual progress immediately on mount!
+    if (savedGameState) {
+        if (savedGameState.completedRounds) {
+            manualProgressRef.current.completedRounds = savedGameState.completedRounds;
+            console.log('📥 [Auto] Captured manual rounds:', savedGameState.completedRounds);
+        }
+        if (savedGameState.learnedSyllables) {
+            manualProgressRef.current.learnedSyllables = savedGameState.learnedSyllables;
+        }
+    }
 
-    // ✅ BUG 7: ALWAYS start fresh from Round 1 in Auto Mode
-    // Don't restore saved round - auto mode plays full sequence every time
-    startNewRound(1);
+ if (isReload && savedGameState && savedGameState.gameId === gameConfig.id && savedGameState.currentRound) {
+      console.log('🔄 [Auto] Restoring saved auto state');
+      
+      // ⭐ SMART RELOAD: Only advance to next round if we're in celebration (between rounds)
+      const isCurrentRoundComplete = savedGameState.gamePhase === 'celebration';
+      
+      const maxRound = Object.keys(gameConfig.syllables).length;
+      const roundToStart = isCurrentRoundComplete && savedGameState.currentRound < maxRound
+        ? savedGameState.currentRound + 1
+        : savedGameState.currentRound;
+      
+      if (isCurrentRoundComplete && roundToStart > savedGameState.currentRound) {
+        console.log(`🎯 [Auto] Round ${savedGameState.currentRound} complete - advancing to Round ${roundToStart}`);
+        hasInitializedRef.current = true;
+        startNewRound(roundToStart);
+      } else {
+        // Normal reload - restore exact state
+        if (savedGameState.currentRound) setCurrentRound(savedGameState.currentRound);
+        if (savedGameState.currentSequence) setCurrentSequence(savedGameState.currentSequence);
+        if (savedGameState.playerInput) setPlayerInput(savedGameState.playerInput);
+        if (savedGameState.gamePhase) setGamePhase(savedGameState.gamePhase);
+        if (savedGameState.visualRewards) setVisualRewards(savedGameState.visualRewards);
+        if (savedGameState.activatedElephants) setActivatedElephants(savedGameState.activatedElephants);
+        
+        const clicks = {};
+        (savedGameState.playerInput || []).forEach(syllable => {
+          clicks[`elephant-${syllable}`] = true;
+        });
+        setRoundClicks(clicks);
+        
+        hasInitializedRef.current = true;
+      }
+    } else {
+      console.log('🆕 [Auto] Starting fresh from Round 1');
+      hasInitializedRef.current = true;
+      startNewRound(1); 
+    }
   }, [isActive, gameConfig]);
-
-  // Auto-start countdown
+  
   useEffect(() => {
     if (gamePhase === 'waiting' && currentSequence.length > 0 && !isCountingDown) {
-      safeSetTimeout(() => {
-        startCountdown();
-      }, 1000);
+      safeSetTimeout(() => startCountdown(), 1000);
     }
   }, [gamePhase, currentSequence, isCountingDown]);
 
-  // Helper functions
+  // Renderers & UI Helpers...
   const isElephantSinging = (syllable) => singingSyllable === syllable;
-  
-  const isElephantClickable = (syllableIndex) => {
-    if (!canPlayerClick) return false;
-    return syllableIndex === playerInput.length;
-  };
-  
-  const hasElephantBeenClicked = (syllableIndex) => {
-    return syllableIndex < playerInput.length;
-  };
-  
-  const isElephantActivated = (syllable) => {
-    return activatedElephants[`elephant-${syllable}`];
-  };
-  
-  const isVisualRewardActive = (syllable) => {
-    return visualRewards[`visual-${syllable}`];
-  };
-  
-  const isNextExpected = (syllableIndex) => {
-    if (!canPlayerClick) return false;
-    return syllableIndex === playerInput.length;
-  };
+  const isElephantClickable = (index) => canPlayerClick && index === playerInput.length;
+  const hasElephantBeenClicked = (index) => index < playerInput.length;
+  const isElephantActivated = (syllable) => activatedElephants[`elephant-${syllable}`];
+  const isVisualRewardActive = (syllable) => visualRewards[`visual-${syllable}`];
+  const isNextExpected = (index) => canPlayerClick && index === playerInput.length;
 
-  // Get positions from config
-  const getPosition = (type, index) => {
-    if (type === 'elephant') {
-      return gameConfig.elements.clicker.positions[index];
-    } else {
-      return gameConfig.elements.singer.positions[index];
-    }
-  };
+  /*const getPosition = (type, index) => {
+    return type === 'elephant' ? gameConfig.elements.clicker.positions[index] : gameConfig.elements.singer.positions[index];
+  };*/
 
-  // Render elephant
-  const renderElephant = (syllable, index) => {
-    const position = getPosition('elephant', index);
-    const isSinging = isElephantSinging(syllable);
-    const isClickable = isElephantClickable(index);
-    const hasBeenClicked = hasElephantBeenClicked(index);
-    const isActivated = isElephantActivated(syllable);
-    const isNext = isNextExpected(index);
-    
-    let elephantStyle = {
-      opacity: 1,
-      transform: 'translate(-50%, -50%) scale(1)',
-      transition: 'all 0.3s ease'
-    };
-    
-    if (isSinging) {
-      elephantStyle.transform = 'translate(-50%, -50%) scale(1.15)';
-      elephantStyle.filter = 'brightness(1.4) drop-shadow(0 0 15px #FFD700)';
-      elephantStyle.animation = 'sing 0.6s ease-in-out';
-    } else if (isNext && !hasBeenClicked) {
-      elephantStyle.filter = 'brightness(1.2) drop-shadow(0 0 8px #FF9800)';
-      elephantStyle.animation = 'nextToClick 1.5s ease-in-out infinite';
-    } else if (hasBeenClicked) {
-      elephantStyle.opacity = 1;
-      elephantStyle.filter = 'brightness(1.1) saturate(1.2)';
-    } else if (isActivated && !hasBeenClicked) {
-      elephantStyle.filter = 'brightness(1.1) saturate(1.1) drop-shadow(0 0 6px rgba(255, 183, 77, 0.4))';
-      elephantStyle.animation = 'gentleGlow 3s ease-in-out infinite';
-    } else if (!canPlayerClick) {
-      elephantStyle.opacity = 0.6;
-    }
+const renderElephant = (syllable, index) => {
+  // ⭐ ADD THIS SAFETY CHECK
+  if (!assetGetters) {
+    console.error('❌ assetGetters is undefined in AutoPlayMode for game:', gameConfig?.id);
+    return null;
+  }
+  
+  const position = gameConfig.elements.clicker?.positions?.[index] || { left: '50%', top: '50%' };
+  let getImage;
+  if (gameConfig.elements.clicker.assetGetters) {
+    // Syllable-specific assets
+    getImage = assetGetters[gameConfig.elements.clicker.assetGetters[syllable]];
+  } else if (gameConfig.elements.clicker.assetGetter) {
+    // Single asset for all
+    getImage = assetGetters[gameConfig.elements.clicker.assetGetter];
+  }
+    if (!getImage) return null;
 
-    // ⭐ Handle both single assetGetter and assetGetters object patterns
-    let getImage;
-    if (gameConfig.elements.clicker.assetGetter) {
-      // Pattern 1: Single getter function (vakratunda, mahakaya, etc.)
-      const getterName = gameConfig.elements.clicker.assetGetter;
-      getImage = assetGetters[getterName];
-    } else if (gameConfig.elements.clicker.assetGetters) {
-      // Pattern 2: Object with syllable mappings (nirvighnam, kurumedeva)
-      const getterName = gameConfig.elements.clicker.assetGetters[syllable];
-      getImage = assetGetters[getterName];
-    }
-
-    if (!getImage) {
-      console.error('[Clicker] Asset getter not found for syllable:', syllable);
-      return null;
-    }
+    const clickable = isElephantClickable(index);
+    const clicked = hasElephantBeenClicked(index);
+    const singing = isElephantSinging(syllable);
+    const activated = isElephantActivated(syllable);
+    const next = isNextExpected(index);
 
     return (
       <button
         key={`elephant-${syllable}`}
+                className={`${gamePrefix}-clicker-element`}  // ← ADD THIS LINE
+
+        style={{
+          position: 'absolute',
+          //left: position.left,
+          //top: position.top,
+          //width: '120px', height: '120px',
+          border: 'none', background: 'transparent',
+          cursor: clickable ? 'pointer' : 'default',
+          zIndex: 20, borderRadius: '50%',
+          opacity: clickable || clicked ? 1 : 0.6,
+          transform:  + (singing ? 'scale(1.15)' : 'scale(1)'),
+          filter: singing ? 'brightness(1.4) drop-shadow(0 0 15px #FFD700)' : 
+                  next && !clicked ? 'brightness(1.2) drop-shadow(0 0 8px #FF9800)' : 
+                  'none',
+          transition: 'all 0.3s ease'
+        }}
+        onClick={() => handleElephantClick(index)}
+        disabled={!clickable}
+      >
+        <img src={getImage(index)} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+        {singing && <div style={{ position: 'absolute', top: '-20px', left: '50%', fontSize: '20px', animation: 'musicNote 0.6s' }}>🎵</div>}
+        {next && !clicked && <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '85%', height: '85%', border: '2px solid #FFD700', borderRadius: '50%', animation: 'goldenPulse 2s infinite' }} />}
+        {next && !clicked && <div style={{ position: 'absolute', top: '-40px', left: '50%', transform: 'translateX(-50%)', background: '#FFD700', color: 'white', padding: '4px 10px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '600', zIndex: 30 }}>👆 Tap Here</div>}
+        {activated && !clicked && <div style={{ position: 'absolute', top: '5px', left: '50%', transform: 'translateX(-50%)', fontSize: '20px', animation: 'crownFloat 2s infinite' }}>👑</div>}
+        <div style={{ position: 'absolute', bottom: '-30px', left: '50%', transform: 'translateX(-50%)', background: clicked ? '#4CAF50' : next ? '#FFC107' : '#999', color: 'white', padding: '4px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 'bold' }}>{syllable.toUpperCase()}</div>
+        {clicked && <div style={{ position: 'absolute', top: '10px', right: '10px', width: '24px', height: '24px', background: '#4CAF50', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>✓</div>}
+      </button>
+    );
+  };
+
+  const renderInitialVisual = (syllable, index) => {
+    if (!gameConfig.elements.singer?.positions) return null;
+    if (isVisualRewardActive(syllable)) return null;
+    
+    let getImage;
+    if (gameConfig.elements.singer.assetGetterInitial) getImage = assetGetters[gameConfig.elements.singer.assetGetterInitial];
+    else if (gameConfig.elements.singer.assetGettersInitial) getImage = assetGetters[gameConfig.elements.singer.assetGettersInitial[syllable]];
+    
+    if (!getImage) return null;
+    const position = gameConfig.elements.singer.positions[index];
+    
+    return (
+      <div key={`initial-${syllable}`} style={{ position: 'absolute', left: position.left, top: position.top, width: '60px', height: '60px', zIndex: 10, transform: 'translate(-50%, -50%)', opacity: 0.7 }}>
+        <img src={getImage(index)} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+      </div>
+    );
+  };
+
+  const renderVisualReward = (syllable, index) => {
+    if (!gameConfig.elements.singer?.positions) return null;
+    if (!isVisualRewardActive(syllable)) return null;
+    
+    let getImage;
+    if (gameConfig.elements.singer.assetGetterReward) getImage = assetGetters[gameConfig.elements.singer.assetGetterReward];
+    else if (gameConfig.elements.singer.assetGettersReward) getImage = assetGetters[gameConfig.elements.singer.assetGettersReward[syllable]];
+    
+    if (!getImage) return null;
+    
+    const position = gameConfig.elements.singer.positionsReward ? gameConfig.elements.singer.positionsReward[index] : gameConfig.elements.singer.positions[index];
+    
+    return (
+      <div key={`reward-${syllable}`} style={{ position: 'absolute', left: position.left, top: position.top, width: '80px', height: '80px', zIndex: 15, animation: 'rewardAppear 1s, rewardGlow 2s infinite', transform: 'translate(-50%, -50%)' }}>
+        <img src={getImage(index)} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+        <div style={{ position: 'absolute', top: '-10px', left: '50%', fontSize: '18px', animation: 'sparkle 2s infinite' }}>✨</div>
+      </div>
+    );
+  };
+
+  const renderDualInitials = (syllable, index) => {
+    if (isVisualRewardActive(syllable)) return null;
+    if (!gameConfig.elements.rewards?.animals) return null;
+    const stonePos = gameConfig.elements.rewards.stones.positionsInitial[index];
+    const getStone = assetGetters[gameConfig.elements.rewards.stones.assetGettersInitial[syllable]];
+    const getAnimal = assetGetters[gameConfig.elements.rewards.animals.assetGetters[syllable]];
+    return (
+      <React.Fragment key={`dual-init-${syllable}`}>
+        {getStone && <div style={{ position: 'absolute', left: stonePos.left, top: stonePos.top, width: '60px', height: '60px', zIndex: 10, transform: 'translate(-50%, -50%)', opacity: 0.8 }}><img src={getStone(index)} style={{ width: '100%' }} /></div>}
+        {getAnimal && <div style={{ position: 'absolute', left: stonePos.left, top: stonePos.top, width: '70px', height: '70px', zIndex: 11, transform: 'translate(-50%, -50%)' }}><img src={getAnimal(index)} style={{ width: '100%' }} /></div>}
+      </React.Fragment>
+    );
+  };
+
+  const renderDualRewards = (syllable, index) => {
+    if (!isVisualRewardActive(syllable)) return null;
+    if (!gameConfig.elements.rewards?.animals) return null;
+    const animalPos = gameConfig.elements.rewards.animals.positions[index];
+    const getAnimal = assetGetters[gameConfig.elements.rewards.animals.assetGetters[syllable]];
+    const stonePos = gameConfig.elements.rewards.stones.positionsReward[index];
+    const getStone = assetGetters[gameConfig.elements.rewards.stones.assetGettersReward[syllable]];
+    return (
+      <React.Fragment key={`dual-rew-${syllable}`}>
+        {getAnimal && <div style={{ position: 'absolute', left: animalPos.left, top: animalPos.top, width: '80px', height: '80px', zIndex: 15, animation: 'rewardAppear 1s', transform: 'translate(-50%, -50%)' }}><img src={getAnimal(index)} style={{ width: '100%' }} /><div style={{position:'absolute',top:'-10px',right:'-10px'}}>✨</div></div>}
+        {getStone && <div style={{ position: 'absolute', left: stonePos.left, top: stonePos.top, width: '60px', height: '60px', zIndex: 12, animation: 'rewardAppear 1s', transform: 'translate(-50%, -50%)' }}><img src={getStone(index)} style={{ width: '100%' }} /></div>}
+      </React.Fragment>
+    );
+  };
+
+// ⭐ NEW: Render previous completed central elements
+const renderPreviousCentralElements = () => {
+  if (!gameConfig.elements.centralSynthesis?.showPreviousRounds) return null;
+  if (!currentRound || currentRound === 1) return null;  // ⭐ Changed from selectedRound to currentRound
+  
+  const previousElements = [];
+  
+  for (let round = 1; round < currentRound; round++) {  // ⭐ Changed from selectedRound to currentRound
+    const position = gameConfig.elements.centralSynthesis.positions[round - 1];
+    
+    // Get the reward image for this round
+    let getRewardImage;
+    const rewardGetters = gameConfig.elements.centralSynthesis.assetGettersByRound;
+    
+    if (rewardGetters && rewardGetters[round]) {
+      // Round-specific getter (Nirvighnam, Kurumedeva)
+      getRewardImage = assetGetters[rewardGetters[round].reward];
+    } else {
+      // Single getter for all rounds (other games)
+      const singleGetter = gameConfig.elements.centralSynthesis.assetGetterReward;
+      if (singleGetter) {
+        getRewardImage = assetGetters[singleGetter];
+      }
+    }
+    
+    if (!getRewardImage || !position) continue;
+    
+    previousElements.push(
+      <div
+        key={`prev-reward-${round}`}
         style={{
           position: 'absolute',
           left: position.left,
           top: position.top,
-          width: '120px',
-          height: '120px',
-          border: 'none',
-          background: 'transparent',
-          cursor: isClickable ? 'pointer' : 'default',
-          zIndex: 20,
-          borderRadius: '50%',
-          ...elephantStyle
+          width: '100px',
+          height: '100px',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 18,
+          opacity: 0.9
         }}
-        onClick={() => handleElephantClick(index)}
-        disabled={!isClickable}
       >
-        <img
-          src={getImage(index)}
-          alt={`${gameConfig.elements.clicker.type} ${syllable}`}
-          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+        <img 
+          src={getRewardImage(0)} 
+          style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
+          alt={`Round ${round} reward`} 
         />
+      </div>
+    );
+  }
+  
+  return previousElements;
+};
+
+  // ⭐ NEW: Render central synthesis element
+  const renderCentralSynthesis = () => {
+    if (!gameConfig.elements.centralSynthesis?.enabled) return null;
+  // ✅ NEW: Shows the animal as soon as a Round exists (matches the Clickers)
+if (!currentRound) return null;
+
+    const position = gameConfig.elements.centralSynthesis.positions[currentRound - 1];
+    if (!position) return null;
+
+    // Get asset getters
+   // Get asset getters (Check for Round Specifics first)
+    let initialKey = gameConfig.elements.centralSynthesis.assetGetterInitial;
+    let rewardKey = gameConfig.elements.centralSynthesis.assetGetterReward;
+
+    // ⭐ If this round has specific assets, use them!
+    if (gameConfig.elements.centralSynthesis.assetGettersByRound && 
+        gameConfig.elements.centralSynthesis.assetGettersByRound[currentRound]) {
         
-        {isSinging && (
-          <div style={{
-            position: 'absolute',
-            top: '-20px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            fontSize: '20px',
-            animation: 'musicNote 0.6s ease-in-out'
-          }}>
-            🎵
-          </div>
-        )}
-        
-        {isNext && !hasBeenClicked && (
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '85%',
-            height: '85%',
-            border: '2px solid #FFD700',
-            borderRadius: '50%',
-            animation: 'goldenPulse 2s ease-in-out infinite',
-            pointerEvents: 'none'
-          }} />
+        initialKey = gameConfig.elements.centralSynthesis.assetGettersByRound[currentRound].initial;
+        rewardKey = gameConfig.elements.centralSynthesis.assetGettersByRound[currentRound].reward;
+    }
+
+    const getInitialImage = assetGetters[initialKey];
+    const getRewardImage = assetGetters[rewardKey];
+    if (!getInitialImage || !getRewardImage) return null;
+
+    // Determine which image to show based on bloom progress
+    const isFullyBloomed = centralBloomProgress === 100;
+    
+    // Use first index (0) for central element
+    const budImage = getInitialImage(0);
+    const bloomImage = getRewardImage(0);
+
+    return (
+      <div
+              className={`${gamePrefix}-central-synthesis`}  // ← ADD THIS LINE
+
+        onClick={centralElementGlowing ? handleCentralElementClick : undefined}
+        style={{
+          position: 'absolute',
+          //left: position.left,
+          //top: position.top,
+          //width: '120px',
+          //height: '120px',
+          //transform: 'translate(-50%, -50%)',
+          zIndex: 20,
+          cursor: centralElementGlowing ? 'pointer' : 'default',
+          transition: 'all 0.5s ease',
+          pointerEvents: centralElementGlowing ? 'auto' : 'none'
+        }}
+      >
+        {/* Bud layer (fades out as blooms) */}
+        <div style={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          opacity: isFullyBloomed ? 0 : (1 - centralBloomProgress / 100),
+          transition: 'opacity 0.5s ease'
+        }}>
+          <img src={budImage} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="bud" />
+        </div>
+
+        {/* Bloom layer (fades in as blooms) */}
+        <div style={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          opacity: centralBloomProgress / 100,
+          transform: `scale(${0.6 + (centralBloomProgress / 100) * 0.4})`,
+          transition: 'all 0.5s ease'
+        }}>
+          <img src={bloomImage} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="bloom" />
+        </div>
+
+        {/* Glow effect when ready */}
+        {centralElementGlowing && (
+          <>
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              width: '140px',
+              height: '140px',
+              transform: 'translate(-50%, -50%)',
+              borderRadius: '50%',
+              background: `radial-gradient(circle, ${gameConfig.theme.primaryColor}40, transparent)`,
+              animation: 'goldenPulse 1.5s ease-in-out infinite',
+              zIndex: -1
+            }} />
+            
+            {/* Tap Here indicator */}
+            <div style={{
+              position: 'absolute',
+              top: '-40px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              background: '#FFD700',
+              color: 'white',
+              padding: '4px 10px',
+              borderRadius: '8px',
+              fontSize: '0.85rem',
+              fontWeight: '600',
+              zIndex: 30,
+              whiteSpace: 'nowrap'
+            }}>
+              👆 Tap Here
+            </div>
+
+            {/* Golden pulse ring */}
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%,-50%)',
+              width: '85%',
+              height: '85%',
+              border: '2px solid #FFD700',
+              borderRadius: '50%',
+              animation: 'goldenPulse 2s infinite'
+            }} />
+          </>
         )}
 
-        {/* ✅ "Tap Here!" hint - Simple version */}
-        {isNext && !hasBeenClicked && (
-          <div style={{
-            position: 'absolute',
-            top: '-40px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            background: '#FFD700',
-            color: 'white',
-            padding: '4px 10px',
-            borderRadius: '8px',
-            fontSize: '0.85rem',
-            fontWeight: '600',
-            whiteSpace: 'nowrap',
-            zIndex: 30,
-            pointerEvents: 'none'
-          }}>
-            👆 Tap Here
-          </div>
-        )}
-
-        {isActivated && !hasBeenClicked && (
-          <div style={{
-            position: 'absolute',
-            top: '5px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            fontSize: '20px',
-            animation: 'crownFloat 2s ease-in-out infinite',
-            filter: 'drop-shadow(0 0 4px rgba(255, 215, 0, 0.8))'
-          }}>
-            👑
-          </div>
-        )}
-        
+        {/* Word label at bottom */}
         <div style={{
           position: 'absolute',
           bottom: '-30px',
           left: '50%',
           transform: 'translateX(-50%)',
-          background: hasBeenClicked 
-            ? 'rgba(76, 175, 80, 0.9)' 
-            : isNext
-            ? 'rgba(255, 193, 7, 0.9)'
-            : isActivated
-            ? 'rgba(255, 183, 77, 0.9)'
-            : `rgba(${gameConfig.theme.primaryColor.replace('#', '')}, 0.9)`,
+          background: centralElementGlowing ? '#FFD700' : isFullyBloomed ? '#4CAF50' : '#999',
           color: 'white',
           padding: '4px 8px',
           borderRadius: '12px',
           fontSize: '12px',
           fontWeight: 'bold',
-          boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
-          transition: 'all 0.3s ease'
+          whiteSpace: 'nowrap'
         }}>
-          {syllable.toUpperCase()}
+          {currentSequence.join('').toUpperCase()}
         </div>
-        
-        {hasBeenClicked && (
+
+        {/* Sparkles when fully bloomed */}
+        {isFullyBloomed && (
           <div style={{
             position: 'absolute',
-            top: '10px',
-            right: '10px',
-            width: '24px',
-            height: '24px',
-            background: 'linear-gradient(135deg, #4CAF50, #45a049)',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            fontSize: '16px',
-            boxShadow: '0 2px 8px rgba(76, 175, 80, 0.4)',
-            animation: 'checkmarkAppear 0.5s ease-out'
+            top: '-10px',
+            right: '-10px',
+            fontSize: '24px',
+            animation: 'sparkle 1s ease-in-out infinite'
           }}>
-            ✓
+            ✨
           </div>
         )}
-      </button>
-    );
-  };
-
-  // ✅ BUG 6 & 8 FIX: Render initial visual (bud/seed) - uses assetGetterInitial
-  const renderInitialVisual = (syllable, index) => {
-    // ⭐ Check if singer element exists (nirvighnam doesn't have singer, only clicker + dual rewards)
-    if (!gameConfig.elements.singer || !gameConfig.elements.singer.positions) {
-      return null;
-    }
-
-    const position = getPosition('visual', index);
-    const isTransformed = isVisualRewardActive(syllable);
-
-    if (isTransformed) return null;
-
-    // ✅ BUG 6 & 8: Use assetGetterInitial for unrewarded state
-    // ⭐ Handle multiple patterns: single function, syllable mappings, or assetGettersInitial
-    let getImage;
-    if (gameConfig.elements.singer.assetGetterInitial) {
-      // Pattern 1: Single getter function (vakratunda, mahakaya)
-      const getterName = gameConfig.elements.singer.assetGetterInitial;
-      getImage = assetGetters[getterName];
-    } else if (gameConfig.elements.singer.assetGettersInitial) {
-      // Pattern 2: assetGettersInitial object (kurumedeva)
-      const getterName = gameConfig.elements.singer.assetGettersInitial[syllable];
-      getImage = assetGetters[getterName];
-    } else if (gameConfig.elements.singer.assetGetters) {
-      // Pattern 3: assetGetters object (not used for initials, but kept for compatibility)
-      const getterName = gameConfig.elements.singer.assetGetters[syllable];
-      getImage = assetGetters[getterName];
-    }
-
-    if (!getImage) {
-      console.warn(`[Visual] Initial asset getter not found for syllable: ${syllable}`);
-      return null;
-    }
-
-    console.log(`[Visual] Rendering initial visual for ${syllable} (index ${index})`);
-
-    return (
-      <div
-        key={`initial-${syllable}`}
-        style={{
-          position: 'absolute',
-          left: position.left,
-          top: position.top,
-          width: '60px',
-          height: '60px',
-          zIndex: 10,
-          transform: 'translate(-50%, -50%)',
-          opacity: 0.7
-        }}
-      >
-        <img
-          src={getImage(index)}
-          alt={`Initial ${syllable}`}
-          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-        />
       </div>
     );
-  };
-
-  // ⭐ NEW: Render initial animals + plain stones for nirvighnam dual-reward system
-  const renderDualInitials = (syllable, index) => {
-    const isTransformed = isVisualRewardActive(syllable);
-    if (isTransformed) return null;
-
-    const rewards = gameConfig.elements.rewards;
-    if (!rewards || !rewards.animals || !rewards.stones) {
-      console.warn('[Dual Initials] Invalid dual reward config');
-      return null;
-    }
-
-    // ⭐ FIX: Animals should be at STONE positions initially (sitting on stones)
-    const stonePosition = rewards.stones.positionsInitial[index];
-    const animalGetterName = rewards.animals.assetGetters[syllable];
-    const getAnimalImage = assetGetters[animalGetterName];
-
-    // Render plain stone underneath
-    const stoneGetterName = rewards.stones.assetGettersInitial[syllable];
-    const getStoneImage = assetGetters[stoneGetterName];
-
-    return (
-      <React.Fragment key={`dual-initial-${syllable}`}>
-        {/* Plain stone */}
-        {getStoneImage && (
-          <div
-            style={{
-              position: 'absolute',
-              left: stonePosition.left,
-              top: stonePosition.top,
-              width: '60px',
-              height: '60px',
-              zIndex: 10,
-              transform: 'translate(-50%, -50%)',
-              opacity: 0.8
-            }}
-          >
-            <img
-              src={getStoneImage(index)}
-              alt={`Stone ${syllable}`}
-              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-            />
-          </div>
-        )}
-
-        {/* Animal on stone - at same position as stone */}
-        {getAnimalImage && (
-          <div
-            style={{
-              position: 'absolute',
-              left: stonePosition.left,
-              top: stonePosition.top,
-              width: '70px',
-              height: '70px',
-              zIndex: 11,
-              transform: 'translate(-50%, -50%)'
-            }}
-          >
-            <img
-              src={getAnimalImage(index)}
-              alt={`Animal ${syllable}`}
-              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-            />
-          </div>
-        )}
-      </React.Fragment>
-    );
-  };
-
-  // ✅ BUG 6 & 8 FIX: Render visual reward (lotus/flower) - uses assetGetterReward
-  const renderVisualReward = (syllable, index) => {
-    // ⭐ Check if singer element exists (nirvighnam doesn't have singer, only clicker + dual rewards)
-    if (!gameConfig.elements.singer || !gameConfig.elements.singer.positions) {
-      return null;
-    }
-
-    // ⭐ Check for different reward positions (kurumedeva has positionsReward)
-    let position;
-    if (gameConfig.elements.singer.positionsReward) {
-      position = gameConfig.elements.singer.positionsReward[index];
-    } else {
-      position = getPosition('visual', index);
-    }
-
-    const isVisible = isVisualRewardActive(syllable);
-
-    if (!isVisible) return null;
-
-    // ✅ BUG 6 & 8: Use assetGetterReward for rewarded state
-    // ⭐ Handle multiple patterns: single function, syllable mappings, or assetGettersReward
-    let getImage;
-    if (gameConfig.elements.singer.assetGetterReward) {
-      // Pattern 1: Single getter function (vakratunda, mahakaya)
-      const getterName = gameConfig.elements.singer.assetGetterReward;
-      getImage = assetGetters[getterName];
-    } else if (gameConfig.elements.singer.assetGettersReward) {
-      // Pattern 2: assetGettersReward object (kurumedeva)
-      const getterName = gameConfig.elements.singer.assetGettersReward[syllable];
-      getImage = assetGetters[getterName];
-    } else if (gameConfig.elements.singer.assetGetters) {
-      // Pattern 3: assetGetters object (not typically used for rewards, but kept for compatibility)
-      const getterName = gameConfig.elements.singer.assetGetters[syllable];
-      getImage = assetGetters[getterName];
-    }
-
-    if (!getImage) {
-      console.warn(`[Visual] Reward asset getter not found for syllable: ${syllable}`);
-      return null;
-    }
-
-    console.log(`[Visual] Reward appeared for ${syllable}! (index ${index})`);
-
-    return (
-      <div
-        key={`reward-${syllable}`}
-        style={{
-          position: 'absolute',
-          left: position.left,
-          top: position.top,
-          width: '80px',
-          height: '80px',
-          zIndex: 15,
-          animation: 'rewardAppear 1s ease-out, rewardGlow 2s ease-in-out infinite 1s',
-          transform: 'translate(-50%, -50%)'
-        }}
-      >
-        <img
-          src={getImage(index)}
-          alt={`Reward ${syllable}`}
-          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-        />
-
-        <div style={{
-          position: 'absolute',
-          top: '-10px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          fontSize: '18px',
-          animation: 'sparkle 2s ease-in-out infinite'
-        }}>
-          ✨
-        </div>
-      </div>
-    );
-  };
-
-  // ⭐ NEW: Render dual rewards for nirvighnam (animals move + stones transform)
-  const renderDualRewards = (syllable, index) => {
-    const isVisible = isVisualRewardActive(syllable);
-    if (!isVisible) return null;
-
-    const rewards = gameConfig.elements.rewards;
-    if (!rewards || !rewards.animals || !rewards.stones) {
-      console.warn('[Dual Rewards] Invalid dual reward config');
-      return null;
-    }
-
-    // Render animal reward (frog/snail/turtle moves to water)
-    const animalPosition = rewards.animals.positions[index];
-    const animalGetterName = rewards.animals.assetGetters[syllable];
-    const getAnimalImage = assetGetters[animalGetterName];
-
-    // Render stone reward (stone transforms to colored version)
-    const stonePosition = rewards.stones.positionsReward[index];
-    const stoneGetterName = rewards.stones.assetGettersReward[syllable];
-    const getStoneImage = assetGetters[stoneGetterName];
-
-    return (
-      <React.Fragment key={`dual-reward-${syllable}`}>
-        {/* Animal in water */}
-        {getAnimalImage && (
-          <div
-            style={{
-              position: 'absolute',
-              left: animalPosition.left,
-              top: animalPosition.top,
-              width: '80px',
-              height: '80px',
-              zIndex: 15,
-              animation: 'rewardAppear 1s ease-out',
-              transform: 'translate(-50%, -50%)'
-            }}
-          >
-            <img
-              src={getAnimalImage(index)}
-              alt={`Animal ${syllable}`}
-              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-            />
-            <div style={{
-              position: 'absolute',
-              top: '-10px',
-              right: '-10px',
-              fontSize: '16px',
-              animation: 'sparkle 2s ease-in-out infinite'
-            }}>
-              ✨
-            </div>
-          </div>
-        )}
-
-        {/* Colored stone */}
-        {getStoneImage && (
-          <div
-            style={{
-              position: 'absolute',
-              left: stonePosition.left,
-              top: stonePosition.top,
-              width: '60px',
-              height: '60px',
-              zIndex: 12,
-              animation: 'rewardAppear 1s ease-out, rewardGlow 2s ease-in-out infinite 1s',
-              transform: 'translate(-50%, -50%)'
-            }}
-          >
-            <img
-              src={getStoneImage(index)}
-              alt={`Stone ${syllable}`}
-              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-            />
-          </div>
-        )}
-      </React.Fragment>
-    );
-  };
-
-  const getStatusMessage = () => {
-    if (isCountingDown) return `Get Ready... ${countdown}`;
-    if (gamePhase === 'playing') return 'Listen carefully...';
-    if (gamePhase === 'listening') return `Click the elephants! (${playerInput.length}/${currentSequence.length})`;
-    if (gamePhase === 'celebration') return 'Beautiful! Well done!';
-    if (gamePhase === 'phase_complete') return 'Phase Complete!';
-    return `Round ${currentRound} - ${gameConfig.displayName.toUpperCase()}`;
   };
 
   if (!isActive || !gameConfig) return null;
 
   return (
-    <div style={{
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      zIndex: 20
-    }}>
-
-        {/* ⭐ NEW: Pause Button */}
-    {!hideElements && (
-      <UniversalPauseButton 
-        onPause={handlePause}
-        disabled={gamePhase === 'phase_complete'}
-      />
-    )}
-
-    {/* ⭐ NEW: Pause Modal */}
-    <PauseModal
-      isOpen={showPauseModal}
-      onContinue={handleContinue}
-      onExit={handleExitToMenu}
-    />
+    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 20 }}>
+      {!hideElements && <UniversalPauseButton onPause={handlePause} disabled={gamePhase === 'phase_complete'} />}
+      <PauseModal isOpen={showPauseModal} onContinue={handleContinue} onExit={handleExitToMenu} />
       
-      {/* Progress indicator */}
       {!hideElements && (
-        <div style={{
-          position: 'absolute',
-          top: '15px',
-          right: '15px',
-          background: 'rgba(255, 255, 255, 0.95)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '20px',
-          padding: '10px 14px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          zIndex: 40,
-          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-          transition: 'all 0.3s ease'
-        }}>
-          <span style={{ 
-            fontWeight: 'bold', 
-            fontSize: '14px',
-            color: gameConfig.theme.primaryColor,
-            letterSpacing: '0.3px'
-          }}>
-            {gameConfig.displayName.toUpperCase()}
-          </span>
+        <div style={{ position: 'absolute', top: '15px', right: '15px', background: 'rgba(255,255,255,0.95)', borderRadius: '20px', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: '12px', zIndex: 40, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
+          <span style={{ fontWeight: 'bold', fontSize: '14px', color: gameConfig.theme.primaryColor }}>{gameConfig.displayName.toUpperCase()}</span>
           <div style={{ display: 'flex', gap: '6px' }}>
             {[1, 2, 3].map(round => (
-              <div
-                key={round}
-                style={{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '50%',
-                  background: round <= currentRound 
-                    ? (round < currentRound ? '#4CAF50' : gameConfig.theme.primaryColor)
-                    : '#E0E0E0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '12px',
-                  fontWeight: 'bold',
-                  color: round <= currentRound ? 'white' : '#666',
-                  boxShadow: round === currentRound ? `0 0 8px ${gameConfig.theme.primaryColor}40` : 'none',
-                  transition: 'all 0.3s ease'
-                }}
-              >
-                {round}
-              </div>
+              <div key={round} style={{ width: '28px', height: '28px', borderRadius: '50%', background: round <= currentRound ? (round < currentRound ? '#4CAF50' : gameConfig.theme.primaryColor) : '#E0E0E0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold', color: round <= currentRound ? 'white' : '#666' }}>{round}</div>
             ))}
           </div>
         </div>
       )}
-      
-      {/* Status message */}
+
       {!hideElements && gamePhase !== 'phase_complete' && (
-        <div style={{
-          position: 'absolute',
-          top: '20px',
-          left: '20%',
-          transform: 'translateX(-50%)',
-          background: `${gameConfig.theme.primaryColor}E6`,
-          color: 'white',
-          padding: '10px 20px',
-          borderRadius: '20px',
-          fontSize: '14px',
-          fontWeight: 'bold',
-          textAlign: 'center',
-          zIndex: 50
-        }}>
-          {getStatusMessage()}
+<div className={getHeaderClassName(gameConfig)}>
+          <div style={{ 
+            fontSize: '28px', 
+            marginBottom: '8px',
+            color: (centralElementGlowing || playerInput.length >= currentSequence.length) ? '#FFD700' : 'white'
+          }}>
+           {isCountingDown ? `${getRoundWord(gameConfig, currentRound)} - Get Ready... ${countdown}` : 
+ gamePhase === 'waiting' ? `${getRoundWord(gameConfig, currentRound)}` :
+ gamePhase === 'playing' ? `${getRoundWord(gameConfig, currentRound)} - Listen carefully...` : 
+ gamePhase === 'celebration' ? 'Awesome!' : 
+ (centralElementGlowing || playerInput.length >= currentSequence.length) 
+   ? gameConfig.uiText.finalInstruction   // ← Changed from 'Click the lotus to finish!'
+   : `${getRoundWord(gameConfig, currentRound)}! ${getClickInstruction(gameConfig.elements.clicker.type)}`}
+          </div>
+          
+          {!isCountingDown && gamePhase !== 'playing' && gamePhase !== 'celebration' && gamePhase !== 'waiting' && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '15px',
+              justifyContent: 'center'
+            }}>
+              <div style={{
+                width: '200px',
+                height: '20px',
+                background: 'rgba(255,255,255,0.3)',
+                borderRadius: '10px',
+                border: '2px solid #8B4513',
+                overflow: 'hidden'
+              }}>
+                <div style={{
+                  width: `${(playerInput.length / (currentSequence.length + 1)) * 100}%`,
+                  height: '100%',
+                  background: 'linear-gradient(90deg, #4ECDC4, #FFD700)',
+                  transition: 'width 0.5s ease-out'
+                }} />
+              </div>
+              <div style={{
+                fontSize: '24px',
+                fontWeight: 'bold',
+                color: 'white',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
+              }}>
+                {playerInput.length}/{currentSequence.length + 1}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
-      {/* Countdown */}
-      {!hideElements && isCountingDown && (
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          fontSize: '100px',
-          fontWeight: 'bold',
-          color: gameConfig.theme.primaryColor,
-          textShadow: `0 0 30px ${gameConfig.theme.primaryColor}80`,
-          zIndex: 100,
-          animation: 'countdownPulse 0.8s ease-in-out'
-        }}>
-          {countdown}
-        </div>
-      )}
+      {!hideElements && isCountingDown && <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '100px', fontWeight: 'bold', color: gameConfig.theme.primaryColor, zIndex: 100, animation: 'countdownPulse 0.8s' }}>{countdown}</div>}
+      {!hideElements && showWaitBanner && <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'rgba(255, 152, 0, 0.95)', color: 'white', padding: '20px 40px', borderRadius: '20px', fontSize: '18px', fontWeight: 'bold', zIndex: 100, animation: 'fadeInOut 1.5s' }}>{waitBannerMessage}</div>}
+      {!hideElements && waterSprayPosition && <div style={{ position: 'absolute', left: waterSprayPosition.left, top: waterSprayPosition.top, transform: 'translateY(-100%)', fontSize: '48px', animation: 'waterSplash 1s', zIndex: 100, pointerEvents: 'none' }}>💦</div>}
 
-      {/* Wait Banner */}
-      {!hideElements && showWaitBanner && (
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          background: 'rgba(255, 152, 0, 0.95)',
-          color: 'white',
-          padding: '20px 40px',
-          borderRadius: '20px',
-          fontSize: '18px',
-          fontWeight: 'bold',
-          zIndex: 100,
-          boxShadow: '0 8px 25px rgba(0,0,0,0.3)',
-          animation: 'fadeInOut 1.5s ease-in-out'
-        }}>
-          {waitBannerMessage}
-        </div>
-      )}
-
-      {/* ✅ FIX 2: Water Spray Animation */}
-      {!hideElements && waterSprayPosition && (
-        <div style={{
-          position: 'absolute',
-          left: waterSprayPosition.left,
-          top: waterSprayPosition.top,
-          transform: 'translate(-50%, -100%)',
-          fontSize: '48px',
-          animation: 'waterSplash 1s ease-out',
-          zIndex: 100,
-          pointerEvents: 'none'
-        }}>
-          💦
-        </div>
-      )}
-
-      {/* Game elements */}
       {!hideElements && (
         <>
-          {/* ⭐ Check if dual-reward system (nirvighnam) or regular system */}
-          {gameConfig.elements.rewards?.animals && gameConfig.elements.rewards?.stones ? (
+          {gameConfig.elements.rewards?.animals ? (
             <>
-              {/* Dual-reward system: animals on stones initially, then animals move + stones transform */}
-              {currentSequence.map((syllable, index) =>
-                renderDualInitials(syllable, index)
-              )}
-              {currentSequence.map((syllable, index) =>
-                renderElephant(syllable, index)
-              )}
-              {currentSequence.map((syllable, index) =>
-                renderDualRewards(syllable, index)
-              )}
+              {currentSequence.map((s, i) => renderDualInitials(s, i))}
+              {currentSequence.map((s, i) => renderElephant(s, i))}
+              {currentSequence.map((s, i) => renderDualRewards(s, i))}
             </>
           ) : (
             <>
-              {/* Regular system: buds → lotus or seeds → flowers */}
-              {currentSequence.map((syllable, index) =>
-                renderInitialVisual(syllable, index)
-              )}
-              {currentSequence.map((syllable, index) =>
-                renderElephant(syllable, index)
-              )}
-              {currentSequence.map((syllable, index) =>
-                renderVisualReward(syllable, index)
-              )}
+              {/* Don't render individual singers - use central synthesis instead */}
+              {currentSequence.map((s, i) => renderElephant(s, i))}
             </>
           )}
+   {/* Previous round rewards */}
+{renderPreviousCentralElements()}
+{/* Current round central synthesis */}
+{renderCentralSynthesis()}
         </>
       )}
 
-      {/* CSS Animations */}
       <style>{`
-        @keyframes fadeInOut {
-          0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-          20% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
-          80% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
-          100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-        }
-        
-        @keyframes sing {
-          0% { transform: translate(-50%, -50%) scale(1); }
-          50% { transform: translate(-50%, -50%) scale(1.2); }
-          100% { transform: translate(-50%, -50%) scale(1.15); }
-        }
-        
-        @keyframes nextToClick {
-          0%, 100% { filter: brightness(1.2) drop-shadow(0 0 8px #FF9800); }
-          50% { filter: brightness(1.4) drop-shadow(0 0 15px #FFB74D); }
-        }
-        
-        @keyframes gentleGlow {
-          0%, 100% { filter: brightness(1.1) saturate(1.1) drop-shadow(0 0 6px rgba(255, 183, 77, 0.4)); }
-          50% { filter: brightness(1.2) saturate(1.2) drop-shadow(0 0 12px rgba(255, 183, 77, 0.6)); }
-        }
-        
-        @keyframes goldenPulse {
-          0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
-          50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
-        }
-        
-        @keyframes crownFloat {
-          0%, 100% { transform: translateX(-50%) translateY(0); }
-          50% { transform: translateX(-50%) translateY(-3px); }
-        }
-        
-        @keyframes countdownPulse {
-          0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-          50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
-          100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-        }
-        
-        @keyframes musicNote {
-          0% { transform: translateX(-50%) translateY(0); opacity: 0; }
-          50% { transform: translateX(-50%) translateY(-10px); opacity: 1; }
-          100% { transform: translateX(-50%) translateY(-20px); opacity: 0; }
-        }
-        
-        @keyframes checkmarkAppear {
-          0% { transform: scale(0) rotate(-45deg); opacity: 0; }
-          60% { transform: scale(1.2) rotate(0deg); opacity: 1; }
-          100% { transform: scale(1) rotate(0deg); opacity: 1; }
-        }
-        
-        @keyframes rewardAppear {
-          0% { transform: translate(-50%, -50%) scale(0) rotate(-180deg); opacity: 0; }
-          100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
-        }
-        
-        @keyframes rewardGlow {
-          0%, 100% { filter: brightness(1.3) saturate(1.4) drop-shadow(0 0 15px rgba(255, 215, 0, 0.6)); }
-          50% { filter: brightness(1.5) saturate(1.6) drop-shadow(0 0 25px rgba(255, 215, 0, 0.8)); }
-        }
-        
-        @keyframes sparkle {
-          0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
-          50% { opacity: 0.5; transform: translateX(-50%) scale(1.2); }
-        }
-
-        /* ✅ Water splash animation */
-        @keyframes waterSplash {
-          0% { transform: translate(-50%, -100%) scale(0.5); opacity: 1; }
-          50% { transform: translate(-50%, -150%) scale(1.2); opacity: 0.8; }
-          100% { transform: translate(-50%, -200%) scale(1.5); opacity: 0; }
-        }
+        @keyframes fadeInOut { 0% { opacity: 0; transform: translate(-50%,-50%) scale(0.8); } 20% { opacity: 1; transform: translate(-50%,-50%) scale(1.05); } 80% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%,-50%) scale(0.8); } }
+        @keyframes goldenPulse { 0%, 100% { opacity: 0.7; transform: translate(-50%,-50%) scale(1); } 50% { opacity: 1; transform: translate(-50%,-50%) scale(1.05); } }
+        @keyframes crownFloat { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-3px); } }
+        @keyframes countdownPulse { 0% { transform: translate(-50%,-50%) scale(0.8); opacity: 0; } 50% { transform: translate(-50%,-50%) scale(1.2); opacity: 1; } }
+        @keyframes musicNote { 0% { transform: translateX(-50%) translateY(0); opacity: 0; } 50% { transform: translateX(-50%) translateY(-10px); opacity: 1; } 100% { transform: translateX(-50%) translateY(-20px); opacity: 0; } }
+        @keyframes rewardAppear { 0% { transform: translate(-50%,-50%) scale(0) rotate(-180deg); opacity: 0; } 100% { transform: translate(-50%,-50%) scale(1) rotate(0deg); opacity: 1; } }
+        @keyframes rewardGlow { 0%, 100% { filter: brightness(1.3) saturate(1.4); } 50% { filter: brightness(1.5) saturate(1.6); } }
+        @keyframes sparkle { 0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); } 50% { opacity: 0.5; transform: translateX(-50%) scale(1.2); } }
+        @keyframes waterSplash { 0% { transform: translate(-50%,-100%) scale(0.5); opacity: 1; } 50% { transform: translate(-50%,-150%) scale(1.2); opacity: 0.8; } 100% { transform: translate(-50%,-200%) scale(1.5); opacity: 0; } }
       `}</style>
     </div>
   );

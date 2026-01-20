@@ -14,10 +14,13 @@ import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import BackToMapButton from '../../../../lib/components/navigation/BackToMapButton';
 import RotatingOrbsEffect from '../../../../lib/components/feedback/RotatingOrbsEffect';
+import SymbolSidebar from '../../components/SymbolSidebar'; // ✅ Added Sidebar
+import Fireworks from '../../../../lib/components/feedback/Fireworks';
 
 // Import assets
 import bgFinal from './assets/images/bg-final.png';
 import ganeshaCharacter from './assets/images/ganesha-character.png';
+import ganeshaCharacterCave from './assets/images/ganesha-character-cave.png'; // ✅ Added for Intro
 
 // Import symbol images
 import vakratundaSymbol from '../../assets/images/symbols/vakratunda-symbol.png';
@@ -29,7 +32,7 @@ import kurumedevaSymbol from '../../assets/images/symbols/kurumedeva-symbol.png'
 import sarvakaryeshuSymbol from '../../assets/images/symbols/sarvakaryeshu-symbol.png';
 import sarvadaSymbol from '../../assets/images/symbols/sarvada-symbol.png';
 
-// Mapping for all symbols with their names and meanings (moved outside component)
+// Mapping for all symbols with their names and meanings
 const symbolData = {
   vakratunda: { name: 'Vakratunda', meaning: 'Curved Trunk', symbol: vakratundaSymbol },
   mahakaya: { name: 'Mahakaya', meaning: 'Big Body', symbol: mahakayaSymbol },
@@ -41,7 +44,7 @@ const symbolData = {
   sarvada: { name: 'Sarvada', meaning: 'Always', symbol: sarvadaSymbol }
 };
 
-// Round 1: Symbol + Sanskrit word ↔ English meaning
+// Round 1 Data
 const createRound1Data = () => [
   { id: 1, type: 'symbol', pair: 'vakratunda', symbol: vakratundaSymbol, content: 'Vakratunda' },
   { id: 2, type: 'text', pair: 'vakratunda', content: 'Curved Trunk' },
@@ -53,6 +56,7 @@ const createRound1Data = () => [
   { id: 8, type: 'text', pair: 'samaprabha', content: 'Equal Brilliance' },
 ];
 
+// Round 2 Data
 const createRound2Data = () => [
   { id: 9, type: 'symbol', pair: 'nirvighnam', symbol: nirvighnamSymbol, content: 'Nirvighnam' },
   { id: 10, type: 'text', pair: 'nirvighnam', content: 'Without Obstacles' },
@@ -64,7 +68,7 @@ const createRound2Data = () => [
   { id: 16, type: 'text', pair: 'sarvada', content: 'Always' },
 ];
 
-// Error Boundary Component
+// Error Boundary
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -150,9 +154,16 @@ const CaveScene5MemoryFinaleContent = ({
   const activeProfile = GameStateManager.getActiveProfile();
   const profileName = activeProfile?.name || 'little explorer';
 
-  // Local UI state (not persisted in SceneManager)
+  // Local UI state
   const [showRotatingOrbs, setShowRotatingOrbs] = useState(false);
   const [isAudioOn, setIsAudioOn] = useState(true);
+  const [showFireworks, setShowFireworks] = useState(false);
+  
+  // Hint System State
+  const [isPeeking, setIsPeeking] = useState(false);
+  const [hintsRemaining, setHintsRemaining] = useState(3);
+  const [showRoundCompleteModal, setShowRoundCompleteModal] = useState(false);
+  
   const timeoutsRef = useRef([]);
 
   // Safe timeout function
@@ -168,6 +179,16 @@ const CaveScene5MemoryFinaleContent = ({
       timeoutsRef.current.forEach(id => clearTimeout(id));
     };
   }, []);
+
+  const playAudio = (audioPath, volume = 1.0) => {
+    try {
+      const audio = new Audio(audioPath);
+      audio.volume = volume;
+      audio.play().catch(() => {});
+    } catch (error) {
+      console.warn('Audio failed:', error);
+    }
+  };
 
   // Shuffle function
   const shuffleArray = (array) => {
@@ -187,14 +208,16 @@ const CaveScene5MemoryFinaleContent = ({
 
     console.log('🔥 Cave Memory Finale reset: User chose to start fresh');
     
-    // STEP 1: Clear all timeouts first to prevent conflicts
+    // Clear all timeouts
     timeoutsRef.current.forEach(id => clearTimeout(id));
     timeoutsRef.current = [];
     
-    // STEP 2: Clear local UI state
+    // Clear local UI state
     setShowRotatingOrbs(false);
+    setHintsRemaining(3);
+    setIsPeeking(false);
     
-    // STEP 3: Reset scene state to initial conditions
+    // Reset scene state
     setTimeout(() => {
       sceneActions.updateState({
         gameStarted: false,
@@ -217,7 +240,7 @@ const CaveScene5MemoryFinaleContent = ({
     if (sceneState.gameStarted && sceneState.cards.length === 0) {
       const cardData = sceneState.currentRound === 1 ? createRound1Data() : createRound2Data();
       const shuffled = shuffleArray(cardData);
-      console.log('Initializing cards for round', sceneState.currentRound, 'Card count:', shuffled.length);
+      console.log('Initializing cards for round', sceneState.currentRound);
       sceneActions.updateState({
         cards: shuffled,
         flippedCards: [],
@@ -229,9 +252,11 @@ const CaveScene5MemoryFinaleContent = ({
 
   // Handle card click
   const handleCardClick = (cardId) => {
-    // SPAM PROTECTION: Ignore if checking, card already flipped, card already matched, or already have 2 flipped
-    if (sceneState.isChecking || sceneState.flippedCards.includes(cardId) || 
-        sceneState.matchedPairs.includes(cardId) || sceneState.flippedCards.length >= 2) {
+    if (sceneState.isChecking || 
+        sceneState.flippedCards.includes(cardId) || 
+        sceneState.matchedPairs.includes(cardId) || 
+        sceneState.flippedCards.length >= 2 ||
+        isPeeking) { // Don't allow clicks during peek
       return;
     }
 
@@ -251,9 +276,8 @@ const CaveScene5MemoryFinaleContent = ({
           console.log('✅ Match found!', card1.pair);
           const newMatched = [...sceneState.matchedPairs, newFlipped[0], newFlipped[1]];
           
-          // Check if round is complete (all 8 cards matched = 4 pairs)
+          // Check if round is complete
           const roundComplete = newMatched.length === 8;
-          console.log('Matched pairs count:', newMatched.length, 'Round complete:', roundComplete);
 
           sceneActions.updateState({
             matchedPairs: newMatched,
@@ -276,24 +300,28 @@ const CaveScene5MemoryFinaleContent = ({
     }
   };
 
-  // Handle round completion
-  const handleRoundComplete = () => {
-    console.log('🎉 Round complete!', sceneState.currentRound);
+const handleRoundComplete = () => {
+  console.log('🎉 Round complete!', sceneState.currentRound);
+
+  if (sceneState.currentRound === 1) {
+    sceneActions.updateState({ round1Complete: true });
+    setShowRoundCompleteModal(true); // Show modal for round 1
+  } else if (sceneState.currentRound === 2) {
+    sceneActions.updateState({ round2Complete: true });
+    setShowRoundCompleteModal(true); // Show modal for round 2
     
-    setShowRotatingOrbs(true);
-    safeSetTimeout(() => setShowRotatingOrbs(false), 3000);
+    // Show modal for 4 seconds
+    safeSetTimeout(() => {
+      setShowRoundCompleteModal(false); // Hide modal
+      
+      // Wait 1 more second, then start orbs
+      safeSetTimeout(() => {
+        handleGameComplete();
+      }, 1000);
+    }, 4000);
+  }
+};
 
-    if (sceneState.currentRound === 1) {
-      // Mark round 1 as complete
-      sceneActions.updateState({ round1Complete: true });
-    } else if (sceneState.currentRound === 2) {
-      // Mark round 2 as complete and trigger game completion
-      sceneActions.updateState({ round2Complete: true });
-      handleGameComplete();
-    }
-  };
-
-  // Handle continuing to next round
   const handleContinueToNextRound = () => {
     console.log('Continuing to round 2');
     sceneActions.updateState({
@@ -306,7 +334,6 @@ const CaveScene5MemoryFinaleContent = ({
     });
   };
 
-  // Handle playing round again
   const handlePlayAgain = () => {
     console.log('Playing round again:', sceneState.currentRound);
     const cardData = sceneState.currentRound === 1 ? createRound1Data() : createRound2Data();
@@ -321,42 +348,31 @@ const CaveScene5MemoryFinaleContent = ({
     });
   };
 
-  // Handle game completion
-  const handleGameComplete = () => {
-    console.log('🎊 Game Complete! All rounds finished.');
-    
-    try {
-      const profileId = activeProfile?.id;
-      if (profileId) {
-        // Save game state
-        GameStateManager.saveGameState(zoneId, sceneId, {
-          completed: true,
-          stars: 8,
-          timestamp: Date.now(),
-          round1Complete: true,
-          round2Complete: true
-        });
-        
-        // Update progress manager
-        ProgressManager.updateSceneCompletion(profileId, zoneId, sceneId, {
-          completed: true,
-          stars: 8
-        });
-      }
-    } catch (error) {
-      console.error('Error saving game state:', error);
-    }
-    
-    sceneActions.updateState({
-      completed: true,
-      showCelebration: true
-    });
-  };
+const handleGameComplete = () => {
+  console.log('🎊 Game Complete! All rounds finished.');
+  
+  // Start orbs immediately (delay already handled in handleRoundComplete)
+  setShowRotatingOrbs(true);
+};
 
   // Start game
   const handleStartGame = () => {
     console.log('🎮 Starting Memory Game');
     sceneActions.updateState({ gameStarted: true });
+  };
+
+  // 👁️ Ganesha's Help (Peek feature)
+  const handleUseHint = () => {
+    if (hintsRemaining <= 0 || isPeeking || sceneState.roundComplete) return;
+    
+    console.log('✨ Using Ganesha Hint');
+    setHintsRemaining(prev => prev - 1);
+    setIsPeeking(true);
+    
+    // Temporarily show all cards via CSS class in render
+    safeSetTimeout(() => {
+      setIsPeeking(false);
+    }, 1500); // Show for 1.5 seconds
   };
 
   if (!sceneState) {
@@ -370,19 +386,53 @@ const CaveScene5MemoryFinaleContent = ({
           className="cave-scene5-memory"
           style={{ backgroundImage: `url(${bgFinal})` }}
         >
-          {/* Opening Welcome Screen */}
+          {/* ✅ NEW OPENING SCREEN: Final Challenge */}
           {!sceneState.gameStarted && (
-            <div className="cave-opening-screen">
-              <div className="opening-message">
-                <div className="opening-content">
-                  <img src={ganeshaCharacter} alt="Ganesha" className="opening-ganesha" />
-                  <h2>🕉️ Cave of Secrets - Final Challenge! 🕉️</h2>
-                  <p>Welcome, little explorer!</p>
-                  <p>It's time to test your mastery of all the symbols!</p>
-                  <p>Match each symbol with its Sanskrit name and meaning.</p>
-                  <p className="opening-hint">💡 Two rounds await you - let's begin!</p>
-                  <button className="play-game-button" onClick={handleStartGame}>
-                    Let's Play! 🎮
+            <div className="finale-instructions-overlay">
+              <div className="finale-instructions-content">
+                {/* Character */}
+                <div className="finale-instructions-ganesha">
+                  <img 
+                    src={ganeshaCharacterCave} 
+                    alt="Ganesha Character"
+                  />
+                </div>
+                
+                {/* Card */}
+                <div className="finale-instructions-card">
+                  <h1 className="finale-instructions-title">
+                    The Final Challenge!
+                  </h1>
+                  
+                  <p className="finale-instructions-subtitle">
+                    You have gathered all the ancient wisdom! <br/>
+                    Now, match the symbols to their meanings to master the Cave of Secrets!
+                  </p>
+                  
+                  <div className="finale-instructions-icons">
+                    <div className="finale-icon-item">
+                      <img src={vakratundaSymbol} alt="Vakratunda" />
+                      <span>Symbols</span>
+                    </div>
+                    <div style={{fontSize: '40px', alignSelf: 'center'}}>↔️</div>
+                    <div className="finale-icon-item">
+                      <div style={{
+                        width: '80px', height: '80px', background: 'white', 
+                        borderRadius: '15px', display: 'flex', alignItems: 'center', 
+                        justifyContent: 'center', fontWeight: 'bold', border: '2px solid #FFD700',
+                        fontSize: '32px'
+                      }}>
+                        ?
+                      </div>
+                      <span>Meanings</span>
+                    </div>
+                  </div>
+                  
+                  <button
+                    className="finale-instructions-button"
+                    onClick={handleStartGame}
+                  >
+                    Start Memory Game
                   </button>
                 </div>
               </div>
@@ -405,7 +455,8 @@ const CaveScene5MemoryFinaleContent = ({
               {/* Memory Card Grid */}
               <div className="memory-grid">
                 {sceneState.cards.map((card) => {
-                  const isFlipped = sceneState.flippedCards.includes(card.id);
+                  // ✅ Card shows if flipped, matched, or peeking
+                  const isFlipped = sceneState.flippedCards.includes(card.id) || isPeeking;
                   const isMatched = sceneState.matchedPairs.includes(card.id);
 
                   return (
@@ -415,20 +466,13 @@ const CaveScene5MemoryFinaleContent = ({
                       onClick={() => handleCardClick(card.id)}
                     >
                       <div className="card-inner">
-                        {/* Card Back */}
-                        <div className="card-back">
-                          {/* Question mark and gems rendered via CSS */}
-                        </div>
-
-                        {/* Card Front */}
+                        <div className="card-back"></div>
                         <div className="card-front">
-                          {/* Corner Gems */}
                           <div className="gem gem-top-left"></div>
                           <div className="gem gem-top-right"></div>
                           <div className="gem gem-bottom-left"></div>
                           <div className="gem gem-bottom-right"></div>
 
-                          {/* Card Content */}
                           <div className="card-content">
                             {card.type === 'symbol' ? (
                               <>
@@ -441,15 +485,12 @@ const CaveScene5MemoryFinaleContent = ({
                           </div>
                         </div>
                       </div>
-
-                      {/* Sparkle effect for matched cards */}
                       {isMatched && <div className="sparkle-effect">✨</div>}
                     </div>
                   );
                 })}
               </div>
 
-              {/* Helper text */}
               <div className="helper-text">
                 Match the symbols with their meanings! 🎯
               </div>
@@ -457,7 +498,7 @@ const CaveScene5MemoryFinaleContent = ({
           )}
 
           {/* Round Complete Screen */}
-          {sceneState.roundComplete && !sceneState.showCelebration && (
+{showRoundCompleteModal && !sceneState.showCelebration && (
             <div className="round-complete-screen" style={{ backgroundImage: `url(${bgFinal})` }}>
               <div className="round-complete-content">
                 <h2 className="round-complete-title">
@@ -469,7 +510,6 @@ const CaveScene5MemoryFinaleContent = ({
                     : "You've mastered all 8 symbols! Time to celebrate!"}
                 </p>
 
-                {/* Display matched pairs */}
                 <div className="matched-pairs-display">
                   {sceneState.matchedPairs.map((cardId) => {
                     const card = sceneState.cards.find(c => c.id === cardId);
@@ -488,13 +528,18 @@ const CaveScene5MemoryFinaleContent = ({
                   })}
                 </div>
 
-                {/* Action buttons */}
                 <div className="round-action-buttons">
-                  <button className="play-again-button" onClick={handlePlayAgain}>
+                  <button className="play-again-button" onClick={() => {
+  setShowRoundCompleteModal(false);
+  handlePlayAgain();
+}}>
                     Play Again 🔄
                   </button>
                   {sceneState.currentRound === 1 && (
-                    <button className="final-continue-button" onClick={handleContinueToNextRound}>
+                    <button className="final-continue-button" onClick={() => {
+  setShowRoundCompleteModal(false);
+  handleContinueToNextRound();
+}}>
                       Next Round →
                     </button>
                   )}
@@ -503,13 +548,158 @@ const CaveScene5MemoryFinaleContent = ({
             </div>
           )}
 
-          {/* Rotating Orbs Effect */}
-          {showRotatingOrbs && (
-            <RotatingOrbsEffect 
-              colors={['#FFD700', '#FFA500', '#FF6347']}
-              duration={3000}
-            />
+          {/* ======================================================== */}
+          {/* ✅ SIDEBAR & HINT SYSTEM */}
+          {/* ======================================================== */}
+          
+          {/* 1. Symbol Sidebar (Reference Guide) */}
+          {sceneState.gameStarted && !sceneState.completed && (
+            <div style={{ filter: 'none' }}>
+              <SymbolSidebar
+                unlockedSymbols={{
+                  vakratunda: true,
+                  mahakaya: true,
+                  suryakoti: true,
+                  samaprabha: true,
+                  nirvighnam: true,
+                  kurumedeva: true,
+                  sarvakaryeshu: true,
+                  sarvada: true
+                }}
+                onSymbolClick={(symbolId) => {
+                  console.log(`Reference: ${symbolId}`);
+                  // Optional: Play audio of the name
+                  // playAudio(`/audio/words/${symbolId}.mp3`); 
+                }}
+              />
+            </div>
           )}
+
+          {/* 2. Ganesha's Magic Eye (Active Hint) */}
+          {sceneState.gameStarted && !sceneState.roundComplete && (
+            <div className="hint-container" style={{
+              position: 'absolute',
+              bottom: '20px',
+              right: '20px',
+              zIndex: 100,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
+            }}>
+              <button 
+                onClick={handleUseHint}
+                disabled={hintsRemaining <= 0 || isPeeking}
+                style={{
+                  background: hintsRemaining > 0 ? 'linear-gradient(45deg, #FFD700, #FFA500)' : '#ccc',
+                  border: '3px solid #FFF',
+                  borderRadius: '50%',
+                  width: '70px',
+                  height: '70px',
+                  cursor: hintsRemaining > 0 ? 'pointer' : 'default',
+                  boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
+                  transition: 'transform 0.2s',
+                  transform: isPeeking ? 'scale(0.9)' : 'scale(1)',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  fontSize: '30px'
+                }}
+              >
+                👁️
+              </button>
+              <div style={{
+                background: 'rgba(0,0,0,0.7)',
+                color: '#FFD700',
+                padding: '4px 10px',
+                borderRadius: '10px',
+                marginTop: '5px',
+                fontSize: '12px',
+                fontWeight: 'bold'
+              }}>
+                {hintsRemaining} hints left
+              </div>
+            </div>
+          )}
+
+{/* Rotating Orbs Effect */}
+{showRotatingOrbs && (
+  <RotatingOrbsEffect
+    show={true}
+    duration={9000}
+    symbolImages={{
+      vakratunda: vakratundaSymbol,
+      mahakaya: mahakayaSymbol,
+      suryakoti: suryakotiSymbol,
+      samaprabha: samaprabhaSymbol,
+      nirvighnam: nirvighnamSymbol,
+      kurumedeva: kurumedevaSymbol,
+      sarvakaryeshu: sarvakaryeshuSymbol,
+      sarvada: sarvadaSymbol
+    }}
+    ganeshaImage={ganeshaCharacter}
+    playerName={profileName}
+    onComplete={() => {
+      console.log('🎯 Memory finale orbs complete');
+      setShowRotatingOrbs(false);
+      
+      const profileId = activeProfile?.id;
+      if (profileId) {
+        GameStateManager.saveGameState(zoneId, sceneId, {
+          completed: true,
+          stars: 8,
+          timestamp: Date.now(),
+          round1Complete: true,
+          round2Complete: true
+        });
+        
+        ProgressManager.updateSceneCompletion(profileId, zoneId, sceneId, {
+          completed: true,
+          stars: 8
+        });
+      }
+      
+      sceneActions.updateState({
+        completed: true,
+        showCelebration: true
+      });
+    }}
+  />
+)}
+
+{/* Fireworks 
+{showFireworks && (
+  <Fireworks
+    show={true}
+    duration={8000}
+    count={25}
+    colors={['#FFD700', '#FF8C00', '#FFA500', '#DAA520', '#B8860B']}
+    onComplete={() => {
+      console.log('🎯 Memory finale fireworks complete');
+      setShowFireworks(false);
+      
+      const profileId = activeProfile?.id;
+      if (profileId) {
+        GameStateManager.saveGameState(zoneId, sceneId, {
+          completed: true,
+          stars: 8,
+          timestamp: Date.now(),
+          round1Complete: true,
+          round2Complete: true
+        });
+        
+        ProgressManager.updateSceneCompletion(profileId, zoneId, sceneId, {
+          completed: true,
+          stars: 8
+        });
+      }
+      
+      sceneActions.updateState({
+        completed: true,
+        showCelebration: true
+      });
+    }}
+  />
+)}
 
           {/* Scene Completion Celebration */}
           <SceneCompletionCelebration
@@ -555,22 +745,14 @@ const CaveScene5MemoryFinaleContent = ({
             }}
           />
 
-          {/* Back to Map Button */}
-          <BackToMapButton 
-            onNavigate={onNavigate}
-          />
+          <BackToMapButton onNavigate={onNavigate} />
 
-          {/* TocaBoca Navigation */}
           <TocaBocaNav
-            onHome={() => {
-              setTimeout(() => onNavigate?.('home'), 100);
-            }}
-            onZonesClick={() => {
-              setTimeout(() => onNavigate?.('zones'), 100);
-            }}
+            onHome={() => setTimeout(() => onNavigate?.('home'), 100)}
+            onZonesClick={() => setTimeout(() => onNavigate?.('zones'), 100)}
             onStartFresh={() => resetScene(true)}
             currentProgress={{
-              stars: sceneState.matchedPairs.length / 2, // Each pair = 1 star
+              stars: sceneState.matchedPairs.length / 2,
               completed: sceneState.completed ? 1 : 0,
               total: 1
             }}

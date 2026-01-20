@@ -7,6 +7,7 @@ export const GAME_CONFIGS = {
   vakratunda: {
     id: 'vakratunda',
     displayName: 'Vakratunda',
+    cssClassName: 'vakratunda-game-phase-header',
     theme: {
       primaryColor: '#4CAF50',
       accentColor: '#81C784',
@@ -14,38 +15,46 @@ export const GAME_CONFIGS = {
     },
     
     syllables: {
-      1: ['va', 'kra'],
-      2: ['va', 'kra', 'tun'],
-      3: ['va', 'kra', 'tun', 'da']
+      1: ['va', 'kra'],           // Round 1: VAKRA (2 syllables)
+      2: ['tun', 'da'],            // Round 2: TUNDA (2 syllables) - NEW!
+      3: ['va', 'kra', 'tun', 'da'] // Round 3: VAKRATUNDA (4 syllables)
     },
     
     elements: {
-      singer: {
-        type: 'lotus',
-        count: 4,
-        ids: ['lotus-va', 'lotus-kra', 'lotus-tun', 'lotus-da'],
-        positions: [
-          { left: '25%', top: '45%' },
-          { left: '35%', top: '55%' },
-          { left: '45%', top: '60%' },
-          { left: '75%', top: '50%' }
-        ],
-        // ✅ BUG 6 & 8 FIX: Separate getters for initial (bud) vs reward (lotus) states
-        assetGetterInitial: 'getBudImage',  // Shows when syllable NOT learned
-        assetGetterReward: 'getLotusImage'   // Shows when syllable IS learned
-      },
-      clicker: {
-        type: 'baby-elephant',
-        count: 4,
-        ids: ['baby-elephant-va', 'baby-elephant-kra', 'baby-elephant-tun', 'baby-elephant-da'],
-        positions: [
-          { left: '18%', top: '65%' },
-          { left: '38%', top: '35%' },
-          { left: '58%', top: '30%' },
-          { left: '68%', top: '28%' }
-        ],
-        assetGetter: 'getBabyElephantImage'
-      }
+        centralSynthesis: {
+            enabled: true,
+            positions: [
+                { left: '50%', top: '45%' }, // Round 1 (Vakra)
+                { left: '50%', top: '65%' }, // Round 2 (Tunda)
+                { left: '50%', top: '55%' }  // Round 3 (Center)
+            ],
+            // ✅ Round-Based Rewards (Bud -> Lotus)
+            assetGettersByRound: {
+                1: { initial: 'getBudVaImage',    reward: 'getLotusVaImage' },
+                2: { initial: 'getBudTunImage',   reward: 'getLotusTunImage' },
+                3: { initial: 'getBudKraImage',   reward: 'getLotusKraImage' } // Using Kra/Da or Va for round 3
+            }
+        },
+
+        clicker: {
+            type: 'baby-elephant',
+            count: 4,
+            // ✅ Short IDs matching the map keys
+            ids: ['va', 'kra', 'tun', 'da'], 
+            positions: [
+                { left: '18%', top: '65%' },
+                { left: '38%', top: '35%' },
+                { left: '58%', top: '30%' },
+                { left: '68%', top: '28%' }
+            ],
+            // ✅ Map Keys -> Function Names
+            assetGetters: {
+                'va':  'getElephantVaImage',
+                'kra': 'getElephantKraImage',
+                'tun': 'getElephantTunImage',
+                'da':  'getElephantDaImage'
+            }
+        }
     },
     
     audio: {
@@ -65,6 +74,11 @@ export const GAME_CONFIGS = {
       duration: 1500,
       color: '#64B5F6'
     },
+
+    uiText: {  // ← ADD THIS BEFORE celebration
+    clickInstruction: 'Click the baby elephants!',
+    finalInstruction: 'Click the lotus to finish!'
+  },
     
     celebration: {
       emoji: '🪷',
@@ -76,6 +90,7 @@ export const GAME_CONFIGS = {
   mahakaya: {
     id: 'mahakaya',
     displayName: 'Mahakaya',
+    cssClassName: 'mahakaya-game-phase-header',
     theme: {
       primaryColor: '#FF9800',
       accentColor: '#FFB74D',
@@ -83,38 +98,44 @@ export const GAME_CONFIGS = {
     },
     
     syllables: {
-      1: ['ma', 'ha'],
-      2: ['ma', 'ha', 'ka'],
-      3: ['ma', 'ha', 'ka', 'ya']
+      1: ['ma', 'ha'],           // Round 1: MAHA (2 syllables)
+      2: ['ka', 'ya'],            // Round 2: KAYA (2 syllables) - NEW!
+      3: ['ma', 'ha', 'ka', 'ya'] // Round 3: MAHAKAYA (4 syllables)
     },
     
-    elements: {
-      singer: {
-        type: 'stone',
-        count: 4,
-        ids: ['stone-ma', 'stone-ha', 'stone-ka', 'stone-ya'],
-        positions: [
-          { left: '20%', top: '60%' },
-          { left: '40%', top: '65%' },
-          { left: '60%', top: '58%' },
-          { left: '80%', top: '62%' }
-        ],
-        // ✅ BUG 6 & 8 FIX: Separate getters for initial (seed) vs reward (flower) states
-        assetGetterInitial: 'getSeedImage',   // Shows when syllable NOT learned
-        assetGetterReward: 'getFlowerImage'    // Shows when syllable IS learned
-      },
-      clicker: {
-        type: 'adult-elephant',
-        count: 4,
-        ids: ['adult-elephant-ma', 'adult-elephant-ha', 'adult-elephant-ka', 'adult-elephant-ya'],
-        positions: [
-          { left: '12%', top: '70%' },
-          { left: '32%', top: '75%' },
-          { left: '52%', top: '72%' },
-          { left: '72%', top: '78%' }
-        ],
-        assetGetter: 'getAdultElephantImage'
-      }
+   elements: {
+        centralSynthesis: {
+            enabled: true,
+            positions: [
+                { left: '50%', top: '55%' }, // Round 1
+                { left: '50%', top: '70%' }, // Round 2
+                { left: '50%', top: '62%' }  // Round 3
+            ],
+            // ✅ Round-Based Rewards (Seed -> Flower)
+            assetGettersByRound: {
+                1: { initial: 'getSeedImage', reward: 'getFlowerMaImage' },
+                2: { initial: 'getSeedImage', reward: 'getFlowerKaImage' },
+                3: { initial: 'getSeedImage', reward: 'getFlowerHaImage' }
+            }
+        },
+
+        clicker: {
+            type: 'adult-elephant',
+            count: 4,
+            ids: ['ma', 'ha', 'ka', 'ya'], 
+            positions: [
+                { left: '12%', top: '70%' },
+                { left: '32%', top: '75%' },
+                { left: '52%', top: '72%' },
+                { left: '72%', top: '78%' }
+            ],
+            assetGetters: {
+                'ma': 'getElephantMaImage',
+                'ha': 'getElephantHaImage',
+                'ka': 'getElephantKaImage',
+                'ya': 'getElephantYaImage'
+            }
+        }
     },
     
     audio: {
@@ -134,6 +155,11 @@ export const GAME_CONFIGS = {
       duration: 1500,
       color: '#FF9800'
     },
+
+    uiText: {  // ← ADD THIS BEFORE celebration
+    clickInstruction: 'Click the elephants!',
+    finalInstruction: 'Click the lily to finish!'
+  },
     
     celebration: {
       emoji: '🗿',
@@ -145,6 +171,7 @@ export const GAME_CONFIGS = {
   suryakoti: {
     id: 'suryakoti',
     displayName: 'Suryakoti',
+    cssClassName: 'suryakoti-game-phase-header',
     theme: {
       primaryColor: '#FFD700', // Gold/Solar Color
       accentColor: '#FFA500',  // Orange/Sun Color
@@ -152,37 +179,46 @@ export const GAME_CONFIGS = {
     },
     
     syllables: {
-      1: ['sur', 'ya'],
-      2: ['sur', 'ya', 'ko'],
-      3: ['sur', 'ya', 'ko', 'ti']
+      1: ['sur', 'ya'],           // Round 1: SURYA (2 syllables)
+      2: ['ko', 'ti'],             // Round 2: KOTI (2 syllables) - NEW!
+      3: ['sur', 'ya', 'ko', 'ti']  // Round 3: SURYAKOTI (4 syllables)
     },
     
     elements: {
-      singer: {
-        type: 'flower',
-        count: 4,
-        ids: ['flower-sur', 'flower-ya', 'flower-ko', 'flower-ti'],
-        positions: [
-          { left: '20%', top: '55%' },
-          { left: '40%', top: '50%' },
-          { left: '60%', top: '55%' },
-          { left: '80%', top: '50%' }
-        ],
-        assetGetterInitial: 'getClosedFlowerImage',
-        assetGetterReward: 'getOpenFlowerImage'
-      },
-      clicker: {
-        type: 'sun-orb',
-        count: 4,
-        ids: ['orb-sur', 'orb-ya', 'orb-ko', 'orb-ti'],
-        positions: [
-          { left: '10%', top: '35%' },
-          { left: '30%', top: '40%' },
-          { left: '50%', top: '45%' },
-          { left: '70%', top: '40%' }
-        ],
-        assetGetter: 'getSunOrbImage'
-      }
+        centralSynthesis: {
+            enabled: true,
+            positions: [
+                { left: '50%', top: '50%' }, // Round 1
+                { left: '50%', top: '62%' }, // Round 2
+                { left: '50%', top: '56%' }  // Round 3
+            ],
+            // ✅ Round-Based Rewards (Closed -> Open)
+            assetGettersByRound: {
+                1: { initial: 'getSunflowerClose', reward: 'getSunflowerOpen' },
+                2: { initial: 'getDaisyClose',     reward: 'getDaisyOpen' },
+                3: { initial: 'getRoseClose',      reward: 'getRoseOpen' }
+                // (Tulip available if you ever add a 4th round)
+            }
+        },
+
+        clicker: {
+            type: 'sun-orb',
+            count: 4,
+            ids: ['sur', 'ya', 'ko', 'ti'], 
+            positions: [
+                { left: '10%', top: '35%' },
+                { left: '30%', top: '40%' },
+                { left: '50%', top: '45%' },
+                { left: '70%', top: '40%' }
+            ],
+            // Map keys (Using same sun orb for all since only one was imported)
+            assetGetters: {
+                'sur': 'getSunOrbImage',
+                'ya':  'getSunOrbImage',
+                'ko':  'getSunOrbImage',
+                'ti':  'getSunOrbImage'
+            }
+        }
     },
     
     audio: {
@@ -202,6 +238,11 @@ export const GAME_CONFIGS = {
       duration: 1500,
       color: '#FF9800'
     },
+
+    uiText: {  // ← ADD THIS BEFORE celebration
+    clickInstruction: 'Click the suns!',
+    finalInstruction: 'Click the flower to finish!'
+  },
     
     celebration: {
       emoji: '🌻',
@@ -213,6 +254,7 @@ export const GAME_CONFIGS = {
   samaprabha: {
     id: 'samaprabha',
     displayName: 'Samaprabha',
+    cssClassName: 'samaprabha-game-phase-header',
     theme: {
       primaryColor: '#9400D3', // Dark Violet/Radiant Light Color
       accentColor: '#BA68C8',  // Light Purple
@@ -220,37 +262,56 @@ export const GAME_CONFIGS = {
     },
     
     syllables: {
-      1: ['sa', 'ma'],
-      2: ['sa', 'ma', 'pra'],
-      3: ['sa', 'ma', 'pra', 'bha']
+      1: ['sa', 'ma'],            // Round 1: SAMA (2 syllables)
+      2: ['pra', 'bha'],           // Round 2: PRABHA (2 syllables) - NEW!
+      3: ['sa', 'ma', 'pra', 'bha'] // Round 3: SAMAPRABHA (4 syllables)
     },
     
     elements: {
-      singer: {
-        type: 'animal',
-        count: 4,
-        ids: ['animal-sa', 'animal-ma', 'animal-pra', 'animal-bha'],
-        positions: [
-          { left: '15%', top: '68%' },
-          { left: '35%', top: '72%' },
-          { left: '55%', top: '68%' },
-          { left: '75%', top: '72%' }
-        ],
-        assetGetterInitial: 'getSadAnimalImage',
-        assetGetterReward: 'getHappyAnimalImage'
-      },
-      clicker: {
-        type: 'rainbow',
-        count: 4,
-        ids: ['rainbow-sa', 'rainbow-ma', 'rainbow-pra', 'rainbow-bha'],
-        positions: [
-          { left: '18%', top: '25%' },
-          { left: '38%', top: '30%' },
-          { left: '58%', top: '25%' },
-          { left: '78%', top: '30%' }
-        ],
-        assetGetter: 'getRainbowImage'
-      }
+      // ⭐ NEW: Central synthesis reward (one per round)
+     centralSynthesis: {
+    enabled: true,
+    positions: [
+       { left: '50%', top: '45%' }, // Round 1 Position
+       { left: '50%', top: '65%' }, // Round 2 Position
+       { left: '50%', top: '55%' }  // Round 3 Position
+    ],
+
+    // ❌ DELETE THESE 2 LINES (Crucial! If they exist, the game ignores the list)
+    // assetGetterInitial: 'getSadAnimal1Image', 
+    // assetGetterReward: 'getHappyAnimal1Image', 
+
+    // ✅ ADD/KEEP THIS LIST
+    assetGettersByRound: {
+        1: { initial: 'getSadAnimal1Image', reward: 'getHappyAnimal1Image' },
+        2: { initial: 'getSadAnimal2Image', reward: 'getHappyAnimal2Image' },
+        3: { initial: 'getSadAnimal3Image', reward: 'getHappyAnimal3Image' },
+        4: { initial: 'getSadAnimal4Image', reward: 'getHappyAnimal4Image' }
+    }
+},
+
+clicker: {
+    type: 'rainbow',
+    count: 4,
+    // IDs must match the keys below exactly
+    ids: ['sa', 'ma', 'pra', 'bha'], 
+    
+    positions: [
+        { left: '18%', top: '25%' },
+        { left: '38%', top: '30%' },
+        { left: '58%', top: '25%' },
+        { left: '78%', top: '30%' }
+    ],
+
+    // ⚠️ IMPORTANT: Plural 'assetGetters' (with an 's')
+    assetGetters: {
+        'sa': 'getRainbowSaImage',
+        'ma': 'getRainbowMaImage',
+        'pra': 'getRainbowPraImage',
+        'bha': 'getRainbowBhaImage'
+    }
+    // ❌ DO NOT ADD 'assetGetter' (singular) here.
+},
     },
     
     audio: {
@@ -270,6 +331,11 @@ export const GAME_CONFIGS = {
       duration: 1500,
       color: '#BA68C8'
     },
+
+    uiText: {  // ← ADD THIS BEFORE celebration
+    clickInstruction: 'Click the rainbows!',
+    finalInstruction: 'Click the animal to finish!'
+  },
     
     celebration: {
       emoji: '🌈',
@@ -281,6 +347,7 @@ export const GAME_CONFIGS = {
   nirvighnam: {
     id: 'nirvighnam',
     displayName: 'Nirvighnam',
+    cssClassName: 'nirvighnam-game-phase-header',
     theme: {
       primaryColor: '#DAA520', // Sacred Wisdom Gold
       accentColor: '#8B4513',  // Earthy Brown
@@ -288,64 +355,46 @@ export const GAME_CONFIGS = {
     },
     
     syllables: {
-      1: ['nir', 'vigh'],           // Round 1: 2 syllables
-      2: ['nir', 'vigh', 'nam']     // Round 2: 3 syllables
+      1: ['nir', 'vigh'],         // Round 1: NIRVIGH (2 syllables)
+      2: ['nam'],                  // Round 2: NAM (1 syllable) - NEW!
+      3: ['nir', 'vigh', 'nam']    // Round 3: NIRVIGHNAM (3 syllables)
     },
     
     elements: {
-      // NO singer element for nirvighnam - clicker doubles as singer
-      clicker: {
-        type: 'rescue-item',
-        count: 3,
-        ids: ['leaf-nir', 'drum-vigh', 'feather-nam'],
-        positions: [
-          { left: '25%', top: '50%' },  // leaf (nir)
-          { left: '50%', top: '50%' },  // drum (vigh)
-          { left: '75%', top: '50%' }   // feather (nam)
-        ],
-        assetGetters: {
-          'nir': 'getLeafRirImage',
-          'vigh': 'getDrumVighImage',
-          'nam': 'getFeatherNamImage'
-        }
-      },
-      // ⭐ Dual reward system - AutoPlayMode will detect this!
-      rewards: {
-        animals: {
-          positions: [  // Animals in water (reward position)
-            { left: '20%', top: '75%' },  // frog in water
-            { left: '50%', top: '75%' },  // snail in water
-            { left: '80%', top: '75%' }   // turtle in water
-          ],
-          assetGetters: {
-            'nir': 'getFrogNirImage',
-            'vigh': 'getSnailVighImage',
-            'nam': 'getTurtleNamImage'
-          }
+        centralSynthesis: {
+            enabled: true,
+            positions: [
+                { left: '50%', top: '45%' }, // Round 1
+                { left: '50%', top: '65%' }, // Round 2
+                { left: '50%', top: '55%' }  // Round 3
+            ],
+              showPreviousRounds: true,
+
+            // ✅ Round-Based Rewards (Stone B&W -> Stone Color)
+            assetGettersByRound: {
+                1: { initial: 'getStone1NirImage',    reward: 'getStone1NirColImage' },
+                2: { initial: 'getStone2VighImage',   reward: 'getStone2VighColImage' },
+                3: { initial: 'getStone3NamImage',    reward: 'getStone3NamColImage' }
+            }
         },
-        stones: {
-          positionsInitial: [  // Plain stones with animals on top (initial)
-            { left: '25%', top: '25%' },
-            { left: '50%', top: '25%' },
-            { left: '75%', top: '25%' }
-          ],
-          positionsReward: [  // Colored stones (reward position)
-            { left: '25%', top: '25%' },
-            { left: '50%', top: '25%' },
-            { left: '75%', top: '25%' }
-          ],
-          assetGettersInitial: {
-            'nir': 'getStone1NirImage',
-            'vigh': 'getStone2VighImage',
-            'nam': 'getStone3NamImage'
-          },
-          assetGettersReward: {
-            'nir': 'getStone1NirColImage',
-            'vigh': 'getStone2VighColImage',
-            'nam': 'getStone3NamColImage'
-          }
+
+        clicker: {
+            type: 'animal',
+            count: 3,
+            // IDs
+            ids: ['nir', 'vigh', 'nam'], 
+            positions: [
+                { left: '25%', top: '70%' },
+                { left: '50%', top: '70%' },
+                { left: '75%', top: '70%' }
+            ],
+            // Map
+            assetGetters: {
+                'nir':  'getFrogNirImage',
+                'vigh': 'getSnailVighImage',
+                'nam':  'getTurtleNamImage'
+            }
         }
-      }
     },
     
     audio: {
@@ -364,6 +413,11 @@ export const GAME_CONFIGS = {
       duration: 1500,
       color: '#DAA520'
     },
+
+    uiText: {  // ← ADD THIS BEFORE celebration
+    clickInstruction: 'Click the animals!',
+    finalInstruction: 'Click the stone to finish!'
+  },
     
     celebration: {
       emoji: '🪨',
@@ -375,6 +429,7 @@ export const GAME_CONFIGS = {
   kurumedeva: {
     id: 'kurumedeva',
     displayName: 'Kurumedeva',
+    cssClassName: 'kurumedeva-game-phase-header',
     theme: {
       primaryColor: '#9370DB', // Divine Grace Purple
       accentColor: '#BA68C8',  // Light Purple
@@ -382,54 +437,57 @@ export const GAME_CONFIGS = {
     },
     
     syllables: {
-      1: ['kuru', 'me'],
-      2: ['kuru', 'me', 'de'],
-      3: ['kuru', 'me', 'de', 'va'] 
+      1: ['kuru', 'me'],          // Round 1: KURUME (2 syllables)
+      2: ['de', 'va'],             // Round 2: DEVA (2 syllables) - NEW!
+      3: ['kuru', 'me', 'de', 'va'] // Round 3: KURUMEDEVA (4 syllables)
     },
     
-    elements: {
-      singer: {
-        type: 'decoration',
-        count: 4, 
-        ids: ['decor-kuru', 'decor-me', 'decor-de', 'decor-va'],
-        positions: [
-          { left: '20%', top: '50%' },
-          { left: '40%', top: '55%' },
-          { left: '60%', top: '55%' },
-          { left: '80%', top: '50%' }
-        ],
-  assetGettersInitial: {
-  'kuru': 'getItem1KuImage',
-  'me': 'getItem3MeImage',
-  'de': 'getItem4DeImage',
-  'va': 'getItem2RuImage'
-},
-assetGettersReward: {
-  'kuru': 'getDecor1KuImage',
-  'me': 'getDecor3MeImage',
-  'de': 'getDecor4DeImage',
-  'va': 'getDecor2RuImage'
-}
-      },
-      clicker: {
-        type: 'animal',
-        count: 4, 
-        ids: ['animal-ku', 'animal-ru', 'animal-me', 'animal-va'],
-        positions: [
-          { left: '15%', top: '70%' },
-          { left: '35%', top: '65%' },
-          { left: '55%', top: '65%' },
-          { left: '75%', top: '70%' }
-        ],
-  assetGetters: {
-  'kuru': 'getAnimal1KuImage',
-  'me': 'getAnimal3MeImage',
-  'de': 'getAnimal4DeImage',
-  'va': 'getAnimal2RuImage'
-}
-      }
+
+elements: {
+        centralSynthesis: {
+            enabled: true,
+            positions: [
+                { left: '50%', top: '45%' }, // Round 1
+                { left: '50%', top: '65%' }, // Round 2
+                { left: '50%', top: '55%' }, // Round 3
+                { left: '50%', top: '50%' }  // Round 4 (if used)
+            ],
+              showPreviousRounds: true,
+
+            // ✅ Single Image Strategy: Use the same getter for both
+            assetGettersByRound: {
+                1: { initial: 'getDecorKuImage', reward: 'getDecorKuImage' },
+                2: { initial: 'getDecorRuImage', reward: 'getDecorRuImage' },
+                3: { initial: 'getDecorMeImage', reward: 'getDecorMeImage' },
+                4: { initial: 'getDecorDeImage', reward: 'getDecorDeImage' }
+            }
+        },
+
+ clicker: {
+            type: 'animal',
+            count: 4, // or 5 if you use all
+            // ✅ Updated IDs to include 'va' (and 'kuru' if that's what the game uses)
+            ids: ['ku', 'ru', 'me', 'de', 'va'], 
+            
+            positions: [
+                { left: '10%', top: '65%' },
+                { left: '30%', top: '35%' },
+                { left: '50%', top: '30%' },
+                { left: '70%', top: '35%' },
+                { left: '90%', top: '65%' }
+            ],
+            // ✅ Map Keys -> Function Names
+            assetGetters: {
+                'ku':   'getAnimalKuImage',
+                'ru':   'getAnimalRuImage',
+                'me':   'getAnimalMeImage',
+                'de':   'getAnimalDeImage',
+                'va':   'getAnimalVaImage',   // 👈 Added this!
+                'kuru': 'getAnimalKuImage'    // 👈 Added backup in case syllable is 'kuru'
+            }
+        }
     },
-    
+  
     audio: {
       syllableFolder: '/audio/syllables/',
       syllableFileMap: {
@@ -446,6 +504,11 @@ assetGettersReward: {
       dropCount: 18, 
       color: '#9370DB'
     },
+
+    uiText: {  // ← ADD THIS BEFORE celebration
+    clickInstruction: 'Click the animals!',
+    finalInstruction: 'Click the decoration to finish!'
+  },
     
     celebration: {
       emoji: '🔮',
@@ -457,6 +520,7 @@ assetGettersReward: {
   sarvakaryeshu: {
     id: 'sarvakaryeshu',
     displayName: 'Sarvakaryeshu',
+    cssClassName: 'sarvakaryeshu-game-phase-header',
     theme: {
       primaryColor: '#008080', // Teal/Pond Color
       accentColor: '#40E0D0',  // Turquoise
@@ -464,37 +528,45 @@ assetGettersReward: {
     },
     
     syllables: {
-      1: ['sar', 'va'],
-      2: ['sar', 'va', 'kar'],
-      3: ['sar', 'va', 'kar', 'yeshu'] // 4 syllables
+      1: ['sar', 'va'],            // Round 1: SARVA (2 syllables)
+      2: ['kar', 'yeshu'],          // Round 2: KARYESHU (2 syllables) - NEW!
+      3: ['sar', 'va', 'kar', 'yeshu'] // Round 3: SARVAKARYESHU (4 syllables)
     },
     
-    elements: {
-      singer: {
-        type: 'animal',
-        count: 4, 
-        ids: ['animal-sar', 'animal-va', 'animal-kar', 'animal-yeshu'],
-        positions: [
-          { left: '20%', top: '60%' },
-          { left: '40%', top: '65%' },
-          { left: '60%', top: '65%' },
-          { left: '80%', top: '60%' }
-        ],
-        assetGetterInitial: 'getSarvakaryeshuSadAnimalImage', 
-        assetGetterReward: 'getSarvakaryeshuHappyAnimalImage'
-      },
-      clicker: {
-        type: 'helper-animal',
-        count: 4, 
-        ids: ['helper-sar', 'helper-va', 'helper-kar', 'helper-yeshu'],
-        positions: [
-          { left: '15%', top: '40%' },
-          { left: '35%', top: '35%' },
-          { left: '55%', top: '35%' },
-          { left: '75%', top: '40%' }
-        ],
-        assetGetter: 'getSarvakaryeshuHelperImage'
-      }
+  elements: {
+        centralSynthesis: {
+            enabled: true,
+            positions: [
+                { left: '50%', top: '58%' }, // Round 1
+                { left: '50%', top: '72%' }, // Round 2
+                { left: '50%', top: '65%' }  // Round 3
+            ],
+            // ✅ Rewards (Sad -> Happy)
+            assetGettersByRound: {
+                1: { initial: 'getSquirrelSad', reward: 'getSquirrelHappy' },
+                2: { initial: 'getBirdSad',     reward: 'getBirdHappy' },
+                3: { initial: 'getDuckSad',     reward: 'getDuckHappy' }
+                // 4: { initial: 'getRabbitSad', reward: 'getRabbitHappy' } (If 4th round)
+            }
+        },
+
+        clicker: {
+            type: 'helper-animal',
+            count: 4,
+            ids: ['sar', 'va', 'kar', 'yeshu'], 
+            positions: [
+                { left: '15%', top: '40%' },
+                { left: '35%', top: '35%' },
+                { left: '55%', top: '35%' },
+                { left: '75%', top: '40%' }
+            ],
+            assetGetters: {
+                'sar':   'getSquirrelHelper',
+                'va':    'getBirdHelper',
+                'kar':   'getDuckHelper',
+                'yeshu': 'getRabbitHelper'
+            }
+        }
     },
     
     audio: {
@@ -514,6 +586,11 @@ assetGettersReward: {
       duration: 1500,
       color: '#40E0D0'
     },
+
+    uiText: {  // ← ADD THIS BEFORE celebration
+    clickInstruction: 'Click the helpers!',
+    finalInstruction: 'Click the animal to finish!'
+  },
     
     celebration: {
       emoji: '🦚',
@@ -525,6 +602,7 @@ assetGettersReward: {
   sarvada: {
     id: 'sarvada',
     displayName: 'Sarvada',
+    cssClassName: 'sarvada-game-phase-header',
     theme: {
       primaryColor: '#7B68EE', // MediumSlateBlue/Final Power Color
       accentColor: '#9370DB',  // MediumPurple
@@ -532,34 +610,42 @@ assetGettersReward: {
     },
     
     syllables: {
-      1: ['sar', 'va'],
-      2: ['sar', 'va', 'da'] // 3 Syllables
+      1: ['sar', 'va'],           // Round 1: SARVA (2 syllables)
+      2: ['da'],                   // Round 2: DA (1 syllable) - NEW!
+      3: ['sar', 'va', 'da']       // Round 3: SARVADA (3 syllables)
     },
     
-    elements: {
-      singer: {
-        type: 'animal',
-        count: 3,
-        ids: ['animal-sar', 'animal-va', 'animal-da'],
-        positions: [
-          { left: '25%', top: '40%' },
-          { left: '50%', top: '50%' },
-          { left: '75%', top: '40%' }
-        ],
-        assetGetterInitial: 'getSarvadaSadAnimalImage',
-        assetGetterReward: 'getSarvadaHappyAnimalImage'
-      },
-      clicker: {
-        type: 'helper-animal',
-        count: 3,
-        ids: ['helper-sar', 'helper-va', 'helper-da'],
-        positions: [
-          { left: '20%', top: '25%' },
-          { left: '45%', top: '20%' },
-          { left: '70%', top: '25%' }
-        ],
-        assetGetter: 'getSarvadaHelperImage'
-      }
+   elements: {
+        centralSynthesis: {
+            enabled: true,
+            positions: [
+                { left: '50%', top: '42%' }, // Round 1
+                { left: '50%', top: '58%' }, // Round 2
+                { left: '50%', top: '50%' }  // Round 3
+            ],
+            // ✅ Rewards (Sad -> Happy)
+            assetGettersByRound: {
+                1: { initial: 'getButterflySad', reward: 'getButterflyHappy' },
+                2: { initial: 'getFawnSad',      reward: 'getFawnHappy' },
+                3: { initial: 'getHedgehogSad',  reward: 'getHedgehogHappy' }
+            }
+        },
+
+        clicker: {
+            type: 'helper-animal',
+            count: 3,
+            ids: ['sar', 'va', 'da'], 
+            positions: [
+                { left: '20%', top: '25%' },
+                { left: '45%', top: '20%' },
+                { left: '70%', top: '25%' }
+            ],
+            assetGetters: {
+                'sar': 'getButterflyHelper',
+                'va':  'getFawnHelper',
+                'da':  'getHedgehogHelper'
+            }
+        }
     },
     
     audio: {
@@ -578,6 +664,11 @@ assetGettersReward: {
       duration: 1500,
       color: '#9370DB'
     },
+
+    uiText: {  // ← ADD THIS BEFORE celebration
+    clickInstruction: 'Click the helpers!',
+    finalInstruction: 'Click the animal to finish!'
+  },
     
     celebration: {
       emoji: '✨',

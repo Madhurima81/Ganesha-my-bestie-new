@@ -348,6 +348,13 @@ if (!profileProgress.zones) profileProgress.zones = {};
 if (!profileProgress.zones[zoneId]) profileProgress.zones[zoneId] = { scenes: {} };
 if (!profileProgress.zones[zoneId].scenes) profileProgress.zones[zoneId].scenes = {};
 
+// Add this line BEFORE line 352
+console.log('🔥 PROGRESS MANAGER RECEIVED:', {
+  zoneId,
+  sceneId,
+  chantedVerses: completionData.chantedVerses
+});
+
 // Update the scene data that calculateZoneProgress will read
 profileProgress.zones[zoneId].scenes[sceneId] = {
   ...profileProgress.zones[zoneId].scenes[sceneId], // Preserve existing data
@@ -364,7 +371,7 @@ profileProgress.zones[zoneId].scenes[sceneId] = {
     // ✅ ADD THESE MISSING LINES - Shloka River specific data
   syllables: completionData.syllables || {},     // 🎯 MISSING - Shloka River syllables
   words: completionData.words || {},             // 🎯 MISSING - Shloka River words
-  
+  chantedVerses: completionData.chantedVerses || {},  // ← ADD THIS
   completedAt: Date.now(),
   lastPlayed: Date.now(),
   unlocked: true

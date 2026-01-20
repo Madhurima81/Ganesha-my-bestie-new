@@ -1,65 +1,64 @@
-// zones/shloka-river/scenes/Scene5/SarvakaryeshuGame.jsx
-// Thin wrapper for Game 7 - connects config to engine
-
 import React from 'react';
 import MemoryGameEngine from '../../core/MemoryGameEngine';
 import { getGameConfig } from '../../configs/gameConfigs';
 
+// Sarvakaryeshu game assets
+import sarSquirrelHappy from './assets/images/sarvakaryeshu/sar-squirrel-happy.png';
+import sarSquirrelHelper from './assets/images/sarvakaryeshu/sar-squirrel-helper.png';
+import sarSquirrelSad from './assets/images/sarvakaryeshu/sar-squirrel-sad.png';
+import vaBirdHappy from './assets/images/sarvakaryeshu/va-bird-happy.png';
+import vaBirdHelper from './assets/images/sarvakaryeshu/va-bird-helper.png';
+import vaBirdSad from './assets/images/sarvakaryeshu/va-bird-sad.png';
+import karDuckHappy from './assets/images/sarvakaryeshu/kar-duck-happy.png';
+import karDuckHelper from './assets/images/sarvakaryeshu/kar-duck-helper.png';
+import karDuckSad from './assets/images/sarvakaryeshu/kar-duck-sad.png';
+import yeshuRabbitHappy from './assets/images/sarvakaryeshu/yeshu-rabbit-happy.png';
+import yeshuRabbitHelper from './assets/images/sarvakaryeshu/yeshu-rabbit-helper.png';
+import yeshuRabbitSad from './assets/images/sarvakaryeshu/yeshu-rabbit-sad.png';
+
 const SarvakaryeshuGame = ({
-  isActive,
-  hideElements,
-  powerGained,
-  onPhaseComplete,
-  onGameComplete,
-  profileName,
-  WaterSprayComponent,
-
-  // ⭐ CHANGED: Assets specific to Sarvakaryeshu game
-  getSarvakaryeshuSadAnimalImage,    // Initial state (sad animal)
-  getSarvakaryeshuHappyAnimalImage,  // Reward state (happy animal)
-  getSarvakaryeshuHelperImage,       // Clicker (helper animal)
-
-  // Mode control
-  selectedMode,
-  skipModeSelection,
-
-  // Reload support
-  isReload,
-  savedGameState,
-  onSaveGameState
+  selectedMode, skipModeSelection, isActive, isReload, savedGameState,
+  onSaveGameState, onPhaseComplete, onGameComplete, hideElements,
+  isAudioOn, playAudio, profileName, RainbowComponent
 }) => {
-
-  // ⭐ CHANGED: Get Sarvakaryeshu config
   const gameConfig = getGameConfig('sarvakaryeshu');
 
-  // ⭐ CHANGED: Map asset getters to config names
+  // 2. MAP
   const assetGetters = {
-    getSarvakaryeshuSadAnimalImage,   // matches: gameConfig.elements.singer.assetGetterInitial
-    getSarvakaryeshuHappyAnimalImage, // matches: gameConfig.elements.singer.assetGetterReward
-    getSarvakaryeshuHelperImage       // matches: gameConfig.elements.clicker.assetGetter
-  };
+    // Clickers (Helpers)
+    getSquirrelHelper: () => sarSquirrelHelper,
+    getBirdHelper:     () => vaBirdHelper,
+    getDuckHelper:     () => karDuckHelper,
+    getRabbitHelper:   () => yeshuRabbitHelper,
 
-  if (!gameConfig) {
-    console.error('❌ SarvakaryeshuGame: Config not found for "sarvakaryeshu"');
-    return null;
+    // Rewards (Sad -> Happy)
+    getSquirrelSad:   () => sarSquirrelSad,
+    getSquirrelHappy: () => sarSquirrelHappy,
+    getBirdSad:       () => vaBirdSad,
+    getBirdHappy:     () => vaBirdHappy,
+    getDuckSad:       () =>karDuckSad,
+    getDuckHappy:     () => karDuckHappy,
+    getRabbitSad:     () => yeshuRabbitSad,
+    getRabbitHappy:   () => yeshuRabbitHappy
   }
-  
+
   return (
     <MemoryGameEngine
       gameConfig={gameConfig}
       assetGetters={assetGetters}
+      selectedMode={selectedMode}
+      skipModeSelection={skipModeSelection}
       isActive={isActive}
-      hideElements={hideElements}
-      powerGained={powerGained}
-      onPhaseComplete={onPhaseComplete}
-      onGameComplete={onGameComplete}
-      profileName={profileName}
-      WaterSprayComponent={WaterSprayComponent}
-      selectedMode={selectedMode}          
-      skipModeSelection={skipModeSelection} 
       isReload={isReload}
       savedGameState={savedGameState}
       onSaveGameState={onSaveGameState}
+      onPhaseComplete={onPhaseComplete}
+      onGameComplete={onGameComplete}
+      hideElements={hideElements}
+      isAudioOn={isAudioOn}
+      playAudio={playAudio}
+      profileName={profileName}
+      WaterSprayComponent={RainbowComponent}
     />
   );
 };

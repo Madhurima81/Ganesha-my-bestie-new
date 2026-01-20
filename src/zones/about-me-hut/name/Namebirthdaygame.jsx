@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './NameBirthdayGame.css';
 import AboutMeCompletion from "../components/Aboutmecompletion";
+import '../../shared/components/OpeningModal.css'; // <--- SHARED MODAL IMPORT
+
 
 // Import images
 import nameBg from './assets/images/name-bg.png';
@@ -14,8 +16,10 @@ import janmashtamiIcon from './assets/images/janmashtami.png';
 import ganeshChaturthiIcon from './assets/images/chaturthi.png';
 
 const NameBirthdayGame = ({ onComplete, onBack, onNavigate }) => {
-  const [gamePhase, setGamePhase] = useState('intro'); 
-  // Phases: intro, name-balloons, name-complete, birthday-intro, birthday-choice, birthday-correct, ending
+const [gamePhase, setGamePhase] = useState('intro'); 
+// Phases: intro, name-balloons, name-complete, birthday-intro, birthday-choice, birthday-correct, 
+// child-name-intro, child-name-input, child-name-complete, child-birthday-intro, child-birthday-month, 
+// child-birthday-date, child-birthday-complete, besties-card, ending
   
   const [poppedLetters, setPoppedLetters] = useState(new Set());
   const [selectedFestival, setSelectedFestival] = useState(null);
@@ -28,24 +32,89 @@ const NameBirthdayGame = ({ onComplete, onBack, onNavigate }) => {
     completed: false
   });
 
+  const [currentLetterIndex, setCurrentLetterIndex] = useState(0);
+const [shakeWrongBalloon, setShakeWrongBalloon] = useState(null);
+const [instructionMessage, setInstructionMessage] = useState('Pop the balloons in order! 🎈');
+const [showHintModal, setShowHintModal] = useState(false);
+const [flippedCards, setFlippedCards] = useState(new Set());
+
+const [childName, setChildName] = useState('');
+const [childNameLetters, setChildNameLetters] = useState([]);
+const [availableLetters] = useState('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''));
+
+const [childBirthdayMonth, setChildBirthdayMonth] = useState('');
+const [childBirthdayMonthName, setChildBirthdayMonthName] = useState('');
+const [childBirthdayDate, setChildBirthdayDate] = useState('');
+
   // Name letters with balloon colors
-  const nameLetters = [
-    { id: 'G', letter: 'G', color: '#FF6B6B', left: '10%' },
-    { id: 'A1', letter: 'A', color: '#4ECDC4', left: '22%' },
-    { id: 'N', letter: 'N', color: '#FFE66D', left: '34%' },
-    { id: 'E', letter: 'E', color: '#95E1D3', left: '46%' },
-    { id: 'S', letter: 'S', color: '#F38181', left: '58%' },
-    { id: 'H', letter: 'H', color: '#AA96DA', left: '70%' },
-    { id: 'A2', letter: 'A', color: '#FCBAD3', left: '82%' }
-  ];
+// Name letters with RANDOM balloon positions
+// Name letters with SPREAD OUT positions (no overlap!)
+const nameLetters = [
+  { id: 'G', letter: 'G', color: '#FF6B6B', left: '15%', top: '45%' },
+  { id: 'A1', letter: 'A', color: '#4ECDC4', left: '75%', top: '30%' },
+  { id: 'N', letter: 'N', color: '#FFE66D', left: '45%', top: '60%' },
+  { id: 'E', letter: 'E', color: '#95E1D3', left: '70%', top: '65%' },
+  { id: 'S', letter: 'S', color: '#F38181', left: '30%', top: '25%' },
+  { id: 'H', letter: 'H', color: '#AA96DA', left: '55%', top: '35%' },
+  { id: 'A2', letter: 'A', color: '#FCBAD3', left: '20%', top: '70%' }
+];
 
   // Festivals - SAME STRUCTURE AS FOOD GAME
-  const festivals = [
-    { id: 'holi', name: 'Holi', image: holiIcon, correct: false },
-    { id: 'diwali', name: 'Diwali', image: diwaliIcon, correct: false },
-    { id: 'janmashtami', name: 'Janmashtami', image: janmashtamiIcon, correct: false },
-    { id: 'ganesh-chaturthi', name: 'Ganesh Chaturthi', image: ganeshChaturthiIcon, correct: true }
-  ];
+// Festivals with EDUCATIONAL INFO
+const festivals = [
+  { 
+    id: 'holi', 
+    name: 'Holi', 
+    image: holiIcon, 
+    correct: false,
+    month: 'March',
+    subtitle: 'Festival of Colors',
+    fact: 'Colors fly in the air!'
+  },
+  { 
+    id: 'diwali', 
+    name: 'Diwali', 
+    image: diwaliIcon, 
+    correct: false,
+    month: 'October-November',
+    subtitle: 'Festival of Lights',
+    fact: '🪔 We light lamps and smile bright.'
+  },
+  { 
+    id: 'janmashtami', 
+    name: 'Janmashtami', 
+    image: janmashtamiIcon, 
+    correct: false,
+    month: 'August',
+    subtitle: "Krishna's Birthday",
+    fact: '🪶 Baby Krishna is born.🦚'
+  },
+  { 
+    id: 'ganesh-chaturthi', 
+    name: 'Ganesh Chaturthi', 
+    image: ganeshChaturthiIcon, 
+    correct: true,
+    month: 'August-September',
+    subtitle: "Ganesha's Birthday!",
+    fact: '🐘 We make Ganesha with clay.'
+  }
+];
+
+// 12 Month-Festival Cards
+const monthFestivals = [
+  { month: 1, name: 'January', festival: 'Makar Sankranti', emoji: '🪁', color: '#87CEEB' },
+  { month: 2, name: 'February', festival: 'Maha Shivaratri', emoji: '🔱', color: '#9370DB' },
+  { month: 3, name: 'March', festival: 'Holi', emoji: '🎨', color: '#FF69B4' },
+  { month: 4, name: 'April', festival: 'Ugadi', emoji: '🌸', color: '#FFB6C1' },
+  { month: 5, name: 'May', festival: 'Akshaya Tritiya', emoji: '💰', color: '#FFD700' },
+  { month: 6, name: 'June', festival: 'Rath Yatra', emoji: '🛕', color: '#FFA07A' },
+  { month: 7, name: 'July', festival: 'Guru Purnima', emoji: '📿', color: '#DDA0DD' },
+  { month: 8, name: 'August', festival: 'Raksha Bandhan', emoji: '🧵', color: '#F0E68C' },
+  { month: 9, name: 'September', festival: 'Ganesh Chaturthi', emoji: '🐘', color: '#FFA500' },
+  { month: 10, name: 'October', festival: 'Navratri', emoji: '🗡️', color: '#FF6347' },
+  { month: 11, name: 'November', festival: 'Diwali', emoji: '🪔', color: '#FFD700' },
+  { month: 12, name: 'December', festival: 'Karthigai Deepam', emoji: '🕯️', color: '#F4A460' }
+];
 
   // Start game
   const handleStartGame = () => {
@@ -53,19 +122,96 @@ const NameBirthdayGame = ({ onComplete, onBack, onNavigate }) => {
   };
 
   // Pop balloon
-  const handlePopBalloon = (letterId) => {
+// Pop balloon - MUST be in order!
+// Pop balloon - MUST be in order! (but any matching letter works)
+/*const handlePopBalloon = (letterId, letterIndex) => {
+  if (poppedLetters.has(letterId)) return;
+
+  // Get the current letter we're looking for
+  const currentNeededLetter = nameLetters[currentLetterIndex].letter;
+  const clickedLetter = nameLetters[letterIndex].letter;
+
+  // Check if clicked letter MATCHES the needed letter (not just index!)
+  if (clickedLetter !== currentNeededLetter) {
+    // WRONG! Shake it
+    setShakeWrongBalloon(letterId);
+    setTimeout(() => setShakeWrongBalloon(null), 500);
+    return;
+  }
+
+  // CORRECT! Pop it
+  setPoppedLetters(prev => new Set([...prev, letterId]));
+  setCurrentLetterIndex(prev => prev + 1);
+  setShowConfetti(true);
+
+  // Update instruction message
+  if (poppedLetters.size + 1 < nameLetters.length) {
+    setInstructionMessage('Great! Keep going! 🎈');
+  } else {
+    setInstructionMessage('Amazing! All balloons popped! 🎉');
+  }
+
+  setTimeout(() => setShowConfetti(false), 500);
+
+  if (poppedLetters.size + 1 === nameLetters.length) {
+    setTimeout(() => {
+      setGamePhase('name-complete');
+setTimeout(() => setGamePhase('child-name-intro'), 3000);
+    }, 800);
+  }
+};*/
+
+// Add this array inside your component (or outside it)
+  const encouragingPhrases = [
+    "Let’s try the next one 🌼",
+    "Look closely 👀",
+    "You’ve got this 💛"
+  ];
+
+  // UPDATED handlePopBalloon function
+  const handlePopBalloon = (letterId, letterIndex) => {
     if (poppedLetters.has(letterId)) return;
 
-    setPoppedLetters(prev => new Set([...prev, letterId]));
-    setShowConfetti(true);
+    const currentNeededLetter = nameLetters[currentLetterIndex].letter;
+    const clickedLetter = nameLetters[letterIndex].letter;
 
+    // --- WRONG TAP LOGIC ---
+    if (clickedLetter !== currentNeededLetter) {
+      setShakeWrongBalloon(letterId);
+      setTimeout(() => setShakeWrongBalloon(null), 500);
+
+      // Capture the current message so we can revert to it
+      const previousMsg = instructionMessage;
+      
+      // Only update if we aren't already showing the error message
+      if (previousMsg !== "Almost there… look for the next letter 👀") {
+        setInstructionMessage("Almost there… look for the next letter 👀");
+        
+        // Revert back after 800ms
+        setTimeout(() => {
+          setInstructionMessage(previousMsg);
+        }, 800);
+      }
+      return;
+    }
+
+    // --- CORRECT TAP LOGIC ---
+    setPoppedLetters(prev => new Set([...prev, letterId]));
+    setCurrentLetterIndex(prev => prev + 1);
+    setShowConfetti(true);
     setTimeout(() => setShowConfetti(false), 500);
 
+    // Check if Game Complete
     if (poppedLetters.size + 1 === nameLetters.length) {
+      setInstructionMessage('Amazing! All balloons popped! 🎉');
       setTimeout(() => {
         setGamePhase('name-complete');
-        setTimeout(() => setGamePhase('birthday-intro'), 3000);
+        setTimeout(() => setGamePhase('child-name-intro'), 3000);
       }, 800);
+    } else {
+      // Pick a random encouraging phrase for the next step
+      const randomPhrase = encouragingPhrases[Math.floor(Math.random() * encouragingPhrases.length)];
+      setInstructionMessage(randomPhrase);
     }
   };
 
@@ -81,17 +227,17 @@ const NameBirthdayGame = ({ onComplete, onBack, onNavigate }) => {
     if (wrongFestivals.has(festivalId)) return;
     
     const festival = festivals.find(f => f.id === festivalId);
-    
-    if (festival.correct) {
+ if (festival.correct) {
       // Correct!
       setSelectedFestival(festivalId);
       setGamePhase('birthday-correct');
       
       setTimeout(() => {
-        setGamePhase('ending');
+        setGamePhase('child-birthday-intro'); // ✅ Keep this
         setGameState(prev => ({ ...prev, completed: true }));
         
-        setTimeout(() => setShowSceneCompletion(true), 3000);
+        // Comment out scene completion for now
+        // setTimeout(() => setShowSceneCompletion(true), 3000);
       }, 2500);
     } else {
       // Wrong - shake and mark
@@ -102,6 +248,90 @@ const NameBirthdayGame = ({ onComplete, onBack, onNavigate }) => {
       setTimeout(() => setShowShake(null), 500);
     }
   };
+
+  // Handle card flip to show info
+const handleCardFlip = (festivalId) => {
+  setFlippedCards(prev => {
+    const newSet = new Set(prev);
+    if (newSet.has(festivalId)) {
+      newSet.delete(festivalId);
+    } else {
+      newSet.add(festivalId);
+    }
+    return newSet;
+  });
+};
+
+// Handle child name letter click
+const handleChildNameLetterClick = (letter) => {
+  setChildNameLetters(prev => [...prev, letter]);
+};
+
+// Remove last letter (backspace)
+const handleChildNameBackspace = () => {
+  setChildNameLetters(prev => prev.slice(0, -1));
+};
+
+// Confirm child's name
+const handleChildNameConfirm = () => {
+  const name = childNameLetters.join('');
+  if (name.length < 2) {
+    return; // Name too short
+  }
+  setChildName(name);
+  
+  // Save to localStorage
+  localStorage.setItem('childName', name);
+  
+  setGamePhase('child-name-complete');
+  
+  // After celebration, move to Ganesha birthday
+  setTimeout(() => {
+    setGamePhase('birthday-intro');
+  }, 3000);
+};
+
+// Handle month selection
+const handleMonthSelect = (monthData) => {
+  setChildBirthdayMonth(monthData.month);
+  setChildBirthdayMonthName(monthData.name);
+  setGamePhase('child-birthday-date');
+};
+
+// Handle date selection
+const handleDateSelect = (date) => {
+  setChildBirthdayDate(date);
+  
+  // Save to localStorage
+  localStorage.setItem('childBirthdayMonth', childBirthdayMonthName);
+  localStorage.setItem('childBirthdayDate', date);
+  localStorage.setItem('childBirthday', `${childBirthdayMonth}-${date}`);
+  
+  setGamePhase('child-birthday-complete');
+  
+  // After celebration, show bestie card
+  setTimeout(() => {
+    setGamePhase('besties-card');
+  }, 3000);
+};
+
+// Get number of days in selected month
+const getDaysInMonth = (month) => {
+  const daysInMonth = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  return daysInMonth[month - 1];
+};
+
+// Generate Ganesha's response based on child's birthday
+const getGaneshaResponse = () => {
+  if (childBirthdayMonth === 9) {
+    return "September! That's MY birthday month too! We're birthday twins! 🐘❤️";
+  } else if (childBirthdayMonth === 8) {
+    return "August! That's so close to my birthday in September! Almost birthday twins! 🎈";
+  } else {
+    const monthData = monthFestivals.find(m => m.month === childBirthdayMonth);
+    return `${monthData.name}! That's during ${monthData.festival}! What a special birthday! ${monthData.emoji}`;
+  }
+};
 
   return (
     <div className="name-birthday-game">
@@ -115,13 +345,51 @@ const NameBirthdayGame = ({ onComplete, onBack, onNavigate }) => {
         }}
       ></div>
 
-      {/* Intro Screen */}
+     {/* SHARED INTRO MODAL */}
       {gamePhase === 'intro' && (
-        <div className="intro-overlay">
-          <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
-          <div className="intro-speech">
-            <p className="intro-text">Let's find my name!</p>
-            <button className="start-btn" onClick={handleStartGame}>Let's Play! 🎈</button>
+        <div className="game-modal-overlay" id="name-birthday-intro">
+          <div className="game-modal-content">
+            
+            {/* Character */}
+            <div className="game-modal-character">
+              <img src={babyGaneshaImg} alt="Baby Ganesha" />
+            </div>
+
+            {/* The Cream Card */}
+            <div className="game-modal-card">
+              <h1 className="game-modal-title">Name & Birthday Quest!</h1>
+              
+              <p className="game-modal-subtitle">
+                I have a special name and a special birthday.
+<br />
+               Let’s discover them together!
+              </p>
+
+              {/* Icons Row */}
+              <div className="game-modal-icons">
+                
+                {/* 1. Name Icon */}
+                <div className="game-modal-icon-item">
+                  <div className="game-modal-icon-circle" style={{background: '#EDE7F6', borderColor: '#D1C4E9'}}>
+                    <span style={{fontSize: '2.5rem'}}>🔤</span>
+                  </div>
+                  <span className="game-modal-icon-label">Name</span>
+                </div>
+
+                {/* 2. Birthday Icon */}
+                <div className="game-modal-icon-item">
+                  <div className="game-modal-icon-circle" style={{background: '#E3F2FD', borderColor: '#90CAF9'}}>
+                    <span style={{fontSize: '2.5rem'}}>🎂</span>
+                  </div>
+                  <span className="game-modal-icon-label">Birthday</span>
+                </div>
+
+              </div>
+
+              <button className="game-modal-button" onClick={handleStartGame}>
+                Let’s Begin 🌱
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -138,16 +406,44 @@ const NameBirthdayGame = ({ onComplete, onBack, onNavigate }) => {
             <img src={babyGaneshaImg} alt="Baby Ganesha" className="ganesha-waiting bounce-gentle" />
           </div>
 
-          <div className="instruction-bubble">Tap the balloons! 🎈</div>
+
+          <div className="instruction-bubble">{instructionMessage}</div>
+
+          {/* Letter Tracker */}
+  <div className="letter-tracker">
+  {nameLetters.map((item, index) => {
+    const isFilled = index < currentLetterIndex;
+    return (
+      <div 
+        key={item.id}
+        className={`letter-box ${isFilled ? 'filled' : 'empty'}`}
+      >
+        {isFilled ? nameLetters[index].letter : ''}
+      </div>
+    );
+  })}
+  <div className="tracker-progress">
+    {currentLetterIndex} of {nameLetters.length}
+  </div>
+</div>
+
+          {/* ADD HINT BUTTON */}
+          <button 
+            className="hint-button bounce-gentle"
+            onClick={() => setShowHintModal(true)}
+          >
+            💡 Hint
+          </button>
 
           <div className="balloons-container">
-            {nameLetters.map((item, index) => !poppedLetters.has(item.id) && (
+           {nameLetters.map((item, index) => !poppedLetters.has(item.id) && (
               <button
                 key={item.id}
-                className="balloon-btn float-balloon"
-                onClick={() => handlePopBalloon(item.id)}
+                className={`balloon-btn float-balloon ${shakeWrongBalloon === item.id ? 'shake-wrong' : ''}`}
+                onClick={() => handlePopBalloon(item.id, index)}
                 style={{
                   left: item.left,
+                  top: item.top,
                   '--balloon-color': item.color,
                   animationDelay: `${index * 0.2}s`
                 }}
@@ -174,6 +470,40 @@ const NameBirthdayGame = ({ onComplete, onBack, onNavigate }) => {
         </div>
       )}
 
+      {/* Hint Modal */}
+          {showHintModal && (
+            <div className="hint-modal-overlay" onClick={() => setShowHintModal(false)}>
+              <div className="hint-modal-content" onClick={(e) => e.stopPropagation()}>
+                <button 
+                  className="hint-close-btn"
+                  onClick={() => setShowHintModal(false)}
+                >
+                  ✕
+                </button>
+                
+                <img 
+                  src={babyGaneshaImg} 
+                  alt="Ganesha" 
+                  className="hint-ganesha bounce"
+                />
+                
+                <div className="hint-message">
+                  <p className="hint-title">My name is:</p>
+                  <div className="hint-name-display">
+                    {nameLetters.map((item, index) => (
+                      <span key={item.id} className="hint-letter" style={{
+                        animationDelay: `${index * 0.1}s`
+                      }}>
+                        {item.letter}
+                      </span>
+                    ))}
+                  </div>
+                  <p className="hint-subtitle">Pop the balloons in this order!</p>
+                </div>
+              </div>
+            </div>
+          )}
+
       {/* Name Complete */}
       {gamePhase === 'name-complete' && (
         <div className="name-complete-screen">
@@ -197,13 +527,354 @@ const NameBirthdayGame = ({ onComplete, onBack, onNavigate }) => {
         </div>
       )}
 
-      {/* Birthday Intro */}
+      {/* Child Name Intro */}
+{/* Child Name Intro - NEW DESIGN */}
+      {gamePhase === 'child-name-intro' && (
+        <div className="child-intro-overlay">
+          <img 
+            src={babyGaneshaImg} 
+            alt="Baby Ganesha" 
+            className="child-intro-ganesha bounce" 
+          />
+          
+          <div className="child-intro-card">
+            <h2 className="child-intro-title">
+              Now you know my name and birthday
+            </h2>
+            {/*<p className="child-intro-text">
+              But what's YOUR name? 🎈
+            </p>*/}
+            
+            <button 
+              className="child-intro-btn" 
+              onClick={() => setGamePhase('child-name-input')}
+            >
+              Tell Me Your Name! ✨
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Child Name Input - Letter Tiles */}
+      {gamePhase === 'child-name-input' && (
+        <div className="child-name-input-screen">
+          <div className="child-input-ganesha">
+            <img src={babyGaneshaImg} alt="Ganesha" className="ganesha-watching bounce-gentle" />
+          </div>
+
+          <div className="child-instruction-bubble">
+            Tap the letters to spell your name! 🎈
+          </div>
+
+          {/* Name Display Box */}
+          <div className="child-name-display">
+            {childNameLetters.length === 0 ? (
+              <div className="name-placeholder">Your Name Here</div>
+            ) : (
+              childNameLetters.map((letter, index) => (
+                <div key={index} className="child-name-letter pop-in">
+                  {letter}
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Control Buttons */}
+          <div className="child-name-controls">
+            <button 
+              className="child-backspace-btn"
+              onClick={handleChildNameBackspace}
+              disabled={childNameLetters.length === 0}
+            >
+              ⌫ Delete
+            </button>
+            <button 
+              className="child-confirm-btn"
+              onClick={handleChildNameConfirm}
+              disabled={childNameLetters.length < 2}
+            >
+              That's My Name! ✓
+            </button>
+          </div>
+
+          {/* Letter Tiles Keyboard */}
+          <div className="child-letter-keyboard">
+            {availableLetters.map((letter, index) => (
+              <button
+                key={index}
+                className="child-letter-tile bounce-gentle"
+                onClick={() => handleChildNameLetterClick(letter)}
+                style={{ animationDelay: `${index * 0.02}s` }}
+              >
+                {letter}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Child Name Complete - Celebration */}
+      {gamePhase === 'child-name-complete' && (
+        <div className="child-name-celebration-screen">
+          <div className="celebration-ganesha">
+            <img src={babyGaneshaSit} alt="Happy Ganesha" className="ganesha-celebrate celebrate-scale" />
+          </div>
+
+          <div className="child-name-reveal">
+            <div className="child-name-text glow-text">{childName}!</div>
+            <p className="ganesha-compliment">What a beautiful name! 🌟</p>
+          </div>
+
+          <div className="celebration-confetti">
+            {Array.from({length: 20}).map((_, i) => (
+              <div key={i} className="confetti-piece" style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 0.5}s`
+              }}>
+                {['✨', '🎉', '⭐', '💫'][Math.floor(Math.random() * 4)]}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+{/* Child Birthday Intro - NEW DESIGN */}
+      {gamePhase === 'child-birthday-intro' && (
+        <div className="child-bday-intro-overlay">
+          <img 
+            src={babyGaneshaImg} 
+            alt="Baby Ganesha" 
+            className="child-bday-intro-ganesha bounce" 
+          />
+          
+          <div className="child-bday-intro-card">
+            <h2 className="child-bday-intro-title">
+              Now I know YOUR name, {childName}! 🎈
+            </h2>
+            <p className="child-bday-intro-text">
+              But when is YOUR birthday? 🎂
+            </p>
+            
+            <button 
+              className="child-bday-intro-btn" 
+              onClick={() => setGamePhase('child-birthday-month')}
+            >
+              Tell You My Birthday! 🎉
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Child Birthday - Month Selection */}
+      {gamePhase === 'child-birthday-month' && (
+        <div className="child-birthday-month-screen">
+          <div className="child-input-ganesha">
+            <img src={babyGaneshaImg} alt="Ganesha" className="ganesha-watching bounce-gentle" />
+          </div>
+
+          <div className="child-instruction-bubble">
+            Tap the month you were born! 🗓️
+          </div>
+
+          <div className="month-festivals-grid">
+            {monthFestivals.map((monthData, index) => (
+              <button
+                key={monthData.month}
+                className="month-festival-card bounce-gentle"
+                onClick={() => handleMonthSelect(monthData)}
+                style={{ 
+                  animationDelay: `${index * 0.05}s`,
+                  borderColor: monthData.color
+                }}
+              >
+                <div className="month-festival-emoji">{monthData.emoji}</div>
+                <div className="month-festival-name">{monthData.name}</div>
+                <div className="month-festival-subtitle">{monthData.festival}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Child Birthday - Date Selection */}
+      {gamePhase === 'child-birthday-date' && (
+        <div className="child-birthday-date-screen">
+          <div className="child-input-ganesha">
+            <img src={babyGaneshaImg} alt="Ganesha" className="ganesha-watching bounce-gentle" />
+          </div>
+
+          <div className="child-instruction-bubble">
+            Which day in {childBirthdayMonthName}? 📅
+          </div>
+
+          <div className="date-picker-grid">
+            {Array.from({ length: getDaysInMonth(childBirthdayMonth) }, (_, i) => i + 1).map((date) => (
+              <button
+                key={date}
+                className="date-picker-button bounce-gentle"
+                onClick={() => handleDateSelect(date)}
+                style={{ animationDelay: `${date * 0.02}s` }}
+              >
+                {date}
+              </button>
+            ))}
+          </div>
+
+          <button 
+            className="back-to-months-btn"
+            onClick={() => setGamePhase('child-birthday-month')}
+          >
+            ← Change Month
+          </button>
+        </div>
+      )}
+
+      {/* Child Birthday Complete - Celebration */}
+      {gamePhase === 'child-birthday-complete' && (
+        <div className="child-birthday-celebration-screen">
+          <div className="celebration-ganesha">
+            <img src={babyGaneshaSit} alt="Happy Ganesha" className="ganesha-celebrate celebrate-scale" />
+          </div>
+
+          <div className="child-birthday-reveal">
+            <div className="child-birthday-text glow-text">
+              {childBirthdayMonthName} {childBirthdayDate}!
+            </div>
+            <p className="ganesha-birthday-response">{getGaneshaResponse()}</p>
+          </div>
+
+          <div className="celebration-confetti">
+            {Array.from({length: 20}).map((_, i) => (
+              <div key={i} className="confetti-piece" style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 0.5}s`
+              }}>
+                {['🎂', '🎉', '⭐', '🎈'][Math.floor(Math.random() * 4)]}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* BESTIES CARD - Final Celebration */}
+   {/* BESTIES CARD - FINAL CELEBRATION (NEW DESIGN) */}
+      {gamePhase === 'besties-card' && (
+        <div className="besties-overlay">
+          
+          <h1 className="besties-title">BEST FRIENDS FOREVER! 💖</h1>
+          <div className="besties-subtitle">We both love celebrations!</div>
+
+          <div className="besties-cards">
+            
+            {/* GANESHA CARD */}
+            <div className="besties-card">
+              <img src={babyGaneshaSit} alt="Ganesha" className="besties-avatar" />
+              <div className="besties-card-name">GANESHA</div>
+              
+              <div className="besties-info-row">
+                <span className="besties-label">Birthday:</span>
+                <span className="besties-value">Ganesh Chaturthi</span>
+              </div>
+              <div className="besties-info-row">
+                <span className="besties-label">Month:</span>
+                <span className="besties-value">Aug-Sept 🐘</span>
+              </div>
+              {/*<div className="besties-info-row">
+                <span className="besties-label">Favorite:</span>
+                <span className="besties-value">Modaks 🍬</span>
+              </div>*/}
+            </div>
+
+            {/* CONNECTOR */}
+            <div className="besties-connector">
+              <div className="besties-heart">❤️</div>
+              <span>F</span>
+              <span>R</span>
+              <span>I</span>
+              <span>E</span>
+              <span>N</span>
+              <span>D</span>
+              <span>S</span>
+              <div className="besties-heart">❤️</div>
+            </div>
+
+            {/* CHILD CARD */}
+            <div className="besties-card">
+              {/* Use avatar image or initials circle */}
+              <div className="child-avatar-circle" style={{width: '80px', height: '80px', margin: '0 auto'}}>
+                 <div className="child-initial" style={{fontSize: '40px'}}>{childName.charAt(0)}</div>
+              </div>
+              <div className="besties-card-name">{childName.toUpperCase()}</div>
+
+              <div className="besties-info-row">
+                <span className="besties-label">Birthday:</span>
+                <span className="besties-value">{childBirthdayMonthName} {childBirthdayDate}</span>
+              </div>
+              <div className="besties-info-row">
+                <span className="besties-label">Festival:</span>
+                <span className="besties-value">
+                  {monthFestivals.find(m => m.month === childBirthdayMonth)?.emoji} {monthFestivals.find(m => m.month === childBirthdayMonth)?.name}
+                </span>
+              </div>
+              {/*<div className="besties-info-row">
+                <span className="besties-label">Best Friend:</span>
+                <span className="besties-value">Ganesha! 🐘</span>
+              </div>*/}
+            </div>
+
+          </div>
+
+          <div className="besties-badge-container">
+            <div className="besties-badge">
+              🎖️ OFFICIAL BESTIES BADGE 🎖️
+            </div>
+            
+            <button 
+              className="besties-end-btn"
+              onClick={() => {
+                setGameState(prev => ({ ...prev, completed: true }));
+                setShowSceneCompletion(true);
+              }}
+            >
+              Finish Game ✨
+            </button>
+          </div>
+
+        </div>
+      )}
+
+{/* Birthday Intro - WITH CLUE */}
+{/* Birthday Intro - NEW DESIGN */}
       {gamePhase === 'birthday-intro' && (
-        <div className="intro-overlay">
-          <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
-          <div className="intro-speech">
-            <p className="intro-text">Which festival is my birthday?</p>
-            <button className="start-btn" onClick={handleStartBirthdayChoice}>Find It! 🪔</button>
+        <div className="bday-quest-overlay">
+          {/* Ganesha sits outside/above the card */}
+          <img 
+            src={babyGaneshaImg} 
+            alt="Baby Ganesha" 
+            className="bday-quest-ganesha bounce" 
+          />
+          
+          <div className="bday-quest-card">
+            {/* Title */}
+            <h2 className="bday-quest-title">
+              Let’s Find My Birthday 🎂
+            </h2>
+
+            {/* Body Copy */}
+            <p className="bday-quest-text">
+              My birthday is a joyful day when people celebrate together.<br />
+              It comes during the festival season.
+            </p>
+
+            {/* Button */}
+            <button 
+              className="bday-quest-btn" 
+              onClick={handleStartBirthdayChoice}
+            >
+              Let’s Explore 🌼
+            </button>
           </div>
         </div>
       )}
@@ -219,24 +890,81 @@ const NameBirthdayGame = ({ onComplete, onBack, onNavigate }) => {
             Which festival is my birthday? 🎊
           </div>
 
-          <div className="birthday-choices-container">
-            {festivals.map((festival, index) => (
-              <button
-                key={festival.id}
-                className={`birthday-choice-card ${showShake === festival.id ? 'birthday-shake' : ''} ${wrongFestivals.has(festival.id) ? 'birthday-wrong' : ''} bounce-gentle`}
-                onClick={() => handleFestivalClick(festival.id)}
-                style={{ animationDelay: `${index * 0.2}s` }}
-                disabled={wrongFestivals.has(festival.id)}
-              >
-                <div className="birthday-choice-image-container">
-                  <img src={festival.image} alt={festival.name} className="birthday-choice-image" />
+<div className="birthday-choices-container">
+    {/* ADD THIS OVERLAY */}
+  {flippedCards.size > 0 && (
+    <div 
+      className="birthday-info-overlay"
+      onClick={() => setFlippedCards(new Set())}
+    />
+  )}
+  
+            {festivals.map((festival, index) => {
+              const isLeftColumn = index % 2 === 0; // 0,2 = LEFT | 1,3 = RIGHT
+              
+              return (
+            <div 
+  key={festival.id} 
+  className={`birthday-card-container ${flippedCards.has(festival.id) ? 'container-active' : ''}`}
+>
+                  {/* MAIN CARD */}
+             <button
+  className={`birthday-choice-card ${showShake === festival.id ? 'birthday-shake' : ''} ${wrongFestivals.has(festival.id) ? 'birthday-wrong' : ''} ${flippedCards.has(festival.id) ? 'card-info-open' : ''}`}
+  onClick={() => handleFestivalClick(festival.id)}
+  disabled={wrongFestivals.has(festival.id) || flippedCards.size > 0} // ← UPDATED LINE
+  style={{ animationDelay: `${index * 0.2}s` }}
+>
+                    <div className="birthday-choice-image-container">
+                      <img src={festival.image} alt={festival.name} className="birthday-choice-image" />
+                    </div>
+                    <div className="birthday-choice-name">{festival.name}</div>
+                    <div className="birthday-choice-subtitle">{festival.subtitle}</div>
+                  </button>
+
+         {/* INFO ICON */}
+<button 
+  className="birthday-info-icon"
+  onClick={() => handleCardFlip(festival.id)}
+  disabled={wrongFestivals.has(festival.id)}
+  style={{
+    [isLeftColumn ? 'left' : 'right']: '10px'
+  }}
+>
+  ⓘ
+</button>
+
+                  {/* SLIDE-OUT INFO PANEL */}
+                  {flippedCards.has(festival.id) && (
+                    <div className={`birthday-info-panel ${isLeftColumn ? 'slide-left' : 'slide-right'}`}>
+            <button 
+  className="birthday-info-close"
+  onClick={(e) => {
+    e.stopPropagation(); // Prevent triggering overlay click
+    setFlippedCards(new Set());
+  }}
+>
+  ✕
+</button>
+                      
+                      <div className="birthday-info-content">
+                        <div className="birthday-info-month">{festival.month}</div>
+                        <div className="birthday-info-fact">{festival.fact}</div>
+                        
+                        {/*<button 
+                          className="birthday-info-choose-btn"
+                          onClick={() => handleFestivalClick(festival.id)}
+                        >
+                          {festival.correct ? "✅ This is my birthday!" : "Try this one"}
+                        </button>*/}
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div className="birthday-choice-name">{festival.name}</div>
-              </button>
-            ))}
+              );
+            })}
           </div>
-        </div>
-      )}
+    </div>
+  )}
 
       {/* Birthday Correct - Celebration */}
       {gamePhase === 'birthday-correct' && (

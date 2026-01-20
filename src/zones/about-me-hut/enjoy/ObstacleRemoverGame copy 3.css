@@ -1,0 +1,1254 @@
+/* ========================================
+   DREAMS & WISHES GAME STYLES
+======================================== */
+
+.dreams-wishes-game {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.dreams-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* Back Button */
+.back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 12px 24px;
+  background: rgba(139, 111, 71, 0.9);
+  color: white;
+  border: 2px solid #654321;
+  border-radius: 12px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 100;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background: rgba(101, 67, 33, 0.9);
+  transform: scale(1.05);
+}
+
+/* ========================================
+   INTRO OVERLAY
+======================================== */
+
+.intro-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.intro-ganesha {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  margin-bottom: 30px;
+}
+
+.intro-speech {
+  background: linear-gradient(135deg, #FFD93D, #FF9800);
+  border: 4px solid #FF8C00;
+  border-radius: 25px;
+  padding: 30px 40px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+}
+
+.intro-text {
+  font-family: 'Baloo 2', cursive;
+  font-size: 24px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  line-height: 1.4;
+}
+
+.start-btn {
+  padding: 15px 40px;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.start-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+}
+
+/* ========================================
+   WISH SCREENS
+======================================== */
+
+.wish-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+}
+
+.ganesha-watching {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+}
+
+.ganesha-small {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.speech-bubble {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border: 3px solid #FF8C00;
+  border-radius: 20px;
+  padding: 15px 25px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 20px;
+  font-weight: 600;
+  color: #654321;
+  text-align: center;
+  z-index: 15;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: bubbleBounce 0.6s ease-out;
+}
+
+.speech-bubble-large {
+  position: absolute;
+  bottom: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border: 3px solid #FF8C00;
+  border-radius: 20px;
+  padding: 20px 35px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 22px;
+  font-weight: 600;
+  color: #654321;
+  text-align: center;
+  z-index: 15;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  max-width: 700px;
+  line-height: 1.5;
+}
+
+.wish-interactive-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* ========================================
+   WISH 1: EARTH & HAPPINESS
+======================================== */
+
+.wish-interactive-container {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 50;
+  width: 600px;
+  height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.earth-icon {
+  width: 500px;
+  height: 500px;
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.earth-icon:hover {
+  transform: scale(1.05);
+}
+
+/* CSS EARTH CIRCLE */
+.earth-emoji {
+  width: 350px;
+  height: 350px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, 
+    #2E86AB 0%, 
+    #4A90E2 20%,
+    #50C878 40%, 
+    #2E86AB 60%,
+    #A7C5EB 80%
+  );
+  box-shadow: 
+    inset -20px -20px 50px rgba(0, 0, 0, 0.4),
+    0 0 40px rgba(74, 144, 226, 0.3);
+  position: relative;
+  transition: all 0.8s ease;
+  filter: grayscale(100%) brightness(0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0; /* Hide emoji if browser renders it */
+}
+
+/* Green land masses */
+.earth-emoji::before {
+  content: '';
+  position: absolute;
+  top: 25%;
+  left: 15%;
+  width: 45%;
+  height: 35%;
+  background: #228B22;
+  border-radius: 50% 40% 60% 50%;
+  opacity: 0.8;
+}
+
+.earth-emoji::after {
+  content: '';
+  position: absolute;
+  bottom: 20%;
+  right: 10%;
+  width: 40%;
+  height: 40%;
+  background: #2F7D32;
+  border-radius: 60% 50% 40% 60%;
+  opacity: 0.8;
+}
+
+/* Tapping stages */
+.earth-icon.earth-tap1 .earth-emoji {
+  filter: grayscale(60%) brightness(0.75);
+  transform: scale(1.05);
+}
+
+.earth-icon.earth-tap2 .earth-emoji {
+  filter: grayscale(30%) brightness(0.9);
+  transform: scale(1.1);
+}
+
+.earth-icon.earth-tap3 .earth-emoji {
+  filter: grayscale(0%) brightness(1.1);
+  transform: scale(1.15);
+  box-shadow: 
+    inset -20px -20px 50px rgba(0, 0, 0, 0.4),
+    0 0 60px rgba(76, 175, 80, 0.9),
+    0 0 100px rgba(255, 215, 0, 0.6);
+}
+
+/* Sad faces around earth */
+.sad-faces {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.face-emoji {
+  position: absolute;
+  font-size: 80px;
+  top: 50%;
+  left: 50%;
+  margin-left: -40px;
+  margin-top: -40px;
+  transition: all 0.8s ease;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.face-happy {
+  animation: faceFloat 2s ease-in-out infinite;
+}
+
+@keyframes faceFloat {
+  0%, 100% { 
+    transform: translateY(0) scale(1); 
+  }
+  50% { 
+    transform: translateY(-30px) scale(1.15); 
+  }
+}
+
+/* ========================================
+   WISH 2: BOWLS & SHARING
+======================================== */
+
+.bowls-container {
+  display: flex;
+  gap: 40px;
+  align-items: flex-end;
+}
+
+.bowl {
+  width: 120px;
+  height: 120px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  animation: bounceGentle 2s ease-in-out infinite;
+}
+
+.bowl:hover {
+  transform: translateY(-10px);
+}
+
+.bowl-emoji {
+  font-size: 80px;
+  filter: grayscale(100%);
+  transition: all 0.5s ease;
+}
+
+.bowl-filled .bowl-emoji {
+  filter: grayscale(0%);
+  transform: scale(1.1);
+}
+
+.bowl-food {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 30px;
+}
+
+.hearts-rain {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.heart-fall {
+  position: absolute;
+  font-size: 30px;
+  animation: heartRain 3s linear infinite;
+}
+
+@keyframes heartRain {
+  0% {
+    transform: translateY(-100px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+/* ========================================
+   WISH 3: PARK & NATURE
+======================================== */
+
+.park-scene {
+  width: 500px;
+  height: 350px;
+  position: relative;
+  cursor: pointer;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.5s ease;
+}
+
+.park-ground {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, #CCC 0%, #999 100%);
+  transition: all 0.5s ease;
+}
+
+.park-scene.park-tap1 .park-ground {
+  background: linear-gradient(to bottom, #B8E6B8 0%, #A0D8A0 100%);
+}
+
+.park-scene.park-tap2 .park-ground {
+  background: linear-gradient(to bottom, #90EE90 0%, #76D776 100%);
+}
+
+.park-scene.park-tap3 .park-ground {
+  background: linear-gradient(to bottom, #7FD87F 0%, #4CAF50 100%);
+  box-shadow: 0 0 40px rgba(76, 175, 80, 0.6);
+}
+
+.flowers-container,
+.butterflies-container,
+.playground {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.flower {
+  position: absolute;
+  font-size: 40px;
+  animation: popIn 0.5s ease backwards;
+}
+
+.butterfly {
+  position: absolute;
+  font-size: 35px;
+  animation: flutter 3s ease-in-out infinite;
+}
+
+.playground {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+}
+
+.playground-item {
+  font-size: 60px;
+  animation: popIn 0.6s ease backwards;
+}
+
+@keyframes flutter {
+  0%, 100% { 
+    transform: translateX(0) translateY(0) rotate(0deg);
+  }
+  25% { 
+    transform: translateX(20px) translateY(-10px) rotate(5deg);
+  }
+  50% { 
+    transform: translateX(0) translateY(-20px) rotate(0deg);
+  }
+  75% { 
+    transform: translateX(-20px) translateY(-10px) rotate(-5deg);
+  }
+}
+
+/* ========================================
+   WISH COMPLETE SCREENS
+======================================== */
+
+.wish-complete-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+}
+
+.ganesha-celebrate {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  margin-bottom: 30px;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+}
+
+.success-message-large {
+  font-family: 'Baloo 2', cursive;
+  font-size: 36px;
+  font-weight: 700;
+  color: #FFD700;
+  text-align: center;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.wish-checkmark {
+  font-family: 'Nunito', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #4CAF50;
+  background: white;
+  padding: 15px 30px;
+  border-radius: 25px;
+  border: 3px solid #45a049;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+}
+
+.celebration-elements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 25;
+}
+
+.floating-element {
+  position: absolute;
+  font-size: 40px;
+  animation: floatUp 3s ease-in-out infinite;
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* ========================================
+   DREAM SCREENS
+======================================== */
+
+.drawing-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.dream-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.dream-container {
+  position: relative;
+  width: 600px;
+  height: 400px;
+  margin-bottom: 100px;
+}
+
+.dream-drawing-display {
+  width: 100%;
+  height: 100%;
+  background: white;
+  border: 5px solid #8B4513;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.dream-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.clouds-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.dream-cloud {
+  position: absolute;
+  font-size: 80px;
+  animation: cloudFloat 3s ease-in-out infinite;
+}
+
+.cloud-1 {
+  top: 10%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.cloud-2 {
+  top: 40%;
+  right: 15%;
+  animation-delay: 1s;
+}
+
+.cloud-3 {
+  bottom: 20%;
+  left: 30%;
+  animation-delay: 2s;
+}
+
+.cloud-fade {
+  animation: cloudFadeOut 0.8s ease forwards;
+}
+
+@keyframes cloudFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes cloudFadeOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
+.ganesha-helper {
+  position: absolute;
+  bottom: -120px;
+  right: -100px;
+  z-index: 3;
+}
+
+.ganesha-trunk {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ganesha-blowing .ganesha-trunk {
+  cursor: pointer;
+}
+
+.ganesha-blowing:hover .ganesha-trunk {
+  transform: scale(1.1);
+}
+
+.ganesha-blow-done .ganesha-trunk {
+  animation: trunkBlow 1s ease;
+}
+
+.golden-puff {
+  position: absolute;
+  top: 30%;
+  left: -50px;
+  font-size: 60px;
+  animation: puffExpand 1s ease forwards;
+}
+
+@keyframes trunkBlow {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-10deg); }
+}
+
+@keyframes puffExpand {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(3) translateX(-100px);
+    opacity: 0;
+  }
+}
+
+.trunk-tap-btn {
+  padding: 18px 45px;
+  background: linear-gradient(135deg, #FF8C00, #FFA500);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(255, 140, 0, 0.4);
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.trunk-tap-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(255, 140, 0, 0.6);
+}
+
+/* ========================================
+   DREAM REVEALED
+======================================== */
+
+.dream-revealed-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+}
+
+.dream-glow-container {
+  position: relative;
+  width: 500px;
+  height: 350px;
+  margin-bottom: 40px;
+}
+
+.dream-image-glowing {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border: 5px solid #FFD700;
+  border-radius: 20px;
+  box-shadow: 0 0 40px rgba(255, 215, 0, 0.8),
+              0 0 60px rgba(255, 215, 0, 0.6),
+              0 0 80px rgba(255, 215, 0, 0.4);
+  animation: dreamGlow 2s ease-in-out infinite;
+}
+
+@keyframes dreamGlow {
+  0%, 100% {
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.8),
+                0 0 60px rgba(255, 215, 0, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 60px rgba(255, 215, 0, 1),
+                0 0 80px rgba(255, 215, 0, 0.8);
+  }
+}
+
+.sparkles-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.sparkle-float {
+  position: absolute;
+  font-size: 30px;
+  animation: sparkleFloat 2s ease-in-out infinite;
+}
+
+@keyframes sparkleFloat {
+  0%, 100% {
+    opacity: 0;
+    transform: translateY(0) scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-30px) scale(1);
+  }
+}
+
+.ganesha-proud {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  margin-bottom: 30px;
+}
+
+/* ========================================
+   COMPARISON CARD
+======================================== */
+
+.dreams-comparison-screen {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  overflow-y: auto;
+  background: linear-gradient(135deg, #FFF9E6, #FFE6CC);
+  z-index: 40;
+}
+
+.comparison-header {
+  text-align: center;
+  margin-bottom: 30px;
+  z-index: 10;
+}
+
+.comparison-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 52px;
+  font-weight: 900;
+  color: #FF8C00;
+  text-shadow: 3px 3px 0 #FFD700;
+  margin-bottom: 10px;
+}
+
+.comparison-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 24px;
+  color: #8B4513;
+  font-weight: 700;
+}
+
+.dreams-comparison-grid {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+  justify-content: center;
+  margin-bottom: 30px;
+  z-index: 10;
+}
+
+.dreams-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  min-width: 300px;
+}
+
+.column-header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.column-avatar {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.child-dream-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  margin: 0 auto 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 5px solid white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.dream-sparkle {
+  font-size: 60px;
+}
+
+.column-name {
+  font-family: 'Baloo 2', cursive;
+  font-size: 28px;
+  font-weight: 900;
+  color: #8B4513;
+  margin: 0;
+}
+
+/* Wishes List */
+.wishes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+.wish-item {
+  background: white;
+  border: 4px solid #8B4513;
+  border-radius: 15px;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.wish-icon {
+  font-size: 40px;
+  flex-shrink: 0;
+}
+
+.wish-text {
+  font-family: 'Baloo 2', cursive;
+  font-size: 20px;
+  font-weight: 700;
+  color: #8B4513;
+  flex: 1;
+}
+
+.wish-check {
+  font-size: 32px;
+  color: #4CAF50;
+  flex-shrink: 0;
+}
+
+/* Dream Display */
+.dream-display-box {
+  background: white;
+  border: 4px solid #FFD700;
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2),
+              0 0 20px rgba(255, 215, 0, 0.3);
+  width: 100%;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dream-thumbnail {
+  max-width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.wishes-quote {
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  font-style: italic;
+  color: #8B4513;
+  text-align: center;
+  margin-top: 15px;
+  line-height: 1.5;
+}
+
+/* Divider */
+.comparison-divider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin: 0 20px;
+}
+
+.heart-connector {
+  font-size: 40px;
+}
+
+.divider-text {
+  font-family: 'Baloo 2', cursive;
+  font-size: 24px;
+  font-weight: 900;
+  color: #FF1493;
+  writing-mode: vertical-rl;
+  letter-spacing: 5px;
+}
+
+/* Final Message */
+.final-message-box {
+  background: white;
+  border: 4px solid #8B4513;
+  border-radius: 20px;
+  padding: 25px 40px;
+  margin-bottom: 25px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  max-width: 700px;
+  z-index: 10;
+}
+
+.final-message-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: #8B4513;
+  text-align: center;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.comparison-badge-container {
+  text-align: center;
+  margin-bottom: 20px;
+  z-index: 10;
+}
+
+.comparison-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: white;
+  font-family: 'Baloo 2', cursive;
+  font-size: 28px;
+  font-weight: 900;
+  padding: 20px 45px;
+  border-radius: 50px;
+  border: 5px solid #FF8C00;
+  box-shadow: 0 8px 20px rgba(255, 140, 0, 0.5);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.comparison-end-btn {
+  padding: 18px 45px;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.comparison-end-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.6);
+}
+
+.comparison-confetti {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.comparison-confetti .confetti-piece {
+  position: absolute;
+  font-size: 24px;
+  animation: float-confetti 5s infinite;
+}
+
+@keyframes float-confetti {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* ========================================
+   ENDING SCREEN
+======================================== */
+
+.ending-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+}
+
+.ganesha-final {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  margin-bottom: 30px;
+}
+
+.final-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 48px;
+  font-weight: 900;
+  color: #FFD700;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+}
+
+/* ========================================
+   ANIMATIONS
+======================================== */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bubbleBounce {
+  0% {
+    transform: translateX(-50%) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: translateX(-50%) scale(1.1);
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes celebrate-scale {
+  0%, 100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+}
+
+.celebrate-scale {
+  animation: celebrate-scale 1s ease-in-out infinite;
+}
+
+.bounce {
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+.bounce-gentle {
+  animation: bounceGentle 2s ease-in-out infinite;
+}
+
+@keyframes bounceGentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.pop-in {
+  animation: popIn 0.6s ease-out;
+}
+
+.pulse {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+.glow-text {
+  animation: glowText 2s ease-in-out infinite;
+}
+
+@keyframes glowText {
+  0%, 100% {
+    text-shadow: 3px 3px 0 #FFD700,
+                 0 0 20px rgba(255, 215, 0, 0.5);
+  }
+  50% {
+    text-shadow: 3px 3px 0 #FFD700,
+                 0 0 40px rgba(255, 215, 0, 0.8);
+  }
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 768px) {
+  .intro-speech {
+    padding: 20px 30px;
+    max-width: 90%;
+  }
+
+  .intro-text {
+    font-size: 20px;
+  }
+
+  .earth-icon {
+    width: 200px;
+    height: 200px;
+  }
+
+  .earth-emoji {
+    font-size: 140px;
+  }
+
+  .bowls-container {
+    gap: 20px;
+  }
+
+  .park-scene {
+    width: 350px;
+    height: 250px;
+  }
+
+  .dream-container {
+    width: 90%;
+    height: 300px;
+  }
+
+  .dreams-comparison-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .comparison-divider {
+    flex-direction: row;
+    margin: 20px 0;
+  }
+
+  .divider-text {
+    writing-mode: horizontal-tb;
+  }
+}

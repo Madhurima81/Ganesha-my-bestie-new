@@ -1,0 +1,133 @@
+.game-pause-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  animation: fadeIn 0.3s ease;
+}
+
+.pause-modal {
+  background: white;
+  border-radius: 30px;
+  padding: 40px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: modalSlideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes modalSlideIn {
+  from {
+    transform: scale(0.8) translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.pause-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.pause-title {
+  font-size: 32px;
+  color: #5D4E37;
+  margin: 0 0 15px 0;
+  font-weight: bold;
+}
+
+.pause-icon {
+  font-size: 50px;
+  display: block;
+}
+
+.pause-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.pause-btn {
+  padding: 18px 25px;
+  border: none;
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.pause-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+.pause-btn.continue {
+  background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+  color: white;
+}
+
+.pause-btn.replay {
+  background: linear-gradient(135deg, #FFD93D 0%, #FF6B6B 100%);
+  color: white;
+}
+
+.pause-btn.end-game {
+  background: linear-gradient(135deg, #A8DADC 0%, #457B9D 100%);
+  color: white;
+}
+
+.btn-icon {
+  font-size: 24px;
+}
+
+.btn-text {
+  font-size: 16px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .pause-modal {
+    padding: 30px 20px;
+  }
+
+  .pause-title {
+    font-size: 26px;
+  }
+
+  .pause-icon {
+    font-size: 40px;
+  }
+
+  .pause-btn {
+    padding: 15px 20px;
+    font-size: 16px;
+  }
+
+  .btn-icon {
+    font-size: 20px;
+  }
+
+  .btn-text {
+    font-size: 14px;
+  }
+}

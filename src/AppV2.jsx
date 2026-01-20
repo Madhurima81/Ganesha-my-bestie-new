@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 // Symbol Mountain Scenes
-import NewModakSceneV5 from './zones/symbol-mountain/scenes/modak/NewModakSceneV5';
+import NewModakSceneV5 from './zones/symbol-mountain/scenes/modak/NewModakSceneV6';
 import PondSceneSimplifiedV3 from './zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV3';
 import SymbolMountainSceneV3 from './zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3';
 import SacredAssemblySceneV8 from './zones/symbol-mountain/scenes/final scene/SacredAssemblySceneV8';
@@ -13,7 +13,7 @@ import CaveSceneFixedV1 from './zones/meaning cave/scenes/VakratundaMahakaya/Cav
 import SuryakotiSceneV3 from './zones/meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV3.jsx';
 import NirvighnamSceneV4 from './zones/meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV4';
 import SarvakaryeshuSarvadaV6 from './zones/meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV6.jsx';
-import CaveScene5MemoryFinale from './zones/meaning cave/scenes/final meaning scene/CaveScene5MemoryFinale';
+import CaveScene5MemoryFinale from './zones/meaning cave/scenes/final meaning scene/CaveScene5MemoryFinale.jsx';
 
 // Shloka River Scenes
 import VakratundaGroveSimplified from './zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx';
@@ -94,7 +94,7 @@ const SCENES = {
   },
 
   // 🕉️ CAVE OF SECRETS
-  'cave-vakratunda': {
+  /*'cave-vakratunda': {
     name: '🕉️ Vakratunda Mahakaya',
     zone: 'Cave of Secrets',
     component: CaveSceneFixedV1,
@@ -131,7 +131,7 @@ const SCENES = {
     sceneId: 'memory-finale'
   },
   // 🌊 SHLOKA RIVER
- /* 'shloka-vakratunda': {
+ 'shloka-vakratunda': {
     name: '🐘 Vakratunda Grove',
     zone: 'Shloka River',
     component: VakratundaGroveSimplified,
@@ -158,14 +158,14 @@ const SCENES = {
     component: SarvakaryeshuChantSimplified,
     zoneId: 'shloka-river',
     sceneId: 'sarvakaryeshu-chant'
-  },*/
+  },
   'shloka-finale': {
     name: '🎊 Shloka River Finale',
     zone: 'Shloka River',
     component: ShlokaRiverFinale,
     zoneId: 'shloka-river',
     sceneId: 'shloka-river-finale'
-  },
+  },*/
 
   // 🎪 FESTIVAL SQUARE
   'festival-piano': {

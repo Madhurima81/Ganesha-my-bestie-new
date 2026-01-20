@@ -38,6 +38,36 @@
   transform: scale(1.05);
 }
 
+/* ========================================= */
+/* INTRO MODAL THEME (Purple Override)       */
+/* ========================================= */
+
+/* 1. Override Title Color */
+#name-birthday-intro .game-modal-title {
+  color: #6B3F1D
+
+}
+
+/* 2. Override Button to Blue/Purple Gradient */
+#name-birthday-intro .game-modal-button {
+  background: linear-gradient(135deg, #FFA94D 0%,    #FF8F00
+ 100%);
+ 
+  box-shadow: 
+    0 10px 25px rgba(118, 75, 162, 0.4),
+    inset 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+
+#name-birthday-intro .game-modal-button:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(118, 75, 162, 0.5);
+}
+
+/* 3. Icon Circle Styles (Optional specific styling) */
+#name-birthday-intro .game-modal-icon-circle {
+  box-shadow: 0 5px 15px rgba(238, 228, 173, 0.667); /* Purple shadow */
+}
+
 /* INTRO OVERLAY */
 .intro-overlay {
   position: absolute;
@@ -132,18 +162,19 @@
 }
 
 .instruction-bubble {
-  position: absolute;
-  top: 12%;
+ position: absolute;
+  top: 20px; /* Changed from whatever it was */
   left: 50%;
   transform: translateX(-50%);
-  background: linear-gradient(135deg, #FFD700, #FFA500);
-  border: 3px solid #FF8C00;
+ background: #FFE8A3;   /* soft butter */
+border: 2px solid #F3C969;
+color: #7A4A00;        /* warm brown text */
+
   border-radius: 20px;
   padding: 15px 30px;
   font-family: 'Georgia', serif;
   font-size: 22px;
-  font-weight: 700;
-  color: #654321;
+  font-weight: 600;
   text-align: center;
   z-index: 20;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -166,6 +197,7 @@
   border: none;
   cursor: pointer;
   width: 80px;
+    top: 30%; /* ADD THIS - but will be overridden by inline style */
   transition: transform 0.3s ease;
   animation: floatBalloon 3s ease-in-out infinite;
 }
@@ -781,7 +813,7 @@
 
 .birthday-speech-bubble {
   position: absolute;
-  top: 20%;
+  top: 10%;
   background: white;
   padding: 20px 30px;
   border-radius: 25px;
@@ -792,23 +824,33 @@
   z-index: 5;
 }
 
+/* BIRTHDAY CHOICES CONTAINER */
 .birthday-choices-container {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 30px;
-  margin-top: 15%;
+  grid-template-columns: repeat(2, 250px); /* FIXED WIDTH for cards */
+  grid-template-rows: repeat(2, 320px); /* FIXED HEIGHT for cards */
+  gap: 25px;
   padding: 20px;
-  max-width: 600px;
+  justify-content: center;
+  margin: 0 auto;
+  margin-top: 80px; /* Space below header */
 }
 
 .birthday-choice-card {
+  width: 100%;
+  height: 100%;
   background: white;
-  border: 3px solid #FFD700;
-  border-radius: 20px;
+  border: 3px solid #DDD;
+  border-radius: 15px;
   padding: 20px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .birthday-choice-card:hover:not(:disabled) {
@@ -854,16 +896,7 @@
   position: relative;
 }
 
-.birthday-wrong::after {
-  content: '✗';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 4rem;
-  color: #ff4444;
-  font-weight: bold;
-}
+
 
 /* Correct Celebration Screen */
 .birthday-correct-screen {
@@ -976,4 +1009,1508 @@
   font-size: 1.5rem;
   font-weight: bold;
   box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+}
+
+/* LETTER TRACKER */
+/* LETTER TRACKER */
+/* LETTER TRACKER - BIGGER & LOWER */
+.letter-tracker {
+  position: absolute;
+  top: 140px; /* MOVED DOWN from 80px */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px; /* BIGGER gap */
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 16px 28px; /* BIGGER padding */
+  border-radius: 30px; /* BIGGER border radius */
+  border: 4px solid #8B4513; /* THICKER border */
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.letter-box {
+  width: 55px; /* BIGGER from 45px */
+  height: 55px; /* BIGGER from 45px */
+  border: 4px solid #8B4513; /* THICKER border */
+  border-radius: 10px; /* BIGGER corners */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Baloo 2', cursive;
+  font-size: 28px; /* BIGGER font from 24px */
+  font-weight: 700;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.letter-box.filled {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: white;
+  border-color: #FF8C00;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(255, 165, 0, 0.5);
+}
+
+.letter-box.empty {
+  background: rgba(255, 255, 255, 0.3);
+  border-style: dashed;
+}
+
+.tracker-progress {
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px; /* BIGGER font from 14px */
+  font-weight: 700; /* BOLDER */
+  color: #8B4513;
+  margin-left: 16px;
+  white-space: nowrap;
+}
+
+/* SHAKE WRONG BALLOON - WITH RED X */
+.shake-wrong {
+  animation: shake-gentle 0.5s ease-in-out;
+  /* Removed position: relative and the ::before block to remove the X */
+}
+
+/* Delete or comment out the .shake-wrong::before block completely */
+/* 
+.shake-wrong::before {
+  content: '✗';
+  ...
+} 
+*/
+
+/* Softer shake animation */
+@keyframes shake-gentle {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px) rotate(-5deg); }
+  75% { transform: translateX(6px) rotate(5deg); }
+}
+
+/* Fix for the Green Outline on click */
+.balloon-btn {
+  /* ... keep existing styles ... */
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.balloon-btn:focus {
+  outline: none;
+}
+
+/* HINT BUTTON */
+.hint-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+background: #F3D9B1;
+color: #7A4A00;
+
+  border: 3px solid #FF8C00;
+  border-radius: 25px;
+  padding: 10px 20px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 165, 0, 0.4);
+  transition: all 0.3s ease;
+  z-index: 200;
+}
+
+.hint-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 165, 0, 0.6);
+   background: #FFDFA3; 
+
+}
+
+.hint-button:active {
+  transform: scale(0.95);
+}
+
+/* HINT MODAL */
+.hint-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.hint-modal-content {
+  background: linear-gradient(135deg, #FFF8DC, #FFEFD5);
+  border: 4px solid #8B4513;
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s ease;
+  text-align: center;
+}
+
+.hint-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #FF6B6B;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hint-close-btn:hover {
+  background: #FF4444;
+  transform: rotate(90deg);
+}
+
+.hint-ganesha {
+  width: 120px;
+  height: auto;
+  margin: 0 auto 20px;
+}
+
+.hint-message {
+  text-align: center;
+}
+
+.hint-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 24px;
+  color: #8B4513;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.hint-name-display {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.hint-letter {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: white;
+  border: 3px solid #FF8C00;
+  border-radius: 10px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 28px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: popIn 0.5s ease backwards;
+  box-shadow: 0 4px 8px rgba(255, 165, 0, 0.3);
+}
+
+.hint-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+  color: #666;
+  font-weight: 600;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* CLUE SPEECH BUBBLE */
+.clue-speech {
+  max-width: 600px;
+  padding: 30px;
+}
+
+.clue-box {
+  background: linear-gradient(135deg, #FFF9E6, #FFE6CC);
+  border: 3px solid #FF8C00;
+  border-radius: 20px;
+  padding: 20px;
+  margin: 20px 0;
+  position: relative;
+}
+
+.clue-icon {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 40px;
+  background: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #FF8C00;
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
+}
+
+.clue-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  color: #8B4513;
+  margin: 10px 0;
+  line-height: 1.5;
+}
+
+.clue-text strong {
+  color: #FF6B00;
+  font-weight: 800;
+  font-size: 20px;
+}
+
+/* ========================================= */
+/*  NEW UNIQUE BIRTHDAY INTRO CARD STYLES    */
+/* ========================================= */
+
+.bday-quest-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Dim background */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* The Warm Cream Card */
+.bday-quest-card {
+  background: #FFF4E3; /* Warm cream */
+  border-radius: 24px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+  border: 2px solid #E6C9A8;
+  padding: 40px;
+  width: 90%;
+  max-width: 550px;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Title Style */
+.bday-quest-title {
+  font-family: 'Baloo 2', cursive; /* Ensure font matches your theme */
+  font-size: 32px;
+  font-weight: 800;
+  color: #5A2E0C;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Body Copy */
+.bday-quest-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: 19px;
+  color: #6D4C41;
+  line-height: 1.5;
+  margin: 0;
+  font-weight: 600;
+}
+
+/* The Button */
+.bday-quest-btn {
+  background: linear-gradient(180deg, #F4A640, #E18B2E);
+  color: #5A2E0C;
+  border: none;
+  border-radius: 999px; /* Pill shape */
+  padding: 16px 45px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 5px 0 #C7771F; /* Hard bottom shadow */
+  transition: all 0.2s ease;
+  margin-top: 10px;
+}
+
+.bday-quest-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 0 #C7771F;
+}
+
+.bday-quest-btn:active {
+  transform: translateY(5px);
+  box-shadow: 0 0 0 #C7771F;
+}
+
+/* Specific Ganesha positioning for this screen */
+.bday-quest-ganesha {
+  width: 140px;
+  height: auto;
+  margin-bottom: 20px; /* Space between Ganesha and Card */
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.2));
+}
+
+/* BIRTHDAY CARD CONTAINER - HOLDS CARD + INFO PANEL */
+.birthday-card-container {
+  position: relative;
+  width: 250px;  /* FIXED width */
+  height: 320px; /* FIXED height */
+   overflow: visible !important;
+  z-index: 1; /* Default stack level */
+}
+
+/* INFO ICON BUTTON */
+.birthday-info-icon {
+  position: absolute;
+  top: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FFE0A3, #FFC766);
+  color: #8B4513;
+  border: 2px solid #FFF3DD;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(255, 180, 80, 0.35);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  z-index: 10;
+}
+
+/* Hover = friendly nudge */
+.birthday-info-icon:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 14px rgba(255, 180, 80, 0.45);
+}
+
+/* Active = soft press */
+.birthday-info-icon:active {
+  transform: scale(0.95);
+  box-shadow: 0 3px 8px rgba(255, 180, 80, 0.3);
+}
+
+
+.bring-to-front {
+  z-index: 50 !important;
+}
+/* CARD GLOW WHEN INFO IS OPEN */
+.card-info-open {
+  box-shadow: 0 0 20px rgba(255, 140, 0, 0.6) !important;
+  border-color: #FF8C00 !important;
+}
+
+/* SLIDE-OUT INFO PANEL */
+
+
+/* SLIDE LEFT - for LEFT column cards (Holi, Janmashtami) */
+/* 3. FORCE the panel to the LEFT side */
+.slide-left {
+  /* Anchors the panel's right edge to the container's left edge */
+  right: 105% !important; 
+  left: auto !important; 
+  top: 0;
+  
+  /* Reset any margins that might cause overlapping */
+  margin-right: 0;
+  margin-left: 0;
+  
+  /* Ensure animation moves from card OUTWARDS */
+  animation: slideOutToLeft 0.4s ease forwards;
+}
+
+/* SLIDE RIGHT - for RIGHT column cards (Diwali, Ganesh Chaturthi) */
+.slide-right {
+  left: 100%;  /* Panel appears to the RIGHT of card */
+  margin-left: 15px;
+  animation: slideInRight 0.4s ease;
+}
+
+/* 5. Define explicit animations so they don't get confused */
+@keyframes slideOutToLeft {
+  from {
+    opacity: 0;
+    transform: translateX(30px); /* Start slightly inside the card */
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0); /* End fully outside */
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);  /* Starts from left, slides right */
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* INFO PANEL */
+.birthday-info-panel {
+  position: absolute;
+  top: 0;
+  width: 220px;
+  height: 100%;
+  background: linear-gradient(135deg, #FFF6DF, #FFE8C7);
+  border: 3px solid #F4A940;
+  border-radius: 18px;
+  padding: 18px 14px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
+
+}
+
+/* INFO PANEL CLOSE BUTTON (gentle, non-threatening) */
+.birthday-info-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #FFD59E; /* warm cream */
+  color: #8B4513;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.birthday-info-close:hover {
+  background: #FFC97A;
+  transform: scale(1.1);
+}
+
+/* INFO PANEL CONTENT */
+.birthday-info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  justify-content: center;
+}
+
+/* MONTH TAG */
+.birthday-info-month {
+  background: linear-gradient(135deg, #FFB347, #FFA000);
+  color: #5A2E00;
+  font-family: 'Baloo 2', cursive;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 8px 6px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* FACT TEXT */
+.birthday-info-fact {
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  color: #6B3F1D;
+  line-height: 1.5;
+  text-align: center;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+}
+
+/* CHOOSE BUTTON */
+.birthday-info-choose-btn {
+  background: linear-gradient(135deg, #6FCF97, #4CAF50);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 8px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.35);
+}
+
+.birthday-info-choose-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.45);
+}
+
+.birthday-info-choose-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 8px rgba(76, 175, 80, 0.3);
+}
+
+/* SUBTITLE (festival descriptor) */
+.birthday-choice-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  color: #8F7A5A;
+  margin-top: 4px;
+  font-style: italic;
+  text-align: center;
+}
+
+/* ========================================= */
+/*  UNIQUE CHILD NAME INTRO STYLES           */
+/* ========================================= */
+
+.child-intro-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Warm Cream Card (Matches Birthday Intro) */
+.child-intro-card {
+  background: #FFF4E3;
+  border-radius: 24px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+  border: 2px solid #E6C9A8;
+  padding: 40px;
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Text Styles */
+.child-intro-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 28px;
+  font-weight: 800;
+  color: #5A2E0C;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.child-intro-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: #6D4C41;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+}
+
+/* Orange Pill Button */
+.child-intro-btn {
+  background: linear-gradient(180deg, #F4A640, #E18B2E);
+  color: #5A2E0C;
+  border: none;
+  border-radius: 999px;
+  padding: 15px 40px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 5px 0 #C7771F;
+  transition: all 0.2s ease;
+}
+
+.child-intro-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 0 #C7771F;
+}
+
+.child-intro-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 #C7771F;
+}
+
+/* Ganesha Image */
+.child-intro-ganesha {
+  width: 140px;
+  height: auto;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.2));
+}
+
+/* ========================================= */
+/*  UNIQUE CHILD BIRTHDAY INTRO STYLES       */
+/* ========================================= */
+
+.child-bday-intro-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Warm Cream Card */
+.child-bday-intro-card {
+  background: #FFF4E3;
+  border-radius: 24px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+  border: 2px solid #E6C9A8;
+  padding: 40px;
+  width: 90%;
+  max-width: 550px;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Text Styles */
+.child-bday-intro-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 26px;
+  font-weight: 800;
+  color: #5A2E0C;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.child-bday-intro-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: #6D4C41;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+}
+
+/* Orange Pill Button */
+.child-bday-intro-btn {
+  background: linear-gradient(180deg, #F4A640, #E18B2E);
+  color: #5A2E0C;
+  border: none;
+  border-radius: 999px;
+  padding: 15px 40px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 5px 0 #C7771F;
+  transition: all 0.2s ease;
+}
+
+.child-bday-intro-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 0 #C7771F;
+}
+
+.child-bday-intro-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 #C7771F;
+}
+
+/* Ganesha Image */
+.child-bday-intro-ganesha {
+  width: 140px;
+  height: auto;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.2));
+}
+
+/* Overlay when info panel is open */
+/* Overlay when info panel is open */
+.birthday-info-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 50;
+  backdrop-filter: blur(3px);
+  cursor: pointer;
+}
+
+/* Card container - positioned for z-index */
+.birthday-card-container {
+  position: relative;
+  z-index: 10;
+}
+
+/* Active container (when info is open) */
+.birthday-card-container.container-active {
+  z-index: 100 !important;
+}
+
+/* Info panel stays on top */
+.birthday-info-panel {
+  z-index: 150 !important;
+}
+
+/* Active card */
+.card-info-open {
+  position: relative;
+  z-index: 90;
+}
+
+/* ========================================
+   CHILD NAME INPUT STYLES
+======================================== */
+
+.child-name-input-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.child-input-ganesha {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.ganesha-watching {
+  width: 100px;
+  height: auto;
+}
+
+.child-instruction-bubble {
+  position: absolute;
+  top: 140px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border: 3px solid #FF8C00;
+  border-radius: 25px;
+  padding: 12px 25px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.4);
+  z-index: 100;
+}
+
+/* NAME DISPLAY BOX */
+.child-name-display {
+  position: absolute;
+  top: 220px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 400px;
+  min-height: 80px;
+  background: white;
+  border: 4px solid #8B4513;
+  border-radius: 15px;
+  padding: 15px 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.name-placeholder {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: #CCC;
+  font-style: italic;
+}
+
+.child-name-letter {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border: 3px solid #FF8C00;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Baloo 2', cursive;
+  font-size: 28px;
+  font-weight: 700;
+  color: white;
+  box-shadow: 0 3px 8px rgba(255, 140, 0, 0.3);
+}
+
+/* CONTROL BUTTONS */
+.child-name-controls {
+  position: absolute;
+  top: 330px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 15px;
+}
+
+.child-backspace-btn,
+.child-confirm-btn {
+  padding: 12px 25px;
+  border-radius: 12px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.child-backspace-btn {
+  background: #FF6B6B;
+  color: white;
+}
+
+.child-backspace-btn:hover:not(:disabled) {
+  background: #FF4444;
+  transform: translateY(-2px);
+}
+
+.child-backspace-btn:disabled {
+  background: #CCC;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.child-confirm-btn {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+}
+
+.child-confirm-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+}
+
+.child-confirm-btn:disabled {
+  background: #CCC;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* LETTER KEYBOARD */
+.child-letter-keyboard {
+  position: absolute;
+  top: 400px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 8px;
+  max-width: 700px;
+  padding: 20px;
+}
+
+.child-letter-tile {
+  width: 65px;
+  height: 65px;
+  background: white;
+  border: 3px solid #8B4513;
+  border-radius: 10px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 24px;
+  font-weight: 700;
+  color: #8B4513;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.child-letter-tile:hover {
+  background: linear-gradient(135deg, #FFE6CC, #FFD4A3);
+  border-color: #FF8C00;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 12px rgba(255, 140, 0, 0.3);
+}
+
+.child-letter-tile:active {
+  transform: translateY(0);
+}
+
+/* CHILD NAME CELEBRATION */
+.child-name-celebration-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.celebration-ganesha {
+  margin-bottom: 30px;
+}
+
+.child-name-reveal {
+  text-align: center;
+}
+
+.child-name-text {
+  font-family: 'Baloo 2', cursive;
+  font-size: 72px;
+  font-weight: 900;
+  color: #FF8C00;
+  text-shadow: 3px 3px 0 #FFD700;
+  margin-bottom: 20px;
+}
+
+.ganesha-compliment {
+  font-family: 'Nunito', sans-serif;
+  font-size: 28px;
+  color: #8B4513;
+  font-weight: 700;
+}
+
+/* ========================================
+   CHILD BIRTHDAY INPUT STYLES
+======================================== */
+
+.child-birthday-month-screen,
+.child-birthday-date-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+/* MONTH FESTIVALS GRID */
+.month-festivals-grid {
+  position: absolute;
+  top: 200px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  max-width: 900px;
+  padding: 20px;
+}
+
+.month-festival-card {
+  width: 180px;
+  height: 140px;
+  background: white;
+  border: 4px solid;
+  border-radius: 15px;
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.month-festival-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.month-festival-emoji {
+  font-size: 48px;
+  margin-bottom: 5px;
+}
+
+.month-festival-name {
+  font-family: 'Baloo 2', cursive;
+  font-size: 20px;
+  font-weight: 700;
+  color: #8B4513;
+}
+
+.month-festival-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  color: #999;
+  text-align: center;
+  font-style: italic;
+}
+
+/* DATE PICKER GRID */
+.date-picker-grid {
+  position: absolute;
+  top: 200px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  max-width: 600px;
+  padding: 20px;
+}
+
+.date-picker-button {
+  width: 70px;
+  height: 70px;
+  background: white;
+  border: 3px solid #8B4513;
+  border-radius: 12px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 24px;
+  font-weight: 700;
+  color: #8B4513;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.date-picker-button:hover {
+  background: linear-gradient(135deg, #FFE6CC, #FFD4A3);
+  border-color: #FF8C00;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 12px rgba(255, 140, 0, 0.3);
+}
+
+.back-to-months-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: #999;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-to-months-btn:hover {
+  background: #777;
+  transform: translateX(-3px);
+}
+
+/* CHILD BIRTHDAY CELEBRATION */
+.child-birthday-celebration-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.child-birthday-reveal {
+  text-align: center;
+}
+
+.child-birthday-text {
+  font-family: 'Baloo 2', cursive;
+  font-size: 64px;
+  font-weight: 900;
+  color: #FF1493;
+  text-shadow: 3px 3px 0 #FFD700;
+  margin-bottom: 20px;
+}
+
+.ganesha-birthday-response {
+  font-family: 'Nunito', sans-serif;
+  font-size: 24px;
+  color: #8B4513;
+  font-weight: 700;
+  max-width: 600px;
+  line-height: 1.5;
+}
+
+
+/* ========================================= */
+/*  NEW BESTIES FOREVER SCREEN (BIGGER)      */
+/* ========================================= */
+
+.besties-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Slightly darker gradient so sparkles pop */
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 240, 220, 0.95) 0%,
+    rgba(255, 210, 160, 0.95) 60%,
+    rgba(210, 170, 130, 0.98) 100%
+  );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  overflow: hidden;
+}
+
+/* ✨ SPARKLES - Made brighter and bigger */
+.besties-overlay::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%; /* Double width for smooth scrolling */
+  height: 200%;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.9) 2px, transparent 2.5px), /* White stars */
+    radial-gradient(circle, rgba(255, 215, 0, 0.7) 3px, transparent 3.5px);   /* Gold stars */
+  background-size: 50px 50px, 90px 90px;
+  background-position: 0 0, 40px 40px;
+  animation: sparkleFloat 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes sparkleFloat {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(-100px, -100px); }
+}
+
+/* 🏷️ Title - BIGGER */
+.besties-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 52px; /* Increased from 34px */
+  font-weight: 900;
+  color: #ff8c00;
+  text-shadow: 2px 4px 0 #ffd18a;
+  margin-bottom: 5px;
+  z-index: 10;
+  text-align: center;
+}
+
+.besties-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px; /* Increased from 15px */
+  color: #7a4a1f;
+  margin-bottom: 35px;
+  z-index: 10;
+  font-weight: 700;
+}
+
+/* 🃏 Cards Wrapper */
+.besties-cards {
+  display: flex;
+  align-items: center;
+  gap: 50px; /* More space between cards */
+  margin-bottom: 40px;
+  z-index: 10;
+}
+
+/* 🎴 Individual Card - MUCH BIGGER */
+.besties-card {
+  width: 340px; /* Increased from 260px */
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 25px;
+  padding: 30px 25px; /* More padding */
+  box-shadow:
+    0 15px 40px rgba(0, 0, 0, 0.2),
+    inset 0 0 0 3px #ffe1b5;
+  display: flex;
+  flex-direction: column;
+  gap: 18px; /* More gap between rows */
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.besties-card:hover {
+  transform: translateY(-8px) scale(1.02);
+}
+
+/* Avatar / Initial */
+.besties-avatar {
+  width: 100px; /* Bigger image */
+  height: 100px;
+  margin: 0 auto;
+  object-fit: contain;
+  filter: drop-shadow(0 5px 8px rgba(0,0,0,0.15));
+}
+
+.child-initial {
+  font-size: 50px !important; /* Bigger letter */
+  line-height: 80px; /* Vertically center in circle */
+}
+
+/* Name */
+.besties-card-name {
+  font-family: 'Baloo 2', cursive;
+  font-size: 32px; /* Increased from 22px */
+  font-weight: 900;
+  color: #8b4513;
+  margin: 5px 0 10px 0;
+}
+
+/* 📄 Info Rows */
+.besties-info-row {
+  background: #fff6e6;
+  border-radius: 15px;
+  padding: 12px 16px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px; /* Increased from 14px */
+  color: #6b3e1e;
+  box-shadow: inset 0 0 0 2px #ffd7a3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ❤️ Vertical Connector */
+.besties-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 900;
+  color: #ff5a7a;
+  z-index: 10;
+}
+
+.besties-connector span {
+  font-size: 18px; /* Bigger letters */
+}
+
+.besties-heart {
+  font-size: 32px; /* Bigger hearts */
+  margin: 5px 0;
+  animation: heartPulse 1.6s ease-in-out infinite;
+}
+
+/* 🏅 Badge & Button Container */
+.besties-badge-container {
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  transform: scale(1.1); /* Scale whole bottom section up slightly */
+}
+
+/* Official Badge */
+.besties-badge {
+  background: linear-gradient(135deg, #ffd44d, #ffb300);
+  color: #5a3300;
+  font-family: 'Baloo 2', cursive;
+  font-size: 24px; /* Bigger font */
+  font-weight: 800;
+  padding: 16px 40px;
+  border-radius: 999px;
+  box-shadow: 0 8px 25px rgba(255, 179, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* Finish Button */
+.besties-end-btn {
+  background: linear-gradient(135deg, #FF6B6B, #FF4444);
+  color: white;
+  font-family: 'Baloo 2', cursive;
+  font-size: 22px; /* Bigger font */
+  font-weight: 700;
+  padding: 14px 45px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(255, 68, 68, 0.4);
+  transition: all 0.2s;
+}
+
+.besties-end-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(255, 68, 68, 0.5);
+}
+
+.special-message {
+  margin-top: 20px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #FF1493;
+  background: white;
+  padding: 15px 30px;
+  border-radius: 25px;
+  border: 3px solid #FF69B4;
+  display: inline-block;
+}
+
+/* ACTION BUTTONS */
+.besties-action-buttons {
+  display: flex;
+  justify-content: center; /* Center the single button */
+  z-index: 10;
+}
+
+.end-game-btn {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: white;
+  font-family: 'Baloo 2', cursive;
+  font-size: 22px;
+  font-weight: 700;
+  padding: 18px 45px;
+  border-radius: 15px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+.end-game-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(255, 215, 0, 0.5);
+}
+
+.bestie-btn {
+  font-family: 'Baloo 2', cursive;
+  font-size: 20px;
+  font-weight: 700;
+  padding: 15px 35px;
+  border-radius: 15px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.play-again-btn {
+  background: linear-gradient(135deg, #95E1D3, #4ECDC4);
+  color: white;
+}
+
+.play-again-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(78, 205, 196, 0.4);
+}
+
+.continue-btn {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+}
+
+.continue-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+}
+
+/* FLOATING CONFETTI */
+.besties-confetti {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.besties-confetti .confetti-piece {
+  position: absolute;
+  font-size: 24px;
+  animation: float-confetti 5s infinite;
+}
+
+@keyframes float-confetti {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
