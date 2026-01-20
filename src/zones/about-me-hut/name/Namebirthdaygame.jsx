@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './NameBirthdayGame.css';
 import AboutMeCompletion from "../components/Aboutmecompletion";
 import '../../shared/components/OpeningModal.css'; // <--- SHARED MODAL IMPORT
+import BackToMapButton from '../../../lib/components/navigation/BackToMapButton';
 
 
 // Import images
@@ -45,6 +46,11 @@ const [availableLetters] = useState('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''));
 const [childBirthdayMonth, setChildBirthdayMonth] = useState('');
 const [childBirthdayMonthName, setChildBirthdayMonthName] = useState('');
 const [childBirthdayDate, setChildBirthdayDate] = useState('');
+
+const reloadHandledRef = useRef(false);
+const [showResumePopup, setShowResumePopup] = useState(false);
+const [resumeMessage, setResumeMessage] = useState('');
+
 
   // Name letters with balloon colors
 // Name letters with RANDOM balloon positions
@@ -120,6 +126,94 @@ const monthFestivals = [
   const handleStartGame = () => {
     setGamePhase('name-balloons');
   };
+
+  // ==================== RELOAD DETECTION ====================
+useEffect(() => {
+  const sessionKey = `namebirthday_session_${Date.now()}`;
+  const existingSession = localStorage.getItem('namebirthday_current_session');
+  
+  const isReload = existingSession !== null;
+  
+  if (isReload && !reloadHandledRef.current) {
+    reloadHandledRef.current = true;
+    
+    console.log("🔄 Reload detected, gamePhase:", gamePhase);
+    
+    // INTRO - No popup
+    if (gamePhase === 'intro') {
+      return;
+    }
+    
+    // NAME BALLOONS - Show progress
+    if (gamePhase === 'name-balloons' && poppedLetters.size > 0) {
+      setResumeMessage(`Great! You've popped ${poppedLetters.size}/7 balloons! Keep going!`);
+      setShowResumePopup(true);
+      setTimeout(() => setShowResumePopup(false), 5000);
+      return;
+    }
+    
+    // CHILD NAME INPUT - Show progress
+    if (gamePhase === 'child-name-input' && childNameLetters.length > 0) {
+      setResumeMessage(`Continue typing your name! (${childNameLetters.length} letters typed)`);
+      setShowResumePopup(true);
+      setTimeout(() => setShowResumePopup(false), 5000);
+      return;
+    }
+    
+    // BIRTHDAY CHOICE - Show progress
+    if (gamePhase === 'birthday-choice' && wrongFestivals.size > 0) {
+      setResumeMessage(`Keep trying! You've eliminated ${wrongFestivals.size} option${wrongFestivals.size > 1 ? 's' : ''}!`);
+      setShowResumePopup(true);
+      setTimeout(() => setShowResumePopup(false), 5000);
+      return;
+    }
+    
+    // CHILD BIRTHDAY MONTH - Already selected
+    if (gamePhase === 'child-birthday-month' && childBirthdayMonth) {
+      setResumeMessage(`You picked ${childBirthdayMonthName}! Continue to select date.`);
+      setShowResumePopup(true);
+      setTimeout(() => {
+        setShowResumePopup(false);
+        setGamePhase('child-birthday-date');
+      }, 3000);
+      return;
+    }
+    
+    // CHILD BIRTHDAY DATE - Already selected
+    if (gamePhase === 'child-birthday-date' && childBirthdayDate) {
+      setResumeMessage(`You picked ${childBirthdayMonthName} ${childBirthdayDate}!`);
+      setShowResumePopup(true);
+      setTimeout(() => {
+        setShowResumePopup(false);
+        setGamePhase('child-birthday-complete');
+      }, 3000);
+      return;
+    }
+    
+    // CELEBRATION/INTRO PHASES - Show as-is
+    if (gamePhase.includes('complete') || gamePhase.includes('intro') || gamePhase === 'birthday-correct') {
+      return;
+    }
+    
+    // BESTIES CARD/ENDING - Show as-is
+    if (gamePhase === 'besties-card' || gamePhase === 'ending') {
+      return;
+    }
+  }
+  
+  localStorage.setItem('namebirthday_current_session', sessionKey);
+  
+  return () => {
+    localStorage.removeItem('namebirthday_current_session');
+  };
+}, []);
+
+useEffect(() => {
+  return () => {
+    reloadHandledRef.current = false;
+  };
+}, []);
+
 
   // Pop balloon
 // Pop balloon - MUST be in order!
@@ -1023,6 +1117,36 @@ const getGaneshaResponse = () => {
           </div>
         </div>
       )}
+
+      {/* Back to Map Button */}
+{!showSceneCompletion && (
+  <BackToMapButton onNavigate={onNavigate} />
+)}
+
+
+      {/* Resume Popup */}
+{showResumePopup && (
+  <div style={{
+    position: 'fixed',
+    top: '20%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    background: 'linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%)',
+    color: 'white',
+    padding: '20px 40px',
+    borderRadius: '20px',
+    boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
+    zIndex: 9999,
+    fontSize: '18px',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    maxWidth: '80%',
+    animation: 'slideDown 0.5s ease-out'
+  }}>
+    {resumeMessage}
+  </div>
+)}
+
 
       {/* About Me Completion Screen */}
       {showSceneCompletion && (

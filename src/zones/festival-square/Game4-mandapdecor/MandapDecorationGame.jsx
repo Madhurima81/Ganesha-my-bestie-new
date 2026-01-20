@@ -1997,12 +1997,13 @@ const currentStepData = (isInMission && selectedMission.type !== 'fix' && select
         />
         
 {/* Clickable zones & Ghosts */}
+{/* Clickable zones & Ghosts (Unified Logic) */}
 {Object.entries(MANDAP_ZONES).map(([zoneId, zone]) => {
   const isInMission = currentMode === GAME_MODES.CHALLENGE && selectedMission;
   
-  // 1. FREE PLAY MODE CHECK
-  if (currentMode === GAME_MODES.FREE_PLAY) {
-    if (zoneId !== 'roof-left') return null;
+// 1. FREE PLAY & ECO MODE - Create one big clickable area
+  if (currentMode === GAME_MODES.FREE_PLAY || selectedMission?.type === 'eco') {
+    if (zoneId !== 'roof-left') return null; // Only render one zone that acts as the screen
     zone = { x: 0, y: 0, width: 100, height: 100 };
   }
   
@@ -2010,32 +2011,40 @@ const currentStepData = (isInMission && selectedMission.type !== 'fix' && select
   const isFixMode = selectedMission?.type === 'fix';
   const isPujaPrep = selectedMission?.id === 'puja-prep';
   
+  // Check if this zone should be highlighted
   const isFixTarget = isFixMode && selectedWrongItem?.correctZone === zoneId;
-  const isHighlighted = highlightedZones.has(zoneId);
+  const isPujaTarget = isPujaPrep && highlightedZones.has(zoneId);
+  const isGenericHighlight = !isPujaTarget && !isFixTarget && highlightedZones.has(zoneId);
   
-  // 3. GHOST ITEM LOGIC (The Magic Part)
+  // 3. GHOST ITEM LOGIC
   let ghostImage = null;
   
-  // Only show ghost if: It's Puja Prep AND it's the current step AND zone is highlighted
-  if (isPujaPrep && isHighlighted) {
+  // Show ghost for Puja Prep
+  if (isPujaTarget) {
     const currentStepData = selectedMission.steps[currentStep - 1];
     if (currentStepData && currentStepData.zone === zoneId) {
-      // Find the image for the current step's item
       const allItems = Object.values(DECORATION_CATEGORIES).flatMap(c => c.items);
       const targetItem = allItems.find(i => i.id === currentStepData.item);
-      if (targetItem) {
-        ghostImage = DECORATION_IMAGES[targetItem.image];
-      }
+      if (targetItem) ghostImage = DECORATION_IMAGES[targetItem.image];
     }
   }
+  
+  // Show ghost for Fix Mode (Show the item you are holding!)
+  if (isFixTarget && selectedWrongItem) {
+     ghostImage = DECORATION_IMAGES[selectedWrongItem.image];
+  }
 
-  // 4. CLASS LOGIC
+  // 4. CLASS LOGIC (Use 'highlighted' for the ring effect)
   let zoneClass = 'mandap-zone';
-  if (isFixTarget) zoneClass += ' zone-target';
-  else if (isHighlighted) zoneClass += ' highlighted'; // Glows yellow
+  
+  if (isFixTarget || isPujaTarget) {
+    zoneClass += ' highlighted'; // Triggers Ring + Sparkles
+  } else if (isGenericHighlight) {
+    zoneClass += ' highlighted'; 
+  }
   
   // Hide irrelevant zones in missions
-  if (isInMission && !isFixMode && !isHighlighted && selectedMission?.type !== 'light' && selectedMission?.type !== 'eco') {
+  if (isInMission && !isFixMode && !isPujaTarget && !isFixTarget && !isGenericHighlight && selectedMission?.type !== 'light' && selectedMission?.type !== 'eco') {
     return null;
   }
   
@@ -2061,7 +2070,7 @@ const currentStepData = (isInMission && selectedMission.type !== 'fix' && select
 })}
         {/* Placed Decorations - WITH DRAGGING */}
      {/* Placed Decorations - WITH DRAGGING */}
-        {Array.from(gameState.placedDecorations.entries()).map(([zoneId, decorations]) => {
+{Array.from(gameState.placedDecorations.entries()).map(([zoneId, decorations]) => {
           const decorationsArray = Array.isArray(decorations) ? decorations : [decorations];
           return decorationsArray.map((decoration, index) => {
             const zone = MANDAP_ZONES[zoneId];
@@ -2074,61 +2083,61 @@ const currentStepData = (isInMission && selectedMission.type !== 'fix' && select
                 left: `${zone.x + zone.width/2 + (index % 3) * 3}%`
               };
 
-            // FIX MODE STATE LOGIC
+            // LOGIC: DETERMINE IF "WRONG" OR "FIXED"
             const isFixMode = selectedMission?.type === 'fix';
             const isWrong = isFixMode && decoration.isWrong && !decoration.isFixed;
             const isSelected = isFixMode && selectedWrongItem?.fixId === decoration.fixId;
             const isFixed = isFixMode && decoration.isFixed;
 
-            // ANIMATION CONFLICT FIX:
-            // Only apply 'glowing' if the item is NOT wrong. 
-            // If it is wrong, we want the 'wiggle' animation to win.
-            let className = 'decoration-image';
-            if (decoration.hasLightEffect && !isWrong) className += ' glowing';
-            if (isWrong) className += ' decoration-wrong';
-            if (isSelected) className += ' decoration-selected';
-            if (isFixed) className += ' decoration-fixed';
+            // --- UNIVERSAL STICKER LOGIC ---
+            let className = '';
+            
+            if (isFixMode && isWrong) {
+                // Fix Mode Broken Item: Wiggle, No Sticker yet
+                className = 'decoration-image decoration-wrong';
+                if (isSelected) className += ' decoration-selected';
+            } else {
+                // ALL OTHER ITEMS (Free Play, Puja, Eco, Fixed Items):
+                // Apply the Sticker Effect!
+                className = 'placed-item-sticker'; 
+                
+                // Add Glow if needed (Diya/Lights)
+                if (decoration.hasLightEffect && !isWrong) className += ' glowing';
+                
+                // Add Poof if newly placed (Puja/Fix)
+                if (decoration.justPlaced) className += ' item-appear-poof';
+            }
             
             return (
-<FreeDraggableItem
-  key={decorationKey}
-  id={decorationKey}
-  position={currentPosition}
-  dragDelay={150}
-  style={{ zIndex: 25 }}
-  onPositionChange={(newPosition) => updateDecorationPosition(decorationKey, newPosition)}
-  onDragStart={() => setIsDragging(true)}
-  onDragEnd={() => setIsDragging(false)}
->
-<img 
-  src={DECORATION_IMAGES[decoration.image]}
-  alt={decoration.name}
-  className={`decoration-image 
-    ${decoration.hasLightEffect ? 'glowing' : ''} 
-    ${selectedMission?.type === 'fix' && decoration.isWrong && !decoration.isFixed ? 'decoration-wrong' : ''} 
-    ${selectedMission?.type === 'fix' && selectedWrongItem?.fixId === decoration.fixId ? 'decoration-selected' : ''}
-    ${selectedMission?.type === 'fix' && decoration.isFixed ? 'decoration-fixed' : ''}`}
-  style={{ 
-    width: getDecorationSize(decoration.image), 
-    height: getDecorationSize(decoration.image), 
-    pointerEvents: selectedMission?.type === 'fix' ? 'auto' : 'none',
-    display: 'block',
-    opacity: 1,
-    
-    // 💥 APPLY INLINE ANIMATION if it exists
-    ...(decoration.animationStyle || {}),
-    
-    // 🖼️ APPLY STICKER EFFECT if it exists
-    ...(decoration.stickerStyle || {})
-  }}
-  onClick={(e) => {
-    if (selectedMission?.type === 'fix' && decoration.isWrong && !decoration.isFixed) {
-      e.stopPropagation();
-      handleWrongItemClick(decoration);
-    }
-  }}
-/>
-</FreeDraggableItem>
+              <FreeDraggableItem
+                key={decorationKey}
+                id={decorationKey}
+                position={currentPosition}
+                dragDelay={150}
+                style={{ zIndex: 25 }}
+                onPositionChange={(newPosition) => updateDecorationPosition(decorationKey, newPosition)}
+                onDragStart={() => setIsDragging(true)}
+                onDragEnd={() => setIsDragging(false)}
+              >
+                <img 
+                  src={DECORATION_IMAGES[decoration.image]}
+                  alt={decoration.name}
+                  className={className}
+                  // Apply dynamic sticker filter if set (from Puja timing logic)
+                  style={{ 
+                    width: getDecorationSize(decoration.image), 
+                    height: getDecorationSize(decoration.image), 
+                    pointerEvents: isFixMode ? 'auto' : 'auto', // Allow dragging in Free Play
+                    ...decoration.stickerStyle // <--- IMPORTANT: Supports dynamic filter changes
+                  }}
+                  onClick={(e) => {
+                    if (isWrong) {
+                      e.stopPropagation();
+                      handleWrongItemClick(decoration);
+                    }
+                  }}
+                />
+              </FreeDraggableItem>
             );
           });
         })}
@@ -2425,9 +2434,7 @@ const currentStepData = (isInMission && selectedMission.type !== 'fix' && select
         {DECORATION_CATEGORIES[gameState.selectedCategory.toUpperCase()]?.name}
       </div>
     
-      <div className="items-title">
-        {DECORATION_CATEGORIES[gameState.selectedCategory.toUpperCase()]?.name}
-      </div>
+
     </div>
     <div className="item-buttons">
       {DECORATION_CATEGORIES[gameState.selectedCategory.toUpperCase()]?.items.map((item) => {

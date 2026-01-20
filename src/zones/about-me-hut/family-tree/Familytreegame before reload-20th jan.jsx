@@ -2,8 +2,6 @@ import React, { useState, useRef } from 'react';
 import './FamilyTreeGame.css';
 import '../../shared/components/OpeningModal.css'; 
 import AboutMeCompletion from "../components/Aboutmecompletion";
-import BackToMapButton from '../../../lib/components/navigation/BackToMapButton';
-
 
 // --- IMPORT ASSETS (Ganesha's Family & Distractors) ---
 import familyTreeBg from './assets/images/family tree bg.png';
@@ -78,11 +76,6 @@ const FamilyTreeGame = ({ onComplete, onBack, onNavigate }) => {
   const [audioBlob, setAudioBlob] = useState(null);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
-
-  const reloadHandledRef = useRef(false);
-const [showResumePopup, setShowResumePopup] = useState(false);
-const [resumeMessage, setResumeMessage] = useState('');
-
 
   // Ganesha's family members data
   const ganeshaFamily = [
@@ -166,79 +159,6 @@ const [resumeMessage, setResumeMessage] = useState('');
     { id: 'myself', label: 'Myself', image: childMyselfImg, color: '#FFD966', row: 3 },
     { id: 'pet', label: 'Pet', image: childPetImg, color: '#F2D3A2', row: 3 }
   ];
-
-  // ==================== RELOAD DETECTION ====================
-useEffect(() => {
-  const sessionKey = `familytree_session_${Date.now()}`;
-  const existingSession = localStorage.getItem('familytree_current_session');
-  
-  // Check if this is a reload
-  const isReload = existingSession !== null;
-  
-  if (isReload && !reloadHandledRef.current) {
-    reloadHandledRef.current = true;
-    
-    console.log("🔄 Reload detected, gamePhase:", gamePhase);
-    console.log("🔄 Placed members:", placedGaneshaMembers.size);
-    console.log("🔄 Child family:", childFamily.length);
-    
-    // INTRO - Don't show popup
-    if (gamePhase === 'intro') {
-      return;
-    }
-    
-    // GANESHA TREE - Some placed
-    if (gamePhase === 'ganeshaTree' && placedGaneshaMembers.size > 0 && placedGaneshaMembers.size < 4) {
-      setResumeMessage(`Great progress! You've placed ${placedGaneshaMembers.size}/4 family members. Keep going!`);
-      setShowResumePopup(true);
-      setTimeout(() => setShowResumePopup(false), 5000);
-      return;
-    }
-    
-    // GANESHA TREE - All placed
-    if (gamePhase === 'ganeshaTree' && placedGaneshaMembers.size === 4) {
-      setResumeMessage(`Amazing! You completed Ganesha's family tree! Tap "All Done!" to continue.`);
-      setShowResumePopup(true);
-      setTimeout(() => setShowResumePopup(false), 5000);
-      return;
-    }
-    
-    // CHILD INPUT - Some added
-    if (gamePhase === 'childInput' && childFamily.length > 0) {
-      setResumeMessage(`You've added ${childFamily.length} family member${childFamily.length > 1 ? 's' : ''} to your tree!`);
-      setShowResumePopup(true);
-      setTimeout(() => setShowResumePopup(false), 5000);
-      return;
-    }
-    
-    // TRANSITION
-    if (gamePhase === 'transition') {
-      // Just show the transition modal as-is
-      return;
-    }
-    
-    // SIDE BY SIDE
-    if (gamePhase === 'sideBySide') {
-      // Show comparison as-is
-      return;
-    }
-  }
-  
-  // Set session marker
-  localStorage.setItem('familytree_current_session', sessionKey);
-  
-  // Cleanup on unmount
-  return () => {
-    localStorage.removeItem('familytree_current_session');
-  };
-}, []); // Run once on mount
-
-// Cleanup ref on unmount
-useEffect(() => {
-  return () => {
-    reloadHandledRef.current = false;
-  };
-}, []);
 
 
   // Handlers
@@ -457,12 +377,6 @@ useEffect(() => {
         </div>
         </>
       )}
-
-            {/* Back to Map Button */}
-      {!showSceneCompletion && (
-        <BackToMapButton onNavigate={onNavigate} />
-      )}
-
 
       {/* GANESHA'S TREE */}
       {gamePhase === 'ganeshaTree' && (
@@ -944,30 +858,6 @@ useEffect(() => {
           </div>
         </div>
       )}
-
-      {/* Resume Popup */}
-{showResumePopup && (
-  <div style={{
-    position: 'fixed',
-    top: '20%',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    color: 'white',
-    padding: '20px 40px',
-    borderRadius: '20px',
-    boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
-    zIndex: 9999,
-    fontSize: '18px',
-    fontWeight: 'bold',
-    textAlign: 'center',
-    maxWidth: '80%',
-    animation: 'slideDown 0.5s ease-out'
-  }}>
-    {resumeMessage}
-  </div>
-)}
-
 
       {showSceneCompletion && (
         <AboutMeCompletion

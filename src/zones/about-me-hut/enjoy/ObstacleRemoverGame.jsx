@@ -5,7 +5,6 @@ import DrawingPad from '../components/Drawingpad';
 import StoryProgressHeader from '../components/StoryProgressHeader';
 import '../../shared/components/OpeningModal.css'; // <--- SHARED MODAL IMPORT
 
-
 // Navigation Components
 import BackToMapButton from '../../../lib/components/navigation/BackToMapButton';
 import MenuButton from '../../../lib/components/navigation/MenuButton';
@@ -107,6 +106,90 @@ const [isAudioOn, setIsAudioOn] = useState(true);
     setGamePhase('wish1-intro');
   };
   // ------------------------------
+
+  // ==================== RELOAD DETECTION ====================
+useEffect(() => {
+  const sessionKey = `dreamswishes_session_${Date.now()}`;
+  const existingSession = localStorage.getItem('dreamswishes_current_session');
+  
+  const isReload = existingSession !== null;
+  
+  if (isReload && !reloadHandledRef.current) {
+    reloadHandledRef.current = true;
+    
+    console.log("🔄 Reload detected, gamePhase:", gamePhase);
+    
+    // INTRO - No popup
+    if (gamePhase === 'intro') {
+      return;
+    }
+    
+    // WISH 1 ACTIVE - Show progress
+    if (gamePhase === 'wish1-active' && wish1Taps > 0 && wish1Taps < 3) {
+      setResumeMessage(`Keep tapping! You've tapped ${wish1Taps}/3 times to spread happiness!`);
+      setShowResumePopup(true);
+      setTimeout(() => setShowResumePopup(false), 5000);
+      return;
+    }
+    
+    // WISH 2 ACTIVE - Show progress
+    if (gamePhase === 'wish2-active') {
+      const filledCount = bowlStates.filter(Boolean).length;
+      if (filledCount > 0 && filledCount < 3) {
+        setResumeMessage(`Great job! You've filled ${filledCount}/3 bowls. Keep sharing!`);
+        setShowResumePopup(true);
+        setTimeout(() => setShowResumePopup(false), 5000);
+      }
+      return;
+    }
+    
+    // WISH 3 ACTIVE - Show progress
+    if (gamePhase === 'wish3-active' && wish3Taps > 0 && wish3Taps < 3) {
+      setResumeMessage(`Keep going! You've tapped ${wish3Taps}/3 times to make the park green!`);
+      setShowResumePopup(true);
+      setTimeout(() => setShowResumePopup(false), 5000);
+      return;
+    }
+    
+    // DREAM DRAWING - Close drawing pad if open
+    if (gamePhase === 'dream-drawing') {
+      setShowDrawingPad(false);
+      setGamePhase('dream-intro');
+      return;
+    }
+    
+    // DREAM CLOUDED/CLEARING - Show progress
+    if ((gamePhase === 'dream-clouded' || gamePhase === 'dream-clearing') && trunkTaps > 0 && trunkTaps < 3) {
+      setResumeMessage(`Keep tapping Ganesha's trunk! ${trunkTaps}/3 clouds cleared!`);
+      setShowResumePopup(true);
+      setTimeout(() => setShowResumePopup(false), 5000);
+      return;
+    }
+    
+    // COMPLETION PHASES - Show as-is
+    if (gamePhase.includes('complete') || gamePhase === 'comparison-card' || gamePhase === 'ending') {
+      return;
+    }
+    
+    // INTRO PHASES - Show intro modals as-is
+    if (gamePhase.includes('intro')) {
+      return;
+    }
+  }
+  
+  localStorage.setItem('dreamswishes_current_session', sessionKey);
+  
+  return () => {
+    localStorage.removeItem('dreamswishes_current_session');
+  };
+}, []);
+
+useEffect(() => {
+  return () => {
+    reloadHandledRef.current = false;
+  };
+}, []);
+
 
   // Handle wish 1 tap (Happiness - Earth)
   const handleWish1Tap = () => {
@@ -947,9 +1030,34 @@ const handleDreamDrawingSave = (data) => {
       )}
 
       {/* Back to Map Button - Shows after game starts */}
-{gamePhase !== 'intro' && !showSceneCompletion && (
+{!showSceneCompletion && (
   <BackToMapButton onNavigate={onNavigate} />
 )}
+
+
+{/* Resume Popup */}
+{showResumePopup && (
+  <div style={{
+    position: 'fixed',
+    top: '20%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    background: 'linear-gradient(135deg, #FF6B9D 0%, #C06C84 100%)',
+    color: 'white',
+    padding: '20px 40px',
+    borderRadius: '20px',
+    boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
+    zIndex: 9999,
+    fontSize: '18px',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    maxWidth: '80%',
+    animation: 'slideDown 0.5s ease-out'
+  }}>
+    {resumeMessage}
+  </div>
+)}
+
 
 {/* ==================== MENU BUTTON (Top-Right) ==================== */}
 {gamePhase !== 'intro' && (

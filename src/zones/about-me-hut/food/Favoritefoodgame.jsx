@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './FavoriteFoodGame.css';
 import AboutMeCompletion from "../components/Aboutmecompletion";
 import DrawingPad from '../components/Drawingpad';
@@ -6,6 +6,8 @@ import StoryProgressHeader from '../components/StoryProgressHeader';
 import DrawOrWritePad from '../components/Draworwritepad';
 import TextInputModal from '../components/Textinputmodal';
 import LetterInputKeyboard from '../components/LetterInputKeyboard';
+import BackToMapButton from '../../../lib/components/navigation/BackToMapButton';
+
 
 // --- EXISTING ASSETS ---
 import foodBg from './assets/images/food-bg.png';
@@ -110,6 +112,11 @@ const FavoriteFoodGame = ({ onComplete, onBack, onNavigate }) => {
 const [feedbackMessage, setFeedbackMessage] = useState(""); // Stores the text
 const [isFeedbackShaking, setIsFeedbackShaking] = useState(false); // Animations
 
+const reloadHandledRef = useRef(false);
+const [showResumePopup, setShowResumePopup] = useState(false);
+const [resumeMessage, setResumeMessage] = useState('');
+
+
   // 2. ADD THE SHUFFLE HELPER FUNCTION
   const shuffleArray = (array) => {
     const shuffled = [...array];
@@ -205,6 +212,115 @@ const [isFeedbackShaking, setIsFeedbackShaking] = useState(false); // Animations
   const handleStartGame = () => {
     setGamePhase('food-choice');
   };
+
+  // ==================== RELOAD DETECTION ====================
+useEffect(() => {
+  const sessionKey = `favoritefood_session_${Date.now()}`;
+  const existingSession = localStorage.getItem('favoritefood_current_session');
+  
+  const isReload = existingSession !== null;
+  
+  if (isReload && !reloadHandledRef.current) {
+    reloadHandledRef.current = true;
+    
+    console.log("🔄 Reload detected, gamePhase:", gamePhase);
+    
+    // INTRO - No popup
+    if (gamePhase === 'intro') {
+      return;
+    }
+    
+    // GANESHA'S CHOICES - Show progress if wrong choices made
+    if (gamePhase === 'food-choice' && wrongChoices.size > 0) {
+      setResumeMessage(`Keep trying! You've eliminated ${wrongChoices.size} option${wrongChoices.size > 1 ? 's' : ''}!`);
+      setShowResumePopup(true);
+      setTimeout(() => setShowResumePopup(false), 5000);
+      return;
+    }
+    
+    if (gamePhase === 'color-choice' && wrongChoices.size > 0) {
+      setResumeMessage(`Keep going! Try another color!`);
+      setShowResumePopup(true);
+      setTimeout(() => setShowResumePopup(false), 5000);
+      return;
+    }
+    
+    if (gamePhase === 'activity-choice' && wrongChoices.size > 0) {
+      setResumeMessage(`Almost there! Try another activity!`);
+      setShowResumePopup(true);
+      setTimeout(() => setShowResumePopup(false), 5000);
+      return;
+    }
+    
+    if (gamePhase === 'friend-choice' && wrongChoices.size > 0) {
+      setResumeMessage(`Keep looking for Ganesha's best friend!`);
+      setShowResumePopup(true);
+      setTimeout(() => setShowResumePopup(false), 5000);
+      return;
+    }
+    
+    // CHILD'S CHOICES - Show what's been completed
+    if (gamePhase === 'child-food-choice' && (childFoodChoice || childFoodDrawing || childFoodText)) {
+      setResumeMessage(`You already picked your favorite food! Continue to color choice.`);
+      setShowResumePopup(true);
+      setTimeout(() => {
+        setShowResumePopup(false);
+        setGamePhase('child-color-choice');
+      }, 3000);
+      return;
+    }
+    
+    if (gamePhase === 'child-color-choice' && childColor) {
+      setResumeMessage(`You picked ${childColorName}! Continue to activity choice.`);
+      setShowResumePopup(true);
+      setTimeout(() => {
+        setShowResumePopup(false);
+        setGamePhase('child-activity-choice');
+      }, 3000);
+      return;
+    }
+    
+    if (gamePhase === 'child-activity-choice' && (childActivityChoice || childActivityDrawing || childActivityText)) {
+      setResumeMessage(`Great! Now tell us about your best friend!`);
+      setShowResumePopup(true);
+      setTimeout(() => {
+        setShowResumePopup(false);
+        setGamePhase('child-friend-intro');
+      }, 3000);
+      return;
+    }
+    
+    if (gamePhase === 'child-friend-input' && childFriendLetters.length > 0) {
+      setResumeMessage(`Continue typing your friend's name! (${childFriendLetters.length} letters)`);
+      setShowResumePopup(true);
+      setTimeout(() => setShowResumePopup(false), 5000);
+      return;
+    }
+    
+    // CELEBRATION/INTRO PHASES - Show as-is
+    if (gamePhase.includes('correct') || gamePhase.includes('intro') || gamePhase === 'friend-celebration') {
+      return;
+    }
+    
+    // COMPARISON/ENDING - Show as-is
+    if (gamePhase === 'comparison-card' || gamePhase === 'ending') {
+      return;
+    }
+  }
+  
+  localStorage.setItem('favoritefood_current_session', sessionKey);
+  
+  return () => {
+    localStorage.removeItem('favoritefood_current_session');
+  };
+}, []);
+
+useEffect(() => {
+  return () => {
+    reloadHandledRef.current = false;
+  };
+}, []);
+
 
   // Auto-advance
   useEffect(() => {
@@ -1176,6 +1292,35 @@ const [isFeedbackShaking, setIsFeedbackShaking] = useState(false); // Animations
           </div>
         </div>
       )}
+
+      {/* Resume Popup */}
+{showResumePopup && (
+  <div style={{
+    position: 'fixed',
+    top: '20%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    background: 'linear-gradient(135deg, #FFA500 0%, #FF8C00 100%)',
+    color: 'white',
+    padding: '20px 40px',
+    borderRadius: '20px',
+    boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
+    zIndex: 9999,
+    fontSize: '18px',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    maxWidth: '80%',
+    animation: 'slideDown 0.5s ease-out'
+  }}>
+    {resumeMessage}
+  </div>
+)}
+
+{/* Back to Map Button */}
+{!showSceneCompletion && (
+  <BackToMapButton onNavigate={onNavigate} />
+)}
+
 
       {/* About Me Completion Screen */}
       {showSceneCompletion && (

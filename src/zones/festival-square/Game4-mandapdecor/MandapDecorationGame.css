@@ -1238,43 +1238,32 @@ animation: fadeIn 0.3s ease-out;
    =============================================== */
 
 /* 1. WRONG ITEM (Wiggle & Fade) */
+/* ===============================================
+   FORCE WIGGLE (Fix Mode)
+   =============================================== */
+
 .decoration-wrong {
-  /* Remove old red border */
+  /* Remove any existing filters/borders */
   border: none !important;
   
-  /* Red tint to indicate issue */
-  filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.6)) !important;
+  /* Apply Red Glow */
+  filter: drop-shadow(0 0 8px #FF5252) !important;
   
-  /* Enable interaction */
+  /* Force Wiggle Animation */
+  animation: wrongItemWiggle 2s ease-in-out infinite !important;
+  
+  /* Make sure it's clickable */
   cursor: pointer !important;
   pointer-events: auto !important;
-  
-  /* The Wiggle Animation */
-  animation: wrongItemWiggle 2s ease-in-out infinite;
-  z-index: 50;
+  z-index: 50 !important;
 }
 
 @keyframes wrongItemWiggle {
-  0% { 
-    transform: translate(-50%, -50%) rotate(0deg); 
-    opacity: 1;
-  }
-  25% { 
-    transform: translate(-50%, -50%) rotate(-10deg); 
-    opacity: 0.7; /* Fade out slightly */
-  }
-  50% { 
-    transform: translate(-50%, -50%) rotate(0deg); 
-    opacity: 1;
-  }
-  75% { 
-    transform: translate(-50%, -50%) rotate(10deg); 
-    opacity: 0.7; /* Fade out slightly */
-  }
-  100% { 
-    transform: translate(-50%, -50%) rotate(0deg); 
-    opacity: 1;
-  }
+  0% { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; }
+  25% { transform: translate(-50%, -50%) rotate(-10deg); opacity: 0.8; }
+  50% { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; }
+  75% { transform: translate(-50%, -50%) rotate(10deg); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; }
 }
 
 /* 2. SELECTED ITEM (When you click a wrong item) */
@@ -3180,7 +3169,7 @@ animation: fadeIn 0.3s ease-out;
   padding: 4px;
 }
 
-/* Base Pill Style (Fix Mode Specific) */
+/* Base Pill Style - Updated to 3D Sticker */
 .fix-item-pill {
   display: flex;
   flex-direction: row;
@@ -3188,51 +3177,69 @@ animation: fadeIn 0.3s ease-out;
   justify-content: flex-start;
   gap: 15px;
   width: 100%;
-  padding: 10px 15px;
-  border-radius: 20px;
-  cursor: default;
-  transition: all 0.2s ease;
+  padding: 12px 18px;
+  border-radius: 24px; /* More rounded for premium feel */
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
-  border: 2px solid transparent;
-  box-shadow: 0 3px 0 rgba(0,0,0,0.05);
+  border: 3px solid rgba(255, 255, 255, 0.5); /* Soft inner rim */
 }
 
-/* --- FIX MODE COLORS (Cooler/Technical Palette) --- */
-/* Item 1: Lights (Soft Blue) */
-.fix-item-pill:nth-child(1) { background: #E1F5FE; color: #0277BD; }
-
-/* Item 2: Diya (Warm Peach) */
-.fix-item-pill:nth-child(2) { background: #FFCCBC; color: #D84315; }
-
-/* Item 3: Fruits (Lemon Chiffon) */
-.fix-item-pill:nth-child(3) { background: #FFF9C4; color: #FBC02D; }
-
-/* Item 4: Garland (Mint) */
-.fix-item-pill:nth-child(4) { background: #C8E6C9; color: #33691E; }
-
-/* Item 5: Rose (Lavender) */
-.fix-item-pill:nth-child(5) { background: #E1BEE7; color: #7B1FA2; }
+/* Individual 3D Shadows for each color */
+.fix-item-pill:nth-child(1) { background: #E1F5FE; box-shadow: 0 6px 0 #81D4FA; }
+.fix-item-pill:nth-child(2) { background: #FFEBEE; box-shadow: 0 6px 0 #FFCDD2; }
+.fix-item-pill:nth-child(3) { background: #FFF9C4; box-shadow: 0 6px 0 #FFF176; }
+.fix-item-pill:nth-child(4) { background: #E8F5E9; box-shadow: 0 6px 0 #C8E6C9; }
+.fix-item-pill:nth-child(5) { background: #F3E5F5; box-shadow: 0 6px 0 #E1BEE7; }
 
 
 /* --- STATES --- */
 
-/* 1. ACTIVE (Selected Item to Fix) */
+/* 💓 The Heartbeat Animation */
+@keyframes heartbeat {
+  0% { transform: translateY(2px) scale(1); }
+  50% { transform: translateY(2px) scale(1.03); } /* Subtle grow */
+  100% { transform: translateY(2px) scale(1); }
+}
+
+/* Apply only to the ACTIVE pill */
 .fix-item-pill.active {
-  cursor: pointer;
-  transform: scale(1.04);
-  background: #FFFFFF; /* Pop to white */
-  border-color: #29B6F6; /* Bright Blue Highlight */
-  box-shadow: 0 6px 15px rgba(41, 182, 246, 0.25);
-  z-index: 10;
+    animation: heartbeat 1.5s ease-in-out infinite;
+    border: 4px solid #FFD54F; /* Gold Highlight */
+    box-shadow: 0 6px 12px rgba(255, 213, 79, 0.4), 0 4px 0 #FFD54F; /* Glowing 3D Shadow */
+    z-index: 10;
 }
 
 /* 2. COMPLETED (Fixed!) */
+/* 🏆 COMPLETED STATE - SUCCESS GREEN */
 .fix-item-pill.completed {
-  opacity: 0.7;
-  filter: grayscale(0.2);
-  background: #EEEEEE !important; /* Grey out finished tasks */
-  color: #757575 !important;
-  border: 2px solid #BDBDBD;
+  background: #F1F8E9 !important; /* Very soft mint green */
+  color: #388E3C !important;      /* Strong forest green text */
+  border: 3px solid #A5D6A7;      /* Defined green border */
+  box-shadow: 0 4px 0 #C5E1A5;    /* Solid 3D green shadow */
+  opacity: 1;                     /* Keep it bright! */
+  filter: none;                   /* No grayscale */
+  cursor: default;
+  animation: none;                /* Stop the "unfixed" wobble */
+}
+
+/* Add a Green Checkmark */
+.fix-item-pill.completed .fix-icon-circle::after {
+  content: '✓';
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #4CAF50;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+  border: 2px solid white;
 }
 
 /* --- INTERNAL ELEMENTS --- */
