@@ -12,7 +12,8 @@
     "test:watch": "jest --watch",
     "check-ui": "node scripts/ui-consistency-checker.cjs",
     "check-ui:interactive": "node scripts/ui-consistency-checker.cjs --interactive",
-    "check-ui:fix": "node scripts/ui-consistency-checker.cjs --auto-fix"
+    "check-ui:fix": "node scripts/ui-consistency-checker.cjs --auto-fix",
+    "check-back-btn": "node scripts/check-back-button.cjs"
   },
   
   "dependencies": {
