@@ -1,0 +1,296 @@
+/* ==========================================
+   UNIFIED HEADER COMPONENT
+   Uses Zone-Current Colors (Layer A - the walls)
+   Adapts to zone context automatically
+   ========================================== */
+
+.unified-header {
+  width: 100%;
+  background: var(--zone-current-soft); /* Soft zone color for header */
+  border-bottom: 3px solid var(--zone-current-accent); /* Zone accent border */
+  padding: 20px;
+
+  transition: all 0.3s ease;
+}
+
+/* Optional shadow variant */
+.unified-header--with-shadow {
+  box-shadow: 0 4px 12px var(--zone-current-shadow);
+}
+
+/* ==========================================
+   CONTAINER - Flexbox Layout
+   ========================================== */
+
+.unified-header__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* ==========================================
+   LEFT & RIGHT ELEMENTS
+   ========================================== */
+
+.unified-header__left,
+.unified-header__right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* When no left/right elements, center the content */
+.unified-header__container:has(.unified-header__content:only-child) {
+  justify-content: center;
+}
+
+/* ==========================================
+   CONTENT (Title & Subtitle)
+   ========================================== */
+
+.unified-header__content {
+  flex: 1;
+  min-width: 0; /* Allow text truncation */
+}
+
+/* Alignment variants */
+.unified-header--align-left .unified-header__content {
+  text-align: left;
+}
+
+.unified-header--align-center .unified-header__content {
+  text-align: center;
+}
+
+.unified-header--align-right .unified-header__content {
+  text-align: right;
+}
+
+/* ==========================================
+   TITLE
+   ========================================== */
+
+.unified-header__title {
+  margin: 0;
+  padding: 0;
+
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--zone-current-accent); /* Zone accent for emphasis */
+
+  /* Normal case text */
+  text-transform: none;
+
+  /* Handle long text */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* ==========================================
+   SUBTITLE
+   ========================================== */
+
+.unified-header__subtitle {
+  margin: 8px 0 0 0;
+  padding: 0;
+
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--play-text-main); /* Main text color */
+  opacity: 0.8;
+
+  /* Handle long text */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* ==========================================
+   EXTRA CONTENT (Below Title)
+   ========================================== */
+
+.unified-header__extra {
+  max-width: 1200px;
+  margin: 20px auto 0 auto;
+  padding-top: 15px;
+  border-top: 2px solid var(--zone-current-accent);
+}
+
+/* ==========================================
+   TABLET OPTIMIZATIONS
+   ========================================== */
+
+@media (max-width: 1024px) {
+  .unified-header {
+    padding: 18px;
+  }
+
+  .unified-header__title {
+    font-size: 28px;
+  }
+
+  .unified-header__subtitle {
+    font-size: 15px;
+  }
+}
+
+/* ==========================================
+   MOBILE OPTIMIZATIONS
+   ========================================== */
+
+@media (max-width: 768px) {
+  .unified-header {
+    padding: 15px;
+  }
+
+  .unified-header__container {
+    gap: 12px;
+  }
+
+  .unified-header__title {
+    font-size: 24px;
+  }
+
+  .unified-header__subtitle {
+    font-size: 14px;
+    margin-top: 6px;
+  }
+
+  .unified-header__extra {
+    margin-top: 15px;
+    padding-top: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .unified-header {
+    padding: 12px;
+  }
+
+  .unified-header__container {
+    gap: 10px;
+  }
+
+  .unified-header__title {
+    font-size: 20px;
+  }
+
+  .unified-header__subtitle {
+    font-size: 13px;
+    margin-top: 4px;
+  }
+
+  /* Stack elements vertically on very small screens if needed */
+  .unified-header__container.unified-header__container--stack {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .unified-header__container.unified-header__container--stack .unified-header__content {
+    text-align: center;
+  }
+}
+
+/* ==========================================
+   ICON BUTTON STYLING (For left/right elements)
+   ========================================== */
+
+/* Style for icon buttons in left/right slots */
+.unified-header__left button,
+.unified-header__right button {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+
+  background: var(--zone-current-base);
+  border: 2px solid var(--zone-current-accent);
+
+  font-size: 20px;
+  color: var(--zone-current-accent);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.unified-header__left button:hover,
+.unified-header__right button:hover {
+  background: var(--zone-current-accent);
+  color: var(--zone-current-base);
+  transform: scale(1.1);
+}
+
+.unified-header__left button:active,
+.unified-header__right button:active {
+  transform: scale(0.95);
+}
+
+/* ==========================================
+   ACCESSIBILITY
+   ========================================== */
+
+.unified-header:focus-within {
+  outline: 2px solid var(--play-magic-blue);
+  outline-offset: 2px;
+}
+
+/* ==========================================
+   USAGE EXAMPLES IN COMMENTS
+   ========================================== */
+
+/*
+✅ BASIC HEADER:
+<Header title="Welcome to Ganesha My Bestie" />
+
+✅ HEADER WITH SUBTITLE:
+<Header
+  title="Modak Cooking Game"
+  subtitle="Follow the steps to make delicious modaks!"
+/>
+
+✅ HEADER WITH BACK BUTTON:
+<Header
+  title="Symbol Mountain"
+  leftElement={
+    <button onClick={handleBack}>
+      ← Back
+    </button>
+  }
+/>
+
+✅ HEADER WITH LEFT & RIGHT ELEMENTS:
+<Header
+  title="Festival Square"
+  subtitle="Explore the festivities"
+  leftElement={<BackButton onClick={handleBack} />}
+  rightElement={<SettingsButton onClick={handleSettings} />}
+/>
+
+✅ HEADER WITH EXTRA CONTENT:
+<Header
+  title="Game Progress"
+  subtitle="Level 3 of 10"
+>
+  <ProgressBar current={3} total={10} />
+</Header>
+
+✅ LEFT-ALIGNED HEADER:
+<Header
+  title="About Me Hut"
+  align="left"
+  withShadow={false}
+/>
+
+✅ HEADER IN DIFFERENT ZONES:
+- Wrap parent in [data-zone="festival-square"] for Festival colors
+- Wrap parent in [data-zone="meaning-cave"] for Cave colors
+- Background/borders adapt automatically via --zone-current-* variables
+*/

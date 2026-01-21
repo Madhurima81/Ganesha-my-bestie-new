@@ -10,8 +10,13 @@ import BackToMapButton from '../../../lib/components/navigation/BackToMapButton'
 import MenuButton from '../../../lib/components/navigation/MenuButton';
 import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
 import HelpMenu from '../../../lib/components/help/HelpMenu';
-import { obstacleRemoverHelpConfig } from './helpConfig'; 
-import SceneManager from "../../../lib/components/scenes/SceneManager"; 
+import { obstacleRemoverHelpConfig } from './helpConfig';
+import SceneManager from "../../../lib/components/scenes/SceneManager";
+
+// Import Unified Design System
+import Button from '../../../lib/components/ui/Button/Button';
+import '../../../lib/styles/zone-themes.css';
+import '../../../lib/styles/animations.css'; 
 
 // Import images
 import babyGaneshaImg from './assets/images/baby-ganesha.png';
@@ -356,7 +361,7 @@ if (gamePhase === 'all-wishes-complete') {
   };
 
   return (
-    <div className="dreams-wishes-game">
+    <div className="dreams-wishes-game" data-zone="about-me-hut">
       <img src={dreamsBg} alt="Background" className="dreams-background" />
 
       {/* Back Button */}
@@ -397,7 +402,14 @@ if (gamePhase === 'all-wishes-complete') {
           <div className="wish-intro-card">
             <p className="wish-intro-text">My first wish is for a happy world.</p>
             <p className="wish-intro-text">The world looks a little sad right now 😔</p>
-            <button className="wish-action-btn" onClick={() => sceneActions.updateState({ gamePhase: 'wish1-active' })}>Let’s Make Them Smile! 😊</button>
+            <Button
+              variant="primary"
+              size="large"
+              onClick={() => sceneActions.updateState({ gamePhase: 'wish1-active' })}
+              className="heartbeat-delayed"
+            >
+              Let's Make Them Smile! 😊
+            </Button>
           </div>
         </div>
       )}
@@ -439,7 +451,14 @@ if (gamePhase === 'all-wishes-complete') {
           <div className="wish-intro-card">
             <p className="wish-intro-text">My second wish is that no one feels hungry or alone.</p>
             <p className="wish-intro-text">Let's share with everyone! 🤝</p>
-            <button className="wish-action-btn" onClick={() => sceneActions.updateState({ gamePhase: 'wish2-active' })}>Let's Share! 🍎</button>
+            <Button
+              variant="primary"
+              size="large"
+              onClick={() => sceneActions.updateState({ gamePhase: 'wish2-active' })}
+              className="heartbeat-delayed"
+            >
+              Let's Share! 🍎
+            </Button>
           </div>
         </div>
       )}
@@ -480,7 +499,14 @@ if (gamePhase === 'all-wishes-complete') {
           <div className="wish-intro-card">
             <p className="wish-intro-text">My last wish is for a green, happy world.</p>
             <p className="wish-intro-text">Where kids can run, play, and smile outside! 🌿</p>
-            <button className="wish-action-btn" onClick={() => sceneActions.updateState({ gamePhase: 'wish3-active' })}>Let's Make It Green! 🌸</button>
+            <Button
+              variant="primary"
+              size="large"
+              onClick={() => sceneActions.updateState({ gamePhase: 'wish3-active' })}
+              className="heartbeat-delayed"
+            >
+              Let's Make It Green! 🌸
+            </Button>
           </div>
         </div>
       )}
@@ -520,8 +546,15 @@ if (gamePhase === 'all-wishes-complete') {
           <img src={babyGaneshaSit} alt="Baby Ganesha" className="intro-ganesha celebrate-scale" />
           <div className="wish-intro-card">
             <p className="wish-intro-text">WOW! You made the world brighter! ✨</p>
-            <p className="wish-intro-text">Now it’s your turn 💛<br />What would you love to wish for?</p>
-            <button className="wish-action-btn" onClick={() => sceneActions.updateState({ gamePhase: 'dream-intro' })}>Tell Me Your Dream! 💭</button>
+            <p className="wish-intro-text">Now it's your turn 💛<br />What would you love to wish for?</p>
+            <Button
+              variant="primary"
+              size="large"
+              onClick={() => sceneActions.updateState({ gamePhase: 'dream-intro' })}
+              className="heartbeat-delayed"
+            >
+              Tell Me Your Dream! 💭
+            </Button>
           </div>
         </div>
       )}
@@ -533,10 +566,17 @@ if (gamePhase === 'all-wishes-complete') {
           <div className="wish-intro-card">
             <p className="wish-intro-text">Draw a happy wish on this magic canvas! ✨</p>
             <p className="wish-intro-text">What would you love to draw today? 🎨</p>
-            <button className="wish-action-btn" onClick={() => { 
-                setShowDrawingPad(true); 
+            <Button
+              variant="primary"
+              size="large"
+              onClick={() => {
+                setShowDrawingPad(true);
                 sceneActions.updateState({ gamePhase: 'dream-drawing', currentModal: 'drawing' }); // Set modal state
-            }}>Start Drawing! ✏️</button>
+              }}
+              className="heartbeat-delayed"
+            >
+              Start Drawing! ✏️
+            </Button>
           </div>
         </div>
       )}
@@ -617,7 +657,14 @@ if (gamePhase === 'all-wishes-complete') {
                 </div>
             </div>
           </div>
-          <button className="primary-cta" onClick={() => sceneActions.updateState({ gamePhase: 'ending', completed: true })}>🎉 Finish Game</button>
+          <Button
+            variant="info"
+            size="large"
+            onClick={() => sceneActions.updateState({ gamePhase: 'ending', completed: true })}
+            className="heartbeat-gentle"
+          >
+            🎉 Finish Game
+          </Button>
         </div>
       )}
 

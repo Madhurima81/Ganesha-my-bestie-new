@@ -1,11 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './NameBirthdayGame.css';
 import AboutMeCompletion from "../components/Aboutmecompletion";
-import '../../shared/components/OpeningModal.css'; 
+import '../../shared/components/OpeningModal.css';
 
 // Import SceneManager & Navigation
 import SceneManager from "../../../lib/components/scenes/SceneManager";
 import BackToMapButton from '../../../lib/components/navigation/BackToMapButton';
+
+// Import Unified Design System
+import Button from '../../../lib/components/ui/Button/Button';
+import Modal from '../../../lib/components/ui/Modal/Modal';
+import '../../../lib/styles/zone-themes.css';
+import '../../../lib/styles/animations.css';
 
 // Import images
 import nameBg from './assets/images/name-bg.png';
@@ -17,6 +23,22 @@ import holiIcon from './assets/images/holi.png';
 import diwaliIcon from './assets/images/diwali.png';
 import janmashtamiIcon from './assets/images/janmashtami.png';
 import ganeshChaturthiIcon from './assets/images/chaturthi.png';
+
+// ... existing imports ...
+
+// Month Images
+import janImg from './assets/images/months/january.png';
+import febImg from './assets/images/months/february.png';
+import marImg from './assets/images/months/march.png';
+import aprImg from './assets/images/months/april.png';
+import mayImg from './assets/images/months/may.png';
+import junImg from './assets/images/months/june.png';
+import julImg from './assets/images/months/july.png';
+import augImg from './assets/images/months/august.png';
+import sepImg from './assets/images/months/september.png';
+import octImg from './assets/images/months/october.png';
+import novImg from './assets/images/months/november.png';
+import decImg from './assets/images/months/december.png';
 
 // Error Boundary
 class ErrorBoundary extends React.Component {
@@ -106,25 +128,57 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
   ];
 
   const festivals = [
-    { id: 'holi', name: 'Holi', image: holiIcon, correct: false, month: 'March', subtitle: 'Festival of Colors', fact: 'Colors fly in the air!' },
-    { id: 'diwali', name: 'Diwali', image: diwaliIcon, correct: false, month: 'Oct-Nov', subtitle: 'Festival of Lights', fact: '🪔 We light lamps and smile bright.' },
-    { id: 'janmashtami', name: 'Janmashtami', image: janmashtamiIcon, correct: false, month: 'August', subtitle: "Krishna's Birthday", fact: '🪶 Baby Krishna is born.🦚' },
-    { id: 'ganesh-chaturthi', name: 'Ganesh Chaturthi', image: ganeshChaturthiIcon, correct: true, month: 'Aug-Sept', subtitle: "Ganesha's Birthday!", fact: '🐘 We make Ganesha with clay.' }
+    { 
+      id: 'holi', 
+      name: 'Holi', // Revealed in Info Panel
+      clue: 'Splash of Colors! 🎨', // Shown on Card
+      image: holiIcon, 
+      correct: false, 
+      month: 'March', 
+      fact: 'We play with water and bright colors!' 
+    },
+    { 
+      id: 'diwali', 
+      name: 'Diwali', 
+      clue: 'Lights & Lamps! 🪔', 
+      image: diwaliIcon, 
+      correct: false, 
+      month: 'Oct-Nov', 
+      fact: 'We light clay lamps (Diyas) and smile bright.' 
+    },
+    { 
+      id: 'janmashtami', 
+      name: 'Janmashtami', 
+      clue: 'Milk & Butter! 🥛', 
+      image: janmashtamiIcon, 
+      correct: false, 
+      month: 'August', 
+      fact: 'Baby Krishna is born. He loves butter!' 
+    },
+    { 
+      id: 'ganesh-chaturthi', 
+      name: 'Ganesh Chaturthi', 
+      clue: 'My Favorite Treat! 🥟', 
+      image: ganeshChaturthiIcon, 
+      correct: true, 
+      month: 'Aug-Sept', 
+      fact: 'We make Ganesha with clay and eat Modaks!' 
+    }
   ];
 
-  const monthFestivals = [
-    { month: 1, name: 'January', festival: 'Makar Sankranti', emoji: '🪁', color: '#87CEEB' },
-    { month: 2, name: 'February', festival: 'Maha Shivaratri', emoji: '🔱', color: '#9370DB' },
-    { month: 3, name: 'March', festival: 'Holi', emoji: '🎨', color: '#FF69B4' },
-    { month: 4, name: 'April', festival: 'Ugadi', emoji: '🌸', color: '#FFB6C1' },
-    { month: 5, name: 'May', festival: 'Akshaya Tritiya', emoji: '💰', color: '#FFD700' },
-    { month: 6, name: 'June', festival: 'Rath Yatra', emoji: '🛕', color: '#FFA07A' },
-    { month: 7, name: 'July', festival: 'Guru Purnima', emoji: '📿', color: '#DDA0DD' },
-    { month: 8, name: 'August', festival: 'Raksha Bandhan', emoji: '🧵', color: '#F0E68C' },
-    { month: 9, name: 'September', festival: 'Ganesh Chaturthi', emoji: '🐘', color: '#FFA500' },
-    { month: 10, name: 'October', festival: 'Navratri', emoji: '🗡️', color: '#FF6347' },
-    { month: 11, name: 'November', festival: 'Diwali', emoji: '🪔', color: '#FFD700' },
-    { month: 12, name: 'December', festival: 'Karthigai Deepam', emoji: '🕯️', color: '#F4A460' }
+const monthFestivals = [
+    { month: 1, name: 'January', festival: 'Makar Sankranti', image: janImg, color: '#87CEEB' },
+    { month: 2, name: 'February', festival: 'Maha Shivaratri', image: febImg, color: '#9370DB' },
+    { month: 3, name: 'March', festival: 'Holi', image: marImg, color: '#FF69B4' },
+    { month: 4, name: 'April', festival: 'Ugadi', image: aprImg, color: '#FFB6C1' },
+    { month: 5, name: 'May', festival: 'Akshaya Tritiya', image: mayImg, color: '#FFD700' },
+    { month: 6, name: 'June', festival: 'Rath Yatra', image: junImg, color: '#FFA07A' },
+    { month: 7, name: 'July', festival: 'Guru Purnima', image: julImg, color: '#DDA0DD' },
+    { month: 8, name: 'August', festival: 'Raksha Bandhan', image: augImg, color: '#F0E68C' },
+    { month: 9, name: 'September', festival: 'Ganesh Chaturthi', image: sepImg, color: '#FFA500' },
+    { month: 10, name: 'October', festival: 'Navratri', image: octImg, color: '#FF6347' },
+    { month: 11, name: 'November', festival: 'Diwali', image: novImg, color: '#FFD700' },
+    { month: 12, name: 'December', festival: 'Karthigai Deepam', image: decImg, color: '#F4A460' }
   ];
 
   const encouragingPhrases = ["Let’s try the next one 🌼", "Look closely 👀", "You’ve got this 💛"];
@@ -206,24 +260,6 @@ if (gamePhase === 'birthday-correct') {
 
     // 3. FINAL PHASE
     if (gamePhase === 'besties-card') {
-      // Verify all required data exists
-      if (!childName || !childBirthdayMonth || !childBirthdayDate) {
-        console.log("🔧 Reload fix: Missing data in besties-card, restarting from intro");
-        sceneActions.updateState({
-          gamePhase: 'intro',
-          poppedLetters: [],
-          currentLetterIndex: 0,
-          selectedFestival: null,
-          wrongFestivals: [],
-          flippedCards: [],
-          childName: '',
-          childNameLetters: [],
-          childBirthdayMonth: '',
-          childBirthdayMonthName: '',
-          childBirthdayDate: ''
-        });
-        return;
-      }
       setResumeMessage("Welcome back! Here's your bestie card! 💖");
       setShowResumePopup(true);
       resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
@@ -348,24 +384,53 @@ useEffect(() => {
     setShowShake(null);
   };
 
-  const handleFestivalClick = (festivalId) => {
-    if (sceneState.wrongFestivals.includes(festivalId)) return;
+// --- UPDATED HANDLER: SHAKE -> FADE -> INFO SEQUENCE ---
+const handleFestivalClick = (festivalId) => {
+    // If THIS card is already open, do nothing
+    if (sceneState.flippedCards.includes(festivalId)) return;
     
+    // If another card is open, close it first (optional, prevents multi-open)
+    if (sceneState.flippedCards.length > 0) return;
+
+    // CHECK: Is this card ALREADY marked as wrong?
+    // If yes, we skip the shake/delay and just let them read the info again.
+    if (sceneState.wrongFestivals.includes(festivalId)) {
+        sceneActions.updateState({ flippedCards: [festivalId] });
+        setInstructionMessage("Read again! 🤓");
+        return;
+    }
+
     const festival = festivals.find(f => f.id === festivalId);
+
     if (festival.correct) {
-      // 1. Set selected festival
-      // 2. Set phase to 'birthday-correct' -> This triggers the useEffect timer to move forward
+      // Correct!
       sceneActions.updateState({
           selectedFestival: festivalId,
           gamePhase: 'birthday-correct'
       });
     } else {
+      // 1. TRIGGER SHAKE ONLY (No Active/Flipped state yet)
       setShowShake(festivalId);
+      setInstructionMessage("Oops! Not that one... 🙊");
+
+      // 2. DELAY: Wait for shake to finish
       setTimeout(() => {
-        sceneActions.updateState({ wrongFestivals: [...sceneState.wrongFestivals, festivalId] });
-      }, 100);
-      setTimeout(() => setShowShake(null), 500);
+        sceneActions.updateState({ 
+          flippedCards: [festivalId], // Now we flip it
+          wrongFestivals: [...sceneState.wrongFestivals, festivalId] // And mark it wrong/grey
+        });
+        setShowShake(null);
+        setInstructionMessage("But look what you found! 🤓");
+      }, 600); 
     }
+  };
+
+  // --- UPDATED CLOSE HANDLER ---
+  const handleCloseInfo = (e) => {
+    if(e) e.stopPropagation();
+    sceneActions.updateState({ flippedCards: [] });
+    // Reset Header to the "Choice" prompt
+    setInstructionMessage("Tap the cards to choose ✨");
   };
 
   const handleCardFlip = (festivalId) => {
@@ -431,32 +496,42 @@ useEffect(() => {
 
   // --- RENDER ---
   return (
-    <div className="name-birthday-game">
+    <div className="name-birthday-game" data-zone="about-me-hut">
       <div className="game-background" style={{backgroundImage: `url(${nameBg})`, backgroundSize: 'cover', backgroundPosition: 'center'}}></div>
 
       {/* Intro */}
-      {sceneState.gamePhase === 'intro' && (
-        <div className="game-modal-overlay" id="name-birthday-intro">
-          <div className="game-modal-content">
-            <div className="game-modal-character"><img src={babyGaneshaImg} alt="Baby Ganesha" /></div>
-            <div className="game-modal-card">
-              <h1 className="game-modal-title">Name & Birthday Quest!</h1>
-              <p className="game-modal-subtitle">I have a special name and a special birthday.<br />Let’s discover them together!</p>
-              <div className="game-modal-icons">
-                <div className="game-modal-icon-item">
-                  <div className="game-modal-icon-circle" style={{background: '#EDE7F6', borderColor: '#D1C4E9'}}><span style={{fontSize: '2.5rem'}}>🔤</span></div>
-                  <span className="game-modal-icon-label">Name</span>
-                </div>
-                <div className="game-modal-icon-item">
-                  <div className="game-modal-icon-circle" style={{background: '#E3F2FD', borderColor: '#90CAF9'}}><span style={{fontSize: '2.5rem'}}>🎂</span></div>
-                  <span className="game-modal-icon-label">Birthday</span>
-                </div>
-              </div>
-              <button className="game-modal-button" onClick={handleStartGame}>Let’s Begin 🌱</button>
+      <Modal
+        isOpen={sceneState.gamePhase === 'intro'}
+        onClose={() => {}}
+        title="Name & Birthday Quest!"
+        confirmText="Let's Begin 🌱"
+        onConfirm={handleStartGame}
+        showCloseButton={false}
+        closeOnOverlayClick={false}
+        size="large"
+      >
+        <div className="intro-modal-content">
+          <img
+            src={babyGaneshaImg}
+            alt="Baby Ganesha"
+            className="intro-ganesha-image heartbeat"
+          />
+          <p className="intro-description">
+            I have a special name and a special birthday.<br />
+            Let's discover them together!
+          </p>
+          <div className="intro-icons-container">
+            <div className="intro-icon-item fade-in delay-100">
+              <div className="intro-icon-circle">🔤</div>
+              <span className="intro-icon-label">Name</span>
+            </div>
+            <div className="intro-icon-item fade-in delay-300">
+              <div className="intro-icon-circle">🎂</div>
+              <span className="intro-icon-label">Birthday</span>
             </div>
           </div>
         </div>
-      )}
+      </Modal>
 
       {/* Back Button */}
       {sceneState.gamePhase !== 'intro' && !sceneState.showingCompletionScreen && (
@@ -477,7 +552,20 @@ useEffect(() => {
             <div className="tracker-progress">{sceneState.currentLetterIndex} of {nameLetters.length}</div>
           </div>
 
-          <button className="hint-button bounce-gentle" onClick={() => setShowHintModal(true)}>💡 Hint</button>
+          <Button
+            variant="secondary"
+            size="small"
+            onClick={() => setShowHintModal(true)}
+            className="pulse-infinite"
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              zIndex: 100
+            }}
+          >
+            💡 Hint
+          </Button>
 
           <div className="balloons-container">
            {nameLetters.map((item, index) => !sceneState.poppedLetters.includes(item.id) && (
@@ -497,21 +585,54 @@ useEffect(() => {
       )}
 
       {/* Hint Modal */}
-      {showHintModal && (
-        <div className="hint-modal-overlay" onClick={() => setShowHintModal(false)}>
-            <div className="hint-modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="hint-close-btn" onClick={() => setShowHintModal(false)}>✕</button>
-            <img src={babyGaneshaImg} alt="Ganesha" className="hint-ganesha bounce"/>
-            <div className="hint-message">
-                <p className="hint-title">My name is:</p>
-                <div className="hint-name-display">
-                {nameLetters.map((item, index) => <span key={item.id} className="hint-letter" style={{animationDelay: `${index * 0.1}s`}}>{item.letter}</span>)}
-                </div>
-                <p className="hint-subtitle">Pop the balloons in this order!</p>
-            </div>
-            </div>
+      <Modal
+        isOpen={showHintModal}
+        onClose={() => setShowHintModal(false)}
+        title="Hint"
+        confirmText="Got It!"
+        size="medium"
+      >
+        <div style={{ textAlign: 'center' }}>
+          <img
+            src={babyGaneshaImg}
+            alt="Ganesha"
+            className="bounce"
+            style={{ width: '120px', margin: '0 auto 20px', display: 'block' }}
+          />
+          <p style={{ fontSize: '20px', fontWeight: '600', marginBottom: '15px', color: 'var(--zone-current-accent)' }}>
+            My name is:
+          </p>
+          <div style={{
+            display: 'flex',
+            gap: '8px',
+            justifyContent: 'center',
+            marginBottom: '15px'
+          }}>
+            {nameLetters.map((item, index) => (
+              <span
+                key={item.id}
+                className="scale-in"
+                style={{
+                  animationDelay: `${index * 0.1}s`,
+                  fontSize: '32px',
+                  fontWeight: 'bold',
+                  color: 'var(--play-action-green)',
+                  padding: '10px',
+                  background: 'var(--zone-current-soft)',
+                  borderRadius: '10px',
+                  minWidth: '50px',
+                  display: 'inline-block'
+                }}
+              >
+                {item.letter}
+              </span>
+            ))}
+          </div>
+          <p style={{ fontSize: '16px', color: 'var(--play-text-main)' }}>
+            Pop the balloons in this order!
+          </p>
         </div>
-      )}
+      </Modal>
 
       {/* Name Complete */}
       {sceneState.gamePhase === 'name-complete' && (
@@ -529,7 +650,14 @@ useEffect(() => {
           <img src={babyGaneshaImg} alt="Baby Ganesha" className="child-intro-ganesha bounce" />
           <div className="child-intro-card">
             <h2 className="child-intro-title">Hi! I am Ganesha.</h2>
-            <button className="child-intro-btn" onClick={() => sceneActions.updateState({ gamePhase: 'child-name-input' })}>What is your name? 👋</button>
+            <Button
+              variant="primary"
+              size="large"
+              onClick={() => sceneActions.updateState({ gamePhase: 'child-name-input' })}
+              className="heartbeat-delayed"
+            >
+              What is your name? 👋
+            </Button>
           </div>
         </div>
       )}
@@ -543,8 +671,22 @@ useEffect(() => {
             {sceneState.childNameLetters.length === 0 ? <div className="name-placeholder">Your Name Here</div> : sceneState.childNameLetters.map((letter, index) => <div key={index} className="child-name-letter pop-in">{letter}</div>)}
           </div>
           <div className="child-name-controls">
-            <button className="child-backspace-btn" onClick={handleChildNameBackspace} disabled={sceneState.childNameLetters.length === 0}>⌫ Delete</button>
-            <button className="child-confirm-btn" onClick={handleChildNameConfirm} disabled={sceneState.childNameLetters.length < 2}>That's My Name! ✓</button>
+            <Button
+              variant="secondary"
+              size="medium"
+              onClick={handleChildNameBackspace}
+              disabled={sceneState.childNameLetters.length === 0}
+            >
+              ⌫ Delete
+            </Button>
+            <Button
+              variant="primary"
+              size="medium"
+              onClick={handleChildNameConfirm}
+              disabled={sceneState.childNameLetters.length < 2}
+            >
+              That's My Name! ✓
+            </Button>
           </div>
           <div className="child-letter-keyboard">
             {availableLetters.map((letter, index) => <button key={index} className="child-letter-tile bounce-gentle" onClick={() => handleChildNameLetterClick(letter)} style={{ animationDelay: `${index * 0.02}s` }}>{letter}</button>)}
@@ -571,20 +713,35 @@ useEffect(() => {
           <div className="child-bday-intro-card">
             <h2 className="child-bday-intro-title">Now I know YOUR name, {sceneState.childName}! 🎈</h2>
             <p className="child-bday-intro-text">But when is YOUR birthday? 🎂</p>
-            <button className="child-bday-intro-btn" onClick={() => sceneActions.updateState({ gamePhase: 'child-birthday-month' })}>Tell You My Birthday! 🎉</button>
+            <Button
+              variant="primary"
+              size="large"
+              onClick={() => sceneActions.updateState({ gamePhase: 'child-birthday-month' })}
+              className="heartbeat-delayed"
+            >
+              Tell You My Birthday! 🎉
+            </Button>
           </div>
         </div>
       )}
 
-      {/* Birthday Month */}
+{/* Birthday Month */}
       {sceneState.gamePhase === 'child-birthday-month' && (
         <div className="child-birthday-month-screen">
           <div className="child-input-ganesha"><img src={babyGaneshaImg} alt="Ganesha" className="ganesha-watching bounce-gentle" /></div>
+          
           <div className="child-instruction-bubble">Tap the month you were born! 🗓️</div>
+          
           <div className="month-festivals-grid">
             {monthFestivals.map((monthData, index) => (
-              <button key={monthData.month} className="month-festival-card bounce-gentle" onClick={() => handleMonthSelect(monthData)} style={{ animationDelay: `${index * 0.05}s`, borderColor: monthData.color }}>
-                <div className="month-festival-emoji">{monthData.emoji}</div>
+              <button 
+                key={monthData.month} 
+                className="month-festival-card bounce-gentle" 
+                onClick={() => handleMonthSelect(monthData)} 
+                style={{ animationDelay: `${index * 0.05}s`, borderColor: monthData.color }}
+              >
+                {/* REPLACED EMOJI WITH IMAGE */}
+                <img src={monthData.image} alt={monthData.name} className="month-card-image" />
                 <div className="month-festival-name">{monthData.name}</div>
                 <div className="month-festival-subtitle">{monthData.festival}</div>
               </button>
@@ -592,7 +749,7 @@ useEffect(() => {
           </div>
         </div>
       )}
-
+      
       {/* Birthday Date */}
       {sceneState.gamePhase === 'child-birthday-date' && (
         <div className="child-birthday-date-screen">
@@ -603,7 +760,19 @@ useEffect(() => {
               <button key={date} className="date-picker-button bounce-gentle" onClick={() => handleDateSelect(date)} style={{ animationDelay: `${date * 0.02}s` }}>{date}</button>
             ))}
           </div>
-          <button className="back-to-months-btn" onClick={() => sceneActions.updateState({ gamePhase: 'child-birthday-month' })}>← Change Month</button>
+          <Button
+            variant="secondary"
+            size="small"
+            onClick={() => sceneActions.updateState({ gamePhase: 'child-birthday-month' })}
+            style={{
+              position: 'absolute',
+              bottom: '20px',
+              left: '50%',
+              transform: 'translateX(-50%)'
+            }}
+          >
+            ← Change Month
+          </Button>
         </div>
       )}
 
@@ -643,7 +812,14 @@ useEffect(() => {
           </div>
           <div className="besties-badge-container">
             <div className="besties-badge">🎖️ OFFICIAL BESTIES BADGE 🎖️</div>
-            <button className="besties-end-btn" onClick={() => sceneActions.updateState({ showingCompletionScreen: true })}>Finish Game ✨</button>
+            <Button
+              variant="info"
+              size="large"
+              onClick={() => sceneActions.updateState({ showingCompletionScreen: true })}
+              className="heartbeat-gentle"
+            >
+              Finish Game ✨
+            </Button>
           </div>
         </div>
       )}
@@ -653,46 +829,100 @@ useEffect(() => {
         <div className="bday-quest-overlay">
           <img src={babyGaneshaImg} alt="Baby Ganesha" className="bday-quest-ganesha bounce" />
           <div className="bday-quest-card">
-            <h2 className="bday-quest-title">Let’s Find My Birthday 🎂</h2>
+            <h2 className="bday-quest-title">Let's Find My Birthday 🎂</h2>
             <p className="bday-quest-text">My birthday is a joyful day when people celebrate together.<br />It comes during the festival season.</p>
-            <button className="bday-quest-btn" onClick={handleStartBirthdayChoice}>Let’s Explore 🌼</button>
+            <Button
+              variant="primary"
+              size="large"
+              onClick={handleStartBirthdayChoice}
+              className="heartbeat-delayed"
+            >
+              Let's Explore 🌼
+            </Button>
           </div>
         </div>
       )}
 
       {/* Birthday Choice */}
+{/* Birthday Choice */}
       {sceneState.gamePhase === 'birthday-choice' && (
         <div className="birthday-choice-screen">
-          <div className="birthday-ganesha-waiting"><img src={babyGaneshaImg} alt="Baby Ganesha" className="birthday-ganesha-small bounce-gentle" /></div>
-          <div className="birthday-speech-bubble">Which festival is my birthday? 🎊</div>
+          
+          {/* 1. Movable Ganesha */}
+          <div className="birthday-ganesha-movable">
+            <img src={babyGaneshaImg} alt="Baby Ganesha" className="birthday-ganesha-small bounce-gentle" />
+          </div>
+
+          {/* 2. DYNAMIC HEADER BUBBLE */}
+          <div className="birthday-speech-bubble">
+            <span className="bubble-main-text">Which festival is my birthday? 🎊</span>
+            <span className="bubble-instruction-small">
+              {/* If a card is open (flipped), show "Tap to close", else show "Tap to choose" */}
+              {sceneState.flippedCards.length > 0 
+                ? "Tap anywhere to close ✖" 
+                : "Tap a card to guess (or ⓘ to peek) ✨"}
+            </span>
+          </div>
+
+          {/* 3. Cards Container */}
           <div className="birthday-choices-container">
-            {sceneState.flippedCards.length > 0 && <div className="birthday-info-overlay" onClick={() => sceneActions.updateState({ flippedCards: [] })} />}
+            
+            {/* BACKGROUND OVERLAY (Click to Close) */}
+            {sceneState.flippedCards.length > 0 && (
+              <div 
+                className="birthday-info-overlay" 
+                onClick={handleCloseInfo} 
+              />
+            )}
+            
             {festivals.map((festival, index) => {
               const isLeftColumn = index % 2 === 0;
+              const isFlipped = sceneState.flippedCards.includes(festival.id);
+              const isWrong = sceneState.wrongFestivals.includes(festival.id);
+
               return (
-                <div key={festival.id} className={`birthday-card-container ${sceneState.flippedCards.includes(festival.id) ? 'container-active' : ''}`}>
-                  <button
-                    className={`birthday-choice-card ${showShake === festival.id ? 'birthday-shake' : ''} ${sceneState.wrongFestivals.includes(festival.id) ? 'birthday-wrong' : ''} ${sceneState.flippedCards.includes(festival.id) ? 'card-info-open' : ''}`}
+                <div key={festival.id} className={`birthday-card-container ${isFlipped ? 'container-active' : ''}`}>
+                  
+          <button
+                    className={`birthday-choice-card heartbeat-card ${isFlipped ? 'card-info-open' : ''} ${isWrong ? 'birthday-wrong' : ''}`}
                     onClick={() => handleFestivalClick(festival.id)}
-                    disabled={sceneState.wrongFestivals.includes(festival.id) || sceneState.flippedCards.length > 0}
+                    /* FIX: Only disable if A card is open, but allow clicking this one even if wrong */
+                    disabled={sceneState.flippedCards.length > 0 && !isFlipped}
                     style={{ animationDelay: `${index * 0.2}s` }}
                   >
-                    <div className="birthday-choice-image-container"><img src={festival.image} alt={festival.name} className="birthday-choice-image" /></div>
-                    <div className="birthday-choice-name">{festival.name}</div>
-                    <div className="birthday-choice-subtitle">{festival.subtitle}</div>
+                    <div className="birthday-choice-image-container">
+                      <img src={festival.image} alt={festival.name} className="birthday-choice-image" />
+                    </div>
+                    <div className="birthday-choice-clue">{festival.clue}</div>
                   </button>
+
+                  {/* INFO ICON: Always clickable even if card is wrong/grayed out, so they can re-read */}
                   <button 
                     className="birthday-info-icon"
-                    onClick={() => handleCardFlip(festival.id)}
-                    disabled={sceneState.wrongFestivals.includes(festival.id)}
+                    onClick={(e) => { 
+                      e.stopPropagation(); 
+                      sceneActions.updateState({ flippedCards: [festival.id] });
+                      setInstructionMessage("Learning Mode! 🤓"); 
+                    }}
                     style={{ [isLeftColumn ? 'left' : 'right']: '10px' }}
                   >ⓘ</button>
-                  {sceneState.flippedCards.includes(festival.id) && (
-                    <div className={`birthday-info-panel ${isLeftColumn ? 'slide-left' : 'slide-right'}`}>
-                      <button className="birthday-info-close" onClick={(e) => { e.stopPropagation(); sceneActions.updateState({ flippedCards: [] }); }}>✕</button>
+
+                  {/* INFO PANEL (Tap to Close) */}
+                  {isFlipped && (
+                    <div 
+                      className={`birthday-info-panel ${isLeftColumn ? 'slide-left' : 'slide-right'}`}
+                      onClick={handleCloseInfo}
+                      style={{ cursor: 'pointer' }}
+                    >
                       <div className="birthday-info-content">
-                        <div className="birthday-info-month">{festival.month}</div>
+                        <div className="birthday-info-month">{festival.name}</div>
                         <div className="birthday-info-fact">{festival.fact}</div>
+                        <div className="birthday-info-sub">{festival.month}</div>
+                        
+                        {/* Subtle Hint to tap to close */}
+                        <div style={{ fontSize: '0.8rem', opacity: 0.7, marginTop: '5px', fontStyle: 'italic' }}>
+                          (Tap to close)
+                        </div>
                       </div>
                     </div>
                   )}
@@ -702,6 +932,7 @@ useEffect(() => {
           </div>
         </div>
       )}
+
 
       {/* Birthday Correct */}
       {sceneState.gamePhase === 'birthday-correct' && (

@@ -1,0 +1,328 @@
+/* ==========================================
+   UNIFIED MODAL COMPONENT
+   Uses Zone-Current Colors (Layer A - the walls)
+   Buttons inside use Global Play Palette (Layer B - the toys)
+   ========================================== */
+
+/* Overlay - Dark background with blur */
+.unified-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+
+  z-index: 1000;
+
+  /* Fade in animation */
+  animation: modal-overlay-fade-in 0.3s ease-out;
+}
+
+@keyframes modal-overlay-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modal Container - Uses zone colors */
+.unified-modal {
+  position: relative;
+  background: var(--zone-current-base); /* Adapts to zone */
+  border: 4px solid var(--zone-current-accent); /* Zone accent border */
+  border-radius: 30px;
+  padding: 30px;
+
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.3),
+    0 0 0 1px var(--zone-current-shadow) inset;
+
+  max-height: 90vh;
+  overflow-y: auto;
+
+  /* Scale in animation */
+  animation: modal-scale-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modal-scale-in {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ==========================================
+   SIZE VARIANTS
+   ========================================== */
+
+.unified-modal--small {
+  width: 100%;
+  max-width: 400px;
+}
+
+.unified-modal--medium {
+  width: 100%;
+  max-width: 600px;
+}
+
+.unified-modal--large {
+  width: 100%;
+  max-width: 800px;
+}
+
+/* ==========================================
+   CLOSE BUTTON (X in corner)
+   ========================================== */
+
+.unified-modal__close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+
+  background: var(--zone-current-soft);
+  border: 2px solid var(--zone-current-accent);
+
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--zone-current-accent);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.unified-modal__close-btn:hover {
+  background: var(--zone-current-accent);
+  color: var(--zone-current-base);
+  transform: rotate(90deg) scale(1.1);
+}
+
+.unified-modal__close-btn:active {
+  transform: rotate(90deg) scale(0.95);
+}
+
+/* ==========================================
+   TITLE
+   ========================================== */
+
+.unified-modal__title {
+  margin: 0 0 20px 0;
+  padding-bottom: 15px;
+
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--zone-current-accent); /* Zone accent for emphasis */
+  text-align: center;
+
+  border-bottom: 3px solid var(--zone-current-soft);
+
+  /* Normal case text */
+  text-transform: none;
+}
+
+/* ==========================================
+   CONTENT
+   ========================================== */
+
+.unified-modal__content {
+  margin-bottom: 25px;
+
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--play-text-main);
+
+  /* Allow scrolling for long content */
+  overflow-y: auto;
+  max-height: 50vh;
+}
+
+.unified-modal__content p {
+  margin: 0 0 12px 0;
+}
+
+.unified-modal__content p:last-child {
+  margin-bottom: 0;
+}
+
+/* ==========================================
+   ACTION BUTTONS
+   ========================================== */
+
+.unified-modal__actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+
+  padding-top: 20px;
+  border-top: 2px solid var(--zone-current-soft);
+}
+
+/* Single button - center it */
+.unified-modal__actions > *:only-child {
+  margin: 0 auto;
+}
+
+/* ==========================================
+   MOBILE OPTIMIZATIONS
+   ========================================== */
+
+@media (max-width: 768px) {
+  .unified-modal-overlay {
+    padding: 15px;
+  }
+
+  .unified-modal {
+    padding: 20px;
+    border-radius: 20px;
+    max-height: 85vh;
+  }
+
+  .unified-modal--small,
+  .unified-modal--medium,
+  .unified-modal--large {
+    max-width: 100%;
+  }
+
+  .unified-modal__title {
+    font-size: 24px;
+    margin-bottom: 15px;
+    padding-bottom: 12px;
+  }
+
+  .unified-modal__content {
+    font-size: 15px;
+    max-height: 40vh;
+  }
+
+  .unified-modal__actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .unified-modal__actions > * {
+    width: 100%;
+  }
+
+  .unified-modal__close-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+    top: 12px;
+    right: 12px;
+  }
+}
+
+/* ==========================================
+   CUSTOM SCROLLBAR (Optional Enhancement)
+   ========================================== */
+
+.unified-modal__content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.unified-modal__content::-webkit-scrollbar-track {
+  background: var(--zone-current-soft);
+  border-radius: 10px;
+}
+
+.unified-modal__content::-webkit-scrollbar-thumb {
+  background: var(--zone-current-accent);
+  border-radius: 10px;
+}
+
+.unified-modal__content::-webkit-scrollbar-thumb:hover {
+  background: var(--zone-current-accent);
+  opacity: 0.8;
+}
+
+/* ==========================================
+   ACCESSIBILITY
+   ========================================== */
+
+.unified-modal:focus {
+  outline: 3px solid var(--play-magic-blue);
+  outline-offset: 2px;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .unified-modal-overlay,
+  .unified-modal {
+    animation: none;
+  }
+
+  .unified-modal__close-btn:hover {
+    transform: none;
+  }
+}
+
+/* ==========================================
+   USAGE EXAMPLES IN COMMENTS
+   ========================================== */
+
+/*
+✅ BASIC MODAL:
+<Modal
+  isOpen={showModal}
+  onClose={() => setShowModal(false)}
+  title="Welcome!"
+>
+  This is the modal content.
+</Modal>
+
+✅ MODAL WITH CONFIRM/CANCEL:
+<Modal
+  isOpen={showConfirm}
+  onClose={() => setShowConfirm(false)}
+  title="Are you sure?"
+  confirmText="Yes, Delete"
+  cancelText="Cancel"
+  onConfirm={handleDelete}
+  onCancel={() => setShowConfirm(false)}
+>
+  This action cannot be undone.
+</Modal>
+
+✅ LARGE MODAL WITHOUT CLOSE BUTTON:
+<Modal
+  isOpen={showInfo}
+  onClose={() => setShowInfo(false)}
+  title="Game Instructions"
+  size="large"
+  showCloseButton={false}
+  closeOnOverlayClick={false}
+>
+  <p>Step 1: ...</p>
+  <p>Step 2: ...</p>
+</Modal>
+
+✅ MODAL IN DIFFERENT ZONES:
+- Wrap parent in [data-zone="festival-square"] for Festival colors
+- Wrap parent in [data-zone="symbol-mountain"] for Mountain colors
+- Background/borders adapt automatically via --zone-current-* variables
+- Buttons inside always use Global Play Palette (green/blue/gold)
+*/

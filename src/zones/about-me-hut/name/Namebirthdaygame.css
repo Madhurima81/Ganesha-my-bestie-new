@@ -16,15 +16,15 @@
   z-index: 0;
 }
 
-/* BACK BUTTON */
+/* BACK BUTTON - Now using unified BackToMapButton component */
 .back-btn {
   position: absolute;
   top: 20px;
   left: 20px;
   padding: 12px 24px;
-  background: rgba(139, 111, 71, 0.9);
-  color: white;
-  border: 2px solid #654321;
+  background: var(--zone-current-accent);
+  color: var(--play-sticker-white);
+  border: 2px solid var(--zone-current-accent);
   border-radius: 12px;
   font-size: 16px;
   font-weight: bold;
@@ -34,7 +34,8 @@
 }
 
 .back-btn:hover {
-  background: rgba(101, 67, 33, 0.9);
+  background: var(--zone-current-accent);
+  opacity: 0.9;
   transform: scale(1.05);
 }
 
@@ -42,30 +43,74 @@
 /* INTRO MODAL THEME (Purple Override)       */
 /* ========================================= */
 
-/* 1. Override Title Color */
+/* INTRO MODAL - Now using unified Modal component */
+/* These styles are deprecated - modal now uses zone-themes.css */
 #name-birthday-intro .game-modal-title {
-  color: #6B3F1D
-
+  color: var(--zone-current-accent);
 }
 
-/* 2. Override Button to Blue/Purple Gradient */
+/* Intro Modal Content Styles - Using zone variables */
+.intro-modal-content {
+  text-align: center;
+}
+
+.intro-ganesha-image {
+  width: 150px;
+  margin: 0 auto 20px;
+  display: block;
+}
+
+.intro-description {
+  font-size: 18px;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  color: var(--play-text-main);
+}
+
+.intro-icons-container {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  align-items: center;
+}
+
+.intro-icon-item {
+  text-align: center;
+}
+
+.intro-icon-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--zone-current-soft);
+  border: 3px solid var(--zone-current-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  margin: 0 auto 10px;
+}
+
+.intro-icon-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--zone-current-accent);
+}
+
 #name-birthday-intro .game-modal-button {
-  background: linear-gradient(135deg, #FFA94D 0%,    #FF8F00
- 100%);
- 
-  box-shadow: 
-    0 10px 25px rgba(118, 75, 162, 0.4),
-    inset 0 2px 0 rgba(255, 255, 255, 0.3);
+  /* Now using unified Button component */
+  background: var(--play-action-green);
+  color: var(--play-text-main);
+  border: 4px solid var(--play-sticker-white);
 }
 
 #name-birthday-intro .game-modal-button:hover {
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 15px 35px rgba(118, 75, 162, 0.5);
+  box-shadow: 0 15px 35px rgba(142, 214, 65, 0.4);
 }
 
-/* 3. Icon Circle Styles (Optional specific styling) */
 #name-birthday-intro .game-modal-icon-circle {
-  box-shadow: 0 5px 15px rgba(238, 228, 173, 0.667); /* Purple shadow */
+  box-shadow: 0 5px 15px var(--zone-current-shadow);
 }
 
 /* INTRO OVERLAY */
@@ -163,24 +208,23 @@
 
 .instruction-bubble {
   position: absolute;
-  top: 30px; /* Lowered slightly for Ganesha to peek over */
+  top: 30px;
   left: 50%;
   transform: translateX(-50%);
-  background: #FFFDF2;      /* Warm Cream */
-  border: 4px solid #F9A825; /* Strong Festive Orange border */
-  color: #4E342E;           /* Bright Festive Red for the question */
-  
-  border-radius: 50px;      /* Fully pill-shaped */
+  background: var(--zone-current-base);
+  border: 4px solid var(--zone-current-accent);
+  color: var(--play-text-main);
+
+  border-radius: 50px;
   padding: 12px 40px;
-  font-family: 'Baloo 2', cursive; /* Match game typography */
-  font-size: 28px;          /* Slightly larger for clarity */
+  font-family: 'Baloo 2', cursive;
+  font-size: 28px;
   font-weight: 800;
   text-align: center;
   z-index: 20;
-  
-  /* THE 3D FIX: Solid colored shadow */
-  box-shadow: 0 6px 0 rgba(249, 168, 37, 0.3); 
-  
+
+  box-shadow: 0 6px 0 var(--zone-current-shadow);
+
   animation: bubbleBounce 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -849,28 +893,44 @@
 }
 
 .birthday-choice-card {
-  width: 100%;
-  height: 100%;
-  background: #FFFDF2; /* Warm Cream Paper look */
-  border: 4px solid #FFFFFF; /* White sticker rim */
-  border-radius: 24px; /* More rounded for safety/playfulness */
-  padding: 20px;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  /* THE 3D FIX: Solid shadow instead of soft glow */
-  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.1); 
+    width: 100%;
+    height: 100%;
+    background: #FFFDF2; /* Warm Cream */
+    border: 4px solid #FFFFFF; /* Clean Sticker Outline */
+    border-radius: 24px;
+    padding: 20px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    
+    /* 🤎 Refined 3D Shadow: Matches the Brown Header */
+    box-shadow: 0 8px 0 rgba(121, 85, 72, 0.2); 
+    
+    /* ✨ Interaction Settings */
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: heartbeat 3s infinite ease-in-out; 
 }
 
-/* 🏆 ACTIVE / CORRECT SELECTION */
-.birthday-choice-card.active {
-  border: 4px solid #FFD54F; /* Gold Highlight */
-  box-shadow: 0 8px 0 #FFB300, 0 10px 20px rgba(255, 179, 0, 0.2);
-  transform: translateY(-4px);
+/* 💓 Heartbeat Animation Logic */
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); } /* Very subtle to avoid distraction */
+    100% { transform: scale(1); }
+}
+
+/* ☝️ Feedback when Tapped */
+.birthday-choice-card:active {
+    transform: scale(0.95);
+    box-shadow: 0 4px 0 rgba(121, 85, 72, 0.2);
+}
+
+/* 💡 Optional: Remove heartbeat when hovering or once selected */
+.birthday-choice-card:hover {
+    animation: none;
+    background: #FFFBCC; /* Subtle yellow tint on hover */
 }
 
 /* 🎨 CARD NAME TYPOGRAPHY */
@@ -930,12 +990,25 @@
   animation: shake 0.5s ease-in-out;
 }
 
-.birthday-wrong {
-  opacity: 0.3;
-  border-color: #ff4444 !important;
-  position: relative;
+
+
+/* Ensure the Info Icon stays colorful and clickable even if the card is gray */
+.birthday-wrong + .birthday-info-icon {
+  filter: grayscale(0%);
+  opacity: 1;
+  cursor: pointer;
+  pointer-events: auto; /* Re-enable clicks on the icon specifically */
 }
 
+/* Ensure the Overlay covers the Movable Ganesha too so clicks don't miss */
+.birthday-info-overlay {
+  z-index: 40; /* Higher than Ganesha (z-index 5) and Bubble (z-index 20) */
+}
+
+/* Ensure active container pops above overlay */
+.container-active {
+  z-index: 50 !important;
+}
 
 
 /* Correct Celebration Screen */
@@ -1541,17 +1614,125 @@ color: #7A4A00;
 
 /* INFO PANEL */
 .birthday-info-panel {
-  position: absolute;
-  top: 0;
-  width: 220px;
-  height: 100%;
-  background: linear-gradient(135deg, #FFF6DF, #FFE8C7);
-  border: 3px solid #F4A940;
-  border-radius: 18px;
-  padding: 18px 14px;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
-
+    position: absolute;
+    top: 0;
+    width: 220px;
+    height: 100%;
+    
+    /* 🎨 Soft Cream Gradient */
+    background: linear-gradient(135deg, #FFFDF2, #FFF9E6); 
+    
+    /* 🤎 Consistent Earthy Border */
+    border: 3px solid #795548; 
+    border-radius: 18px;
+    padding: 18px 14px;
+    
+    /* 🗂️ Depth & Animation */
+    box-shadow: 0 8px 22px rgba(121, 85, 72, 0.25);
+    z-index: 150 !important;
 }
+
+/* ========================================= */
+/*  MYSTERY CARD & STICKER UI                */
+/* ========================================= */
+
+/* 1. The Sticker Card Look */
+.birthday-choice-card {
+  /* Reset/Base */
+  width: 100%;
+  height: 100%;
+  background: #FFFDF2; /* Warm Cream */
+  
+  /* 🎨 Sticker Border & Earthy Shadow */
+  border: 4px solid #FFFFFF !important; 
+  box-shadow: 0 8px 0 rgba(121, 85, 72, 0.2) !important; 
+  border-radius: 24px;
+  
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  
+  /* Animation smoothing */
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+}
+
+/* Hover Effect */
+.birthday-choice-card:hover:not(:disabled) {
+  transform: scale(1.05) translateY(-5px);
+  border-color: #FFD54F !important; /* Gold Highlight */
+  box-shadow: 0 12px 0 rgba(121, 85, 72, 0.2) !important;
+}
+
+/* 2. Mystery Clue Text (On Card Face) */
+.birthday-choice-clue {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #5D4037; /* Earthy Dark Brown */
+  text-align: center;
+  line-height: 1.2;
+  margin-top: 10px;
+}
+
+/* 3. Info Panel Reveal Styles */
+.birthday-info-month {
+  /* This is now the TITLE REVEAL inside the panel */
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.6rem !important;
+  font-weight: 800;
+  color: #D84315 !important; /* Burnt Orange */
+  background: transparent !important;
+  box-shadow: none !important;
+  text-align: center;
+  padding: 0 !important;
+  line-height: 1.1;
+}
+
+.birthday-info-sub {
+  font-family: 'Nunito', sans-serif;
+  background: #FFECB3;
+  color: #8D6E63;
+  font-size: 0.9rem;
+  padding: 4px 10px;
+  border-radius: 12px;
+  align-self: center;
+  font-weight: 700;
+  margin-top: auto;
+}
+
+/* 4. Heartbeat Animation */
+@keyframes heartbeat-pulse {
+  0% { transform: scale(1); }
+  5% { transform: scale(1.03); }
+  10% { transform: scale(1); }
+  15% { transform: scale(1.03); }
+  50% { transform: scale(1); }
+  100% { transform: scale(1); }
+}
+
+.heartbeat-card {
+  animation: heartbeat-pulse 3s infinite ease-in-out;
+}
+
+/* Pause heartbeat on hover or when info open */
+.birthday-choice-card:hover,
+.birthday-choice-card.card-info-open {
+  animation-play-state: paused;
+}
+
+/* 5. Active/Wrong States */
+.card-info-open {
+  /* Highlight when info panel is open */
+  border-color: #FF8C00 !important;
+  box-shadow: 0 0 0 4px #FFECB3, 0 12px 0 rgba(121, 85, 72, 0.2) !important;
+  transform: scale(1.02);
+  z-index: 90;
+}
+
+
 
 /* INFO PANEL CLOSE BUTTON (gentle, non-threatening) */
 .birthday-info-close {
@@ -1646,6 +1827,78 @@ color: #7A4A00;
   font-style: italic;
   text-align: center;
 }
+
+/* ================================================== */
+/*  UPDATED HEADER & MOVABLE GANESHA                  */
+/* ================================================== */
+
+/* 1. SEPARATE GANESHA CLASS FOR MOVING */
+.birthday-ganesha-movable {
+  position: absolute;
+  z-index: 5; /* Behind the text bubble (which is usually z-index 10) */
+  
+  /* --- MOVE HIM HERE --- */
+  top: 6%;        /* Adjust vertical position */
+  left: 25%;       /* Adjust horizontal position */
+  transform: translateX(-50%); /* Keeps him centered. Remove this line if moving to left/right side */
+  /* --------------------- */
+}
+
+/* 2. UPDATED SPEECH BUBBLE (To handle 2 lines) */
+.birthday-speech-bubble {
+  /* Existing styles preserved */
+  position: absolute;
+  top: 8%; 
+  left: 50%;
+  transform: translateX(-50%);
+  background: #FFFDF2;      
+  border: 4px solid #795548; 
+  color: #4E342E;           
+  padding: 10px 40px;      /* Slightly reduced vertical padding to fit 2 lines nicely */
+  border-radius: 50px;      
+  box-shadow: 0 6px 0 rgba(121, 85, 72, 0.2); 
+  z-index: 20; /* Ensures text is over Ganesha */
+  
+  /* Flexbox to stack the two lines */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* 3. NEW TEXT STYLES */
+.bubble-main-text {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.bubble-instruction-small {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.1rem; /* Smaller font */
+  font-weight: 700;
+  color: #8D6E63;    /* Slightly lighter brown */
+  margin-top: 2px;
+}
+
+/* Mobile Adjustments for the new header */
+@media (max-width: 768px) {
+  .birthday-speech-bubble {
+    padding: 8px 25px;
+    width: 90%;
+  }
+  
+  .bubble-main-text {
+    font-size: 1.3rem;
+  }
+  
+  .bubble-instruction-small {
+    font-size: 0.9rem;
+  }
+}
+
 
 /* ========================================= */
 /*  UNIQUE CHILD NAME INTRO STYLES           */
@@ -2105,46 +2358,99 @@ color: #7A4A00;
   padding: 20px;
 }
 
+/* ========================================= */
+/*  FIXED MONTH CARD LAYOUT                  */
+/* ========================================= */
+
+/* 1. GRID CONTAINER */
+.month-festivals-grid {
+  /* Ensure grid cells respect content size */
+  grid-auto-rows: auto; 
+  gap: 15px !important;
+  padding-bottom: 20px;
+}
+
+/* 2. THE CARD (Remove fixed height!) */
 .month-festival-card {
-  width: 180px;
-  height: 140px;
-  background: white;
-  border: 4px solid;
-  border-radius: 15px;
-  padding: 15px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  /* Use min-height instead of fixed height so it grows with text */
+  min-height: 180px !important; 
+  height: auto !important; 
+  
+  background: #FFFFFF;
+  border: 4px solid; 
+  border-radius: 20px;
+  
+  /* Flex layout to stack Image -> Name -> Subtitle */
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important; /* Center vertically */
+  
+  padding: 10px !important;
+  box-shadow: 0 6px 0 rgba(0,0,0,0.1) !important;
+  
+  /* Ensure text doesn't spill out */
+  overflow: visible !important; 
+  position: relative;
+  z-index: 1;
 }
 
-.month-festival-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+/* 3. THE IMAGE (Sized to fit) */
+.month-card-image {
+  /* Slightly smaller to ensure text room, but still big enough */
+  width: 120px !important;  
+  height: 120px !important; 
+  object-fit: contain !important;
+  margin-bottom: 8px !important;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
 }
 
-.month-festival-emoji {
-  font-size: 48px;
-  margin-bottom: 5px;
-}
-
+/* 4. THE TEXT (Clean Typography) */
 .month-festival-name {
   font-family: 'Baloo 2', cursive;
-  font-size: 20px;
-  font-weight: 700;
-  color: #8B4513;
+  font-size: 1.1rem !important; /* Readable size */
+  font-weight: 800;
+  color: #3e2723;
+  text-align: center;
+  line-height: 1.2;
+  margin-bottom: 2px;
+  width: 100%;
 }
 
 .month-festival-subtitle {
   font-family: 'Nunito', sans-serif;
-  font-size: 13px;
-  color: #999;
+  font-size: 0.8rem !important;
+  color: #8d6e63;
   text-align: center;
   font-style: italic;
+  width: 100%;
+}
+
+/* Hover Effect */
+.month-festival-card:hover {
+  transform: translateY(-5px);
+  z-index: 10; /* Bring to front on hover */
+}
+
+/* Ensure Wrong State allows Clicks but looks Grey */
+.birthday-wrong {
+  opacity: 0.6;
+  filter: grayscale(100%);
+  background: #E0E0E0;
+  border-color: #BDBDBD !important;
+  box-shadow: none !important;
+  /* Ensure it remains clickable */
+  cursor: pointer !important; 
+  pointer-events: auto !important; 
+}
+
+/* When Info is Open, even if wrong, highlight it */
+.birthday-wrong.card-info-open {
+  filter: grayscale(0%); /* Bring color back when reading info */
+  opacity: 1;
+  border-color: #FF8C00 !important;
+  box-shadow: 0 0 0 4px #FFECB3, 0 12px 0 rgba(121, 85, 72, 0.2) !important;
 }
 
 /* DATE PICKER GRID */

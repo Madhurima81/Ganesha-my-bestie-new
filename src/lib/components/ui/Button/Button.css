@@ -1,0 +1,284 @@
+/* ==========================================
+   UNIFIED BUTTON COMPONENT
+   Uses ONLY Global Play Palette (Layer B)
+   Same colors in ALL zones
+   ========================================== */
+
+.unified-button {
+  /* Base Structure */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  /* Typography - Normal case (not uppercase) */
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  font-weight: 600;
+  text-align: center;
+
+  /* Pill Shape */
+  border-radius: 25px;
+
+  /* Always 4px white border (sticker border) */
+  border: 4px solid var(--play-sticker-white);
+
+  /* Cursor */
+  cursor: pointer;
+
+  /* Smooth transitions */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Remove default button styles */
+  outline: none;
+
+  /* Prevent text selection */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+
+/* ==========================================
+   VARIANT STYLES - Always use Play Colors
+   ========================================== */
+
+/* Primary - Action Green (most common) */
+.unified-button--primary {
+  background: var(--play-action-green);
+  color: var(--play-text-main);
+  box-shadow:
+    0 4px 12px var(--play-shadow-base),
+    0 2px 4px rgba(142, 214, 65, 0.2);
+}
+
+.unified-button--primary:hover:not(:disabled) {
+  background: #7EC737; /* Slightly darker green */
+  transform: translateY(-2px) scale(1.02);
+  box-shadow:
+    0 6px 20px var(--play-shadow-hover),
+    0 0 20px var(--play-hover-glow);
+}
+
+.unified-button--primary:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+  box-shadow:
+    0 2px 8px var(--play-shadow-base),
+    0 0 10px var(--play-hover-glow);
+}
+
+/* Secondary - Magic Blue (informational) */
+.unified-button--secondary {
+  background: var(--play-magic-blue);
+  color: var(--play-text-main);
+  box-shadow:
+    0 4px 12px var(--play-shadow-base),
+    0 2px 4px rgba(79, 195, 247, 0.2);
+}
+
+.unified-button--secondary:hover:not(:disabled) {
+  background: #3DB4E8; /* Slightly darker blue */
+  transform: translateY(-2px) scale(1.02);
+  box-shadow:
+    0 6px 20px var(--play-shadow-hover),
+    0 0 20px rgba(79, 195, 247, 0.4);
+}
+
+.unified-button--secondary:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+  box-shadow:
+    0 2px 8px var(--play-shadow-base),
+    0 0 10px rgba(79, 195, 247, 0.3);
+}
+
+/* Info - Joy Gold (success/rewards) */
+.unified-button--info {
+  background: var(--play-joy-gold);
+  color: var(--play-text-main);
+  box-shadow:
+    0 4px 12px var(--play-shadow-base),
+    0 2px 4px rgba(255, 210, 48, 0.2);
+}
+
+.unified-button--info:hover:not(:disabled) {
+  background: #F0C520; /* Slightly darker gold */
+  transform: translateY(-2px) scale(1.02);
+  box-shadow:
+    0 6px 20px var(--play-shadow-hover),
+    0 0 20px var(--play-active-glow);
+}
+
+.unified-button--info:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+  box-shadow:
+    0 2px 8px var(--play-shadow-base),
+    0 0 10px var(--play-active-glow);
+}
+
+/* ==========================================
+   SIZE VARIANTS
+   ========================================== */
+
+.unified-button--small {
+  padding: 8px 20px;
+  font-size: 14px;
+  min-height: 36px;
+}
+
+.unified-button--medium {
+  padding: 12px 30px;
+  font-size: 16px;
+  min-height: 48px;
+}
+
+.unified-button--large {
+  padding: 16px 40px;
+  font-size: 20px;
+  min-height: 60px;
+}
+
+/* ==========================================
+   DISABLED STATE
+   ========================================== */
+
+.unified-button--disabled {
+  background: #CCCCCC !important;
+  color: #888888 !important;
+  cursor: not-allowed !important;
+  opacity: 0.6;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.unified-button--disabled:hover {
+  transform: none !important;
+}
+
+/* ==========================================
+   HEARTBEAT ANIMATION (On Mount)
+   ========================================== */
+
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
+  }
+  14% {
+    transform: scale(1.1);
+  }
+  28% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.1);
+  }
+  70% {
+    transform: scale(1);
+  }
+}
+
+.unified-button.heartbeat-once {
+  animation: heartbeat 0.8s ease-in-out;
+}
+
+/* ==========================================
+   FOCUS STATES (Accessibility)
+   ========================================== */
+
+.unified-button:focus-visible {
+  outline: 3px solid var(--play-magic-blue);
+  outline-offset: 2px;
+}
+
+/* ==========================================
+   LOADING STATE (Optional)
+   ========================================== */
+
+.unified-button--loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+}
+
+.unified-button--loading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -8px;
+  border: 3px solid var(--play-sticker-white);
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: button-spin 0.6s linear infinite;
+}
+
+@keyframes button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================
+   MOBILE OPTIMIZATIONS
+   ========================================== */
+
+@media (max-width: 768px) {
+  .unified-button--small {
+    padding: 6px 16px;
+    font-size: 13px;
+    min-height: 32px;
+  }
+
+  .unified-button--medium {
+    padding: 10px 24px;
+    font-size: 15px;
+    min-height: 44px;
+  }
+
+  .unified-button--large {
+    padding: 14px 32px;
+    font-size: 18px;
+    min-height: 56px;
+  }
+
+  /* Increase tap target for mobile */
+  .unified-button::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    right: -8px;
+    bottom: -8px;
+  }
+}
+
+/* ==========================================
+   USAGE EXAMPLES IN COMMENTS
+   ========================================== */
+
+/*
+✅ PRIMARY BUTTON (Default - Most Actions):
+<Button variant="primary" size="medium" onClick={handleNext}>
+  Next Step
+</Button>
+
+✅ SECONDARY BUTTON (Info/Help):
+<Button variant="secondary" size="small" onClick={handleHelp}>
+  Help
+</Button>
+
+✅ INFO BUTTON (Success/Rewards):
+<Button variant="info" size="large" onClick={handleComplete}>
+  Claim Reward!
+</Button>
+
+✅ DISABLED STATE:
+<Button variant="primary" disabled>
+  Not Available
+</Button>
+
+✅ WITHOUT HEARTBEAT:
+<Button variant="primary" withHeartbeat={false}>
+  No Animation
+</Button>
+*/
