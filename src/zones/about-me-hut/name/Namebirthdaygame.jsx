@@ -206,6 +206,24 @@ if (gamePhase === 'birthday-correct') {
 
     // 3. FINAL PHASE
     if (gamePhase === 'besties-card') {
+      // Verify all required data exists
+      if (!childName || !childBirthdayMonth || !childBirthdayDate) {
+        console.log("🔧 Reload fix: Missing data in besties-card, restarting from intro");
+        sceneActions.updateState({
+          gamePhase: 'intro',
+          poppedLetters: [],
+          currentLetterIndex: 0,
+          selectedFestival: null,
+          wrongFestivals: [],
+          flippedCards: [],
+          childName: '',
+          childNameLetters: [],
+          childBirthdayMonth: '',
+          childBirthdayMonthName: '',
+          childBirthdayDate: ''
+        });
+        return;
+      }
       setResumeMessage("Welcome back! Here's your bestie card! 💖");
       setShowResumePopup(true);
       resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
