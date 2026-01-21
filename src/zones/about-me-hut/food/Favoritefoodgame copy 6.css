@@ -1,0 +1,946 @@
+/* FavoriteFoodGame.css - Cleaned & Organized */
+
+/* ========================================= */
+/* 1. CORE LAYOUT & BACKGROUND               */
+/* ========================================= */
+.favorite-food-game {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'Nunito', sans-serif;
+}
+
+.food-background {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* ========================================= */
+/* 2. SHARED UI ELEMENTS (Buttons, Modals)   */
+/* ========================================= */
+
+/* Back Button */
+.back-btn {
+  position: absolute;
+  top: 20px; left: 20px;
+  padding: 12px 24px;
+  background: rgba(139, 111, 71, 0.9);
+  color: white;
+  border: 2px solid #654321;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 100;
+  transition: all 0.3s ease;
+}
+.back-btn:hover {
+  background: rgba(101, 67, 33, 0.9);
+  transform: scale(1.05);
+}
+
+/* Intro Overlay */
+.intro-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.intro-ganesha {
+  width: 200px; height: 200px;
+  object-fit: contain;
+  margin-bottom: 30px;
+}
+
+/* Modal Styling */
+.game-modal-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 2.5rem;
+  color: #5D4037;
+  text-align: center;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.game-modal-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.4rem;
+  color: #6D4C41; 
+  line-height: 1.6;
+  margin: 10px auto 35px auto;
+  max-width: 480px;
+  text-align: center;
+}
+
+.game-modal-button {
+  background: linear-gradient(135deg, #FF9966 0%, #FF5E62 100%); 
+  color: white;
+  border: none;
+  padding: 16px 50px;
+  border-radius: 50px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.6rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(255, 94, 98, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: block;
+  margin: 0 auto;
+}
+.game-modal-button:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(255, 94, 98, 0.5);
+}
+
+/* Intro Icons */
+.game-modal-icons {
+  display: flex; justify-content: center;
+  gap: 25px; margin: 10px 0 25px 0; width: 100%;
+}
+.game-modal-icon-item {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  animation: popIn 0.5s backwards;
+}
+.game-modal-icon-circle {
+  width: 70px; height: 70px;
+  background: white; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  border: 2px solid #FFE0B2;
+  overflow: hidden;
+}
+.game-modal-icon-circle img { width: 70%; height: 70%; object-fit: contain; }
+.game-modal-icon-label { font-size: 0.95rem; font-weight: 700; color: #8D6E63; }
+
+/* Friend Intro Box */
+.friend-intro-box {
+  position: absolute; left: 50%; bottom: 28%; 
+  transform: translateX(-50%); z-index: 60;
+  width: min(420px, 88%);
+  padding: 26px 28px 24px;
+  background: linear-gradient(180deg, #FFE08A 0%, #FFC83D 100%);
+  border-radius: 22px;
+  box-shadow: 0 10px 24px rgba(120, 80, 20, 0.35), inset 0 2px 0 rgba(255, 255, 255, 0.45);
+  text-align: center;
+  animation: popInCard 0.35s ease-out;
+}
+.friend-intro-text {
+  margin: 0 0 18px; font-family: 'Baloo 2', cursive;
+  font-size: 24px; font-weight: 700; color: #6B4A1E; line-height: 1.3;
+}
+.friend-intro-btn {
+  border: none; border-radius: 16px; padding: 12px 22px; min-width: 160px;
+  background: #FFD400; color: #5C3B00; 
+  font-family: 'Baloo 2', cursive; font-size: 19px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 6px 14px rgba(120, 80, 20, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: transform 0.15s;
+}
+.friend-intro-btn:hover { transform: translateY(-2px); }
+
+/* ========================================= */
+/* GAME-SPECIFIC GANESHA OVERRIDE            */
+/* (Only affects FavoriteFoodGame.js)        */
+/* ========================================= */
+
+/* 1. Make the Image Bigger */
+.favorite-food-game .ganesha-small {
+  width: 150px !important;  /* Increased from 100px */
+  height: 150px !important;
+  
+  /* Ensure he stays crisp */
+  object-fit: contain;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
+}
+
+/* 2. Adjust the Container Position (Optional) */
+/* Since he is bigger, you might want to move him up a tiny bit */
+.favorite-food-game .ganesha-waiting {
+  top: 17%; /* Moved up slightly from 10% */
+}
+
+/* ========================================= */
+/* 3. GAMEPLAY ELEMENTS (Ganesha Phase)      */
+/* ========================================= */
+
+.choice-screen { position: relative; width: 100%; height: 100%; z-index: 10; }
+
+.ganesha-waiting {
+  position: absolute; top: 10%; left: 50%;
+  transform: translateX(-50%); z-index: 20;
+}
+.ganesha-small {
+  width: 120px; height: 120px; object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+/* Speech Bubble */
+.speech-bubble {
+  position: absolute; top: 20%; left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border: 3px solid #FF8C00; border-radius: 20px;
+  padding: 15px 25px;
+  font-family: 'Georgia', serif; font-size: 20px; font-weight: 600; color: #654321;
+  text-align: center; z-index: 15;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: bubbleBounce 0.6s ease-out;
+  white-space: nowrap;
+}
+
+/* BASE CONTAINER (Shared Logic) */
+.choices-container {
+  position: absolute; bottom: 15%; left: 50%;
+  transform: translateX(-50%);
+  display: flex; gap: 40px;
+  align-items: flex-end; justify-content: center;
+  z-index: 10; width: 100%;
+}
+
+/* BASE CARD (Shared Logic) */
+/* BASE CARD (Shared Logic) */
+.choice-card {
+  /* 👇 ADD THIS LINE 👇 */
+  position: relative; 
+  
+  background: none !important; 
+  border: none !important; 
+  padding: 0 !important;
+  cursor: pointer; 
+  transition: transform 0.3s ease;
+  animation: popIn 0.5s ease-out both;
+  display: flex; 
+  flex-direction: column; 
+  align-items: center;
+}
+
+.choice-card:hover { transform: scale(1.15) translateY(-10px); }
+.choice-card:active { transform: scale(1.05) translateY(-5px); }
+
+.choice-image-container {
+  width: 150px; height: 150px;
+  display: flex; align-items: center; justify-content: center;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+}
+.choice-image { width: 100%; height: 100%; object-fit: contain; }
+.choice-name {
+  font-family: 'Georgia', serif; font-size: 18px; font-weight: 700; color: white;
+  text-align: center; margin-top: 10px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* WRONG/CORRECT STATES */
+.choice-card.wrong {
+  animation: wrongWiggle 0.4s ease-out forwards;
+  opacity: 0.6; filter: grayscale(40%) blur(0.5px); pointer-events: none;
+}
+.choice-card.correct {
+  animation: correctPop 0.6s forwards;
+  background: white !important; border: 4px solid #FFD700 !important;
+  border-radius: 20px; z-index: 20; pointer-events: none; padding: 10px !important;
+}
+.choice-card.correct::after {
+  content: '✨'; position: absolute; top: -20px; right: -15px;
+  font-size: 35px; animation: sparklePop 0.8s ease-out forwards; z-index: 25;
+}
+
+/* ========================================= */
+/* YELLOW SPEECH BUBBLE – POLISHED VERSION   */
+/* ========================================= */
+
+/* ========================================= */
+/* YELLOW SPEECH BUBBLE – LARGER VERSION     */
+/* ========================================= */
+
+.fav-speech-bubble {
+  position: absolute;
+  top: 29%;
+  left: 50%;
+  transform: translateX(-50%);
+
+  /* Warm honey-yellow */
+  background: linear-gradient(
+    180deg,
+    #FFE7A3 0%,
+    #FFD36A 100%
+  );
+
+  border: 3px solid #F2C35B; /* Slightly thicker border */
+  border-radius: 40px;       /* Rounder corners */
+
+  /* INCREASED SIZE HERE 👇 */
+  padding: 20px 50px;        /* More space inside */
+  min-width: 340px;          /* Wider bubble */
+  font-size: 26px;           /* Bigger text */
+  
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  color: #5A3A1E;
+  text-align: center;
+  line-height: 1.3;
+
+  box-shadow:
+    0 12px 28px rgba(120, 70, 20, 0.3),
+    inset 0 2px 0 rgba(255, 255, 255, 0.6);
+
+  z-index: 20;
+  animation: bubblePop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+}
+
+/* Make the little triangle pointer bigger too */
+.fav-speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -14px; /* Move down further */
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 30px;   /* Wider triangle */
+  height: 16px;  /* Taller triangle */
+
+  background: #FFD36A;
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 4px 8px rgba(120, 70, 20, 0.2);
+}
+
+/* ========================================= */
+/* 4. INDIVIDUAL SCENE POSITIONING (EDIT HERE) */
+/* ========================================= */
+
+/* --- SCENE A: FOOD --- */
+/* --- SCENE A: FOOD --- */
+
+/* 1. Increase the container size significantly */
+.food-scene .choice-image-container { 
+  width: 220px !important;   /* Was 160px, now much bigger */
+  height: 220px !important;
+}
+
+/* 2. Force the image to fill that new space */
+.food-scene .choice-image {
+  width: 100% !important;
+  height: 100% !important;
+  padding: 0 !important;     /* Remove padding that shrinks the image */
+  object-fit: contain !important;
+}
+
+/* Optional: Adjust positioning if they are now too big and overlapping */
+.food-scene .choice-card:nth-child(1) { top: -10px; } 
+.food-scene .choice-card:nth-child(2) { top: 100px; }   
+.food-scene .choice-card:nth-child(3) { top: -30px; }
+
+
+/* --- SCENE B: FRIEND --- */
+/* Maybe friends are closer together? */
+.friend-scene { gap: 20px; } 
+.friend-scene .choice-card:nth-child(2) { top: -30px; } /* Only middle up */
+.friend-scene .choice-image-container { width: 200px; height: 200px; }
+
+
+/* --- SCENE C: COLOR --- */
+/* Colors can be smaller */
+/* --- SCENE C: COLOR --- */
+
+/* 1. Make the container MUCH bigger */
+.color-scene .choice-image-container { 
+  width: 200px !important;  /* Was 120px */
+  height: 200px !important; 
+}
+
+/* 2. Force image to fill */
+.color-scene .choice-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+}
+
+/* 3. Positioning for 4 items (Arc Shape) */
+.color-scene .choice-card:nth-child(1) { top: 30px; } /* Outer Left - Up */
+.color-scene .choice-card:nth-child(2) { top: 0px; }   /* Inner Left - Down */
+.color-scene .choice-card:nth-child(3) { top: 0px; }   /* Inner Right - Down */
+.color-scene .choice-card:nth-child(4) { top: 30px; } /* Outer Right - Up */
+
+/* --- SCENE D: ACTIVITY --- */
+/* --- SCENE D: ACTIVITY --- */
+
+/* 1. Make images bigger */
+.activity-scene .choice-image-container { 
+  width: 180px !important;  /* Was 150px, made bigger */
+  height: 180px !important; 
+}
+
+/* 2. Positioning (Arc Shape) */
+.activity-scene .choice-card:nth-child(1) { top: 0px; }    /* Outer Left */
+.activity-scene .choice-card:nth-child(2) { top: -30px; }  /* Middle Up */
+.activity-scene .choice-card:nth-child(3) { top: -30px; }  /* Middle Up */
+.activity-scene .choice-card:nth-child(4) { top: 0px; }    /* Outer Right */
+
+/* ========================================= */
+/* DYNAMIC FEEDBACK TEXT                     */
+/* ========================================= */
+
+.feedback-message {
+  position: absolute;
+  
+  /* 1. MOVED DOWN: Increased from 70px to 130px */
+  top: calc(25% + 150px); 
+  
+  left: 50%;
+  transform: translateX(-50%);
+  
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px; /* Slightly bigger */
+  font-weight: 800;
+  
+  /* 2. BACKGROUND REMOVED: No more dark box */
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0;
+
+  /* 3. TEXT COLOR: Dark Brown (Matches speech bubble) for readability */
+  color: #5A3A1E; 
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5); /* Soft light shadow to pop off wall */
+  
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none; 
+  z-index: 15;
+  white-space: nowrap;
+}
+
+/* When the message exists, show it */
+.feedback-message.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Shake animation for the text itself */
+.shake-text {
+  animation: textShake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+  color: #8c6104; /* Turn Red momentarily when wrong */
+}
+
+/* ========================================= */
+/* CHILD PHASE MODAL (Transition)            */
+/* ========================================= */
+.child-phase-modal {
+  background: linear-gradient(180deg, #fff6db 0%, #ffefc4 100%);
+  border-radius: 22px;
+  padding: 35px 40px;
+  max-width: 480px;
+  text-align: center;
+  position: relative;
+  z-index: 60;
+  box-shadow: 0 15px 40px rgba(120, 90, 40, 0.3), inset 0 2px 0 rgba(255, 255, 255, 0.8);
+  border: 3px solid rgba(255, 215, 130, 1);
+  animation: modalRiseIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.child-phase-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 26px;
+  font-weight: 800;
+  color: #5a3b1e; 
+  margin-bottom: 12px;
+}
+
+.child-phase-subtext {
+  font-family: 'Nunito', sans-serif;
+  font-size: 19px;
+  color: #8B5E3C;
+  font-weight: 700;
+  margin-bottom: 25px;
+}
+
+.child-phase-button {
+  background: linear-gradient(180deg, #ffd84d 0%, #ffbf00 100%);
+  border: none;
+  border-radius: 50px;
+  padding: 14px 35px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 18px;
+  font-weight: 800;
+  color: #4a3200;
+  box-shadow: 0 4px 0 #e0a800, 0 10px 18px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 120ms ease;
+}
+
+.child-phase-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #e0a800, 0 12px 22px rgba(0, 0, 0, 0.25);
+}
+
+
+/* ========================================= */
+/* CHILD FRIEND INTRO & INPUT                */
+/* ========================================= */
+
+.child-card {
+  position: relative;
+  z-index: 60;
+  max-width: 520px;
+  padding: 35px 40px;
+  border-radius: 28px;
+  background: linear-gradient(180deg, #fff6d8 0%, #ffe9a8 100%);
+  box-shadow: 0 15px 40px rgba(120, 90, 20, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 2px solid #ffdf7e;
+  text-align: center;
+  animation: modalRiseIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.child-card-text {
+  font-family: 'Baloo 2', cursive;
+  font-size: 28px;
+  font-weight: 800;
+  color: #6b3f00; 
+  line-height: 1.3;
+  margin-bottom: 25px;
+}
+
+.child-card-button {
+  display: inline-block;
+  padding: 16px 35px;
+  border-radius: 50px;
+  border: none;
+  background: linear-gradient(180deg, #ffd400 0%, #ffb800 100%);
+  color: #5a3600;
+  font-family: 'Baloo 2', cursive;
+  font-size: 20px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 0 #e5a700, 0 10px 20px rgba(120, 90, 20, 0.35);
+  transition: transform 0.15s ease;
+  animation: gentlePulse 2.8s ease-in-out infinite;
+}
+
+.child-card-button:active {
+  transform: translateY(3px);
+  box-shadow: 0 3px 0 #e5a700;
+}
+
+
+/* ========================================= */
+/* 5. CHILD PHASE ELEMENTS (OVAL LAYOUT)     */
+/* ========================================= */
+
+/* Container - Changed from Grid to Flex for Oval Shape */
+.kid-choices-grid {
+  position: absolute;
+  bottom: 22%; 
+  left: 50%;
+  transform: translateX(-50%);
+  
+  display: flex;       /* Use Flexbox */
+  flex-wrap: wrap;     /* Allow wrapping to 2 lines */
+  justify-content: center; /* Center items */
+  
+  width: 100%;
+  max-width: 950px;    /* Controls how wide the group is */
+  z-index: 20;
+}
+
+/* The Card Wrapper */
+.kid-choice-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  
+  /* Fixed width to ensure 4 fit per row */
+  width: 180px !important; 
+  height: auto;
+  margin: 0 10px; /* Spacing between items */
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  
+  cursor: pointer;
+  position: relative; /* Essential for the top offsets below */
+  transition: transform 0.3s ease;
+}
+
+/* --- THE OVAL POSITIONING LOGIC --- */
+
+/* ROW 1 (Back Row): Curves Up */
+.kid-choice-card:nth-child(1) { top: 30px; } /* Outer Left (Lower) */
+.kid-choice-card:nth-child(2) { top: 0px; }  /* Inner Left (Higher) */
+.kid-choice-card:nth-child(3) { top: 0px; }  /* Inner Right (Higher) */
+.kid-choice-card:nth-child(4) { top: 30px; } /* Outer Right (Lower) */
+
+/* ROW 2 (Front Row): Curves Down */
+.kid-choice-card:nth-child(5) { top: 20px; } /* Outer Left */
+.kid-choice-card:nth-child(6) { top: 50px; } /* Inner Left (Lowest) */
+.kid-choice-card:nth-child(7) { top: 50px; } /* Inner Right (Lowest) */
+.kid-choice-card:nth-child(8) { top: 20px; } /* Outer Right */
+
+
+/* Hover Animation */
+.kid-choice-card:hover {
+  transform: scale(1.15) translateY(-10px);
+}
+
+/* Images */
+.kid-choice-card img {
+  width: 160px !important; 
+  height: 160px !important;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.4));
+  transition: all 0.3s ease;
+}
+
+.kid-choice-card:hover img {
+  filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.5));
+}
+
+/* Text Labels */
+.kid-choice-name {
+  font-family: 'Baloo 2', cursive;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+  text-align: center;
+  line-height: 1.2;
+  margin-top: -5px; 
+}
+
+/* Custom Inputs (Draw/Type Buttons) */
+.custom-input-options {
+  position: absolute;
+  bottom: 6%; /* Lowered to fit the arc */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  width: 100%;
+  z-index: 30;
+}
+
+.draw-button, .type-button {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  padding: 12px 35px;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+  min-width: 140px;
+  transition: transform 0.2s;
+  border: 3px solid rgba(255,255,255,0.4);
+}
+
+.draw-button { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+.type-button { background: linear-gradient(135deg, #FFC837, #FF8008); color: white; }
+
+.draw-button:hover, .type-button:hover {
+  transform: translateY(-3px) scale(1.05);
+}
+
+
+/* ========================================= */
+/* CHILD COLOR PALETTE (FIXED POSITION)      */
+/* ========================================= */
+
+.color-palette-grid {
+  position: absolute;
+  bottom: 15%; /* Adjusted slightly up */
+  left: 50%;
+  transform: translateX(-50%);
+  
+  display: flex;
+  flex-wrap: wrap; 
+  justify-content: center;
+  align-items: center;
+  
+  width: 100%;
+  max-width: 800px; /* Reduced width to keep them closer */
+  gap: 15px;
+  z-index: 20;
+}
+
+.color-choice-button {
+  position: relative;
+  width: 160px !important; 
+  height: 160px !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.color-choice-button img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,0.3));
+}
+
+.color-choice-button:hover {
+  transform: scale(1.15) translateY(-10px);
+}
+
+/* --- POSITIONING FOR 8 HEARTS --- */
+
+/* ROW 1 (Back Row - Curves Up) */
+
+/* 1st Item (RED) - Move Left */
+.color-choice-button:nth-child(1) { 
+  top: 30px;    /* Lower it slightly if needed */
+  left: -40px;  /* 👈 PUSH LEFT (Negative value moves left) */
+}
+
+/* 4th Item (GREEN) - Move Right */
+.color-choice-button:nth-child(4) { 
+  top: 30px; 
+  left: 40px;   /* 👈 PUSH RIGHT (Positive value moves right) */
+}
+
+/* 2nd & 3rd items (Orange & Yellow) - Keep in Center/Top */
+.color-choice-button:nth-child(2),
+.color-choice-button:nth-child(3) { 
+  top: -20px;   /* Keep them high up */
+  left: 0px;    /* Keep them centered */
+}
+
+/* ROW 2 (Front Row) - No changes needed unless you want to spread them too */
+.color-choice-button:nth-child(5),
+.color-choice-button:nth-child(8) { 
+  top: 40px; 
+}
+
+.color-choice-button:nth-child(6),
+.color-choice-button:nth-child(7) { 
+  top: 70px; 
+}
+
+/* ========================================= */
+/* SPECIFIC LAYOUT FOR CHILD ACTIVITY (6 Items) */
+/* ========================================= */
+
+/* 1. Container - Restrict Width to force 3 items per row */
+.child-activity-scene {
+  bottom: 20% !important; 
+  /* Reducing max-width forces the 6 items to break into 2 rows of 3 */
+  max-width: 650px !important; 
+  gap: 45px;
+}
+
+/* 2. Smaller Card Size for this scene */
+.child-activity-scene .kid-choice-card {
+  width: 130px !important; 
+  margin: 0;
+}
+
+.child-activity-scene .kid-choice-card img {
+  width: 130px !important;  
+  height: 130px !important; 
+}
+
+/* 3. Positioning Logic (Creating the Arc) */
+
+/* --- ROW 1 (Back Row: Items 1, 2, 3) --- */
+
+/* Left (1) & Right (3) */
+.child-activity-scene .kid-choice-card:nth-child(1), 
+.child-activity-scene .kid-choice-card:nth-child(3) { 
+  top: 0px; 
+}
+
+/* Center (2) - Highest point (Arc Up) */
+.child-activity-scene .kid-choice-card:nth-child(2) { 
+  top: -35px; 
+}
+
+/* --- ROW 2 (Front Row: Items 4, 5, 6) --- */
+
+/* Left (4) & Right (6) */
+.child-activity-scene .kid-choice-card:nth-child(4),
+.child-activity-scene .kid-choice-card:nth-child(6) { 
+  top: 30px; 
+}
+
+/* Center (5) - Lowest point (Arc Down) */
+.child-activity-scene .kid-choice-card:nth-child(5) { 
+  top: 65px; 
+}
+
+/* ========================================= */
+/* 6. INPUTS & KEYBOARD (Friend Name)        */
+/* ========================================= */
+.friend-input-screen { position: relative; width: 100%; height: 100%; }
+
+.friend-name-display {
+  position: absolute; top: 35%; left: 50%; transform: translateX(-50%);
+  min-width: 400px; min-height: 80px;
+  background: white; border: 4px solid #8B4513; border-radius: 15px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+.name-placeholder { font-size: 20px; color: #CCC; font-style: italic; }
+.friend-letter {
+  width: 50px; height: 50px; background: linear-gradient(135deg, #4ECDC4, #44A08D);
+  border: 3px solid #3A9B8C; border-radius: 10px; color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Baloo 2', cursive; font-size: 28px; font-weight: 700;
+}
+
+.friend-controls {
+  position: absolute; top: 45%; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 15px;
+}
+.friend-backspace-btn, .friend-confirm-btn {
+  padding: 10px 20px; border-radius: 12px; border: none;
+  font-family: 'Baloo 2', cursive; font-size: 16px; font-weight: 700;
+  cursor: pointer; transition: transform 0.3s;
+}
+.friend-backspace-btn { background: #FF6B6B; color: white; }
+.friend-confirm-btn { background: linear-gradient(135deg, #4CAF50, #45a049); color: white; }
+
+.friend-keyboard {
+  position: absolute; top: 58%; left: 50%; transform: translateX(-50%);
+  display: grid; grid-template-columns: repeat(9, 1fr); gap: 8px;
+  max-width: 700px; padding: 20px;
+  background: rgba(255, 255, 255, 0.3); border-radius: 20px;
+}
+.friend-letter-tile {
+  width: 55px; height: 55px; background: white;
+  border: 3px solid #8B4513; border-radius: 10px;
+  font-family: 'Baloo 2', cursive; font-size: 24px; font-weight: 700; color: #8B4513;
+  cursor: pointer; transition: all 0.2s ease; position: static;
+}
+.friend-letter-tile:hover { background: #FFE6CC; transform: translateY(-3px); }
+
+/* ========================================= */
+/* 7. CELEBRATION & ENDING                   */
+/* ========================================= */
+.correct-screen, .ending-screen { position: relative; width: 100%; height: 100%; z-index: 30; }
+
+.ganesha-happy { position: absolute; top: 30%; left: 35%; transform: translate(-50%, -50%); }
+.ganesha-celebrate { width: 200px; height: 200px; animation: celebrate 1s ease-in-out infinite; }
+.correct-food { position: absolute; top: 30%; right: 30%; transform: translate(50%, -50%); }
+.food-in-hand { width: 180px; height: 180px; filter: drop-shadow(0 8px 20px rgba(255, 215, 0, 0.6)); }
+
+.friends-together {
+  position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+  display: flex; gap: 40px; align-items: center;
+}
+.ganesha-with-friend, .friend-character { width: 160px; height: 160px; }
+
+.success-message {
+  position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%);
+  background: linear-gradient(135deg, #FFD700, #FFA500); border: 3px solid #FF8C00;
+  border-radius: 20px; padding: 20px 40px; text-align: center;
+  font-family: 'Georgia', serif; font-size: 24px; font-weight: 700; color: #654321;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); animation: popIn 0.6s ease-out; min-width: 300px;
+}
+
+/* Comparison Overlay (The Big Card) */
+.friendship-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(ellipse at center, rgba(255,244,224,0.9), rgba(255,220,180,0.7));
+  backdrop-filter: blur(5px); z-index: 50; overflow-y: auto; padding: 40px 20px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.friendship-grid {
+  display: flex; justify-content: center; align-items: flex-start; gap: 20px;
+  width: 100%; max-width: 900px; margin-bottom: 30px;
+}
+.friend-column {
+  flex: 1; background: rgba(255,255,255,0.7); border-radius: 24px; padding: 20px;
+  display: flex; flex-direction: column; align-items: center; gap: 15px;
+}
+.friend-items-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
+.friend-item {
+  background: white; border-radius: 18px; padding: 12px 8px; min-height: 100px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+}
+.friend-item-img { width: 45px; height: 45px; object-fit: contain; }
+.friend-item-text { font-family: 'Baloo 2', cursive; font-size: 14px; font-weight: 700; color: #5D4037; }
+.connector-text { writing-mode: vertical-rl; font-family: 'Baloo 2', cursive; font-size: 18px; color: #FF5A5A; }
+.primary-cta {
+  background: linear-gradient(180deg, #5fd068, #3bb54a); border: none; border-radius: 20px;
+  padding: 14px 40px; font-family: 'Baloo 2', cursive; font-size: 22px; font-weight: 800; color: white; cursor: pointer;
+}
+
+/* 2. Title Section */
+.friendship-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 42px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: #ff8a00; /* Warm Orange */
+  text-align: center;
+  text-shadow:
+    0 2px 0 #fff2cc,
+    0 6px 14px rgba(255, 140, 0, 0.35);
+  margin: 0 0 10px 0;
+  animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.friendship-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: #8B4513; /* Dark Wood Brown */
+  font-weight: 700;
+  margin-bottom: 30px;
+  text-shadow: 0 1px 4px rgba(255, 255, 255, 0.6);
+}
+
+/* ========================================= */
+/* 8. ANIMATIONS                             */
+/* ========================================= */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popIn { 0% { opacity: 0; transform: scale(0.5); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes bubbleBounce { 0% { transform: translateX(-50%) scale(0.8); opacity: 0; } 50% { transform: translateX(-50%) scale(1.1); } 100% { transform: translateX(-50%) scale(1); opacity: 1; } }
+@keyframes celebrate { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-10px) rotate(2deg); } }
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+.bounce { animation: bounce 2s ease-in-out infinite; }
+@keyframes bounceGentle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+.bounce-gentle { animation: bounceGentle 2s ease-in-out infinite; }
+@keyframes wrongWiggle { 0% { transform: translateX(0) scale(1); } 20% { transform: translateX(-6px) scale(0.98); } 40% { transform: translateX(6px) scale(0.98); } 60% { transform: translateX(-4px) scale(0.97); } 80% { transform: translateX(4px) scale(0.97); } 100% { transform: translateX(0) scale(0.95); } }
+@keyframes correctPop { 0% { transform: scale(1); box-shadow: 0 4px 12px rgba(0,0,0,0.1); } 50% { transform: scale(1.15); box-shadow: 0 0 35px rgba(255, 215, 0, 0.8); border-color: #FFA500; } 100% { transform: scale(1.1); box-shadow: 0 0 25px rgba(255, 215, 0, 0.6); } }
+@keyframes sparklePop { 0% { opacity: 0; transform: scale(0.5); } 30% { opacity: 1; } 100% { opacity: 0; transform: scale(1.5) rotate(45deg) translateY(-20px); } }
+@keyframes sparkleFloat { 0%, 100% { opacity: 0; transform: translateY(0) scale(0.5); } 50% { opacity: 1; transform: translateY(-20px) scale(1); } }
+.sparkle { position: absolute; font-size: 30px; animation: sparkleFloat 2s ease-in-out infinite; }
+@keyframes modalRiseIn { 0% { opacity: 0; transform: translateY(30px) scale(0.95); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes popInCard { 0% { transform: translateX(-50%) scale(0.92); opacity: 0; } 100% { transform: translateX(-50%) scale(1); opacity: 1; } }
+
+/* ========================================= */
+/* 9. MEDIA QUERIES (Mobile Reset)           */
+/* ========================================= */
+@media (max-width: 768px) {
+  .intro-ganesha { width: 150px; height: 150px; }
+  .ganesha-small { width: 90px; height: 90px; }
+  .choices-container { gap: 20px; bottom: 20%; }
+  
+  /* Reset individual positioning for mobile so they align straight */
+  .food-scene .choice-card:nth-child(n),
+  .friend-scene .choice-card:nth-child(n),
+  .color-scene .choice-card:nth-child(n),
+  .activity-scene .choice-card:nth-child(n) {
+    top: 0px !important;
+    left: 0px !important;
+  }
+  
+  .choice-image-container { width: 100px !important; height: 100px !important; }
+  .kid-choices-grid { grid-template-columns: repeat(3, 1fr); bottom: 20%; gap: 15px; }
+  .kid-choice-card img { width: 90px !important; height: 90px !important; }
+  .friend-keyboard { grid-template-columns: repeat(7, 1fr); gap: 5px; }
+  .friend-letter-tile { width: 40px; height: 40px; font-size: 18px; }
+}

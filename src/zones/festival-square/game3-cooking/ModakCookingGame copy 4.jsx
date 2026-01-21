@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './ModakCookingGame.css';
-import '../../shared/components/OpeningModal.css';
+import '../../shared/components/OpeningModal.css'; // <--- SHARED MODAL IMPORT
 
 // Import scene management components
 import SceneManager from '../../../lib/components/scenes/SceneManager';
@@ -61,7 +61,7 @@ import helperMouse from './assets/images/helper-mouse.png';
 const STEPS = {
   INTRODUCTION: 'introduction',
   MIX_FILLING: 'mix_filling',
-  MAKE_DOUGH: 'make_dough',
+  MAKE_DOUGH: 'make_dough', 
   SHAPE_DOUGH: 'shape_dough',
   FILL_CLOSE: 'fill_close',
   STEAM_MODAKS: 'steam_modaks',
@@ -70,33 +70,33 @@ const STEPS = {
 
 // Step configuration
 const STEP_CONFIG = [
-  {
-    id: STEPS.MIX_FILLING,
-    icon: stepIconMix,
+  { 
+    id: STEPS.MIX_FILLING, 
+    icon: stepIconMix, 
     title: 'Mix Filling',
     actions: ['Add Coconut', 'Add Jaggery', 'Stir Mixture']
   },
-  {
-    id: STEPS.MAKE_DOUGH,
-    icon: stepIconDough,
+  { 
+    id: STEPS.MAKE_DOUGH, 
+    icon: stepIconDough, 
     title: 'Make Dough',
     actions: ['Add Rice Flour', 'Add Water', 'Mix Dough']
   },
-  {
-    id: STEPS.SHAPE_DOUGH,
-    icon: stepIconShape,
+  { 
+    id: STEPS.SHAPE_DOUGH, 
+    icon: stepIconShape, 
     title: 'Shape Dough',
     actions: ['Place Dough', 'Flatten Dough', 'Shape Cup']
   },
-  {
-    id: STEPS.FILL_CLOSE,
-    icon: stepIconFill,
+  { 
+    id: STEPS.FILL_CLOSE, 
+    icon: stepIconFill, 
     title: 'Fill & Close',
     actions: ['Add Filling', 'Seal Edges']
   },
-  {
-    id: STEPS.STEAM_MODAKS,
-    icon: stepIconSteam,
+  { 
+    id: STEPS.STEAM_MODAKS, 
+    icon: stepIconSteam, 
     title: 'Steam Cook',
     actions: ['Add to Steamer', 'Close Lid', 'Wait for Steam']
   }
@@ -112,7 +112,7 @@ const OpeningModal = ({ show, onStart }) => {
       <div className="game-modal-content">
         {/* Character - Left Side */}
         <div className="game-modal-character">
-          <img
+          <img 
             src={ganeshaChef}
             alt="Ganesha"
           />
@@ -150,7 +150,6 @@ const OpeningModal = ({ show, onStart }) => {
     </div>
   );
 };
-
 // Error Boundary
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -281,9 +280,9 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
       const rect = element.getBoundingClientRect();
       setHelperState({
         visible: true,
-        position: {
-          x: rect.left + rect.width / 2,
-          y: rect.top - 60
+        position: { 
+          x: rect.left + rect.width / 2, 
+          y: rect.top - 60 
         },
         message: message,
         celebrating: celebrate
@@ -434,13 +433,6 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 }
                 return { ...prev, timeLeft: newTime };
               });
-
-              sceneActions.updateState({
-                steamingState: {
-                  ...sceneState.steamingState,
-                  timeLeft: sceneState.steamingState.timeLeft - 1
-                }
-              });
             }, 1000);
             steamTimerRef.current = interval;
 
@@ -485,7 +477,7 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
       return;
     }
 
-    switch (sceneState.currentStep) {
+    switch (gameState.currentStep) {
       case STEPS.MIX_FILLING:
         if (!mixingState.coconutAdded) {
           updateHelper('coconut-bowl', '🥥 Tap coconut!');
@@ -497,7 +489,7 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
           hideHelper();
         }
         break;
-
+        
       case STEPS.MAKE_DOUGH:
         if (!doughState.flourAdded) {
           updateHelper('rice-bowl', '🌾 Add flour!');
@@ -509,7 +501,7 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
           hideHelper();
         }
         break;
-
+        
       case STEPS.SHAPE_DOUGH:
         if (!shapingState.doughPlaced) {
           updateHelper('dough-ball', '👆 Place dough!');
@@ -521,7 +513,7 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
           hideHelper();
         }
         break;
-
+        
       case STEPS.FILL_CLOSE:
         if (!fillingState.filled) {
           updateHelper('coconut-jaggery-filling', '🥥 Add filling!');
@@ -531,7 +523,7 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
           hideHelper();
         }
         break;
-
+        
       case STEPS.STEAM_MODAKS:
         if (!steamingState.inSteamer) {
           updateHelper('sealed-modak', '👆 Into steamer!');
@@ -541,11 +533,11 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
           hideHelper();
         }
         break;
-
+        
       default:
         hideHelper();
     }
-  }, [sceneState.currentStep, mixingState, doughState, shapingState, fillingState, steamingState]);
+  }, [gameState.currentStep, mixingState, doughState, shapingState, fillingState, steamingState]);
 
   // Handle interactions with celebration
   const handleCoconutClick = () => {
@@ -568,17 +560,11 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   const handleJaggeryClick = () => {
     if (mixingState.coconutAdded && !mixingState.jaggeryAdded) {
-      const newMixingState = { ...mixingState, jaggeryAdded: true };
-      setMixingState(newMixingState);
+      setMixingState(prev => ({ ...prev, jaggeryAdded: true }));
       setHelperState(prev => ({ ...prev, celebrating: true }));
-
-      sceneActions.updateState({
-        mixingState: newMixingState,
-        stars: sceneState.stars + 1
-      });
-
       safeSetTimeout(() => {
         setHelperState(prev => ({ ...prev, celebrating: false }));
+        setGameState(prev => ({ ...prev, stars: prev.stars + 1 }));
       }, 500);
     }
   };
@@ -586,33 +572,26 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const handleStirClick = () => {
     if (mixingState.coconutAdded && mixingState.jaggeryAdded && !mixingState.stirred) {
       const newStirCount = mixingState.stirCount + 1;
-      const newMixingState = { ...mixingState, stirCount: newStirCount };
-      setMixingState(newMixingState);
-
-      sceneActions.updateState({
-        mixingState: newMixingState
-      });
-
+      setMixingState(prev => ({ ...prev, stirCount: newStirCount }));
+      
       if (newStirCount >= 3) {
-        const finalMixingState = { ...newMixingState, stirred: true };
-        setMixingState(finalMixingState);
+        setMixingState(prev => ({ ...prev, stirred: true }));
         setHelperState(prev => ({ ...prev, celebrating: true }));
-
+        
         safeSetTimeout(() => {
           setHelperState(prev => ({ ...prev, celebrating: false }));
-
-          sceneActions.updateState({
-            mixingState: finalMixingState,
-            stars: sceneState.stars + 1,
-            completedSteps: [...sceneState.completedSteps, STEPS.MIX_FILLING]
-          });
-
+          setGameState(prev => ({ 
+            ...prev, 
+            stars: prev.stars + 1,
+            completedSteps: [...prev.completedSteps, STEPS.MIX_FILLING]
+          }));
+          
           // Show step completion
           showStepCompletion(STEPS.MIX_FILLING);
-
+          
           // Move to next step after celebration
           safeSetTimeout(() => {
-            sceneActions.updateState({ currentStep: STEPS.MAKE_DOUGH });
+            setGameState(prev => ({ ...prev, currentStep: STEPS.MAKE_DOUGH }));
           }, 3000);
         }, 500);
       } else {
@@ -626,34 +605,22 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   const handleFlourClick = () => {
     if (!doughState.flourAdded) {
-      const newDoughState = { ...doughState, flourAdded: true };
-      setDoughState(newDoughState);
+      setDoughState(prev => ({ ...prev, flourAdded: true }));
       setHelperState(prev => ({ ...prev, celebrating: true }));
-
-      sceneActions.updateState({
-        doughState: newDoughState,
-        stars: sceneState.stars + 1
-      });
-
       safeSetTimeout(() => {
         setHelperState(prev => ({ ...prev, celebrating: false }));
+        setGameState(prev => ({ ...prev, stars: prev.stars + 1 }));
       }, 500);
     }
   };
 
   const handleWaterClick = () => {
     if (doughState.flourAdded && !doughState.waterAdded) {
-      const newDoughState = { ...doughState, waterAdded: true };
-      setDoughState(newDoughState);
+      setDoughState(prev => ({ ...prev, waterAdded: true }));
       setHelperState(prev => ({ ...prev, celebrating: true }));
-
-      sceneActions.updateState({
-        doughState: newDoughState,
-        stars: sceneState.stars + 1
-      });
-
       safeSetTimeout(() => {
         setHelperState(prev => ({ ...prev, celebrating: false }));
+        setGameState(prev => ({ ...prev, stars: prev.stars + 1 }));
       }, 500);
     }
   };
@@ -661,33 +628,26 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const handleDoughMixClick = () => {
     if (doughState.flourAdded && doughState.waterAdded && !doughState.mixed) {
       const newMixCount = doughState.mixCount + 1;
-      const newDoughState = { ...doughState, mixCount: newMixCount };
-      setDoughState(newDoughState);
-
-      sceneActions.updateState({
-        doughState: newDoughState
-      });
-
+      setDoughState(prev => ({ ...prev, mixCount: newMixCount }));
+      
       if (newMixCount >= 3) {
-        const finalDoughState = { ...newDoughState, mixed: true };
-        setDoughState(finalDoughState);
+        setDoughState(prev => ({ ...prev, mixed: true }));
         setHelperState(prev => ({ ...prev, celebrating: true }));
-
+        
         safeSetTimeout(() => {
           setHelperState(prev => ({ ...prev, celebrating: false }));
-
-          sceneActions.updateState({
-            doughState: finalDoughState,
-            stars: sceneState.stars + 1,
-            completedSteps: [...sceneState.completedSteps, STEPS.MAKE_DOUGH]
-          });
-
+          setGameState(prev => ({ 
+            ...prev, 
+            stars: prev.stars + 1,
+            completedSteps: [...prev.completedSteps, STEPS.MAKE_DOUGH]
+          }));
+          
           // Show step completion
           showStepCompletion(STEPS.MAKE_DOUGH);
-
+          
           // Move to next step after celebration
           safeSetTimeout(() => {
-            sceneActions.updateState({ currentStep: STEPS.SHAPE_DOUGH });
+            setGameState(prev => ({ ...prev, currentStep: STEPS.SHAPE_DOUGH }));
           }, 3000);
         }, 500);
       } else {
@@ -701,59 +661,45 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   const handleDoughPlaceClick = () => {
     if (!shapingState.doughPlaced) {
-      const newShapingState = { ...shapingState, doughPlaced: true };
-      setShapingState(newShapingState);
+      setShapingState(prev => ({ ...prev, doughPlaced: true }));
       setHelperState(prev => ({ ...prev, celebrating: true }));
-
-      sceneActions.updateState({
-        shapingState: newShapingState,
-        stars: sceneState.stars + 1
-      });
-
       safeSetTimeout(() => {
         setHelperState(prev => ({ ...prev, celebrating: false }));
+        setGameState(prev => ({ ...prev, stars: prev.stars + 1 }));
       }, 500);
     }
   };
 
   const handleFlattenClick = () => {
     if (shapingState.doughPlaced && !shapingState.flattened) {
-      const newShapingState = { ...shapingState, flattened: true };
-      setShapingState(newShapingState);
+      setShapingState(prev => ({ ...prev, flattened: true }));
       setHelperState(prev => ({ ...prev, celebrating: true }));
-
-      sceneActions.updateState({
-        shapingState: newShapingState,
-        stars: sceneState.stars + 1
-      });
-
       safeSetTimeout(() => {
         setHelperState(prev => ({ ...prev, celebrating: false }));
+        setGameState(prev => ({ ...prev, stars: prev.stars + 1 }));
       }, 500);
     }
   };
 
   const handleShapeClick = () => {
     if (shapingState.flattened && !shapingState.shaped) {
-      const finalShapingState = { ...shapingState, shaped: true };
-      setShapingState(finalShapingState);
+      setShapingState(prev => ({ ...prev, shaped: true }));
       setHelperState(prev => ({ ...prev, celebrating: true }));
-
+      
       safeSetTimeout(() => {
         setHelperState(prev => ({ ...prev, celebrating: false }));
-
-        sceneActions.updateState({
-          shapingState: finalShapingState,
-          stars: sceneState.stars + 1,
-          completedSteps: [...sceneState.completedSteps, STEPS.SHAPE_DOUGH]
-        });
-
+        setGameState(prev => ({ 
+          ...prev, 
+          stars: prev.stars + 1,
+          completedSteps: [...prev.completedSteps, STEPS.SHAPE_DOUGH]
+        }));
+        
         // Show step completion
         showStepCompletion(STEPS.SHAPE_DOUGH);
-
+        
         // Move to next step after celebration
         safeSetTimeout(() => {
-          sceneActions.updateState({ currentStep: STEPS.FILL_CLOSE });
+          setGameState(prev => ({ ...prev, currentStep: STEPS.FILL_CLOSE }));
         }, 3000);
       }, 500);
     }
@@ -761,42 +707,34 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   const handleFillingClick = () => {
     if (!fillingState.filled) {
-      const newFillingState = { ...fillingState, filled: true };
-      setFillingState(newFillingState);
+      setFillingState(prev => ({ ...prev, filled: true }));
       setHelperState(prev => ({ ...prev, celebrating: true }));
-
-      sceneActions.updateState({
-        fillingState: newFillingState,
-        stars: sceneState.stars + 1
-      });
-
       safeSetTimeout(() => {
         setHelperState(prev => ({ ...prev, celebrating: false }));
+        setGameState(prev => ({ ...prev, stars: prev.stars + 1 }));
       }, 500);
     }
   };
 
   const handleSealClick = () => {
     if (fillingState.filled && !fillingState.sealed) {
-      const finalFillingState = { ...fillingState, sealed: true };
-      setFillingState(finalFillingState);
+      setFillingState(prev => ({ ...prev, sealed: true }));
       setHelperState(prev => ({ ...prev, celebrating: true }));
-
+      
       safeSetTimeout(() => {
         setHelperState(prev => ({ ...prev, celebrating: false }));
-
-        sceneActions.updateState({
-          fillingState: finalFillingState,
-          stars: sceneState.stars + 1,
-          completedSteps: [...sceneState.completedSteps, STEPS.FILL_CLOSE]
-        });
-
+        setGameState(prev => ({ 
+          ...prev, 
+          stars: prev.stars + 1,
+          completedSteps: [...prev.completedSteps, STEPS.FILL_CLOSE]
+        }));
+        
         // Show step completion
         showStepCompletion(STEPS.FILL_CLOSE);
-
+        
         // Move to next step after celebration
         safeSetTimeout(() => {
-          sceneActions.updateState({ currentStep: STEPS.STEAM_MODAKS });
+          setGameState(prev => ({ ...prev, currentStep: STEPS.STEAM_MODAKS }));
         }, 3000);
       }, 500);
     }
@@ -804,35 +742,23 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   const handleSteamerPlaceClick = () => {
     if (!steamingState.inSteamer) {
-      const newSteamingState = { ...steamingState, inSteamer: true };
-      setSteamingState(newSteamingState);
+      setSteamingState(prev => ({ ...prev, inSteamer: true }));
       setHelperState(prev => ({ ...prev, celebrating: true }));
-
-      sceneActions.updateState({
-        steamingState: newSteamingState,
-        stars: sceneState.stars + 1
-      });
-
       safeSetTimeout(() => {
         setHelperState(prev => ({ ...prev, celebrating: false }));
+        setGameState(prev => ({ ...prev, stars: prev.stars + 1 }));
       }, 500);
     }
   };
 
   const handleLidClick = () => {
     if (steamingState.inSteamer && !steamingState.lidClosed) {
-      const newSteamingState = { ...steamingState, lidClosed: true, steamingStartedAt: Date.now() };
-      setSteamingState(newSteamingState);
+      setSteamingState(prev => ({ ...prev, lidClosed: true }));
       setHelperState(prev => ({ ...prev, celebrating: true }));
-
-      sceneActions.updateState({
-        steamingState: newSteamingState
-      });
-
       safeSetTimeout(() => {
         setHelperState(prev => ({ ...prev, celebrating: false }));
       }, 500);
-
+      
       // Start timer
       const interval = setInterval(() => {
         setSteamingState(prev => {
@@ -841,47 +767,34 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
             clearInterval(interval);
             return { ...prev, timeLeft: 0, steamed: true };
           }
-
-          // Update SceneManager state each second
-          sceneActions.updateState({
-            steamingState: { ...prev, timeLeft: newTime }
-          });
-
           return { ...prev, timeLeft: newTime };
         });
       }, 1000);
-      steamTimerRef.current = interval;
-
+      
       safeSetTimeout(() => {
-        sceneActions.updateState({
-          stars: sceneState.stars + 1,
-          completedSteps: [...sceneState.completedSteps, STEPS.STEAM_MODAKS],
+        setGameState(prev => ({ 
+          ...prev, 
+          stars: prev.stars + 1,
+          completedSteps: [...prev.completedSteps, STEPS.STEAM_MODAKS],
           currentStep: STEPS.COMPLETE,
-          showDoneButton: true,
-          steamingState: { ...newSteamingState, steamed: true, timeLeft: 0 }
-        });
+          showDoneButton: true
+        }));
       }, 8000);
     }
   };
 
   const completeGame = () => {
-    sceneActions.updateState({ completed: true });
     setShowSceneCompletion(true);
   };
 
   const beginCooking = () => {
-    sceneActions.updateState({
-      currentStep: STEPS.MIX_FILLING,
-      welcomeShown: true
-    });
+    setGameState(prev => ({ ...prev, currentStep: STEPS.MIX_FILLING }));
   };
 
   // Cleanup
   useEffect(() => {
     return () => {
       timeoutsRef.current.forEach(id => clearTimeout(id));
-      if (steamTimerRef.current) clearInterval(steamTimerRef.current);
-      reloadHandledRef.current = false;
     };
   }, []);
 
@@ -899,12 +812,12 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
       <div className="progress-board">
         <div className="steps-container">
           {STEP_CONFIG.map((step, index) => (
-            <div
+            <div 
               key={step.id}
               className={`step-icon ${
-                sceneState.currentStep === step.id ? 'active' : ''
+                gameState.currentStep === step.id ? 'active' : ''
               } ${
-                sceneState.completedSteps.includes(step.id) ? 'completed' : ''
+                gameState.completedSteps.includes(step.id) ? 'completed' : ''
               }`}
             >
               <img src={step.icon} alt={step.title} />
@@ -916,7 +829,7 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       {/* HELPER MOUSE - Single guide */}
       {helperState.visible && (
-        <div
+        <div 
           className={`floating-helper ${helperState.celebrating ? 'celebrating' : ''}`}
           style={{
             position: 'fixed',
@@ -934,48 +847,35 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
       )}
 
       {/* STEP COMPLETION CELEBRATION */}
-      {sceneState.showStepComplete && sceneState.completedStepInfo && (
+      {showStepComplete && completedStepInfo && (
         <div className="step-completion-overlay">
           <div className="step-completion-card">
             <div className="step-complete-icon">
-              <img src={sceneState.completedStepInfo.icon} alt={sceneState.completedStepInfo.title} />
+              <img src={completedStepInfo.icon} alt={completedStepInfo.title} />
             </div>
             <div className="step-complete-text">
-              Step {sceneState.completedStepInfo.number} - Completed
+              Step {completedStepInfo.number} - Completed
             </div>
             <div className="step-complete-message">Great Job!</div>
           </div>
         </div>
       )}
 
-      {/* RESUME POPUP */}
-      {showResumePopup && (
-        <div style={{
-          position: 'fixed', top: '20%', left: '50%', transform: 'translateX(-50%)',
-          background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-          padding: '30px 50px', borderRadius: '20px', boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
-          zIndex: 9999, fontFamily: 'Baloo 2, cursive', fontSize: '28px', fontWeight: 'bold',
-          color: '#5D2E0F', textAlign: 'center', maxWidth: '80%', border: '4px solid #FF8C00'
-        }}>
-          {resumeMessage}
-        </div>
-      )}
-
 
       {/* Opening Modal - Replaces Introduction Scene */}
-      {sceneState.currentStep === STEPS.INTRODUCTION && (
-        <OpeningModal
+      {gameState.currentStep === STEPS.INTRODUCTION && (
+        <OpeningModal 
           show={true}
           onStart={beginCooking}
         />
       )}
 
       {/* STEP 1: MIX FILLING */}
-      {sceneState.currentStep === STEPS.MIX_FILLING && (
+      {gameState.currentStep === STEPS.MIX_FILLING && (
         <div className="step-area mixing-area">
           <div className="work-surface">
             {/* Coconut Bowl */}
-            <div
+            <div 
               id="coconut-bowl"
               className={`clickable-item ${!mixingState.coconutAdded ? 'available' : 'used'}`}
               onClick={handleCoconutClick}
@@ -986,19 +886,19 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
             {/* Mixing Bowl */}
             <div className="main-mixing-bowl">
-              <img
+              <img 
                 src={
                   mixingState.stirred ? brassMixingBowlAllIngredients :
                   mixingState.jaggeryAdded ? brassMixingBowlCoconutJaggery :
                   mixingState.coconutAdded ? brassMixingBowlCoconut :
                   brassMixingBowlEmpty
-                }
-                alt="Mixing Bowl"
+                } 
+                alt="Mixing Bowl" 
               />
             </div>
 
             {/* Jaggery Bowl */}
-            <div
+            <div 
               id="jaggery-bowl"
               className={`clickable-item ${mixingState.coconutAdded && !mixingState.jaggeryAdded ? 'available' : mixingState.jaggeryAdded ? 'used' : 'inactive'}`}
               onClick={handleJaggeryClick}
@@ -1008,7 +908,7 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
             </div>
 
             {/* Spoon */}
-            <div
+            <div 
               id="spoon-tool"
               className={`clickable-item spoon-item ${mixingState.coconutAdded && mixingState.jaggeryAdded && !mixingState.stirred ? 'available' : 'inactive'}`}
               onClick={handleStirClick}
@@ -1021,11 +921,11 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
       )}
 
       {/* STEP 2: MAKE DOUGH */}
-      {sceneState.currentStep === STEPS.MAKE_DOUGH && (
+      {gameState.currentStep === STEPS.MAKE_DOUGH && (
         <div className="step-area dough-area">
           <div className="work-surface">
             {/* Rice Bowl */}
-            <div
+            <div 
               id="rice-bowl"
               className={`clickable-item ${!doughState.flourAdded ? 'available' : 'used'}`}
               onClick={handleFlourClick}
@@ -1036,19 +936,19 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
             {/* Dough Bowl */}
             <div className="dough-bowl-area">
-              <img
+              <img 
                 src={
                   doughState.mixed ? perfectModakDough :
                   doughState.waterAdded ? brassBowlFlourWater :
                   doughState.flourAdded ? brassBowlWithFlour :
                   brassMixingBowlEmpty
-                }
-                alt="Dough Bowl"
+                } 
+                alt="Dough Bowl" 
               />
             </div>
 
             {/* Water Pot */}
-            <div
+            <div 
               id="water-pot"
               className={`clickable-item ${doughState.flourAdded && !doughState.waterAdded ? 'available' : doughState.waterAdded ? 'used' : 'inactive'}`}
               onClick={handleWaterClick}
@@ -1058,7 +958,7 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
             </div>
 
             {/* Spoon */}
-            <div
+            <div 
               id="spoon-tool"
               className={`clickable-item spoon-item ${doughState.flourAdded && doughState.waterAdded && !doughState.mixed ? 'available' : 'inactive'}`}
               onClick={handleDoughMixClick}
@@ -1071,11 +971,11 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
       )}
 
       {/* STEP 3: SHAPE DOUGH */}
-      {sceneState.currentStep === STEPS.SHAPE_DOUGH && (
+      {gameState.currentStep === STEPS.SHAPE_DOUGH && (
         <div className="step-area shaping-area">
           <div className="work-surface">
             {/* Dough Ball */}
-            <div
+            <div 
               id="dough-ball"
               className={`clickable-item ${!shapingState.doughPlaced ? 'available' : 'used'}`}
               onClick={handleDoughPlaceClick}
@@ -1085,17 +985,17 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
             </div>
 
             {/* Rolling Mat */}
-            <div
+            <div 
               id="rolling-mat"
               className="shaping-surface"
             >
-              <img
+              <img 
                 src={
                   shapingState.shaped ? doughCup :
                   shapingState.flattened ? flatDough :
                   shapingState.doughPlaced ? doughPortion :
                   rollingMat
-                }
+                } 
                 alt="Shaping Surface"
                 className={`${shapingState.doughPlaced && !shapingState.flattened ? 'available clickable-item' : ''}`}
                 onClick={handleFlattenClick}
@@ -1104,7 +1004,7 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
             </div>
 
             {/* Wooden Mold */}
-            <div
+            <div 
               id="wooden-mold"
               className={`clickable-item ${shapingState.flattened && !shapingState.shaped ? 'available' : 'inactive'}`}
               onClick={handleShapeClick}
@@ -1117,11 +1017,11 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
       )}
 
       {/* STEP 4: FILL & CLOSE */}
-      {sceneState.currentStep === STEPS.FILL_CLOSE && (
+      {gameState.currentStep === STEPS.FILL_CLOSE && (
         <div className="step-area filling-area">
           <div className="work-surface">
             {/* Coconut-Jaggery Filling */}
-            <div
+            <div 
               id="coconut-jaggery-filling"
               className={`clickable-item ${!fillingState.filled ? 'available' : 'used'}`}
               onClick={handleFillingClick}
@@ -1132,12 +1032,12 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
             {/* Dough Cup */}
             <div className="dough-cup-area">
-              <img
+              <img 
                 src={
                   fillingState.sealed ? sealedModak :
                   fillingState.filled ? cupWithFilling :
                   doughCup
-                }
+                } 
                 alt="Modak"
                 id="cup-with-filling"
                 className={`${fillingState.filled && !fillingState.sealed ? 'available clickable-item' : ''}`}
@@ -1150,12 +1050,12 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
       )}
 
       {/* STEP 5: STEAM */}
-      {sceneState.currentStep === STEPS.STEAM_MODAKS && (
+      {gameState.currentStep === STEPS.STEAM_MODAKS && (
         <div className="step-area steaming-area">
           <div className="work-surface">
             {/* Sealed Modak */}
             {!steamingState.inSteamer && (
-              <div
+              <div 
                 id="sealed-modak"
                 className="clickable-item available"
                 onClick={handleSteamerPlaceClick}
@@ -1167,11 +1067,11 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
             {/* Steamer */}
             <div className="steamer-setup">
-              <img
-                src={steamingState.inSteamer ? steamerWithModak : emptyBrassSteamer}
-                alt="Steamer"
+              <img 
+                src={steamingState.inSteamer ? steamerWithModak : emptyBrassSteamer} 
+                alt="Steamer" 
               />
-
+              
               {steamingState.lidClosed && (
                 <>
                   <img src={steamerLid} alt="Lid" className="steamer-lid-placed" />
@@ -1189,7 +1089,7 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
             {/* Lid */}
             {steamingState.inSteamer && !steamingState.lidClosed && (
-              <div
+              <div 
                 id="steamer-lid"
                 className="clickable-item available"
                 onClick={handleLidClick}
@@ -1203,7 +1103,7 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
       )}
 
       {/* COMPLETE */}
-      {sceneState.currentStep === STEPS.COMPLETE && (
+      {gameState.currentStep === STEPS.COMPLETE && (
         <div className="completion-area">
           <div className="final-modak-display">
             <img src={cookedModak} alt="Cooked Modak" className="final-modak" />
@@ -1211,8 +1111,8 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
               <img src={modaksOnPlate} alt="Modaks" />
             </div>
           </div>
-
-          {sceneState.showDoneButton && (
+          
+          {gameState.showDoneButton && (
             <button className="done-cooking-button" onClick={completeGame}>
               🎉 All Done!
             </button>
@@ -1221,7 +1121,33 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
       )}
 
       {/* Start Over Button */}
-      <div className="start-over-button" onClick={() => resetScene()}>
+      <div className="start-over-button" onClick={() => {
+        timeoutsRef.current.forEach(id => clearTimeout(id));
+        timeoutsRef.current = [];
+        
+        setTimeout(() => {
+          setGameState({
+            currentStep: STEPS.INTRODUCTION,
+            currentAction: 0,
+            completedSteps: [],
+            stars: 0,
+            gameStartTime: Date.now(),
+            completed: false,
+            showDoneButton: false
+          });
+          setMixingState({ coconutAdded: false, jaggeryAdded: false, stirred: false, stirCount: 0 });
+          setDoughState({ flourAdded: false, waterAdded: false, mixed: false, mixCount: 0 });
+          setShapingState({ doughPlaced: false, flattened: false, shaped: false });
+          setFillingState({ filled: false, sealed: false });
+          setSteamingState({ inSteamer: false, lidClosed: false, steamed: false, timeLeft: 8 });
+          setShowSceneCompletion(false);
+          setActiveElement(null);
+          setShowSparkles(false);
+          setShowMouseCelebration(false);
+          setIsShaking(false);
+          hideHelper();
+        }, 100);
+      }}>
         <span>🔄</span>
         <span>Start Over</span>
       </div>
@@ -1230,16 +1156,40 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
       <GamePauseMenu
         show={showPauseMenu}
         gameName="Modak Mastery"
-        currentStars={sceneState.stars}
+        currentStars={gameState.stars}
         hasDesignOption={false}
-
+        
         onResume={() => setShowPauseMenu(false)}
-
+        
         onRestart={() => {
           setShowPauseMenu(false);
-          resetScene();
+          timeoutsRef.current.forEach(id => clearTimeout(id));
+          timeoutsRef.current = [];
+          
+          setTimeout(() => {
+            setGameState({
+              currentStep: STEPS.INTRODUCTION,
+              currentAction: 0,
+              completedSteps: [],
+              stars: 0,
+              gameStartTime: Date.now(),
+              completed: false,
+              showDoneButton: false
+            });
+            setMixingState({ coconutAdded: false, jaggeryAdded: false, stirred: false, stirCount: 0 });
+            setDoughState({ flourAdded: false, waterAdded: false, mixed: false, mixCount: 0 });
+            setShapingState({ doughPlaced: false, flattened: false, shaped: false });
+            setFillingState({ filled: false, sealed: false });
+            setSteamingState({ inSteamer: false, lidClosed: false, steamed: false, timeLeft: 8 });
+            setShowSceneCompletion(false);
+            setActiveElement(null);
+            setShowSparkles(false);
+            setShowMouseCelebration(false);
+            setIsShaking(false);
+            hideHelper();
+          }, 100);
         }}
-
+        
         onComplete={() => {
           setShowPauseMenu(false);
           completeGame();
@@ -1251,26 +1201,53 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
         <FestivalSquareCompletion
           show={showSceneCompletion}
           sceneName="Modak Mastery"
-          sceneNumber={3}
+          sceneNumber={2}
           totalScenes={4}
-          starsEarned={sceneState.stars}
-          totalStars={13}
+          starsEarned={gameState.stars}
+          totalStars={8}
           discoveredBadges={['cooking']}
           badgeImages={{
             cooking: cookingBadge
           }}
-          nextSceneName="Mandap Decoration"
+          nextSceneName="Rangoli Artistry"
           childName="little chef"
           onContinue={() => {
             console.log('🍪 MODAK CONTINUE: Going to next game');
+            const profileId = localStorage.getItem('activeProfileId');
+            if (profileId) {
+              // Save completion logic here
+            }
             setTimeout(() => {
               onNavigate?.('scene-complete-continue');
             }, 100);
           }}
           onReplay={() => {
             console.log('🎮 MODAK REPLAY: Play Again');
-            resetScene();
+            const profileId = localStorage.getItem('activeProfileId');
+            if (profileId) {
+              localStorage.removeItem('modakGame');
+            }
+            
+            setGameState({
+              currentStep: STEPS.INTRODUCTION,
+              currentAction: 0,
+              completedSteps: [],
+              stars: 0,
+              gameStartTime: Date.now(),
+              completed: false,
+              showDoneButton: false
+            });
+            setMixingState({ coconutAdded: false, jaggeryAdded: false, stirred: false, stirCount: 0 });
+            setDoughState({ flourAdded: false, waterAdded: false, mixed: false, mixCount: 0 });
+            setShapingState({ doughPlaced: false, flattened: false, shaped: false });
+            setFillingState({ filled: false, sealed: false });
+            setSteamingState({ inSteamer: false, lidClosed: false, steamed: false, timeLeft: 8 });
             setShowSceneCompletion(false);
+            setActiveElement(null);
+            setShowSparkles(false);
+            setShowMouseCelebration(false);
+            setIsShaking(false);
+            hideHelper();
           }}
           onBackToMap={() => {
             console.log('🗺️ MODAK MAP: Back to Festival Square');
@@ -1300,16 +1277,38 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
         onZonesClick={() => {
           if (onNavigate) onNavigate('zones');
         }}
-        onStartFresh={() => resetScene()}
+        onStartFresh={() => {
+          localStorage.removeItem('modakGame');
+          timeoutsRef.current.forEach(id => clearTimeout(id));
+          timeoutsRef.current = [];
+          
+          setGameState({
+            currentStep: STEPS.INTRODUCTION,
+            currentAction: 0,
+            completedSteps: [],
+            stars: 0,
+            gameStartTime: Date.now(),
+            completed: false,
+            showDoneButton: false
+          });
+          setMixingState({ coconutAdded: false, jaggeryAdded: false, stirred: false, stirCount: 0 });
+          setDoughState({ flourAdded: false, waterAdded: false, mixed: false, mixCount: 0 });
+          setShapingState({ doughPlaced: false, flattened: false, shaped: false });
+          setFillingState({ filled: false, sealed: false });
+          setSteamingState({ inSteamer: false, lidClosed: false, steamed: false, timeLeft: 8 });
+          setShowSceneCompletion(false);
+          setActiveElement(null);
+          setShowSparkles(false);
+          setShowMouseCelebration(false);
+          setIsShaking(false);
+          hideHelper();
+        }}
         currentProgress={{
-          stars: sceneState.stars || 0,
-          completed: sceneState.completed ? 1 : 0,
+          stars: gameState.stars || 0,
+          completed: gameState.completed ? 1 : 0,
           total: 1
         }}
       />
-
-      {/* BackToMapButton */}
-      {sceneState.welcomeShown && <BackToMapButton onNavigate={onNavigate} />}
     </div>
   );
 };
