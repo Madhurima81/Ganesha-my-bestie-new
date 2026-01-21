@@ -9,7 +9,6 @@ import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
 
 import PujaSidebar from './components/sidebars/PujaSidebar';
 import FixSidebar from './components/sidebars/FixSidebar';
-import MandapItem from './components/MandapItem';
 
 // Mission Completion Overlay Component
 const MissionCompletionOverlay = ({ 
@@ -379,7 +378,7 @@ const MISSIONS = [
 
 
 // CORRECTED Image mapping for 24 assets
-export const DECORATION_IMAGES = { 
+const DECORATION_IMAGES = {
   'flower_marigold_bunch.png': flowerMarigoldBunch,
   'flower_rose_petals.png': flowerRosePetals,
   'flower_lotus_single.png': flowerLotusSingle,
@@ -449,7 +448,7 @@ const PHASES = {
 };
 
 // CORRECTED 6 Categories with 24 total items
-export const DECORATION_CATEGORIES = {
+const DECORATION_CATEGORIES = {
   FLOWERS: {
     id: 'flowers',
     name: 'Flowers',
@@ -1866,29 +1865,76 @@ const currentStepData = (isInMission && selectedMission.type !== 'fix' && select
 })}
         {/* Placed Decorations - WITH DRAGGING */}
      {/* Placed Decorations - WITH DRAGGING */}
-{/* Placed Decorations - CLEAN COMPONENT */}
-        {Array.from(gameState.placedDecorations.entries()).map(([zoneId, decorations]) => {
+{Array.from(gameState.placedDecorations.entries()).map(([zoneId, decorations]) => {
           const decorationsArray = Array.isArray(decorations) ? decorations : [decorations];
-          
-          return decorationsArray.map((decoration, index) => (
-            <MandapItem 
-              key={`deco-${zoneId}-${index}`} 
-              decoration={decoration}
-              zoneId={zoneId}
-              index={index}
-              zoneData={MANDAP_ZONES[zoneId]}
-              
-              // Pass the state needed for logic
-              isFixMode={selectedMission?.type === 'fix'}
-              selectedWrongId={selectedWrongItem?.fixId}
-              
-              // Pass the functions to handle events
-              onUpdatePosition={updateDecorationPosition}
-              onDragStart={() => setIsDragging(true)}
-              onDragEnd={() => setIsDragging(false)}
-              onWrongClick={handleWrongItemClick}
-            />
-          ));
+          return decorationsArray.map((decoration, index) => {
+            const zone = MANDAP_ZONES[zoneId];
+            const decorationKey = `decoration-${zoneId}-${index}`;
+            
+            // Position Logic
+            const currentPosition = decoration.customPosition || 
+              gameState.decorationPositions?.get(decorationKey) || {
+                top: `${zone.y + zone.height/2 + Math.floor(index / 3) * 3}%`,
+                left: `${zone.x + zone.width/2 + (index % 3) * 3}%`
+              };
+
+            // LOGIC: DETERMINE IF "WRONG" OR "FIXED"
+            const isFixMode = selectedMission?.type === 'fix';
+            const isWrong = isFixMode && decoration.isWrong && !decoration.isFixed;
+            const isSelected = isFixMode && selectedWrongItem?.fixId === decoration.fixId;
+            const isFixed = isFixMode && decoration.isFixed;
+
+            // --- UNIVERSAL STICKER LOGIC ---
+            let className = '';
+            
+            if (isFixMode && isWrong) {
+                // Fix Mode Broken Item: Wiggle, No Sticker yet
+                className = 'decoration-image decoration-wrong';
+                if (isSelected) className += ' decoration-selected';
+            } else {
+                // ALL OTHER ITEMS (Free Play, Puja, Eco, Fixed Items):
+                // Apply the Sticker Effect!
+                className = 'placed-item-sticker'; 
+                
+                // Add Glow if needed (Diya/Lights)
+                if (decoration.hasLightEffect && !isWrong) className += ' glowing';
+                
+                // Add Poof if newly placed (Puja/Fix)
+                if (decoration.justPlaced) className += ' item-appear-poof';
+            }
+            
+            return (
+              <FreeDraggableItem
+                key={decorationKey}
+                id={decorationKey}
+                position={currentPosition}
+                dragDelay={150}
+                style={{ zIndex: 25 }}
+                onPositionChange={(newPosition) => updateDecorationPosition(decorationKey, newPosition)}
+                onDragStart={() => setIsDragging(true)}
+                onDragEnd={() => setIsDragging(false)}
+              >
+                <img 
+                  src={DECORATION_IMAGES[decoration.image]}
+                  alt={decoration.name}
+                  className={className}
+                  // Apply dynamic sticker filter if set (from Puja timing logic)
+                  style={{ 
+                    width: getDecorationSize(decoration.image), 
+                    height: getDecorationSize(decoration.image), 
+                    pointerEvents: isFixMode ? 'auto' : 'auto', // Allow dragging in Free Play
+                    ...decoration.stickerStyle // <--- IMPORTANT: Supports dynamic filter changes
+                  }}
+                  onClick={(e) => {
+                    if (isWrong) {
+                      e.stopPropagation();
+                      handleWrongItemClick(decoration);
+                    }
+                  }}
+                />
+              </FreeDraggableItem>
+            );
+          });
         })}
 
         {/* Sparkle Effects */}
@@ -1979,33 +2025,144 @@ const currentStepData = (isInMission && selectedMission.type !== 'fix' && select
           {showCulturalNote.message}
         </div>
       )}
-{/* --- MISSION SIDEBARS (Modular) --- */}
-{isInMission && (selectedMission?.id === 'puja-prep' || selectedMission?.type === 'fix') ? (
-  <>
-    {/* 1. FIX MODE SIDEBAR */}
-    {selectedMission?.type === 'fix' && (
-      <FixSidebar 
-        wrongPlacements={selectedMission.wrongPlacements}
-        wrongItemsMap={wrongItemsMap}
-        selectedWrongItem={selectedWrongItem}
-        onSelectWrongItem={(item) => handleWrongItemClick(item)}
-      />
-    )}
 
-    {/* 2. PUJA PREP SIDEBAR */}
-    {selectedMission?.id === 'puja-prep' && (
-      <PujaSidebar 
-        steps={selectedMission.steps}
-        completedSteps={completedSteps}
-        currentStep={currentStep}
-        onSelectStep={(decoration, zone) => {
-           handleDecorationSelect(decoration);
-           setHighlightedZones(new Set([zone]));
-        }}
-      />
-    )}
-  </>
-) : (
+{/* Mission Steps Panel OR Category Buttons */}
+{isInMission && (selectedMission?.id === 'puja-prep' || selectedMission?.type === 'fix') ? (() => {
+  const missionData = getMissionData(selectedMission, currentStep, fixedCount);
+  
+  if (missionData.type === 'fix') {
+
+// FIX MODE SIDEBAR (New Separate Styles)
+    return (
+      <div className="inventory-tray items-mode">
+        
+        {/* Title */}
+        <div className="items-title" style={{marginBottom: '15px'}}>
+          Fix Items 🔧
+        </div>
+
+        {/* Vertical List using NEW classes */}
+        <div className="fix-steps-list">
+          {selectedMission.wrongPlacements.map((item, index) => {
+            const fixId = `fix-${index}`;
+            const wrongItem = wrongItemsMap.get(fixId);
+            const isFixed = wrongItem?.isFixed || false;
+            const isSelected = selectedWrongItem?.fixId === fixId;
+            
+            const decorationData = Object.values(DECORATION_CATEGORIES)
+              .flatMap(cat => cat.items)
+              .find(i => i.id === item.id);
+            
+            return (
+              <div
+                key={fixId}
+                // USE NEW CLASS: fix-item-pill
+                className={`fix-item-pill ${isFixed ? 'completed' : ''} ${isSelected ? 'active' : ''}`}
+                onClick={() => {
+                  if (!isFixed && wrongItem) {
+                    handleWrongItemClick(wrongItem);
+                  }
+                }}
+              >
+                {/* 1. Icon Circle (Left) - USE NEW CLASS: fix-icon-circle */}
+                <div className="fix-icon-circle">
+                  {decorationData && (
+                    <img 
+                      src={DECORATION_IMAGES[decorationData.image]} 
+                      alt={decorationData.name}
+                      className="fix-icon-img" // NEW CLASS
+                    />
+                  )}
+                  
+                  {/* Status Badges */}
+                  {isFixed ? (
+                    <div className="mini-check-badge">✓</div>
+                  ) : (
+                    <div className="mini-cross-badge">✖</div>
+                  )}
+                </div>
+
+                {/* 2. Text (Right) - USE NEW CLASSES */}
+                <div className="fix-text-col">
+                  <span className="fix-item-name">
+                    {decorationData ? decorationData.name : 'Item'}
+                  </span>
+                  <span className="fix-item-sub">
+                    {isFixed ? 'Fixed!' : isSelected ? 'Tap glowing spot!' : 'In wrong spot'}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  
+} else if (selectedMission?.id === 'puja-prep' && selectedMission.steps) {
+    // PUJA PREP SIDEBAR (Styled like Item List)
+    return (
+      <div className="inventory-tray items-mode"> 
+        
+        {/* Title */}
+        <div className="items-title" style={{marginBottom: '15px'}}>
+          Puja Steps 🌸
+        </div>
+
+        {/* Vertical Steps List */}
+        <div className="puja-steps-list">
+          {selectedMission.steps.map((step, index) => {
+            const stepNumber = index + 1;
+            const isCompleted = completedSteps.includes(stepNumber);
+            const isCurrent = stepNumber === currentStep;
+            const isFuture = !isCompleted && !isCurrent;
+            
+            const decorationData = Object.values(DECORATION_CATEGORIES)
+              .flatMap(cat => cat.items)
+              .find(item => item.id === step.item);
+            
+            return (
+              <div
+                key={step.step}
+                className={`puja-item-pill ${isCompleted ? 'completed' : ''} ${isCurrent ? 'active' : ''} ${isFuture ? 'locked' : ''}`}
+                onClick={() => {
+                  if (isCurrent && decorationData) {
+                    handleDecorationSelect(decorationData);
+                    setHighlightedZones(new Set([step.zone]));
+                  }
+                }}
+              >
+                {/* 1. Icon Circle (Left) */}
+                <div className="puja-icon-circle">
+                  {decorationData && (
+                    <img 
+                      src={DECORATION_IMAGES[decorationData.image]} 
+                      alt={decorationData.name}
+                      className="puja-icon-img"
+                    />
+                  )}
+                  {/* Small Checkmark Badge if done */}
+                  {isCompleted && <div className="mini-check-badge">✓</div>}
+                </div>
+
+                {/* 2. Text (Right) */}
+                <div className="puja-text-col">
+                  <span className="puja-item-name">
+{decorationData ? decorationData.name : 'Item'}
+                  </span>
+                  <span className="puja-item-sub">
+                    {isCompleted ? 'Done!' : isCurrent ? 'Tap to place' : 'Coming Next...'}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+  
+  return null; // No sidebar for Eco & Light missions
+})() : (
   
   /* FREE PLAY MODE - Show Categories */
 !isInMission && !gameState.selectedCategory && gameState.phase !== PHASES.COMPLETE && (

@@ -4,47 +4,34 @@ import './DrawingPad.css';
 const DrawingPad = ({ 
   prompt = "Draw your dream 💛",
   onSave,
-  onCancel,
-  initialData, // <--- NEW: Data to restore
-  onAutoSave   // <--- NEW: Function to save progress
+  onCancel 
 }) => {
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [color, setColor] = useState('#FF6B6B');
   const [brushSize, setBrushSize] = useState(5);
   const [isEraser, setIsEraser] = useState(false);
+  const [showTextInput, setShowTextInput] = useState(false);
+  const [textToAdd, setTextToAdd] = useState('');
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [audioBlob, setAudioBlob] = useState(null);
+  const mediaRecorderRef = useRef(null);
+  const timerRef = useRef(null);
   
-  // Unused features commented out for cleanliness based on your snippet
-  // const [showTextInput, setShowTextInput] = useState(false);
-  // const [textToAdd, setTextToAdd] = useState('');
-  
-  // Initialize canvas & Restore Data
+  // Initialize canvas
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
-    
-    // 1. Basic Setup
-    context.lineCap = 'round';
-    context.lineJoin = 'round';
-    context.strokeStyle = color;
-    context.lineWidth = brushSize;
-    
-    // 2. Fill White Background (Default)
     context.fillStyle = '#ffffff';
     context.fillRect(0, 0, canvas.width, canvas.height);
-
-    // 3. RESTORE PREVIOUS DRAWING (If it exists)
-    if (initialData) {
-      const img = new Image();
-      img.src = initialData;
-      img.onload = () => {
-        // Draw the saved image onto the canvas
-        context.drawImage(img, 0, 0);
-      };
-    }
-  }, []); // Run once on mount
+    context.strokeStyle = color;
+    context.lineWidth = brushSize;
+    context.lineCap = 'round';
+    context.lineJoin = 'round';
+  }, []);
   
-  // Update brush/eraser settings dynamically
+  // Update brush/eraser
   useEffect(() => {
     if (canvasRef.current) {
       const context = canvasRef.current.getContext('2d');
@@ -58,28 +45,30 @@ const DrawingPad = ({
     }
   }, [color, brushSize, isEraser]);
   
-  const getCoordinates = (e) => {
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
-    
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    
-    let clientX, clientY;
-    
-    if (e.touches) {
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    } else {
-      clientX = e.clientX;
-      clientY = e.clientY;
-    }
-    
-    const x = (clientX - rect.left) * scaleX;
-    const y = (clientY - rect.top) * scaleY;
-    
-    return { x, y };
-  };
+const getCoordinates = (e) => {
+  const canvas = canvasRef.current;
+  const rect = canvas.getBoundingClientRect();
+  
+  // Get the actual canvas dimensions
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  
+  let clientX, clientY;
+  
+  if (e.touches) {
+    clientX = e.touches[0].clientX;
+    clientY = e.touches[0].clientY;
+  } else {
+    clientX = e.clientX;
+    clientY = e.clientY;
+  }
+  
+  // Calculate position relative to canvas with scaling
+  const x = (clientX - rect.left) * scaleX;
+  const y = (clientY - rect.top) * scaleY;
+  
+  return { x, y };
+};
   
   const startDrawing = (e) => {
     e.preventDefault();
@@ -101,24 +90,79 @@ const DrawingPad = ({
   
   const stopDrawing = () => {
     if (isDrawing) {
-      const canvas = canvasRef.current;
-      canvas.getContext('2d').closePath();
+      canvasRef.current.getContext('2d').closePath();
       setIsDrawing(false);
-
-      // --- AUTO SAVE LOGIC ---
-      // Save every time a stroke is finished
-      if (onAutoSave) {
-        const imageData = canvas.toDataURL('image/png');
-        onAutoSave(imageData);
-      }
+    }
+  };
+  
+  // Add text to canvas
+  const handleAddText = () => {
+    if (!textToAdd.trim()) return;
+    
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+    context.font = 'bold 32px "Baloo 2", cursive';
+    context.fillStyle = color;
+    context.textAlign = 'center';
+    context.fillText(textToAdd, canvas.width / 2, canvas.height / 2);
+    
+    setTextToAdd('');
+    setShowTextInput(false);
+  };
+  
+  // Voice recording
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      const audioChunks = [];
+      
+      mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(audioChunks, { type: 'audio/webm' });
+        setAudioBlob(blob);
+        stream.getTracks().forEach(track => track.stop());
+        clearInterval(timerRef.current);
+      };
+      
+      mediaRecorder.start();
+      setIsRecording(true);
+      setRecordingTime(0);
+      
+      timerRef.current = setInterval(() => {
+        setRecordingTime(prev => {
+          if (prev >= 30) {
+            stopRecording();
+            return 30;
+          }
+          return prev + 1;
+        });
+      }, 1000);
+    } catch (err) {
+      alert('Microphone access needed!');
+    }
+  };
+  
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      clearInterval(timerRef.current);
+    }
+  };
+  
+  const playAudio = () => {
+    if (audioBlob) {
+      const audio = new Audio(URL.createObjectURL(audioBlob));
+      audio.play();
     }
   };
   
   const handleSave = () => {
     const imageData = canvasRef.current.toDataURL('image/png');
     if (onSave) {
-      // Pass image data back
-      onSave({ image: imageData });
+      onSave({ image: imageData, audio: audioBlob });
     }
   };
   
@@ -205,18 +249,24 @@ const DrawingPad = ({
         />
       </div>
       
+      {/* Bottom Tools */}
+{/* Bottom Tools - Hidden for now */}
+{false && (
+  <div className="bottom-tools">
+    {/* Text and Voice buttons hidden */}
+  </div>
+)}
+      
       {/* Done Button */}
-      <div className="drawing-actions">
-          <button className="done-btn" onClick={handleSave}>
-            Done Drawing!
-          </button>
-          
-          {onCancel && (
-            <button className="cancel-link" onClick={onCancel}>
-              Cancel
-            </button>
-          )}
-      </div>
+      <button className="done-btn" onClick={handleSave}>
+        Done Drawing!
+      </button>
+      
+      {onCancel && (
+        <button className="cancel-link" onClick={onCancel}>
+          Cancel
+        </button>
+      )}
     </div>
   );
 };

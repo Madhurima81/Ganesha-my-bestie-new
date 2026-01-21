@@ -84,7 +84,7 @@ const FavoriteFoodGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
         initialState={{
           gamePhase: 'intro',
           
-          // Data Arrays
+          // Data Arrays (Saved here to persist order on reload)
           randomFoods: [],
           randomFriends: [],
           randomColors: [],
@@ -114,11 +114,11 @@ const FavoriteFoodGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
           
           childFriendName: '',
           childFriendLetters: [],
-          
-          // Modal Persistence State (NEW)
-          currentModal: null, // 'food-draw', 'food-type', 'activity-draw', 'activity-type'
-          draftData: null,    // Stores incomplete drawing/text
 
+          // NEW STATE FOR SAVING DRAFTS
+    currentModal: null, // 'food-draw', 'food-type', 'activity-draw', 'activity-type'
+    draftData: null,    // Will hold the drawing image string or typed text
+          
           // Completion
           stars: 2,
           completed: false,
@@ -147,7 +147,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   if (!sceneState) return <div>Loading...</div>;
 
-  // --- LOCAL UI STATE (Transient) ---
+  // --- LOCAL UI STATE (Transient - doesn't need to be saved) ---
   const [showShake, setShowShake] = useState(null);
   const [showDrawingPad, setShowDrawingPad] = useState(false);
   const [drawingMode, setDrawingMode] = useState(null);
@@ -221,7 +221,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     { id: 'brown', name: 'Brown', image: brownImg, emoji: '🤎' },
   ];
 
-  // --- INITIALIZATION ---
+  // --- INITIALIZATION (Shuffle) ---
   const shuffleArray = (array) => {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -242,20 +242,19 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }
   }, []);
 
-  // --- RELOAD DETECTION & RESTORATION LOGIC ---
+  // --- RELOAD DETECTION LOGIC ---
   useEffect(() => {
     if (isReload && !reloadHandledRef.current) {
       reloadHandledRef.current = true;
-      const { 
-        gamePhase, wrongChoices, currentModal, 
-        childFoodChoice, childColor, childActivityChoice, childFriendLetters 
-      } = sceneState;
       
-      console.log("🔄 Reload detected. Phase:", gamePhase, "Modal:", currentModal);
+      // Keep your current destructuring
+      const { gamePhase, wrongChoices, childFoodChoice, childColor, childFriendLetters } = sceneState;
+      
+      console.log("🔄 Reload detected, gamePhase:", gamePhase);
       
       if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
 
-      // --- 1. RESTORE MODALS (Drawing/Typing) ---
+// --- 1. RESTORE MODALS (Drawing/Typing) ---
       if (currentModal) {
         setResumeMessage("Welcome back! We saved your progress! 🎨");
         setShowResumePopup(true);
@@ -277,9 +276,11 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         return; // Stop here if we restored a modal
       }
 
-      // --- 2. EXISTING LOGIC (If no modal was open) ---
       if (gamePhase === 'intro') return;
 
+      
+
+      // 1. Ganesha's Guessing Logic
       if (gamePhase === 'food-choice' && wrongChoices.length > 0) {
         setResumeMessage(`Keep trying! You've eliminated ${wrongChoices.length} option${wrongChoices.length > 1 ? 's' : ''}!`);
         setShowResumePopup(true);
@@ -294,8 +295,9 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         return;
       }
 
-      // Child Food Phase
+      // 2. Child Food Phase (Modified)
       if (gamePhase === 'child-food-choice') {
+         // If data exists, auto-advance (Your existing logic)
          if (childFoodChoice || sceneState.childFoodDrawing || sceneState.childFoodText) {
             setResumeMessage(`You already picked your favorite food! Continue to color choice.`);
             setShowResumePopup(true);
@@ -303,15 +305,17 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
               setShowResumePopup(false);
               sceneActions.updateState({ gamePhase: 'child-color-choice' });
             }, 3000);
-         } else {
-            setResumeMessage(`Welcome back! Ready to pick (or draw) your favorite food? 🍕`);
+         } 
+         // ELSE: You reloaded while choosing/drawing/typing -> Show Welcome Back
+         else {
+            setResumeMessage(`Welcome back! Ready to pick or draw your favorite food? 🍕`);
             setShowResumePopup(true);
             resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
          }
          return;
       }
       
-      // Child Color Phase
+      // 3. Child Color Phase
       if (gamePhase === 'child-color-choice') {
          if (childColor) {
             setResumeMessage(`You picked ${sceneState.childColorName}! Continue to activity choice.`);
@@ -328,24 +332,27 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
          return;
       }
 
-      // Child Activity Phase
+      // 4. Child Activity Phase (Added "Else" block here too)
       if (gamePhase === 'child-activity-choice') {
-          if (childActivityChoice || sceneState.childActivityDrawing || sceneState.childActivityText) {
+          // Note: using sceneState accessors directly to be safe like in food phase
+          if (sceneState.childActivityChoice || sceneState.childActivityDrawing || sceneState.childActivityText) {
              setResumeMessage(`Great! Now tell us about your best friend!`);
              setShowResumePopup(true);
              resumePopupTimeoutRef.current = setTimeout(() => {
                setShowResumePopup(false);
                sceneActions.updateState({ gamePhase: 'child-friend-intro' });
              }, 3000);
-          } else {
-             setResumeMessage(`Welcome back! Ready to pick (or draw) your favorite activity? ⚽`);
+          } 
+          // ELSE: Reloaded while choosing/drawing/typing
+          else {
+             setResumeMessage(`Welcome back! Ready to pick or draw your favorite activity? ⚽`);
              setShowResumePopup(true);
              resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
           }
           return;
       }
 
-      // Friend Input
+      // 5. Friend Input
       if (gamePhase === 'child-friend-input' && childFriendLetters.length > 0) {
         setResumeMessage(`Continue typing your friend's name! (${childFriendLetters.length} letters)`);
         setShowResumePopup(true);
@@ -355,25 +362,42 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }
   }, [isReload, sceneState.gamePhase]);
 
-  // Auto-transition Handler (Fixes frozen screens)
+
+  // =========================================================
+  // 🔥 FIX: AUTO-TRANSITION HANDLER (Solves frozen screen on reload)
+  // =========================================================
   useEffect(() => {
+    // If the game is in a "Correct" state (showing celebration),
+    // set a timer to move to the next phase automatically.
+    // This runs on mount (reload) and on state update.
+    
     let timer;
     const { gamePhase } = sceneState;
 
     if (gamePhase === 'food-correct') {
-      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'color-choice', wrongChoices: [] }); }, 2500);
+      timer = setTimeout(() => {
+        sceneActions.updateState({ gamePhase: 'color-choice', wrongChoices: [] });
+      }, 2500);
     } 
     else if (gamePhase === 'color-correct') {
-      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'activity-choice', wrongChoices: [] }); }, 2500);
+      timer = setTimeout(() => {
+        sceneActions.updateState({ gamePhase: 'activity-choice', wrongChoices: [] });
+      }, 2500);
     } 
     else if (gamePhase === 'activity-correct') {
-      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'friend-intro', wrongChoices: [] }); }, 2500);
+      timer = setTimeout(() => {
+        sceneActions.updateState({ gamePhase: 'friend-intro', wrongChoices: [] });
+      }, 2500);
     }
     else if (gamePhase === 'friend-correct') {
-      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'child-intro', wrongChoices: [] }); }, 2500);
+      timer = setTimeout(() => {
+        sceneActions.updateState({ gamePhase: 'child-intro', wrongChoices: [] });
+      }, 2500);
     }
     else if (gamePhase === 'friend-celebration') {
-      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'comparison-card' }); }, 3000);
+      timer = setTimeout(() => {
+        sceneActions.updateState({ gamePhase: 'comparison-card' });
+      }, 3000);
     }
 
     return () => clearTimeout(timer);
@@ -388,15 +412,20 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   const handleFoodClick = (foodId) => {
     if (sceneState.wrongChoices.includes(foodId) || sceneState.correctChoiceId) return;
+    
     const food = foods.find(f => f.id === foodId);
+    
     if (food.correct) {
+      // 1. Mark as correct (triggers animation)
       sceneActions.updateState({ correctChoiceId: foodId });
       setFeedbackMessage("");
+      
+      // 2. Switch phase (This will trigger the useEffect above to handle the 2.5s delay)
       setTimeout(() => {
         sceneActions.updateState({
             selectedFood: foodId,
             storyDiscoveries: [{ image: modakImg, name: 'Modak' }],
-            gamePhase: 'food-correct', 
+            gamePhase: 'food-correct', // <--- This change triggers the useEffect
             correctChoiceId: null
         });
       }, 1000); 
@@ -413,12 +442,14 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const handleColorClick = (colorId) => {
     if (sceneState.wrongChoices.includes(colorId)) return;
     const color = colors.find(c => c.id === colorId);
+    
     if (color.correct) {
       sceneActions.updateState({
           storyDiscoveries: [...sceneState.storyDiscoveries, { image: orangeImg, name: 'Orange' }],
           gamePhase: 'color-correct'
       });
       setFeedbackMessage("");
+      // useEffect handles transition
     } else {
       setShowShake(colorId);
       setFeedbackMessage("Oops! Not that one, try again! 🙈");
@@ -432,12 +463,14 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const handleActivityClick = (activityId) => {
     if (sceneState.wrongChoices.includes(activityId)) return;
     const activity = activities.find(a => a.id === activityId);
+    
     if (activity.correct) {
       sceneActions.updateState({
           storyDiscoveries: [...sceneState.storyDiscoveries, { image: actDancingImg, name: 'Dancing' }],
           gamePhase: 'activity-correct'
       });
       setFeedbackMessage("");
+      // useEffect handles transition
     } else {
       setShowShake(activityId);
       setFeedbackMessage("Oops! Try again! 💃");
@@ -449,12 +482,16 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleStartFriendChoice = () => {
-    sceneActions.updateState({ wrongChoices: [], gamePhase: 'friend-choice' });
+    sceneActions.updateState({ 
+        wrongChoices: [], 
+        gamePhase: 'friend-choice' 
+    });
   };
 
   const handleFriendClick = (friendId) => {
     if (sceneState.wrongChoices.includes(friendId)) return;
     const friend = friends.find(f => f.id === friendId);
+    
     if (friend.correct) {
       sceneActions.updateState({
           selectedFriend: friendId,
@@ -462,6 +499,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           gamePhase: 'friend-correct'
       });
       setFeedbackMessage("");
+      // useEffect handles transition
     } else {
       setShowShake(friendId);
       setFeedbackMessage("Not my best friend! Try again! 🐭");
@@ -489,9 +527,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     sceneActions.updateState({
         childFoodDrawing: data.image,
         childDiscoveries: [{ image: data.image, name: 'My Food' }],
-        gamePhase: 'child-color-choice',
-        currentModal: null, // Clear modal state
-        draftData: null
+        gamePhase: 'child-color-choice'
     });
   };
 
@@ -524,16 +560,13 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     sceneActions.updateState({
         childActivityDrawing: data.image,
         childDiscoveries: [...sceneState.childDiscoveries, { image: data.image, name: 'My Activity' }],
-        gamePhase: 'child-friend-intro',
-        currentModal: null, // Clear modal state
-        draftData: null
+        gamePhase: 'child-friend-intro'
     });
   };
 
   const handleDrawingCancel = () => {
     setShowDrawingPad(false);
     setDrawingMode(null);
-    sceneActions.updateState({ currentModal: null, draftData: null });
   };
 
   // --- RENDER ---
@@ -826,16 +859,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           </div>
           
           <div className="custom-input-options">
-            <button className="draw-button" onClick={() => { 
-                setShowDrawingPad(true); 
-                setDrawingMode('food'); 
-                sceneActions.updateState({ currentModal: 'food-draw' }); // Track modal
-            }}>🎨 Draw</button>
-            <button className="type-button" onClick={() => { 
-                setShowTextInput(true); 
-                setTextInputMode('food'); 
-                sceneActions.updateState({ currentModal: 'food-type' }); // Track modal
-            }}>✏️ Type</button>
+            <button className="draw-button" onClick={() => { setShowDrawingPad(true); setDrawingMode('food'); }}>🎨 Draw</button>
+            <button className="type-button" onClick={() => { setShowTextInput(true); setTextInputMode('food'); }}>✏️ Type</button>
           </div>
         </div>
       )}
@@ -895,16 +920,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           </div>
 
           <div className="custom-input-options">
-            <button className="draw-button" onClick={() => { 
-                setShowDrawingPad(true); 
-                setDrawingMode('activity'); 
-                sceneActions.updateState({ currentModal: 'activity-draw' }); // Track modal
-            }}>🎨 Draw</button>
-            <button className="type-button" onClick={() => { 
-                setShowTextInput(true); 
-                setTextInputMode('activity'); 
-                sceneActions.updateState({ currentModal: 'activity-type' }); // Track modal
-            }}>✏️ Type</button>
+            <button className="draw-button" onClick={() => { setShowDrawingPad(true); setDrawingMode('activity'); }}>🎨 Draw</button>
+            <button className="type-button" onClick={() => { setShowTextInput(true); setTextInputMode('activity'); }}>✏️ Type</button>
           </div>
         </div>
       )}
@@ -959,10 +976,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         <div className="drawing-overlay">
           <DrawingPad
             prompt={drawingMode === 'food' ? "Draw your favorite food! 🍕" : "Draw your favorite activity! ⚽"}
-            
-            initialData={sceneState.draftData} // Restore draft
-            onAutoSave={(data) => sceneActions.updateState({ draftData: data })} // Auto-save on stroke
-
             onSave={drawingMode === 'food' ? handleFoodDrawingSave : handleActivityDrawingSave}
             onCancel={handleDrawingCancel}
           />
@@ -972,26 +985,16 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {showTextInput && textInputMode === 'food' && (
         <TextInputModal
           prompt="What's YOUR favorite food?"
-          
-          initialValue={sceneState.draftData} // Restore text
-          onAutoSave={(text) => sceneActions.updateState({ draftData: text })} // Auto-save on type
-
           onSave={(text) => {
             setShowTextInput(false);
             setTextInputMode(null);
             sceneActions.updateState({
                 childFoodText: text,
                 childDiscoveries: [{ emoji: '✏️', name: text }],
-                gamePhase: 'child-color-choice',
-                currentModal: null, // Clear modal
-                draftData: null
+                gamePhase: 'child-color-choice'
             });
           }}
-          onCancel={() => { 
-              setShowTextInput(false); 
-              setTextInputMode(null); 
-              sceneActions.updateState({ currentModal: null, draftData: null });
-          }}
+          onCancel={() => { setShowTextInput(false); setTextInputMode(null); }}
           maxLength={30}
         />
       )}
@@ -999,26 +1002,16 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {showTextInput && textInputMode === 'activity' && (
         <TextInputModal
           prompt="What's YOUR favorite activity?"
-          
-          initialValue={sceneState.draftData} // Restore text
-          onAutoSave={(text) => sceneActions.updateState({ draftData: text })} // Auto-save on type
-
           onSave={(text) => {
             setShowTextInput(false);
             setTextInputMode(null);
             sceneActions.updateState({
                 childActivityText: text,
                 childDiscoveries: [...sceneState.childDiscoveries.slice(0, 2), { emoji: '✏️', name: text }],
-                gamePhase: 'child-friend-intro',
-                currentModal: null, // Clear modal
-                draftData: null
+                gamePhase: 'child-friend-intro'
             });
           }}
-          onCancel={() => { 
-              setShowTextInput(false); 
-              setTextInputMode(null); 
-              sceneActions.updateState({ currentModal: null, draftData: null });
-          }}
+          onCancel={() => { setShowTextInput(false); setTextInputMode(null); }}
           maxLength={30}
         />
       )}
@@ -1236,9 +1229,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 childFriendLetters: [],
                 showingCompletionScreen: false,
                 stars: 2,
-                completed: false,
-                currentModal: null, // Reset modal
-                draftData: null
+                completed: false
             });
             setShowDrawingPad(false); 
             setDrawingMode(null);

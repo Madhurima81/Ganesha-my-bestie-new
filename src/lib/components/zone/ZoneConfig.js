@@ -244,8 +244,8 @@ export const ZONE_CONFIGS = {
     sequence: 5,
     scenes: [
       {
-        id: 'game1',
-        name: 'Family Tree',
+    id: 'family-tree',
+    name: 'Family Tree',
         emoji: '👨‍👩‍👦',
         iconImage: '/images/zones/about-me-hut/family-tree-icon.png',
         description: 'Help Ganesha complete his family tree',
@@ -255,8 +255,8 @@ export const ZONE_CONFIGS = {
         position: { top: 30, left: 25 }
       },
       {
-        id: 'game2',
-        name: 'My Favorite Things',
+     id: 'favorite-food',
+    name: 'My Favorite Things',
         emoji: '�',
         iconImage: '/images/zones/about-me-hut/favorite-things-icon.png',
         description: 'Find Ganesha\'s favorite food and best friend',
@@ -266,8 +266,8 @@ export const ZONE_CONFIGS = {
         position: { top: 50, left: 60 }
       },
       {
-        id: 'game3',
-        name: 'Obstacle Remover',
+     id: 'dreams-wishes',
+    name: 'Obstacle Remover',
         emoji: '🪔',
         iconImage: '/images/zones/about-me-hut/obstacle-remover-icon.png',
         description: 'Clear obstacles with joy, peace, and love',
@@ -277,8 +277,8 @@ export const ZONE_CONFIGS = {
         position: { top: 70, left: 35 }
       },
       {
-        id: 'game4',
-        name: 'Name & Birthday',
+           id: 'name-birthday',
+    name: 'Name & Birthday',
         emoji: '🎈',
         iconImage: '/images/zones/about-me-hut/name-birthday-icon.png',
         description: 'Spell GANESHA and find his birthday festival',

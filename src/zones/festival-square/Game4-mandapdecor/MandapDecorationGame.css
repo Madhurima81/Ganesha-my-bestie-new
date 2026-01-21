@@ -1391,17 +1391,13 @@ animation: fadeIn 0.3s ease-out;
 
 .placed-item-sticker {
   /* Creates a GOLDEN outline + glow (matches your UI theme) */
-  filter: 
-    drop-shadow(2px 0 0 #FFD700) 
-    drop-shadow(-2px 0 0 #FFD700) 
-    drop-shadow(0 2px 0 #FFD700) 
-    drop-shadow(0 -2px 0 #FFD700)
-    drop-shadow(3px 0 0 #FFA500) 
-    drop-shadow(-3px 0 0 #FFA500) 
-    drop-shadow(0 3px 0 #FFA500) 
-    drop-shadow(0 -3px 0 #FFA500)
-    drop-shadow(0 0 10px rgba(255, 215, 0, 0.9))  /* Golden glow */
-    drop-shadow(0 6px 12px rgba(0,0,0,0.4)); /* Depth shadow */
+filter: 
+    drop-shadow(1px 0 0 white) 
+    drop-shadow(-1px 0 0 white) 
+    drop-shadow(0 1px 0 white) 
+    drop-shadow(0 -1px 0 white)
+    drop-shadow(0 4px 6px rgba(0,0,0,0.2)); /* Softer shadow */
+
   
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   cursor: grab;

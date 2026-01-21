@@ -1,9 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './FamilyTreeGame.css';
-import '../../shared/components/OpeningModal.css'; 
+import '../../shared/components/OpeningModal.css';
 import AboutMeCompletion from "../components/Aboutmecompletion";
-import BackToMapButton from '../../../lib/components/navigation/BackToMapButton';
 
+// Import SceneManager & Navigation
+import SceneManager from "../../../lib/components/scenes/SceneManager";
+import BackToMapButton from '../../../lib/components/navigation/BackToMapButton';
 
 // --- IMPORT ASSETS (Ganesha's Family & Distractors) ---
 import familyTreeBg from './assets/images/family tree bg.png';
@@ -13,12 +15,12 @@ import familyTree from './assets/images/family-tree.png';
 import babyGaneshaImg from './assets/images/ganesha/family-ganesha.png';
 import shivaImg from './assets/images/ganesha/family-shiva.png';
 import parvatiImg from './assets/images/ganesha/family-parvati.png';
-import kartikeyaImg from './assets/images/ganesha/family-kartkeya.png'; // Note: Matches screenshot spelling
+import kartikeyaImg from './assets/images/ganesha/family-kartkeya.png';
 
 // Incorrect Answers (Distractors)
 import brahmaImg from './assets/images/ganesha/family-brahma.png';
 import vishnuImg from './assets/images/ganesha/family-vishnu.png';
-import lakshmiImg from './assets/images/ganesha/family-lakshmi.png'; // Assuming hyphen based on standard, check file if it has '='
+import lakshmiImg from './assets/images/ganesha/family-lakshmi.png';
 import saraswatiImg from './assets/images/ganesha/family-saraswati.png';
 import hanumanImg from './assets/images/ganesha/family-hanuman.png';
 import krishnaImg from './assets/images/ganesha/family-krishna.png';
@@ -35,220 +37,242 @@ import childSisterImg from './assets/images/child/family-sister.png';
 import childMyselfImg from './assets/images/child/family-myself.png';
 import childPetImg from './assets/images/child/family-pet.png';
 
+// Error Boundary
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError(error) { return { hasError: true }; }
+  componentDidCatch(error, errorInfo) { console.error("Error:", error, errorInfo); }
+  render() {
+    if (this.state.hasError) return <button onClick={() => window.location.reload()}>Reload Scene</button>;
+    return this.props.children;
+  }
+}
 
-const FamilyTreeGame = ({ onComplete, onBack, onNavigate }) => {
-  // Game phases
-  const [gamePhase, setGamePhase] = useState('intro');
+// =========================================================
+// 1. MAIN WRAPPER (Handles SceneManager)
+// =========================================================
+const FamilyTreeGame = ({
+  onComplete,
+  onNavigate,
+  onBack,
+  zoneId = 'about-me-hut',
+  sceneId = 'family-tree'
+}) => {
+  return (
+    <ErrorBoundary>
+      <SceneManager
+        zoneId={zoneId}
+        sceneId={sceneId}
+        initialState={{
+          // Game Phase Control
+          gamePhase: 'intro',
+          
+          // Ganesha Tree State (Arrays for JSON compatibility)
+          placedGaneshaMembers: [], 
+          tappedMembers: [],
+          
+          // Selection State
+          selectedCircle: null,
+          showChoiceModal: false,
+          currentChoices: [],
+          disabledChoices: [],
+          wrongChoice: null,
+          correctChoiceId: null,
+          justPlacedId: null,
+          
+          // Modals & Popups
+          showFunFactModal: null,
+          flippedMember: null,
+          showYouGotIt: null,
+          showTreeSparkles: false,
+          showCelebration: null,
+          
+          // Transition & Child Tree State
+          isSequencePlaying: false,
+          showBottomTray: false,
+          
+          // Child Family Data
+          childFamily: [],
+          showNameModal: false,
+          currentFamilyType: null,
+          callName: '',
+          selectedMemberIndex: null,
+          
+          // Completion
+          showingCompletionScreen: false,
+          stars: 0,
+          completed: false
+        }}
+      >
+        {({ sceneState, sceneActions, isReload }) => (
+          <FamilyTreeGameContent
+            sceneState={sceneState}
+            sceneActions={sceneActions}
+            isReload={isReload}
+            onComplete={onComplete}
+            onNavigate={onNavigate}
+            onBack={onBack}
+          />
+        )}
+      </SceneManager>
+    </ErrorBoundary>
+  );
+};
+
+// =========================================================
+// 2. CONTENT COMPONENT (Logic & UI)
+// =========================================================
+const FamilyTreeGameContent = ({
+  sceneState,
+  sceneActions,
+  isReload,
+  onComplete,
+  onNavigate,
+  onBack
+}) => {
   
-  // Ganesha's tree state
-  const [placedGaneshaMembers, setPlacedGaneshaMembers] = useState(new Set());
-  const [selectedCircle, setSelectedCircle] = useState(null);
-  const [showChoiceModal, setShowChoiceModal] = useState(false);
-  const [currentChoices, setCurrentChoices] = useState([]);
-  const [wrongChoice, setWrongChoice] = useState(null);
-  const [showFunFactModal, setShowFunFactModal] = useState(null);
-  const [flippedMember, setFlippedMember] = useState(null);
-  
-  // Scene return state
-  const [sceneReturnState, setSceneReturnState] = useState('idle');
-  const [isReturning, setIsReturning] = useState(false);
-  const [showBottomTray, setShowBottomTray] = useState(false);
-  const [showYouGotIt, setShowYouGotIt] = useState(null); 
+  if (!sceneState || !sceneActions) return <div>Loading...</div>;
 
-  const [deletableMemberIndex, setDeletableMemberIndex] = useState(null); 
-  const longPressTimer = useRef(null); 
+  // IMPORTANT: Ensure phase exists (just like Modak code)
+  if (!sceneState?.gamePhase) {
+    sceneActions.updateState({ gamePhase: 'intro' });
+  }
 
-  const [selectedMemberIndex, setSelectedMemberIndex] = useState(null);
-  const [showTreeSparkles, setShowTreeSparkles] = useState(false);
-  const [tappedMembers, setTappedMembers] = useState(new Set());
-
-  const [correctChoiceId, setCorrectChoiceId] = useState(null); 
-  const [justPlacedId, setJustPlacedId] = useState(null); 
-  const [showCelebration, setShowCelebration] = useState(null);
-  const [isSequencePlaying, setIsSequencePlaying] = useState(false);
-  const [disabledChoices, setDisabledChoices] = useState(new Set());
-  const [showSceneCompletion, setShowSceneCompletion] = useState(false);
-
-  // Child's family state
-  const [childFamily, setChildFamily] = useState([]);
-  const [showNameModal, setShowNameModal] = useState(false);
-  const [currentFamilyType, setCurrentFamilyType] = useState(null);
-  const [callName, setCallName] = useState('');
-  const [isRecording, setIsRecording] = useState(false);
-  const [audioBlob, setAudioBlob] = useState(null);
+  // --- LOCAL REFS & STATE (Not persisted in SceneManager) ---
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
-
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioBlob, setAudioBlob] = useState(null);
+  
+  // --- RELOAD DETECTION STATE ---
   const reloadHandledRef = useRef(false);
-const [showResumePopup, setShowResumePopup] = useState(false);
-const [resumeMessage, setResumeMessage] = useState('');
+  const resumePopupTimeoutRef = useRef(null);
+  const [showResumePopup, setShowResumePopup] = useState(false);
+  const [resumeMessage, setResumeMessage] = useState('');
 
-
-  // Ganesha's family members data
+  // --- DATA DEFINITIONS ---
   const ganeshaFamily = [
     {
-      id: 'father',
-      role: 'Father',
-      correctAnswer: 'shiva',
+      id: 'father', role: 'Father', correctAnswer: 'shiva',
       position: { top: '30%', left: '35%' },
-      introTitle: '🔱 My Father!',
-      introText: 'He is calm and strong 🕉️',
-      flipTitle: 'My Father',
-      funFact: 'My father is calm and strong. He protects us and teaches me peace 🕉️'
+      introTitle: '🔱 My Father!', introText: 'He is calm and strong 🕉️',
+      flipTitle: 'My Father', funFact: 'My father is calm and strong. He protects us and teaches me peace 🕉️'
     },
     {
-      id: 'mother',
-      role: 'Mother',
-      correctAnswer: 'parvati',
+      id: 'mother', role: 'Mother', correctAnswer: 'parvati',
       position: { top: '30%', right: '25%' },
-      introTitle: '🌸 My Mother!',
-      introText: 'She is kind and loving 💗',
-      flipTitle: 'My Mother',
-      funFact: 'My mother is kind and loving. She gives the best hugs and keeps me safe 💗'
+      introTitle: '🌸 My Mother!', introText: 'She is kind and loving 💗',
+      flipTitle: 'My Mother', funFact: 'My mother is kind and loving. She gives the best hugs and keeps me safe 💗'
     },
     {
-      id: 'brother',
-      role: 'Brother',
-      correctAnswer: 'kartikeya',
+      id: 'brother', role: 'Brother', correctAnswer: 'kartikeya',
       position: { bottom: '25%', left: '45%' },
-      introTitle: '🦚 My Brother!',
-      introText: 'He is brave and fast 🦚',
-      flipTitle: 'My Brother',
-      funFact: 'My brother is very brave. He travels the world on his peacock 🦚'
+      introTitle: '🦚 My Brother!', introText: 'He is brave and fast 🦚',
+      flipTitle: 'My Brother', funFact: 'My brother is very brave. He travels the world on his peacock 🦚'
     },
      {
-      id: 'myself',
-      role: 'Me',
-      correctAnswer: 'ganesha',
+      id: 'myself', role: 'Me', correctAnswer: 'ganesha',
       position: { bottom: '25%', right: '30%' },
-      introTitle: '😊 That’s Me!',
-      introText: 'I love modaks 🍬',
-      flipTitle: 'Me',
-      funFact: 'That’s me! I love modaks and helping my friends 😊'
+      introTitle: '😊 That’s Me!', introText: 'I love modaks 🍬',
+      flipTitle: 'Me', funFact: 'That’s me! I love modaks and helping my friends 😊'
     }
   ];
 
-  // Deity choices (UPDATED with Images for distractors)
   const deityChoices = {
     father: [
-      { id: 'shiva', name: 'Shiva Ji', image: shivaImg, type: 'img',  isCorrect: true },
-      { id: 'vishnu', name: 'Vishnu Ji', image: vishnuImg, type: 'img',  isCorrect: false },
-      { id: 'brahma', name: 'Brahma Ji', image: brahmaImg, type: 'img',  isCorrect: false }
+      { id: 'shiva', name: 'Shiva Ji', image: shivaImg, type: 'img', isCorrect: true },
+      { id: 'vishnu', name: 'Vishnu Ji', image: vishnuImg, type: 'img', isCorrect: false },
+      { id: 'brahma', name: 'Brahma Ji', image: brahmaImg, type: 'img', isCorrect: false }
     ],
     mother: [
-      { id: 'parvati', name: 'Parvati Mata', image: parvatiImg, type: 'img',  isCorrect: true },
-      { id: 'lakshmi', name: 'Lakshmi Mata', image: lakshmiImg, type: 'img',  isCorrect: false },
-      { id: 'saraswati', name: 'Saraswati Mata', image: saraswatiImg, type: 'img',  isCorrect: false }
+      { id: 'parvati', name: 'Parvati Mata', image: parvatiImg, type: 'img', isCorrect: true },
+      { id: 'lakshmi', name: 'Lakshmi Mata', image: lakshmiImg, type: 'img', isCorrect: false },
+      { id: 'saraswati', name: 'Saraswati Mata', image: saraswatiImg, type: 'img', isCorrect: false }
     ],
     brother: [
-      { id: 'kartikeya', name: 'Kartikeya', image: kartikeyaImg, type: 'img',  isCorrect: true },
+      { id: 'kartikeya', name: 'Kartikeya', image: kartikeyaImg, type: 'img', isCorrect: true },
       { id: 'hanuman', name: 'Hanuman Ji', image: hanumanImg, type: 'img', isCorrect: false },
-      { id: 'krishna', name: 'Krishna Ji', image: krishnaImg, type: 'img',  isCorrect: false }
+      { id: 'krishna', name: 'Krishna Ji', image: krishnaImg, type: 'img', isCorrect: false }
     ],
-     myself: [
+    myself: [
       { id: 'ganesha', name: 'Ganesha', image: babyGaneshaImg, type: 'img', isCorrect: true },
       { id: 'mushak', name: 'Mushak', image: mouseImg, type: 'img', isCorrect: false },
-      { id: 'nandi', name: 'Nandi', image: nandiImg, type: 'img',  isCorrect: false }
+      { id: 'nandi', name: 'Nandi', image: nandiImg, type: 'img', isCorrect: false }
     ]
   };
 
-  // Child's family types (UPDATED with Images)
   const familyMemberTypes = [
     { id: 'dad', label: 'Dad', image: childDadImg, color: '#6BB6FF', row: 2 },
     { id: 'mom', label: 'Mom', image: childMomImg, color: '#FF8FB1', row: 2 },
-
     { id: 'grandparent-m', label: 'Grandpa', image: childGrandpaImg, color: '#BEE7D8', row: 1 },
     { id: 'grandparent-f', label: 'Grandma', image: childGrandmaImg, color: '#F7C6D9', row: 1 },
-
     { id: 'brother', label: 'Brother', image: childBrotherImg, color: '#7EDC9A', row: 3 },
     { id: 'sister', label: 'Sister', image: childSisterImg, color: '#FFA6C9', row: 3 },
-
     { id: 'myself', label: 'Myself', image: childMyselfImg, color: '#FFD966', row: 3 },
     { id: 'pet', label: 'Pet', image: childPetImg, color: '#F2D3A2', row: 3 }
   ];
 
-  // ==================== RELOAD DETECTION ====================
-useEffect(() => {
-  const sessionKey = `familytree_session_${Date.now()}`;
-  const existingSession = localStorage.getItem('familytree_current_session');
-  
-  // Check if this is a reload
-  const isReload = existingSession !== null;
-  
-  if (isReload && !reloadHandledRef.current) {
-    reloadHandledRef.current = true;
-    
-    console.log("🔄 Reload detected, gamePhase:", gamePhase);
-    console.log("🔄 Placed members:", placedGaneshaMembers.size);
-    console.log("🔄 Child family:", childFamily.length);
-    
-    // INTRO - Don't show popup
-    if (gamePhase === 'intro') {
-      return;
-    }
-    
-    // GANESHA TREE - Some placed
-    if (gamePhase === 'ganeshaTree' && placedGaneshaMembers.size > 0 && placedGaneshaMembers.size < 4) {
-      setResumeMessage(`Great progress! You've placed ${placedGaneshaMembers.size}/4 family members. Keep going!`);
-      setShowResumePopup(true);
-      setTimeout(() => setShowResumePopup(false), 5000);
-      return;
-    }
-    
-    // GANESHA TREE - All placed
-    if (gamePhase === 'ganeshaTree' && placedGaneshaMembers.size === 4) {
-      setResumeMessage(`Amazing! You completed Ganesha's family tree! Tap "All Done!" to continue.`);
-      setShowResumePopup(true);
-      setTimeout(() => setShowResumePopup(false), 5000);
-      return;
-    }
-    
-    // CHILD INPUT - Some added
-    if (gamePhase === 'childInput' && childFamily.length > 0) {
-      setResumeMessage(`You've added ${childFamily.length} family member${childFamily.length > 1 ? 's' : ''} to your tree!`);
-      setShowResumePopup(true);
-      setTimeout(() => setShowResumePopup(false), 5000);
-      return;
-    }
-    
-    // TRANSITION
-    if (gamePhase === 'transition') {
-      // Just show the transition modal as-is
-      return;
-    }
-    
-    // SIDE BY SIDE
-    if (gamePhase === 'sideBySide') {
-      // Show comparison as-is
-      return;
-    }
-  }
-  
-  // Set session marker
-  localStorage.setItem('familytree_current_session', sessionKey);
-  
-  // Cleanup on unmount
-  return () => {
-    localStorage.removeItem('familytree_current_session');
-  };
-}, []); // Run once on mount
+  // ==================== RELOAD DETECTION (Exactly like Modak) ====================
+  useEffect(() => {
+    // If we are reloading and haven't handled it yet
+    if (isReload && !reloadHandledRef.current) {
+      reloadHandledRef.current = true;
+      
+      const { gamePhase, placedGaneshaMembers, childFamily } = sceneState;
+      
+      console.log("🔄 Reload detected, gamePhase:", gamePhase);
+      
+      // Clear any existing timeouts
+      if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
 
-// Cleanup ref on unmount
-useEffect(() => {
-  return () => {
-    reloadHandledRef.current = false;
-  };
-}, []);
+      // 1. INTRO - Don't show popup
+      if (gamePhase === 'intro') {
+        return;
+      }
+      
+      // 2. GANESHA TREE - Some placed (Note: .length for arrays)
+      if (gamePhase === 'ganeshaTree' && placedGaneshaMembers && placedGaneshaMembers.length > 0 && placedGaneshaMembers.length < 4) {
+        setResumeMessage(`Great progress! You've placed ${placedGaneshaMembers.length}/4 family members. Keep going!`);
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
+        return;
+      }
+      
+      // 3. GANESHA TREE - All placed
+      if (gamePhase === 'ganeshaTree' && placedGaneshaMembers && placedGaneshaMembers.length === 4) {
+        setResumeMessage(`Amazing! You completed Ganesha's family tree! Tap "All Done!" to continue.`);
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
+        return;
+      }
+      
+      // 4. CHILD INPUT - Some added
+      if (gamePhase === 'childInput' && childFamily && childFamily.length > 0) {
+        setResumeMessage(`You've added ${childFamily.length} family member${childFamily.length > 1 ? 's' : ''} to your tree!`);
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
+        return;
+      }
+      
+      // 5. TRANSITION / SIDE BY SIDE
+      // Just show the UI as-is, no special popup needed
+    }
+  }, [isReload, sceneState.gamePhase]); // Run when isReload changes
 
+  // Cleanup ref on unmount
+  useEffect(() => {
+    return () => {
+      reloadHandledRef.current = false;
+      if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
+    };
+  }, []);
 
-  // Handlers
-  const handleStartGame = () => setGamePhase('ganeshaTree');
-
-  // ... inside FamilyTreeGame component ...
-
-  // 1. ADD THIS HELPER FUNCTION
+  // --- HELPER FUNCTIONS ---
   const shuffleArray = (array) => {
-    const shuffled = [...array]; // Create a copy so we don't change original data
+    const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
@@ -256,113 +280,99 @@ useEffect(() => {
     return shuffled;
   };
 
-  // ... existing code ...
-
-  // 2. UPDATE THIS FUNCTION
-  const handleClickCircle = (circleId) => {
-    if (isSequencePlaying) return;
-    if (showFunFactModal || showChoiceModal) return;
-    
-    // If clicking a placed deity, toggle BIG flip card
-    if (placedGaneshaMembers.has(circleId)) {
-      setFlippedMember(flippedMember === circleId ? null : circleId);
-      setTappedMembers(prev => {
-        const newSet = new Set(prev);
-        newSet.add(circleId);
-        return newSet;
-      });
-      return;
-    }
-
-    setDisabledChoices(new Set()); 
-    setSelectedCircle(circleId);
-
-    // ✨ CHANGED HERE: Wrap the choices in shuffleArray() ✨
-    setCurrentChoices(shuffleArray(deityChoices[circleId]));
-    
-    setShowChoiceModal(true);
-    setWrongChoice(null);
+  const getPlacedDeityImage = (memberId) => {
+    const choices = deityChoices[memberId];
+    if (!choices) return null;
+    return choices.find(d => d.isCorrect);
   };
 
-  /*const handleClickCircle = (circleId) => {
-    if (isSequencePlaying) return;
-    if (showFunFactModal || showChoiceModal) return;
-    
-    // If clicking a placed deity, toggle BIG flip card
-    if (placedGaneshaMembers.has(circleId)) {
-      setFlippedMember(flippedMember === circleId ? null : circleId);
-      setTappedMembers(prev => {
-        const newSet = new Set(prev);
-        newSet.add(circleId);
-        return newSet;
+  const getFamilyByRow = (rowNumber) => {
+    return sceneState.childFamily ? sceneState.childFamily.filter(m => m.row === rowNumber) : [];
+  };
+
+  // --- EVENT HANDLERS (Using sceneActions) ---
+  const handleStartGame = () => {
+    sceneActions.updateState({ gamePhase: 'ganeshaTree' });
+  };
+
+  const handleClickCircle = (circleId) => {
+    if (sceneState.isSequencePlaying) return;
+    if (sceneState.showFunFactModal || sceneState.showChoiceModal) return;
+
+    // Check if already placed (Using Array.includes instead of Set.has)
+    if (sceneState.placedGaneshaMembers.includes(circleId)) {
+      sceneActions.updateState({
+        flippedMember: sceneState.flippedMember === circleId ? null : circleId,
+        tappedMembers: sceneState.tappedMembers.includes(circleId) 
+          ? sceneState.tappedMembers 
+          : [...sceneState.tappedMembers, circleId]
       });
       return;
     }
 
-    setDisabledChoices(new Set()); 
-    setSelectedCircle(circleId);
-    setCurrentChoices(deityChoices[circleId]);
-    setShowChoiceModal(true);
-    setWrongChoice(null);
-  };*/
+    sceneActions.updateState({
+      disabledChoices: [],
+      selectedCircle: circleId,
+      currentChoices: shuffleArray(deityChoices[circleId]),
+      showChoiceModal: true,
+      wrongChoice: null
+    });
+  };
 
   const handleChoiceSelection = (choice) => {
     if (choice.isCorrect) {
-      setIsSequencePlaying(true);
-      setShowYouGotIt(choice.id);
-      
-      setTimeout(() => setCorrectChoiceId(choice.id), 800);
-      setTimeout(() => setShowYouGotIt(null), 1400);
-      
+      sceneActions.updateState({ isSequencePlaying: true, showYouGotIt: choice.id });
+      setTimeout(() => sceneActions.updateState({ correctChoiceId: choice.id }), 800);
+      setTimeout(() => sceneActions.updateState({ showYouGotIt: null }), 1400);
       setTimeout(() => {
-        setShowChoiceModal(false);
-        const newPlaced = new Set(placedGaneshaMembers);
-        newPlaced.add(selectedCircle);
-        setPlacedGaneshaMembers(newPlaced);
-        setCorrectChoiceId(null);
+        sceneActions.updateState({
+          showChoiceModal: false,
+          placedGaneshaMembers: [...sceneState.placedGaneshaMembers, sceneState.selectedCircle],
+          correctChoiceId: null
+        });
       }, 1600);
-      
-      setTimeout(() => setJustPlacedId(selectedCircle), 1700);
-      
+      setTimeout(() => sceneActions.updateState({ justPlacedId: sceneState.selectedCircle }), 1700);
       setTimeout(() => {
-        const member = ganeshaFamily.find(m => m.id === selectedCircle);
-        const correctDeity = deityChoices[selectedCircle].find(d => d.isCorrect);
-        setShowFunFactModal({ ...member, ...correctDeity });
-        setJustPlacedId(null);
-      }, 2200); 
-      
+        const member = ganeshaFamily.find(m => m.id === sceneState.selectedCircle);
+        const correctDeity = deityChoices[sceneState.selectedCircle].find(d => d.isCorrect);
+        sceneActions.updateState({
+          showFunFactModal: { ...member, ...correctDeity },
+          justPlacedId: null
+        });
+      }, 2200);
     } else {
-      setWrongChoice(choice.id);
+      sceneActions.updateState({ wrongChoice: choice.id });
       setTimeout(() => {
-        setWrongChoice(null);
-        setDisabledChoices(prev => {
-          const newSet = new Set(prev);
-          newSet.add(choice.id);
-          return newSet;
+        sceneActions.updateState({
+          wrongChoice: null,
+          disabledChoices: [...sceneState.disabledChoices, choice.id]
         });
       }, 1500);
     }
   };
 
   const handleCloseFunFact = () => {
-    setShowFunFactModal(null);
-    setIsSequencePlaying(false);
+    sceneActions.updateState({ showFunFactModal: null, isSequencePlaying: false });
   };
 
   const handleGaneshaTreeDone = () => {
-    setShowTreeSparkles(true);
+    sceneActions.updateState({ showTreeSparkles: true });
     setTimeout(() => {
-      setGamePhase('transition'); 
-      setShowTreeSparkles(false);
-      setShowCelebration(null); 
-    }, 2500); 
+      sceneActions.updateState({
+        gamePhase: 'transition',
+        showTreeSparkles: false,
+        showCelebration: null
+      });
+    }, 2500);
   };
 
   const handleSelectFamilyType = (type) => {
-    setCurrentFamilyType(type);
-    setCallName('');
-    setAudioBlob(null);
-    setShowNameModal(true);
+    sceneActions.updateState({
+      currentFamilyType: type,
+      callName: '',
+      showNameModal: true
+    });
+    setAudioBlob(null); 
   };
 
   const startRecording = async () => {
@@ -373,8 +383,8 @@ useEffect(() => {
       audioChunksRef.current = [];
       mediaRecorder.ondataavailable = (event) => audioChunksRef.current.push(event.data);
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
-        setAudioBlob(audioBlob);
+        const blob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+        setAudioBlob(blob);
         stream.getTracks().forEach(track => track.stop());
       };
       mediaRecorder.start();
@@ -392,33 +402,39 @@ useEffect(() => {
   };
 
   const handleAddFamilyMember = () => {
-    if (!callName.trim() && !audioBlob) return;
+    if (!sceneState.callName.trim() && !audioBlob) return;
     const newMember = {
-      ...currentFamilyType,
-      callName: callName.trim() || 'My ' + currentFamilyType.label,
-      audioBlob
+      ...sceneState.currentFamilyType,
+      callName: sceneState.callName.trim() || 'My ' + sceneState.currentFamilyType.label,
+      audioBlob 
     };
-    setChildFamily([...childFamily, newMember]);
-    setShowNameModal(false);
-    setCurrentFamilyType(null);
-    setCallName('');
+    sceneActions.updateState({
+      childFamily: [...sceneState.childFamily, newMember],
+      showNameModal: false,
+      currentFamilyType: null,
+      callName: ''
+    });
     setAudioBlob(null);
   };
 
-  const getPlacedDeityImage = (memberId) => {
-    const member = ganeshaFamily.find(m => m.id === memberId);
-    if (!member) return null;
-    return deityChoices[memberId].find(d => d.isCorrect);
+  const handleDeleteMember = (index) => {
+    const newFamily = sceneState.childFamily.filter((_, i) => i !== index);
+    sceneActions.updateState({
+        childFamily: newFamily,
+        selectedMemberIndex: null
+    });
   };
-
-  const getFamilyByRow = (rowNumber) => childFamily.filter(m => m.row === rowNumber);
 
   return (
     <div className="family-tree-game">
       <img src={familyTreeBg} alt="Background" className="tree-background" />
 
+      {!sceneState.showingCompletionScreen && (
+        <BackToMapButton onNavigate={onNavigate} />
+      )}
+
       {/* INTRO PHASE */}
-      {gamePhase === 'intro' && (
+      {sceneState.gamePhase === 'intro' && (
          <>
           <div className="ganesha-tree-wrapper">
             <img src={familyTree} alt="Family Tree" className="tree-overlay" />
@@ -458,20 +474,13 @@ useEffect(() => {
         </>
       )}
 
-            {/* Back to Map Button */}
-      {!showSceneCompletion && (
-        <BackToMapButton onNavigate={onNavigate} />
-      )}
-
-
       {/* GANESHA'S TREE */}
-      {gamePhase === 'ganeshaTree' && (
+      {sceneState.gamePhase === 'ganeshaTree' && (
         <>
           <button className="back-btn" onClick={onBack}>← Back</button>
           
-          {/* HEADER */}
           <div className="game-header-hud">
-            {placedGaneshaMembers.size < 2 && (
+            {sceneState.placedGaneshaMembers.length < 2 && (
               <div className="hud-instruction-bubble">
                 👉 Tap a circle to meet my family!
               </div>
@@ -480,42 +489,36 @@ useEffect(() => {
               {ganeshaFamily.map((m, i) => (
                 <span 
                   key={i} 
-                  className={`heart-icon ${placedGaneshaMembers.has(m.id) ? 'filled' : ''}`}
+                  className={`heart-icon ${sceneState.placedGaneshaMembers.includes(m.id) ? 'filled' : ''}`}
                 >
-                  {placedGaneshaMembers.has(m.id) ? '❤️' : '🤍'} 
+                  {sceneState.placedGaneshaMembers.includes(m.id) ? '❤️' : '🤍'} 
                 </span>
               ))}
             </div>
           </div>
 
-          <img 
-            src={familyTree} 
-            alt="Family Tree" 
-            className={`tree-overlay ${sceneReturnState === 'finished' || sceneReturnState === 'idle' ? 'sharp' : 'blurred'}`} 
-          />
+          <img src={familyTree} alt="Family Tree" className="tree-overlay" />
 
-          {/* Circle spots */}
           {ganeshaFamily.map(member => (
             <div
               key={member.id}
-              className={`circle-spot-with-label ${isSequencePlaying ? 'blocked' : ''}`}
+              className={`circle-spot-with-label ${sceneState.isSequencePlaying ? 'blocked' : ''}`}
               style={member.position}
               onClick={() => handleClickCircle(member.id)}
             >
-              {!placedGaneshaMembers.has(member.id) ? (
+              {!sceneState.placedGaneshaMembers.includes(member.id) ? (
                 <div className="empty-circle" />
               ) : (
-                <div className={`placed-deity ${justPlacedId === member.id ? 'just-placed-glow' : ''}`}>
+                <div className={`placed-deity ${sceneState.justPlacedId === member.id ? 'just-placed-glow' : ''}`}>
                   <div className="deity-front">
                     <div className="deity-circle">
-                      {/* Always using Image type now for deities based on new imports */}
                       <img src={getPlacedDeityImage(member.id).image} alt="Deity" className="deity-image" />
                     </div>
-                    {!tappedMembers.has(member.id) && (
+                    {!sceneState.tappedMembers.includes(member.id) && (
                       <div className="tap-to-learn">👆 Tap!</div>
                     )}    
                   </div>
-                  {justPlacedId === member.id && (
+                  {sceneState.justPlacedId === member.id && (
                     <div className="circle-celebration-sparkles">
                       <span className="circle-sparkle cs-1">✨</span>
                       <span className="circle-sparkle cs-2">⭐</span>
@@ -529,55 +532,47 @@ useEffect(() => {
             </div>
           ))}
 
-          {/* Choice Modal */}
-          {showChoiceModal && (
+          {sceneState.showChoiceModal && (
             <div className="modal-overlay" >
               <div className="choice-modal">
-                <button className="modal-close-btn" onClick={() => setShowChoiceModal(false)}>×</button>
+                <button className="modal-close-btn" onClick={() => sceneActions.updateState({ showChoiceModal: false })}>×</button>
                 <h2 className="choice-title">
-                  {ganeshaFamily.find(m => m.id === selectedCircle)?.id === 'myself' 
+                  {ganeshaFamily.find(m => m.id === sceneState.selectedCircle)?.id === 'myself' 
                     ? "Who is Ganesha? 🤔" 
-                    : `Who is Ganesha's ${ganeshaFamily.find(m => m.id === selectedCircle)?.role}? 🤔`
+                    : `Who is Ganesha's ${ganeshaFamily.find(m => m.id === sceneState.selectedCircle)?.role}? 🤔`
                   }
                 </h2>
                 <div className="choice-options">
-                  {currentChoices.map(choice => (
+                  {sceneState.currentChoices.map(choice => (
                     <button
                       key={choice.id}
-                      className={`choice-card ${wrongChoice === choice.id ? 'wrong-shake' : ''} ${correctChoiceId === choice.id ? 'correct-card-hit' : ''}`}
+                      className={`choice-card ${sceneState.wrongChoice === choice.id ? 'wrong-shake' : ''} ${sceneState.correctChoiceId === choice.id ? 'correct-card-hit' : ''}`}
                       onClick={() => handleChoiceSelection(choice)}
                       disabled={
-                        disabledChoices.has(choice.id) ||
-                        wrongChoice !== null ||
-                        correctChoiceId !== null ||
-                        showYouGotIt !== null
+                        sceneState.disabledChoices.includes(choice.id) ||
+                        sceneState.wrongChoice !== null ||
+                        sceneState.correctChoiceId !== null ||
+                        sceneState.showYouGotIt !== null
                       }
                     >  
                       <div className="choice-image">
-                        {/* Render Images from new imports */}
                         <img src={choice.image} alt={choice.name} />
                       </div>
-                      
                       <div className="family-choice-name">{choice.name}</div>
-                      <div className="choice-subtitle">{choice.subtitle}</div>
                       
-                      {showYouGotIt === choice.id && (
+                      {sceneState.showYouGotIt === choice.id && (
                         <div className="you-got-it-text">
-                          <div className="you-got-it-bubble">
-                            🎉 You got it! 🎉
-                          </div>
+                          <div className="you-got-it-bubble">🎉 You got it! 🎉</div>
                         </div>
                       )}
                       
-                      {correctChoiceId === choice.id && (
+                      {sceneState.correctChoiceId === choice.id && (
                         <div className="correct-checkmark">
-                          <div className="checkmark-circle">
-                            <div className="checkmark-icon">✓</div>
-                          </div>
+                          <div className="checkmark-circle"><div className="checkmark-icon">✓</div></div>
                         </div>
                       )}
                       
-                      {correctChoiceId === choice.id && (
+                      {sceneState.correctChoiceId === choice.id && (
                         <div className="card-sparkles">
                           <span className="sparkle sparkle-1">✨</span>
                           <span className="sparkle sparkle-2">✨</span>
@@ -588,40 +583,29 @@ useEffect(() => {
                     </button>
                   ))}
                 </div>
-                {wrongChoice && (
+                {sceneState.wrongChoice && (
                   <div className="wrong-feedback"><p>Hmm, not quite! 🤔 Try again! ✨</p></div>
                 )}
               </div>
             </div>
           )}
 
-          {/* Fun Fact Modal */}
-          {showFunFactModal && (
+          {sceneState.showFunFactModal && (
             <div className="modal-overlay modal-overlay-fade">
-              <div 
-                className="fun-fact-modal fun-fact-modal-slide"
-                data-from={selectedCircle}
-              >
+              <div className="fun-fact-modal fun-fact-modal-slide" data-from={sceneState.selectedCircle}>
                 <button className="modal-close-btn" onClick={handleCloseFunFact}>×</button>
                 <div className="modal-deity-image">
-                  <img src={showFunFactModal.image} alt={showFunFactModal.name} />
+                  <img src={sceneState.showFunFactModal.image} alt={sceneState.showFunFactModal.name} />
                 </div>
-                <h3 className="modal-title">
-                  {showFunFactModal.introTitle}
-                </h3>
-                <p className="modal-fact-text">{showFunFactModal.introText}</p>
-                <button className="modal-cool-btn" onClick={handleCloseFunFact}>
-                  Cool! ✨
-                </button>
+                <h3 className="modal-title">{sceneState.showFunFactModal.introTitle}</h3>
+                <p className="modal-fact-text">{sceneState.showFunFactModal.introText}</p>
+                <button className="modal-cool-btn" onClick={handleCloseFunFact}>Cool! ✨</button>
               </div>
             </div>
           )}
 
-          {placedGaneshaMembers.size === ganeshaFamily.length && !showFunFactModal && !isSequencePlaying && (
-            <button 
-    className="tree-done-btn done-btn-pulse" 
-              onClick={handleGaneshaTreeDone}
-            >
+          {sceneState.placedGaneshaMembers.length === ganeshaFamily.length && !sceneState.showFunFactModal && !sceneState.isSequencePlaying && (
+            <button className="tree-done-btn done-btn-pulse" onClick={handleGaneshaTreeDone}>
               All Done! ✨
             </button>
           )}
@@ -629,8 +613,8 @@ useEffect(() => {
       )}
 
       {/* SPARKLE LAYER */}
-      <div className={`tree-sparkle-layer ${showTreeSparkles ? 'active' : ''}`}>
-        {showTreeSparkles && [...Array(100)].map((_, i) => (
+      <div className={`tree-sparkle-layer ${sceneState.showTreeSparkles ? 'active' : ''}`}>
+        {sceneState.showTreeSparkles && [...Array(100)].map((_, i) => (
           <div
             key={i}
             className="tree-sparkle"
@@ -645,46 +629,25 @@ useEffect(() => {
       </div>
 
       {/* BIG FLIP CARD OVERLAY */}
-      {flippedMember && (
-        <div 
-          className="flip-card-overlay" 
-          onClick={() => setFlippedMember(null)}
-        >
-          <div 
-            className="flip-card-big"
-            onClick={() => setFlippedMember(null)} 
-          >
+      {sceneState.flippedMember && (
+        <div className="flip-card-overlay" onClick={() => sceneActions.updateState({ flippedMember: null })}>
+          <div className="flip-card-big" onClick={() => sceneActions.updateState({ flippedMember: null })}>
             <div className="flip-card-deity">
-              <img 
-                src={getPlacedDeityImage(flippedMember).image} 
-                alt="Deity" 
-              />
+              <img src={getPlacedDeityImage(sceneState.flippedMember).image} alt="Deity" />
             </div>
-            
             <div className="flip-card-content">
-              <h3 className="flip-card-title">
-                {ganeshaFamily.find(m => m.id === flippedMember)?.flipTitle}
-              </h3>
-              <p className="flip-card-fact">
-                {ganeshaFamily.find(m => m.id === flippedMember)?.funFact}
-              </p>
+              <h3 className="flip-card-title">{ganeshaFamily.find(m => m.id === sceneState.flippedMember)?.flipTitle}</h3>
+              <p className="flip-card-fact">{ganeshaFamily.find(m => m.id === sceneState.flippedMember)?.funFact}</p>
             </div>
-            
-            <div className="flip-card-hint">
-              Tap anywhere to close ✨
-            </div>
+            <div className="flip-card-hint">Tap anywhere to close ✨</div>
           </div>
         </div>
       )}
 
       {/* TRANSITION PHASE */}
-      {gamePhase === 'transition' && (
+      {sceneState.gamePhase === 'transition' && (
         <div className="transition-modal-simple">
-          <img 
-            src={babyGaneshaImg} 
-            alt="Ganesha" 
-            className="transition-ganesha-float" 
-          />
+          <img src={babyGaneshaImg} alt="Ganesha" className="transition-ganesha-float" />
           <div className="transition-card-simple">
             <h2 className="transition-title">Your Turn!</h2>
             <p className="transition-text">
@@ -694,8 +657,8 @@ useEffect(() => {
             <button 
               className="continue-btn-simple" 
               onClick={() => {
-                 setGamePhase('childInput');
-                 setTimeout(() => setShowBottomTray(true), 100);
+                 sceneActions.updateState({ gamePhase: 'childInput' });
+                 setTimeout(() => sceneActions.updateState({ showBottomTray: true }), 100);
               }}
             >
              Add My Family! 🏠
@@ -704,31 +667,26 @@ useEffect(() => {
         </div>
       )}
 
-      {/* CHILD'S FAMILY INPUT */}
-      {gamePhase === 'childInput' && (
+     {/* CHILD'S FAMILY INPUT */}
+      {sceneState.gamePhase === 'childInput' && (
         <>
-          <button className="back-btn" onClick={() => setGamePhase('transition')}>← Back</button>
+          <button className="back-btn" onClick={() => sceneActions.updateState({ gamePhase: 'transition' })}>← Back</button>
           <img src={familyTree} alt="Family Tree" className="tree-overlay" />
-          {childFamily.length < 3 && (
-            <div className="instruction-text">
-            <p>👇 “Tap someone to add to your tree!” 🌱!</p>
-            </div>
-          )}
-
-          {/* SHOW HINT: Only appears if there is at least 1 person on the tree */}
-{childFamily.length > 0 && (
-  <div className="tray-hint-text">
-    (Tap a face to remove it)
-  </div>
-)}
           
-          <div className="child-family-tree" onClick={() => setSelectedMemberIndex(null)}>
-            {/* Helper to render members with images */}
+          {sceneState.childFamily.length < 3 && (
+            <div className="instruction-text"><p>👇 “Tap someone to add to your tree!” 🌱!</p></div>
+          )}
+          {sceneState.childFamily.length > 0 && (
+            <div className="tray-hint-text">(Tap a face to remove it)</div>
+          )}
+          
+          {/* Tree Display */}
+          <div className="child-family-tree" onClick={() => sceneActions.updateState({ selectedMemberIndex: null })}>
             {[1, 2, 3].map(rowNum => (
               <div key={rowNum} className={`family-row row-${rowNum}`}>
                 {getFamilyByRow(rowNum).map((member, idx) => {
-                  const actualIdx = childFamily.findIndex(m => m === member);
-                  const isSelected = selectedMemberIndex === actualIdx;
+                  const actualIdx = sceneState.childFamily.findIndex(m => m === member);
+                  const isSelected = sceneState.selectedMemberIndex === actualIdx;
                   return (
                     <div key={idx} className="tree-member-small">
                       <div 
@@ -736,24 +694,16 @@ useEffect(() => {
                         style={{ background: member.color, position: 'relative', cursor: 'pointer', overflow: 'hidden' }}
                         onClick={(e) => {
                           e.stopPropagation();
-                          setSelectedMemberIndex(isSelected ? null : actualIdx);
+                          sceneActions.updateState({ selectedMemberIndex: isSelected ? null : actualIdx });
                         }}
                       >
-                        {/* Replaced emoji with Image */}
-                        <img 
-                          src={member.image} 
-                          alt={member.label} 
-                          style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '5px' }} 
-                        />
-                        
+                        <img src={member.image} alt={member.label} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '5px' }} />
                         {isSelected && (
                           <button
                             className="delete-member-btn"
                             onClick={(e) => {
                               e.stopPropagation();
-                              const newFamily = childFamily.filter((_, i) => i !== actualIdx);
-                              setChildFamily(newFamily);
-                              setSelectedMemberIndex(null);
+                              handleDeleteMember(actualIdx);
                             }}
                           >
                             ×
@@ -768,18 +718,39 @@ useEffect(() => {
             ))}
           </div>
 
-          {/* NEW BOTTOM TRAY WITH IMAGES */}
-          <div className={`bottom-member-tray ${showBottomTray ? 'tray-visible' : ''}`}>
+          {/* FLOATING DONE BUTTON (Moved Above Tray) */}
+          {sceneState.childFamily.length > 0 && (
+            <button 
+              className="tray-done-btn" 
+              onClick={() => sceneActions.updateState({ gamePhase: 'sideBySide' })}
+              style={{
+                position: 'absolute',
+                bottom: '180px', // Sits above the tray height
+                right: '20px',
+                zIndex: 100,
+                boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                animation: 'popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+              }}
+            >
+              Done! ✓
+            </button>
+          )}
+
+          {/* BOTTOM TRAY (Centered & Padded) */}
+          <div 
+            className={`bottom-member-tray ${sceneState.showBottomTray ? 'tray-visible' : ''}`}
+            style={{
+              justifyContent: 'center', // Center the items
+              paddingLeft: '140px',     // Push items away from the "Back to Map" button
+              paddingRight: '20px'      // Balance the padding
+            }}
+          >
             {familyMemberTypes.map(type => (
               <button 
                 key={type.id} 
                 className="member-card" 
                 onClick={() => handleSelectFamilyType(type)}
-                style={{ 
-                  border: `2px solid ${type.color}`,
-                  minWidth: '85px',
-                  padding: '10px'
-                }}
+                style={{ border: `2px solid ${type.color}`, minWidth: '85px', padding: '10px' }}
               >
                 <div style={{ width: '50px', height: '50px', marginBottom: '5px' }}>
                   <img src={type.image} alt={type.label} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
@@ -787,56 +758,39 @@ useEffect(() => {
                 <div style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{type.label}</div>
               </button>
             ))}
-
-            {childFamily.length > 0 && (
-              <button 
-                      className="tray-done-btn" 
-                onClick={() => setGamePhase('sideBySide')}
-              >
-                Done! ✓
-              </button>
-            )}
           </div>
 
-          {/* Name Modal */}
-          {showNameModal && currentFamilyType && (
+          {/* Name Input Modal */}
+          {sceneState.showNameModal && sceneState.currentFamilyType && (
             <div className="modal-overlay">
               <div className="name-input-modal">
-                <button 
-                  className="modal-close-btn" 
-                  onClick={() => setShowNameModal(false)}
-                >
-                  ×
-                </button>
-                {/* Replaced emoji with Image */}
+                <button className="modal-close-btn" onClick={() => sceneActions.updateState({ showNameModal: false })}>×</button>
                 <div className="modal-emoji-large" style={{ width: '100px', height: '100px', margin: '0 auto 15px' }}>
-                   <img src={currentFamilyType.image} alt={currentFamilyType.label} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                   <img src={sceneState.currentFamilyType.image} alt={sceneState.currentFamilyType.label} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
-                <h2 className="modal-question">What do you call your {currentFamilyType.label}?</h2>
+                <h2 className="modal-question">What do you call your {sceneState.currentFamilyType.label}?</h2>
                 <div className="input-with-voice">
                   <input
-                    
-              
-  type="text"
-  className="name-input"
-  placeholder="e.g., Papa, Mama..."
-  value={callName}
-  onChange={(e) => setCallName(e.target.value)}
-  onKeyDown={(e) => {
-    if (e.key === 'Enter' && callName.trim()) {
-      e.preventDefault();
-      handleAddFamilyMember();
-    }
-  }}
-  autoFocus
-/>
+                    type="text"
+                    className="name-input"
+                    placeholder="e.g., Papa, Mama..."
+                    value={sceneState.callName}
+                    onChange={(e) => sceneActions.updateState({ callName: e.target.value })}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && sceneState.callName.trim()) {
+                        e.preventDefault();
+                        handleAddFamilyMember();
+                      }
+                    }}
+                    autoFocus
+                  />
                   <button className={`voice-btn ${isRecording ? 'recording' : ''}`} onClick={isRecording ? stopRecording : startRecording}>
                     {isRecording ? '⏹️' : '🎤'}
                   </button>
                 </div>
                 {audioBlob && <p className="audio-recorded">✓ Voice recorded!</p>}
-<p className="input-hint">💡 Press Enter to add to tree</p>
-                <button className="submit-name-btn" onClick={handleAddFamilyMember} disabled={!callName.trim() && !audioBlob}>
+                <p className="input-hint">💡 Press Enter to add to tree</p>
+                <button className="submit-name-btn" onClick={handleAddFamilyMember} disabled={!sceneState.callName.trim() && !audioBlob}>
                   Add to Tree! ✓
                 </button>
               </div>
@@ -846,9 +800,8 @@ useEffect(() => {
       )}
 
       {/* SIDE BY SIDE (Magical Reveal) */}
-      {gamePhase === 'sideBySide' && (
+      {sceneState.gamePhase === 'sideBySide' && (
         <div className="side-by-side-screen">
-          
           {[...Array(30)].map((_, i) => (
             <div 
               key={i} 
@@ -875,14 +828,10 @@ useEffect(() => {
                 {ganeshaFamily.map(member => {
                   const deity = getPlacedDeityImage(member.id);
                  return (
-        <div 
-          key={member.id} 
-          className="tree-member-mini ganesha-comparison-icon"  
-          style={member.position}
-        >
-          <img src={deity.image} alt={deity.name} className="mini-image ganesha-comparison-img" />  {/* ADD THIS CLASS */}
-          <p className="mini-name ganesha-comparison-label">{member.role}</p>  {/* ADD THIS CLASS */}
-        </div>
+                  <div key={member.id} className="tree-member-mini ganesha-comparison-icon" style={member.position}>
+                    <img src={deity.image} alt={deity.name} className="mini-image ganesha-comparison-img" /> 
+                    <p className="mini-name ganesha-comparison-label">{member.role}</p> 
+                  </div>
                   );
                 })}
               </div>
@@ -895,50 +844,34 @@ useEffect(() => {
               <span className="connector-heart">✨</span>
             </div>
 
-{/* RIGHT CARD: Your Family */}
-<div className="tree-column slide-in-right">
-  <h3 className="tree-heading">Your Family</h3>
-  <p style={{textAlign:'center', color:'#5D4037', marginBottom:'10px'}}>🏡 Your Home</p>
-  
-  {/* ADD DATA ATTRIBUTE FOR MEMBER COUNT */}
-  <div 
-    className="tree-visual"
-    data-member-count={childFamily.length}  
-  >
-    <img src={familyTree} alt="Tree" className="reveal-tree-img" />
-    
-    {/* Child Rows using Images */}
-    {[1, 2, 3].map(rowNum => (
-      <div key={rowNum} className={`reveal-row reveal-row-${rowNum}`}>
-        {getFamilyByRow(rowNum).map((member, idx) => (
-          <div key={idx} className="reveal-member">
-            <div className="reveal-avatar" style={{ background: member.color, padding: '5px' }}>
-              <img src={member.image} alt={member.label} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            {/* RIGHT CARD: Your Family */}
+            <div className="tree-column slide-in-right">
+              <h3 className="tree-heading">Your Family</h3>
+              <p style={{textAlign:'center', color:'#5D4037', marginBottom:'10px'}}>🏡 Your Home</p>
+              
+              <div className="tree-visual" data-member-count={sceneState.childFamily.length}>
+                <img src={familyTree} alt="Tree" className="reveal-tree-img" />
+                {[1, 2, 3].map(rowNum => (
+                  <div key={rowNum} className={`reveal-row reveal-row-${rowNum}`}>
+                    {getFamilyByRow(rowNum).map((member, idx) => (
+                      <div key={idx} className="reveal-member">
+                        <div className="reveal-avatar" style={{ background: member.color, padding: '5px' }}>
+                          <img src={member.image} alt={member.label} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                        </div>
+                        <div className="reveal-name">{member.callName}</div>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="reveal-name">{member.callName}</div>
           </div>
-        ))}
-      </div>
-    ))}
-  </div>
-</div>
-          </div>
-
-          
 
           <div className="action-buttons">
-            <button className="make-another-btn" onClick={() => {
-              setChildFamily([]);
-              setGamePhase('childInput');
-            }}>
+            <button className="make-another-btn" onClick={() => sceneActions.updateState({ childFamily: [], gamePhase: 'childInput' })}>
               🌳 Make Another Tree
             </button>
-            <button 
-              className="end-game-btn" 
-              onClick={() => {
-                setShowSceneCompletion(true);
-              }}
-            >
+            <button className="end-game-btn" onClick={() => sceneActions.updateState({ showingCompletionScreen: true, completed: true, stars: 3 })}>
               End Game ✨
             </button>
           </div>
@@ -946,32 +879,32 @@ useEffect(() => {
       )}
 
       {/* Resume Popup */}
-{showResumePopup && (
-  <div style={{
-    position: 'fixed',
-    top: '20%',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    color: 'white',
-    padding: '20px 40px',
-    borderRadius: '20px',
-    boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
-    zIndex: 9999,
-    fontSize: '18px',
-    fontWeight: 'bold',
-    textAlign: 'center',
-    maxWidth: '80%',
-    animation: 'slideDown 0.5s ease-out'
-  }}>
-    {resumeMessage}
-  </div>
-)}
+      {showResumePopup && (
+        <div style={{
+          position: 'fixed',
+          top: '20%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          color: 'white',
+          padding: '20px 40px',
+          borderRadius: '20px',
+          boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
+          zIndex: 9999,
+          fontSize: '18px',
+          fontWeight: 'bold',
+          textAlign: 'center',
+          maxWidth: '80%',
+          animation: 'slideDown 0.5s ease-out'
+        }}>
+          {resumeMessage}
+        </div>
+      )}
 
-
-      {showSceneCompletion && (
+      {/* Completion Modal */}
+      {sceneState.showingCompletionScreen && (
         <AboutMeCompletion
-          show={showSceneCompletion}
+          show={sceneState.showingCompletionScreen}
           sceneName="My Family Tree"
           sceneNumber={1}
           totalScenes={4}
@@ -985,24 +918,20 @@ useEffect(() => {
           nextSceneName="Favorite Food"
           childName="Family Star"
           onContinue={() => {
-            if (onNavigate) {
-              onNavigate('game2'); 
-            } else if (onComplete) {
-              onComplete();
-            }
+            if (onNavigate) onNavigate('game2'); 
+            else if (onComplete) onComplete();
           }}
           onReplay={() => {
-            setGamePhase('intro');
-            setPlacedGaneshaMembers(new Set());
-            setChildFamily([]);
-            setShowSceneCompletion(false);
+            sceneActions.updateState({
+                gamePhase: 'intro',
+                placedGaneshaMembers: [],
+                childFamily: [],
+                showingCompletionScreen: false
+            });
           }}
           onBackToMap={() => {
-            if (onNavigate) {
-              onNavigate('zone-welcome');
-            } else if (onBack) {
-              onBack();
-            }
+            if (onNavigate) onNavigate('zone-welcome');
+            else if (onBack) onBack();
           }}
           onHome={() => {
              if (onNavigate) onNavigate('home');

@@ -5,30 +5,13 @@ const TextInputModal = ({
   prompt = "What's your answer?",
   onSave,
   onCancel,
-  maxLength = 50,
-  initialValue, // <--- NEW: To restore text
-  onAutoSave    // <--- NEW: To save while typing
+  maxLength = 50
 }) => {
-  // Initialize with saved draft if available
-  const [textInput, setTextInput] = useState(initialValue || '');
+  const [textInput, setTextInput] = useState('');
 
   const handleSave = () => {
     if (textInput.trim()) {
       onSave(textInput.trim());
-    }
-  };
-
-  const handleChange = (e) => {
-    const val = e.target.value;
-    
-    // Only update if within length limit
-    if (val.length <= maxLength) {
-      setTextInput(val);
-      
-      // Send updates to parent for auto-saving
-      if (onAutoSave) {
-        onAutoSave(val);
-      }
     }
   };
 
@@ -48,7 +31,11 @@ const TextInputModal = ({
         <textarea
           className="text-input-box"
           value={textInput}
-          onChange={handleChange} // Use new handler
+          onChange={(e) => {
+            if (e.target.value.length <= maxLength) {
+              setTextInput(e.target.value);
+            }
+          }}
           onKeyDown={handleKeyDown}
           placeholder="Type your answer here..."
           maxLength={maxLength}

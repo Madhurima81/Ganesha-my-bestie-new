@@ -44,7 +44,7 @@ static ZONES = {
     id: 5,
     name: 'About Me Hut',
     icon: '🏡',
-    scenes: ['game1', 'game2', 'game3', 'game4']
+scenes: ['family-tree', 'dreams-wishes', 'favorite-food', 'name-birthday']
   }
   // ✅ REMOVE: All the placeholder zones (ocean-depths, sky-kingdom, etc.)
 };

@@ -45,13 +45,12 @@ const SCENE_MAPPING = {
     'game3': () => import('./zones/festival-square/game3-cooking/ModakCookingGame.jsx'),
     'game4': () => import('./zones/festival-square/Game4-mandapdecor/MandapDecorationGame.jsx')
   },
-  // ✅ NEW: About Me Hut - Zone 5
-  'about-me-hut': {
-    'game1': () => import('./zones/about-me-hut/family-tree/Familytreegame.jsx'),
-    'game2': () => import('./zones/about-me-hut/food/Favoritefoodgame.jsx'),
-    'game3': () => import('./zones/about-me-hut/enjoy/ObstacleRemoverGame.jsx'),
-    'game4': () => import('./zones/about-me-hut/name/Namebirthdaygame.jsx')
-  }
+'about-me-hut': {
+  'family-tree': () => import('./zones/about-me-hut/family-tree/Familytreegame.jsx'),
+  'favorite-food': () => import('./zones/about-me-hut/food/Favoritefoodgame.jsx'),
+  'dreams-wishes': () => import('./zones/about-me-hut/enjoy/ObstacleRemoverGame.jsx'),
+  'name-birthday': () => import('./zones/about-me-hut/name/Namebirthdaygame.jsx')
+}
 
 };
 
