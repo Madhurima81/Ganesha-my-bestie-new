@@ -328,8 +328,8 @@
   animation: fadeIn 0.3s ease-out;
 }
 
-.vakratunda-mission-modal { /* Corrected Prefix - Using zone colors */
-  background: var(--zone-current-base);
+.vakratunda-mission-modal { /* Corrected Prefix */
+  background: rgba(255, 255, 240, 0.98);
   border-radius: 25px;
   padding: 35px 45px;
   max-width: 480px;
@@ -362,10 +362,10 @@
   display: inline-block;
 }
 
-.vakratunda-mission-title { /* Corrected Prefix - Using play-joy-gold */
+.vakratunda-mission-title { /* Corrected Prefix */
   font-size: 26px;
   font-weight: bold;
-  color: var(--play-joy-gold);
+  color: #FFD700;
   margin-bottom: 18px;
 }
 
@@ -376,9 +376,9 @@
   margin-bottom: 15px;
 }
 
-.vakratunda-mission-description { /* Corrected Prefix - Using play-text-main */
+.vakratunda-mission-description { /* Corrected Prefix */
   font-size: 15px;
-  color: var(--play-text-main);
+  color: #555;
   margin-bottom: 28px;
   line-height: 1.6;
 }

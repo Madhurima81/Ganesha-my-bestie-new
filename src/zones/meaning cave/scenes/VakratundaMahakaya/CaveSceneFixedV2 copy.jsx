@@ -1,7 +1,6 @@
 // zones/cave-of-secrets/scenes/vakratunda-mahakaya/CaveSceneFixed.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import './CaveSceneFixed.css';
-import '../../../../lib/styles/zone-themes.css';
 import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
 
 // Import scene management components
@@ -32,7 +31,6 @@ import BackToMapButton from '../../../../lib/components/navigation/BackToMapButt
 import RescueModal from '../../components/RescueModal';
 import { RESCUE_CONFIGS } from '../../config/RescueConfigs';
 import SymbolSidebar from '../../components/SymbolSidebar';
-import UnifiedHeaderV2 from '../../components/UnifiedHeaderV2';
 
 import ClickDotsPathGame from './ClickDotsPathGame';
 import mooshikaTracing from './assets/images/mooshika-tracing.png';
@@ -41,7 +39,7 @@ import mooshikaTracing from './assets/images/mooshika-tracing.png';
 import SanskritSidebar from '../../../../lib/components/feedback/SanskritSidebar';
 import doorImage from './assets/images/door-image.png';
 
-import UnifiedModal from '../../../../lib/components/ui/Modal/UnifiedModal';
+import DoorUnlockedModal from '../../components/DoorUnlockedModal';
 
 import DoorComponent from '../../components/DoorComponent';
 import ganeshaComplete from './assets/images/ganesha-complete.png';
@@ -1243,7 +1241,6 @@ setTimeout(() => {
   }
 
   return (
-    <div data-zone="meaning-cave">
     <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
       <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
         <div className="pond-scene-container" data-phase={sceneState.phase}>
@@ -1309,39 +1306,27 @@ setTimeout(() => {
             {!showPowerModal && !showRescueModal && !showCenteredSymbol && sceneState.welcomeShown && (
               <>
                 {sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE && !sceneState.door1Completed && (
-                  <UnifiedHeaderV2
-                    zone="meaning-cave"
-                    title="🔱 SPELL VAKRATUNDA! Drag the syllables in order!"
-                    currentRound={0}
-                    totalRounds={4}
-                  />
+                  <div className="phase-header">
+                    🔱 SPELL VAKRATUNDA! Drag the syllables in order!
+                  </div>
                 )}
-
+                
                 {sceneState.phase === CAVE_PHASES.TRACE_ACTIVE && !sceneState.tracingCompleted && (
-                  <UnifiedHeaderV2
-                    zone="meaning-cave"
-                    title="🐭 TRACE THE CURVED TRUNK! Follow the path!"
-                    currentRound={1}
-                    totalRounds={4}
-                  />
+                  <div className="phase-header">
+                    🐭 TRACE THE CURVED TRUNK! Follow the path!
+                  </div>
                 )}
-
+                
                 {sceneState.phase === CAVE_PHASES.DOOR2_ACTIVE && !sceneState.door2Completed && (
-                  <UnifiedHeaderV2
-                    zone="meaning-cave"
-                    title="🔱 SPELL MAHAKAYA! Arrange the syllables!"
-                    currentRound={2}
-                    totalRounds={4}
-                  />
+                  <div className="phase-header">
+                    🔱 SPELL MAHAKAYA! Arrange the syllables!
+                  </div>
                 )}
-
+                
                 {sceneState.phase === CAVE_PHASES.GROW_ACTIVE && sceneState.stonesClicked < 4 && (
-                  <UnifiedHeaderV2
-                    zone="meaning-cave"
-                    title="💎 CLICK THE SACRED STONES! Make Ganesha mighty!"
-                    currentRound={3}
-                    totalRounds={4}
-                  />
+                  <div className="phase-header">
+                    💎 CLICK THE SACRED STONES! Make Ganesha mighty!
+                  </div>
                 )}
               </>
             )}
@@ -2053,7 +2038,6 @@ onComplete={() => {
         </div>
       </MessageManager>
     </InteractionManager>
-    </div>
   );
 };
 

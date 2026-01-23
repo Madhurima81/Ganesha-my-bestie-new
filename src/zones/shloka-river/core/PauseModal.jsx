@@ -1,6 +1,7 @@
 // Location: zones/shloka-river/core/components/PauseModal.jsx
 
 import React from 'react';
+import UnifiedButtonV2 from './UnifiedButtonV2';
 
 const PauseModal = ({ isOpen, onContinue, onExit, gameName, theme }) => {
   if (!isOpen) return null;
@@ -42,48 +43,28 @@ const PauseModal = ({ isOpen, onContinue, onExit, gameName, theme }) => {
           Your progress is saved! 🌟
         </p>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {/* Continue Playing Button */}
-          <button
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {/* Continue Playing Button - Green */}
+          <UnifiedButtonV2
+            variant="primary"
+            size="large"
             onClick={onContinue}
-            style={{
-              width: '100%',
-              padding: '20px',
-              background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)',
-              border: 'none',
-              borderRadius: '16px',
-              color: 'white',
-              fontSize: '20px',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              boxShadow: '0 6px 20px rgba(76, 175, 80, 0.4)'
-            }}
           >
             ▶️ Keep Playing!
-          </button>
+          </UnifiedButtonV2>
 
-          {/* Exit to Menu Button */}
-          <button
+          {/* Exit to Menu Button - Red */}
+          <UnifiedButtonV2
+            variant="danger"
             onClick={onExit}
-            style={{
-              width: '100%',
-              padding: '20px',
-              background: 'linear-gradient(135deg, #FF9800 0%, #F57C00 100%)',
-              border: 'none',
-              borderRadius: '16px',
-              color: 'white',
-              fontSize: '18px',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              boxShadow: '0 4px 15px rgba(255, 152, 0, 0.3)'
-            }}
           >
             🏠 Exit to Menu
-            <div style={{ fontSize: '12px', opacity: 0.9, marginTop: '4px' }}>
-              Progress saved automatically
-            </div>
-          </button>
+          </UnifiedButtonV2>
         </div>
+
+        <p style={{ fontSize: '14px', color: '#999', marginTop: '20px' }}>
+          Progress saved automatically ✨
+        </p>
       </div>
     </div>
   );

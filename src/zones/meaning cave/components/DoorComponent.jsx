@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation';
+import UnifiedModal from '../../../lib/components/ui/Modal/UnifiedModal';
 import './DoorComponentV1.css';
 
 const getSyllablePosition = (index) => {
@@ -779,114 +780,23 @@ useEffect(() => {
   </div>
 )}*/}
 
-        {/* ✅ Portal Modal - renders at document root for perfect centering */}
+        {/* ✅ UnifiedModal - zone-adaptive modal */}
         {showDoorModal && showModal && ReactDOM.createPortal(
-          <div 
-            className="door-unlocked-overlay"
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'rgba(0, 0, 0, 0.85)',
-              zIndex: 1000,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              animation: 'fadeIn 0.3s ease-out'
-            }}
+          <UnifiedModal
+            isOpen={showDoorModal}
+            title={modalTitle}
+            iconImage={modalSymbolImage}
+            iconSize="120px"
+            confirmText={modalButtonText}
+            confirmVariant="primary"
+            onConfirm={handleModalButtonClick}
+            onClose={handleModalButtonClick}
+            closeOnOverlayClick={false}
+            size="medium"
           >
-            <div 
-              className="door-unlocked-card"
-              style={{
-                background: 'linear-gradient(135deg, #FFFEF7 0%, #FFF9E6 100%)',
-                borderRadius: '30px',
-                border: `5px solid ${modalCardBorderColor}`,
-                padding: '40px 50px',
-                maxWidth: '500px',
-                width: '90%',
-                textAlign: 'center',
-                position: 'relative',
-                animation: 'slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                boxShadow: `0 0 30px ${modalCardBorderColor}99, 0 0 60px ${modalCardBorderColor}66`
-              }}
-            >
-              {/* Title */}
-              <h1 style={{
-                fontFamily: "'Baloo', cursive",
-                fontSize: '48px',
-                fontWeight: '800',
-                color: modalTitleColor,
-                margin: '0 0 30px 0',
-                textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
-                letterSpacing: '1px'
-              }}>
-                {modalTitle}
-              </h1>
-              
-              {/* Symbol Icon */}
-              {modalSymbolImage && (
-                <div style={{ margin: '20px 0 30px 0' }}>
-                  <img 
-                    src={modalSymbolImage} 
-                    alt="symbol" 
-                    style={{
-                      width: '120px',
-                      height: '120px',
-                      objectFit: 'contain',
-                      animation: 'iconBounce 1s ease-in-out infinite',
-                      filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15))'
-                    }}
-                  />
-                </div>
-              )}
-              
-              {/* Description */}
-              <p style={{
-                fontFamily: "'Nunito', sans-serif",
-                fontSize: '22px',
-                fontWeight: '600',
-                color: '#5A4A3A',
-                lineHeight: '1.5',
-                margin: '0 0 35px 0',
-                padding: '0 10px'
-              }}>
-                {modalDescription}
-              </p>
-              
-              {/* Button */}
-              <button 
-                onClick={handleModalButtonClick}
-                style={{
-                  fontFamily: "'Baloo', cursive",
-                  fontSize: '28px',
-                  fontWeight: '700',
-                  color: modalButtonTextColor,
-                  background: `linear-gradient(135deg, ${modalButtonColor} 0%, ${modalButtonColor}DD 100%)`,
-                  border: 'none',
-                  borderRadius: '50px',
-                  padding: '18px 60px',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  boxShadow: `0 4px 15px ${modalButtonColor}66`,
-                  textTransform: 'capitalize',
-                  letterSpacing: '0.5px'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.transform = 'translateY(-3px) scale(1.05)';
-                  e.target.style.boxShadow = `0 6px 20px ${modalButtonColor}99`;
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.transform = 'translateY(0) scale(1)';
-                  e.target.style.boxShadow = `0 4px 15px ${modalButtonColor}66`;
-                }}
-              >
-                {modalButtonText}
-              </button>
-            </div>
-          </div>,
-          document.body  // ✅ Render at document root, not inside door-component
+            <p>{modalDescription}</p>
+          </UnifiedModal>,
+          document.querySelector('[data-zone="meaning-cave"]') || document.body
         )}
 
         {/* Success Sparkles */}

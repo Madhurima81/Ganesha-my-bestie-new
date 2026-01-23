@@ -1,0 +1,1342 @@
+/* CaveSceneFixed.css - Using PROVEN PondScene CSS Foundation with Cave Theming */
+
+/* ✅ PROVEN FOUNDATION: Keep pond container structure that makes SymbolSceneIntegration work */
+.pond-scene-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.pond-background {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin: 0;
+  padding: 0;
+  /* ✅ CAVE THEME: Dark cave background color as fallback */
+  background-color: #1a1208;
+}
+
+/* ✅ CAVE THEME: CSS Variables for cave styling */
+:root {
+  --cave-brown-dark: #2c1810;
+  --cave-brown-medium: #4a2c1a;
+  --cave-brown-light: #8b4513;
+  --cave-gold: #ffd700;
+  --cave-gold-dark: #daa520;
+  --cave-amber: #ffb347;
+  --cave-crystal: #e6e6fa;
+  --sanskrit-saffron: #ff9933;
+  --trunk-orange: #ff6b35;
+  --stone-gray: #696969;
+  --ganesha-divine: #ff8c42;
+  --cave-glow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CAVE PHASE HEADER - Sanskrit themed
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════
+   PHASE HEADER - Always-visible instructions
+   ═══════════════════════════════════════════════════════════════ */
+
+.phase-header {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #8B4513, #D2691E);
+  color: white;
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-size: 18px;
+  font-weight: bold;
+  z-index: 100;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  text-align: center;
+  white-space: nowrap;
+  border: 3px solid #FFD700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  animation: gentle-bounce 3s ease-in-out infinite;
+}
+
+@keyframes gentle-bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-5px); }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .phase-header {
+    font-size: 14px;
+    padding: 10px 20px;
+    top: 60px;
+    max-width: 90vw;
+    white-space: normal;
+    line-height: 1.3;
+  }
+}
+
+@media (max-width: 480px) {
+  .phase-header {
+    font-size: 12px;
+    padding: 8px 16px;
+    top: 50px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .phase-header {
+    animation: none !important;
+  }
+}
+
+/* 🎮 TRACING GAME STYLES - Add to CaveSceneFixed.css */
+
+/* 🎮 GAME 1: ENHANCED INTERACTIVE TRACING AREA STYLES */
+.tracing-area {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 800px;
+  background: none !important; /* ← REMOVE background */
+  border-radius: 0; /* ← REMOVE border radius */
+  padding: 0; /* ← REMOVE padding */
+  box-shadow: none !important; /* ← REMOVE shadow */
+  border: none !important; /* ← REMOVE border */
+  z-index: 5;
+}
+
+.trace-instructions {
+  text-align: center;
+  margin-bottom: 15px;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.trace-instructions h3 {
+  font-size: 1.8rem;
+  margin: 0 0 5px 0;
+  color: #ffd700;
+}
+
+.trace-instructions p {
+  font-size: 1.1rem;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.trace-svg {
+  width: 100%;
+  height: 200px;
+  background: none !important; /* ← REMOVE background */
+  border-radius: 0; /* ← REMOVE border radius */
+  border: none !important; /* ← REMOVE border */
+  cursor: crosshair;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  touch-action: none;
+}
+
+/* Progress indicator */
+.trace-progress {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00ff88, #ffd700);
+  border-radius: 6px;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
+.progress-text {
+  color: #ffd700;
+  font-weight: bold;
+  font-size: 1.1rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+/* Start button */
+.trace-start-button {
+  position: absolute;
+  top: 15px; /* ← MOVED to top */
+  left: 50%;
+  transform: translateX(-50%);
+  
+  /* Sleek modern design */
+  background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+  border: none;
+  border-radius: 25px; /* ← More rounded */
+  padding: 12px 24px; /* ← Smaller padding */
+  cursor: pointer;
+  color: white;
+  font-weight: 600; /* ← Less bold */
+  font-size: 16px; /* ← Smaller font */
+  text-align: center;
+  
+  /* Sleek shadow */
+  box-shadow: 
+    0 4px 15px rgba(78, 205, 196, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  transition: all 0.3s ease;
+  z-index: 20;
+  
+  /* Remove bulky styling */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: auto;
+  width: auto;
+}
+
+.trace-start-button:hover {
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(78, 205, 196, 0.4),
+    0 4px 8px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #52D6CC 0%, #4AA894 100%);
+}
+
+.trace-start-button:active {
+  transform: translateX(-50%) translateY(0px);
+  box-shadow: 
+    0 2px 8px rgba(78, 205, 196, 0.3),
+    0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Hide the trunk icon in start button */
+.trace-start-button img {
+  display: none;
+}
+
+/* Completion message */
+.trace-completed {
+  position: absolute;
+  top: 15px; /* ← MOVED to top */
+  left: 50%;
+  transform: translateX(-50%);
+  
+  /* Sleek modern design - SUCCESS GREEN */
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  border: none;
+  border-radius: 25px;
+  padding: 12px 24px;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  text-align: center;
+  
+  /* Sleek shadow */
+  box-shadow: 
+    0 4px 15px rgba(72, 187, 120, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  transition: all 0.3s ease;
+  z-index: 20;
+  
+  /* Remove old styling */
+  width: auto;
+  height: auto;
+  min-width: 200px;
+  
+  /* Success pulse animation */
+  animation: successPulse 2s ease-in-out infinite;
+}
+
+.trace-completed h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+}
+
+.trace-completed p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+  color: white;
+  margin-top: 4px;
+}
+
+/* Success pulse animation */
+@keyframes successPulse {
+  0%, 100% { 
+    transform: translateX(-50%) scale(1);
+    box-shadow: 
+      0 4px 15px rgba(72, 187, 120, 0.3),
+      0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  50% { 
+    transform: translateX(-50%) scale(1.02);
+    box-shadow: 
+      0 6px 20px rgba(72, 187, 120, 0.4),
+      0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* Mobile responsive adjustments for tracing */
+@media (max-width: 768px) {
+  .tracing-area {
+    width: 95%;
+    padding: 15px;
+  }
+  
+  .trace-instructions h3 {
+    font-size: 1.4rem;
+  }
+  
+  .trace-instructions p {
+    font-size: 1rem;
+  }
+  
+  .trace-svg {
+    height: 150px;
+  }
+  
+  .trace-start-button {
+    padding: 12px 20px;
+    font-size: 1rem;
+  }
+  
+  .trace-start-button img {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+/* Portrait orientation adjustments for tracing */
+@media (orientation: portrait) {
+  .tracing-area {
+    top: 25%;
+    left: 5%;
+    width: 90%;
+    height: 50%;
+  }
+}
+
+/* Touch device optimizations for tracing */
+@media (hover: none) and (pointer: coarse) {
+  .trace-svg {
+    cursor: default;
+  }
+  
+  .trace-start-button:hover {
+    transform: translate(-50%, -50%);
+  }
+  
+  .trace-start-button {
+    min-height: 60px;
+    min-width: 120px;
+  }
+}
+
+/* Reduced motion support for tracing */
+@media (prefers-reduced-motion: reduce) {
+  .trace-completed {
+    animation: none !important;
+  }
+  
+  .trace-start-button,
+  .progress-fill {
+    transition: none !important;
+  }
+}
+
+/* ✅ NEW: Ganesha animations */
+.mini-ganesha-container.breathing img {
+  animation: ganeshaBreathing 3s ease-in-out infinite;
+}
+
+.mini-ganesha-container.happy img {
+  animation: ganeshaHappy 0.8s ease-out;
+}
+
+.mini-ganesha-container.growing img {
+  animation: ganeshaGrowing 1.2s ease-out;
+}
+
+.mini-ganesha-container.mighty img {
+  animation: ganeshaMighty 2s ease-out;
+}
+
+@keyframes ganeshaBreathing {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes ganeshaHappy {
+  0% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.1) rotate(2deg); }
+  50% { transform: scale(1.15) rotate(-2deg); }
+  75% { transform: scale(1.1) rotate(1deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes ganeshaGrowing {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); filter: brightness(1.3); }
+  100% { transform: scale(1); }
+}
+
+@keyframes ganeshaMighty {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.3) rotate(5deg); }
+  50% { transform: scale(1.5) rotate(-5deg); filter: brightness(1.5) drop-shadow(0 0 30px gold); }
+  75% { transform: scale(1.3) rotate(3deg); }
+  100% { transform: scale(1); }
+}
+
+/* 🎮 GAME 2: GROWING GANESHA STYLES */
+.growing-area {
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  width: 80%;
+  height: 80%;
+  z-index: 5;
+  background: none;
+  border-radius: 20px;
+  border: none;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.floating-stones {
+  position: relative;
+  width: 100%;
+  height: 60%;
+  margin-bottom: 20px;
+}
+
+.floating-stone {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  animation: stoneFloat 3s ease-in-out infinite;
+  z-index: 10;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.1), rgba(218, 165, 32, 0.2));
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+}
+
+.floating-stone:hover {
+  transform: scale(1.1);
+  animation-play-state: paused;
+}
+
+.floating-stone.clicked {
+  animation: stoneDisappear 0.8s ease-out forwards;
+  pointer-events: none;
+}
+
+.floating-stone img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px var(--cave-gold));
+}
+
+@keyframes stoneFloat {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg); 
+  }
+  25% { 
+    transform: translateY(-10px) rotate(2deg); 
+  }
+  50% { 
+    transform: translateY(-5px) rotate(0deg); 
+  }
+  75% { 
+    transform: translateY(-15px) rotate(-2deg); 
+  }
+}
+
+@keyframes stoneDisappear {
+  0% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.3) rotate(180deg);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(0) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* ✅ PROVEN: Lotus counter (adapted for Sanskrit) */
+.lotus-counter {
+  position: absolute;
+  top: 15px;
+  left: 75px;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.9) 0%, rgba(218, 165, 32, 0.9) 100%);
+  border-radius: 25px;
+  padding: 8px 16px;
+  box-shadow: var(--cave-glow);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 120px;
+  height: 40px;
+  border: 2px solid var(--cave-gold);
+}
+
+.counter-icon {
+  width: 24px;
+  height: 24px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.counter-progress {
+  flex: 1;
+  height: 6px;
+  background-color: rgba(139, 69, 19, 0.3);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.counter-progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, var(--sanskrit-saffron), var(--cave-gold));
+  border-radius: 3px;
+  transition: width 0.5s ease;
+  box-shadow: 0 0 8px rgba(255, 153, 51, 0.6);
+}
+
+.counter-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cave-brown-dark);
+}
+
+/* ✅ SIMPLE CAVE GAMES: Crystal and Stone */
+
+.stone-area {
+  position: absolute;
+  top: 45%;
+  right: 25%;
+  z-index: 10;
+}
+
+
+.magical-crystal:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 25px rgba(255, 182, 193, 1));
+}
+
+
+
+.golden-stone {
+  position: relative;
+  font-size: 60px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8));
+  animation: stoneBob 3s ease-in-out infinite;
+  opacity: 0.7;
+}
+
+.golden-stone:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 25px rgba(255, 215, 0, 1));
+  opacity: 1;
+}
+
+.stone-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: glowPulse 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes crystalPulse {
+  0%, 100% { 
+    transform: scale(1); 
+    filter: drop-shadow(0 0 15px rgba(255, 182, 193, 0.8));
+  }
+  50% { 
+    transform: scale(1.05); 
+    filter: drop-shadow(0 0 20px rgba(255, 182, 193, 1));
+  }
+}
+
+@keyframes stoneBob {
+  0%, 100% { 
+    transform: translateY(0px) scale(1); 
+  }
+  50% { 
+    transform: translateY(-5px) scale(1.02); 
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% { 
+    opacity: 0.3; 
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% { 
+    opacity: 0.6; 
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+/* ✅ SHOW STONE ONLY AFTER CRYSTAL IS CLICKED */
+.stone-area {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+/* When Door 2 is active, show the stone */
+.pond-scene-container[data-phase="door2_active"] .stone-area,
+.pond-scene-container[data-phase="door2_complete"] .stone-area {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mighty-text {
+  position: absolute;
+  top: 80%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 24px;
+  font-weight: bold;
+  color: #FFD700;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  animation: textGrow 2s ease-out forwards;
+  z-index: 10;
+}
+
+@keyframes textGrow {
+  0% { 
+    transform: translateX(-50%) scale(0);
+    opacity: 0;
+  }
+  50% { 
+    transform: translateX(-50%) scale(1.3);
+    opacity: 1;
+  }
+  100% { 
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+}
+
+.curved-text {
+  position: absolute;
+  top: 85%;
+  left: 30%;
+  font-size: 24px;
+  font-weight: bold;
+  color: #4ECDC4;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  animation: curvedFlow 3s ease-out forwards;
+  z-index: 10;
+}
+
+@keyframes curvedFlow {
+  0% { 
+    transform: translateX(-100px) translateY(50px) scale(0) rotate(-15deg);
+    opacity: 0;
+  }
+  30% { 
+    transform: translateX(-20px) translateY(10px) scale(0.8) rotate(-5deg);
+    opacity: 0.7;
+  }
+  70% { 
+    transform: translateX(10px) translateY(-10px) scale(1.1) rotate(5deg);
+    opacity: 1;
+  }
+  100% { 
+    transform: translateX(0) translateY(0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0% { 
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5) translateY(20px);
+  }
+  50% { 
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2) translateY(-10px);
+  }
+  100% { 
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8) translateY(-50px);
+  }
+}
+
+/* ✅ CAVE THEME: Loading state */
+.loading {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  color: var(--cave-gold);
+  z-index: 1000;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* ✅ PROVEN: Error boundary */
+.error-boundary {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  z-index: 9999;
+  max-width: 500px;
+}
+
+.error-boundary h2 {
+  color: var(--cave-brown-dark);
+  margin-bottom: 15px;
+}
+
+.error-boundary button {
+  background: var(--cave-gold);
+  color: var(--cave-brown-dark);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+.error-boundary button:hover {
+  background: var(--cave-gold-dark);
+}
+
+/* ✅ CAVE THEME: Sparkle effects */
+.cave-sparkle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(circle, var(--cave-crystal) 0%, var(--cave-gold) 100%);
+  border-radius: 50%;
+  animation: caveSparkle 2s ease-in-out infinite alternate;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+
+@keyframes caveSparkle {
+  0% { opacity: 0.3; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1.2); }
+}
+
+/* ✅ PROVEN: All-lotuses sparkle (adapted for cave) */
+.all-lotuses-sparkle {
+  position: absolute;
+  top: 20%;
+  left: 10%;
+  width: 80%;
+  height: 60%;
+  pointer-events: none;
+  z-index: 15;
+}
+
+/* ✅ PROVEN: Divine light effect */
+.divine-light-effect {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 200px;
+  z-index: 199;
+  pointer-events: none;
+}
+
+/* ✅ CAVE THEME: Confetti animation */
+@keyframes confettiFall {
+  to {
+    transform: translateY(100vh) rotate(720deg);
+  }
+}
+
+/* ✅ PROVEN: Navigation z-index hierarchy */
+.pond-background {
+  position: relative;
+  z-index: 1;
+}
+
+.interactive-hint,
+.hint-bubble {
+  z-index: 90;
+}
+
+.scene-navigation-bar {
+  z-index: 100;
+}
+
+.popup-overlay,
+.scroll-animation-overlay,
+.celebration-overlay {
+  z-index: 1000;
+}
+
+/* ✅ PROVEN: Responsive design */
+@media (max-width: 768px) {
+  .lotus-counter {
+    width: 200px;
+    height: 36px;
+    padding: 6px 12px;
+    top: 10px;
+    left: 10px;
+  }
+  
+  .counter-display {
+    font-size: 11px;
+  }
+  
+  .vakratunda-door,
+  .mahakaya-door {
+    transform: scale(0.6);
+  }
+  
+  .door-component {
+    min-width: 250px;
+    min-height: 180px;
+    padding: 15px;
+  }
+  
+  .door-syllable {
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+}
+
+/* ✅ PROVEN: Portrait orientation */
+@media (orientation: portrait) {
+  .vakratunda-door {
+    top: 25%;
+    left: 10%;
+  }
+  
+  .mahakaya-door {
+    top: 50%;
+    right: 10%;
+  }
+  
+  .lotus-counter {
+    top: 5px;
+    left: 5px;
+    width: 180px;
+  }
+}
+
+/* ✅ PROVEN: Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .door-syllable:hover {
+    transform: none;
+  }
+  
+  .door-syllable {
+    min-width: 50px;
+    min-height: 50px;
+  }
+}
+
+/* ✅ PROVEN: High contrast mode */
+@media (prefers-contrast: high) {
+  .pond-scene-container {
+    background: #000000;
+  }
+  
+  .lotus-counter {
+    background: #FFFFFF;
+    border-color: #000000;
+    color: #000000;
+  }
+  
+  .door-component {
+    background: #FFFFFF;
+    border-color: #000000;
+    color: #000000;
+  }
+  
+  .door-syllable {
+    background: #FFFF00;
+    border-color: #000000;
+    color: #000000;
+  }
+}
+
+/* ✅ PROVEN: Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .pond-scene-container *,
+  .door-syllable,
+  .cave-sparkle {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .door-syllable:hover {
+    transform: none !important;
+  }
+  
+  .door-syllable:hover {
+    opacity: 0.8;
+  }
+
+  /* ✅ EXACT SPECIFICITY: Match the HTML structure */
+div.pond-scene-container div.mini-ganesha-container.growing img {
+  animation: ganeshaGrowing 1.2s ease-out !important;
+}
+
+div.pond-scene-container div.mini-ganesha-container.breathing img {
+  animation: ganeshaBreathing 3s ease-in-out infinite !important;
+}
+
+div.pond-scene-container div.mini-ganesha-container.happy img {
+  animation: ganeshaHappy 0.8s ease-out !important;
+}
+
+div.pond-scene-container div.mini-ganesha-container.mighty img {
+  animation: ganeshaMighty 2s ease-out !important;
+}
+
+/* ✅ ENSURE KEYFRAMES ARE PRESENT */
+@keyframes ganeshaGrowing {
+  0% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.2); filter: brightness(1.3); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+@keyframes ganeshaBreathing {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes ganeshaHappy {
+  0% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.1) rotate(2deg); }
+  50% { transform: scale(1.15) rotate(-2deg); }
+  75% { transform: scale(1.1) rotate(1deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes ganeshaMighty {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.3) rotate(5deg); }
+  50% { transform: scale(1.5) rotate(-5deg); filter: brightness(1.5) drop-shadow(0 0 30px gold); }
+  75% { transform: scale(1.3) rotate(3deg); }
+  100% { transform: scale(1); }
+}
+}
+
+/* Add to the end of CaveSceneFixed.css */
+
+/* ==================== SYMBOL CELEBRATION ANIMATIONS ==================== */
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes symbolAppear {
+  0% { 
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  100% { 
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes symbolGlow {
+  0% { 
+    filter: drop-shadow(0 0 30px currentColor) brightness(1);
+    transform: scale(1);
+  }
+  100% { 
+    filter: drop-shadow(0 0 60px currentColor) brightness(1.4);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes textPulse {
+  0%, 100% { 
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes powerPulse {
+  0%, 100% { 
+    transform: scale(1);
+  }
+  50% { 
+    transform: scale(1.08);
+  }
+}
+
+/* ===========================
+   SCENE 1 THEME: CAVE OF SECRETS (Vakratunda Mahakaya)
+   Palette: Saffron, Earth Brown, Ancient Stone
+   =========================== */
+
+/* ===========================
+   INSTRUCTION MODAL - Opening Screen
+   =========================== */
+.cave-instructions-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(26, 18, 8, 0.85); /* Dark Cave Shadow */
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: cave-fadeIn 0.3s ease-out;
+}
+
+/* Sparkles container */
+.cave-sparkles {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  pointer-events: none;
+  z-index: 101;
+  animation: cave-sparklesFadeOut 0.8s ease-out forwards;
+}
+
+.cave-sparkle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #FF9933; /* Saffron Sparkle */
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  animation: cave-sparkleFloat 0.8s ease-out forwards;
+  box-shadow: 0 0 15px rgba(255, 153, 51, 0.8);
+}
+
+.cave-sparkle:nth-child(1) { top: 20%; left: 50%; animation-delay: 0s; transform: translate(-50%, -50%) scale(0); }
+.cave-sparkle:nth-child(2) { top: 50%; left: 80%; animation-delay: 0.1s; transform: translate(-50%, -50%) scale(0); }
+.cave-sparkle:nth-child(3) { top: 80%; left: 50%; animation-delay: 0.2s; transform: translate(-50%, -50%) scale(0); }
+.cave-sparkle:nth-child(4) { top: 50%; left: 20%; animation-delay: 0.15s; transform: translate(-50%, -50%) scale(0); }
+
+.cave-instructions-content {
+  position: relative;
+  width: 95%;
+  max-width: 1400px;
+  height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  padding: 0 60px;
+  animation: cave-contentFadeIn 0.5s ease-out 0.5s both;
+}
+
+.cave-instructions-ganesha {
+  flex: 0 0 40%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  animation: cave-slideInLeft 0.6s ease-out 0.8s both;
+}
+
+.cave-instructions-ganesha img {
+  width: 100%;
+  max-width: 450px;
+  height: auto;
+  filter: drop-shadow(0 0 30px rgba(255, 153, 51, 0.5)); /* Saffron Aura */
+  transform: scaleX(1); 
+}
+
+.cave-instructions-card {
+  flex: 0 0 45%;
+  background: #FFF8E7; /* Ancient Parchment */
+  border-radius: 30px;
+  padding: 50px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  animation: cave-slideInRight 0.6s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 4px solid #8B4513; /* Earth Border */
+}
+
+.cave-instructions-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 48px;
+  font-weight: 700;
+  color: #5D4037; /* Dark Earth */
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.cave-instructions-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 24px;
+  color: #8D6E63; /* Stone Brown */
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
+
+.cave-instructions-icons {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  margin-bottom: 45px;
+  width: 100%;
+}
+
+.cave-instruction-icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.cave-instruction-icon-item img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.cave-instruction-icon-label {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #5D4037;
+}
+
+.cave-instructions-button {
+  font-family: 'Baloo 2', cursive;
+  background: linear-gradient(135deg, #D35400 0%, #A04000 100%); /* Burnt Orange/Rust */
+  border: 2px solid #FFD700;
+  color: white;
+  padding: 20px 70px;
+  font-size: 28px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(211, 84, 0, 0.4);
+  text-transform: capitalize;
+}
+
+.cave-instructions-button:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(211, 84, 0, 0.6);
+  background: linear-gradient(135deg, #E67E22 0%, #BA4A00 100%);
+}
+
+.cave-instructions-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ===========================
+   POWER UNLOCK CELEBRATION MODAL (Cave Theme)
+   =========================== */
+.cave-power-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 600;
+  animation: cave-fadeIn 0.3s ease-out;
+}
+
+.cave-power-card {
+  background: #FFF8E7; /* Ancient Parchment */
+  border-radius: 30px;
+  padding: 50px;
+  max-width: 600px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  position: relative;
+  animation: cave-scaleIn 0.4s ease-out;
+  border: 4px solid #8B4513;
+}
+
+.cave-power-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 38px;
+  font-weight: 700;
+  color: #5D4037;
+  margin-bottom: 30px;
+  line-height: 1.2;
+}
+
+.cave-power-icon {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 25px;
+  object-fit: contain;
+  animation: cave-powerPulse 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(255, 153, 51, 0.4));
+}
+
+.cave-power-description {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: #5D4037;
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
+
+.cave-power-primary-button {
+  font-family: 'Baloo 2', cursive;
+  background: linear-gradient(135deg, #D35400 0%, #A04000 100%);
+  border: 2px solid #FFD700;
+  color: white;
+  padding: 18px 60px;
+  font-size: 24px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(211, 84, 0, 0.4);
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.cave-power-primary-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(211, 84, 0, 0.6);
+  background: linear-gradient(135deg, #E67E22 0%, #BA4A00 100%);
+}
+
+.cave-power-primary-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.cave-power-secondary-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.cave-power-secondary-button {
+  font-family: 'Nunito', sans-serif;
+  background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%); /* Teal Accent */
+  border: none;
+  color: white;
+  padding: 14px 35px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+  flex: 1;
+}
+
+.cave-power-secondary-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(78, 205, 196, 0.6);
+}
+
+.cave-power-secondary-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Animations */
+@keyframes cave-fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cave-scaleIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+@keyframes cave-slideInLeft { from { opacity: 0; transform: translateX(-100px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes cave-slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes cave-contentFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+@keyframes cave-sparklesFadeOut { 0% { opacity: 1; } 60% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes cave-sparkleFloat { 
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+}
+@keyframes cave-powerPulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(255, 153, 51, 0.5)); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 25px rgba(255, 153, 51, 0.8)); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cave-instructions-content { flex-direction: column; height: auto; padding: 20px; gap: 20px; }
+  .cave-instructions-ganesha { flex: 0 0 auto; }
+  .cave-instructions-ganesha img { max-width: 250px; }
+  .cave-instructions-card { flex: 0 0 auto; padding: 30px 25px; }
+  .cave-instructions-title { font-size: 28px; }
+  .cave-instructions-subtitle { font-size: 16px; }
+  .cave-instruction-icon-item img { width: 55px; height: 55px; }
+  .cave-instructions-button { font-size: 20px; padding: 14px 40px; }
+  
+  .cave-power-card { padding: 35px 25px; }
+  .cave-power-title { font-size: 30px; }
+  .cave-power-icon { width: 110px; height: 110px; }
+  .cave-power-description { font-size: 18px; }
+  .cave-power-primary-button { font-size: 20px; padding: 16px 45px; }
+  .cave-power-secondary-buttons { flex-direction: column; }
+  .cave-power-secondary-button { font-size: 16px; padding: 12px 30px; }
+}

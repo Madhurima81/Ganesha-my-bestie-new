@@ -53,10 +53,10 @@
   --zone-festival-soft: #FFE8D1;     /* Soft peach for secondary elements */
 
   /* 🏺 Meaning Cave (Mystery, Discovery, Wisdom) */
-  --zone-cave-base: #F2F1F7;         /* Soft Indigo Tint Wall */
-  --zone-cave-accent: #6A4C93;       /* Deep Temple Purple (Meaning) */
-  --zone-cave-shadow: rgba(106, 76, 147, 0.2);
-  --zone-cave-soft: #DED9E8;         /* Soft lavender for secondary elements */
+  --zone-cave-base: #EEDCC5;         /* Warm Sand Wall */
+  --zone-cave-accent: #8D4E2A;       /* Burnt Sienna (Earthy Meaning) */
+  --zone-cave-shadow: rgba(93, 51, 29, 0.3);
+  --zone-cave-soft: #F5E6D3;         /* Soft cream for secondary elements */
 
   /* 🌊 Shloka River (Peace, Flow, Learning) */
   --zone-river-base: #F4F9F4;        /* Pale Moss Tint Wall */

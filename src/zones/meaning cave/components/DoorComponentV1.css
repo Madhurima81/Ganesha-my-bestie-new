@@ -3,11 +3,11 @@
 /* ✅ SAFE: Lower z-index, scoped styles */
 .door-component {
   position: absolute;
-  top: -12%;
+  top: 420px;
   left: 50%;
   transform: translateX(-50%);
-  width: 450px;
-  height: 550px;
+  width: 550px;
+  height: 650px;
   z-index: 15; /* ← SAFE: Lower than symbol popup */
   pointer-events: auto;
 }
@@ -452,8 +452,9 @@
 /* ✅ SAFE: Mobile responsive - SCOPED */
 @media (max-width: 768px) {
   .door-component {
-    width: 320px;
-    height: 400px;
+    width: 380px;
+    height: 480px;
+    top: 180px;
   }
   
   .door-target-word h2 {

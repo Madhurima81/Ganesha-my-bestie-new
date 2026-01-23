@@ -1,6 +1,7 @@
 // zones/cave-of-secrets/components/RescueModal.jsx
 import React, { useState } from 'react';
 import './RescueModal.css';
+import UnifiedButtonV2 from './UnifiedButtonV2';
 
 const RescueModal = ({
   show,
@@ -165,9 +166,14 @@ const RescueModal = ({
               <p className="animal-saved-clean">{wordData.animalSavedMessage}</p>
               
               {/* Continue Button */}
-              <button className="rescue-continue-btn" onClick={handleContinue}>
+              <UnifiedButtonV2
+                variant="success"
+                size="large"
+                heartbeat={true}
+                onClick={handleContinue}
+              >
                 Continue Adventure →
-              </button>
+              </UnifiedButtonV2>
             </div>
           )}
 

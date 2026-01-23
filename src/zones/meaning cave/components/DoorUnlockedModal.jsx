@@ -1,6 +1,7 @@
 // zones/cave-of-secrets/components/DoorUnlockedModal.jsx
 import React from 'react';
 import './DoorUnlockedModal.css';
+import UnifiedButtonV2 from './UnifiedButtonV2';
 
 const DoorUnlockedModal = ({ 
   show,
@@ -58,17 +59,13 @@ const DoorUnlockedModal = ({
         </p>
         
         {/* Start Button */}
-        <button 
-          className="door-unlocked-button" 
+        <UnifiedButtonV2
+          variant="success"
+          size="large"
           onClick={onStart}
-          style={{
-            background: buttonColor,
-            color: buttonTextColor,
-            boxShadow: `0 4px 15px ${buttonColor}60`
-          }}
         >
           {buttonText}
-        </button>
+        </UnifiedButtonV2>
       </div>
     </div>
   );

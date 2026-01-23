@@ -1,8 +1,6 @@
 // zones/cave-of-secrets/scenes/vakratunda-mahakaya/CaveSceneFixed.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import './CaveSceneFixed.css';
-import '../../../../lib/styles/zone-themes.css';
-import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
 
 // Import scene management components
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
@@ -32,7 +30,6 @@ import BackToMapButton from '../../../../lib/components/navigation/BackToMapButt
 import RescueModal from '../../components/RescueModal';
 import { RESCUE_CONFIGS } from '../../config/RescueConfigs';
 import SymbolSidebar from '../../components/SymbolSidebar';
-import UnifiedHeaderV2 from '../../components/UnifiedHeaderV2';
 
 import ClickDotsPathGame from './ClickDotsPathGame';
 import mooshikaTracing from './assets/images/mooshika-tracing.png';
@@ -41,7 +38,7 @@ import mooshikaTracing from './assets/images/mooshika-tracing.png';
 import SanskritSidebar from '../../../../lib/components/feedback/SanskritSidebar';
 import doorImage from './assets/images/door-image.png';
 
-import UnifiedModal from '../../../../lib/components/ui/Modal/UnifiedModal';
+import DoorUnlockedModal from '../../components/DoorUnlockedModal';
 
 import DoorComponent from '../../components/DoorComponent';
 import ganeshaComplete from './assets/images/ganesha-complete.png';
@@ -284,15 +281,6 @@ const CaveSceneContent = ({
   const [showPowerMission, setShowPowerMission] = useState(false); // Can be used if needed
   const [currentMissionSymbol, setCurrentMissionSymbol] = useState(null);
 
-  // Discovery overlay states
-const [showDiscoveryFlip1, setShowDiscoveryFlip1] = useState(false);
-const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false);
-
-// Resume popup
-const [showResumePopup, setShowResumePopup] = useState(false);
-const [resumeMessage, setResumeMessage] = useState('');
-const resumePopupTimeoutRef = useRef(null);
-const reloadHandledRef = useRef(false);
 
   // Refs
   const timeoutsRef = useRef([]);
@@ -377,35 +365,25 @@ const reloadHandledRef = useRef(false);
 
     return (
       <div className="tracing-area" id="tracing-area">
- <ClickDotsPathGame
-  mooshikaImage={mooshikaTracing}
-  ganeshaImage={ganeshaComplete}
-  onComplete={() => {
-    console.log('🎯 Dots completed!');
-    completeTracing();
-  }}
-  onProgress={(progressPercent, currentDot) => {
-    sceneActions.updateState({
-      traceProgress: progressPercent,
-      currentPathSegment: currentDot
-    });
-  }}
-  disabled={false}
-  showDebug={true}
-  initialDot={sceneState.currentPathSegment || 0}
-  initialProgress={sceneState.traceProgress || 0}
-  isResuming={isReload && sceneState.tracingStarted && !sceneState.tracingCompleted}
-  
-  // ✅ ADD THIS LINE
-  onInteraction={() => {
-    if (showResumePopup) {
-      setShowResumePopup(false);
-      if (resumePopupTimeoutRef.current) {
-        clearTimeout(resumePopupTimeoutRef.current);
-      }
-    }
-  }}
-/>
+        <ClickDotsPathGame
+          mooshikaImage={mooshikaTracing}
+          ganeshaImage={ganeshaComplete}
+          onComplete={() => {
+            console.log('🎉 Dots completed!');
+            completeTracing();
+          }}
+          onProgress={(progressPercent, currentDot) => {
+            sceneActions.updateState({
+              traceProgress: progressPercent,
+              currentPathSegment: currentDot
+            });
+          }}
+          disabled={false}
+          showDebug={true}
+          initialDot={sceneState.currentPathSegment || 0}
+          initialProgress={sceneState.traceProgress || 0}
+          isResuming={isReload && sceneState.tracingStarted && !sceneState.tracingCompleted}
+        />
       </div>
     );
   };
@@ -462,7 +440,6 @@ const reloadHandledRef = useRef(false);
   useEffect(() => {
     return () => {
       timeoutsRef.current.forEach(id => clearTimeout(id));
-          reloadHandledRef.current = false; // 🔧 ADD THIS LINE
     };
   }, []);
 
@@ -513,433 +490,8 @@ const reloadHandledRef = useRef(false);
     }
   ];
 
-  useEffect(() => {
-  if (!isReload || reloadHandledRef.current || !sceneState.welcomeShown) {
-    return;
-  }
-
-  console.log('🔄 RELOAD DETECTED - Phase:', sceneState.phase);
-  reloadHandledRef.current = true;
-
-  // ============================================
-  // DISCOVERY PHASES - SHOW OVERLAYS AGAIN
-  // ============================================
-  
-  if (sceneState.phase === CAVE_PHASES.VAKRATUNDA_LEARNING) {
-    console.log('📌 Reload: Discovery 1 - Showing again');
-    
-    sceneActions.updateState({
-      discoveredSymbols: {
-        ...sceneState.discoveredSymbols,
-        vakratunda: true
-      }
-    });
-    
-    setTimeout(() => setShowDiscoveryFlip1(true), 500);
-    return;
-  }
-  
-  if (sceneState.phase === CAVE_PHASES.MAHAKAYA_LEARNING) {
-    console.log('📌 Reload: Discovery 2 - Showing again');
-    
-    sceneActions.updateState({
-      discoveredSymbols: {
-        vakratunda: true,
-        mahakaya: true
-      }
-    });
-    
-    setTimeout(() => setShowDiscoveryFlip2(true), 500);
-    return;
-  }
-  
-  // ============================================
-  // DOOR & GAME PHASES
-  // ============================================
-  
-// ==================== DOOR PHASES ====================
-
-// Door 1 - Check if completed
-if (sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE) {
-  console.log('📌 Reload: Door 1 phase');
-  
-  const placedCount = sceneState.door1SyllablesPlaced?.length || 0;
-  
-  // ✅ If all 4 placed, don't show popup - let modal show
-  if (placedCount >= 4) {
-    console.log('📌 Door 1 complete (4/4), modal will show automatically');
-    return;
-  }
-  
-  // Only show resume if incomplete
-  setResumeMessage(`Continue placing syllables! ${placedCount}/4 placed!`);
-  setShowResumePopup(true);
-  
-  if (resumePopupTimeoutRef.current) {
-    clearTimeout(resumePopupTimeoutRef.current);
-  }
-  resumePopupTimeoutRef.current = setTimeout(() => {
-    setShowResumePopup(false);
-  }, 5000);
-  
-  return;
-}
-
-// Door 1 Complete - Modal shows automatically
-if (sceneState.phase === CAVE_PHASES.DOOR1_COMPLETE) {
-  console.log('📌 Reload: Door 1 complete, showing modal');
-  // Don't show resume popup, modal will appear automatically
-  return;
-}
-
-// Door 2 - Check if completed
-if (sceneState.phase === CAVE_PHASES.DOOR2_ACTIVE) {
-  console.log('📌 Reload: Door 2 phase');
-  
-  const placedCount = sceneState.door2SyllablesPlaced?.length || 0;
-  
-  // ✅ If all 4 placed, don't show popup - let modal show
-  if (placedCount >= 4) {
-    console.log('📌 Door 2 complete (4/4), modal will show automatically');
-    return;
-  }
-  
-  // Only show resume if incomplete
-  setResumeMessage(`Continue placing syllables! ${placedCount}/4 placed!`);
-  setShowResumePopup(true);
-  
-  if (resumePopupTimeoutRef.current) {
-    clearTimeout(resumePopupTimeoutRef.current);
-  }
-  resumePopupTimeoutRef.current = setTimeout(() => {
-    setShowResumePopup(false);
-  }, 5000);
-  
-  return;
-}
-
-// Door 2 Complete - Modal shows automatically
-if (sceneState.phase === CAVE_PHASES.DOOR2_COMPLETE) {
-  console.log('📌 Reload: Door 2 complete, showing modal');
-  // Don't show resume popup, modal will appear automatically
-  return;
-}
-
-if (sceneState.phase === CAVE_PHASES.TRACE_ACTIVE) {
-  console.log('📌 Reload: Tracing phase');
-  
-  const traceProgress = sceneState.traceProgress || 0;
-  const currentDot = sceneState.currentPathSegment || 0;
-  
-  // ✅ If 100% complete, trigger the completion flow
-  if (traceProgress >= 100 || currentDot >= 10) {
-    console.log('📌 Tracing complete, triggering discovery');
-    
-    // Call completeTracing to set phase and show discovery
-    completeTracing();
-    
-    return;
-  }
-  
-  // Show resume popup for incomplete
-  setResumeMessage("Continue tracing Mooshika's curved path!");
-  setShowResumePopup(true);
-  
-  if (resumePopupTimeoutRef.current) {
-    clearTimeout(resumePopupTimeoutRef.current);
-  }
-  resumePopupTimeoutRef.current = setTimeout(() => {
-    setShowResumePopup(false);
-  }, 5000);
-  
-  return;
-}
-
-// Growing Phase (Body Parts)
-if (sceneState.phase === CAVE_PHASES.GROW_ACTIVE) {
-  console.log('📌 Reload: Mahakaya phase');
-  
-  sceneActions.updateState({
-    discoveredSymbols: {
-      ...sceneState.discoveredSymbols,
-      vakratunda: true
-    }
-  });
-  
-  const clickedStones = sceneState.stonesClicked || 0;
-  
-  // ✅ If all 4 clicked, trigger completion flow
-  if (clickedStones >= 4) {
-    console.log('📌 All stones clicked, triggering discovery');
-    
-    // Call completeGrowing to set phase and show discovery
-    completeGrowing();
-    
-    return;
-  }
-  
-  // Only show resume if incomplete
-  setResumeMessage(`Continue learning Mahakaya! Click the body parts (${clickedStones}/4)!`);
-  setShowResumePopup(true);
-  
-  if (resumePopupTimeoutRef.current) {
-    clearTimeout(resumePopupTimeoutRef.current);
-  }
-  resumePopupTimeoutRef.current = setTimeout(() => {
-    setShowResumePopup(false);
-  }, 5000);
-  
-  return;
-}
-
-// ✅ NEW: Tracing Complete (before discovery)
-if (sceneState.phase === CAVE_PHASES.TRACE_COMPLETE) {
-  console.log('📌 Reload: Tracing just completed, showing discovery');
-  
-  sceneActions.updateState({
-    discoveredSymbols: {
-      ...sceneState.discoveredSymbols,
-      vakratunda: true
-    }
-  });
-  
-  // Trigger discovery overlay immediately
-  setTimeout(() => {
-    setShowDiscoveryFlip1(true);
-  }, 500);
-  
-  return;
-}
-
-// ✅ NEW: Growing Complete (before discovery)
-if (sceneState.phase === CAVE_PHASES.GROW_COMPLETE) {
-  console.log('📌 Reload: Growing just completed, showing discovery');
-  
-  sceneActions.updateState({
-    discoveredSymbols: {
-      vakratunda: true,
-      mahakaya: true
-    }
-  });
-  
-  // Trigger discovery overlay immediately
-  setTimeout(() => {
-    setShowDiscoveryFlip2(true);
-  }, 500);
-  
-  return;
-}  
-  // ============================================
-  // COMPLETION PHASE
-  // ============================================
-  
-  if (sceneState.phase === CAVE_PHASES.COMPLETE) {
-    console.log('📌 Reload: Completion');
-    
-    sceneActions.updateState({
-      discoveredSymbols: {
-        vakratunda: true,
-        mahakaya: true
-      }
-    });
-    
-    if (!sceneState.showingCompletionScreen) {
-      setTimeout(() => setShowSceneCompletion(true), 500);
-    }
-    
-    return;
-  }
-
-}, [isReload, sceneState.phase, sceneState.welcomeShown]);
-
-  // ==================== RELOAD HANDLING ====================
-/*useEffect(() => {
-  if (!isReload || reloadHandledRef.current || !sceneState.welcomeShown) {
-    return;
-  }
-
-  console.log('🔄 RELOAD DETECTED - Phase:', sceneState.phase); // ← ADD THIS
-  console.log('🔄 Expected:', CAVE_PHASES.VAKRATUNDA_LEARNING); // ← ADD THIS
-
-  console.log('🔄 RELOAD - Resuming from:', sceneState.phase);
-  reloadHandledRef.current = true;
-
-  // ============================================
-  // DISCOVERY PHASES - SHOW OVERLAYS AGAIN
-  // ============================================
-  
-  if (sceneState.phase === CAVE_PHASES.VAKRATUNDA_LEARNING) {
-    console.log('📌 Reload: Discovery 1 - Showing again');
-    
-    sceneActions.updateState({
-      discoveredSymbols: {
-        ...sceneState.discoveredSymbols,
-        vakratunda: true
-      }
-    });
-    
-    setTimeout(() => setShowDiscoveryFlip1(true), 500);
-    return;
-  }
-  
-  if (sceneState.phase === CAVE_PHASES.MAHAKAYA_LEARNING) {
-    console.log('📌 Reload: Discovery 2 - Showing again');
-    
-    sceneActions.updateState({
-      discoveredSymbols: {
-        vakratunda: true,
-        mahakaya: true
-      }
-    });
-    
-    setTimeout(() => setShowDiscoveryFlip2(true), 500);
-    return;
-  }
-
-  // ✅ ADD: Tracing Complete (before discovery)
-if (sceneState.phase === CAVE_PHASES.TRACE_COMPLETE) {
-  console.log('📌 Reload: Tracing just completed, showing discovery');
-  
-  sceneActions.updateState({
-    discoveredSymbols: {
-      ...sceneState.discoveredSymbols,
-      vakratunda: true
-    }
-  });
-  
-  // Trigger discovery overlay immediately
-  setTimeout(() => {
-    setShowDiscoveryFlip1(true);
-  }, 500);
-  
-  return;
-}
-
-// ✅ ADD: Growing Complete (before discovery)
-if (sceneState.phase === CAVE_PHASES.GROW_COMPLETE) {
-  console.log('📌 Reload: Growing just completed, showing discovery');
-  
-  sceneActions.updateState({
-    discoveredSymbols: {
-      vakratunda: true,
-      mahakaya: true
-    }
-  });
-  
-  // Trigger discovery overlay immediately
-  setTimeout(() => {
-    setShowDiscoveryFlip2(true);
-  }, 500);
-  
-  return;
-}
-  
-  // ============================================
-  // GAMEPLAY PHASES - RESUME POPUPS
-  // ============================================
-  
-if (sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE) {
-  console.log('📌 Reload: Door 1 phase');
-  
-  // ✅ FIX: Use door1SyllablesPlaced array length
-  const placedCount = sceneState.door1SyllablesPlaced?.length || 0;
-  setResumeMessage(`Continue placing syllables! ${placedCount}/4 placed!`);
-  setShowResumePopup(true);
-  
-  if (resumePopupTimeoutRef.current) {
-    clearTimeout(resumePopupTimeoutRef.current);
-  }
-  resumePopupTimeoutRef.current = setTimeout(() => {
-    setShowResumePopup(false);
-  }, 5000);
-  
-  return;
-}
-
-if (sceneState.phase === CAVE_PHASES.TRACE_ACTIVE) {
-  console.log('📌 Reload: Tracing phase');
-  
-  setResumeMessage("Continue tracing Mooshika's curved path!");
-  setShowResumePopup(true);
-  
-  if (resumePopupTimeoutRef.current) {
-    clearTimeout(resumePopupTimeoutRef.current);
-  }
-  resumePopupTimeoutRef.current = setTimeout(() => {
-    setShowResumePopup(false);
-  }, 5000);
-  
-  return;
-}
-
-if (sceneState.phase === CAVE_PHASES.DOOR2_ACTIVE) {
-  console.log('📌 Reload: Door 1 phase');
-  
-  // ✅ FIX: Use door1SyllablesPlaced array length
-  const placedCount = sceneState.door2SyllablesPlaced?.length || 0;
-  setResumeMessage(`Continue placing syllables! ${placedCount}/4 placed!`);
-  setShowResumePopup(true);
-  
-  if (resumePopupTimeoutRef.current) {
-    clearTimeout(resumePopupTimeoutRef.current);
-  }
-  resumePopupTimeoutRef.current = setTimeout(() => {
-    setShowResumePopup(false);
-  }, 5000);
-  
-  return;
-}
-  
-if (sceneState.phase === CAVE_PHASES.GROW_ACTIVE) {
-  console.log('📌 Reload: Mahakaya phase');
-  
-  sceneActions.updateState({
-    discoveredSymbols: {
-      ...sceneState.discoveredSymbols,
-      vakratunda: true
-    }
-  });
-  
-  // ✅ FIX: Use stonesClicked (it's a NUMBER, not array)
-  const clickedStones = sceneState.stonesClicked || 0;
-  setResumeMessage(`Continue learning Mahakaya! Click the body parts (${clickedStones}/4)!`);
-  setShowResumePopup(true);
-  
-  if (resumePopupTimeoutRef.current) {
-    clearTimeout(resumePopupTimeoutRef.current);
-  }
-  resumePopupTimeoutRef.current = setTimeout(() => {
-    setShowResumePopup(false);
-  }, 5000);
-  
-  return;
-}
-  
-  // ============================================
-  // COMPLETION
-  // ============================================
-  
-  if (sceneState.phase === CAVE_PHASES.COMPLETE) {
-    console.log('📌 Reload: Completion');
-    
-    sceneActions.updateState({
-      discoveredSymbols: {
-        vakratunda: true,
-        mahakaya: true
-      }
-    });
-    
-    if (!sceneState.showingCompletionScreen) {
-      setTimeout(() => setShowSceneCompletion(true), 500);
-    }
-    
-    return;
-  }
-
-}, [isReload, sceneState.phase, sceneState.welcomeShown]);
-
   // Reload Logic
-  /*useEffect(() => {
+  useEffect(() => {
     if (!isReload || !sceneState) return;
     if (isManualReset) return;
    
@@ -970,17 +522,10 @@ if (sceneState.phase === CAVE_PHASES.GROW_ACTIVE) {
     
     // Normal reload state clearing
     sceneActions.updateState({ isReloadingGameCoach: false });
-  }, [isReload]);*/
+  }, [isReload]);
 
 
 const handleDoor1SyllablePlaced = (syllable) => {
-    if (showResumePopup) {
-    setShowResumePopup(false);
-    if (resumePopupTimeoutRef.current) {
-      clearTimeout(resumePopupTimeoutRef.current);
-    }
-  }
-
   const now = Date.now();
   if (now - lastClickTime.current < 300) return;
   if (sceneState.phase !== CAVE_PHASES.DOOR1_ACTIVE) return;
@@ -1023,13 +568,6 @@ const handleDoor1Complete = () => {
 };
 
   const handleDoor2SyllablePlaced = (syllable) => {
-      if (showResumePopup) {
-    setShowResumePopup(false);
-    if (resumePopupTimeoutRef.current) {
-      clearTimeout(resumePopupTimeoutRef.current);
-    }
-  }
-
     const now = Date.now();
     if (now - lastClickTime.current < 300) return;
     if (sceneState.phase !== CAVE_PHASES.DOOR2_ACTIVE) return;
@@ -1078,26 +616,18 @@ const handleDoor1Complete = () => {
     
     sceneActions.updateState({
       tracingCompleted: true,
-    phase: CAVE_PHASES.VAKRATUNDA_LEARNING  // ✅ CHANGE: Set to learning phase
+      phase: CAVE_PHASES.TRACE_COMPLETE
     });
 
     safeSetTimeout(() => {
-setTimeout(() => {
-  setShowDiscoveryFlip1(true);
-}, 1500);    }, 500);
+      completeSymbolLearning('vakratunda');
+    }, 500);
   };
 
   const handleStoneClick = (stoneId) => {
-    
     const stone = sceneState.floatingStones.find(s => s.id === stoneId);
     if (!stone || stone.clicked) return;
-
-     if (showResumePopup) {
-    setShowResumePopup(false);
-    if (resumePopupTimeoutRef.current) {
-      clearTimeout(resumePopupTimeoutRef.current);
-    }
-  }
+    
     if (progressiveHintRef.current?.hideHint) {
       progressiveHintRef.current.hideHint();
     }
@@ -1116,7 +646,6 @@ setTimeout(() => {
       ganeshaSize: scalingSizes[newStonesClicked - 1] || 0.8,
       ganeshaGlow: glowSizes[newStonesClicked - 1] || 0.2,
       ganeshaAnimation: 'growing',
-
     });
     
     setShowSparkle(`stone-${stoneId}-clicked`);
@@ -1137,17 +666,16 @@ setTimeout(() => {
     
     sceneActions.updateState({
       growingCompleted: true,
-  phase: CAVE_PHASES.MAHAKAYA_LEARNING  // ✅ Set to learning phase
+      phase: CAVE_PHASES.GROW_COMPLETE
     });
 
     safeSetTimeout(() => {
-setTimeout(() => {
-  setShowDiscoveryFlip2(true);
-}, 1500);    }, 500);
+      completeSymbolLearning('mahakaya');
+    }, 500);
   };
 
   // Symbol Learning Flow
-  /*const completeSymbolLearning = (symbolKey) => {
+  const completeSymbolLearning = (symbolKey) => {
     console.log(`${symbolKey} symbol learned`);
     
     setShowCenteredSymbol(symbolKey);
@@ -1169,7 +697,7 @@ setTimeout(() => {
         setShowPowerModal(true);
       }, 2000);
     }, 5000);
-  };*/
+  };
 
   // Power Modal Handlers
   const handleSaveAnimal = () => {
@@ -1243,7 +771,6 @@ setTimeout(() => {
   }
 
   return (
-    <div data-zone="meaning-cave">
     <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
       <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
         <div className="pond-scene-container" data-phase={sceneState.phase}>
@@ -1309,39 +836,27 @@ setTimeout(() => {
             {!showPowerModal && !showRescueModal && !showCenteredSymbol && sceneState.welcomeShown && (
               <>
                 {sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE && !sceneState.door1Completed && (
-                  <UnifiedHeaderV2
-                    zone="meaning-cave"
-                    title="🔱 SPELL VAKRATUNDA! Drag the syllables in order!"
-                    currentRound={0}
-                    totalRounds={4}
-                  />
+                  <div className="phase-header">
+                    🔱 SPELL VAKRATUNDA! Drag the syllables in order!
+                  </div>
                 )}
-
+                
                 {sceneState.phase === CAVE_PHASES.TRACE_ACTIVE && !sceneState.tracingCompleted && (
-                  <UnifiedHeaderV2
-                    zone="meaning-cave"
-                    title="🐭 TRACE THE CURVED TRUNK! Follow the path!"
-                    currentRound={1}
-                    totalRounds={4}
-                  />
+                  <div className="phase-header">
+                    🐭 TRACE THE CURVED TRUNK! Follow the path!
+                  </div>
                 )}
-
+                
                 {sceneState.phase === CAVE_PHASES.DOOR2_ACTIVE && !sceneState.door2Completed && (
-                  <UnifiedHeaderV2
-                    zone="meaning-cave"
-                    title="🔱 SPELL MAHAKAYA! Arrange the syllables!"
-                    currentRound={2}
-                    totalRounds={4}
-                  />
+                  <div className="phase-header">
+                    🔱 SPELL MAHAKAYA! Arrange the syllables!
+                  </div>
                 )}
-
+                
                 {sceneState.phase === CAVE_PHASES.GROW_ACTIVE && sceneState.stonesClicked < 4 && (
-                  <UnifiedHeaderV2
-                    zone="meaning-cave"
-                    title="💎 CLICK THE SACRED STONES! Make Ganesha mighty!"
-                    currentRound={3}
-                    totalRounds={4}
-                  />
+                  <div className="phase-header">
+                    💎 CLICK THE SACRED STONES! Make Ganesha mighty!
+                  </div>
                 )}
               </>
             )}
@@ -1538,9 +1053,9 @@ setTimeout(() => {
 
 
             {/* Back Button */}
-         {sceneState.welcomeShown && !showSceneCompletion && (
-  <BackToMapButton onNavigate={onNavigate} />
-)}
+            {sceneState.welcomeShown && (
+              <BackToMapButton onNavigate={onNavigate} hideCoach={hideCoach} clearManualCloseTracking={clearManualCloseTracking} />
+            )}
 
             {/* Start Fresh Button */}
             <div 
@@ -1799,105 +1314,7 @@ modalCardBorderColor="#FFA500"
               profileName={profileName}
             />
 
-            
-            {/* ==================== DISCOVERY 1: VAKRATUNDA (Adaptability) ==================== */}
-{showDiscoveryFlip1 && (
-  <SimpleDiscoveryOverlay
-    // STAGE 1: Discovery Moment
-    celebrationTitle="Vakratunda Revealed!"
-    celebrationText="A curved path hides a special magic!"
-    celebrationImage={vakratundaCard}
-    
-    // STAGE 2: Adaptability Power Reveal
-    powerTitle="Adaptability Power Unlocked!"
-    powerText="Life isn't always straight… but just like Mooshika, you can follow twists and turns and still reach your goal!"
-    powerIcon={vakratundaSymbol}
-    
-    buttonText="⭐ Let's Make Him Grow!"
-onComplete={() => {
-      console.log("Discovery 1: Vakratunda learned!");
-      setShowDiscoveryFlip1(false);
-      
-      // Update learned words + move to Door 2
-      sceneActions.updateState({ 
-        phase: CAVE_PHASES.DOOR2_ACTIVE,
-        // 👇 THIS MATCHES YOUR SCREENSHOT
-        learnedWords: {
-          ...sceneState.learnedWords,
-          vakratunda: { learned: true, scene: 1 }
-        }
-      });
-    }}
-    showSparkles={true}
-  />
-)}
-
-{/* ==================== DISCOVERY 2: MAHAKAYA (Inner Strength) ==================== */}
-{showDiscoveryFlip2 && (
-  <SimpleDiscoveryOverlay
-    // STAGE 1: Discovery Moment
-    celebrationTitle="Mahakaya Revealed!"
-    celebrationText="Tiny to mighty—magic is growing!"
-    celebrationImage={mahakayaCard}
-    
-    // STAGE 2: Inner Strength Power Reveal
-    powerTitle="Inner Strength Unlocked!"
-    powerText="Even when you feel small, you have a big, mighty strength inside— just like Mahakaya!"
-    powerIcon={mahakayaSymbol}
-    
-    buttonText="⭐ Feel the Power!"
-onComplete={() => {
-      console.log("Discovery 2: Mahakaya learned! 🎆");
-      setShowDiscoveryFlip2(false);
-      
-      // Update learned words + complete scene
-      sceneActions.updateState({ 
-        phase: CAVE_PHASES.COMPLETE,
-        completed: true,
-        // 👇 THIS MATCHES YOUR SCREENSHOT (adding both ensures state is consistent)
-        learnedWords: {
-          ...sceneState.learnedWords,
-          vakratunda: { learned: true, scene: 1 },
-          mahakaya: { learned: true, scene: 1 }
-        }
-      });
-
-      setShowSparkle('final-fireworks');
-    }}
-
-
-      
-   
-    
-    
-    showSparkles={true}
-  />
-)}
-
-{/* ==================== RESUME POPUP ==================== */}
-{showResumePopup && (
-  <div style={{
-    position: 'fixed',
-    top: '20%',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    zIndex: 1000,
-    background: 'linear-gradient(135deg, #8B4513 0%, #D2691E 100%)',
-    color: 'white',
-    padding: '20px 40px',
-    borderRadius: '15px',
-    fontFamily: "'Baloo 2', cursive",
-    fontSize: '1.4rem',
-    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.3)',
-    border: '3px solid #FFD700',
-    textAlign: 'center',
-    animation: 'slideDown 0.3s ease'
-  }}>
-    {resumeMessage}
-  </div>
-)}
-
-{/* Final Fireworks */}
+            {/* Final Fireworks */}
             {showSparkle === 'final-fireworks' && (
               <Fireworks
                 show={true}
@@ -1926,7 +1343,6 @@ onComplete={() => {
                 }}
               />
             )}
-
 
             {/* Scene Completion */}
             <SceneCompletionCelebration
@@ -1964,17 +1380,18 @@ onComplete={() => {
                 resetScene();
               }}
               onContinue={() => {
-             
+          
+                
                 const profileId = localStorage.getItem('activeProfileId');
                 if (profileId) {
-                  /*ProgressManager.updateSceneCompletion(profileId, 'cave-of-secrets', 'vakratunda-mahakaya', {
+                  ProgressManager.updateSceneCompletion(profileId, 'cave-of-secrets', 'vakratunda-mahakaya', {
                     completed: true,
                     stars: 8,
                     symbols: {},
                     sanskritWords: { vakratunda: true, mahakaya: true },
                     learnedWords: sceneState.learnedWords || {},
                     chants: { vakratunda: true, mahakaya: true }
-                  });*/
+                  });
                 }
 
                 setTimeout(() => {
@@ -1982,10 +1399,6 @@ onComplete={() => {
                   onNavigate?.('scene-complete-continue');
                 }, 100);
               }}
-              onExploreZones={() => {
-  setShowSceneCompletion(false);
-  onNavigate?.('zones');
-}}
             />
 
             {/* Progressive Hints */}
@@ -2053,7 +1466,6 @@ onComplete={() => {
         </div>
       </MessageManager>
     </InteractionManager>
-    </div>
   );
 };
 

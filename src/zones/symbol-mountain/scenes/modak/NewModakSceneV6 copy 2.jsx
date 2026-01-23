@@ -7,7 +7,7 @@ import '../../../shared/components/OpeningModal.css'; // <--- SHARED MODAL IMPOR
 import '../../../../lib/styles/zone-themes.css';
 
 // Unified Components
-import UnifiedHeaderV2 from '../../../../lib/components/ui/Header/UnifiedHeaderV2';
+import UnifiedHeaderV2 from '../../shared/components/UnifiedHeaderV2';
 import UnifiedButtonV2 from '../../../../lib/components/ui/Button/UnifiedButtonV2';
 import UnifiedModal from '../../../../lib/components/ui/Modal/UnifiedModal';
 
@@ -1105,42 +1105,95 @@ const completeSymbolLearning = (symbolKey, symbolData) => {
   };*/
 
   return (
-    <div data-zone="symbol-mountain">
     <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
       <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
         <div className="modak-game-container">
           <div className="modak-game-background" style={{ backgroundImage: `url(${forestBackground})` }}>
-            {/* Phase Headers - Using UnifiedHeaderV2 */}
-{!showChoiceButtons && !showPowerMission && sceneState.welcomeShown && (
+            {/*{renderCounter()}
+{/* Phase Headers */}
+{!showChoiceButtons && !showPowerMission && sceneState.welcomeShown && ( 
   <>
     {/* 1. SEARCH PHASE */}
     {sceneState.phase === PHASES.MOOSHIKA_SEARCH && (
-      <UnifiedHeaderV2
-        zone="symbol-mountain"
-        title="🔍 WHERE IS MOOSHIKA? Click the mounds!"
-        currentRound={0}
-        totalRounds={3}
-      />
+      <div className="modak-game-phase-header">
+        WHERE IS MOOSHIKA? Click the mounds!
+      </div>
     )}
     
     {/* 2. MODAK COLLECTION PHASE */}
     {(sceneState.phase === PHASES.MODAKS_UNLOCKED || sceneState.phase === PHASES.SOME_COLLECTED) && !sceneState.basketFull && (
-      <UnifiedHeaderV2
-        zone="symbol-mountain"
-        title={`🍬 HELP MOOSHIKA! Collect ${sceneState.collectedModaks?.length || 0}/3 modaks!`}
-        currentRound={1}
-        totalRounds={3}
-      />
+      <div className="modak-game-phase-header">
+        <div>HELP MOOSHIKA! Click modaks to collect!</div>
+        
+        <div className="modak-header-content-row">
+          {/* Progress Bar 
+          <div className="modak-progress-track">
+            <div 
+              className="modak-progress-fill modak-collection"
+              style={{
+                width: `${((sceneState.collectedModaks?.length || 0) / 3) * 100}%`
+              }} 
+            />
+          </div>
+          {/* Hearts Display */}
+{/* Hearts Display and Counter in one row */}
+<div className="flex flex-row gap-3 justify-center items-center mb-4">
+  {[1, 2, 3].map((heart) => (
+    <span
+      key={heart}
+      className={`text-5xl transition-all duration-500 ${
+        (sceneState.collectedModaks?.length || 0) >= heart ? 'opacity-100' : 'opacity-30'
+      }`}
+    >
+      {(sceneState.collectedModaks?.length || 0) >= heart ? '❤️' : '🤍'}
+    </span>
+  ))}
+  <div className="modak-progress-text ml-3">
+    {sceneState.collectedModaks?.length || 0}/3
+  </div>
+</div>
+          {/* Counter */}
+          <div className="modak-progress-text">
+            {sceneState.collectedModaks?.length || 0}/3
+          </div>
+        </div>
+      </div>
     )}
 
     {/* 3. ROCK FEEDING PHASE */}
     {(sceneState.phase === PHASES.ROCK_VISIBLE || sceneState.phase === PHASES.ROCK_FEEDING) && !sceneState.rockTransformed && (
-      <UnifiedHeaderV2
-        zone="symbol-mountain"
-        title={`🪨 FEED GANESHA! Share ${sceneState.rockFeedCount || 0}/3 modaks!`}
-        currentRound={2}
-        totalRounds={3}
-      />
+      <div className="modak-game-phase-header">
+        <div>FEED GANESHA! Click modaks from basket!</div>
+        
+        <div className="modak-header-content-row">
+          {/* Progress Bar 
+          <div className="modak-progress-track">
+            <div 
+              className="modak-progress-fill rock-feeding"
+              style={{
+                width: `${((sceneState.rockFeedCount || 0) / 3) * 100}%`
+              }} 
+            />
+          </div>
+          {/* Hearts Display */}
+<div className="flex flex-row gap-3 justify-center items-center mb-4">
+    {[1, 2, 3].map((heart) => (
+    <div
+      key={heart}
+      className={`text-5xl transition-all duration-500 ${
+        (sceneState.rockFeedCount || 0) >= heart ? 'opacity-100' : 'opacity-30'
+      }`}
+    >
+      {(sceneState.rockFeedCount || 0) >= heart ? '❤️' : '🤍'}
+    </div>
+  ))}
+</div>
+          {/* Counter */}
+          <div className="modak-progress-text">
+            {sceneState.rockFeedCount || 0}/3
+          </div>
+        </div>
+      </div>
     )}
   </>
 )}
@@ -2130,10 +2183,9 @@ onHelp={() => {
             />
           )}
         
-        </div>
+        </div>       
       </MessageManager>
     </InteractionManager>
-    </div>
   );
 };
 

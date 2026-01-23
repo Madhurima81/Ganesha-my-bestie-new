@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unified Zone Header with Star Progress</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* =====================================================
+       UNIFIED ZONE HEADER WITH STAR PROGRESS
+       For: Shloka River, Symbol Mountain, Meaning Cave
+       ===================================================== */
+
+    :root {
+      /* Unified Color Tokens */
+      --header-bg-overlay: rgba(255, 255, 255, 0.25);
+      --header-border: #fff;
+      --header-text-main: #fff;
+      --header-text-shadow: rgba(0, 0, 0, 0.5);
+
+      /* Star Progress Colors */
+      --star-filled: #FFD700;
+      --star-empty: rgba(255, 255, 255, 0.3);
+      --star-glow: rgba(255, 215, 0, 0.6);
+
+      /* Zone-Specific Accent Colors */
+      --zone-accent-primary: #FFD700;
+      --zone-accent-secondary: #FFA500;
+    }
+
+    /* Demo body styling */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Baloo 2', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+    }
+
+    .demo-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+      padding: 40px 20px;
+    }
+
+    .zone-demo {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      height: 200px;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    /* Background images for demo */
+    .zone-demo.shloka {
+      background: linear-gradient(135deg, #4DD0E1 0%, #26C6DA 100%);
+    }
+
+    .zone-demo.symbol {
+      background: linear-gradient(135deg, #FFD700 0%, #FFA000 100%);
+    }
+
+    .zone-demo.cave {
+      background: linear-gradient(135deg, #FFC107 0%, #FF8F00 100%);
+    }
+
+    /* ==================== MAIN HEADER CONTAINER ==================== */
+    .unified-zone-header {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+
+      /* Layout */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+
+      /* Styling */
+      background: var(--header-bg-overlay);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 15px 40px;
+      border-radius: 25px;
+      border: 3px solid var(--header-border);
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+
+      /* Sizing */
+      min-width: 450px;
+      z-index: 900;
+
+      /* Animation */
+      transition: all 0.3s ease;
+      animation: headerSlideDown 0.5s ease-out;
+    }
+
+    /* ==================== HEADER TEXT ==================== */
+    .unified-zone-header .header-text {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--header-text-main);
+      text-shadow: 2px 2px 4px var(--header-text-shadow);
+      text-align: center;
+      margin: 0;
+      letter-spacing: 1px;
+    }
+
+    /* ==================== STAR PROGRESS CONTAINER ==================== */
+    .star-progress-container {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    /* Star Track */
+    .star-track {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Individual Star */
+    .star {
+      width: 32px;
+      height: 32px;
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+
+    /* Star SVG styling */
+    .star svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Empty Star */
+    .star.empty svg {
+      fill: var(--star-empty);
+      stroke: rgba(255, 255, 255, 0.5);
+      stroke-width: 2;
+    }
+
+    /* Filled Star */
+    .star.filled svg {
+      fill: var(--star-filled);
+      stroke: #FFA500;
+      stroke-width: 1.5;
+      filter: drop-shadow(0 0 8px var(--star-glow));
+      animation: starPulse 2s ease-in-out infinite;
+    }
+
+    /* Current Star (being filled) */
+    .star.current svg {
+      fill: url(#starGradient);
+      stroke: #FFA500;
+      stroke-width: 1.5;
+      animation: starGlow 1.5s ease-in-out infinite;
+    }
+
+    /* Progress Counter */
+    .progress-counter {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--header-text-main);
+      text-shadow: 2px 2px 4px var(--header-text-shadow);
+      margin: 0;
+      padding: 0;
+      white-space: nowrap;
+      min-width: 60px;
+      text-align: center;
+    }
+
+    /* ==================== ZONE-SPECIFIC BORDERS ==================== */
+    .zone-shloka-river {
+      border-color: #4DD0E1;
+    }
+
+    .zone-shloka-river .star.filled svg {
+      fill: #4DD0E1;
+      stroke: #00BCD4;
+    }
+
+    .zone-symbol-mountain {
+      border-color: #FFD700;
+    }
+
+    .zone-symbol-mountain .star.filled svg {
+      fill: #FFD700;
+      stroke: #FFA000;
+    }
+
+    .zone-meaning-cave {
+      border-color: #FFC107;
+    }
+
+    .zone-meaning-cave .star.filled svg {
+      fill: #FFC107;
+      stroke: #FF8F00;
+    }
+
+    /* ==================== ANIMATIONS ==================== */
+    @keyframes headerSlideDown {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -20px);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+    }
+
+    @keyframes starPulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.1);
+      }
+    }
+
+    @keyframes starGlow {
+      0%, 100% {
+        filter: drop-shadow(0 0 8px var(--star-glow));
+      }
+      50% {
+        filter: drop-shadow(0 0 16px rgba(255, 215, 0, 1));
+      }
+    }
+
+    @keyframes starFill {
+      0% {
+        transform: scale(0.5) rotate(-180deg);
+        opacity: 0;
+      }
+      60% {
+        transform: scale(1.2) rotate(10deg);
+      }
+      100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+      }
+    }
+
+    /* Star hover effect */
+    .star:hover {
+      transform: scale(1.15);
+    }
+
+    /* When a star gets filled, play animation */
+    .star.filled.just-filled svg {
+      animation: starFill 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards,
+                 starPulse 2s ease-in-out 0.5s infinite;
+    }
+
+    /* ==================== RESPONSIVE BREAKPOINTS ==================== */
+
+    /* Mobile Portrait (320px - 600px) */
+    @media (max-width: 600px) {
+      .unified-zone-header {
+        min-width: 90%;
+        max-width: 95%;
+        padding: 10px 20px;
+        border: 2px solid var(--header-border);
+      }
+
+      .unified-zone-header .header-text {
+        font-size: 20px;
+      }
+
+      .star {
+        width: 24px;
+        height: 24px;
+      }
+
+      .star-track {
+        gap: 6px;
+      }
+
+      .progress-counter {
+        font-size: 18px;
+      }
+    }
+
+    /* Tablets (768px - 1023px) */
+    @media (min-width: 768px) and (max-width: 1023px) {
+      .unified-zone-header {
+        min-width: 600px;
+        padding: 20px 45px;
+      }
+
+      .unified-zone-header .header-text {
+        font-size: 32px;
+      }
+
+      .star {
+        width: 36px;
+        height: 36px;
+      }
+
+      .progress-counter {
+        font-size: 28px;
+      }
+    }
+
+    /* Large Desktops (1920px+) */
+    @media (min-width: 1920px) {
+      .unified-zone-header .header-text {
+        font-size: 36px;
+      }
+
+      .star {
+        width: 40px;
+        height: 40px;
+      }
+
+      .progress-counter {
+        font-size: 32px;
+      }
+    }
+
+    /* ==================== HOVER EFFECTS ==================== */
+    .unified-zone-header:hover {
+      box-shadow: 0 12px 40px rgba(31, 38, 135, 0.5);
+    }
+
+    /* Demo Controls */
+    .demo-controls {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.95);
+      padding: 20px 30px;
+      border-radius: 50px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      display: flex;
+      gap: 15px;
+      z-index: 1000;
+    }
+
+    .demo-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 25px;
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 0 rgba(102, 126, 234, 0.5);
+    }
+
+    .demo-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 rgba(102, 126, 234, 0.5);
+    }
+
+    .demo-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 0 rgba(102, 126, 234, 0.5);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="demo-container">
+
+    <!-- Shloka River Zone Demo -->
+    <div class="zone-demo shloka">
+      <div class="unified-zone-header zone-shloka-river" id="header1">
+        <div class="header-text">VAKRATUNDA - Get Ready... 1</div>
+        <div class="star-progress-container">
+          <div class="star-track" id="stars1">
+            <!-- Stars will be generated by JS -->
+          </div>
+          <div class="progress-counter" id="counter1">0/5</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Symbol Mountain Zone Demo -->
+    <div class="zone-demo symbol">
+      <div class="unified-zone-header zone-symbol-mountain" id="header2">
+        <div class="header-text">EKADANTA - Power Up!</div>
+        <div class="star-progress-container">
+          <div class="star-track" id="stars2">
+            <!-- Stars will be generated by JS -->
+          </div>
+          <div class="progress-counter" id="counter2">0/8</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Meaning Cave Zone Demo -->
+    <div class="zone-demo cave">
+      <div class="unified-zone-header zone-meaning-cave" id="header3">
+        <div class="header-text">MAHAKAYA - Discover Meaning</div>
+        <div class="star-progress-container">
+          <div class="star-track" id="stars3">
+            <!-- Stars will be generated by JS -->
+          </div>
+          <div class="progress-counter" id="counter3">0/6</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Demo Controls -->
+  <div class="demo-controls">
+    <button class="demo-btn" onclick="addProgress(1)">+1 Shloka River</button>
+    <button class="demo-btn" onclick="addProgress(2)">+1 Symbol Mountain</button>
+    <button class="demo-btn" onclick="addProgress(3)">+1 Meaning Cave</button>
+    <button class="demo-btn" onclick="resetAll()">Reset All</button>
+  </div>
+
+  <!-- SVG Definitions (hidden) -->
+  <svg style="display: none;">
+    <defs>
+      <!-- Star shape path -->
+      <symbol id="starShape" viewBox="0 0 24 24">
+        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+      </symbol>
+
+      <!-- Gradient for current/partial star -->
+      <linearGradient id="starGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+        <stop offset="50%" style="stop-color:#FFA500;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:rgba(255,255,255,0.3);stop-opacity:1" />
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <script>
+    // Progress state for each zone
+    const progressState = {
+      1: { current: 0, total: 5 },
+      2: { current: 0, total: 8 },
+      3: { current: 0, total: 6 }
+    };
+
+    // Initialize stars for each zone
+    function initStars(zoneId) {
+      const starTrack = document.getElementById(`stars${zoneId}`);
+      const total = progressState[zoneId].total;
+
+      starTrack.innerHTML = '';
+
+      for (let i = 0; i < total; i++) {
+        const star = document.createElement('div');
+        star.className = 'star empty';
+        star.innerHTML = '<svg><use href="#starShape"/></svg>';
+        starTrack.appendChild(star);
+      }
+
+      updateStars(zoneId);
+    }
+
+    // Update star display based on progress
+    function updateStars(zoneId) {
+      const stars = document.querySelectorAll(`#stars${zoneId} .star`);
+      const current = progressState[zoneId].current;
+      const total = progressState[zoneId].total;
+
+      stars.forEach((star, index) => {
+        star.classList.remove('empty', 'filled', 'current', 'just-filled');
+
+        if (index < current) {
+          star.classList.add('filled');
+        } else if (index === current) {
+          star.classList.add('current');
+        } else {
+          star.classList.add('empty');
+        }
+      });
+
+      // Update counter
+      document.getElementById(`counter${zoneId}`).textContent = `${current}/${total}`;
+    }
+
+    // Add progress to a zone
+    function addProgress(zoneId) {
+      const state = progressState[zoneId];
+
+      if (state.current < state.total) {
+        state.current++;
+
+        // Add animation class to the newly filled star
+        const stars = document.querySelectorAll(`#stars${zoneId} .star`);
+        if (stars[state.current - 1]) {
+          stars[state.current - 1].classList.add('just-filled');
+
+          // Remove animation class after animation completes
+          setTimeout(() => {
+            stars[state.current - 1].classList.remove('just-filled');
+          }, 500);
+        }
+
+        updateStars(zoneId);
+      }
+    }
+
+    // Reset all zones
+    function resetAll() {
+      progressState[1].current = 0;
+      progressState[2].current = 0;
+      progressState[3].current = 0;
+
+      updateStars(1);
+      updateStars(2);
+      updateStars(3);
+    }
+
+    // Initialize all zones on load
+    window.addEventListener('DOMContentLoaded', () => {
+      initStars(1);
+      initStars(2);
+      initStars(3);
+    });
+
+    // Optional: Add click functionality to stars for manual testing
+    document.addEventListener('click', (e) => {
+      const star = e.target.closest('.star');
+      if (star) {
+        const track = star.closest('.star-track');
+        const zoneId = parseInt(track.id.replace('stars', ''));
+        const starIndex = Array.from(track.children).indexOf(star);
+
+        progressState[zoneId].current = starIndex + 1;
+        updateStars(zoneId);
+      }
+    });
+  </script>
+
+</body>
+</html>

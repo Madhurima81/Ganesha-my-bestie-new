@@ -44,7 +44,6 @@ import MahakayaGame from './MahakayaGame';
 // import WaterSpray from './components/WaterSpray';
 
 import useSafeClick from '../../core/hooks/useSafeClick';
-import UnifiedButtonV2 from '../../core/UnifiedButtonV2';
 
 // Character images
 import boyNamaste from './assets/images/boy-namaste.png';
@@ -620,10 +619,8 @@ const handleMissionComplete = () => {
         </div>
 
         {/* Call to Action */}
-        <UnifiedButtonV2
-          variant="success"
-          size="large"
-          heartbeat={true}
+        <button
+          className="river-instructions-button"
           onClick={() => {
             // 1. Mark welcome as shown
             sceneActions.updateState({
@@ -636,7 +633,7 @@ const handleMissionComplete = () => {
           }}
         >
           Let's Chant!
-        </UnifiedButtonV2>
+        </button>
       </div>
     </div>
   </div>
@@ -831,20 +828,13 @@ onClick={() => {
     🔄 Play Again
   </button>
   
-  <UnifiedButtonV2
-    variant="secondary"
-    onClick={handleSaveAnimal}
-  >
+  <button className="vakratunda-power-modal-btn save-btn" onClick={handleSaveAnimal}>
     🐾 Save an Animal
-  </UnifiedButtonV2>
-
-  <UnifiedButtonV2
-    variant="success"
-    heartbeat={true}
-    onClick={handleContinueLearning}
-  >
+  </button>
+  
+  <button className="vakratunda-power-modal-btn continue-btn" onClick={handleContinueLearning}>
     {currentWord === 'vakratunda' ? '🎵 Discover Mahakaya' : '✨ End Scene'}
-  </UnifiedButtonV2>
+  </button>
 </div>
       </div>
     </div>
@@ -882,23 +872,26 @@ onClick={() => {
 {/* MODE SELECTION MODAL - Shows BEFORE game starts */}
 {showModeSelection && !modeSelected && (
   <div className="vakratunda-mission-modal-overlay">
-    <div className="vakratunda-mission-modal mode-selection-modal" style={{ maxWidth: '600px', padding: '50px' }}>
-      <h2 className="vakratunda-mission-title" style={{ color: '#4CAF50', fontSize: '32px' }}>🎮 How do you want to play?</h2>
-      <p className="vakratunda-mission-description" style={{ fontSize: '18px', marginBottom: '40px' }}>
+    <div className="vakratunda-mission-modal mode-selection-modal">
+      <h2 className="vakratunda-mission-title">🎮 How do you want to play?</h2>
+      <p className="vakratunda-mission-description">
         Choose your learning style for <strong>{modeForPhase?.toUpperCase()}</strong>
       </p>
       
-      <div style={{
-        display: 'flex',
-        gap: '20px',
+      <div style={{ 
+        display: 'flex', 
+        gap: '20px', 
         marginTop: '30px',
-        flexDirection: 'column',
-        alignItems: 'center'
+        flexDirection: 'column'
       }}>
         {/* AUTO PLAY BUTTON */}
-        <UnifiedButtonV2
-          variant="primary"
-          size="large"
+        <button
+          className="vakratunda-mission-start-btn"
+          style={{
+            background: 'linear-gradient(135deg, #4CAF50 0%, #81C784 100%)',
+            padding: '20px',
+            fontSize: '16px'
+          }}
           onClick={() => {
             console.log(`🎮 Mode selected: AUTO for ${modeForPhase}`);
 
@@ -914,16 +907,20 @@ onClick={() => {
             });
           }}
         >
-          <div style={{ fontSize: '20px', fontWeight: '800', marginBottom: '6px' }}>▶️ Auto Play</div>
-          <div style={{ fontSize: '14px', fontWeight: '600', opacity: 0.95, lineHeight: '1.3' }}>
+          <div style={{ fontSize: '24px', marginBottom: '8px' }}>▶️ Auto Play</div>
+          <div style={{ fontSize: '13px', opacity: 0.9 }}>
             Start from Round 1 and learn step by step
           </div>
-        </UnifiedButtonV2>
-
+        </button>
+        
         {/* MANUAL BUTTON */}
-        <UnifiedButtonV2
-          variant="secondary"
-          size="large"
+        <button
+          className="vakratunda-mission-start-btn"
+          style={{
+            background: 'linear-gradient(135deg, #2196F3 0%, #64B5F6 100%)',
+            padding: '20px',
+            fontSize: '16px'
+          }}
           onClick={() => {
             console.log(`🎮 Mode selected: MANUAL for ${modeForPhase}`);
 
@@ -939,11 +936,11 @@ onClick={() => {
             });
           }}
         >
-          <div style={{ fontSize: '20px', fontWeight: '800', marginBottom: '6px' }}>🎯 Choose a Round</div>
-          <div style={{ fontSize: '14px', fontWeight: '600', opacity: 0.95, lineHeight: '1.3' }}>
+          <div style={{ fontSize: '24px', marginBottom: '8px' }}>🎯 Choose a Round</div>
+          <div style={{ fontSize: '13px', opacity: 0.9 }}>
             Pick any round you like and practice!
           </div>
-        </UnifiedButtonV2>
+        </button>
       </div>
     </div>
   </div>

@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UnifiedModal Preview - Cave Zone</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* ==========================================
+       ZONE COLORS - MEANING CAVE
+       ========================================== */
+    :root {
+      /* Cave Zone Colors */
+      --zone-current-base: #EEDCC5;         /* Warm Sand */
+      --zone-current-accent: #8D4E2A;       /* Burnt Sienna */
+      --zone-current-shadow: #5D331D;       /* Deep Umber */
+      --zone-current-soft: #F5E6D3;         /* Soft Cream */
+
+      /* Text Colors */
+      --play-text-main: #4E342E;            /* Deep Cocoa Brown */
+      --play-joy-gold: #FFD700;
+    }
+
+    /* ==========================================
+       UNIFIED MODAL - ZONE-ADAPTIVE
+       ========================================== */
+
+    /* Overlay */
+    .unified-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 10000;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(4px);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      animation: modalFadeIn 0.3s ease-out;
+    }
+
+    /* MODAL CONTAINER - THE STICKER CARD */
+    .unified-modal-container {
+      position: relative;
+
+      /* Always Cream Background */
+      background: #FFF9F2;
+
+      /* 3D Sticker Effect - Uses Zone Variables */
+      border: 5px solid var(--zone-current-accent);
+      border-radius: 35px;
+      box-shadow:
+        0 10px 0 var(--zone-current-shadow),
+        0 15px 30px rgba(0, 0, 0, 0.3);
+
+      /* Layout */
+      padding: 40px 50px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+
+      /* Animation */
+      animation: modalSlideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+      /* Prevent background scroll */
+      overflow-y: auto;
+      max-height: 90vh;
+    }
+
+    /* CLOSE BUTTON (X) */
+    .unified-modal__close-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+
+      background: transparent;
+      border: none;
+
+      font-size: 28px;
+      color: var(--zone-current-accent);
+
+      width: 40px;
+      height: 40px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      border-radius: 50%;
+    }
+
+    .unified-modal__close-btn:hover {
+      background: var(--zone-current-soft);
+      transform: scale(1.1);
+    }
+
+    /* ICON/IMAGE */
+    .unified-modal__icon-container {
+      margin: 0 0 25px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .unified-modal__icon {
+      object-fit: contain;
+      animation: iconBounce 1s ease-in-out infinite;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+    }
+
+    /* TITLE */
+    .unified-modal__title {
+      font-family: 'Baloo 2', cursive;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--play-text-main);
+      margin: 0 0 20px 0;
+      letter-spacing: 0.5px;
+      line-height: 1.2;
+    }
+
+    /* CONTENT */
+    .unified-modal__content {
+      font-family: 'Nunito', 'Poppins', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--play-text-main);
+      opacity: 0.9;
+      line-height: 1.6;
+      margin: 0 0 30px 0;
+    }
+
+    .unified-modal__content p {
+      margin: 0 0 15px 0;
+    }
+
+    .unified-modal__content p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* ACTION BUTTONS */
+    .unified-modal__actions {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+      margin-top: 25px;
+    }
+
+    /* ==========================================
+       UNIFIED BUTTON COMPONENT (From Button.css)
+       ========================================== */
+    .unified-button {
+      /* Base Structure */
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      /* Typography */
+      font-family: 'Poppins', 'Segoe UI', sans-serif;
+      font-weight: 600;
+      text-align: center;
+
+      /* Pill Shape */
+      border-radius: 25px;
+
+      /* 4px white border (3D sticker border) */
+      border: 4px solid #FFFFFF;
+
+      /* Cursor */
+      cursor: pointer;
+
+      /* Smooth transitions */
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+      /* Remove default button styles */
+      outline: none;
+      user-select: none;
+    }
+
+    /* Primary - Action Green */
+    .unified-button--primary {
+      background: #8ED641;
+      color: #4E342E;
+      box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.1),
+        0 2px 4px rgba(142, 214, 65, 0.2);
+    }
+
+    .unified-button--primary:hover {
+      background: #7EC737;
+      transform: translateY(-2px) scale(1.02);
+      box-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.2),
+        0 0 20px rgba(142, 214, 65, 0.3);
+    }
+
+    .unified-button--primary:active {
+      transform: translateY(0) scale(0.98);
+      box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.1),
+        0 0 10px rgba(142, 214, 65, 0.3);
+    }
+
+    /* Size: Large */
+    .unified-button--large {
+      padding: 16px 40px;
+      font-size: 20px;
+      min-height: 60px;
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      .unified-button--large {
+        padding: 14px 32px;
+        font-size: 18px;
+        min-height: 56px;
+      }
+    }
+
+    /* ANIMATIONS */
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes modalSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes iconBounce {
+      0%, 100% {
+        transform: translateY(0) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-10px) rotate(5deg);
+      }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .unified-modal-container {
+        padding: 30px 35px;
+        max-width: 90%;
+        border-radius: 25px;
+        border-width: 4px;
+        box-shadow:
+          0 8px 0 var(--zone-current-shadow),
+          0 12px 25px rgba(0, 0, 0, 0.3);
+      }
+
+      .unified-modal__title {
+        font-size: 2rem;
+        margin-bottom: 15px;
+      }
+
+      .unified-modal__content {
+        font-size: 1.1rem;
+        margin-bottom: 25px;
+      }
+
+      .unified-modal__icon {
+        max-width: 100px;
+        max-height: 100px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .unified-modal-container {
+        padding: 25px 25px;
+        border-radius: 20px;
+      }
+
+      .unified-modal__title {
+        font-size: 1.75rem;
+        margin-bottom: 12px;
+      }
+
+      .unified-modal__content {
+        font-size: 1rem;
+        margin-bottom: 20px;
+      }
+
+      .unified-modal__icon {
+        max-width: 90px;
+        max-height: 90px;
+      }
+
+      .unified-modal__close-btn {
+        top: 10px;
+        right: 10px;
+        width: 35px;
+        height: 35px;
+        font-size: 24px;
+      }
+    }
+
+    /* Control Panel */
+    .control-panel {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      z-index: 20000;
+    }
+
+    .control-panel h3 {
+      margin: 0 0 15px 0;
+      font-size: 1.1rem;
+      color: #333;
+    }
+
+    .control-panel button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 8px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 600;
+    }
+
+    .control-panel button:hover {
+      background: #2980b9;
+    }
+
+    .zone-label {
+      background: var(--zone-current-accent);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Control Panel -->
+  <div class="control-panel">
+    <h3>🎨 Zone Colors Preview</h3>
+    <div class="zone-label">Meaning Cave (Brown)</div>
+    <button onclick="changeZone('cave')">Cave (Brown) ✓</button>
+    <button onclick="changeZone('river')">River (Green)</button>
+    <button onclick="changeZone('aboutme')">About-Me (Terracotta)</button>
+    <button onclick="changeZone('mountain')">Mountain (Slate)</button>
+    <button onclick="changeZone('festival')">Festival (Marigold)</button>
+  </div>
+
+  <!-- Modal -->
+  <div class="unified-modal-overlay">
+    <div class="unified-modal-container">
+
+      <!-- Close Button -->
+      <button class="unified-modal__close-btn" aria-label="Close modal">
+        ✕
+      </button>
+
+      <!-- Icon/Image -->
+      <div class="unified-modal__icon-container">
+        <div class="unified-modal__icon" style="width: 120px; height: 120px; background: linear-gradient(135deg, #8D4E2A 0%, #D2691E 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem;">
+          🕉️
+        </div>
+      </div>
+
+      <!-- Title -->
+      <h2 class="unified-modal__title">
+        Door Unlocked!
+      </h2>
+
+      <!-- Content -->
+      <div class="unified-modal__content">
+        <p>You chanted VAKRATUNDA! Now trace the curved trunk to discover its power.</p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="unified-modal__actions">
+        <button class="unified-button unified-button--primary unified-button--large">
+          Start Tracing
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const zoneColors = {
+      cave: {
+        base: '#EEDCC5',
+        accent: '#8D4E2A',
+        shadow: '#5D331D',
+        soft: '#F5E6D3',
+        text: '#4E342E',
+        name: 'Meaning Cave (Brown)'
+      },
+      river: {
+        base: '#F4F9F4',
+        accent: '#2D5A27',
+        shadow: 'rgba(45, 90, 39, 0.2)',
+        soft: '#E8F5E9',
+        text: '#1B5E20',
+        name: 'Shloka River (Green)'
+      },
+      aboutme: {
+        base: '#FFFDF2',
+        accent: '#8D4B38',
+        shadow: 'rgba(141, 75, 56, 0.2)',
+        soft: '#FFF5E6',
+        text: '#5D4037',
+        name: 'About-Me Hut (Terracotta)'
+      },
+      mountain: {
+        base: '#F0F7F7',
+        accent: '#52727E',
+        shadow: 'rgba(82, 114, 126, 0.2)',
+        soft: '#E0F2F1',
+        text: '#37474F',
+        name: 'Symbol Mountain (Slate)'
+      },
+      festival: {
+        base: '#FFF9F0',
+        accent: '#E67E22',
+        shadow: 'rgba(230, 126, 34, 0.2)',
+        soft: '#FFF3E0',
+        text: '#E65100',
+        name: 'Festival Square (Marigold)'
+      }
+    };
+
+    function changeZone(zone) {
+      const colors = zoneColors[zone];
+      document.documentElement.style.setProperty('--zone-current-base', colors.base);
+      document.documentElement.style.setProperty('--zone-current-accent', colors.accent);
+      document.documentElement.style.setProperty('--zone-current-shadow', colors.shadow);
+      document.documentElement.style.setProperty('--zone-current-soft', colors.soft);
+      document.documentElement.style.setProperty('--play-text-main', colors.text);
+
+      document.querySelector('.zone-label').textContent = colors.name;
+      document.body.style.background = `linear-gradient(135deg, ${colors.accent} 0%, ${colors.base} 100%)`;
+    }
+
+    // Close modal on overlay click
+    document.querySelector('.unified-modal-overlay').addEventListener('click', function(e) {
+      if (e.target === this) {
+        console.log('Overlay clicked - would close modal');
+      }
+    });
+
+    // Close button
+    document.querySelector('.unified-modal__close-btn').addEventListener('click', function() {
+      console.log('Close button clicked - would close modal');
+    });
+  </script>
+
+</body>
+</html>

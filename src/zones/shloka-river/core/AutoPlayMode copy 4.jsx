@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSafeClick } from './hooks/useSafeClick';
 import UniversalPauseButton from './UniversalPauseButton';
 import PauseModal from './PauseModal';
-import UnifiedHeaderV2 from './UnifiedHeaderV2';
+import UnifiedHeader from './UnifiedHeader';
 
 const getHeaderClassName = (gameConfig) => {
   const classNames = {
@@ -508,20 +508,20 @@ const renderElephant = (syllable, index) => {
     return (
       <button
         key={`elephant-${syllable}`}
-        className={`${gamePrefix}-clicker-element`}
+                className={`${gamePrefix}-clicker-element`}  // ← ADD THIS LINE
+
         style={{
           position: 'absolute',
-          left: position.left,
-          top: position.top,
-          border: 'none',
-          background: 'transparent',
+          //left: position.left,
+          //top: position.top,
+          //width: '120px', height: '120px',
+          border: 'none', background: 'transparent',
           cursor: clickable ? 'pointer' : 'default',
-          zIndex: 20,
-          borderRadius: '50%',
+          zIndex: 20, borderRadius: '50%',
           opacity: clickable || clicked ? 1 : 0.6,
-          transform: singing ? 'scale(1.15)' : 'scale(1)',
-          filter: singing ? 'brightness(1.4) drop-shadow(0 0 15px #FFD700)' :
-                  next && !clicked ? 'brightness(1.2) drop-shadow(0 0 8px #FF9800)' :
+          transform:  + (singing ? 'scale(1.15)' : 'scale(1)'),
+          filter: singing ? 'brightness(1.4) drop-shadow(0 0 15px #FFD700)' : 
+                  next && !clicked ? 'brightness(1.2) drop-shadow(0 0 8px #FF9800)' : 
                   'none',
           transition: 'all 0.3s ease'
         }}
@@ -821,9 +821,20 @@ if (!currentRound) return null;
     <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 20 }}>
       {!hideElements && <UniversalPauseButton onPause={handlePause} disabled={gamePhase === 'phase_complete'} />}
       <PauseModal isOpen={showPauseModal} onContinue={handleContinue} onExit={handleExitToMenu} />
+      
+      {!hideElements && (
+        <div style={{ position: 'absolute', top: '15px', right: '15px', background: 'rgba(255,255,255,0.95)', borderRadius: '20px', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: '12px', zIndex: 40, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
+          <span style={{ fontWeight: 'bold', fontSize: '14px', color: gameConfig.theme.primaryColor }}>{gameConfig.displayName.toUpperCase()}</span>
+          <div style={{ display: 'flex', gap: '6px' }}>
+            {[1, 2, 3].map(round => (
+              <div key={round} style={{ width: '28px', height: '28px', borderRadius: '50%', background: round <= currentRound ? (round < currentRound ? '#4CAF50' : gameConfig.theme.primaryColor) : '#E0E0E0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold', color: round <= currentRound ? 'white' : '#666' }}>{round}</div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {!hideElements && gamePhase !== 'phase_complete' && (
-        <UnifiedHeaderV2
+        <UnifiedHeader
           zone="shloka-river"
           title={
             isCountingDown ? `${getRoundWord(gameConfig, currentRound)} - Get Ready... ${countdown}` :

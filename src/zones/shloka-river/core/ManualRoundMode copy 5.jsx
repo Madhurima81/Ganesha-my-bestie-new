@@ -6,7 +6,6 @@ import { useSafeClick } from './hooks/useSafeClick';
 
 import UniversalPauseButton from './UniversalPauseButton';
 import PauseModal from './PauseModal';
-import UnifiedButtonV2 from './UnifiedButtonV2';
 
 // Helper: Get dynamic instruction text based on clicker type
 const getClickInstruction = (clickerType) => {
@@ -875,8 +874,8 @@ const renderPreviousCentralElements = () => {
 
       {!hideElements && gameState === 'roundSelection' && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 150 }}>
-          <div style={{ background: 'white', borderRadius: '30px', padding: '50px', maxWidth: '520px', width: '90%', textAlign: 'center', boxShadow: '0 25px 70px rgba(0,0,0,0.4)' }}>
-            <h2 style={{ fontSize: '32px', fontWeight: 'bold', color: '#4CAF50', marginBottom: '25px' }}>Choose Round:</h2>
+          <div style={{ background: 'white', borderRadius: '30px', padding: '40px', maxWidth: '500px', textAlign: 'center', boxShadow: '0 25px 70px rgba(0,0,0,0.4)' }}>
+            <h2 style={{ fontSize: '28px', fontWeight: 'bold', color: gameConfig.theme.primaryColor, marginBottom: '20px' }}>Choose Round:</h2>
             <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginBottom: '30px' }}>
               {Array.from({ length: Object.keys(gameConfig.syllables).length }, (_, i) => i + 1).map(round => {
                 const isCompleted = completedRounds.includes(round);
@@ -889,46 +888,11 @@ const renderPreviousCentralElements = () => {
                 );
               })}
             </div>
-            {selectedRound && (
-              <div style={{ marginTop: '20px' }}>
-                <UnifiedButtonV2
-                  variant="success"
-                  size="large"
-                  heartbeat={true}
-                  onClick={handleStartRound}
-                >
-                  ▶️ START ROUND {selectedRound}
-                </UnifiedButtonV2>
-              </div>
-            )}
-            <div style={{ borderTop: '2px solid #E0E0E0', paddingTop: '25px', marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
-              <UnifiedButtonV2
-                variant="primary"
-                onClick={handleFinishGame}
-              >
-                <div>
-                  <div style={{ fontSize: '20px', fontWeight: '800' }}>
-                    🏁 Finish & Return
-                  </div>
-                  <div style={{ fontSize: '14px', fontWeight: '600', opacity: 0.95, marginTop: '4px' }}>
-                    Save progress and return to scene
-                  </div>
-                </div>
-              </UnifiedButtonV2>
-
-              <UnifiedButtonV2
-                variant="secondary"
-                onClick={handleSwitchToAutoMode}
-              >
-                <div>
-                  <div style={{ fontSize: '20px', fontWeight: '800' }}>
-                    🎵 Hear Full Mantra
-                  </div>
-                  <div style={{ fontSize: '14px', fontWeight: '600', opacity: 0.95, marginTop: '4px' }}>
-                    Switch to Auto Play from Round 1
-                  </div>
-                </div>
-              </UnifiedButtonV2>
+            {selectedRound && <button onClick={handleStartRound} style={{ width: '100%', padding: '20px', marginTop: '20px', background: `linear-gradient(135deg, ${gameConfig.theme.primaryColor} 0%, ${gameConfig.theme.primaryColor}CC 100%)`, border: 'none', borderRadius: '15px', color: 'white', fontSize: '20px', fontWeight: 'bold', cursor: 'pointer', boxShadow: `0 6px 20px ${gameConfig.theme.primaryColor}40`, animation: 'pulseButton 1.5s ease-in-out infinite' }}>▶️ START ROUND {selectedRound}</button>}
+            <div style={{ borderTop: '2px solid #E0E0E0', paddingTop: '25px', marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <button className="btn-finish primary" onClick={handleFinishGame} style={{ width: '100%', padding: '18px', background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)', border: 'none', borderRadius: '15px', color: 'white', fontSize: '17px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 15px rgba(76, 175, 80, 0.4)', minHeight: '60px' }}>
+                🏁 Finish & Return<div style={{ fontSize: '12px', opacity: 0.9, marginTop: '4px' }}>Save progress and return to scene</div></button>
+              <button className="btn-auto-mode secondary" onClick={handleSwitchToAutoMode} style={{ width: '100%', padding: '18px', background: 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)', border: 'none', borderRadius: '15px', color: 'white', fontSize: '17px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 15px rgba(33, 150, 243, 0.4)', minHeight: '60px' }}>🎵 Hear Full Mantra<div style={{ fontSize: '12px', opacity: 0.9, marginTop: '4px' }}>Switch to Auto Play from Round 1</div></button>
             </div>
           </div>
         </div>

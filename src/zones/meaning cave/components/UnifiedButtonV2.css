@@ -1,0 +1,244 @@
+/* =====================================================
+   UNIFIED 3D TOY BUTTON V2
+   Solid gradient buttons with 3D shadow effect
+   Green (Primary/Go), Blue (Choice/Alternative),
+   Gold (Success), Red (Exit/Danger)
+   ===================================================== */
+
+/* 🔘 The Base 3D Pill Structure */
+.btn-toy-3d {
+  display: inline-flex;
+  flex-direction: column;  /* Stack text vertically */
+  align-items: center;
+  justify-content: center;
+  border-radius: 50px; /* Perfect pill shape */
+  font-family: 'Baloo 2', cursive;
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: #FFFFFF;
+  text-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  border: none;
+  position: relative;
+  transition: all 0.1s ease;
+  width: auto;
+  padding: 20px 30px;  /* More height, less width */
+  min-width: 280px;     /* Wider buttons */
+  max-width: 400px;     /* Limit max width */
+  user-select: none;
+  text-align: center;   /* Center align text */
+}
+
+/* ✨ The White Sticker Edge (Inner Highlight) */
+.btn-toy-3d::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 48px;
+  pointer-events: none;
+}
+
+/* ==================== BUTTON VARIANTS ==================== */
+
+/* 🟢 Green - Primary/Go Actions (Continue, Start, Play Again) */
+.btn-primary {
+  background: linear-gradient(to bottom, #66BB6A, #4CAF50);
+  box-shadow:
+    0 6px 0 #388E3C,        /* The 3D "Side" */
+    0 10px 15px rgba(0, 0, 0, 0.15); /* The Floor Shadow */
+}
+
+.btn-primary:hover {
+  background: linear-gradient(to bottom, #6FC973, #51B355);
+}
+
+.btn-primary:active {
+  transform: translateY(4px);
+  box-shadow:
+    0 2px 0 #388E3C,
+    0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 🔵 Blue - Alternative Choice (Manual Mode, Explore) */
+.btn-secondary {
+  background: linear-gradient(to bottom, #42A5F5, #2196F3);
+  box-shadow:
+    0 6px 0 #1976D2,
+    0 10px 15px rgba(0, 0, 0, 0.15);
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(to bottom, #4BAFF7, #29A1F5);
+}
+
+.btn-secondary:active {
+  transform: translateY(4px);
+  box-shadow:
+    0 2px 0 #1976D2,
+    0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 🟡 Gold - Success/Big Win (Continue Adventure, Scene Complete) */
+.btn-success {
+  background: linear-gradient(to bottom, #FFB347, #FF8C00);
+  box-shadow:
+    0 8px 0 #E67E22,        /* Bigger shadow for emphasis */
+    0 12px 20px rgba(0, 0, 0, 0.2);
+}
+
+.btn-success:hover {
+  background: linear-gradient(to bottom, #FFC05C, #FF9A1A);
+}
+
+.btn-success:active {
+  transform: translateY(4px);
+  box-shadow:
+    0 4px 0 #E67E22,
+    0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 🔴 Red - Exit/Danger (Exit to Menu, Cancel) */
+.btn-danger {
+  background: linear-gradient(to bottom, #EF5350, #E53935);
+  box-shadow:
+    0 6px 0 #C62828,
+    0 10px 15px rgba(0, 0, 0, 0.15);
+}
+
+.btn-danger:hover {
+  background: linear-gradient(to bottom, #F26360, #E94440);
+}
+
+.btn-danger:active {
+  transform: translateY(4px);
+  box-shadow:
+    0 2px 0 #C62828,
+    0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ==================== HEARTBEAT ANIMATION ==================== */
+
+/* Apply heartbeat after 3 seconds to draw attention */
+.btn-heartbeat {
+  animation: heartbeat 1.5s ease-in-out infinite;
+  animation-delay: 3s;
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  10%, 30% {
+    transform: scale(1.05);
+  }
+  20%, 40% {
+    transform: scale(1);
+  }
+}
+
+/* Stop heartbeat on hover */
+.btn-heartbeat:hover {
+  animation: none;
+}
+
+/* ==================== BUTTON SIZES ==================== */
+
+/* Small Button (Secondary actions) */
+.btn-small {
+  padding: 10px 24px;
+  font-size: 1rem;
+  min-width: 160px;
+}
+
+.btn-small::after {
+  border-radius: 38px;
+}
+
+/* Large Button (Primary CTAs) */
+.btn-large {
+  padding: 18px 48px;
+  font-size: 1.4rem;
+  min-width: 280px;
+}
+
+.btn-large::after {
+  border-radius: 52px;
+}
+
+/* ==================== DISABLED STATE ==================== */
+
+.btn-toy-3d:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  pointer-events: none;
+}
+
+/* ==================== RESPONSIVE BREAKPOINTS ==================== */
+
+/* Mobile Portrait (320px - 600px) */
+@media (max-width: 600px) {
+  .btn-toy-3d {
+    padding: 12px 28px;
+    font-size: 1.1rem;
+    min-width: 180px;
+  }
+
+  .btn-small {
+    padding: 8px 20px;
+    font-size: 0.9rem;
+    min-width: 140px;
+  }
+
+  .btn-large {
+    padding: 14px 36px;
+    font-size: 1.2rem;
+    min-width: 220px;
+  }
+}
+
+/* Tablets (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .btn-toy-3d {
+    padding: 16px 40px;
+    font-size: 1.3rem;
+    min-width: 240px;
+  }
+
+  .btn-small {
+    padding: 12px 28px;
+    font-size: 1.1rem;
+    min-width: 180px;
+  }
+
+  .btn-large {
+    padding: 20px 52px;
+    font-size: 1.5rem;
+    min-width: 300px;
+  }
+}
+
+/* Large Desktops (1920px+) */
+@media (min-width: 1920px) {
+  .btn-toy-3d {
+    padding: 16px 42px;
+    font-size: 1.4rem;
+    min-width: 260px;
+  }
+
+  .btn-small {
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    min-width: 200px;
+  }
+
+  .btn-large {
+    padding: 22px 60px;
+    font-size: 1.6rem;
+    min-width: 340px;
+  }
+}
