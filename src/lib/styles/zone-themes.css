@@ -35,34 +35,34 @@
 
 :root {
   /* 🛖 About-Me Hut (Self, Warmth, Family) */
-  --zone-about-base: #FFFDF2;        /* Warm Cream Wall */
-  --zone-about-accent: #8D4B38;      /* Terracotta Earth (Meaning) */
-  --zone-about-shadow: rgba(141, 75, 56, 0.2);
-  --zone-about-soft: #F5E6D3;        /* Soft tan for secondary elements */
+  --zone-about-base: #FFF9F0;        /* Warm Clay Home */
+  --zone-about-accent: #D89566;      /* Warm Clay/Ochre */
+  --zone-about-shadow: rgba(216, 149, 102, 0.2);
+  --zone-about-soft: #FFEBD6;        /* Soft peach for secondary elements */
 
   /* 🏔️ Symbol Mountain (Knowledge, Stillness, Mystery) */
-  --zone-symbol-base: #F0F7F7;       /* Misty Mist Wall */
-  --zone-symbol-accent: #52727E;     /* Slate Stone (Meaning) */
-  --zone-symbol-shadow: rgba(82, 114, 126, 0.2);
-  --zone-symbol-soft: #D4E4E7;       /* Soft mist for secondary elements */
+  --zone-symbol-base: #FFFAED;       /* Bright Golden Yellow */
+  --zone-symbol-accent: #F4C430;     /* Saffron Gold (Bright) */
+  --zone-symbol-shadow: rgba(244, 196, 48, 0.2);
+  --zone-symbol-soft: #FFF3C8;       /* Soft golden yellow for secondary elements */
 
   /* 🏮 Festival Square (Energy, Tradition, Joy) */
-  --zone-festival-base: #FFF9F0;     /* Pale Saffron Wall */
-  --zone-festival-accent: #E67E22;   /* Marigold Orange (Meaning) */
+  --zone-festival-base: #FFF8ED;     /* Pale Saffron Wall */
+  --zone-festival-accent: #E67E22;   /* Marigold Orange */
   --zone-festival-shadow: rgba(230, 126, 34, 0.2);
-  --zone-festival-soft: #FFE8D1;     /* Soft peach for secondary elements */
+  --zone-festival-soft: #FFE8CE;     /* Soft peach for secondary elements */
 
   /* 🏺 Meaning Cave (Mystery, Discovery, Wisdom) */
-  --zone-cave-base: #EEDCC5;         /* Warm Sand Wall */
-  --zone-cave-accent: #8D4E2A;       /* Burnt Sienna (Earthy Meaning) */
-  --zone-cave-shadow: rgba(93, 51, 29, 0.3);
-  --zone-cave-soft: #F5E6D3;         /* Soft cream for secondary elements */
+  --zone-cave-base: #FFF5EC;         /* Amber Fire-lit */
+  --zone-cave-accent: #C85A2E;       /* Burnt Rust/Amber */
+  --zone-cave-shadow: rgba(200, 90, 46, 0.25);
+  --zone-cave-soft: #FFE4CE;         /* Soft amber for secondary elements */
 
   /* 🌊 Shloka River (Peace, Flow, Learning) */
-  --zone-river-base: #F4F9F4;        /* Pale Moss Tint Wall */
-  --zone-river-accent: #2D5A27;      /* Sacred Forest Green (Meaning) */
-  --zone-river-shadow: rgba(45, 90, 39, 0.2);
-  --zone-river-soft: #D9E8D7;        /* Soft sage for secondary elements */
+  --zone-river-base: #F0F8F7;        /* Soft Aqua Sage */
+  --zone-river-accent: #4A9B87;      /* Sage-Water Blend */
+  --zone-river-shadow: rgba(74, 155, 135, 0.2);
+  --zone-river-soft: #D4E8E3;        /* Soft sage for secondary elements */
 }
 
 /* ==========================================

@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revised Zone Colors - Pick Your Favorites!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-family: 'Baloo 2', cursive;
+      color: white;
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .subtitle {
+      text-align: center;
+      color: rgba(255,255,255,0.95);
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+    }
+
+    .zone-section {
+      margin-bottom: 50px;
+    }
+
+    .zone-section-title {
+      font-family: 'Baloo 2', cursive;
+      color: white;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      text-align: center;
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      gap: 25px;
+      margin-bottom: 20px;
+    }
+
+    .option-card {
+      background: white;
+      border-radius: 25px;
+      padding: 25px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .option-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+    }
+
+    .option-badge {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #FFD230;
+      color: #4E342E;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .option-title {
+      font-family: 'Baloo 2', cursive;
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .option-concept {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 20px;
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    .vibe-tag {
+      display: inline-block;
+      background: #f0f0f0;
+      padding: 6px 12px;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      margin-bottom: 20px;
+      color: #555;
+    }
+
+    .color-preview {
+      border-radius: 20px;
+      padding: 40px 20px;
+      text-align: center;
+      margin-bottom: 15px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      font-weight: 600;
+      font-size: 1.1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .color-preview::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: inherit;
+      opacity: 0.95;
+      z-index: 0;
+    }
+
+    .color-preview-text {
+      position: relative;
+      z-index: 1;
+    }
+
+    .color-swatches {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .swatch {
+      border-radius: 12px;
+      padding: 15px 10px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .swatch-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+      letter-spacing: 0.5px;
+    }
+
+    .swatch-value {
+      font-size: 0.75rem;
+      font-family: 'Courier New', monospace;
+      opacity: 0.8;
+    }
+
+    .button-demo {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 15px;
+    }
+
+    .demo-button {
+      padding: 12px 20px;
+      border-radius: 25px;
+      font-weight: 600;
+      border: 4px solid white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .demo-button:hover {
+      transform: scale(1.05);
+    }
+
+    .comparison-note {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 20px;
+      border-radius: 20px;
+      margin: 30px 0;
+      text-align: center;
+      font-size: 1.1rem;
+      line-height: 1.8;
+    }
+
+    .kept-zones {
+      background: white;
+      border-radius: 25px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      margin-top: 40px;
+    }
+
+    .kept-title {
+      font-family: 'Baloo 2', cursive;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: #333;
+      text-align: center;
+    }
+
+    .kept-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .kept-item {
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+    }
+
+    .kept-emoji {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    .kept-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+    }
+
+    .kept-status {
+      font-size: 0.85rem;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 Revised Zone Colors - Pick Your Favorites!</h1>
+    <p class="subtitle">Fresh color options for Symbol Mountain, Cave of Secrets, and About Me Hut</p>
+
+    <div class="comparison-note">
+      ✨ <strong>Your Feedback:</strong> Gray too dull for Symbol Mountain • Cave & About Me too similar<br>
+      🎨 <strong>Solution:</strong> New vibrant yet child-friendly options below!
+    </div>
+
+    <!-- SYMBOL MOUNTAIN OPTIONS -->
+    <div class="zone-section">
+      <div class="zone-section-title">🏔️ Symbol Mountain - Choose Your Style</div>
+
+      <div class="options-grid">
+
+        <!-- Option 1: Mystical Lavender -->
+        <div class="option-card">
+          <div class="option-badge">OPTION 1</div>
+          <div class="option-title">Mystical Lavender</div>
+          <div class="option-concept">Sacred temples, spiritual wisdom, mystical learning - purple evokes meditation and higher knowledge</div>
+          <div class="vibe-tag">✨ Mystical • Sacred • Spiritual • Enlightened</div>
+
+          <div class="color-preview" style="background: linear-gradient(135deg, #F3EFF9 0%, #E3DCF0 100%); color: #3D2E5C;">
+            <div class="color-preview-text">Menu Background Preview</div>
+          </div>
+
+          <div class="color-swatches">
+            <div class="swatch" style="background: #F3EFF9; color: #3D2E5C;">
+              <div class="swatch-label">Base</div>
+              <div class="swatch-value">#F3EFF9</div>
+            </div>
+            <div class="swatch" style="background: #7B68A6; color: white;">
+              <div class="swatch-label">Accent</div>
+              <div class="swatch-value">#7B68A6</div>
+            </div>
+            <div class="swatch" style="background: #E3DCF0; color: #3D2E5C;">
+              <div class="swatch-label">Soft</div>
+              <div class="swatch-value">#E3DCF0</div>
+            </div>
+          </div>
+
+          <div class="button-demo">
+            <div class="demo-button" style="background: #8ED641; color: #4E342E;">Action</div>
+            <div class="demo-button" style="background: #FFD230; color: #4E342E;">Success</div>
+          </div>
+        </div>
+
+        <!-- Option 2: Golden Enlightenment -->
+        <div class="option-card">
+          <div class="option-badge">OPTION 2</div>
+          <div class="option-title">Golden Enlightenment</div>
+          <div class="option-concept">Ancient temples, golden light, divine wisdom - muted gold (not bright) creates sacred atmosphere</div>
+          <div class="vibe-tag">🏛️ Sacred • Ancient • Wise • Illuminated</div>
+
+          <div class="color-preview" style="background: linear-gradient(135deg, #FFF8E7 0%, #F5EECF 100%); color: #5D4A1F;">
+            <div class="color-preview-text">Menu Background Preview</div>
+          </div>
+
+          <div class="color-swatches">
+            <div class="swatch" style="background: #FFF8E7; color: #5D4A1F;">
+              <div class="swatch-label">Base</div>
+              <div class="swatch-value">#FFF8E7</div>
+            </div>
+            <div class="swatch" style="background: #D4A744; color: white;">
+              <div class="swatch-label">Accent</div>
+              <div class="swatch-value">#D4A744</div>
+            </div>
+            <div class="swatch" style="background: #F5EECF; color: #5D4A1F;">
+              <div class="swatch-label">Soft</div>
+              <div class="swatch-value">#F5EECF</div>
+            </div>
+          </div>
+
+          <div class="button-demo">
+            <div class="demo-button" style="background: #8ED641; color: #4E342E;">Action</div>
+            <div class="demo-button" style="background: #FFD230; color: #4E342E;">Success</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CAVE OF SECRETS OPTIONS -->
+    <div class="zone-section">
+      <div class="zone-section-title">🏺 Cave of Secrets - Choose Your Style</div>
+
+      <div class="options-grid">
+
+        <!-- Option 1: Deep Plum Jewel Cave -->
+        <div class="option-card">
+          <div class="option-badge">OPTION 1</div>
+          <div class="option-title">Deep Plum Treasure</div>
+          <div class="option-concept">Rich jewel tones, treasure chest, mysterious depths - plum/wine creates intrigue without darkness</div>
+          <div class="vibe-tag">💎 Mysterious • Rich • Treasure • Ancient</div>
+
+          <div class="color-preview" style="background: linear-gradient(135deg, #F5EEF3 0%, #E8D9E1 100%); color: #4A2638;">
+            <div class="color-preview-text">Menu Background Preview</div>
+          </div>
+
+          <div class="color-swatches">
+            <div class="swatch" style="background: #F5EEF3; color: #4A2638;">
+              <div class="swatch-label">Base</div>
+              <div class="swatch-value">#F5EEF3</div>
+            </div>
+            <div class="swatch" style="background: #8B4C6D; color: white;">
+              <div class="swatch-label">Accent</div>
+              <div class="swatch-value">#8B4C6D</div>
+            </div>
+            <div class="swatch" style="background: #E8D9E1; color: #4A2638;">
+              <div class="swatch-label">Soft</div>
+              <div class="swatch-value">#E8D9E1</div>
+            </div>
+          </div>
+
+          <div class="button-demo">
+            <div class="demo-button" style="background: #8ED641; color: #4E342E;">Action</div>
+            <div class="demo-button" style="background: #FFD230; color: #4E342E;">Success</div>
+          </div>
+        </div>
+
+        <!-- Option 2: Amber Fire-lit -->
+        <div class="option-card">
+          <div class="option-badge">OPTION 2</div>
+          <div class="option-title">Amber Fire-lit Cave</div>
+          <div class="option-concept">Warm torchlight, amber glow, fire-lit exploration - creates cozy mystery with warm orange-rust</div>
+          <div class="vibe-tag">🔥 Warm • Torchlit • Cozy • Adventurous</div>
+
+          <div class="color-preview" style="background: linear-gradient(135deg, #FFF5EC 0%, #FFE4CE 100%); color: #6B2F1A;">
+            <div class="color-preview-text">Menu Background Preview</div>
+          </div>
+
+          <div class="color-swatches">
+            <div class="swatch" style="background: #FFF5EC; color: #6B2F1A;">
+              <div class="swatch-label">Base</div>
+              <div class="swatch-value">#FFF5EC</div>
+            </div>
+            <div class="swatch" style="background: #C85A2E; color: white;">
+              <div class="swatch-label">Accent</div>
+              <div class="swatch-value">#C85A2E</div>
+            </div>
+            <div class="swatch" style="background: #FFE4CE; color: #6B2F1A;">
+              <div class="swatch-label">Soft</div>
+              <div class="swatch-value">#FFE4CE</div>
+            </div>
+          </div>
+
+          <div class="button-demo">
+            <div class="demo-button" style="background: #8ED641; color: #4E342E;">Action</div>
+            <div class="demo-button" style="background: #FFD230; color: #4E342E;">Success</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ABOUT ME HUT - SINGLE OPTION -->
+    <div class="zone-section">
+      <div class="zone-section-title">🛖 About Me Hut - Revised & More Distinct</div>
+
+      <div class="options-grid">
+
+        <div class="option-card" style="grid-column: 1 / -1; max-width: 600px; margin: 0 auto;">
+          <div class="option-badge">REVISED</div>
+          <div class="option-title">Warm Clay Home</div>
+          <div class="option-concept">Cozy wooden hut, warm hearth, family comfort - brighter ochre/clay makes it more distinct from cave colors</div>
+          <div class="vibe-tag">🏠 Warm • Cozy • Safe • Homey</div>
+
+          <div class="color-preview" style="background: linear-gradient(135deg, #FFF9F0 0%, #FFEBD6 100%); color: #7D4520;">
+            <div class="color-preview-text">Menu Background Preview</div>
+          </div>
+
+          <div class="color-swatches">
+            <div class="swatch" style="background: #FFF9F0; color: #7D4520;">
+              <div class="swatch-label">Base</div>
+              <div class="swatch-value">#FFF9F0</div>
+            </div>
+            <div class="swatch" style="background: #D89566; color: white;">
+              <div class="swatch-label">Accent</div>
+              <div class="swatch-value">#D89566</div>
+            </div>
+            <div class="swatch" style="background: #FFEBD6; color: #7D4520;">
+              <div class="swatch-label">Soft</div>
+              <div class="swatch-value">#FFEBD6</div>
+            </div>
+          </div>
+
+          <div class="button-demo">
+            <div class="demo-button" style="background: #8ED641; color: #4E342E;">Action</div>
+            <div class="demo-button" style="background: #FFD230; color: #4E342E;">Success</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ZONES STAYING THE SAME -->
+    <div class="kept-zones">
+      <div class="kept-title">✅ These Zones Keep Their Colors (Already Perfect!)</div>
+      <div class="kept-grid">
+
+        <div class="kept-item" style="background: linear-gradient(135deg, #FFF8ED 0%, #FFE8CE 100%);">
+          <div class="kept-emoji">🏮</div>
+          <div class="kept-name" style="color: #8B4513;">Festival Square</div>
+          <div class="kept-status" style="color: #8B4513;">Marigold/Saffron - Perfect!</div>
+        </div>
+
+        <div class="kept-item" style="background: linear-gradient(135deg, #F0F8F7 0%, #D4E8E3 100%);">
+          <div class="kept-emoji">🌊</div>
+          <div class="kept-name" style="color: #1B4D3E;">Shloka River</div>
+          <div class="kept-status" style="color: #1B4D3E;">Soft Aqua/Sage - Perfect!</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="comparison-note" style="margin-top: 40px;">
+      <strong>📝 How to Choose:</strong><br>
+      Think about the FEELING each zone should create for children.<br>
+      Symbol Mountain = Mystical temple or Golden wisdom?<br>
+      Cave = Jewel treasure or Fire-lit exploration?<br>
+      <br>
+      <strong>My Recommendations:</strong><br>
+      🏔️ Symbol Mountain → <strong>Mystical Lavender</strong> (unique, spiritual, not seen elsewhere)<br>
+      🏺 Cave → <strong>Deep Plum</strong> (distinct from other zones, treasure-like)<br>
+      🛖 About Me → <strong>Warm Clay</strong> (clearly different from plum cave)
+    </div>
+
+  </div>
+</body>
+</html>

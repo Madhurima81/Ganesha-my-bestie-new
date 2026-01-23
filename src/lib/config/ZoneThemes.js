@@ -3,226 +3,230 @@
 
 export const ZONE_THEMES = {
   'symbol-mountain': {
-    // Menu Background
-    menuBg: 'linear-gradient(135deg, rgba(245, 235, 220, 0.95), rgba(238, 220, 200, 0.95))',
-    menuBorder: '#D4A574',
+    // Menu Background - Bright Golden Yellow
+    menuBg: 'linear-gradient(135deg, rgba(255, 250, 237, 0.95), rgba(255, 243, 200, 0.95))',
+    menuBorder: '#F4C430',
     menuBorderWidth: '3px',
-    
+
     // Text Colors
-    textPrimary: '#5D2E0F',      // Dark brown
-    textSecondary: '#8B6F47',    // Muted brown
-    textLabel: '#5D2E0F',
-    
+    textPrimary: '#6B5416',      // Deep golden brown
+    textSecondary: '#8B7134',    // Medium golden brown
+    textLabel: '#6B5416',
+
     // Header
-    headerBg: 'linear-gradient(135deg, rgba(255, 215, 0, 0.98), rgba(255, 165, 0, 0.98))',
-    headerText: '#5D2E0F',
-    headerBorder: '#FFB84D',
-    headerGlow: '0 0 20px rgba(255, 184, 77, 0.5), 0 4px 0 rgba(255, 255, 255, 0.3)',
-    
+    headerBg: 'linear-gradient(135deg, rgba(255, 243, 200, 0.98), rgba(244, 196, 48, 0.98))',
+    headerText: '#6B5416',
+    headerBorder: '#F4C430',
+    headerGlow: '0 0 20px rgba(244, 196, 48, 0.5), 0 4px 0 rgba(255, 255, 255, 0.3)',
+
     // Accents & Highlights
-    accentColor: '#FFB84D',      // Sand glow
-    glowColor: 'rgba(255, 184, 77, 0.3)',
-    badgeBg: '#FFC107',
-    badgeText: '#FFFFFF',
-    
+    accentColor: '#F4C430',      // Saffron gold (bright)
+    glowColor: 'rgba(244, 196, 48, 0.3)',
+    badgeBg: '#F4C430',
+    badgeText: '#6B5416',
+
     // Blur Effect
     blur: 'blur(8px)',           // Soft matte blur
-    
+
     // Button States
     buttonBg: '#FFFFFF',
     buttonBorder: 'transparent',
-    buttonHoverBg: '#FFF9E6',
-    buttonHoverBorder: '#FFB84D',
-    buttonActiveBg: 'linear-gradient(135deg, #FFD700, #FFA500)',
-    
+    buttonHoverBg: '#FFFAED',
+    buttonHoverBorder: '#F4C430',
+    buttonActiveBg: 'linear-gradient(135deg, #F4C430, #E5B026)',
+
     // Divider
-    dividerColor: 'rgba(139, 111, 71, 0.2)',
+    dividerColor: 'rgba(107, 84, 22, 0.2)',
     dividerStyle: 'solid',       // Stone dots
-    
+
     // Parent Button
-    parentBg: '#FFF3E0',
-    parentHoverBg: '#FFE0B2',
-    parentBorder: '#FF9800',
-    
+    parentBg: '#FFF3C8',
+    parentHoverBg: '#FFEAA5',
+    parentBorder: '#F4C430',
+
     // Help Menu
-    helpBg: 'linear-gradient(135deg, #FFF9E6 0%, #FFE6CC 100%)',
+    helpBg: 'linear-gradient(135deg, #FFFAED 0%, #FFF3C8 100%)',
     helpCardBg: '#FFFFFF',
-    helpCardBorder: '#FFD700',
-    helpHintIconBg: 'linear-gradient(135deg, #FFF9E6, #FFE6CC)',
-    
+    helpCardBorder: '#F4C430',
+    helpHintIconBg: 'linear-gradient(135deg, #FFFAED, #FFF3C8)',
+
     // Font
     fontFamily: '"Baloo", cursive',
     fontFamilyBody: '"Nunito", sans-serif'
   },
   
   'cave-of-secrets': {
-    menuBg: 'linear-gradient(135deg, rgba(101, 67, 33, 0.92), rgba(78, 52, 26, 0.92))',
-    menuBorder: '#8B6F47',
+    // Menu Background - Amber Fire-lit
+    menuBg: 'linear-gradient(135deg, rgba(255, 245, 236, 0.95), rgba(255, 228, 206, 0.95))',
+    menuBorder: '#C85A2E',
     menuBorderWidth: '3px',
-    
-    textPrimary: '#FFE4C4',      // Warm charcoal (light for dark bg)
-    textSecondary: '#D2B48C',    // Soft grey
-    textLabel: '#FFE4C4',
-    
-    headerBg: 'linear-gradient(135deg, rgba(139, 90, 43, 0.98), rgba(101, 67, 33, 0.98))',
-    headerText: '#FFE4C4',
-    headerBorder: '#D2691E',
-    headerGlow: '0 0 20px rgba(255, 140, 0, 0.5), 0 4px 0 rgba(255, 228, 196, 0.3)',
-    
-    accentColor: '#FF8C00',      // Amber glow
-    glowColor: 'rgba(255, 140, 0, 0.4)',
-    badgeBg: '#FF8C00',
+
+    textPrimary: '#6B2F1A',      // Deep rust brown
+    textSecondary: '#8B4A35',    // Medium rust
+    textLabel: '#6B2F1A',
+
+    headerBg: 'linear-gradient(135deg, rgba(255, 228, 206, 0.98), rgba(200, 90, 46, 0.98))',
+    headerText: '#6B2F1A',
+    headerBorder: '#C85A2E',
+    headerGlow: '0 0 20px rgba(200, 90, 46, 0.5), 0 4px 0 rgba(255, 255, 255, 0.3)',
+
+    accentColor: '#C85A2E',      // Burnt rust/amber
+    glowColor: 'rgba(200, 90, 46, 0.3)',
+    badgeBg: '#C85A2E',
     badgeText: '#FFFFFF',
-    
-    blur: 'blur(12px)',          // Heavier blur
-    
-    buttonBg: 'rgba(255, 228, 196, 0.15)',
+
+    blur: 'blur(8px)',           // Soft blur
+
+    buttonBg: '#FFFFFF',
     buttonBorder: 'transparent',
-    buttonHoverBg: 'rgba(139, 111, 71, 0.3)',
-    buttonHoverBorder: '#FF8C00',
-    buttonActiveBg: 'linear-gradient(135deg, #FF8C00, #FF6347)',
-    
-    dividerColor: 'rgba(255, 228, 196, 0.2)',
+    buttonHoverBg: '#FFF5EC',
+    buttonHoverBorder: '#C85A2E',
+    buttonActiveBg: 'linear-gradient(135deg, #C85A2E, #B44C20)',
+
+    dividerColor: 'rgba(107, 47, 26, 0.2)',
     dividerStyle: 'solid',       // Carved line
-    
-    parentBg: 'rgba(139, 69, 19, 0.3)',
-    parentHoverBg: 'rgba(160, 82, 45, 0.4)',
-    parentBorder: '#D2691E',
-    
-    helpBg: 'linear-gradient(135deg, rgba(101, 67, 33, 0.98), rgba(78, 52, 26, 0.98))',
-    helpCardBg: 'rgba(255, 228, 196, 0.1)',
-    helpCardBorder: '#FF8C00',
-    helpHintIconBg: 'linear-gradient(135deg, rgba(139, 90, 43, 0.4), rgba(101, 67, 33, 0.4))',
-    
+
+    parentBg: '#FFE4CE',
+    parentHoverBg: '#FFD4AE',
+    parentBorder: '#C85A2E',
+
+    helpBg: 'linear-gradient(135deg, #FFF5EC 0%, #FFE4CE 100%)',
+    helpCardBg: '#FFFFFF',
+    helpCardBorder: '#C85A2E',
+    helpHintIconBg: 'linear-gradient(135deg, #FFF5EC, #FFE4CE)',
+
     fontFamily: '"Baloo", cursive',
     fontFamilyBody: '"Nunito", sans-serif'
   },
   
   'festival-square': {
-    menuBg: 'linear-gradient(135deg, rgba(200, 230, 201, 0.95), rgba(165, 214, 167, 0.95))',
-    menuBorder: '#66BB6A',
+    // Menu Background - Marigold/Saffron
+    menuBg: 'linear-gradient(135deg, rgba(255, 248, 237, 0.95), rgba(255, 232, 206, 0.95))',
+    menuBorder: '#E67E22',
     menuBorderWidth: '3px',
-    
-    textPrimary: '#1B5E20',      // Deep green
-    textSecondary: '#558B2F',    // Olive
-    textLabel: '#1B5E20',
-    
-    headerBg: 'linear-gradient(135deg, rgba(129, 199, 132, 0.98), rgba(102, 187, 106, 0.98))',
-    headerText: '#1B5E20',
-    headerBorder: '#66BB6A',
-    headerGlow: '0 0 20px rgba(255, 167, 38, 0.5), 0 4px 0 rgba(255, 255, 255, 0.3)',
-    
-    accentColor: '#FFA726',      // Marigold glow
-    glowColor: 'rgba(255, 167, 38, 0.3)',
-    badgeBg: '#FFA726',
+
+    textPrimary: '#8B4513',      // Deep warm brown
+    textSecondary: '#A0522D',    // Sienna
+    textLabel: '#8B4513',
+
+    headerBg: 'linear-gradient(135deg, rgba(255, 232, 206, 0.98), rgba(230, 126, 34, 0.98))',
+    headerText: '#8B4513',
+    headerBorder: '#E67E22',
+    headerGlow: '0 0 20px rgba(230, 126, 34, 0.5), 0 4px 0 rgba(255, 255, 255, 0.3)',
+
+    accentColor: '#E67E22',      // Marigold orange
+    glowColor: 'rgba(230, 126, 34, 0.3)',
+    badgeBg: '#E67E22',
     badgeText: '#FFFFFF',
-    
+
     blur: 'blur(8px)',           // Soft blur
-    
+
     buttonBg: '#FFFFFF',
     buttonBorder: 'transparent',
-    buttonHoverBg: '#E8F5E9',
-    buttonHoverBorder: '#66BB6A',
-    buttonActiveBg: 'linear-gradient(135deg, #FFA726, #FF6F00)',
-    
-    dividerColor: 'rgba(27, 94, 32, 0.2)',
+    buttonHoverBg: '#FFF8ED',
+    buttonHoverBorder: '#E67E22',
+    buttonActiveBg: 'linear-gradient(135deg, #E67E22, #D97016)',
+
+    dividerColor: 'rgba(139, 69, 19, 0.2)',
     dividerStyle: 'solid',       // Garland dots
-    
-    parentBg: '#FFF3E0',
-    parentHoverBg: '#FFE0B2',
-    parentBorder: '#FF9800',
-    
-    helpBg: 'linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%)',
+
+    parentBg: '#FFE8CE',
+    parentHoverBg: '#FFD9B4',
+    parentBorder: '#E67E22',
+
+    helpBg: 'linear-gradient(135deg, #FFF8ED 0%, #FFE8CE 100%)',
     helpCardBg: '#FFFFFF',
-    helpCardBorder: '#66BB6A',
-    helpHintIconBg: 'linear-gradient(135deg, #E8F5E9, #C8E6C9)',
-    
+    helpCardBorder: '#E67E22',
+    helpHintIconBg: 'linear-gradient(135deg, #FFF8ED, #FFE8CE)',
+
     fontFamily: '"Baloo", cursive',
     fontFamilyBody: '"Nunito", sans-serif'
   },
   
   'shloka-river': {
-    menuBg: 'linear-gradient(135deg, rgba(178, 223, 219, 0.95), rgba(128, 203, 196, 0.95))',
-    menuBorder: '#4DB6AC',
+    // Menu Background - Soft Aqua Sage
+    menuBg: 'linear-gradient(135deg, rgba(240, 248, 247, 0.95), rgba(212, 232, 227, 0.95))',
+    menuBorder: '#4A9B87',
     menuBorderWidth: '3px',
-    
-    textPrimary: '#004D40',      // Deep teal/blue-green
-    textSecondary: '#00695C',    // Slate blue
-    textLabel: '#004D40',
-    
-    headerBg: 'linear-gradient(135deg, rgba(128, 203, 196, 0.98), rgba(77, 182, 172, 0.98))',
-    headerText: '#004D40',
-    headerBorder: '#4DB6AC',
-    headerGlow: '0 0 20px rgba(128, 203, 196, 0.6), 0 4px 0 rgba(255, 255, 255, 0.4)',
-    
-    accentColor: '#80CBC4',      // Pearl/water glow
-    glowColor: 'rgba(128, 203, 196, 0.4)',
-    badgeBg: '#80CBC4',
-    badgeText: '#004D40',
-    
-    blur: 'blur(6px)',           // Light watery blur
-    
-    buttonBg: 'rgba(255, 255, 255, 0.8)',
+
+    textPrimary: '#1B4D3E',      // Deep forest teal
+    textSecondary: '#2D6B5A',    // Medium sage
+    textLabel: '#1B4D3E',
+
+    headerBg: 'linear-gradient(135deg, rgba(212, 232, 227, 0.98), rgba(74, 155, 135, 0.98))',
+    headerText: '#1B4D3E',
+    headerBorder: '#4A9B87',
+    headerGlow: '0 0 20px rgba(74, 155, 135, 0.5), 0 4px 0 rgba(255, 255, 255, 0.3)',
+
+    accentColor: '#4A9B87',      // Sage-water blend
+    glowColor: 'rgba(74, 155, 135, 0.3)',
+    badgeBg: '#4A9B87',
+    badgeText: '#FFFFFF',
+
+    blur: 'blur(8px)',           // Soft watery blur
+
+    buttonBg: '#FFFFFF',
     buttonBorder: 'transparent',
-    buttonHoverBg: 'rgba(178, 223, 219, 0.5)',
-    buttonHoverBorder: '#4DB6AC',
-    buttonActiveBg: 'linear-gradient(135deg, #80CBC4, #4DB6AC)',
-    
-    dividerColor: 'rgba(0, 77, 64, 0.2)',
+    buttonHoverBg: '#F0F8F7',
+    buttonHoverBorder: '#4A9B87',
+    buttonActiveBg: 'linear-gradient(135deg, #4A9B87, #3A8170)',
+
+    dividerColor: 'rgba(27, 77, 62, 0.2)',
     dividerStyle: 'solid',       // Wave/ripple dots
-    
-    parentBg: '#E0F2F1',
-    parentHoverBg: '#B2DFDB',
-    parentBorder: '#26A69A',
-    
-    helpBg: 'linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 100%)',
-    helpCardBg: 'rgba(255, 255, 255, 0.9)',
-    helpCardBorder: '#4DB6AC',
-    helpHintIconBg: 'linear-gradient(135deg, #E0F7FA, #B2EBF2)',
-    
+
+    parentBg: '#D4E8E3',
+    parentHoverBg: '#BEDDD7',
+    parentBorder: '#4A9B87',
+
+    helpBg: 'linear-gradient(135deg, #F0F8F7 0%, #D4E8E3 100%)',
+    helpCardBg: '#FFFFFF',
+    helpCardBorder: '#4A9B87',
+    helpHintIconBg: 'linear-gradient(135deg, #F0F8F7, #D4E8E3)',
+
     fontFamily: '"Baloo", cursive',
     fontFamilyBody: '"Nunito", sans-serif'
   },
   
   'about-me-hut': {
-    menuBg: 'linear-gradient(135deg, rgba(255, 243, 224, 0.95), rgba(255, 224, 178, 0.95))',
-    menuBorder: '#FFB74D',
+    // Menu Background - Warm Clay Home
+    menuBg: 'linear-gradient(135deg, rgba(255, 249, 240, 0.95), rgba(255, 235, 214, 0.95))',
+    menuBorder: '#D89566',
     menuBorderWidth: '3px',
-    
-    textPrimary: '#BF360C',      // Deep orange-brown
-    textSecondary: '#E64A19',
-    textLabel: '#BF360C',
-    
-    headerBg: 'linear-gradient(135deg, rgba(255, 183, 77, 0.98), rgba(255, 152, 0, 0.98))',
-    headerText: '#BF360C',
-    headerBorder: '#FFB74D',
-    headerGlow: '0 0 20px rgba(255, 152, 0, 0.5), 0 4px 0 rgba(255, 255, 255, 0.3)',
-    
-    accentColor: '#FF9800',
-    glowColor: 'rgba(255, 152, 0, 0.3)',
-    badgeBg: '#FF9800',
+
+    textPrimary: '#7D4520',      // Deep warm brown
+    textSecondary: '#A06542',    // Medium clay brown
+    textLabel: '#7D4520',
+
+    headerBg: 'linear-gradient(135deg, rgba(255, 235, 214, 0.98), rgba(216, 149, 102, 0.98))',
+    headerText: '#7D4520',
+    headerBorder: '#D89566',
+    headerGlow: '0 0 20px rgba(216, 149, 102, 0.5), 0 4px 0 rgba(255, 255, 255, 0.3)',
+
+    accentColor: '#D89566',      // Warm clay/ochre
+    glowColor: 'rgba(216, 149, 102, 0.3)',
+    badgeBg: '#D89566',
     badgeText: '#FFFFFF',
-    
+
     blur: 'blur(8px)',
-    
+
     buttonBg: '#FFFFFF',
     buttonBorder: 'transparent',
-    buttonHoverBg: '#FFF3E0',
-    buttonHoverBorder: '#FFB74D',
-    buttonActiveBg: 'linear-gradient(135deg, #FFB74D, #FF9800)',
-    
-    dividerColor: 'rgba(191, 54, 12, 0.2)',
+    buttonHoverBg: '#FFF9F0',
+    buttonHoverBorder: '#D89566',
+    buttonActiveBg: 'linear-gradient(135deg, #D89566, #C98556)',
+
+    dividerColor: 'rgba(125, 69, 32, 0.2)',
     dividerStyle: 'solid',
-    
-    parentBg: '#FFCCBC',
-    parentHoverBg: '#FFAB91',
-    parentBorder: '#FF7043',
-    
-    helpBg: 'linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%)',
+
+    parentBg: '#FFEBD6',
+    parentHoverBg: '#FFE0C2',
+    parentBorder: '#D89566',
+
+    helpBg: 'linear-gradient(135deg, #FFF9F0 0%, #FFEBD6 100%)',
     helpCardBg: '#FFFFFF',
-    helpCardBorder: '#FFB74D',
-    helpHintIconBg: 'linear-gradient(135deg, #FFF3E0, #FFE0B2)',
-    
+    helpCardBorder: '#D89566',
+    helpHintIconBg: 'linear-gradient(135deg, #FFF9F0, #FFEBD6)',
+
     fontFamily: '"Baloo", cursive',
     fontFamilyBody: '"Nunito", sans-serif'
   }

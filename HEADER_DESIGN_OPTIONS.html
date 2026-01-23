@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Header Design Options - Choose Your Style</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-family: 'Baloo 2', cursive;
+      color: white;
+      text-align: center;
+      font-size: 3rem;
+      margin-bottom: 20px;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .intro {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 30px;
+      border-radius: 25px;
+      margin-bottom: 40px;
+      text-align: center;
+      line-height: 1.8;
+    }
+
+    .perspective-section {
+      margin-bottom: 50px;
+    }
+
+    .perspective-title {
+      font-family: 'Baloo 2', cursive;
+      color: white;
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      text-align: center;
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .header-option {
+      background: white;
+      border-radius: 30px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      transition: transform 0.3s ease;
+    }
+
+    .header-option:hover {
+      transform: translateY(-8px);
+    }
+
+    .option-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .option-number {
+      font-family: 'Baloo 2', cursive;
+      font-size: 2rem;
+      color: #333;
+    }
+
+    .role-badge {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .badge-kid {
+      background: #FFD230;
+      color: #4E342E;
+    }
+
+    .badge-parent {
+      background: #8ED641;
+      color: #4E342E;
+    }
+
+    .badge-dev {
+      background: #4FC3F7;
+      color: white;
+    }
+
+    .option-title {
+      font-family: 'Baloo 2', cursive;
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .option-description {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 25px;
+      font-size: 0.95rem;
+    }
+
+    /* HEADER PREVIEWS */
+    .header-preview {
+      position: relative;
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #f5f5f5;
+      border-radius: 15px;
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .game-background {
+      width: 100%;
+      height: 100px;
+      background: linear-gradient(135deg, #87CEEB 0%, #98D8E8 100%);
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Option 1: Soft Pill Banner */
+    .header-pill {
+      position: absolute;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--zone-base);
+      border: 4px solid var(--zone-accent);
+      border-radius: 25px;
+      padding: 12px 30px;
+      box-shadow: 0 8px 0 var(--zone-shadow), 0 12px 20px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      min-width: 280px;
+    }
+
+    .header-pill .task-text {
+      font-family: 'Baloo 2', cursive;
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text-color);
+      text-transform: uppercase;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    .header-pill .stars {
+      display: flex;
+      gap: 8px;
+    }
+
+    .star {
+      font-size: 1.2rem;
+    }
+
+    /* Option 2: Card with Accent Bar */
+    .header-card {
+      position: absolute;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      border-radius: 20px;
+      padding: 15px 25px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      border-top: 6px solid var(--zone-accent);
+      min-width: 300px;
+    }
+
+    .header-card .task-text {
+      font-family: 'Baloo 2', cursive;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-color);
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .header-card .stars {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    /* Option 3: Floating Chip */
+    .header-chip {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      border-radius: 50px;
+      padding: 12px 24px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-chip .icon {
+      width: 32px;
+      height: 32px;
+      background: var(--zone-accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .header-chip .task-text {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .header-chip .stars {
+      display: flex;
+      gap: 6px;
+    }
+
+    /* Option 4: Story Bubble */
+    .header-bubble {
+      position: absolute;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      border-radius: 30px;
+      padding: 15px 30px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      position: relative;
+      min-width: 320px;
+    }
+
+    .header-bubble::before {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      left: 30px;
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-top: 15px solid white;
+    }
+
+    .header-bubble .character-icon {
+      position: absolute;
+      left: -20px;
+      top: -10px;
+      font-size: 2.5rem;
+    }
+
+    .header-bubble .task-text {
+      font-family: 'Baloo 2', cursive;
+      font-size: 0.95rem;
+      color: var(--text-color);
+      text-align: center;
+      margin-bottom: 10px;
+      padding-left: 25px;
+    }
+
+    .header-bubble .stars {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    /* Pros/Cons */
+    .pros-cons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .pros, .cons {
+      padding: 15px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .pros {
+      background: #E8F5E9;
+      border-left: 4px solid #8ED641;
+    }
+
+    .cons {
+      background: #FFEBEE;
+      border-left: 4px solid #F44336;
+    }
+
+    .pros h4, .cons h4 {
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .pros ul, .cons ul {
+      margin-left: 20px;
+    }
+
+    .recommended-badge {
+      background: linear-gradient(135deg, #8ED641 0%, #6FBF3C 100%);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-weight: 700;
+      text-align: center;
+      margin-top: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    /* Role perspectives */
+    .role-perspective {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 15px;
+      margin-top: 20px;
+      border-left: 4px solid #4FC3F7;
+    }
+
+    .role-perspective h4 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+
+    .role-perspective p {
+      color: #666;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .final-recommendation {
+      background: white;
+      border-radius: 30px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      margin-top: 40px;
+    }
+
+    .final-recommendation h2 {
+      font-family: 'Baloo 2', cursive;
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 25px 0;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .comparison-table th {
+      background: #f5f5f5;
+      font-weight: 700;
+      color: #333;
+    }
+
+    .comparison-table td {
+      color: #666;
+    }
+
+    .score {
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .score-5 { color: #8ED641; }
+    .score-4 { color: #66BB6A; }
+    .score-3 { color: #FFC107; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 Header Design Options</h1>
+
+    <div class="intro">
+      <strong>Goal:</strong> Choose the best header design for your game scenes!<br>
+      <strong>Current Status:</strong> UnifiedHeaderV2 exists but we can improve the design<br>
+      <strong>Consider:</strong> Child UX, Parent trust, Developer ease
+    </div>
+
+    <!-- OPTIONS GRID -->
+    <div class="options-grid">
+
+      <!-- OPTION 1: Soft Pill Banner -->
+      <div class="header-option">
+        <div class="option-header">
+          <div class="option-number">Option 1</div>
+          <div class="role-badge badge-kid">⭐ Kid Favorite</div>
+        </div>
+
+        <div class="option-title">Soft Pill Banner (Recommended)</div>
+        <div class="option-description">
+          A rounded, pill-shaped header with zone colors, sitting at the top center.
+          Features task text with star progress below. Clean, modern, and playful.
+        </div>
+
+        <div class="header-preview">
+          <div class="game-background">
+            <div class="header-pill" style="--zone-base: #FFFAED; --zone-accent: #F4C430; --zone-shadow: rgba(244,196,48,0.2); --text-color: #6B5416;">
+              <div class="task-text">Find Mooshika under the mounds!</div>
+              <div class="stars">
+                <span class="star">⭐</span>
+                <span class="star" style="opacity: 0.3;">⭐</span>
+                <span class="star" style="opacity: 0.3;">⭐</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pros-cons">
+          <div class="pros">
+            <h4>✅ Pros</h4>
+            <ul>
+              <li>Very child-friendly</li>
+              <li>Clear visual hierarchy</li>
+              <li>3D sticker feel with shadow</li>
+              <li>Zone colors prominent</li>
+              <li>Stars easy to see</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <h4>❌ Cons</h4>
+            <ul>
+              <li>Takes more vertical space</li>
+              <li>Shadow may clash with some backgrounds</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="role-perspective">
+          <h4>👶 Kid's View:</h4>
+          <p>"Big and colorful! I can see what to do and my stars!"</p>
+        </div>
+
+        <div class="role-perspective" style="border-left-color: #8ED641;">
+          <h4>👨‍👩‍👧 Parent's View:</h4>
+          <p>"Clear task description helps my child stay focused. I can glance and see their progress."</p>
+        </div>
+
+        <div class="role-perspective" style="border-left-color: #FFD230;">
+          <h4>💻 Developer's View:</h4>
+          <p>"Uses CSS variables, easy to implement. Clean separation of content and style. Responsive-friendly."</p>
+        </div>
+
+        <div class="recommended-badge">
+          ⭐ RECOMMENDED - Best balance of UX and aesthetics
+        </div>
+      </div>
+
+      <!-- OPTION 2: Card with Accent Bar -->
+      <div class="header-option">
+        <div class="option-header">
+          <div class="option-number">Option 2</div>
+          <div class="role-badge badge-parent">👨‍👩‍👧 Parent Preferred</div>
+        </div>
+
+        <div class="option-title">Card with Accent Bar</div>
+        <div class="option-description">
+          White card with a colored top border. Minimal, professional look.
+          Task text centered with stars below.
+        </div>
+
+        <div class="header-preview">
+          <div class="game-background">
+            <div class="header-card" style="--zone-accent: #E67E22; --text-color: #8B4513;">
+              <div class="task-text">🎨 Decorate the mandap with joy</div>
+              <div class="stars">
+                <span class="star">⭐</span>
+                <span class="star">⭐</span>
+                <span class="star" style="opacity: 0.3;">⭐</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pros-cons">
+          <div class="pros">
+            <h4>✅ Pros</h4>
+            <ul>
+              <li>Clean, minimal design</li>
+              <li>Professional appearance</li>
+              <li>Less visual noise</li>
+              <li>Works on any background</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <h4>❌ Cons</h4>
+            <ul>
+              <li>Less playful</li>
+              <li>Zone color less prominent</li>
+              <li>May look too "educational app"</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="role-perspective">
+          <h4>👶 Kid's View:</h4>
+          <p>"It's okay. A bit plain but I can read it easily."</p>
+        </div>
+
+        <div class="role-perspective" style="border-left-color: #8ED641;">
+          <h4>👨‍👩‍👧 Parent's View:</h4>
+          <p>"Love the clean look! Professional and not overwhelming. Easy to read task."</p>
+        </div>
+
+        <div class="role-perspective" style="border-left-color: #FFD230;">
+          <h4>💻 Developer's View:</h4>
+          <p>"Simplest to implement. Standard box model, no complex shadows. Very maintainable."</p>
+        </div>
+      </div>
+
+      <!-- OPTION 3: Floating Chip -->
+      <div class="header-option">
+        <div class="option-header">
+          <div class="option-number">Option 3</div>
+          <div class="role-badge badge-dev">💻 Dev Efficient</div>
+        </div>
+
+        <div class="option-title">Floating Chip (Minimal)</div>
+        <div class="option-description">
+          Compact horizontal chip with icon, task, and stars in one line.
+          Minimal space usage, modern material design aesthetic.
+        </div>
+
+        <div class="header-preview">
+          <div class="game-background">
+            <div class="header-chip" style="--zone-accent: #4A9B87; --text-color: #1B4D3E;">
+              <div class="icon">🪷</div>
+              <div class="task-text">Open the lotus flowers</div>
+              <div class="stars">
+                <span class="star">⭐</span>
+                <span class="star" style="opacity: 0.3;">⭐</span>
+                <span class="star" style="opacity: 0.3;">⭐</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pros-cons">
+          <div class="pros">
+            <h4>✅ Pros</h4>
+            <ul>
+              <li>Minimal space usage</li>
+              <li>Modern, sleek design</li>
+              <li>Fast to render</li>
+              <li>Works on mobile</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <h4>❌ Cons</h4>
+            <ul>
+              <li>May be too small for young kids</li>
+              <li>Less prominent zone colors</li>
+              <li>Can feel cramped</li>
+              <li>Task text may truncate</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="role-perspective">
+          <h4>👶 Kid's View:</h4>
+          <p>"It's small. I have to look hard to see my stars."</p>
+        </div>
+
+        <div class="role-perspective" style="border-left-color: #8ED641;">
+          <h4>👨‍👩‍👧 Parent's View:</h4>
+          <p>"Looks nice but maybe too compact? I prefer seeing progress more clearly."</p>
+        </div>
+
+        <div class="role-perspective" style="border-left-color: #FFD230;">
+          <h4>💻 Developer's View:</h4>
+          <p>"Very lightweight. Flexbox layout, easy responsive adjustments. Quick to implement."</p>
+        </div>
+      </div>
+
+      <!-- OPTION 4: Story Bubble -->
+      <div class="header-option">
+        <div class="option-header">
+          <div class="option-number">Option 4</div>
+          <div class="role-badge badge-kid">🎭 Most Playful</div>
+        </div>
+
+        <div class="option-title">Story Bubble (Character-Driven)</div>
+        <div class="option-description">
+          Speech bubble from a character (Ganesha/Mooshika). Creates narrative feel,
+          like a character is guiding the child.
+        </div>
+
+        <div class="header-preview">
+          <div class="game-background">
+            <div class="header-bubble" style="--text-color: #6B2F1A;">
+              <div class="character-icon">🐘</div>
+              <div class="task-text">"Let's collect the sweet modaks together!"</div>
+              <div class="stars">
+                <span class="star">⭐</span>
+                <span class="star">⭐</span>
+                <span class="star">⭐</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pros-cons">
+          <div class="pros">
+            <h4>✅ Pros</h4>
+            <ul>
+              <li>Most engaging/fun</li>
+              <li>Creates story narrative</li>
+              <li>Character-driven</li>
+              <li>Kids love speech bubbles</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <h4>❌ Cons</h4>
+            <ul>
+              <li>More complex to style</li>
+              <li>Tail may overlap content</li>
+              <li>Takes most space</li>
+              <li>Can look cluttered</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="role-perspective">
+          <h4>👶 Kid's View:</h4>
+          <p>"Ganesha is talking to me! I love when he tells me what to do!"</p>
+        </div>
+
+        <div class="role-perspective" style="border-left-color: #8ED641;">
+          <h4>👨‍👩‍👧 Parent's View:</h4>
+          <p>"Cute and engaging! But might be distracting if overused. Good for story-heavy scenes."</p>
+        </div>
+
+        <div class="role-perspective" style="border-left-color: #FFD230;">
+          <h4>💻 Developer's View:</h4>
+          <p>"More CSS for the tail. Need to handle character positioning. Medium complexity."</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FINAL RECOMMENDATION -->
+    <div class="final-recommendation">
+      <h2>📊 Comparison & Final Recommendation</h2>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Criteria</th>
+            <th>Option 1 (Pill)</th>
+            <th>Option 2 (Card)</th>
+            <th>Option 3 (Chip)</th>
+            <th>Option 4 (Bubble)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Child Appeal</strong></td>
+            <td class="score score-5">⭐⭐⭐⭐⭐</td>
+            <td class="score score-3">⭐⭐⭐</td>
+            <td class="score score-3">⭐⭐⭐</td>
+            <td class="score score-5">⭐⭐⭐⭐⭐</td>
+          </tr>
+          <tr>
+            <td><strong>Clarity</strong></td>
+            <td class="score score-5">⭐⭐⭐⭐⭐</td>
+            <td class="score score-5">⭐⭐⭐⭐⭐</td>
+            <td class="score score-3">⭐⭐⭐</td>
+            <td class="score score-4">⭐⭐⭐⭐</td>
+          </tr>
+          <tr>
+            <td><strong>Space Efficiency</strong></td>
+            <td class="score score-4">⭐⭐⭐⭐</td>
+            <td class="score score-4">⭐⭐⭐⭐</td>
+            <td class="score score-5">⭐⭐⭐⭐⭐</td>
+            <td class="score score-3">⭐⭐⭐</td>
+          </tr>
+          <tr>
+            <td><strong>Zone Color Visibility</strong></td>
+            <td class="score score-5">⭐⭐⭐⭐⭐</td>
+            <td class="score score-3">⭐⭐⭐</td>
+            <td class="score score-3">⭐⭐⭐</td>
+            <td class="score score-4">⭐⭐⭐⭐</td>
+          </tr>
+          <tr>
+            <td><strong>Dev Simplicity</strong></td>
+            <td class="score score-4">⭐⭐⭐⭐</td>
+            <td class="score score-5">⭐⭐⭐⭐⭐</td>
+            <td class="score score-5">⭐⭐⭐⭐⭐</td>
+            <td class="score score-3">⭐⭐⭐</td>
+          </tr>
+          <tr>
+            <td><strong>Playfulness</strong></td>
+            <td class="score score-5">⭐⭐⭐⭐⭐</td>
+            <td class="score score-3">⭐⭐⭐</td>
+            <td class="score score-3">⭐⭐⭐</td>
+            <td class="score score-5">⭐⭐⭐⭐⭐</td>
+          </tr>
+          <tr>
+            <td><strong>🏆 TOTAL</strong></td>
+            <td class="score score-5"><strong>28/30</strong></td>
+            <td class="score score-4">23/30</td>
+            <td class="score score-4">22/30</td>
+            <td class="score score-4">24/30</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="background: linear-gradient(135deg, #8ED641 0%, #6FBF3C 100%); color: white; padding: 30px; border-radius: 20px; margin-top: 30px; text-align: center;">
+        <h3 style="font-family: 'Baloo 2', cursive; font-size: 1.8rem; margin-bottom: 15px;">
+          🏆 Winner: Option 1 - Soft Pill Banner
+        </h3>
+        <p style="font-size: 1.1rem; line-height: 1.6;">
+          <strong>Why?</strong> Best balance of child appeal, clarity, and zone color visibility.
+          The 3D sticker effect makes it feel like a playful game element rather than boring UI.
+          Zone colors are prominent, stars are clear, and it's easy to read.
+        </p>
+        <p style="margin-top: 15px; font-size: 0.95rem; opacity: 0.9;">
+          <strong>Alternative:</strong> Use Option 4 (Story Bubble) for story-heavy scenes like intro/completion!
+        </p>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
