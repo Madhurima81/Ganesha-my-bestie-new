@@ -7,38 +7,38 @@ export const OPENING_MODALS = {
   // ========================================
   'meaning-cave': {
     'vakratunda-mahakaya': {
-      title: "Unlock the Cave of Secrets!",
-      subtitle: "2 sacred Sanskrit chants are hidden here!",
-      description: "Help unlock the ancient doors to discover Vakratunda and Mahakaya!",
+      title: "Unlock the Curved Trunk Chamber!",
+      subtitle: "2 ancient Sanskrit chants are hidden here!",
       icons: ['vakratunda', 'mahakaya'],
+      iconLabels: ['Curved Trunk', 'Great Body'],
       buttonText: "Enter the Cave",
-      character: 'ganesha-headphones' // or null
+      character: null
     },
 
     'suryakoti-samaprabha': {
-      title: "Door of Light Awaits!",
-      subtitle: "TODO: Add content from actual scene",
-      description: "",
+      title: "Unlock the Million Suns Chamber!",
+      subtitle: "2 radiant Sanskrit chants are hidden here!",
       icons: ['suryakoti', 'samaprabha'],
-      buttonText: "Enter",
+      iconLabels: ['Million Suns', 'Equal Radiance'],
+      buttonText: "Enter the Cave",
       character: null
     },
 
     'nirvighnam-kurumedeva': {
-      title: "TODO: Add title",
-      subtitle: "TODO: Add subtitle",
-      description: "",
+      title: "Unlock the Obstacle Remover Chamber!",
+      subtitle: "2 powerful Sanskrit chants are hidden here!",
       icons: ['nirvighnam', 'kurumedeva'],
-      buttonText: "Begin",
+      iconLabels: ['No Obstacles', 'Do For Me'],
+      buttonText: "Enter the Cave",
       character: null
     },
 
     'sarvakaryeshu-sarvada': {
-      title: "TODO: Add title",
-      subtitle: "TODO: Add subtitle",
-      description: "",
+      title: "Unlock the Divine Tasks Chamber!",
+      subtitle: "2 powerful Sanskrit chants are hidden here!",
       icons: ['sarvakaryeshu', 'sarvada'],
-      buttonText: "Enter",
+      iconLabels: ['All Actions', 'Always'],
+      buttonText: "Enter the Cave",
       character: null
     },
 
@@ -56,7 +56,7 @@ export const OPENING_MODALS = {
   // SYMBOL MOUNTAIN
   // ========================================
   'symbol-mountain': {
-    'modak-scene': {
+    'modak': {
       title: "Help Ganesha Save the Forest!",
       subtitle: "3 magical friends are hiding — let's find them!",
       description: "Search for Mooshika, collect modaks, and discover the power of gratitude!",
@@ -65,21 +65,21 @@ export const OPENING_MODALS = {
       character: 'ganesha-happy'
     },
 
-    'pond-scene': {
-      title: "TODO: Add title",
-      subtitle: "TODO: Add subtitle",
-      description: "",
-      icons: [],
-      buttonText: "Start",
+    'pond': {
+      title: "Explore the Sacred Pond!",
+      subtitle: "2 magical symbols are hidden here!",
+      icons: ['lotus', 'trunk'],
+      iconLabels: ['Lotus', 'Trunk'],
+      buttonText: "Begin Adventure!",
       character: null
     },
 
-    'tusk-scene': {
-      title: "TODO: Add title",
-      subtitle: "TODO: Add subtitle",
-      description: "",
-      icons: [],
-      buttonText: "Begin",
+    'tusk': {
+      title: "Master the Musical Mountain!",
+      subtitle: "3 sacred sounds are hidden here!",
+      icons: ['eyes', 'ears', 'tusk'],
+      iconLabels: ['Eyes', 'Ears', 'Tusk'],
+      buttonText: "Begin Adventure!",
       character: null
     }
   },
@@ -90,37 +90,34 @@ export const OPENING_MODALS = {
   'shloka-river': {
     'vakratunda-grove': {
       title: "Welcome to Vakratunda Grove!",
-      subtitle: "Learn 2 Sanskrit chants with Ganesha!",
-      description: "Match syllables and grow flowers while mastering sacred words!",
+      subtitle: "Where Ancient Chants Echo",
       icons: ['vakratunda-app', 'mahakaya-app'],
-      buttonText: "Begin Learning!",
+      buttonText: "Let's Chant!",
       character: 'ganesha-headphones'
     },
 
     'suryakoti-bank': {
-      title: "TODO: Add title",
-      subtitle: "TODO: Add subtitle",
-      description: "",
-      icons: [],
-      buttonText: "Start Chanting",
+      title: "Welcome to Suryakoti Bank!",
+      subtitle: "River of Light",
+      icons: ['suryakoti-app', 'samaprabha-app'],
+      buttonText: "Let's Chant!",
       character: 'ganesha-headphones'
     },
 
     'nirvighnam-chant': {
-      title: "TODO: Add title",
-      subtitle: "TODO: Add subtitle",
-      description: "",
-      icons: [],
-      buttonText: "Begin",
+      title: "Welcome to Nirvighnam Waters!",
+      subtitle: "River of Obstacle Removal",
+      icons: ['nirvighnam-app', 'kurumedeva-app'],
+      buttonText: "Let's Chant!",
       character: 'ganesha-headphones'
     },
 
     'sarvakaryeshu-chant': {
-      title: "TODO: Add title",
-      subtitle: "TODO: Add subtitle",
-      description: "",
-      icons: [],
-      buttonText: "Start",
+      title: "🌙 Every Day, Always",
+      subtitle: "River of Constant Blessings",
+      icons: ['sarvakaryeshu-app', 'sarvada-app'],
+      iconLabels: ['Day', 'Night'],
+      buttonText: "Let's Chant!",
       character: 'ganesha-headphones'
     },
 
@@ -138,40 +135,37 @@ export const OPENING_MODALS = {
   // FESTIVAL SQUARE (Play Zone)
   // ========================================
   'festival-square': {
-    'piano-game': {
-      title: "TODO: Add title",
-      subtitle: "TODO: Add subtitle",
-      description: "",
+    'game1': {
+      title: "Piano Time! 🎹",
+      subtitle: "Let's create beautiful festival melodies together!",
       icons: [],
-      buttonText: "Play Music",
-      character: null
+      buttonText: "Let's Play!",
+      character: 'baby-ganesha-sit'
     },
 
-    'rangoli-game': {
-      title: "TODO: Add title",
-      subtitle: "TODO: Add subtitle",
-      description: "",
+    'game2': {
+      title: "Rangoli Time! 🎨",
+      subtitle: "Let's create beautiful festival art together!",
       icons: [],
-      buttonText: "Create Rangoli",
-      character: null
+      buttonText: "Let's Create!",
+      character: 'baby-ganesha-sit'
     },
 
-    'cooking-game': {
-      title: "TODO: Add title",
-      subtitle: "TODO: Add subtitle",
-      description: "",
+    'game3': {
+      title: "Modak Time! 🍬",
+      subtitle: "Let's cook Ganesha's favorite sweet together!",
       icons: [],
-      buttonText: "Start Cooking",
-      character: null
+      buttonText: "Let's Cook!",
+      character: 'baby-ganesha-sit'
     },
 
-    'mandap-decor': {
-      title: "TODO: Add title",
-      subtitle: "TODO: Add subtitle",
-      description: "",
-      icons: [],
-      buttonText: "Decorate",
-      character: null
+    'game4': {
+      title: "Mandap Time! 🏛️",
+      subtitle: "Let's create a beautiful wedding canopy together!",
+      icons: ['mandap-decorate'],
+      iconLabels: ['Decorate'],
+      buttonText: "Let's Build!",
+      character: 'baby-ganesha-sit'
     }
   },
 
@@ -179,40 +173,40 @@ export const OPENING_MODALS = {
   // ABOUT ME HUT (Play Zone)
   // ========================================
   'about-me-hut': {
-    'name-scene': {
-      title: "TODO: Add title",
-      subtitle: "TODO: Add subtitle",
-      description: "",
+    'name-birthday': {
+      title: "Name & Birthday Quest!",
+      subtitle: "I have a special name and a special birthday.",
+      description: "Let's discover them together!",
       icons: [],
-      buttonText: "Tell My Name",
-      character: null
+      buttonText: "Let's Begin 🌱",
+      character: 'baby-ganesha-sit'
     },
 
     'family-tree': {
-      title: "TODO: Add title",
-      subtitle: "TODO: Add subtitle",
-      description: "",
+      title: "Meet My Family",
+      subtitle: "This is my family. They make me who I am.",
+      description: "Let me show you the people I love!",
       icons: [],
-      buttonText: "Build Family Tree",
-      character: null
+      buttonText: "Meet My Family 💛",
+      character: 'baby-ganesha-sit'
     },
 
-    'food-scene': {
-      title: "TODO: Add title",
-      subtitle: "TODO: Add subtitle",
-      description: "",
+    'favorite-food': {
+      title: "The Favorites Match!",
+      subtitle: "I have some things I love more than anything!",
+      description: "Can you guess my favorites?",
       icons: [],
-      buttonText: "Choose Food",
-      character: null
+      buttonText: "Let's Play! 🎯",
+      character: 'baby-ganesha-sit'
     },
 
-    'enjoy-scene': {
-      title: "TODO: Add title",
-      subtitle: "TODO: Add subtitle",
-      description: "",
-      icons: [],
-      buttonText: "Share What I Enjoy",
-      character: null
+    'dreams-wishes': {
+      title: "Dreams & Wishes",
+      subtitle: "I have three happy wishes for the world.",
+      description: "Let's make them come true together.",
+      icons: ['wish-earth', 'wish-share', 'wish-flower'],
+      buttonText: "Let's Begin! ✨",
+      character: 'baby-ganesha-sit'
     }
   }
 };

@@ -28,13 +28,6 @@ import MenuButton from '../../../../lib/components/navigation/MenuButton';
 import HelpMenu from '../../../../lib/components/help/HelpMenu';
 import { modakHelpConfig } from './helpConfig';
 
-// Content Configs
-import {
-  getOpeningModal,
-  getSceneHeader,
-  formatHeader,
-  getResumeMessage
-} from '../../../../lib/config/content';
 
 // UI Components
 import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
@@ -213,11 +206,11 @@ const NewModakScene = ({
   );
 };
 
-const NewModakSceneContent = ({
-  sceneState,
-  sceneActions,
-  isReload,
-  onComplete,
+const NewModakSceneContent = ({ 
+  sceneState, 
+  sceneActions, 
+  isReload, 
+  onComplete, 
   onNavigate,
   zoneId,
   sceneId
@@ -227,12 +220,6 @@ const NewModakSceneContent = ({
   }
 
   if (!sceneState?.phase) sceneActions.updateState({ phase: PHASES.MOOSHIKA_SEARCH });
-
-  // Get content from configs
-  const openingModalContent = getOpeningModal(zoneId, sceneId);
-
-  // Note: Discovery overlay content is handled by SimpleDiscoveryOverlay component
-  // which would need to be updated separately to use discoveryContent.js
 
   const [showHintGlow, setShowHintGlow] = useState(false);
 
@@ -394,16 +381,13 @@ useEffect(() => {
 // ============================================
 
 // CHANGE TO (use moundStates):
-if (sceneState.phase === PHASES.MOOSHIKA_SEARCH &&
-    sceneState.moundStates &&
+if (sceneState.phase === PHASES.MOOSHIKA_SEARCH && 
+    sceneState.moundStates && 
     sceneState.moundStates.filter(state => state === 1).length > 0) {
-
+  
   const clickedCount = sceneState.moundStates.filter(state => state === 1).length;
-
-  setResumeMessage(
-    getResumeMessage(zoneId, sceneId, 'searchInProgress', { count: clickedCount }) ||
-    `Keep searching! You've checked ${clickedCount}/5 mounds. Mooshika is hiding in one!`
-  );
+  
+  setResumeMessage(`Keep searching! You've checked ${clickedCount}/5 mounds. Mooshika is hiding in one!`);
   setShowResumePopup(true);
   
   if (resumePopupTimeoutRef.current) {
@@ -507,10 +491,7 @@ if (sceneState.phase === PHASES.MODAKS_UNLOCKED ||
   });
   
   // ✅ NOW use collected
-  setResumeMessage(
-    getResumeMessage(zoneId, sceneId, 'collectionInProgress', { count: collected }) ||
-    `Continue collecting modaks! You have ${collected}/3 in the basket!`
-  );
+  setResumeMessage(`Continue collecting modaks! You have ${collected}/3 in the basket!`);
   setShowResumePopup(true);
   setTimeout(() => setShowResumePopup(false), 5000);
   
@@ -538,13 +519,10 @@ if (sceneState.phase === PHASES.ROCK_VISIBLE ||
   });
   
   // ✅ NOW use fedCount in message
-  setResumeMessage(
-    getResumeMessage(zoneId, sceneId, 'feedingInProgress', { count: fedCount }) ||
-    `Keep feeding the rock with modaks! You have fed ${fedCount}/3!`
-  );
+  setResumeMessage(`Keep feeding the rock with modaks! You have fed ${fedCount}/3!`);
   setShowResumePopup(true);
   setTimeout(() => setShowResumePopup(false), 5000);
-
+  
   return; // Exit early
 }
     
@@ -659,10 +637,7 @@ else if (sceneState.phase === PHASES.MODAKS_UNLOCKED || sceneState.phase === PHA
 else if (sceneState.phase === PHASES.ROCK_VISIBLE || sceneState.phase === PHASES.ROCK_FEEDING) {
   console.log('📌 TRIGGERING POPUP for rock feeding');
   const fedCount = sceneState.rockFeedCount || 0;
-  setResumeMessage(
-    getResumeMessage(zoneId, sceneId, 'feedingInProgress', { count: fedCount }) ||
-    `Keep feeding the rock with modaks! You have fed ${fedCount}/3!`
-  );
+  setResumeMessage(`Keep feeding the rock with modaks! You have fed ${fedCount}/3!`);
   setShowResumePopup(true);
   setTimeout(() => setShowResumePopup(false), 5000);
 }
@@ -1142,20 +1117,17 @@ const completeSymbolLearning = (symbolKey, symbolData) => {
     {sceneState.phase === PHASES.MOOSHIKA_SEARCH && (
       <UnifiedHeaderV2
         zone="symbol-mountain"
-        title={getSceneHeader(zoneId, sceneId, 'search') || '🔍 WHERE IS MOOSHIKA? Click the mounds!'}
+        title="🔍 WHERE IS MOOSHIKA? Click the mounds!"
         currentRound={0}
         totalRounds={3}
       />
     )}
-
+    
     {/* 2. MODAK COLLECTION PHASE */}
     {(sceneState.phase === PHASES.MODAKS_UNLOCKED || sceneState.phase === PHASES.SOME_COLLECTED) && !sceneState.basketFull && (
       <UnifiedHeaderV2
         zone="symbol-mountain"
-        title={formatHeader(
-          getSceneHeader(zoneId, sceneId, 'collection'),
-          { count: sceneState.collectedModaks?.length || 0 }
-        ) || `🍬 HELP MOOSHIKA! Collect ${sceneState.collectedModaks?.length || 0}/3 modaks!`}
+        title={`🍬 HELP MOOSHIKA! Collect ${sceneState.collectedModaks?.length || 0}/3 modaks!`}
         currentRound={1}
         totalRounds={3}
       />
@@ -1165,10 +1137,7 @@ const completeSymbolLearning = (symbolKey, symbolData) => {
     {(sceneState.phase === PHASES.ROCK_VISIBLE || sceneState.phase === PHASES.ROCK_FEEDING) && !sceneState.rockTransformed && (
       <UnifiedHeaderV2
         zone="symbol-mountain"
-        title={formatHeader(
-          getSceneHeader(zoneId, sceneId, 'feeding'),
-          { count: sceneState.rockFeedCount || 0 }
-        ) || `🪨 FEED GANESHA! Share ${sceneState.rockFeedCount || 0}/3 modaks!`}
+        title={`🪨 FEED GANESHA! Share ${sceneState.rockFeedCount || 0}/3 modaks!`}
         currentRound={2}
         totalRounds={3}
       />
@@ -1208,20 +1177,20 @@ const completeSymbolLearning = (symbolKey, symbolData) => {
                   {/* Card Right */}
                   <div className="game-modal-card">
                     <h1 className="game-modal-title">
-                      {openingModalContent?.title || 'Help Ganesha Save the Forest!'}
+                      Help Ganesha Save the Forest!
                     </h1>
-
+                    
                     <p className="game-modal-subtitle">
-                      {openingModalContent?.subtitle || '3 magical friends are hiding — let us find them!'}
+                      3 magical friends are hiding — let's find them!
                     </p>
-
+                    
                     <div className="game-modal-icons">
                       <div className="game-modal-icon-item">
-
-<img
+                  
+<img 
   src={symbolMooshikaColored} /* <--- Use the cute brown one here! */
-  alt="Mooshika Found"
-  className="discovery-hero-img"
+  alt="Mooshika Found" 
+  className="discovery-hero-img" 
 />
                         <span className="game-modal-icon-label">Mooshika</span>
                       </div>
@@ -1234,14 +1203,14 @@ const completeSymbolLearning = (symbolKey, symbolData) => {
                         <span className="game-modal-icon-label">Belly Badge</span>
                       </div>
                     </div>
-
+                    
                     <button
                       className="game-modal-button"
                       onClick={() => {
                         sceneActions.updateState({ welcomeShown: true });
                       }}
                     >
-                      {openingModalContent?.buttonText || 'Begin Adventure!'}
+                      Begin Adventure!
                     </button>
                   </div>
                 </div>

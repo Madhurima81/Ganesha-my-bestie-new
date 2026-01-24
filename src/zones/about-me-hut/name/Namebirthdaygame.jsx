@@ -13,6 +13,9 @@ import Modal from '../../../lib/components/ui/Modal/Modal';
 import '../../../lib/styles/zone-themes.css';
 import '../../../lib/styles/animations.css';
 
+// Content Configs
+import { getOpeningModal } from '../../../lib/config/content';
+
 // Import images
 import nameBg from './assets/images/name-bg.png';
 import babyGaneshaImg from './assets/images/baby-ganesha-sit.png';
@@ -101,6 +104,9 @@ const NameBirthdayGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
 const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplete, onNavigate, onBack }) => {
 
   if (!sceneState) return <div>Loading...</div>;
+
+  // Get content from configs
+  const openingModalContent = getOpeningModal('about-me-hut', 'name-birthday');
 
   // --- LOCAL UI STATE ---
   const [showShake, setShowShake] = useState(null);
@@ -503,8 +509,8 @@ const handleFestivalClick = (festivalId) => {
       <Modal
         isOpen={sceneState.gamePhase === 'intro'}
         onClose={() => {}}
-        title="Name & Birthday Quest!"
-        confirmText="Let's Begin 🌱"
+        title={openingModalContent?.title || "Name & Birthday Quest!"}
+        confirmText={openingModalContent?.buttonText || "Let's Begin 🌱"}
         onConfirm={handleStartGame}
         showCloseButton={false}
         closeOnOverlayClick={false}
@@ -517,8 +523,8 @@ const handleFestivalClick = (festivalId) => {
             className="intro-ganesha-image heartbeat"
           />
           <p className="intro-description">
-            I have a special name and a special birthday.<br />
-            Let's discover them together!
+            {openingModalContent?.subtitle || "I have a special name and a special birthday."}<br />
+            {openingModalContent?.description || "Let's discover them together!"}
           </p>
           <div className="intro-icons-container">
             <div className="intro-icon-item fade-in delay-100">

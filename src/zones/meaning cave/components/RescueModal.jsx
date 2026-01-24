@@ -1,7 +1,7 @@
 // zones/cave-of-secrets/components/RescueModal.jsx
 import React, { useState } from 'react';
 import './RescueModal.css';
-import UnifiedButtonV2 from './UnifiedButtonV2';
+import UnifiedButtonV2 from '../../../lib/components/ui/Button/UnifiedButtonV2';
 
 const RescueModal = ({
   show,

@@ -255,7 +255,7 @@ export const RESUME_MESSAGES = {
   },
 
   'symbol-mountain': {
-    'modak-scene': {
+    'modak': {
       searchInProgress: "Keep searching! You've checked {count}/5 mounds. Mooshika is hiding in one!",
       collectionInProgress: "Continue collecting modaks! You have {count}/3 in the basket!",
       feedingInProgress: "Keep feeding the rock with modaks! You have fed {count}/3!"

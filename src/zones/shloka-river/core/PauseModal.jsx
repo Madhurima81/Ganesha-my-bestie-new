@@ -1,7 +1,7 @@
 // Location: zones/shloka-river/core/components/PauseModal.jsx
 
 import React from 'react';
-import UnifiedButtonV2 from './UnifiedButtonV2';
+import UnifiedButtonV2 from '../../../lib/components/ui/Button/UnifiedButtonV2';
 
 const PauseModal = ({ isOpen, onContinue, onExit, gameName, theme }) => {
   if (!isOpen) return null;

@@ -44,7 +44,7 @@ import MahakayaGame from './MahakayaGame';
 // import WaterSpray from './components/WaterSpray';
 
 import useSafeClick from '../../core/hooks/useSafeClick';
-import UnifiedButtonV2 from '../../core/UnifiedButtonV2';
+import UnifiedButtonV2 from '../../../../lib/components/ui/Button/UnifiedButtonV2';
 
 // Character images
 import boyNamaste from './assets/images/boy-namaste.png';

@@ -6,7 +6,7 @@ import { useSafeClick } from './hooks/useSafeClick';
 
 import UniversalPauseButton from './UniversalPauseButton';
 import PauseModal from './PauseModal';
-import UnifiedButtonV2 from './UnifiedButtonV2';
+import UnifiedButtonV2 from '../../../lib/components/ui/Button/UnifiedButtonV2';
 
 // Helper: Get dynamic instruction text based on clicker type
 const getClickInstruction = (clickerType) => {

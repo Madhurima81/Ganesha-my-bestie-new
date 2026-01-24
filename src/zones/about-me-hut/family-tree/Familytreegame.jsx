@@ -7,6 +7,9 @@ import AboutMeCompletion from "../components/Aboutmecompletion";
 import SceneManager from "../../../lib/components/scenes/SceneManager";
 import BackToMapButton from '../../../lib/components/navigation/BackToMapButton';
 
+// Content Configs
+import { getOpeningModal } from '../../../lib/config/content';
+
 // --- IMPORT ASSETS (Ganesha's Family & Distractors) ---
 import familyTreeBg from './assets/images/family tree bg.png';
 import familyTree from './assets/images/family-tree.png';
@@ -135,6 +138,9 @@ const FamilyTreeGameContent = ({
 }) => {
   
   if (!sceneState || !sceneActions) return <div>Loading...</div>;
+
+  // Get content from configs
+  const openingModalContent = getOpeningModal('about-me-hut', 'family-tree');
 
   // IMPORTANT: Ensure phase exists (just like Modak code)
   if (!sceneState?.gamePhase) {
@@ -445,11 +451,10 @@ const FamilyTreeGameContent = ({
               <img src={babyGaneshaImg} alt="Baby Ganesha" />
             </div>
             <div className="game-modal-card">
-              <h1 className="game-modal-title">Meet My Family</h1>
+              <h1 className="game-modal-title">{openingModalContent?.title || 'Meet My Family'}</h1>
               <p className="game-modal-subtitle">
-                This is my family.<br />
-                They make me who I am.<br />
-                After that, I'd love to meet yours too 💛
+                {openingModalContent?.subtitle || 'This is my family. They make me who I am.'}<br />
+                {openingModalContent?.description || "After that, I'd love to meet yours too 💛"}
               </p>
               <div className="game-modal-icons">
                 <div className="game-modal-icon-item">
@@ -466,7 +471,7 @@ const FamilyTreeGameContent = ({
                 </div>
               </div>
               <button className="game-modal-button" onClick={handleStartGame}>
-                Meet My Family! 🌟
+                {openingModalContent?.buttonText || 'Meet My Family! 🌟'}
               </button>
             </div>
           </div>

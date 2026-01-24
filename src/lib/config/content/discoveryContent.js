@@ -132,7 +132,7 @@ export const DISCOVERY_CONTENT = {
   // SYMBOL MOUNTAIN
   // ========================================
   'symbol-mountain': {
-    'modak-scene': {
+    'modak': {
       mooshika: {
         celebration: {
           title: "You Found Mooshika!",
@@ -177,34 +177,76 @@ export const DISCOVERY_CONTENT = {
       }
     },
 
-    'pond-scene': {
-      symbol1: {
+    'pond': {
+      lotus: {
         celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
-          icon: 'TODO'
+          title: "You Found the Golden Lotus!",
+          text: "It has something magical to share!",
+          icon: 'golden-lotus'
         },
         power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
+          title: "Positivity Power Unlocked!",
+          text: "Just like a lotus stays clean in muddy water… you can stay bright and happy even on messy days!",
+          affirmation: "I am positive",
+          buttonText: "Ready to Bloom!"
+        }
+      },
+
+      trunk: {
+        celebration: {
+          title: "You Found the Elephant's Trunk Magic!",
+          text: "It wants to share its secret with you!",
+          icon: 'water-elephant'
+        },
+        power: {
+          title: "Power Switch Unlocked!",
+          text: "Your trunk can be strong or gentle. And just like that… you can choose how to act!",
+          affirmation: "I can choose",
+          buttonText: "Mission Complete!"
         }
       }
     },
 
-    'tusk-scene': {
-      symbol1: {
+    'tusk': {
+      eyes: {
         celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
-          icon: 'TODO'
+          title: "You Found Ganesha's Eye Magic!",
+          text: "His eyes want to share a special skill with you!",
+          icon: 'ganesha-eyes'
         },
         power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
+          title: "Laser Focus Unlocked!",
+          text: "Small eyes can spot tiny details! With Laser Focus, you can notice little things that others might miss.",
+          affirmation: "I can focus",
+          buttonText: "Focus On!"
+        }
+      },
+
+      ears: {
+        celebration: {
+          title: "You Found Ganesha's Ear Magic!",
+          text: "His big ears have something to teach you!",
+          icon: 'ganesha-ears'
+        },
+        power: {
+          title: "Big Ears Unlocked!",
+          text: "Big ears help you listen carefully! With Listening Power, you can catch every sound and every important clue.",
+          affirmation: "I can listen",
+          buttonText: "Listen Up!"
+        }
+      },
+
+      tusk: {
+        celebration: {
+          title: "You Found Ganesha's Tusk Magic!",
+          text: "This tusk holds a powerful secret!",
+          icon: 'ganesha-tusk'
+        },
+        power: {
+          title: "Determination Unlocked!",
+          text: "Ganesha finished writing even with one tusk! With Determination Power, you can finish what you start—even when it gets tough.",
+          affirmation: "I am determined",
+          buttonText: "Get It Done!"
         }
       }
     }

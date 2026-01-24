@@ -45,7 +45,7 @@ export const SCENE_HEADERS = {
   // SYMBOL MOUNTAIN
   // ========================================
   'symbol-mountain': {
-    'modak-scene': {
+    'modak': {
       search: "🔍 WHERE IS MOOSHIKA? Click the mounds!",
       collection: "🍬 HELP MOOSHIKA! Collect {count}/3 modaks!",
       feeding: "🪨 FEED GANESHA! Share {count}/3 modaks!",
@@ -53,18 +53,18 @@ export const SCENE_HEADERS = {
       complete: "✨ Gratitude Power Unlocked!"
     },
 
-    'pond-scene': {
-      initial: "TODO: Add header",
-      search: "TODO: Add header",
-      interaction: "TODO: Add header",
-      complete: "TODO: Add header"
+    'pond': {
+      initial: "🌸 BLOOM THE LOTUSES! Click to open them!",
+      goldenVisible: "✨ FIND THE GOLDEN LOTUS! It's hiding somewhere!",
+      elephantVisible: "🐘 FILL THE POND! Use the elephant's trunk!",
+      complete: "🎊 POND COMPLETE! Both symbols unlocked!"
     },
 
-    'tusk-scene': {
-      initial: "TODO: Add header",
-      search: "TODO: Add header",
-      interaction: "TODO: Add header",
-      complete: "TODO: Add header"
+    'tusk': {
+      eyes: "🔭 FIND THE HIDDEN OBJECTS! Use your laser focus!",
+      ears: "🎵 LISTEN TO THE RHYTHM! Match the musical notes!",
+      tusk: "🎹 COMPLETE THE SONG! Place the notes in the tusk!",
+      complete: "🎊 MUSICAL MOUNTAIN MASTERED! All powers unlocked!"
     }
   },
 

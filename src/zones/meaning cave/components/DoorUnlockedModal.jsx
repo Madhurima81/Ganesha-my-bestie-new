@@ -1,7 +1,7 @@
 // zones/cave-of-secrets/components/DoorUnlockedModal.jsx
 import React from 'react';
 import './DoorUnlockedModal.css';
-import UnifiedButtonV2 from './UnifiedButtonV2';
+import UnifiedButtonV2 from '../../../lib/components/ui/Button/UnifiedButtonV2';
 
 const DoorUnlockedModal = ({ 
   show,

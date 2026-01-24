@@ -13,6 +13,9 @@ import HelpMenu from '../../../lib/components/help/HelpMenu';
 import { obstacleRemoverHelpConfig } from './helpConfig';
 import SceneManager from "../../../lib/components/scenes/SceneManager";
 
+// Content Configs
+import { getOpeningModal } from '../../../lib/config/content';
+
 // Import Unified Design System
 import Button from '../../../lib/components/ui/Button/Button';
 import '../../../lib/styles/zone-themes.css';
@@ -108,6 +111,9 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
 const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplete, onNavigate, onBack }) => {
 
   if (!sceneState) return <div>Loading...</div>;
+
+  // Get content from configs
+  const openingModalContent = getOpeningModal('about-me-hut', 'dreams-wishes');
 
   // --- LOCAL UI STATE (Not saved in DB) ---
   const [showSlideMenu, setShowSlideMenu] = useState(false);
@@ -382,14 +388,17 @@ if (gamePhase === 'all-wishes-complete') {
           <div className="game-modal-content">
             <div className="game-modal-character"><img src={babyGaneshaImg} alt="Ganesha" /></div>
             <div className="dream-card">
-              <h1 className="dream-title">Our Big Wishes! 🌟</h1>
-              <p className="dream-text">I have three happy wishes for the world.<br />Let’s make them come true together.</p>
+              <h1 className="dream-title">{openingModalContent?.title || 'Our Big Wishes! 🌟'}</h1>
+              <p className="dream-text">
+                {openingModalContent?.subtitle || 'I have three happy wishes for the world.'}<br />
+                {openingModalContent?.description || "Let's make them come true together."}
+              </p>
               <div className="dream-icon-row">
                 <div className="dream-icon-item"><img src={wishIconEarth} alt="Earth" className="intro-wish-icon" /></div>
                 <div className="dream-icon-item"><img src={wishIconShare} alt="Sharing" className="intro-wish-icon" /></div>
                 <div className="dream-icon-item"><img src={wishIconFlower} alt="Nature" className="intro-wish-icon" /></div>
               </div>
-              <button className="dream-btn" onClick={handleStartGame}>Yes! Let’s do it together 🌱</button>
+              <button className="dream-btn" onClick={handleStartGame}>{openingModalContent?.buttonText || "Yes! Let's do it together 🌱"}</button>
             </div>
           </div>
         </div>

@@ -10,6 +10,9 @@ import LetterInputKeyboard from '../components/LetterInputKeyboard';
 import SceneManager from "../../../lib/components/scenes/SceneManager";
 import BackToMapButton from '../../../lib/components/navigation/BackToMapButton';
 
+// Content Configs
+import { getOpeningModal } from '../../../lib/config/content';
+
 // --- EXISTING ASSETS ---
 import foodBg from './assets/images/food-bg.png';
 import babyGaneshaImg from './assets/images/baby-ganesha.png';
@@ -146,6 +149,9 @@ const FavoriteFoodGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
 const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplete, onNavigate, onBack }) => {
 
   if (!sceneState) return <div>Loading...</div>;
+
+  // Get content from configs
+  const openingModalContent = getOpeningModal('about-me-hut', 'favorite-food');
 
   // --- LOCAL UI STATE (Transient) ---
   const [showShake, setShowShake] = useState(null);
@@ -560,10 +566,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
               <img src={babyGaneshaImg} alt="Baby Ganesha" />
             </div>
             <div className="game-modal-card">
-              <h1 className="game-modal-title">The Favorites Match!</h1>
+              <h1 className="game-modal-title">{openingModalContent?.title || 'The Favorites Match!'}</h1>
               <p className="game-modal-subtitle">
-                I have some things I love more than anything!<br />
-                Can you guess my favorites?<br />
+                {openingModalContent?.subtitle || 'I have some things I love more than anything!'}<br />
+                {openingModalContent?.description || 'Can you guess my favorites?'}<br />
               </p>
               <div className="game-modal-icons">
                 <div className="game-modal-icon-item">
@@ -580,7 +586,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 </div>
               </div>
               <button className="game-modal-button" onClick={handleStartGame}>
-                Let's Play Guessing! 🌟
+                {openingModalContent?.buttonText || "Let's Play Guessing! 🌟"}
               </button>
             </div>
           </div>
