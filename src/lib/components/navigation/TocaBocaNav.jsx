@@ -1,11 +1,8 @@
 // lib/components/navigation/TocaBocaNav.jsx
-// Slide menu triggered by MenuButton (no swipe detection)
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import './TocaBocaNav.css';
-import { getZoneTheme } from '../../config/ZoneThemes';
 
-// Helper functions for zone display
 const getZoneName = (zoneId) => {
   const names = {
     'symbol-mountain': 'Symbol Mountain',
@@ -17,20 +14,20 @@ const getZoneName = (zoneId) => {
   return names[zoneId] || 'Game Zone';
 };
 
-const getZoneTagline = (zoneId) => {
-  const taglines = {
+const getZoneSubtitle = (zoneId) => {
+  const subtitles = {
     'symbol-mountain': 'Discover & Learn',
     'cave-of-secrets': 'Hidden Treasures',
     'festival-square': 'Celebrate & Create',
     'shloka-river': 'Flow & Chant',
     'about-me-hut': 'Your Story'
   };
-  return taglines[zoneId] || 'Have Fun!';
+  return subtitles[zoneId] || 'Have Fun!';
 };
 
 const TocaBocaNav = ({
-  show,           // ← Controlled by parent via MenuButton
-  onClose,        // ← Close handler
+  show,
+  onClose,
   onHome,
   onHelp,
   onStartFresh,
@@ -40,206 +37,168 @@ const TocaBocaNav = ({
   zoneId = 'symbol-mountain'
 }) => {
   const [showParentAccess, setShowParentAccess] = useState(false);
-  const theme = getZoneTheme(zoneId);
+  const [isPressing, setIsPressing] = useState(false);
+  const [mathProblem, setMathProblem] = useState({ n1: 0, n2: 0 });
+  const [userAnswer, setUserAnswer] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+  const pressTimerRef = useRef(null);
 
-  // Auto-hide menu after inactivity (optional)
-  useEffect(() => {
-    if (!show) return;
-    
-    const hideTimer = setTimeout(() => {
-      onClose?.();
-    }, 8000); // Auto-close after 8 seconds
-    
-    return () => clearTimeout(hideTimer);
-  }, [show, onClose]);
-
-  const handleMenuAction = (action) => {
-    action();
-    onClose?.();
+  // --- Logic ---
+  const generateProblem = () => {
+    setMathProblem({ 
+      n1: Math.floor(Math.random() * 10) + 10, 
+      n2: Math.floor(Math.random() * 9) + 1 
+    });
+    setUserAnswer('');
+    setErrorMsg('');
   };
 
-  const handleParentVerification = () => {
-    const num1 = Math.floor(Math.random() * 10) + 5;
-    const num2 = Math.floor(Math.random() * 10) + 5;
-    const answer = prompt(`Parent Verification: What is ${num1} + ${num2}?`);
-    
-    if (parseInt(answer) === num1 + num2) {
-      onParentMenu?.('dashboard');
+  const startPress = () => {
+    setIsPressing(true);
+    pressTimerRef.current = setTimeout(() => {
+      setIsPressing(false);
+      generateProblem();
+      setShowParentAccess(true);
+    }, 1000); 
+  };
+
+  const cancelPress = () => {
+    setIsPressing(false);
+    if (pressTimerRef.current) clearTimeout(pressTimerRef.current);
+  };
+
+  const handleVerify = () => {
+    if (parseInt(userAnswer) === mathProblem.n1 + mathProblem.n2) {
       setShowParentAccess(false);
       onClose?.();
+      onParentMenu?.('dashboard');
     } else {
-      alert('Incorrect answer. Please try again.');
+      setErrorMsg('Try again!');
+      setUserAnswer('');
     }
+  };
+
+  const handleMenuAction = (action) => {
+    action?.();
+    onClose?.();
   };
 
   return (
     <>
-      {/* Menu overlay */}
-      {show && (
-        <div className="menu-overlay" onClick={onClose} />
-      )}
+      {show && <div className="menu-overlay" onClick={onClose} />}
       
-      {/* Left slide menu */}
       <div 
         className={`side-menu ${show ? 'visible' : ''}`}
-        style={{
-          background: theme.menuBg,
-          backdropFilter: theme.blur,
-          fontFamily: theme.fontFamilyBody
-        }}
+        data-zone={zoneId} 
+        onClick={(e) => e.stopPropagation()} // Prevent clicks inside menu from closing it
       >
-        {/* Close button */}
-        <button 
-          className="menu-close" 
-          onClick={onClose}
-          style={{
-            background: 'rgba(255, 255, 255, 0.6)',
-            color: theme.textPrimary
-          }}
-        >
-          ×
-        </button>
         
-        {/* ZONE HEADER */}
+        {/* HEADER WITH SUBTITLE */}
         <div className="menu-zone-header">
-          <h2 
-            className="menu-zone-title"
-            style={{ color: theme.textPrimary }}
-          >
+          <h2 className="menu-zone-title">
             {getZoneName(zoneId)}
           </h2>
-          <p 
-            className="menu-zone-subtitle"
-            style={{ color: theme.textSecondary }}
-          >
-            {getZoneTagline(zoneId)}
+          <p className="menu-zone-subtitle">
+            {getZoneSubtitle(zoneId)}
           </p>
         </div>
 
-        <div className="menu-content">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
           
-          {/* 1. BACK TO MAP */}
+          {/* PRIMARY */}
           <button 
-            className="menu-button"
-            onClick={() => handleMenuAction(onHome)}
-            style={{
-              background: 'rgba(255, 255, 255, 0.4)',
-              color: theme.textPrimary
-            }}
-          >
-            <span className="menu-icon">🏠</span>
-            <span className="menu-label">Back to Map</span>
-          </button>
-          
-          {/* 2. PLAY AGAIN */}
-          <button 
-            className="menu-button"
+            className="nav-btn-primary" 
             onClick={() => handleMenuAction(() => {
-              if (window.confirm('Start this scene fresh? You will lose current progress in this scene only.')) {
-                onStartFresh?.();
-              }
+              if (window.confirm('Restart?')) onStartFresh?.();
             })}
-            style={{
-              background: 'rgba(255, 255, 255, 0.4)',
-              color: theme.textPrimary
-            }}
           >
-            <span className="menu-icon">🔄</span>
-            <span className="menu-label">Play Again</span>
+            <span style={{ fontSize: '24px' }}>🔄</span>
+            Play Again
           </button>
           
-          {/* 3. SOUND */}
+          {/* SECONDARY */}
           <button 
-            className="menu-button"
-            onClick={() => handleMenuAction(onAudioToggle)}
-            style={{
-              background: 'rgba(255, 255, 255, 0.4)',
-              color: theme.textPrimary
-            }}
-          >
-            <span className="menu-icon">{isAudioOn ? '🔊' : '🔇'}</span>
-            <span className="menu-label">Sound</span>
-          </button>
-          
-          {/* 4. HELP */}
-          <button 
-            className="menu-button"
+            className="nav-btn-secondary"
             onClick={() => handleMenuAction(onHelp)}
-            style={{
-              background: 'rgba(255, 255, 255, 0.4)',
-              color: theme.textPrimary
-            }}
+            style={{ flexDirection: 'row', justifyContent: 'flex-start', gap: '15px', paddingLeft: '24px' }}
           >
-            <span className="menu-icon">❓</span>
-            <span className="menu-label">Help</span>
+            <span style={{ fontSize: '24px' }}>❓</span>
+            How to Play
           </button>
 
-          {/* DIVIDER */}
-          <div 
-            className="menu-divider"
-            style={{
-              background: `linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent)`
-            }}
-          />
+          {/* SECONDARY SPLIT ROW */}
+          <div className="menu-settings-row">
+            <button 
+              className="nav-btn-secondary"
+              onClick={() => handleMenuAction(onHome)}
+            >
+              <span style={{ fontSize: '24px' }}>🏠</span>
+              <span>Map</span>
+            </button>
+
+            <button 
+              className="nav-btn-secondary"
+              onClick={onAudioToggle}
+            >
+              <span style={{ fontSize: '24px' }}>
+                {isAudioOn ? '🔊' : '🔇'}
+              </span>
+              <span>{isAudioOn ? 'On' : 'Off'}</span>
+            </button>
+          </div>
           
-          {/* GANESHA ICON - Long press for Parent Zone */}
-          <button 
-            className="menu-button ganesha-button"
-            onTouchStart={(e) => {
-              const longPressTimer = setTimeout(() => {
-                setShowParentAccess(true);
-              }, 1000);
-              e.currentTarget.longPressTimer = longPressTimer;
-            }}
-            onTouchEnd={(e) => {
-              clearTimeout(e.currentTarget.longPressTimer);
-            }}
-            onMouseDown={(e) => {
-              const longPressTimer = setTimeout(() => {
-                setShowParentAccess(true);
-              }, 1000);
-              e.currentTarget.longPressTimer = longPressTimer;
-            }}
-            onMouseUp={(e) => {
-              clearTimeout(e.currentTarget.longPressTimer);
-            }}
-            onMouseLeave={(e) => {
-              clearTimeout(e.currentTarget.longPressTimer);
-            }}
-            onClick={(e) => {
-              e.preventDefault();
-            }}
-            style={{
-              background: 'rgba(255, 255, 255, 0.25)',
-              color: theme.textPrimary
-            }}
-          >
-            <span className="menu-icon" style={{ fontSize: '40px' }}>🐘</span>
-          </button>
-          
-          <div 
-            className="menu-hint-text"
-            style={{
-              color: theme.textSecondary
-            }}
-          >
-            Long-press for grown-ups
+          {/* PARENT LOCK */}
+          <div style={{ marginTop: '10px' }}>
+            <button 
+              className={`nav-btn-muted ${isPressing ? 'pressing' : ''}`}
+              onMouseDown={startPress}
+              onMouseUp={cancelPress}
+              onMouseLeave={cancelPress}
+              onTouchStart={startPress}
+              onTouchEnd={cancelPress}
+            >
+              <div className="long-press-indicator" />
+              <span style={{ fontSize: '24px', zIndex: 2 }}>🐘</span>
+              <span style={{ zIndex: 2 }}>Parents (Hold)</span>
+            </button>
           </div>
         </div>
+
+        {/* FOOTER HINT */}
+        <div className="menu-footer-hint">
+          ( Tap outside to close )
+        </div>
       </div>
-      
-      {/* Parent access overlay */}
+
+      {/* PARENT MODAL */}
       {showParentAccess && (
         <div className="parent-overlay" onClick={() => setShowParentAccess(false)}>
-          <div className="parent-modal" onClick={(e) => e.stopPropagation()}>
-            <h2>Parent Access</h2>
-            <p>This area is for grown-ups only!</p>
-            <button className="parent-button" onClick={handleParentVerification}>
-              Enter Parent Zone
-            </button>
-            <button className="parent-button cancel" onClick={() => setShowParentAccess(false)}>
-              Cancel
-            </button>
+          <div className="parent-modal" onClick={e => e.stopPropagation()} data-zone={zoneId}>
+            <h2 style={{ margin: '0 0 10px 0', color: '#4E342E' }}>Parent Zone</h2>
+            <p style={{ color: '#4E342E' }}>
+              {mathProblem.n1} + {mathProblem.n2} = ?
+            </p>
+            
+            <input 
+              type="number"
+              className="parent-input"
+              value={userAnswer}
+              onChange={(e) => setUserAnswer(e.target.value)}
+              autoFocus
+            />
+            {errorMsg && <div style={{color:'#F44336', marginBottom:'10px', fontWeight:'bold'}}>{errorMsg}</div>}
+
+            <div style={{display:'flex', justifyContent:'center'}}>
+              <button 
+                className="parent-button unlock"
+                onClick={handleVerify}
+              >
+                Unlock
+              </button>
+              <button className="parent-button cancel" onClick={() => setShowParentAccess(false)}>
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}

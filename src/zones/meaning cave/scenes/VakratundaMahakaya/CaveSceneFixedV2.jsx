@@ -32,7 +32,7 @@ import BackToMapButton from '../../../../lib/components/navigation/BackToMapButt
 import RescueModal from '../../components/RescueModal';
 import { RESCUE_CONFIGS } from '../../config/RescueConfigs';
 import SymbolSidebar from '../../components/SymbolSidebar';
-import UnifiedHeaderV2 from '../../components/UnifiedHeaderV2';
+import UnifiedHeaderV2 from '../../../../lib/components/ui/Header/UnifiedHeaderV2';
 
 import ClickDotsPathGame from './ClickDotsPathGame';
 import mooshikaTracing from './assets/images/mooshika-tracing.png';

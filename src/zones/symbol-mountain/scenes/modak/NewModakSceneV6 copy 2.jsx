@@ -7,7 +7,7 @@ import '../../../shared/components/OpeningModal.css'; // <--- SHARED MODAL IMPOR
 import '../../../../lib/styles/zone-themes.css';
 
 // Unified Components
-import UnifiedHeaderV2 from '../../shared/components/UnifiedHeaderV2';
+import UnifiedHeaderV2 from '../../../../lib/components/ui/Header/UnifiedHeaderV2';
 import UnifiedButtonV2 from '../../../../lib/components/ui/Button/UnifiedButtonV2';
 import UnifiedModal from '../../../../lib/components/ui/Modal/UnifiedModal';
 

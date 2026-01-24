@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSafeClick } from './hooks/useSafeClick';
 import UniversalPauseButton from './UniversalPauseButton';
 import PauseModal from './PauseModal';
-import UnifiedHeader from './UnifiedHeader';
+import UnifiedHeaderV2 from '../../../lib/components/ui/Header/UnifiedHeaderV2';
 
 const getHeaderClassName = (gameConfig) => {
   const classNames = {

@@ -1,12 +1,14 @@
 // zones/symbol-mountain/scenes/modak/helpConfig.js
 // Help menu configuration for Modak Mission scene
 
+// Import images for visual hints
 import mudMound from './assets/images/mud-mound.png';
 import modak1 from './assets/images/modak-1.png';
 import basket from './assets/images/basket.png';
 import belly from './assets/images/belly.png';
 import mooshika from '../../shared/images/icons/symbol-mooshika-colored.png';
 
+// Phase constants (should match your scene)
 const PHASES = {
   MOOSHIKA_SEARCH: 'mooshika_search',
   MODAKS_UNLOCKED: 'modaks_unlocked',
@@ -29,50 +31,48 @@ export const modakHelpConfig = {
       hints.push({
         image: mudMound,
         name: 'Mounds',
-        description: 'Tap these brown mounds to see who is hiding inside!',
+        description: 'These are brown hills. Tap them to search for Mooshika hiding inside!',
         priority: 1
       });
     }
     
     // Phase 2: Collecting modaks
-    if (
-      sceneState.phase === PHASES.MODAKS_UNLOCKED || 
-      sceneState.phase === PHASES.SOME_COLLECTED
-    ) {
+    if (sceneState.phase === PHASES.MODAKS_UNLOCKED || 
+        sceneState.phase === PHASES.SOME_COLLECTED) {
+      
       if (!sceneState.basketFull) {
         hints.push({
           image: modak1,
           name: 'Modaks',
-          description: 'Tap the sweet modaks to collect them.',
+          description: 'Sweet treats that Ganesha loves! Tap them to collect.',
           priority: 1
         });
         
         hints.push({
           image: basket,
           name: 'Basket',
-          description: 'Your basket holds the modaks. Collect 3 to move ahead!',
+          description: 'Holds the modaks you collect. Fill it up with 3 modaks!',
           priority: 2
         });
       }
     }
     
     // Phase 3: Feeding Ganesha
-    if (
-      (sceneState.phase === PHASES.ROCK_VISIBLE || 
-       sceneState.phase === PHASES.ROCK_FEEDING) && 
-      !sceneState.rockTransformed
-    ) {
+    if ((sceneState.phase === PHASES.ROCK_VISIBLE || 
+         sceneState.phase === PHASES.ROCK_FEEDING) && 
+        !sceneState.rockTransformed) {
+      
       hints.push({
         image: belly,
         name: 'Ganesha Stone',
-        description: 'This stone is Ganesha. Feed him modaks from your basket!',
+        description: 'This magical stone is Ganesha! Tap modaks from the basket to feed him.',
         priority: 1
       });
       
       hints.push({
         image: basket,
         name: 'Basket',
-        description: 'Tap a modak in the basket, then tap Ganesha.',
+        description: 'Tap a modak from the basket, then tap the stone to feed Ganesha!',
         priority: 2
       });
     }
@@ -82,9 +82,9 @@ export const modakHelpConfig = {
   
   // General tips (always shown)
   generalTips: [
-    'Check the top to see what to do next.',
-    'Glowing things can be tapped.',
-    'Found a symbol? Open the side bar to learn its meaning.',
-    'Mooshika is here to help you!'
+    'Look at the top for what to do next!',
+    'Glowing things can be tapped!',
+    'Found a symbol? Tap it on the side to learn more!',
+    'Mooshika the mouse is your helper!'
   ]
 };

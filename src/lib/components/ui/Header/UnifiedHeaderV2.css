@@ -1,35 +1,33 @@
 /* =====================================================
-   UNIFIED ZONE HEADER V2 - SOLID STICKER STYLE
-   Solid backgrounds with 3D shadow effect
-   Works with all 5 zones using CSS variables
+   UNIFIED ZONE HEADER V2 - SOFT PILL BANNER STYLE
+   Cream background with zone-colored border & shadow
+   Toca Boca aesthetic - soft, rounded, gentle
    ===================================================== */
 
-/* ==================== MAIN HEADER CONTAINER (THE STICKER) ==================== */
+/* ==================== MAIN HEADER CONTAINER (SOFT PILL) ==================== */
 .unified-zone-header-v2 {
   position: absolute;
   top: 80px;
   left: 50%;
   transform: translateX(-50%);
 
-  /* Uses zone variables from zone-themes.css */
-  background: var(--zone-current-base) !important;
+  /* Consistent cream background across ALL zones */
+  background: #f5efca !important;
 
-  /* Solid Border */
-  border: 4px solid var(--zone-current-accent) !important;
-  border-radius: 25px;
+  /* Zone-colored border (thin and soft) */
+  border: 3px solid var(--zone-current-accent) !important;
+  border-radius: 32px;
 
-  /* 3D Sticker Shadow */
-  box-shadow:
-    0 8px 0 var(--zone-current-shadow),
-    0 12px 20px rgba(0, 0, 0, 0.2) !important;
+  /* Soft, gentle shadow with zone tint */
+  box-shadow: 0 6px 24px var(--zone-current-shadow) !important;
 
   /* Layout */
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 12px 30px;
-  min-width: 280px;
+  gap: 10px;
+  padding: 16px 36px;
+  min-width: 300px;
 
   /* Positioning */
   z-index: 900;
@@ -43,12 +41,12 @@
 .unified-zone-header-v2 .header-text {
   font-family: 'Baloo 2', cursive;
   font-size: 1.3rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--play-text-main);
-  text-transform: uppercase;
   margin: 0;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   text-align: center;
+  line-height: 1.3;
 }
 
 /* ==================== STAR PROGRESS ROW ==================== */
@@ -83,8 +81,8 @@
 .star-v2.empty svg {
   fill: rgba(255, 255, 255, 0.3);
   stroke: var(--zone-current-accent);
-  stroke-width: 3px;
-  opacity: 0.5;
+  stroke-width: 2px;
+  opacity: 0.4;
 }
 
 /* Filled Star (Earned) */
@@ -154,12 +152,10 @@
   .unified-zone-header-v2 {
     min-width: 90%;
     max-width: 95%;
-    padding: 10px 20px;
+    padding: 12px 24px;
     top: 60px;
-    border: 3px solid var(--zone-current-accent);
-    box-shadow:
-      0 6px 0 var(--zone-current-shadow),
-      0 8px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 28px;
+    box-shadow: 0 4px 20px var(--zone-current-shadow);
   }
 
   .unified-zone-header-v2 .header-text {
@@ -180,8 +176,9 @@
 @media (min-width: 568px) and (max-width: 1019px) and (orientation: landscape) and (max-height: 500px) {
   .unified-zone-header-v2 {
     top: 50px;
-    padding: 10px 25px;
+    padding: 12px 28px;
     min-width: 320px;
+    border-radius: 30px;
   }
 
   .unified-zone-header-v2 .header-text {
@@ -202,8 +199,9 @@
 @media (min-width: 768px) and (max-width: 1023px) {
   .unified-zone-header-v2 {
     min-width: 400px;
-    padding: 16px 40px;
+    padding: 18px 40px;
     top: 90px;
+    border-radius: 36px;
   }
 
   .unified-zone-header-v2 .header-text {
@@ -224,8 +222,9 @@
 @media (min-width: 768px) and (min-height: 1000px) {
   .unified-zone-header-v2 {
     top: 100px;
-    padding: 18px 45px;
+    padding: 20px 45px;
     min-width: 450px;
+    border-radius: 38px;
   }
 
   .unified-zone-header-v2 .header-text {
@@ -242,12 +241,11 @@
 @media (min-width: 1024px) and (min-height: 1366px) {
   .unified-zone-header-v2 {
     top: 120px;
-    padding: 20px 50px;
+    padding: 22px 50px;
     min-width: 500px;
-    border: 5px solid var(--zone-current-accent);
-    box-shadow:
-      0 10px 0 var(--zone-current-shadow),
-      0 15px 25px rgba(0, 0, 0, 0.2);
+    border-radius: 40px;
+    border: 3px solid var(--zone-current-accent);
+    box-shadow: 0 8px 28px var(--zone-current-shadow);
   }
 
   .unified-zone-header-v2 .header-text {
@@ -268,8 +266,9 @@
 @media (min-width: 1366px) and (max-width: 1919px) and (max-height: 900px) {
   .unified-zone-header-v2 {
     top: 90px;
-    padding: 18px 45px;
+    padding: 20px 45px;
     min-width: 450px;
+    border-radius: 38px;
   }
 
   .unified-zone-header-v2 .header-text {
@@ -286,8 +285,9 @@
 @media (min-width: 1920px) {
   .unified-zone-header-v2 {
     top: 100px;
-    padding: 20px 50px;
+    padding: 22px 50px;
     min-width: 500px;
+    border-radius: 40px;
   }
 
   .unified-zone-header-v2 .header-text {

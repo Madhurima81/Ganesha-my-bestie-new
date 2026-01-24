@@ -168,6 +168,58 @@
       min-width: 280px;
     }
 
+    /* Option 1A: SOFTER Pill Banner */
+    .header-pill-soft {
+      position: absolute;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--zone-base);
+      border: 2px solid var(--zone-accent);
+      border-radius: 32px;
+      padding: 16px 36px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      min-width: 300px;
+    }
+
+    /* Option 1B: VERY SOFT Pill Banner */
+    .header-pill-very-soft {
+      position: absolute;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--zone-base);
+      border: 2px solid var(--zone-accent);
+      border-radius: 40px;
+      padding: 20px 40px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      min-width: 320px;
+    }
+
+    .header-pill-soft .task-text,
+    .header-pill-very-soft .task-text {
+      font-family: 'Baloo 2', cursive;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-color);
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .header-pill-soft .stars,
+    .header-pill-very-soft .stars {
+      display: flex;
+      gap: 10px;
+    }
+
     .header-pill .task-text {
       font-family: 'Baloo 2', cursive;
       font-size: 1rem;
@@ -493,6 +545,109 @@
 
         <div class="recommended-badge">
           ⭐ RECOMMENDED - Best balance of UX and aesthetics
+        </div>
+      </div>
+
+      <!-- OPTION 1A: SOFTER Version -->
+      <div class="header-option">
+        <div class="option-header">
+          <div class="option-number">Option 1A</div>
+          <div class="role-badge badge-kid">✨ Softer</div>
+        </div>
+
+        <div class="option-title">Softer Pill Banner</div>
+        <div class="option-description">
+          Same as Option 1 but with rounder corners (32px), thinner border (2px),
+          gentler shadow, and more breathing room. More Toca Boca-like!
+        </div>
+
+        <div class="header-preview">
+          <div class="game-background">
+            <div class="header-pill-soft" style="--zone-base: #FFFAED; --zone-accent: #F4C430; --zone-shadow: rgba(244,196,48,0.2); --text-color: #6B5416;">
+              <div class="task-text">🔍 Where is Mooshika? Click the mounds!</div>
+              <div class="stars">
+                <span class="star">⭐</span>
+                <span class="star" style="opacity: 0.3;">⭐</span>
+                <span class="star" style="opacity: 0.3;">⭐</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pros-cons">
+          <div class="pros">
+            <h4>✅ What's Better</h4>
+            <ul>
+              <li>More rounded = softer feel</li>
+              <li>Thinner border = less harsh</li>
+              <li>Gentler shadow = not overwhelming</li>
+              <li>More padding = spacious</li>
+              <li>Better Toca Boca vibe</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <h4>⚠️ Trade-offs</h4>
+            <ul>
+              <li>Takes slightly more space</li>
+              <li>Less "sticker" feel (but still good!)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="recommended-badge" style="background: linear-gradient(135deg, #FFD230 0%, #FFC107 100%);">
+          ✨ SOFTER VERSION - More Toca Boca feel!
+        </div>
+      </div>
+
+      <!-- OPTION 1B: VERY SOFT Version -->
+      <div class="header-option">
+        <div class="option-header">
+          <div class="option-number">Option 1B</div>
+          <div class="role-badge badge-kid">☁️ Very Soft</div>
+        </div>
+
+        <div class="option-title">Very Soft Pill Banner (Pillowy)</div>
+        <div class="option-description">
+          Maximum softness! 40px border radius, 2px thin border,
+          super gentle shadow, and lots of breathing room. Like a cloud!
+        </div>
+
+        <div class="header-preview">
+          <div class="game-background">
+            <div class="header-pill-very-soft" style="--zone-base: #FFFAED; --zone-accent: #F4C430; --zone-shadow: rgba(244,196,48,0.2); --text-color: #6B5416;">
+              <div class="task-text">🔍 Where is Mooshika? Click the mounds!</div>
+              <div class="stars">
+                <span class="star">⭐</span>
+                <span class="star" style="opacity: 0.3;">⭐</span>
+                <span class="star" style="opacity: 0.3;">⭐</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pros-cons">
+          <div class="pros">
+            <h4>✅ What's Better</h4>
+            <ul>
+              <li>Maximum roundness = very soft</li>
+              <li>Almost no shadow = gentle</li>
+              <li>Lots of padding = comfortable</li>
+              <li>Most Toca Boca-like</li>
+              <li>Very calming aesthetic</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <h4>⚠️ Trade-offs</h4>
+            <ul>
+              <li>Takes most vertical space</li>
+              <li>May feel "too soft" for some zones</li>
+              <li>Less definition/contrast</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="recommended-badge" style="background: linear-gradient(135deg, #4FC3F7 0%, #29B6F6 100%);">
+          ☁️ VERY SOFT - Maximum Toca Boca vibe!
         </div>
       </div>
 

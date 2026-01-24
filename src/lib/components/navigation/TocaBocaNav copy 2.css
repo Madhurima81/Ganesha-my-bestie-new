@@ -1,0 +1,284 @@
+/* TocaBocaNav.css - Beautiful Zone-Themed Design */
+/* Replace your current TocaBocaNav.css with this */
+
+/* ==================== EDGE DETECTION & HINTS ==================== */
+
+.edge-indicator {
+  position: fixed;
+  width: 5px;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 99;
+  animation: pulse-edge 3s infinite;
+}
+
+.edge-indicator.left {
+  left: 0;
+  top: 0;
+}
+
+@keyframes pulse-edge {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
+
+.swipe-hint {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 100px;
+  border-radius: 0 50% 50% 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 98;
+}
+
+.swipe-hint.visible {
+  opacity: 1;
+  animation: swipe-hint 2s ease-in-out infinite;
+}
+
+@keyframes swipe-hint {
+  0%, 100% { transform: translateY(-50%) translateX(0); }
+  50% { transform: translateY(-50%) translateX(10px); }
+}
+
+/* ==================== MENU OVERLAY ==================== */
+
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 99;
+  animation: fadeIn 0.3s ease;
+}
+
+/* ==================== SIDE MENU - BEAUTIFUL CARD DESIGN ==================== */
+
+.side-menu {
+  position: fixed;
+  top: 50%;
+  left: -450px;
+  transform: translateY(-50%);
+  width: 380px;
+  max-width: 85vw;
+  backdrop-filter: blur(20px);
+  border-radius: 30px;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+  transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100;
+  padding: 35px 25px 30px 25px;
+  border: none;
+}
+
+.side-menu.visible {
+  left: 20px;
+}
+
+.menu-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.6);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  z-index: 1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.menu-close:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: rotate(90deg) scale(1.1);
+}
+
+.menu-zone-header {
+  text-align: center;
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+}
+
+.menu-zone-header::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 2px;
+}
+
+.menu-zone-title {
+  font-family: 'Baloo', cursive;
+  font-size: 28px;
+  font-weight: bold;
+  margin: 0 0 5px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.menu-zone-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  opacity: 0.85;
+  margin: 0;
+}
+
+.menu-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.menu-button {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.4);
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+}
+
+.menu-button:hover {
+  background: rgba(255, 255, 255, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(255, 255, 255, 0.4) inset;
+}
+
+.menu-icon {
+  font-size: 24px;
+  width: 32px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.menu-label {
+  flex: 1;
+  text-align: left;
+}
+
+.menu-divider {
+  height: 2px;
+  background: linear-gradient(
+    to right, 
+    transparent, 
+    rgba(255, 255, 255, 0.3), 
+    transparent
+  );
+  margin: 8px 0;
+}
+
+.ganesha-button {
+  background: rgba(255, 255, 255, 0.25);
+  justify-content: center;
+  padding: 20px;
+}
+
+.ganesha-button .menu-icon {
+  font-size: 40px;
+}
+
+.menu-hint-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: 11px;
+  text-align: center;
+  margin-top: -5px;
+  opacity: 0.7;
+  font-style: italic;
+}
+
+.parent-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  animation: fadeIn 0.3s ease;
+}
+
+.parent-modal {
+  background: white;
+  border-radius: 30px;
+  padding: 40px;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.parent-modal h2 {
+  font-family: 'Baloo', cursive;
+  color: #5d4037;
+  font-size: 28px;
+}
+
+.parent-modal p {
+  font-family: 'Nunito', sans-serif;
+  color: #666;
+  font-size: 16px;
+}
+
+.parent-button {
+  font-family: 'Nunito', sans-serif;
+  background: #8bc34a;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 14px 32px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 10px;
+  transition: all 0.3s ease;
+}
+
+.parent-button.cancel {
+  background: #f44336;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 600px) {
+  .side-menu {
+    width: 340px;
+    padding: 30px 20px;
+  }
+}
