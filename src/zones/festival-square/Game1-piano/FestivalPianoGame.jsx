@@ -14,6 +14,7 @@ import SimpleSceneManager from '../../../lib/services/SimpleSceneManager';
 import FestivalSquareCompletion from '../components/FestivalSquareCompletion';
 import GamePauseMenu from '../components/GamePauseMenu';
 import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
+import GameLayout from '../../../lib/components/layout/GameLayout';
 
 import musicBadge from './assets/images/music-badge.png';
 import ganeshaCompletion from './assets/images/ganesha-musician.png';
@@ -618,12 +619,34 @@ if (sceneState.currentMode === GAME_MODES.INTRO) {
   const nextExpectedKey = getNextExpectedKey();
 
   return (
-    <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
-      <MessageManager sceneState={sceneState} sceneActions={sceneActions} zoneId={zoneId} sceneId={sceneId}>
-        <div className="festival-piano-game">
-          <div className="game-header">
+    <GameLayout
+      zoneId={zoneId}
+      sceneState={sceneState}
+      onHome={() => onNavigate?.('home')}
+      onReplay={() => {
+        if (sceneState.currentMode === GAME_MODES.FREE_PLAY) {
+          handleRestart();
+          setFreePlayRecording({ isRecording: false, recordedNotes: [], hasRecording: false });
+        } else if (sceneState.currentMode === GAME_MODES.CHALLENGE && sceneState.currentSong) {
+          sceneActions.updateState({
+            currentStep: 0,
+            recordedNotes: [],
+            isRecording: false,
+            isDemoPlaying: false,
+            isPlayingRecording: false
+          });
+        }
+      }}
+      showMenuLabel={true}
+      showPauseButton={true}
+      onPause={() => sceneActions.updateState({ showPauseMenu: true })}
+    >
+      <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
+        <MessageManager sceneState={sceneState} sceneActions={sceneActions} zoneId={zoneId} sceneId={sceneId}>
+          <div className="festival-piano-game">
+          {/*<div className="game-header">
             <button className="back-button" onClick={() => isChallengePlaying ? sceneActions.updateState({ currentSong: null }) : handleModeSelect(GAME_MODES.SELECTION)}>← {isChallengePlaying ? 'Songs' : 'Menu'}</button>
-          </div>
+          </div>*/}
           
           {isChallengePlaying && (
              <div className="challenge-header-simple">
@@ -661,10 +684,10 @@ if (sceneState.currentMode === GAME_MODES.INTRO) {
 
           {localUIState.showCulturalNote && (<div className="cultural-note" style={{ left: `${localUIState.showCulturalNote.position.x}%`, top: `${localUIState.showCulturalNote.position.y - 15}%` }}>{localUIState.showCulturalNote.instrument.culturalNote}</div>)}
 
-          <div className="progress-counter">
+          {/*<div className="progress-counter">
             <div className="stars">⭐ {sceneState.stars}</div>
             {sceneState.currentMode === GAME_MODES.FREE_PLAY && (<><div className="taps">🎵 {sceneState.tapCount}</div><div className="instruments">🎼 {Object.keys(sceneState.discoveredInstruments).length}/5</div></>)}
-          </div>
+          </div>*/}
 
           {sceneState.currentMode === GAME_MODES.FREE_PLAY && (
             <div className="free-play-recording-controls">
@@ -789,23 +812,11 @@ onTryAnother={() => {
   }}
 />
 
-
-    <button
-  className="game-pause-button"
-  onClick={() => sceneActions.updateState({ showPauseMenu: true })}
-  aria-label="Pause Game"
->
-  ⏸️
-</button>
-
-          {sceneState.currentMode !== GAME_MODES.INTRO && (
-            <TocaBocaNav onHome={() => onNavigate?.('home')} onZonesClick={() => onNavigate?.('zones')} currentProgress={{ stars: sceneState.stars || 0, completed: sceneState.phase === PHASES.COMPLETE ? 1 : 0, total: 1 }}/>
-          )}
-
           {sceneState.showSceneCompletion && (<FestivalSquareCompletion show={sceneState.showSceneCompletion} sceneName="Piano Mastery" starsEarned={sceneState.stars || 0} onContinue={() => onNavigate?.('scene-complete-continue')} onReplay={() => window.location.reload()} onBackToMap={() => onNavigate?.('zone-welcome')}/>)}
         </div>
       </MessageManager>
     </InteractionManager>
+  </GameLayout>
   );
 };
 

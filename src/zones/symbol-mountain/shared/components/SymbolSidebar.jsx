@@ -93,12 +93,16 @@ const SymbolSidebar = ({ discoveredSymbols = {}, onSymbolClick, className = '' }
   const [showPopup, setShowPopup] = useState(false);
   const [selectedSymbol, setSelectedSymbol] = useState(null);
   const [animatingSymbol, setAnimatingSymbol] = useState(null);
+  const [tappedSymbols, setTappedSymbols] = useState({});
 
   // Symbol order for display
   const symbolOrder = ['modak', 'mooshika', 'belly', 'lotus', 'trunk', 'eyes', 'ear', 'tusk'];
 
   const handleSymbolClick = (symbolId) => {
     if (discoveredSymbols[symbolId]) {
+      // Mark symbol as tapped
+      setTappedSymbols(prev => ({ ...prev, [symbolId]: true }));
+
       setSelectedSymbol(symbolId);
       setShowPopup(true);
       if (onSymbolClick) {
@@ -133,7 +137,8 @@ const SymbolSidebar = ({ discoveredSymbols = {}, onSymbolClick, className = '' }
           const symbol = symbolInfo[symbolId];
           const isDiscovered = discoveredSymbols[symbolId];
           const isAnimating = animatingSymbol === symbolId;
-          
+          const needsTap = isDiscovered && !tappedSymbols[symbolId];
+
           return (
             <div
               key={symbolId}
@@ -144,7 +149,11 @@ const SymbolSidebar = ({ discoveredSymbols = {}, onSymbolClick, className = '' }
                 cursor: isDiscovered ? 'pointer' : 'not-allowed'
               }}
               title={isDiscovered ? symbol.title : 'Symbol not yet discovered'}
-            />
+            >
+              {needsTap && (
+                <div className="tap-indicator">TAP!</div>
+              )}
+            </div>
           );
         })}
       </div>

@@ -1,14 +1,12 @@
 // zones/symbol-mountain/scenes/pond/helpConfig.js
 // Help menu configuration for Pond Scene (Lotus Blooming)
 
-// Import images for visual hints
 import lotusClosed from './assets/images/lotus-closed.png';
 import lotusBloomed from './assets/images/lotus-bloomed.png';
 import goldenLotusClosed from './assets/images/golden-lotus-closed.png';
 import elephantFull from './assets/images/elephant-full.png';
 import waterElephant from './assets/images/water-elephant.png';
 
-// Phase constants (should match your scene)
 const PHASES = {
   INITIAL: 'initial',
   SOME_BLOOMED: 'some_bloomed',
@@ -29,51 +27,54 @@ export const pondHelpConfig = {
     const hints = [];
     
     // Phase 1: Blooming regular lotuses
-    if (sceneState.phase === PHASES.INITIAL || 
-        sceneState.phase === PHASES.SOME_BLOOMED) {
-      
+    if (
+      sceneState.phase === PHASES.INITIAL || 
+      sceneState.phase === PHASES.SOME_BLOOMED
+    ) {
       hints.push({
         image: lotusClosed,
         name: 'Closed Lotus',
-        description: 'These pink buds are waiting to bloom. Tap them to make them flower!',
+        description: 'Tap these closed lotuses to help them bloom.',
         priority: 1
       });
       
       hints.push({
         image: lotusBloomed,
         name: 'Bloomed Lotus',
-        description: 'A beautiful bloomed lotus! Keep tapping closed ones until all 3 bloom.',
+        description: 'Bloomed lotuses show your progress. Keep going!',
         priority: 2
       });
     }
     
     // Phase 2: Golden lotus appears
-    if (sceneState.phase === PHASES.ALL_BLOOMED || 
-        sceneState.phase === PHASES.GOLDEN_VISIBLE) {
-      
+    if (
+      sceneState.phase === PHASES.ALL_BLOOMED || 
+      sceneState.phase === PHASES.GOLDEN_VISIBLE
+    ) {
       hints.push({
         image: goldenLotusClosed,
         name: 'Golden Lotus',
-        description: 'A special golden lotus appeared! Tap it to see what happens.',
+        description: 'A special lotus appeared. Tap it to see what happens next.',
         priority: 1
       });
     }
     
     // Phase 3: Elephant trunk watering
-    if (sceneState.phase === PHASES.ELEPHANT_VISIBLE || 
-        sceneState.phase === PHASES.ELEPHANT_TRANSFORMED) {
-      
+    if (
+      sceneState.phase === PHASES.ELEPHANT_VISIBLE || 
+      sceneState.phase === PHASES.ELEPHANT_TRANSFORMED
+    ) {
       hints.push({
         image: elephantFull,
-        name: "Elephant's Trunk",
-        description: "Tap Ganesha's trunk to spray water and make the golden lotus bloom!",
+        name: "Ganesha’s Trunk",
+        description: "Tap Ganesha’s trunk to spray water.",
         priority: 1
       });
       
       hints.push({
         image: goldenLotusClosed,
         name: 'Golden Lotus',
-        description: 'The golden lotus needs water from the trunk to bloom.',
+        description: 'The golden lotus needs water to bloom.',
         priority: 2
       });
     }
@@ -83,9 +84,8 @@ export const pondHelpConfig = {
   
   // General tips (always shown)
   generalTips: [
-    'Look at the top for what to do next!',
-    'Glowing things can be tapped!',
-    'Found a symbol? Tap it on the side to learn more!',
-    'Mooshika the mouse is your helper!'
+    'Check the top to see what to do next.',
+    'Glowing things can be tapped.',
+    'Found a symbol? Open the side bar to learn its meaning.',
   ]
 };

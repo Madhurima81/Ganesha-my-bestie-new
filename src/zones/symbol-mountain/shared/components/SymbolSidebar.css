@@ -33,6 +33,7 @@
   transition: all 0.3s ease;
   border-radius: 50%;
   padding: 5px;
+  position: relative;
 }
 
 .ganesha-icon.undiscovered {
@@ -70,6 +71,37 @@
 
 .ganesha-star-burst-anim {
   animation: ganesha-star-burst 0.8s ease-out forwards;
+}
+
+/* Tap indicator */
+.tap-indicator {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+  color: white;
+  font-family: 'Baloo 2', cursive;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(255, 107, 107, 0.4);
+  animation: tap-pulse 1.5s ease-in-out infinite;
+  z-index: 10;
+  pointer-events: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@keyframes tap-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 3px 10px rgba(255, 107, 107, 0.4);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.6);
+  }
 }
 
 /* --- POPUP STYLING --- */

@@ -142,27 +142,67 @@ export const SCENE_HEADERS = {
   // ABOUT ME HUT (Play Zone)
   // ========================================
   'about-me-hut': {
-    'name-scene': {
-      initial: "TODO: Add header",
-      complete: "TODO: Add header"
+    // Scene 1: Name & Birthday
+    'name-birthday': {
+      'name-balloons': "Pop the balloons in order! 🎈",
+      'name-complete': "Amazing! All balloons popped! 🎉",
+      'child-name-intro': "Hi! I am Ganesha.",
+      'child-name-input': "Tap the letters to spell your name! 🎈",
+      'child-name-complete': "What a beautiful name! 🌟",
+      'birthday-intro': "Let's Find My Birthday 🎂",
+      'birthday-choice': "Which festival is my birthday? 🎊",
+      'birthday-correct': "Yes! Ganesh Chaturthi is my birthday! 🎉",
+      'child-birthday-intro': "But when is YOUR birthday? 🎂",
+      'child-birthday-month': "Tap the month you were born! 🗓️",
+      'child-birthday-date': "Which day in {month}? 📅",
+      'besties-card': "BEST FRIENDS FOREVER! 💖"
     },
 
+    // Scene 2: Family Tree
     'family-tree': {
-      initial: "TODO: Add header",
-      building: "TODO: Add header",
-      complete: "TODO: Add header"
+      'ganeshaTree': "👉 Tap a circle to meet my family!",
+      'ganeshaTree-complete': "Amazing! You completed Ganesha's family tree!",
+      'transition': "That's my family! Now, I want to see your world.",
+      'childInput': "👇 Tap someone to add to your tree! 🌱",
+      'sideBySide': "Look at Our Family Trees! Connected by Love 💛"
     },
 
-    'food-scene': {
-      initial: "TODO: Add header",
-      choosing: "TODO: Add header",
-      complete: "TODO: Add header"
+    // Scene 3: Favorite Things
+    'favorite-food': {
+      'food-choice': "Which one is my favorite? 🍬",
+      'food-correct': "Yes! Modak is my favorite! 🎉",
+      'color-choice': "What's my favorite color? 🎨",
+      'color-correct': "Yes! Orange is my favorite color! 🧡",
+      'activity-choice': "What do I love to do? 🤔",
+      'activity-correct': "Yes! I love Dancing! 💃✨",
+      'friend-intro': "Great! Now find my best friend!",
+      'friend-choice': "Who is my best friend? 🤔",
+      'friend-correct': "Yes! Mushika is my best friend! 🐭✨",
+      'child-intro': "Now it's your turn! 😊 Tell me about you.",
+      'child-food-choice': "What's YOUR favorite food? 🍕",
+      'child-color-choice': "What's YOUR favorite color? 🎨",
+      'child-activity-choice': "What do YOU love to do? 🎮",
+      'child-friend-intro': "My best friend is... 👫",
+      'friend-celebration': "Yay! {friendName} is your best friend! 🎉",
+      'comparison-card': "You and Ganesha are friends forever! ✨"
     },
 
-    'enjoy-scene': {
-      initial: "TODO: Add header",
-      sharing: "TODO: Add header",
-      complete: "TODO: Add header"
+    // Scene 4: Dreams & Wishes
+    'dreams-wishes': {
+      'wish1-intro': "My first wish is for a happy world.",
+      'wish1-active': "Tap the earth {count} times to send smiles! ({count}/3)",
+      'wish1-complete': "You made the world smile! 😊✨",
+      'wish2-intro': "My second wish is that no one feels hungry or alone.",
+      'wish2-active': "Tap the bowls {count} times to fill them! ({count}/3)",
+      'wish2-complete': "You filled hearts with sharing! ✨",
+      'wish3-intro': "My last wish is for a green, happy world.",
+      'wish3-active': "Tap the park {count} times to make it bloom! ({count}/3)",
+      'wish3-complete': "You made the world green and playful! ✨",
+      'all-wishes-complete': "WOW! You made the world brighter! ✨",
+      'dream-intro': "Draw a happy wish on this magic canvas! ✨",
+      'dream-clouded': "Tap my trunk {count} times to move the clouds! ☁️",
+      'dream-revealed': "Your dream will come true! I believe in you! 🌟",
+      'comparison-card': "Dreams Come Together! ✨ Friends Help Each Other"
     }
   }
 };

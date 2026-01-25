@@ -1,0 +1,110 @@
+/* lib/components/layout/GameLayout.css */
+/* Pause button styling - positioned in top-left corner */
+
+.pause-button-wrapper {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 95;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.pause-button-trigger {
+  position: relative;
+
+  /* Size */
+  width: 56px;
+  height: 56px;
+
+  /* Beautiful rounded style */
+  border-radius: 50%;
+  border: 3px solid #FF6B6B;
+  background: linear-gradient(135deg, #FFE66D 0%, #FFC93C 100%);
+
+  /* Shadow and depth */
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+
+  /* Cursor */
+  cursor: pointer;
+
+  /* Transitions */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Center content */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Remove default button styles */
+  padding: 0;
+  outline: none;
+
+  /* Frosted glass effect */
+  backdrop-filter: blur(10px);
+
+  /* Emoji styling */
+  font-size: 24px;
+  line-height: 1;
+}
+
+/* Hover effect */
+.pause-button-trigger:hover {
+  transform: scale(1.1);
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+}
+
+/* Active/pressed effect */
+.pause-button-trigger:active {
+  transform: scale(0.95);
+  box-shadow:
+    0 3px 10px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+/* Button label */
+.pause-button-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 4px 12px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  pointer-events: none;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .pause-button-wrapper {
+    top: 15px;
+    left: 15px;
+  }
+
+  .pause-button-trigger {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+
+  .pause-button-label {
+    font-size: 12px;
+    padding: 3px 10px;
+  }
+}
+
+/* Ensure it doesn't overlap with header */
+@media (max-height: 600px) {
+  .pause-button-wrapper {
+    top: 12px;
+    left: 12px;
+  }
+}

@@ -160,78 +160,241 @@ export const MODAL_CONTENT = {
   // ABOUT ME HUT - Play Zone Modals
   // ========================================
   'about-me-hut': {
-    'name-scene': {
-      welcome: {
-        title: "TODO: Add title",
-        description: "TODO: Add description",
-        buttonText: "Tell My Name"
+    // Scene 1: Name & Birthday
+    'name-birthday': {
+      hint: {
+        title: "Hint",
+        description: "My name is: G-A-N-E-S-H-A. Pop the balloons in this order!",
+        buttonText: "Got It!"
       },
 
-      complete: {
-        title: "TODO: Add title",
-        description: "TODO: Add description",
-        buttonText: "Continue"
+      childNameIntro: {
+        title: "Hi! I am Ganesha.",
+        description: "",
+        buttonText: "What is your name? 👋"
+      },
+
+      birthdayIntro: {
+        title: "Let's Find My Birthday 🎂",
+        description: "My birthday is a joyful day when people celebrate together. It comes during the festival season.",
+        buttonText: "Let's Explore 🌼"
+      },
+
+      childBirthdayIntro: {
+        title: "Now I know YOUR name, {childName}! 🎈",
+        description: "But when is YOUR birthday? 🎂",
+        buttonText: "Tell You My Birthday! 🎉"
+      },
+
+      bestiesCard: {
+        title: "BEST FRIENDS FOREVER! 💖",
+        subtitle: "We both love celebrations!",
+        ganeshaInfo: {
+          birthday: "Ganesh Chaturthi",
+          month: "Aug-Sept 🐘"
+        },
+        buttonText: "Finish Game ✨"
       }
     },
 
+    // Scene 2: Family Tree
     'family-tree': {
-      welcome: {
-        title: "TODO: Add title",
-        description: "TODO: Add description",
-        buttonText: "Build Tree"
+      // Ganesha's family fun facts
+      fatherFact: {
+        title: "🔱 My Father!",
+        description: "He is calm and strong 🕉️",
+        fullFact: "My father is calm and strong. He protects us and teaches me peace 🕉️",
+        buttonText: "Cool! ✨"
       },
 
-      memberAdded: {
-        title: "TODO: Add title",
-        description: "TODO: Add description",
-        buttonText: "Add Another"
+      motherFact: {
+        title: "🌸 My Mother!",
+        description: "She is kind and loving 💗",
+        fullFact: "My mother is kind and loving. She gives the best hugs and keeps me safe 💗",
+        buttonText: "Cool! ✨"
       },
 
-      complete: {
-        title: "TODO: Add title",
-        description: "TODO: Add description",
-        buttonText: "View Tree"
+      brotherFact: {
+        title: "🦚 My Brother!",
+        description: "He is brave and fast 🦚",
+        fullFact: "My brother is very brave. He travels the world on his peacock 🦚",
+        buttonText: "Cool! ✨"
+      },
+
+      myselfFact: {
+        title: "😊 That's Me!",
+        description: "I love modaks 🍬",
+        fullFact: "That's me! I love modaks and helping my friends 😊",
+        buttonText: "Cool! ✨"
+      },
+
+      transition: {
+        title: "Your Turn!",
+        description: "That's my family! Now, I want to see your world. Who are the special people in your house?",
+        buttonText: "Add My Family! 🏠"
+      },
+
+      nameInput: {
+        title: "What do you call your {memberType}?",
+        placeholder: "e.g., Papa, Mama...",
+        hint: "💡 Press Enter to add to tree",
+        buttonText: "Add to Tree! ✓"
+      },
+
+      sideBySide: {
+        title: "Look at Our Family Trees!",
+        subtitle: "Connected by Love 💛",
+        ganeshaLocation: "🏔️ Mount Kailash",
+        childLocation: "🏡 Your Home",
+        replayButton: "🌳 Make Another Tree",
+        finishButton: "End Game ✨"
       }
     },
 
-    'food-scene': {
-      welcome: {
-        title: "TODO: Add title",
-        description: "TODO: Add description",
-        buttonText: "Choose Food"
+    // Scene 3: Favorite Things
+    'favorite-food': {
+      wrongFeedback: {
+        food: "Oops! Try again! 🥟",
+        color: "Oops! Not that one, try again! 🙈",
+        activity: "Oops! Try again! 💃",
+        friend: "Not my best friend! Try again! 🐭"
       },
 
-      foodSelected: {
-        title: "TODO: Add title",
-        description: "TODO: Add description",
-        buttonText: "Continue"
+      childIntro: {
+        title: "Now it's your turn! 😊",
+        description: "Tell me about you.",
+        buttonText: "Tell Me about You! ✨"
       },
 
-      complete: {
-        title: "TODO: Add title",
-        description: "TODO: Add description",
-        buttonText: "Done"
+      childFriendIntro: {
+        title: "My best friend is... 👫",
+        buttonText: "Tap to tell! ✨"
+      },
+
+      friendCelebration: {
+        title: "Yay! {friendName} is your best friend! 🎉",
+        description: "Let me show you something special 💛"
+      },
+
+      comparisonCard: {
+        title: "You and Ganesha are friends forever! ✨",
+        subtitle: "Ganesha loves knowing about you 💛",
+        ganeshaFavorites: {
+          food: "Modak",
+          color: "Orange",
+          activity: "Dancing",
+          friend: "Mushika"
+        },
+        badgeText: "🏆 Friendship Badge Unlocked! 🏆",
+        buttonText: "🎉 Finish Game"
       }
     },
 
-    'enjoy-scene': {
-      welcome: {
-        title: "TODO: Add title",
-        description: "TODO: Add description",
-        buttonText: "Share Interests"
+    // Scene 4: Dreams & Wishes
+    'dreams-wishes': {
+      wish1Intro: {
+        title: "My first wish is for a happy world.",
+        description: "The world looks a little sad right now 😔",
+        buttonText: "Let's Make Them Smile! 😊"
       },
 
-      activityAdded: {
-        title: "TODO: Add title",
-        description: "TODO: Add description",
-        buttonText: "Add More"
+      wish1Complete: {
+        title: "You made the world smile! 😊✨",
+        subtitle: "Thank you for helping me 💛",
+        progress: "🌱 1 of 3 wishes complete"
       },
 
-      complete: {
-        title: "TODO: Add title",
-        description: "TODO: Add description",
-        buttonText: "Done"
+      wish2Intro: {
+        title: "My second wish is that no one feels hungry or alone.",
+        description: "Let's share with everyone! 🤝",
+        buttonText: "Let's Share! 🍎"
+      },
+
+      wish2Complete: {
+        title: "You filled hearts with sharing! ✨",
+        subtitle: "Thank you for caring so much 💛",
+        progress: "🌱 2 of 3 wishes complete"
+      },
+
+      wish3Intro: {
+        title: "My last wish is for a green, happy world.",
+        description: "Where kids can run, play, and smile outside! 🌿",
+        buttonText: "Let's Make It Green! 🌸"
+      },
+
+      wish3Complete: {
+        title: "You made the world green and playful! ✨",
+        subtitle: "Thank you for helping the Earth 💛",
+        progress: "🌱 3 of 3 wishes complete"
+      },
+
+      allWishesComplete: {
+        title: "WOW! You made the world brighter! ✨",
+        description: "Now it's your turn 💛 What would you love to wish for?",
+        buttonText: "Tell Me Your Dream! 💭"
+      },
+
+      dreamIntro: {
+        title: "Draw a happy wish on this magic canvas! ✨",
+        description: "What would you love to draw today? 🎨",
+        buttonText: "Start Drawing! ✏️"
+      },
+
+      dreamRevealed: {
+        title: "Your dream will come true!",
+        description: "I believe in you! 🌟"
+      },
+
+      comparisonCard: {
+        title: "Dreams Come Together! ✨",
+        subtitle: "Friends Help Each Other",
+        ganeshaWishes: ["😊 Happiness ✓", "🤝 Sharing ✓", "🌳 Earth ✓"],
+        buttonText: "🎉 Finish Game"
       }
+    },
+
+    // Common button texts used across About Me scenes
+    'common-buttons': {
+      back: "← Back",
+      delete: "⌫ Delete",
+      confirm: "✓",
+      done: "Done! ✓",
+      finish: "Finish Game ✨",
+      replay: "Play Again 🔄",
+      backToMap: "Back to Map 🗺️",
+      home: "Home 🏠",
+      hint: "💡 Hint",
+      close: "✕",
+      cool: "Cool! ✨",
+      continue: "Continue →",
+
+      // Name scene specific
+      thatsMyName: "That's My Name! ✓",
+      whatIsYourName: "What is your name? 👋",
+      tellMyBirthday: "Tell You My Birthday! 🎉",
+      changeMonth: "← Change Month",
+
+      // Family tree specific
+      meetMyFamily: "Meet My Family! 🌟",
+      addToTree: "Add to Tree! ✓",
+      addMyFamily: "Add My Family! 🏠",
+      makeAnotherTree: "🌳 Make Another Tree",
+      endGame: "End Game ✨",
+
+      // Favorite things specific
+      letsPlay: "Let's Play Guessing! 🌟",
+      findFriend: "Find Friend! 🌟",
+      tellMeAboutYou: "Tell Me about You! ✨",
+      tapToTell: "Tap to tell! ✨",
+      draw: "🎨 Draw",
+      type: "✏️ Type",
+
+      // Dreams specific
+      letsMakeSmile: "Let's Make Them Smile! 😊",
+      letsShare: "Let's Share! 🍎",
+      letsMakeGreen: "Let's Make It Green! 🌸",
+      tellMeDream: "Tell Me Your Dream! 💭",
+      startDrawing: "Start Drawing! ✏️"
     }
   }
 };
@@ -289,8 +452,35 @@ export const RESUME_MESSAGES = {
   },
 
   'about-me-hut': {
-    'name-scene': {
-      inProgress: "TODO: Add message"
+    'name-birthday': {
+      nameBalloons: "Great! You've popped {count}/7 balloons!",
+      childNameInput: "Continue typing your name! ({count} letters typed)",
+      birthdayChoice: "Keep trying! You've eliminated {count} options!",
+      childBirthdayMonth: "You picked {month}! Now pick the date. 📅",
+      bestiesCard: "Welcome back! Here's your bestie card! 💖"
+    },
+
+    'family-tree': {
+      ganeshaTreePartial: "Great progress! You've placed {count}/4 family members. Keep going!",
+      ganeshaTreeComplete: "Amazing! You completed Ganesha's family tree! Tap 'All Done!' to continue.",
+      childInput: "You've added {count} family member{plural} to your tree!"
+    },
+
+    'favorite-food': {
+      foodChoice: "Keep trying! You've eliminated {count} option{plural}!",
+      childFoodChoice: "Welcome back! Ready to pick (or draw) your favorite food? 🍕",
+      childColorChoice: "Let's pick your favorite color! 🎨",
+      childActivityChoice: "Welcome back! Ready to pick (or draw) your favorite activity? ⚽",
+      childFriendInput: "Continue typing your friend's name! ({count} letters)",
+      drawingModal: "Welcome back! We saved your progress! 🎨"
+    },
+
+    'dreams-wishes': {
+      wish1Active: "Keep tapping! You've tapped {count}/3 times!",
+      wish2Active: "Great! You've filled {count}/3 bowls!",
+      wish3Active: "Keep going! {count}/3 parts of the park are green!",
+      dreamClearing: "Keep clearing the clouds! {count}/3 done!",
+      drawingModal: "Welcome back! We saved your drawing! 🎨"
     }
   }
 };
@@ -358,4 +548,9 @@ export const formatModalContent = (content, variables = {}) => {
   });
 
   return formatted;
+};
+
+// Get common button text for About Me zone
+export const getButtonText = (zoneId, buttonKey) => {
+  return MODAL_CONTENT[zoneId]?.['common-buttons']?.[buttonKey] || buttonKey;
 };
