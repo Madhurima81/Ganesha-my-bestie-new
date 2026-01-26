@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './CaveScene5MemoryFinale.css';
+import './Cavescene5memoryfinale.css';
 import GameStateManager from "../../../../lib/services/GameStateManager";
 import SimpleZoneCompletionCelebration from '../../../../lib/components/celebration/SimpleZoneCompletionCelebration';
 import BackToMapButton from '../../../../lib/components/navigation/BackToMapButton';

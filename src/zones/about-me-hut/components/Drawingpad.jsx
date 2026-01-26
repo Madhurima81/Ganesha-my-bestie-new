@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import './DrawingPad.css';
+import './Drawingpad.css';
 
 const DrawingPad = ({ 
   prompt = "Draw your dream 💛",

@@ -1,6 +1,6 @@
 // zones/cave-of-secrets/scenes/Scene5/CaveScene5MemoryFinale.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import './CaveScene5MemoryFinale.css';
+import './Cavescene5memoryfinale.css';
 
 // Import scene management components
 import SceneManager from "../../../../lib/components/scenes/SceneManager";

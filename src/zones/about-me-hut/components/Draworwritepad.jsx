@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './DrawOrWritePad.css';
+import './Draworwritepad.css';
 import DrawingPad from './Drawingpad';
 
 const DrawOrWritePad = ({ 

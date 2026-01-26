@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './AboutMeCompletion.css';
+import './Aboutmecompletion.css';
 
 const AboutMeCompletion = ({ 
   show = false, 

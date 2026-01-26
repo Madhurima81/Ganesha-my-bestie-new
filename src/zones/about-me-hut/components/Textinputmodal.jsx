@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './TextInputModal.css';
+import './Textinputmodal.css';
 
 const TextInputModal = ({ 
   prompt = "What's your answer?",

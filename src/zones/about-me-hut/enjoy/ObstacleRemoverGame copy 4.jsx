@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './Dreamswishesgame.css';
+import './DreamsWishesGame.css';
 import AboutMeCompletion from "../components/Aboutmecompletion";
 import DrawingPad from '../components/Drawingpad';
 import StoryProgressHeader from '../components/StoryProgressHeader';

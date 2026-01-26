@@ -2,7 +2,7 @@
 // REDESIGNED: Learn from Ganesha, then input YOUR obstacles with visual transformation
 
 import React, { useState, useEffect, useRef } from 'react';
-import './ObstacleRemoverGameRedesigned.css';
+import './Obstacleremovergameredesigned.css';
 import '../../shared/components/OpeningModal.css';
 import AboutMeCompletion from '../components/Aboutmecompletion';
 
