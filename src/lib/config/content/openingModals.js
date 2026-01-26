@@ -43,12 +43,13 @@ export const OPENING_MODALS = {
     },
 
     'final-meaning-scene': {
-      title: "TODO: Add title",
-      subtitle: "TODO: Add subtitle",
-      description: "",
-      icons: [],
-      buttonText: "Begin Final Scene",
-      character: null
+      title: "The Final Challenge!",
+      subtitle: "You have gathered all the ancient wisdom!",
+      description: "Now, match the symbols to their meanings to master the Cave of Secrets!",
+      icons: ['vakratunda', 'meaning'],
+      iconLabels: ['Symbols', 'Meanings'],
+      buttonText: "Start Memory Game",
+      character: 'ganesha-cave'
     }
   },
 
@@ -122,11 +123,12 @@ export const OPENING_MODALS = {
     },
 
     'shloka-river-finale': {
-      title: "TODO: Add title",
-      subtitle: "TODO: Add subtitle",
-      description: "",
-      icons: [],
-      buttonText: "Complete Journey",
+      title: "🎊 The Grand Shloka Celebration!",
+      subtitle: "You have mastered all 8 sacred chants!",
+      description: "Chant the complete Vakratunda Mahakaya Shloka with Ganesha!",
+      icons: ['vakratunda-app', 'mahakaya-app', 'suryakoti-app', 'samaprabha-app', 'nirvighnam-app', 'kurumedeva-app', 'sarvakaryeshu-app', 'sarvada-app'],
+      iconLabels: ['VA', 'MA', 'SU', 'SA', 'NI', 'KU', 'SAR', 'SAR'],
+      buttonText: "Begin Celebration!",
       character: 'ganesha-headphones'
     }
   },
@@ -138,34 +140,37 @@ export const OPENING_MODALS = {
     'game1': {
       title: "Piano Time! 🎹",
       subtitle: "Let's create beautiful festival melodies together!",
-      icons: [],
+      icons: ['listen-icon', 'play-icon', 'create-icon'],
+      iconLabels: ['Listen', 'Play', 'Create'],
       buttonText: "Let's Play!",
-      character: 'baby-ganesha-sit'
+      character: 'ganesha-musician'
     },
 
     'game2': {
       title: "Rangoli Time! 🎨",
       subtitle: "Let's create beautiful festival art together!",
-      icons: [],
+      icons: ['learn-icon', 'draw-icon', 'design-icon'],
+      iconLabels: ['Learn', 'Draw', 'Design'],
       buttonText: "Let's Create!",
-      character: 'baby-ganesha-sit'
+      character: 'ganesha-artist'
     },
 
     'game3': {
       title: "Modak Time! 🍬",
       subtitle: "Let's cook Ganesha's favorite sweet together!",
-      icons: [],
+      icons: ['recipe-icon', 'cook-icon', 'serve-icon'],
+      iconLabels: ['Recipe', 'Cook', 'Serve'],
       buttonText: "Let's Cook!",
-      character: 'baby-ganesha-sit'
+      character: 'ganesha-chef'
     },
 
     'game4': {
       title: "Mandap Time! 🏛️",
       subtitle: "Let's create a beautiful wedding canopy together!",
-      icons: ['mandap-decorate'],
-      iconLabels: ['Decorate'],
+      icons: ['mandap-learn-icon', 'mandap-build-icon', 'mandap-decorate-icon'],
+      iconLabels: ['Learn', 'Build', 'Decorate'],
       buttonText: "Let's Build!",
-      character: 'baby-ganesha-sit'
+      character: 'ganesha-happy-sitting'
     }
   },
 
