@@ -29,11 +29,11 @@ import VakratundaGroveSimplified from './zones/shloka-river/scenes/Scene1/Vakrat
     import SarvakaryeshuChantSimplified from './zones/shloka-river/scenes/scene4/SarvakaryeshuChantSimplified.jsx';
 
 //Cave of secrets - new flow - oct
-        import CaveSceneFixedV1 from './zones/meaning cave/scenes/VakratundaMahakaya/CaveSceneFixedV1.jsx';
-            import SuryakotiSceneV3 from './zones/meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV3.jsx';
+        import CaveSceneFixedV1 from './zones/meaning-cave/scenes/VakratundaMahakaya/CaveSceneFixedV1.jsx';
+            import SuryakotiSceneV3 from './zones/meaning-cave/scenes/suryakoti-samaprabha/SuryakotiSceneV3.jsx';
 
-        import NirvighnamSceneV4 from './zones/meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV4.jsx';
-                import SarvakaryeshuSarvadaV6 from './zones/meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV6.jsx';
+        import NirvighnamSceneV4 from './zones/meaning-cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV4.jsx';
+                import SarvakaryeshuSarvadaV6 from './zones/meaning-cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV6.jsx';
 
 
 // Import GameCoach Provider
