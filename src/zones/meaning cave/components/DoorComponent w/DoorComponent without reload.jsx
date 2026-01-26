@@ -1,7 +1,7 @@
 // lib/components/cave/DoorComponent.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation';
-import './DoorComponentV1.css';
+import '../DoorComponentV1.css';
 
 const DoorComponent = ({
   syllables = ['Va', 'kra'],
