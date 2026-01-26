@@ -1,7 +1,7 @@
 
 
 import React, { useState, useEffect } from 'react';
-import './FamilyTreeGame.css';
+import './Familytreegame.css';
 
 // Import images
 import familyTreeBg from './assets/images/family tree bg.png';

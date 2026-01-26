@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import './FamilyTreeGame.css';
+import './Familytreegame.css';
 import '../../shared/components/OpeningModal.css'; 
 import AboutMeCompletion from "../components/Aboutmecompletion";
 import BackToMapButton from '../../../lib/components/navigation/BackToMapButton';

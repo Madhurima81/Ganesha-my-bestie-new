@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import './FamilyTreeGame.css';
+import './Familytreegame.css';
 import '../../shared/components/OpeningModal.css'; // <--- SHARED MODAL IMPORT
 
 
