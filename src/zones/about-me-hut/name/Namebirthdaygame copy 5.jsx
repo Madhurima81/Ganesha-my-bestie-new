@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './NameBirthdayGame.css';
+import './Namebirthdaygame.css';
 import AboutMeCompletion from "../components/Aboutmecompletion";
 import '../../shared/components/OpeningModal.css'; // <--- SHARED MODAL IMPORT
 

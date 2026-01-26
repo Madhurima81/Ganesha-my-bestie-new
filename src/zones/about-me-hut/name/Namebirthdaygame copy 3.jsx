@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './NameBirthdayGame.css';
+import './Namebirthdaygame.css';
 import AboutMeCompletion from "../components/Aboutmecompletion";
 import DrawingPad from "../components/Drawingpad";
 
