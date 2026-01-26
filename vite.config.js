@@ -41,7 +41,6 @@ export default defineConfig({
           ],
           
           'zone-shloka-river': [
-            './src/zones/shloka-river/scenes/Scene1/VakratundaGroveV2',
             './src/zones/shloka-river/scenes/Scene2/SuryakotiBank',
             './src/zones/shloka-river/scenes/Scene3/NirvighnamChant',
             './src/zones/shloka-river/scenes/scene4/SarvakaryeshuChant',
