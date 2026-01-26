@@ -13,7 +13,7 @@ import CaveSceneFixedV1 from './zones/meaning cave/scenes/VakratundaMahakaya/Cav
 import SuryakotiSceneV3 from './zones/meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV3.jsx';
 import NirvighnamSceneV4 from './zones/meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV4';
 import SarvakaryeshuSarvadaV6 from './zones/meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV6.jsx';
-import CaveScene5MemoryFinale from './zones/meaning cave/scenes/final meaning scene/CaveScene5MemoryFinale.jsx';
+import CaveScene5MemoryFinale from './zones/meaning cave/scenes/final meaning scene/Cavescene5memoryfinale.jsx';
 
 // Shloka River Scenes
 import VakratundaGroveSimplified from './zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx';
