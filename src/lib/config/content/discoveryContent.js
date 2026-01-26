@@ -40,29 +40,29 @@ export const DISCOVERY_CONTENT = {
     'suryakoti-samaprabha': {
       suryakoti: {
         celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
+          title: "Suryakoti Revealed!",
+          text: "A million suns are shining inside you!",
           icon: 'suryakoti-symbol'
         },
         power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
+          title: "Inner Light Unlocked!",
+          text: "Just like Ganesha shines brighter than a million suns, YOU have a bright light inside! When you feel scared or unsure, remember your inner glow!",
+          affirmation: "I am radiant",
+          buttonText: "⭐ Shine Bright!"
         }
       },
 
       samaprabha: {
         celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
+          title: "Samaprabha Revealed!",
+          text: "Your light shines equally everywhere!",
           icon: 'samaprabha-symbol'
         },
         power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
+          title: "Equal Kindness Unlocked!",
+          text: "Ganesha's light shines on everyone the same way. You can be kind to everyone equally — friends, family, and even people you just met!",
+          affirmation: "I am kind to all",
+          buttonText: "⭐ Spread the Light!"
         }
       }
     },
@@ -70,29 +70,29 @@ export const DISCOVERY_CONTENT = {
     'nirvighnam-kurumedeva': {
       nirvighnam: {
         celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
+          title: "Nirvighnam Revealed!",
+          text: "The path ahead is clearing!",
           icon: 'nirvighnam-symbol'
         },
         power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
+          title: "Problem Solving Unlocked!",
+          text: "Sometimes things get in the way. But guess what? You can find a way around them, over them, or through them — just like Ganesha removes obstacles!",
+          affirmation: "I can solve problems",
+          buttonText: "⭐ Clear the Path!"
         }
       },
 
       kurumedeva: {
         celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
+          title: "Kurumedeva Revealed!",
+          text: "You learned to ask for help!",
           icon: 'kurumedeva-symbol'
         },
         power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
+          title: "Asking Power Unlocked!",
+          text: "It's okay to ask for help! When you say 'please help me,' you're being brave and smart. Even Ganesha helps those who ask!",
+          affirmation: "I can ask for help",
+          buttonText: "⭐ Help is Here!"
         }
       }
     },
@@ -100,29 +100,29 @@ export const DISCOVERY_CONTENT = {
     'sarvakaryeshu-sarvada': {
       sarvakaryeshu: {
         celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
+          title: "Sarvakaryeshu Revealed!",
+          text: "Every action becomes special!",
           icon: 'sarvakaryeshu-symbol'
         },
         power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
+          title: "Dedication Unlocked!",
+          text: "Whether you're playing, learning, or helping — do it with your whole heart! Ganesha blesses ALL your actions when you give your best!",
+          affirmation: "I give my best",
+          buttonText: "⭐ Do Your Best!"
         }
       },
 
       sarvada: {
         celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
+          title: "Sarvada Revealed!",
+          text: "Always and forever — the magic never stops!",
           icon: 'sarvada-symbol'
         },
         power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
+          title: "Persistence Unlocked!",
+          text: "Ganesha is with you ALWAYS — not just sometimes! And you can keep trying, keep smiling, and keep being amazing every single day!",
+          affirmation: "I never give up",
+          buttonText: "⭐ Forever Strong!"
         }
       }
     }
@@ -289,29 +289,29 @@ export const DISCOVERY_CONTENT = {
     'suryakoti-bank': {
       suryakoti: {
         celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
+          title: "You Learned Suryakoti!",
+          text: "All syllables of 'Million Suns' mastered!",
           icon: 'suryakoti-complete'
         },
         power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
+          title: "Solar Clarity Power!",
+          text: "Your inner light shines like a million suns!",
+          affirmation: "I am radiant",
+          buttonText: "Continue to Samaprabha!"
         }
       },
 
       samaprabha: {
         celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
+          title: "You Learned Samaprabha!",
+          text: "The equal radiance chant is yours!",
           icon: 'samaprabha-complete'
         },
         power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
+          title: "Equal Kindness Power!",
+          text: "You shine your light on everyone equally!",
+          affirmation: "I am kind to all",
+          buttonText: "Complete Scene!"
         }
       }
     },
@@ -319,29 +319,29 @@ export const DISCOVERY_CONTENT = {
     'nirvighnam-chant': {
       nirvighnam: {
         celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
+          title: "You Learned Nirvighnam!",
+          text: "The obstacle-removing chant is yours!",
           icon: 'nirvighnam-complete'
         },
         power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
+          title: "Problem Solving Power!",
+          text: "You can clear any obstacle from your path!",
+          affirmation: "I can solve problems",
+          buttonText: "Continue to Kurumedeva!"
         }
       },
 
       kurumedeva: {
         celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
+          title: "You Learned Kurumedeva!",
+          text: "The divine request chant is complete!",
           icon: 'kurumedeva-complete'
         },
         power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
+          title: "Asking Power!",
+          text: "You know how to ask for help when you need it!",
+          affirmation: "I can ask for help",
+          buttonText: "Complete Scene!"
         }
       }
     },
@@ -349,29 +349,29 @@ export const DISCOVERY_CONTENT = {
     'sarvakaryeshu-chant': {
       sarvakaryeshu: {
         celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
+          title: "You Learned Sarvakaryeshu!",
+          text: "The 'all actions' chant is yours!",
           icon: 'sarvakaryeshu-complete'
         },
         power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
+          title: "Dedication Power!",
+          text: "You do everything with your whole heart!",
+          affirmation: "I give my best",
+          buttonText: "Continue to Sarvada!"
         }
       },
 
       sarvada: {
         celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
+          title: "You Learned Sarvada!",
+          text: "The 'always' chant completes your journey!",
           icon: 'sarvada-complete'
         },
         power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
+          title: "Persistence Power!",
+          text: "You never give up — always and forever!",
+          affirmation: "I never give up",
+          buttonText: "Complete Scene!"
         }
       }
     }
