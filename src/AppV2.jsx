@@ -10,7 +10,7 @@ import SacredAssemblySceneV8 from './zones/symbol-mountain/scenes/final scene/Sa
 
 // Cave of Secrets Scenes
 import CaveSceneFixedV1 from './zones/meaning-cave/scenes/VakratundaMahakaya/CaveSceneFixedV1';
-import SuryakotiSceneV3 from './zones/meaning=cave/scenes/suryakoti-samaprabha/SuryakotiSceneV3.jsx';
+import SuryakotiSceneV3 from './zones/meaning-cave/scenes/suryakoti-samaprabha/SuryakotiSceneV3.jsx';
 import NirvighnamSceneV4 from './zones/meaning-cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV4';
 import SarvakaryeshuSarvadaV6 from './zones/meaning-cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV6.jsx';
 import CaveScene5MemoryFinale from './zones/meaning-cave/scenes/final-meaning-scene/CaveScene5MemoryFinale.jsx';
