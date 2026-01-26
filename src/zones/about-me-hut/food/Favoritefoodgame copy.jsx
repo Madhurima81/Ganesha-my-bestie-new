@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './FavoriteFoodGame.css';
+import './Favoritefoodgame.css';
 import AboutMeCompletion from "../components/Aboutmecompletion";
 
 // Import images

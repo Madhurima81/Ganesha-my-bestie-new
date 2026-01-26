@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import './FavoriteFoodGame.css';
+import './Favoritefoodgame.css';
 import AboutMeCompletion from "../components/Aboutmecompletion";
 import DrawingPad from '../components/Drawingpad';
 import StoryProgressHeader from '../components/StoryProgressHeader';

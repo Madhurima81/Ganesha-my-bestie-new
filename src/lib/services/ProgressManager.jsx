@@ -32,7 +32,7 @@ class ProgressManager {
   },
    'festival-square': {
   name: 'Festival Square',
-  scenes: ['game1', 'game2', 'game3', 'game4'],
+  scenes: ['festival-piano', 'festival-rangoli', 'festival-cooking', 'festival-mandap'],
   totalScenes: 4,
   order: 4
 },
@@ -73,11 +73,11 @@ static SCENE_METADATA = {
   'sarvakaryeshu-chant': { name: 'Sarvakaryeshu Chant', maxStars: 5, order: 4 },
   'shloka-river-finale': { name: 'Shloka River Finale', maxStars: 6, order: 5 },
   
-  // Festival Square scenes  
-  'game1': { name: 'Festival Piano', maxStars: 6, order: 1 },
-  'game2': { name: 'Rangoli Art Booth', maxStars: 6, order: 2 },
-  'game3': { name: 'Modak Cooking', maxStars: 6, order: 3 },
-  'game4': { name: 'Mandap Decoration', maxStars: 6, order: 4 }
+  // Festival Square scenes
+  'festival-piano': { name: 'Festival Piano', maxStars: 6, order: 1 },
+  'festival-rangoli': { name: 'Rangoli Art Booth', maxStars: 6, order: 2 },
+  'festival-cooking': { name: 'Modak Cooking', maxStars: 6, order: 3 },
+  'festival-mandap': { name: 'Mandap Decoration', maxStars: 6, order: 4 }
 };
 
   // 📊 GET ZONE PROGRESS - Primary function for Zone Welcome screens
