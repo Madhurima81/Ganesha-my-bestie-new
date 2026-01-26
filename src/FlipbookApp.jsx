@@ -22,9 +22,9 @@ const SCENE_MAPPING = {
     'final-scene': () => import('./zones/symbol-mountain/scenes/final scene/SacredAssemblySceneV8'),  
   },
   'cave-of-secrets': {
-    'vakratunda-mahakaya': () => import('./zones/meaning cave/scenes/VakratundaMahakaya/CaveSceneFixedV1'),
-    'suryakoti-samaprabha': () => import('./zones/meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV2'), 
-    'nirvighnam-kurumedeva': () => import('./zones/meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV3')
+    'vakratunda-mahakaya': () => import('./zones/meaning-cave/scenes/VakratundaMahakaya/CaveSceneFixedV1'),
+    'suryakoti-samaprabha': () => import('./zones/meaning-cave/scenes/suryakoti-samaprabha/SuryakotiSceneV2'),
+    'nirvighnam-kurumedeva': () => import('./zones/meaning-cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV3')
   }
 };
 

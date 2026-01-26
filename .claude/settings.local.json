@@ -1,7 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(for:*)",
+      "Bash(do)",
+      "Bash(if [ -f \"/Users/gautam/development/temp/Ganesha-my-bestie-new/$f\" ])",
+      "Bash(then)",
+      "Bash(echo:*)",
+      "Bash(else)",
+      "Bash(fi)"
     ]
   }
 }

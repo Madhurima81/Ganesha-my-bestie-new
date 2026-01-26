@@ -34,14 +34,14 @@ export default defineConfig({
           ],
           
           'zone-cave-secrets': [
-            './src/zones/meaning cave/scenes/VakratundaMahakaya/CaveSceneFixedV1',
-            './src/zones/meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV2',
-            './src/zones/meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV3',
-            './src/zones/meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV5.jsx'
+            './src/zones/meaning-cave/scenes/VakratundaMahakaya/CaveSceneFixedV1',
+            './src/zones/meaning-cave/scenes/suryakoti-samaprabha/SuryakotiSceneV2',
+            './src/zones/meaning-cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV3',
+            './src/zones/meaning-cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV5.jsx'
           ],
           
           'zone-shloka-river': [
-            './src/zones/shloka-river/scenes/Scene1/VakratundaGroveV2',
+            './src/zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified',
             './src/zones/shloka-river/scenes/Scene2/SuryakotiBank',
             './src/zones/shloka-river/scenes/Scene3/NirvighnamChant',
             './src/zones/shloka-river/scenes/scene4/SarvakaryeshuChant',
