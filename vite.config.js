@@ -1,9 +1,46 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import fs from 'fs'
+import path from 'path'
+
+// Custom plugin to enforce case-sensitive imports (catches issues that would fail on Linux)
+function caseSensitivePlugin() {
+  return {
+    name: 'case-sensitive',
+    resolveId(source, importer) {
+      if (!importer || !source.startsWith('.')) return null;
+
+      const importerDir = path.dirname(importer);
+      const resolvedPath = path.resolve(importerDir, source);
+
+      // Add common extensions if not present
+      const extensions = ['', '.js', '.jsx', '.ts', '.tsx', '.css', '.json'];
+
+      for (const ext of extensions) {
+        const fullPath = resolvedPath + ext;
+        if (fs.existsSync(fullPath)) {
+          const dir = path.dirname(fullPath);
+          const basename = path.basename(fullPath);
+          const actualFiles = fs.readdirSync(dir);
+          const actualFile = actualFiles.find(f => f.toLowerCase() === basename.toLowerCase());
+
+          if (actualFile && actualFile !== basename) {
+            this.error(
+              `Case mismatch: imported "${basename}" but file is "${actualFile}"\n` +
+              `  in ${importer}`
+            );
+          }
+          break;
+        }
+      }
+      return null;
+    }
+  };
+}
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [caseSensitivePlugin(), react()],
   
   server: {
     hmr: {
