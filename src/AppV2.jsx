@@ -94,7 +94,7 @@ const SCENES = {
   },
 
   // 🕉️ CAVE OF SECRETS
-  /*'cave-vakratunda': {
+  'cave-vakratunda': {
     name: '🕉️ Vakratunda Mahakaya',
     zone: 'Cave of Secrets',
     component: CaveSceneFixedV1,
@@ -165,7 +165,7 @@ const SCENES = {
     component: ShlokaRiverFinale,
     zoneId: 'shloka-river',
     sceneId: 'shloka-river-finale'
-  },*/
+  },
 
   // 🎪 FESTIVAL SQUARE
   'festival-piano': {
