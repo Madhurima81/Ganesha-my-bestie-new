@@ -17,7 +17,7 @@ import { initializeSounds } from './lib/utils/SoundManager';
 
 const SCENE_MAPPING = {
   'symbol-mountain': {
-    'modak': () => import('./zones/symbol-mountain/scenes/modak/NewModakSceneV6'),
+    'modak': () => import('./zones/symbol-mountain/scenes/modak/NewModakSceneV7.jsx'),
     'pond': () => import('./zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx'),
     'symbol': () => import('./zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3'),
     'final-scene': () => import('./zones/symbol-mountain/scenes/final scene/SacredAssemblySceneV8'),

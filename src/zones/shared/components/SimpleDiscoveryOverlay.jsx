@@ -3,15 +3,15 @@ import './SimpleDiscoveryOverlay.css';
 
 /**
  * SimpleDiscoveryOverlay Component
- * 
+ *
  * A clean, story-focused discovery overlay that shows celebration and mission moments.
  * Uses simple fade transitions instead of complex page flips.
  * Perfect for kids 6-7 years old - clear, focused, not overwhelming.
- * 
+ *
  * Flow:
- * 1. Celebration moment (auto-advances after delay)
- * 2. Mission/Power moment (button to continue)
- * 
+ * 1. Celebration moment (tap anywhere to continue)
+ * 2. Mission/Power moment (button appears after VO finishes)
+ *
  * @param {Object} props
  * @param {string} props.celebrationTitle - Title for celebration (e.g., "You Found Mooshika!")
  * @param {string} props.celebrationText - Celebration description text
@@ -23,6 +23,8 @@ import './SimpleDiscoveryOverlay.css';
  * @param {function} props.onComplete - Callback when user clicks continue button
  * @param {number} props.celebrationDuration - How long to show celebration before power (default: 2500ms)
  * @param {boolean} props.showSparkles - Show sparkle animations (default: true)
+ * @param {function} props.onPowerStageEnter - Callback when power stage starts (for triggering VO)
+ * @param {boolean} props.showButton - External control for button visibility (VO-gated)
  */
 const SimpleDiscoveryOverlay = ({
   celebrationTitle,
@@ -34,10 +36,13 @@ const SimpleDiscoveryOverlay = ({
   buttonText = "Continue Adventure",
   onComplete,
   celebrationDuration = 2500,
-  showSparkles = true
+  showSparkles = true,
+  onPowerStageEnter,
+  showButton = true // Default to true for backward compatibility
 }) => {
   const [stage, setStage] = useState('celebration'); // 'celebration' or 'power'
   const [isVisible, setIsVisible] = useState(false);
+  const [internalButtonVisible, setInternalButtonVisible] = useState(false);
 
   /*useEffect(() => {
     // Fade in
@@ -53,9 +58,27 @@ const SimpleDiscoveryOverlay = ({
   }, [stage, celebrationDuration]);*/
 
   useEffect(() => {
-  // Fade in only
-  setTimeout(() => setIsVisible(true), 50);
-}, []);
+    // Fade in only
+    setTimeout(() => setIsVisible(true), 50);
+  }, []);
+
+  // When entering power stage, notify parent (for VO trigger)
+  useEffect(() => {
+    if (stage === 'power') {
+      onPowerStageEnter?.();
+      // If no external control, show button after a small delay
+      if (showButton === true && !onPowerStageEnter) {
+        setTimeout(() => setInternalButtonVisible(true), 500);
+      }
+    }
+  }, [stage, onPowerStageEnter, showButton]);
+
+  // Sync external showButton prop with internal state
+  useEffect(() => {
+    if (showButton && stage === 'power') {
+      setInternalButtonVisible(true);
+    }
+  }, [showButton, stage]);
 
   const handleContinue = () => {
     // Fade out before calling onComplete
@@ -163,13 +186,31 @@ const SimpleDiscoveryOverlay = ({
             {powerText}
           </p>
 
-          {/* Continue Button */}
-          <button 
-            className="discovery-button"
-            onClick={handleContinue}
-          >
-            {buttonText}
-          </button>
+          {/* Continue Button - VO-Gated */}
+          {internalButtonVisible && (
+            <button
+              className="discovery-button vo-gated-button"
+              onClick={handleContinue}
+              style={{
+                animation: 'buttonFadeIn 0.35s ease-out'
+              }}
+            >
+              {buttonText}
+            </button>
+          )}
+
+          <style>{`
+            @keyframes buttonFadeIn {
+              from {
+                opacity: 0;
+                transform: translateY(4px) scale(0.96);
+              }
+              to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+              }
+            }
+          `}</style>
 
           {/* Progress indicator */}
           <div className="stage-indicator">

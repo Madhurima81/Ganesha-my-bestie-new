@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 // Symbol Mountain Scenes
-import NewModakSceneV5 from './zones/symbol-mountain/scenes/modak/NewModakSceneV6';
+import NewModakSceneV5 from './zones/symbol-mountain/scenes/modak/NewModakSceneV7.jsx';
 import PondSceneSimplifiedV3 from './zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV3';
 import SymbolMountainSceneV3 from './zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3';
 import SacredAssemblySceneV8 from './zones/symbol-mountain/scenes/final scene/SacredAssemblySceneV8';
