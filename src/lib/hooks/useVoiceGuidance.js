@@ -64,6 +64,9 @@ const useVoiceGuidance = (zoneId, sceneId, {
     audio.onerror = (e) => {
       console.error(`Error playing voice ${key}:`, e);
       setIsPlaying(false);
+      voiceRef.current = null;
+      // Still call onEnded so the flow continues even if audio fails
+      if (onEnded) onEnded();
     };
 
     voiceRef.current = audio;
@@ -71,6 +74,9 @@ const useVoiceGuidance = (zoneId, sceneId, {
     audio.play().catch(err => {
       console.error('Voice play failed:', err);
       setIsPlaying(false);
+      voiceRef.current = null;
+      // Still call onEnded so the flow continues even if audio fails
+      if (onEnded) onEnded();
     });
 
     // Reset idle timer on voice play

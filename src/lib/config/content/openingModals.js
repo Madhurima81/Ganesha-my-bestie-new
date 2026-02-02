@@ -58,8 +58,8 @@ export const OPENING_MODALS = {
   // ========================================
   'symbol-mountain': {
     'modak': {
-      title: "Help Ganesha Save the Forest!",
-      subtitle: "3 magical friends are hiding — let's find them!",
+      title: "Modak Mission",
+      subtitle: "Let’s find Mooshika,collect some modaks,and enjoy them together!",
       description: "Search for Mooshika, collect modaks, and discover the power of gratitude!",
       icons: ['mooshika', 'modak', 'belly'],
       buttonText: "Begin Adventure!",

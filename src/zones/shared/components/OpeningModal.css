@@ -3,7 +3,7 @@
 /* ====================================================== */
 
 :root {
-  --modal-overlay-bg: rgba(0, 0, 0, 0.7);
+  --modal-overlay-bg: rgba(0, 0, 0, 0.75); /* Slightly darker for focus */
   --modal-card-bg: #FFF9E6;
   --modal-card-border: none;
   --modal-text-primary: #5D2E0F;
@@ -24,74 +24,97 @@
   align-items: center;
   justify-content: center;
   animation: modalFadeIn 0.3s ease-out;
+  backdrop-filter: blur(4px); /* Adds premium blur effect behind */
 }
 
 .game-modal-content {
   position: relative;
   width: 95%;
-  max-width: 1400px;
+  max-width: 1600px; /* INCREASED: Was 1400px. Allows wider spread. */
   height: 80vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 60px;
-  padding: 0 60px;
+  gap: 40px; /* Reduced gap slightly to keep elements connected */
+  padding: 0 40px;
 }
 
 /* --- Character (Left Side) --- */
 .game-modal-character {
-  flex: 0 0 40%;
+  flex: 0 0 35%; /* REDUCED: Was 40%. Gives more room to the card. */
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  z-index: 2; /* Ensures character overlaps card slightly if needed */
 }
 
 .game-modal-character img {
   width: 100%;
-  max-width: 450px;
+  max-width: 480px;
   height: auto;
-  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.25));
   transform: scaleX(-1);
-  /* ADD THIS LINE: */
   animation: charBreathe 3s ease-in-out infinite;
 }
+
 /* --- Card (Right Side) --- */
 .game-modal-card {
-  flex: 0 0 45%;
+  /* --- SHAPE & SIZE (Matches Image 2) --- */
+  flex: 0 0 45%; /* Crucial: Makes it a box, not a wide banner */
+  max-width: 600px; /* Keeps it contained */
+  width: auto;      /* Let flex handle the width */
+  
+  /* --- COLORS (Using your Variables) --- */
   background: var(--modal-card-bg);
   border: var(--modal-card-border);
+  box-shadow: 0 10px 40px var(--modal-shadow-color);
+  
+  /* --- STYLING --- */
   border-radius: 30px;
   padding: 50px;
-  box-shadow: 0 10px 40px var(--modal-shadow-color);
+  
+  /* --- ALIGNMENT --- */
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
+  
+  /* --- ANIMATION --- */
+  animation: slideInRight 0.6s ease-out;
+}
+
+/* Add this animation if you don't have it yet */
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(50px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 .game-modal-title {
   font-family: 'Baloo 2', cursive;
-  font-size: 48px;
+  font-size: 52px; /* INCREASED: Was 48px */
   font-weight: 700;
   color: var(--modal-text-primary);
-  margin-bottom: 20px;
-  line-height: 1.2;
+  margin-bottom: 25px;
+  line-height: 1.1;
+  width: 100%;
 }
 
 .game-modal-subtitle {
   font-family: 'Nunito', sans-serif;
-  font-size: 24px;
+  font-size: 26px;
   color: var(--modal-text-secondary);
-  margin-bottom: 40px;
-  line-height: 1.5;
+  margin-bottom: 45px;
+  line-height: 1.4;
+  max-width: 90%;
 }
 
 /* --- Icons Grid --- */
 .game-modal-icons {
   display: flex;
   justify-content: center;
-  gap: 50px;
-  margin-bottom: 45px;
+  gap: 60px; /* INCREASED: Spread icons out more */
+  margin-bottom: 50px;
   width: 100%;
 }
 
@@ -103,21 +126,20 @@
 }
 
 .game-modal-icon-item img {
-  width: 100px;
-  height: 100px;
+  width: 110px; /* INCREASED: Was 100px */
+  height: 110px;
   object-fit: contain;
   filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
-  /* ADD THIS LINE: */
   animation: iconFloat 3s ease-in-out infinite;
 }
 
-/* Optional: Stagger the icons so they don't move exactly together */
 .game-modal-icon-item:nth-child(1) img { animation-delay: 0s; }
 .game-modal-icon-item:nth-child(2) img { animation-delay: 0.5s; }
 .game-modal-icon-item:nth-child(3) img { animation-delay: 1s; }
+
 .game-modal-icon-label {
   font-family: 'Nunito', sans-serif;
-  font-size: 20px;
+  font-size: 22px; /* INCREASED */
   font-weight: 700;
   color: var(--modal-text-primary);
 }
@@ -128,67 +150,69 @@
   background: var(--modal-btn-bg);
   color: var(--modal-btn-text);
   border: none;
-  padding: 20px 70px;
-  font-size: 28px;
-  font-weight: 700;
-  border-radius: 50px;
+  
+  /* BIG BUTTON STYLES */
+  padding: 25px 90px;
+  font-size: 36px;
+  font-weight: 800;
+  border-radius: 70px;
+  
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 6px 20px var(--modal-btn-shadow);
+  box-shadow: 0 10px 30px var(--modal-btn-shadow);
   text-transform: capitalize;
-   /* ADD THIS LINE: */
-  animation: btnPulse 2s infinite;
+  white-space: nowrap;
+
+  /* --- NEW HEARTBEAT ANIMATION --- */
+  /* 1.3s is a natural heartbeat rhythm */
+  animation: heartbeat 1.3s ease-in-out infinite;
 }
 
-/* Stop animation when hovering (so the click feel is snappy) */
+/* Pause animation on hover so it doesn't jitter while clicking */
 .game-modal-button:hover {
   animation: none;
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 10px 30px var(--modal-btn-shadow);
+  transform: scale(1.05) translateY(-5px);
+  box-shadow: 0 15px 40px var(--modal-btn-shadow);
 }
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
+  }
+  14% {
+    transform: scale(1.1);
+  }
+  28% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.1);
+  }
+  70% {
+    transform: scale(1);
+  }
+}
+
 
 .game-modal-button:active { transform: scale(0.98); }
 
 @keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 /* ====================================================== */
-/* ANIMATIONS (Glows & Pulses)                            */
+/* ANIMATIONS                                             */
 /* ====================================================== */
-
-/* 1. Character Breathing (Preserves the flip!) */
 @keyframes charBreathe {
-  0%, 100% { 
-    transform: scaleX(-1) scaleY(1); 
-    filter: drop-shadow(0 8px 20px rgba(0,0,0,0.2)); 
-  }
-  50% { 
-    transform: scaleX(-1) scaleY(1.03); /* Grow slightly */
-    filter: drop-shadow(0 0 25px var(--modal-btn-shadow)); /* Glow with theme color */
-  }
+  0%, 100% { transform: scaleX(-1) scaleY(1); filter: drop-shadow(0 8px 20px rgba(0,0,0,0.25)); }
+  50% { transform: scaleX(-1) scaleY(1.02); filter: drop-shadow(0 0 25px rgba(255, 140, 0, 0.3)); }
 }
 
-/* 2. Icons Magical Float */
 @keyframes iconFloat {
-  0%, 100% { 
-    transform: translateY(0); 
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
-  }
-  50% { 
-    transform: translateY(-8px); /* Float up */
-    filter: drop-shadow(0 15px 20px var(--modal-btn-shadow)); /* Strong glow */
-  }
+  0%, 100% { transform: translateY(0); filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1)); }
+  50% { transform: translateY(-10px); filter: drop-shadow(0 15px 20px var(--modal-btn-shadow)); }
 }
 
-/* 3. Button Heartbeat (Call to Action) */
 @keyframes btnPulse {
-  0%, 100% { 
-    transform: scale(1); 
-    box-shadow: 0 6px 20px var(--modal-btn-shadow);
-  }
-  50% { 
-    transform: scale(1.05); 
-    box-shadow: 0 10px 40px var(--modal-btn-shadow); /* Big Glow */
-  }
+  0%, 100% { transform: scale(1); box-shadow: 0 6px 20px var(--modal-btn-shadow); }
+  50% { transform: scale(1.05); box-shadow: 0 10px 40px var(--modal-btn-shadow); }
 }
 
 
@@ -196,207 +220,93 @@
 /* RESPONSIVE MEDIA QUERIES                               */
 /* ====================================================== */
 
-/* 1. MOBILE PORTRAIT (Phones Vertical) */
+/* 1. MOBILE PORTRAIT */
 @media (max-width: 600px) {
-  .game-modal-content { 
-    flex-direction: column; height: auto; min-height: 80vh; padding: 20px; gap: 0;
-  }
-  .game-modal-character { 
-    margin-bottom: -30px; z-index: 2; justify-content: center; flex: 0 0 auto;
-  }
-  .game-modal-character img { width: 160px; }
-  .game-modal-card { 
-    padding: 40px 20px 25px; width: 100%; z-index: 1; flex: 0 0 auto;
-  }
-  .game-modal-title { font-size: 26px; }
+  .game-modal-content { flex-direction: column; height: auto; min-height: 80vh; padding: 20px; gap: 0; }
+  .game-modal-character { margin-bottom: -30px; z-index: 2; justify-content: center; flex: 0 0 auto; }
+  .game-modal-character img { width: 180px; }
+  .game-modal-card { padding: 50px 20px 30px; width: 100%; z-index: 1; flex: 0 0 auto; border-radius: 25px; }
+  .game-modal-title { font-size: 28px; }
   .game-modal-subtitle { font-size: 16px; margin-bottom: 20px; }
-  .game-modal-icons { gap: 20px; margin-bottom: 20px; }
-  .game-modal-icon-item img { width: 50px; height: 50px; }
+  .game-modal-icons { gap: 20px; margin-bottom: 25px; }
+  .game-modal-icon-item img { width: 55px; height: 55px; }
   .game-modal-icon-label { font-size: 14px; }
-  .game-modal-button { font-size: 18px; padding: 12px 30px; }
+  .game-modal-button { font-size: 20px; padding: 15px 40px; width: 100%; }
 }
 
-/* 2. MOBILE LANDSCAPE (Phones Horizontal - iPhone SE, Pixel 7, Galaxy S23) */
-/* Fix: Widen the card and bump sizes slightly to fill the 900px+ width */
+/* 2. MOBILE LANDSCAPE */
 @media (min-width: 568px) and (max-width: 1019px) and (orientation: landscape) {
-  .game-modal-content { 
-    width: 100%; 
-    height: 90vh; 
-    padding: 0 20px; /* More side padding */
-    gap: 30px;       /* Increased gap between Ganesha & Card */
-    justify-content: center;
-  }
-
-  .game-modal-character { 
-    flex: 0 0 25%;   /* Give Ganesha more width (was 20%) */
-    justify-content: flex-end; 
-  }
-  
-  .game-modal-character img { 
-    max-height: 280px; /* Let him be taller */
-    width: auto; 
-  }
-
-  .game-modal-card { 
-    flex: 0 1 auto; 
-    width: 100%; 
-    max-width: 520px; /* Wider card (was 480px) to use Pixel 7 screen space */
-    padding: 20px 30px; 
-  }
-
-  /* Fuller Typography */
-  .game-modal-title { 
-    font-size: 26px; /* Up from 22px */
-    margin-bottom: 5px; 
-  }
-  
-  .game-modal-subtitle { 
-    font-size: 14px; /* Up from 13px */
-    margin-bottom: 12px; 
-  }
-  
-  .game-modal-icons { 
-    gap: 30px; 
-    margin-bottom: 12px; 
-  }
-  
-  .game-modal-icon-item img { 
-    width: 55px; /* Up from 45px */
-    height: 55px; 
-  }
-  
-  .game-modal-icon-label { 
-    font-size: 12px; 
-  }
-  
-  .game-modal-button { 
-    font-size: 18px; /* Up from 16px */
-    padding: 10px 40px; 
-    margin-top: 5px; 
-  }
+  .game-modal-content { width: 100%; height: 95vh; padding: 0 20px; gap: 20px; }
+  .game-modal-character { flex: 0 0 25%; }
+  .game-modal-character img { max-height: 280px; width: auto; }
+  .game-modal-card { flex: 1; padding: 20px 30px; max-width: none; }
+  .game-modal-title { font-size: 28px; margin-bottom: 5px; }
+  .game-modal-subtitle { font-size: 15px; margin-bottom: 10px; }
+  .game-modal-icons { gap: 30px; margin-bottom: 10px; }
+  .game-modal-icon-item img { width: 60px; height: 60px; }
+  .game-modal-icon-label { font-size: 13px; }
+  .game-modal-button { font-size: 20px; padding: 10px 40px; margin-top: 5px; }
 }
 
-/* 3. iPAD PORTRAIT (Standard Tablet Vertical - Mini/Air) */
+/* 3. iPAD PORTRAIT */
 @media (min-width: 768px) and (max-width: 1023px) and (orientation: portrait) {
-  .game-modal-content { flex-direction: column; gap: 20px; }
+  .game-modal-content { flex-direction: column; gap: 30px; }
   .game-modal-character { order: -1; justify-content: center; flex: 0 0 auto; }
-  .game-modal-character img { max-width: 300px; }
-  .game-modal-card { width: 80%; max-width: 550px; padding: 40px; flex: 0 0 auto; }
-  .game-modal-title { font-size: 42px; }
+  .game-modal-character img { max-width: 320px; }
+  .game-modal-card { width: 85%; max-width: 600px; padding: 50px; flex: 0 0 auto; }
+  .game-modal-title { font-size: 44px; }
 }
 
-/* 4. iPAD MINI/AIR LANDSCAPE (Standard Tablet Horizontal) */
-/* Covers iPad Mini (1024x768) & Air (1180x820) */
+/* 4. iPAD MINI/AIR LANDSCAPE (Targeting 1024px - 1180px) */
+/* This makes the card WIDER on Tablets */
 @media (min-width: 768px) and (min-height: 768px) and (max-width: 1180px) {
   .game-modal-content { 
-    width: 95%; 
-    max-width: 1150px; /* Wider container */
-    max-height: 90vh; 
-    gap: 40px;         /* More breathing room between Ganesha & Card */
-    padding: 0 20px; 
+    max-width: 1200px; 
+    padding: 0 30px;
+    gap: 30px;
   }
 
-  .game-modal-character { flex: 0 0 42%; }
-  
-  /* Make Ganesha bigger */
-  .game-modal-character img { 
-    max-width: 400px; /* Up from 350px */
-    max-height: 70vh; 
-  }
-
-  /* Make Card fuller */
-  .game-modal-card { 
-    padding: 45px;    /* Up from 30px */
-    flex: 0 0 48%;    /* Take up more width */
-  }
-  
-  /* Punchier Typography */
-  .game-modal-title { 
-    font-size: 42px;  /* Up from 36px */
-    margin-bottom: 20px; 
-  }
-  
-  .game-modal-subtitle { 
-    font-size: 22px;  /* Up from 20px */
-    margin-bottom: 30px; 
-  }
-  
-  .game-modal-icons { 
-    margin-bottom: 30px; 
-    gap: 45px; 
-  }
-  
-  .game-modal-icon-item img { 
-    width: 85px;      /* Up from 70px */
-    height: 85px; 
-  }
-  
-  .game-modal-icon-label {
-    font-size: 18px;  /* Slightly bigger labels */
-  }
-  
-  .game-modal-button { 
-    font-size: 24px;  /* Up from 22px */
-    padding: 18px 60px; 
-  }
-}
-
-/* 5. iPAD PRO 12.9" LANDSCAPE (WIDER FIX) 
-   Logic: Relaxed restrictions to fill the 1366px width.
-*/
-@media (min-width: 1300px) and (orientation: landscape) {
-  .game-modal-content { 
-    width: 95%; /* Wider! */
-    max-width: 1600px; 
-    gap: 50px; 
-  }
-  /* Ganesha grows comfortably */
-  .game-modal-character { flex: 1; }
-  .game-modal-character img { max-width: 550px; max-height: 70vh; }
-  
-  /* Card grows comfortably */
-  .game-modal-card { flex: 1; padding: 60px; max-width: none; }
-  
-  .game-modal-title { font-size: 56px; margin-bottom: 25px; }
-  .game-modal-subtitle { font-size: 28px; margin-bottom: 40px; }
-  .game-modal-icons { gap: 50px; margin-bottom: 50px; }
-  .game-modal-icon-item img { width: 100px; height: 100px; }
-  .game-modal-icon-label { font-size: 22px; }
-  .game-modal-button { font-size: 32px; padding: 22px 80px; }
-}
-
-/* 6. iPAD PRO 12.9" PORTRAIT (GIANT MODE FIX)
-   Logic: The screen is 1366px tall! We need to super-size the vertical stack.
-*/
-@media (min-width: 1024px) and (min-height: 1366px) and (orientation: portrait) {
-  .game-modal-content { 
-    flex-direction: column; 
-    gap: 40px; 
+  .game-modal-character { 
+    flex: 0 0 32%; /* Smaller Ganesha */
     justify-content: center;
   }
   
-  /* Giant Ganesha on top */
-  .game-modal-character { 
-    order: -1; 
-    justify-content: center; 
-    flex: 0 0 auto;
-  }
   .game-modal-character img { 
-    max-width: 500px; /* Big! */
+    max-width: 380px; 
+    max-height: 65vh; 
   }
-  
-  /* Giant Card on bottom */
+
   .game-modal-card { 
-    width: 85%; 
-    max-width: 800px; /* Much wider than Air */
-    padding: 60px; 
-    flex: 0 0 auto;
+    flex: 0 0 60%; /* WIDER CARD (Was 48%) */
+    padding: 50px 60px; /* More Padding */
   }
   
-  .game-modal-title { font-size: 56px; margin-bottom: 25px; }
-  .game-modal-subtitle { font-size: 28px; margin-bottom: 40px; }
-  .game-modal-icons { gap: 50px; margin-bottom: 50px; }
-  .game-modal-icon-item img { width: 110px; height: 110px; }
-  .game-modal-icon-label { font-size: 24px; }
-  .game-modal-button { font-size: 32px; padding: 25px 90px; border-radius: 60px; }
+  .game-modal-title { font-size: 42px; margin-bottom: 20px; }
+  .game-modal-subtitle { font-size: 22px; margin-bottom: 30px; }
+  .game-modal-icons { margin-bottom: 30px; gap: 40px; }
+  .game-modal-icon-item img { width: 90px; height: 90px; }
+  .game-modal-button { font-size: 26px; padding: 20px 60px; }
+}
+
+/* 5. iPAD PRO & DESKTOP (Ultra Wide) */
+@media (min-width: 1300px) and (orientation: landscape) {
+  .game-modal-content { gap: 60px; }
+  .game-modal-character { flex: 0 0 35%; }
+  .game-modal-character img { max-width: 600px; }
+  .game-modal-card { flex: 1; padding: 80px 100px; }
+  .game-modal-title { font-size: 64px; margin-bottom: 30px; }
+  .game-modal-subtitle { font-size: 32px; margin-bottom: 50px; }
+  .game-modal-icons { gap: 60px; margin-bottom: 60px; }
+  .game-modal-icon-item img { width: 130px; height: 130px; }
+  .game-modal-button { font-size: 36px; padding: 25px 100px; }
+}
+
+/* 6. GIANT PORTRAIT (iPad Pro 12.9 Vertical) */
+@media (min-width: 1024px) and (min-height: 1366px) and (orientation: portrait) {
+  .game-modal-content { flex-direction: column; gap: 50px; }
+  .game-modal-character { order: -1; }
+  .game-modal-character img { max-width: 550px; }
+  .game-modal-card { width: 90%; max-width: 850px; padding: 70px; }
+  .game-modal-title { font-size: 60px; }
+  .game-modal-button { font-size: 36px; padding: 30px 100px; }
 }

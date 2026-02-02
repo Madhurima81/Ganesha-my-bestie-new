@@ -804,9 +804,9 @@ const NewModakSceneMVPContent = ({
   }, [showDiscoveryFlip3]);
 
 
- const handleMoundClick = (moundIndex) => {
+  const handleMoundClick = (moundIndex) => {
     recordInteraction();
-    playTap(); // SFX only
+    playTap();
 
     if (!sceneState || !sceneActions) return;
     if (sceneState.phase !== PHASES.MOOSHIKA_SEARCH) return;
@@ -815,12 +815,8 @@ const NewModakSceneMVPContent = ({
     moundStates[moundIndex - 1] = 1;
 
     if (moundIndex === sceneState.correctMound) {
-      // 1. STOP THE SEARCH VOICE IMMEDIATELY
-      stopIdleTimer(); 
-      stopMusic(); // Optional: Dip music volume if you have that capability, or stop it
-
-      // 2. PLAY SUCCESS VOICE (The "Yay" moment)
-      playCorrect('mooshikaFound'); 
+      // CORRECT! Found Mooshika!
+      playCorrect('mooshikaFound');
       setShowSparkle('mooshika-found');
 
       const moundPositions = { 1: { top: '45%', left: '25%' }, 2: { top: '55%', left: '75%' }, 3: { top: '60%', left: '30%' }, 4: { top: '60%', left: '50%' }, 5: { top: '60%', left: '60%' } };
@@ -834,29 +830,28 @@ const NewModakSceneMVPContent = ({
         moundsVanishing: true
       });
 
-      // AUTO-PARK VISUALS
+      // AUTO-PARK
       setTimeout(() => {
         sceneActions.updateState({
           mooshikaPosition: { top: '48%', left: '45%' }
         });
-        // Tiny speech bubble for visual flavor
+
         setTimeout(() => {
-          //setMooshikaSpeechMessage("I'll wait here! Find the Modaks!");
+          setMooshikaSpeechMessage("I'll wait here! Find the Modaks!");
           setShowMooshikaSpeech(true);
           setTimeout(() => setShowMooshikaSpeech(false), 3000);
         }, 500);
+
       }, 1500);
 
-      // 3. THE GAP: INCREASE DELAY TO 4000ms (4 seconds)
-      // This allows "Yay found him" to finish before "Focus Power" starts
+      // Trigger Discovery Flip 1
       setTimeout(() => {
         setShowDiscoveryFlip1(true);
-      }, 6000); 
+      }, 2000);
 
     } else {
-      // Wrong mound - play SFX + VO
+      // Wrong mound
       playWrong();
-      playVoice('wrongTap'); // Add voice feedback
       setShowSparkle(`mound-${moundIndex}`);
       sceneActions.updateState({ moundStates });
       setTimeout(() => setShowSparkle(null), 1000);
@@ -910,7 +905,7 @@ const NewModakSceneMVPContent = ({
       // Trigger Discovery Flip 2
       setTimeout(() => {
         setShowDiscoveryFlip2(true);
-      }, 4500);
+      }, 2500);
     } else {
       sceneActions.updateState({
         modakStates,
@@ -943,20 +938,10 @@ const NewModakSceneMVPContent = ({
       progress: { percentage: 60 + (10 * newFeedCount) }
     });
 
-    // Play feeding progress VO
-    if (newFeedCount === 1) {
-      playVoice('feedProgress1');
-    } else if (newFeedCount === 2) {
-      playVoice('feedProgress2');
-    }
-
     if (newFeedCount >= 3) {
       setTimeout(() => {
         setShowSparkle('belly-transform');
-        // Play feed complete then belly happy
-        playVoice('feedComplete', () => {
-          playCelebration('bellyHappy');
-        });
+        playCelebration('bellyHappy');
 
         sceneActions.updateState({
           rockTransformed: true,
@@ -1496,8 +1481,7 @@ const NewModakSceneMVPContent = ({
                   console.log("Power 2: Sharing Power unlocked");
                   setShowDiscoveryFlip2(false);
                   setDiscoveryButtonVisible(false);
-                  // Play feeding intro VO
-                  playVoice('feedGanesha');
+                  playVoice('bellyPrompt');
                   sceneActions.updateState({
                     phase: PHASES.ROCK_VISIBLE,
                     basketReady: true,

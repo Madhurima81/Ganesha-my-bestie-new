@@ -1,0 +1,403 @@
+/* PowerUnlockOverlay.css */
+/* Single-screen glowing card design for power unlocks */
+/* Spacious, kid-friendly layout */
+
+.power-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+.power-overlay.visible {
+  opacity: 1;
+}
+
+/* Backdrop */
+.power-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0.8) 100%
+  );
+  backdrop-filter: blur(8px);
+}
+
+/* Floating particles - sparkle style */
+.power-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  left: var(--x);
+  bottom: -10px;
+  opacity: 0;
+  animation: particleRise var(--duration) var(--delay) infinite ease-out;
+}
+
+/* Star shape for particles */
+.particle::before {
+  content: '✦';
+  font-size: 18px;
+  color: var(--color);
+  text-shadow: 0 0 10px var(--color), 0 0 20px var(--color);
+  filter: blur(0.5px);
+}
+
+@keyframes particleRise {
+  0% {
+    transform: translateY(0) scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.9;
+    transform: scale(1) rotate(45deg);
+  }
+  100% {
+    transform: translateY(-100vh) scale(0.3) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+/* Content container - More vertical spacing */
+.power-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 48px 60px;
+  max-width: 600px;
+  gap: 8px;
+}
+
+/* Icon wrapper with glow - Positioned higher */
+.power-icon-wrapper {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin-bottom: 24px;
+  flex-shrink: 0;
+}
+
+.power-icon-wrapper.animated .power-icon {
+  animation: iconPulse 2s ease-in-out infinite;
+}
+
+.power-icon-wrapper.animated .power-glow-outer {
+  animation: glowPulseOuter 2s ease-in-out infinite;
+}
+
+.power-icon-wrapper.animated .power-glow-inner {
+  animation: glowPulseInner 2s ease-in-out infinite;
+}
+
+/* Glow effects */
+.power-glow-outer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    var(--glow-color) 0%,
+    transparent 70%
+  );
+  opacity: 0.5;
+  filter: blur(25px);
+}
+
+.power-glow-inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    var(--glow-color) 0%,
+    transparent 60%
+  );
+  opacity: 0.7;
+  filter: blur(12px);
+}
+
+@keyframes glowPulseOuter {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.15);
+    opacity: 0.5;
+  }
+}
+
+@keyframes glowPulseInner {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.7;
+  }
+}
+
+/* Light rays */
+.power-rays {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: 400px;
+  pointer-events: none;
+}
+
+.ray {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 3px;
+  height: 180px;
+  background: linear-gradient(
+    to top,
+    transparent 0%,
+    var(--color) 50%,
+    transparent 100%
+  );
+  transform-origin: bottom center;
+  transform: translate(-50%, -100%) rotate(var(--rotation));
+  opacity: 0.5;
+  animation: rayPulse 3s ease-in-out infinite;
+  animation-delay: calc(var(--rotation) * 0.01);
+}
+
+@keyframes rayPulse {
+  0%, 100% {
+    opacity: 0.3;
+    height: 150px;
+  }
+  50% {
+    opacity: 0.6;
+    height: 180px;
+  }
+}
+
+/* Icon */
+.power-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 160px;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.power-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.5)) drop-shadow(0 4px 16px rgba(0, 0, 0, 0.3));
+}
+
+@keyframes iconPulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+
+/* Title - Bigger and more space */
+.power-title {
+  font-size: 38px;
+  font-weight: 700;
+  color: #FFD700;
+  margin: 0;
+  margin-bottom: 16px;
+  text-shadow:
+    0 0 20px rgba(255, 215, 0, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+  line-height: 1.2;
+}
+
+/* Description - Better readability */
+.power-description {
+  font-size: 20px;
+  line-height: 1.7;
+  color: #FFFFFF;
+  margin: 0;
+  margin-bottom: 28px;
+  max-width: 480px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  opacity: 0.95;
+}
+
+/* Button - Larger tap target */
+.power-button {
+  padding: 18px 56px;
+  font-size: 22px;
+  font-weight: 600;
+  color: #5D2E0F;
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow:
+    0 4px 15px rgba(255, 165, 0, 0.4),
+    0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease-out;
+  animation: buttonFadeIn 0.35s ease-out;
+  margin-top: 8px;
+}
+
+.power-button:hover {
+  transform: scale(1.05);
+  box-shadow:
+    0 6px 20px rgba(255, 165, 0, 0.5),
+    0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.power-button:active {
+  transform: scale(0.98);
+}
+
+@keyframes buttonFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Tablet responsive */
+@media (max-width: 768px) {
+  .power-content {
+    padding: 36px 40px;
+    max-width: 500px;
+  }
+
+  .power-icon-wrapper {
+    width: 180px;
+    height: 180px;
+  }
+
+  .power-icon {
+    width: 140px;
+    height: 140px;
+  }
+
+  .power-glow-outer {
+    width: 280px;
+    height: 280px;
+  }
+
+  .power-glow-inner {
+    width: 200px;
+    height: 200px;
+  }
+
+  .power-title {
+    font-size: 32px;
+  }
+
+  .power-description {
+    font-size: 18px;
+  }
+
+  .power-button {
+    padding: 16px 48px;
+    font-size: 20px;
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+  .power-content {
+    padding: 24px 20px;
+  }
+
+  .power-icon-wrapper {
+    width: 140px;
+    height: 140px;
+    margin-bottom: 16px;
+  }
+
+  .power-icon {
+    width: 110px;
+    height: 110px;
+  }
+
+  .power-glow-outer {
+    width: 200px;
+    height: 200px;
+  }
+
+  .power-glow-inner {
+    width: 150px;
+    height: 150px;
+  }
+
+  .power-rays {
+    width: 250px;
+    height: 250px;
+  }
+
+  .ray {
+    height: 120px;
+  }
+
+  .power-title {
+    font-size: 26px;
+    margin-bottom: 12px;
+  }
+
+  .power-description {
+    font-size: 16px;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  .power-button {
+    padding: 14px 40px;
+    font-size: 18px;
+  }
+}

@@ -54,14 +54,19 @@
 
 .modak-game-power-card {
   background: #FFF9E6;
-  border-radius: 30px;
-  padding: 50px;
-  max-width: 600px;
+  border-radius: 40px; /* Slightly rounder corners */
+  padding: 60px 80px; /* More breathing room on sides */
+  max-width: 850px;   /* <--- KEY CHANGE: Was 600px. Makes it longer horizontally */
+  min-height: 400px;  /* <--- KEY CHANGE: Ensures it doesn't look squat */
   width: 90%;
   text-align: center;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4); /* Deeper shadow for pop */
   position: relative;
-  animation: modak-game-scaleIn 0.4s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: modak-game-scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncier animation */
 }
 
 .modak-game-power-title {

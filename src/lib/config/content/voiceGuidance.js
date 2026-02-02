@@ -8,84 +8,88 @@ export const VOICE_SCRIPTS = {
       // ========================================
       // SCENE ENTRY
       // ========================================
-      // NOTE: Files have .mp3.mp3 extension (double extension from download)
       welcome: {
         text: "Welcome to Symbol Mountain! Can you find my friend Mooshika? He's hiding somewhere...",
-        file: 'modak-welcome.mp3.mp3'
+        file: 'modak-opening-modal.mp3'
       },
 
       // ========================================
       // PHASE 1: FIND MOOSHIKA
       // ========================================
-      // Instruction
       findMooshika: {
         text: "Tap the little mound to find Mooshika!",
-        file: 'modak-find-mooshika.mp3.mp3'
+        file: 'modak-find-mooshika.mp3'
       },
-      // Discovery
       mooshikaFound: {
         text: "You found Mooshika! He's my little mouse friend. He teaches us about FOCUS!",
-        file: 'modak-mooshika-found.mp3.mp3'
+        file: 'modak-mooshika-found.mp3'
       },
-      // Power unlock
       focusPower: {
         text: "Your mind is like a little mouse - sometimes it runs around! But YOU can call it back. Say with me: I can focus!",
-        file: 'modak-focus-power.mp3.mp3'
+        file: 'modak-focus-power.mp3'
       },
 
       // ========================================
       // PHASE 2: COLLECT MODAKS
       // ========================================
-      // Mission start
       collectStart: {
         text: "Now help Mooshika collect 3 modaks for me! Tap each golden modak you find!",
-        file: 'modak-collect-start.mp3.mp3'
+        file: 'modak-collect-start.mp3'
       },
-      // Guidance hints during collection
       tapModak: {
         text: "Tap the golden modak!",
-        file: 'modak-tap-modak.mp3.mp3'
+        file: 'modak-tap-modak.mp3'
       },
       lookAround: {
         text: "Look around! There are more modaks hiding!",
-        file: 'modak-look-around.mp3.mp3'
+        file: 'modak-look-around.mp3'
       },
-      // Progress feedback
       collectProgress1: {
         text: "One modak! Keep looking!",
-        file: 'modak-progress-1.mp3.mp3'
+        file: 'modak-progress-1.mp3'
       },
       collectProgress2: {
         text: "Two modaks! One more to go!",
-        file: 'modak-progress-2.mp3.mp3'
+        file: 'modak-progress-2.mp3'
       },
       collectComplete: {
         text: "All three modaks! Amazing! Now... will you share them with me?",
-        file: 'modak-collect-complete.mp3.mp3'
+        file: 'modak-collect-complete.mp3'
       },
 
       // ========================================
       // PHASE 3: SHARE WITH GANESHA
       // ========================================
-      // Sharing power unlock
       sharingPower: {
         text: "When you share something special, it feels even MORE special! Say with me: I love to share!",
-        file: 'modak-sharing-power.mp3.mp3'
+        file: 'modak-sharing-power.mp3'
       },
-      // Instruction to feed
-      bellyPrompt: {
-        text: "Tap my tummy to feed me the modaks!",
-        file: 'modak-sharing-start.mp3.mp3'
+      // Instruction to feed (tap version)
+      shareTap: {
+        text: "Tap the modaks to share them with Ganesha!",
+        file: 'modak-share-tap.mp3'
       },
-      // Drag instruction (if using drag)
-      dragToGanesha: {
-        text: "Drag the modaks to Ganesha!",
-        file: 'modak-sharing-start.mp3.mp3'
+      // Instruction to feed (drag version)
+      feedGanesha: {
+        text: "Drag the modaks to feed Ganesha!",
+        file: 'modak-feed-ganesha.mp3'
       },
-      // Belly reaction
+      // Feeding progress VOs
+      feedProgress1: {
+        text: "Yummy! One modak!",
+        file: 'modak-feed-1.mp3'
+      },
+      feedProgress2: {
+        text: "Mmm! Two modaks!",
+        file: 'modak-feed-2.mp3'
+      },
+      feedComplete: {
+        text: "All three! My tummy is so happy!",
+        file: 'modak-feed-complete.mp3'
+      },
       bellyHappy: {
         text: "Mmmm! Yummy! Modaks are my favorite! Thank you!",
-        file: 'modak-feed-complete.mp3.mp3'
+        file: 'modak-belly-happy.mp3'
       },
 
       // ========================================
@@ -93,11 +97,11 @@ export const VOICE_SCRIPTS = {
       // ========================================
       gratitudePower: {
         text: "You helped Mooshika, collected with care, and shared with love. That's GRATITUDE! Say with me: I am grateful!",
-        file: 'modak-gratitude-power.mp3.mp3'
+        file: 'modak-gratitude-power.mp3'
       },
-      sceneComplete: {
-        text: "Three powers unlocked! You're amazing!",
-        file: 'modak-scene-complete.mp3.mp3'
+      kindHeartPower: {
+        text: "You have a kind heart!",
+        file: 'modak-kind-heart-power.mp3'
       },
 
       // ========================================
@@ -105,23 +109,19 @@ export const VOICE_SCRIPTS = {
       // ========================================
       hintExplore: {
         text: "Tap around to explore!",
-        file: 'modak-hint-mound.mp3.mp3'
+        file: 'modak-hint-explore.mp3'
       },
       hintMooshika: {
         text: "Look for something small and grey hiding in the grass...",
-        file: 'modak-hint-mound.mp3.mp3'
+        file: 'modak-hint-mooshika.mp3'
       },
       hintMound: {
         text: "See that little mound? Tap it!",
-        file: 'modak-hint-mound.mp3.mp3'
+        file: 'modak-hint-mound.mp3'
       },
       hintModak: {
         text: "The modaks are golden and round! Tap them!",
-        file: 'modak-hint-modak.mp3.mp3'
-      },
-      hintBelly: {
-        text: "Tap Ganesha's tummy!",
-        file: 'modak-hint-feed.mp3.mp3'
+        file: 'modak-hint-modak.mp3'
       },
 
       // ========================================
@@ -129,15 +129,15 @@ export const VOICE_SCRIPTS = {
       // ========================================
       encourage1: {
         text: "Great job!",
-        file: 'modak-collect-one.mp3.mp3'
+        file: 'modak-encourage-1.mp3'
       },
       encourage2: {
         text: "You're doing amazing!",
-        file: 'modak-collect-two.mp3.mp3'
+        file: 'modak-encourage-2.mp3'
       },
       encourage3: {
         text: "Keep going!",
-        file: 'modak-progress-1.mp3.mp3'
+        file: 'modak-encourage-3.mp3'
       },
 
       // ========================================
@@ -145,11 +145,11 @@ export const VOICE_SCRIPTS = {
       // ========================================
       wrongTap: {
         text: "Not there! Try somewhere else!",
-        file: 'modak-wrong-mound.mp3.mp3'
+        file: 'modak-wrong-tap.mp3'
       },
       tryAgain: {
         text: "Almost! Try again!",
-        file: 'modak-wrong-mound.mp3.mp3'
+        file: 'modak-try-again.mp3'
       }
     }
   },
@@ -208,7 +208,7 @@ export const getPhaseHint = (phase) => {
   const hintMap = {
     'findMooshika': 'hintMound',
     'collectModaks': 'hintModak',
-    'shareWithGanesha': 'hintBelly'
+    'shareWithGanesha': 'shareTap'
   };
   return hintMap[phase] || 'hintExplore';
 };
