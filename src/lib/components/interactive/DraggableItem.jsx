@@ -2,15 +2,16 @@
 // 🎯 Supports both drop zones AND free movement
 import React, { useRef, useState, useEffect } from 'react';
 
-const DraggableItem = ({ 
-  id, 
-  data, 
-  onDragStart, 
-  onDragEnd, 
+const DraggableItem = ({
+  id,
+  data,
+  onDragStart,
+  onDragEnd,
   onPositionUpdate, // 🆕 NEW: Add position update support
-  disabled = false, 
+  disabled = false,
   children,
-  allowFreeMovement = false // 🆕 NEW: Enable free movement mode
+  allowFreeMovement = false, // 🆕 NEW: Enable free movement mode
+  style = {} // Allow custom styles to override defaults
 }) => {
   const elementRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -291,8 +292,9 @@ const DraggableItem = ({
         opacity: isDragging ? 0.6 : 1,
         userSelect: 'none',
         touchAction: 'none',
-        width: '64px',
-        height: '64px'
+        width: '100%',
+        height: '100%',
+        ...style // Allow custom styles to override
       }}
       data-draggable={id}
     >

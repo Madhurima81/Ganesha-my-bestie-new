@@ -4,18 +4,15 @@ import './PowerUnlockOverlay.css';
 /**
  * PowerUnlockOverlay Component
  *
- * Single-screen discovery overlay with glowing card design.
- * Shows power icon with glow effect, title, description, and VO-gated button.
- *
  * @param {Object} props
- * @param {string} props.title - Power title (e.g., "Focus Power Unlocked!")
- * @param {string} props.description - Power description text
- * @param {string} props.icon - Power icon image URL
- * @param {string} props.iconColor - Glow color for the icon (default: '#FFD700')
- * @param {string} props.buttonText - Button text (default: "Continue")
- * @param {boolean} props.showButton - External control for button visibility (VO-gated)
- * @param {function} props.onShow - Callback when overlay appears (for triggering VO)
- * @param {function} props.onComplete - Callback when user clicks button
+ * @param {string} props.title - Power title
+ * @param {string|Object} props.description - Description text or object with {main: string[], emphasis: string}
+ * @param {string} props.icon - Icon URL
+ * @param {string} props.iconColor - Glow color
+ * @param {string} props.buttonText - Button text
+ * @param {boolean} props.showButton - Button visibility
+ * @param {function} props.onShow - Callback when shown
+ * @param {function} props.onComplete - Callback on complete
  */
 const PowerUnlockOverlay = ({
   title,
@@ -31,12 +28,10 @@ const PowerUnlockOverlay = ({
   const [iconAnimated, setIconAnimated] = useState(false);
   const hasCalledOnShow = useRef(false);
 
-  // Fade in on mount - only call onShow ONCE
   useEffect(() => {
     const fadeTimer = setTimeout(() => setIsVisible(true), 50);
     const iconTimer = setTimeout(() => setIconAnimated(true), 300);
 
-    // Notify parent that overlay is shown (for VO trigger) - ONLY ONCE
     let showTimer;
     if (!hasCalledOnShow.current && onShow) {
       hasCalledOnShow.current = true;
@@ -48,19 +43,41 @@ const PowerUnlockOverlay = ({
       clearTimeout(iconTimer);
       if (showTimer) clearTimeout(showTimer);
     };
-  }, []); // Empty deps - only run once on mount
+  }, []);
 
   const handleContinue = () => {
     setIsVisible(false);
     setTimeout(() => onComplete?.(), 300);
   };
 
+  // Render description based on type
+  const renderDescription = () => {
+    // If description is an object with main and emphasis
+    if (typeof description === 'object' && description.main) {
+      return (
+        <div className="power-description-container">
+          {description.main.map((text, index) => (
+            <p key={index} className="power-description-main">
+              {text}
+            </p>
+          ))}
+          {description.emphasis && (
+            <p className="power-description-emphasis">
+              {description.emphasis}
+            </p>
+          )}
+        </div>
+      );
+    }
+    
+    // Fallback to simple string
+    return <p className="power-description">{description}</p>;
+  };
+
   return (
     <div className={`power-overlay ${isVisible ? 'visible' : ''}`}>
-      {/* Backdrop */}
       <div className="power-backdrop" />
 
-      {/* Floating particles */}
       <div className="power-particles">
         {[...Array(20)].map((_, i) => (
           <div
@@ -76,11 +93,8 @@ const PowerUnlockOverlay = ({
         ))}
       </div>
 
-      {/* Content */}
       <div className="power-content">
-        {/* Icon with glow */}
         <div className={`power-icon-wrapper ${iconAnimated ? 'animated' : ''}`}>
-          {/* Glow layers */}
           <div
             className="power-glow-outer"
             style={{ '--glow-color': iconColor }}
@@ -90,7 +104,6 @@ const PowerUnlockOverlay = ({
             style={{ '--glow-color': iconColor }}
           />
 
-          {/* Light rays */}
           <div className="power-rays">
             {[...Array(8)].map((_, i) => (
               <div
@@ -104,19 +117,16 @@ const PowerUnlockOverlay = ({
             ))}
           </div>
 
-          {/* Icon */}
           <div className="power-icon">
             <img src={icon} alt={title} />
           </div>
         </div>
 
-        {/* Title */}
         <h1 className="power-title">{title}</h1>
 
-        {/* Description */}
-        <p className="power-description">{description}</p>
+        {/* Dynamic description rendering */}
+        {renderDescription()}
 
-        {/* VO-Gated Button */}
         {showButton && (
           <button
             className="power-button"

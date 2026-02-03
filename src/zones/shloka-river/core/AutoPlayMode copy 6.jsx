@@ -87,11 +87,8 @@ const AutoPlayMode = ({
   // 10-Second Idle Hint Timer (triggers during player's turn - 'listening' phase)
   useEffect(() => {
     let idleTimer;
-    console.log(`[IdleTimer Check] Phase: ${gamePhase}, CanClick: ${canPlayerClick}, SeqPlaying: ${isSequencePlaying}, Countdown: ${isCountingDown}`);
     if (gamePhase === 'listening' && canPlayerClick && !isSequencePlaying && !isCountingDown) {
-      console.log('⏳ Idle Timer Started (10s)...');
       idleTimer = setTimeout(() => {
-        console.log('💡 Idle Hint Triggered!');
         setShowIdleHint(true);
       }, 10000); // 10 seconds like Modak scene
     } else {
@@ -339,11 +336,10 @@ const AutoPlayMode = ({
     // Dynamic Class Logic
     let className = `${gamePrefix}-clicker-element`;
     if (singing) className += ' singing';
-    const isPlayingPhase = isSequencePlaying || gamePhase === 'playing';
-    // If it's the next clickable item, give it a gentle pulse (not during playback)
-    if (next && !clicked && !isPlayingPhase) className += ' pulse';
-    // If idle time passed, give it the strong glow (not during playback)
-    if (showIdleHint && next && !clicked && !isPlayingPhase) className += ' hint-glow';
+    // If it's the next clickable item, give it a gentle pulse
+    if (next && !clicked) className += ' pulse';
+    // If idle time passed, give it the strong glow
+    if (showIdleHint && next && !clicked) className += ' hint-glow';
 
     return (
       <button

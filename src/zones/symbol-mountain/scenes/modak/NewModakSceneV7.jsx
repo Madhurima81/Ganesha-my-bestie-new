@@ -20,6 +20,8 @@ import GameStateManager from "../../../../lib/services/GameStateManager";
 import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
 import CulturalCelebrationModal from '../../../../lib/components/progress/CulturalCelebrationModal';
 import CulturalProgressExtractor from '../../../../lib/services/CulturalProgressExtractor';
+import DraggableItem from '../../../../lib/components/interactive/DraggableItem';
+import DropZone from '../../../../lib/components/interactive/DropZone';
 import FreeDraggableItem from '../../../../lib/components/interactive/FreeDraggableItem';
 
 // Voice Guidance Hook
@@ -69,33 +71,33 @@ const PauseButton = ({ onClick, visible }) => {
       onClick={onClick}
       style={{
         position: 'fixed',
-        top: '16px',
-        left: '16px',
-        width: '48px',
-        height: '48px',
+        top: '20px',
+        left: '20px',
+        width: '64px',
+        height: '64px',
         borderRadius: '50%',
-        border: 'none',
+        border: '3px solid rgba(255, 215, 0, 0.6)',
         background: 'rgba(255, 255, 255, 0.95)',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
         cursor: 'pointer',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: 1000,
+        zIndex: 3500,
         transition: 'transform 0.2s, box-shadow 0.2s, opacity 0.3s',
         opacity: 1
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'scale(1.1)';
-        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+        e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.25)';
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'scale(1)';
-        e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
+        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
       }}
       aria-label="Pause"
     >
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="#5D2E0F">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="#5D2E0F">
         <rect x="6" y="4" width="4" height="16" rx="1" />
         <rect x="14" y="4" width="4" height="16" rx="1" />
       </svg>
@@ -136,72 +138,75 @@ const PauseMenu = ({
       <div
         style={{
           background: '#FFF9E6',
-          borderRadius: '24px',
-          padding: '24px 32px',
-          minWidth: '320px',
+          borderRadius: '32px',
+          padding: '36px 48px',
+          minWidth: '420px',
           maxWidth: '90%',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
-          border: '3px solid #FFD700',
+          boxShadow: '0 12px 40px rgba(0,0,0,0.25)',
+          border: '4px solid #FFD700',
           animation: 'scaleIn 0.2s ease-out'
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '12px' }}>
           <h2 style={{
             margin: 0,
-            fontSize: '24px',
+            fontSize: '32px',
             fontWeight: 'bold',
             color: '#5D2E0F',
-            fontStyle: 'italic'
+            fontStyle: 'italic',
+            fontFamily: "'Baloo 2', cursive"
           }}>
             {zoneName}
           </h2>
           <p style={{
-            margin: '4px 0 16px',
-            fontSize: '14px',
+            margin: '8px 0 20px',
+            fontSize: '18px',
             color: '#8B7355',
-            letterSpacing: '2px'
+            letterSpacing: '3px',
+            fontWeight: '600'
           }}>
             PAUSED
           </p>
           <div style={{
-            height: '1px',
+            height: '2px',
             background: 'linear-gradient(90deg, transparent, #D4C4A8, transparent)',
-            marginBottom: '20px'
+            marginBottom: '24px'
           }} />
         </div>
 
         {/* Menu Items */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {/* Resume Button (Primary) */}
           <button
             onClick={onResume}
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
-              padding: '14px 20px',
-              border: '2px solid #FFD700',
-              borderRadius: '12px',
+              gap: '16px',
+              padding: '18px 28px',
+              border: '3px solid #FFD700',
+              borderRadius: '16px',
               background: '#FFFEF5',
               cursor: 'pointer',
-              fontSize: '18px',
+              fontSize: '24px',
               fontWeight: '600',
               color: '#5D2E0F',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
+              fontFamily: "'Nunito', sans-serif"
             }}
           >
             <span style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '8px',
+              width: '48px',
+              height: '48px',
+              borderRadius: '12px',
               background: '#4A90D9',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
             }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
                 <polygon points="5,3 19,12 5,21" />
               </svg>
             </span>
@@ -214,25 +219,26 @@ const PauseMenu = ({
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
-              padding: '14px 20px',
+              gap: '16px',
+              padding: '18px 28px',
               border: 'none',
-              borderRadius: '12px',
+              borderRadius: '16px',
               background: '#FFFEF5',
               cursor: 'pointer',
-              fontSize: '18px',
+              fontSize: '24px',
               fontWeight: '500',
               color: '#5D2E0F',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
+              fontFamily: "'Nunito', sans-serif"
             }}
           >
             <span style={{
-              width: '36px',
-              height: '36px',
+              width: '48px',
+              height: '48px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '24px'
+              fontSize: '32px'
             }}>
               🏠
             </span>
@@ -245,29 +251,30 @@ const PauseMenu = ({
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
-              padding: '14px 20px',
+              gap: '16px',
+              padding: '18px 28px',
               border: 'none',
-              borderRadius: '12px',
+              borderRadius: '16px',
               background: '#FFFEF5',
               cursor: 'pointer',
-              fontSize: '18px',
+              fontSize: '24px',
               fontWeight: '500',
               color: '#5D2E0F',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
+              fontFamily: "'Nunito', sans-serif"
             }}
           >
             <span style={{
-              width: '36px',
-              height: '36px',
+              width: '48px',
+              height: '48px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '24px'
+              fontSize: '32px'
             }}>
               {isSoundOn ? '🔊' : '🔇'}
             </span>
-            Sound: <span style={{ color: isSoundOn ? '#2E8B57' : '#8B7355' }}>
+            Sound: <span style={{ color: isSoundOn ? '#2E8B57' : '#8B7355', fontWeight: '600' }}>
               {isSoundOn ? 'On' : 'Off'}
             </span>
           </button>
@@ -281,25 +288,26 @@ const PauseMenu = ({
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
-              padding: '14px 20px',
+              gap: '16px',
+              padding: '18px 28px',
               border: 'none',
-              borderRadius: '12px',
+              borderRadius: '16px',
               background: '#FFFEF5',
               cursor: 'pointer',
-              fontSize: '18px',
+              fontSize: '24px',
               fontWeight: '500',
               color: '#5D2E0F',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
+              fontFamily: "'Nunito', sans-serif"
             }}
           >
             <span style={{
-              width: '36px',
-              height: '36px',
+              width: '48px',
+              height: '48px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '24px'
+              fontSize: '32px'
             }}>
               👤
             </span>
@@ -310,9 +318,9 @@ const PauseMenu = ({
         {/* Footer hint */}
         <p style={{
           textAlign: 'center',
-          marginTop: '20px',
+          marginTop: '28px',
           marginBottom: '0',
-          fontSize: '14px',
+          fontSize: '18px',
           color: '#8B7355'
         }}>
           (Tap outside to resume)
@@ -655,6 +663,21 @@ const NewModakSceneMVPContent = ({
         basketFull: false,
         progress: { percentage: 30 } // Reset progress bar visual
       });
+      // Replay collect instruction VO on reload
+      setTimeout(() => {
+        playVoice('collectStart');
+        setCurrentPhase('collectModaks');
+        startIdleTimer();
+      }, 500);
+    }
+
+    // 3b. REPLAY VO for modak collection phase on reload
+    if (sceneState.phase === PHASES.MODAKS_UNLOCKED && sceneState.modaksUnlocked) {
+      setTimeout(() => {
+        playVoice('collectStart');
+        setCurrentPhase('collectModaks');
+        startIdleTimer();
+      }, 500);
     }
 
     // 4. RESTORE MODAK POPUP (Power Unlock 2)
@@ -673,6 +696,21 @@ const NewModakSceneMVPContent = ({
         collectedModaks: [0, 1, 2], // Refill basket with 3 modaks
         basketFull: true
       });
+      // Replay feed instruction VO on reload
+      setTimeout(() => {
+        playVoice('feedGanesha');
+        setCurrentPhase('shareWithGanesha');
+        startIdleTimer();
+      }, 500);
+    }
+
+    // 5b. REPLAY VO for feeding phase on reload
+    if (sceneState.phase === PHASES.ROCK_VISIBLE && sceneState.rockVisible) {
+      setTimeout(() => {
+        playVoice('feedGanesha');
+        setCurrentPhase('shareWithGanesha');
+        startIdleTimer();
+      }, 500);
     }
 
     // 6. RESTORE BELLY POPUP & FIREWORKS (Power Unlock 3)
@@ -721,12 +759,22 @@ const NewModakSceneMVPContent = ({
     }
   }, [sceneState.welcomeShown]);
 
-  // Update phase for idle hints
+  // Update phase for idle hints AND restart idle timer
   useEffect(() => {
     if (sceneState.phase === PHASES.MODAKS_UNLOCKED || sceneState.phase === PHASES.SOME_COLLECTED) {
       setCurrentPhase('collectModaks');
+      // Restart idle timer for this phase
+      stopIdleTimer();
+      startIdleTimer();
     } else if (sceneState.phase === PHASES.ROCK_VISIBLE || sceneState.phase === PHASES.ROCK_FEEDING) {
       setCurrentPhase('shareWithGanesha');
+      // Restart idle timer for this phase
+      stopIdleTimer();
+      startIdleTimer();
+    } else if (sceneState.phase === PHASES.ROCK_TRANSFORMED || sceneState.phase === PHASES.COMPLETE) {
+      // Scene is ending - stop idle timer and clear phase
+      stopIdleTimer();
+      setCurrentPhase(null);
     }
   }, [sceneState.phase]);
 
@@ -790,8 +838,10 @@ const NewModakSceneMVPContent = ({
   // 3. Handle Gratitude Power (Belly) Overlay
   useEffect(() => {
     if (showDiscoveryFlip3) {
+      // Stop idle timer - scene is essentially complete
+      stopIdleTimer();
       setDiscoveryButtonVisible(false);
-      
+
       const timer = setTimeout(() => {
         playVoice('gratitudePower', () => {
           playSfx('chime');
@@ -889,7 +939,12 @@ const NewModakSceneMVPContent = ({
     }
 
     if (collectedCount === 3) {
+      // Stop idle timer during transition
+      stopIdleTimer();
+
       playSfx('celebration');
+      // Show celebration sparkles immediately
+      setShowSparkle('modaks-complete');
 
       sceneActions.updateState({
         modakStates,
@@ -907,10 +962,15 @@ const NewModakSceneMVPContent = ({
         playVoice('collectComplete');
       }, 1000);
 
-      // Trigger Discovery Flip 2
+      // Clear sparkle before overlay
+      setTimeout(() => {
+        setShowSparkle(null);
+      }, 4000);
+
+      // Trigger Discovery Flip 2 (after VO finishes ~5s)
       setTimeout(() => {
         setShowDiscoveryFlip2(true);
-      }, 4500);
+      }, 5500);
     } else {
       sceneActions.updateState({
         modakStates,
@@ -921,12 +981,16 @@ const NewModakSceneMVPContent = ({
     }
   };
 
-  const handleModakInBasketClick = (modakIndex) => {
+  // Handle drop on rock/belly - DropZone callback
+  const handleRockFeed = ({ id, data }) => {
+    console.log('🎯 Modak dropped on rock:', id, data);
+
+    if (!sceneState.rockVisible || sceneState.rockFeedCount >= 3) return;
+    if (!data || data.type !== 'basket-modak') return;
+
+    const modakIndex = data.index;
     recordInteraction();
     playTap();
-
-    if (!sceneState.rockVisible) return;
-    if (sceneState.rockFeedCount >= 3) return;
 
     const newCollectedModaks = sceneState.collectedModaks.filter(i => i !== modakIndex);
     const newFeedCount = sceneState.rockFeedCount + 1;
@@ -1251,6 +1315,21 @@ const NewModakSceneMVPContent = ({
                 </>
               )}
 
+              {/* MODAKS COMPLETE CELEBRATION SPARKLES */}
+              {showSparkle === 'modaks-complete' && (
+                <>
+                  <div style={{ position: 'absolute', top: '30%', left: '50%', transform: 'translateX(-50%)', width: '200px', height: '200px', zIndex: 20 }}>
+                    <SparkleAnimation type="glitter" count={30} color="#ffd700" size={14} duration={3500} fadeOut={true} area="full" />
+                  </div>
+                  <div style={{ position: 'absolute', top: '35%', left: '20%', width: '100px', height: '100px', zIndex: 20 }}>
+                    <SparkleAnimation type="star" count={20} color="#FFD700" size={12} duration={3000} fadeOut={true} area="full" />
+                  </div>
+                  <div style={{ position: 'absolute', top: '35%', right: '20%', width: '100px', height: '100px', zIndex: 20 }}>
+                    <SparkleAnimation type="star" count={20} color="#FFD700" size={12} duration={3000} fadeOut={true} area="full" />
+                  </div>
+                </>
+              )}
+
               {/* MODAKS */}
               {sceneState.modaksUnlocked && [0, 1, 2].map((index) => {
                 if (sceneState.modakStates[index] === 1) return null;
@@ -1302,46 +1381,61 @@ const NewModakSceneMVPContent = ({
                 </div>
               )}
 
-              {sceneState.collectedModaks?.map((modakIndex, displayIndex) => (
-                <div
-                  key={`collected-${modakIndex}-${displayIndex}`}
-                  className={`modak-game-modak modak-game-modak-collected-${displayIndex + 1}
-                    ${showHintGlow && sceneState.rockVisible ? 'modak-game-hint-glow' : ''}`}
-                  style={{
-                    position: 'absolute',
-                    top: `${42 + displayIndex * 3}%`,
-                    left: `${14 + displayIndex * 2}%`,
-                    zIndex: 15,
-                    cursor: sceneState.rockVisible ? 'pointer' : 'default',
-                    animation: 'modak-game-modakToBasket 0.8s ease-out'
-                  }}
-                  onClick={() => {
-                    if (sceneState.rockVisible && sceneState.rockFeedCount < 3) {
-                      handleModakInBasketClick(modakIndex);
-                    }
-                  }}
-                >
-                  <img
-                    src={getModakImage(modakIndex)}
-                    alt={`Collected Modak ${modakIndex + 1}`}
+              {sceneState.collectedModaks?.map((modakIndex, displayIndex) => {
+                const canDrag = sceneState.rockVisible && sceneState.rockFeedCount < 3;
+
+                return (
+                  <div
+                    key={`collected-${modakIndex}-${displayIndex}`}
+                    className={`modak-game-modak modak-game-modak-collected-${displayIndex + 1}
+                      ${showHintGlow && sceneState.rockVisible ? 'modak-game-hint-glow' : ''}`}
+                    style={{
+                      position: 'absolute',
+                      top: `${42 + displayIndex * 3}%`,
+                      left: `${14 + displayIndex * 2}%`,
+                      zIndex: 15,
+                      animation: 'modak-game-modakToBasket 0.8s ease-out'
+                    }}
+                  >
+                    <DraggableItem
+                      id={`basket-modak-${modakIndex}`}
+                      data={{ type: 'basket-modak', index: modakIndex }}
+                      disabled={!canDrag}
+                      onDragStart={(id, data) => {
+                        console.log('Dragging from basket:', id, data);
+                        recordInteraction();
+                      }}
+                      onDragEnd={(id) => console.log('Basket drag ended:', id)}
+                    >
+                      <img
+                        src={getModakImage(modakIndex)}
+                        alt={`Collected Modak ${modakIndex + 1}`}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          filter: 'brightness(1.1) saturate(1.2)',
+                          cursor: canDrag ? 'grab' : 'default'
+                        }}
+                      />
+                    </DraggableItem>
+                    <SparkleAnimation type="star" count={8} color="#ffd700" size={6} duration={1500} fadeOut={true} area="full" />
+                  </div>
+                );
+              })}
+
+              {/* ROCK/BELLY - Drop zone for feeding */}
+              {sceneState.rockVisible && (
+                <div className="modak-game-rock-container breathing">
+                  <DropZone
+                    id="feeding-rock"
+                    acceptTypes={['basket-modak']}
+                    onDrop={handleRockFeed}
+                    disabled={sceneState.rockFeedCount >= 3}
                     style={{
                       width: '100%',
                       height: '100%',
-                      filter: 'brightness(1.1) saturate(1.2)'
+                      borderRadius: '50%'
                     }}
-                  />
-                  <SparkleAnimation type="star" count={8} color="#ffd700" size={6} duration={1500} fadeOut={true} area="full" />
-                </div>
-              ))}
-
-              {/* ROCK/BELLY */}
-              {sceneState.rockVisible && (
-                <div className="modak-game-rock-container breathing">
-                  <ClickableElement
-                    id="feeding-rock"
-                    onClick={() => {}}
-                    completed={sceneState.rockTransformed}
-                    zone="rock-zone"
                   >
                     <img
                       src={sceneState.rockTransformed ? belly : rock}
@@ -1354,7 +1448,7 @@ const NewModakSceneMVPContent = ({
                         transition: 'transform 0.8s ease-out'
                       }}
                     />
-                  </ClickableElement>
+                  </DropZone>
 
                   {(showSparkle === 'rock-feeding' || showSparkle === 'belly-transform') && (
                     <SparkleAnimation
@@ -1456,7 +1550,13 @@ const NewModakSceneMVPContent = ({
             {showDiscoveryFlip1 && (
               <PowerUnlockOverlay
                 title="Focus Power Unlocked!"
-                description="Your mind is like a little mouse... Sometimes it runs around! But guess what? You can call it back!"
+         description={{
+      main: [
+        "Sometimes our mind runs everywhere like a tiny mouse!",
+        "But when it's time to learn or play, we can bring it back."
+      ],
+      emphasis: "Say with me: I can focus!"
+    }}
                 icon={symbolMooshikaColored}
                 iconColor="#FF69B4"
                 buttonText="Let's Collect Modaks!"
@@ -1485,11 +1585,14 @@ const NewModakSceneMVPContent = ({
             {/* POWER UNLOCK 2: Sharing Power (Modak) */}
             {showDiscoveryFlip2 && (
               <PowerUnlockOverlay
-                title="Sharing Power Unlocked!"
-                description="When you collect something special, it feels even MORE special when you share it with someone you love!"
+                title="Sweet Reward Earned!"
+                
+                description="You searched carefully and found all the modaks!
+
+Sweet rewards come when we try our best."
                 icon={symbolModakColored}
                 iconColor="#FFD700"
-                buttonText="Let's Share with Ganesha!"
+                buttonText="Let’s Share Them"
                 showButton={discoveryButtonVisible}
                 // onShow removed - handled by useEffect
                 onComplete={() => {
@@ -1511,8 +1614,14 @@ const NewModakSceneMVPContent = ({
             {/* POWER UNLOCK 3: Gratitude Power (Belly) */}
             {showDiscoveryFlip3 && (
               <PowerUnlockOverlay
-                title="Gratitude Power Complete!"
-                description="You helped Mooshika, collected with care, and shared with love. That's what gratitude means - saying thank you by doing good things!"
+                title="Sharing Power Unlocked!"
+              description={{
+      main: [
+        "You chose to share your sweets with me.",
+        "That shows a kind heart."
+      ],
+      emphasis: "Say with me: I am kind!"
+    }}
                 icon={symbolBellyColored}
                 iconColor="#FF8C42"
                 buttonText="Celebrate!"

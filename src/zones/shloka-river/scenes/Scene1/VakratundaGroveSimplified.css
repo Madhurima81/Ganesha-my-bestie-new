@@ -1,37 +1,19 @@
-/* VakratundaGroveSimplified.css - Clean implementation following Pond scene pattern */
+/* VakratundaGroveSimplified.css - Final Clean Version (No Jumping + Working Glow) */
 
-/* CSS Variables */
+/* ==========================================================================
+   1. VARIABLES & MAIN CONTAINERS
+   ========================================================================== */
 :root {
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
   --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
-  
-  --border-radius-sm: 8px;
-  --border-radius-md: 12px;
-  --border-radius-lg: 20px;
-  
-  --font-size-sm: 0.875rem;
-  --font-size-md: 1rem;
-  --font-size-lg: 1.25rem;
-  --font-size-xl: 1.5rem;
-  
   --color-primary: #1565C0;
   --color-secondary: #4ECDC4;
   --color-accent: #FF6B35;
-  --color-success: #4CAF50;
-  --color-warning: #FF9800;
-  
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.2);
-  
   --transition-fast: 0.2s;
-  --transition-medium: 0.3s;
-  --transition-slow: 0.5s;
 }
 
-/* Main Container */
 .vakratunda-simplified-container {
   width: 100vw !important;
   height: 100vh !important;
@@ -52,1864 +34,248 @@
   position: relative;
 }
 
-/* ===========================
-   RIVER THEME: SHLOKA RIVER INSTRUCTION MODAL
-   Palette: Aqua, Teal, Slate Blue, Coral
-   =========================== */
+/* Aspect Ratio Fixes */
+@media (max-aspect-ratio: 9/16) { .river-background { background-size: auto 100% !important; } }
+@media (min-aspect-ratio: 16/9) { .river-background { background-size: 100% auto !important; } }
 
-:root {
-  --river-bg-overlay: rgba(0, 96, 100, 0.85); /* Deep Teal Transparency */
-  --river-card-bg: #F0F8FF; /* Alice Blue */
-  --river-card-border: #4DD0E1; /* Cyan */
-  --river-text-heading: #006064; /* Dark Teal */
-  --river-text-body: #455A64; /* Slate Blue */
-  --river-accent-coral: #FF7043; /* Coral Orange */
-  --river-accent-glow: #B2EBF2;
-}
+/* ==========================================================================
+   2. GAME ELEMENTS - BASE STYLES (NO TRANSLATE)
+   ========================================================================== */
 
-/* Main Overlay */
-.river-instructions-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--river-bg-overlay);
-  z-index: 2000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: river-fadeIn 0.5s ease-out;
-  backdrop-filter: blur(5px);
-}
-
-/* Background Sparkles */
-.river-sparkles {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 101;
-}
-
-.river-sparkle {
-  position: absolute;
-  width: 15px;
-  height: 15px;
-  background: #E0F7FA;
-  border-radius: 50%;
-  box-shadow: 0 0 15px rgba(224, 247, 250, 0.8);
-  animation: river-bubbleFloat 3s ease-in-out infinite;
-}
-
-.river-sparkle:nth-child(1) { top: 70%; left: 20%; animation-duration: 4s; width: 20px; height: 20px; }
-.river-sparkle:nth-child(2) { top: 80%; left: 80%; animation-duration: 3.5s; }
-.river-sparkle:nth-child(3) { top: 40%; left: 10%; animation-duration: 5s; width: 10px; height: 10px; }
-.river-sparkle:nth-child(4) { top: 30%; left: 90%; animation-duration: 4.5s; }
-
-/* Layout Container */
-.river-instructions-content {
-  position: relative;
-  width: 95%;
-  max-width: 1200px;
-  height: auto;
-  min-height: 60vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 40px;
-  padding: 20px;
-  z-index: 102;
-}
-
-/* Character (Ganesha) - Left Side */
-.river-instructions-ganesha {
-  flex: 0 0 35%;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  animation: river-slideInLeft 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.river-instructions-ganesha img {
-  width: 100%;
-  max-width: 420px;
-  height: auto;
-  filter: drop-shadow(0 0 25px rgba(77, 208, 225, 0.6)); /* Aqua Glow */
-  animation: river-floatCharacter 4s ease-in-out infinite;
-}
-
-/* Content Card - Right Side */
-.river-instructions-card {
-  flex: 0 0 50%;
-  background: var(--river-card-bg);
-  border-radius: 40px;
-  padding: 40px 50px;
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3), inset 0 0 40px rgba(255, 255, 255, 0.8);
-  border: 4px solid var(--river-card-border);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  animation: river-slideInRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Subtle water wave background inside card */
-.river-instructions-card::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 150px;
-  background: linear-gradient(to top, rgba(178, 235, 242, 0.3), transparent);
-  border-radius: 0 0 35px 35px;
-  pointer-events: none;
-}
-
-/* Typography */
-.river-instructions-title {
-  font-family: 'Comic Sans MS', 'Baloo 2', cursive; /* Matching font stack */
-  font-size: 42px;
-  font-weight: 800;
-  color: var(--river-text-heading);
-  margin-bottom: 10px;
-  text-shadow: 2px 2px 0px rgba(255,255,255,0.5);
-}
-
-.river-instructions-subtitle {
-  font-family: 'Nunito', sans-serif;
-  font-size: 22px;
-  font-weight: 700;
-  color: #00838F; /* Slightly lighter teal */
-  margin-bottom: 25px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  background: rgba(224, 247, 250, 0.8);
-  padding: 5px 20px;
-  border-radius: 20px;
-}
-
-.river-instructions-text {
-  font-family: 'Nunito', sans-serif;
-  font-size: 19px;
-  line-height: 1.6;
-  color: var(--river-text-body);
-  margin-bottom: 30px;
-  max-width: 90%;
-}
-
-/* Icons Section */
-.river-instructions-icons {
-  display: flex;
-  justify-content: center;
-  gap: 40px;
-  margin-bottom: 35px;
-  width: 100%;
-}
-
-.river-icon-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  transition: transform 0.3s ease;
-}
-
-.river-icon-item:hover {
-  transform: translateY(-5px);
-}
-
-.river-icon-item img {
-  width: 85px;
-  height: 85px;
-  object-fit: contain;
-  filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
-}
-
-.river-icon-label {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--river-text-heading);
-}
-
-/* CTA Button */
-.river-instructions-button {
-  background: linear-gradient(135deg, #FF8A65 0%, #FF5722 100%); /* Warm Coral Gradient */
-  border: 3px solid #FFF;
-  color: white;
-  padding: 16px 60px;
-  font-size: 26px;
-  font-weight: 800;
-  border-radius: 50px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 8px 20px rgba(255, 87, 34, 0.4);
-  font-family: 'Baloo 2', cursive;
-  position: relative;
+/* --- Vakratunda Elements --- */
+.vakratunda-clicker-element {
+  position: absolute !important;
+  width: 150px !important;
+  height: 150px !important;
   z-index: 10;
-}
-
-.river-instructions-button:hover {
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 12px 25px rgba(255, 87, 34, 0.5);
-  background: linear-gradient(135deg, #FFAB91 0%, #F4511E 100%);
-}
-
-.river-instructions-button:active {
-  transform: translateY(0) scale(0.98);
-}
-
-/* Animations */
-@keyframes river-fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes river-slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes river-slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
-
-@keyframes river-floatCharacter {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-15px); }
-}
-
-@keyframes river-bubbleFloat {
-  0% { transform: translateY(100px) scale(0); opacity: 0; }
-  50% { opacity: 0.8; }
-  100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
-}
-
-/* Mobile Responsive */
-@media (max-width: 900px) {
-  .river-instructions-content {
-    flex-direction: column;
-    padding: 10px;
-  }
-  
-  .river-instructions-ganesha {
-    flex: 0 0 auto;
-    justify-content: center;
-    order: 1;
-  }
-  
-  .river-instructions-ganesha img {
-    max-width: 200px; /* Smaller character on mobile */
-  }
-  
-  .river-instructions-card {
-    flex: 0 0 auto;
-    width: 100%;
-    order: 2;
-    padding: 25px;
-  }
-
-  .river-instructions-title { font-size: 28px; }
-  .river-instructions-subtitle { font-size: 16px; margin-bottom: 15px; }
-  .river-instructions-text { font-size: 16px; margin-bottom: 20px; }
-  .river-icon-item img { width: 60px; height: 60px; }
-  .river-instructions-button { font-size: 20px; padding: 12px 40px; }
-}
-
-/* ==================== OPENING MISSION MODAL (VAKRATUNDA_STORY & MAHAKAYA_STORY) ==================== */
-.vakratunda-mission-modal-overlay { /* Corrected Prefix */
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  background: rgba(0, 0, 0, 0.7) !important;
-  backdrop-filter: blur(3px);
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  z-index: 9999 !important;
-  animation: fadeIn 0.3s ease-out;
-}
-
-.vakratunda-mission-modal { /* Corrected Prefix - Using zone colors */
-  background: var(--zone-current-base);
-  border-radius: 25px;
-  padding: 35px 45px;
-  max-width: 480px;
-  text-align: center;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  animation: modalSlideUp 0.5s ease-out;
-  position: relative;
-  z-index: 10000 !important;
-}
-
-.vakratunda-modal-character { /* Corrected Prefix */
-  margin-bottom: 20px;
-}
-
-.vakratunda-character-img { /* Corrected Prefix */
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 10px;
-  display: block;
-}
-
-.vakratunda-character-speech-bubble { /* Corrected Prefix */
-  background: #FFF9E6;
-  padding: 8px 16px;
-  border-radius: 15px;
-  border: 2px solid #FFD700;
-  font-size: 14px;
-  font-weight: 600;
-  color: #8B4513;
-  display: inline-block;
-}
-
-.vakratunda-mission-title { /* Corrected Prefix - Using play-joy-gold */
-  font-size: 26px;
-  font-weight: bold;
-  color: var(--play-joy-gold);
-  margin-bottom: 18px;
-}
-
-.vakratunda-mission-subtitle { /* Corrected Prefix */
-  font-size: 18px;
-  font-weight: 600;
-  color: #E91E63;
-  margin-bottom: 15px;
-}
-
-.vakratunda-mission-description { /* Corrected Prefix - Using play-text-main */
-  font-size: 15px;
-  color: var(--play-text-main);
-  margin-bottom: 28px;
-  line-height: 1.6;
-}
-
-.vakratunda-mission-start-btn { /* Corrected Prefix */
-  background: linear-gradient(135deg, #FFD700 0%, #FF8C00 100%);
-  color: white;
-  border: none;
-  padding: 14px 40px;
-  border-radius: 30px;
-  font-size: 18px;
-  font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+  /* No translate here - prevents jumping */
 }
 
-.vakratunda-mission-start-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.5);
-}
+.vakratunda-clicker-element:hover { transform: translate(-50%, -50%) scale(1.1) !important; }
+.vakratunda-clicker-element:active { transform: translate(-50%, -50%) scale(0.95) !important; }
 
-.vakratunda-story-continue-btn { /* Corrected Prefix for Mahakaya Story continue */
-  background: linear-gradient(135deg, var(--color-accent) 0%, #F7931E 100%);
-  color: white;
-  border: none;
-  padding: 14px 35px;
-  border-radius: 25px;
-  font-size: 18px;
-  font-weight: bold;
+.vakratunda-central-synthesis {
+  position: absolute !important;
+  width: 160px !important;
+  height: 160px !important;
+  z-index: 10;
   cursor: pointer;
-  box-shadow: var(--shadow-md);
-  transition: transform var(--transition-fast);
-}
-
-.vakratunda-story-continue-btn:hover {
-  transform: translateY(-2px);
-}
-
-
-/* NOTE: Generic .mission-goals, .mission-goal, .mission-reward removed as they were not used in JSX or were redundant with SanskritWordMission.css */
-
-
-/* ==================== STORY TRANSITION MODAL (Removed generic, using prefixed above) ==================== */
-
-
-/* ==================== 5-SECOND WORD CELEBRATION ==================== */
-.vakratunda-celebration-overlay { /* Corrected Prefix */
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(3px);
-  z-index:10001;
-  animation: fadeIn 0.3s ease-out;
-}
-
-.vakratunda-centered-word-celebration { /* Corrected Prefix */
-  position: fixed;
-  top: 50%;
-  left: 50%;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+  transition: transform 0.3s ease;
   transform: translate(-50%, -50%);
-  z-index: 10002;
-  text-align: center;
-  animation: celebrationAppear 0.5s ease-out;
 }
 
-.vakratunda-celebration-app-icon { /* Corrected Prefix */
-  width: 180px;
-  height: 180px;
-  margin-bottom: 25px;
-  filter: drop-shadow(0 0 40px currentColor);
-  animation: celebrationGlow 2s ease-in-out infinite alternate;
-}
+.vakratunda-central-synthesis:hover { transform: translate(-50%, -50%) scale(1.1) !important; }
 
-.vakratunda-celebration-word-text { /* Corrected Prefix */
-  font-size: 48px;
-  font-weight: bold;
-  color: white;
-  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
-  letter-spacing: 3px;
-  animation: textPulse 1.5s ease-in-out infinite;
-}
-
-.vakratunda-celebration-sparkles { /* Corrected Prefix */
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 400px;
-  height: 400px;
-  pointer-events: none;
-}
-
-.mode-selection-modal { /* Used as a modifier */
-  max-width: 600px !important;
-}
-
-/* NOTE: .mode-buttons, .mode-btn, .auto-mode, .manual-mode, .mode-icon, .mode-title, .mode-desc are not prefixed in JSX, keeping them here is an assumption they are used globally or as local generic styles. */
-
-
-/* ==================== POWER MODAL ==================== */
-.vakratunda-power-modal-overlay { /* Corrected Prefix */
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(3px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  animation: fadeIn 0.3s ease-out;
-}
-
-.vakratunda-power-modal { /* Corrected Prefix */
-  background: linear-gradient(135deg, #FFF9E6 0%, #FFE9B8 100%);
-  border-radius: 25px;
-  padding: 40px;
-  max-width: 600px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  animation: modalSlideUp 0.5s ease-out;
-}
-
-/* NOTE: .power-modal-title removed, not in JSX */
-
-.vakratunda-power-modal-content { /* Corrected Prefix */
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 35px;
-}
-
-.vakratunda-power-modal-left { /* Corrected Prefix */
-  flex: 1;
-  text-align: left;
-}
-
-.vakratunda-power-modal-text { /* Corrected Prefix */
-  font-size: 16px;
-  color: #555;
-  margin-bottom: 15px;
-  line-height: 1.6;
-}
-
-.vakratunda-power-modal-subtext { /* Corrected Prefix */
-  font-size: 14px;
-  color: #888;
-  font-style: italic;
-}
-
-.vakratunda-power-modal-right { /* Corrected Prefix */
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  align-items: center;
-}
-
-/* NOTE: .power-modal-icon removed, not in JSX */
-
-.vakratunda-power-modal-btn { /* Corrected Prefix */
-  width: 100%;
-  padding: 12px 25px;
-  border: none;
-  border-radius: 25px;
-  font-size: 15px;
-  font-weight: bold;
+/* --- Mahakaya Elements --- */
+.mahakaya-clicker-element {
+  position: absolute !important;
+  width: 160px !important;
+  height: 160px !important;
+  z-index: 10;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
 }
 
-.save-btn { /* Modifier, keeping generic */
-  background: linear-gradient(135deg, #FF6B9D, #FF8EB3);
-  color: white;
+.mahakaya-clicker-element:hover { transform: translate(-50%, -50%) scale(1.1) !important; }
+.mahakaya-clicker-element:active { transform: translate(-50%, -50%) scale(0.95) !important; }
+
+.mahakaya-central-synthesis {
+  position: absolute !important;
+  width: 160px !important;
+  height: 160px !important;
+  z-index: 10;
+  cursor: pointer;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+  transition: transform 0.3s ease;
+  transform: translate(-50%, -50%);
 }
 
-.continue-btn { /* Modifier, keeping generic */
-  background: linear-gradient(135deg, #4ECDC4, #44A08D);
-  color: white;
+.mahakaya-central-synthesis:hover { transform: translate(-50%, -50%) scale(1.1) !important; }
+
+/* ==========================================================================
+   3. ANIMATIONS (PULSE & GLOW) - FIXED
+   ========================================================================== */
+
+/* A. Singing Animation (Sequence Playing) */
+.vakratunda-clicker-element.singing,
+.mahakaya-clicker-element.singing {
+  transform: translate(-50%, -50%) scale(1.2) !important;
+  filter: brightness(1.4) drop-shadow(0 0 15px #FFD700);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.vakratunda-power-modal-btn:hover { /* Corrected Prefix */
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+/* B. Gentle Pulse (Default for next item) */
+.vakratunda-clicker-element.pulse,
+.mahakaya-clicker-element.pulse {
+  animation: gentle-pulse-centered 2s infinite ease-in-out !important;
 }
 
-/* Affirmation Row - Icon + Text */
-.vakratunda-power-affirmation-row { /* Corrected Prefix */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  margin: 25px auto 30px auto;
-  padding: 20px;
-  background: linear-gradient(135deg, #FFF9E6 0%, #FFE9B8 100%);
-  border: 3px solid #FFD700;
-  border-radius: 20px;
-  max-width: 450px;
-  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+.vakratunda-central-synthesis.pulse,
+.mahakaya-central-synthesis.pulse {
+  animation: gentle-pulse-centered 2s infinite ease-in-out !important;
 }
 
-.vakratunda-affirmation-icon { /* Corrected Prefix */
-  width: 80px;
-  height: 80px;
-  filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5));
+@keyframes gentle-pulse-centered {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.05); }
+  100% { transform: translate(-50%, -50%) scale(1); }
 }
 
-.vakratunda-affirmation-content { /* Corrected Prefix */
-  text-align: left;
-}
-
-.vakratunda-affirmation-text { /* Corrected Prefix */
-  font-size: 22px;
-  font-weight: bold;
-  color: #8B4513;
-  margin-bottom: 5px;
-  font-style: italic;
-}
-
-.vakratunda-affirmation-description { /* Corrected Prefix */
-  font-size: 14px;
-  color: #666;
-  font-weight: 600;
-}
-
-/* NOTE: SAVE ANIMAL MISSION styles are handled by SanskritWordMission.css - removed redundant/confusing styles from here. */
-
-
-.game-phase-header { /* Used as-is in JSX */
-  position: fixed;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: linear-gradient(135deg, #1565C0, #42A5F5);
-  color: white;
-  padding: 14px 35px;
-  border-radius: 30px;
-  font-size: 18px;
-  font-weight: bold;
-  z-index: 100;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-@keyframes headerBounce { /* Used as-is */
-  0%, 100% {
-    transform: translateX(-50%) translateY(0);
-  }
-  50% {
-    transform: translateX(-50%) translateY(-5px);
-  }
-}
-
-/* ==================== ANIMATIONS ==================== */
-/* Keeping animations generic */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes modalSlideUp {
-  from {
-    transform: translateY(30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes celebrationAppear {
-  from {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-  }
-  to {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes celebrationGlow {
-  from {
-    filter: drop-shadow(0 0 30px currentColor);
-    transform: scale(1);
-  }
-  to {
-    filter: drop-shadow(0 0 60px currentColor);
-    transform: scale(1.05);
-  }
-}
-
-@keyframes textPulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.05);
-  }
-}
-
-@keyframes powerPulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.08);
-  }
-}
-
-@keyframes btnPulse {
+@keyframes gentle-pulse {
   0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  50% { transform: scale(1.05); }
   100% { transform: scale(1); }
 }
 
-/* ==================== LOADING & ERROR STATES ==================== */
-/* Keeping generic */
-.loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  font-size: 24px;
-  color: var(--color-primary);
-  font-weight: bold;
-  background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+/* C. Strong Hint Glow (After 10s Idle) */
+.hint-glow {
+  /* !important ensures this overrides the pulse animation */
+  animation: hint-pulse-glow-centered 1.5s infinite ease-in-out !important;
+  z-index: 50 !important;
+  filter: drop-shadow(0 0 25px rgba(255, 215, 0, 1)) !important;
 }
 
-.error-boundary {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  padding: 20px;
-  text-align: center;
-  background: #FFF5F5;
+.vakratunda-central-synthesis.hint-glow,
+.mahakaya-central-synthesis.hint-glow {
+  animation: hint-pulse-glow-centered 1.5s infinite ease-in-out !important;
 }
 
-.error-boundary h2 {
-  color: #FF5252;
-  margin-bottom: 20px;
-  font-size: 28px;
-}
 
-.error-boundary button {
-  background: var(--color-primary);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background var(--transition-fast);
-}
-
-.error-boundary button:hover {
-  background: #0D47A1;
-}
-
-/* ==================== RESPONSIVE DESIGN ==================== */
-@media (max-width: 768px) {
-  .vakratunda-mission-modal, /* Corrected Prefix */
-  .vakratunda-power-modal { /* Corrected Prefix */
-    max-width: 90vw;
-    padding: 25px;
+@keyframes hint-pulse-glow-centered {
+  0% {
+    /* Normal State */
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8)) brightness(1.05);
+    transform: translate(-50%, -50%) scale(1);
   }
-  
-  .vakratunda-mission-title { /* Corrected Prefix */
-    font-size: 22px;
+  50% {
+    /* Glowing State - Bright Gold */
+    filter: drop-shadow(0 0 35px rgba(255, 215, 0, 1)) brightness(1.15);
+    transform: translate(-50%, -50%) scale(1.15);
   }
-
-  .vakratunda-celebration-word-text { /* Corrected Prefix */
-    font-size: 36px;
+  100% {
+    /* Normal State */
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8)) brightness(1.05);
+    transform: translate(-50%, -50%) scale(1);
   }
-
-  .vakratunda-celebration-app-icon { /* Corrected Prefix */
-    width: 120px;
-    height: 120px;
-  }
-
-  /* NOTE: .syllable-chant-buttons are in SanskritWordMission.css, removing from here to avoid conflict/duplication */
 }
 
-
-/* Persistent companion boy - ALWAYS visible once game starts */
-.vakratunda-companion-boy { /* Corrected Prefix */
-  position: fixed;
-  bottom: 100px;
-  right: 160px;
-  z-index: 5;
-  animation: slideInLeft 0.6s ease-out;
-}
-
-/* Update boy companion with breathing */
-.vakratunda-boy-companion { /* Corrected Prefix */
-  width: 120px;
-  height: auto;
-  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
-  animation: breathe 3s ease-in-out infinite;
-}
-
-
-/* GANESHA CELEBRATION - Fades in next to persistent boy */
-.vakratunda-ganesha-celebration-enter { /* Corrected Prefix */
-  position: fixed;
-  bottom: 120px;
-  left: 280px;
-  z-index: 100;
-  animation: fadeIn 0.8s ease-out;
-}
-
-
-.vakratunda-ganesha-slides-in { /* Corrected Prefix */
-  width: 140px;
-  height: auto;
-  filter: drop-shadow(4px 4px 8px rgba(0,0,0,0.3));
-  animation: fadeIn 0.8s ease-out, breathe 3s ease-in-out infinite 0.8s;
-}
-
-.vakratunda-ganesha-celebration-bubble { /* Corrected Prefix */
-  position: absolute;
-  top: -65px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #E8F5E9;
-  padding: 10px 18px;
-  border-radius: 20px;
-  border: 3px solid #4CAF50;
-  font-size: 16px;
-  font-weight: bold;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  white-space: nowrap;
-  animation: popIn 0.4s ease-out 0.2s both;
-}
-
-.vakratunda-ganesha-celebration-bubble::after {
-  content: '';
-  position: absolute;
-  bottom: -12px;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 8px solid transparent;
-  border-top-color: #4CAF50;
-}
-
-.vakratunda-ganesha-celebration-bubble::before {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 6px solid transparent;
-  border-top-color: #E8F5E9;
-  z-index: 1;
-}
-
-.vakratunda-ganesha-sparkle-position { /* Corrected Prefix */
-  position: fixed;
-  bottom: 150px;
-  left: 280px;
-  width: 150px;
-  height: 150px;
-  z-index: 100;
-  pointer-events: none;
-}
-
-/* FINAL CELEBRATION - Ganesha appears BEFORE completion screen */
-.vakratunda-final-ganesha-appears { /* Corrected Prefix */
-  position: fixed;
-  bottom: 120px;
-  left: 50%;
-  transform: translateX(-100px);
-  z-index: 9998;
-  animation: fadeIn 1s ease-out;
-}
-
-.vakratunda-ganesha-final-enters { /* Corrected Prefix */
-  width: 140px;
-  height: auto;
-  filter: drop-shadow(4px 4px 8px rgba(0,0,0,0.3));
-  animation: fadeIn 1s ease-out, breathe 3s ease-in-out infinite 1s;
-}
-
-.vakratunda-ganesha-final-bubble { /* Corrected Prefix */
-  position: absolute;
-  top: -65px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #E8F5E9;
-  padding: 10px 18px;
-  border-radius: 20px;
-  border: 3px solid #4CAF50;
-  font-size: 16px;
-  font-weight: bold;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  white-space: nowrap;
-  animation: popIn 0.6s ease-out 0.4s both;
-}
-
-.vakratunda-ganesha-final-bubble::after {
-  content: '';
-  position: absolute;
-  bottom: -12px;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 8px solid transparent;
-  border-top-color: #4CAF50;
-}
-
-.vakratunda-ganesha-final-bubble::before {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 6px solid transparent;
-  border-top-color: #E8F5E9;
-  z-index: 1;
-}
-
-
-/* Breathing animation (Generic, used by prefixed classes) */
-@keyframes breathe {
-  0%, 100% {
+@keyframes hint-pulse-glow {
+  0% {
+    /* Normal State */
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8)) brightness(1.05);
     transform: scale(1);
   }
   50% {
-    transform: scale(1.03);
-  }
-}
-
-/* Other animations (Generic) */
-@keyframes bounceIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.3);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  70% {
-    transform: scale(0.9);
+    /* Glowing State - Bright Gold */
+    filter: drop-shadow(0 0 35px rgba(255, 215, 0, 1)) brightness(1.15);
+    transform: scale(1.15);
   }
   100% {
-    opacity: 1;
+    /* Normal State */
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8)) brightness(1.05);
     transform: scale(1);
   }
 }
 
-@keyframes popIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
+/* ==========================================================================
+   4. POSITIONS (Adjusted for No-Translate)
+   ========================================================================== */
 
-@keyframes popUp {
-  0% {
-    opacity: 0;
-    transform: translateY(50px) scale(0.8);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes slideUp {
-  0% {
-    opacity: 0;
-    transform: translateY(100px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-/* ========================================== */
-/* GAME PHASE HEADERS - Dynamic per word */
-/* ========================================== */
-
-.game-phase-header {
-  position: fixed;
-  top: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: linear-gradient(135deg, #1976D2 0%, #2196F3 100%);
-  color: white;
-  padding: 16px 32px;
-  border-radius: 25px;
-  font-family: 'Baloo 2', cursive;
-  font-size: 20px;
-  font-weight: 600;
-  box-shadow: 0 4px 20px rgba(25, 118, 210, 0.4);
-  z-index: 900;
-  animation: headerSlideDown 0.5s ease-out;
-  text-align: center;
-  white-space: nowrap;
-}
-
-@keyframes headerSlideDown {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -20px);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-}
-
-/* ========================================== */
-/* RESPONSIVE DESIGN - DISNEY QUALITY */
-/* Replace old @media queries with these */
-/* ========================================== */
-
-/* === 1. BACKGROUND RESPONSIVE === */
-@media (max-aspect-ratio: 9/16) {
-  .river-background {
-    background-size: auto 100% !important;
-  }
-}
-
-@media (min-aspect-ratio: 16/9) {
-  .river-background {
-    background-size: 100% auto !important;
-  }
-}
-
-/* === 2. MOBILE PORTRAIT (Phones) === */
-@media (max-width: 600px) {
-  .vakratunda-character-img {
-    width: 120px;
-  }
-  
-  .vakratunda-mission-title {
-    font-size: 20px;
-  }
-  
-  .vakratunda-mission-description {
-    font-size: 14px;
-  }
-  
-  .vakratunda-mission-start-btn {
-    font-size: 16px;
-    padding: 15px 30px;
-  }
-  
-  .game-phase-header {
-    font-size: 16px;
-    padding: 12px 20px;
-  }
-  
-  .vakratunda-mission-modal {
-    padding: 20px;
-    margin: 15px;
-  }
-}
-
-/* === 3. MOBILE LANDSCAPE (Phones horizontal) === */
-@media (min-width: 568px) and (max-width: 1019px) and (orientation: landscape) {
-  .vakratunda-character-img {
-    width: 100px;
-  }
-  
-  .vakratunda-mission-modal {
-    max-height: 85vh;
-    overflow-y: auto;
-    padding: 20px;
-  }
-  
-  .game-phase-header {
-    font-size: 14px;
-    padding: 10px 18px;
-    top: 60px;
-  }
-}
-
-/* === 4. iPAD ALL (Portrait + Landscape) - KEY FIX === */
-@media (min-width: 768px) and (min-height: 768px) and (max-width: 1366px) {
-  .vakratunda-character-img {
-    width: 200px;
-  }
-  
-  .vakratunda-mission-title {
-    font-size: 32px;
-  }
-  
-  .vakratunda-mission-description {
-    font-size: 20px;
-  }
-  
-  .vakratunda-mission-start-btn {
-    font-size: 20px;
-    padding: 20px 40px;
-  }
-  
-  .game-phase-header {
-    font-size: 22px;
-    padding: 18px 35px;
-  }
-  
-  .vakratunda-mission-modal {
-    padding: 35px;
-    max-width: 600px;
-  }
-}
-
-/* === 5. iPAD PORTRAIT (Make bigger) === */
-@media (min-width: 768px) and (min-height: 1000px) and (orientation: portrait) {
-  .vakratunda-character-img {
-    width: 220px;
-  }
-  
-  .vakratunda-mission-title {
-    font-size: 36px;
-  }
-  
-  .game-phase-header {
-    font-size: 24px;
-    padding: 20px 40px;
-  }
-}
-
-/* === 6. iPAD PRO 12.9" === */
-@media (min-width: 1024px) and (min-height: 1366px) {
-  .vakratunda-character-img {
-    width: 250px;
-  }
-  
-  .vakratunda-mission-title {
-    font-size: 40px;
-  }
-  
-  .vakratunda-mission-description {
-    font-size: 24px;
-  }
-  
-  .game-phase-header {
-    font-size: 28px;
-    padding: 22px 45px;
-  }
-  
-  .vakratunda-mission-start-btn {
-    font-size: 24px;
-    padding: 25px 50px;
-  }
-}
-
-/* === 7. LAPTOPS/CHROMEBOOKS === */
-@media (min-width: 1366px) and (max-height: 900px) {
-  .vakratunda-simplified-container {
-    max-width: 1600px;
-    margin: 0 auto;
-  }
-  
-  .game-phase-header {
-    font-size: 24px;
-    padding: 20px 40px;
-  }
-}
-
-/* ========================================== */
-
-
-/* ========================================== */
-/* VAKRATUNDA GAME HEADER - BIGGER & LOWER */
-/* ========================================== */
-
-/* Vakratunda Header */
-.vakratunda-game-phase-header {
-  position: absolute;
-  top: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255,255,255,0.3);
-  padding: 20px 40px;
-  border-radius: 15px;
-  border: 3px solid #4CAF50;  /* Green */
-  z-index: 50;
-  font-size: 32px;
-  font-weight: bold;
-  color: white;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-  text-align: center;
-  min-width: 500px;
-}
-
-/* Mahakaya Header */
-.mahakaya-game-phase-header {
-  position: absolute;
-  top: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255,255,255,0.3);
-  padding: 20px 40px;
-  border-radius: 15px;
-  border: 3px solid #FF9800;  /* Orange */
-  z-index: 50;
-  font-size: 32px;
-  font-weight: bold;
-  color: white;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-  text-align: center;
-  min-width: 500px;
-}
-
-/* Media Queries for Vakratunda & Mahakaya */
-@media (max-width: 600px) {
-  .vakratunda-game-phase-header,
-  .mahakaya-game-phase-header {
-    top: 60px;
-    padding: 15px 25px;
-    font-size: 24px;
-    min-width: 320px;
-    border: 2px solid;
-  }
-}
-
-@media (min-width: 768px) and (min-height: 768px) {
-  .vakratunda-game-phase-header,
-  .mahakaya-game-phase-header {
-    top: 100px;
-    padding: 25px 50px;
-    font-size: 38px;
-    min-width: 600px;
-    border: 4px solid;
-  }
-}
-
-@media (min-width: 1024px) and (min-height: 1366px) {
-  .vakratunda-game-phase-header,
-  .mahakaya-game-phase-header {
-    top: 120px;
-    padding: 30px 60px;
-    font-size: 42px;
-    min-width: 700px;
-    border: 5px solid;
-  }
-}
-
-/* ========================================== */
-/* VAKRATUNDA GAME - RESPONSIVE (ORGANIZED BY DEVICE) */
-/* Add this to VakratundaGroveSimplified.css */
-/* ========================================== */
-
-/* ==================== DEFAULT SIZES (FALLBACK) ==================== */
-/* These apply when no media query matches */
-
-/* ==================== DEFAULT SIZES (FALLBACK) ==================== */
-
-.vakratunda-clicker-element {
-  position: absolute !important;  /* ← ADD THIS LINE */
-  width: 120px !important;
-  height: 120px !important;
-}
-
-.vakratunda-central-synthesis {
-  position: absolute !important;  /* ← ADD THIS LINE */
-  width: 120px !important;
-  height: 120px !important;
-}
-
-/* ==================== MOBILE PORTRAIT ==================== */
+/* --- MOBILE PORTRAIT (< 600px) --- */
 @media (max-width: 600px) and (orientation: portrait) {
-  /* Elephant Sizes */
-  .vakratunda-clicker-element,
-  .vakratunda-baby-elephant {
-    width: 70px !important;
-    height: 70px !important;
-  }
+  .vakratunda-clicker-element { width: 80px !important; height: 80px !important; }
+  .vakratunda-central-synthesis { width: 90px !important; height: 90px !important; }
   
-  /* Elephant Positions */
-  .vakratunda-clicker-element:nth-child(1) { left: 12% !important; top: 72% !important; }
-  .vakratunda-clicker-element:nth-child(2) { left: 32% !important; top: 48% !important; }
-  .vakratunda-clicker-element:nth-child(3) { left: 52% !important; top: 42% !important; }
-  .vakratunda-clicker-element:nth-child(4) { left: 72% !important; top: 38% !important; }
+  .vakratunda-clicker-element:nth-child(1) { left: 10%; top: 65%; }
+  .vakratunda-clicker-element:nth-child(2) { left: 30%; top: 40%; }
+  .vakratunda-clicker-element:nth-child(3) { left: 55%; top: 35%; }
+  .vakratunda-clicker-element:nth-child(4) { left: 75%; top: 30%; }
   
-  /* Lotus Sizes */
-  .vakratunda-central-synthesis,
-  .vakratunda-lotus-element {
-    width: 90px !important;
-    height: 90px !important;
-  }
+  .vakratunda-central-synthesis { left: 40%; top: 50%; } 
   
-  /* Lotus Positions */
-  .vakratunda-central-synthesis:nth-of-type(1) { left: 50% !important; top: 42% !important; }
-  .vakratunda-central-synthesis:nth-of-type(2) { left: 50% !important; top: 68% !important; }
-  .vakratunda-central-synthesis:nth-of-type(3) { left: 50% !important; top: 55% !important; }
+  .mahakaya-clicker-element { width: 85px !important; height: 85px !important; }
+  .mahakaya-central-synthesis { width: 95px !important; height: 95px !important; }
+
+  .mahakaya-clicker-element:nth-child(1) { left: 10%; top: 65%; }
+  .mahakaya-clicker-element:nth-child(2) { left: 32%; top: 70%; }
+  .mahakaya-clicker-element:nth-child(3) { left: 62%; top: 68%; }
+  .mahakaya-clicker-element:nth-child(4) { left: 82%; top: 72%; }
   
-  /* Hover Effects */
-  .vakratunda-clicker-element:hover,
-  .vakratunda-central-synthesis:hover {
-    transform: scale(1.1) !important;
-  }
+  .mahakaya-central-synthesis { left: 40%; top: 55%; }
 }
 
+/* --- TABLET LANDSCAPE (iPad) --- */
+@media (min-width: 768px) and (orientation: landscape) {
+  .vakratunda-clicker-element { width: 160px !important; height: 160px !important; }
+  .vakratunda-central-synthesis { width: 180px !important; height: 180px !important; }
 
-/* ==================== MOBILE LANDSCAPE ==================== */
-@media (min-width: 568px) and (max-width: 1019px) and (orientation: landscape) and (max-height: 500px) {
-  /* Elephant Sizes */
-  .vakratunda-clicker-element,
-  .vakratunda-baby-elephant {
-    width: 80px !important;
-    height: 80px !important;
-  }
+  .vakratunda-clicker-element:nth-child(1) { left: 12%; top: 60%; }
+  .vakratunda-clicker-element:nth-child(2) { left: 28%; top: 42%; }
+  .vakratunda-clicker-element:nth-child(3) { left: 68%; top: 35%; }
+  .vakratunda-clicker-element:nth-child(4) { left: 82%; top: 30%; }
   
-  /* Elephant Positions */
-  .vakratunda-clicker-element:nth-child(1) { left: 10% !important; top: 55% !important; }
-  .vakratunda-clicker-element:nth-child(2) { left: 30% !important; top: 48% !important; }
-  .vakratunda-clicker-element:nth-child(3) { left: 50% !important; top: 42% !important; }
-  .vakratunda-clicker-element:nth-child(4) { left: 70% !important; top: 38% !important; }
+  .vakratunda-central-synthesis { left: 45%; top: 50%; }
   
-  /* Lotus Sizes */
-  .vakratunda-central-synthesis,
-  .vakratunda-lotus-element {
-    width: 100px !important;
-    height: 100px !important;
-  }
+  .mahakaya-clicker-element { width: 190px !important; height: 190px !important; }
+  .mahakaya-central-synthesis { width: 210px !important; height: 210px !important; }
+
+  .mahakaya-clicker-element:nth-child(1) { left: 10%; top: 65%; }
+  .mahakaya-clicker-element:nth-child(2) { left: 32%; top: 70%; }
+  .mahakaya-clicker-element:nth-child(3) { left: 62%; top: 68%; }
+  .mahakaya-clicker-element:nth-child(4) { left: 82%; top: 72%; }
   
-  /* Lotus Positions */
-  .vakratunda-central-synthesis:nth-of-type(1) { left: 50% !important; top: 38% !important; }
-  .vakratunda-central-synthesis:nth-of-type(2) { left: 50% !important; top: 62% !important; }
-  .vakratunda-central-synthesis:nth-of-type(3) { left: 50% !important; top: 50% !important; }
+  .mahakaya-central-synthesis { left: 45%; top: 55%; }
 }
 
+/* --- HIGH RES / DESKTOP (> 1366px) --- */
+@media (min-width: 1367px) {
+  .vakratunda-clicker-element { width: 220px !important; height: 220px !important; }
+  .vakratunda-central-synthesis { width: 240px !important; height: 240px !important; }
 
-/* ==================== iPAD MINI/AIR/REGULAR PORTRAIT ==================== */
-@media (min-width: 768px) and (max-width: 1023px) and (orientation: portrait) {
-  /* Elephant Sizes */
-  .vakratunda-clicker-element,
-  .vakratunda-baby-elephant {
-    width: 110px !important;
-    height: 110px !important;
-  }
-  
-  /* Elephant Positions */
-  .vakratunda-clicker-element:nth-child(1) { left: 16% !important; top: 68% !important; }
-  .vakratunda-clicker-element:nth-child(2) { left: 36% !important; top: 38% !important; }
-  .vakratunda-clicker-element:nth-child(3) { left: 56% !important; top: 33% !important; }
-  .vakratunda-clicker-element:nth-child(4) { left: 70% !important; top: 30% !important; }
-  
-  /* Lotus Sizes */
-  .vakratunda-central-synthesis,
-  .vakratunda-lotus-element {
-    width: 130px !important;
-    height: 130px !important;
-  }
-  
-  /* Lotus Positions */
-  .vakratunda-central-synthesis:nth-of-type(1) { left: 50% !important; top: 45% !important; }
-  .vakratunda-central-synthesis:nth-of-type(2) { left: 50% !important; top: 65% !important; }
-  .vakratunda-central-synthesis:nth-of-type(3) { left: 50% !important; top: 55% !important; }
-  
-  /* Hover Effects */
-  .vakratunda-clicker-element:hover,
-  .vakratunda-central-synthesis:hover {
-    transform: scale(1.15) !important;
-  }
+  .vakratunda-clicker-element:nth-child(1) { left: 18%; top: 60%; }
+  .vakratunda-clicker-element:nth-child(2) { left: 33%; top: 45%; }
+  .vakratunda-clicker-element:nth-child(3) { left: 62%; top: 40%; }
+  .vakratunda-clicker-element:nth-child(4) { left: 78%; top: 35%; }
+
+  .vakratunda-central-synthesis { left: 45%; top: 50%; }
+
+  .mahakaya-clicker-element { width: 230px !important; height: 230px !important; }
+  .mahakaya-central-synthesis { width: 250px !important; height: 250px !important; }
+
+  .mahakaya-clicker-element:nth-child(1) { left: 15%; top: 65%; }
+  .mahakaya-clicker-element:nth-child(2) { left: 35%; top: 70%; }
+  .mahakaya-clicker-element:nth-child(3) { left: 60%; top: 68%; }
+  .mahakaya-clicker-element:nth-child(4) { left: 80%; top: 72%; }
+
+  .mahakaya-central-synthesis { left: 45%; top: 55%; }
 }
 
-
-/* ==================== iPAD MINI/AIR/REGULAR LANDSCAPE ==================== */
-@media (min-width: 768px) and (max-width: 1023px) and (orientation: landscape) {
-  /* Elephant Sizes */
-  .vakratunda-clicker-element,
-  .vakratunda-baby-elephant {
-    width: 95px !important;
-    height: 95px !important;
-  }
-  
-  /* Elephant Positions */
-  .vakratunda-clicker-element:nth-child(1) { left: 14% !important; top: 58% !important; }
-  .vakratunda-clicker-element:nth-child(2) { left: 34% !important; top: 45% !important; }
-  .vakratunda-clicker-element:nth-child(3) { left: 54% !important; top: 40% !important; }
-  .vakratunda-clicker-element:nth-child(4) { left: 72% !important; top: 36% !important; }
-  
-  /* Lotus Sizes */
-  .vakratunda-central-synthesis,
-  .vakratunda-lotus-element {
-    width: 115px !important;
-    height: 115px !important;
-  }
-  
-  /* Lotus Positions */
-  .vakratunda-central-synthesis:nth-of-type(1) { left: 50% !important; top: 40% !important; }
-  .vakratunda-central-synthesis:nth-of-type(2) { left: 50% !important; top: 60% !important; }
-  .vakratunda-central-synthesis:nth-of-type(3) { left: 50% !important; top: 50% !important; }
+/* ==========================================================================
+   5. OTHER STYLES (Modals, Headers, etc)
+   ========================================================================== */
+.game-modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px);
+  display: flex; align-items: center; justify-content: center; z-index: 9999;
 }
+.game-modal-content { display: flex; align-items: center; gap: 30px; width: 90%; max-width: 900px; }
+.game-modal-card { background: #FFF9E6; border-radius: 30px; padding: 40px; border: 4px solid #FFD700; text-align: center; flex: 1; }
+.game-modal-title { font-family: 'Baloo 2', cursive; font-size: 36px; color: #5D2E0F; margin-bottom: 15px; }
+.game-modal-icons { display: flex; justify-content: center; gap: 40px; margin-bottom: 30px; }
+.game-modal-icon-item img { width: 80px; height: 80px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1)); }
+.vakratunda-companion-boy { position: fixed; bottom: 80px; right: 120px; z-index: 5; animation: slideInRight 0.6s ease-out; }
+.vakratunda-boy-companion { width: 120px; height: auto; animation: breathe 3s ease-in-out infinite; }
+.vakratunda-celebration-word-text { font-family: 'Baloo 2', cursive; font-size: 64px; color: white; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
-
-/* ==================== iPAD PRO 11" PORTRAIT ==================== */
-@media (min-width: 1024px) and (max-width: 1365px) and (orientation: portrait) and (min-height: 1300px) {
-  /* Elephant Sizes */
-  .vakratunda-clicker-element,
-  .vakratunda-baby-elephant {
-    width: 125px !important;
-    height: 125px !important;
-  }
-  
-  /* Elephant Positions */
-  .vakratunda-clicker-element:nth-child(1) { left: 17% !important; top: 67% !important; }
-  .vakratunda-clicker-element:nth-child(2) { left: 37% !important; top: 37% !important; }
-  .vakratunda-clicker-element:nth-child(3) { left: 57% !important; top: 32% !important; }
-  .vakratunda-clicker-element:nth-child(4) { left: 70% !important; top: 30% !important; }
-  
-  /* Lotus Sizes */
-  .vakratunda-central-synthesis,
-  .vakratunda-lotus-element {
-    width: 145px !important;
-    height: 145px !important;
-  }
-  
-  /* Lotus Positions */
-  .vakratunda-central-synthesis:nth-of-type(1) { left: 50% !important; top: 44% !important; }
-  .vakratunda-central-synthesis:nth-of-type(2) { left: 50% !important; top: 66% !important; }
-  .vakratunda-central-synthesis:nth-of-type(3) { left: 50% !important; top: 55% !important; }
-  
-  /* Hover Effects */
-  .vakratunda-clicker-element:hover,
-  .vakratunda-central-synthesis:hover {
-    transform: scale(1.2) !important;
-  }
-}
-
-
-/* ==================== iPAD PRO 11" LANDSCAPE ==================== */
-@media (min-width: 1024px) and (max-width: 1365px) and (orientation: landscape) and (max-height: 850px) {
-  /* Elephant Sizes */
-  .vakratunda-clicker-element,
-  .vakratunda-baby-elephant {
-    width: 105px !important;
-    height: 105px !important;
-  }
-  
-  /* Elephant Positions */
-  .vakratunda-clicker-element:nth-child(1) { left: 15% !important; top: 60% !important; }
-  .vakratunda-clicker-element:nth-child(2) { left: 35% !important; top: 48% !important; }
-  .vakratunda-clicker-element:nth-child(3) { left: 55% !important; top: 43% !important; }
-  .vakratunda-clicker-element:nth-child(4) { left: 73% !important; top: 39% !important; }
-  
-  /* Lotus Sizes */
-  .vakratunda-central-synthesis,
-  .vakratunda-lotus-element {
-    width: 125px !important;
-    height: 125px !important;
-  }
-  
-  /* Lotus Positions */
-  .vakratunda-central-synthesis:nth-of-type(1) { left: 50% !important; top: 42% !important; }
-  .vakratunda-central-synthesis:nth-of-type(2) { left: 50% !important; top: 62% !important; }
-  .vakratunda-central-synthesis:nth-of-type(3) { left: 50% !important; top: 52% !important; }
-}
-
-
-/* ==================== iPAD PRO 12.9" PORTRAIT ==================== */
-@media (min-width: 1024px) and (min-height: 1366px) and (orientation: portrait) {
-  /* Elephant Sizes */
-  .vakratunda-clicker-element,
-  .vakratunda-baby-elephant {
-    width: 150px !important;
-    height: 150px !important;
-  }
-  
-  /* Elephant Positions */
-  .vakratunda-clicker-element:nth-child(1) { left: 17% !important; top: 66% !important; }
-  .vakratunda-clicker-element:nth-child(2) { left: 37% !important; top: 36% !important; }
-  .vakratunda-clicker-element:nth-child(3) { left: 57% !important; top: 31% !important; }
-  .vakratunda-clicker-element:nth-child(4) { left: 69% !important; top: 29% !important; }
-  
-  /* Lotus Sizes */
-  .vakratunda-central-synthesis,
-  .vakratunda-lotus-element {
-    width: 150px !important;
-    height: 150px !important;
-  }
-  
-  /* Lotus Positions - Uses gameConfigs.js defaults */
-}
-
-
-/* ==================== iPAD PRO 12.9" LANDSCAPE ==================== */
-@media (min-width: 1366px) and (max-width: 1700px) and (orientation: landscape) and (max-height: 1050px) {
-  /* Elephant Sizes */
-  .vakratunda-clicker-element,
-  .vakratunda-baby-elephant {
-    width: 200px !important;
-    height: 200px !important;
-  }
-  
-  /* Elephant Positions */
-  .vakratunda-clicker-element:nth-child(1) { left: 16% !important; top: 62% !important; }
-  .vakratunda-clicker-element:nth-child(2) { left: 36% !important; top: 45% !important; }
-  .vakratunda-clicker-element:nth-child(3) { left: 26% !important; top: 60% !important; }
-  .vakratunda-clicker-element:nth-child(4) { left: 42% !important; top: 46% !important; }
-  
-  /* Lotus Sizes */
-  .vakratunda-central-synthesis,
-  .vakratunda-lotus-element {
-    width: 200px !important;
-    height: 200px !important;
-  }
-  
-  /* Lotus Positions */
-  .vakratunda-central-synthesis:nth-of-type(1) { left: 50% !important; top: 43% !important; }
-  .vakratunda-central-synthesis:nth-of-type(2) { left: 50% !important; top: 63% !important; }
-  .vakratunda-central-synthesis:nth-of-type(3) { left: 50% !important; top: 53% !important; }
-}
-
-
-/* ==================== LAPTOP / DESKTOP ==================== */
-@media (min-width: 1366px) and (max-width: 1919px) and (min-height: 1051px) {  /* Elephant Sizes */
-  .vakratunda-clicker-element,
-  .vakratunda-baby-elephant {
-    width: 200px !important;
-    height: 200px !important;
-  }
-  
-  /* Elephant Positions - Uses gameConfigs.js defaults */
-  
-  /* Lotus Sizes */
-  .vakratunda-central-synthesis,
-  .vakratunda-lotus-element {
-    width: 200px !important;
-    height: 200px !important;
-  }
-  
-  /* Lotus Positions - Uses gameConfigs.js defaults */
-}
-
-
-/* ==================== LARGE DESKTOP (1920px+) ==================== */
-@media (min-width: 1920px) {
-  /* Elephant Sizes */
-  .vakratunda-clicker-element,
-  .vakratunda-baby-elephant {
-    width: 120px !important;
-    height: 120px !important;
-  }
-  
-  /* Elephant Positions - Uses gameConfigs.js defaults */
-  
-  /* Lotus Sizes */
-  .vakratunda-central-synthesis,
-  .vakratunda-lotus-element {
-    width: 120px !important;
-    height: 120px !important;
-  }
-  
-  /* Lotus Positions - Uses gameConfigs.js defaults */
-}
-
-
-/* ==================== VISUAL POLISH (ALL DEVICES) ==================== */
-
-.vakratunda-clicker-element {
-  cursor: pointer;
-  transition: transform 0.2s ease, filter 0.2s ease;
-  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
-}
-
-.vakratunda-clicker-element:active {
-  transform: scale(0.95) !important;
-}
-
-.vakratunda-central-synthesis,
-.vakratunda-lotus-element {
-  cursor: pointer;
-  transition: transform 0.3s ease, filter 0.2s ease;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
-}
-
-.vakratunda-central-synthesis.glowing {
-  animation: vakratunda-lotus-glow 1.5s ease-in-out infinite;
-  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
-}
-
-@keyframes vakratunda-lotus-glow {
-  0%, 100% {
-    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
-    transform: scale(1);
-  }
-  50% {
-    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 1));
-    transform: scale(1.05);
-  }
-}
-
-/* ==================== END OF VAKRATUNDA RESPONSIVE CSS ==================== */
-
-/* ========================================== */
-/* MAHAKAYA GAME - COMPLETE RESPONSIVE CSS */
-/* Add this to VakratundaGroveSimplified.css (after Vakratunda CSS) */
-/* ========================================== */
-
-/* ==================== DEFAULT SIZES (FALLBACK) ==================== */
-
-.mahakaya-clicker-element {
-  position: absolute !important;
-  width: 120px !important;
-  height: 120px !important;
-}
-
-.mahakaya-central-synthesis {
-  position: absolute !important;
-  width: 120px !important;
-  height: 120px !important;
-}
-
-/* ==================== MOBILE PORTRAIT ==================== */
-@media (max-width: 600px) and (orientation: portrait) {
-  /* Adult Elephant Sizes */
-  .mahakaya-clicker-element {
-    width: 70px !important;
-    height: 70px !important;
-  }
-  
-  /* Adult Elephant Positions */
-  .mahakaya-clicker-element:nth-child(1) { left: 12% !important; top: 70% !important; } /* MA */
-  .mahakaya-clicker-element:nth-child(2) { left: 32% !important; top: 75% !important; } /* HA */
-  .mahakaya-clicker-element:nth-child(3) { left: 52% !important; top: 72% !important; } /* KA */
-  .mahakaya-clicker-element:nth-child(4) { left: 72% !important; top: 78% !important; } /* YA */
-  
-  /* Lily/Flower Sizes */
-  .mahakaya-central-synthesis {
-    width: 90px !important;
-    height: 90px !important;
-  }
-  
-  /* Lily/Flower Positions */
-  .mahakaya-central-synthesis:nth-of-type(1) { left: 50% !important; top: 55% !important; } /* Round 1 */
-  .mahakaya-central-synthesis:nth-of-type(2) { left: 50% !important; top: 70% !important; } /* Round 2 */
-  .mahakaya-central-synthesis:nth-of-type(3) { left: 50% !important; top: 62% !important; } /* Round 3 */
-  
-  /* Hover Effects */
-  .mahakaya-clicker-element:hover,
-  .mahakaya-central-synthesis:hover {
-    transform: scale(1.1) !important;
-  }
-}
-
-
-/* ==================== MOBILE LANDSCAPE ==================== */
-@media (min-width: 568px) and (max-width: 1019px) and (orientation: landscape) and (max-height: 500px) {
-  /* Adult Elephant Sizes */
-  .mahakaya-clicker-element {
-    width: 80px !important;
-    height: 80px !important;
-  }
-  
-  /* Adult Elephant Positions */
-  .mahakaya-clicker-element:nth-child(1) { left: 12% !important; top: 70% !important; }
-  .mahakaya-clicker-element:nth-child(2) { left: 32% !important; top: 75% !important; }
-  .mahakaya-clicker-element:nth-child(3) { left: 52% !important; top: 72% !important; }
-  .mahakaya-clicker-element:nth-child(4) { left: 72% !important; top: 78% !important; }
-  
-  /* Lily/Flower Sizes */
-  .mahakaya-central-synthesis {
-    width: 100px !important;
-    height: 100px !important;
-  }
-  
-  /* Lily/Flower Positions */
-  .mahakaya-central-synthesis:nth-of-type(1) { left: 50% !important; top: 55% !important; }
-  .mahakaya-central-synthesis:nth-of-type(2) { left: 50% !important; top: 70% !important; }
-  .mahakaya-central-synthesis:nth-of-type(3) { left: 50% !important; top: 62% !important; }
-}
-
-
-/* ==================== iPAD MINI/AIR/REGULAR PORTRAIT ==================== */
-@media (min-width: 768px) and (max-width: 1023px) and (orientation: portrait) {
-  /* Adult Elephant Sizes */
-  .mahakaya-clicker-element {
-    width: 110px !important;
-    height: 110px !important;
-  }
-  
-  /* Adult Elephant Positions */
-  .mahakaya-clicker-element:nth-child(1) { left: 12% !important; top: 70% !important; }
-  .mahakaya-clicker-element:nth-child(2) { left: 32% !important; top: 75% !important; }
-  .mahakaya-clicker-element:nth-child(3) { left: 52% !important; top: 72% !important; }
-  .mahakaya-clicker-element:nth-child(4) { left: 72% !important; top: 78% !important; }
-  
-  /* Lily/Flower Sizes */
-  .mahakaya-central-synthesis {
-    width: 130px !important;
-    height: 130px !important;
-  }
-  
-  /* Lily/Flower Positions */
-  .mahakaya-central-synthesis:nth-of-type(1) { left: 50% !important; top: 55% !important; }
-  .mahakaya-central-synthesis:nth-of-type(2) { left: 50% !important; top: 70% !important; }
-  .mahakaya-central-synthesis:nth-of-type(3) { left: 50% !important; top: 62% !important; }
-  
-  /* Hover Effects */
-  .mahakaya-clicker-element:hover,
-  .mahakaya-central-synthesis:hover {
-    transform: scale(1.15) !important;
-  }
-}
-
-
-/* ==================== iPAD MINI/AIR/REGULAR LANDSCAPE ==================== */
-@media (min-width: 768px) and (max-width: 1023px) and (orientation: landscape) {
-  /* Adult Elephant Sizes */
-  .mahakaya-clicker-element {
-    width: 95px !important;
-    height: 95px !important;
-  }
-  
-  /* Adult Elephant Positions */
-  .mahakaya-clicker-element:nth-child(1) { left: 12% !important; top: 70% !important; }
-  .mahakaya-clicker-element:nth-child(2) { left: 32% !important; top: 75% !important; }
-  .mahakaya-clicker-element:nth-child(3) { left: 52% !important; top: 72% !important; }
-  .mahakaya-clicker-element:nth-child(4) { left: 72% !important; top: 78% !important; }
-  
-  /* Lily/Flower Sizes */
-  .mahakaya-central-synthesis {
-    width: 115px !important;
-    height: 115px !important;
-  }
-  
-  /* Lily/Flower Positions */
-  .mahakaya-central-synthesis:nth-of-type(1) { left: 50% !important; top: 55% !important; }
-  .mahakaya-central-synthesis:nth-of-type(2) { left: 50% !important; top: 70% !important; }
-  .mahakaya-central-synthesis:nth-of-type(3) { left: 50% !important; top: 62% !important; }
-}
-
-
-/* ==================== iPAD PRO 11" PORTRAIT ==================== */
-@media (min-width: 1024px) and (max-width: 1365px) and (orientation: portrait) and (min-height: 1300px) {
-  /* Adult Elephant Sizes */
-  .mahakaya-clicker-element {
-    width: 125px !important;
-    height: 125px !important;
-  }
-  
-  /* Adult Elephant Positions */
-  .mahakaya-clicker-element:nth-child(1) { left: 12% !important; top: 70% !important; }
-  .mahakaya-clicker-element:nth-child(2) { left: 32% !important; top: 75% !important; }
-  .mahakaya-clicker-element:nth-child(3) { left: 52% !important; top: 72% !important; }
-  .mahakaya-clicker-element:nth-child(4) { left: 72% !important; top: 78% !important; }
-  
-  /* Lily/Flower Sizes */
-  .mahakaya-central-synthesis {
-    width: 145px !important;
-    height: 145px !important;
-  }
-  
-  /* Lily/Flower Positions */
-  .mahakaya-central-synthesis:nth-of-type(1) { left: 50% !important; top: 55% !important; }
-  .mahakaya-central-synthesis:nth-of-type(2) { left: 50% !important; top: 70% !important; }
-  .mahakaya-central-synthesis:nth-of-type(3) { left: 50% !important; top: 62% !important; }
-  
-  /* Hover Effects */
-  .mahakaya-clicker-element:hover,
-  .mahakaya-central-synthesis:hover {
-    transform: scale(1.2) !important;
-  }
-}
-
-
-/* ==================== iPAD PRO 11" LANDSCAPE ==================== */
-@media (min-width: 1024px) and (max-width: 1365px) and (orientation: landscape) and (max-height: 850px) {
-  /* Adult Elephant Sizes */
-  .mahakaya-clicker-element {
-    width: 105px !important;
-    height: 105px !important;
-  }
-  
-  /* Adult Elephant Positions */
-  .mahakaya-clicker-element:nth-child(1) { left: 12% !important; top: 70% !important; }
-  .mahakaya-clicker-element:nth-child(2) { left: 32% !important; top: 75% !important; }
-  .mahakaya-clicker-element:nth-child(3) { left: 52% !important; top: 72% !important; }
-  .mahakaya-clicker-element:nth-child(4) { left: 72% !important; top: 78% !important; }
-  
-  /* Lily/Flower Sizes */
-  .mahakaya-central-synthesis {
-    width: 125px !important;
-    height: 125px !important;
-  }
-  
-  /* Lily/Flower Positions */
-  .mahakaya-central-synthesis:nth-of-type(1) { left: 50% !important; top: 55% !important; }
-  .mahakaya-central-synthesis:nth-of-type(2) { left: 50% !important; top: 70% !important; }
-  .mahakaya-central-synthesis:nth-of-type(3) { left: 50% !important; top: 62% !important; }
-}
-
-
-/* ==================== iPAD PRO 12.9" PORTRAIT ==================== */
-@media (min-width: 1024px) and (min-height: 1366px) and (orientation: portrait) {
-  /* Adult Elephant Sizes */
-  .mahakaya-clicker-element {
-    width: 130px !important;
-    height: 130px !important;
-  }
-  
-  /* Adult Elephant Positions - Uses gameConfigs.js defaults */
-  
-  /* Lily/Flower Sizes */
-  .mahakaya-central-synthesis {
-    width: 150px !important;
-    height: 150px !important;
-  }
-  
-  /* Lily/Flower Positions - Uses gameConfigs.js defaults */
-}
-
-
-/* ==================== iPAD PRO 12.9" LANDSCAPE ==================== */
-@media (min-width: 1366px) and (max-width: 1700px) and (orientation: landscape) and (max-height: 1050px) {
-  /* Adult Elephant Sizes */
-  .mahakaya-clicker-element {
-    width: 150px !important;
-    height: 150px !important;
-  }
-  
-  /* Adult Elephant Positions */
-  .mahakaya-clicker-element:nth-child(1) { left: 12% !important; top: 70% !important; }
-  .mahakaya-clicker-element:nth-child(2) { left: 32% !important; top: 75% !important; }
-  .mahakaya-clicker-element:nth-child(3) { left: 52% !important; top: 72% !important; }
-  .mahakaya-clicker-element:nth-child(4) { left: 72% !important; top: 78% !important; }
-  
-  /* Lily/Flower Sizes */
-  .mahakaya-central-synthesis {
-    width: 200px !important;
-    height: 200px !important;
-  }
-  
-  /* Lily/Flower Positions */
-  .mahakaya-central-synthesis:nth-of-type(1) { left: 50% !important; top: 55% !important; }
-  .mahakaya-central-synthesis:nth-of-type(2) { left: 50% !important; top: 70% !important; }
-  .mahakaya-central-synthesis:nth-of-type(3) { left: 50% !important; top: 62% !important; }
-}
-
-
-/* ==================== LAPTOP / DESKTOP ==================== */
-@media (min-width: 1366px) and (max-width: 1919px) and (min-height: 1051px) {
-  /* Adult Elephant Sizes */
-  .mahakaya-clicker-element {
-    width: 100px !important;
-    height: 100px !important;
-  }
-  
-  /* Adult Elephant Positions - Uses gameConfigs.js defaults */
-  
-  /* Lily/Flower Sizes */
-  .mahakaya-central-synthesis {
-    width: 120px !important;
-    height: 120px !important;
-  }
-  
-  /* Lily/Flower Positions - Uses gameConfigs.js defaults */
-}
-
-
-/* ==================== LARGE DESKTOP (1920px+) ==================== */
-@media (min-width: 1920px) {
-  /* Adult Elephant Sizes */
-  .mahakaya-clicker-element {
-    width: 120px !important;
-    height: 120px !important;
-  }
-  
-  /* Adult Elephant Positions - Uses gameConfigs.js defaults */
-  
-  /* Lily/Flower Sizes */
-  .mahakaya-central-synthesis {
-    width: 120px !important;
-    height: 120px !important;
-  }
-  
-  /* Lily/Flower Positions - Uses gameConfigs.js defaults */
-}
-
-
-/* ==================== VISUAL POLISH (ALL DEVICES) ==================== */
-
-.mahakaya-clicker-element {
-  cursor: pointer;
-  transition: transform 0.2s ease, filter 0.2s ease;
-  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
-}
-
-.mahakaya-clicker-element:active {
-  transform: scale(0.95) !important;
-}
-
-.mahakaya-central-synthesis {
-  cursor: pointer;
-  transition: transform 0.3s ease, filter 0.2s ease;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
-}
-
-.mahakaya-central-synthesis.glowing {
-  animation: mahakaya-lily-glow 1.5s ease-in-out infinite;
-  filter: drop-shadow(0 0 20px rgba(255, 152, 0, 0.8));
-}
-
-@keyframes mahakaya-lily-glow {
-  0%, 100% {
-    filter: drop-shadow(0 0 20px rgba(255, 152, 0, 0.6));
-    transform: scale(1);
-  }
-  50% {
-    filter: drop-shadow(0 0 30px rgba(255, 152, 0, 1));
-    transform: scale(1.05);
-  }
-}
-
-/* ==================== END OF MAHAKAYA RESPONSIVE CSS ==================== */
+/* Generic Animations */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes popIn { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes celebrationGlow { from { filter: drop-shadow(0 0 30px rgba(255,255,255,0.6)); } to { filter: drop-shadow(0 0 60px rgba(255,255,255,1)); } }
+@keyframes floatUp { 0% { transform: translateY(0); opacity: 0; } 50% { opacity: 0.8; } 100% { transform: translateY(-100px); opacity: 0; } }

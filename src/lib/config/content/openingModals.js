@@ -59,7 +59,7 @@ export const OPENING_MODALS = {
   'symbol-mountain': {
     'modak': {
       title: "Modak Mission",
-      subtitle: "Let’s find Mooshika,collect some modaks,and enjoy them together!",
+      subtitle: "Let’s find Mooshika, collect some modaks, and enjoy them together!",
       description: "Search for Mooshika, collect modaks, and discover the power of gratitude!",
       icons: ['mooshika', 'modak', 'belly'],
       buttonText: "Begin Adventure!",

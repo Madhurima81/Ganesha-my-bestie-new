@@ -1,6 +1,6 @@
 /* PowerUnlockOverlay.css */
 /* Single-screen glowing card design for power unlocks */
-/* Spacious, kid-friendly layout */
+/* Spacious, kid-friendly layout - UPDATED with multi-part description */
 
 .power-overlay {
   position: fixed;
@@ -88,17 +88,17 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 48px 60px;
-  max-width: 600px;
-  gap: 8px;
+  padding: 60px 80px;
+  max-width: 1000px;
+  gap: 12px;
 }
 
-/* Icon wrapper with glow - Positioned higher */
+/* Icon wrapper with glow - Smaller, less dominant */
 .power-icon-wrapper {
   position: relative;
-  width: 200px;
-  height: 200px;
-  margin-bottom: 24px;
+  width: 160px;
+  height: 160px;
+  margin-bottom: 22px;
   flex-shrink: 0;
 }
 
@@ -120,8 +120,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 320px;
-  height: 320px;
+  width: 280px;
+  height: 280px;
   border-radius: 50%;
   background: radial-gradient(
     circle,
@@ -137,8 +137,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 240px;
-  height: 240px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   background: radial-gradient(
     circle,
@@ -177,8 +177,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 400px;
-  height: 400px;
+  width: 350px;
+  height: 350px;
   pointer-events: none;
 }
 
@@ -187,7 +187,7 @@
   top: 50%;
   left: 50%;
   width: 3px;
-  height: 180px;
+  height: 150px;
   background: linear-gradient(
     to top,
     transparent 0%,
@@ -204,22 +204,22 @@
 @keyframes rayPulse {
   0%, 100% {
     opacity: 0.3;
-    height: 150px;
+    height: 130px;
   }
   50% {
     opacity: 0.6;
-    height: 180px;
+    height: 150px;
   }
 }
 
-/* Icon */
+/* Icon - Smaller */
 .power-icon {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 160px;
-  height: 160px;
+  width: 130px;
+  height: 130px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -242,59 +242,107 @@
   }
 }
 
-/* Title - Bigger and more space */
+/* Title - BIGGER and bolder */
 .power-title {
-  font-size: 38px;
-  font-weight: 700;
+  font-family: 'Baloo 2', cursive;
+  font-size: 48px;
+  font-weight: 800;
   color: #FFD700;
   margin: 0;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
   text-shadow:
     0 0 20px rgba(255, 215, 0, 0.5),
     0 2px 4px rgba(0, 0, 0, 0.5);
   letter-spacing: 1px;
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
-/* Description - Better readability */
-.power-description {
-  font-size: 20px;
-  line-height: 1.7;
+/* ============================================ */
+/* MULTI-PART DESCRIPTION (NEW)                */
+/* ============================================ */
+
+/* Description container */
+.power-description-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 40px;
+  max-width: 750px;
+}
+
+/* Main description text - Normal */
+.power-description-main {
+  font-family: 'Nunito', sans-serif;
+  font-size: 30px;
+  line-height: 1.6;
   color: #FFFFFF;
   margin: 0;
-  margin-bottom: 28px;
-  max-width: 480px;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   opacity: 0.95;
+  text-align: center;
 }
 
-/* Button - Larger tap target */
+/* Emphasis text - BIGGER, BOLDER */
+.power-description-emphasis {
+  font-family: 'Baloo 2', cursive;
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1.7;
+  color: #FFD700;
+  margin: 8px 0 0 0;
+  text-shadow: 
+    0 0 15px rgba(255, 215, 0, 0.6),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+/* Fallback for simple string description */
+.power-description {
+  font-family: 'Nunito', sans-serif;
+  font-size: 28px;
+  line-height: 1.9;
+  color: #FFFFFF;
+  margin: 0;
+  margin-bottom: 40px;
+  max-width: 650px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  opacity: 0.95;
+  white-space: pre-line;
+}
+
+/* Button - Larger and more prominent */
 .power-button {
-  padding: 18px 56px;
-  font-size: 22px;
-  font-weight: 600;
+  padding: 20px 60px;
+  font-size: 30px;
+  font-weight: 700;
   color: #5D2E0F;
   background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
   border: none;
   border-radius: 50px;
   cursor: pointer;
   box-shadow:
-    0 4px 15px rgba(255, 165, 0, 0.4),
-    0 2px 4px rgba(0, 0, 0, 0.2);
+    0 6px 0 #CC8400,
+    0 10px 25px rgba(255, 165, 0, 0.4);
   transition: all 0.2s ease-out;
   animation: buttonFadeIn 0.35s ease-out;
-  margin-top: 8px;
+  margin-top: 16px;
+  font-family: 'Baloo 2', cursive;
 }
 
 .power-button:hover {
-  transform: scale(1.05);
+  transform: translateY(-3px);
   box-shadow:
-    0 6px 20px rgba(255, 165, 0, 0.5),
-    0 4px 8px rgba(0, 0, 0, 0.2);
+    0 8px 0 #CC8400,
+    0 14px 30px rgba(255, 165, 0, 0.5);
 }
 
 .power-button:active {
-  transform: scale(0.98);
+  transform: translateY(2px);
+  box-shadow:
+    0 2px 0 #CC8400,
+    0 4px 12px rgba(255, 165, 0, 0.3);
 }
 
 @keyframes buttonFadeIn {
@@ -308,62 +356,88 @@
   }
 }
 
+/* ============================================ */
+/* RESPONSIVE STYLES                            */
+/* ============================================ */
+
 /* Tablet responsive */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .power-content {
-    padding: 36px 40px;
-    max-width: 500px;
+    padding: 50px 60px;
+    max-width: 700px;
   }
 
   .power-icon-wrapper {
+    width: 140px;
+    height: 140px;
+    margin-bottom: 28px;
+  }
+
+  .power-icon {
+    width: 115px;
+    height: 115px;
+  }
+
+  .power-glow-outer {
+    width: 240px;
+    height: 240px;
+  }
+
+  .power-glow-inner {
     width: 180px;
     height: 180px;
   }
 
-  .power-icon {
-    width: 140px;
-    height: 140px;
-  }
-
-  .power-glow-outer {
-    width: 280px;
-    height: 280px;
-  }
-
-  .power-glow-inner {
-    width: 200px;
-    height: 200px;
+  .power-rays {
+    width: 300px;
+    height: 300px;
   }
 
   .power-title {
-    font-size: 32px;
+    font-size: 42px;
+    margin-bottom: 20px;
+  }
+
+  .power-description-container {
+    max-width: 580px;
+    gap: 14px;
+  }
+
+  .power-description-main {
+    font-size: 21px;
+  }
+
+  .power-description-emphasis {
+    font-size: 27px;
   }
 
   .power-description {
-    font-size: 18px;
+    font-size: 22px;
+    margin-bottom: 36px;
   }
 
   .power-button {
-    padding: 16px 48px;
-    font-size: 20px;
+    padding: 18px 54px;
+    font-size: 22px;
   }
 }
 
 /* Mobile responsive */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .power-content {
-    padding: 24px 20px;
+    padding: 40px 30px;
+    max-width: 550px;
   }
 
   .power-icon-wrapper {
-    width: 140px;
-    height: 140px;
-    margin-bottom: 16px;
+    width: 120px;
+    height: 120px;
+    margin-bottom: 24px;
   }
 
   .power-icon {
-    width: 110px;
-    height: 110px;
+    width: 100px;
+    height: 100px;
   }
 
   .power-glow-outer {
@@ -382,18 +456,100 @@
   }
 
   .ray {
-    height: 120px;
+    height: 100px;
   }
 
   .power-title {
-    font-size: 26px;
-    margin-bottom: 12px;
+    font-size: 36px;
+    margin-bottom: 18px;
+  }
+
+  .power-description-container {
+    max-width: 480px;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .power-description-main {
+    font-size: 19px;
+  }
+
+  .power-description-emphasis {
+    font-size: 24px;
   }
 
   .power-description {
-    font-size: 16px;
+    font-size: 20px;
+    margin-bottom: 32px;
+    line-height: 1.8;
+    max-width: 480px;
+  }
+
+  .power-button {
+    padding: 16px 48px;
+    font-size: 20px;
+  }
+}
+
+/* Small mobile responsive */
+@media (max-width: 480px) {
+  .power-content {
+    padding: 30px 20px;
+  }
+
+  .power-icon-wrapper {
+    width: 100px;
+    height: 100px;
     margin-bottom: 20px;
-    line-height: 1.6;
+  }
+
+  .power-icon {
+    width: 85px;
+    height: 85px;
+  }
+
+  .power-glow-outer {
+    width: 160px;
+    height: 160px;
+  }
+
+  .power-glow-inner {
+    width: 120px;
+    height: 120px;
+  }
+
+  .power-rays {
+    width: 200px;
+    height: 200px;
+  }
+
+  .ray {
+    height: 80px;
+  }
+
+  .power-title {
+    font-size: 30px;
+    margin-bottom: 16px;
+  }
+
+  .power-description-container {
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .power-description-main {
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+  .power-description-emphasis {
+    font-size: 21px;
+  }
+
+  .power-description {
+    font-size: 18px;
+    margin-bottom: 28px;
+    line-height: 1.7;
   }
 
   .power-button {

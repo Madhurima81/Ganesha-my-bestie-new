@@ -35,6 +35,19 @@ const useVoiceGuidance = (zoneId, sceneId, {
   const idleTimerRef = useRef(null);
   const lastInteractionRef = useRef(Date.now());
 
+  // Refs for idle timer to access current values
+  const isPlayingRef = useRef(isPlaying);
+  const currentPhaseRef = useRef(currentPhase);
+
+  // Keep refs in sync with state
+  useEffect(() => {
+    isPlayingRef.current = isPlaying;
+  }, [isPlaying]);
+
+  useEffect(() => {
+    currentPhaseRef.current = currentPhase;
+  }, [currentPhase]);
+
   // ========================================
   // VOICE PLAYBACK
   // ========================================
@@ -168,12 +181,15 @@ const useVoiceGuidance = (zoneId, sceneId, {
     idleTimerRef.current = setInterval(() => {
       const timeSinceInteraction = (Date.now() - lastInteractionRef.current) / 1000;
 
-      if (timeSinceInteraction >= idleTimeout && !isPlaying && currentPhase) {
-        const hintKey = getPhaseHint(currentPhase);
+      // Use refs to get current values (not stale closure values)
+      if (timeSinceInteraction >= idleTimeout && !isPlayingRef.current && currentPhaseRef.current) {
+        const hintKey = getPhaseHint(currentPhaseRef.current);
         playVoice(hintKey);
+        // Reset interaction time after playing hint so it doesn't repeat immediately
+        lastInteractionRef.current = Date.now();
       }
     }, 1000);
-  }, [idleTimeout, isPlaying, currentPhase, playVoice]);
+  }, [idleTimeout, playVoice]);
 
   const stopIdleTimer = useCallback(() => {
     if (idleTimerRef.current) {

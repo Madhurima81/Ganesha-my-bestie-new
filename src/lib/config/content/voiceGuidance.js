@@ -104,6 +104,10 @@ export const VOICE_SCRIPTS = {
         file: 'modak-kind-heart-power.mp3'
       },
 
+      sceneComplete: {
+        text: "Amazing work, little explorer! You did it! Focus, sweet reward, and sharing — all done! I’m so proud of you!",
+      file: "modak-scene-complete.mp3"},
+
       // ========================================
       // IDLE HINTS (after 10s of no interaction)
       // ========================================
@@ -208,7 +212,7 @@ export const getPhaseHint = (phase) => {
   const hintMap = {
     'findMooshika': 'hintMound',
     'collectModaks': 'hintModak',
-    'shareWithGanesha': 'shareTap'
+    'shareWithGanesha': 'feedGanesha'
   };
   return hintMap[phase] || 'hintExplore';
 };

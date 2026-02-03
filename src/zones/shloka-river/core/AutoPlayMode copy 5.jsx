@@ -1,10 +1,45 @@
 // zones/shloka-river/core/AutoPlayMode.jsx
-// FIXED: Removed "Tap Here"/Circles/Crowns. Added Pulse + Hint Glow.
+// FIXED: Preserves Manual Mode progress (completedRounds) and passes it back on exit
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useSafeClick } from './hooks/useSafeClick';
 import UniversalPauseButton from './UniversalPauseButton';
 import PauseModal from './PauseModal';
+import UnifiedHeaderV2 from '../../../lib/components/ui/Header/UnifiedHeaderV2';
+
+const getHeaderClassName = (gameConfig) => {
+  const classNames = {
+    'vakratunda': 'vakratunda-game-phase-header',
+    'mahakaya': 'mahakaya-game-phase-header',
+    'suryakoti': 'suryakoti-game-phase-header',
+    'samaprabha': 'samaprabha-game-phase-header',
+    'nirvighnam': 'nirvighnam-game-phase-header',
+    'kurumedeva': 'kurumedeva-game-phase-header',
+    'sarvakaryeshu': 'sarvakaryeshu-game-phase-header',
+    'sarvada': 'sarvada-game-phase-header'
+  };
+  return classNames[gameConfig.id] || 'vakratunda-game-phase-header';
+};
+
+// Helper: Get dynamic instruction text based on clicker type
+const getClickInstruction = (clickerType) => {
+  const instructions = {
+    'baby-elephant': 'Click the baby elephants!',
+    'adult-elephant': 'Click the elephants!',
+    'sun-orb': 'Click the suns!',
+    'rainbow': 'Click the rainbows!',
+    'animal': 'Click the animals!',
+    'helper-animal': 'Click the helpers!'
+  };
+  return instructions[clickerType] || 'Click to play!';
+};
+
+// Helper: Get round word name from syllables
+const getRoundWord = (gameConfig, roundNumber) => {
+  const syllables = gameConfig.syllables[roundNumber];
+  if (!syllables) return '';
+  return syllables.join('').toUpperCase();
+};
 
 const AutoPlayMode = ({
   gameConfig,
@@ -12,8 +47,14 @@ const AutoPlayMode = ({
   gamePrefix = 'default',
   isActive = false,
   hideElements = false,
+  powerGained = false,
   onPhaseComplete,
   onGameComplete,
+  profileName = 'little explorer',
+  WaterSprayComponent,
+  isReload = false,
+  savedGameState = null,
+  onSaveGameState
 }) => {
 
   const { safeClick } = useSafeClick(300);
@@ -40,10 +81,7 @@ const AutoPlayMode = ({
   const [showWaitBanner, setShowWaitBanner] = useState(false);
   const [showPauseModal, setShowPauseModal] = useState(false);
   
-  // Hint State
-  const [showIdleHint, setShowIdleHint] = useState(false);
-  
-  // Central synthesis states
+  // ⭐ NEW: Central synthesis states
   const [centralElementGlowing, setCentralElementGlowing] = useState(false);
   const [centralBloomProgress, setCentralBloomProgress] = useState(0); // 0 to 100
   
@@ -52,6 +90,34 @@ const AutoPlayMode = ({
   const intervalsRef = useRef([]);
   const isComponentMountedRef = useRef(true);
   const hasInitializedRef = useRef(false);
+
+  // ⭐ NEW: Ref to hold Manual Mode progress so it doesn't get lost
+  const manualProgressRef = useRef({
+    completedRounds: [],
+    learnedSyllables: []
+  });
+
+  // ⭐ NEW: Centralized Save Helper
+  // This ensures we NEVER wipe out the completedRounds when saving Auto Mode state
+  const saveGameStateHelper = (updates = {}) => {
+    if (!onSaveGameState) return;
+
+    const stateToSave = {
+      gamePhase,
+      currentRound,
+      currentSequence,
+      playerInput,
+      visualRewards,
+      activatedElephants,
+      gameId: gameConfig.id,
+      // ⭐ PASSTHROUGH: Always include the manual progress we captured
+      completedRounds: manualProgressRef.current.completedRounds,
+      learnedSyllables: manualProgressRef.current.learnedSyllables,
+      ...updates
+    };
+
+    onSaveGameState(stateToSave);
+  };
 
   const clearAllTimers = () => {
     timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
@@ -84,22 +150,6 @@ const AutoPlayMode = ({
     };
   }, []);
 
-  // 10-Second Idle Hint Timer (triggers during player's turn - 'listening' phase)
-  useEffect(() => {
-    let idleTimer;
-    console.log(`[IdleTimer Check] Phase: ${gamePhase}, CanClick: ${canPlayerClick}, SeqPlaying: ${isSequencePlaying}, Countdown: ${isCountingDown}`);
-    if (gamePhase === 'listening' && canPlayerClick && !isSequencePlaying && !isCountingDown) {
-      console.log('⏳ Idle Timer Started (10s)...');
-      idleTimer = setTimeout(() => {
-        console.log('💡 Idle Hint Triggered!');
-        setShowIdleHint(true);
-      }, 10000); // 10 seconds like Modak scene
-    } else {
-      setShowIdleHint(false);
-    }
-    return () => clearTimeout(idleTimer);
-  }, [gamePhase, canPlayerClick, playerInput, isSequencePlaying, isCountingDown]);
-
   // Audio
   const playSyllableAudio = (syllable) => {
     try {
@@ -124,10 +174,18 @@ const AutoPlayMode = ({
     setRoundClicks({});
     setGamePhase('waiting');
     setCanPlayerClick(false);
-    setShowIdleHint(false);
     
+    // ⭐ NEW: Reset central synthesis states
     setCentralElementGlowing(false);
     setCentralBloomProgress(0);
+    
+    // ⭐ UPDATED: Use helper to save
+    saveGameStateHelper({
+      gamePhase: 'waiting',
+      currentRound: roundNumber,
+      currentSequence: sequence,
+      playerInput: [],
+    });
   };
 
   const startCountdown = () => {
@@ -153,7 +211,6 @@ const AutoPlayMode = ({
     setCanPlayerClick(false);
     setPlayerInput([]);
     setSingingSyllable(null);
-    setShowIdleHint(false);
     
     currentSequence.forEach((syllable, index) => {
       safeSetTimeout(() => {
@@ -202,10 +259,28 @@ const AutoPlayMode = ({
   };
 
   const handleExitToMenu = () => {
+    console.log('🎮 Exiting auto-play - returning progress:', manualProgressRef.current.completedRounds);
+    
     setShowPauseModal(false);
     clearAllTimers();
+    
+    // Reset local auto state
     setGamePhase('waiting');
     setCurrentRound(1);
+    setCurrentSequence([]);
+    setPlayerInput([]);
+    
+    if (onPhaseComplete) {
+      onPhaseComplete({
+        // Return everything current
+        learnedSyllables: Object.keys(visualRewards).map(key => key.replace('visual-', '')),
+        visualRewards: visualRewards,
+        activatedElephants: activatedElephants,
+        // ⭐ CRITICAL: Pass the manual rounds back!
+        completedRounds: manualProgressRef.current.completedRounds,
+        isEarlyExit: true 
+      });
+    }
   };
 
   const handleElephantClick = (syllableIndex) => {
@@ -220,7 +295,6 @@ const AutoPlayMode = ({
       const expectedIndex = playerInput.length;
       if (syllableIndex !== expectedIndex) { triggerWaitBanner('Click in order! 🎯'); return; }
       
-      setShowIdleHint(false); // Reset idle hint
       playSyllableAudio(clickedSyllable);
 
       if (gameConfig.id === 'vakratunda' || gameConfig.id === 'mahakaya') {
@@ -235,41 +309,53 @@ const AutoPlayMode = ({
       setActivatedElephants(prev => ({ ...prev, [`elephant-${clickedSyllable}`]: true }));
       setVisualRewards(prev => ({ ...prev, [`visual-${clickedSyllable}`]: true }));
       
+      // ⭐ NEW: Update central bloom progress instead of auto-completing
       if (newPlayerInput.length === currentSequence.length) {
+        // Calculate final bloom percentage (just before glow state)
         const totalSyllables = currentSequence.length;
         const finalBloomBeforeGlow = totalSyllables === 2 ? 75 : 
                                       totalSyllables === 3 ? 75 : 
-                                      90; 
+                                      90; // For 4 syllables
+        
         setCentralBloomProgress(finalBloomBeforeGlow);
+        
+        // Make it glow and clickable
         safeSetTimeout(() => {
           setCentralElementGlowing(true);
         }, 500);
       } else {
+        // Incremental bloom progress for each elephant click
         const totalSyllables = currentSequence.length;
         const progressPerClick = totalSyllables === 2 ? 50 : 
                                   totalSyllables === 3 ? 33 : 
-                                  25;
+                                  25; // For 4 syllables
         setCentralBloomProgress(newPlayerInput.length * progressPerClick);
       }
     });
   };
 
+  // ⭐ NEW: Handle central synthesis element click
   const handleCentralElementClick = () => {
     safeClick(() => {
-      if (!centralElementGlowing) return;
+      if (!centralElementGlowing) return; // Only clickable when glowing
       
-      setShowIdleHint(false);
+      console.log('🌸 Central element clicked - playing complete word audio');
+      
+      // ✅ Update playerInput to include lotus click (shows X/X progress)
       setPlayerInput([...currentSequence, 'lotus']);
       
+      // Play complete word audio
       const completeWordAudio = gameConfig.audio.completeWordFile;
       if (completeWordAudio) {
         const audio = new Audio(completeWordAudio);
         audio.play().catch(e => console.error('Audio play error:', e));
       }
       
+      // Bloom to 100%
       setCentralBloomProgress(100);
       setCentralElementGlowing(false);
       
+      // Wait for audio/animation, then complete round
       safeSetTimeout(() => {
         handleRoundSuccess();
       }, 1500);
@@ -280,6 +366,13 @@ const AutoPlayMode = ({
     setCanPlayerClick(false);
     setGamePhase('celebration');
     
+    // Save progress on success (using helper)
+    saveGameStateHelper({
+        gamePhase: 'celebration',
+        visualRewards,
+        activatedElephants
+    });
+
     safeSetTimeout(() => {
       const maxRound = Object.keys(gameConfig.syllables).length;
       if (currentRound < maxRound) {
@@ -290,17 +383,84 @@ const AutoPlayMode = ({
     }, 2000);
   };
 
-  const handlePhaseComplete = () => {
-    setGamePhase('phase_complete');
-    if (onPhaseComplete) onPhaseComplete(gameConfig.id);
-    if (onGameComplete) onGameComplete();
-  };
+/*const handlePhaseComplete = () => {
+  setGamePhase('phase_complete');
+  if (onPhaseComplete) onPhaseComplete(gameConfig.id);
+  if (onGameComplete) onGameComplete();
+  
+  // Keep completion data for CulturalProgressExtractor
+  if (onSaveGameState) {
+    onSaveGameState({
+      gameId: gameConfig.id,
+      gameMode: 'auto',
+      gameState: null,
+      currentRound: null,
+      completedRounds: completedRounds,  // ⭐ KEEP
+      learnedSyllables: learnedSyllables,  // ⭐ KEEP
+      visualRewards: visualRewards  // ⭐ KEEP
+    });
+  }
+};*/
 
+const handlePhaseComplete = () => {
+  setGamePhase('phase_complete');
+  if (onPhaseComplete) onPhaseComplete(gameConfig.id);
+  if (onGameComplete) onGameComplete();
+};
+
+// Initialization Effect
   useEffect(() => {
     if (!isActive || !gameConfig) return;
     if (hasInitializedRef.current) return;
-    hasInitializedRef.current = true;
-    startNewRound(1); 
+
+    // ⭐ KEY: Capture manual progress immediately on mount!
+    if (savedGameState) {
+        if (savedGameState.completedRounds) {
+            manualProgressRef.current.completedRounds = savedGameState.completedRounds;
+            console.log('📥 [Auto] Captured manual rounds:', savedGameState.completedRounds);
+        }
+        if (savedGameState.learnedSyllables) {
+            manualProgressRef.current.learnedSyllables = savedGameState.learnedSyllables;
+        }
+    }
+
+ if (isReload && savedGameState && savedGameState.gameId === gameConfig.id && savedGameState.currentRound) {
+      console.log('🔄 [Auto] Restoring saved auto state');
+      
+      // ⭐ SMART RELOAD: Only advance to next round if we're in celebration (between rounds)
+      const isCurrentRoundComplete = savedGameState.gamePhase === 'celebration';
+      
+      const maxRound = Object.keys(gameConfig.syllables).length;
+      const roundToStart = isCurrentRoundComplete && savedGameState.currentRound < maxRound
+        ? savedGameState.currentRound + 1
+        : savedGameState.currentRound;
+      
+      if (isCurrentRoundComplete && roundToStart > savedGameState.currentRound) {
+        console.log(`🎯 [Auto] Round ${savedGameState.currentRound} complete - advancing to Round ${roundToStart}`);
+        hasInitializedRef.current = true;
+        startNewRound(roundToStart);
+      } else {
+        // Normal reload - restore exact state
+        if (savedGameState.currentRound) setCurrentRound(savedGameState.currentRound);
+        if (savedGameState.currentSequence) setCurrentSequence(savedGameState.currentSequence);
+        if (savedGameState.playerInput) setPlayerInput(savedGameState.playerInput);
+        if (savedGameState.gamePhase) setGamePhase(savedGameState.gamePhase);
+        if (savedGameState.visualRewards) setVisualRewards(savedGameState.visualRewards);
+        if (savedGameState.activatedElephants) setActivatedElephants(savedGameState.activatedElephants);
+        
+        const clicks = {};
+        (savedGameState.playerInput || []).forEach(syllable => {
+          clicks[`elephant-${syllable}`] = true;
+        });
+        setRoundClicks(clicks);
+        
+        hasInitializedRef.current = true;
+      }
+    } else {
+      console.log('🆕 [Auto] Starting fresh from Round 1');
+      hasInitializedRef.current = true;
+      startNewRound(1); 
+    }
   }, [isActive, gameConfig]);
   
   useEffect(() => {
@@ -309,8 +469,7 @@ const AutoPlayMode = ({
     }
   }, [gamePhase, currentSequence, isCountingDown]);
 
-  // --- Render Helpers ---
-
+  // Renderers & UI Helpers...
   const isElephantSinging = (syllable) => singingSyllable === syllable;
   const isElephantClickable = (index) => canPlayerClick && index === playerInput.length;
   const hasElephantBeenClicked = (index) => index < playerInput.length;
@@ -318,16 +477,26 @@ const AutoPlayMode = ({
   const isVisualRewardActive = (syllable) => visualRewards[`visual-${syllable}`];
   const isNextExpected = (index) => canPlayerClick && index === playerInput.length;
 
-  const renderElephant = (syllable, index) => {
-    if (!assetGetters) return null;
-    
-    const position = gameConfig.elements.clicker?.positions?.[index] || { left: '50%', top: '50%' };
-    let getImage;
-    if (gameConfig.elements.clicker.assetGetters) {
-      getImage = assetGetters[gameConfig.elements.clicker.assetGetters[syllable]];
-    } else if (gameConfig.elements.clicker.assetGetter) {
-      getImage = assetGetters[gameConfig.elements.clicker.assetGetter];
-    }
+  /*const getPosition = (type, index) => {
+    return type === 'elephant' ? gameConfig.elements.clicker.positions[index] : gameConfig.elements.singer.positions[index];
+  };*/
+
+const renderElephant = (syllable, index) => {
+  // ⭐ ADD THIS SAFETY CHECK
+  if (!assetGetters) {
+    console.error('❌ assetGetters is undefined in AutoPlayMode for game:', gameConfig?.id);
+    return null;
+  }
+  
+  const position = gameConfig.elements.clicker?.positions?.[index] || { left: '50%', top: '50%' };
+  let getImage;
+  if (gameConfig.elements.clicker.assetGetters) {
+    // Syllable-specific assets
+    getImage = assetGetters[gameConfig.elements.clicker.assetGetters[syllable]];
+  } else if (gameConfig.elements.clicker.assetGetter) {
+    // Single asset for all
+    getImage = assetGetters[gameConfig.elements.clicker.assetGetter];
+  }
     if (!getImage) return null;
 
     const clickable = isElephantClickable(index);
@@ -336,49 +505,78 @@ const AutoPlayMode = ({
     const activated = isElephantActivated(syllable);
     const next = isNextExpected(index);
 
-    // Dynamic Class Logic
-    let className = `${gamePrefix}-clicker-element`;
-    if (singing) className += ' singing';
-    const isPlayingPhase = isSequencePlaying || gamePhase === 'playing';
-    // If it's the next clickable item, give it a gentle pulse (not during playback)
-    if (next && !clicked && !isPlayingPhase) className += ' pulse';
-    // If idle time passed, give it the strong glow (not during playback)
-    if (showIdleHint && next && !clicked && !isPlayingPhase) className += ' hint-glow';
-
     return (
       <button
         key={`elephant-${syllable}`}
-        className={className}
+        className={`${gamePrefix}-clicker-element`}
         style={{
           position: 'absolute',
           left: position.left,
           top: position.top,
-          transform: 'translate(-50%, -50%)', // ✅ FIX: Match CSS base transform to prevent jumping
           border: 'none',
           background: 'transparent',
           cursor: clickable ? 'pointer' : 'default',
           zIndex: 20,
           borderRadius: '50%',
           opacity: clickable || clicked ? 1 : 0.6,
+          transform: singing ? 'scale(1.15)' : 'scale(1)',
+          filter: singing ? 'brightness(1.4) drop-shadow(0 0 15px #FFD700)' :
+                  next && !clicked ? 'brightness(1.2) drop-shadow(0 0 8px #FF9800)' :
+                  'none',
           transition: 'all 0.3s ease'
         }}
         onClick={() => handleElephantClick(index)}
         disabled={!clickable}
       >
         <img src={getImage(index)} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-        {/* Only the music note when singing - no other clutter */}
         {singing && <div style={{ position: 'absolute', top: '-20px', left: '50%', fontSize: '20px', animation: 'musicNote 0.6s' }}>🎵</div>}
-        
-        {/* Simple Label */}
-        <div style={{ position: 'absolute', bottom: '-30px', left: '50%', transform: 'translateX(-50%)', background: clicked ? '#4CAF50' : '#999', color: 'white', padding: '4px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 'bold' }}>{syllable.toUpperCase()}</div>
-        
-        {/* Simple Checkmark when done */}
+        {next && !clicked && <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '85%', height: '85%', border: '2px solid #FFD700', borderRadius: '50%', animation: 'goldenPulse 2s infinite' }} />}
+        {next && !clicked && <div style={{ position: 'absolute', top: '-40px', left: '50%', transform: 'translateX(-50%)', background: '#FFD700', color: 'white', padding: '4px 10px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '600', zIndex: 30 }}>👆 Tap Here</div>}
+        {activated && !clicked && <div style={{ position: 'absolute', top: '5px', left: '50%', transform: 'translateX(-50%)', fontSize: '20px', animation: 'crownFloat 2s infinite' }}>👑</div>}
+        <div style={{ position: 'absolute', bottom: '-30px', left: '50%', transform: 'translateX(-50%)', background: clicked ? '#4CAF50' : next ? '#FFC107' : '#999', color: 'white', padding: '4px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 'bold' }}>{syllable.toUpperCase()}</div>
         {clicked && <div style={{ position: 'absolute', top: '10px', right: '10px', width: '24px', height: '24px', background: '#4CAF50', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>✓</div>}
       </button>
     );
   };
 
-  // ... (renderDualInitials, renderDualRewards, renderPreviousCentralElements omitted - same as before) ...
+  const renderInitialVisual = (syllable, index) => {
+    if (!gameConfig.elements.singer?.positions) return null;
+    if (isVisualRewardActive(syllable)) return null;
+    
+    let getImage;
+    if (gameConfig.elements.singer.assetGetterInitial) getImage = assetGetters[gameConfig.elements.singer.assetGetterInitial];
+    else if (gameConfig.elements.singer.assetGettersInitial) getImage = assetGetters[gameConfig.elements.singer.assetGettersInitial[syllable]];
+    
+    if (!getImage) return null;
+    const position = gameConfig.elements.singer.positions[index];
+    
+    return (
+      <div key={`initial-${syllable}`} style={{ position: 'absolute', left: position.left, top: position.top, width: '60px', height: '60px', zIndex: 10, transform: 'translate(-50%, -50%)', opacity: 0.7 }}>
+        <img src={getImage(index)} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+      </div>
+    );
+  };
+
+  const renderVisualReward = (syllable, index) => {
+    if (!gameConfig.elements.singer?.positions) return null;
+    if (!isVisualRewardActive(syllable)) return null;
+    
+    let getImage;
+    if (gameConfig.elements.singer.assetGetterReward) getImage = assetGetters[gameConfig.elements.singer.assetGetterReward];
+    else if (gameConfig.elements.singer.assetGettersReward) getImage = assetGetters[gameConfig.elements.singer.assetGettersReward[syllable]];
+    
+    if (!getImage) return null;
+    
+    const position = gameConfig.elements.singer.positionsReward ? gameConfig.elements.singer.positionsReward[index] : gameConfig.elements.singer.positions[index];
+    
+    return (
+      <div key={`reward-${syllable}`} style={{ position: 'absolute', left: position.left, top: position.top, width: '80px', height: '80px', zIndex: 15, animation: 'rewardAppear 1s, rewardGlow 2s infinite', transform: 'translate(-50%, -50%)' }}>
+        <img src={getImage(index)} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+        <div style={{ position: 'absolute', top: '-10px', left: '50%', fontSize: '18px', animation: 'sparkle 2s infinite' }}>✨</div>
+      </div>
+    );
+  };
+
   const renderDualInitials = (syllable, index) => {
     if (isVisualRewardActive(syllable)) return null;
     if (!gameConfig.elements.rewards?.animals) return null;
@@ -408,66 +606,77 @@ const AutoPlayMode = ({
     );
   };
 
-  const renderPreviousCentralElements = () => {
-    if (!gameConfig.elements.centralSynthesis?.showPreviousRounds) return null;
-    if (!currentRound || currentRound === 1) return null;
+// ⭐ NEW: Render previous completed central elements
+const renderPreviousCentralElements = () => {
+  if (!gameConfig.elements.centralSynthesis?.showPreviousRounds) return null;
+  if (!currentRound || currentRound === 1) return null;  // ⭐ Changed from selectedRound to currentRound
+  
+  const previousElements = [];
+  
+  for (let round = 1; round < currentRound; round++) {  // ⭐ Changed from selectedRound to currentRound
+    const position = gameConfig.elements.centralSynthesis.positions[round - 1];
     
-    const previousElements = [];
+    // Get the reward image for this round
+    let getRewardImage;
+    const rewardGetters = gameConfig.elements.centralSynthesis.assetGettersByRound;
     
-    for (let round = 1; round < currentRound; round++) {
-      const position = gameConfig.elements.centralSynthesis.positions[round - 1];
-      let getRewardImage;
-      const rewardGetters = gameConfig.elements.centralSynthesis.assetGettersByRound;
-      
-      if (rewardGetters && rewardGetters[round]) {
-        getRewardImage = assetGetters[rewardGetters[round].reward];
-      } else {
-        const singleGetter = gameConfig.elements.centralSynthesis.assetGetterReward;
-        if (singleGetter) {
-          getRewardImage = assetGetters[singleGetter];
-        }
+    if (rewardGetters && rewardGetters[round]) {
+      // Round-specific getter (Nirvighnam, Kurumedeva)
+      getRewardImage = assetGetters[rewardGetters[round].reward];
+    } else {
+      // Single getter for all rounds (other games)
+      const singleGetter = gameConfig.elements.centralSynthesis.assetGetterReward;
+      if (singleGetter) {
+        getRewardImage = assetGetters[singleGetter];
       }
-      
-      if (!getRewardImage || !position) continue;
-      
-      previousElements.push(
-        <div
-          key={`prev-reward-${round}`}
-          style={{
-            position: 'absolute',
-            left: position.left,
-            top: position.top,
-            width: '100px',
-            height: '100px',
-            transform: 'translate(-50%, -50%)',
-            zIndex: 18,
-            opacity: 0.9
-          }}
-        >
-          <img 
-            src={getRewardImage(0)} 
-            style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
-            alt={`Round ${round} reward`} 
-          />
-        </div>
-      );
     }
     
-    return previousElements;
-  };
+    if (!getRewardImage || !position) continue;
+    
+    previousElements.push(
+      <div
+        key={`prev-reward-${round}`}
+        style={{
+          position: 'absolute',
+          left: position.left,
+          top: position.top,
+          width: '100px',
+          height: '100px',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 18,
+          opacity: 0.9
+        }}
+      >
+        <img 
+          src={getRewardImage(0)} 
+          style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
+          alt={`Round ${round} reward`} 
+        />
+      </div>
+    );
+  }
+  
+  return previousElements;
+};
 
+  // ⭐ NEW: Render central synthesis element
   const renderCentralSynthesis = () => {
     if (!gameConfig.elements.centralSynthesis?.enabled) return null;
-    if (!currentRound) return null;
+  // ✅ NEW: Shows the animal as soon as a Round exists (matches the Clickers)
+if (!currentRound) return null;
 
     const position = gameConfig.elements.centralSynthesis.positions[currentRound - 1];
     if (!position) return null;
 
+    // Get asset getters
+   // Get asset getters (Check for Round Specifics first)
     let initialKey = gameConfig.elements.centralSynthesis.assetGetterInitial;
     let rewardKey = gameConfig.elements.centralSynthesis.assetGetterReward;
 
+    // ⭐ If this round has specific assets, use them!
     if (gameConfig.elements.centralSynthesis.assetGettersByRound && 
         gameConfig.elements.centralSynthesis.assetGettersByRound[currentRound]) {
+        
         initialKey = gameConfig.elements.centralSynthesis.assetGettersByRound[currentRound].initial;
         rewardKey = gameConfig.elements.centralSynthesis.assetGettersByRound[currentRound].reward;
     }
@@ -476,29 +685,32 @@ const AutoPlayMode = ({
     const getRewardImage = assetGetters[rewardKey];
     if (!getInitialImage || !getRewardImage) return null;
 
+    // Determine which image to show based on bloom progress
     const isFullyBloomed = centralBloomProgress === 100;
+    
+    // Use first index (0) for central element
     const budImage = getInitialImage(0);
     const bloomImage = getRewardImage(0);
 
-    let className = `${gamePrefix}-central-synthesis`;
-    if (centralElementGlowing) {
-      className += ' pulse'; // Pulse when ready
-      if (showIdleHint) className += ' hint-glow'; // Strong glow if waiting
-    }
-
     return (
       <div
-        className={className}
+              className={`${gamePrefix}-central-synthesis`}  // ← ADD THIS LINE
+
         onClick={centralElementGlowing ? handleCentralElementClick : undefined}
         style={{
           position: 'absolute',
-          transform: 'translate(-50%, -50%)', // ✅ FIX: Match CSS base transform to prevent jumping
+          //left: position.left,
+          //top: position.top,
+          //width: '120px',
+          //height: '120px',
+          //transform: 'translate(-50%, -50%)',
           zIndex: 20,
           cursor: centralElementGlowing ? 'pointer' : 'default',
           transition: 'all 0.5s ease',
-          pointerEvents: centralElementGlowing ? 'auto' : 'none',
+          pointerEvents: centralElementGlowing ? 'auto' : 'none'
         }}
       >
+        {/* Bud layer (fades out as blooms) */}
         <div style={{
           position: 'absolute',
           width: '100%',
@@ -509,6 +721,7 @@ const AutoPlayMode = ({
           <img src={budImage} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="bud" />
         </div>
 
+        {/* Bloom layer (fades in as blooms) */}
         <div style={{
           position: 'absolute',
           width: '100%',
@@ -520,6 +733,56 @@ const AutoPlayMode = ({
           <img src={bloomImage} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="bloom" />
         </div>
 
+        {/* Glow effect when ready */}
+        {centralElementGlowing && (
+          <>
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              width: '140px',
+              height: '140px',
+              transform: 'translate(-50%, -50%)',
+              borderRadius: '50%',
+              background: `radial-gradient(circle, ${gameConfig.theme.primaryColor}40, transparent)`,
+              animation: 'goldenPulse 1.5s ease-in-out infinite',
+              zIndex: -1
+            }} />
+            
+            {/* Tap Here indicator */}
+            <div style={{
+              position: 'absolute',
+              top: '-40px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              background: '#FFD700',
+              color: 'white',
+              padding: '4px 10px',
+              borderRadius: '8px',
+              fontSize: '0.85rem',
+              fontWeight: '600',
+              zIndex: 30,
+              whiteSpace: 'nowrap'
+            }}>
+              👆 Tap Here
+            </div>
+
+            {/* Golden pulse ring */}
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%,-50%)',
+              width: '85%',
+              height: '85%',
+              border: '2px solid #FFD700',
+              borderRadius: '50%',
+              animation: 'goldenPulse 2s infinite'
+            }} />
+          </>
+        )}
+
+        {/* Word label at bottom */}
         <div style={{
           position: 'absolute',
           bottom: '-30px',
@@ -536,6 +799,7 @@ const AutoPlayMode = ({
           {currentSequence.join('').toUpperCase()}
         </div>
 
+        {/* Sparkles when fully bloomed */}
         {isFullyBloomed && (
           <div style={{
             position: 'absolute',
@@ -558,6 +822,23 @@ const AutoPlayMode = ({
       {!hideElements && <UniversalPauseButton onPause={handlePause} disabled={gamePhase === 'phase_complete'} />}
       <PauseModal isOpen={showPauseModal} onContinue={handleContinue} onExit={handleExitToMenu} />
 
+      {!hideElements && gamePhase !== 'phase_complete' && (
+        <UnifiedHeaderV2
+          zone="shloka-river"
+          title={
+            isCountingDown ? `${getRoundWord(gameConfig, currentRound)} - Get Ready... ${countdown}` :
+            gamePhase === 'waiting' ? `${getRoundWord(gameConfig, currentRound)}` :
+            gamePhase === 'playing' ? `${getRoundWord(gameConfig, currentRound)} - Listen carefully...` :
+            gamePhase === 'celebration' ? 'Awesome!' :
+            (centralElementGlowing || playerInput.length >= currentSequence.length)
+              ? gameConfig.uiText.finalInstruction
+              : `${getRoundWord(gameConfig, currentRound)}! ${getClickInstruction(gameConfig.elements.clicker.type)}`
+          }
+          currentRound={playerInput.length}
+          totalRounds={currentSequence.length + 1}
+        />
+      )}
+
       {!hideElements && isCountingDown && <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '100px', fontWeight: 'bold', color: gameConfig.theme.primaryColor, zIndex: 100, animation: 'countdownPulse 0.8s' }}>{countdown}</div>}
       {!hideElements && showWaitBanner && <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'rgba(255, 152, 0, 0.95)', color: 'white', padding: '20px 40px', borderRadius: '20px', fontSize: '18px', fontWeight: 'bold', zIndex: 100, animation: 'fadeInOut 1.5s' }}>{waitBannerMessage}</div>}
       {!hideElements && waterSprayPosition && <div style={{ position: 'absolute', left: waterSprayPosition.left, top: waterSprayPosition.top, transform: 'translateY(-100%)', fontSize: '48px', animation: 'waterSplash 1s', zIndex: 100, pointerEvents: 'none' }}>💦</div>}
@@ -572,11 +853,14 @@ const AutoPlayMode = ({
             </>
           ) : (
             <>
+              {/* Don't render individual singers - use central synthesis instead */}
               {currentSequence.map((s, i) => renderElephant(s, i))}
             </>
           )}
-          {renderPreviousCentralElements()}
-          {renderCentralSynthesis()}
+   {/* Previous round rewards */}
+{renderPreviousCentralElements()}
+{/* Current round central synthesis */}
+{renderCentralSynthesis()}
         </>
       )}
 

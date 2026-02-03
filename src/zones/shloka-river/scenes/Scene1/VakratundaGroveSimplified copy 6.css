@@ -1,0 +1,585 @@
+/* VakratundaGroveSimplified.css - Final Fixed Version */
+
+/* ==========================================================================
+   1. VARIABLES & MAIN CONTAINERS
+   ========================================================================== */
+:root {
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --color-primary: #1565C0;
+  --color-secondary: #4ECDC4;
+  --color-accent: #FF6B35;
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
+  --transition-fast: 0.2s;
+}
+
+.vakratunda-simplified-container {
+  width: 100vw !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  position: relative;
+}
+
+.river-background {
+  width: 100% !important;
+  height: 100vh !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: relative;
+}
+
+/* Aspect Ratio Fixes for Background */
+@media (max-aspect-ratio: 9/16) {
+  .river-background { background-size: auto 100% !important; }
+}
+@media (min-aspect-ratio: 16/9) {
+  .river-background { background-size: 100% auto !important; }
+}
+
+/* ==========================================================================
+   2. MODALS (OPENING & INTERSTITIAL) - MODAK STYLE
+   ========================================================================== */
+
+/* Overlay */
+.game-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* Modal Content Wrapper */
+.game-modal-content {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  max-width: 900px;
+  width: 90%;
+}
+
+/* Character Image (Left of modal) */
+.game-modal-character img {
+  width: 280px;
+  height: auto;
+  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.4));
+  animation: breathe 3s ease-in-out infinite;
+}
+
+/* The Card */
+.game-modal-card {
+  background: #FFF9E6;
+  border-radius: 30px;
+  padding: 40px;
+  box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+  border: 4px solid #FFD700;
+  text-align: center;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.game-modal-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 36px;
+  color: #5D2E0F;
+  margin-bottom: 15px;
+  line-height: 1.2;
+}
+
+.game-modal-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: #8B5A2B;
+  margin-bottom: 30px;
+}
+
+/* Icons in Opening Modal */
+.game-modal-icons {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 30px;
+}
+
+.game-modal-icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.game-modal-icon-item img {
+  width: 80px;
+  height: 80px;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+}
+
+.game-modal-icon-item span {
+  font-weight: bold;
+  color: #5D2E0F;
+}
+
+/* Sparkles Decoration */
+.modak-game-sparkles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.modak-game-sparkle {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: floatUp 3s infinite linear;
+}
+
+/* ==========================================================================
+   3. COMPANIONS (BOY & GANESHA)
+   ========================================================================== */
+
+/* Persistent Boy */
+.vakratunda-companion-boy {
+  position: fixed;
+  bottom: 80px;
+  right: 120px;
+  z-index: 5;
+  animation: slideInRight 0.6s ease-out;
+}
+
+.vakratunda-boy-companion {
+  width: 120px;
+  height: auto;
+  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+  animation: breathe 3s ease-in-out infinite;
+}
+
+/* Ganesha Celebration Enter */
+.vakratunda-ganesha-celebration-enter {
+  position: fixed;
+  bottom: 100px;
+  left: 200px;
+  z-index: 100;
+  animation: fadeIn 0.8s ease-out;
+}
+
+.vakratunda-ganesha-slides-in {
+  width: 160px;
+  height: auto;
+  filter: drop-shadow(4px 4px 8px rgba(0,0,0,0.3));
+  animation: breathe 3s ease-in-out infinite;
+}
+
+/* Final Ganesha (Finale) */
+.vakratunda-final-ganesha-appears {
+  position: fixed;
+  bottom: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9998;
+  animation: fadeIn 1s ease-out;
+}
+
+.vakratunda-ganesha-final-enters {
+  width: 250px;
+  height: auto;
+  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
+  animation: breathe 3s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   4. CELEBRATIONS & TEXT
+   ========================================================================== */
+
+.vakratunda-celebration-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 10001;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.vakratunda-centered-word-celebration {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10002;
+  text-align: center;
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.vakratunda-celebration-app-icon {
+  width: 180px;
+  height: 180px;
+  margin-bottom: 25px;
+  filter: drop-shadow(0 0 40px rgba(255, 255, 255, 0.8));
+  animation: celebrationGlow 2s infinite alternate;
+}
+
+.vakratunda-celebration-word-text {
+  font-family: 'Baloo 2', cursive;
+  font-size: 64px;
+  font-weight: 800;
+  color: white;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  letter-spacing: 2px;
+}
+
+/* ==========================================================================
+   5. VISUAL POLISH & ANIMATIONS (THE FIX FOR JUMPING)
+   ========================================================================== */
+
+/* --- Vakratunda Elements --- */
+.vakratunda-clicker-element {
+  cursor: pointer;
+  /* NOTE: Don't transition transform - let CSS animations handle it smoothly */
+  transition: filter 0.2s ease, opacity 0.3s ease;
+  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+  /* Base state - must match inline style to prevent jumping */
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.vakratunda-clicker-element:hover {
+  /* Keep translate, add scale */
+  transform: translate(-50%, -50%) scale(1.1) !important;
+}
+
+.vakratunda-clicker-element:active {
+  /* Keep translate, reduce scale */
+  transform: translate(-50%, -50%) scale(0.95) !important;
+}
+
+.vakratunda-central-synthesis {
+  cursor: pointer;
+  /* NOTE: Don't transition transform - let CSS animations handle it smoothly */
+  transition: filter 0.2s ease, opacity 0.3s ease;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.vakratunda-central-synthesis:hover {
+  transform: translate(-50%, -50%) scale(1.1) !important;
+}
+
+.vakratunda-central-synthesis.glowing {
+  animation: vakratunda-lotus-glow 1.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+}
+
+@keyframes vakratunda-lotus-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 1));
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+
+/* --- Mahakaya Elements --- */
+.mahakaya-clicker-element {
+  cursor: pointer;
+  /* NOTE: Don't transition transform - let CSS animations handle it smoothly */
+  transition: filter 0.2s ease, opacity 0.3s ease;
+  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.mahakaya-clicker-element:hover {
+  transform: translate(-50%, -50%) scale(1.1) !important;
+}
+
+.mahakaya-clicker-element:active {
+  transform: translate(-50%, -50%) scale(0.95) !important;
+}
+
+.mahakaya-central-synthesis {
+  cursor: pointer;
+  /* NOTE: Don't transition transform - let CSS animations handle it smoothly */
+  transition: filter 0.2s ease, opacity 0.3s ease;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.mahakaya-central-synthesis:hover {
+  transform: translate(-50%, -50%) scale(1.1) !important;
+}
+
+.mahakaya-central-synthesis.glowing {
+  animation: mahakaya-lily-glow 1.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(255, 152, 0, 0.8));
+}
+
+@keyframes mahakaya-lily-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 20px rgba(255, 152, 0, 0.6));
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 30px rgba(255, 152, 0, 1));
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+
+/* ==========================================================================
+   6. VAKRATUNDA GAME ELEMENTS (RESPONSIVE POSITIONS)
+   ========================================================================== */
+
+/* --- GLOBAL DEFAULTS --- */
+.vakratunda-clicker-element {
+  position: absolute !important;
+  width: 150px !important;
+  height: 150px !important;
+  top: 50%;
+  left: 50%;
+  z-index: 10;
+}
+
+.vakratunda-central-synthesis {
+  position: absolute !important;
+  width: 160px !important;
+  height: 160px !important;
+  top: 60%; 
+  left: 50%;
+  z-index: 10;
+}
+
+/* --- MOBILE PORTRAIT (< 600px) --- */
+@media (max-width: 600px) and (orientation: portrait) {
+  .vakratunda-clicker-element { width: 80px !important; height: 80px !important; }
+  .vakratunda-central-synthesis { width: 90px !important; height: 90px !important; }
+  
+  .vakratunda-clicker-element:nth-child(1) { left: 15% !important; top: 70% !important; }
+  .vakratunda-clicker-element:nth-child(2) { left: 35% !important; top: 45% !important; }
+  .vakratunda-clicker-element:nth-child(3) { left: 60% !important; top: 40% !important; }
+  .vakratunda-clicker-element:nth-child(4) { left: 80% !important; top: 35% !important; }
+  
+  .vakratunda-central-synthesis:nth-of-type(1) { top: 45% !important; left: 50% !important; }
+  .vakratunda-central-synthesis:nth-of-type(2) { top: 60% !important; left: 50% !important; }
+  .vakratunda-central-synthesis:nth-of-type(3) { top: 52% !important; left: 50% !important; }
+  
+  /* Modal Adjustments */
+  .game-modal-content { flex-direction: column; }
+  .game-modal-character img { width: 140px; margin-bottom: -20px; z-index: 2; }
+}
+
+/* --- TABLET LANDSCAPE (Standard iPad) --- */
+@media (min-width: 768px) and (orientation: landscape) {
+  .vakratunda-clicker-element { width: 160px !important; height: 160px !important; }
+  .vakratunda-central-synthesis { width: 180px !important; height: 180px !important; }
+
+  .vakratunda-clicker-element:nth-child(1) { left: 15% !important; top: 65% !important; }
+  .vakratunda-clicker-element:nth-child(2) { left: 30% !important; top: 48% !important; }
+  .vakratunda-clicker-element:nth-child(3) { left: 70% !important; top: 40% !important; }
+  .vakratunda-clicker-element:nth-child(4) { left: 85% !important; top: 35% !important; }
+  
+  .vakratunda-central-synthesis:nth-of-type(1) { left: 50% !important; top: 45% !important; }
+  .vakratunda-central-synthesis:nth-of-type(2) { left: 50% !important; top: 65% !important; }
+  .vakratunda-central-synthesis:nth-of-type(3) { left: 50% !important; top: 55% !important; }
+}
+
+/* --- HIGH RES / DESKTOP (> 1366px) --- */
+@media (min-width: 1367px) {
+  .vakratunda-clicker-element { width: 220px !important; height: 220px !important; }
+  .vakratunda-central-synthesis { width: 240px !important; height: 240px !important; }
+
+  .vakratunda-clicker-element:nth-child(1) { left: 20% !important; top: 65% !important; }
+  .vakratunda-clicker-element:nth-child(2) { left: 35% !important; top: 50% !important; }
+  .vakratunda-clicker-element:nth-child(3) { left: 65% !important; top: 45% !important; }
+  .vakratunda-clicker-element:nth-child(4) { left: 80% !important; top: 40% !important; }
+
+  .vakratunda-central-synthesis:nth-of-type(1) { left: 50% !important; top: 45% !important; }
+  .vakratunda-central-synthesis:nth-of-type(2) { left: 50% !important; top: 70% !important; }
+  .vakratunda-central-synthesis:nth-of-type(3) { left: 50% !important; top: 58% !important; }
+}
+
+/* ==========================================================================
+   7. MAHAKAYA GAME ELEMENTS (RESPONSIVE POSITIONS)
+   ========================================================================== */
+
+/* --- GLOBAL DEFAULTS --- */
+.mahakaya-clicker-element {
+  position: absolute !important;
+  width: 160px !important;
+  height: 160px !important;
+  top: 70%;
+  left: 20%; 
+  z-index: 10;
+}
+
+.mahakaya-central-synthesis {
+  position: absolute !important;
+  width: 160px !important;
+  height: 160px !important;
+  top: 60%;
+  left: 50%;
+  z-index: 10;
+}
+
+/* --- MOBILE PORTRAIT --- */
+@media (max-width: 600px) and (orientation: portrait) {
+  .mahakaya-clicker-element { width: 85px !important; height: 85px !important; }
+  .mahakaya-central-synthesis { width: 95px !important; height: 95px !important; }
+
+  .mahakaya-clicker-element:nth-child(1) { left: 15% !important; top: 70% !important; }
+  .mahakaya-clicker-element:nth-child(2) { left: 38% !important; top: 75% !important; }
+  .mahakaya-clicker-element:nth-child(3) { left: 62% !important; top: 72% !important; }
+  .mahakaya-clicker-element:nth-child(4) { left: 85% !important; top: 78% !important; }
+
+  .mahakaya-central-synthesis:nth-of-type(1) { top: 50% !important; left: 50% !important; }
+  .mahakaya-central-synthesis:nth-of-type(2) { top: 65% !important; left: 50% !important; }
+  .mahakaya-central-synthesis:nth-of-type(3) { top: 58% !important; left: 50% !important; }
+}
+
+/* --- TABLET LANDSCAPE --- */
+@media (min-width: 768px) and (orientation: landscape) {
+  .mahakaya-clicker-element { width: 190px !important; height: 190px !important; }
+  .mahakaya-central-synthesis { width: 210px !important; height: 210px !important; }
+
+  .mahakaya-clicker-element:nth-child(1) { left: 15% !important; top: 70% !important; }
+  .mahakaya-clicker-element:nth-child(2) { left: 35% !important; top: 75% !important; }
+  .mahakaya-clicker-element:nth-child(3) { left: 65% !important; top: 72% !important; }
+  .mahakaya-clicker-element:nth-child(4) { left: 85% !important; top: 78% !important; }
+
+  .mahakaya-central-synthesis:nth-of-type(1) { left: 50% !important; top: 50% !important; }
+  .mahakaya-central-synthesis:nth-of-type(2) { left: 50% !important; top: 70% !important; }
+  .mahakaya-central-synthesis:nth-of-type(3) { left: 50% !important; top: 60% !important; }
+}
+
+/* --- HIGH RES / DESKTOP --- */
+@media (min-width: 1367px) {
+  .mahakaya-clicker-element { width: 230px !important; height: 230px !important; }
+  .mahakaya-central-synthesis { width: 250px !important; height: 250px !important; }
+
+  .mahakaya-clicker-element:nth-child(1) { left: 18% !important; top: 68% !important; }
+  .mahakaya-clicker-element:nth-child(2) { left: 38% !important; top: 72% !important; }
+  .mahakaya-clicker-element:nth-child(3) { left: 62% !important; top: 70% !important; }
+  .mahakaya-clicker-element:nth-child(4) { left: 82% !important; top: 75% !important; }
+
+  .mahakaya-central-synthesis:nth-of-type(1) { left: 50% !important; top: 50% !important; }
+  .mahakaya-central-synthesis:nth-of-type(2) { left: 50% !important; top: 75% !important; }
+  .mahakaya-central-synthesis:nth-of-type(3) { left: 50% !important; top: 62% !important; }
+}
+
+/* ==========================================================================
+   8. ANIMATIONS (GENERIC)
+   ========================================================================== */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes popIn { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes celebrationGlow { from { filter: drop-shadow(0 0 30px rgba(255,255,255,0.6)); } to { filter: drop-shadow(0 0 60px rgba(255,255,255,1)); } }
+@keyframes floatUp { 0% { transform: translateY(0); opacity: 0; } 50% { opacity: 0.8; } 100% { transform: translateY(-100px); opacity: 0; } }
+@keyframes glowPulse { 0%, 100% { filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6)); transform: translate(-50%, -50%) scale(1); } 50% { filter: drop-shadow(0 0 30px rgba(255, 215, 0, 1)); transform: translate(-50%, -50%) scale(1.05); } }
+
+/* ==========================================================================
+   ANIMATION CLASSES (Pulse & Idle Glow)
+   ========================================================================== */
+
+/* 1. Gentle Pulse (Default for next item) */
+.vakratunda-clicker-element.pulse,
+.mahakaya-clicker-element.pulse,
+.vakratunda-central-synthesis.pulse,
+.mahakaya-central-synthesis.pulse {
+  animation: gentle-pulse 2s infinite ease-in-out !important;
+}
+
+@keyframes gentle-pulse {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.05); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* 2. Strong Hint Glow (After 15s) */
+.hint-glow {
+  animation: hint-pulse-glow 1.5s infinite ease-in-out !important;
+  z-index: 50 !important;
+}
+
+@keyframes hint-pulse-glow {
+  0% {
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5)) brightness(1);
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 1)) brightness(1.2);
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  100% {
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5)) brightness(1);
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* 
+   IMPORTANT: Append this CSS to VakratundaGroveSimplified.css
+   This ensures animations have the centering logic built-in.
+*/
+
+/* --- ANIMATION CLASSES WITH CENTERING --- */
+
+/* 1. Gentle Pulse (Default for next item) */
+.vakratunda-clicker-element.pulse,
+.mahakaya-clicker-element.pulse,
+.vakratunda-central-synthesis.pulse,
+.mahakaya-central-synthesis.pulse {
+  animation: gentle-pulse 2s infinite ease-in-out !important;
+}
+
+@keyframes gentle-pulse {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.1); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* 2. Strong Hint Glow (After 10s) */
+.hint-glow {
+  animation: hint-pulse-glow 1.5s infinite ease-in-out !important;
+  z-index: 50 !important;
+}
+
+@keyframes hint-pulse-glow {
+  0% {
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5)) brightness(1);
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 1)) brightness(1.3);
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+  100% {
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5)) brightness(1);
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* 3. Singing Animation - instant scale, no transition needed */
+.vakratunda-clicker-element.singing,
+.mahakaya-clicker-element.singing {
+  transform: translate(-50%, -50%) scale(1.2) !important;
+  filter: brightness(1.4) drop-shadow(0 0 15px #FFD700) !important;
+}
