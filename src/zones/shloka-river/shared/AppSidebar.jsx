@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './AppSidebar.css';
 import SanskritVoiceRecorder from '../../../lib/components/audio/SanskritVoiceRecorder.jsx';
 
@@ -92,14 +92,20 @@ const AppSidebar = ({ unlockedApps = {}, onAppClick, className = '', savedRecord
   const [showPopup, setShowPopup] = useState(false);
   const [selectedApp, setSelectedApp] = useState(null);
   const [animatingApp, setAnimatingApp] = useState(null);
+  const [tappedApps, setTappedApps] = useState({});
+  const prevUnlockedRef = useRef({});
 
   // App order for display (matching scene progression)
   const appOrder = ['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha', 'nirvighnam', 'kurumedeva','sarvakaryeshu', 'sarvada'];
 
   const handleAppClick = (appId) => {
     if (unlockedApps[appId]) {
+      setTappedApps(prev => ({ ...prev, [appId]: true }));
       setSelectedApp(appId);
       setShowPopup(true);
+      if (onAppClick) {
+        onAppClick(appId);
+      }
     }
   };
 
@@ -110,16 +116,19 @@ const AppSidebar = ({ unlockedApps = {}, onAppClick, className = '', savedRecord
 
   // Trigger animation when an app is newly unlocked
   useEffect(() => {
-    const newlyUnlocked = appOrder.find(app => 
-      unlockedApps[app] && !animatingApp
+    const prevUnlocked = prevUnlockedRef.current || {};
+    const newlyUnlocked = appOrder.find(app =>
+      unlockedApps[app] && !prevUnlocked[app]
     );
-    
-    if (newlyUnlocked) {
+
+    if (newlyUnlocked && !animatingApp) {
       setAnimatingApp(newlyUnlocked);
       setTimeout(() => {
         setAnimatingApp(null);
       }, 1000);
     }
+
+    prevUnlockedRef.current = { ...unlockedApps };
   }, [unlockedApps, animatingApp]);
 
   return (
@@ -129,6 +138,7 @@ const AppSidebar = ({ unlockedApps = {}, onAppClick, className = '', savedRecord
           const app = appInfo[appId];
           const isUnlocked = unlockedApps[appId];
           const isAnimating = animatingApp === appId;
+          const needsTap = isUnlocked && !tappedApps[appId];
           
           return (
             <div
@@ -140,7 +150,11 @@ const AppSidebar = ({ unlockedApps = {}, onAppClick, className = '', savedRecord
                 cursor: isUnlocked ? 'pointer' : 'not-allowed'
               }}
               title={isUnlocked ? app.title : 'App not yet unlocked'}
-            />
+            >
+              {needsTap && (
+                <div className="tap-indicator">TAP!</div>
+              )}
+            </div>
           );
         })}
       </div>

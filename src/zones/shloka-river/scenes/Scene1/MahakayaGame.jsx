@@ -37,7 +37,10 @@ const MahakayaGame = ({
 
   isReload,
   savedGameState,
-  onSaveGameState
+  onSaveGameState,
+
+  // Voice Guidance - ⭐ NEW
+  voiceGuidance
 }) => {
 
   const gameConfig = getGameConfig('mahakaya');
@@ -84,6 +87,7 @@ const assetGetters = {
       savedGameState={savedGameState}
       onSaveGameState={onSaveGameState}
       gamePrefix="mahakaya"
+      voiceGuidance={voiceGuidance}        // ⭐ VOICE GUIDANCE
     />
   );
 };

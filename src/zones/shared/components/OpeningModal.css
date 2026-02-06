@@ -30,13 +30,13 @@
 .game-modal-content {
   position: relative;
   width: 95%;
-  max-width: 1600px; /* INCREASED: Was 1400px. Allows wider spread. */
+  max-width: 1700px;
   height: 80vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 40px; /* Reduced gap slightly to keep elements connected */
-  padding: 0 40px;
+  gap: 50px;
+  padding: 0 60px;
 }
 
 /* --- Character (Left Side) --- */
@@ -50,7 +50,7 @@
 
 .game-modal-character img {
   width: 100%;
-  max-width: 480px;
+  max-width: 720px;
   height: auto;
   filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.25));
   transform: scaleX(-1);
@@ -60,8 +60,9 @@
 /* --- Card (Right Side) --- */
 .game-modal-card {
   /* --- SHAPE & SIZE (Matches Image 2) --- */
-  flex: 0 0 45%; /* Crucial: Makes it a box, not a wide banner */
-  max-width: 600px; /* Keeps it contained */
+  flex: 0 0 50%;
+  max-width: 700px;
+  min-height: 650px;
   width: auto;      /* Let flex handle the width */
   
   /* --- COLORS (Using your Variables) --- */
@@ -70,8 +71,8 @@
   box-shadow: 0 10px 40px var(--modal-shadow-color);
   
   /* --- STYLING --- */
-  border-radius: 30px;
-  padding: 50px;
+  border-radius: 36px;
+  padding: 80px 70px;
   
   /* --- ALIGNMENT --- */
   display: flex;
@@ -92,19 +93,19 @@
 
 .game-modal-title {
   font-family: 'Baloo 2', cursive;
-  font-size: 52px; /* INCREASED: Was 48px */
+  font-size: 80px;
   font-weight: 700;
   color: var(--modal-text-primary);
-  margin-bottom: 25px;
+  margin-bottom: 30px;
   line-height: 1.1;
   width: 100%;
 }
 
 .game-modal-subtitle {
   font-family: 'Nunito', sans-serif;
-  font-size: 26px;
+  font-size: 42px;
   color: var(--modal-text-secondary);
-  margin-bottom: 45px;
+  margin-bottom: 60px;
   line-height: 1.4;
   max-width: 90%;
 }
@@ -113,8 +114,8 @@
 .game-modal-icons {
   display: flex;
   justify-content: center;
-  gap: 60px; /* INCREASED: Spread icons out more */
-  margin-bottom: 50px;
+  gap: 80px;
+  margin-bottom: 70px;
   width: 100%;
 }
 
@@ -126,8 +127,8 @@
 }
 
 .game-modal-icon-item img {
-  width: 110px; /* INCREASED: Was 100px */
-  height: 110px;
+  width: 165px;
+  height: 165px;
   object-fit: contain;
   filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
   animation: iconFloat 3s ease-in-out infinite;
@@ -139,7 +140,14 @@
 
 .game-modal-icon-label {
   font-family: 'Nunito', sans-serif;
-  font-size: 22px; /* INCREASED */
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--modal-text-primary);
+}
+
+/* Stronger specificity to avoid global overrides */
+.game-modal-card .game-modal-icon-label {
+  font-size: 30px !important;
   font-weight: 700;
   color: var(--modal-text-primary);
 }
@@ -152,16 +160,19 @@
   border: none;
   
   /* BIG BUTTON STYLES */
-  padding: 25px 90px;
-  font-size: 36px;
+  padding: 38px 135px;
+  font-size: 56px;
   font-weight: 800;
-  border-radius: 70px;
+  border-radius: 90px;
   
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 10px 30px var(--modal-btn-shadow);
+  box-shadow: 0 14px 40px var(--modal-btn-shadow);
   text-transform: capitalize;
   white-space: nowrap;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 
   /* --- NEW HEARTBEAT ANIMATION --- */
   /* 1.3s is a natural heartbeat rhythm */
@@ -190,6 +201,35 @@
   70% {
     transform: scale(1);
   }
+}
+
+/* Stronger specificity to avoid global overrides */
+.game-modal-card .game-modal-title {
+  font-size: 60px !important;
+  font-weight: 700;
+  color: var(--modal-text-primary);
+  line-height: 1.1;
+}
+
+.game-modal-card h1.game-modal-title {
+  font-size: 60px !important;
+  line-height: 1.1;
+}
+
+.game-modal-card .game-modal-subtitle {
+  font-size: 30px !important;
+  color: var(--modal-text-secondary);
+  line-height: 1.4;
+}
+
+.game-modal-card p.game-modal-subtitle {
+  font-size: 36px !important;
+  line-height: 1.4;
+}
+
+.game-modal-card .game-modal-button {
+  font-size: 36px !important;
+  padding: 38px 135px !important;
 }
 
 

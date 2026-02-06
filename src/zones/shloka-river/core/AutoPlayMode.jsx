@@ -14,6 +14,7 @@ const AutoPlayMode = ({
   hideElements = false,
   onPhaseComplete,
   onGameComplete,
+  voiceGuidance = null,  // ⭐ VOICE GUIDANCE
 }) => {
 
   const { safeClick } = useSafeClick(300);
@@ -84,6 +85,12 @@ const AutoPlayMode = ({
     };
   }, []);
 
+  // Store voiceGuidance in a ref so effects don't re-fire when the prop object changes identity
+  const voiceGuidanceRef = useRef(voiceGuidance);
+  useEffect(() => {
+    voiceGuidanceRef.current = voiceGuidance;
+  }, [voiceGuidance]);
+
   // 10-Second Idle Hint Timer (triggers during player's turn - 'listening' phase)
   useEffect(() => {
     let idleTimer;
@@ -93,6 +100,10 @@ const AutoPlayMode = ({
       idleTimer = setTimeout(() => {
         console.log('💡 Idle Hint Triggered!');
         setShowIdleHint(true);
+        // Play hint VO
+        if (voiceGuidanceRef.current?.playVoice) {
+          voiceGuidanceRef.current.playVoice('hintTapTheShiny');
+        }
       }, 10000); // 10 seconds like Modak scene
     } else {
       setShowIdleHint(false);
@@ -125,7 +136,8 @@ const AutoPlayMode = ({
     setGamePhase('waiting');
     setCanPlayerClick(false);
     setShowIdleHint(false);
-    
+    countdownTriggeredRef.current = false; // Reset so next round can trigger countdown
+
     setCentralElementGlowing(false);
     setCentralBloomProgress(0);
   };
@@ -154,27 +166,52 @@ const AutoPlayMode = ({
     setPlayerInput([]);
     setSingingSyllable(null);
     setShowIdleHint(false);
-    
-    currentSequence.forEach((syllable, index) => {
-      safeSetTimeout(() => {
-        setSingingSyllable(syllable);
-        playSyllableAudio(syllable);
-        safeSetTimeout(() => setSingingSyllable(null), 600);
-        if (index === currentSequence.length - 1) {
-          safeSetTimeout(() => {
-            setIsSequencePlaying(false);
-            setGamePhase('listening');
-            setCanPlayerClick(true);
-          }, 800);
-        }
-      }, index * 1200);
-    });
+
+    // Helper to play syllables after VO finishes
+    const playSyllables = () => {
+      currentSequence.forEach((syllable, index) => {
+        safeSetTimeout(() => {
+          setSingingSyllable(syllable);
+          playSyllableAudio(syllable);
+          safeSetTimeout(() => setSingingSyllable(null), 600);
+          if (index === currentSequence.length - 1) {
+            safeSetTimeout(() => {
+              setIsSequencePlaying(false);
+              setGamePhase('listening');
+              setCanPlayerClick(true);
+              // Play "Your turn" VO when player can click
+              if (voiceGuidanceRef.current?.playVoice) {
+                voiceGuidanceRef.current.playVoice('instructionYourTurn');
+              }
+            }, 800);
+          }
+        }, index * 1200);
+      });
+    };
+
+    // Play "Listen carefully" VO first, then play syllables after it finishes
+    if (voiceGuidanceRef.current?.playVoice) {
+      voiceGuidanceRef.current.playVoice('instructionListen', () => {
+        // VO finished - now play syllables
+        safeSetTimeout(playSyllables, 300);
+      });
+    } else {
+      // No voice guidance - play syllables immediately
+      playSyllables();
+    }
   };
 
-  const triggerWaitBanner = (message) => {
+  const triggerWaitBanner = (message, playErrorVO = false) => {
     setWaitBannerMessage(message);
     setShowWaitBanner(true);
     safeSetTimeout(() => setShowWaitBanner(false), 1500);
+
+    // Play error VO for wrong clicks
+    if (playErrorVO && voiceGuidanceRef.current?.playVoice) {
+      const errorVOs = ['errorOops', 'errorNotQuite', 'errorLetsTryAgain'];
+      const randomError = errorVOs[Math.floor(Math.random() * errorVOs.length)];
+      voiceGuidanceRef.current.playVoice(randomError);
+    }
   };
 
   const handlePause = () => {
@@ -218,7 +255,7 @@ const AutoPlayMode = ({
       if (roundClicks[`elephant-${clickedSyllable}`]) { triggerWaitBanner('Already clicked! 🐘'); return; }
       
       const expectedIndex = playerInput.length;
-      if (syllableIndex !== expectedIndex) { triggerWaitBanner('Click in order! 🎯'); return; }
+      if (syllableIndex !== expectedIndex) { triggerWaitBanner('Click in order! 🎯', true); return; }
       
       setShowIdleHint(false); // Reset idle hint
       playSyllableAudio(clickedSyllable);
@@ -279,7 +316,14 @@ const AutoPlayMode = ({
   const handleRoundSuccess = () => {
     setCanPlayerClick(false);
     setGamePhase('celebration');
-    
+
+    // Play random encouragement VO
+    if (voiceGuidanceRef.current?.playVoice) {
+      const encouragements = ['encourageAmazing', 'encourageFantastic', 'encourageGreatJob', 'encouragePerfect', 'encourageWellDone', 'encourageWonderful'];
+      const randomEncouragement = encouragements[Math.floor(Math.random() * encouragements.length)];
+      voiceGuidanceRef.current.playVoice(randomEncouragement);
+    }
+
     safeSetTimeout(() => {
       const maxRound = Object.keys(gameConfig.syllables).length;
       if (currentRound < maxRound) {
@@ -296,18 +340,51 @@ const AutoPlayMode = ({
     if (onGameComplete) onGameComplete();
   };
 
+  // Track if game start VO has been played
+  const gameStartVOPlayedRef = useRef(false);
+  // Track if we're currently waiting for game start VO to finish (prevents race condition)
+  const waitingForGameStartVORef = useRef(false);
+  // Track if countdown has already been triggered for current round (prevents duplicate triggers)
+  const countdownTriggeredRef = useRef(false);
+
   useEffect(() => {
     if (!isActive || !gameConfig) return;
     if (hasInitializedRef.current) return;
     hasInitializedRef.current = true;
-    startNewRound(1); 
+    gameStartVOPlayedRef.current = false; // Reset for new game
+    waitingForGameStartVORef.current = false;
+    countdownTriggeredRef.current = false;
+    startNewRound(1);
   }, [isActive, gameConfig]);
-  
+
   useEffect(() => {
     if (gamePhase === 'waiting' && currentSequence.length > 0 && !isCountingDown) {
-      safeSetTimeout(() => startCountdown(), 1000);
+      // Guard: Don't re-trigger if VO is still playing or countdown already started
+      if (waitingForGameStartVORef.current || countdownTriggeredRef.current) return;
+
+      // Play game start VO first (only once), then start countdown after it finishes
+      if (!gameStartVOPlayedRef.current && voiceGuidanceRef.current?.playVoice) {
+        gameStartVOPlayedRef.current = true;
+        waitingForGameStartVORef.current = true;
+        // Determine which VO to play based on game
+        const gameStartVOKey = gameConfig.id === 'vakratunda' ? 'vakratundaGameStart' : 'mahakayaGameStart';
+        voiceGuidanceRef.current.playVoice(gameStartVOKey, () => {
+          // VO finished - now start countdown
+          waitingForGameStartVORef.current = false;
+          countdownTriggeredRef.current = true;
+          safeSetTimeout(() => startCountdown(), 500);
+        });
+      } else if (gameStartVOPlayedRef.current) {
+        // VO already played (subsequent rounds), start countdown immediately
+        countdownTriggeredRef.current = true;
+        safeSetTimeout(() => startCountdown(), 1000);
+      } else {
+        // No voice guidance, start countdown immediately
+        countdownTriggeredRef.current = true;
+        safeSetTimeout(() => startCountdown(), 1000);
+      }
     }
-  }, [gamePhase, currentSequence, isCountingDown]);
+  }, [gamePhase, currentSequence, isCountingDown, gameConfig]);
 
   // --- Render Helpers ---
 

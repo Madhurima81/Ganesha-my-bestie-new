@@ -1,8 +1,182 @@
-// Voice Guidance - Modak Scene Only (MVP)
+// Voice Guidance - Multi-Zone Support
 // Audio scripts for Ganesha's voice prompts
 // Replaces header, help menu, and text instructions
 
 export const VOICE_SCRIPTS = {
+  // ========================================
+  // SHLOKA RIVER ZONE
+  // ========================================
+  'shloka-river': {
+    'vakratunda-grove': {
+      // ========================================
+      // SCENE ENTRY
+      // ========================================
+      welcome: {
+        text: "Welcome to Shloka River! Let's learn a magical Sanskrit word together!",
+        file: 'shloka-river-welcome.mp3'
+      },
+
+      // ========================================
+      // VAKRATUNDA GAME (Round 1)
+      // ========================================
+      vakratundaGameStart: {
+        text: "Let's learn VAKRATUNDA! It means 'curved trunk'. Listen and tap the syllables!",
+        file: 'vakratunda-game-start.mp3'
+      },
+      vakratundaRound1: {
+        text: "Round 1! Listen carefully and tap what you hear...",
+        file: 'vakratunda-round1-learn.mp3'
+      },
+      vakratundaRound2: {
+        text: "Round 2! Now let's practice what we learned!",
+        file: 'vakratunda-round2-learn.mp3'
+      },
+
+      // ========================================
+      // VAKRATUNDA POWER UNLOCK
+      // ========================================
+      vakratundaPower: {
+        text: "You learned VAKRATUNDA! This gives you Flexibility Power! Say with me: I am flexible!",
+        file: 'vakratunda-power-flexibility.mp3'
+      },
+      vakratundaLotusBloom: {
+        text: "Beautiful! The lotus is blooming!",
+        file: 'vakratunda-lotus-bloom.mp3'
+      },
+
+      // ========================================
+      // MAHAKAYA GAME (Round 2)
+      // ========================================
+      mahakayaGameStart: {
+        text: "Now let's learn MAHAKAYA! It means 'great body'. Listen and tap!",
+        file: 'mahakaya-game-start.mp3'
+      },
+
+      // ========================================
+      // MAHAKAYA POWER UNLOCK
+      // ========================================
+      mahakayaPower: {
+        text: "You learned MAHAKAYA! This gives you Inner Strength! Say with me: I am strong!",
+        file: 'mahakaya-power-strength.mp3'
+      },
+
+      // ========================================
+      // WORD CELEBRATION
+      // ========================================
+      chantWordReveal: {
+        text: "You did it! Say the word with me!",
+        file: 'chant-word-reveal.mp3'
+      },
+
+      // ========================================
+      // SCENE COMPLETE
+      // ========================================
+      sceneComplete: {
+        text: "Amazing work! You learned two Sanskrit words and unlocked special powers!",
+        file: 'shloka-river-fireworks-celebration.mp3'
+      },
+
+      // ========================================
+      // INSTRUCTIONS (Generic)
+      // ========================================
+      instructionListen: {
+        text: "Listen carefully...",
+        file: 'instruction_listen.mp3'
+      },
+      instructionTap: {
+        text: "Now tap what you heard!",
+        file: 'instruction_tap.mp3'
+      },
+      instructionTapInOrder: {
+        text: "Tap the syllables in order!",
+        file: 'instruction_tap_in_order.mp3'
+      },
+      instructionYourTurn: {
+        text: "Your turn!",
+        file: 'instruction_your_turn.mp3'
+      },
+      instructionWatchAndListen: {
+        text: "Watch and listen!",
+        file: 'instruction_watch_and_listen.mp3'
+      },
+      instructionRepeatAfterMe: {
+        text: "Repeat after me!",
+        file: 'instruction_repeat_after_me.mp3'
+      },
+      instructionNowYouTry: {
+        text: "Now you try!",
+        file: 'instruction_now_you_try.mp3'
+      },
+
+      // ========================================
+      // ENCOURAGEMENT
+      // ========================================
+      encourageAmazing: {
+        text: "Amazing!",
+        file: 'encourage_amazing.mp3'
+      },
+      encourageFantastic: {
+        text: "Fantastic!",
+        file: 'encourage_fantastic.mp3'
+      },
+      encourageGreatJob: {
+        text: "Great job!",
+        file: 'encourage_great_job.mp3'
+      },
+      encouragePerfect: {
+        text: "Perfect!",
+        file: 'encourage_perfect.mp3'
+      },
+      encourageWellDone: {
+        text: "Well done!",
+        file: 'encourage_well_done.mp3'
+      },
+      encourageWonderful: {
+        text: "Wonderful!",
+        file: 'encourage_wonderful.mp3'
+      },
+
+      // ========================================
+      // ERRORS
+      // ========================================
+      errorOops: {
+        text: "Oops!",
+        file: 'error_oops.mp3'
+      },
+      errorNotQuite: {
+        text: "Not quite! Try again!",
+        file: 'error_not_quite.mp3'
+      },
+      errorLetsTryAgain: {
+        text: "Let's try again!",
+        file: 'error_lets_try_again.mp3'
+      },
+
+      // ========================================
+      // HINTS
+      // ========================================
+      hintLookForGlow: {
+        text: "Look for the glowing one!",
+        file: 'hint_look_for_glow.mp3'
+      },
+      hintTapTheShiny: {
+        text: "Tap the shiny syllable!",
+        file: 'hint_tap_the_shiny.mp3'
+      },
+      hintThisOne: {
+        text: "This one!",
+        file: 'hint_this_one.mp3'
+      },
+      hintTryAgain: {
+        text: "Try again!",
+        file: 'hint_try_again.mp3'
+      }
+    }
+  },
+
+  // ========================================
+  // SYMBOL MOUNTAIN ZONE
+  // ========================================
   'symbol-mountain': {
     'modak': {
       // ========================================
@@ -189,10 +363,40 @@ export const getVoiceScript = (zoneId, sceneId, key) => {
   return VOICE_SCRIPTS[zoneId]?.[sceneId]?.[key] || null;
 };
 
-// Get audio path for voice files (in voice/modak/ folder)
+// Get audio path for voice files
+// Structure for shloka-river:
+//   - All VO files (instructions, encouragements, hints, errors, scene VO) → /audio/voiceover/INSTRUCTIONS/
+//   - Syllable audio files → /audio/voiceover/{word}/ (e.g., vakratunda/va.mp3)
+//   - Full word audio → /audio/voiceover/words/
+// Structure for symbol-mountain: /audio/voice/modak/
 export const getAudioPath = (zoneId, sceneId, key) => {
   const script = getVoiceScript(zoneId, sceneId, key);
-  return script ? `/audio/voice/modak/${script.file}` : null;
+  if (!script) return null;
+
+  // Shloka River zone - ALL VO files are in INSTRUCTIONS folder
+  if (zoneId === 'shloka-river') {
+    return `/audio/voiceover/INSTRUCTIONS/${script.file}`;
+  }
+
+  // Symbol Mountain zone - legacy path
+  if (zoneId === 'symbol-mountain') {
+    return `/audio/voice/modak/${script.file}`;
+  }
+
+  // Fallback
+  return `/audio/voiceover/INSTRUCTIONS/${script.file}`;
+};
+
+// Get syllable audio path (for memory games)
+// Syllables are in word-specific folders: /audio/voiceover/{word}/{syllable}.mp3
+export const getSyllablePath = (word, syllable) => {
+  return `/audio/voiceover/${word}/${syllable}.mp3`;
+};
+
+// Get full word audio path
+// Full words are in: /audio/voiceover/words/{word}.mp3
+export const getWordPath = (word) => {
+  return `/audio/voiceover/words/${word}.mp3`;
 };
 
 // Get SFX path (in sfx/ folder)
@@ -210,9 +414,15 @@ export const getMusicPath = (key) => {
 // Get hint for current phase
 export const getPhaseHint = (phase) => {
   const hintMap = {
+    // Symbol Mountain hints
     'findMooshika': 'hintMound',
     'collectModaks': 'hintModak',
-    'shareWithGanesha': 'feedGanesha'
+    'shareWithGanesha': 'feedGanesha',
+    // Shloka River hints
+    'vakratundaGame': 'hintTapTheShiny',
+    'mahakayaGame': 'hintTapTheShiny',
+    'listenPhase': 'instructionListen',
+    'tapPhase': 'hintLookForGlow'
   };
   return hintMap[phase] || 'hintExplore';
 };

@@ -40,7 +40,10 @@ const VakratundaGame = ({
   // Reload support
   isReload,
   savedGameState,
-  onSaveGameState
+  onSaveGameState,
+
+  // Voice Guidance - ⭐ NEW
+  voiceGuidance
 }) => {
 
   // Get Vakratunda config from your gameConfigs.js
@@ -87,6 +90,7 @@ const assetGetters = {
       savedGameState={savedGameState}
       onSaveGameState={onSaveGameState}
       gamePrefix="vakratunda"
+      voiceGuidance={voiceGuidance}        // ⭐ VOICE GUIDANCE
     />
   );
 };

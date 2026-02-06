@@ -21,7 +21,8 @@ const MemoryGameEngine = ({
   isReload = false,
   savedGameState = null,
   onSaveGameState,
-  gamePrefix = 'default'  // ← ADD THIS
+  gamePrefix = 'default',
+  voiceGuidance = null  // ⭐ VOICE GUIDANCE
 }) => {
 
   useEffect(() => {
@@ -174,8 +175,9 @@ useEffect(() => {
   isActive,
   hideElements,
   powerGained,
-  assetGetters,  // ⭐ ADD THIS LINE
-    gamePrefix,  // ← ADD THIS
+  assetGetters,
+  gamePrefix,
+  voiceGuidance,  // ⭐ VOICE GUIDANCE
 
   onPhaseComplete: (data) => {
     if (data?.isEarlyExit) {

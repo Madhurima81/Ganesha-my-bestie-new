@@ -4,7 +4,9 @@ import {
   getSfxPath,
   getMusicPath,
   getPhaseHint,
-  getRandomEncouragement
+  getRandomEncouragement,
+  getSyllablePath,
+  getWordPath
 } from '../config/content/voiceGuidance';
 
 /**
@@ -55,7 +57,9 @@ const useVoiceGuidance = (zoneId, sceneId, {
   const playVoice = useCallback((key, onEnded) => {
     const path = getAudioPath(zoneId, sceneId, key);
     if (!path) {
-      console.warn(`Voice not found: ${key}`);
+      console.warn(`Voice not found: ${key} for ${zoneId}/${sceneId}`);
+      // ⭐ FIX: Still call onEnded so flow continues even if audio path not found
+      if (onEnded) onEnded();
       return;
     }
 
@@ -252,6 +256,96 @@ const useVoiceGuidance = (zoneId, sceneId, {
   }, [playSfx, playVoice]);
 
   // ========================================
+  // SYLLABLE & WORD PLAYBACK (for memory games)
+  // ========================================
+
+  // Play a syllable audio (e.g., "va" from vakratunda)
+  const playSyllable = useCallback((word, syllable, onEnded) => {
+    const path = getSyllablePath(word, syllable);
+    if (!path) {
+      console.warn(`Syllable not found: ${word}/${syllable}`);
+      if (onEnded) onEnded();
+      return;
+    }
+
+    // Stop any currently playing voice
+    if (voiceRef.current) {
+      voiceRef.current.pause();
+      voiceRef.current = null;
+    }
+
+    const audio = new Audio(path);
+    audio.volume = voiceVolume;
+
+    audio.onended = () => {
+      setIsPlaying(false);
+      voiceRef.current = null;
+      if (onEnded) onEnded();
+    };
+
+    audio.onerror = (e) => {
+      console.error(`Error playing syllable ${word}/${syllable}:`, e);
+      setIsPlaying(false);
+      voiceRef.current = null;
+      if (onEnded) onEnded();
+    };
+
+    voiceRef.current = audio;
+    setIsPlaying(true);
+    audio.play().catch(err => {
+      console.error('Syllable play failed:', err);
+      setIsPlaying(false);
+      voiceRef.current = null;
+      if (onEnded) onEnded();
+    });
+
+    lastInteractionRef.current = Date.now();
+  }, [voiceVolume]);
+
+  // Play a full word audio (e.g., "vakratunda")
+  const playWord = useCallback((word, onEnded) => {
+    const path = getWordPath(word);
+    if (!path) {
+      console.warn(`Word not found: ${word}`);
+      if (onEnded) onEnded();
+      return;
+    }
+
+    // Stop any currently playing voice
+    if (voiceRef.current) {
+      voiceRef.current.pause();
+      voiceRef.current = null;
+    }
+
+    const audio = new Audio(path);
+    audio.volume = voiceVolume;
+
+    audio.onended = () => {
+      setIsPlaying(false);
+      voiceRef.current = null;
+      if (onEnded) onEnded();
+    };
+
+    audio.onerror = (e) => {
+      console.error(`Error playing word ${word}:`, e);
+      setIsPlaying(false);
+      voiceRef.current = null;
+      if (onEnded) onEnded();
+    };
+
+    voiceRef.current = audio;
+    setIsPlaying(true);
+    audio.play().catch(err => {
+      console.error('Word play failed:', err);
+      setIsPlaying(false);
+      voiceRef.current = null;
+      if (onEnded) onEnded();
+    });
+
+    lastInteractionRef.current = Date.now();
+  }, [voiceVolume]);
+
+  // ========================================
   // LIFECYCLE
   // ========================================
 
@@ -273,6 +367,10 @@ const useVoiceGuidance = (zoneId, sceneId, {
     // Voice
     playVoice,
     stopVoice,
+
+    // Syllable & Word (for memory games)
+    playSyllable,
+    playWord,
 
     // SFX
     playSfx,

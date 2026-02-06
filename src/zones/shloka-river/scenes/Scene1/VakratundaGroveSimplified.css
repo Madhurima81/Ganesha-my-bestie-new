@@ -256,18 +256,186 @@
 }
 
 /* ==========================================================================
+   4. CELEBRATIONS & TEXT (PowerUnlock Style)
+   ========================================================================== */
+
+.vakratunda-celebration-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* Match PowerUnlockOverlay backdrop */
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0.8) 100%
+  );
+  backdrop-filter: blur(8px);
+  z-index: 10001;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.vakratunda-centered-word-celebration {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10002;
+  text-align: center;
+  /* Flex for proper centering */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* Prevent shifting */
+  width: 100%;
+  max-width: 500px;
+  animation: celebrationPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes celebrationPopIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.vakratunda-celebration-app-icon {
+  width: 160px;
+  height: 160px;
+  margin-bottom: 30px;
+  filter: drop-shadow(0 0 40px rgba(255, 255, 255, 0.8));
+  animation: iconCelebrationPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconCelebrationPulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.6));
+  }
+  50% {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 50px rgba(255, 255, 255, 1));
+  }
+}
+
+.vakratunda-celebration-word-text {
+  font-family: 'Baloo 2', cursive;
+  font-size: 56px;
+  font-weight: 800;
+  color: #FFD700;
+  text-shadow:
+    0 0 20px rgba(255, 215, 0, 0.5),
+    0 4px 10px rgba(0,0,0,0.4);
+  letter-spacing: 3px;
+  /* Prevent text shifting */
+  white-space: nowrap;
+}
+
+/* Responsive celebration */
+@media (max-width: 768px) {
+  .vakratunda-celebration-app-icon {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 20px;
+  }
+  .vakratunda-celebration-word-text {
+    font-size: 42px;
+    letter-spacing: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .vakratunda-celebration-app-icon {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 16px;
+  }
+  .vakratunda-celebration-word-text {
+    font-size: 32px;
+    letter-spacing: 1px;
+  }
+}
+
+
+/* ==========================================================================
    5. OTHER STYLES (Modals, Headers, etc)
    ========================================================================== */
-.game-modal-overlay {
-  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-  background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px);
-  display: flex; align-items: center; justify-content: center; z-index: 9999;
+
+/* Game Phase Headers (Vakratunda / Mahakaya) */
+.vakratunda-game-phase-header {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.3);
+  padding: 20px 40px;
+  border-radius: 15px;
+  border: 3px solid #4CAF50;
+  z-index: 50;
+  font-size: 32px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  text-align: center;
+  min-width: 500px;
 }
-.game-modal-content { display: flex; align-items: center; gap: 30px; width: 90%; max-width: 900px; }
-.game-modal-card { background: #FFF9E6; border-radius: 30px; padding: 40px; border: 4px solid #FFD700; text-align: center; flex: 1; }
-.game-modal-title { font-family: 'Baloo 2', cursive; font-size: 36px; color: #5D2E0F; margin-bottom: 15px; }
-.game-modal-icons { display: flex; justify-content: center; gap: 40px; margin-bottom: 30px; }
-.game-modal-icon-item img { width: 80px; height: 80px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1)); }
+
+.mahakaya-game-phase-header {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.3);
+  padding: 20px 40px;
+  border-radius: 15px;
+  border: 3px solid #FF9800;
+  z-index: 50;
+  font-size: 32px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  text-align: center;
+  min-width: 500px;
+}
+
+@media (max-width: 600px) {
+  .vakratunda-game-phase-header,
+  .mahakaya-game-phase-header {
+    top: 60px;
+    padding: 15px 25px;
+    font-size: 24px;
+    min-width: 320px;
+    border: 2px solid;
+  }
+}
+
+@media (min-width: 768px) and (min-height: 768px) {
+  .vakratunda-game-phase-header,
+  .mahakaya-game-phase-header {
+    top: 100px;
+    padding: 25px 50px;
+    font-size: 38px;
+    min-width: 600px;
+    border: 4px solid;
+  }
+}
+
+@media (min-width: 1024px) and (min-height: 1366px) {
+  .vakratunda-game-phase-header,
+  .mahakaya-game-phase-header {
+    top: 120px;
+    padding: 30px 60px;
+    font-size: 42px;
+    min-width: 700px;
+    border: 5px solid;
+  }
+}
 .vakratunda-companion-boy { position: fixed; bottom: 80px; right: 120px; z-index: 5; animation: slideInRight 0.6s ease-out; }
 .vakratunda-boy-companion { width: 120px; height: auto; animation: breathe 3s ease-in-out infinite; }
 .vakratunda-celebration-word-text { font-family: 'Baloo 2', cursive; font-size: 64px; color: white; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }

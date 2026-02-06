@@ -312,7 +312,17 @@
   white-space: pre-line;
 }
 
-/* Button - Larger and more prominent */
+/* Button Group - for multiple buttons */
+.power-button-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+/* Button - Larger and more prominent (Primary) */
 .power-button {
   padding: 20px 60px;
   font-size: 30px;
@@ -327,8 +337,36 @@
     0 10px 25px rgba(255, 165, 0, 0.4);
   transition: all 0.2s ease-out;
   animation: buttonFadeIn 0.35s ease-out;
-  margin-top: 16px;
   font-family: 'Baloo 2', cursive;
+}
+
+/* Secondary Button - Play Again (smaller, outline style) */
+.power-button-secondary {
+  padding: 14px 32px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease-out;
+  animation: buttonFadeIn 0.35s ease-out;
+  font-family: 'Nunito', sans-serif;
+  backdrop-filter: blur(4px);
+}
+
+.power-button-secondary:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.power-button-secondary:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .power-button:hover {
@@ -420,6 +458,15 @@
     padding: 18px 54px;
     font-size: 22px;
   }
+
+  .power-button-secondary {
+    padding: 12px 28px;
+    font-size: 18px;
+  }
+
+  .power-button-group {
+    gap: 16px;
+  }
 }
 
 /* Mobile responsive */
@@ -489,6 +536,16 @@
     padding: 16px 48px;
     font-size: 20px;
   }
+
+  .power-button-secondary {
+    padding: 10px 24px;
+    font-size: 16px;
+  }
+
+  .power-button-group {
+    gap: 12px;
+    flex-direction: column;
+  }
 }
 
 /* Small mobile responsive */
@@ -555,5 +612,14 @@
   .power-button {
     padding: 14px 40px;
     font-size: 18px;
+  }
+
+  .power-button-secondary {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .power-button-group {
+    gap: 10px;
   }
 }

@@ -11,8 +11,11 @@ import './PowerUnlockOverlay.css';
  * @param {string} props.iconColor - Glow color
  * @param {string} props.buttonText - Button text
  * @param {boolean} props.showButton - Button visibility
+ * @param {boolean} props.showPlayAgain - Show play again button (for shloka-river zone)
+ * @param {string} props.playAgainText - Play again button text
  * @param {function} props.onShow - Callback when shown
  * @param {function} props.onComplete - Callback on complete
+ * @param {function} props.onPlayAgain - Callback for play again
  */
 const PowerUnlockOverlay = ({
   title,
@@ -21,8 +24,11 @@ const PowerUnlockOverlay = ({
   iconColor = '#FFD700',
   buttonText = 'Continue',
   showButton = false,
+  showPlayAgain = false,
+  playAgainText = 'Play Again',
   onShow,
-  onComplete
+  onComplete,
+  onPlayAgain
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [iconAnimated, setIconAnimated] = useState(false);
@@ -48,6 +54,11 @@ const PowerUnlockOverlay = ({
   const handleContinue = () => {
     setIsVisible(false);
     setTimeout(() => onComplete?.(), 300);
+  };
+
+  const handlePlayAgain = () => {
+    setIsVisible(false);
+    setTimeout(() => onPlayAgain?.(), 300);
   };
 
   // Render description based on type
@@ -128,12 +139,22 @@ const PowerUnlockOverlay = ({
         {renderDescription()}
 
         {showButton && (
-          <button
-            className="power-button"
-            onClick={handleContinue}
-          >
-            {buttonText}
-          </button>
+          <div className="power-button-group">
+            {showPlayAgain && (
+              <button
+                className="power-button-secondary"
+                onClick={handlePlayAgain}
+              >
+                🔄 {playAgainText}
+              </button>
+            )}
+            <button
+              className="power-button"
+              onClick={handleContinue}
+            >
+              {buttonText}
+            </button>
+          </div>
         )}
       </div>
     </div>

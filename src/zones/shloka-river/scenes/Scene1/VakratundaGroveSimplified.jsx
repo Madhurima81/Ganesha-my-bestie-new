@@ -7,6 +7,9 @@ import '../../../shared/components/OpeningModal.css';
 
 // Scene management
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
+
+// Voice Guidance Hook
+import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
 import MessageManager from "../../../../lib/components/scenes/MessageManager";
 import InteractionManager from "../../../../lib/components/scenes/InteractionManager";
 import GameStateManager from "../../../../lib/services/GameStateManager";
@@ -20,10 +23,14 @@ import Fireworks from '../../../../lib/components/feedback/Fireworks';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
 import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOverlay'; // ✅ Modak Style Overlay
+import { PauseButton, PauseMenu } from '../../../../lib/components/ui/PauseMenu'; // ✅ Shared Pause Components
 
 import AppSidebar from '../../shared/AppSidebar';
 // REMOVED: import SanskritWordMission (No longer needed)
 import SanskritVoiceRecorder from '../../../../lib/components/audio/SanskritVoiceRecorder';
+
+// Zone Theme
+import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 
 // Game Components
 import VakratundaGame from './VakratundaGame';
@@ -51,73 +58,10 @@ import seedImage from './assets/images/mahakaya/seed.png';
 import flowerMa from './assets/images/mahakaya/ma-flower.png';
 
 // ========================================
-// 1. LOCAL UI COMPONENTS (From Modak MVP)
+// 1. LOCAL UI COMPONENTS
 // ========================================
 
-const PauseButton = ({ onClick, visible }) => {
-  if (!visible) return null;
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        position: 'fixed',
-        top: '20px',
-        left: '20px',
-        width: '64px',
-        height: '64px',
-        borderRadius: '50%',
-        border: '3px solid rgba(255, 215, 0, 0.6)',
-        background: 'rgba(255, 255, 255, 0.95)',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 3500,
-        transition: 'transform 0.2s, box-shadow 0.2s',
-      }}
-      onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
-      onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-    >
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="#5D2E0F">
-        <rect x="6" y="4" width="4" height="16" rx="1" />
-        <rect x="14" y="4" width="4" height="16" rx="1" />
-      </svg>
-    </button>
-  );
-};
-
-const PauseMenu = ({ show, onResume, onBackToMap, isSoundOn, onSoundToggle }) => {
-  if (!show) return null;
-  return (
-    <div style={{
-      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-      background: 'rgba(0, 0, 0, 0.5)', zIndex: 4000,
-      display: 'flex', alignItems: 'center', justifyContent: 'center'
-    }} onClick={onResume}>
-      <div style={{
-        background: '#FFF9E6', borderRadius: '32px', padding: '36px',
-        border: '4px solid #FFD700', minWidth: '320px', textAlign: 'center'
-      }} onClick={e => e.stopPropagation()}>
-        <h2 style={{ color: '#5D2E0F', margin: '0 0 20px 0' }}>PAUSED</h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <button onClick={onResume} style={menuButtonStyle}>Resume</button>
-          <button onClick={onSoundToggle} style={menuButtonStyle}>
-            Sound: {isSoundOn ? 'ON 🔊' : 'OFF 🔇'}
-          </button>
-          <button onClick={onBackToMap} style={menuButtonStyle}>Back to Map 🏠</button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const menuButtonStyle = {
-  padding: '16px 24px', borderRadius: '16px', border: '3px solid #FFD700',
-  background: '#fff', fontSize: '18px', fontWeight: 'bold', color: '#5D2E0F', cursor: 'pointer'
-};
-
-const VOGatedButton = ({ visible, onClick, children }) => {
+const VOGatedButton = ({ visible, onClick, children, style = {} }) => {
   if (!visible) return null;
   return (
     <button
@@ -133,7 +77,8 @@ const VOGatedButton = ({ visible, onClick, children }) => {
         boxShadow: '0 4px 15px rgba(76, 175, 80, 0.3)',
         cursor: 'pointer',
         animation: 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-        marginTop: '20px'
+        marginTop: '20px',
+        ...style // Allow custom styles to override defaults
       }}
     >
       {children}
@@ -252,10 +197,10 @@ const VakratundaGroveContent = ({
   const [showSparkle, setShowSparkle] = useState(null);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
   const [showCenteredWord, setShowCenteredWord] = useState(null);
-  
+
   // Controls the Power Unlock Overlay
   const [showPowerOverlay, setShowPowerOverlay] = useState(false);
-  
+
   const [currentWord, setCurrentWord] = useState(null);
   const [isAudioOn, setIsAudioOn] = useState(true);
   const [showGaneshaCelebration, setShowGaneshaCelebration] = useState(false);
@@ -263,7 +208,7 @@ const VakratundaGroveContent = ({
 
   // Pause Menu State
   const [showPauseMenu, setShowPauseMenu] = useState(false);
-  
+
   // Opening Modal State
   const [openingButtonVisible, setOpeningButtonVisible] = useState(false);
 
@@ -271,6 +216,23 @@ const VakratundaGroveContent = ({
   const timeoutsRef = useRef([]);
   const activeProfile = GameStateManager.getActiveProfile();
   const profileName = activeProfile?.name || 'explorer';
+
+  // Voice Guidance Hook
+  const {
+    playVoice: playVO,
+    stopVoice,
+    playSyllable,
+    playWord: playWordAudio,
+    playSfx,
+    playCorrect,
+    playWrong,
+    isPlaying: isVOPlaying,
+    setCurrentPhase
+  } = useVoiceGuidance(zoneId, sceneId, {
+    enableMusic: false,
+    voiceVolume: 1,
+    sfxVolume: 0.7
+  });
 
   const safeSetTimeout = (callback, delay) => {
     const id = setTimeout(callback, delay);
@@ -284,12 +246,21 @@ const VakratundaGroveContent = ({
     };
   }, []);
 
-  // Simulating VO for Opening Modal
+  // ========================================
+  // VOICE: Play welcome on OPENING MODAL (before game starts)
+  // Button appears only after VO finishes
+  // ========================================
   useEffect(() => {
+    // Play welcome voice when opening modal is shown (phase is INITIAL and not yet started)
     if (sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown) {
+      // Small delay before starting welcome VO
       const timer = setTimeout(() => {
-        setOpeningButtonVisible(true);
-      }, 1500);
+        playVO('welcome', () => {
+          // VO finished - show the button with fade-in
+          playSfx('chime'); // Ready cue sound
+          setOpeningButtonVisible(true);
+        });
+      }, 800);
       return () => clearTimeout(timer);
     }
   }, [sceneState.phase, sceneState.welcomeShown]);
@@ -305,14 +276,35 @@ const VakratundaGroveContent = ({
     }
   };
 
+  // Use hook's playWord for word audio
   const playWord = (word) => {
-    playAudio(`/audio/words/${word}.mp3`);
+    if (isAudioOn) {
+      playWordAudio(word);
+    }
   };
+
+  // Set current phase for idle hints (game start VO is now handled by AutoPlayMode)
+  useEffect(() => {
+    if (sceneState.phase === PHASES.VAKRATUNDA_GAME && sceneState.welcomeShown) {
+      setCurrentPhase('vakratundaGame');
+    }
+  }, [sceneState.phase, sceneState.welcomeShown, setCurrentPhase]);
+
+  useEffect(() => {
+    if (sceneState.phase === PHASES.MAHAKAYA_GAME) {
+      setCurrentPhase('mahakayaGame');
+    }
+  }, [sceneState.phase, setCurrentPhase]);
 
   // Memory game completion
   const handlePhaseComplete = (word) => {
     console.log(`${word} learned!`);
-    
+
+    // Play celebration VO
+    if (isAudioOn) {
+      playVO('chantWordReveal');
+    }
+
     // Update State
     const chantKey = word === 'vakratunda' ? 'vakratunda-chant' : 'mahakaya-chant';
     sceneActions.updateState({
@@ -325,23 +317,27 @@ const VakratundaGroveContent = ({
     setShowCenteredWord(word);
     setShowSparkle(`${word}-celebration`);
     playWord(word);
-    
+
     // Transition to Power Unlock Overlay
     safeSetTimeout(() => {
       setShowCenteredWord(null);
       setShowSparkle(`${word}-to-sidebar`);
-      
+
       sceneActions.updateState({
         unlockedApps: { ...sceneState.unlockedApps, [word]: true }
       });
-      
+
       safeSetTimeout(() => {
         setShowSparkle(null);
         setCurrentWord(word);
-        
-        // Show the Overlay
-        setShowPowerOverlay(true); 
-        
+
+        // Show the Overlay and play power VO
+        setShowPowerOverlay(true);
+        if (isAudioOn) {
+          const powerVOKey = word === 'vakratunda' ? 'vakratundaPower' : 'mahakayaPower';
+          playVO(powerVOKey);
+        }
+
         sceneActions.updateState({
           phase: word === 'vakratunda' ? PHASES.VAKRATUNDA_POWER : PHASES.MAHAKAYA_POWER
         });
@@ -352,13 +348,20 @@ const VakratundaGroveContent = ({
   // ✅ FIXED: Direct transitions, no "Save Animal" mission
   const handlePowerUnlockComplete = () => {
     setShowPowerOverlay(false);
-    
+    stopVoice(); // Stop any playing VO
+
     if (currentWord === 'vakratunda') {
       console.log('🔄 Moving to Mahakaya Phase');
       // Go straight to Mahakaya Game
       sceneActions.updateState({ phase: PHASES.MAHAKAYA_GAME });
     } else {
       console.log('🎉 Triggering Final Celebration');
+
+      // Play scene complete VO
+      if (isAudioOn) {
+        playVO('sceneComplete');
+      }
+
       // Complete Scene
       sceneActions.updateState({
         phase: PHASES.COMPLETE,
@@ -366,11 +369,36 @@ const VakratundaGroveContent = ({
         completed: true,
         progress: { percentage: 100, starsEarned: 5, completed: true }
       });
-      
+
       // Trigger Finale
       setShowFinalGanesha(true);
       setShowSparkle('final-fireworks');
     }
+  };
+
+  // 🔄 Play Again - Replay the current word's game
+  const handlePlayAgain = () => {
+    setShowPowerOverlay(false);
+
+    if (currentWord === 'vakratunda') {
+      console.log('🔄 Replaying Vakratunda Game');
+      // Reset vakratunda game state and go back to game phase
+      sceneActions.updateState({
+        phase: PHASES.VAKRATUNDA_GAME,
+        vakratundaGameState: null, // Clear saved state to start fresh
+        learnedWords: { ...sceneState.learnedWords, vakratunda: false }
+      });
+    } else if (currentWord === 'mahakaya') {
+      console.log('🔄 Replaying Mahakaya Game');
+      // Reset mahakaya game state and go back to game phase
+      sceneActions.updateState({
+        phase: PHASES.MAHAKAYA_GAME,
+        mahakayaGameState: null, // Clear saved state to start fresh
+        learnedWords: { ...sceneState.learnedWords, mahakaya: false }
+      });
+    }
+
+    setCurrentWord(null);
   };
 
   // Unified State Saver
@@ -390,14 +418,14 @@ const VakratundaGroveContent = ({
         <div className="vakratunda-simplified-container">
           <div className="river-background" style={{ backgroundImage: `url(${riverBackground})` }}>
 
-            {/* 1. PAUSE BUTTON (New UI) */}
-            <PauseButton 
-              visible={sceneState.welcomeShown && !showSceneCompletion} 
-              onClick={() => setShowPauseMenu(true)} 
+            {/* 1. PAUSE BUTTON - Using shared component */}
+            <PauseButton
+              visible={sceneState.welcomeShown && !showSceneCompletion}
+              onClick={() => setShowPauseMenu(true)}
             />
 
-            {/* 2. PAUSE MENU (New UI) */}
-            <PauseMenu 
+            {/* 2. PAUSE MENU - Using shared component */}
+            <PauseMenu
               show={showPauseMenu}
               onResume={() => setShowPauseMenu(false)}
               onBackToMap={() => {
@@ -405,60 +433,80 @@ const VakratundaGroveContent = ({
                 onNavigate?.('zones');
               }}
               isSoundOn={isAudioOn}
-              onSoundToggle={() => setIsAudioOn(!isAudioOn)}
+              onSoundToggle={() => {
+                if (isAudioOn) stopVoice(); // Stop VO when muting
+                setIsAudioOn(!isAudioOn);
+              }}
+              zoneName="Shloka River"
             />
 
-            {/* 3. OPENING MODAL (Modak Style) */}
-            {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
-              <div
-                className="game-modal-overlay"
-                style={{
-                  '--modal-card-bg': '#FFF9E6',
-                  '--modal-text-primary': '#5D2E0F'
-                }}
-              >
-                 <div className="modak-game-sparkles">
-                    <div className="modak-game-sparkle"></div>
-                    <div className="modak-game-sparkle"></div>
-                  </div>
-
-                <div className="game-modal-content">
-                  <div className="game-modal-character">
-                    <img src={ganeshaHeadphones} alt="Ganesha" />
-                  </div>
-
-                  <div className="game-modal-card">
-                    <h1 className="game-modal-title">Help Ganesha Save the Forest!</h1>
-                    <p className="game-modal-subtitle">
-                      Two magical words have special powers to help the animals.
-                    </p>
-
-                    <div className="game-modal-icons">
-                       <div className="game-modal-icon-item">
-                          <img src={appVakratunda} alt="Flexibility" />
-                          <span>Flexibility</span>
-                       </div>
-                       <div className="game-modal-icon-item">
-                          <img src={appMahakaya} alt="Strength" />
-                          <span>Strength</span>
-                       </div>
+            {/* 3. OPENING MODAL (Using Zone Theme Colors) */}
+            {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (() => {
+              const theme = getZoneTheme(zoneId);
+              return (
+                <div
+                  className="game-modal-overlay"
+                  style={{
+                    '--modal-card-bg': '#F0F8F7',           // Light aqua from theme
+                    '--modal-card-border': `4px solid ${theme.accentColor}`,
+                    '--modal-text-primary': theme.textPrimary,
+                    '--modal-text-secondary': theme.textSecondary,
+                    '--modal-btn-bg': `linear-gradient(135deg, ${theme.accentColor} 0%, ${theme.buttonActiveBg?.split(',')[1]?.replace(')', '') || '#3A8170'} 100%)`,
+                    '--modal-btn-shadow': theme.glowColor
+                  }}
+                >
+                   <div className="modak-game-sparkles">
+                      <div className="modak-game-sparkle"></div>
+                      <div className="modak-game-sparkle"></div>
                     </div>
 
-                    <VOGatedButton
-                      visible={openingButtonVisible}
-                      onClick={() => {
-                        sceneActions.updateState({ 
-                          welcomeShown: true,
-                          phase: PHASES.VAKRATUNDA_GAME 
-                        });
-                      }}
-                    >
-                      Start Learning!
-                    </VOGatedButton>
+                  <div className="game-modal-content">
+                    <div className="game-modal-character">
+                      <img src={ganeshaHeadphones} alt="Ganesha" />
+                    </div>
+
+                    <div className="game-modal-card" style={{
+                      background: '#F0F8F7',
+                      border: `4px solid ${theme.accentColor}`
+                    }}>
+                      <h1 className="game-modal-title" style={{ color: theme.textPrimary }}>
+                        Help Ganesha Save the Forest!
+                      </h1>
+                      <p className="game-modal-subtitle" style={{ color: theme.textSecondary }}>
+                        Two magical words have special powers to help the animals.
+                      </p>
+
+                      <div className="game-modal-icons">
+                         <div className="game-modal-icon-item">
+                            <img src={appVakratunda} alt="Flexibility" />
+                            <span style={{ color: theme.textPrimary }}>Flexibility</span>
+                         </div>
+                         <div className="game-modal-icon-item">
+                            <img src={appMahakaya} alt="Strength" />
+                            <span style={{ color: theme.textPrimary }}>Strength</span>
+                         </div>
+                      </div>
+
+                      <VOGatedButton
+                        visible={openingButtonVisible}
+                        onClick={() => {
+                          sceneActions.updateState({
+                            welcomeShown: true,
+                            phase: PHASES.VAKRATUNDA_GAME
+                          });
+                        }}
+                        style={{
+                          background: `linear-gradient(135deg, ${theme.accentColor} 0%, #3A8170 100%)`,
+                          boxShadow: `0 10px 30px ${theme.glowColor}`
+                        }}
+                      >
+                        Start Learning!
+                      </VOGatedButton>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             {/* VAKRATUNDA MEMORY GAME */}
             <VakratundaGame
@@ -471,10 +519,11 @@ const VakratundaGroveContent = ({
               getLotusImage={() => lotusVa}
               getBabyElephantImage={() => elephantBabyVa}
               selectedMode="auto"
-              skipModeSelection={true} 
+              skipModeSelection={true}
               isReload={isReload}
               savedGameState={sceneState.vakratundaGameState}
               onSaveGameState={(state) => handleSaveComponentState('vakratundaGame', state)}
+              voiceGuidance={{ playVoice: playVO, playSfx, stopVoice }}
             />
 
             {/* MAHAKAYA MEMORY GAME */}
@@ -493,14 +542,15 @@ const VakratundaGroveContent = ({
               isReload={isReload}
               savedGameState={sceneState.mahakayaGameState}
               onSaveGameState={(state) => handleSaveComponentState('mahakayaGame', state)}
+              voiceGuidance={{ playVoice: playVO, playSfx, stopVoice }}
             />
 
-            {/* PERSISTENT BOY CHARACTER */}
-            {sceneState.welcomeShown && !showSceneCompletion && (
+            {/* PERSISTENT BOY CHARACTER (Commented out per user request) */}
+            {/* {sceneState.welcomeShown && !showSceneCompletion && (
               <div className="vakratunda-companion-boy">
                 <img src={boyNamaste} alt="Learning with you" className="vakratunda-boy-companion" />
               </div>
-            )}
+            )} */}
 
             {/* GANESHA CELEBRATION */}
             {showGaneshaCelebration && (
@@ -509,7 +559,7 @@ const VakratundaGroveContent = ({
               </div>
             )}
 
-            {/* 4. UPDATED POWER OVERLAY */}
+            {/* 4. UPDATED POWER OVERLAY (with Play Again for shloka-river) */}
             {showPowerOverlay && currentWord && (
               <PowerUnlockOverlay
                 title={`${powerConfig[currentWord].name} Unlocked!`}
@@ -518,15 +568,17 @@ const VakratundaGroveContent = ({
                     powerConfig[currentWord].affirmation,
                     powerConfig[currentWord].story
                   ],
-                  emphasis: currentWord === 'vakratunda' 
-                    ? "You are ready for the next challenge!" 
+                  emphasis: currentWord === 'vakratunda'
+                    ? "You are ready for the next challenge!"
                     : "You have mastered both powers!"
                 }}
                 icon={powerConfig[currentWord].image}
                 iconColor={powerConfig[currentWord].color}
-                // ✅ BUTTON TEXT UPDATE
                 buttonText={currentWord === 'vakratunda' ? "Discover Mahakaya" : "Celebrate!"}
                 showButton={true}
+                showPlayAgain={true}
+                playAgainText="Practice Again"
+                onPlayAgain={handlePlayAgain}
                 onComplete={handlePowerUnlockComplete}
               />
             )}
