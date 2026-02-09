@@ -271,6 +271,10 @@ const AutoPlayMode = ({
     safeClick(() => {
       if (isCountingDown) { triggerWaitBanner('Wait! Get ready... ⏰'); return; }
       if (!canPlayerClick || isSequencePlaying) { triggerWaitBanner('Listen first! 👂'); return; }
+      // Stop any lingering VO (Listen/Your turn) on tap
+      if (voiceGuidanceRef.current?.stopVoice) {
+        voiceGuidanceRef.current.stopVoice();
+      }
       
       const clickedSyllable = currentSequence[syllableIndex];
       if (!clickedSyllable) return;
@@ -316,6 +320,10 @@ const AutoPlayMode = ({
   const handleCentralElementClick = () => {
     safeClick(() => {
       if (!centralElementGlowing) return;
+      // Stop any lingering VO before celebration
+      if (voiceGuidanceRef.current?.stopVoice) {
+        voiceGuidanceRef.current.stopVoice();
+      }
       
       setShowIdleHint(false);
       setPlayerInput([...currentSequence, 'lotus']);

@@ -48,6 +48,7 @@ const AutoPlayModeV2 = ({
   // Central synthesis states
   const [centralElementGlowing, setCentralElementGlowing] = useState(false);
   const [centralBloomProgress, setCentralBloomProgress] = useState(0);
+  const [showLotusSparkles, setShowLotusSparkles] = useState(false);
 
   // Refs
   const timeoutsRef = useRef([]);
@@ -151,6 +152,7 @@ const AutoPlayModeV2 = ({
 
     setCentralElementGlowing(false);
     setCentralBloomProgress(0);
+    setShowLotusSparkles(false);
     setActivatedElephants({});
     setVisualRewards({});
   };
@@ -179,6 +181,9 @@ const AutoPlayModeV2 = ({
   // CORE FLOW: One syllable at a time
   // ==========================================
 
+  // Natural random delay helper (between min and max ms)
+  const naturalDelay = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
   // Start the flow for current syllable index
   const startSyllableFlow = (syllableIdx) => {
     if (flowInProgressRef.current) return;
@@ -206,27 +211,23 @@ const AutoPlayModeV2 = ({
       // Step 1: VO "Listen"
       if (voiceGuidanceRef.current?.playVoice) {
         voiceGuidanceRef.current.playVoice('instructionListen', () => {
-          // Step 2: Auto-play the syllable
+          // Step 2: Auto-play the syllable (natural pause after "Listen")
           safeSetTimeout(() => {
             setSingingSyllable(syllable);
             playSyllableAudio(syllable, () => {
               setSingingSyllable(null);
-              // Step 3: VO "Tap and repeat" → enable clicking
+              // Step 3: VO "Tap and repeat" — enable tap at START of VO, not after it ends
               safeSetTimeout(() => {
+                setGamePhase('listening_syllable');
+                setCanPlayerClick(true); // Enable tap NOW — VO is the go-signal
+                flowInProgressRef.current = false;
                 if (voiceGuidanceRef.current?.playVoice) {
-                  voiceGuidanceRef.current.playVoice('instructionTapAndRepeat', () => {
-                    setGamePhase('listening_syllable');
-                    setCanPlayerClick(true);
-                    flowInProgressRef.current = false;
-                  });
-                } else {
-                  setGamePhase('listening_syllable');
-                  setCanPlayerClick(true);
-                  flowInProgressRef.current = false;
+                  voiceGuidanceRef.current.playVoice('instructionTapAndRepeat');
+                  // VO plays in background; child can tap immediately and stopVoice() cuts it
                 }
-              }, 300);
+              }, naturalDelay(400, 700)); // Breathe after syllable sound
             });
-          }, 300);
+          }, naturalDelay(500, 800)); // Anticipation gap after "Listen"
         });
       } else {
         // No voice guidance — just auto-play
@@ -263,6 +264,11 @@ const AutoPlayModeV2 = ({
       if (roundClicks[`elephant-${clickedSyllable}`]) {
         triggerWaitBanner('Already tapped! 🐘');
         return;
+      }
+
+      // Stop any playing VO ("Tap and repeat" / "Listen") so it doesn't overlap with syllable audio
+      if (voiceGuidanceRef.current?.stopVoice) {
+        voiceGuidanceRef.current.stopVoice();
       }
 
       setShowIdleHint(false);
@@ -302,26 +308,22 @@ const AutoPlayModeV2 = ({
         safeSetTimeout(() => {
           setCentralElementGlowing(true);
           setGamePhase('waiting_lotus');
+          setCanPlayerClick(true); // Enable tap NOW — lotus VO is the go-signal
+          flowInProgressRef.current = false;
 
-          // VO: Tap the lotus/lily — varies by round and game
+          // VO: Tap the lotus/lily — plays in background, stopVoice() cuts it on tap
           if (voiceGuidanceRef.current?.playVoice) {
             const centralVO = getCentralTapVO();
-            voiceGuidanceRef.current.playVoice(centralVO, () => {
-              setCanPlayerClick(true);
-              flowInProgressRef.current = false;
-            });
-          } else {
-            setCanPlayerClick(true);
-            flowInProgressRef.current = false;
+            voiceGuidanceRef.current.playVoice(centralVO);
           }
-        }, 500);
+        }, naturalDelay(400, 700)); // Natural pause before lotus glows
       } else {
         // Move to next syllable
         setCurrentSyllableIndex(nextIdx);
         safeSetTimeout(() => {
           flowInProgressRef.current = false;
           startSyllableFlow(nextIdx);
-        }, 800);
+        }, naturalDelay(600, 1000)); // Natural pause between syllables
       }
     });
   };
@@ -333,9 +335,15 @@ const AutoPlayModeV2 = ({
     safeClick(() => {
       if (!centralElementGlowing || !canPlayerClick) return;
 
+      // Stop any lingering VO (lotus instruction) before playing word audio
+      if (voiceGuidanceRef.current?.stopVoice) {
+        voiceGuidanceRef.current.stopVoice();
+      }
+
       setShowIdleHint(false);
       setCanPlayerClick(false);
       setPlayerInput([...currentSequence, 'lotus']);
+      setShowLotusSparkles(true);
 
       // Play complete word audio — varies by round
       const completeWordAudio = gameConfig.audio.completeWordByRound?.[currentRound]
@@ -349,6 +357,7 @@ const AutoPlayModeV2 = ({
       setCentralElementGlowing(false);
 
       safeSetTimeout(() => {
+        setShowLotusSparkles(false);
         handleRoundSuccess();
       }, 1500);
     });
@@ -682,6 +691,17 @@ const AutoPlayModeV2 = ({
         {isFullyBloomed && (
           <div style={{ position: 'absolute', top: '-10px', right: '-10px', fontSize: '24px', animation: 'sparkle 1s ease-in-out infinite' }}>✨</div>
         )}
+
+        {/* Burst sparkles on lotus click */}
+        {showLotusSparkles && (
+          <>
+            <div style={{ position: 'absolute', top: '-18px', left: '50%', fontSize: '20px', animation: 'sparkleBurst1 1.2s ease-out forwards', pointerEvents: 'none' }}>✨</div>
+            <div style={{ position: 'absolute', top: '10%', right: '-16px', fontSize: '18px', animation: 'sparkleBurst2 1s ease-out forwards', pointerEvents: 'none' }}>✨</div>
+            <div style={{ position: 'absolute', bottom: '-12px', left: '20%', fontSize: '16px', animation: 'sparkleBurst3 1.1s ease-out forwards', pointerEvents: 'none' }}>✨</div>
+            <div style={{ position: 'absolute', top: '20%', left: '-14px', fontSize: '18px', animation: 'sparkleBurst4 0.9s ease-out forwards', pointerEvents: 'none' }}>✨</div>
+            <div style={{ position: 'absolute', bottom: '10%', right: '-10px', fontSize: '14px', animation: 'sparkleBurst5 1.3s ease-out forwards', pointerEvents: 'none' }}>✨</div>
+          </>
+        )}
       </div>
     );
   };
@@ -721,6 +741,11 @@ const AutoPlayModeV2 = ({
         @keyframes rewardAppear { 0% { transform: translate(-50%,-50%) scale(0) rotate(-180deg); opacity: 0; } 100% { transform: translate(-50%,-50%) scale(1) rotate(0deg); opacity: 1; } }
         @keyframes sparkle { 0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); } 50% { opacity: 0.5; transform: translateX(-50%) scale(1.2); } }
         @keyframes waterSplash { 0% { transform: translate(-50%,-100%) scale(0.5); opacity: 1; } 50% { transform: translate(-50%,-150%) scale(1.2); opacity: 0.8; } 100% { transform: translate(-50%,-200%) scale(1.5); opacity: 0; } }
+        @keyframes sparkleBurst1 { 0% { opacity: 1; transform: translate(-50%, 0) scale(0.5); } 100% { opacity: 0; transform: translate(-50%, -30px) scale(1.3); } }
+        @keyframes sparkleBurst2 { 0% { opacity: 1; transform: scale(0.5); } 100% { opacity: 0; transform: translate(15px, -20px) scale(1.2); } }
+        @keyframes sparkleBurst3 { 0% { opacity: 1; transform: scale(0.5); } 100% { opacity: 0; transform: translate(-10px, 20px) scale(1.1); } }
+        @keyframes sparkleBurst4 { 0% { opacity: 1; transform: scale(0.5); } 100% { opacity: 0; transform: translate(-20px, -10px) scale(1.2); } }
+        @keyframes sparkleBurst5 { 0% { opacity: 1; transform: scale(0.5); } 100% { opacity: 0; transform: translate(12px, 18px) scale(1); } }
       `}</style>
     </div>
   );

@@ -306,6 +306,9 @@ const VakratundaGroveContent = ({
       playVO('chantWordReveal');
     }
 
+    // Word-reveal VO key (matches voiceGuidance.js)
+    const wordRevealKey = word === 'vakratunda' ? 'vakratunda-word-reveal' : 'mahakaya-word-reveal';
+
     // Update State
     const chantKey = word === 'vakratunda' ? 'vakratunda-chant' : 'mahakaya-chant';
     sceneActions.updateState({
@@ -319,8 +322,7 @@ const VakratundaGroveContent = ({
     setShowSparkle(`${word}-celebration`);
     playWord(word);
 
-    // Transition to Power Unlock Overlay (original timing)
-    safeSetTimeout(() => {
+    const goToPowerOverlay = () => {
       setShowCenteredWord(null);
       setShowSparkle(`${word}-to-sidebar`);
 
@@ -352,7 +354,21 @@ const VakratundaGroveContent = ({
           phase: word === 'vakratunda' ? PHASES.VAKRATUNDA_POWER : PHASES.MAHAKAYA_POWER
         });
       }, 2000);
-    }, 5000);
+    };
+
+    // Word reveal VO -> then transition to Power Unlock Overlay
+    if (isAudioOn) {
+      safeSetTimeout(() => {
+        playVO(wordRevealKey, () => {
+          goToPowerOverlay();
+        });
+      }, 2000);
+    } else {
+      // Audio off fallback - use timed transitions
+      safeSetTimeout(() => {
+        goToPowerOverlay();
+      }, 5000);
+    }
   };
 
   // ✅ FIXED: Direct transitions, no "Save Animal" mission
@@ -433,6 +449,35 @@ const VakratundaGroveContent = ({
               visible={sceneState.welcomeShown && !showSceneCompletion}
               onClick={() => setShowPauseMenu(true)}
             />
+
+            {/* DEV TEST BUTTONS - Skip to word overlay */}
+            { sceneState.welcomeShown && !showPowerOverlay && !showCenteredWord && (
+              <div style={{
+                position: 'fixed', top: 10, right: 10, zIndex: 99999,
+                display: 'flex', gap: '6px', flexDirection: 'column'
+              }}>
+                <button
+                  onClick={() => handlePhaseComplete('vakratunda')}
+                  style={{
+                    padding: '6px 12px', fontSize: '11px', fontWeight: 'bold',
+                    background: '#4ECDC4', color: '#fff', border: 'none',
+                    borderRadius: '6px', cursor: 'pointer', opacity: 0.85
+                  }}
+                >
+                  ⚡ Test Vakratunda Reveal
+                </button>
+                <button
+                  onClick={() => handlePhaseComplete('mahakaya')}
+                  style={{
+                    padding: '6px 12px', fontSize: '11px', fontWeight: 'bold',
+                    background: '#FF6B35', color: '#fff', border: 'none',
+                    borderRadius: '6px', cursor: 'pointer', opacity: 0.85
+                  }}
+                >
+                  ⚡ Test Mahakaya Reveal
+                </button>
+              </div>
+            )}
 
             {/* 2. PAUSE MENU - Using shared component */}
             <PauseMenu
