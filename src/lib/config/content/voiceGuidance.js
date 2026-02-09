@@ -67,6 +67,14 @@ export const VOICE_SCRIPTS = {
         text: "You did it! Say the word with me!",
         file: 'chant-word-reveal.mp3'
       },
+      'vakratunda-word-reveal': {
+        text: "Vakratunda!",
+        file: 'vakratunda-word-reveal.mp3'
+      },
+      'mahakaya-word-reveal': {
+        text: "Mahakaya!",
+        file: 'mahakaya-word-reveal.mp3'
+      },
 
       // ========================================
       // SCENE COMPLETE
@@ -106,6 +114,42 @@ export const VOICE_SCRIPTS = {
       instructionNowYouTry: {
         text: "Now you try!",
         file: 'instruction_now_you_try.mp3'
+      },
+      instructionTapAndRepeat: {
+        text: "Tap and repeat!",
+        file: 'instruction_tap_and_repeat.mp3'
+      },
+      instructionTapAndSay: {
+        text: "Tap and say!",
+        file: 'instruction_tap_and_say.mp3'
+      },
+      instructionTapTheElephant: {
+        text: "Tap the elephant!",
+        file: 'instruction_tap_the_elephant.mp3'
+      },
+      instructionTapLotus: {
+        text: "Tap the lotus!",
+        file: 'instruction_tap_lotus.mp3'
+      },
+      instructionTapLotusWord: {
+        text: "Tap the lotus to hear the word!",
+        file: 'instruction_tap_lotus_word.mp3'
+      },
+      instructionTapLotusUnlock: {
+        text: "Tap the lotus to unlock the full word!",
+        file: 'instruction_tap_lotus_unlock.mp3'
+      },
+      instructionTapLily: {
+        text: "Tap the lily!",
+        file: 'instruction_tap_lily.mp3'
+      },
+      instructionTapLilyWord: {
+        text: "Tap the lily to hear the word!",
+        file: 'instruction_tap_lily_word.mp3'
+      },
+      instructionTapLilyUnlock: {
+        text: "Tap the lily to unlock the full word!",
+        file: 'instruction_tap_lily_unlock.mp3'
       },
 
       // ========================================

@@ -16,8 +16,8 @@ export const GAME_CONFIGS = {
     
     syllables: {
       1: ['va', 'kra'],           // Round 1: VAKRA (2 syllables)
-      2: ['tun', 'da'],            // Round 2: TUNDA (2 syllables) - NEW!
-      3: ['va', 'kra', 'tun', 'da'] // Round 3: VAKRATUNDA (4 syllables)
+      2: ['tun', 'da'],            // Round 2: TUNDA (2 syllables)
+      3: ['vakra', 'tunda']        // Round 3: VAKRATUNDA (2 known chunks, no auto-play)
     },
     
     elements: {
@@ -52,7 +52,9 @@ export const GAME_CONFIGS = {
                 'va':  'getElephantVaImage',
                 'kra': 'getElephantKraImage',
                 'tun': 'getElephantTunImage',
-                'da':  'getElephantDaImage'
+                'da':  'getElephantDaImage',
+                'vakra': 'getElephantVaImage',   // Round 3 chunk - reuse va elephant
+                'tunda': 'getElephantTunImage'    // Round 3 chunk - reuse tun elephant
             }
         }
     },
@@ -63,9 +65,15 @@ export const GAME_CONFIGS = {
         'va': 'vakratunda-va',
         'kra': 'vakratunda-kra',
         'tun': 'vakratunda-tun',
-        'da': 'vakratunda-da'
+        'da': 'vakratunda-da',
+        'vakra': 'vakratunda - vakra',        // Round 3 chunk
+        'tunda': 'tunda-vakratunda'           // Round 3 chunk
       },
-      completeWordFile: '/audio/words/Vakratunda.mp3'
+      completeWordByRound: {
+        1: '/audio/syllables/vakratunda - vakra.mp3',   // Round 1: vakra
+        2: '/audio/syllables/tunda-vakratunda.mp3',     // Round 2: tunda
+        3: '/audio/words/vakratunda.mp3'                // Round 3: vakratunda
+      }
     },
     
     waterSpray: {
@@ -99,8 +107,8 @@ export const GAME_CONFIGS = {
     
     syllables: {
       1: ['ma', 'ha'],           // Round 1: MAHA (2 syllables)
-      2: ['ka', 'ya'],            // Round 2: KAYA (2 syllables) - NEW!
-      3: ['ma', 'ha', 'ka', 'ya'] // Round 3: MAHAKAYA (4 syllables)
+      2: ['ka', 'ya'],            // Round 2: KAYA (2 syllables)
+      3: ['maha', 'kaya']         // Round 3: MAHAKAYA (2 known chunks, no auto-play)
     },
     
    elements: {
@@ -133,7 +141,9 @@ export const GAME_CONFIGS = {
                 'ma': 'getElephantMaImage',
                 'ha': 'getElephantHaImage',
                 'ka': 'getElephantKaImage',
-                'ya': 'getElephantYaImage'
+                'ya': 'getElephantYaImage',
+                'maha': 'getElephantMaImage',    // Round 3 chunk - reuse ma elephant
+                'kaya': 'getElephantKaImage'     // Round 3 chunk - reuse ka elephant
             }
         }
     },
@@ -144,9 +154,15 @@ export const GAME_CONFIGS = {
         'ma': 'mahakaya-ma',
         'ha': 'mahakaya-ha',
         'ka': 'mahakaya-ka',
-        'ya': 'mahakaya-ya'
+        'ya': 'mahakaya-ya',
+        'maha': 'maha-mahakaya',             // Round 3 chunk
+        'kaya': 'kaya-mahakaya'              // Round 3 chunk
       },
-      completeWordFile: '/audio/words/Mahakaya.mp3'
+      completeWordByRound: {
+        1: '/audio/syllables/maha-mahakaya.mp3',    // Round 1: maha
+        2: '/audio/syllables/kaya-mahakaya.mp3',    // Round 2: kaya
+        3: '/audio/words/mahakaya.mp3'              // Round 3: mahakaya
+      }
     },
     
     waterSpray: {

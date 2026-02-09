@@ -28,7 +28,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
   sfxVolume = 0.7,
   idleTimeout = 10
 } = {}) => {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlayingState] = useState(false);
   const [currentPhase, setCurrentPhase] = useState(null);
 
   const voiceRef = useRef(null);
@@ -41,10 +41,11 @@ const useVoiceGuidance = (zoneId, sceneId, {
   const isPlayingRef = useRef(isPlaying);
   const currentPhaseRef = useRef(currentPhase);
 
-  // Keep refs in sync with state
-  useEffect(() => {
-    isPlayingRef.current = isPlaying;
-  }, [isPlaying]);
+  // Deferred setIsPlaying to avoid "Cannot update component while rendering another" warning
+  const setIsPlaying = (value) => {
+    isPlayingRef.current = value; // Update ref immediately for synchronous checks
+    queueMicrotask(() => setIsPlayingState(value)); // Defer state update
+  };
 
   useEffect(() => {
     currentPhaseRef.current = currentPhase;
@@ -63,8 +64,11 @@ const useVoiceGuidance = (zoneId, sceneId, {
       return;
     }
 
-    // Stop any currently playing voice
+    // Stop any currently playing voice - clear handlers BEFORE pausing
+    // to prevent the old audio's abort/error from firing the old callback
     if (voiceRef.current) {
+      voiceRef.current.onended = null;
+      voiceRef.current.onerror = null;
       voiceRef.current.pause();
       voiceRef.current = null;
     }
@@ -72,10 +76,18 @@ const useVoiceGuidance = (zoneId, sceneId, {
     const audio = new Audio(path);
     audio.volume = voiceVolume;
 
+    // Guard: ensure onEnded is called exactly once
+    let callbackFired = false;
+    const fireCallback = () => {
+      if (callbackFired) return;
+      callbackFired = true;
+      if (onEnded) onEnded();
+    };
+
     audio.onended = () => {
       setIsPlaying(false);
       voiceRef.current = null;
-      if (onEnded) onEnded();
+      fireCallback();
     };
 
     audio.onerror = (e) => {
@@ -83,7 +95,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
       setIsPlaying(false);
       voiceRef.current = null;
       // Still call onEnded so the flow continues even if audio fails
-      if (onEnded) onEnded();
+      fireCallback();
     };
 
     voiceRef.current = audio;
@@ -93,7 +105,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
       setIsPlaying(false);
       voiceRef.current = null;
       // Still call onEnded so the flow continues even if audio fails
-      if (onEnded) onEnded();
+      fireCallback();
     });
 
     // Reset idle timer on voice play
@@ -268,8 +280,10 @@ const useVoiceGuidance = (zoneId, sceneId, {
       return;
     }
 
-    // Stop any currently playing voice
+    // Stop any currently playing voice - clear handlers BEFORE pausing
     if (voiceRef.current) {
+      voiceRef.current.onended = null;
+      voiceRef.current.onerror = null;
       voiceRef.current.pause();
       voiceRef.current = null;
     }
@@ -277,17 +291,25 @@ const useVoiceGuidance = (zoneId, sceneId, {
     const audio = new Audio(path);
     audio.volume = voiceVolume;
 
+    // Guard: ensure onEnded is called exactly once
+    let callbackFired = false;
+    const fireCallback = () => {
+      if (callbackFired) return;
+      callbackFired = true;
+      if (onEnded) onEnded();
+    };
+
     audio.onended = () => {
       setIsPlaying(false);
       voiceRef.current = null;
-      if (onEnded) onEnded();
+      fireCallback();
     };
 
     audio.onerror = (e) => {
       console.error(`Error playing syllable ${word}/${syllable}:`, e);
       setIsPlaying(false);
       voiceRef.current = null;
-      if (onEnded) onEnded();
+      fireCallback();
     };
 
     voiceRef.current = audio;
@@ -296,7 +318,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
       console.error('Syllable play failed:', err);
       setIsPlaying(false);
       voiceRef.current = null;
-      if (onEnded) onEnded();
+      fireCallback();
     });
 
     lastInteractionRef.current = Date.now();
@@ -311,8 +333,10 @@ const useVoiceGuidance = (zoneId, sceneId, {
       return;
     }
 
-    // Stop any currently playing voice
+    // Stop any currently playing voice - clear handlers BEFORE pausing
     if (voiceRef.current) {
+      voiceRef.current.onended = null;
+      voiceRef.current.onerror = null;
       voiceRef.current.pause();
       voiceRef.current = null;
     }
@@ -320,17 +344,25 @@ const useVoiceGuidance = (zoneId, sceneId, {
     const audio = new Audio(path);
     audio.volume = voiceVolume;
 
+    // Guard: ensure onEnded is called exactly once
+    let callbackFired = false;
+    const fireCallback = () => {
+      if (callbackFired) return;
+      callbackFired = true;
+      if (onEnded) onEnded();
+    };
+
     audio.onended = () => {
       setIsPlaying(false);
       voiceRef.current = null;
-      if (onEnded) onEnded();
+      fireCallback();
     };
 
     audio.onerror = (e) => {
       console.error(`Error playing word ${word}:`, e);
       setIsPlaying(false);
       voiceRef.current = null;
-      if (onEnded) onEnded();
+      fireCallback();
     };
 
     voiceRef.current = audio;
@@ -339,7 +371,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
       console.error('Word play failed:', err);
       setIsPlaying(false);
       voiceRef.current = null;
-      if (onEnded) onEnded();
+      fireCallback();
     });
 
     lastInteractionRef.current = Date.now();

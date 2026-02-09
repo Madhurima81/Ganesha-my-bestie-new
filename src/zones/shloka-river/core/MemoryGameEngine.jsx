@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import ModeSelectionModal from './ModeSelectionModal';
-import AutoPlayMode from './AutoPlayMode';
+import AutoPlayMode from './AutoPlayModeV2';  // V2: one-at-a-time flow
 import ManualRoundMode from './ManualRoundMode';
 
 const MemoryGameEngine = ({

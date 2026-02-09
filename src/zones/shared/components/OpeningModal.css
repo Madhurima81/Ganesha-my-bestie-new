@@ -170,9 +170,8 @@
   box-shadow: 0 14px 40px var(--modal-btn-shadow);
   text-transform: capitalize;
   white-space: nowrap;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+  align-self: center;
+  margin: 0 auto;
 
   /* --- NEW HEARTBEAT ANIMATION --- */
   /* 1.3s is a natural heartbeat rhythm */
@@ -228,8 +227,8 @@
 }
 
 .game-modal-card .game-modal-button {
-  font-size: 36px !important;
-  padding: 38px 135px !important;
+  font-size: 30px;
+  padding: 22px 65px;
 }
 
 
@@ -300,30 +299,30 @@
 /* 4. iPAD MINI/AIR LANDSCAPE (Targeting 1024px - 1180px) */
 /* This makes the card WIDER on Tablets */
 @media (min-width: 768px) and (min-height: 768px) and (max-width: 1180px) {
-  .game-modal-content { 
-    max-width: 1200px; 
+  .game-modal-content {
+    max-width: 1200px;
     padding: 0 30px;
     gap: 30px;
   }
 
-  .game-modal-character { 
+  .game-modal-character {
     flex: 0 0 32%; /* Smaller Ganesha */
     justify-content: center;
   }
-  
-  .game-modal-character img { 
-    max-width: 380px; 
-    max-height: 65vh; 
+
+  .game-modal-character img {
+    max-width: 380px;
+    max-height: 65vh;
   }
 
-  .game-modal-card { 
+  .game-modal-card {
     flex: 0 0 60%; /* WIDER CARD (Was 48%) */
     padding: 50px 60px; /* More Padding */
   }
-  
-  .game-modal-title { font-size: 42px; margin-bottom: 20px; }
-  .game-modal-subtitle { font-size: 22px; margin-bottom: 30px; }
-  .game-modal-icons { margin-bottom: 30px; gap: 40px; }
+
+  .game-modal-title { font-size: 42px; margin-bottom: 25px; }
+  .game-modal-subtitle { font-size: 22px; margin-bottom: 40px; }
+  .game-modal-icons { margin-bottom: 40px; gap: 50px; }
   .game-modal-icon-item img { width: 90px; height: 90px; }
   .game-modal-button { font-size: 26px; padding: 20px 60px; }
 }

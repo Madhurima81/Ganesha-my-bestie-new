@@ -1,12 +1,14 @@
-// zones/shloka-river/core/AutoPlayMode.jsx
-// FIXED: Removed "Tap Here"/Circles/Crowns. Added Pulse + Hint Glow.
+// zones/shloka-river/core/AutoPlayModeV2.jsx
+// V2: One-syllable-at-a-time flow
+// Round 1 & 2: Listen → auto-play syllable → "Tap it" → kid taps → next syllable → lotus tap
+// Round 3: No auto-play, kid taps known chunks → lotus tap
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useSafeClick } from './hooks/useSafeClick';
 import UniversalPauseButton from './UniversalPauseButton';
 import PauseModal from './PauseModal';
 
-const AutoPlayMode = ({
+const AutoPlayModeV2 = ({
   gameConfig,
   assetGetters,
   gamePrefix = 'default',
@@ -14,46 +16,45 @@ const AutoPlayMode = ({
   hideElements = false,
   onPhaseComplete,
   onGameComplete,
-  voiceGuidance = null,  // ⭐ VOICE GUIDANCE
+  voiceGuidance = null,
 }) => {
 
   const { safeClick } = useSafeClick(300);
 
   // Core game state
   const [gamePhase, setGamePhase] = useState('waiting');
+  // Phases: 'waiting' | 'playing_syllable' | 'listening_syllable' | 'waiting_lotus' | 'celebration' | 'phase_complete'
   const [currentRound, setCurrentRound] = useState(1);
   const [currentSequence, setCurrentSequence] = useState([]);
+  const [currentSyllableIndex, setCurrentSyllableIndex] = useState(0); // Which syllable we're on
   const [playerInput, setPlayerInput] = useState([]);
-  const [isSequencePlaying, setIsSequencePlaying] = useState(false);
   const [canPlayerClick, setCanPlayerClick] = useState(false);
   const [singingSyllable, setSingingSyllable] = useState(null);
-  
+
   // Visual state
   const [visualRewards, setVisualRewards] = useState({});
   const [activatedElephants, setActivatedElephants] = useState({});
   const [roundClicks, setRoundClicks] = useState({});
-  
+
   // Animation state
-  const [countdown, setCountdown] = useState(0);
-  const [isCountingDown, setIsCountingDown] = useState(false);
   const [waterSprayPosition, setWaterSprayPosition] = useState(null);
   const [waitBannerMessage, setWaitBannerMessage] = useState('');
   const [showWaitBanner, setShowWaitBanner] = useState(false);
   const [showPauseModal, setShowPauseModal] = useState(false);
-  
+
   // Hint State
   const [showIdleHint, setShowIdleHint] = useState(false);
-  
+
   // Central synthesis states
   const [centralElementGlowing, setCentralElementGlowing] = useState(false);
-  const [centralBloomProgress, setCentralBloomProgress] = useState(0); // 0 to 100
-  
+  const [centralBloomProgress, setCentralBloomProgress] = useState(0);
+
   // Refs
   const timeoutsRef = useRef([]);
   const intervalsRef = useRef([]);
   const isComponentMountedRef = useRef(true);
   const hasInitializedRef = useRef(false);
-  const sequencePlayingRef = useRef(false); // Guard against double playSequence calls
+  const flowInProgressRef = useRef(false);
 
   const clearAllTimers = () => {
     timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
@@ -70,14 +71,6 @@ const AutoPlayMode = ({
     return timeout;
   };
 
-  const safeSetInterval = (callback, delay) => {
-    const interval = setInterval(() => {
-      if (isComponentMountedRef.current) callback();
-    }, delay);
-    intervalsRef.current.push(interval);
-    return interval;
-  };
-
   useEffect(() => {
     isComponentMountedRef.current = true;
     return () => {
@@ -86,255 +79,284 @@ const AutoPlayMode = ({
     };
   }, []);
 
-  // Store voiceGuidance in a ref so effects don't re-fire when the prop object changes identity
+  // Store voiceGuidance in a ref to avoid effect re-fires
   const voiceGuidanceRef = useRef(voiceGuidance);
   useEffect(() => {
     voiceGuidanceRef.current = voiceGuidance;
   }, [voiceGuidance]);
 
-  // 10-Second Idle Hint Timer (triggers during player's turn - 'listening' phase)
+  // 10-Second Idle Hint Timer
   useEffect(() => {
     let idleTimer;
-    console.log(`[IdleTimer Check] Phase: ${gamePhase}, CanClick: ${canPlayerClick}, SeqPlaying: ${isSequencePlaying}, Countdown: ${isCountingDown}`);
-    if (gamePhase === 'listening' && canPlayerClick && !isSequencePlaying && !isCountingDown) {
-      console.log('⏳ Idle Timer Started (10s)...');
+    if ((gamePhase === 'listening_syllable' || gamePhase === 'waiting_lotus') && canPlayerClick) {
       idleTimer = setTimeout(() => {
-        console.log('💡 Idle Hint Triggered!');
         setShowIdleHint(true);
-        // Play hint VO
         if (voiceGuidanceRef.current?.playVoice) {
-          voiceGuidanceRef.current.playVoice('hintTapTheShiny');
+          // Alternate between hints randomly
+          const hints = ['hintTapTheShiny', 'hintLookForGlow'];
+          const randomHint = hints[Math.floor(Math.random() * hints.length)];
+          voiceGuidanceRef.current.playVoice(randomHint);
         }
-      }, 10000); // 10 seconds like Modak scene
+      }, 10000);
     } else {
       setShowIdleHint(false);
     }
     return () => clearTimeout(idleTimer);
-  }, [gamePhase, canPlayerClick, playerInput, isSequencePlaying, isCountingDown]);
+  }, [gamePhase, canPlayerClick, playerInput]);
 
   // Audio
-  const playSyllableAudio = (syllable) => {
+  const playSyllableAudio = (syllable, onEnded) => {
     try {
       const fileName = gameConfig.audio.syllableFileMap[syllable];
-      if (!fileName) return;
+      if (!fileName) {
+        if (onEnded) onEnded();
+        return;
+      }
       const audioPath = `${gameConfig.audio.syllableFolder}${fileName}.mp3`;
       const audio = new Audio(audioPath);
       audio.volume = 0.8;
-      audio.play().catch(e => console.log('Audio fallback:', e));
+      if (onEnded) {
+        audio.onended = onEnded;
+        audio.onerror = () => onEnded();
+      }
+      audio.play().catch(e => {
+        console.log('Audio fallback:', e);
+        if (onEnded) onEnded();
+      });
     } catch (error) {
       console.log('Audio error:', error);
+      if (onEnded) onEnded();
     }
   };
 
+  const maxRound = gameConfig ? Object.keys(gameConfig.syllables).length : 3;
+  const isRound3 = currentRound === maxRound; // Last round = chunk round
+
   const getSequenceForRound = (round) => gameConfig.syllables[round] || [];
 
+  // ==========================================
+  // START NEW ROUND
+  // ==========================================
   const startNewRound = (roundNumber) => {
-    clearAllTimers();
-    sequencePlayingRef.current = false;
     const sequence = getSequenceForRound(roundNumber);
     setCurrentRound(roundNumber);
     setCurrentSequence(sequence);
     setPlayerInput([]);
     setRoundClicks({});
+    setCurrentSyllableIndex(0);
     setGamePhase('waiting');
     setCanPlayerClick(false);
     setShowIdleHint(false);
-    countdownTriggeredRef.current = false; // Reset so next round can trigger countdown
-    sequencePlayingRef.current = false; // Reset so next round can play sequence
+    flowInProgressRef.current = false;
 
     setCentralElementGlowing(false);
     setCentralBloomProgress(0);
+    setActivatedElephants({});
+    setVisualRewards({});
   };
 
-  const startCountdown = () => {
-    setIsCountingDown(true);
-    setCountdown(3);
-    const countdownInterval = safeSetInterval(() => {
-      setCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(countdownInterval);
-          setIsCountingDown(false);
-          playSequence();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 800);
-  };
+  // ==========================================
+  // VO HELPER: Get the correct "tap lotus/lily" VO per round & game
+  // ==========================================
+  const getCentralTapVO = () => {
+    const isMahakaya = gameConfig.id === 'mahakaya';
+    const isLastRound = currentRound === maxRound;
 
-  const playSequence = () => {
-    if (currentSequence.length === 0) return;
-    // Guard: prevent playSequence from running twice for the same round
-    if (sequencePlayingRef.current) {
-      console.log('[playSequence] Already playing, skipping duplicate call');
-      return;
-    }
-    if (sequencePlayingRef.current) return;
-    
-    sequencePlayingRef.current = true;
-
-    setIsSequencePlaying(true);
-    setGamePhase('playing');
-    setCanPlayerClick(false);
-    setPlayerInput([]);
-    setSingingSyllable(null);
-    setShowIdleHint(false);
-
-    // Helper to play syllables after VO finishes
-    let syllablesStarted = false;
-    const playSyllables = () => {
-      if (syllablesStarted) return;
-      syllablesStarted = true;
-
-      currentSequence.forEach((syllable, index) => {
-        safeSetTimeout(() => {
-          setSingingSyllable(syllable);
-          playSyllableAudio(syllable);
-          safeSetTimeout(() => setSingingSyllable(null), 600);
-          if (index === currentSequence.length - 1) {
-            safeSetTimeout(() => {
-              sequencePlayingRef.current = false; // Reset for next round
-              setIsSequencePlaying(false);
-              sequencePlayingRef.current = false;
-              setGamePhase('listening');
-              setCanPlayerClick(true);
-              // Play "Your turn" VO when player can click
-              if (voiceGuidanceRef.current?.playVoice) {
-                voiceGuidanceRef.current.playVoice('instructionYourTurn');
-              }
-            }, 800);
-          }
-        }, index * 1200);
-      });
-    };
-
-    // Play "Listen carefully" VO first, then play syllables after it finishes
-    if (voiceGuidanceRef.current?.playVoice) {
-      voiceGuidanceRef.current.playVoice('instructionListen', () => {
-        // VO finished - now play syllables
-        safeSetTimeout(playSyllables, 300);
-      });
+    if (isMahakaya) {
+      // Mahakaya uses lily
+      if (isLastRound) return 'instructionTapLilyUnlock';   // Round 3: "Tap the lily to unlock"
+      if (currentRound === 2) return 'instructionTapLily';  // Round 2: "Tap the lily"
+      return 'instructionTapLilyWord';                       // Round 1: "Tap the lily to hear the word"
     } else {
-      // No voice guidance - play syllables immediately
-      playSyllables();
+      // Vakratunda (and others) uses lotus
+      if (isLastRound) return 'instructionTapLotusUnlock';   // Round 3: "Tap the lotus to unlock"
+      if (currentRound === 2) return 'instructionTapLotus';  // Round 2: "Tap the lotus"
+      return 'instructionTapLotusWord';                       // Round 1: "Tap the lotus to hear the word"
     }
   };
 
-  const triggerWaitBanner = (message, playErrorVO = false) => {
-    setWaitBannerMessage(message);
-    setShowWaitBanner(true);
-    safeSetTimeout(() => setShowWaitBanner(false), 1500);
+  // ==========================================
+  // CORE FLOW: One syllable at a time
+  // ==========================================
 
-    // Play error VO for wrong clicks
-    if (playErrorVO && voiceGuidanceRef.current?.playVoice) {
-      const errorVOs = ['errorOops', 'errorNotQuite', 'errorLetsTryAgain'];
-      const randomError = errorVOs[Math.floor(Math.random() * errorVOs.length)];
-      voiceGuidanceRef.current.playVoice(randomError);
-    }
-  };
+  // Start the flow for current syllable index
+  const startSyllableFlow = (syllableIdx) => {
+    if (flowInProgressRef.current) return;
+    flowInProgressRef.current = true;
 
-  const handlePause = () => {
-    setShowPauseModal(true);
-    clearAllTimers();
-    sequencePlayingRef.current = false; // Reset so sequence can replay on resume
-    sequencePlayingRef.current = false;
-  };
+    const syllable = currentSequence[syllableIdx];
+    if (!syllable) return;
 
-  const handleContinue = () => {
-    setShowPauseModal(false);
-    if (gamePhase === 'listening') {
+    const isLastRound = currentRound === maxRound;
+
+    if (isLastRound) {
+      // ROUND 3: No auto-play — just VO prompt and wait for tap
+      setGamePhase('listening_syllable');
       setCanPlayerClick(true);
-      setIsSequencePlaying(false);
-    } else if (gamePhase === 'waiting') {
-      startCountdown();
-    } else if (gamePhase === 'playing') {
-      playSequence();
-    } else if (gamePhase === 'celebration' || gamePhase === 'success') {
-       if (currentRound < Object.keys(gameConfig.syllables).length) {
-          startNewRound(currentRound + 1);
-          safeSetTimeout(() => startCountdown(), 500);
-       } else {
-          handlePhaseComplete();
-       }
+
+      // VO: "Tap the elephant"
+      if (voiceGuidanceRef.current?.playVoice) {
+        voiceGuidanceRef.current.playVoice('instructionTapTheElephant');
+      }
+    } else {
+      // ROUND 1 & 2: Listen → auto-play → "Tap it" → wait for tap
+      setGamePhase('playing_syllable');
+      setCanPlayerClick(false);
+
+      // Step 1: VO "Listen"
+      if (voiceGuidanceRef.current?.playVoice) {
+        voiceGuidanceRef.current.playVoice('instructionListen', () => {
+          // Step 2: Auto-play the syllable
+          safeSetTimeout(() => {
+            setSingingSyllable(syllable);
+            playSyllableAudio(syllable, () => {
+              setSingingSyllable(null);
+              // Step 3: VO "Tap and repeat" → enable clicking
+              safeSetTimeout(() => {
+                if (voiceGuidanceRef.current?.playVoice) {
+                  voiceGuidanceRef.current.playVoice('instructionTapAndRepeat', () => {
+                    setGamePhase('listening_syllable');
+                    setCanPlayerClick(true);
+                    flowInProgressRef.current = false;
+                  });
+                } else {
+                  setGamePhase('listening_syllable');
+                  setCanPlayerClick(true);
+                  flowInProgressRef.current = false;
+                }
+              }, 300);
+            });
+          }, 300);
+        });
+      } else {
+        // No voice guidance — just auto-play
+        setSingingSyllable(syllable);
+        playSyllableAudio(syllable, () => {
+          setSingingSyllable(null);
+          setGamePhase('listening_syllable');
+          setCanPlayerClick(true);
+          flowInProgressRef.current = false;
+        });
+      }
     }
   };
 
-  const handleExitToMenu = () => {
-    setShowPauseModal(false);
-    clearAllTimers();
-    sequencePlayingRef.current = false;
-    setGamePhase('waiting');
-    setCurrentRound(1);
-  };
-
+  // ==========================================
+  // HANDLE ELEPHANT TAP
+  // ==========================================
   const handleElephantClick = (syllableIndex) => {
     safeClick(() => {
-      if (isCountingDown) { triggerWaitBanner('Wait! Get ready... ⏰'); return; }
-      if (!canPlayerClick || isSequencePlaying) { triggerWaitBanner('Listen first! 👂'); return; }
-      
-      const clickedSyllable = currentSequence[syllableIndex];
-      if (!clickedSyllable) return;
-      if (roundClicks[`elephant-${clickedSyllable}`]) { triggerWaitBanner('Already clicked! 🐘'); return; }
-      
-      const expectedIndex = playerInput.length;
-      if (syllableIndex !== expectedIndex) { triggerWaitBanner('Click in order! 🎯', true); return; }
-      
-      setShowIdleHint(false); // Reset idle hint
-      playSyllableAudio(clickedSyllable);
-
-      if (gameConfig.id === 'vakratunda' || gameConfig.id === 'mahakaya') {
-        const position = gameConfig.elements.clicker.positions[syllableIndex];
-        setWaterSprayPosition({ left: position.left, top: position.top });
-        safeSetTimeout(() => setWaterSprayPosition(null), 1000);
+      if (!canPlayerClick) {
+        triggerWaitBanner('Listen first! 👂');
+        return;
       }
 
+      const clickedSyllable = currentSequence[syllableIndex];
+      if (!clickedSyllable) return;
+
+      // Must tap the CURRENT syllable (one at a time)
+      if (syllableIndex !== currentSyllableIndex) {
+        triggerWaitBanner('Not this one! 🎯', true);
+        return;
+      }
+
+      if (roundClicks[`elephant-${clickedSyllable}`]) {
+        triggerWaitBanner('Already tapped! 🐘');
+        return;
+      }
+
+      setShowIdleHint(false);
+      setCanPlayerClick(false);
+
+      // Play syllable audio on tap
+      setSingingSyllable(clickedSyllable);
+      playSyllableAudio(clickedSyllable, () => {
+        setSingingSyllable(null);
+      });
+
+      // Water spray effect
+      if (gameConfig.id === 'vakratunda' || gameConfig.id === 'mahakaya') {
+        const position = gameConfig.elements.clicker.positions[syllableIndex];
+        if (position) {
+          setWaterSprayPosition({ left: position.left, top: position.top });
+          safeSetTimeout(() => setWaterSprayPosition(null), 1000);
+        }
+      }
+
+      // Mark this syllable as done
       const newPlayerInput = [...playerInput, clickedSyllable];
       setPlayerInput(newPlayerInput);
       setRoundClicks(prev => ({ ...prev, [`elephant-${clickedSyllable}`]: true }));
       setActivatedElephants(prev => ({ ...prev, [`elephant-${clickedSyllable}`]: true }));
       setVisualRewards(prev => ({ ...prev, [`visual-${clickedSyllable}`]: true }));
-      
-      if (newPlayerInput.length === currentSequence.length) {
-        const totalSyllables = currentSequence.length;
-        const finalBloomBeforeGlow = totalSyllables === 2 ? 75 : 
-                                      totalSyllables === 3 ? 75 : 
-                                      90; 
-        setCentralBloomProgress(finalBloomBeforeGlow);
+
+      // Bloom progress
+      const totalSyllables = currentSequence.length;
+      const progressPerClick = Math.floor(80 / totalSyllables); // Max 80% before lotus tap
+      setCentralBloomProgress(newPlayerInput.length * progressPerClick);
+
+      // Check if all syllables tapped
+      const nextIdx = currentSyllableIndex + 1;
+      if (nextIdx >= currentSequence.length) {
+        // All syllables done → lotus phase
         safeSetTimeout(() => {
           setCentralElementGlowing(true);
+          setGamePhase('waiting_lotus');
+
+          // VO: Tap the lotus/lily — varies by round and game
+          if (voiceGuidanceRef.current?.playVoice) {
+            const centralVO = getCentralTapVO();
+            voiceGuidanceRef.current.playVoice(centralVO, () => {
+              setCanPlayerClick(true);
+              flowInProgressRef.current = false;
+            });
+          } else {
+            setCanPlayerClick(true);
+            flowInProgressRef.current = false;
+          }
         }, 500);
       } else {
-        const totalSyllables = currentSequence.length;
-        const progressPerClick = totalSyllables === 2 ? 50 : 
-                                  totalSyllables === 3 ? 33 : 
-                                  25;
-        setCentralBloomProgress(newPlayerInput.length * progressPerClick);
+        // Move to next syllable
+        setCurrentSyllableIndex(nextIdx);
+        safeSetTimeout(() => {
+          flowInProgressRef.current = false;
+          startSyllableFlow(nextIdx);
+        }, 800);
       }
     });
   };
 
+  // ==========================================
+  // HANDLE LOTUS TAP
+  // ==========================================
   const handleCentralElementClick = () => {
     safeClick(() => {
-      if (!centralElementGlowing) return;
-      
+      if (!centralElementGlowing || !canPlayerClick) return;
+
       setShowIdleHint(false);
+      setCanPlayerClick(false);
       setPlayerInput([...currentSequence, 'lotus']);
-      
-      const completeWordAudio = gameConfig.audio.completeWordFile;
+
+      // Play complete word audio — varies by round
+      const completeWordAudio = gameConfig.audio.completeWordByRound?.[currentRound]
+        || gameConfig.audio.completeWordFile; // fallback
       if (completeWordAudio) {
         const audio = new Audio(completeWordAudio);
         audio.play().catch(e => console.error('Audio play error:', e));
       }
-      
+
       setCentralBloomProgress(100);
       setCentralElementGlowing(false);
-      
+
       safeSetTimeout(() => {
         handleRoundSuccess();
       }, 1500);
     });
   };
 
+  // ==========================================
+  // ROUND SUCCESS
+  // ==========================================
   const handleRoundSuccess = () => {
     setCanPlayerClick(false);
     setGamePhase('celebration');
@@ -347,7 +369,6 @@ const AutoPlayMode = ({
     }
 
     safeSetTimeout(() => {
-      const maxRound = Object.keys(gameConfig.syllables).length;
       if (currentRound < maxRound) {
         startNewRound(currentRound + 1);
       } else {
@@ -362,64 +383,102 @@ const AutoPlayMode = ({
     if (onGameComplete) onGameComplete();
   };
 
-  // Track if game start VO has been played
+  // ==========================================
+  // WAIT BANNER
+  // ==========================================
+  const triggerWaitBanner = (message, playErrorVO = false) => {
+    setWaitBannerMessage(message);
+    setShowWaitBanner(true);
+    safeSetTimeout(() => setShowWaitBanner(false), 1500);
+
+    if (playErrorVO && voiceGuidanceRef.current?.playVoice) {
+      const errorVOs = ['errorOops', 'errorNotQuite', 'errorLetsTryAgain'];
+      const randomError = errorVOs[Math.floor(Math.random() * errorVOs.length)];
+      voiceGuidanceRef.current.playVoice(randomError);
+    }
+  };
+
+  // ==========================================
+  // PAUSE / CONTINUE
+  // ==========================================
+  const handlePause = () => {
+    setShowPauseModal(true);
+    clearAllTimers();
+    flowInProgressRef.current = false;
+  };
+
+  const handleContinue = () => {
+    setShowPauseModal(false);
+    if (gamePhase === 'listening_syllable' || gamePhase === 'waiting_lotus') {
+      setCanPlayerClick(true);
+    } else if (gamePhase === 'waiting') {
+      // Restart the syllable flow
+      startSyllableFlow(currentSyllableIndex);
+    } else if (gamePhase === 'playing_syllable') {
+      startSyllableFlow(currentSyllableIndex);
+    } else if (gamePhase === 'celebration') {
+      if (currentRound < maxRound) {
+        startNewRound(currentRound + 1);
+      } else {
+        handlePhaseComplete();
+      }
+    }
+  };
+
+  const handleExitToMenu = () => {
+    setShowPauseModal(false);
+    clearAllTimers();
+    setGamePhase('waiting');
+    setCurrentRound(1);
+  };
+
+  // ==========================================
+  // INITIALIZATION
+  // ==========================================
   const gameStartVOPlayedRef = useRef(false);
-  // Track if we're currently waiting for game start VO to finish (prevents race condition)
   const waitingForGameStartVORef = useRef(false);
-  // Track if countdown has already been triggered for current round (prevents duplicate triggers)
-  const countdownTriggeredRef = useRef(false);
 
   useEffect(() => {
     if (!isActive || !gameConfig) return;
     if (hasInitializedRef.current) return;
     hasInitializedRef.current = true;
-    gameStartVOPlayedRef.current = false; // Reset for new game
+    gameStartVOPlayedRef.current = false;
     waitingForGameStartVORef.current = false;
-    countdownTriggeredRef.current = false;
     startNewRound(1);
   }, [isActive, gameConfig]);
 
+  // When round starts (gamePhase='waiting'), play game start VO then begin syllable flow
   useEffect(() => {
-    if (gamePhase === 'waiting' && currentSequence.length > 0 && !isCountingDown) {
-      // Guard: Don't re-trigger if VO is still playing or countdown already started
-      if (waitingForGameStartVORef.current || countdownTriggeredRef.current) return;
+    if (gamePhase === 'waiting' && currentSequence.length > 0) {
+      if (waitingForGameStartVORef.current) return;
 
-      // Play game start VO first (only once), then start countdown after it finishes
       if (!gameStartVOPlayedRef.current && voiceGuidanceRef.current?.playVoice) {
         gameStartVOPlayedRef.current = true;
         waitingForGameStartVORef.current = true;
-        // Determine which VO to play based on game
         const gameStartVOKey = gameConfig.id === 'vakratunda' ? 'vakratundaGameStart' : 'mahakayaGameStart';
         voiceGuidanceRef.current.playVoice(gameStartVOKey, () => {
-          // VO finished - now start countdown
           waitingForGameStartVORef.current = false;
-          countdownTriggeredRef.current = true;
-          safeSetTimeout(() => startCountdown(), 500);
+          safeSetTimeout(() => startSyllableFlow(0), 500);
         });
-      } else if (gameStartVOPlayedRef.current) {
-        // VO already played (subsequent rounds), start countdown immediately
-        countdownTriggeredRef.current = true;
-        safeSetTimeout(() => startCountdown(), 1000);
       } else {
-        // No voice guidance, start countdown immediately
-        countdownTriggeredRef.current = true;
-        safeSetTimeout(() => startCountdown(), 1000);
+        // Subsequent rounds — start syllable flow directly (small delay)
+        safeSetTimeout(() => startSyllableFlow(0), 800);
       }
     }
-  }, [gamePhase, currentSequence, isCountingDown, gameConfig]);
+  }, [gamePhase, currentSequence, gameConfig]);
 
-  // --- Render Helpers ---
+  // ==========================================
+  // RENDER HELPERS
+  // ==========================================
 
   const isElephantSinging = (syllable) => singingSyllable === syllable;
-  const isElephantClickable = (index) => canPlayerClick && index === playerInput.length;
-  const hasElephantBeenClicked = (index) => index < playerInput.length;
-  const isElephantActivated = (syllable) => activatedElephants[`elephant-${syllable}`];
+  const hasElephantBeenClicked = (syllable) => roundClicks[`elephant-${syllable}`];
+  const isCurrentTarget = (index) => canPlayerClick && index === currentSyllableIndex && !roundClicks[`elephant-${currentSequence[index]}`];
   const isVisualRewardActive = (syllable) => visualRewards[`visual-${syllable}`];
-  const isNextExpected = (index) => canPlayerClick && index === playerInput.length;
 
   const renderElephant = (syllable, index) => {
     if (!assetGetters) return null;
-    
+
     const position = gameConfig.elements.clicker?.positions?.[index] || { left: '50%', top: '50%' };
     let getImage;
     if (gameConfig.elements.clicker.assetGetters) {
@@ -429,20 +488,14 @@ const AutoPlayMode = ({
     }
     if (!getImage) return null;
 
-    const clickable = isElephantClickable(index);
-    const clicked = hasElephantBeenClicked(index);
+    const clicked = hasElephantBeenClicked(syllable);
     const singing = isElephantSinging(syllable);
-    const activated = isElephantActivated(syllable);
-    const next = isNextExpected(index);
+    const isTarget = isCurrentTarget(index);
 
-    // Dynamic Class Logic
     let className = `${gamePrefix}-clicker-element`;
     if (singing) className += ' singing';
-    const isPlayingPhase = isSequencePlaying || gamePhase === 'playing';
-    // If it's the next clickable item, give it a gentle pulse (not during playback)
-    if (next && !clicked && !isPlayingPhase) className += ' pulse';
-    // If idle time passed, give it the strong glow (not during playback)
-    if (showIdleHint && next && !clicked && !isPlayingPhase) className += ' hint-glow';
+    if (isTarget && !clicked) className += ' pulse';
+    if (showIdleHint && isTarget && !clicked) className += ' hint-glow';
 
     return (
       <button
@@ -452,48 +505,50 @@ const AutoPlayMode = ({
           position: 'absolute',
           left: position.left,
           top: position.top,
-          transform: 'translate(-50%, -50%)', // ✅ FIX: Match CSS base transform to prevent jumping
+          transform: 'translate(-50%, -50%)',
           border: 'none',
           background: 'transparent',
-          cursor: clickable ? 'pointer' : 'default',
+          cursor: isTarget ? 'pointer' : 'default',
           zIndex: 20,
           borderRadius: '50%',
-          opacity: clickable || clicked ? 1 : 0.6,
+          opacity: isTarget || clicked ? 1 : 0.4,
           transition: 'all 0.3s ease'
         }}
         onClick={() => handleElephantClick(index)}
-        disabled={!clickable}
+        disabled={!isTarget}
       >
         <img src={getImage(index)} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-        {/* Only the music note when singing - no other clutter */}
         {singing && <div style={{ position: 'absolute', top: '-20px', left: '50%', fontSize: '20px', animation: 'musicNote 0.6s' }}>🎵</div>}
-        
-        {/* Simple Label */}
-      <div style={{
-  position: 'absolute',
-  bottom: '-34px',
-  left: '50%',
-  transform: 'translateX(-50%)',
-  background: clicked ? '#C8F2C2' : 'rgba(255,255,255,0.85)',
-  color: '#2E7D32',
-  padding: '6px 10px',
-  borderRadius: '14px',
-  fontSize: '14px',
-  fontWeight: 600,
-  letterSpacing: '0.5px',
-  boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-  border: '1px solid rgba(0,0,0,0.08)'
-}}>
+
+   <div
+  style={{
+    position: 'absolute',
+    bottom: '-34px',
+    left: '50%',
+    transform: clicked
+      ? 'translateX(-50%) scale(1.08)'
+      : 'translateX(-50%) scale(1)',
+    transition: 'all 0.18s ease-out',
+    background: clicked ? '#C8F2C2' : 'rgba(255,255,255,0.85)',
+    color: '#2E7D32',
+    padding: '6px 10px',
+    borderRadius: '14px',
+    fontSize: '14px',
+    fontWeight: 600,
+    letterSpacing: '0.5px',
+    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+    border: '1px solid rgba(0,0,0,0.08)'
+  }}
+>
   {syllable}
 </div>
-        
-        {/* Simple Checkmark when done */}
+
+
         {clicked && <div style={{ position: 'absolute', top: '10px', right: '10px', width: '24px', height: '24px', background: '#4CAF50', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>✓</div>}
       </button>
     );
   };
 
-  // ... (renderDualInitials, renderDualRewards, renderPreviousCentralElements omitted - same as before) ...
   const renderDualInitials = (syllable, index) => {
     if (isVisualRewardActive(syllable)) return null;
     if (!gameConfig.elements.rewards?.animals) return null;
@@ -526,48 +581,26 @@ const AutoPlayMode = ({
   const renderPreviousCentralElements = () => {
     if (!gameConfig.elements.centralSynthesis?.showPreviousRounds) return null;
     if (!currentRound || currentRound === 1) return null;
-    
+
     const previousElements = [];
-    
     for (let round = 1; round < currentRound; round++) {
       const position = gameConfig.elements.centralSynthesis.positions[round - 1];
       let getRewardImage;
       const rewardGetters = gameConfig.elements.centralSynthesis.assetGettersByRound;
-      
       if (rewardGetters && rewardGetters[round]) {
         getRewardImage = assetGetters[rewardGetters[round].reward];
       } else {
         const singleGetter = gameConfig.elements.centralSynthesis.assetGetterReward;
-        if (singleGetter) {
-          getRewardImage = assetGetters[singleGetter];
-        }
+        if (singleGetter) getRewardImage = assetGetters[singleGetter];
       }
-      
       if (!getRewardImage || !position) continue;
-      
+
       previousElements.push(
-        <div
-          key={`prev-reward-${round}`}
-          style={{
-            position: 'absolute',
-            left: position.left,
-            top: position.top,
-            width: '100px',
-            height: '100px',
-            transform: 'translate(-50%, -50%)',
-            zIndex: 18,
-            opacity: 0.9
-          }}
-        >
-          <img 
-            src={getRewardImage(0)} 
-            style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
-            alt={`Round ${round} reward`} 
-          />
+        <div key={`prev-reward-${round}`} style={{ position: 'absolute', left: position.left, top: position.top, width: '100px', height: '100px', transform: 'translate(-50%, -50%)', zIndex: 18, opacity: 0.9 }}>
+          <img src={getRewardImage(0)} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt={`Round ${round} reward`} />
         </div>
       );
     }
-    
     return previousElements;
   };
 
@@ -581,7 +614,7 @@ const AutoPlayMode = ({
     let initialKey = gameConfig.elements.centralSynthesis.assetGetterInitial;
     let rewardKey = gameConfig.elements.centralSynthesis.assetGetterReward;
 
-    if (gameConfig.elements.centralSynthesis.assetGettersByRound && 
+    if (gameConfig.elements.centralSynthesis.assetGettersByRound &&
         gameConfig.elements.centralSynthesis.assetGettersByRound[currentRound]) {
         initialKey = gameConfig.elements.centralSynthesis.assetGettersByRound[currentRound].initial;
         rewardKey = gameConfig.elements.centralSynthesis.assetGettersByRound[currentRound].reward;
@@ -597,8 +630,8 @@ const AutoPlayMode = ({
 
     let className = `${gamePrefix}-central-synthesis`;
     if (centralElementGlowing) {
-      className += ' pulse'; // Pulse when ready
-      if (showIdleHint) className += ' hint-glow'; // Strong glow if waiting
+      className += ' pulse';
+      if (showIdleHint) className += ' hint-glow';
     }
 
     return (
@@ -607,34 +640,19 @@ const AutoPlayMode = ({
         onClick={centralElementGlowing ? handleCentralElementClick : undefined}
         style={{
           position: 'absolute',
-          transform: 'translate(-50%, -50%)', // ✅ FIX: Match CSS base transform to prevent jumping
+          transform: 'translate(-50%, -50%)',
           zIndex: 20,
           cursor: centralElementGlowing ? 'pointer' : 'default',
           transition: 'all 0.5s ease',
           pointerEvents: centralElementGlowing ? 'auto' : 'none',
         }}
       >
-        <div style={{
-          position: 'absolute',
-          width: '100%',
-          height: '100%',
-          opacity: isFullyBloomed ? 0 : (1 - centralBloomProgress / 100),
-          transition: 'opacity 0.5s ease'
-        }}>
+        <div style={{ position: 'absolute', width: '100%', height: '100%', opacity: isFullyBloomed ? 0 : (1 - centralBloomProgress / 100), transition: 'opacity 0.5s ease' }}>
           <img src={budImage} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="bud" />
         </div>
-
-        <div style={{
-          position: 'absolute',
-          width: '100%',
-          height: '100%',
-          opacity: centralBloomProgress / 100,
-          transform: `scale(${0.6 + (centralBloomProgress / 100) * 0.4})`,
-          transition: 'all 0.5s ease'
-        }}>
+        <div style={{ position: 'absolute', width: '100%', height: '100%', opacity: centralBloomProgress / 100, transform: `scale(${0.6 + (centralBloomProgress / 100) * 0.4})`, transition: 'all 0.5s ease' }}>
           <img src={bloomImage} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="bloom" />
         </div>
-
         <div
           style={{
             position: 'absolute',
@@ -661,17 +679,8 @@ const AutoPlayMode = ({
         >
           {currentSequence.join('')}
         </div>
-
         {isFullyBloomed && (
-          <div style={{
-            position: 'absolute',
-            top: '-10px',
-            right: '-10px',
-            fontSize: '24px',
-            animation: 'sparkle 1s ease-in-out infinite'
-          }}>
-            ✨
-          </div>
+          <div style={{ position: 'absolute', top: '-10px', right: '-10px', fontSize: '24px', animation: 'sparkle 1s ease-in-out infinite' }}>✨</div>
         )}
       </div>
     );
@@ -684,7 +693,6 @@ const AutoPlayMode = ({
       {/* Pause button hidden per request */}
       <PauseModal isOpen={showPauseModal} onContinue={handleContinue} onExit={handleExitToMenu} />
 
-      {!hideElements && isCountingDown && <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '100px', fontWeight: 'bold', color: gameConfig.theme.primaryColor, zIndex: 100, animation: 'countdownPulse 0.8s' }}>{countdown}</div>}
       {!hideElements && showWaitBanner && <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'rgba(255, 152, 0, 0.95)', color: 'white', padding: '20px 40px', borderRadius: '20px', fontSize: '18px', fontWeight: 'bold', zIndex: 100, animation: 'fadeInOut 1.5s' }}>{waitBannerMessage}</div>}
       {!hideElements && waterSprayPosition && <div style={{ position: 'absolute', left: waterSprayPosition.left, top: waterSprayPosition.top, transform: 'translateY(-100%)', fontSize: '48px', animation: 'waterSplash 1s', zIndex: 100, pointerEvents: 'none' }}>💦</div>}
 
@@ -708,12 +716,9 @@ const AutoPlayMode = ({
 
       <style>{`
         @keyframes fadeInOut { 0% { opacity: 0; transform: translate(-50%,-50%) scale(0.8); } 20% { opacity: 1; transform: translate(-50%,-50%) scale(1.05); } 80% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%,-50%) scale(0.8); } }
-        @keyframes goldenPulse { 0%, 100% { opacity: 0.7; transform: translate(-50%,-50%) scale(1); } 50% { opacity: 1; transform: translate(-50%,-50%) scale(1.05); } }
-        @keyframes crownFloat { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-3px); } }
         @keyframes countdownPulse { 0% { transform: translate(-50%,-50%) scale(0.8); opacity: 0; } 50% { transform: translate(-50%,-50%) scale(1.2); opacity: 1; } }
         @keyframes musicNote { 0% { transform: translateX(-50%) translateY(0); opacity: 0; } 50% { transform: translateX(-50%) translateY(-10px); opacity: 1; } 100% { transform: translateX(-50%) translateY(-20px); opacity: 0; } }
         @keyframes rewardAppear { 0% { transform: translate(-50%,-50%) scale(0) rotate(-180deg); opacity: 0; } 100% { transform: translate(-50%,-50%) scale(1) rotate(0deg); opacity: 1; } }
-        @keyframes rewardGlow { 0%, 100% { filter: brightness(1.3) saturate(1.4); } 50% { filter: brightness(1.5) saturate(1.6); } }
         @keyframes sparkle { 0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); } 50% { opacity: 0.5; transform: translateX(-50%) scale(1.2); } }
         @keyframes waterSplash { 0% { transform: translate(-50%,-100%) scale(0.5); opacity: 1; } 50% { transform: translate(-50%,-150%) scale(1.2); opacity: 0.8; } 100% { transform: translate(-50%,-200%) scale(1.5); opacity: 0; } }
       `}</style>
@@ -721,4 +726,4 @@ const AutoPlayMode = ({
   );
 };
 
-export default AutoPlayMode;
+export default AutoPlayModeV2;

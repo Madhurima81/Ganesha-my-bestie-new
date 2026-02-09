@@ -61,27 +61,26 @@ import flowerMa from './assets/images/mahakaya/ma-flower.png';
 // 1. LOCAL UI COMPONENTS
 // ========================================
 
-const VOGatedButton = ({ visible, onClick, children, style = {} }) => {
+const VOGatedButton = ({ visible, onClick, children, className = '', style = {} }) => {
   if (!visible) return null;
   return (
     <button
       onClick={onClick}
+      className={className}
       style={{
-        padding: '16px 32px',
-        fontSize: '24px',
-        fontWeight: 'bold',
-        color: 'white',
-        background: 'linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%)',
-        border: 'none',
-        borderRadius: '50px',
-        boxShadow: '0 4px 15px rgba(76, 175, 80, 0.3)',
-        cursor: 'pointer',
-        animation: 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-        marginTop: '20px',
-        ...style // Allow custom styles to override defaults
+        ...style,
+        animation: 'buttonFadeIn 0.35s ease-out',
+        opacity: 1,
+        transform: 'translateY(0)'
       }}
     >
       {children}
+      <style>{`
+        @keyframes buttonFadeIn {
+          from { opacity: 0; transform: translateY(12px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </button>
   );
 };
@@ -104,15 +103,15 @@ const powerConfig = {
     name: 'Flexibility Power', 
     image: appVakratunda,
     color: '#4ECDC4',
-    affirmation: 'I am flexible',
-    story: "Just like the elephant's trunk can bend and twist, your mind can be flexible too!"
+    affirmation: 'My trunk bends to find a new way.',
+    story: 'When you feel stuck, try a new way.'
   },
   mahakaya: { 
     name: 'Inner Strength', 
     image: appMahakaya,
     color: '#FF6B35',
-    affirmation: 'I am strong',
-    story: "Just like a big strong elephant, you have a giant strength inside your heart."
+    affirmation: 'I am big and strong — and you have strength inside too.',
+    story: 'Stand tall. Be brave.'
   }
 };
 
@@ -200,6 +199,8 @@ const VakratundaGroveContent = ({
 
   // Controls the Power Unlock Overlay
   const [showPowerOverlay, setShowPowerOverlay] = useState(false);
+  const [showPowerButton, setShowPowerButton] = useState(false);
+  const [showPracticeAgainButton, setShowPracticeAgainButton] = useState(false);
 
   const [currentWord, setCurrentWord] = useState(null);
   const [isAudioOn, setIsAudioOn] = useState(true);
@@ -318,7 +319,7 @@ const VakratundaGroveContent = ({
     setShowSparkle(`${word}-celebration`);
     playWord(word);
 
-    // Transition to Power Unlock Overlay
+    // Transition to Power Unlock Overlay (original timing)
     safeSetTimeout(() => {
       setShowCenteredWord(null);
       setShowSparkle(`${word}-to-sidebar`);
@@ -333,9 +334,18 @@ const VakratundaGroveContent = ({
 
         // Show the Overlay and play power VO
         setShowPowerOverlay(true);
+        setShowPowerButton(false);
+        setShowPracticeAgainButton(false);
         if (isAudioOn) {
           const powerVOKey = word === 'vakratunda' ? 'vakratundaPower' : 'mahakayaPower';
-          playVO(powerVOKey);
+          playVO(powerVOKey, () => {
+            playSfx('chime');
+            setShowPowerButton(true);
+            setShowPracticeAgainButton(true);
+          });
+        } else {
+          setShowPowerButton(true);
+          setShowPracticeAgainButton(true);
         }
 
         sceneActions.updateState({
@@ -451,8 +461,8 @@ const VakratundaGroveContent = ({
                     '--modal-card-border': `4px solid ${theme.accentColor}`,
                     '--modal-text-primary': theme.textPrimary,
                     '--modal-text-secondary': theme.textSecondary,
-                    '--modal-btn-bg': `linear-gradient(135deg, ${theme.accentColor} 0%, ${theme.buttonActiveBg?.split(',')[1]?.replace(')', '') || '#3A8170'} 100%)`,
-                    '--modal-btn-shadow': theme.glowColor
+                    '--modal-btn-bg': 'linear-gradient(135deg, #2E7D6B 0%, #1B5E4B 100%)',
+                    '--modal-btn-shadow': 'rgba(30, 94, 75, 0.4)'
                   }}
                 >
                    <div className="modak-game-sparkles">
@@ -470,10 +480,10 @@ const VakratundaGroveContent = ({
                       border: `4px solid ${theme.accentColor}`
                     }}>
                       <h1 className="game-modal-title" style={{ color: theme.textPrimary }}>
-                        Help Ganesha Save the Forest!
+                        Elephant River
                       </h1>
                       <p className="game-modal-subtitle" style={{ color: theme.textSecondary }}>
-                        Two magical words have special powers to help the animals.
+                        Say the magic sounds and make flowers bloom
                       </p>
 
                       <div className="game-modal-icons">
@@ -495,9 +505,10 @@ const VakratundaGroveContent = ({
                             phase: PHASES.VAKRATUNDA_GAME
                           });
                         }}
+                        className="game-modal-button"
                         style={{
-                          background: `linear-gradient(135deg, ${theme.accentColor} 0%, #3A8170 100%)`,
-                          boxShadow: `0 10px 30px ${theme.glowColor}`
+                          background: 'linear-gradient(135deg, #2E7D6B 0%, #1B5E4B 100%)',
+                          boxShadow: '0 10px 30px rgba(30, 94, 75, 0.4)'
                         }}
                       >
                         Start Learning!
@@ -569,14 +580,16 @@ const VakratundaGroveContent = ({
                     powerConfig[currentWord].story
                   ],
                   emphasis: currentWord === 'vakratunda'
-                    ? "You are ready for the next challenge!"
-                    : "You have mastered both powers!"
+                    ? 'I can try again.'
+                    : currentWord === 'mahakaya'
+                      ? 'I am strong inside.'
+                      : 'You have mastered both powers!'
                 }}
                 icon={powerConfig[currentWord].image}
                 iconColor={powerConfig[currentWord].color}
                 buttonText={currentWord === 'vakratunda' ? "Discover Mahakaya" : "Celebrate!"}
-                showButton={true}
-                showPlayAgain={true}
+                showButton={showPowerButton}
+                showPlayAgain={showPracticeAgainButton}
                 playAgainText="Practice Again"
                 onPlayAgain={handlePlayAgain}
                 onComplete={handlePowerUnlockComplete}
