@@ -22,8 +22,11 @@ const MemoryGameEngine = ({
   savedGameState = null,
   onSaveGameState,
   gamePrefix = 'default',
-  voiceGuidance = null  // ⭐ VOICE GUIDANCE
+  voiceGuidance = null,  // ⭐ VOICE GUIDANCE
+    isPaused = false // <--- 1. ADD THIS HERE
 }) => {
+
+ 
 
   useEffect(() => {
     if (isActive && !gameConfig) {
@@ -34,6 +37,9 @@ const MemoryGameEngine = ({
   const [selectedMode, setSelectedMode] = useState(preSelectedMode);
   const [showModeModal, setShowModeModal] = useState(!skipModeSelection && !preSelectedMode);
   const [manualModeKey, setManualModeKey] = useState(0);
+
+   // ⭐ ADD THIS DEBUG LOG
+  console.log("🚂 Engine Rendered. isPaused:", isPaused, "Mode:", selectedMode);
 
 // Initialize mode
 useEffect(() => {
@@ -178,6 +184,8 @@ useEffect(() => {
   assetGetters,
   gamePrefix,
   voiceGuidance,  // ⭐ VOICE GUIDANCE
+      isPaused, // <--- 2. ADD THIS HERE
+
 
   onPhaseComplete: (data) => {
     if (data?.isEarlyExit) {

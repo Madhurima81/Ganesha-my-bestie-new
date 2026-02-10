@@ -111,7 +111,7 @@ const handleAction = (callback, skipComplete = false) => {
                   </div>
                 </>
               ) : containerType === 'smartwatch' ? (
-                 <img src="/images/smartwatch-base.png" alt="Smartwatch" className="backpack-image" />
+                 <img src="/images/smartwatch-screen.png" alt="Smartwatch" className="backpack-image" />
               ) : (
                  <img src="/images/meaning-journal.png" alt="Journal" className="backpack-image" />
               )}

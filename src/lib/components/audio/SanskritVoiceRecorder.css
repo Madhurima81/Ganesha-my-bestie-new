@@ -1,0 +1,458 @@
+/* SanskritVoiceRecorder.css — Enhanced Zone Theme */
+
+/* 1. Import Fonts (Baloo 2 for fun headers, Nunito for readable text) */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap');
+
+:root {
+  /* --- Palette --- */
+  --svr-bg: rgba(60, 40, 20, 0.65); /* Darker overlay for focus */
+
+  --svr-card-bg: #FFF9F0;
+  --svr-border: #EBCBAE;
+  --svr-dashed: #D4B495;
+
+  /* Primary (Orange) */
+  --svr-primary: #FF8C42;
+  --svr-primary-dark: #D6691E; /* For button depth */
+  
+  /* Accent (Yellow) */
+  --svr-accent: #FFD93D;
+  --svr-accent-dark: #D9B018; /* For button depth */
+  --svr-accent-soft: #FFF5D6;
+
+  /* Text */
+  --svr-text: #5C3C28;
+  --svr-text-light: #8A6A55;
+
+  /* State Colors */
+  --svr-danger: #FF6B6B;
+  --svr-danger-dark: #D63E3E;
+  --svr-success: #6BCF7F;
+  --svr-success-dark: #45A056;
+}
+
+/* --- Animations --- */
+@keyframes svr-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes svr-popIn {
+  0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* --- Overlay --- */
+.svr-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--svr-bg);
+  backdrop-filter: blur(4px); /* Modern blur effect */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  padding: 20px;
+  font-family: 'Nunito', sans-serif; /* Default font */
+}
+
+/* --- Card (The Main Container) --- */
+.svr-card {
+  background: var(--svr-card-bg);
+  width: 100%;
+  max-width: 900px;
+  
+  /* Added Height & Spacing */
+  min-height: 600px; 
+  padding: 50px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centers content vertically */
+  
+  border-radius: 40px;
+  border: 6px solid var(--svr-border);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.25), 
+              inset 0 -10px 0 rgba(0,0,0,0.05); /* Inner shadow for depth */
+  
+  position: relative;
+  animation: svr-popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* --- Close Button --- */
+/* --- Close Button (High Visibility) --- */
+.svr-close {
+  position: absolute;
+  top: -20px;  /* Moves it slightly outside/overlapping the top edge */
+  right: -20px; /* Moves it slightly outside/overlapping the right edge */
+  background: #FF6B6B; /* Bright Red */
+  color: white;
+  border: 4px solid #FFF9F0; /* Matches card background to look like a cutout */
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-family: sans-serif;
+  font-size: 32px;
+  line-height: 1;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  z-index: 100; /* Ensures it sits on top of everything */
+  padding-bottom: 4px; /* Optical adjustment */
+  transition: transform 0.2s;
+}
+
+.svr-close:hover {
+  background: #E04F4F;
+  transform: scale(1.1);
+}
+
+.svr-close:active {
+  transform: translateY(4px);
+  box-shadow: none;
+}
+
+/* --- Typography --- */
+.svr-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.svr-icon-wrap {
+  margin-bottom: 16px;
+}
+
+.svr-icon {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+}
+
+.svr-title {
+  font-family: 'Baloo 2', cursive;
+  color: var(--svr-text);
+  font-size: 38px; /* Bigger */
+  font-weight: 800;
+  margin: 0 0 10px 0;
+  letter-spacing: -0.5px;
+}
+
+.svr-prompt {
+  font-family: 'Nunito', sans-serif;
+  color: var(--svr-text-light);
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 5px 0;
+}
+
+.svr-word {
+  font-family: 'Baloo 2', cursive;
+  color: var(--svr-primary);
+  font-size: 28px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* --- Practice Box (Dashed Area) --- */
+.svr-practice {
+  background: #FFFDF9;
+  border: 4px dashed var(--svr-dashed);
+  border-radius: 30px;
+  padding: 35px; /* More breathing room */
+  margin: 30px 0;
+  position: relative;
+}
+
+.svr-practice-title {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #FFF9F0;
+  padding: 0 15px;
+  color: var(--svr-dashed);
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* --- Syllable Buttons --- */
+.svr-syllables {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.svr-syllable-btn {
+  font-family: 'Baloo 2', cursive;
+  background: white;
+  border: 3px solid var(--svr-border);
+  border-bottom: 6px solid var(--svr-border); /* 3D effect */
+  color: var(--svr-text);
+  padding: 14px 24px;
+  border-radius: 18px;
+  font-size: 22px;
+  font-weight: 700;
+  min-width: 70px;
+  transition: all 0.1s;
+}
+
+.svr-syllable-btn:hover:not(:disabled) {
+  background: var(--svr-accent-soft);
+  transform: translateY(-2px);
+}
+
+.svr-syllable-btn:active:not(:disabled) {
+  border-bottom: 3px solid var(--svr-border);
+  transform: translateY(3px);
+}
+
+/* --- "Hear Word" Button --- */
+.svr-word-btn {
+  font-family: 'Baloo 2', cursive;
+  background: var(--svr-accent);
+  color: #705200;
+  border: none;
+  border-bottom: 6px solid var(--svr-accent-dark); /* 3D effect */
+  padding: 16px 32px;
+  border-radius: 50px;
+  font-size: 19px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+  justify-content: center;
+  transition: all 0.1s;
+}
+
+.svr-word-btn:hover:not(:disabled) {
+  filter: brightness(1.05);
+  transform: translateY(-2px);
+}
+
+.svr-word-btn:active:not(:disabled) {
+  border-bottom: 0px solid transparent;
+  transform: translateY(6px);
+  margin-bottom: 6px; /* Prevents layout shift */
+}
+
+/* --- Audio Progress Bar --- */
+.svr-audio-progress {
+  margin-top: 20px;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.svr-progress-bar {
+  background: #EFEFEF;
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.svr-progress-fill {
+  height: 100%;
+  background: var(--svr-primary);
+  border-radius: 6px;
+  transition: width 0.1s linear;
+}
+
+.svr-progress-time {
+  font-family: 'Nunito', monospace;
+  font-size: 14px;
+  color: var(--svr-text-light);
+  margin-top: 6px;
+  text-align: right;
+  font-weight: 700;
+}
+
+/* --- Recording Status --- */
+.svr-status-box {
+  background: #FFF0F0;
+  border: 3px solid var(--svr-danger);
+  color: var(--svr-danger-dark);
+  padding: 20px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Baloo 2', cursive;
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 25px;
+  animation: svr-pulse 2s infinite;
+}
+
+.svr-recording-dot {
+  width: 16px;
+  height: 16px;
+  background-color: var(--svr-danger);
+  border-radius: 50%;
+  margin-right: 12px;
+  box-shadow: 0 0 10px var(--svr-danger);
+}
+
+/* --- Playback Card (New Recording) --- */
+.svr-new-recording-card {
+  background: #F0FFF4;
+  border: 3px solid var(--svr-success);
+  border-radius: 25px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 20px rgba(107, 207, 127, 0.15);
+}
+
+.svr-player-title {
+  font-family: 'Baloo 2', cursive;
+  color: var(--svr-success-dark);
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* --- Primary Controls (Mic / Stop) --- */
+.svr-controls-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.svr-controls-group {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.svr-btn-start {
+  font-family: 'Baloo 2', cursive;
+  background: var(--svr-primary);
+  color: white;
+  border: none;
+  border-bottom: 6px solid var(--svr-primary-dark); /* 3D */
+  padding: 20px 48px;
+  border-radius: 24px;
+  font-size: 24px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.1s;
+  box-shadow: 0 10px 20px rgba(255, 140, 66, 0.3);
+}
+
+.svr-btn-start:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.svr-btn-start:active:not(:disabled) {
+  border-bottom: 0px;
+  transform: translateY(6px);
+  box-shadow: none;
+}
+
+.svr-btn-stop {
+  font-family: 'Baloo 2', cursive;
+  background: var(--svr-danger);
+  color: white;
+  border: none;
+  border-bottom: 6px solid var(--svr-danger-dark);
+  padding: 20px 48px;
+  border-radius: 24px;
+  font-size: 24px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.svr-btn-stop:active {
+  border-bottom: 0px;
+  transform: translateY(6px);
+}
+
+/* --- Secondary Controls (Save/Retry) --- */
+.svr-btn-secondary,
+.svr-btn-success,
+.svr-btn-accent {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  padding: 14px 24px;
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.svr-btn-secondary {
+  background: #E0E0E0;
+  color: #555;
+  border-bottom: 4px solid #BBBBBB;
+}
+
+.svr-btn-success {
+  background: var(--svr-success);
+  color: white;
+  border-bottom: 4px solid var(--svr-success-dark);
+}
+
+.svr-btn-accent {
+  background: var(--svr-accent);
+  color: #705200;
+  border-bottom: 4px solid var(--svr-accent-dark);
+}
+
+.svr-btn-secondary:active,
+.svr-btn-success:active,
+.svr-btn-accent:active {
+  border-bottom: 0px;
+  transform: translateY(4px);
+}
+
+/* --- Skip Link --- */
+.svr-skip-section {
+  margin-top: 30px;
+  text-align: center;
+  border-top: 2px dashed var(--svr-dashed);
+  padding-top: 20px;
+  width: 100%;
+}
+
+.svr-btn-skip {
+  background: transparent;
+  font-family: 'Nunito', sans-serif;
+  color: var(--svr-text-light);
+  border: 2px solid transparent;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.svr-btn-skip:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+/* --- Locked / Disabled State --- */
+.is-locked {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+  filter: grayscale(0.8);
+  pointer-events: none;
+}

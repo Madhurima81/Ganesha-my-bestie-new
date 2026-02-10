@@ -413,24 +413,39 @@ useEffect(() => {
   }
 }, [sceneState?.phase, sceneState?.masteryShown, profileName]);
 
-  // Auto-glow effect - triggers 20 seconds after phase starts
+  // Repeating auto-glow hint — first glow at 20s, then pulse off/on every 12-15s
   useEffect(() => {
+    let firstTimer;
+    let repeatTimer;
+
     const glowPhases = [
       PHASES.MOOSHIKA_SEARCH,
       PHASES.MODAKS_UNLOCKED,
       PHASES.ROCK_VISIBLE
     ];
-    
+
     // CRITICAL: Only start timer if welcome modal has been dismissed
-    if (glowPhases.includes(sceneState?.phase) && 
-        sceneState?.welcomeShown && 
-        !showPowerModal && 
+    if (glowPhases.includes(sceneState?.phase) &&
+        sceneState?.welcomeShown &&
+        !showPowerModal &&
         !showPowerMission) {
-      const timer = setTimeout(() => {
+
+      // First glow after 20s
+      firstTimer = setTimeout(() => {
         setShowHintGlow(true);
+
+        // Then pulse off/on every 12-15s to re-catch attention
+        repeatTimer = setInterval(() => {
+          setShowHintGlow(false);
+          // Brief off-period (600ms) then glow back on
+          setTimeout(() => setShowHintGlow(true), 600);
+        }, 12000 + Math.floor(Math.random() * 3000)); // 12-15s
       }, 20000);
-      
-      return () => clearTimeout(timer);
+
+      return () => {
+        clearTimeout(firstTimer);
+        clearInterval(repeatTimer);
+      };
     } else {
       setShowHintGlow(false);
     }

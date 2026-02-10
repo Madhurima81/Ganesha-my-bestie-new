@@ -259,6 +259,7 @@ const NewModakSceneMVPContent = ({
   // ========================================
   const {
     playVoice,
+    stopVoice,
     playSfx,
     playTap,
     playCorrect,
@@ -498,8 +499,11 @@ const NewModakSceneMVPContent = ({
     }
   }, [sceneState.phase]);
 
-  // Auto-glow effect
+  // Repeating auto-glow hint — first glow at 20s, then pulse off/on every 12-15s
   useEffect(() => {
+    let firstTimer;
+    let repeatTimer;
+
     const glowPhases = [
       PHASES.MOOSHIKA_SEARCH,
       PHASES.MODAKS_UNLOCKED,
@@ -507,11 +511,22 @@ const NewModakSceneMVPContent = ({
     ];
 
     if (glowPhases.includes(sceneState?.phase) && sceneState?.welcomeShown) {
-      const timer = setTimeout(() => {
+      // First glow after 20s
+      firstTimer = setTimeout(() => {
         setShowHintGlow(true);
+
+        // Then pulse off/on every 12-15s to re-catch attention
+        repeatTimer = setInterval(() => {
+          setShowHintGlow(false);
+          // Brief off-period (600ms) then glow back on
+          setTimeout(() => setShowHintGlow(true), 600);
+        }, 12000 + Math.floor(Math.random() * 3000)); // 12-15s
       }, 20000);
 
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(firstTimer);
+        clearInterval(repeatTimer);
+      };
     } else {
       setShowHintGlow(false);
     }
@@ -586,7 +601,8 @@ const NewModakSceneMVPContent = ({
 
     if (moundIndex === sceneState.correctMound) {
       // 1. STOP THE SEARCH VOICE IMMEDIATELY
-      stopIdleTimer(); 
+      stopVoice(); // Cut any playing VO so it doesn't overlap with success sound
+      stopIdleTimer();
       stopMusic(); // Optional: Dip music volume if you have that capability, or stop it
 
       // 2. PLAY SUCCESS VOICE (The "Yay" moment)
@@ -624,7 +640,8 @@ const NewModakSceneMVPContent = ({
       }, 6000); 
 
     } else {
-      // Wrong mound - play SFX + VO
+      // Wrong mound - stop any idle hint VO, then play SFX + VO
+      stopVoice();
       playWrong();
       playVoice('wrongTap'); // Add voice feedback
       setShowSparkle(`mound-${moundIndex}`);
@@ -635,6 +652,7 @@ const NewModakSceneMVPContent = ({
 
   const handleModakClick = (modakIndex) => {
     recordInteraction();
+    stopVoice(); // Cut any playing VO (idle hint / collect instruction) before tap SFX
     playTap();
 
     if (!sceneState.modaksUnlocked) return;
@@ -710,6 +728,7 @@ const NewModakSceneMVPContent = ({
 
     const modakIndex = data.index;
     recordInteraction();
+    stopVoice(); // Cut any playing VO (idle hint / feed instruction) before feed SFX
     playTap();
 
     const newCollectedModaks = sceneState.collectedModaks.filter(i => i !== modakIndex);

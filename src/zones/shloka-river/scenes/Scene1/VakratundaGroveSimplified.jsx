@@ -228,12 +228,17 @@ const VakratundaGroveContent = ({
     playCorrect,
     playWrong,
     isPlaying: isVOPlaying,
-    setCurrentPhase
+    setCurrentPhase,
+    startIdleTimer,
+    stopIdleTimer
   } = useVoiceGuidance(zoneId, sceneId, {
     enableMusic: false,
     voiceVolume: 1,
     sfxVolume: 0.7
   });
+
+  // Track whether recorder popup is open — pause game voice when it is
+  const [isRecorderOpen, setIsRecorderOpen] = useState(false);
 
   const safeSetTimeout = (callback, delay) => {
     const id = setTimeout(callback, delay);
@@ -580,6 +585,7 @@ const VakratundaGroveContent = ({
               savedGameState={sceneState.vakratundaGameState}
               onSaveGameState={(state) => handleSaveComponentState('vakratundaGame', state)}
               voiceGuidance={{ playVoice: playVO, playSfx, stopVoice }}
+              isPaused={isRecorderOpen}
             />
 
             {/* MAHAKAYA MEMORY GAME */}
@@ -599,6 +605,7 @@ const VakratundaGroveContent = ({
               savedGameState={sceneState.mahakayaGameState}
               onSaveGameState={(state) => handleSaveComponentState('mahakayaGame', state)}
               voiceGuidance={{ playVoice: playVO, playSfx, stopVoice }}
+              isPaused={isRecorderOpen}
             />
 
             {/* PERSISTENT BOY CHARACTER (Commented out per user request) */}
@@ -662,6 +669,17 @@ const VakratundaGroveContent = ({
               unlockedApps={sceneState.unlockedApps || {}}
               savedRecordings={savedRecordings}
               isReload={isReload}
+       onPopupOpen={() => {
+    console.log("🎤 Recorder Opening - Pausing Game"); // <--- Add this log
+    stopVoice();
+    stopIdleTimer();
+    setIsRecorderOpen(true); // <--- THIS MUST RUN
+  }}
+  onPopupClose={() => {
+    console.log("🎤 Recorder Closing - Resuming Game"); // <--- Add this log
+    setIsRecorderOpen(false);
+    startIdleTimer();
+  }}
             />
 
             {showSparkle === 'final-fireworks' && (

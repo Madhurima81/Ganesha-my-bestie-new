@@ -88,7 +88,7 @@ const appInfo = {
   }
 };
 
-const AppSidebar = ({ unlockedApps = {}, onAppClick, className = '', savedRecordings = {}, onSaveRecording }) => {
+const AppSidebar = ({ unlockedApps = {}, onAppClick, className = '', savedRecordings = {}, onSaveRecording, onPopupOpen, onPopupClose }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedApp, setSelectedApp] = useState(null);
   const [animatingApp, setAnimatingApp] = useState(null);
@@ -103,6 +103,7 @@ const AppSidebar = ({ unlockedApps = {}, onAppClick, className = '', savedRecord
       setTappedApps(prev => ({ ...prev, [appId]: true }));
       setSelectedApp(appId);
       setShowPopup(true);
+      onPopupOpen?.(); // Tell parent to pause game/voice
       if (onAppClick) {
         onAppClick(appId);
       }
@@ -112,6 +113,7 @@ const AppSidebar = ({ unlockedApps = {}, onAppClick, className = '', savedRecord
   const closePopup = () => {
     setShowPopup(false);
     setSelectedApp(null);
+    onPopupClose?.(); // Tell parent to resume game/voice
   };
 
   // Trigger animation when an app is newly unlocked
