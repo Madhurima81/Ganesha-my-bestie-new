@@ -306,6 +306,10 @@ const VakratundaGroveContent = ({
   const handlePhaseComplete = (word) => {
     console.log(`${word} learned!`);
 
+    // Stop idle timer — game is done, no more hints
+    stopIdleTimer();
+    setCurrentPhase(null);
+
     // Play celebration VO
     if (isAudioOn) {
       playVO('chantWordReveal');
@@ -676,9 +680,13 @@ const VakratundaGroveContent = ({
     setIsRecorderOpen(true); // <--- THIS MUST RUN
   }}
   onPopupClose={() => {
-    console.log("🎤 Recorder Closing - Resuming Game"); // <--- Add this log
+    console.log("🎤 Recorder Closing - Resuming Game");
     setIsRecorderOpen(false);
-    startIdleTimer();
+    // Only restart idle timer if we're in an active game phase (not celebration/overlay/complete)
+    const activeGamePhases = [PHASES.VAKRATUNDA_GAME, PHASES.MAHAKAYA_GAME];
+    if (activeGamePhases.includes(sceneState.phase) && !showPowerOverlay && !showCenteredWord) {
+      startIdleTimer();
+    }
   }}
             />
 

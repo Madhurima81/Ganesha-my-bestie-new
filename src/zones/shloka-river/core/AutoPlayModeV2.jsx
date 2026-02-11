@@ -56,7 +56,15 @@ const AutoPlayModeV2 = ({
   const flowInProgressRef = useRef(false);
   
   // Track audio for pausing
-  const currentAudioRef = useRef(null); 
+  const currentAudioRef = useRef(null);
+
+  // Track last VO and child action state for robust resume
+  const lastInterruptibleVORef = useRef(null);
+  const wasChildActionPendingRef = useRef(false);
+
+  // Ref-based pause tracking (avoids stale closures in audio callbacks)
+  const isPausedRef = useRef(isPaused);
+  useEffect(() => { isPausedRef.current = isPaused; }, [isPaused]);
 
   const clearAllTimers = () => {
     timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
@@ -117,32 +125,55 @@ const AutoPlayModeV2 = ({
     } else {
       // === RESUME LOGIC ===
       if (isActive && hasInitializedRef.current) {
-        console.log('▶️ AutoPlayModeV2: RESUMING');
-        
+        console.log('▶️ AutoPlayModeV2: RESUMING from phase:', gamePhase);
+
+        // Don't resume if game is already complete
+        if (gamePhase === 'phase_complete') return;
+
         if (gamePhase === 'playing_syllable') {
-           // Case 1: Paused during the "Listen" or "Syllable Sound"
-           // Restart the whole flow so they hear it clearly
+           // Paused during "Listen" VO or syllable audio → restart flow
            startSyllableFlow(currentSyllableIndex);
 
         } else if (gamePhase === 'listening_syllable') {
-           // Case 2: Paused while waiting for child to Tap Elephant
+           // Paused while waiting for child to tap elephant → re-enable + replay last VO
+           // Round 3 uses 'instructionTapTheElephant', other rounds use 'instructionTapAndRepeat'
            setCanPlayerClick(true);
-           // ⭐ FIX: Replay "Tap and Repeat" immediately
+           wasChildActionPendingRef.current = true;
            if (voiceGuidanceRef.current?.playVoice) {
-              voiceGuidanceRef.current.playVoice('instructionTapAndRepeat');
+              const replayVO = lastInterruptibleVORef.current || 'instructionTapAndRepeat';
+              voiceGuidanceRef.current.playVoice(replayVO);
            }
 
         } else if (gamePhase === 'waiting_lotus') {
-           // Case 3: Paused while waiting for child to Tap Lotus
+           // Paused while waiting for child to tap lotus → re-enable + replay VO
            setCanPlayerClick(true);
-           // ⭐ FIX: Replay "Tap the Lotus/Lily" immediately
+           wasChildActionPendingRef.current = true;
            if (voiceGuidanceRef.current?.playVoice) {
               const centralVO = getCentralTapVO();
               voiceGuidanceRef.current.playVoice(centralVO);
            }
 
+        } else if (gamePhase === 'celebration') {
+           // Paused during celebration → resume round transition timer
+           safeSetTimeout(() => {
+             if (currentRound < maxRound) {
+               startNewRound(currentRound + 1);
+             } else {
+               handlePhaseComplete();
+             }
+           }, 1500);
+
         } else if (gamePhase === 'waiting' && currentSequence.length > 0) {
            startSyllableFlow(currentSyllableIndex);
+
+        } else {
+           // Fallback: if child action was pending, replay last VO
+           if (wasChildActionPendingRef.current) {
+             setCanPlayerClick(true);
+             if (lastInterruptibleVORef.current && voiceGuidanceRef.current?.playVoice) {
+               voiceGuidanceRef.current.playVoice(lastInterruptibleVORef.current);
+             }
+           }
         }
       }
     }
@@ -231,6 +262,8 @@ const AutoPlayModeV2 = ({
     setCanPlayerClick(false);
     setShowIdleHint(false);
     flowInProgressRef.current = false;
+    wasChildActionPendingRef.current = false;
+    lastInterruptibleVORef.current = null;
 
     setCentralElementGlowing(false);
     setCentralBloomProgress(0);
@@ -271,12 +304,15 @@ const AutoPlayModeV2 = ({
     if (isLastRound) {
       setGamePhase('listening_syllable');
       setCanPlayerClick(true);
+      wasChildActionPendingRef.current = true;
       if (voiceGuidanceRef.current?.playVoice) {
+        lastInterruptibleVORef.current = 'instructionTapTheElephant';
         voiceGuidanceRef.current.playVoice('instructionTapTheElephant');
       }
     } else {
       setGamePhase('playing_syllable');
       setCanPlayerClick(false);
+      wasChildActionPendingRef.current = false;
 
       const runAudioSequence = () => {
           if (isPaused) { flowInProgressRef.current = false; return; }
@@ -284,14 +320,16 @@ const AutoPlayModeV2 = ({
           setSingingSyllable(syllable);
           playSyllableAudio(syllable, () => {
               setSingingSyllable(null);
-              
+
               if (isPaused) { flowInProgressRef.current = false; return; }
 
               safeSetTimeout(() => {
                 setGamePhase('listening_syllable');
                 setCanPlayerClick(true);
+                wasChildActionPendingRef.current = true;
                 flowInProgressRef.current = false;
                 if (voiceGuidanceRef.current?.playVoice && !isPaused) {
+                  lastInterruptibleVORef.current = 'instructionTapAndRepeat';
                   voiceGuidanceRef.current.playVoice('instructionTapAndRepeat');
                 }
               }, naturalDelay(400, 700));
@@ -299,6 +337,7 @@ const AutoPlayModeV2 = ({
       };
 
       if (voiceGuidanceRef.current?.playVoice) {
+        lastInterruptibleVORef.current = 'instructionListen';
         voiceGuidanceRef.current.playVoice('instructionListen', () => {
              safeSetTimeout(runAudioSequence, naturalDelay(500, 800));
         });
@@ -321,6 +360,7 @@ const AutoPlayModeV2 = ({
 
       setShowIdleHint(false);
       setCanPlayerClick(false);
+      wasChildActionPendingRef.current = false;
 
       if (gameConfig.id === 'vakratunda' || gameConfig.id === 'mahakaya') {
         const position = gameConfig.elements.clicker.positions[syllableIndex];
@@ -342,22 +382,30 @@ const AutoPlayModeV2 = ({
 
       setSingingSyllable(clickedSyllable);
       playSyllableAudio(clickedSyllable, () => {
+        // Guard: if paused while audio was playing, don't continue the flow
+        if (isPausedRef.current) return;
+
         setSingingSyllable(null);
         const nextIdx = currentSyllableIndex + 1;
-        
+
         if (nextIdx >= currentSequence.length) {
           safeSetTimeout(() => {
+            if (isPausedRef.current) return;
             setCentralElementGlowing(true);
             setGamePhase('waiting_lotus');
             setCanPlayerClick(true);
+            wasChildActionPendingRef.current = true;
             flowInProgressRef.current = false;
-            if (voiceGuidanceRef.current?.playVoice && !isPaused) {
-              voiceGuidanceRef.current.playVoice(getCentralTapVO());
+            if (voiceGuidanceRef.current?.playVoice) {
+              const centralVO = getCentralTapVO();
+              lastInterruptibleVORef.current = centralVO;
+              voiceGuidanceRef.current.playVoice(centralVO);
             }
           }, naturalDelay(400, 700));
         } else {
           setCurrentSyllableIndex(nextIdx);
           safeSetTimeout(() => {
+            if (isPausedRef.current) return;
             flowInProgressRef.current = false;
             startSyllableFlow(nextIdx);
           }, naturalDelay(600, 1000));
@@ -373,6 +421,7 @@ const AutoPlayModeV2 = ({
 
       setShowIdleHint(false);
       setCanPlayerClick(false);
+      wasChildActionPendingRef.current = false;
       setPlayerInput([...currentSequence, 'lotus']);
       setShowLotusSparkles(true);
       setCentralBloomProgress(100);
@@ -381,7 +430,9 @@ const AutoPlayModeV2 = ({
       const completeWordAudio = gameConfig.audio.completeWordByRound?.[currentRound] || gameConfig.audio.completeWordFile;
 
       const proceedAfterAudio = () => {
+        if (isPausedRef.current) return;
         safeSetTimeout(() => {
+          if (isPausedRef.current) return;
           setShowLotusSparkles(false);
           handleRoundSuccess();
         }, naturalDelay(400, 700));
@@ -389,9 +440,10 @@ const AutoPlayModeV2 = ({
 
       if (completeWordAudio) {
         const audio = new Audio(completeWordAudio);
-        audio.onended = proceedAfterAudio;
-        audio.onerror = () => proceedAfterAudio();
-        audio.play().catch(() => proceedAfterAudio());
+        currentAudioRef.current = audio; // Track so pause can stop it
+        audio.onended = () => { currentAudioRef.current = null; proceedAfterAudio(); };
+        audio.onerror = () => { currentAudioRef.current = null; proceedAfterAudio(); };
+        audio.play().catch(() => { currentAudioRef.current = null; proceedAfterAudio(); });
       } else {
         safeSetTimeout(proceedAfterAudio, 500);
       }
@@ -405,6 +457,7 @@ const AutoPlayModeV2 = ({
     if (voiceGuidanceRef.current?.playVoice) {
       const encouragements = ['encourageAmazing', 'encourageFantastic', 'encourageGreatJob', 'encouragePerfect', 'encourageWellDone', 'encourageWonderful'];
       const randomEncouragement = encouragements[Math.floor(Math.random() * encouragements.length)];
+      lastInterruptibleVORef.current = randomEncouragement;
       voiceGuidanceRef.current.playVoice(randomEncouragement);
     }
 
@@ -436,9 +489,37 @@ const AutoPlayModeV2 = ({
   const handlePause = () => { setShowPauseModal(true); clearAllTimers(); flowInProgressRef.current = false; };
   const handleContinue = () => {
     setShowPauseModal(false);
-    if (gamePhase === 'listening_syllable' || gamePhase === 'waiting_lotus') { setCanPlayerClick(true); }
-    else if (gamePhase === 'waiting') { startSyllableFlow(currentSyllableIndex); }
-    else if (gamePhase === 'playing_syllable') { startSyllableFlow(currentSyllableIndex); }
+    if (gamePhase === 'playing_syllable') {
+      startSyllableFlow(currentSyllableIndex);
+    } else if (gamePhase === 'listening_syllable') {
+      setCanPlayerClick(true);
+      wasChildActionPendingRef.current = true;
+      if (voiceGuidanceRef.current?.playVoice) {
+        const replayVO = lastInterruptibleVORef.current || 'instructionTapAndRepeat';
+        voiceGuidanceRef.current.playVoice(replayVO);
+      }
+    } else if (gamePhase === 'waiting_lotus') {
+      setCanPlayerClick(true);
+      wasChildActionPendingRef.current = true;
+      if (voiceGuidanceRef.current?.playVoice) {
+        voiceGuidanceRef.current.playVoice(getCentralTapVO());
+      }
+    } else if (gamePhase === 'celebration') {
+      safeSetTimeout(() => {
+        if (currentRound < maxRound) {
+          startNewRound(currentRound + 1);
+        } else {
+          handlePhaseComplete();
+        }
+      }, 1500);
+    } else if (gamePhase === 'waiting') {
+      startSyllableFlow(currentSyllableIndex);
+    } else if (wasChildActionPendingRef.current) {
+      setCanPlayerClick(true);
+      if (lastInterruptibleVORef.current && voiceGuidanceRef.current?.playVoice) {
+        voiceGuidanceRef.current.playVoice(lastInterruptibleVORef.current);
+      }
+    }
   };
   const handleExitToMenu = () => { setShowPauseModal(false); clearAllTimers(); setGamePhase('waiting'); setCurrentRound(1); };
 

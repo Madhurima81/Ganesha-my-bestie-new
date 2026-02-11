@@ -89,7 +89,7 @@ const symbolInfo = {
   }
 };
 
-const SymbolSidebar = ({ discoveredSymbols = {}, onSymbolClick, className = '' }) => {
+const SymbolSidebar = ({ discoveredSymbols = {}, onSymbolClick, onPopupOpen, onPopupClose, className = '' }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedSymbol, setSelectedSymbol] = useState(null);
   const [animatingSymbol, setAnimatingSymbol] = useState(null);
@@ -105,6 +105,7 @@ const SymbolSidebar = ({ discoveredSymbols = {}, onSymbolClick, className = '' }
 
       setSelectedSymbol(symbolId);
       setShowPopup(true);
+      onPopupOpen?.();
       if (onSymbolClick) {
         onSymbolClick(symbolId);
       }
@@ -114,6 +115,7 @@ const SymbolSidebar = ({ discoveredSymbols = {}, onSymbolClick, className = '' }
   const closePopup = () => {
     setShowPopup(false);
     setSelectedSymbol(null);
+    onPopupClose?.();
   };
 
   // Trigger animation when a symbol is newly discovered

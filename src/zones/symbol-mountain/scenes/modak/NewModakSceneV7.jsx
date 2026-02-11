@@ -1391,6 +1391,13 @@ Sweet rewards come when we try our best."
                 onSymbolClick={(symbolId) => {
                   console.log(`Sidebar symbol clicked: ${symbolId}`);
                 }}
+                onPopupOpen={() => {
+                  stopVoice();
+                  stopIdleTimer();
+                }}
+                onPopupClose={() => {
+                  startIdleTimer();
+                }}
               />
             )}
           </div>
