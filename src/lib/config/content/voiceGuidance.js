@@ -377,6 +377,226 @@ export const VOICE_SCRIPTS = {
   },
 
   // ========================================
+  // ABOUT ME HUT ZONE
+  // ========================================
+  'about-me-hut': {
+    'family-tree': {
+      // ========================================
+      // OPENING MODAL
+      // ========================================
+      welcome: {
+        text: "This is my family. They make me who I am. Let me show you the people I love!",
+        file: 'family-tree-opening-modal.wav'
+      },
+
+      // ========================================
+      // GANESHA PHASE - INSTRUCTIONS
+      // ========================================
+      tapCircle: {
+        text: "Tap a circle to meet my family!",
+        file: 'family-tree-tap-circle.wav'
+      },
+
+      // ========================================
+      // GANESHA PHASE - QUESTIONS
+      // ========================================
+      whoFather: {
+        text: "Who is Ganesha's Father?",
+        file: 'family-tree-who-father.wav'
+      },
+      whoMother: {
+        text: "Who is Ganesha's Mother?",
+        file: 'family-tree-who-mother.wav'
+      },
+      whoBrother: {
+        text: "Who is Ganesha's Brother?",
+        file: 'family-tree-who-brother.wav'
+      },
+      whoMyself: {
+        text: "Who is Ganesha?",
+        file: 'family-tree-who-myself.wav'
+      },
+
+      // ========================================
+      // GANESHA PHASE - DEITY NAMES
+      // ========================================
+      shiva: {
+        text: "Shiva Ji",
+        file: 'shiva.wav'
+      },
+      parvati: {
+        text: "Parvati Mata",
+        file: 'parvati mata.wav'
+      },
+      kartikeya: {
+        text: "Kartikeya",
+        file: 'kartikeya.wav'
+      },
+      ganesha: {
+        text: "Ganesha",
+        file: 'ganesha.wav'
+      },
+      // Wrong choices
+      vishnu: {
+        text: "Vishnu Ji",
+        file: 'vishnu.wav'
+      },
+      brahma: {
+        text: "Brahma Ji",
+        file: 'brahma.wav'
+      },
+      lakshmi: {
+        text: "Lakshmi Mata",
+        file: 'lakshmi mata.wav'
+      },
+      saraswati: {
+        text: "Saraswati Mata",
+        file: 'saraswati mata.wav'
+      },
+      hanuman: {
+        text: "Hanuman Ji",
+        file: 'hanuman.wav'
+      },
+      krishna: {
+        text: "Krishna Ji",
+        file: 'krishna.wav'
+      },
+      mushak: {
+        text: "Mushak",
+        file: 'mushak.wav'
+      },
+      nandi: {
+        text: "Nandi",
+        file: 'nandi.wav'
+      },
+
+      // ========================================
+      // GANESHA PHASE - FEEDBACK
+      // ========================================
+      correctChoice: {
+        text: "You got it!",
+        file: 'family-tree-correct-choice.wav'
+      },
+      wrongChoice: {
+        text: "Almost — try again",
+        file: 'family-tree-wrong-choice.wav'
+      },
+
+      // ========================================
+      // GANESHA PHASE - FUN FACTS (Auto-show after correct choice)
+      // ========================================
+      factFather: {
+        text: "My father is calm and strong. He protects us and teaches me peace.",
+        file: 'family-tree-info-father.wav'  // TEMP: Using info file until fact file is added
+      },
+      factMother: {
+        text: "My mother is kind and loving. She gives the best hugs and keeps me safe.",
+        file: 'family-tree-fact-mother.wav'
+      },
+      factBrother: {
+        text: "My brother is very brave. He travels the world on his peacock.",
+        file: 'family-tree-fact-brother.wav'
+      },
+      factMyself: {
+        text: "That's me! I love modaks and helping my friends.",
+        file: 'family-tree-fact-myself.wav'
+      },
+
+      // ========================================
+      // GANESHA PHASE - INFO (Tap placed avatar to view again)
+      // ========================================
+      infoFather: {
+        text: "This is my father.",
+        file: 'family-tree-info-father.wav'
+      },
+      infoMother: {
+        text: "This is my mother.",
+        file: 'family-tree-info-mother.wav'
+      },
+      infoBrother: {
+        text: "This is my brother.",
+        file: 'family-tree-info-brother.wav'
+      },
+      infoMyself: {
+        text: "This is me!",
+        file: 'family-tree-info-myself.wav'
+      },
+
+      // ========================================
+      // GANESHA PHASE - PROGRESS
+      // ========================================
+      progressFirst: {
+        text: "Great start!",
+        file: 'family-tree-progress-first-ganesha.wav'
+      },
+      progressMid: {
+        text: "You're doing so well!",
+        file: 'family-tree-progress-mid-ganesha.wav'
+      },
+      progressNearFull: {
+        text: "Almost done with my family!",
+        file: 'family-tree-progress-near-full-ganesha.wav'
+      },
+      allPlaced: {
+        text: "You met my whole family!",
+        file: 'family-tree-all-placed-ganesha.wav'
+      },
+
+      // ========================================
+      // TRANSITION MODAL
+      // ========================================
+      transition: {
+        text: "That's my family! Now, I want to see your world. Who are the special people in your house?",
+        file: 'family-tree-transition.wav'
+      },
+
+      // ========================================
+      // CHILD PHASE
+      // ========================================
+      childStart: {
+        text: "Now let's build YOUR family tree!",
+        file: 'family-tree-child-start.wav'
+      },
+      namePrompt: {
+        text: "What do you call them?",
+        file: 'family-tree-name-prompt.wav'
+      },
+      memberAdded: {
+        text: "Added to your tree!",
+        file: 'family-tree-member-added.wav'
+      },
+      childProgress1: {
+        text: "Great start on your family!",
+        file: 'family-tree-child-progress1.wav'
+      },
+      childProgress3: {
+        text: "Your tree is growing!",
+        file: 'family-tree-child-progress3.wav'
+      },
+      childProgress5: {
+        text: "What a big family!",
+        file: 'family-tree-child-progress5.wav'
+      },
+      childProgressFull: {
+        text: "Your family tree looks amazing!",
+        file: 'family-tree-child-progress-full.wav'
+      },
+
+      // ========================================
+      // FINAL SCENE
+      // ========================================
+      finalReveal: {
+        text: "Look at our family trees! Connected by love.",
+        file: 'family-tree-final-reveal.wav'
+      },
+      sceneComplete: {
+        text: "You did it! We both have families who love us!",
+        file: 'family-tree-scene-complete.wav'
+      }
+    }
+  },
+
+  // ========================================
   // SHARED SFX (in public/audio/sfx/)
   // ========================================
   shared: {
@@ -413,6 +633,7 @@ export const getVoiceScript = (zoneId, sceneId, key) => {
 //   - Syllable audio files → /audio/voiceover/{word}/ (e.g., vakratunda/va.mp3)
 //   - Full word audio → /audio/voiceover/words/
 // Structure for symbol-mountain: /audio/voice/modak/
+// Structure for about-me-hut: /audio/family-tree/
 export const getAudioPath = (zoneId, sceneId, key) => {
   const script = getVoiceScript(zoneId, sceneId, key);
   if (!script) return null;
@@ -425,6 +646,11 @@ export const getAudioPath = (zoneId, sceneId, key) => {
   // Symbol Mountain zone - legacy path
   if (zoneId === 'symbol-mountain') {
     return `/audio/voice/modak/${script.file}`;
+  }
+
+  // About Me Hut zone - family tree
+  if (zoneId === 'about-me-hut' && sceneId === 'family-tree') {
+    return `/audio/family-tree/${script.file}`;
   }
 
   // Fallback

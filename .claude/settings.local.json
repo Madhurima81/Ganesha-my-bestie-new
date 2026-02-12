@@ -4,7 +4,8 @@
       "Bash(done)",
       "Bash(npm run build:*)",
       "Bash(dir \"C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\public\\\\audio\\\\voiceover\\\\INSTRUCTIONS\")",
-      "Bash(node -e:*)"
+      "Bash(node -e:*)",
+      "Bash(grep:*)"
     ]
   }
 }
