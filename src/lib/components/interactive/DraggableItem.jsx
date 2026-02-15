@@ -17,6 +17,7 @@ const DraggableItem = ({
   const [isDragging, setIsDragging] = useState(false);
   const [touchStartPos, setTouchStartPos] = useState({ x: 0, y: 0 });
   const [dragMode, setDragMode] = useState('dropzone'); // 'dropzone' or 'free'
+  const originalSizeRef = useRef({ width: 0, height: 0 }); // 🔧 Store original size
   
   // Add touch event listeners
   useEffect(() => {
@@ -25,60 +26,77 @@ const DraggableItem = ({
     
     const handleTouchStart = (e) => {
       if (disabled) return;
-      
+
       // Prevent default to avoid scrolling while dragging
       e.preventDefault();
-      
+
+      // 🔧 FIX: Capture original size BEFORE any transformations
+      const rect = element.getBoundingClientRect();
+      originalSizeRef.current = {
+        width: rect.width,
+        height: rect.height
+      };
+
       // Get touch position
       const touch = e.touches[0];
       setTouchStartPos({
         x: touch.clientX,
         y: touch.clientY
       });
-      
+
       // Determine drag mode based on allowFreeMovement and onPositionUpdate
       const mode = (allowFreeMovement || onPositionUpdate) ? 'free' : 'dropzone';
       setDragMode(mode);
-      
+
       console.log(`🎮 Touch drag started for ${id} in ${mode} mode`);
-      
+
       // Notify parent of drag start
       if (onDragStart) {
         onDragStart(id, data);
       }
-      
+
       setIsDragging(true);
-      
+
       if (mode === 'dropzone') {
         // Set data transfer for drop zones to recognize
         const dataTransfer = { id, data };
         window.__dragData = dataTransfer;
       }
-      
+
       // Add visual indicator
       element.style.opacity = '0.6';
     };
     
     const handleTouchMove = (e) => {
       if (!isDragging) return;
-      
+
       // Get current touch position
       const touch = e.touches[0];
-      
+
+      // 🔧 FIX: Use the ORIGINAL captured size for offset calculation
+      const offsetX = originalSizeRef.current.width / 2;
+      const offsetY = originalSizeRef.current.height / 2;
+
       if (dragMode === 'free') {
         // 🆕 FREE MOVEMENT MODE - Follow finger exactly, centered
         element.style.position = 'fixed';
-        element.style.top = `${touch.clientY - 32}px`; // ✅ Centered on finger (32 = half of 64px)
-        element.style.left = `${touch.clientX - 32}px`; // ✅ Centered on finger
+        element.style.top = `${touch.clientY - offsetY}px`;
+        element.style.left = `${touch.clientX - offsetX}px`;
         element.style.zIndex = '1000';
         element.style.pointerEvents = 'none';
+        // 🔧 FIX: Lock the size to original dimensions
+        element.style.width = `${originalSizeRef.current.width}px`;
+        element.style.height = `${originalSizeRef.current.height}px`;
       } else {
         // 🔄 EXISTING DROPZONE MODE
         element.style.position = 'fixed';
-        element.style.top = `${touch.clientY - 32}px`;
-        element.style.left = `${touch.clientX - 32}px`;
+        element.style.top = `${touch.clientY - offsetY}px`;
+        element.style.left = `${touch.clientX - offsetX}px`;
         element.style.zIndex = '1000';
         element.style.pointerEvents = 'none';
+        // 🔧 FIX: Lock the size to original dimensions
+        element.style.width = `${originalSizeRef.current.width}px`;
+        element.style.height = `${originalSizeRef.current.height}px`;
         
         // Find drop zone element under finger
         const elementsUnderTouch = document.elementsFromPoint(touch.clientX, touch.clientY);
@@ -105,15 +123,15 @@ const DraggableItem = ({
       
       if (dragMode === 'free') {
         // 🆕 FREE MOVEMENT MODE - Update position
-        
+
         // Calculate final position as percentage
         const finalPosition = {
           top: `${(touch.clientY / window.innerHeight) * 100}%`,
           left: `${(touch.clientX / window.innerWidth) * 100}%`
         };
-        
+
         console.log(`🐭 Free movement final position:`, finalPosition);
-        
+
         // Clean up styles - let parent handle positioning
         element.style.position = '';
         element.style.top = '';
@@ -121,14 +139,16 @@ const DraggableItem = ({
         element.style.zIndex = '';
         element.style.opacity = '';
         element.style.pointerEvents = '';
-        
+        element.style.width = ''; // 🔧 Clear locked size
+        element.style.height = ''; // 🔧 Clear locked size
+
         // Update parent with new position
         if (onPositionUpdate) {
           onPositionUpdate(finalPosition);
         }
       } else {
         // 🔄 EXISTING DROPZONE MODE
-        
+
         // Clean up styles
         element.style.position = '';
         element.style.top = '';
@@ -136,6 +156,8 @@ const DraggableItem = ({
         element.style.zIndex = '';
         element.style.opacity = '';
         element.style.pointerEvents = '';
+        element.style.width = ''; // 🔧 Clear locked size
+        element.style.height = ''; // 🔧 Clear locked size
         
         // Find drop zone under touch
         const elementsUnderTouch = document.elementsFromPoint(touch.clientX, touch.clientY);
@@ -178,11 +200,20 @@ const DraggableItem = ({
       e.preventDefault();
       return;
     }
-    
+
+    // 🔧 FIX: Capture original size BEFORE any transformations
+    if (elementRef.current) {
+      const rect = elementRef.current.getBoundingClientRect();
+      originalSizeRef.current = {
+        width: rect.width,
+        height: rect.height
+      };
+    }
+
     // Determine drag mode for mouse/desktop
     const mode = (allowFreeMovement || onPositionUpdate) ? 'free' : 'dropzone';
     setDragMode(mode);
-    
+
     console.log(`🖱️ Mouse drag started for ${id} in ${mode} mode`);
     
     if (mode === 'dropzone') {
@@ -192,16 +223,21 @@ const DraggableItem = ({
       
       // Create drag image
       if (elementRef.current) {
+        // 🔧 FIX: Use actual element size for drag image
+        const rect = elementRef.current.getBoundingClientRect();
+        const width = Math.round(rect.width);
+        const height = Math.round(rect.height);
+
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = 64;
-        canvas.height = 64;
-        
+        canvas.width = width;
+        canvas.height = height;
+
         const img = elementRef.current.querySelector('img');
         if (img) {
-          ctx.drawImage(img, 0, 0, 64, 64);
+          ctx.drawImage(img, 0, 0, width, height);
           ctx.globalAlpha = 0.6;
-          e.dataTransfer.setDragImage(canvas, 32, 32);
+          e.dataTransfer.setDragImage(canvas, width / 2, height / 2);
         }
       }
     } else {
@@ -211,12 +247,19 @@ const DraggableItem = ({
       // Add mouse move listeners for free movement
       const handleMouseMove = (moveEvent) => {
         if (elementRef.current) {
+          // 🔧 FIX: Use the ORIGINAL captured size for offset calculation
+          const offsetX = originalSizeRef.current.width / 2;
+          const offsetY = originalSizeRef.current.height / 2;
+
           elementRef.current.style.position = 'fixed';
-          elementRef.current.style.top = `${moveEvent.clientY - 32}px`; // ✅ Centered on cursor
-          elementRef.current.style.left = `${moveEvent.clientX - 32}px`; // ✅ Centered on cursor
+          elementRef.current.style.top = `${moveEvent.clientY - offsetY}px`;
+          elementRef.current.style.left = `${moveEvent.clientX - offsetX}px`;
           elementRef.current.style.zIndex = '1000';
           elementRef.current.style.pointerEvents = 'none';
           elementRef.current.style.opacity = '0.6';
+          // 🔧 FIX: Lock the size to original dimensions
+          elementRef.current.style.width = `${originalSizeRef.current.width}px`;
+          elementRef.current.style.height = `${originalSizeRef.current.height}px`;
         }
       };
       
@@ -237,6 +280,8 @@ const DraggableItem = ({
           elementRef.current.style.zIndex = '';
           elementRef.current.style.pointerEvents = '';
           elementRef.current.style.opacity = '';
+          elementRef.current.style.width = ''; // 🔧 Clear locked size
+          elementRef.current.style.height = ''; // 🔧 Clear locked size
         }
         
         // Update position

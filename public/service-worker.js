@@ -1,7 +1,7 @@
 // Service Worker for Ganesha My Bestie PWA
-// Version 1.0.0
+// Version 1.0.1
 
-const CACHE_VERSION = 'ganesha-v1.0.0';
+const CACHE_VERSION = 'ganesha-v1.0.1';
 const CACHE_NAMES = {
   CORE: `${CACHE_VERSION}-core`,
   PUBLIC: `${CACHE_VERSION}-public`,
@@ -33,6 +33,7 @@ const PUBLIC_ASSETS = [
 // Audio files - cached on-demand but kept for longer
 const AUDIO_PATTERNS = [
   /\/audio\/.+\.mp3$/,
+  /\/audio\/.+\.wav$/,
   /\/words\/.+\.mp3$/
 ];
 
@@ -114,7 +115,7 @@ async function handleFetch(request) {
   const path = url.pathname;
   
   // Strategy 1: Core app shell - Cache First (instant loading)
-  if (CORE_ASSETS.some(asset => path.includes(asset)) || 
+  if (CORE_ASSETS.includes(path) || 
       path === '/' || 
       path.endsWith('.jsx') || 
       path.endsWith('.css')) {

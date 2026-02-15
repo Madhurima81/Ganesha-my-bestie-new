@@ -487,7 +487,7 @@ export const VOICE_SCRIPTS = {
       // ========================================
       factFather: {
         text: "My father is calm and strong. He protects us and teaches me peace.",
-        file: 'family-tree-info-father.wav'  // TEMP: Using info file until fact file is added
+        file: 'family-tree-fact-father.wav'
       },
       factMother: {
         text: "My mother is kind and loving. She gives the best hugs and keeps me safe.",
@@ -541,6 +541,10 @@ export const VOICE_SCRIPTS = {
         text: "You met my whole family!",
         file: 'family-tree-all-placed-ganesha.wav'
       },
+      hintTap: {
+        text: "Tap a circle to meet my family!",
+        file: 'family-tree-hint-tap.wav'
+      },
 
       // ========================================
       // TRANSITION MODAL
@@ -557,29 +561,52 @@ export const VOICE_SCRIPTS = {
         text: "Now let's build YOUR family tree!",
         file: 'family-tree-child-start.wav'
       },
+      childHint: {
+        text: "Tap someone below to add to your tree!",
+        file: 'family-tree-child-hint.wav'
+      },
       namePrompt: {
         text: "What do you call them?",
         file: 'family-tree-name-prompt.wav'
       },
-      memberAdded: {
-        text: "Added to your tree!",
-        file: 'family-tree-member-added.wav'
+      namePromptShort: {
+        text: "What do you call them?",
+        file: 'family-tree-name-prompt-short.wav'
       },
-      childProgress1: {
-        text: "Great start on your family!",
+      // Progress milestones (at 1, 5, 10, 16, 21 members)
+      childProgressStart: {
+        text: "Nice! Your tree has started growing.",
         file: 'family-tree-child-progress1.wav'
       },
-      childProgress3: {
-        text: "Your tree is growing!",
+      childProgressSmall: {
+        text: "Beautiful! You added someone to your family tree.",
+        file: 'family-tree-child-progress2.wav'
+      },
+      childProgressMid: {
+        text: "Look at that! Your family tree is getting bigger.",
         file: 'family-tree-child-progress3.wav'
       },
-      childProgress5: {
-        text: "What a big family!",
-        file: 'family-tree-child-progress5.wav'
+      childProgressNearFull: {
+        text: "Mmm. Your tree is filling with love.",
+        file: 'family-tree-child-progress-1full.wav'
       },
-      childProgressFull: {
-        text: "Your family tree looks amazing!",
+      childProgressComplete: {
+        text: "Aha! Your family tree is full of love!",
         file: 'family-tree-child-progress-full.wav'
+      },
+
+      // Row completion VOs (when 7 members fill a row)
+      rowLimitGrandparents: {
+        text: "Wow! Your grandparents row is full!",
+        file: 'ganesha_limit_grandparents.wav'
+      },
+      rowLimitElders: {
+        text: "Amazing! Your parents row is complete!",
+        file: 'ganesha_limit_elders.wav'
+      },
+      rowLimitSiblingsPets: {
+        text: "Perfect! Your siblings and pets row is full!",
+        file: 'ganesha_limit_siblings_pets.wav'
       },
 
       // ========================================

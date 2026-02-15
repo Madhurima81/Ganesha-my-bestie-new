@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './Familytreegame.css';
 import '../../shared/components/OpeningModal.css';
-import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
+import AboutMeCompletion from "../components/Aboutmecompletion";
 
 // Import SceneManager & Navigation
 import SceneManager from "../../../lib/components/scenes/SceneManager";
@@ -259,25 +259,6 @@ const FamilyTreeGameContent = ({
   const resumePopupTimeoutRef = useRef(null);
   const [showResumePopup, setShowResumePopup] = useState(false);
   const [resumeMessage, setResumeMessage] = useState('');
-  const isPausedRef = useRef(false);
-  const scheduledTimeoutsRef = useRef([]);
-  const ganeshaIdleHintTimerRef = useRef(null);
-  const childIdleVOTimerRef = useRef(null);
-
-  const clearScheduledTimeouts = () => {
-    scheduledTimeoutsRef.current.forEach((id) => clearTimeout(id));
-    scheduledTimeoutsRef.current = [];
-  };
-
-  const scheduleTimeout = (fn, delay) => {
-    const id = window.setTimeout(() => {
-      scheduledTimeoutsRef.current = scheduledTimeoutsRef.current.filter((t) => t !== id);
-      if (isPausedRef.current) return;
-      fn();
-    }, delay);
-    scheduledTimeoutsRef.current.push(id);
-    return id;
-  };
 
   // --- DATA DEFINITIONS ---
   const ganeshaFamily = [
@@ -363,7 +344,7 @@ const FamilyTreeGameContent = ({
       if (gamePhase === 'ganeshaTree' && placedGaneshaMembers && placedGaneshaMembers.length > 0 && placedGaneshaMembers.length < 4) {
         setResumeMessage(`Great progress! You've placed ${placedGaneshaMembers.length}/4 family members. Keep going!`);
         setShowResumePopup(true);
-        resumePopupTimeoutRef.current = scheduleTimeout(() => setShowResumePopup(false), 5000);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
         return;
       }
       
@@ -371,7 +352,7 @@ const FamilyTreeGameContent = ({
       if (gamePhase === 'ganeshaTree' && placedGaneshaMembers && placedGaneshaMembers.length === 4) {
         setResumeMessage(`Amazing! You completed Ganesha's family tree! Tap "All Done!" to continue.`);
         setShowResumePopup(true);
-        resumePopupTimeoutRef.current = scheduleTimeout(() => setShowResumePopup(false), 5000);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
         return;
       }
       
@@ -379,7 +360,7 @@ const FamilyTreeGameContent = ({
       if (gamePhase === 'childInput' && childFamily && childFamily.length > 0) {
         setResumeMessage(`You've added ${childFamily.length} family member${childFamily.length > 1 ? 's' : ''} to your tree!`);
         setShowResumePopup(true);
-        resumePopupTimeoutRef.current = scheduleTimeout(() => setShowResumePopup(false), 5000);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
         return;
       }
       
@@ -416,28 +397,6 @@ const FamilyTreeGameContent = ({
     return sceneState.childFamily ? sceneState.childFamily.filter(m => m.row === rowNumber) : [];
   };
 
-  const getNamePromptQuestion = (typeId, fallbackLabel) => {
-    const promptMap = {
-      dad: 'What do you call your Dad/Uncle?',
-      mom: 'What do you call your Mom/Aunt?',
-      brother: 'What do you call your Brother/Cousin?',
-      sister: 'What do you call your Sister/Cousin?',
-      myself: 'What do you call yourself?'
-    };
-    return promptMap[typeId] || `What do you call your ${fallbackLabel}?`;
-  };
-
-  const getNamePromptPlaceholder = (typeId) => {
-    const placeholderMap = {
-      dad: 'e.g., Papa, Chachu...',
-      mom: 'e.g., Mama, Maasi...',
-      brother: 'e.g., Bhaiya, Cousin...',
-      sister: 'e.g., Didi, Cousin...',
-      myself: 'e.g., My nickname...'
-    };
-    return placeholderMap[typeId] || 'e.g., Papa, Mama...';
-  };
-
   // ========================================
   // VOICE: Play welcome on OPENING MODAL (before game starts)
   // Button appears only after VO finishes
@@ -446,7 +405,7 @@ const FamilyTreeGameContent = ({
     // Play welcome voice when opening modal is shown (phase is intro)
     if (sceneState.gamePhase === 'intro') {
       // Small delay before starting welcome VO
-      const timer = scheduleTimeout(() => {
+      const timer = setTimeout(() => {
         playVoice('welcome', () => {
           // VO finished - show the button with fade-in
           playSfx('chime'); // Ready cue sound
@@ -462,13 +421,8 @@ const FamilyTreeGameContent = ({
   // ========================================
   useEffect(() => {
     return () => {
-      clearScheduledTimeouts();
       stopMusic();
       stopIdleTimer();
-      if (childIdleVOTimerRef.current) {
-        clearTimeout(childIdleVOTimerRef.current);
-        childIdleVOTimerRef.current = null;
-      }
     };
   }, []);
 
@@ -478,7 +432,7 @@ const FamilyTreeGameContent = ({
   useEffect(() => {
     if (sceneState.gamePhase === 'ganeshaTree') {
       // Play tap circle instruction VO
-      scheduleTimeout(() => {
+      setTimeout(() => {
         playVoice('tapCircle');
       }, 500);
     }
@@ -501,7 +455,7 @@ const FamilyTreeGameContent = ({
 
       const voKey = questionVOMap[sceneState.selectedCircle];
       if (voKey) {
-        scheduleTimeout(() => {
+        setTimeout(() => {
           playVoice(voKey);
         }, 300);
       }
@@ -525,7 +479,7 @@ const FamilyTreeGameContent = ({
 
       const voKey = funFactVOMap[sceneState.selectedCircle];
       if (voKey) {
-        scheduleTimeout(() => {
+        setTimeout(() => {
           playVoice(voKey);
         }, 300);
       }
@@ -549,7 +503,7 @@ const FamilyTreeGameContent = ({
 
       const voKey = infoVOMap[sceneState.flippedMember];
       if (voKey) {
-        scheduleTimeout(() => {
+        setTimeout(() => {
           playVoice(voKey);
         }, 300);
       }
@@ -570,7 +524,7 @@ const FamilyTreeGameContent = ({
       !sceneState.isSequencePlaying
     ) {
       // Play "all placed" VO when button becomes visible
-      scheduleTimeout(() => {
+      setTimeout(() => {
         playVoice('allPlaced');
       }, 500);
     }
@@ -589,7 +543,7 @@ const FamilyTreeGameContent = ({
       setTransitionButtonVisible(false);
       stopVoice();
 
-      scheduleTimeout(() => {
+      setTimeout(() => {
         playVoice('transition', () => {
           playSfx('chime');
           setTransitionButtonVisible(true);
@@ -606,105 +560,14 @@ const FamilyTreeGameContent = ({
       setChildStartPlayed(true);
       stopVoice();
 
-      scheduleTimeout(() => {
+      setTimeout(() => {
         playVoice('childStart');
       }, 500);
     }
   }, [sceneState.gamePhase, childStartPlayed]);
 
   // ========================================
-  // GANESHA TREE: Idle hint VO
-  // First hint: 10s when 0 placed, otherwise 15s
-  // Then repeat every 15s while still idle/tappable
-  // ========================================
-  useEffect(() => {
-    if (ganeshaIdleHintTimerRef.current) {
-      clearTimeout(ganeshaIdleHintTimerRef.current);
-      ganeshaIdleHintTimerRef.current = null;
-    }
-
-    const inGaneshaTree = sceneState.gamePhase === 'ganeshaTree';
-    const hasBlockingOverlay =
-      sceneState.showChoiceModal ||
-      sceneState.showFunFactModal ||
-      sceneState.flippedMember ||
-      sceneState.isSequencePlaying ||
-      showPauseMenu;
-    const allPlaced = sceneState.placedGaneshaMembers.length === ganeshaFamily.length;
-
-    if (!inGaneshaTree || hasBlockingOverlay || allPlaced) return;
-
-    const firstDelay = sceneState.placedGaneshaMembers.length === 0 ? 10000 : 15000;
-
-    const scheduleNextHint = (delayMs) => {
-      ganeshaIdleHintTimerRef.current = scheduleTimeout(() => {
-        playVoice('hintTap');
-        scheduleNextHint(15000);
-      }, delayMs);
-    };
-
-    scheduleNextHint(firstDelay);
-
-    return () => {
-      if (ganeshaIdleHintTimerRef.current) {
-        clearTimeout(ganeshaIdleHintTimerRef.current);
-        ganeshaIdleHintTimerRef.current = null;
-      }
-    };
-  }, [
-    sceneState.gamePhase,
-    sceneState.showChoiceModal,
-    sceneState.showFunFactModal,
-    sceneState.flippedMember,
-    sceneState.isSequencePlaying,
-    sceneState.placedGaneshaMembers.length,
-    showPauseMenu
-  ]);
-
-  // ========================================
-  // CHILD TREE: Idle hint VO (15s, repeating like ganesha)
-  // ========================================
-  useEffect(() => {
-    if (childIdleVOTimerRef.current) {
-      clearTimeout(childIdleVOTimerRef.current);
-      childIdleVOTimerRef.current = null;
-    }
-
-    const inChildInput = sceneState.gamePhase === 'childInput';
-    const hasBlockingOverlay = sceneState.showNameModal || showPauseMenu;
-    const isChildTreeComplete = sceneState.childFamily.length >= 21;
-
-    if (!inChildInput || hasBlockingOverlay || isChildTreeComplete) return;
-
-    const scheduleNextHint = () => {
-      childIdleVOTimerRef.current = scheduleTimeout(() => {
-        playVoice('childHint');
-        scheduleNextHint();
-      }, 15000);
-    };
-
-    scheduleNextHint();
-
-    return () => {
-      if (childIdleVOTimerRef.current) {
-        clearTimeout(childIdleVOTimerRef.current);
-        childIdleVOTimerRef.current = null;
-      }
-    };
-  }, [
-    sceneState.gamePhase,
-    sceneState.showNameModal,
-    sceneState.childFamily.length,
-    sceneState.selectedMemberIndex,
-    showPauseMenu
-  ]);
-
-  // ========================================
-  // CHILD PHASE: Play name prompt VO when name modal opens
-  // Rule:
-  // 1st-2nd open -> immediate full prompt
-  // 3rd open -> immediate short prompt
-  // 4th+ open -> only idle short prompt after 10s
+  // CHILD PHASE: Play name prompt VO when name modal opens (1-2-3 Rule + Idle Timer)
   // ========================================
   useEffect(() => {
     // Clear any existing timer when modal state changes
@@ -720,26 +583,26 @@ const FamilyTreeGameContent = ({
       const newCount = namePromptCount + 1;
       setNamePromptCount(newCount);
 
-      // 1st-2nd: full prompt immediately
-      if (newCount === 1 || newCount === 2) {
-        scheduleTimeout(() => {
+      // 1-2-3 Rule: Choose which VO to play
+      const playNamePromptVO = () => {
+        if (newCount === 1 || newCount === 2) {
+          // 1st and 2nd time: Full guidance
           playVoice('namePrompt');
-        }, 300);
-      }
-
-      // 3rd: short prompt immediately
-      if (newCount === 3) {
-        scheduleTimeout(() => {
+        } else if (newCount === 3) {
+          // 3rd time: Short prompt
           playVoice('namePromptShort');
-        }, 300);
-      }
+        }
+        // 4th time onwards: Silent (no VO)
+      };
 
-      // 4th+: only play short prompt after 10s idle (using scheduleTimeout for pause-awareness)
-      if (newCount >= 4) {
-        namePromptTimerRef.current = scheduleTimeout(() => {
-          playVoice('namePromptShort');
-        }, 10000);
-      }
+      setTimeout(() => {
+        playNamePromptVO();
+      }, 300);
+
+      // Idle Timer: Replay prompt after 8 seconds of inactivity (works for all times)
+      namePromptTimerRef.current = setTimeout(() => {
+        playNamePromptVO();
+      }, 8000);
     }
 
     // Cleanup timer when modal closes
@@ -749,7 +612,7 @@ const FamilyTreeGameContent = ({
         namePromptTimerRef.current = null;
       }
     };
-  }, [sceneState.showNameModal, sceneState.currentFamilyType]);
+  }, [sceneState.showNameModal, sceneState.currentFamilyType, namePromptPlayed, namePromptCount]);
 
   // ========================================
   // OLD: Removed childProgressFull logic - now using milestone system in handleAddFamilyMember
@@ -766,11 +629,11 @@ const FamilyTreeGameContent = ({
       stopVoice();
 
       // Play final reveal VO
-      scheduleTimeout(() => {
+      setTimeout(() => {
         playVoice('finalReveal', () => {
-          // After final reveal, wait briefly, then play second VO directly (no celebration SFX)
-          scheduleTimeout(() => {
-            playVoice('sceneComplete');
+          // After final reveal, play scene complete
+          setTimeout(() => {
+            playCelebration('sceneComplete');
           }, 500);
         });
       }, 500);
@@ -843,22 +706,22 @@ const FamilyTreeGameContent = ({
       }
 
       // Play correct choice VO after deity name (increased delay to let deity name finish)
-      scheduleTimeout(() => {
+      setTimeout(() => {
         playCorrect('correctChoice');
       }, 1800);
 
       sceneActions.updateState({ isSequencePlaying: true, showYouGotIt: choice.id });
-      scheduleTimeout(() => sceneActions.updateState({ correctChoiceId: choice.id }), 800);
-      scheduleTimeout(() => sceneActions.updateState({ showYouGotIt: null }), 1400);
-      scheduleTimeout(() => {
+      setTimeout(() => sceneActions.updateState({ correctChoiceId: choice.id }), 800);
+      setTimeout(() => sceneActions.updateState({ showYouGotIt: null }), 1400);
+      setTimeout(() => {
         sceneActions.updateState({
           showChoiceModal: false,
           placedGaneshaMembers: [...sceneState.placedGaneshaMembers, sceneState.selectedCircle],
           correctChoiceId: null
         });
       }, 1600);
-      scheduleTimeout(() => sceneActions.updateState({ justPlacedId: sceneState.selectedCircle }), 1700);
-      scheduleTimeout(() => {
+      setTimeout(() => sceneActions.updateState({ justPlacedId: sceneState.selectedCircle }), 1700);
+      setTimeout(() => {
         const member = ganeshaFamily.find(m => m.id === sceneState.selectedCircle);
         const correctDeity = deityChoices[sceneState.selectedCircle].find(d => d.isCorrect);
         sceneActions.updateState({
@@ -894,7 +757,7 @@ const FamilyTreeGameContent = ({
       if (wrongDeityVO) {
         playVoice(wrongDeityVO, () => {
           // Step 2: After deity name finishes, wait 1 second
-          scheduleTimeout(() => {
+          setTimeout(() => {
             // Step 3: Play wrong choice VO with callback
             playVoice('wrongChoice', () => {
               // Step 4: Unblock taps after both VOs finish
@@ -905,7 +768,7 @@ const FamilyTreeGameContent = ({
             sceneActions.updateState({ wrongChoice: choice.id });
 
             // Clear animation and disable choice after fade completes
-            scheduleTimeout(() => {
+            setTimeout(() => {
               sceneActions.updateState({
                 wrongChoice: null,
                 disabledChoices: [...sceneState.disabledChoices, choice.id]
@@ -924,11 +787,11 @@ const FamilyTreeGameContent = ({
     const placedCount = sceneState.placedGaneshaMembers.length + 1; // +1 because we just placed one
 
     if (placedCount === 1) {
-      scheduleTimeout(() => playVoice('progressFirst'), 300);
+      setTimeout(() => playVoice('progressFirst'), 300);
     } else if (placedCount === 2) {
-      scheduleTimeout(() => playVoice('progressMid'), 300);
+      setTimeout(() => playVoice('progressMid'), 300);
     } else if (placedCount === 3) {
-      scheduleTimeout(() => playVoice('progressNearFull'), 300);
+      setTimeout(() => playVoice('progressNearFull'), 300);
     } else if (placedCount === 4) {
       // Will play when "All Done" button appears
     }
@@ -936,7 +799,7 @@ const FamilyTreeGameContent = ({
 
   const handleGaneshaTreeDone = () => {
     sceneActions.updateState({ showTreeSparkles: true });
-    scheduleTimeout(() => {
+    setTimeout(() => {
       sceneActions.updateState({
         gamePhase: 'transition',
         showTreeSparkles: false,
@@ -1000,7 +863,6 @@ const FamilyTreeGameContent = ({
 
     const newChildFamily = [...sceneState.childFamily, newMember];
     const memberCount = newChildFamily.length;
-    const previousChildFamily = sceneState.childFamily;
 
     sceneActions.updateState({
       childFamily: newChildFamily,
@@ -1011,32 +873,19 @@ const FamilyTreeGameContent = ({
     setAudioBlob(null);
 
     // Count members in each row
-    const prevRow1Count = previousChildFamily.filter(m => m.row === 1).length; // Grandparents
-    const prevRow2Count = previousChildFamily.filter(m => m.row === 2).length; // Parents
-    const prevRow3Count = previousChildFamily.filter(m => m.row === 3).length; // Siblings/Pets
-
     const row1Count = newChildFamily.filter(m => m.row === 1).length; // Grandparents
     const row2Count = newChildFamily.filter(m => m.row === 2).length; // Parents
     const row3Count = newChildFamily.filter(m => m.row === 3).length; // Siblings/Pets
 
-    // Play VOs:
-    // - Row completion VO only for the first two rows that become full (dynamic order)
-    // - Third row completion does NOT play a row-limit VO
-    // - Milestones (including 21 complete) still play
+    // Play VOs: Row completion takes priority, then milestones
     const playVO = () => {
-      const completedRowsBefore = [prevRow1Count, prevRow2Count, prevRow3Count].filter(c => c >= 7).length;
-      const completedRowsAfter = [row1Count, row2Count, row3Count].filter(c => c >= 7).length;
-
-      let newlyCompletedRow = null;
-      if (prevRow1Count < 7 && row1Count >= 7) newlyCompletedRow = 1;
-      if (prevRow2Count < 7 && row2Count >= 7) newlyCompletedRow = 2;
-      if (prevRow3Count < 7 && row3Count >= 7) newlyCompletedRow = 3;
-
-      // Row completion VO only when a new row completes and it's 1st or 2nd completed row
-      if (newlyCompletedRow && completedRowsAfter > completedRowsBefore && completedRowsAfter <= 2) {
-        if (newlyCompletedRow === 1) playVoice('rowLimitGrandparents');
-        else if (newlyCompletedRow === 2) playVoice('rowLimitElders');
-        else if (newlyCompletedRow === 3) playVoice('rowLimitSiblingsPets');
+      // Row completion VOs (when a row hits 7 members)
+      if (row1Count === 7 && newMember.row === 1) {
+        playVoice('rowLimitGrandparents'); // "Wow! Your grandparents row is full!"
+      } else if (row2Count === 7 && newMember.row === 2) {
+        playVoice('rowLimitElders'); // "Amazing! Your parents row is complete!"
+      } else if (row3Count === 7 && newMember.row === 3) {
+        playVoice('rowLimitSiblingsPets'); // "Perfect! Your siblings and pets row is full!"
       }
       // Progress milestones (1, 5, 10, 16, 21)
       else if (memberCount === 1) {
@@ -1053,7 +902,7 @@ const FamilyTreeGameContent = ({
     };
 
     // Delay VO slightly after member is added
-    scheduleTimeout(() => {
+    setTimeout(() => {
       playVO();
     }, 800);
   };
@@ -1074,16 +923,7 @@ const FamilyTreeGameContent = ({
       <PauseButton
         visible={sceneState.gamePhase !== 'intro'}
         onClick={() => {
-          isPausedRef.current = true;
-          clearScheduledTimeouts();
-          stopIdleTimer();
           stopVoice(); // Stop any playing VO
-          setIsPlayingWrongVO(false); // Unblock taps if pause interrupted wrong-choice VO
-          // Clear name prompt timer if active
-          if (namePromptTimerRef.current) {
-            clearTimeout(namePromptTimerRef.current);
-            namePromptTimerRef.current = null;
-          }
           setShowPauseMenu(true);
         }}
       />
@@ -1092,44 +932,6 @@ const FamilyTreeGameContent = ({
       <PauseMenu
         show={showPauseMenu}
         onResume={() => {
-          isPausedRef.current = false;
-          stopVoice(); // Ensure no stale VO resumes from before pause
-          setIsPlayingWrongVO(false);
-          if (sceneState.gamePhase === 'transition') {
-            // If transition VO was interrupted, keep the CTA available
-            setTransitionButtonVisible(true);
-          }
-          if (sceneState.gamePhase === 'ganeshaTree') {
-            // Defensive unlock in case pause interrupted a VO callback chain or wrong choice animation
-            // If there's an active wrong choice animation, move it to disabled choices before clearing
-            if (sceneState.wrongChoice && !sceneState.disabledChoices.includes(sceneState.wrongChoice)) {
-              sceneActions.updateState({
-                disabledChoices: [...sceneState.disabledChoices, sceneState.wrongChoice],
-                wrongChoice: null,
-                correctChoiceId: null,
-                showYouGotIt: null,
-                isSequencePlaying: false
-              });
-            } else {
-              // Clear all animation states to re-enable buttons
-              sceneActions.updateState({
-                isSequencePlaying: false,
-                showYouGotIt: null,
-                wrongChoice: null,
-                correctChoiceId: null
-              });
-            }
-          }
-          // Handle name input modal idle timer restart (for 4th+ time)
-          if (sceneState.gamePhase === 'childInput' && sceneState.showNameModal && namePromptCount >= 4) {
-            // Restart the 10-second idle timer for name prompt
-            if (namePromptTimerRef.current) {
-              clearTimeout(namePromptTimerRef.current);
-            }
-            namePromptTimerRef.current = scheduleTimeout(() => {
-              playVoice('namePromptShort');
-            }, 10000);
-          }
           setShowPauseMenu(false);
           // Restart idle timer if we're in an active phase
           if (sceneState.gamePhase === 'ganeshaTree' || sceneState.gamePhase === 'childInput') {
@@ -1240,7 +1042,7 @@ const FamilyTreeGameContent = ({
               onClick={() => handleClickCircle(member.id)}
             >
               {!sceneState.placedGaneshaMembers.includes(member.id) ? (
-                <div className={`empty-circle ${!sceneState.isSequencePlaying ? 'empty-circle-hint-glow' : ''}`} />
+                <div className="empty-circle" />
               ) : (
                 <div className={`placed-deity ${sceneState.justPlacedId === member.id ? 'just-placed-glow' : ''}`}>
                   <div className="deity-front">
@@ -1394,7 +1196,7 @@ const FamilyTreeGameContent = ({
                 playSfx('tap');
                 setTransitionButtonVisible(false);
                 sceneActions.updateState({ gamePhase: 'childInput' });
-                scheduleTimeout(() => sceneActions.updateState({ showBottomTray: true }), 100);
+                setTimeout(() => sceneActions.updateState({ showBottomTray: true }), 100);
                 // Reset child start VO state
                 setChildStartPlayed(false);
               }}
@@ -1416,7 +1218,7 @@ const FamilyTreeGameContent = ({
             <div className="instruction-text"><p>👇 "Tap someone to add to your tree!" 🌱!</p></div>
           )} */}
           {sceneState.childFamily.length > 0 && (
-            <div className="tray-hint-text">Tap a member to delete</div>
+            <div className="tray-hint-text">(Tap a face to remove it)</div>
           )}
           
           {/* Tree Display */}
@@ -1460,16 +1262,23 @@ const FamilyTreeGameContent = ({
           {/* FLOATING DONE BUTTON (Moved Above Tray) */}
           {sceneState.childFamily.length > 0 && (
             <button 
-              className={`tray-done-btn ${sceneState.childFamily.length >= 21 ? 'tray-done-btn-attention' : ''}`} 
+              className="tray-done-btn" 
               onClick={() => sceneActions.updateState({ gamePhase: 'sideBySide' })}
+              style={{
+                position: 'absolute',
+                bottom: '180px', // Sits above the tray height
+                right: '20px',
+                zIndex: 100,
+                boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                animation: 'popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+              }}
             >
-              <span className="tray-done-main">Done!</span>
-              <span className="tray-done-sub">Finish Tree</span>
+              Done! ✓
             </button>
           )}
 
           {/* BOTTOM TRAY (Centered & Padded) */}
-          <div
+          <div 
             className={`bottom-member-tray ${sceneState.showBottomTray ? 'tray-visible' : ''}`}
             style={{
               justifyContent: 'center', // Center the items
@@ -1477,64 +1286,42 @@ const FamilyTreeGameContent = ({
               paddingRight: '20px'      // Balance the padding
             }}
           >
-            {familyMemberTypes.map(type => {
-              // Count members in this type's row
-              const rowCount = sceneState.childFamily.filter(m => m.row === type.row).length;
-              const isRowFull = rowCount >= 7;
-
-              return (
+            {familyMemberTypes.map(type => (
               <button
                 key={type.id}
                 className="member-card"
-                onClick={() => !isRowFull && handleSelectFamilyType(type)}
-                disabled={isRowFull}
-                style={{
-                  borderColor: type.color,
-                  opacity: isRowFull ? 0.4 : 1,
-                  cursor: isRowFull ? 'not-allowed' : 'pointer'
-                }}
+                onClick={() => handleSelectFamilyType(type)}
+                style={{ borderColor: type.color }}
               >
                 <div className="member-card-icon-wrap">
                   <img src={type.image} alt={type.label} className="member-card-icon" />
                 </div>
                 <div className="member-card-label">{type.label}</div>
               </button>
-              );
-            })}
+            ))}
           </div>
 
           {/* Name Input Modal */}
           {sceneState.showNameModal && sceneState.currentFamilyType && (
             <div className="modal-overlay">
               <div className="name-input-modal">
-                <button className="modal-close-btn" onClick={() => {
-                  stopVoice(); // Stop VO when modal closes
-                  sceneActions.updateState({ showNameModal: false });
-                }}>×</button>
+                <button className="modal-close-btn" onClick={() => sceneActions.updateState({ showNameModal: false })}>×</button>
                 <div className="modal-emoji-large" style={{ width: '100px', height: '100px', margin: '0 auto 15px' }}>
                    <img src={sceneState.currentFamilyType.image} alt={sceneState.currentFamilyType.label} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
-                <h2 className="modal-question">
-                  {getNamePromptQuestion(sceneState.currentFamilyType.id, sceneState.currentFamilyType.label)}
-                </h2>
+                <h2 className="modal-question">What do you call your {sceneState.currentFamilyType.label}?</h2>
                 <div className="input-with-voice">
                   <input
                     type="text"
                     className="name-input"
-                    placeholder={getNamePromptPlaceholder(sceneState.currentFamilyType.id)}
+                    placeholder="e.g., Papa, Mama..."
                     value={sceneState.callName}
                     onChange={(e) => {
                       sceneActions.updateState({ callName: e.target.value });
-                      // Reset idle short-prompt timer while typing
+                      // Reset idle timer when user types
                       if (namePromptTimerRef.current) {
                         clearTimeout(namePromptTimerRef.current);
                         namePromptTimerRef.current = null;
-                      }
-                      // From 4th open onward, replay short prompt only after 10s idle (using scheduleTimeout for pause-awareness)
-                      if (sceneState.showNameModal && namePromptCount >= 4) {
-                        namePromptTimerRef.current = scheduleTimeout(() => {
-                          playVoice('namePromptShort');
-                        }, 10000);
                       }
                     }}
                     onKeyDown={(e) => {
@@ -1563,17 +1350,15 @@ const FamilyTreeGameContent = ({
       {/* SIDE BY SIDE (Magical Reveal) */}
       {sceneState.gamePhase === 'sideBySide' && (
         <div className="side-by-side-screen">
-          {[...Array(45)].map((_, i) => (
+          {[...Array(30)].map((_, i) => (
             <div 
               key={i} 
               className="final-sparkle"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 4}s`,
-                width: `${Math.random() * 7 + 4}px`,
-                height: `${Math.random() * 7 + 4}px`,
-                opacity: `${Math.random() * 0.35 + 0.45}`
+                animationDelay: `${Math.random() * 3}s`,
+                width: `${Math.random() * 6 + 4}px`
               }}
             />
           ))}
@@ -1585,16 +1370,14 @@ const FamilyTreeGameContent = ({
             {/* LEFT CARD: Ganesha */}
             <div className="tree-column slide-in-left">
               <h3 className="tree-heading">Ganesha's Family</h3>
-              <p className="tree-location">Mount Kailash</p>
+              <p style={{textAlign:'center', color:'#5D4037', marginBottom:'10px'}}>🏔️ Mount Kailash</p>
               <div className="tree-visual">
                 <img src={familyTree} alt="Tree" className="reveal-tree-img" />
                 {ganeshaFamily.map(member => {
                   const deity = getPlacedDeityImage(member.id);
                  return (
                   <div key={member.id} className="tree-member-mini ganesha-comparison-icon" style={member.position}>
-                    <div className="mini-image ganesha-comparison-img">
-                      <img src={deity.image} alt={deity.name} className="ganesha-comparison-photo" />
-                    </div>
+                    <img src={deity.image} alt={deity.name} className="mini-image ganesha-comparison-img" /> 
                     <p className="mini-name ganesha-comparison-label">{member.role}</p> 
                   </div>
                   );
@@ -1612,7 +1395,7 @@ const FamilyTreeGameContent = ({
             {/* RIGHT CARD: Your Family */}
             <div className="tree-column slide-in-right">
               <h3 className="tree-heading">Your Family</h3>
-              <p className="tree-location">Your Home</p>
+              <p style={{textAlign:'center', color:'#5D4037', marginBottom:'10px'}}>🏡 Your Home</p>
               
               <div className="tree-visual" data-member-count={sceneState.childFamily.length}>
                 <img src={familyTree} alt="Tree" className="reveal-tree-img" />
@@ -1636,7 +1419,7 @@ const FamilyTreeGameContent = ({
             <button className="make-another-btn" onClick={() => sceneActions.updateState({ childFamily: [], gamePhase: 'childInput' })}>
               🌳 Make Another Tree
             </button>
-            <button className="family-tree-end-game-btn" onClick={() => sceneActions.updateState({ showingCompletionScreen: true, completed: true, stars: 3 })}>
+            <button className="end-game-btn" onClick={() => sceneActions.updateState({ showingCompletionScreen: true, completed: true, stars: 3 })}>
               End Game ✨
             </button>
           </div>
@@ -1668,18 +1451,20 @@ const FamilyTreeGameContent = ({
 
       {/* Completion Modal */}
       {sceneState.showingCompletionScreen && (
-        <SceneCompletionCelebration
+        <AboutMeCompletion
           show={sceneState.showingCompletionScreen}
           sceneName="My Family Tree"
-          childName="Family Star"
-          sceneId="family-tree"
-          discoveredSymbols={['father', 'mother', 'me']}
-          symbolImages={{
-            father: shivaImg,
-            mother: parvatiImg,
-            me: babyGaneshaImg
+          sceneNumber={1}
+          totalScenes={4}
+          starsEarned={3}
+          totalStars={3}
+          discoveredBadges={['family-connector', 'tree-builder']}
+          badgeImages={{}}
+          characterImages={{
+            babyGanesha: babyGaneshaImg 
           }}
           nextSceneName="Favorite Food"
+          childName="Family Star"
           onContinue={() => {
             if (onNavigate) onNavigate('game2'); 
             else if (onComplete) onComplete();
@@ -1692,7 +1477,7 @@ const FamilyTreeGameContent = ({
                 showingCompletionScreen: false
             });
           }}
-          onExploreZones={() => {
+          onBackToMap={() => {
             if (onNavigate) onNavigate('zone-welcome');
             else if (onBack) onBack();
           }}
@@ -1706,13 +1491,3 @@ const FamilyTreeGameContent = ({
 };
 
 export default FamilyTreeGame;
-
-
-
-
-
-
-
-
-
-
