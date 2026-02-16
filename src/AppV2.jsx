@@ -94,7 +94,7 @@ const SCENES = {
   },
 
   // 🕉️ CAVE OF SECRETS
-  'cave-vakratunda': {
+  /*'cave-vakratunda': {
     name: '🕉️ Vakratunda Mahakaya',
     zone: 'Cave of Secrets',
     component: CaveSceneFixedV1,
@@ -129,7 +129,7 @@ const SCENES = {
     component: CaveScene5MemoryFinale,
     zoneId: 'cave-of-secrets',
     sceneId: 'memory-finale'
-  },
+  },*/
   // 🌊 SHLOKA RIVER
  'shloka-vakratunda': {
     name: '🐘 Vakratunda Grove',
@@ -168,7 +168,7 @@ const SCENES = {
   },
 
   // 🎪 FESTIVAL SQUARE
-  'festival-piano': {
+  /*'festival-piano': {
     name: '🎹 Piano Game',
     zone: 'Festival Square',
     component: FestivalPianoGame,
@@ -195,7 +195,7 @@ const SCENES = {
     component: MandapDecorationGame,
     zoneId: 'festival-square',
     sceneId: 'game4'
-  },
+  },*/
 
   // 🏠 ABOUT ME HUT
   'family-tree': {

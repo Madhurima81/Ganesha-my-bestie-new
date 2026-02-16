@@ -217,6 +217,17 @@ const VakratundaGroveContent = ({
   const timeoutsRef = useRef([]);
   const activeProfile = GameStateManager.getActiveProfile();
   const profileName = activeProfile?.name || 'explorer';
+  const isFinalCelebrationActive =
+    showSparkle === 'final-fireworks' ||
+    showFinalGanesha ||
+    showSceneCompletion ||
+    sceneState.phase === PHASES.COMPLETE;
+
+  useEffect(() => {
+    if (isFinalCelebrationActive && showPauseMenu) {
+      setShowPauseMenu(false);
+    }
+  }, [isFinalCelebrationActive, showPauseMenu]);
 
   // Voice Guidance Hook
   const {
@@ -234,11 +245,61 @@ const VakratundaGroveContent = ({
   } = useVoiceGuidance(zoneId, sceneId, {
     enableMusic: false,
     voiceVolume: 1,
-    sfxVolume: 0.7
+    sfxVolume: 0.7,
+    idleTimeout: 20
   });
 
   // Track whether recorder popup is open — pause game voice when it is
   const [isRecorderOpen, setIsRecorderOpen] = useState(false);
+
+  // ========================================
+  // ESC KEY TO TOGGLE PAUSE (Desktop UX)
+  // ========================================
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && sceneState.welcomeShown && !isFinalCelebrationActive && !showSceneCompletion) {
+        e.preventDefault();
+        if (!showPauseMenu) {
+          // Open pause menu
+          stopVoice();
+          stopIdleTimer();
+          setShowPauseMenu(true);
+        } else {
+          // Close pause menu (resume)
+          setShowPauseMenu(false);
+          const activeGamePhases = [PHASES.VAKRATUNDA_GAME, PHASES.MAHAKAYA_GAME];
+          const celebrationPhases = [PHASES.VAKRATUNDA_COMPLETE, PHASES.VAKRATUNDA_POWER, PHASES.MAHAKAYA_COMPLETE, PHASES.MAHAKAYA_POWER];
+          if (activeGamePhases.includes(sceneState.phase) &&
+              !celebrationPhases.includes(sceneState.phase) &&
+              !showPowerOverlay &&
+              !showCenteredWord) {
+            startIdleTimer();
+          }
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showPauseMenu, sceneState.welcomeShown, isFinalCelebrationActive, showSceneCompletion, sceneState.phase, showPowerOverlay, showCenteredWord]);
+
+  // ========================================
+  // AUTO-PAUSE ON APP BLUR (Mobile/Tab Switch)
+  // ========================================
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      // Don't auto-pause during power overlay, word reveal, or other non-interactive overlays
+      const shouldNotPause = showPowerOverlay || showCenteredWord || isFinalCelebrationActive || showSceneCompletion || showPauseMenu;
+
+      if (document.hidden && sceneState.welcomeShown && !shouldNotPause) {
+        // Auto-pause when user switches tabs/apps
+        stopVoice();
+        stopIdleTimer();
+        setShowPauseMenu(true);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [sceneState.welcomeShown, isFinalCelebrationActive, showSceneCompletion, showPauseMenu, showPowerOverlay, showCenteredWord]);
 
   const safeSetTimeout = (callback, delay) => {
     const id = setTimeout(callback, delay);
@@ -388,7 +449,10 @@ const VakratundaGroveContent = ({
     if (currentWord === 'vakratunda') {
       console.log('🔄 Moving to Mahakaya Phase');
       // Go straight to Mahakaya Game
-      sceneActions.updateState({ phase: PHASES.MAHAKAYA_GAME });
+      sceneActions.updateState({
+        phase: PHASES.MAHAKAYA_GAME,
+        mahakayaGameState: null // Ensure Mahakaya always starts from first syllable
+      });
     } else {
       console.log('🎉 Triggering Final Celebration');
 
@@ -455,8 +519,13 @@ const VakratundaGroveContent = ({
 
             {/* 1. PAUSE BUTTON - Using shared component */}
             <PauseButton
-              visible={sceneState.welcomeShown && !showSceneCompletion}
-              onClick={() => setShowPauseMenu(true)}
+              visible={sceneState.welcomeShown && !showSceneCompletion && !isFinalCelebrationActive}
+              onClick={() => {
+                if (isFinalCelebrationActive) return;
+                stopVoice();      // Stop any playing VO
+                stopIdleTimer();  // Stop idle hints
+                setShowPauseMenu(true);
+              }}
             />
 
             {/* DEV TEST BUTTONS - Skip to word overlay */}
@@ -488,10 +557,83 @@ const VakratundaGroveContent = ({
               </div>
             )}
 
-            {/* 2. PAUSE MENU - Using shared component */}
+            {/* 2. VISUAL PAUSE OVERLAY - Dims/blurs background when paused */}
+            {showPauseMenu && !isFinalCelebrationActive && (
+              <div style={{
+                position: 'fixed',
+                inset: 0,
+                background: 'rgba(0, 0, 0, 0.3)',
+                backdropFilter: 'blur(3px)',
+                WebkitBackdropFilter: 'blur(3px)', // Safari support
+                zIndex: 999,
+                pointerEvents: 'none',
+                transition: 'opacity 0.2s ease-out',
+                opacity: 1
+              }} />
+            )}
+
+            {/* 3. PAUSE MENU - Using shared component */}
             <PauseMenu
-              show={showPauseMenu}
-              onResume={() => setShowPauseMenu(false)}
+              show={showPauseMenu && !isFinalCelebrationActive}
+              onResume={() => {
+                setShowPauseMenu(false);
+
+                // SPECIAL CASE: If paused during word reveal celebration, continue to power overlay
+                if ((sceneState.phase === PHASES.VAKRATUNDA_COMPLETE || sceneState.phase === PHASES.MAHAKAYA_COMPLETE) && showCenteredWord) {
+                  console.log('🔄 Resuming from word reveal celebration, continuing to power overlay...');
+                  // Determine which word based on phase
+                  const word = sceneState.phase === PHASES.VAKRATUNDA_COMPLETE ? 'vakratunda' : 'mahakaya';
+
+                  // Skip directly to power overlay (word reveal VO already played)
+                  safeSetTimeout(() => {
+                    setShowCenteredWord(null);
+                    setShowSparkle(`${word}-to-sidebar`);
+
+                    sceneActions.updateState({
+                      unlockedApps: { ...sceneState.unlockedApps, [word]: true }
+                    });
+
+                    safeSetTimeout(() => {
+                      setShowSparkle(null);
+                      setCurrentWord(word);
+
+                      // Show the Overlay and play power VO
+                      setShowPowerOverlay(true);
+                      setShowPowerButton(false);
+                      setShowPracticeAgainButton(false);
+                      if (isAudioOn) {
+                        const powerVOKey = word === 'vakratunda' ? 'vakratundaPower' : 'mahakayaPower';
+                        playVO(powerVOKey, () => {
+                          playSfx('chime');
+                          setShowPowerButton(true);
+                          setShowPracticeAgainButton(true);
+                        });
+                      } else {
+                        setShowPowerButton(true);
+                        setShowPracticeAgainButton(true);
+                      }
+
+                      sceneActions.updateState({
+                        phase: word === 'vakratunda' ? PHASES.VAKRATUNDA_POWER : PHASES.MAHAKAYA_POWER
+                      });
+                    }, 2000);
+                  }, 500);
+
+                  return; // Don't restart idle timer
+                }
+
+                // Restart idle timer ONLY for active game phases (not celebration/complete/power phases)
+                const activeGamePhases = [PHASES.VAKRATUNDA_GAME, PHASES.MAHAKAYA_GAME];
+                const celebrationPhases = [PHASES.VAKRATUNDA_COMPLETE, PHASES.VAKRATUNDA_POWER, PHASES.MAHAKAYA_COMPLETE, PHASES.MAHAKAYA_POWER];
+
+                // Don't restart idle timer if we're in celebration/transition OR if overlay/centered word is showing
+                if (activeGamePhases.includes(sceneState.phase) &&
+                    !celebrationPhases.includes(sceneState.phase) &&
+                    !showPowerOverlay &&
+                    !showCenteredWord) {
+                  startIdleTimer();
+                }
+              }}
               onBackToMap={() => {
                 setShowPauseMenu(false);
                 onNavigate?.('zones');
@@ -589,7 +731,7 @@ const VakratundaGroveContent = ({
               savedGameState={sceneState.vakratundaGameState}
               onSaveGameState={(state) => handleSaveComponentState('vakratundaGame', state)}
               voiceGuidance={{ playVoice: playVO, playSfx, stopVoice }}
-              isPaused={isRecorderOpen}
+              isPaused={isRecorderOpen || showPauseMenu}
             />
 
             {/* MAHAKAYA MEMORY GAME */}
@@ -609,7 +751,7 @@ const VakratundaGroveContent = ({
               savedGameState={sceneState.mahakayaGameState}
               onSaveGameState={(state) => handleSaveComponentState('mahakayaGame', state)}
               voiceGuidance={{ playVoice: playVO, playSfx, stopVoice }}
-              isPaused={isRecorderOpen}
+              isPaused={isRecorderOpen || showPauseMenu}
             />
 
             {/* PERSISTENT BOY CHARACTER (Commented out per user request) */}

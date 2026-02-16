@@ -39,7 +39,6 @@ const AutoPlayModeV2 = ({
   const [waitBannerMessage, setWaitBannerMessage] = useState('');
   const [showWaitBanner, setShowWaitBanner] = useState(false);
   const [showPauseModal, setShowPauseModal] = useState(false);
-  const [isPauseButtonLocked, setIsPauseButtonLocked] = useState(false);
 
   // Hint State
   const [showIdleHint, setShowIdleHint] = useState(false);
@@ -75,9 +74,7 @@ const AutoPlayModeV2 = ({
 
   // Guard against multiple rapid pause/resume cycles causing stacked callbacks
   const isResumingRef = useRef(false);
-  const pendingResumeRef = useRef(false);
   const lastResumeTimeRef = useRef(0);
-  const pauseButtonCooldownUntilRef = useRef(0);
 
   const clearAllTimers = () => {
     timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
@@ -92,17 +89,6 @@ const AutoPlayModeV2 = ({
     }, delay);
     timeoutsRef.current.push(timeout);
     return timeout;
-  };
-
-  const lockPauseButton = (durationMs = 450) => {
-    const unlockAt = Date.now() + durationMs;
-    pauseButtonCooldownUntilRef.current = unlockAt;
-    setIsPauseButtonLocked(true);
-    safeSetTimeout(() => {
-      if (Date.now() >= pauseButtonCooldownUntilRef.current) {
-        setIsPauseButtonLocked(false);
-      }
-    }, durationMs + 30);
   };
 
   useEffect(() => {
@@ -133,8 +119,6 @@ const AutoPlayModeV2 = ({
 
       clearAllTimers();
       flowInProgressRef.current = false;
-      isResumingRef.current = false;
-      pendingResumeRef.current = false;
 
       if (voiceGuidanceRef.current?.stopVoice) {
         voiceGuidanceRef.current.stopVoice();
@@ -162,30 +146,18 @@ const AutoPlayModeV2 = ({
       if (isActive && hasInitializedRef.current) {
         // GUARD: Prevent multiple simultaneous resumes (but allow retries after short delay)
         if (isResumingRef.current) {
-          pendingResumeRef.current = true;
           console.log('⚠️ Skipping resume - already resuming');
           return;
         }
 
         isResumingRef.current = true;
         lastResumeTimeRef.current = Date.now();
-        pendingResumeRef.current = false;
-
-        const releaseResumeLock = () => {
-          safeSetTimeout(() => {
-            isResumingRef.current = false;
-            if (!isPausedRef.current && pendingResumeRef.current) {
-              pendingResumeRef.current = false;
-              handleContinue();
-            }
-          }, 100);
-        };
 
         console.log('▶️ AutoPlayModeV2: RESUMING from phase:', gamePhase);
 
         // Don't resume if game is already complete
         if (gamePhase === 'phase_complete') {
-          releaseResumeLock();
+          isResumingRef.current = false;
           return;
         }
 
@@ -229,17 +201,14 @@ const AutoPlayModeV2 = ({
           if (!started) {
             setSingingSyllable(null);
             flowInProgressRef.current = false;
-            releaseResumeLock();
             return;
           }
-          releaseResumeLock();
           return; // Early return - don't execute other resume logic
         }
 
         // SPECIAL CASE: If paused during lotus completion audio, replay it and continue flow
         if (gamePhase === 'waiting_lotus' && lotusAudioPlayingRef.current) {
           replayLotusAudioAfterPause();
-          releaseResumeLock();
           return;
         }
 
@@ -260,7 +229,6 @@ const AutoPlayModeV2 = ({
             lastInterruptibleVORef.current = centralVO;
             voiceGuidanceRef.current.playVoice(centralVO);
           }
-          releaseResumeLock();
           return;
         }
 
@@ -327,7 +295,10 @@ const AutoPlayModeV2 = ({
            }
         }
 
-        releaseResumeLock();
+        // Clear the resuming flag after a short delay (allow resume actions to start)
+        safeSetTimeout(() => {
+          isResumingRef.current = false;
+        }, 100);
       }
     }
   }, [isPaused, isActive]);
@@ -708,21 +679,9 @@ const AutoPlayModeV2 = ({
     }
   };
 
-  const handlePause = () => {
-    if (showPauseModal) return;
-    if (isResumingRef.current) return;
-    if (Date.now() < pauseButtonCooldownUntilRef.current) return;
-    setShowPauseModal(true);
-    clearAllTimers();
-    flowInProgressRef.current = false;
-  };
+  const handlePause = () => { setShowPauseModal(true); clearAllTimers(); flowInProgressRef.current = false; };
   const handleContinue = () => {
-    if (isResumingRef.current) {
-      pendingResumeRef.current = true;
-      return;
-    }
     setShowPauseModal(false);
-    lockPauseButton(450);
     if (gamePhase === 'playing_syllable') {
       startSyllableFlow(currentSyllableIndex);
     } else if (gamePhase === 'listening_syllable') {
@@ -964,12 +923,7 @@ const AutoPlayModeV2 = ({
 
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 20 }}>
-      {!hideElements && (
-        <UniversalPauseButton
-          onPause={handlePause}
-          disabled={gamePhase === 'phase_complete' || isPauseButtonLocked || showPauseModal}
-        />
-      )}
+      {!hideElements && <UniversalPauseButton onPause={handlePause} disabled={gamePhase === 'phase_complete'} />}
       <PauseModal isOpen={showPauseModal} onContinue={handleContinue} onExit={handleExitToMenu} />
 
       {!hideElements && showWaitBanner && <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'rgba(255, 152, 0, 0.95)', color: 'white', padding: '20px 40px', borderRadius: '20px', fontSize: '18px', fontWeight: 'bold', zIndex: 100, animation: 'fadeInOut 1.5s' }}>{waitBannerMessage}</div>}
@@ -1011,3 +965,4 @@ const AutoPlayModeV2 = ({
 };
 
 export default AutoPlayModeV2;
+

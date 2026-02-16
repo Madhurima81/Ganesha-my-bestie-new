@@ -38,7 +38,7 @@ import Fireworks from '../../../../lib/components/feedback/Fireworks';
 import SymbolSidebar from '../../shared/components/SymbolSidebar';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOverlay';
-import { PauseButton, PauseMenu } from '../../../../lib/components/ui/PauseMenu'; // ✅ Shared Pause Components
+import { PauseButton, PauseMenu, PauseBlurOverlay, usePauseEnhancements } from '../../../../lib/components/ui/PauseMenu'; // ✅ Shared Pause Components
 
 // Images
 import forestBackground from './assets/images/forest-background.png';
@@ -299,6 +299,29 @@ const NewModakSceneMVPContent = ({
   // ========================================
   const [showPauseMenu, setShowPauseMenu] = useState(false);
   const [isSoundOn, setIsSoundOn] = useState(true);
+
+  // ========================================
+  // PAUSE MENU ENHANCEMENTS (ESC + AUTO-PAUSE + BLUR)
+  // ========================================
+  usePauseEnhancements(
+    showPauseMenu,
+    setShowPauseMenu,
+    () => {
+      // On pause: Stop VOs and timers
+      stopVoice();
+      stopIdleTimer();
+    },
+    () => {
+      // On resume: Restart game if active
+      const gameActive = sceneState.welcomeShown && !showSceneCompletion;
+      if (gameActive) {
+        startIdleTimer();
+      }
+    },
+    {
+      gameActive: sceneState.welcomeShown && !showSceneCompletion && !showDiscoveryFlip1 && !showDiscoveryFlip2 && !showDiscoveryFlip3
+    }
+  );
 
   // ========================================
   // VO-GATED STATE MACHINE
@@ -837,6 +860,9 @@ const NewModakSceneMVPContent = ({
         visible={sceneState.welcomeShown}
         onClick={() => setShowPauseMenu(true)}
       />
+
+      {/* Visual Blur Overlay */}
+      <PauseBlurOverlay show={showPauseMenu} />
 
       {/* Pause Menu */}
       <PauseMenu

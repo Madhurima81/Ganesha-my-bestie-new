@@ -6,7 +6,12 @@
       "Bash(dir \"C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\public\\\\audio\\\\voiceover\\\\INSTRUCTIONS\")",
       "Bash(node -e:*)",
       "Bash(grep:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)"
     ]
   }
 }
