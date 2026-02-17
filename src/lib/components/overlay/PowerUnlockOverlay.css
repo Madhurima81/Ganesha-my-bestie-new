@@ -326,10 +326,12 @@
 .power-button {
   background: linear-gradient(180deg, #FFD54F, #FFB300);
   color: #5D4037;
-  padding: 14px 28px;
-  border-radius: 28px;
+  padding: 20px 56px;
+  border-radius: 36px;
   border: none;
-  font-size: 16px;
+  font-size: 28px;
+  line-height: 1.1;
+  min-height: 72px;
   font-weight: 800;
   letter-spacing: 0.4px;
   box-shadow: 0 8px 18px rgba(255,179,0,0.45);
@@ -343,10 +345,12 @@
 .power-button-secondary {
   background: rgba(255, 255, 255, 0.15);
   color: #FFFFFF;
-  padding: 12px 20px;
-  border-radius: 24px;
+  padding: 16px 32px;
+  border-radius: 30px;
   border: 2px solid rgba(255,255,255,0.6);
-  font-size: 14px;
+  font-size: 20px;
+  line-height: 1.1;
+  min-height: 62px;
   font-weight: 600;
   letter-spacing: 0.3px;
   backdrop-filter: blur(4px);

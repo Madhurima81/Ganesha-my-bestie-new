@@ -31,13 +31,11 @@ const PowerUnlockOverlay = ({
   onPlayAgain
 }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [iconAnimated, setIconAnimated] = useState(false);
+  const [iconAnimated, setIconAnimated] = useState(true);
   const hasCalledOnShow = useRef(false);
 
   useEffect(() => {
     const fadeTimer = setTimeout(() => setIsVisible(true), 50);
-    const iconTimer = setTimeout(() => setIconAnimated(true), 300);
-
     let showTimer;
     if (!hasCalledOnShow.current && onShow) {
       hasCalledOnShow.current = true;
@@ -46,7 +44,6 @@ const PowerUnlockOverlay = ({
 
     return () => {
       clearTimeout(fadeTimer);
-      clearTimeout(iconTimer);
       if (showTimer) clearTimeout(showTimer);
     };
   }, []);

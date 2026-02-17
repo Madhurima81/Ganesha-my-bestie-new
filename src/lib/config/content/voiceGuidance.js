@@ -292,6 +292,11 @@ export const VOICE_SCRIPTS = {
         text: "Drag the modaks to feed Ganesha!",
         file: 'modak-feed-ganesha.mp3'
       },
+      // Hint for feeding phase (idle hint)
+      feedHint: {
+        text: "Drag them here!",
+        file: 'feed-hint.mp3'
+      },
       // Feeding progress VOs
       feedProgress1: {
         text: "Yummy! One modak!",
@@ -713,8 +718,8 @@ export const getPhaseHint = (phase) => {
   const hintMap = {
     // Symbol Mountain hints
     'findMooshika': 'hintMound',
-    'collectModaks': 'hintModak',
-    'shareWithGanesha': 'feedGanesha',
+    'collectModaks': 'tapModak',        // Use tapModak hint for collect phase
+    'shareWithGanesha': 'feedHint',     // Use feedHint for feed phase
     // Shloka River hints
     'vakratundaGame': 'hintTapTheShiny',
     'mahakayaGame': 'hintTapTheShiny',

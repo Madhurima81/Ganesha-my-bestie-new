@@ -277,7 +277,7 @@ const NewModakSceneMVPContent = ({
     musicVolume: 0.2,
     voiceVolume: 1,
     sfxVolume: 0.7,
-    idleTimeout: 10
+    idleTimeout: 20
   });
 
   // Get content from configs
@@ -294,11 +294,161 @@ const NewModakSceneMVPContent = ({
   const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false);
   const [showDiscoveryFlip3, setShowDiscoveryFlip3] = useState(false);
 
+  // Track final celebration completion (VO + fireworks sync)
+  const [sceneCompleteVOFinished, setSceneCompleteVOFinished] = useState(false);
+  const [fireworksFinished, setFireworksFinished] = useState(false);
+
   // ========================================
   // PAUSE MENU STATE
   // ========================================
   const [showPauseMenu, setShowPauseMenu] = useState(false);
   const [isSoundOn, setIsSoundOn] = useState(true);
+  const [isPauseButtonLocked, setIsPauseButtonLocked] = useState(false);
+  const timeoutsRef = useRef([]);
+  const resumeInFlightRef = useRef(false);
+  const pendingResumeRef = useRef(false);
+  const lastResumeTimeRef = useRef(0);
+  const pauseButtonCooldownUntilRef = useRef(0);
+
+  // Track if initial instruction has completed for each phase
+  const [initialInstructionPlayed, setInitialInstructionPlayed] = useState({
+    findMooshika: false,
+    collectModaks: false,
+    shareWithGanesha: false
+  });
+
+  const isCelebrationOrOverlayActive =
+    showSceneCompletion ||
+    showDiscoveryFlip1 ||
+    showDiscoveryFlip2 ||
+    showDiscoveryFlip3 ||
+    sceneState.phase === PHASES.ALL_COLLECTED || // Block during modak completion → overlay transition
+    sceneState.phase === PHASES.ROCK_TRANSFORMED; // Block during feeding completion → overlay transition
+
+  const canShowPauseUI = sceneState.welcomeShown && !isCelebrationOrOverlayActive;
+
+  // Get current game phase for initial instruction tracking
+  const getCurrentGamePhase = () => {
+    if (sceneState.phase === PHASES.MOOSHIKA_SEARCH) return 'findMooshika';
+    if (sceneState.phase === PHASES.MODAKS_UNLOCKED || sceneState.phase === PHASES.SOME_COLLECTED) return 'collectModaks';
+    if (sceneState.phase === PHASES.ROCK_VISIBLE || sceneState.phase === PHASES.ROCK_FEEDING) return 'shareWithGanesha';
+    return null;
+  };
+
+  // Replay initial instruction with callback to mark as complete
+  const replayInitialInstruction = (phase) => {
+    if (phase === 'findMooshika') {
+      playVoice('findMooshika', () => {
+        setInitialInstructionPlayed(prev => ({ ...prev, findMooshika: true }));
+      });
+      setCurrentPhase('findMooshika');
+    } else if (phase === 'collectModaks') {
+      playVoice('collectStart', () => {
+        setInitialInstructionPlayed(prev => ({ ...prev, collectModaks: true }));
+      });
+      setCurrentPhase('collectModaks');
+    } else if (phase === 'shareWithGanesha') {
+      playVoice('feedGanesha', () => {
+        setInitialInstructionPlayed(prev => ({ ...prev, shareWithGanesha: true }));
+      });
+      setCurrentPhase('shareWithGanesha');
+    }
+  };
+
+  // Restore phase context for idle hints (NO VO played)
+  const restoreCurrentPhase = () => {
+    if (!sceneState?.welcomeShown || isCelebrationOrOverlayActive) return;
+
+    if (sceneState.phase === PHASES.MOOSHIKA_SEARCH) {
+      setCurrentPhase('findMooshika');
+    } else if (sceneState.phase === PHASES.MODAKS_UNLOCKED || sceneState.phase === PHASES.SOME_COLLECTED) {
+      setCurrentPhase('collectModaks');
+    } else if (sceneState.phase === PHASES.ROCK_VISIBLE || sceneState.phase === PHASES.ROCK_FEEDING) {
+      setCurrentPhase('shareWithGanesha');
+    }
+  };
+
+  const handlePauseCore = () => {
+    stopVoice();
+    stopIdleTimer();
+  };
+
+  const lockPauseButton = (durationMs = 450) => {
+    const unlockAt = Date.now() + durationMs;
+    pauseButtonCooldownUntilRef.current = unlockAt;
+    setIsPauseButtonLocked(true);
+    const timerId = setTimeout(() => {
+      if (Date.now() >= pauseButtonCooldownUntilRef.current) {
+        setIsPauseButtonLocked(false);
+      }
+    }, durationMs + 30);
+    timeoutsRef.current.push(timerId);
+  };
+
+  const resumePhaseAfterPause = () => {
+    if (!canShowPauseUI) return;
+
+    const currentGamePhase = getCurrentGamePhase();
+
+    // SPECIAL CASE: Replay completion VOs during transition phases
+    // This handles the gap between completion and power overlay
+    if (sceneState.phase === PHASES.ALL_COLLECTED) {
+      // Paused during modak collection completion (before overlay)
+      playVoice('collectComplete');
+      startIdleTimer();
+      return;
+    }
+
+    if (sceneState.phase === PHASES.ROCK_TRANSFORMED) {
+      // Paused during feeding completion (before overlay)
+      playVoice('feedComplete', () => {
+        playCelebration('bellyHappy');
+      });
+      startIdleTimer();
+      return;
+    }
+
+    // If initial instruction hasn't finished playing, replay it
+    if (currentGamePhase && !initialInstructionPlayed[currentGamePhase]) {
+      replayInitialInstruction(currentGamePhase);
+      startIdleTimer();
+    } else {
+      // Initial instruction already played - use silent resume + idle timer
+      restoreCurrentPhase();
+      startIdleTimer();
+    }
+  };
+
+  const handlePauseOpen = () => {
+    if (!canShowPauseUI || showPauseMenu || isPauseButtonLocked) return;
+    if (Date.now() < pauseButtonCooldownUntilRef.current) return;
+    handlePauseCore();
+    setShowPauseMenu(true);
+  };
+
+  const handleResumeFromPause = () => {
+    const now = Date.now();
+    if (resumeInFlightRef.current && now - lastResumeTimeRef.current < 300) {
+      pendingResumeRef.current = true;
+      return;
+    }
+
+    resumeInFlightRef.current = true;
+    pendingResumeRef.current = false;
+    lastResumeTimeRef.current = now;
+    setShowPauseMenu(false);
+    lockPauseButton(450);
+    resumePhaseAfterPause();
+
+    const releaseId = setTimeout(() => {
+      resumeInFlightRef.current = false;
+      if (pendingResumeRef.current) {
+        pendingResumeRef.current = false;
+        resumePhaseAfterPause();
+      }
+    }, 260);
+    timeoutsRef.current.push(releaseId);
+  };
 
   // ========================================
   // PAUSE MENU ENHANCEMENTS (ESC + AUTO-PAUSE + BLUR)
@@ -306,20 +456,10 @@ const NewModakSceneMVPContent = ({
   usePauseEnhancements(
     showPauseMenu,
     setShowPauseMenu,
-    () => {
-      // On pause: Stop VOs and timers
-      stopVoice();
-      stopIdleTimer();
-    },
-    () => {
-      // On resume: Restart game if active
-      const gameActive = sceneState.welcomeShown && !showSceneCompletion;
-      if (gameActive) {
-        startIdleTimer();
-      }
-    },
+    handlePauseCore,
+    handleResumeFromPause,
     {
-      gameActive: sceneState.welcomeShown && !showSceneCompletion && !showDiscoveryFlip1 && !showDiscoveryFlip2 && !showDiscoveryFlip3
+      gameActive: canShowPauseUI
     }
   );
 
@@ -353,8 +493,6 @@ const NewModakSceneMVPContent = ({
       image: symbolBellyColored
     }
   };
-
-  const timeoutsRef = useRef([]);
 
   const activeProfile = GameStateManager.getActiveProfile();
   const profileName = activeProfile?.name || 'little explorer';
@@ -495,7 +633,10 @@ const NewModakSceneMVPContent = ({
       startMusic();
       // Play find mooshika instruction
       setTimeout(() => {
-        playVoice('findMooshika');
+        playVoice('findMooshika', () => {
+          // Mark initial instruction as complete
+          setInitialInstructionPlayed(prev => ({ ...prev, findMooshika: true }));
+        });
         setCurrentPhase('findMooshika');
         setAppState('play');
         startIdleTimer();
@@ -610,6 +751,16 @@ const NewModakSceneMVPContent = ({
       return () => clearTimeout(timer);
     }
   }, [showDiscoveryFlip3]);
+
+  // ========================================
+  // FINAL CELEBRATION SYNC: Show completion modal only when BOTH VO and fireworks finish
+  // ========================================
+  useEffect(() => {
+    if (sceneCompleteVOFinished && fireworksFinished) {
+      console.log('✅ Both VO and fireworks finished - showing completion modal');
+      setShowSceneCompletion(true);
+    }
+  }, [sceneCompleteVOFinished, fireworksFinished]);
 
 
  const handleMoundClick = (moundIndex) => {
@@ -857,19 +1008,20 @@ const NewModakSceneMVPContent = ({
     <div data-zone="symbol-mountain">
       {/* Pause Button - Always visible after welcome screen */}
       <PauseButton
-        visible={sceneState.welcomeShown}
-        onClick={() => setShowPauseMenu(true)}
+        visible={canShowPauseUI}
+        onClick={handlePauseOpen}
       />
 
       {/* Visual Blur Overlay */}
-      <PauseBlurOverlay show={showPauseMenu} />
+      <PauseBlurOverlay show={showPauseMenu && canShowPauseUI} />
 
       {/* Pause Menu */}
       <PauseMenu
-        show={showPauseMenu}
-        onResume={() => setShowPauseMenu(false)}
+        show={showPauseMenu && canShowPauseUI}
+        onResume={handleResumeFromPause}
         onBackToMap={() => {
           setShowPauseMenu(false);
+          handlePauseCore();
           stopMusic();
           onNavigate?.('zones');
         }}
@@ -1054,14 +1206,6 @@ const NewModakSceneMVPContent = ({
                     />
                   )}
 
-                  {showMooshikaSpeech && (
-                    <div className="modak-game-mooshika-speech-bubble">
-                      <div className="modak-game-speech-content">
-                        {mooshikaSpeechMessage}
-                      </div>
-                      <div className="modak-game-speech-arrow"></div>
-                    </div>
-                  )}
                 </FreeDraggableItem>
               )}
 
@@ -1159,7 +1303,9 @@ const NewModakSceneMVPContent = ({
                       top: `${42 + displayIndex * 3}%`,
                       left: `${14 + displayIndex * 2}%`,
                       zIndex: 15,
-                      animation: 'modak-game-modakToBasket 0.8s ease-out'
+                      // Avoid drag-anchor offset during feed phase by removing
+                      // transform animation once the modaks become draggable.
+                      animation: canDrag ? 'none' : 'modak-game-modakToBasket 0.8s ease-out'
                     }}
                   >
                     <DraggableItem
@@ -1252,10 +1398,13 @@ const NewModakSceneMVPContent = ({
             {showSparkle === 'final-fireworks' && (
               <Fireworks
                 show={true}
-                duration={4000}
+                duration={6000}
                 onComplete={() => {
+                  console.log('✅ Fireworks finished');
                   setShowSparkle(null);
+                  setFireworksFinished(true);
 
+                  // Save game state
                   const profileId = localStorage.getItem('activeProfileId');
                   if (profileId) {
                     GameStateManager.saveGameState('symbol-mountain', 'modak', {
@@ -1270,7 +1419,7 @@ const NewModakSceneMVPContent = ({
                     SimpleSceneManager.clearCurrentScene();
                   }
 
-                  setShowSceneCompletion(true);
+                  // Completion modal will show via useEffect when BOTH VO and fireworks finish
                 }}
               />
             )}
@@ -1331,7 +1480,10 @@ const NewModakSceneMVPContent = ({
                   console.log("Power 1: Focus Power unlocked");
                   setShowDiscoveryFlip1(false);
                   setDiscoveryButtonVisible(false);
-                  playVoice('collectStart');
+                  playVoice('collectStart', () => {
+                    // Mark initial instruction as complete
+                    setInitialInstructionPlayed(prev => ({ ...prev, collectModaks: true }));
+                  });
                   setShowSparkle('modaks-appearing');
                   setTimeout(() => {
                     sceneActions.updateState({
@@ -1365,7 +1517,10 @@ Sweet rewards come when we try our best."
                   setShowDiscoveryFlip2(false);
                   setDiscoveryButtonVisible(false);
                   // Play feeding intro VO
-                  playVoice('feedGanesha');
+                  playVoice('feedGanesha', () => {
+                    // Mark initial instruction as complete
+                    setInitialInstructionPlayed(prev => ({ ...prev, shareWithGanesha: true }));
+                  });
                   sceneActions.updateState({
                     phase: PHASES.ROCK_VISIBLE,
                     basketReady: true,
@@ -1396,10 +1551,22 @@ Sweet rewards come when we try our best."
                   console.log("Power 3: Gratitude Power unlocked");
                   setShowDiscoveryFlip3(false);
                   setDiscoveryButtonVisible(false);
-                  playVoice('sceneComplete');
+
+                  // Reset completion flags
+                  setSceneCompleteVOFinished(false);
+                  setFireworksFinished(false);
+
+                  // Play scene complete VO with callback
+                  playVoice('sceneComplete', () => {
+                    console.log('✅ Scene complete VO finished');
+                    setSceneCompleteVOFinished(true);
+                  });
+
                   sceneActions.updateState({
                     discoveredSymbols: { ...sceneState.discoveredSymbols, belly: true }
                   });
+
+                  // Start fireworks immediately
                   setShowSparkle('final-fireworks');
                 }}
               />
@@ -1411,18 +1578,19 @@ Sweet rewards come when we try our best."
               {...CulturalProgressExtractor.getCulturalProgressData()}
             />
 
-            {sceneState.welcomeShown && (
+            {sceneState.welcomeShown && showSparkle !== 'final-fireworks' && (
               <SymbolSidebar
                 discoveredSymbols={sceneState.discoveredSymbols || {}}
                 onSymbolClick={(symbolId) => {
                   console.log(`Sidebar symbol clicked: ${symbolId}`);
                 }}
                 onPopupOpen={() => {
-                  stopVoice();
-                  stopIdleTimer();
+                  // Same as pause: stop VOs and timers
+                  handlePauseCore();
                 }}
                 onPopupClose={() => {
-                  startIdleTimer();
+                  // Same as resume: replay initial instruction or silent resume
+                  resumePhaseAfterPause();
                 }}
               />
             )}

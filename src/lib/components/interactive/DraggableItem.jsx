@@ -18,7 +18,19 @@ const DraggableItem = ({
   const [touchStartPos, setTouchStartPos] = useState({ x: 0, y: 0 });
   const [dragMode, setDragMode] = useState('dropzone'); // 'dropzone' or 'free'
   const originalSizeRef = useRef({ width: 0, height: 0 }); // 🔧 Store original size
-  
+
+  // 🔧 FIX: Pre-cache element size after render to avoid first-drag offset issues
+  useEffect(() => {
+    if (elementRef.current && originalSizeRef.current.width === 0) {
+      const rect = elementRef.current.getBoundingClientRect();
+      originalSizeRef.current = {
+        width: rect.width,
+        height: rect.height
+      };
+      console.log(`📐 Pre-cached size for ${id}:`, originalSizeRef.current);
+    }
+  }, [id]);
+
   // Add touch event listeners
   useEffect(() => {
     const element = elementRef.current;
