@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './PowerUnlockOverlay.css';
+import { getZoneTheme } from '../../config/ZoneThemes';
 
 /**
  * PowerUnlockOverlay Component
@@ -22,6 +23,7 @@ const PowerUnlockOverlay = ({
   description,
   icon,
   iconColor = '#FFD700',
+  zoneId = 'symbol-mountain',
   buttonText = 'Continue',
   showButton = false,
   showPlayAgain = false,
@@ -33,6 +35,11 @@ const PowerUnlockOverlay = ({
   const [isVisible, setIsVisible] = useState(false);
   const [iconAnimated, setIconAnimated] = useState(true);
   const hasCalledOnShow = useRef(false);
+  const zoneTheme = getZoneTheme(zoneId);
+  const zoneThemeVars = {
+    '--zone-accent-color': zoneTheme.accentColor,
+    '--zone-glow-color': zoneTheme.glowColor
+  };
 
   useEffect(() => {
     const fadeTimer = setTimeout(() => setIsVisible(true), 50);
@@ -83,7 +90,7 @@ const PowerUnlockOverlay = ({
   };
 
   return (
-    <div className={`power-overlay ${isVisible ? 'visible' : ''}`}>
+    <div className={`power-overlay ${isVisible ? 'visible' : ''}`} style={zoneThemeVars}>
       <div className="power-backdrop" />
 
       <div className="power-particles">

@@ -214,6 +214,7 @@ const VakratundaGroveContent = ({
   const [openingButtonVisible, setOpeningButtonVisible] = useState(false);
 
   const [savedRecordings, setSavedRecordings] = useState({});
+  const [showAppDiscovery, setShowAppDiscovery] = useState(false);
   const timeoutsRef = useRef([]);
   const activeProfile = GameStateManager.getActiveProfile();
   const profileName = activeProfile?.name || 'explorer';
@@ -221,6 +222,7 @@ const VakratundaGroveContent = ({
     showSparkle === 'final-fireworks' ||
     showFinalGanesha ||
     showSceneCompletion ||
+    showAppDiscovery ||
     sceneState.phase === PHASES.COMPLETE;
 
   useEffect(() => {
@@ -454,25 +456,32 @@ const VakratundaGroveContent = ({
         mahakayaGameState: null // Ensure Mahakaya always starts from first syllable
       });
     } else {
-      console.log('🎉 Triggering Final Celebration');
-
-      // Play scene complete VO
-      if (isAudioOn) {
-        playVO('sceneComplete');
-      }
-
-      // Complete Scene
-      sceneActions.updateState({
-        phase: PHASES.COMPLETE,
-        stars: 5,
-        completed: true,
-        progress: { percentage: 100, starsEarned: 5, completed: true }
-      });
-
-      // Trigger Finale
-      setShowFinalGanesha(true);
-      setShowSparkle('final-fireworks');
+      console.log('📱 Showing App Discovery screen');
+      // Show App Discovery screen before final celebration
+      setShowAppDiscovery(true);
     }
+  };
+
+  const handleAppDiscoveryCelebrate = () => {
+    setShowAppDiscovery(false);
+    console.log('🎉 Triggering Final Celebration from App Discovery');
+
+    // Play scene complete VO
+    if (isAudioOn) {
+      playVO('sceneComplete');
+    }
+
+    // Complete Scene
+    sceneActions.updateState({
+      phase: PHASES.COMPLETE,
+      stars: 5,
+      completed: true,
+      progress: { percentage: 100, starsEarned: 5, completed: true }
+    });
+
+    // Trigger Finale
+    setShowFinalGanesha(true);
+    setShowSparkle('final-fireworks');
   };
 
   // 🔄 Play Again - Replay the current word's game
@@ -666,9 +675,9 @@ const VakratundaGroveContent = ({
                       <div className="modak-game-sparkle"></div>
                     </div>
 
-                  <div className="game-modal-content">
-                    <div className="game-modal-character">
-                      <img src={ganeshaHeadphones} alt="Ganesha" />
+                    <div className="game-modal-content">
+                      <div className="game-modal-character">
+                      <img src={ganeshaHeadphones} alt="Ganesha" className="vakratunda-modal-ganesha" />
                     </div>
 
                     <div className="game-modal-card" style={{
@@ -707,7 +716,7 @@ const VakratundaGroveContent = ({
                           boxShadow: '0 10px 30px rgba(30, 94, 75, 0.4)'
                         }}
                       >
-                        Start Learning!
+                        Let’s Make Magic! ✨
                       </VOGatedButton>
                     </div>
                   </div>
@@ -771,6 +780,7 @@ const VakratundaGroveContent = ({
             {/* 4. UPDATED POWER OVERLAY (with Play Again for shloka-river) */}
             {showPowerOverlay && currentWord && (
               <PowerUnlockOverlay
+                zoneId={zoneId}
                 title={`${powerConfig[currentWord].name} Unlocked!`}
                 description={{
                   main: [
@@ -785,7 +795,7 @@ const VakratundaGroveContent = ({
                 }}
                 icon={powerConfig[currentWord].image}
                 iconColor={powerConfig[currentWord].color}
-                buttonText={currentWord === 'vakratunda' ? "Discover Mahakaya" : "Celebrate!"}
+                buttonText={currentWord === 'vakratunda' ? "Discover Mahakaya" : "Discover Words!"}
                 showButton={showPowerButton}
                 showPlayAgain={showPracticeAgainButton}
                 playAgainText="Practice Again"
@@ -805,32 +815,55 @@ const VakratundaGroveContent = ({
                     className="vakratunda-celebration-app-icon"
                   />
                   <div className="vakratunda-celebration-word-text">
-                    {showCenteredWord.toUpperCase()}
+                    {showCenteredWord.charAt(0).toUpperCase() + showCenteredWord.slice(1).toLowerCase()}
                   </div>
                 </div>
               </>
             )}
 
+            {/* App Discovery Screen (centerMode) — shown after Mahakaya Power Overlay */}
+            {showAppDiscovery && (
+              <AppSidebar
+                centerMode={true}
+                unlockedApps={sceneState.unlockedApps || {}}
+                savedRecordings={savedRecordings}
+                highlightApps={['vakratunda', 'mahakaya']}
+                onCelebrate={handleAppDiscoveryCelebrate}
+                onPopupOpen={() => {
+                  stopVoice();
+                  stopIdleTimer();
+                }}
+                onPopupClose={() => {
+                  // stay on discovery screen, no timer restart
+                }}
+              />
+            )}
+
+            {/* Side rail AppSidebar — hidden during App Discovery and final celebration */}
+            {!showAppDiscovery &&
+             !isFinalCelebrationActive &&
+             !(sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown) && (
             <AppSidebar
               unlockedApps={sceneState.unlockedApps || {}}
               savedRecordings={savedRecordings}
               isReload={isReload}
-       onPopupOpen={() => {
-    console.log("🎤 Recorder Opening - Pausing Game"); // <--- Add this log
-    stopVoice();
-    stopIdleTimer();
-    setIsRecorderOpen(true); // <--- THIS MUST RUN
-  }}
-  onPopupClose={() => {
-    console.log("🎤 Recorder Closing - Resuming Game");
-    setIsRecorderOpen(false);
-    // Only restart idle timer if we're in an active game phase (not celebration/overlay/complete)
-    const activeGamePhases = [PHASES.VAKRATUNDA_GAME, PHASES.MAHAKAYA_GAME];
-    if (activeGamePhases.includes(sceneState.phase) && !showPowerOverlay && !showCenteredWord) {
-      startIdleTimer();
-    }
-  }}
+              onPopupOpen={() => {
+                console.log("🎤 Recorder Opening - Pausing Game");
+                stopVoice();
+                stopIdleTimer();
+                setIsRecorderOpen(true);
+              }}
+              onPopupClose={() => {
+                console.log("🎤 Recorder Closing - Resuming Game");
+                setIsRecorderOpen(false);
+                // Only restart idle timer if we're in an active game phase (not celebration/overlay/complete)
+                const activeGamePhases = [PHASES.VAKRATUNDA_GAME, PHASES.MAHAKAYA_GAME];
+                if (activeGamePhases.includes(sceneState.phase) && !showPowerOverlay && !showCenteredWord) {
+                  startIdleTimer();
+                }
+              }}
             />
+            )}
 
             {showSparkle === 'final-fireworks' && (
               <Fireworks
@@ -873,18 +906,33 @@ const VakratundaGroveContent = ({
 
             <SceneCompletionCelebration
               show={showSceneCompletion}
+              zoneId={zoneId}
               sceneName="Vakratunda Grove"
               sceneNumber={1}
               totalScenes={5}
               starsEarned={5}
               totalStars={5}
               discoveredSymbols={['vakratunda', 'mahakaya']}
-              containerType="smartwatch"
-              containerScreenImage={smartwatchScreen}
+              containerType="apps"
               appImages={{
                 vakratunda: appVakratunda,
                 mahakaya: appMahakaya,
               }}
+              appData={{
+                vakratunda: {
+                  title: "Vakratunda - Curved Trunk",
+                  description: "The remover of obstacles with his curved trunk! Practice the sacred sounds: VA-KRA-TUN-DA",
+                  syllables: ['VA', 'KRA', 'TUN', 'DA'],
+                  color: '#4ECDC4'
+                },
+                mahakaya: {
+                  title: "Mahakaya - Great Body",
+                  description: "The great cosmic form that contains the entire universe within! Practice: MA-HA-KA-YA",
+                  syllables: ['MA', 'HA', 'KA', 'YA'],
+                  color: '#FF6B35'
+                }
+              }}
+              savedRecordings={savedRecordings}
               nextSceneName="Suryakoti Bank"
               sceneId="vakratunda-grove"
               completionData={{

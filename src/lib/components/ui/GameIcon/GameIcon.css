@@ -1,0 +1,20 @@
+.game-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.game-icon--img {
+  object-fit: contain;
+}
+
+.game-icon--emoji {
+  /* keeps emoji from inheriting colour/font styles that distort it */
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  text-decoration: none;
+  color: inherit;
+}

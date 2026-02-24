@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import GameStateManager from '../../lib/services/GameStateManager';
 import ProgressManager from '../../lib/services/ProgressManager';
+import ScreenHeader from '../../lib/components/shared/ScreenHeader';
 import './SymbolMountainFlipbook.css';
 
 // ✅ ACTUAL SCENE IMPORTS - Lazy load your existing scenes
@@ -232,15 +233,27 @@ const SymbolMountainFlipbook = (props) => {
 const ChapterOverview = ({ chapterData, onSceneSelect, onBackToMap }) => {
   return (
     <div className="chapter-overview">
+
+      {/* Divine center glow */}
+      <div className="map-glow" aria-hidden="true" />
+
+      {/* Floating particles */}
+      <div className="ch-particles" aria-hidden="true">
+        <span/><span/><span/><span/>
+      </div>
+
       {/* Header with back button */}
       <div className="chapter-header">
         <button className="back-to-map-btn" onClick={onBackToMap}>
           ← Back to Map
         </button>
         <div className="chapter-title-section">
-          <span className="chapter-icon">{chapterData.icon}</span>
-          <h1>{chapterData.title}</h1>
-          <p className="chapter-subtitle">{chapterData.subtitle}</p>
+          <ScreenHeader
+            title={chapterData.title}
+            subtitle={chapterData.subtitle}
+            glowColor="gold"
+            icon={chapterData.icon}
+          />
         </div>
       </div>
 
@@ -287,41 +300,44 @@ const SceneCard = ({ scene, pageNumber, onSelect }) => {
   };
 
   return (
-    <div 
+    <div
       className={`scene-card ${scene.status}`}
       onClick={scene.status !== 'locked' ? onSelect : undefined}
     >
-      <div className="card-header">
-        <span className="page-number">{pageNumber}</span>
-        <span className="scene-icon">{scene.icon}</span>
-      </div>
-      
-      <div className="card-content">
-        <h3>{scene.title}</h3>
-        <p>{scene.subtitle}</p>
-        <div className="symbol-preview">
-          Symbol: {scene.symbol}
+      {/* Inner surface — spec's zone-inner */}
+      <div className="zone-inner">
+        <div className="card-header">
+          <span className="page-number">{pageNumber}</span>
+          <span className="scene-icon">{scene.icon}</span>
         </div>
-        {Object.keys(scene.symbols).length > 0 && (
-          <div className="discovered-symbols">
-            Discovered: {Object.keys(scene.symbols).join(', ')}
+
+        <div className="card-content">
+          <h3>{scene.title}</h3>
+          <p>{scene.subtitle}</p>
+          <div className="symbol-preview">
+            Symbol: {scene.symbol}
           </div>
-        )}
-      </div>
-      
-      <div className="card-footer">
-        <button 
-          className={`action-btn ${scene.status}`}
-          disabled={scene.status === 'locked'}
-        >
-          {getActionText()}
-        </button>
-        
-        {scene.stars > 0 && (
-          <div className="stars">
-            {'⭐'.repeat(scene.stars)}
-          </div>
-        )}
+          {Object.keys(scene.symbols).length > 0 && (
+            <div className="discovered-symbols">
+              Discovered: {Object.keys(scene.symbols).join(', ')}
+            </div>
+          )}
+        </div>
+
+        <div className="card-footer">
+          <button
+            className={`action-btn ${scene.status}`}
+            disabled={scene.status === 'locked'}
+          >
+            {getActionText()}
+          </button>
+
+          {scene.stars > 0 && (
+            <div className="stars">
+              {'⭐'.repeat(scene.stars)}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

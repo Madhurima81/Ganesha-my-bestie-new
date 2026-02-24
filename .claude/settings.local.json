@@ -11,7 +11,12 @@
       "Bash(findstr:*)",
       "Bash(taskkill:*)",
       "Bash(ls:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(Get-Content \"C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\src\\\\zones\\\\shloka-river\\\\core\\\\SharedGameUI.css\")",
+      "Bash(Measure-Object:*)",
+      "Bash(copy:*)",
+      "Bash(cmd.exe /c \"copy:*)",
+      "Bash(dir:*)"
     ]
   }
 }

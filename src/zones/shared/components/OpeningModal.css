@@ -300,31 +300,62 @@
 /* This makes the card WIDER on Tablets */
 @media (min-width: 768px) and (min-height: 768px) and (max-width: 1180px) {
   .game-modal-content {
-    max-width: 1200px;
-    padding: 0 30px;
-    gap: 30px;
+    max-width: 1180px;
+    padding: 0 24px;
+    gap: 10px;
+  }
+
+  .game-modal-content::before {
+    content: '';
+    position: absolute;
+    left: 44%;
+    top: 50%;
+    width: 220px;
+    height: 260px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(
+      ellipse at center,
+      rgba(46, 125, 107, 0.18) 0%,
+      rgba(46, 125, 107, 0.09) 45%,
+      rgba(46, 125, 107, 0) 75%
+    );
+    filter: blur(4px);
+    pointer-events: none;
+    z-index: 1;
   }
 
   .game-modal-character {
-    flex: 0 0 32%; /* Smaller Ganesha */
-    justify-content: center;
+    flex: 0 0 34%;
+    justify-content: flex-end;
+    margin-right: -42px; /* slight overlap with card to feel connected */
+    z-index: 2;
   }
 
   .game-modal-character img {
-    max-width: 380px;
-    max-height: 65vh;
+    max-width: 430px;
+    max-height: 68vh;
   }
 
   .game-modal-card {
-    flex: 0 0 60%; /* WIDER CARD (Was 48%) */
-    padding: 50px 60px; /* More Padding */
+    flex: 0 0 560px;
+    max-width: 600px;
+    min-height: 560px;
+    padding: 44px 48px;
+    z-index: 3;
   }
 
-  .game-modal-title { font-size: 42px; margin-bottom: 25px; }
-  .game-modal-subtitle { font-size: 22px; margin-bottom: 40px; }
-  .game-modal-icons { margin-bottom: 40px; gap: 50px; }
-  .game-modal-icon-item img { width: 90px; height: 90px; }
-  .game-modal-button { font-size: 26px; padding: 20px 60px; }
+  .game-modal-card .game-modal-title { font-size: 32px !important; margin-bottom: 18px; }
+  .game-modal-card .game-modal-subtitle { font-size: 20px !important; margin-bottom: 28px; }
+  .game-modal-card p.game-modal-subtitle { font-size: 20px !important; }
+  .game-modal-icons { margin-bottom: 28px; gap: 28px; }
+  .game-modal-icon-item img { width: 64px; height: 64px; }
+  .game-modal-card .game-modal-icon-label { font-size: 18px !important; }
+  .game-modal-card .game-modal-button {
+    font-size: 22px !important;
+    min-height: 60px;
+    padding: 0 56px;
+    border-radius: 36px;
+  }
 }
 
 /* 5. iPAD PRO & DESKTOP (Ultra Wide) */

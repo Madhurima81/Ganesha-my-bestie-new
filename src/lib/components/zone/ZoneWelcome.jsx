@@ -3,6 +3,8 @@
 
 import React, { useState, useEffect } from 'react';
 import './ZoneWelcome.css';
+import { getZoneTheme } from '../../config/ZoneThemes';
+import ScreenHeader from '../shared/ScreenHeader';
 import GameStateManager from '../../services/GameStateManager';
 import CulturalProgressExtractor from '../../services/CulturalProgressExtractor';
 
@@ -443,16 +445,31 @@ if (tempData) {
   return { status: 'available', stars: 0 };
 };
 
-  // ✅ DISNEY SYSTEM: Enhanced unlock detection with multiple paths
+  const getCardAccentColor = () => {
+    const theme = getZoneTheme(zoneData?.id);
+    return theme?.accentColor || '#9b7be8';
+  };
+
+  // ✅ MVP: Only scene 1 is playable in each zone — scenes 2+ are "Coming Soon"
+  const MVP_FIRST_SCENE_ONLY = false;
+
+  // ✅ ALL SCENES UNLOCKED — remove this line to re-enable sequential locking
   const checkSceneUnlocked = (scene) => {
+    return true;
     if (!zoneData || !zoneData.scenes) return false;
-    
+
+    // ✅ MVP LOCK: Only the first scene is unlocked in MVP mode
+    if (MVP_FIRST_SCENE_ONLY && scene.order !== 1) {
+      console.log(`🌙 MVP: Scene ${scene.id} locked (MVP — only scene 1 available)`);
+      return false;
+    }
+
     // ✅ NEW: Check if scene has explicit unlocked flag in ZoneConfig (for zones like About Me Hut & Festival Square)
     if (scene.unlocked === true) {
       console.log(`🔓 ZONE CONFIG: Scene ${scene.id} explicitly unlocked in ZoneConfig`);
       return true;
     }
-    
+
     // ✅ DISNEY PATH 1: First scene is always unlocked
     if (scene.order === 1) {
       console.log(`🔓 DISNEY: Scene ${scene.id} unlocked (first scene)`);
@@ -598,16 +615,15 @@ if (tempData) {
   }
 
   return (
-    <div 
-      className="zone-welcome-container"
+    <div
+      className={`zone-welcome-container screen ${zoneData.id}`}
       data-zone={zoneData.id}
       style={{
-        backgroundImage: `url('${zoneData.background}')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
+        '--zone-bg': `url('${zoneData.background}')`,
+        '--zone-text-primary': getZoneTheme(zoneData.id)?.textPrimary || '#6B5416'
       }}
     >
+      <div className="bg-layer"></div>
 
       {/* 🔍 TEMPORARY DEBUG BUTTON */}
 <button 
@@ -651,100 +667,12 @@ if (tempData) {
         ← Back to Map
       </button>
 
-    {/* Centered Zone Title */}
-<div className="zone-title-centered">
-  <div className="zone-icon-large">{zoneData.icon}</div>
-  <div className="zone-title-complete">
-    <h1 className="zone-name-centered">{zoneData.name}</h1>
-    {(() => {
-      const allCompleted = zoneData.scenes.every(scene => {
-        const status = getSceneStatus(scene);
-        return status.status === 'completed';
-      });
-      
-      return allCompleted ? (
-        <div className="zone-complete-badge">
-          <span className="zone-complete-check">✓</span>
-          COMPLETE
-        </div>
-      ) : null;
-    })()}
-  </div>
-</div>
- 
-
-    {/* ✨ Instructional Header - Dynamic Guidance with Personalization */}
-    {(() => {
-      // Get profile name
-      const activeProfile = GameStateManager.getActiveProfile();
-      const profileName = activeProfile?.name || '';
-      
-      // Find first available or in-progress scene
-      const nextScene = zoneData.scenes.find(scene => {
-        const status = getSceneStatus(scene);
-        return status.status === 'available' || status.status === 'in-progress';
-      });
-      
-      // Check if all scenes completed
-      const allCompleted = zoneData.scenes.every(scene => {
-        const status = getSceneStatus(scene);
-        return status.status === 'completed';
-      });
-      
-      // Determine header message
-      let headerClass = '';
-      let icon = '🎯';
-      let message = '';
-      
-      if (allCompleted) {
-        headerClass = 'complete-all';
-        icon = '🎉';
-        message = profileName 
-          ? `Amazing, ${profileName}! You mastered ${zoneData.name}!`
-          : `Amazing! You mastered ${zoneData.name}!`;
-      } else if (nextScene) {
-        const nextStatus = getSceneStatus(nextScene);
-        if (nextStatus.status === 'in-progress') {
-          headerClass = 'success';
-          icon = '▶️';
-          message = profileName ? (
-            <>
-              Keep going, {profileName}! Continue <span className="zone-instruction-scene-name">{nextScene.name}</span>!
-            </>
-          ) : (
-            <>
-              Keep going! Continue <span className="zone-instruction-scene-name">{nextScene.name}</span>!
-            </>
-          );
-        } else {
-          headerClass = '';
-          icon = '🎯';
-          message = profileName ? (
-            <>
-              {profileName}, click <span className="zone-instruction-scene-name">{nextScene.name}</span> to begin!
-            </>
-          ) : (
-            <>
-              Click <span className="zone-instruction-scene-name">{nextScene.name}</span> to start your adventure!
-            </>
-          );
-        }
-      }
-      
-      return message ? (
-        <div className={`zone-instruction-header ${headerClass}`}>
-          <p className="zone-instruction-text">
-            <span className="zone-instruction-icon">{icon}</span>
-            {message}
-          </p>
-        </div>
-      ) : null;
-    })()}
- 
+      <div className="zone-title-top">
+        <ScreenHeader title={zoneData.name} glowColor="gold" />
+      </div>
 
       {/* Scene Icons Grid */}
-      <div className="zone-scenes-container" data-zone={zoneData.id}>
-        {/* ✨ NEW: Horizontal Container with Grid */}
+      <div className="zone-scenes-container cards-wrapper" data-zone={zoneData.id}>
         <div className="scenes-horizontal-container">
           {zoneData.scenes.map((scene, index) => {
             const status = getSceneStatus(scene);
@@ -759,13 +687,14 @@ if (tempData) {
             return (
               <div
                 key={scene.id}
-                className={`zone-scene-card ${status.status} ${
+                className={`zone-scene-card zone-card zone-${index + 1} ${status.status} ${
                   highlightedScene === scene.id ? 'highlighted' : ''
                 } ${status.status === 'locked' ? 'locked-scene' : 'unlocked-scene'} ${
                   isNextScene ? 'next-scene' : ''
                 }`}
                 style={{
-                  cursor: status.status === 'locked' ? 'not-allowed' : 'pointer'
+                  cursor: status.status === 'locked' ? 'not-allowed' : 'pointer',
+                  '--zone-color': getCardAccentColor()
                 }}
                 onClick={() => handleSceneClick(scene)}
               >
@@ -783,88 +712,93 @@ if (tempData) {
                   </div>
                 )}
 
-                {/* ✨ NEW: Scene Icon Area (Top) */}
-                <div className="scene-icon-area">
-                  {scene.iconImage ? (
-                    <img 
-                      src={scene.iconImage}
-                      alt={scene.name}
-                      className="scene-icon-img"
-                      style={{
-                        filter: status.status === 'locked' ? 'grayscale(100%) opacity(0.5)' : 'none'
-                      }}
-                      onError={(e) => {
-                        console.warn(`Failed to load image for ${scene.id}, falling back to emoji`);
-                        e.target.style.display = 'none';
-                        if (e.target.nextElementSibling) {
-                          e.target.nextElementSibling.style.display = 'block';
-                        }
-                      }}
-                    />
-                  ) : null}
-                  
-                  <div 
-                    className="scene-emoji"
-                    style={{
-                      filter: status.status === 'locked' ? 'grayscale(100%)' : 'none',
-                      display: scene.iconImage ? 'none' : 'block'
-                    }}
-                  >
-                    {scene.emoji}
-                  </div>
-                  
-                  {/* Lock overlay for locked scenes */}
-                  {status.status === 'locked' && (
-                    <div className="scene-lock-overlay">
-                      <span className="scene-lock-icon">🔒</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* ✨ NEW: Scene Name Area (Middle) */}
-                <div className="scene-name-area">
-                  <div className="scene-name">
-                    {scene.name}
-                  </div>
-                </div>
-
-                {/* ✨ NEW: Integrated Action Area (Bottom) */}
-                <div className="scene-action-integrated">
-                  {status.status === 'in-progress' ? (
-                    <div className="action-split-container">
-                      <button 
-                        className="action-button-split continue"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleSceneClick(scene, 'continue');
+                <div className="zone-inner">
+                  {/* ✨ NEW: Scene Icon Area (Top) */}
+                  <div className="scene-icon-area">
+                    <div className="icon-circle">
+                      {scene.iconImage ? (
+                        <img 
+                          src={scene.iconImage}
+                          alt={scene.name}
+                          className="scene-icon-img"
+                          style={{
+                            filter: status.status === 'locked' ? 'grayscale(100%) opacity(0.5)' : 'none'
+                          }}
+                          onError={(e) => {
+                            console.warn(`Failed to load image for ${scene.id}, falling back to emoji`);
+                            e.target.style.display = 'none';
+                            if (e.target.nextElementSibling) {
+                              e.target.nextElementSibling.style.display = 'block';
+                            }
+                          }}
+                        />
+                      ) : null}
+                      
+                      <div 
+                        className="scene-emoji"
+                        style={{
+                          filter: status.status === 'locked' ? 'grayscale(100%)' : 'none',
+                          display: scene.iconImage ? 'none' : 'block'
                         }}
                       >
+                        {scene.emoji}
+                      </div>
+                    </div>
+                    
+                    {/* Moon overlay for MVP locked scenes */}
+                    {status.status === 'locked' && (
+                      <div className="scene-lock-overlay">
+                        <span className="scene-lock-icon">🌙</span>
+                        <span className="scene-lock-stars">✨</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* ✨ NEW: Scene Name Area (Middle) */}
+                  <div className="scene-name-area">
+                    <div className="scene-name">
+                      {scene.name}
+                    </div>
+                  </div>
+
+                  {/* ✨ NEW: Integrated Action Area (Bottom) */}
+                  <div className="scene-action-integrated">
+                    {status.status === 'in-progress' ? (
+                      <div className="action-split-container">
+                        <button 
+                          className="action-button-split zone-btn continue"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSceneClick(scene, 'continue');
+                          }}
+                        >
 Continue                            
-                      </button>
+                        </button>
+                        <button 
+                          className="action-button-split zone-btn replay"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSceneClick(scene, 'replay');
+                          }}
+                        >
+                          Replay
+                        </button>
+                      </div>
+                    ) : (
                       <button 
-                        className="action-button-split replay"
+                        className={`action-button-integrated zone-btn ${status.status}`}
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleSceneClick(scene, 'replay');
+                              console.log('Button clicked!', scene.id); // ✨ DEBUG LOG
+                          handleSceneClick(scene);
                         }}
                       >
-                        Replay
+                        {status.status === 'available' && 'Start'}
+                        {status.status === 'completed' && 'Replay'}
+                        {status.status === 'locked' && 'Coming Soon'}
                       </button>
-                    </div>
-                  ) : (
-                    <button 
-                      className={`action-button-integrated ${status.status}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                            console.log('Button clicked!', scene.id); // ✨ DEBUG LOG
-                        handleSceneClick(scene);
-                      }}
-                    >
-                      {status.status === 'available' && 'Start'}
-                      {status.status === 'completed' && 'Replay'}
-                      {status.status === 'locked' && 'Complete Previous'}
-                    </button>
-                  )}
+                    )}
+                  </div>
                 </div>
 
               </div>
@@ -873,23 +807,32 @@ Continue
         </div>
       </div>
 
-{/* ✨ DYNAMIC ZONE-SPECIFIC STATS BAR */}
+{/* JOURNEY PANEL — progress pill at bottom */}
 <div className="stats-bottom-bar">
-  {Object.keys(sceneProgress).length > 0 ? (
-    <div className={`stats-cards stats-${getRelevantCards().length}-cards`}>
-      {(() => {
-        const relevantCards = getRelevantCards();
-        const zoneStats = getZoneStats();
-        
-        return relevantCards.map(cardType => 
-          renderStatCard(cardType, zoneStats)
-        );
-      })()}
-    </div>
-  ) : (
-    <div className="stats-loading">
-      🎒 Loading zone progress...
-    </div>
+  {Object.keys(sceneProgress).length > 0 ? (() => {
+    const zoneStats = getZoneStats();
+    const totalScenes = zoneStats.total;
+    const completedCount = zoneStats.completed;
+    const symbolCount = zoneStats.symbols || zoneStats.chants || zoneStats.stories || zoneStats.meanings || 0;
+    return (
+      <div className="journey-panel">
+        <div className="journey-left">
+          🪔 <span>{symbolCount} {
+            zoneData?.id === 'symbol-mountain' ? 'Symbols' :
+            zoneData?.id === 'shloka-river'    ? 'Chants'  :
+            zoneData?.id === 'story-treehouse' ? 'Stories' :
+            zoneData?.id === 'cave-of-secrets' ? 'Meanings': 'Points'
+          }</span>
+        </div>
+        <div className="journey-steps">
+          {Array.from({ length: totalScenes }, (_, i) => (
+            <span key={i} className={`step ${i < completedCount ? 'done' : ''}`} />
+          ))}
+        </div>
+      </div>
+    );
+  })() : (
+    <div className="stats-loading">🎒 Loading...</div>
   )}
 </div>
 

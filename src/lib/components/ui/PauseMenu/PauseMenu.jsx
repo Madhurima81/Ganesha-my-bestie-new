@@ -4,6 +4,7 @@
 
 import React from 'react';
 import './PauseMenu.css';
+import { getZoneTheme } from '../../../config/ZoneThemes';
 
 // ========================================
 // PAUSE BUTTON COMPONENT
@@ -34,10 +35,48 @@ export const PauseMenu = ({
   onBackToMap,
   isSoundOn = true,
   onSoundToggle,
+  zoneId,
   zoneName = "Adventure",
   showParentsOption = true
 }) => {
   if (!show) return null;
+
+  const normalizeZoneNameToId = (name) => {
+    if (!name) return 'symbol-mountain';
+    const normalized = name.toLowerCase().trim().replace(/\s+/g, '-');
+    const zoneNameMap = {
+      'symbol-mountain': 'symbol-mountain',
+      'cave-of-secrets': 'cave-of-secrets',
+      'festival-square': 'festival-square',
+      'shloka-river': 'shloka-river',
+      'about-me-hut': 'about-me-hut'
+    };
+    return zoneNameMap[normalized] || 'symbol-mountain';
+  };
+
+  const resolvedZoneId = zoneId || normalizeZoneNameToId(zoneName);
+  const theme = getZoneTheme(resolvedZoneId);
+  const pauseThemeVars = {
+    '--zone-menu-bg': theme.menuBg,
+    '--zone-menu-border': theme.menuBorder,
+    '--zone-menu-border-width': theme.menuBorderWidth,
+    '--zone-text-primary': theme.textPrimary,
+    '--zone-text-secondary': theme.textSecondary,
+    '--zone-font-family': theme.fontFamily,
+    '--zone-font-family-body': theme.fontFamilyBody,
+    '--zone-button-bg': theme.buttonBg,
+    '--zone-button-hover-bg': theme.buttonHoverBg,
+    '--zone-button-hover-border': theme.buttonHoverBorder,
+    '--zone-button-active-bg': theme.buttonActiveBg,
+    '--zone-badge-text': theme.badgeText,
+    '--zone-glow-color': theme.glowColor,
+    '--zone-parent-bg': theme.parentBg,
+    '--zone-parent-hover-bg': theme.parentHoverBg,
+    '--zone-parent-border': theme.parentBorder,
+    '--zone-divider-color': theme.dividerColor,
+    '--zone-divider-style': theme.dividerStyle,
+    '--zone-blur': theme.blur
+  };
 
   return (
     <div
@@ -46,6 +85,7 @@ export const PauseMenu = ({
     >
       <div
         className="universal-pause-card"
+        style={pauseThemeVars}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -57,7 +97,7 @@ export const PauseMenu = ({
 
         {/* Menu Items */}
         <div className="universal-pause-menu">
-          {/* Resume Button (Primary) */}
+          {/* Continue Button (Primary) */}
           <button
             className="universal-pause-item universal-pause-item-primary"
             onClick={onResume}
@@ -67,12 +107,12 @@ export const PauseMenu = ({
                 <polygon points="5,3 19,12 5,21" />
               </svg>
             </span>
-            Resume
+            Continue Adventure
           </button>
 
           {/* Back to Map */}
           <button
-            className="universal-pause-item"
+            className="universal-pause-item universal-pause-item-secondary"
             onClick={onBackToMap}
           >
             <span className="universal-pause-icon-emoji">🏠</span>
@@ -81,10 +121,10 @@ export const PauseMenu = ({
 
           {/* Sound Toggle */}
           {onSoundToggle && (
-            <button
-              className="universal-pause-item"
-              onClick={onSoundToggle}
-            >
+              <button
+                className="universal-pause-item universal-pause-item-secondary"
+                onClick={onSoundToggle}
+              >
               <span className="universal-pause-icon-emoji">
                 {isSoundOn ? '🔊' : '🔇'}
               </span>
@@ -97,7 +137,7 @@ export const PauseMenu = ({
           {/* Parents (Hold) */}
           {showParentsOption && (
             <button
-              className="universal-pause-item"
+              className="universal-pause-item universal-pause-item-secondary universal-pause-item-parent"
               onMouseDown={(e) => {
                 // Long press handler - would need timeout logic
                 console.log('Parents button held');
@@ -111,7 +151,7 @@ export const PauseMenu = ({
 
         {/* Footer hint */}
         <p className="universal-pause-footer">
-          (Tap outside to resume)
+          Tap anywhere to jump back in
         </p>
       </div>
     </div>

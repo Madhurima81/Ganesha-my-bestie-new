@@ -1,5 +1,6 @@
 // MainWelcomeScreen.jsx - PRODUCTION READY VERSION
 import React, { useState, useEffect } from 'react';
+import PrimaryBtn from '../shared/PrimaryBtn';
 import './MainWelcomeScreen.css';
 
 const MainWelcomeScreen = ({ onStartAdventure }) => {
@@ -8,37 +9,19 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
   const [showHintArrow, setShowHintArrow] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(false);
-  const [particleCount, setParticleCount] = useState(12);
 
   // Track time on screen for analytics
   useEffect(() => {
     const startTime = Date.now();
-    
     return () => {
       const timeOnScreen = Date.now() - startTime;
       console.log(`📊 Welcome screen viewed for ${timeOnScreen}ms`);
-      // TODO: Send to analytics when ready
-      // trackEvent('welcome_screen_duration', timeOnScreen)
     };
-  }, []);
-
-  // Set particle count based on device
-  useEffect(() => {
-    const updateParticleCount = () => {
-      setParticleCount(window.innerWidth < 768 ? 6 : 12);
-    };
-    
-    updateParticleCount();
-    window.addEventListener('resize', updateParticleCount);
-    
-    return () => window.removeEventListener('resize', updateParticleCount);
   }, []);
 
   // Preload images
   useEffect(() => {
     const images = [
-      '/images/welcome-background.png',
-      '/images/welcome-board.png',
       '/images/welcome-ganesha.png',
       '/images/welcome-mooshika.png'
     ];
@@ -126,9 +109,9 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
         }}>
           <div style={{
             fontSize: '24px',
-            color: '#FFD700',
-            fontFamily: 'Comic Sans MS, cursive',
-            animation: 'pulse 1.5s ease-in-out infinite'
+            color: '#8e63d9',
+            fontFamily: "'Baloo 2', cursive",
+            fontWeight: 700
           }}>
             Loading Ganesha's World...
           </div>
@@ -139,31 +122,48 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
 
   return (
     <div className="main-welcome-container">
-      {/* Background */}
-      <div className="welcome-background">
-        <img 
-          src="/images/welcome-background.png" 
-          alt="Welcome Background"
-          className="background-image"
-        />
+
+      {/* BACKGROUND IMAGE */}
+      <img
+        src="/images/welcome-background.png"
+        alt=""
+        className="welcome-bg-image"
+        aria-hidden="true"
+      />
+
+      {/* TWINKLING STARS */}
+      <div className="twinkle-stars" aria-hidden="true">
+        <span/><span/><span/><span/><span/><span/>
+        <span/><span/><span/><span/><span/><span/>
       </div>
-      
-      {/* WELCOME BOARD */}
-      <div className={`welcome-board-container ${showButton ? 'visible' : ''}`}>
-        <img 
-          src="/images/welcome-board.png" 
-          alt="Welcome to Ganesha's World"
-          className="welcome-board-image"
-        />
+
+      {/* FLOATING GOLDEN LIGHT PARTICLES */}
+      <div className="floating-lights" aria-hidden="true">
+        <span/><span/><span/><span/><span/>
+      </div>
+
+      {/* ATMOSPHERIC OVERLAY — center lift + edge depth */}
+      <div className="welcome-bg-overlay" aria-hidden="true" />
+
+      {/* CINEMATIC VIGNETTE */}
+      <div className="welcome-vignette" aria-hidden="true" />
+
+      {/* TITLE TEXT */}
+      <div className={`welcome-title-container ${showButton ? 'visible' : ''}`}>
+        <div className="welcome-title-wrapper">
+          <h1 className="welcome-title">Ganesha World</h1>
+        </div>
       </div>
       
       {/* GANESHA - Now with breathing animation */}
       <div className={`welcome-ganesha-image-container ${showButton ? 'visible' : ''}`}>
-        <img 
-          src="/images/welcome-ganesha.png" 
-          alt="Ganesha"
-          className="welcome-ganesha-image"
-        />
+        <div className="ganesha-wrap">
+          <img
+            src="/images/welcome-ganesha.png"
+            alt="Ganesha"
+            className="welcome-ganesha-image"
+          />
+        </div>
       </div>
       
       {/* MOOSHIKA - Now with bounce animation */}
@@ -176,40 +176,21 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
       </div>
       
       {/* HINT ARROW - Appears after 10 seconds */}
-      <div className={`hint-arrow ${showHintArrow ? 'visible' : ''}`}>
-        👇
-      </div>
+      <div className={`hint-arrow ${showHintArrow ? 'visible' : ''}`} />
       
       {/* BUTTON AT BOTTOM */}
       <div className="welcome-content-overlay">
         <div className={`adventure-button-container ${showButton ? 'visible' : ''}`}>
-          <button 
-            className={`new-adventure-btn ${pulseButton ? 'pulse-hint' : ''}`}
+          <PrimaryBtn
+            label={isStarting ? 'Starting...' : 'Start'}
             onClick={handleStartAdventure}
             disabled={isStarting}
-            aria-label="Start your adventure in Ganesha's World"
-          >
-            <span className="btn-text">
-              {isStarting ? 'Starting...' : 'New Adventure'}
-            </span>
-          </button>
+            size="lg"
+            fullWidth={false}
+          />
         </div>
       </div>
       
-      {/* Particles - Dynamic count based on device */}
-      <div className="magical-particles">
-        {[...Array(particleCount)].map((_, i) => (
-          <div 
-            key={i} 
-            className="particle"
-            style={{
-              animationDelay: `${i * 0.8}s`,
-              left: `${10 + Math.random() * 80}%`,
-              top: `${20 + Math.random() * 60}%`
-            }}
-          />
-        ))}
-      </div>
     </div>
   );
 };

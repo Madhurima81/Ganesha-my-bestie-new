@@ -1,0 +1,163 @@
+/* ================================================ */
+/* ScreenHeader — Unified title for all screens     */
+/* Two themes: purple (profile/welcome) | gold (zone) */
+/* ================================================ */
+
+.screen-header {
+  text-align: center;
+  display: inline-block;
+  width: 100%;
+}
+
+/* Halo wrapper — emitting light behind the title */
+.screen-header-halo-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.screen-header-halo-wrap::before {
+  content: "";
+  position: absolute;
+  width: 130%;
+  height: 200%;
+  left: -15%;
+  top: -50%;
+  filter: blur(40px);
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+/* ── Purple theme (profile / welcome screens) ── */
+.screen-header--purple .screen-header-halo-wrap::before {
+  background: radial-gradient(
+    circle,
+    rgba(200, 170, 255, 0.35) 0%,
+    rgba(200, 170, 255, 0.15) 40%,
+    transparent 70%
+  );
+}
+
+.screen-header--purple .screen-header-title {
+  color: #5c3ea6;
+  text-shadow:
+    0 0 6px  rgba(140, 100, 255, 0.35),
+    0 0 18px rgba(140, 100, 255, 0.22),
+    0 0 30px rgba(200, 170, 255, 0.12);
+  animation: shPurplePulse 5s ease-in-out infinite;
+}
+
+.screen-header--purple .screen-header-subtitle {
+  color: #7e6bb8;
+}
+
+@keyframes shPurplePulse {
+  0%, 100% {
+    text-shadow:
+      0 0 6px  rgba(140, 100, 255, 0.30),
+      0 0 18px rgba(140, 100, 255, 0.18),
+      0 0 30px rgba(200, 170, 255, 0.10);
+  }
+  50% {
+    text-shadow:
+      0 0 10px rgba(140, 100, 255, 0.42),
+      0 0 24px rgba(140, 100, 255, 0.28),
+      0 0 40px rgba(200, 170, 255, 0.18);
+  }
+}
+
+/* ── Gold theme (zone screens) ── */
+.screen-header--gold .screen-header-halo-wrap::before {
+  background: radial-gradient(
+    circle,
+    rgba(244, 196, 48, 0.30) 0%,
+    rgba(244, 196, 48, 0.12) 40%,
+    transparent 70%
+  );
+}
+
+.screen-header--gold .screen-header-title {
+  color: #6B5416;
+  text-shadow:
+    0 0 6px  rgba(244, 196, 48, 0.50),
+    0 0 18px rgba(244, 196, 48, 0.32),
+    0 0 32px rgba(244, 196, 48, 0.18);
+  animation: shGoldPulse 5s ease-in-out infinite;
+}
+
+.screen-header--gold .screen-header-subtitle {
+  color: #8B7134;
+}
+
+@keyframes shGoldPulse {
+  0%, 100% {
+    text-shadow:
+      0 0 6px  rgba(244, 196, 48, 0.45),
+      0 0 18px rgba(244, 196, 48, 0.28),
+      0 0 32px rgba(244, 196, 48, 0.14);
+  }
+  50% {
+    text-shadow:
+      0 0 10px rgba(244, 196, 48, 0.65),
+      0 0 24px rgba(244, 196, 48, 0.42),
+      0 0 44px rgba(244, 196, 48, 0.24);
+  }
+}
+
+/* ── Shared title base ── */
+.screen-header-title {
+  font-family: 'Baloo 2', cursive, sans-serif;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+  position: relative;
+}
+
+/* Ultra-subtle edge highlight */
+.screen-header-title::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(255,255,255,0.18), rgba(255,255,255,0));
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+
+/* ── Icon above title ── */
+.screen-header-icon {
+  display: block;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+/* ── Subtitle ── */
+.screen-header-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: 0.3px;
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+/* ── Size scales ── */
+/* xs  — modal headings   */
+.screen-header--xs .screen-header-title    { font-size: clamp(24px, 3vw,   56px); }
+.screen-header--xs .screen-header-subtitle { font-size: clamp(14px, 1.4vw, 24px); }
+.screen-header--xs .screen-header-icon     { font-size: clamp(28px, 3.5vw, 52px); }
+
+/* sm  — section headings */
+.screen-header--sm .screen-header-title    { font-size: clamp(28px, 3.5vw, 64px); }
+.screen-header--sm .screen-header-subtitle { font-size: clamp(15px, 1.6vw, 26px); }
+.screen-header--sm .screen-header-icon     { font-size: clamp(32px, 4vw,   60px); }
+
+/* md  — page headers (default) */
+.screen-header-title    { font-size: clamp(36px, 5vw, 88px); }
+.screen-header-subtitle { font-size: clamp(16px, 1.8vw, 30px); }
+.screen-header-icon     { font-size: clamp(40px, 5vw, 72px); }
+
+/* lg  — hero titles */
+.screen-header--lg .screen-header-title    { font-size: clamp(60px, 7vw, 120px); }
+.screen-header--lg .screen-header-subtitle { font-size: clamp(20px, 2.2vw, 40px); }
+.screen-header--lg .screen-header-icon     { font-size: clamp(52px, 6.5vw, 100px); }

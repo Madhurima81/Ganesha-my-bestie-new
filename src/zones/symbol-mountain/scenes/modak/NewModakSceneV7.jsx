@@ -293,6 +293,7 @@ const NewModakSceneMVPContent = ({
   const [showDiscoveryFlip1, setShowDiscoveryFlip1] = useState(false);
   const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false);
   const [showDiscoveryFlip3, setShowDiscoveryFlip3] = useState(false);
+  const [showSymbolDiscovery, setShowSymbolDiscovery] = useState(false);
 
   // Track final celebration completion (VO + fireworks sync)
   const [sceneCompleteVOFinished, setSceneCompleteVOFinished] = useState(false);
@@ -310,6 +311,14 @@ const NewModakSceneMVPContent = ({
   const lastResumeTimeRef = useRef(0);
   const pauseButtonCooldownUntilRef = useRef(0);
 
+  // 🔧 Track symbol sidebar popup state for celebration pausing
+  const [isSymbolPopupOpen, setIsSymbolPopupOpen] = useState(false);
+  const celebrationTimeoutRef = useRef(null);
+  const celebrationTimeRemainingRef = useRef(0);
+  const celebrationPauseTimeRef = useRef(0);
+  const celebrationTypeRef = useRef(null); // 'flip1', 'flip2', or 'flip3'
+  const celebrationRunIdRef = useRef(0);
+
   // Track if initial instruction has completed for each phase
   const [initialInstructionPlayed, setInitialInstructionPlayed] = useState({
     findMooshika: false,
@@ -324,6 +333,11 @@ const NewModakSceneMVPContent = ({
     showDiscoveryFlip3 ||
     sceneState.phase === PHASES.ALL_COLLECTED || // Block during modak completion → overlay transition
     sceneState.phase === PHASES.ROCK_TRANSFORMED; // Block during feeding completion → overlay transition
+
+  const isFinalCelebrationActive =
+    sceneState.phase === PHASES.ROCK_TRANSFORMED ||
+    showSparkle === 'final-fireworks' ||
+    showSceneCompletion;
 
   const canShowPauseUI = sceneState.welcomeShown && !isCelebrationOrOverlayActive;
 
@@ -386,6 +400,17 @@ const NewModakSceneMVPContent = ({
   };
 
   const resumePhaseAfterPause = () => {
+    // Final celebration path: only resume sceneComplete VO if fireworks are actually playing
+    // NOT during symbol discovery screen (which happens before fireworks)
+    if (sceneState.phase === PHASES.ROCK_TRANSFORMED && !sceneCompleteVOFinished && showSparkle === 'final-fireworks') {
+      console.log('[final-celebration] resume final VO after popup close');
+      playVoice('sceneComplete', () => {
+        console.log('✅ Scene complete VO finished');
+        setSceneCompleteVOFinished(true);
+      });
+      return;
+    }
+
     if (!canShowPauseUI) return;
 
     const currentGamePhase = getCurrentGamePhase();
@@ -503,9 +528,90 @@ const NewModakSceneMVPContent = ({
     return id;
   };
 
+  const clearCelebrationTimer = () => {
+    if (celebrationTimeoutRef.current) {
+      clearTimeout(celebrationTimeoutRef.current);
+      celebrationTimeoutRef.current = null;
+    }
+  };
+
+  const completeCelebrationTransition = (type) => {
+    if (type === 'flip1') setShowDiscoveryFlip1(true);
+    else if (type === 'flip2') setShowDiscoveryFlip2(true);
+    else if (type === 'flip3') setShowDiscoveryFlip3(true);
+
+    celebrationTimeoutRef.current = null;
+    celebrationTimeRemainingRef.current = 0;
+    celebrationPauseTimeRef.current = 0;
+    celebrationTypeRef.current = null;
+  };
+
+  const scheduleCelebrationTransition = (type, delayMs) => {
+    clearCelebrationTimer();
+    celebrationRunIdRef.current += 1;
+    const runId = celebrationRunIdRef.current;
+
+    celebrationTypeRef.current = type;
+    celebrationTimeRemainingRef.current = delayMs;
+    celebrationPauseTimeRef.current = Date.now();
+    console.log(`[celebration][${type}] start delay=${delayMs}ms runId=${runId}`);
+
+    celebrationTimeoutRef.current = setTimeout(() => {
+      if (runId !== celebrationRunIdRef.current) {
+        console.log(
+          `[celebration][${type}] stale-callback ignored callbackRunId=${runId} activeRunId=${celebrationRunIdRef.current}`
+        );
+        return;
+      }
+      console.log(`[celebration][${type}] complete -> show overlay runId=${runId}`);
+      completeCelebrationTransition(type);
+    }, delayMs);
+  };
+
+  const pauseCelebrationTransition = () => {
+    if (!celebrationTimeoutRef.current || !celebrationTypeRef.current) return false;
+
+    const type = celebrationTypeRef.current;
+    clearCelebrationTimer();
+    const elapsed = Date.now() - celebrationPauseTimeRef.current;
+    celebrationTimeRemainingRef.current = Math.max(
+      0,
+      celebrationTimeRemainingRef.current - elapsed
+    );
+    console.log(
+      `[celebration][${type}] pause elapsed=${elapsed}ms remaining=${celebrationTimeRemainingRef.current}ms`
+    );
+    return true;
+  };
+
+  const resumeCelebrationTransition = () => {
+    if (celebrationTimeRemainingRef.current <= 0 || !celebrationTypeRef.current) return false;
+
+    celebrationRunIdRef.current += 1;
+    const runId = celebrationRunIdRef.current;
+    const type = celebrationTypeRef.current;
+    const remaining = celebrationTimeRemainingRef.current;
+
+    celebrationPauseTimeRef.current = Date.now();
+    console.log(`[celebration][${type}] resume remaining=${remaining}ms runId=${runId}`);
+    celebrationTimeoutRef.current = setTimeout(() => {
+      if (runId !== celebrationRunIdRef.current) {
+        console.log(
+          `[celebration][${type}] stale-resume-callback ignored callbackRunId=${runId} activeRunId=${celebrationRunIdRef.current}`
+        );
+        return;
+      }
+      console.log(`[celebration][${type}] complete-after-resume -> show overlay runId=${runId}`);
+      completeCelebrationTransition(type);
+    }, remaining);
+    return true;
+  };
+
   useEffect(() => {
     return () => {
       timeoutsRef.current.forEach(id => clearTimeout(id));
+      clearCelebrationTimer();
+      celebrationRunIdRef.current += 1;
       stopMusic();
       stopIdleTimer();
     };
@@ -752,15 +858,26 @@ const NewModakSceneMVPContent = ({
     }
   }, [showDiscoveryFlip3]);
 
-  // ========================================
-  // FINAL CELEBRATION SYNC: Show completion modal only when BOTH VO and fireworks finish
-  // ========================================
+  // Play symbol discovery VO when discovery screen opens
   useEffect(() => {
-    if (sceneCompleteVOFinished && fireworksFinished) {
-      console.log('✅ Both VO and fireworks finished - showing completion modal');
-      setShowSceneCompletion(true);
+    if (showSymbolDiscovery) {
+      playVoice('symbolDiscovery');
     }
-  }, [sceneCompleteVOFinished, fireworksFinished]);
+  }, [showSymbolDiscovery]);
+
+  // ========================================
+  // FINAL CELEBRATION SYNC: Show completion modal 1s after VO finishes
+  // Fireworks duration is long enough to always cover the VO
+  useEffect(() => {
+    if (sceneCompleteVOFinished) {
+      console.log('✅ Scene complete VO finished → showing modal in 1s');
+      const timer = setTimeout(() => {
+        setShowSceneCompletion(true);
+        setShowSparkle(null); // stop fireworks when modal appears
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [sceneCompleteVOFinished]);
 
 
  const handleMoundClick = (moundIndex) => {
@@ -807,11 +924,8 @@ const NewModakSceneMVPContent = ({
         }, 500);
       }, 1500);
 
-      // 3. THE GAP: INCREASE DELAY TO 4000ms (4 seconds)
-      // This allows "Yay found him" to finish before "Focus Power" starts
-      setTimeout(() => {
-        setShowDiscoveryFlip1(true);
-      }, 6000); 
+      // 3. Gap before first power overlay; pause/resume-safe.
+      scheduleCelebrationTransition('flip1', 6000);
 
     } else {
       // Wrong mound - stop any idle hint VO, then play SFX + VO
@@ -879,10 +993,8 @@ const NewModakSceneMVPContent = ({
         setShowSparkle(null);
       }, 4000);
 
-      // Trigger Discovery Flip 2 (after VO finishes ~5s)
-      setTimeout(() => {
-        setShowDiscoveryFlip2(true);
-      }, 5500);
+      // Trigger Discovery Flip 2 (after VO finishes ~5s), pause/resume-safe.
+      scheduleCelebrationTransition('flip2', 5500);
     } else {
       sceneActions.updateState({
         modakStates,
@@ -940,10 +1052,8 @@ const NewModakSceneMVPContent = ({
           phase: PHASES.ROCK_TRANSFORMED
         });
 
-        // Trigger Discovery Flip 3
-        setTimeout(() => {
-          setShowDiscoveryFlip3(true);
-        }, 3500);
+        // Trigger Discovery Flip 3, pause/resume-safe.
+        scheduleCelebrationTransition('flip3', 3500);
 
       }, 1500);
     } else {
@@ -953,6 +1063,11 @@ const NewModakSceneMVPContent = ({
 
   const resetScene = () => {
     stopIdleTimer();
+    clearCelebrationTimer();
+    celebrationRunIdRef.current += 1;
+    celebrationTimeRemainingRef.current = 0;
+    celebrationPauseTimeRef.current = 0;
+    celebrationTypeRef.current = null;
 
     sceneActions.updateState({
       moundStates: [0, 0, 0, 0, 0],
@@ -1398,8 +1513,9 @@ const NewModakSceneMVPContent = ({
             {showSparkle === 'final-fireworks' && (
               <Fireworks
                 show={true}
-                duration={6000}
+                duration={15000}
                 onComplete={() => {
+                  // Fireworks are just visual - modal is triggered by VO completion + 1s delay
                   console.log('✅ Fireworks finished');
                   setShowSparkle(null);
                   setFireworksFinished(true);
@@ -1428,6 +1544,7 @@ const NewModakSceneMVPContent = ({
             {showSceneCompletion && (
               <SceneCompletionCelebration
                 show={true}
+                zoneId={zoneId}
                 sceneName="Mooshika's Modak Mission"
                 sceneNumber={1}
                 totalScenes={4}
@@ -1438,6 +1555,20 @@ const NewModakSceneMVPContent = ({
                   mooshika: symbolMooshikaColored,
                   modak: symbolModakColored,
                   belly: symbolBellyColored
+                }}
+                symbolData={{
+                  mooshika: {
+                    title: "Mooshika — Ganesha's Clever Friend!",
+                    description: "A tiny mouse with a big heart! Mooshika helps Ganesha travel anywhere and reminds us to stay humble & smart."
+                  },
+                  modak: {
+                    title: "Modak — Ganesha's Sweet Treat!",
+                    description: "A magical sweet that fills you with happy, joyful energy!"
+                  },
+                  belly: {
+                    title: "Belly — Big Happy Tummy!",
+                    description: "Ganesha's big belly holds all worries and turns them into calm. It reminds us to feel safe, relaxed and happy inside."
+                  }
                 }}
                 nextSceneName="Next Symbol Mountain Adventure"
                 sceneId="modak"
@@ -1544,30 +1675,21 @@ Sweet rewards come when we try our best."
     }}
                 icon={symbolBellyColored}
                 iconColor="#FF8C42"
-                buttonText="Celebrate!"
+                buttonText="Discover Symbols!"
                 showButton={discoveryButtonVisible}
                 // onShow removed - handled by useEffect
                 onComplete={() => {
-                  console.log("Power 3: Gratitude Power unlocked");
+                  console.log("Power 3: Gratitude Power unlocked → Symbol Discovery");
                   setShowDiscoveryFlip3(false);
                   setDiscoveryButtonVisible(false);
 
-                  // Reset completion flags
-                  setSceneCompleteVOFinished(false);
-                  setFireworksFinished(false);
-
-                  // Play scene complete VO with callback
-                  playVoice('sceneComplete', () => {
-                    console.log('✅ Scene complete VO finished');
-                    setSceneCompleteVOFinished(true);
-                  });
-
+                  // Unlock belly symbol before showing discovery screen
                   sceneActions.updateState({
                     discoveredSymbols: { ...sceneState.discoveredSymbols, belly: true }
                   });
 
-                  // Start fireworks immediately
-                  setShowSparkle('final-fireworks');
+                  // Show symbol discovery moment
+                  setShowSymbolDiscovery(true);
                 }}
               />
             )}
@@ -1578,19 +1700,76 @@ Sweet rewards come when we try our best."
               {...CulturalProgressExtractor.getCulturalProgressData()}
             />
 
-            {sceneState.welcomeShown && showSparkle !== 'final-fireworks' && (
+            {/* SYMBOL DISCOVERY MOMENT - center mode after Power Overlay 3 */}
+            {showSymbolDiscovery && (
+              <SymbolSidebar
+                centerMode={true}
+                discoveredSymbols={sceneState.discoveredSymbols || {}}
+                highlightSymbols={Object.keys(sceneState.discoveredSymbols || {})}
+                onPopupOpen={() => handlePauseCore()}
+                onPopupClose={() => resumePhaseAfterPause()}
+                onCelebrate={() => {
+                  setShowSymbolDiscovery(false);
+
+                  // Reset completion flags
+                  setSceneCompleteVOFinished(false);
+                  setFireworksFinished(false);
+
+                  // Play scene complete VO
+                  playVoice('sceneComplete', () => {
+                    console.log('✅ Scene complete VO finished');
+                    setSceneCompleteVOFinished(true);
+                  });
+
+                  // Start fireworks
+                  setShowSparkle('final-fireworks');
+                }}
+              />
+            )}
+
+            {/* SIDE RAIL - hide during symbol discovery and final fireworks */}
+            {sceneState.welcomeShown && !isFinalCelebrationActive && !showSymbolDiscovery && (
               <SymbolSidebar
                 discoveredSymbols={sceneState.discoveredSymbols || {}}
                 onSymbolClick={(symbolId) => {
                   console.log(`Sidebar symbol clicked: ${symbolId}`);
                 }}
                 onPopupOpen={() => {
+                  console.log('[symbol-popup] opened');
+                  console.log('📊 Celebration state:', {
+                    hasTimeout: !!celebrationTimeoutRef.current,
+                    type: celebrationTypeRef.current,
+                    remaining: celebrationTimeRemainingRef.current
+                  });
+
+                  setIsSymbolPopupOpen(true);
+
                   // Same as pause: stop VOs and timers
                   handlePauseCore();
+
+                  // Pause pending celebration transition, if any.
+                  if (pauseCelebrationTransition()) {
+                    console.log(
+                      `[symbol-popup] paused celebration type=${celebrationTypeRef.current} remaining=${celebrationTimeRemainingRef.current}ms`
+                    );
+                  } else {
+                    console.log('[symbol-popup] no active celebration timer to pause');
+                  }
                 }}
                 onPopupClose={() => {
+                  console.log('[symbol-popup] closed');
+                  setIsSymbolPopupOpen(false);
+
                   // Same as resume: replay initial instruction or silent resume
                   resumePhaseAfterPause();
+
+                  // Resume celebration timeout if it was paused.
+                  if (celebrationTimeRemainingRef.current > 0 && celebrationTypeRef.current) {
+                    console.log(
+                      `[symbol-popup] resuming celebration type=${celebrationTypeRef.current} in=${celebrationTimeRemainingRef.current}ms`
+                    );
+                    resumeCelebrationTransition();
+                  }
                 }}
               />
             )}

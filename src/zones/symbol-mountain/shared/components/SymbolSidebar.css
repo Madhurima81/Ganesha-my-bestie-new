@@ -48,7 +48,7 @@
 
 .ganesha-icon.discovered:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+  box-shadow: 0 0 15px var(--zone-glow-color, rgba(255, 215, 0, 0.5));
 }
 
 /* Star burst animation */
@@ -78,14 +78,16 @@
   position: absolute;
   top: -5px;
   right: -5px;
-  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+  background: var(--zone-accent-color, #FF8E53);
   color: white;
   font-family: 'Baloo 2', cursive;
   font-size: 10px;
   font-weight: 800;
   padding: 3px 8px;
   border-radius: 12px;
-  box-shadow: 0 3px 10px rgba(255, 107, 107, 0.4);
+  box-shadow:
+    0 3px 10px var(--zone-glow-color, rgba(255, 107, 107, 0.4)),
+    0 0 10px var(--zone-glow-color, rgba(255, 107, 107, 0.3));
   animation: tap-pulse 1.5s ease-in-out infinite;
   z-index: 10;
   pointer-events: none;
@@ -96,11 +98,15 @@
 @keyframes tap-pulse {
   0%, 100% {
     transform: scale(1);
-    box-shadow: 0 3px 10px rgba(255, 107, 107, 0.4);
+    box-shadow:
+      0 3px 10px var(--zone-glow-color, rgba(255, 107, 107, 0.4)),
+      0 0 10px var(--zone-glow-color, rgba(255, 107, 107, 0.25));
   }
   50% {
     transform: scale(1.1);
-    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.6);
+    box-shadow:
+      0 5px 15px var(--zone-glow-color, rgba(255, 107, 107, 0.6)),
+      0 0 16px var(--zone-glow-color, rgba(255, 107, 107, 0.4));
   }
 }
 
@@ -245,7 +251,7 @@
 
 /* Continue button */
 .ganesha-popup-continue-btn {
-  background: #FF8F00;
+  background: var(--zone-accent-color, #FF8F00);
   color: white;
   border: none;
   padding: 18px 56px;
@@ -255,19 +261,18 @@
   font-weight: 800;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 5px 0 #E65100;
+  box-shadow: 0 5px 0 color-mix(in srgb, var(--zone-accent-color, #FF8F00) 70%, black);
   margin-bottom: 10px;
 }
 
 .ganesha-popup-continue-btn:hover {
-  background: #FFA000;
   transform: translateY(-2px);
-  box-shadow: 0 7px 0 #E65100;
+  box-shadow: 0 7px 0 color-mix(in srgb, var(--zone-accent-color, #FF8F00) 70%, black);
 }
 
 .ganesha-popup-continue-btn:active {
   transform: translateY(2px);
-  box-shadow: 0 2px 0 #E65100;
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--zone-accent-color, #FF8F00) 70%, black);
 }
 
 /* Animation Definitions */
@@ -285,6 +290,121 @@
     opacity: 1;
     transform: scale(1) translateY(0);
   }
+}
+
+/* ── CENTER MODE ─────────────────────────────────────────────────────────── */
+
+.symbol-discovery-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+  animation: ganesha-fadeIn 0.4s ease;
+}
+
+.symbol-discovery-panel {
+  background: #FFF8E7;
+  border-radius: 36px;
+  padding: 64px 80px;
+  max-width: 900px;
+  width: 92%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  animation: ganesha-slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 5px solid #fff;
+}
+
+.symbol-discovery-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 38px;
+  font-weight: 800;
+  color: #4E342E;
+  margin-bottom: 36px;
+}
+
+.symbol-discovery-grid {
+  display: flex;
+  justify-content: center;
+  gap: 56px;
+  flex-wrap: wrap;
+  margin-bottom: 52px;
+}
+
+.symbol-discovery-icon {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 16px;
+  background: var(--zone-glow-color, rgba(255, 215, 0, 0.1));
+  transition: transform 0.2s ease;
+}
+
+.symbol-discovery-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.symbol-discovery-icon:hover {
+  transform: scale(1.1);
+}
+
+.symbol-discovery-icon.symbol-discovery-tapped {
+  background: rgba(100, 200, 100, 0.15);
+}
+
+.symbol-discovery-icon.symbol-discovery-tapped img {
+  filter: drop-shadow(0 0 10px rgba(100, 200, 100, 0.6));
+}
+
+@keyframes symbol-discovery-pulse-anim {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 var(--zone-glow-color, rgba(255, 193, 7, 0.5));
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 12px var(--zone-glow-color, rgba(255, 193, 7, 0));
+  }
+}
+
+.symbol-discovery-icon.symbol-discovery-pulse {
+  animation: symbol-discovery-pulse-anim 1.8s ease-in-out infinite;
+}
+
+.symbol-discovery-icon.symbol-discovery-tapped.symbol-discovery-pulse {
+  animation: none;
+}
+
+.symbol-discovery-celebrate-btn {
+  background: var(--zone-accent-color, #FF8F00);
+  color: white;
+  border: none;
+  padding: 18px 60px;
+  border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--zone-accent-color, #FF8F00) 70%, black);
+  transition: all 0.2s ease;
+}
+
+.symbol-discovery-celebrate-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 color-mix(in srgb, var(--zone-accent-color, #FF8F00) 70%, black);
+}
+
+.symbol-discovery-celebrate-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--zone-accent-color, #FF8F00) 70%, black);
 }
 
 /* Mobile responsiveness */

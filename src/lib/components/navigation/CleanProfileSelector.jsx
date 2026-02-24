@@ -1,6 +1,8 @@
 // CleanProfileSelector.jsx - FIXED: Delete Modal Bug
 import React, { useState, useEffect } from 'react';
 import GameStateManager from '../../services/GameStateManager';
+import PrimaryBtn from '../shared/PrimaryBtn';
+import ScreenHeader from '../shared/ScreenHeader';
 import './CleanProfileSelector.css';
 
 const CleanProfileSelector = ({ 
@@ -13,6 +15,8 @@ const CleanProfileSelector = ({
   const [selectedAvatar, setSelectedAvatar] = useState('monkey');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
   const [showInfo, setShowInfo] = useState(false);
+  const [manageModeId, setManageModeId] = useState(null); // stores the profile id being managed
+  const longPressTimer = React.useRef(null);
 
   // 🎨 Animal Config: Matches Image 1 Colors
   const animalAvatars = [
@@ -63,6 +67,7 @@ const CleanProfileSelector = ({
     GameStateManager.deleteProfile(profileId);
     loadProfiles();
     setShowDeleteConfirm(null);
+    setManageModeId(null);
   };
 
   const getAnimalId = (avatarData) => {
@@ -76,66 +81,68 @@ const CleanProfileSelector = ({
 
   return (
     <div className="clean-profile-overlay">
-      <div className="clean-forest-background"></div>
+      <div className="clean-forest-background">
+        <div className="profile-dust" aria-hidden="true">
+          <span/><span/><span/>
+        </div>
+        {/* Atmospheric overlay — center lift + edge depth */}
+        <div className="profile-bg-overlay" aria-hidden="true" />
+        {/* Cinematic vignette */}
+        <div className="profile-vignette" aria-hidden="true" />
+      </div>
       
       <div className="clean-profile-container">
         
         {/* ✨ CREATE PROFILE MODAL */}
         {showCreateProfile && (
-          <div className="clean-modal-overlay">
-            <div className="clean-create-card">
-              
-              <h2 className="modal-title">Create Your Explorer!</h2>
-              <p className="modal-subtitle">Pick your name and your forest friend</p>
-              
+          <div className="overlay">
+            <div className="explorer-modal">
+
+              <ScreenHeader
+                title="Create Your Explorer!"
+                glowColor="purple"
+              />
+
               <input
                 type="text"
                 placeholder="Enter your name"
                 value={newProfileName}
                 onChange={(e) => setNewProfileName(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter' && newProfileName.trim()) handleCreateProfile(); }}
                 maxLength={12}
-                className="clean-text-input"
+                className="name-input"
                 autoFocus
               />
-              
-              <h3 className="section-label">Pick your Forest Friend</h3>
-              
-              <div className="clean-avatar-grid">
+
+              <p className="pick-friend-label">Pick your Forest Friend</p>
+
+              <div className="friend-grid">
                 {animalAvatars.map((animal) => (
                   <div
                     key={animal.id}
-                    className={`clean-avatar-option ${selectedAvatar === animal.id ? 'selected' : ''}`}
+                    className={`friend-card ${selectedAvatar === animal.id ? 'active' : ''}`}
                     onClick={() => setSelectedAvatar(animal.id)}
                   >
-                    {selectedAvatar === animal.id && (
-                      <div className="checkmark-badge">✓</div>
-                    )}
-                    <img 
+                    <img
                       src={`/images/new-explorer-${animal.id}.png`}
                       alt={animal.name}
-                      className="clean-avatar-img"
                     />
-                    <div 
-                      className="animal-label-pill"
-                      style={{ backgroundColor: animal.labelColor }}
-                    >
-                      {animal.name}
-                    </div>
+                    <span>{animal.name}</span>
                   </div>
                 ))}
               </div>
-              
-              <button 
+
+              <PrimaryBtn
+                label="Start Adventure!"
                 onClick={handleCreateProfile}
-                className="btn-primary-blue"
                 disabled={!newProfileName.trim()}
-              >
-                Start Adventure!
-              </button>
-              
-              <button 
+                size="md"
+                fullWidth
+              />
+
+              <button
                 onClick={() => setShowCreateProfile(false)}
-                className="btn-text-back"
+                className="back-btn"
               >
                 Back
               </button>
@@ -148,79 +155,97 @@ const CleanProfileSelector = ({
         {!showCreateProfile && (
           <>
             <div className="clean-profile-header">
-              <h2 className="clean-profile-title">Who's Playing?</h2>
-              {/* ✅ Info Button */}
-              <button 
+              <ScreenHeader title="Who's Playing?" glowColor="purple" />
+              {/* ℹ️ Help Button */}
+              <button
                 className="clean-info-btn"
                 onClick={() => setShowInfo(true)}
               >
-                ℹ️
+                ?
               </button>
             </div>
             
             <div className="clean-profiles-grid">
               {profileArray.map((profile) => {
                 const animalId = getAnimalId(profile.avatar);
+                const isManaging = manageModeId === profile.id;
                 return (
-                  <div 
+                  <div
                     key={profile.id}
-                    className="clean-profile-card"
-                    onClick={() => onProfileSelect(profile.id)}
+                    className={`clean-profile-card ${isManaging ? 'manage' : ''}`}
+                    onClick={() => { if (!isManaging) onProfileSelect(profile.id); }}
+                    onMouseDown={() => {
+                      longPressTimer.current = setTimeout(() => setManageModeId(profile.id), 900);
+                    }}
+                    onMouseUp={() => clearTimeout(longPressTimer.current)}
+                    onMouseLeave={() => clearTimeout(longPressTimer.current)}
+                    onTouchStart={() => {
+                      longPressTimer.current = setTimeout(() => setManageModeId(profile.id), 900);
+                    }}
+                    onTouchEnd={() => clearTimeout(longPressTimer.current)}
                   >
                     <div className="clean-animal-avatar-container">
-                      <img 
+                      <img
                         src={`/images/new-explorer-${animalId}.png`}
                         alt="Profile"
                         className="clean-animal-avatar-image"
                       />
+                      {isManaging && (
+                        <button
+                          className="clean-delete-trigger"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowDeleteConfirm(profile.id);
+                          }}
+                        >
+                          ×
+                        </button>
+                      )}
                     </div>
                     <div className="clean-profile-name">{profile.name}</div>
-                    
-                    <button 
-                      className="clean-delete-trigger"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowDeleteConfirm(profile.id);
-                      }}
-                    >
-                      ×
-                    </button>
                   </div>
                 );
               })}
-              
+
               {/* EMPTY SLOTS */}
               {[...Array(emptySlots)].map((_, index) => (
-                <div 
+                <div
                   key={`empty-${index}`}
                   className="clean-profile-card empty"
-                  onClick={() => setShowCreateProfile(true)}
+                  onClick={() => { setManageModeId(null); setShowCreateProfile(true); }}
                 >
-                  <div className="clean-add-profile">
-                    <div className="clean-add-icon">+</div>
-                    <div className="clean-add-text">New</div>
-                  </div>
+                  <div className="clean-add-icon">＋</div>
+                  <div className="clean-add-text">Add Friend</div>
                 </div>
               ))}
             </div>
 
-            {/* ✅ FIXED: DELETE MODAL - Moved OUTSIDE profiles grid */}
+            {/* Done managing */}
+            {manageModeId && (
+              <button className="manage-done-btn" onClick={() => setManageModeId(null)}>
+                Done
+              </button>
+            )}
+
+            {/* DELETE CONFIRMATION MODAL */}
             {showDeleteConfirm && (
               <div className="clean-modal-overlay" onClick={() => setShowDeleteConfirm(null)}>
                 <div className="clean-delete-card" onClick={(e) => e.stopPropagation()}>
-                  <h3 className="modal-title-small">Delete Profile?</h3>
+                  <h3 className="modal-title-small">
+                    Delete {profiles[showDeleteConfirm]?.name}?
+                  </h3>
                   <p className="modal-text">
-                    Are you sure you want to delete <strong>{profiles[showDeleteConfirm]?.name}</strong>?
+                    This will erase all their progress. This can't be undone.
                   </p>
-                  <button 
-                    className="btn-danger-red" 
+                  <button
+                    className="btn-delete-lavender"
                     onClick={() => confirmDelete(showDeleteConfirm)}
                   >
                     Yes, Delete
                   </button>
-                  <button 
-                    className="btn-text-cancel" 
-                    onClick={() => setShowDeleteConfirm(null)}
+                  <button
+                    className="btn-text-cancel"
+                    onClick={() => { setShowDeleteConfirm(null); setManageModeId(null); }}
                   >
                     Cancel
                   </button>
@@ -234,15 +259,15 @@ const CleanProfileSelector = ({
         {showInfo && (
           <div className="clean-modal-overlay" onClick={() => setShowInfo(false)}>
             <div className="clean-create-card" onClick={(e) => e.stopPropagation()}>
-              <h2 className="modal-title">Help & Guide</h2>
+              <ScreenHeader title="Help & Guide" glowColor="purple" />
               <p className="modal-text" style={{textAlign:'left', padding:'0 10px'}}>
                 👋 Welcome to Ganesha's World!<br/><br/>
-                <strong>1. Create a Profile:</strong> Tap "New" to start.<br/>
+                <strong>1. Create a Profile:</strong> Tap "Add Friend" to start.<br/>
                 <strong>2. Pick a Friend:</strong> Choose an animal avatar.<br/>
                 <strong>3. Play:</strong> Tap your profile to continue.<br/>
                 <strong>4. Manage:</strong> You can have up to 4 profiles. Tap "×" to delete one.
               </p>
-              <button className="btn-primary-blue" onClick={() => setShowInfo(false)}>Got it!</button>
+              <PrimaryBtn label="Got it!" onClick={() => setShowInfo(false)} size="md" fullWidth />
             </div>
           </div>
         )}

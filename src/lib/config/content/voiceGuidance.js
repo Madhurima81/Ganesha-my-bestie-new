@@ -327,9 +327,15 @@ export const VOICE_SCRIPTS = {
         file: 'modak-kind-heart-power.mp3'
       },
 
+      symbolDiscovery: {
+        text: "You found 3 special symbols! Tap each one to learn their secret!",
+        file: 'modak-symbol-discovery.mp3'
+      },
+
       sceneComplete: {
-        text: "Amazing work, little explorer! You did it! Focus, sweet reward, and sharing — all done! I’m so proud of you!",
-      file: "modak-scene-complete.mp3"},
+        text: "Amazing work, little explorer! You did it! Focus, sweet reward, and sharing — all done! I'm so proud of you!",
+        file: "modak-scene-complete.mp3"
+      },
 
       // ========================================
       // IDLE HINTS (after 10s of no interaction)

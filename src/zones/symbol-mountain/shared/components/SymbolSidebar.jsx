@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './SymbolSidebar.css';
+import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 
 // Import gray and colored symbol icons
 import symbolBellyGray from '../images/icons/symbol-belly-gray.png';
@@ -89,7 +90,13 @@ const symbolInfo = {
   }
 };
 
-const SymbolSidebar = ({ discoveredSymbols = {}, onSymbolClick, onPopupOpen, onPopupClose, className = '' }) => {
+const SymbolSidebar = ({ discoveredSymbols = {}, onSymbolClick, onPopupOpen, onPopupClose, className = '', centerMode = false, highlightSymbols = [], onCelebrate, zoneId = 'symbol-mountain' }) => {
+  const theme = getZoneTheme(zoneId);
+  const zoneThemeVars = {
+    '--zone-accent-color': theme.accentColor,
+    '--zone-glow-color': theme.glowColor
+  };
+
   const [showPopup, setShowPopup] = useState(false);
   const [selectedSymbol, setSelectedSymbol] = useState(null);
   const [animatingSymbol, setAnimatingSymbol] = useState(null);
@@ -98,17 +105,18 @@ const SymbolSidebar = ({ discoveredSymbols = {}, onSymbolClick, onPopupOpen, onP
   // Symbol order for display
   const symbolOrder = ['modak', 'mooshika', 'belly', 'lotus', 'trunk', 'eyes', 'ear', 'tusk'];
 
+  // In centerMode, only show discovered symbols
+  const displaySymbols = centerMode
+    ? symbolOrder.filter(s => discoveredSymbols[s])
+    : symbolOrder;
+
   const handleSymbolClick = (symbolId) => {
     if (discoveredSymbols[symbolId]) {
-      // Mark symbol as tapped
       setTappedSymbols(prev => ({ ...prev, [symbolId]: true }));
-
       setSelectedSymbol(symbolId);
       setShowPopup(true);
       onPopupOpen?.();
-      if (onSymbolClick) {
-        onSymbolClick(symbolId);
-      }
+      if (onSymbolClick) onSymbolClick(symbolId);
     }
   };
 
@@ -120,22 +128,73 @@ const SymbolSidebar = ({ discoveredSymbols = {}, onSymbolClick, onPopupOpen, onP
 
   // Trigger animation when a symbol is newly discovered
   React.useEffect(() => {
-    const newlyDiscovered = symbolOrder.find(symbol => 
+    const newlyDiscovered = symbolOrder.find(symbol =>
       discoveredSymbols[symbol] && !animatingSymbol
     );
-    
     if (newlyDiscovered) {
       setAnimatingSymbol(newlyDiscovered);
-      setTimeout(() => {
-        setAnimatingSymbol(null);
-      }, 1000);
+      setTimeout(() => setAnimatingSymbol(null), 1000);
     }
   }, [discoveredSymbols, animatingSymbol]);
 
+  // ── CENTER MODE ──────────────────────────────────────────────────────────────
+  if (centerMode) {
+    return (
+      <>
+        <div className="symbol-discovery-overlay">
+          <div className="symbol-discovery-panel" style={zoneThemeVars}>
+            <p className="symbol-discovery-title">Tap the symbols to learn about them!</p>
+
+            <div className="symbol-discovery-grid">
+              {displaySymbols.map((symbolId) => {
+                const symbol = symbolInfo[symbolId];
+                const isHighlighted = highlightSymbols.includes(symbolId);
+                const isTapped = tappedSymbols[symbolId];
+
+                return (
+                  <div
+                    key={symbolId}
+                    className={`symbol-discovery-icon ${isHighlighted ? 'symbol-discovery-pulse' : ''} ${isTapped ? 'symbol-discovery-tapped' : ''}`}
+                    onClick={() => handleSymbolClick(symbolId)}
+                  >
+                    <img src={symbol.colorIcon} alt={symbol.title} />
+                    {!isTapped && (
+                      <div className="tap-indicator">TAP!</div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            <button className="symbol-discovery-celebrate-btn" onClick={onCelebrate}>
+              🎉 Celebrate!
+            </button>
+          </div>
+        </div>
+
+        {/* Symbol Information Popup */}
+        {showPopup && selectedSymbol && (
+          <div className="ganesha-popup-overlay" onClick={closePopup}>
+            <div className="ganesha-popup-content" style={zoneThemeVars} onClick={(e) => e.stopPropagation()}>
+              <button className="ganesha-popup-close-btn" onClick={closePopup}>×</button>
+              <div className="ganesha-popup-img-container">
+                <img src={symbolInfo[selectedSymbol].popupImage} alt={symbolInfo[selectedSymbol].title} className="ganesha-popup-custom-img" />
+              </div>
+              <h2 className="ganesha-popup-title">{symbolInfo[selectedSymbol].title}</h2>
+              <p className="ganesha-popup-description">{symbolInfo[selectedSymbol].description}</p>
+              <button className="ganesha-popup-continue-btn" onClick={closePopup}>Continue</button>
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // ── SIDE RAIL MODE (default) ─────────────────────────────────────────────────
   return (
     <>
-      <div className={`ganesha-sidebar ${className}`}>
-        {symbolOrder.map((symbolId) => {
+      <div className={`ganesha-sidebar ${className}`} style={zoneThemeVars}>
+        {displaySymbols.map((symbolId) => {
           const symbol = symbolInfo[symbolId];
           const isDiscovered = discoveredSymbols[symbolId];
           const isAnimating = animatingSymbol === symbolId;
@@ -163,23 +222,14 @@ const SymbolSidebar = ({ discoveredSymbols = {}, onSymbolClick, onPopupOpen, onP
       {/* Symbol Information Popup */}
       {showPopup && selectedSymbol && (
         <div className="ganesha-popup-overlay" onClick={closePopup}>
-          <div className="ganesha-popup-content" onClick={(e) => e.stopPropagation()}>
+          <div className="ganesha-popup-content" style={zoneThemeVars} onClick={(e) => e.stopPropagation()}>
             <button className="ganesha-popup-close-btn" onClick={closePopup}>×</button>
-            
             <div className="ganesha-popup-img-container">
-              <img 
-                src={symbolInfo[selectedSymbol].popupImage} 
-                alt={symbolInfo[selectedSymbol].title}
-                className="ganesha-popup-custom-img"
-              />
+              <img src={symbolInfo[selectedSymbol].popupImage} alt={symbolInfo[selectedSymbol].title} className="ganesha-popup-custom-img" />
             </div>
-            
             <h2 className="ganesha-popup-title">{symbolInfo[selectedSymbol].title}</h2>
             <p className="ganesha-popup-description">{symbolInfo[selectedSymbol].description}</p>
-            
-            <button className="ganesha-popup-continue-btn" onClick={closePopup}>
-              Continue
-            </button>
+            <button className="ganesha-popup-continue-btn" onClick={closePopup}>Continue</button>
           </div>
         </div>
       )}

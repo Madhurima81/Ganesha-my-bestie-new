@@ -1,369 +1,380 @@
-/* ZonePreviewModal.css - Polished, Animated & Responsive */
+/* ZonePreviewModal.css — Sacred Portal, fully scoped with portal- prefix */
 
-:root {
-  --card: #fffdf5;
-  --text: #0E4A5A;
-  --subtext: #577783;
-  --radius: 32px;
-  /* ✨ STRONGER DROP SHADOW */
-  --shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.6); 
-  --ui-padding: 32px;
-}
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&family=Baloo+2:wght@700;800&display=swap');
 
-/* Overlay */
-.zone-modal-overlay {
+/* =========================
+   OVERLAY
+========================= */
+.portal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(8px);
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(40, 30, 80, 0.35);
+  backdrop-filter: blur(6px);
   z-index: 2000;
-  animation: fadeIn 0.2s ease;
-  padding: 20px;
-  box-sizing: border-box;
+  animation: portalFadeIn 0.6s ease forwards;
 }
 
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes portalFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
 
-/* The Card */
-.zone-modal-card {
-  width: 100%;
-  max-width: 480px;
-  border-radius: var(--radius);
-  background: var(--card);
-  box-shadow: var(--shadow); /* Using the strong shadow */
-  padding: var(--ui-padding);
+/* =========================
+   CLOSING STATE
+========================= */
+.portal-overlay.closing {
+  animation: portalFadeOut 0.6s ease forwards;
+}
+
+.portal-overlay.closing .portal-modal {
+  animation: portalClose 0.6s cubic-bezier(.22, 1, .36, 1) forwards;
+}
+
+.portal-overlay.closing .portal-modal::before {
+  animation: portalHaloFade 0.5s ease forwards;
+}
+
+@keyframes portalFadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes portalClose {
+  from { transform: translateY(0)    scale(1);    opacity: 1; }
+  to   { transform: translateY(10px) scale(0.96); opacity: 0; }
+}
+
+@keyframes portalHaloFade {
+  from { opacity: 0.6; }
+  to   { opacity: 0;   }
+}
+
+/* =========================
+   OPENING / ENTER STATE
+   (sacred expansion into zone)
+========================= */
+.portal-overlay.opening {
+  animation: lightFill 0.8s ease forwards;
+}
+
+.portal-overlay.opening .portal-modal {
+  animation: portalExpand 0.8s cubic-bezier(.22, 1, .36, 1) forwards;
+}
+
+.portal-overlay.opening .portal-modal::before {
+  animation: haloExpand 0.8s ease forwards;
+}
+
+/* Overlay fades to transparent — lets the zone show through naturally */
+@keyframes lightFill {
+  0%   { background: rgba(40, 30, 80, 0.35); backdrop-filter: blur(6px); }
+  60%  { background: rgba(92, 62, 168, 0.2); backdrop-filter: blur(2px); }
+  100% { background: rgba(0, 0, 0, 0);       backdrop-filter: blur(0px); }
+}
+
+/* Modal gently scales up and fades — no jarring flash */
+@keyframes portalExpand {
+  0%   { transform: scale(1);    opacity: 1;   }
+  40%  { transform: scale(1.08); opacity: 0.7; }
+  100% { transform: scale(1.18); opacity: 0;   }
+}
+
+/* Halo softly expands and fades */
+@keyframes haloExpand {
+  0%   { opacity: 0.6; transform: scale(1);   }
+  100% { opacity: 0;   transform: scale(2.2); }
+}
+
+/* =========================
+   MODAL CARD
+========================= */
+.portal-modal {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  animation: popUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-sizing: border-box;
-  max-height: 90vh;
-  overflow-y: auto;
-  border: 4px solid rgba(255,255,255,0.5);
+  width: clamp(560px, 48vw, 860px);
+  max-width: 92vw;
+  padding: clamp(48px, 5vw, 88px) clamp(48px, 5.5vw, 96px);
+  border-radius: clamp(36px, 3.5vw, 56px);
+  text-align: center;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(14px);
+  box-shadow:
+    0 20px 50px rgba(92, 62, 168, 0.22),
+    0 0 60px rgba(255, 215, 140, 0.25);
+  animation: portalRise 0.8s cubic-bezier(.22, 1, .36, 1) forwards;
 }
 
-@keyframes popUp {
-  from { transform: scale(0.9) translateY(20px); opacity: 0; }
-  to { transform: scale(1) translateY(0); opacity: 1; }
+@keyframes portalRise {
+  from { transform: translateY(20px) scale(0.95); opacity: 0; }
+  to   { transform: translateY(0)    scale(1);    opacity: 1; }
 }
 
-/* 1. Image Area */
-.zone-art {
-  width: 100%;
-  height: 150px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 10px;
-  margin-top: -10px;
+/* Golden halo behind modal */
+.portal-modal::before {
+  content: "";
+  position: absolute;
+  inset: -60px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 215, 140, 0.35) 0%,
+    rgba(255, 215, 140, 0.15) 40%,
+    transparent 70%
+  );
+  z-index: -1;
+  pointer-events: none;
+  animation: portalHaloPulse 5s ease-in-out infinite;
 }
 
-.zone-art img {
-  height: 160px;
-  width: auto;
+@keyframes portalHaloPulse {
+  0%   { opacity: 0.5; transform: scale(1);    }
+  50%  { opacity: 0.8; transform: scale(1.05); }
+  100% { opacity: 0.5; transform: scale(1);    }
+}
+
+/* =========================
+   MASCOT
+========================= */
+.portal-mascot {
+  width: clamp(140px, 13vw, 220px);
+  height: clamp(140px, 13vw, 220px);
   object-fit: contain;
-  display: block;
-  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.15));
-  /* ✨ BREATHING & BOUNCE ANIMATION */
-  animation: breatheBounce 3s ease-in-out infinite;
+  margin-bottom: clamp(16px, 1.6vw, 28px);
+  animation: portalFloat 4s ease-in-out infinite;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.12));
 }
 
-@keyframes breatheBounce {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-8px) scale(1.05); }
+@keyframes portalFloat {
+  0%   { transform: translateY(0);   }
+  50%  { transform: translateY(-6px); }
+  100% { transform: translateY(0);   }
 }
 
-/* 2. Text */
-.title {
-  font-size: 32px;
+/* =========================
+   TEXT
+========================= */
+.portal-title {
+  font-family: 'Baloo 2', 'Nunito', sans-serif;
+  font-size: clamp(38px, 4vw, 64px);
   font-weight: 800;
-  color: var(--text);
-  text-align: center;
-  margin: 10px 0 5px;
-  font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
-  letter-spacing: -0.5px;
+  color: #5c3ea8;
+  margin: 0 0 clamp(8px, 0.8vw, 14px) 0;
+  line-height: 1.2;
 }
 
-.subtitle {
-  font-size: 16px;
-  color: var(--subtext);
-  margin: 0 0 25px;
+.portal-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(20px, 2vw, 32px);
+  color: #7a63c2;
   font-style: italic;
-  text-align: center;
+  margin: 0 0 clamp(28px, 2.8vw, 48px) 0;
 }
 
-/* 3. Activities List */
-.activities {
-  background: var(--light-bg, #f0f9ff);
-  padding: 20px;
-  border-radius: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-bottom: 30px;
+/* =========================
+   FEATURES LIST
+========================= */
+.portal-features {
+  border-radius: clamp(18px, 1.8vw, 30px);
+  padding: clamp(16px, 1.6vw, 28px) clamp(20px, 2vw, 36px);
+  margin-bottom: clamp(28px, 2.8vw, 48px);
   width: 100%;
   box-sizing: border-box;
-  border: 2px solid rgba(0,0,0,0.02);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1vw, 18px);
 }
 
-.activity {
+.portal-feature-row {
   display: flex;
   align-items: center;
-  gap: 15px;
-  font-size: 17px;
-  color: var(--text);
+  gap: clamp(12px, 1.2vw, 20px);
   text-align: left;
-  font-weight: 700;
 }
 
-.activity .ico {
-  font-size: 24px;
+.portal-feature-icon {
+  font-size: clamp(28px, 2.8vw, 46px);
   flex-shrink: 0;
-  width: 30px;
+  width: clamp(36px, 3.6vw, 58px);
   text-align: center;
 }
 
-/* 4. Buttons */
-.btn-row {
-  display: flex;
-  flex-direction: row;
-  gap: 15px;
-  width: 100%;
-  margin-top: auto;
-}
-
-.btn-primary {
-  flex: 2;
-  background: var(--primary);
-  color: #fff;
-  padding: 18px 24px;
-  border-radius: 20px;
-  border: none;
-  border-bottom: 6px solid rgba(0,0,0,0.2);
-  font-weight: 800;
-  font-size: 22px;
-  cursor: pointer;
-  font-family: inherit;
-  transition: transform 0.1s;
-  text-shadow: 0 2px 0 rgba(0,0,0,0.1);
-}
-
-.btn-primary:active {
-  transform: translateY(6px);
-  border-bottom: 0px solid transparent;
-  margin-bottom: 6px;
-}
-
-.btn-secondary {
-  flex: 1;
-  background: #fff;
-  color: var(--subtext);
-  border: 2px solid #e0e0e0;
-  border-bottom: 6px solid #e0e0e0;
-  padding: 18px 10px;
-  border-radius: 20px;
+.portal-feature-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(22px, 2.2vw, 36px);
   font-weight: 700;
-  font-size: 18px;
+  color: #4a3b8f;
+  line-height: 1.4;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+.portal-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(12px, 1.4vw, 24px);
+  width: 100%;
+}
+
+/* PrimaryBtn scoped size inside modal */
+.portal-actions .primary-btn-unified {
+  font-size: clamp(22px, 2.4vw, 38px);
+  padding: clamp(18px, 1.8vw, 30px) clamp(48px, 5vw, 90px);
+  flex: 2;
+}
+
+/* Primary — green "Enter" */
+.portal-primary-btn {
+  flex: 2;
+  padding: 18px 32px;
+  border-radius: 999px;
+  border: none;
+  font-family: 'Baloo 2', 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 24px;
   cursor: pointer;
-  font-family: inherit;
-  transition: all 0.1s;
+  background: linear-gradient(90deg, #7ed957, #4fb34f);
+  color: white;
+  box-shadow:
+    0 6px 18px rgba(79, 179, 79, 0.4),
+    0 0 20px rgba(255, 215, 140, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  letter-spacing: 0.3px;
 }
 
-.btn-secondary:active {
-  transform: translateY(6px);
-  border-bottom: 2px solid #e0e0e0;
-  margin-bottom: 6px;
+.portal-primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 10px 24px rgba(79, 179, 79, 0.5),
+    0 0 24px rgba(255, 215, 140, 0.4);
 }
 
-/* ============================================================ */
-/* 📱 MOBILE LANDSCAPE SPECIFIC (2-Column Grid)                 */
-/*    Target: Phones held sideways (Height < 600px)             */
-/*    Goal: Fit everything on one screen, NO SCROLL             */
-/* ============================================================ */
-
-@media (max-height: 600px) and (orientation: landscape) {
-  
-  .zone-modal-card {
-    /* 1. Grid Layout Setup */
-    display: grid !important;
-    grid-template-columns: 40% 55% !important; /* Left Col (40%), Right Col (55%) */
-    column-gap: 5% !important;
-    grid-template-rows: auto auto auto 1fr; /* Image, Title, Tagline, Buttons */
-    
-    /* 2. Map Elements to Grid Areas */
-    grid-template-areas: 
-      "image list"
-      "title list"
-      "tag   list"
-      "btns  btns"; /* Buttons span full bottom */
-      
-    /* 3. Sizing Constraints */
-    width: 95% !important;
-    max-width: 600px !important; /* Not too wide */
-    height: 70vh !important;     /* Fill screen height */
-    padding: 15px 25px !important;
-    align-items: center;         /* Center vertically */
-    overflow-y: hidden;          /* Try to prevent body scroll */
-  }
-
-  /* --- COLUMN 1 (LEFT): Visuals --- */
-
-  /* 1. Image */
-  .zone-art {
-    grid-area: image;
-    height: 80px !important; /* Small enough to fit */
-    margin: 0 !important;
-    width: 100% !important;
-    align-self: end; /* Push to bottom of its cell */
-  }
-  
-  .zone-art img {
-    height: 100% !important;
-  }
-
-  /* 2. Title */
-  .title {
-    grid-area: title;
-    font-size: 22px !important;
-    margin: 5px 0 0 0 !important;
-    text-align: center !important;
-    line-height: 1.1;
-  }
-
-  /* 3. Tagline */
-  .subtitle {
-    grid-area: tag;
-    font-size: 12px !important;
-    margin: 2px 0 10px 0 !important;
-    text-align: center !important;
-    align-self: start; /* Push to top of its cell */
-  }
-
-  /* --- COLUMN 2 (RIGHT): Pointers --- */
-
-  /* 4. Activities List */
-  .activities {
-    grid-area: list;
-    height: 100% !important; /* Fill available height */
-    max-height: 200px;       /* Cap height to prevent overflow */
-    margin: 0 !important;
-    padding: 12px !important;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 8px !important;
-    overflow-y: auto;        /* Scroll only inside list if needed */
-  }
-
-  .activity {
-    font-size: 13px !important;
-    gap: 8px !important;
-  }
-  
-  .activity .ico {
-    width: 24px !important;
-    height: 24px !important;
-    font-size: 14px !important;
-  }
-
-  /* --- BOTTOM ROW: Buttons --- */
-
-  /* 5. Buttons */
-  .btn-row {
-    grid-area: btns;
-    width: 100% !important;
-    margin: 10px 0 0 0 !important;
-    flex-direction: row !important; /* Force side-by-side */
-    justify-content: center;
-    gap: 15px !important;
-  }
-
-  .btn-primary, .btn-secondary {
-    flex: 1;
-    padding: 10px 0 !important;
-    font-size: 16px !important;
-    border-radius: 20px !important;
-    max-width: 200px; /* Prevent them from getting too wide */
-  }
+.portal-primary-btn:active {
+  transform: translateY(1px);
 }
 
-/* ============================================================ */
-/* 📱 TABLET & iPAD PRO OVERRIDES (Hero Mode)                   */
-/*    Makes everything Chunky, Bold, and Immersive              */
-/* ============================================================ */
+/* Ghost — "Return" */
+.portal-ghost-btn {
+  flex: 1;
+  padding: clamp(18px, 1.8vw, 30px) clamp(24px, 2.4vw, 44px);
+  border-radius: 999px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: clamp(18px, 1.8vw, 30px);
+  cursor: pointer;
+  background: transparent;
+  border: 2px solid rgba(108, 76, 184, 0.45);
+  color: #6c4cb8;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
 
-@media (min-width: 768px) and (min-height: 1000px) {
-  
-  /* 1. Make the Card Much Wider */
-  .zone-modal-card {
-    max-width: 640px; /* Was 480px */
-    padding: 40px;
+.portal-ghost-btn:hover {
+  background: rgba(108, 76, 184, 0.08);
+  transform: translateY(-1px);
+}
+
+.portal-ghost-btn:active {
+  transform: translateY(1px);
+}
+
+/* =========================
+   iPAD KIDS — large screen
+========================= */
+@media (min-width: 768px) and (min-height: 900px) {
+  .portal-modal {
+    width: 640px;
+    padding: 56px 56px;
     border-radius: 40px;
   }
 
-  /* 2. Make the Character the "Star" */
-  .zone-art {
-    height: 220px; /* Was 150px */
-    margin-top: -20px;
-  }
-  
-  .zone-art img {
-    height: 240px; /* Massive character */
-    filter: drop-shadow(0 12px 24px rgba(0,0,0,0.2));
+  .portal-mascot {
+    width: 160px;
+    height: 160px;
+    margin-bottom: 20px;
   }
 
-  /* 3. Typography: Big & Readable */
-  .title {
-    font-size: 48px; /* Huge Title */
-    margin: 15px 0 10px;
+  .portal-title {
+    font-size: 46px;
+    margin-bottom: 10px;
   }
 
-  .subtitle {
-    font-size: 20px;
-    margin-bottom: 30px;
+  .portal-subtitle {
+    font-size: 22px;
+    margin-bottom: 32px;
   }
 
-  /* 4. Activities List: Room to breathe */
-  .activities {
-    padding: 25px;
-    gap: 20px;
+  .portal-features {
+    padding: 24px 28px;
+    gap: 16px;
     margin-bottom: 40px;
-    border-radius: 30px;
+    border-radius: 26px;
   }
 
-  .activity {
-    font-size: 22px; /* Much easier to read */
-    gap: 20px;
-  }
-
-  .activity .ico {
-    font-size: 32px; /* Bigger emojis */
+  .portal-feature-icon {
+    font-size: 32px;
     width: 40px;
   }
 
-  /* 5. Buttons: Massive Touch Targets */
-  .btn-row {
-    gap: 20px;
+  .portal-feature-text {
+    font-size: 26px;
   }
 
-  .btn-primary {
-    padding: 25px 30px;
+  .portal-primary-btn {
     font-size: 28px;
-    border-radius: 30px;
-    border-bottom-width: 8px; /* Chunkier click feel */
+    padding: 22px 36px;
   }
 
-  .btn-secondary {
-    padding: 25px 20px;
+  .portal-ghost-btn {
     font-size: 24px;
-    border-radius: 30px;
-    border-bottom-width: 8px;
+    padding: 22px 28px;
   }
+}
+
+/* =========================
+   MOBILE LANDSCAPE
+========================= */
+@media (max-height: 600px) and (orientation: landscape) {
+  .portal-modal {
+    width: 90vw;
+    max-width: 560px;
+    padding: 20px 28px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "mascot  features"
+      "title   features"
+      "sub     features"
+      "btns    btns";
+    column-gap: 24px;
+    text-align: left;
+  }
+
+  .portal-mascot     { grid-area: mascot;   width: 70px; height: 70px; margin-bottom: 8px; }
+  .portal-title      { grid-area: title;    font-size: 20px; margin: 0 0 4px; }
+  .portal-subtitle   { grid-area: sub;      font-size: 12px; margin: 0 0 10px; }
+  .portal-features   { grid-area: features; margin-bottom: 0; height: 100%; justify-content: center; }
+  .portal-feature-text { font-size: 13px; }
+  .portal-feature-icon { font-size: 16px; }
+  .portal-actions    { grid-area: btns;     margin-top: 12px; }
+  .portal-primary-btn { font-size: 14px; padding: 10px 18px; }
+  .portal-ghost-btn   { font-size: 13px; padding: 10px 14px; }
+}
+
+/* =========================
+   MOBILE PORTRAIT
+========================= */
+@media (max-width: 480px) {
+  .portal-modal {
+    padding: 28px 22px;
+    border-radius: 22px;
+  }
+  .portal-mascot    { width: 80px; height: 80px; }
+  .portal-title     { font-size: 22px; }
+  .portal-subtitle  { font-size: 13px; }
+  .portal-feature-text { font-size: 14px; }
+  .portal-primary-btn  { font-size: 15px; padding: 12px 20px; }
+  .portal-ghost-btn    { font-size: 14px; padding: 12px 14px; }
 }

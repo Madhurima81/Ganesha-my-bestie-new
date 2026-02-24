@@ -1,4 +1,4 @@
-/* CleanProfileSelector.css - Fixed Mobile Landscape & iPad Layouts */
+/* CleanProfileSelector.css */
 
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;700;800&display=swap');
 
@@ -16,13 +16,113 @@
 /* ========================================== */
 .clean-profile-overlay {
   position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-  background-color: rgba(0, 0, 0, 0.4);
   display: flex; align-items: center; justify-content: center; z-index: 1000;
 }
 
 .clean-forest-background {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background-image: url('/images/profile-background.png'); background-size: cover; z-index: -1;
+  background-image: url('/images/profile-background.png');
+  background-size: cover; background-position: center; z-index: -1;
+  overflow: hidden;
+}
+
+/* ✨ Gentle twinkle breathing */
+.clean-forest-background::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(2px 2px at 25% 30%, rgba(255,255,255,0.9), transparent),
+    radial-gradient(2px 2px at 70% 40%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1.5px 1.5px at 55% 20%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(2px 2px at 15% 65%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1.5px 1.5px at 85% 55%, rgba(255,255,255,0.7), transparent);
+  animation: softTwinkle 5s ease-in-out infinite alternate;
+  z-index: 0;
+}
+
+@keyframes softTwinkle {
+  0%   { opacity: 0.4; }
+  100% { opacity: 0.9; }
+}
+
+/* 🌫 Slow ambient glow drift */
+.clean-forest-background::after {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255,255,255,0.25) 0%,
+    rgba(255,255,255,0.15) 30%,
+    transparent 60%
+  );
+  animation: slowDrift 30s linear infinite;
+  z-index: 0;
+}
+
+@keyframes slowDrift {
+  0%   { transform: translateX(-3%) translateY(-2%); }
+  50%  { transform: translateX(3%)  translateY(2%);  }
+  100% { transform: translateX(-3%) translateY(-2%); }
+}
+
+/* 🌟 Floating dust particles */
+.profile-dust {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.profile-dust span {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0%, #ffe680 70%, transparent 100%);
+  box-shadow: 0 0 8px rgba(255, 230, 120, 0.6);
+  opacity: 0.6;
+  animation: floatDust 18s linear infinite;
+}
+
+.profile-dust span:nth-child(1) { left: 20%; bottom: -10px; animation-delay: 0s;  }
+.profile-dust span:nth-child(2) { left: 50%; bottom: -10px; animation-delay: 6s;  }
+.profile-dust span:nth-child(3) { left: 75%; bottom: -10px; animation-delay: 12s; }
+
+@keyframes floatDust {
+  0%   { transform: translateY(0);        opacity: 0;   }
+  20%  { opacity: 0.7; }
+  100% { transform: translateY(-110vh);   opacity: 0;   }
+}
+
+/* 🌌 Atmospheric overlay — same as loading/welcome screens */
+.profile-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgba(255, 255, 255, 0.12),
+    rgba(180, 140, 255, 0.20) 60%,
+    rgba(120, 80, 220, 0.28) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 🎬 Cinematic vignette — pushes attention inward */
+.profile-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle,
+    transparent 50%,
+    rgba(0, 0, 0, 0.18) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
 }
 
 .clean-profile-container {
@@ -30,23 +130,76 @@
 }
 
 .clean-profile-header {
-  display: flex; align-items: center; gap: 15px; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 20px; margin-bottom: 40px;
 }
 
 .clean-profile-title {
   font-family: var(--font-title);
-  color: white; font-size: 36px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  color: #5c3ea6;
+  font-size: clamp(32px, 4vw, 72px);
+  font-weight: 800;
   margin: 0;
+  letter-spacing: 0.3px;
+  position: relative;
+
+  /* Layered purple whisper glow — matches loading/welcome */
+  text-shadow:
+    0 0 6px  rgba(140, 100, 255, 0.35),
+    0 0 18px rgba(140, 100, 255, 0.25),
+    0 0 30px rgba(200, 170, 255, 0.15);
+
+  animation: profileTitlePulse 5s ease-in-out infinite;
+}
+
+@keyframes profileTitlePulse {
+  0%, 100% {
+    text-shadow:
+      0 0 6px  rgba(140, 100, 255, 0.3),
+      0 0 18px rgba(140, 100, 255, 0.2),
+      0 0 30px rgba(200, 170, 255, 0.1);
+  }
+  50% {
+    text-shadow:
+      0 0 10px rgba(140, 100, 255, 0.4),
+      0 0 22px rgba(140, 100, 255, 0.3),
+      0 0 40px rgba(200, 170, 255, 0.2);
+  }
 }
 
 .clean-info-btn {
-  background: white; color: var(--color-blue);
-  width: 40px; height: 40px; border-radius: 50%;
-  border: none; font-size: 20px; font-weight: bold;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.2s;
+  background: linear-gradient(180deg, #b497f5 0%, #9a73d9 100%);
+  color: white;
+  width: clamp(36px, 3.5vw, 64px);
+  height: clamp(36px, 3.5vw, 64px);
+  border-radius: 50%;
+  border: none;
+  font-size: clamp(20px, 2vw, 36px);
+  font-weight: 700;
+  font-family: var(--font-title);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow:
+    0 5px 0 #6a4fb3,
+    0 8px 18px rgba(120, 80, 200, 0.35),
+    inset 0 2px 4px rgba(255, 255, 255, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  line-height: 1;
+  flex-shrink: 0;
 }
-.clean-info-btn:hover { transform: scale(1.1); }
+.clean-info-btn:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 7px 0 #6a4fb3,
+    0 12px 24px rgba(120, 80, 200, 0.45),
+    inset 0 2px 4px rgba(255, 255, 255, 0.4);
+}
+.clean-info-btn:active {
+  transform: translateY(3px);
+  box-shadow:
+    0 2px 0 #6a4fb3,
+    0 4px 8px rgba(120, 80, 200, 0.25),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3);
+}
 
 /* ========================================== */
 /* 2. MODALS                                  */
@@ -60,37 +213,46 @@
 /* Common Card Base */
 .clean-create-card, .clean-delete-card {
   background: #FFFDF7;
-  border-radius: 20px;
+  border-radius: 24px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.3);
   display: flex; flex-direction: column; align-items: center;
   position: relative;
-  width: 90%; max-width: 450px; padding: 35px;
+  width: 90%;
+  max-width: clamp(400px, 40vw, 700px);
+  padding: clamp(28px, 3vw, 50px);
   border: 1px solid rgba(0,0,0,0.05);
-  
-  /* Static positioning (No fly-in animation) */
-  transform-origin: center center;
 }
 
 /* Typography */
 .modal-title {
   font-family: var(--font-title);
-  color: #0D47A1; font-size: 32px; font-weight: 800; margin: 0 0 5px 0; text-align: center;
+  color: #0D47A1;
+  font-size: clamp(26px, 2.5vw, 48px);
+  font-weight: 800; margin: 0 0 5px 0; text-align: center;
 }
 .modal-title-small {
-  font-family: var(--font-title); color: #C62828; font-size: 26px; font-weight: 800; margin: 0 0 10px 0; text-align: center;
+  font-family: var(--font-title); color: #C62828;
+  font-size: clamp(22px, 2vw, 38px);
+  font-weight: 800; margin: 0 0 10px 0; text-align: center;
 }
 .modal-subtitle, .modal-text {
-  font-family: var(--font-body); color: var(--color-subtext); font-size: 16px; margin: 0 0 20px 0; text-align: center; line-height: 1.5;
+  font-family: var(--font-body); color: var(--color-subtext);
+  font-size: clamp(14px, 1.4vw, 24px);
+  margin: 0 0 20px 0; text-align: center; line-height: 1.5;
 }
 .section-label {
-  font-family: var(--font-title); color: #0D47A1; font-size: 20px; font-weight: 800; margin: 20px 0 15px 0;
+  font-family: var(--font-title); color: #0D47A1;
+  font-size: clamp(16px, 1.8vw, 32px);
+  font-weight: 800; margin: 16px 0 12px 0;
 }
 
 /* Input */
 .clean-text-input {
-  font-family: var(--font-body); width: 100%; padding: 14px;
+  font-family: var(--font-body); width: 100%;
+  padding: clamp(12px, 1.2vw, 20px);
   border: 2px solid #4FC3F7; border-radius: 20px;
-  font-size: 18px; text-align: center; font-weight: 700;
+  font-size: clamp(16px, 1.6vw, 28px);
+  text-align: center; font-weight: 700;
   outline: none; box-sizing: border-box; color: #333;
 }
 .clean-text-input:focus { border-color: var(--color-blue); box-shadow: 0 0 0 4px rgba(2,136,209,0.1); }
@@ -98,27 +260,47 @@
 /* ========================================== */
 /* 3. AVATAR SELECTION GRID                   */
 /* ========================================== */
-.clean-avatar-grid { display: flex; gap: 12px; justify-content: center; width: 100%; flex-wrap: wrap; }
+.clean-avatar-grid {
+  display: flex; gap: clamp(10px, 1.5vw, 28px);
+  justify-content: center; width: 100%;
+  flex-wrap: nowrap;
+}
 
 .clean-avatar-option {
-  position: relative; width: 90px; height: 110px; background: #FFF8E1;
-  border-radius: 12px; cursor: pointer; display: flex; flex-direction: column;
-  align-items: center; justify-content: flex-end; transition: transform 0.2s; overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  position: relative;
+  width: clamp(80px, 8vw, 150px);
+  height: clamp(100px, 10vw, 185px);
+  background: #FFF8E1;
+  border-radius: 14px; cursor: pointer;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-end;
+  transition: transform 0.2s; overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  flex-shrink: 0;
 }
 .clean-avatar-option:hover { transform: translateY(-5px); }
 .clean-avatar-option.selected { box-shadow: 0 0 0 3px #4CAF50; transform: scale(1.05); }
 
 .checkmark-badge {
-  position: absolute; top: -6px; right: -6px; background: #4CAF50; color: white;
-  border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
-  font-size: 14px; border: 2px solid white; z-index: 10; font-weight: bold;
+  position: absolute; top: -6px; right: -6px;
+  background: #4CAF50; color: white;
+  border-radius: 50%;
+  width: clamp(20px, 2vw, 34px);
+  height: clamp(20px, 2vw, 34px);
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(12px, 1.2vw, 18px);
+  border: 2px solid white; z-index: 10; font-weight: bold;
 }
 
-.clean-avatar-img { width: 70px; height: 70px; object-fit: contain; margin-bottom: 4px; z-index: 1; }
+.clean-avatar-img {
+  width: clamp(55px, 6vw, 115px);
+  height: clamp(55px, 6vw, 115px);
+  object-fit: contain; margin-bottom: 4px; z-index: 1;
+}
 .animal-label-pill {
   font-family: var(--font-body); width: 100%; text-align: center; color: white;
-  font-size: 12px; font-weight: 800; padding: 5px 0; margin-top: auto;
+  font-size: clamp(10px, 1vw, 16px);
+  font-weight: 800; padding: 5px 0; margin-top: auto;
 }
 
 /* ========================================== */
@@ -126,8 +308,10 @@
 /* ========================================== */
 .btn-primary-blue {
   font-family: var(--font-title); background: var(--color-blue); color: white;
-  width: 100%; padding: 14px; border: none; border-radius: 20px;
-  font-size: 22px; font-weight: 800; margin-top: 25px; cursor: pointer;
+  width: 100%; padding: clamp(12px, 1.2vw, 22px);
+  border: none; border-radius: 20px;
+  font-size: clamp(18px, 1.8vw, 32px);
+  font-weight: 800; margin-top: 20px; cursor: pointer;
   box-shadow: 0 6px 0 var(--color-blue-dark); transition: transform 0.1s;
 }
 .btn-primary-blue:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--color-blue-dark); }
@@ -135,226 +319,266 @@
 
 .btn-text-back, .btn-text-cancel {
   font-family: var(--font-body); background: none; border: none; color: var(--color-blue);
-  font-size: 18px; font-weight: 700; margin-top: 15px; cursor: pointer;
+  font-size: clamp(14px, 1.4vw, 24px);
+  font-weight: 700; margin-top: 12px; cursor: pointer;
 }
 .btn-text-back:hover, .btn-text-cancel:hover { text-decoration: underline; }
 
 .btn-danger-red {
   font-family: var(--font-title); background: #E53935; color: white;
-  width: 100%; padding: 12px; border: none; border-radius: 20px;
-  font-size: 20px; font-weight: 700; cursor: pointer;
+  width: 100%; padding: clamp(10px, 1vw, 18px);
+  border: none; border-radius: 20px;
+  font-size: clamp(16px, 1.6vw, 28px);
+  font-weight: 700; cursor: pointer;
   box-shadow: 0 4px 0 #B71C1C; margin-bottom: 10px;
 }
 .btn-danger-red:active { transform: translateY(3px); box-shadow: none; }
 
 /* ========================================== */
-/* 5. PROFILE CARDS (Wood Theme Main Screen)  */
+/* 5. PROFILE CARDS                           */
 /* ========================================== */
-.clean-profiles-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 10px; }
 
+.clean-profiles-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(20px, 3vw, 56px);
+  width: clamp(320px, 55vw, 900px);
+  margin: 0 auto;
+  margin-top: 10px;
+}
+
+/* Base Card */
 .clean-profile-card {
-  width: 160px; height: 190px; background: rgba(255,255,255,0.9); border-radius: 20px;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  cursor: pointer; position: relative; transition: transform 0.2s;
+  background: #f6f2ff;
+  border-radius: 24px;
+  padding: clamp(20px, 2.5vw, 44px) clamp(16px, 2vw, 36px) clamp(18px, 2.2vw, 40px);
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 24px rgba(120, 90, 180, 0.15);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-.clean-profile-card:hover { transform: translateY(-5px); }
 
+.clean-profile-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 0 0 4px rgba(155, 123, 232, 0.3),
+    0 14px 30px rgba(120, 90, 180, 0.25);
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+.clean-profile-card:active { transform: scale(0.97); }
+
+/* Manage mode — slight wiggle hint */
+.clean-profile-card.manage {
+  animation: manageWiggle 0.4s ease-in-out;
+}
+@keyframes manageWiggle {
+  0%,100% { transform: rotate(0deg);   }
+  25%      { transform: rotate(-1.5deg); }
+  75%      { transform: rotate(1.5deg);  }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(155, 123, 232, 0.3), 0 14px 30px rgba(120, 90, 180, 0.25); }
+  50%       { box-shadow: 0 0 0 6px rgba(155, 123, 232, 0.45), 0 14px 30px rgba(120, 90, 180, 0.3); }
+}
+
+/* Avatar Circle */
 .clean-animal-avatar-container {
-  width: 110px; height: 110px; background: #fff; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  border: 4px solid #fff; box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  width: clamp(80px, 12vw, 220px);
+  height: clamp(80px, 12vw, 220px);
+  border-radius: 50%;
+  margin: 4px auto clamp(10px, 1.2vw, 20px);
+  display: grid;
+  place-items: center;
+  overflow: visible;
+  background: #e8ddff;
+  position: relative;
+  transition: box-shadow 0.25s ease;
+  flex-shrink: 0;
 }
-.clean-animal-avatar-image { width: 90px; height: 90px; object-fit: contain; }
 
+.clean-profile-card:hover .clean-animal-avatar-container {
+  box-shadow: 0 0 20px rgba(155, 123, 232, 0.5);
+}
+
+.clean-animal-avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Profile Name */
 .clean-profile-name {
-  font-family: var(--font-body); margin-top: 15px; font-weight: 800; font-size: 16px;
-  color: #3E2723; background: #FFF8E1; padding: 6px 15px; border-radius: 12px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  font-family: var(--font-body);
+  font-size: clamp(16px, 2vw, 36px);
+  font-weight: 700;
+  color: #4B3A73;
+  letter-spacing: 0.2px;
+  margin-top: 0;
 }
 
+/* Delete Button — lavender, no red */
 .clean-delete-trigger {
-  position: absolute; top: -8px; right: -8px; background: #E53935; color: white;
-  width: 32px; height: 32px; border-radius: 50%; border: 2px solid white;
-  cursor: pointer; font-weight: 800; font-size: 20px;
-  display: flex; align-items: center; justify-content: center;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: clamp(28px, 2.5vw, 46px);
+  height: clamp(28px, 2.5vw, 46px);
+  border-radius: 50%;
+  background: #f5eaff;
+  color: #7c5db6;
+  border: 2px solid #d4b8f0;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: clamp(16px, 1.6vw, 26px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(120, 90, 180, 0.25);
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 10;
 }
 
-/* Empty Slot */
-.clean-profile-card.empty .clean-animal-avatar-container { border: 4px dashed #BCAAA4; background: transparent; box-shadow: none; }
-.clean-add-icon { font-size: 40px; color: #BCAAA4; font-weight: bold; }
-.clean-add-text { font-family: var(--font-body); font-weight: 800; color: #8D6E63; margin-top: 10px; }
+.clean-profile-card.manage .clean-delete-trigger {
+  opacity: 1;
+}
 
-/* Delete Modal */
-.clean-delete-confirm-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); border-radius: 20px; display: flex; align-items: center; justify-content: center; z-index: 20; animation: fadeIn 0.2s ease-out; }
+/* Done button */
+.manage-done-btn {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(14px, 1.5vw, 24px);
+  background: #7c5db6;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 10px 32px;
+  cursor: pointer;
+  margin-top: 20px;
+  box-shadow: 0 4px 12px rgba(120, 90, 180, 0.3);
+  transition: background 0.15s ease;
+}
+.manage-done-btn:hover { background: #6a4fa8; }
+
+/* Empty / Add Friend Slot */
+.clean-profile-card.empty {
+  background: rgba(255, 255, 255, 0.35);
+  border: 2.5px dashed rgba(180, 150, 255, 0.6);
+  box-shadow: none;
+  backdrop-filter: blur(6px);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.clean-profile-card.empty:hover {
+  transform: translateY(-5px);
+  border-color: rgba(155, 120, 255, 0.9);
+  box-shadow: 0 12px 28px rgba(120, 90, 180, 0.22);
+}
+
+.clean-add-icon {
+  width: clamp(80px, 12vw, 220px);
+  height: clamp(80px, 12vw, 220px);
+  border-radius: 50%;
+  margin: 4px auto clamp(10px, 1.2vw, 20px);
+  display: grid;
+  place-items: center;
+  font-size: clamp(32px, 5vw, 90px);
+  font-weight: 700;
+  /* Matches the Start Adventure button gradient */
+  background: linear-gradient(180deg, #b497f5 0%, #9a73d9 100%);
+  color: white;
+  box-shadow:
+    0 5px 0 #6a4fb3,
+    0 8px 20px rgba(120, 80, 200, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.35);
+  flex-shrink: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.clean-profile-card.empty:hover .clean-add-icon {
+  transform: scale(1.06);
+  box-shadow:
+    0 7px 0 #6a4fb3,
+    0 12px 26px rgba(120, 80, 200, 0.4),
+    inset 0 2px 4px rgba(255, 255, 255, 0.4);
+}
+
+.clean-add-text {
+  font-family: var(--font-body);
+  font-size: clamp(16px, 2vw, 36px);
+  font-weight: 700;
+  color: #5c3ea6;
+  margin-top: 0;
+  letter-spacing: 0.2px;
+}
+
+/* Delete Confirm Modal — lavender */
+.modal-title-small {
+  font-family: var(--font-title);
+  color: #5c3ea8;
+  font-size: clamp(22px, 2vw, 38px);
+  font-weight: 800;
+  margin: 0 0 10px 0;
+  text-align: center;
+}
+
+.btn-delete-lavender {
+  font-family: var(--font-title);
+  background: #7c5db6;
+  color: white;
+  width: 100%;
+  padding: clamp(12px, 1.2vw, 20px);
+  border: none;
+  border-radius: 20px;
+  font-size: clamp(16px, 1.6vw, 28px);
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 5px 0 #5a3fa0;
+  margin-bottom: 10px;
+  transition: transform 0.08s ease;
+}
+.btn-delete-lavender:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #5a3fa0;
+}
+
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-.delete-modal { width: 90%; background: #FFF9F0; border-radius: 24px; padding: 15px; box-shadow: 0 12px 28px rgba(0,0,0,0.12); border: 1px solid #E0E0E0; display: flex; flex-direction: column; align-items: center; }
-.delete-modal h3 { margin: 0 0 6px; font-family: "Baloo 2", cursive; font-size: 18px; color: #8A4E1B; text-align: center; }
-.delete-modal p { margin: 0 0 12px; font-size: 12px; color: #5F6B73; text-align: center; font-family: "Nunito", sans-serif; line-height: 1.4; }
-.btn-delete { width: 100%; padding: 10px 0; border-radius: 999px; border: 0; background: #E15757; color: white; font-weight: 700; font-size: 14px; font-family: "Nunito", sans-serif; cursor: pointer; box-shadow: 0 6px 14px rgba(225,87,87,0.18); transition: transform 0.1s; }
-.btn-delete:active { transform: scale(0.95); }
-.btn-cancel { margin-top: 8px; background: none; border: 0; color: #8A4E1B; font-family: "Nunito", sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; }
-.btn-cancel:hover { text-decoration: underline; }
-
 /* ========================================== */
-/* 6. MEDIA QUERIES (Updated)                 */
+/* 6. MEDIA QUERIES                           */
 /* ========================================== */
 
 /* Mobile Portrait */
 @media (max-width: 600px) {
+  .clean-profile-header { margin-bottom: 20px; }
   .clean-create-card { width: 95%; padding: 25px; }
   .modal-title { font-size: 26px; }
+  .clean-avatar-grid { flex-wrap: wrap; gap: 10px; }
   .clean-avatar-option { width: 75px; height: 95px; }
   .clean-avatar-img { width: 55px; height: 55px; }
-  .clean-profile-card { width: 140px; height: 170px; }
-  .clean-animal-avatar-container { width: 90px; height: 90px; }
+  .clean-profiles-grid { gap: 16px; width: 320px; }
+  .clean-profile-card { padding: 16px 12px 14px; border-radius: 18px; }
+  .clean-animal-avatar-container { width: 76px; height: 76px; }
+  .clean-add-icon { width: 76px; height: 76px; font-size: 32px; }
+  .clean-profile-name, .clean-add-text { font-size: 16px; }
   .clean-profile-title { font-size: 28px; }
 }
 
-/* 🟢 UPDATED: Mobile Landscape (1 Column Vertical Stack) */
+/* Mobile Landscape */
 @media (max-height: 600px) and (orientation: landscape) {
-  .clean-create-card { 
-    flex-direction: column; /* Vertical Stack */
-    width: 80%; /* Limit width */
-    max-width: 400px;
-    padding: 10px 20px;
-    max-height: 95vh; /* Use full height */
-    overflow-y: auto; /* Scroll if needed */
-  }
-  
-  .modal-title { font-size: 20px; margin-bottom: 2px; }
-  .modal-subtitle { font-size: 12px; margin-bottom: 8px; }
-  
-  .clean-text-input { 
-    padding: 8px; font-size: 16px; margin-bottom: 5px;
-  }
-  
-  .section-label { font-size: 14px; margin: 5px 0; }
-  
-  .clean-avatar-grid { gap: 8px; }
-  .clean-avatar-option { width: 60px; height: 75px; }
-  .clean-avatar-img { width: 40px; height: 40px; }
-  .animal-label-pill { font-size: 9px; padding: 2px 0; }
-  
-  .btn-primary-blue { margin-top: 10px; padding: 8px; font-size: 16px; }
-  .btn-text-back { margin-top: 5px; font-size: 14px; }
-}
+  .clean-profile-header { margin-bottom: 8px; gap: 10px; }
+  .clean-profile-title { font-size: 22px; }
+  .clean-info-btn { width: 30px; height: 30px; font-size: 16px; }
 
-/* ============================================================ */
-/* 7. MOBILE LANDSCAPE SPECIFIC (Fits 4 profiles in 1 row)      */
-/*    Target: iPhone/Pixel in landscape (Height < 500px)        */
-/* ============================================================ */
-@media (max-height: 600px) and (orientation: landscape) {
-  
-  .clean-profile-container {
-    padding: 5px 20px; /* Very tight padding */
-    justify-content: center; /* Center everything vertically */
-  }
-
-  .clean-profile-header {
-    margin-bottom: 5px; /* Pull header closer to cards */
-    gap: 10px;
-  }
-
-  .clean-profile-title {
-    font-size: 22px; /* Smaller title */
-    margin: 0;
-  }
-
-  .clean-info-btn {
-    width: 30px;
-    height: 30px;
-    font-size: 16px;
-  }
-
-  /* Force 1 Row Grid */
-  .clean-profiles-grid {
-    display: flex; /* Use Flex instead of Grid to prevent wrapping */
-    flex-direction: row;
-    justify-content: center;
-    gap: 15px;
-    width: 100%;
-    margin-top: 5px;
-  }
-
-  /* Shrink the Cards */
-  .clean-profile-card {
-    width: 110px; /* Much narrower */
-    height: 130px; /* Much shorter */
-    padding: 5px;
-  }
-
-  /* Shrink Avatar Circle */
-  .clean-animal-avatar-container {
-    width: 80px;
-    height: 80px;
-    border-width: 3px;
-  }
-
-  /* Shrink Animal Image */
-  .clean-animal-avatar-image {
-    width: 70px;
-    height: 70px;
-  }
-
-  /* Shrink Name Label */
-  .clean-profile-name {
-    font-size: 11px;
-    padding: 3px 8px;
-    margin-top: 8px;
-  }
-
-  /* Adjust "New Profile" Icon */
-  .clean-add-icon {
-    width: 35px;
-    height: 35px;
-    font-size: 24px;
-    margin-bottom: 5px;
-  }
-
-  .clean-add-text {
-    font-size: 11px;
-    margin-top: 0;
-  }
-}
-
-/* 🟢 UPDATED: iPad Portrait (Wider Modal for 4 Animals) */
-@media (min-width: 768px) and (min-height: 1000px) {
-  .clean-create-card { 
-    max-width: 750px; /* INCREASED from 600px */
-    padding: 50px; 
-  }
-  .modal-title { font-size: 42px; }
-  .clean-text-input { font-size: 24px; padding: 18px; margin-bottom: 30px; }
-  
-  .clean-avatar-grid { gap: 30px; } /* More gap */
-  .clean-avatar-option { width: 130px; height: 160px; }
-  .clean-avatar-img { width: 100px; height: 100px; }
-  
-  .clean-profile-card { width: 220px; height: 260px; }
-  .clean-animal-avatar-container { width: 150px; height: 150px; }
-  .clean-profile-name { font-size: 22px; }
-}
-
-/* ========================================== */
-/* 6. MEDIA QUERIES (Updated for 1-Row Layout) */
-/* ========================================== */
-
-/* Mobile Portrait - Keep 2 Rows (Too narrow for 1 row) */
-@media (max-width: 600px) {
-  .clean-create-card { width: 95%; padding: 25px; }
-  .modal-title { font-size: 26px; }
-  .clean-avatar-grid { flex-wrap: wrap; justify-content: center; } /* Allow wrap here */
-  .clean-avatar-option { width: 75px; height: 95px; }
-  .clean-avatar-img { width: 55px; height: 55px; }
-  .clean-profile-card { width: 140px; height: 170px; }
-  .clean-animal-avatar-container { width: 90px; height: 90px; }
-  .clean-profile-title { font-size: 28px; }
-}
-
-/* Mobile Landscape - 1 Column Stack */
-@media (max-height: 600px) and (orientation: landscape) {
-  .clean-create-card { 
+  .clean-create-card {
     flex-direction: column; width: 80%; max-width: 400px;
     padding: 10px 20px; max-height: 95vh; overflow-y: auto;
   }
@@ -362,65 +586,299 @@
   .modal-subtitle { font-size: 12px; margin-bottom: 8px; }
   .clean-text-input { padding: 8px; font-size: 16px; margin-bottom: 5px; }
   .section-label { font-size: 14px; margin: 5px 0; }
-  
-  /* 1 Row for Mobile Landscape too */
-  .clean-avatar-grid { gap: 8px; flex-wrap: nowrap; } 
+  .clean-avatar-grid { gap: 8px; flex-wrap: nowrap; }
   .clean-avatar-option { width: 60px; height: 75px; flex-shrink: 0; }
   .clean-avatar-img { width: 40px; height: 40px; }
   .animal-label-pill { font-size: 9px; padding: 2px 0; }
-  
   .btn-primary-blue { margin-top: 10px; padding: 8px; font-size: 16px; }
   .btn-text-back { margin-top: 5px; font-size: 14px; }
+
+  .clean-profiles-grid {
+    display: flex; flex-direction: row;
+    justify-content: center; gap: 15px; width: 100%;
+  }
+  .clean-profile-card { width: 110px; height: 130px; padding: 5px; border-radius: 14px; }
+  .clean-animal-avatar-container { width: 70px; height: 70px; }
+  .clean-add-icon { width: 70px; height: 70px; font-size: 28px; }
+  .clean-profile-name, .clean-add-text { font-size: 12px; }
 }
 
-/* 🟢 UPDATED: iPad Portrait / Mini (Fixes Wrapping) */
-@media (min-width: 768px) and (min-height: 900px) {
-  .clean-create-card { 
-    max-width: 700px; /* Wide enough */
-    width: 90%;
-    padding: 40px; 
-  }
+/* iPad Portrait (768-1023px wide) */
+@media (min-width: 768px) and (max-width: 1023px) and (orientation: portrait) {
+  .clean-profile-header { margin-bottom: 32px; gap: 16px; }
+  .clean-profiles-grid { gap: 28px; width: 560px; }
+  .clean-profile-card { padding: 28px 22px 24px; border-radius: 22px; }
+  .clean-animal-avatar-container { width: 140px; height: 140px; border-width: 6px; }
+  .clean-add-icon { width: 140px; height: 140px; font-size: 60px; }
+  .clean-profile-name, .clean-add-text { font-size: 26px; }
+  .clean-profile-title { font-size: 52px; }
+  .clean-info-btn { width: 48px; height: 48px; font-size: 28px; }
+
+  .clean-create-card { max-width: 700px; padding: 40px; }
   .modal-title { font-size: 38px; }
-  .clean-text-input { font-size: 22px; padding: 16px; margin-bottom: 25px; }
-  
-  /* Force 1 Row */
-  .clean-avatar-grid { 
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap; /* Prevent wrapping */
-    justify-content: center;
-    gap: 15px; /* Reduced gap to fit */
-  }
-  
-  /* Adjusted size to fit 4 in a row */
-  .clean-avatar-option { 
-    width: 110px; /* Slightly reduced from 130px */
-    height: 140px;
-    flex-shrink: 0; /* Prevent squishing */
-  }
+  .clean-text-input { font-size: 22px; padding: 16px; }
+  .clean-avatar-option { width: 110px; height: 140px; }
   .clean-avatar-img { width: 85px; height: 85px; }
-  
-  .clean-profile-card { width: 200px; height: 240px; }
-  .clean-animal-avatar-container { width: 140px; height: 140px; }
-  .clean-profile-name { font-size: 20px; }
 }
 
-/* 🟢 UPDATED: iPad Landscape / Desktop (Wide Screen) */
+/* iPad Landscape & Large tablets (1024px+) — iPad kids target */
 @media (min-width: 1024px) {
+  .clean-profile-header { margin-bottom: clamp(30px, 4vh, 60px); gap: 20px; }
+
+  .clean-profiles-grid {
+    gap: clamp(28px, 3.5vw, 64px);
+    width: clamp(500px, 60vw, 1000px);
+  }
+
+  .clean-profile-card {
+    padding: clamp(28px, 3vw, 56px) clamp(22px, 2.5vw, 48px) clamp(26px, 3vw, 52px);
+    border-radius: clamp(22px, 2.5vw, 40px);
+  }
+
+  .clean-animal-avatar-container {
+    width: clamp(120px, 13vw, 240px);
+    height: clamp(120px, 13vw, 240px);
+    border-width: clamp(5px, 0.6vw, 10px);
+    margin-bottom: clamp(12px, 1.5vw, 24px);
+  }
+
+  .clean-add-icon {
+    width: clamp(120px, 13vw, 240px);
+    height: clamp(120px, 13vw, 240px);
+    font-size: clamp(50px, 6vw, 110px);
+    margin-bottom: clamp(12px, 1.5vw, 24px);
+  }
+
+  .clean-profile-name, .clean-add-text {
+    font-size: clamp(22px, 2.4vw, 44px);
+  }
+
+  .clean-profile-title {
+    font-size: clamp(48px, 5vw, 88px);
+  }
+
+  .clean-info-btn {
+    width: clamp(44px, 4vw, 72px);
+    height: clamp(44px, 4vw, 72px);
+    font-size: clamp(24px, 2.5vw, 44px);
+  }
+
+  .clean-delete-trigger {
+    width: clamp(32px, 3vw, 54px);
+    height: clamp(32px, 3vw, 54px);
+    font-size: clamp(18px, 1.8vw, 32px);
+    top: -12px; right: -12px;
+  }
+
+  /* Create modal for large screens */
   .clean-create-card {
-    max-width: 750px;
-    padding: 50px;
+    max-width: clamp(500px, 45vw, 800px);
+    padding: clamp(40px, 4vw, 70px);
   }
-  
-  .clean-avatar-grid {
-    gap: 25px; /* More space allowed here */
-    flex-wrap: nowrap;
-  }
-  
-  .clean-avatar-option {
-    width: 120px; 
-    height: 150px;
-  }
-  
-  .clean-avatar-img { width: 95px; height: 95px; }
+  .clean-avatar-grid { gap: clamp(16px, 2vw, 36px); }
+  .clean-avatar-option { width: clamp(100px, 10vw, 180px); height: clamp(125px, 12.5vw, 220px); }
+  .clean-avatar-img { width: clamp(78px, 8vw, 145px); height: clamp(78px, 8vw, 145px); }
+}
+
+/* ============================================================ */
+/* CREATE EXPLORER MODAL — New Purple Theme                     */
+/* ============================================================ */
+
+/* Overlay — blurred purple tint over the forest bg */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.08), rgba(130,90,255,0.35));
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  z-index: 2000;
+}
+
+/* Modal Card */
+.explorer-modal {
+  width: clamp(480px, 55vw, 900px);
+  max-width: 95%;
+  background: linear-gradient(180deg, #ffffff 0%, #f7f3ff 100%);
+  border-radius: clamp(22px, 2.5vw, 40px);
+  padding: clamp(36px, 4.5vw, 72px) clamp(36px, 5vw, 80px);
+  text-align: center;
+  box-shadow:
+    0 20px 50px rgba(140, 110, 255, 0.28),
+    0 4px 12px rgba(0, 0, 0, 0.08);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ScreenHeader inside modal */
+.explorer-modal .screen-header {
+  margin-bottom: clamp(20px, 2.5vw, 44px);
+  width: 100%;
+}
+
+/* ScreenHeader inside profile header row */
+.clean-profile-header .screen-header {
+  flex: 1;
+}
+.clean-profile-header .screen-header-title {
+  font-size: clamp(32px, 4vw, 72px) !important;
+}
+
+/* "Pick your Forest Friend" label */
+.pick-friend-label {
+  font-family: var(--font-title);
+  font-size: clamp(16px, 1.8vw, 34px);
+  font-weight: 700;
+  color: #5c3ea6;
+  margin: 0 0 clamp(16px, 1.8vw, 32px) 0;
+  width: 100%;
+  text-align: center;
+}
+
+/* Name Input */
+.explorer-modal .name-input {
+  width: 100%;
+  padding: clamp(14px, 1.5vw, 28px) clamp(16px, 1.6vw, 30px);
+  border-radius: clamp(16px, 1.8vw, 32px);
+  border: 2.5px solid #c6d8ff;
+  font-family: var(--font-body);
+  font-size: clamp(15px, 1.6vw, 30px);
+  outline: none;
+  margin-bottom: clamp(20px, 2.5vw, 44px);
+  background: #ffffff;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
+  box-sizing: border-box;
+  text-align: center;
+  color: #444;
+  font-weight: 600;
+}
+.explorer-modal .name-input:focus {
+  border-color: #7c4dff;
+  box-shadow: 0 0 0 4px rgba(124, 77, 255, 0.15);
+}
+.explorer-modal .name-input::placeholder {
+  color: #bbb;
+  font-weight: 500;
+}
+
+/* Section heading (kept for fallback) */
+.explorer-modal h3 {
+  font-family: var(--font-title);
+  font-size: clamp(16px, 1.8vw, 34px);
+  font-weight: 700;
+  color: #5c3ea6;
+  margin: 0 0 clamp(16px, 1.8vw, 32px) 0;
+  width: 100%;
+}
+
+/* Friend Grid — 4 columns */
+.friend-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(12px, 1.6vw, 28px);
+  margin-bottom: clamp(24px, 3vw, 52px);
+  width: 100%;
+}
+
+/* Friend Card */
+.friend-card {
+  background: #ffffff;
+  border-radius: clamp(14px, 1.6vw, 28px);
+  padding: clamp(16px, 1.8vw, 32px) clamp(10px, 1vw, 18px) clamp(12px, 1.4vw, 24px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.07);
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  border: 2.5px solid transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.friend-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 24px rgba(124, 77, 255, 0.22);
+}
+.friend-card.active {
+  border-color: #7c4dff;
+  box-shadow: 0 10px 26px rgba(124, 77, 255, 0.32);
+  background: linear-gradient(180deg, #f3ecff 0%, #ffffff 100%);
+}
+
+/* Animal image inside friend card */
+.friend-card img {
+  width: clamp(55px, 7.5vw, 140px);
+  height: clamp(55px, 7.5vw, 140px);
+  object-fit: contain;
+  margin-bottom: clamp(8px, 0.9vw, 16px);
+}
+
+/* Animal name label */
+.friend-card span {
+  display: block;
+  font-family: var(--font-body);
+  font-size: clamp(12px, 1.3vw, 24px);
+  font-weight: 700;
+  color: #9c8cc4;
+}
+
+/* Start Adventure Button */
+.explorer-modal .primary-btn {
+  width: 100%;
+  padding: clamp(14px, 1.5vw, 28px);
+  border-radius: clamp(24px, 2.5vw, 44px);
+  border: none;
+  font-family: var(--font-title);
+  font-size: clamp(17px, 2vw, 36px);
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  background: linear-gradient(180deg, #a178ff 0%, #7c4dff 100%);
+  box-shadow: 0 10px 28px rgba(124, 77, 255, 0.4),
+              0 4px 0 #5c2dcc;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  letter-spacing: 0.4px;
+}
+.explorer-modal .primary-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 34px rgba(124, 77, 255, 0.5),
+              0 4px 0 #5c2dcc;
+}
+.explorer-modal .primary-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 4px 12px rgba(124, 77, 255, 0.3),
+              0 1px 0 #5c2dcc;
+}
+.explorer-modal .primary-btn:disabled {
+  background: #ccc;
+  box-shadow: 0 4px 0 #aaa;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Back link — plain centered text below button */
+.explorer-modal .back-btn {
+  display: block;
+  width: 100%;
+  margin-top: clamp(12px, 1.2vw, 22px);
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: clamp(13px, 1.3vw, 24px);
+  font-weight: 600;
+  color: #8e8eaa;
+  cursor: pointer;
+  opacity: 0.9;
+  transition: opacity 0.2s, color 0.2s;
+  text-align: center;
+  position: static;
+}
+.explorer-modal .back-btn:hover {
+  opacity: 1;
+  color: #7c4dff;
 }

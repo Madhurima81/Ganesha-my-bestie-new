@@ -24,9 +24,9 @@ export const GAME_CONFIGS = {
         centralSynthesis: {
             enabled: true,
             positions: [
-                { left: '50%', top: '45%' }, // Round 1 (Vakra)
-                { left: '50%', top: '65%' }, // Round 2 (Tunda)
-                { left: '50%', top: '55%' }  // Round 3 (Center)
+                { left: '40%', top: '55%', size: 'clamp(200px, 40vw, 510px)' }, // Round 1 (Vakra)
+                { left: '40%', top: '55%', size: 'clamp(120px, 18vw, 510px)' }, // Round 2 (Tunda)
+                { left: '40%', top: '55%', size: 'clamp(120px, 18vw, 510px)' }  // Round 3 (Center)
             ],
             // ✅ Round-Based Rewards (Bud -> Lotus)
             assetGettersByRound: {
@@ -40,10 +40,26 @@ export const GAME_CONFIGS = {
             type: 'baby-elephant',
             count: 4,
             // ✅ Short IDs matching the map keys
-            ids: ['va', 'kra', 'tun', 'da'], 
+            ids: ['va', 'kra', 'tun', 'da'],
+            // positions per round, per syllable index within that round
+            positionsByRound: {
+                1: [                                                                              // Round 1: va, kra
+                    { left: '16%', top: '56%', size: 'clamp(200px, 38vw, 480px)', flip: false }, // index 0 → va
+                    { left: '62%', top: '66%', size: 'clamp(200px, 38vw, 480px)', flip: true  }, // index 1 → kra
+                ],
+                2: [                                                                              // Round 2: tun, da
+                    { left: '16%', top: '56%', size: 'clamp(140px, 26vw, 480px)', flip: true }, // index 0 → tun
+                    { left: '62%', top: '66%', size: 'clamp(140px, 26vw, 480px)', flip: false }, // index 1 → da
+                ],
+                3: [                                                                              // Round 3: vakra, tunda
+                    { left: '16%', top: '56%', size: 'clamp(140px, 26vw, 480px)', flip: false }, // index 0 → vakra
+                    { left: '62%', top: '66%', size: 'clamp(140px, 26vw, 480px)', flip: false  }, // index 1 → tunda
+                ],
+            },
+            // fallback flat positions (used if positionsByRound not found)
             positions: [
-                { left: '18%', top: '65%' },
-                { left: '38%', top: '35%' },
+                { left: '34%', top: '66%' },
+                { left: '66%', top: '66%' },
                 { left: '58%', top: '30%' },
                 { left: '68%', top: '28%' }
             ],
@@ -104,20 +120,20 @@ export const GAME_CONFIGS = {
       accentColor: '#FFB74D',
       backgroundColor: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
     },
-    
+
     syllables: {
       1: ['ma', 'ha'],           // Round 1: MAHA (2 syllables)
       2: ['ka', 'ya'],            // Round 2: KAYA (2 syllables)
       3: ['maha', 'kaya']         // Round 3: MAHAKAYA (2 known chunks, no auto-play)
     },
-    
+
    elements: {
         centralSynthesis: {
             enabled: true,
             positions: [
-                { left: '50%', top: '55%' }, // Round 1
-                { left: '50%', top: '70%' }, // Round 2
-                { left: '50%', top: '62%' }  // Round 3
+                { left: '45%', top: '45%', size: '450px' }, // Round 1
+                { left: '45%', top: '45%', size: '450px' }, // Round 2
+                { left: '45%', top: '45%', size: '450px' }  // Round 3
             ],
             // ✅ Round-Based Rewards (Seed -> Flower)
             assetGettersByRound: {
@@ -130,7 +146,23 @@ export const GAME_CONFIGS = {
         clicker: {
             type: 'adult-elephant',
             count: 4,
-            ids: ['ma', 'ha', 'ka', 'ya'], 
+            ids: ['ma', 'ha', 'ka', 'ya'],
+            // ✅ Per-round positions with size and flip per element
+            positionsByRound: {
+                1: [                                                          // Round 1: ma, ha
+                    { left: '20%', top: '60%', size: '480px', flip: false }, // index 0 → ma
+                    { left: '65%', top: '62%', size: '480px', flip: true  }, // index 1 → ha
+                ],
+                2: [                                                          // Round 2: ka, ya
+                    { left: '20%', top: '60%', size: '480px', flip: true }, // index 0 → ka
+                    { left: '65%', top: '62%', size: '480px', flip: true  }, // index 1 → ya
+                ],
+                3: [                                                          // Round 3: maha, kaya
+                    { left: '20%', top: '60%', size: '480px', flip: false }, // index 0 → maha
+                    { left: '65%', top: '62%', size: '480px', flip: false }, // index 1 → kaya
+                ],
+            },
+            // fallback flat positions
             positions: [
                 { left: '12%', top: '70%' },
                 { left: '32%', top: '75%' },
@@ -204,9 +236,9 @@ export const GAME_CONFIGS = {
         centralSynthesis: {
             enabled: true,
             positions: [
-                { left: '50%', top: '50%' }, // Round 1
-                { left: '50%', top: '62%' }, // Round 2
-                { left: '50%', top: '56%' }  // Round 3
+                { left: '50%', top: '50%', size: '260px' }, // Round 1
+                { left: '50%', top: '62%', size: '260px' }, // Round 2
+                { left: '50%', top: '56%', size: '260px' }  // Round 3
             ],
             // ✅ Round-Based Rewards (Closed -> Open)
             assetGettersByRound: {
@@ -220,7 +252,25 @@ export const GAME_CONFIGS = {
         clicker: {
             type: 'sun-orb',
             count: 4,
-            ids: ['sur', 'ya', 'ko', 'ti'], 
+            ids: ['sur', 'ya', 'ko', 'ti'],
+            // ✅ Per-round positions with size and flip per element
+            positionsByRound: {
+                1: [                                                          // Round 1: sur, ya
+                    { left: '25%', top: '35%', size: '280px', flip: false }, // index 0 → sur
+                    { left: '70%', top: '38%', size: '280px', flip: false }, // index 1 → ya
+                ],
+                2: [                                                          // Round 2: ko, ti
+                    { left: '25%', top: '35%', size: '280px', flip: false }, // index 0 → ko
+                    { left: '70%', top: '38%', size: '280px', flip: false }, // index 1 → ti
+                ],
+                3: [                                                          // Round 3: sur, ya, ko, ti
+                    { left: '12%', top: '35%', size: '240px', flip: false }, // index 0 → sur
+                    { left: '38%', top: '38%', size: '240px', flip: false }, // index 1 → ya
+                    { left: '62%', top: '35%', size: '240px', flip: false }, // index 2 → ko
+                    { left: '85%', top: '38%', size: '240px', flip: false }, // index 3 → ti
+                ],
+            },
+            // fallback flat positions
             positions: [
                 { left: '10%', top: '35%' },
                 { left: '30%', top: '40%' },
@@ -288,16 +338,11 @@ export const GAME_CONFIGS = {
      centralSynthesis: {
     enabled: true,
     positions: [
-       { left: '50%', top: '45%' }, // Round 1 Position
-       { left: '50%', top: '65%' }, // Round 2 Position
-       { left: '50%', top: '55%' }  // Round 3 Position
+       { left: '50%', top: '45%', size: '260px' }, // Round 1 Position
+       { left: '50%', top: '65%', size: '260px' }, // Round 2 Position
+       { left: '50%', top: '55%', size: '260px' }  // Round 3 Position
     ],
 
-    // ❌ DELETE THESE 2 LINES (Crucial! If they exist, the game ignores the list)
-    // assetGetterInitial: 'getSadAnimal1Image', 
-    // assetGetterReward: 'getHappyAnimal1Image', 
-
-    // ✅ ADD/KEEP THIS LIST
     assetGettersByRound: {
         1: { initial: 'getSadAnimal1Image', reward: 'getHappyAnimal1Image' },
         2: { initial: 'getSadAnimal2Image', reward: 'getHappyAnimal2Image' },
@@ -309,9 +354,25 @@ export const GAME_CONFIGS = {
 clicker: {
     type: 'rainbow',
     count: 4,
-    // IDs must match the keys below exactly
-    ids: ['sa', 'ma', 'pra', 'bha'], 
-    
+    ids: ['sa', 'ma', 'pra', 'bha'],
+    // ✅ Per-round positions with size and flip per element
+    positionsByRound: {
+        1: [                                                          // Round 1: sa, ma
+            { left: '22%', top: '25%', size: '280px', flip: false }, // index 0 → sa
+            { left: '68%', top: '28%', size: '280px', flip: true  }, // index 1 → ma
+        ],
+        2: [                                                          // Round 2: pra, bha
+            { left: '22%', top: '25%', size: '280px', flip: false }, // index 0 → pra
+            { left: '68%', top: '28%', size: '280px', flip: true  }, // index 1 → bha
+        ],
+        3: [                                                          // Round 3: sa, ma, pra, bha
+            { left: '12%', top: '25%', size: '240px', flip: false }, // index 0 → sa
+            { left: '37%', top: '28%', size: '240px', flip: false }, // index 1 → ma
+            { left: '62%', top: '25%', size: '240px', flip: false }, // index 2 → pra
+            { left: '85%', top: '28%', size: '240px', flip: true  }, // index 3 → bha
+        ],
+    },
+    // fallback flat positions
     positions: [
         { left: '18%', top: '25%' },
         { left: '38%', top: '30%' },
@@ -319,14 +380,12 @@ clicker: {
         { left: '78%', top: '30%' }
     ],
 
-    // ⚠️ IMPORTANT: Plural 'assetGetters' (with an 's')
     assetGetters: {
         'sa': 'getRainbowSaImage',
         'ma': 'getRainbowMaImage',
         'pra': 'getRainbowPraImage',
         'bha': 'getRainbowBhaImage'
     }
-    // ❌ DO NOT ADD 'assetGetter' (singular) here.
 },
     },
     
@@ -380,9 +439,9 @@ clicker: {
         centralSynthesis: {
             enabled: true,
             positions: [
-                { left: '50%', top: '45%' }, // Round 1
-                { left: '50%', top: '65%' }, // Round 2
-                { left: '50%', top: '55%' }  // Round 3
+                { left: '50%', top: '45%', size: '260px' }, // Round 1
+                { left: '50%', top: '65%', size: '260px' }, // Round 2
+                { left: '50%', top: '55%', size: '260px' }  // Round 3
             ],
               showPreviousRounds: true,
 
@@ -397,14 +456,28 @@ clicker: {
         clicker: {
             type: 'animal',
             count: 3,
-            // IDs
-            ids: ['nir', 'vigh', 'nam'], 
+            ids: ['nir', 'vigh', 'nam'],
+            // ✅ Per-round positions with size and flip per element
+            positionsByRound: {
+                1: [                                                          // Round 1: nir, vigh
+                    { left: '25%', top: '68%', size: '280px', flip: false }, // index 0 → nir
+                    { left: '68%', top: '68%', size: '280px', flip: true  }, // index 1 → vigh
+                ],
+                2: [                                                          // Round 2: nam
+                    { left: '45%', top: '68%', size: '280px', flip: false }, // index 0 → nam
+                ],
+                3: [                                                          // Round 3: nir, vigh, nam
+                    { left: '18%', top: '68%', size: '260px', flip: false }, // index 0 → nir
+                    { left: '50%', top: '68%', size: '260px', flip: false }, // index 1 → vigh
+                    { left: '78%', top: '68%', size: '260px', flip: true  }, // index 2 → nam
+                ],
+            },
+            // fallback flat positions
             positions: [
                 { left: '25%', top: '70%' },
                 { left: '50%', top: '70%' },
                 { left: '75%', top: '70%' }
             ],
-            // Map
             assetGetters: {
                 'nir':  'getFrogNirImage',
                 'vigh': 'getSnailVighImage',
@@ -412,7 +485,7 @@ clicker: {
             }
         }
     },
-    
+
     audio: {
       syllableFolder: '/audio/syllables/',
       syllableFileMap: {
@@ -463,10 +536,10 @@ elements: {
         centralSynthesis: {
             enabled: true,
             positions: [
-                { left: '50%', top: '45%' }, // Round 1
-                { left: '50%', top: '65%' }, // Round 2
-                { left: '50%', top: '55%' }, // Round 3
-                { left: '50%', top: '50%' }  // Round 4 (if used)
+                { left: '50%', top: '45%', size: '260px' }, // Round 1
+                { left: '50%', top: '65%', size: '260px' }, // Round 2
+                { left: '50%', top: '55%', size: '260px' }, // Round 3
+                { left: '50%', top: '50%', size: '260px' }  // Round 4 (if used)
             ],
               showPreviousRounds: true,
 
@@ -479,12 +552,28 @@ elements: {
             }
         },
 
- clicker: {
+        clicker: {
             type: 'animal',
-            count: 4, // or 5 if you use all
-            // ✅ Updated IDs to include 'va' (and 'kuru' if that's what the game uses)
-            ids: ['ku', 'ru', 'me', 'de', 'va'], 
-            
+            count: 4,
+            ids: ['ku', 'ru', 'me', 'de', 'va'],
+            // ✅ Per-round positions with size and flip per element
+            positionsByRound: {
+                1: [                                                          // Round 1: kuru, me
+                    { left: '22%', top: '60%', size: '280px', flip: false }, // index 0 → kuru
+                    { left: '68%', top: '60%', size: '280px', flip: true  }, // index 1 → me
+                ],
+                2: [                                                          // Round 2: de, va
+                    { left: '22%', top: '60%', size: '280px', flip: false }, // index 0 → de
+                    { left: '68%', top: '60%', size: '280px', flip: true  }, // index 1 → va
+                ],
+                3: [                                                          // Round 3: kuru, me, de, va
+                    { left: '10%', top: '62%', size: '240px', flip: false }, // index 0 → kuru
+                    { left: '37%', top: '60%', size: '240px', flip: false }, // index 1 → me
+                    { left: '62%', top: '62%', size: '240px', flip: false }, // index 2 → de
+                    { left: '85%', top: '60%', size: '240px', flip: true  }, // index 3 → va
+                ],
+            },
+            // fallback flat positions
             positions: [
                 { left: '10%', top: '65%' },
                 { left: '30%', top: '35%' },
@@ -498,8 +587,8 @@ elements: {
                 'ru':   'getAnimalRuImage',
                 'me':   'getAnimalMeImage',
                 'de':   'getAnimalDeImage',
-                'va':   'getAnimalVaImage',   // 👈 Added this!
-                'kuru': 'getAnimalKuImage'    // 👈 Added backup in case syllable is 'kuru'
+                'va':   'getAnimalVaImage',
+                'kuru': 'getAnimalKuImage'
             }
         }
     },
@@ -553,23 +642,40 @@ elements: {
         centralSynthesis: {
             enabled: true,
             positions: [
-                { left: '50%', top: '58%' }, // Round 1
-                { left: '50%', top: '72%' }, // Round 2
-                { left: '50%', top: '65%' }  // Round 3
+                { left: '50%', top: '58%', size: '260px' }, // Round 1
+                { left: '50%', top: '72%', size: '260px' }, // Round 2
+                { left: '50%', top: '65%', size: '260px' }  // Round 3
             ],
             // ✅ Rewards (Sad -> Happy)
             assetGettersByRound: {
                 1: { initial: 'getSquirrelSad', reward: 'getSquirrelHappy' },
                 2: { initial: 'getBirdSad',     reward: 'getBirdHappy' },
                 3: { initial: 'getDuckSad',     reward: 'getDuckHappy' }
-                // 4: { initial: 'getRabbitSad', reward: 'getRabbitHappy' } (If 4th round)
             }
         },
 
         clicker: {
             type: 'helper-animal',
             count: 4,
-            ids: ['sar', 'va', 'kar', 'yeshu'], 
+            ids: ['sar', 'va', 'kar', 'yeshu'],
+            // ✅ Per-round positions with size and flip per element
+            positionsByRound: {
+                1: [                                                          // Round 1: sar, va
+                    { left: '22%', top: '38%', size: '280px', flip: false }, // index 0 → sar
+                    { left: '68%', top: '40%', size: '280px', flip: true  }, // index 1 → va
+                ],
+                2: [                                                          // Round 2: kar, yeshu
+                    { left: '22%', top: '38%', size: '280px', flip: false }, // index 0 → kar
+                    { left: '68%', top: '40%', size: '280px', flip: true  }, // index 1 → yeshu
+                ],
+                3: [                                                          // Round 3: sar, va, kar, yeshu
+                    { left: '10%', top: '38%', size: '240px', flip: false }, // index 0 → sar
+                    { left: '36%', top: '40%', size: '240px', flip: false }, // index 1 → va
+                    { left: '62%', top: '38%', size: '240px', flip: false }, // index 2 → kar
+                    { left: '85%', top: '40%', size: '240px', flip: true  }, // index 3 → yeshu
+                ],
+            },
+            // fallback flat positions
             positions: [
                 { left: '15%', top: '40%' },
                 { left: '35%', top: '35%' },
@@ -635,9 +741,9 @@ elements: {
         centralSynthesis: {
             enabled: true,
             positions: [
-                { left: '50%', top: '42%' }, // Round 1
-                { left: '50%', top: '58%' }, // Round 2
-                { left: '50%', top: '50%' }  // Round 3
+                { left: '50%', top: '42%', size: '260px' }, // Round 1
+                { left: '50%', top: '58%', size: '260px' }, // Round 2
+                { left: '50%', top: '50%', size: '260px' }  // Round 3
             ],
             // ✅ Rewards (Sad -> Happy)
             assetGettersByRound: {
@@ -650,7 +756,23 @@ elements: {
         clicker: {
             type: 'helper-animal',
             count: 3,
-            ids: ['sar', 'va', 'da'], 
+            ids: ['sar', 'va', 'da'],
+            // ✅ Per-round positions with size and flip per element
+            positionsByRound: {
+                1: [                                                          // Round 1: sar, va
+                    { left: '22%', top: '22%', size: '280px', flip: false }, // index 0 → sar
+                    { left: '68%', top: '25%', size: '280px', flip: true  }, // index 1 → va
+                ],
+                2: [                                                          // Round 2: da
+                    { left: '45%', top: '22%', size: '280px', flip: false }, // index 0 → da
+                ],
+                3: [                                                          // Round 3: sar, va, da
+                    { left: '18%', top: '22%', size: '260px', flip: false }, // index 0 → sar
+                    { left: '48%', top: '22%', size: '260px', flip: false }, // index 1 → va
+                    { left: '75%', top: '22%', size: '260px', flip: true  }, // index 2 → da
+                ],
+            },
+            // fallback flat positions
             positions: [
                 { left: '20%', top: '25%' },
                 { left: '45%', top: '20%' },

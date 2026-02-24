@@ -1,27 +1,16 @@
-// CleanMapZone.jsx - Positions controlled by CSS Media Queries
+// CleanMapZone.jsx - Clean map with zone states (locked/active/in-progress/completed)
 import React, { useState, useEffect } from 'react';
 import './CleanMapZone.css';
 import GameStateManager from '../lib/services/GameStateManager';
 import ZonePreviewModal from './components/ZonePreviewModal';
 
-console.log('🗺️ CleanMapZone loaded - CSS Positioning Enabled');
-
-// Hardcoded zone data - 5 active zones
 const ZONES_DATA = [
   {
-    id: 'about-me-hut',
-    name: 'About Me Hut',
-    sequence: 5,
-    scenes: [
-      { id: 'game1', name: 'Family Tree' },
-      { id: 'game2', name: 'Profile' },
-      { id: 'game3', name: 'Avatar' }
-    ]
-  },
-  {
     id: 'symbol-mountain',
-    name: 'Symbol Mountain',
+    name: 'Symbol\nMountain',
     sequence: 1,
+    unlockRequires: null,
+    unlockNote: null, // always unlocked first
     scenes: [
       { id: 'scene1', name: 'Introduction' },
       { id: 'scene2', name: 'Symbol Quiz' },
@@ -32,7 +21,9 @@ const ZONES_DATA = [
   {
     id: 'cave-of-secrets',
     name: 'Cave of Secrets',
-    sequence: 2,
+    sequence: 1,
+    unlockRequires: null,
+    unlockNote: null,
     scenes: [
       { id: 'scene1', name: 'Word Learning' },
       { id: 'scene2', name: 'Practice' },
@@ -42,8 +33,10 @@ const ZONES_DATA = [
   },
   {
     id: 'shloka-river',
-    name: 'Shloka River',
-    sequence: 3,
+    name: 'Shloka\nRiver',
+    sequence: 1,                               // always active like Symbol Mountain
+    unlockRequires: null,
+    unlockNote: null,
     scenes: [
       { id: 'shloka-river-intro', name: 'Introduction' },
       { id: 'shloka-river-learn', name: 'Learn Shloka' },
@@ -53,69 +46,114 @@ const ZONES_DATA = [
   },
   {
     id: 'festival-square',
-    name: 'Festival Square',
-    sequence: 4,
+    name: 'Festival\nSquare',
+    sequence: 1,
+    unlockRequires: null,
+    unlockNote: null,
     scenes: [
       { id: 'piano', name: 'Piano Game' },
       { id: 'rangoli', name: 'Rangoli Art' },
       { id: 'modak', name: 'Modak Cooking' },
       { id: 'mandap', name: 'Mandap Decoration' }
     ]
+  },
+  {
+    id: 'about-me-hut',
+    name: 'About Me Hut',
+    sequence: 1,                               // always accessible
+    unlockRequires: null,
+    unlockNote: null,
+    scenes: [
+      { id: 'game1', name: 'Family Tree' },
+      { id: 'game2', name: 'Profile' },
+      { id: 'game3', name: 'Avatar' }
+    ]
   }
 ];
 
-// Zone images mapping
-const zoneImages = {
-  'about-me-hut': '/images/about-me-hut-map-icon.png',
-  'symbol-mountain': '/images/symbol-mountain-map-icon.png',
-  'cave-of-secrets': '/images/cave-of-secrets-map-icon.png',
-  'festival-square': '/images/festival-square-map-icon.png',
-  'shloka-river': '/images/shloka-river-map-icon.png'
+// Zone layout config: tap area + label position classes
+const ZONE_LAYOUT = {
+  'symbol-mountain': {
+    wrapperClass: 'zone-wrapper shloka-mountain-wrapper',
+    zoneClass:    'zone shloka-mountain',
+    labelClass:   'label shloka-mountain-label',
+  },
+  'cave-of-secrets': {
+    wrapperClass: 'zone-wrapper cave-secrets-wrapper',
+    zoneClass:    'zone cave-secrets',
+    labelClass:   'label cave-label',
+  },
+  'shloka-river': {
+    wrapperClass: 'zone-wrapper shloka-river-wrapper',
+    zoneClass:    'zone shloka-river',
+    labelClass:   'label river-label',
+  },
+  'festival-square': {
+    wrapperClass: 'zone-wrapper festival-square-wrapper',
+    zoneClass:    'zone festival-square',
+    labelClass:   'label festival-label',
+  },
+  'about-me-hut': {
+    wrapperClass: 'zone-wrapper about-hut-wrapper',
+    zoneClass:    'zone about-hut',
+    labelClass:   'label hut-label',
+  },
 };
 
-// Zone emojis as fallback
-const zoneEmojis = {
-  'about-me-hut': '🏠',
-  'symbol-mountain': '⛰️',
-  'cave-of-secrets': '🕳️',
-  'festival-square': '🎡',
-  'shloka-river': '🌊'
+// Resolve avatar string/emoji → animal id for image path
+const getAnimalId = (avatar) => {
+  if (!avatar) return null;
+  const KNOWN = ['monkey', 'peacock', 'squirrel', 'tiger'];
+  if (KNOWN.includes(avatar)) return avatar;
+  const emojiMap = { '🐵': 'monkey', '🦚': 'peacock', '🐿️': 'squirrel', '🐯': 'tiger' };
+  return emojiMap[avatar] || null;
 };
 
-const CleanMapZone = ({ onZoneSelect, onBackToWelcome }) => {
-  const [zones] = useState(ZONES_DATA);
+// Derive state for a zone given its progress and unlock requirements
+const getZoneState = (zoneId, allProgress) => {
+  const zoneDef = ZONES_DATA.find(z => z.id === zoneId);
+  if (!zoneDef) return 'active';
+
+  // Check if zone is locked by a prerequisite
+  if (zoneDef.unlockRequires) {
+    const reqZone = ZONES_DATA.find(z => z.id === zoneDef.unlockRequires);
+    if (reqZone) {
+      const reqP = allProgress[reqZone.id];
+      const reqCompleted = reqP?.completedScenes || 0;
+      if (reqCompleted < reqZone.scenes.length) return 'locked';
+    }
+  }
+
+  const p = allProgress[zoneId];
+  if (!p) return 'active'; // no progress data yet → treat as active (unlocked but not started)
+
+  const { completedScenes, totalScenes } = p;
+  if (completedScenes >= totalScenes && totalScenes > 0) return 'completed';
+  if (completedScenes > 0) return 'in-progress';
+  return 'active';
+};
+
+const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles }) => {
   const [zoneProgress, setZoneProgress] = useState({});
-  const [overallProgress, setOverallProgress] = useState({ 
-    earnedStars: 0, 
-    totalStars: 60, 
-    percentage: 0 
-  });
-  
   const [selectedZone, setSelectedZone] = useState(null);
   const [showZoneModal, setShowZoneModal] = useState(false);
-  const [animationsEnabled, setAnimationsEnabled] = useState(false);
+  const [activeProfile, setActiveProfile] = useState(null);
 
-  // Initialize and load progress
+  useEffect(() => {
+    const profile = GameStateManager.getActiveProfile();
+    setActiveProfile(profile);
+  }, []);
+
   useEffect(() => {
     loadBasicProgress();
-    
-    // Enable animations after component mounts
-    const timer = setTimeout(() => {
-      setAnimationsEnabled(true);
-    }, 300);
-    
-    return () => clearTimeout(timer);
   }, []);
 
   const loadBasicProgress = () => {
     try {
       const progressData = {};
-      let totalEarned = 0;
-      
       ZONES_DATA.forEach(zone => {
         let completedScenes = 0;
         let totalStars = 0;
-        
         zone.scenes.forEach(scene => {
           const progress = GameStateManager.getSceneProgress(zone.id, scene.id);
           if (progress?.completed) {
@@ -123,171 +161,120 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome }) => {
             totalStars += progress.stars || 0;
           }
         });
-        
         progressData[zone.id] = {
-          completedScenes: completedScenes,
+          completedScenes,
           totalScenes: zone.scenes.length,
           stars: totalStars,
           percentage: Math.round((completedScenes / zone.scenes.length) * 100)
         };
-        
-        totalEarned += totalStars;
       });
-      
       setZoneProgress(progressData);
-      setOverallProgress(prev => ({
-        ...prev,
-        earnedStars: totalEarned,
-        percentage: Math.min(100, Math.round((totalEarned / prev.totalStars) * 100))
-      }));
-      
     } catch (error) {
       console.error('Error loading progress:', error);
     }
   };
-  
-  const handleZoneClick = (zone) => {
+
+  const handleZoneClick = (zone, state) => {
+    if (state === 'locked') return;
     setSelectedZone(zone);
     setShowZoneModal(true);
   };
 
   const handleStartZone = (zone) => {
-    if (onZoneSelect) {
-      onZoneSelect(zone.id);
-    }
+    if (onZoneSelect) onZoneSelect(zone.id);
   };
 
-  const isZoneUnlocked = (zone) => true; // All unlocked
-
   return (
-    <div className={`clean-map-container ${animationsEnabled ? 'animations-enabled' : ''}`}>
-      {/* Map Background */}
-      <div className="clean-map-background">
-        <img 
-          src="/images/map-background.png" 
-          alt="Map Background"
-          className="map-background-image"
-        />
-        <img 
-          src="/images/fun zone gate.png" 
-          alt="Fun Zone Gate"
-          className="fun-zone-gate"
-        />
+    <div className="map-container morning">
+
+      {/* Background image */}
+      <img
+        src="/images/map-background.svg"
+        alt="Map"
+        className="map-bg-img"
+      />
+
+      {/* Drifting clouds — CSS shapes, no image needed */}
+      <div className="map-cloud map-cloud-1" aria-hidden="true" />
+      <div className="map-cloud map-cloud-2" aria-hidden="true" />
+      <div className="map-cloud map-cloud-3" aria-hidden="true" />
+
+      {/* Atmospheric overlay */}
+      <div className="map-bg-overlay" aria-hidden="true" />
+      {/* Cinematic vignette */}
+      <div className="map-vignette" aria-hidden="true" />
+      {/* Floating dust particles */}
+      <div className="map-dust" aria-hidden="true">
+        <span/><span/><span/><span/>
       </div>
-      
-      {/* Zone Markers */}
-      {zones.map((zone, index) => {
-        const isUnlocked = isZoneUnlocked(zone);
-        const progress = zoneProgress[zone.id];
-        const zoneStars = progress ? progress.stars : 0;
-        const completionPercentage = progress ? progress.percentage : 0;
-        const isCompleted = completionPercentage >= 100;
-        
+
+      {/* ── Zone Wrappers (tap area + label grouped by state) ── */}
+      {ZONES_DATA.map(zone => {
+        const layout = ZONE_LAYOUT[zone.id];
+        if (!layout) return null;
+        const state = getZoneState(zone.id, zoneProgress);
+        const isLocked = state === 'locked';
+
         return (
-          <div
-            key={zone.id}
-            // IMPORTANT: specific class `zone-${zone.id}` added here for CSS positioning
-            className={`clean-zone-marker zone-${zone.id} ${isUnlocked ? 'unlocked' : 'locked'} ${isCompleted ? 'completed' : ''} ${selectedZone?.id === zone.id ? 'selected' : ''}`}
-            // IMPORTANT: No 'left' or 'top' here anymore. Only animation delay.
-            style={{
-              animationDelay: animationsEnabled ? `${index * 0.2}s` : '0s'
-            }}
-            onClick={() => isUnlocked && handleZoneClick(zone)}
-          >
-            {/* Sequence Number */}
-            <div className="zone-sequence-number">
-              {zone.sequence}
+          <React.Fragment key={zone.id}>
+            {/* Tap area */}
+            <div
+              className={`${layout.zoneClass} zone-state-${state}`}
+              onClick={() => handleZoneClick(zone, state)}
+              aria-disabled={isLocked}
+            >
+              {/* In-progress pulse ring */}
+              {state === 'in-progress' && <div className="zone-pulse-ring" aria-hidden="true" />}
+              {/* Completed gold outline + check badge */}
+              {state === 'completed' && <div className="zone-completed-ring" aria-hidden="true" />}
+              {state === 'completed' && <div className="zone-check-badge" aria-hidden="true">✓</div>}
             </div>
 
-            {/* Icon */}
-            <div className="clean-zone-icon-wrapper">
-              <img 
-                src={zoneImages[zone.id]} 
-                alt={zone.name}
-                className="clean-zone-icon-image"
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.nextElementSibling.style.display = 'flex';
-                }}
-              />
-              <div className="clean-zone-icon-emoji" style={{ display: 'none' }}>
-                {zoneEmojis[zone.id]}
-              </div>
-              
-              {!isUnlocked && (
-                <div className="clean-lock-overlay">
-                  <span className="clean-lock-icon">🔒</span>
-                </div>
+            {/* Label */}
+            <div className={`${layout.labelClass} label-state-${state}`}>
+              {zone.name.split('\n').map((line, i) => (
+                <span key={i}>{line}{i < zone.name.split('\n').length - 1 && <br/>}</span>
+              ))}
+              {isLocked && zone.unlockNote && (
+                <div className="unlock-note">{zone.unlockNote}</div>
               )}
             </div>
-            
-            {/* Label & Stars */}
-            <div className="clean-zone-integrated-label">
-              <span className="clean-zone-name">{zone.name}</span>
-              {isUnlocked && (
-                <div className="clean-zone-stars">
-                  {'⭐'.repeat(Math.min(zoneStars, 3))}
-                  {zoneStars > 3 && <span className="extra-stars"> +{zoneStars - 3}</span>}
-                </div>
-              )}
-            </div>
-
-            {/* Mini Progress Bar */}
-            {isUnlocked && completionPercentage > 0 && (
-              <div className="zone-progress-indicator">
-                <div 
-                  className="zone-progress-fill" 
-                  style={{ width: `${completionPercentage}%` }}
-                />
-              </div>
-            )}
-          </div>
+          </React.Fragment>
         );
       })}
-      
-      {/* Overall Progress Bar */}
-      <div className="clean-overall-progress">
-        <div className="clean-progress-bar">
-          <div 
-            className="clean-progress-fill" 
-            style={{ width: `${overallProgress.percentage}%` }}
-          />
-        </div>
-        <span className="clean-progress-text">
-          Journey Progress: {overallProgress.earnedStars} / {overallProgress.totalStars} Stars
-        </span>
-      </div>
-
-      {/* Ganesha Decoration */}
-      <div className="map-ganesha-character">
-        <img 
-          src="/images/welcome-ganesha.png" 
-          alt="Ganesha"
-          className="map-ganesha-image"
-        />
-      </div>
 
       {/* Back Button */}
-      <button 
-        className="map-back-button" 
-        onClick={onBackToWelcome}
-      >
+      <button className="map-back-button" onClick={onBackToWelcome}>
         ← Back
       </button>
 
-      {/* Header */}
-      <div className="map-header">
-        <h1 className="map-header-text">Click on any zone to begin! 🗺️</h1>
-      </div>
+      {/* Profile chip — top right */}
+      {activeProfile && (() => {
+        const animalId = getAnimalId(activeProfile.avatar);
+        return (
+          <button className="map-profile-chip" onClick={onGoToProfiles || onBackToWelcome} title="Switch Explorer">
+            <span className="map-profile-avatar">
+              {animalId ? (
+                <img
+                  src={`/images/new-explorer-${animalId}.png`}
+                  alt={activeProfile.name}
+                  className="map-profile-avatar-img"
+                  onError={(e) => { e.target.style.display = 'none'; }}
+                />
+              ) : (
+                activeProfile.avatar || '🧒'
+              )}
+            </span>
+            <span className="map-profile-name">{activeProfile.name}</span>
+          </button>
+        );
+      })()}
 
-      {/* Preview Modal */}
+      {/* Zone Preview Modal */}
       {showZoneModal && selectedZone && (
         <ZonePreviewModal
           zone={selectedZone}
-          onClose={() => {
-            setShowZoneModal(false);
-            setSelectedZone(null);
-          }}
+          onClose={() => { setShowZoneModal(false); setSelectedZone(null); }}
           onStartZone={handleStartZone}
           progress={zoneProgress[selectedZone.id]}
         />

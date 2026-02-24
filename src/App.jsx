@@ -6,6 +6,7 @@ import './Enhanced.css'
 
 import MainWelcomeScreen from './lib/components/navigation/MainWelcomeScreen';
 import CleanGameWelcomeScreen from './lib/components/navigation/CleanGameWelcomeScreen';
+import CleanProfileSelector from './lib/components/navigation/CleanProfileSelector';
 import CleanMapZone from './pages/CleanMapZone';
 import ZoneWelcome from './lib/components/zone/ZoneWelcome';
 import { getZoneConfig } from './lib/components/zone/ZoneConfig';
@@ -794,57 +795,61 @@ chants: result?.chants || result?.chantedVerses || {},
     }}>
 {currentView === 'loading' && (
   <div className="enhanced-loading-screen">
+
+    {/* Layer 1 — Atmospheric overlay (center lift + edge depth) */}
+    <div className="bg-overlay" />
+    {/* Layer 2 — Cinematic vignette */}
+    <div className="bg-vignette" />
+
     {/* Ganesha Character */}
     <div className="loading-ganesha-container">
       <div className="loading-ganesha-glow"></div>
-      <img 
-        src="/images/welcome-ganesha.png" 
+      <img
+        src="/images/welcome-ganesha.png"
         alt="Ganesha"
         className="loading-ganesha"
       />
     </div>
-    
-    {/* Mooshika Scurrying */}
-    <div className="loading-mooshika-container">
-      <img 
-        src="/images/welcome-mooshika.png" 
-        alt="Mooshika"
-        className="loading-mooshika"
-      />
-    </div>
-    
+
     {/* Loading Text */}
     <div className="loading-text-container">
-      <div className="loading-title">
-        Welcome to Ganesha's World
-        <span className="loading-dots">
-          <span>.</span><span>.</span><span>.</span>
-        </span>
+      <div className="title-wrapper">
+        <div className="loading-title">
+          Welcome to Ganesha's World
+          <span className="loading-dots">
+            <span>.</span><span>.</span><span>.</span>
+          </span>
+        </div>
       </div>
       <div className="loading-subtitle">
-        {loadingStep || 'Getting everything ready for your adventure!'}
+        {loadingStep || 'Almost ready...'}
       </div>
     </div>
-    
-    {/* Accurate Progress Bar */}
+
+    {/* Premium Progress Bar — no percentage text */}
     <div className="loading-progress-container">
-      <div 
+      <div
         className="loading-progress-bar"
         style={{ width: `${loadingProgress}%` }}
-      >
-        <span className="progress-percentage">{loadingProgress}%</span>
-      </div>
+      />
     </div>
-    
+
+    {/* 3 subtle sparkles near the bar */}
+    <div className="bar-sparkles">
+      <div className="sparkle" style={{ left: '30%', animationDelay: '0s' }} />
+      <div className="sparkle" style={{ left: '50%', animationDelay: '1s' }} />
+      <div className="sparkle" style={{ left: '70%', animationDelay: '2s' }} />
+    </div>
+
     {/* Magical Particles */}
     <div className="loading-particles">
       {[...Array(8)].map((_, i) => (
-        <div 
-          key={i} 
+        <div
+          key={i}
           className="loading-particle"
           style={{
             animationDelay: `${i * 0.5}s`,
-            left: `${10 + Math.random() * 80}%`,
+            left: `${10 + (i * 10)}%`,
           }}
         />
       ))}
@@ -876,11 +881,23 @@ chants: result?.chants || result?.chantedVerses || {},
           </div>
       )}
       
+      {currentView === 'profile-selector' && (
+        <div className="view-transition">
+          <CleanProfileSelector
+            onProfileSelect={(profileId) => {
+              GameStateManager.setActiveProfile(profileId);
+              setCurrentView('map');
+            }}
+          />
+        </div>
+      )}
+
       {currentView === 'map' && (
                   <div className="view-transition">
-        <CleanMapZone 
+        <CleanMapZone
           onZoneSelect={handleZoneSelect}
                 onBackToWelcome={() => setCurrentView('profile-welcome')}
+                onGoToProfiles={() => setCurrentView('profile-selector')}
           currentZone={currentZone}
           highlightedScene={currentScene}
         />

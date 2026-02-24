@@ -16,6 +16,114 @@
   animation: zoneWelcomeSlideIn 0.5s ease-out;
 }
 
+.screen {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.bg-layer {
+  position: absolute;
+  inset: 0;
+  background-image: url('/images/map-background.svg');
+  background-repeat: no-repeat;
+  background-size: 150%;
+  background-position: 50% 50%;
+  z-index: 0;
+  /* No blur — SVG is crisp at any size */
+  transition: background-position 800ms ease, background-size 800ms ease;
+}
+
+/* ── Zone camera positions ──────────────────────────────
+   Each class zooms into the relevant area of the master map.
+   Values to tweak visually — adjust % to reframe the "shot".
+─────────────────────────────────────────────────────── */
+
+/* Symbol Mountain — top-left (mountain + cave entrance) */
+.symbol-mountain .bg-layer {
+  background-size: 155%;
+  background-position: 20% 35%;
+}
+
+/* Cave of Secrets — centre (cave mouth area) */
+.cave-of-secrets .bg-layer {
+  background-size: 150%;
+  background-position: 50% 45%;
+}
+
+/* Shloka River — right-centre (river winding down) */
+.shloka-river .bg-layer {
+  background-size: 150%;
+  background-position: 75% 40%;
+}
+
+/* Festival Square — bottom-right (gate + open area) */
+.festival-square .bg-layer {
+  background-size: 155%;
+  background-position: 80% 75%;
+}
+
+/* About Me Hut — bottom-left (hut + dotted path) */
+.about-me-hut .bg-layer {
+  background-size: 150%;
+  background-position: 30% 75%;
+}
+
+/* ── Subtle top tint — keeps zone title readable ── */
+.bg-layer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(155, 123, 232, 0.10) 0%,
+    rgba(155, 123, 232, 0.04) 25%,
+    transparent 50%
+  );
+}
+
+/* Zone-specific tint overrides (5–8% opacity only) */
+.symbol-mountain .bg-layer::after {
+  background: linear-gradient(
+    to bottom,
+    rgba(244, 196, 48, 0.08) 0%,
+    transparent 45%
+  );
+}
+
+.shloka-river .bg-layer::after {
+  background: linear-gradient(
+    to bottom,
+    rgba(80, 160, 220, 0.07) 0%,
+    transparent 45%
+  );
+}
+
+.festival-square .bg-layer::after {
+  background: linear-gradient(
+    to bottom,
+    rgba(220, 80, 120, 0.06) 0%,
+    transparent 45%
+  );
+}
+
+.about-me-hut .bg-layer::after {
+  background: linear-gradient(
+    to bottom,
+    rgba(100, 180, 80, 0.07) 0%,
+    transparent 45%
+  );
+}
+
+.cave-of-secrets .bg-layer::after {
+  background: linear-gradient(
+    to bottom,
+    rgba(100, 60, 180, 0.09) 0%,
+    transparent 45%
+  );
+}
+
 @keyframes zoneWelcomeSlideIn {
   from {
     opacity: 0;
@@ -109,52 +217,315 @@
   display: none; /* Hide icon, show only name */
 }
 
+/* ScreenHeader scoped inside zone title bar */
+.zone-title-top .screen-header {
+  padding: 0;
+  margin: 0;
+}
+.zone-title-top .screen-header-halo-wrap {
+  background: none;
+  box-shadow: none;
+  padding: 0;
+}
+.zone-title-top .screen-header-title {
+  font-size: clamp(36px, 4vw, 72px);
+  color: var(--zone-text-primary, #6B5416);
+  text-shadow:
+    0 2px 10px rgba(255, 255, 255, 0.9),
+    0 0 28px rgba(255, 255, 255, 0.5);
+  animation: zoneTitlePulse 4s ease-in-out infinite;
+  white-space: nowrap;
+  margin: 0;
+}
+
 /* Scene Cards Container */
 .zone-scenes-container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  margin: 8vh auto 0;
+}
+
+.zone-title-top {
   position: absolute;
-  bottom: 200px;
+  top: 24px;
   left: 50%;
   transform: translateX(-50%);
-  width: 90%;
-  max-width: 1000px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  z-index: 50;
+  z-index: 3;
+}
+
+@keyframes zoneTitlePulse {
+  0%, 100% { text-shadow: 0 2px 10px rgba(255,255,255,0.85), 0 0 20px rgba(255,255,255,0.3); }
+  50%       { text-shadow: 0 2px 10px rgba(255,255,255,0.95), 0 0 36px rgba(255,255,255,0.6); }
+}
+
+.cards-wrapper {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 82vh;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.cards-wrapper::before {
+  content: "";
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 210, 120, 0.25) 0%,
+    rgba(255, 210, 120, 0.1) 40%,
+    transparent 70%
+  );
+  filter: blur(40px);
+  pointer-events: none;
 }
 
 .scenes-horizontal-container {
-  display: grid;
-  gap: 20px;
-  justify-content: center;  /* ✅ Keep this */
-  justify-items: center;     /* ✅ ADD THIS - centers grid items */
+  display: contents;
+}
+
+/* ========================================== */
+/* 4-CARD PYRAMID LAYOUT                     */
+/* ========================================== */
+/*
+        [ 4 ]           ← TOP CENTER
+  [ 2 ]       [ 3 ]    ← MIDDLE ROW
+        [ 1 ]           ← BOTTOM CENTER
+*/
+
+/* All cards centred on their anchor point */
+.zone-scene-card {
+  transform: translate(-50%, -50%);
+}
+
+/* zone-1 — BOTTOM CENTER (Modak — active/unlocked) */
+.zone-1 {
+  left: 50%;
+  top: 80%;
+}
+
+/* zone-2 — MIDDLE LEFT (Sacred Pond) */
+.zone-2 {
+  left: 30%;
+  top: 52%;
+}
+
+/* zone-3 — MIDDLE RIGHT (Sacred Tusk) */
+.zone-3 {
+  left: 70%;
+  top: 52%;
+}
+
+/* zone-4 — TOP CENTER (Sacred Assembly) */
+.zone-4 {
+  left: 50%;
+  top: 26%;
+}
+
+/* 5-card fallback */
+.zone-5 {
+  left: 50%;
+  top: 92%;
+}
+
+/* Uniform float — no staggered jitter */
+.zone-1, .zone-2, .zone-3, .zone-4, .zone-5 {
+  animation-delay: 0s;
+}
+
+/* ========================================== */
+/* SYMBOL MOUNTAIN - PREMIUM REFINED STYLE   */
+/* ========================================== */
+
+/* Background tint - soft saffron air */
+.symbol-mountain .bg-layer::after {
+  background: linear-gradient(
+    to bottom,
+    rgba(244, 196, 48, 0.10) 0%,
+    rgba(244, 196, 48, 0.05) 30%,
+    transparent 55%
+  );
+}
+
+/* ------------------------------------------ */
+/* CARD BASE                                  */
+/* ------------------------------------------ */
+
+.symbol-mountain .zone-card {
+  border-radius: 28px;
+  padding: 6px;
+  background: linear-gradient(
+    145deg,
+    #fffaf0,
+    #fff3d2
+  );
+  box-shadow:
+    0 18px 40px rgba(107, 84, 22, 0.18),
+    0 6px 18px rgba(244, 196, 48, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+  transition: all 0.25s ease;
+  animation: floatSoft 6s ease-in-out infinite;
+}
+
+.symbol-mountain .zone-card:hover {
+  transform: translate(-50%, calc(-50% - 6px));
+}
+
+.symbol-mountain .zone-card.locked {
+  opacity: 0.55;
+  filter: grayscale(40%);
+  box-shadow: 0 10px 20px rgba(107, 84, 22, 0.12);
+  cursor: not-allowed;
+}
+
+/* Remove purple fake base */
+.symbol-mountain .zone-card::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: -14px;
+  height: 24px;
+  border-radius: 24px;
+  background: rgba(107, 84, 22, 0.15);
+  box-shadow: 0 10px 20px rgba(107, 84, 22, 0.25);
+  z-index: -1;
+}
+
+/* ------------------------------------------ */
+/* INNER PANEL                                */
+/* ------------------------------------------ */
+
+.symbol-mountain .zone-inner {
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #fff8e6 100%
+  );
+  border-radius: 18px;
+  padding: 14px 10px;
+  box-shadow:
+    inset 0 3px 8px rgba(255, 255, 255, 0.9),
+    inset 0 -4px 10px rgba(244, 196, 48, 0.08);
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
-/* 4-card zones - always 4 columns in a row */
-[data-zone="symbol-mountain"] .scenes-horizontal-container,
-[data-zone="festival-square"] .scenes-horizontal-container,
-[data-zone="about-me-hut"] .scenes-horizontal-container {
-  grid-template-columns: repeat(4, 220px);
+/* ------------------------------------------ */
+/* ICON CIRCLE                                */
+/* ------------------------------------------ */
+
+.symbol-mountain .icon-circle {
+  width: clamp(60px, 6vw, 96px);
+  height: clamp(60px, 6vw, 96px);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 30% 30%,
+    #fffdf7,
+    #ffe9b5
+  );
+  box-shadow:
+    0 10px 20px rgba(244, 196, 48, 0.25),
+    inset 0 4px 8px rgba(255, 255, 255, 0.8);
 }
 
-/* 5-card zones - always 3 columns, creating 3+2 pyramid */
-[data-zone="cave-of-secrets"] .scenes-horizontal-container,
-[data-zone="shloka-river"] .scenes-horizontal-container {
-  grid-template-columns: repeat(3, 220px);
+/* Remove strong gold glow on available scenes */
+.symbol-mountain .zone-scene-card.available .scene-emoji,
+.symbol-mountain .zone-scene-card.available .scene-icon-img,
+.symbol-mountain .zone-scene-card.in-progress .scene-emoji,
+.symbol-mountain .zone-scene-card.in-progress .scene-icon-img {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1))
+          drop-shadow(0 0 12px rgba(244, 196, 48, 0.35));
 }
 
-/* Position cards 4 and 5 to create centered pyramid effect */
-[data-zone="cave-of-secrets"] .zone-scene-card:nth-child(4),
-[data-zone="shloka-river"] .zone-scene-card:nth-child(4) {
-  grid-column: 1; /* First position of second row */
+/* ------------------------------------------ */
+/* SCENE NAME                                 */
+/* ------------------------------------------ */
+
+.symbol-mountain .scene-name {
+  color: #6B5416;
 }
 
-[data-zone="cave-of-secrets"] .zone-scene-card:nth-child(5),
-[data-zone="shloka-river"] .zone-scene-card:nth-child(5) {
-  grid-column: 2; /* Center position of second row */
+.symbol-mountain .zone-scene-card.locked .scene-name {
+  color: rgba(107, 84, 22, 0.4);
+  text-shadow: none;
+}
+
+/* ------------------------------------------ */
+/* BUTTON - SOFT TEMPLE STYLE                 */
+/* ------------------------------------------ */
+
+.symbol-mountain .zone-btn {
+  margin-top: clamp(6px, 0.6vw, 10px);
+  padding: clamp(6px, 0.6vw, 10px) clamp(10px, 1.2vw, 20px);
+  border-radius: 14px;
+  border: 1.5px solid #F4C430;
+  background: linear-gradient(
+    180deg,
+    #fffaf0,
+    #ffeec2
+  );
+  color: #6B5416;
+  font-weight: 700;
+  font-size: clamp(9px, 0.9vw, 13px);
+  box-shadow:
+    0 6px 14px rgba(107, 84, 22, 0.18),
+    inset 0 2px 4px rgba(255, 255, 255, 0.8);
+  transition: all 0.2s ease;
+}
+
+.symbol-mountain .zone-btn:hover {
+  background: linear-gradient(
+    180deg,
+    #fff6dd,
+    #ffe4a0
+  );
+  transform: translateY(-2px);
+}
+
+.symbol-mountain .zone-btn:active {
+  transform: translateY(2px);
+  box-shadow:
+    0 3px 8px rgba(107, 84, 22, 0.2),
+    inset 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.symbol-mountain .zone-card.locked .zone-btn,
+.symbol-mountain .zone-btn.locked {
+  background: #f2efe6;
+  border: 1px solid rgba(107, 84, 22, 0.2);
+  color: rgba(107, 84, 22, 0.4);
+  box-shadow: none;
+}
+
+/* ------------------------------------------ */
+/* REMOVE CHEAP GOLD PULSE EFFECTS            */
+/* ------------------------------------------ */
+
+.symbol-mountain .zone-scene-card.next-scene,
+.symbol-mountain .zone-scene-card.next-scene .zone-btn {
+  animation: none;
+  box-shadow: none;
+}
+
+.symbol-mountain .zone-scene-card.next-scene {
+  box-shadow:
+    0 10px 30px rgba(244, 196, 48, 0.25);
+}
+
+/* Remove breathing glow */
+.symbol-mountain .zone-scene-card.next-scene .scene-emoji,
+.symbol-mountain .zone-scene-card.next-scene .scene-icon-img {
+  animation: none;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1))
+          drop-shadow(0 0 18px rgba(244, 196, 48, 0.4));
 }
 
 /* ========================================== */
@@ -162,45 +533,72 @@
 /* ========================================== */
 
 .zone-scene-card {
-  background: #FFF8E1;
-  border-radius: 20px;
-  width: 220px;
-  min-height: 280px;
-  padding: 24px 18px;
+  position: absolute;
+  width: clamp(208px, 18.2vw, 312px);
+  min-height: clamp(247px, 23.4vw, 377px);
+  padding: 6px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  position: relative;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-  border: 2px solid rgba(0, 0, 0, 0.05);
 }
 
-.zone-scene-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+/* New base card system */
+.zone-card {
+  border-radius: 28px;
+  padding: 6px;
+  background: linear-gradient(
+    145deg,
+    #f3f0ff,
+    #ddd6f5
+  );
+  box-shadow:
+    0 25px 50px rgba(100, 80, 160, 0.25),
+    0 12px 24px rgba(120, 100, 200, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.7) inset;
+  text-align: center;
+  transition: all 0.25s ease;
+  animation: floatSoft 6s ease-in-out infinite;
 }
 
-.zone-scene-card.locked {
-  background: #F5F5F5;
+.zone-card:hover {
+  transform: translate(-50%, calc(-50% - 6px));
+}
+
+.zone-card.locked {
+  opacity: 0.55;
+  filter: grayscale(50%);
+  box-shadow: 0 15px 30px rgba(100, 80, 160, 0.15);
   cursor: not-allowed;
-  opacity: 0.7;
 }
 
-.zone-scene-card.locked:hover {
-  transform: translateY(-2px);
+.zone-card::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: -14px;
+  height: 24px;
+  border-radius: 24px;
+  background: #cfc7ee;
+  box-shadow: 0 10px 25px rgba(80, 60, 140, 0.35);
+  z-index: -1;
 }
 
-.zone-scene-card.completed {
-  border-color: #81C784;
-  background: linear-gradient(145deg, #FFF8E1 0%, #F1F8E9 100%);
-}
-
-.zone-scene-card.in-progress {
-  border-color: #FFB74D;
-  background: linear-gradient(145deg, #FFF8E1 0%, #FFF3E0 100%);
+.zone-inner {
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #f5f2ff 100%
+  );
+  border-radius: 22px;
+  padding: 44px 34px;
+  text-align: center;
+  box-shadow:
+    inset 0 3px 8px rgba(255, 255, 255, 0.9),
+    inset 0 -6px 12px rgba(160, 140, 220, 0.15);
+  width: 100%;
 }
 
 /* Hide old order indicator and stars */
@@ -219,8 +617,19 @@
   position: relative;
 }
 
+.icon-circle {
+  width: clamp(78px, 7.8vw, 125px);
+  height: clamp(78px, 7.8vw, 125px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px;
+  background: color-mix(in srgb, var(--zone-color) 20%, white);
+}
+
 .scene-emoji {
-  font-size: 90px;
+  font-size: clamp(42px, 4.6vw, 73px);
   margin: 0;
   transition: transform 0.3s ease;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
@@ -231,16 +640,13 @@
 }
 
 .zone-scene-card.locked .scene-emoji {
-  filter: grayscale(100%) opacity(0.5);
+  filter: grayscale(80%) opacity(0.3) brightness(0.6);
 }
-
-/* Lock Overlay */
-.scene-lock-overlay {
 
 /* Scene Icon Image Styles */
 .scene-icon-img {
-  width: 90px;
-  height: 90px;
+  width: clamp(47px, 5.2vw, 78px);
+  height: clamp(47px, 5.2vw, 78px);
   object-fit: contain;
   margin: 0;
   transition: transform 0.3s ease;
@@ -252,9 +658,11 @@
 }
 
 .zone-scene-card.locked .scene-icon-img {
-  filter: grayscale(100%) opacity(0.5) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+  filter: grayscale(80%) opacity(0.3) brightness(0.6) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
+/* Lock Overlay */
+.scene-lock-overlay {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -269,7 +677,29 @@
 
 .scene-lock-icon {
   font-size: 40px;
-  opacity: 0.8;
+  opacity: 0.95;
+  animation: moonGlow 3s ease-in-out infinite;
+  display: block;
+  filter: drop-shadow(0 0 8px rgba(200, 180, 255, 0.8));
+}
+
+.scene-lock-stars {
+  font-size: 16px;
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  animation: starTwinkle 2s ease-in-out infinite;
+  opacity: 0.9;
+}
+
+@keyframes moonGlow {
+  0%, 100% { transform: scale(1);     filter: drop-shadow(0 0 8px rgba(200, 180, 255, 0.8)); }
+  50%       { transform: scale(1.12);  filter: drop-shadow(0 0 16px rgba(200, 180, 255, 1)); }
+}
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.3); }
 }
 
 /* Scene Name - Below Icon */
@@ -285,7 +715,7 @@
 
 .scene-name {
   font-family: 'Baloo 2', cursive;
-  font-size: 20px;
+  font-size: clamp(14px, 1.45vw, 21px);
   font-weight: 800;
   color: #3E2723;
   margin: 0;
@@ -294,7 +724,8 @@
 }
 
 .zone-scene-card.locked .scene-name {
-  color: #9E9E9E;
+  color: #c8b4ff;
+  text-shadow: 0 0 8px rgba(200, 180, 255, 0.5);
 }
 
 /* Action Buttons - Bottom */
@@ -309,7 +740,7 @@
 /* Single Button Style */
 .action-button-integrated {
   width: 100%;
-  padding: 14px 16px;
+  padding: 16px 24px;
   border: none;
   border-radius: 50px;
   font-family: 'Nunito', sans-serif;
@@ -318,7 +749,6 @@
   cursor: pointer;
   transition: all 0.2s ease;
   color: white;
-  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -337,39 +767,43 @@
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
 }
 
-/* Button Colors by Status */
-.action-button-integrated.available {
-  background: #FFC107;
-  color: #3E2723;
-  box-shadow: 0 4px 0 #F57C00;
+/* Zone colored button */
+.zone-btn {
+  margin-top: clamp(8px, 0.8vw, 13px);
+  padding: clamp(8px, 0.8vw, 13px) clamp(13px, 1.56vw, 26px);
+  border-radius: 18px;
+  border: none;
+  font-weight: 700;
+  font-size: clamp(12px, 1.2vw, 17px);
+  color: white;
+  cursor: pointer;
+  background: linear-gradient(
+    180deg,
+    var(--zone-color),
+    color-mix(in srgb, var(--zone-color) 80%, black)
+  );
+  box-shadow:
+    0 6px 0 color-mix(in srgb, var(--zone-color) 70%, black),
+    0 14px 24px rgba(124, 93, 214, 0.4),
+    inset 0 2px 6px rgba(255, 255, 255, 0.6);
+  transition: all 0.15s ease;
 }
 
-.action-button-integrated.available:hover {
-  background: #FFD54F;
-  box-shadow: 0 6px 0 #F57C00;
-}
-
-.action-button-integrated.completed {
-  background: #8D6E63;
-  box-shadow: 0 4px 0 #5D4037;
-}
-
-.action-button-integrated.completed:hover {
-  background: #A1887F;
-  box-shadow: 0 6px 0 #5D4037;
-}
-
-.action-button-integrated.locked {
-  background: #BDBDBD;
-  color: #616161;
-  box-shadow: 0 4px 0 #9E9E9E;
+.zone-card.locked .zone-btn,
+.zone-btn.locked {
+  background: linear-gradient(#e4e1ec, #d4d1de);
+  color: #8b8796;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.8);
   cursor: not-allowed;
 }
 
-.action-button-integrated.locked:hover {
-  transform: none;
-  box-shadow: 0 4px 0 #9E9E9E;
+@keyframes floatSoft {
+  0%   { transform: translate(-50%, -50%) translateY(0px); }
+  50%  { transform: translate(-50%, -50%) translateY(-10px); }
+  100% { transform: translate(-50%, -50%) translateY(0px); }
 }
+
+/* Float animation is uniform — delays removed */
 
 /* Split Buttons for In-Progress */
 .action-split-container {
@@ -387,103 +821,114 @@
   cursor: pointer;
   transition: all 0.2s ease;
   color: white;
-  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 14px;
+  padding: 14px 16px;
 }
 
 .action-button-split.continue {
   flex: 1;
-  background: #20B2AA;
-  box-shadow: 0 4px 0 #008B8B;
 }
 
 .action-button-split.continue:hover {
-  background: #48D1CC;
   transform: translateY(-2px);
-  box-shadow: 0 6px 0 #008B8B;
+  box-shadow: 0 12px 24px rgba(120, 90, 180, 0.25);
 }
 
 .action-button-split.continue:active {
   transform: translateY(2px);
-  box-shadow: 0 2px 0 #008B8B;
+  box-shadow: 0 6px 12px rgba(120, 90, 180, 0.2);
 }
 
 .action-button-split.replay {
-  flex: 0 0 90px; /* ✅ Fixed width for text "Replay" */
-  background: #FF9800;
-  font-size: 14px; /* ✅ Text size instead of emoji size */
-  box-shadow: 0 4px 0 #F57C00;
+  flex: 0 0 120px; /* ✅ Fixed width for text "Replay" */
+  font-size: 15px; /* ✅ Text size instead of emoji size */
   white-space: nowrap;
-  padding: 14px 8px; /* ✅ Adjusted padding for text */
+  padding: 14px 10px; /* ✅ Adjusted padding for text */
 }
 
 .action-button-split.replay:hover {
-  background: #FFB74D;
   transform: translateY(-2px);
-  box-shadow: 0 6px 0 #F57C00;
+  box-shadow: 0 12px 24px rgba(120, 90, 180, 0.25);
 }
 
 .action-button-split.replay:active {
   transform: translateY(2px);
-  box-shadow: 0 2px 0 #F57C00;
+  box-shadow: 0 6px 12px rgba(120, 90, 180, 0.2);
 }
 
 /* ========================================== */
-/* STATS BAR - Bottom Badges                  */
+/* JOURNEY PANEL - Bottom Progress Bar        */
 /* ========================================== */
 
 .stats-bottom-bar {
   position: absolute;
-  bottom: 40px;
+  bottom: clamp(28px, 3vh, 50px);
   left: 50%;
   transform: translateX(-50%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 16px;
   z-index: 100;
 }
 
-.stats-cards {
+/* Main pill container */
+.journey-panel {
   display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  justify-content: center;
+  align-items: center;
+  gap: clamp(20px, 2.4vw, 40px);
+  padding: clamp(12px, 1.2vw, 20px) clamp(28px, 3.2vw, 56px);
+  border-radius: 60px;
+  background: linear-gradient(180deg, #fffaf0, #ffeec2);
+  box-shadow:
+    0 8px 20px rgba(107, 84, 22, 0.22),
+    inset 0 2px 6px rgba(255, 255, 255, 0.9);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  color: #6B5416;
+  white-space: nowrap;
 }
 
-.stat-card {
-  background: #FFF8E1;
-  border-radius: 50px;
-  padding: 10px 20px;
+/* Left label */
+.journey-left {
   display: flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  border: 2px solid rgba(0, 0, 0, 0.05);
+  font-size: clamp(14px, 1.4vw, 22px);
 }
 
-.stat-card-icon {
-  font-size: 24px;
-  line-height: 1;
+/* Step dots */
+.journey-steps {
+  display: flex;
+  gap: clamp(8px, 0.9vw, 14px);
 }
 
-.stat-card-text {
-  font-family: 'Nunito', sans-serif;
-  font-size: 15px;
-  font-weight: 800;
-  color: #3E2723;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+.step {
+  width: clamp(14px, 1.4vw, 22px);
+  height: clamp(14px, 1.4vw, 22px);
+  border-radius: 50%;
+  background: rgba(107, 84, 22, 0.22);
+  transition: all 0.3s ease;
+}
+
+.step.done {
+  background: #F4C430;
+  box-shadow: 0 0 10px rgba(244, 196, 48, 0.5);
+}
+
+/* Subtle lift on hover */
+.journey-panel:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
 }
 
 .stats-loading {
   font-family: 'Nunito', sans-serif;
-  font-size: 16px;
-  color: #3E2723;
+  font-size: clamp(14px, 1.4vw, 20px);
+  color: #6B5416;
   font-weight: 700;
+  padding: clamp(12px, 1.2vw, 20px) clamp(28px, 3.2vw, 56px);
+  background: linear-gradient(180deg, #fffaf0, #ffeec2);
+  border-radius: 60px;
+  box-shadow: 0 8px 20px rgba(107, 84, 22, 0.22);
 }
 
 /* ========================================== */
@@ -491,29 +936,7 @@
 /* ========================================== */
 /* ZONE-SPECIFIC CARD SIZING (5-card zones)   */
 /* ========================================== */
-
-/* Same size for 5-scene zones - all cards 220px */
-[data-zone="cave-of-secrets"] .zone-scene-card,
-[data-zone="shloka-river"] .zone-scene-card {
-  width: 220px;
-  min-height: 280px;
-}
-
-[data-zone="cave-of-secrets"] .scene-emoji,
-[data-zone="shloka-river"] .scene-emoji {
-  font-size: 90px;
-}
-
-[data-zone="cave-of-secrets"] .scene-icon-img,
-[data-zone="shloka-river"] .scene-icon-img {
-  width: 90px;
-  height: 90px;
-}
-
-[data-zone="cave-of-secrets"] .scene-name,
-[data-zone="shloka-river"] .scene-name {
-  font-size: 18px;
-}
+/* 5-card zones reuse the same base card sizing */
 
 /* RESPONSIVE DESIGN                          */
 /* ========================================== */
@@ -529,50 +952,51 @@
   }
 
   .zone-scenes-container {
-    bottom: 180px;
     width: 95%;
+    margin-top: 16vh;
   }
 
-  .scenes-horizontal-container {
-    grid-template-columns: repeat(auto-fit, 180px);
-    gap: 12px;
+  .cards-wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
     overflow-x: auto;
     overflow-y: hidden;
     padding: 10px 5px;
-    justify-content: flex-start;
-    width: 100%;
+    height: auto;
   }
 
-  /* Override zone-specific grid on mobile - use auto scroll */
-  [data-zone="symbol-mountain"] .scenes-horizontal-container,
-  [data-zone="festival-square"] .scenes-horizontal-container,
-  [data-zone="about-me-hut"] .scenes-horizontal-container,
-  [data-zone="cave-of-secrets"] .scenes-horizontal-container,
-  [data-zone="shloka-river"] .scenes-horizontal-container {
-    grid-template-columns: repeat(auto-fit, 180px);
-  }
-
-  /* Reset nth-child positioning on mobile */
-  [data-zone="cave-of-secrets"] .zone-scene-card:nth-child(4),
-  [data-zone="cave-of-secrets"] .zone-scene-card:nth-child(5),
-  [data-zone="shloka-river"] .zone-scene-card:nth-child(4),
-  [data-zone="shloka-river"] .zone-scene-card:nth-child(5) {
-    grid-column: auto;
+  .zone-1,
+  .zone-2,
+  .zone-3,
+  .zone-4,
+  .zone-5 {
+    top: auto;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    margin: 0;
   }
 
   .zone-scene-card {
-    width: 180px;
-    min-height: 240px;
-    padding: 18px 14px;
+    position: relative;
+    width: 200px;
+    min-height: 250px;
+    padding: 6px;
+  }
+
+  .icon-circle {
+    width: 80px;
+    height: 80px;
   }
 
   .scene-emoji {
-    font-size: 70px;
+    font-size: 56px;
   }
 
   .scene-icon-img {
-    width: 70px;
-    height: 70px;
+    width: 56px;
+    height: 56px;
   }
 
   .scene-name {
@@ -590,8 +1014,8 @@
   }
 
   .action-button-split.replay {
-    width: 45px;
-    font-size: 18px;
+    width: 60px;
+    font-size: 12px;
   }
 
   .stats-bottom-bar {
@@ -619,22 +1043,28 @@
   }
 
   .zone-scenes-container {
-    bottom: 160px;
+    margin-top: 14vh;
   }
 
   .zone-scene-card {
     width: 160px;
     min-height: 220px;
     padding: 16px 12px;
+    position: relative;
+  }
+
+  .icon-circle {
+    width: 70px;
+    height: 70px;
   }
 
   .scene-emoji {
-    font-size: 60px;
+    font-size: 52px;
   }
 
   .scene-icon-img {
-    width: 60px;
-    height: 60px;
+    width: 52px;
+    height: 52px;
   }
 
   .scene-name {
@@ -657,34 +1087,27 @@
 
 /* Tablets */
 @media (min-width: 769px) and (max-width: 1024px) {
-  /* Adjust grid for slightly smaller cards on tablet */
-  [data-zone="symbol-mountain"] .scenes-horizontal-container,
-  [data-zone="festival-square"] .scenes-horizontal-container,
-  [data-zone="about-me-hut"] .scenes-horizontal-container {
-    grid-template-columns: repeat(4, 200px);
-  }
-
-  [data-zone="cave-of-secrets"] .scenes-horizontal-container,
-  [data-zone="shloka-river"] .scenes-horizontal-container {
-    grid-template-columns: repeat(3, 200px);
-  }
-
   .zone-scene-card {
-    width: 200px;
-    min-height: 260px;
+    width: 260px;
+    min-height: 300px;
+  }
+
+  .icon-circle {
+    width: 96px;
+    height: 96px;
   }
 
   .scene-emoji {
-    font-size: 80px;
+    font-size: 64px;
   }
 
   .scene-icon-img {
-    width: 80px;
-    height: 80px;
+    width: 64px;
+    height: 64px;
   }
 
-  .scene-name {
-    font-size: 18px;
+.scene-name {
+  font-size: 20px;
   }
 }
 
@@ -699,22 +1122,27 @@
   }
 
   .zone-scenes-container {
-    bottom: 100px;
+    margin-top: 12vh;
   }
 
   .zone-scene-card {
-    width: 160px;
-    min-height: 200px;
-    padding: 14px 12px;
+    width: 180px;
+    min-height: 220px;
+    padding: 16px 14px;
+  }
+
+  .icon-circle {
+    width: 72px;
+    height: 72px;
   }
 
   .scene-emoji {
-    font-size: 60px;
+    font-size: 52px;
   }
 
   .scene-icon-img {
-    width: 60px;
-    height: 60px;
+    width: 52px;
+    height: 52px;
   }
 
   .scene-name {
@@ -773,18 +1201,18 @@ button[style*="position: fixed"][style*="background: purple"] {
 .zone-scene-card.available:hover,
 .zone-scene-card.in-progress:hover,
 .zone-scene-card.completed:hover {
-  transform: translateY(-5px);
+  transform: translate(-50%, calc(-50% - 5px));
   animation: cardBounce 0.6s ease forwards;
 }
 
 @keyframes cardBounce {
-  0% { transform: translateY(-5px); }
-  15% { transform: translateY(-12px); }
-  30% { transform: translateY(-8px); }
-  45% { transform: translateY(-12px); }
-  60% { transform: translateY(-8px); }
-  75% { transform: translateY(-10px); }
-  100% { transform: translateY(-5px); }
+  0%   { transform: translate(-50%, calc(-50% - 5px));  }
+  15%  { transform: translate(-50%, calc(-50% - 12px)); }
+  30%  { transform: translate(-50%, calc(-50% - 8px));  }
+  45%  { transform: translate(-50%, calc(-50% - 12px)); }
+  60%  { transform: translate(-50%, calc(-50% - 8px));  }
+  75%  { transform: translate(-50%, calc(-50% - 10px)); }
+  100% { transform: translate(-50%, calc(-50% - 5px));  }
 }
 
 /* Extra highlight for next recommended scene */
@@ -805,9 +1233,9 @@ button[style*="position: fixed"][style*="background: purple"] {
 }
 
 /* Pulse the next scene button */
-.zone-scene-card.next-scene .action-button-integrated {
+.zone-scene-card.next-scene .zone-btn {
   animation: buttonPulse 2s ease-in-out infinite;
-  box-shadow: 0 4px 0 #F57C00, 0 0 20px rgba(255, 193, 7, 0.6);
+  box-shadow: 0 6px 18px rgba(255, 193, 7, 0.6);
 }
 
 @keyframes buttonPulse {

@@ -8,6 +8,7 @@
   left: 0;
   right: 0;
   bottom: 0;
+  --glow-color: var(--zone-glow-color, rgba(255, 215, 0, 0.35));
   z-index: 3000;
   display: flex;
   align-items: center;
@@ -29,8 +30,8 @@
   bottom: 0;
   background: radial-gradient(
     ellipse at center,
-    rgba(0, 0, 0, 0.6) 0%,
-    rgba(0, 0, 0, 0.8) 100%
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.75) 100%
   );
   backdrop-filter: blur(8px);
 }
@@ -60,9 +61,23 @@
 .particle::before {
   content: '✦';
   font-size: 18px;
-  color: var(--color);
-  text-shadow: 0 0 10px var(--color), 0 0 20px var(--color);
+  color: var(--zone-accent-color, #FFD700);
+  text-shadow:
+    0 0 10px var(--zone-glow-color, rgba(255, 215, 0, 0.6)),
+    0 0 20px var(--zone-glow-color, rgba(255, 215, 0, 0.4));
   filter: blur(0.5px);
+}
+
+.particle:nth-child(3n)::before {
+  color: var(--zone-accent-color, #FFD700);
+}
+
+.particle:nth-child(3n+1)::before {
+  color: #ffffff;
+}
+
+.particle:nth-child(3n+2)::before {
+  color: color-mix(in srgb, var(--zone-accent-color, #FFD700) 70%, white);
 }
 
 @keyframes particleRise {
@@ -247,11 +262,11 @@
   font-family: 'Baloo 2', cursive;
   font-size: 48px;
   font-weight: 800;
-  color: #FFD700;
+  color: var(--zone-accent-color, #FFD700);
   margin: 0;
   margin-bottom: 24px;
   text-shadow:
-    0 0 20px rgba(255, 215, 0, 0.5),
+    0 0 20px var(--zone-glow-color, rgba(255, 215, 0, 0.5)),
     0 2px 4px rgba(0, 0, 0, 0.5);
   letter-spacing: 1px;
   line-height: 1.1;
@@ -289,11 +304,11 @@
   font-size: 36px;
   font-weight: 800;
   line-height: 1.7;
-  color: #FFD700;
+  color: var(--zone-accent-color, #FFD700);
   margin: 8px 0 0 0;
   text-shadow: 
-    0 0 15px rgba(255, 215, 0, 0.6),
-    0 2px 4px rgba(0, 0, 0, 0.5);
+    0 0 14px var(--zone-glow-color, rgba(255, 215, 0, 0.6)),
+    0 2px 4px rgba(0, 0, 0, 0.6);
   text-align: center;
   letter-spacing: 0.5px;
 }
@@ -324,8 +339,17 @@
 
 /* Button - Larger and more prominent (Primary) */
 .power-button {
-  background: linear-gradient(180deg, #FFD54F, #FFB300);
-  color: #5D4037;
+  background: linear-gradient(
+    180deg,
+    var(--zone-accent-color, #FFD54F),
+    var(--zone-accent-color, #FFB300)
+  );
+  background: linear-gradient(
+    180deg,
+    var(--zone-accent-color, #FFD54F),
+    color-mix(in srgb, var(--zone-accent-color, #FFD54F) 80%, black)
+  );
+  color: #FFFFFF;
   padding: 20px 56px;
   border-radius: 36px;
   border: none;
@@ -334,7 +358,9 @@
   min-height: 72px;
   font-weight: 800;
   letter-spacing: 0.4px;
-  box-shadow: 0 8px 18px rgba(255,179,0,0.45);
+  box-shadow:
+    0 10px 22px var(--zone-glow-color, rgba(255,179,0,0.45)),
+    0 0 0 3px rgba(255,255,255,0.25) inset;
   cursor: pointer;
   transition: all 0.15s ease-out;
   animation: buttonFadeIn 0.35s ease-out;
@@ -347,7 +373,7 @@
   color: #FFFFFF;
   padding: 16px 32px;
   border-radius: 30px;
-  border: 2px solid rgba(255,255,255,0.6);
+  border: 2px solid var(--zone-accent-color, rgba(255,255,255,0.6));
   font-size: 20px;
   line-height: 1.1;
   min-height: 62px;

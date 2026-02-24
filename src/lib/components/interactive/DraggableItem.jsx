@@ -20,14 +20,21 @@ const DraggableItem = ({
   const originalSizeRef = useRef({ width: 0, height: 0 }); // 🔧 Store original size
 
   // 🔧 FIX: Pre-cache element size after render to avoid first-drag offset issues
+  // Use setTimeout to ensure CSS layout has completed before measuring
   useEffect(() => {
     if (elementRef.current && originalSizeRef.current.width === 0) {
-      const rect = elementRef.current.getBoundingClientRect();
-      originalSizeRef.current = {
-        width: rect.width,
-        height: rect.height
-      };
-      console.log(`📐 Pre-cached size for ${id}:`, originalSizeRef.current);
+      // Wait for next frame to ensure CSS has been applied
+      const timer = setTimeout(() => {
+        if (elementRef.current) {
+          const rect = elementRef.current.getBoundingClientRect();
+          originalSizeRef.current = {
+            width: rect.width,
+            height: rect.height
+          };
+          console.log(`📐 Pre-cached size for ${id}:`, originalSizeRef.current);
+        }
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, [id]);
 

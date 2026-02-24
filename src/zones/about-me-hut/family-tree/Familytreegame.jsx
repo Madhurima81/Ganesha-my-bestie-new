@@ -1692,6 +1692,7 @@ const FamilyTreeGameContent = ({
       {sceneState.showingCompletionScreen && (
         <SceneCompletionCelebration
           show={sceneState.showingCompletionScreen}
+          zoneId="about-me-hut"
           sceneName="My Family Tree"
           childName="Family Star"
           sceneId="family-tree"

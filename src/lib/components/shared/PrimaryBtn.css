@@ -1,0 +1,112 @@
+/* ================================================ */
+/* PrimaryBtn — Unified button for Ganesha's World  */
+/* Purple pill, 3D press, shimmer, inner glow       */
+/* ================================================ */
+
+.primary-btn-unified {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border: none;
+  font-family: 'Baloo 2', cursive, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  color: white;
+
+  /* Purple gradient — same as welcome screen Start btn */
+  background: linear-gradient(180deg, #9a73d9 0%, #7f5ac7 100%);
+
+  /* Pill shape */
+  border-radius: 80px;
+
+  /* 3D shadow + inner highlight */
+  box-shadow:
+    0 8px 0 #5a3fa0,
+    0 14px 28px rgba(120, 80, 200, 0.35),
+    inset 0 3px 6px rgba(255, 255, 255, 0.35);
+
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  /* Always-on subtle pulse */
+  animation: primaryBtnPulse 4s ease-in-out infinite;
+}
+
+/* Size variants */
+.primary-btn-sm  { font-size: clamp(14px, 1.4vw, 22px); padding: 14px 44px; }
+.primary-btn-md  { font-size: clamp(17px, 2vw, 32px);   padding: clamp(14px,1.5vw,24px) clamp(36px,4vw,72px); }
+.primary-btn-lg  { font-size: clamp(22px, 2.8vw, 48px); padding: clamp(20px,2vw,32px)  clamp(60px,7vw,130px); }
+
+.primary-btn-full { width: 100%; padding-left: 0; padding-right: 0; }
+
+/* Shimmer sweep */
+.primary-btn-unified::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  animation: primaryBtnShimmer 4s infinite;
+  pointer-events: none;
+}
+
+@keyframes primaryBtnShimmer {
+  0%   { left: -100%; }
+  60%  { left: 150%;  }
+  100% { left: 150%;  }
+}
+
+@keyframes primaryBtnPulse {
+  0%, 100% {
+    box-shadow:
+      0 8px 0 #5a3fa0,
+      0 14px 28px rgba(120, 80, 200, 0.35),
+      inset 0 3px 6px rgba(255, 255, 255, 0.35);
+  }
+  50% {
+    box-shadow:
+      0 8px 0 #5a3fa0,
+      0 18px 36px rgba(120, 80, 200, 0.5),
+      inset 0 3px 6px rgba(255, 255, 255, 0.35);
+  }
+}
+
+.primary-btn-unified:hover:not(:disabled) {
+  transform: translateY(-4px);
+  animation: none;
+  box-shadow:
+    0 10px 0 #5a3fa0,
+    0 20px 38px rgba(120, 80, 200, 0.45),
+    inset 0 3px 6px rgba(255, 255, 255, 0.4);
+}
+
+.primary-btn-unified:active:not(:disabled) {
+  transform: translateY(5px);
+  animation: none;
+  box-shadow:
+    0 3px 0 #5a3fa0,
+    0 6px 14px rgba(120, 80, 200, 0.25),
+    inset 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.primary-btn-unified:disabled {
+  background: linear-gradient(180deg, #c5b8e8 0%, #b0a0d8 100%);
+  box-shadow:
+    0 5px 0 #9080c0,
+    0 8px 18px rgba(120, 80, 200, 0.15);
+  cursor: not-allowed;
+  opacity: 0.7;
+  animation: none;
+}
+
+.primary-btn-text {
+  position: relative;
+  z-index: 2;
+}

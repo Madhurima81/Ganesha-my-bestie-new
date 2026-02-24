@@ -1043,15 +1043,20 @@ const PondSceneContent = ({
                 totalScenes={4}
                 starsEarned={5}
                 totalStars={5}
-                discoveredSymbols={['mooshika', 'modak', 'belly', 'lotus', 'trunk'].filter(symbol =>
-                  sceneState.discoveredSymbols?.[symbol]
-                )}
+                discoveredSymbols={['lotus', 'trunk']}
                 symbolImages={{
-                  mooshika: symbolMooshikaColored,
-                  modak: symbolModakColored,
-                  belly: symbolBellyColored,
                   lotus: symbolLotusColored,
                   trunk: symbolTrunkColored
+                }}
+                symbolData={{
+                  lotus: {
+                    title: "Lotus — Ganesha's Pure Flower!",
+                    description: "The lotus grows in muddy water but blooms beautifully clean. It reminds us to stay pure and bright no matter what!"
+                  },
+                  trunk: {
+                    title: "Trunk — Ganesha's Super Tool!",
+                    description: "Ganesha's trunk can pick up tiny flowers or move giant rocks! It shows us that being gentle AND strong is a superpower."
+                  }
                 }}
                 nextSceneName="Temple Discovery"
                 sceneId="pond"

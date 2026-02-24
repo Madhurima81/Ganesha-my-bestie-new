@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './AppSidebar.css';
 import SanskritVoiceRecorder from '../../../lib/components/audio/SanskritVoiceRecorder.jsx';
+import { getZoneTheme } from '../../../lib/config/ZoneThemes';
+import { applyRecorderTheme } from '../../../lib/theme/RecorderThemeAdapter';
 
 
 import appVakratundaGray from '../scenes/assets/images/apps/app-gray-vakratunda.png';
@@ -31,7 +33,7 @@ const appInfo = {
     power: { name: 'Flexibility', icon: '🌟', color: '#FFD700' }
   },
   mahakaya: {
-    title: "Mahakaya - Great Body", 
+    title: "Mahakaya - Great Body",
     description: "The great cosmic form that contains the entire universe within. Practice the sacred sounds: MA-HA-KA-YA",
     colorIcon: appMahakaya,
     grayIcon: appMahakayaGray,
@@ -71,7 +73,7 @@ const appInfo = {
     power: { name: 'Generosity', icon: '🎁', color: '#FF9800' }
   },
   sarvakaryeshu: {
-    title: "Sarvakaryeshu - In All Tasks", 
+    title: "Sarvakaryeshu - In All Tasks",
     description: "The one who ensures success in all undertaken tasks. Practice the sacred sounds: SAR-VA-KAR-YE-SHU",
     colorIcon: appSarvakaryeshu,
     grayIcon: appSarvakaryeshuGray,
@@ -88,22 +90,46 @@ const appInfo = {
   }
 };
 
-const AppSidebar = ({ unlockedApps = {}, onAppClick, className = '', savedRecordings = {}, onSaveRecording, onPopupOpen, onPopupClose }) => {
+const AppSidebar = ({
+  unlockedApps = {},
+  onAppClick,
+  className = '',
+  savedRecordings = {},
+  onSaveRecording,
+  onPopupOpen,
+  onPopupClose,
+  zoneId = 'shloka-river',
+  // Center mode props (like SymbolSidebar centerMode)
+  centerMode = false,
+  highlightApps = [],
+  onCelebrate
+}) => {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedApp, setSelectedApp] = useState(null);
   const [animatingApp, setAnimatingApp] = useState(null);
   const [tappedApps, setTappedApps] = useState({});
   const prevUnlockedRef = useRef({});
+  const theme = getZoneTheme(zoneId);
+  const zoneThemeVars = {
+    '--zone-accent-color': theme.accentColor,
+    '--zone-glow-color': theme.glowColor
+  };
 
   // App order for display (matching scene progression)
   const appOrder = ['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha', 'nirvighnam', 'kurumedeva','sarvakaryeshu', 'sarvada'];
 
+  // In centerMode, only show unlocked apps
+  const displayApps = centerMode
+    ? appOrder.filter(id => unlockedApps[id])
+    : appOrder;
+
   const handleAppClick = (appId) => {
-    if (unlockedApps[appId]) {
+    if (centerMode || unlockedApps[appId]) {
+      applyRecorderTheme(zoneId);
       setTappedApps(prev => ({ ...prev, [appId]: true }));
       setSelectedApp(appId);
       setShowPopup(true);
-      onPopupOpen?.(); // Tell parent to pause game/voice
+      onPopupOpen?.();
       if (onAppClick) {
         onAppClick(appId);
       }
@@ -113,7 +139,7 @@ const AppSidebar = ({ unlockedApps = {}, onAppClick, className = '', savedRecord
   const closePopup = () => {
     setShowPopup(false);
     setSelectedApp(null);
-    onPopupClose?.(); // Tell parent to resume game/voice
+    onPopupClose?.();
   };
 
   // Trigger animation when an app is newly unlocked
@@ -133,15 +159,81 @@ const AppSidebar = ({ unlockedApps = {}, onAppClick, className = '', savedRecord
     prevUnlockedRef.current = { ...unlockedApps };
   }, [unlockedApps, animatingApp]);
 
+  // CENTER MODE (App Discovery Screen)
+  if (centerMode) {
+    return (
+      <>
+        <div className="app-discovery-overlay">
+          <div className="app-discovery-panel" style={zoneThemeVars}>
+            <h2 className="app-discovery-title">You Learned 2 Sacred Words!</h2>
+            <p className="app-discovery-subtitle">Tap each word to practice chanting it!</p>
+
+            <div className="app-discovery-grid">
+              {displayApps.map((appId, index) => {
+                const app = appInfo[appId];
+                const isHighlighted = highlightApps.includes(appId);
+                const hasTapped = tappedApps[appId];
+                return (
+                  <div
+                    key={appId}
+                    className={`app-discovery-icon ${isHighlighted ? 'app-discovery-pulse' : ''}`}
+                    onClick={() => handleAppClick(appId)}
+                    style={{ animationDelay: `${index * 0.15}s` }}
+                  >
+                    <img
+                      src={app.colorIcon}
+                      alt={app.title}
+                      className="app-discovery-img"
+                    />
+                    <div className={`tap-indicator ${hasTapped ? 'tap-indicator-done' : ''}`}>
+                      {hasTapped ? 'Done' : 'TAP!'}
+                    </div>
+                    <p className="app-discovery-name">
+                      {appId.charAt(0).toUpperCase() + appId.slice(1)}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+
+            <button
+              className="app-discovery-celebrate-btn"
+              onClick={onCelebrate}
+            >
+              Celebrate!
+            </button>
+          </div>
+        </div>
+
+        {/* Recorder popup in center mode */}
+        {showPopup && selectedApp && (
+          <SanskritVoiceRecorder
+            word={selectedApp}
+            syllables={appInfo[selectedApp].syllables}
+            appIcon={appInfo[selectedApp].colorIcon}
+            appColor={appInfo[selectedApp].power.color}
+            savedRecordings={savedRecordings}
+            onSaveRecording={onSaveRecording}
+            allowSkip={false}
+            title="Practice Chanting"
+            prompt={`Try saying ${selectedApp.toUpperCase()}`}
+            onComplete={closePopup}
+          />
+        )}
+      </>
+    );
+  }
+
+  // SIDE RAIL MODE (default)
   return (
     <>
-      <div className={`app-sidebar ${className}`}>
+      <div className={`app-sidebar ${className}`} style={zoneThemeVars}>
         {appOrder.map((appId) => {
           const app = appInfo[appId];
           const isUnlocked = unlockedApps[appId];
           const isAnimating = animatingApp === appId;
           const needsTap = isUnlocked && !tappedApps[appId];
-          
+
           return (
             <div
               key={appId}
@@ -163,36 +255,18 @@ const AppSidebar = ({ unlockedApps = {}, onAppClick, className = '', savedRecord
 
       {/* App Information Popup with Voice Recorder */}
       {showPopup && selectedApp && (
-        <div className="app-popup-overlay" onClick={closePopup}>
-          <div className="app-popup-content" onClick={(e) => e.stopPropagation()}>
-            <button className="popup-close-btn" onClick={closePopup}>×</button>
-            
-            <div className="popup-app-icon">
-              <img 
-                src={appInfo[selectedApp].colorIcon} 
-                alt={appInfo[selectedApp].title}
-                className="popup-app-image"
-              />
-            </div>
-            
-            <h2 className="popup-title">{appInfo[selectedApp].title}</h2>
-            <p className="popup-description">{appInfo[selectedApp].description}</p>
-            
-            {/* Voice Recorder Component - replaces old syllable practice buttons */}
-            <SanskritVoiceRecorder 
-              word={selectedApp}
-              syllables={appInfo[selectedApp].syllables}
-              appIcon={appInfo[selectedApp].colorIcon}
-              appColor={appInfo[selectedApp].power.color}
-              savedRecordings={savedRecordings}
-              onSaveRecording={onSaveRecording}
-              allowSkip={false}
-              title="Practice Chanting"
-              prompt={`Try saying ${selectedApp.toUpperCase()}`}
-              onComplete={closePopup}
-            />
-          </div>
-        </div>
+        <SanskritVoiceRecorder
+          word={selectedApp}
+          syllables={appInfo[selectedApp].syllables}
+          appIcon={appInfo[selectedApp].colorIcon}
+          appColor={appInfo[selectedApp].power.color}
+          savedRecordings={savedRecordings}
+          onSaveRecording={onSaveRecording}
+          allowSkip={false}
+          title="Practice Chanting"
+          prompt={`Try saying ${selectedApp.toUpperCase()}`}
+          onComplete={closePopup}
+        />
       )}
     </>
   );

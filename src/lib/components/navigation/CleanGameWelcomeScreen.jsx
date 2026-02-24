@@ -2,10 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import GameStateManager from '../../services/GameStateManager';
 import CleanProfileSelector from './CleanProfileSelector';
+import PrimaryBtn from '../shared/PrimaryBtn';
+import ScreenHeader from '../shared/ScreenHeader';
 import './CleanGameWelcomeScreen.css';
 import SimpleSceneManager from '../../services/SimpleSceneManager';
 import CulturalProgressExtractor from '../../services/CulturalProgressExtractor';
 import ProgressPopup from './ProgressPopup';
+import GameIcon from '../ui/GameIcon';
 
 const CleanGameWelcomeScreen = ({ onContinue, onNewGame }) => {
   const [profiles, setProfiles] = useState({});
@@ -363,8 +366,10 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame }) => {
           const welcomeMsg = getWelcomeMessage();
           return (
             <>
-              <h1 className="welcome-title">{welcomeMsg.title}</h1>
-              {/* No subtitle here, kept simple */}
+              <ScreenHeader
+                title={welcomeMsg.title}
+                glowColor="purple"
+              />
             </>
           );
         })()}        
@@ -401,8 +406,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame }) => {
           {/* Switch Explorer Button */}
           {hasProgress && (
             <button className="change-explorer-btn" onClick={handleBackToProfiles}>
-              <span className="btn-icon">🔄</span>
-              Choose Different Explorer
+              Switch Explorer
             </button>
           )}
         </div>
@@ -418,8 +422,8 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame }) => {
                   onClick={() => handleProgressBoxClick('symbols')}
                 >
                   {isZoneComplete(culturalProgress.symbols) && <div className="completion-badge"><span className="star-icon">⭐</span></div>}
-                  <span className="stat-icon-clean">⭐</span>
-                  <span className="stat-text-clean">{culturalProgress.symbols} Sacred Symbols</span>
+                  <GameIcon name="zone_stat_symbols" size={32} className="stat-icon-clean" />
+                  <span className="stat-text-clean">{culturalProgress.symbols} Symbols</span>
                 </div>
                 
                 <div 
@@ -427,8 +431,8 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame }) => {
                   onClick={() => handleProgressBoxClick('meanings')}
                 >
                   {isZoneComplete(culturalProgress.meanings) && <div className="completion-badge"><span className="star-icon">⭐</span></div>}
-                  <span className="stat-icon-clean">📜</span>
-                  <span className="stat-text-clean">{culturalProgress.meanings} Meanings Learned</span>
+                  <GameIcon name="zone_stat_meanings" size={32} className="stat-icon-clean" />
+                  <span className="stat-text-clean">{culturalProgress.meanings} Meanings</span>
                 </div>
                 
                 <div 
@@ -436,8 +440,8 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame }) => {
                   onClick={() => handleProgressBoxClick('chants')}
                 >
                   {isZoneComplete(culturalProgress.chants) && <div className="completion-badge"><span className="star-icon">⭐</span></div>}
-                  <span className="stat-icon-clean">🎵</span>
-                  <span className="stat-text-clean">{culturalProgress.chants} Sanskrit Chants</span>
+                  <GameIcon name="zone_stat_chants" size={32} className="stat-icon-clean" />
+                  <span className="stat-text-clean">{culturalProgress.chants} Chants</span>
                 </div>
               </div>
             </div>
@@ -448,23 +452,26 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame }) => {
         <div className="welcome-actions">
           {hasProgress ? (
             <>
-              <button className="primary-btn enhanced-btn" onClick={handleContinue}>
-                {getWelcomeMessage().buttonText.main}
-                <span className="sub-text">{getWelcomeMessage().buttonText.sub}</span>
-              </button>
-              
+              <PrimaryBtn
+                label={getWelcomeMessage().buttonText.main}
+                onClick={handleContinue}
+                size="md"
+                fullWidth
+              />
               <button className="secondary-btn" onClick={handleNewGame}>
                 Explore Scenes
-                <span className="sub-text">Replay any scene</span>
               </button>
             </>
           ) : (
             <>
-              <button className="primary-btn enhanced-btn" onClick={handleContinue}>
-                Start Adventure
-              </button>
+              <PrimaryBtn
+                label="Start Adventure"
+                onClick={handleContinue}
+                size="md"
+                fullWidth
+              />
               <button className="secondary-btn" onClick={handleBackToProfiles}>
-                Choose Different Explorer
+                Switch Explorer
               </button>
             </>
           )}

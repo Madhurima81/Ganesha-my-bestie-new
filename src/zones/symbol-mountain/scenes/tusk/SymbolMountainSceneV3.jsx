@@ -883,13 +883,25 @@ const SymbolMountainSceneContent = ({
                 totalScenes={4}
                 starsEarned={9}
                 totalStars={9}
-                discoveredSymbols={[
-                  'mooshika', 'modak', 'belly', 'lotus', 'trunk', 'eyes', 'ears', 'tusk'
-                ].filter(symbol => sceneState.discoveredSymbols?.[symbol])}
+                discoveredSymbols={['eyes', 'ears', 'tusk']}
                 symbolImages={{
-                  mooshika: symbolMooshikaColored, modak: symbolModakColored, belly: symbolBellyColored,
-                  lotus: symbolLotusColored, trunk: symbolTrunkColored, eyes: symbolEyesColored,
-                  ears: symbolEarColored, tusk: symbolTuskColored
+                  eyes: symbolEyesColored,
+                  ears: symbolEarColored,
+                  tusk: symbolTuskColored
+                }}
+                symbolData={{
+                  eyes: {
+                    title: "Eyes — Ganesha's Wise Vision!",
+                    description: "Ganesha's eyes see everything clearly — the big picture and the tiny details. They remind us to look carefully before we act!"
+                  },
+                  ears: {
+                    title: "Ears — Ganesha's Super Listeners!",
+                    description: "Ganesha's big ears hear every word. They remind us to listen with our whole heart and learn from everything around us."
+                  },
+                  tusk: {
+                    title: "Tusk — Ganesha's Writing Tool!",
+                    description: "Ganesha broke his own tusk to write a great story! It shows us that we can turn any challenge into something amazing."
+                  }
                 }}
                 nextSceneName="Final Assembly"
                 sceneId="symbol"

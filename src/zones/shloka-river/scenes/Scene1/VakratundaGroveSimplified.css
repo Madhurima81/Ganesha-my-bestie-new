@@ -45,13 +45,15 @@
 /* --- Vakratunda Elements --- */
 .vakratunda-clicker-element {
   position: absolute !important;
-  width: 150px !important;
-  height: 150px !important;
+  /* clamp(min, preferred, max): scales smoothly from 140px on phones to 320px on desktop */
+  width: clamp(140px, 28vw, 320px);
+  height: clamp(140px, 28vw, 320px);
+  min-width: clamp(140px, 28vw, 320px);
+  min-height: clamp(140px, 28vw, 320px);
   z-index: 10;
   cursor: pointer;
   transition: transform 0.2s ease, filter 0.2s ease;
   filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
-  /* No translate here - prevents jumping */
 }
 
 .vakratunda-clicker-element:hover { transform: translate(-50%, -50%) scale(1.1) !important; }
@@ -59,8 +61,11 @@
 
 .vakratunda-central-synthesis {
   position: absolute !important;
-  width: 160px !important;
-  height: 160px !important;
+  /* clamp(min, preferred, max): scales smoothly from 120px on phones to 310px on desktop */
+  width: clamp(120px, 26vw, 310px);
+  height: clamp(120px, 26vw, 310px);
+  min-width: clamp(120px, 26vw, 310px);
+  min-height: clamp(120px, 26vw, 310px);
   z-index: 10;
   cursor: pointer;
   filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
@@ -211,7 +216,7 @@
 
 /* --- TABLET LANDSCAPE (iPad) --- */
 @media (min-width: 768px) and (orientation: landscape) {
-  .vakratunda-clicker-element { width: 160px !important; height: 160px !important; }
+  .vakratunda-clicker-element { width: 210px !important; height: 210px !important; }
   .vakratunda-central-synthesis { width: 180px !important; height: 180px !important; }
 
   .vakratunda-clicker-element:nth-child(1) { left: 12%; top: 60%; }
@@ -234,7 +239,7 @@
 
 /* --- HIGH RES / DESKTOP (> 1366px) --- */
 @media (min-width: 1367px) {
-  .vakratunda-clicker-element { width: 220px !important; height: 220px !important; }
+  .vakratunda-clicker-element { width: 250px !important; height: 250px !important; }
   .vakratunda-central-synthesis { width: 240px !important; height: 240px !important; }
 
   .vakratunda-clicker-element:nth-child(1) { left: 18%; top: 60%; }
@@ -335,6 +340,7 @@
   letter-spacing: 3px;
   /* Prevent text shifting */
   white-space: nowrap;
+  text-transform: none;
 }
 
 /* Responsive celebration */
@@ -438,12 +444,28 @@
 }
 .vakratunda-companion-boy { position: fixed; bottom: 80px; right: 120px; z-index: 5; animation: slideInRight 0.6s ease-out; }
 .vakratunda-boy-companion { width: 120px; height: auto; animation: breathe 3s ease-in-out infinite; }
-.vakratunda-celebration-word-text { font-family: 'Baloo 2', cursive; font-size: 64px; color: white; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+
+/* Opening modal Ganesha animation (breathing + pulse) */
+.vakratunda-modal-ganesha {
+  animation:
+    vakratunda-modal-breathe 3.8s ease-in-out infinite,
+    vakratunda-modal-pulse 2.2s ease-in-out infinite !important;
+  transform-origin: center bottom;
+}
 
 /* Generic Animations */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes vakratunda-modal-breathe {
+  0%, 100% { transform: scaleX(-1) scale(1) translateY(0); }
+  50% { transform: scaleX(-1) scale(1.035) translateY(-4px); }
+}
+@keyframes vakratunda-modal-pulse {
+  0%, 100% { filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.25)) drop-shadow(0 0 0 rgba(46, 125, 107, 0)); }
+  50% { filter: drop-shadow(0 10px 26px rgba(0, 0, 0, 0.3)) drop-shadow(0 0 20px rgba(46, 125, 107, 0.38)); }
+}
 @keyframes popIn { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
 @keyframes slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes celebrationGlow { from { filter: drop-shadow(0 0 30px rgba(255,255,255,0.6)); } to { filter: drop-shadow(0 0 60px rgba(255,255,255,1)); } }
 @keyframes floatUp { 0% { transform: translateY(0); opacity: 0; } 50% { opacity: 0.8; } 100% { transform: translateY(-100px); opacity: 0; } }
+

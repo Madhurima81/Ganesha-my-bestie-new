@@ -197,6 +197,57 @@
   }
 }
 
+
+/* ==========================================================================
+   SHARED GAME ELEMENT STYLES — CLICKERS + CENTRAL SYNTHESIS
+   Applies to ALL games (except vakratunda which has its own CSS).
+
+   ⚠️  HOW SIZE WORKS:
+   - clamp(min, preferred-vw, max) scales smoothly with viewport — no media queries needed
+   - gameConfigs.js positionsByRound[round][i].size overrides via inline style
+   - To change default sizes: edit the clamp() values below
+   - To change per-round/per-element sizes: edit gameConfigs.js
+   ========================================================================== */
+
+/* --- BASE STYLES: All game clicker elements (scales 140px → 280px with viewport) --- */
+[class$="-clicker-element"] {
+  position: absolute !important;
+  width: clamp(140px, 26vw, 280px);
+  height: clamp(140px, 26vw, 280px);
+  min-width: clamp(140px, 26vw, 280px);
+  min-height: clamp(140px, 26vw, 280px);
+  z-index: 10;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+}
+
+[class$="-clicker-element"]:hover {
+  transform: translate(-50%, -50%) scale(1.1) !important;
+}
+
+[class$="-clicker-element"]:active {
+  transform: translate(-50%, -50%) scale(0.95) !important;
+}
+
+/* --- BASE STYLES: All game central synthesis elements (scales 120px → 260px with viewport) --- */
+[class$="-central-synthesis"] {
+  position: absolute !important;
+  width: clamp(120px, 24vw, 260px);
+  height: clamp(120px, 24vw, 260px);
+  min-width: clamp(120px, 24vw, 260px);
+  min-height: clamp(120px, 24vw, 260px);
+  z-index: 10;
+  cursor: pointer;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+  transition: transform 0.3s ease;
+  transform: translate(-50%, -50%);
+}
+
+[class$="-central-synthesis"]:hover {
+  transform: translate(-50%, -50%) scale(1.1) !important;
+}
+
 /* Laptops / Small Desktops */
 @media (min-width: 1366px) and (max-height: 900px) {
   .universal-game-header {

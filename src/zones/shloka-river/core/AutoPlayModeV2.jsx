@@ -5,6 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSafeClick } from './hooks/useSafeClick';
 import UniversalPauseButton from './UniversalPauseButton';
 import PauseModal from './PauseModal';
+import './SharedGameUI.css';
 
 const AutoPlayModeV2 = ({
   gameConfig,
@@ -518,6 +519,9 @@ const AutoPlayModeV2 = ({
       setCanPlayerClick(false);
       wasChildActionPendingRef.current = false;
 
+      // Only play "Listen carefully" + "Tap and repeat" for the very first elephant of Round 1
+      const isFirstElephantOfGame = currentRound === 1 && syllableIdx === 0;
+
       const runAudioSequence = () => {
           if (isPausedRef.current) { flowInProgressRef.current = false; return; }
 
@@ -533,7 +537,7 @@ const AutoPlayModeV2 = ({
                 setCanPlayerClick(true);
                 wasChildActionPendingRef.current = true;
                 flowInProgressRef.current = false;
-                if (voiceGuidanceRef.current?.playVoice && !isPausedRef.current) {
+                if (voiceGuidanceRef.current?.playVoice && !isPausedRef.current && isFirstElephantOfGame) {
                   lastInterruptibleVORef.current = 'instructionTapAndRepeat';
                   voiceGuidanceRef.current.playVoice('instructionTapAndRepeat');
                 }
@@ -546,7 +550,7 @@ const AutoPlayModeV2 = ({
           }
       };
 
-      if (voiceGuidanceRef.current?.playVoice) {
+      if (voiceGuidanceRef.current?.playVoice && isFirstElephantOfGame) {
         lastInterruptibleVORef.current = 'instructionListen';
         voiceGuidanceRef.current.playVoice('instructionListen', () => {
              if (isPausedRef.current) { flowInProgressRef.current = false; return; }
@@ -836,7 +840,11 @@ const AutoPlayModeV2 = ({
 
   const renderElephant = (syllable, index) => {
     if (!assetGetters) return null;
-    const position = gameConfig.elements.clicker?.positions?.[index] || { left: '50%', top: '50%' };
+    // Use round-aware positions if available, otherwise fall back to flat positions
+    const positionsByRound = gameConfig.elements.clicker?.positionsByRound;
+    const position = (positionsByRound?.[currentRound]?.[index])
+      || gameConfig.elements.clicker?.positions?.[index]
+      || { left: '50%', top: '50%' };
     let getImage;
     if (gameConfig.elements.clicker.assetGetters) getImage = assetGetters[gameConfig.elements.clicker.assetGetters[syllable]];
     else if (gameConfig.elements.clicker.assetGetter) getImage = assetGetters[gameConfig.elements.clicker.assetGetter];
@@ -844,15 +852,27 @@ const AutoPlayModeV2 = ({
     const clicked = hasElephantBeenClicked(syllable);
     const singing = isElephantSinging(syllable);
     const isTarget = isCurrentTarget(index);
+    // Read size and flip from config — fallback to CSS class size if not set
+    const elephantSize = position.size || undefined;
+    const shouldFlip = position.flip === true;
     let className = `${gamePrefix}-clicker-element`;
     if (singing) className += ' singing';
     if (isTarget && !clicked) className += ' pulse';
     if (showIdleHint && isTarget && !clicked) className += ' hint-glow';
     return (
-      <button key={`elephant-${syllable}`} className={className} style={{ position: 'absolute', left: position.left, top: position.top, transform: 'translate(-50%, -50%)', border: 'none', background: 'transparent', cursor: isTarget ? 'pointer' : 'default', zIndex: 20, borderRadius: '50%', opacity: isTarget || clicked ? 1 : 0.4, transition: 'all 0.3s ease' }} onClick={() => handleElephantClick(index)} disabled={!isTarget}>
-        <img src={getImage(index)} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+      <button key={`elephant-${syllable}`} className={className} style={{ position: 'absolute', left: position.left, top: position.top, transform: 'translate(-50%, -50%)', border: 'none', background: 'transparent', cursor: isTarget ? 'pointer' : 'default', zIndex: 20, borderRadius: '50%', opacity: isTarget || clicked ? 1 : 0.4, transition: 'all 0.3s ease', ...(elephantSize && { width: elephantSize, height: elephantSize, minWidth: elephantSize, minHeight: elephantSize }) }} onClick={() => handleElephantClick(index)} disabled={!isTarget}>
+        <img
+          src={getImage(index)}
+          alt=""
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            transform: shouldFlip ? 'scaleX(-1)' : 'none'
+          }}
+        />
         {singing && <div style={{ position: 'absolute', top: '-20px', left: '50%', fontSize: '20px', animation: 'musicNote 0.6s' }}>🎵</div>}
-        <div style={{ position: 'absolute', bottom: '-34px', left: '50%', transform: clicked ? 'translateX(-50%) scale(1.08)' : 'translateX(-50%) scale(1)', transition: 'all 0.18s ease-out', background: clicked ? '#C8F2C2' : 'rgba(255,255,255,0.85)', color: '#2E7D32', padding: '6px 10px', borderRadius: '14px', fontSize: '14px', fontWeight: 600, letterSpacing: '0.5px', boxShadow: '0 2px 6px rgba(0,0,0,0.15)', border: '1px solid rgba(0,0,0,0.08)' }}>{syllable}</div>
+        <div style={{ position: 'absolute', bottom: '-34px', left: '50%', transform: clicked ? 'translateX(-50%) scale(1.08)' : 'translateX(-50%) scale(1)', transition: 'all 0.18s ease-out', background: clicked ? '#C8F2C2' : 'rgba(255,255,255,0.85)', color: '#2E7D32', padding: '8px 14px', borderRadius: '16px', fontSize: 'clamp(14px, 1.8vw, 20px)', fontWeight: 700, letterSpacing: '0.5px', boxShadow: '0 2px 6px rgba(0,0,0,0.15)', border: '1px solid rgba(0,0,0,0.08)', whiteSpace: 'nowrap' }}>{syllable}</div>
         {clicked && <div style={{ position: 'absolute', top: '10px', right: '10px', width: '24px', height: '24px', background: '#4CAF50', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>✓</div>}
       </button>
     );
@@ -936,14 +956,14 @@ const AutoPlayModeV2 = ({
       if (showIdleHint) className += ' hint-glow';
     }
     return (
-      <div className={className} onClick={centralElementGlowing ? handleCentralElementClick : undefined} style={{ position: 'absolute', transform: 'translate(-50%, -50%)', zIndex: 20, cursor: centralElementGlowing ? 'pointer' : 'default', transition: 'all 0.5s ease', pointerEvents: centralElementGlowing ? 'auto' : 'none', }}>
+      <div className={className} onClick={centralElementGlowing ? handleCentralElementClick : undefined} style={{ position: 'absolute', left: position.left, top: position.top, transform: 'translate(-50%, -50%)', zIndex: 20, cursor: centralElementGlowing ? 'pointer' : 'default', transition: 'all 0.5s ease', pointerEvents: centralElementGlowing ? 'auto' : 'none', ...(position.size && { width: position.size, height: position.size, minWidth: position.size, minHeight: position.size }) }}>
         <div style={{ position: 'absolute', width: '100%', height: '100%', opacity: isFullyBloomed ? 0 : (1 - centralBloomProgress / 100), transition: 'opacity 0.5s ease' }}>
           <img src={budImage} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="bud" />
         </div>
         <div style={{ position: 'absolute', width: '100%', height: '100%', opacity: centralBloomProgress / 100, transform: `scale(${0.6 + (centralBloomProgress / 100) * 0.4})`, transition: 'all 0.5s ease' }}>
           <img src={bloomImage} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="bloom" />
         </div>
-        <div style={{ position: 'absolute', bottom: '-36px', left: '50%', transform: 'translateX(-50%) scale(' + (centralElementGlowing ? 1.08 : 1) + ')', transition: 'all 0.2s ease-out', background: isFullyBloomed ? 'linear-gradient(180deg, #FFF7CC, #FFE082)' : 'rgba(255,255,255,0.9)', color: '#7A5C00', padding: '8px 14px', borderRadius: '18px', fontSize: currentSequence.length > 8 ? '14px' : '15px', fontWeight: 700, letterSpacing: '0.6px', whiteSpace: 'nowrap', border: '2px solid rgba(255,215,0,0.6)', boxShadow: isFullyBloomed ? '0 4px 14px rgba(255,215,0,0.35)' : '0 2px 6px rgba(0,0,0,0.12)', textTransform: 'capitalize' }}>
+        <div style={{ position: 'absolute', bottom: '-36px', left: '50%', transform: 'translateX(-50%) scale(' + (centralElementGlowing ? 1.08 : 1) + ')', transition: 'all 0.2s ease-out', background: isFullyBloomed ? 'linear-gradient(180deg, #FFF7CC, #FFE082)' : 'rgba(255,255,255,0.9)', color: '#7A5C00', padding: '8px 14px', borderRadius: '16px', fontSize: 'clamp(14px, 1.8vw, 20px)', fontWeight: 700, letterSpacing: '0.6px', whiteSpace: 'nowrap', border: '2px solid rgba(255,215,0,0.6)', boxShadow: isFullyBloomed ? '0 4px 14px rgba(255,215,0,0.35)' : '0 2px 6px rgba(0,0,0,0.12)', textTransform: 'capitalize' }}>
           {currentSequence.join('')}
         </div>
         {isFullyBloomed && ( <div style={{ position: 'absolute', top: '-10px', right: '-10px', fontSize: '24px', animation: 'sparkle 1s ease-in-out infinite' }}>✨</div> )}
@@ -971,6 +991,36 @@ const AutoPlayModeV2 = ({
         />
       )}
       <PauseModal isOpen={showPauseModal} onContinue={handleContinue} onExit={handleExitToMenu} />
+
+      {/* ⭐ Round reward stars — one star pops in after each round's lotus is tapped */}
+      {!hideElements && gamePhase !== 'phase_complete' && (
+        <div style={{
+          position: 'absolute',
+          top: '60px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          display: 'flex',
+          gap: '14px',
+          alignItems: 'center',
+          zIndex: 50,
+          pointerEvents: 'none',
+          minHeight: '44px',
+        }}>
+          {Array.from({ length: currentRound - 1 + (gamePhase === 'celebration' ? 1 : 0) }).map((_, i) => (
+            <svg key={i} width="40" height="40" viewBox="0 0 24 24" style={{
+              filter: 'drop-shadow(1px 2px 0px rgba(0,0,0,0.25))',
+              animation: i === (currentRound - 2 + (gamePhase === 'celebration' ? 1 : 0)) ? 'starPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards' : 'none',
+            }}>
+              <path
+                d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
+                fill="#FFD700"
+                stroke="#FFA000"
+                strokeWidth="1.5"
+              />
+            </svg>
+          ))}
+        </div>
+      )}
 
       {!hideElements && showWaitBanner && <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'rgba(255, 152, 0, 0.95)', color: 'white', padding: '20px 40px', borderRadius: '20px', fontSize: '18px', fontWeight: 'bold', zIndex: 100, animation: 'fadeInOut 1.5s' }}>{waitBannerMessage}</div>}
       {!hideElements && waterSprayPosition && <div style={{ position: 'absolute', left: waterSprayPosition.left, top: waterSprayPosition.top, transform: 'translateY(-100%)', fontSize: '48px', animation: 'waterSplash 1s', zIndex: 100, pointerEvents: 'none' }}>💦</div>}
@@ -1005,6 +1055,8 @@ const AutoPlayModeV2 = ({
         @keyframes sparkleBurst3 { 0% { opacity: 1; transform: scale(0.5); } 100% { opacity: 0; transform: translate(-10px, 20px) scale(1.1); } }
         @keyframes sparkleBurst4 { 0% { opacity: 1; transform: scale(0.5); } 100% { opacity: 0; transform: translate(-20px, -10px) scale(1.2); } }
         @keyframes sparkleBurst5 { 0% { opacity: 1; transform: scale(0.5); } 100% { opacity: 0; } }
+        @keyframes starGlowV2 { 0%, 100% { filter: drop-shadow(0 0 4px rgba(255,215,0,0.6)); } 50% { filter: drop-shadow(0 0 12px rgba(255,215,0,1)); } }
+        @keyframes starPopIn { 0% { transform: scale(0) rotate(-180deg); opacity: 0; } 60% { transform: scale(1.3) rotate(10deg); opacity: 1; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
       `}</style>
     </div>
   );

@@ -2,7 +2,7 @@
 
 /* ========================================== */
 /* 1. CHARACTER-BASED LOADING SCREEN          */
-/*    Theme: Deep Orange Sunset (Image 2)     */
+/*    Theme: Lavender Welcome (matches main)  */
 /* ========================================== */
 
 .enhanced-loading-screen {
@@ -11,8 +11,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  /* ✨ CHANGE: Use the new background image */
-  background: url('/images/loading-bg.png') no-repeat center center;
+  background: url('/images/welcome-background.png') no-repeat center center;
   background-size: cover;
   display: flex;
   flex-direction: column;
@@ -22,14 +21,63 @@
   overflow: hidden;
 }
 
+/* Sparkle twinkle layer */
+.enhanced-loading-screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(2px 2px at 20% 25%, rgba(255,255,255,0.9), transparent),
+    radial-gradient(2px 2px at 72% 38%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1.5px 1.5px at 50% 18%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(2px 2px at 84% 72%, rgba(255,255,255,0.9), transparent),
+    radial-gradient(1.5px 1.5px at 15% 60%, rgba(255,255,255,0.7), transparent);
+  animation: loadingTwinkle 4s ease-in-out infinite alternate;
+  z-index: 1;
+}
+
+@keyframes loadingTwinkle {
+  0%   { opacity: 0.4; }
+  100% { opacity: 1;   }
+}
+
 /* ===================================== */
-/* GANESHA LOADING CHARACTER (Line Art)  */
+/* HALO BEHIND GANESHA                   */
+/* ===================================== */
+.loading-ganesha-glow {
+  display: block !important;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.5)  0%,
+    rgba(255, 255, 255, 0.2) 40%,
+    transparent              70%
+  );
+  filter: blur(30px);
+  animation: pulseHalo 4s ease-in-out infinite;
+  z-index: -1;
+}
+
+@keyframes pulseHalo {
+  0%, 100% { transform: translate(-50%, -50%) scale(1);    opacity: 0.6; }
+  50%       { transform: translate(-50%, -50%) scale(1.06); opacity: 0.9; }
+}
+
+/* ===================================== */
+/* GANESHA — same image as welcome screen */
 /* ===================================== */
 .loading-ganesha-container {
   position: relative;
-  width: 220px; /* Slightly larger for line art */
-  height: 220px;
-  margin-bottom: 10px;
+  width: 500px;
+  height: 500px;
+  margin-bottom: 24px;
   z-index: 2;
   display: flex;
   justify-content: center;
@@ -40,72 +88,157 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  /* ✨ TRICK: Force use of outline SVG via CSS */
-  content: url('/images/ganesha-character.png'); 
-  filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.4)); /* Golden Glow */
-  animation: ganeshaFloat 4s ease-in-out infinite;
+  content: url('/images/welcome-ganesha.png');
+  filter: drop-shadow(0 0 18px rgba(255, 230, 120, 0.5));
+  animation: ganeshaFloat 3.5s ease-in-out infinite;
 }
 
 @keyframes ganeshaFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  0%, 100% { transform: translateY(0px)   scale(1);    }
+  50%       { transform: translateY(-10px) scale(1.03); }
 }
 
-/* Hide legacy elements */
-.loading-ganesha-glow, 
-.loading-mooshika-container,
-.enhanced-loading-screen::before {
-  display: none; 
+/* Hide mooshika on loading */
+.loading-mooshika-container {
+  display: none;
 }
 
 /* ===================================== */
-/* LOADING TEXT (New Fonts)              */
+/* ATMOSPHERIC OVERLAY LAYERS            */
+/* ===================================== */
+
+.bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgba(255, 255, 255, 0.15),
+    rgba(180, 140, 255, 0.25) 60%,
+    rgba(120, 80, 220, 0.35) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.bg-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle,
+    transparent 55%,
+    rgba(0, 0, 0, 0.15) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ===================================== */
+/* LOADING TEXT                          */
 /* ===================================== */
 .loading-text-container {
   text-align: center;
   z-index: 2;
-  margin-top: 10px;
+  margin-top: 8px;
+}
+
+/* Halo behind the title text */
+.title-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.title-wrapper::before {
+  content: "";
+  position: absolute;
+  width: 120%;
+  height: 180%;
+  left: -10%;
+  top: -40%;
+  background: radial-gradient(
+    circle,
+    rgba(200, 170, 255, 0.35) 0%,
+    rgba(200, 170, 255, 0.15) 40%,
+    transparent 70%
+  );
+  filter: blur(40px);
+  z-index: -1;
+  pointer-events: none;
 }
 
 .loading-title {
-  /* ✨ FONT: Baloo 2, Semi-bold */
   font-family: 'Baloo 2', cursive, sans-serif;
-  font-weight: 600;
-  font-size: 48px;
-  color: #FFFFFF; /* White text */
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  font-weight: 700;
+  font-size: 90px !important;
+  color: #5c3ea6;
+  letter-spacing: 0.5px;
   margin-bottom: 0;
   line-height: 1.2;
+  position: relative;
+
+  /* Layered purple glow — whispering, not shouting */
+  text-shadow:
+    0 0 6px  rgba(140, 100, 255, 0.35),
+    0 0 18px rgba(140, 100, 255, 0.25),
+    0 0 30px rgba(200, 170, 255, 0.15);
+
+  animation: softPulse 5s ease-in-out infinite;
+}
+
+/* Ultra-subtle gold highlight edge */
+.loading-title::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0)
+  );
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+
+@keyframes softPulse {
+  0%, 100% {
+    text-shadow:
+      0 0 6px  rgba(140, 100, 255, 0.3),
+      0 0 18px rgba(140, 100, 255, 0.2),
+      0 0 30px rgba(200, 170, 255, 0.1);
+  }
+  50% {
+    text-shadow:
+      0 0 10px rgba(140, 100, 255, 0.4),
+      0 0 22px rgba(140, 100, 255, 0.3),
+      0 0 40px rgba(200, 170, 255, 0.2);
+  }
 }
 
 .loading-subtitle {
-  /* ✨ FONT: Nunito, Medium */
   font-family: 'Nunito', sans-serif;
   font-weight: 500;
-  font-size: 22px;
-  color: #FFD700; /* Golden Yellow */
-  margin-top: 5px;
+  font-size: 40px;
+  color: #6b4fb3;
+  margin-top: 18px;
   letter-spacing: 0.5px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 /* Animated dots */
 .loading-dots span {
   animation: dotBounce 1.4s ease-in-out infinite;
   display: inline-block;
-  color: #FFD700;
+  color: #b49ef0;
 }
-.loading-dots span:nth-child(1) { animation-delay: 0s; }
+.loading-dots span:nth-child(1) { animation-delay: 0s;   }
 .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
 .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
 
 @keyframes dotBounce {
-  0%, 60%, 100% { transform: translateY(0); }
-  30% { transform: translateY(-6px); }
+  0%, 60%, 100% { transform: translateY(0);    }
+  30%            { transform: translateY(-6px); }
 }
 
 /* ===================================== */
-/* MAGICAL PARTICLES (Sunset Style)      */
+/* MAGICAL PARTICLES                     */
 /* ===================================== */
 .loading-particles {
   position: absolute;
@@ -116,73 +249,126 @@
 
 .loading-particle {
   position: absolute;
-  width: 4px;
-  height: 4px;
-  background: #FFD700; /* Gold particles */
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle, #fff 0%, #ffe680 70%, transparent 100%);
   border-radius: 50%;
-  animation: particleRise 5s ease-in-out infinite;
-  box-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
-  opacity: 0.6;
+  animation: particleRise 6s linear infinite;
+  box-shadow: 0 0 8px rgba(255, 230, 120, 0.7);
+  opacity: 0.7;
 }
 
 @keyframes particleRise {
-  0% { opacity: 0; transform: translateY(100vh) scale(0); }
-  20% { opacity: 0.8; transform: translateY(80vh) scale(1); }
-  80% { opacity: 0.8; transform: translateY(20vh) scale(0.8); }
-  100% { opacity: 0; transform: translateY(0) scale(0); }
+  0%   { opacity: 0;   transform: translateY(100vh) scale(0); }
+  20%  { opacity: 0.8; }
+  80%  { opacity: 0.7; }
+  100% { opacity: 0;   transform: translateY(0) scale(0);     }
 }
 
 /* ===================================== */
-/* PROGRESS BAR (Warm Theme)             */
+/* PREMIUM PROGRESS BAR                  */
 /* ===================================== */
 .loading-progress-container {
   position: relative;
-  width: 320px;
-  height: 8px;
-  background: rgba(0, 0, 0, 0.3); /* Dark track */
-  border-radius: 10px;
-  margin-top: 25px;
+  width: 700px;
+  height: 22px;
+  border-radius: 40px;
   overflow: hidden;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15); /* soft lavender glass */
+  backdrop-filter: blur(6px);
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.06);
+  margin-top: 36px;
   z-index: 2;
 }
 
 .loading-progress-bar {
   height: 100%;
-  /* ✨ GOLDEN SUNSET GRADIENT */
-  background: linear-gradient(90deg, #FFC107 0%, #FF9800 100%); 
-  border-radius: 10px;
-  transition: width 0.3s ease-out;
-  box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding-right: 5px;
+  border-radius: 40px;
+  position: relative;
+  overflow: hidden;
+
+  /* Layered divine gold */
+  background: linear-gradient(
+    90deg,
+    #f6d365 0%,
+    #f9b233 35%,
+    #f6a623 60%,
+    #f6d365 100%
+  );
+  box-shadow:
+    0 0 8px  rgba(246, 178, 51, 0.6),
+    0 0 18px rgba(246, 178, 51, 0.4);
+  transition: width 0.4s ease;
 }
 
-/* Shimmer Effect */
-.loading-progress-bar::before {
-  content: '';
+/* Metallic shine — top highlight (polished temple gold) */
+.loading-progress-bar::after {
+  content: "";
   position: absolute;
-  top: 0; left: -100%; width: 100%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-  animation: shimmer 1.5s infinite;
+  top: 2px;
+  left: 5%;
+  width: 90%;
+  height: 40%;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.6),
+    rgba(255, 255, 255, 0)
+  );
+  border-radius: 40px;
+  pointer-events: none;
+}
+
+/* Gentle shimmer sweep */
+.loading-progress-bar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -40%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer 2.5s infinite;
 }
 
 @keyframes shimmer {
-  0% { left: -100%; }
-  100% { left: 100%; }
+  0%   { left: -40%; }
+  100% { left: 120%; }
 }
 
-/* Progress Text */
+/* Bar sparkles */
+.bar-sparkles {
+  position: relative;
+  width: 700px;
+  height: 0;
+  z-index: 2;
+}
+
+.sparkle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #fff;
+  border-radius: 50%;
+  opacity: 0.85;
+  top: -18px;
+  animation: floatSparkle 3s ease-in-out infinite;
+}
+
+@keyframes floatSparkle {
+  0%   { transform: translateY(0px);  opacity: 0.85; }
+  50%  { transform: translateY(-8px); opacity: 0.4;  }
+  100% { transform: translateY(0px);  opacity: 0.85; }
+}
+
+/* Hide old percentage text */
 .progress-percentage {
-  /* ✨ FONT: Nunito, Bold */
-  font-family: 'Nunito', sans-serif;
-  font-weight: 700;
-  font-size: 9px;
-  color: #5d4037; /* Dark brown text on yellow bar */
-  opacity: 0.8;
+  display: none;
 }
 
 /* ========================================== */
@@ -371,10 +557,11 @@
 
 /* Tablets */
 @media (min-width: 768px) and (max-width: 1366px) {
-  .loading-ganesha-container { width: 300px; height: 300px; }
-  .loading-title { font-size: 56px; }
-  .loading-subtitle { font-size: 28px; }
-  .loading-progress-container { width: 450px; height: 12px; }
+  .loading-ganesha-container { width: 500px; height: 500px; }
+  .loading-title { font-size: 90px !important; }
+  .loading-subtitle { font-size: 40px; }
+  .loading-progress-container { width: 700px; height: 22px; }
+  .bar-sparkles { width: 700px; }
 }
 
 /* Accessibility */
