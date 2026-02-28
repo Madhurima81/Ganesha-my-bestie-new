@@ -22,3 +22,37 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Prevent accidental snapshot files in source tree
+src/**/prev codes/
+src/**/previuos codes/
+src/**/* copy*.js
+src/**/* copy*.jsx
+src/**/* copy*.css
+src/**/* copy*.ts
+src/**/* copy*.tsx
+src/**/*.backup*.js
+src/**/*.backup*.jsx
+src/**/*.backup*.css
+src/**/*.backup*.ts
+src/**/*.backup*.tsx
+src/**/* backup*.js
+src/**/* backup*.jsx
+src/**/* backup*.css
+src/**/* backup*.ts
+src/**/* backup*.tsx
+src/**/* before*.js
+src/**/* before*.jsx
+src/**/* before*.css
+src/**/* before*.ts
+src/**/* before*.tsx
+src/**/* bfr*.js
+src/**/* bfr*.jsx
+src/**/* bfr*.css
+src/**/* bfr*.ts
+src/**/* bfr*.tsx
+src/**/*_backup*.js
+src/**/*_backup*.jsx
+src/**/*_backup*.css
+src/**/*_backup*.ts
+src/**/*_backup*.tsx
