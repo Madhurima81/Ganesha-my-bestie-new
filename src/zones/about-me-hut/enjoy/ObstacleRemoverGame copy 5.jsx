@@ -348,7 +348,7 @@ const handleDreamDrawingSave = (data) => {
               <p className="dream-text">
                I have three happy wishes for the world.
 <br />
-                Let’s make them come true together.<br />
+                Let's make them come true together.<br />
              
               </p>
 
@@ -365,7 +365,7 @@ const handleDreamDrawingSave = (data) => {
 </div>
 
               <button className="dream-btn" onClick={handleStartGame}>
-                Yes! Let’s do it together 🌱
+                Yes! Let's do it together 🌱
               </button>
 
             </div>
@@ -384,7 +384,7 @@ const handleDreamDrawingSave = (data) => {
 </p>
             <p className="wish-intro-text">The world looks a little sad right now 😔</p>
             <button className="wish-action-btn" onClick={() => setGamePhase('wish1-active')}>
-             Let’s Make Them Smile! 😊
+             Let's Make Them Smile! 😊
 
             </button>
           </div>
@@ -746,7 +746,7 @@ const handleDreamDrawingSave = (data) => {
           <div className="wish-intro-card">
             <p className="wish-intro-text">WOW! You made the world brighter! ✨</p>
             <p className="wish-intro-text">
-              Now it’s your turn 💛<br />
+              Now it's your turn 💛<br />
               What would you love to wish for?
             </p>
             
@@ -860,12 +860,12 @@ const handleDreamDrawingSave = (data) => {
       {trunkTaps === 0 ? (
         <>Sometimes worries float in the way ☁️
 
-          <br/> Let’s gently move them together <br/> 
+          <br/> Let's gently move them together <br/> 
           <strong>Tap my trunk 3 times to help me move them! 💛</strong>
         </>
       ) : trunkTaps < 3 ? (
         <>
-          You’re doing great! 🌟
+          You're doing great! 🌟
 <br/>Tap again!
           <div className="tap-counter-big">({trunkTaps}/3)</div>
         </>
@@ -968,7 +968,7 @@ const handleDreamDrawingSave = (data) => {
                 </div>
               </div>
               
-              <p className="wishes-quote">“You helped the world smile.” 🌍</p>
+              <p className="wishes-quote">"You helped the world smile." 🌍</p>
             </div>
 
             {/* --- CENTER: CONNECTOR --- */}
@@ -993,7 +993,7 @@ const handleDreamDrawingSave = (data) => {
                 )}
               </div>
               
-              <p className="wishes-quote">“I’ll help your dream shine.” ✨</p>
+              <p className="wishes-quote">"I'll help your dream shine." ✨</p>
             </div>
 
           </div>

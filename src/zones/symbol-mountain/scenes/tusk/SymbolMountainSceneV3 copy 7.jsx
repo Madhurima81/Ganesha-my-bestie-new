@@ -677,7 +677,7 @@ const SymbolMountainSceneContent = ({
           {/* ==================== DISCOVERY 1: EYES (Laser Focus) ==================== */}
           {showDiscoveryFlip1 && (
             <SimpleDiscoveryOverlay
-              celebrationTitle="You Found Ganesha’s Eye Magic!"
+              celebrationTitle="You Found Ganesha's Eye Magic!"
               celebrationText="His eyes want to share a special skill with you!"
               celebrationImage={ganeshaEyes}
               
@@ -706,7 +706,7 @@ const SymbolMountainSceneContent = ({
           {/* ==================== DISCOVERY 2: EARS (Big Ears) ==================== */}
           {showDiscoveryFlip2 && (
             <SimpleDiscoveryOverlay
-              celebrationTitle="You Found Ganesha’s Ear Magic!"
+              celebrationTitle="You Found Ganesha's Ear Magic!"
               celebrationText="His big ears have something to teach you!"
               celebrationImage={ganeshaEars}
               
@@ -738,7 +738,7 @@ const SymbolMountainSceneContent = ({
           {/* ==================== DISCOVERY 3: TUSK (Determination) ==================== */}
           {showDiscoveryFlip3 && (
             <SimpleDiscoveryOverlay
-              celebrationTitle="You Found Ganesha’s Tusk Magic!"
+              celebrationTitle="You Found Ganesha's Tusk Magic!"
               celebrationText="This tusk holds a powerful secret!"
               celebrationImage={ganeshaTusk}
               

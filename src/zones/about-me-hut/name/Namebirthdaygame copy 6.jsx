@@ -257,9 +257,9 @@ setTimeout(() => setGamePhase('child-name-intro'), 3000);
 
 // Add this array inside your component (or outside it)
   const encouragingPhrases = [
-    "Let’s try the next one 🌼",
+    "Let's try the next one 🌼",
     "Look closely 👀",
-    "You’ve got this 💛"
+    "You've got this 💛"
   ];
 
   // UPDATED handlePopBalloon function
@@ -456,7 +456,7 @@ const getGaneshaResponse = () => {
               <p className="game-modal-subtitle">
                 I have a special name and a special birthday.
 <br />
-               Let’s discover them together!
+               Let's discover them together!
               </p>
 
               {/* Icons Row */}
@@ -481,7 +481,7 @@ const getGaneshaResponse = () => {
               </div>
 
               <button className="game-modal-button" onClick={handleStartGame}>
-                Let’s Begin 🌱
+                Let's Begin 🌱
               </button>
             </div>
           </div>
@@ -953,7 +953,7 @@ const getGaneshaResponse = () => {
           <div className="bday-quest-card">
             {/* Title */}
             <h2 className="bday-quest-title">
-              Let’s Find My Birthday 🎂
+              Let's Find My Birthday 🎂
             </h2>
 
             {/* Body Copy */}
@@ -967,7 +967,7 @@ const getGaneshaResponse = () => {
               className="bday-quest-btn" 
               onClick={handleStartBirthdayChoice}
             >
-              Let’s Explore 🌼
+              Let's Explore 🌼
             </button>
           </div>
         </div>

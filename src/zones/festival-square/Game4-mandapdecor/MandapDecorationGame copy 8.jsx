@@ -237,7 +237,7 @@ const MISSIONS = [
       category: 'FLOWERS',
       zone: 'altar-left-flowers',  // ✅ NEW ZONE
       instruction: "Place flowers on the left altar",
-      successMessage: "“So pretty! Ganesha loves these flowers!”",
+      successMessage: '"So pretty! Ganesha loves these flowers!"' ,
       culturalNote: "Marigolds are sacred flowers in Hindu pujas",
       emoji: '🌸'
     },
@@ -247,7 +247,7 @@ const MISSIONS = [
       category: 'OFFERINGS',
       zone: 'altar-left-coconut',  // ✅ NEW ZONE (below flowers)
       instruction: "Add coconut to the left altar",
-      successMessage: "“Yay! The coconut is ready for puja!”",
+      successMessage: '"Yay! The coconut is ready for puja!"' ,
       culturalNote: "Breaking coconut removes obstacles",
       emoji: '🥥'
     },
@@ -257,7 +257,7 @@ const MISSIONS = [
       category: 'LIGHTS',
       zone: 'altar-center-diya',  // ✅ NEW ZONE (next to Ganesha)
       instruction: "Light the diya next to Ganesha",
-      successMessage: "“Lovely! The diya is shining bright!”",
+      successMessage: '"Lovely! The diya is shining bright!"' ,
       culturalNote: "Diyas guide the gods to our prayers",
       emoji: '🪔'
     },
@@ -1366,7 +1366,7 @@ const handleZoneClick = (zoneId, event) => {
       }
       return (
         <div className="header-content-row">
-          <span>“Tap items to put them in the right place”</span>
+          <span>"Tap items to put them in the right place"</span>
         </div>
       );
     }

@@ -581,14 +581,14 @@ const handleProgressBoxClick = (type) => {
     const allSymbols = [
       { 
         id: 'modak', 
-        displayName: "Modak — Ganesha’s Sweet Treat!", 
+        displayName: "Modak — Ganesha's Sweet Treat!", 
         image: '/images/symbols-symbolmountain/symbol-modak-colored.png', 
         description: "A magical sweet that fills you with happy, joyful energy!", 
         //audio: '/audio/symbols/modak.mp3' 
       },
       { 
         id: 'mooshika', 
-        displayName: "Mooshika — Ganesha’s Clever Friend!", 
+        displayName: "Mooshika — Ganesha's Clever Friend!", 
         image: '/images/symbols-symbolmountain/symbol-mooshika-colored.png', 
         description: "A tiny mouse with a big heart! Mooshika helps Ganesha travel anywhere and reminds us to stay humble & smart.", 
         //audio: '/audio/symbols/mooshika.mp3' 
@@ -597,7 +597,7 @@ const handleProgressBoxClick = (type) => {
         id: 'belly', 
         displayName: "Belly — Big Happy Tummy!", 
         image: '/images/symbols-symbolmountain/symbol-belly-colored.png', 
-        description: "Ganesha’s big belly holds all worries and turns them into calm. It reminds us to feel safe, relaxed and happy inside.", 
+        description: "Ganesha's big belly holds all worries and turns them into calm. It reminds us to feel safe, relaxed and happy inside.", 
         //audio: '/audio/symbols/belly.mp3' 
       },
       { 
@@ -611,7 +611,7 @@ const handleProgressBoxClick = (type) => {
         id: 'trunk', 
         displayName: "Trunk — Strength with Flexibility", 
         image: '/images/symbols-symbolmountain/symbol-trunk-colored.png', 
-        description: "Ganesha’s trunk is powerful yet gentle — showing us that real strength is soft, kind & adaptable.", 
+        description: "Ganesha's trunk is powerful yet gentle — showing us that real strength is soft, kind & adaptable.", 
         //audio: '/audio/symbols/trunk.mp3' 
       },
       { 
@@ -669,7 +669,7 @@ const handleProgressBoxClick = (type) => {
         displayName: "Mahakaya", 
         subtitle: "Mighty Form!", 
         image: '/images/meanings-caveofsecrets/mahakaya-symbol.png',
-        description: "Ganesha’s body is big, strong and steady like a mountain! A powerful protector with a warm, loving heart. ❤️",
+        description: "Ganesha's body is big, strong and steady like a mountain! A powerful protector with a warm, loving heart. ❤️",
         audio: '/audio/meanings/mahakaya.mp3'
       },
       { 
@@ -717,7 +717,7 @@ const handleProgressBoxClick = (type) => {
         displayName: "Sarvada", 
         subtitle: "Always!", 
         image: '/images/meanings-caveofsecrets/sarvada-symbol.png',
-        description: "Ganesha’s love and blessings stay always with us. Forever guiding, forever protecting. 💛",
+        description: "Ganesha's love and blessings stay always with us. Forever guiding, forever protecting. 💛",
         audio: '/audio/meanings/sarvada.mp3'
       }
     ];

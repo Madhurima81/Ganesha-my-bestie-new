@@ -159,7 +159,7 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
     { month: 12, name: 'December', festival: 'Karthigai Deepam', emoji: '🕯️', color: '#F4A460' }
   ];
 
-  const encouragingPhrases = ["Let’s try the next one 🌼", "Look closely 👀", "You’ve got this 💛"];
+  const encouragingPhrases = ["Let's try the next one 🌼", "Look closely 👀", "You've got this 💛"];
 
 // --- RELOAD DETECTION & RESTORATION ---
 useEffect(() => {
@@ -467,7 +467,7 @@ const handleFestivalClick = (festivalId) => {
             <div className="game-modal-character"><img src={babyGaneshaImg} alt="Baby Ganesha" /></div>
             <div className="game-modal-card">
               <h1 className="game-modal-title">Name & Birthday Quest!</h1>
-              <p className="game-modal-subtitle">I have a special name and a special birthday.<br />Let’s discover them together!</p>
+              <p className="game-modal-subtitle">I have a special name and a special birthday.<br />Let's discover them together!</p>
               <div className="game-modal-icons">
                 <div className="game-modal-icon-item">
                   <div className="game-modal-icon-circle" style={{background: '#EDE7F6', borderColor: '#D1C4E9'}}><span style={{fontSize: '2.5rem'}}>🔤</span></div>
@@ -478,7 +478,7 @@ const handleFestivalClick = (festivalId) => {
                   <span className="game-modal-icon-label">Birthday</span>
                 </div>
               </div>
-              <button className="game-modal-button" onClick={handleStartGame}>Let’s Begin 🌱</button>
+              <button className="game-modal-button" onClick={handleStartGame}>Let's Begin 🌱</button>
             </div>
           </div>
         </div>
@@ -679,9 +679,9 @@ const handleFestivalClick = (festivalId) => {
         <div className="bday-quest-overlay">
           <img src={babyGaneshaImg} alt="Baby Ganesha" className="bday-quest-ganesha bounce" />
           <div className="bday-quest-card">
-            <h2 className="bday-quest-title">Let’s Find My Birthday 🎂</h2>
+            <h2 className="bday-quest-title">Let's Find My Birthday 🎂</h2>
             <p className="bday-quest-text">My birthday is a joyful day when people celebrate together.<br />It comes during the festival season.</p>
-            <button className="bday-quest-btn" onClick={handleStartBirthdayChoice}>Let’s Explore 🌼</button>
+            <button className="bday-quest-btn" onClick={handleStartBirthdayChoice}>Let's Explore 🌼</button>
           </div>
         </div>
       )}

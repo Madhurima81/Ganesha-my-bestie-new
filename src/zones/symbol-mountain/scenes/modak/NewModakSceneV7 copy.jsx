@@ -1,4 +1,4 @@
-// zones/symbol-mountain/scenes/modak/NewModakSceneV7_MVP.jsx
+﻿// zones/symbol-mountain/scenes/modak/NewModakSceneV7_MVP.jsx
 // MVP Version: Voice-guided, minimal UI (no header, no help menu)
 // Like Khan Academy Kids / Lingokids approach
 
@@ -1078,7 +1078,6 @@ const NewModakSceneMVPContent = ({
                       </h1>
 
                       <p className="game-modal-subtitle">
-                        {openingModalContent?.subtitle || '3 magical friends are hiding — let us find them!'}
                       </p>
 
                       <div className="game-modal-icons">

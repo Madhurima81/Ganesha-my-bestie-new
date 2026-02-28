@@ -1553,7 +1553,7 @@ onClick={() => {
                             color: powerConfig[currentPracticeWord]?.color || '#FFD700'
                           }}
                         >
-                          {powerConfig[currentPracticeWord]?.icon || 'Ã¢Å“Â¨'}
+                          {powerConfig[currentPracticeWord]?.icon || 'Ã¢Å"¨'}
                         </div>
                       ))}
                     </div>
@@ -1606,7 +1606,7 @@ onClick={() => {
                     zIndex: 25 
                   }}>
                     <button className="record-blessing-btn" onClick={handleGaneshaRecord}>
-                      Ã°Å¸Å½Â¤ Chant Now
+                      🎤 Chant Now
                     </button>
                     <button className="skip-blessing-btn" onClick={handleGaneshaSkip}>
                       Chant Later
@@ -1665,7 +1665,7 @@ onClick={() => {
                     }
                   </div>
                   <button className="word-practice-btn" onClick={() => handleWordPlay(currentPracticeWord)}>
-                    Ã°Å¸Å½Âµ {currentPracticeWord.toUpperCase()}
+                    🎵 {currentPracticeWord.toUpperCase()}
                   </button>
                   <button className="practice-close-btn" onClick={handleAudioPracticeClose}>
                     Close
@@ -1678,10 +1678,10 @@ onClick={() => {
             {showChoiceButtons && (
               <div className="power-choice-buttons">
                 <button className="choice-btn save-animal-btn" onClick={handleSaveAnimal}>
-                  Ã°Å¸ÂÂ± Save an Animal
+                  🐱 Save an Animal
                 </button>
                 <button className="choice-btn continue-learning-btn" onClick={handleContinueLearning}>
-                  {currentPracticeWord === 'samaprabha' ? 'Ã¢Å“Â¨ End Scene' : 'Ã¢Å¾Â¡Ã¯Â¸Â Continue Learning'}
+                  {currentPracticeWord === 'samaprabha' ? 'Ã¢Å"¨ End Scene' : '➡️ Continue Learning'}
                 </button>
               </div>
             )}
@@ -2110,7 +2110,7 @@ onClick={() => {
             fontSize: '12px',
             fontWeight: 'bold'
           }} onClick={() => {
-            console.log('Ã°Å¸Â§Âª TESTING: Reload test clicked');
+            console.log('🧪 TESTING: Reload test clicked');
             console.log('Current sceneState:', sceneState);
             console.log('Memory game state:', sceneState?.memoryGameState);
             console.log('Mission state:', sceneState?.missionState);

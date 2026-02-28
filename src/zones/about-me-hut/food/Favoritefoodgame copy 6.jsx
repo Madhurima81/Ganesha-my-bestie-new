@@ -907,7 +907,7 @@ useEffect(() => {
         <div className="intro-overlay">
           <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
           <div className="child-phase-modal">
-            <h2 className="child-phase-title">Now it’s your turn! 😊</h2>
+            <h2 className="child-phase-title">Now it's your turn! 😊</h2>
             <p className="child-phase-subtext">Tell me about you.</p>
             <button className="child-phase-button" onClick={() => setGamePhase('child-food-choice')}>
               Tell Me about You!✨

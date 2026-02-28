@@ -77,7 +77,7 @@ funFact: 'My brother is brave! He rides a beautiful peacock.',
       id: 'myself',
       role: 'Me', // or "Myself"
       correctAnswer: 'ganesha',
-funFact: 'That’s me! I love modaks and helping my friends.',
+funFact: 'That's me! I love modaks and helping my friends.',
       position: { bottom: '25%', right: '15%' } // Mirrored position
     }
   ];
@@ -611,7 +611,7 @@ const handleMemberClick = (index, e) => {
        {/* Hide instruction after 3 members are added so it doesn't block the view */}
           {childFamily.length < 3 && (
             <div className="instruction-text">
-            <p>👇 “Pick someone to add to your tree!” 🌱!</p>
+            <p>👇 "Pick someone to add to your tree!" 🌱!</p>
             </div>
           )}
          {/* Display on tree */}

@@ -176,8 +176,8 @@ const FamilyTreeGameContent = ({
      {
       id: 'myself', role: 'Me', correctAnswer: 'ganesha',
       position: { bottom: '25%', right: '30%' },
-      introTitle: '😊 That’s Me!', introText: 'I love modaks 🍬',
-      flipTitle: 'Me', funFact: 'That’s me! I love modaks and helping my friends 😊'
+      introTitle: '😊 That's Me!', introText: 'I love modaks 🍬',
+      flipTitle: 'Me', funFact: 'That's me! I love modaks and helping my friends 😊'
     }
   ];
 
@@ -674,7 +674,7 @@ const FamilyTreeGameContent = ({
           <img src={familyTree} alt="Family Tree" className="tree-overlay" />
           
           {sceneState.childFamily.length < 3 && (
-            <div className="instruction-text"><p>👇 “Tap someone to add to your tree!” 🌱!</p></div>
+            <div className="instruction-text"><p>👇 "Tap someone to add to your tree!" 🌱!</p></div>
           )}
           {sceneState.childFamily.length > 0 && (
             <div className="tray-hint-text">(Tap a face to remove it)</div>

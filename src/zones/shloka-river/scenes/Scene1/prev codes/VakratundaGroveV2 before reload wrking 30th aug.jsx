@@ -182,7 +182,7 @@ const VakratundaGroveContent = ({
   zoneId,
   sceneId
 }) => {
-  console.log('ðŸŽ® VakratundaGroveContent render', { 
+  console.log('🎮 VakratundaGroveContent render', { 
     sceneState: sceneState?.phase, 
     isReload, 
     memoryGameState: !!sceneState?.memoryGameState,
@@ -236,8 +236,8 @@ const VakratundaGroveContent = ({
 
   // Add power configuration
   const powerConfig = {
-    vakratunda: { name: 'Flexibility', icon: 'ðŸŒ€', color: '#FFD700' },
-    mahakaya: { name: 'Inner Strength', icon: 'ðŸ’ª', color: '#FF6B35' }
+    vakratunda: { name: 'Flexibility', icon: '🌀', color: '#FFD700' },
+    mahakaya: { name: 'Inner Strength', icon: 'ðŸ'ª', color: '#FF6B35' }
   };
 
   // Safe setTimeout function
@@ -256,12 +256,12 @@ const VakratundaGroveContent = ({
 
   // UNIFIED: Single state saving function for both components
   const handleSaveComponentState = (componentType, componentState) => {
-    console.log(`ðŸ’¾ Saving ${componentType} state:`, componentState);
+    console.log(`ðŸ'¾ Saving ${componentType} state:`, componentState);
     
     // Prevent double calls by debouncing
     if (handleSaveComponentState.lastCall && 
         Date.now() - handleSaveComponentState.lastCall < 100) {
-      console.log('ðŸš« Debounced duplicate save call');
+      console.log('🚫 Debounced duplicate save call');
       return;
     }
     handleSaveComponentState.lastCall = Date.now();
@@ -276,7 +276,7 @@ const VakratundaGroveContent = ({
       })
     };
     
-    console.log(`âœ… Updating scene state with ${componentType}:`, updatedState);
+    console.log(`✅ Updating scene state with ${componentType}:`, updatedState);
     sceneActions.updateState(updatedState);
   };
 
@@ -319,7 +319,7 @@ const VakratundaGroveContent = ({
   useEffect(() => {
     if (!isReload || !sceneState) return;
     
-    console.log('ðŸ”„ SANSKRIT RELOAD: Starting unified reload sequence', {
+    console.log('ðŸ"„ SANSKRIT RELOAD: Starting unified reload sequence', {
       currentPopup: sceneState.currentPopup,
       showingCompletionScreen: sceneState.showingCompletionScreen,
       completed: sceneState.completed,
@@ -342,7 +342,7 @@ const VakratundaGroveContent = ({
     );
     
     if (isFreshRestartAfterPlayAgain) {
-      console.log('ðŸ”„ SANSKRIT RELOAD: Detected fresh restart after Play Again');
+      console.log('ðŸ"„ SANSKRIT RELOAD: Detected fresh restart after Play Again');
       
       if (playAgainRequested === 'true') {
         localStorage.removeItem(playAgainKey);
@@ -372,7 +372,7 @@ const VakratundaGroveContent = ({
       
       // Handle popup states
       if (sceneState.currentPopup) {
-        console.log('ðŸ”„ SANSKRIT: Resuming popup:', sceneState.currentPopup);
+        console.log('ðŸ"„ SANSKRIT: Resuming popup:', sceneState.currentPopup);
         
         switch(sceneState.currentPopup) {
           case 'final_fireworks':
@@ -390,7 +390,7 @@ const VakratundaGroveContent = ({
               return;
             }
             
-            console.log('ðŸŽ¯ SANSKRIT: Resuming final fireworks');
+            console.log('🎯 SANSKRIT: Resuming final fireworks');
             setShowSparkle('final-fireworks');
             sceneActions.updateState({
               gameCoachState: null,
@@ -426,11 +426,11 @@ const VakratundaGroveContent = ({
 
       // UNIFIED: Restore component states if available
       if (sceneState.memoryGameState) {
-        console.log('ðŸ”„ Restoring memory game state:', sceneState.memoryGameState);
+        console.log('ðŸ"„ Restoring memory game state:', sceneState.memoryGameState);
       }
       
       if (sceneState.missionState && sceneState.missionState.word) {
-        console.log('ðŸ”„ Restoring mission state:', sceneState.missionState);
+        console.log('ðŸ"„ Restoring mission state:', sceneState.missionState);
         setCurrentRescueWord(sceneState.missionState.word);
         if (sceneState.missionState.rescuePhase !== 'problem') {
           setShowRescueMission(true);
@@ -468,7 +468,7 @@ const VakratundaGroveContent = ({
   };
 
   const handleSaveAnimal = () => {
-    console.log('ðŸ± RESCUE MISSION: Starting animal rescue');
+    console.log('🐱 RESCUE MISSION: Starting animal rescue');
     
     setShowChoiceButtons(false);
     setCurrentRescueWord(currentPracticeWord || blessingWord);
@@ -484,7 +484,7 @@ const VakratundaGroveContent = ({
   };
 
   const handleRescueComplete = () => {
-    console.log('âœ… Rescue complete for:', currentRescueWord);
+    console.log('✅ Rescue complete for:', currentRescueWord);
     
     // UNIFIED: Save completion state
     handleSaveComponentState('mission', {
@@ -741,7 +741,7 @@ const VakratundaGroveContent = ({
     
     return (
       <div className="syllable-counter">
-        <div className="counter-icon">ðŸŒ¸</div>
+        <div className="counter-icon">🌸</div>
         <div className="counter-progress">
           <div
             className="counter-progress-fill"
@@ -1234,7 +1234,7 @@ const VakratundaGroveContent = ({
                             color: powerConfig[currentPracticeWord]?.color || '#FFD700'
                           }}
                         >
-                          {powerConfig[currentPracticeWord]?.icon || 'âœ¨'}
+                          {powerConfig[currentPracticeWord]?.icon || '✨'}
                         </div>
                       ))}
                     </div>
@@ -1287,7 +1287,7 @@ const VakratundaGroveContent = ({
                     zIndex: 25 
                   }}>
                     <button className="record-blessing-btn" onClick={handleGaneshaRecord}>
-                      ðŸŽ¤ Chant Now
+                      🎤 Chant Now
                     </button>
                     <button className="skip-blessing-btn" onClick={handleGaneshaSkip}>
                       Chant Later
@@ -1338,7 +1338,7 @@ const VakratundaGroveContent = ({
                     }
                   </div>
                   <button className="word-practice-btn" onClick={() => handleWordPlay(currentPracticeWord)}>
-                    ðŸŽµ {currentPracticeWord.toUpperCase()}
+                    🎵 {currentPracticeWord.toUpperCase()}
                   </button>
                   <button className="practice-close-btn" onClick={handleAudioPracticeClose}>
                     Close
@@ -1351,10 +1351,10 @@ const VakratundaGroveContent = ({
             {showChoiceButtons && (
               <div className="power-choice-buttons">
                 <button className="choice-btn save-animal-btn" onClick={handleSaveAnimal}>
-                  ðŸ± Save an Animal
+                  🐱 Save an Animal
                 </button>
                 <button className="choice-btn continue-learning-btn" onClick={handleContinueLearning}>
-                  {currentPracticeWord === 'mahakaya' ? 'âœ¨ End Scene' : 'âž¡ï¸ Continue Learning'}
+                  {currentPracticeWord === 'mahakaya' ? '✨ End Scene' : '➡️ Continue Learning'}
                 </button>
               </div>
             )}
@@ -1483,7 +1483,7 @@ const VakratundaGroveContent = ({
               count={15}
               colors={['#FFD700', '#FF1493', '#00CED1', '#98FB98', '#FF6347', '#9370DB']}
               onComplete={() => {
-                console.log('ðŸŽ¯ FIREWORKS COMPLETION HANDLER CALLED');
+                console.log('🎯 FIREWORKS COMPLETION HANDLER CALLED');
                 
                 try {
                   setShowSparkle(null);
@@ -1499,17 +1499,17 @@ const VakratundaGroveContent = ({
                         phase: 'complete',
                         timestamp: Date.now()
                       });
-                      console.log('âœ… Game state saved successfully');
+                      console.log('✅ Game state saved successfully');
                     } catch (saveError) {
-                      console.warn('âš ï¸ Error saving game state:', saveError);
+                      console.warn('âš ️ Error saving game state:', saveError);
                     }
 
                     try {
                       localStorage.removeItem(`temp_session_${profileId}_shloka-river_vakratunda-grove`);
                       SimpleSceneManager.clearCurrentScene();
-                      console.log('âœ… Temp session cleared');
+                      console.log('✅ Temp session cleared');
                     } catch (clearError) {
-                      console.warn('âš ï¸ Error clearing session:', clearError);
+                      console.warn('âš ️ Error clearing session:', clearError);
                     }
                   }
 
@@ -1520,13 +1520,13 @@ const VakratundaGroveContent = ({
                     stars: 5,
                     completed: true
                   });
-                  console.log('ðŸŽ¯ Scene state updated');
+                  console.log('🎯 Scene state updated');
 
                   setShowSceneCompletion(true);
-                  console.log('ðŸŽ¯ setShowSceneCompletion(true) called');
+                  console.log('🎯 setShowSceneCompletion(true) called');
                   
                 } catch (error) {
-                  console.error('ðŸ’¥ Error in fireworks completion:', error);
+                  console.error('ðŸ'¥ Error in fireworks completion:', error);
                   setShowSceneCompletion(true);
                 }
               }}
@@ -1658,7 +1658,7 @@ const VakratundaGroveContent = ({
             fontSize: '12px',
             fontWeight: 'bold'
           }} onClick={() => {
-            console.log('ðŸ§ª TESTING: Quick completion test clicked');
+            console.log('🧪 TESTING: Quick completion test clicked');
             
             sceneActions.updateState({
               learnedSyllables: {
@@ -1707,7 +1707,7 @@ const VakratundaGroveContent = ({
             fontSize: '12px',
             fontWeight: 'bold'
           }} onClick={() => {
-            console.log('ðŸ§ª TESTING: Reload test clicked');
+            console.log('🧪 TESTING: Reload test clicked');
             console.log('Current sceneState:', sceneState);
             console.log('Memory game state:', sceneState?.memoryGameState);
             console.log('Mission state:', sceneState?.missionState);

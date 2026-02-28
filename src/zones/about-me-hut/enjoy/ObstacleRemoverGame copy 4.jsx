@@ -192,7 +192,7 @@ const handleDreamDrawingSave = (data) => {
                 I need your help to make them come true!<br />
                 <br />
                 Will you help me?<br />
-                Then I’ll help you with your dream!
+                Then I'll help you with your dream!
               </p>
 
 <div className="dream-icon-row">
@@ -208,7 +208,7 @@ const handleDreamDrawingSave = (data) => {
 </div>
 
               <button className="dream-btn" onClick={handleStartGame}>
-                Yes! Let’s Help Ganesha! 🌼
+                Yes! Let's Help Ganesha! 🌼
               </button>
 
             </div>
@@ -227,7 +227,7 @@ const handleDreamDrawingSave = (data) => {
 </p>
             <p className="wish-intro-text">The world looks a little sad right now 😔</p>
             <button className="wish-action-btn" onClick={() => setGamePhase('wish1-active')}>
-             Let’s Make Them Smile! 😊
+             Let's Make Them Smile! 😊
 
             </button>
           </div>
@@ -588,7 +588,7 @@ const handleDreamDrawingSave = (data) => {
           <div className="wish-intro-card">
             <p className="wish-intro-text">WOW! You made the world brighter! ✨</p>
             <p className="wish-intro-text">
-              Now it’s your turn 💛<br />
+              Now it's your turn 💛<br />
               What would you love to wish for?
             </p>
             
@@ -808,7 +808,7 @@ const handleDreamDrawingSave = (data) => {
                 </div>
               </div>
               
-              <p className="wishes-quote">“You helped the world smile.” 🌍</p>
+              <p className="wishes-quote">"You helped the world smile." 🌍</p>
             </div>
 
             {/* --- CENTER: CONNECTOR --- */}
@@ -833,7 +833,7 @@ const handleDreamDrawingSave = (data) => {
                 )}
               </div>
               
-              <p className="wishes-quote">“I’ll help your dream shine.” ✨</p>
+              <p className="wishes-quote">"I'll help your dream shine." ✨</p>
             </div>
 
           </div>

@@ -378,13 +378,13 @@ if (gamePhase === 'all-wishes-complete') {
             <div className="game-modal-character"><img src={babyGaneshaImg} alt="Ganesha" /></div>
             <div className="dream-card">
               <h1 className="dream-title">Our Big Wishes! 🌟</h1>
-              <p className="dream-text">I have three happy wishes for the world.<br />Let’s make them come true together.</p>
+              <p className="dream-text">I have three happy wishes for the world.<br />Let's make them come true together.</p>
               <div className="dream-icon-row">
                 <div className="dream-icon-item"><img src={wishIconEarth} alt="Earth" className="intro-wish-icon" /></div>
                 <div className="dream-icon-item"><img src={wishIconShare} alt="Sharing" className="intro-wish-icon" /></div>
                 <div className="dream-icon-item"><img src={wishIconFlower} alt="Nature" className="intro-wish-icon" /></div>
               </div>
-              <button className="dream-btn" onClick={handleStartGame}>Yes! Let’s do it together 🌱</button>
+              <button className="dream-btn" onClick={handleStartGame}>Yes! Let's do it together 🌱</button>
             </div>
           </div>
         </div>
@@ -397,7 +397,7 @@ if (gamePhase === 'all-wishes-complete') {
           <div className="wish-intro-card">
             <p className="wish-intro-text">My first wish is for a happy world.</p>
             <p className="wish-intro-text">The world looks a little sad right now 😔</p>
-            <button className="wish-action-btn" onClick={() => sceneActions.updateState({ gamePhase: 'wish1-active' })}>Let’s Make Them Smile! 😊</button>
+            <button className="wish-action-btn" onClick={() => sceneActions.updateState({ gamePhase: 'wish1-active' })}>Let's Make Them Smile! 😊</button>
           </div>
         </div>
       )}
@@ -520,7 +520,7 @@ if (gamePhase === 'all-wishes-complete') {
           <img src={babyGaneshaSit} alt="Baby Ganesha" className="intro-ganesha celebrate-scale" />
           <div className="wish-intro-card">
             <p className="wish-intro-text">WOW! You made the world brighter! ✨</p>
-            <p className="wish-intro-text">Now it’s your turn 💛<br />What would you love to wish for?</p>
+            <p className="wish-intro-text">Now it's your turn 💛<br />What would you love to wish for?</p>
             <button className="wish-action-btn" onClick={() => sceneActions.updateState({ gamePhase: 'dream-intro' })}>Tell Me Your Dream! 💭</button>
           </div>
         </div>

@@ -159,7 +159,7 @@ import parkCleaniebucket from './assets/images/game 2/helpers/park_cleaniebucket
 import parkBloomyflower from './assets/images/game 2/helpers/park_bloomyflower.png';
 import parkSparklestar from './assets/images/game 2/helpers/park_sparklestar.png';
 
-// âœ… FIXED: Correct flow sequence with Game 2
+// ✅ FIXED: Correct flow sequence with Game 2
 const SCENE_PHASES = {
   DOOR1_ACTIVE: 'door1_active',           // â† FIRST: Door 1
   DOOR1_COMPLETE: 'door1_complete',
@@ -169,9 +169,9 @@ const SCENE_PHASES = {
   SCENARIO_CLARITY: 'scenario_clarity',
   SCENARIO_CHOOSING: 'scenario_choosing',
   SCENARIO_SUCCESS: 'scenario_success',
-  SARVAKARYESHU_LEARNING: 'sarvakaryeshu_learning', // âœ… Clean text phase
+  SARVAKARYESHU_LEARNING: 'sarvakaryeshu_learning', // ✅ Clean text phase
   
-  // âœ… NEW: Game 2 phases (same pattern as Game 1)
+  // ✅ NEW: Game 2 phases (same pattern as Game 1)
   GAME2_INTRO: 'game2_intro',
   HELPER_UNCERTAINTY: 'helper_uncertainty',
   HELPER_CHOOSING: 'helper_choosing', 

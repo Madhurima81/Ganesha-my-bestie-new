@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import './Familytreegame.css';
 import '../../shared/components/OpeningModal.css';
 import AboutMeCompletion from "../components/Aboutmecompletion";
@@ -283,8 +283,8 @@ const FamilyTreeGameContent = ({
      {
       id: 'myself', role: 'Me', correctAnswer: 'ganesha',
       position: { bottom: '25%', right: '30%' },
-      introTitle: '😊 That’s Me!', introText: 'I love modaks 🍬',
-      flipTitle: 'Me', funFact: 'That’s me! I love modaks and helping my friends 😊'
+      introTitle: '😊 That's Me!', introText: 'I love modaks 🍬',
+      flipTitle: 'Me', funFact: 'That's me! I love modaks and helping my friends 😊'
     }
   ];
 
@@ -974,7 +974,6 @@ const FamilyTreeGameContent = ({
             <div className="game-modal-card">
               <h1 className="game-modal-title">{openingModalContent?.title || 'Meet My Family'}</h1>
               <p className="game-modal-subtitle">
-                {openingModalContent?.subtitle || 'This is my family. They make me who I am.'}<br />
                 {openingModalContent?.description || "After that, I'd love to meet yours too 💛"}
               </p>
               <div className="game-modal-icons">

@@ -754,7 +754,7 @@ const handleDrawingCancel = () => {
           
           {/* New Cream Modal Card */}
           <div className="child-phase-modal">
-            <h2 className="child-phase-title">Now it’s your turn! 😊</h2>
+            <h2 className="child-phase-title">Now it's your turn! 😊</h2>
             <p className="child-phase-subtext">Tell me about you.</p>
             
             <button 

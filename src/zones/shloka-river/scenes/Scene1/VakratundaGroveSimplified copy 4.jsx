@@ -954,7 +954,7 @@ onClick={() => {
     powerText="Like a lotus that bends with the water, you can handle changes and keep going with a happy heart."
     powerIcon={appVakratunda}
     
-    buttonText="Let’s Grow Bigger! (Go to Mahakaya)"
+    buttonText="Let's Grow Bigger! (Go to Mahakaya)"
     onComplete={() => {
       console.log("Discovery 1: Vakratunda learned!");
       setShowDiscoveryFlip1(false);

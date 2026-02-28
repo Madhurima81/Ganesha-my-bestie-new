@@ -190,7 +190,7 @@ const VakratundaGroveContent = ({
   zoneId,
   sceneId
 }) => {
-  console.log('Ã°Å¸Å½Â® VakratundaGroveContent render', { 
+  console.log('🎮 VakratundaGroveContent render', { 
     sceneState: sceneState?.phase, 
     isReload, 
     memoryGameState: !!sceneState?.memoryGameState,
@@ -246,8 +246,8 @@ const VakratundaGroveContent = ({
 
   // Add power configuration
   const powerConfig = {
-    vakratunda: { name: 'Flexibility', icon: 'Ã°Å¸Å’â‚¬', color: '#FFD700' },
-    mahakaya: { name: 'Inner Strength', icon: 'Ã°Å¸â€™Âª', color: '#FF6B35' }
+    vakratunda: { name: 'Flexibility', icon: 'Ã°Å¸Å'€', color: '#FFD700' },
+    mahakaya: { name: 'Inner Strength', icon: '💪', color: '#FF6B35' }
   };
 
   // Safe setTimeout function
@@ -309,12 +309,12 @@ useEffect(() => {
 
   // UNIFIED: Single state saving function for both components
   const handleSaveComponentState = (componentType, componentState) => {
-    console.log(`Ã°Å¸â€™Â¾ Saving ${componentType} state:`, componentState);
+    console.log(`💾 Saving ${componentType} state:`, componentState);
     
     // Prevent double calls by debouncing
     if (handleSaveComponentState.lastCall && 
         Date.now() - handleSaveComponentState.lastCall < 100) {
-      console.log('Ã°Å¸Å¡Â« Debounced duplicate save call');
+      console.log('🚫 Debounced duplicate save call');
       return;
     }
     handleSaveComponentState.lastCall = Date.now();
@@ -329,7 +329,7 @@ useEffect(() => {
       })
     };
     
-    console.log(`Ã¢Å“â€¦ Updating scene state with ${componentType}:`, updatedState);
+    console.log(`Ã¢Å"… Updating scene state with ${componentType}:`, updatedState);
     sceneActions.updateState(updatedState);
   };
 
@@ -575,7 +575,7 @@ useEffect(() => {
   /*useEffect(() => {
     if (!isReload || !sceneState) return;
     
-    console.log('Ã°Å¸â€â€ž SANSKRIT RELOAD: Starting unified reload sequence', {
+    console.log('🔄 SANSKRIT RELOAD: Starting unified reload sequence', {
       currentPopup: sceneState.currentPopup,
       showingCompletionScreen: sceneState.showingCompletionScreen,
       completed: sceneState.completed,
@@ -598,7 +598,7 @@ useEffect(() => {
     );
     
     if (isFreshRestartAfterPlayAgain) {
-      console.log('Ã°Å¸â€â€ž SANSKRIT RELOAD: Detected fresh restart after Play Again');
+      console.log('🔄 SANSKRIT RELOAD: Detected fresh restart after Play Again');
       
       if (playAgainRequested === 'true') {
         localStorage.removeItem(playAgainKey);
@@ -628,7 +628,7 @@ useEffect(() => {
       
       // Handle popup states
       if (sceneState.currentPopup) {
-        console.log('Ã°Å¸â€â€ž SANSKRIT: Resuming popup:', sceneState.currentPopup);
+        console.log('🔄 SANSKRIT: Resuming popup:', sceneState.currentPopup);
         
         switch(sceneState.currentPopup) {
           case 'final_fireworks':
@@ -646,7 +646,7 @@ useEffect(() => {
               return;
             }
             
-            console.log('Ã°Å¸Å½Â¯ SANSKRIT: Resuming final fireworks');
+            console.log('🎯 SANSKRIT: Resuming final fireworks');
             setShowSparkle('final-fireworks');
             sceneActions.updateState({
               gameCoachState: null,
@@ -682,11 +682,11 @@ useEffect(() => {
 
       // UNIFIED: Restore component states if available
       if (sceneState.memoryGameState) {
-        console.log('Ã°Å¸â€â€ž Restoring memory game state:', sceneState.memoryGameState);
+        console.log('🔄 Restoring memory game state:', sceneState.memoryGameState);
       }
       
       if (sceneState.missionState && sceneState.missionState.word) {
-        console.log('Ã°Å¸â€â€ž Restoring mission state:', sceneState.missionState);
+        console.log('🔄 Restoring mission state:', sceneState.missionState);
         setCurrentRescueWord(sceneState.missionState.word);
         if (sceneState.missionState.rescuePhase !== 'problem') {
           setShowRescueMission(true);
@@ -725,7 +725,7 @@ useEffect(() => {
 
  // Updated handleSaveAnimal function - replace the entire function
 const handleSaveAnimal = () => {
-  console.log('ðŸ± RESCUE MISSION: Starting animal rescue');
+  console.log('🐱 RESCUE MISSION: Starting animal rescue');
   
   setShowChoiceButtons(false);
   setCurrentRescueWord(currentPracticeWord || blessingWord);
@@ -750,7 +750,7 @@ const handleSaveAnimal = () => {
 
  // Updated handleRescueComplete function - replace the entire function
 const handleRescueComplete = () => {
-  console.log('âœ… Rescue complete for:', currentRescueWord);
+  console.log('✅ Rescue complete for:', currentRescueWord);
   
   // UNIFIED: Save completion state
   handleSaveComponentState('mission', {
@@ -1056,7 +1056,7 @@ const handleWordPlay = (word) => {
     
     return (
       <div className="syllable-counter">
-        <div className="counter-icon">Ã°Å¸Å’Â¸</div>
+        <div className="counter-icon">Ã°Å¸Å'¸</div>
         <div className="counter-progress">
           <div
             className="counter-progress-fill"
@@ -1555,7 +1555,7 @@ onClick={() => {
                             color: powerConfig[currentPracticeWord]?.color || '#FFD700'
                           }}
                         >
-                          {powerConfig[currentPracticeWord]?.icon || 'Ã¢Å“Â¨'}
+                          {powerConfig[currentPracticeWord]?.icon || 'Ã¢Å"¨'}
                         </div>
                       ))}
                     </div>
@@ -1608,7 +1608,7 @@ onClick={() => {
                     zIndex: 25 
                   }}>
                     <button className="record-blessing-btn" onClick={handleGaneshaRecord}>
-                      Ã°Å¸Å½Â¤ Chant Now
+                      🎤 Chant Now
                     </button>
                     <button className="skip-blessing-btn" onClick={handleGaneshaSkip}>
                       Chant Later
@@ -1659,7 +1659,7 @@ onClick={() => {
                     }
                   </div>
                   <button className="word-practice-btn" onClick={() => handleWordPlay(currentPracticeWord)}>
-                    Ã°Å¸Å½Âµ {currentPracticeWord.toUpperCase()}
+                    🎵 {currentPracticeWord.toUpperCase()}
                   </button>
                   <button className="practice-close-btn" onClick={handleAudioPracticeClose}>
                     Close
@@ -1672,10 +1672,10 @@ onClick={() => {
             {showChoiceButtons && (
               <div className="power-choice-buttons">
                 <button className="choice-btn save-animal-btn" onClick={handleSaveAnimal}>
-                  Ã°Å¸ÂÂ± Save an Animal
+                  🐱 Save an Animal
                 </button>
                 <button className="choice-btn continue-learning-btn" onClick={handleContinueLearning}>
-                  {currentPracticeWord === 'mahakaya' ? 'Ã¢Å“Â¨ End Scene' : 'Ã¢Å¾Â¡Ã¯Â¸Â Continue Learning'}
+                  {currentPracticeWord === 'mahakaya' ? 'Ã¢Å"¨ End Scene' : '➡️ Continue Learning'}
                 </button>
               </div>
             )}
@@ -1804,7 +1804,7 @@ onClick={() => {
               count={15}
               colors={['#FFD700', '#FF1493', '#00CED1', '#98FB98', '#FF6347', '#9370DB']}
               onComplete={() => {
-                console.log('Ã°Å¸Å½Â¯ FIREWORKS COMPLETION HANDLER CALLED');
+                console.log('🎯 FIREWORKS COMPLETION HANDLER CALLED');
                 
                 try {
                   setShowSparkle(null);
@@ -1820,17 +1820,17 @@ onClick={() => {
                         phase: 'complete',
                         timestamp: Date.now()
                       });
-                      console.log('Ã¢Å“â€¦ Game state saved successfully');
+                      console.log('Ã¢Å"… Game state saved successfully');
                     } catch (saveError) {
-                      console.warn('Ã¢Å¡ Ã¯Â¸Â Error saving game state:', saveError);
+                      console.warn('âš ️ Error saving game state:', saveError);
                     }
 
                     try {
                       localStorage.removeItem(`temp_session_${profileId}_shloka-river_vakratunda-grove`);
                       SimpleSceneManager.clearCurrentScene();
-                      console.log('Ã¢Å“â€¦ Temp session cleared');
+                      console.log('Ã¢Å"… Temp session cleared');
                     } catch (clearError) {
-                      console.warn('Ã¢Å¡ Ã¯Â¸Â Error clearing session:', clearError);
+                      console.warn('âš ️ Error clearing session:', clearError);
                     }
                   }
 
@@ -1841,13 +1841,13 @@ onClick={() => {
                     stars: 5,
                     completed: true
                   });
-                  console.log('Ã°Å¸Å½Â¯ Scene state updated');
+                  console.log('🎯 Scene state updated');
 
                   setShowSceneCompletion(true);
-                  console.log('Ã°Å¸Å½Â¯ setShowSceneCompletion(true) called');
+                  console.log('🎯 setShowSceneCompletion(true) called');
                   
                 } catch (error) {
-                  console.error('Ã°Å¸â€™Â¥ Error in fireworks completion:', error);
+                  console.error('💥 Error in fireworks completion:', error);
                   setShowSceneCompletion(true);
                 }
               }}
@@ -2010,7 +2010,7 @@ onClick={() => {
             fontSize: '12px',
             fontWeight: 'bold'
           }} onClick={() => {
-            console.log('Ã°Å¸Â§Âª TESTING: Quick completion test clicked');
+            console.log('🧪 TESTING: Quick completion test clicked');
             
             sceneActions.updateState({
               learnedSyllables: {
@@ -2167,7 +2167,7 @@ onClick={() => {
             fontSize: '12px',
             fontWeight: 'bold'
           }} onClick={() => {
-            console.log('Ã°Å¸Â§Âª TESTING: Reload test clicked');
+            console.log('🧪 TESTING: Reload test clicked');
             console.log('Current sceneState:', sceneState);
             console.log('Memory game state:', sceneState?.memoryGameState);
             console.log('Mission state:', sceneState?.missionState);

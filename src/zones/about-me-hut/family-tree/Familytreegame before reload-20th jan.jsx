@@ -114,10 +114,10 @@ const FamilyTreeGame = ({ onComplete, onBack, onNavigate }) => {
       role: 'Me',
       correctAnswer: 'ganesha',
       position: { bottom: '25%', right: '30%' },
-      introTitle: '😊 That’s Me!',
+      introTitle: '😊 That's Me!',
       introText: 'I love modaks 🍬',
       flipTitle: 'Me',
-      funFact: 'That’s me! I love modaks and helping my friends 😊'
+      funFact: 'That's me! I love modaks and helping my friends 😊'
     }
   ];
 
@@ -625,7 +625,7 @@ const FamilyTreeGame = ({ onComplete, onBack, onNavigate }) => {
           <img src={familyTree} alt="Family Tree" className="tree-overlay" />
           {childFamily.length < 3 && (
             <div className="instruction-text">
-            <p>👇 “Tap someone to add to your tree!” 🌱!</p>
+            <p>👇 "Tap someone to add to your tree!" 🌱!</p>
             </div>
           )}
 

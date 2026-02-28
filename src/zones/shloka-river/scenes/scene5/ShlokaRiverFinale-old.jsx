@@ -624,7 +624,7 @@ const handleFireworksComplete = () => {
       <div className="river-story-text">
         <p>The river is calm.</p>
         <p>The raft is ready.</p>
-        <p>Now it’s time to journey together.</p>
+        <p>Now it's time to journey together.</p>
         <br />
         <p>Each friend will step onto the raft,</p>
         <p>chanting their sound—</p>
@@ -645,7 +645,7 @@ const handleFireworksComplete = () => {
           });
         }}
       >
-        🪵 Let’s Begin the Journey
+        🪵 Let's Begin the Journey
       </button>
     </div>
   </div>
