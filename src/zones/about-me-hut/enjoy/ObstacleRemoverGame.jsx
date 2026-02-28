@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import './DreamsWishesGame.css';
 import AboutMeCompletion from "../components/Aboutmecompletion";
 import DrawingPad from '../components/Drawingpad';
@@ -15,6 +15,7 @@ import SceneManager from "../../../lib/components/scenes/SceneManager";
 
 // Content Configs
 import { getOpeningModal } from '../../../lib/config/content';
+import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 
 // Import Unified Design System
 import Button from '../../../lib/components/ui/Button/Button';
@@ -384,13 +385,12 @@ if (gamePhase === 'all-wishes-complete') {
 
       {/* Intro */}
       {sceneState.gamePhase === 'intro' && (
-        <div className="game-modal-overlay">
+        <div className="game-modal-overlay" style={(() => { const theme = getZoneTheme('about-me-hut'); return { '--modal-card-bg': theme.parentBg, '--modal-text-primary': theme.textPrimary, '--modal-btn-bg': theme.buttonActiveBg, '--modal-btn-shadow': theme.glowColor }; })()}>
           <div className="game-modal-content">
             <div className="game-modal-character"><img src={babyGaneshaImg} alt="Ganesha" /></div>
             <div className="dream-card">
               <h1 className="dream-title">{openingModalContent?.title || 'Our Big Wishes! 🌟'}</h1>
               <p className="dream-text">
-                {openingModalContent?.subtitle || 'I have three happy wishes for the world.'}<br />
                 {openingModalContent?.description || "Let's make them come true together."}
               </p>
               <div className="dream-icon-row">

@@ -1,6 +1,9 @@
-// zones/cave-of-secrets/scenes/Scene5/CaveScene5MemoryFinale.jsx
+﻿// zones/cave-of-secrets/scenes/Scene5/CaveScene5MemoryFinale.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import './Cavescene5memoryfinale.css';
+import '../../../shared/components/OpeningModal.css';
+import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
+import { getOpeningModal } from '../../../../lib/config/content/openingModals';
 
 // Import scene management components
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
@@ -387,57 +390,46 @@ const handleGameComplete = () => {
           style={{ backgroundImage: `url(${bgFinal})` }}
         >
           {/* ✅ NEW OPENING SCREEN: Final Challenge */}
-          {!sceneState.gameStarted && (
-            <div className="finale-instructions-overlay">
-              <div className="finale-instructions-content">
-                {/* Character */}
-                <div className="finale-instructions-ganesha">
-                  <img 
-                    src={ganeshaCharacterCave} 
-                    alt="Ganesha Character"
-                  />
-                </div>
-                
-                {/* Card */}
-                <div className="finale-instructions-card">
-                  <h1 className="finale-instructions-title">
-                    The Final Challenge!
-                  </h1>
-                  
-                  <p className="finale-instructions-subtitle">
-                    You have gathered all the ancient wisdom! <br/>
-                    Now, match the symbols to their meanings to master the Cave of Secrets!
-                  </p>
-                  
-                  <div className="finale-instructions-icons">
-                    <div className="finale-icon-item">
-                      <img src={vakratundaSymbol} alt="Vakratunda" />
-                      <span>Symbols</span>
-                    </div>
-                    <div style={{fontSize: '40px', alignSelf: 'center'}}>↔️</div>
-                    <div className="finale-icon-item">
-                      <div style={{
-                        width: '80px', height: '80px', background: 'white', 
-                        borderRadius: '15px', display: 'flex', alignItems: 'center', 
-                        justifyContent: 'center', fontWeight: 'bold', border: '2px solid #FFD700',
-                        fontSize: '32px'
-                      }}>
-                        ?
-                      </div>
-                      <span>Meanings</span>
-                    </div>
+          {!sceneState.gameStarted && (() => {
+            const theme = getZoneTheme(zoneId);
+            const modal = getOpeningModal(zoneId, sceneId);
+            return (
+              <div className="game-modal-overlay" style={{
+                '--modal-card-bg': theme.parentBg,
+                '--modal-text-primary': theme.textPrimary,
+                '--modal-btn-bg': theme.buttonActiveBg,
+                '--modal-btn-shadow': theme.glowColor
+              }}>
+                <div className="game-modal-content">
+                  <div className="game-modal-character">
+                    <img src={ganeshaCharacterCave} alt="Ganesha Character" />
                   </div>
-                  
-                  <button
-                    className="finale-instructions-button"
-                    onClick={handleStartGame}
-                  >
-                    Start Memory Game
-                  </button>
+                  <div className="game-modal-card">
+                    <h1 className="game-modal-title">{modal?.title || 'You Did It'}</h1>
+                    <p className="game-modal-subtitle">{modal?.description || 'See how they come together.'}</p>
+                    <div className="game-modal-icons">
+                      <div className="game-modal-icon-item">
+                        <img src={vakratundaSymbol} alt="Vakratunda" />
+                        <span className="game-modal-icon-label">Symbols</span>
+                      </div>
+                      <div className="game-modal-icon-item">
+                        <div style={{
+                          width: '80px', height: '80px', background: 'white',
+                          borderRadius: '15px', display: 'flex', alignItems: 'center',
+                          justifyContent: 'center', fontWeight: 'bold', border: '2px solid #FFD700',
+                          fontSize: '32px'
+                        }}>?</div>
+                        <span className="game-modal-icon-label">Meanings</span>
+                      </div>
+                    </div>
+                    <button className="game-modal-button" onClick={handleStartGame}>
+                      {modal?.buttonText || "Let's Explore"}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* Game Screen */}
           {sceneState.gameStarted && !sceneState.roundComplete && (

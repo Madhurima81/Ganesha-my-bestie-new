@@ -1843,7 +1843,7 @@ const completeGame2 = () => {
 {/* ✅ ADD DEBUG BUTTON HERE: */}
           <button 
 onClick={() => {
-              console.log('ðŸŽ¯ DEBUG: Jumping to Game 2');
+              console.log('🎯 DEBUG: Jumping to Game 2');
               const missions = generateRandomMissions();
               const firstMissionId = missions[0];
               const firstMissionData = HELPER_MISSIONS[firstMissionId];

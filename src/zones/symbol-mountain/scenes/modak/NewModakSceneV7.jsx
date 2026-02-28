@@ -1,4 +1,4 @@
-// zones/symbol-mountain/scenes/modak/NewModakSceneV7_MVP.jsx
+﻿// zones/symbol-mountain/scenes/modak/NewModakSceneV7_MVP.jsx
 // MVP Version: Voice-guided, minimal UI (no header, no help menu)
 // Like Khan Academy Kids / Lingokids approach
 
@@ -6,6 +6,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './ModakScene.css';
 import '../../../shared/components/OpeningModal.css';
 import '../../../../lib/styles/zone-themes.css';
+import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 
 // Unified Components (keep buttons/modals, remove header)
 import UnifiedButtonV2 from '../../../../lib/components/ui/Button/UnifiedButtonV2';
@@ -27,14 +28,22 @@ import FreeDraggableItem from '../../../../lib/components/interactive/FreeDragga
 // Voice Guidance Hook
 import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
 
+// Symbol Auto-Reveal: flip card → flies to sidebar (replaces PowerUnlockOverlay)
+import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
+
+// Symbol Collection Hook (flight animation → sidebar bloom → overlay) — superseded by SymbolAutoReveal
+// import useSymbolCollection from '../../../../lib/hooks/useSymbolCollection';
+
 // Content Configs
 import {
-  getOpeningModal
+  getOpeningModal,
+  getCompletionModal
 } from '../../../../lib/config/content';
 
 // UI Components
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
-import Fireworks from '../../../../lib/components/feedback/Fireworks';
+// import Fireworks from '../../../../lib/components/feedback/Fireworks'; // ← replaced by FireworksCompletion
+import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
 import SymbolSidebar from '../../shared/components/SymbolSidebar';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOverlay';
@@ -282,6 +291,7 @@ const NewModakSceneMVPContent = ({
 
   // Get content from configs
   const openingModalContent = getOpeningModal(zoneId, sceneId);
+  const completionModalContent = getCompletionModal(zoneId, sceneId);
 
   const [showHintGlow, setShowHintGlow] = useState(false);
   const [showSparkle, setShowSparkle] = useState(null);
@@ -294,6 +304,16 @@ const NewModakSceneMVPContent = ({
   const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false);
   const [showDiscoveryFlip3, setShowDiscoveryFlip3] = useState(false);
   const [showSymbolDiscovery, setShowSymbolDiscovery] = useState(false);
+
+  // ── SymbolAutoReveal state ──────────────────────────────────────────────
+  // null = not showing; object = reveal active
+  const [revealConfig, setRevealConfig] = useState(null);
+
+  // ── useSymbolCollection (superseded by SymbolAutoReveal) ────────────────
+  // const [currentOverlaySymbol, setCurrentOverlaySymbol] = useState(null);
+  // const { flyingSymbol, flightStyle, animatingSymbol, showOverlay: symbolCollectOverlay,
+  //         handleCollect, closeOverlay: closeSymbolOverlay }
+  //   = useSymbolCollection({ onCollectSound: () => playSfx('chime') });
 
   // Track final celebration completion (VO + fireworks sync)
   const [sceneCompleteVOFinished, setSceneCompleteVOFinished] = useState(false);
@@ -331,11 +351,11 @@ const NewModakSceneMVPContent = ({
     showDiscoveryFlip1 ||
     showDiscoveryFlip2 ||
     showDiscoveryFlip3 ||
-    sceneState.phase === PHASES.ALL_COLLECTED || // Block during modak completion → overlay transition
-    sceneState.phase === PHASES.ROCK_TRANSFORMED; // Block during feeding completion → overlay transition
+    !!revealConfig ||          // Block while SymbolAutoReveal is showing
+    sceneState.phase === PHASES.ALL_COLLECTED || // Block during modak completion → reveal transition
+    sceneState.phase === PHASES.ROCK_TRANSFORMED; // Block during feeding completion → reveal transition
 
   const isFinalCelebrationActive =
-    sceneState.phase === PHASES.ROCK_TRANSFORMED ||
     showSparkle === 'final-fireworks' ||
     showSceneCompletion;
 
@@ -858,6 +878,17 @@ const NewModakSceneMVPContent = ({
     }
   }, [showDiscoveryFlip3]);
 
+  // Bridge useEffect (useSymbolCollection → flip states) — superseded by SymbolAutoReveal
+  // useEffect(() => {
+  //   if (symbolCollectOverlay && currentOverlaySymbol) {
+  //     if (currentOverlaySymbol === 'mooshika') setShowDiscoveryFlip1(true);
+  //     else if (currentOverlaySymbol === 'modak') setShowDiscoveryFlip2(true);
+  //     else if (currentOverlaySymbol === 'belly') setShowDiscoveryFlip3(true);
+  //     closeSymbolOverlay();
+  //     setCurrentOverlaySymbol(null);
+  //   }
+  // }, [symbolCollectOverlay, currentOverlaySymbol]);
+
   // Play symbol discovery VO when discovery screen opens
   useEffect(() => {
     if (showSymbolDiscovery) {
@@ -879,6 +910,92 @@ const NewModakSceneMVPContent = ({
     }
   }, [sceneCompleteVOFinished]);
 
+
+ // ── SymbolAutoReveal helpers ──────────────────────────────────────────────
+
+  // Compute delta from card center (viewport center) to sidebar icon center
+  const getSidebarTarget = (symbolId) => {
+    const el = document.getElementById(`sidebar-${symbolId}`);
+    if (!el) return { x: 220, y: 0 }; // fallback: right edge of screen
+    const r = el.getBoundingClientRect();
+    return {
+      x: (r.left + r.width  / 2) - (window.innerWidth  / 2),
+      y: (r.top  + r.height / 2) - (window.innerHeight / 2)
+    };
+  };
+
+  // Trigger final fireworks + scene-complete VO (extracted from onCelebrate)
+  const triggerFireworks = () => {
+    setSceneCompleteVOFinished(false);
+    setFireworksFinished(false);
+    playVoice('sceneComplete', () => {
+      console.log('✅ Scene complete VO finished');
+      setSceneCompleteVOFinished(true);
+    });
+    setShowSparkle('final-fireworks');
+  };
+
+  // Run game-phase advancement after user taps card and it finishes flying
+  //
+  // Timing reference (all from user tap):
+  //   tap + 680ms  → sar-sidebar-bloom class added (CSS anim = 1.4s → finishes at tap+2080ms)
+  //   tap + 1150ms → onComplete() fires  (this function runs)
+  //   bloom finishes ~930ms after onComplete
+  //
+  // Rule: never update discoveredSymbols before ~950ms after onComplete —
+  // updating it causes SymbolSidebar to re-render which strips the bloom
+  // class mid-animation and makes the icon vanish.
+  const handleRevealComplete = (symbolId) => {
+    setRevealConfig(null);
+
+    if (symbolId === 'mooshika') {
+      // 950ms: bloom fully done → start VO + sparkles at modak positions
+      safeSetTimeout(() => {
+        playVoice('collectStart', () => {
+          setInitialInstructionPlayed(prev => ({ ...prev, collectModaks: true }));
+        });
+        setShowSparkle('modaks-appearing');
+        // 500ms later: unlock modaks + mark symbol discovered (brief settle beat)
+        safeSetTimeout(() => {
+          sceneActions.updateState({
+            phase: PHASES.MODAKS_UNLOCKED,
+            modaksUnlocked: true,
+            basketVisible: true,
+            discoveredSymbols: { ...sceneState.discoveredSymbols, mooshika: true }
+          });
+          safeSetTimeout(() => setShowSparkle(null), 2000);
+        }, 500);
+      }, 950);
+
+    } else if (symbolId === 'modak') {
+      // 950ms: bloom fully done → start VO + show rock
+      safeSetTimeout(() => {
+        playVoice('feedGanesha', () => {
+          setInitialInstructionPlayed(prev => ({ ...prev, shareWithGanesha: true }));
+        });
+        sceneActions.updateState({
+          phase: PHASES.ROCK_VISIBLE,
+          basketReady: true,
+          rockVisible: true,
+          discoveredSymbols: { ...sceneState.discoveredSymbols, modak: true }
+        });
+      }, 950);
+
+    } else if (symbolId === 'belly') {
+      // 950ms: bloom fully done → icon settles into found state
+      safeSetTimeout(() => {
+        sceneActions.updateState({
+          discoveredSymbols: { ...sceneState.discoveredSymbols, belly: true }
+        });
+      }, 950);
+      // ── Phase: Symbol Discovery screen (showSymbolDiscovery) commented out ──
+      // setShowSymbolDiscovery(true);
+      // 950ms bloom settle + 1500ms hold in found state = 2450ms before fireworks
+      safeSetTimeout(() => {
+        triggerFireworks();
+      }, 2450);
+    }
+  };
 
  const handleMoundClick = (moundIndex) => {
     recordInteraction();
@@ -924,8 +1041,23 @@ const NewModakSceneMVPContent = ({
         }, 500);
       }, 1500);
 
-      // 3. Gap before first power overlay; pause/resume-safe.
-      scheduleCelebrationTransition('flip1', 6000);
+      // 3. Show SymbolAutoReveal for mooshika at 4800ms
+      safeSetTimeout(() => {
+        setRevealConfig({
+          symbolId:    'mooshika',
+          symbolImage: symbolMooshikaColored,
+          symbolName:  'Mooshika',
+          affirmation: 'I can focus.',
+          sidebarTarget: getSidebarTarget('mooshika')
+        });
+      }, 4800);
+      // ── Old useSymbolCollection trigger (superseded) ──
+      // safeSetTimeout(() => {
+      //   const el = document.querySelector('.modak-game-mooshika-container');
+      //   const startRect = el ? el.getBoundingClientRect() : { top: window.innerHeight*0.48, left: window.innerWidth*0.45, width: 60, height: 60 };
+      //   setCurrentOverlaySymbol('mooshika');
+      //   handleCollect('mooshika', startRect, symbolMooshikaColored);
+      // }, 4800);
 
     } else {
       // Wrong mound - stop any idle hint VO, then play SFX + VO
@@ -993,8 +1125,23 @@ const NewModakSceneMVPContent = ({
         setShowSparkle(null);
       }, 4000);
 
-      // Trigger Discovery Flip 2 (after VO finishes ~5s), pause/resume-safe.
-      scheduleCelebrationTransition('flip2', 5500);
+      // Show SymbolAutoReveal for modak at 4300ms
+      safeSetTimeout(() => {
+        setRevealConfig({
+          symbolId:    'modak',
+          symbolImage: symbolModakColored,
+          symbolName:  'Modak',
+          affirmation: 'I share with joy.',
+          sidebarTarget: getSidebarTarget('modak')
+        });
+      }, 4300);
+      // ── Old useSymbolCollection trigger (superseded) ──
+      // safeSetTimeout(() => {
+      //   const el = document.querySelector('.modak-game-basket-container');
+      //   const startRect = el ? el.getBoundingClientRect() : { top: window.innerHeight*0.45, left: window.innerWidth*0.15, width: 80, height: 80 };
+      //   setCurrentOverlaySymbol('modak');
+      //   handleCollect('modak', startRect, symbolModakColored);
+      // }, 4300);
     } else {
       sceneActions.updateState({
         modakStates,
@@ -1040,6 +1187,9 @@ const NewModakSceneMVPContent = ({
     }
 
     if (newFeedCount >= 3) {
+      // Pre-compute sidebar target NOW (while rock is still in DOM / before transform)
+      const bellySidebarTarget = getSidebarTarget('belly');
+
       setTimeout(() => {
         setShowSparkle('belly-transform');
         // Play feed complete then belly happy
@@ -1052,8 +1202,23 @@ const NewModakSceneMVPContent = ({
           phase: PHASES.ROCK_TRANSFORMED
         });
 
-        // Trigger Discovery Flip 3, pause/resume-safe.
-        scheduleCelebrationTransition('flip3', 3500);
+        // Show SymbolAutoReveal for belly at 2300ms (3800ms total from handleRockFeed)
+        safeSetTimeout(() => {
+          setRevealConfig({
+            symbolId:     'belly',
+            symbolImage:  symbolBellyColored,
+            symbolName:   'Big Belly',
+            affirmation:  'I feel safe inside.',
+            sidebarTarget: bellySidebarTarget
+          });
+        }, 2300);
+        // ── Old useSymbolCollection trigger (superseded) ──
+        // safeSetTimeout(() => {
+        //   const el = document.querySelector('.modak-game-rock-container');
+        //   const startRect = el ? el.getBoundingClientRect() : { top: window.innerHeight*0.6, left: window.innerWidth*0.5, width: 80, height: 80 };
+        //   setCurrentOverlaySymbol('belly');
+        //   handleCollect('belly', startRect, symbolBellyColored);
+        // }, 2300);
 
       }, 1500);
     } else {
@@ -1109,6 +1274,7 @@ const NewModakSceneMVPContent = ({
     setShowDiscoveryFlip2(false);
     setShowDiscoveryFlip3(false);
     setShowSceneCompletion(false);
+    setRevealConfig(null);
   };
 
   const getModakImage = (index) => {
@@ -1121,6 +1287,9 @@ const NewModakSceneMVPContent = ({
   // ========================================
   return (
     <div data-zone="symbol-mountain">
+      {/* Flying Symbol Clone (useSymbolCollection) — superseded by SymbolAutoReveal */}
+      {/* {flyingSymbol && <img className="flying-symbol" src={flyingSymbol.src} alt="" style={flightStyle} />} */}
+
       {/* Pause Button - Always visible after welcome screen */}
       <PauseButton
         visible={canShowPauseUI}
@@ -1161,12 +1330,15 @@ const NewModakSceneMVPContent = ({
               {sceneState.phase === PHASES.MOOSHIKA_SEARCH && !sceneState.welcomeShown && (
                 <div
                   className="game-modal-overlay"
-                  style={{
-                    '--modal-card-bg': '#FFF9E6',
-                    '--modal-text-primary': '#5D2E0F',
-                    '--modal-btn-bg': 'linear-gradient(135deg, #FFA500 0%, #FF8C00 100%)',
-                    '--modal-btn-shadow': 'rgba(255, 140, 0, 0.4)'
-                  }}
+                  style={(() => {
+                    const theme = getZoneTheme(zoneId);
+                    return {
+                      '--modal-card-bg': theme.parentBg,
+                      '--modal-text-primary': theme.textPrimary,
+                      '--modal-btn-bg': theme.buttonActiveBg,
+                      '--modal-btn-shadow': theme.glowColor
+                    };
+                  })()}
                 >
                   <div className="modak-game-sparkles">
                     <div className="modak-game-sparkle"></div>
@@ -1189,7 +1361,7 @@ const NewModakSceneMVPContent = ({
                       </h1>
 
                       <p className="game-modal-subtitle">
-                        {openingModalContent?.subtitle || '3 magical friends are hiding — let us find them!'}
+                        {openingModalContent?.description}
                       </p>
 
                       <div className="game-modal-icons">
@@ -1509,36 +1681,33 @@ const NewModakSceneMVPContent = ({
 
             </div>
 
-            {/* FIREWORKS */}
-            {showSparkle === 'final-fireworks' && (
-              <Fireworks
-                show={true}
+            {/* FIREWORKS — old <Fireworks> replaced by <FireworksCompletion> */}
+            {/* <Fireworks
+                show={showSparkle === 'final-fireworks'}
                 duration={15000}
                 onComplete={() => {
-                  // Fireworks are just visual - modal is triggered by VO completion + 1s delay
                   console.log('✅ Fireworks finished');
                   setShowSparkle(null);
                   setFireworksFinished(true);
-
-                  // Save game state
                   const profileId = localStorage.getItem('activeProfileId');
                   if (profileId) {
                     GameStateManager.saveGameState('symbol-mountain', 'modak', {
-                      completed: true,
-                      stars: 8,
+                      completed: true, stars: 8,
                       symbols: { mooshika: true, modak: true, belly: true },
-                      phase: 'complete',
-                      timestamp: Date.now()
+                      phase: 'complete', timestamp: Date.now()
                     });
-
                     localStorage.removeItem(`temp_session_${profileId}_symbol-mountain_modak`);
                     SimpleSceneManager.clearCurrentScene();
                   }
-
-                  // Completion modal will show via useEffect when BOTH VO and fireworks finish
                 }}
-              />
-            )}
+              /> */}
+
+            {/* Visual-only fireworks — no card/buttons. SceneCompletionCelebration
+                auto-shows via the sceneCompleteVOFinished useEffect. */}
+            <FireworksCompletion
+              show={showSparkle === 'final-fireworks'}
+              showCard={false}
+            />
 
             {/* SCENE COMPLETION */}
             {showSceneCompletion && (
@@ -1546,6 +1715,8 @@ const NewModakSceneMVPContent = ({
                 show={true}
                 zoneId={zoneId}
                 sceneName="Mooshika's Modak Mission"
+                completionTitle={completionModalContent?.title}
+                completionSubtitle={completionModalContent?.subtitle}
                 sceneNumber={1}
                 totalScenes={4}
                 starsEarned={3}
@@ -1590,109 +1761,50 @@ const NewModakSceneMVPContent = ({
               />
             )}
 
-          {/* DISCOVERY 1: Found Mooshika */}
-            {/* POWER UNLOCK 1: Focus Power (Mooshika) */}
+          {/* ── SYMBOL AUTO-REVEAL (replaces PowerUnlockOverlay) ───────────────
+               Flip card: symbol image → affirmation → user taps → flies to sidebar */}
+            {revealConfig && (
+              <SymbolAutoReveal
+                key={revealConfig.symbolId}
+                symbolId={revealConfig.symbolId}
+                symbolImage={revealConfig.symbolImage}
+                symbolName={revealConfig.symbolName}
+                affirmation={revealConfig.affirmation}
+                sidebarTargetRect={revealConfig.sidebarTarget}
+                onComplete={() => handleRevealComplete(revealConfig.symbolId)}
+              />
+            )}
+
+            {/* ── PowerUnlockOverlay instances — COMMENTED OUT (superseded by SymbolAutoReveal) ──
+
             {showDiscoveryFlip1 && (
-              <PowerUnlockOverlay
-                title="Focus Power Unlocked!"
-         description={{
-      main: [
-        "Sometimes our mind runs everywhere like a tiny mouse!",
-        "But when it's time to learn or play, we can bring it back."
-      ],
-      emphasis: "Say with me: I can focus!"
-    }}
-                icon={symbolMooshikaColored}
-                iconColor="#FF69B4"
-                buttonText="Let's Collect Modaks!"
-                showButton={discoveryButtonVisible} 
-                // onShow removed - handled by useEffect
-                onComplete={() => {
-                  console.log("Power 1: Focus Power unlocked");
-                  setShowDiscoveryFlip1(false);
-                  setDiscoveryButtonVisible(false);
-                  playVoice('collectStart', () => {
-                    // Mark initial instruction as complete
-                    setInitialInstructionPlayed(prev => ({ ...prev, collectModaks: true }));
-                  });
-                  setShowSparkle('modaks-appearing');
-                  setTimeout(() => {
-                    sceneActions.updateState({
-                      phase: PHASES.MODAKS_UNLOCKED,
-                      modaksUnlocked: true,
-                      basketVisible: true,
-                      discoveredSymbols: { ...sceneState.discoveredSymbols, mooshika: true }
-                    });
-                    setTimeout(() => setShowSparkle(null), 2000);
-                  }, 500);
-                }}
+              <PowerUnlockOverlay title="Focus Power Unlocked!"
+                description={{ main: ["Sometimes our mind runs everywhere like a tiny mouse!", "But when it's time to learn or play, we can bring it back."], emphasis: "Say with me: I can focus!" }}
+                icon={symbolMooshikaColored} iconColor="#FF69B4"
+                buttonText="Let's Collect Modaks!" showButton={discoveryButtonVisible}
+                onComplete={() => { setShowDiscoveryFlip1(false); setDiscoveryButtonVisible(false); playVoice('collectStart', () => setInitialInstructionPlayed(prev => ({ ...prev, collectModaks: true }))); setShowSparkle('modaks-appearing'); setTimeout(() => { sceneActions.updateState({ phase: PHASES.MODAKS_UNLOCKED, modaksUnlocked: true, basketVisible: true, discoveredSymbols: { ...sceneState.discoveredSymbols, mooshika: true } }); setTimeout(() => setShowSparkle(null), 2000); }, 500); }}
               />
             )}
 
-            {/* DISCOVERY 2: Collected Modaks */}
-            {/* POWER UNLOCK 2: Sharing Power (Modak) */}
             {showDiscoveryFlip2 && (
-              <PowerUnlockOverlay
-                title="Sweet Reward Earned!"
-                
-                description="You searched carefully and found all the modaks!
-
-Sweet rewards come when we try our best."
-                icon={symbolModakColored}
-                iconColor="#FFD700"
-                buttonText="Let’s Share Them"
-                showButton={discoveryButtonVisible}
-                // onShow removed - handled by useEffect
-                onComplete={() => {
-                  console.log("Power 2: Sharing Power unlocked");
-                  setShowDiscoveryFlip2(false);
-                  setDiscoveryButtonVisible(false);
-                  // Play feeding intro VO
-                  playVoice('feedGanesha', () => {
-                    // Mark initial instruction as complete
-                    setInitialInstructionPlayed(prev => ({ ...prev, shareWithGanesha: true }));
-                  });
-                  sceneActions.updateState({
-                    phase: PHASES.ROCK_VISIBLE,
-                    basketReady: true,
-                    rockVisible: true,
-                    discoveredSymbols: { ...sceneState.discoveredSymbols, modak: true }
-                  });
-                }}
+              <PowerUnlockOverlay title="Sweet Reward Earned!"
+                description="You searched carefully and found all the modaks! Sweet rewards come when we try our best."
+                icon={symbolModakColored} iconColor="#FFD700"
+                buttonText="Let's Share Them" showButton={discoveryButtonVisible}
+                onComplete={() => { setShowDiscoveryFlip2(false); setDiscoveryButtonVisible(false); playVoice('feedGanesha', () => setInitialInstructionPlayed(prev => ({ ...prev, shareWithGanesha: true }))); sceneActions.updateState({ phase: PHASES.ROCK_VISIBLE, basketReady: true, rockVisible: true, discoveredSymbols: { ...sceneState.discoveredSymbols, modak: true } }); }}
               />
             )}
 
-            {/* POWER UNLOCK 3: Gratitude Power (Belly) */}
             {showDiscoveryFlip3 && (
-              <PowerUnlockOverlay
-                title="Sharing Power Unlocked!"
-              description={{
-      main: [
-        "You chose to share your sweets with me.",
-        "That shows a kind heart."
-      ],
-      emphasis: "Say with me: I am kind!"
-    }}
-                icon={symbolBellyColored}
-                iconColor="#FF8C42"
-                buttonText="Discover Symbols!"
-                showButton={discoveryButtonVisible}
-                // onShow removed - handled by useEffect
-                onComplete={() => {
-                  console.log("Power 3: Gratitude Power unlocked → Symbol Discovery");
-                  setShowDiscoveryFlip3(false);
-                  setDiscoveryButtonVisible(false);
-
-                  // Unlock belly symbol before showing discovery screen
-                  sceneActions.updateState({
-                    discoveredSymbols: { ...sceneState.discoveredSymbols, belly: true }
-                  });
-
-                  // Show symbol discovery moment
-                  setShowSymbolDiscovery(true);
-                }}
+              <PowerUnlockOverlay title="Sharing Power Unlocked!"
+                description={{ main: ["You chose to share your sweets with me.", "That shows a kind heart."], emphasis: "Say with me: I am kind!" }}
+                icon={symbolBellyColored} iconColor="#FF8C42"
+                buttonText="Discover Symbols!" showButton={discoveryButtonVisible}
+                onComplete={() => { setShowDiscoveryFlip3(false); setDiscoveryButtonVisible(false); sceneActions.updateState({ discoveredSymbols: { ...sceneState.discoveredSymbols, belly: true } }); setShowSymbolDiscovery(true); }}
               />
             )}
+
+            ── End PowerUnlockOverlay ── */}
 
             <CulturalCelebrationModal
               show={showCulturalCelebration}
@@ -1700,7 +1812,8 @@ Sweet rewards come when we try our best."
               {...CulturalProgressExtractor.getCulturalProgressData()}
             />
 
-            {/* SYMBOL DISCOVERY MOMENT - center mode after Power Overlay 3 */}
+            {/* SYMBOL DISCOVERY MOMENT - center mode — COMMENTED OUT
+                 Fireworks now auto-trigger 350ms after sidebar bloom via handleRevealComplete.
             {showSymbolDiscovery && (
               <SymbolSidebar
                 centerMode={true}
@@ -1710,26 +1823,23 @@ Sweet rewards come when we try our best."
                 onPopupClose={() => resumePhaseAfterPause()}
                 onCelebrate={() => {
                   setShowSymbolDiscovery(false);
-
-                  // Reset completion flags
                   setSceneCompleteVOFinished(false);
                   setFireworksFinished(false);
-
-                  // Play scene complete VO
                   playVoice('sceneComplete', () => {
                     console.log('✅ Scene complete VO finished');
                     setSceneCompleteVOFinished(true);
                   });
 
-                  // Start fireworks
                   setShowSparkle('final-fireworks');
                 }}
               />
             )}
+            ── End Symbol Discovery screen ── */}
 
-            {/* SIDE RAIL - hide during symbol discovery and final fireworks */}
-            {sceneState.welcomeShown && !isFinalCelebrationActive && !showSymbolDiscovery && (
+            {/* SIDE RAIL - hide during final fireworks and celebration popup */}
+            {sceneState.welcomeShown && !isFinalCelebrationActive && (
               <SymbolSidebar
+                // animatingSymbol={animatingSymbol}  // superseded by SymbolAutoReveal
                 discoveredSymbols={sceneState.discoveredSymbols || {}}
                 onSymbolClick={(symbolId) => {
                   console.log(`Sidebar symbol clicked: ${symbolId}`);

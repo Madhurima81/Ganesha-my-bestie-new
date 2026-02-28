@@ -1,4 +1,4 @@
-// zones/symbol-mountain/scenes/modak/NewModakSceneV5.jsx
+﻿// zones/symbol-mountain/scenes/modak/NewModakSceneV5.jsx
 // ProgressiveHintSystem with visual disabled state
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -842,7 +842,6 @@ const NewModakSceneContent = ({
                         </h1>
 
                         <p className="game-modal-subtitle">
-                          {openingModalContent?.subtitle || '3 magical friends are hiding — let us find them!'}
                         </p>
 
                         <div className="game-modal-icons">

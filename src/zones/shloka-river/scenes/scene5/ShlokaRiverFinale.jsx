@@ -1,9 +1,11 @@
-// zones/shloka-river/scenes/scene5/ShlokaRiverFinale.jsx
+﻿// zones/shloka-river/scenes/scene5/ShlokaRiverFinale.jsx
 // SIMPLIFIED FEEDBACK SYSTEM
 import React, { useState, useRef } from 'react';
 import './RiverFinaleEnhanced.css';
 import '../../../shared/components/OpeningModal.css'; // <--- SHARED MODAL IMPORT
 import GamePauseMenu from '../../core/GamePauseMenu-river';
+import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
+import { getOpeningModal } from '../../../../lib/config/content';
 
 
 // Import background image
@@ -463,44 +465,30 @@ if (allCorrect) {
       <audio ref={audioRef} />
 
       {/* INTRO SCREEN */}
-      {gamePhase === 'intro' && (
-        <div className="game-screen intro-screen">
-          <div className="intro-modal">
-            <div className="intro-ganesha">🐘</div>
-            <h1 className="intro-title">🌊 Shloka River Finale 🌊</h1>
-            <div className="intro-content">
-              <p className="intro-subtitle">Welcome to the sacred waters, little one!</p>
-              <div className="intro-instructions">
-                <div className="instruction-item">
-                  <span className="instruction-icon">🪷</span>
-                  <div>
-                    <strong>Level 1: Build Sacred Words</strong>
-                    <p>Tap lily pads to select them, then tap syllable stones to build 8 sacred Sanskrit words!</p>
-                  </div>
-                </div>
-                <div className="instruction-item">
-                  <span className="instruction-icon">⛵</span>
-                  <div>
-                    <strong>Level 2: Arrange the Shloka</strong>
-                    <p>Place the words in the correct order to complete Ganesha's blessing!</p>
-                  </div>
-                </div>
+      {gamePhase === 'intro' && (() => {
+        const theme = getZoneTheme('shloka-river');
+        const modal = getOpeningModal('shloka-river', 'shloka-river-finale');
+        return (
+          <div className="game-modal-overlay" style={{ '--modal-card-bg': theme.parentBg, '--modal-text-primary': theme.textPrimary, '--modal-btn-bg': theme.buttonActiveBg, '--modal-btn-shadow': theme.glowColor }}>
+            <div className="game-modal-content">
+              <div className="game-modal-character">
+                <span style={{ fontSize: '80px' }}>🐘</span>
               </div>
-              <div className="intro-tip">
-                💡 <strong>Tip:</strong> When you finish a word, you'll see green ✓ for correct syllables and red ✗ for wrong ones. Press "Hear Word" if you need help!
+              <div className="game-modal-card">
+                <h1 className="game-modal-title">{modal?.title || 'Chant and Celebrate'}</h1>
+                <button className="game-modal-button" onClick={handleStartGame}>
+                  {modal?.buttonText || "Let's Explore"}
+                </button>
+                {onBack && (
+                  <button className="intro-back-btn" onClick={onBack}>
+                    ← Back to Map
+                  </button>
+                )}
               </div>
             </div>
-            <button className="intro-start-btn" onClick={handleStartGame}>
-              Begin Your Journey! ✨
-            </button>
-            {onBack && (
-              <button className="intro-back-btn" onClick={onBack}>
-                ← Back to Map
-              </button>
-            )}
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* MODE SELECTION SCREEN */}
 {gamePhase === 'mode-select' && (

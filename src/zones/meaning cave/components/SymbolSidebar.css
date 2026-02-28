@@ -1,184 +1,251 @@
-/* SymbolSidebar.css - Mantra/Cave Version */
+/* SymbolSidebar.css — Cave of Secrets (Meaning Cave) */
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;700;800&display=swap');
 
-/* Sidebar container */
-.mantra-cave-sidebar {
+/* ── Flight Animation — rendered by parent scene ─────────────────────────── */
+.flying-symbol {
   position: fixed;
-  right: 20px;
+  z-index: 2000;
+  pointer-events: none;
+  will-change: transform;
+  transition: transform 0.9s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* Sidebar container */
+.ganesha-sidebar {
+  position: fixed;
+  right: 24px;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 15px 10px;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 40px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  z-index: 1000;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  max-height: 80vh;
-  overflow-y: auto;
-  width: 90px;
+  justify-content: center;
   align-items: center;
+  gap: 22px;
+  width: 100px;
+  padding: 20px 16px;
+
+  background: #F6EFD8;
+  border-radius: 60px;
+
+  box-shadow: 0 10px 22px rgba(60, 40, 20, 0.18);
+
+  z-index: 1000;
 }
 
-/* Icons */
-.mantra-cave-icon {
-  width: 55px;
-  height: 55px;
-  border-radius: 12px;
+/* Individual icons */
+.ganesha-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.35);
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
-  border: 3px solid transparent;
-  background-color: rgba(255, 255, 255, 0.5);
 }
 
-.mantra-cave-icon.unlocked {
-  border-color: #FFC107;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+/* Locked State */
+.symbol-locked {
+  filter: saturate(0.35) brightness(0.9);
+  opacity: 0.75;
+  transform: scale(0.98);
+  transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+/* Unlocked State */
+.symbol-unlocked {
   filter: none;
   opacity: 1;
-  background-color: #FFF8E1;
-  cursor: pointer;
+  box-shadow:
+    inset 0 0 12px rgba(255, 255, 255, 0.5),
+    0 0 16px rgba(255, 193, 7, 0.45);
+  transition: transform 0.2s ease;
 }
 
-.mantra-cave-icon.locked {
-  opacity: 0.5;
-  filter: grayscale(100%);
-  cursor: not-allowed;
+.symbol-unlocked:hover {
+  transform: translateY(-3px);
 }
 
-.mantra-cave-icon.unlocked:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 15px rgba(255, 193, 7, 0.4);
+/* Animating (When Symbol Flies In) */
+.ganesha-icon.animating {
+  animation: symbolBloom 1.2s ease-out forwards;
 }
 
-/* RENAMED ANIMATION CLASS */
-.mantra-cave-icon.mantra-cave-animate {
-  animation: mantraCaveStarBurst 0.8s ease-out;
+@keyframes symbolBloom {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 193, 7, 0);
+  }
+  40% {
+    transform: scale(1.08);
+    box-shadow: 0 0 26px rgba(255, 193, 7, 0.8);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 16px rgba(255, 193, 7, 0.45);
+  }
 }
 
-@keyframes mantraCaveStarBurst {
-  0% { transform: scale(1); filter: brightness(1); }
-  50% { transform: scale(1.3); filter: brightness(1.3) drop-shadow(0 0 10px gold); }
-  100% { transform: scale(1); filter: brightness(1); }
+/* Tap indicator */
+.tap-indicator {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #FF8E53;
+  color: white;
+  font-family: 'Baloo 2', cursive;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(255, 107, 107, 0.4);
+  animation: tap-pulse 1.5s ease-in-out infinite;
+  z-index: 10;
+  pointer-events: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* --- POPUP UI --- */
+@keyframes tap-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
 
-.mantra-cave-popup-overlay {
+/* ─── POPUP STYLING ──────────────────────────────────────────────────────── */
+
+.ganesha-popup-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
-  backdrop-filter: blur(5px);
-  animation: mantraCaveFadeIn 0.3s ease;
-}
-
-.mantra-cave-popup-content {
-  background: #FFF9F0;
-  border-radius: 40px;
-  padding: 50px;
-  max-width: 600px;
-  width: 90%;
-  text-align: center;
-  position: relative;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
-  animation: mantraCaveSlideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  border: 6px solid #FFFFFF;
-}
-
-.mantra-cave-close-x {
-  position: absolute;
-  top: 20px;
-  right: 25px;
-  background: none;
-  border: none;
-  font-size: 36px;
-  color: #8D6E63;
-  cursor: pointer;
-  font-weight: bold;
-  transition: transform 0.2s;
-  line-height: 1;
-}
-
-.mantra-cave-close-x:hover {
-  transform: scale(1.1);
-  color: #5D4037;
-}
-
-/* Main Icon Container */
-.mantra-cave-popup-img-container {
-  margin: 10px auto 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
   width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  animation: ganesha-fadeIn 0.3s ease;
+  backdrop-filter: blur(4px);
 }
 
-.mantra-cave-popup-img {
+.ganesha-popup-content {
+  background: #F7F1E3;
+  border-radius: 42px;
+  padding: 54px;
+  max-width: 700px;
+  width: 90%;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(60, 40, 20, 0.18);
+  animation: ganesha-fadeUp 0.35s ease-out;
+  text-align: center;
+  border: 5px solid #fff;
+}
+
+.ganesha-popup-close-btn {
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  width: 42px;
+  height: 42px;
+  border: none;
+  background: transparent;
+  font-size: 38px;
+  font-weight: 800;
+  color: #C6AFA0;
+  cursor: pointer;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+.ganesha-popup-close-btn:hover {
+  color: #8D6E63;
+  transform: scale(1.1);
+}
+
+.ganesha-popup-img-container {
+  width: 100%;
+  max-width: 320px;
+  height: 230px;
+  margin: 10px auto 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.ganesha-popup-img-container::before,
+.ganesha-popup-img-container::after {
+  content: '✦';
+  position: absolute;
+  color: #FFC107;
+  font-size: 32px;
+  animation: ganesha-twinkle 1.5s infinite alternate;
+}
+
+.ganesha-popup-img-container::before {
+  top: 5%;
+  left: 15%;
+  animation-delay: 0.2s;
+}
+
+.ganesha-popup-img-container::after {
+  bottom: 10%;
+  right: 15%;
+  transform: scale(0.8);
+}
+
+@keyframes ganesha-twinkle {
+  from { opacity: 0.4; transform: scale(0.8); }
+  to   { opacity: 1;   transform: scale(1.2); }
+}
+
+.ganesha-popup-custom-img {
   width: auto;
   height: 100%;
   max-height: 100%;
   object-fit: contain;
-  background: transparent; 
-  box-shadow: none;
-  animation: mantraCavePulse 2.5s infinite ease-in-out;
+  animation: ganesha-pulse 2.5s infinite ease-in-out;
 }
 
-@keyframes mantraCavePulse {
-  0% {
-    transform: scale(1);
-    filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.5));
-  }
-  50% {
-    transform: scale(1.08); 
-    filter: drop-shadow(0 0 35px rgba(255, 193, 7, 0.9)) brightness(1.1);
-  }
-  100% {
-    transform: scale(1);
-    filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.5));
-  }
+@keyframes ganesha-pulse {
+  0%   { transform: scale(1);    filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.5)); }
+  50%  { transform: scale(1.08); filter: drop-shadow(0 0 30px rgba(255, 193, 7, 0.8)) brightness(1.1); }
+  100% { transform: scale(1);    filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.5)); }
 }
 
-.mantra-cave-popup-title {
+.ganesha-popup-title {
   font-family: 'Baloo 2', cursive;
-  font-size: 40px;
-  font-weight: 800;
-  color: #3E2723;
-  margin-bottom: 20px;
-  line-height: 1.1;
-}
-
-.mantra-cave-popup-desc {
-  font-family: 'Nunito', sans-serif;
-  font-size: 24px;
-  color: #5D4037;
-  line-height: 1.5;
-  margin-bottom: 40px;
+  font-size: 22px;
+  color: #6B574A;
+  margin-top: 28px;
+  margin-bottom: 8px;
   font-weight: 700;
-  padding: 0 15px;
+  line-height: 1.2;
 }
 
-.mantra-cave-btn-group {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-  margin-top: 10px;
+.ganesha-popup-description {
+  font-family: 'Nunito', sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: #4A3A2F;
+  line-height: 1.4;
+  margin: 10px 0 28px 0;
+  letter-spacing: 0.5px;
+  animation: affirmation-fade 0.4s ease-out;
 }
 
-.mantra-cave-audio-btn {
+@keyframes affirmation-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Audio button (Cave of Secrets) */
+.ganesha-popup-audio-btn {
   background: #FFC107;
   border: none;
   color: #3E2723;
@@ -190,75 +257,82 @@
   cursor: pointer;
   box-shadow: 0 5px 0 #FFA000;
   transition: transform 0.1s;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 10px;
   text-transform: uppercase;
 }
 
-.mantra-cave-audio-btn:active {
+.ganesha-popup-audio-btn:active {
   transform: translateY(2px);
   box-shadow: 0 2px 0 #FFA000;
 }
 
-.mantra-cave-action-close-btn {
-  background: #FF7043;
-  border: none;
-  color: white;
-  padding: 15px 40px;
-  border-radius: 50px;
-  font-family: 'Baloo 2', cursive;
-  font-size: 22px;
-  font-weight: 800;
-  cursor: pointer;
-  box-shadow: 0 5px 0 #E64A19;
-  transition: transform 0.1s;
-}
-
-.mantra-cave-action-close-btn:active {
-  transform: translateY(2px);
-  box-shadow: 0 2px 0 #E64A19;
-}
-
-/* Animations */
-@keyframes mantraCaveFadeIn {
+@keyframes ganesha-fadeIn {
   from { opacity: 0; }
-  to { opacity: 1; }
+  to   { opacity: 1; }
 }
 
-@keyframes mantraCaveSlideUp {
-  from { transform: scale(0.9) translateY(30px); opacity: 0; }
-  to { transform: scale(1) translateY(0); opacity: 1; }
+@keyframes ganesha-fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
+/* Tablet Responsive */
+@media (max-width: 1024px) {
+  .ganesha-sidebar {
+    right: 18px;
+    width: 100px;
+    padding: 20px 14px;
+    gap: 20px;
+  }
+  .ganesha-icon {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+/* Mobile Responsive */
 @media (max-width: 768px) {
-  .mantra-cave-sidebar {
-    right: 10px;
-    width: 70px;
-    padding: 10px 5px;
+  .ganesha-sidebar {
+    right: 12px;
+    width: 90px;
+    padding: 18px 12px;
+    gap: 18px;
   }
-  .mantra-cave-popup-content {
-    padding: 30px 20px;
-    max-width: 95%;
+  .ganesha-icon {
+    width: 52px;
+    height: 52px;
   }
-  .mantra-cave-popup-title {
-    font-size: 28px;
+  .ganesha-popup-content {
+    padding: 36px 24px;
+    max-width: 94%;
   }
-  .mantra-cave-popup-desc {
+  .ganesha-popup-title {
     font-size: 18px;
   }
-  .mantra-cave-popup-img-container {
-    height: 150px;
+  .ganesha-popup-description {
+    font-size: 22px;
   }
-  .mantra-cave-btn-group {
-    flex-direction: column;
-    gap: 15px;
+  .ganesha-popup-img-container {
+    height: 180px;
   }
-  .mantra-cave-audio-btn, 
-  .mantra-cave-action-close-btn {
-    width: 100%;
-    justify-content: center;
-    padding: 12px 20px;
-    font-size: 20px;
+  .ganesha-popup-audio-btn {
+    font-size: 18px;
+    padding: 12px 28px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .ganesha-sidebar {
+    right: 10px;
+    width: 84px;
+    padding: 16px 10px;
+    gap: 16px;
+  }
+  .ganesha-icon {
+    width: 48px;
+    height: 48px;
   }
 }

@@ -1,4 +1,4 @@
-// zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx
+﻿// zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx
 // FIXED: Removed SanskritWordMission, connected PowerUnlockOverlay directly to next phase
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -31,6 +31,7 @@ import SanskritVoiceRecorder from '../../../../lib/components/audio/SanskritVoic
 
 // Zone Theme
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
+import { getOpeningModal } from '../../../../lib/config/content';
 
 // Game Components
 import VakratundaGame from './VakratundaGame';
@@ -658,68 +659,52 @@ const VakratundaGroveContent = ({
             {/* 3. OPENING MODAL (Using Zone Theme Colors) */}
             {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (() => {
               const theme = getZoneTheme(zoneId);
+              const modal = getOpeningModal(zoneId, sceneId);
               return (
                 <div
                   className="game-modal-overlay"
                   style={{
-                    '--modal-card-bg': '#F0F8F7',           // Light aqua from theme
-                    '--modal-card-border': `4px solid ${theme.accentColor}`,
+                    '--modal-card-bg': theme.parentBg,
                     '--modal-text-primary': theme.textPrimary,
-                    '--modal-text-secondary': theme.textSecondary,
-                    '--modal-btn-bg': 'linear-gradient(135deg, #2E7D6B 0%, #1B5E4B 100%)',
-                    '--modal-btn-shadow': 'rgba(30, 94, 75, 0.4)'
+                    '--modal-btn-bg': theme.buttonActiveBg,
+                    '--modal-btn-shadow': theme.glowColor
                   }}
                 >
-                   <div className="modak-game-sparkles">
-                      <div className="modak-game-sparkle"></div>
-                      <div className="modak-game-sparkle"></div>
-                    </div>
-
                     <div className="game-modal-content">
                       <div className="game-modal-character">
-                      <img src={ganeshaHeadphones} alt="Ganesha" className="vakratunda-modal-ganesha" />
-                    </div>
-
-                    <div className="game-modal-card" style={{
-                      background: '#F0F8F7',
-                      border: `4px solid ${theme.accentColor}`
-                    }}>
-                      <h1 className="game-modal-title" style={{ color: theme.textPrimary }}>
-                        Elephant River
-                      </h1>
-                      <p className="game-modal-subtitle" style={{ color: theme.textSecondary }}>
-                        Say the magic sounds and make flowers bloom
-                      </p>
-
-                      <div className="game-modal-icons">
-                         <div className="game-modal-icon-item">
-                            <img src={appVakratunda} alt="Flexibility" />
-                            <span style={{ color: theme.textPrimary }}>Flexibility</span>
-                         </div>
-                         <div className="game-modal-icon-item">
-                            <img src={appMahakaya} alt="Strength" />
-                            <span style={{ color: theme.textPrimary }}>Strength</span>
-                         </div>
+                        <img src={ganeshaHeadphones} alt="Ganesha" className="vakratunda-modal-ganesha" />
                       </div>
 
-                      <VOGatedButton
-                        visible={openingButtonVisible}
-                        onClick={() => {
-                          sceneActions.updateState({
-                            welcomeShown: true,
-                            phase: PHASES.VAKRATUNDA_GAME
-                          });
-                        }}
-                        className="game-modal-button"
-                        style={{
-                          background: 'linear-gradient(135deg, #2E7D6B 0%, #1B5E4B 100%)',
-                          boxShadow: '0 10px 30px rgba(30, 94, 75, 0.4)'
-                        }}
-                      >
-                        Let’s Make Magic! ✨
-                      </VOGatedButton>
+                      <div className="game-modal-card">
+                        <h1 className="game-modal-title">
+                          {modal?.title || 'Bloom and Grow'}
+                        </h1>
+
+                        <div className="game-modal-icons">
+                          <div className="game-modal-icon-item">
+                            <img src={appVakratunda} alt="Flexibility" />
+                            <span className="game-modal-icon-label">Flexibility</span>
+                          </div>
+                          <div className="game-modal-icon-item">
+                            <img src={appMahakaya} alt="Strength" />
+                            <span className="game-modal-icon-label">Strength</span>
+                          </div>
+                        </div>
+
+                        <VOGatedButton
+                          visible={openingButtonVisible}
+                          onClick={() => {
+                            sceneActions.updateState({
+                              welcomeShown: true,
+                              phase: PHASES.VAKRATUNDA_GAME
+                            });
+                          }}
+                          className="game-modal-button"
+                        >
+                          {modal?.buttonText || "Let's Explore"}
+                        </VOGatedButton>
+                      </div>
                     </div>
-                  </div>
                 </div>
               );
             })()}

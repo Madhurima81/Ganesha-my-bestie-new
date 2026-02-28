@@ -1,7 +1,9 @@
-// FestivalPianoGame.jsx - FINAL VERSION with Intro Scene, Restyled UI, and All Game Modes + SONG COMPLETION MODAL
+﻿// FestivalPianoGame.jsx - FINAL VERSION with Intro Scene, Restyled UI, and All Game Modes + SONG COMPLETION MODAL
 import React, { useState, useEffect, useRef } from 'react';
 import './FestivalPianoGame.css';
 import '../../shared/components/OpeningModal.css'; // <--- SHARED MODAL IMPORT
+import { getZoneTheme } from '../../../lib/config/ZoneThemes';
+import { getOpeningModal } from '../../../lib/config/content/openingModals';
 
 // Import scene management components
 import SceneManager from "../../../lib/components/scenes/SceneManager";
@@ -149,26 +151,28 @@ const SongCompletionOverlay = ({
 
 
 // Opening Modal Component
-const OpeningModal = ({ show, onStart }) => {
+const OpeningModal = ({ show, onStart, zoneId = 'festival-square', sceneId = 'game1' }) => {
   if (!show) return null;
+  const theme = getZoneTheme(zoneId);
+  const modal = getOpeningModal(zoneId, sceneId);
 
   return (
-    <div className="game-modal-overlay">
+    <div className="game-modal-overlay" style={{
+      '--modal-card-bg': theme.parentBg,
+      '--modal-text-primary': theme.textPrimary,
+      '--modal-btn-bg': theme.buttonActiveBg,
+      '--modal-btn-shadow': theme.glowColor
+    }}>
       <div className="game-modal-content">
         {/* Character - Left Side */}
         <div className="game-modal-character">
-      <img 
-  src={ganeshaGameScene}
-  alt="Ganesha"
-/>
+          <img src={ganeshaGameScene} alt="Ganesha" />
         </div>
 
         {/* Card - Right Side */}
         <div className="game-modal-card">
-          <h1 className="game-modal-title">Piano Time! 🎹</h1>
-          <p className="game-modal-subtitle">
-            Let's create beautiful festival melodies together!
-          </p>
+          <h1 className="game-modal-title">{modal?.title || 'Festival Beats'}</h1>
+          <p className="game-modal-subtitle">{modal?.description || 'Play and feel the rhythm rise.'}</p>
 
           {/* Icons Grid */}
           <div className="game-modal-icons">
@@ -186,9 +190,9 @@ const OpeningModal = ({ show, onStart }) => {
             </div>
           </div>
 
-          {/* Let's Play Button */}
+          {/* Let's Explore Button */}
           <button className="game-modal-button" onClick={onStart}>
-            Let's Play!
+            {modal?.buttonText || "Let's Explore"}
           </button>
         </div>
       </div>
@@ -545,8 +549,10 @@ if (sceneState.currentMode === GAME_MODES.INTRO) {
       <div className="festival-piano-game">
         {/* Piano background will show through */}
       </div>
-      <OpeningModal 
+      <OpeningModal
         show={true}
+        zoneId={zoneId}
+        sceneId={sceneId}
         onStart={() => sceneActions.updateState({ currentMode: GAME_MODES.SELECTION })}
       />
       <TocaBocaNav onHome={() => onNavigate?.('home')} onZonesClick={() => onNavigate?.('zones')} />

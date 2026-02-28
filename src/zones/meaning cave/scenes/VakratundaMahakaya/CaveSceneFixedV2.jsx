@@ -1,7 +1,10 @@
-// zones/cave-of-secrets/scenes/vakratunda-mahakaya/CaveSceneFixed.jsx
+﻿// zones/cave-of-secrets/scenes/vakratunda-mahakaya/CaveSceneFixed.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import './CaveSceneFixed.css';
 import '../../../../lib/styles/zone-themes.css';
+import '../../../shared/components/OpeningModal.css';
+import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
+import { getOpeningModal } from '../../../../lib/config/content/openingModals';
 import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
 
 // Import scene management components
@@ -1250,60 +1253,41 @@ setTimeout(() => {
           <div className="pond-background" style={{ backgroundImage: `url(${caveBackground})` }}>
 
             {/* OPENING INSTRUCTION SCREEN */}
-            {sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE && !sceneState.welcomeShown && (
-              <div className="cave-instructions-overlay">
-                {/* Sparkles */}
-                <div className="cave-sparkles">
-                  <div className="cave-sparkle"></div>
-                  <div className="cave-sparkle"></div>
-                  <div className="cave-sparkle"></div>
-                  <div className="cave-sparkle"></div>
-                </div>
-
-                <div className="cave-instructions-content">
-                  {/* Character - Left Side */}
-                  <div className="cave-instructions-ganesha">
-                    <img 
-                      src={ganeshaCharacterCave} 
-                      alt="Ganesha Character"
-                      style={{maxWidth: '450px'}}
-                    />
-                  </div>
-                  
-                  {/* Instruction Card - Right Side */}
-                  <div className="cave-instructions-card">
-                    <h1 className="cave-instructions-title">
-                      Unlock the Cave of Secrets!
-                    </h1>
-                    
-                    <p className="cave-instructions-subtitle">
-                      2 sacred Sanskrit chants are hidden here!
-                    </p>
-                    
-                    {/* Icons showing what to find */}
-                    <div className="cave-instructions-icons">
-                      <div className="cave-instruction-icon-item">
-                        <img src={vakratundaSymbol} alt="Vakratunda" />
-                        <span className="cave-instruction-icon-label">Curved Trunk</span>
-                      </div>
-                      <div className="cave-instruction-icon-item">
-                        <img src={mahakayaSymbol} alt="Mahakaya" />
-                        <span className="cave-instruction-icon-label">Great Body</span>
-                      </div>
+            {sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE && !sceneState.welcomeShown && (() => {
+              const theme = getZoneTheme(zoneId);
+              const modal = getOpeningModal(zoneId, sceneId);
+              return (
+                <div className="game-modal-overlay" style={{
+                  '--modal-card-bg': theme.parentBg,
+                  '--modal-text-primary': theme.textPrimary,
+                  '--modal-btn-bg': theme.buttonActiveBg,
+                  '--modal-btn-shadow': theme.glowColor
+                }}>
+                  <div className="game-modal-content">
+                    <div className="game-modal-character">
+                      <img src={ganeshaCharacterCave} alt="Ganesha Character" />
                     </div>
-                    
-                    <button
-                      className="cave-instructions-button"
-                      onClick={() => {
-                        sceneActions.updateState({ welcomeShown: true });
-                      }}
-                    >
-                      Enter the Cave
-                    </button>
+                    <div className="game-modal-card">
+                      <h1 className="game-modal-title">{modal?.title || 'Build the Strength'}</h1>
+                      <p className="game-modal-subtitle">{modal?.description || 'Feel the strength grow with each move.'}</p>
+                      <div className="game-modal-icons">
+                        <div className="game-modal-icon-item">
+                          <img src={vakratundaSymbol} alt="Vakratunda" />
+                          <span className="game-modal-icon-label">Curved Trunk</span>
+                        </div>
+                        <div className="game-modal-icon-item">
+                          <img src={mahakayaSymbol} alt="Mahakaya" />
+                          <span className="game-modal-icon-label">Great Body</span>
+                        </div>
+                      </div>
+                      <button className="game-modal-button" onClick={() => sceneActions.updateState({ welcomeShown: true })}>
+                        {modal?.buttonText || "Let's Explore"}
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             {/* Phase Headers - Always Visible */}
             {!showPowerModal && !showRescueModal && !showCenteredSymbol && sceneState.welcomeShown && (

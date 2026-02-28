@@ -15,6 +15,7 @@ import '../../../lib/styles/animations.css';
 
 // Content Configs
 import { getOpeningModal } from '../../../lib/config/content';
+import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 
 // Import images
 import nameBg from './assets/images/name-bg.png';
@@ -187,7 +188,7 @@ const monthFestivals = [
     { month: 12, name: 'December', festival: 'Karthigai Deepam', image: decImg, color: '#F4A460' }
   ];
 
-  const encouragingPhrases = ["Let’s try the next one 🌼", "Look closely 👀", "You’ve got this 💛"];
+  const encouragingPhrases = ["Let's try the next one 🌼", "Look closely 👀", "You've got this 💛"];
 
 // --- RELOAD DETECTION & RESTORATION ---
 useEffect(() => {
@@ -506,38 +507,37 @@ const handleFestivalClick = (festivalId) => {
       <div className="game-background" style={{backgroundImage: `url(${nameBg})`, backgroundSize: 'cover', backgroundPosition: 'center'}}></div>
 
       {/* Intro */}
-      <Modal
-        isOpen={sceneState.gamePhase === 'intro'}
-        onClose={() => {}}
-        title={openingModalContent?.title || "Name & Birthday Quest!"}
-        confirmText={openingModalContent?.buttonText || "Let's Begin 🌱"}
-        onConfirm={handleStartGame}
-        showCloseButton={false}
-        closeOnOverlayClick={false}
-        size="large"
-      >
-        <div className="intro-modal-content">
-          <img
-            src={babyGaneshaImg}
-            alt="Baby Ganesha"
-            className="intro-ganesha-image heartbeat"
-          />
-          <p className="intro-description">
-            {openingModalContent?.subtitle || "I have a special name and a special birthday."}<br />
-            {openingModalContent?.description || "Let's discover them together!"}
-          </p>
-          <div className="intro-icons-container">
-            <div className="intro-icon-item fade-in delay-100">
-              <div className="intro-icon-circle">🔤</div>
-              <span className="intro-icon-label">Name</span>
-            </div>
-            <div className="intro-icon-item fade-in delay-300">
-              <div className="intro-icon-circle">🎂</div>
-              <span className="intro-icon-label">Birthday</span>
+      {sceneState.gamePhase === 'intro' && (() => {
+        const theme = getZoneTheme('about-me-hut');
+        return (
+          <div className="game-modal-overlay" style={{ '--modal-card-bg': theme.parentBg, '--modal-text-primary': theme.textPrimary, '--modal-btn-bg': theme.buttonActiveBg, '--modal-btn-shadow': theme.glowColor }}>
+            <div className="game-modal-content">
+              <div className="game-modal-character">
+                <img src={babyGaneshaImg} alt="Baby Ganesha" />
+              </div>
+              <div className="game-modal-card">
+                <h1 className="game-modal-title">{openingModalContent?.title || "Let's Be Friends"}</h1>
+                <p className="game-modal-subtitle">
+                  {openingModalContent?.description || 'Let us share your name and birthday.'}
+                </p>
+                <div className="game-modal-icons">
+                  <div className="game-modal-icon-item">
+                    <div className="game-modal-icon-circle">🔤</div>
+                    <span className="game-modal-icon-label">Name</span>
+                  </div>
+                  <div className="game-modal-icon-item">
+                    <div className="game-modal-icon-circle">🎂</div>
+                    <span className="game-modal-icon-label">Birthday</span>
+                  </div>
+                </div>
+                <button className="game-modal-button" onClick={handleStartGame}>
+                  {openingModalContent?.buttonText || "Let's Begin"}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      </Modal>
+        );
+      })()}
 
       {/* Back Button */}
       {sceneState.gamePhase !== 'intro' && !sceneState.showingCompletionScreen && (

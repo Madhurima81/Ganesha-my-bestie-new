@@ -66,8 +66,8 @@ export const pondHelpConfig = {
     ) {
       hints.push({
         image: elephantFull,
-        name: "Ganesha’s Trunk",
-        description: "Tap Ganesha’s trunk to spray water.",
+        name: "Ganesha's Trunk",
+        description: "Tap Ganesha's trunk to spray water.",
         priority: 1
       });
       

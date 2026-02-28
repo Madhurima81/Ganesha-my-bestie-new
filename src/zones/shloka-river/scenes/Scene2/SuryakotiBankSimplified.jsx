@@ -1,8 +1,11 @@
-// zones/shloka-river/scenes/Scene2/SuryakotiBank.jsx - Updated with Combined Memory Game
+﻿// zones/shloka-river/scenes/Scene2/SuryakotiBank.jsx - Updated with Combined Memory Game
 import React, { useState, useEffect, useRef } from 'react';
 import './SuryakotiBankSimplified.css';
+import '../../../shared/components/OpeningModal.css';
 // ... existing imports
 import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
+import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
+import { getOpeningModal } from '../../../../lib/config/content';
 
 // Import scene management components
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
@@ -1207,57 +1210,43 @@ const handlePhaseComplete = (word) => {
           <div className="river-background" style={{ backgroundImage: `url(${suryakotiBankBg})` }}>
 
    {/* ==================== SHLOKA RIVER INSTRUCTION MODAL ==================== */}
-{sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
-  <div className="river-instructions-overlay">
-    {/* Background Sparkles */}
-    <div className="river-sparkles">
-      <div className="river-sparkle"></div>
-      <div className="river-sparkle"></div>
-      <div className="river-sparkle"></div>
-    </div>
-
-    <div className="river-instructions-content">
-      {/* Left: Character */}
-      <div className="river-instructions-ganesha">
-        <img src={ganeshaHeadphones} alt="Ganesha Character" />
-      </div>
-
-      {/* Right: Instruction Card */}
-      <div className="river-instructions-card">
-        <h1 className="river-instructions-title">Welcome to Suryakoti Bank!</h1>
-        <p className="river-instructions-subtitle">River of Light</p>
-        <p className="river-instructions-text">
-          The sun flowers are sleeping! Chant magical sounds to wake them up with golden rays and find your inner energy.
-        </p>
-
-        {/* Icons Area */}
-        <div className="river-instructions-icons">
-          <div className="river-icon-item">
-            <img src={appSuryakoti} alt="Suryakoti" />
-            <span className="river-icon-label">Energy</span>
-          </div>
-          <div className="river-icon-item">
-            <img src={appSamaprabha} alt="Samaprabha" />
-            <span className="river-icon-label">Kindness</span>
-          </div>
+{sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (() => {
+  const theme = getZoneTheme(zoneId);
+  const modal = getOpeningModal(zoneId, sceneId);
+  return (
+    <div className="game-modal-overlay" style={{ '--modal-card-bg': theme.parentBg, '--modal-text-primary': theme.textPrimary, '--modal-btn-bg': theme.buttonActiveBg, '--modal-btn-shadow': theme.glowColor }}>
+      <div className="game-modal-content">
+        <div className="game-modal-character">
+          <img src={ganeshaHeadphones} alt="Ganesha Character" />
         </div>
-
-        {/* Call to Action */}
-        <button
-          className="river-instructions-button"
-          onClick={() => {
-            sceneActions.updateState({ welcomeShown: true });
-            setModeForPhase('suryakoti');
-            setShowModeSelection(true);
-            setModeSelected(false);
-          }}
-        >
-          Let's Chant!
-        </button>
+        <div className="game-modal-card">
+          <h1 className="game-modal-title">{modal?.title || 'Sun and Smiles'}</h1>
+          <div className="game-modal-icons">
+            <div className="game-modal-icon-item">
+              <img src={appSuryakoti} alt="Suryakoti" />
+              <span className="game-modal-icon-label">Energy</span>
+            </div>
+            <div className="game-modal-icon-item">
+              <img src={appSamaprabha} alt="Samaprabha" />
+              <span className="game-modal-icon-label">Kindness</span>
+            </div>
+          </div>
+          <button
+            className="game-modal-button"
+            onClick={() => {
+              sceneActions.updateState({ welcomeShown: true });
+              setModeForPhase('suryakoti');
+              setShowModeSelection(true);
+              setModeSelected(false);
+            }}
+          >
+            {modal?.buttonText || "Let's Explore"}
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-)}
+  );
+})()}
 
            {/*} {sceneState.phase === PHASES.SAMAPRABHA_STORY && (
   <div className="suryakoti-mission-modal-overlay">

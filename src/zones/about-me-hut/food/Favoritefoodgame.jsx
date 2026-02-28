@@ -12,6 +12,8 @@ import BackToMapButton from '../../../lib/components/navigation/BackToMapButton'
 
 // Content Configs
 import { getOpeningModal } from '../../../lib/config/content';
+import { getZoneTheme } from '../../../lib/config/ZoneThemes';
+import '../../shared/components/OpeningModal.css';
 
 // --- EXISTING ASSETS ---
 import foodBg from './assets/images/food-bg.png';
@@ -560,7 +562,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       {/* Intro Screen */}
       {sceneState.gamePhase === 'intro' && (
-        <div className="game-modal-overlay" id="favorite-food-intro">
+        <div className="game-modal-overlay" id="favorite-food-intro" style={(() => { const theme = getZoneTheme('about-me-hut'); return { '--modal-card-bg': theme.parentBg, '--modal-text-primary': theme.textPrimary, '--modal-btn-bg': theme.buttonActiveBg, '--modal-btn-shadow': theme.glowColor }; })()}>
           <div className="game-modal-content">
             <div className="game-modal-character">
               <img src={babyGaneshaImg} alt="Baby Ganesha" />
@@ -568,8 +570,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             <div className="game-modal-card">
               <h1 className="game-modal-title">{openingModalContent?.title || 'The Favorites Match!'}</h1>
               <p className="game-modal-subtitle">
-                {openingModalContent?.subtitle || 'I have some things I love more than anything!'}<br />
-                {openingModalContent?.description || 'Can you guess my favorites?'}<br />
+                {openingModalContent?.description || 'Let us discover what we both enjoy.'}
               </p>
               <div className="game-modal-icons">
                 <div className="game-modal-icon-item">
@@ -800,7 +801,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         <div className="intro-overlay">
           <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
           <div className="child-phase-modal">
-            <h2 className="child-phase-title">Now it’s your turn! 😊</h2>
+            <h2 className="child-phase-title">Now it's your turn! 😊</h2>
             <p className="child-phase-subtext">Tell me about you.</p>
             <button className="child-phase-button" onClick={() => sceneActions.updateState({ gamePhase: 'child-food-choice' })}>
               Tell Me about You!✨

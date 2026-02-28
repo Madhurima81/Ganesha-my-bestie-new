@@ -1,9 +1,11 @@
-// zones/cave-of-secrets/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvada.jsx
+﻿// zones/cave-of-secrets/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvada.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import './SarvakaryeshuSarvada.css';
-// 1. ADD IMPORT (Top of file)
+import '../../../shared/components/OpeningModal.css';
 import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
 import ganeshaCharacterCave from './assets/images/ganesha-character-cave.png';
+import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
+import { getOpeningModal } from '../../../../lib/config/content/openingModals';
 
 // Import scene management components
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
@@ -1456,56 +1458,41 @@ useEffect(() => {
           <div className="scene-background" style={{ backgroundImage: `url(${sceneBackground})` }}>
 
             {/* ✅ OPENING SCREEN: Sarvakaryeshu Sarvada */}
-{sceneState.phase === SCENE_PHASES.DOOR1_ACTIVE && !sceneState.welcomeShown && (
-  <div className="sarvakaryeshu-instructions-overlay">
-    <div className="sarvakaryeshu-sparkles">
-      <div className="sarvakaryeshu-sparkle"></div>
-      <div className="sarvakaryeshu-sparkle"></div>
-      <div className="sarvakaryeshu-sparkle"></div>
-      <div className="sarvakaryeshu-sparkle"></div>
-    </div>
-
-    <div className="sarvakaryeshu-instructions-content">
-      <div className="sarvakaryeshu-instructions-ganesha">
-        <img 
-          src={ganeshaCharacterCave} 
-          alt="Ganesha Character"
-          style={{maxWidth: '450px'}}
-        />
-      </div>
-      
-      <div className="sarvakaryeshu-instructions-card">
-        <h1 className="sarvakaryeshu-instructions-title">
-          Unlock the Divine Tasks Chamber!
-        </h1>
-        
-        <p className="sarvakaryeshu-instructions-subtitle">
-          2 powerful Sanskrit chants are hidden here!
-        </p>
-        
-        <div className="sarvakaryeshu-instructions-icons">
-          <div className="sarvakaryeshu-instruction-icon-item">
-            <img src={sarvakaryeshuSymbol} alt="Sarvakaryeshu" />
-            <span className="sarvakaryeshu-instruction-icon-label">In All Tasks</span>
-          </div>
-          <div className="sarvakaryeshu-instruction-icon-item">
-            <img src={sarvadaSymbol} alt="Sarvada" />
-            <span className="sarvakaryeshu-instruction-icon-label">Always</span>
-          </div>
+{sceneState.phase === SCENE_PHASES.DOOR1_ACTIVE && !sceneState.welcomeShown && (() => {
+  const theme = getZoneTheme(zoneId);
+  const modal = getOpeningModal(zoneId, sceneId);
+  return (
+    <div className="game-modal-overlay" style={{
+      '--modal-card-bg': theme.parentBg,
+      '--modal-text-primary': theme.textPrimary,
+      '--modal-btn-bg': theme.buttonActiveBg,
+      '--modal-btn-shadow': theme.glowColor
+    }}>
+      <div className="game-modal-content">
+        <div className="game-modal-character">
+          <img src={ganeshaCharacterCave} alt="Ganesha Character" />
         </div>
-        
-        <button
-          className="sarvakaryeshu-instructions-button"
-          onClick={() => {
-            sceneActions.updateState({ welcomeShown: true });
-          }}
-        >
-          Enter the Cave
-        </button>
+        <div className="game-modal-card">
+          <h1 className="game-modal-title">{modal?.title || 'Choose with Ganesha'}</h1>
+          <p className="game-modal-subtitle">{modal?.description || 'Choose wisely with Ganesha beside you.'}</p>
+          <div className="game-modal-icons">
+            <div className="game-modal-icon-item">
+              <img src={sarvakaryeshuSymbol} alt="Sarvakaryeshu" />
+              <span className="game-modal-icon-label">In All Tasks</span>
+            </div>
+            <div className="game-modal-icon-item">
+              <img src={sarvadaSymbol} alt="Sarvada" />
+              <span className="game-modal-icon-label">Always</span>
+            </div>
+          </div>
+          <button className="game-modal-button" onClick={() => sceneActions.updateState({ welcomeShown: true })}>
+            {modal?.buttonText || "Let's Explore"}
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-)}
+  );
+})()}
 
 {/* Story Modal 
 {showStoryModal && (
@@ -2315,7 +2302,7 @@ return symbols.map((symbol, index) => {
   <SimpleDiscoveryOverlay
     // STAGE 1: Discovery Moment
     celebrationTitle="Sarvakaryeshu Mastered!"
-    celebrationText={"“Self-Help Power…”\n\nYou found the right Ganesha power for every task! Sarvakaryeshu means ‘In All Activities’—you can handle anything!"}
+    celebrationText={""Self-Help Power…"\n\nYou found the right Ganesha power for every task! Sarvakaryeshu means 'In All Activities'—you can handle anything!"}
     celebrationImage={doorImage} // or one of the game scenario images
     
     // STAGE 2: Mastery Power Reveal
@@ -2346,12 +2333,12 @@ return symbols.map((symbol, index) => {
   <SimpleDiscoveryOverlay
     // STAGE 1: Discovery Moment
     celebrationTitle="Sarvada Revealed!"
-    celebrationText={"“Always Ready…”\n\nYou helped your friends! Sarvada means ‘Always’—your powers work every day, for everyone."}
+    celebrationText={""Always Ready…"\n\nYou helped your friends! Sarvada means 'Always'—your powers work every day, for everyone."}
     celebrationImage={doorImage} // or a helper image
     
     // STAGE 2: Infinite Wisdom Power Reveal
     powerTitle="Infinite Wisdom Unlocked!"
-    powerText="Ganesha’s wisdom is with you—always. Use your powers to be a kind friend, a good helper, and a brave leader."
+    powerText="Ganesha's wisdom is with you—always. Use your powers to be a kind friend, a good helper, and a brave leader."
     powerIcon={sarvadaSymbol}
     
     buttonText="The Journey Continues!"

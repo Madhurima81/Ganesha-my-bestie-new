@@ -1,6 +1,10 @@
-// zones/symbol-mountain/scenes/final-scene/SacredAssemblyScene.jsx - V8 DIVINE VERSION
+﻿// zones/symbol-mountain/scenes/final-scene/SacredAssemblyScene.jsx - V8 DIVINE VERSION
 import React, { useState, useEffect, useRef } from 'react';
 import './SacredAssemblyScene.css';
+import '../../../shared/components/OpeningModal.css';
+import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
+import { getOpeningModal } from '../../../../lib/config/content/openingModals';
+import { getCompletionModal } from '../../../../lib/config/content';
 
 // Import scene management components
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
@@ -349,6 +353,7 @@ const SacredAssemblyContent = ({
   const [showZoneCompletion, setShowZoneCompletion] = useState(false);
   const [hintUsed, setHintUsed] = useState(false);
   const [isOrbsRunning, setIsOrbsRunning] = useState(false);
+  const completionModalContent = getCompletionModal(zoneId, sceneId);
 
   const { resetScene } = useSceneReset(sceneActions, 'symbol-mountain', 'final-scene', getSceneResetConfig('final-scene'));
 
@@ -962,66 +967,45 @@ const handleWrongPlacement = (clickedZoneId) => {
         <div className="sacred-assembly-container">
           
           {/* OPENING INSTRUCTION SCREEN (Scene 4) */}
-          {sceneState.phase === 'initial' && !sceneState.welcomeShown && (
-            <div className="assembly-instructions-overlay">
-              {/* Sparkles */}
-              <div className="assembly-sparkles">
-                <div className="assembly-sparkle"></div>
-                <div className="assembly-sparkle"></div>
-                <div className="assembly-sparkle"></div>
-                <div className="assembly-sparkle"></div>
-              </div>
-
-              <div className="assembly-instructions-content">
-                {/* Character - Left Side */}
-                <div className="assembly-instructions-ganesha">
-                  <img 
-                    src={ganeshaDivine} 
-                    alt="Divine Ganesha"
-                    style={{maxWidth: '450px'}}
-                  />
-                </div>
-                
-                {/* Instruction Card - Right Side */}
-                <div className="assembly-instructions-card">
-                  <h1 className="assembly-instructions-title">
-                    Awaken the Divine Ganesha!
-                  </h1>
-                  
-              <p className="assembly-instructions-subtitle">
-  You have learned all 8 sacred symbols! Now prove your knowledge by 
-  matching each symbol's meaning to the correct part of Ganesha's form. 
-  Watch him come to life as you succeed!
-</p>
-                  
-                  {/* Icons showing what to find */}
-                  <div className="assembly-instructions-icons">
-                    <div className="assembly-instruction-icon-item">
-                      <img src={symbolEyesColored} alt="Wisdom" />
-                      <span className="assembly-instruction-icon-label">Wisdom</span>
-                    </div>
-                    <div className="assembly-instruction-icon-item">
-                      <img src={symbolTrunkColored} alt="Strength" />
-                      <span className="assembly-instruction-icon-label">Strength</span>
-                    </div>
-                    <div className="assembly-instruction-icon-item">
-                      <img src={symbolLotusColored} alt="Blessing" />
-                      <span className="assembly-instruction-icon-label">Blessing</span>
-                    </div>
+          {sceneState.phase === 'initial' && !sceneState.welcomeShown && (() => {
+            const theme = getZoneTheme(zoneId);
+            const modal = getOpeningModal(zoneId, sceneId);
+            return (
+              <div className="game-modal-overlay" style={{
+                '--modal-card-bg': theme.parentBg,
+                '--modal-text-primary': theme.textPrimary,
+                '--modal-btn-bg': theme.buttonActiveBg,
+                '--modal-btn-shadow': theme.glowColor
+              }}>
+                <div className="game-modal-content">
+                  <div className="game-modal-character">
+                    <img src={ganeshaDivine} alt="Divine Ganesha" />
                   </div>
-                  
-                  <button
-                    className="assembly-instructions-button"
-                    onClick={() => {
-                      sceneActions.updateState({ welcomeShown: true });
-                    }}
-                  >
-                    Begin Assembly!
-                  </button>
+                  <div className="game-modal-card">
+                    <h1 className="game-modal-title">{modal?.title || 'Shine Together'}</h1>
+                    <p className="game-modal-subtitle">{modal?.description || 'Place them and watch them glow.'}</p>
+                    <div className="game-modal-icons">
+                      <div className="game-modal-icon-item">
+                        <img src={symbolEyesColored} alt="Wisdom" />
+                        <span className="game-modal-icon-label">Wisdom</span>
+                      </div>
+                      <div className="game-modal-icon-item">
+                        <img src={symbolTrunkColored} alt="Strength" />
+                        <span className="game-modal-icon-label">Strength</span>
+                      </div>
+                      <div className="game-modal-icon-item">
+                        <img src={symbolLotusColored} alt="Blessing" />
+                        <span className="game-modal-icon-label">Blessing</span>
+                      </div>
+                    </div>
+                    <button className="game-modal-button" onClick={() => sceneActions.updateState({ welcomeShown: true })}>
+                      {modal?.buttonText || "Let's Explore"}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* HEARTS PROGRESS BAR */}
 {sceneState.welcomeShown && (
@@ -1565,6 +1549,8 @@ const handleWrongPlacement = (clickedZoneId) => {
           <SceneCompletionCelebration
             show={showSceneCompletion}
             sceneName="Symbol Mountain"
+            completionTitle={completionModalContent?.title}
+            completionSubtitle={completionModalContent?.subtitle}
             sceneNumber={4}
             totalScenes={4}
             starsEarned={8}

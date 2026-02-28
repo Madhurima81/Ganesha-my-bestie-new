@@ -1,7 +1,10 @@
-// zones/cave-of-secrets/scenes/suryakoti-samaprabha/SuryakotiScene.jsx
+﻿// zones/cave-of-secrets/scenes/suryakoti-samaprabha/SuryakotiScene.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
 import './SuryakotiScene.css';
+import '../../../shared/components/OpeningModal.css';
+import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
+import { getOpeningModal } from '../../../../lib/config/content/openingModals';
 
 // Import scene management components (PROVEN FROM CAVE)
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
@@ -1620,60 +1623,41 @@ const hideActiveHints = () => {
 
 
       {/* ✅ OPENING INSTRUCTION SCREEN (Full Screen) */}
-{sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE && !sceneState.welcomeShown && (
-  <div className="suryakoti-instructions-overlay">
-    {/* Sparkles */}
-    <div className="suryakoti-sparkles">
-      <div className="suryakoti-sparkle"></div>
-      <div className="suryakoti-sparkle"></div>
-      <div className="suryakoti-sparkle"></div>
-      <div className="suryakoti-sparkle"></div>
-    </div>
-
-    <div className="suryakoti-instructions-content">
-      {/* Character - Left Side */}
-      <div className="suryakoti-instructions-ganesha">
-        <img 
-          src={ganeshaCharacterCave} 
-          alt="Ganesha Character"
-          style={{maxWidth: '450px'}}
-        />
-      </div>
-      
-      {/* Instruction Card - Right Side */}
-      <div className="suryakoti-instructions-card">
-        <h1 className="suryakoti-instructions-title">
-          Unlock the Million Suns Chamber!
-        </h1>
-        
-        <p className="suryakoti-instructions-subtitle">
-          2 radiant Sanskrit chants are hidden here!
-        </p>
-        
-        {/* Icons showing what to find */}
-        <div className="suryakoti-instructions-icons">
-          <div className="suryakoti-instruction-icon-item">
-            <img src={suryakotiSymbol} alt="Suryakoti" />
-            <span className="suryakoti-instruction-icon-label">Million Suns</span>
-          </div>
-          <div className="suryakoti-instruction-icon-item">
-            <img src={samaprabhaSymbol} alt="Samaprabha" />
-            <span className="suryakoti-instruction-icon-label">Equal Radiance</span>
-          </div>
+{sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE && !sceneState.welcomeShown && (() => {
+  const theme = getZoneTheme(zoneId);
+  const modal = getOpeningModal(zoneId, sceneId);
+  return (
+    <div className="game-modal-overlay" style={{
+      '--modal-card-bg': theme.parentBg,
+      '--modal-text-primary': theme.textPrimary,
+      '--modal-btn-bg': theme.buttonActiveBg,
+      '--modal-btn-shadow': theme.glowColor
+    }}>
+      <div className="game-modal-content">
+        <div className="game-modal-character">
+          <img src={ganeshaCharacterCave} alt="Ganesha Character" />
         </div>
-        
-        <button
-          className="suryakoti-instructions-button"
-          onClick={() => {
-            sceneActions.updateState({ welcomeShown: true });
-          }}
-        >
-          Enter the Cave
-        </button>
+        <div className="game-modal-card">
+          <h1 className="game-modal-title">{modal?.title || 'Spread the Light'}</h1>
+          <p className="game-modal-subtitle">{modal?.description || 'Find them and light up the cave.'}</p>
+          <div className="game-modal-icons">
+            <div className="game-modal-icon-item">
+              <img src={suryakotiSymbol} alt="Suryakoti" />
+              <span className="game-modal-icon-label">Million Suns</span>
+            </div>
+            <div className="game-modal-icon-item">
+              <img src={samaprabhaSymbol} alt="Samaprabha" />
+              <span className="game-modal-icon-label">Equal Radiance</span>
+            </div>
+          </div>
+          <button className="game-modal-button" onClick={() => sceneActions.updateState({ welcomeShown: true })}>
+            {modal?.buttonText || "Let's Explore"}
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-)}
+  );
+})()}
 
   
 
@@ -2910,7 +2894,7 @@ const hideActiveHints = () => {
   <SimpleDiscoveryOverlay
     // STAGE 1: Discovery Moment
     celebrationTitle="Surya Koti Uncovered!"
-    celebrationText={"“Gathering Light…”\n\nYou collected the light of many suns! Surya Koti means ‘Like Ten Million Suns’— it’s the brightest magic of all!"}
+    celebrationText={""Gathering Light…"\n\nYou collected the light of many suns! Surya Koti means 'Like Ten Million Suns'— it's the brightest magic of all!"}
     celebrationImage={suryakotiCard}
     
     // STAGE 2: Vibrancy Power Reveal
@@ -2943,7 +2927,7 @@ const hideActiveHints = () => {
   <SimpleDiscoveryOverlay
     // STAGE 1: Discovery Moment
     celebrationTitle="Samaprabha Revealed!"
-    celebrationText={"“Equal Radiance…”\n\nYou shared your light with everyone equally! Samaprabha means ‘Equal Shine’— a magic of kindness that reaches all."}
+    celebrationText={""Equal Radiance…"\n\nYou shared your light with everyone equally! Samaprabha means 'Equal Shine'— a magic of kindness that reaches all."}
     celebrationImage={samaprabhaCard}
     
     // STAGE 2: Kindness Power Reveal

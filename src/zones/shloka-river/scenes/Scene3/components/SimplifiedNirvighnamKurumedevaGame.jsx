@@ -1,5 +1,5 @@
 // SimplifiedNirvighnamKurumedevaGame.jsx - Combined Nirvighnam + Kurumedeva
-// Pattern: Same elements sing Ã¢â€ â€™ Player clicks same elements Ã¢â€ â€™ Visual rewards transform
+// Pattern: Same elements sing Ã¢â€ ’ Player clicks same elements Ã¢â€ ’ Visual rewards transform
 
 import React, { useState, useEffect, useRef } from 'react';
 
@@ -148,7 +148,7 @@ const SimplifiedNirvighnamKurumedevaGame = ({
 
   // ENHANCED: Comprehensive timer cleanup - CRITICAL for phase transitions
   const clearAllTimers = () => {
-    console.log('Ã°Å¸Â§Â¹ Clearing all timers for clean state transition');
+    console.log('🧹 Clearing all timers for clean state transition');
     timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
     intervalsRef.current.forEach(interval => clearInterval(interval));
     timeoutsRef.current = [];
@@ -181,7 +181,7 @@ const SimplifiedNirvighnamKurumedevaGame = ({
   useEffect(() => {
     isComponentMountedRef.current = true;
     return () => {
-      console.log('Ã°Å¸Â§Â¹ SimplifiedNirvighnamKurumedevaGame: Component unmounting - cleaning up thoroughly');
+      console.log('🧹 SimplifiedNirvighnamKurumedevaGame: Component unmounting - cleaning up thoroughly');
       isComponentMountedRef.current = false;
       clearAllTimers();
       
@@ -379,7 +379,7 @@ const SimplifiedNirvighnamKurumedevaGame = ({
 
   // ENHANCED: Start Kurumedeva phase with comprehensive state cleanup
   const startKurumedevaPhase = () => {
-    console.log('Ã°Å¸â€Â¥ STARTING KURUMEDEVA PHASE - COMPREHENSIVE RESET Ã°Å¸â€Â¥');
+    console.log('🔥 STARTING KURUMEDEVA PHASE - COMPREHENSIVE RESET 🔥');
     
     // CRITICAL: Clear all timers first to prevent interference
     clearAllTimers();
@@ -416,14 +416,14 @@ const SimplifiedNirvighnamKurumedevaGame = ({
       });
     }
     
-    console.log('Ã¢Å“â€¦ Kurumedeva phase initialized with clean state');
+    console.log('Ã¢Å"… Kurumedeva phase initialized with clean state');
   };
 
   // Expose global function for parent to call
   useEffect(() => {
     if (!isActive) return;
     
-    console.log('Ã°Å¸Å½Â® Setting up global functions for SimplifiedNirvighnamKurumedevaGame');
+    console.log('🎮 Setting up global functions for SimplifiedNirvighnamKurumedevaGame');
     
     if (!window.simplifiedNirvighnamKurumedevaGame) {
       window.simplifiedNirvighnamKurumedevaGame = {};
@@ -432,10 +432,10 @@ const SimplifiedNirvighnamKurumedevaGame = ({
     window.simplifiedNirvighnamKurumedevaGame.startKurumedevaPhase = startKurumedevaPhase;
     window.simplifiedNirvighnamKurumedevaGame.isReady = true;
     
-    console.log('Ã¢Å“â€¦ Global function registered:', typeof window.simplifiedNirvighnamKurumedevaGame.startKurumedevaPhase);
+    console.log('Ã¢Å"… Global function registered:', typeof window.simplifiedNirvighnamKurumedevaGame.startKurumedevaPhase);
     
     return () => {
-      console.log('Ã°Å¸Â§Â¹ Cleaning up global functions');
+      console.log('🧹 Cleaning up global functions');
       if (window.simplifiedNirvighnamKurumedevaGame) {
         window.simplifiedNirvighnamKurumedevaGame.isReady = false;
         delete window.simplifiedNirvighnamKurumedevaGame.startKurumedevaPhase;
@@ -522,7 +522,7 @@ useEffect(() => {
   // Auto-transition to Kurumedeva when power is gained and Nirvighnam is complete
 useEffect(() => {
   if (powerGained && currentPhase === 'nirvighnam' && gamePhase === 'phase_complete') {
-    console.log('Ã°Å¸â€Â¥ AUTO-TRANSITION: Nirvighnam complete + power gained - switching to Kurumedeva');
+    console.log('🔥 AUTO-TRANSITION: Nirvighnam complete + power gained - switching to Kurumedeva');
     startKurumedevaPhase();
   }
 }, [powerGained, currentPhase, gamePhase]);
@@ -709,7 +709,7 @@ useEffect(() => {
             fontSize: '20px',
             animation: 'musicNote 0.6s ease-in-out'
           }}>
-            Ã°Å¸Å½Âµ
+            🎵
           </div>
         )}
         
@@ -740,7 +740,7 @@ useEffect(() => {
             animation: 'crownFloat 2s ease-in-out infinite',
             filter: 'drop-shadow(0 0 4px rgba(255, 215, 0, 0.8))'
           }}>
-            Ã°Å¸â€˜â€˜
+            👑
           </div>
         )}
         
@@ -786,7 +786,7 @@ useEffect(() => {
             boxShadow: '0 2px 8px rgba(76, 175, 80, 0.4)',
             animation: 'checkmarkAppear 0.5s ease-out'
           }}>
-            Ã¢Å“â€œ
+            Ã¢Å"“
           </div>
         )}
       </button>

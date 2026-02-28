@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import './MandapDecorationGame.css';
 import '../../shared/components/OpeningModal.css'; // <--- SHARED MODAL IMPORT
+import { getZoneTheme } from '../../../lib/config/ZoneThemes';
+import { getOpeningModal } from '../../../lib/config/content/openingModals';
 
 import FreeDraggableItem from '../../../lib/components/interactive/FreeDraggableItem';
 import FestivalSquareCompletion from '../components/FestivalSquareCompletion';
@@ -84,26 +86,28 @@ const MissionCompletionOverlay = ({
 
 
 // Opening Modal Component for Mandap
-const OpeningModal = ({ show, onStart }) => {
+const OpeningModal = ({ show, onStart, zoneId = 'festival-square', sceneId = 'game4' }) => {
   if (!show) return null;
+  const theme = getZoneTheme(zoneId);
+  const modal = getOpeningModal(zoneId, sceneId);
 
   return (
-    <div className="game-modal-overlay">
+    <div className="game-modal-overlay" style={{
+      '--modal-card-bg': theme.parentBg,
+      '--modal-text-primary': theme.textPrimary,
+      '--modal-btn-bg': theme.buttonActiveBg,
+      '--modal-btn-shadow': theme.glowColor
+    }}>
       <div className="game-modal-content">
         {/* Character - Left Side */}
         <div className="game-modal-character">
-          <img 
-            src={ganeshaImage}
-            alt="Ganesha"
-          />
+          <img src={ganeshaImage} alt="Ganesha" />
         </div>
 
         {/* Card - Right Side */}
         <div className="game-modal-card">
-          <h1 className="game-modal-title">Mandap Time! 🏛️</h1>
-          <p className="game-modal-subtitle">
-            Let's create a beautiful wedding canopy together!
-          </p>
+          <h1 className="game-modal-title">{modal?.title || 'Mandap Magic'}</h1>
+          <p className="game-modal-subtitle">{modal?.description || 'Decorate it your way.'}</p>
 
           {/* Icons Grid */}
           <div className="game-modal-icons">
@@ -121,9 +125,9 @@ const OpeningModal = ({ show, onStart }) => {
             </div>
           </div>
 
-          {/* Let's Play Button */}
+          {/* Let's Explore Button */}
           <button className="game-modal-button" onClick={onStart}>
-            Let's Build!
+            {modal?.buttonText || "Let's Explore"}
           </button>
         </div>
       </div>
@@ -238,7 +242,7 @@ const MISSIONS = [
       category: 'FLOWERS',
       zone: 'altar-left-flowers',  // ✅ NEW ZONE
       instruction: "Place flowers on the left altar",
-      successMessage: "“So pretty! Ganesha loves these flowers!”",
+      successMessage: '"So pretty! Ganesha loves these flowers!"' ,
       culturalNote: "Marigolds are sacred flowers in Hindu pujas",
       emoji: '🌸'
     },
@@ -248,7 +252,7 @@ const MISSIONS = [
       category: 'OFFERINGS',
       zone: 'altar-left-coconut',  // ✅ NEW ZONE (below flowers)
       instruction: "Add coconut to the left altar",
-      successMessage: "“Yay! The coconut is ready for puja!”",
+      successMessage: '"Yay! The coconut is ready for puja!"' ,
       culturalNote: "Breaking coconut removes obstacles",
       emoji: '🥥'
     },
@@ -258,7 +262,7 @@ const MISSIONS = [
       category: 'LIGHTS',
       zone: 'altar-center-diya',  // ✅ NEW ZONE (next to Ganesha)
       instruction: "Light the diya next to Ganesha",
-      successMessage: "“Lovely! The diya is shining bright!”",
+      successMessage: '"Lovely! The diya is shining bright!"' ,
       culturalNote: "Diyas guide the gods to our prayers",
       emoji: '🪔'
     },
@@ -732,7 +736,7 @@ const MANDAP_ZONES = {
   'base-floor': { x: 55, y: 73, width: 10, height: 10 }               // Floor
 };
 
-const MandapDecorationGame = ({ onComplete, onNavigate }) => {
+const MandapDecorationGame = ({ onComplete, onNavigate, zoneId = 'festival-square', sceneId = 'game4' }) => {
   // Game state
   const [gameState, setGameState] = useState(() => {
     const savedState = loadGameState();
@@ -1367,7 +1371,7 @@ const handleZoneClick = (zoneId, event) => {
       }
       return (
         <div className="header-content-row">
-          <span>“Tap items to put them in the right place”</span>
+          <span>"Tap items to put them in the right place"</span>
         </div>
       );
     }
@@ -1471,8 +1475,10 @@ const itemName = targetItem ? targetItem.name : 'item'; // Use full name
 if (currentMode === GAME_MODES.INTRO) {
   return (
     <>
-      <OpeningModal 
+      <OpeningModal
         show={true}
+        zoneId={zoneId}
+        sceneId={sceneId}
         onStart={() => setCurrentMode(GAME_MODES.SELECTION)}
       />
       <TocaBocaNav 

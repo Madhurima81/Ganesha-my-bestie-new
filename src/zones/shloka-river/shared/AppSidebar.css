@@ -1,68 +1,108 @@
-/* AppSidebar.css */
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap');
+/* AppSidebar.css — Shloka River */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;700;800&display=swap');
 
-.app-sidebar {
+/* ── Flight Animation — rendered by parent scene ─────────────────────────── */
+.flying-symbol {
   position: fixed;
-  right: 20px;         /* Distance from right edge */
-  top: 50%;            /* Center vertically */
+  z-index: 2000;
+  pointer-events: none;
+  will-change: transform;
+  transition: transform 0.9s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* Sidebar container */
+.ganesha-sidebar {
+  position: fixed;
+  right: 24px;
+  top: 50%;
   transform: translateY(-50%);
   display: flex;
-  flex-direction: column;  /* Stack vertically */
-  gap: 10px;           /* Slightly larger gap */
-  padding: 18px 10px;  /* Larger padding */
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 24px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(10px);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 22px;
+  width: 100px;
+  padding: 20px 16px;
+
+  background: #F6EFD8;
+  border-radius: 60px;
+
+  box-shadow: 0 10px 22px rgba(60, 40, 20, 0.18);
+
   z-index: 1000;
-  border: 2px solid rgba(76, 175, 80, 0.3);
-  max-height: 80vh;    /* Don't exceed screen height */
-  overflow-y: auto;    /* Scroll if needed */
-  width: 96px;         /* Large size */
 }
 
-.app-icon {
+/* Individual icons */
+.ganesha-icon {
   width: 68px;
   height: 68px;
-  border-radius: 10px;
-  background-size: cover;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.35);
+  background-size: contain;
+  background-repeat: no-repeat;
   background-position: center;
-  transition: all 0.3s ease;
+  box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
-  border: 2px solid transparent;
 }
 
-.app-icon.unlocked {
-  border-color: rgba(76, 175, 80, 0.5);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+/* Locked State */
+.symbol-locked {
+  filter: saturate(0.35) brightness(0.9);
+  opacity: 0.75;
+  transform: scale(0.98);
+  transition: filter 0.2s ease, opacity 0.2s ease;
 }
 
-.app-icon.unlocked:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+/* Unlocked State */
+.symbol-unlocked {
+  filter: none;
+  opacity: 1;
+  box-shadow:
+    inset 0 0 12px rgba(255, 255, 255, 0.5),
+    0 0 16px rgba(255, 193, 7, 0.45);
+  transition: transform 0.2s ease;
 }
 
-.app-icon.locked {
-  opacity: 0.6;
-  filter: grayscale(1);
+.symbol-unlocked:hover {
+  transform: translateY(-3px);
 }
 
-.app-icon.star-burst {
-  animation: starBurst 1s ease-out;
+/* Animating (When Symbol Flies In) */
+.ganesha-icon.animating {
+  animation: symbolBloom 1.2s ease-out forwards;
 }
 
-/* Tap indicator (like Modak scene) */
+@keyframes symbolBloom {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 193, 7, 0);
+  }
+  40% {
+    transform: scale(1.08);
+    box-shadow: 0 0 26px rgba(255, 193, 7, 0.8);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 16px rgba(255, 193, 7, 0.45);
+  }
+}
+
+/* Tap indicator */
 .tap-indicator {
   position: absolute;
-  top: -6px;
-  right: -6px;
+  top: -5px;
+  right: -5px;
   background: var(--zone-accent-color, #FF8E53);
   color: white;
   font-family: 'Baloo 2', cursive;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 800;
-  padding: 4px 10px;
-  border-radius: 14px;
+  padding: 3px 8px;
+  border-radius: 12px;
   box-shadow:
     0 3px 10px var(--zone-glow-color, rgba(255, 107, 107, 0.4)),
     0 0 10px var(--zone-glow-color, rgba(255, 107, 107, 0.3));
@@ -88,165 +128,50 @@
   }
 }
 
-.badge-corner-tag {
-  background: var(--zone-accent-color, #FF8E53);
-  color: #fff;
-  box-shadow: 0 0 10px var(--zone-glow-color, rgba(255, 107, 107, 0.35));
+.tap-indicator-done {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%) !important;
 }
 
-@keyframes starBurst {
-  0% {
-    transform: scale(1);
-    box-shadow: 0 0 5px gold;
+/* Tablet Responsive */
+@media (max-width: 1024px) {
+  .ganesha-sidebar {
+    right: 18px;
+    width: 100px;
+    padding: 20px 14px;
+    gap: 20px;
   }
-  50% {
-    transform: scale(1.3);
-    box-shadow: 0 0 20px gold;
-  }
-  100% {
-    transform: scale(1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  .ganesha-icon {
+    width: 56px;
+    height: 56px;
   }
 }
 
-.app-popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
-  backdrop-filter: blur(5px);
-}
-
-.app-popup-content {
-  background: white;
-  border-radius: 20px;
-  padding: 30px;
-  max-width: 400px;
-  width: 90%;
-  text-align: center;
-  position: relative;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  animation: popupSlideIn 0.3s ease-out;
-}
-
-@keyframes popupSlideIn {
-  from {
-    transform: translateY(24px);
-    opacity: 0;
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .ganesha-sidebar {
+    right: 12px;
+    width: 90px;
+    padding: 18px 12px;
+    gap: 18px;
   }
-  to {
-    transform: translateY(0);
-    opacity: 1;
+  .ganesha-icon {
+    width: 52px;
+    height: 52px;
   }
 }
 
-.popup-close-btn {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  background: none;
-  border: none;
-  font-size: 24px;
-  color: #999;
-  cursor: pointer;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.popup-close-btn:hover {
-  color: #333;
-}
-
-.popup-app-icon {
-  margin-bottom: 20px;
-}
-
-.popup-app-image {
-  width: 80px;
-  height: 80px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.popup-title {
-  font-size: 20px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 15px;
-  line-height: 1.3;
-}
-
-.popup-description {
-  font-size: 16px;
-  color: #666;
-  line-height: 1.5;
-  margin-bottom: 20px;
-}
-
-.syllable-practice {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  margin-bottom: 25px;
-  flex-wrap: wrap;
-}
-
-.syllable-btn {
-  background: linear-gradient(135deg, #4CAF50, #45a049);
-  border: none;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.syllable-btn:hover {
-  transform: scale(1.05);
-}
-
-.word-practice-btn {
-  background: linear-gradient(135deg, #FFD700, #FFA500);
-  border: none;
-  color: white;
-  padding: 10px 25px;
-  border-radius: 22px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  margin-bottom: 15px;
-}
-
-.word-practice-btn:hover {
-  transform: scale(1.05);
-}
-
-.popup-continue-btn {
-  background: linear-gradient(135deg, #FF6B35, #FF8C42);
-  border: none;
-  color: white;
-  padding: 12px 30px;
-  border-radius: 25px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.popup-continue-btn:hover {
-  transform: scale(1.05);
+/* Small Mobile */
+@media (max-width: 480px) {
+  .ganesha-sidebar {
+    right: 10px;
+    width: 84px;
+    padding: 16px 10px;
+    gap: 16px;
+  }
+  .ganesha-icon {
+    width: 48px;
+    height: 48px;
+  }
 }
 
 /* ─── CENTER MODE: App Discovery Screen ──────────────────────────────────── */
@@ -287,7 +212,6 @@
   font-weight: 800;
   color: #E65100;
   margin: 0 0 8px 0;
-  text-shadow: none;
 }
 
 .app-discovery-subtitle {
@@ -321,7 +245,6 @@
   transform: scale(1.08);
 }
 
-/* Zone-aware glow layer behind each discovery tile */
 .app-discovery-icon::after {
   content: "";
   position: absolute;
@@ -329,7 +252,7 @@
   left: 2px;
   right: 2px;
   bottom: 42px;
-  border-radius: 28px;
+  border-radius: 50%;
   background: var(--zone-glow-color, rgba(255, 107, 53, 0.4));
   filter: blur(14px);
   opacity: 0.55;
@@ -341,13 +264,11 @@
 .app-discovery-img {
   width: 150px;
   height: 150px;
-  border-radius: 28px;
+  border-radius: 50%;
   border: 3px solid var(--zone-accent-color, #E65100);
   background: #fff;
-  box-shadow:
-    0 6px 18px rgba(0, 0, 0, 0.15),
-    0 0 0 0 var(--zone-glow-color, rgba(230, 81, 0, 0.3));
-  object-fit: cover;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  object-fit: contain;
 }
 
 .app-discovery-name {
@@ -371,13 +292,8 @@
   50% {
     box-shadow:
       0 8px 24px rgba(0, 0, 0, 0.2),
-      0 0 0 8px var(--zone-glow-color, rgba(230, 81, 0, 0.55)),
-      0 0 30px var(--zone-glow-color, rgba(230, 81, 0, 0.25));
+      0 0 0 8px var(--zone-glow-color, rgba(230, 81, 0, 0.55));
   }
-}
-
-.tap-indicator-done {
-  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%) !important;
 }
 
 .app-discovery-celebrate-btn {
@@ -400,12 +316,6 @@
 }
 
 @keyframes zoneBadgeGlow {
-  0%, 100% {
-    opacity: 0.35;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.65;
-    transform: scale(1.06);
-  }
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50%       { opacity: 0.65; transform: scale(1.06); }
 }

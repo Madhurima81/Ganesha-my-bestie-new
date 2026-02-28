@@ -1,9 +1,12 @@
-// zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV3.jsx
+﻿// zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV3.jsx
 
 import React, { useState, useEffect, useRef } from 'react';
 import './PondScene.css';
 import '../../../shared/components/OpeningModal.css';
 import '../../../../lib/styles/zone-themes.css'; // Ensure theme vars are loaded
+import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
+import { getOpeningModal } from '../../../../lib/config/content/openingModals';
+import { getCompletionModal } from '../../../../lib/config/content';
 
 // Unified Components
 import UnifiedHeaderV2 from '../../../../lib/components/ui/Header/UnifiedHeaderV2';
@@ -37,6 +40,7 @@ import SymbolSidebar from '../../shared/components/SymbolSidebar';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import SymbolPowerMission from '../../shared/components/SymbolPowerMission';
 import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
+import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
 
 // Images
 import pondBackground from './assets/images/pond-background.png';
@@ -206,6 +210,7 @@ const PondSceneContent = ({
 
   const { showMessage, hideCoach, clearManualCloseTracking } = useGameCoach();
   const { resetScene } = useSceneReset(sceneActions, 'symbol-mountain', 'pond', getSceneResetConfig('pond'));
+  const completionModalContent = getCompletionModal(zoneId, sceneId);
 
   const [showSparkle, setShowSparkle] = useState(null);
   const [showHintGlow, setShowHintGlow] = useState(false);
@@ -225,9 +230,10 @@ const PondSceneContent = ({
   const [showResumePopup, setShowResumePopup] = useState(false);
   const [resumeMessage, setResumeMessage] = useState('');
 
-  // Discovery overlay states
-  const [showDiscoveryFlip1, setShowDiscoveryFlip1] = useState(false);
-  const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false);
+  // Discovery overlay states (kept to avoid undeclared-var errors; never set to true — SymbolAutoReveal handles discovery now)
+  const [showDiscoveryFlip1, setShowDiscoveryFlip1] = useState(false); // eslint-disable-line no-unused-vars
+  const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false); // eslint-disable-line no-unused-vars
+  const [revealConfig, setRevealConfig] = useState(null);
 
   // Audio State
   const [isAudioOn, setIsAudioOn] = useState(true);
@@ -295,16 +301,26 @@ const PondSceneContent = ({
       sceneActions.updateState({
         discoveredSymbols: { ...sceneState.discoveredSymbols, lotus: true }
       });
-      setTimeout(() => setShowDiscoveryFlip1(true), 500);
+      safeSetTimeout(() => setRevealConfig({
+        symbolId: 'lotus',
+        symbolName: 'Lotus',
+        affirmation: 'I bloom in the mud!',
+        symbolImage: symbolLotusColored
+      }), 500);
       return;
     }
-    
+
     // Discovery 2: Elephant Trunk Magic
     if (sceneState.phase === PHASES.ELEPHANT_TRANSFORMED) {
       sceneActions.updateState({
         discoveredSymbols: { lotus: true, trunk: true }
       });
-      setTimeout(() => setShowDiscoveryFlip2(true), 500);
+      safeSetTimeout(() => setRevealConfig({
+        symbolId: 'trunk',
+        symbolName: 'Trunk',
+        affirmation: 'Strong and gentle!',
+        symbolImage: symbolTrunkColored
+      }), 500);
       return;
     }
     
@@ -491,6 +507,42 @@ const PondSceneContent = ({
     }
   };
 
+  // ── SymbolAutoReveal helpers ───────────────────────────────────────────────
+
+  const getSidebarTarget = (symbolId) => document.getElementById(`sidebar-${symbolId}`);
+
+  const triggerFireworks = () => {
+    setShowSparkle('final-fireworks');
+  };
+
+  const handleRevealComplete = (symbolId) => {
+    setRevealConfig(null);
+
+    if (symbolId === 'lotus') {
+      // 950ms delay — lets sidebar bloom animation fully settle before React re-render
+      safeSetTimeout(() => {
+        sceneActions.updateState({
+          phase: PHASES.GOLDEN_VISIBLE,
+          goldenLotusVisible: true,
+          discoveredSymbols: { ...sceneState.discoveredSymbols, lotus: true }
+        });
+      }, 950);
+
+    } else if (symbolId === 'trunk') {
+      // 950ms — bloom protection; 2450ms — 950ms bloom + 1500ms hold before fireworks
+      safeSetTimeout(() => {
+        sceneActions.updateState({
+          phase: PHASES.COMPLETE,
+          completed: true,
+          discoveredSymbols: { lotus: true, trunk: true }
+        });
+      }, 950);
+      safeSetTimeout(() => triggerFireworks(), 2450);
+    }
+  };
+
+  // ─────────────────────────────────────────────────────────────────────────
+
   const handleLotusClick = (index) => {
     if (progressiveHintRef.current?.hideHint) progressiveHintRef.current.hideHint();
     if (showResumePopup) {
@@ -526,7 +578,12 @@ const PondSceneContent = ({
           allLotusBloom: true,
           phase: PHASES.ALL_BLOOMED
         });
-        setTimeout(() => setShowDiscoveryFlip1(true), 1500);
+        safeSetTimeout(() => setRevealConfig({
+          symbolId: 'lotus',
+          symbolName: 'Lotus',
+          affirmation: 'I bloom in the mud!',
+          symbolImage: symbolLotusColored
+        }), 1500);
       }, 1000);
 
     } else {
@@ -604,7 +661,12 @@ const PondSceneContent = ({
             safeSetTimeout(() => {
               sceneActions.updateState({ trunkActive: false });
               setShowSparkle(null);
-              setTimeout(() => setShowDiscoveryFlip2(true), 2000);
+              safeSetTimeout(() => setRevealConfig({
+                symbolId: 'trunk',
+                symbolName: 'Trunk',
+                affirmation: 'Strong and gentle!',
+                symbolImage: symbolTrunkColored
+              }), 2000);
             }, 1000);
             return;
           }
@@ -677,6 +739,8 @@ const PondSceneContent = ({
     );
   };
 
+  const isFinalCelebrationActive = showSparkle === 'final-fireworks' || showSceneCompletion;
+
   if (!sceneState) {
     return <div className="loading">Loading scene state...</div>;
   }
@@ -736,42 +800,41 @@ const PondSceneContent = ({
 )}
 
               {/* OPENING INSTRUCTION SCREEN */}
-              {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
-                <div className="pond-instructions-overlay">
-                  <div className="pond-sparkles">
-                    <div className="pond-sparkle"></div>
-                    <div className="pond-sparkle"></div>
-                    <div className="pond-sparkle"></div>
-                    <div className="pond-sparkle"></div>
-                  </div>
-
-                  <div className="pond-instructions-content">
-                    <div className="pond-instructions-ganesha">
-                      <img src={ganeshaCharacter} alt="Character" style={{maxWidth: '450px'}} />
-                    </div>
-                    
-                    <div className="pond-instructions-card">
-                      <h1 className="pond-instructions-title">Explore the Sacred Pond!</h1>
-                      <p className="pond-instructions-subtitle">2 magical symbols are hidden here!</p>
-                      
-                      <div className="pond-instructions-icons">
-                        <div className="pond-instruction-icon-item">
-                          <img src={symbolLotusColored} alt="Lotus" />
-                          <span className="pond-instruction-icon-label">Lotus</span>
-                        </div>
-                        <div className="pond-instruction-icon-item">
-                          <img src={symbolTrunkColored} alt="Trunk" />
-                          <span className="pond-instruction-icon-label">Trunk</span>
-                        </div>
+              {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (() => {
+                const theme = getZoneTheme(zoneId);
+                const modal = getOpeningModal(zoneId, sceneId);
+                return (
+                  <div className="game-modal-overlay" style={{
+                    '--modal-card-bg': theme.parentBg,
+                    '--modal-text-primary': theme.textPrimary,
+                    '--modal-btn-bg': theme.buttonActiveBg,
+                    '--modal-btn-shadow': theme.glowColor
+                  }}>
+                    <div className="game-modal-content">
+                      <div className="game-modal-character">
+                        <img src={ganeshaCharacter} alt="Ganesha Character" />
                       </div>
-                      
-                      <button className="pond-instructions-button" onClick={() => sceneActions.updateState({ welcomeShown: true })}>
-                        Begin Adventure!
-                      </button>
+                      <div className="game-modal-card">
+                        <h1 className="game-modal-title">{modal?.title || 'Wake the Lotus'}</h1>
+                        <p className="game-modal-subtitle">{modal?.description || 'A golden lotus is waiting.'}</p>
+                        <div className="game-modal-icons">
+                          <div className="game-modal-icon-item">
+                            <img src={symbolLotusColored} alt="Lotus" />
+                            <span className="game-modal-icon-label">Lotus</span>
+                          </div>
+                          <div className="game-modal-icon-item">
+                            <img src={symbolTrunkColored} alt="Trunk" />
+                            <span className="game-modal-icon-label">Trunk</span>
+                          </div>
+                        </div>
+                        <button className="game-modal-button" onClick={() => sceneActions.updateState({ welcomeShown: true })}>
+                          {modal?.buttonText || "Let's Explore"}
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
               {/* Lotus flowers */}
               {[0, 1, 2].map((index) => (
@@ -987,8 +1050,8 @@ const PondSceneContent = ({
               />
             )}
 
-            {/* DISCOVERY 1: GOLDEN LOTUS */}
-            {showDiscoveryFlip1 && (
+            {/* DISCOVERY 1: GOLDEN LOTUS — disabled; SymbolAutoReveal handles this now */}
+            {false && showDiscoveryFlip1 && (
               <SimpleDiscoveryOverlay
                 celebrationTitle="You Found the Golden Lotus!"
                 celebrationText="It has something magical to share!"
@@ -1010,8 +1073,8 @@ const PondSceneContent = ({
               />
             )}
 
-            {/* DISCOVERY 2: ELEPHANT TRUNK */}
-            {showDiscoveryFlip2 && (
+            {/* DISCOVERY 2: ELEPHANT TRUNK — disabled; SymbolAutoReveal handles this now */}
+            {false && showDiscoveryFlip2 && (
               <SimpleDiscoveryOverlay
                 celebrationTitle="You Found the Elephant's Trunk Magic!"
                 celebrationText="It wants to share its secret with you!"
@@ -1034,11 +1097,25 @@ const PondSceneContent = ({
               />
             )}
 
+            {/* SYMBOL AUTO REVEAL */}
+            {revealConfig && (
+              <SymbolAutoReveal
+                symbolId={revealConfig.symbolId}
+                symbolName={revealConfig.symbolName}
+                affirmation={revealConfig.affirmation}
+                symbolImage={revealConfig.symbolImage}
+                sidebarTarget={getSidebarTarget(revealConfig.symbolId)}
+                onComplete={() => handleRevealComplete(revealConfig.symbolId)}
+              />
+            )}
+
             {/* Scene Completion */}
             {showSceneCompletion && (
               <SceneCompletionCelebration
                 show={true}
                 sceneName="Pond Adventure"
+                completionTitle={completionModalContent?.title}
+                completionSubtitle={completionModalContent?.subtitle}
                 sceneNumber={2}
                 totalScenes={4}
                 starsEarned={5}
@@ -1103,7 +1180,7 @@ const PondSceneContent = ({
               onClose={() => setShowCulturalCelebration(false)}
             />
 
-            {sceneState.welcomeShown && (
+            {sceneState.welcomeShown && !isFinalCelebrationActive && (
               <SymbolSidebar
                 discoveredSymbols={{
                   mooshika: true,

@@ -1,9 +1,13 @@
-// zones/symbol-mountain/scenes/symbol/SymbolMountainSceneV3.jsx
+﻿// zones/symbol-mountain/scenes/symbol/SymbolMountainSceneV3.jsx
 // 🎵 Complete Musical Mountain Scene - Final Migration V5
 
 import React, { useState, useEffect, useRef } from 'react';
 import './SymbolMountainScene.css';
+import '../../../shared/components/OpeningModal.css';
 import '../../../../lib/styles/zone-themes.css'; // Ensure themes are loaded
+import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
+import { getOpeningModal } from '../../../../lib/config/content/openingModals';
+import { getCompletionModal } from '../../../../lib/config/content';
 
 // --- NEW MASTER LAYOUT & CONFIG ---
 import GameLayout from '../../../../lib/components/layout/GameLayout'; 
@@ -208,6 +212,7 @@ const SymbolMountainSceneContent = ({
   if (!sceneState?.phase) sceneActions.updateState({ phase: PHASES.EYES_GAME });
 
   const { resetScene } = useSceneReset(sceneActions, 'symbol-mountain', 'symbol', getSceneResetConfig('symbol'));
+  const completionModalContent = getCompletionModal(zoneId, sceneId);
 
   // Local UI states
   const [showSparkle, setShowSparkle] = useState(null);
@@ -504,29 +509,37 @@ const SymbolMountainSceneContent = ({
           <div className="symbol-mountain-scene-v2-container">
             <div className="mountain-background" style={{ backgroundImage: `url(${mountainBackground})` }}>
 
-              {/* OPENING INSTRUCTIONS (CUSTOM HTML AS REQUESTED) */}
-              {sceneState.phase === PHASES.EYES_GAME && !sceneState.welcomeShown && (
-                <div className="mountain-instructions-overlay">
-                  <div className="mountain-sparkles">
-                    <div className="mountain-sparkle"></div><div className="mountain-sparkle"></div>
-                  </div>
-                  <div className="mountain-instructions-content">
-                    <div className="mountain-instructions-ganesha">
-                      <img src={ganeshaCharacter} alt="Character" style={{maxWidth: '450px'}}/>
-                    </div>
-                    <div className="mountain-instructions-card">
-                      <h1 className="mountain-instructions-title">Master the Musical Mountain!</h1>
-                      <p className="mountain-instructions-subtitle">3 sacred sounds are hidden here!</p>
-                      <div className="mountain-instructions-icons">
-                        <div className="mountain-instruction-icon-item"><img src={symbolEyesColored} alt="Eyes" /><span className="mountain-instruction-icon-label">Eyes</span></div>
-                        <div className="mountain-instruction-icon-item"><img src={symbolEarColored} alt="Ears" /><span className="mountain-instruction-icon-label">Ears</span></div>
-                        <div className="mountain-instruction-icon-item"><img src={symbolTuskColored} alt="Tusk" /><span className="mountain-instruction-icon-label">Tusk</span></div>
+              {/* OPENING INSTRUCTIONS */}
+              {sceneState.phase === PHASES.EYES_GAME && !sceneState.welcomeShown && (() => {
+                const theme = getZoneTheme(zoneId);
+                const modal = getOpeningModal(zoneId, sceneId);
+                return (
+                  <div className="game-modal-overlay" style={{
+                    '--modal-card-bg': theme.parentBg,
+                    '--modal-text-primary': theme.textPrimary,
+                    '--modal-btn-bg': theme.buttonActiveBg,
+                    '--modal-btn-shadow': theme.glowColor
+                  }}>
+                    <div className="game-modal-content">
+                      <div className="game-modal-character">
+                        <img src={ganeshaCharacter} alt="Ganesha Character" />
                       </div>
-                      <button className="mountain-instructions-button" onClick={() => sceneActions.updateState({ welcomeShown: true })}>Begin Adventure!</button>
+                      <div className="game-modal-card">
+                        <h1 className="game-modal-title">{modal?.title || 'Play the Notes'}</h1>
+                        <p className="game-modal-subtitle">{modal?.description || 'Play the rhythm and see what changes.'}</p>
+                        <div className="game-modal-icons">
+                          <div className="game-modal-icon-item"><img src={symbolEyesColored} alt="Eyes" /><span className="game-modal-icon-label">Eyes</span></div>
+                          <div className="game-modal-icon-item"><img src={symbolEarColored} alt="Ears" /><span className="game-modal-icon-label">Ears</span></div>
+                          <div className="game-modal-icon-item"><img src={symbolTuskColored} alt="Tusk" /><span className="game-modal-icon-label">Tusk</span></div>
+                        </div>
+                        <button className="game-modal-button" onClick={() => sceneActions.updateState({ welcomeShown: true })}>
+                          {modal?.buttonText || "Let's Explore"}
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
               {/* UNIFIED HEADERS FOR PHASES */}
               {!showDiscoveryFlip1 && !showDiscoveryFlip2 && !showDiscoveryFlip3 && sceneState?.welcomeShown && (
@@ -774,7 +787,7 @@ const SymbolMountainSceneContent = ({
             {/* DISCOVERY OVERLAYS */}
             {showDiscoveryFlip1 && (
               <SimpleDiscoveryOverlay
-                celebrationTitle="You Found Ganesha’s Eye Magic!"
+                celebrationTitle="You Found Ganesha's Eye Magic!"
                 celebrationText="His eyes want to share a special skill with you!"
                 celebrationImage={ganeshaEyes}
                 powerTitle="Laser Focus Unlocked!"
@@ -800,7 +813,7 @@ const SymbolMountainSceneContent = ({
 
             {showDiscoveryFlip2 && (
               <SimpleDiscoveryOverlay
-                celebrationTitle="You Found Ganesha’s Ear Magic!"
+                celebrationTitle="You Found Ganesha's Ear Magic!"
                 celebrationText="His big ears have something to teach you!"
                 celebrationImage={ganeshaEars}
                 powerTitle="Big Ears Unlocked!"
@@ -829,7 +842,7 @@ const SymbolMountainSceneContent = ({
 
             {showDiscoveryFlip3 && (
               <SimpleDiscoveryOverlay
-                celebrationTitle="You Found Ganesha’s Tusk Magic!"
+                celebrationTitle="You Found Ganesha's Tusk Magic!"
                 celebrationText="This tusk holds a powerful secret!"
                 celebrationImage={ganeshaTusk}
                 powerTitle="Determination Unlocked!"
@@ -879,6 +892,8 @@ const SymbolMountainSceneContent = ({
               <SceneCompletionCelebration
                 show={true}
                 sceneName="Musical Mountain Adventure"
+                completionTitle={completionModalContent?.title}
+                completionSubtitle={completionModalContent?.subtitle}
                 sceneNumber={3}
                 totalScenes={4}
                 starsEarned={9}

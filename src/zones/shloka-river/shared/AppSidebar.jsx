@@ -4,90 +4,25 @@ import SanskritVoiceRecorder from '../../../lib/components/audio/SanskritVoiceRe
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 import { applyRecorderTheme } from '../../../lib/theme/RecorderThemeAdapter';
 
+// Mantra icons — same images as Meaning Cave (colored only, no gray set)
+import vakratundaIcon    from '../../meaning cave/assets/images/symbols/vakratunda-symbol.png';
+import mahakayaIcon      from '../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
+import suryakotiIcon     from '../../meaning cave/assets/images/symbols/suryakoti-symbol.png';
+import samaprabhaIcon    from '../../meaning cave/assets/images/symbols/samaprabha-symbol.png';
+import nirvighnamIcon    from '../../meaning cave/assets/images/symbols/nirvighnam-symbol.png';
+import kurumedevaIcon    from '../../meaning cave/assets/images/symbols/kurumedeva-symbol.png';
+import sarvakaryeshuIcon from '../../meaning cave/assets/images/symbols/sarvakaryeshu-symbol.png';
+import sarvadaIcon       from '../../meaning cave/assets/images/symbols/sarvada-symbol.png';
 
-import appVakratundaGray from '../scenes/assets/images/apps/app-gray-vakratunda.png';
-import appVakratunda from '../scenes/assets/images/apps/app-Vakratunda.png';
-import appMahakayaGray from '../scenes/assets/images/apps/app-gray-mahakaya.png';
-import appMahakaya from '../scenes/assets/images/apps/app-mahakaya.png';
-import appKurumedevaGray from '../scenes/assets/images/apps/app-gray-kurumedeva.png';
-import appKurumedeva from '../scenes/assets/images/apps/app-kurumedeva.png';
-import appNirvighnamGray from '../scenes/assets/images/apps/app-gray-nirvighnam.png';
-import appNirvighnam from '../scenes/assets/images/apps/app-nirvighnam.png';
-import appSamaprabhaGray from '../scenes/assets/images/apps/app-gray-samaprabha.png';
-import appSamaprabha from '../scenes/assets/images/apps/app-samaprabha.png';
-import appSarvadaGray from '../scenes/assets/images/apps/app-gray-sarvada.png';
-import appSarvada from '../scenes/assets/images/apps/app-sarvada.png';
-import appSarvakaryeshuGray from '../scenes/assets/images/apps/app-gray-sarvakaryeshu.png';
-import appSarvakaryeshu from '../scenes/assets/images/apps/app-sarvakaryeshu.png';
-import appSuryakotiGray from '../scenes/assets/images/apps/app-gray-suryakoti.png';
-import appSuryakoti from '../scenes/assets/images/apps/app-suryakoti.png';
-
-// App information for popups (like symbolInfo in SymbolSidebar)
 const appInfo = {
-  vakratunda: {
-    title: "Vakratunda - Curved Trunk",
-    description: "The remover of obstacles with his curved trunk, guiding us through life's challenges. Practice the sacred sounds: VA-KRA-TUN-DA",
-    colorIcon: appVakratunda,
-    grayIcon: appVakratundaGray,
-    syllables: ['VA', 'KRA', 'TUN', 'DA'],
-    power: { name: 'Flexibility', icon: '🌟', color: '#FFD700' }
-  },
-  mahakaya: {
-    title: "Mahakaya - Great Body",
-    description: "The great cosmic form that contains the entire universe within. Practice the sacred sounds: MA-HA-KA-YA",
-    colorIcon: appMahakaya,
-    grayIcon: appMahakayaGray,
-    syllables: ['MA', 'HA', 'KA', 'YA'],
-    power: { name: 'Inner Strength', icon: '💪', color: '#FF6B35' }
-  },
-  kurumedeva: {
-    title: "Kurumedeva - Divine Protector",
-    description: "The divine protector who grants wisdom and removes fear. Practice the sacred sounds: KU-RU-ME-DEVA",
-    colorIcon: appKurumedeva,
-    grayIcon: appKurumedevaGray,
-    syllables: ['KU', 'RU', 'ME', 'DEVA'],
-    power: { name: 'Protection', icon: '🛡️', color: '#4CAF50' }
-  },
-  nirvighnam: {
-    title: "Nirvighnam - Without Obstacles",
-    description: "The one who ensures smooth completion of all endeavors. Practice the sacred sounds: NIR-VIGH-NAM",
-    colorIcon: appNirvighnam,
-    grayIcon: appNirvighnamGray,
-    syllables: ['NIR', 'VIGH', 'NAM'],
-    power: { name: 'Clear Path', icon: '🌈', color: '#9C27B0' }
-  },
-  samaprabha: {
-    title: "Samaprabha - Equal Radiance",
-    description: "The equally radiant one who brings balance and harmony. Practice the sacred sounds: SA-MA-PRA-BHA",
-    colorIcon: appSamaprabha,
-    grayIcon: appSamaprabhaGray,
-    syllables: ['SA', 'MA', 'PRA', 'BHA'],
-    power: { name: 'Balance', icon: '⚖️', color: '#2196F3' }
-  },
-  sarvada: {
-    title: "Sarvada - Always Giving",
-    description: "The eternal giver who blesses devotees with abundance. Practice the sacred sounds: SAR-VA-DA",
-    colorIcon: appSarvada,
-    grayIcon: appSarvadaGray,
-    syllables: ['SAR', 'VA', 'DA'],
-    power: { name: 'Generosity', icon: '🎁', color: '#FF9800' }
-  },
-  sarvakaryeshu: {
-    title: "Sarvakaryeshu - In All Tasks",
-    description: "The one who ensures success in all undertaken tasks. Practice the sacred sounds: SAR-VA-KAR-YE-SHU",
-    colorIcon: appSarvakaryeshu,
-    grayIcon: appSarvakaryeshuGray,
-    syllables: ['SAR', 'VA', 'KAR', 'YE', 'SHU'],
-    power: { name: 'Success', icon: '🏆', color: '#795548' }
-  },
-  suryakoti: {
-    title: "Suryakoti - Million Suns",
-    description: "The brilliant one whose radiance equals a million suns. Practice the sacred sounds: SUR-YA-KO-TI",
-    colorIcon: appSuryakoti,
-    grayIcon: appSuryakotiGray,
-    syllables: ['SUR', 'YA', 'KO', 'TI'],
-    power: { name: 'Brilliance', icon: '☀️', color: '#FFC107' }
-  }
+  vakratunda:    { title: "Vakratunda",    description: "I adapt.",            icon: vakratundaIcon,    syllables: ['VA', 'KRA', 'TUN', 'DA'],        power: { color: '#FFD700' } },
+  mahakaya:      { title: "Mahakaya",      description: "I am strong.",        icon: mahakayaIcon,      syllables: ['MA', 'HA', 'KA', 'YA'],           power: { color: '#FF6B35' } },
+  suryakoti:     { title: "Suryakoti",     description: "I shine.",            icon: suryakotiIcon,     syllables: ['SUR', 'YA', 'KO', 'TI'],          power: { color: '#FFC107' } },
+  samaprabha:    { title: "Samaprabha",    description: "I stay bright.",      icon: samaprabhaIcon,    syllables: ['SA', 'MA', 'PRA', 'BHA'],         power: { color: '#2196F3' } },
+  kurumedeva:    { title: "Kurumedeva",    description: "I try again.",        icon: kurumedevaIcon,    syllables: ['KU', 'RU', 'ME', 'DEVA'],         power: { color: '#4CAF50' } },
+  nirvighnam:    { title: "Nirvighnam",    description: "I move forward.",     icon: nirvighnamIcon,    syllables: ['NIR', 'VIGH', 'NAM'],             power: { color: '#9C27B0' } },
+  sarvakaryeshu: { title: "Sarvakaryeshu", description: "I do my tasks.",      icon: sarvakaryeshuIcon, syllables: ['SAR', 'VA', 'KAR', 'YE', 'SHU'],  power: { color: '#795548' } },
+  sarvada:       { title: "Sarvada",       description: "I do not give up.",   icon: sarvadaIcon,       syllables: ['SAR', 'VA', 'DA'],                power: { color: '#FF9800' } },
 };
 
 const AppSidebar = ({
@@ -99,7 +34,7 @@ const AppSidebar = ({
   onPopupOpen,
   onPopupClose,
   zoneId = 'shloka-river',
-  // Center mode props (like SymbolSidebar centerMode)
+  // Center mode props (for future use)
   centerMode = false,
   highlightApps = [],
   onCelebrate
@@ -115,13 +50,17 @@ const AppSidebar = ({
     '--zone-glow-color': theme.glowColor
   };
 
-  // App order for display (matching scene progression)
-  const appOrder = ['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha', 'nirvighnam', 'kurumedeva','sarvakaryeshu', 'sarvada'];
+  const appOrder = ['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha', 'kurumedeva', 'nirvighnam', 'sarvakaryeshu', 'sarvada'];
 
-  // In centerMode, only show unlocked apps
   const displayApps = centerMode
     ? appOrder.filter(id => unlockedApps[id])
     : appOrder;
+
+  const getIconClass = (appId) => {
+    if (animatingApp === appId) return 'ganesha-icon animating';
+    if (unlockedApps[appId])    return 'ganesha-icon symbol-unlocked';
+    return 'ganesha-icon symbol-locked';
+  };
 
   const handleAppClick = (appId) => {
     if (centerMode || unlockedApps[appId]) {
@@ -130,9 +69,7 @@ const AppSidebar = ({
       setSelectedApp(appId);
       setShowPopup(true);
       onPopupOpen?.();
-      if (onAppClick) {
-        onAppClick(appId);
-      }
+      if (onAppClick) onAppClick(appId);
     }
   };
 
@@ -142,30 +79,26 @@ const AppSidebar = ({
     onPopupClose?.();
   };
 
-  // Trigger animation when an app is newly unlocked
+  // Trigger bloom animation when an app is newly unlocked
   useEffect(() => {
     const prevUnlocked = prevUnlockedRef.current || {};
     const newlyUnlocked = appOrder.find(app =>
       unlockedApps[app] && !prevUnlocked[app]
     );
-
     if (newlyUnlocked && !animatingApp) {
       setAnimatingApp(newlyUnlocked);
-      setTimeout(() => {
-        setAnimatingApp(null);
-      }, 1000);
+      setTimeout(() => setAnimatingApp(null), 1000);
     }
-
     prevUnlockedRef.current = { ...unlockedApps };
   }, [unlockedApps, animatingApp]);
 
-  // CENTER MODE (App Discovery Screen)
+  // CENTER MODE (for future scenes)
   if (centerMode) {
     return (
       <>
         <div className="app-discovery-overlay">
           <div className="app-discovery-panel" style={zoneThemeVars}>
-            <h2 className="app-discovery-title">You Learned 2 Sacred Words!</h2>
+            <h2 className="app-discovery-title">You Learned Sacred Words!</h2>
             <p className="app-discovery-subtitle">Tap each word to practice chanting it!</p>
 
             <div className="app-discovery-grid">
@@ -180,37 +113,27 @@ const AppSidebar = ({
                     onClick={() => handleAppClick(appId)}
                     style={{ animationDelay: `${index * 0.15}s` }}
                   >
-                    <img
-                      src={app.colorIcon}
-                      alt={app.title}
-                      className="app-discovery-img"
-                    />
+                    <img src={app.icon} alt={app.title} className="app-discovery-img" />
                     <div className={`tap-indicator ${hasTapped ? 'tap-indicator-done' : ''}`}>
                       {hasTapped ? 'Done' : 'TAP!'}
                     </div>
-                    <p className="app-discovery-name">
-                      {appId.charAt(0).toUpperCase() + appId.slice(1)}
-                    </p>
+                    <p className="app-discovery-name">{app.title}</p>
                   </div>
                 );
               })}
             </div>
 
-            <button
-              className="app-discovery-celebrate-btn"
-              onClick={onCelebrate}
-            >
+            <button className="app-discovery-celebrate-btn" onClick={onCelebrate}>
               Celebrate!
             </button>
           </div>
         </div>
 
-        {/* Recorder popup in center mode */}
         {showPopup && selectedApp && (
           <SanskritVoiceRecorder
             word={selectedApp}
             syllables={appInfo[selectedApp].syllables}
-            appIcon={appInfo[selectedApp].colorIcon}
+            appIcon={appInfo[selectedApp].icon}
             appColor={appInfo[selectedApp].power.color}
             savedRecordings={savedRecordings}
             onSaveRecording={onSaveRecording}
@@ -227,38 +150,35 @@ const AppSidebar = ({
   // SIDE RAIL MODE (default)
   return (
     <>
-      <div className={`app-sidebar ${className}`} style={zoneThemeVars}>
+      <div className={`ganesha-sidebar ${className}`} style={zoneThemeVars}>
         {appOrder.map((appId) => {
           const app = appInfo[appId];
           const isUnlocked = unlockedApps[appId];
-          const isAnimating = animatingApp === appId;
           const needsTap = isUnlocked && !tappedApps[appId];
 
           return (
             <div
               key={appId}
-              className={`app-icon ${isUnlocked ? 'unlocked' : 'locked'} ${isAnimating ? 'star-burst' : ''}`}
+              id={`sidebar-${appId}`}
+              className={getIconClass(appId)}
               onClick={() => handleAppClick(appId)}
               style={{
-                backgroundImage: `url(${isUnlocked ? app.colorIcon : app.grayIcon})`,
-                cursor: isUnlocked ? 'pointer' : 'not-allowed'
+                backgroundImage: `url(${app.icon})`,
+                cursor: isUnlocked ? 'pointer' : 'not-allowed',
               }}
-              title={isUnlocked ? app.title : 'App not yet unlocked'}
+              title={isUnlocked ? app.title : 'Locked'}
             >
-              {needsTap && (
-                <div className="tap-indicator">TAP!</div>
-              )}
+              {needsTap && <div className="tap-indicator">TAP!</div>}
             </div>
           );
         })}
       </div>
 
-      {/* App Information Popup with Voice Recorder */}
       {showPopup && selectedApp && (
         <SanskritVoiceRecorder
           word={selectedApp}
           syllables={appInfo[selectedApp].syllables}
-          appIcon={appInfo[selectedApp].colorIcon}
+          appIcon={appInfo[selectedApp].icon}
           appColor={appInfo[selectedApp].power.color}
           savedRecordings={savedRecordings}
           onSaveRecording={onSaveRecording}

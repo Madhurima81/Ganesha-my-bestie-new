@@ -15,6 +15,7 @@ import { PauseButton, PauseMenu, PauseBlurOverlay, usePauseEnhancements } from '
 
 // Content Configs
 import { getOpeningModal } from '../../../lib/config/content';
+import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 
 // --- IMPORT ASSETS (Ganesha's Family & Distractors) ---
 import familyTreeBg from './assets/images/family tree bg.png';
@@ -377,8 +378,8 @@ const FamilyTreeGameContent = ({
      {
       id: 'myself', role: 'Me', correctAnswer: 'ganesha',
       position: { bottom: '25%', right: '30%' },
-      introTitle: '😊 That’s Me!', introText: 'I love modaks 🍬',
-      flipTitle: 'Me', funFact: 'That’s me! I love modaks and helping my friends 😊'
+      introTitle: "😊 That's Me!", introText: 'I love modaks 🍬',
+      flipTitle: 'Me', funFact: "That's me! I love modaks and helping my friends 😊"
     }
   ];
 
@@ -1186,7 +1187,7 @@ const FamilyTreeGameContent = ({
           <div className="ganesha-tree-wrapper">
             <img src={familyTree} alt="Family Tree" className="tree-overlay" />
           </div>
-        <div className="game-modal-overlay" id="family-tree-intro"> 
+        <div className="game-modal-overlay" id="family-tree-intro" style={(() => { const theme = getZoneTheme('about-me-hut'); return { '--modal-card-bg': theme.parentBg, '--modal-text-primary': theme.textPrimary, '--modal-btn-bg': theme.buttonActiveBg, '--modal-btn-shadow': theme.glowColor }; })()}>
           <div className="game-modal-content">
             <div className="game-modal-character">
               <img src={babyGaneshaImg} alt="Baby Ganesha" />
@@ -1194,8 +1195,7 @@ const FamilyTreeGameContent = ({
             <div className="game-modal-card">
               <h1 className="game-modal-title">{openingModalContent?.title || 'Meet My Family'}</h1>
               <p className="game-modal-subtitle">
-                {openingModalContent?.subtitle || 'This is my family. They make me who I am.'}<br />
-                {openingModalContent?.description || "After that, I'd love to meet yours too 💛"}
+                {openingModalContent?.description || "After that, I'd love to meet yours too."}
               </p>
               <div className="game-modal-icons">
                 <div className="game-modal-icon-item">

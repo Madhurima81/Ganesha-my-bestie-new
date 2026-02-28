@@ -1,7 +1,10 @@
-// zones/cave-of-secrets/scenes/nirvighnam-kurumedeva/NirvighnamScene.jsx
+﻿// zones/cave-of-secrets/scenes/nirvighnam-kurumedeva/NirvighnamScene.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import './NirvighnamScene.css';
+import '../../../shared/components/OpeningModal.css';
 import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
+import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
+import { getOpeningModal } from '../../../../lib/config/content/openingModals';
 
 // Import scene management components
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
@@ -1417,58 +1420,41 @@ const handleRescueComplete = (success) => {
           }}>
 
             {/* ✅ OPENING SCREEN: Nirvighnam & Kurumedeva */}
-{sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE && !sceneState.welcomeShown && (
-  <div className="nirvighnam-instructions-overlay">
-    <div className="nirvighnam-sparkles">
-      <div className="nirvighnam-sparkle"></div>
-      <div className="nirvighnam-sparkle"></div>
-      <div className="nirvighnam-sparkle"></div>
-      <div className="nirvighnam-sparkle"></div>
-    </div>
-
-    <div className="nirvighnam-instructions-content">
-      {/* Character */}
-      <div className="nirvighnam-instructions-ganesha">
-        <img 
-          src={ganeshaCharacterCave} 
-          alt="Ganesha Character"
-          style={{maxWidth: '450px'}}
-        />
-      </div>
-      
-      {/* Card */}
-      <div className="nirvighnam-instructions-card">
-        <h1 className="nirvighnam-instructions-title">
-          Unlock the Obstacle Remover Chamber!
-        </h1>
-        
-        <p className="nirvighnam-instructions-subtitle">
-          2 powerful Sanskrit chants are hidden here!
-        </p>
-        
-        <div className="nirvighnam-instructions-icons">
-          <div className="nirvighnam-instruction-icon-item">
-            <img src={nirvighnamSymbol} alt="Nirvighnam" />
-            <span className="nirvighnam-instruction-icon-label">No Obstacles</span>
-          </div>
-          <div className="nirvighnam-instruction-icon-item">
-            <img src={kurumedevaSymbol} alt="Kurumedeva" />
-            <span className="nirvighnam-instruction-icon-label">Divine Help</span>
-          </div>
+{sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE && !sceneState.welcomeShown && (() => {
+  const theme = getZoneTheme(zoneId);
+  const modal = getOpeningModal(zoneId, sceneId);
+  return (
+    <div className="game-modal-overlay" style={{
+      '--modal-card-bg': theme.parentBg,
+      '--modal-text-primary': theme.textPrimary,
+      '--modal-btn-bg': theme.buttonActiveBg,
+      '--modal-btn-shadow': theme.glowColor
+    }}>
+      <div className="game-modal-content">
+        <div className="game-modal-character">
+          <img src={ganeshaCharacterCave} alt="Ganesha Character" />
         </div>
-        
-        <button
-          className="nirvighnam-instructions-button"
-          onClick={() => {
-            sceneActions.updateState({ welcomeShown: true });
-          }}
-        >
-          Enter the Cave
-        </button>
+        <div className="game-modal-card">
+          <h1 className="game-modal-title">{modal?.title || 'Cross the Bridge'}</h1>
+          <p className="game-modal-subtitle">{modal?.description || 'Clear a way and move forward.'}</p>
+          <div className="game-modal-icons">
+            <div className="game-modal-icon-item">
+              <img src={nirvighnamSymbol} alt="Nirvighnam" />
+              <span className="game-modal-icon-label">No Obstacles</span>
+            </div>
+            <div className="game-modal-icon-item">
+              <img src={kurumedevaSymbol} alt="Kurumedeva" />
+              <span className="game-modal-icon-label">Divine Help</span>
+            </div>
+          </div>
+          <button className="game-modal-button" onClick={() => sceneActions.updateState({ welcomeShown: true })}>
+            {modal?.buttonText || "Let's Explore"}
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-)}
+  );
+})()}
 
 {/* Phase Headers - Always Visible */}
 {!showPowerModal && !showRescueModal && !showCenteredSymbol && !showStoryModal && (
@@ -2710,12 +2696,12 @@ if (currentMissionSymbol === 'nirvighnam') {
   <SimpleDiscoveryOverlay
     // STAGE 1: Discovery Moment
     celebrationTitle="Nirvighnam Revealed!"
-    celebrationText={"“Clear the Path…”\n\nYou cleared the fog that was blocking the way! Nirvighnam means ‘No Obstacles’—you now have the magic to clear your mind."}
+    celebrationText={""Clear the Path…"\n\nYou cleared the fog that was blocking the way! Nirvighnam means 'No Obstacles'—you now have the magic to clear your mind."}
     celebrationImage={rockAnger} // or fogAnger
     
     // STAGE 2: Power Reveal
     powerTitle="Obstacle Remover Unlocked!"
-    powerText="Don’t let little worries cover your bright light. Use this power to clear the way and focus on peace, love, and joy!"
+    powerText="Don't let little worries cover your bright light. Use this power to clear the way and focus on peace, love, and joy!"
     powerIcon={nirvighnamSymbol}
     
     buttonText="Clear the Way!"
@@ -2741,12 +2727,12 @@ if (currentMissionSymbol === 'nirvighnam') {
   <SimpleDiscoveryOverlay
     // STAGE 1: Discovery Moment
     celebrationTitle="Kurumedeva Revealed!"
-    celebrationText={"“The Builder’s Power…”\n\nYou built the bridge! Kurumedeva means ‘Grant Me This Blessing’—a magic that helps you build solutions and ask for help when you need it."}
+    celebrationText={""The Builder's Power…"\n\nYou built the bridge! Kurumedeva means 'Grant Me This Blessing'—a magic that helps you build solutions and ask for help when you need it."}
     celebrationImage={rockSad} // or bridge image
     
     // STAGE 2: Power Reveal
     powerTitle="Solution Builder Unlocked!"
-    powerText="When you find a gap, don’t stop! Use your Builder’s Power to find the right tools—or ask for help—and cross any problem."
+    powerText="When you find a gap, don't stop! Use your Builder's Power to find the right tools—or ask for help—and cross any problem."
     powerIcon={kurumedevaSymbol}
     
     buttonText="Start Building!"

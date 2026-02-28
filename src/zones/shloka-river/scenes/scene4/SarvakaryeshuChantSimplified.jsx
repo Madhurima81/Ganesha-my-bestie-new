@@ -1,12 +1,15 @@
-// zones/shloka-river/scenes/Scene4/SarvakaryeshuChant.jsx - REBUILT using Scene 2 pattern
+﻿// zones/shloka-river/scenes/Scene4/SarvakaryeshuChant.jsx - REBUILT using Scene 2 pattern
 // ✅ Clean architecture: No early exit handling in scene file
 // ✅ Simple callbacks like Scenes 1, 2, 3
 // ✅ MemoryGameEngine handles all mode logic internally
 
 import React, { useState, useEffect, useRef } from 'react';
 import './SarvakaryeshuChantSimplified.css';
+import '../../../shared/components/OpeningModal.css';
 // ... existing imports
 import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
+import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
+import { getOpeningModal } from '../../../../lib/config/content';
 
 // Import scene management components
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
@@ -679,61 +682,43 @@ const handleSaveComponentState = (componentType, componentState) => {
           >
 
   {/* ==================== SCENE 4 INTRO: EVERY DAY, ALWAYS ==================== */}
-{sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
-  <div className="river-instructions-overlay">
-    {/* Background Sparkles */}
-    <div className="river-sparkles">
-      <div className="river-sparkle"></div>
-      <div className="river-sparkle"></div>
-      <div className="river-sparkle"></div>
-    </div>
-
-    <div className="river-instructions-content">
-      {/* Left: Character */}
-      <div className="river-instructions-ganesha">
-        <img src={ganeshaHeadphones} alt="Ganesha Character" />
-      </div>
-
-      {/* Right: Instruction Card */}
-      <div className="river-instructions-card">
-        <h1 className="river-instructions-title">🌙 Every Day, Always</h1>
-        
-        {/* Icon Row */}
-        <div className="river-instructions-icons" style={{ margin: '20px 0' }}>
-          <div className="river-icon-item">
-            <img src={appSarvakaryeshu} alt="Day Helper" />
-            <span className="river-icon-label">Day</span>
-          </div>
-          <div className="river-icon-item">
-            <img src={appSarvada} alt="Night Helper" />
-            <span className="river-icon-label">Night</span>
-          </div>
+{sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (() => {
+  const theme = getZoneTheme(zoneId);
+  const modal = getOpeningModal(zoneId, sceneId);
+  return (
+    <div className="game-modal-overlay" style={{ '--modal-card-bg': theme.parentBg, '--modal-text-primary': theme.textPrimary, '--modal-btn-bg': theme.buttonActiveBg, '--modal-btn-shadow': theme.glowColor }}>
+      <div className="game-modal-content">
+        <div className="game-modal-character">
+          <img src={ganeshaHeadphones} alt="Ganesha Character" />
         </div>
-
-        <p className="river-instructions-text">
-          Help during the day.
-          <br />
-          Help at night too.
-          <br />
-          That’s what heroes do.
-        </p>
-
-        {/* Call to Action */}
-        <button
-          className="river-instructions-button"
-          onClick={() => {
-            sceneActions.updateState({ welcomeShown: true });
-            setModeForPhase('sarvakaryeshu');
-            setShowModeSelection(true);
-            setModeSelected(false);
-          }}
-        >
-          ⭐ Become a Ganesha Hero
-        </button>
+        <div className="game-modal-card">
+          <h1 className="game-modal-title">{modal?.title || 'Care and Share'}</h1>
+          <div className="game-modal-icons">
+            <div className="game-modal-icon-item">
+              <img src={appSarvakaryeshu} alt="Day Helper" />
+              <span className="game-modal-icon-label">Day</span>
+            </div>
+            <div className="game-modal-icon-item">
+              <img src={appSarvada} alt="Night Helper" />
+              <span className="game-modal-icon-label">Night</span>
+            </div>
+          </div>
+          <button
+            className="game-modal-button"
+            onClick={() => {
+              sceneActions.updateState({ welcomeShown: true });
+              setModeForPhase('sarvakaryeshu');
+              setShowModeSelection(true);
+              setModeSelected(false);
+            }}
+          >
+            {modal?.buttonText || "Let's Explore"}
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-)}
+  );
+})()}
 
             {/* Sarvada Story Modal 
             {showSarvadaStory && (
@@ -1061,7 +1046,7 @@ hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || showMission}
     celebrationImage={appSarvada}
     
     powerTitle="I Help Always!"
-    powerText="You help when it’s easy and when it’s hard. You are brave and caring—always."
+    powerText="You help when it's easy and when it's hard. You are brave and caring—always."
     powerIcon={appSarvada}
     
     buttonText="Final Power!"

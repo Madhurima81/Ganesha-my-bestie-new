@@ -1,8 +1,11 @@
-// zones/shloka-river/scenes/Scene3/NirvighnamChant.jsx - Scene 3 with Stone/Decoration mechanics
+﻿// zones/shloka-river/scenes/Scene3/NirvighnamChant.jsx - Scene 3 with Stone/Decoration mechanics
 import React, { useState, useEffect, useRef } from 'react';
 import './NirvighnamChantSimplified.css';
+import '../../../shared/components/OpeningModal.css';
 // ... existing imports
 import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
+import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
+import { getOpeningModal } from '../../../../lib/config/content';
 
 // Import scene management components
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
@@ -238,7 +241,7 @@ const NirvighnamChantContent = ({
   zoneId,
   sceneId
 }) => {
-console.log('ðŸ•‰ï¸ NirvighnamChantContent render', { 
+console.log('🕉️ NirvighnamChantContent render', { 
   sceneState: sceneState?.phase, 
   isReload, 
   nirvighnamMode: sceneState?.nirvighnamMode,
@@ -868,7 +871,7 @@ const backgroundImage = (() => {
 
     return (
       <div className="syllable-counter">
-        <div className="counter-icon">ðŸ•‰ï¸</div>
+        <div className="counter-icon">🕉️</div>
         <div className="counter-progress">
           <div
             className="counter-progress-fill"
@@ -1102,59 +1105,43 @@ hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || showMission}
 
 />
 {/* ==================== SCENE 3 INTRO: CLEAR & BUILD ==================== */}
-{sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
-  <div className="river-instructions-overlay">
-    {/* Background Sparkles */}
-    <div className="river-sparkles">
-      <div className="river-sparkle"></div>
-      <div className="river-sparkle"></div>
-      <div className="river-sparkle"></div>
-    </div>
-
-    <div className="river-instructions-content">
-      {/* Left: Character */}
-      <div className="river-instructions-ganesha">
-        <img src={ganeshaWithHeadphones} alt="Ganesha Character" />
-      </div>
-
-      {/* Right: Instruction Card */}
-      <div className="river-instructions-card">
-        <h1 className="river-instructions-title">Clear & Build</h1>
-        
-        {/* Icon Row */}
-        <div className="river-instructions-icons" style={{ margin: '20px 0' }}>
-          <div className="river-icon-item">
-            <img src={appNirvighnam} alt="Clear Obstacles" />
-            <span className="river-icon-label">Clear Path</span>
-          </div>
-          <div className="river-icon-item">
-            <img src={appKurumedeva} alt="Build Together" />
-            <span className="river-icon-label">Build Temple</span>
-          </div>
+{sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (() => {
+  const theme = getZoneTheme(zoneId);
+  const modal = getOpeningModal(zoneId, sceneId);
+  return (
+    <div className="game-modal-overlay" style={{ '--modal-card-bg': theme.parentBg, '--modal-text-primary': theme.textPrimary, '--modal-btn-bg': theme.buttonActiveBg, '--modal-btn-shadow': theme.glowColor }}>
+      <div className="game-modal-content">
+        <div className="game-modal-character">
+          <img src={ganeshaWithHeadphones} alt="Ganesha Character" />
         </div>
-
-        <p className="river-instructions-text">
-          Some paths are blocked. Clear the way.
-          <br />
-          Build something beautiful together.
-        </p>
-
-        {/* Call to Action */}
-        <button
-          className="river-instructions-button"
-          onClick={() => {
-            sceneActions.updateState({ welcomeShown: true });
-            setModeForPhase('nirvighnam');
-            setShowModeSelection(true);
-            setModeSelected(false);
-          }}
-        >
-          🛠️ Let’s Help & Build
-        </button>
+        <div className="game-modal-card">
+          <h1 className="game-modal-title">{modal?.title || 'Clear the Path'}</h1>
+          <div className="game-modal-icons">
+            <div className="game-modal-icon-item">
+              <img src={appNirvighnam} alt="Clear Obstacles" />
+              <span className="game-modal-icon-label">Clear Path</span>
+            </div>
+            <div className="game-modal-icon-item">
+              <img src={appKurumedeva} alt="Build Together" />
+              <span className="game-modal-icon-label">Build Temple</span>
+            </div>
+          </div>
+          <button
+            className="game-modal-button"
+            onClick={() => {
+              sceneActions.updateState({ welcomeShown: true });
+              setModeForPhase('nirvighnam');
+              setShowModeSelection(true);
+              setModeSelected(false);
+            }}
+          >
+            {modal?.buttonText || "Let's Explore"}
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-)}
+  );
+})()}
 
 {/* ⭐ MODE SELECTION MODAL - Shows BEFORE game starts */}
 {showModeSelection && !modeSelected && (
@@ -1316,7 +1303,7 @@ hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || showMission}
     celebrationImage={appNirvighnam}
     
     powerTitle="I Clear the Way!"
-    powerText="When something feels stuck, you don’t give up. You find a way forward."
+    powerText="When something feels stuck, you don't give up. You find a way forward."
     powerIcon={appNirvighnam}
     
     buttonText="What Is My Power?"
@@ -1740,7 +1727,7 @@ onClick={() => {
   fontSize: '12px',
   fontWeight: 'bold'
 }} onClick={() => {
-  console.log('ðŸ§ª TESTING: Universal completion clicked');
+  console.log('🧪 TESTING: Universal completion clicked');
   
   // Automatically complete all syllables and words in any scene
   const allSyllables = Object.keys(sceneState?.learnedSyllables || {});
@@ -1834,7 +1821,7 @@ onClick={() => {
             fontSize: '12px',
             fontWeight: 'bold'
           }} onClick={() => {
-            console.log('ðŸ§ª TESTING: Skip to Kurumedeva Game clicked');
+            console.log('🧪 TESTING: Skip to Kurumedeva Game clicked');
             
             setShowSparkle(null);
             setShowRecording(false);
@@ -1887,7 +1874,7 @@ onClick={() => {
               kurumedevaWisdomShown: false
             });
             
-            console.log('âœ… State set for Kurumedeva game - should start immediately');
+            console.log('✅ State set for Kurumedeva game - should start immediately');
           }}>
             SKIP TO KURUMEDEVA
           </div>
@@ -1906,7 +1893,7 @@ onClick={() => {
             fontSize: '12px',
             fontWeight: 'bold'
           }} onClick={() => {
-            console.log('ðŸ§ª TESTING: Reload test clicked');
+            console.log('🧪 TESTING: Reload test clicked');
             console.log('Current sceneState:', sceneState);
             console.log('Nirvighnam game state:', sceneState?.nirvighnamGameState);
             console.log('Mission state:', sceneState?.missionState);

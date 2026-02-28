@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import './FestivalRangoliGame.css';
 import '../../shared/components/OpeningModal.css'; // <--- SHARED MODAL IMPORT
+import { getZoneTheme } from '../../../lib/config/ZoneThemes';
+import { getOpeningModal } from '../../../lib/config/content/openingModals';
 
 import FestivalSquareCompletion from '../components/FestivalSquareCompletion';
 import rangoliArtistBadge from './assets/images/rangoli-badge.png';
@@ -76,26 +78,28 @@ const DesignCompletionOverlay = ({
 };
 
 // Opening Modal Component for Rangoli
-const OpeningModal = ({ show, onStart }) => {
+const OpeningModal = ({ show, onStart, zoneId = 'festival-square', sceneId = 'game2' }) => {
   if (!show) return null;
+  const theme = getZoneTheme(zoneId);
+  const modal = getOpeningModal(zoneId, sceneId);
 
   return (
-    <div className="game-modal-overlay">
+    <div className="game-modal-overlay" style={{
+      '--modal-card-bg': theme.parentBg,
+      '--modal-text-primary': theme.textPrimary,
+      '--modal-btn-bg': theme.buttonActiveBg,
+      '--modal-btn-shadow': theme.glowColor
+    }}>
       <div className="game-modal-content">
         {/* Character - Left Side */}
         <div className="game-modal-character">
-          <img 
-            src={ganeshaArtist}
-            alt="Ganesha"
-          />
+          <img src={ganeshaArtist} alt="Ganesha" />
         </div>
 
         {/* Card - Right Side */}
         <div className="game-modal-card">
-          <h1 className="game-modal-title">Rangoli Time! 🎨</h1>
-          <p className="game-modal-subtitle">
-            Let's create beautiful festival art together!
-          </p>
+          <h1 className="game-modal-title">{modal?.title || 'Sparkly Rangoli'}</h1>
+          <p className="game-modal-subtitle">{modal?.description || 'Create something bright and bold.'}</p>
 
           {/* Icons Grid */}
           <div className="game-modal-icons">
@@ -113,9 +117,9 @@ const OpeningModal = ({ show, onStart }) => {
             </div>
           </div>
 
-          {/* Let's Play Button */}
+          {/* Let's Explore Button */}
           <button className="game-modal-button" onClick={onStart}>
-            Let's Create!
+            {modal?.buttonText || "Let's Explore"}
           </button>
         </div>
       </div>
@@ -167,7 +171,7 @@ const COLOR_PALETTE = [
   '#4D96FF', '#2BCDC1', '#FFB6C1', '#87CEEB', '#DDA0DD', '#F0E68C'
 ];
 
-const FestivalRangoliGame = ({ onComplete, onNavigate }) => {
+const FestivalRangoliGame = ({ onComplete, onNavigate, zoneId = 'festival-square', sceneId = 'game2' }) => {
   // Game state
   const [gameState, setGameState] = useState({
     phase: PHASES.INTRODUCTION,
@@ -753,8 +757,10 @@ const handleManualCompletion = () => {
       
       {/* Opening Modal - Replaces Introduction Scene */}
       {gameState.phase === PHASES.INTRODUCTION && (
-        <OpeningModal 
+        <OpeningModal
           show={true}
+          zoneId={zoneId}
+          sceneId={sceneId}
           onStart={startRangoliGame}
         />
       )}

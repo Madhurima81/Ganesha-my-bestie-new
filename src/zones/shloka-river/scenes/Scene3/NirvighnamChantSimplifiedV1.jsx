@@ -242,7 +242,7 @@ const NirvighnamChantContent = ({
   zoneId,
   sceneId
 }) => {
-console.log('ðŸ•‰ï¸ NirvighnamChantContent render', { 
+console.log('🕉️ NirvighnamChantContent render', { 
   sceneState: sceneState?.phase, 
   isReload, 
   nirvighnamMode: sceneState?.nirvighnamMode,
@@ -834,7 +834,7 @@ const backgroundImage = (() => {
 
     return (
       <div className="syllable-counter">
-        <div className="counter-icon">ðŸ•‰ï¸</div>
+        <div className="counter-icon">🕉️</div>
         <div className="counter-progress">
           <div
             className="counter-progress-fill"
@@ -1602,7 +1602,7 @@ appImages={{
   fontSize: '12px',
   fontWeight: 'bold'
 }} onClick={() => {
-  console.log('ðŸ§ª TESTING: Universal completion clicked');
+  console.log('🧪 TESTING: Universal completion clicked');
   
   // Automatically complete all syllables and words in any scene
   const allSyllables = Object.keys(sceneState?.learnedSyllables || {});
@@ -1696,7 +1696,7 @@ appImages={{
             fontSize: '12px',
             fontWeight: 'bold'
           }} onClick={() => {
-            console.log('ðŸ§ª TESTING: Skip to Kurumedeva Game clicked');
+            console.log('🧪 TESTING: Skip to Kurumedeva Game clicked');
             
             setShowSparkle(null);
             setShowRecording(false);
@@ -1749,7 +1749,7 @@ appImages={{
               kurumedevaWisdomShown: false
             });
             
-            console.log('âœ… State set for Kurumedeva game - should start immediately');
+            console.log('✅ State set for Kurumedeva game - should start immediately');
           }}>
             SKIP TO KURUMEDEVA
           </div>
@@ -1768,7 +1768,7 @@ appImages={{
             fontSize: '12px',
             fontWeight: 'bold'
           }} onClick={() => {
-            console.log('ðŸ§ª TESTING: Reload test clicked');
+            console.log('🧪 TESTING: Reload test clicked');
             console.log('Current sceneState:', sceneState);
             console.log('Nirvighnam game state:', sceneState?.nirvighnamGameState);
             console.log('Mission state:', sceneState?.missionState);
