@@ -1,4 +1,4 @@
-// DropZone.jsx - FIXED VERSION
+// DropZone.jsx
 import React, { useRef, useState, useEffect } from 'react';
 
 const DropZone = ({
@@ -12,57 +12,57 @@ const DropZone = ({
 }) => {
   const [isOver, setIsOver] = useState(false);
   const zoneRef = useRef(null);
-  
-  // Set up custom event listeners for touch devices
+
+  // ── Refs so the touch handlers always have current values
+  //    without re-registering listeners on every render ──────────────────────
+  const acceptTypesRef = useRef(acceptTypes);
+  const onDropRef      = useRef(onDrop);
+  const disabledRef    = useRef(disabled);
+
+  // Keep refs in sync with props on every render (cheap, no effect re-run)
+  useEffect(() => { acceptTypesRef.current = acceptTypes; });
+  useEffect(() => { onDropRef.current      = onDrop; });
+  useEffect(() => { disabledRef.current    = disabled; });
+
+  // Set up custom event listeners for touch devices — registered ONCE per id
   useEffect(() => {
     const element = zoneRef.current;
     if (!element) return;
-    
-    // Set a data attribute for identification
+
     element.setAttribute('data-dropzone', id);
-    
-    // Handle custom touch drag events
+
     const handleCustomDragOver = (e) => {
-      if (disabled) return;
-      
-      const { id: itemId, data } = e.detail;
-      
-      // Check if the item type is acceptable
-      const isAcceptable = acceptTypes.length === 0 || 
-        (data && data.type && acceptTypes.includes(data.type));
-      
+      if (disabledRef.current) return;
+      const { data } = e.detail;
+      const types = acceptTypesRef.current;
+      const isAcceptable = types.length === 0 ||
+        (data && data.type && types.includes(data.type));
       if (isAcceptable) {
         setIsOver(true);
-        e.preventDefault(); // Allow drop
+        e.preventDefault();
       }
     };
-    
+
     const handleCustomDrop = (e) => {
-      if (disabled) return;
-      
+      if (disabledRef.current) return;
       setIsOver(false);
-      
-      const { id: itemId, data, sourceElement } = e.detail;
-      
-      // Check if the item type is acceptable
-      const isAcceptable = acceptTypes.length === 0 || 
-        (data && data.type && acceptTypes.includes(data.type));
-      
-      if (isAcceptable && onDrop) {
-        // Call the onDrop handler with the item data
-        onDrop({ id: itemId, data });
+      const { id: itemId, data } = e.detail;
+      const types = acceptTypesRef.current;
+      const isAcceptable = types.length === 0 ||
+        (data && data.type && types.includes(data.type));
+      if (isAcceptable && onDropRef.current) {
+        onDropRef.current({ id: itemId, data });
       }
     };
-    
-    // Listen for custom events
+
     element.addEventListener('custom-dragover', handleCustomDragOver);
-    element.addEventListener('custom-drop', handleCustomDrop);
-    
+    element.addEventListener('custom-drop',     handleCustomDrop);
+
     return () => {
       element.removeEventListener('custom-dragover', handleCustomDragOver);
-      element.removeEventListener('custom-drop', handleCustomDrop);
+      element.removeEventListener('custom-drop',     handleCustomDrop);
     };
-  }, [id, acceptTypes, onDrop, disabled]);
+  }, [id]); // Only re-register if the zone id itself changes
   
   // Standard HTML5 drag and drop handlers
   const handleDragOver = (e) => {

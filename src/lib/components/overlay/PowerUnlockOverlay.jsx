@@ -34,6 +34,8 @@ const PowerUnlockOverlay = ({
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [iconAnimated, setIconAnimated] = useState(true);
+  // Two-phase: icon blooms first, description + button fade in after delay
+  const [isCelebrationPhase, setIsCelebrationPhase] = useState(true);
   const hasCalledOnShow = useRef(false);
   const zoneTheme = getZoneTheme(zoneId);
   const zoneThemeVars = {
@@ -43,6 +45,8 @@ const PowerUnlockOverlay = ({
 
   useEffect(() => {
     const fadeTimer = setTimeout(() => setIsVisible(true), 50);
+    // After 1.5s: end celebration phase so description + button fade in
+    const celebrationTimer = setTimeout(() => setIsCelebrationPhase(false), 1500);
     let showTimer;
     if (!hasCalledOnShow.current && onShow) {
       hasCalledOnShow.current = true;
@@ -51,6 +55,7 @@ const PowerUnlockOverlay = ({
 
     return () => {
       clearTimeout(fadeTimer);
+      clearTimeout(celebrationTimer);
       if (showTimer) clearTimeout(showTimer);
     };
   }, []);
@@ -90,7 +95,7 @@ const PowerUnlockOverlay = ({
   };
 
   return (
-    <div className={`power-overlay ${isVisible ? 'visible' : ''}`} style={zoneThemeVars}>
+    <div className={`power-overlay ${isVisible ? 'visible' : ''} ${isCelebrationPhase ? 'celebration' : ''}`} style={zoneThemeVars}>
       <div className="power-backdrop" />
 
       <div className="power-particles">
@@ -139,27 +144,42 @@ const PowerUnlockOverlay = ({
 
         <h1 className="power-title">{title}</h1>
 
-        {/* Dynamic description rendering */}
-        {renderDescription()}
+        {/* Phase 2: description + button — hidden during celebration, fade in after 1.5s
+            Inline styles guarantee override of any CSS class or keyframe animation */}
+        <div
+          style={{
+            opacity: isCelebrationPhase ? 0 : 1,
+            transform: isCelebrationPhase ? 'translateY(18px)' : 'translateY(0)',
+            transition: 'opacity 0.65s ease-out, transform 0.65s ease-out',
+            pointerEvents: isCelebrationPhase ? 'none' : 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            width: '100%',
+            gap: 'inherit'
+          }}
+        >
+          {renderDescription()}
 
-        {showButton && (
-          <div className="power-button-group">
-            {showPlayAgain && (
+          {showButton && (
+            <div className="power-button-group">
+              {showPlayAgain && (
+                <button
+                  className="power-button-secondary"
+                  onClick={handlePlayAgain}
+                >
+                  🔄 {playAgainText}
+                </button>
+              )}
               <button
-                className="power-button-secondary"
-                onClick={handlePlayAgain}
+                className="power-button"
+                onClick={handleContinue}
               >
-                🔄 {playAgainText}
+                {buttonText}
               </button>
-            )}
-            <button
-              className="power-button"
-              onClick={handleContinue}
-            >
-              {buttonText}
-            </button>
-          </div>
-        )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

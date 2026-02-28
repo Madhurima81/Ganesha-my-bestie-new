@@ -8,6 +8,12 @@ export {
 } from './openingModals';
 
 export {
+  COMPLETION_MODALS,
+  getCompletionModal,
+  hasCompletionModal
+} from './completionModals';
+
+export {
   SCENE_HEADERS,
   getSceneHeader,
   getSceneHeaders,

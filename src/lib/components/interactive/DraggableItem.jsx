@@ -1,5 +1,8 @@
-// DraggableItem.jsx - ENHANCED VERSION
-// 🎯 Supports both drop zones AND free movement
+// DraggableItem.jsx
+// Uses refs for drag state so touch handlers never have stale closures —
+// eliminates the "sudden jump on first drag" offset bug.
+// touchOffsetX/Y captures where within the element the finger landed so the
+// element follows the finger at exactly that grab point (no center-snap).
 import React, { useRef, useState, useEffect } from 'react';
 
 const DraggableItem = ({
@@ -7,358 +10,263 @@ const DraggableItem = ({
   data,
   onDragStart,
   onDragEnd,
-  onPositionUpdate, // 🆕 NEW: Add position update support
+  onPositionUpdate,
   disabled = false,
   children,
-  allowFreeMovement = false, // 🆕 NEW: Enable free movement mode
-  style = {} // Allow custom styles to override defaults
+  allowFreeMovement = false,
+  style = {}
 }) => {
   const elementRef = useRef(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [touchStartPos, setTouchStartPos] = useState({ x: 0, y: 0 });
-  const [dragMode, setDragMode] = useState('dropzone'); // 'dropzone' or 'free'
-  const originalSizeRef = useRef({ width: 0, height: 0 }); // 🔧 Store original size
 
-  // 🔧 FIX: Pre-cache element size after render to avoid first-drag offset issues
-  // Use setTimeout to ensure CSS layout has completed before measuring
+  // ── Refs for drag logic — always current, never stale in closures ─────────
+  const isDraggingRef   = useRef(false);
+  const dragModeRef     = useRef('dropzone');
+  const originalSizeRef = useRef({ width: 0, height: 0, touchOffsetX: 0, touchOffsetY: 0 });
+
+  // ── State only for rendering (opacity, draggable attr) ────────────────────
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragMode,   setDragMode]   = useState('dropzone');
+
+  // Pre-cache element size after mount
   useEffect(() => {
     if (elementRef.current && originalSizeRef.current.width === 0) {
-      // Wait for next frame to ensure CSS has been applied
       const timer = setTimeout(() => {
         if (elementRef.current) {
           const rect = elementRef.current.getBoundingClientRect();
-          originalSizeRef.current = {
-            width: rect.width,
-            height: rect.height
-          };
-          console.log(`📐 Pre-cached size for ${id}:`, originalSizeRef.current);
+          originalSizeRef.current = { width: rect.width, height: rect.height };
         }
       }, 0);
       return () => clearTimeout(timer);
     }
   }, [id]);
 
-  // Add touch event listeners
+  // ── Touch event handlers ──────────────────────────────────────────────────
   useEffect(() => {
     const element = elementRef.current;
     if (!element) return;
-    
+
     const handleTouchStart = (e) => {
       if (disabled) return;
-
-      // Prevent default to avoid scrolling while dragging
       e.preventDefault();
 
-      // 🔧 FIX: Capture original size BEFORE any transformations
-      const rect = element.getBoundingClientRect();
+      // Capture current size AND where within the element the finger landed —
+      // this keeps the grab point under the finger throughout the drag (no center-snap).
+      const rect   = element.getBoundingClientRect();
+      const touch0 = e.touches[0];
       originalSizeRef.current = {
-        width: rect.width,
-        height: rect.height
+        width:        rect.width,
+        height:       rect.height,
+        touchOffsetX: touch0.clientX - rect.left,
+        touchOffsetY: touch0.clientY - rect.top,
       };
 
-      // Get touch position
-      const touch = e.touches[0];
-      setTouchStartPos({
-        x: touch.clientX,
-        y: touch.clientY
-      });
-
-      // Determine drag mode based on allowFreeMovement and onPositionUpdate
       const mode = (allowFreeMovement || onPositionUpdate) ? 'free' : 'dropzone';
+
+      // Set refs SYNCHRONOUSLY — no React async delay
+      isDraggingRef.current = true;
+      dragModeRef.current   = mode;
+
+      // Update state for render (draggable attr / opacity) — async is fine here
+      setIsDragging(true);
       setDragMode(mode);
 
-      console.log(`🎮 Touch drag started for ${id} in ${mode} mode`);
-
-      // Notify parent of drag start
-      if (onDragStart) {
-        onDragStart(id, data);
-      }
-
-      setIsDragging(true);
+      if (onDragStart) onDragStart(id, data);
 
       if (mode === 'dropzone') {
-        // Set data transfer for drop zones to recognize
-        const dataTransfer = { id, data };
-        window.__dragData = dataTransfer;
+        window.__dragData = { id, data };
       }
 
-      // Add visual indicator
       element.style.opacity = '0.6';
     };
-    
+
     const handleTouchMove = (e) => {
-      if (!isDragging) return;
+      // Use ref — always current, no stale closure issue
+      if (!isDraggingRef.current) return;
 
-      // Get current touch position
-      const touch = e.touches[0];
+      const touch   = e.touches[0];
+      // Use the recorded grab-point offset so the element stays exactly where
+      // the finger first touched it (not snapping its center to the finger).
+      const offsetX = originalSizeRef.current.touchOffsetX;
+      const offsetY = originalSizeRef.current.touchOffsetY;
 
-      // 🔧 FIX: Use the ORIGINAL captured size for offset calculation
-      const offsetX = originalSizeRef.current.width / 2;
-      const offsetY = originalSizeRef.current.height / 2;
+      element.style.position     = 'fixed';
+      element.style.top          = `${touch.clientY - offsetY}px`;
+      element.style.left         = `${touch.clientX - offsetX}px`;
+      element.style.zIndex       = '1000';
+      element.style.pointerEvents = 'none';
+      element.style.width        = `${originalSizeRef.current.width}px`;
+      element.style.height       = `${originalSizeRef.current.height}px`;
 
-      if (dragMode === 'free') {
-        // 🆕 FREE MOVEMENT MODE - Follow finger exactly, centered
-        element.style.position = 'fixed';
-        element.style.top = `${touch.clientY - offsetY}px`;
-        element.style.left = `${touch.clientX - offsetX}px`;
-        element.style.zIndex = '1000';
-        element.style.pointerEvents = 'none';
-        // 🔧 FIX: Lock the size to original dimensions
-        element.style.width = `${originalSizeRef.current.width}px`;
-        element.style.height = `${originalSizeRef.current.height}px`;
-      } else {
-        // 🔄 EXISTING DROPZONE MODE
-        element.style.position = 'fixed';
-        element.style.top = `${touch.clientY - offsetY}px`;
-        element.style.left = `${touch.clientX - offsetX}px`;
-        element.style.zIndex = '1000';
-        element.style.pointerEvents = 'none';
-        // 🔧 FIX: Lock the size to original dimensions
-        element.style.width = `${originalSizeRef.current.width}px`;
-        element.style.height = `${originalSizeRef.current.height}px`;
-        
-        // Find drop zone element under finger
+      if (dragModeRef.current === 'dropzone') {
         const elementsUnderTouch = document.elementsFromPoint(touch.clientX, touch.clientY);
         const dropZone = elementsUnderTouch.find(el => el.getAttribute('data-dropzone'));
-        
         if (dropZone) {
-          const event = new CustomEvent('custom-dragover', {
-            detail: { id, data }
-          });
-          dropZone.dispatchEvent(event);
+          dropZone.dispatchEvent(new CustomEvent('custom-dragover', { detail: { id, data } }));
         }
       }
     };
-    
+
     const handleTouchEnd = (e) => {
-      if (!isDragging) return;
-      
+      if (!isDraggingRef.current) return;
+
+      // Reset ref immediately
+      isDraggingRef.current = false;
       setIsDragging(false);
-      
-      // Get final touch position
+
       const touch = e.changedTouches[0];
-      
-      console.log(`🎮 Touch drag ended for ${id} in ${dragMode} mode`);
-      
-      if (dragMode === 'free') {
-        // 🆕 FREE MOVEMENT MODE - Update position
+      const mode  = dragModeRef.current;
 
-        // Calculate final position as percentage
+      // Clean up inline styles
+      element.style.position     = '';
+      element.style.top          = '';
+      element.style.left         = '';
+      element.style.zIndex       = '';
+      element.style.opacity      = '';
+      element.style.pointerEvents = '';
+      element.style.width        = '';
+      element.style.height       = '';
+
+      if (mode === 'free') {
         const finalPosition = {
-          top: `${(touch.clientY / window.innerHeight) * 100}%`,
-          left: `${(touch.clientX / window.innerWidth) * 100}%`
+          top:  `${(touch.clientY / window.innerHeight) * 100}%`,
+          left: `${(touch.clientX / window.innerWidth)  * 100}%`,
         };
-
-        console.log(`🐭 Free movement final position:`, finalPosition);
-
-        // Clean up styles - let parent handle positioning
-        element.style.position = '';
-        element.style.top = '';
-        element.style.left = '';
-        element.style.zIndex = '';
-        element.style.opacity = '';
-        element.style.pointerEvents = '';
-        element.style.width = ''; // 🔧 Clear locked size
-        element.style.height = ''; // 🔧 Clear locked size
-
-        // Update parent with new position
-        if (onPositionUpdate) {
-          onPositionUpdate(finalPosition);
-        }
+        if (onPositionUpdate) onPositionUpdate(finalPosition);
       } else {
-        // 🔄 EXISTING DROPZONE MODE
-
-        // Clean up styles
-        element.style.position = '';
-        element.style.top = '';
-        element.style.left = '';
-        element.style.zIndex = '';
-        element.style.opacity = '';
-        element.style.pointerEvents = '';
-        element.style.width = ''; // 🔧 Clear locked size
-        element.style.height = ''; // 🔧 Clear locked size
-        
-        // Find drop zone under touch
+        // Find drop zone under finger
         const elementsUnderTouch = document.elementsFromPoint(touch.clientX, touch.clientY);
         const dropZone = elementsUnderTouch.find(el => el.getAttribute('data-dropzone'));
-        
         if (dropZone) {
-          // Trigger drop event
-          const event = new CustomEvent('custom-drop', {
+          dropZone.dispatchEvent(new CustomEvent('custom-drop', {
             detail: { id, data, sourceElement: element }
-          });
-          dropZone.dispatchEvent(event);
+          }));
         }
-        
-        // Clean up global state
         window.__dragData = null;
       }
-      
-      // Notify parent of drag end
-      if (onDragEnd) {
-        onDragEnd(id);
-      }
+
+      if (onDragEnd) onDragEnd(id);
     };
-    
-    // Add touch event listeners
+
     element.addEventListener('touchstart', handleTouchStart, { passive: false });
-    element.addEventListener('touchmove', handleTouchMove, { passive: false });
-    element.addEventListener('touchend', handleTouchEnd);
-    
-    // Cleanup
+    element.addEventListener('touchmove',  handleTouchMove,  { passive: false });
+    element.addEventListener('touchend',   handleTouchEnd);
+
     return () => {
       element.removeEventListener('touchstart', handleTouchStart);
-      element.removeEventListener('touchmove', handleTouchMove);
-      element.removeEventListener('touchend', handleTouchEnd);
+      element.removeEventListener('touchmove',  handleTouchMove);
+      element.removeEventListener('touchend',   handleTouchEnd);
     };
-  }, [id, data, onDragStart, onDragEnd, onPositionUpdate, disabled, isDragging, allowFreeMovement, dragMode]);
-  
-  // 🔄 EXISTING: Standard drag and drop handlers with mouse support
-  const handleDragStart = (e) => {
-    if (disabled) {
-      e.preventDefault();
-      return;
-    }
+    // isDragging and dragMode intentionally NOT in deps — using refs instead
+  }, [id, data, onDragStart, onDragEnd, onPositionUpdate, disabled, allowFreeMovement]);
 
-    // 🔧 FIX: Capture original size BEFORE any transformations
+  // ── Mouse / desktop drag handlers (dropzone mode) ─────────────────────────
+  const handleDragStart = (e) => {
+    if (disabled) { e.preventDefault(); return; }
+
     if (elementRef.current) {
       const rect = elementRef.current.getBoundingClientRect();
+      // Capture where within the element the mouse clicked (grab-point offset)
       originalSizeRef.current = {
-        width: rect.width,
-        height: rect.height
+        width:        rect.width,
+        height:       rect.height,
+        touchOffsetX: e.clientX - rect.left,
+        touchOffsetY: e.clientY - rect.top,
       };
     }
 
-    // Determine drag mode for mouse/desktop
     const mode = (allowFreeMovement || onPositionUpdate) ? 'free' : 'dropzone';
+    isDraggingRef.current = true;
+    dragModeRef.current   = mode;
+    setIsDragging(true);
     setDragMode(mode);
 
-    console.log(`🖱️ Mouse drag started for ${id} in ${mode} mode`);
-    
     if (mode === 'dropzone') {
-      // 🔄 EXISTING DROPZONE BEHAVIOR
       e.dataTransfer.setData('application/json', JSON.stringify({ id, data }));
       e.dataTransfer.effectAllowed = 'move';
-      
-      // Create drag image
+
       if (elementRef.current) {
-        // 🔧 FIX: Use actual element size for drag image
-        const rect = elementRef.current.getBoundingClientRect();
-        const width = Math.round(rect.width);
-        const height = Math.round(rect.height);
-
+        const rect   = elementRef.current.getBoundingClientRect();
+        const w      = Math.round(rect.width);
+        const h      = Math.round(rect.height);
         const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = width;
-        canvas.height = height;
-
+        canvas.width  = w;
+        canvas.height = h;
         const img = elementRef.current.querySelector('img');
         if (img) {
-          ctx.drawImage(img, 0, 0, width, height);
-          ctx.globalAlpha = 0.6;
-          e.dataTransfer.setDragImage(canvas, width / 2, height / 2);
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          e.dataTransfer.setDragImage(canvas, w / 2, h / 2);
         }
       }
     } else {
-      // 🆕 FREE MOVEMENT MODE - Prevent default drag behavior and handle manually
       e.preventDefault();
-      
-      // Add mouse move listeners for free movement
-      const handleMouseMove = (moveEvent) => {
-        if (elementRef.current) {
-          // 🔧 FIX: Use the ORIGINAL captured size for offset calculation
-          const offsetX = originalSizeRef.current.width / 2;
-          const offsetY = originalSizeRef.current.height / 2;
 
-          elementRef.current.style.position = 'fixed';
-          elementRef.current.style.top = `${moveEvent.clientY - offsetY}px`;
-          elementRef.current.style.left = `${moveEvent.clientX - offsetX}px`;
-          elementRef.current.style.zIndex = '1000';
-          elementRef.current.style.pointerEvents = 'none';
-          elementRef.current.style.opacity = '0.6';
-          // 🔧 FIX: Lock the size to original dimensions
-          elementRef.current.style.width = `${originalSizeRef.current.width}px`;
-          elementRef.current.style.height = `${originalSizeRef.current.height}px`;
-        }
+      const handleMouseMove = (moveEvent) => {
+        if (!elementRef.current) return;
+        // Use the recorded grab-point so the element stays under the click spot
+        const offsetX = originalSizeRef.current.touchOffsetX;
+        const offsetY = originalSizeRef.current.touchOffsetY;
+        elementRef.current.style.position     = 'fixed';
+        elementRef.current.style.top          = `${moveEvent.clientY - offsetY}px`;
+        elementRef.current.style.left         = `${moveEvent.clientX - offsetX}px`;
+        elementRef.current.style.zIndex       = '1000';
+        elementRef.current.style.pointerEvents = 'none';
+        elementRef.current.style.opacity      = '0.6';
+        elementRef.current.style.width        = `${originalSizeRef.current.width}px`;
+        elementRef.current.style.height       = `${originalSizeRef.current.height}px`;
       };
-      
+
       const handleMouseUp = (upEvent) => {
-        // Calculate final position
         const finalPosition = {
-          top: `${(upEvent.clientY / window.innerHeight) * 100}%`,
-          left: `${(upEvent.clientX / window.innerWidth) * 100}%`
+          top:  `${(upEvent.clientY / window.innerHeight) * 100}%`,
+          left: `${(upEvent.clientX / window.innerWidth)  * 100}%`,
         };
-        
-        console.log(`🖱️ Mouse free movement final position:`, finalPosition);
-        
-        // Clean up
         if (elementRef.current) {
-          elementRef.current.style.position = '';
-          elementRef.current.style.top = '';
-          elementRef.current.style.left = '';
-          elementRef.current.style.zIndex = '';
+          elementRef.current.style.position     = '';
+          elementRef.current.style.top          = '';
+          elementRef.current.style.left         = '';
+          elementRef.current.style.zIndex       = '';
           elementRef.current.style.pointerEvents = '';
-          elementRef.current.style.opacity = '';
-          elementRef.current.style.width = ''; // 🔧 Clear locked size
-          elementRef.current.style.height = ''; // 🔧 Clear locked size
+          elementRef.current.style.opacity      = '';
+          elementRef.current.style.width        = '';
+          elementRef.current.style.height       = '';
         }
-        
-        // Update position
-        if (onPositionUpdate) {
-          onPositionUpdate(finalPosition);
-        }
-        
-        // Clean up listeners
+        if (onPositionUpdate) onPositionUpdate(finalPosition);
         document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-        
-        // End drag
+        document.removeEventListener('mouseup',   handleMouseUp);
+        isDraggingRef.current = false;
         setIsDragging(false);
-        if (onDragEnd) {
-          onDragEnd(id);
-        }
+        if (onDragEnd) onDragEnd(id);
       };
-      
-      // Add listeners
+
       document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('mouseup',   handleMouseUp);
     }
-    
-    setIsDragging(true);
-    
-    // Notify parent component
-    if (onDragStart) {
-      onDragStart(id, data);
-    }
+
+    if (onDragStart) onDragStart(id, data);
   };
-  
-  const handleDragEnd = (e) => {
-    if (dragMode === 'dropzone') {
+
+  const handleDragEnd = () => {
+    if (dragModeRef.current === 'dropzone') {
+      isDraggingRef.current = false;
       setIsDragging(false);
-      
-      // Notify parent component
-      if (onDragEnd) {
-        onDragEnd(id);
-      }
+      if (onDragEnd) onDragEnd(id);
     }
-    // Free movement mode handles this in mouse up handler
   };
 
   return (
     <div
       ref={elementRef}
-      draggable={!disabled && dragMode === 'dropzone'} // Only draggable in dropzone mode
+      draggable={!disabled && dragMode === 'dropzone'}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
-      onMouseDown={dragMode === 'free' ? handleDragStart : undefined} // Handle mouse down for free mode
       style={{
-        cursor: disabled ? 'default' : 'grab',
-        opacity: isDragging ? 0.6 : 1,
+        cursor:     disabled ? 'default' : 'grab',
+        opacity:    isDragging ? 0.6 : 1,
         userSelect: 'none',
         touchAction: 'none',
-        width: '100%',
+        width:  '100%',
         height: '100%',
-        ...style // Allow custom styles to override
+        ...style
       }}
       data-draggable={id}
     >

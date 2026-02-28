@@ -2,86 +2,93 @@
 // Organized by zone → scene
 
 export const OPENING_MODALS = {
-  // ========================================
-  // CAVE OF SECRETS (Meaning Cave)
-  // ========================================
-  'meaning-cave': {
-    'vakratunda-mahakaya': {
-      title: "Unlock the Curved Trunk Chamber!",
-      subtitle: "2 ancient Sanskrit chants are hidden here!",
-      icons: ['vakratunda', 'mahakaya'],
-      iconLabels: ['Curved Trunk', 'Great Body'],
-      buttonText: "Enter the Cave",
-      character: null
-    },
-
-    'suryakoti-samaprabha': {
-      title: "Unlock the Million Suns Chamber!",
-      subtitle: "2 radiant Sanskrit chants are hidden here!",
-      icons: ['suryakoti', 'samaprabha'],
-      iconLabels: ['Million Suns', 'Equal Radiance'],
-      buttonText: "Enter the Cave",
-      character: null
-    },
-
-    'nirvighnam-kurumedeva': {
-      title: "Unlock the Obstacle Remover Chamber!",
-      subtitle: "2 powerful Sanskrit chants are hidden here!",
-      icons: ['nirvighnam', 'kurumedeva'],
-      iconLabels: ['No Obstacles', 'Do For Me'],
-      buttonText: "Enter the Cave",
-      character: null
-    },
-
-    'sarvakaryeshu-sarvada': {
-      title: "Unlock the Divine Tasks Chamber!",
-      subtitle: "2 powerful Sanskrit chants are hidden here!",
-      icons: ['sarvakaryeshu', 'sarvada'],
-      iconLabels: ['All Actions', 'Always'],
-      buttonText: "Enter the Cave",
-      character: null
-    },
-
-    'final-meaning-scene': {
-      title: "The Final Challenge!",
-      subtitle: "You have gathered all the ancient wisdom!",
-      description: "Now, match the symbols to their meanings to master the Cave of Secrets!",
-      icons: ['vakratunda', 'meaning'],
-      iconLabels: ['Symbols', 'Meanings'],
-      buttonText: "Start Memory Game",
-      character: 'ganesha-cave'
-    }
-  },
 
   // ========================================
   // SYMBOL MOUNTAIN
   // ========================================
   'symbol-mountain': {
     'modak': {
-      title: "Modak Mission",
-      subtitle: "Let’s find Mooshika, collect some modaks, and enjoy them together!",
-      description: "Search for Mooshika, collect modaks, and discover the power of gratitude!",
+      title: "Share the Modaks",
+      description: "Mooshika is nearby. Can you find him before he scurries away?",
       icons: ['mooshika', 'modak', 'belly'],
-      buttonText: "Begin Adventure!",
+      buttonText: "Let's Explore",
       character: 'ganesha-happy'
     },
 
     'pond': {
-      title: "Explore the Sacred Pond!",
-      subtitle: "2 magical symbols are hidden here!",
+      title: "Wake the Lotus",
+      description: "The pond rests quietly. A golden lotus is waiting to bloom.",
       icons: ['lotus', 'trunk'],
       iconLabels: ['Lotus', 'Trunk'],
-      buttonText: "Begin Adventure!",
+      buttonText: "Let's Explore",
       character: null
     },
 
-    'tusk': {
-      title: "Master the Musical Mountain!",
-      subtitle: "3 sacred sounds are hidden here!",
+    'symbol': {
+      title: "Play the Notes",
+      description: "The mountain is listening. Follow the rhythm and see what awakens.",
       icons: ['eyes', 'ears', 'tusk'],
       iconLabels: ['Eyes', 'Ears', 'Tusk'],
-      buttonText: "Begin Adventure!",
+      buttonText: "Let's Explore",
       character: null
+    },
+
+    'final-scene': {
+      title: "Shine Together",
+      description: "All the symbols are ready. Place them gently and watch them glow.",
+      icons: ['vakratunda', 'meaning'],
+      buttonText: "Let's Explore",
+      character: 'ganesha-cave'
+    }
+  },
+
+  // ========================================
+  // CAVE OF SECRETS
+  // ========================================
+  'cave-of-secrets': {
+    'vakratunda-mahakaya': {
+      title: "Build the Strength",
+      description: "Trace the curve slowly and feel the strength grow.",
+      icons: ['vakratunda', 'mahakaya'],
+      iconLabels: ['Curved Trunk', 'Great Body'],
+      buttonText: "Let's Explore",
+      character: null
+    },
+
+    'suryakoti-samaprabha': {
+      title: "Spread the Light",
+      description: "Tiny suns glow in the dark. Find them and let the cave shine.",
+      icons: ['suryakoti', 'samaprabha'],
+      iconLabels: ['Million Suns', 'Equal Radiance'],
+      buttonText: "Let's Explore",
+      character: null
+    },
+
+    'nirvighnam-kurumedeva': {
+      title: "Clear the Way",
+      description: "A gentle fog lies ahead. Guide the path and move forward with ease.",
+      icons: ['nirvighnam', 'kurumedeva'],
+      iconLabels: ['No Obstacles', 'Do For Me'],
+      buttonText: "Let's Explore",
+      character: null
+    },
+
+    'sarvakaryeshu-sarvada': {
+      title: "Choose with Ganesha",
+      description: "Take a quiet moment and choose with Ganesha beside you.",
+      icons: ['sarvakaryeshu', 'sarvada'],
+      iconLabels: ['All Actions', 'Always'],
+      buttonText: "Let's Explore",
+      character: null
+    },
+
+    'final-meaning-scene': {
+      title: "All Meanings Together",
+      description: "The shloka is complete. See how every part connects.",
+      icons: ['vakratunda', 'meaning'],
+      iconLabels: ['Symbols', 'Meanings'],
+      buttonText: "Let's Explore",
+      character: 'ganesha-cave'
     }
   },
 
@@ -90,127 +97,122 @@ export const OPENING_MODALS = {
   // ========================================
   'shloka-river': {
     'vakratunda-grove': {
-      title: "Welcome to Vakratunda Grove!",
-      subtitle: "Where Ancient Chants Echo",
+      title: "Bloom and Grow",
+      description: "Say the word clearly and watch the flowers bloom.",
       icons: ['vakratunda-app', 'mahakaya-app'],
-      buttonText: "Let's Chant!",
+      buttonText: "Let's Explore",
       character: 'ganesha-headphones'
     },
 
     'suryakoti-bank': {
-      title: "Welcome to Suryakoti Bank!",
-      subtitle: "River of Light",
+      title: "Sun and Smiles",
+      description: "Call the light forward and see the world brighten around you.",
       icons: ['suryakoti-app', 'samaprabha-app'],
-      buttonText: "Let's Chant!",
+      buttonText: "Let's Explore",
       character: 'ganesha-headphones'
     },
 
     'nirvighnam-chant': {
-      title: "Welcome to Nirvighnam Waters!",
-      subtitle: "River of Obstacle Removal",
+      title: "Clear the Path",
+      description: "Chant with steady rhythm and feel the way appear.",
       icons: ['nirvighnam-app', 'kurumedeva-app'],
-      buttonText: "Let's Chant!",
+      buttonText: "Let's Explore",
       character: 'ganesha-headphones'
     },
 
     'sarvakaryeshu-chant': {
-      title: "🌙 Every Day, Always",
-      subtitle: "River of Constant Blessings",
+      title: "Care and Share",
+      description: "Say the words with heart and watch kindness spread.",
       icons: ['sarvakaryeshu-app', 'sarvada-app'],
       iconLabels: ['Day', 'Night'],
-      buttonText: "Let's Chant!",
+      buttonText: "Let's Explore",
       character: 'ganesha-headphones'
     },
 
     'shloka-river-finale': {
-      title: "🎊 The Grand Shloka Celebration!",
-      subtitle: "You have mastered all 8 sacred chants!",
-      description: "Chant the complete Vakratunda Mahakaya Shloka with Ganesha!",
-      icons: ['vakratunda-app', 'mahakaya-app', 'suryakoti-app', 'samaprabha-app', 'nirvighnam-app', 'kurumedeva-app', 'sarvakaryeshu-app', 'sarvada-app'],
-      iconLabels: ['VA', 'MA', 'SU', 'SA', 'NI', 'KU', 'SAR', 'SAR'],
-      buttonText: "Begin Celebration!",
+      title: "Chant and Celebrate",
+      description: "All the words flow together. Let your voice lead the river.",
+      icons: ['vakratunda-app','mahakaya-app','suryakoti-app','samaprabha-app','nirvighnam-app','kurumedeva-app','sarvakaryeshu-app','sarvada-app'],
+      iconLabels: ['VA','MA','SU','SA','NI','KU','SAR','SAR'],
+      buttonText: "Let's Explore",
       character: 'ganesha-headphones'
     }
   },
 
   // ========================================
-  // FESTIVAL SQUARE (Play Zone)
+  // FESTIVAL SQUARE
   // ========================================
   'festival-square': {
     'game1': {
-      title: "Piano Time! 🎹",
-      subtitle: "Let's create beautiful festival melodies together!",
+      title: "Festival Beats",
+      description: "The music is waiting. Play and feel the rhythm come alive.",
       icons: ['listen-icon', 'play-icon', 'create-icon'],
       iconLabels: ['Listen', 'Play', 'Create'],
-      buttonText: "Let's Play!",
+      buttonText: "Let's Explore",
       character: 'ganesha-musician'
     },
 
     'game2': {
-      title: "Rangoli Time! 🎨",
-      subtitle: "Let's create beautiful festival art together!",
+      title: "Sparkly Rangoli",
+      description: "Colors rest on the floor. Create something bright and beautiful.",
       icons: ['learn-icon', 'draw-icon', 'design-icon'],
       iconLabels: ['Learn', 'Draw', 'Design'],
-      buttonText: "Let's Create!",
+      buttonText: "Let's Explore",
       character: 'ganesha-artist'
     },
 
     'game3': {
-      title: "Modak Time! 🍬",
-      subtitle: "Let's cook Ganesha's favorite sweet together!",
+      title: "Modak Party",
+      description: "Sweet ingredients are ready. Mix and see what you can make.",
       icons: ['recipe-icon', 'cook-icon', 'serve-icon'],
       iconLabels: ['Recipe', 'Cook', 'Serve'],
-      buttonText: "Let's Cook!",
+      buttonText: "Let's Explore",
       character: 'ganesha-chef'
     },
 
     'game4': {
-      title: "Mandap Time! 🏛️",
-      subtitle: "Let's create a beautiful wedding canopy together!",
-      icons: ['mandap-learn-icon', 'mandap-build-icon', 'mandap-decorate-icon'],
+      title: "Mandap Magic",
+      description: "The space is yours. Decorate it in your own way.",
+      icons: ['mandap-learn-icon','mandap-build-icon','mandap-decorate-icon'],
       iconLabels: ['Learn', 'Build', 'Decorate'],
-      buttonText: "Let's Build!",
+      buttonText: "Let's Explore",
       character: 'ganesha-happy-sitting'
     }
   },
 
   // ========================================
-  // ABOUT ME HUT (Play Zone)
+  // ABOUT ME HUT
   // ========================================
   'about-me-hut': {
     'name-birthday': {
-      title: "Name & Birthday Quest!",
-      subtitle: "I have a special name and a special birthday.",
-      description: "Let's discover them together!",
+      title: "Let's Be Friends",
+      description: "Ganesha would love to know you. Share a little about yourself.",
       icons: [],
-      buttonText: "Let's Begin 🌱",
+      buttonText: "Let's Explore",
       character: 'baby-ganesha-sit'
     },
 
     'family-tree': {
-      title: "Meet My Family",
-      subtitle: "This is my family. They make me who I am.",
-      description: "Let me show you the people I love!",
+      title: "Our Special World",
+      description: "Every family is unique. Show what makes yours special.",
       icons: [],
-      buttonText: "Meet My Family 💛",
+      buttonText: "Let's Explore",
       character: 'baby-ganesha-sit'
     },
 
     'favorite-food': {
-      title: "The Favorites Match!",
-      subtitle: "I have some things I love more than anything!",
-      description: "Can you guess my favorites?",
+      title: "What We Love",
+      description: "Favorites tell a story. Share what you enjoy most.",
       icons: [],
-      buttonText: "Let's Play! 🎯",
+      buttonText: "Let's Explore",
       character: 'baby-ganesha-sit'
     },
 
     'dreams-wishes': {
-      title: "Dreams & Wishes",
-      subtitle: "I have three happy wishes for the world.",
-      description: "Let's make them come true together.",
+      title: "Dream Big Together",
+      description: "Every dream begins with a thought. See where yours can lead.",
       icons: ['wish-earth', 'wish-share', 'wish-flower'],
-      buttonText: "Let's Begin! ✨",
+      buttonText: "Let's Explore",
       character: 'baby-ganesha-sit'
     }
   }

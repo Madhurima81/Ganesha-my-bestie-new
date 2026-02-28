@@ -50,11 +50,15 @@ export const ZONE_THEMES = {
     helpCardBorder: '#F4C430',
     helpHintIconBg: 'linear-gradient(135deg, #FFFAED, #FFF3C8)',
 
+    // Button shades (for PrimaryBtn CSS vars)
+    btnTop: '#FFDA5A',
+    btnShadow: '#B8920A',
+
     // Font
     fontFamily: '"Baloo", cursive',
     fontFamilyBody: '"Nunito", sans-serif'
   },
-  
+
   'cave-of-secrets': {
     // Menu Background - Amber Fire-lit
     menuBg: 'linear-gradient(135deg, rgba(255, 245, 236, 0.95), rgba(255, 228, 206, 0.95))',
@@ -95,10 +99,14 @@ export const ZONE_THEMES = {
     helpCardBorder: '#C85A2E',
     helpHintIconBg: 'linear-gradient(135deg, #FFF5EC, #FFE4CE)',
 
+    // Button shades (for PrimaryBtn CSS vars)
+    btnTop: '#E07045',
+    btnShadow: '#8B2E0A',
+
     fontFamily: '"Baloo", cursive',
     fontFamilyBody: '"Nunito", sans-serif'
   },
-  
+
   'festival-square': {
     // Menu Background - Marigold/Saffron
     menuBg: 'linear-gradient(135deg, rgba(255, 248, 237, 0.95), rgba(255, 232, 206, 0.95))',
@@ -139,10 +147,14 @@ export const ZONE_THEMES = {
     helpCardBorder: '#E67E22',
     helpHintIconBg: 'linear-gradient(135deg, #FFF8ED, #FFE8CE)',
 
+    // Button shades (for PrimaryBtn CSS vars)
+    btnTop: '#F4962A',
+    btnShadow: '#A84E00',
+
     fontFamily: '"Baloo", cursive',
     fontFamilyBody: '"Nunito", sans-serif'
   },
-  
+
   'shloka-river': {
     // Menu Background - Soft Aqua Sage
     menuBg: 'linear-gradient(135deg, rgba(240, 248, 247, 0.95), rgba(212, 232, 227, 0.95))',
@@ -183,10 +195,14 @@ export const ZONE_THEMES = {
     helpCardBorder: '#4A9B87',
     helpHintIconBg: 'linear-gradient(135deg, #F0F8F7, #D4E8E3)',
 
+    // Button shades (for PrimaryBtn CSS vars)
+    btnTop: '#5FBEA8',
+    btnShadow: '#1A6B5A',
+
     fontFamily: '"Baloo", cursive',
     fontFamilyBody: '"Nunito", sans-serif'
   },
-  
+
   'about-me-hut': {
     // Menu Background - Warm Clay Home
     menuBg: 'linear-gradient(135deg, rgba(255, 249, 240, 0.95), rgba(255, 235, 214, 0.95))',
@@ -226,6 +242,10 @@ export const ZONE_THEMES = {
     helpCardBg: '#FFFFFF',
     helpCardBorder: '#D89566',
     helpHintIconBg: 'linear-gradient(135deg, #FFF9F0, #FFEBD6)',
+
+    // Button shades (for PrimaryBtn CSS vars)
+    btnTop: '#E8AA7A',
+    btnShadow: '#9A5A20',
 
     fontFamily: '"Baloo", cursive',
     fontFamilyBody: '"Nunito", sans-serif'

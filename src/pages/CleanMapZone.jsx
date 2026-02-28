@@ -1,8 +1,8 @@
 // CleanMapZone.jsx - Clean map with zone states (locked/active/in-progress/completed)
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './CleanMapZone.css';
 import GameStateManager from '../lib/services/GameStateManager';
-import ZonePreviewModal from './components/ZonePreviewModal';
+// import ZonePreviewModal from './components/ZonePreviewModal'; // commented out — no preview modal
 
 const ZONES_DATA = [
   {
@@ -12,64 +12,147 @@ const ZONES_DATA = [
     unlockRequires: null,
     unlockNote: null, // always unlocked first
     scenes: [
-      { id: 'scene1', name: 'Introduction' },
-      { id: 'scene2', name: 'Symbol Quiz' },
-      { id: 'scene3', name: 'Matching Game' },
-      { id: 'scene4', name: 'Final Challenge' }
+      { id: 'modak', name: 'Modak' },
+      { id: 'pond', name: 'Pond' },
+      { id: 'symbol', name: 'Symbol' },
+      { id: 'final-scene', name: 'Final Scene' }
     ]
   },
   {
     id: 'cave-of-secrets',
     name: 'Cave of Secrets',
     sequence: 1,
-    unlockRequires: null,
-    unlockNote: null,
+    unlockRequires: ['symbol-mountain', 'shloka-river'],
+    unlockNote: 'Unlocks after Symbol Mountain + Shloka River',
     scenes: [
-      { id: 'scene1', name: 'Word Learning' },
-      { id: 'scene2', name: 'Practice' },
-      { id: 'scene3', name: 'Memory Game' },
-      { id: 'scene4', name: 'Quiz' }
+      { id: 'vakratunda-mahakaya', name: 'Vakratunda Mahakaya' },
+      { id: 'suryakoti-samaprabha', name: 'Suryakoti Samaprabha' },
+      { id: 'nirvighnam-kurumedeva', name: 'Nirvighnam Kurumedeva' },
+      { id: 'sarvakaryeshu-sarvada', name: 'Sarvakaryeshu Sarvada' },
+      { id: 'final-meaning-scene', name: 'Final Meaning Scene' }
     ]
   },
   {
     id: 'shloka-river',
     name: 'Shloka\nRiver',
-    sequence: 1,                               // always active like Symbol Mountain
-    unlockRequires: null,
-    unlockNote: null,
+    sequence: 1,
+    unlockRequires: 'symbol-mountain',
+    unlockNote: 'Complete 1 Symbol Mountain scene',
     scenes: [
-      { id: 'shloka-river-intro', name: 'Introduction' },
-      { id: 'shloka-river-learn', name: 'Learn Shloka' },
-      { id: 'shloka-river-practice', name: 'Practice' },
-      { id: 'shloka-river-finale', name: 'Final Performance' }
+      { id: 'vakratunda-grove', name: 'Vakratunda Grove' },
+      { id: 'suryakoti-bank', name: 'Suryakoti Bank' },
+      { id: 'nirvighnam-chant', name: 'Nirvighnam Chant' },
+      { id: 'sarvakaryeshu-chant', name: 'Sarvakaryeshu Chant' },
+      { id: 'shloka-river-finale', name: 'Shloka River Finale' }
     ]
   },
   {
     id: 'festival-square',
     name: 'Festival\nSquare',
     sequence: 1,
-    unlockRequires: null,
-    unlockNote: null,
+    unlockRequires: 'shloka-river',
+    unlockNote: 'Complete Shloka River',
     scenes: [
-      { id: 'piano', name: 'Piano Game' },
-      { id: 'rangoli', name: 'Rangoli Art' },
-      { id: 'modak', name: 'Modak Cooking' },
-      { id: 'mandap', name: 'Mandap Decoration' }
+      { id: 'game1', name: 'Game 1' },
+      { id: 'game2', name: 'Game 2' },
+      { id: 'game3', name: 'Game 3' },
+      { id: 'game4', name: 'Game 4' }
     ]
   },
   {
     id: 'about-me-hut',
     name: 'About Me Hut',
-    sequence: 1,                               // always accessible
-    unlockRequires: null,
-    unlockNote: null,
+    sequence: 1,
+    unlockRequires: 'symbol-mountain',
+    unlockNote: 'Complete Symbol Mountain',
     scenes: [
-      { id: 'game1', name: 'Family Tree' },
-      { id: 'game2', name: 'Profile' },
-      { id: 'game3', name: 'Avatar' }
+      { id: 'family-tree', name: 'Family Tree' },
+      { id: 'dreams-wishes', name: 'Dreams & Wishes' },
+      { id: 'favorite-food', name: 'Favorite Food' },
+      { id: 'name-birthday', name: 'Name & Birthday' }
     ]
   }
 ];
+
+const ZONE_IDS = {
+  SYMBOL: 'symbol-mountain',
+  RIVER: 'shloka-river',
+  HUT: 'about-me-hut',
+  FESTIVAL: 'festival-square',
+  CAVE: 'cave-of-secrets',
+};
+
+const getCompletedScenes = (allProgress, zoneId) => allProgress[zoneId]?.completedScenes || 0;
+
+const getTotalScenes = (zoneId) => {
+  const zone = ZONES_DATA.find(z => z.id === zoneId);
+  return zone?.scenes?.length || 0;
+};
+
+const isZoneComplete = (allProgress, zoneId) => {
+  const totalScenes = getTotalScenes(zoneId);
+  return totalScenes > 0 && getCompletedScenes(allProgress, zoneId) >= totalScenes;
+};
+
+const isZoneUnlocked = (zoneId, allProgress) => {
+  if (zoneId === ZONE_IDS.SYMBOL) return true;
+  if (zoneId === ZONE_IDS.RIVER) return getCompletedScenes(allProgress, ZONE_IDS.SYMBOL) >= 1;
+  if (zoneId === ZONE_IDS.HUT) return isZoneComplete(allProgress, ZONE_IDS.SYMBOL);
+  if (zoneId === ZONE_IDS.FESTIVAL) return isZoneComplete(allProgress, ZONE_IDS.RIVER);
+  if (zoneId === ZONE_IDS.CAVE) {
+    return isZoneComplete(allProgress, ZONE_IDS.SYMBOL) && isZoneComplete(allProgress, ZONE_IDS.RIVER);
+  }
+  return true;
+};
+
+const playUnlockChime = (intensity = 'normal') => {
+  try {
+    if (typeof window === 'undefined') return;
+    const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextCtor) return;
+
+    const audioCtx = new AudioContextCtor();
+    const now = audioCtx.currentTime;
+    const outputGain = audioCtx.createGain();
+    outputGain.gain.setValueAtTime(0.0001, now);
+    outputGain.connect(audioCtx.destination);
+
+    const sequence = intensity === 'master'
+      ? [
+          { freq: 220, start: 0.00, dur: 0.28 },
+          { freq: 261.63, start: 0.16, dur: 0.36 },
+          { freq: 329.63, start: 0.32, dur: 0.48 },
+        ]
+      : [
+          { freq: 392, start: 0.00, dur: 0.20 },
+          { freq: 523.25, start: 0.14, dur: 0.24 },
+        ];
+
+    const peak = intensity === 'master' ? 0.08 : 0.05;
+    outputGain.gain.linearRampToValueAtTime(peak, now + 0.04);
+    outputGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.90);
+
+    sequence.forEach((note) => {
+      const osc = audioCtx.createOscillator();
+      const oscGain = audioCtx.createGain();
+      osc.type = intensity === 'master' ? 'triangle' : 'sine';
+      osc.frequency.setValueAtTime(note.freq, now + note.start);
+      oscGain.gain.setValueAtTime(0.0001, now + note.start);
+      oscGain.gain.linearRampToValueAtTime(0.7, now + note.start + 0.03);
+      oscGain.gain.exponentialRampToValueAtTime(0.0001, now + note.start + note.dur);
+      osc.connect(oscGain);
+      oscGain.connect(outputGain);
+      osc.start(now + note.start);
+      osc.stop(now + note.start + note.dur + 0.03);
+    });
+
+    setTimeout(() => {
+      audioCtx.close().catch(() => {});
+    }, 1200);
+  } catch (error) {
+    // Audio is best-effort only; unlock visuals should still run.
+  }
+};
 
 // Zone layout config: tap area + label position classes
 const ZONE_LAYOUT = {
@@ -111,18 +194,7 @@ const getAnimalId = (avatar) => {
 
 // Derive state for a zone given its progress and unlock requirements
 const getZoneState = (zoneId, allProgress) => {
-  const zoneDef = ZONES_DATA.find(z => z.id === zoneId);
-  if (!zoneDef) return 'active';
-
-  // Check if zone is locked by a prerequisite
-  if (zoneDef.unlockRequires) {
-    const reqZone = ZONES_DATA.find(z => z.id === zoneDef.unlockRequires);
-    if (reqZone) {
-      const reqP = allProgress[reqZone.id];
-      const reqCompleted = reqP?.completedScenes || 0;
-      if (reqCompleted < reqZone.scenes.length) return 'locked';
-    }
-  }
+  if (!isZoneUnlocked(zoneId, allProgress)) return 'locked';
 
   const p = allProgress[zoneId];
   if (!p) return 'active'; // no progress data yet → treat as active (unlocked but not started)
@@ -133,11 +205,32 @@ const getZoneState = (zoneId, allProgress) => {
   return 'active';
 };
 
+// First scene for each zone — used for direct entry on first visit
+const ZONE_FIRST_SCENES = {
+  'symbol-mountain':  'modak',
+  'cave-of-secrets':  'vakratunda-mahakaya',
+  'shloka-river':     'vakratunda-grove',
+  'festival-square':  'game1',
+  'about-me-hut':     'family-tree',
+};
+
+// Real scene IDs per zone — ZONES_DATA uses placeholder IDs so we need this separately
+const ZONE_SCENES = {
+  'symbol-mountain':  ['modak', 'pond', 'symbol', 'final-scene'],
+  'cave-of-secrets':  ['vakratunda-mahakaya', 'suryakoti-samaprabha', 'nirvighnam-kurumedeva', 'sarvakaryeshu-sarvada', 'mantra-assembly'],
+  'shloka-river':     ['vakratunda-grove', 'suryakoti-bank', 'nirvighnam-chant', 'sarvakaryeshu-chant', 'shloka-river-finale'],
+  'festival-square':  ['game1', 'game2', 'game3', 'game4'],
+  'about-me-hut':     ['family-tree', 'favorite-food', 'dreams-wishes', 'name-birthday'],
+};
+
 const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles }) => {
   const [zoneProgress, setZoneProgress] = useState({});
-  const [selectedZone, setSelectedZone] = useState(null);
-  const [showZoneModal, setShowZoneModal] = useState(false);
+  // const [selectedZone, setSelectedZone] = useState(null);  // removed — no preview modal
+  // const [showZoneModal, setShowZoneModal] = useState(false); // removed — no preview modal
   const [activeProfile, setActiveProfile] = useState(null);
+  const [unlockingZones, setUnlockingZones] = useState({});
+  const unlockTimersRef = useRef({});
+  const prevZoneStatesRef = useRef(null);
 
   useEffect(() => {
     const profile = GameStateManager.getActiveProfile();
@@ -148,14 +241,78 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles }) => {
     loadBasicProgress();
   }, []);
 
+  useEffect(() => {
+    const handleFocus = () => loadBasicProgress();
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        loadBasicProgress();
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      Object.values(unlockTimersRef.current).forEach(clearTimeout);
+    };
+  }, []);
+
+  useEffect(() => {
+    const nextStates = {};
+    ZONES_DATA.forEach(zone => {
+      nextStates[zone.id] = getZoneState(zone.id, zoneProgress);
+    });
+
+    if (!prevZoneStatesRef.current) {
+      prevZoneStatesRef.current = nextStates;
+      return;
+    }
+
+    ZONES_DATA.forEach(zone => {
+      const zoneId = zone.id;
+      const prevState = prevZoneStatesRef.current[zoneId];
+      const nextState = nextStates[zoneId];
+
+      if (prevState === 'locked' && nextState === 'active') {
+        const unlockIntensity = zoneId === ZONE_IDS.CAVE ? 'master' : 'normal';
+
+        if (unlockTimersRef.current[zoneId]) {
+          clearTimeout(unlockTimersRef.current[zoneId]);
+        }
+
+        setUnlockingZones(prev => ({ ...prev, [zoneId]: unlockIntensity }));
+        playUnlockChime(unlockIntensity);
+
+        unlockTimersRef.current[zoneId] = setTimeout(() => {
+          setUnlockingZones(prev => {
+            const updated = { ...prev };
+            delete updated[zoneId];
+            return updated;
+          });
+          delete unlockTimersRef.current[zoneId];
+        }, 1200);
+      }
+    });
+
+    prevZoneStatesRef.current = nextStates;
+  }, [zoneProgress]);
+
   const loadBasicProgress = () => {
     try {
       const progressData = {};
       ZONES_DATA.forEach(zone => {
+        const sceneIds = zone.scenes.map(scene => scene.id);
         let completedScenes = 0;
         let totalStars = 0;
-        zone.scenes.forEach(scene => {
-          const progress = GameStateManager.getSceneProgress(zone.id, scene.id);
+        sceneIds.forEach(sceneId => {
+          const progress = GameStateManager.getSceneProgress(zone.id, sceneId);
           if (progress?.completed) {
             completedScenes++;
             totalStars += progress.stars || 0;
@@ -163,9 +320,11 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles }) => {
         });
         progressData[zone.id] = {
           completedScenes,
-          totalScenes: zone.scenes.length,
+          totalScenes: sceneIds.length,
           stars: totalStars,
-          percentage: Math.round((completedScenes / zone.scenes.length) * 100)
+          percentage: sceneIds.length > 0
+            ? Math.round((completedScenes / sceneIds.length) * 100)
+            : 0
         };
       });
       setZoneProgress(progressData);
@@ -174,15 +333,47 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles }) => {
     }
   };
 
-  const handleZoneClick = (zone, state) => {
-    if (state === 'locked') return;
-    setSelectedZone(zone);
-    setShowZoneModal(true);
+  // Which zones show progress dots
+  // First-time: progressive unlock based on Symbol Mountain scenes completed
+  // Returning (has played beyond SM): all zones show dots
+  const getDotsVisible = () => {
+    const smCompleted = zoneProgress['symbol-mountain']?.completedScenes || 0;
+
+    const hasPlayedBeyondSM = Object.entries(zoneProgress).some(
+      ([zoneId, p]) => zoneId !== 'symbol-mountain' && (p.completedScenes || 0) > 0
+    );
+
+    if (hasPlayedBeyondSM || smCompleted >= ZONE_SCENES['symbol-mountain'].length) {
+      // Returning user — all zones visible
+      return { 'symbol-mountain': true, 'shloka-river': true, 'cave-of-secrets': true, 'festival-square': true, 'about-me-hut': true };
+    }
+
+    // Progressive unlock for first-time users
+    return {
+      'symbol-mountain':  true,
+      'shloka-river':     smCompleted >= 1,
+      'cave-of-secrets':  smCompleted >= 2,
+      'festival-square':  smCompleted >= 3,
+      'about-me-hut':     smCompleted >= 4,
+    };
   };
 
-  const handleStartZone = (zone) => {
-    if (onZoneSelect) onZoneSelect(zone.id);
+  const dotsVisible = getDotsVisible();
+
+  const handleZoneClick = (zone, state) => {
+    if (state === 'locked' || state === 'unlocking') return;
+
+    if (state === 'active') {
+      // No progress at all → first time in this zone → go directly to Scene 1
+      const firstScene = ZONE_FIRST_SCENES[zone.id];
+      if (onZoneSelect) onZoneSelect(zone.id, firstScene);
+    } else {
+      // in-progress or completed → returning user → go to zone welcome (scene picker)
+      if (onZoneSelect) onZoneSelect(zone.id);
+    }
   };
+
+  // const handleStartZone = (zone) => { ... }; // removed — no preview modal
 
   return (
     <div className="map-container morning">
@@ -212,31 +403,41 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles }) => {
       {ZONES_DATA.map(zone => {
         const layout = ZONE_LAYOUT[zone.id];
         if (!layout) return null;
-        const state = getZoneState(zone.id, zoneProgress);
-        const isLocked = state === 'locked';
+        const baseState = getZoneState(zone.id, zoneProgress);
+        const unlockIntensity = unlockingZones[zone.id];
+        const state = unlockIntensity ? 'unlocking' : baseState;
+        const isDisabled = state === 'locked' || state === 'unlocking';
+        const unlockClass = unlockIntensity === 'master' ? 'zone-unlock-master' : '';
+        const labelState = state === 'unlocking' ? 'active' : state;
 
         return (
           <React.Fragment key={zone.id}>
             {/* Tap area */}
             <div
-              className={`${layout.zoneClass} zone-state-${state}`}
+              className={`${layout.zoneClass} zone-state-${state} ${unlockClass}`.trim()}
               onClick={() => handleZoneClick(zone, state)}
-              aria-disabled={isLocked}
+              aria-disabled={isDisabled}
             >
-              {/* In-progress pulse ring */}
-              {state === 'in-progress' && <div className="zone-pulse-ring" aria-hidden="true" />}
-              {/* Completed gold outline + check badge */}
-              {state === 'completed' && <div className="zone-completed-ring" aria-hidden="true" />}
+              {/* Completed check badge only — no permanent rings/borders */}
               {state === 'completed' && <div className="zone-check-badge" aria-hidden="true">✓</div>}
             </div>
 
             {/* Label */}
-            <div className={`${layout.labelClass} label-state-${state}`}>
+            <div className={`${layout.labelClass} label-state-${labelState}`}>
               {zone.name.split('\n').map((line, i) => (
                 <span key={i}>{line}{i < zone.name.split('\n').length - 1 && <br/>}</span>
               ))}
-              {isLocked && zone.unlockNote && (
+              {state === 'locked' && zone.unlockNote && (
                 <div className="unlock-note">{zone.unlockNote}</div>
+              )}
+              {/* Progress dots — only for unlocked zones */}
+              {dotsVisible[zone.id] && (
+                <div className="zone-progress">
+                  {(ZONE_SCENES[zone.id] || []).map((sceneId, i) => {
+                    const completed = i < (zoneProgress[zone.id]?.completedScenes || 0);
+                    return <div key={sceneId} className={`zone-progress-dot${completed ? ' completed' : ''}`} />;
+                  })}
+                </div>
               )}
             </div>
           </React.Fragment>
@@ -270,7 +471,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles }) => {
         );
       })()}
 
-      {/* Zone Preview Modal */}
+      {/* Zone Preview Modal — commented out, no longer used
       {showZoneModal && selectedZone && (
         <ZonePreviewModal
           zone={selectedZone}
@@ -279,6 +480,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles }) => {
           progress={zoneProgress[selectedZone.id]}
         />
       )}
+      */}
     </div>
   );
 };

@@ -10,6 +10,8 @@ import { applyRecorderTheme } from "../../theme/RecorderThemeAdapter";
 const SceneCompletionCelebration = ({
   show = false,
   sceneName = "Adventure",
+  completionTitle = null,
+  completionSubtitle = null,
   discoveredSymbols = [],
   symbolImages = {},
   symbolData = {}, // { symbolId: { title, description } }
@@ -34,17 +36,25 @@ const SceneCompletionCelebration = ({
   const [symbolsInContainer, setSymbolsInContainer] = useState([]);
   const [selectedSymbol, setSelectedSymbol] = useState(null); // for symbol popup
   const [selectedApp, setSelectedApp] = useState(null); // for app recorder popup
-  // Generate random positions for stars once on mount so they don't jump around
-  const [stars] = useState(() => Array.from({ length: 50 }).map((_, i) => ({
-    id: i,
-    top: `${Math.random() * 100}%`,
-    left: `${Math.random() * 100}%`,
-    delay: `${Math.random() * 5}s`,
-    duration: `${3 + Math.random() * 4}s`,
-    size: `${15 + Math.random() * 20}px`
-  })));
+  const [isExiting, setIsExiting] = useState(false);
   const resolvedZoneId = zoneId || GameStateManager.currentZone || 'symbol-mountain';
 
+  const playChime = () => {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = 880;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.8);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 1.8);
+    } catch (e) { /* audio not available */ }
+  };
 
   useEffect(() => {
     if (!show) return;
@@ -56,6 +66,14 @@ const SceneCompletionCelebration = ({
       applyRecorderTheme(resolvedZoneId);
     }
   }, [selectedApp, resolvedZoneId]);
+
+  useEffect(() => {
+    if (show) {
+      setIsExiting(false);
+      const t = setTimeout(() => playChime(), 1000);
+      return () => clearTimeout(t);
+    }
+  }, [show]);
 
   useEffect(() => {
     if (!show) {
@@ -81,37 +99,26 @@ const handleAction = (callback, skipComplete = false) => {
   callback?.();
 };
 
+  const handleContinueWithAnimation = (callback) => {
+    setIsExiting(true);
+    setTimeout(() => {
+      setIsExiting(false);
+      callback?.();
+    }, 700);
+  };
+
   if (!show) return null;
 
   return (
-    <div className="celebration-backdrop">
-
-      {/* --- BACKGROUND SPARKLES (Lots of Stars) --- */}
-      <div className="background-sparkles">
-        {stars.map((star) => (
-          <div
-            key={star.id}
-            className="bg-sparkle"
-            style={{
-              top: star.top,
-              left: star.left,
-              animationDelay: star.delay,
-              animationDuration: star.duration,
-              fontSize: star.size
-            }}
-          >
-            ⭐
-          </div>
-        ))}
-      </div>
+    <div className={`celebration-backdrop${isExiting ? ' exiting' : ''}`}>
 
       {/* Main Card */}
-      <div className="celebration-card">
+      <div className={`celebration-card${isExiting ? ' exiting' : ''}`}>
 
         {/* Text Header */}
         <div className="celebration-header">
-          <div className="title-text">Amazing Work, {childName}!</div>
-          <div className="subtitle-text">[{sceneName}] Completed!</div>
+          <div className="title-text">{completionTitle || '🌟 You Did It!'}</div>
+          <div className="subtitle-text">{completionSubtitle || `${sceneName} is glowing because of you!`}</div>
         </div>
 
         <div className="celebration-body">
@@ -133,9 +140,6 @@ const handleAction = (callback, skipComplete = false) => {
                           <img src={symbolImages[symbol]} alt={symbol} className="trophy-symbol-img" /> :
                           <span style={{ fontSize: '64px' }}>⭐</span>
                         }
-                        {symbolData[symbol] && (
-                          <div className="tap-indicator">TAP!</div>
-                        )}
                       </div>
                       {symbolData[symbol] && (
                         <p className="trophy-symbol-name">{symbol.charAt(0).toUpperCase() + symbol.slice(1)}</p>
@@ -163,7 +167,6 @@ const handleAction = (callback, skipComplete = false) => {
                           <img src={appImages[appId]} alt={appId} className="trophy-symbol-img" /> :
                           <span style={{ fontSize: '64px' }}>🎵</span>
                         }
-                        <div className="tap-indicator">TAP!</div>
                       </div>
                       <p className="trophy-symbol-name">
                         {appId.charAt(0).toUpperCase() + appId.slice(1)}
@@ -204,72 +207,70 @@ const handleAction = (callback, skipComplete = false) => {
                   </div>
                 )}
 
-                {/* Continue Adventure - only show as primary if no primaryAction */}
+                {/* Keep Exploring — primary CTA (only when no custom primaryAction) */}
                 {!primaryAction && (
                   <button
                     className="celebration-btn celebration-btn-orange"
                     onClick={() => {
-                      // Clear next scene state before continuing
-                      console.log('🎯 Continue Adventure clicked');
-                      console.log('🎯 Current sceneId:', sceneId);
-                      console.log('🎯 GameStateManager.currentZone:', GameStateManager.currentZone);
-
                       const currentZone = GameStateManager.currentZone || 'symbol-mountain';
                       const nextSceneInfo = GameStateManager.getNextScene(currentZone, sceneId);
-
-                      console.log('🎯 Next scene info:', nextSceneInfo);
-
                       if (nextSceneInfo) {
-                        console.log(`✨ Clearing next scene state: ${nextSceneInfo.scene}`);
                         GameStateManager.clearSceneState(nextSceneInfo.zone, nextSceneInfo.scene);
-                      } else {
-                        console.log('❌ No next scene found!');
                       }
-
-                      // Then continue normally
-                      handleAction(onContinue);
+                      handleContinueWithAnimation(() => handleAction(onContinue));
                     }}
                   >
-                    Continue Adventure
+                    Keep Exploring
                   </button>
                 )}
 
-                {/* Secondary actions row */}
-                <div className="celebration-actions-row">
-                  <button
-                    className="celebration-btn celebration-btn-teal"
-                    onClick={() => handleAction(onReplay, true)}
-                  >
-                    Play Again
-                  </button>
-
-                  {/* Show "Next Scene" button if primaryAction exists */}
-                  {primaryAction && (
+                {/* Secondary / Tertiary actions */}
+                {!primaryAction ? (
+                  <>
+                    {/* 2nd tier: Explore Scenes */}
+                    <button
+                      className="celebration-btn celebration-btn-teal"
+                      onClick={() => handleAction(onExploreZones)}
+                    >
+                      Explore Scenes
+                    </button>
+                    {/* 3rd tier: Play Again — smallest, least prominent */}
+                    <button
+                      className="celebration-btn-replay"
+                      onClick={() => handleAction(onReplay, true)}
+                    >
+                      Play Again
+                    </button>
+                  </>
+                ) : (
+                  <div className="celebration-actions-row">
+                    <button
+                      className="celebration-btn celebration-btn-teal celebration-btn-ghost"
+                      onClick={() => handleAction(onReplay, true)}
+                    >
+                      Play Again
+                    </button>
                     <button
                       className="celebration-btn celebration-btn-teal"
                       onClick={() => {
                         const currentZone = GameStateManager.currentZone || 'symbol-mountain';
                         const nextSceneInfo = GameStateManager.getNextScene(currentZone, sceneId);
-
                         if (nextSceneInfo) {
-                          console.log(`✨ Clearing next scene state: ${nextSceneInfo.scene}`);
                           GameStateManager.clearSceneState(nextSceneInfo.zone, nextSceneInfo.scene);
                         }
-
                         handleAction(onContinue);
                       }}
                     >
                       Next Scene
                     </button>
-                  )}
-
-                  <button
-                    className="celebration-btn celebration-btn-teal"
-                    onClick={() => handleAction(onExploreZones)}
-                  >
-                    {primaryAction ? 'Back to Zone' : 'Explore Scenes'}
-                  </button>
-                </div>
+                    <button
+                      className="celebration-btn celebration-btn-teal"
+                      onClick={() => handleAction(onExploreZones)}
+                    >
+                      Back to Zone
+                    </button>
+                  </div>
+                )}
               </>
             ) : (
               <>

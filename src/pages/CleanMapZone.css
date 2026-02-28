@@ -111,6 +111,7 @@
   position: absolute;
   cursor: pointer;
   z-index: 8;
+  outline: none;   /* prevent browser focus ring appearing after navigation */
   transition: transform 0.35s ease, opacity 0.3s ease, filter 0.3s ease;
   border-radius: 24px;
   /* Uncomment to debug: background: rgba(255,0,0,0.12); border: 2px dashed red; */
@@ -126,21 +127,6 @@
 .zone.zone-state-active {
   opacity: 1;
   filter: none;
-}
-
-.zone.zone-state-active::after {
-  content: "";
-  position: absolute;
-  inset: -8px;
-  border-radius: 24px;
-  background: radial-gradient(
-    circle,
-    rgba(180, 150, 255, 0.25) 0%,
-    rgba(180, 150, 255, 0.1)  40%,
-    transparent 70%
-  );
-  pointer-events: none;
-  z-index: -1;
 }
 
 /* ── IN-PROGRESS STATE ────────────────────────────
@@ -211,6 +197,66 @@
   cursor: default;
 }
 
+/* ── UNLOCKING STATE ──────────────────────────────
+   Brief glow + scale settle when a zone opens
+──────────────────────────────────────────────── */
+.zone.zone-state-unlocking {
+  pointer-events: none;
+  animation: zoneUnlockPulse 1.2s ease-out forwards;
+}
+
+.zone.zone-state-unlocking::after {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  border-radius: 28px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 215, 120, 0.6) 0%,
+    rgba(255, 215, 120, 0.35) 35%,
+    rgba(255, 215, 120, 0.15) 60%,
+    transparent 75%
+  );
+  animation: zoneUnlockGlow 1.2s ease-out forwards;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.zone.zone-state-unlocking.zone-unlock-master::after {
+  inset: -18px;
+  border-radius: 32px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 210, 90, 0.82) 0%,
+    rgba(255, 210, 90, 0.48) 38%,
+    rgba(255, 210, 90, 0.2) 64%,
+    transparent 80%
+  );
+}
+
+@keyframes zoneUnlockPulse {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.7;
+  }
+  40% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes zoneUnlockGlow {
+  0% { opacity: 0; }
+  30% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 /* =========================
    ZONE LABEL STYLING
 ========================= */
@@ -226,8 +272,7 @@
   pointer-events: none;
   z-index: 10;
   transition: color 0.3s ease, opacity 0.3s ease;
-  animation: spiritualBreath 6s ease-in-out infinite,
-             textPulse 3s ease-in-out infinite;
+  animation: spiritualBreath 6s ease-in-out infinite; /* no idle glow — only in-progress gets textPulseGold */
 }
 
 /* ── Label state modifiers ── */
@@ -238,10 +283,9 @@
   opacity: 1;
 }
 
-/* In-progress: subtle golden shimmer on text */
+/* In-progress: same breath as other states — no permanent glow */
 .label.label-state-in-progress {
-  animation: spiritualBreath 6s ease-in-out infinite,
-             textPulseGold 2.5s ease-in-out infinite;
+  animation: spiritualBreath 6s ease-in-out infinite;
 }
 
 /* Locked: muted purple, slightly dim */
@@ -620,4 +664,24 @@
   .hut-label             { font-size: 11px; }
   .fun-zone-gate         { width: 110px; }
   .map-back-button       { font-size: 12px; padding: 6px 14px; }
+}
+
+/* ── Zone Progress Dots ── */
+.zone-progress {
+  display: flex;
+  justify-content: center;
+  gap: 9px;
+  margin-top: 8px;
+}
+
+.zone-progress-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: rgba(140, 120, 200, 0.4);
+}
+
+.zone-progress-dot.completed {
+  background: #f4c430;
+  box-shadow: 0 0 8px rgba(244, 196, 48, 0.75), 0 0 3px rgba(244, 196, 48, 0.5);
 }

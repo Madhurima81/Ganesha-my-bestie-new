@@ -4,6 +4,21 @@
   font-weight: 400;
 }
 
+/* ── SCREEN TRANSITION (global) ─────────────────────── */
+.page-transition {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.35s ease-out forwards;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* ──────────────────────────────────────────────────── */
+
 body {
   margin: 0;
   min-width: 320px;

@@ -15,7 +15,7 @@ export const ZONE_CONFIGS = {
     scenes: [
       {
         id: 'modak',
-        name: 'Modak Forest',
+        name: 'Share the Modaks',
         emoji: '🍯',
         iconImage: '/images/zones/symbol-mountain/modak-icon.png',
         description: 'Help Mooshika collect sweet modaks',
@@ -25,7 +25,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'pond',
-        name: 'Sacred Pond',
+        name: 'Wake the Lotus',
         emoji: '🪷',
         iconImage: '/images/zones/symbol-mountain/pond-icon.png',
         description: 'Find lotus flowers and meet the elephant',
@@ -35,7 +35,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'symbol',
-        name: 'Sacred Tusk',
+        name: 'Play the Notes',
         emoji: '😀',
         iconImage: '/images/zones/symbol-mountain/tusk-icon.png',
         description: 'Master the musical tusk assembly',
@@ -45,7 +45,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'final-scene',
-        name: 'Sacred Assembly',
+        name: 'Shine Together',
         emoji: '🕉️',
         iconImage: '/images/zones/symbol-mountain/assembly-icon.png',
         description: 'Assemble all sacred symbols to awaken Ganesha',
@@ -69,7 +69,7 @@ export const ZONE_CONFIGS = {
     scenes: [
       {
         id: 'vakratunda-mahakaya',
-        name: 'Vakratunda Mahakaya',
+        name: 'Build the Strength',
         emoji: '😀',
         iconImage: '/images/zones/cave-of-secrets/vakratunda-icon.png',
         description: 'Learn about Ganesha\'s curved trunk and mighty form',
@@ -79,7 +79,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'suryakoti-samaprabha', 
-        name: 'Surya Koti Samaprabha',
+        name: 'Spread the Light',
         emoji: '☀️',
         iconImage: '/images/zones/cave-of-secrets/suryakoti-icon.png',
         description: 'Awaken a million suns and discover divine brilliance',
@@ -89,7 +89,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'nirvighnam-kurumedeva',
-        name: 'Nirvighnam Kurume Deva',
+        name: 'Cross the Bridge',
         emoji: '🛤️',
         iconImage: '/images/zones/cave-of-secrets/nirvighnam-icon.png',
         description: 'Clear obstacles with divine power and build bridges',
@@ -99,7 +99,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'sarvakaryeshu-sarvada',
-        name: 'Sarvakaryeshu Sarvada',
+        name: 'Choose with Ganesha',
         emoji: '🌟',
         iconImage: '/images/zones/cave-of-secrets/sarvakaryeshu-icon.png',
         description: 'Experience divine presence in all daily activities',
@@ -109,7 +109,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'final-meaning-scene',
-        name: 'Memory Match Finale',
+        name: 'You Did It',
         emoji: '🎴',
         iconImage: '/images/zones/cave-of-secrets/finale-icon.png',
         description: 'Match symbols with meanings in the final challenge',
@@ -133,7 +133,7 @@ export const ZONE_CONFIGS = {
     scenes: [
       {
         id: 'vakratunda-grove',
-        name: 'Vakratunda Grove',
+        name: 'Bloom and Grow',
         emoji: '🌳',
         iconImage: '/images/zones/shloka-river/vakratunda-grove-icon.png',
         order: 1,
@@ -141,7 +141,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'suryakoti-bank', 
-        name: 'Suryakoti Bank',
+        name: 'Sun and Smiles',
         emoji: '☀️',
         iconImage: '/images/zones/shloka-river/suryakoti-bank-icon.png',
         order: 2,
@@ -149,7 +149,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'nirvighnam-chant',
-        name: 'Nirvighnam Chant', 
+        name: 'Clear the Path',
         emoji: '🎵',
         iconImage: '/images/zones/shloka-river/nirvighnam-chant-icon.png',
         order: 3,
@@ -157,7 +157,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'sarvakaryeshu-chant',
-        name: 'Sarvakaryeshu Chant',
+        name: 'Care and Share',
         emoji: '🕉️',
         iconImage: '/images/zones/shloka-river/sarvakaryeshu-chant-icon.png',
         order: 4,
@@ -165,7 +165,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'shloka-river-finale',
-        name: 'Shloka River Finale',
+        name: 'Chant and Celebrate',
         emoji: '🎊',
         iconImage: '/images/zones/shloka-river/finale-icon.png',
         order: 5, 
@@ -187,7 +187,7 @@ export const ZONE_CONFIGS = {
     scenes: [
       {
         id: 'game1',
-        name: 'Festival Piano',
+        name: 'Festival Beats',
         emoji: '🎹',
         iconImage: '/images/zones/festival-square/piano-icon.png',
         description: 'Play beautiful melodies on the festival piano',
@@ -197,7 +197,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'game2',
-        name: 'Rangoli Art Booth',
+        name: 'Sparkly Rangoli',
         emoji: '🎨',
         iconImage: '/images/zones/festival-square/rangoli-icon.png',
         description: 'Create colorful rangoli patterns',
@@ -207,7 +207,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'game3',
-        name: 'Modak Cooking',
+        name: 'Modak Party',
         emoji: '🍯',
         iconImage: '/images/zones/festival-square/modak-cooking-icon.png',
         description: 'Cook delicious modaks for the festival',
@@ -217,7 +217,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'game4',
-        name: 'Mandap Decoration',
+        name: 'Mandap Magic',
         emoji: '🛕',
         iconImage: '/images/zones/festival-square/mandap-icon.png',
         description: 'Decorate the beautiful festival mandap',
@@ -245,7 +245,7 @@ export const ZONE_CONFIGS = {
     scenes: [
       {
     id: 'family-tree',
-    name: 'Family Tree',
+    name: "Let's Be Friends",
         emoji: '👨‍👩‍👦',
         iconImage: '/images/zones/about-me-hut/family-tree-icon.png',
         description: 'Help Ganesha complete his family tree',
@@ -256,7 +256,7 @@ export const ZONE_CONFIGS = {
       },
       {
      id: 'favorite-food',
-    name: 'My Favorite Things',
+    name: 'Our Special World',
         emoji: '�',
         iconImage: '/images/zones/about-me-hut/favorite-things-icon.png',
         description: 'Find Ganesha\'s favorite food and best friend',
@@ -267,7 +267,7 @@ export const ZONE_CONFIGS = {
       },
       {
      id: 'dreams-wishes',
-    name: 'Obstacle Remover',
+    name: 'What We Love',
         emoji: '🪔',
         iconImage: '/images/zones/about-me-hut/obstacle-remover-icon.png',
         description: 'Clear obstacles with joy, peace, and love',
@@ -278,7 +278,7 @@ export const ZONE_CONFIGS = {
       },
       {
            id: 'name-birthday',
-    name: 'Name & Birthday',
+    name: 'Dream Big Together',
         emoji: '🎈',
         iconImage: '/images/zones/about-me-hut/name-birthday-icon.png',
         description: 'Spell GANESHA and find his birthday festival',

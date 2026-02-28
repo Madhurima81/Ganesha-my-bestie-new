@@ -5,12 +5,13 @@ import PrimaryBtn from '../shared/PrimaryBtn';
 import ScreenHeader from '../shared/ScreenHeader';
 import './CleanProfileSelector.css';
 
-const CleanProfileSelector = ({ 
-  onProfileSelect, 
-  profiles: initialProfiles
+const CleanProfileSelector = ({
+  onProfileSelect,
+  profiles: initialProfiles,
+  forceCreate = false   // true for first-time users — skips grid, opens create modal immediately
 }) => {
   const [profiles, setProfiles] = useState(initialProfiles || {});
-  const [showCreateProfile, setShowCreateProfile] = useState(false);
+  const [showCreateProfile, setShowCreateProfile] = useState(forceCreate);
   const [newProfileName, setNewProfileName] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState('monkey');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
@@ -80,7 +81,7 @@ const CleanProfileSelector = ({
   const emptySlots = Math.max(0, 4 - profileArray.length);
 
   return (
-    <div className="clean-profile-overlay">
+    <div className="clean-profile-overlay page-transition">
       <div className="clean-forest-background">
         <div className="profile-dust" aria-hidden="true">
           <span/><span/><span/>

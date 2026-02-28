@@ -63,28 +63,31 @@ const SACRED_SYMBOLS = Object.keys(symbolImages).map((key, index) => ({
       return;
     }
 
-    console.log('🌟 Starting Slow Rotating Orbs Effect with Fireworks');
-
-    // Phase 1: Orbs appear immediately (no blessing text)
+    // Phase 1
     setCurrentPhase('orbs-appearing');
     setOrbsVisible(true);
     
-    // Phase 2: Ganesha awakens in center (longer delay for slower pace)
+    // Phase 2
     setTimeout(() => {
       setCurrentPhase('ganesha-awakening');
       setGaneshaAwakened(true);
     }, 2000);
 
-    // Phase 3: Convergence + FIREWORKS! (much longer for meditative effect)
+    // Phase 3 — convergence
     setTimeout(() => {
       setCurrentPhase('convergence');
-      setShowFireworks(true);  // ← START FIREWORKS DURING CONVERGENCE
     }, 4000);
 
-    // Complete after duration (longer total duration)
+    // Phase 4 — settle (no state change needed visually if CSS handles it)
+
+    // Phase 5 — fireworks AFTER settle
     setTimeout(() => {
-      console.log('🎆 Slow orb effect with fireworks complete');
-      setShowFireworks(false);  // ← STOP FIREWORKS BEFORE COMPLETION
+      setShowFireworks(true);
+    }, 6000);
+
+    // Complete
+    setTimeout(() => {
+      setShowFireworks(false);
       onComplete?.();
     }, duration);
 
@@ -94,22 +97,6 @@ const SACRED_SYMBOLS = Object.keys(symbolImages).map((key, index) => ({
 
   return (
     <div className="rotating-orbs-effect">
-      
-      {/* Cosmic background effect */}
-      <div className="cosmic-background">
-        {Array.from({ length: 80 }).map((_, i) => (
-          <div
-            key={i}
-            className="cosmic-star"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${2 + Math.random() * 2}s`
-            }}
-          />
-        ))}
-      </div>
 
       {/* Rotating orbs container */}
       {orbsVisible && (
@@ -132,11 +119,6 @@ const SACRED_SYMBOLS = Object.keys(symbolImages).map((key, index) => ({
                   />
                   <div className="orb-glow" />
                 </div>
-                
-                {/* Blessing text that appears on hover/touch */}
-                <div className="orb-blessing">
-                  {symbol.blessing}
-                </div>
               </div>
             ))}
           </div>
@@ -146,14 +128,7 @@ const SACRED_SYMBOLS = Object.keys(symbolImages).map((key, index) => ({
       {/* Central Ganesha manifestation - Pure visual, no text */}
       {ganeshaAwakened && (
         <div className="central-ganesha-container">
-          <div className="divine-aura">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div 
-                key={i}
-                className={`aura-ring ring-${i + 1}`}
-              />
-            ))}
-          </div>
+          <div className="divine-aura" />
           
           <div className="ganesha-manifestation">
             {ganeshaImage ? (
@@ -173,6 +148,7 @@ const SACRED_SYMBOLS = Object.keys(symbolImages).map((key, index) => ({
       {showFireworks && (
         <Fireworks
           show={true}
+          variant="zone"
           duration={6000}  // 6 seconds of fireworks during final phase
           count={20}
           colors={['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7']}
@@ -190,24 +166,6 @@ const SACRED_SYMBOLS = Object.keys(symbolImages).map((key, index) => ({
             // Don't call main onComplete here - let the main timer handle it
           }}
         />
-      )}
-
-      {/* Particle effects for extra magic */}
-      {currentPhase === 'convergence' && (
-        <div className="particle-effects">
-          {Array.from({ length: 30 }).map((_, i) => (
-            <div
-              key={i}
-              className="magic-particle"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 2}s`,
-                animationDuration: `${1 + Math.random()}s`
-              }}
-            />
-          ))}
-        </div>
       )}
     </div>
   );

@@ -161,7 +161,10 @@ const loadSceneProgress = () => {
             tempState.mooshikaFound || 
             tempState.collectedModaks?.length > 0 ||
             tempState.lotusStates?.some(state => state === 1) ||
-            (tempState.phase && tempState.phase !== 'mooshika_search' && tempState.phase !== 'initial')
+            tempState.placedGaneshaMembers?.length > 0 ||
+            tempState.childFamily?.length > 0 ||
+            (tempState.phase && tempState.phase !== 'mooshika_search' && tempState.phase !== 'initial') ||
+            (tempState.gamePhase && !['intro', 'initial'].includes(tempState.gamePhase))
           );
           progressPercentage = tempState.progress?.percentage || 0;
           tempStars = tempState.stars || 0;
@@ -410,9 +413,12 @@ if (tempData) {
       const hasPartialProgress = (
   tempState.stars > 0 ||
   tempState.phase && !['initial', 'mooshika_search'].includes(tempState.phase) ||
+  (tempState.gamePhase && !['intro', 'initial'].includes(tempState.gamePhase)) ||
   tempState.discoveredSymbols && Object.keys(tempState.discoveredSymbols).length > 0 ||
   tempState.mooshikaFound ||
   tempState.collectedModaks?.length > 0 ||
+  tempState.placedGaneshaMembers?.length > 0 ||
+  tempState.childFamily?.length > 0 ||
   tempState.rockFeedCount > 0 ||
   tempState.rockTransformed ||  // ✅ INCLUDE rock transformed as progress
   tempState.lotusStates?.some(state => state === 1) ||
@@ -624,6 +630,7 @@ if (tempData) {
       }}
     >
       <div className="bg-layer"></div>
+      <div className="zone-bg-overlay"></div>
 
       {/* 🔍 TEMPORARY DEBUG BUTTON */}
 <button 
@@ -710,6 +717,10 @@ if (tempData) {
                   <div className="scene-stars-display">
                     {status.stars}⭐
                   </div>
+                )}
+
+                {(status.status === 'completed' || sceneProgress[scene.id]?.completed === true) && (
+                  <div className="scene-complete-badge">✓</div>
                 )}
 
                 <div className="zone-inner">
@@ -846,3 +857,4 @@ Continue
 
 
 export default ZoneWelcome;
+

@@ -16,6 +16,8 @@
   animation: zoneWelcomeSlideIn 0.5s ease-out;
 }
 
+
+
 .screen {
   position: relative;
   height: 100vh;
@@ -27,47 +29,18 @@
   inset: 0;
   background-image: url('/images/map-background.svg');
   background-repeat: no-repeat;
-  background-size: 150%;
-  background-position: 50% 50%;
+  background-size: cover;
+  background-position: center center;
   z-index: 0;
-  /* No blur — SVG is crisp at any size */
-  transition: background-position 800ms ease, background-size 800ms ease;
 }
 
-/* ── Zone camera positions ──────────────────────────────
-   Each class zooms into the relevant area of the master map.
-   Values to tweak visually — adjust % to reframe the "shot".
-─────────────────────────────────────────────────────── */
-
-/* Symbol Mountain — top-left (mountain + cave entrance) */
-.symbol-mountain .bg-layer {
-  background-size: 155%;
-  background-position: 20% 35%;
-}
-
-/* Cave of Secrets — centre (cave mouth area) */
-.cave-of-secrets .bg-layer {
-  background-size: 150%;
-  background-position: 50% 45%;
-}
-
-/* Shloka River — right-centre (river winding down) */
-.shloka-river .bg-layer {
-  background-size: 150%;
-  background-position: 75% 40%;
-}
-
-/* Festival Square — bottom-right (gate + open area) */
-.festival-square .bg-layer {
-  background-size: 155%;
-  background-position: 80% 75%;
-}
-
-/* About Me Hut — bottom-left (hut + dotted path) */
-.about-me-hut .bg-layer {
-  background-size: 150%;
-  background-position: 30% 75%;
-}
+/* Zone camera positions — kept for future use when expanded canvas is ready
+.symbol-mountain .bg-layer { background-size: 155%; background-position: 20% 35%; }
+.cave-of-secrets .bg-layer { background-size: 150%; background-position: 50% 45%; }
+.shloka-river    .bg-layer { background-size: 150%; background-position: 75% 40%; }
+.festival-square .bg-layer { background-size: 155%; background-position: 80% 75%; }
+.about-me-hut    .bg-layer { background-size: 150%; background-position: 30% 75%; }
+*/
 
 /* ── Subtle top tint — keeps zone title readable ── */
 .bg-layer::after {
@@ -121,6 +94,67 @@
     to bottom,
     rgba(100, 60, 180, 0.09) 0%,
     transparent 45%
+  );
+}
+
+/* ========================================== */
+/* ZONE BACKGROUND OVERLAY - Radial glow      */
+/* ========================================== */
+
+.zone-bg-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgba(255, 255, 255, 0.12),
+    rgba(120, 170, 150, 0.18) 60%,
+    rgba(80, 140, 120, 0.22) 100%
+  );
+}
+
+.symbol-mountain .zone-bg-overlay {
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgba(255, 255, 255, 0.12),
+    rgba(210, 190, 120, 0.18) 60%,
+    rgba(170, 150, 80, 0.22) 100%
+  );
+}
+
+.cave-of-secrets .zone-bg-overlay {
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgba(255, 255, 255, 0.12),
+    rgba(140, 110, 80, 0.18) 60%,
+    rgba(100, 70, 50, 0.22) 100%
+  );
+}
+
+.shloka-river .zone-bg-overlay {
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgba(255, 255, 255, 0.12),
+    rgba(100, 165, 205, 0.18) 60%,
+    rgba(60, 130, 175, 0.22) 100%
+  );
+}
+
+.festival-square .zone-bg-overlay {
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgba(255, 255, 255, 0.12),
+    rgba(210, 130, 150, 0.18) 60%,
+    rgba(175, 90, 115, 0.22) 100%
+  );
+}
+
+.about-me-hut .zone-bg-overlay {
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgba(255, 255, 255, 0.12),
+    rgba(130, 185, 105, 0.18) 60%,
+    rgba(90, 150, 65, 0.22) 100%
   );
 }
 
@@ -288,6 +322,26 @@
   pointer-events: none;
 }
 
+.cards-wrapper::after {
+  content: "";
+  position: absolute;
+  width: 900px;
+  height: 700px;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.35) 40%,
+    rgba(255, 255, 255, 0.15) 70%,
+    transparent 85%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
 .scenes-horizontal-container {
   display: contents;
 }
@@ -309,25 +363,25 @@
 /* zone-1 — BOTTOM CENTER (Modak — active/unlocked) */
 .zone-1 {
   left: 50%;
-  top: 80%;
+  top: 83%;
 }
 
 /* zone-2 — MIDDLE LEFT (Sacred Pond) */
 .zone-2 {
   left: 30%;
-  top: 52%;
+  top: 57%;
 }
 
 /* zone-3 — MIDDLE RIGHT (Sacred Tusk) */
 .zone-3 {
   left: 70%;
-  top: 52%;
+  top: 57%;
 }
 
 /* zone-4 — TOP CENTER (Sacred Assembly) */
 .zone-4 {
   left: 50%;
-  top: 26%;
+  top: 31%;
 }
 
 /* 5-card fallback */
@@ -342,190 +396,49 @@
 }
 
 /* ========================================== */
-/* SYMBOL MOUNTAIN - PREMIUM REFINED STYLE   */
+/* 5-CARD 2-ROW LAYOUT                       */
+/* Cave of Secrets · Shloka River (5 scenes) */
 /* ========================================== */
+/*
+    [ 4 ]         [ 5 ]     ← TOP ROW (2 cards)
+  [ 1 ]   [ 2 ]   [ 3 ]    ← BOTTOM ROW (3 cards)
+*/
 
-/* Background tint - soft saffron air */
-.symbol-mountain .bg-layer::after {
-  background: linear-gradient(
-    to bottom,
-    rgba(244, 196, 48, 0.10) 0%,
-    rgba(244, 196, 48, 0.05) 30%,
-    transparent 55%
-  );
+.cave-of-secrets .cards-wrapper,
+.shloka-river .cards-wrapper {
+  height: 80vh;
 }
 
-/* ------------------------------------------ */
-/* CARD BASE                                  */
-/* ------------------------------------------ */
-
-.symbol-mountain .zone-card {
-  border-radius: 28px;
-  padding: 6px;
-  background: linear-gradient(
-    145deg,
-    #fffaf0,
-    #fff3d2
-  );
-  box-shadow:
-    0 18px 40px rgba(107, 84, 22, 0.18),
-    0 6px 18px rgba(244, 196, 48, 0.12),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.7);
-  transition: all 0.25s ease;
-  animation: floatSoft 6s ease-in-out infinite;
+/* BOTTOM ROW — 3 cards */
+.cave-of-secrets .zone-1,
+.shloka-river .zone-1 {
+  left: 22%;
+  top: 80%;
 }
 
-.symbol-mountain .zone-card:hover {
-  transform: translate(-50%, calc(-50% - 6px));
+.cave-of-secrets .zone-2,
+.shloka-river .zone-2 {
+  left: 50%;
+  top: 80%;
 }
 
-.symbol-mountain .zone-card.locked {
-  opacity: 0.55;
-  filter: grayscale(40%);
-  box-shadow: 0 10px 20px rgba(107, 84, 22, 0.12);
-  cursor: not-allowed;
+.cave-of-secrets .zone-3,
+.shloka-river .zone-3 {
+  left: 78%;
+  top: 80%;
 }
 
-/* Remove purple fake base */
-.symbol-mountain .zone-card::after {
-  content: "";
-  position: absolute;
-  left: 14px;
-  right: 14px;
-  bottom: -14px;
-  height: 24px;
-  border-radius: 24px;
-  background: rgba(107, 84, 22, 0.15);
-  box-shadow: 0 10px 20px rgba(107, 84, 22, 0.25);
-  z-index: -1;
+/* TOP ROW — 2 cards */
+.cave-of-secrets .zone-4,
+.shloka-river .zone-4 {
+  left: 34%;
+  top: 36%;
 }
 
-/* ------------------------------------------ */
-/* INNER PANEL                                */
-/* ------------------------------------------ */
-
-.symbol-mountain .zone-inner {
-  background: linear-gradient(
-    180deg,
-    #ffffff 0%,
-    #fff8e6 100%
-  );
-  border-radius: 18px;
-  padding: 14px 10px;
-  box-shadow:
-    inset 0 3px 8px rgba(255, 255, 255, 0.9),
-    inset 0 -4px 10px rgba(244, 196, 48, 0.08);
-  width: 100%;
-}
-
-/* ------------------------------------------ */
-/* ICON CIRCLE                                */
-/* ------------------------------------------ */
-
-.symbol-mountain .icon-circle {
-  width: clamp(60px, 6vw, 96px);
-  height: clamp(60px, 6vw, 96px);
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 30% 30%,
-    #fffdf7,
-    #ffe9b5
-  );
-  box-shadow:
-    0 10px 20px rgba(244, 196, 48, 0.25),
-    inset 0 4px 8px rgba(255, 255, 255, 0.8);
-}
-
-/* Remove strong gold glow on available scenes */
-.symbol-mountain .zone-scene-card.available .scene-emoji,
-.symbol-mountain .zone-scene-card.available .scene-icon-img,
-.symbol-mountain .zone-scene-card.in-progress .scene-emoji,
-.symbol-mountain .zone-scene-card.in-progress .scene-icon-img {
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1))
-          drop-shadow(0 0 12px rgba(244, 196, 48, 0.35));
-}
-
-/* ------------------------------------------ */
-/* SCENE NAME                                 */
-/* ------------------------------------------ */
-
-.symbol-mountain .scene-name {
-  color: #6B5416;
-}
-
-.symbol-mountain .zone-scene-card.locked .scene-name {
-  color: rgba(107, 84, 22, 0.4);
-  text-shadow: none;
-}
-
-/* ------------------------------------------ */
-/* BUTTON - SOFT TEMPLE STYLE                 */
-/* ------------------------------------------ */
-
-.symbol-mountain .zone-btn {
-  margin-top: clamp(6px, 0.6vw, 10px);
-  padding: clamp(6px, 0.6vw, 10px) clamp(10px, 1.2vw, 20px);
-  border-radius: 14px;
-  border: 1.5px solid #F4C430;
-  background: linear-gradient(
-    180deg,
-    #fffaf0,
-    #ffeec2
-  );
-  color: #6B5416;
-  font-weight: 700;
-  font-size: clamp(9px, 0.9vw, 13px);
-  box-shadow:
-    0 6px 14px rgba(107, 84, 22, 0.18),
-    inset 0 2px 4px rgba(255, 255, 255, 0.8);
-  transition: all 0.2s ease;
-}
-
-.symbol-mountain .zone-btn:hover {
-  background: linear-gradient(
-    180deg,
-    #fff6dd,
-    #ffe4a0
-  );
-  transform: translateY(-2px);
-}
-
-.symbol-mountain .zone-btn:active {
-  transform: translateY(2px);
-  box-shadow:
-    0 3px 8px rgba(107, 84, 22, 0.2),
-    inset 0 3px 6px rgba(0, 0, 0, 0.15);
-}
-
-.symbol-mountain .zone-card.locked .zone-btn,
-.symbol-mountain .zone-btn.locked {
-  background: #f2efe6;
-  border: 1px solid rgba(107, 84, 22, 0.2);
-  color: rgba(107, 84, 22, 0.4);
-  box-shadow: none;
-}
-
-/* ------------------------------------------ */
-/* REMOVE CHEAP GOLD PULSE EFFECTS            */
-/* ------------------------------------------ */
-
-.symbol-mountain .zone-scene-card.next-scene,
-.symbol-mountain .zone-scene-card.next-scene .zone-btn {
-  animation: none;
-  box-shadow: none;
-}
-
-.symbol-mountain .zone-scene-card.next-scene {
-  box-shadow:
-    0 10px 30px rgba(244, 196, 48, 0.25);
-}
-
-/* Remove breathing glow */
-.symbol-mountain .zone-scene-card.next-scene .scene-emoji,
-.symbol-mountain .zone-scene-card.next-scene .scene-icon-img {
-  animation: none;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1))
-          drop-shadow(0 0 18px rgba(244, 196, 48, 0.4));
+.cave-of-secrets .zone-5,
+.shloka-river .zone-5 {
+  left: 66%;
+  top: 36%;
 }
 
 /* ========================================== */
@@ -534,14 +447,15 @@
 
 .zone-scene-card {
   position: absolute;
-  width: clamp(208px, 18.2vw, 312px);
-  min-height: clamp(247px, 23.4vw, 377px);
+  width: clamp(240px, 21vw, 380px);
+  min-height: clamp(290px, 26vw, 460px);
   padding: 6px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
+  z-index: 2;
 }
 
 /* New base card system */
@@ -550,14 +464,13 @@
   padding: 6px;
   background: linear-gradient(
     145deg,
-    #f3f0ff,
-    #ddd6f5
+    #fffcf4,
+    #faf0d8
   );
   box-shadow:
-    0 25px 50px rgba(100, 80, 160, 0.25),
-    0 12px 24px rgba(120, 100, 200, 0.18),
-    0 0 0 1px rgba(255, 255, 255, 0.7) inset;
-  text-align: center;
+    0 18px 40px rgba(0, 0, 0, 0.12),
+    0 6px 18px rgba(0, 0, 0, 0.08),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.8);
   transition: all 0.25s ease;
   animation: floatSoft 6s ease-in-out infinite;
 }
@@ -581,23 +494,19 @@
   bottom: -14px;
   height: 24px;
   border-radius: 24px;
-  background: #cfc7ee;
-  box-shadow: 0 10px 25px rgba(80, 60, 140, 0.35);
+  background: color-mix(in srgb, var(--zone-accent-color, #000) 25%, transparent);
+  box-shadow:
+    0 10px 20px color-mix(in srgb, var(--zone-accent-color, #000) 40%, black);
+  opacity: 0.25;
   z-index: -1;
 }
 
 .zone-inner {
-  background: linear-gradient(
-    180deg,
-    #ffffff 0%,
-    #f5f2ff 100%
-  );
-  border-radius: 22px;
-  padding: 44px 34px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 36px 32px 28px;
   text-align: center;
-  box-shadow:
-    inset 0 3px 8px rgba(255, 255, 255, 0.9),
-    inset 0 -6px 12px rgba(160, 140, 220, 0.15);
   width: 100%;
 }
 
@@ -618,8 +527,8 @@
 }
 
 .icon-circle {
-  width: clamp(78px, 7.8vw, 125px);
-  height: clamp(78px, 7.8vw, 125px);
+  width: clamp(92px, 9.2vw, 150px);
+  height: clamp(92px, 9.2vw, 150px);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -629,7 +538,7 @@
 }
 
 .scene-emoji {
-  font-size: clamp(42px, 4.6vw, 73px);
+  font-size: clamp(50px, 5.4vw, 86px);
   margin: 0;
   transition: transform 0.3s ease;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
@@ -645,8 +554,8 @@
 
 /* Scene Icon Image Styles */
 .scene-icon-img {
-  width: clamp(47px, 5.2vw, 78px);
-  height: clamp(47px, 5.2vw, 78px);
+  width: clamp(56px, 6.2vw, 95px);
+  height: clamp(56px, 6.2vw, 95px);
   object-fit: contain;
   margin: 0;
   transition: transform 0.3s ease;
@@ -715,7 +624,7 @@
 
 .scene-name {
   font-family: 'Baloo 2', cursive;
-  font-size: clamp(14px, 1.45vw, 21px);
+  font-size: clamp(16px, 1.7vw, 26px);
   font-weight: 800;
   color: #3E2723;
   margin: 0;
@@ -744,7 +653,7 @@
   border: none;
   border-radius: 50px;
   font-family: 'Nunito', sans-serif;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 800;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -769,24 +678,44 @@
 
 /* Zone colored button */
 .zone-btn {
-  margin-top: clamp(8px, 0.8vw, 13px);
-  padding: clamp(8px, 0.8vw, 13px) clamp(13px, 1.56vw, 26px);
-  border-radius: 18px;
+  margin-top: clamp(10px, 1vw, 16px);
+  padding: clamp(10px, 1vw, 16px) clamp(16px, 1.8vw, 32px);
+  border-radius: 40px;
   border: none;
   font-weight: 700;
-  font-size: clamp(12px, 1.2vw, 17px);
+  font-size: clamp(18px, 1.7vw, 24px); /* Start button size */
   color: white;
   cursor: pointer;
+
   background: linear-gradient(
     180deg,
-    var(--zone-color),
-    color-mix(in srgb, var(--zone-color) 80%, black)
+    color-mix(in srgb, var(--zone-color) 90%, white),
+    var(--zone-color)
   );
+
   box-shadow:
-    0 6px 0 color-mix(in srgb, var(--zone-color) 70%, black),
-    0 14px 24px rgba(124, 93, 214, 0.4),
-    inset 0 2px 6px rgba(255, 255, 255, 0.6);
-  transition: all 0.15s ease;
+    0 4px 0 color-mix(in srgb, var(--zone-color) 85%, black),
+    0 10px 18px color-mix(in srgb, var(--zone-color) 30%, transparent),
+    inset 0 2px 6px rgba(255, 255, 255, 0.5);
+
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Continue / Replay — same zone-btn but tighter space, keep slightly smaller */
+.action-button-split.zone-btn {
+  font-size: clamp(15px, 1.4vw, 19px);
+}
+
+.zone-btn:hover {
+  transform: translateY(-4px);
+}
+
+.zone-btn:active {
+  transform: translateY(2px);
+  box-shadow:
+    0 3px 0 color-mix(in srgb, var(--zone-color) 85%, black),
+    0 6px 12px color-mix(in srgb, var(--zone-color) 30%, transparent),
+    inset 0 2px 6px rgba(255,255,255,0.4);
 }
 
 .zone-card.locked .zone-btn,
@@ -816,7 +745,7 @@
   border: none;
   border-radius: 50px;
   font-family: 'Nunito', sans-serif;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 800;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -831,31 +760,19 @@
   flex: 1;
 }
 
-.action-button-split.continue:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 24px rgba(120, 90, 180, 0.25);
-}
-
-.action-button-split.continue:active {
-  transform: translateY(2px);
-  box-shadow: 0 6px 12px rgba(120, 90, 180, 0.2);
-}
-
 .action-button-split.replay {
-  flex: 0 0 120px; /* ✅ Fixed width for text "Replay" */
-  font-size: 15px; /* ✅ Text size instead of emoji size */
+  flex: 0 0 120px;
+  font-size: 17px;
   white-space: nowrap;
-  padding: 14px 10px; /* ✅ Adjusted padding for text */
+  padding: 14px 10px;
 }
 
-.action-button-split.replay:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 24px rgba(120, 90, 180, 0.25);
+.action-button-split:hover {
+  transform: translateY(-4px);
 }
 
-.action-button-split.replay:active {
+.action-button-split:active {
   transform: translateY(2px);
-  box-shadow: 0 6px 12px rgba(120, 90, 180, 0.2);
 }
 
 /* ========================================== */
@@ -1003,17 +920,17 @@
     font-size: 17px;
   }
 
-  .action-button-integrated {
-    font-size: 14px;
+  .zone-btn {
+    font-size: 15px;
     padding: 12px 14px;
   }
 
-  .action-button-split {
+  .action-button-split.zone-btn {
     font-size: 13px;
     padding: 12px;
   }
 
-  .action-button-split.replay {
+  .action-button-split.zone-btn.replay {
     width: 60px;
     font-size: 12px;
   }
@@ -1071,7 +988,7 @@
     font-size: 15px;
   }
 
-  .action-button-integrated {
+  .zone-btn {
     font-size: 13px;
     padding: 10px 12px;
   }
@@ -1149,7 +1066,7 @@
     font-size: 15px;
   }
 
-  .action-button-integrated {
+  .zone-btn {
     font-size: 13px;
     padding: 10px 12px;
   }
@@ -1166,19 +1083,10 @@ button[style*="position: fixed"][style*="background: purple"] {
 }
 
 /* ========================================== */
-/* VISUAL ENHANCEMENTS - GLOW & ANIMATIONS   */
+/* VISUAL ENHANCEMENTS                        */
 /* ========================================== */
 
-/* Golden glow for next recommended scene only */
-.zone-scene-card.next-scene .scene-emoji,
-.zone-scene-card.next-scene .scene-icon-img {
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1))
-          drop-shadow(0 0 30px rgba(255, 200, 0, 0.9))
-          drop-shadow(0 0 50px rgba(255, 215, 0, 0.6));
-  animation: iconBreathe 3s ease-in-out infinite;
-}
-
-/* Subtle glow for other available/in-progress (no breathing) */
+/* Subtle glow for available/in-progress */
 .zone-scene-card.available .scene-emoji,
 .zone-scene-card.available .scene-icon-img,
 .zone-scene-card.in-progress .scene-emoji,
@@ -1187,65 +1095,70 @@ button[style*="position: fixed"][style*="background: purple"] {
           drop-shadow(0 0 15px rgba(255, 200, 0, 0.4));
 }
 
-/* Gentle breathing animation for icons */
-@keyframes iconBreathe {
-  0%, 100% { 
-    transform: scale(1);
-  }
-  50% { 
-    transform: scale(1.05);
-  }
+/* Warm glow for completed icons so they don't look muted/locked */
+.zone-scene-card.completed .scene-emoji,
+.zone-scene-card.completed .scene-icon-img {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1))
+          drop-shadow(0 0 12px rgba(255, 200, 0, 0.35));
 }
 
-/* Card hover bounce - more pronounced */
+/* Card hover lift - calm premium */
 .zone-scene-card.available:hover,
 .zone-scene-card.in-progress:hover,
 .zone-scene-card.completed:hover {
   transform: translate(-50%, calc(-50% - 5px));
-  animation: cardBounce 0.6s ease forwards;
 }
 
-@keyframes cardBounce {
-  0%   { transform: translate(-50%, calc(-50% - 5px));  }
-  15%  { transform: translate(-50%, calc(-50% - 12px)); }
-  30%  { transform: translate(-50%, calc(-50% - 8px));  }
-  45%  { transform: translate(-50%, calc(-50% - 12px)); }
-  60%  { transform: translate(-50%, calc(-50% - 8px));  }
-  75%  { transform: translate(-50%, calc(-50% - 10px)); }
-  100% { transform: translate(-50%, calc(-50% - 5px));  }
-}
-
-/* Extra highlight for next recommended scene */
+/* Next recommended scene - static highlight only */
 .zone-scene-card.next-scene {
   position: relative;
   box-shadow: 0 8px 30px rgba(255, 215, 0, 0.6);
-  animation: nextScenePulse 2s ease-in-out infinite;
 }
 
-@keyframes nextScenePulse {
-  0%, 100% {
-    box-shadow: 0 8px 30px rgba(255, 215, 0, 0.6);
-  }
-  50% {
-    box-shadow: 0 8px 40px rgba(255, 215, 0, 0.9),
-                0 0 60px rgba(255, 200, 0, 0.5);
-  }
+/* ========================================== */
+/* COMPLETED STATE                            */
+/* ========================================== */
+
+.zone-scene-card.completed {
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--zone-color) 35%, transparent),
+    0 18px 40px rgba(0,0,0,0.12),
+    0 6px 18px rgba(0,0,0,0.08);
 }
 
-/* Pulse the next scene button */
-.zone-scene-card.next-scene .zone-btn {
-  animation: buttonPulse 2s ease-in-out infinite;
-  box-shadow: 0 6px 18px rgba(255, 193, 7, 0.6);
+.scene-complete-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--zone-color);
+  color: white;
+  font-weight: 800;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
-@keyframes buttonPulse {
-  0%, 100% {
-    box-shadow: 0 4px 0 #F57C00, 0 0 20px rgba(255, 193, 7, 0.6);
-  }
-  50% {
-    box-shadow: 0 4px 0 #F57C00, 0 0 30px rgba(255, 193, 7, 0.9),
-                0 0 40px rgba(255, 215, 0, 0.5);
-  }
+/* ========================================== */
+/* LOCKED STATE CLEANUP                       */
+/* ========================================== */
+
+.zone-scene-card.locked:hover {
+  transform: translate(-50%, -50%);
+}
+
+.zone-scene-card.locked .scene-emoji,
+.zone-scene-card.locked .scene-icon-img {
+  filter: grayscale(100%) opacity(0.35);
+}
+
+.zone-card.locked .zone-btn {
+  cursor: not-allowed;
+  transform: none;
 }
 
 

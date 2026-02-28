@@ -16,7 +16,9 @@
       "Bash(Measure-Object:*)",
       "Bash(copy:*)",
       "Bash(cmd.exe /c \"copy:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(python:*)",
+      "Bash(powershell.exe -Command \"Copy-Item ''C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\src\\\\lib\\\\components\\\\overlay\\\\PowerUnlockOverlay.css'' ''C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\src\\\\lib\\\\components\\\\overlay\\\\PowerUnlockOverlay.backup.css''\")"
     ]
   }
 }

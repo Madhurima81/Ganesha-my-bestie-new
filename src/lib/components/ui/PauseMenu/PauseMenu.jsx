@@ -91,8 +91,7 @@ export const PauseMenu = ({
         {/* Header */}
         <div className="universal-pause-header">
           <h2 className="universal-pause-title">{zoneName}</h2>
-          <p className="universal-pause-subtitle">PAUSED</p>
-          <div className="universal-pause-divider" />
+          
         </div>
 
         {/* Menu Items */}
@@ -116,7 +115,7 @@ export const PauseMenu = ({
             onClick={onBackToMap}
           >
             <span className="universal-pause-icon-emoji">🏠</span>
-            Back to Map
+          Home
           </button>
 
           {/* Sound Toggle */}

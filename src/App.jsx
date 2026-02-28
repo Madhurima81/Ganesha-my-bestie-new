@@ -374,10 +374,9 @@ setCurrentView('profile-welcome');
   const handleStartAdventure = () => {
     console.log('🌟 Start Adventure clicked from main welcome');
     restoreDefaultStyles();
-    
-    // Always go to CleanGameWelcomeScreen
-    // It will handle profile selection internally if needed
-    setCurrentView('profile-welcome');
+
+    // First-time users: go straight to profile creation, then map (skip dashboard)
+    setCurrentView('profile-create');
   };
   
   // Handle continuing from last save
@@ -881,12 +880,26 @@ chants: result?.chants || result?.chantedVerses || {},
           </div>
       )}
       
+      {/* First-time profile creation — skips dashboard, goes straight to map */}
+      {currentView === 'profile-create' && (
+        <div className="view-transition">
+          <CleanProfileSelector
+            forceCreate={true}
+            profiles={{}}
+            onProfileSelect={(profileId) => {
+              GameStateManager.setActiveProfile(profileId);
+              setCurrentView('map');  // first-timers go directly to map after creating profile
+            }}
+          />
+        </div>
+      )}
+
       {currentView === 'profile-selector' && (
         <div className="view-transition">
           <CleanProfileSelector
             onProfileSelect={(profileId) => {
               GameStateManager.setActiveProfile(profileId);
-              setCurrentView('map');
+              setCurrentView('profile-welcome');  // go to dashboard, not map
             }}
           />
         </div>
@@ -897,7 +910,7 @@ chants: result?.chants || result?.chantedVerses || {},
         <CleanMapZone
           onZoneSelect={handleZoneSelect}
                 onBackToWelcome={() => setCurrentView('profile-welcome')}
-                onGoToProfiles={() => setCurrentView('profile-selector')}
+                onGoToProfiles={() => setCurrentView('profile-welcome')}
           currentZone={currentZone}
           highlightedScene={currentScene}
         />
@@ -967,7 +980,7 @@ if (tempData.playAgainRequested) {
       })()}
       
       {/* Fallback view */}
-      {!['loading', 'error', 'main-welcome', 'profile-welcome', 'map', 'zone-welcome', 'scene'].includes(currentView) && (
+      {!['loading', 'error', 'main-welcome', 'profile-welcome', 'profile-create', 'profile-selector', 'map', 'zone-welcome', 'scene'].includes(currentView) && (
         <div className="unknown-view-error">
           <h2>Error: Unknown view state</h2>
           <p>Current view: {currentView}</p>

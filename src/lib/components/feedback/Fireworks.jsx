@@ -5,6 +5,9 @@ const Fireworks = ({
   show = false, 
   duration = 5000, 
   count = 5,
+  variant = 'scene',
+  className = '',
+  style = {},
   colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'],
   onComplete = () => {}
 }) => {
@@ -44,7 +47,8 @@ const Fireworks = ({
     const x = 10 + Math.random() * 80; // 10% to 90% of screen width
     const y = 20 + Math.random() * 40; // 20% to 60% of screen height for burst
     const particles = [];
-    const particleCount = 30 + Math.random() * 20;
+    const isScene = variant === 'scene';
+    const particleCount = Math.floor(isScene ? (16 + Math.random() * 8) : (30 + Math.random() * 20));
     
     // Create particles for this firework
     for (let i = 0; i < particleCount; i++) {
@@ -77,7 +81,7 @@ const Fireworks = ({
   if (!show || !isActive) return null;
 
   return (
-    <div className="fireworks-container">
+    <div className={`fireworks-container ${variant} ${className}`.trim()} style={style}>
       {fireworks.map(firework => (
         <div
           key={firework.id}
@@ -108,7 +112,7 @@ const Fireworks = ({
                 className={`particle ${particle.trail ? 'with-trail' : ''}`}
                 style={{
                   '--angle': `${particle.angle}deg`,
-                  '--velocity': `${particle.velocity * 30}px`,
+                  '--velocity': `${particle.velocity * 24}px`,
                   '--size': `${particle.size}px`,
                   '--color': particle.color,
                   transform: `rotate(${particle.angle}deg)`,
@@ -120,29 +124,19 @@ const Fireworks = ({
               </div>
             ))}
           </div>
-          
-          {/* Central flash */}
-          <div 
-            className="center-flash"
-            style={{ 
-              animationDelay: `${firework.delay + 1000}ms`,
-              backgroundColor: firework.color
-            }}
-          />
         </div>
       ))}
       
       {/* Additional sparkles */}
       <div className="sparkle-overlay">
-        {[...Array(20)].map((_, i) => (
+        {[...Array(12)].map((_, i) => (
           <div
             key={`sparkle-${i}`}
             className="floating-sparkle"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * duration}ms`,
-              animationDuration: `${2 + Math.random() * 2}s`
+              animationDelay: `${Math.random() * duration}ms`
             }}
           >✨</div>
         ))}

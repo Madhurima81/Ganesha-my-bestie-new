@@ -13,16 +13,20 @@
   letter-spacing: 0.4px;
   color: white;
 
-  /* Purple gradient — same as welcome screen Start btn */
-  background: linear-gradient(180deg, #9a73d9 0%, #7f5ac7 100%);
+  /* Gradient — defaults purple, overridable via --btn-color-top / --btn-color-base / --btn-color-shadow */
+  background: linear-gradient(
+    180deg,
+    var(--btn-color-top, #9a73d9) 0%,
+    var(--btn-color-base, #7f5ac7) 100%
+  );
 
   /* Pill shape */
   border-radius: 80px;
 
   /* 3D shadow + inner highlight */
   box-shadow:
-    0 8px 0 #5a3fa0,
-    0 14px 28px rgba(120, 80, 200, 0.35),
+    0 8px 0 var(--btn-color-shadow, #5a3fa0),
+    0 14px 28px var(--btn-color-glow, rgba(120, 80, 200, 0.35)),
     inset 0 3px 6px rgba(255, 255, 255, 0.35);
 
   transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -66,14 +70,14 @@
 @keyframes primaryBtnPulse {
   0%, 100% {
     box-shadow:
-      0 8px 0 #5a3fa0,
-      0 14px 28px rgba(120, 80, 200, 0.35),
+      0 8px 0 var(--btn-color-shadow, #5a3fa0),
+      0 14px 28px var(--btn-color-glow, rgba(120, 80, 200, 0.35)),
       inset 0 3px 6px rgba(255, 255, 255, 0.35);
   }
   50% {
     box-shadow:
-      0 8px 0 #5a3fa0,
-      0 18px 36px rgba(120, 80, 200, 0.5),
+      0 8px 0 var(--btn-color-shadow, #5a3fa0),
+      0 18px 36px var(--btn-color-glow, rgba(120, 80, 200, 0.5)),
       inset 0 3px 6px rgba(255, 255, 255, 0.35);
   }
 }
@@ -82,8 +86,8 @@
   transform: translateY(-4px);
   animation: none;
   box-shadow:
-    0 10px 0 #5a3fa0,
-    0 20px 38px rgba(120, 80, 200, 0.45),
+    0 10px 0 var(--btn-color-shadow, #5a3fa0),
+    0 20px 38px var(--btn-color-glow, rgba(120, 80, 200, 0.45)),
     inset 0 3px 6px rgba(255, 255, 255, 0.4);
 }
 
@@ -91,8 +95,8 @@
   transform: translateY(5px);
   animation: none;
   box-shadow:
-    0 3px 0 #5a3fa0,
-    0 6px 14px rgba(120, 80, 200, 0.25),
+    0 3px 0 var(--btn-color-shadow, #5a3fa0),
+    0 6px 14px var(--btn-color-glow, rgba(120, 80, 200, 0.25)),
     inset 0 5px 10px rgba(0, 0, 0, 0.2);
 }
 

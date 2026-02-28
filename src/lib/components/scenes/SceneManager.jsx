@@ -102,7 +102,7 @@ const loadSceneProgress = () => {
       };
     }
     
-    // If completed but no session data, start fresh
+    // If completed but no session data, start fresh replay
     if (isCompleted && !isActualReload) {
       console.log('🎮 SCENE: Starting fresh replay of completed scene');
       localStorage.removeItem(replayKey);
@@ -110,6 +110,7 @@ const loadSceneProgress = () => {
       setIsReload(false);
       return {
         ...initialState,
+        welcomeShown: true,   // skip opening modal + VO for return users
         completed: false,
         stars: 0,
         originalCompletion: permanentState
@@ -209,6 +210,9 @@ const loadSceneProgress = () => {
                    (!sceneState.rockTransformed || sceneState.rockTransformed === false) &&
                    (!sceneState.placedSymbols || Object.keys(sceneState.placedSymbols).length === 0) &&  // ← ADD: Assembly scene check
                    (!sceneState.phase || sceneState.phase === 'initial') &&
+                   (!sceneState.gamePhase || sceneState.gamePhase === 'intro') &&
+                   (!sceneState.placedGaneshaMembers || sceneState.placedGaneshaMembers.length === 0) &&
+                   (!sceneState.childFamily || sceneState.childFamily.length === 0) &&
                    (!sceneState.interactions || Object.keys(sceneState.interactions).length === 0);
     
     if (isEmpty) {

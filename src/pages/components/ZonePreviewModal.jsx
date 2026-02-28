@@ -2,56 +2,77 @@
 import React, { useState } from 'react';
 import './ZonePreviewModal.css';
 import PrimaryBtn from '../../lib/components/shared/PrimaryBtn';
+import { getZoneTheme } from '../../lib/config/ZoneThemes';
 
 const zoneContent = {
   'symbol-mountain': {
-    tagline: "What's Hiding on the Mountain?",
+    tagline: "Find What Makes Ganesha Special",
+    primaryAction: "Find the First Symbol",
     image: '/images/zone-art-symbol-mountain.png',
-    featuresBg: 'rgba(210, 230, 255, 0.35)',
+    featuresBg: 'rgba(244, 196, 48, 0.15)',
+    accentColor: '#F4C430',
+    titleColor: '#6B4D00',
+    shadowColor: 'rgba(244, 196, 48, 0.32)',
     activities: [
-      { icon: '🐘', title: 'Find Ganesha\'s 8 clues' },
-      { icon: '💡', title: 'Find out what each one means' },
-      { icon: '🏆', title: 'Collect them all!' }
+      { icon: '🔍', title: 'Search for 8 hidden symbols.' },
+      { icon: '✅', title: 'Place each one correctly.' },
+      { icon: '✨', title: 'Wake Ganesha to life.' }
     ]
   },
   'cave-of-secrets': {
-    tagline: "Crack the Code in the Cave",
+    tagline: "Be a Word Detective",
+    primaryAction: "Solve the First Word",
     image: '/images/zone-art-cave.png',
-    featuresBg: 'rgba(210, 190, 255, 0.3)',
+    featuresBg: 'rgba(200, 90, 46, 0.12)',
+    accentColor: '#C85A2E',
+    titleColor: '#7A2E0A',
+    shadowColor: 'rgba(200, 90, 46, 0.30)',
     activities: [
-      { icon: '🔍', title: 'Find out what words mean' },
-      { icon: '🔤', title: 'Build words piece by piece' },
-      { icon: '🐾', title: 'Save the animals inside!' }
+      { icon: '🧱', title: 'Build each hidden word.' },
+      { icon: '🧩', title: 'Solve the cave challenges.' },
+      { icon: '💡', title: 'Discover what it means.' }
     ]
   },
   'shloka-river': {
-    tagline: "Say It Like Ganesha Does",
+    tagline: "See What Your Voice Can Do",
+    primaryAction: "Try the First Word",
     image: '/images/zone-art-shloka-river.png',
-    featuresBg: 'rgba(190, 230, 255, 0.3)',
+    featuresBg: 'rgba(74, 155, 135, 0.12)',
+    accentColor: '#4A9B87',
+    titleColor: '#1A5E50',
+    shadowColor: 'rgba(74, 155, 135, 0.30)',
     activities: [
-      { icon: '🎧', title: 'Hear the words come alive' },
-      { icon: '🎙️', title: 'Record your own voice' },
-      { icon: '⭐', title: 'Chant the whole thing!' }
+      { icon: '🎧', title: 'Hear each Sanskrit word.' },
+      { icon: '🎙️', title: 'Say it and watch things happen.' },
+      { icon: '⭐', title: 'Chant the full shloka.' }
     ]
   },
   'festival-square': {
-    tagline: "Party Time with Ganesha!",
+    tagline: "Celebrate Ganesh Chaturthi Your Way",
+    primaryAction: "Start the Celebration",
     image: '/images/zone-art-festival.png',
-    featuresBg: 'rgba(255, 230, 190, 0.35)',
+    featuresBg: 'rgba(230, 126, 34, 0.12)',
+    accentColor: '#E67E22',
+    titleColor: '#7A3A00',
+    shadowColor: 'rgba(230, 126, 34, 0.30)',
     activities: [
-      { icon: '🎹', title: 'Play songs on the piano' },
-      { icon: '🎨', title: 'Make colourful rangoli' },
-      { icon: '🍬', title: 'Cook modak for the feast!' }
+      { icon: '🎹', title: 'Play music for the celebration.' },
+      { icon: '🎨', title: 'Design your own rangoli.' },
+      { icon: '🍬', title: 'Make sweet modaks.' }
     ]
   },
   'about-me-hut': {
-    tagline: "Tell Ganesha All About You!",
+    tagline: "Create Your Place in Ganesha's World",
+    primaryAction: "Step Inside",
     image: '/images/zone-art-hut.png',
-    featuresBg: 'rgba(255, 245, 190, 0.35)',
+    featuresBg: 'rgba(216, 149, 102, 0.15)',
+    accentColor: '#D89566',
+    titleColor: '#6B3A0A',
+    shadowColor: 'rgba(216, 149, 102, 0.32)',
     activities: [
-      { icon: '🎂', title: 'Your name, your birthday' },
-      { icon: '🌳', title: 'Who\'s in your family?' },
-      { icon: '🌟', title: 'Draw your biggest dream!' }
+      { icon: '🐘', title: 'Meet Ganesha.' },
+      { icon: '🤗', title: 'Tell him about you.' },
+      { icon: '🌟', title: 'Share your biggest dream.' }
     ]
   }
 };
@@ -73,7 +94,7 @@ const ZonePreviewModal = ({ zone, onClose, onStartZone }) => {
     }, 600);
   };
 
-  // Enter button — sacred expansion into zone
+  // Primary action button — expansion into zone
   const handlePlay = () => {
     setOpening(true);
     setTimeout(() => {
@@ -91,7 +112,15 @@ const ZonePreviewModal = ({ zone, onClose, onStartZone }) => {
       <div
         className="portal-modal"
         onClick={(e) => e.stopPropagation()}
+        style={{
+          '--zone-modal-accent': content.accentColor,
+          '--zone-modal-title': content.titleColor,
+          '--zone-modal-shadow': content.shadowColor,
+        }}
       >
+        {/* Close button */}
+        <span className="portal-close-btn" onClick={handleClose}>×</span>
+
         {/* Mascot */}
         <img
           src={content.image}
@@ -120,14 +149,20 @@ const ZonePreviewModal = ({ zone, onClose, onStartZone }) => {
         {/* Buttons */}
         <div className="portal-actions">
           <PrimaryBtn
-            label="Enter"
+            label={content.primaryAction}
             onClick={handlePlay}
-            size="lg"
+            size="md"
             fullWidth={false}
+            style={(() => {
+              const theme = getZoneTheme(zone.id);
+              return {
+                '--btn-color-top': theme.btnTop,
+                '--btn-color-base': theme.accentColor,
+                '--btn-color-shadow': theme.btnShadow,
+                '--btn-color-glow': theme.glowColor
+              };
+            })()}
           />
-          <button className="portal-ghost-btn" onClick={handleClose}>
-            Return
-          </button>
         </div>
       </div>
     </div>

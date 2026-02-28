@@ -172,45 +172,45 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame }) => {
     
     if (type === 'symbols') {
       const allSymbols = [
-        { 
-          id: 'modak', displayName: "Modak — Ganesha’s Sweet Treat!", 
-          image: '/images/symbols-symbolmountain/symbol-modak-colored.png', 
-          description: "A magical sweet that fills you with happy, joyful energy!" 
+        {
+          id: 'modak', displayName: 'Modak',
+          image: '/images/symbols-symbolmountain/symbol-modak-colored.png',
+          description: 'I share with joy.'
         },
-        { 
-          id: 'mooshika', displayName: "Mooshika — Ganesha’s Clever Friend!", 
-          image: '/images/symbols-symbolmountain/symbol-mooshika-colored.png', 
-          description: "A tiny mouse with a big heart! Mooshika helps Ganesha travel anywhere and reminds us to stay humble & smart." 
+        {
+          id: 'mooshika', displayName: 'Mooshika',
+          image: '/images/symbols-symbolmountain/symbol-mooshika-colored.png',
+          description: 'I can focus.'
         },
-        { 
-          id: 'belly', displayName: "Belly — Big Happy Tummy!", 
-          image: '/images/symbols-symbolmountain/symbol-belly-colored.png', 
-          description: "Ganesha’s big belly holds all worries and turns them into calm. It reminds us to feel safe, relaxed and happy inside." 
+        {
+          id: 'belly', displayName: 'Big Belly',
+          image: '/images/symbols-symbolmountain/symbol-belly-colored.png',
+          description: 'I feel safe inside.'
         },
-        { 
-          id: 'lotus', displayName: "Lotus — Pure & Peaceful Heart", 
-          image: '/images/symbols-symbolmountain/symbol-lotus-colored.png', 
-          description: "The lotus grows clean even in mud! It teaches us to stay calm, kind, and good inside." 
+        {
+          id: 'lotus', displayName: 'Lotus',
+          image: '/images/symbols-symbolmountain/symbol-lotus-colored.png',
+          description: 'I stay calm and kind.'
         },
-        { 
-          id: 'trunk', displayName: "Trunk — Strength with Flexibility", 
-          image: '/images/symbols-symbolmountain/symbol-trunk-colored.png', 
-          description: "Ganesha’s trunk is powerful yet gentle — showing us that real strength is soft, kind & adaptable." 
+        {
+          id: 'trunk', displayName: 'Trunk',
+          image: '/images/symbols-symbolmountain/symbol-trunk-colored.png',
+          description: 'I am strong and gentle.'
         },
-        { 
-          id: 'eyes', displayName: "Eyes — Divine Vision", 
-          image: '/images/symbols-symbolmountain/symbol-eyes-colored.png', 
-          description: "Ganesha sees the good in everyone! His eyes remind us to look with love, curiosity & wonder." 
+        {
+          id: 'eyes', displayName: 'Eyes',
+          image: '/images/symbols-symbolmountain/symbol-eyes-colored.png',
+          description: 'I notice the good.'
         },
-        { 
-          id: 'ears', displayName: "Ears — Listen with Love", 
-          image: '/images/symbols-symbolmountain/symbol-ear-colored.png', 
-          description: "Big ears to hear prayers, stories & feelings! They teach us to listen carefully and understand others." 
+        {
+          id: 'ear', displayName: 'Ears',
+          image: '/images/symbols-symbolmountain/symbol-ear-colored.png',
+          description: 'I listen with care.'
         },
-        { 
-          id: 'tusk', displayName: "Tusks — Perfect Imperfection", 
-          image: '/images/symbols-symbolmountain/symbol-tusk-colored.png', 
-          description: "One broken, one whole — reminding us that even with flaws, we are powerful, unique & complete!" 
+        {
+          id: 'tusk', displayName: 'Tusk',
+          image: '/images/symbols-symbolmountain/symbol-tusk-colored.png',
+          description: 'I finish what I start.'
         }
       ];
       
@@ -236,7 +236,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame }) => {
         { 
           id: 'mahakaya', displayName: "Mahakaya", subtitle: "Mighty Form!", 
           image: '/images/meanings-caveofsecrets/mahakaya-symbol.png',
-          description: "Ganesha’s body is big, strong and steady like a mountain! A powerful protector with a warm, loving heart. ❤️",
+          description: "Ganesha's body is big, strong and steady like a mountain! A powerful protector with a warm, loving heart. ❤️",
           audio: '/audio/meanings/mahakaya.mp3'
         },
         { 
@@ -272,7 +272,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame }) => {
         { 
           id: 'sarvada', displayName: "Sarvada", subtitle: "Always!", 
           image: '/images/meanings-caveofsecrets/sarvada-symbol.png',
-          description: "Ganesha’s love and blessings stay always with us. Forever guiding, forever protecting. 💛",
+          description: "Ganesha's love and blessings stay always with us. Forever guiding, forever protecting. 💛",
           audio: '/audio/meanings/sarvada.mp3'
         }
       ];
@@ -350,7 +350,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame }) => {
   
   if (!currentProfile) {
     return (
-      <div className="clean-welcome-overlay">
+      <div className="clean-welcome-overlay page-transition">
         <div className="clean-welcome-content">
           <h1>Loading Profile...</h1>
           <button onClick={() => setShowProfileSelector(true)}>Select Profile</button>
@@ -360,7 +360,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame }) => {
   }
   
   return (
-    <div className="clean-welcome-overlay">
+    <div className="clean-welcome-overlay page-transition">
       <div className="clean-welcome-content">
         {(() => {
           const welcomeMsg = getWelcomeMessage();

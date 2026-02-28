@@ -24,18 +24,14 @@
 /* Backdrop */
 .power-backdrop {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(0, 0, 0, 0.55) 0%,
-    rgba(0, 0, 0, 0.75) 100%
-  );
-  backdrop-filter: blur(8px);
+  inset: 0;
+background: radial-gradient(
+  ellipse at center,
+  rgba(60, 45, 90, 0.45) 0%,
+  rgba(25, 20, 45, 0.65) 100%
+);
+  backdrop-filter: blur(4px);
 }
-
 /* Floating particles - sparkle style */
 .power-particles {
   position: absolute;
@@ -635,4 +631,46 @@
   .power-button-group {
     gap: 10px;
   }
+}
+
+/* ============================================ */
+/* TWO-PHASE: CELEBRATION → INFO TRANSITION     */
+/* Phase 1 (.celebration): icon blooms, no text */
+/* Phase 2 (class removed): content fades in    */
+/* ============================================ */
+
+/* Description and button hidden during celebration phase */
+.power-overlay.celebration .power-description-container,
+.power-overlay.celebration .power-description {
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+}
+
+.power-overlay.celebration .power-button-group {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Title subtly smaller during celebration so icon is hero */
+.power-overlay.celebration .power-title {
+  transform: scale(0.95);
+  opacity: 0.85;
+}
+
+/* Smooth transitions when celebration phase ends */
+.power-description-container {
+  transition: opacity 0.55s ease-out 0.1s, transform 0.55s ease-out 0.1s;
+}
+
+.power-description {
+  transition: opacity 0.55s ease-out 0.1s, transform 0.55s ease-out 0.1s;
+}
+
+.power-button-group {
+  transition: opacity 0.45s ease-out 0.2s;
+}
+
+.power-title {
+  transition: transform 0.5s ease-out, opacity 0.5s ease-out;
 }

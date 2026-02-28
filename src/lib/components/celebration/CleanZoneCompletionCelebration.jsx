@@ -179,6 +179,7 @@ const handleHome = () => {
           {/* FIREWORKS INTEGRATION */}
           <Fireworks 
             show={showFireworks}
+            variant="zone"
             duration={2500}
             count={4}
             colors={['#FFD700', '#FF69B4', '#8A2BE2', '#FFA500', '#DA70D6', '#F0E68C']}
