@@ -109,12 +109,13 @@ export default function FireworksCompletion({
   onContinue,
   onHome,
   autoShowCard = 900,
+  showCard     = true,   // set false to keep fireworks visual-only (no card/buttons)
 }) {
   const shells            = useShells(show);
   const [cardIn, setCardIn] = useState(false);
 
   useEffect(() => {
-    if (!show) { setCardIn(false); return; }
+    if (!show || !showCard) { setCardIn(false); return; }
     const t = setTimeout(() => setCardIn(true), autoShowCard);
     return () => clearTimeout(t);
   }, [show, autoShowCard]);
