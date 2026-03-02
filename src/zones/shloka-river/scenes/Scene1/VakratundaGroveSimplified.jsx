@@ -750,7 +750,7 @@ const VakratundaGroveContent = ({
               savedGameState={sceneState.vakratundaGameState}
               onSaveGameState={(state) => handleSaveComponentState('vakratundaGame', state)}
               voiceGuidance={{ playVoice: playVO, playSfx, stopVoice }}
-              isPaused={isRecorderOpen || showPauseMenu}
+              isPaused={isRecorderOpen}
             />
 
             {/* MAHAKAYA MEMORY GAME */}
