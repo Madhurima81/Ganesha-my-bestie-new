@@ -630,6 +630,7 @@ if (tempData) {
         '--zone-text-primary': getZoneTheme(zoneData.id)?.textPrimary || '#6B5416'
       }}
     >
+      <HomeButton onNavigate={onNavigate} />
       <div className="bg-layer"></div>
 
       {/* 🔍 TEMPORARY DEBUG BUTTON */}
