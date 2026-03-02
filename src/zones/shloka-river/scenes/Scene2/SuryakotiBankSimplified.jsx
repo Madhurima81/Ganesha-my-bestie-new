@@ -1662,6 +1662,7 @@ hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || showMission}
             
             {/* Sanskrit Voice Recorder 
             <SanskritVoiceRecorder
+              chantResult={null}
               show={showRecording}
               prompt="Try chanting"
               word={currentRecordingWord}

@@ -1,4 +1,4 @@
-// zones/shloka-river/scenes/Scene3/NirvighnamChant.jsx - Scene 3 with Stone/Decoration mechanics
+﻿// zones/shloka-river/scenes/Scene3/NirvighnamChant.jsx - Scene 3 with Stone/Decoration mechanics
 import React, { useState, useEffect, useRef } from 'react';
 import './NirvighnamChant.css';
 
@@ -219,7 +219,7 @@ const NirvighnamChantContent = ({
   zoneId,
   sceneId
 }) => {
-console.log('🕉️ NirvighnamChantContent render', { 
+console.log('ðŸ•‰ï¸ NirvighnamChantContent render', { 
   sceneState: sceneState?.phase, 
   isReload, 
   combinedGameState: !!sceneState?.combinedGameState,
@@ -277,8 +277,8 @@ console.log('🕉️ NirvighnamChantContent render', {
 
   // Add power configuration for Scene 3
   const powerConfig = {
-    nirvighnam: { name: 'Sacred Wisdom', icon: '🕉️', color: '#DAA520' },
-    kurumedeva: { name: 'Divine Grace', icon: '🪷', color: '#9370DB' }
+    nirvighnam: { name: 'Sacred Wisdom', icon: 'ðŸ•‰ï¸', color: '#DAA520' },
+    kurumedeva: { name: 'Divine Grace', icon: 'ðŸª·', color: '#9370DB' }
   };
 
   // Safe setTimeout function
@@ -339,12 +339,12 @@ console.log('🕉️ NirvighnamChantContent render', {
 
   // UNIFIED: Single state saving function for both components
   const handleSaveComponentState = (componentType, componentState) => {
-    console.log(`ðŸ'¾ Saving ${componentType} state:`, componentState);
+    console.log(`Ã°Å¸'Â¾ Saving ${componentType} state:`, componentState);
     
     // Prevent double calls by debouncing
     if (handleSaveComponentState.lastCall && 
         Date.now() - handleSaveComponentState.lastCall < 100) {
-      console.log('🚫 Debounced duplicate save call');
+      console.log('ðŸš« Debounced duplicate save call');
       return;
     }
     handleSaveComponentState.lastCall = Date.now();
@@ -364,12 +364,12 @@ console.log('🕉️ NirvighnamChantContent render', {
         }
       })
     };
-     console.log(`⚡ Updating scene state with ${componentType}:`, updatedState);
+     console.log(`âš¡ Updating scene state with ${componentType}:`, updatedState);
     sceneActions.updateState(updatedState);
   };
 
       const handleSaveCombinedGameState = (gameState) => {
-  console.log('ðŸ'¾ Saving combined game state:', gameState);
+  console.log('Ã°Å¸'Â¾ Saving combined game state:', gameState);
   
   sceneActions.updateState({
     combinedGameState: gameState
@@ -404,7 +404,7 @@ useEffect(() => {
   useEffect(() => {
     if (!isReload || !sceneState) return;
     
-    console.log('ðŸ"„ NIRVIGHNAM RELOAD: Starting reload', {
+    console.log('Ã°Å¸"â€ž NIRVIGHNAM RELOAD: Starting reload', {
       phase: sceneState.phase,
       showingCompletionScreen: sceneState.showingCompletionScreen,
       completed: sceneState.completed
@@ -416,7 +416,7 @@ useEffect(() => {
     const playAgainRequested = localStorage.getItem(playAgainKey);
     
     if (playAgainRequested === 'true') {
-      console.log('ðŸ"„ NIRVIGHNAM: Fresh restart after Play Again');
+      console.log('Ã°Å¸"â€ž NIRVIGHNAM: Fresh restart after Play Again');
       localStorage.removeItem(playAgainKey);
       sceneActions.updateState({ 
         phase: PHASES.INITIAL,
@@ -432,7 +432,7 @@ useEffect(() => {
 
     // Handle completion screen reload
     if (sceneState.showingCompletionScreen) {
-      console.log('ðŸ"„ NIRVIGHNAM: Resuming completion screen');
+      console.log('Ã°Å¸"â€ž NIRVIGHNAM: Resuming completion screen');
       setShowSceneCompletion(true);
       return;
     }
@@ -440,20 +440,20 @@ useEffect(() => {
     // Phase-specific reload logic
     switch (sceneState.phase) {
       case PHASES.INITIAL:
-        console.log('ðŸ"„ NIRVIGHNAM: Resuming initial welcome');
+        console.log('Ã°Å¸"â€ž NIRVIGHNAM: Resuming initial welcome');
         break;
         
       case PHASES.NIRVIGHNAM_GAME_ACTIVE:
-        console.log('ðŸ"„ NIRVIGHNAM: Nirvighnam game active - letting component handle itself');
+        console.log('Ã°Å¸"â€ž NIRVIGHNAM: Nirvighnam game active - letting component handle itself');
         break;
 
       case PHASES.KURUMEDEVA_GAME_ACTIVE:
-        console.log('ðŸ"„ NIRVIGHNAM: Kurumedeva game active - letting component handle itself');
+        console.log('Ã°Å¸"â€ž NIRVIGHNAM: Kurumedeva game active - letting component handle itself');
         setNirvighnamPowerGained(true);
         break;
         
       case PHASES.NIRVIGHNAM_COMPLETE:
-        console.log('ðŸ"„ NIRVIGHNAM: Resuming Nirvighnam completion celebration');
+        console.log('Ã°Å¸"â€ž NIRVIGHNAM: Resuming Nirvighnam completion celebration');
         setBlessingWord('nirvighnam');
         setCurrentPracticeWord('nirvighnam');
         setShowWordCelebration(true);
@@ -471,7 +471,7 @@ useEffect(() => {
         break;
         
       case PHASES.KURUMEDEVA_COMPLETE:
-        console.log('ðŸ"„ NIRVIGHNAM: Resuming Kurumedeva completion celebration');
+        console.log('Ã°Å¸"â€ž NIRVIGHNAM: Resuming Kurumedeva completion celebration');
         setBlessingWord('kurumedeva');
         setCurrentPracticeWord('kurumedeva');
         setShowWordCelebration(true);
@@ -489,7 +489,7 @@ useEffect(() => {
         break;
         
       case PHASES.GANESHA_BLESSING_NIRVIGHNAM:
-        console.log('ðŸ"„ NIRVIGHNAM: Resuming Ganesha blessing for Nirvighnam');
+        console.log('Ã°Å¸"â€ž NIRVIGHNAM: Resuming Ganesha blessing for Nirvighnam');
         setBlessingWord('nirvighnam');
         setCurrentPracticeWord('nirvighnam');
         setShowChoiceButtons(false);
@@ -501,7 +501,7 @@ useEffect(() => {
         break;
 
       case PHASES.GANESHA_BLESSING_KURUMEDEVA:
-        console.log('ðŸ"„ NIRVIGHNAM: Resuming Ganesha blessing for Kurumedeva');
+        console.log('Ã°Å¸"â€ž NIRVIGHNAM: Resuming Ganesha blessing for Kurumedeva');
         setBlessingWord('kurumedeva');
         setCurrentPracticeWord('kurumedeva');
         setShowChoiceButtons(false);
@@ -513,7 +513,7 @@ useEffect(() => {
         break;
         
       case PHASES.CHOICE_BUTTONS_NIRVIGHNAM:
-        console.log('ðŸ"„ NIRVIGHNAM: Resuming choice buttons for Nirvighnam');
+        console.log('Ã°Å¸"â€ž NIRVIGHNAM: Resuming choice buttons for Nirvighnam');
         setCurrentPracticeWord('nirvighnam');
         setShowGaneshaBlessing(false);
         setShowWordCelebration(false);
@@ -525,7 +525,7 @@ useEffect(() => {
         break;
         
       case PHASES.CHOICE_BUTTONS_KURUMEDEVA:
-        console.log('ðŸ"„ NIRVIGHNAM: Resuming choice buttons for Kurumedeva');
+        console.log('Ã°Å¸"â€ž NIRVIGHNAM: Resuming choice buttons for Kurumedeva');
         setCurrentPracticeWord('kurumedeva');
         setShowGaneshaBlessing(false);
         setShowWordCelebration(false);
@@ -537,26 +537,26 @@ useEffect(() => {
         break;
         
       case PHASES.RESCUE_MISSION_NIRVIGHNAM:
-        console.log('ðŸ"„ NIRVIGHNAM: Resuming rescue mission for Nirvighnam');
+        console.log('Ã°Å¸"â€ž NIRVIGHNAM: Resuming rescue mission for Nirvighnam');
         setCurrentRescueWord('nirvighnam');
         setShowRescueMission(true);
         break;
         
       case PHASES.KURUMEDEVA_STORY:
-        console.log('ðŸ"„ NIRVIGHNAM: Resuming Kurumedeva story');
+        console.log('Ã°Å¸"â€ž NIRVIGHNAM: Resuming Kurumedeva story');
         setNirvighnamPowerGained(true);
         setShowKurumedevaStory(true);
         break;
         
       case PHASES.RESCUE_MISSION_KURUMEDEVA:
-        console.log('ðŸ"„ NIRVIGHNAM: Resuming rescue mission for Kurumedeva');
+        console.log('Ã°Å¸"â€ž NIRVIGHNAM: Resuming rescue mission for Kurumedeva');
         setCurrentRescueWord('kurumedeva');
         setNirvighnamPowerGained(true);
         setShowRescueMission(true);
         break;
         
       case PHASES.SCENE_COMPLETE:
-        console.log('ðŸ"„ NIRVIGHNAM: Resuming scene complete');
+        console.log('Ã°Å¸"â€ž NIRVIGHNAM: Resuming scene complete');
         if (!sceneState.showingCompletionScreen) {
           setTimeout(() => {
             setShowSparkle('final-fireworks');
@@ -565,7 +565,7 @@ useEffect(() => {
         break;
         
       default:
-        console.log('ðŸ"„ NIRVIGHNAM: No specific reload needed for phase:', sceneState.phase);
+        console.log('Ã°Å¸"â€ž NIRVIGHNAM: No specific reload needed for phase:', sceneState.phase);
     }
   }, [isReload]);
 
@@ -578,7 +578,7 @@ const resetScene = (showConfirm = true) => {
       setForceMemoryGameReset(true);
 
 
-  console.log('🔥 Nirvighnam Scene reset: User chose to start fresh');
+  console.log('ðŸ”¥ Nirvighnam Scene reset: User chose to start fresh');
   
   // STEP 1: Set force reset flag for the combined game component
   if (window.simplifiedNirvighnamKurumedevaGame) {
@@ -700,7 +700,7 @@ const resetScene = (showConfirm = true) => {
       }
     }, 1000);
     
-    console.log('✅ Nirvighnam scene state reset complete');
+    console.log('âœ… Nirvighnam scene state reset complete');
   }, 150);
 };
 
@@ -743,7 +743,7 @@ const resetScene = (showConfirm = true) => {
   };
 
   const handleSaveAnimal = () => {
-    console.log('🐘 RESCUE MISSION: Starting sacred animal rescue');
+    console.log('ðŸ˜ RESCUE MISSION: Starting sacred animal rescue');
     
     setShowChoiceButtons(false);
     setCurrentRescueWord(currentPracticeWord || blessingWord);
@@ -774,7 +774,7 @@ const resetScene = (showConfirm = true) => {
   };
 
   const handleRescueComplete = () => {
-    console.log('✅ Rescue complete for:', currentRescueWord);
+    console.log('âœ… Rescue complete for:', currentRescueWord);
     
     handleSaveComponentState('mission', {
       rescuePhase: 'success',
@@ -1080,7 +1080,7 @@ const backgroundImage = (
 
     return (
       <div className="syllable-counter">
-        <div className="counter-icon">🕉️</div>
+        <div className="counter-icon">ðŸ•‰ï¸</div>
         <div className="counter-progress">
           <div
             className="counter-progress-fill"
@@ -1459,6 +1459,7 @@ setTimeout(() => {
 
             {/* Sanskrit Voice Recorder */}
             <SanskritVoiceRecorder
+              chantResult={null}
               show={showRecording}
               prompt="Try chanting"
               word={currentRecordingWord}
@@ -1567,7 +1568,7 @@ setTimeout(() => {
                             color: powerConfig[currentPracticeWord]?.color || '#DAA520'
                           }}
                         >
-                          {powerConfig[currentPracticeWord]?.icon || '🕉️'}
+                          {powerConfig[currentPracticeWord]?.icon || 'ðŸ•‰ï¸'}
                         </div>
                       ))}
                     </div>
@@ -1620,7 +1621,7 @@ setTimeout(() => {
                     zIndex: 25 
                   }}>
                     <button className="record-blessing-btn" onClick={handleGaneshaRecord}>
-                      🎤 Chant Now
+                      ðŸŽ¤ Chant Now
                     </button>
                     <button className="skip-blessing-btn" onClick={handleGaneshaSkip}>
                       Chant Later
@@ -1674,7 +1675,7 @@ setTimeout(() => {
                     }
                   </div>
                   <button className="word-practice-btn" onClick={() => handleWordPlay(currentPracticeWord)}>
-                    ðŸ"µ {currentPracticeWord.toUpperCase()}
+                    Ã°Å¸"Âµ {currentPracticeWord.toUpperCase()}
                   </button>
                   <button className="practice-close-btn" onClick={handleAudioPracticeClose}>
                     Close
@@ -1687,10 +1688,10 @@ setTimeout(() => {
             {showChoiceButtons && (
               <div className="power-choice-buttons">
                 <button className="choice-btn save-animal-btn" onClick={handleSaveAnimal}>
-                  🐘 Save a Sacred Animal
+                  ðŸ˜ Save a Sacred Animal
                 </button>
                 <button className="choice-btn continue-learning-btn" onClick={handleContinueLearning}>
-                  {currentPracticeWord === 'kurumedeva' ? '✨ End Scene' : '🪷 Continue Learning'}
+                  {currentPracticeWord === 'kurumedeva' ? 'âœ¨ End Scene' : 'ðŸª· Continue Learning'}
                 </button>
               </div>
             )}
@@ -1817,7 +1818,7 @@ setTimeout(() => {
                           count={25}
                           colors={['#FFD700', '#FF8C00', '#FFA500', '#DAA520', '#B8860B']}
                           onComplete={() => {
-                            console.log('🎯 Nirvighnam chant fireworks complete');
+                            console.log('ðŸŽ¯ Nirvighnam chant fireworks complete');
                             setShowSparkle(null);
                             
                             const profileId = localStorage.getItem('activeProfileId');
@@ -1832,7 +1833,7 @@ setTimeout(() => {
                       });
                       localStorage.removeItem(`temp_session_${profileId}_shloka-river_nirvighnam-chant`);
                               SimpleSceneManager.clearCurrentScene();
-                              console.log('✅ nirvighnam chant: Completion saved and temp session cleared');
+                              console.log('âœ… nirvighnam chant: Completion saved and temp session cleared');
                             }
                             
                             setShowSceneCompletion(true);
@@ -1870,7 +1871,7 @@ appImages={{
             }}
             onComplete={onComplete}
     onReplay={() => {
-  console.log('🔀 INSTANT REPLAY: Garden Adventure restart');
+  console.log('ðŸ”€ INSTANT REPLAY: Garden Adventure restart');
   resetScene(false);  // No confirm dialog for replay
 }}
             onContinue={() => {
@@ -1934,7 +1935,7 @@ appImages={{
   fontSize: '12px',
   fontWeight: 'bold'
 }} onClick={() => {
-  console.log('🧪 TESTING: Universal completion clicked');
+  console.log('ðŸ§ª TESTING: Universal completion clicked');
   
   // Automatically complete all syllables and words in any scene
   const allSyllables = Object.keys(sceneState?.learnedSyllables || {});
@@ -2028,7 +2029,7 @@ appImages={{
             fontSize: '12px',
             fontWeight: 'bold'
           }} onClick={() => {
-            console.log('🧪 TESTING: Skip to Kurumedeva Game clicked');
+            console.log('ðŸ§ª TESTING: Skip to Kurumedeva Game clicked');
             
             setShowSparkle(null);
             setShowRecording(false);
@@ -2081,7 +2082,7 @@ appImages={{
               kurumedevaWisdomShown: false
             });
             
-            console.log('✅ State set for Kurumedeva game - should start immediately');
+            console.log('âœ… State set for Kurumedeva game - should start immediately');
           }}>
             SKIP TO KURUMEDEVA
           </div>
@@ -2100,7 +2101,7 @@ appImages={{
             fontSize: '12px',
             fontWeight: 'bold'
           }} onClick={() => {
-            console.log('🧪 TESTING: Reload test clicked');
+            console.log('ðŸ§ª TESTING: Reload test clicked');
             console.log('Current sceneState:', sceneState);
             console.log('Nirvighnam game state:', sceneState?.nirvighnamGameState);
             console.log('Mission state:', sceneState?.missionState);

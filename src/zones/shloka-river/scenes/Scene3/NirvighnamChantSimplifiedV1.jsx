@@ -1,4 +1,4 @@
-// zones/shloka-river/scenes/Scene3/NirvighnamChant.jsx - Scene 3 with Stone/Decoration mechanics
+﻿// zones/shloka-river/scenes/Scene3/NirvighnamChant.jsx - Scene 3 with Stone/Decoration mechanics
 import React, { useState, useEffect, useRef } from 'react';
 import './NirvighnamChantSimplified.css';
 
@@ -190,7 +190,7 @@ const NirvighnamChant = ({
 
           unlockedApps: {},
 
-          // ⭐ Mode selection (like Scene 2)
+          // â­ Mode selection (like Scene 2)
           nirvighnamMode: null,      // 'auto' or 'manual'
           kurumedevaMode: null,      // 'auto' or 'manual'
           missionState: {
@@ -242,7 +242,7 @@ const NirvighnamChantContent = ({
   zoneId,
   sceneId
 }) => {
-console.log('🕉️ NirvighnamChantContent render', { 
+console.log('ðŸ•‰ï¸ NirvighnamChantContent render', { 
   sceneState: sceneState?.phase, 
   isReload, 
   nirvighnamMode: sceneState?.nirvighnamMode,
@@ -303,7 +303,7 @@ const [showPowerModal, setShowPowerModal] = useState(false);
 
       const [showMission, setShowMission] = useState(false);
 
-  // ⭐ Mode selection state (like Scene 2)
+  // â­ Mode selection state (like Scene 2)
   const [showModeSelection, setShowModeSelection] = useState(false);
   const [modeForPhase, setModeForPhase] = useState(null); // 'nirvighnam' or 'kurumedeva'
   const [modeSelected, setModeSelected] = useState(false); // Prevent loops
@@ -425,12 +425,12 @@ useEffect(() => {
 
 // UNIFIED: Single state saving function (like VakratundaGrove & SuryakotiBank)
 const handleSaveComponentState = (componentType, componentState) => {
-  console.log(`💾 Saving ${componentType} state:`, componentState);
+  console.log(`ðŸ’¾ Saving ${componentType} state:`, componentState);
   
   // Prevent double calls by debouncing
   if (handleSaveComponentState.lastCall && 
       Date.now() - handleSaveComponentState.lastCall < 100) {
-    console.log('🚫 Debounced duplicate save call');
+    console.log('ðŸš« Debounced duplicate save call');
     return;
   }
   handleSaveComponentState.lastCall = Date.now();
@@ -455,7 +455,7 @@ const handleSaveComponentState = (componentType, componentState) => {
     })
   };
   
-  console.log(`⚡ Updating scene state with ${componentType}:`, updatedState);
+  console.log(`âš¡ Updating scene state with ${componentType}:`, updatedState);
   sceneActions.updateState(updatedState);
 };
 
@@ -558,7 +558,7 @@ const handleSaveAnimal = () => {
   };
 
 const handleRescueComplete = () => {
-  console.log('✅ Rescue complete for:', currentRescueWord);
+  console.log('âœ… Rescue complete for:', currentRescueWord);
   
   setShowRescueMission(false);
   
@@ -667,7 +667,7 @@ const handlePhaseComplete = (phase) => {
 };
 
 const handleMissionComplete = () => {
-  console.log('✅ Mission complete for:', currentPracticeWord);
+  console.log('âœ… Mission complete for:', currentPracticeWord);
   setShowMission(false);
   
   if (currentPracticeWord === 'nirvighnam') {
@@ -679,7 +679,7 @@ const handleMissionComplete = () => {
     }, 500);
     
   } else if (currentPracticeWord === 'kurumedeva') {
-    // ⭐ Complete the scene properly
+    // â­ Complete the scene properly
     sceneActions.updateState({
       phase: PHASES.SCENE_COMPLETE,
       stars: 5,
@@ -687,7 +687,7 @@ const handleMissionComplete = () => {
       progress: { percentage: 100, starsEarned: 5, completed: true }
     });
     
-    // ⭐ Show fireworks AND prepare for completion screen
+    // â­ Show fireworks AND prepare for completion screen
     safeSetTimeout(() => {
       setShowSparkle('final-fireworks');
     }, 500);
@@ -778,7 +778,7 @@ const handleContinueLearning = () => {
 
 // Add this simple logic - no complex function calls
 const backgroundImage = (() => {
-  // ⭐ NEW: Check which game is currently being played
+  // â­ NEW: Check which game is currently being played
   const isPlayingNirvighnam = sceneState?.phase === PHASES.NIRVIGHNAM_GAME_ACTIVE ||
                               modeForPhase === 'nirvighnam';
   
@@ -791,12 +791,12 @@ const backgroundImage = (() => {
                               modeForPhase === 'kurumedeva' ||
                               modeForPhase === 'kurume';
   
-  // ⭐ Priority: If actively playing Nirvighnam, use its background
+  // â­ Priority: If actively playing Nirvighnam, use its background
   if (isPlayingNirvighnam) {
     return nirvighnamChantBg;
   }
   
-  // ⭐ Otherwise check if should use Kurumedeva background
+  // â­ Otherwise check if should use Kurumedeva background
   const shouldUseKuruBg = isPlayingKurumedeva ||
                          sceneState?.learnedWords?.nirvighnam || 
                          nirvighnamPowerGained;
@@ -804,7 +804,7 @@ const backgroundImage = (() => {
   return shouldUseKuruBg ? kuruBg : nirvighnamChantBg;
 })();
 
-  // ⭐ Simplified hint configs for new wrapper-based architecture
+  // â­ Simplified hint configs for new wrapper-based architecture
   const getHintConfigs = () => [
     {
       id: 'recording-hint',
@@ -834,7 +834,7 @@ const backgroundImage = (() => {
 
     return (
       <div className="syllable-counter">
-        <div className="counter-icon">🕉️</div>
+        <div className="counter-icon">ðŸ•‰ï¸</div>
         <div className="counter-progress">
           <div
             className="counter-progress-fill"
@@ -996,7 +996,7 @@ sceneActions.updateState({
   }}
 >
 
-{/* ⭐ NIRVIGHNAM GAME - Scene-controlled mode */}
+{/* â­ NIRVIGHNAM GAME - Scene-controlled mode */}
 <NirvighnamGame
   isActive={sceneState.phase === PHASES.NIRVIGHNAM_GAME_ACTIVE}
   hideElements={isTransitioning || showGaneshaBlessing || sceneState.phase === PHASES.NIRVIGHNAM_COMPLETE}
@@ -1004,7 +1004,7 @@ sceneActions.updateState({
   onGameComplete={handleGameComplete}
   profileName={profileName}
 
-    // ⭐ ADD THESE STONE GETTERS
+    // â­ ADD THESE STONE GETTERS
   getStoneInitialImage={getStoneInitialImage}
   getStoneRewardImage={getStoneRewardImage}
   getNirvighnamAnimalImage={getNirvighnamAnimalImage}
@@ -1023,7 +1023,7 @@ sceneActions.updateState({
   getStone2VighColImage={() => stone2VighCol}
   getStone3NamColImage={() => stone3NamCol}
 
-  // ⭐ Mode control - scene manages the modal, game gets the selection
+  // â­ Mode control - scene manages the modal, game gets the selection
   selectedMode={sceneState.nirvighnamMode}
   skipModeSelection={true}
 
@@ -1036,7 +1036,7 @@ sceneActions.updateState({
   onSaveGameState={(gameState) => handleSaveComponentState('nirvighnamGame', gameState)}
 />
 
-{/* ⭐ KURUMEDEVA GAME - Scene-controlled mode */}
+{/* â­ KURUMEDEVA GAME - Scene-controlled mode */}
 <KurumeDevaGame
   isActive={sceneState.phase === PHASES.KURUMEDEVA_GAME_ACTIVE}
   hideElements={isTransitioning || showGaneshaBlessing || sceneState.phase === PHASES.KURUMEDEVA_COMPLETE}
@@ -1054,7 +1054,7 @@ sceneActions.updateState({
   getDecorRewardImage={getDecorRewardImage}
   getKurumedevaAnimalImage={getKurumedevaAnimalImage}
 
-  // ⭐ Mode control - scene manages the modal, game gets the selection
+  // â­ Mode control - scene manages the modal, game gets the selection
   selectedMode={sceneState.kurumedevaMode}
   skipModeSelection={true}
 
@@ -1074,7 +1074,7 @@ sceneActions.updateState({
       <div className="nirvighnam-modal-character">
         <img src={ganeshaWithHeadphones} alt="Ganesha" className="nirvighnam-character-img" />
         <div className="nirvighnam-character-speech-bubble">
-          Let's clear the path! 🌿
+          Let's clear the path! ðŸŒ¿
         </div>
       </div>
       
@@ -1086,7 +1086,7 @@ sceneActions.updateState({
       <button
         className="nirvighnam-mission-start-btn"
         onClick={() => {
-          console.log('🎮 Opening mode selection for NIRVIGHNAM');
+          console.log('ðŸŽ® Opening mode selection for NIRVIGHNAM');
           sceneActions.updateState({ welcomeShown: true });
           setModeForPhase('nirvighnam');
           setShowModeSelection(true);
@@ -1099,11 +1099,11 @@ sceneActions.updateState({
   </div>
 )}
 
-{/* ⭐ MODE SELECTION MODAL - Shows BEFORE game starts */}
+{/* â­ MODE SELECTION MODAL - Shows BEFORE game starts */}
 {showModeSelection && !modeSelected && (
   <div className="nirvighnam-mission-modal-overlay">
     <div className="nirvighnam-mission-modal">
-      <h2 className="nirvighnam-mission-title">🎮 How do you want to play?</h2>
+      <h2 className="nirvighnam-mission-title">ðŸŽ® How do you want to play?</h2>
       <p className="nirvighnam-mission-description">
         Choose your learning style for <strong>{modeForPhase?.toUpperCase()}</strong>
       </p>
@@ -1125,11 +1125,11 @@ sceneActions.updateState({
             background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)'
           }}
           onClick={() => {
-            console.log(`🎮 Mode selected: AUTO for ${modeForPhase}`);
+            console.log(`ðŸŽ® Mode selected: AUTO for ${modeForPhase}`);
             setModeSelected(true);
             setShowModeSelection(false);
 
-            // ⭐ Single state update: mode + phase
+            // â­ Single state update: mode + phase
             const modeKey = `${modeForPhase}Mode`;
             const phaseKey = modeForPhase === 'nirvighnam' ? PHASES.NIRVIGHNAM_GAME_ACTIVE : PHASES.KURUMEDEVA_GAME_ACTIVE;
             sceneActions.updateState({
@@ -1138,7 +1138,7 @@ sceneActions.updateState({
             });
           }}
         >
-          <div>▶️ Auto Play</div>
+          <div>â–¶ï¸ Auto Play</div>
           <div style={{ fontSize: '14px', opacity: 0.9, marginTop: '5px' }}>
             Start from Round 1 and learn step by step
           </div>
@@ -1154,11 +1154,11 @@ sceneActions.updateState({
             background: 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)'
           }}
           onClick={() => {
-            console.log(`🎮 Mode selected: MANUAL for ${modeForPhase}`);
+            console.log(`ðŸŽ® Mode selected: MANUAL for ${modeForPhase}`);
             setModeSelected(true);
             setShowModeSelection(false);
 
-            // ⭐ Single state update: mode + phase
+            // â­ Single state update: mode + phase
             const modeKey = `${modeForPhase}Mode`;
             const phaseKey = modeForPhase === 'nirvighnam' ? PHASES.NIRVIGHNAM_GAME_ACTIVE : PHASES.KURUMEDEVA_GAME_ACTIVE;
             sceneActions.updateState({
@@ -1167,7 +1167,7 @@ sceneActions.updateState({
             });
           }}
         >
-          <div>🎯 Choose a Round</div>
+          <div>ðŸŽ¯ Choose a Round</div>
           <div style={{ fontSize: '14px', opacity: 0.9, marginTop: '5px' }}>
             Pick any round you want to practice
           </div>
@@ -1184,7 +1184,7 @@ sceneActions.updateState({
       <div className="nirvighnam-modal-character">
         <img src={ganeshaWithHeadphones} alt="Ganesha" className="nirvighnam-character-img" />
         <div className="nirvighnam-character-speech-bubble">
-          One more to learn! 💪
+          One more to learn! ðŸ’ª
         </div>
       </div>
       
@@ -1196,7 +1196,7 @@ sceneActions.updateState({
       <button
         className="nirvighnam-mission-start-btn"
         onClick={() => {
-          console.log('🎮 Opening mode selection for KURUMEDEVA');
+          console.log('ðŸŽ® Opening mode selection for KURUMEDEVA');
           setShowKurumedevaStory(false);
           setModeForPhase('kurumedeva');
           setShowModeSelection(true);
@@ -1211,6 +1211,7 @@ sceneActions.updateState({
 
             {/* Sanskrit Voice Recorder */}
             <SanskritVoiceRecorder
+              chantResult={null}
               show={showRecording}
               prompt="Try chanting"
               word={currentRecordingWord}
@@ -1252,7 +1253,7 @@ sceneActions.updateState({
   beforeImage={missionImages[currentPracticeWord]?.before}
   afterImage={missionImages[currentPracticeWord]?.after}
   powerConfig={powerConfig[currentPracticeWord]}
-      isFinalWordInScene={currentPracticeWord=== 'kurumedeva'}  // ⭐ ADD THIS LINE
+      isFinalWordInScene={currentPracticeWord=== 'kurumedeva'}  // â­ ADD THIS LINE
 
   onComplete={handleMissionComplete}
   onCancel={() => {
@@ -1333,37 +1334,37 @@ sceneActions.updateState({
         
        <div className="nirvighnam-power-modal-right">
   
-  {/* ⭐ NEW: Play Again button */}
+  {/* â­ NEW: Play Again button */}
   <button 
     className="nirvighnam-power-modal-btn nirvighnam-play-again-btn" 
 onClick={() => {
-  console.log(`🔄 Play Again: Restarting ${currentPracticeWord} game`);
+  console.log(`ðŸ”„ Play Again: Restarting ${currentPracticeWord} game`);
   
-  // ⭐ UPDATE PHASE FIRST (before closing modal)
+  // â­ UPDATE PHASE FIRST (before closing modal)
   if (currentPracticeWord === 'nirvighnam') {
     sceneActions.updateState({ 
-      phase: PHASES.NIRVIGHNAM_GAME_ACTIVE  // ⭐ Set phase FIRST
+      phase: PHASES.NIRVIGHNAM_GAME_ACTIVE  // â­ Set phase FIRST
     });
     setModeForPhase('nirvighnam');
     setShowModeSelection(true);
     setModeSelected(false);
   } else if (currentPracticeWord === 'kurumedeva') {
     sceneActions.updateState({ 
-      phase: PHASES.KURUMEDEVA_GAME_ACTIVE  // ⭐ Set phase FIRST
+      phase: PHASES.KURUMEDEVA_GAME_ACTIVE  // â­ Set phase FIRST
     });
     setModeForPhase('kurumedeva');
     setShowModeSelection(true);
     setModeSelected(false);
   } else if (currentPracticeWord === 'kurume') {
     sceneActions.updateState({ 
-      phase: PHASES.KURUMEDEVA_GAME_ACTIVE  // ⭐ Set phase FIRST
+      phase: PHASES.KURUMEDEVA_GAME_ACTIVE  // â­ Set phase FIRST
     });
     setModeForPhase('kurume');
     setShowModeSelection(true);
     setModeSelected(false);
   }
   
-  // ⭐ Close power modal AFTER phase update
+  // â­ Close power modal AFTER phase update
   setShowPowerModal(false);
 }}
     style={{
@@ -1371,15 +1372,15 @@ onClick={() => {
       marginBottom: '10px'
     }}
   >
-    🔄 Play Again
+    ðŸ”„ Play Again
   </button>
 
   <button className="nirvighnam-power-modal-btn nirvighnam-save-btn" onClick={handleSaveAnimal}>
-    🐾 Save an Animal
+    ðŸ¾ Save an Animal
   </button>
           
           <button className="nirvighnam-power-modal-btn nirvighnam-continue-btn" onClick={handleContinueLearning}>
-            {currentPracticeWord === 'kurumedeva' ? '✨ End Scene' : '🪷 Discover Kurumedeva'}
+            {currentPracticeWord === 'kurumedeva' ? 'âœ¨ End Scene' : 'ðŸª· Discover Kurumedeva'}
           </button>
         </div>
       </div>
@@ -1484,7 +1485,7 @@ onClick={() => {
     count={25}
     colors={['#FFD700', '#FF8C00', '#FFA500', '#DAA520', '#B8860B']}
     onComplete={() => {
-      console.log('🎯 Nirvighnam chant fireworks complete');
+      console.log('ðŸŽ¯ Nirvighnam chant fireworks complete');
       setShowSparkle(null);
       
       const profileId = localStorage.getItem('activeProfileId');
@@ -1494,13 +1495,13 @@ onClick={() => {
           stars: 5,
           syllables: sceneState?.learnedSyllables || {},
           words: sceneState?.learnedWords || {},
-          unlocked: sceneState?.unlockedApps || {},  // ⭐ ADD THIS
+          unlocked: sceneState?.unlockedApps || {},  // â­ ADD THIS
           phase: 'complete',
           timestamp: Date.now()
         });
         localStorage.removeItem(`temp_session_${profileId}_shloka-river_nirvighnam-chant`);
         SimpleSceneManager.clearCurrentScene();
-        console.log('✅ nirvighnam chant: Completion saved and temp session cleared');
+        console.log('âœ… nirvighnam chant: Completion saved and temp session cleared');
       }
       
       setShowSceneCompletion(true);
@@ -1533,12 +1534,12 @@ appImages={{
   stars: 5,
   syllables: sceneState.learnedSyllables,
   words: sceneState.learnedWords,
-  unlocked: sceneState.unlockedApps,  // ⭐ ADD THIS
+  unlocked: sceneState.unlockedApps,  // â­ ADD THIS
   completed: true
 }}
             onComplete={onComplete}
     onReplay={() => {
-  console.log('🔀 INSTANT REPLAY: Garden Adventure restart');
+  console.log('ðŸ”€ INSTANT REPLAY: Garden Adventure restart');
   resetScene(false);  // No confirm dialog for replay
 }}
             onContinue={() => {
@@ -1602,7 +1603,7 @@ appImages={{
   fontSize: '12px',
   fontWeight: 'bold'
 }} onClick={() => {
-  console.log('🧪 TESTING: Universal completion clicked');
+  console.log('ðŸ§ª TESTING: Universal completion clicked');
   
   // Automatically complete all syllables and words in any scene
   const allSyllables = Object.keys(sceneState?.learnedSyllables || {});
@@ -1696,7 +1697,7 @@ appImages={{
             fontSize: '12px',
             fontWeight: 'bold'
           }} onClick={() => {
-            console.log('🧪 TESTING: Skip to Kurumedeva Game clicked');
+            console.log('ðŸ§ª TESTING: Skip to Kurumedeva Game clicked');
             
             setShowSparkle(null);
             setShowRecording(false);
@@ -1749,7 +1750,7 @@ appImages={{
               kurumedevaWisdomShown: false
             });
             
-            console.log('✅ State set for Kurumedeva game - should start immediately');
+            console.log('âœ… State set for Kurumedeva game - should start immediately');
           }}>
             SKIP TO KURUMEDEVA
           </div>
@@ -1768,7 +1769,7 @@ appImages={{
             fontSize: '12px',
             fontWeight: 'bold'
           }} onClick={() => {
-            console.log('🧪 TESTING: Reload test clicked');
+            console.log('ðŸ§ª TESTING: Reload test clicked');
             console.log('Current sceneState:', sceneState);
             console.log('Nirvighnam game state:', sceneState?.nirvighnamGameState);
             console.log('Mission state:', sceneState?.missionState);

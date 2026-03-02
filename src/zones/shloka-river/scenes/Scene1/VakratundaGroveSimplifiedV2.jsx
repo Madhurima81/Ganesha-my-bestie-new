@@ -1,4 +1,4 @@
-// zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx
+﻿// zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx
 // Clean implementation following Pond scene pattern
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -372,7 +372,7 @@ const handleContinueLearning = () => {
 };
 
 const handleMissionComplete = () => {
-  console.log('✅ Mission complete for:', currentWord);
+  console.log('âœ… Mission complete for:', currentWord);
   setShowMission(false);
   
   if (currentWord === 'vakratunda') {
@@ -411,7 +411,7 @@ const handleMissionComplete = () => {
       <div className="modal-character">
         <img src={ganeshaHeadphones} alt="Ganesha" className="character-img" />
         <div className="character-speech-bubble">
-          Let's save the forest! 🌳
+          Let's save the forest! ðŸŒ³
         </div>
       </div>
       
@@ -465,13 +465,13 @@ const handleMissionComplete = () => {
 {/* STATIC LEARNING HEADER 
 {sceneState.phase === PHASES.VAKRATUNDA_GAME && !showCenteredWord && !showPowerModal && !showMission && (
   <div className="game-phase-header">
-    🎵 Let's Learn to Chant VAKRATUNDA!
+    ðŸŽµ Let's Learn to Chant VAKRATUNDA!
   </div>
 )}
 
 {sceneState.phase === PHASES.MAHAKAYA_GAME && !showCenteredWord && !showPowerModal && !showMission && (
   <div className="game-phase-header">
-    🎵 Let's Learn to Chant MAHAKAYA!
+    ðŸŽµ Let's Learn to Chant MAHAKAYA!
   </div>
 )}*/}
 
@@ -481,7 +481,7 @@ const handleMissionComplete = () => {
       <div className="modal-character">
         <img src={ganeshaHeadphones} alt="Ganesha" className="character-img" />
         <div className="character-speech-bubble">
-          One more to learn! 💪
+          One more to learn! ðŸ’ª
         </div>
       </div>
       
@@ -554,7 +554,7 @@ const handleMissionComplete = () => {
   <div className="ganesha-celebration-enter">
     <img src={ganeshaHeadphones} alt="Ganesha" className="ganesha-slides-in" />
     <div className="ganesha-celebration-bubble">
-      {showGaneshaCelebration === 'vakratunda' ? 'Great job! 🎉' : 'Amazing! ⭐'}
+      {showGaneshaCelebration === 'vakratunda' ? 'Great job! ðŸŽ‰' : 'Amazing! â­'}
     </div>
   </div>
 )}
@@ -582,11 +582,11 @@ const handleMissionComplete = () => {
           />
           
           <button className="power-modal-btn save-btn" onClick={handleSaveAnimal}>
-            🐾 Save an Animal
+            ðŸ¾ Save an Animal
           </button>
           
           <button className="power-modal-btn continue-btn" onClick={handleContinueLearning}>
-            {currentWord === 'vakratunda' ? '🎵 Discover Mahakaya' : '✨ End Scene'}
+            {currentWord === 'vakratunda' ? 'ðŸŽµ Discover Mahakaya' : 'âœ¨ End Scene'}
           </button>
         </div>
       </div>
@@ -622,6 +622,7 @@ const handleMissionComplete = () => {
 
 
 <SanskritVoiceRecorder
+  chantResult={null}
   show={showRecorder}
   word={practiceWord || ''}
   savedRecordings={savedRecordings}
@@ -702,7 +703,7 @@ const handleMissionComplete = () => {
   <div className="final-ganesha-appears">
     <img src={ganeshaHeadphones} alt="Ganesha" className="ganesha-final-enters" />
     <div className="ganesha-final-bubble">
-      You're a hero! 🌟
+      You're a hero! ðŸŒŸ
     </div>
   </div>
 )}

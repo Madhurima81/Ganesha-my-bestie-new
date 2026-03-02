@@ -1,4 +1,4 @@
-// zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx
+﻿// zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx
 // Clean implementation following Pond scene pattern
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -166,9 +166,9 @@ const VakratundaGroveSimplified = ({
           stars: 0,
           completed: false,
           progress: { percentage: 0, starsEarned: 0, completed: false },
-            vakratundaGameState: null,  // ⭐ ADD THIS
-  mahakayaGameState: null  ,   // ⭐ ADD THIS
-       // ⭐ Mode selection (like Scene 2)
+            vakratundaGameState: null,  // â­ ADD THIS
+  mahakayaGameState: null  ,   // â­ ADD THIS
+       // â­ Mode selection (like Scene 2)
           vakratundaMode: null,      // 'auto' or 'manual'
           mahakayaMode: null,      // 'auto' or 'manual'
           missionState: {
@@ -294,12 +294,12 @@ useEffect(() => {
 
     // UNIFIED: Single state saving function (like VakratundaGrove)
   const handleSaveComponentState = (componentType, componentState) => {
-    console.log(`💾 Saving ${componentType} state:`, componentState);
+    console.log(`ðŸ’¾ Saving ${componentType} state:`, componentState);
     
     // Prevent double calls by debouncing
     if (handleSaveComponentState.lastCall && 
         Date.now() - handleSaveComponentState.lastCall < 100) {
-      console.log('🚫 Debounced duplicate save call');
+      console.log('ðŸš« Debounced duplicate save call');
       return;
     }
     handleSaveComponentState.lastCall = Date.now();
@@ -325,7 +325,7 @@ const updatedState = {
   })
 };
     
-    console.log(`⚡ Updating scene state with ${componentType}:`, updatedState);
+    console.log(`âš¡ Updating scene state with ${componentType}:`, updatedState);
     sceneActions.updateState(updatedState);
   };
 
@@ -379,12 +379,12 @@ const onDeleteAppRecording = (recordingId, word) => {
 const handlePhaseComplete = (word) => {
   console.log(`${word} learned!`);
 
-    // ✅ DEFINE THE CHANT KEY BASED ON THE WORD
+    // âœ… DEFINE THE CHANT KEY BASED ON THE WORD
   const chantKey = word === 'vakratunda' ? 'vakratunda-chant' : 'mahakaya-chant';
   
   sceneActions.updateState({
     learnedWords: { ...sceneState.learnedWords, [word]: true },
-    // ✅ IMMEDIATE UPDATE: Add this specific chant to the list
+    // âœ… IMMEDIATE UPDATE: Add this specific chant to the list
     chantedVerses: { 
       ...sceneState.chantedVerses, 
       [chantKey]: true 
@@ -455,7 +455,7 @@ const handleContinueLearning = () => {
 };
 
 const handleMissionComplete = () => {
-  console.log('✅ Mission complete for:', currentWord);
+  console.log('âœ… Mission complete for:', currentWord);
   setShowMission(false);
   
   if (currentWord === 'vakratunda') {
@@ -499,7 +499,7 @@ const handleMissionComplete = () => {
       <div className="vakratunda-modal-character">
         <img src={ganeshaHeadphones} alt="Ganesha" className="vakratunda-character-img" />
         <div className="vakratunda-character-speech-bubble">
-          Let's save the forest! 🌳
+          Let's save the forest! ðŸŒ³
         </div>
       </div>
       
@@ -532,12 +532,12 @@ const handleMissionComplete = () => {
   onPhaseComplete={() => handlePhaseComplete('vakratunda')}
   onGameComplete={() => {}}
   profileName={profileName}
-  // ✅ BUG 6 & 8 FIX: Pass BOTH initial (bud) and reward (lotus) asset getters
+  // âœ… BUG 6 & 8 FIX: Pass BOTH initial (bud) and reward (lotus) asset getters
   getBudImage={getBudImage}
   getLotusImage={getLotusImage}
   getBabyElephantImage={getBabyElephantImage}
-  selectedMode={sceneState.vakratundaMode}  // ⭐ Mode from scene modal
-  skipModeSelection={true}  // ⭐ ALWAYS skip - scene handles mode selection
+  selectedMode={sceneState.vakratundaMode}  // â­ Mode from scene modal
+  skipModeSelection={true}  // â­ ALWAYS skip - scene handles mode selection
   isReload={isReload}
   savedGameState={sceneState.vakratundaGameState}
 onSaveGameState={(state) => handleSaveComponentState('vakratundaGame', state)}
@@ -551,12 +551,12 @@ onSaveGameState={(state) => handleSaveComponentState('vakratundaGame', state)}
   onPhaseComplete={() => handlePhaseComplete('mahakaya')}
   onGameComplete={() => {}}
   profileName={profileName}
-  // ✅ BUG 6 & 8 FIX: Pass BOTH initial (seed) and reward (flower) asset getters
+  // âœ… BUG 6 & 8 FIX: Pass BOTH initial (seed) and reward (flower) asset getters
   getSeedImage={getSeedImage}
   getFlowerImage={getFlowerImage}
   getAdultElephantImage={getAdultElephantImage}
-  selectedMode={sceneState.mahakayaMode}  // ⭐ Mode from scene modal
-  skipModeSelection={true}  // ⭐ ALWAYS skip - scene handles mode selection
+  selectedMode={sceneState.mahakayaMode}  // â­ Mode from scene modal
+  skipModeSelection={true}  // â­ ALWAYS skip - scene handles mode selection
   isReload={isReload}
   savedGameState={sceneState.mahakayaGameState}
 onSaveGameState={(state) => handleSaveComponentState('mahakayaGame', state)}
@@ -593,13 +593,13 @@ onSaveGameState={(state) => handleSaveComponentState('mahakayaGame', state)}
 {/* STATIC LEARNING HEADER 
 {sceneState.phase === PHASES.VAKRATUNDA_GAME && !showCenteredWord && !showPowerModal && !showMission && (
   <div className="game-phase-header">
-    🎵 Let's Learn to Chant VAKRATUNDA!
+    ðŸŽµ Let's Learn to Chant VAKRATUNDA!
   </div>
 )}
 
 {sceneState.phase === PHASES.MAHAKAYA_GAME && !showCenteredWord && !showPowerModal && !showMission && (
   <div className="game-phase-header">
-    🎵 Let's Learn to Chant MAHAKAYA!
+    ðŸŽµ Let's Learn to Chant MAHAKAYA!
   </div>
 )}*/}
 
@@ -609,7 +609,7 @@ onSaveGameState={(state) => handleSaveComponentState('mahakayaGame', state)}
       <div className="vakratunda-modal-character">
         <img src={ganeshaHeadphones} alt="Ganesha" className="vakratunda-character-img" />
         <div className="vakratunda-character-speech-bubble">
-          One more to learn! 💪
+          One more to learn! ðŸ’ª
         </div>
       </div>
       
@@ -654,7 +654,7 @@ onClick={() => {
   <div className="vakratunda-ganesha-celebration-enter">
     <img src={ganeshaHeadphones} alt="Ganesha" className="vakratunda-ganesha-slides-in" />
     <div className="vakratunda-ganesha-celebration-bubble">
-      {showGaneshaCelebration === 'vakratunda' ? 'Great job! 🎉' : 'Amazing! ⭐'}
+      {showGaneshaCelebration === 'vakratunda' ? 'Great job! ðŸŽ‰' : 'Amazing! â­'}
     </div>
   </div>
 )}
@@ -686,11 +686,11 @@ onClick={() => {
   <div className="vakratunda-power-modal-right">
   {/* NO ICON HERE - removed duplicate */}
   
-  {/* ⭐ NEW: Play Again button */}
+  {/* â­ NEW: Play Again button */}
   <button 
     className="vakratunda-power-modal-btn play-again-btn" 
     onClick={() => {
-      console.log(`🔄 Play Again: Restarting ${currentWord} game`);
+      console.log(`ðŸ”„ Play Again: Restarting ${currentWord} game`);
       setShowPowerModal(false);
       
       // Reset to game phase for the current word
@@ -709,15 +709,15 @@ onClick={() => {
       marginBottom: '10px'
     }}
   >
-    🔄 Play Again
+    ðŸ”„ Play Again
   </button>
   
   <button className="vakratunda-power-modal-btn save-btn" onClick={handleSaveAnimal}>
-    🐾 Save an Animal
+    ðŸ¾ Save an Animal
   </button>
   
   <button className="vakratunda-power-modal-btn continue-btn" onClick={handleContinueLearning}>
-    {currentWord === 'vakratunda' ? '🎵 Discover Mahakaya' : '✨ End Scene'}
+    {currentWord === 'vakratunda' ? 'ðŸŽµ Discover Mahakaya' : 'âœ¨ End Scene'}
   </button>
 </div>
       </div>
@@ -757,7 +757,7 @@ onClick={() => {
 {showModeSelection && !modeSelected && (
   <div className="vakratunda-mission-modal-overlay">
     <div className="vakratunda-mission-modal mode-selection-modal">
-      <h2 className="vakratunda-mission-title">🎮 How do you want to play?</h2>
+      <h2 className="vakratunda-mission-title">ðŸŽ® How do you want to play?</h2>
       <p className="vakratunda-mission-description">
         Choose your learning style for <strong>{modeForPhase?.toUpperCase()}</strong>
       </p>
@@ -777,13 +777,13 @@ onClick={() => {
             fontSize: '16px'
           }}
           onClick={() => {
-            console.log(`🎮 Mode selected: AUTO for ${modeForPhase}`);
+            console.log(`ðŸŽ® Mode selected: AUTO for ${modeForPhase}`);
 
             // Mark as selected to prevent loop
             setModeSelected(true);
             setShowModeSelection(false);
 
-            // ⭐ FIX: Set mode AND phase in SINGLE update to prevent race condition
+            // â­ FIX: Set mode AND phase in SINGLE update to prevent race condition
             const modeKey = `${modeForPhase}Mode`;
             sceneActions.updateState({
               [modeKey]: 'auto',
@@ -791,7 +791,7 @@ onClick={() => {
             });
           }}
         >
-          <div style={{ fontSize: '24px', marginBottom: '8px' }}>▶️ Auto Play</div>
+          <div style={{ fontSize: '24px', marginBottom: '8px' }}>â–¶ï¸ Auto Play</div>
           <div style={{ fontSize: '13px', opacity: 0.9 }}>
             Start from Round 1 and learn step by step
           </div>
@@ -806,13 +806,13 @@ onClick={() => {
             fontSize: '16px'
           }}
           onClick={() => {
-            console.log(`🎮 Mode selected: MANUAL for ${modeForPhase}`);
+            console.log(`ðŸŽ® Mode selected: MANUAL for ${modeForPhase}`);
 
             // Mark as selected to prevent loop
             setModeSelected(true);
             setShowModeSelection(false);
 
-            // ⭐ FIX: Set mode AND phase in SINGLE update to prevent race condition
+            // â­ FIX: Set mode AND phase in SINGLE update to prevent race condition
             const modeKey = `${modeForPhase}Mode`;
             sceneActions.updateState({
               [modeKey]: 'manual',
@@ -820,7 +820,7 @@ onClick={() => {
             });
           }}
         >
-          <div style={{ fontSize: '24px', marginBottom: '8px' }}>🎯 Choose a Round</div>
+          <div style={{ fontSize: '24px', marginBottom: '8px' }}>ðŸŽ¯ Choose a Round</div>
           <div style={{ fontSize: '13px', opacity: 0.9 }}>
             Pick any round you like and practice!
           </div>
@@ -837,7 +837,7 @@ onClick={() => {
   beforeImage={missionImages[currentWord]?.before}
   afterImage={missionImages[currentWord]?.after}
   powerConfig={powerConfig[currentWord]}
-      isFinalWordInScene={currentWord === 'mahakaya'}  // ⭐ ADD THIS LINE
+      isFinalWordInScene={currentWord === 'mahakaya'}  // â­ ADD THIS LINE
 
   onComplete={handleMissionComplete}
   onCancel={() => {
@@ -859,6 +859,7 @@ onClick={() => {
 
 
 <SanskritVoiceRecorder
+  chantResult={null}
   show={showRecorder}
   word={practiceWord || ''}
   savedRecordings={savedRecordings}
@@ -890,7 +891,7 @@ onClick={() => {
   // Save and show completion immediately
   const profileId = localStorage.getItem('activeProfileId');
   if (profileId) {
-    console.log('🔥 SAVING:', zoneId, sceneId, {
+    console.log('ðŸ”¥ SAVING:', zoneId, sceneId, {
   completed: true,
   stars: 5,
   chantedVerses: { 'vakratunda-mahakaya-line1': true }
@@ -927,7 +928,7 @@ chantedVerses: sceneState.chantedVerses || {
   <div className="vakratunda-final-ganesha-appears">
     <img src={ganeshaHeadphones} alt="Ganesha" className="vakratunda-ganesha-final-enters" />
     <div className="vakratunda-ganesha-final-bubble">
-      You're a hero! 🌟
+      You're a hero! ðŸŒŸ
     </div>
   </div>
 )}
@@ -958,7 +959,7 @@ appImages={{
             }}
             onComplete={onComplete}
         onReplay={() => {
-  console.log('🔄 INSTANT REPLAY: Garden Adventure restart');
+  console.log('ðŸ”„ INSTANT REPLAY: Garden Adventure restart');
   setShowSceneCompletion(false);
   resetScene();
 }}
@@ -991,7 +992,7 @@ chantedVerses: sceneState.chantedVerses || {
                   stars: 5,
                   syllables: sceneState.learnedSyllables,
                   words: sceneState.learnedWords,
-                   // ✅ ADD THIS:
+                   // âœ… ADD THIS:
  chantedVerses: sceneState.chantedVerses || { 
     'vakratunda-chant': true, 
     'mahakaya-chant': true 

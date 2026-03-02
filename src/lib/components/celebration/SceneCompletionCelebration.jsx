@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useGameCoach } from "../coach/GameCoach";
 import './SceneCompletionCelebration.css';
 import '../../../zones/symbol-mountain/shared/components/SymbolSidebar.css';
@@ -90,10 +90,10 @@ const SceneCompletionCelebration = ({
 
 const handleAction = (callback, skipComplete = false) => {
   if (!skipComplete && onComplete && completionData) {
-    console.log('🎯 SceneCompletion handleAction called');
-    console.log('🎯 sceneId:', sceneId);
-    console.log('🎯 completionData:', completionData);
-    console.log('🎯 completionData.chantedVerses:', completionData.chantedVerses);
+    console.log('ðŸŽ¯ SceneCompletion handleAction called');
+    console.log('ðŸŽ¯ sceneId:', sceneId);
+    console.log('ðŸŽ¯ completionData:', completionData);
+    console.log('ðŸŽ¯ completionData.chantedVerses:', completionData.chantedVerses);
     onComplete(sceneId, completionData);
   }
   callback?.();
@@ -117,7 +117,7 @@ const handleAction = (callback, skipComplete = false) => {
 
         {/* Text Header */}
         <div className="celebration-header">
-          <div className="title-text">{completionTitle || '🌟 You Did It!'}</div>
+          <div className="title-text">{completionTitle || 'ðŸŒŸ You Did It!'}</div>
           <div className="subtitle-text">{completionSubtitle || `${sceneName} is glowing because of you!`}</div>
         </div>
 
@@ -138,7 +138,7 @@ const handleAction = (callback, skipComplete = false) => {
                       <div className="trophy-symbol-glow">
                         {symbolImages[symbol] ?
                           <img src={symbolImages[symbol]} alt={symbol} className="trophy-symbol-img" /> :
-                          <span style={{ fontSize: '64px' }}>⭐</span>
+                          <span style={{ fontSize: '64px' }}>â­</span>
                         }
                       </div>
                       {symbolData[symbol] && (
@@ -149,7 +149,7 @@ const handleAction = (callback, skipComplete = false) => {
                 </div>
               </>
             ) : containerType === 'apps' && discoveredSymbols.length > 0 ? (
-              /* App Trophy Row — tapping opens the voice recorder */
+              /* App Trophy Row â€” tapping opens the voice recorder */
               <>
                 <div className="trophy-symbols-row">
                   {discoveredSymbols.map((appId, index) => (
@@ -165,7 +165,7 @@ const handleAction = (callback, skipComplete = false) => {
                       <div className="trophy-symbol-glow">
                         {appImages[appId] ?
                           <img src={appImages[appId]} alt={appId} className="trophy-symbol-img" /> :
-                          <span style={{ fontSize: '64px' }}>🎵</span>
+                          <span style={{ fontSize: '64px' }}>ðŸŽµ</span>
                         }
                       </div>
                       <p className="trophy-symbol-name">
@@ -207,7 +207,7 @@ const handleAction = (callback, skipComplete = false) => {
                   </div>
                 )}
 
-                {/* Keep Exploring — primary CTA (only when no custom primaryAction) */}
+                {/* Keep Exploring â€” primary CTA (only when no custom primaryAction) */}
                 {!primaryAction && (
                   <button
                     className="celebration-btn celebration-btn-orange"
@@ -234,7 +234,7 @@ const handleAction = (callback, skipComplete = false) => {
                     >
                       Explore Scenes
                     </button>
-                    {/* 3rd tier: Play Again — smallest, least prominent */}
+                    {/* 3rd tier: Play Again â€” smallest, least prominent */}
                     <button
                       className="celebration-btn-replay"
                       onClick={() => handleAction(onReplay, true)}
@@ -305,7 +305,7 @@ const handleAction = (callback, skipComplete = false) => {
       {selectedSymbol && symbolData[selectedSymbol] && (
         <div className="ganesha-popup-overlay" onClick={() => setSelectedSymbol(null)} style={{ zIndex: 9999 }}>
           <div className="ganesha-popup-content" onClick={(e) => e.stopPropagation()}>
-            <button className="ganesha-popup-close-btn" onClick={() => setSelectedSymbol(null)}>×</button>
+            <button className="ganesha-popup-close-btn" onClick={() => setSelectedSymbol(null)}>Ã—</button>
             <div className="ganesha-popup-img-container">
               {symbolImages[selectedSymbol] && (
                 <img src={symbolImages[selectedSymbol]} alt={selectedSymbol} className="ganesha-popup-custom-img" />
@@ -321,6 +321,7 @@ const handleAction = (callback, skipComplete = false) => {
       {/* App recorder popup - when tapping app icons (containerType="apps") */}
       {selectedApp && appData[selectedApp] && (
         <SanskritVoiceRecorder
+          chantResult={null}
           word={selectedApp}
           syllables={appData[selectedApp].syllables}
           appIcon={appImages[selectedApp]}

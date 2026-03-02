@@ -1,4 +1,4 @@
-// zones/shloka-river/scenes/Scene5/SarvakaryeshuChant.jsx - Scene 5 with Divine Games
+﻿// zones/shloka-river/scenes/Scene5/SarvakaryeshuChant.jsx - Scene 5 with Divine Games
 import React, { useState, useEffect, useRef } from 'react';
 import './SarvakaryeshuChant.css';
 
@@ -214,7 +214,7 @@ const SarvakaryeshuChantContent = ({
   zoneId,
   sceneId
 }) => {
-  console.log('🎨 SarvakaryeshuChantContent render', { 
+  console.log('ðŸŽ¨ SarvakaryeshuChantContent render', { 
     sceneState: sceneState?.phase, 
     isReload, 
     sarvakaryeshuGameState: !!sceneState?.sarvakaryeshuGameState,
@@ -273,8 +273,8 @@ const SarvakaryeshuChantContent = ({
 
   // Add power configuration for Scene 5
   const powerConfig = {
-    sarvakaryeshu: { name: 'Divine Action', icon: '✨', color: '#FFD700' },
-    sarvada: { name: 'Eternal Blessing', icon: '🌟', color: '#4B0082' }
+    sarvakaryeshu: { name: 'Divine Action', icon: 'âœ¨', color: '#FFD700' },
+    sarvada: { name: 'Eternal Blessing', icon: 'ðŸŒŸ', color: '#4B0082' }
   };
 
   // Safe setTimeout function
@@ -306,7 +306,7 @@ const resetScene = (showConfirm = true) => {
     return;
   }
 
-  console.log('🔥 Sarvakaryeshu Scene reset: User chose to start fresh');
+  console.log('ðŸ”¥ Sarvakaryeshu Scene reset: User chose to start fresh');
   
   // STEP 1: Set force reset flag for the combined game component
   if (window.sarvakaryeshuSarvadaGame) {
@@ -428,7 +428,7 @@ const resetScene = (showConfirm = true) => {
       }
     }, 1000);
     
-    console.log('✅ Sarvakaryeshu scene state reset complete');
+    console.log('âœ… Sarvakaryeshu scene state reset complete');
   }, 150);
 };
 
@@ -466,11 +466,11 @@ const resetScene = (showConfirm = true) => {
   }, []);
 
 const handleSaveComponentState = (componentType, componentState) => {
-  console.log(`💾 Saving ${componentType} state:`, componentState);
+  console.log(`ðŸ’¾ Saving ${componentType} state:`, componentState);
   
   if (handleSaveComponentState.lastCall && 
       Date.now() - handleSaveComponentState.lastCall < 100) {
-    console.log('🚫 Debounced duplicate save call');
+    console.log('ðŸš« Debounced duplicate save call');
     return;
   }
   handleSaveComponentState.lastCall = Date.now();
@@ -485,7 +485,7 @@ const handleSaveComponentState = (componentType, componentState) => {
     })
   };
   
-  console.log(`⚡ Updating scene state with ${componentType}:`, updatedState);
+  console.log(`âš¡ Updating scene state with ${componentType}:`, updatedState);
   sceneActions.updateState(updatedState);
 };
 
@@ -524,7 +524,7 @@ useEffect(() => {
   useEffect(() => {
     if (!isReload || !sceneState) return;
     
-    console.log('🔄 SARVAKARYESHU RELOAD: Starting reload', {
+    console.log('ðŸ”„ SARVAKARYESHU RELOAD: Starting reload', {
       phase: sceneState.phase,
       showingCompletionScreen: sceneState.showingCompletionScreen,
       completed: sceneState.completed
@@ -536,7 +536,7 @@ useEffect(() => {
     const playAgainRequested = localStorage.getItem(playAgainKey);
     
     if (playAgainRequested === 'true') {
-      console.log('🔄 SARVAKARYESHU: Fresh restart after Play Again');
+      console.log('ðŸ”„ SARVAKARYESHU: Fresh restart after Play Again');
       localStorage.removeItem(playAgainKey);
       sceneActions.updateState({ 
         phase: PHASES.INITIAL,
@@ -551,7 +551,7 @@ useEffect(() => {
 
     // Handle completion screen reload
     if (sceneState.showingCompletionScreen) {
-      console.log('🔄 SARVAKARYESHU: Resuming completion screen');
+      console.log('ðŸ”„ SARVAKARYESHU: Resuming completion screen');
       setShowSceneCompletion(true);
       return;
     }
@@ -559,20 +559,20 @@ useEffect(() => {
     // Phase-specific reload logic
     switch (sceneState.phase) {
       case PHASES.INITIAL:
-        console.log('🔄 SARVAKARYESHU: Resuming initial welcome');
+        console.log('ðŸ”„ SARVAKARYESHU: Resuming initial welcome');
         break;
         
       case PHASES.SARVAKARYESHU_GAME_ACTIVE:
-        console.log('🔄 SARVAKARYESHU: Sarvakaryeshu game active - letting component handle itself');
+        console.log('ðŸ”„ SARVAKARYESHU: Sarvakaryeshu game active - letting component handle itself');
         break;
 
       case PHASES.SARVADA_GAME_ACTIVE:
-        console.log('🔄 SARVAKARYESHU: Sarvada game active - letting component handle itself');
+        console.log('ðŸ”„ SARVAKARYESHU: Sarvada game active - letting component handle itself');
         setSarvakaryeshuPowerGained(true);
         break;
         
       case PHASES.SARVAKARYESHU_COMPLETE:
-        console.log('🔄 SARVAKARYESHU: Resuming Sarvakaryeshu completion celebration');
+        console.log('ðŸ”„ SARVAKARYESHU: Resuming Sarvakaryeshu completion celebration');
         setBlessingWord('sarvakaryeshu');
         setCurrentPracticeWord('sarvakaryeshu');
         setShowWordCelebration(true);
@@ -590,7 +590,7 @@ useEffect(() => {
         break;
         
       case PHASES.SARVADA_COMPLETE:
-        console.log('🔄 SARVAKARYESHU: Resuming Sarvada completion celebration');
+        console.log('ðŸ”„ SARVAKARYESHU: Resuming Sarvada completion celebration');
         setBlessingWord('sarvada');
         setCurrentPracticeWord('sarvada');
         setShowWordCelebration(true);
@@ -608,7 +608,7 @@ useEffect(() => {
         break;
         
       case PHASES.GANESHA_BLESSING_SARVAKARYESHU:
-        console.log('🔄 SARVAKARYESHU: Resuming Ganesha blessing for Sarvakaryeshu');
+        console.log('ðŸ”„ SARVAKARYESHU: Resuming Ganesha blessing for Sarvakaryeshu');
         setBlessingWord('sarvakaryeshu');
         setCurrentPracticeWord('sarvakaryeshu');
         setShowChoiceButtons(false);
@@ -620,7 +620,7 @@ useEffect(() => {
         break;
 
       case PHASES.GANESHA_BLESSING_SARVADA:
-        console.log('🔄 SARVAKARYESHU: Resuming Ganesha blessing for Sarvada');
+        console.log('ðŸ”„ SARVAKARYESHU: Resuming Ganesha blessing for Sarvada');
         setBlessingWord('sarvada');
         setCurrentPracticeWord('sarvada');
         setShowChoiceButtons(false);
@@ -632,7 +632,7 @@ useEffect(() => {
         break;
         
       case PHASES.CHOICE_BUTTONS_SARVAKARYESHU:
-        console.log('🔄 SARVAKARYESHU: Resuming choice buttons for Sarvakaryeshu');
+        console.log('ðŸ”„ SARVAKARYESHU: Resuming choice buttons for Sarvakaryeshu');
         setCurrentPracticeWord('sarvakaryeshu');
         setShowGaneshaBlessing(false);
         setShowWordCelebration(false);
@@ -644,7 +644,7 @@ useEffect(() => {
         break;
         
       case PHASES.CHOICE_BUTTONS_SARVADA:
-        console.log('🔄 SARVAKARYESHU: Resuming choice buttons for Sarvada');
+        console.log('ðŸ”„ SARVAKARYESHU: Resuming choice buttons for Sarvada');
         setCurrentPracticeWord('sarvada');
         setShowGaneshaBlessing(false);
         setShowWordCelebration(false);
@@ -656,26 +656,26 @@ useEffect(() => {
         break;
         
       case PHASES.RESCUE_MISSION_SARVAKARYESHU:
-        console.log('🔄 SARVAKARYESHU: Resuming rescue mission for Sarvakaryeshu');
+        console.log('ðŸ”„ SARVAKARYESHU: Resuming rescue mission for Sarvakaryeshu');
         setCurrentRescueWord('sarvakaryeshu');
         setShowRescueMission(true);
         break;
         
       case PHASES.SARVADA_STORY:
-        console.log('🔄 SARVAKARYESHU: Resuming Sarvada story');
+        console.log('ðŸ”„ SARVAKARYESHU: Resuming Sarvada story');
         setSarvakaryeshuPowerGained(true);
         setShowSarvadaStory(true);
         break;
         
       case PHASES.RESCUE_MISSION_SARVADA:
-        console.log('🔄 SARVAKARYESHU: Resuming rescue mission for Sarvada');
+        console.log('ðŸ”„ SARVAKARYESHU: Resuming rescue mission for Sarvada');
         setCurrentRescueWord('sarvada');
         setSarvakaryeshuPowerGained(true);
         setShowRescueMission(true);
         break;
         
       case PHASES.SCENE_COMPLETE:
-        console.log('🔄 SARVAKARYESHU: Resuming scene complete');
+        console.log('ðŸ”„ SARVAKARYESHU: Resuming scene complete');
         if (!sceneState.showingCompletionScreen) {
           setTimeout(() => {
             setShowSparkle('final-fireworks');
@@ -684,7 +684,7 @@ useEffect(() => {
         break;
         
       default:
-        console.log('🔄 SARVAKARYESHU: No specific reload needed for phase:', sceneState.phase);
+        console.log('ðŸ”„ SARVAKARYESHU: No specific reload needed for phase:', sceneState.phase);
     }
   }, [isReload]);
 
@@ -719,7 +719,7 @@ const getSarvadaDecorImage = (index, activated) => {
 };*/
 
   const handleSaveAnimal = () => {
-    console.log('🐘 RESCUE MISSION: Starting divine animal rescue');
+    console.log('ðŸ˜ RESCUE MISSION: Starting divine animal rescue');
     
     setShowChoiceButtons(false);
     setCurrentRescueWord(currentPracticeWord || blessingWord);
@@ -750,7 +750,7 @@ const getSarvadaDecorImage = (index, activated) => {
   };
 
   const handleRescueComplete = () => {
-    console.log('✅ Rescue complete for:', currentRescueWord);
+    console.log('âœ… Rescue complete for:', currentRescueWord);
     
     handleSaveComponentState('mission', {
       rescuePhase: 'success',
@@ -1047,7 +1047,7 @@ const getSarvadaDecorImage = (index, activated) => {
 
     return (
       <div className="syllable-counter">
-        <div className="counter-icon">✨</div>
+        <div className="counter-icon">âœ¨</div>
         <div className="counter-progress">
           <div
             className="counter-progress-fill"
@@ -1417,6 +1417,7 @@ if (window.sarvakaryeshuSarvadaGame?.startSarvadaPhase) {
 
             {/* Sanskrit Voice Recorder */}
             <SanskritVoiceRecorder
+              chantResult={null}
               show={showRecording}
               prompt="Try chanting"
               word={currentRecordingWord}
@@ -1527,7 +1528,7 @@ if (window.sarvakaryeshuSarvadaGame?.startSarvadaPhase) {
                             color: powerConfig[currentPracticeWord]?.color || '#FFD700'
                           }}
                         >
-                          {powerConfig[currentPracticeWord]?.icon || '✨'}
+                          {powerConfig[currentPracticeWord]?.icon || 'âœ¨'}
                         </div>
                       ))}
                     </div>
@@ -1580,7 +1581,7 @@ if (window.sarvakaryeshuSarvadaGame?.startSarvadaPhase) {
                     zIndex: 25 
                   }}>
                     <button className="record-blessing-btn" onClick={handleGaneshaRecord}>
-                      🎤 Chant Now
+                      ðŸŽ¤ Chant Now
                     </button>
                     <button className="skip-blessing-btn" onClick={handleGaneshaSkip}>
                       Chant Later
@@ -1634,7 +1635,7 @@ if (window.sarvakaryeshuSarvadaGame?.startSarvadaPhase) {
                     }
                   </div>
                   <button className="word-practice-btn" onClick={() => handleWordPlay(currentPracticeWord)}>
-                    🔵 {currentPracticeWord.toUpperCase()}
+                    ðŸ”µ {currentPracticeWord.toUpperCase()}
                   </button>
                   <button className="practice-close-btn" onClick={handleAudioPracticeClose}>
                     Close
@@ -1647,10 +1648,10 @@ if (window.sarvakaryeshuSarvadaGame?.startSarvadaPhase) {
             {showChoiceButtons && (
               <div className="power-choice-buttons">
                 <button className="choice-btn save-animal-btn" onClick={handleSaveAnimal}>
-                  🐘 Save a Divine Animal
+                  ðŸ˜ Save a Divine Animal
                 </button>
                 <button className="choice-btn continue-learning-btn" onClick={handleContinueLearning}>
-                  {currentPracticeWord === 'sarvada' ? '✨ End Scene' : '🌟 Continue Learning'}
+                  {currentPracticeWord === 'sarvada' ? 'âœ¨ End Scene' : 'ðŸŒŸ Continue Learning'}
                 </button>
               </div>
             )}
@@ -1777,7 +1778,7 @@ if (window.sarvakaryeshuSarvadaGame?.startSarvadaPhase) {
               count={15}
               colors={['#FFD700', '#4B0082', '#FF69B4', '#32CD32', '#FF8C00', '#9370DB']}
               onComplete={() => {
-                console.log('🎯 FIREWORKS COMPLETION HANDLER CALLED');
+                console.log('ðŸŽ¯ FIREWORKS COMPLETION HANDLER CALLED');
                 
                 try {
                   setShowSparkle(null);
@@ -1793,17 +1794,17 @@ if (window.sarvakaryeshuSarvadaGame?.startSarvadaPhase) {
                         phase: 'complete',
                         timestamp: Date.now()
                       });
-                      console.log('✅ Game state saved successfully');
+                      console.log('âœ… Game state saved successfully');
                     } catch (saveError) {
-                      console.warn('⚠️ Error saving game state:', saveError);
+                      console.warn('âš ï¸ Error saving game state:', saveError);
                     }
 
                     try {
                       localStorage.removeItem(`temp_session_${profileId}_shloka-river_sarvakaryeshu-chant`);
                       SimpleSceneManager.clearCurrentScene();
-                      console.log('✅ Temp session cleared');
+                      console.log('âœ… Temp session cleared');
                     } catch (clearError) {
-                      console.warn('⚠️ Error clearing session:', clearError);
+                      console.warn('âš ï¸ Error clearing session:', clearError);
                     }
                   }
 
@@ -1814,13 +1815,13 @@ if (window.sarvakaryeshuSarvadaGame?.startSarvadaPhase) {
                     stars: 5,
                     completed: true
                   });
-                  console.log('🎯 Scene state updated');
+                  console.log('ðŸŽ¯ Scene state updated');
 
                   setShowSceneCompletion(true);
-                  console.log('🎯 setShowSceneCompletion(true) called');
+                  console.log('ðŸŽ¯ setShowSceneCompletion(true) called');
                   
                 } catch (error) {
-                  console.error('💥 Error in fireworks completion:', error);
+                  console.error('ðŸ’¥ Error in fireworks completion:', error);
                   setShowSceneCompletion(true);
                 }
               }}
@@ -1835,7 +1836,7 @@ if (window.sarvakaryeshuSarvadaGame?.startSarvadaPhase) {
                           count={25}
                           colors={['#FFD700', '#FF8C00', '#FFA500', '#DAA520', '#B8860B']}
                           onComplete={() => {
-                            console.log('🎯 sarvakaryeshu-chant fireworks complete');
+                            console.log('ðŸŽ¯ sarvakaryeshu-chant fireworks complete');
                             setShowSparkle(null);
                             
                             const profileId = localStorage.getItem('activeProfileId');
@@ -1850,7 +1851,7 @@ if (window.sarvakaryeshuSarvadaGame?.startSarvadaPhase) {
                       });
                       localStorage.removeItem(`temp_session_${profileId}_shloka-river_sarvakaryeshu-chant`);
                               SimpleSceneManager.clearCurrentScene();
-                              console.log('✅ vakratunda chant: Completion saved and temp session cleared');
+                              console.log('âœ… vakratunda chant: Completion saved and temp session cleared');
                             }
                             
                             setShowSceneCompletion(true);
@@ -1890,7 +1891,7 @@ appImages={{
             }}
             onComplete={onComplete}
    onReplay={() => {
-  console.log('🔀 INSTANT REPLAY: Garden Adventure restart');
+  console.log('ðŸ”€ INSTANT REPLAY: Garden Adventure restart');
   resetScene(false);  // No confirm dialog for replay
 }}
         
@@ -1955,7 +1956,7 @@ appImages={{
   fontSize: '12px',
   fontWeight: 'bold'
 }} onClick={() => {
-  console.log('🧪 TESTING: Universal completion clicked');
+  console.log('ðŸ§ª TESTING: Universal completion clicked');
   
   // Automatically complete all syllables and words in any scene
   const allSyllables = Object.keys(sceneState?.learnedSyllables || {});
@@ -2052,7 +2053,7 @@ appImages={{
             fontSize: '12px',
             fontWeight: 'bold'
           }} onClick={() => {
-            console.log('🧪 TESTING: Skip to Sarvada Game clicked');
+            console.log('ðŸ§ª TESTING: Skip to Sarvada Game clicked');
             
             setShowSparkle(null);
             setShowRecording(false);
@@ -2105,7 +2106,7 @@ appImages={{
               sarvadaWisdomShown: false
             });
             
-            console.log('✅ State set for Sarvada game - should start immediately');
+            console.log('âœ… State set for Sarvada game - should start immediately');
           }}>
             SKIP TO SARVADA
           </div>
