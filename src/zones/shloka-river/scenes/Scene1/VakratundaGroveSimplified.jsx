@@ -704,6 +704,12 @@ const VakratundaGroveContent = ({
                         <h1 className="game-modal-title">
                           {modal?.title || 'Bloom and Grow'}
                         </h1>
+                        <p className="game-modal-subtitle">
+                          {modal?.subtitle || 'Where Ancient Chants Echo'}
+                        </p>
+                        <p className="game-modal-subtitle">
+                          {modal?.description || 'Learn two sacred sounds and help the river bloom with wisdom.'}
+                        </p>
 
                         <div className="game-modal-icons">
                           <div className="game-modal-icon-item">
