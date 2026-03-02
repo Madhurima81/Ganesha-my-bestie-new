@@ -5,6 +5,7 @@ import './SuryakotiScene.css';
 import '../../../shared/components/OpeningModal.css';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../../lib/config/content/openingModals';
+import OpeningModal from '../../../shared/components/OpeningModal.jsx';
 
 // Import scene management components (PROVEN FROM CAVE)
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
@@ -86,7 +87,7 @@ import appSuryakoti from "../../assets/images/apps/app-suryakoti.png";
 import appSamaprabha from "../../assets/images/apps/app-samaprabha.png";
 
 const CAVE_PHASES = {
-    STORY_INTRO: 'story_intro', // ← ADD THIS LINE
+  STORY_INTRO: 'story_intro', // ← ADD THIS LINE
 
   // Part 1: Suryakoti Learning
   DOOR1_ACTIVE: 'door1_active',
@@ -95,7 +96,7 @@ const CAVE_PHASES = {
   SUN_COLLECTION_ACTIVE: 'sun_collection_active',
   SUN_COLLECTION_COMPLETE: 'sun_collection_complete',
   SURYAKOTI_LEARNING: 'suryakoti_learning',
-  
+
   // Part 2: Samaprabha Learning  
   DOOR2_ACTIVE: 'door2_active',
   DOOR2_COMPLETE: 'door2_complete',
@@ -103,7 +104,7 @@ const CAVE_PHASES = {
   HEALING_ACTIVE: 'healing_active',
   HEALING_COMPLETE: 'healing_complete',
   SAMAPRABHA_LEARNING: 'samaprabha_learning',
-  
+
   SCENE_CELEBRATION: 'scene_celebration',
   COMPLETE: 'complete'
 };
@@ -131,15 +132,15 @@ const STORY_MODALS = {
 };
 
 const powerConfig = {
-  suryakoti: { 
-    name: 'Million Suns Power', 
+  suryakoti: {
+    name: 'Million Suns Power',
     image: suryakotiSymbol,
-    color: '#FF8C42' 
+    color: '#FF8C42'
   },
-  samaprabha: { 
-    name: 'Equal Radiance Power', 
+  samaprabha: {
+    name: 'Equal Radiance Power',
     image: samaprabhaSymbol,
-    color: '#FFD700' 
+    color: '#FFD700'
   }
 };
 
@@ -192,7 +193,7 @@ const SuryakotiScene = ({
         zoneId={zoneId}
         sceneId={sceneId}
         initialState={{
-        welcomeShown: false,
+          welcomeShown: false,
 
           // Door 1 state (Su-rya-ko-ti)
           door1State: 'waiting',
@@ -227,29 +228,29 @@ const SuryakotiScene = ({
             //{ id: 4, healed: false, scaredFace: scaredFace4, happyFace: happyFace4 },
             //{ id: 5, healed: false, scaredFace: scaredFace5, happyFace: happyFace5 }
           ],
-          
-    // Sanskrit learning - Scene 1 words already learned
-learnedWords: {
-  vakratunda: { learned: true, scene: 1 },
-  mahakaya: { learned: true, scene: 1 },
-  suryakoti: { learned: false, scene: 2 },
-  samaprabha: { learned: false, scene: 2 } 
-},
 
-// ✅ NEW: Add these at root level (not inside learnedWords)
-showSuryakotiText: false,
-showSamaprabhaText: false,
+          // Sanskrit learning - Scene 1 words already learned
+          learnedWords: {
+            vakratunda: { learned: true, scene: 1 },
+            mahakaya: { learned: true, scene: 1 },
+            suryakoti: { learned: false, scene: 2 },
+            samaprabha: { learned: false, scene: 2 }
+          },
+
+          // ✅ NEW: Add these at root level (not inside learnedWords)
+          showSuryakotiText: false,
+          showSamaprabhaText: false,
 
           // Scene progression  
-phase: CAVE_PHASES.DOOR1_ACTIVE,
+          phase: CAVE_PHASES.DOOR1_ACTIVE,
           currentFocus: 'door1',
-          
+
           // Discovery and popup states (PROVEN SYSTEM)
           discoveredSymbols: {},
           currentPopup: null,
           symbolDiscoveryState: null,
           sidebarHighlightState: null,
-          
+
           // GameCoach states (PROVEN SYSTEM)
           /*gameCoachState: null,
           isReloadingGameCoach: false,
@@ -259,7 +260,7 @@ phase: CAVE_PHASES.DOOR1_ACTIVE,
           lastGameCoachTime: 0,
           sunCollectionIntroShown: false,
           healingIntroShown: false,*/
-          
+
           // Progress tracking (PROVEN SYSTEM)
           stars: 0,
           completed: false,
@@ -268,7 +269,7 @@ phase: CAVE_PHASES.DOOR1_ACTIVE,
             starsEarned: 0,
             completed: false
           },
-          
+
           // UI states (PROVEN SYSTEM)
           showingCompletionScreen: false,
           fireworksCompleted: false
@@ -304,16 +305,16 @@ const SuryakotiSceneContent = ({
   if (!sceneState?.phase) sceneActions.updateState({ phase: CAVE_PHASES.DOOR1_ACTIVE });
 
   // Access GameCoach functionality (PROVEN FROM CAVE)
-// GameCoach removed - using direct navigation
-const hideCoach = () => {}; // Stub for compatibility
-const clearManualCloseTracking = () => {}; // Stub for compatibility
+  // GameCoach removed - using direct navigation
+  const hideCoach = () => { }; // Stub for compatibility
+  const clearManualCloseTracking = () => { }; // Stub for compatibility
 
   const { resetScene } = useSceneReset(
-  sceneActions, 
-  'cave-of-secrets', 
-  'suryakoti-samaprabha', 
-  getSceneResetConfig('suryakoti-samaprabha')
-);
+    sceneActions,
+    'cave-of-secrets',
+    'suryakoti-samaprabha',
+    getSceneResetConfig('suryakoti-samaprabha')
+  );
 
   // State management (PROVEN FROM CAVE)
   const [showSparkle, setShowSparkle] = useState(null);
@@ -327,35 +328,35 @@ const clearManualCloseTracking = () => {}; // Stub for compatibility
   const [pendingAction, setPendingAction] = useState(null);
 
   // ADD after existing useState declarations:
-const [showCenteredSymbol, setShowCenteredSymbol] = useState(null);
-const [showPowerModal, setShowPowerModal] = useState(false);
-const [currentMissionSymbol, setCurrentMissionSymbol] = useState(null);
-const [showRescueModal, setShowRescueModal] = useState(false);
-const [currentRescueWord, setCurrentRescueWord] = useState(null);
-const [showStoryModal, setShowStoryModal] = useState(null); // 'suryakoti' or 'samaprabha'
+  const [showCenteredSymbol, setShowCenteredSymbol] = useState(null);
+  const [showPowerModal, setShowPowerModal] = useState(false);
+  const [currentMissionSymbol, setCurrentMissionSymbol] = useState(null);
+  const [showRescueModal, setShowRescueModal] = useState(false);
+  const [currentRescueWord, setCurrentRescueWord] = useState(null);
+  const [showStoryModal, setShowStoryModal] = useState(null); // 'suryakoti' or 'samaprabha'
 
-// ========== 🛡️ CLICK PROTECTION STATE ==========
-const [clickLocked, setClickLocked] = useState(false);
-const lastClickTime = useRef(0);
-const activeTouches = useRef(0);
-const isProcessingClick = useRef(false);
+  // ========== 🛡️ CLICK PROTECTION STATE ==========
+  const [clickLocked, setClickLocked] = useState(false);
+  const lastClickTime = useRef(0);
+  const activeTouches = useRef(0);
+  const isProcessingClick = useRef(false);
 
-const [isManualReset, setIsManualReset] = useState(false);
+  const [isManualReset, setIsManualReset] = useState(false);
 
-// Discovery overlay states
-const [showDiscoveryFlip1, setShowDiscoveryFlip1] = useState(false);
-const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false);
+  // Discovery overlay states
+  const [showDiscoveryFlip1, setShowDiscoveryFlip1] = useState(false);
+  const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false);
 
-const [discovery1Triggered, setDiscovery1Triggered] = useState(false);
-const [discovery2Triggered, setDiscovery2Triggered] = useState(false);
+  const [discovery1Triggered, setDiscovery1Triggered] = useState(false);
+  const [discovery2Triggered, setDiscovery2Triggered] = useState(false);
 
-// Resume popup
-const [showResumePopup, setShowResumePopup] = useState(false);
-const [resumeMessage, setResumeMessage] = useState('');
-const resumePopupTimeoutRef = useRef(null);
+  // Resume popup
+  const [showResumePopup, setShowResumePopup] = useState(false);
+  const [resumeMessage, setResumeMessage] = useState('');
+  const resumePopupTimeoutRef = useRef(null);
 
-// Reload handler
-const reloadHandledRef = useRef(false);
+  // Reload handler
+  const reloadHandledRef = useRef(false);
 
   // Refs (PROVEN FROM CAVE)
   const timeoutsRef = useRef([]);
@@ -375,39 +376,39 @@ const reloadHandledRef = useRef(false);
   };
 
   const playAudio = (audioPath, volume = 1.0) => {
-  try {
-    const audio = new Audio(audioPath);
-    audio.volume = volume;
-    audio.play().catch(() => {});
-  } catch (error) {
-    console.warn('Audio failed:', error);
-  }
-};
-
-const playSyllable = (syllable) => {
-  const map = {
-    'sur': 'suryakoti-sur',
-    'ya': 'suryakoti-ya',
-    'ko': 'suryakoti-ko',
-    'ti': 'suryakoti-ti',
-    'sa': 'samaprabha-sa',
-    'ma': 'samaprabha-ma',
-    'pra': 'samaprabha-pra',
-    'bha': 'samaprabha-bha'
+    try {
+      const audio = new Audio(audioPath);
+      audio.volume = volume;
+      audio.play().catch(() => { });
+    } catch (error) {
+      console.warn('Audio failed:', error);
+    }
   };
-  playAudio(`/audio/syllables/${map[syllable] || syllable}.mp3`);
-};
+
+  const playSyllable = (syllable) => {
+    const map = {
+      'sur': 'suryakoti-sur',
+      'ya': 'suryakoti-ya',
+      'ko': 'suryakoti-ko',
+      'ti': 'suryakoti-ti',
+      'sa': 'samaprabha-sa',
+      'ma': 'samaprabha-ma',
+      'pra': 'samaprabha-pra',
+      'bha': 'samaprabha-bha'
+    };
+    playAudio(`/audio/syllables/${map[syllable] || syllable}.mp3`);
+  };
 
 
   // Show first modal on mount
-/*useEffect(() => {
-  if (sceneState.phase === 'STORY_INTRO' && !showStoryModal) {
-    setTimeout(() => {
-      setShowStoryModal('suryakoti');
-    }, 500);
-  }
-}, [sceneState.phase]);*/
-  
+  /*useEffect(() => {
+    if (sceneState.phase === 'STORY_INTRO' && !showStoryModal) {
+      setTimeout(() => {
+        setShowStoryModal('suryakoti');
+      }, 500);
+    }
+  }, [sceneState.phase]);*/
+
 
   // Clear local storage function
   const clearLocalStorage = () => {
@@ -427,9 +428,9 @@ const playSyllable = (syllable) => {
             keysToRemove.push(key);
           }
         }
-        
+
         keysToRemove.forEach(key => localStorage.removeItem(key));
-        
+
         console.log('🗑️ Local storage cleared:', keysToRemove.length, 'keys removed');
         alert('Local storage cleared! The page will reload.');
         window.location.reload();
@@ -440,7 +441,7 @@ const playSyllable = (syllable) => {
     }
   };
 
-  
+
 
   // Cleanup timeouts on unmount (PROVEN FROM CAVE)
   useEffect(() => {
@@ -450,214 +451,214 @@ const playSyllable = (syllable) => {
   }, []);
 
   // ==================== RELOAD HANDLING ====================
-useEffect(() => {
-  if (!isReload || reloadHandledRef.current || !sceneState.welcomeShown) {
-    return;
-  }
-
-  console.log('🔄 RELOAD DETECTED - Phase:', sceneState.phase);
-  reloadHandledRef.current = true;
-
-  // ============================================
-  // DISCOVERY PHASES - SHOW OVERLAYS AGAIN
-  // ============================================
-  
-  if (sceneState.phase === CAVE_PHASES.SURYAKOTI_LEARNING) {
-    console.log('📌 Reload: Discovery 1 - Showing again');
-    
-    sceneActions.updateState({
-      learnedWords: {
-        ...sceneState.learnedWords,
-        suryakoti: { learned: true, scene: 2 }
-      }
-    });
-    
-    setTimeout(() => setShowDiscoveryFlip1(true), 500);
-    return;
-  }
-  
-  if (sceneState.phase === CAVE_PHASES.SAMAPRABHA_LEARNING) {
-    console.log('📌 Reload: Discovery 2 - Showing again');
-    
-    sceneActions.updateState({
-      learnedWords: {
-        ...sceneState.learnedWords,
-        suryakoti: { learned: true, scene: 2 },
-        samaprabha: { learned: true, scene: 2 }
-      }
-    });
-    
-    setTimeout(() => setShowDiscoveryFlip2(true), 500);
-    return;
-  }
-  
-  // ============================================
-  // DOOR PHASES
-  // ============================================
-  
-  // Door 1 - Su-rya-ko-ti
-  if (sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE) {
-    const placedCount = sceneState.door1SyllablesPlaced?.length || 0;
-    
-    if (placedCount >= 4) {
-      console.log('📌 Door 1 complete, modal will show');
+  useEffect(() => {
+    if (!isReload || reloadHandledRef.current || !sceneState.welcomeShown) {
       return;
     }
-    
-    setResumeMessage(`Continue spelling SURYAKOTI! ${placedCount}/4 syllables placed!`);
-    setShowResumePopup(true);
-    
-    if (resumePopupTimeoutRef.current) {
-      clearTimeout(resumePopupTimeoutRef.current);
-    }
-    resumePopupTimeoutRef.current = setTimeout(() => {
-      setShowResumePopup(false);
-    }, 5000);
-    
-    return;
-  }
-  
-  if (sceneState.phase === CAVE_PHASES.DOOR1_COMPLETE) {
-    console.log('📌 Door 1 complete, showing modal');
-    return;
-  }
-  
-  // Door 2 - Sa-ma-pra-bha
-  if (sceneState.phase === CAVE_PHASES.DOOR2_ACTIVE) {
-    const placedCount = sceneState.door2SyllablesPlaced?.length || 0;
-    
-    if (placedCount >= 4) {
-      console.log('📌 Door 2 complete, modal will show');
-      return;
-    }
-    
-    setResumeMessage(`Continue spelling SAMAPRABHA! ${placedCount}/4 syllables placed!`);
-    setShowResumePopup(true);
-    
-    if (resumePopupTimeoutRef.current) {
-      clearTimeout(resumePopupTimeoutRef.current);
-    }
-    resumePopupTimeoutRef.current = setTimeout(() => {
-      setShowResumePopup(false);
-    }, 5000);
-    
-    return;
-  }
-  
-  if (sceneState.phase === CAVE_PHASES.DOOR2_COMPLETE) {
-    console.log('📌 Door 2 complete, showing modal');
-    return;
-  }
-  
-  // ============================================
-  // GAME 1: SUN COLLECTION (Component handles its own reload)
-  // ============================================
-  
-if (sceneState.phase === CAVE_PHASES.SUN_COLLECTION_ACTIVE) {
-    console.log('📌 Reload: Sun collection phase');
-    
-    const collectedSuns = sceneState.collectedSuns || 0;
-    
-    // ✅ FIX: Check count AND trigger the Discovery Flip
-    if (collectedSuns >= 3) {
-      console.log('📌 All suns collected, triggering discovery');
-      
+
+    console.log('🔄 RELOAD DETECTED - Phase:', sceneState.phase);
+    reloadHandledRef.current = true;
+
+    // ============================================
+    // DISCOVERY PHASES - SHOW OVERLAYS AGAIN
+    // ============================================
+
+    if (sceneState.phase === CAVE_PHASES.SURYAKOTI_LEARNING) {
+      console.log('📌 Reload: Discovery 1 - Showing again');
+
       sceneActions.updateState({
-        phase: CAVE_PHASES.SURYAKOTI_LEARNING,
-        sunCollectionCompleted: true
-      });
-      
-      // ⚡️ ADD THIS: Force the overlay to open immediately
-      setTimeout(() => {
-        setShowDiscoveryFlip1(true);
-      }, 500);
-
-      return;
-    }
-    
-    // Show resume for in-progress
-    setResumeMessage(`Keep collecting suns! ${collectedSuns}/3 found!`);
-    setShowResumePopup(true);
-    
-    if (resumePopupTimeoutRef.current) {
-      clearTimeout(resumePopupTimeoutRef.current);
-    }
-    resumePopupTimeoutRef.current = setTimeout(() => {
-      setShowResumePopup(false);
-    }, 5000);
-    
-    return;
-  }
-  // ============================================
-  // GAME 2: HEALING (Inline game)
-  // ============================================
-
-  if (sceneState.phase === CAVE_PHASES.HEALING_ACTIVE) {
-    console.log('📌 Reload: Healing phase');
-    
-    // Keep your existing learnedWords update logic here
-    sceneActions.updateState({
-      learnedWords: {
-        ...sceneState.learnedWords,
-        suryakoti: { learned: true, scene: 2 }
-      }
-    });
-    
-    const healedCount = sceneState.healedChildren?.length || 0;
-    
-    // ✅ FIX: Check count AND trigger the Discovery Flip
-    if (healedCount >= 3) {
-      console.log('📌 All 3 healed, triggering discovery');
-      
-      sceneActions.updateState({
-        phase: CAVE_PHASES.SAMAPRABHA_LEARNING,
-        healingCompleted: true
+        learnedWords: {
+          ...sceneState.learnedWords,
+          suryakoti: { learned: true, scene: 2 }
+        }
       });
 
-      // ⚡️ ADD THIS: Force the overlay to open immediately
-      setTimeout(() => {
-        setShowDiscoveryFlip2(true);
-      }, 500);
+      setTimeout(() => setShowDiscoveryFlip1(true), 500);
+      return;
+    }
+
+    if (sceneState.phase === CAVE_PHASES.SAMAPRABHA_LEARNING) {
+      console.log('📌 Reload: Discovery 2 - Showing again');
+
+      sceneActions.updateState({
+        learnedWords: {
+          ...sceneState.learnedWords,
+          suryakoti: { learned: true, scene: 2 },
+          samaprabha: { learned: true, scene: 2 }
+        }
+      });
+
+      setTimeout(() => setShowDiscoveryFlip2(true), 500);
+      return;
+    }
+
+    // ============================================
+    // DOOR PHASES
+    // ============================================
+
+    // Door 1 - Su-rya-ko-ti
+    if (sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE) {
+      const placedCount = sceneState.door1SyllablesPlaced?.length || 0;
+
+      if (placedCount >= 4) {
+        console.log('📌 Door 1 complete, modal will show');
+        return;
+      }
+
+      setResumeMessage(`Continue spelling SURYAKOTI! ${placedCount}/4 syllables placed!`);
+      setShowResumePopup(true);
+
+      if (resumePopupTimeoutRef.current) {
+        clearTimeout(resumePopupTimeoutRef.current);
+      }
+      resumePopupTimeoutRef.current = setTimeout(() => {
+        setShowResumePopup(false);
+      }, 5000);
 
       return;
     }
-    
-    // Show resume for in-progress
-    setResumeMessage(`Continue healing! ${healedCount}/3 children healed!`);
-    setShowResumePopup(true);
-    
-    if (resumePopupTimeoutRef.current) {
-      clearTimeout(resumePopupTimeoutRef.current);
-    }
-    resumePopupTimeoutRef.current = setTimeout(() => {
-      setShowResumePopup(false);
-    }, 5000);
-    
-    return;
-  }
 
-  // ============================================
-  // COMPLETION
-  // ============================================
-  
-  if (sceneState.phase === CAVE_PHASES.COMPLETE) {
-    console.log('📌 Reload: Completion');
-    
-    sceneActions.updateState({
-      learnedWords: {
-        suryakoti: { learned: true, scene: 2 },
-        samaprabha: { learned: true, scene: 2 }
+    if (sceneState.phase === CAVE_PHASES.DOOR1_COMPLETE) {
+      console.log('📌 Door 1 complete, showing modal');
+      return;
+    }
+
+    // Door 2 - Sa-ma-pra-bha
+    if (sceneState.phase === CAVE_PHASES.DOOR2_ACTIVE) {
+      const placedCount = sceneState.door2SyllablesPlaced?.length || 0;
+
+      if (placedCount >= 4) {
+        console.log('📌 Door 2 complete, modal will show');
+        return;
       }
-    });
-    
-    if (!sceneState.showingCompletionScreen) {
-      setTimeout(() => setShowSceneCompletion(true), 500);
-    }
-    
-    return;
-  }
 
-}, [isReload, sceneState.phase, sceneState.welcomeShown]);
+      setResumeMessage(`Continue spelling SAMAPRABHA! ${placedCount}/4 syllables placed!`);
+      setShowResumePopup(true);
+
+      if (resumePopupTimeoutRef.current) {
+        clearTimeout(resumePopupTimeoutRef.current);
+      }
+      resumePopupTimeoutRef.current = setTimeout(() => {
+        setShowResumePopup(false);
+      }, 5000);
+
+      return;
+    }
+
+    if (sceneState.phase === CAVE_PHASES.DOOR2_COMPLETE) {
+      console.log('📌 Door 2 complete, showing modal');
+      return;
+    }
+
+    // ============================================
+    // GAME 1: SUN COLLECTION (Component handles its own reload)
+    // ============================================
+
+    if (sceneState.phase === CAVE_PHASES.SUN_COLLECTION_ACTIVE) {
+      console.log('📌 Reload: Sun collection phase');
+
+      const collectedSuns = sceneState.collectedSuns || 0;
+
+      // ✅ FIX: Check count AND trigger the Discovery Flip
+      if (collectedSuns >= 3) {
+        console.log('📌 All suns collected, triggering discovery');
+
+        sceneActions.updateState({
+          phase: CAVE_PHASES.SURYAKOTI_LEARNING,
+          sunCollectionCompleted: true
+        });
+
+        // ⚡️ ADD THIS: Force the overlay to open immediately
+        setTimeout(() => {
+          setShowDiscoveryFlip1(true);
+        }, 500);
+
+        return;
+      }
+
+      // Show resume for in-progress
+      setResumeMessage(`Keep collecting suns! ${collectedSuns}/3 found!`);
+      setShowResumePopup(true);
+
+      if (resumePopupTimeoutRef.current) {
+        clearTimeout(resumePopupTimeoutRef.current);
+      }
+      resumePopupTimeoutRef.current = setTimeout(() => {
+        setShowResumePopup(false);
+      }, 5000);
+
+      return;
+    }
+    // ============================================
+    // GAME 2: HEALING (Inline game)
+    // ============================================
+
+    if (sceneState.phase === CAVE_PHASES.HEALING_ACTIVE) {
+      console.log('📌 Reload: Healing phase');
+
+      // Keep your existing learnedWords update logic here
+      sceneActions.updateState({
+        learnedWords: {
+          ...sceneState.learnedWords,
+          suryakoti: { learned: true, scene: 2 }
+        }
+      });
+
+      const healedCount = sceneState.healedChildren?.length || 0;
+
+      // ✅ FIX: Check count AND trigger the Discovery Flip
+      if (healedCount >= 3) {
+        console.log('📌 All 3 healed, triggering discovery');
+
+        sceneActions.updateState({
+          phase: CAVE_PHASES.SAMAPRABHA_LEARNING,
+          healingCompleted: true
+        });
+
+        // ⚡️ ADD THIS: Force the overlay to open immediately
+        setTimeout(() => {
+          setShowDiscoveryFlip2(true);
+        }, 500);
+
+        return;
+      }
+
+      // Show resume for in-progress
+      setResumeMessage(`Continue healing! ${healedCount}/3 children healed!`);
+      setShowResumePopup(true);
+
+      if (resumePopupTimeoutRef.current) {
+        clearTimeout(resumePopupTimeoutRef.current);
+      }
+      resumePopupTimeoutRef.current = setTimeout(() => {
+        setShowResumePopup(false);
+      }, 5000);
+
+      return;
+    }
+
+    // ============================================
+    // COMPLETION
+    // ============================================
+
+    if (sceneState.phase === CAVE_PHASES.COMPLETE) {
+      console.log('📌 Reload: Completion');
+
+      sceneActions.updateState({
+        learnedWords: {
+          suryakoti: { learned: true, scene: 2 },
+          samaprabha: { learned: true, scene: 2 }
+        }
+      });
+
+      if (!sceneState.showingCompletionScreen) {
+        setTimeout(() => setShowSceneCompletion(true), 500);
+      }
+
+      return;
+    }
+
+  }, [isReload, sceneState.phase, sceneState.welcomeShown]);
 
 
 
@@ -704,9 +705,9 @@ if (sceneState.phase === CAVE_PHASES.SUN_COLLECTION_ACTIVE) {
       position: { bottom: '60%', left: '30%', transform: 'translateX(-50%)' },
       condition: (sceneState, hintLevel) => {
         if (!sceneState) return false;
-        return sceneState?.phase === CAVE_PHASES.DOOR1_ACTIVE && 
-               !sceneState?.door1Completed &&
-               !showMagicalCard && !isVisible && !showPopupBook;
+        return sceneState?.phase === CAVE_PHASES.DOOR1_ACTIVE &&
+          !sceneState?.door1Completed &&
+          !showMagicalCard && !isVisible && !showPopupBook;
       }
     },
     {
@@ -717,8 +718,8 @@ if (sceneState.phase === CAVE_PHASES.SUN_COLLECTION_ACTIVE) {
       condition: (sceneState, hintLevel) => {
         if (!sceneState) return false;
         return sceneState?.phase === CAVE_PHASES.SUN_COLLECTION_ACTIVE &&
-               sceneState?.collectedSuns < 5 &&
-               !showMagicalCard && !isVisible && !showPopupBook;
+          sceneState?.collectedSuns < 5 &&
+          !showMagicalCard && !isVisible && !showPopupBook;
       }
     },
     {
@@ -728,9 +729,9 @@ if (sceneState.phase === CAVE_PHASES.SUN_COLLECTION_ACTIVE) {
       position: { bottom: '60%', left: '30%', transform: 'translateX(-50%)' },
       condition: (sceneState, hintLevel) => {
         if (!sceneState) return false;
-        return sceneState?.phase === CAVE_PHASES.DOOR2_ACTIVE && 
-               !sceneState?.door2Completed &&
-               !showMagicalCard && !isVisible && !showPopupBook;
+        return sceneState?.phase === CAVE_PHASES.DOOR2_ACTIVE &&
+          !sceneState?.door2Completed &&
+          !showMagicalCard && !isVisible && !showPopupBook;
       }
     },
     {
@@ -741,8 +742,8 @@ if (sceneState.phase === CAVE_PHASES.SUN_COLLECTION_ACTIVE) {
       condition: (sceneState, hintLevel) => {
         if (!sceneState) return false;
         return sceneState?.phase === CAVE_PHASES.HEALING_ACTIVE &&
-               sceneState?.healedChildren?.length < 3 &&
-               !showMagicalCard && !isVisible && !showPopupBook;
+          sceneState?.healedChildren?.length < 3 &&
+          !showMagicalCard && !isVisible && !showPopupBook;
       }
     }
   ];
@@ -850,7 +851,7 @@ if (sceneState.phase === CAVE_PHASES.SUN_COLLECTION_ACTIVE) {
   // RELOAD LOGIC (PROVEN FROM CAVE)
   useEffect(() => {
     if (!isReload || !sceneState) return;
-    
+
     console.log('🔄 SURYAKOTI RELOAD: Starting comprehensive reload sequence', {
       currentPopup: sceneState.currentPopup,
       showingCompletionScreen: sceneState.showingCompletionScreen,
@@ -859,36 +860,36 @@ if (sceneState.phase === CAVE_PHASES.SUN_COLLECTION_ACTIVE) {
     });
 
     // ✅ EMERGENCY: Clear all sparkles on any reload
-setTimeout(() => {
-  setShowSparkle(null); // Clear React sparkle state
-  
-  // Clear any DOM sparkle elements
-  const sparkleElements = document.querySelectorAll('.sparkle, [class*="sparkle"]');
-  sparkleElements.forEach(el => el.style.display = 'none');
-}, 100);
+    setTimeout(() => {
+      setShowSparkle(null); // Clear React sparkle state
+
+      // Clear any DOM sparkle elements
+      const sparkleElements = document.querySelectorAll('.sparkle, [class*="sparkle"]');
+      sparkleElements.forEach(el => el.style.display = 'none');
+    }, 100);
 
     // Check for Play Again flag first
     const profileId = localStorage.getItem('activeProfileId');
     const playAgainKey = `play_again_${profileId}_${zoneId}_${sceneId}`;
     const playAgainRequested = localStorage.getItem(playAgainKey);
-    
+
     const isFreshRestartAfterPlayAgain = (
       playAgainRequested === 'true' ||
-      (sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE && 
-       sceneState.completed === false && 
-       sceneState.stars === 0 && 
-       (sceneState.currentPopup === 'final_fireworks' || sceneState.showingCompletionScreen))
+      (sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE &&
+        sceneState.completed === false &&
+        sceneState.stars === 0 &&
+        (sceneState.currentPopup === 'final_fireworks' || sceneState.showingCompletionScreen))
     );
-    
+
     if (isFreshRestartAfterPlayAgain) {
       console.log('🔄 SURYAKOTI RELOAD: Detected fresh restart after Play Again - clearing completion state');
-      
+
       if (playAgainRequested === 'true') {
         localStorage.removeItem(playAgainKey);
         console.log('✅ CLEARED: Suryakoti Play Again storage flag');
       }
-      
-      sceneActions.updateState({ 
+
+      sceneActions.updateState({
         showingCompletionScreen: false,
         currentPopup: null,
         completed: false,
@@ -898,20 +899,20 @@ setTimeout(() => {
     }
 
     // IMMEDIATELY block GameCoach normal flow
-    
+
     setTimeout(() => {
       // Handle popup states, symbol discovery, etc. (same pattern as Cave)
       if (sceneState.currentPopup) {
         console.log('🔄 SURYAKOTI: Resuming popup:', sceneState.currentPopup);
-        
-        switch(sceneState.currentPopup) {
-    
+
+        switch (sceneState.currentPopup) {
+
 
           case 'final_fireworks':
             const profileId = localStorage.getItem('activeProfileId');
             const playAgainKey = `play_again_${profileId}_cave-of-secrets_suryakoti-samaprabha`;
             const playAgainRequested = localStorage.getItem(playAgainKey);
-            
+
             if (playAgainRequested === 'true') {
               console.log('🚫 SURYAKOTI FIREWORKS BLOCKED: Play Again was clicked');
               localStorage.removeItem(playAgainKey);
@@ -924,11 +925,11 @@ setTimeout(() => {
               });
               return;
             }
-            
+
             console.log('🎆 SURYAKOTI: Resuming final fireworks');
             setShowSparkle('final-fireworks');
             sceneActions.updateState({
-          
+
               phase: CAVE_PHASES.COMPLETE,
               stars: 8,
               completed: true,
@@ -938,7 +939,7 @@ setTimeout(() => {
                 completed: true
               }
             });
-            
+
             setTimeout(() => {
               setShowSparkle('final-fireworks');
             }, 500);
@@ -948,147 +949,147 @@ setTimeout(() => {
       }
 
       // Line 609: }
-// Line 610: return;
-// Line 611: }
+      // Line 610: return;
+      // Line 611: }
 
-// ✅ FIXED - Handle Door 1 reload properly:
-else if (sceneState.door1Completed && 
-         (sceneState.phase === CAVE_PHASES.SUN_COLLECTION_INTRO || 
+      // ✅ FIXED - Handle Door 1 reload properly:
+      else if (sceneState.door1Completed &&
+        (sceneState.phase === CAVE_PHASES.SUN_COLLECTION_INTRO ||
           (sceneState.collectedSuns === 0 && sceneState.sunCollectionStarted))) {
-  console.log('🔄 SURYAKOTI: Door 1 complete, clearing all animations and starting game');
-  
-  // Clear ALL blocking states
-  sceneActions.updateState({
-    phase: CAVE_PHASES.SUN_COLLECTION_ACTIVE, // Skip intro, go straight to active
-    sunCollectionStarted: true, // Ensure game is started
-    
-    // ✅ Clear all blocking animation states
-    symbolDiscoveryState: null,
-    sidebarHighlightState: null,
-      
-    
-    // ✅ Clear any sparkle states
-    currentPopup: null
-  });
-  
-  // ✅ Force clear any remaining sparkles
-  setTimeout(() => {
-    const sparkleElements = document.querySelectorAll('[style*="sparkle"], [class*="sparkle"]');
-    sparkleElements.forEach(el => el.remove());
-  }, 100);
-  
-  return;
-}
+        console.log('🔄 SURYAKOTI: Door 1 complete, clearing all animations and starting game');
 
-// ✅ ADD: Handle Door 2 completed but healing not started  
-else if (sceneState.door2Completed && !sceneState.healingStarted) {
-  console.log('🔄 SURYAKOTI: Door 2 completed but healing not started - starting healing game');
-  sceneActions.updateState({
-    phase: CAVE_PHASES.HEALING_INTRO,
-    healingStarted: true,
-    availableSuns: [
-      { id: 1, angle: 0 },
-      { id: 2, angle: 72 },
-      { id: 3, angle: 144 },
-      //{ id: 4, angle: 216 },
-      //{ id: 5, angle: 288 }
-    ],
-  
-  });
-  return;
-}
+        // Clear ALL blocking states
+        sceneActions.updateState({
+          phase: CAVE_PHASES.SUN_COLLECTION_ACTIVE, // Skip intro, go straight to active
+          sunCollectionStarted: true, // Ensure game is started
 
-// ✅ NEW: Handle sun collection started but 0 suns collected (freeze point)
-else if (sceneState.sunCollectionStarted && 
-         sceneState.collectedSuns === 0 && 
-         (sceneState.phase === CAVE_PHASES.SUN_COLLECTION_INTRO || 
+          // ✅ Clear all blocking animation states
+          symbolDiscoveryState: null,
+          sidebarHighlightState: null,
+
+
+          // ✅ Clear any sparkle states
+          currentPopup: null
+        });
+
+        // ✅ Force clear any remaining sparkles
+        setTimeout(() => {
+          const sparkleElements = document.querySelectorAll('[style*="sparkle"], [class*="sparkle"]');
+          sparkleElements.forEach(el => el.remove());
+        }, 100);
+
+        return;
+      }
+
+      // ✅ ADD: Handle Door 2 completed but healing not started  
+      else if (sceneState.door2Completed && !sceneState.healingStarted) {
+        console.log('🔄 SURYAKOTI: Door 2 completed but healing not started - starting healing game');
+        sceneActions.updateState({
+          phase: CAVE_PHASES.HEALING_INTRO,
+          healingStarted: true,
+          availableSuns: [
+            { id: 1, angle: 0 },
+            { id: 2, angle: 72 },
+            { id: 3, angle: 144 },
+            //{ id: 4, angle: 216 },
+            //{ id: 5, angle: 288 }
+          ],
+
+        });
+        return;
+      }
+
+      // ✅ NEW: Handle sun collection started but 0 suns collected (freeze point)
+      else if (sceneState.sunCollectionStarted &&
+        sceneState.collectedSuns === 0 &&
+        (sceneState.phase === CAVE_PHASES.SUN_COLLECTION_INTRO ||
           sceneState.phase === CAVE_PHASES.SUN_COLLECTION_ACTIVE)) {
-  console.log('🔄 SURYAKOTI: Sun collection started but 0 suns - clearing freeze state');
-  sceneActions.updateState({
-    phase: CAVE_PHASES.SUN_COLLECTION_ACTIVE,
-  });
-  return;
-}
+        console.log('🔄 SURYAKOTI: Sun collection started but 0 suns - clearing freeze state');
+        sceneActions.updateState({
+          phase: CAVE_PHASES.SUN_COLLECTION_ACTIVE,
+        });
+        return;
+      }
 
-// ✅ ADD: Handle mid-sun-collection reload
-else if (sceneState.sunCollectionStarted && 
-         !sceneState.sunCollectionCompleted && 
-         sceneState.collectedSuns > 0 && 
-         sceneState.collectedSuns < 3) {
-  console.log('🔄 SURYAKOTI: Resuming mid-sun-collection with', sceneState.collectedSuns, 'suns');
-  sceneActions.updateState({
-    phase: CAVE_PHASES.SUN_COLLECTION_ACTIVE,
-  });
-  return;
-}
+      // ✅ ADD: Handle mid-sun-collection reload
+      else if (sceneState.sunCollectionStarted &&
+        !sceneState.sunCollectionCompleted &&
+        sceneState.collectedSuns > 0 &&
+        sceneState.collectedSuns < 3) {
+        console.log('🔄 SURYAKOTI: Resuming mid-sun-collection with', sceneState.collectedSuns, 'suns');
+        sceneActions.updateState({
+          phase: CAVE_PHASES.SUN_COLLECTION_ACTIVE,
+        });
+        return;
+      }
 
-// ✅ ADD: Handle sun collection completed but learning not started
-else if (sceneState.sunCollectionCompleted && 
-         !sceneState.learnedWords?.suryakoti?.learned &&
-         !sceneState.symbolDiscoveryState && 
-         !sceneState.currentPopup) {
-  console.log('🔄 SURYAKOTI: Sun collection completed but Suryakoti learning not started');
-  sceneActions.updateState({
-    phase: CAVE_PHASES.SURYAKOTI_LEARNING,
-  });
-  // Trigger learning completion
-  setTimeout(() => completeSuryakotiLearning(), 500);
-  return;
-}
+      // ✅ ADD: Handle sun collection completed but learning not started
+      else if (sceneState.sunCollectionCompleted &&
+        !sceneState.learnedWords?.suryakoti?.learned &&
+        !sceneState.symbolDiscoveryState &&
+        !sceneState.currentPopup) {
+        console.log('🔄 SURYAKOTI: Sun collection completed but Suryakoti learning not started');
+        sceneActions.updateState({
+          phase: CAVE_PHASES.SURYAKOTI_LEARNING,
+        });
+        // Trigger learning completion
+        setTimeout(() => completeSuryakotiLearning(), 500);
+        return;
+      }
 
-// ✅ FIXED - Better handling of text animation reload:
-else if (sceneState.showSuryakotiText || 
-         (sceneState.learnedWords?.suryakoti?.learned && 
+      // ✅ FIXED - Better handling of text animation reload:
+      else if (sceneState.showSuryakotiText ||
+        (sceneState.learnedWords?.suryakoti?.learned &&
           sceneState.phase === CAVE_PHASES.SURYAKOTI_LEARNING)) {
-  console.log('🔄 SURYAKOTI: Resuming during Suryakoti text animation - skipping to Door 2');
-  
-  // Clear ALL animation states to prevent loops
-  sceneActions.updateState({
-    showSuryakotiText: false,
-    phase: CAVE_PHASES.DOOR2_ACTIVE,
-    
-    // ✅ ADD: Ensure sun collection is marked complete
-    sunCollectionCompleted: true,
-    sunCollectionStarted: true,
-    collectedSuns: 3,
-    caveIllumination: 100,
-    
-    // ✅ ADD: Prevent any pending callbacks
-    symbolDiscoveryState: null,
-    sidebarHighlightState: null
-  });
-  
-  // ✅ ADD: Clear any pending timeouts that might restart animation
-  if (typeof window !== 'undefined') {
-    const highestId = setTimeout(() => {}, 0);
-    for (let i = 0; i < highestId; i++) {
-      clearTimeout(i);
-    }
-  }
-  
-  return;
-}
+        console.log('🔄 SURYAKOTI: Resuming during Suryakoti text animation - skipping to Door 2');
 
-else if (sceneState.showSamaprabhaText || 
-         (sceneState.learnedWords?.samaprabha?.learned && 
+        // Clear ALL animation states to prevent loops
+        sceneActions.updateState({
+          showSuryakotiText: false,
+          phase: CAVE_PHASES.DOOR2_ACTIVE,
+
+          // ✅ ADD: Ensure sun collection is marked complete
+          sunCollectionCompleted: true,
+          sunCollectionStarted: true,
+          collectedSuns: 3,
+          caveIllumination: 100,
+
+          // ✅ ADD: Prevent any pending callbacks
+          symbolDiscoveryState: null,
+          sidebarHighlightState: null
+        });
+
+        // ✅ ADD: Clear any pending timeouts that might restart animation
+        if (typeof window !== 'undefined') {
+          const highestId = setTimeout(() => { }, 0);
+          for (let i = 0; i < highestId; i++) {
+            clearTimeout(i);
+          }
+        }
+
+        return;
+      }
+
+      else if (sceneState.showSamaprabhaText ||
+        (sceneState.learnedWords?.samaprabha?.learned &&
           sceneState.phase === CAVE_PHASES.SAMAPRABHA_LEARNING)) {
-  console.log('🔄 SURYAKOTI: Resuming during Samaprabha text animation - skipping to fireworks');
-  sceneActions.updateState({
-    showSamaprabhaText: false, // Clear the text
-  });
-  // Skip to final celebration
-  setTimeout(() => showFinalCelebration(), 500);
-  return;
-}
+        console.log('🔄 SURYAKOTI: Resuming during Samaprabha text animation - skipping to fireworks');
+        sceneActions.updateState({
+          showSamaprabhaText: false, // Clear the text
+        });
+        // Skip to final celebration
+        setTimeout(() => showFinalCelebration(), 500);
+        return;
+      }
 
-// Continue with existing code after this...
+      // Continue with existing code after this...
 
       // Handle completion screen reload
       if (sceneState.showingCompletionScreen) {
         const profileId = localStorage.getItem('activeProfileId');
         const playAgainKey = `play_again_${profileId}_cave-of-secrets_suryakoti-samaprabha`;
         const playAgainRequested = localStorage.getItem(playAgainKey);
-        
+
         if (playAgainRequested === 'true') {
           console.log('🚫 SURYAKOTI COMPLETION BLOCKED: Play Again was clicked');
           localStorage.removeItem(playAgainKey);
@@ -1101,10 +1102,10 @@ else if (sceneState.showSamaprabhaText ||
           });
           return;
         }
-        
+
         console.log('🔄 SURYAKOTI: Resuming completion screen');
         setShowSceneCompletion(true);
-      
+
         return;
       }
 
@@ -1112,454 +1113,454 @@ else if (sceneState.showSamaprabhaText ||
       console.log('🔄 SURYAKOTI: No special reload needed, clearing flags');
       setTimeout(() => {
       }, 1500);
-      
+
     }, 500);
-    
+
   }, [isReload]);
 
   // Door 1 handlers (ADAPTED FOR SURYAKOTI)
   const handleDoor1SyllablePlaced = (syllable) => {
-     if (showResumePopup) {
-    setShowResumePopup(false);
-    if (resumePopupTimeoutRef.current) {
-      clearTimeout(resumePopupTimeoutRef.current);
+    if (showResumePopup) {
+      setShowResumePopup(false);
+      if (resumePopupTimeoutRef.current) {
+        clearTimeout(resumePopupTimeoutRef.current);
+      }
     }
-  }
     hideActiveHints();
     console.log(`Door 1 syllable placed: ${syllable}`);
-    
+
     const expectedSyllable = sceneState.door1Syllables?.[sceneState.door1CurrentStep || 0] || 'Su';
     const isCorrect = syllable === expectedSyllable;
-    
+
     if (isCorrect) {
       const newStep = (sceneState.door1CurrentStep || 0) + 1;
       const newSyllablesPlaced = [...(sceneState.door1SyllablesPlaced || []), syllable];
-      
-      console.log(`✅ Correct! Step ${newStep-1} -> ${newStep}`);
-      
+
+      console.log(`✅ Correct! Step ${newStep - 1} -> ${newStep}`);
+
       sceneActions.updateState({
         door1SyllablesPlaced: newSyllablesPlaced,
         door1CurrentStep: newStep
       });
-      
-  if (newStep >= 4) {
-  // ❌ REMOVED: Don't auto-trigger door completion
-  // The DoorComponent will call onDoorComplete when button is clicked
-  console.log('✅ All syllables placed - waiting for Start Challenge button');
-}
+
+      if (newStep >= 4) {
+        // ❌ REMOVED: Don't auto-trigger door completion
+        // The DoorComponent will call onDoorComplete when button is clicked
+        console.log('✅ All syllables placed - waiting for Start Challenge button');
+      }
     } else {
       console.log(`❌ Wrong! Expected "${expectedSyllable}", got "${syllable}"`);
-    // Removed GameCoach feedback - user gets visual feedback from door
-console.log(`Expected: ${expectedSyllable}, got: ${syllable}`);
+      // Removed GameCoach feedback - user gets visual feedback from door
+      console.log(`Expected: ${expectedSyllable}, got: ${syllable}`);
     }
   };
 
-const handleDoor1Complete = () => {
-  console.log('🚪 Door 1 completed - starting sparkle fade!');
-  
-  if (sceneState.door1Completed) {
-    console.log('🚫 Door 1 already completed, ignoring duplicate call');
-    return;
-  }
-  
-  setShowSparkle('door1-completing');
-  
-  const doorElement = document.querySelector('.suryakoti-door .door-container');
-  if (doorElement) {
-    doorElement.classList.add('completing');
-  }
-  
-  sceneActions.updateState({
-    door1Completed: true,
-    phase: CAVE_PHASES.SUN_COLLECTION_ACTIVE,  // ✅ CHANGE: Set to ACTIVE immediately
-    sunCollectionStarted: true  // ✅ ADD: Mark as started too
-  });
+  const handleDoor1Complete = () => {
+    console.log('🚪 Door 1 completed - starting sparkle fade!');
 
-  setTimeout(() => {
-    setShowSparkle(null);
-  }, 3000);
-};
+    if (sceneState.door1Completed) {
+      console.log('🚫 Door 1 already completed, ignoring duplicate call');
+      return;
+    }
+
+    setShowSparkle('door1-completing');
+
+    const doorElement = document.querySelector('.suryakoti-door .door-container');
+    if (doorElement) {
+      doorElement.classList.add('completing');
+    }
+
+    sceneActions.updateState({
+      door1Completed: true,
+      phase: CAVE_PHASES.SUN_COLLECTION_ACTIVE,  // ✅ CHANGE: Set to ACTIVE immediately
+      sunCollectionStarted: true  // ✅ ADD: Mark as started too
+    });
+
+    setTimeout(() => {
+      setShowSparkle(null);
+    }, 3000);
+  };
 
   // Door 2 handlers (ADAPTED FOR SAMAPRABHA)
   const handleDoor2SyllablePlaced = (syllable) => {
-     if (showResumePopup) {
-    setShowResumePopup(false);
-    if (resumePopupTimeoutRef.current) {
-      clearTimeout(resumePopupTimeoutRef.current);
+    if (showResumePopup) {
+      setShowResumePopup(false);
+      if (resumePopupTimeoutRef.current) {
+        clearTimeout(resumePopupTimeoutRef.current);
+      }
     }
-  }
     hideActiveHints();
     console.log(`Door 2 syllable placed: ${syllable}`);
-    
+
     const expectedSyllable = sceneState.door2Syllables?.[sceneState.door2CurrentStep || 0] || 'Sa';
     const isCorrect = syllable === expectedSyllable;
-    
+
     if (isCorrect) {
       const newStep = (sceneState.door2CurrentStep || 0) + 1;
       const newSyllablesPlaced = [...(sceneState.door2SyllablesPlaced || []), syllable];
-      
+
       sceneActions.updateState({
         door2SyllablesPlaced: newSyllablesPlaced,
         door2CurrentStep: newStep
       });
-      
- if (newStep >= 4) {
-  // ❌ REMOVED: Don't auto-trigger door completion
-  // The DoorComponent will call onDoorComplete when button is clicked
-  console.log('✅ All syllables placed - waiting for Start Challenge button');
-}
+
+      if (newStep >= 4) {
+        // ❌ REMOVED: Don't auto-trigger door completion
+        // The DoorComponent will call onDoorComplete when button is clicked
+        console.log('✅ All syllables placed - waiting for Start Challenge button');
+      }
     } else {
- // Removed GameCoach feedback - user gets visual feedback from door
-console.log(`Expected: ${expectedSyllable}, got: ${syllable}`);
+      // Removed GameCoach feedback - user gets visual feedback from door
+      console.log(`Expected: ${expectedSyllable}, got: ${syllable}`);
     }
   };
 
-const handleDoor2Complete = () => {
-  console.log('🚪 Door 2 completed - starting sparkle fade!');
-  
-  setShowSparkle('door2-completing');
-  
-  const doorElement = document.querySelector('.samaprabha-door .door-container');
-  if (doorElement) {
-    doorElement.classList.add('completing');
-  }
-  
-  sceneActions.updateState({
-    door2Completed: true,
-    phase: CAVE_PHASES.HEALING_ACTIVE,  // ✅ CHANGE: Set to ACTIVE immediately
-    healingStarted: true,  // ✅ ADD: Mark as started
-    availableSuns: [
-      { id: 1, angle: 0 },
-      { id: 2, angle: 72 },
-      { id: 3, angle: 144 }
-    ]
-  });
+  const handleDoor2Complete = () => {
+    console.log('🚪 Door 2 completed - starting sparkle fade!');
 
-  setTimeout(() => {
-    setShowSparkle(null);
-  }, 3000);
-};
+    setShowSparkle('door2-completing');
 
+    const doorElement = document.querySelector('.samaprabha-door .door-container');
+    if (doorElement) {
+      doorElement.classList.add('completing');
+    }
 
-// ✅ REPLACE this function entirely:
-const handleSunCollectionStart = () => {
-  console.log('🌞 Starting sun collection game!');
-  
-  // ✅ ADD: Prevent multiple calls
-  if (sceneState.sunCollectionStarted) {
-    console.log('🚫 Sun collection already started, ignoring duplicate call');
-    return;
-  }
-  
-  sceneActions.updateState({
-    sunCollectionStarted: true,
-    phase: CAVE_PHASES.SUN_COLLECTION_ACTIVE,
-    
-    // ✅ ADD: Clear any blocking states that could cause freeze
-    symbolDiscoveryState: null,
-    sidebarHighlightState: null,
-  });
-};
-
-const handleSunCollected = (count) => {
-  console.log(`☀️ Sun collected! Total: ${count}/3`);
-  console.log('🔍 BEFORE UPDATE:', sceneState.collectedSuns);
-  
-  const newIllumination = (count / 3) * 100;
-  
-  sceneActions.updateState({
-    collectedSuns: count,
-    caveIllumination: newIllumination,
-    sunCollectionStarted: true
-  });
-  
-  console.log('🔍 AFTER UPDATE - should be', count);
-};
-
-
-const handleSunCollectionComplete = () => {
-  console.log('🌟 Sun collection completed!');
-  
-  sceneActions.updateState({
-    sunCollectionCompleted: true,
-    phase: CAVE_PHASES.SURYAKOTI_LEARNING  // ✅ CHANGE to learning phase
-  });
-
-  safeSetTimeout(() => {
-    setTimeout(() => {
-      setShowDiscoveryFlip1(true);  // ✅ Trigger discovery overlay
-    }, 1500);
-  }, 500);
-};
-
-// ❌ DELETE the old function entirely, REPLACE with:
-/*/*const completeSuryakotiLearning = () => {
-  if (sceneState.learnedWords?.suryakoti?.learned) {
-    console.log('🚫 Suryakoti already learned, skipping');
-    sceneActions.updateState({ phase: CAVE_PHASES.DOOR2_ACTIVE });
-    return;
-  }
-  
-  console.log('🌟 Suryakoti symbol learned - FULL CELEBRATION');
-  
-  // Step 1: Show big centered symbol + text (5 seconds)
-  setShowCenteredSymbol('suryakoti');
-  
-  setTimeout(() => {
-    // Step 2: Hide centered, start fly animation to sidebar
-    setShowCenteredSymbol(null);
-    setShowSparkle('suryakoti-to-sidebar');
-    
-    // ✅ UPDATE: Mark symbol as learned
     sceneActions.updateState({
-      learnedWords: {
-        ...sceneState.learnedWords,
-        suryakoti: { learned: true, scene: 2 }
-      }
+      door2Completed: true,
+      phase: CAVE_PHASES.HEALING_ACTIVE,  // ✅ CHANGE: Set to ACTIVE immediately
+      healingStarted: true,  // ✅ ADD: Mark as started
+      availableSuns: [
+        { id: 1, angle: 0 },
+        { id: 2, angle: 72 },
+        { id: 3, angle: 144 }
+      ]
+    });
+
+    setTimeout(() => {
+      setShowSparkle(null);
+    }, 3000);
+  };
+
+
+  // ✅ REPLACE this function entirely:
+  const handleSunCollectionStart = () => {
+    console.log('🌞 Starting sun collection game!');
+
+    // ✅ ADD: Prevent multiple calls
+    if (sceneState.sunCollectionStarted) {
+      console.log('🚫 Sun collection already started, ignoring duplicate call');
+      return;
+    }
+
+    sceneActions.updateState({
+      sunCollectionStarted: true,
+      phase: CAVE_PHASES.SUN_COLLECTION_ACTIVE,
+
+      // ✅ ADD: Clear any blocking states that could cause freeze
+      symbolDiscoveryState: null,
+      sidebarHighlightState: null,
+    });
+  };
+
+  const handleSunCollected = (count) => {
+    console.log(`☀️ Sun collected! Total: ${count}/3`);
+    console.log('🔍 BEFORE UPDATE:', sceneState.collectedSuns);
+
+    const newIllumination = (count / 3) * 100;
+
+    sceneActions.updateState({
+      collectedSuns: count,
+      caveIllumination: newIllumination,
+      sunCollectionStarted: true
+    });
+
+    console.log('🔍 AFTER UPDATE - should be', count);
+  };
+
+
+  const handleSunCollectionComplete = () => {
+    console.log('🌟 Sun collection completed!');
+
+    sceneActions.updateState({
+      sunCollectionCompleted: true,
+      phase: CAVE_PHASES.SURYAKOTI_LEARNING  // ✅ CHANGE to learning phase
+    });
+
+    safeSetTimeout(() => {
+      setTimeout(() => {
+        setShowDiscoveryFlip1(true);  // ✅ Trigger discovery overlay
+      }, 1500);
+    }, 500);
+  };
+
+  // ❌ DELETE the old function entirely, REPLACE with:
+  /*/*const completeSuryakotiLearning = () => {
+    if (sceneState.learnedWords?.suryakoti?.learned) {
+      console.log('🚫 Suryakoti already learned, skipping');
+      sceneActions.updateState({ phase: CAVE_PHASES.DOOR2_ACTIVE });
+      return;
+    }
+    
+    console.log('🌟 Suryakoti symbol learned - FULL CELEBRATION');
+    
+    // Step 1: Show big centered symbol + text (5 seconds)
+    setShowCenteredSymbol('suryakoti');
+    
+    setTimeout(() => {
+      // Step 2: Hide centered, start fly animation to sidebar
+      setShowCenteredSymbol(null);
+      setShowSparkle('suryakoti-to-sidebar');
+      
+      // ✅ UPDATE: Mark symbol as learned
+      sceneActions.updateState({
+        learnedWords: {
+          ...sceneState.learnedWords,
+          suryakoti: { learned: true, scene: 2 }
+        }
+      });
+      
+      setTimeout(() => {
+        // Step 3: Symbol in sidebar, show power modal
+        setShowSparkle(null);
+        setCurrentMissionSymbol('suryakoti');
+        setShowPowerModal(true);
+      }, 2000);
+    }, 5000);
+  };*/
+
+  /*const handleSunClick = (sunIndex) => {
+    const now = Date.now();
+    
+    // 🛡️ PROTECTION LAYERS
+    if (now - lastClickTime.current < 400) {
+      console.log('🚫 BLOCKED: Too fast');
+      return;
+    }
+    if (clickLocked) {
+      console.log('🚫 BLOCKED: Animation playing');
+      return;
+    }
+    if (isProcessingClick.current) {
+      console.log('🚫 BLOCKED: Processing');
+      return;
+    }
+    if (activeTouches.current > 1) {
+      console.log('🚫 BLOCKED: Multi-touch');
+      return;
+    }
+    if (sceneState.phase !== CAVE_PHASES.HEALING_ACTIVE) {
+      console.log('🚫 BLOCKED: Wrong phase');
+      return;
+    }
+    if (showPowerModal || showRescueModal || showStoryModal || showCenteredSymbol) {
+      console.log('🚫 BLOCKED: Modal open');
+      return;
+    }
+    
+    // ✅ APPROVED - Process click
+    console.log(`☀️ Sun ${sunIndex} clicked!`);
+    lastClickTime.current = now;
+    setClickLocked(true);
+    isProcessingClick.current = true;
+    
+    hideActiveHints();
+    
+    // Check if this sun was already used
+    if (sceneState.healedChildren?.includes(sunIndex)) {
+      console.log('⚠️ This sun was already used');
+      setClickLocked(false);
+      isProcessingClick.current = false;
+      return;
+    }
+    
+    // Add to healed children
+    const newHealedChildren = [...(sceneState.healedChildren || []), sunIndex];
+    
+    // Show sparkle effect
+    setShowSparkle(`child-${sunIndex}-healed`);
+    setTimeout(() => setShowSparkle(null), 1500);
+    
+    // Update state
+    sceneActions.updateState({
+      healedChildren: newHealedChildren,
+      caveIllumination: Math.min(100, sceneState.caveIllumination + 33)
     });
     
+    // Check completion
+    if (newHealedChildren.length >= 3) {
+      console.log('✅ All 3 children healed!');
+      safeSetTimeout(() => {
+        completeHealing();
+      }, 2000);
+    }
+    
+    // Unlock after delay
     setTimeout(() => {
-      // Step 3: Symbol in sidebar, show power modal
-      setShowSparkle(null);
-      setCurrentMissionSymbol('suryakoti');
-      setShowPowerModal(true);
-    }, 2000);
-  }, 5000);
-};*/
+      setClickLocked(false);
+      isProcessingClick.current = false;
+    }, 1000);
+  };*/
 
-/*const handleSunClick = (sunIndex) => {
-  const now = Date.now();
-  
-  // 🛡️ PROTECTION LAYERS
-  if (now - lastClickTime.current < 400) {
-    console.log('🚫 BLOCKED: Too fast');
-    return;
-  }
-  if (clickLocked) {
-    console.log('🚫 BLOCKED: Animation playing');
-    return;
-  }
-  if (isProcessingClick.current) {
-    console.log('🚫 BLOCKED: Processing');
-    return;
-  }
-  if (activeTouches.current > 1) {
-    console.log('🚫 BLOCKED: Multi-touch');
-    return;
-  }
-  if (sceneState.phase !== CAVE_PHASES.HEALING_ACTIVE) {
-    console.log('🚫 BLOCKED: Wrong phase');
-    return;
-  }
-  if (showPowerModal || showRescueModal || showStoryModal || showCenteredSymbol) {
-    console.log('🚫 BLOCKED: Modal open');
-    return;
-  }
-  
-  // ✅ APPROVED - Process click
-  console.log(`☀️ Sun ${sunIndex} clicked!`);
-  lastClickTime.current = now;
-  setClickLocked(true);
-  isProcessingClick.current = true;
-  
-  hideActiveHints();
-  
-  // Check if this sun was already used
-  if (sceneState.healedChildren?.includes(sunIndex)) {
-    console.log('⚠️ This sun was already used');
-    setClickLocked(false);
-    isProcessingClick.current = false;
-    return;
-  }
-  
-  // Add to healed children
-  const newHealedChildren = [...(sceneState.healedChildren || []), sunIndex];
-  
-  // Show sparkle effect
-  setShowSparkle(`child-${sunIndex}-healed`);
-  setTimeout(() => setShowSparkle(null), 1500);
-  
-  // Update state
-  sceneActions.updateState({
-    healedChildren: newHealedChildren,
-    caveIllumination: Math.min(100, sceneState.caveIllumination + 33)
-  });
-  
-  // Check completion
-  if (newHealedChildren.length >= 3) {
-    console.log('✅ All 3 children healed!');
+  const completeHealing = () => {
+    console.log('💖 Healing completed!');
+
+    sceneActions.updateState({
+      healingCompleted: true,
+      phase: CAVE_PHASES.SAMAPRABHA_LEARNING  // ✅ CHANGE to learning phase
+    });
+
     safeSetTimeout(() => {
-      completeHealing();
-    }, 2000);
-  }
-  
-  // Unlock after delay
-  setTimeout(() => {
-    setClickLocked(false);
-    isProcessingClick.current = false;
-  }, 1000);
-};*/
-
-const completeHealing = () => {
-  console.log('💖 Healing completed!');
-  
-  sceneActions.updateState({
-    healingCompleted: true,
-    phase: CAVE_PHASES.SAMAPRABHA_LEARNING  // ✅ CHANGE to learning phase
-  });
-
-  safeSetTimeout(() => {
-    setTimeout(() => {
-      setShowDiscoveryFlip2(true);  // ✅ Trigger discovery overlay
-    }, 1500);
-  }, 500);
-};
+      setTimeout(() => {
+        setShowDiscoveryFlip2(true);  // ✅ Trigger discovery overlay
+      }, 1500);
+    }, 500);
+  };
 
   const handleSunClick = (sunIndex) => {
-      if (showResumePopup) {
-    setShowResumePopup(false);
-    if (resumePopupTimeoutRef.current) {
-      clearTimeout(resumePopupTimeoutRef.current);
-    }
-  }
-
-  // Basic validation only
-  if (clickLocked) {
-    console.log('Animation playing');
-    return;
-  }
-  
-  if (sceneState.phase !== CAVE_PHASES.HEALING_ACTIVE) {
-    console.log('Wrong phase');
-    return;
-  }
-  
-  if (showPowerModal || showRescueModal || showStoryModal || showCenteredSymbol) {
-    console.log('Modal open');
-    return;
-  }
-  
-  if (sceneState.healedChildren?.includes(sunIndex)) {
-    console.log('Sun already used');
-    return;
-  }
-  
-  // Process click
-  console.log(`☀️ Sun ${sunIndex} clicked!`);
-  setClickLocked(true);
-  hideActiveHints();
-  
-  // Add to healed children
-  const newHealedChildren = [...(sceneState.healedChildren || []), sunIndex];
-  
-  // Show sparkle
-  setShowSparkle(`child-${sunIndex}-healed`);
-  setTimeout(() => setShowSparkle(null), 1500);
-  
-  // Update state
-  sceneActions.updateState({
-    healedChildren: newHealedChildren,
-    caveIllumination: Math.min(100, sceneState.caveIllumination + 33)
-  });
-  
-  // Check completion
-  if (newHealedChildren.length >= 3) {
-    console.log('✅ All 3 children healed!');
-    setTimeout(() => {
-      completeHealing();
-    }, 2000);
-  }
-  
-  // Unlock
-  setTimeout(() => {
-    setClickLocked(false);
-  }, 800);
-};
-
-// ❌ DELETE the old function entirely, REPLACE with:
-/*const startSamaprabhaLearning = () => {
-  if (sceneState.learnedWords?.samaprabha?.learned) {
-    console.log('🚫 Samaprabha already learned, skipping');
-    showFinalCelebration();
-    return;
-  }
-  
-  console.log('🌟 Samaprabha symbol learned - FULL CELEBRATION');
-  
-  // Step 1: Show big centered symbol + text (5 seconds)
-  setShowCenteredSymbol('samaprabha');
-  
-  setTimeout(() => {
-    // Step 2: Hide centered, start fly animation to sidebar
-    setShowCenteredSymbol(null);
-    setShowSparkle('samaprabha-to-sidebar');
-    
-    // ✅ UPDATE: Mark symbol as learned
-    sceneActions.updateState({
-      learnedWords: {
-        ...sceneState.learnedWords,
-        samaprabha: { learned: true, scene: 2 }
+    if (showResumePopup) {
+      setShowResumePopup(false);
+      if (resumePopupTimeoutRef.current) {
+        clearTimeout(resumePopupTimeoutRef.current);
       }
+    }
+
+    // Basic validation only
+    if (clickLocked) {
+      console.log('Animation playing');
+      return;
+    }
+
+    if (sceneState.phase !== CAVE_PHASES.HEALING_ACTIVE) {
+      console.log('Wrong phase');
+      return;
+    }
+
+    if (showPowerModal || showRescueModal || showStoryModal || showCenteredSymbol) {
+      console.log('Modal open');
+      return;
+    }
+
+    if (sceneState.healedChildren?.includes(sunIndex)) {
+      console.log('Sun already used');
+      return;
+    }
+
+    // Process click
+    console.log(`☀️ Sun ${sunIndex} clicked!`);
+    setClickLocked(true);
+    hideActiveHints();
+
+    // Add to healed children
+    const newHealedChildren = [...(sceneState.healedChildren || []), sunIndex];
+
+    // Show sparkle
+    setShowSparkle(`child-${sunIndex}-healed`);
+    setTimeout(() => setShowSparkle(null), 1500);
+
+    // Update state
+    sceneActions.updateState({
+      healedChildren: newHealedChildren,
+      caveIllumination: Math.min(100, sceneState.caveIllumination + 33)
     });
-    
+
+    // Check completion
+    if (newHealedChildren.length >= 3) {
+      console.log('✅ All 3 children healed!');
+      setTimeout(() => {
+        completeHealing();
+      }, 2000);
+    }
+
+    // Unlock
     setTimeout(() => {
-      // Step 3: Symbol in sidebar, show power modal
-      setShowSparkle(null);
-      setCurrentMissionSymbol('samaprabha');
-      setShowPowerModal(true);
-    }, 2000);
-  }, 5000);
-};*/
-
-// ✅ ADD: Power Modal Actions
-const handleSaveAnimal = () => {
-  setShowPowerModal(false);
-  setCurrentRescueWord(currentMissionSymbol);
-  setShowRescueModal(true);
-};
-
-const handleContinueLearning = () => {
-  setShowPowerModal(false);
-  
-  if (currentMissionSymbol === 'suryakoti') {
-    // Show second story modal before Door 2
-    setShowStoryModal('samaprabha');
-  } else if (currentMissionSymbol === 'samaprabha') {
-    // Go to final celebration
-    setTimeout(() => showFinalCelebration(), 500);
-  }
-};
-
-// Helper function for button text
-const getNextDiscoveryText = (currentSymbol) => {
-  const nextActions = {
-    suryakoti: '🚪 Discover Samaprabha',
-    samaprabha: '✨ Complete Chamber'
+      setClickLocked(false);
+    }, 800);
   };
-  return nextActions[currentSymbol] || '➡️ Continue';
-};
 
-const handleRescueComplete = (success) => {
-  if (!success) return;
-  
-  setShowRescueModal(false);
-  
-  if (currentRescueWord === 'suryakoti') {
-    setTimeout(() => {
-      setShowStoryModal('samaprabha');  // ✅ Show second story modal
-    }, 500);
-  } else if (currentRescueWord === 'samaprabha') {
-    setTimeout(() => {
+  // ❌ DELETE the old function entirely, REPLACE with:
+  /*const startSamaprabhaLearning = () => {
+    if (sceneState.learnedWords?.samaprabha?.learned) {
+      console.log('🚫 Samaprabha already learned, skipping');
       showFinalCelebration();
-    }, 500);
-  }
-  
-  setCurrentRescueWord(null);
-};
-
- const showFinalCelebration = () => {
-    console.log('🎊 Starting final cave celebration');
+      return;
+    }
     
+    console.log('🌟 Samaprabha symbol learned - FULL CELEBRATION');
+    
+    // Step 1: Show big centered symbol + text (5 seconds)
+    setShowCenteredSymbol('samaprabha');
+    
+    setTimeout(() => {
+      // Step 2: Hide centered, start fly animation to sidebar
+      setShowCenteredSymbol(null);
+      setShowSparkle('samaprabha-to-sidebar');
+      
+      // ✅ UPDATE: Mark symbol as learned
+      sceneActions.updateState({
+        learnedWords: {
+          ...sceneState.learnedWords,
+          samaprabha: { learned: true, scene: 2 }
+        }
+      });
+      
+      setTimeout(() => {
+        // Step 3: Symbol in sidebar, show power modal
+        setShowSparkle(null);
+        setCurrentMissionSymbol('samaprabha');
+        setShowPowerModal(true);
+      }, 2000);
+    }, 5000);
+  };*/
+
+  // ✅ ADD: Power Modal Actions
+  const handleSaveAnimal = () => {
+    setShowPowerModal(false);
+    setCurrentRescueWord(currentMissionSymbol);
+    setShowRescueModal(true);
+  };
+
+  const handleContinueLearning = () => {
+    setShowPowerModal(false);
+
+    if (currentMissionSymbol === 'suryakoti') {
+      // Show second story modal before Door 2
+      setShowStoryModal('samaprabha');
+    } else if (currentMissionSymbol === 'samaprabha') {
+      // Go to final celebration
+      setTimeout(() => showFinalCelebration(), 500);
+    }
+  };
+
+  // Helper function for button text
+  const getNextDiscoveryText = (currentSymbol) => {
+    const nextActions = {
+      suryakoti: '🚪 Discover Samaprabha',
+      samaprabha: '✨ Complete Chamber'
+    };
+    return nextActions[currentSymbol] || '➡️ Continue';
+  };
+
+  const handleRescueComplete = (success) => {
+    if (!success) return;
+
+    setShowRescueModal(false);
+
+    if (currentRescueWord === 'suryakoti') {
+      setTimeout(() => {
+        setShowStoryModal('samaprabha');  // ✅ Show second story modal
+      }, 500);
+    } else if (currentRescueWord === 'samaprabha') {
+      setTimeout(() => {
+        showFinalCelebration();
+      }, 500);
+    }
+
+    setCurrentRescueWord(null);
+  };
+
+  const showFinalCelebration = () => {
+    console.log('🎊 Starting final cave celebration');
+
     setShowMagicalCard(false);
     setShowPopupBook(false);
     setShowSparkle(null);
@@ -1591,11 +1592,11 @@ const handleRescueComplete = (success) => {
   };
 
 
-const hideActiveHints = () => {
-  if (progressiveHintRef.current && typeof progressiveHintRef.current.hideHint === 'function') {
-    progressiveHintRef.current.hideHint();
-  }
-};
+  const hideActiveHints = () => {
+    if (progressiveHintRef.current && typeof progressiveHintRef.current.hideHint === 'function') {
+      progressiveHintRef.current.hideHint();
+    }
+  };
 
   const handleHintShown = (level) => {
     console.log(`Cave hint level ${level} shown`);
@@ -1618,116 +1619,87 @@ const hideActiveHints = () => {
         sceneActions={sceneActions}
       >
         <div className="pond-scene-container" data-phase={sceneState.phase}>
-{/* GRADUAL BACKGROUND BLENDING */}
-<div className="pond-background" style={{ position: 'relative', width: '100%', height: '100%' }}>
+          {/* GRADUAL BACKGROUND BLENDING */}
+          <div className="pond-background" style={{ position: 'relative', width: '100%', height: '100%' }}>
 
 
-      {/* ✅ OPENING INSTRUCTION SCREEN (Full Screen) */}
-{sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE && !sceneState.welcomeShown && (() => {
-  const theme = getZoneTheme(zoneId);
-  const modal = getOpeningModal(zoneId, sceneId);
-  return (
-    <div className="game-modal-overlay" style={{
-      '--modal-card-bg': theme.parentBg,
-      '--modal-text-primary': theme.textPrimary,
-      '--modal-btn-bg': theme.buttonActiveBg,
-      '--modal-btn-shadow': theme.glowColor
-    }}>
-      <div className="game-modal-content">
-        <div className="game-modal-character">
-          <img src={ganeshaCharacterCave} alt="Ganesha Character" />
-        </div>
-        <div className="game-modal-card">
-          <h1 className="game-modal-title">{modal?.title || 'Spread the Light'}</h1>
-          <p className="game-modal-subtitle">{modal?.description || 'Find them and light up the cave.'}</p>
-          <div className="game-modal-icons">
-            <div className="game-modal-icon-item">
-              <img src={suryakotiSymbol} alt="Suryakoti" />
-              <span className="game-modal-icon-label">Million Suns</span>
-            </div>
-            <div className="game-modal-icon-item">
-              <img src={samaprabhaSymbol} alt="Samaprabha" />
-              <span className="game-modal-icon-label">Equal Radiance</span>
-            </div>
-          </div>
-          <button className="game-modal-button" onClick={() => sceneActions.updateState({ welcomeShown: true })}>
-            {modal?.buttonText || "Let's Explore"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-})()}
+            <OpeningModal
+              zoneId={zoneId}
+              sceneId={sceneId}
+              onStart={() => sceneActions.updateState({ welcomeShown: true })}
+              characterImg={ganeshaCharacterCave}
+              showButton={true}
+            />
 
-  
 
-{/* Phase Headers - Always Visible */}
-{!showPowerModal && !showRescueModal && !showCenteredSymbol && (
-  <>
-    {/* Door 1 Active */}
-    {sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE && !sceneState.door1Completed && (
-      <div className="phase-header">
-        🔤 SPELL SURYAKOTI! Drag the syllables in order!
-      </div>
-    )}
-    
-    {/* Sun Collection */}
-    {sceneState.phase === CAVE_PHASES.SUN_COLLECTION_ACTIVE && sceneState.collectedSuns < 3 && (
-      <div className="phase-header">
-        ☀️ COLLECT THE GOLDEN SUNS! Fill your orb!
-      </div>
-    )}
-    
-    {/* Door 2 Active */}
-    {sceneState.phase === CAVE_PHASES.DOOR2_ACTIVE && !sceneState.door2Completed && (
-      <div className="phase-header">
-        🔤 SPELL SAMAPRABHA! Arrange the syllables!
-      </div>
-    )}
-    
-    {/* Healing Children */}
-    {sceneState.phase === CAVE_PHASES.HEALING_ACTIVE && sceneState.healedChildren?.length < 3 && (
-      <div className="phase-header">
-        💖 HEAL THE CHILDREN! Click the suns!
-      </div>
-    )}
-  </>
-)}
-  
-  {/* Dark background - always there */}
-  <div style={{
-    position: 'absolute',
-    top: 0, left: 0, right: 0, bottom: 0,
-    backgroundImage: `url(${caveBackgroundDark})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    zIndex: 1
-  }} />
-  
-  {/* Bright background - fades in gradually */}
-  <div style={{
-    position: 'absolute',
-    top: 0, left: 0, right: 0, bottom: 0,
-    backgroundImage: `url(${caveBackgroundBright})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center', 
-    backgroundRepeat: 'no-repeat',
-    opacity: Math.max(0, (sceneState.caveIllumination - 60) / 40), // Starts fading in at 60%, full at 100%
-    transition: 'opacity 2s ease',
-    zIndex: 2
-  }} />
-  
-  {/* Filter overlay */}
-  <div style={{
-    position: 'absolute',
-    top: 0, left: 0, right: 0, bottom: 0,
-    filter: `brightness(${1 + Math.min((sceneState.caveIllumination || 0) / 500, 0.15)})`,
-    transition: 'all 2s ease',
-    zIndex: 3,
-    pointerEvents: 'none'
-  }} />
-            
+
+            {/* Phase Headers - Always Visible */}
+            {!showPowerModal && !showRescueModal && !showCenteredSymbol && (
+              <>
+                {/* Door 1 Active */}
+                {sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE && !sceneState.door1Completed && (
+                  <div className="phase-header">
+                    🔤 SPELL SURYAKOTI! Drag the syllables in order!
+                  </div>
+                )}
+
+                {/* Sun Collection */}
+                {sceneState.phase === CAVE_PHASES.SUN_COLLECTION_ACTIVE && sceneState.collectedSuns < 3 && (
+                  <div className="phase-header">
+                    ☀️ COLLECT THE GOLDEN SUNS! Fill your orb!
+                  </div>
+                )}
+
+                {/* Door 2 Active */}
+                {sceneState.phase === CAVE_PHASES.DOOR2_ACTIVE && !sceneState.door2Completed && (
+                  <div className="phase-header">
+                    🔤 SPELL SAMAPRABHA! Arrange the syllables!
+                  </div>
+                )}
+
+                {/* Healing Children */}
+                {sceneState.phase === CAVE_PHASES.HEALING_ACTIVE && sceneState.healedChildren?.length < 3 && (
+                  <div className="phase-header">
+                    💖 HEAL THE CHILDREN! Click the suns!
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Dark background - always there */}
+            <div style={{
+              position: 'absolute',
+              top: 0, left: 0, right: 0, bottom: 0,
+              backgroundImage: `url(${caveBackgroundDark})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              zIndex: 1
+            }} />
+
+            {/* Bright background - fades in gradually */}
+            <div style={{
+              position: 'absolute',
+              top: 0, left: 0, right: 0, bottom: 0,
+              backgroundImage: `url(${caveBackgroundBright})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              opacity: Math.max(0, (sceneState.caveIllumination - 60) / 40), // Starts fading in at 60%, full at 100%
+              transition: 'opacity 2s ease',
+              zIndex: 2
+            }} />
+
+            {/* Filter overlay */}
+            <div style={{
+              position: 'absolute',
+              top: 0, left: 0, right: 0, bottom: 0,
+              filter: `brightness(${1 + Math.min((sceneState.caveIllumination || 0) / 500, 0.15)})`,
+              transition: 'all 2s ease',
+              zIndex: 3,
+              pointerEvents: 'none'
+            }} />
+
             {/* Divine light for GameCoach */}
             {showSparkle === 'divine-light' && (
               <div style={{
@@ -1743,7 +1715,7 @@ const hideActiveHints = () => {
                 <SparkleAnimation
                   type="glitter"
                   count={80}
-                  color="#FFD700" 
+                  color="#FFD700"
                   size={3}
                   duration={2000}
                   fadeOut={true}
@@ -1949,7 +1921,7 @@ const hideActiveHints = () => {
                   completedWord="Suryakoti"
                   onDoorComplete={handleDoor1Complete}
                   onSyllablePlaced={handleDoor1SyllablePlaced}
-                    onSyllableAudio={playSyllable}  // ← ADD THIS LINE
+                  onSyllableAudio={playSyllable}  // ← ADD THIS LINE
 
                   sceneTheme="cave-of-secrets"
                   doorImage={doorImage}
@@ -1993,46 +1965,46 @@ const hideActiveHints = () => {
               </div>
             )}
 
-{/* Sun Collection Game */}
-{(sceneState.phase === CAVE_PHASES.SUN_COLLECTION_INTRO || 
-  sceneState.phase === CAVE_PHASES.SUN_COLLECTION_ACTIVE || 
-  sceneState.phase === CAVE_PHASES.SUN_COLLECTION_COMPLETE ||
-  sceneState.phase === CAVE_PHASES.SURYAKOTI_LEARNING) && 
- !showCenteredSymbol && 
- !showPowerModal && 
- !showRescueModal && 
- !showStoryModal && 
- !showSceneCompletion && ( 
-  <div className="sun-collection-area" id="sun-collection-area">
-<SunCollectionGameV1
-  onComplete={handleSunCollectionComplete}
-  onSunCollected={handleSunCollected}
-  profileName={profileName}
-  
-  isResuming={isReload}
-  resumeCollectedSuns={sceneState.collectedSuns || 0}
-  resumeIllumination={sceneState.caveIllumination || 0}
-  resumeStarted={sceneState.sunCollectionStarted || false}
-  
-  caveBounds={{
-    top: '10%',
-    left: '15%',
-    width: '80%',
-    height: '80%',
-  }}
-  
-  // ✅ ADD THIS
-  onInteraction={() => {
-    if (showResumePopup) {
-      setShowResumePopup(false);
-      if (resumePopupTimeoutRef.current) {
-        clearTimeout(resumePopupTimeoutRef.current);
-      }
-    }
-  }}
-/>
-  </div>
-)}
+            {/* Sun Collection Game */}
+            {(sceneState.phase === CAVE_PHASES.SUN_COLLECTION_INTRO ||
+              sceneState.phase === CAVE_PHASES.SUN_COLLECTION_ACTIVE ||
+              sceneState.phase === CAVE_PHASES.SUN_COLLECTION_COMPLETE ||
+              sceneState.phase === CAVE_PHASES.SURYAKOTI_LEARNING) &&
+              !showCenteredSymbol &&
+              !showPowerModal &&
+              !showRescueModal &&
+              !showStoryModal &&
+              !showSceneCompletion && (
+                <div className="sun-collection-area" id="sun-collection-area">
+                  <SunCollectionGameV1
+                    onComplete={handleSunCollectionComplete}
+                    onSunCollected={handleSunCollected}
+                    profileName={profileName}
+
+                    isResuming={isReload}
+                    resumeCollectedSuns={sceneState.collectedSuns || 0}
+                    resumeIllumination={sceneState.caveIllumination || 0}
+                    resumeStarted={sceneState.sunCollectionStarted || false}
+
+                    caveBounds={{
+                      top: '10%',
+                      left: '15%',
+                      width: '80%',
+                      height: '80%',
+                    }}
+
+                    // ✅ ADD THIS
+                    onInteraction={() => {
+                      if (showResumePopup) {
+                        setShowResumePopup(false);
+                        if (resumePopupTimeoutRef.current) {
+                          clearTimeout(resumePopupTimeoutRef.current);
+                        }
+                      }
+                    }}
+                  />
+                </div>
+              )}
 
 
 
@@ -2046,7 +2018,7 @@ const hideActiveHints = () => {
                   completedWord="Samaprabha"
                   onDoorComplete={handleDoor2Complete}
                   onSyllablePlaced={handleDoor2SyllablePlaced}
-                    onSyllableAudio={playSyllable}  // ← ADD THIS LINE
+                  onSyllableAudio={playSyllable}  // ← ADD THIS LINE
 
                   sceneTheme="cave-of-secrets"
                   doorImage={doorImage}
@@ -2090,184 +2062,184 @@ const hideActiveHints = () => {
               </div>
             )}
 
-{/* ✨ NEW: Suryakoti to Sidebar Effect */}
-{showSparkle === 'suryakoti-to-sidebar' && (
-  <div style={{
-    position: 'absolute',
-    top: '30%',
-    left: '30%',
-    width: '300px',
-    height: '200px',
-    zIndex: 15,
-    pointerEvents: 'none'
-  }}>
-    <SparkleAnimation
-      type="stream"
-      count={20}
-      color="#FF8C42"
-      size={10}
-      duration={3000}
-      fadeOut={true}
-      area="full"
-    />
-  </div>
-)}
+            {/* ✨ NEW: Suryakoti to Sidebar Effect */}
+            {showSparkle === 'suryakoti-to-sidebar' && (
+              <div style={{
+                position: 'absolute',
+                top: '30%',
+                left: '30%',
+                width: '300px',
+                height: '200px',
+                zIndex: 15,
+                pointerEvents: 'none'
+              }}>
+                <SparkleAnimation
+                  type="stream"
+                  count={20}
+                  color="#FF8C42"
+                  size={10}
+                  duration={3000}
+                  fadeOut={true}
+                  area="full"
+                />
+              </div>
+            )}
 
-{/* ✨ NEW: Samaprabha to Sidebar Effect */}
-{showSparkle === 'samaprabha-to-sidebar' && (
-  <div style={{
-    position: 'absolute',
-    top: '30%',
-    right: '30%',
-    width: '300px',
-    height: '200px',
-    zIndex: 15,
-    pointerEvents: 'none'
-  }}>
-    <SparkleAnimation
-      type="stream"
-      count={20}
-      color="#FFD700"
-      size={10}
-      duration={3000}
-      fadeOut={true}
-      area="full"
-    />
-  </div>
-)}
+            {/* ✨ NEW: Samaprabha to Sidebar Effect */}
+            {showSparkle === 'samaprabha-to-sidebar' && (
+              <div style={{
+                position: 'absolute',
+                top: '30%',
+                right: '30%',
+                width: '300px',
+                height: '200px',
+                zIndex: 15,
+                pointerEvents: 'none'
+              }}>
+                <SparkleAnimation
+                  type="stream"
+                  count={20}
+                  color="#FFD700"
+                  size={10}
+                  duration={3000}
+                  fadeOut={true}
+                  area="full"
+                />
+              </div>
+            )}
 
-{/* Suryakoti Text */}
-{sceneState.showSuryakotiText && (
-  <div className="suryakoti-text" style={{
-    position: 'absolute',
-    top: '65%',
-    left: '30%',
-    fontSize: '24px',
-    fontWeight: 'bold',
-    color: '#FF8C42',
-    textShadow: '2px 2px 4px rgba(0,0,0,0.7)',
-    animation: 'textFloat 3s ease-out forwards',
-    zIndex: 15
-  }}>
-    Million Suns
-  </div>
-)}
+            {/* Suryakoti Text */}
+            {sceneState.showSuryakotiText && (
+              <div className="suryakoti-text" style={{
+                position: 'absolute',
+                top: '65%',
+                left: '30%',
+                fontSize: '24px',
+                fontWeight: 'bold',
+                color: '#FF8C42',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.7)',
+                animation: 'textFloat 3s ease-out forwards',
+                zIndex: 15
+              }}>
+                Million Suns
+              </div>
+            )}
 
-{/* Samaprabha Text */}
-{sceneState.showSamaprabhaText && (
-  <div className="samaprabha-text" style={{
-    position: 'absolute',
-    top: '65%',
-    right: '30%',
-    fontSize: '24px',
-    fontWeight: 'bold',
-    color: '#FFD700',
-    textShadow: '2px 2px 4px rgba(0,0,0,0.7)',
-    animation: 'textGrow 2s ease-out forwards',
-    zIndex: 15
-  }}>
-    Equal Brilliance
-  </div>
-)}
+            {/* Samaprabha Text */}
+            {sceneState.showSamaprabhaText && (
+              <div className="samaprabha-text" style={{
+                position: 'absolute',
+                top: '65%',
+                right: '30%',
+                fontSize: '24px',
+                fontWeight: 'bold',
+                color: '#FFD700',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.7)',
+                animation: 'textGrow 2s ease-out forwards',
+                zIndex: 15
+              }}>
+                Equal Brilliance
+              </div>
+            )}
 
-{/* Game 2: CLICK THE SUNS - Simple Click Game */}
-{(sceneState.phase === CAVE_PHASES.HEALING_INTRO || 
-  sceneState.phase === CAVE_PHASES.HEALING_ACTIVE || 
-  sceneState.phase === CAVE_PHASES.HEALING_COMPLETE ||
-  sceneState.phase === CAVE_PHASES.SAMAPRABHA_LEARNING ||
-  sceneState.phase === CAVE_PHASES.SCENE_CELEBRATION ||
-  sceneState.phase === CAVE_PHASES.COMPLETE) && 
- !showCenteredSymbol && 
- !showPowerModal && 
- !showRescueModal && 
- !showStoryModal && 
- !showSceneCompletion && (
-  
- <div 
-    className="healing-game-area"
-    onTouchStart={(e) => {
-      activeTouches.current = e.touches.length;
-      if (e.touches.length > 1) {
-        console.log('🚫 MULTI-TOUCH BLOCKED');
-        e.preventDefault();
-      }
-    }}
-    onTouchEnd={() => {
-      activeTouches.current = 0;
-    }}
-  >
-    
-    {/* Central Orb */}
-    <div className="central-healing-orb">
-      <img 
-        src={orbGanesha}
-        alt="Healing Orb"
-        style={{ width: '100%', height: '100%' }}
-      />
-    </div>
-    
-    {/* 3 Clickable Suns Around Orb */}
-    {[1, 2, 3].map((sunIndex) => {
-      const isUsed = sceneState.healedChildren?.includes(sunIndex);
-      
-      if (isUsed) return null;
-      
-      return (
-        <div 
-          key={sunIndex} 
-          className={`healing-sun healing-sun-${sunIndex}`}
-          onClick={() => handleSunClick(sunIndex)}
-          style={{ cursor: isUsed ? 'default' : 'pointer' }}
-        >
-          <img 
-            src={sunImage}
-            alt={`Healing Sun ${sunIndex}`}
-            style={{ 
-              width: '100%', 
-              height: '100%',
-              filter: 'brightness(1.2)',
-              transition: 'transform 0.2s ease'
-            }}
-          />
-        </div>
-      );
-    })}
-    
-    {/* 3 Children - Show scared or happy face */}
-    {(() => {
-      const childPositions = [
-        { childId: 1, className: 'healing-child-1', position: 'top-left' },
-        { childId: 2, className: 'healing-child-2', position: 'top-right' },
-        { childId: 3, className: 'healing-child-3', position: 'bottom-left' }
-      ];
-      
-      return childPositions.map((childConfig, arrayIndex) => {
-        const childData = sceneState.childStates?.[arrayIndex];
-        const isHealed = sceneState.healedChildren?.includes(childConfig.childId);
-        
-        return (
-          <div key={childConfig.childId} className={childConfig.className}>
-            <img 
-              src={isHealed ? childData?.happyFace : childData?.scaredFace}
-              alt={`Child ${childConfig.childId}`}
-              style={{ 
-                width: '100%', 
-                height: '100%',
-                filter: isHealed ? 'brightness(1.3)' : 'brightness(0.8)',
-                border: isHealed ? '3px solid #90EE90' : '2px solid rgba(255,255,255,0.3)',
-                borderRadius: '50%',
-                transition: 'all 0.5s ease'
-              }}
-            />
-          </div>
-        );
-      });
-    })()}
-    
-  </div>
-)}
+            {/* Game 2: CLICK THE SUNS - Simple Click Game */}
+            {(sceneState.phase === CAVE_PHASES.HEALING_INTRO ||
+              sceneState.phase === CAVE_PHASES.HEALING_ACTIVE ||
+              sceneState.phase === CAVE_PHASES.HEALING_COMPLETE ||
+              sceneState.phase === CAVE_PHASES.SAMAPRABHA_LEARNING ||
+              sceneState.phase === CAVE_PHASES.SCENE_CELEBRATION ||
+              sceneState.phase === CAVE_PHASES.COMPLETE) &&
+              !showCenteredSymbol &&
+              !showPowerModal &&
+              !showRescueModal &&
+              !showStoryModal &&
+              !showSceneCompletion && (
 
-<style>{`
+                <div
+                  className="healing-game-area"
+                  onTouchStart={(e) => {
+                    activeTouches.current = e.touches.length;
+                    if (e.touches.length > 1) {
+                      console.log('🚫 MULTI-TOUCH BLOCKED');
+                      e.preventDefault();
+                    }
+                  }}
+                  onTouchEnd={() => {
+                    activeTouches.current = 0;
+                  }}
+                >
+
+                  {/* Central Orb */}
+                  <div className="central-healing-orb">
+                    <img
+                      src={orbGanesha}
+                      alt="Healing Orb"
+                      style={{ width: '100%', height: '100%' }}
+                    />
+                  </div>
+
+                  {/* 3 Clickable Suns Around Orb */}
+                  {[1, 2, 3].map((sunIndex) => {
+                    const isUsed = sceneState.healedChildren?.includes(sunIndex);
+
+                    if (isUsed) return null;
+
+                    return (
+                      <div
+                        key={sunIndex}
+                        className={`healing-sun healing-sun-${sunIndex}`}
+                        onClick={() => handleSunClick(sunIndex)}
+                        style={{ cursor: isUsed ? 'default' : 'pointer' }}
+                      >
+                        <img
+                          src={sunImage}
+                          alt={`Healing Sun ${sunIndex}`}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            filter: 'brightness(1.2)',
+                            transition: 'transform 0.2s ease'
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
+
+                  {/* 3 Children - Show scared or happy face */}
+                  {(() => {
+                    const childPositions = [
+                      { childId: 1, className: 'healing-child-1', position: 'top-left' },
+                      { childId: 2, className: 'healing-child-2', position: 'top-right' },
+                      { childId: 3, className: 'healing-child-3', position: 'bottom-left' }
+                    ];
+
+                    return childPositions.map((childConfig, arrayIndex) => {
+                      const childData = sceneState.childStates?.[arrayIndex];
+                      const isHealed = sceneState.healedChildren?.includes(childConfig.childId);
+
+                      return (
+                        <div key={childConfig.childId} className={childConfig.className}>
+                          <img
+                            src={isHealed ? childData?.happyFace : childData?.scaredFace}
+                            alt={`Child ${childConfig.childId}`}
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              filter: isHealed ? 'brightness(1.3)' : 'brightness(0.8)',
+                              border: isHealed ? '3px solid #90EE90' : '2px solid rgba(255,255,255,0.3)',
+                              borderRadius: '50%',
+                              transition: 'all 0.5s ease'
+                            }}
+                          />
+                        </div>
+                      );
+                    });
+                  })()}
+
+                </div>
+              )}
+
+            <style>{`
   @keyframes gentleGlow {
     0%, 100% { 
       filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8)) brightness(1.2);
@@ -2319,7 +2291,7 @@ const hideActiveHints = () => {
 
 `}</style>
 
-{/* ========== STORY MODAL ========== 
+            {/* ========== STORY MODAL ========== 
 {showStoryModal && (
   <div style={{
     position: 'fixed',
@@ -2716,32 +2688,32 @@ const hideActiveHints = () => {
 
 
 {/* ========== RESCUE MODAL ========== */}
-<RescueModal
-  key={currentRescueWord} // ✅ ADD THIS LINE - Forces remount for each word
-  show={showRescueModal}
-  wordData={currentRescueWord ? RESCUE_CONFIGS[currentRescueWord] : null}
-  onComplete={handleRescueComplete}
-  profileName={profileName}
-/>
+            <RescueModal
+              key={currentRescueWord} // ✅ ADD THIS LINE - Forces remount for each word
+              show={showRescueModal}
+              wordData={currentRescueWord ? RESCUE_CONFIGS[currentRescueWord] : null}
+              onComplete={handleRescueComplete}
+              profileName={profileName}
+            />
 
 
-<div style={{ filter: 'none' }}>
-  <SymbolSidebar
-    unlockedSymbols={{
-      vakratunda: sceneState.learnedWords?.vakratunda?.learned || false,
-      mahakaya: sceneState.learnedWords?.mahakaya?.learned || false,
-      suryakoti: sceneState.learnedWords?.suryakoti?.learned || false,
-      samaprabha: sceneState.learnedWords?.samaprabha?.learned || false,
-      nirvighnam: false,
-      kurumedeva: false,
-      sarvakaryeshu: false,
-      sarvada: false
-    }}
-    onSymbolClick={(symbolId) => {
-      console.log(`Symbol clicked: ${symbolId}`);
-    }}
-  />
-</div>
+            <div style={{ filter: 'none' }}>
+              <SymbolSidebar
+                unlockedSymbols={{
+                  vakratunda: sceneState.learnedWords?.vakratunda?.learned || false,
+                  mahakaya: sceneState.learnedWords?.mahakaya?.learned || false,
+                  suryakoti: sceneState.learnedWords?.suryakoti?.learned || false,
+                  samaprabha: sceneState.learnedWords?.samaprabha?.learned || false,
+                  nirvighnam: false,
+                  kurumedeva: false,
+                  sarvakaryeshu: false,
+                  sarvada: false
+                }}
+                onSymbolClick={(symbolId) => {
+                  console.log(`Symbol clicked: ${symbolId}`);
+                }}
+              />
+            </div>
 
 
             {/* Confetti during card celebrations */}
@@ -2775,7 +2747,7 @@ const hideActiveHints = () => {
               </div>
             )}
 
-      <style>{`
+            <style>{`
   @keyframes confettiFall {
     to {
       transform: translateY(100vh) rotate(720deg);
@@ -2866,7 +2838,7 @@ const hideActiveHints = () => {
                 onComplete={() => {
                   console.log('🎯 Suryakoti fireworks complete');
                   setShowSparkle(null);
-                  
+
                   const profileId = localStorage.getItem('activeProfileId');
                   if (profileId) {
                     GameStateManager.saveGameState('cave-of-secrets', 'suryakoti-samaprabha', {
@@ -2877,113 +2849,113 @@ const hideActiveHints = () => {
                       phase: 'complete',
                       timestamp: Date.now()
                     });
-                    
+
                     localStorage.removeItem(`temp_session_${profileId}_cave-of-secrets_suryakoti-samaprabha`);
                     SimpleSceneManager.clearCurrentScene();
                     console.log('✅ SURYAKOTI: Completion saved and temp session cleared');
                   }
-                  
+
                   setShowSceneCompletion(true);
                 }}
               />
             )}
 
             {/* ==================== DISCOVERY 1: SURYAKOTI (Million Suns) ==================== */}
-{/* ==================== DISCOVERY 1: SURYAKOTI (Million Suns) ==================== */}
-{showDiscoveryFlip1 && (
-  <SimpleDiscoveryOverlay
-    // STAGE 1: Discovery Moment
-    celebrationTitle="Surya Koti Uncovered!"
-    celebrationText={""Gathering Light…"\n\nYou collected the light of many suns! Surya Koti means 'Like Ten Million Suns'— it's the brightest magic of all!"}
-    celebrationImage={suryakotiCard}
-    
+            {/* ==================== DISCOVERY 1: SURYAKOTI (Million Suns) ==================== */}
+            {showDiscoveryFlip1 && (
+              <SimpleDiscoveryOverlay
+                // STAGE 1: Discovery Moment
+                celebrationTitle="Surya Koti Uncovered!"
+                celebrationText={""Gathering Light…"\n\nYou collected the light of many suns! Surya Koti means 'Like Ten Million Suns'— it's the brightest magic of all!"}
+            celebrationImage={suryakotiCard}
+
     // STAGE 2: Vibrancy Power Reveal
-    powerTitle="Vibrancy Power Unlocked!"
-    powerText="You hold the brightest light! Use this power to bring energy and joy to everything you do—and every game you play."
-    powerIcon={suryakotiSymbol}
-    
-    buttonText="Shine Bright!"
-    onComplete={() => {
-      console.log("Discovery 1: Suryakoti learned!");
-      setShowDiscoveryFlip1(false);
-      
-      // Update learned words + move to Door 2
-      sceneActions.updateState({ 
-        phase: CAVE_PHASES.DOOR2_ACTIVE,
-        learnedWords: {
-          ...sceneState.learnedWords,
-          suryakoti: { learned: true, scene: 2 }
-        }
-      });
-    }}
-    
-    showSparkles={true}
+            powerTitle="Vibrancy Power Unlocked!"
+            powerText="You hold the brightest light! Use this power to bring energy and joy to everything you do—and every game you play."
+            powerIcon={suryakotiSymbol}
+
+            buttonText="Shine Bright!"
+            onComplete={() => {
+              console.log("Discovery 1: Suryakoti learned!");
+              setShowDiscoveryFlip1(false);
+
+              // Update learned words + move to Door 2
+              sceneActions.updateState({
+                phase: CAVE_PHASES.DOOR2_ACTIVE,
+                learnedWords: {
+                  ...sceneState.learnedWords,
+                  suryakoti: { learned: true, scene: 2 }
+                }
+              });
+            }}
+
+            showSparkles={true}
   />
 )}
 
-{/* ==================== DISCOVERY 2: SAMAPRABHA (Equal Radiance) ==================== */}
-{/* ==================== DISCOVERY 2: SAMAPRABHA (Equal Radiance) ==================== */}
-{showDiscoveryFlip2 && (
-  <SimpleDiscoveryOverlay
-    // STAGE 1: Discovery Moment
-    celebrationTitle="Samaprabha Revealed!"
-    celebrationText={""Equal Radiance…"\n\nYou shared your light with everyone equally! Samaprabha means 'Equal Shine'— a magic of kindness that reaches all."}
-    celebrationImage={samaprabhaCard}
-    
+            {/* ==================== DISCOVERY 2: SAMAPRABHA (Equal Radiance) ==================== */}
+            {/* ==================== DISCOVERY 2: SAMAPRABHA (Equal Radiance) ==================== */}
+            {showDiscoveryFlip2 && (
+              <SimpleDiscoveryOverlay
+                // STAGE 1: Discovery Moment
+                celebrationTitle="Samaprabha Revealed!"
+                celebrationText={""Equal Radiance…"\n\nYou shared your light with everyone equally! Samaprabha means 'Equal Shine'— a magic of kindness that reaches all."}
+            celebrationImage={samaprabhaCard}
+
     // STAGE 2: Kindness Power Reveal
-    powerTitle="Kindness Power Unlocked!"
-    powerText="Shine your light on everyone, no matter what! Your kindness makes the world a better, brighter place."
-    powerIcon={samaprabhaSymbol}
-    
-    buttonText="Light the Way!"
-    onComplete={() => {
-      console.log("Discovery 2: Samaprabha learned!");
-      setShowDiscoveryFlip2(false);
-      
-      // Update learned words + complete scene
-      sceneActions.updateState({ 
-        phase: CAVE_PHASES.COMPLETE,
-        completed: true,
-        learnedWords: {
-          suryakoti: { learned: true, scene: 2 },
-          samaprabha: { learned: true, scene: 2 }
-        }
-      });
-      
-         setShowSparkle('final-fireworks');
-    }}
-    
-    showSparkles={true}
+            powerTitle="Kindness Power Unlocked!"
+            powerText="Shine your light on everyone, no matter what! Your kindness makes the world a better, brighter place."
+            powerIcon={samaprabhaSymbol}
+
+            buttonText="Light the Way!"
+            onComplete={() => {
+              console.log("Discovery 2: Samaprabha learned!");
+              setShowDiscoveryFlip2(false);
+
+              // Update learned words + complete scene
+              sceneActions.updateState({
+                phase: CAVE_PHASES.COMPLETE,
+                completed: true,
+                learnedWords: {
+                  suryakoti: { learned: true, scene: 2 },
+                  samaprabha: { learned: true, scene: 2 }
+                }
+              });
+
+              setShowSparkle('final-fireworks');
+            }}
+
+            showSparkles={true}
   />
 )}
-{/* ==================== RESUME POPUP ==================== */}
-{showResumePopup && (
-  <div style={{
-    position: 'fixed',
-    top: '20%',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    zIndex: 1000,
-    background: 'linear-gradient(135deg, #FF6B35 0%, #FFA500 100%)',
-    color: 'white',
-    padding: '20px 40px',
-    borderRadius: '15px',
-    fontFamily: "'Baloo 2', cursive",
-    fontSize: '1.4rem',
-    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.3)',
-    border: '3px solid #FFD700',
-    textAlign: 'center',
-    animation: 'slideDown 0.3s ease'
-  }}>
-    {resumeMessage}
-  </div>
-)}
+            {/* ==================== RESUME POPUP ==================== */}
+            {showResumePopup && (
+              <div style={{
+                position: 'fixed',
+                top: '20%',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                zIndex: 1000,
+                background: 'linear-gradient(135deg, #FF6B35 0%, #FFA500 100%)',
+                color: 'white',
+                padding: '20px 40px',
+                borderRadius: '15px',
+                fontFamily: "'Baloo 2', cursive",
+                fontSize: '1.4rem',
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.3)',
+                border: '3px solid #FFD700',
+                textAlign: 'center',
+                animation: 'slideDown 0.3s ease'
+              }}>
+                {resumeMessage}
+              </div>
+            )}
 
 
             {/* Back Button */}
-         {sceneState.welcomeShown && !showSceneCompletion && (
-  <BackToMapButton onNavigate={onNavigate} />
-)}
+            {sceneState.welcomeShown && !showSceneCompletion && (
+              <BackToMapButton onNavigate={onNavigate} />
+            )}
 
             {/* Scene Completion */}
             <SceneCompletionCelebration
@@ -2993,81 +2965,81 @@ const hideActiveHints = () => {
               totalScenes={4}
               starsEarned={sceneState.progress?.starsEarned || 8}
               totalStars={8}
-     discoveredSymbols={['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha']}
-containerType="journal"
-containerImage={meaningJournal}
-meaningCards={{
-  vakratunda: { sanskrit: "वक्रतुण्ड", meaning: "Curved Trunk" },
-  mahakaya: { sanskrit: "महाकाय", meaning: "Great Body" },
-  suryakoti: { sanskrit: "सूर्यकोटि", meaning: "Million Suns" },
-  samaprabha: { sanskrit: "समप्रभ", meaning: "Equal Radiance" }
-}}
-appImages={{
-  vakratunda: appVakratunda,
-  mahakaya: appMahakaya,
-  suryakoti: appSuryakoti,
-  samaprabha: appSamaprabha
-}}
+              discoveredSymbols={['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha']}
+              containerType="journal"
+              containerImage={meaningJournal}
+              meaningCards={{
+                vakratunda: { sanskrit: "वक्रतुण्ड", meaning: "Curved Trunk" },
+                mahakaya: { sanskrit: "महाकाय", meaning: "Great Body" },
+                suryakoti: { sanskrit: "सूर्यकोटि", meaning: "Million Suns" },
+                samaprabha: { sanskrit: "समप्रभ", meaning: "Equal Radiance" }
+              }}
+              appImages={{
+                vakratunda: appVakratunda,
+                mahakaya: appMahakaya,
+                suryakoti: appSuryakoti,
+                samaprabha: appSamaprabha
+              }}
               nextSceneName="Sacred Cleansing Waters"
               sceneId="suryakoti-samaprabha"
               completionData={{
                 stars: 8,
-                  symbols: {},  // ← ADD: Empty symbols for Cave
+                symbols: {},  // ← ADD: Empty symbols for Cave
                 sanskritWords: { suryakoti: true, samaprabha: true },
-                 learnedWords: sceneState.learnedWords || {},  // ← ADD: Scene learned words
-  chants: { suryakoti: true, samaprabha: true },  // ← ADD: For CulturalProgressExtractor
+                learnedWords: sceneState.learnedWords || {},  // ← ADD: Scene learned words
+                chants: { suryakoti: true, samaprabha: true },  // ← ADD: For CulturalProgressExtractor
                 completed: true,
                 totalStars: 8
               }}
               onComplete={onComplete}
 
-    // ADD THIS TO SceneCompletionCelebration:
-        onReplay={() => {
-  console.log('🔄 INSTANT REPLAY: Garden Adventure restart');
-  setShowSceneCompletion(false);
-  resetScene();
-}}
+              // ADD THIS TO SceneCompletionCelebration:
+              onReplay={() => {
+                console.log('🔄 INSTANT REPLAY: Garden Adventure restart');
+                setShowSceneCompletion(false);
+                resetScene();
+              }}
 
-        // ADD THIS TO SceneCompletionCelebration:
-onContinue={() => {
-  console.log('🔧 CONTINUE: Suryakoti scene to next scene');
+              // ADD THIS TO SceneCompletionCelebration:
+              onContinue={() => {
+                console.log('🔧 CONTINUE: Suryakoti scene to next scene');
 
-  
-  // 2. Save completion data - CHANT FORMAT
-  const profileId = localStorage.getItem('activeProfileId');
-  if (profileId) {
-    ProgressManager.updateSceneCompletion(profileId, 'cave-of-secrets', 'suryakoti-samaprabha', {
-      completed: true,
-      stars: 8,
-      symbols: {},  // ← Cave scenes don't learn symbols
-      sanskritWords: { suryakoti: true, samaprabha: true },
-      learnedWords: sceneState.learnedWords || {},
-      chants: { suryakoti: true, samaprabha: true }
-    });
-    
-    GameStateManager.saveGameState('cave-of-secrets', 'suryakoti-samaprabha', {
-      completed: true,
-      stars: 8,
-      sanskritWords: { suryakoti: true, samaprabha: true },
-      learnedWords: sceneState.learnedWords || {}
-    });
-    
-    console.log('✅ CONTINUE: Suryakoti completion data saved');
-  }
 
-  // 3. Set next scene for resume tracking
-  setTimeout(() => {
-    SimpleSceneManager.setCurrentScene('cave-of-secrets', 'sarvakaryeshu-sarvada', false, false);
-    console.log('✅ CONTINUE: Next scene (nirvighnam-kurumedeva) set for resume tracking');
-    
-    onNavigate?.('scene-complete-continue');
-  }, 100);
-}}
+                // 2. Save completion data - CHANT FORMAT
+                const profileId = localStorage.getItem('activeProfileId');
+                if (profileId) {
+                  ProgressManager.updateSceneCompletion(profileId, 'cave-of-secrets', 'suryakoti-samaprabha', {
+                    completed: true,
+                    stars: 8,
+                    symbols: {},  // ← Cave scenes don't learn symbols
+                    sanskritWords: { suryakoti: true, samaprabha: true },
+                    learnedWords: sceneState.learnedWords || {},
+                    chants: { suryakoti: true, samaprabha: true }
+                  });
 
-onExploreZones={() => {
-  setShowSceneCompletion(false);
-  onNavigate?.('zone-welcome');
-}}
+                  GameStateManager.saveGameState('cave-of-secrets', 'suryakoti-samaprabha', {
+                    completed: true,
+                    stars: 8,
+                    sanskritWords: { suryakoti: true, samaprabha: true },
+                    learnedWords: sceneState.learnedWords || {}
+                  });
+
+                  console.log('✅ CONTINUE: Suryakoti completion data saved');
+                }
+
+                // 3. Set next scene for resume tracking
+                setTimeout(() => {
+                  SimpleSceneManager.setCurrentScene('cave-of-secrets', 'sarvakaryeshu-sarvada', false, false);
+                  console.log('✅ CONTINUE: Next scene (nirvighnam-kurumedeva) set for resume tracking');
+
+                  onNavigate?.('scene-complete-continue');
+                }, 100);
+              }}
+
+              onExploreZones={() => {
+                setShowSceneCompletion(false);
+                onNavigate?.('zone-welcome');
+              }}
             />
 
             {/* Progressive Hints System */}
@@ -3077,8 +3049,8 @@ onExploreZones={() => {
               sceneState={sceneState}
               hintConfigs={getHintConfigs()}
               characterImage={mooshikaCoach}
-              initialDelay={20000}        
-              hintDisplayTime={10000}    
+              initialDelay={20000}
+              hintDisplayTime={10000}
               position="bottom-right"
               iconSize={60}
               zIndex={2000}
@@ -3086,7 +3058,7 @@ onExploreZones={() => {
               onHintButtonClick={handleHintButtonClick}
               enabled={true}
             />
-{/* Navigation - Always on top */}
+            {/* Navigation - Always on top */}
             <div style={{ position: 'relative', zIndex: 10000 }}>
               <TocaBocaNav
                 onHome={() => {
