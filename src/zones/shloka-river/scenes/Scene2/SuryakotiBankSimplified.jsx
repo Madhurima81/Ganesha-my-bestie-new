@@ -1873,17 +1873,8 @@ hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || showMission}
                 chantedVerses: { 'suryakoti-chant': true, 'samaprabha-chant': true },
                 completed: true
               }}
-              // 1. EXPLORE ZONES FIX: Pass data manually to App.jsx
-              onComplete={() => {
-                if (onComplete) {
-                  onComplete({
-                    completed: true,
-                    stars: 5,
-                    chantedVerses: { 'suryakoti-chant': true, 'samaprabha-chant': true },
-                    words: { suryakoti: true, samaprabha: true }
-                  });
-                }
-              }}
+              // 1. EXPLORE SCENES: Go to zone welcome
+              onComplete={() => onNavigate?.('zone-welcome')}
               // 2. REPLAY FIX: Reset scene
               onReplay={() => {
                 console.log('🔄 INSTANT REPLAY');
