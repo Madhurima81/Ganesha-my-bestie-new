@@ -22,24 +22,24 @@ const ShlokaRiverFinale = ({ onComplete, onBack }) => {
   const [scrambledSyllables, setScrambledSyllables] = useState([]);
   const [showCelebration, setShowCelebration] = useState(false);
   const [hint, setHint] = useState("Tap a lily pad to start!");
-  
+
   // Simple feedback system
   const [slotFeedback, setSlotFeedback] = useState([]); // 'correct', 'wrong', or null
   const [showHearWordButton, setShowHearWordButton] = useState(false);
   const [showHearWordModal, setShowHearWordModal] = useState(false);
   const [highlightedModalSlot, setHighlightedModalSlot] = useState(null);
-  
+
   // Level 2 state
   const [selectedShlokaSlot, setSelectedShlokaSlot] = useState(null);
   const [shlokaSlots, setShlokaSlots] = useState(Array(8).fill(null));
   const [usedWords, setUsedWords] = useState([]);
 
   // Add after existing state, before shlokaWords array:
-const [gameMode, setGameMode] = useState(null); // 'full-journey', 'practice', 'quick-play'
-const [selectedWordForPractice, setSelectedWordForPractice] = useState(null);
-const [selectedLevelMode, setSelectedLevelMode] = useState(null); // 'level1', 'level2', 'both'
-const [showPauseMenu, setShowPauseMenu] = useState(false);
-  
+  const [gameMode, setGameMode] = useState(null); // 'full-journey', 'practice', 'quick-play'
+  const [selectedWordForPractice, setSelectedWordForPractice] = useState(null);
+  const [selectedLevelMode, setSelectedLevelMode] = useState(null); // 'level1', 'level2', 'both'
+  const [showPauseMenu, setShowPauseMenu] = useState(false);
+
   const audioRef = useRef(null);
 
   // 8 Sanskrit words
@@ -169,65 +169,65 @@ const [showPauseMenu, setShowPauseMenu] = useState(false);
   };
 
   // Start game
-// REPLACE the existing handleStartGame with:
-const handleStartGame = () => {
-  setGamePhase('mode-select'); // Go to mode selection instead of directly to level1
-};
+  // REPLACE the existing handleStartGame with:
+  const handleStartGame = () => {
+    setGamePhase('mode-select'); // Go to mode selection instead of directly to level1
+  };
 
-// ADD these new functions after handleStartGame:
+  // ADD these new functions after handleStartGame:
 
-const handleModeSelect = (mode) => {
-  setGameMode(mode);
-  if (mode === 'full-journey') {
-    setSelectedLevelMode('both');
-    setGamePhase('level1');
-    loadWord(0);
-  } else if (mode === 'practice') {
-    setGamePhase('word-select');
-  } else if (mode === 'quick-play') {
-    const randomIndex = Math.floor(Math.random() * 8);
-    setSelectedWordForPractice(randomIndex);
-    setSelectedLevelMode('both');
-    setGamePhase('level1');
-    loadWord(randomIndex);
-  }
-};
+  const handleModeSelect = (mode) => {
+    setGameMode(mode);
+    if (mode === 'full-journey') {
+      setSelectedLevelMode('both');
+      setGamePhase('level1');
+      loadWord(0);
+    } else if (mode === 'practice') {
+      setGamePhase('word-select');
+    } else if (mode === 'quick-play') {
+      const randomIndex = Math.floor(Math.random() * 8);
+      setSelectedWordForPractice(randomIndex);
+      setSelectedLevelMode('both');
+      setGamePhase('level1');
+      loadWord(randomIndex);
+    }
+  };
 
-const handleWordSelect = (wordIndex) => {
-  setSelectedWordForPractice(wordIndex);
-  setGamePhase('level-select');
-};
+  const handleWordSelect = (wordIndex) => {
+    setSelectedWordForPractice(wordIndex);
+    setGamePhase('level-select');
+  };
 
-const handleLevelSelect = (level) => {
-  setSelectedLevelMode(level);
-  const wordIdx = selectedWordForPractice !== null ? selectedWordForPractice : 0;
-  
-  if (level === 'level1' || level === 'both') {
-    setGamePhase('level1');
-    loadWord(wordIdx);
-  } else if (level === 'level2') {
-    setCompletedWords(shlokaWords); // Pre-fill all words
-    setGamePhase('level2');
-    setHint("Arrange the words in the correct order!");
-  }
-};
+  const handleLevelSelect = (level) => {
+    setSelectedLevelMode(level);
+    const wordIdx = selectedWordForPractice !== null ? selectedWordForPractice : 0;
 
-// Pause Menu Handlers
-const handlePauseClick = () => setShowPauseMenu(true);
-const handleResume = () => setShowPauseMenu(false);
-const handleRestartGame = () => {
-  setShowPauseMenu(false);
-  if (gamePhase === 'level1') loadWord(currentWordIndex);
-  else if (gamePhase === 'level2') {
-    setShlokaSlots(Array(8).fill(null));
-    setUsedWords([]);
-    setShlokaFeedback([]);
-    setShowHearShlokaButton(false);
-  }
-};
-const handleChangeWord = () => { setShowPauseMenu(false); setGamePhase('word-select'); };
-const handleChangeLevel = () => { setShowPauseMenu(false); setGamePhase('level-select'); };
-const handleEndGame = () => { setShowPauseMenu(false); setGamePhase('scene-complete'); };
+    if (level === 'level1' || level === 'both') {
+      setGamePhase('level1');
+      loadWord(wordIdx);
+    } else if (level === 'level2') {
+      setCompletedWords(shlokaWords); // Pre-fill all words
+      setGamePhase('level2');
+      setHint("Arrange the words in the correct order!");
+    }
+  };
+
+  // Pause Menu Handlers
+  const handlePauseClick = () => setShowPauseMenu(true);
+  const handleResume = () => setShowPauseMenu(false);
+  const handleRestartGame = () => {
+    setShowPauseMenu(false);
+    if (gamePhase === 'level1') loadWord(currentWordIndex);
+    else if (gamePhase === 'level2') {
+      setShlokaSlots(Array(8).fill(null));
+      setUsedWords([]);
+      setShlokaFeedback([]);
+      setShowHearShlokaButton(false);
+    }
+  };
+  const handleChangeWord = () => { setShowPauseMenu(false); setGamePhase('word-select'); };
+  const handleChangeLevel = () => { setShowPauseMenu(false); setGamePhase('level-select'); };
+  const handleEndGame = () => { setShowPauseMenu(false); setGamePhase('scene-complete'); };
 
   // Load word
   const loadWord = (wordIndex) => {
@@ -274,7 +274,7 @@ const handleEndGame = () => { setShowPauseMenu(false); setGamePhase('scene-compl
   // Handle syllable click
   const handleSyllableClick = (syllable, syllableIndex) => {
     console.log("Syllable clicked:", syllable);
-    
+
     if (usedSyllables.includes(syllable)) {
       setHint("You already used that syllable!");
       return;
@@ -308,53 +308,53 @@ const handleEndGame = () => { setShowPauseMenu(false); setGamePhase('scene-compl
   // SIMPLIFIED: Check word and show tick/cross feedback
   const checkWord = (currentSlots) => {
     const currentWord = shlokaWords[currentWordIndex];
-    
+
     // Generate feedback for each slot
-    const feedback = currentSlots.map((slot, idx) => 
+    const feedback = currentSlots.map((slot, idx) =>
       slot === currentWord.syllables[idx] ? 'correct' : 'wrong'
     );
-    
+
     setSlotFeedback(feedback);
-    
+
     const allCorrect = feedback.every(f => f === 'correct');
-    
-// FIND the checkWord function and UPDATE the section after "ALL CORRECT!":
 
-if (allCorrect) {
-  setHint(`Perfect! You built "${currentWord.word}"! 🎉`);
-  setShowHearWordButton(false);
-  
-  setTimeout(() => {
-    setShowCelebration(true);
-    playAudio(currentWord.wordAudio);
-  }, 500);
+    // FIND the checkWord function and UPDATE the section after "ALL CORRECT!":
 
-  setTimeout(() => {
-    setShowCelebration(false);
-    const newCompletedWords = [...completedWords, currentWord];
-    setCompletedWords(newCompletedWords);
+    if (allCorrect) {
+      setHint(`Perfect! You built "${currentWord.word}"! 🎉`);
+      setShowHearWordButton(false);
 
-    // CHECK GAME MODE FOR PROGRESSION
-    if (gameMode === 'full-journey') {
-      // Full journey - advance through all words
-      if (currentWordIndex < 7) {
-        loadWord(currentWordIndex + 1);
-      } else {
-        setGamePhase('level1-complete');
-        setTimeout(() => {
+      setTimeout(() => {
+        setShowCelebration(true);
+        playAudio(currentWord.wordAudio);
+      }, 500);
+
+      setTimeout(() => {
+        setShowCelebration(false);
+        const newCompletedWords = [...completedWords, currentWord];
+        setCompletedWords(newCompletedWords);
+
+        // CHECK GAME MODE FOR PROGRESSION
+        if (gameMode === 'full-journey') {
+          // Full journey - advance through all words
+          if (currentWordIndex < 7) {
+            loadWord(currentWordIndex + 1);
+          } else {
+            setGamePhase('level1-complete');
+            setTimeout(() => {
+              setGamePhase('level2');
+              setHint("Arrange the words in the correct order!");
+            }, 3000);
+          }
+        } else if (gameMode === 'practice' && selectedLevelMode === 'both') {
+          // Practice mode with both levels - go to level 2 with just this word
           setGamePhase('level2');
-          setHint("Arrange the words in the correct order!");
-        }, 3000);
-      }
-    } else if (gameMode === 'practice' && selectedLevelMode === 'both') {
-      // Practice mode with both levels - go to level 2 with just this word
-      setGamePhase('level2');
-      setHint("Now arrange the shloka!");
-    } else {
-      // Single level practice or quick play - end game
-      setGamePhase('scene-complete');
-    }
-  }, 3500);
+          setHint("Now arrange the shloka!");
+        } else {
+          // Single level practice or quick play - end game
+          setGamePhase('scene-complete');
+        }
+      }, 3500);
 
     } else {
       // SOME WRONG - Show "Hear Word" button
@@ -366,32 +366,32 @@ if (allCorrect) {
   // MODAL: Play word with highlights in popup showing correct arrangement
   const handleHearWord = async () => {
     const currentWord = shlokaWords[currentWordIndex];
-    
+
     // Show modal with correct syllables
     setShowHearWordModal(true);
-    
+
     // Wait a moment for modal to appear
     await new Promise(resolve => setTimeout(resolve, 300));
-    
+
     // Play syllables one by one with highlights
     for (let i = 0; i < currentWord.syllables.length; i++) {
       // Highlight current syllable in modal
       setHighlightedModalSlot(i);
-      
+
       // Play syllable audio
       playAudio(currentWord.syllableAudio[i]);
-      
+
       // Wait for syllable duration
       await new Promise(resolve => setTimeout(resolve, 1200));
     }
-    
+
     // Clear highlight and keep modal open for a moment
     setHighlightedModalSlot(null);
-    
+
     // Wait then close modal
     await new Promise(resolve => setTimeout(resolve, 1000));
     setShowHearWordModal(false);
-    
+
     setHint("Now tap the red ✗ syllables to remove them and try again!");
   };
 
@@ -457,151 +457,136 @@ if (allCorrect) {
   return (
     <div className="river-finale-container">
       {/* Background */}
-      <div 
-        className="river-bg" 
+      <div
+        className="river-bg"
         style={{ backgroundImage: `url(${bgImage})` }}
       />
 
       <audio ref={audioRef} />
 
       {/* INTRO SCREEN */}
-      {gamePhase === 'intro' && (() => {
-        const theme = getZoneTheme('shloka-river');
-        const modal = getOpeningModal('shloka-river', 'shloka-river-finale');
-        return (
-          <div className="game-modal-overlay" style={{ '--modal-card-bg': theme.parentBg, '--modal-text-primary': theme.textPrimary, '--modal-btn-bg': theme.buttonActiveBg, '--modal-btn-shadow': theme.glowColor }}>
-            <div className="game-modal-content">
-              <div className="game-modal-character">
-                <span style={{ fontSize: '80px' }}>🐘</span>
-              </div>
-              <div className="game-modal-card">
-                <h1 className="game-modal-title">{modal?.title || 'Chant and Celebrate'}</h1>
-                <button className="game-modal-button" onClick={handleStartGame}>
-                  {modal?.buttonText || "Let's Explore"}
-                </button>
-                {onBack && (
-                  <button className="intro-back-btn" onClick={onBack}>
-                    ← Back to Map
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        );
-      })()}
+      {gamePhase === 'intro' && (
+        <OpeningModal
+          zoneId="shloka-river"
+          sceneId="shloka-river-finale"
+          onStart={handleStartGame}
+          characterImg={'ganeshaHeadphones'}
+          showButton={true}
+        />
+      )}
 
       {/* MODE SELECTION SCREEN */}
-{gamePhase === 'mode-select' && (
-  <div className="game-screen selection-screen">
-    <div className="selection-modal">
-      <h2 className="selection-title">🌊 Choose Your Journey 🌊</h2>
-      
-      <div className="selection-options">
-        <button className="selection-btn journey" onClick={() => handleModeSelect('full-journey')}>
-          <span className="selection-icon">🎯</span>
-          <div className="selection-content">
-            <h3>Full Journey</h3>
-            <p>Master all 8 sacred words!</p>
+      {gamePhase === 'mode-select' && (
+        <div className="game-screen selection-screen">
+          <div className="selection-modal">
+            <h2 className="selection-title">🌊 Choose Your Journey 🌊</h2>
+
+            <div className="selection-options">
+              <button className="selection-btn journey" onClick={() => handleModeSelect('full-journey')}>
+                <span className="selection-icon">🎯</span>
+                <div className="selection-content">
+                  <h3>Full Journey</h3>
+                  <p>Master all 8 sacred words!</p>
+                </div>
+              </button>
+
+              <button className="selection-btn practice" onClick={() => handleModeSelect('practice')}>
+                <span className="selection-icon">📚</span>
+                <div className="selection-content">
+                  <h3>Practice Mode</h3>
+                  <p>Choose specific word & level</p>
+                </div>
+              </button>
+
+              <button className="selection-btn quick" onClick={() => handleModeSelect('quick-play')}>
+                <span className="selection-icon">🎲</span>
+                <div className="selection-content">
+                  <h3>Quick Play</h3>
+                  <p>Random word practice</p>
+                </div>
+              </button>
+            </div>
+
+            <button className="selection-back-btn" onClick={onBack}>← Back to Map</button>
           </div>
-        </button>
+        </div>
+      )}
 
-        <button className="selection-btn practice" onClick={() => handleModeSelect('practice')}>
-          <span className="selection-icon">📚</span>
-          <div className="selection-content">
-            <h3>Practice Mode</h3>
-            <p>Choose specific word & level</p>
+      {/* WORD SELECTION SCREEN */}
+      {gamePhase === 'word-select' && (
+        <div className="game-screen selection-screen">
+          <div className="selection-modal wide">
+            <h2 className="selection-title">Choose a Word to Practice</h2>
+
+            <div className="word-selection-grid">
+              {shlokaWords.map((word, index) => (
+                <button
+                  key={word.id}
+                  className="word-select-btn"
+                  onClick={() => handleWordSelect(index)}
+                >
+                  <span className="word-select-number">{index + 1}</span>
+                  <span className="word-select-name">{word.word}</span>
+                  <span className="word-select-meaning">{word.meaning}</span>
+                </button>
+              ))}
+            </div>
+
+            <button className="selection-back-btn" onClick={() => setGamePhase('mode-select')}>
+              ← Back
+            </button>
           </div>
-        </button>
+        </div>
+      )}
 
-        <button className="selection-btn quick" onClick={() => handleModeSelect('quick-play')}>
-          <span className="selection-icon">🎲</span>
-          <div className="selection-content">
-            <h3>Quick Play</h3>
-            <p>Random word practice</p>
+      {/* LEVEL SELECTION SCREEN */}
+      {gamePhase === 'level-select' && (
+        <div className="game-screen selection-screen">
+          <div className="selection-modal">
+            <h2 className="selection-title">What do you want to practice?</h2>
+            <p className="selection-subtitle">
+              Word: {shlokaWords[selectedWordForPractice]?.word} ({shlokaWords[selectedWordForPractice]?.meaning})
+            </p>
+
+            <div className="selection-options">
+              <button className="selection-btn level1" onClick={() => handleLevelSelect('level1')}>
+                <span className="selection-icon">🪷</span>
+                <div className="selection-content">
+                  <h3>Build Word</h3>
+                  <p>Level 1: Syllable practice</p>
+                </div>
+              </button>
+
+              <button className="selection-btn level2" onClick={() => handleLevelSelect('level2')}>
+                <span className="selection-icon">⛵</span>
+                <div className="selection-content">
+                  <h3>Arrange Shloka</h3>
+                  <p>Level 2: Word order</p>
+                </div>
+              </button>
+
+              <button className="selection-btn both" onClick={() => handleLevelSelect('both')}>
+                <span className="selection-icon">🌊</span>
+                <div className="selection-content">
+                  <h3>Both Levels</h3>
+                  <p>Complete practice</p>
+                </div>
+              </button>
+            </div>
+
+            <button className="selection-back-btn" onClick={() => setGamePhase('word-select')}>
+              ← Back
+            </button>
           </div>
-        </button>
-      </div>
-
-      <button className="selection-back-btn" onClick={onBack}>← Back to Map</button>
-    </div>
-  </div>
-)}
-
-{/* WORD SELECTION SCREEN */}
-{gamePhase === 'word-select' && (
-  <div className="game-screen selection-screen">
-    <div className="selection-modal wide">
-      <h2 className="selection-title">Choose a Word to Practice</h2>
-      
-      <div className="word-selection-grid">
-        {shlokaWords.map((word, index) => (
-          <button 
-            key={word.id}
-            className="word-select-btn"
-            onClick={() => handleWordSelect(index)}
-          >
-            <span className="word-select-number">{index + 1}</span>
-            <span className="word-select-name">{word.word}</span>
-            <span className="word-select-meaning">{word.meaning}</span>
-          </button>
-        ))}
-      </div>
-
-      <button className="selection-back-btn" onClick={() => setGamePhase('mode-select')}>
-        ← Back
-      </button>
-    </div>
-  </div>
-)}
-
-{/* LEVEL SELECTION SCREEN */}
-{gamePhase === 'level-select' && (
-  <div className="game-screen selection-screen">
-    <div className="selection-modal">
-      <h2 className="selection-title">What do you want to practice?</h2>
-      <p className="selection-subtitle">
-        Word: {shlokaWords[selectedWordForPractice]?.word} ({shlokaWords[selectedWordForPractice]?.meaning})
-      </p>
-      
-      <div className="selection-options">
-        <button className="selection-btn level1" onClick={() => handleLevelSelect('level1')}>
-          <span className="selection-icon">🪷</span>
-          <div className="selection-content">
-            <h3>Build Word</h3>
-            <p>Level 1: Syllable practice</p>
-          </div>
-        </button>
-
-        <button className="selection-btn level2" onClick={() => handleLevelSelect('level2')}>
-          <span className="selection-icon">⛵</span>
-          <div className="selection-content">
-            <h3>Arrange Shloka</h3>
-            <p>Level 2: Word order</p>
-          </div>
-        </button>
-
-        <button className="selection-btn both" onClick={() => handleLevelSelect('both')}>
-          <span className="selection-icon">🌊</span>
-          <div className="selection-content">
-            <h3>Both Levels</h3>
-            <p>Complete practice</p>
-          </div>
-        </button>
-      </div>
-
-      <button className="selection-back-btn" onClick={() => setGamePhase('word-select')}>
-        ← Back
-      </button>
-    </div>
-  </div>
-)}
+        </div>
+      )}
 
       {/* LEVEL 1 SCREEN */}
       {gamePhase === 'level1' && (
         <div className="game-screen level1-game">
           <button className="game-back-btn" onClick={onBack}>← Back</button>
           {/* Add this button right after the "Back" button in both level1-game and level2-game: */}
-<button className="game-pause-btn" onClick={handlePauseClick}>⏸️</button>
+          <button className="game-pause-btn" onClick={handlePauseClick}>⏸️</button>
 
           <div className="game-header">
             <h2 className="game-title">🪷 Build the Sacred Words 🪷</h2>
@@ -616,7 +601,7 @@ if (allCorrect) {
               🔊 Hear Word
             </button>
           )}
-          
+
 
           {/* Lily Pads with Simple Tick/Cross Feedback */}
           <div className="lily-pads-area">
@@ -720,7 +705,7 @@ if (allCorrect) {
         <div className="game-screen level2-game">
           <button className="game-back-btn" onClick={onBack}>← Back</button>
           {/* Add this button right after the "Back" button in both level1-game and level2-game: */}
-<button className="game-pause-btn" onClick={handlePauseClick}>⏸️</button>
+          <button className="game-pause-btn" onClick={handlePauseClick}>⏸️</button>
 
           <div className="game-header">
             <h2 className="game-title">⛵ Arrange the Complete Shloka ⛵</h2>
@@ -802,7 +787,7 @@ if (allCorrect) {
           <div className="final-ganesha">🐘</div>
           <h1 className="final-title">Shloka River Complete! 🎉🌊</h1>
           <p className="final-message">You've mastered the sacred Ganesha Shloka!</p>
-          
+
           <div className="final-shloka">
             {shlokaWords.map(word => (
               <div key={word.id} className="final-word-item">
@@ -830,16 +815,16 @@ if (allCorrect) {
       )}
 
       {/* Add at the end, just before the final closing </div> of river-finale-container: */}
-<GamePauseMenu
-  show={showPauseMenu}
-  gameName="Shloka River"
-  onResume={handleResume}
-  onRestart={handleRestartGame}
-  onBackToModes={() => { setShowPauseMenu(false); setGamePhase('mode-select'); }}
-  onChangeWord={gameMode === 'practice' ? handleChangeWord : null}
-  onChangeLevel={gameMode === 'practice' ? handleChangeLevel : null}
-  onComplete={handleEndGame}
-/>
+      <GamePauseMenu
+        show={showPauseMenu}
+        gameName="Shloka River"
+        onResume={handleResume}
+        onRestart={handleRestartGame}
+        onBackToModes={() => { setShowPauseMenu(false); setGamePhase('mode-select'); }}
+        onChangeWord={gameMode === 'practice' ? handleChangeWord : null}
+        onChangeLevel={gameMode === 'practice' ? handleChangeLevel : null}
+        onComplete={handleEndGame}
+      />
     </div>
   );
 };
