@@ -36,7 +36,7 @@ export const OPENING_MODALS = {
     'final-scene': {
       title: "Shine Together",
       description: "All the symbols are ready. Place them gently and watch them glow.",
-      icons: ['vakratunda', 'meaning'],
+      icons: ['eyes', 'trunk', 'lotus'],
       buttonText: "Let's Explore",
       character: 'ganesha-cave'
     }
@@ -132,8 +132,8 @@ export const OPENING_MODALS = {
     'shloka-river-finale': {
       title: "Chant and Celebrate",
       description: "All the words flow together. Let your voice lead the river.",
-      icons: ['vakratunda-app','mahakaya-app','suryakoti-app','samaprabha-app','nirvighnam-app','kurumedeva-app','sarvakaryeshu-app','sarvada-app'],
-      iconLabels: ['VA','MA','SU','SA','NI','KU','SAR','SAR'],
+      icons: ['vakratunda-app', 'mahakaya-app', 'suryakoti-app', 'samaprabha-app', 'nirvighnam-app', 'kurumedeva-app', 'sarvakaryeshu-app', 'sarvada-app'],
+      iconLabels: ['VA', 'MA', 'SU', 'SA', 'NI', 'KU', 'SAR', 'SAR'],
       buttonText: "Let's Explore",
       character: 'ganesha-headphones'
     }
@@ -173,7 +173,7 @@ export const OPENING_MODALS = {
     'game4': {
       title: "Mandap Magic",
       description: "The space is yours. Decorate it in your own way.",
-      icons: ['mandap-learn-icon','mandap-build-icon','mandap-decorate-icon'],
+      icons: ['mandap-learn-icon', 'mandap-build-icon', 'mandap-decorate-icon'],
       iconLabels: ['Learn', 'Build', 'Decorate'],
       buttonText: "Let's Explore",
       character: 'ganesha-happy-sitting'
