@@ -1235,36 +1235,31 @@ const NewModakSceneMVPContent = ({
       {/* Flying Symbol Clone (useSymbolCollection) — superseded by SymbolAutoReveal */}
       {/* {flyingSymbol && <img className="flying-symbol" src={flyingSymbol.src} alt="" style={flightStyle} />} */}
 
-      {/* Pause Button - Always visible after welcome screen */}
-      <PauseButton
-        visible={canShowPauseUI}
-        onClick={handlePauseOpen}
-      />
-
-      {/* Visual Blur Overlay */}
-      <PauseBlurOverlay show={showPauseMenu && canShowPauseUI} />
-
-      {/* Pause Menu */}
-      <PauseMenu
-        show={showPauseMenu && canShowPauseUI}
-        onResume={handleResumeFromPause}
-        onBackToMap={() => {
-          setShowPauseMenu(false);
-          handlePauseCore();
-          stopMusic();
-          onNavigate?.('zones');
-        }}
-        isSoundOn={isSoundOn}
-        onSoundToggle={() => {
-          setIsSoundOn(!isSoundOn);
-          if (isSoundOn) {
-            stopMusic();
-          } else {
-            startMusic();
-          }
-        }}
-        zoneName="Symbol Mountain"
-      />
+      {sceneState.welcomeShown && !isFinalCelebrationActive && (
+        <button
+          type="button"
+          onClick={handleHomeToMainMap}
+          style={{
+            position: 'fixed',
+            top: '16px',
+            left: '16px',
+            zIndex: 10001,
+            width: '52px',
+            height: '52px',
+            borderRadius: '50%',
+            border: '2px solid #fff',
+            background: 'linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%)',
+            color: '#fff',
+            fontSize: '24px',
+            cursor: 'pointer',
+            boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
+          }}
+          aria-label="Go to main map"
+          title="Home"
+        >
+          🏠
+        </button>
+      )}
 
       <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
         <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
