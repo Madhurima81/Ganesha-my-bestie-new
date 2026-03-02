@@ -35,7 +35,8 @@ import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal
 // import useSymbolCollection from '../../../../lib/hooks/useSymbolCollection';
 
 // Content Configs
-getOpeningModal,
+import {
+  getOpeningModal,
   getCompletionModal
 } from '../../../../lib/config/content';
 
