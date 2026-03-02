@@ -38,6 +38,8 @@ import appNirvighnam from '../../shloka-river/assets/images/apps/app-nirvighnam.
 import appKurumedeva from '../../shloka-river/assets/images/apps/app-kurumedeva.png';
 import appSarvakaryeshu from '../../shloka-river/assets/images/apps/app-sarvakaryeshu.png';
 import appSarvada from '../../shloka-river/assets/images/apps/app-sarvada.png';
+import stoneIcon from '../../shloka-river/scenes/Scene3/assets/images/nirvighnam/stone1.png';
+import raftIcon from '../../shloka-river/scenes/scene5/assets/images/raft.png';
 
 // Cave of Secrets (Meaning Cave) Symbols
 import symbolVakratunda from '../../meaning cave/assets/images/symbols/vakratunda-symbol.png';
@@ -94,6 +96,11 @@ const ICON_MAP = {
     'sarvakaryeshu': symbolSarvakaryeshu,
     'sarvada': symbolSarvada,
     'meaning': meaningJournal,
+
+    // Shloka River Finale
+    'build-words': stoneIcon,
+    'arrange': raftIcon,
+    'complete': symbolLotusColored,
 };
 
 const OpeningModal = ({
