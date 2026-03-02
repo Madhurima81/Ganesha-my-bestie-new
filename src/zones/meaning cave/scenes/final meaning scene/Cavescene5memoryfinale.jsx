@@ -16,6 +16,7 @@ import ProgressManager from "../../../../lib/services/ProgressManager";
 // UI Components
 import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
+import HomeButton from '../../../../lib/components/ui/HomeButton';
 import BackToMapButton from '../../../../lib/components/navigation/BackToMapButton';
 import RotatingOrbsEffect from '../../../../lib/components/feedback/RotatingOrbsEffect';
 import SymbolSidebar from '../../components/SymbolSidebar'; // ✅ Added Sidebar
