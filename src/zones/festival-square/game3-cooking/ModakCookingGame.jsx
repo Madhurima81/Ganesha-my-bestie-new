@@ -200,7 +200,6 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
   const [showMouseCelebration, setShowMouseCelebration] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
-  const [showPauseMenu, setShowPauseMenu] = useState(false);
   const [showResumePopup, setShowResumePopup] = useState(false);
   const [resumeMessage, setResumeMessage] = useState('');
 
