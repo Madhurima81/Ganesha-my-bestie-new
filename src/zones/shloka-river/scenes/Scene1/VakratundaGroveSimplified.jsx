@@ -28,6 +28,7 @@ import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal
 import HomeButton from '../../../../lib/components/ui/HomeButton';
 
 import AppSidebar from '../../shared/AppSidebar';
+import OpeningModal from '../../shared/components/OpeningModal';
 // REMOVED: import SanskritWordMission (No longer needed)
 import SanskritVoiceRecorder from '../../../../lib/components/audio/SanskritVoiceRecorder';
 
@@ -102,15 +103,15 @@ const PHASES = {
 };
 
 const powerConfig = {
-  vakratunda: { 
-    name: 'Flexibility Power', 
+  vakratunda: {
+    name: 'Flexibility Power',
     image: appVakratunda,
     color: '#4ECDC4',
     affirmation: 'My trunk bends to find a new way.',
     story: 'When you feel stuck, try a new way.'
   },
-  mahakaya: { 
-    name: 'Inner Strength', 
+  mahakaya: {
+    name: 'Inner Strength',
     image: appMahakaya,
     color: '#FF6B35',
     affirmation: 'I am big and strong — and you have strength inside too.',
@@ -154,7 +155,7 @@ const VakratundaGroveSimplified = ({
         initialState={{
           phase: PHASES.INITIAL,
           learnedWords: { vakratunda: false, mahakaya: false },
-          chantedVerses: {}, 
+          chantedVerses: {},
           learnedSyllables: {},
           unlockedApps: {},
           welcomeShown: false,
@@ -328,8 +329,8 @@ const VakratundaGroveContent = ({
     if (!el) return { x: 220, y: 0 }; // fallback: right edge of screen
     const r = el.getBoundingClientRect();
     return {
-      x: (r.left + r.width  / 2) - (window.innerWidth  / 2),
-      y: (r.top  + r.height / 2) - (window.innerHeight / 2)
+      x: (r.left + r.width / 2) - (window.innerWidth / 2),
+      y: (r.top + r.height / 2) - (window.innerHeight / 2)
     };
   };
 
@@ -462,9 +463,9 @@ const VakratundaGroveContent = ({
 
       // Show SymbolAutoReveal flip card
       setRevealConfig({
-        symbolId:    word,
+        symbolId: word,
         symbolImage: powerConfig[word].image,
-        symbolName:  powerConfig[word].name,
+        symbolName: powerConfig[word].name,
         affirmation: powerConfig[word].affirmation,
         sidebarTarget: getSidebarTarget(word)
       });
@@ -632,7 +633,7 @@ const VakratundaGroveContent = ({
             ── End PauseButton ── */}
 
             {/* DEV TEST BUTTONS - Skip to word overlay */}
-            { sceneState.welcomeShown && !showPowerOverlay && !showCenteredWord && (
+            {sceneState.welcomeShown && !showPowerOverlay && !showCenteredWord && (
               <div style={{
                 position: 'fixed', top: 10, right: 10, zIndex: 99999,
                 display: 'flex', gap: '6px', flexDirection: 'column'
@@ -684,70 +685,25 @@ const VakratundaGroveContent = ({
             ── End PauseMenu ── */}
 
             {/* 3. OPENING MODAL (Using Zone Theme Colors) */}
-            {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (() => {
-              const theme = getZoneTheme(zoneId);
-              const modal = getOpeningModal(zoneId, sceneId);
-              return (
-                <div
-                  className="game-modal-overlay"
-                  style={{
-                    '--modal-card-bg': theme.parentBg,
-                    '--modal-text-primary': theme.textPrimary,
-                    '--modal-btn-bg': theme.buttonActiveBg,
-                    '--modal-btn-shadow': theme.glowColor
-                  }}
-                >
-                    <div className="game-modal-content">
-                      <div className="game-modal-character">
-                        <img src={ganeshaHeadphones} alt="Ganesha" className="vakratunda-modal-ganesha" />
-                      </div>
-
-                      <div className="game-modal-card">
-                        <h1 className="game-modal-title">
-                          {modal?.title || 'Bloom and Grow'}
-                        </h1>
-                        <p className="game-modal-subtitle">
-                          {modal?.subtitle || 'Where Ancient Chants Echo'}
-                        </p>
-                        <p className="game-modal-subtitle">
-                          {modal?.description || 'Learn two sacred sounds and help the river bloom with wisdom.'}
-                        </p>
-
-                        <div className="game-modal-icons">
-                          <div className="game-modal-icon-item">
-                            <img src={appVakratunda} alt="Flexibility" />
-                            <span className="game-modal-icon-label">Flexibility</span>
-                          </div>
-                          <div className="game-modal-icon-item">
-                            <img src={appMahakaya} alt="Strength" />
-                            <span className="game-modal-icon-label">Strength</span>
-                          </div>
-                        </div>
-
-                        <VOGatedButton
-                          visible={openingButtonVisible}
-                          onClick={() => {
-                            sceneActions.updateState({
-                              welcomeShown: true,
-                              phase: PHASES.VAKRATUNDA_GAME
-                            });
-                          }}
-                          className="game-modal-button"
-                        >
-                          {modal?.buttonText || "Let's Explore"}
-                        </VOGatedButton>
-                      </div>
-                    </div>
-                </div>
-              );
-            })()}
+            <OpeningModal
+              zoneId={zoneId}
+              sceneId={sceneId}
+              onStart={() => {
+                sceneActions.updateState({
+                  welcomeShown: true,
+                  phase: PHASES.VAKRATUNDA_GAME
+                });
+              }}
+              characterImg={ganeshaHeadphones}
+              showButton={openingButtonVisible}
+            />
 
             {/* VAKRATUNDA MEMORY GAME */}
             <VakratundaGame
               isActive={sceneState.phase === PHASES.VAKRATUNDA_GAME}
               hideElements={showCenteredWord || showPowerOverlay || !!revealConfig}
               onPhaseComplete={() => handlePhaseComplete('vakratunda')}
-              onGameComplete={() => {}}
+              onGameComplete={() => { }}
               profileName={profileName}
               getBudImage={() => budVa}
               getLotusImage={() => lotusVa}
@@ -767,7 +723,7 @@ const VakratundaGroveContent = ({
               hideElements={showCenteredWord || showPowerOverlay || !!revealConfig}
               powerGained={sceneState.learnedWords?.vakratunda}
               onPhaseComplete={() => handlePhaseComplete('mahakaya')}
-              onGameComplete={() => {}}
+              onGameComplete={() => { }}
               profileName={profileName}
               getSeedImage={() => seedImage}
               getFlowerImage={() => flowerMa}
@@ -842,7 +798,7 @@ const VakratundaGroveContent = ({
               <>
                 <div className="vakratunda-celebration-overlay" />
                 <div className="vakratunda-centered-word-celebration">
-                  <img 
+                  <img
                     src={powerConfig[showCenteredWord]?.image}
                     alt={showCenteredWord}
                     className="vakratunda-celebration-app-icon"
@@ -874,29 +830,29 @@ const VakratundaGroveContent = ({
 
             {/* Side rail AppSidebar — hidden during App Discovery and final celebration */}
             {!showAppDiscovery &&
-             !isFinalCelebrationActive &&
-             !(sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown) && (
-            <AppSidebar
-              unlockedApps={sceneState.unlockedApps || {}}
-              savedRecordings={savedRecordings}
-              isReload={isReload}
-              onPopupOpen={() => {
-                console.log("🎤 Recorder Opening - Pausing Game");
-                stopVoice();
-                stopIdleTimer();
-                setIsRecorderOpen(true);
-              }}
-              onPopupClose={() => {
-                console.log("🎤 Recorder Closing - Resuming Game");
-                setIsRecorderOpen(false);
-                // Only restart idle timer if we're in an active game phase (not celebration/overlay/complete)
-                const activeGamePhases = [PHASES.VAKRATUNDA_GAME, PHASES.MAHAKAYA_GAME];
-                if (activeGamePhases.includes(sceneState.phase) && !showPowerOverlay && !showCenteredWord) {
-                  startIdleTimer();
-                }
-              }}
-            />
-            )}
+              !isFinalCelebrationActive &&
+              !(sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown) && (
+                <AppSidebar
+                  unlockedApps={sceneState.unlockedApps || {}}
+                  savedRecordings={savedRecordings}
+                  isReload={isReload}
+                  onPopupOpen={() => {
+                    console.log("🎤 Recorder Opening - Pausing Game");
+                    stopVoice();
+                    stopIdleTimer();
+                    setIsRecorderOpen(true);
+                  }}
+                  onPopupClose={() => {
+                    console.log("🎤 Recorder Closing - Resuming Game");
+                    setIsRecorderOpen(false);
+                    // Only restart idle timer if we're in an active game phase (not celebration/overlay/complete)
+                    const activeGamePhases = [PHASES.VAKRATUNDA_GAME, PHASES.MAHAKAYA_GAME];
+                    if (activeGamePhases.includes(sceneState.phase) && !showPowerOverlay && !showCenteredWord) {
+                      startIdleTimer();
+                    }
+                  }}
+                />
+              )}
 
             {showSparkle === 'final-fireworks' && (
               <Fireworks
@@ -905,7 +861,7 @@ const VakratundaGroveContent = ({
                 onComplete={() => {
                   setShowSparkle(null);
                   setShowFinalGanesha(false);
-                  
+
                   // Save completion data
                   const profileId = localStorage.getItem('activeProfileId');
                   if (profileId) {
@@ -983,7 +939,7 @@ const VakratundaGroveContent = ({
               onContinue={() => {
                 onNavigate?.('scene-complete-continue');
               }}
-            />    
+            />
 
             <ProgressiveHintSystem
               ref={useRef(null)}
