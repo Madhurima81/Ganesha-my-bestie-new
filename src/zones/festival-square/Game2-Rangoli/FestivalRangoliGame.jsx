@@ -977,6 +977,23 @@ const FestivalRangoliGame = ({ onComplete, onNavigate, zoneId = 'festival-square
         }}
       />
 
+      {/* Game Pause Menu */}
+      <GamePauseMenu
+        show={showPauseMenu}
+        gameName="Rangoli Artistry"
+        currentStars={gameState.stars}
+        hasDesignOption={true}
+        onResume={() => setShowPauseMenu(false)}
+        onRestart={() => { setShowPauseMenu(false); startOverCurrentDesign(); }}
+        onBackToModes={() => {
+          setShowPauseMenu(false);
+          saveCurrentProgress();
+          setLastWorkedDesign(gameState.selectedDesign);
+          setGameState(prev => ({ ...prev, phase: PHASES.SELECTION }));
+        }}
+        onComplete={() => { setShowPauseMenu(false); handleManualCompletion(); }}
+      />
+
       {/* Festival Square Completion */}
       {showSceneCompletion && (
         <FestivalSquareCompletion
