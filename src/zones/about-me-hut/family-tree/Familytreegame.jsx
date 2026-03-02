@@ -676,7 +676,7 @@ const FamilyTreeGameContent = ({
     }
 
     const inChildInput = sceneState.gamePhase === 'childInput';
-    const hasBlockingOverlay = sceneState.showNameModal || showPauseMenu;
+    const hasBlockingOverlay = sceneState.showNameModal;
     const isChildTreeComplete = sceneState.childFamily.length >= 21;
 
     if (!inChildInput || hasBlockingOverlay || isChildTreeComplete) return;
