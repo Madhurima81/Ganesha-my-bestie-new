@@ -91,11 +91,6 @@ const ICON_MAP = {
     'sarvada': symbolSarvada,
     'meaning': meaningJournal,
 
-    // Shloka River Finale
-    'build-words': stoneIcon,
-    'arrange': raftIcon,
-    'complete': symbolLotusColored,
-
     // Festival Square
     'listen-icon': listenIcon,
     'play-icon': playIcon,
