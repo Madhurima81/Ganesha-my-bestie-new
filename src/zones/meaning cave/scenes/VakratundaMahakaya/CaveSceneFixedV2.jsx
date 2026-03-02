@@ -1254,6 +1254,7 @@ const CaveSceneContent = ({
       <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
         <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
           <div className="pond-scene-container" data-phase={sceneState.phase}>
+            <HomeButton onNavigate={onNavigate} />
             <div className="pond-background" style={{ backgroundImage: `url(${caveBackground})` }}>
 
               {/* OPENING INSTRUCTION SCREEN */}
