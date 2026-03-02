@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import OpeningModal from '../../shared/components/OpeningModal.jsx';
-import '../../shared/components/OpeningModal.css';
+import './DreamsWishesGame.css';
 import AboutMeCompletion from "../components/Aboutmecompletion";
 import DrawingPad from '../components/Drawingpad';
 
@@ -99,15 +98,17 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
       )}
 
       {/* INTRO SCREEN */}
-      {/* INTRO SCREEN - Using Shared OpeningModal */}
       {gamePhase === 'intro' && (
-        <OpeningModal
-          zoneId="about-me-hut"
-          sceneId="dreams-wishes"
-          onStart={() => setGamePhase('wish1-intro')}
-          characterImg={babyGaneshaImg}
-          showButton={true}
-        />
+        <div className="intro-overlay">
+          <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
+          <div className="intro-speech">
+            <p className="intro-text">I have three giant wishes for the whole world!</p>
+            <p className="intro-text">Will you help me make them come true? 🌟</p>
+            <button className="start-btn" onClick={() => setGamePhase('wish1-intro')}>
+              Yes! Let's Help Ganesha! ✨
+            </button>
+          </div>
+        </div>
       )}
 
       {/* WISH 1 INTRO - HAPPINESS */}
