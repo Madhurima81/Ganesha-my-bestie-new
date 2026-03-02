@@ -36,10 +36,9 @@ import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal
 
 // Content Configs
 import {
-import {
-    getOpeningModal,
-    getCompletionModal
-  } from '../../../../lib/config/content';
+  getOpeningModal,
+  getCompletionModal
+} from '../../../../lib/config/content';
 
 // Shared Components
 import OpeningModal from '../../../shared/components/OpeningModal';
