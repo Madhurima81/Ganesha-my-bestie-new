@@ -1696,7 +1696,8 @@ const NewModakSceneMVPContent = ({
                 }}
                 onNextScene={() => {
                   console.log("Next scene clicked");
-                  onNavigate?.('zones');
+                  SimpleSceneManager.setCurrentScene('symbol-mountain', 'pond', false, false);
+                  onNavigate?.('scene-complete-continue');
                 }}
               />
             )}
