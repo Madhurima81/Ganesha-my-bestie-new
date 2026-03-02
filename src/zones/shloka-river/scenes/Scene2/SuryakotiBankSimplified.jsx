@@ -1,11 +1,9 @@
 ﻿// zones/shloka-river/scenes/Scene2/SuryakotiBank.jsx - Updated with Combined Memory Game
 import React, { useState, useEffect, useRef } from 'react';
 import './SuryakotiBankSimplified.css';
-import '../../../shared/components/OpeningModal.css';
 // ... existing imports
 import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
-import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
-import { getOpeningModal } from '../../../../lib/config/content';
+import OpeningModal from '../../../shared/components/OpeningModal';
 
 // Import scene management components
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
