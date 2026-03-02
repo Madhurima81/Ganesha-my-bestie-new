@@ -49,6 +49,7 @@ import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimat
 import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
 import SymbolSidebar from '../../shared/components/SymbolSidebar';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
+import HomeButton from '../../../../lib/components/ui/HomeButton';
 import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOverlay';
 
 // Images
