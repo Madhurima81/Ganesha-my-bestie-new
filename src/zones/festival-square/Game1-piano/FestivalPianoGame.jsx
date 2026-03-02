@@ -1,7 +1,8 @@
 ﻿// FestivalPianoGame.jsx - FINAL VERSION with Intro Scene, Restyled UI, and All Game Modes + SONG COMPLETION MODAL
 import React, { useState, useEffect, useRef } from 'react';
 import './FestivalPianoGame.css';
-import '../../shared/components/OpeningModal.css'; // <--- SHARED MODAL IMPORT
+import OpeningModal from '../../../shared/components/OpeningModal.jsx';
+import '../../../shared/components/OpeningModal.css'; // <--- SHARED MODAL IMPORT
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../lib/config/content/openingModals';
 
@@ -63,14 +64,14 @@ const FESTIVAL_SONGS = [
   { id: 'sukh-karta', name: 'Sukh Karta Dukh Harta', festival: 'Ganesh Aarti', difficulty: 3, icon: '✨', description: 'Prayer praising Ganesha as the giver of happiness', melody: ['bells', 'cymbals', 'shehnai', 'shehnai', 'cymbals', 'shehnai', 'bells', 'cymbals', 'shehnai', 'cymbals', 'bells', 'bells', 'bells'], culturalNote: 'Means "Giver of joy, remover of sorrow, destroyer of obstacles"', unlocked: false }
 ];
 
-const SongCompletionOverlay = ({ 
-  show, 
-  songName, 
-  starsEarned, 
+const SongCompletionOverlay = ({
+  show,
+  songName,
+  starsEarned,
   isPlayingMySong,
-  onPlayAgain, 
+  onPlayAgain,
   onHearMySong,
-  onTryAnother 
+  onTryAnother
 }) => {
   if (!show) return null;
 
@@ -78,8 +79,8 @@ const SongCompletionOverlay = ({
     <div className="mission-completion-overlay">
       <div className="completion-sparkles">
         {Array.from({ length: 20 }).map((_, i) => (
-          <div 
-            key={i} 
+          <div
+            key={i}
             className="completion-sparkle"
             style={{
               left: `${Math.random() * 100}%`,
@@ -91,52 +92,52 @@ const SongCompletionOverlay = ({
           </div>
         ))}
       </div>
-      
+
       <div className="completion-card">
-        <div 
+        <div
           className="completion-ganesha"
           style={{ backgroundImage: `url(${ganeshaCompletion})` }}
         />
-        
+
         <div className="completion-message">
           <h1 className="completion-title">🎵 Song Complete! 🎵</h1>
           <p className="completion-subtitle">{songName}</p>
-          
+
           <div className="completion-stars">
             {Array.from({ length: starsEarned }).map((_, i) => (
               <span key={i} className="star-earned">⭐</span>
             ))}
           </div>
-          
+
           <p className="completion-blessing">
-            {isPlayingMySong 
+            {isPlayingMySong
               ? "🔊 Listen to your beautiful music!"
               : "Beautiful music, little musician! Ganesha is smiling!"
             }
           </p>
         </div>
-        
+
         <div className="completion-buttons-three">
-          <button 
-            className="completion-btn play-again" 
+          <button
+            className="completion-btn play-again"
             onClick={onPlayAgain}
             disabled={isPlayingMySong}
           >
             <span className="btn-icon">🔄</span>
             <span className="btn-text">Play Again!</span>
           </button>
-          
-          <button 
-            className="completion-btn hear-my-song" 
+
+          <button
+            className="completion-btn hear-my-song"
             onClick={onHearMySong}
             disabled={isPlayingMySong}
           >
             <span className="btn-icon">{isPlayingMySong ? '🔊' : '🎵'}</span>
             <span className="btn-text">{isPlayingMySong ? 'Playing...' : 'Hear My Song!'}</span>
           </button>
-          
-          <button 
-            className="completion-btn try-another" 
+
+          <button
+            className="completion-btn try-another"
             onClick={onTryAnother}
             disabled={isPlayingMySong}
           >
@@ -150,61 +151,12 @@ const SongCompletionOverlay = ({
 };
 
 
-// Opening Modal Component
-const OpeningModal = ({ show, onStart, zoneId = 'festival-square', sceneId = 'game1' }) => {
-  if (!show) return null;
-  const theme = getZoneTheme(zoneId);
-  const modal = getOpeningModal(zoneId, sceneId);
-
-  return (
-    <div className="game-modal-overlay" style={{
-      '--modal-card-bg': theme.parentBg,
-      '--modal-text-primary': theme.textPrimary,
-      '--modal-btn-bg': theme.buttonActiveBg,
-      '--modal-btn-shadow': theme.glowColor
-    }}>
-      <div className="game-modal-content">
-        {/* Character - Left Side */}
-        <div className="game-modal-character">
-          <img src={ganeshaGameScene} alt="Ganesha" />
-        </div>
-
-        {/* Card - Right Side */}
-        <div className="game-modal-card">
-          <h1 className="game-modal-title">{modal?.title || 'Festival Beats'}</h1>
-          <p className="game-modal-subtitle">{modal?.description || 'Play and feel the rhythm rise.'}</p>
-
-          {/* Icons Grid */}
-          <div className="game-modal-icons">
-            <div className="game-modal-icon-item">
-              <img src="/assets/festival-square/icons/listen-icon.png" alt="Listen" />
-              <span className="game-modal-icon-label">Listen</span>
-            </div>
-            <div className="game-modal-icon-item">
-              <img src="/assets/festival-square/icons/play-icon.png" alt="Play" />
-              <span className="game-modal-icon-label">Play</span>
-            </div>
-            <div className="game-modal-icon-item">
-              <img src="/assets/festival-square/icons/create-icon.png" alt="Create" />
-              <span className="game-modal-icon-label">Create</span>
-            </div>
-          </div>
-
-          {/* Let's Explore Button */}
-          <button className="game-modal-button" onClick={onStart}>
-            {modal?.buttonText || "Let's Explore"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
-    constructor(props) { super(props); this.state = { hasError: false, error: null, errorInfo: null }; }
-    static getDerivedStateFromError(error) { return { hasError: true }; }
-    componentDidCatch(error, errorInfo) { console.error("Error caught:", error, errorInfo); this.setState({ error, errorInfo }); }
-    render() { if (this.state.hasError) { return (<div className="error-boundary"><h2>Something went wrong.</h2><button onClick={() => window.location.reload()}>Reload</button></div>); } return this.props.children; }
+  constructor(props) { super(props); this.state = { hasError: false, error: null, errorInfo: null }; }
+  static getDerivedStateFromError(error) { return { hasError: true }; }
+  componentDidCatch(error, errorInfo) { console.error("Error caught:", error, errorInfo); this.setState({ error, errorInfo }); }
+  render() { if (this.state.hasError) { return (<div className="error-boundary"><h2>Something went wrong.</h2><button onClick={() => window.location.reload()}>Reload</button></div>); } return this.props.children; }
 }
 
 // 🎯 WRAPPER COMPONENT
@@ -223,7 +175,7 @@ const FestivalPianoGame = ({ onComplete, onNavigate, zoneId = 'festival-square',
           showSongComplete: false, completedSongData: null,
           dancingAnimals: {}, showDanceFloor: false, danceParticles: [], currentPopup: null, showingCompletionScreen: false,
           progress: { percentage: 0, starsEarned: 0, completed: false },
-          
+
         }}
       >
         {({ sceneState, sceneActions, isReload }) => (
@@ -270,18 +222,18 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
       osc.start(now); osc.stop(now + duration);
     });
   };
-  
+
   const triggerAnimalDance = (instrumentId) => {
     const animalType = ANIMAL_INSTRUMENT_MAP[instrumentId];
     if (!animalType) return;
-    sceneActions.updateState({ dancingAnimals: { ...sceneState.dancingAnimals, [animalType]: true }});
+    sceneActions.updateState({ dancingAnimals: { ...sceneState.dancingAnimals, [animalType]: true } });
     safeSetTimeout(() => {
       const newDancing = { ...sceneState.dancingAnimals };
       delete newDancing[animalType];
       sceneActions.updateState({ dancingAnimals: newDancing });
     }, 1200);
   };
-  
+
   const handleModeSelect = (mode) => {
     sceneActions.updateState({ currentMode: mode });
     if (mode === GAME_MODES.FREE_PLAY) {
@@ -367,12 +319,12 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
     const songIndex = FESTIVAL_SONGS.findIndex(s => s.id === song.id);
     const nextSong = FESTIVAL_SONGS[songIndex + 1];
     const unlockedSongs = { ...sceneState.unlockedSongs, ...(nextSong && { [nextSong.id]: true }) };
-    
+
     // Update state and show completion modal
-    sceneActions.updateState({ 
-      challengeStars: newStars, 
-      stars: Math.max(sceneState.stars, newStars), 
-      completedSongs, 
+    sceneActions.updateState({
+      challengeStars: newStars,
+      stars: Math.max(sceneState.stars, newStars),
+      completedSongs,
       unlockedSongs,
       showSongComplete: true,
       completedSongData: {
@@ -390,9 +342,9 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
     if (freePlayRecording.isRecording) {
       setFreePlayRecording(prev => ({
         ...prev,
-        recordedNotes: [...prev.recordedNotes, { 
-          instrumentId: instrument.id, 
-          timestamp: Date.now() 
+        recordedNotes: [...prev.recordedNotes, {
+          instrumentId: instrument.id,
+          timestamp: Date.now()
         }]
       }));
     }
@@ -416,7 +368,7 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
     if (sceneState.currentMode === GAME_MODES.FREE_PLAY) handleFreePlayKeyPress(instrument);
     else if (sceneState.currentMode === GAME_MODES.CHALLENGE) handleChallengeKeyPress(instrument);
   };
-  
+
   const handleManualCompletion = () => {
     sceneActions.updateState({ phase: PHASES.COMPLETE, completed: true, stars: Math.max(8, sceneState.stars), showingCompletionScreen: true });
     safeSetTimeout(() => sceneActions.updateState({ showSceneCompletion: true }), 500);
@@ -443,7 +395,7 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
   const playFreePlayRecording = () => {
     if (sceneState.isPlayingRecording) return;
     sceneActions.updateState({ isPlayingRecording: true });
-    
+
     freePlayRecording.recordedNotes.forEach((note, index) => {
       safeSetTimeout(() => {
         const instrument = INSTRUMENTS.find(i => i.id === note.instrumentId);
@@ -454,7 +406,7 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
             activeKey: note.instrumentId,
             showSparkle: note.instrumentId
           }));
-          
+
           safeSetTimeout(() => {
             setLocalUIState(prev => ({
               ...prev,
@@ -463,7 +415,7 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
             }));
           }, 400);
         }
-        
+
         // Auto-stop when finished
         if (index === freePlayRecording.recordedNotes.length - 1) {
           safeSetTimeout(() => {
@@ -478,7 +430,7 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
     // Clear all pending timeouts to stop playback
     timeoutsRef.current.forEach(id => clearTimeout(id));
     timeoutsRef.current = [];
-    
+
     // Reset playing state
     sceneActions.updateState({ isPlayingRecording: false });
     setLocalUIState(prev => ({
@@ -504,10 +456,10 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
     URL.revokeObjectURL(url);
   };
 
-   // Handle restart
+  // Handle restart
   const handleRestart = () => {
     console.log('Restarting game');
-    
+
     sceneActions.updateState({
       phase: PHASES.DISCOVERY,
       tapCount: 0,
@@ -542,23 +494,24 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
 
 
   if (!sceneState) return <div className="loading">Loading...</div>;
-  
-if (sceneState.currentMode === GAME_MODES.INTRO) {
-  return (
-    <>
-      <div className="festival-piano-game">
-        {/* Piano background will show through */}
-      </div>
-      <OpeningModal
-        show={true}
-        zoneId={zoneId}
-        sceneId={sceneId}
-        onStart={() => sceneActions.updateState({ currentMode: GAME_MODES.SELECTION })}
-      />
-      <TocaBocaNav onHome={() => onNavigate?.('home')} onZonesClick={() => onNavigate?.('zones')} />
-    </>
-  );
-}
+
+  if (sceneState.currentMode === GAME_MODES.INTRO) {
+    return (
+      <>
+        <div className="festival-piano-game">
+          {/* Piano background will show through */}
+        </div>
+        <OpeningModal
+          zoneId={zoneId}
+          sceneId={sceneId}
+          onStart={() => sceneActions.updateState({ currentMode: GAME_MODES.SELECTION })}
+          characterImg={ganeshaGameScene}
+          showButton={true}
+        />
+        <TocaBocaNav onHome={() => onNavigate?.('home')} onZonesClick={() => onNavigate?.('zones')} />
+      </>
+    );
+  }
 
   if (sceneState.currentMode === GAME_MODES.SELECTION) {
     return (
@@ -570,24 +523,24 @@ if (sceneState.currentMode === GAME_MODES.INTRO) {
             <div className="mode-selection-screen">
               <h2 className="mode-subtitle">Choose Your Musical Adventure!</h2>
               <h1 className="mode-title">🎹 Festival Piano 🎹</h1>
-              
+
               <div className="mode-cards">
                 <div className="mode-card" onClick={() => handleModeSelect(GAME_MODES.FREE_PLAY)}>
-                    <div className="mode-icon">🎵</div>
-                    <h2>Free Play</h2>
-                    <p>Explore and create your own melodies</p>
-                    <button className="mode-button free-play-card">Let's Play!</button>
+                  <div className="mode-icon">🎵</div>
+                  <h2>Free Play</h2>
+                  <p>Explore and create your own melodies</p>
+                  <button className="mode-button free-play-card">Let's Play!</button>
                 </div>
                 <div className="mode-card" onClick={() => handleModeSelect(GAME_MODES.CHALLENGE)}>
-                    <div className="mode-icon">🎯</div>
-                    <h2>Festival Challenge</h2>
-                    <p>Learn traditional ganesha songs</p>
-                    <button className="mode-button challenge-button">Start Challenge!</button>
+                  <div className="mode-icon">🎯</div>
+                  <h2>Festival Challenge</h2>
+                  <p>Learn traditional ganesha songs</p>
+                  <button className="mode-button challenge-button">Start Challenge!</button>
                 </div>
               </div>
               <div className="progress-summary"></div>
             </div>
-            <TocaBocaNav onHome={() => onNavigate?.('home')} onZonesClick={() => onNavigate?.('zones')} currentProgress={{ stars: sceneState.stars || 0, completed: sceneState.phase === PHASES.COMPLETE ? 1 : 0, total: 1 }}/>
+            <TocaBocaNav onHome={() => onNavigate?.('home')} onZonesClick={() => onNavigate?.('zones')} currentProgress={{ stars: sceneState.stars || 0, completed: sceneState.phase === PHASES.COMPLETE ? 1 : 0, total: 1 }} />
           </div>
         </MessageManager>
       </InteractionManager>
@@ -614,7 +567,7 @@ if (sceneState.currentMode === GAME_MODES.INTRO) {
                 );
               })}
             </div>
-            <TocaBocaNav onHome={() => onNavigate?.('home')} onZonesClick={() => onNavigate?.('zones')} currentProgress={{ stars: sceneState.challengeStars || 0, completed: Object.keys(sceneState.completedSongs).length, total: FESTIVAL_SONGS.length }}/>
+            <TocaBocaNav onHome={() => onNavigate?.('home')} onZonesClick={() => onNavigate?.('zones')} currentProgress={{ stars: sceneState.challengeStars || 0, completed: Object.keys(sceneState.completedSongs).length, total: FESTIVAL_SONGS.length }} />
           </div>
         </MessageManager>
       </InteractionManager>
@@ -650,12 +603,12 @@ if (sceneState.currentMode === GAME_MODES.INTRO) {
       <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
         <MessageManager sceneState={sceneState} sceneActions={sceneActions} zoneId={zoneId} sceneId={sceneId}>
           <div className="festival-piano-game">
-          {/*<div className="game-header">
+            {/*<div className="game-header">
             <button className="back-button" onClick={() => isChallengePlaying ? sceneActions.updateState({ currentSong: null }) : handleModeSelect(GAME_MODES.SELECTION)}>← {isChallengePlaying ? 'Songs' : 'Menu'}</button>
           </div>*/}
-          
-          {isChallengePlaying && (
-             <div className="challenge-header-simple">
+
+            {isChallengePlaying && (
+              <div className="challenge-header-simple">
                 <h2 className="song-title-simple">{sceneState.currentSong.icon} {sceneState.currentSong.name}</h2>
                 <div className="simple-controls">
                   <button className="simple-play-button" onClick={playDemo} disabled={sceneState.isDemoPlaying || sceneState.isPlayingRecording || sceneState.isRecording}>▶️ Hear Song</button>
@@ -664,183 +617,183 @@ if (sceneState.currentMode === GAME_MODES.INTRO) {
                   </button>
                 </div>
                 <div className="progress-dots-simple">
-                  {sceneState.currentSong.melody.map((_, i) => <span key={i} className={`dot ${i < sceneState.currentStep ? 'done' : ''} ${i === sceneState.currentStep && sceneState.isRecording ? 'now' : ''}`}/>)}
+                  {sceneState.currentSong.melody.map((_, i) => <span key={i} className={`dot ${i < sceneState.currentStep ? 'done' : ''} ${i === sceneState.currentStep && sceneState.isRecording ? 'now' : ''}`} />)}
                 </div>
-            </div>
-          )}
-
-          {sceneState.currentMode === GAME_MODES.FREE_PLAY && (<div className="ganesha-simple"><div className="ganesha-simple-image" style={{ backgroundImage: `url(${ganeshaGameScene})` }}/></div>)}
-
-          <div className="dancing-animals">
-            {Object.keys(ANIMAL_INSTRUMENT_MAP).map(id => {
-              const type = ANIMAL_INSTRUMENT_MAP[id], isDancing = sceneState.dancingAnimals?.[type];
-              return (<div key={type} className={`animal-character animal-${type} ${isDancing ? 'animal-dancing' : ''}`}>{isDancing && <div className="animal-sparkles">{Array.from({ length: 6 }).map((_, i) => <div key={i} className="animal-sparkle" style={{ left: `${Math.random()*100}%`, top: `${Math.random()*100}%` }}/>)}</div>}</div>);
-            })}
-          </div>
-          
-          <div className="piano-base">
-            <div className="piano-keys-frame-simple" />
-            {INSTRUMENTS.map(instrument => (
-              <div key={instrument.id} className={`piano-key key-${instrument.id} ${localUIState.activeKey === instrument.id ? 'active' : ''} ${sceneState.discoveredInstruments[instrument.id] ? 'discovered' : ''} ${nextExpectedKey === instrument.id && sceneState.isRecording ? 'highlighted-next' : ''}`} style={{ left: `${instrument.keyPosition.x}%`, top: `${instrument.keyPosition.y}%` }} onClick={() => handleKeyPress(instrument)}>
-                <div className={`instrument-icon icon-${instrument.id}`} />
-                {localUIState.showSparkle === instrument.id && <div className="key-sparkles">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="sparkle" style={{ left: `${Math.random()*100}%`, top: `${Math.random()*100}%` }}/>)}</div>}
               </div>
-            ))}
-          </div>
+            )}
 
-          {localUIState.showCulturalNote && (<div className="cultural-note" style={{ left: `${localUIState.showCulturalNote.position.x}%`, top: `${localUIState.showCulturalNote.position.y - 15}%` }}>{localUIState.showCulturalNote.instrument.culturalNote}</div>)}
+            {sceneState.currentMode === GAME_MODES.FREE_PLAY && (<div className="ganesha-simple"><div className="ganesha-simple-image" style={{ backgroundImage: `url(${ganeshaGameScene})` }} /></div>)}
 
-          {/*<div className="progress-counter">
+            <div className="dancing-animals">
+              {Object.keys(ANIMAL_INSTRUMENT_MAP).map(id => {
+                const type = ANIMAL_INSTRUMENT_MAP[id], isDancing = sceneState.dancingAnimals?.[type];
+                return (<div key={type} className={`animal-character animal-${type} ${isDancing ? 'animal-dancing' : ''}`}>{isDancing && <div className="animal-sparkles">{Array.from({ length: 6 }).map((_, i) => <div key={i} className="animal-sparkle" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }} />)}</div>}</div>);
+              })}
+            </div>
+
+            <div className="piano-base">
+              <div className="piano-keys-frame-simple" />
+              {INSTRUMENTS.map(instrument => (
+                <div key={instrument.id} className={`piano-key key-${instrument.id} ${localUIState.activeKey === instrument.id ? 'active' : ''} ${sceneState.discoveredInstruments[instrument.id] ? 'discovered' : ''} ${nextExpectedKey === instrument.id && sceneState.isRecording ? 'highlighted-next' : ''}`} style={{ left: `${instrument.keyPosition.x}%`, top: `${instrument.keyPosition.y}%` }} onClick={() => handleKeyPress(instrument)}>
+                  <div className={`instrument-icon icon-${instrument.id}`} />
+                  {localUIState.showSparkle === instrument.id && <div className="key-sparkles">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="sparkle" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }} />)}</div>}
+                </div>
+              ))}
+            </div>
+
+            {localUIState.showCulturalNote && (<div className="cultural-note" style={{ left: `${localUIState.showCulturalNote.position.x}%`, top: `${localUIState.showCulturalNote.position.y - 15}%` }}>{localUIState.showCulturalNote.instrument.culturalNote}</div>)}
+
+            {/*<div className="progress-counter">
             <div className="stars">⭐ {sceneState.stars}</div>
             {sceneState.currentMode === GAME_MODES.FREE_PLAY && (<><div className="taps">🎵 {sceneState.tapCount}</div><div className="instruments">🎼 {Object.keys(sceneState.discoveredInstruments).length}/5</div></>)}
           </div>*/}
 
-          {sceneState.currentMode === GAME_MODES.FREE_PLAY && (
-            <div className="free-play-recording-controls">
-              <button 
-                className={`free-record-btn ${freePlayRecording.isRecording ? 'recording' : ''}`}
-                onClick={toggleFreePlayRecording}
-              >
-                {freePlayRecording.isRecording ? '⏹️ Stop' : '⏺️ Record'}
-              </button>
+            {sceneState.currentMode === GAME_MODES.FREE_PLAY && (
+              <div className="free-play-recording-controls">
+                <button
+                  className={`free-record-btn ${freePlayRecording.isRecording ? 'recording' : ''}`}
+                  onClick={toggleFreePlayRecording}
+                >
+                  {freePlayRecording.isRecording ? '⏹️ Stop' : '⏺️ Record'}
+                </button>
 
-              {freePlayRecording.hasRecording && !freePlayRecording.isRecording && (
-                <>
-                  <button 
-                    className="free-play-btn" 
-                    onClick={sceneState.isPlayingRecording ? stopFreePlayRecording : playFreePlayRecording}
-                    disabled={freePlayRecording.isRecording}
-                  >
-                    {sceneState.isPlayingRecording ? '⏹️ Stop' : '▶️ Hear'}
-                  </button>
-                  <button className="free-download-btn" onClick={downloadRecording}>
-                    ⬇️ Save
-                  </button>
-                </>
-              )}
-            </div>
-          )}
+                {freePlayRecording.hasRecording && !freePlayRecording.isRecording && (
+                  <>
+                    <button
+                      className="free-play-btn"
+                      onClick={sceneState.isPlayingRecording ? stopFreePlayRecording : playFreePlayRecording}
+                      disabled={freePlayRecording.isRecording}
+                    >
+                      {sceneState.isPlayingRecording ? '⏹️ Stop' : '▶️ Hear'}
+                    </button>
+                    <button className="free-download-btn" onClick={downloadRecording}>
+                      ⬇️ Save
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
 
 
-          {localUIState.showSparkle === 'wrong' && (<div className="wrong-feedback">❌ Try again!</div>)}
+            {localUIState.showSparkle === 'wrong' && (<div className="wrong-feedback">❌ Try again!</div>)}
 
-      <SongCompletionOverlay
-  show={sceneState.showSongComplete}
-  songName={sceneState.completedSongData?.name}
-  starsEarned={sceneState.completedSongData?.starsEarned}
-  isPlayingMySong={sceneState.isPlayingRecording}
-  
-  onPlayAgain={() => {
-    // Stop any playing recording first
-    if (sceneState.isPlayingRecording) {
-      timeoutsRef.current.forEach(id => clearTimeout(id));
-      timeoutsRef.current = [];
-    }
-    
-    const songToReplay = sceneState.completedSongData?.song;
-    sceneActions.updateState({ 
-      showSongComplete: false,
-      completedSongData: null,
-      currentSong: songToReplay,
-      currentStep: 0,
-      recordedNotes: [],
-      isRecording: false,
-      isDemoPlaying: false,
-      isPlayingRecording: false
-    });
-  }}
-  
-  onHearMySong={() => {
-    // Don't close modal, just play recording
-    if (!sceneState.isPlayingRecording) {
-      playRecording();
-    }
-  }}
-  
-onTryAnother={() => {
-  // Stop any playing recording first
-  if (sceneState.isPlayingRecording) {
-    timeoutsRef.current.forEach(id => clearTimeout(id));
-    timeoutsRef.current = [];
-  }
-  
-  sceneActions.updateState({ 
-    showSongComplete: false,
-    completedSongData: null,
-    currentSong: null,
-    currentStep: 0,
-    recordedNotes: [],
-    isPlayingRecording: false,
-    currentMode: GAME_MODES.SELECTION  // ← Go to mode selection!
-  });
-}}
-/>
+            <SongCompletionOverlay
+              show={sceneState.showSongComplete}
+              songName={sceneState.completedSongData?.name}
+              starsEarned={sceneState.completedSongData?.starsEarned}
+              isPlayingMySong={sceneState.isPlayingRecording}
 
-<GamePauseMenu
-  show={sceneState.showPauseMenu}
-  gameName={sceneState.currentMode === GAME_MODES.CHALLENGE ? "Festival Challenge" : "Piano Free Play"}
-  
-  // 1. "Keep Playing" -> Resumes the game
-  onResume={() => sceneActions.updateState({ showPauseMenu: false })}
-  
-  // 2. "Start Fresh" -> Restarts the current activity
-  onRestart={() => {
-    sceneActions.updateState({ showPauseMenu: false });
-    if (sceneState.currentMode === GAME_MODES.FREE_PLAY) {
-      handleRestart();
-      // Clear free play recording
-      setFreePlayRecording({ isRecording: false, recordedNotes: [], hasRecording: false });
-    } else if (sceneState.currentMode === GAME_MODES.CHALLENGE && sceneState.currentSong) {
-      // Just reset, don't auto-play
-      sceneActions.updateState({ 
-        currentStep: 0,
-        recordedNotes: [],
-        isRecording: false,
-        isDemoPlaying: false,
-        isPlayingRecording: false
-      });
-    }
-  }}
+              onPlayAgain={() => {
+                // Stop any playing recording first
+                if (sceneState.isPlayingRecording) {
+                  timeoutsRef.current.forEach(id => clearTimeout(id));
+                  timeoutsRef.current = [];
+                }
 
-  // 3. "Change Mode" -> ALWAYS goes to the main menu
-  onBackToModes={() => {
-    sceneActions.updateState({ 
-      showPauseMenu: false,
-      currentMode: GAME_MODES.SELECTION, // Always go to the main selection screen
-      currentSong: null // Also clear any active song just in case
-    });
-  }}
+                const songToReplay = sceneState.completedSongData?.song;
+                sceneActions.updateState({
+                  showSongComplete: false,
+                  completedSongData: null,
+                  currentSong: songToReplay,
+                  currentStep: 0,
+                  recordedNotes: [],
+                  isRecording: false,
+                  isDemoPlaying: false,
+                  isPlayingRecording: false
+                });
+              }}
 
-  // 4. "I'm Done Playing" -> Goes to the completion screen
-  onComplete={() => {
-    sceneActions.updateState({ showPauseMenu: false });
-    handleManualCompletion();
-  }}
-/>
+              onHearMySong={() => {
+                // Don't close modal, just play recording
+                if (!sceneState.isPlayingRecording) {
+                  playRecording();
+                }
+              }}
 
-          {sceneState.showSceneCompletion && (<FestivalSquareCompletion show={sceneState.showSceneCompletion} sceneName="Piano Mastery" starsEarned={sceneState.stars || 0} onContinue={() => onNavigate?.('scene-complete-continue')} onReplay={() => {
-  console.log('🎹 PIANO REPLAY: Play Again');
-  sceneActions.updateState({
-    phase: PHASES.DISCOVERY,
-    tapCount: 0,
-    discoveredInstruments: {},
-    celebrationStarted: false,
-    gameStartTime: Date.now(),
-    stars: 0,
-    completed: false,
-    showDoneButton: false,
-    showCompletionBadge: false,
-    showSceneCompletion: false,
-    showingCompletionScreen: false,
-    dancingAnimals: {},
-    showDanceFloor: false,
-    progress: { percentage: 0, starsEarned: 0, completed: false }
-  });
-}} onBackToMap={() => onNavigate?.('zone-welcome')}/>)}
-        </div>
-      </MessageManager>
-    </InteractionManager>
-  </GameLayout>
+              onTryAnother={() => {
+                // Stop any playing recording first
+                if (sceneState.isPlayingRecording) {
+                  timeoutsRef.current.forEach(id => clearTimeout(id));
+                  timeoutsRef.current = [];
+                }
+
+                sceneActions.updateState({
+                  showSongComplete: false,
+                  completedSongData: null,
+                  currentSong: null,
+                  currentStep: 0,
+                  recordedNotes: [],
+                  isPlayingRecording: false,
+                  currentMode: GAME_MODES.SELECTION  // ← Go to mode selection!
+                });
+              }}
+            />
+
+            <GamePauseMenu
+              show={sceneState.showPauseMenu}
+              gameName={sceneState.currentMode === GAME_MODES.CHALLENGE ? "Festival Challenge" : "Piano Free Play"}
+
+              // 1. "Keep Playing" -> Resumes the game
+              onResume={() => sceneActions.updateState({ showPauseMenu: false })}
+
+              // 2. "Start Fresh" -> Restarts the current activity
+              onRestart={() => {
+                sceneActions.updateState({ showPauseMenu: false });
+                if (sceneState.currentMode === GAME_MODES.FREE_PLAY) {
+                  handleRestart();
+                  // Clear free play recording
+                  setFreePlayRecording({ isRecording: false, recordedNotes: [], hasRecording: false });
+                } else if (sceneState.currentMode === GAME_MODES.CHALLENGE && sceneState.currentSong) {
+                  // Just reset, don't auto-play
+                  sceneActions.updateState({
+                    currentStep: 0,
+                    recordedNotes: [],
+                    isRecording: false,
+                    isDemoPlaying: false,
+                    isPlayingRecording: false
+                  });
+                }
+              }}
+
+              // 3. "Change Mode" -> ALWAYS goes to the main menu
+              onBackToModes={() => {
+                sceneActions.updateState({
+                  showPauseMenu: false,
+                  currentMode: GAME_MODES.SELECTION, // Always go to the main selection screen
+                  currentSong: null // Also clear any active song just in case
+                });
+              }}
+
+              // 4. "I'm Done Playing" -> Goes to the completion screen
+              onComplete={() => {
+                sceneActions.updateState({ showPauseMenu: false });
+                handleManualCompletion();
+              }}
+            />
+
+            {sceneState.showSceneCompletion && (<FestivalSquareCompletion show={sceneState.showSceneCompletion} sceneName="Piano Mastery" starsEarned={sceneState.stars || 0} onContinue={() => onNavigate?.('scene-complete-continue')} onReplay={() => {
+              console.log('🎹 PIANO REPLAY: Play Again');
+              sceneActions.updateState({
+                phase: PHASES.DISCOVERY,
+                tapCount: 0,
+                discoveredInstruments: {},
+                celebrationStarted: false,
+                gameStartTime: Date.now(),
+                stars: 0,
+                completed: false,
+                showDoneButton: false,
+                showCompletionBadge: false,
+                showSceneCompletion: false,
+                showingCompletionScreen: false,
+                dancingAnimals: {},
+                showDanceFloor: false,
+                progress: { percentage: 0, starsEarned: 0, completed: false }
+              });
+            }} onBackToMap={() => onNavigate?.('zone-welcome')} />)}
+          </div>
+        </MessageManager>
+      </InteractionManager>
+    </GameLayout>
   );
 };
 
