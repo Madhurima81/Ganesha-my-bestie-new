@@ -1105,43 +1105,19 @@ hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || showMission}
 
 />
 {/* ==================== SCENE 3 INTRO: CLEAR & BUILD ==================== */}
-{sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (() => {
-  const theme = getZoneTheme(zoneId);
-  const modal = getOpeningModal(zoneId, sceneId);
-  return (
-    <div className="game-modal-overlay" style={{ '--modal-card-bg': theme.parentBg, '--modal-text-primary': theme.textPrimary, '--modal-btn-bg': theme.buttonActiveBg, '--modal-btn-shadow': theme.glowColor }}>
-      <div className="game-modal-content">
-        <div className="game-modal-character">
-          <img src={ganeshaWithHeadphones} alt="Ganesha Character" />
-        </div>
-        <div className="game-modal-card">
-          <h1 className="game-modal-title">{modal?.title || 'Clear the Path'}</h1>
-          <div className="game-modal-icons">
-            <div className="game-modal-icon-item">
-              <img src={appNirvighnam} alt="Clear Obstacles" />
-              <span className="game-modal-icon-label">Clear Path</span>
-            </div>
-            <div className="game-modal-icon-item">
-              <img src={appKurumedeva} alt="Build Together" />
-              <span className="game-modal-icon-label">Build Temple</span>
-            </div>
-          </div>
-          <button
-            className="game-modal-button"
-            onClick={() => {
-              sceneActions.updateState({ welcomeShown: true });
-              setModeForPhase('nirvighnam');
-              setShowModeSelection(true);
-              setModeSelected(false);
-            }}
-          >
-            {modal?.buttonText || "Let's Explore"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-})()}
+{sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
+  <OpeningModal
+    zoneId={zoneId}
+    sceneId={sceneId}
+    characterImg={ganeshaWithHeadphones}
+    onStart={() => {
+      sceneActions.updateState({ welcomeShown: true });
+      setModeForPhase('nirvighnam');
+      setShowModeSelection(true);
+      setModeSelected(false);
+    }}
+  />
+)}
 
 {/* ⭐ MODE SELECTION MODAL - Shows BEFORE game starts */}
 {showModeSelection && !modeSelected && (
