@@ -175,6 +175,8 @@
   font-size: 34px;
   font-weight: 700;
   color: var(--modal-text-primary);
+  /* Labels under opening-modal icons intentionally hidden */
+  display: none;
 }
 
 /* Stronger specificity to avoid global overrides */
