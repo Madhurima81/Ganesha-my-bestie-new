@@ -578,16 +578,17 @@ const VakratundaGroveContent = ({
         <div className="vakratunda-simplified-container">
           <div className="river-background" style={{ backgroundImage: `url(${riverBackground})` }}>
 
-            {/* 1. PAUSE BUTTON - Using shared component */}
+            {/* ── PauseButton — REMOVED (replaced by home icon) ──
             <PauseButton
               visible={sceneState.welcomeShown && !showSceneCompletion && !isFinalCelebrationActive}
               onClick={() => {
                 if (isFinalCelebrationActive) return;
-                stopVoice();      // Stop any playing VO
-                stopIdleTimer();  // Stop idle hints
+                stopVoice();
+                stopIdleTimer();
                 setShowPauseMenu(true);
               }}
             />
+            ── End PauseButton ── */}
 
             {/* DEV TEST BUTTONS - Skip to word overlay */}
             { sceneState.welcomeShown && !showPowerOverlay && !showCenteredWord && (
