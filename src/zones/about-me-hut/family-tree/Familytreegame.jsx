@@ -17,6 +17,9 @@ import { PauseButton, PauseMenu, PauseBlurOverlay, usePauseEnhancements } from '
 import { getOpeningModal } from '../../../lib/config/content';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 
+// Shared Components
+import OpeningModal from '../../shared/components/OpeningModal';
+
 // --- IMPORT ASSETS (Ganesha's Family & Distractors) ---
 import familyTreeBg from './assets/images/family tree bg.png';
 import familyTree from './assets/images/family-tree.png';
@@ -119,11 +122,11 @@ const FamilyTreeGame = ({
         initialState={{
           // Game Phase Control
           gamePhase: 'intro',
-          
+
           // Ganesha Tree State (Arrays for JSON compatibility)
-          placedGaneshaMembers: [], 
+          placedGaneshaMembers: [],
           tappedMembers: [],
-          
+
           // Selection State
           selectedCircle: null,
           showChoiceModal: false,
@@ -132,25 +135,25 @@ const FamilyTreeGame = ({
           wrongChoice: null,
           correctChoiceId: null,
           justPlacedId: null,
-          
+
           // Modals & Popups
           showFunFactModal: null,
           flippedMember: null,
           showYouGotIt: null,
           showTreeSparkles: false,
           showCelebration: null,
-          
+
           // Transition & Child Tree State
           isSequencePlaying: false,
           showBottomTray: false,
-          
+
           // Child Family Data
           childFamily: [],
           showNameModal: false,
           currentFamilyType: null,
           callName: '',
           selectedMemberIndex: null,
-          
+
           // Completion
           showingCompletionScreen: false,
           stars: 0,
@@ -183,7 +186,7 @@ const FamilyTreeGameContent = ({
   onNavigate,
   onBack
 }) => {
-  
+
   if (!sceneState || !sceneActions) return <div>Loading...</div>;
 
   // Get content from configs
@@ -329,7 +332,7 @@ const FamilyTreeGameContent = ({
   const audioChunksRef = useRef([]);
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState(null);
-  
+
   // --- RELOAD DETECTION STATE ---
   const reloadHandledRef = useRef(false);
   const resumePopupTimeoutRef = useRef(null);
@@ -375,7 +378,7 @@ const FamilyTreeGameContent = ({
       introTitle: '🦚 My Brother!', introText: 'He is brave and fast 🦚',
       flipTitle: 'My Brother', funFact: 'My brother is very brave. He travels the world on his peacock 🦚'
     },
-     {
+    {
       id: 'myself', role: 'Me', correctAnswer: 'ganesha',
       position: { bottom: '25%', right: '30%' },
       introTitle: "😊 That's Me!", introText: 'I love modaks 🍬',
@@ -422,11 +425,11 @@ const FamilyTreeGameContent = ({
     // If we are reloading and haven't handled it yet
     if (isReload && !reloadHandledRef.current) {
       reloadHandledRef.current = true;
-      
+
       const { gamePhase, placedGaneshaMembers, childFamily } = sceneState;
-      
+
       console.log("🔄 Reload detected, gamePhase:", gamePhase);
-      
+
       // Clear any existing timeouts
       if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
 
@@ -434,7 +437,7 @@ const FamilyTreeGameContent = ({
       if (gamePhase === 'intro') {
         return;
       }
-      
+
       // 2. GANESHA TREE - Some placed (Note: .length for arrays)
       if (gamePhase === 'ganeshaTree' && placedGaneshaMembers && placedGaneshaMembers.length > 0 && placedGaneshaMembers.length < 4) {
         setResumeMessage(`Great progress! You've placed ${placedGaneshaMembers.length}/4 family members. Keep going!`);
@@ -442,7 +445,7 @@ const FamilyTreeGameContent = ({
         resumePopupTimeoutRef.current = scheduleTimeout(() => setShowResumePopup(false), 5000);
         return;
       }
-      
+
       // 3. GANESHA TREE - All placed
       if (gamePhase === 'ganeshaTree' && placedGaneshaMembers && placedGaneshaMembers.length === 4) {
         setResumeMessage(`Amazing! You completed Ganesha's family tree! Tap "All Done!" to continue.`);
@@ -450,7 +453,7 @@ const FamilyTreeGameContent = ({
         resumePopupTimeoutRef.current = scheduleTimeout(() => setShowResumePopup(false), 5000);
         return;
       }
-      
+
       // 4. CHILD INPUT - Some added
       if (gamePhase === 'childInput' && childFamily && childFamily.length > 0) {
         setResumeMessage(`You've added ${childFamily.length} family member${childFamily.length > 1 ? 's' : ''} to your tree!`);
@@ -458,7 +461,7 @@ const FamilyTreeGameContent = ({
         resumePopupTimeoutRef.current = scheduleTimeout(() => setShowResumePopup(false), 5000);
         return;
       }
-      
+
       // 5. TRANSITION / SIDE BY SIDE
       // Just show the UI as-is, no special popup needed
     }
@@ -1137,8 +1140,8 @@ const FamilyTreeGameContent = ({
   const handleDeleteMember = (index) => {
     const newFamily = sceneState.childFamily.filter((_, i) => i !== index);
     sceneActions.updateState({
-        childFamily: newFamily,
-        selectedMemberIndex: null
+      childFamily: newFamily,
+      selectedMemberIndex: null
     });
   };
 
@@ -1183,48 +1186,21 @@ const FamilyTreeGameContent = ({
 
       {/* INTRO PHASE */}
       {sceneState.gamePhase === 'intro' && (
-         <>
+        <>
           <div className="ganesha-tree-wrapper">
             <img src={familyTree} alt="Family Tree" className="tree-overlay" />
           </div>
-        <div className="game-modal-overlay" id="family-tree-intro" style={(() => { const theme = getZoneTheme('about-me-hut'); return { '--modal-card-bg': theme.parentBg, '--modal-text-primary': theme.textPrimary, '--modal-btn-bg': theme.buttonActiveBg, '--modal-btn-shadow': theme.glowColor }; })()}>
-          <div className="game-modal-content">
-            <div className="game-modal-character">
-              <img src={babyGaneshaImg} alt="Baby Ganesha" />
-            </div>
-            <div className="game-modal-card">
-              <h1 className="game-modal-title">{openingModalContent?.title || 'Meet My Family'}</h1>
-              <p className="game-modal-subtitle">
-                {openingModalContent?.description || "After that, I'd love to meet yours too."}
-              </p>
-              <div className="game-modal-icons">
-                <div className="game-modal-icon-item">
-                  <img src={shivaImg} alt="Father" />
-                  <span className="game-modal-icon-label">Father</span>
-                </div>
-                <div className="game-modal-icon-item">
-                  <img src={parvatiImg} alt="Mother" />
-                  <span className="game-modal-icon-label">Mother</span>
-                </div>
-                <div className="game-modal-icon-item">
-                  <img src={kartikeyaImg} alt="Brother" />
-                  <span className="game-modal-icon-label">Brother</span>
-                </div>
-              </div>
-              <VOGatedButton
-                visible={openingButtonVisible}
-                onClick={() => {
-                  playSfx('tap');
-                  setOpeningButtonVisible(false);
-                  handleStartGame();
-                }}
-                className="game-modal-button"
-              >
-                {openingModalContent?.buttonText || 'Meet My Family! 🌟'}
-              </VOGatedButton>
-            </div>
-          </div>
-        </div>
+          <OpeningModal
+            zoneId="about-me-hut"
+            sceneId="family-tree"
+            onStart={() => {
+              playSfx('tap');
+              setOpeningButtonVisible(false);
+              handleStartGame();
+            }}
+            characterImg={babyGaneshaImg}
+            showButton={openingButtonVisible}
+          />
         </>
       )}
 
@@ -1232,7 +1208,7 @@ const FamilyTreeGameContent = ({
       {sceneState.gamePhase === 'ganeshaTree' && (
         <>
           <button className="back-btn" onClick={onBack}>← Back</button>
-          
+
           <div className="game-header-hud">
             {/* Header instruction commented out - using VO instead */}
             {/* {sceneState.placedGaneshaMembers.length < 2 && (
@@ -1242,11 +1218,11 @@ const FamilyTreeGameContent = ({
             )} */}
             <div className="hud-hearts-row">
               {ganeshaFamily.map((m, i) => (
-                <span 
-                  key={i} 
+                <span
+                  key={i}
                   className={`heart-icon ${sceneState.placedGaneshaMembers.includes(m.id) ? 'filled' : ''}`}
                 >
-                  {sceneState.placedGaneshaMembers.includes(m.id) ? '❤️' : '🤍'} 
+                  {sceneState.placedGaneshaMembers.includes(m.id) ? '❤️' : '🤍'}
                 </span>
               ))}
             </div>
@@ -1271,7 +1247,7 @@ const FamilyTreeGameContent = ({
                     </div>
                     {!sceneState.tappedMembers.includes(member.id) && (
                       <div className="tap-to-learn">👆 Tap!</div>
-                    )}    
+                    )}
                   </div>
                   {sceneState.justPlacedId === member.id && (
                     <div className="circle-celebration-sparkles">
@@ -1292,8 +1268,8 @@ const FamilyTreeGameContent = ({
               <div className="choice-modal">
                 <button className="modal-close-btn" onClick={() => sceneActions.updateState({ showChoiceModal: false })}>×</button>
                 <h2 className="choice-title">
-                  {ganeshaFamily.find(m => m.id === sceneState.selectedCircle)?.id === 'myself' 
-                    ? "Who is Ganesha? 🤔" 
+                  {ganeshaFamily.find(m => m.id === sceneState.selectedCircle)?.id === 'myself'
+                    ? "Who is Ganesha? 🤔"
                     : `Who is Ganesha's ${ganeshaFamily.find(m => m.id === sceneState.selectedCircle)?.role}? 🤔`
                   }
                 </h2>
@@ -1309,20 +1285,20 @@ const FamilyTreeGameContent = ({
                         sceneState.correctChoiceId !== null ||
                         sceneState.showYouGotIt !== null
                       }
-                    >  
+                    >
                       <div className="choice-image">
                         <img src={choice.image} alt={choice.name} />
                       </div>
                       <div className="family-choice-name">{choice.name}</div>
 
                       {/* "You got it!" text removed - using VO only */}
-                      
+
                       {sceneState.correctChoiceId === choice.id && (
                         <div className="correct-checkmark">
                           <div className="checkmark-circle"><div className="checkmark-icon">✓</div></div>
                         </div>
                       )}
-                      
+
                       {sceneState.correctChoiceId === choice.id && (
                         <div className="card-sparkles">
                           <span className="sparkle sparkle-1">✨</span>
@@ -1370,8 +1346,8 @@ const FamilyTreeGameContent = ({
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 2}s`, 
-              animationDuration: `${1.5 + Math.random()}s` 
+              animationDelay: `${Math.random() * 2}s`,
+              animationDuration: `${1.5 + Math.random()}s`
             }}
           />
         ))}
@@ -1406,7 +1382,7 @@ const FamilyTreeGameContent = ({
           <div className="transition-card-simple">
             <h2 className="transition-title">Your Turn!</h2>
             <p className="transition-text">
-              That's my family! Now, I want to see your world.<br/>
+              That's my family! Now, I want to see your world.<br />
               Who are the special people in your house?
             </p>
             <VOGatedButton
@@ -1421,13 +1397,13 @@ const FamilyTreeGameContent = ({
                 setChildStartPlayed(false);
               }}
             >
-             Add My Family! 🏠
+              Add My Family! 🏠
             </VOGatedButton>
           </div>
         </div>
       )}
 
-     {/* CHILD'S FAMILY INPUT */}
+      {/* CHILD'S FAMILY INPUT */}
       {sceneState.gamePhase === 'childInput' && (
         <>
           <button className="back-btn" onClick={() => sceneActions.updateState({ gamePhase: 'transition' })}>← Back</button>
@@ -1440,7 +1416,7 @@ const FamilyTreeGameContent = ({
           {sceneState.childFamily.length > 0 && (
             <div className="tray-hint-text">Tap a member to delete</div>
           )}
-          
+
           {/* Tree Display */}
           <div className="child-family-tree" onClick={() => sceneActions.updateState({ selectedMemberIndex: null })}>
             {[1, 2, 3].map(rowNum => (
@@ -1450,8 +1426,8 @@ const FamilyTreeGameContent = ({
                   const isSelected = sceneState.selectedMemberIndex === actualIdx;
                   return (
                     <div key={idx} className="tree-member-small">
-                      <div 
-                        className={`member-avatar-small ${isSelected ? 'selected-mode' : ''}`} 
+                      <div
+                        className={`member-avatar-small ${isSelected ? 'selected-mode' : ''}`}
                         style={{ background: member.color, position: 'relative', cursor: 'pointer', overflow: 'hidden' }}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -1481,8 +1457,8 @@ const FamilyTreeGameContent = ({
 
           {/* FLOATING DONE BUTTON (Moved Above Tray) */}
           {sceneState.childFamily.length > 0 && (
-            <button 
-              className={`tray-done-btn ${sceneState.childFamily.length >= 21 ? 'tray-done-btn-attention' : ''}`} 
+            <button
+              className={`tray-done-btn ${sceneState.childFamily.length >= 21 ? 'tray-done-btn-attention' : ''}`}
               onClick={() => sceneActions.updateState({ gamePhase: 'sideBySide' })}
             >
               <span className="tray-done-main">Done!</span>
@@ -1505,22 +1481,22 @@ const FamilyTreeGameContent = ({
               const isRowFull = rowCount >= 7;
 
               return (
-              <button
-                key={type.id}
-                className="member-card"
-                onClick={() => !isRowFull && handleSelectFamilyType(type)}
-                disabled={isRowFull}
-                style={{
-                  borderColor: type.color,
-                  opacity: isRowFull ? 0.4 : 1,
-                  cursor: isRowFull ? 'not-allowed' : 'pointer'
-                }}
-              >
-                <div className="member-card-icon-wrap">
-                  <img src={type.image} alt={type.label} className="member-card-icon" />
-                </div>
-                <div className="member-card-label">{type.label}</div>
-              </button>
+                <button
+                  key={type.id}
+                  className="member-card"
+                  onClick={() => !isRowFull && handleSelectFamilyType(type)}
+                  disabled={isRowFull}
+                  style={{
+                    borderColor: type.color,
+                    opacity: isRowFull ? 0.4 : 1,
+                    cursor: isRowFull ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  <div className="member-card-icon-wrap">
+                    <img src={type.image} alt={type.label} className="member-card-icon" />
+                  </div>
+                  <div className="member-card-label">{type.label}</div>
+                </button>
               );
             })}
           </div>
@@ -1534,7 +1510,7 @@ const FamilyTreeGameContent = ({
                   sceneActions.updateState({ showNameModal: false });
                 }}>×</button>
                 <div className="modal-emoji-large" style={{ width: '100px', height: '100px', margin: '0 auto 15px' }}>
-                   <img src={sceneState.currentFamilyType.image} alt={sceneState.currentFamilyType.label} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  <img src={sceneState.currentFamilyType.image} alt={sceneState.currentFamilyType.label} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
                 <h2 className="modal-question">
                   {getNamePromptQuestion(sceneState.currentFamilyType.id, sceneState.currentFamilyType.label)}
@@ -1586,8 +1562,8 @@ const FamilyTreeGameContent = ({
       {sceneState.gamePhase === 'sideBySide' && (
         <div className="side-by-side-screen">
           {[...Array(45)].map((_, i) => (
-            <div 
-              key={i} 
+            <div
+              key={i}
               className="final-sparkle"
               style={{
                 left: `${Math.random() * 100}%`,
@@ -1602,7 +1578,7 @@ const FamilyTreeGameContent = ({
 
           <h1 className="reveal-title">Look at Our Family Trees!</h1>
           <p className="reveal-subtitle">Connected by Love 💛</p>
-          
+
           <div className="two-trees-container">
             {/* LEFT CARD: Ganesha */}
             <div className="tree-column slide-in-left">
@@ -1612,13 +1588,13 @@ const FamilyTreeGameContent = ({
                 <img src={familyTree} alt="Tree" className="reveal-tree-img" />
                 {ganeshaFamily.map(member => {
                   const deity = getPlacedDeityImage(member.id);
-                 return (
-                  <div key={member.id} className="tree-member-mini ganesha-comparison-icon" style={member.position}>
-                    <div className="mini-image ganesha-comparison-img">
-                      <img src={deity.image} alt={deity.name} className="ganesha-comparison-photo" />
+                  return (
+                    <div key={member.id} className="tree-member-mini ganesha-comparison-icon" style={member.position}>
+                      <div className="mini-image ganesha-comparison-img">
+                        <img src={deity.image} alt={deity.name} className="ganesha-comparison-photo" />
+                      </div>
+                      <p className="mini-name ganesha-comparison-label">{member.role}</p>
                     </div>
-                    <p className="mini-name ganesha-comparison-label">{member.role}</p> 
-                  </div>
                   );
                 })}
               </div>
@@ -1635,7 +1611,7 @@ const FamilyTreeGameContent = ({
             <div className="tree-column slide-in-right">
               <h3 className="tree-heading">Your Family</h3>
               <p className="tree-location">Your Home</p>
-              
+
               <div className="tree-visual" data-member-count={sceneState.childFamily.length}>
                 <img src={familyTree} alt="Tree" className="reveal-tree-img" />
                 {[1, 2, 3].map(rowNum => (
@@ -1709,10 +1685,10 @@ const FamilyTreeGameContent = ({
           }}
           onReplay={() => {
             sceneActions.updateState({
-                gamePhase: 'intro',
-                placedGaneshaMembers: [],
-                childFamily: [],
-                showingCompletionScreen: false
+              gamePhase: 'intro',
+              placedGaneshaMembers: [],
+              childFamily: [],
+              showingCompletionScreen: false
             });
           }}
           onExploreZones={() => {
@@ -1720,7 +1696,7 @@ const FamilyTreeGameContent = ({
             else if (onBack) onBack();
           }}
           onHome={() => {
-             if (onNavigate) onNavigate('home');
+            if (onNavigate) onNavigate('home');
           }}
         />
       )}
