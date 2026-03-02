@@ -1212,7 +1212,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           onContinue={() => {
             setTimeout(() => {
               if (onNavigate) {
-                onNavigate('game3');
+                onNavigate('scene-complete-continue');
               } else if (onComplete) {
                 onComplete();
               }
