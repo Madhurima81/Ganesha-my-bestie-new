@@ -754,6 +754,7 @@ const MandapDecorationGame = ({ onComplete, onNavigate, zoneId = 'festival-squar
   const [timeRemaining, setTimeRemaining] = useState(60);
   const [timerActive, setTimerActive] = useState(false);
 
+  const [showPauseMenu, setShowPauseMenu] = useState(false);
   const [showMissionComplete, setShowMissionComplete] = useState(false);
   const [completedMissionData, setCompletedMissionData] = useState(null);
 
