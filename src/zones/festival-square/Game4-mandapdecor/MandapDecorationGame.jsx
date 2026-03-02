@@ -719,7 +719,6 @@ const MandapDecorationGame = ({ onComplete, onNavigate, zoneId = 'festival-squar
   const [isDragging, setIsDragging] = useState(false);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
   const [nearDeleteZone, setNearDeleteZone] = useState(false);
-  const [showPauseMenu, setShowPauseMenu] = useState(false); // 👈 ADD THIS
 
   const [currentMode, setCurrentMode] = useState(GAME_MODES.INTRO);
   const [selectedMission, setSelectedMission] = useState(null);
