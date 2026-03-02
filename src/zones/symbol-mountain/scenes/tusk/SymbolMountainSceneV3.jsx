@@ -10,12 +10,13 @@ import { getOpeningModal } from '../../../../lib/config/content/openingModals';
 import { getCompletionModal } from '../../../../lib/config/content';
 
 // --- NEW MASTER LAYOUT & CONFIG ---
-import GameLayout from '../../../../lib/components/layout/GameLayout'; 
-import { symbolHelpConfig } from './helpConfig'; 
+import GameLayout from '../../../../lib/components/layout/GameLayout';
+import { symbolHelpConfig } from './helpConfig';
 // ----------------------------------
 
 // Unified Components
 import UnifiedHeaderV2 from '../../../../lib/components/ui/Header/UnifiedHeaderV2';
+import OpeningModal from '../../shared/components/OpeningModal';
 
 // Import scene management components
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
@@ -91,10 +92,10 @@ const PHASES = {
 };
 
 const NOTE_STATES = {
-  LOCKED: 'locked',      
-  APPEARING: 'appearing', 
-  ACTIVE: 'active',      
-  USED: 'used'          
+  LOCKED: 'locked',
+  APPEARING: 'appearing',
+  ACTIVE: 'active',
+  USED: 'used'
 };
 
 // Musical instrument positions
@@ -126,11 +127,11 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-const SymbolMountainSceneV3 = ({ 
-  onComplete, 
-  onNavigate, 
-  zoneId = 'symbol-mountain', 
-  sceneId = 'symbol' 
+const SymbolMountainSceneV3 = ({
+  onComplete,
+  onNavigate,
+  zoneId = 'symbol-mountain',
+  sceneId = 'symbol'
 }) => {
   return (
     <ErrorBoundary>
@@ -142,13 +143,13 @@ const SymbolMountainSceneV3 = ({
           activeGame: 'eyes',
           completedGames: [],
           currentFocus: 'eyes',
-          
+
           eyesGameComplete: false,
           showEyesTelescopeGame: false,
           foundInstruments: [],
           discoveredInstruments: {},
           instrumentsFound: 0,
-          
+
           earsVisible: false,
           earsGameComplete: false,
           showEarsRhythmGame: false,
@@ -162,18 +163,18 @@ const SymbolMountainSceneV3 = ({
           earsSequenceJustCompleted: false,
           earsReadyForNextNote: false,
           earsLastCompletedNote: null,
-          
+
           showTuskAssemblyGame: false,
           tuskGameActive: false,
           tuskPower: 0,
           tuskFullyPowered: false,
           ganeshaComplete: false,
           showGaneshaOutline: false,
-          
+
           discoveredSymbols: {
             mooshika: true, modak: true, belly: true, lotus: true, trunk: true
           },
-          
+
           welcomeShown: false,
           currentPopup: null,
           showingCompletionScreen: false,
@@ -183,7 +184,7 @@ const SymbolMountainSceneV3 = ({
         }}
       >
         {({ sceneState, sceneActions, isReload }) => (
-          <SymbolMountainSceneContent 
+          <SymbolMountainSceneContent
             sceneState={sceneState}
             sceneActions={sceneActions}
             isReload={isReload}
@@ -198,11 +199,11 @@ const SymbolMountainSceneV3 = ({
   );
 };
 
-const SymbolMountainSceneContent = ({ 
-  sceneState, 
-  sceneActions, 
-  isReload, 
-  onComplete, 
+const SymbolMountainSceneContent = ({
+  sceneState,
+  sceneActions,
+  isReload,
+  onComplete,
   onNavigate,
   zoneId,
   sceneId
@@ -227,7 +228,7 @@ const SymbolMountainSceneContent = ({
   const [showResumePopup, setShowResumePopup] = useState(false);
   const [resumeMessage, setResumeMessage] = useState('');
   const [isAudioOn, setIsAudioOn] = useState(true);
-  
+
   const timeoutsRef = useRef([]);
   const resumePopupTimeoutRef = useRef(null);
   const reloadHandledRef = useRef(false);
@@ -256,7 +257,7 @@ const SymbolMountainSceneContent = ({
         if (sceneState.musicalNoteStates[key] === 'golden') {
           syncedState[key] = NOTE_STATES.ACTIVE;
         } else if (sceneState.musicalNoteStates[key] === 'used') {
-           syncedState[key] = NOTE_STATES.USED;
+          syncedState[key] = NOTE_STATES.USED;
         }
       });
       setMusicalNoteStates(syncedState);
@@ -274,9 +275,9 @@ const SymbolMountainSceneContent = ({
   // Auto-glow effect
   useEffect(() => {
     const glowPhases = [PHASES.EYES_GAME, PHASES.EARS_GAME, PHASES.TUSK_GAME];
-    const isActiveGameplay = glowPhases.includes(sceneState?.phase) && sceneState?.welcomeShown && 
+    const isActiveGameplay = glowPhases.includes(sceneState?.phase) && sceneState?.welcomeShown &&
       !sceneState?.showEyesTelescopeGame && !sceneState?.showEarsRhythmGame;
-    
+
     if (isActiveGameplay) {
       const timer = setTimeout(() => setShowHintGlow(true), 20000);
       return () => clearTimeout(timer);
@@ -338,8 +339,8 @@ const SymbolMountainSceneContent = ({
     handleSmartDismiss();
     if (sceneState.eyesGameComplete) return;
     if (!sceneState.welcomeShown) sceneActions.updateState({ welcomeShown: true });
-    
-    sceneActions.updateState({ 
+
+    sceneActions.updateState({
       showEyesTelescopeGame: true,
       eyesGameActive: true,
       activeGame: 'eyes'
@@ -349,8 +350,8 @@ const SymbolMountainSceneContent = ({
   const handleEarsClick = () => {
     handleSmartDismiss();
     if (!sceneState.earsVisible || sceneState.earsGameComplete) return;
-    
-    sceneActions.updateState({ 
+
+    sceneActions.updateState({
       showEarsRhythmGame: true,
       earsGameActive: true,
       musicalNotesVisible: true,
@@ -377,16 +378,16 @@ const SymbolMountainSceneContent = ({
       ...prev,
       [noteId]: NOTE_STATES.USED
     }));
-    
+
     const newTuskPower = sceneState.tuskPower + 1;
     sceneActions.updateState({
       tuskPower: newTuskPower,
       tuskFullyPowered: newTuskPower === 3
     });
-    
+
     setShowSparkle('tusk-feeding');
     setTimeout(() => setShowSparkle(null), 1500);
-    
+
     if (newTuskPower >= 3) {
       safeSetTimeout(() => {
         sceneActions.updateState({ ganeshaComplete: true, ganeshaAssembling: false });
@@ -412,24 +413,24 @@ const SymbolMountainSceneContent = ({
   const handleEarsGameComplete = () => {
     const completedNote = sceneState.currentNote;
     const isLastRound = completedNote === 'note3';
-    
-    sceneActions.updateState({ 
+
+    sceneActions.updateState({
       showEarsRhythmGame: false,
       earsGamePhase: 'waiting',
       earsPlayerInput: [],
       earsCurrentSequence: [],
       earsSequenceItemsShown: 0
     });
-    
+
     if (isLastRound) setShowSparkle('ears-complete-final');
     else setShowSparkle('ears-round-complete');
-    
+
     unlockNote(completedNote);
-    
+
     const allNotesUnlocked = ['note1', 'note2', 'note3'].every(
       note => note <= completedNote || musicalNoteStates[note] === NOTE_STATES.ACTIVE
     );
-    
+
     if (allNotesUnlocked) {
       setTimeout(() => {
         setShowSparkle(null);
@@ -509,37 +510,13 @@ const SymbolMountainSceneContent = ({
           <div className="symbol-mountain-scene-v2-container">
             <div className="mountain-background" style={{ backgroundImage: `url(${mountainBackground})` }}>
 
-              {/* OPENING INSTRUCTIONS */}
-              {sceneState.phase === PHASES.EYES_GAME && !sceneState.welcomeShown && (() => {
-                const theme = getZoneTheme(zoneId);
-                const modal = getOpeningModal(zoneId, sceneId);
-                return (
-                  <div className="game-modal-overlay" style={{
-                    '--modal-card-bg': theme.parentBg,
-                    '--modal-text-primary': theme.textPrimary,
-                    '--modal-btn-bg': theme.buttonActiveBg,
-                    '--modal-btn-shadow': theme.glowColor
-                  }}>
-                    <div className="game-modal-content">
-                      <div className="game-modal-character">
-                        <img src={ganeshaCharacter} alt="Ganesha Character" />
-                      </div>
-                      <div className="game-modal-card">
-                        <h1 className="game-modal-title">{modal?.title || 'Play the Notes'}</h1>
-                        <p className="game-modal-subtitle">{modal?.description || 'Play the rhythm and see what changes.'}</p>
-                        <div className="game-modal-icons">
-                          <div className="game-modal-icon-item"><img src={symbolEyesColored} alt="Eyes" /><span className="game-modal-icon-label">Eyes</span></div>
-                          <div className="game-modal-icon-item"><img src={symbolEarColored} alt="Ears" /><span className="game-modal-icon-label">Ears</span></div>
-                          <div className="game-modal-icon-item"><img src={symbolTuskColored} alt="Tusk" /><span className="game-modal-icon-label">Tusk</span></div>
-                        </div>
-                        <button className="game-modal-button" onClick={() => sceneActions.updateState({ welcomeShown: true })}>
-                          {modal?.buttonText || "Let's Explore"}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })()}
+              <OpeningModal
+                zoneId={zoneId}
+                sceneId={sceneId}
+                onStart={() => sceneActions.updateState({ welcomeShown: true })}
+                characterImg={ganeshaCharacter}
+                showButton={true}
+              />
 
               {/* UNIFIED HEADERS FOR PHASES */}
               {!showDiscoveryFlip1 && !showDiscoveryFlip2 && !showDiscoveryFlip3 && sceneState?.welcomeShown && (
@@ -575,8 +552,8 @@ const SymbolMountainSceneContent = ({
               )}
 
               {/* EYES SYMBOL */}
-              {sceneState.welcomeShown && !sceneState.discoveredSymbols?.eyes && ( 
-                <div 
+              {sceneState.welcomeShown && !sceneState.discoveredSymbols?.eyes && (
+                <div
                   className={`eyes-symbol-container ${sceneState.eyesGameComplete ? 'completed' : 'active'} ${showHintGlow && sceneState.phase === PHASES.EYES_GAME ? 'hint-glow' : ''}`}
                   onClick={handleEyesClick}
                 >
@@ -595,7 +572,7 @@ const SymbolMountainSceneContent = ({
                   profileName={profileName}
                   initialDiscoveredInstruments={sceneState.discoveredInstruments || {}}
                   initialFoundInstruments={sceneState.foundInstruments || []}
-                  isReload={isReload && sceneState.showEyesTelescopeGame}
+                  isReload={isAudioOn && sceneState.showEyesTelescopeGame}
                   onInstrumentFound={(instrumentType, allFound, discovered) => {
                     sceneActions.updateState({ foundInstruments: allFound, discoveredInstruments: discovered, instrumentsFound: allFound.length });
                   }}
@@ -616,7 +593,7 @@ const SymbolMountainSceneContent = ({
 
               {/* EARS SYMBOL */}
               {sceneState.earsVisible && !sceneState.discoveredSymbols?.ears && (
-                <div 
+                <div
                   className={`ears-symbol-container ${sceneState.earsGameComplete ? 'completed' : 'active'} materialized ${showHintGlow && sceneState.earsVisible && !sceneState.earsGameComplete ? 'hint-glow' : ''}`}
                   onClick={handleEarsClick}
                 >
@@ -654,11 +631,11 @@ const SymbolMountainSceneContent = ({
                       earsReadyForNextNote: false,
                       earsLastCompletedNote: null
                     });
-                      unlockNote(noteId); 
+                    unlockNote(noteId);
 
                     setShowSparkle(`note-${noteId}-golden`);
                     setTimeout(() => setShowSparkle(null), 2000);
-                    
+
                     const goldenNotes = Object.values(newNoteStates).filter(state => state === 'golden');
                     if (goldenNotes.length === 3) handleEarsGameComplete();
                     else {
@@ -685,13 +662,13 @@ const SymbolMountainSceneContent = ({
                           transition: 'all 0.5s ease',
                           cursor: state === NOTE_STATES.ACTIVE ? 'pointer' : 'default',
                           background: state === NOTE_STATES.LOCKED ? 'rgba(200, 200, 200, 0.5)' :
-                                    state === NOTE_STATES.APPEARING ? 'rgba(255, 215, 0, 0.3)' :
-                                    state === NOTE_STATES.ACTIVE ? 'linear-gradient(135deg, #FFD700, #FFA500)' :
-                                    'rgba(150, 150, 150, 0.3)',
+                            state === NOTE_STATES.APPEARING ? 'rgba(255, 215, 0, 0.3)' :
+                              state === NOTE_STATES.ACTIVE ? 'linear-gradient(135deg, #FFD700, #FFA500)' :
+                                'rgba(150, 150, 150, 0.3)',
                           border: state === NOTE_STATES.ACTIVE ? '3px solid #FF8C00' : '2px solid #999',
                           boxShadow: state === NOTE_STATES.ACTIVE ? '0 0 20px rgba(255, 215, 0, 0.6)' : 'none',
                           animation: state === NOTE_STATES.APPEARING ? 'noteAppear 1.5s ease-out' :
-                                    state === NOTE_STATES.ACTIVE ? 'gentlePulse 2s ease-in-out infinite' : 'none'
+                            state === NOTE_STATES.ACTIVE ? 'gentlePulse 2s ease-in-out infinite' : 'none'
                         }}
                         onClick={() => {
                           if (state === NOTE_STATES.ACTIVE && sceneState.showTuskAssemblyGame) {
@@ -725,11 +702,11 @@ const SymbolMountainSceneContent = ({
                     </div>
                   )}
                   <div style={{ position: 'absolute', bottom: '10px', left: '30%', width: '120px', height: '120px', transform: 'translateX(-30%)', zIndex: 30 }}>
-                    <img 
+                    <img
                       src={ganeshaTusk} alt="Tusk"
                       style={{
                         width: '60px', height: '60px',
-                        filter: sceneState.tuskPower > 0 ? `brightness(${1.2 + (sceneState.tuskPower * 0.2)}) drop-shadow(0 0 ${8 + (sceneState.tuskPower * 4)}px #ffd700)` : 'brightness(1.1)',    
+                        filter: sceneState.tuskPower > 0 ? `brightness(${1.2 + (sceneState.tuskPower * 0.2)}) drop-shadow(0 0 ${8 + (sceneState.tuskPower * 4)}px #ffd700)` : 'brightness(1.1)',
                         transition: 'all 0.8s ease'
                       }}
                     />
@@ -738,7 +715,7 @@ const SymbolMountainSceneContent = ({
               )}
 
               {/* PROGRESSIVE HINTS */}
-              {sceneState.welcomeShown && ( 
+              {sceneState.welcomeShown && (
                 <ProgressiveHintSystem
                   ref={progressiveHintRef}
                   sceneId={sceneId}
@@ -752,7 +729,7 @@ const SymbolMountainSceneContent = ({
                   zIndex={2000}
                   enabled={shouldEnableHints()}
                   disabledMessage="Great job!"
-                /> 
+                />
               )}
 
               {/* REMOVED MANUAL NAV & BACK BUTTON (Handled by GameLayout) */}
@@ -762,7 +739,7 @@ const SymbolMountainSceneContent = ({
 
             {/* SIDEBAR */}
             {sceneState.welcomeShown && (
-              <SymbolSidebar 
+              <SymbolSidebar
                 discoveredSymbols={{
                   mooshika: true, modak: true, belly: true, lotus: true, trunk: true,
                   ...(sceneState.discoveredSymbols || {}),
@@ -939,7 +916,7 @@ const SymbolMountainSceneContent = ({
                 }}
               />
             )}
-          </div>       
+          </div>
         </MessageManager>
       </InteractionManager>
     </GameLayout>
