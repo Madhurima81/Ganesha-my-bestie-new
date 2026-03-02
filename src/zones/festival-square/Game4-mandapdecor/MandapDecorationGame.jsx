@@ -1,4 +1,5 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
+import OpeningModal from '../../shared/components/OpeningModal.jsx';
 import './MandapDecorationGame.css';
 import '../../shared/components/OpeningModal.css'; // <--- SHARED MODAL IMPORT
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
@@ -14,13 +15,13 @@ import FixSidebar from './components/sidebars/FixSidebar';
 import MandapItem from './components/MandapItem';
 
 // Mission Completion Overlay Component
-const MissionCompletionOverlay = ({ 
-  show, 
-  missionName, 
-  starsEarned, 
+const MissionCompletionOverlay = ({
+  show,
+  missionName,
+  starsEarned,
   totalTime,
-  onPlayAgain, 
-  onTryAnother 
+  onPlayAgain,
+  onTryAnother
 }) => {
   if (!show) return null;
 
@@ -28,8 +29,8 @@ const MissionCompletionOverlay = ({
     <div className="mission-completion-overlay">
       <div className="completion-sparkles">
         {Array.from({ length: 20 }).map((_, i) => (
-          <div 
-            key={i} 
+          <div
+            key={i}
             className="completion-sparkle"
             style={{
               left: `${Math.random() * 100}%`,
@@ -41,99 +42,50 @@ const MissionCompletionOverlay = ({
           </div>
         ))}
       </div>
-      
-  <div className="decor-completion-card">
-  <div 
-    className="completion-ganesha"
-    style={{ backgroundImage: `url(${ganeshaImage})` }}
-  />
-  
-  <div className="completion-message">
-    <h1 className="completion-title">Mission Complete!</h1>
-    <p className="completion-subtitle">{missionName}</p>
-    
-    <div className="completion-stars">
-      {Array.from({ length: starsEarned }).map((_, i) => (
-        <span key={i} className="star-earned">⭐</span>
-      ))}
-    </div>
-    
-    <p className="completion-blessing">
-      "Well done, little decorator! Your devotion shines bright!"
-    </p>
-    
-    {totalTime && (
-      <p className="completion-time">⏱️ Time: {totalTime}s</p>
-    )}
-  </div>
-  
-  <div className="completion-buttons">
-    {/* NEW CLASS NAMES HERE */}
-    <button className="decor-btn-green" onClick={onTryAnother}>
-      <span className="btn-icon">🔄</span>
-      <span className="btn-text">Try Another!</span>
-    </button>
-    
-    <button className="decor-btn-orange" onClick={onPlayAgain}>
-      <span className="btn-icon">🎯</span>
-      <span className="btn-text">Play Again!</span>
-    </button>
-  </div>
-</div>
-    </div>
-  );
-};
 
+      <div className="decor-completion-card">
+        <div
+          className="completion-ganesha"
+          style={{ backgroundImage: `url(${ganeshaImage})` }}
+        />
 
-// Opening Modal Component for Mandap
-const OpeningModal = ({ show, onStart, zoneId = 'festival-square', sceneId = 'game4' }) => {
-  if (!show) return null;
-  const theme = getZoneTheme(zoneId);
-  const modal = getOpeningModal(zoneId, sceneId);
+        <div className="completion-message">
+          <h1 className="completion-title">Mission Complete!</h1>
+          <p className="completion-subtitle">{missionName}</p>
 
-  return (
-    <div className="game-modal-overlay" style={{
-      '--modal-card-bg': theme.parentBg,
-      '--modal-text-primary': theme.textPrimary,
-      '--modal-btn-bg': theme.buttonActiveBg,
-      '--modal-btn-shadow': theme.glowColor
-    }}>
-      <div className="game-modal-content">
-        {/* Character - Left Side */}
-        <div className="game-modal-character">
-          <img src={ganeshaImage} alt="Ganesha" />
-        </div>
-
-        {/* Card - Right Side */}
-        <div className="game-modal-card">
-          <h1 className="game-modal-title">{modal?.title || 'Mandap Magic'}</h1>
-          <p className="game-modal-subtitle">{modal?.description || 'Decorate it your way.'}</p>
-
-          {/* Icons Grid */}
-          <div className="game-modal-icons">
-            <div className="game-modal-icon-item">
-              <img src="/assets/festival-square/icons/mandap-learn-icon.png" alt="Learn" />
-              <span className="game-modal-icon-label">Learn</span>
-            </div>
-            <div className="game-modal-icon-item">
-              <img src="/assets/festival-square/icons/mandap-build-icon.png" alt="Build" />
-              <span className="game-modal-icon-label">Build</span>
-            </div>
-            <div className="game-modal-icon-item">
-              <img src="/assets/festival-square/icons/mandap-decorate-icon.png" alt="Decorate" />
-              <span className="game-modal-icon-label">Decorate</span>
-            </div>
+          <div className="completion-stars">
+            {Array.from({ length: starsEarned }).map((_, i) => (
+              <span key={i} className="star-earned">⭐</span>
+            ))}
           </div>
 
-          {/* Let's Explore Button */}
-          <button className="game-modal-button" onClick={onStart}>
-            {modal?.buttonText || "Let's Explore"}
+          <p className="completion-blessing">
+            "Well done, little decorator! Your devotion shines bright!"
+          </p>
+
+          {totalTime && (
+            <p className="completion-time">⏱️ Time: {totalTime}s</p>
+          )}
+        </div>
+
+        <div className="completion-buttons">
+          {/* NEW CLASS NAMES HERE */}
+          <button className="decor-btn-green" onClick={onTryAnother}>
+            <span className="btn-icon">🔄</span>
+            <span className="btn-text">Try Another!</span>
+          </button>
+
+          <button className="decor-btn-orange" onClick={onPlayAgain}>
+            <span className="btn-icon">🎯</span>
+            <span className="btn-text">Play Again!</span>
           </button>
         </div>
       </div>
     </div>
   );
 };
+
+
 import ganeshaImage from './assets/images/ganesha_happy_sitting.png';
 
 // Import all decoration images - CORRECTED 24 ASSETS
@@ -207,15 +159,15 @@ export function getMissionData(selectedMission, currentStep, progressCount = 0) 
   }
 
   // Puja Prep Mission
-// Puja Prep Mission
-const currentStepData = selectedMission.steps?.[currentStep - 1];
-return {
-  type: 'steps',
-  currentStepData,
-  currentProgress: progressCount,  // ✅ Use progressCount parameter
-  totalSteps: selectedMission.steps?.length || 5,
-  instruction: currentStepData?.instruction || ''
-};
+  // Puja Prep Mission
+  const currentStepData = selectedMission.steps?.[currentStep - 1];
+  return {
+    type: 'steps',
+    currentStepData,
+    currentProgress: progressCount,  // ✅ Use progressCount parameter
+    totalSteps: selectedMission.steps?.length || 5,
+    instruction: currentStepData?.instruction || ''
+  };
 }
 
 // Game modes
@@ -228,162 +180,162 @@ const GAME_MODES = {
 
 
 const MISSIONS = [
-{
-  id: 'puja-prep',
-  name: 'Puja Prep',
-  icon: '🙏',
-  description: 'Get ready for Ganesha\'s blessing ceremony!',
-  difficulty: 1,
-  unlocked: true,
-  steps: [
-    {
-      step: 1,
-      item: 'marigold_bunch',
-      category: 'FLOWERS',
-      zone: 'altar-left-flowers',  // ✅ NEW ZONE
-      instruction: "Place flowers on the left altar",
-      successMessage: '"So pretty! Ganesha loves these flowers!"' ,
-      culturalNote: "Marigolds are sacred flowers in Hindu pujas",
-      emoji: '🌸'
-    },
-    {
-      step: 2,
-      item: 'coconut',
-      category: 'OFFERINGS',
-      zone: 'altar-left-coconut',  // ✅ NEW ZONE (below flowers)
-      instruction: "Add coconut to the left altar",
-      successMessage: '"Yay! The coconut is ready for puja!"' ,
-      culturalNote: "Breaking coconut removes obstacles",
-      emoji: '🥥'
-    },
-    {
-      step: 3,
+  {
+    id: 'puja-prep',
+    name: 'Puja Prep',
+    icon: '🙏',
+    description: 'Get ready for Ganesha\'s blessing ceremony!',
+    difficulty: 1,
+    unlocked: true,
+    steps: [
+      {
+        step: 1,
+        item: 'marigold_bunch',
+        category: 'FLOWERS',
+        zone: 'altar-left-flowers',  // ✅ NEW ZONE
+        instruction: "Place flowers on the left altar",
+        successMessage: '"So pretty! Ganesha loves these flowers!"',
+        culturalNote: "Marigolds are sacred flowers in Hindu pujas",
+        emoji: '🌸'
+      },
+      {
+        step: 2,
+        item: 'coconut',
+        category: 'OFFERINGS',
+        zone: 'altar-left-coconut',  // ✅ NEW ZONE (below flowers)
+        instruction: "Add coconut to the left altar",
+        successMessage: '"Yay! The coconut is ready for puja!"',
+        culturalNote: "Breaking coconut removes obstacles",
+        emoji: '🥥'
+      },
+      {
+        step: 3,
         item: 'golden_ornate',
-      category: 'LIGHTS',
-      zone: 'altar-center-diya',  // ✅ NEW ZONE (next to Ganesha)
-      instruction: "Light the diya next to Ganesha",
-      successMessage: '"Lovely! The diya is shining bright!"' ,
-      culturalNote: "Diyas guide the gods to our prayers",
-      emoji: '🪔'
-    },
-    {
-      step: 4,
-      item: 'sweets_modak',
-      category: 'OFFERINGS',
-      zone: 'altar-center-modak',  // ✅ NEW ZONE (next to diya)
-      instruction: "Place modaks in the center",
-      successMessage: "Yummy! Ganesha loves modaks!",
-      culturalNote: "Modak is Ganesha's favorite food",
-      emoji: '🍬'
-    },
-    {
-      step: 5,
-      item: 'rangoli_base',
-      category: 'SPECIAL',
-      zone: 'base-floor',  // ✅ Floor zone
-      instruction: "Create rangoli on the floor",
-      successMessage: "Amazing! Everything is ready for Ganesha!",
-      culturalNote: "Rangoli welcomes guests with colors",
-      emoji: '🌈'
-    }
-  ]
-},
+        category: 'LIGHTS',
+        zone: 'altar-center-diya',  // ✅ NEW ZONE (next to Ganesha)
+        instruction: "Light the diya next to Ganesha",
+        successMessage: '"Lovely! The diya is shining bright!"',
+        culturalNote: "Diyas guide the gods to our prayers",
+        emoji: '🪔'
+      },
+      {
+        step: 4,
+        item: 'sweets_modak',
+        category: 'OFFERINGS',
+        zone: 'altar-center-modak',  // ✅ NEW ZONE (next to diya)
+        instruction: "Place modaks in the center",
+        successMessage: "Yummy! Ganesha loves modaks!",
+        culturalNote: "Modak is Ganesha's favorite food",
+        emoji: '🍬'
+      },
+      {
+        step: 5,
+        item: 'rangoli_base',
+        category: 'SPECIAL',
+        zone: 'base-floor',  // ✅ Floor zone
+        instruction: "Create rangoli on the floor",
+        successMessage: "Amazing! Everything is ready for Ganesha!",
+        culturalNote: "Rangoli welcomes guests with colors",
+        emoji: '🌈'
+      }
+    ]
+  },
   // Keep your other missions the same
-{
-  id: 'fix-mandap',
-  name: 'Mandap Mix-Up',
-  icon: '🔧',
-  description: 'Wind blew decorations everywhere!',
-  difficulty: 2,
+  {
+    id: 'fix-mandap',
+    name: 'Mandap Mix-Up',
+    icon: '🔧',
+    description: 'Wind blew decorations everywhere!',
+    difficulty: 2,
     unlocked: true,  // ✅ CHANGE FROM false TO true
-  type: 'fix',
-  wrongPlacements: [
-    { id: 'string_festival', wrongZone: 'base-floor', correctZone: 'pillar-left' },
-    { id: 'painted_decorative', wrongZone: 'roof-center', correctZone: 'altar-center-diya' },
-    { id: 'fruits_plate', wrongZone: 'pillar-right', correctZone: 'altar-left-coconut' },
-    { id: 'jasmine_garland', wrongZone: 'altar-right', correctZone: 'entrance-arch' },
-    { id: 'rose_petals', wrongZone: 'roof-left', correctZone: 'pillar-right' }
-  ]
-},
-{
-  id: 'eco-mandap',
-  name: 'Eco Mandap',
-  icon: '🌿',
-  description: "Let's make a nature-friendly mandap!",
-  difficulty: 2,
-  unlocked: true,
-  type: 'eco',
-  ecoItems: [
-    // Flowers - ALL ECO
-    'marigold_bunch', 
-    'rose_petals', 
-    'lotus_single', 
-    'flower_petals',
-    
-    // Garlands - Natural ones are ECO
-    'jasmine_garland_long',
-    'flower_leaf_mix',
-    
-    // Lights - Only CLAY diyas are ECO
-    'clay_traditional',
-    'painted_decorative',
-    'golden_ornate',
-    
-    // Offerings - ALL ECO (natural food items)
-    'coconut', 
-    'fruits_plate', 
-    'sweets_modak',
-    'incense_sticks',
-    
-    // Special - Natural items are ECO
-    'kalash_pot', 
-    'peacock_feathers', 
-    'rangoli_base'
-  ],
-  nonEcoItems: [
-    // Garlands - Fabric/synthetic are NON-ECO
-    'toran_fabric_flowers',
-    'toran_mango',  // If using plastic mango leaves
-    'garland_mixed_chain',  // If synthetic
-    
-    // Lights - Electric/battery/paper are NON-ECO
-    'string_festival',
-    'paper_lanterns',
-    
-    // Fun - ALL NON-ECO (plastic/paper)
-    'balloons_cluster', 
-    'streamers_flowing', 
-    'bunting_colorful',
-    'confetti_scatter',
-    
-    // Special - Synthetic items
-    'fabric_draping'
-  ],
-  targetEcoCount: 5,
-  maxNonEcoAllowed: 2
-},
-{
-  id: 'light-challenge',
-  name: 'Light Challenge',
-  icon: '💡',
-  description: 'Illuminate the sacred space',
-  difficulty: 3,
-  unlocked: true,
-  type: 'light',  // ✅ ADD THIS!
-  timeLimit: 60,  // ✅ ADD THIS!
-  items: [        // ✅ ADD THIS!
-    { id: 'clay_traditional', zone: 'altar-left' },
-    { id: 'painted_decorative', zone: 'altar-center' },
-    { id: 'golden_ornate', zone: 'altar-right' },
-    { id: 'string_festival', zone: 'roof-center' },
-    { id: 'paper_lanterns', zone: 'pillar-right' }
-  ]
-}
+    type: 'fix',
+    wrongPlacements: [
+      { id: 'string_festival', wrongZone: 'base-floor', correctZone: 'pillar-left' },
+      { id: 'painted_decorative', wrongZone: 'roof-center', correctZone: 'altar-center-diya' },
+      { id: 'fruits_plate', wrongZone: 'pillar-right', correctZone: 'altar-left-coconut' },
+      { id: 'jasmine_garland', wrongZone: 'altar-right', correctZone: 'entrance-arch' },
+      { id: 'rose_petals', wrongZone: 'roof-left', correctZone: 'pillar-right' }
+    ]
+  },
+  {
+    id: 'eco-mandap',
+    name: 'Eco Mandap',
+    icon: '🌿',
+    description: "Let's make a nature-friendly mandap!",
+    difficulty: 2,
+    unlocked: true,
+    type: 'eco',
+    ecoItems: [
+      // Flowers - ALL ECO
+      'marigold_bunch',
+      'rose_petals',
+      'lotus_single',
+      'flower_petals',
+
+      // Garlands - Natural ones are ECO
+      'jasmine_garland_long',
+      'flower_leaf_mix',
+
+      // Lights - Only CLAY diyas are ECO
+      'clay_traditional',
+      'painted_decorative',
+      'golden_ornate',
+
+      // Offerings - ALL ECO (natural food items)
+      'coconut',
+      'fruits_plate',
+      'sweets_modak',
+      'incense_sticks',
+
+      // Special - Natural items are ECO
+      'kalash_pot',
+      'peacock_feathers',
+      'rangoli_base'
+    ],
+    nonEcoItems: [
+      // Garlands - Fabric/synthetic are NON-ECO
+      'toran_fabric_flowers',
+      'toran_mango',  // If using plastic mango leaves
+      'garland_mixed_chain',  // If synthetic
+
+      // Lights - Electric/battery/paper are NON-ECO
+      'string_festival',
+      'paper_lanterns',
+
+      // Fun - ALL NON-ECO (plastic/paper)
+      'balloons_cluster',
+      'streamers_flowing',
+      'bunting_colorful',
+      'confetti_scatter',
+
+      // Special - Synthetic items
+      'fabric_draping'
+    ],
+    targetEcoCount: 5,
+    maxNonEcoAllowed: 2
+  },
+  {
+    id: 'light-challenge',
+    name: 'Light Challenge',
+    icon: '💡',
+    description: 'Illuminate the sacred space',
+    difficulty: 3,
+    unlocked: true,
+    type: 'light',  // ✅ ADD THIS!
+    timeLimit: 60,  // ✅ ADD THIS!
+    items: [        // ✅ ADD THIS!
+      { id: 'clay_traditional', zone: 'altar-left' },
+      { id: 'painted_decorative', zone: 'altar-center' },
+      { id: 'golden_ornate', zone: 'altar-right' },
+      { id: 'string_festival', zone: 'roof-center' },
+      { id: 'paper_lanterns', zone: 'pillar-right' }
+    ]
+  }
 ];
 
 
 // CORRECTED Image mapping for 24 assets
-export const DECORATION_IMAGES = { 
+export const DECORATION_IMAGES = {
   'flower_marigold_bunch.png': flowerMarigoldBunch,
   'flower_rose_petals.png': flowerRosePetals,
   'flower_lotus_single.png': flowerLotusSingle,
@@ -431,7 +383,7 @@ const loadGameState = () => {
   try {
     const saved = localStorage.getItem('mandapGame');
     if (!saved) return null;
-    
+
     const saveData = JSON.parse(saved);
     return {
       ...saveData,
@@ -447,7 +399,7 @@ const loadGameState = () => {
 // Game phases
 const PHASES = {
   DISCOVERY: 'discovery',
-  DECORATION: 'decoration', 
+  DECORATION: 'decoration',
   GANESHA_ARRIVAL: 'ganesha_arrival',
   COMPLETE: 'complete'
 };
@@ -721,12 +673,12 @@ const MANDAP_ZONES = {
   'roof-left': { x: 15, y: 8, width: 15, height: 12 },
   'roof-center': { x: 35, y: 8, width: 30, height: 12 },
   'roof-right': { x: 70, y: 8, width: 15, height: 12 },
-  
+
   'entrance-arch': { x: 30, y: 18, width: 40, height: 8 },
-  
+
   'pillar-left': { x: 20, y: 25, width: 12, height: 35 },
   'pillar-right': { x: 68, y: 25, width: 12, height: 35 },
-  
+
   // Glow positions match item placement positions
   'altar-left-flowers': { x: 40, y: 72, width: 10, height: 10 },      // Left pillar
   'altar-left-coconut': { x: 62, y: 72, width: 10, height: 10 },      // Center left
@@ -743,7 +695,7 @@ const MandapDecorationGame = ({ onComplete, onNavigate, zoneId = 'festival-squar
     if (savedState) {
       return savedState;
     }
-    
+
     // Default state if no save exists
     return {
       phase: PHASES.DISCOVERY,
@@ -771,87 +723,88 @@ const MandapDecorationGame = ({ onComplete, onNavigate, zoneId = 'festival-squar
 
   const [currentMode, setCurrentMode] = useState(GAME_MODES.INTRO);
   const [selectedMission, setSelectedMission] = useState(null);
-const [completedMissions, setCompletedMissions] = useState({});
-const [unlockedMissions, setUnlockedMissions] = useState({ 'puja-prep': true });
-const [missionStars, setMissionStars] = useState(0);
+  const [completedMissions, setCompletedMissions] = useState({});
+  const [unlockedMissions, setUnlockedMissions] = useState({ 'puja-prep': true });
+  const [missionStars, setMissionStars] = useState(0);
 
-// Mission step-tracking states
-const [currentStep, setCurrentStep] = useState(1);
-const [completedSteps, setCompletedSteps] = useState([]);
-const [showMissionIntro, setShowMissionIntro] = useState(false);
-const [guidanceMessage, setGuidanceMessage] = useState('');
-const [showStepSuccess, setShowStepSuccess] = useState(false);
+  // Mission step-tracking states
+  const [currentStep, setCurrentStep] = useState(1);
+  const [completedSteps, setCompletedSteps] = useState([]);
+  const [showMissionIntro, setShowMissionIntro] = useState(false);
+  const [guidanceMessage, setGuidanceMessage] = useState('');
+  const [showStepSuccess, setShowStepSuccess] = useState(false);
 
 
-const [missionStartTime, setMissionStartTime] = useState(null);
-const [timeElapsed, setTimeElapsed] = useState(0);
+  const [missionStartTime, setMissionStartTime] = useState(null);
+  const [timeElapsed, setTimeElapsed] = useState(0);
 
-const [lastCompletedStep, setLastCompletedStep] = useState(null);
+  const [lastCompletedStep, setLastCompletedStep] = useState(null);
 
-// Fix mission states
-const [wrongItemsMap, setWrongItemsMap] = useState(new Map());
-const [selectedWrongItem, setSelectedWrongItem] = useState(null);
-const [fixedCount, setFixedCount] = useState(0);
+  // Fix mission states
+  const [wrongItemsMap, setWrongItemsMap] = useState(new Map());
+  const [selectedWrongItem, setSelectedWrongItem] = useState(null);
+  const [fixedCount, setFixedCount] = useState(0);
 
-const [ecoCount, setEcoCount] = useState(0);
-const [nonEcoCount, setNonEcoCount] = useState(0);
-const [placedEcoItems, setPlacedEcoItems] = useState([]);
+  const [ecoCount, setEcoCount] = useState(0);
+  const [nonEcoCount, setNonEcoCount] = useState(0);
+  const [placedEcoItems, setPlacedEcoItems] = useState([]);
 
-// ADD LIGHT CHALLENGE STATE
-const [lightsPlaced, setLightsPlaced] = useState(0);
-const [timeRemaining, setTimeRemaining] = useState(60);
-const [timerActive, setTimerActive] = useState(false);
+  // ADD LIGHT CHALLENGE STATE
+  const [lightsPlaced, setLightsPlaced] = useState(0);
+  const [timeRemaining, setTimeRemaining] = useState(60);
+  const [timerActive, setTimerActive] = useState(false);
 
-const [showMissionComplete, setShowMissionComplete] = useState(false);
-const [completedMissionData, setCompletedMissionData] = useState(null);
+  const [showMissionComplete, setShowMissionComplete] = useState(false);
+  const [completedMissionData, setCompletedMissionData] = useState(null);
 
-const [isTrayCollapsed, setIsTrayCollapsed] = useState(false);
-const [showStartSpot, setShowStartSpot] = useState(true);
-const [headerTip, setHeaderTip] = useState(null); // stores temporary message
-const [sparklePositions, setSparklePositions] = useState(new Map()); // Track sparkles
+  const [isTrayCollapsed, setIsTrayCollapsed] = useState(false);
+  const [showStartSpot, setShowStartSpot] = useState(true);
+  const [headerTip, setHeaderTip] = useState(null); // stores temporary message
+  const [sparklePositions, setSparklePositions] = useState(new Map()); // Track sparkles
 
   // Get decoration size function
   const getDecorationSize = (imageName) => {
     const sizes = {
       // Garlands - Make these bigger since they're long
       'garland_jasmine.png': '90px',
-      'garland_flower_leaf_mix.png': '100px', 
+      'garland_flower_leaf_mix.png': '100px',
       'toran_fabric_flowers.png': '85px',
       'garland_mixed_chain.png': '95px',
-      
+
       // Flowers - Keep moderate size
       'flower_marigold_bunch.png': '70px',
       'flower_rose_petals.png': '55px',
       'flower_lotus_single.png': '65px',
       'flower_petals.png': '50px',
-      
+
       // Lights & Diyas - Vary by importance
       'diya_golden_ornate.png': '75px',        // Special diya bigger
       'diya_clay_traditional.png': '60px',
       'diya_painted_decorative.png': '65px',
       'lights_string_festival.png': '100px',
       'lights_paper_lanterns.png': '105px',
-      
+
       // Offerings - Medium sizes
       'offering_coconut.png': '65px',
       'offering_fruits_plate.png': '70px',
       'offering_sweets_modak.png': '68px',
       'offering_incense_sticks.png': '60px',
-      
+
       // Fun items - Playful sizes
       'fun_bunting_colorful.png': '80px',
       'fun_balloons_cluster.png': '85px',
       'fun_streamers_flowing.png': '90px',
       'fun_confetti_scatter.png': '45px',      // Smaller for confetti
-      
+
       // Special items - Make these stand out
       'special_fabric_draping.png': '110px',   // Biggest
       'special_peacock_feathers.png': '105px', // Very big
       'special_kalash_pot.png': '80px',
       'special_rangoli_base.png': '95px'
     };
-    
-return sizes[imageName] ? `${parseInt(sizes[imageName]) + 25}px` : '85px';  };
+
+    return sizes[imageName] ? `${parseInt(sizes[imageName]) + 25}px` : '85px';
+  };
 
   // Audio management
   const audioContextRef = useRef(null);
@@ -877,25 +830,25 @@ return sizes[imageName] ? `${parseInt(sizes[imageName]) + 25}px` : '85px';  };
   }, []);
 
   // Timer effect for missions
-useEffect(() => {
-  if (!missionStartTime || !selectedMission) return;
-  
-  const interval = setInterval(() => {
-    const elapsed = Math.floor((Date.now() - missionStartTime) / 1000);
-    setTimeElapsed(elapsed);
-  }, 1000);
-  
-  return () => clearInterval(interval);
-}, [missionStartTime, selectedMission]);
+  useEffect(() => {
+    if (!missionStartTime || !selectedMission) return;
 
-useEffect(() => {
-  if (selectedMission?.type === 'eco') {
-    setEcoCount(0);
-    setNonEcoCount(0);
-    setPlacedEcoItems([]);
-    setGuidanceMessage('Choose only eco-friendly decorations! 🌿');
-  }
-}, [selectedMission]);
+    const interval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - missionStartTime) / 1000);
+      setTimeElapsed(elapsed);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [missionStartTime, selectedMission]);
+
+  useEffect(() => {
+    if (selectedMission?.type === 'eco') {
+      setEcoCount(0);
+      setNonEcoCount(0);
+      setPlacedEcoItems([]);
+      setGuidanceMessage('Choose only eco-friendly decorations! 🌿');
+    }
+  }, [selectedMission]);
 
   // Auto-save game state whenever it changes
   useEffect(() => {
@@ -909,113 +862,113 @@ useEffect(() => {
   };
 
   // Initialize Fix Mandap mission - place items in wrong zones
-useEffect(() => {
-  if (selectedMission?.type === 'fix' && !showMissionIntro) {
-    console.log('🔧 Initializing Fix Mandap mission');
-    
-    // Create map of wrong placements
-    const wrongMap = new Map();
-    const placements = new Map();
-    
-    selectedMission.wrongPlacements.forEach((item, index) => {
-      // Get decoration data
-      const decorationData = Object.values(DECORATION_CATEGORIES)
-        .flatMap(cat => cat.items)
-        .find(i => i.id === item.id);
-      
-      if (decorationData) {
-        const wrongItem = {
-          ...decorationData,
-          wrongZone: item.wrongZone,
-          correctZone: item.correctZone,
-          isWrong: true,
-          fixId: `fix-${index}`
-        };
-        
-        wrongMap.set(`fix-${index}`, wrongItem);
-        
-        // Place in wrong zone
-        const zoneItems = placements.get(item.wrongZone) || [];
-        zoneItems.push(wrongItem);
-        placements.set(item.wrongZone, zoneItems);
-      }
-    });
-    
-    setWrongItemsMap(wrongMap);
-    setGameState(prev => ({
-      ...prev,
-      placedDecorations: placements
-    }));
-    setFixedCount(0);
-    setGuidanceMessage('Tap the RED glowing decorations to fix them!');
-  }
-}, [selectedMission, showMissionIntro]);
+  useEffect(() => {
+    if (selectedMission?.type === 'fix' && !showMissionIntro) {
+      console.log('🔧 Initializing Fix Mandap mission');
 
-// Light Challenge Timer
-useEffect(() => {
-  if (selectedMission?.type === 'light' && timerActive) {
-    const timer = setInterval(() => {
-      setTimeRemaining(prev => {
-        if (prev <= 1) {
-          // Time's up!
-          setTimerActive(false);
-          setGuidanceMessage('⏰ Time\'s up! Try again!');
-          
-          safeSetTimeout(() => {
-            resetMissionState();
-            setSelectedMission(null);
-            setCurrentMode(GAME_MODES.SELECTION);
-          }, 3000);
-          
-          return 0;
+      // Create map of wrong placements
+      const wrongMap = new Map();
+      const placements = new Map();
+
+      selectedMission.wrongPlacements.forEach((item, index) => {
+        // Get decoration data
+        const decorationData = Object.values(DECORATION_CATEGORIES)
+          .flatMap(cat => cat.items)
+          .find(i => i.id === item.id);
+
+        if (decorationData) {
+          const wrongItem = {
+            ...decorationData,
+            wrongZone: item.wrongZone,
+            correctZone: item.correctZone,
+            isWrong: true,
+            fixId: `fix-${index}`
+          };
+
+          wrongMap.set(`fix-${index}`, wrongItem);
+
+          // Place in wrong zone
+          const zoneItems = placements.get(item.wrongZone) || [];
+          zoneItems.push(wrongItem);
+          placements.set(item.wrongZone, zoneItems);
         }
-        return prev - 1;
       });
-    }, 1000);
-    
-    return () => clearInterval(timer);
-  }
-}, [selectedMission, timerActive]);
 
-// Initialize Light Challenge
-useEffect(() => {
-  if (selectedMission?.type === 'light') {
-    setLightsPlaced(0);
-    setTimeRemaining(60);
-    setTimerActive(true);
-    setGuidanceMessage('Quick! Place all the lights before time runs out! 💡');
-        setGameState(prev => ({ ...prev, selectedCategory: 'lights' }));
-  }
-}, [selectedMission]);
+      setWrongItemsMap(wrongMap);
+      setGameState(prev => ({
+        ...prev,
+        placedDecorations: placements
+      }));
+      setFixedCount(0);
+      setGuidanceMessage('Tap the RED glowing decorations to fix them!');
+    }
+  }, [selectedMission, showMissionIntro]);
 
-const resetMissionState = () => {
-  setGameState({
-    selectedCategory: null,
-    selectedDecoration: null,
-    placedDecorations: new Map(),
-    decorationPositions: new Map(),
-    phase: PHASES.CHOOSING
-  });
-  
-  setCurrentStep(1);
-  setCompletedSteps([]);
-  setEcoCount(0);
-  setNonEcoCount(0);
-  setPlacedEcoItems([]);
-  setFixedCount(0);
-  setWrongItemsMap(new Map());
-  setLightsPlaced(0);        // ✅ ADD
-  setTimeRemaining(60);      // ✅ ADD
-  setTimerActive(false);     // ✅ ADD
-  setSelectedWrongItem(null);
-  setHighlightedZones(new Set());
-  setGuidanceMessage('');
-  setShowStepSuccess(false);
-  setLastCompletedStep(null);
-  setShowSparkle(null);
-};
+  // Light Challenge Timer
+  useEffect(() => {
+    if (selectedMission?.type === 'light' && timerActive) {
+      const timer = setInterval(() => {
+        setTimeRemaining(prev => {
+          if (prev <= 1) {
+            // Time's up!
+            setTimerActive(false);
+            setGuidanceMessage('⏰ Time\'s up! Try again!');
 
-// Auto-expand tray when entering a new category
+            safeSetTimeout(() => {
+              resetMissionState();
+              setSelectedMission(null);
+              setCurrentMode(GAME_MODES.SELECTION);
+            }, 3000);
+
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [selectedMission, timerActive]);
+
+  // Initialize Light Challenge
+  useEffect(() => {
+    if (selectedMission?.type === 'light') {
+      setLightsPlaced(0);
+      setTimeRemaining(60);
+      setTimerActive(true);
+      setGuidanceMessage('Quick! Place all the lights before time runs out! 💡');
+      setGameState(prev => ({ ...prev, selectedCategory: 'lights' }));
+    }
+  }, [selectedMission]);
+
+  const resetMissionState = () => {
+    setGameState({
+      selectedCategory: null,
+      selectedDecoration: null,
+      placedDecorations: new Map(),
+      decorationPositions: new Map(),
+      phase: PHASES.CHOOSING
+    });
+
+    setCurrentStep(1);
+    setCompletedSteps([]);
+    setEcoCount(0);
+    setNonEcoCount(0);
+    setPlacedEcoItems([]);
+    setFixedCount(0);
+    setWrongItemsMap(new Map());
+    setLightsPlaced(0);        // ✅ ADD
+    setTimeRemaining(60);      // ✅ ADD
+    setTimerActive(false);     // ✅ ADD
+    setSelectedWrongItem(null);
+    setHighlightedZones(new Set());
+    setGuidanceMessage('');
+    setShowStepSuccess(false);
+    setLastCompletedStep(null);
+    setShowSparkle(null);
+  };
+
+  // Auto-expand tray when entering a new category
   useEffect(() => {
     if (gameState.selectedCategory) {
       setIsTrayCollapsed(false);
@@ -1028,35 +981,35 @@ const resetMissionState = () => {
     if (!audioContextRef.current) return;
     const ctx = audioContextRef.current;
     const now = ctx.currentTime;
-    
+
     const frequencies = [523, 659, 784]; // Pleasant chime
     frequencies.forEach((freq, index) => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      
+
       osc.connect(gain);
       gain.connect(ctx.destination);
-      
+
       osc.frequency.setValueAtTime(freq, now);
       osc.type = 'sine';
-      
+
       gain.gain.setValueAtTime(0.1, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-      
+
       osc.start(now + index * 0.1);
       osc.stop(now + 0.5 + index * 0.1);
     });
   };
 
   // Handle clicking wrong decoration in Fix mode
-const handleWrongItemClick = (decoration) => {
-  console.log('🔧 Clicked wrong item:', decoration.id);
-  setSelectedWrongItem(decoration);
-  setGuidanceMessage(`Good! Now tap the GREEN glowing spot to fix it!`);
-  
-  // Highlight correct zone
-  setHighlightedZones(new Set([decoration.correctZone]));
-};
+  const handleWrongItemClick = (decoration) => {
+    console.log('🔧 Clicked wrong item:', decoration.id);
+    setSelectedWrongItem(decoration);
+    setGuidanceMessage(`Good! Now tap the GREEN glowing spot to fix it!`);
+
+    // Highlight correct zone
+    setHighlightedZones(new Set([decoration.correctZone]));
+  };
 
 
   // Handle category selection
@@ -1076,51 +1029,51 @@ const handleWrongItemClick = (decoration) => {
     clearHighlights();
   };
 
-const handleDecorationSelect = (decoration) => {
-  if (gameState.phase === PHASES.COMPLETE) return;
+  const handleDecorationSelect = (decoration) => {
+    if (gameState.phase === PHASES.COMPLETE) return;
 
-  setGameState(prev => ({
-    ...prev,
-    selectedDecoration: decoration
-  }));
+    setGameState(prev => ({
+      ...prev,
+      selectedDecoration: decoration
+    }));
 
-// For Light Challenge, highlight all valid zones for the selected decoration
-if (selectedMission?.type === 'light') {
-  const validZones = new Set(decoration.validZones);
-  setHighlightedZones(validZones);
-}
-  // For Eco Mandap, highlight valid zones
-  else if (selectedMission?.type === 'eco') {
-    const validZones = new Set(decoration.validZones);
-    setHighlightedZones(validZones);
-  }
-  // Normal highlighting for other modes
-  else {
-    const validZones = new Set(decoration.validZones);
-    setHighlightedZones(validZones);
-  }
-};
+    // For Light Challenge, highlight all valid zones for the selected decoration
+    if (selectedMission?.type === 'light') {
+      const validZones = new Set(decoration.validZones);
+      setHighlightedZones(validZones);
+    }
+    // For Eco Mandap, highlight valid zones
+    else if (selectedMission?.type === 'eco') {
+      const validZones = new Set(decoration.validZones);
+      setHighlightedZones(validZones);
+    }
+    // Normal highlighting for other modes
+    else {
+      const validZones = new Set(decoration.validZones);
+      setHighlightedZones(validZones);
+    }
+  };
 
-// Helper function to get decoration name
-const getDecorationName = (itemId) => {
-  const allItems = Object.values(DECORATION_CATEGORIES)
-    .flatMap(cat => cat.items);
-  const item = allItems.find(i => i.id === itemId);
-  return item?.name || itemId;
-};
+  // Helper function to get decoration name
+  const getDecorationName = (itemId) => {
+    const allItems = Object.values(DECORATION_CATEGORIES)
+      .flatMap(cat => cat.items);
+    const item = allItems.find(i => i.id === itemId);
+    return item?.name || itemId;
+  };
 
   // Eco Mission Helper Functions
-const isEcoItem = (itemId) => {
-  if (!selectedMission || selectedMission.type !== 'eco') return false;
-  return selectedMission.ecoItems?.includes(itemId) || false;
-};
+  const isEcoItem = (itemId) => {
+    if (!selectedMission || selectedMission.type !== 'eco') return false;
+    return selectedMission.ecoItems?.includes(itemId) || false;
+  };
 
-const isNonEcoItem = (itemId) => {
-  if (!selectedMission || selectedMission.type !== 'eco') return false;
-  return selectedMission.nonEcoItems?.includes(itemId) || false;
-};
+  const isNonEcoItem = (itemId) => {
+    if (!selectedMission || selectedMission.type !== 'eco') return false;
+    return selectedMission.nonEcoItems?.includes(itemId) || false;
+  };
 
-const handleZoneClick = (zoneId, event) => {
+  const handleZoneClick = (zoneId, event) => {
     // ===============================================
     // 1. FIX THE MANDAP MISSION LOGIC
     // ===============================================
@@ -1132,7 +1085,7 @@ const handleZoneClick = (zoneId, event) => {
 
       // Fix the item
       const newPlacements = new Map(gameState.placedDecorations);
-      
+
       // Remove from wrong zone
       const wrongZoneItems = newPlacements.get(selectedWrongItem.wrongZone) || [];
       const filteredWrong = wrongZoneItems.filter(d => d.fixId !== selectedWrongItem.fixId);
@@ -1141,14 +1094,14 @@ const handleZoneClick = (zoneId, event) => {
       } else {
         newPlacements.delete(selectedWrongItem.wrongZone);
       }
-      
+
       // Add to correct zone
       const correctZoneItems = newPlacements.get(zoneId) || [];
       correctZoneItems.push({ ...selectedWrongItem, isFixed: true, isWrong: false });
       newPlacements.set(zoneId, correctZoneItems);
-      
+
       setGameState(prev => ({ ...prev, placedDecorations: newPlacements }));
-      
+
       const newFixedCount = fixedCount + 1;
       setFixedCount(newFixedCount);
 
@@ -1159,7 +1112,7 @@ const handleZoneClick = (zoneId, event) => {
         updatedWrongMap.set(selectedWrongItem.fixId, { ...itemToUpdate, isFixed: true });
         setWrongItemsMap(updatedWrongMap);
       }
-      
+
       // Success Feedback
       setShowStepSuccess(true);
       setLastCompletedStep({
@@ -1167,11 +1120,11 @@ const handleZoneClick = (zoneId, event) => {
         successMessage: `Perfect! ${newFixedCount}/5 decorations fixed!`
       });
       setShowSparkle(zoneId);
-      
+
       setTimeout(() => { setShowSparkle(null); setShowStepSuccess(false); }, 2000);
       setSelectedWrongItem(null);
       clearHighlights();
-      
+
       // Check Completion
       if (newFixedCount >= 5) {
         setTimeout(() => {
@@ -1193,25 +1146,25 @@ const handleZoneClick = (zoneId, event) => {
     if (selectedMission?.type === 'eco') {
       const isEco = selectedMission.ecoItems?.includes(gameState.selectedDecoration.id);
       const isNonEco = selectedMission.nonEcoItems?.includes(gameState.selectedDecoration.id);
-      
+
       if (isNonEco) return; // Warning handled in click
-      
+
       if (isEco && !placedEcoItems.includes(gameState.selectedDecoration.id)) {
         const newEcoCount = ecoCount + 1;
         setEcoCount(newEcoCount);
         setPlacedEcoItems([...placedEcoItems, gameState.selectedDecoration.id]);
-        
+
         // Eco Success
         setShowStepSuccess(true);
         setLastCompletedStep({ emoji: '🌿', successMessage: `Great! ${newEcoCount}/${selectedMission.targetEcoCount} eco items!` });
         setTimeout(() => setShowStepSuccess(false), 2000);
 
         if (newEcoCount >= selectedMission.targetEcoCount) {
-           setTimeout(() => {
-             setCompletedMissions(prev => ({ ...prev, [selectedMission.id]: true }));
-             setCompletedMissionData({ name: selectedMission.name, starsEarned: 5 });
-             setShowMissionComplete(true);
-           }, 2000);
+          setTimeout(() => {
+            setCompletedMissions(prev => ({ ...prev, [selectedMission.id]: true }));
+            setCompletedMissionData({ name: selectedMission.name, starsEarned: 5 });
+            setShowMissionComplete(true);
+          }, 2000);
         }
       }
     }
@@ -1227,12 +1180,12 @@ const handleZoneClick = (zoneId, event) => {
     const newPlacements = new Map(gameState.placedDecorations);
     const existingInZone = newPlacements.get(zoneId) || [];
     const decoration = gameState.selectedDecoration;
-    
+
     // --- A. PUJA PREP (Animation Sequence) ---
     if (selectedMission?.id === 'puja-prep' && decoration.id) {
       const fixedPosition = PUJA_PREP_POSITIONS[decoration.id];
       const uniqueKey = `${decoration.id}-${Date.now()}`;
-      
+
       const decorationWithPosition = {
         ...decoration,
         customPosition: fixedPosition || { left: '50%', top: '50%' },
@@ -1243,14 +1196,14 @@ const handleZoneClick = (zoneId, event) => {
 
       existingInZone.push(decorationWithPosition);
       newPlacements.set(zoneId, existingInZone);
-      
+
       setGameState(prev => ({
         ...prev,
         placedDecorations: newPlacements,
         selectedDecoration: null,
         selectedCategory: null
       }));
-      
+
       clearHighlights();
       playPlacementSound(decoration);
 
@@ -1281,7 +1234,7 @@ const handleZoneClick = (zoneId, event) => {
       setTimeout(() => {
         setShowSparkle(null);
         setShowStepSuccess(false);
-        
+
         if (currentStep < selectedMission.steps.length) {
           setCurrentStep(currentStep + 1);
           setGuidanceMessage(selectedMission.steps[currentStep].instruction);
@@ -1297,7 +1250,7 @@ const handleZoneClick = (zoneId, event) => {
 
     // --- B. FREE PLAY & OTHERS (Instant Placement) ---
     let decorationWithPosition = { ...decoration };
-    
+
     // Exact Position for Free Play/Eco
     if ((currentMode === GAME_MODES.FREE_PLAY || selectedMission?.type === 'eco') && event) {
       const rect = event.currentTarget.getBoundingClientRect();
@@ -1308,16 +1261,16 @@ const handleZoneClick = (zoneId, event) => {
 
     existingInZone.push(decorationWithPosition);
     newPlacements.set(zoneId, existingInZone);
-    
+
     setGameState(prev => ({
       ...prev,
       placedDecorations: newPlacements,
       selectedDecoration: null
     }));
-    
+
     playPlacementSound(decoration);
     clearHighlights();
-    
+
     // Simple Feedback
     setShowSparkle(zoneId);
     setTimeout(() => setShowSparkle(null), 1000);
@@ -1353,18 +1306,18 @@ const handleZoneClick = (zoneId, event) => {
   };
 
   // --- DYNAMIC HEADER LOGIC ---
-// --- SMART HEADER LOGIC ---
-// --- SMART HEADER LOGIC ---
-// --- SMART HEADER LOGIC ---
+  // --- SMART HEADER LOGIC ---
+  // --- SMART HEADER LOGIC ---
+  // --- SMART HEADER LOGIC ---
   const getHeaderContent = () => {
-    
+
     // --- 1. FIX THE MANDAP MISSION ---
     if (selectedMission?.type === 'fix') {
       if (selectedWrongItem) {
         return (
           <div className="header-content-row">
             <span>Tap the </span>
-            <span style={{color: '#FFA000', fontWeight: 'bold', margin: '0 5px'}}>glowing spot</span>
+            <span style={{ color: '#FFA000', fontWeight: 'bold', margin: '0 5px' }}>glowing spot</span>
             <span>! ✨</span>
           </div>
         );
@@ -1379,7 +1332,7 @@ const handleZoneClick = (zoneId, event) => {
     // --- 2. PUJA PREP MISSION (UPDATED WITH IMAGE & COLOR) ---
     if (selectedMission?.id === 'puja-prep' && selectedMission.steps) {
       const currentStepData = selectedMission.steps[currentStep - 1];
-      
+
       // Step A: Item is selected (in hand) -> Guide to Mandap
       if (gameState.selectedDecoration) {
         return (
@@ -1388,13 +1341,13 @@ const handleZoneClick = (zoneId, event) => {
           </div>
         );
       }
-      
+
       // Step B: Item NOT selected -> Guide to Menu (Color + Image)
-      
+
       // 1. Find the item details to get the image
       const allItems = Object.values(DECORATION_CATEGORIES).flatMap(cat => cat.items);
       const targetItem = allItems.find(i => i.id === currentStepData.item);
-const itemName = targetItem ? targetItem.name : 'item'; // Use full name
+      const itemName = targetItem ? targetItem.name : 'item'; // Use full name
 
       // 2. Define colors for visual linking
       const ITEM_COLORS = {
@@ -1404,23 +1357,23 @@ const itemName = targetItem ? targetItem.name : 'item'; // Use full name
         'sweets_modak': '#D84315',     // Deep Orange
         'rangoli_base': '#9C27B0'      // Purple
       };
-      
+
       const targetColor = ITEM_COLORS[currentStepData.item] || '#D84315'; // Default fallback
 
       return (
         <div className="header-content-row">
           <span>Tap the </span>
-          
+
           {/* COLOR-CODED TEXT WITH PULSE */}
           <span className="header-target-word" style={{ color: targetColor }}>
             {itemName}
           </span>
-          
+
           {/* ACTUAL ITEM IMAGE */}
           {targetItem && (
-            <img 
-              src={DECORATION_IMAGES[targetItem.image]} 
-              alt="icon" 
+            <img
+              src={DECORATION_IMAGES[targetItem.image]}
+              alt="icon"
               className="header-mini-icon"
             />
           )}
@@ -1442,12 +1395,12 @@ const itemName = targetItem ? targetItem.name : 'item'; // Use full name
       return (
         <div className="header-content-row">
           <span>Tap to place</span>
-          <span style={{color: '#D84315', fontWeight: 'bold', marginLeft: '6px'}}>
+          <span style={{ color: '#D84315', fontWeight: 'bold', marginLeft: '6px' }}>
             {gameState.selectedDecoration.name.split(' ')[0]}
           </span>
-          <img 
-            src={DECORATION_IMAGES[gameState.selectedDecoration.image]} 
-            alt="icon" 
+          <img
+            src={DECORATION_IMAGES[gameState.selectedDecoration.image]}
+            alt="icon"
             className="header-mini-icon"
           />
         </div>
@@ -1472,247 +1425,248 @@ const itemName = targetItem ? targetItem.name : 'item'; // Use full name
   };
 
   // Show intro screen first with OpeningModal
-if (currentMode === GAME_MODES.INTRO) {
-  return (
-    <>
-      <OpeningModal
-        show={true}
-        zoneId={zoneId}
-        sceneId={sceneId}
-        onStart={() => setCurrentMode(GAME_MODES.SELECTION)}
-      />
-      <TocaBocaNav 
-        onHome={() => onNavigate?.('home')} 
-        onZonesClick={() => onNavigate?.('zones')} 
-      />
-    </>
-  );
-}
-// Show mode selection screen
-// Show mode selection screen
-if (currentMode === GAME_MODES.SELECTION) {
-  return (
-    <div className="mandap-game-container">
-      
-      {/* New Container for the specific Mandap Look */}
-      <div className="mandap-selection-popup">
-        
-        {/* Title with decorative flowers */}
-        <h1 className="mandap-popup-title">
-          <span className="title-deco">✿</span> Decorate the Mandap! <span className="title-deco">✿</span>
-        </h1>
-        
-        <div className="mandap-mode-options">
-          {/* Free Play Card - Purple Theme */}
-          <div 
-            className="mandap-option-card card-free" 
-            onClick={() => {
-              resetMissionState(); 
-              setCurrentMode(GAME_MODES.FREE_PLAY);
-            }}
-          >
-            <div className="option-icon-circle">
-              <span className="option-icon">🎨</span>
-            </div>
-            <h2>Free Play</h2>
-            <p>Decorate however you like</p>
-            <button className="mandap-action-btn btn-free">Decorate Freely</button>
-          </div>
-          
-          {/* Challenge Mode Card - Green Theme */}
-          <div 
-            className="mandap-option-card card-challenge" 
-            onClick={() => setCurrentMode(GAME_MODES.CHALLENGE)}
-          >
-             <div className="option-icon-circle">
-              <span className="option-icon">🎯</span>
-            </div>
-            <h2>Challenge Mode</h2>
-            <p>Complete festival missions</p>
-            <button className="mandap-action-btn btn-challenge">Start Challenge</button>
-          </div>
-        </div>
+  if (currentMode === GAME_MODES.INTRO) {
+    return (
+      <>
+        <OpeningModal
+          zoneId={zoneId}
+          sceneId={sceneId}
+          onStart={() => setCurrentMode(GAME_MODES.SELECTION)}
+          characterImg={ganeshaImage}
+          showButton={true}
+        />
+        <TocaBocaNav
+          onHome={() => onNavigate?.('home')}
+          onZonesClick={() => onNavigate?.('zones')}
+        />
+      </>
+    );
+  }
+  // Show mode selection screen
+  // Show mode selection screen
+  if (currentMode === GAME_MODES.SELECTION) {
+    return (
+      <div className="mandap-game-container">
 
-      </div>
-    </div>
-  );
-}
+        {/* New Container for the specific Mandap Look */}
+        <div className="mandap-selection-popup">
 
-// Show mission selection when in Challenge mode
-// Show mission selection when in Challenge mode
-// Show mission selection when in Challenge mode
-if (currentMode === GAME_MODES.CHALLENGE && !selectedMission) {
-  return (
-    <div className="mandap-game-container">
-      {/* 1. Dark Overlay */}
-      <div className="mandap-popup-overlay" />
+          {/* Title with decorative flowers */}
+          <h1 className="mandap-popup-title">
+            <span className="title-deco">✿</span> Decorate the Mandap! <span className="title-deco">✿</span>
+          </h1>
 
-      {/* 2. Central Popup Card */}
-      <div className="mandap-selection-popup mission-popup-size">
-        
-        {/* Header: Back Button + Title */}
-        <div className="mission-popup-header">
-          <button 
-            className="popup-back-pill" 
-            onClick={() => setCurrentMode(GAME_MODES.SELECTION)}
-          >
-            ← Back
-          </button>
-          
-          <div className="mission-header-text">
-            <h1 className="mission-popup-title">
-              <span className="icon-bounce">🎯</span> Decoration Missions ✿
-            </h1>
-            <p className="mission-popup-subtitle">Complete fun challenges to earn stars!</p>
-          </div>
-          
-          {/* Invisible spacer to balance the header (keeps title centered) */}
-          <div style={{width: '80px'}}></div> 
-        </div>
-
-        {/* 3. The 2x2 Grid */}
-        <div className="mission-grid-refined">
-          {MISSIONS.map((mission) => {
-            const isCompleted = completedMissions[mission.id];
-            
-            // Assign colors based on Mission ID
-            let colorClass = "theme-pink"; 
-            if (mission.id === 'fix-mandap') colorClass = "theme-yellow";
-            if (mission.id === 'eco-mandap') colorClass = "theme-green";
-            if (mission.id === 'light-challenge') colorClass = "theme-orange";
-
-            return (
-              <div
-                key={mission.id}
-                className={`mission-refined-card ${colorClass} ${isCompleted ? 'completed-glow' : ''}`}
-                onClick={() => {
-                  resetMissionState();
-                  setSelectedMission(mission);
-                  setShowMissionIntro(true);
-                }}
-              >
-                {/* Checkmark Badge if done */}
-                {isCompleted && <div className="mission-check-badge">✓</div>}
-
-                <div className="mission-card-icon">{mission.icon}</div>
-                <h3 className="mission-card-title">{mission.name}</h3>
-                <p className="mission-card-desc">{mission.description}</p>
-                
-                {/* Star Rating */}
-                <div className="mission-card-stars">
-                   {Array.from({ length: 3 }).map((_, i) => (
-                    <span key={i} className={`star-icon ${i < mission.difficulty ? 'filled' : 'empty'}`}>⭐</span>
-                  ))}
-                </div>
+          <div className="mandap-mode-options">
+            {/* Free Play Card - Purple Theme */}
+            <div
+              className="mandap-option-card card-free"
+              onClick={() => {
+                resetMissionState();
+                setCurrentMode(GAME_MODES.FREE_PLAY);
+              }}
+            >
+              <div className="option-icon-circle">
+                <span className="option-icon">🎨</span>
               </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-// Show Mission Intro Overlay
-if (showMissionIntro && selectedMission) {
-  return (
-    <div className="mandap-game-container">
-      <div className="mission-intro-overlay">
-        <div className="mission-intro-content">
-          <div 
-            className="mission-intro-ganesha" 
-            style={{ backgroundImage: `url(${ganeshaImage})` }}
-          />
-<div className="mission-intro-speech">
-  {selectedMission.type === 'fix' 
-    ? "Oh! Something feels messy…Can you help me fix it?"
-    : selectedMission.type === 'eco'
-    ? "Let's protect Mother Earth! Choose only natural, eco-friendly decorations. Avoid plastic and artificial items! 🌿"
-    : selectedMission.type === 'light'
-    ? "Time to light up the mandap! Place all the diyas and lights quickly before time runs out! Ready, set, GO! 💡⏰"
-    : "Let's prepare for my puja together! Follow my steps carefully!"}
-</div>
-    <button 
-  className="mission-start-button"
-  onClick={() => {
-    setShowMissionIntro(false);
-    
-    // Set guidance message based on mission type
-    if (selectedMission.type === 'fix') {
-      setGuidanceMessage('Tap the RED glowing decorations to fix them!');
-    } else {
-      const firstStep = selectedMission.steps?.[0];
-      setGuidanceMessage(firstStep?.instruction || 'Let\'s begin!');
-    }
-  }}
->
-          
-            🌸 Let's Begin!
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Show the actual game (FREE_PLAY or CHALLENGE with selected mission)
-if (currentMode === GAME_MODES.FREE_PLAY || (currentMode === GAME_MODES.CHALLENGE && selectedMission && !showMissionIntro)) {
-const isInMission = currentMode === GAME_MODES.CHALLENGE && selectedMission;
-const currentStepData = (isInMission && selectedMission.type !== 'fix' && selectedMission.steps) 
-  ? selectedMission.steps[currentStep - 1] 
-  : null;
-  
-  return (
-
-    <div className={`mandap-decoration-container ${isDragging ? 'dragging-active' : ''}`}>
-      {/* Background with mandap-bg image */}
-      <div 
-        className="mandap-background" 
-        style={{
-          backgroundImage: `url(${mandapBgImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
-      />
-
-{/* --- DYNAMIC HEADER PILL --- */}
-      {/* Show in Free Play OR Puja Prep OR Fix Mode */}
-      {(currentMode === GAME_MODES.FREE_PLAY || selectedMission?.id === 'puja-prep' || selectedMission?.type === 'fix') && (
-        <div className="game-header-container">
-          <div className="dynamic-header-pill header-bounce">
-            
-            <div className="header-text">
-              {headerTip ? (
-                 <div className="header-content-row" style={{ color: '#E65100' }}>
-                   {headerTip}
-                 </div>
-              ) : (
-                 getHeaderContent()
-              )}
+              <h2>Free Play</h2>
+              <p>Decorate however you like</p>
+              <button className="mandap-action-btn btn-free">Decorate Freely</button>
             </div>
-            
-            <div className="header-decoration">
-              ✿ ✿ ✿
+
+            {/* Challenge Mode Card - Green Theme */}
+            <div
+              className="mandap-option-card card-challenge"
+              onClick={() => setCurrentMode(GAME_MODES.CHALLENGE)}
+            >
+              <div className="option-icon-circle">
+                <span className="option-icon">🎯</span>
+              </div>
+              <h2>Challenge Mode</h2>
+              <p>Complete festival missions</p>
+              <button className="mandap-action-btn btn-challenge">Start Challenge</button>
             </div>
           </div>
+
         </div>
-      )}
+      </div>
+    );
+  }
 
-      {/* ADD PAUSE BUTTON HERE */}
-<button 
-  className="game-pause-button"
-  onClick={() => setShowPauseMenu(true)}
-  aria-label="Pause Game"
->
-  ⏸️
-</button>
+  // Show mission selection when in Challenge mode
+  // Show mission selection when in Challenge mode
+  // Show mission selection when in Challenge mode
+  if (currentMode === GAME_MODES.CHALLENGE && !selectedMission) {
+    return (
+      <div className="mandap-game-container">
+        {/* 1. Dark Overlay */}
+        <div className="mandap-popup-overlay" />
+
+        {/* 2. Central Popup Card */}
+        <div className="mandap-selection-popup mission-popup-size">
+
+          {/* Header: Back Button + Title */}
+          <div className="mission-popup-header">
+            <button
+              className="popup-back-pill"
+              onClick={() => setCurrentMode(GAME_MODES.SELECTION)}
+            >
+              ← Back
+            </button>
+
+            <div className="mission-header-text">
+              <h1 className="mission-popup-title">
+                <span className="icon-bounce">🎯</span> Decoration Missions ✿
+              </h1>
+              <p className="mission-popup-subtitle">Complete fun challenges to earn stars!</p>
+            </div>
+
+            {/* Invisible spacer to balance the header (keeps title centered) */}
+            <div style={{ width: '80px' }}></div>
+          </div>
+
+          {/* 3. The 2x2 Grid */}
+          <div className="mission-grid-refined">
+            {MISSIONS.map((mission) => {
+              const isCompleted = completedMissions[mission.id];
+
+              // Assign colors based on Mission ID
+              let colorClass = "theme-pink";
+              if (mission.id === 'fix-mandap') colorClass = "theme-yellow";
+              if (mission.id === 'eco-mandap') colorClass = "theme-green";
+              if (mission.id === 'light-challenge') colorClass = "theme-orange";
+
+              return (
+                <div
+                  key={mission.id}
+                  className={`mission-refined-card ${colorClass} ${isCompleted ? 'completed-glow' : ''}`}
+                  onClick={() => {
+                    resetMissionState();
+                    setSelectedMission(mission);
+                    setShowMissionIntro(true);
+                  }}
+                >
+                  {/* Checkmark Badge if done */}
+                  {isCompleted && <div className="mission-check-badge">✓</div>}
+
+                  <div className="mission-card-icon">{mission.icon}</div>
+                  <h3 className="mission-card-title">{mission.name}</h3>
+                  <p className="mission-card-desc">{mission.description}</p>
+
+                  {/* Star Rating */}
+                  <div className="mission-card-stars">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                      <span key={i} className={`star-icon ${i < mission.difficulty ? 'filled' : 'empty'}`}>⭐</span>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+
+  // Show Mission Intro Overlay
+  if (showMissionIntro && selectedMission) {
+    return (
+      <div className="mandap-game-container">
+        <div className="mission-intro-overlay">
+          <div className="mission-intro-content">
+            <div
+              className="mission-intro-ganesha"
+              style={{ backgroundImage: `url(${ganeshaImage})` }}
+            />
+            <div className="mission-intro-speech">
+              {selectedMission.type === 'fix'
+                ? "Oh! Something feels messy…Can you help me fix it?"
+                : selectedMission.type === 'eco'
+                  ? "Let's protect Mother Earth! Choose only natural, eco-friendly decorations. Avoid plastic and artificial items! 🌿"
+                  : selectedMission.type === 'light'
+                    ? "Time to light up the mandap! Place all the diyas and lights quickly before time runs out! Ready, set, GO! 💡⏰"
+                    : "Let's prepare for my puja together! Follow my steps carefully!"}
+            </div>
+            <button
+              className="mission-start-button"
+              onClick={() => {
+                setShowMissionIntro(false);
+
+                // Set guidance message based on mission type
+                if (selectedMission.type === 'fix') {
+                  setGuidanceMessage('Tap the RED glowing decorations to fix them!');
+                } else {
+                  const firstStep = selectedMission.steps?.[0];
+                  setGuidanceMessage(firstStep?.instruction || 'Let\'s begin!');
+                }
+              }}
+            >
+
+              🌸 Let's Begin!
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show the actual game (FREE_PLAY or CHALLENGE with selected mission)
+  if (currentMode === GAME_MODES.FREE_PLAY || (currentMode === GAME_MODES.CHALLENGE && selectedMission && !showMissionIntro)) {
+    const isInMission = currentMode === GAME_MODES.CHALLENGE && selectedMission;
+    const currentStepData = (isInMission && selectedMission.type !== 'fix' && selectedMission.steps)
+      ? selectedMission.steps[currentStep - 1]
+      : null;
+
+    return (
+
+      <div className={`mandap-decoration-container ${isDragging ? 'dragging-active' : ''}`}>
+        {/* Background with mandap-bg image */}
+        <div
+          className="mandap-background"
+          style={{
+            backgroundImage: `url(${mandapBgImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        />
+
+        {/* --- DYNAMIC HEADER PILL --- */}
+        {/* Show in Free Play OR Puja Prep OR Fix Mode */}
+        {(currentMode === GAME_MODES.FREE_PLAY || selectedMission?.id === 'puja-prep' || selectedMission?.type === 'fix') && (
+          <div className="game-header-container">
+            <div className="dynamic-header-pill header-bounce">
+
+              <div className="header-text">
+                {headerTip ? (
+                  <div className="header-content-row" style={{ color: '#E65100' }}>
+                    {headerTip}
+                  </div>
+                ) : (
+                  getHeaderContent()
+                )}
+              </div>
+
+              <div className="header-decoration">
+                ✿ ✿ ✿
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ADD PAUSE BUTTON HERE */}
+        <button
+          className="game-pause-button"
+          onClick={() => setShowPauseMenu(true)}
+          aria-label="Pause Game"
+        >
+          ⏸️
+        </button>
 
 
 
-{/* Minimal Mission Header */}
-{/* Simple Mission Progress 
+        {/* Minimal Mission Header */}
+        {/* Simple Mission Progress 
 {isInMission && selectedMission && selectedMission.id === 'puja-prep' && (  <div className="simple-mission-panel">
     <div className="mission-icon">{selectedMission.icon}</div>
     <div className="mission-info">
@@ -1748,429 +1702,429 @@ const currentStepData = (isInMission && selectedMission.type !== 'fix' && select
   </div>
 )}*/}
 
-{showStepSuccess && lastCompletedStep && (
-    <div className="step-success-overlay" onClick={() => setShowStepSuccess(false)}>
-      
-      {/* 1. CONFETTI LAYER (New) */}
-      <div className="confetti-container">
-        {/* Create 30 pieces of confetti */}
-        {Array.from({ length: 30 }).map((_, i) => (
-          <div 
-            key={i} 
-            className="confetti-piece"
-            style={{
-              left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 1.5}s`,
-              animationDuration: `${2 + Math.random() * 2}s`
-            }}
-          />
-        ))}
-      </div>
+        {showStepSuccess && lastCompletedStep && (
+          <div className="step-success-overlay" onClick={() => setShowStepSuccess(false)}>
 
-      {/* 2. SUCCESS CARD */}
-      <div className="step-success-message">
-        {/* Success Icon/Image */}
-        {lastCompletedStep.item ? (
-           <img 
-             src={DECORATION_IMAGES[
-               Object.values(DECORATION_CATEGORIES)
-                 .flatMap(cat => cat.items)
-                 .find(i => i.id === lastCompletedStep.item)?.image
-             ]} 
-             alt="Success"
-             className="success-popup-img"
-           />
-        ) : (
-           <div style={{fontSize: '60px'}}>✨</div>
+            {/* 1. CONFETTI LAYER (New) */}
+            <div className="confetti-container">
+              {/* Create 30 pieces of confetti */}
+              {Array.from({ length: 30 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="confetti-piece"
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 1.5}s`,
+                    animationDuration: `${2 + Math.random() * 2}s`
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* 2. SUCCESS CARD */}
+            <div className="step-success-message">
+              {/* Success Icon/Image */}
+              {lastCompletedStep.item ? (
+                <img
+                  src={DECORATION_IMAGES[
+                    Object.values(DECORATION_CATEGORIES)
+                      .flatMap(cat => cat.items)
+                      .find(i => i.id === lastCompletedStep.item)?.image
+                  ]}
+                  alt="Success"
+                  className="success-popup-img"
+                />
+              ) : (
+                <div style={{ fontSize: '60px' }}>✨</div>
+              )}
+
+              <h2>Perfect!</h2>
+              <p>{lastCompletedStep.successMessage}</p>
+            </div>
+          </div>
         )}
 
-        <h2>Perfect!</h2>
-        <p>{lastCompletedStep.successMessage}</p>
-      </div>
-    </div>
-  )}
-      
-      {/* Main Mandap Structure */}
-      <div className="mandap-structure">
-        <img 
-          src={mandapImage} 
-          alt="Mandap Structure" 
-          className="mandap-base-image"
-        />
-        
-{/* Clickable zones & Ghosts */}
-{/* Clickable zones & Ghosts (Unified Logic) */}
-{Object.entries(MANDAP_ZONES).map(([zoneId, zone]) => {
-  const isInMission = currentMode === GAME_MODES.CHALLENGE && selectedMission;
-  
-// 1. FREE PLAY & ECO MODE - Create one big clickable area
-  if (currentMode === GAME_MODES.FREE_PLAY || selectedMission?.type === 'eco') {
-    if (zoneId !== 'roof-left') return null; // Only render one zone that acts as the screen
-    zone = { x: 0, y: 0, width: 100, height: 100 };
-  }
-  
-  // 2. SETUP VARIABLES
-  const isFixMode = selectedMission?.type === 'fix';
-  const isPujaPrep = selectedMission?.id === 'puja-prep';
-  
-  // Check if this zone should be highlighted
-  const isFixTarget = isFixMode && selectedWrongItem?.correctZone === zoneId;
-  const isPujaTarget = isPujaPrep && highlightedZones.has(zoneId);
-  const isGenericHighlight = !isPujaTarget && !isFixTarget && highlightedZones.has(zoneId);
-  
-  // 3. GHOST ITEM LOGIC
-  let ghostImage = null;
-  
-  // Show ghost for Puja Prep
-  if (isPujaTarget) {
-    const currentStepData = selectedMission.steps[currentStep - 1];
-    if (currentStepData && currentStepData.zone === zoneId) {
-      const allItems = Object.values(DECORATION_CATEGORIES).flatMap(c => c.items);
-      const targetItem = allItems.find(i => i.id === currentStepData.item);
-      if (targetItem) ghostImage = DECORATION_IMAGES[targetItem.image];
-    }
-  }
-  
-  // Show ghost for Fix Mode (Show the item you are holding!)
-  if (isFixTarget && selectedWrongItem) {
-     ghostImage = DECORATION_IMAGES[selectedWrongItem.image];
-  }
+        {/* Main Mandap Structure */}
+        <div className="mandap-structure">
+          <img
+            src={mandapImage}
+            alt="Mandap Structure"
+            className="mandap-base-image"
+          />
 
-  // 4. CLASS LOGIC (Use 'highlighted' for the ring effect)
-  let zoneClass = 'mandap-zone';
-  
-  if (isFixTarget || isPujaTarget) {
-    zoneClass += ' highlighted'; // Triggers Ring + Sparkles
-  } else if (isGenericHighlight) {
-    zoneClass += ' highlighted'; 
-  }
-  
-  // Hide irrelevant zones in missions
-  if (isInMission && !isFixMode && !isPujaTarget && !isFixTarget && !isGenericHighlight && selectedMission?.type !== 'light' && selectedMission?.type !== 'eco') {
-    return null;
-  }
-  
-  return (
-    <div
-      key={zoneId}
-      className={zoneClass}
-      onClick={(event) => handleZoneClick(zoneId, event)}
-      style={{
-        left: `${zone.x}%`,
-        top: `${zone.y}%`,
-        width: `${zone.width}%`,
-        height: `${zone.height}%`,
-        pointerEvents: 'auto'
-      }}
-    >
-      {/* 👻 RENDER THE GHOST HERE */}
-      {ghostImage && (
-        <img src={ghostImage} alt="ghost" className="ghost-item" />
-      )}
-    </div>
-  );
-})}
-        {/* Placed Decorations - WITH DRAGGING */}
-     {/* Placed Decorations - WITH DRAGGING */}
-{/* Placed Decorations - CLEAN COMPONENT */}
-        {Array.from(gameState.placedDecorations.entries()).map(([zoneId, decorations]) => {
-          const decorationsArray = Array.isArray(decorations) ? decorations : [decorations];
-          
-          return decorationsArray.map((decoration, index) => (
-            <MandapItem 
-              key={`deco-${zoneId}-${index}`} 
-              decoration={decoration}
-              zoneId={zoneId}
-              index={index}
-              zoneData={MANDAP_ZONES[zoneId]}
-              
-              // Pass the state needed for logic
-              isFixMode={selectedMission?.type === 'fix'}
-              selectedWrongId={selectedWrongItem?.fixId}
-              
-              // Pass the functions to handle events
-              onUpdatePosition={updateDecorationPosition}
-              onDragStart={() => setIsDragging(true)}
-              onDragEnd={() => setIsDragging(false)}
-              onWrongClick={handleWrongItemClick}
-            />
-          ));
-        })}
+          {/* Clickable zones & Ghosts */}
+          {/* Clickable zones & Ghosts (Unified Logic) */}
+          {Object.entries(MANDAP_ZONES).map(([zoneId, zone]) => {
+            const isInMission = currentMode === GAME_MODES.CHALLENGE && selectedMission;
 
-        {/* Sparkle Effects */}
-        {showSparkle && (
-          <div className="sparkle-effects">
-            {MANDAP_ZONES[showSparkle] && (
+            // 1. FREE PLAY & ECO MODE - Create one big clickable area
+            if (currentMode === GAME_MODES.FREE_PLAY || selectedMission?.type === 'eco') {
+              if (zoneId !== 'roof-left') return null; // Only render one zone that acts as the screen
+              zone = { x: 0, y: 0, width: 100, height: 100 };
+            }
+
+            // 2. SETUP VARIABLES
+            const isFixMode = selectedMission?.type === 'fix';
+            const isPujaPrep = selectedMission?.id === 'puja-prep';
+
+            // Check if this zone should be highlighted
+            const isFixTarget = isFixMode && selectedWrongItem?.correctZone === zoneId;
+            const isPujaTarget = isPujaPrep && highlightedZones.has(zoneId);
+            const isGenericHighlight = !isPujaTarget && !isFixTarget && highlightedZones.has(zoneId);
+
+            // 3. GHOST ITEM LOGIC
+            let ghostImage = null;
+
+            // Show ghost for Puja Prep
+            if (isPujaTarget) {
+              const currentStepData = selectedMission.steps[currentStep - 1];
+              if (currentStepData && currentStepData.zone === zoneId) {
+                const allItems = Object.values(DECORATION_CATEGORIES).flatMap(c => c.items);
+                const targetItem = allItems.find(i => i.id === currentStepData.item);
+                if (targetItem) ghostImage = DECORATION_IMAGES[targetItem.image];
+              }
+            }
+
+            // Show ghost for Fix Mode (Show the item you are holding!)
+            if (isFixTarget && selectedWrongItem) {
+              ghostImage = DECORATION_IMAGES[selectedWrongItem.image];
+            }
+
+            // 4. CLASS LOGIC (Use 'highlighted' for the ring effect)
+            let zoneClass = 'mandap-zone';
+
+            if (isFixTarget || isPujaTarget) {
+              zoneClass += ' highlighted'; // Triggers Ring + Sparkles
+            } else if (isGenericHighlight) {
+              zoneClass += ' highlighted';
+            }
+
+            // Hide irrelevant zones in missions
+            if (isInMission && !isFixMode && !isPujaTarget && !isFixTarget && !isGenericHighlight && selectedMission?.type !== 'light' && selectedMission?.type !== 'eco') {
+              return null;
+            }
+
+            return (
               <div
-                className="zone-sparkles"
+                key={zoneId}
+                className={zoneClass}
+                onClick={(event) => handleZoneClick(zoneId, event)}
                 style={{
-                  left: `${MANDAP_ZONES[showSparkle].x + MANDAP_ZONES[showSparkle].width/2}%`,
-                  top: `${MANDAP_ZONES[showSparkle].y + MANDAP_ZONES[showSparkle].height/2}%`,
-                  transform: 'translate(-50%, -50%)'
+                  left: `${zone.x}%`,
+                  top: `${zone.y}%`,
+                  width: `${zone.width}%`,
+                  height: `${zone.height}%`,
+                  pointerEvents: 'auto'
                 }}
               >
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="sparkle"
-                    style={{
-                      animationDelay: `${Math.random() * 0.5}s`
-                    }}
-                  />
+                {/* 👻 RENDER THE GHOST HERE */}
+                {ghostImage && (
+                  <img src={ghostImage} alt="ghost" className="ghost-item" />
+                )}
+              </div>
+            );
+          })}
+          {/* Placed Decorations - WITH DRAGGING */}
+          {/* Placed Decorations - WITH DRAGGING */}
+          {/* Placed Decorations - CLEAN COMPONENT */}
+          {Array.from(gameState.placedDecorations.entries()).map(([zoneId, decorations]) => {
+            const decorationsArray = Array.isArray(decorations) ? decorations : [decorations];
+
+            return decorationsArray.map((decoration, index) => (
+              <MandapItem
+                key={`deco-${zoneId}-${index}`}
+                decoration={decoration}
+                zoneId={zoneId}
+                index={index}
+                zoneData={MANDAP_ZONES[zoneId]}
+
+                // Pass the state needed for logic
+                isFixMode={selectedMission?.type === 'fix'}
+                selectedWrongId={selectedWrongItem?.fixId}
+
+                // Pass the functions to handle events
+                onUpdatePosition={updateDecorationPosition}
+                onDragStart={() => setIsDragging(true)}
+                onDragEnd={() => setIsDragging(false)}
+                onWrongClick={handleWrongItemClick}
+              />
+            ));
+          })}
+
+          {/* Sparkle Effects */}
+          {showSparkle && (
+            <div className="sparkle-effects">
+              {MANDAP_ZONES[showSparkle] && (
+                <div
+                  className="zone-sparkles"
+                  style={{
+                    left: `${MANDAP_ZONES[showSparkle].x + MANDAP_ZONES[showSparkle].width / 2}%`,
+                    top: `${MANDAP_ZONES[showSparkle].y + MANDAP_ZONES[showSparkle].height / 2}%`,
+                    transform: 'translate(-50%, -50%)'
+                  }}
+                >
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="sparkle"
+                      style={{
+                        animationDelay: `${Math.random() * 0.5}s`
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Milestone Sparkles */}
+          {milestoneSparkle && (
+            <div className="milestone-sparkle-effects">
+              {Array.from({ length: 20 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="celebration-sparkle"
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 2}s`
+                  }}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Sparkle Burst Effects on Item Placement */}
+        {sparklePositions.size > 0 && (
+          <>
+            {Array.from(sparklePositions.entries()).map(([key, pos]) => (
+              <div
+                key={key}
+                className="sparkle-effect"
+                style={{
+                  left: `${pos.x}%`,
+                  top: `${pos.y}%`,
+                  position: 'absolute',
+                  pointerEvents: 'none',
+                  zIndex: 30
+                }}
+              >
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="sparkle-star" />
                 ))}
               </div>
-            )}
-          </div>
+            ))}
+          </>
         )}
 
-        {/* Milestone Sparkles */}
-        {milestoneSparkle && (
-          <div className="milestone-sparkle-effects">
-            {Array.from({ length: 20 }).map((_, i) => (
-              <div
-                key={i}
-                className="celebration-sparkle"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  animationDelay: `${Math.random() * 2}s`
+        {/* Simple Ganesha Character - Peaceful Observer */}
+        <div className="ganesha-simple">
+          <div
+            className="ganesha-simple-image"
+            style={{ backgroundImage: `url(${ganeshaImage})` }}
+          />
+        </div>
+
+        {/* Cultural Note Display */}
+        {showCulturalNote && (
+          <div
+            className="cultural-note-display"
+            style={{
+              left: `${showCulturalNote.zone.x + showCulturalNote.zone.width / 2}%`,
+              top: `${showCulturalNote.zone.y - 5}%`,
+              transform: 'translate(-50%, -100%)'
+            }}
+          >
+            {showCulturalNote.message}
+          </div>
+        )}
+        {/* --- MISSION SIDEBARS (Modular) --- */}
+        {isInMission && (selectedMission?.id === 'puja-prep' || selectedMission?.type === 'fix') ? (
+          <>
+            {/* 1. FIX MODE SIDEBAR */}
+            {selectedMission?.type === 'fix' && (
+              <FixSidebar
+                wrongPlacements={selectedMission.wrongPlacements}
+                wrongItemsMap={wrongItemsMap}
+                selectedWrongItem={selectedWrongItem}
+                onSelectWrongItem={(item) => handleWrongItemClick(item)}
+              />
+            )}
+
+            {/* 2. PUJA PREP SIDEBAR */}
+            {selectedMission?.id === 'puja-prep' && (
+              <PujaSidebar
+                steps={selectedMission.steps}
+                completedSteps={completedSteps}
+                currentStep={currentStep}
+                onSelectStep={(decoration, zone) => {
+                  handleDecorationSelect(decoration);
+                  setHighlightedZones(new Set([zone]));
                 }}
               />
-            ))}
+            )}
+          </>
+        ) : (
+
+          /* FREE PLAY MODE - Show Categories */
+          !isInMission && !gameState.selectedCategory && gameState.phase !== PHASES.COMPLETE && (
+            <div className="inventory-tray">
+              <div className="categories-title">Choose Decorations:</div>
+              <div className="category-buttons">
+                {Object.entries(DECORATION_CATEGORIES).map(([key, category]) => (
+                  <div
+                    key={key}
+                    className="category-button"
+                    onClick={() => handleCategorySelect(key.toLowerCase())}
+                  >
+                    <span className="category-icon">{category.icon}</span>
+                    <span className="category-name">{category.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
+        )}
+
+        {/* ECO MISSION TRAY - Categories */}
+        {isInMission && selectedMission?.type === 'eco' && !gameState.selectedCategory && (
+          <div className="inventory-tray">
+            <div className="categories-title">Choose Eco Items: 🌿</div>
+            <div className="category-buttons">
+              {Object.entries(DECORATION_CATEGORIES)
+                .filter(([key]) => key !== 'FUN')
+                .map(([key, category]) => (
+                  <div
+                    key={key}
+                    className="category-button"
+                    onClick={() => handleCategorySelect(key.toLowerCase())}
+                  >
+                    <span className="category-icon">{category.icon}</span>
+                    <span className="category-name">{category.name}</span>
+                  </div>
+                ))}
+            </div>
           </div>
         )}
-      </div>
 
-      {/* Sparkle Burst Effects on Item Placement */}
-{sparklePositions.size > 0 && (
-  <>
-    {Array.from(sparklePositions.entries()).map(([key, pos]) => (
-      <div 
-        key={key}
-        className="sparkle-effect"
-        style={{
-          left: `${pos.x}%`,
-          top: `${pos.y}%`,
-          position: 'absolute',
-          pointerEvents: 'none',
-          zIndex: 30
-        }}
-      >
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="sparkle-star" />
-        ))}
-      </div>
-    ))}
-  </>
-)}
+        {/* ECO MISSION TRAY - Items */}
+        {isInMission && selectedMission?.type === 'eco' && gameState.selectedCategory && (
+          <div className={`inventory-tray ${isDragging ? 'dragging-active' : ''}`}>
+            <div className="items-header">
+              {/* 1. New Circular Back Button with Arrow Icon */}
+              <button
+                className="back-button"
+                onClick={() => {
+                  setGameState(prev => ({
+                    ...prev,
+                    selectedCategory: null,
+                    selectedDecoration: null
+                  }));
+                  clearHighlights();
+                }}
+              >
+                ←
+              </button>
 
-      {/* Simple Ganesha Character - Peaceful Observer */}
-<div className="ganesha-simple">
-  <div 
-    className="ganesha-simple-image" 
-    style={{ backgroundImage: `url(${ganeshaImage})` }}
-  />
-</div>
+              {/* 2. Title */}
+              <div className="items-title">
+                {DECORATION_CATEGORIES[gameState.selectedCategory.toUpperCase()]?.name}
+              </div>
 
-      {/* Cultural Note Display */}
-      {showCulturalNote && (
-        <div 
-          className="cultural-note-display"
-          style={{
-            left: `${showCulturalNote.zone.x + showCulturalNote.zone.width/2}%`,
-            top: `${showCulturalNote.zone.y - 5}%`,
-            transform: 'translate(-50%, -100%)'
-          }}
-        >
-          {showCulturalNote.message}
-        </div>
-      )}
-{/* --- MISSION SIDEBARS (Modular) --- */}
-{isInMission && (selectedMission?.id === 'puja-prep' || selectedMission?.type === 'fix') ? (
-  <>
-    {/* 1. FIX MODE SIDEBAR */}
-    {selectedMission?.type === 'fix' && (
-      <FixSidebar 
-        wrongPlacements={selectedMission.wrongPlacements}
-        wrongItemsMap={wrongItemsMap}
-        selectedWrongItem={selectedWrongItem}
-        onSelectWrongItem={(item) => handleWrongItemClick(item)}
-      />
-    )}
 
-    {/* 2. PUJA PREP SIDEBAR */}
-    {selectedMission?.id === 'puja-prep' && (
-      <PujaSidebar 
-        steps={selectedMission.steps}
-        completedSteps={completedSteps}
-        currentStep={currentStep}
-        onSelectStep={(decoration, zone) => {
-           handleDecorationSelect(decoration);
-           setHighlightedZones(new Set([zone]));
-        }}
-      />
-    )}
-  </>
-) : (
-  
-  /* FREE PLAY MODE - Show Categories */
-!isInMission && !gameState.selectedCategory && gameState.phase !== PHASES.COMPLETE && (
-    <div className="inventory-tray">
-      <div className="categories-title">Choose Decorations:</div>
-      <div className="category-buttons">
-        {Object.entries(DECORATION_CATEGORIES).map(([key, category]) => (
-          <div
-            key={key}
-            className="category-button"
-            onClick={() => handleCategorySelect(key.toLowerCase())}
-          >
-            <span className="category-icon">{category.icon}</span>
-            <span className="category-name">{category.name}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-)}
+            </div>
+            <div className="item-buttons">
+              {DECORATION_CATEGORIES[gameState.selectedCategory.toUpperCase()]?.items.map((item) => {
+                const isEco = selectedMission.ecoItems?.includes(item.id);
+                const isNonEco = selectedMission.nonEcoItems?.includes(item.id);
 
-{/* ECO MISSION TRAY - Categories */}
-{isInMission && selectedMission?.type === 'eco' && !gameState.selectedCategory && (
-  <div className="inventory-tray">
-    <div className="categories-title">Choose Eco Items: 🌿</div>
-    <div className="category-buttons">
-      {Object.entries(DECORATION_CATEGORIES)
-        .filter(([key]) => key !== 'FUN')
-        .map(([key, category]) => (
-          <div
-            key={key}
-            className="category-button"
-            onClick={() => handleCategorySelect(key.toLowerCase())}
-          >
-            <span className="category-icon">{category.icon}</span>
-            <span className="category-name">{category.name}</span>
-          </div>
-        ))}
-    </div>
-  </div>
-)}
 
-{/* ECO MISSION TRAY - Items */}
-{isInMission && selectedMission?.type === 'eco' && gameState.selectedCategory && (
-  <div className={`inventory-tray ${isDragging ? 'dragging-active' : ''}`}>
-<div className="items-header">
-      {/* 1. New Circular Back Button with Arrow Icon */}
-      <button 
-        className="back-button"
-        onClick={() => {
-          setGameState(prev => ({
-            ...prev,
-            selectedCategory: null,
-            selectedDecoration: null
-          }));
-          clearHighlights();
-        }}
-      >
-        ←
-      </button>
-
-      {/* 2. Title */}
-      <div className="items-title">
-        {DECORATION_CATEGORIES[gameState.selectedCategory.toUpperCase()]?.name}
-      </div>
-    
-
-    </div>
-    <div className="item-buttons">
-      {DECORATION_CATEGORIES[gameState.selectedCategory.toUpperCase()]?.items.map((item) => {
-        const isEco = selectedMission.ecoItems?.includes(item.id);
-        const isNonEco = selectedMission.nonEcoItems?.includes(item.id);
-     
-        
-        return (
-          <div
-            key={item.id}
-            className={`item-button 
+                return (
+                  <div
+                    key={item.id}
+                    className={`item-button 
               ${gameState.selectedDecoration?.id === item.id ? 'selected' : ''} 
               ${isEco ? 'eco-item' : ''} 
               ${isNonEco ? 'non-eco-item disabled' : ''}
                   `}
 
-            onClick={() => {
-              if (isNonEco) {
-                setGuidanceMessage('❌ Not eco-friendly! Choose green items only! 🌿');
-                setTimeout(() => {
-                  setGuidanceMessage('Choose only natural, eco-friendly items! 🌿');
-                }, 2000);
-                return;
-              }
-              handleDecorationSelect(item);
-            }}
-          >
-            <img 
-              src={DECORATION_IMAGES[item.image]} 
-              alt={item.name}
-              className="item-image"
-            />
-            <span className="item-name">
-              {item.name} {/* <--- NOW IT SHOWS FULL NAME */}
-              {isEco && ' ✓'}
-              {isNonEco && ' ✗'}
-            </span>
+                    onClick={() => {
+                      if (isNonEco) {
+                        setGuidanceMessage('❌ Not eco-friendly! Choose green items only! 🌿');
+                        setTimeout(() => {
+                          setGuidanceMessage('Choose only natural, eco-friendly items! 🌿');
+                        }, 2000);
+                        return;
+                      }
+                      handleDecorationSelect(item);
+                    }}
+                  >
+                    <img
+                      src={DECORATION_IMAGES[item.image]}
+                      alt={item.name}
+                      className="item-image"
+                    />
+                    <span className="item-name">
+                      {item.name} {/* <--- NOW IT SHOWS FULL NAME */}
+                      {isEco && ' ✓'}
+                      {isNonEco && ' ✗'}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        );
-      })}
-    </div>
-  </div>
-)}
+        )}
 
-{/* LIGHT CHALLENGE TRAY - Categories */}
-{isInMission && selectedMission?.type === 'light' && !gameState.selectedCategory && (
-      <div className="inventory-tray">
-    <div className="categories-title">
-      Choose Lights: 💡 ⏰ {Math.floor(timeRemaining / 60)}:{(timeRemaining % 60).toString().padStart(2, '0')}
-    </div>
-    <div className="category-buttons">
-      <div
-        className="category-button"
-onClick={() => handleCategorySelect('lights_diyas')}
-      >
-        <span className="category-icon">🪔</span>
-        <span className="category-name">Lights & Diyas</span>
-      </div>
-    </div>
-  </div>
-)}
+        {/* LIGHT CHALLENGE TRAY - Categories */}
+        {isInMission && selectedMission?.type === 'light' && !gameState.selectedCategory && (
+          <div className="inventory-tray">
+            <div className="categories-title">
+              Choose Lights: 💡 ⏰ {Math.floor(timeRemaining / 60)}:{(timeRemaining % 60).toString().padStart(2, '0')}
+            </div>
+            <div className="category-buttons">
+              <div
+                className="category-button"
+                onClick={() => handleCategorySelect('lights_diyas')}
+              >
+                <span className="category-icon">🪔</span>
+                <span className="category-name">Lights & Diyas</span>
+              </div>
+            </div>
+          </div>
+        )}
 
-{/* LIGHT CHALLENGE TRAY - Items */}
-{isInMission && selectedMission?.type === 'light' && gameState.selectedCategory && (
-  <div className={`inventory-tray ${isDragging ? 'dragging-active' : ''}`}>
-<div className="items-header">
-  {/* The back button has been removed */}
-  <div className="items-title">
-    Place the Lights! ⏰ {timeRemaining}s
-  </div>
-</div>
-    <div className="item-buttons">
-{DECORATION_CATEGORIES.LIGHTS_DIYAS?.items.map((item) => ( 
-  
-        <div
-          key={item.id}
-          className={`item-button ${gameState.selectedDecoration?.id === item.id ? 'selected' : ''}`}
-          onClick={() => handleDecorationSelect(item)}
-        >
-          <img 
-            src={DECORATION_IMAGES[item.image]} 
-            alt={item.name}
-            className="item-image"
-          />
-          <span className="item-name">{item.name.split(' ')[0]} 💡</span>
-        </div>
-      ))}
-    </div>
-  </div>
-)}
+        {/* LIGHT CHALLENGE TRAY - Items */}
+        {isInMission && selectedMission?.type === 'light' && gameState.selectedCategory && (
+          <div className={`inventory-tray ${isDragging ? 'dragging-active' : ''}`}>
+            <div className="items-header">
+              {/* The back button has been removed */}
+              <div className="items-title">
+                Place the Lights! ⏰ {timeRemaining}s
+              </div>
+            </div>
+            <div className="item-buttons">
+              {DECORATION_CATEGORIES.LIGHTS_DIYAS?.items.map((item) => (
 
-{/* Inventory Tray - Items (for Free Play) 
+                <div
+                  key={item.id}
+                  className={`item-button ${gameState.selectedDecoration?.id === item.id ? 'selected' : ''}`}
+                  onClick={() => handleDecorationSelect(item)}
+                >
+                  <img
+                    src={DECORATION_IMAGES[item.image]}
+                    alt={item.name}
+                    className="item-image"
+                  />
+                  <span className="item-name">{item.name.split(' ')[0]} 💡</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Inventory Tray - Items (for Free Play) 
 {gameState.selectedCategory && gameState.phase !== PHASES.COMPLETE && !isInMission && (
   <div 
     className={`inventory-tray ${isDragging ? 'dragging-active' : ''}`}
@@ -2212,92 +2166,92 @@ onClick={() => handleCategorySelect('lights_diyas')}
   </div>
 )}*/}
 
-{/* Inventory Tray - Items (for Free Play) */}
-{gameState.selectedCategory && gameState.phase !== PHASES.COMPLETE && !isInMission && (
-  <div 
-    className={`inventory-tray items-mode ${isTrayCollapsed ? 'collapsed' : ''} ${isDragging ? 'dragging-active' : ''}`}
-  >
-    
-    {/* 1. TOGGLE HANDLE (The Tab on the side) */}
-    <div 
-      className="tray-toggle"
-      onClick={() => setIsTrayCollapsed(!isTrayCollapsed)}
-    >
-      {isTrayCollapsed ? '◀' : '▶'}
-    </div>
+        {/* Inventory Tray - Items (for Free Play) */}
+        {gameState.selectedCategory && gameState.phase !== PHASES.COMPLETE && !isInMission && (
+          <div
+            className={`inventory-tray items-mode ${isTrayCollapsed ? 'collapsed' : ''} ${isDragging ? 'dragging-active' : ''}`}
+          >
 
-    {/* 2. HEADER */}
-    <div className="items-header">
-      <button 
-        className="back-button"
-        onClick={() => {
-          setGameState(prev => ({
-            ...prev,
-            selectedCategory: null,
-            selectedDecoration: null
-          }));
-          clearHighlights();
-          setIsTrayCollapsed(false); // Reset to full width
-        }}
-      >
-←
-      </button>
+            {/* 1. TOGGLE HANDLE (The Tab on the side) */}
+            <div
+              className="tray-toggle"
+              onClick={() => setIsTrayCollapsed(!isTrayCollapsed)}
+            >
+              {isTrayCollapsed ? '◀' : '▶'}
+            </div>
 
-      {/* Title - Fades out when collapsed */}
-      <div className={`items-title ${isTrayCollapsed ? 'fade-out' : ''}`}>
-        {DECORATION_CATEGORIES[gameState.selectedCategory.toUpperCase()]?.name}
-      </div>
-    </div>
+            {/* 2. HEADER */}
+            <div className="items-header">
+              <button
+                className="back-button"
+                onClick={() => {
+                  setGameState(prev => ({
+                    ...prev,
+                    selectedCategory: null,
+                    selectedDecoration: null
+                  }));
+                  clearHighlights();
+                  setIsTrayCollapsed(false); // Reset to full width
+                }}
+              >
+                ←
+              </button>
 
-    {/* 3. ITEM LIST */}
-    <div className="item-buttons">
-      {DECORATION_CATEGORIES[gameState.selectedCategory.toUpperCase()]?.items.map((item) => (
-        <div
-          key={item.id}
-          className={`item-button ${gameState.selectedDecoration?.id === item.id ? 'selected' : ''}`}
-          onClick={() => handleDecorationSelect(item)}
-        >
-          <img 
-            src={DECORATION_IMAGES[item.image]} 
-            alt={item.name}
-            className="item-image"
-          />
-          
-          {/* Hide text when collapsed */}
-          {!isTrayCollapsed && (
-            <span className="item-name">
-              {item.name} {/* <--- NOW IT SHOWS FULL NAME */}
-            </span>
-          )}
-        </div>
-      ))}
-    </div>
-  </div>
-)}
+              {/* Title - Fades out when collapsed */}
+              <div className={`items-title ${isTrayCollapsed ? 'fade-out' : ''}`}>
+                {DECORATION_CATEGORIES[gameState.selectedCategory.toUpperCase()]?.name}
+              </div>
+            </div>
+
+            {/* 3. ITEM LIST */}
+            <div className="item-buttons">
+              {DECORATION_CATEGORIES[gameState.selectedCategory.toUpperCase()]?.items.map((item) => (
+                <div
+                  key={item.id}
+                  className={`item-button ${gameState.selectedDecoration?.id === item.id ? 'selected' : ''}`}
+                  onClick={() => handleDecorationSelect(item)}
+                >
+                  <img
+                    src={DECORATION_IMAGES[item.image]}
+                    alt={item.name}
+                    className="item-image"
+                  />
+
+                  {/* Hide text when collapsed */}
+                  {!isTrayCollapsed && (
+                    <span className="item-name">
+                      {item.name} {/* <--- NOW IT SHOWS FULL NAME */}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
 
-      {/* Delete Zone */}
-      {isDragging && nearDeleteZone && (
-        <div className="delete-zone-boundaries">
-          <div className="delete-zone-right">
-            <span className="delete-zone-text">Drag here to delete</span>
+        {/* Delete Zone */}
+        {isDragging && nearDeleteZone && (
+          <div className="delete-zone-boundaries">
+            <div className="delete-zone-right">
+              <span className="delete-zone-text">Drag here to delete</span>
+            </div>
+          </div>
+        )}
+
+        {/* Progress Display */}
+        <div className="progress-display">
+          <div className="progress-item">
+            <span className="progress-icon">⭐</span>
+            <span className="progress-value">{gameState.stars}</span>
+          </div>
+          <div className="progress-item">
+            <span className="progress-icon">🎎</span>
+            <span className="progress-value">{gameState.decorationCount}</span>
           </div>
         </div>
-      )}
 
-      {/* Progress Display */}
-      <div className="progress-display">
-        <div className="progress-item">
-          <span className="progress-icon">⭐</span>
-          <span className="progress-value">{gameState.stars}</span>
-        </div>
-        <div className="progress-item">
-          <span className="progress-icon">🎎</span>
-          <span className="progress-value">{gameState.decorationCount}</span>
-        </div>
-      </div>
-
-      {/* Start Over Button 
+        {/* Start Over Button 
       <div className="start-over-button" onClick={() => {
         // Clear saved game
         localStorage.removeItem('mandapGame');
@@ -2356,249 +2310,249 @@ onClick={() => handleCategorySelect('lights_diyas')}
 )}
 
 {/* Mission Completion Overlay */}
-<MissionCompletionOverlay
-  show={showMissionComplete}
-  missionName={completedMissionData?.name}
-  starsEarned={completedMissionData?.starsEarned}
-  totalTime={completedMissionData?.totalTime}
-  
-  onPlayAgain={() => {
-    setShowMissionComplete(false);
-    resetMissionState();
-    setShowMissionIntro(true); // Restart same mission
-  }}
-  
-  onTryAnother={() => {
-    setShowMissionComplete(false);
-    resetMissionState();
-    setSelectedMission(null);
-    setCurrentMode(GAME_MODES.SELECTION);
-  }}
-/>
+        <MissionCompletionOverlay
+          show={showMissionComplete}
+          missionName={completedMissionData?.name}
+          starsEarned={completedMissionData?.starsEarned}
+          totalTime={completedMissionData?.totalTime}
 
-{/* ADD GAME PAUSE MENU HERE */}
-<GamePauseMenu
-  show={showPauseMenu}
-  gameName="Mandap Decoration"
-  currentStars={gameState.stars}
-  hasDesignOption={false}  // 👈 FALSE - no design selection
-  
-  onResume={() => setShowPauseMenu(false)}
-  
-onRestart={() => {
-  setShowPauseMenu(false);
-  
-  // If in a mission, restart the mission
-  if (selectedMission) {
-    resetMissionState(); // This already clears everything!
-    
-    // Restart the same mission
-    setShowMissionIntro(true);
-    
-    // Set timer for Light Challenge
-    if (selectedMission.type === 'light') {
-      setTimeRemaining(60);
-      setTimerActive(false); // Will start when mission intro closes
-    }
-    
-    // Re-initialize Fix Mandap wrong items
-    if (selectedMission.type === 'fix') {
-      // The useEffect will handle initialization when showMissionIntro becomes false
-    }
-  } else {
-    // Free play mode - reset everything
-    localStorage.removeItem('mandapGame');
-    
-    setGameState({
-      phase: PHASES.CHOOSING,
-      selectedCategory: null,
-      selectedDecoration: null,
-      placedDecorations: new Map(),
-      decorationPositions: new Map(),
-      decorationCount: 0,
-      stars: 0,
-      gameStartTime: Date.now(),
-      completed: false,
-      showDoneButton: false
-    });
-    
-    resetMissionState(); // Also clear any residual mission state
-    setHighlightedZones(new Set());
-    setShowSparkle(null);
-    setShowCulturalNote(null);
-    setMilestoneSparkle(false);
-    setShowSceneCompletion(false);
-    setNearDeleteZone(false);
-    setGuidanceMessage('Start fresh! Choose decorations to begin! 🎨');
-  }
-}}
-
-onBackToModes={() => {
-  setShowPauseMenu(false);
-  resetMissionState(); // Clear all mission data
-  setSelectedMission(null); // Clear mission
-  setCurrentMode(GAME_MODES.SELECTION); // Go back to mode selection
-}}
-
-  onComplete={() => {
-    setShowPauseMenu(false);
-    // Trigger completion
-    setGameState(prev => ({ ...prev, completed: true }));
-    safeSetTimeout(() => {
-      setShowSceneCompletion(true);
-    }, 1500);
-  }}
-/>
-
-
-
-      {/* Festival Square Completion */}
-      {showSceneCompletion && (
-        <FestivalSquareCompletion
-          show={showSceneCompletion}
-          sceneName="Mandap Decoration"
-          sceneNumber={1}
-          totalScenes={4}
-          starsEarned={gameState.stars}
-          totalStars={8}
-          discoveredBadges={['decoration']}
-          badgeImages={{
-            decoration: decorationBadge
+          onPlayAgain={() => {
+            setShowMissionComplete(false);
+            resetMissionState();
+            setShowMissionIntro(true); // Restart same mission
           }}
-characterImages={{
-  ganeshaMusician: ganeshaImage
-}}
-       nextSceneName="Modak Cooking"
-          childName="little decorator"
-         onContinue={() => {
-  console.log('🏛️ MANDAP CONTINUE: Completed all Festival games!');
-  
-  const profileId = localStorage.getItem('activeProfileId');
-  if (profileId) {
-    ProgressManager.updateSceneCompletion(profileId, 'festival-square', 'game4', {
-      completed: true,
-      stars: gameState.stars,
-      badges: { decoration: true }
-    });
-    
-    GameStateManager.saveGameState('festival-square', 'game4', {
-      completed: true,
-      stars: gameState.stars,
-      badges: { decoration: true }
-    });
-    
-    console.log('✅ MANDAP CONTINUE: Completion data saved');
-    console.log('🎉 ALL FESTIVAL SQUARE GAMES COMPLETED!');
-  }
-  
-  // Loop back to first scene (festival-square is circular)
-  setTimeout(() => {
-    console.log('🔄 MANDAP: Looping back to Festival Beats (game1)');
 
-    // Navigate to next scene (circular — loops to game1)
-    onNavigate?.('scene-complete-continue');
-  }, 100);
-}}
-
-onReplay={() => {
-  console.log('🎮 MANDAP REPLAY: Play Again');
-  
-  const profileId = localStorage.getItem('activeProfileId');
-  if (profileId) {
-    // Clear ALL storage
-    localStorage.removeItem(`temp_session_${profileId}_festival-square_game4`);
-    localStorage.removeItem(`replay_session_${profileId}_festival-square_game4`);
-    localStorage.removeItem(`play_again_${profileId}_festival-square_game4`);
-    localStorage.removeItem('mandapGame');
-    
-    SimpleSceneManager.setCurrentScene('festival-square', 'game4', false, false);
-    console.log('🗑️ MANDAP: All storage cleared');
-  }
-  
-  // RESET ALL GAME STATE - fresh start
-  setGameState({
-    phase: 'intro',
-    placedDecorations: new Map(),
-    decorationPositions: new Map(),
-    stars: 0,
-    showDoneButton: false,
-    completed: false
-  });
-  setHighlightedZones(new Set());
-  setShowSparkle(null);
-  setShowCulturalNote(null);
-  setMilestoneSparkle(false);
-  setShowSceneCompletion(false);
-  setNearDeleteZone(false);
-  
-  console.log('🔄 MANDAP: Game reset complete');
-}}
-
-onBackToMap={() => {
-  console.log('🗺️ MANDAP MAP: Back to Festival Square');
-  
-  // Clear current scene tracking
-  SimpleSceneManager.clearCurrentScene();
-  
-  if (onNavigate) {
-    onNavigate('zone-welcome'); // Goes to Festival Square zone welcome
-  }
-}}
-
-onHome={() => {
-  if (onNavigate) {
-    onNavigate('home');
-  }
-}}
+          onTryAnother={() => {
+            setShowMissionComplete(false);
+            resetMissionState();
+            setSelectedMission(null);
+            setCurrentMode(GAME_MODES.SELECTION);
+          }}
         />
-      )}
 
-      <TocaBocaNav
-  onHome={() => {
-    if (onNavigate) onNavigate('home');
-  }}
-  onProgress={() => {
-    console.log('Show festival progress');
-  }}
-  onHelp={() => console.log('Show help')}
-  onParentMenu={() => console.log('Parent menu')}
-  isAudioOn={true}
-  onAudioToggle={() => console.log('Toggle audio')}
-  onZonesClick={() => {
-    if (onNavigate) onNavigate('zones');
-  }}
-  onStartFresh={() => {
-    // Reset entire decoration game
-    localStorage.removeItem('mandapGame');
-    
-    setGameState({
-      phase: 'intro',
-      placedDecorations: new Map(),
-      decorationPositions: new Map(),
-      stars: 0,
-      showDoneButton: false,
-      completed: false
-    });
-    setHighlightedZones(new Set());
-    setShowSparkle(null);
-    setShowCulturalNote(null);
-    setMilestoneSparkle(false);
-    setShowSceneCompletion(false);
-    setNearDeleteZone(false);
-  }}
-  currentProgress={{
-    stars: gameState.stars || 0,
-    completed: gameState.completed ? 1 : 0,
-    total: 1
-  }}
-/>
-      
-    </div>
-  );
-}
+        {/* ADD GAME PAUSE MENU HERE */}
+        <GamePauseMenu
+          show={showPauseMenu}
+          gameName="Mandap Decoration"
+          currentStars={gameState.stars}
+          hasDesignOption={false}  // 👈 FALSE - no design selection
 
-// If somehow no mode matches, show loading
-return <div>Loading...</div>;
+          onResume={() => setShowPauseMenu(false)}
+
+          onRestart={() => {
+            setShowPauseMenu(false);
+
+            // If in a mission, restart the mission
+            if (selectedMission) {
+              resetMissionState(); // This already clears everything!
+
+              // Restart the same mission
+              setShowMissionIntro(true);
+
+              // Set timer for Light Challenge
+              if (selectedMission.type === 'light') {
+                setTimeRemaining(60);
+                setTimerActive(false); // Will start when mission intro closes
+              }
+
+              // Re-initialize Fix Mandap wrong items
+              if (selectedMission.type === 'fix') {
+                // The useEffect will handle initialization when showMissionIntro becomes false
+              }
+            } else {
+              // Free play mode - reset everything
+              localStorage.removeItem('mandapGame');
+
+              setGameState({
+                phase: PHASES.CHOOSING,
+                selectedCategory: null,
+                selectedDecoration: null,
+                placedDecorations: new Map(),
+                decorationPositions: new Map(),
+                decorationCount: 0,
+                stars: 0,
+                gameStartTime: Date.now(),
+                completed: false,
+                showDoneButton: false
+              });
+
+              resetMissionState(); // Also clear any residual mission state
+              setHighlightedZones(new Set());
+              setShowSparkle(null);
+              setShowCulturalNote(null);
+              setMilestoneSparkle(false);
+              setShowSceneCompletion(false);
+              setNearDeleteZone(false);
+              setGuidanceMessage('Start fresh! Choose decorations to begin! 🎨');
+            }
+          }}
+
+          onBackToModes={() => {
+            setShowPauseMenu(false);
+            resetMissionState(); // Clear all mission data
+            setSelectedMission(null); // Clear mission
+            setCurrentMode(GAME_MODES.SELECTION); // Go back to mode selection
+          }}
+
+          onComplete={() => {
+            setShowPauseMenu(false);
+            // Trigger completion
+            setGameState(prev => ({ ...prev, completed: true }));
+            safeSetTimeout(() => {
+              setShowSceneCompletion(true);
+            }, 1500);
+          }}
+        />
+
+
+
+        {/* Festival Square Completion */}
+        {showSceneCompletion && (
+          <FestivalSquareCompletion
+            show={showSceneCompletion}
+            sceneName="Mandap Decoration"
+            sceneNumber={1}
+            totalScenes={4}
+            starsEarned={gameState.stars}
+            totalStars={8}
+            discoveredBadges={['decoration']}
+            badgeImages={{
+              decoration: decorationBadge
+            }}
+            characterImages={{
+              ganeshaMusician: ganeshaImage
+            }}
+            nextSceneName="Modak Cooking"
+            childName="little decorator"
+            onContinue={() => {
+              console.log('🏛️ MANDAP CONTINUE: Completed all Festival games!');
+
+              const profileId = localStorage.getItem('activeProfileId');
+              if (profileId) {
+                ProgressManager.updateSceneCompletion(profileId, 'festival-square', 'game4', {
+                  completed: true,
+                  stars: gameState.stars,
+                  badges: { decoration: true }
+                });
+
+                GameStateManager.saveGameState('festival-square', 'game4', {
+                  completed: true,
+                  stars: gameState.stars,
+                  badges: { decoration: true }
+                });
+
+                console.log('✅ MANDAP CONTINUE: Completion data saved');
+                console.log('🎉 ALL FESTIVAL SQUARE GAMES COMPLETED!');
+              }
+
+              // Loop back to first scene (festival-square is circular)
+              setTimeout(() => {
+                console.log('🔄 MANDAP: Looping back to Festival Beats (game1)');
+
+                // Navigate to next scene (circular — loops to game1)
+                onNavigate?.('scene-complete-continue');
+              }, 100);
+            }}
+
+            onReplay={() => {
+              console.log('🎮 MANDAP REPLAY: Play Again');
+
+              const profileId = localStorage.getItem('activeProfileId');
+              if (profileId) {
+                // Clear ALL storage
+                localStorage.removeItem(`temp_session_${profileId}_festival-square_game4`);
+                localStorage.removeItem(`replay_session_${profileId}_festival-square_game4`);
+                localStorage.removeItem(`play_again_${profileId}_festival-square_game4`);
+                localStorage.removeItem('mandapGame');
+
+                SimpleSceneManager.setCurrentScene('festival-square', 'game4', false, false);
+                console.log('🗑️ MANDAP: All storage cleared');
+              }
+
+              // RESET ALL GAME STATE - fresh start
+              setGameState({
+                phase: 'intro',
+                placedDecorations: new Map(),
+                decorationPositions: new Map(),
+                stars: 0,
+                showDoneButton: false,
+                completed: false
+              });
+              setHighlightedZones(new Set());
+              setShowSparkle(null);
+              setShowCulturalNote(null);
+              setMilestoneSparkle(false);
+              setShowSceneCompletion(false);
+              setNearDeleteZone(false);
+
+              console.log('🔄 MANDAP: Game reset complete');
+            }}
+
+            onBackToMap={() => {
+              console.log('🗺️ MANDAP MAP: Back to Festival Square');
+
+              // Clear current scene tracking
+              SimpleSceneManager.clearCurrentScene();
+
+              if (onNavigate) {
+                onNavigate('zone-welcome'); // Goes to Festival Square zone welcome
+              }
+            }}
+
+            onHome={() => {
+              if (onNavigate) {
+                onNavigate('home');
+              }
+            }}
+          />
+        )}
+
+        <TocaBocaNav
+          onHome={() => {
+            if (onNavigate) onNavigate('home');
+          }}
+          onProgress={() => {
+            console.log('Show festival progress');
+          }}
+          onHelp={() => console.log('Show help')}
+          onParentMenu={() => console.log('Parent menu')}
+          isAudioOn={true}
+          onAudioToggle={() => console.log('Toggle audio')}
+          onZonesClick={() => {
+            if (onNavigate) onNavigate('zones');
+          }}
+          onStartFresh={() => {
+            // Reset entire decoration game
+            localStorage.removeItem('mandapGame');
+
+            setGameState({
+              phase: 'intro',
+              placedDecorations: new Map(),
+              decorationPositions: new Map(),
+              stars: 0,
+              showDoneButton: false,
+              completed: false
+            });
+            setHighlightedZones(new Set());
+            setShowSparkle(null);
+            setShowCulturalNote(null);
+            setMilestoneSparkle(false);
+            setShowSceneCompletion(false);
+            setNearDeleteZone(false);
+          }}
+          currentProgress={{
+            stars: gameState.stars || 0,
+            completed: gameState.completed ? 1 : 0,
+            total: 1
+          }}
+        />
+
+      </div>
+    );
+  }
+
+  // If somehow no mode matches, show loading
+  return <div>Loading...</div>;
 };
 
 export default MandapDecorationGame;
