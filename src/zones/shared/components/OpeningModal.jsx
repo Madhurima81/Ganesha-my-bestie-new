@@ -85,9 +85,9 @@ const ICON_MAP = {
     'activity': favActivityImg,
     'balloons': siblingsPeaceballoon,
     'birthday': '🎂', // Fallback to emoji if no high-quality cake found yet
-    'earth': wishIconEarth,
-    'sharing': wishIconShare,
-    'flower': wishIconFlower,
+    'wish-earth': wishIconEarth,
+    'wish-share': wishIconShare,
+    'wish-flower': wishIconFlower,
 
     // Shloka River Apps
     'vakratunda-app': appVakratunda,
