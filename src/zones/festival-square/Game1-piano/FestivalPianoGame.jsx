@@ -1,7 +1,7 @@
 ﻿// FestivalPianoGame.jsx - FINAL VERSION with Intro Scene, Restyled UI, and All Game Modes + SONG COMPLETION MODAL
 import React, { useState, useEffect, useRef } from 'react';
 import './FestivalPianoGame.css';
-import OpeningModal from '../../../shared/components/OpeningModal.jsx';
+import OpeningModal from '../../shared/components/OpeningModal.jsx';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../lib/config/content/openingModals';
 
