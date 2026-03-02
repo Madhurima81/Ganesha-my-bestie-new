@@ -15,6 +15,9 @@ import { getOpeningModal } from '../../../lib/config/content';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 import '../../shared/components/OpeningModal.css';
 
+// Shared Components
+import OpeningModal from '../../shared/components/OpeningModal';
+
 // --- EXISTING ASSETS ---
 import foodBg from './assets/images/food-bg.png';
 import babyGaneshaImg from './assets/images/baby-ganesha.png';
@@ -88,38 +91,38 @@ const FavoriteFoodGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
         sceneId={sceneId}
         initialState={{
           gamePhase: 'intro',
-          
+
           // Data Arrays
           randomFoods: [],
           randomFriends: [],
           randomColors: [],
           randomActivities: [],
-          
+
           // Selection State
           selectedFood: null,
           selectedFriend: null,
-          wrongChoices: [], 
+          wrongChoices: [],
           correctChoiceId: null,
-          
+
           // Discovery Progress
           storyDiscoveries: [],
           childDiscoveries: [],
-          
+
           // Child Choices
           childFoodChoice: null,
           childFoodDrawing: null,
           childFoodText: null,
-          
+
           childColor: null,
           childColorName: '',
-          
+
           childActivityChoice: null,
           childActivityDrawing: null,
           childActivityText: null,
-          
+
           childFriendName: '',
           childFriendLetters: [],
-          
+
           // Modal Persistence State (NEW)
           currentModal: null, // 'food-draw', 'food-type', 'activity-draw', 'activity-type'
           draftData: null,    // Stores incomplete drawing/text
@@ -161,7 +164,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const [drawingMode, setDrawingMode] = useState(null);
   const [showTextInput, setShowTextInput] = useState(false);
   const [textInputMode, setTextInputMode] = useState(null);
-  
+
   const [feedbackMessage, setFeedbackMessage] = useState("");
   const [isFeedbackShaking, setIsFeedbackShaking] = useState(false);
 
@@ -254,13 +257,13 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   useEffect(() => {
     if (isReload && !reloadHandledRef.current) {
       reloadHandledRef.current = true;
-      const { 
-        gamePhase, wrongChoices, currentModal, 
-        childFoodChoice, childColor, childActivityChoice, childFriendLetters 
+      const {
+        gamePhase, wrongChoices, currentModal,
+        childFoodChoice, childColor, childActivityChoice, childFriendLetters
       } = sceneState;
-      
+
       console.log("🔄 Reload detected. Phase:", gamePhase, "Modal:", currentModal);
-      
+
       if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
 
       // --- 1. RESTORE MODALS (Drawing/Typing) ---
@@ -294,7 +297,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
         return;
       }
-      
+
       if ((gamePhase === 'color-choice' || gamePhase === 'activity-choice' || gamePhase === 'friend-choice') && wrongChoices.length > 0) {
         setResumeMessage(`Keep going! Try another option!`);
         setShowResumePopup(true);
@@ -304,53 +307,53 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       // Child Food Phase
       if (gamePhase === 'child-food-choice') {
-         if (childFoodChoice || sceneState.childFoodDrawing || sceneState.childFoodText) {
-            setResumeMessage(`You already picked your favorite food! Continue to color choice.`);
-            setShowResumePopup(true);
-            resumePopupTimeoutRef.current = setTimeout(() => {
-              setShowResumePopup(false);
-              sceneActions.updateState({ gamePhase: 'child-color-choice' });
-            }, 3000);
-         } else {
-            setResumeMessage(`Welcome back! Ready to pick (or draw) your favorite food? 🍕`);
-            setShowResumePopup(true);
-            resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
-         }
-         return;
+        if (childFoodChoice || sceneState.childFoodDrawing || sceneState.childFoodText) {
+          setResumeMessage(`You already picked your favorite food! Continue to color choice.`);
+          setShowResumePopup(true);
+          resumePopupTimeoutRef.current = setTimeout(() => {
+            setShowResumePopup(false);
+            sceneActions.updateState({ gamePhase: 'child-color-choice' });
+          }, 3000);
+        } else {
+          setResumeMessage(`Welcome back! Ready to pick (or draw) your favorite food? 🍕`);
+          setShowResumePopup(true);
+          resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
+        }
+        return;
       }
-      
+
       // Child Color Phase
       if (gamePhase === 'child-color-choice') {
-         if (childColor) {
-            setResumeMessage(`You picked ${sceneState.childColorName}! Continue to activity choice.`);
-            setShowResumePopup(true);
-            resumePopupTimeoutRef.current = setTimeout(() => {
-              setShowResumePopup(false);
-              sceneActions.updateState({ gamePhase: 'child-activity-choice' });
-            }, 3000);
-         } else {
-            setResumeMessage(`Let's pick your favorite color! 🎨`);
-            setShowResumePopup(true);
-            resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
-         }
-         return;
+        if (childColor) {
+          setResumeMessage(`You picked ${sceneState.childColorName}! Continue to activity choice.`);
+          setShowResumePopup(true);
+          resumePopupTimeoutRef.current = setTimeout(() => {
+            setShowResumePopup(false);
+            sceneActions.updateState({ gamePhase: 'child-activity-choice' });
+          }, 3000);
+        } else {
+          setResumeMessage(`Let's pick your favorite color! 🎨`);
+          setShowResumePopup(true);
+          resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
+        }
+        return;
       }
 
       // Child Activity Phase
       if (gamePhase === 'child-activity-choice') {
-          if (childActivityChoice || sceneState.childActivityDrawing || sceneState.childActivityText) {
-             setResumeMessage(`Great! Now tell us about your best friend!`);
-             setShowResumePopup(true);
-             resumePopupTimeoutRef.current = setTimeout(() => {
-               setShowResumePopup(false);
-               sceneActions.updateState({ gamePhase: 'child-friend-intro' });
-             }, 3000);
-          } else {
-             setResumeMessage(`Welcome back! Ready to pick (or draw) your favorite activity? ⚽`);
-             setShowResumePopup(true);
-             resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
-          }
-          return;
+        if (childActivityChoice || sceneState.childActivityDrawing || sceneState.childActivityText) {
+          setResumeMessage(`Great! Now tell us about your best friend!`);
+          setShowResumePopup(true);
+          resumePopupTimeoutRef.current = setTimeout(() => {
+            setShowResumePopup(false);
+            sceneActions.updateState({ gamePhase: 'child-friend-intro' });
+          }, 3000);
+        } else {
+          setResumeMessage(`Welcome back! Ready to pick (or draw) your favorite activity? ⚽`);
+          setShowResumePopup(true);
+          resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
+        }
+        return;
       }
 
       // Friend Input
@@ -370,10 +373,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     if (gamePhase === 'food-correct') {
       timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'color-choice', wrongChoices: [] }); }, 2500);
-    } 
+    }
     else if (gamePhase === 'color-correct') {
       timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'activity-choice', wrongChoices: [] }); }, 2500);
-    } 
+    }
     else if (gamePhase === 'activity-correct') {
       timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'friend-intro', wrongChoices: [] }); }, 2500);
     }
@@ -402,12 +405,12 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       setFeedbackMessage("");
       setTimeout(() => {
         sceneActions.updateState({
-            selectedFood: foodId,
-            storyDiscoveries: [{ image: modakImg, name: 'Modak' }],
-            gamePhase: 'food-correct', 
-            correctChoiceId: null
+          selectedFood: foodId,
+          storyDiscoveries: [{ image: modakImg, name: 'Modak' }],
+          gamePhase: 'food-correct',
+          correctChoiceId: null
         });
-      }, 1000); 
+      }, 1000);
     } else {
       setShowShake(foodId);
       setFeedbackMessage("Oops! Try again! 🥟");
@@ -423,8 +426,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     const color = colors.find(c => c.id === colorId);
     if (color.correct) {
       sceneActions.updateState({
-          storyDiscoveries: [...sceneState.storyDiscoveries, { image: orangeImg, name: 'Orange' }],
-          gamePhase: 'color-correct'
+        storyDiscoveries: [...sceneState.storyDiscoveries, { image: orangeImg, name: 'Orange' }],
+        gamePhase: 'color-correct'
       });
       setFeedbackMessage("");
     } else {
@@ -442,8 +445,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     const activity = activities.find(a => a.id === activityId);
     if (activity.correct) {
       sceneActions.updateState({
-          storyDiscoveries: [...sceneState.storyDiscoveries, { image: actDancingImg, name: 'Dancing' }],
-          gamePhase: 'activity-correct'
+        storyDiscoveries: [...sceneState.storyDiscoveries, { image: actDancingImg, name: 'Dancing' }],
+        gamePhase: 'activity-correct'
       });
       setFeedbackMessage("");
     } else {
@@ -465,9 +468,9 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     const friend = friends.find(f => f.id === friendId);
     if (friend.correct) {
       sceneActions.updateState({
-          selectedFriend: friendId,
-          storyDiscoveries: [...sceneState.storyDiscoveries, { image: mouseImg, name: 'Mushika' }],
-          gamePhase: 'friend-correct'
+        selectedFriend: friendId,
+        storyDiscoveries: [...sceneState.storyDiscoveries, { image: mouseImg, name: 'Mushika' }],
+        gamePhase: 'friend-correct'
       });
       setFeedbackMessage("");
     } else {
@@ -485,9 +488,9 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const handleKidFoodClick = (foodId) => {
     const selected = kidFoods.find(f => f.id === foodId);
     sceneActions.updateState({
-        childFoodChoice: foodId,
-        childDiscoveries: [{ image: selected.image, name: selected.name }],
-        gamePhase: 'child-color-choice'
+      childFoodChoice: foodId,
+      childDiscoveries: [{ image: selected.image, name: selected.name }],
+      gamePhase: 'child-color-choice'
     });
   };
 
@@ -495,34 +498,34 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     setShowDrawingPad(false);
     setDrawingMode(null);
     sceneActions.updateState({
-        childFoodDrawing: data.image,
-        childDiscoveries: [{ image: data.image, name: 'My Food' }],
-        gamePhase: 'child-color-choice',
-        currentModal: null, // Clear modal state
-        draftData: null
+      childFoodDrawing: data.image,
+      childDiscoveries: [{ image: data.image, name: 'My Food' }],
+      gamePhase: 'child-color-choice',
+      currentModal: null, // Clear modal state
+      draftData: null
     });
   };
 
   const handleKidColorClick = (colorId) => {
     const selectedColor = kidColors.find(c => c.id === colorId);
     sceneActions.updateState({
-        childColor: selectedColor.image || selectedColor.color,
-        childColorName: selectedColor.name,
-        childDiscoveries: [...sceneState.childDiscoveries, { 
-            image: selectedColor.image, 
-            emoji: selectedColor.emoji, 
-            name: selectedColor.name 
-        }],
-        gamePhase: 'child-activity-choice'
+      childColor: selectedColor.image || selectedColor.color,
+      childColorName: selectedColor.name,
+      childDiscoveries: [...sceneState.childDiscoveries, {
+        image: selectedColor.image,
+        emoji: selectedColor.emoji,
+        name: selectedColor.name
+      }],
+      gamePhase: 'child-activity-choice'
     });
   };
 
   const handleKidActivityClick = (activityId) => {
     const selected = kidActivities.find(a => a.id === activityId);
     sceneActions.updateState({
-        childActivityChoice: activityId,
-        childDiscoveries: [...sceneState.childDiscoveries, { image: selected.image, name: selected.name }],
-        gamePhase: 'child-friend-intro'
+      childActivityChoice: activityId,
+      childDiscoveries: [...sceneState.childDiscoveries, { image: selected.image, name: selected.name }],
+      gamePhase: 'child-friend-intro'
     });
   };
 
@@ -530,11 +533,11 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     setShowDrawingPad(false);
     setDrawingMode(null);
     sceneActions.updateState({
-        childActivityDrawing: data.image,
-        childDiscoveries: [...sceneState.childDiscoveries, { image: data.image, name: 'My Activity' }],
-        gamePhase: 'child-friend-intro',
-        currentModal: null, // Clear modal state
-        draftData: null
+      childActivityDrawing: data.image,
+      childDiscoveries: [...sceneState.childDiscoveries, { image: data.image, name: 'My Activity' }],
+      gamePhase: 'child-friend-intro',
+      currentModal: null, // Clear modal state
+      draftData: null
     });
   };
 
@@ -554,45 +557,19 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         <StoryProgressHeader discoveries={sceneState.storyDiscoveries} />
       )}
 
-      {(sceneState.gamePhase.includes('child') || sceneState.gamePhase === 'friend-celebration') && 
-       sceneState.gamePhase !== 'comparison-card' && 
-       sceneState.gamePhase !== 'ending' && (
-        <StoryProgressHeader discoveries={sceneState.childDiscoveries} isChildMode={true} />
-      )}
+      {(sceneState.gamePhase.includes('child') || sceneState.gamePhase === 'friend-celebration') &&
+        sceneState.gamePhase !== 'comparison-card' &&
+        sceneState.gamePhase !== 'ending' && (
+          <StoryProgressHeader discoveries={sceneState.childDiscoveries} isChildMode={true} />
+        )}
 
-      {/* Intro Screen */}
-      {sceneState.gamePhase === 'intro' && (
-        <div className="game-modal-overlay" id="favorite-food-intro" style={(() => { const theme = getZoneTheme('about-me-hut'); return { '--modal-card-bg': theme.parentBg, '--modal-text-primary': theme.textPrimary, '--modal-btn-bg': theme.buttonActiveBg, '--modal-btn-shadow': theme.glowColor }; })()}>
-          <div className="game-modal-content">
-            <div className="game-modal-character">
-              <img src={babyGaneshaImg} alt="Baby Ganesha" />
-            </div>
-            <div className="game-modal-card">
-              <h1 className="game-modal-title">{openingModalContent?.title || 'The Favorites Match!'}</h1>
-              <p className="game-modal-subtitle">
-                {openingModalContent?.description || 'Let us discover what we both enjoy.'}
-              </p>
-              <div className="game-modal-icons">
-                <div className="game-modal-icon-item">
-                  <div className="game-modal-icon-circle"><img src={favIconFood} alt="Food" /></div>
-                  <span className="game-modal-icon-label">Food</span>
-                </div>
-                <div className="game-modal-icon-item">
-                  <div className="game-modal-icon-circle"><img src={favIconColor} alt="Color" /></div>
-                  <span className="game-modal-icon-label">Color</span>
-                </div>
-                <div className="game-modal-icon-item">
-                  <div className="game-modal-icon-circle"><img src={favIconActivity} alt="Activity" /></div>
-                  <span className="game-modal-icon-label">Activity</span>
-                </div>
-              </div>
-              <button className="game-modal-button" onClick={handleStartGame}>
-                {openingModalContent?.buttonText || "Let's Play Guessing! 🌟"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <OpeningModal
+        zoneId="about-me-hut"
+        sceneId="favorite-food"
+        onStart={handleStartGame}
+        characterImg={babyGaneshaImg}
+        showButton={true}
+      />
 
       {/* Back Button */}
       {sceneState.gamePhase !== 'intro' && !sceneState.showingCompletionScreen && (
@@ -607,7 +584,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           </div>
           <div className="fav-speech-bubble">Which one is my favorite? 🍬</div>
           <div className={`feedback-message visible ${isFeedbackShaking ? 'shake-text' : ''}`}>
-             {feedbackMessage || "Tap the food you think I love! 🥟"} 
+            {feedbackMessage || "Tap the food you think I love! 🥟"}
           </div>
           <div className="choices-container food-scene">
             {sceneState.randomFoods.map((food, index) => (
@@ -635,7 +612,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             <img src={babyGaneshaSit} alt="Happy Ganesha" className="ganesha-celebrate" />
           </div>
           <div className="correct-food">
-            <img src={foods.find(f => f.id === sceneState.selectedFood).image} alt="Modak" className="food-in-hand pop-in"/>
+            <img src={foods.find(f => f.id === sceneState.selectedFood).image} alt="Modak" className="food-in-hand pop-in" />
           </div>
           <div className="celebration-sparkles">
             {Array.from({ length: 15 }).map((_, i) => (
@@ -654,7 +631,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           </div>
           <div className="fav-speech-bubble">What's my favorite color? 🎨</div>
           <div className={`feedback-message visible ${isFeedbackShaking ? 'shake-text' : ''}`}>
-            {feedbackMessage || "Tap the color you think I love! 💛"} 
+            {feedbackMessage || "Tap the color you think I love! 💛"}
           </div>
           <div className="choices-container color-scene">
             {sceneState.randomColors.map((color, index) => (
@@ -682,7 +659,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             <img src={babyGaneshaSit} alt="Happy Ganesha" className="ganesha-celebrate" />
           </div>
           <div className="correct-food">
-             <img src={orangeImg} alt="Orange" className="food-in-hand pop-in" style={{width:'180px', height:'180px'}}/>
+            <img src={orangeImg} alt="Orange" className="food-in-hand pop-in" style={{ width: '180px', height: '180px' }} />
           </div>
           <div className="celebration-sparkles">
             {Array.from({ length: 15 }).map((_, i) => (
@@ -701,7 +678,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           </div>
           <div className="fav-speech-bubble">What do I love to do? 🤔</div>
           <div className={`feedback-message visible ${isFeedbackShaking ? 'shake-text' : ''}`}>
-             {feedbackMessage || "Tap the activity you think I love! 🎮"} 
+            {feedbackMessage || "Tap the activity you think I love! 🎮"}
           </div>
           <div className="choices-container activity-scene">
             {sceneState.randomActivities.map((activity, index) => (
@@ -729,7 +706,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             <img src={babyGaneshaSit} alt="Happy Ganesha" className="ganesha-celebrate" />
           </div>
           <div className="correct-food">
-            <img src={actDancingImg} alt="Dancing" className="food-in-hand pop-in" style={{width:'180px', height:'180px'}}/>
+            <img src={actDancingImg} alt="Dancing" className="food-in-hand pop-in" style={{ width: '180px', height: '180px' }} />
           </div>
           <div className="celebration-sparkles">
             {Array.from({ length: 15 }).map((_, i) => (
@@ -743,7 +720,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Friend Intro */}
       {sceneState.gamePhase === 'friend-intro' && (
         <div className="intro-overlay">
-          <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce"/>
+          <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
           <div className="friend-intro-box">
             <h2 className="friend-intro-text">Great! Now find my best friend!</h2>
             <button className="friend-intro-btn" onClick={handleStartFriendChoice}>Find Friend! 🌟</button>
@@ -759,7 +736,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           </div>
           <div className="fav-speech-bubble">Who is my best friend? 🤔</div>
           <div className={`feedback-message visible ${isFeedbackShaking ? 'shake-text' : ''}`}>
-             {feedbackMessage || "Tap my best friend! 🐭"} 
+            {feedbackMessage || "Tap my best friend! 🐭"}
           </div>
           <div className="choices-container friend-scene">
             {sceneState.randomFriends.map((friend, index) => (
@@ -817,7 +794,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             <img src={babyGaneshaImg} alt="Baby Ganesha" className="ganesha-small bounce-gentle" />
           </div>
           <div className="fav-speech-bubble">What's YOUR favorite food? 🍕</div>
-          
+
           <div className="kid-choices-grid">
             {kidFoods.map((food, index) => (
               <button
@@ -826,22 +803,22 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 onClick={() => handleKidFoodClick(food.id)}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <img src={food.image} alt={food.name} className="choice-image" style={{width:'60px', height:'60px'}}/>
+                <img src={food.image} alt={food.name} className="choice-image" style={{ width: '60px', height: '60px' }} />
                 <div className="kid-choice-name">{food.name}</div>
               </button>
             ))}
           </div>
-          
+
           <div className="custom-input-options">
-            <button className="draw-button" onClick={() => { 
-                setShowDrawingPad(true); 
-                setDrawingMode('food'); 
-                sceneActions.updateState({ currentModal: 'food-draw' }); // Track modal
+            <button className="draw-button" onClick={() => {
+              setShowDrawingPad(true);
+              setDrawingMode('food');
+              sceneActions.updateState({ currentModal: 'food-draw' }); // Track modal
             }}>🎨 Draw</button>
-            <button className="type-button" onClick={() => { 
-                setShowTextInput(true); 
-                setTextInputMode('food'); 
-                sceneActions.updateState({ currentModal: 'food-type' }); // Track modal
+            <button className="type-button" onClick={() => {
+              setShowTextInput(true);
+              setTextInputMode('food');
+              sceneActions.updateState({ currentModal: 'food-type' }); // Track modal
             }}>✏️ Type</button>
           </div>
         </div>
@@ -861,7 +838,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 key={color.id}
                 className="color-choice-button bounce-gentle"
                 onClick={() => handleKidColorClick(color.id)}
-                style={{ 
+                style={{
                   backgroundColor: color.image ? 'transparent' : color.color,
                   border: color.image ? 'none' : '4px solid white',
                   animationDelay: `${index * 0.05}s`
@@ -869,9 +846,9 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 title={color.name}
               >
                 {color.image ? (
-                   <img src={color.image} alt={color.name} style={{width:'100%', height:'100%', objectFit:'contain'}} />
+                  <img src={color.image} alt={color.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 ) : (
-                   color.emoji
+                  color.emoji
                 )}
               </button>
             ))}
@@ -895,22 +872,22 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 onClick={() => handleKidActivityClick(activity.id)}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <img src={activity.image} alt={activity.name} className="choice-image" style={{width:'60px', height:'60px'}}/>
+                <img src={activity.image} alt={activity.name} className="choice-image" style={{ width: '60px', height: '60px' }} />
                 <div className="kid-choice-name">{activity.name}</div>
               </button>
             ))}
           </div>
 
           <div className="custom-input-options">
-            <button className="draw-button" onClick={() => { 
-                setShowDrawingPad(true); 
-                setDrawingMode('activity'); 
-                sceneActions.updateState({ currentModal: 'activity-draw' }); // Track modal
+            <button className="draw-button" onClick={() => {
+              setShowDrawingPad(true);
+              setDrawingMode('activity');
+              sceneActions.updateState({ currentModal: 'activity-draw' }); // Track modal
             }}>🎨 Draw</button>
-            <button className="type-button" onClick={() => { 
-                setShowTextInput(true); 
-                setTextInputMode('activity'); 
-                sceneActions.updateState({ currentModal: 'activity-type' }); // Track modal
+            <button className="type-button" onClick={() => {
+              setShowTextInput(true);
+              setTextInputMode('activity');
+              sceneActions.updateState({ currentModal: 'activity-type' }); // Track modal
             }}>✏️ Type</button>
           </div>
         </div>
@@ -936,12 +913,12 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <LetterInputKeyboard
             onConfirm={(name) => {
               sceneActions.updateState({
-                  childFriendName: name,
-                  childFriendLetters: name.split(''),
-                  childDiscoveries: [...sceneState.childDiscoveries, { emoji: '👤', name: name }],
-                  gamePhase: 'friend-celebration'
+                childFriendName: name,
+                childFriendLetters: name.split(''),
+                childDiscoveries: [...sceneState.childDiscoveries, { emoji: '👤', name: name }],
+                gamePhase: 'friend-celebration'
               });
-              
+
               localStorage.setItem('childFavorites', JSON.stringify({
                 food: sceneState.childFoodChoice,
                 foodDrawing: sceneState.childFoodDrawing,
@@ -966,7 +943,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         <div className="drawing-overlay">
           <DrawingPad
             prompt={drawingMode === 'food' ? "Draw your favorite food! 🍕" : "Draw your favorite activity! ⚽"}
-            
+
             initialData={sceneState.draftData} // Restore draft
             onAutoSave={(data) => sceneActions.updateState({ draftData: data })} // Auto-save on stroke
 
@@ -975,11 +952,11 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           />
         </div>
       )}
-      
+
       {showTextInput && textInputMode === 'food' && (
         <TextInputModal
           prompt="What's YOUR favorite food?"
-          
+
           initialValue={sceneState.draftData} // Restore text
           onAutoSave={(text) => sceneActions.updateState({ draftData: text })} // Auto-save on type
 
@@ -987,17 +964,17 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             setShowTextInput(false);
             setTextInputMode(null);
             sceneActions.updateState({
-                childFoodText: text,
-                childDiscoveries: [{ emoji: '✏️', name: text }],
-                gamePhase: 'child-color-choice',
-                currentModal: null, // Clear modal
-                draftData: null
+              childFoodText: text,
+              childDiscoveries: [{ emoji: '✏️', name: text }],
+              gamePhase: 'child-color-choice',
+              currentModal: null, // Clear modal
+              draftData: null
             });
           }}
-          onCancel={() => { 
-              setShowTextInput(false); 
-              setTextInputMode(null); 
-              sceneActions.updateState({ currentModal: null, draftData: null });
+          onCancel={() => {
+            setShowTextInput(false);
+            setTextInputMode(null);
+            sceneActions.updateState({ currentModal: null, draftData: null });
           }}
           maxLength={30}
         />
@@ -1006,7 +983,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {showTextInput && textInputMode === 'activity' && (
         <TextInputModal
           prompt="What's YOUR favorite activity?"
-          
+
           initialValue={sceneState.draftData} // Restore text
           onAutoSave={(text) => sceneActions.updateState({ draftData: text })} // Auto-save on type
 
@@ -1014,17 +991,17 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             setShowTextInput(false);
             setTextInputMode(null);
             sceneActions.updateState({
-                childActivityText: text,
-                childDiscoveries: [...sceneState.childDiscoveries.slice(0, 2), { emoji: '✏️', name: text }],
-                gamePhase: 'child-friend-intro',
-                currentModal: null, // Clear modal
-                draftData: null
+              childActivityText: text,
+              childDiscoveries: [...sceneState.childDiscoveries.slice(0, 2), { emoji: '✏️', name: text }],
+              gamePhase: 'child-friend-intro',
+              currentModal: null, // Clear modal
+              draftData: null
             });
           }}
-          onCancel={() => { 
-              setShowTextInput(false); 
-              setTextInputMode(null); 
-              sceneActions.updateState({ currentModal: null, draftData: null });
+          onCancel={() => {
+            setShowTextInput(false);
+            setTextInputMode(null);
+            sceneActions.updateState({ currentModal: null, draftData: null });
           }}
           maxLength={30}
         />
@@ -1098,11 +1075,11 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   {sceneState.childFoodText ? (
                     <div className="friend-item-typed-text">{sceneState.childFoodText}</div>
                   ) : sceneState.childFoodDrawing ? (
-                    <img src={sceneState.childFoodDrawing} alt="Draw" className="friend-item-img" style={{borderRadius:'4px'}} />
+                    <img src={sceneState.childFoodDrawing} alt="Draw" className="friend-item-img" style={{ borderRadius: '4px' }} />
                   ) : sceneState.childFoodChoice ? (
-                    <img src={kidFoods.find(f => f.id === sceneState.childFoodChoice)?.image} alt="Food" className="friend-item-img"/>
+                    <img src={kidFoods.find(f => f.id === sceneState.childFoodChoice)?.image} alt="Food" className="friend-item-img" />
                   ) : (
-                    <div style={{fontSize:'20px'}}>🤷</div>
+                    <div style={{ fontSize: '20px' }}>🤷</div>
                   )}
                   <span className="friend-item-text">
                     {sceneState.childFoodText ? sceneState.childFoodText : sceneState.childFoodDrawing ? 'Drawing' : kidFoods.find(f => f.id === sceneState.childFoodChoice)?.name}
@@ -1111,11 +1088,11 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 {/* Color */}
                 <div className="friend-item">
                   <span className="friend-item-label">Color</span>
-                   {sceneState.childColor && sceneState.childColor.startsWith('#') ? (
-                     <div style={{width:'50px', height:'50px', borderRadius:'50%', background: sceneState.childColor}}></div>
-                   ) : (
-                     <img src={sceneState.childColor} alt={sceneState.childColorName} className="friend-item-img" />
-                   )}
+                  {sceneState.childColor && sceneState.childColor.startsWith('#') ? (
+                    <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: sceneState.childColor }}></div>
+                  ) : (
+                    <img src={sceneState.childColor} alt={sceneState.childColorName} className="friend-item-img" />
+                  )}
                   <span className="friend-item-text">{sceneState.childColorName}</span>
                 </div>
                 {/* Activity */}
@@ -1124,11 +1101,11 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   {sceneState.childActivityText ? (
                     <div className="friend-item-typed-text">{sceneState.childActivityText}</div>
                   ) : sceneState.childActivityDrawing ? (
-                    <img src={sceneState.childActivityDrawing} alt="Draw" className="friend-item-img" style={{borderRadius:'4px'}} />
+                    <img src={sceneState.childActivityDrawing} alt="Draw" className="friend-item-img" style={{ borderRadius: '4px' }} />
                   ) : sceneState.childActivityChoice ? (
-                    <img src={kidActivities.find(a => a.id === sceneState.childActivityChoice)?.image} alt="Activity" className="friend-item-img"/>
+                    <img src={kidActivities.find(a => a.id === sceneState.childActivityChoice)?.image} alt="Activity" className="friend-item-img" />
                   ) : (
-                    <div style={{fontSize:'20px'}}>🤷</div>
+                    <div style={{ fontSize: '20px' }}>🤷</div>
                   )}
                   <span className="friend-item-text">
                     {sceneState.childActivityText ? sceneState.childActivityText : sceneState.childActivityDrawing ? 'Drawing' : kidActivities.find(a => a.id === sceneState.childActivityChoice)?.name}
@@ -1137,7 +1114,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 {/* Friend */}
                 <div className="friend-item">
                   <span className="friend-item-label">Best Friend</span>
-                  <div style={{fontSize:'24px', fontWeight:'bold', color:'#8B4513'}}>
+                  <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#8B4513' }}>
                     {sceneState.childFriendName.charAt(0)}
                   </div>
                   <span className="friend-item-text">{sceneState.childFriendName}</span>
@@ -1147,17 +1124,17 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           </div>
 
           <div className="badge-strip">
-            <span style={{fontSize:'24px'}}>🏆</span>
+            <span style={{ fontSize: '24px' }}>🏆</span>
             <span className="badge-text">Friendship Badge Unlocked!</span>
-            <span style={{fontSize:'24px'}}>🏆</span>
+            <span style={{ fontSize: '24px' }}>🏆</span>
           </div>
 
-          <button 
+          <button
             className="primary-cta"
             onClick={() => {
-              sceneActions.updateState({ 
-                  completed: true,
-                  showingCompletionScreen: true
+              sceneActions.updateState({
+                completed: true,
+                showingCompletionScreen: true
               });
             }}
           >
@@ -1208,7 +1185,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           characterImages={{ babyGanesha: babyGaneshaImg }}
           nextSceneName="Spell GANESHA"
           childName="super finder"
-          
+
           onContinue={() => {
             setTimeout(() => {
               if (onNavigate) {
@@ -1218,41 +1195,41 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
               }
             }, 100);
           }}
-          
+
           onReplay={() => {
             sceneActions.updateState({
-                randomFoods: shuffleArray(foods),
-                randomFriends: shuffleArray(friends),
-                randomColors: shuffleArray(colors),
-                randomActivities: shuffleArray(activities),
-                gamePhase: 'intro',
-                selectedFood: null,
-                selectedFriend: null,
-                wrongChoices: [], 
-                storyDiscoveries: [], 
-                childDiscoveries: [],
-                childFoodChoice: null,
-                childFoodDrawing: null,
-                childFoodText: null,
-                childColor: null,
-                childColorName: '',
-                childActivityChoice: null,
-                childActivityDrawing: null,
-                childActivityText: null,
-                childFriendName: '',
-                childFriendLetters: [],
-                showingCompletionScreen: false,
-                stars: 2,
-                completed: false,
-                currentModal: null, // Reset modal
-                draftData: null
+              randomFoods: shuffleArray(foods),
+              randomFriends: shuffleArray(friends),
+              randomColors: shuffleArray(colors),
+              randomActivities: shuffleArray(activities),
+              gamePhase: 'intro',
+              selectedFood: null,
+              selectedFriend: null,
+              wrongChoices: [],
+              storyDiscoveries: [],
+              childDiscoveries: [],
+              childFoodChoice: null,
+              childFoodDrawing: null,
+              childFoodText: null,
+              childColor: null,
+              childColorName: '',
+              childActivityChoice: null,
+              childActivityDrawing: null,
+              childActivityText: null,
+              childFriendName: '',
+              childFriendLetters: [],
+              showingCompletionScreen: false,
+              stars: 2,
+              completed: false,
+              currentModal: null, // Reset modal
+              draftData: null
             });
-            setShowDrawingPad(false); 
+            setShowDrawingPad(false);
             setDrawingMode(null);
             setShowTextInput(false);
             setTextInputMode(null);
           }}
-          
+
           onBackToMap={() => {
             if (onNavigate) {
               onNavigate('zone-welcome');
@@ -1260,7 +1237,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
               onBack();
             }
           }}
-          
+
           onHome={() => {
             if (onNavigate) {
               onNavigate('home');
