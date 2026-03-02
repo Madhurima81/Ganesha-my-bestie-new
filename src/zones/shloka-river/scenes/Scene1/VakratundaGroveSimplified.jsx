@@ -237,11 +237,11 @@ const VakratundaGroveContent = ({
     showPowerOverlay ||
     showCenteredWord;
 
-  useEffect(() => {
-    if (isFinalCelebrationActive && showPauseMenu) {
-      setShowPauseMenu(false);
-    }
-  }, [isFinalCelebrationActive, showPauseMenu]);
+  // useEffect(() => {
+  //   if (isFinalCelebrationActive && showPauseMenu) {
+  //     setShowPauseMenu(false);
+  //   }
+  // }, [isFinalCelebrationActive, showPauseMenu]);
 
   // Voice Guidance Hook
   const {
