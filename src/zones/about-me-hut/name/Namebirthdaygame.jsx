@@ -991,7 +991,7 @@ const handleFestivalClick = (festivalId) => {
           
           onContinue={() => {
             setTimeout(() => {
-              if (onNavigate) onNavigate('zone-complete');
+              if (onNavigate) onNavigate('scene-complete-continue');
               else if (onComplete) onComplete();
             }, 100);
           }}
