@@ -25,7 +25,7 @@ import Fireworks from '../../../../lib/components/feedback/Fireworks';
 import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
 import MagicalCardFlip from '../../../../lib/components/animation/MagicalCardFlip';
 import SymbolSidebar from '../../shared/components/SymbolSidebar';
-import OpeningModal from '../../shared/components/OpeningModal';
+import OpeningModal from '../../../shared/components/OpeningModal';
 
 import useSceneReset from '../../../../lib/hooks/useSceneReset';
 import BackToMapButton from '../../../../lib/components/navigation/BackToMapButton';
