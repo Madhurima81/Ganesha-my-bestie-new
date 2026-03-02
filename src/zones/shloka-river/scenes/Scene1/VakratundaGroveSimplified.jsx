@@ -589,6 +589,7 @@ const VakratundaGroveContent = ({
     <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
       <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
         <div className="vakratunda-simplified-container">
+          <HomeButton onNavigate={onNavigate} />
           <div className="river-background" style={{ backgroundImage: `url(${riverBackground})` }}>
 
             {/* HOME BUTTON — replaces PauseButton */}
