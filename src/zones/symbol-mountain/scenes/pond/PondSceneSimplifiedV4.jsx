@@ -8,12 +8,12 @@ import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../../lib/config/content/openingModals';
 import { getCompletionModal } from '../../../../lib/config/content';
 
-// Unified Components
-import UnifiedHeaderV2 from '../../../../lib/components/ui/Header/UnifiedHeaderV2';
+// Shared Components
+import OpeningModal from '../../shared/components/OpeningModal';
 
 // --- NEW MASTER LAYOUT & CONFIG ---
-import GameLayout from '../../../../lib/components/layout/GameLayout'; 
-import { pondHelpConfig } from './helpConfig'; 
+import GameLayout from '../../../../lib/components/layout/GameLayout';
+import { pondHelpConfig } from './helpConfig';
 // ----------------------------------
 
 // Import scene management components
@@ -76,15 +76,15 @@ const PHASES = {
 };
 
 const powerConfig = {
-  lotus: { 
-    name: 'Sacred Purity', 
+  lotus: {
+    name: 'Sacred Purity',
     image: symbolLotusColored,
-    color: '#4ECDC4' 
+    color: '#4ECDC4'
   },
-  trunk: { 
-    name: 'Divine Blessing', 
+  trunk: {
+    name: 'Divine Blessing',
     image: symbolTrunkColored,
-    color: '#FFD700' 
+    color: '#FFD700'
   }
 };
 
@@ -272,15 +272,15 @@ const PondSceneContent = ({
       PHASES.GOLDEN_VISIBLE,
       PHASES.ELEPHANT_VISIBLE
     ];
-    
-    if (glowPhases.includes(sceneState?.phase) && 
-        sceneState?.welcomeShown && 
-        !showPowerModal && 
-        !showPowerMission) {
+
+    if (glowPhases.includes(sceneState?.phase) &&
+      sceneState?.welcomeShown &&
+      !showPowerModal &&
+      !showPowerMission) {
       const timer = setTimeout(() => {
         setShowHintGlow(true);
       }, 20000);
-      
+
       return () => clearTimeout(timer);
     } else {
       setShowHintGlow(false);
@@ -323,7 +323,7 @@ const PondSceneContent = ({
       }), 500);
       return;
     }
-    
+
     // Lotus Blooming Phase
     if (sceneState.phase === PHASES.INITIAL || sceneState.phase === PHASES.SOME_BLOOMED) {
       const bloomed = sceneState.lotusStates?.filter(s => s === 1).length || 0;
@@ -332,10 +332,10 @@ const PondSceneContent = ({
       setTimeout(() => setShowResumePopup(false), 5000);
       return;
     }
-    
+
     // Elephant Phase
-    if (sceneState.phase === PHASES.GOLDEN_VISIBLE || 
-        sceneState.phase === PHASES.ELEPHANT_VISIBLE) {
+    if (sceneState.phase === PHASES.GOLDEN_VISIBLE ||
+      sceneState.phase === PHASES.ELEPHANT_VISIBLE) {
       sceneActions.updateState({
         discoveredSymbols: { ...sceneState.discoveredSymbols, lotus: true }
       });
@@ -344,7 +344,7 @@ const PondSceneContent = ({
       setTimeout(() => setShowResumePopup(false), 5000);
       return;
     }
-    
+
     // Completion Phase
     if (sceneState.phase === PHASES.COMPLETE) {
       sceneActions.updateState({
@@ -437,7 +437,7 @@ const PondSceneContent = ({
   const handleContinueLearning = () => {
     setShowPowerModal(false);
     const symbolKey = currentMissionSymbol;
-    
+
     if (symbolKey === 'lotus') {
       setTimeout(() => setShowSparkle('all-lotuses'), 500);
       setTimeout(() => {
@@ -449,7 +449,7 @@ const PondSceneContent = ({
         setShowSparkle('golden-lotus');
         setTimeout(() => setShowSparkle(null), 2000);
       }, 1500);
-      
+
     } else if (symbolKey === 'trunk') {
       setShowSparkle('golden-lotus-bloom');
       setTimeout(() => {
@@ -551,28 +551,28 @@ const PondSceneContent = ({
     }
     if (!sceneState || !sceneActions) return;
     if (!sceneState.welcomeShown) sceneActions.updateState({ welcomeShown: true });
-    
+
     const lotusStates = [...(sceneState.lotusStates || [0, 0, 0])];
-    
+
     if (lotusStates[index] === 1) {
       setShowSparkle(`lotus-${index}`);
       setTimeout(() => setShowSparkle(null), 1500);
       return;
     }
-    
+
     lotusStates[index] = 1;
     setShowSparkle(`lotus-${index}`);
     setTimeout(() => setShowSparkle(null), 1500);
-    
+
     const bloomedCount = lotusStates.filter(s => s === 1).length;
-    
+
     if (bloomedCount === 3) {
-      sceneActions.updateState({ 
+      sceneActions.updateState({
         lotusStates,
         phase: PHASES.SOME_BLOOMED,
         progress: { percentage: 50, starsEarned: 4 }
       });
-      
+
       setTimeout(() => {
         sceneActions.updateState({
           allLotusBloom: true,
@@ -598,21 +598,21 @@ const PondSceneContent = ({
   const handleGoldenLotusClick = () => {
     if (progressiveHintRef.current?.hideHint) progressiveHintRef.current.hideHint();
     if (!sceneState || !sceneActions) return;
-    
+
     if (sceneState.goldenLotusBloom) {
       setShowSparkle('golden-lotus-bloom');
       setTimeout(() => setShowSparkle(null), 1500);
       return;
     }
-    
+
     if (sceneState.elephantVisible) {
       setShowSparkle('golden-lotus-clicked');
       setTimeout(() => setShowSparkle(null), 1500);
       return;
     }
-    
+
     setShowSparkle('golden-lotus-clicked');
-    
+
     safeSetTimeout(() => {
       setShowSparkle(null);
       sceneActions.updateState({
@@ -632,29 +632,29 @@ const PondSceneContent = ({
       clearTimeout(resumePopupTimeoutRef.current);
     }
     if (!sceneState || !sceneActions || sceneState.elephantTransformed) return;
-    
+
     setShowSparkle('elephant');
-    
+
     const elephant = document.getElementById('elephant-container');
     if (elephant) {
       elephant.classList.add('elephant-slide-in');
-      
+
       safeSetTimeout(() => {
         elephant.style.right = '4%';
         elephant.classList.add('elephant-position-locked');
-        
+
         sceneActions.updateState({
           elephantTransformed: true,
           trunkActive: true,
           phase: PHASES.ELEPHANT_TRANSFORMED
         });
-        
+
         let dropCount = 0;
         const maxDrops = 15;
-        
+
         createWaterDrop();
         dropCount++;
-        
+
         const waterInterval = setInterval(() => {
           if (dropCount >= maxDrops) {
             clearInterval(waterInterval);
@@ -673,7 +673,7 @@ const PondSceneContent = ({
           createWaterDrop();
           dropCount++;
         }, 150);
-        
+
         timeoutsRef.current.push(waterInterval);
       }, 1000);
     }
@@ -725,14 +725,14 @@ const PondSceneContent = ({
   const renderCounter = () => {
     const lotusStates = sceneState?.lotusStates || [0, 0, 0];
     const bloomCount = lotusStates.filter(state => state === 1).length;
-    
+
     return (
       <div className="lotus-counter">
         <div className="counter-icon">
           <img src={bloomCount > 0 ? lotusBloomed : lotusClosed} alt="Lotus" />
         </div>
         <div className="counter-progress">
-          <div className="counter-progress-fill" style={{width: `${(bloomCount / 3) * 100}%`}} />
+          <div className="counter-progress-fill" style={{ width: `${(bloomCount / 3) * 100}%` }} />
         </div>
         <div className="counter-display">{bloomCount}/3</div>
       </div>
@@ -760,81 +760,52 @@ const PondSceneContent = ({
         <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
           <div className="pond-scene-container">
             <div className="pond-background" style={{ backgroundImage: `url(${pondBackground})` }}>
-              
+
               {/* REMOVE OLD MANUAL RENDERCOUNTER, UNIFIED HEADER IS HANDLED BELOW */}
-              
-{/* Phase Headers */}
-{!showPowerModal && !showPowerMission && sceneState.welcomeShown && (
-  <>
-    {/* 1. LOTUS BLOOMING PHASE */}
-    {(sceneState.phase === PHASES.INITIAL || sceneState.phase === PHASES.SOME_BLOOMED) && (
-      <UnifiedHeaderV2
-        zone="symbol-mountain"
-        title="BLOOM THE LOTUSES!"
-        // Count how many are bloomed (value 1)
-        currentRound={sceneState.lotusStates?.filter(s => s === 1).length || 0}
-        totalRounds={3}
-      />
-    )}
 
-    {/* 2. GOLDEN LOTUS PHASE */}
-    {sceneState.goldenLotusVisible && !sceneState.elephantVisible && (
-      <UnifiedHeaderV2
-        zone="symbol-mountain"
-        title="CLICK THE GOLDEN LOTUS!"
-        currentRound={0} // Just text, no progress needed yet
-        totalRounds={1}
-      />
-    )}
+              {/* Phase Headers */}
+              {!showPowerModal && !showPowerMission && sceneState.welcomeShown && (
+                <>
+                  {/* 1. LOTUS BLOOMING PHASE */}
+                  {(sceneState.phase === PHASES.INITIAL || sceneState.phase === PHASES.SOME_BLOOMED) && (
+                    <UnifiedHeaderV2
+                      zone="symbol-mountain"
+                      title="BLOOM THE LOTUSES!"
+                      // Count how many are bloomed (value 1)
+                      currentRound={sceneState.lotusStates?.filter(s => s === 1).length || 0}
+                      totalRounds={3}
+                    />
+                  )}
 
-    {/* 3. ELEPHANT SPRAYING PHASE */}
-    {sceneState.phase === PHASES.ELEPHANT_VISIBLE && (
-      <UnifiedHeaderV2
-        zone="symbol-mountain"
-        title="HELP THE ELEPHANT! Click trunk to spray water!"
-        currentRound={sceneState.trunkActive ? 1 : 0} 
-        totalRounds={1}
-      />
-    )}
-  </>
-)}
+                  {/* 2. GOLDEN LOTUS PHASE */}
+                  {sceneState.goldenLotusVisible && !sceneState.elephantVisible && (
+                    <UnifiedHeaderV2
+                      zone="symbol-mountain"
+                      title="CLICK THE GOLDEN LOTUS!"
+                      currentRound={0} // Just text, no progress needed yet
+                      totalRounds={1}
+                    />
+                  )}
 
-              {/* OPENING INSTRUCTION SCREEN */}
-              {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (() => {
-                const theme = getZoneTheme(zoneId);
-                const modal = getOpeningModal(zoneId, sceneId);
-                return (
-                  <div className="game-modal-overlay" style={{
-                    '--modal-card-bg': theme.parentBg,
-                    '--modal-text-primary': theme.textPrimary,
-                    '--modal-btn-bg': theme.buttonActiveBg,
-                    '--modal-btn-shadow': theme.glowColor
-                  }}>
-                    <div className="game-modal-content">
-                      <div className="game-modal-character">
-                        <img src={ganeshaCharacter} alt="Ganesha Character" />
-                      </div>
-                      <div className="game-modal-card">
-                        <h1 className="game-modal-title">{modal?.title || 'Wake the Lotus'}</h1>
-                        <p className="game-modal-subtitle">{modal?.description || 'A golden lotus is waiting.'}</p>
-                        <div className="game-modal-icons">
-                          <div className="game-modal-icon-item">
-                            <img src={symbolLotusColored} alt="Lotus" />
-                            <span className="game-modal-icon-label">Lotus</span>
-                          </div>
-                          <div className="game-modal-icon-item">
-                            <img src={symbolTrunkColored} alt="Trunk" />
-                            <span className="game-modal-icon-label">Trunk</span>
-                          </div>
-                        </div>
-                        <button className="game-modal-button" onClick={() => sceneActions.updateState({ welcomeShown: true })}>
-                          {modal?.buttonText || "Let's Explore"}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })()}
+                  {/* 3. ELEPHANT SPRAYING PHASE */}
+                  {sceneState.phase === PHASES.ELEPHANT_VISIBLE && (
+                    <UnifiedHeaderV2
+                      zone="symbol-mountain"
+                      title="HELP THE ELEPHANT! Click trunk to spray water!"
+                      currentRound={sceneState.trunkActive ? 1 : 0}
+                      totalRounds={1}
+                    />
+                  )}
+                </>
+              )}
+
+              <OpeningModal
+                zoneId={zoneId}
+                sceneId={sceneId}
+                onStart={() => sceneActions.updateState({ welcomeShown: true })}
+                characterImg={ganeshaCharacter}
+                showButton={true}
+              />
 
               {/* Lotus flowers */}
               {[0, 1, 2].map((index) => (
@@ -1030,7 +1001,7 @@ const PondSceneContent = ({
                 colors={['#FFD700', '#FF1493', '#00CED1', '#98FB98', '#FF6347', '#9370DB']}
                 onComplete={() => {
                   setShowSparkle(null);
-                  
+
                   const profileId = localStorage.getItem('activeProfileId');
                   if (profileId) {
                     GameStateManager.saveGameState('symbol-mountain', 'pond', {
@@ -1040,11 +1011,11 @@ const PondSceneContent = ({
                       phase: 'complete',
                       timestamp: Date.now()
                     });
-                    
+
                     localStorage.removeItem(`temp_session_${profileId}_symbol-mountain_pond`);
                     SimpleSceneManager.clearCurrentScene();
                   }
-                  
+
                   setShowSceneCompletion(true);
                 }}
               />
@@ -1063,7 +1034,7 @@ const PondSceneContent = ({
                 onComplete={() => {
                   console.log("Discovery 1: Golden Lotus discovered!");
                   setShowDiscoveryFlip1(false);
-                  sceneActions.updateState({ 
+                  sceneActions.updateState({
                     phase: PHASES.GOLDEN_VISIBLE,
                     goldenLotusVisible: true,
                     discoveredSymbols: { ...sceneState.discoveredSymbols, lotus: true }
@@ -1086,7 +1057,7 @@ const PondSceneContent = ({
                 onComplete={() => {
                   console.log("Discovery 2: Mission complete! 🎆");
                   setShowDiscoveryFlip2(false);
-                  sceneActions.updateState({ 
+                  sceneActions.updateState({
                     phase: PHASES.COMPLETE,
                     completed: true,
                     discoveredSymbols: { lotus: true, trunk: true }
@@ -1151,7 +1122,7 @@ const PondSceneContent = ({
                 onContinue={() => {
                   if (clearManualCloseTracking) clearManualCloseTracking();
                   if (hideCoach) hideCoach();
-                  
+
                   const profileId = localStorage.getItem('activeProfileId');
                   if (profileId) {
                     ProgressManager.updateSceneCompletion(profileId, 'symbol-mountain', 'pond', {
@@ -1170,7 +1141,7 @@ const PondSceneContent = ({
             )}
 
             {/* DELETE MANUAL TOCABOCA NAV - GameLayout HANDLES THIS NOW */}
-            
+
             {sceneState.welcomeShown && !showSceneCompletion && (
               <BackToMapButton onNavigate={onNavigate} />
             )}
@@ -1194,7 +1165,7 @@ const PondSceneContent = ({
               />
             )}
 
-          </div>      
+          </div>
         </MessageManager>
       </InteractionManager>
     </GameLayout>
