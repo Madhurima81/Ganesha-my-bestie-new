@@ -65,6 +65,7 @@ import fruitImg from './assets/images/food/fav-fruit.png';
 import pastaImg from './assets/images/food/fav-pasta.png';
 import dosaImg from './assets/images/food/fav-dosa.png';
 import riceImg from './assets/images/food/fav-rice.png';
+import HomeButton from '../../../lib/components/ui/HomeButton';
 
 // Error Boundary
 class ErrorBoundary extends React.Component {
