@@ -509,6 +509,7 @@ const SymbolMountainSceneContent = ({
       <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
         <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
           <div className="symbol-mountain-scene-v2-container">
+            <HomeButton onNavigate={onNavigate} />
             <div className="mountain-background" style={{ backgroundImage: `url(${mountainBackground})` }}>
 
               <OpeningModal
