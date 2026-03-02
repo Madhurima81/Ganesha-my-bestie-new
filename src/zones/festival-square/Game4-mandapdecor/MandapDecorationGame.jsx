@@ -2327,6 +2327,45 @@ const MandapDecorationGame = ({ onComplete, onNavigate, zoneId = 'festival-squar
 
 
 
+        {/* Game Pause Menu */}
+        <GamePauseMenu
+          show={showPauseMenu}
+          gameName="Mandap Decoration"
+          currentStars={gameState.stars}
+          hasDesignOption={false}
+          onResume={() => setShowPauseMenu(false)}
+          onRestart={() => {
+            setShowPauseMenu(false);
+            if (selectedMission) {
+              resetMissionState();
+              setShowMissionIntro(true);
+              if (selectedMission.type === 'light') { setTimeRemaining(60); setTimerActive(false); }
+            } else {
+              localStorage.removeItem('mandapGame');
+              setGameState({ phase: PHASES.CHOOSING, selectedCategory: null, selectedDecoration: null, placedDecorations: new Map(), decorationPositions: new Map(), decorationCount: 0, stars: 0, gameStartTime: Date.now(), completed: false, showDoneButton: false });
+              resetMissionState();
+              setHighlightedZones(new Set());
+              setShowSparkle(null);
+              setShowCulturalNote(null);
+              setMilestoneSparkle(false);
+              setShowSceneCompletion(false);
+              setNearDeleteZone(false);
+              setGuidanceMessage('Start fresh! Choose decorations to begin! 🎨');
+            }
+          }}
+          onBackToModes={() => {
+            setShowPauseMenu(false);
+            resetMissionState();
+            setSelectedMission(null);
+            setCurrentMode(GAME_MODES.SELECTION);
+          }}
+          onComplete={() => {
+            setShowPauseMenu(false);
+            setGameState(prev => ({ ...prev, completed: true }));
+            safeSetTimeout(() => { setShowSceneCompletion(true); }, 1500);
+          }}
+        />
+
         {/* Festival Square Completion */}
         {showSceneCompletion && (
           <FestivalSquareCompletion
