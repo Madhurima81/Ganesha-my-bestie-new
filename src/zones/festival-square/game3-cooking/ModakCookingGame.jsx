@@ -1,4 +1,5 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
+import OpeningModal from '../../../shared/components/OpeningModal.jsx';
 import './ModakCookingGame.css';
 import '../../shared/components/OpeningModal.css';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
@@ -105,55 +106,6 @@ const STEP_CONFIG = [
 ];
 
 
-// Opening Modal Component for Modak
-const OpeningModal = ({ show, onStart, zoneId = 'festival-square', sceneId = 'game3' }) => {
-  if (!show) return null;
-  const theme = getZoneTheme(zoneId);
-  const modal = getOpeningModal(zoneId, sceneId);
-
-  return (
-    <div className="game-modal-overlay" style={{
-      '--modal-card-bg': theme.parentBg,
-      '--modal-text-primary': theme.textPrimary,
-      '--modal-btn-bg': theme.buttonActiveBg,
-      '--modal-btn-shadow': theme.glowColor
-    }}>
-      <div className="game-modal-content">
-        {/* Character - Left Side */}
-        <div className="game-modal-character">
-          <img src={ganeshaChef} alt="Ganesha" />
-        </div>
-
-        {/* Card - Right Side */}
-        <div className="game-modal-card">
-          <h1 className="game-modal-title">{modal?.title || 'Modak Party'}</h1>
-          <p className="game-modal-subtitle">{modal?.description || 'See what you can make.'}</p>
-
-          {/* Icons Grid */}
-          <div className="game-modal-icons">
-            <div className="game-modal-icon-item">
-              <img src="/assets/festival-square/icons/recipe-icon.png" alt="Recipe" />
-              <span className="game-modal-icon-label">Recipe</span>
-            </div>
-            <div className="game-modal-icon-item">
-              <img src="/assets/festival-square/icons/cook-icon.png" alt="Cook" />
-              <span className="game-modal-icon-label">Cook</span>
-            </div>
-            <div className="game-modal-icon-item">
-              <img src="/assets/festival-square/icons/serve-icon.png" alt="Serve" />
-              <span className="game-modal-icon-label">Serve</span>
-            </div>
-          </div>
-
-          {/* Let's Explore Button */}
-          <button className="game-modal-button" onClick={onStart}>
-            {modal?.buttonText || "Let's Explore"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 // Error Boundary
 class ErrorBoundary extends React.Component {
@@ -905,11 +857,9 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
           {STEP_CONFIG.map((step, index) => (
             <div
               key={step.id}
-              className={`step-icon ${
-                sceneState.currentStep === step.id ? 'active' : ''
-              } ${
-                sceneState.completedSteps.includes(step.id) ? 'completed' : ''
-              }`}
+              className={`step-icon ${sceneState.currentStep === step.id ? 'active' : ''
+                } ${sceneState.completedSteps.includes(step.id) ? 'completed' : ''
+                }`}
             >
               <img src={step.icon} alt={step.title} />
               <div className="step-number">{index + 1}</div>
@@ -969,10 +919,11 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Opening Modal - Replaces Introduction Scene */}
       {sceneState.currentStep === STEPS.INTRODUCTION && (
         <OpeningModal
-          show={true}
           zoneId={zoneId}
           sceneId={sceneId}
           onStart={beginCooking}
+          characterImg={ganeshaChef}
+          showButton={true}
         />
       )}
 
@@ -995,9 +946,9 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
               <img
                 src={
                   mixingState.stirred ? brassMixingBowlAllIngredients :
-                  mixingState.jaggeryAdded ? brassMixingBowlCoconutJaggery :
-                  mixingState.coconutAdded ? brassMixingBowlCoconut :
-                  brassMixingBowlEmpty
+                    mixingState.jaggeryAdded ? brassMixingBowlCoconutJaggery :
+                      mixingState.coconutAdded ? brassMixingBowlCoconut :
+                        brassMixingBowlEmpty
                 }
                 alt="Mixing Bowl"
               />
@@ -1045,9 +996,9 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
               <img
                 src={
                   doughState.mixed ? perfectModakDough :
-                  doughState.waterAdded ? brassBowlFlourWater :
-                  doughState.flourAdded ? brassBowlWithFlour :
-                  brassMixingBowlEmpty
+                    doughState.waterAdded ? brassBowlFlourWater :
+                      doughState.flourAdded ? brassBowlWithFlour :
+                        brassMixingBowlEmpty
                 }
                 alt="Dough Bowl"
               />
@@ -1098,9 +1049,9 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
               <img
                 src={
                   shapingState.shaped ? doughCup :
-                  shapingState.flattened ? flatDough :
-                  shapingState.doughPlaced ? doughPortion :
-                  rollingMat
+                    shapingState.flattened ? flatDough :
+                      shapingState.doughPlaced ? doughPortion :
+                        rollingMat
                 }
                 alt="Shaping Surface"
                 className={`${shapingState.doughPlaced && !shapingState.flattened ? 'available clickable-item' : ''}`}
@@ -1141,8 +1092,8 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
               <img
                 src={
                   fillingState.sealed ? sealedModak :
-                  fillingState.filled ? cupWithFilling :
-                  doughCup
+                    fillingState.filled ? cupWithFilling :
+                      doughCup
                 }
                 alt="Modak"
                 id="cup-with-filling"
