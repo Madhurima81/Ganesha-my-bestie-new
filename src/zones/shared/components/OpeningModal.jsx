@@ -4,7 +4,6 @@ import { getOpeningModal } from '../../../lib/config/content';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 
 // Icon Mapping for Unified Style
-// This maps the keys in openingModals.js to the high-quality assets
 import symbolMooshikaColored from '../../symbol-mountain/shared/images/icons/symbol-mooshika-colored.png';
 import symbolModakColored from '../../symbol-mountain/shared/images/icons/symbol-modak-colored.png';
 import symbolBellyColored from '../../symbol-mountain/shared/images/icons/symbol-belly-colored.png';
@@ -47,7 +46,13 @@ const ICON_MAP = {
     'birthday': '🎂', // Fallback to emoji if no high-quality cake found yet
 };
 
-const OpeningModal = ({ zoneId, sceneId, onStart, characterImg }) => {
+const OpeningModal = ({
+    zoneId,
+    sceneId,
+    onStart,
+    characterImg,
+    showButton = true
+}) => {
     const content = getOpeningModal(zoneId, sceneId);
     if (!content) return null;
 
@@ -91,9 +96,11 @@ const OpeningModal = ({ zoneId, sceneId, onStart, characterImg }) => {
                         ))}
                     </div>
 
-                    <button className="game-modal-button" onClick={onStart}>
-                        {content.buttonText || "Let's Explore"}
-                    </button>
+                    {showButton && (
+                        <button className="game-modal-button reveal" onClick={onStart}>
+                            {content.buttonText || "Let's Explore"}
+                        </button>
+                    )}
                 </div>
             </div>
         </div>
