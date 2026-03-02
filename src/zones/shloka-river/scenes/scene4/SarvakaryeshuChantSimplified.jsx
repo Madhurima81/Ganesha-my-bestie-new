@@ -682,43 +682,19 @@ const handleSaveComponentState = (componentType, componentState) => {
           >
 
   {/* ==================== SCENE 4 INTRO: EVERY DAY, ALWAYS ==================== */}
-{sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (() => {
-  const theme = getZoneTheme(zoneId);
-  const modal = getOpeningModal(zoneId, sceneId);
-  return (
-    <div className="game-modal-overlay" style={{ '--modal-card-bg': theme.parentBg, '--modal-text-primary': theme.textPrimary, '--modal-btn-bg': theme.buttonActiveBg, '--modal-btn-shadow': theme.glowColor }}>
-      <div className="game-modal-content">
-        <div className="game-modal-character">
-          <img src={ganeshaHeadphones} alt="Ganesha Character" />
-        </div>
-        <div className="game-modal-card">
-          <h1 className="game-modal-title">{modal?.title || 'Care and Share'}</h1>
-          <div className="game-modal-icons">
-            <div className="game-modal-icon-item">
-              <img src={appSarvakaryeshu} alt="Day Helper" />
-              <span className="game-modal-icon-label">Day</span>
-            </div>
-            <div className="game-modal-icon-item">
-              <img src={appSarvada} alt="Night Helper" />
-              <span className="game-modal-icon-label">Night</span>
-            </div>
-          </div>
-          <button
-            className="game-modal-button"
-            onClick={() => {
-              sceneActions.updateState({ welcomeShown: true });
-              setModeForPhase('sarvakaryeshu');
-              setShowModeSelection(true);
-              setModeSelected(false);
-            }}
-          >
-            {modal?.buttonText || "Let's Explore"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-})()}
+{sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
+  <OpeningModal
+    zoneId={zoneId}
+    sceneId={sceneId}
+    characterImg={ganeshaHeadphones}
+    onStart={() => {
+      sceneActions.updateState({ welcomeShown: true });
+      setModeForPhase('sarvakaryeshu');
+      setShowModeSelection(true);
+      setModeSelected(false);
+    }}
+  />
+)}
 
             {/* Sarvada Story Modal 
             {showSarvadaStory && (
