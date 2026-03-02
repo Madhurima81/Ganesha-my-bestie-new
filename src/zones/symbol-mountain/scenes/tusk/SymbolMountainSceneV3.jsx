@@ -15,7 +15,7 @@ import { symbolHelpConfig } from './helpConfig';
 
 // Unified Components
 import UnifiedHeaderV2 from '../../../../lib/components/ui/Header/UnifiedHeaderV2';
-import OpeningModal from '../../shared/components/OpeningModal';
+import OpeningModal from '../../../shared/components/OpeningModal';
 
 // Import scene management components
 import SceneManager from "../../../../lib/components/scenes/SceneManager";

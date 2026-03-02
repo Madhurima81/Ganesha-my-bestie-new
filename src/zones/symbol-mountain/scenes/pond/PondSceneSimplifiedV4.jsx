@@ -8,7 +8,7 @@ import { getOpeningModal } from '../../../../lib/config/content/openingModals';
 import { getCompletionModal } from '../../../../lib/config/content';
 
 // Shared Components
-import OpeningModal from '../../shared/components/OpeningModal';
+import OpeningModal from '../../../shared/components/OpeningModal';
 
 // --- NEW MASTER LAYOUT & CONFIG ---
 import GameLayout from '../../../../lib/components/layout/GameLayout';
