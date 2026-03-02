@@ -374,6 +374,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   return (
     <div className="dreams-wishes-game" data-zone="about-me-hut">
       <img src={dreamsBg} alt="Background" className="dreams-background" />
+      <HomeButton onNavigate={onNavigate} />
 
       {/* Back Button */}
       {sceneState.gamePhase !== 'intro' && !sceneState.showingCompletionScreen && (
