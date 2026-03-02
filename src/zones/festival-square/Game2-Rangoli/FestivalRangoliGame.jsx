@@ -829,43 +829,6 @@ const FestivalRangoliGame = ({ onComplete, onNavigate, zoneId = 'festival-square
       )}
 
 
-      {/* Game Pause Menu */}
-      <GamePauseMenu
-        show={showPauseMenu}
-        gameName="Rangoli Artistry"
-        currentStars={gameState.stars}
-        hasDesignOption={true}
-
-        onResume={() => setShowPauseMenu(false)}
-
-        onRestart={() => {
-          setShowPauseMenu(false);
-          startOverCurrentDesign();
-        }}
-
-        // 3. "Change Mode" -> ALWAYS goes to the main menu
-        onBackToModes={() => {
-
-          setShowPauseMenu(false);
-
-          // IMPORTANT: Save current progress FIRST
-          saveCurrentProgress();
-
-          // Save which design they were working on
-          setLastWorkedDesign(gameState.selectedDesign);
-
-          // Go back to selection
-          setGameState(prev => ({
-            ...prev,
-            phase: PHASES.SELECTION
-          }));
-        }}
-
-        onComplete={() => {
-          setShowPauseMenu(false);
-          handleManualCompletion();
-        }}
-      />
 
 
       {/* Design Confirmation Modal - Simplified */}
