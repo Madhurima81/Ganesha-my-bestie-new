@@ -15,6 +15,7 @@ import GameStateManager from "../../../../lib/services/GameStateManager";
 import { useGameCoach } from '../../../../lib/components/coach/GameCoach';
 import ProgressManager from '../../../../lib/services/ProgressManager';
 import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
+import HomeButton from '../../../../lib/components/ui/HomeButton';
 import mooshikaCoach from "./assets/images/mooshika-coach.png";
 
 // UI Components
