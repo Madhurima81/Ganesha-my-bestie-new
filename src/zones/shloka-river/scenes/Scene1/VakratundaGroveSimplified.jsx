@@ -24,7 +24,7 @@ import SceneCompletionCelebration from '../../../../lib/components/celebration/S
 import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
 import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOverlay'; // ← superseded by SymbolAutoReveal
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
-import { PauseButton, PauseMenu } from '../../../../lib/components/ui/PauseMenu'; // ✅ Shared Pause Components
+// import { PauseButton, PauseMenu } from '../../../../lib/components/ui/PauseMenu'; // ← removed: replaced by home icon
 
 import AppSidebar from '../../shared/AppSidebar';
 // REMOVED: import SanskritWordMission (No longer needed)
