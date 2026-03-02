@@ -544,27 +544,33 @@ const getNextScene = (zoneId, currentSceneId) => {
       'sarvakaryeshu-chant',   // Scene 4: Learn Sarvakaryeshu
       'shloka-river-finale'    // Scene 5: Complete chant assembly
     ],
-      'festival-square': ['game1', 'game2', 'game3', 'game4']
-
+      'festival-square': ['game1', 'game2', 'game3', 'game4'],
+    // ✅ About Me Hut — circular (last scene loops back to first)
+    'about-me-hut': ['family-tree', 'favorite-food', 'dreams-wishes', 'name-birthday']
   };
-  
+
   const scenes = sceneProgression[zoneId];
   if (!scenes) {
     console.log(`🎯 HELPER: No progression defined for zone: ${zoneId}`);
     return null;
   }
-  
+
   const currentIndex = scenes.indexOf(currentSceneId);
   if (currentIndex === -1) {
     console.log(`🎯 HELPER: Scene ${currentSceneId} not found in ${zoneId}`);
     return null;
   }
-  
+
   if (currentIndex === scenes.length - 1) {
+    // ✅ About Me Hut: circular — loop back to first scene
+    if (zoneId === 'about-me-hut') {
+      console.log(`🔄 CIRCULAR: ${currentSceneId} → ${scenes[0]} in ${zoneId}`);
+      return scenes[0];
+    }
     console.log(`🎯 HELPER: ${currentSceneId} is last scene in ${zoneId}`);
-    return null; // Last scene in zone
+    return null; // Last scene in zone → zone-welcome
   }
-  
+
   const nextScene = scenes[currentIndex + 1];
   console.log(`🎯 HELPER: ${currentSceneId} → ${nextScene} in ${zoneId}`);
   return nextScene;
