@@ -1411,6 +1411,7 @@ const NirvighnamSceneContent = ({
         sceneActions={sceneActions}
       >
         <div className="pond-scene-container" data-phase={sceneState.phase}>
+          <HomeButton onNavigate={onNavigate} />
           <div className="pond-background" style={{
             position: 'relative',
             width: '100%',
