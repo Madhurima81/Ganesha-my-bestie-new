@@ -444,53 +444,57 @@ const VakratundaGroveContent = ({
     setShowSparkle(`${word}-celebration`);
     playWord(word);
 
-    const goToPowerOverlay = () => {
+    // ── Transition: word celebration → SymbolAutoReveal ──────────────────────
+    const triggerReveal = () => {
       setShowCenteredWord(null);
-      setShowSparkle(`${word}-to-sidebar`);
+      setShowSparkle(null);
 
-      sceneActions.updateState({
-        unlockedApps: { ...sceneState.unlockedApps, [word]: true }
+      // Show SymbolAutoReveal flip card
+      setRevealConfig({
+        symbolId:    word,
+        symbolImage: powerConfig[word].image,
+        symbolName:  powerConfig[word].name,
+        affirmation: powerConfig[word].affirmation,
+        sidebarTarget: getSidebarTarget(word)
       });
 
-      safeSetTimeout(() => {
-        setShowSparkle(null);
-        setCurrentWord(word);
-
-        // Show the Overlay and play power VO
-        setShowPowerOverlay(true);
-        setShowPowerButton(false);
-        setShowPracticeAgainButton(false);
-        if (isAudioOn) {
-          const powerVOKey = word === 'vakratunda' ? 'vakratundaPower' : 'mahakayaPower';
-          playVO(powerVOKey, () => {
-            playSfx('chime');
-            setShowPowerButton(true);
-            setShowPracticeAgainButton(true);
-          });
-        } else {
-          setShowPowerButton(true);
-          setShowPracticeAgainButton(true);
-        }
-
-        sceneActions.updateState({
-          phase: word === 'vakratunda' ? PHASES.VAKRATUNDA_POWER : PHASES.MAHAKAYA_POWER
-        });
-      }, 2000);
+      sceneActions.updateState({
+        phase: word === 'vakratunda' ? PHASES.VAKRATUNDA_POWER : PHASES.MAHAKAYA_POWER
+      });
     };
 
-    // Word reveal VO -> then transition to Power Unlock Overlay
+    // Word reveal VO -> then transition to SymbolAutoReveal
     if (isAudioOn) {
       safeSetTimeout(() => {
         playVO(wordRevealKey, () => {
-          goToPowerOverlay();
+          triggerReveal();
         });
       }, 2000);
     } else {
       // Audio off fallback - use timed transitions
       safeSetTimeout(() => {
-        goToPowerOverlay();
+        triggerReveal();
       }, 5000);
     }
+
+    // ── Old goToPowerOverlay (superseded by SymbolAutoReveal) ──
+    // const goToPowerOverlay = () => {
+    //   setShowCenteredWord(null);
+    //   setShowSparkle(`${word}-to-sidebar`);
+    //   sceneActions.updateState({ unlockedApps: { ...sceneState.unlockedApps, [word]: true } });
+    //   safeSetTimeout(() => {
+    //     setShowSparkle(null);
+    //     setCurrentWord(word);
+    //     setShowPowerOverlay(true);
+    //     setShowPowerButton(false);
+    //     setShowPracticeAgainButton(false);
+    //     if (isAudioOn) {
+    //       const powerVOKey = word === 'vakratunda' ? 'vakratundaPower' : 'mahakayaPower';
+    //       playVO(powerVOKey, () => { playSfx('chime'); setShowPowerButton(true); setShowPracticeAgainButton(true); });
+    //     } else { setShowPowerButton(true); setShowPracticeAgainButton(true); }
+    //     sceneActions.updateState({ phase: word === 'vakratunda' ? PHASES.VAKRATUNDA_POWER : PHASES.MAHAKAYA_POWER });
+    //   }, 2000);
+    // };
   };
 
   // ✅ FIXED: Direct transitions, no "Save Animal" mission
