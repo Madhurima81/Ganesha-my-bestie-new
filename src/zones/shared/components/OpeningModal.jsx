@@ -142,12 +142,27 @@ const OpeningModal = ({
     sceneId,
     onStart,
     characterImg,
-    showButton = true
+    showButton = true,
+    // Direct content props — use these when not using zoneId+sceneId config lookup
+    title: titleProp,
+    description: descriptionProp,
+    icons: iconsProp,
+    iconLabels: iconLabelsProp,
+    buttonText: buttonTextProp,
 }) => {
-    const content = getOpeningModal(zoneId, sceneId);
-    if (!content) return null;
+    const configContent = (zoneId && sceneId) ? getOpeningModal(zoneId, sceneId) : null;
 
-    const theme = getZoneTheme(zoneId);
+    const content = {
+        title: titleProp ?? configContent?.title,
+        description: descriptionProp ?? configContent?.description,
+        icons: iconsProp ?? configContent?.icons,
+        iconLabels: iconLabelsProp ?? configContent?.iconLabels,
+        buttonText: buttonTextProp ?? configContent?.buttonText,
+    };
+
+    if (!content.title && !content.description) return null;
+
+    const theme = zoneId ? getZoneTheme(zoneId) : {};
 
     return (
         <div className="game-modal-overlay" style={{
