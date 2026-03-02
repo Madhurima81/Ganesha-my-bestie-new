@@ -631,61 +631,16 @@ const VakratundaGroveContent = ({
             )}
             ── End blur overlay ── */}
 
-            {/* 3. PAUSE MENU - Using shared component */}
+            {/* ── PauseMenu — REMOVED (replaced by home icon) ──
             <PauseMenu
               show={showPauseMenu && !isFinalCelebrationActive}
-              onResume={() => {
-                setShowPauseMenu(false);
-
-                // SPECIAL CASE: If paused during word reveal celebration, skip to SymbolAutoReveal
-                if ((sceneState.phase === PHASES.VAKRATUNDA_COMPLETE || sceneState.phase === PHASES.MAHAKAYA_COMPLETE) && showCenteredWord) {
-                  console.log('🔄 Resuming from word reveal celebration, triggering SymbolAutoReveal...');
-                  const word = sceneState.phase === PHASES.VAKRATUNDA_COMPLETE ? 'vakratunda' : 'mahakaya';
-
-                  safeSetTimeout(() => {
-                    setShowCenteredWord(null);
-                    setShowSparkle(null);
-
-                    setRevealConfig({
-                      symbolId:    word,
-                      symbolImage: powerConfig[word].image,
-                      symbolName:  powerConfig[word].name,
-                      affirmation: powerConfig[word].affirmation,
-                      sidebarTarget: getSidebarTarget(word)
-                    });
-
-                    sceneActions.updateState({
-                      phase: word === 'vakratunda' ? PHASES.VAKRATUNDA_POWER : PHASES.MAHAKAYA_POWER
-                    });
-                  }, 500);
-
-                  return; // Don't restart idle timer
-                }
-
-                // Restart idle timer ONLY for active game phases (not celebration/complete/power phases)
-                const activeGamePhases = [PHASES.VAKRATUNDA_GAME, PHASES.MAHAKAYA_GAME];
-                const celebrationPhases = [PHASES.VAKRATUNDA_COMPLETE, PHASES.VAKRATUNDA_POWER, PHASES.MAHAKAYA_COMPLETE, PHASES.MAHAKAYA_POWER];
-
-                // Don't restart idle timer if we're in celebration/transition OR if overlay/centered word is showing
-                if (activeGamePhases.includes(sceneState.phase) &&
-                    !celebrationPhases.includes(sceneState.phase) &&
-                    !showPowerOverlay &&
-                    !revealConfig &&
-                    !showCenteredWord) {
-                  startIdleTimer();
-                }
-              }}
-              onBackToMap={() => {
-                setShowPauseMenu(false);
-                onNavigate?.('zones');
-              }}
+              onResume={() => { setShowPauseMenu(false); startIdleTimer(); }}
+              onBackToMap={() => { setShowPauseMenu(false); onNavigate?.('zones'); }}
               isSoundOn={isAudioOn}
-              onSoundToggle={() => {
-                if (isAudioOn) stopVoice(); // Stop VO when muting
-                setIsAudioOn(!isAudioOn);
-              }}
+              onSoundToggle={() => { if (isAudioOn) stopVoice(); setIsAudioOn(!isAudioOn); }}
               zoneName="Shloka River"
             />
+            ── End PauseMenu ── */}
 
             {/* 3. OPENING MODAL (Using Zone Theme Colors) */}
             {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (() => {
