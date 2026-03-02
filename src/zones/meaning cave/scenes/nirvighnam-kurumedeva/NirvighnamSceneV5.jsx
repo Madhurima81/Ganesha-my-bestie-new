@@ -1,5 +1,6 @@
 ﻿// zones/cave-of-secrets/scenes/nirvighnam-kurumedeva/NirvighnamScene.jsx
 import React, { useState, useEffect, useRef } from 'react';
+import OpeningModal from '../../../shared/components/OpeningModal.jsx';
 import './NirvighnamScene.css';
 import '../../../shared/components/OpeningModal.css';
 import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
@@ -77,13 +78,13 @@ import kurumedevaSymbol from '../../assets/images/symbols/kurumedeva-symbol.png'
 // ✅ NEW: Simple 3-click fog reveal component
 const SimpleFogClicker = ({ emotionId, fogImage, rockImage, onComplete, isActive, fogProgress = 0 }) => {
   const [isCompleted, setIsCompleted] = useState(false);
-  
+
   if (!isActive && fogProgress === 0) return null;
 
   const opacity = Math.max(0, 1 - (fogProgress / 3));
 
   return (
-    <div 
+    <div
 
       className={`simple-fog-clicker fog-${emotionId}`}
       style={{
@@ -98,7 +99,7 @@ const SimpleFogClicker = ({ emotionId, fogImage, rockImage, onComplete, isActive
       }}
     >
       {/* Rock Background */}
-      <img 
+      <img
         src={rockImage}
         alt={`${emotionId} rock`}
         style={{
@@ -112,10 +113,10 @@ const SimpleFogClicker = ({ emotionId, fogImage, rockImage, onComplete, isActive
           zIndex: 1
         }}
       />
-      
+
       {/* Fog Overlay */}
       {fogProgress < 3 && (
-        <img 
+        <img
           src={fogImage}
           alt={`${emotionId} fog`}
           style={{
@@ -132,8 +133,8 @@ const SimpleFogClicker = ({ emotionId, fogImage, rockImage, onComplete, isActive
           }}
         />
       )}
-      
-{/* Initial Instruction - BEFORE first click */}
+
+      {/* Initial Instruction - BEFORE first click */}
       {isActive && fogProgress === 0 && (
         <div style={{
           position: 'absolute',
@@ -155,7 +156,7 @@ const SimpleFogClicker = ({ emotionId, fogImage, rockImage, onComplete, isActive
           👆 Click 3 times to clear!
         </div>
       )}
-      
+
       {/* Progress Counter - AFTER first click */}
       {isActive && fogProgress > 0 && fogProgress < 3 && (
         <div style={{
@@ -196,14 +197,14 @@ const SimpleFogClicker = ({ emotionId, fogImage, rockImage, onComplete, isActive
 
 const SimpleRockPlacer = ({ rockId, rockImage, emotion, onPlace, isPlaced, isUsed, isClickable = true }) => {
   const [isAnimating, setIsAnimating] = useState(false);  // ✅ This was missing!
-  
+
   const handleClick = () => {
     // Check if clickable first
     if (!isClickable) {
       console.log(`🚫 Rock ${rockId} not clickable yet - place previous rocks first`);
       return;
     }
-    
+
     if (isPlaced || isUsed || isAnimating) return;
 
     console.log(`🪨 Rock clicked: ${rockId}`);
@@ -220,7 +221,7 @@ const SimpleRockPlacer = ({ rockId, rockImage, emotion, onPlace, isPlaced, isUse
   if (isUsed) return null;
 
   return (
-    <div 
+    <div
       onClick={handleClick}
       style={{
         width: '80px',
@@ -233,23 +234,23 @@ const SimpleRockPlacer = ({ rockId, rockImage, emotion, onPlace, isPlaced, isUse
         filter: isAnimating ? 'blur(2px)' : (!isClickable ? 'grayscale(0.5)' : 'none')
       }}
     >
-      <img 
+      <img
         src={rockImage}
         alt={`${emotion} rock`}
-        style={{ 
-          width: '100%', 
+        style={{
+          width: '100%',
           height: '100%',
           borderRadius: '12px',
-          border: isAnimating ? '3px solid rgba(255, 215, 0, 0.3)' : 
-                  !isClickable ? '3px solid rgba(128, 128, 128, 0.3)' :
-                  '3px solid rgba(255, 215, 0, 0.6)',
-          boxShadow: isAnimating ? 'none' : 
-                     !isClickable ? '0 2px 4px rgba(0,0,0,0.2)' :
-                     '0 4px 8px rgba(0,0,0,0.3)',
+          border: isAnimating ? '3px solid rgba(255, 215, 0, 0.3)' :
+            !isClickable ? '3px solid rgba(128, 128, 128, 0.3)' :
+              '3px solid rgba(255, 215, 0, 0.6)',
+          boxShadow: isAnimating ? 'none' :
+            !isClickable ? '0 2px 4px rgba(0,0,0,0.2)' :
+              '0 4px 8px rgba(0,0,0,0.3)',
           transition: 'all 0.3s ease'
         }}
       />
-      
+
       {!isAnimating && isClickable && (
         <div style={{
           position: 'absolute',
@@ -277,14 +278,14 @@ const getBridgeRockPosition = (displayIndex) => {
   // Center over the river gap
   const bridgeCenterX = 50;
   const bridgeCenterY = 60;
-  
+
   const positions = [
     { top: bridgeCenterY, left: bridgeCenterX - 10 },  // Left
     { top: bridgeCenterY - 3, left: bridgeCenterX },   // Center (slightly higher)
     { top: bridgeCenterY, left: bridgeCenterX + 10 }   // Right
   ];
   const pos = positions[displayIndex] || positions[0];
-  
+
   return {
     top: `${pos.top}%`,
     left: `${pos.left}%`
@@ -292,7 +293,7 @@ const getBridgeRockPosition = (displayIndex) => {
 };
 
 const CAVE_PHASES = {
-    STORY_INTRO: 'story_intro', // ← ADD THIS LINE
+  STORY_INTRO: 'story_intro', // ← ADD THIS LINE
 
   DOOR1_ACTIVE: 'door1_active',
   DOOR1_COMPLETE: 'door1_complete',
@@ -300,14 +301,14 @@ const CAVE_PHASES = {
   CRYSTAL_FOG_ACTIVE: 'crystal_fog_active',
   CRYSTAL_FOG_COMPLETE: 'crystal_fog_complete',
   NIRVIGHNAM_LEARNING: 'nirvighnam_learning',
-  
+
   DOOR2_ACTIVE: 'door2_active',
   DOOR2_COMPLETE: 'door2_complete',
   BRIDGE_BUILDING_INTRO: 'bridge_building_intro',
   BRIDGE_BUILDING_ACTIVE: 'bridge_building_active',
   BRIDGE_BUILDING_COMPLETE: 'bridge_building_complete',
   KURUME_DEVA_LEARNING: 'kurume_deva_learning',
-  
+
   SCENE_CELEBRATION: 'scene_celebration',
   COMPLETE: 'complete'
 };
@@ -361,15 +362,15 @@ const EMOTION_PAIRS = [
 
 // Power configuration for celebrations
 const powerConfig = {
-  nirvighnam: { 
-    name: 'Obstacle Remover Power', 
+  nirvighnam: {
+    name: 'Obstacle Remover Power',
     image: nirvighnamSymbol,
-    color: '#9C27B0' 
+    color: '#9C27B0'
   },
-  kurumedeva: { 
-    name: 'Divine Help Power', 
+  kurumedeva: {
+    name: 'Divine Help Power',
     image: kurumedevaSymbol,
-    color: '#FFD700' 
+    color: '#FFD700'
   }
 };
 
@@ -449,7 +450,7 @@ const NirvighnamScene = ({
           bridgeStability: 0,
           bridgeCompleted: false,
           ganeshaCanCross: false,
-          
+
           // Sanskrit learning
           learnedWords: {
             vakratunda: { learned: true, scene: 1 },
@@ -459,17 +460,17 @@ const NirvighnamScene = ({
             nirvighnam: { learned: false, scene: 3 },
             kurumedeva: { learned: false, scene: 3 }
           },
-          
+
           // Scene progression
-phase: CAVE_PHASES.DOOR1_ACTIVE, // ✅ Was 'STORY_INTRO'
+          phase: CAVE_PHASES.DOOR1_ACTIVE, // ✅ Was 'STORY_INTRO'
           currentFocus: 'door1',
 
-         
-          
+
+
           // Discovery and popup states
           discoveredSymbols: {},
           currentPopup: null,
-          
+
           // Progress tracking
           stars: 0,
           completed: false,
@@ -478,7 +479,7 @@ phase: CAVE_PHASES.DOOR1_ACTIVE, // ✅ Was 'STORY_INTRO'
             starsEarned: 0,
             completed: false
           },
-          
+
           // UI states
           showingCompletionScreen: false,
           fireworksCompleted: false
@@ -514,16 +515,16 @@ const NirvighnamSceneContent = ({
   if (!sceneState?.phase) sceneActions.updateState({ phase: CAVE_PHASES.DOOR1_ACTIVE });
 
   // GameCoach removed - using direct navigation
-  const hideCoach = () => {};
-  const clearManualCloseTracking = () => {};
+  const hideCoach = () => { };
+  const clearManualCloseTracking = () => { };
 
   const { resetScene } = useSceneReset(
-    sceneActions, 
-    'cave-of-secrets', 
-    'nirvighnam-kurumedeva', 
+    sceneActions,
+    'cave-of-secrets',
+    'nirvighnam-kurumedeva',
     getSceneResetConfig('nirvighnam-kurumedeva')
   );
-  
+
   // State management
   const [showSparkle, setShowSparkle] = useState(null);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
@@ -538,30 +539,30 @@ const NirvighnamSceneContent = ({
   const [showStoryModal, setShowStoryModal] = useState(null); // 'nirvighnam' or 'kurumedeva'
 
   // --- Fog Crystal Control (sequential clearing) ---
-const [activeCrystal, setActiveCrystal] = useState(null);
-const [fogProgress, setFogProgress] = useState({});  // Tracks clicks per crystal
-const [hintMessage, setHintMessage] = useState(null);
+  const [activeCrystal, setActiveCrystal] = useState(null);
+  const [fogProgress, setFogProgress] = useState({});  // Tracks clicks per crystal
+  const [hintMessage, setHintMessage] = useState(null);
 
   // ========== 🛡️ CLICK PROTECTION STATE ==========
-const [clickLocked, setClickLocked] = useState(false);
-const lastClickTime = useRef(0);
-const activeTouches = useRef(0);
-const isProcessingClick = useRef(false);
+  const [clickLocked, setClickLocked] = useState(false);
+  const lastClickTime = useRef(0);
+  const activeTouches = useRef(0);
+  const isProcessingClick = useRef(false);
 
-// Discovery overlay states
-const [showDiscoveryFlip1, setShowDiscoveryFlip1] = useState(false); // First discovery
-const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false); // Second discovery
+  // Discovery overlay states
+  const [showDiscoveryFlip1, setShowDiscoveryFlip1] = useState(false); // First discovery
+  const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false); // Second discovery
 
-// Resume popup
-const [showResumePopup, setShowResumePopup] = useState(false);
-const [resumeMessage, setResumeMessage] = useState('');
-const resumePopupTimeoutRef = useRef(null);
+  // Resume popup
+  const [showResumePopup, setShowResumePopup] = useState(false);
+  const [resumeMessage, setResumeMessage] = useState('');
+  const resumePopupTimeoutRef = useRef(null);
 
-// Reload handler
-const reloadHandledRef = useRef(false);
+  // Reload handler
+  const reloadHandledRef = useRef(false);
 
 
-  
+
 
   // Refs
   const timeoutsRef = useRef([]);
@@ -573,21 +574,21 @@ const reloadHandledRef = useRef(false);
   const profileName = activeProfile?.name || 'little explorer';
 
   // Show first modal on mount
-/*useEffect(() => {
-  if (sceneState.phase === 'STORY_INTRO' && !showStoryModal) {
-    setTimeout(() => {
-      setShowStoryModal('nirvighnam');
-    }, 500);
-  }
-}, [sceneState.phase]);*/
+  /*useEffect(() => {
+    if (sceneState.phase === 'STORY_INTRO' && !showStoryModal) {
+      setTimeout(() => {
+        setShowStoryModal('nirvighnam');
+      }, 500);
+    }
+  }, [sceneState.phase]);*/
 
-// Auto-hide hint message after 2 seconds
-useEffect(() => {
-  if (hintMessage) {
-    const timer = setTimeout(() => setHintMessage(null), 2000);
-    return () => clearTimeout(timer);
-  }
-}, [hintMessage]);
+  // Auto-hide hint message after 2 seconds
+  useEffect(() => {
+    if (hintMessage) {
+      const timer = setTimeout(() => setHintMessage(null), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [hintMessage]);
 
   // Safe setTimeout function
   const safeSetTimeout = (callback, delay) => {
@@ -597,27 +598,27 @@ useEffect(() => {
   };
 
   const playAudio = (audioPath, volume = 1.0) => {
-  try {
-    const audio = new Audio(audioPath);
-    audio.volume = volume;
-    audio.play().catch(() => {});
-  } catch (error) {
-    console.warn('Audio failed:', error);
-  }
-};
-
-const playSyllable = (syllable) => {
-  const map = {
-    'nir': 'nirvighnam-nir',
-    'vigh': 'nirvighnam-vigh',
-    'nam': 'nirvighnam-nam',
-    'kuru': 'kurume-kuru',
-    'me': 'kurume-me',
-    'de': 'deva-de',
-    'va': 'deva-va'
+    try {
+      const audio = new Audio(audioPath);
+      audio.volume = volume;
+      audio.play().catch(() => { });
+    } catch (error) {
+      console.warn('Audio failed:', error);
+    }
   };
-  playAudio(`/audio/syllables/${map[syllable] || syllable}.mp3`);
-};
+
+  const playSyllable = (syllable) => {
+    const map = {
+      'nir': 'nirvighnam-nir',
+      'vigh': 'nirvighnam-vigh',
+      'nam': 'nirvighnam-nam',
+      'kuru': 'kurume-kuru',
+      'me': 'kurume-me',
+      'de': 'deva-de',
+      'va': 'deva-va'
+    };
+    playAudio(`/audio/syllables/${map[syllable] || syllable}.mp3`);
+  };
 
   // Clear local storage function
   const clearLocalStorage = () => {
@@ -637,9 +638,9 @@ const playSyllable = (syllable) => {
             keysToRemove.push(key);
           }
         }
-        
+
         keysToRemove.forEach(key => localStorage.removeItem(key));
-        
+
         console.log('🗑️ Local storage cleared:', keysToRemove.length, 'keys removed');
         alert('Local storage cleared! The page will reload.');
         window.location.reload();
@@ -658,170 +659,170 @@ const playSyllable = (syllable) => {
   }, []);
 
   // ==================== RESTORE FOG GAME STATE ON RELOAD ====================
-useEffect(() => {
-  if (isReload && sceneState.phase === CAVE_PHASES.CRYSTAL_FOG_ACTIVE) {
-    console.log('🔄 Restoring fog game state on reload');
-    
-    // ✅ Restore active crystal
-    if (sceneState.selectedCrystal) {
-      console.log('📌 Restoring active crystal:', sceneState.selectedCrystal);
-      setActiveCrystal(sceneState.selectedCrystal);
+  useEffect(() => {
+    if (isReload && sceneState.phase === CAVE_PHASES.CRYSTAL_FOG_ACTIVE) {
+      console.log('🔄 Restoring fog game state on reload');
+
+      // ✅ Restore active crystal
+      if (sceneState.selectedCrystal) {
+        console.log('📌 Restoring active crystal:', sceneState.selectedCrystal);
+        setActiveCrystal(sceneState.selectedCrystal);
+      }
+
+      // ✅ Restore fog progress if you saved it (optional)
+      if (sceneState.fogClickProgress) {
+        console.log('📌 Restoring fog progress:', sceneState.fogClickProgress);
+        setFogProgress(sceneState.fogClickProgress);
+      }
     }
-    
-    // ✅ Restore fog progress if you saved it (optional)
-    if (sceneState.fogClickProgress) {
-      console.log('📌 Restoring fog progress:', sceneState.fogClickProgress);
-      setFogProgress(sceneState.fogClickProgress);
-    }
-  }
-}, [isReload, sceneState.phase, sceneState.selectedCrystal]);
+  }, [isReload, sceneState.phase, sceneState.selectedCrystal]);
 
   useEffect(() => {
-  if (!isReload || reloadHandledRef.current || !sceneState.welcomeShown) {
-    return;
-  }
+    if (!isReload || reloadHandledRef.current || !sceneState.welcomeShown) {
+      return;
+    }
 
-  console.log('🔄 RELOAD DETECTED - Phase:', sceneState.phase);
-  reloadHandledRef.current = true;
+    console.log('🔄 RELOAD DETECTED - Phase:', sceneState.phase);
+    reloadHandledRef.current = true;
 
-  // ============================================
-  // 1. DISCOVERY: NIRVIGHNAM (Obstacle Remover)
-  // ============================================
-  if (sceneState.phase === CAVE_PHASES.NIRVIGHNAM_LEARNING) {
-    console.log('📌 Reload: Nirvighnam Discovery');
-    
-    sceneActions.updateState({
-      learnedWords: {
-        ...sceneState.learnedWords,
-        nirvighnam: { learned: true, scene: 3 }
-      }
-    });
-    
-    // Force the card to appear
-    setTimeout(() => setShowDiscoveryFlip1(true), 500);
-    return;
-  }
+    // ============================================
+    // 1. DISCOVERY: NIRVIGHNAM (Obstacle Remover)
+    // ============================================
+    if (sceneState.phase === CAVE_PHASES.NIRVIGHNAM_LEARNING) {
+      console.log('📌 Reload: Nirvighnam Discovery');
 
-  // ============================================
-  // 2. DISCOVERY: KURUMEDEVA (Solution Builder)
-  // ============================================
-  if (sceneState.phase === CAVE_PHASES.KURUME_DEVA_LEARNING) {
-    console.log('📌 Reload: Kurumedeva Discovery');
-    
-    sceneActions.updateState({
-      learnedWords: {
-        ...sceneState.learnedWords,
-        nirvighnam: { learned: true, scene: 3 },
-        kurumedeva: { learned: true, scene: 3 }
-      }
-    });
-    
-    // Force the card to appear
-    setTimeout(() => setShowDiscoveryFlip2(true), 500);
-    return;
-  }
-
-  // ============================================
-  // 3. GAME 1: CRYSTAL FOG (Check Completion)
-  // ============================================
-
-  
-  // ✅ Check if complete
-  if (sceneState.phase === CAVE_PHASES.CRYSTAL_FOG_ACTIVE) {
-  console.log('📌 Reload: Crystal Fog phase');
-  
-  const clearedCount = sceneState.clearedFogs?.length || 0;
-  
-  // ✅ Check if complete
-  if (clearedCount >= 3) {
-    console.log('📌 All fog cleared, transitioning to learning phase');
-    sceneActions.updateState({
-      phase: CAVE_PHASES.NIRVIGHNAM_LEARNING,
-      crystalFogCompleted: true
-    });
-    return;
-  }
-  
-  // ✅ Check what stage user is at
-  const selectedCrystal = sceneState.selectedCrystal;
-  
-  if (selectedCrystal) {
-    // Mid-fog-clearing
-    setResumeMessage(`Keep clicking the fog to clear it!`);
-  } else {
-    // Need to pick crystal
-    setResumeMessage(`Click a crystal to start! (${clearedCount}/3 cleared)`);
-  }
-  
-  setShowResumePopup(true);
-  
-  if (resumePopupTimeoutRef.current) {
-    clearTimeout(resumePopupTimeoutRef.current);
-  }
-  resumePopupTimeoutRef.current = setTimeout(() => {
-    setShowResumePopup(false);
-  }, 5000);
-  
-  return;
-}
-
-  // ============================================
-  // 4. GAME 2: BRIDGE BUILDING (Check Completion)
-  // ============================================
-  if (sceneState.phase === CAVE_PHASES.BRIDGE_BUILDING_ACTIVE) {
-    const bridgeCount = sceneState.bridgeRocks?.length || 0;
-    
-    // ✅ If complete, force transition to Discovery
-    if (bridgeCount >= 3) {
-      console.log('📌 Bridge complete on reload, triggering discovery');
-      
       sceneActions.updateState({
-        bridgeCompleted: true,
-        phase: CAVE_PHASES.KURUME_DEVA_LEARNING
+        learnedWords: {
+          ...sceneState.learnedWords,
+          nirvighnam: { learned: true, scene: 3 }
+        }
       });
 
+      // Force the card to appear
+      setTimeout(() => setShowDiscoveryFlip1(true), 500);
+      return;
+    }
+
+    // ============================================
+    // 2. DISCOVERY: KURUMEDEVA (Solution Builder)
+    // ============================================
+    if (sceneState.phase === CAVE_PHASES.KURUME_DEVA_LEARNING) {
+      console.log('📌 Reload: Kurumedeva Discovery');
+
+      sceneActions.updateState({
+        learnedWords: {
+          ...sceneState.learnedWords,
+          nirvighnam: { learned: true, scene: 3 },
+          kurumedeva: { learned: true, scene: 3 }
+        }
+      });
+
+      // Force the card to appear
       setTimeout(() => setShowDiscoveryFlip2(true), 500);
       return;
     }
 
-    // Resume popup
-    setResumeMessage(`Build the bridge! ${bridgeCount}/3 rocks placed!`);
-    setShowResumePopup(true);
-    if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
-    resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
-    return;
-  }
+    // ============================================
+    // 3. GAME 1: CRYSTAL FOG (Check Completion)
+    // ============================================
 
-  // ============================================
-  // 5. DOORS & COMPLETION
-  // ============================================
-  
-  // Door 1 Active
-  if (sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE) {
-    const placed = sceneState.door1SyllablesPlaced?.length || 0;
-    if (placed < 3) {
-      setResumeMessage(`Spell Nirvighnam! ${placed}/3 syllables placed!`);
-      setShowResumePopup(true);
-      setTimeout(() => setShowResumePopup(false), 5000);
-    }
-    return;
-  }
 
-  // Scene Complete
-  if (sceneState.phase === CAVE_PHASES.COMPLETE) {
-    sceneActions.updateState({
-      learnedWords: {
-        nirvighnam: { learned: true, scene: 3 },
-        kurumedeva: { learned: true, scene: 3 }
+    // ✅ Check if complete
+    if (sceneState.phase === CAVE_PHASES.CRYSTAL_FOG_ACTIVE) {
+      console.log('📌 Reload: Crystal Fog phase');
+
+      const clearedCount = sceneState.clearedFogs?.length || 0;
+
+      // ✅ Check if complete
+      if (clearedCount >= 3) {
+        console.log('📌 All fog cleared, transitioning to learning phase');
+        sceneActions.updateState({
+          phase: CAVE_PHASES.NIRVIGHNAM_LEARNING,
+          crystalFogCompleted: true
+        });
+        return;
       }
-    });
-    if (!sceneState.showingCompletionScreen) {
-      setTimeout(() => setShowSceneCompletion(true), 500);
-    }
-    return;
-  }
 
-}, [isReload, sceneState.phase, sceneState.welcomeShown]);
+      // ✅ Check what stage user is at
+      const selectedCrystal = sceneState.selectedCrystal;
+
+      if (selectedCrystal) {
+        // Mid-fog-clearing
+        setResumeMessage(`Keep clicking the fog to clear it!`);
+      } else {
+        // Need to pick crystal
+        setResumeMessage(`Click a crystal to start! (${clearedCount}/3 cleared)`);
+      }
+
+      setShowResumePopup(true);
+
+      if (resumePopupTimeoutRef.current) {
+        clearTimeout(resumePopupTimeoutRef.current);
+      }
+      resumePopupTimeoutRef.current = setTimeout(() => {
+        setShowResumePopup(false);
+      }, 5000);
+
+      return;
+    }
+
+    // ============================================
+    // 4. GAME 2: BRIDGE BUILDING (Check Completion)
+    // ============================================
+    if (sceneState.phase === CAVE_PHASES.BRIDGE_BUILDING_ACTIVE) {
+      const bridgeCount = sceneState.bridgeRocks?.length || 0;
+
+      // ✅ If complete, force transition to Discovery
+      if (bridgeCount >= 3) {
+        console.log('📌 Bridge complete on reload, triggering discovery');
+
+        sceneActions.updateState({
+          bridgeCompleted: true,
+          phase: CAVE_PHASES.KURUME_DEVA_LEARNING
+        });
+
+        setTimeout(() => setShowDiscoveryFlip2(true), 500);
+        return;
+      }
+
+      // Resume popup
+      setResumeMessage(`Build the bridge! ${bridgeCount}/3 rocks placed!`);
+      setShowResumePopup(true);
+      if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
+      resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
+      return;
+    }
+
+    // ============================================
+    // 5. DOORS & COMPLETION
+    // ============================================
+
+    // Door 1 Active
+    if (sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE) {
+      const placed = sceneState.door1SyllablesPlaced?.length || 0;
+      if (placed < 3) {
+        setResumeMessage(`Spell Nirvighnam! ${placed}/3 syllables placed!`);
+        setShowResumePopup(true);
+        setTimeout(() => setShowResumePopup(false), 5000);
+      }
+      return;
+    }
+
+    // Scene Complete
+    if (sceneState.phase === CAVE_PHASES.COMPLETE) {
+      sceneActions.updateState({
+        learnedWords: {
+          nirvighnam: { learned: true, scene: 3 },
+          kurumedeva: { learned: true, scene: 3 }
+        }
+      });
+      if (!sceneState.showingCompletionScreen) {
+        setTimeout(() => setShowSceneCompletion(true), 500);
+      }
+      return;
+    }
+
+  }, [isReload, sceneState.phase, sceneState.welcomeShown]);
 
   // Hint configurations
   const getHintConfigs = () => [
@@ -832,19 +833,19 @@ useEffect(() => {
       position: { bottom: '60%', left: '30%', transform: 'translateX(-50%)' },
       condition: (sceneState, hintLevel) => {
         if (!sceneState) return false;
-        return sceneState?.phase === CAVE_PHASES.DOOR1_ACTIVE && 
-               !sceneState?.door1Completed;
+        return sceneState?.phase === CAVE_PHASES.DOOR1_ACTIVE &&
+          !sceneState?.door1Completed;
       }
     },
     {
       id: 'crystal-selection-hint',
-  message: 'Choose a crystal tool to clear the matching fog!',
-  explicitMessage: 'Click a crystal, then erase the same-colored fog area!',
+      message: 'Choose a crystal tool to clear the matching fog!',
+      explicitMessage: 'Click a crystal, then erase the same-colored fog area!',
       position: { bottom: '60%', left: '30%', transform: 'translateX(-50%)' },
       condition: (sceneState, hintLevel) => {
         if (!sceneState) return false;
         return sceneState?.phase === CAVE_PHASES.CRYSTAL_FOG_ACTIVE &&
-               !sceneState?.selectedCrystal;
+          !sceneState?.selectedCrystal;
       }
     },
     {
@@ -854,19 +855,19 @@ useEffect(() => {
       position: { bottom: '60%', left: '30%', transform: 'translateX(-50%)' },
       condition: (sceneState, hintLevel) => {
         if (!sceneState) return false;
-        return sceneState?.phase === CAVE_PHASES.DOOR2_ACTIVE && 
-               !sceneState?.door2Completed;
+        return sceneState?.phase === CAVE_PHASES.DOOR2_ACTIVE &&
+          !sceneState?.door2Completed;
       }
     },
     {
       id: 'bridge-building-hint',
-       message: 'Click your rocks to place them on the bridge!',
-  explicitMessage: 'Click each rock to automatically place it on the bridge path!',
+      message: 'Click your rocks to place them on the bridge!',
+      explicitMessage: 'Click each rock to automatically place it on the bridge path!',
       position: { bottom: '60%', left: '30%', transform: 'translateX(-50%)' },
       condition: (sceneState, hintLevel) => {
         if (!sceneState) return false;
         return sceneState?.phase === CAVE_PHASES.BRIDGE_BUILDING_ACTIVE &&
-               sceneState?.bridgeRocks?.length < 3;
+          sceneState?.bridgeRocks?.length < 3;
       }
     }
   ];
@@ -1000,33 +1001,33 @@ useEffect(() => {
 
   // Door 1 handlers
   const handleDoor1SyllablePlaced = (syllable) => {
- if (showResumePopup) {
-    setShowResumePopup(false);
-    if (resumePopupTimeoutRef.current) {
-      clearTimeout(resumePopupTimeoutRef.current);
+    if (showResumePopup) {
+      setShowResumePopup(false);
+      if (resumePopupTimeoutRef.current) {
+        clearTimeout(resumePopupTimeoutRef.current);
+      }
     }
-  }
 
     hideActiveHints();
     console.log(`Door 1 syllable placed: ${syllable}`);
-    
+
     const expectedSyllable = sceneState.door1Syllables?.[sceneState.door1CurrentStep || 0] || 'Nir';
     const isCorrect = syllable === expectedSyllable;
-    
+
     if (isCorrect) {
       const newStep = (sceneState.door1CurrentStep || 0) + 1;
       const newSyllablesPlaced = [...(sceneState.door1SyllablesPlaced || []), syllable];
-      
+
       sceneActions.updateState({
         door1SyllablesPlaced: newSyllablesPlaced,
         door1CurrentStep: newStep
       });
-      
-if (newStep >= 3) {
-  // ❌ REMOVED: Don't auto-trigger door completion
-  // The DoorComponent will call onDoorComplete when button is clicked
-  console.log('✅ All syllables placed - waiting for Start Challenge button');
-}
+
+      if (newStep >= 3) {
+        // ❌ REMOVED: Don't auto-trigger door completion
+        // The DoorComponent will call onDoorComplete when button is clicked
+        console.log('✅ All syllables placed - waiting for Start Challenge button');
+      }
     } else {
       console.log(`Expected: ${expectedSyllable}, got: ${syllable}`);
     }
@@ -1034,14 +1035,14 @@ if (newStep >= 3) {
 
   const handleDoor1Complete = () => {
     console.log('🚪 Door 1 completed');
-    
+
     setShowSparkle('door1-completing');
-    
+
     const doorElement = document.querySelector('.nirvighnam-door .door-container');
     if (doorElement) {
       doorElement.classList.add('completing');
     }
-    
+
     sceneActions.updateState({
       door1Completed: true,
       phase: CAVE_PHASES.CRYSTAL_FOG_ACTIVE,
@@ -1055,32 +1056,32 @@ if (newStep >= 3) {
 
   // Door 2 handlers
   const handleDoor2SyllablePlaced = (syllable) => {
-     if (showResumePopup) {
-    setShowResumePopup(false);
-    if (resumePopupTimeoutRef.current) {
-      clearTimeout(resumePopupTimeoutRef.current);
+    if (showResumePopup) {
+      setShowResumePopup(false);
+      if (resumePopupTimeoutRef.current) {
+        clearTimeout(resumePopupTimeoutRef.current);
+      }
     }
-  }
     hideActiveHints();
     console.log(`Door 2 syllable placed: ${syllable}`);
-    
+
     const expectedSyllable = sceneState.door2Syllables?.[sceneState.door2CurrentStep || 0] || 'Ku';
     const isCorrect = syllable === expectedSyllable;
-    
+
     if (isCorrect) {
       const newStep = (sceneState.door2CurrentStep || 0) + 1;
       const newSyllablesPlaced = [...(sceneState.door2SyllablesPlaced || []), syllable];
-      
+
       sceneActions.updateState({
         door2SyllablesPlaced: newSyllablesPlaced,
         door2CurrentStep: newStep
       });
-      
-  if (newStep >= 4) {
-  // ❌ REMOVED: Don't auto-trigger door completion
-  // The DoorComponent will call onDoorComplete when button is clicked
-  console.log('✅ All syllables placed - waiting for Start Challenge button');
-}
+
+      if (newStep >= 4) {
+        // ❌ REMOVED: Don't auto-trigger door completion
+        // The DoorComponent will call onDoorComplete when button is clicked
+        console.log('✅ All syllables placed - waiting for Start Challenge button');
+      }
     } else {
       console.log(`Expected: ${expectedSyllable}, got: ${syllable}`);
     }
@@ -1088,14 +1089,14 @@ if (newStep >= 3) {
 
   const handleDoor2Complete = () => {
     console.log('🚪 Door 2 completed');
-    
+
     setShowSparkle('door2-completing');
-    
+
     const doorElement = document.querySelector('.kurumedeva-door .door-container');
     if (doorElement) {
       doorElement.classList.add('completing');
     }
-    
+
     sceneActions.updateState({
       door2Completed: true,
       phase: CAVE_PHASES.BRIDGE_BUILDING_ACTIVE,
@@ -1108,83 +1109,83 @@ if (newStep >= 3) {
   };
 
   const handleFogClick = (emotionId) => {
-  if (showResumePopup) {
-    setShowResumePopup(false);
-    if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
-  }
-  
-  if (activeCrystal !== emotionId) {
-    console.log(`🚫 Can't click fog - ${emotionId} not active`);
-    return;
-  }
-  
-  hideActiveHints();
-  
-  setFogProgress(prev => {
-    const clicks = (prev[emotionId] || 0) + 1;
-    console.log(`🌫️ Fog ${emotionId} clicked: ${clicks}/3`);
-    
-    // ✅ SAVE to sceneState for reload
-    const newProgress = { ...prev, [emotionId]: clicks };
-    sceneActions.updateState({
-      fogClickProgress: newProgress
-    });
-    
-    if (clicks >= 3) {
-      handleFogClear(emotionId);
+    if (showResumePopup) {
+      setShowResumePopup(false);
+      if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
     }
-    
-    return newProgress;
-  });
-};
 
-const handleCrystalSelect = (emotionId) => {
-  console.log(`🔮 Crystal selected: ${emotionId}`);
-  
-  // 🛡️ If fog is being cleared for another crystal, block
-  if (activeCrystal && activeCrystal !== emotionId) {
-    setHintMessage("Finish clearing the other fog first! 🌫️✨");
-    return;
-  }
-  
-  // Set this as the active crystal and start its fog sequence
-  setActiveCrystal(emotionId);
-  
-  sceneActions.updateState({
-    selectedCrystal: emotionId
-  });
-};
+    if (activeCrystal !== emotionId) {
+      console.log(`🚫 Can't click fog - ${emotionId} not active`);
+      return;
+    }
 
-const handleFogClear = (emotionId) => {
-  console.log(`🌫️ Fog cleared: ${emotionId}`);
-  
-  // ✅ Unlock crystal - ready for next one
-  setActiveCrystal(null);
-  
-  // ✅ NEW: Show celebration hint for next step
-  /*const remainingFogs = 3 - (sceneState.clearedFogs?.length || 0) - 1;
-  if (remainingFogs > 0) {
-    setTimeout(() => {
-      setHintMessage(`🎉 Great job! Now pick another crystal! (${remainingFogs} more to go!)`);
-    }, 1500);
-  }*/
+    hideActiveHints();
+
+    setFogProgress(prev => {
+      const clicks = (prev[emotionId] || 0) + 1;
+      console.log(`🌫️ Fog ${emotionId} clicked: ${clicks}/3`);
+
+      // ✅ SAVE to sceneState for reload
+      const newProgress = { ...prev, [emotionId]: clicks };
+      sceneActions.updateState({
+        fogClickProgress: newProgress
+      });
+
+      if (clicks >= 3) {
+        handleFogClear(emotionId);
+      }
+
+      return newProgress;
+    });
+  };
+
+  const handleCrystalSelect = (emotionId) => {
+    console.log(`🔮 Crystal selected: ${emotionId}`);
+
+    // 🛡️ If fog is being cleared for another crystal, block
+    if (activeCrystal && activeCrystal !== emotionId) {
+      setHintMessage("Finish clearing the other fog first! 🌫️✨");
+      return;
+    }
+
+    // Set this as the active crystal and start its fog sequence
+    setActiveCrystal(emotionId);
+
+    sceneActions.updateState({
+      selectedCrystal: emotionId
+    });
+  };
+
+  const handleFogClear = (emotionId) => {
+    console.log(`🌫️ Fog cleared: ${emotionId}`);
+
+    // ✅ Unlock crystal - ready for next one
+    setActiveCrystal(null);
+
+    // ✅ NEW: Show celebration hint for next step
+    /*const remainingFogs = 3 - (sceneState.clearedFogs?.length || 0) - 1;
+    if (remainingFogs > 0) {
+      setTimeout(() => {
+        setHintMessage(`🎉 Great job! Now pick another crystal! (${remainingFogs} more to go!)`);
+      }, 1500);
+    }*/
 
 
-  
-  const newClearedFogs = [...(sceneState.clearedFogs || []), emotionId];
+
+    const newClearedFogs = [...(sceneState.clearedFogs || []), emotionId];
     const newCollectedRocks = [...(sceneState.collectedRocks || []), emotionId];
     const newProgress = (newClearedFogs.length / 3) * 100;
-    
+
     setShowSparkle(`fog-${emotionId}-cleared`);
     setTimeout(() => setShowSparkle(null), 1500);
-    
+
     sceneActions.updateState({
       clearedFogs: newClearedFogs,
       collectedRocks: newCollectedRocks,
       emotionalProgress: newProgress,
       selectedCrystal: null
     });
-    
+
     if (newClearedFogs.length >= 3) {
       console.log('All fog cleared!');
       safeSetTimeout(() => {
@@ -1193,24 +1194,24 @@ const handleFogClear = (emotionId) => {
     }
   };
 
-const handleCrystalFogComplete = () => {
-  console.log('🔮 Crystal fog clearing completed!');
-  
-  sceneActions.updateState({
-    crystalFogCompleted: true,
-    phase: CAVE_PHASES.NIRVIGHNAM_LEARNING, // ✅ Set to Learning Phase
-    progress: {
-      ...sceneState.progress,
-      percentage: 50,
-      starsEarned: 3
-    }
-  });
+  const handleCrystalFogComplete = () => {
+    console.log('🔮 Crystal fog clearing completed!');
 
-  // ✅ Trigger Discovery Overlay immediately
-  setTimeout(() => {
-    setShowDiscoveryFlip1(true);
-  }, 1500);
-};
+    sceneActions.updateState({
+      crystalFogCompleted: true,
+      phase: CAVE_PHASES.NIRVIGHNAM_LEARNING, // ✅ Set to Learning Phase
+      progress: {
+        ...sceneState.progress,
+        percentage: 50,
+        starsEarned: 3
+      }
+    });
+
+    // ✅ Trigger Discovery Overlay immediately
+    setTimeout(() => {
+      setShowDiscoveryFlip1(true);
+    }, 1500);
+  };
 
   const completeNirvighnamLearning = () => {
     if (sceneState.learnedWords?.nirvighnam?.learned) {
@@ -1218,22 +1219,22 @@ const handleCrystalFogComplete = () => {
       sceneActions.updateState({ phase: CAVE_PHASES.DOOR2_ACTIVE });
       return;
     }
-    
+
     console.log('🌟 Nirvighnam symbol learned - FULL CELEBRATION');
-    
+
     setShowCenteredSymbol('nirvighnam');
-    
+
     setTimeout(() => {
       setShowCenteredSymbol(null);
       setShowSparkle('nirvighnam-to-sidebar');
-      
+
       sceneActions.updateState({
         learnedWords: {
           ...sceneState.learnedWords,
           nirvighnam: { learned: true, scene: 3 }
         }
       });
-      
+
       setTimeout(() => {
         setShowSparkle(null);
         setCurrentMissionSymbol('nirvighnam');
@@ -1242,49 +1243,49 @@ const handleCrystalFogComplete = () => {
     }, 5000);
   };
 
-  
- const handleBridgeRockClick = (rockId) => {
-  if (showResumePopup) {
-  setShowResumePopup(false);
-  if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
-}
-  console.log(`🌉 Bridge rock clicked: ${rockId}`);
-  
-  hideActiveHints();
 
-  const newBridgeRocks = [...(sceneState.bridgeRocks || []), rockId];
-  
-  // Big sparkle celebration
-  setShowSparkle(`bridge-rock-${rockId}-placed`);
-  setTimeout(() => setShowSparkle(null), 2000);
-  
-  sceneActions.updateState({
-    bridgeRocks: newBridgeRocks,
-    ganeshaCanCross: newBridgeRocks.length >= 3
-  });
-  
-  if (newBridgeRocks.length >= 3) {
-    console.log('✅ Bridge completed!');
-    safeSetTimeout(() => {
-      completeBridgeBuilding();
-    }, 2000);
-  }
-};
+  const handleBridgeRockClick = (rockId) => {
+    if (showResumePopup) {
+      setShowResumePopup(false);
+      if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
+    }
+    console.log(`🌉 Bridge rock clicked: ${rockId}`);
 
-const completeBridgeBuilding = () => {
-  console.log('🌉 Bridge building completed!');
-  
-  sceneActions.updateState({
-    bridgeCompleted: true,
-    phase: CAVE_PHASES.KURUME_DEVA_LEARNING, // ✅ Set to Learning Phase
-    showDivineHelpText: true
-  });
+    hideActiveHints();
 
-  // ✅ Trigger Discovery Overlay immediately
-  setTimeout(() => {
-    setShowDiscoveryFlip2(true);
-  }, 1500);
-};
+    const newBridgeRocks = [...(sceneState.bridgeRocks || []), rockId];
+
+    // Big sparkle celebration
+    setShowSparkle(`bridge-rock-${rockId}-placed`);
+    setTimeout(() => setShowSparkle(null), 2000);
+
+    sceneActions.updateState({
+      bridgeRocks: newBridgeRocks,
+      ganeshaCanCross: newBridgeRocks.length >= 3
+    });
+
+    if (newBridgeRocks.length >= 3) {
+      console.log('✅ Bridge completed!');
+      safeSetTimeout(() => {
+        completeBridgeBuilding();
+      }, 2000);
+    }
+  };
+
+  const completeBridgeBuilding = () => {
+    console.log('🌉 Bridge building completed!');
+
+    sceneActions.updateState({
+      bridgeCompleted: true,
+      phase: CAVE_PHASES.KURUME_DEVA_LEARNING, // ✅ Set to Learning Phase
+      showDivineHelpText: true
+    });
+
+    // ✅ Trigger Discovery Overlay immediately
+    setTimeout(() => {
+      setShowDiscoveryFlip2(true);
+    }, 1500);
+  };
 
   const startKurumedevaLearning = () => {
     if (sceneState.learnedWords?.kurumedeva?.learned) {
@@ -1292,22 +1293,22 @@ const completeBridgeBuilding = () => {
       showFinalCelebration();
       return;
     }
-    
+
     console.log('🌟 Kurume Deva symbol learned - FULL CELEBRATION');
-    
+
     setShowCenteredSymbol('kurumedeva');
-    
+
     setTimeout(() => {
       setShowCenteredSymbol(null);
       setShowSparkle('kurumedeva-to-sidebar');
-      
+
       sceneActions.updateState({
         learnedWords: {
           ...sceneState.learnedWords,
           kurumedeva: { learned: true, scene: 3 }
         }
       });
-      
+
       setTimeout(() => {
         setShowSparkle(null);
         setCurrentMissionSymbol('kurumedeva');
@@ -1323,17 +1324,17 @@ const completeBridgeBuilding = () => {
     setShowRescueModal(true);
   };
 
-const handleContinueLearning = () => {
-  setShowPowerModal(false);
-  
-  if (currentMissionSymbol === 'nirvighnam') {
-    // Show second story modal before Door 2
-    setShowStoryModal('kurumedeva');
-  } else if (currentMissionSymbol === 'kurumedeva') {
-    // Go to final celebration
-    setTimeout(() => showFinalCelebration(), 500);
-  }
-};
+  const handleContinueLearning = () => {
+    setShowPowerModal(false);
+
+    if (currentMissionSymbol === 'nirvighnam') {
+      // Show second story modal before Door 2
+      setShowStoryModal('kurumedeva');
+    } else if (currentMissionSymbol === 'kurumedeva') {
+      // Go to final celebration
+      setTimeout(() => showFinalCelebration(), 500);
+    }
+  };
 
   const getNextDiscoveryText = (currentSymbol) => {
     const nextActions = {
@@ -1343,23 +1344,23 @@ const handleContinueLearning = () => {
     return nextActions[currentSymbol] || '➡️ Continue';
   };
 
-const handleRescueComplete = (success) => {
-  if (!success) return;
-  
-  setShowRescueModal(false);
-  
-  if (currentRescueWord === 'nirvighnam') {
-    setTimeout(() => {
-      setShowStoryModal('kurumedeva');  // ✅ Show second story modal
-    }, 500);
-  } else if (currentRescueWord === 'kurumedeva') {
-    setTimeout(() => {
-      showFinalCelebration();
-    }, 500);
-  }
-  
-  setCurrentRescueWord(null);
-};
+  const handleRescueComplete = (success) => {
+    if (!success) return;
+
+    setShowRescueModal(false);
+
+    if (currentRescueWord === 'nirvighnam') {
+      setTimeout(() => {
+        setShowStoryModal('kurumedeva');  // ✅ Show second story modal
+      }, 500);
+    } else if (currentRescueWord === 'kurumedeva') {
+      setTimeout(() => {
+        showFinalCelebration();
+      }, 500);
+    }
+
+    setCurrentRescueWord(null);
+  };
 
   const showFinalCelebration = () => {
     console.log('🎊 Starting final celebration');
@@ -1409,9 +1410,9 @@ const handleRescueComplete = (success) => {
         sceneActions={sceneActions}
       >
         <div className="pond-scene-container" data-phase={sceneState.phase}>
-          <div className="pond-background" style={{ 
-            position: 'relative', 
-            width: '100%', 
+          <div className="pond-background" style={{
+            position: 'relative',
+            width: '100%',
             height: '100%',
             backgroundImage: `url(${caveBackgroundDark})`,
             backgroundSize: 'cover',
@@ -1420,99 +1421,71 @@ const handleRescueComplete = (success) => {
           }}>
 
             {/* ✅ OPENING SCREEN: Nirvighnam & Kurumedeva */}
-{sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE && !sceneState.welcomeShown && (() => {
-  const theme = getZoneTheme(zoneId);
-  const modal = getOpeningModal(zoneId, sceneId);
-  return (
-    <div className="game-modal-overlay" style={{
-      '--modal-card-bg': theme.parentBg,
-      '--modal-text-primary': theme.textPrimary,
-      '--modal-btn-bg': theme.buttonActiveBg,
-      '--modal-btn-shadow': theme.glowColor
-    }}>
-      <div className="game-modal-content">
-        <div className="game-modal-character">
-          <img src={ganeshaCharacterCave} alt="Ganesha Character" />
-        </div>
-        <div className="game-modal-card">
-          <h1 className="game-modal-title">{modal?.title || 'Cross the Bridge'}</h1>
-          <p className="game-modal-subtitle">{modal?.description || 'Clear a way and move forward.'}</p>
-          <div className="game-modal-icons">
-            <div className="game-modal-icon-item">
-              <img src={nirvighnamSymbol} alt="Nirvighnam" />
-              <span className="game-modal-icon-label">No Obstacles</span>
-            </div>
-            <div className="game-modal-icon-item">
-              <img src={kurumedevaSymbol} alt="Kurumedeva" />
-              <span className="game-modal-icon-label">Divine Help</span>
-            </div>
-          </div>
-          <button className="game-modal-button" onClick={() => sceneActions.updateState({ welcomeShown: true })}>
-            {modal?.buttonText || "Let's Explore"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-})()}
+            <OpeningModal
+              zoneId={zoneId}
+              sceneId={sceneId}
+              onStart={() => sceneActions.updateState({ welcomeShown: true })}
+              characterImg={ganeshaCharacterCave}
+              showButton={true}
+            />
 
-{/* Phase Headers - Always Visible */}
-{!showPowerModal && !showRescueModal && !showCenteredSymbol && !showStoryModal && (
-  <>
-    {sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE && !sceneState.door1Completed && (
-      <div className="phase-header">
-        🔤 SPELL NIRVIGHNAM! Click the syllables in order!
-      </div>
-    )}
-    
-{sceneState.phase === CAVE_PHASES.CRYSTAL_FOG_ACTIVE && sceneState.clearedFogs?.length < 3 && (
-  <div className="phase-header">
-    🔮 CLEAR THE FOG! {sceneState.clearedFogs?.length || 0}/3 crystals clicked
-  </div>
-)}
-    
-    {sceneState.phase === CAVE_PHASES.DOOR2_ACTIVE && !sceneState.door2Completed && (
-      <div className="phase-header">
-        🔤 SPELL KURUME DEVA! Click the syllables in order!
-      </div>
-    )}
-    
-    {sceneState.phase === CAVE_PHASES.BRIDGE_BUILDING_ACTIVE && sceneState.bridgeRocks?.length < 3 && (
-      <div className="phase-header">
-    🌉 BUILD THE BRIDGE! Click rocks to place them!
-      </div>
-    )}
-  </>
-)}
+            {/* Phase Headers - Always Visible */}
+            {!showPowerModal && !showRescueModal && !showCenteredSymbol && !showStoryModal && (
+              <>
+                {sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE && !sceneState.door1Completed && (
+                  <div className="phase-header">
+                    🔤 SPELL NIRVIGHNAM! Click the syllables in order!
+                  </div>
+                )}
 
-{/* Hint Banner - Fog game guidance */}
-{hintMessage && !showPowerModal && !showRescueModal && !showStoryModal && !showCenteredSymbol && (
-  <div
-    style={{
-      position: 'absolute',
-      top: '80px',
-      left: '50%',
-      transform: 'translateX(-50%)',
-      background: 'linear-gradient(135deg, #FFF9C4, #FFF59D)',
-      border: '3px solid #FBC02D',
-      borderRadius: '20px',
-      padding: '12px 24px',
-      fontWeight: 'bold',
-      fontSize: '18px',
-      color: '#4b3d02',
-      boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-      zIndex: 2000,
-      animation: 'hintFadeInOut 2s ease-in-out',
-      pointerEvents: 'none',
-      textAlign: 'center',
-      maxWidth: '400px'
-    }}
-  >
-    {hintMessage}
-  </div>
-)}
-            
-            <button 
+                {sceneState.phase === CAVE_PHASES.CRYSTAL_FOG_ACTIVE && sceneState.clearedFogs?.length < 3 && (
+                  <div className="phase-header">
+                    🔮 CLEAR THE FOG! {sceneState.clearedFogs?.length || 0}/3 crystals clicked
+                  </div>
+                )}
+
+                {sceneState.phase === CAVE_PHASES.DOOR2_ACTIVE && !sceneState.door2Completed && (
+                  <div className="phase-header">
+                    🔤 SPELL KURUME DEVA! Click the syllables in order!
+                  </div>
+                )}
+
+                {sceneState.phase === CAVE_PHASES.BRIDGE_BUILDING_ACTIVE && sceneState.bridgeRocks?.length < 3 && (
+                  <div className="phase-header">
+                    🌉 BUILD THE BRIDGE! Click rocks to place them!
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Hint Banner - Fog game guidance */}
+            {hintMessage && !showPowerModal && !showRescueModal && !showStoryModal && !showCenteredSymbol && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '80px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  background: 'linear-gradient(135deg, #FFF9C4, #FFF59D)',
+                  border: '3px solid #FBC02D',
+                  borderRadius: '20px',
+                  padding: '12px 24px',
+                  fontWeight: 'bold',
+                  fontSize: '18px',
+                  color: '#4b3d02',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                  zIndex: 2000,
+                  animation: 'hintFadeInOut 2s ease-in-out',
+                  pointerEvents: 'none',
+                  textAlign: 'center',
+                  maxWidth: '400px'
+                }}
+              >
+                {hintMessage}
+              </div>
+            )}
+
+            <button
               className="clear-storage-button"
               onClick={clearLocalStorage}
               style={{
@@ -1541,7 +1514,7 @@ const handleRescueComplete = (success) => {
                 <DoorComponent
                   key={`door1-${sceneState.door1CurrentStep}-${sceneState.door1Completed}-${sceneState.phase}`}
                   syllables={['Nir', 'vigh', 'nam']}
-                    onSyllableAudio={playSyllable}  // ← ADD THIS
+                  onSyllableAudio={playSyllable}  // ← ADD THIS
 
                   completedWord="Nirvighnam"
                   onDoorComplete={handleDoor1Complete}
@@ -1560,7 +1533,7 @@ const handleRescueComplete = (success) => {
                   isCompleted={sceneState.door1Completed}
                   placedSyllables={sceneState.door1SyllablesPlaced || []}
                   isResuming={isReload}
-                  
+
                 />
               </div>
             )}
@@ -1589,125 +1562,125 @@ const handleRescueComplete = (success) => {
             )}
 
             {/* Crystal Fog Clearing Game */}
-            {(sceneState.phase === CAVE_PHASES.CRYSTAL_FOG_INTRO || 
-              sceneState.phase === CAVE_PHASES.CRYSTAL_FOG_ACTIVE || 
+            {(sceneState.phase === CAVE_PHASES.CRYSTAL_FOG_INTRO ||
+              sceneState.phase === CAVE_PHASES.CRYSTAL_FOG_ACTIVE ||
               sceneState.phase === CAVE_PHASES.CRYSTAL_FOG_COMPLETE ||
-              sceneState.phase === CAVE_PHASES.NIRVIGHNAM_LEARNING) && 
-             !showCenteredSymbol && 
-             !showPowerModal && 
-             !showRescueModal && 
-             !showStoryModal && 
-             !showSceneCompletion && (
-<div 
-                className="crystal-fog-area" 
-                id="crystal-fog-area"
-                onTouchStart={(e) => {
-                  activeTouches.current = e.touches.length;
-                  if (e.touches.length > 1) {
-                    console.log('🚫 MULTI-TOUCH BLOCKED in Crystal Fog');
-                    e.preventDefault();
-                  }
-                }}
-                onTouchEnd={() => {
-                  activeTouches.current = 0;
-                }}
-              >                
-    <div className="crystal-tools-area">
-                  {EMOTION_PAIRS.map((pair) => {
-                    const isSelected = sceneState.selectedCrystal === pair.id;
-                    const isUsed = sceneState.clearedFogs?.includes(pair.id);
-                    const isLocked = activeCrystal && activeCrystal !== pair.id;  // ✅ ADD THIS LINE
-                    
-                    if (isUsed) return null;
-                    
-                    return (
-                   <div 
-                        key={pair.id} 
-                        className={`crystal-tool crystal-${pair.id} ${isSelected ? 'selected' : ''}`}
-                        onClick={() => handleCrystalSelect(pair.id)}
-                        style={{
-                          opacity: isLocked ? 0.4 : 1,
-                          cursor: isLocked ? 'not-allowed' : 'pointer',
-                          transition: 'opacity 0.3s ease',
-                          animation: !isLocked && !isUsed && !activeCrystal ? 'crystalPulse 2s ease-in-out infinite' : 'none',  // ✅ ADD THIS
-                          filter: !isLocked && !isUsed && !activeCrystal ? 'drop-shadow(0 0 10px rgba(255,215,0,0.6))' : 'none'  // ✅ ADD THIS
-                        }}
-                      >
-                    
-                        <img 
-                          src={pair.crystal}
-                          alt={`${pair.emotion} crystal`}
-                          style={{ 
-                            width: '60px', 
-                            height: '60px',
-                            cursor: 'pointer',
-                            filter: isSelected ? 'brightness(1.3) drop-shadow(0 0 10px #FFD700)' : 'brightness(1)'
-                          }}
-                        />
-                        <div className="crystal-label">
-                          {pair.emotion.charAt(0).toUpperCase() + pair.emotion.slice(1)}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+              sceneState.phase === CAVE_PHASES.NIRVIGHNAM_LEARNING) &&
+              !showCenteredSymbol &&
+              !showPowerModal &&
+              !showRescueModal &&
+              !showStoryModal &&
+              !showSceneCompletion && (
+                <div
+                  className="crystal-fog-area"
+                  id="crystal-fog-area"
+                  onTouchStart={(e) => {
+                    activeTouches.current = e.touches.length;
+                    if (e.touches.length > 1) {
+                      console.log('🚫 MULTI-TOUCH BLOCKED in Crystal Fog');
+                      e.preventDefault();
+                    }
+                  }}
+                  onTouchEnd={() => {
+                    activeTouches.current = 0;
+                  }}
+                >
+                  <div className="crystal-tools-area">
+                    {EMOTION_PAIRS.map((pair) => {
+                      const isSelected = sceneState.selectedCrystal === pair.id;
+                      const isUsed = sceneState.clearedFogs?.includes(pair.id);
+                      const isLocked = activeCrystal && activeCrystal !== pair.id;  // ✅ ADD THIS LINE
 
-    <div className="fog-erasing-areas">
-                  {EMOTION_PAIRS.map((pair) => {
-                    const isCleared = sceneState.clearedFogs?.includes(pair.id);
-                    const isThisCrystalActive = activeCrystal === pair.id;
-                    const currentProgress = fogProgress[pair.id] || 0;
-                    
-                    return (
-                      <div 
-                        key={pair.id} 
-                        className={`fog-erasing-container fog-${pair.id}`}
-                        onClick={() => isThisCrystalActive && handleFogClick(pair.id)}
-                        style={{
-                          cursor: isThisCrystalActive ? 'pointer' : 'default',
-                          border: isThisCrystalActive ? '4px solid rgba(255, 215, 0, 0.6)' : 'none',
-                          borderRadius: '15px',
-                          padding: '10px',
-                          transition: 'all 0.3s ease'
-                        }}
-                      >
-                        {!isCleared && (
-                          <SimpleFogClicker
-                            emotionId={pair.id}
-                            fogImage={pair.fog}
-                            rockImage={pair.rock}
-                            onComplete={handleFogClear}
-                            isActive={isThisCrystalActive}
-                            fogProgress={currentProgress}
+                      if (isUsed) return null;
+
+                      return (
+                        <div
+                          key={pair.id}
+                          className={`crystal-tool crystal-${pair.id} ${isSelected ? 'selected' : ''}`}
+                          onClick={() => handleCrystalSelect(pair.id)}
+                          style={{
+                            opacity: isLocked ? 0.4 : 1,
+                            cursor: isLocked ? 'not-allowed' : 'pointer',
+                            transition: 'opacity 0.3s ease',
+                            animation: !isLocked && !isUsed && !activeCrystal ? 'crystalPulse 2s ease-in-out infinite' : 'none',  // ✅ ADD THIS
+                            filter: !isLocked && !isUsed && !activeCrystal ? 'drop-shadow(0 0 10px rgba(255,215,0,0.6))' : 'none'  // ✅ ADD THIS
+                          }}
+                        >
+
+                          <img
+                            src={pair.crystal}
+                            alt={`${pair.emotion} crystal`}
+                            style={{
+                              width: '60px',
+                              height: '60px',
+                              cursor: 'pointer',
+                              filter: isSelected ? 'brightness(1.3) drop-shadow(0 0 10px #FFD700)' : 'brightness(1)'
+                            }}
                           />
-                        )}
-                        
-                        {isCleared && (
-                          <div className="completed-fog-area">
-                            <div className="revealed-rock-display">
-                              <img 
-                                src={pair.rock}
-                                alt={`${pair.emotion} rock revealed`}
-                                style={{ 
-                                  width: '80px', 
-                                  height: 'auto',
-                                  borderRadius: '10px',
-                                  animation: 'rockReveal 2s ease-out'
-                                }}
-                              />
-                              <div className="rock-blessing">
-                                ✨ {pair.emotion} overcome! ✨
+                          <div className="crystal-label">
+                            {pair.emotion.charAt(0).toUpperCase() + pair.emotion.slice(1)}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="fog-erasing-areas">
+                    {EMOTION_PAIRS.map((pair) => {
+                      const isCleared = sceneState.clearedFogs?.includes(pair.id);
+                      const isThisCrystalActive = activeCrystal === pair.id;
+                      const currentProgress = fogProgress[pair.id] || 0;
+
+                      return (
+                        <div
+                          key={pair.id}
+                          className={`fog-erasing-container fog-${pair.id}`}
+                          onClick={() => isThisCrystalActive && handleFogClick(pair.id)}
+                          style={{
+                            cursor: isThisCrystalActive ? 'pointer' : 'default',
+                            border: isThisCrystalActive ? '4px solid rgba(255, 215, 0, 0.6)' : 'none',
+                            borderRadius: '15px',
+                            padding: '10px',
+                            transition: 'all 0.3s ease'
+                          }}
+                        >
+                          {!isCleared && (
+                            <SimpleFogClicker
+                              emotionId={pair.id}
+                              fogImage={pair.fog}
+                              rockImage={pair.rock}
+                              onComplete={handleFogClear}
+                              isActive={isThisCrystalActive}
+                              fogProgress={currentProgress}
+                            />
+                          )}
+
+                          {isCleared && (
+                            <div className="completed-fog-area">
+                              <div className="revealed-rock-display">
+                                <img
+                                  src={pair.rock}
+                                  alt={`${pair.emotion} rock revealed`}
+                                  style={{
+                                    width: '80px',
+                                    height: 'auto',
+                                    borderRadius: '10px',
+                                    animation: 'rockReveal 2s ease-out'
+                                  }}
+                                />
+                                <div className="rock-blessing">
+                                  ✨ {pair.emotion} overcome! ✨
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
 
-              </div>
-            )}
+                </div>
+              )}
 
             {/* Door 2 Component */}
             {(sceneState.phase === CAVE_PHASES.DOOR2_ACTIVE || sceneState.phase === CAVE_PHASES.DOOR2_COMPLETE) && (
@@ -1715,7 +1688,7 @@ const handleRescueComplete = (success) => {
                 <DoorComponent
                   key={`door2-${sceneState.door2CurrentStep}-${sceneState.door2Completed}-${sceneState.phase}`}
                   syllables={['Kuru', 'me', 'de', 'va']}
-                    onSyllableAudio={playSyllable}  // ← ADD THIS
+                  onSyllableAudio={playSyllable}  // ← ADD THIS
 
                   completedWord="Kurume Deva"
                   onDoorComplete={handleDoor2Complete}
@@ -1761,7 +1734,7 @@ const handleRescueComplete = (success) => {
               </div>
             )}
 
-{/* Animated Texts 
+            {/* Animated Texts 
 {sceneState.showObstacleText && (
   <div className="obstacle-text" style={{
     position: 'absolute',
@@ -1795,178 +1768,112 @@ const handleRescueComplete = (success) => {
   </div>
 )}*/}
 
-{showSparkle === 'nirvighnam-to-sidebar' && (
-  <div style={{
-    position: 'absolute',
-    top: '30%',
-    left: '30%',
-    width: '300px',
-    height: '200px',
-    zIndex: 15,
-    pointerEvents: 'none'
-  }}>
-    <SparkleAnimation
-      type="stream"
-      count={20}
-      color="#9C27B0"
-      size={10}
-      duration={3000}
-      fadeOut={true}
-      area="full"
-    />
-  </div>
-)}
+            {showSparkle === 'nirvighnam-to-sidebar' && (
+              <div style={{
+                position: 'absolute',
+                top: '30%',
+                left: '30%',
+                width: '300px',
+                height: '200px',
+                zIndex: 15,
+                pointerEvents: 'none'
+              }}>
+                <SparkleAnimation
+                  type="stream"
+                  count={20}
+                  color="#9C27B0"
+                  size={10}
+                  duration={3000}
+                  fadeOut={true}
+                  area="full"
+                />
+              </div>
+            )}
 
-{showSparkle === 'kurumedeva-to-sidebar' && (
-  <div style={{
-    position: 'absolute',
-    top: '30%',
-    right: '30%',
-    width: '300px',
-    height: '200px',
-    zIndex: 15,
-    pointerEvents: 'none'
-  }}>
-    <SparkleAnimation
-      type="stream"
-      count={20}
-      color="#FFD700"
-      size={10}
-      duration={3000}
-      fadeOut={true}
-      area="full"
-    />
-  </div>
-)}
+            {showSparkle === 'kurumedeva-to-sidebar' && (
+              <div style={{
+                position: 'absolute',
+                top: '30%',
+                right: '30%',
+                width: '300px',
+                height: '200px',
+                zIndex: 15,
+                pointerEvents: 'none'
+              }}>
+                <SparkleAnimation
+                  type="stream"
+                  count={20}
+                  color="#FFD700"
+                  size={10}
+                  duration={3000}
+                  fadeOut={true}
+                  area="full"
+                />
+              </div>
+            )}
 
             {/* Bridge Building Game */}
-         {/* Bridge Building Game */}
-            {(sceneState.phase === CAVE_PHASES.BRIDGE_BUILDING_INTRO || 
-              sceneState.phase === CAVE_PHASES.BRIDGE_BUILDING_ACTIVE || 
+            {/* Bridge Building Game */}
+            {(sceneState.phase === CAVE_PHASES.BRIDGE_BUILDING_INTRO ||
+              sceneState.phase === CAVE_PHASES.BRIDGE_BUILDING_ACTIVE ||
               sceneState.phase === CAVE_PHASES.BRIDGE_BUILDING_COMPLETE ||
               sceneState.phase === CAVE_PHASES.KURUME_DEVA_LEARNING ||
               sceneState.phase === CAVE_PHASES.SCENE_CELEBRATION ||
-              sceneState.phase === CAVE_PHASES.COMPLETE) && 
-             !showCenteredSymbol && 
-             !showPowerModal && 
-             !showRescueModal && 
-             !showStoryModal && 
-             !showSceneCompletion && (
-              
-<div 
-                className="bridge-building-area" 
-                id="bridge-building-area"
-                onTouchStart={(e) => {
-                  activeTouches.current = e.touches.length;
-                  if (e.touches.length > 1) {
-                    console.log('🚫 MULTI-TOUCH BLOCKED in Bridge Building');
-                    e.preventDefault();
-                  }
-                }}
-                onTouchEnd={() => {
-                  activeTouches.current = 0;
-                }}
-              >                
-                <div className="simple-gap">
-                  <div className="gap-line"></div>
-                </div>
+              sceneState.phase === CAVE_PHASES.COMPLETE) &&
+              !showCenteredSymbol &&
+              !showPowerModal &&
+              !showRescueModal &&
+              !showStoryModal &&
+              !showSceneCompletion && (
 
-<div className="bridge-rocks-inventory">
-  <div className="inventory-rocks">
-    {sceneState.collectedRocks?.map((rockId, index) => {
-      const isUsed = sceneState.bridgeRocks?.includes(rockId);
-      const pair = EMOTION_PAIRS.find(p => p.id === rockId);
-      
-      // ✅ NEW: Only current rock is clickable (sequential)
-      const currentBridgeCount = sceneState.bridgeRocks?.length || 0;
-      const isCurrentRock = index === currentBridgeCount;
-      const isClickable = !isUsed && isCurrentRock;
-      
-      return (
-        <div key={rockId} className={`bridge-rock-inventory bridge-rock-${rockId}`}>
-          <SimpleRockPlacer
-            rockId={rockId}
-            rockImage={pair.rock}
-            emotion={pair.emotion}
-            onPlace={handleBridgeRockClick}
-            isUsed={isUsed}
-            isClickable={isClickable}  // ✅ NEW: Pass clickable state
-          />
-        </div>
-      );
-    })}
-  </div>
-</div>
+                <div
+                  className="bridge-building-area"
+                  id="bridge-building-area"
+                  onTouchStart={(e) => {
+                    activeTouches.current = e.touches.length;
+                    if (e.touches.length > 1) {
+                      console.log('🚫 MULTI-TOUCH BLOCKED in Bridge Building');
+                      e.preventDefault();
+                    }
+                  }}
+                  onTouchEnd={() => {
+                    activeTouches.current = 0;
+                  }}
+                >
+                  <div className="simple-gap">
+                    <div className="gap-line"></div>
+                  </div>
 
-          
-                {/* Bridge Counter */}
-                <div className="bridge-counter" style={{
-                  position: 'absolute',
-                  top: '15px',
-                  left: '15px',
-                  background: 'rgba(255, 255, 255, 0.9)',
-                  borderRadius: '25px',
-                  padding: '8px 16px',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                  zIndex: 25,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  width: '180px',
-                  height: '40px'
-                }}>
-                  <div className="counter-icon" style={{ width: '24px', height: '24px' }}>
-                    <div style={{
-                      width: '100%',
-                      height: '100%',
-                      background: 'linear-gradient(45deg, #8B4513, #DAA520)',
-                      borderRadius: '50%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '12px'
-                    }}>
-                      🪨
+                  <div className="bridge-rocks-inventory">
+                    <div className="inventory-rocks">
+                      {sceneState.collectedRocks?.map((rockId, index) => {
+                        const isUsed = sceneState.bridgeRocks?.includes(rockId);
+                        const pair = EMOTION_PAIRS.find(p => p.id === rockId);
+
+                        // ✅ NEW: Only current rock is clickable (sequential)
+                        const currentBridgeCount = sceneState.bridgeRocks?.length || 0;
+                        const isCurrentRock = index === currentBridgeCount;
+                        const isClickable = !isUsed && isCurrentRock;
+
+                        return (
+                          <div key={rockId} className={`bridge-rock-inventory bridge-rock-${rockId}`}>
+                            <SimpleRockPlacer
+                              rockId={rockId}
+                              rockImage={pair.rock}
+                              emotion={pair.emotion}
+                              onPlace={handleBridgeRockClick}
+                              isUsed={isUsed}
+                              isClickable={isClickable}  // ✅ NEW: Pass clickable state
+                            />
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
-                  
-                  <div className="counter-progress" style={{
-                    flex: 1,
-                    height: '6px',
-                    background: 'rgba(0, 0, 0, 0.1)',
-                    borderRadius: '3px',
-                    overflow: 'hidden'
-                  }}>
-                    <div 
-                      className="counter-progress-fill"
-                      style={{
-                        width: `${((sceneState.bridgeRocks?.length || 0) / 3) * 100}%`,
-                        height: '100%',
-                        background: 'linear-gradient(to right, #8B4513, #DAA520)',
-                        borderRadius: '3px',
-                        transition: 'width 0.5s ease'
-                      }}
-                    />
-                  </div>
-                  
-                  <div className="counter-display" style={{
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#333'
-                  }}>
-                    {sceneState.bridgeRocks?.length || 0}/3
-                  </div>
-                </div>
 
-                {/* Crystal Fog Counter */}
-                {(sceneState.phase === CAVE_PHASES.CRYSTAL_FOG_INTRO || 
-                  sceneState.phase === CAVE_PHASES.CRYSTAL_FOG_ACTIVE || 
-                  sceneState.phase === CAVE_PHASES.CRYSTAL_FOG_COMPLETE ||
-                  sceneState.phase === CAVE_PHASES.NIRVIGHNAM_LEARNING) &&  !showCenteredSymbol && !showPowerModal && 
-                  !showRescueModal && !showStoryModal && !showSceneCompletion && !sceneState.learnedWords?.nirvighnam?.learned && (
 
-                  
-                  <div className="crystal-fog-counter" style={{
+                  {/* Bridge Counter */}
+                  <div className="bridge-counter" style={{
                     position: 'absolute',
                     top: '15px',
                     left: '15px',
@@ -1985,17 +1892,17 @@ const handleRescueComplete = (success) => {
                       <div style={{
                         width: '100%',
                         height: '100%',
-                        background: 'linear-gradient(45deg, #9C27B0, #E1BEE7)',
+                        background: 'linear-gradient(45deg, #8B4513, #DAA520)',
                         borderRadius: '50%',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         fontSize: '12px'
                       }}>
-                        🔮
+                        🪨
                       </div>
                     </div>
-                    
+
                     <div className="counter-progress" style={{
                       flex: 1,
                       height: '6px',
@@ -2003,65 +1910,131 @@ const handleRescueComplete = (success) => {
                       borderRadius: '3px',
                       overflow: 'hidden'
                     }}>
-                      <div 
+                      <div
                         className="counter-progress-fill"
                         style={{
-                          width: `${((sceneState.clearedFogs?.length || 0) / 3) * 100}%`,
+                          width: `${((sceneState.bridgeRocks?.length || 0) / 3) * 100}%`,
                           height: '100%',
-                          background: 'linear-gradient(to right, #9C27B0, #E1BEE7)',
+                          background: 'linear-gradient(to right, #8B4513, #DAA520)',
                           borderRadius: '3px',
                           transition: 'width 0.5s ease'
                         }}
                       />
                     </div>
-                    
+
                     <div className="counter-display" style={{
                       fontSize: '14px',
                       fontWeight: '600',
                       color: '#333'
                     }}>
-                      {sceneState.clearedFogs?.length || 0}/3
+                      {sceneState.bridgeRocks?.length || 0}/3
                     </div>
                   </div>
-                )}
 
-                {sceneState.bridgeRocks && sceneState.bridgeRocks.map((rockId, displayIndex) => {
-                  const pair = EMOTION_PAIRS.find(p => p.id === rockId);
-                  if (!pair) return null;
-                  
-                  const position = getBridgeRockPosition(displayIndex);
-                  
-                  return (
-                    <div 
-                      key={`bridge-rock-placed-${rockId}-${displayIndex}`}
-                      className={`bridge-rock-placed bridge-rock-${displayIndex + 1}`}
-                      style={{
+                  {/* Crystal Fog Counter */}
+                  {(sceneState.phase === CAVE_PHASES.CRYSTAL_FOG_INTRO ||
+                    sceneState.phase === CAVE_PHASES.CRYSTAL_FOG_ACTIVE ||
+                    sceneState.phase === CAVE_PHASES.CRYSTAL_FOG_COMPLETE ||
+                    sceneState.phase === CAVE_PHASES.NIRVIGHNAM_LEARNING) && !showCenteredSymbol && !showPowerModal &&
+                    !showRescueModal && !showStoryModal && !showSceneCompletion && !sceneState.learnedWords?.nirvighnam?.learned && (
+
+
+                      <div className="crystal-fog-counter" style={{
                         position: 'absolute',
-                        top: position.top,
-                        left: position.left,
-                        width: '90px',
-                        height: 'auto',
-                        zIndex: 20 + displayIndex,
-                        transform: 'translate(-50%, -50%)',
-                        transition: 'all 0.8s cubic-bezier(0.4, 0.0, 0.2, 1)',
-                        filter: 'brightness(1.1)'
-                      }}
-                    >
-                      <img 
-                        src={pair.rock}
-                        alt={`Bridge ${pair.emotion} rock`}
-                        style={{ 
-                          width: '100%', 
-                          height: '100%',
-                          borderRadius: '12px'
-                        }}
-                      />
-                    </div>
-                  );
-                })}
+                        top: '15px',
+                        left: '15px',
+                        background: 'rgba(255, 255, 255, 0.9)',
+                        borderRadius: '25px',
+                        padding: '8px 16px',
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                        zIndex: 25,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        width: '180px',
+                        height: '40px'
+                      }}>
+                        <div className="counter-icon" style={{ width: '24px', height: '24px' }}>
+                          <div style={{
+                            width: '100%',
+                            height: '100%',
+                            background: 'linear-gradient(45deg, #9C27B0, #E1BEE7)',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '12px'
+                          }}>
+                            🔮
+                          </div>
+                        </div>
 
-              </div>
-            )}
+                        <div className="counter-progress" style={{
+                          flex: 1,
+                          height: '6px',
+                          background: 'rgba(0, 0, 0, 0.1)',
+                          borderRadius: '3px',
+                          overflow: 'hidden'
+                        }}>
+                          <div
+                            className="counter-progress-fill"
+                            style={{
+                              width: `${((sceneState.clearedFogs?.length || 0) / 3) * 100}%`,
+                              height: '100%',
+                              background: 'linear-gradient(to right, #9C27B0, #E1BEE7)',
+                              borderRadius: '3px',
+                              transition: 'width 0.5s ease'
+                            }}
+                          />
+                        </div>
+
+                        <div className="counter-display" style={{
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          color: '#333'
+                        }}>
+                          {sceneState.clearedFogs?.length || 0}/3
+                        </div>
+                      </div>
+                    )}
+
+                  {sceneState.bridgeRocks && sceneState.bridgeRocks.map((rockId, displayIndex) => {
+                    const pair = EMOTION_PAIRS.find(p => p.id === rockId);
+                    if (!pair) return null;
+
+                    const position = getBridgeRockPosition(displayIndex);
+
+                    return (
+                      <div
+                        key={`bridge-rock-placed-${rockId}-${displayIndex}`}
+                        className={`bridge-rock-placed bridge-rock-${displayIndex + 1}`}
+                        style={{
+                          position: 'absolute',
+                          top: position.top,
+                          left: position.left,
+                          width: '90px',
+                          height: 'auto',
+                          zIndex: 20 + displayIndex,
+                          transform: 'translate(-50%, -50%)',
+                          transition: 'all 0.8s cubic-bezier(0.4, 0.0, 0.2, 1)',
+                          filter: 'brightness(1.1)'
+                        }}
+                      >
+                        <img
+                          src={pair.rock}
+                          alt={`Bridge ${pair.emotion} rock`}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            borderRadius: '12px'
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
+
+                </div>
+              )}
 
             {/* ========== STORY MODAL ========== 
 {showStoryModal && (
@@ -2463,13 +2436,13 @@ if (currentMissionSymbol === 'nirvighnam') {
 )}
 
 {/* ========== RESCUE MODAL ========== */}
-<RescueModal
-  key={currentRescueWord}
-  show={showRescueModal}
-  wordData={currentRescueWord ? RESCUE_CONFIGS[currentRescueWord] : null}
-  onComplete={handleRescueComplete}
-  profileName={profileName}
-/>
+            <RescueModal
+              key={currentRescueWord}
+              show={showRescueModal}
+              wordData={currentRescueWord ? RESCUE_CONFIGS[currentRescueWord] : null}
+              onComplete={handleRescueComplete}
+              profileName={profileName}
+            />
 
             {/* Symbol Sidebar */}
             <div style={{ filter: 'none' }}>
@@ -2657,7 +2630,7 @@ if (currentMissionSymbol === 'nirvighnam') {
   }
 }
             `}</style>
-          
+
 
             {/* Final Fireworks */}
             {showSparkle === 'final-fireworks' && (
@@ -2669,7 +2642,7 @@ if (currentMissionSymbol === 'nirvighnam') {
                 onComplete={() => {
                   console.log('🎯 Nirvighnam fireworks complete');
                   setShowSparkle(null);
-                  
+
                   const profileId = localStorage.getItem('activeProfileId');
                   if (profileId) {
                     GameStateManager.saveGameState('cave-of-secrets', 'nirvighnam-kurumedeva', {
@@ -2680,98 +2653,98 @@ if (currentMissionSymbol === 'nirvighnam') {
                       phase: 'complete',
                       timestamp: Date.now()
                     });
-                    
+
                     localStorage.removeItem(`temp_session_${profileId}_cave-of-secrets_nirvighnam-kurumedeva`);
                     SimpleSceneManager.clearCurrentScene();
                     console.log('✅ NIRVIGHNAM: Completion saved');
                   }
-                  
+
                   setShowSceneCompletion(true);
                 }}
               />
             )}
 
             {/* ==================== DISCOVERY 1: NIRVIGHNAM ==================== */}
-{showDiscoveryFlip1 && (
-  <SimpleDiscoveryOverlay
-    // STAGE 1: Discovery Moment
-    celebrationTitle="Nirvighnam Revealed!"
-    celebrationText={""Clear the Path…"\n\nYou cleared the fog that was blocking the way! Nirvighnam means 'No Obstacles'—you now have the magic to clear your mind."}
-    celebrationImage={rockAnger} // or fogAnger
-    
-    // STAGE 2: Power Reveal
-    powerTitle="Obstacle Remover Unlocked!"
-    powerText="Don't let little worries cover your bright light. Use this power to clear the way and focus on peace, love, and joy!"
-    powerIcon={nirvighnamSymbol}
-    
-    buttonText="Clear the Way!"
-    onComplete={() => {
-      console.log("Discovery 1 complete!");
-      setShowDiscoveryFlip1(false);
-      
-      // Move to Door 2
-      sceneActions.updateState({ 
-        phase: CAVE_PHASES.DOOR2_ACTIVE,
-        learnedWords: {
-          ...sceneState.learnedWords,
-          nirvighnam: { learned: true, scene: 3 }
-        }
-      });
-    }}
-    showSparkles={true}
+            {showDiscoveryFlip1 && (
+              <SimpleDiscoveryOverlay
+                // STAGE 1: Discovery Moment
+                celebrationTitle="Nirvighnam Revealed!"
+                celebrationText={""Clear the Path…"\n\nYou cleared the fog that was blocking the way! Nirvighnam means 'No Obstacles'—you now have the magic to clear your mind."}
+            celebrationImage={rockAnger} // or fogAnger
+
+            // STAGE 2: Power Reveal
+            powerTitle="Obstacle Remover Unlocked!"
+            powerText="Don't let little worries cover your bright light. Use this power to clear the way and focus on peace, love, and joy!"
+            powerIcon={nirvighnamSymbol}
+
+            buttonText="Clear the Way!"
+            onComplete={() => {
+              console.log("Discovery 1 complete!");
+              setShowDiscoveryFlip1(false);
+
+              // Move to Door 2
+              sceneActions.updateState({
+                phase: CAVE_PHASES.DOOR2_ACTIVE,
+                learnedWords: {
+                  ...sceneState.learnedWords,
+                  nirvighnam: { learned: true, scene: 3 }
+                }
+              });
+            }}
+            showSparkles={true}
   />
 )}
 
-{/* ==================== DISCOVERY 2: KURUMEDEVA ==================== */}
-{showDiscoveryFlip2 && (
-  <SimpleDiscoveryOverlay
-    // STAGE 1: Discovery Moment
-    celebrationTitle="Kurumedeva Revealed!"
-    celebrationText={""The Builder's Power…"\n\nYou built the bridge! Kurumedeva means 'Grant Me This Blessing'—a magic that helps you build solutions and ask for help when you need it."}
-    celebrationImage={rockSad} // or bridge image
-    
-    // STAGE 2: Power Reveal
-    powerTitle="Solution Builder Unlocked!"
-    powerText="When you find a gap, don't stop! Use your Builder's Power to find the right tools—or ask for help—and cross any problem."
-    powerIcon={kurumedevaSymbol}
-    
-    buttonText="Start Building!"
-    onComplete={() => {
-      console.log("Discovery 2 complete!");
-      setShowDiscoveryFlip2(false);
-      
-      // Complete Scene
-      sceneActions.updateState({ 
-        phase: CAVE_PHASES.COMPLETE,
-        completed: true,
-        learnedWords: {
-          nirvighnam: { learned: true, scene: 3 },
-          kurumedeva: { learned: true, scene: 3 }
-        }
-      });
-        setShowSparkle('final-fireworks');
-    }}
-    showSparkles={true}
+            {/* ==================== DISCOVERY 2: KURUMEDEVA ==================== */}
+            {showDiscoveryFlip2 && (
+              <SimpleDiscoveryOverlay
+                // STAGE 1: Discovery Moment
+                celebrationTitle="Kurumedeva Revealed!"
+                celebrationText={""The Builder's Power…"\n\nYou built the bridge! Kurumedeva means 'Grant Me This Blessing'—a magic that helps you build solutions and ask for help when you need it."}
+            celebrationImage={rockSad} // or bridge image
+
+            // STAGE 2: Power Reveal
+            powerTitle="Solution Builder Unlocked!"
+            powerText="When you find a gap, don't stop! Use your Builder's Power to find the right tools—or ask for help—and cross any problem."
+            powerIcon={kurumedevaSymbol}
+
+            buttonText="Start Building!"
+            onComplete={() => {
+              console.log("Discovery 2 complete!");
+              setShowDiscoveryFlip2(false);
+
+              // Complete Scene
+              sceneActions.updateState({
+                phase: CAVE_PHASES.COMPLETE,
+                completed: true,
+                learnedWords: {
+                  nirvighnam: { learned: true, scene: 3 },
+                  kurumedeva: { learned: true, scene: 3 }
+                }
+              });
+              setShowSparkle('final-fireworks');
+            }}
+            showSparkles={true}
   />
 )}
 
-{/* ==================== RESUME POPUP ==================== */}
-{showResumePopup && (
-  <div style={{
-    position: 'fixed', top: '20%', left: '50%', transform: 'translateX(-50%)',
-    zIndex: 1000, background: 'linear-gradient(135deg, #6A1B9A 0%, #AB47BC 100%)',
-    color: 'white', padding: '20px 40px', borderRadius: '15px',
-    fontFamily: "'Baloo 2', cursive", fontSize: '1.4rem',
-    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.3)', border: '3px solid #FFD700',
-    textAlign: 'center', animation: 'slideDown 0.3s ease'
-  }}>
-    {resumeMessage}
-  </div>
-)}
+            {/* ==================== RESUME POPUP ==================== */}
+            {showResumePopup && (
+              <div style={{
+                position: 'fixed', top: '20%', left: '50%', transform: 'translateX(-50%)',
+                zIndex: 1000, background: 'linear-gradient(135deg, #6A1B9A 0%, #AB47BC 100%)',
+                color: 'white', padding: '20px 40px', borderRadius: '15px',
+                fontFamily: "'Baloo 2', cursive", fontSize: '1.4rem',
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.3)', border: '3px solid #FFD700',
+                textAlign: 'center', animation: 'slideDown 0.3s ease'
+              }}>
+                {resumeMessage}
+              </div>
+            )}
 
-{sceneState.welcomeShown && !showSceneCompletion && (
-  <BackToMapButton onNavigate={onNavigate} />
-)}
+            {sceneState.welcomeShown && !showSceneCompletion && (
+              <BackToMapButton onNavigate={onNavigate} />
+            )}
 
             {/* Scene Completion */}
             <SceneCompletionCelebration
@@ -2827,7 +2800,7 @@ if (currentMissionSymbol === 'nirvighnam') {
                     learnedWords: sceneState.learnedWords || {},
                     chants: { nirvighnam: true, kurumedeva: true }
                   });
-                  
+
                   GameStateManager.saveGameState('cave-of-secrets', 'nirvighnam-kurumedeva', {
                     completed: true,
                     stars: 8,
@@ -2842,9 +2815,9 @@ if (currentMissionSymbol === 'nirvighnam') {
                 }, 100);
               }}
               onExploreZones={() => {
-  setShowSceneCompletion(false);
-  onNavigate?.('zone-welcome');
-}}
+                setShowSceneCompletion(false);
+                onNavigate?.('zone-welcome');
+              }}
             />
 
             {/* Progressive Hints System */}
@@ -2854,8 +2827,8 @@ if (currentMissionSymbol === 'nirvighnam') {
               sceneState={sceneState}
               hintConfigs={getHintConfigs()}
               characterImage={mooshikaCoach}
-              initialDelay={20000}        
-              hintDisplayTime={10000}    
+              initialDelay={20000}
+              hintDisplayTime={10000}
               position="bottom-right"
               iconSize={60}
               zIndex={2000}
@@ -2864,7 +2837,7 @@ if (currentMissionSymbol === 'nirvighnam') {
               enabled={true}
             />
 
-{/* Navigation - Always on top */}
+            {/* Navigation - Always on top */}
             <div style={{ position: 'relative', zIndex: 10000 }}>
               <TocaBocaNav
                 onHome={() => {
