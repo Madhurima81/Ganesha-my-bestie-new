@@ -509,6 +509,7 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
   return (
     <div className="name-birthday-game" data-zone="about-me-hut">
       <div className="game-background" style={{ backgroundImage: `url(${nameBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
+      <HomeButton onNavigate={onNavigate} />
 
       {/* Intro */}
       <OpeningModal
