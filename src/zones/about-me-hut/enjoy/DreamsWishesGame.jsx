@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import './DreamsWishesGame.css';
+import OpeningModal from '../../shared/components/OpeningModal.jsx';
+import '../../shared/components/OpeningModal.css';
 import AboutMeCompletion from "../components/Aboutmecompletion";
 import DrawingPad from '../components/Drawingpad';
 
@@ -32,7 +33,7 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
   const handleWish1Tap = () => {
     const newTaps = wish1Taps + 1;
     setWish1Taps(newTaps);
-    
+
     if (newTaps >= 3) {
       setTimeout(() => {
         setGamePhase('wish1-complete');
@@ -45,7 +46,7 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
   const handleWish2Tap = () => {
     const newTaps = wish2Taps + 1;
     setWish2Taps(newTaps);
-    
+
     if (newTaps >= 3) {
       setTimeout(() => {
         setGamePhase('wish2-complete');
@@ -58,7 +59,7 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
   const handleWish3Tap = () => {
     const newTaps = wish3Taps + 1;
     setWish3Taps(newTaps);
-    
+
     if (newTaps >= 3) {
       setTimeout(() => {
         setGamePhase('wish3-complete');
@@ -78,7 +79,7 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
   const handleTrunkTap = () => {
     const newTaps = trunkTaps + 1;
     setTrunkTaps(newTaps);
-    
+
     if (newTaps >= 3) {
       setTimeout(() => {
         setGamePhase('dream-revealed');
@@ -98,17 +99,15 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
       )}
 
       {/* INTRO SCREEN */}
+      {/* INTRO SCREEN - Using Shared OpeningModal */}
       {gamePhase === 'intro' && (
-        <div className="intro-overlay">
-          <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
-          <div className="intro-speech">
-            <p className="intro-text">I have three giant wishes for the whole world!</p>
-            <p className="intro-text">Will you help me make them come true? 🌟</p>
-            <button className="start-btn" onClick={() => setGamePhase('wish1-intro')}>
-              Yes! Let's Help Ganesha! ✨
-            </button>
-          </div>
-        </div>
+        <OpeningModal
+          zoneId="about-me-hut"
+          sceneId="dreams-wishes"
+          onStart={() => setGamePhase('wish1-intro')}
+          characterImg={babyGaneshaImg}
+          showButton={true}
+        />
       )}
 
       {/* WISH 1 INTRO - HAPPINESS */}
@@ -137,15 +136,15 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
           </div>
 
           <div className="wish-interactive-container">
-            <div 
+            <div
               className={`earth-icon ${wish1Taps >= 1 ? 'earth-tap1' : ''} ${wish1Taps >= 2 ? 'earth-tap2' : ''} ${wish1Taps >= 3 ? 'earth-tap3' : ''}`}
               onClick={handleWish1Tap}
             >
               <div className="earth-emoji">🌍</div>
               <div className="sad-faces">
-                {Array.from({length: 6}).map((_, i) => (
-                  <div 
-                    key={i} 
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div
+                    key={i}
                     className={`face-emoji ${wish1Taps >= 3 ? 'face-happy' : 'face-sad'}`}
                     style={{
                       transform: `rotate(${i * 60}deg) translateY(-80px)`,
@@ -169,12 +168,12 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
             You helped spread happiness! 😊✨
           </div>
           <div className="wish-checkmark">✓ Happiness Wish Complete!</div>
-          
+
           {/* Floating happy faces */}
           <div className="celebration-elements">
-            {Array.from({length: 15}).map((_, i) => (
-              <div 
-                key={i} 
+            {Array.from({ length: 15 }).map((_, i) => (
+              <div
+                key={i}
                 className="floating-element"
                 style={{
                   left: `${Math.random() * 100}%`,
@@ -215,8 +214,8 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
 
           <div className="wish-interactive-container">
             <div className="bowls-container">
-              {Array.from({length: 3}).map((_, i) => (
-                <div 
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div
                   key={i}
                   className={`bowl ${wish2Taps > i ? 'bowl-filled' : 'bowl-empty'}`}
                   onClick={handleWish2Tap}
@@ -236,8 +235,8 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
           {/* Hearts raining */}
           {wish2Taps >= 3 && (
             <div className="hearts-rain">
-              {Array.from({length: 20}).map((_, i) => (
-                <div 
+              {Array.from({ length: 20 }).map((_, i) => (
+                <div
                   key={i}
                   className="heart-fall"
                   style={{
@@ -261,12 +260,12 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
             You helped spread sharing! 🤝✨
           </div>
           <div className="wish-checkmark">✓ Sharing Wish Complete!</div>
-          
+
           {/* Floating hearts */}
           <div className="celebration-elements">
-            {Array.from({length: 15}).map((_, i) => (
-              <div 
-                key={i} 
+            {Array.from({ length: 15 }).map((_, i) => (
+              <div
+                key={i}
                 className="floating-element"
                 style={{
                   left: `${Math.random() * 100}%`,
@@ -306,18 +305,18 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
           </div>
 
           <div className="wish-interactive-container">
-            <div 
+            <div
               className={`park-scene ${wish3Taps >= 1 ? 'park-tap1' : ''} ${wish3Taps >= 2 ? 'park-tap2' : ''} ${wish3Taps >= 3 ? 'park-tap3' : ''}`}
               onClick={handleWish3Tap}
             >
               {/* Park base */}
               <div className="park-ground"></div>
-              
+
               {/* Flowers appear */}
               {wish3Taps >= 1 && (
                 <div className="flowers-container">
                   {['🌸', '🌺', '🌼', '🌻', '🌷'].map((flower, i) => (
-                    <div 
+                    <div
                       key={i}
                       className="flower pop-in"
                       style={{
@@ -336,7 +335,7 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
               {wish3Taps >= 2 && (
                 <div className="butterflies-container">
                   {['🦋', '🦋', '🦋'].map((butterfly, i) => (
-                    <div 
+                    <div
                       key={i}
                       className="butterfly flutter"
                       style={{
@@ -371,12 +370,12 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
             You made the world beautiful! 🌳✨
           </div>
           <div className="wish-checkmark">✓ Nature Wish Complete!</div>
-          
+
           {/* Floating nature elements */}
           <div className="celebration-elements">
-            {Array.from({length: 15}).map((_, i) => (
-              <div 
-                key={i} 
+            {Array.from({ length: 15 }).map((_, i) => (
+              <div
+                key={i}
                 className="floating-element"
                 style={{
                   left: `${Math.random() * 100}%`,
@@ -448,8 +447,8 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
 
             {/* Clouds covering dream */}
             <div className="clouds-container">
-              {Array.from({length: 3}).map((_, i) => (
-                <div 
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div
                   key={i}
                   className={`dream-cloud cloud-${i + 1}`}
                   style={{ animationDelay: `${i * 0.3}s` }}
@@ -466,11 +465,11 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
           </div>
 
           <div className="speech-bubble-large">
-            Oh no! Hurdle Clouds are hiding your dream!<br/>
+            Oh no! Hurdle Clouds are hiding your dream!<br />
             Don't worry, I am the Obstacle Remover!
           </div>
 
-          <button 
+          <button
             className="trunk-tap-btn"
             onClick={() => setGamePhase('dream-clearing')}
           >
@@ -492,8 +491,8 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
 
             {/* Fading clouds */}
             <div className="clouds-container">
-              {Array.from({length: 3}).map((_, i) => (
-                <div 
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div
                   key={i}
                   className={`dream-cloud cloud-${i + 1} ${trunkTaps > i ? 'cloud-fade' : ''}`}
                 >
@@ -503,7 +502,7 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
             </div>
 
             {/* Tappable Ganesha */}
-            <div 
+            <div
               className={`ganesha-helper ganesha-blowing ${trunkTaps >= 3 ? 'ganesha-blow-done' : ''}`}
               onClick={handleTrunkTap}
             >
@@ -525,11 +524,11 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
             {childDreamDrawing && (
               <img src={childDreamDrawing} alt="Your dream" className="dream-image-glowing" />
             )}
-            
+
             {/* Sparkles around dream */}
             <div className="sparkles-container">
-              {Array.from({length: 20}).map((_, i) => (
-                <div 
+              {Array.from({ length: 20 }).map((_, i) => (
+                <div
                   key={i}
                   className="sparkle-float"
                   style={{
@@ -547,7 +546,7 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
           <img src={babyGaneshaSit} alt="Ganesha" className="ganesha-proud celebrate-scale" />
 
           <div className="success-message-large">
-            Your dream will come true!<br/>
+            Your dream will come true!<br />
             I believe in you! Never give up! 🌟
           </div>
         </div>
@@ -570,19 +569,19 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
               </div>
 
               <div className="wishes-list">
-                <div className="wish-item pop-in" style={{animationDelay: '0.1s'}}>
+                <div className="wish-item pop-in" style={{ animationDelay: '0.1s' }}>
                   <div className="wish-icon">😊</div>
                   <div className="wish-text">Happiness</div>
                   <div className="wish-check">✓</div>
                 </div>
 
-                <div className="wish-item pop-in" style={{animationDelay: '0.2s'}}>
+                <div className="wish-item pop-in" style={{ animationDelay: '0.2s' }}>
                   <div className="wish-icon">🤝</div>
                   <div className="wish-text">Sharing</div>
                   <div className="wish-check">✓</div>
                 </div>
 
-                <div className="wish-item pop-in" style={{animationDelay: '0.3s'}}>
+                <div className="wish-item pop-in" style={{ animationDelay: '0.3s' }}>
                   <div className="wish-icon">🌳</div>
                   <div className="wish-text">Green World</div>
                   <div className="wish-check">✓</div>
@@ -610,7 +609,7 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
                 <h2 className="column-name">YOUR DREAM</h2>
               </div>
 
-              <div className="dream-display-box pop-in" style={{animationDelay: '0.4s'}}>
+              <div className="dream-display-box pop-in" style={{ animationDelay: '0.4s' }}>
                 {childDreamDrawing && (
                   <img src={childDreamDrawing} alt="Your dream" className="dream-thumbnail" />
                 )}
@@ -625,7 +624,7 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
           {/* Final Message */}
           <div className="final-message-box">
             <p className="final-message-text">
-              "No obstacle can stop us when we work together.<br/>
+              "No obstacle can stop us when we work together.<br />
               You are my best friend!"
             </p>
           </div>
@@ -638,7 +637,7 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
           </div>
 
           {/* End Game Button */}
-          <button 
+          <button
             className="comparison-end-btn"
             onClick={() => {
               setGamePhase('ending');
@@ -651,7 +650,7 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
 
           {/* Floating Confetti */}
           <div className="comparison-confetti">
-            {Array.from({length: 30}).map((_, i) => (
+            {Array.from({ length: 30 }).map((_, i) => (
               <div key={i} className="confetti-piece" style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
@@ -688,7 +687,7 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
           }}
           nextSceneName="Symbol Mountain"
           childName="dream maker"
-          
+
           onContinue={() => {
             if (onNavigate) {
               onNavigate('zone-complete');
@@ -696,7 +695,7 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
               onComplete();
             }
           }}
-          
+
           onReplay={() => {
             setGamePhase('intro');
             setWish1Taps(0);
@@ -708,7 +707,7 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
             setShowSceneCompletion(false);
             setGameState({ stars: 3, completed: false });
           }}
-          
+
           onBackToMap={() => {
             if (onNavigate) {
               onNavigate('zone-welcome');
@@ -716,7 +715,7 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
               onBack();
             }
           }}
-          
+
           onHome={() => {
             if (onNavigate) {
               onNavigate('home');
