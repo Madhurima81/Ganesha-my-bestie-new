@@ -34,6 +34,7 @@ import SanskritWordMission from '../../shared/SanskritWordMission.jsx';
 
 import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem.jsx';
 import SaveAnimalMission from '../../../../lib/components/missions/SaveAnimalMission.jsx';
+import OpeningModal from '../../../shared/components/OpeningModal.jsx';
 
 // Images - Suryakoti scene assets
 import suryakotiBankBg from './assets/images/Scene2-bg.png';
@@ -76,7 +77,7 @@ import boyNamaste from '../assets/images/boy-namaste.png';
 // Rescue mission images
 import suryakotiBefore from './assets/images/Suryakoti/suryakoti-before.png';
 import suryakotiAfter from './assets/images/Suryakoti/suryakoti-after.png';
-import samaprabhaBefore from './assets/images/Samaprabha/samaprabha-before.png'; 
+import samaprabhaBefore from './assets/images/Samaprabha/samaprabha-before.png';
 import samaprabhaAfter from './assets/images/Samaprabha/samaprabha-after.png';
 
 // Updated PHASES constant for separate game approach (like VakratundaGrove)
@@ -97,7 +98,7 @@ const PHASES = {
   CHOICE_BUTTONS_SAMAPRABHA: 'choice_buttons_samaprabha',
   RESCUE_MISSION_SAMAPRABHA: 'rescue_mission_samaprabha',
   SAMAPRABHA_POWER: 'samaprabha_power',  // âœ… ADD THIS
-SCENE_COMPLETE: 'scene_complete'
+  SCENE_COMPLETE: 'scene_complete'
 };
 
 // Simple Error Boundary Component
@@ -151,7 +152,7 @@ const SuryakotiBank = ({
         initialState={{
           // Simplified state - combined memory game handles its own logic
           phase: PHASES.INITIAL,
-          
+
           // Learning progress (for progress tracking)
           learnedSyllables: {
             sur: false, ya: false, ko: false, ti: false,
@@ -177,18 +178,18 @@ const SuryakotiBank = ({
             word: null,
             missionJustCompleted: false
           },
-          
+
           // Message flags
           welcomeShown: false,
           suryakotiWisdomShown: false,
           samaprabhaWisdomShown: false,
-          
+
           // System state
           currentPopup: null,
           showingCompletionScreen: false,
           gameCoachState: null,
           isReloadingGameCoach: false,
-          
+
           // Progress
           stars: 0,
           completed: false,
@@ -220,11 +221,11 @@ const SuryakotiBankContent = ({
   zoneId,
   sceneId
 }) => {
-  console.log('ðŸŒž SuryakotiBankContent render', { 
-    sceneState: sceneState?.phase, 
-    isReload, 
+  console.log('ðŸŒž SuryakotiBankContent render', {
+    sceneState: sceneState?.phase,
+    isReload,
     memoryGameState: !!sceneState?.memoryGameState,
-    missionState: sceneState?.missionState 
+    missionState: sceneState?.missionState
   });
 
   if (!sceneState?.phase) sceneActions.updateState({ phase: PHASES.INITIAL });
@@ -260,7 +261,7 @@ const SuryakotiBankContent = ({
   const [currentPracticeWord, setCurrentPracticeWord] = useState('');
   const [showChoiceButtons, setShowChoiceButtons] = useState(false);
   const [unlockedApps, setUnlockedApps] = useState([]);
-  
+
   const [blessingPhase, setBlessingPhase] = useState('welcome');
   const [showParticles, setShowParticles] = useState(false);
   const [showPulseRings, setShowPulseRings] = useState(false);
@@ -273,17 +274,17 @@ const SuryakotiBankContent = ({
   const [showRescueMission, setShowRescueMission] = useState(false);
   const [currentRescueWord, setCurrentRescueWord] = useState('');
   const [showWordCelebration, setShowWordCelebration] = useState(false);
-    const [showCenteredWord, setShowCenteredWord] = useState(null);
+  const [showCenteredWord, setShowCenteredWord] = useState(null);
   const [showPowerModal, setShowPowerModal] = useState(false);  // â­ ADD THIS LINE
-const [showMission, setShowMission] = useState(false);  // â­ ADD THIS LINE TOO
-const [currentWord, setCurrentWord] = useState(null);  // â­ ADD THIS LINE
+  const [showMission, setShowMission] = useState(false);  // â­ ADD THIS LINE TOO
+  const [currentWord, setCurrentWord] = useState(null);  // â­ ADD THIS LINE
 
 
   const [showSamaprabhaStory, setShowSamaprabhaStory] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isAudioOn, setIsAudioOn] = useState(true);
 
-    const [forceMemoryGameReset, setForceMemoryGameReset] = useState(false); // ADD THIS LINE
+  const [forceMemoryGameReset, setForceMemoryGameReset] = useState(false); // ADD THIS LINE
   const [rescuePhase, setRescuePhase] = useState('problem');
 
   const [savedRecordings, setSavedRecordings] = useState({});
@@ -291,29 +292,29 @@ const [currentWord, setCurrentWord] = useState(null);  // â­ ADD THIS LINE
 
 
   // Add power configuration for Scene 2
-// âœ… REPLACE the existing powerConfig with:
-const powerConfig = {
-  suryakoti: { 
-    name: 'Solar Clarity', 
-    image: appSuryakoti,
-    color: '#FFA500',
-    affirmation: 'I am clear',
-    description: 'I see with clarity!'
-  },
-  samaprabha: { 
-    name: 'Radiant Light', 
-    image: appSamaprabha,
-    color: '#9400D3',
-    affirmation: 'I am radiant',
-    description: 'I shine from within!'
-  }
-};
+  // âœ… REPLACE the existing powerConfig with:
+  const powerConfig = {
+    suryakoti: {
+      name: 'Solar Clarity',
+      image: appSuryakoti,
+      color: '#FFA500',
+      affirmation: 'I am clear',
+      description: 'I see with clarity!'
+    },
+    samaprabha: {
+      name: 'Radiant Light',
+      image: appSamaprabha,
+      color: '#9400D3',
+      affirmation: 'I am radiant',
+      description: 'I shine from within!'
+    }
+  };
 
-// âœ… ADD mission images mapping:
-const missionImages = {
-  suryakoti: { before: suryakotiBefore, after: suryakotiAfter },
-  samaprabha: { before: samaprabhaBefore, after: samaprabhaAfter }
-};
+  // âœ… ADD mission images mapping:
+  const missionImages = {
+    suryakoti: { before: suryakotiBefore, after: suryakotiAfter },
+    samaprabha: { before: samaprabhaBefore, after: samaprabhaAfter }
+  };
 
   // Safe setTimeout function
   const safeSetTimeout = (callback, delay) => {
@@ -324,7 +325,7 @@ const missionImages = {
 
   const playAudio = (audioPath, volume = 1.0) => {
     if (!isAudioOn) return Promise.resolve(); // Skip if muted
-    
+
     try {
       const audio = new Audio(audioPath);
       audio.volume = volume;
@@ -339,115 +340,115 @@ const missionImages = {
   };
 
   // At the top of your component, create the reusable function
-const resetScene = (showConfirm = true) => {
-  if (showConfirm && !confirm('Start this scene from the beginning? You will lose current progress.')) {
-    return;
-  }
-
-  console.log('Scene reset: User chose to start fresh');
-  
-  // STEP 1: Set force reset flag FIRST
-  setForceMemoryGameReset(true);
-  
-  // STEP 2: Clear all timeouts first to prevent conflicts
-  timeoutsRef.current.forEach(id => clearTimeout(id));
-  timeoutsRef.current = [];
-  
-  // STEP 3: Clear ALL local React state variables immediately
-  setShowSparkle(null);
-  setShowRecording(false);
-  setShowSceneCompletion(false);
-  setCurrentRecordingWord('');
-  setShowAudioTracker(true);
-  
-  // Clear Ganesha-related states
-  setShowGaneshaBlessing(false);
-  setBlessingPhase('welcome');
-  setCurrentPracticeWord('');
-  setShowChoiceButtons(false);
-  setShowAudioPractice(false);
-  
-  // Clear other UI states with safety checks
-  if (typeof setShowParticles !== 'undefined') setShowParticles(false);
-  if (typeof setShowPulseRings !== 'undefined') setShowPulseRings(false);
-  if (typeof setShowCenteredApp !== 'undefined') setShowCenteredApp(null);
-  if (typeof setUnlockedApps !== 'undefined') setUnlockedApps([]);
-  if (typeof setSuryakotiPowerGained !== 'undefined') setSuryakotiPowerGained(false);
-  if (typeof setBlessingWord !== 'undefined') setBlessingWord('');
-  
-  // Clear rescue mission states
-  if (typeof setShowRescueMission !== 'undefined') setShowRescueMission(false);
-  if (typeof setRescuePhase !== 'undefined') setRescuePhase('problem');
-  if (typeof setCurrentRescueWord !== 'undefined') setCurrentRescueWord('');
-  
-  // Clear hint states
-  if (typeof setHintUsed !== 'undefined') setHintUsed(false);
-  if (progressiveHintRef.current && typeof progressiveHintRef.current.hideHint === 'function') {
-    progressiveHintRef.current.hideHint();
-  }
-  
-  // STEP 4: Hide GameCoach immediately
-  if (hideCoach) hideCoach();
-  if (clearManualCloseTracking) clearManualCloseTracking();
-  
-  // STEP 5: Clear memory game completion state
-  if (window.simplifiedCombinedMemoryGame && window.simplifiedCombinedMemoryGame.clearCompletionState) {
-    window.simplifiedCombinedMemoryGame.clearCompletionState();
-  }
-  
-  // STEP 6: Force memory game reset
-  const forceMemoryGameReset = () => {
-    if (window.simplifiedCombinedMemoryGame) {
-      window.simplifiedCombinedMemoryGame.visualRewards = {};
-      window.simplifiedCombinedMemoryGame.activatedSingers = {};
-      window.simplifiedCombinedMemoryGame.isForceReset = true;
+  const resetScene = (showConfirm = true) => {
+    if (showConfirm && !confirm('Start this scene from the beginning? You will lose current progress.')) {
+      return;
     }
-  };
-  
-  forceMemoryGameReset();
-  
-  // STEP 7: Reset scene state
-  setTimeout(() => {
-    sceneActions.updateState({
-      learnedSyllables: {
-        sur: false, ya: false, ko: false, ti: false,
-        sa: false, ma: false, pra: false, bha: false
-      },
-      learnedWords: {
-        suryakoti: false,
-        samaprabha: false
-      },
-      memoryGameState: null,
-          unlockedApps: {},  // â† This is what's missing!
 
-      phase: PHASES.INITIAL,
-      welcomeShown: false,
-      suryakotiWisdomShown: false,
-      samaprabhaWisdomShown: false,
-      currentPopup: null,
-      showingCompletionScreen: false,
-      gameCoachState: null,
-      isReloadingGameCoach: false,
-      stars: 0,
-      completed: false,
-      progress: { percentage: 0, starsEarned: 0, completed: false }
-    });
-    
+    console.log('Scene reset: User chose to start fresh');
+
+    // STEP 1: Set force reset flag FIRST
+    setForceMemoryGameReset(true);
+
+    // STEP 2: Clear all timeouts first to prevent conflicts
+    timeoutsRef.current.forEach(id => clearTimeout(id));
+    timeoutsRef.current = [];
+
+    // STEP 3: Clear ALL local React state variables immediately
+    setShowSparkle(null);
+    setShowRecording(false);
+    setShowSceneCompletion(false);
+    setCurrentRecordingWord('');
+    setShowAudioTracker(true);
+
+    // Clear Ganesha-related states
+    setShowGaneshaBlessing(false);
+    setBlessingPhase('welcome');
+    setCurrentPracticeWord('');
+    setShowChoiceButtons(false);
+    setShowAudioPractice(false);
+
+    // Clear other UI states with safety checks
+    if (typeof setShowParticles !== 'undefined') setShowParticles(false);
+    if (typeof setShowPulseRings !== 'undefined') setShowPulseRings(false);
+    if (typeof setShowCenteredApp !== 'undefined') setShowCenteredApp(null);
+    if (typeof setUnlockedApps !== 'undefined') setUnlockedApps([]);
+    if (typeof setSuryakotiPowerGained !== 'undefined') setSuryakotiPowerGained(false);
+    if (typeof setBlessingWord !== 'undefined') setBlessingWord('');
+
+    // Clear rescue mission states
+    if (typeof setShowRescueMission !== 'undefined') setShowRescueMission(false);
+    if (typeof setRescuePhase !== 'undefined') setRescuePhase('problem');
+    if (typeof setCurrentRescueWord !== 'undefined') setCurrentRescueWord('');
+
+    // Clear hint states
+    if (typeof setHintUsed !== 'undefined') setHintUsed(false);
+    if (progressiveHintRef.current && typeof progressiveHintRef.current.hideHint === 'function') {
+      progressiveHintRef.current.hideHint();
+    }
+
+    // STEP 4: Hide GameCoach immediately
+    if (hideCoach) hideCoach();
+    if (clearManualCloseTracking) clearManualCloseTracking();
+
+    // STEP 5: Clear memory game completion state
+    if (window.simplifiedCombinedMemoryGame && window.simplifiedCombinedMemoryGame.clearCompletionState) {
+      window.simplifiedCombinedMemoryGame.clearCompletionState();
+    }
+
+    // STEP 6: Force memory game reset
+    const forceMemoryGameReset = () => {
+      if (window.simplifiedCombinedMemoryGame) {
+        window.simplifiedCombinedMemoryGame.visualRewards = {};
+        window.simplifiedCombinedMemoryGame.activatedSingers = {};
+        window.simplifiedCombinedMemoryGame.isForceReset = true;
+      }
+    };
+
+    forceMemoryGameReset();
+
+    // STEP 7: Reset scene state
     setTimeout(() => {
-      setForceMemoryGameReset(false);
-    }, 1000);
-    
-    console.log('Scene state reset complete');
-  }, 150);
-};
+      sceneActions.updateState({
+        learnedSyllables: {
+          sur: false, ya: false, ko: false, ti: false,
+          sa: false, ma: false, pra: false, bha: false
+        },
+        learnedWords: {
+          suryakoti: false,
+          samaprabha: false
+        },
+        memoryGameState: null,
+        unlockedApps: {},  // â† This is what's missing!
+
+        phase: PHASES.INITIAL,
+        welcomeShown: false,
+        suryakotiWisdomShown: false,
+        samaprabhaWisdomShown: false,
+        currentPopup: null,
+        showingCompletionScreen: false,
+        gameCoachState: null,
+        isReloadingGameCoach: false,
+        stars: 0,
+        completed: false,
+        progress: { percentage: 0, starsEarned: 0, completed: false }
+      });
+
+      setTimeout(() => {
+        setForceMemoryGameReset(false);
+      }, 1000);
+
+      console.log('Scene state reset complete');
+    }, 150);
+  };
 
   const toggleAudio = () => {
     const newAudioState = !isAudioOn;
     setIsAudioOn(newAudioState);
-    
+
     // Save preference to localStorage
     localStorage.setItem('sanskritGameAudio', newAudioState.toString());
-    
+
     // Stop all currently playing audio if muting
     if (!newAudioState) {
       // Stop all audio elements
@@ -456,31 +457,31 @@ const resetScene = (showConfirm = true) => {
         audio.currentTime = 0;
       });
     }
-    
+
     console.log(`Audio ${newAudioState ? 'enabled' : 'muted'}`);
   };
 
   const onSaveAppRecording = (recordingData) => {
-  console.log('ðŸ’¾ Saving recording:', recordingData);
-  setSavedRecordings(prev => ({
-    ...prev,
-    [recordingData.word]: [
-      ...(prev[recordingData.word] || []),
-      recordingData
-    ]
-  }));
-};
-
-const onDeleteAppRecording = (recordingId, word) => {
-  console.log('ðŸ—‘ï¸ Deleting recording:', recordingId, word);
-  setSavedRecordings(prev => {
-    const wordRecordings = prev[word] || [];
-    return {
+    console.log('ðŸ’¾ Saving recording:', recordingData);
+    setSavedRecordings(prev => ({
       ...prev,
-      [word]: wordRecordings.filter(rec => rec.id !== recordingId)
-    };
-  });
-};
+      [recordingData.word]: [
+        ...(prev[recordingData.word] || []),
+        recordingData
+      ]
+    }));
+  };
+
+  const onDeleteAppRecording = (recordingId, word) => {
+    console.log('ðŸ—‘ï¸ Deleting recording:', recordingId, word);
+    setSavedRecordings(prev => {
+      const wordRecordings = prev[word] || [];
+      return {
+        ...prev,
+        [word]: wordRecordings.filter(rec => rec.id !== recordingId)
+      };
+    });
+  };
 
   // Cleanup timeouts on unmount
   useEffect(() => {
@@ -489,11 +490,11 @@ const onDeleteAppRecording = (recordingId, word) => {
     };
   }, []);
 
-    // Expose audio functions globally for SanskritWordMission
+  // Expose audio functions globally for SanskritWordMission
   useEffect(() => {
     window.playSanskritAudio = playSyllable;
     window.playSanskritWord = playWord;
-    
+
     return () => {
       delete window.playSanskritAudio;
       delete window.playSanskritWord;
@@ -511,36 +512,36 @@ const onDeleteAppRecording = (recordingId, word) => {
   // UNIFIED: Single state saving function (like VakratundaGrove)
   const handleSaveComponentState = (componentType, componentState) => {
     console.log(`ðŸ’¾ Saving ${componentType} state:`, componentState);
-    
+
     // Prevent double calls by debouncing
-    if (handleSaveComponentState.lastCall && 
-        Date.now() - handleSaveComponentState.lastCall < 100) {
+    if (handleSaveComponentState.lastCall &&
+      Date.now() - handleSaveComponentState.lastCall < 100) {
       console.log('ðŸš« Debounced duplicate save call');
       return;
     }
     handleSaveComponentState.lastCall = Date.now();
 
     if (componentState === null || componentState?.cleared) {
-  const updatedState = {
-    ...(componentType === 'suryakotiGame' && { suryakotiGameState: null }),
-    ...(componentType === 'samaprabhaGame' && { samaprabhaGameState: null })
-  };
-  sceneActions.updateState(updatedState);
-  return;
-}
-    
-const updatedState = {
-  ...(componentType === 'memoryGame' && { memoryGameState: componentState }),
-  ...(componentType === 'suryakotiGame' && { suryakotiGameState: componentState }),
-  ...(componentType === 'samaprabhaGame' && { samaprabhaGameState: componentState }),
-  ...(componentType === 'mission' && { 
-    missionState: {
-      ...sceneState.missionState,
-      ...componentState
+      const updatedState = {
+        ...(componentType === 'suryakotiGame' && { suryakotiGameState: null }),
+        ...(componentType === 'samaprabhaGame' && { samaprabhaGameState: null })
+      };
+      sceneActions.updateState(updatedState);
+      return;
     }
-  })
-};
-    
+
+    const updatedState = {
+      ...(componentType === 'memoryGame' && { memoryGameState: componentState }),
+      ...(componentType === 'suryakotiGame' && { suryakotiGameState: componentState }),
+      ...(componentType === 'samaprabhaGame' && { samaprabhaGameState: componentState }),
+      ...(componentType === 'mission' && {
+        missionState: {
+          ...sceneState.missionState,
+          ...componentState
+        }
+      })
+    };
+
     console.log(`âš¡ Updating scene state with ${componentType}:`, updatedState);
     sceneActions.updateState(updatedState);
   };
@@ -562,7 +563,7 @@ const updatedState = {
         setShowSamaprabhaStory(true);
       }
     };
-    
+
     return () => {
       if (window.suryakotiBank) {
         delete window.suryakotiBank;
@@ -756,25 +757,25 @@ const updatedState = {
 
   // Add this around line 380-400 (after playAudio function)
 
-const playSyllable = (syllable) => {
-  const map = {
-    // Suryakoti syllables
-    'sur': 'suryakoti-sur',
-    'ya': 'suryakoti-ya', 
-    'ko': 'suryakoti-ko',
-    'ti': 'suryakoti-ti',
-    // Samaprabha syllables
-    'sa': 'samaprabha-sa',
-    'ma': 'samaprabha-ma',
-    'pra': 'samaprabha-pra',
-    'bha': 'samaprabha-bha'
+  const playSyllable = (syllable) => {
+    const map = {
+      // Suryakoti syllables
+      'sur': 'suryakoti-sur',
+      'ya': 'suryakoti-ya',
+      'ko': 'suryakoti-ko',
+      'ti': 'suryakoti-ti',
+      // Samaprabha syllables
+      'sa': 'samaprabha-sa',
+      'ma': 'samaprabha-ma',
+      'pra': 'samaprabha-pra',
+      'bha': 'samaprabha-bha'
+    };
+    playAudio(`/audio/syllables/${map[syllable] || syllable}.mp3`);
   };
-  playAudio(`/audio/syllables/${map[syllable] || syllable}.mp3`);
-};
 
-const playWord = (word) => {
-  playAudio(`/audio/words/${word}.mp3`);
-};
+  const playWord = (word) => {
+    playAudio(`/audio/words/${word}.mp3`);
+  };
 
   // Asset getter functions - consolidated for combined memory game
   const getSunOrbImage = (index) => {
@@ -797,23 +798,23 @@ const playWord = (word) => {
     return images[index];
   };
 
-// âœ… KEEP your existing getAnimalImage function
-const getAnimalImage = (index, isHappy) => {
-  const sadImages = [bunnySad, kittenSad, puppySad, squirrelSad];
-  const happyImages = [bunnyHappy, kittenHappy, puppyHappy, squirrelHappy];
-  return isHappy ? happyImages[index] : sadImages[index];
-};
+  // âœ… KEEP your existing getAnimalImage function
+  const getAnimalImage = (index, isHappy) => {
+    const sadImages = [bunnySad, kittenSad, puppySad, squirrelSad];
+    const happyImages = [bunnyHappy, kittenHappy, puppyHappy, squirrelHappy];
+    return isHappy ? happyImages[index] : sadImages[index];
+  };
 
-// âœ… ADD these two new functions right after getAnimalImage:
-const getSadAnimalImage = (index) => {
-  const images = [bunnySad, kittenSad, puppySad, squirrelSad];
-  return images[index];
-};
+  // âœ… ADD these two new functions right after getAnimalImage:
+  const getSadAnimalImage = (index) => {
+    const images = [bunnySad, kittenSad, puppySad, squirrelSad];
+    return images[index];
+  };
 
-const getHappyAnimalImage = (index) => {
-  const images = [bunnyHappy, kittenHappy, puppyHappy, squirrelHappy];
-  return images[index];
-};
+  const getHappyAnimalImage = (index) => {
+    const images = [bunnyHappy, kittenHappy, puppyHappy, squirrelHappy];
+    return images[index];
+  };
 
   const getFruitImage = (index, isCollected) => {
     // Assumes only one type of fruit for now (mango)
@@ -821,92 +822,92 @@ const getHappyAnimalImage = (index) => {
   };
 
 
-    
-// âœ… REPLACE with clean versions:
-const handleSaveAnimal = () => {
-  setShowPowerModal(false);
-  setShowMission(true);
-};
 
-const handleContinueLearning = () => {
-  setShowPowerModal(false);
-  
-  if (currentWord === 'suryakoti') {
-    safeSetTimeout(() => {
-      sceneActions.updateState({ phase: PHASES.SAMAPRABHA_STORY });
-    }, 500);
-  } else {
-    // Complete scene
-    sceneActions.updateState({
-      phase: PHASES.COMPLETE,
-      stars: 5,
-      completed: true,
-      progress: { percentage: 100, starsEarned: 5, completed: true }
-    });
-    
-    setShowSparkle('final-fireworks');
-  }
-};
+  // âœ… REPLACE with clean versions:
+  const handleSaveAnimal = () => {
+    setShowPowerModal(false);
+    setShowMission(true);
+  };
 
-const handleMissionComplete = () => {
-  console.log('âœ… Mission complete for:', currentWord);
-  setShowMission(false);
-  
-  if (currentWord === 'suryakoti') {
-    safeSetTimeout(() => {
-      sceneActions.updateState({ phase: PHASES.SAMAPRABHA_STORY });
-    }, 500);
-  } else {
-    // Complete scene - SAME AS handleContinueLearning
-    sceneActions.updateState({
-      phase: PHASES.COMPLETE,
-      stars: 5,
-      completed: true,
-      progress: { percentage: 100, starsEarned: 5, completed: true }
-    });
-    
-    setShowSparkle('final-fireworks');
-  }
-};
+  const handleContinueLearning = () => {
+    setShowPowerModal(false);
+
+    if (currentWord === 'suryakoti') {
+      safeSetTimeout(() => {
+        sceneActions.updateState({ phase: PHASES.SAMAPRABHA_STORY });
+      }, 500);
+    } else {
+      // Complete scene
+      sceneActions.updateState({
+        phase: PHASES.COMPLETE,
+        stars: 5,
+        completed: true,
+        progress: { percentage: 100, starsEarned: 5, completed: true }
+      });
+
+      setShowSparkle('final-fireworks');
+    }
+  };
+
+  const handleMissionComplete = () => {
+    console.log('âœ… Mission complete for:', currentWord);
+    setShowMission(false);
+
+    if (currentWord === 'suryakoti') {
+      safeSetTimeout(() => {
+        sceneActions.updateState({ phase: PHASES.SAMAPRABHA_STORY });
+      }, 500);
+    } else {
+      // Complete scene - SAME AS handleContinueLearning
+      sceneActions.updateState({
+        phase: PHASES.COMPLETE,
+        stars: 5,
+        completed: true,
+        progress: { percentage: 100, starsEarned: 5, completed: true }
+      });
+
+      setShowSparkle('final-fireworks');
+    }
+  };
 
   const handleRescueComplete = () => {
     console.log('âœ… Rescue complete for:', currentRescueWord);
-    
+
     // Save the mission state to prevent it from re-triggering on reload
     handleSaveComponentState('mission', {
       rescuePhase: 'success',
       word: currentRescueWord,
       missionJustCompleted: true
     });
-    
+
     // Hide the rescue mission screen
     setShowRescueMission(false);
-    
+
     if (currentRescueWord === 'suryakoti') {
       console.log('Suryakoti rescue complete - showing Samaprabha story now');
-      
+
       // Clean up the UI
       setShowChoiceButtons(false);
       setShowGaneshaBlessing(false);
       setSuryakotiPowerGained(true); // Grant the power from the first word
-      
+
       // Update the scene's main phase to the story of the NEXT game
       sceneActions.updateState({
         phase: PHASES.SAMAPRABHA_STORY
       });
-      
+
       // Show the intro popup for the Samaprabha game
       setTimeout(() => {
         setShowSamaprabhaStory(true);
       }, 500);
-      
+
     } else if (currentRescueWord === 'samaprabha') {
       console.log('Samaprabha rescue complete - FINAL FIREWORKS NOW!');
-      
+
       // Clean up all UI
       setShowChoiceButtons(false);
       setShowGaneshaBlessing(false);
-      
+
       // Update the scene's main phase to SCENE_COMPLETE
       sceneActions.updateState({
         phase: PHASES.SCENE_COMPLETE,
@@ -914,7 +915,7 @@ const handleMissionComplete = () => {
         completed: true,
         progress: { percentage: 100, starsEarned: 5, completed: true }
       });
-      
+
       // Start the final fireworks celebration
       setTimeout(() => {
         setShowSparkle('final-fireworks');
@@ -922,46 +923,46 @@ const handleMissionComplete = () => {
     }
   };
 
-// âœ… REPLACE with VakratundaGrove pattern:
-const handlePhaseComplete = (word) => {
-  console.log(`${word} learned!`);
-  
-  sceneActions.updateState({
-    learnedWords: { ...sceneState.learnedWords, [word]: true },
-    learnedSyllables: {
-      ...sceneState.learnedSyllables,
-      ...(word === 'suryakoti' 
-        ? { sur: true, ya: true, ko: true, ti: true }
-        : { sa: true, ma: true, pra: true, bha: true })
-    },
-    phase: word === 'suryakoti' ? PHASES.SURYAKOTI_COMPLETE : PHASES.SAMAPRABHA_COMPLETE
-  });
+  // âœ… REPLACE with VakratundaGrove pattern:
+  const handlePhaseComplete = (word) => {
+    console.log(`${word} learned!`);
 
-  // Step 1: Show 5-second celebration
-  setShowCenteredWord(word);
-  setShowSparkle(`${word}-celebration`);
-  playAudio(`/audio/words/${word}.mp3`);
-  
-  safeSetTimeout(() => {
-    // Step 2: Hide centered, fly to sidebar
-    setShowCenteredWord(null);
-    setShowSparkle(`${word}-to-sidebar`);
-    
     sceneActions.updateState({
-      unlockedApps: { ...sceneState.unlockedApps, [word]: true }
+      learnedWords: { ...sceneState.learnedWords, [word]: true },
+      learnedSyllables: {
+        ...sceneState.learnedSyllables,
+        ...(word === 'suryakoti'
+          ? { sur: true, ya: true, ko: true, ti: true }
+          : { sa: true, ma: true, pra: true, bha: true })
+      },
+      phase: word === 'suryakoti' ? PHASES.SURYAKOTI_COMPLETE : PHASES.SAMAPRABHA_COMPLETE
     });
-    
+
+    // Step 1: Show 5-second celebration
+    setShowCenteredWord(word);
+    setShowSparkle(`${word}-celebration`);
+    playAudio(`/audio/words/${word}.mp3`);
+
     safeSetTimeout(() => {
-      // Step 3: Show power modal IMMEDIATELY
-      setShowSparkle(null);
-      setCurrentWord(word);
-      setShowPowerModal(true);
+      // Step 2: Hide centered, fly to sidebar
+      setShowCenteredWord(null);
+      setShowSparkle(`${word}-to-sidebar`);
+
       sceneActions.updateState({
-        phase: word === 'suryakoti' ? PHASES.SURYAKOTI_POWER : PHASES.SAMAPRABHA_POWER
+        unlockedApps: { ...sceneState.unlockedApps, [word]: true }
       });
-    }, 2000);
-  }, 5000);
-};
+
+      safeSetTimeout(() => {
+        // Step 3: Show power modal IMMEDIATELY
+        setShowSparkle(null);
+        setCurrentWord(word);
+        setShowPowerModal(true);
+        sceneActions.updateState({
+          phase: word === 'suryakoti' ? PHASES.SURYAKOTI_POWER : PHASES.SAMAPRABHA_POWER
+        });
+      }, 2000);
+    }, 5000);
+  };
 
 
 
@@ -982,11 +983,11 @@ const handlePhaseComplete = (word) => {
   // Audio playback functions
   const handleSyllablePlay = (syllable) => {
     if (!isAudioOn) return;
-    
+
     const syllableFileMap = {
       // Suryakoti syllables
       'sur': 'suryakoti-sur',
-      'ya': 'suryakoti-ya', 
+      'ya': 'suryakoti-ya',
       'ko': 'suryakoti-ko',
       'ti': 'suryakoti-ti',
       // Samaprabha syllables
@@ -995,7 +996,7 @@ const handlePhaseComplete = (word) => {
       'pra': 'samaprabha-pra',
       'bha': 'samaprabha-bha'
     };
-    
+
     const fileName = syllableFileMap[syllable.toLowerCase()] || syllable;
     playAudio(`/audio/syllables/${fileName}.mp3`);
   };
@@ -1007,11 +1008,11 @@ const handlePhaseComplete = (word) => {
 
   const startPracticeRound = (word, round) => {
     console.log(`Starting practice: ${word} round ${round}`);
-    
+
     if (window.simplifiedCombinedMemoryGame && window.simplifiedCombinedMemoryGame.startPracticeMode) {
       window.simplifiedCombinedMemoryGame.startPracticeMode(word, round);
     }
-    
+
     sceneActions.updateState({
       phase: PHASES.MEMORY_GAME_ACTIVE,
       currentPopup: null
@@ -1029,7 +1030,7 @@ const handlePhaseComplete = (word) => {
       }
     },
     {
-      id: 'orb-clicking-hint', 
+      id: 'orb-clicking-hint',
       message: 'Click the sun orbs to repeat the sequence!',
       explicitMessage: 'Click the sun orbs in the order you heard: sur-ya-ko-ti!',
       position: { bottom: '60%', left: '50%', transform: 'translateX(-50%)' },
@@ -1085,20 +1086,20 @@ const handlePhaseComplete = (word) => {
   const getSyllableState = (syllable) => {
     const learned = sceneState.learnedSyllables?.[syllable.toLowerCase()];
     if (learned) return 'learned';
-    
+
     const currentWord = sceneState.learnedWords?.suryakoti ? 'samaprabha' : 'suryakoti';
     const phaseSyllables = currentWord === 'suryakoti'
       ? ['sur', 'ya', 'ko', 'ti']
       : ['sa', 'ma', 'pra', 'bha'];
-    
+
     if (phaseSyllables.includes(syllable.toLowerCase())) return 'current';
     return 'locked';
   };
 
   // Determine if combined memory game should be active
-  const isCombinedGameActive = sceneState.phase === PHASES.MEMORY_GAME_ACTIVE || 
-                             sceneState.phase === PHASES.SURYAKOTI_COMPLETE || 
-                             sceneState.phase === PHASES.SAMAPRABHA_COMPLETE;
+  const isCombinedGameActive = sceneState.phase === PHASES.MEMORY_GAME_ACTIVE ||
+    sceneState.phase === PHASES.SURYAKOTI_COMPLETE ||
+    sceneState.phase === PHASES.SAMAPRABHA_COMPLETE;
 
   // UNIFIED: Extract reload props for combined memory game (like VakratundaGrove)
   /*const simplifiedCombinedMemoryGameReloadProps = sceneState.memoryGameState ? {
@@ -1156,27 +1157,41 @@ const handlePhaseComplete = (word) => {
         <div className="suryakoti-bank-container">
           <div className="river-background" style={{ backgroundImage: `url(${suryakotiBankBg})` }}>
 
-            {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
+            <OpeningModal
+              zoneId={zoneId}
+              sceneId={sceneId}
+              onStart={() => {
+                console.log('ðŸŽ® Opening mode selection for SURYAKOTI via OpeningModal');
+                sceneActions.updateState({ welcomeShown: true });
+                setModeForPhase('suryakoti');
+                setShowModeSelection(true);
+                setModeSelected(false);
+              }}
+              characterImg={ganeshaHeadphones}
+              showButton={true}
+            />
+
+            {sceneState.phase === PHASES.SAMAPRABHA_STORY && (
               <div className="suryakoti-mission-modal-overlay">
                 <div className="suryakoti-mission-modal">
                   <div className="suryakoti-modal-character">
                     <img src={ganeshaHeadphones} alt="Ganesha" className="suryakoti-character-img" />
                     <div className="suryakoti-character-speech-bubble">
-                      Let's save the forest! ðŸŒ³
+                      One more to learn! ðŸ’ª
                     </div>
                   </div>
-                  
-                  <h2 className="suryakoti-mission-title">Help Ganesha Save the River!</h2>
-                  <div className="suryakoti-mission-subtitle">2 magical words have special powers!</div>
+
+                  <h2 className="suryakoti-mission-title">Great Work!</h2>
+                  <div className="suryakoti-mission-subtitle">Now unlock the second power!</div>
                   <p className="suryakoti-mission-description">
-                    First, learn to chant <strong>SURYAKOTI</strong> to unlock solar power and rescue trapped animals!
+                    Learn to chant <strong>SAMAPRABHA</strong> to unlock radiant light and save more animals!
                   </p>
                   <button
                     className="suryakoti-mission-start-btn"
                     onClick={() => {
-                      console.log('ðŸŽ® Opening mode selection for SURYAKOTI');
-                      sceneActions.updateState({ welcomeShown: true });
-                      setModeForPhase('suryakoti');
+                      console.log('ðŸŽ® Opening mode selection for SAMAPRABHA');
+                      setSuryakotiPowerGained(true); // â­ Keep this - makes Samaprabha visible
+                      setModeForPhase('samaprabha');
                       setShowModeSelection(true);
                       setModeSelected(false);
                     }}
@@ -1187,111 +1202,80 @@ const handlePhaseComplete = (word) => {
               </div>
             )}
 
-            {sceneState.phase === PHASES.SAMAPRABHA_STORY && (
-  <div className="suryakoti-mission-modal-overlay">
-    <div className="suryakoti-mission-modal">
-      <div className="suryakoti-modal-character">
-        <img src={ganeshaHeadphones} alt="Ganesha" className="suryakoti-character-img" />
-        <div className="suryakoti-character-speech-bubble">
-          One more to learn! ðŸ’ª
-        </div>
-      </div>
-      
-      <h2 className="suryakoti-mission-title">Great Work!</h2>
-      <div className="suryakoti-mission-subtitle">Now unlock the second power!</div>
-      <p className="suryakoti-mission-description">
-        Learn to chant <strong>SAMAPRABHA</strong> to unlock radiant light and save more animals!
-      </p>
-     <button
-        className="suryakoti-mission-start-btn"
-        onClick={() => {
-          console.log('ðŸŽ® Opening mode selection for SAMAPRABHA');
-          setSuryakotiPowerGained(true); // â­ Keep this - makes Samaprabha visible
-          setModeForPhase('samaprabha');
-          setShowModeSelection(true);
-          setModeSelected(false);
-        }}
-      >
-        Start Learning!
-      </button>
-    </div>
-  </div>
-)}
+            {/* â­ MODE SELECTION MODAL - Shows BEFORE game starts */}
+            {showModeSelection && !modeSelected && (
+              <div className="suryakoti-mission-modal-overlay">
+                <div className="suryakoti-mission-modal mode-selection-modal">
+                  <h2 className="suryakoti-mission-title">ðŸŽ® How do you want to play?</h2>
+                  <p className="suryakoti-mission-description">
+                    Choose your learning style for <strong>{modeForPhase?.toUpperCase()}</strong>
+                  </p>
 
-{/* â­ MODE SELECTION MODAL - Shows BEFORE game starts */}
-{showModeSelection && !modeSelected && (
-  <div className="suryakoti-mission-modal-overlay">
-    <div className="suryakoti-mission-modal mode-selection-modal">
-      <h2 className="suryakoti-mission-title">ðŸŽ® How do you want to play?</h2>
-      <p className="suryakoti-mission-description">
-        Choose your learning style for <strong>{modeForPhase?.toUpperCase()}</strong>
-      </p>
+                  <div style={{
+                    display: 'flex',
+                    gap: '20px',
+                    marginTop: '30px',
+                    flexDirection: 'column'
+                  }}>
+                    {/* AUTO PLAY BUTTON */}
+                    <button
+                      className="suryakoti-mission-start-btn"
+                      style={{
+                        background: 'linear-gradient(135deg, #4CAF50 0%, #81C784 100%)',
+                        padding: '20px',
+                        fontSize: '16px'
+                      }}
+                      onClick={() => {
+                        console.log(`ðŸŽ® Mode selected: AUTO for ${modeForPhase}`);
+                        setModeSelected(true);
+                        setShowModeSelection(false);
 
-      <div style={{
-        display: 'flex',
-        gap: '20px',
-        marginTop: '30px',
-        flexDirection: 'column'
-      }}>
-        {/* AUTO PLAY BUTTON */}
-        <button
-          className="suryakoti-mission-start-btn"
-          style={{
-            background: 'linear-gradient(135deg, #4CAF50 0%, #81C784 100%)',
-            padding: '20px',
-            fontSize: '16px'
-          }}
-          onClick={() => {
-            console.log(`ðŸŽ® Mode selected: AUTO for ${modeForPhase}`);
-            setModeSelected(true);
-            setShowModeSelection(false);
+                        // â­ Single state update: mode + phase
+                        const modeKey = `${modeForPhase}Mode`;
+                        const phaseKey = modeForPhase === 'suryakoti' ? PHASES.SURYAKOTI_GAME_ACTIVE : PHASES.SAMAPRABHA_GAME_ACTIVE;
+                        sceneActions.updateState({
+                          [modeKey]: 'auto',
+                          phase: phaseKey
+                        });
+                      }}
+                    >
+                      <div style={{ fontSize: '24px', marginBottom: '8px' }}>â–¶ï¸ Auto Play</div>
+                      <div style={{ fontSize: '13px', opacity: 0.9 }}>
+                        Start from Round 1 and learn step by step
+                      </div>
+                    </button>
 
-            // â­ Single state update: mode + phase
-            const modeKey = `${modeForPhase}Mode`;
-            const phaseKey = modeForPhase === 'suryakoti' ? PHASES.SURYAKOTI_GAME_ACTIVE : PHASES.SAMAPRABHA_GAME_ACTIVE;
-            sceneActions.updateState({
-              [modeKey]: 'auto',
-              phase: phaseKey
-            });
-          }}
-        >
-          <div style={{ fontSize: '24px', marginBottom: '8px' }}>â–¶ï¸ Auto Play</div>
-          <div style={{ fontSize: '13px', opacity: 0.9 }}>
-            Start from Round 1 and learn step by step
-          </div>
-        </button>
+                    {/* MANUAL BUTTON */}
+                    <button
+                      className="suryakoti-mission-start-btn"
+                      style={{
+                        background: 'linear-gradient(135deg, #2196F3 0%, #64B5F6 100%)',
+                        padding: '20px',
+                        fontSize: '16px'
+                      }}
+                      onClick={() => {
+                        console.log(`ðŸŽ® Mode selected: MANUAL for ${modeForPhase}`);
+                        setModeSelected(true);
+                        setShowModeSelection(false);
 
-        {/* MANUAL BUTTON */}
-        <button
-          className="suryakoti-mission-start-btn"
-          style={{
-            background: 'linear-gradient(135deg, #2196F3 0%, #64B5F6 100%)',
-            padding: '20px',
-            fontSize: '16px'
-          }}
-          onClick={() => {
-            console.log(`ðŸŽ® Mode selected: MANUAL for ${modeForPhase}`);
-            setModeSelected(true);
-            setShowModeSelection(false);
-
-            // â­ Single state update: mode + phase
-            const modeKey = `${modeForPhase}Mode`;
-            const phaseKey = modeForPhase === 'suryakoti' ? PHASES.SURYAKOTI_GAME_ACTIVE : PHASES.SAMAPRABHA_GAME_ACTIVE;
-            sceneActions.updateState({
-              [modeKey]: 'manual',
-              phase: phaseKey
-            });
-          }}
-        >
-          <div style={{ fontSize: '24px', marginBottom: '8px' }}>ðŸŽ¯ Choose a Round</div>
-          <div style={{ fontSize: '13px', opacity: 0.9 }}>
-            Pick any round you want to practice
-          </div>
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+                        // â­ Single state update: mode + phase
+                        const modeKey = `${modeForPhase}Mode`;
+                        const phaseKey = modeForPhase === 'suryakoti' ? PHASES.SURYAKOTI_GAME_ACTIVE : PHASES.SAMAPRABHA_GAME_ACTIVE;
+                        sceneActions.updateState({
+                          [modeKey]: 'manual',
+                          phase: phaseKey
+                        });
+                      }}
+                    >
+                      <div style={{ fontSize: '24px', marginBottom: '8px' }}>ðŸŽ¯ Choose a Round</div>
+                      <div style={{ fontSize: '13px', opacity: 0.9 }}>
+                        Pick any round you want to practice
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* â­ SURYAKOTI GAME - Separate component like VakratundaGame */}
             <SuryakotiGame
@@ -1422,119 +1406,119 @@ const handlePhaseComplete = (word) => {
               </div>
             )}*/}
 
-            
+
 
 
 
             {/* âœ… ADD: 5-SECOND WORD CELEBRATION - SAME AS VAKRATUNDA */}
-{showCenteredWord && (
-  <>
-    <div className="suryakoti-celebration-overlay" />
-    <div className="suryakoti-centered-word-celebration">
-      <img 
-        src={powerConfig[showCenteredWord]?.image}
-        alt={showCenteredWord}
-        className="suryakoti-celebration-app-icon"
-      />
-      <div className="suryakoti-celebration-word-text">
-        {showCenteredWord.toUpperCase()}
-      </div>
-      <div className="suryakoti-celebration-sparkles">
-        <SparkleAnimation
-          type="glitter"
-          count={30}
-          color={powerConfig[showCenteredWord]?.color}
-          size={12}
-          duration={5000}
-          fadeOut={true}
-          area="full"
-        />
-      </div>
-    </div>
-  </>
-)}
+            {showCenteredWord && (
+              <>
+                <div className="suryakoti-celebration-overlay" />
+                <div className="suryakoti-centered-word-celebration">
+                  <img
+                    src={powerConfig[showCenteredWord]?.image}
+                    alt={showCenteredWord}
+                    className="suryakoti-celebration-app-icon"
+                  />
+                  <div className="suryakoti-celebration-word-text">
+                    {showCenteredWord.toUpperCase()}
+                  </div>
+                  <div className="suryakoti-celebration-sparkles">
+                    <SparkleAnimation
+                      type="glitter"
+                      count={30}
+                      color={powerConfig[showCenteredWord]?.color}
+                      size={12}
+                      duration={5000}
+                      fadeOut={true}
+                      area="full"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
 
-{/* âœ… ADD: POWER MODAL - SAME AS VAKRATUNDA */}
-{showPowerModal && (
-  <div className="suryakoti-power-modal-overlay">
-    <div className="suryakoti-power-modal">
-      <div className="suryakoti-power-affirmation-row">
-        <img 
-          src={powerConfig[currentWord]?.image}
-          alt={currentWord}
-          className="suryakoti-affirmation-icon"
-        />
-        <div className="suryakoti-affirmation-content">
-          <div className="suryakoti-affirmation-text">"{powerConfig[currentWord]?.affirmation}"</div>
-          <div className="suryakoti-affirmation-description">{powerConfig[currentWord]?.description}</div>
-        </div>
-      </div>
-      
-      <div className="suryakoti-power-modal-content">
-        <div className="suryakoti-power-modal-left">
-          <p className="suryakoti-power-modal-text">
-            You can now use this power to help animals in need!
-          </p>
-          <p className="suryakoti-power-modal-subtext">Choose your next action:</p>
-        </div>
-        
-   <div className="suryakoti-power-modal-right">
-  
-  {/* â­ NEW: Play Again button */}
-  <button 
-    className="suryakoti-power-modal-btn suryakoti-play-again-btn" 
-    onClick={() => {
-      console.log(`ðŸ”„ Play Again: Restarting ${currentWord} game`);
-      setShowPowerModal(false);
-      
-      // Reset to game phase for the current word
-      if (currentWord === 'suryakoti') {
-        setModeForPhase('suryakoti');
-        setShowModeSelection(true);
-        setModeSelected(false);
-      } else if (currentWord === 'samaprabha') {
-        setModeForPhase('samaprabha');
-        setShowModeSelection(true);
-        setModeSelected(false);
-      }
-    }}
-    style={{
-      background: 'linear-gradient(135deg, #9C27B0 0%, #BA68C8 100%)',
-      marginBottom: '10px'
-    }}
-  >
-    ðŸ”„ Play Again
-  </button>
+            {/* âœ… ADD: POWER MODAL - SAME AS VAKRATUNDA */}
+            {showPowerModal && (
+              <div className="suryakoti-power-modal-overlay">
+                <div className="suryakoti-power-modal">
+                  <div className="suryakoti-power-affirmation-row">
+                    <img
+                      src={powerConfig[currentWord]?.image}
+                      alt={currentWord}
+                      className="suryakoti-affirmation-icon"
+                    />
+                    <div className="suryakoti-affirmation-content">
+                      <div className="suryakoti-affirmation-text">"{powerConfig[currentWord]?.affirmation}"</div>
+                      <div className="suryakoti-affirmation-description">{powerConfig[currentWord]?.description}</div>
+                    </div>
+                  </div>
 
-  <button className="suryakoti-power-modal-btn suryakoti-save-btn" onClick={handleSaveAnimal}>
-    ðŸŒŸSave an Animal
-  </button>
-          <button className="suryakoti-power-modal-btn suryakoti-continue-btn" onClick={handleContinueLearning}>
-            {currentWord === 'suryakoti' ? 'ðŸŽµ Discover Samaprabha' : 'âœ¨ End Scene'}
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
+                  <div className="suryakoti-power-modal-content">
+                    <div className="suryakoti-power-modal-left">
+                      <p className="suryakoti-power-modal-text">
+                        You can now use this power to help animals in need!
+                      </p>
+                      <p className="suryakoti-power-modal-subtext">Choose your next action:</p>
+                    </div>
 
-{/* âœ… REPLACE SaveAnimalMission with SanskritWordMission */}
-<SanskritWordMission
-  show={showMission}
-  word={currentWord}
-  beforeImage={missionImages[currentWord]?.before}
-  afterImage={missionImages[currentWord]?.after}
-  powerConfig={powerConfig[currentWord]}
-      isFinalWordInScene={currentWord === 'samaprabha'}  // â­ ADD THIS LINE
-  onComplete={handleMissionComplete}
-  onCancel={() => {
-    setShowMission(false);
-    setShowPowerModal(true);
-  }}
-/>
+                    <div className="suryakoti-power-modal-right">
+
+                      {/* â­ NEW: Play Again button */}
+                      <button
+                        className="suryakoti-power-modal-btn suryakoti-play-again-btn"
+                        onClick={() => {
+                          console.log(`ðŸ”„ Play Again: Restarting ${currentWord} game`);
+                          setShowPowerModal(false);
+
+                          // Reset to game phase for the current word
+                          if (currentWord === 'suryakoti') {
+                            setModeForPhase('suryakoti');
+                            setShowModeSelection(true);
+                            setModeSelected(false);
+                          } else if (currentWord === 'samaprabha') {
+                            setModeForPhase('samaprabha');
+                            setShowModeSelection(true);
+                            setModeSelected(false);
+                          }
+                        }}
+                        style={{
+                          background: 'linear-gradient(135deg, #9C27B0 0%, #BA68C8 100%)',
+                          marginBottom: '10px'
+                        }}
+                      >
+                        ðŸ”„ Play Again
+                      </button>
+
+                      <button className="suryakoti-power-modal-btn suryakoti-save-btn" onClick={handleSaveAnimal}>
+                        ðŸŒŸSave an Animal
+                      </button>
+                      <button className="suryakoti-power-modal-btn suryakoti-continue-btn" onClick={handleContinueLearning}>
+                        {currentWord === 'suryakoti' ? 'ðŸŽµ Discover Samaprabha' : 'âœ¨ End Scene'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* âœ… REPLACE SaveAnimalMission with SanskritWordMission */}
+            <SanskritWordMission
+              show={showMission}
+              word={currentWord}
+              beforeImage={missionImages[currentWord]?.before}
+              afterImage={missionImages[currentWord]?.after}
+              powerConfig={powerConfig[currentWord]}
+              isFinalWordInScene={currentWord === 'samaprabha'}  // â­ ADD THIS LINE
+              onComplete={handleMissionComplete}
+              onCancel={() => {
+                setShowMission(false);
+                setShowPowerModal(true);
+              }}
+            />
 
             {/* Rest of the components remain the same as original SuryakotiBank... */}
-            
+
             {/* Sanskrit Voice Recorder 
             <SanskritVoiceRecorder
               chantResult={null}
@@ -1549,42 +1533,42 @@ const handlePhaseComplete = (word) => {
               onSkip={handleRecordingSkip}
             />*/}
 
-         
 
-<AppSidebar
-  unlockedApps={{
-    vakratunda: true,
-    mahakaya: true,
-    ...(sceneState.unlockedApps || {})
-  }}
-  savedRecordings={savedRecordings}              // ADD THIS
-  onSaveRecording={onSaveAppRecording}           // ADD THIS
-  onDeleteRecording={onDeleteAppRecording}       // ADD THIS
-  onAppClick={(app) => {
-    setCurrentPracticeWord(app.id);
-    setShowAudioRecorder(true);
-  }}
-  isReload={isReload}
-  onSaveAppState={(appState) => {
-    sceneActions.updateState({ unlockedApps: appState });
-  }}
-/>
 
-          {/* SAVE ANIMAL MISSION - REUSABLE COMPONENT */}
-<SanskritWordMission
-  show={showMission}
-  word={currentWord}
-  beforeImage={missionImages[currentWord]?.before}
-  afterImage={missionImages[currentWord]?.after}
-  powerConfig={powerConfig[currentWord]}
-      isFinalWordInScene={currentWord === 'samaprabha'}  // â­ ADD THIS LINE
+            <AppSidebar
+              unlockedApps={{
+                vakratunda: true,
+                mahakaya: true,
+                ...(sceneState.unlockedApps || {})
+              }}
+              savedRecordings={savedRecordings}              // ADD THIS
+              onSaveRecording={onSaveAppRecording}           // ADD THIS
+              onDeleteRecording={onDeleteAppRecording}       // ADD THIS
+              onAppClick={(app) => {
+                setCurrentPracticeWord(app.id);
+                setShowAudioRecorder(true);
+              }}
+              isReload={isReload}
+              onSaveAppState={(appState) => {
+                sceneActions.updateState({ unlockedApps: appState });
+              }}
+            />
 
-  onComplete={handleMissionComplete}
-  onCancel={() => {
-    setShowMission(false);
-    setShowPowerModal(true);
-  }}
-/>
+            {/* SAVE ANIMAL MISSION - REUSABLE COMPONENT */}
+            <SanskritWordMission
+              show={showMission}
+              word={currentWord}
+              beforeImage={missionImages[currentWord]?.before}
+              afterImage={missionImages[currentWord]?.after}
+              powerConfig={powerConfig[currentWord]}
+              isFinalWordInScene={currentWord === 'samaprabha'}  // â­ ADD THIS LINE
+
+              onComplete={handleMissionComplete}
+              onCancel={() => {
+                setShowMission(false);
+                setShowPowerModal(true);
+              }}
+            />
 
 
             {/* Progressive Hints System */}
@@ -1594,8 +1578,8 @@ const handlePhaseComplete = (word) => {
               sceneState={sceneState}
               hintConfigs={getHintConfigs()}
               characterImage={mooshikaCoach}
-              initialDelay={20000}        
-              hintDisplayTime={10000}    
+              initialDelay={20000}
+              hintDisplayTime={10000}
               position="bottom-right"
               iconSize={60}
               zIndex={2000}
@@ -1652,23 +1636,23 @@ const handlePhaseComplete = (word) => {
                 bottom: '20%',
                 zIndex: 15
               }}>
-                <img 
+                <img
                   src={boyNamaste}
                   alt="Boy character celebrating"
                   className="breathing-animation"
-                  style={{ 
-                    width: '100px', 
-                    height: 'auto', 
+                  style={{
+                    width: '100px',
+                    height: 'auto',
                     objectFit: 'contain'
                   }}
                 />
               </div>
-              
+
               {/* Ganesha during celebration */}
               <div className="ganesha-avatar celebration">
-                <img 
-                  src={ganeshaHeadphones} 
-                  alt="Ganesha celebrating" 
+                <img
+                  src={ganeshaHeadphones}
+                  alt="Ganesha celebrating"
                   className="ganesha-image breathing-animation"
                   style={{
                     filter: 'brightness(1.2) drop-shadow(0 0 25px #FFD700)'
@@ -1688,7 +1672,7 @@ const handlePhaseComplete = (word) => {
               onComplete={() => {
                 console.log('ðŸŽ¯ suryakoti-bank fireworks complete');
                 setShowSparkle(null);
-                
+
                 const profileId = localStorage.getItem('activeProfileId');
                 if (profileId) {
                   GameStateManager.saveGameState('shloka-river', 'suryakoti-bank', {
@@ -1703,12 +1687,12 @@ const handlePhaseComplete = (word) => {
                   SimpleSceneManager.clearCurrentScene();
                   console.log('âœ… suryakoti-bank : Completion saved and temp session cleared');
                 }
-                
+
                 setShowSceneCompletion(true);
               }}
             />
           )}
-          
+
           <SceneCompletionCelebration
             show={showSceneCompletion}
             sceneName="Suryakoti Bank"
@@ -1716,15 +1700,15 @@ const handlePhaseComplete = (word) => {
             totalScenes={5}
             starsEarned={5}
             totalStars={5}
-         discoveredSymbols={['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha']}
-  containerType="smartwatch"
-  containerScreenImage={smartwatchScreen}
-  appImages={{
-    vakratunda: appVakratunda,
-    mahakaya: appMahakaya,
-    suryakoti: appSuryakoti,
-    samaprabha: appSamaprabha,
-  }}
+            discoveredSymbols={['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha']}
+            containerType="smartwatch"
+            containerScreenImage={smartwatchScreen}
+            appImages={{
+              vakratunda: appVakratunda,
+              mahakaya: appMahakaya,
+              suryakoti: appSuryakoti,
+              samaprabha: appSamaprabha,
+            }}
 
             nextSceneName="Nirvighnam Chant"
             sceneId="suryakoti-bank"
@@ -1735,13 +1719,13 @@ const handlePhaseComplete = (word) => {
               completed: true
             }}
             onComplete={onComplete}
-onReplay={() => {
-  console.log('ðŸ”€ INSTANT REPLAY: Garden Adventure restart');
-  resetScene(false);  // No confirm dialog for replay
-}}
+            onReplay={() => {
+              console.log('ðŸ”€ INSTANT REPLAY: Garden Adventure restart');
+              resetScene(false);  // No confirm dialog for replay
+            }}
             onContinue={() => {
               console.log('SANSKRIT CONTINUE: Going to next scene + preserving resume');
-              
+
               if (clearManualCloseTracking) {
                 clearManualCloseTracking();
                 console.log('SANSKRIT CONTINUE: GameCoach manual tracking cleared');
@@ -1750,14 +1734,14 @@ onReplay={() => {
                 hideCoach();
                 console.log('SANSKRIT CONTINUE: GameCoach hidden');
               }
-              
+
               setTimeout(() => {
                 console.log('SANSKRIT CONTINUE: Forcing GameCoach fresh start for next scene');
                 if (clearManualCloseTracking) {
                   clearManualCloseTracking();
                 }
               }, 500);
-              
+
               const profileId = localStorage.getItem('activeProfileId');
               if (profileId) {
                 ProgressManager.updateSceneCompletion(profileId, 'shloka-river', 'suryakoti-bank', {
@@ -1766,26 +1750,26 @@ onReplay={() => {
                   syllables: sceneState.learnedSyllables,
                   words: sceneState.learnedWords
                 });
-                
+
                 GameStateManager.saveGameState('shloka-river', 'suryakoti-bank', {
                   completed: true,
                   stars: 5,
                   syllables: sceneState.learnedSyllables,
                   words: sceneState.learnedWords
                 });
-                
+
                 console.log('SANSKRIT CONTINUE: Completion data saved');
               }
 
               setTimeout(() => {
                 SimpleSceneManager.setCurrentScene('shloka-river', 'nirvighnam-chant', false, false);
                 console.log('SANSKRIT CONTINUE: Next scene (nirvighnam-chant) set for resume tracking');
-                
+
                 onNavigate?.('scene-complete-continue');
               }, 100);
             }}
-          />        
-          
+          />
+
           {/* Navigation */}
           <TocaBocaNav
             onHome={() => {
@@ -1806,7 +1790,7 @@ onReplay={() => {
               if (clearManualCloseTracking) clearManualCloseTracking();
               setTimeout(() => onNavigate?.('zones'), 100);
             }}
-              onStartFresh={() => resetScene(true)}  // Add this if TocaBoca has reset option
+            onStartFresh={() => resetScene(true)}  // Add this if TocaBoca has reset option
 
             currentProgress={{
               stars: sceneState.stars || 0,
