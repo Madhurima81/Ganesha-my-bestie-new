@@ -2496,8 +2496,8 @@ characterImages={{
     SimpleSceneManager.clearCurrentScene();
     console.log('✅ MANDAP: Festival Square zone completed');
     
-    // Navigate back to zone selection or home
-    onNavigate?.('zone-complete');
+    // Navigate back to zone welcome
+    onNavigate?.('zone-welcome');
   }, 100);
 }}
 
