@@ -28,6 +28,8 @@ import wishIconFlower from '../../about-me-hut/enjoy/assets/images/wish-icon-flo
 
 // Shared / Fallback
 import siblingsPeaceballoon from '../../meaning cave/scenes/sarvakaryeshu-sarvada/assets/images/game 2/helpers/siblings_peaceballoon.png';
+import birthdayIcon from '../../festival-square/Game1-piano/assets/images/name-birthday-icon.png';
+import balloonsIcon from '../../festival-square/Game4-mandapdecor/assets/images/fun_balloons_cluster.png';
 
 // Shloka River App Icons
 import appVakratunda from '../../shloka-river/assets/images/apps/app-Vakratunda.png';
@@ -83,8 +85,8 @@ const ICON_MAP = {
     'food': favFoodImg,
     'color': favColorImg,
     'activity': favActivityImg,
-    'balloons': siblingsPeaceballoon,
-    'birthday': '🎂', // Fallback to emoji if no high-quality cake found yet
+    'balloons': balloonsIcon,
+    'birthday': birthdayIcon,
     'wish-earth': wishIconEarth,
     'wish-share': wishIconShare,
     'wish-flower': wishIconFlower,
