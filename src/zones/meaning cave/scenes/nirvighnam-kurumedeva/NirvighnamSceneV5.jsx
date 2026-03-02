@@ -23,6 +23,7 @@ import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimat
 import Fireworks from '../../../../lib/components/feedback/Fireworks';
 import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
+import HomeButton from '../../../../lib/components/ui/HomeButton';
 
 // Cave-specific components
 import DoorComponent from '../../components/DoorComponent';
