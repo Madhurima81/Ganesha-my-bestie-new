@@ -302,8 +302,8 @@ const VakratundaGroveContent = ({
   // ========================================
   useEffect(() => {
     const handleVisibilityChange = () => {
-      // Don't auto-pause during power overlay, word reveal, or other non-interactive overlays
-      const shouldNotPause = showPowerOverlay || showCenteredWord || isFinalCelebrationActive || showSceneCompletion || showPauseMenu;
+      // Don't auto-pause during power overlay, reveal card, word reveal, or other non-interactive overlays
+      const shouldNotPause = showPowerOverlay || !!revealConfig || showCenteredWord || isFinalCelebrationActive || showSceneCompletion || showPauseMenu;
 
       if (document.hidden && sceneState.welcomeShown && !shouldNotPause) {
         // Auto-pause when user switches tabs/apps
