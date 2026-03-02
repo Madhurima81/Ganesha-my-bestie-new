@@ -4,7 +4,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import './ModakScene.css';
-import '../../../shared/components/OpeningModal.css';
 import '../../../../lib/styles/zone-themes.css';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 
