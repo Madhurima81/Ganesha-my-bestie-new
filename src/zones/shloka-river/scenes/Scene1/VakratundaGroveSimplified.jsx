@@ -986,6 +986,7 @@ const VakratundaGroveContent = ({
               onComplete={onComplete}
               onReplay={() => {
                 setShowSceneCompletion(false);
+                setRevealConfig(null);
                 resetScene();
               }}
               onContinue={() => {
