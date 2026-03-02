@@ -818,7 +818,25 @@ onTryAnother={() => {
   }}
 />
 
-          {sceneState.showSceneCompletion && (<FestivalSquareCompletion show={sceneState.showSceneCompletion} sceneName="Piano Mastery" starsEarned={sceneState.stars || 0} onContinue={() => onNavigate?.('scene-complete-continue')} onReplay={() => window.location.reload()} onBackToMap={() => onNavigate?.('zone-welcome')}/>)}
+          {sceneState.showSceneCompletion && (<FestivalSquareCompletion show={sceneState.showSceneCompletion} sceneName="Piano Mastery" starsEarned={sceneState.stars || 0} onContinue={() => onNavigate?.('scene-complete-continue')} onReplay={() => {
+  console.log('🎹 PIANO REPLAY: Play Again');
+  sceneActions.updateState({
+    phase: PHASES.DISCOVERY,
+    tapCount: 0,
+    discoveredInstruments: {},
+    celebrationStarted: false,
+    gameStartTime: Date.now(),
+    stars: 0,
+    completed: false,
+    showDoneButton: false,
+    showCompletionBadge: false,
+    showSceneCompletion: false,
+    showingCompletionScreen: false,
+    dancingAnimals: {},
+    showDanceFloor: false,
+    progress: { percentage: 0, starsEarned: 0, completed: false }
+  });
+}} onBackToMap={() => onNavigate?.('zone-welcome')}/>)}
         </div>
       </MessageManager>
     </InteractionManager>
