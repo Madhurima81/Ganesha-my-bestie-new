@@ -29,6 +29,27 @@ import wishIconFlower from '../../about-me-hut/enjoy/assets/images/wish-icon-flo
 // Shared / Fallback
 import siblingsPeaceballoon from '../../meaning cave/scenes/sarvakaryeshu-sarvada/assets/images/game 2/helpers/siblings_peaceballoon.png';
 
+// Shloka River App Icons
+import appVakratunda from '../../shloka-river/assets/images/apps/app-Vakratunda.png';
+import appMahakaya from '../../shloka-river/assets/images/apps/app-mahakaya.png';
+import appSuryakoti from '../../shloka-river/assets/images/apps/app-suryakoti.png';
+import appSamaprabha from '../../shloka-river/assets/images/apps/app-samaprabha.png';
+import appNirvighnam from '../../shloka-river/assets/images/apps/app-nirvighnam.png';
+import appKurumedeva from '../../shloka-river/assets/images/apps/app-kurumedeva.png';
+import appSarvakaryeshu from '../../shloka-river/assets/images/apps/app-sarvakaryeshu.png';
+import appSarvada from '../../shloka-river/assets/images/apps/app-sarvada.png';
+
+// Cave of Secrets (Meaning Cave) Symbols
+import symbolVakratunda from '../../meaning cave/assets/images/symbols/vakratunda-symbol.png';
+import symbolMahakaya from '../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
+import symbolSuryakoti from '../../meaning cave/assets/images/symbols/suryakoti-symbol.png';
+import symbolSamaprabha from '../../meaning cave/assets/images/symbols/samaprabha-symbol.png';
+import symbolNirvighnam from '../../meaning cave/assets/images/symbols/nirvighnam-symbol.png';
+import symbolKurumedeva from '../../meaning cave/assets/images/symbols/kurumedeva-symbol.png';
+import symbolSarvakaryeshu from '../../meaning cave/assets/images/symbols/sarvakaryeshu-symbol.png';
+import symbolSarvada from '../../meaning cave/assets/images/symbols/sarvada-symbol.png';
+import meaningJournal from '../../meaning cave/assets/images/meaning-journal.png';
+
 const ICON_MAP = {
     // Symbol Mountain
     'mooshika': symbolMooshikaColored,
@@ -52,6 +73,27 @@ const ICON_MAP = {
     'earth': wishIconEarth,
     'sharing': wishIconShare,
     'flower': wishIconFlower,
+
+    // Shloka River Apps
+    'vakratunda-app': appVakratunda,
+    'mahakaya-app': appMahakaya,
+    'suryakoti-app': appSuryakoti,
+    'samaprabha-app': appSamaprabha,
+    'nirvighnam-app': appNirvighnam,
+    'kurumedeva-app': appKurumedeva,
+    'sarvakaryeshu-app': appSarvakaryeshu,
+    'sarvada-app': appSarvada,
+
+    // Cave of Secrets Symbols
+    'vakratunda': symbolVakratunda,
+    'mahakaya': symbolMahakaya,
+    'suryakoti': symbolSuryakoti,
+    'samaprabha': symbolSamaprabha,
+    'nirvighnam': symbolNirvighnam,
+    'kurumedeva': symbolKurumedeva,
+    'sarvakaryeshu': symbolSarvakaryeshu,
+    'sarvada': symbolSarvada,
+    'meaning': meaningJournal,
 };
 
 const OpeningModal = ({
