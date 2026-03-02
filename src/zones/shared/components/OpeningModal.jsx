@@ -51,6 +51,19 @@ import symbolKurumedeva from '../../meaning cave/assets/images/symbols/kurumedev
 import symbolSarvakaryeshu from '../../meaning cave/assets/images/symbols/sarvakaryeshu-symbol.png';
 import symbolSarvada from '../../meaning cave/assets/images/symbols/sarvada-symbol.png';
 import meaningJournal from '../../meaning cave/assets/images/meaning-journal.png';
+// Festival Square Icons
+import listenIcon from '../../festival-square/assets/images/icons/listen-icon.png';
+import playIcon from '../../festival-square/assets/images/icons/play-icon.png';
+import createIcon from '../../festival-square/assets/images/icons/create-icon.png';
+import cookIcon from '../../festival-square/assets/images/icons/cook-icon.png';
+import designIcon from '../../festival-square/assets/images/icons/design-icon.png';
+import drawIcon from '../../festival-square/assets/images/icons/draw-icon.png';
+import learnIcon from '../../festival-square/assets/images/icons/learn-icon.png';
+import coconutIcon from '../../festival-square/assets/images/icons/mandap-coconut-icon.png';
+import diyaIcon from '../../festival-square/assets/images/icons/mandap-diya-icon.png';
+import flowerIcon from '../../festival-square/assets/images/icons/mandap-flower-icon.png';
+import recipeIcon from '../../festival-square/assets/images/icons/recipe-icon.png';
+import serveIcon from '../../festival-square/assets/images/icons/serve-icon.png';
 
 const ICON_MAP = {
     // Symbol Mountain
@@ -101,6 +114,20 @@ const ICON_MAP = {
     'build-words': stoneIcon,
     'arrange': raftIcon,
     'complete': symbolLotusColored,
+
+    // Festival Square
+    'listen-icon': listenIcon,
+    'play-icon': playIcon,
+    'create-icon': createIcon,
+    'cook-icon': cookIcon,
+    'design-icon': designIcon,
+    'draw-icon': drawIcon,
+    'learn-icon': learnIcon,
+    'mandap-coconut-icon': coconutIcon,
+    'mandap-diya-icon': diyaIcon,
+    'mandap-flower-icon': flowerIcon,
+    'recipe-icon': recipeIcon,
+    'serve-icon': serveIcon,
 };
 
 const OpeningModal = ({
