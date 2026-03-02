@@ -35,10 +35,12 @@ import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal
 // import useSymbolCollection from '../../../../lib/hooks/useSymbolCollection';
 
 // Content Configs
-import {
-  getOpeningModal,
+getOpeningModal,
   getCompletionModal
 } from '../../../../lib/config/content';
+
+// Shared Components
+import OpeningModal from '../../../shared/components/OpeningModal';
 
 // UI Components
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
@@ -770,13 +772,13 @@ const NewModakSceneMVPContent = ({
   // ========================================
   // FIX: Handle Discovery Overlay Logic via useEffect
   // ========================================
-  
+
   // 1. Handle Focus Power (Mooshika) Overlay
   useEffect(() => {
     if (showDiscoveryFlip1) {
       // Ensure button is hidden initially
       setDiscoveryButtonVisible(false);
-      
+
       // Add a small delay to allow modal to animate in, then play VO
       const timer = setTimeout(() => {
         playVoice('focusPower', () => {
@@ -793,7 +795,7 @@ const NewModakSceneMVPContent = ({
   useEffect(() => {
     if (showDiscoveryFlip2) {
       setDiscoveryButtonVisible(false);
-      
+
       const timer = setTimeout(() => {
         playVoice('sharingPower', () => {
           playSfx('chime');
@@ -856,7 +858,7 @@ const NewModakSceneMVPContent = ({
   }, [sceneCompleteVOFinished]);
 
 
- // ── SymbolAutoReveal helpers ──────────────────────────────────────────────
+  // ── SymbolAutoReveal helpers ──────────────────────────────────────────────
 
   // Compute delta from card center (viewport center) to sidebar icon center
   const getSidebarTarget = (symbolId) => {
@@ -864,8 +866,8 @@ const NewModakSceneMVPContent = ({
     if (!el) return { x: 220, y: 0 }; // fallback: right edge of screen
     const r = el.getBoundingClientRect();
     return {
-      x: (r.left + r.width  / 2) - (window.innerWidth  / 2),
-      y: (r.top  + r.height / 2) - (window.innerHeight / 2)
+      x: (r.left + r.width / 2) - (window.innerWidth / 2),
+      y: (r.top + r.height / 2) - (window.innerHeight / 2)
     };
   };
 
@@ -942,7 +944,7 @@ const NewModakSceneMVPContent = ({
     }
   };
 
- const handleMoundClick = (moundIndex) => {
+  const handleMoundClick = (moundIndex) => {
     recordInteraction();
     playTap(); // SFX only
 
@@ -959,7 +961,7 @@ const NewModakSceneMVPContent = ({
       stopMusic(); // Optional: Dip music volume if you have that capability, or stop it
 
       // 2. PLAY SUCCESS VOICE (The "Yay" moment)
-      playCorrect('mooshikaFound'); 
+      playCorrect('mooshikaFound');
       setShowSparkle('mooshika-found');
 
       const moundPositions = { 1: { top: '45%', left: '25%' }, 2: { top: '55%', left: '75%' }, 3: { top: '60%', left: '30%' }, 4: { top: '60%', left: '50%' }, 5: { top: '60%', left: '60%' } };
@@ -989,9 +991,9 @@ const NewModakSceneMVPContent = ({
       // 3. Show SymbolAutoReveal for mooshika at 4800ms
       safeSetTimeout(() => {
         setRevealConfig({
-          symbolId:    'mooshika',
+          symbolId: 'mooshika',
           symbolImage: symbolMooshikaColored,
-          symbolName:  'Mooshika',
+          symbolName: 'Mooshika',
           affirmation: 'I can focus.',
           sidebarTarget: getSidebarTarget('mooshika')
         });
@@ -1073,9 +1075,9 @@ const NewModakSceneMVPContent = ({
       // Show SymbolAutoReveal for modak at 4300ms
       safeSetTimeout(() => {
         setRevealConfig({
-          symbolId:    'modak',
+          symbolId: 'modak',
           symbolImage: symbolModakColored,
-          symbolName:  'Modak',
+          symbolName: 'Modak',
           affirmation: 'I share with joy.',
           sidebarTarget: getSidebarTarget('modak')
         });
@@ -1150,10 +1152,10 @@ const NewModakSceneMVPContent = ({
         // Show SymbolAutoReveal for belly at 2300ms (3800ms total from handleRockFeed)
         safeSetTimeout(() => {
           setRevealConfig({
-            symbolId:     'belly',
-            symbolImage:  symbolBellyColored,
-            symbolName:   'Big Belly',
-            affirmation:  'I feel safe inside.',
+            symbolId: 'belly',
+            symbolImage: symbolBellyColored,
+            symbolName: 'Big Belly',
+            affirmation: 'I feel safe inside.',
             sidebarTarget: bellySidebarTarget
           });
         }, 2300);
@@ -1287,56 +1289,17 @@ const NewModakSceneMVPContent = ({
                     <div className="modak-game-sparkle"></div>
                   </div>
 
-                  <div className="game-modal-content">
-                    <div className="game-modal-character">
-                      <img
-                        src={ganeshaCharacter}
-                        alt="Ganesha Character"
-                      />
-                    </div>
-
-                    <div className="game-modal-card">
-                      <h1 className="game-modal-title">
-                        {openingModalContent?.title || 'Help Ganesha Save the Forest!'}
-                      </h1>
-
-                      <p className="game-modal-subtitle">
-                        {openingModalContent?.description}
-                      </p>
-
-                      <div className="game-modal-icons">
-                        <div className="game-modal-icon-item">
-                          <img
-                            src={symbolMooshikaColored}
-                            alt="Mooshika Found"
-                            className="discovery-hero-img"
-                          />
-                          <span className="game-modal-icon-label">Mooshika</span>
-                        </div>
-                        <div className="game-modal-icon-item">
-                          <img src={symbolModakColored} alt="Modak" />
-                          <span className="game-modal-icon-label">Modak</span>
-                        </div>
-                        <div className="game-modal-icon-item">
-                          <img src={symbolBellyColored} alt="Belly Badge" />
-                          <span className="game-modal-icon-label">Belly Badge</span>
-                        </div>
-                      </div>
-
-                      {/* VO-Gated Button - Only visible after welcome VO finishes */}
-                      <VOGatedButton
-                        visible={openingButtonVisible}
-                        onClick={() => {
-                          playSfx('tap');
-                          setOpeningButtonVisible(false);
-                          sceneActions.updateState({ welcomeShown: true });
-                        }}
-                        className="game-modal-button"
-                      >
-                        {openingModalContent?.buttonText || 'Begin Adventure!'}
-                      </VOGatedButton>
-                    </div>
-                  </div>
+                  <OpeningModal
+                    zoneId={zoneId}
+                    sceneId={sceneId}
+                    onStart={() => {
+                      playSfx('tap');
+                      setOpeningButtonVisible(false);
+                      sceneActions.updateState({ welcomeShown: true });
+                    }}
+                    characterImg={ganeshaCharacter}
+                    showButton={openingButtonVisible}
+                  />
                 </div>
               )}
 
@@ -1702,7 +1665,7 @@ const NewModakSceneMVPContent = ({
               />
             )}
 
-          {/* ── SYMBOL AUTO-REVEAL (replaces PowerUnlockOverlay) ───────────────
+            {/* ── SYMBOL AUTO-REVEAL (replaces PowerUnlockOverlay) ───────────────
                Flip card: symbol image → affirmation → user taps → flies to sidebar */}
             {revealConfig && (
               <SymbolAutoReveal
