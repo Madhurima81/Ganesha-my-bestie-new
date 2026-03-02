@@ -25,6 +25,7 @@ import ProgressiveHintSystem from '../../../../lib/components/interactive/Progre
 import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOverlay'; // ← superseded by SymbolAutoReveal
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
 // import { PauseButton, PauseMenu } from '../../../../lib/components/ui/PauseMenu'; // ← removed: replaced by home icon
+import HomeButton from '../../../../lib/components/ui/HomeButton';
 
 import AppSidebar from '../../shared/AppSidebar';
 // REMOVED: import SanskritWordMission (No longer needed)
