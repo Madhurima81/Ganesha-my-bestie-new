@@ -2,12 +2,12 @@ import React from 'react';
 import './HomeButton.css';
 
 /**
- * HomeButton — simple fixed home icon shown in every scene.
- * Replaces the pause menu. Tapping navigates back to zone welcome.
+ * HomeButton — simple fixed home icon shown in every scene and zone welcome.
+ * Tapping navigates back to the main map.
  */
 const HomeButton = ({ onNavigate, position = 'top-left' }) => {
   const handleHome = () => {
-    onNavigate?.('zone-welcome');
+    onNavigate?.('zones');
   };
 
   return (
