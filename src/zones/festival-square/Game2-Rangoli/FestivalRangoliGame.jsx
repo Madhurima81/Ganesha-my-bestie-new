@@ -187,18 +187,6 @@ const FestivalRangoliGame = ({ onComplete, onNavigate, zoneId = 'festival-square
     }
   }, [gameState.phase]);
 
-  // Add this useEffect in your component (around line 200-300, after other useEffects)
-
-  useEffect(() => {
-    const handleKeyPress = (e) => {
-      if (e.key === 'Escape' && !gameState.completed) {
-        setShowPauseMenu(prev => !prev);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [gameState.completed]);
 
   // Start rangoli game from introduction
   const startRangoliGame = () => {
