@@ -838,14 +838,12 @@ Continue
 
     return (
       <div className="journey-panel">
-        <div className="journey-left">
-          {statIcon ? (
+        {statIcon && (
+          <div className="journey-left">
             <img src={statIcon} alt={statLabel} className="journey-stat-icon" />
-          ) : (
-            <span>🎒</span>
-          )}
-          <span>{symbolCount}/8 {statLabel}</span>
-        </div>
+            <span>{symbolCount}/8 {statLabel}</span>
+          </div>
+        )}
         <div className="journey-steps">
           {Array.from({ length: totalScenes }, (_, i) => (
             <span key={i} className={`step ${i < completedCount ? 'done' : ''}`} />
