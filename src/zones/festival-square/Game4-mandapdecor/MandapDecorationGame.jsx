@@ -2491,13 +2491,12 @@ characterImages={{
     console.log('🎉 ALL FESTIVAL SQUARE GAMES COMPLETED!');
   }
   
-  // Clear current scene since zone is complete
+  // Loop back to first scene (festival-square is circular)
   setTimeout(() => {
-    SimpleSceneManager.clearCurrentScene();
-    console.log('✅ MANDAP: Festival Square zone completed');
-    
-    // Navigate back to zone welcome
-    onNavigate?.('zone-welcome');
+    console.log('🔄 MANDAP: Looping back to Festival Beats (game1)');
+
+    // Navigate to next scene (circular — loops to game1)
+    onNavigate?.('scene-complete-continue');
   }, 100);
 }}
 
