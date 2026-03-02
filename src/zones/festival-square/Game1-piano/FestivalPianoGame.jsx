@@ -727,47 +727,7 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
               }}
             />
 
-            <GamePauseMenu
-              show={sceneState.showPauseMenu}
-              gameName={sceneState.currentMode === GAME_MODES.CHALLENGE ? "Festival Challenge" : "Piano Free Play"}
-
-              // 1. "Keep Playing" -> Resumes the game
-              onResume={() => sceneActions.updateState({ showPauseMenu: false })}
-
-              // 2. "Start Fresh" -> Restarts the current activity
-              onRestart={() => {
-                sceneActions.updateState({ showPauseMenu: false });
-                if (sceneState.currentMode === GAME_MODES.FREE_PLAY) {
-                  handleRestart();
-                  // Clear free play recording
-                  setFreePlayRecording({ isRecording: false, recordedNotes: [], hasRecording: false });
-                } else if (sceneState.currentMode === GAME_MODES.CHALLENGE && sceneState.currentSong) {
-                  // Just reset, don't auto-play
-                  sceneActions.updateState({
-                    currentStep: 0,
-                    recordedNotes: [],
-                    isRecording: false,
-                    isDemoPlaying: false,
-                    isPlayingRecording: false
-                  });
-                }
-              }}
-
-              // 3. "Change Mode" -> ALWAYS goes to the main menu
-              onBackToModes={() => {
-                sceneActions.updateState({
-                  showPauseMenu: false,
-                  currentMode: GAME_MODES.SELECTION, // Always go to the main selection screen
-                  currentSong: null // Also clear any active song just in case
-                });
-              }}
-
-              // 4. "I'm Done Playing" -> Goes to the completion screen
-              onComplete={() => {
-                sceneActions.updateState({ showPauseMenu: false });
-                handleManualCompletion();
-              }}
-            />
+            <HomeButton onNavigate={onNavigate} />
 
             {sceneState.showSceneCompletion && (<FestivalSquareCompletion show={sceneState.showSceneCompletion} sceneName="Piano Mastery" starsEarned={sceneState.stars || 0} onContinue={() => onNavigate?.('scene-complete-continue')} onReplay={() => {
               console.log('🎹 PIANO REPLAY: Play Again');
