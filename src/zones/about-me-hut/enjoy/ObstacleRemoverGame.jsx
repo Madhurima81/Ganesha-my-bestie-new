@@ -717,7 +717,7 @@ if (gamePhase === 'all-wishes-complete') {
           characterImages={{ babyGanesha: babyGaneshaImg }}
           nextSceneName="Symbol Mountain"
           childName="dream maker"
-          onContinue={() => { if (onNavigate) onNavigate('zone-complete'); else if (onComplete) onComplete(); }}
+          onContinue={() => { if (onNavigate) onNavigate('scene-complete-continue'); else if (onComplete) onComplete(); }}
           onReplay={() => sceneActions.updateState({ gamePhase: 'intro', wish1Taps: 0, wish2Taps: 0, wish3Taps: 0, bowlStates: [false, false, false], trunkTaps: 0, childDreamDrawing: null, showingCompletionScreen: false, completed: false })}
           onBackToMap={() => { if (onNavigate) onNavigate('zone-welcome'); else if (onBack) onBack(); }}
           onHome={() => { if (onNavigate) onNavigate('home'); }}
