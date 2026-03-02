@@ -191,6 +191,10 @@ const OpeningModal = ({
                                         ) : (
                                             <img src={ICON_MAP[iconKey]} alt={content.iconLabels?.[index] || iconKey} />
                                         )
+                                    ) : typeof iconKey === 'string' && iconKey.length < 4 ? (
+                                        <span style={{ fontSize: '70px' }}>{iconKey}</span>
+                                    ) : iconKey?.startsWith?.('http') || iconKey?.startsWith?.('/') || iconKey?.startsWith?.('data:') ? (
+                                        <img src={iconKey} alt={content.iconLabels?.[index] || ''} />
                                     ) : (
                                         <span style={{ fontSize: '70px' }}>✨</span>
                                     )}
