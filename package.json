@@ -9,8 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "jest",
-    "test:watch": "jest --watch",
-    "auto:commit": "powershell -ExecutionPolicy Bypass -File ./scripts/auto-commit.ps1"
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "framer-motion": "^12.9.4",
