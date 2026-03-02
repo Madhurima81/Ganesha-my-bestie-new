@@ -31,6 +31,7 @@ import ProgressiveHintSystem from '../../../../lib/components/interactive/Progre
 import SaveAnimalMission from '../../../../lib/components/missions/SaveAnimalMission.jsx';
 import BackToMapButton from '../../../../lib/components/navigation/BackToMapButton.jsx';
 import SanskritWordMission from '../../shared/SanskritWordMission.jsx';
+import OpeningModal from '../../../shared/components/OpeningModal.jsx';
 
 
 
@@ -81,7 +82,7 @@ import boyNamaste from '../assets/images/boy-namaste.png';
 // Rescue mission images
 import nirvighnamBefore from './assets/images/nirvighnam/nirvighnam-before.png';
 import nirvighnamAfter from './assets/images/nirvighnam/nirvighnam-after.png';
-import kurumedevaBefore from './assets/images/Kurumedeva/kurumedeva-before.png'; 
+import kurumedevaBefore from './assets/images/Kurumedeva/kurumedeva-before.png';
 import kurumedevaAfter from './assets/images/Kurumedeva/kurumedeva-after.png';
 
 
@@ -104,15 +105,15 @@ const PHASES = {
 };
 
 const powerConfig = {
-  nirvighnam: { 
-    name: 'Sacred Wisdom', 
+  nirvighnam: {
+    name: 'Sacred Wisdom',
     image: appNirvighnam,
     color: '#DAA520',
     affirmation: 'I am wise',
     description: 'I have ancient knowledge!'
   },
-  kurumedeva: { 
-    name: 'Divine Grace', 
+  kurumedeva: {
+    name: 'Divine Grace',
     image: appKurumedeva,
     color: '#9370DB',
     affirmation: 'I am graceful',
@@ -121,8 +122,8 @@ const powerConfig = {
 };
 
 const missionImages = {
-    nirvighnam: { before: nirvighnamBefore, after: nirvighnamAfter },
-    kurumedeva: { before: kurumedevaBefore, after: kurumedevaAfter }
+  nirvighnam: { before: nirvighnamBefore, after: nirvighnamAfter },
+  kurumedeva: { before: kurumedevaBefore, after: kurumedevaAfter }
 };
 
 
@@ -177,11 +178,11 @@ const NirvighnamChant = ({
         initialState={{
           // Simplified state - memory games handle their own logic
           phase: PHASES.INITIAL,
-          
+
           // Learning progress (for progress tracking)
           learnedSyllables: {
             nir: false, vigh: false, nam: false,
-  kuru: false, me: false, de: false, va: false
+            kuru: false, me: false, de: false, va: false
           },
           learnedWords: {
             nirvighnam: false,
@@ -199,18 +200,18 @@ const NirvighnamChant = ({
             word: null,
             missionJustCompleted: false
           },
-          
+
           // Message flags
           welcomeShown: false,
           nirvighnamWisdomShown: false,
           kurumedevaWisdomShown: false,
-          
+
           // System state
           currentPopup: null,
           showingCompletionScreen: false,
           gameCoachState: null,
           isReloadingGameCoach: false,
-          
+
           // Progress
           stars: 0,
           completed: false,
@@ -242,13 +243,13 @@ const NirvighnamChantContent = ({
   zoneId,
   sceneId
 }) => {
-console.log('ðŸ•‰ï¸ NirvighnamChantContent render', { 
-  sceneState: sceneState?.phase, 
-  isReload, 
-  nirvighnamMode: sceneState?.nirvighnamMode,
-  kurumedevaMode: sceneState?.kurumedevaMode,
-  missionState: sceneState?.missionState 
-});
+  console.log('ðŸ•‰ï¸ NirvighnamChantContent render', {
+    sceneState: sceneState?.phase,
+    isReload,
+    nirvighnamMode: sceneState?.nirvighnamMode,
+    kurumedevaMode: sceneState?.kurumedevaMode,
+    missionState: sceneState?.missionState
+  });
 
   if (!sceneState?.phase) sceneActions.updateState({ phase: PHASES.INITIAL });
 
@@ -257,7 +258,7 @@ console.log('ðŸ•‰ï¸ NirvighnamChantContent render', {
 
   const [showSparkle, setShowSparkle] = useState(null);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
-  
+
   // Timeouts ref for cleanup
   const timeoutsRef = useRef([]);
 
@@ -278,7 +279,7 @@ console.log('ðŸ•‰ï¸ NirvighnamChantContent render', {
   const [currentPracticeWord, setCurrentPracticeWord] = useState('');
   const [showChoiceButtons, setShowChoiceButtons] = useState(false);
   const [unlockedApps, setUnlockedApps] = useState([]);
-  
+
   const [blessingPhase, setBlessingPhase] = useState('welcome');
   const [showParticles, setShowParticles] = useState(false);
   const [showPulseRings, setShowPulseRings] = useState(false);
@@ -291,17 +292,17 @@ console.log('ðŸ•‰ï¸ NirvighnamChantContent render', {
   const [showRescueMission, setShowRescueMission] = useState(false);
   const [currentRescueWord, setCurrentRescueWord] = useState('');
 
-const [showCenteredWord, setShowCenteredWord] = useState(null);
-const [showPowerModal, setShowPowerModal] = useState(false);
+  const [showCenteredWord, setShowCenteredWord] = useState(null);
+  const [showPowerModal, setShowPowerModal] = useState(false);
 
   const [showKurumedevaStory, setShowKurumedevaStory] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isAudioOn, setIsAudioOn] = useState(true);
 
-     const [forceMemoryGameReset, setForceMemoryGameReset] = useState(false); // ADD THIS LINE
-    const [rescuePhase, setRescuePhase] = useState('problem');
+  const [forceMemoryGameReset, setForceMemoryGameReset] = useState(false); // ADD THIS LINE
+  const [rescuePhase, setRescuePhase] = useState('problem');
 
-      const [showMission, setShowMission] = useState(false);
+  const [showMission, setShowMission] = useState(false);
 
   // â­ Mode selection state (like Scene 2)
   const [showModeSelection, setShowModeSelection] = useState(false);
@@ -318,7 +319,7 @@ const [showPowerModal, setShowPowerModal] = useState(false);
 
   const playAudio = (audioPath, volume = 1.0) => {
     if (!isAudioOn) return Promise.resolve();
-    
+
     try {
       const audio = new Audio(audioPath);
       audio.volume = volume;
@@ -332,45 +333,45 @@ const [showPowerModal, setShowPowerModal] = useState(false);
     }
   };
 
-    // Handle saving a new recording
-const handleSaveRecording = (recordingData) => {
-  setSavedRecordings(prev => {
-    const wordRecordings = prev[recordingData.word] || [];
-    return {
-      ...prev,
-      [recordingData.word]: [...wordRecordings, recordingData]
-    };
-  });
-};
-
-// Add this around line 200-230 (after playAudio function)
-
-const playSyllable = (syllable) => {
-  const map = {
-    // Nirvighnam syllables
-    'nir': 'nirvighnam-nir',
-    'vigh': 'nirvighnam-vigh', 
-    'nam': 'nirvighnam-nam',
-    // Kurumedeva syllables
-    'kuru': 'kurumedeva-kuru',
-    'me': 'kurumedeva-me',
-    'de': 'kurumedeva-de',
-    'va': 'kurumedeva-va'
+  // Handle saving a new recording
+  const handleSaveRecording = (recordingData) => {
+    setSavedRecordings(prev => {
+      const wordRecordings = prev[recordingData.word] || [];
+      return {
+        ...prev,
+        [recordingData.word]: [...wordRecordings, recordingData]
+      };
+    });
   };
-  playAudio(`/audio/syllables/${map[syllable] || syllable}.mp3`);
-};
 
-const playWord = (word) => {
-  playAudio(`/audio/words/${word}.mp3`);
-};
+  // Add this around line 200-230 (after playAudio function)
+
+  const playSyllable = (syllable) => {
+    const map = {
+      // Nirvighnam syllables
+      'nir': 'nirvighnam-nir',
+      'vigh': 'nirvighnam-vigh',
+      'nam': 'nirvighnam-nam',
+      // Kurumedeva syllables
+      'kuru': 'kurumedeva-kuru',
+      'me': 'kurumedeva-me',
+      'de': 'kurumedeva-de',
+      'va': 'kurumedeva-va'
+    };
+    playAudio(`/audio/syllables/${map[syllable] || syllable}.mp3`);
+  };
+
+  const playWord = (word) => {
+    playAudio(`/audio/words/${word}.mp3`);
+  };
 
   const toggleAudio = () => {
     const newAudioState = !isAudioOn;
     setIsAudioOn(newAudioState);
-    
+
     // Save preference to localStorage
     localStorage.setItem('sanskritGameAudio', newAudioState.toString());
-    
+
     // Stop all currently playing audio if muting
     if (!newAudioState) {
       document.querySelectorAll('audio').forEach(audio => {
@@ -378,7 +379,7 @@ const playWord = (word) => {
         audio.currentTime = 0;
       });
     }
-    
+
     console.log(`Audio ${newAudioState ? 'enabled' : 'muted'}`);
   };
 
@@ -389,30 +390,30 @@ const playWord = (word) => {
   }, []);
 
   // Expose audio functions globally for SanskritWordMission
-useEffect(() => {
-  window.playSanskritAudio = playSyllable;
-  window.playSanskritWord = playWord;
-  
-  return () => {
-    delete window.playSanskritAudio;
-    delete window.playSanskritWord;
-  };
-}, [isAudioOn]); // Re-attach if audio setting changes
+  useEffect(() => {
+    window.playSanskritAudio = playSyllable;
+    window.playSanskritWord = playWord;
 
-// Safety: Show completion screen if scene is marked complete but modal not showing
-useEffect(() => {
-  if (sceneState.phase === PHASES.COMPLETE && 
-      sceneState.completed && 
-      !showSceneCompletion && 
+    return () => {
+      delete window.playSanskritAudio;
+      delete window.playSanskritWord;
+    };
+  }, [isAudioOn]); // Re-attach if audio setting changes
+
+  // Safety: Show completion screen if scene is marked complete but modal not showing
+  useEffect(() => {
+    if (sceneState.phase === PHASES.COMPLETE &&
+      sceneState.completed &&
+      !showSceneCompletion &&
       !showSparkle) {
-    const timer = safeSetTimeout(() => {
-      setShowFinalGanesha(false);
-      setShowSceneCompletion(true);
-    }, 7000); // 7 seconds max wait
-    
-    return () => clearTimeout(timer);
-  }
-}, [sceneState.phase, sceneState.completed, showSceneCompletion, showSparkle]);
+      const timer = safeSetTimeout(() => {
+        setShowFinalGanesha(false);
+        setShowSceneCompletion(true);
+      }, 7000); // 7 seconds max wait
+
+      return () => clearTimeout(timer);
+    }
+  }, [sceneState.phase, sceneState.completed, showSceneCompletion, showSparkle]);
 
 
   // Load audio preference on component mount
@@ -423,41 +424,41 @@ useEffect(() => {
     }
   }, []);
 
-// UNIFIED: Single state saving function (like VakratundaGrove & SuryakotiBank)
-const handleSaveComponentState = (componentType, componentState) => {
-  console.log(`ðŸ’¾ Saving ${componentType} state:`, componentState);
-  
-  // Prevent double calls by debouncing
-  if (handleSaveComponentState.lastCall && 
-      Date.now() - handleSaveComponentState.lastCall < 100) {
-    console.log('ðŸš« Debounced duplicate save call');
-    return;
-  }
-  handleSaveComponentState.lastCall = Date.now();
+  // UNIFIED: Single state saving function (like VakratundaGrove & SuryakotiBank)
+  const handleSaveComponentState = (componentType, componentState) => {
+    console.log(`ðŸ’¾ Saving ${componentType} state:`, componentState);
 
-  if (componentState === null || componentState?.cleared) {
-  const updatedState = {
-   ...(componentType === 'nirvighnamGame' && { nirvighnamGameState: null }),
-      ...(componentType === 'kurumedevaGame' && { kurumedevaGameState: null }),
+    // Prevent double calls by debouncing
+    if (handleSaveComponentState.lastCall &&
+      Date.now() - handleSaveComponentState.lastCall < 100) {
+      console.log('ðŸš« Debounced duplicate save call');
+      return;
+    }
+    handleSaveComponentState.lastCall = Date.now();
+
+    if (componentState === null || componentState?.cleared) {
+      const updatedState = {
+        ...(componentType === 'nirvighnamGame' && { nirvighnamGameState: null }),
+        ...(componentType === 'kurumedevaGame' && { kurumedevaGameState: null }),
+      };
+      sceneActions.updateState(updatedState);
+      return;
+    }
+
+    const updatedState = {
+      ...(componentType === 'nirvighnamGame' && { nirvighnamGameState: componentState }),
+      ...(componentType === 'kurumedevaGame' && { kurumedevaGameState: componentState }),
+      ...(componentType === 'mission' && {
+        missionState: {
+          ...sceneState.missionState,
+          ...componentState
+        }
+      })
+    };
+
+    console.log(`âš¡ Updating scene state with ${componentType}:`, updatedState);
+    sceneActions.updateState(updatedState);
   };
-  sceneActions.updateState(updatedState);
-  return;
-}
-  
-  const updatedState = {
-    ...(componentType === 'nirvighnamGame' && { nirvighnamGameState: componentState }),
-    ...(componentType === 'kurumedevaGame' && { kurumedevaGameState: componentState }),
-    ...(componentType === 'mission' && { 
-      missionState: {
-        ...sceneState.missionState,
-        ...componentState
-      }
-    })
-  };
-  
-  console.log(`âš¡ Updating scene state with ${componentType}:`, updatedState);
-  sceneActions.updateState(updatedState);
-};
 
   // Set up communication for the scene itself
   useEffect(() => {
@@ -475,41 +476,41 @@ const handleSaveComponentState = (componentType, componentState) => {
   }, []);
 
   const getNirvighnamAnimalImage = (index) => {
-  const images = [frogNir, snailVigh, turtleNam];
-  return images[index];
-};
+    const images = [frogNir, snailVigh, turtleNam];
+    return images[index];
+  };
 
 
   const getStoneInitialImage = (index) => {
-  const images = [stone1Nir, stone2Vigh, stone3Nam];
-  return images[index];
-};
+    const images = [stone1Nir, stone2Vigh, stone3Nam];
+    return images[index];
+  };
 
-const getStoneRewardImage = (index) => {
-  const images = [stone1NirCol, stone2VighCol, stone3NamCol];
-  return images[index];
-};
+  const getStoneRewardImage = (index) => {
+    const images = [stone1NirCol, stone2VighCol, stone3NamCol];
+    return images[index];
+  };
 
-const getDecorInitialImage = (index) => {
-  const images = [decor1Ku, decor2Ru, decor3Me];
+  const getDecorInitialImage = (index) => {
+    const images = [decor1Ku, decor2Ru, decor3Me];
 
-  return images[index];
-};
+    return images[index];
+  };
 
-const getDecorRewardImage = (index) => {
-  const images = [decor1Ku, decor2Ru, decor3Me]; // Same image, rendered with opacity
-  return images[index];
-};
+  const getDecorRewardImage = (index) => {
+    const images = [decor1Ku, decor2Ru, decor3Me]; // Same image, rendered with opacity
+    return images[index];
+  };
 
-const getKurumedevaAnimalImage = (index) => {
-  const images = [
-    animal1Ku,   // kuru
-    animal3Me,   // me
-    animal4De,   // de
-    animal2Ru    // va
-  ];
-  return images[index];
-};
+  const getKurumedevaAnimalImage = (index) => {
+    const images = [
+      animal1Ku,   // kuru
+      animal3Me,   // me
+      animal4De,   // de
+      animal2Ru    // va
+    ];
+    return images[index];
+  };
 
 
   // Image getter functions for Nirvighnam game (stone clearing)
@@ -520,16 +521,16 @@ const getKurumedevaAnimalImage = (index) => {
     return images[index];
   };
 
- const getNirvighnamStoneImage = (index, colored) => {
-  const baseStones = [stone1Nir, stone2Vigh, stone3Nam];
-  const coloredStones = [stone1NirCol, stone2VighCol, stone3NamCol];
-  
-  if (colored) {
-    return coloredStones[index];
-  } else {
-    return baseStones[index];
-  }
-};
+  const getNirvighnamStoneImage = (index, colored) => {
+    const baseStones = [stone1Nir, stone2Vigh, stone3Nam];
+    const coloredStones = [stone1NirCol, stone2VighCol, stone3NamCol];
+
+    if (colored) {
+      return coloredStones[index];
+    } else {
+      return baseStones[index];
+    }
+  };
 
   // Image getter functions for Kurumedeva game (4 syllables: kuru, me, de, va)
 
@@ -544,11 +545,11 @@ const getKurumedevaAnimalImage = (index) => {
     return images[index];
   };
 
-const handleSaveAnimal = () => {
-  setShowPowerModal(false);
-  setCurrentRescueWord(currentPracticeWord); // ADD THIS LINE!
-  setShowMission(true);
-};
+  const handleSaveAnimal = () => {
+    setShowPowerModal(false);
+    setCurrentRescueWord(currentPracticeWord); // ADD THIS LINE!
+    setShowMission(true);
+  };
 
   const handleRoundJump = (round) => {
     console.log(`Jumping to round ${round} in main scene`);
@@ -557,170 +558,170 @@ const handleSaveAnimal = () => {
     });
   };
 
-const handleRescueComplete = () => {
-  console.log('âœ… Rescue complete for:', currentRescueWord);
-  
-  setShowRescueMission(false);
-  
-  if (currentRescueWord === 'nirvighnam') {
-    console.log('Nirvighnam rescue complete - showing Kurumedeva story');
-    
-    setNirvighnamPowerGained(true);
-    
-    sceneActions.updateState({
-      phase: PHASES.KURUMEDEVA_STORY
-    });
-    
-    safeSetTimeout(() => {
-      setShowKurumedevaStory(true);
-    }, 500);
-    
-  } else if (currentRescueWord === 'kurumedeva') {
-    console.log('Kurumedeva rescue complete - FINAL FIREWORKS!');
-    
-    sceneActions.updateState({
-      phase: PHASES.SCENE_COMPLETE,
-      stars: 5,
-      completed: true,
-      progress: { percentage: 100, starsEarned: 5, completed: true }
-    });
-    
-    safeSetTimeout(() => {
-      setShowSparkle('final-fireworks');
-    }, 500);
-  }
-};
+  const handleRescueComplete = () => {
+    console.log('âœ… Rescue complete for:', currentRescueWord);
 
-const handlePhaseComplete = (phase) => {
-  console.log(`${phase} learned!`);
-  
-  if (phase === 'nirvighnam') {
-    sceneActions.updateState({
-      learnedWords: { ...sceneState.learnedWords, nirvighnam: true },
-      learnedSyllables: {
-        ...sceneState.learnedSyllables,
-        nir: true, vigh: true, nam: true 
-      },
-      phase: PHASES.NIRVIGHNAM_COMPLETE,
-      progress: { ...sceneState.progress, percentage: 50, starsEarned: 3 }
-    });
-    
-    // Step 1: Show 5-second celebration
-    setShowCenteredWord('nirvighnam');
-    setShowSparkle('nirvighnam-celebration');
-    playAudio('/audio/words/nirvighnam.mp3');
-    
-    safeSetTimeout(() => {
-      // Step 2: Hide centered, fly to sidebar
-      setShowCenteredWord(null);
-      setShowSparkle('nirvighnam-to-sidebar');
-      
+    setShowRescueMission(false);
+
+    if (currentRescueWord === 'nirvighnam') {
+      console.log('Nirvighnam rescue complete - showing Kurumedeva story');
+
+      setNirvighnamPowerGained(true);
+
       sceneActions.updateState({
-        unlockedApps: { ...sceneState.unlockedApps, nirvighnam: true }
+        phase: PHASES.KURUMEDEVA_STORY
       });
-      
-      safeSetTimeout(() => {
-        // Step 3: Show power modal IMMEDIATELY
-        setShowSparkle(null);
-        setCurrentPracticeWord('nirvighnam');
-        setShowPowerModal(true);
-        sceneActions.updateState({
-          phase: PHASES.CHOICE_BUTTONS_NIRVIGHNAM
-        });
-      }, 2000);
-    }, 5000);
-    
-  } else if (phase === 'kurumedeva') {
-    sceneActions.updateState({
-      learnedWords: { ...sceneState.learnedWords, kurumedeva: true },
-      learnedSyllables: {
-        ...sceneState.learnedSyllables,
-        ku: true, ru: true, me: true, de: true, va: true
-      },
-      phase: PHASES.KURUMEDEVA_COMPLETE,
-      progress: { percentage: 90, starsEarned: 4 }
-    });
 
-    setNirvighnamPowerGained(true);
-    setShowCenteredWord('kurumedeva');
-    setShowSparkle('kurumedeva-celebration');
-    playAudio('/audio/words/kurumedeva.mp3');
-    
-    safeSetTimeout(() => {
-      setShowCenteredWord(null);
-      setShowSparkle('kurumedeva-to-sidebar');
-      
+      safeSetTimeout(() => {
+        setShowKurumedevaStory(true);
+      }, 500);
+
+    } else if (currentRescueWord === 'kurumedeva') {
+      console.log('Kurumedeva rescue complete - FINAL FIREWORKS!');
+
       sceneActions.updateState({
-        unlockedApps: { ...sceneState.unlockedApps, kurumedeva: true }
+        phase: PHASES.SCENE_COMPLETE,
+        stars: 5,
+        completed: true,
+        progress: { percentage: 100, starsEarned: 5, completed: true }
       });
-      
-      safeSetTimeout(() => {
-        setShowSparkle(null);
-        setCurrentPracticeWord('kurumedeva');
-        setShowPowerModal(true);
-        sceneActions.updateState({
-          phase: PHASES.CHOICE_BUTTONS_KURUMEDEVA
-        });
-      }, 2000);
-    }, 5000);
-  }
-};
 
-const handleMissionComplete = () => {
-  console.log('âœ… Mission complete for:', currentPracticeWord);
-  setShowMission(false);
-  
-  if (currentPracticeWord === 'nirvighnam') {
-    setNirvighnamPowerGained(true);
-    sceneActions.updateState({ phase: PHASES.KURUMEDEVA_STORY });
-    
-    safeSetTimeout(() => {
-      setShowKurumedevaStory(true);
-    }, 500);
-    
-  } else if (currentPracticeWord === 'kurumedeva') {
-    // â­ Complete the scene properly
-    sceneActions.updateState({
-      phase: PHASES.SCENE_COMPLETE,
-      stars: 5,
-      completed: true,
-      progress: { percentage: 100, starsEarned: 5, completed: true }
-    });
-    
-    // â­ Show fireworks AND prepare for completion screen
-    safeSetTimeout(() => {
-      setShowSparkle('final-fireworks');
-    }, 500);
-  }
-};
+      safeSetTimeout(() => {
+        setShowSparkle('final-fireworks');
+      }, 500);
+    }
+  };
+
+  const handlePhaseComplete = (phase) => {
+    console.log(`${phase} learned!`);
+
+    if (phase === 'nirvighnam') {
+      sceneActions.updateState({
+        learnedWords: { ...sceneState.learnedWords, nirvighnam: true },
+        learnedSyllables: {
+          ...sceneState.learnedSyllables,
+          nir: true, vigh: true, nam: true
+        },
+        phase: PHASES.NIRVIGHNAM_COMPLETE,
+        progress: { ...sceneState.progress, percentage: 50, starsEarned: 3 }
+      });
+
+      // Step 1: Show 5-second celebration
+      setShowCenteredWord('nirvighnam');
+      setShowSparkle('nirvighnam-celebration');
+      playAudio('/audio/words/nirvighnam.mp3');
+
+      safeSetTimeout(() => {
+        // Step 2: Hide centered, fly to sidebar
+        setShowCenteredWord(null);
+        setShowSparkle('nirvighnam-to-sidebar');
+
+        sceneActions.updateState({
+          unlockedApps: { ...sceneState.unlockedApps, nirvighnam: true }
+        });
+
+        safeSetTimeout(() => {
+          // Step 3: Show power modal IMMEDIATELY
+          setShowSparkle(null);
+          setCurrentPracticeWord('nirvighnam');
+          setShowPowerModal(true);
+          sceneActions.updateState({
+            phase: PHASES.CHOICE_BUTTONS_NIRVIGHNAM
+          });
+        }, 2000);
+      }, 5000);
+
+    } else if (phase === 'kurumedeva') {
+      sceneActions.updateState({
+        learnedWords: { ...sceneState.learnedWords, kurumedeva: true },
+        learnedSyllables: {
+          ...sceneState.learnedSyllables,
+          ku: true, ru: true, me: true, de: true, va: true
+        },
+        phase: PHASES.KURUMEDEVA_COMPLETE,
+        progress: { percentage: 90, starsEarned: 4 }
+      });
+
+      setNirvighnamPowerGained(true);
+      setShowCenteredWord('kurumedeva');
+      setShowSparkle('kurumedeva-celebration');
+      playAudio('/audio/words/kurumedeva.mp3');
+
+      safeSetTimeout(() => {
+        setShowCenteredWord(null);
+        setShowSparkle('kurumedeva-to-sidebar');
+
+        sceneActions.updateState({
+          unlockedApps: { ...sceneState.unlockedApps, kurumedeva: true }
+        });
+
+        safeSetTimeout(() => {
+          setShowSparkle(null);
+          setCurrentPracticeWord('kurumedeva');
+          setShowPowerModal(true);
+          sceneActions.updateState({
+            phase: PHASES.CHOICE_BUTTONS_KURUMEDEVA
+          });
+        }, 2000);
+      }, 5000);
+    }
+  };
+
+  const handleMissionComplete = () => {
+    console.log('âœ… Mission complete for:', currentPracticeWord);
+    setShowMission(false);
+
+    if (currentPracticeWord === 'nirvighnam') {
+      setNirvighnamPowerGained(true);
+      sceneActions.updateState({ phase: PHASES.KURUMEDEVA_STORY });
+
+      safeSetTimeout(() => {
+        setShowKurumedevaStory(true);
+      }, 500);
+
+    } else if (currentPracticeWord === 'kurumedeva') {
+      // â­ Complete the scene properly
+      sceneActions.updateState({
+        phase: PHASES.SCENE_COMPLETE,
+        stars: 5,
+        completed: true,
+        progress: { percentage: 100, starsEarned: 5, completed: true }
+      });
+
+      // â­ Show fireworks AND prepare for completion screen
+      safeSetTimeout(() => {
+        setShowSparkle('final-fireworks');
+      }, 500);
+    }
+  };
 
   // Add this near the top with other helper functions
-const getPlainStoneImage = (syllable) => {
-  if (syllable === 'nir') return stone1Nir;
-  if (syllable === 'vigh') return stone2Vigh;
-  if (syllable === 'nam') return stone3Nam;
-  return null;
-};
+  const getPlainStoneImage = (syllable) => {
+    if (syllable === 'nir') return stone1Nir;
+    if (syllable === 'vigh') return stone2Vigh;
+    if (syllable === 'nam') return stone3Nam;
+    return null;
+  };
 
-  
-const handleContinueLearning = () => {
-  setShowPowerModal(false);
-  
-  if (currentPracticeWord === 'nirvighnam') {
-    setNirvighnamPowerGained(true);
-    sceneActions.updateState({ phase: PHASES.KURUMEDEVA_STORY });
-    safeSetTimeout(() => setShowKurumedevaStory(true), 500);
-    
-  } else if (currentPracticeWord === 'kurumedeva') {
-    sceneActions.updateState({
-      phase: PHASES.SCENE_COMPLETE,
-      stars: 5,
-      completed: true,
-      progress: { percentage: 100, starsEarned: 5, completed: true }
-    });
-    safeSetTimeout(() => setShowSparkle('final-fireworks'), 500);
-  }
-};
+
+  const handleContinueLearning = () => {
+    setShowPowerModal(false);
+
+    if (currentPracticeWord === 'nirvighnam') {
+      setNirvighnamPowerGained(true);
+      sceneActions.updateState({ phase: PHASES.KURUMEDEVA_STORY });
+      safeSetTimeout(() => setShowKurumedevaStory(true), 500);
+
+    } else if (currentPracticeWord === 'kurumedeva') {
+      sceneActions.updateState({
+        phase: PHASES.SCENE_COMPLETE,
+        stars: 5,
+        completed: true,
+        progress: { percentage: 100, starsEarned: 5, completed: true }
+      });
+      safeSetTimeout(() => setShowSparkle('final-fireworks'), 500);
+    }
+  };
 
   const handleAppClick = (appType) => {
     setCurrentPracticeWord(appType);
@@ -738,11 +739,11 @@ const handleContinueLearning = () => {
   // Plays the correct audio for syllables
   const handleSyllablePlay = (syllable) => {
     if (!isAudioOn) return;
-    
+
     const syllableFileMap = {
       // Syllables for Nirvighnam
       'nir': 'nirvighnam-nir',
-      'vigh': 'nirvighnam-vigh', 
+      'vigh': 'nirvighnam-vigh',
       'nam': 'nirvighnam-nam',
 
       // Syllables for Kurumedeva
@@ -752,7 +753,7 @@ const handleContinueLearning = () => {
       'de': 'kurumedeva-de',
       'va': 'kurumedeva-va'
     };
-    
+
     const fileName = syllableFileMap[syllable.toLowerCase()] || syllable;
     playAudio(`/audio/syllables/${fileName}.mp3`);
   };
@@ -765,44 +766,44 @@ const handleContinueLearning = () => {
 
   const startPracticeRound = (word, round) => {
     console.log(`Starting practice: ${word} round ${round}`);
-    
+
     if (window.sanskritMemoryGame && window.sanskritMemoryGame.startPracticeMode) {
       window.sanskritMemoryGame.startPracticeMode(word, round);
     }
-    
+
     sceneActions.updateState({
       phase: PHASES.MEMORY_GAME_ACTIVE,
       currentPopup: null
     });
   };
 
-// Add this simple logic - no complex function calls
-const backgroundImage = (() => {
-  // â­ NEW: Check which game is currently being played
-  const isPlayingNirvighnam = sceneState?.phase === PHASES.NIRVIGHNAM_GAME_ACTIVE ||
-                              modeForPhase === 'nirvighnam';
-  
-  const isPlayingKurumedeva = sceneState?.phase === PHASES.KURUMEDEVA_GAME_ACTIVE ||
-                              sceneState?.phase === PHASES.KURUMEDEVA_STORY ||
-                              sceneState?.phase === PHASES.KURUMEDEVA_COMPLETE ||
-                              sceneState?.phase === PHASES.GANESHA_BLESSING_KURUMEDEVA ||
-                              sceneState?.phase === PHASES.CHOICE_BUTTONS_KURUMEDEVA ||
-                              sceneState?.phase === PHASES.RESCUE_MISSION_KURUMEDEVA ||
-                              modeForPhase === 'kurumedeva' ||
-                              modeForPhase === 'kurume';
-  
-  // â­ Priority: If actively playing Nirvighnam, use its background
-  if (isPlayingNirvighnam) {
-    return nirvighnamChantBg;
-  }
-  
-  // â­ Otherwise check if should use Kurumedeva background
-  const shouldUseKuruBg = isPlayingKurumedeva ||
-                         sceneState?.learnedWords?.nirvighnam || 
-                         nirvighnamPowerGained;
-  
-  return shouldUseKuruBg ? kuruBg : nirvighnamChantBg;
-})();
+  // Add this simple logic - no complex function calls
+  const backgroundImage = (() => {
+    // â­ NEW: Check which game is currently being played
+    const isPlayingNirvighnam = sceneState?.phase === PHASES.NIRVIGHNAM_GAME_ACTIVE ||
+      modeForPhase === 'nirvighnam';
+
+    const isPlayingKurumedeva = sceneState?.phase === PHASES.KURUMEDEVA_GAME_ACTIVE ||
+      sceneState?.phase === PHASES.KURUMEDEVA_STORY ||
+      sceneState?.phase === PHASES.KURUMEDEVA_COMPLETE ||
+      sceneState?.phase === PHASES.GANESHA_BLESSING_KURUMEDEVA ||
+      sceneState?.phase === PHASES.CHOICE_BUTTONS_KURUMEDEVA ||
+      sceneState?.phase === PHASES.RESCUE_MISSION_KURUMEDEVA ||
+      modeForPhase === 'kurumedeva' ||
+      modeForPhase === 'kurume';
+
+    // â­ Priority: If actively playing Nirvighnam, use its background
+    if (isPlayingNirvighnam) {
+      return nirvighnamChantBg;
+    }
+
+    // â­ Otherwise check if should use Kurumedeva background
+    const shouldUseKuruBg = isPlayingKurumedeva ||
+      sceneState?.learnedWords?.nirvighnam ||
+      nirvighnamPowerGained;
+
+    return shouldUseKuruBg ? kuruBg : nirvighnamChantBg;
+  })();
 
   // â­ Simplified hint configs for new wrapper-based architecture
   const getHintConfigs = () => [
@@ -855,7 +856,7 @@ const backgroundImage = (() => {
     setShowRecording(false);
     setShowPulseRings(false);
     setBlessingPhase('complete');
-    
+
     safeSetTimeout(() => {
       continueAfterRecording();
     }, 2000);
@@ -871,7 +872,7 @@ const backgroundImage = (() => {
     if (currentRecordingWord === 'nirvighnam') {
       console.log('=== CALLING startBlessingAnimation for nirvighnam ===');
       startBlessingAnimation();
-      
+
     } else if (currentRecordingWord === 'kurumedeva') {
       console.log('=== CALLING startBlessingAnimation for kurumedeva ===');
       startBlessingAnimation();
@@ -882,13 +883,13 @@ const backgroundImage = (() => {
   const startBlessingAnimation = async () => {
     try {
       console.log('=== BLESSING ANIMATION START ===');
-      
+
       const wordToProcess = blessingWord || currentPracticeWord;
       if (!wordToProcess) {
         console.error('No word to process in blessing animation!');
         return;
       }
-      
+
       setBlessingPhase('transfer');
       setShowParticles(true);
       await new Promise(resolve => safeSetTimeout(resolve, 4000));
@@ -897,26 +898,26 @@ const backgroundImage = (() => {
       await new Promise(resolve => safeSetTimeout(resolve, 2000));
 
       setShowCenteredApp(wordToProcess);
-      
+
       for (let i = 1; i <= 4; i++) {
         await new Promise(resolve => safeSetTimeout(resolve, 1000));
       }
 
       setShowCenteredApp(null);
-      
-sceneActions.updateState({
-  unlockedApps: {
-    ...sceneState.unlockedApps,
-    [wordToProcess]: true 
-  }
-});
+
+      sceneActions.updateState({
+        unlockedApps: {
+          ...sceneState.unlockedApps,
+          [wordToProcess]: true
+        }
+      });
 
       await new Promise(resolve => safeSetTimeout(resolve, 1000));
 
       setShowGaneshaBlessing(false);
       setShowChoiceButtons(true);
       setBlessingPhase('complete');
-      
+
       const word = blessingWord || currentPracticeWord;
       sceneActions.updateState({
         phase: word === 'nirvighnam'
@@ -929,7 +930,7 @@ sceneActions.updateState({
       setShowGaneshaBlessing(false);
       setShowChoiceButtons(true);
       setBlessingPhase('complete');
-      
+
       const word = blessingWord || currentPracticeWord;
       sceneActions.updateState({
         phase: word === 'nirvighnam'
@@ -983,231 +984,214 @@ sceneActions.updateState({
     <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
       <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
 
-        
+
         <div className="nirvighnam-chant-container">
 
-<div 
-  className="river-background" 
-  style={{
-    backgroundImage: `url(${backgroundImage})`, // CHANGED: use simple variable
-    backgroundSize: 'cover',
-    backgroundPosition: 'center top', // Shows more of the top
-    backgroundRepeat: 'no-repeat'
-  }}
->
+          <div
+            className="river-background"
+            style={{
+              backgroundImage: `url(${backgroundImage})`, // CHANGED: use simple variable
+              backgroundSize: 'cover',
+              backgroundPosition: 'center top', // Shows more of the top
+              backgroundRepeat: 'no-repeat'
+            }}
+          >
 
-{/* â­ NIRVIGHNAM GAME - Scene-controlled mode */}
-<NirvighnamGame
-  isActive={sceneState.phase === PHASES.NIRVIGHNAM_GAME_ACTIVE}
-  hideElements={isTransitioning || showGaneshaBlessing || sceneState.phase === PHASES.NIRVIGHNAM_COMPLETE}
-  onPhaseComplete={handlePhaseComplete}
-  onGameComplete={handleGameComplete}
-  profileName={profileName}
+            {/* â­ NIRVIGHNAM GAME - Scene-controlled mode */}
+            <NirvighnamGame
+              isActive={sceneState.phase === PHASES.NIRVIGHNAM_GAME_ACTIVE}
+              hideElements={isTransitioning || showGaneshaBlessing || sceneState.phase === PHASES.NIRVIGHNAM_COMPLETE}
+              onPhaseComplete={handlePhaseComplete}
+              onGameComplete={handleGameComplete}
+              profileName={profileName}
 
-    // â­ ADD THESE STONE GETTERS
-  getStoneInitialImage={getStoneInitialImage}
-  getStoneRewardImage={getStoneRewardImage}
-  getNirvighnamAnimalImage={getNirvighnamAnimalImage}
+              // â­ ADD THESE STONE GETTERS
+              getStoneInitialImage={getStoneInitialImage}
+              getStoneRewardImage={getStoneRewardImage}
+              getNirvighnamAnimalImage={getNirvighnamAnimalImage}
 
-  // Nirvighnam asset functions
-  getLeafRirImage={() => leafNir}
-  getDrumVighImage={() => drumVigh}
-  getFeatherNamImage={() => featherNam}
-  getFrogNirImage={() => frogNir}
-  getSnailVighImage={() => snailVigh}
-  getTurtleNamImage={() => turtleNam}
-  getStone1NirImage={() => stone1Nir}
-  getStone2VighImage={() => stone2Vigh}
-  getStone3NamImage={() => stone3Nam}
-  getStone1NirColImage={() => stone1NirCol}
-  getStone2VighColImage={() => stone2VighCol}
-  getStone3NamColImage={() => stone3NamCol}
+              // Nirvighnam asset functions
+              getLeafRirImage={() => leafNir}
+              getDrumVighImage={() => drumVigh}
+              getFeatherNamImage={() => featherNam}
+              getFrogNirImage={() => frogNir}
+              getSnailVighImage={() => snailVigh}
+              getTurtleNamImage={() => turtleNam}
+              getStone1NirImage={() => stone1Nir}
+              getStone2VighImage={() => stone2Vigh}
+              getStone3NamImage={() => stone3Nam}
+              getStone1NirColImage={() => stone1NirCol}
+              getStone2VighColImage={() => stone2VighCol}
+              getStone3NamColImage={() => stone3NamCol}
 
-  // â­ Mode control - scene manages the modal, game gets the selection
-  selectedMode={sceneState.nirvighnamMode}
-  skipModeSelection={true}
+              // â­ Mode control - scene manages the modal, game gets the selection
+              selectedMode={sceneState.nirvighnamMode}
+              skipModeSelection={true}
 
-  // Audio
-  isAudioOn={isAudioOn}
-  playAudio={playAudio}
+              // Audio
+              isAudioOn={isAudioOn}
+              playAudio={playAudio}
 
-  isReload={isReload}
-  savedGameState={sceneState.nirvighnamGameState}
-  onSaveGameState={(gameState) => handleSaveComponentState('nirvighnamGame', gameState)}
-/>
+              isReload={isReload}
+              savedGameState={sceneState.nirvighnamGameState}
+              onSaveGameState={(gameState) => handleSaveComponentState('nirvighnamGame', gameState)}
+            />
 
-{/* â­ KURUMEDEVA GAME - Scene-controlled mode */}
-<KurumeDevaGame
-  isActive={sceneState.phase === PHASES.KURUMEDEVA_GAME_ACTIVE}
-  hideElements={isTransitioning || showGaneshaBlessing || sceneState.phase === PHASES.KURUMEDEVA_COMPLETE}
-  onPhaseComplete={handlePhaseComplete}
-  onGameComplete={handleGameComplete}
-  profileName={profileName}
+            {/* â­ KURUMEDEVA GAME - Scene-controlled mode */}
+            <KurumeDevaGame
+              isActive={sceneState.phase === PHASES.KURUMEDEVA_GAME_ACTIVE}
+              hideElements={isTransitioning || showGaneshaBlessing || sceneState.phase === PHASES.KURUMEDEVA_COMPLETE}
+              onPhaseComplete={handlePhaseComplete}
+              onGameComplete={handleGameComplete}
+              profileName={profileName}
 
-  // Kurumedeva asset functions
-  getAnimal1KuImage={() => animal1Ku}
-  getAnimal3MeImage={() => animal3Me}
-  getAnimal4DeImage={() => animal4De}
-  getAnimal2RuImage={() => animal2Ru}
+              // Kurumedeva asset functions
+              getAnimal1KuImage={() => animal1Ku}
+              getAnimal3MeImage={() => animal3Me}
+              getAnimal4DeImage={() => animal4De}
+              getAnimal2RuImage={() => animal2Ru}
 
-    getDecorInitialImage={getDecorInitialImage}
-  getDecorRewardImage={getDecorRewardImage}
-  getKurumedevaAnimalImage={getKurumedevaAnimalImage}
+              getDecorInitialImage={getDecorInitialImage}
+              getDecorRewardImage={getDecorRewardImage}
+              getKurumedevaAnimalImage={getKurumedevaAnimalImage}
 
-  // â­ Mode control - scene manages the modal, game gets the selection
-  selectedMode={sceneState.kurumedevaMode}
-  skipModeSelection={true}
+              // â­ Mode control - scene manages the modal, game gets the selection
+              selectedMode={sceneState.kurumedevaMode}
+              skipModeSelection={true}
 
-  // Audio
-  isAudioOn={isAudioOn}
-  playAudio={playAudio}
+              // Audio
+              isAudioOn={isAudioOn}
+              playAudio={playAudio}
 
-  isReload={isReload}
-  savedGameState={sceneState.kurumedevaGameState}
-  onSaveGameState={(gameState) => handleSaveComponentState('kurumedevaGame', gameState)}
+              isReload={isReload}
+              savedGameState={sceneState.kurumedevaGameState}
+              onSaveGameState={(gameState) => handleSaveComponentState('kurumedevaGame', gameState)}
 
-/>
-      {/* OPENING MISSION MODAL */}
-{sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
-  <div className="nirvighnam-mission-modal-overlay">
-    <div className="nirvighnam-mission-modal">
-      <div className="nirvighnam-modal-character">
-        <img src={ganeshaWithHeadphones} alt="Ganesha" className="nirvighnam-character-img" />
-        <div className="nirvighnam-character-speech-bubble">
-          Let's clear the path! ðŸŒ¿
-        </div>
-      </div>
-      
-      <h2 className="nirvighnam-mission-title">The Sacred Stone Path</h2>
-      <div className="nirvighnam-mission-subtitle">2 magical words have special powers!</div>
-      <p className="nirvighnam-mission-description">
-        First, learn to chant <strong>NIRVIGHNAM</strong> to unlock Sacred Wisdom and help animals!
-      </p>
-      <button
-        className="nirvighnam-mission-start-btn"
-        onClick={() => {
-          console.log('ðŸŽ® Opening mode selection for NIRVIGHNAM');
-          sceneActions.updateState({ welcomeShown: true });
-          setModeForPhase('nirvighnam');
-          setShowModeSelection(true);
-          setModeSelected(false);
-        }}
-      >
-        Start Learning!
-      </button>
-    </div>
-  </div>
-)}
+            />
+            {/* OPENING MISSION MODAL */}
+            <OpeningModal
+              zoneId={zoneId}
+              sceneId={sceneId}
+              onStart={() => {
+                console.log('ðŸŽ® Opening mode selection for NIRVIGHNAM via OpeningModal');
+                sceneActions.updateState({ welcomeShown: true });
+                setModeForPhase('nirvighnam');
+                setShowModeSelection(true);
+                setModeSelected(false);
+              }}
+              characterImg={ganeshaWithHeadphones}
+              showButton={true}
+            />
 
-{/* â­ MODE SELECTION MODAL - Shows BEFORE game starts */}
-{showModeSelection && !modeSelected && (
-  <div className="nirvighnam-mission-modal-overlay">
-    <div className="nirvighnam-mission-modal">
-      <h2 className="nirvighnam-mission-title">ðŸŽ® How do you want to play?</h2>
-      <p className="nirvighnam-mission-description">
-        Choose your learning style for <strong>{modeForPhase?.toUpperCase()}</strong>
-      </p>
+            {/* â­ MODE SELECTION MODAL - Shows BEFORE game starts */}
+            {showModeSelection && !modeSelected && (
+              <div className="nirvighnam-mission-modal-overlay">
+                <div className="nirvighnam-mission-modal">
+                  <h2 className="nirvighnam-mission-title">ðŸŽ® How do you want to play?</h2>
+                  <p className="nirvighnam-mission-description">
+                    Choose your learning style for <strong>{modeForPhase?.toUpperCase()}</strong>
+                  </p>
 
-      <div style={{
-        display: 'flex',
-        gap: '20px',
-        marginTop: '20px',
-        justifyContent: 'center',
-        flexWrap: 'wrap'
-      }}>
-        {/* AUTO PLAY BUTTON */}
-        <button
-          className="nirvighnam-mission-start-btn"
-          style={{
-            flex: '1',
-            minWidth: '200px',
-            maxWidth: '300px',
-            background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)'
-          }}
-          onClick={() => {
-            console.log(`ðŸŽ® Mode selected: AUTO for ${modeForPhase}`);
-            setModeSelected(true);
-            setShowModeSelection(false);
+                  <div style={{
+                    display: 'flex',
+                    gap: '20px',
+                    marginTop: '20px',
+                    justifyContent: 'center',
+                    flexWrap: 'wrap'
+                  }}>
+                    {/* AUTO PLAY BUTTON */}
+                    <button
+                      className="nirvighnam-mission-start-btn"
+                      style={{
+                        flex: '1',
+                        minWidth: '200px',
+                        maxWidth: '300px',
+                        background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)'
+                      }}
+                      onClick={() => {
+                        console.log(`ðŸŽ® Mode selected: AUTO for ${modeForPhase}`);
+                        setModeSelected(true);
+                        setShowModeSelection(false);
 
-            // â­ Single state update: mode + phase
-            const modeKey = `${modeForPhase}Mode`;
-            const phaseKey = modeForPhase === 'nirvighnam' ? PHASES.NIRVIGHNAM_GAME_ACTIVE : PHASES.KURUMEDEVA_GAME_ACTIVE;
-            sceneActions.updateState({
-              [modeKey]: 'auto',
-              phase: phaseKey
-            });
-          }}
-        >
-          <div>â–¶ï¸ Auto Play</div>
-          <div style={{ fontSize: '14px', opacity: 0.9, marginTop: '5px' }}>
-            Start from Round 1 and learn step by step
-          </div>
-        </button>
+                        // â­ Single state update: mode + phase
+                        const modeKey = `${modeForPhase}Mode`;
+                        const phaseKey = modeForPhase === 'nirvighnam' ? PHASES.NIRVIGHNAM_GAME_ACTIVE : PHASES.KURUMEDEVA_GAME_ACTIVE;
+                        sceneActions.updateState({
+                          [modeKey]: 'auto',
+                          phase: phaseKey
+                        });
+                      }}
+                    >
+                      <div>â–¶ï¸ Auto Play</div>
+                      <div style={{ fontSize: '14px', opacity: 0.9, marginTop: '5px' }}>
+                        Start from Round 1 and learn step by step
+                      </div>
+                    </button>
 
-        {/* MANUAL BUTTON */}
-        <button
-          className="nirvighnam-mission-start-btn"
-          style={{
-            flex: '1',
-            minWidth: '200px',
-            maxWidth: '300px',
-            background: 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)'
-          }}
-          onClick={() => {
-            console.log(`ðŸŽ® Mode selected: MANUAL for ${modeForPhase}`);
-            setModeSelected(true);
-            setShowModeSelection(false);
+                    {/* MANUAL BUTTON */}
+                    <button
+                      className="nirvighnam-mission-start-btn"
+                      style={{
+                        flex: '1',
+                        minWidth: '200px',
+                        maxWidth: '300px',
+                        background: 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)'
+                      }}
+                      onClick={() => {
+                        console.log(`ðŸŽ® Mode selected: MANUAL for ${modeForPhase}`);
+                        setModeSelected(true);
+                        setShowModeSelection(false);
 
-            // â­ Single state update: mode + phase
-            const modeKey = `${modeForPhase}Mode`;
-            const phaseKey = modeForPhase === 'nirvighnam' ? PHASES.NIRVIGHNAM_GAME_ACTIVE : PHASES.KURUMEDEVA_GAME_ACTIVE;
-            sceneActions.updateState({
-              [modeKey]: 'manual',
-              phase: phaseKey
-            });
-          }}
-        >
-          <div>ðŸŽ¯ Choose a Round</div>
-          <div style={{ fontSize: '14px', opacity: 0.9, marginTop: '5px' }}>
-            Pick any round you want to practice
-          </div>
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+                        // â­ Single state update: mode + phase
+                        const modeKey = `${modeForPhase}Mode`;
+                        const phaseKey = modeForPhase === 'nirvighnam' ? PHASES.NIRVIGHNAM_GAME_ACTIVE : PHASES.KURUMEDEVA_GAME_ACTIVE;
+                        sceneActions.updateState({
+                          [modeKey]: 'manual',
+                          phase: phaseKey
+                        });
+                      }}
+                    >
+                      <div>ðŸŽ¯ Choose a Round</div>
+                      <div style={{ fontSize: '14px', opacity: 0.9, marginTop: '5px' }}>
+                        Pick any round you want to practice
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
-{/* STORY TRANSITION MODAL */}
-{showKurumedevaStory && (
-  <div className="nirvighnam-mission-modal-overlay">
-    <div className="nirvighnam-mission-modal">
-      <div className="nirvighnam-modal-character">
-        <img src={ganeshaWithHeadphones} alt="Ganesha" className="nirvighnam-character-img" />
-        <div className="nirvighnam-character-speech-bubble">
-          One more to learn! ðŸ’ª
-        </div>
-      </div>
-      
-      <h2 className="nirvighnam-mission-title">Great Work!</h2>
-      <div className="nirvighnam-mission-subtitle">Now unlock the second power!</div>
-      <p className="nirvighnam-mission-description">
-        Learn to chant <strong>KURUMEDEVA</strong> to unlock Divine Grace and save more animals!
-      </p>
-      <button
-        className="nirvighnam-mission-start-btn"
-        onClick={() => {
-          console.log('ðŸŽ® Opening mode selection for KURUMEDEVA');
-          setShowKurumedevaStory(false);
-          setModeForPhase('kurumedeva');
-          setShowModeSelection(true);
-          setModeSelected(false);
-        }}
-      >
-        Start Learning!
-      </button>
-    </div>
-  </div>
-)}
+            {/* STORY TRANSITION MODAL */}
+            {showKurumedevaStory && (
+              <div className="nirvighnam-mission-modal-overlay">
+                <div className="nirvighnam-mission-modal">
+                  <div className="nirvighnam-modal-character">
+                    <img src={ganeshaWithHeadphones} alt="Ganesha" className="nirvighnam-character-img" />
+                    <div className="nirvighnam-character-speech-bubble">
+                      One more to learn! ðŸ’ª
+                    </div>
+                  </div>
+
+                  <h2 className="nirvighnam-mission-title">Great Work!</h2>
+                  <div className="nirvighnam-mission-subtitle">Now unlock the second power!</div>
+                  <p className="nirvighnam-mission-description">
+                    Learn to chant <strong>KURUMEDEVA</strong> to unlock Divine Grace and save more animals!
+                  </p>
+                  <button
+                    className="nirvighnam-mission-start-btn"
+                    onClick={() => {
+                      console.log('ðŸŽ® Opening mode selection for KURUMEDEVA');
+                      setShowKurumedevaStory(false);
+                      setModeForPhase('kurumedeva');
+                      setShowModeSelection(true);
+                      setModeSelected(false);
+                    }}
+                  >
+                    Start Learning!
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Sanskrit Voice Recorder */}
             <SanskritVoiceRecorder
@@ -1233,7 +1217,7 @@ sceneActions.updateState({
                 zIndex: 100,
                 animation: 'appGlow 2s ease-in-out infinite alternate'
               }}>
-                <img 
+                <img
                   src={showCenteredApp === 'nirvighnam' ? appNirvighnam : appKurumedeva}
                   alt={`${showCenteredApp} app`}
                   style={{
@@ -1247,146 +1231,146 @@ sceneActions.updateState({
             )}
 
             {/* SAVE ANIMAL MISSION - REUSABLE COMPONENT */}
-<SanskritWordMission
-  show={showMission}
-  word={currentPracticeWord}
-  beforeImage={missionImages[currentPracticeWord]?.before}
-  afterImage={missionImages[currentPracticeWord]?.after}
-  powerConfig={powerConfig[currentPracticeWord]}
-      isFinalWordInScene={currentPracticeWord=== 'kurumedeva'}  // â­ ADD THIS LINE
+            <SanskritWordMission
+              show={showMission}
+              word={currentPracticeWord}
+              beforeImage={missionImages[currentPracticeWord]?.before}
+              afterImage={missionImages[currentPracticeWord]?.after}
+              powerConfig={powerConfig[currentPracticeWord]}
+              isFinalWordInScene={currentPracticeWord === 'kurumedeva'}  // â­ ADD THIS LINE
 
-  onComplete={handleMissionComplete}
-  onCancel={() => {
-    setShowMission(false);
-    setShowPowerModal(true);
-  }}
-/>
+              onComplete={handleMissionComplete}
+              onCancel={() => {
+                setShowMission(false);
+                setShowPowerModal(true);
+              }}
+            />
 
-<AppSidebar 
-  unlockedApps={{
-    vakratunda: true,      // From Scene 1
-    mahakaya: true,        // From Scene 1
-    suryakoti: true,       // From Scene 2
-    samaprabha: true,      // From Scene 2
-    ...(sceneState.unlockedApps || {})  // nirvighnam, kurumedeva
-  }}
-  onAppClick={(app) => {
-    setCurrentPracticeWord(app.id);
-    setShowAudioPractice(true);
-  }}
-  isReload={isReload}
-  onSaveAppState={(appState) => {
-    sceneActions.updateState({ unlockedApps: appState });
-  }}
-/>
+            <AppSidebar
+              unlockedApps={{
+                vakratunda: true,      // From Scene 1
+                mahakaya: true,        // From Scene 1
+                suryakoti: true,       // From Scene 2
+                samaprabha: true,      // From Scene 2
+                ...(sceneState.unlockedApps || {})  // nirvighnam, kurumedeva
+              }}
+              onAppClick={(app) => {
+                setCurrentPracticeWord(app.id);
+                setShowAudioPractice(true);
+              }}
+              isReload={isReload}
+              onSaveAppState={(appState) => {
+                sceneActions.updateState({ unlockedApps: appState });
+              }}
+            />
 
-       {/* 5-SECOND WORD CELEBRATION */}
-{showCenteredWord && (
-  <>
-    <div className="nirvighnam-celebration-overlay" />
-    <div className="nirvighnam-centered-word-celebration">
-      <img 
-        src={powerConfig[showCenteredWord]?.image}
-        alt={showCenteredWord}
-        className="nirvighnam-celebration-app-icon"
-      />
-      <div className="nirvighnam-celebration-word-text">
-        {showCenteredWord.toUpperCase()}
-      </div>
-      <div className="nirvighnam-celebration-sparkles">
-        <SparkleAnimation
-          type="glitter"
-          count={30}
-          color={powerConfig[showCenteredWord]?.color}
-          size={12}
-          duration={5000}
-          fadeOut={true}
-          area="full"
-        />
-      </div>
-    </div>
-  </>
-)}
+            {/* 5-SECOND WORD CELEBRATION */}
+            {showCenteredWord && (
+              <>
+                <div className="nirvighnam-celebration-overlay" />
+                <div className="nirvighnam-centered-word-celebration">
+                  <img
+                    src={powerConfig[showCenteredWord]?.image}
+                    alt={showCenteredWord}
+                    className="nirvighnam-celebration-app-icon"
+                  />
+                  <div className="nirvighnam-celebration-word-text">
+                    {showCenteredWord.toUpperCase()}
+                  </div>
+                  <div className="nirvighnam-celebration-sparkles">
+                    <SparkleAnimation
+                      type="glitter"
+                      count={30}
+                      color={powerConfig[showCenteredWord]?.color}
+                      size={12}
+                      duration={5000}
+                      fadeOut={true}
+                      area="full"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
 
-{/* POWER MODAL */}
-{showPowerModal && (
-  <div className="nirvighnam-power-modal-overlay">
-    <div className="nirvighnam-power-modal">
-      <div className="nirvighnam-power-affirmation-row">
-        <img 
-          src={powerConfig[currentPracticeWord]?.image}
-          alt={currentPracticeWord}
-          className="nirvighnam-affirmation-icon"
-        />
-        <div className="nirvighnam-affirmation-content">
-          <div className="nirvighnam-affirmation-text">"{powerConfig[currentPracticeWord]?.affirmation}"</div>
-          <div className="nirvighnam-affirmation-description">{powerConfig[currentPracticeWord]?.description}</div>
-        </div>
-      </div>
-      
-      <div className="nirvighnam-power-modal-content">
-        <div className="nirvighnam-power-modal-left">
-          <p className="nirvighnam-power-modal-text">
-            You can now use this power to help animals in need!
-          </p>
-          <p className="nirvighnam-power-modal-subtext">Choose your next action:</p>
-        </div>
-        
-       <div className="nirvighnam-power-modal-right">
-  
-  {/* â­ NEW: Play Again button */}
-  <button 
-    className="nirvighnam-power-modal-btn nirvighnam-play-again-btn" 
-onClick={() => {
-  console.log(`ðŸ”„ Play Again: Restarting ${currentPracticeWord} game`);
-  
-  // â­ UPDATE PHASE FIRST (before closing modal)
-  if (currentPracticeWord === 'nirvighnam') {
-    sceneActions.updateState({ 
-      phase: PHASES.NIRVIGHNAM_GAME_ACTIVE  // â­ Set phase FIRST
-    });
-    setModeForPhase('nirvighnam');
-    setShowModeSelection(true);
-    setModeSelected(false);
-  } else if (currentPracticeWord === 'kurumedeva') {
-    sceneActions.updateState({ 
-      phase: PHASES.KURUMEDEVA_GAME_ACTIVE  // â­ Set phase FIRST
-    });
-    setModeForPhase('kurumedeva');
-    setShowModeSelection(true);
-    setModeSelected(false);
-  } else if (currentPracticeWord === 'kurume') {
-    sceneActions.updateState({ 
-      phase: PHASES.KURUMEDEVA_GAME_ACTIVE  // â­ Set phase FIRST
-    });
-    setModeForPhase('kurume');
-    setShowModeSelection(true);
-    setModeSelected(false);
-  }
-  
-  // â­ Close power modal AFTER phase update
-  setShowPowerModal(false);
-}}
-    style={{
-      background: 'linear-gradient(135deg, #9C27B0 0%, #BA68C8 100%)',
-      marginBottom: '10px'
-    }}
-  >
-    ðŸ”„ Play Again
-  </button>
+            {/* POWER MODAL */}
+            {showPowerModal && (
+              <div className="nirvighnam-power-modal-overlay">
+                <div className="nirvighnam-power-modal">
+                  <div className="nirvighnam-power-affirmation-row">
+                    <img
+                      src={powerConfig[currentPracticeWord]?.image}
+                      alt={currentPracticeWord}
+                      className="nirvighnam-affirmation-icon"
+                    />
+                    <div className="nirvighnam-affirmation-content">
+                      <div className="nirvighnam-affirmation-text">"{powerConfig[currentPracticeWord]?.affirmation}"</div>
+                      <div className="nirvighnam-affirmation-description">{powerConfig[currentPracticeWord]?.description}</div>
+                    </div>
+                  </div>
 
-  <button className="nirvighnam-power-modal-btn nirvighnam-save-btn" onClick={handleSaveAnimal}>
-    ðŸ¾ Save an Animal
-  </button>
-          
-          <button className="nirvighnam-power-modal-btn nirvighnam-continue-btn" onClick={handleContinueLearning}>
-            {currentPracticeWord === 'kurumedeva' ? 'âœ¨ End Scene' : 'ðŸª· Discover Kurumedeva'}
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
+                  <div className="nirvighnam-power-modal-content">
+                    <div className="nirvighnam-power-modal-left">
+                      <p className="nirvighnam-power-modal-text">
+                        You can now use this power to help animals in need!
+                      </p>
+                      <p className="nirvighnam-power-modal-subtext">Choose your next action:</p>
+                    </div>
+
+                    <div className="nirvighnam-power-modal-right">
+
+                      {/* â­ NEW: Play Again button */}
+                      <button
+                        className="nirvighnam-power-modal-btn nirvighnam-play-again-btn"
+                        onClick={() => {
+                          console.log(`ðŸ”„ Play Again: Restarting ${currentPracticeWord} game`);
+
+                          // â­ UPDATE PHASE FIRST (before closing modal)
+                          if (currentPracticeWord === 'nirvighnam') {
+                            sceneActions.updateState({
+                              phase: PHASES.NIRVIGHNAM_GAME_ACTIVE  // â­ Set phase FIRST
+                            });
+                            setModeForPhase('nirvighnam');
+                            setShowModeSelection(true);
+                            setModeSelected(false);
+                          } else if (currentPracticeWord === 'kurumedeva') {
+                            sceneActions.updateState({
+                              phase: PHASES.KURUMEDEVA_GAME_ACTIVE  // â­ Set phase FIRST
+                            });
+                            setModeForPhase('kurumedeva');
+                            setShowModeSelection(true);
+                            setModeSelected(false);
+                          } else if (currentPracticeWord === 'kurume') {
+                            sceneActions.updateState({
+                              phase: PHASES.KURUMEDEVA_GAME_ACTIVE  // â­ Set phase FIRST
+                            });
+                            setModeForPhase('kurume');
+                            setShowModeSelection(true);
+                            setModeSelected(false);
+                          }
+
+                          // â­ Close power modal AFTER phase update
+                          setShowPowerModal(false);
+                        }}
+                        style={{
+                          background: 'linear-gradient(135deg, #9C27B0 0%, #BA68C8 100%)',
+                          marginBottom: '10px'
+                        }}
+                      >
+                        ðŸ”„ Play Again
+                      </button>
+
+                      <button className="nirvighnam-power-modal-btn nirvighnam-save-btn" onClick={handleSaveAnimal}>
+                        ðŸ¾ Save an Animal
+                      </button>
+
+                      <button className="nirvighnam-power-modal-btn nirvighnam-continue-btn" onClick={handleContinueLearning}>
+                        {currentPracticeWord === 'kurumedeva' ? 'âœ¨ End Scene' : 'ðŸª· Discover Kurumedeva'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Progressive Hints System */}
             <ProgressiveHintSystem
@@ -1395,8 +1379,8 @@ onClick={() => {
               sceneState={sceneState}
               hintConfigs={getHintConfigs()}
               characterImage={mooshikaCoach}
-              initialDelay={20000}        
-              hintDisplayTime={10000}    
+              initialDelay={20000}
+              hintDisplayTime={10000}
               position="bottom-right"
               iconSize={60}
               zIndex={2000}
@@ -1452,22 +1436,22 @@ onClick={() => {
                 bottom: '20%',
                 zIndex: 15
               }}>
-                <img 
+                <img
                   src={boyNamaste}
                   alt="Boy character celebrating"
                   className="breathing-animation"
-                  style={{ 
-                    width: '100px', 
-                    height: 'auto', 
+                  style={{
+                    width: '100px',
+                    height: 'auto',
                     objectFit: 'contain'
                   }}
                 />
               </div>
-              
+
               <div className="ganesha-avatar celebration">
-                <img 
-                  src={ganeshaWithHeadphones} 
-                  alt="Ganesha celebrating" 
+                <img
+                  src={ganeshaWithHeadphones}
+                  alt="Ganesha celebrating"
                   className="ganesha-image breathing-animation"
                   style={{
                     filter: 'brightness(1.2) drop-shadow(0 0 25px #DAA520)'
@@ -1477,38 +1461,38 @@ onClick={() => {
             </>
           )}
 
-{/* Final Fireworks */}
-{showSparkle === 'final-fireworks' && (
-  <Fireworks
-    show={true}
-    duration={8000}
-    count={25}
-    colors={['#FFD700', '#FF8C00', '#FFA500', '#DAA520', '#B8860B']}
-    onComplete={() => {
-      console.log('ðŸŽ¯ Nirvighnam chant fireworks complete');
-      setShowSparkle(null);
-      
-      const profileId = localStorage.getItem('activeProfileId');
-      if (profileId) {
-        GameStateManager.saveGameState('shloka-river', 'nirvighnam-chant', {
-          completed: true,
-          stars: 5,
-          syllables: sceneState?.learnedSyllables || {},
-          words: sceneState?.learnedWords || {},
-          unlocked: sceneState?.unlockedApps || {},  // â­ ADD THIS
-          phase: 'complete',
-          timestamp: Date.now()
-        });
-        localStorage.removeItem(`temp_session_${profileId}_shloka-river_nirvighnam-chant`);
-        SimpleSceneManager.clearCurrentScene();
-        console.log('âœ… nirvighnam chant: Completion saved and temp session cleared');
-      }
-      
-      setShowSceneCompletion(true);
-    }}
-  />
-)}
-          
+          {/* Final Fireworks */}
+          {showSparkle === 'final-fireworks' && (
+            <Fireworks
+              show={true}
+              duration={8000}
+              count={25}
+              colors={['#FFD700', '#FF8C00', '#FFA500', '#DAA520', '#B8860B']}
+              onComplete={() => {
+                console.log('ðŸŽ¯ Nirvighnam chant fireworks complete');
+                setShowSparkle(null);
+
+                const profileId = localStorage.getItem('activeProfileId');
+                if (profileId) {
+                  GameStateManager.saveGameState('shloka-river', 'nirvighnam-chant', {
+                    completed: true,
+                    stars: 5,
+                    syllables: sceneState?.learnedSyllables || {},
+                    words: sceneState?.learnedWords || {},
+                    unlocked: sceneState?.unlockedApps || {},  // â­ ADD THIS
+                    phase: 'complete',
+                    timestamp: Date.now()
+                  });
+                  localStorage.removeItem(`temp_session_${profileId}_shloka-river_nirvighnam-chant`);
+                  SimpleSceneManager.clearCurrentScene();
+                  console.log('âœ… nirvighnam chant: Completion saved and temp session cleared');
+                }
+
+                setShowSceneCompletion(true);
+              }}
+            />
+          )}
+
           <SceneCompletionCelebration
             show={showSceneCompletion}
             sceneName="Nirvighnam Chant"
@@ -1516,35 +1500,35 @@ onClick={() => {
             totalScenes={5}
             starsEarned={5}
             totalStars={5}
-discoveredSymbols={['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha', 'nirvighnam', 'kurumedeva']}
-  containerType="smartwatch"
-  containerScreenImage={smartwatchScreen}
-appImages={{
-  vakratunda: appVakratunda,
-  mahakaya: appMahakaya,
-  suryakoti: appSuryakoti,
-  samaprabha: appSamaprabha,
-  nirvighnam: appNirvighnam,
-  kurumedeva: appKurumedeva,
-}}
+            discoveredSymbols={['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha', 'nirvighnam', 'kurumedeva']}
+            containerType="smartwatch"
+            containerScreenImage={smartwatchScreen}
+            appImages={{
+              vakratunda: appVakratunda,
+              mahakaya: appMahakaya,
+              suryakoti: appSuryakoti,
+              samaprabha: appSamaprabha,
+              nirvighnam: appNirvighnam,
+              kurumedeva: appKurumedeva,
+            }}
 
             nextSceneName="sarvakaryeshu-chant"
             sceneId="nirvighnam-chant"
-   completionData={{
-  stars: 5,
-  syllables: sceneState.learnedSyllables,
-  words: sceneState.learnedWords,
-  unlocked: sceneState.unlockedApps,  // â­ ADD THIS
-  completed: true
-}}
+            completionData={{
+              stars: 5,
+              syllables: sceneState.learnedSyllables,
+              words: sceneState.learnedWords,
+              unlocked: sceneState.unlockedApps,  // â­ ADD THIS
+              completed: true
+            }}
             onComplete={onComplete}
-    onReplay={() => {
-  console.log('ðŸ”€ INSTANT REPLAY: Garden Adventure restart');
-  resetScene(false);  // No confirm dialog for replay
-}}
+            onReplay={() => {
+              console.log('ðŸ”€ INSTANT REPLAY: Garden Adventure restart');
+              resetScene(false);  // No confirm dialog for replay
+            }}
             onContinue={() => {
               console.log('NIRVIGHNAM CONTINUE: Going to next scene + preserving resume');
-              
+
               if (clearManualCloseTracking) {
                 clearManualCloseTracking();
                 console.log('NIRVIGHNAM CONTINUE: GameCoach manual tracking cleared');
@@ -1553,14 +1537,14 @@ appImages={{
                 hideCoach();
                 console.log('NIRVIGHNAM CONTINUE: GameCoach hidden');
               }
-              
+
               setTimeout(() => {
                 console.log('NIRVIGHNAM CONTINUE: Forcing GameCoach fresh start for next scene');
                 if (clearManualCloseTracking) {
                   clearManualCloseTracking();
                 }
               }, 500);
-              
+
               const profileId = localStorage.getItem('activeProfileId');
               if (profileId) {
                 ProgressManager.updateSceneCompletion(profileId, 'shloka-river', 'nirvighnam-chant', {
@@ -1569,25 +1553,25 @@ appImages={{
                   syllables: sceneState.learnedSyllables,
                   words: sceneState.learnedWords
                 });
-                
+
                 GameStateManager.saveGameState('shloka-river', 'nirvighnam-chant', {
                   completed: true,
                   stars: 5,
                   syllables: sceneState.learnedSyllables,
                   words: sceneState.learnedWords
                 });
-                
+
                 console.log('NIRVIGHNAM CONTINUE: Completion data saved');
               }
 
               setTimeout(() => {
                 SimpleSceneManager.setCurrentScene('shloka-river', 'sarvakaryeshu-chant', false, false);
                 console.log('NIRVIGHNAM CONTINUE: Next scene (divine-dance) set for resume tracking');
-                
+
                 onNavigate?.('scene-complete-continue');
               }, 100);
             }}
-          />      
+          />
 
           {/* TESTING: Universal completion button - works for any Sanskrit scene 
 <div style={{
@@ -1675,7 +1659,7 @@ appImages={{
               if (clearManualCloseTracking) clearManualCloseTracking();
               setTimeout(() => onNavigate?.('zones'), 100);
             }}
-                          onStartFresh={() => resetScene(true)}  // Add this if TocaBoca has reset option
+            onStartFresh={() => resetScene(true)}  // Add this if TocaBoca has reset option
             currentProgress={{
               stars: sceneState.stars || 0,
               completed: sceneState.completed ? 1 : 0,
@@ -1794,72 +1778,72 @@ appImages={{
             TEST RELOAD SAVE
           </div>*/}
 
-  {/* Back Button */}
-         {sceneState.welcomeShown && !showSceneCompletion && (
-  <BackToMapButton onNavigate={onNavigate} />
-)}
+          {/* Back Button */}
+          {sceneState.welcomeShown && !showSceneCompletion && (
+            <BackToMapButton onNavigate={onNavigate} />
+          )}
 
           {/* Emergency Reset Button */}
-          <div   style={{
-    position: 'absolute',
-    bottom: '20px',
-    right: '20px',
-    background: 'linear-gradient(135deg, #FF6B6B, #EE5A52)',
-    color: 'white',
-    border: 'none',
-    borderRadius: '12px',
-    padding: '8px 16px',
-    fontSize: '12px',
-    fontWeight: '600',
-    cursor: 'pointer',
-    zIndex: 30,
-    boxShadow: '0 3px 10px rgba(238, 90, 82, 0.3)',
-    transition: 'all 0.2s ease',
-    ':hover': {
-      transform: 'translateY(-1px)',
-      boxShadow: '0 4px 15px rgba(238, 90, 82, 0.4)'
-    }
-  }}
-          onClick={() => {
-            if (confirm('Start this Sanskrit scene from the beginning? You will lose current progress.')) {
-              console.log('Sanskrit emergency restart: User chose to start fresh');
-              
-              setShowSparkle(null);
-              setShowRecording(false);
-              setShowSceneCompletion(false);
-              setCurrentRecordingWord('');
-              setShowAudioTracker(true);
-              
-              setTimeout(() => {
-                sceneActions.updateState({
-                  learnedSyllables: {},
-                  learnedWords: {},
-                  nirvighnamGameState: null,
-                  kurumedevaGameState: null,
-                  missionState: {
-                    rescuePhase: 'problem',
-                    showParticles: false,
-                    word: null,
-                    missionJustCompleted: false
-                  },
-                  phase: PHASES.INITIAL,
-                  welcomeShown: false,
-                  nirvighnamWisdomShown: false,
-                  kurumedevaWisdomShown: false,
-                  currentPopup: null,
-                  showingCompletionScreen: false,
-                  gameCoachState: null,
-                  isReloadingGameCoach: false,
-                  stars: 0,
-                  completed: false,
-                  progress: { percentage: 0, starsEarned: 0, completed: false }
-                });
-              }, 100);
-              
-              if (hideCoach) hideCoach();
-              if (clearManualCloseTracking) clearManualCloseTracking();
+          <div style={{
+            position: 'absolute',
+            bottom: '20px',
+            right: '20px',
+            background: 'linear-gradient(135deg, #FF6B6B, #EE5A52)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '12px',
+            padding: '8px 16px',
+            fontSize: '12px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            zIndex: 30,
+            boxShadow: '0 3px 10px rgba(238, 90, 82, 0.3)',
+            transition: 'all 0.2s ease',
+            ':hover': {
+              transform: 'translateY(-1px)',
+              boxShadow: '0 4px 15px rgba(238, 90, 82, 0.4)'
             }
-          }}>
+          }}
+            onClick={() => {
+              if (confirm('Start this Sanskrit scene from the beginning? You will lose current progress.')) {
+                console.log('Sanskrit emergency restart: User chose to start fresh');
+
+                setShowSparkle(null);
+                setShowRecording(false);
+                setShowSceneCompletion(false);
+                setCurrentRecordingWord('');
+                setShowAudioTracker(true);
+
+                setTimeout(() => {
+                  sceneActions.updateState({
+                    learnedSyllables: {},
+                    learnedWords: {},
+                    nirvighnamGameState: null,
+                    kurumedevaGameState: null,
+                    missionState: {
+                      rescuePhase: 'problem',
+                      showParticles: false,
+                      word: null,
+                      missionJustCompleted: false
+                    },
+                    phase: PHASES.INITIAL,
+                    welcomeShown: false,
+                    nirvighnamWisdomShown: false,
+                    kurumedevaWisdomShown: false,
+                    currentPopup: null,
+                    showingCompletionScreen: false,
+                    gameCoachState: null,
+                    isReloadingGameCoach: false,
+                    stars: 0,
+                    completed: false,
+                    progress: { percentage: 0, starsEarned: 0, completed: false }
+                  });
+                }, 100);
+
+                if (hideCoach) hideCoach();
+                if (clearManualCloseTracking) clearManualCloseTracking();
+              }
+            }}>
             Start Fresh
           </div>
         </div>
