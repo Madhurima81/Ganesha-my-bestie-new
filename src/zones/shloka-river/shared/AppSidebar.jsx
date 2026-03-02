@@ -133,6 +133,7 @@ const AppSidebar = ({
           <SanskritVoiceRecorder
             word={selectedApp}
             syllables={appInfo[selectedApp].syllables}
+            chantResult={null}
             appIcon={appInfo[selectedApp].icon}
             appColor={appInfo[selectedApp].power.color}
             savedRecordings={savedRecordings}
@@ -178,6 +179,7 @@ const AppSidebar = ({
         <SanskritVoiceRecorder
           word={selectedApp}
           syllables={appInfo[selectedApp].syllables}
+          chantResult={null}
           appIcon={appInfo[selectedApp].icon}
           appColor={appInfo[selectedApp].power.color}
           savedRecordings={savedRecordings}
