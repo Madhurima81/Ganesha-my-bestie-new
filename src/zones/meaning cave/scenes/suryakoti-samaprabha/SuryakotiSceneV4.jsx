@@ -1620,6 +1620,7 @@ const SuryakotiSceneContent = ({
         sceneActions={sceneActions}
       >
         <div className="pond-scene-container" data-phase={sceneState.phase}>
+          <HomeButton onNavigate={onNavigate} />
           {/* GRADUAL BACKGROUND BLENDING */}
           <div className="pond-background" style={{ position: 'relative', width: '100%', height: '100%' }}>
 
