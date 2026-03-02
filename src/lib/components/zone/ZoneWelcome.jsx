@@ -824,15 +824,27 @@ Continue
     const totalScenes = zoneStats.total;
     const completedCount = zoneStats.completed;
     const symbolCount = zoneStats.symbols || zoneStats.chants || zoneStats.stories || zoneStats.meanings || 0;
+
+    const statIcon =
+      zoneData?.id === 'symbol-mountain' ? '/images/icons/zone_stat_symbol.svg' :
+      zoneData?.id === 'shloka-river'    ? '/images/icons/zone_stat_chants.svg' :
+      zoneData?.id === 'cave-of-secrets' ? '/images/icons/zone_stat_meaning.svg' : null;
+
+    const statLabel =
+      zoneData?.id === 'symbol-mountain' ? 'Symbols' :
+      zoneData?.id === 'shloka-river'    ? 'Chants'  :
+      zoneData?.id === 'story-treehouse' ? 'Stories' :
+      zoneData?.id === 'cave-of-secrets' ? 'Meanings' : 'Points';
+
     return (
       <div className="journey-panel">
         <div className="journey-left">
-          🪔 <span>{symbolCount} {
-            zoneData?.id === 'symbol-mountain' ? 'Symbols' :
-            zoneData?.id === 'shloka-river'    ? 'Chants'  :
-            zoneData?.id === 'story-treehouse' ? 'Stories' :
-            zoneData?.id === 'cave-of-secrets' ? 'Meanings': 'Points'
-          }</span>
+          {statIcon ? (
+            <img src={statIcon} alt={statLabel} className="journey-stat-icon" />
+          ) : (
+            <span>🎒</span>
+          )}
+          <span>{symbolCount}/8 {statLabel}</span>
         </div>
         <div className="journey-steps">
           {Array.from({ length: totalScenes }, (_, i) => (
