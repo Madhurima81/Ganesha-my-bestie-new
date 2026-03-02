@@ -597,8 +597,6 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
         }
       }}
       showMenuLabel={true}
-      showPauseButton={true}
-      onPause={() => sceneActions.updateState({ showPauseMenu: true })}
     >
       <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
         <MessageManager sceneState={sceneState} sceneActions={sceneActions} zoneId={zoneId} sceneId={sceneId}>
