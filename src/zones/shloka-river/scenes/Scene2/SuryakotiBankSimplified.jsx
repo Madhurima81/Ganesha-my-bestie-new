@@ -1208,6 +1208,7 @@ const handlePhaseComplete = (word) => {
     <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
       <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
         <div className="suryakoti-bank-container">
+          <HomeButton onNavigate={onNavigate} />
           <div className="river-background" style={{ backgroundImage: `url(${suryakotiBankBg})` }}>
 
    {/* ==================== SHLOKA RIVER INSTRUCTION MODAL ==================== */}
