@@ -321,6 +321,50 @@ const VakratundaGroveContent = ({
     };
   }, []);
 
+  // ── SymbolAutoReveal helpers ──────────────────────────────────────────────
+
+  // Compute delta from card center (viewport center) to sidebar icon center
+  const getSidebarTarget = (symbolId) => {
+    const el = document.getElementById(`sidebar-${symbolId}`);
+    if (!el) return { x: 220, y: 0 }; // fallback: right edge of screen
+    const r = el.getBoundingClientRect();
+    return {
+      x: (r.left + r.width  / 2) - (window.innerWidth  / 2),
+      y: (r.top  + r.height / 2) - (window.innerHeight / 2)
+    };
+  };
+
+  // Run game-phase advancement after user taps card and it finishes flying
+  // Rule: never update unlockedApps before ~950ms after onComplete —
+  // updating it causes AppSidebar to re-render which strips the bloom
+  // class mid-animation.
+  const handleRevealComplete = (symbolId) => {
+    setRevealConfig(null);
+
+    if (symbolId === 'vakratunda') {
+      // 950ms: bloom fully done → advance to Mahakaya game
+      safeSetTimeout(() => {
+        sceneActions.updateState({
+          unlockedApps: { ...sceneState.unlockedApps, vakratunda: true },
+          phase: PHASES.MAHAKAYA_GAME,
+          mahakayaGameState: null // Ensure Mahakaya always starts from first syllable
+        });
+      }, 950);
+
+    } else if (symbolId === 'mahakaya') {
+      // 950ms: bloom fully done → mark app unlocked
+      safeSetTimeout(() => {
+        sceneActions.updateState({
+          unlockedApps: { ...sceneState.unlockedApps, mahakaya: true }
+        });
+      }, 950);
+      // Show App Discovery screen after bloom settles
+      safeSetTimeout(() => {
+        setShowAppDiscovery(true);
+      }, 1500);
+    }
+  };
+
   // ========================================
   // VOICE: Play welcome on OPENING MODAL (before game starts)
   // Button appears only after VO finishes
