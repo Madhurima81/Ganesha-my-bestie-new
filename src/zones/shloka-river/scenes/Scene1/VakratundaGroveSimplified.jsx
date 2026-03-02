@@ -648,45 +648,26 @@ const VakratundaGroveContent = ({
               onResume={() => {
                 setShowPauseMenu(false);
 
-                // SPECIAL CASE: If paused during word reveal celebration, continue to power overlay
+                // SPECIAL CASE: If paused during word reveal celebration, skip to SymbolAutoReveal
                 if ((sceneState.phase === PHASES.VAKRATUNDA_COMPLETE || sceneState.phase === PHASES.MAHAKAYA_COMPLETE) && showCenteredWord) {
-                  console.log('🔄 Resuming from word reveal celebration, continuing to power overlay...');
-                  // Determine which word based on phase
+                  console.log('🔄 Resuming from word reveal celebration, triggering SymbolAutoReveal...');
                   const word = sceneState.phase === PHASES.VAKRATUNDA_COMPLETE ? 'vakratunda' : 'mahakaya';
 
-                  // Skip directly to power overlay (word reveal VO already played)
                   safeSetTimeout(() => {
                     setShowCenteredWord(null);
-                    setShowSparkle(`${word}-to-sidebar`);
+                    setShowSparkle(null);
 
-                    sceneActions.updateState({
-                      unlockedApps: { ...sceneState.unlockedApps, [word]: true }
+                    setRevealConfig({
+                      symbolId:    word,
+                      symbolImage: powerConfig[word].image,
+                      symbolName:  powerConfig[word].name,
+                      affirmation: powerConfig[word].affirmation,
+                      sidebarTarget: getSidebarTarget(word)
                     });
 
-                    safeSetTimeout(() => {
-                      setShowSparkle(null);
-                      setCurrentWord(word);
-
-                      // Show the Overlay and play power VO
-                      setShowPowerOverlay(true);
-                      setShowPowerButton(false);
-                      setShowPracticeAgainButton(false);
-                      if (isAudioOn) {
-                        const powerVOKey = word === 'vakratunda' ? 'vakratundaPower' : 'mahakayaPower';
-                        playVO(powerVOKey, () => {
-                          playSfx('chime');
-                          setShowPowerButton(true);
-                          setShowPracticeAgainButton(true);
-                        });
-                      } else {
-                        setShowPowerButton(true);
-                        setShowPracticeAgainButton(true);
-                      }
-
-                      sceneActions.updateState({
-                        phase: word === 'vakratunda' ? PHASES.VAKRATUNDA_POWER : PHASES.MAHAKAYA_POWER
-                      });
-                    }, 2000);
+                    sceneActions.updateState({
+                      phase: word === 'vakratunda' ? PHASES.VAKRATUNDA_POWER : PHASES.MAHAKAYA_POWER
+                    });
                   }, 500);
 
                   return; // Don't restart idle timer
@@ -700,6 +681,7 @@ const VakratundaGroveContent = ({
                 if (activeGamePhases.includes(sceneState.phase) &&
                     !celebrationPhases.includes(sceneState.phase) &&
                     !showPowerOverlay &&
+                    !revealConfig &&
                     !showCenteredWord) {
                   startIdleTimer();
                 }
