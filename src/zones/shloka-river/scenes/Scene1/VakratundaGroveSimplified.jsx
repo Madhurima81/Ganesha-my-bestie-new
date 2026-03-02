@@ -972,7 +972,7 @@ const VakratundaGroveContent = ({
                 words: sceneState.learnedWords,
                 completed: true
               }}
-              onComplete={onComplete}
+              onComplete={() => onNavigate?.('zone-welcome')}
               onReplay={() => {
                 setShowSceneCompletion(false);
                 setRevealConfig(null);
