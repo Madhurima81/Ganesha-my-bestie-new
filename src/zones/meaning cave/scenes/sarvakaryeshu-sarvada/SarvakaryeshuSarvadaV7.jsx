@@ -1457,6 +1457,7 @@ const SarvakaryeshuSarvadaContent = ({
     <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
       <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
         <div className="scene-container" data-phase={sceneState.phase}>
+          <HomeButton onNavigate={onNavigate} />
           <div className="scene-background" style={{ backgroundImage: `url(${sceneBackground})` }}>
 
             {/* ✅ OPENING SCREEN: Sarvakaryeshu Sarvada */}
