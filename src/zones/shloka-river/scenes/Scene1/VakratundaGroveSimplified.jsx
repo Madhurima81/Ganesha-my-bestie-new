@@ -22,7 +22,8 @@ import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimat
 import Fireworks from '../../../../lib/components/feedback/Fireworks';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
-import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOverlay'; // ✅ Modak Style Overlay
+import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOverlay'; // ← superseded by SymbolAutoReveal
+import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
 import { PauseButton, PauseMenu } from '../../../../lib/components/ui/PauseMenu'; // ✅ Shared Pause Components
 
 import AppSidebar from '../../shared/AppSidebar';
