@@ -181,6 +181,16 @@ const FestivalRangoliGame = ({ onComplete, onNavigate, zoneId = 'festival-square
 
   // Welcome message effect
   useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.key === 'Escape' && !gameState.completed) {
+        setShowPauseMenu(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [gameState.completed]);
+
+  useEffect(() => {
     if (gameState.phase === PHASES.INTRODUCTION && !gameState.completed) {
       const welcomeTimeout = safeSetTimeout(() => {
         setGaneshaMessage("Welcome to my art station! Let's create beautiful rangoli designs together!");
