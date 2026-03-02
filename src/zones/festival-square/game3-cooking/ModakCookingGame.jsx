@@ -845,10 +845,7 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Background */}
       <div className="cooking-background" style={{ backgroundImage: `url(${cookingBg})` }} />
 
-      {/* Pause Button */}
-      <div className="game-pause-button" onClick={() => setShowPauseMenu(true)}>
-        ⏸️
-      </div>
+      <HomeButton onNavigate={onNavigate} />
 
       {/* Progress Board - ICONS ONLY */}
       <div className="progress-board">
