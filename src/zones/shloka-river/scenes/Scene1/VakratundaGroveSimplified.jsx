@@ -773,7 +773,7 @@ const VakratundaGroveContent = ({
             {/* MAHAKAYA MEMORY GAME */}
             <MahakayaGame
               isActive={sceneState.phase === PHASES.MAHAKAYA_GAME}
-              hideElements={showCenteredWord || showPowerOverlay}
+              hideElements={showCenteredWord || showPowerOverlay || !!revealConfig}
               powerGained={sceneState.learnedWords?.vakratunda}
               onPhaseComplete={() => handlePhaseComplete('mahakaya')}
               onGameComplete={() => {}}
