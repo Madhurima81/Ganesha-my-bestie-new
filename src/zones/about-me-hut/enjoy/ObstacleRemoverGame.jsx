@@ -19,6 +19,7 @@ import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 
 // Shared Components
 import OpeningModal from '../../shared/components/OpeningModal';
+import HomeButton from '../../../lib/components/ui/HomeButton';
 
 // Import Unified Design System
 import Button from '../../../lib/components/ui/Button/Button';
