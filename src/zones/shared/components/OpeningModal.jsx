@@ -21,6 +21,11 @@ import favFoodImg from '../../about-me-hut/food/assets/images/fav-icon-food.png'
 import favColorImg from '../../about-me-hut/food/assets/images/fav-icon-color.png';
 import favActivityImg from '../../about-me-hut/food/assets/images/fav-icon-activity.png';
 
+// Dreams & Wishes Icons
+import wishIconEarth from '../../about-me-hut/enjoy/assets/images/wish-icon-earth.png';
+import wishIconShare from '../../about-me-hut/enjoy/assets/images/wish-icon-share.png';
+import wishIconFlower from '../../about-me-hut/enjoy/assets/images/wish-icon-flower.png';
+
 // Shared / Fallback
 import siblingsPeaceballoon from '../../meaning cave/scenes/sarvakaryeshu-sarvada/assets/images/game 2/helpers/siblings_peaceballoon.png';
 
@@ -44,6 +49,9 @@ const ICON_MAP = {
     'activity': favActivityImg,
     'balloons': siblingsPeaceballoon,
     'birthday': '🎂', // Fallback to emoji if no high-quality cake found yet
+    'earth': wishIconEarth,
+    'sharing': wishIconShare,
+    'flower': wishIconFlower,
 };
 
 const OpeningModal = ({
