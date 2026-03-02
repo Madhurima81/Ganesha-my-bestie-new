@@ -47,10 +47,10 @@ const SCENE_MAPPING = {
     'game4': () => import('./zones/festival-square/Game4-mandapdecor/MandapDecorationGame.jsx')
   },
 'about-me-hut': {
-  'family-tree': () => import('./zones/about-me-hut/family-tree/Familytreegame.jsx'),
-  'favorite-food': () => import('./zones/about-me-hut/food/Favoritefoodgame.jsx'),
-  'dreams-wishes': () => import('./zones/about-me-hut/enjoy/ObstacleRemoverGame.jsx'),
-  'name-birthday': () => import('./zones/about-me-hut/name/Namebirthdaygame.jsx')
+  'family-tree': () => import('./zones/about-me-hut/name/Namebirthdaygame.jsx'),
+  'favorite-food': () => import('./zones/about-me-hut/family-tree/Familytreegame.jsx'),
+  'dreams-wishes': () => import('./zones/about-me-hut/food/Favoritefoodgame.jsx'),
+  'name-birthday': () => import('./zones/about-me-hut/enjoy/ObstacleRemoverGame.jsx')
 }
 
 };
