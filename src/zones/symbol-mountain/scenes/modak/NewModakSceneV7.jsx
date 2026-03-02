@@ -319,16 +319,9 @@ const NewModakSceneMVPContent = ({
   const [fireworksFinished, setFireworksFinished] = useState(false);
 
   // ========================================
-  // PAUSE MENU STATE
+  // TIMER / FLOW STATE
   // ========================================
-  const [showPauseMenu, setShowPauseMenu] = useState(false);
-  const [isSoundOn, setIsSoundOn] = useState(true);
-  const [isPauseButtonLocked, setIsPauseButtonLocked] = useState(false);
   const timeoutsRef = useRef([]);
-  const resumeInFlightRef = useRef(false);
-  const pendingResumeRef = useRef(false);
-  const lastResumeTimeRef = useRef(0);
-  const pauseButtonCooldownUntilRef = useRef(0);
 
   // 🔧 Track symbol sidebar popup state for celebration pausing
   const [isSymbolPopupOpen, setIsSymbolPopupOpen] = useState(false);
@@ -357,8 +350,6 @@ const NewModakSceneMVPContent = ({
   const isFinalCelebrationActive =
     showSparkle === 'final-fireworks' ||
     showSceneCompletion;
-
-  const canShowPauseUI = sceneState.welcomeShown && !isCelebrationOrOverlayActive;
 
   // Get current game phase for initial instruction tracking
   const getCurrentGamePhase = () => {
@@ -404,18 +395,6 @@ const NewModakSceneMVPContent = ({
   const handlePauseCore = () => {
     stopVoice();
     stopIdleTimer();
-  };
-
-  const lockPauseButton = (durationMs = 450) => {
-    const unlockAt = Date.now() + durationMs;
-    pauseButtonCooldownUntilRef.current = unlockAt;
-    setIsPauseButtonLocked(true);
-    const timerId = setTimeout(() => {
-      if (Date.now() >= pauseButtonCooldownUntilRef.current) {
-        setIsPauseButtonLocked(false);
-      }
-    }, durationMs + 30);
-    timeoutsRef.current.push(timerId);
   };
 
   const resumePhaseAfterPause = () => {
