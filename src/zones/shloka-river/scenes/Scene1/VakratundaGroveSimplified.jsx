@@ -199,10 +199,14 @@ const VakratundaGroveContent = ({
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
   const [showCenteredWord, setShowCenteredWord] = useState(null);
 
-  // Controls the Power Unlock Overlay
+  // Controls the Power Unlock Overlay (superseded by SymbolAutoReveal)
   const [showPowerOverlay, setShowPowerOverlay] = useState(false);
   const [showPowerButton, setShowPowerButton] = useState(false);
   const [showPracticeAgainButton, setShowPracticeAgainButton] = useState(false);
+
+  // ── SymbolAutoReveal state ──────────────────────────────────────────────
+  // null = not showing; object = reveal active
+  const [revealConfig, setRevealConfig] = useState(null);
 
   const [currentWord, setCurrentWord] = useState(null);
   const [isAudioOn, setIsAudioOn] = useState(true);
