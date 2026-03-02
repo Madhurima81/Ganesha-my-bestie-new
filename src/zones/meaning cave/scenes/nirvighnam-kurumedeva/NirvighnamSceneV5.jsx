@@ -2669,64 +2669,64 @@ if (currentMissionSymbol === 'nirvighnam') {
               <SimpleDiscoveryOverlay
                 // STAGE 1: Discovery Moment
                 celebrationTitle="Nirvighnam Revealed!"
-                celebrationText={""Clear the Path…"\n\nYou cleared the fog that was blocking the way! Nirvighnam means 'No Obstacles'—you now have the magic to clear your mind."}
-            celebrationImage={rockAnger} // or fogAnger
+                celebrationText={"Clear the Path...\n\nYou cleared the fog that was blocking the way! Nirvighnam means 'No Obstacles'—you now have the magic to clear your mind."}
+                celebrationImage={rockAnger} // or fogAnger
 
-            // STAGE 2: Power Reveal
-            powerTitle="Obstacle Remover Unlocked!"
-            powerText="Don't let little worries cover your bright light. Use this power to clear the way and focus on peace, love, and joy!"
-            powerIcon={nirvighnamSymbol}
+                // STAGE 2: Power Reveal
+                powerTitle="Obstacle Remover Unlocked!"
+                powerText="Don't let little worries cover your bright light. Use this power to clear the way and focus on peace, love, and joy!"
+                powerIcon={nirvighnamSymbol}
 
-            buttonText="Clear the Way!"
-            onComplete={() => {
-              console.log("Discovery 1 complete!");
-              setShowDiscoveryFlip1(false);
+                buttonText="Clear the Way!"
+                onComplete={() => {
+                  console.log("Discovery 1 complete!");
+                  setShowDiscoveryFlip1(false);
 
-              // Move to Door 2
-              sceneActions.updateState({
-                phase: CAVE_PHASES.DOOR2_ACTIVE,
-                learnedWords: {
-                  ...sceneState.learnedWords,
-                  nirvighnam: { learned: true, scene: 3 }
-                }
-              });
-            }}
-            showSparkles={true}
-  />
-)}
+                  // Move to Door 2
+                  sceneActions.updateState({
+                    phase: CAVE_PHASES.DOOR2_ACTIVE,
+                    learnedWords: {
+                      ...sceneState.learnedWords,
+                      nirvighnam: { learned: true, scene: 3 }
+                    }
+                  });
+                }}
+                showSparkles={true}
+              />
+            )}
 
             {/* ==================== DISCOVERY 2: KURUMEDEVA ==================== */}
             {showDiscoveryFlip2 && (
               <SimpleDiscoveryOverlay
                 // STAGE 1: Discovery Moment
                 celebrationTitle="Kurumedeva Revealed!"
-                celebrationText={""The Builder's Power…"\n\nYou built the bridge! Kurumedeva means 'Grant Me This Blessing'—a magic that helps you build solutions and ask for help when you need it."}
-            celebrationImage={rockSad} // or bridge image
+                celebrationText={"The Builder's Power...\n\nYou built the bridge! Kurumedeva means 'Grant Me This Blessing'—a magic that helps you build solutions and ask for help when you need it."}
+                celebrationImage={rockSad} // or bridge image
 
-            // STAGE 2: Power Reveal
-            powerTitle="Solution Builder Unlocked!"
-            powerText="When you find a gap, don't stop! Use your Builder's Power to find the right tools—or ask for help—and cross any problem."
-            powerIcon={kurumedevaSymbol}
+                // STAGE 2: Power Reveal
+                powerTitle="Solution Builder Unlocked!"
+                powerText="When you find a gap, don't stop! Use your Builder's Power to find the right tools—or ask for help—and cross any problem."
+                powerIcon={kurumedevaSymbol}
 
-            buttonText="Start Building!"
-            onComplete={() => {
-              console.log("Discovery 2 complete!");
-              setShowDiscoveryFlip2(false);
+                buttonText="Start Building!"
+                onComplete={() => {
+                  console.log("Discovery 2 complete!");
+                  setShowDiscoveryFlip2(false);
 
-              // Complete Scene
-              sceneActions.updateState({
-                phase: CAVE_PHASES.COMPLETE,
-                completed: true,
-                learnedWords: {
-                  nirvighnam: { learned: true, scene: 3 },
-                  kurumedeva: { learned: true, scene: 3 }
-                }
-              });
-              setShowSparkle('final-fireworks');
-            }}
-            showSparkles={true}
-  />
-)}
+                  // Complete Scene
+                  sceneActions.updateState({
+                    phase: CAVE_PHASES.COMPLETE,
+                    completed: true,
+                    learnedWords: {
+                      nirvighnam: { learned: true, scene: 3 },
+                      kurumedeva: { learned: true, scene: 3 }
+                    }
+                  });
+                  setShowSparkle('final-fireworks');
+                }}
+                showSparkles={true}
+              />
+            )}
 
             {/* ==================== RESUME POPUP ==================== */}
             {showResumePopup && (
