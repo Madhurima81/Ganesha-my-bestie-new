@@ -10,6 +10,7 @@ import rangoliArtistBadge from './assets/images/rangoli-badge.png';
 import ganeshaCompletion from './assets/images/ganesha-artist.png';
 import ganeshaArtist from './assets/images/ganesha-artist.png';
 // In FestivalPianoGame.jsx (or any game inside Game1-piano folder)
+import GamePauseMenu from '../components/GamePauseMenu';
 import HomeButton from '../../../lib/components/ui/HomeButton';
 import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
 
