@@ -409,7 +409,7 @@ const NewModakSceneMVPContent = ({
       return;
     }
 
-    if (!canShowPauseUI) return;
+    if (!sceneState?.welcomeShown || isCelebrationOrOverlayActive) return;
 
     const currentGamePhase = getCurrentGamePhase();
 
@@ -442,49 +442,16 @@ const NewModakSceneMVPContent = ({
     }
   };
 
-  const handlePauseOpen = () => {
-    if (!canShowPauseUI || showPauseMenu || isPauseButtonLocked) return;
-    if (Date.now() < pauseButtonCooldownUntilRef.current) return;
+  const handleHomeToMainMap = () => {
     handlePauseCore();
-    setShowPauseMenu(true);
-  };
-
-  const handleResumeFromPause = () => {
-    const now = Date.now();
-    if (resumeInFlightRef.current && now - lastResumeTimeRef.current < 300) {
-      pendingResumeRef.current = true;
-      return;
+    stopMusic();
+    const activeProfileId = localStorage.getItem('activeProfileId');
+    if (activeProfileId) {
+      localStorage.removeItem(`temp_session_${activeProfileId}_symbol-mountain_modak`);
     }
-
-    resumeInFlightRef.current = true;
-    pendingResumeRef.current = false;
-    lastResumeTimeRef.current = now;
-    setShowPauseMenu(false);
-    lockPauseButton(450);
-    resumePhaseAfterPause();
-
-    const releaseId = setTimeout(() => {
-      resumeInFlightRef.current = false;
-      if (pendingResumeRef.current) {
-        pendingResumeRef.current = false;
-        resumePhaseAfterPause();
-      }
-    }, 260);
-    timeoutsRef.current.push(releaseId);
+    SimpleSceneManager.clearCurrentScene();
+    onNavigate?.('direct-to-map');
   };
-
-  // ========================================
-  // PAUSE MENU ENHANCEMENTS (ESC + AUTO-PAUSE + BLUR)
-  // ========================================
-  usePauseEnhancements(
-    showPauseMenu,
-    setShowPauseMenu,
-    handlePauseCore,
-    handleResumeFromPause,
-    {
-      gameActive: canShowPauseUI
-    }
-  );
 
   // ========================================
   // VO-GATED STATE MACHINE
