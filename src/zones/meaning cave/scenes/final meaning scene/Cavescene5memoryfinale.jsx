@@ -1,5 +1,6 @@
 ﻿// zones/cave-of-secrets/scenes/Scene5/CaveScene5MemoryFinale.jsx
 import React, { useState, useEffect, useRef } from 'react';
+import OpeningModal from '../../../shared/components/OpeningModal.jsx';
 import './Cavescene5memoryfinale.css';
 import '../../../shared/components/OpeningModal.css';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
@@ -161,12 +162,12 @@ const CaveScene5MemoryFinaleContent = ({
   const [showRotatingOrbs, setShowRotatingOrbs] = useState(false);
   const [isAudioOn, setIsAudioOn] = useState(true);
   const [showFireworks, setShowFireworks] = useState(false);
-  
+
   // Hint System State
   const [isPeeking, setIsPeeking] = useState(false);
   const [hintsRemaining, setHintsRemaining] = useState(3);
   const [showRoundCompleteModal, setShowRoundCompleteModal] = useState(false);
-  
+
   const timeoutsRef = useRef([]);
 
   // Safe timeout function
@@ -187,7 +188,7 @@ const CaveScene5MemoryFinaleContent = ({
     try {
       const audio = new Audio(audioPath);
       audio.volume = volume;
-      audio.play().catch(() => {});
+      audio.play().catch(() => { });
     } catch (error) {
       console.warn('Audio failed:', error);
     }
@@ -210,16 +211,16 @@ const CaveScene5MemoryFinaleContent = ({
     }
 
     console.log('🔥 Cave Memory Finale reset: User chose to start fresh');
-    
+
     // Clear all timeouts
     timeoutsRef.current.forEach(id => clearTimeout(id));
     timeoutsRef.current = [];
-    
+
     // Clear local UI state
     setShowRotatingOrbs(false);
     setHintsRemaining(3);
     setIsPeeking(false);
-    
+
     // Reset scene state
     setTimeout(() => {
       sceneActions.updateState({
@@ -255,11 +256,11 @@ const CaveScene5MemoryFinaleContent = ({
 
   // Handle card click
   const handleCardClick = (cardId) => {
-    if (sceneState.isChecking || 
-        sceneState.flippedCards.includes(cardId) || 
-        sceneState.matchedPairs.includes(cardId) || 
-        sceneState.flippedCards.length >= 2 ||
-        isPeeking) { // Don't allow clicks during peek
+    if (sceneState.isChecking ||
+      sceneState.flippedCards.includes(cardId) ||
+      sceneState.matchedPairs.includes(cardId) ||
+      sceneState.flippedCards.length >= 2 ||
+      isPeeking) { // Don't allow clicks during peek
       return;
     }
 
@@ -270,7 +271,7 @@ const CaveScene5MemoryFinaleContent = ({
     // Check for match when 2 cards are flipped
     if (newFlipped.length === 2) {
       sceneActions.updateState({ isChecking: true });
-      
+
       const card1 = sceneState.cards.find(c => c.id === newFlipped[0]);
       const card2 = sceneState.cards.find(c => c.id === newFlipped[1]);
 
@@ -278,7 +279,7 @@ const CaveScene5MemoryFinaleContent = ({
         if (card1.pair === card2.pair) {
           console.log('✅ Match found!', card1.pair);
           const newMatched = [...sceneState.matchedPairs, newFlipped[0], newFlipped[1]];
-          
+
           // Check if round is complete
           const roundComplete = newMatched.length === 8;
 
@@ -303,27 +304,27 @@ const CaveScene5MemoryFinaleContent = ({
     }
   };
 
-const handleRoundComplete = () => {
-  console.log('🎉 Round complete!', sceneState.currentRound);
+  const handleRoundComplete = () => {
+    console.log('🎉 Round complete!', sceneState.currentRound);
 
-  if (sceneState.currentRound === 1) {
-    sceneActions.updateState({ round1Complete: true });
-    setShowRoundCompleteModal(true); // Show modal for round 1
-  } else if (sceneState.currentRound === 2) {
-    sceneActions.updateState({ round2Complete: true });
-    setShowRoundCompleteModal(true); // Show modal for round 2
-    
-    // Show modal for 4 seconds
-    safeSetTimeout(() => {
-      setShowRoundCompleteModal(false); // Hide modal
-      
-      // Wait 1 more second, then start orbs
+    if (sceneState.currentRound === 1) {
+      sceneActions.updateState({ round1Complete: true });
+      setShowRoundCompleteModal(true); // Show modal for round 1
+    } else if (sceneState.currentRound === 2) {
+      sceneActions.updateState({ round2Complete: true });
+      setShowRoundCompleteModal(true); // Show modal for round 2
+
+      // Show modal for 4 seconds
       safeSetTimeout(() => {
-        handleGameComplete();
-      }, 1000);
-    }, 4000);
-  }
-};
+        setShowRoundCompleteModal(false); // Hide modal
+
+        // Wait 1 more second, then start orbs
+        safeSetTimeout(() => {
+          handleGameComplete();
+        }, 1000);
+      }, 4000);
+    }
+  };
 
   const handleContinueToNextRound = () => {
     console.log('Continuing to round 2');
@@ -341,7 +342,7 @@ const handleRoundComplete = () => {
     console.log('Playing round again:', sceneState.currentRound);
     const cardData = sceneState.currentRound === 1 ? createRound1Data() : createRound2Data();
     const shuffled = shuffleArray(cardData);
-    
+
     sceneActions.updateState({
       cards: shuffled,
       flippedCards: [],
@@ -351,12 +352,12 @@ const handleRoundComplete = () => {
     });
   };
 
-const handleGameComplete = () => {
-  console.log('🎊 Game Complete! All rounds finished.');
-  
-  // Start orbs immediately (delay already handled in handleRoundComplete)
-  setShowRotatingOrbs(true);
-};
+  const handleGameComplete = () => {
+    console.log('🎊 Game Complete! All rounds finished.');
+
+    // Start orbs immediately (delay already handled in handleRoundComplete)
+    setShowRotatingOrbs(true);
+  };
 
   // Start game
   const handleStartGame = () => {
@@ -367,11 +368,11 @@ const handleGameComplete = () => {
   // 👁️ Ganesha's Help (Peek feature)
   const handleUseHint = () => {
     if (hintsRemaining <= 0 || isPeeking || sceneState.roundComplete) return;
-    
+
     console.log('✨ Using Ganesha Hint');
     setHintsRemaining(prev => prev - 1);
     setIsPeeking(true);
-    
+
     // Temporarily show all cards via CSS class in render
     safeSetTimeout(() => {
       setIsPeeking(false);
@@ -385,51 +386,18 @@ const handleGameComplete = () => {
   return (
     <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
       <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
-        <div 
+        <div
           className="cave-scene5-memory"
           style={{ backgroundImage: `url(${bgFinal})` }}
         >
           {/* ✅ NEW OPENING SCREEN: Final Challenge */}
-          {!sceneState.gameStarted && (() => {
-            const theme = getZoneTheme(zoneId);
-            const modal = getOpeningModal(zoneId, sceneId);
-            return (
-              <div className="game-modal-overlay" style={{
-                '--modal-card-bg': theme.parentBg,
-                '--modal-text-primary': theme.textPrimary,
-                '--modal-btn-bg': theme.buttonActiveBg,
-                '--modal-btn-shadow': theme.glowColor
-              }}>
-                <div className="game-modal-content">
-                  <div className="game-modal-character">
-                    <img src={ganeshaCharacterCave} alt="Ganesha Character" />
-                  </div>
-                  <div className="game-modal-card">
-                    <h1 className="game-modal-title">{modal?.title || 'You Did It'}</h1>
-                    <p className="game-modal-subtitle">{modal?.description || 'See how they come together.'}</p>
-                    <div className="game-modal-icons">
-                      <div className="game-modal-icon-item">
-                        <img src={vakratundaSymbol} alt="Vakratunda" />
-                        <span className="game-modal-icon-label">Symbols</span>
-                      </div>
-                      <div className="game-modal-icon-item">
-                        <div style={{
-                          width: '80px', height: '80px', background: 'white',
-                          borderRadius: '15px', display: 'flex', alignItems: 'center',
-                          justifyContent: 'center', fontWeight: 'bold', border: '2px solid #FFD700',
-                          fontSize: '32px'
-                        }}>?</div>
-                        <span className="game-modal-icon-label">Meanings</span>
-                      </div>
-                    </div>
-                    <button className="game-modal-button" onClick={handleStartGame}>
-                      {modal?.buttonText || "Let's Explore"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })()}
+          <OpeningModal
+            zoneId={zoneId}
+            sceneId={sceneId}
+            onStart={handleStartGame}
+            characterImg={ganeshaCharacterCave}
+            showButton={true}
+          />
 
           {/* Game Screen */}
           {sceneState.gameStarted && !sceneState.roundComplete && (
@@ -490,14 +458,14 @@ const handleGameComplete = () => {
           )}
 
           {/* Round Complete Screen */}
-{showRoundCompleteModal && !sceneState.showCelebration && (
+          {showRoundCompleteModal && !sceneState.showCelebration && (
             <div className="round-complete-screen" style={{ backgroundImage: `url(${bgFinal})` }}>
               <div className="round-complete-content">
                 <h2 className="round-complete-title">
                   {sceneState.currentRound === 1 ? '🎉 Great Job! 🎉' : '🎊 Amazing! 🎊'}
                 </h2>
                 <p className="round-complete-message">
-                  {sceneState.currentRound === 1 
+                  {sceneState.currentRound === 1
                     ? "You've matched all 4 symbols! Ready for the next challenge?"
                     : "You've mastered all 8 symbols! Time to celebrate!"}
                 </p>
@@ -506,7 +474,7 @@ const handleGameComplete = () => {
                   {sceneState.matchedPairs.map((cardId) => {
                     const card = sceneState.cards.find(c => c.id === cardId);
                     if (!card || card.type !== 'symbol') return null;
-                    
+
                     const data = symbolData[card.pair];
                     return (
                       <div key={cardId} className="matched-pair-item">
@@ -522,16 +490,16 @@ const handleGameComplete = () => {
 
                 <div className="round-action-buttons">
                   <button className="play-again-button" onClick={() => {
-  setShowRoundCompleteModal(false);
-  handlePlayAgain();
-}}>
+                    setShowRoundCompleteModal(false);
+                    handlePlayAgain();
+                  }}>
                     Play Again 🔄
                   </button>
                   {sceneState.currentRound === 1 && (
                     <button className="final-continue-button" onClick={() => {
-  setShowRoundCompleteModal(false);
-  handleContinueToNextRound();
-}}>
+                      setShowRoundCompleteModal(false);
+                      handleContinueToNextRound();
+                    }}>
                       Next Round →
                     </button>
                   )}
@@ -543,7 +511,7 @@ const handleGameComplete = () => {
           {/* ======================================================== */}
           {/* ✅ SIDEBAR & HINT SYSTEM */}
           {/* ======================================================== */}
-          
+
           {/* 1. Symbol Sidebar (Reference Guide) */}
           {sceneState.gameStarted && !sceneState.completed && (
             <div style={{ filter: 'none' }}>
@@ -578,7 +546,7 @@ const handleGameComplete = () => {
               flexDirection: 'column',
               alignItems: 'center'
             }}>
-              <button 
+              <button
                 onClick={handleUseHint}
                 disabled={hintsRemaining <= 0 || isPeeking}
                 style={{
@@ -613,52 +581,52 @@ const handleGameComplete = () => {
             </div>
           )}
 
-{/* Rotating Orbs Effect */}
-{showRotatingOrbs && (
-  <RotatingOrbsEffect
-    show={true}
-    duration={9000}
-    symbolImages={{
-      vakratunda: vakratundaSymbol,
-      mahakaya: mahakayaSymbol,
-      suryakoti: suryakotiSymbol,
-      samaprabha: samaprabhaSymbol,
-      nirvighnam: nirvighnamSymbol,
-      kurumedeva: kurumedevaSymbol,
-      sarvakaryeshu: sarvakaryeshuSymbol,
-      sarvada: sarvadaSymbol
-    }}
-    ganeshaImage={ganeshaCharacter}
-    playerName={profileName}
-    onComplete={() => {
-      console.log('🎯 Memory finale orbs complete');
-      setShowRotatingOrbs(false);
-      
-      const profileId = activeProfile?.id;
-      if (profileId) {
-        GameStateManager.saveGameState(zoneId, sceneId, {
-          completed: true,
-          stars: 8,
-          timestamp: Date.now(),
-          round1Complete: true,
-          round2Complete: true
-        });
-        
-        ProgressManager.updateSceneCompletion(profileId, zoneId, sceneId, {
-          completed: true,
-          stars: 8
-        });
-      }
-      
-      sceneActions.updateState({
-        completed: true,
-        showCelebration: true
-      });
-    }}
-  />
-)}
+          {/* Rotating Orbs Effect */}
+          {showRotatingOrbs && (
+            <RotatingOrbsEffect
+              show={true}
+              duration={9000}
+              symbolImages={{
+                vakratunda: vakratundaSymbol,
+                mahakaya: mahakayaSymbol,
+                suryakoti: suryakotiSymbol,
+                samaprabha: samaprabhaSymbol,
+                nirvighnam: nirvighnamSymbol,
+                kurumedeva: kurumedevaSymbol,
+                sarvakaryeshu: sarvakaryeshuSymbol,
+                sarvada: sarvadaSymbol
+              }}
+              ganeshaImage={ganeshaCharacter}
+              playerName={profileName}
+              onComplete={() => {
+                console.log('🎯 Memory finale orbs complete');
+                setShowRotatingOrbs(false);
 
-{/* Fireworks 
+                const profileId = activeProfile?.id;
+                if (profileId) {
+                  GameStateManager.saveGameState(zoneId, sceneId, {
+                    completed: true,
+                    stars: 8,
+                    timestamp: Date.now(),
+                    round1Complete: true,
+                    round2Complete: true
+                  });
+
+                  ProgressManager.updateSceneCompletion(profileId, zoneId, sceneId, {
+                    completed: true,
+                    stars: 8
+                  });
+                }
+
+                sceneActions.updateState({
+                  completed: true,
+                  showCelebration: true
+                });
+              }}
+            />
+          )}
+
+          {/* Fireworks 
 {showFireworks && (
   <Fireworks
     show={true}
@@ -701,8 +669,8 @@ const handleGameComplete = () => {
             totalScenes={5}
             starsEarned={8}
             totalStars={8}
-            discoveredSymbols={['vakratunda', 'mahakaya', 'samaprabha', 'suryakoti', 
-                               'nirvighnam', 'kurumedeva', 'sarvakaryeshu', 'sarvada']}
+            discoveredSymbols={['vakratunda', 'mahakaya', 'samaprabha', 'suryakoti',
+              'nirvighnam', 'kurumedeva', 'sarvakaryeshu', 'sarvada']}
             symbolImages={{
               vakratunda: vakratundaSymbol,
               mahakaya: mahakayaSymbol,
