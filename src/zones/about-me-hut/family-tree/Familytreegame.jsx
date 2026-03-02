@@ -1704,7 +1704,7 @@ const FamilyTreeGameContent = ({
           }}
           nextSceneName="Favorite Food"
           onContinue={() => {
-            if (onNavigate) onNavigate('game2'); 
+            if (onNavigate) onNavigate('scene-complete-continue');
             else if (onComplete) onComplete();
           }}
           onReplay={() => {
