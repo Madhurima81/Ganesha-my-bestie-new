@@ -1653,14 +1653,7 @@ const MandapDecorationGame = ({ onComplete, onNavigate, zoneId = 'festival-squar
           </div>
         )}
 
-        {/* ADD PAUSE BUTTON HERE */}
-        <button
-          className="game-pause-button"
-          onClick={() => setShowPauseMenu(true)}
-          aria-label="Pause Game"
-        >
-          ⏸️
-        </button>
+        <HomeButton onNavigate={onNavigate} />
 
 
 
