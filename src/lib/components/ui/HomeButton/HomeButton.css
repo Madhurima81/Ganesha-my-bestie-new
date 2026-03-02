@@ -1,0 +1,68 @@
+/* ============================================================
+   HomeButton — simple Toca Boca style home icon for all scenes
+   ============================================================ */
+
+.home-button {
+  position: fixed;
+  z-index: 9999;
+
+  /* Size */
+  width: clamp(48px, 5.5vw, 72px);
+  height: clamp(48px, 5.5vw, 72px);
+
+  /* Shape */
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+
+  /* Background — warm orange pill like Toca Boca UI */
+  background: linear-gradient(145deg, #F4845F, #E8622A);
+  box-shadow:
+    0 4px 0px #B84A1A,        /* hard bottom shadow (cartoonish) */
+    0 6px 16px rgba(0,0,0,0.25);
+
+  /* Centre the SVG */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: clamp(10px, 1.1vw, 16px);
+
+  /* Smooth press */
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+
+  /* No text-select jitter */
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---- Positions ---- */
+.home-button--top-left {
+  top: clamp(12px, 1.5vw, 24px);
+  left: clamp(12px, 1.5vw, 24px);
+}
+
+.home-button--top-right {
+  top: clamp(12px, 1.5vw, 24px);
+  right: clamp(12px, 1.5vw, 24px);
+}
+
+/* ---- Press state ---- */
+.home-button:active {
+  transform: translateY(3px) scale(0.95);
+  box-shadow:
+    0 1px 0px #B84A1A,
+    0 2px 8px rgba(0,0,0,0.2);
+}
+
+.home-button:hover {
+  background: linear-gradient(145deg, #F97B50, #E05A20);
+}
+
+/* ---- Icon ---- */
+.home-button__icon {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+}
