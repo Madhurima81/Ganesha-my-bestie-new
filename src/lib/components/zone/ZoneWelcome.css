@@ -829,8 +829,8 @@
 }
 
 .step {
-  width: clamp(14px, 1.4vw, 22px);
-  height: clamp(14px, 1.4vw, 22px);
+  width: clamp(16px, 1.6vw, 26px);
+  height: clamp(16px, 1.6vw, 26px);
   border-radius: 50%;
   background: rgba(107, 84, 22, 0.22);
   transition: all 0.3s ease;
