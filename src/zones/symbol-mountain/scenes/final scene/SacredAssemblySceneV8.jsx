@@ -967,6 +967,7 @@ const SacredAssemblyContent = ({
         sceneActions={sceneActions}
       >
         <div className="sacred-assembly-container">
+          <HomeButton onNavigate={onNavigate} />
 
           <OpeningModal
             zoneId={zoneId}
