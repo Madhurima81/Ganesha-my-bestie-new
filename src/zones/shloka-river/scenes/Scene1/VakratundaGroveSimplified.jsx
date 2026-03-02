@@ -271,7 +271,7 @@ const VakratundaGroveContent = ({
   // ========================================
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && sceneState.welcomeShown && !isFinalCelebrationActive && !showSceneCompletion) {
+      if (e.key === 'Escape' && sceneState.welcomeShown && !isCelebrationOrOverlayActive && !showSceneCompletion) {
         e.preventDefault();
         if (!showPauseMenu) {
           // Open pause menu
@@ -286,6 +286,7 @@ const VakratundaGroveContent = ({
           if (activeGamePhases.includes(sceneState.phase) &&
               !celebrationPhases.includes(sceneState.phase) &&
               !showPowerOverlay &&
+              !revealConfig &&
               !showCenteredWord) {
             startIdleTimer();
           }
@@ -294,7 +295,7 @@ const VakratundaGroveContent = ({
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [showPauseMenu, sceneState.welcomeShown, isFinalCelebrationActive, showSceneCompletion, sceneState.phase, showPowerOverlay, showCenteredWord]);
+  }, [showPauseMenu, sceneState.welcomeShown, isCelebrationOrOverlayActive, showSceneCompletion, sceneState.phase, showPowerOverlay, showCenteredWord, revealConfig]);
 
   // ========================================
   // AUTO-PAUSE ON APP BLUR (Mobile/Tab Switch)
