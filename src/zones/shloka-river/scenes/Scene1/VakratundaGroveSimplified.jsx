@@ -213,8 +213,8 @@ const VakratundaGroveContent = ({
   const [showGaneshaCelebration, setShowGaneshaCelebration] = useState(false);
   const [showFinalGanesha, setShowFinalGanesha] = useState(false);
 
-  // Pause Menu State
-  const [showPauseMenu, setShowPauseMenu] = useState(false);
+  // Pause Menu State — removed: replaced by home icon
+  // const [showPauseMenu, setShowPauseMenu] = useState(false);
 
   // Opening Modal State
   const [openingButtonVisible, setOpeningButtonVisible] = useState(false);
