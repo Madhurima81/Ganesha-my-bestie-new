@@ -29,6 +29,7 @@ import ProgressiveHintSystem from '../../../../lib/components/interactive/Progre
 import SymbolSceneIntegration from '../../../../lib/components/animation/SymbolSceneIntegration';
 import MagicalCardFlip from '../../../../lib/components/animation/MagicalCardFlip';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
+import HomeButton from '../../../../lib/components/ui/HomeButton';
 
 import useSceneReset from '../../../../lib/hooks/useSceneReset';
 import { getSceneResetConfig } from '../../../../lib/config/SceneResetConfigs';
