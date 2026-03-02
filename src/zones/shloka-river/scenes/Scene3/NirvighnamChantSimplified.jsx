@@ -1663,17 +1663,8 @@ onClick={() => {
               chantedVerses: { 'nirvighnam-chant': true, 'kurumedeva-chant': true }, // ✅ Pass Chants
               completed: true
             }}
-            // 1. EXPLORE ZONES FIX: Pass data manually to App.jsx
-            onComplete={() => {
-              if (onComplete) {
-                onComplete({
-                  completed: true,
-                  stars: 5,
-                  chantedVerses: { 'nirvighnam-chant': true, 'kurumedeva-chant': true },
-                  words: { nirvighnam: true, kurumedeva: true }
-                });
-              }
-            }}
+            // 1. EXPLORE SCENES: Go to zone welcome
+            onComplete={() => onNavigate?.('zone-welcome')}
             // 2. REPLAY FIX: Reset scene
             onReplay={() => {
               console.log('🔀 INSTANT REPLAY');
