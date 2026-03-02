@@ -1,7 +1,6 @@
 ﻿// zones/symbol-mountain/scenes/final-scene/SacredAssemblyScene.jsx - V8 DIVINE VERSION
 import React, { useState, useEffect, useRef } from 'react';
 import './SacredAssemblyScene.css';
-import '../../../shared/components/OpeningModal.css';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../../lib/config/content/openingModals';
 import { getCompletionModal } from '../../../../lib/config/content';

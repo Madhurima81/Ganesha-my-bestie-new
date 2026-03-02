@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import './PondScene.css';
-import '../../../shared/components/OpeningModal.css';
 import '../../../../lib/styles/zone-themes.css'; // Ensure theme vars are loaded
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../../lib/config/content/openingModals';

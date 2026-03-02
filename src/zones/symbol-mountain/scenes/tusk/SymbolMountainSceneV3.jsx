@@ -3,7 +3,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import './SymbolMountainScene.css';
-import '../../../shared/components/OpeningModal.css';
 import '../../../../lib/styles/zone-themes.css'; // Ensure themes are loaded
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../../lib/config/content/openingModals';
