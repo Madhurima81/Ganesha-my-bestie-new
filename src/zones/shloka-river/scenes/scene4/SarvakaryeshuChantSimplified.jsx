@@ -1249,17 +1249,8 @@ hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || showMission}
                 chantedVerses: { 'sarvakaryeshu-chant': true, 'sarvada-chant': true }, // ✅ Pass Chants
                 completed: true
               }}
-              // 1. EXPLORE ZONES FIX: Pass data manually
-              onComplete={() => {
-                if (onComplete) {
-                  onComplete({
-                    completed: true,
-                    stars: 5,
-                    chantedVerses: { 'sarvakaryeshu-chant': true, 'sarvada-chant': true },
-                    words: { sarvakaryeshu: true, sarvada: true }
-                  });
-                }
-              }}
+              // 1. EXPLORE SCENES: Go to zone welcome
+              onComplete={() => onNavigate?.('zone-welcome')}
               // 2. REPLAY FIX
               onReplay={() => {
                 console.log('🔀 INSTANT REPLAY');
