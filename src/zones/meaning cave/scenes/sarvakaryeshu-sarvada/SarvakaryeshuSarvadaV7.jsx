@@ -2275,68 +2275,68 @@ const SarvakaryeshuSarvadaContent = ({
               <SimpleDiscoveryOverlay
                 // STAGE 1: Discovery Moment
                 celebrationTitle="Sarvakaryeshu Mastered!"
-                celebrationText={""Self-Help Power…"\n\nYou found the right Ganesha power for every task! Sarvakaryeshu means 'In All Activities'—you can handle anything!"}
-            celebrationImage={doorImage} // or one of the game scenario images
+                celebrationText={"Self-Help Power...\n\nYou found the right Ganesha power for every task! Sarvakaryeshu means 'In All Activities'—you can handle anything!"}
+                celebrationImage={doorImage} // or one of the game scenario images
 
-            // STAGE 2: Mastery Power Reveal
-            powerTitle="Mastery Unlocked!"
-            powerText="You have all the tools you need! Use your powers to finish tasks, try new things, and do your best every day."
-            powerIcon={sarvakaryeshuSymbol}
+                // STAGE 2: Mastery Power Reveal
+                powerTitle="Mastery Unlocked!"
+                powerText="You have all the tools you need! Use your powers to finish tasks, try new things, and do your best every day."
+                powerIcon={sarvakaryeshuSymbol}
 
-            buttonText="I Can Do It!"
-            onComplete={() => {
-              console.log("Discovery 1 complete!");
-              setShowDiscoveryFlip1(false);
+                buttonText="I Can Do It!"
+                onComplete={() => {
+                  console.log("Discovery 1 complete!");
+                  setShowDiscoveryFlip1(false);
 
-              // Update sidebar + move to Door 2
-              sceneActions.updateState({
-                phase: SCENE_PHASES.DOOR2_ACTIVE,
-                learnedWords: {
-                  ...sceneState.learnedWords,
-                  sarvakaryeshu: { learned: true, scene: 4 }
-                }
-              });
-            }}
-            showSparkles={true}
-  />
-)}
+                  // Update sidebar + move to Door 2
+                  sceneActions.updateState({
+                    phase: SCENE_PHASES.DOOR2_ACTIVE,
+                    learnedWords: {
+                      ...sceneState.learnedWords,
+                      sarvakaryeshu: { learned: true, scene: 4 }
+                    }
+                  });
+                }}
+                showSparkles={true}
+              />
+            )}
 
             {/* ==================== DISCOVERY 2: SARVADA ==================== */}
             {showDiscoveryFlip2 && (
               <SimpleDiscoveryOverlay
                 // STAGE 1: Discovery Moment
                 celebrationTitle="Sarvada Revealed!"
-                celebrationText={""Always Ready…"\n\nYou helped your friends! Sarvada means 'Always'—your powers work every day, for everyone."}
-            celebrationImage={doorImage} // or a helper image
+                celebrationText={"Always Ready...\n\nYou helped your friends! Sarvada means 'Always'—your powers work every day, for everyone."}
+                celebrationImage={doorImage} // or a helper image
 
-            // STAGE 2: Infinite Wisdom Power Reveal
-            powerTitle="Infinite Wisdom Unlocked!"
-            powerText="Ganesha's wisdom is with you—always. Use your powers to be a kind friend, a good helper, and a brave leader."
-            powerIcon={sarvadaSymbol}
+                // STAGE 2: Infinite Wisdom Power Reveal
+                powerTitle="Infinite Wisdom Unlocked!"
+                powerText="Ganesha's wisdom is with you—always. Use your powers to be a kind friend, a good helper, and a brave leader."
+                powerIcon={sarvadaSymbol}
 
-            buttonText="The Journey Continues!"
-            onComplete={() => {
-              console.log("Discovery 2 complete!");
-              setShowDiscoveryFlip2(false);
+                buttonText="The Journey Continues!"
+                onComplete={() => {
+                  console.log("Discovery 2 complete!");
+                  setShowDiscoveryFlip2(false);
 
-              // Update sidebar + complete scene
-              sceneActions.updateState({
-                phase: SCENE_PHASES.COMPLETE,
-                completed: true,
-                learnedWords: {
-                  sarvakaryeshu: { learned: true, scene: 4 },
-                  sarvada: { learned: true, scene: 4 }
-                }
-              });
+                  // Update sidebar + complete scene
+                  sceneActions.updateState({
+                    phase: SCENE_PHASES.COMPLETE,
+                    completed: true,
+                    learnedWords: {
+                      sarvakaryeshu: { learned: true, scene: 4 },
+                      sarvada: { learned: true, scene: 4 }
+                    }
+                  });
 
-              // Show completion screen
-              setShowSparkle('final-fireworks');
-            }}
+                  // Show completion screen
+                  setShowSparkle('final-fireworks');
+                }}
 
 
-            showSparkles={true}
-  />
-)}
+                showSparkles={true}
+              />
+            )}
 
             {/* ==================== RESUME POPUP ==================== */}
             {showResumePopup && (
