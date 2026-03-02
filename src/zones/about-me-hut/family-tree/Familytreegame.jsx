@@ -225,85 +225,12 @@ const FamilyTreeGameContent = ({
   });
 
   // ========================================
-  // PAUSE MENU STATE
+  // PAUSE MENU STATE (commented out — replaced by HomeButton)
   // ========================================
-  const [showPauseMenu, setShowPauseMenu] = useState(false);
-  const [isSoundOn, setIsSoundOn] = useState(true);
+  // const [showPauseMenu, setShowPauseMenu] = useState(false);
+  // const [isSoundOn, setIsSoundOn] = useState(true);
 
-  // ========================================
-  // PAUSE MENU ENHANCEMENTS (ESC + AUTO-PAUSE + BLUR)
-  // ========================================
-  usePauseEnhancements(
-    showPauseMenu,
-    setShowPauseMenu,
-    () => {
-      // On pause: Stop VOs, timers, and block wrong-choice animations
-      isPausedRef.current = true;
-      clearScheduledTimeouts();
-      stopIdleTimer();
-      stopVoice();
-      setIsPlayingWrongVO(false); // Unblock taps if pause interrupted wrong-choice VO
-
-      // Clear name prompt timer if active
-      if (namePromptTimerRef.current) {
-        clearTimeout(namePromptTimerRef.current);
-        namePromptTimerRef.current = null;
-      }
-    },
-    () => {
-      // On resume: Restart game if active
-      isPausedRef.current = false;
-      stopVoice(); // Ensure no stale VO resumes from before pause
-      setIsPlayingWrongVO(false);
-
-      // Handle phase-specific resume logic
-      if (sceneState.gamePhase === 'transition') {
-        // If transition VO was interrupted, keep the CTA available
-        setTransitionButtonVisible(true);
-      }
-
-      if (sceneState.gamePhase === 'ganeshaTree') {
-        // Defensive unlock in case pause interrupted a VO callback chain or wrong choice animation
-        if (sceneState.wrongChoice && !sceneState.disabledChoices.includes(sceneState.wrongChoice)) {
-          sceneActions.updateState({
-            disabledChoices: [...sceneState.disabledChoices, sceneState.wrongChoice],
-            wrongChoice: null,
-            correctChoiceId: null,
-            showYouGotIt: null,
-            isSequencePlaying: false
-          });
-        } else {
-          // Clear all animation states to re-enable buttons
-          sceneActions.updateState({
-            isSequencePlaying: false,
-            showYouGotIt: null,
-            wrongChoice: null,
-            correctChoiceId: null
-          });
-        }
-      }
-
-      // Handle name input modal idle timer restart (for 4th+ time)
-      if (sceneState.gamePhase === 'childInput' && sceneState.showNameModal && namePromptCount >= 4) {
-        if (namePromptTimerRef.current) {
-          clearTimeout(namePromptTimerRef.current);
-        }
-        namePromptTimerRef.current = scheduleTimeout(() => {
-          playVoice('namePromptShort');
-        }, 10000);
-      }
-
-      // Restart idle timer if we're in an active phase
-      if (sceneState.gamePhase === 'ganeshaTree' || sceneState.gamePhase === 'childInput') {
-        startIdleTimer();
-      }
-    },
-    {
-      gameActive: sceneState.gamePhase !== 'intro' && !sceneState.showingCompletionScreen,
-      allowEsc: true,
-      allowAutoPause: true
-    }
-  );
+  // usePauseEnhancements(showPauseMenu, setShowPauseMenu, ...) — removed
 
   // ========================================
   // VO-GATED BUTTON STATE
