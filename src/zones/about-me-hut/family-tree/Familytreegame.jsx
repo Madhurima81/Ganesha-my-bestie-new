@@ -635,8 +635,7 @@ const FamilyTreeGameContent = ({
       sceneState.showChoiceModal ||
       sceneState.showFunFactModal ||
       sceneState.flippedMember ||
-      sceneState.isSequencePlaying ||
-      showPauseMenu;
+      sceneState.isSequencePlaying;
     const allPlaced = sceneState.placedGaneshaMembers.length === ganeshaFamily.length;
 
     if (!inGaneshaTree || hasBlockingOverlay || allPlaced) return;
