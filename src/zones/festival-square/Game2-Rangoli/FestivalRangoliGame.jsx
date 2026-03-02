@@ -154,6 +154,7 @@ const FestivalRangoliGame = ({ onComplete, onNavigate, zoneId = 'festival-square
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
   const [ganeshaMessage, setGaneshaMessage] = useState('');
   const [showGaneshaMessage, setShowGaneshaMessage] = useState(false);
+  const [showPauseMenu, setShowPauseMenu] = useState(false);
 
 
   const [showDesignConfirmation, setShowDesignConfirmation] = useState(false);
