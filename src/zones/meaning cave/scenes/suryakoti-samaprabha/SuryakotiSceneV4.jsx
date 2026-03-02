@@ -2866,32 +2866,32 @@ const SuryakotiSceneContent = ({
               <SimpleDiscoveryOverlay
                 // STAGE 1: Discovery Moment
                 celebrationTitle="Surya Koti Uncovered!"
-                celebrationText={""Gathering Light…"\n\nYou collected the light of many suns! Surya Koti means 'Like Ten Million Suns'— it's the brightest magic of all!"}
-            celebrationImage={suryakotiCard}
+                celebrationText={"Gathering Light...\n\nYou collected the light of many suns! Surya Koti means 'Like Ten Million Suns'— it's the brightest magic of all!"}
+                celebrationImage={suryakotiCard}
 
-    // STAGE 2: Vibrancy Power Reveal
-            powerTitle="Vibrancy Power Unlocked!"
-            powerText="You hold the brightest light! Use this power to bring energy and joy to everything you do—and every game you play."
-            powerIcon={suryakotiSymbol}
+                // STAGE 2: Vibrancy Power Reveal
+                powerTitle="Vibrancy Power Unlocked!"
+                powerText="You hold the brightest light! Use this power to bring energy and joy to everything you do—and every game you play."
+                powerIcon={suryakotiSymbol}
 
-            buttonText="Shine Bright!"
-            onComplete={() => {
-              console.log("Discovery 1: Suryakoti learned!");
-              setShowDiscoveryFlip1(false);
+                buttonText="Shine Bright!"
+                onComplete={() => {
+                  console.log("Discovery 1: Suryakoti learned!");
+                  setShowDiscoveryFlip1(false);
 
-              // Update learned words + move to Door 2
-              sceneActions.updateState({
-                phase: CAVE_PHASES.DOOR2_ACTIVE,
-                learnedWords: {
-                  ...sceneState.learnedWords,
-                  suryakoti: { learned: true, scene: 2 }
-                }
-              });
-            }}
+                  // Update learned words + move to Door 2
+                  sceneActions.updateState({
+                    phase: CAVE_PHASES.DOOR2_ACTIVE,
+                    learnedWords: {
+                      ...sceneState.learnedWords,
+                      suryakoti: { learned: true, scene: 2 }
+                    }
+                  });
+                }}
 
-            showSparkles={true}
-  />
-)}
+                showSparkles={true}
+              />
+            )}
 
             {/* ==================== DISCOVERY 2: SAMAPRABHA (Equal Radiance) ==================== */}
             {/* ==================== DISCOVERY 2: SAMAPRABHA (Equal Radiance) ==================== */}
@@ -2899,35 +2899,35 @@ const SuryakotiSceneContent = ({
               <SimpleDiscoveryOverlay
                 // STAGE 1: Discovery Moment
                 celebrationTitle="Samaprabha Revealed!"
-                celebrationText={""Equal Radiance…"\n\nYou shared your light with everyone equally! Samaprabha means 'Equal Shine'— a magic of kindness that reaches all."}
-            celebrationImage={samaprabhaCard}
+                celebrationText={"Equal Radiance...\n\nYou shared your light with everyone equally! Samaprabha means 'Equal Shine'— a magic of kindness that reaches all."}
+                celebrationImage={samaprabhaCard}
 
-    // STAGE 2: Kindness Power Reveal
-            powerTitle="Kindness Power Unlocked!"
-            powerText="Shine your light on everyone, no matter what! Your kindness makes the world a better, brighter place."
-            powerIcon={samaprabhaSymbol}
+                // STAGE 2: Kindness Power Reveal
+                powerTitle="Kindness Power Unlocked!"
+                powerText="Shine your light on everyone, no matter what! Your kindness makes the world a better, brighter place."
+                powerIcon={samaprabhaSymbol}
 
-            buttonText="Light the Way!"
-            onComplete={() => {
-              console.log("Discovery 2: Samaprabha learned!");
-              setShowDiscoveryFlip2(false);
+                buttonText="Light the Way!"
+                onComplete={() => {
+                  console.log("Discovery 2: Samaprabha learned!");
+                  setShowDiscoveryFlip2(false);
 
-              // Update learned words + complete scene
-              sceneActions.updateState({
-                phase: CAVE_PHASES.COMPLETE,
-                completed: true,
-                learnedWords: {
-                  suryakoti: { learned: true, scene: 2 },
-                  samaprabha: { learned: true, scene: 2 }
-                }
-              });
+                  // Update learned words + complete scene
+                  sceneActions.updateState({
+                    phase: CAVE_PHASES.COMPLETE,
+                    completed: true,
+                    learnedWords: {
+                      suryakoti: { learned: true, scene: 2 },
+                      samaprabha: { learned: true, scene: 2 }
+                    }
+                  });
 
-              setShowSparkle('final-fireworks');
-            }}
+                  setShowSparkle('final-fireworks');
+                }}
 
-            showSparkles={true}
-  />
-)}
+                showSparkles={true}
+              />
+            )}
             {/* ==================== RESUME POPUP ==================== */}
             {showResumePopup && (
               <div style={{
