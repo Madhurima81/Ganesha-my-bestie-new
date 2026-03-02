@@ -266,36 +266,32 @@ const VakratundaGroveContent = ({
   // Track whether recorder popup is open — pause game voice when it is
   const [isRecorderOpen, setIsRecorderOpen] = useState(false);
 
-  // ========================================
-  // ESC KEY TO TOGGLE PAUSE (Desktop UX)
-  // ========================================
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && sceneState.welcomeShown && !isCelebrationOrOverlayActive && !showSceneCompletion) {
-        e.preventDefault();
-        if (!showPauseMenu) {
-          // Open pause menu
-          stopVoice();
-          stopIdleTimer();
-          setShowPauseMenu(true);
-        } else {
-          // Close pause menu (resume)
-          setShowPauseMenu(false);
-          const activeGamePhases = [PHASES.VAKRATUNDA_GAME, PHASES.MAHAKAYA_GAME];
-          const celebrationPhases = [PHASES.VAKRATUNDA_COMPLETE, PHASES.VAKRATUNDA_POWER, PHASES.MAHAKAYA_COMPLETE, PHASES.MAHAKAYA_POWER];
-          if (activeGamePhases.includes(sceneState.phase) &&
-              !celebrationPhases.includes(sceneState.phase) &&
-              !showPowerOverlay &&
-              !revealConfig &&
-              !showCenteredWord) {
-            startIdleTimer();
-          }
-        }
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [showPauseMenu, sceneState.welcomeShown, isCelebrationOrOverlayActive, showSceneCompletion, sceneState.phase, showPowerOverlay, showCenteredWord, revealConfig]);
+  // ── ESC key pause handler — REMOVED (replaced by home icon) ──
+  // useEffect(() => {
+  //   const handleKeyDown = (e) => {
+  //     if (e.key === 'Escape' && sceneState.welcomeShown && !isCelebrationOrOverlayActive && !showSceneCompletion) {
+  //       e.preventDefault();
+  //       if (!showPauseMenu) {
+  //         stopVoice();
+  //         stopIdleTimer();
+  //         setShowPauseMenu(true);
+  //       } else {
+  //         setShowPauseMenu(false);
+  //         const activeGamePhases = [PHASES.VAKRATUNDA_GAME, PHASES.MAHAKAYA_GAME];
+  //         const celebrationPhases = [PHASES.VAKRATUNDA_COMPLETE, PHASES.VAKRATUNDA_POWER, PHASES.MAHAKAYA_COMPLETE, PHASES.MAHAKAYA_POWER];
+  //         if (activeGamePhases.includes(sceneState.phase) &&
+  //             !celebrationPhases.includes(sceneState.phase) &&
+  //             !showPowerOverlay &&
+  //             !revealConfig &&
+  //             !showCenteredWord) {
+  //           startIdleTimer();
+  //         }
+  //       }
+  //     }
+  //   };
+  //   window.addEventListener('keydown', handleKeyDown);
+  //   return () => window.removeEventListener('keydown', handleKeyDown);
+  // }, [showPauseMenu, sceneState.welcomeShown, isCelebrationOrOverlayActive, showSceneCompletion, sceneState.phase, showPowerOverlay, showCenteredWord, revealConfig]);
 
   // ========================================
   // AUTO-PAUSE ON APP BLUR (Mobile/Tab Switch)
