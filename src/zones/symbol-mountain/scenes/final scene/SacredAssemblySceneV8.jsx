@@ -12,6 +12,7 @@ import MessageManager from "../../../../lib/components/scenes/MessageManager";
 import InteractionManager from "../../../../lib/components/scenes/InteractionManager";
 import GameStateManager from "../../../../lib/services/GameStateManager";
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
+import HomeButton from '../../../../lib/components/ui/HomeButton';
 import RotatingOrbsEffect from '../../../../lib/components/feedback/RotatingOrbsEffect';
 // import SimpleGameCoach, { SimpleGameCoachConfigs } from '../../../../lib/components/coach/SimpleGameCoach'; // COMMENTED OUT
 import ProgressManager from '../../../../lib/services/ProgressManager';
