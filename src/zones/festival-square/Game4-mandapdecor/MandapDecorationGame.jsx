@@ -7,7 +7,7 @@ import { getOpeningModal } from '../../../lib/config/content/openingModals';
 
 import FreeDraggableItem from '../../../lib/components/interactive/FreeDraggableItem';
 import FestivalSquareCompletion from '../components/FestivalSquareCompletion';
-import GamePauseMenu from '../components/GamePauseMenu'; // 👈 ADD THIS
+import HomeButton from '../../../lib/components/ui/HomeButton';
 import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
 
 import PujaSidebar from './components/sidebars/PujaSidebar';
