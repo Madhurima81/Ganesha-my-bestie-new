@@ -562,8 +562,8 @@ const getNextScene = (zoneId, currentSceneId) => {
   }
 
   if (currentIndex === scenes.length - 1) {
-    // ✅ About Me Hut: circular — loop back to first scene
-    if (zoneId === 'about-me-hut') {
+    // ✅ About Me Hut & Festival Square: circular — loop back to first scene
+    if (zoneId === 'about-me-hut' || zoneId === 'festival-square') {
       console.log(`🔄 CIRCULAR: ${currentSceneId} → ${scenes[0]} in ${zoneId}`);
       return scenes[0];
     }
