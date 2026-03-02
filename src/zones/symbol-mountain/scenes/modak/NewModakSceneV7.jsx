@@ -47,7 +47,6 @@ import FireworksCompletion from '../../../../lib/components/feedback/FireworksCo
 import SymbolSidebar from '../../shared/components/SymbolSidebar';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOverlay';
-import { PauseButton, PauseMenu, PauseBlurOverlay, usePauseEnhancements } from '../../../../lib/components/ui/PauseMenu'; // ✅ Shared Pause Components
 
 // Images
 import forestBackground from './assets/images/forest-background.png';
