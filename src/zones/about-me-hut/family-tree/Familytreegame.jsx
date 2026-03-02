@@ -663,8 +663,7 @@ const FamilyTreeGameContent = ({
     sceneState.showFunFactModal,
     sceneState.flippedMember,
     sceneState.isSequencePlaying,
-    sceneState.placedGaneshaMembers.length,
-    showPauseMenu
+    sceneState.placedGaneshaMembers.length
   ]);
 
   // ========================================
