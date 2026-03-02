@@ -15,6 +15,7 @@ import ProgressManager from '../../../lib/services/ProgressManager';
 import SimpleSceneManager from '../../../lib/services/SimpleSceneManager';
 
 import FestivalSquareCompletion from '../components/FestivalSquareCompletion';
+import GamePauseMenu from '../components/GamePauseMenu';
 import HomeButton from '../../../lib/components/ui/HomeButton';
 import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
 import GameLayout from '../../../lib/components/layout/GameLayout';
