@@ -770,7 +770,7 @@ const VakratundaGroveContent = ({
               savedGameState={sceneState.mahakayaGameState}
               onSaveGameState={(state) => handleSaveComponentState('mahakayaGame', state)}
               voiceGuidance={{ playVoice: playVO, playSfx, stopVoice }}
-              isPaused={isRecorderOpen || showPauseMenu}
+              isPaused={isRecorderOpen}
             />
 
             {/* PERSISTENT BOY CHARACTER (Commented out per user request) */}
