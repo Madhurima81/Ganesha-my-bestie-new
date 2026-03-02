@@ -2513,7 +2513,7 @@ return symbols.map((symbol, index) => {
               }}
               onExploreZones={() => {
   setShowSceneCompletion(false);
-  onNavigate?.('zones');
+  onNavigate?.('zone-welcome');
 }}
             />
 
