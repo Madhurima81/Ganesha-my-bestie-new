@@ -187,7 +187,7 @@ export const OPENING_MODALS = {
     'name-birthday': {
       title: "Let's Be Friends",
       description: "Ganesha would love to know you. Share a little about yourself.",
-      icons: ['balloons', 'cake'],
+      icons: ['balloons', 'birthday'],
       iconLabels: ['Name', 'Birthday'],
       buttonText: "Let's Explore",
       character: 'baby-ganesha-sit'
@@ -196,8 +196,8 @@ export const OPENING_MODALS = {
     'family-tree': {
       title: "Our Special World",
       description: "Every family is unique. Show what makes yours special.",
-      icons: ['family', 'home'],
-      iconLabels: ['Family', 'Home'],
+      icons: ['shiva', 'parvati', 'kartikeya'],
+      iconLabels: ['Father', 'Mother', 'Brother'],
       buttonText: "Let's Explore",
       character: 'baby-ganesha-sit'
     },
@@ -205,8 +205,8 @@ export const OPENING_MODALS = {
     'favorite-food': {
       title: "What We Love",
       description: "Favorites tell a story. Share what you enjoy most.",
-      icons: ['modak', 'mooshika'],
-      iconLabels: ['Food', 'Friend'],
+      icons: ['food', 'color', 'activity'],
+      iconLabels: ['Food', 'Color', 'Activity'],
       buttonText: "Let's Explore",
       character: 'baby-ganesha-sit'
     },
