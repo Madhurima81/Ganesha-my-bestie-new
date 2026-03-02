@@ -471,7 +471,7 @@ const ShlokaRiverFinale = ({ onComplete, onBack }) => {
           zoneId="shloka-river"
           sceneId="shloka-river-finale"
           onStart={handleStartGame}
-          characterImg={'ganeshaHeadphones'}
+          characterImg={ganeshaHeadphones}
           showButton={true}
         />
       )}
