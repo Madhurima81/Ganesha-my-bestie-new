@@ -17,6 +17,9 @@ import '../../../lib/styles/animations.css';
 import { getOpeningModal } from '../../../lib/config/content';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 
+// Shared Components
+import OpeningModal from '../../shared/components/OpeningModal';
+
 // Import images
 import nameBg from './assets/images/name-bg.png';
 import babyGaneshaImg from './assets/images/baby-ganesha-sit.png';
@@ -69,11 +72,11 @@ const NameBirthdayGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
         sceneId={sceneId}
         initialState={{
           gamePhase: 'intro',
-          poppedLetters: [], 
+          poppedLetters: [],
           currentLetterIndex: 0,
           selectedFestival: null,
-          wrongFestivals: [], 
-          flippedCards: [],   
+          wrongFestivals: [],
+          flippedCards: [],
           childName: '',
           childNameLetters: [],
           childBirthdayMonth: '',
@@ -135,45 +138,45 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
   ];
 
   const festivals = [
-    { 
-      id: 'holi', 
+    {
+      id: 'holi',
       name: 'Holi', // Revealed in Info Panel
       clue: 'Splash of Colors! 🎨', // Shown on Card
-      image: holiIcon, 
-      correct: false, 
-      month: 'March', 
-      fact: 'We play with water and bright colors!' 
+      image: holiIcon,
+      correct: false,
+      month: 'March',
+      fact: 'We play with water and bright colors!'
     },
-    { 
-      id: 'diwali', 
-      name: 'Diwali', 
-      clue: 'Lights & Lamps! 🪔', 
-      image: diwaliIcon, 
-      correct: false, 
-      month: 'Oct-Nov', 
-      fact: 'We light clay lamps (Diyas) and smile bright.' 
+    {
+      id: 'diwali',
+      name: 'Diwali',
+      clue: 'Lights & Lamps! 🪔',
+      image: diwaliIcon,
+      correct: false,
+      month: 'Oct-Nov',
+      fact: 'We light clay lamps (Diyas) and smile bright.'
     },
-    { 
-      id: 'janmashtami', 
-      name: 'Janmashtami', 
-      clue: 'Milk & Butter! 🥛', 
-      image: janmashtamiIcon, 
-      correct: false, 
-      month: 'August', 
-      fact: 'Baby Krishna is born. He loves butter!' 
+    {
+      id: 'janmashtami',
+      name: 'Janmashtami',
+      clue: 'Milk & Butter! 🥛',
+      image: janmashtamiIcon,
+      correct: false,
+      month: 'August',
+      fact: 'Baby Krishna is born. He loves butter!'
     },
-    { 
-      id: 'ganesh-chaturthi', 
-      name: 'Ganesh Chaturthi', 
-      clue: 'My Favorite Treat! 🥟', 
-      image: ganeshChaturthiIcon, 
-      correct: true, 
-      month: 'Aug-Sept', 
-      fact: 'We make Ganesha with clay and eat Modaks!' 
+    {
+      id: 'ganesh-chaturthi',
+      name: 'Ganesh Chaturthi',
+      clue: 'My Favorite Treat! 🥟',
+      image: ganeshChaturthiIcon,
+      correct: true,
+      month: 'Aug-Sept',
+      fact: 'We make Ganesha with clay and eat Modaks!'
     }
   ];
 
-const monthFestivals = [
+  const monthFestivals = [
     { month: 1, name: 'January', festival: 'Makar Sankranti', image: janImg, color: '#87CEEB' },
     { month: 2, name: 'February', festival: 'Maha Shivaratri', image: febImg, color: '#9370DB' },
     { month: 3, name: 'March', festival: 'Holi', image: marImg, color: '#FF69B4' },
@@ -190,164 +193,164 @@ const monthFestivals = [
 
   const encouragingPhrases = ["Let's try the next one 🌼", "Look closely 👀", "You've got this 💛"];
 
-// --- RELOAD DETECTION & RESTORATION ---
-useEffect(() => {
-  if (isReload && !reloadHandledRef.current) {
-    reloadHandledRef.current = true;
-    const { 
-      gamePhase, 
-      poppedLetters, 
-      childNameLetters, 
-      childName,
-      wrongFestivals, 
-      childBirthdayMonth,
-      childBirthdayMonthName, 
-      childBirthdayDate 
-    } = sceneState;
-    
-    console.log("🔄 Reload detected. Phase:", gamePhase);
-    if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
+  // --- RELOAD DETECTION & RESTORATION ---
+  useEffect(() => {
+    if (isReload && !reloadHandledRef.current) {
+      reloadHandledRef.current = true;
+      const {
+        gamePhase,
+        poppedLetters,
+        childNameLetters,
+        childName,
+        wrongFestivals,
+        childBirthdayMonth,
+        childBirthdayMonthName,
+        childBirthdayDate
+      } = sceneState;
 
-    // 0. INTRO - no reload needed
-    if (gamePhase === 'intro') return;
+      console.log("🔄 Reload detected. Phase:", gamePhase);
+      if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
 
-    // 1. CHECK COMPLETION EDGE CASES - Force correct phase if completed but phase not updated
-    if (poppedLetters.length === 7 && gamePhase === 'name-balloons') {
-      console.log("🔧 Reload fix: Forcing name-complete");
-      sceneActions.updateState({ gamePhase: 'name-complete' });
-      return;
-    }
+      // 0. INTRO - no reload needed
+      if (gamePhase === 'intro') return;
 
-    if (childName && gamePhase === 'child-name-input') {
-      console.log("🔧 Reload fix: Forcing child-name-complete");
-      sceneActions.updateState({ gamePhase: 'child-name-complete' });
-      return;
-    }
+      // 1. CHECK COMPLETION EDGE CASES - Force correct phase if completed but phase not updated
+      if (poppedLetters.length === 7 && gamePhase === 'name-balloons') {
+        console.log("🔧 Reload fix: Forcing name-complete");
+        sceneActions.updateState({ gamePhase: 'name-complete' });
+        return;
+      }
 
-    if (childBirthdayDate && childBirthdayMonth && gamePhase === 'child-birthday-date') {
-      console.log("🔧 Reload fix: Forcing child-birthday-complete");
-      sceneActions.updateState({ gamePhase: 'child-birthday-complete' });
-      return;
-    }
+      if (childName && gamePhase === 'child-name-input') {
+        console.log("🔧 Reload fix: Forcing child-name-complete");
+        sceneActions.updateState({ gamePhase: 'child-name-complete' });
+        return;
+      }
 
-    // 2. AUTO-TRANSITION PHASES - Let them continue
- // Replace the name-complete handler with:
-if (gamePhase === 'name-complete') {
-  console.log("🔧 Reload during name-complete, jumping to child-name-intro");
-  // Don't show popup, just move directly to next phase
-  sceneActions.updateState({ gamePhase: 'child-name-intro' });
-  return;
-}
+      if (childBirthdayDate && childBirthdayMonth && gamePhase === 'child-birthday-date') {
+        console.log("🔧 Reload fix: Forcing child-birthday-complete");
+        sceneActions.updateState({ gamePhase: 'child-birthday-complete' });
+        return;
+      }
 
-  if (gamePhase === 'child-name-complete') {
-  console.log("🔧 Reload during child-name-complete, jumping to birthday-intro");
-  sceneActions.updateState({ gamePhase: 'birthday-intro' });
-  return;
-}
+      // 2. AUTO-TRANSITION PHASES - Let them continue
+      // Replace the name-complete handler with:
+      if (gamePhase === 'name-complete') {
+        console.log("🔧 Reload during name-complete, jumping to child-name-intro");
+        // Don't show popup, just move directly to next phase
+        sceneActions.updateState({ gamePhase: 'child-name-intro' });
+        return;
+      }
 
-if (gamePhase === 'birthday-correct') {
-  console.log("🔧 Reload during birthday-correct, jumping to child-birthday-intro");
-  sceneActions.updateState({ gamePhase: 'child-birthday-intro' });
-  return;
-}
+      if (gamePhase === 'child-name-complete') {
+        console.log("🔧 Reload during child-name-complete, jumping to birthday-intro");
+        sceneActions.updateState({ gamePhase: 'birthday-intro' });
+        return;
+      }
 
-    if (gamePhase === 'birthday-correct') {
-      setResumeMessage("You found it! Moving ahead...");
-      setShowResumePopup(true);
-      resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 2000);
-      return;
-    }
+      if (gamePhase === 'birthday-correct') {
+        console.log("🔧 Reload during birthday-correct, jumping to child-birthday-intro");
+        sceneActions.updateState({ gamePhase: 'child-birthday-intro' });
+        return;
+      }
 
-    if (gamePhase === 'child-birthday-complete') {
-      setResumeMessage("Welcome back! We saved your birthday! 🎂");
-      setShowResumePopup(true);
-      resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-      return;
-    }
+      if (gamePhase === 'birthday-correct') {
+        setResumeMessage("You found it! Moving ahead...");
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 2000);
+        return;
+      }
 
-    // 3. FINAL PHASE
-    if (gamePhase === 'besties-card') {
-      setResumeMessage("Welcome back! Here's your bestie card! 💖");
-      setShowResumePopup(true);
-      resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-      return;
-    }
+      if (gamePhase === 'child-birthday-complete') {
+        setResumeMessage("Welcome back! We saved your birthday! 🎂");
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
+        return;
+      }
 
-    // 4. INTRO PHASES - just return, no message needed
-    if (gamePhase === 'child-name-intro' || 
-        gamePhase === 'birthday-intro' || 
+      // 3. FINAL PHASE
+      if (gamePhase === 'besties-card') {
+        setResumeMessage("Welcome back! Here's your bestie card! 💖");
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
+        return;
+      }
+
+      // 4. INTRO PHASES - just return, no message needed
+      if (gamePhase === 'child-name-intro' ||
+        gamePhase === 'birthday-intro' ||
         gamePhase === 'child-birthday-intro' ||
         gamePhase === 'child-birthday-month') {
-      return;
+        return;
+      }
+
+      // 5. PARTIAL PROGRESS PHASES
+      if (gamePhase === 'name-balloons' && poppedLetters.length > 0) {
+        setResumeMessage(`Great! You've popped ${poppedLetters.length}/7 balloons!`);
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
+        return;
+      }
+
+      if (gamePhase === 'child-name-input' && childNameLetters.length > 0) {
+        setResumeMessage(`Continue typing your name! (${childNameLetters.length} letters typed)`);
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
+        return;
+      }
+
+      if (gamePhase === 'birthday-choice' && wrongFestivals.length > 0) {
+        setResumeMessage(`Keep trying! You've eliminated ${wrongFestivals.length} options!`);
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
+        return;
+      }
+
+      if (gamePhase === 'child-birthday-date' && childBirthdayMonth) {
+        setResumeMessage(`You picked ${childBirthdayMonthName}! Now pick the date. 📅`);
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
+        return;
+      }
+
+      if (childBirthdayDate && childBirthdayMonth &&
+        (gamePhase === 'child-birthday-date' || gamePhase === 'child-birthday-complete')) {
+        console.log("🔧 Reload fix: Birthday complete, moving to besties-card");
+        sceneActions.updateState({ gamePhase: 'besties-card' });
+        return;
+      }
     }
+  }, [isReload, sceneState.gamePhase]);
 
-    // 5. PARTIAL PROGRESS PHASES
-    if (gamePhase === 'name-balloons' && poppedLetters.length > 0) {
-      setResumeMessage(`Great! You've popped ${poppedLetters.length}/7 balloons!`);
-      setShowResumePopup(true);
-      resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
-      return;
-    }
+  // --- AUTO-TRANSITION HANDLER ---
+  useEffect(() => {
+    let timer;
 
-    if (gamePhase === 'child-name-input' && childNameLetters.length > 0) {
-      setResumeMessage(`Continue typing your name! (${childNameLetters.length} letters typed)`);
-      setShowResumePopup(true);
-      resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
-      return;
-    }
+    console.log("🔄 Auto-transition check. Current phase:", sceneState.gamePhase);
 
-    if (gamePhase === 'birthday-choice' && wrongFestivals.length > 0) {
-      setResumeMessage(`Keep trying! You've eliminated ${wrongFestivals.length} options!`);
-      setShowResumePopup(true);
-      resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
-      return;
-    }
-
-    if (gamePhase === 'child-birthday-date' && childBirthdayMonth) {
-      setResumeMessage(`You picked ${childBirthdayMonthName}! Now pick the date. 📅`);
-      setShowResumePopup(true);
-      resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
-      return;
-    }
-
-    if (childBirthdayDate && childBirthdayMonth && 
-    (gamePhase === 'child-birthday-date' || gamePhase === 'child-birthday-complete')) {
-  console.log("🔧 Reload fix: Birthday complete, moving to besties-card");
-  sceneActions.updateState({ gamePhase: 'besties-card' });
-  return;
-}
-  }
-}, [isReload, sceneState.gamePhase]);
-
-// --- AUTO-TRANSITION HANDLER ---
-useEffect(() => {
-  let timer;
-
-  console.log("🔄 Auto-transition check. Current phase:", sceneState.gamePhase);
-
-  if (sceneState.gamePhase === 'name-complete') {
+    if (sceneState.gamePhase === 'name-complete') {
       console.log("⏰ Setting timer for name-complete → child-name-intro");
-      timer = setTimeout(() => { 
+      timer = setTimeout(() => {
         console.log("✅ Transitioning to child-name-intro");
-        sceneActions.updateState({ gamePhase: 'child-name-intro' }); 
+        sceneActions.updateState({ gamePhase: 'child-name-intro' });
       }, 3000);
-  }
-  else if (sceneState.gamePhase === 'child-name-complete') {
+    }
+    else if (sceneState.gamePhase === 'child-name-complete') {
       timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'birthday-intro' }); }, 3000);
-  }
-  else if (sceneState.gamePhase === 'birthday-correct') {
-      timer = setTimeout(() => { 
-          sceneActions.updateState({ gamePhase: 'child-birthday-intro' }); 
+    }
+    else if (sceneState.gamePhase === 'birthday-correct') {
+      timer = setTimeout(() => {
+        sceneActions.updateState({ gamePhase: 'child-birthday-intro' });
       }, 2500);
-  }
-  else if (sceneState.gamePhase === 'child-birthday-complete') {
+    }
+    else if (sceneState.gamePhase === 'child-birthday-complete') {
       timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'besties-card' }); }, 3000);
-  }
+    }
 
-  return () => {
-    if (timer) clearTimeout(timer);
-  };
-}, [sceneState.gamePhase, sceneActions]);
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [sceneState.gamePhase, sceneActions]);
 
   // --- HANDLERS ---
 
@@ -369,10 +372,10 @@ useEffect(() => {
 
     const newPopped = [...sceneState.poppedLetters, letterId];
     sceneActions.updateState({
-        poppedLetters: newPopped,
-        currentLetterIndex: sceneState.currentLetterIndex + 1
+      poppedLetters: newPopped,
+      currentLetterIndex: sceneState.currentLetterIndex + 1
     });
-    
+
     setShowConfetti(true);
     setTimeout(() => setShowConfetti(false), 500);
 
@@ -391,20 +394,20 @@ useEffect(() => {
     setShowShake(null);
   };
 
-// --- UPDATED HANDLER: SHAKE -> FADE -> INFO SEQUENCE ---
-const handleFestivalClick = (festivalId) => {
+  // --- UPDATED HANDLER: SHAKE -> FADE -> INFO SEQUENCE ---
+  const handleFestivalClick = (festivalId) => {
     // If THIS card is already open, do nothing
     if (sceneState.flippedCards.includes(festivalId)) return;
-    
+
     // If another card is open, close it first (optional, prevents multi-open)
     if (sceneState.flippedCards.length > 0) return;
 
     // CHECK: Is this card ALREADY marked as wrong?
     // If yes, we skip the shake/delay and just let them read the info again.
     if (sceneState.wrongFestivals.includes(festivalId)) {
-        sceneActions.updateState({ flippedCards: [festivalId] });
-        setInstructionMessage("Read again! 🤓");
-        return;
+      sceneActions.updateState({ flippedCards: [festivalId] });
+      setInstructionMessage("Read again! 🤓");
+      return;
     }
 
     const festival = festivals.find(f => f.id === festivalId);
@@ -412,8 +415,8 @@ const handleFestivalClick = (festivalId) => {
     if (festival.correct) {
       // Correct!
       sceneActions.updateState({
-          selectedFestival: festivalId,
-          gamePhase: 'birthday-correct'
+        selectedFestival: festivalId,
+        gamePhase: 'birthday-correct'
       });
     } else {
       // 1. TRIGGER SHAKE ONLY (No Active/Flipped state yet)
@@ -422,19 +425,19 @@ const handleFestivalClick = (festivalId) => {
 
       // 2. DELAY: Wait for shake to finish
       setTimeout(() => {
-        sceneActions.updateState({ 
+        sceneActions.updateState({
           flippedCards: [festivalId], // Now we flip it
           wrongFestivals: [...sceneState.wrongFestivals, festivalId] // And mark it wrong/grey
         });
         setShowShake(null);
         setInstructionMessage("But look what you found! 🤓");
-      }, 600); 
+      }, 600);
     }
   };
 
   // --- UPDATED CLOSE HANDLER ---
   const handleCloseInfo = (e) => {
-    if(e) e.stopPropagation();
+    if (e) e.stopPropagation();
     sceneActions.updateState({ flippedCards: [] });
     // Reset Header to the "Choice" prompt
     setInstructionMessage("Tap the cards to choose ✨");
@@ -443,9 +446,9 @@ const handleFestivalClick = (festivalId) => {
   const handleCardFlip = (festivalId) => {
     let newFlipped = [...sceneState.flippedCards];
     if (newFlipped.includes(festivalId)) {
-        newFlipped = newFlipped.filter(id => id !== festivalId);
+      newFlipped = newFlipped.filter(id => id !== festivalId);
     } else {
-        newFlipped.push(festivalId);
+      newFlipped.push(festivalId);
     }
     sceneActions.updateState({ flippedCards: newFlipped });
   };
@@ -461,27 +464,27 @@ const handleFestivalClick = (festivalId) => {
   const handleChildNameConfirm = () => {
     const name = sceneState.childNameLetters.join('');
     if (name.length < 2) return;
-    
+
     sceneActions.updateState({
-        childName: name,
-        gamePhase: 'child-name-complete'
+      childName: name,
+      gamePhase: 'child-name-complete'
     });
     localStorage.setItem('childName', name);
   };
 
   const handleMonthSelect = (monthData) => {
     sceneActions.updateState({
-        childBirthdayMonth: monthData.month,
-        childBirthdayMonthName: monthData.name,
-        gamePhase: 'child-birthday-date'
+      childBirthdayMonth: monthData.month,
+      childBirthdayMonthName: monthData.name,
+      gamePhase: 'child-birthday-date'
     });
   };
 
   const handleDateSelect = (date) => {
     sceneActions.updateState({
-        childBirthdayDate: date,
-        gamePhase: 'child-birthday-complete',
-        completed: true // Mark completed here so it saves
+      childBirthdayDate: date,
+      gamePhase: 'child-birthday-complete',
+      completed: true // Mark completed here so it saves
     });
     localStorage.setItem('childBirthday', `${sceneState.childBirthdayMonth}-${date}`);
   };
@@ -496,48 +499,24 @@ const handleFestivalClick = (festivalId) => {
     if (month === 9) return "September! That's MY birthday month too! We're birthday twins! 🐘❤️";
     else if (month === 8) return "August! That's so close to my birthday in September! Almost birthday twins! 🎈";
     else {
-        const monthData = monthFestivals.find(m => m.month === month);
-        return `${monthData?.name}! That's during ${monthData?.festival}! What a special birthday! ${monthData?.emoji}`;
+      const monthData = monthFestivals.find(m => m.month === month);
+      return `${monthData?.name}! That's during ${monthData?.festival}! What a special birthday! ${monthData?.emoji}`;
     }
   };
 
   // --- RENDER ---
   return (
     <div className="name-birthday-game" data-zone="about-me-hut">
-      <div className="game-background" style={{backgroundImage: `url(${nameBg})`, backgroundSize: 'cover', backgroundPosition: 'center'}}></div>
+      <div className="game-background" style={{ backgroundImage: `url(${nameBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
 
       {/* Intro */}
-      {sceneState.gamePhase === 'intro' && (() => {
-        const theme = getZoneTheme('about-me-hut');
-        return (
-          <div className="game-modal-overlay" style={{ '--modal-card-bg': theme.parentBg, '--modal-text-primary': theme.textPrimary, '--modal-btn-bg': theme.buttonActiveBg, '--modal-btn-shadow': theme.glowColor }}>
-            <div className="game-modal-content">
-              <div className="game-modal-character">
-                <img src={babyGaneshaImg} alt="Baby Ganesha" />
-              </div>
-              <div className="game-modal-card">
-                <h1 className="game-modal-title">{openingModalContent?.title || "Let's Be Friends"}</h1>
-                <p className="game-modal-subtitle">
-                  {openingModalContent?.description || 'Let us share your name and birthday.'}
-                </p>
-                <div className="game-modal-icons">
-                  <div className="game-modal-icon-item">
-                    <div className="game-modal-icon-circle">🔤</div>
-                    <span className="game-modal-icon-label">Name</span>
-                  </div>
-                  <div className="game-modal-icon-item">
-                    <div className="game-modal-icon-circle">🎂</div>
-                    <span className="game-modal-icon-label">Birthday</span>
-                  </div>
-                </div>
-                <button className="game-modal-button" onClick={handleStartGame}>
-                  {openingModalContent?.buttonText || "Let's Begin"}
-                </button>
-              </div>
-            </div>
-          </div>
-        );
-      })()}
+      <OpeningModal
+        zoneId="about-me-hut"
+        sceneId="name-birthday"
+        onStart={handleStartGame}
+        characterImg={babyGaneshaImg}
+        showButton={true} // Name game doesn't seem to have VO gating on the intro button
+      />
 
       {/* Back Button */}
       {sceneState.gamePhase !== 'intro' && !sceneState.showingCompletionScreen && (
@@ -552,8 +531,8 @@ const handleFestivalClick = (festivalId) => {
 
           <div className="letter-tracker">
             {nameLetters.map((item, index) => {
-                const isFilled = index < sceneState.currentLetterIndex;
-                return <div key={item.id} className={`letter-box ${isFilled ? 'filled' : 'empty'}`}>{isFilled ? nameLetters[index].letter : ''}</div>;
+              const isFilled = index < sceneState.currentLetterIndex;
+              return <div key={item.id} className={`letter-box ${isFilled ? 'filled' : 'empty'}`}>{isFilled ? nameLetters[index].letter : ''}</div>;
             })}
             <div className="tracker-progress">{sceneState.currentLetterIndex} of {nameLetters.length}</div>
           </div>
@@ -574,7 +553,7 @@ const handleFestivalClick = (festivalId) => {
           </Button>
 
           <div className="balloons-container">
-           {nameLetters.map((item, index) => !sceneState.poppedLetters.includes(item.id) && (
+            {nameLetters.map((item, index) => !sceneState.poppedLetters.includes(item.id) && (
               <button
                 key={item.id}
                 className={`balloon-btn float-balloon ${shakeWrongBalloon === item.id ? 'shake-wrong' : ''}`}
@@ -586,7 +565,7 @@ const handleFestivalClick = (festivalId) => {
               </button>
             ))}
           </div>
-          {showConfetti && <div className="mini-confetti">{Array.from({length: 10}).map((_, i) => <div key={i} className="confetti-piece" style={{left: `${Math.random() * 100}%`, top: `${Math.random() * 50 + 25}%`}}>✨</div>)}</div>}
+          {showConfetti && <div className="mini-confetti">{Array.from({ length: 10 }).map((_, i) => <div key={i} className="confetti-piece" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 50 + 25}%` }}>✨</div>)}</div>}
         </div>
       )}
 
@@ -645,8 +624,8 @@ const handleFestivalClick = (festivalId) => {
         <div className="name-complete-screen">
           <div className="ganesha-happy"><img src={babyGaneshaSit} alt="Happy Ganesha" className="ganesha-clapping celebrate-scale" /></div>
           <div className="name-reveal"><div className="name-text glow-text">GANESHA</div></div>
-          <div className="celebration-confetti">{Array.from({length: 20}).map((_, i) => <div key={i} className="confetti-piece" 
-          style={{left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%`}}>🎉</div>)}</div>
+          <div className="celebration-confetti">{Array.from({ length: 20 }).map((_, i) => <div key={i} className="confetti-piece"
+            style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}>🎉</div>)}</div>
         </div>
       )}
 
@@ -708,7 +687,7 @@ const handleFestivalClick = (festivalId) => {
             <div className="child-name-text glow-text">{sceneState.childName}!</div>
             <p className="ganesha-compliment">What a beautiful name! 🌟</p>
           </div>
-          <div className="celebration-confetti">{Array.from({length: 20}).map((_, i) => <div key={i} className="confetti-piece" style={{left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%`}}>🎉</div>)}</div>
+          <div className="celebration-confetti">{Array.from({ length: 20 }).map((_, i) => <div key={i} className="confetti-piece" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}>🎉</div>)}</div>
         </div>
       )}
 
@@ -731,19 +710,19 @@ const handleFestivalClick = (festivalId) => {
         </div>
       )}
 
-{/* Birthday Month */}
+      {/* Birthday Month */}
       {sceneState.gamePhase === 'child-birthday-month' && (
         <div className="child-birthday-month-screen">
           <div className="child-input-ganesha"><img src={babyGaneshaImg} alt="Ganesha" className="ganesha-watching bounce-gentle" /></div>
-          
+
           <div className="child-instruction-bubble">Tap the month you were born! 🗓️</div>
-          
+
           <div className="month-festivals-grid">
             {monthFestivals.map((monthData, index) => (
-              <button 
-                key={monthData.month} 
-                className="month-festival-card bounce-gentle" 
-                onClick={() => handleMonthSelect(monthData)} 
+              <button
+                key={monthData.month}
+                className="month-festival-card bounce-gentle"
+                onClick={() => handleMonthSelect(monthData)}
                 style={{ animationDelay: `${index * 0.05}s`, borderColor: monthData.color }}
               >
                 {/* REPLACED EMOJI WITH IMAGE */}
@@ -755,7 +734,7 @@ const handleFestivalClick = (festivalId) => {
           </div>
         </div>
       )}
-      
+
       {/* Birthday Date */}
       {sceneState.gamePhase === 'child-birthday-date' && (
         <div className="child-birthday-date-screen">
@@ -790,7 +769,7 @@ const handleFestivalClick = (festivalId) => {
             <div className="child-birthday-text glow-text">{sceneState.childBirthdayMonthName} {sceneState.childBirthdayDate}!</div>
             <p className="ganesha-birthday-response">{getGaneshaResponse()}</p>
           </div>
-          <div className="celebration-confetti">{Array.from({length: 20}).map((_, i) => <div key={i} className="confetti-piece" style={{left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%`}}>🎂</div>)}</div>
+          <div className="celebration-confetti">{Array.from({ length: 20 }).map((_, i) => <div key={i} className="confetti-piece" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}>🎂</div>)}</div>
         </div>
       )}
 
@@ -808,8 +787,8 @@ const handleFestivalClick = (festivalId) => {
             </div>
             <div className="besties-connector"><div className="besties-heart">❤️</div><span>FRIENDS</span><div className="besties-heart">❤️</div></div>
             <div className="besties-card">
-              <div className="child-avatar-circle" style={{width: '80px', height: '80px', margin: '0 auto'}}>
-                 <div className="child-initial" style={{fontSize: '40px'}}>{sceneState.childName.charAt(0)}</div>
+              <div className="child-avatar-circle" style={{ width: '80px', height: '80px', margin: '0 auto' }}>
+                <div className="child-initial" style={{ fontSize: '40px' }}>{sceneState.childName.charAt(0)}</div>
               </div>
               <div className="besties-card-name">{sceneState.childName.toUpperCase()}</div>
               <div className="besties-info-row"><span className="besties-label">Birthday:</span><span className="besties-value">{sceneState.childBirthdayMonthName} {sceneState.childBirthdayDate}</span></div>
@@ -850,10 +829,10 @@ const handleFestivalClick = (festivalId) => {
       )}
 
       {/* Birthday Choice */}
-{/* Birthday Choice */}
+      {/* Birthday Choice */}
       {sceneState.gamePhase === 'birthday-choice' && (
         <div className="birthday-choice-screen">
-          
+
           {/* 1. Movable Ganesha */}
           <div className="birthday-ganesha-movable">
             <img src={babyGaneshaImg} alt="Baby Ganesha" className="birthday-ganesha-small bounce-gentle" />
@@ -864,23 +843,23 @@ const handleFestivalClick = (festivalId) => {
             <span className="bubble-main-text">Which festival is my birthday? 🎊</span>
             <span className="bubble-instruction-small">
               {/* If a card is open (flipped), show "Tap to close", else show "Tap to choose" */}
-              {sceneState.flippedCards.length > 0 
-                ? "Tap anywhere to close ✖" 
+              {sceneState.flippedCards.length > 0
+                ? "Tap anywhere to close ✖"
                 : "Tap a card to guess (or ⓘ to peek) ✨"}
             </span>
           </div>
 
           {/* 3. Cards Container */}
           <div className="birthday-choices-container">
-            
+
             {/* BACKGROUND OVERLAY (Click to Close) */}
             {sceneState.flippedCards.length > 0 && (
-              <div 
-                className="birthday-info-overlay" 
-                onClick={handleCloseInfo} 
+              <div
+                className="birthday-info-overlay"
+                onClick={handleCloseInfo}
               />
             )}
-            
+
             {festivals.map((festival, index) => {
               const isLeftColumn = index % 2 === 0;
               const isFlipped = sceneState.flippedCards.includes(festival.id);
@@ -888,8 +867,8 @@ const handleFestivalClick = (festivalId) => {
 
               return (
                 <div key={festival.id} className={`birthday-card-container ${isFlipped ? 'container-active' : ''}`}>
-                  
-          <button
+
+                  <button
                     className={`birthday-choice-card heartbeat-card ${isFlipped ? 'card-info-open' : ''} ${isWrong ? 'birthday-wrong' : ''}`}
                     onClick={() => handleFestivalClick(festival.id)}
                     /* FIX: Only disable if A card is open, but allow clicking this one even if wrong */
@@ -903,19 +882,19 @@ const handleFestivalClick = (festivalId) => {
                   </button>
 
                   {/* INFO ICON: Always clickable even if card is wrong/grayed out, so they can re-read */}
-                  <button 
+                  <button
                     className="birthday-info-icon"
-                    onClick={(e) => { 
-                      e.stopPropagation(); 
+                    onClick={(e) => {
+                      e.stopPropagation();
                       sceneActions.updateState({ flippedCards: [festival.id] });
-                      setInstructionMessage("Learning Mode! 🤓"); 
+                      setInstructionMessage("Learning Mode! 🤓");
                     }}
                     style={{ [isLeftColumn ? 'left' : 'right']: '10px' }}
                   >ⓘ</button>
 
                   {/* INFO PANEL (Tap to Close) */}
                   {isFlipped && (
-                    <div 
+                    <div
                       className={`birthday-info-panel ${isLeftColumn ? 'slide-left' : 'slide-right'}`}
                       onClick={handleCloseInfo}
                       style={{ cursor: 'pointer' }}
@@ -924,7 +903,7 @@ const handleFestivalClick = (festivalId) => {
                         <div className="birthday-info-month">{festival.name}</div>
                         <div className="birthday-info-fact">{festival.fact}</div>
                         <div className="birthday-info-sub">{festival.month}</div>
-                        
+
                         {/* Subtle Hint to tap to close */}
                         <div style={{ fontSize: '0.8rem', opacity: 0.7, marginTop: '5px', fontStyle: 'italic' }}>
                           (Tap to close)
@@ -944,8 +923,8 @@ const handleFestivalClick = (festivalId) => {
       {sceneState.gamePhase === 'birthday-correct' && (
         <div className="birthday-correct-screen">
           <div className="birthday-ganesha-happy"><img src={babyGaneshaSit} alt="Happy Ganesha" className="birthday-ganesha-celebrate" /></div>
-          <div className="birthday-correct-festival"><img src={festivals.find(f => f.id === sceneState.selectedFestival).image} alt="Ganesh Chaturthi" className="birthday-festival-in-hand pop-in"/></div>
-          <div className="birthday-celebration-sparkles">{Array.from({length: 15}).map((_, i) => <div key={i} className="birthday-sparkle" style={{left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%`}}>✨</div>)}</div>
+          <div className="birthday-correct-festival"><img src={festivals.find(f => f.id === sceneState.selectedFestival).image} alt="Ganesh Chaturthi" className="birthday-festival-in-hand pop-in" /></div>
+          <div className="birthday-celebration-sparkles">{Array.from({ length: 15 }).map((_, i) => <div key={i} className="birthday-sparkle" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}>✨</div>)}</div>
           <div className="birthday-success-message">Yes! Ganesh Chaturthi is my birthday! 🎉</div>
         </div>
       )}
@@ -988,36 +967,36 @@ const handleFestivalClick = (festivalId) => {
           nextSceneName="Explore More!"
           childName="festival finder"
           isFinalScene={true}
-          
+
           onContinue={() => {
             setTimeout(() => {
               if (onNavigate) onNavigate('scene-complete-continue');
               else if (onComplete) onComplete();
             }, 100);
           }}
-          
+
           onReplay={() => {
             sceneActions.updateState({
-                gamePhase: 'intro',
-                poppedLetters: [],
-                selectedFestival: null,
-                wrongFestivals: [],
-                flippedCards: [],
-                childName: '',
-                childNameLetters: [],
-                childBirthdayMonth: '',
-                childBirthdayDate: '',
-                showingCompletionScreen: false,
-                completed: false,
-                currentLetterIndex: 0
+              gamePhase: 'intro',
+              poppedLetters: [],
+              selectedFestival: null,
+              wrongFestivals: [],
+              flippedCards: [],
+              childName: '',
+              childNameLetters: [],
+              childBirthdayMonth: '',
+              childBirthdayDate: '',
+              showingCompletionScreen: false,
+              completed: false,
+              currentLetterIndex: 0
             });
           }}
-          
+
           onBackToMap={() => {
             if (onNavigate) onNavigate('zone-welcome');
             else if (onBack) onBack();
           }}
-          
+
           onHome={() => { if (onNavigate) onNavigate('home'); }}
         />
       )}
