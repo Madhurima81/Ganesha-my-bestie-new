@@ -391,6 +391,7 @@ const CaveScene5MemoryFinaleContent = ({
           className="cave-scene5-memory"
           style={{ backgroundImage: `url(${bgFinal})` }}
         >
+          <HomeButton onNavigate={onNavigate} />
           {/* ✅ NEW OPENING SCREEN: Final Challenge */}
           <OpeningModal
             zoneId={zoneId}
