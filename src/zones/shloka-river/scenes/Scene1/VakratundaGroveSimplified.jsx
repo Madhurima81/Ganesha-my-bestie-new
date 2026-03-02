@@ -590,6 +590,33 @@ const VakratundaGroveContent = ({
         <div className="vakratunda-simplified-container">
           <div className="river-background" style={{ backgroundImage: `url(${riverBackground})` }}>
 
+            {/* HOME BUTTON — replaces PauseButton */}
+            {sceneState.welcomeShown && !isFinalCelebrationActive && (
+              <button
+                type="button"
+                onClick={handleHomeToMainMap}
+                style={{
+                  position: 'fixed',
+                  top: '16px',
+                  left: '16px',
+                  zIndex: 10001,
+                  width: '52px',
+                  height: '52px',
+                  borderRadius: '50%',
+                  border: '2px solid #fff',
+                  background: 'linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%)',
+                  color: '#fff',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
+                }}
+                aria-label="Go to main map"
+                title="Home"
+              >
+                🏠
+              </button>
+            )}
+
             {/* ── PauseButton — REMOVED (replaced by home icon) ──
             <PauseButton
               visible={sceneState.welcomeShown && !showSceneCompletion && !isFinalCelebrationActive}
