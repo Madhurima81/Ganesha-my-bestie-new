@@ -363,6 +363,18 @@ const VakratundaGroveContent = ({
     }
   };
 
+  // ── Home button: stop everything → go to main map ──────────────────────
+  const handleHomeToMainMap = () => {
+    stopVoice();
+    stopIdleTimer();
+    const activeProfileId = localStorage.getItem('activeProfileId');
+    if (activeProfileId) {
+      localStorage.removeItem(`temp_session_${activeProfileId}_${zoneId}_${sceneId}`);
+    }
+    SimpleSceneManager.clearCurrentScene();
+    onNavigate?.('direct-to-map');
+  };
+
   // ========================================
   // VOICE: Play welcome on OPENING MODAL (before game starts)
   // Button appears only after VO finishes
