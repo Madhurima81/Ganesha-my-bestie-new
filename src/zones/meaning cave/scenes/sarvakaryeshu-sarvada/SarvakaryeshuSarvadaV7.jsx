@@ -1,5 +1,6 @@
 ﻿// zones/cave-of-secrets/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvada.jsx
 import React, { useState, useEffect, useRef } from 'react';
+import OpeningModal from '../../../shared/components/OpeningModal.jsx';
 import './SarvakaryeshuSarvada.css';
 import '../../../shared/components/OpeningModal.css';
 import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
@@ -169,33 +170,33 @@ import appSarvada from "../../assets/images/apps/app-sarvada.png";
 
 // Power configuration for celebrations
 const powerConfig = {
-  sarvakaryeshu: { 
-    name: 'All Tasks Wisdom', 
+  sarvakaryeshu: {
+    name: 'All Tasks Wisdom',
     image: sarvakaryeshuSymbol,
-    color: '#FFD700' 
+    color: '#FFD700'
   },
-  sarvada: { 
-    name: 'Always Helper Power', 
+  sarvada: {
+    name: 'Always Helper Power',
     image: sarvadaSymbol,
-    color: '#FF8C42' 
+    color: '#FF8C42'
   }
 };
 
 const SCENE_PHASES = {
-    STORY_INTRO: 'story_intro', // ← NEW
-  DOOR1_ACTIVE: 'door1_active',           
+  STORY_INTRO: 'story_intro', // ← NEW
+  DOOR1_ACTIVE: 'door1_active',
   DOOR1_COMPLETE: 'door1_complete',
-  CHARACTER_SELECT: 'character_select',    
+  CHARACTER_SELECT: 'character_select',
   GAME1_INTRO: 'game1_intro',
   SCENARIO_CHOOSING: 'scenario_choosing',
   SCENARIO_SUCCESS: 'scenario_success',
   SARVAKARYESHU_LEARNING: 'sarvakaryeshu_learning',
-  DOOR2_ACTIVE: 'door2_active',           
+  DOOR2_ACTIVE: 'door2_active',
   DOOR2_COMPLETE: 'door2_complete',
   GAME2_INTRO: 'game2_intro',
   HELPER_CHOOSING: 'helper_choosing',
   HELPER_SUCCESS: 'helper_success',
-    SARVADA_LEARNING: 'sarvada_learning',  // ❌ Missing? Discovery 2
+  SARVADA_LEARNING: 'sarvada_learning',  // ❌ Missing? Discovery 2
   SCENE_CELEBRATION: 'scene_celebration',
   COMPLETE: 'complete'
 };
@@ -204,7 +205,7 @@ const SCENE_PHASES = {
 const SCENARIOS = {
   homework: {
     id: 'homework',
-    name: 'Homework Challenge',    
+    name: 'Homework Challenge',
     problemDeclaration: "This math homework is so hard! I don't know what to do!",
     backgrounds: {
       worried: { boy: homeworkWorriedBoy, girl: homeworkWorriedGirl },
@@ -230,7 +231,7 @@ const SCENARIOS = {
   },
   sports: {
     id: 'sports',
-    name: 'Sports Challenge',     
+    name: 'Sports Challenge',
     problemDeclaration: "I keep missing these shots! This is so frustrating!",
     backgrounds: {
       worried: { boy: sportsWorriedBoy, girl: sportsDiscouragedGirl },
@@ -256,7 +257,7 @@ const SCENARIOS = {
   },
   shoelaces: {
     id: 'shoelaces',
-    name: 'Shoelace Challenge',    
+    name: 'Shoelace Challenge',
     problemDeclaration: "These shoelaces are all tangled! I'm getting so frustrated!",
     backgrounds: {
       worried: { boy: shoelacesWorriedBoy, girl: shoelaceFrustratedGirl },
@@ -282,7 +283,7 @@ const SCENARIOS = {
   },
   broketoy: {
     id: 'broketoy',
-    name: 'Broken Toy Challenge',    
+    name: 'Broken Toy Challenge',
     problemDeclaration: "Oh no! I broke my toy! What am I going to do?",
     backgrounds: {
       worried: { boy: broketoyWorriedBoy, girl: broketoyWorriedGirl },
@@ -308,7 +309,7 @@ const SCENARIOS = {
   },
   sharing: {
     id: 'sharing',
-    name: 'Sharing Challenge',        
+    name: 'Sharing Challenge',
     problemDeclaration: "I want to keep all my toys! But my friend wants to play too...",
     backgrounds: {
       worried: { boy: sharingWorriedBoy, girl: sharingGreedGirl },
@@ -383,9 +384,9 @@ const GAME2_SCENARIOS = {
     id: 'dog',
     name: 'Comfort Scared Dog',
     problemDeclaration: "I'm so scared of the thunder! Help me feel safe!",
-    backgrounds: { 
-      before: dogBefore, 
-      after: dogAfter 
+    backgrounds: {
+      before: dogBefore,
+      after: dogAfter
     },
     helpers: [
       { id: 'snuggyblanket', image: dogSnuggyblanket, name: 'Cozy Comfort' },
@@ -400,9 +401,9 @@ const GAME2_SCENARIOS = {
     id: 'construction',
     name: 'Help Tired Construction Worker',
     problemDeclaration: "This work is so hard and loud! I need energy!",
-    backgrounds: { 
-      before: constructionBefore, 
-      after: constructionAfter 
+    backgrounds: {
+      before: constructionBefore,
+      after: constructionAfter
     },
     helpers: [
       { id: 'melodymug', image: constructionMelodymug, name: 'Peaceful Music' },
@@ -417,9 +418,9 @@ const GAME2_SCENARIOS = {
     id: 'mom',
     name: 'Help Busy Mom in Kitchen',
     problemDeclaration: "I have so much cooking to do! I could use help!",
-    backgrounds: { 
-      before: momBefore, 
-      after: momAfter 
+    backgrounds: {
+      before: momBefore,
+      after: momAfter
     },
     helpers: [
       { id: 'chefchintu', image: momChefchintu, name: 'Cooking Help' },
@@ -434,9 +435,9 @@ const GAME2_SCENARIOS = {
     id: 'siblings',
     name: 'Help Fighting Siblings',
     problemDeclaration: "We're fighting! Help us make peace!",
-    backgrounds: { 
-      before: siblingsBefore, 
-      after: siblingsAfter 
+    backgrounds: {
+      before: siblingsBefore,
+      after: siblingsAfter
     },
     helpers: [
       { id: 'gigglebox', image: siblingsGigglebox, name: 'Share Fun' },
@@ -451,9 +452,9 @@ const GAME2_SCENARIOS = {
     id: 'park',
     name: 'Clean Up Littered Park',
     problemDeclaration: "This beautiful park is so messy!",
-    backgrounds: { 
-      before: parkBefore, 
-      after: parkAfter 
+    backgrounds: {
+      before: parkBefore,
+      after: parkAfter
     },
     helpers: [
       { id: 'leafyfriend', image: parkLeafyfriend, name: 'Nature Friend' },
@@ -503,21 +504,21 @@ const SarvakaryeshuSarvada = ({ onComplete, onNavigate, zoneId = 'cave-of-secret
         initialState={{
           phase: SCENE_PHASES.DOOR1_ACTIVE,
           selectedCharacter: null,
-          
-phase: SCENE_PHASES.DOOR1_ACTIVE, // ✅ Was 'STORY_INTRO'
-welcomeShown: false, // ✅ Add this
-          
+
+          phase: SCENE_PHASES.DOOR1_ACTIVE, // ✅ Was 'STORY_INTRO'
+          welcomeShown: false, // ✅ Add this
+
           // Door states
           door1Completed: false,
           door1CurrentStep: 0,
           door1SyllablesPlaced: [],
           door1Syllables: ['Sar', 'va', 'kar', 'yeshu'],
-          
+
           door2Completed: false,
           door2CurrentStep: 0,
           door2SyllablesPlaced: [],
           door2Syllables: ['Sar', 'va', 'da'],
-          
+
           // Game 1
           currentGame: 1,
           selectedScenarios: [],
@@ -526,23 +527,23 @@ welcomeShown: false, // ✅ Add this
           game1Completed: false,
           currentBackground: 'worried',
 
-            symbolsVisible: 'none',
-  symbolsClickable: false,  // ← ADD THIS
-    selectedSymbol: null,  // ← Make sure this is null initially
+          symbolsVisible: 'none',
+          symbolsClickable: false,  // ← ADD THIS
+          selectedSymbol: null,  // ← Make sure this is null initially
 
-    ganeshaGuidanceMessage: null,
-  unwiseChoicesTried: [],
-          
-    
-// Game 2
-game2Scenarios: [],
-currentGame2Scenario: 0,
-game2ScenariosCompleted: 0,
-game2Completed: false,
-game2Background: 'before',
-selectedHelper: null,          // ← ADD THIS
-showHelperAnimation: false,    // ← ADD THIS
-          
+          ganeshaGuidanceMessage: null,
+          unwiseChoicesTried: [],
+
+
+          // Game 2
+          game2Scenarios: [],
+          currentGame2Scenario: 0,
+          game2ScenariosCompleted: 0,
+          game2Completed: false,
+          game2Background: 'before',
+          selectedHelper: null,          // ← ADD THIS
+          showHelperAnimation: false,    // ← ADD THIS
+
           // Sanskrit learning
           learnedWords: {
             vakratunda: { learned: true, scene: 1 },
@@ -554,7 +555,7 @@ showHelperAnimation: false,    // ← ADD THIS
             sarvakaryeshu: { learned: false, scene: 4 },
             sarvada: { learned: false, scene: 4 }
           },
-          
+
           stars: 0,
           completed: false,
           showingCompletionScreen: false
@@ -586,16 +587,16 @@ const SarvakaryeshuSarvadaContent = ({
   sceneId
 }) => {
   // GameCoach removed - stub functions
-  const hideCoach = () => {};
-  const clearManualCloseTracking = () => {};
+  const hideCoach = () => { };
+  const clearManualCloseTracking = () => { };
 
   const { resetScene } = useSceneReset(
-    sceneActions, 
-    'cave-of-secrets', 
-    'sarvakaryeshu-sarvada', 
+    sceneActions,
+    'cave-of-secrets',
+    'sarvakaryeshu-sarvada',
     getSceneResetConfig('sarvakaryeshu-sarvada')
   );
-  
+
   // State management
   const [showSparkle, setShowSparkle] = useState(null);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
@@ -614,45 +615,45 @@ const SarvakaryeshuSarvadaContent = ({
   const activeProfile = GameStateManager.getActiveProfile();
   const profileName = activeProfile?.name || 'little explorer';
   // Add to state
-const [showStoryModal, setShowStoryModal] = useState(null); // 'sarvakaryeshu' or 'sarvada'
-const isProcessingClickRef = useRef(false);
-const lastClickTimeRef = useRef(0);
-const CLICK_COOLDOWN = 800; // 800ms between clicks
-const [bannerMessage, setBannerMessage] = useState('initial');
-const currentlyProcessingSymbolRef = useRef(null);  // ← NEW: Track specific symbol
-const game2HelperSelectedRef = useRef(false);  // Track if ANY helper selected
-const game2ProcessingHelperRef = useRef(null); // Track which helper is processing
+  const [showStoryModal, setShowStoryModal] = useState(null); // 'sarvakaryeshu' or 'sarvada'
+  const isProcessingClickRef = useRef(false);
+  const lastClickTimeRef = useRef(0);
+  const CLICK_COOLDOWN = 800; // 800ms between clicks
+  const [bannerMessage, setBannerMessage] = useState('initial');
+  const currentlyProcessingSymbolRef = useRef(null);  // ← NEW: Track specific symbol
+  const game2HelperSelectedRef = useRef(false);  // Track if ANY helper selected
+  const game2ProcessingHelperRef = useRef(null); // Track which helper is processing
 
-const [showDiscoveryFlip1, setShowDiscoveryFlip1] = useState(false);
-const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false);
-const [showResumePopup, setShowResumePopup] = useState(false);
-const [resumeMessage, setResumeMessage] = useState('');
-const resumePopupTimeoutRef = useRef(null);
-const reloadHandledRef = useRef(false);
+  const [showDiscoveryFlip1, setShowDiscoveryFlip1] = useState(false);
+  const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false);
+  const [showResumePopup, setShowResumePopup] = useState(false);
+  const [resumeMessage, setResumeMessage] = useState('');
+  const resumePopupTimeoutRef = useRef(null);
+  const reloadHandledRef = useRef(false);
 
-// Story modal data
-const STORY_MODALS = {
-  sarvakaryeshu: {
-    icon: ganeshaIcon,
-    speech: "Let's create divine decorations! ✨",
-    title: "Help Ganesha Bless All Actions!",
-    subtitle: "2 divine words to master!",
-    description: "First, learn to chant SARVAKARYESHU to unlock divine action power and save animals!",
-    buttonText: "Start Learning!",
-    buttonColor: "linear-gradient(135deg, #FFD700, #FFA500)"
-  },
-  sarvada: {
-    icon: ganeshaIcon,
-    speech: "One more divine word! 💪",
-    title: "Great Work!",
-    subtitle: "Now unlock eternal blessing!",
-    description: "Learn to chant SARVADA to unlock eternal blessing power and save animals!",
-    buttonText: "Start Learning!",
-    buttonColor: "linear-gradient(135deg, #9C27B0, #E91E63)"
-  }
-};
+  // Story modal data
+  const STORY_MODALS = {
+    sarvakaryeshu: {
+      icon: ganeshaIcon,
+      speech: "Let's create divine decorations! ✨",
+      title: "Help Ganesha Bless All Actions!",
+      subtitle: "2 divine words to master!",
+      description: "First, learn to chant SARVAKARYESHU to unlock divine action power and save animals!",
+      buttonText: "Start Learning!",
+      buttonColor: "linear-gradient(135deg, #FFD700, #FFA500)"
+    },
+    sarvada: {
+      icon: ganeshaIcon,
+      speech: "One more divine word! 💪",
+      title: "Great Work!",
+      subtitle: "Now unlock eternal blessing!",
+      description: "Learn to chant SARVADA to unlock eternal blessing power and save animals!",
+      buttonText: "Start Learning!",
+      buttonColor: "linear-gradient(135deg, #9C27B0, #E91E63)"
+    }
+  };
 
-// ============================================
+  // ============================================
   // 🔄 COMPLETE RELOAD LOGIC (Final 7-Point Version)
   // ============================================
   useEffect(() => {
@@ -666,30 +667,30 @@ const STORY_MODALS = {
     // --------------------------------------------
     // 1. DISCOVERY PHASES
     // --------------------------------------------
-if (sceneState.phase === SCENE_PHASES.SARVAKARYESHU_LEARNING) {
-  sceneActions.updateState({
-    learnedWords: { ...sceneState.learnedWords, sarvakaryeshu: { learned: true, scene: 4 } }
-  });
-  setTimeout(() => setShowDiscoveryFlip1(true), 500);
-  return;
-}
+    if (sceneState.phase === SCENE_PHASES.SARVAKARYESHU_LEARNING) {
+      sceneActions.updateState({
+        learnedWords: { ...sceneState.learnedWords, sarvakaryeshu: { learned: true, scene: 4 } }
+      });
+      setTimeout(() => setShowDiscoveryFlip1(true), 500);
+      return;
+    }
 
-// --------------------------------------------
+    // --------------------------------------------
     // ✅ ADD THIS: Discovery 2 (Sarvada)
     // --------------------------------------------
     if (sceneState.phase === SCENE_PHASES.SARVADA_LEARNING) {
       console.log('📌 Reload: Sarvada Discovery');
-      
+
       // 1. Force clear everything
       sceneActions.updateState({
         showHelperAnimation: false, // Kill animation
         selectedHelper: null,
         symbolsVisible: 'none',
         ganeshaGuidanceMessage: null,
-        
-        learnedWords: { 
-          ...sceneState.learnedWords, 
-          sarvada: { learned: true, scene: 4 } 
+
+        learnedWords: {
+          ...sceneState.learnedWords,
+          sarvada: { learned: true, scene: 4 }
         }
       });
 
@@ -724,13 +725,13 @@ if (sceneState.phase === SCENE_PHASES.SARVAKARYESHU_LEARNING) {
     // --------------------------------------------
     // 3. GAME 1 (SCENARIO CHOOSING)
     // --------------------------------------------
-    if (sceneState.phase === SCENE_PHASES.GAME1_INTRO || 
-        sceneState.phase === SCENE_PHASES.SCENARIO_CHOOSING || 
-        sceneState.phase === SCENE_PHASES.SCENARIO_SUCCESS) {
-      
+    if (sceneState.phase === SCENE_PHASES.GAME1_INTRO ||
+      sceneState.phase === SCENE_PHASES.SCENARIO_CHOOSING ||
+      sceneState.phase === SCENE_PHASES.SCENARIO_SUCCESS) {
+
       const completed = sceneState.scenariosCompleted || 0;
       if (completed >= 3) {
-        completeGame1(); 
+        completeGame1();
         return;
       }
 
@@ -755,11 +756,11 @@ if (sceneState.phase === SCENE_PHASES.SARVAKARYESHU_LEARNING) {
     // 4. GAME 2 INTRO (⚠️ YELLOW MESSAGE FIX)
     // --------------------------------------------
     if ((sceneState.phase === SCENE_PHASES.DOOR2_ACTIVE && sceneState.door2Completed) ||
-        sceneState.phase === SCENE_PHASES.DOOR2_COMPLETE || 
-        sceneState.phase === SCENE_PHASES.GAME2_INTRO) {
-      
+      sceneState.phase === SCENE_PHASES.DOOR2_COMPLETE ||
+      sceneState.phase === SCENE_PHASES.GAME2_INTRO) {
+
       console.log('📌 Reload: Unfreezing Game 2 Message');
-      
+
       sceneActions.updateState({
         ganeshaGuidanceMessage: null, // 🛡️ Force remove "Now help others..."
         currentGame: 2,
@@ -787,17 +788,17 @@ if (sceneState.phase === SCENE_PHASES.SARVAKARYESHU_LEARNING) {
     // --------------------------------------------
     // 6. GAME 2 (HELPER CHOOSING)
     // --------------------------------------------
-    if (sceneState.phase === SCENE_PHASES.HELPER_CHOOSING || 
-        sceneState.phase === SCENE_PHASES.HELPER_SUCCESS) {
-      
+    if (sceneState.phase === SCENE_PHASES.HELPER_CHOOSING ||
+      sceneState.phase === SCENE_PHASES.HELPER_SUCCESS) {
+
       const completed = sceneState.game2ScenariosCompleted || 0;
-      
+
       // ✅ COMPLETION CHECK
       if (completed >= 3) {
         console.log('📌 Game 2 finished on reload');
         // 🛡️ CRITICAL: Kill animation before calling complete
-        sceneActions.updateState({ showHelperAnimation: false }); 
-        completeGame2(); 
+        sceneActions.updateState({ showHelperAnimation: false });
+        completeGame2();
         return;
       }
 
@@ -823,12 +824,12 @@ if (sceneState.phase === SCENE_PHASES.SARVAKARYESHU_LEARNING) {
     }
 
 
-// --------------------------------------------
+    // --------------------------------------------
     // 7. ALREADY COMPLETE (Post-Fireworks)
     // --------------------------------------------
     if (sceneState.phase === SCENE_PHASES.COMPLETE) {
       console.log('📌 Reload: Scene Already Complete');
-      
+
       sceneActions.updateState({
         ganeshaGuidanceMessage: null,
         showHelperAnimation: false,
@@ -850,29 +851,29 @@ if (sceneState.phase === SCENE_PHASES.SARVAKARYESHU_LEARNING) {
   };
 
   const playAudio = (audioPath, volume = 1.0) => {
-  try {
-    const audio = new Audio(audioPath);
-    audio.volume = volume;
-    audio.play().catch(() => {});
-  } catch (error) {
-    console.warn('Audio failed:', error);
-  }
-};
-
-const playSyllable = (syllable) => {
-  const map = {
-    // Door 1: Sarvakaryeshu syllables (4 syllables)
-    'sar': 'sarvakaryeshu-sar',
-    'va': 'sarvakaryeshu-va',
-    'kar': 'sarvakaryeshu-kar',
-    'yeshu': 'sarvakaryeshu-yeshu',
-    // Door 2: Sarvada syllables
-    'sar2': 'sarvada-sar',
-    'va2': 'sarvada-va',
-    'da': 'sarvada-da'
+    try {
+      const audio = new Audio(audioPath);
+      audio.volume = volume;
+      audio.play().catch(() => { });
+    } catch (error) {
+      console.warn('Audio failed:', error);
+    }
   };
-  playAudio(`/audio/syllables/${map[syllable] || syllable}.mp3`);
-};
+
+  const playSyllable = (syllable) => {
+    const map = {
+      // Door 1: Sarvakaryeshu syllables (4 syllables)
+      'sar': 'sarvakaryeshu-sar',
+      'va': 'sarvakaryeshu-va',
+      'kar': 'sarvakaryeshu-kar',
+      'yeshu': 'sarvakaryeshu-yeshu',
+      // Door 2: Sarvada syllables
+      'sar2': 'sarvada-sar',
+      'va2': 'sarvada-va',
+      'da': 'sarvada-da'
+    };
+    playAudio(`/audio/syllables/${map[syllable] || syllable}.mp3`);
+  };
 
 
   const generateRandomScenarios = () => {
@@ -902,18 +903,18 @@ const playSyllable = (syllable) => {
   };
 
   const getCurrentHelperPosition = (helperId) => {
-  const scenario = getCurrentGame2Scenario();
-  const helperIndex = scenario.helpers.findIndex(h => h.id === helperId);
-  
-  const positions = [
-    { x: 18, y: 25 },   // position-1
-    { x: 8, y: 75 },   // position-2
-    { x: 92, y: 25 },  // position-3
-    { x: 92, y: 75 }   // position-4
-  ];
-  
-  return positions[helperIndex] || positions[0];
-};
+    const scenario = getCurrentGame2Scenario();
+    const helperIndex = scenario.helpers.findIndex(h => h.id === helperId);
+
+    const positions = [
+      { x: 18, y: 25 },   // position-1
+      { x: 8, y: 75 },   // position-2
+      { x: 92, y: 25 },  // position-3
+      { x: 92, y: 75 }   // position-4
+    ];
+
+    return positions[helperIndex] || positions[0];
+  };
 
   const getCurrentScenarioImage = () => {
     if (sceneState.currentGame === 2) {
@@ -929,12 +930,12 @@ const playSyllable = (syllable) => {
 
   // Door 1
   const handleDoor1SyllablePlaced = (syllable) => {
- if (showResumePopup) {
-    setShowResumePopup(false);
-    if (resumePopupTimeoutRef.current) {
-      clearTimeout(resumePopupTimeoutRef.current);
+    if (showResumePopup) {
+      setShowResumePopup(false);
+      if (resumePopupTimeoutRef.current) {
+        clearTimeout(resumePopupTimeoutRef.current);
+      }
     }
-  }
 
     const expected = sceneState.door1Syllables?.[sceneState.door1CurrentStep || 0];
     if (syllable === expected) {
@@ -943,11 +944,11 @@ const playSyllable = (syllable) => {
         door1SyllablesPlaced: [...(sceneState.door1SyllablesPlaced || []), syllable],
         door1CurrentStep: newStep
       });
-    if (newStep >= 4) {
-  // ❌ REMOVED: Don't auto-trigger door completion
-  // The DoorComponent will call onDoorComplete when button is clicked
-  console.log('✅ All syllables placed - waiting for Start Challenge button');
-}
+      if (newStep >= 4) {
+        // ❌ REMOVED: Don't auto-trigger door completion
+        // The DoorComponent will call onDoorComplete when button is clicked
+        console.log('✅ All syllables placed - waiting for Start Challenge button');
+      }
     }
   };
 
@@ -961,235 +962,235 @@ const playSyllable = (syllable) => {
     setTimeout(() => setShowSparkle(null), 3000);
   };
 
-// After character selection, show Ganesha message
-const handleCharacterSelect = (character) => {
-  setShowSparkle('character-selected');
-  sceneActions.updateState({
-    selectedCharacter: character,
-    phase: SCENE_PHASES.GAME1_INTRO,
-    selectedScenarios: generateRandomScenarios(),
-    currentScenario: 0,
-    stars: 3
-  });
-  
-  setTimeout(() => {
-    setShowSparkle(null);
-    // ✅ Show Ganesha's guidance message
+  // After character selection, show Ganesha message
+  const handleCharacterSelect = (character) => {
+    setShowSparkle('character-selected');
     sceneActions.updateState({
-      ganeshaGuidanceMessage: "I will guide you to make wise choices! 🕉️"
+      selectedCharacter: character,
+      phase: SCENE_PHASES.GAME1_INTRO,
+      selectedScenarios: generateRandomScenarios(),
+      currentScenario: 0,
+      stars: 3
     });
-    
+
     setTimeout(() => {
-      sceneActions.updateState({ ganeshaGuidanceMessage: null });
-      startScenario(0);
-    }, 3000);
-  }, 2000);
-};
+      setShowSparkle(null);
+      // ✅ Show Ganesha's guidance message
+      sceneActions.updateState({
+        ganeshaGuidanceMessage: "I will guide you to make wise choices! 🕉️"
+      });
+
+      setTimeout(() => {
+        sceneActions.updateState({ ganeshaGuidanceMessage: null });
+        startScenario(0);
+      }, 3000);
+    }, 2000);
+  };
 
 
-const startScenario = (index) => {
-  setBannerMessage('initial');  // ← ADD THIS
-  
-  setTimeout(() => {
-    setBannerMessage('ready');  // ← THEN CHANGE TO READY
-  }, 2000);
+  const startScenario = (index) => {
+    setBannerMessage('initial');  // ← ADD THIS
 
-   // ✅ ADD THESE 3 LINES
-  isProcessingClickRef.current = false;
-  lastClickTimeRef.current = 0;
+    setTimeout(() => {
+      setBannerMessage('ready');  // ← THEN CHANGE TO READY
+    }, 2000);
 
-  sceneActions.updateState({
-    currentScenario: index,
-    phase: SCENE_PHASES.SCENARIO_CHOOSING,
-    showProblemDeclaration: true,
-    symbolsVisible: 'none', // Start hidden
-    symbolsClickable: false,
+    // ✅ ADD THESE 3 LINES
+    isProcessingClickRef.current = false;
+    lastClickTimeRef.current = 0;
+
+    sceneActions.updateState({
+      currentScenario: index,
+      phase: SCENE_PHASES.SCENARIO_CHOOSING,
+      showProblemDeclaration: true,
+      symbolsVisible: 'none', // Start hidden
+      symbolsClickable: false,
       selectedSymbol: null,  // ← ADD THIS LINE if missing
 
-    currentBackground: 'worried',
-    characterMessage: null,
-    unwiseChoicesTried: [] // ← Reset tried symbols
-  });
-  
-  // ✅ After 3 seconds: Hide problem, show symbols
-  setTimeout(() => {
-    sceneActions.updateState({
-      showProblemDeclaration: false,
-      symbolsVisible: 'clear', // Show symbols
-      symbolsClickable: true,   // Enable clicking
-          selectedSymbol: null  // ← ADD THIS LINE
-
+      currentBackground: 'worried',
+      characterMessage: null,
+      unwiseChoicesTried: [] // ← Reset tried symbols
     });
-  }, 3000);
-};
 
-const handleSymbolClick = (symbolId, isWise) => {
-  if (showResumePopup) {
-  setShowResumePopup(false);
-  if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
-}
-  console.log('🎯 Click attempt:', symbolId);
-  
-  const now = Date.now();
-  
-  // ========== 🛡️ PROTECTION LAYER 1: SAME SYMBOL DOUBLE-CLICK ==========
-  if (currentlyProcessingSymbolRef.current === symbolId) {
-    console.log('🚫 BLOCKED: Already processing this exact symbol:', symbolId);
-    return;
-  }
-  
-  // ========== 🛡️ PROTECTION LAYER 2: GLOBAL COOLDOWN ==========
-  if (now - lastClickTimeRef.current < CLICK_COOLDOWN) {
-    console.log('🚫 BLOCKED: Click too fast! Wait', CLICK_COOLDOWN, 'ms between clicks');
-    return;
-  }
-  
-  // ========== 🛡️ PROTECTION LAYER 3: GLOBAL PROCESSING LOCK ==========
-  if (isProcessingClickRef.current) {
-    console.log('🚫 BLOCKED: Already processing another click!');
-    return;
-  }
-  
-  // ========== 🛡️ PROTECTION LAYER 4: ALREADY TRIED CHECK ==========
-  const alreadyTried = (sceneState.unwiseChoicesTried || []).includes(symbolId);
-  if (alreadyTried) {
-    console.log('🚫 BLOCKED: Symbol already tried:', symbolId);
-    return;
-  }
-  
-  // ========== 🛡️ PROTECTION LAYER 5: CLICKABLE STATE ==========
-  if (!sceneState.symbolsClickable) {
-    console.log('🚫 BLOCKED: Symbols not clickable yet!');
-    return;
-  }
-  
-  // ========== ✅ ALL CHECKS PASSED - PROCESS CLICK ==========
-  console.log('✅ Click APPROVED:', symbolId, 'Wise:', isWise);
-  
-  // 🔒 LOCK EVERYTHING IMMEDIATELY
-  lastClickTimeRef.current = now;
-  isProcessingClickRef.current = true;
-  currentlyProcessingSymbolRef.current = symbolId;  // ← NEW: Lock this specific symbol
-  
-  // Immediate state update to lock UI
-  sceneActions.updateState({ 
-    selectedSymbol: symbolId,
-    symbolsClickable: false 
-  });
-  
-  const scenario = getCurrentScenario();
-  const reaction = scenario.characterReactions[symbolId];
-  
-  // Show sparkles based on choice
-  setShowSparkle(isWise ? 'wise-choice' : 'unwise-choice');
-  
-  if (isWise) {
-    // ========== ✅ CORRECT CHOICE ==========
-    console.log('🎉 Correct choice!');
-    
-    setBannerMessage('success');
-    
-    sceneActions.updateState({
-      currentBackground: 'success',
-      characterMessage: reaction,
-      symbolsClickable: false,
-      selectedSymbol: symbolId
-    });
-    
-    // Celebrate for 2.5 seconds, then complete
+    // ✅ After 3 seconds: Hide problem, show symbols
     setTimeout(() => {
-      setShowSparkle(null);
-      completeCurrentScenario();
-      
-      // ✅ UNLOCK after scenario complete
-      isProcessingClickRef.current = false;
-      currentlyProcessingSymbolRef.current = null;  // ← Clear symbol lock
-    }, 2500);
-    
-  } else {
-    // ========== ❌ WRONG CHOICE ==========
-    console.log('❌ Wrong choice - showing feedback');
-    
-    const newUnwiseTried = [...(sceneState.unwiseChoicesTried || []), symbolId];
-    
-    // Stage 1: Immediate feedback
-    setBannerMessage('processing');
-    
+      sceneActions.updateState({
+        showProblemDeclaration: false,
+        symbolsVisible: 'clear', // Show symbols
+        symbolsClickable: true,   // Enable clicking
+        selectedSymbol: null  // ← ADD THIS LINE
+
+      });
+    }, 3000);
+  };
+
+  const handleSymbolClick = (symbolId, isWise) => {
+    if (showResumePopup) {
+      setShowResumePopup(false);
+      if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
+    }
+    console.log('🎯 Click attempt:', symbolId);
+
+    const now = Date.now();
+
+    // ========== 🛡️ PROTECTION LAYER 1: SAME SYMBOL DOUBLE-CLICK ==========
+    if (currentlyProcessingSymbolRef.current === symbolId) {
+      console.log('🚫 BLOCKED: Already processing this exact symbol:', symbolId);
+      return;
+    }
+
+    // ========== 🛡️ PROTECTION LAYER 2: GLOBAL COOLDOWN ==========
+    if (now - lastClickTimeRef.current < CLICK_COOLDOWN) {
+      console.log('🚫 BLOCKED: Click too fast! Wait', CLICK_COOLDOWN, 'ms between clicks');
+      return;
+    }
+
+    // ========== 🛡️ PROTECTION LAYER 3: GLOBAL PROCESSING LOCK ==========
+    if (isProcessingClickRef.current) {
+      console.log('🚫 BLOCKED: Already processing another click!');
+      return;
+    }
+
+    // ========== 🛡️ PROTECTION LAYER 4: ALREADY TRIED CHECK ==========
+    const alreadyTried = (sceneState.unwiseChoicesTried || []).includes(symbolId);
+    if (alreadyTried) {
+      console.log('🚫 BLOCKED: Symbol already tried:', symbolId);
+      return;
+    }
+
+    // ========== 🛡️ PROTECTION LAYER 5: CLICKABLE STATE ==========
+    if (!sceneState.symbolsClickable) {
+      console.log('🚫 BLOCKED: Symbols not clickable yet!');
+      return;
+    }
+
+    // ========== ✅ ALL CHECKS PASSED - PROCESS CLICK ==========
+    console.log('✅ Click APPROVED:', symbolId, 'Wise:', isWise);
+
+    // 🔒 LOCK EVERYTHING IMMEDIATELY
+    lastClickTimeRef.current = now;
+    isProcessingClickRef.current = true;
+    currentlyProcessingSymbolRef.current = symbolId;  // ← NEW: Lock this specific symbol
+
+    // Immediate state update to lock UI
     sceneActions.updateState({
-      unwiseChoicesTried: newUnwiseTried,
-      characterMessage: reaction,
+      selectedSymbol: symbolId,
       symbolsClickable: false
     });
-    
-    // Stage 2: After 800ms - unlock for retry
-    setTimeout(() => {
-      setBannerMessage('try-again');
-      sceneActions.updateState({
-        characterMessage: null,
-        symbolsClickable: true
-      });
-      setShowSparkle(null);
-      
-      // ✅ UNLOCK after feedback shown
-      isProcessingClickRef.current = false;
-      currentlyProcessingSymbolRef.current = null;  // ← Clear symbol lock
-    }, 800);
-    
-    // Stage 3: Reset banner after 3 seconds
-    setTimeout(() => {
-      setBannerMessage('ready');
-    }, 3000);
-  }
-};
 
-const completeCurrentScenario = () => {
-  const nextScenario = (sceneState.currentScenario || 0) + 1;
-  const completed = (sceneState.scenariosCompleted || 0) + 1;
-  
-  sceneActions.updateState({
-    scenariosCompleted: completed,
-    characterMessage: null // Clear message
-  });
-  
-  if (completed >= 3) {
-    setTimeout(() => {
-      // ✅ Hide game before celebration
-      sceneActions.updateState({
-        symbolsVisible: 'none',
-        phase: SCENE_PHASES.SARVAKARYESHU_LEARNING
-      });
-      completeGame1();
-    }, 1000);
-  } else {
-    setTimeout(() => {
-      startScenario(nextScenario);
-    }, 1000);
-  }
-};
+    const scenario = getCurrentScenario();
+    const reaction = scenario.characterReactions[symbolId];
 
-const completeGame1 = () => {
-  console.log('⭐ Game 1 completed!');
-  
-  sceneActions.updateState({
-    game1Completed: true,
-    phase: SCENE_PHASES.SARVAKARYESHU_LEARNING, // ✅ Set phase
-    symbolsVisible: 'none'
-  });
-  
-  // ✅ Trigger Discovery 1
-  safeSetTimeout(() => {
-    setShowDiscoveryFlip1(true);
-  }, 1500);
-};
+    // Show sparkles based on choice
+    setShowSparkle(isWise ? 'wise-choice' : 'unwise-choice');
+
+    if (isWise) {
+      // ========== ✅ CORRECT CHOICE ==========
+      console.log('🎉 Correct choice!');
+
+      setBannerMessage('success');
+
+      sceneActions.updateState({
+        currentBackground: 'success',
+        characterMessage: reaction,
+        symbolsClickable: false,
+        selectedSymbol: symbolId
+      });
+
+      // Celebrate for 2.5 seconds, then complete
+      setTimeout(() => {
+        setShowSparkle(null);
+        completeCurrentScenario();
+
+        // ✅ UNLOCK after scenario complete
+        isProcessingClickRef.current = false;
+        currentlyProcessingSymbolRef.current = null;  // ← Clear symbol lock
+      }, 2500);
+
+    } else {
+      // ========== ❌ WRONG CHOICE ==========
+      console.log('❌ Wrong choice - showing feedback');
+
+      const newUnwiseTried = [...(sceneState.unwiseChoicesTried || []), symbolId];
+
+      // Stage 1: Immediate feedback
+      setBannerMessage('processing');
+
+      sceneActions.updateState({
+        unwiseChoicesTried: newUnwiseTried,
+        characterMessage: reaction,
+        symbolsClickable: false
+      });
+
+      // Stage 2: After 800ms - unlock for retry
+      setTimeout(() => {
+        setBannerMessage('try-again');
+        sceneActions.updateState({
+          characterMessage: null,
+          symbolsClickable: true
+        });
+        setShowSparkle(null);
+
+        // ✅ UNLOCK after feedback shown
+        isProcessingClickRef.current = false;
+        currentlyProcessingSymbolRef.current = null;  // ← Clear symbol lock
+      }, 800);
+
+      // Stage 3: Reset banner after 3 seconds
+      setTimeout(() => {
+        setBannerMessage('ready');
+      }, 3000);
+    }
+  };
+
+  const completeCurrentScenario = () => {
+    const nextScenario = (sceneState.currentScenario || 0) + 1;
+    const completed = (sceneState.scenariosCompleted || 0) + 1;
+
+    sceneActions.updateState({
+      scenariosCompleted: completed,
+      characterMessage: null // Clear message
+    });
+
+    if (completed >= 3) {
+      setTimeout(() => {
+        // ✅ Hide game before celebration
+        sceneActions.updateState({
+          symbolsVisible: 'none',
+          phase: SCENE_PHASES.SARVAKARYESHU_LEARNING
+        });
+        completeGame1();
+      }, 1000);
+    } else {
+      setTimeout(() => {
+        startScenario(nextScenario);
+      }, 1000);
+    }
+  };
+
+  const completeGame1 = () => {
+    console.log('⭐ Game 1 completed!');
+
+    sceneActions.updateState({
+      game1Completed: true,
+      phase: SCENE_PHASES.SARVAKARYESHU_LEARNING, // ✅ Set phase
+      symbolsVisible: 'none'
+    });
+
+    // ✅ Trigger Discovery 1
+    safeSetTimeout(() => {
+      setShowDiscoveryFlip1(true);
+    }, 1500);
+  };
 
   // Door 2
   const handleDoor2SyllablePlaced = (syllable) => {
-     if (showResumePopup) {
-    setShowResumePopup(false);
-    if (resumePopupTimeoutRef.current) {
-      clearTimeout(resumePopupTimeoutRef.current);
+    if (showResumePopup) {
+      setShowResumePopup(false);
+      if (resumePopupTimeoutRef.current) {
+        clearTimeout(resumePopupTimeoutRef.current);
+      }
     }
-  }
     const expected = sceneState.door2Syllables?.[sceneState.door2CurrentStep || 0];
     if (syllable === expected) {
       const newStep = (sceneState.door2CurrentStep || 0) + 1;
@@ -1197,35 +1198,35 @@ const completeGame1 = () => {
         door2SyllablesPlaced: [...(sceneState.door2SyllablesPlaced || []), syllable],
         door2CurrentStep: newStep
       });
-   if (newStep >= 3) {
-  // ❌ REMOVED: Don't auto-trigger door completion
-  // The DoorComponent will call onDoorComplete when button is clicked
-  console.log('✅ All syllables placed - waiting for Start Challenge button');
-}
+      if (newStep >= 3) {
+        // ❌ REMOVED: Don't auto-trigger door completion
+        // The DoorComponent will call onDoorComplete when button is clicked
+        console.log('✅ All syllables placed - waiting for Start Challenge button');
+      }
     }
   };
 
-// After Door 2 complete, before Game 2
-const handleDoor2Complete = () => {
-  setShowSparkle('door2-completing');
-  sceneActions.updateState({
-    door2Completed: true,
-    stars: 7
-  });
-  
-safeSetTimeout(() => {
-    setShowSparkle(null);
-    // ✅ Show Ganesha's guidance for helping others
+  // After Door 2 complete, before Game 2
+  const handleDoor2Complete = () => {
+    setShowSparkle('door2-completing');
     sceneActions.updateState({
-      ganeshaGuidanceMessage: "Now help others as I helped you! 🌟"
+      door2Completed: true,
+      stars: 7
     });
-    
-safeSetTimeout(() => {
-      sceneActions.updateState({ ganeshaGuidanceMessage: null });
-      startGame2();
-    }, 3000);
-  }, 1000);
-};
+
+    safeSetTimeout(() => {
+      setShowSparkle(null);
+      // ✅ Show Ganesha's guidance for helping others
+      sceneActions.updateState({
+        ganeshaGuidanceMessage: "Now help others as I helped you! 🌟"
+      });
+
+      safeSetTimeout(() => {
+        sceneActions.updateState({ ganeshaGuidanceMessage: null });
+        startGame2();
+      }, 3000);
+    }, 1000);
+  };
 
   // Game 2
   const startGame2 = () => {
@@ -1235,111 +1236,111 @@ safeSetTimeout(() => {
       game2Scenarios: generateRandomGame2Scenarios(),
       currentGame2Scenario: 0
     });
-    
+
     safeSetTimeout(() => startGame2Scenario(0), 2000);
   };
 
-const startGame2Scenario = (index) => {
-  // ✅ Reset locks for new scenario
-  game2HelperSelectedRef.current = false;
-  game2ProcessingHelperRef.current = null;
-  
-  sceneActions.updateState({
-    currentGame2Scenario: index,
-    phase: SCENE_PHASES.HELPER_CHOOSING,
-    showProblemDeclaration: true,
-    symbolsVisible: 'none',  // Start hidden
-    game2Background: 'before',
-    characterMessage: null,
-    selectedHelper: null
-  });
-  
-  // Show helpers after 2 seconds (time to read problem)
-  setTimeout(() => {
-    sceneActions.updateState({
-      symbolsVisible: 'clear',
-      showProblemDeclaration: false
-    });
-  }, 2000);
-};
+  const startGame2Scenario = (index) => {
+    // ✅ Reset locks for new scenario
+    game2HelperSelectedRef.current = false;
+    game2ProcessingHelperRef.current = null;
 
-const handleHelperClick = (helperId) => {
-  if (showResumePopup) {
-  setShowResumePopup(false);
-  if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
-}
-  console.log('🎯 Game 2: Helper click attempt:', helperId);
-  
-  // ========== 🛡️ PROTECTION LAYER 1: ALREADY SELECTED CHECK ==========
-  if (game2HelperSelectedRef.current) {
-    console.log('🚫 GAME2 BLOCKED: Helper already chosen!');
-    return;
-  }
-  
-  // ========== 🛡️ PROTECTION LAYER 2: PROCESSING CHECK ==========
-  if (game2ProcessingHelperRef.current) {
-    console.log('🚫 GAME2 BLOCKED: Already processing helper:', game2ProcessingHelperRef.current);
-    return;
-  }
-  
-  // ========== 🛡️ PROTECTION LAYER 3: CLICKABLE STATE ==========
-  if (sceneState.symbolsVisible !== 'clear') {
-    console.log('🚫 GAME2 BLOCKED: Helpers not visible yet!');
-    return;
-  }
-  
-  // ========== ✅ ALL CHECKS PASSED ==========
-  console.log('✅ GAME2 Click APPROVED:', helperId);
-  
-// 🔒 INSTANT LOCK - No second chances in Game 2!
-  game2HelperSelectedRef.current = true;
-  game2ProcessingHelperRef.current = helperId;
-  
-  // Mark selection - this triggers fade of non-selected helpers
-  sceneActions.updateState({
-    selectedHelper: helperId,
-    // Keep symbolsVisible: 'clear' so selected helper stays visible
-  });
-  
-  // Show sparkles for celebration
-  setShowSparkle('helper-selected');
-  
-  // Wait 800ms for non-selected to fade, THEN start animation
-  safeSetTimeout(() => {
     sceneActions.updateState({
-      showHelperAnimation: true
-      // DON'T set symbolsVisible: 'none' here!
+      currentGame2Scenario: index,
+      phase: SCENE_PHASES.HELPER_CHOOSING,
+      showProblemDeclaration: true,
+      symbolsVisible: 'none',  // Start hidden
+      game2Background: 'before',
+      characterMessage: null,
+      selectedHelper: null
     });
-  }, 800);
-};
 
-const handleHelperAnimationComplete = () => {
-  setShowSparkle(null);
-  
-  const scenario = getCurrentGame2Scenario();
-  
-  // Show gratitude
-  sceneActions.updateState({
-    game2Background: 'after',
-    characterMessage: scenario.gratitude
-  });
-  
-  safeSetTimeout(() => {
-    completeGame2Scenario();
-    
-    // ✅ Keep locks until next scenario starts
-    // (they'll be reset in startGame2Scenario)
-  }, 2500);
-};
+    // Show helpers after 2 seconds (time to read problem)
+    setTimeout(() => {
+      sceneActions.updateState({
+        symbolsVisible: 'clear',
+        showProblemDeclaration: false
+      });
+    }, 2000);
+  };
+
+  const handleHelperClick = (helperId) => {
+    if (showResumePopup) {
+      setShowResumePopup(false);
+      if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
+    }
+    console.log('🎯 Game 2: Helper click attempt:', helperId);
+
+    // ========== 🛡️ PROTECTION LAYER 1: ALREADY SELECTED CHECK ==========
+    if (game2HelperSelectedRef.current) {
+      console.log('🚫 GAME2 BLOCKED: Helper already chosen!');
+      return;
+    }
+
+    // ========== 🛡️ PROTECTION LAYER 2: PROCESSING CHECK ==========
+    if (game2ProcessingHelperRef.current) {
+      console.log('🚫 GAME2 BLOCKED: Already processing helper:', game2ProcessingHelperRef.current);
+      return;
+    }
+
+    // ========== 🛡️ PROTECTION LAYER 3: CLICKABLE STATE ==========
+    if (sceneState.symbolsVisible !== 'clear') {
+      console.log('🚫 GAME2 BLOCKED: Helpers not visible yet!');
+      return;
+    }
+
+    // ========== ✅ ALL CHECKS PASSED ==========
+    console.log('✅ GAME2 Click APPROVED:', helperId);
+
+    // 🔒 INSTANT LOCK - No second chances in Game 2!
+    game2HelperSelectedRef.current = true;
+    game2ProcessingHelperRef.current = helperId;
+
+    // Mark selection - this triggers fade of non-selected helpers
+    sceneActions.updateState({
+      selectedHelper: helperId,
+      // Keep symbolsVisible: 'clear' so selected helper stays visible
+    });
+
+    // Show sparkles for celebration
+    setShowSparkle('helper-selected');
+
+    // Wait 800ms for non-selected to fade, THEN start animation
+    safeSetTimeout(() => {
+      sceneActions.updateState({
+        showHelperAnimation: true
+        // DON'T set symbolsVisible: 'none' here!
+      });
+    }, 800);
+  };
+
+  const handleHelperAnimationComplete = () => {
+    setShowSparkle(null);
+
+    const scenario = getCurrentGame2Scenario();
+
+    // Show gratitude
+    sceneActions.updateState({
+      game2Background: 'after',
+      characterMessage: scenario.gratitude
+    });
+
+    safeSetTimeout(() => {
+      completeGame2Scenario();
+
+      // ✅ Keep locks until next scenario starts
+      // (they'll be reset in startGame2Scenario)
+    }, 2500);
+  };
 
   const completeGame2Scenario = () => {
     const nextScenario = (sceneState.currentGame2Scenario || 0) + 1;
     const completed = (sceneState.game2ScenariosCompleted || 0) + 1;
-    
+
     sceneActions.updateState({
       game2ScenariosCompleted: completed
     });
-    
+
     if (completed >= 3) {
       safeSetTimeout(() => completeGame2(), 3000);
     } else {
@@ -1350,22 +1351,22 @@ const handleHelperAnimationComplete = () => {
     }
   };
 
-const completeGame2 = () => {
-  console.log('⭐ Game 2 completed!');
-  
-  sceneActions.updateState({
-    game2Completed: true,
-    phase: SCENE_PHASES.SARVADA_LEARNING,  // ✅ CHANGE from COMPLETE
-    symbolsVisible: 'none',
-    characterMessage: null,
-    showProblemDeclaration: false
-  });
-  
-  // ✅ Trigger Discovery 2
-  safeSetTimeout(() => {
-    setShowDiscoveryFlip2(true);
-  }, 1500);
-};
+  const completeGame2 = () => {
+    console.log('⭐ Game 2 completed!');
+
+    sceneActions.updateState({
+      game2Completed: true,
+      phase: SCENE_PHASES.SARVADA_LEARNING,  // ✅ CHANGE from COMPLETE
+      symbolsVisible: 'none',
+      characterMessage: null,
+      showProblemDeclaration: false
+    });
+
+    // ✅ Trigger Discovery 2
+    safeSetTimeout(() => {
+      setShowDiscoveryFlip2(true);
+    }, 1500);
+  };
 
   // Power Modal Actions
   const handleSaveAnimal = () => {
@@ -1374,39 +1375,39 @@ const completeGame2 = () => {
     setShowRescueModal(true);
   };
 
- // After Game 1 celebration, show modal 2
-const handleContinueLearning = () => {
-  setShowPowerModal(false);
-  
-  if (currentMissionSymbol === 'sarvakaryeshu') {
-    // Show second story modal before Door 2
-    setShowStoryModal('sarvada');
-  } else if (currentMissionSymbol === 'sarvada') {
-    safeSetTimeout(() => showFinalCelebration(), 500);
-  }
-};
+  // After Game 1 celebration, show modal 2
+  const handleContinueLearning = () => {
+    setShowPowerModal(false);
+
+    if (currentMissionSymbol === 'sarvakaryeshu') {
+      // Show second story modal before Door 2
+      setShowStoryModal('sarvada');
+    } else if (currentMissionSymbol === 'sarvada') {
+      safeSetTimeout(() => showFinalCelebration(), 500);
+    }
+  };
 
   const getNextDiscoveryText = (symbol) => {
     return symbol === 'sarvakaryeshu' ? '🚪 Discover Sarvada' : '✨ Complete Scene';
   };
 
-const handleRescueComplete = (success) => {
-  if (!success) return;
-  
-  setShowRescueModal(false);
-  
-  if (currentRescueWord === 'sarvakaryeshu') {
-    safeSetTimeout(() => {
-      setShowStoryModal('sarvada');  // ✅ Show second story modal
-    }, 500);
-  } else if (currentRescueWord === 'sarvada') {
-    safeSetTimeout(() => {
-      showFinalCelebration();
-    }, 500);
-  }
-  
-  setCurrentRescueWord(null);
-};
+  const handleRescueComplete = (success) => {
+    if (!success) return;
+
+    setShowRescueModal(false);
+
+    if (currentRescueWord === 'sarvakaryeshu') {
+      safeSetTimeout(() => {
+        setShowStoryModal('sarvada');  // ✅ Show second story modal
+      }, 500);
+    } else if (currentRescueWord === 'sarvada') {
+      safeSetTimeout(() => {
+        showFinalCelebration();
+      }, 500);
+    }
+
+    setCurrentRescueWord(null);
+  };
 
   const showFinalCelebration = () => {
     sceneActions.updateState({
@@ -1415,7 +1416,7 @@ const handleRescueComplete = (success) => {
       stars: 8,
       completed: true
     });
-    
+
     setShowSparkle('final-fireworks');
   };
 
@@ -1432,22 +1433,22 @@ const handleRescueComplete = (success) => {
 }, [sceneState.phase]);*/
 
 
- useEffect(() => {
-  return () => {
-    isProcessingClickRef.current = false;     // ← ADD THIS
-    lastClickTimeRef.current = 0;              // ← ADD THIS
-    timeoutsRef.current.forEach(id => clearTimeout(id));
-  };
-}, []);
+  useEffect(() => {
+    return () => {
+      isProcessingClickRef.current = false;     // ← ADD THIS
+      lastClickTimeRef.current = 0;              // ← ADD THIS
+      timeoutsRef.current.forEach(id => clearTimeout(id));
+    };
+  }, []);
 
-useEffect(() => {
-  console.log('🔒 Protection State:', {
-    isProcessing: isProcessingClickRef.current,
-    currentSymbol: currentlyProcessingSymbolRef.current,
-    symbolsClickable: sceneState.symbolsClickable,
-    unwiseTried: sceneState.unwiseChoicesTried
-  });
-}, [sceneState.symbolsClickable, sceneState.unwiseChoicesTried]);
+  useEffect(() => {
+    console.log('🔒 Protection State:', {
+      isProcessing: isProcessingClickRef.current,
+      currentSymbol: currentlyProcessingSymbolRef.current,
+      symbolsClickable: sceneState.symbolsClickable,
+      unwiseTried: sceneState.unwiseChoicesTried
+    });
+  }, [sceneState.symbolsClickable, sceneState.unwiseChoicesTried]);
 
   if (!sceneState) return <div>Loading...</div>;
 
@@ -1458,43 +1459,15 @@ useEffect(() => {
           <div className="scene-background" style={{ backgroundImage: `url(${sceneBackground})` }}>
 
             {/* ✅ OPENING SCREEN: Sarvakaryeshu Sarvada */}
-{sceneState.phase === SCENE_PHASES.DOOR1_ACTIVE && !sceneState.welcomeShown && (() => {
-  const theme = getZoneTheme(zoneId);
-  const modal = getOpeningModal(zoneId, sceneId);
-  return (
-    <div className="game-modal-overlay" style={{
-      '--modal-card-bg': theme.parentBg,
-      '--modal-text-primary': theme.textPrimary,
-      '--modal-btn-bg': theme.buttonActiveBg,
-      '--modal-btn-shadow': theme.glowColor
-    }}>
-      <div className="game-modal-content">
-        <div className="game-modal-character">
-          <img src={ganeshaCharacterCave} alt="Ganesha Character" />
-        </div>
-        <div className="game-modal-card">
-          <h1 className="game-modal-title">{modal?.title || 'Choose with Ganesha'}</h1>
-          <p className="game-modal-subtitle">{modal?.description || 'Choose wisely with Ganesha beside you.'}</p>
-          <div className="game-modal-icons">
-            <div className="game-modal-icon-item">
-              <img src={sarvakaryeshuSymbol} alt="Sarvakaryeshu" />
-              <span className="game-modal-icon-label">In All Tasks</span>
-            </div>
-            <div className="game-modal-icon-item">
-              <img src={sarvadaSymbol} alt="Sarvada" />
-              <span className="game-modal-icon-label">Always</span>
-            </div>
-          </div>
-          <button className="game-modal-button" onClick={() => sceneActions.updateState({ welcomeShown: true })}>
-            {modal?.buttonText || "Let's Explore"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-})()}
+            <OpeningModal
+              zoneId={zoneId}
+              sceneId={sceneId}
+              onStart={() => sceneActions.updateState({ welcomeShown: true })}
+              characterImg={ganeshaCharacterCave}
+              showButton={true}
+            />
 
-{/* Story Modal 
+            {/* Story Modal 
 {showStoryModal && (
   <div style={{
     position: 'fixed',
@@ -1623,85 +1596,85 @@ useEffect(() => {
                     🔤 SPELL SARVAKARYESHU! Click syllables in order!
                   </div>
                 )}
-            
 
-{(sceneState.symbolsVisible === 'clear' || sceneState.symbolsVisible === 'all') && 
- sceneState.currentGame === 1 && 
- sceneState.phase === SCENE_PHASES.SCENARIO_CHOOSING && (
-  <div style={{
-    position: 'absolute',
-    bottom: '12%',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    // Dynamic background based on stage
-    background: bannerMessage === 'processing'
-      ? 'linear-gradient(135deg, #FFA500, #FF8C42)'  // Orange during processing
-      : bannerMessage === 'try-again'
-        ? 'linear-gradient(135deg, #FF6B6B, #FF8E53)'  // Red when ready to retry
-        : sceneState.currentBackground === 'success'
-          ? 'linear-gradient(135deg, #4ECDC4, #44A08D)'  // Green for correct
-          : 'linear-gradient(135deg, #FFD700, #FFA500)',  // Gold for initial
-    padding: '15px 30px',
-    borderRadius: '20px',
-    fontSize: '20px',
-    fontWeight: 'bold',
-    color: '#2C1810',
-    zIndex: 1000,
-    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)',
-    // Only bounce when clickable AND ready
-    animation: (sceneState.symbolsClickable && bannerMessage === 'ready') 
-      ? 'bannerBounce 2s infinite' 
-      : bannerMessage === 'try-again'
-        ? 'bannerPulse 0.8s ease-out'  // One-time pulse when unlocked
-        : 'none',
-    border: '3px solid #FF8C42',
-    textAlign: 'center',
-    maxWidth: '80%',
-    transition: 'all 0.4s ease',
-  }}>
-    {/* STAGED MESSAGES */}
-    {bannerMessage === 'initial' && '📖 Read the problem...'}
-    {bannerMessage === 'ready' && sceneState.symbolsClickable && '🎯 CLICK A SYMBOL to make your choice!'}
-    {bannerMessage === 'processing' && '🤔 Hmm, let me think...'}
-    {bannerMessage === 'try-again' && '💭 Try another symbol!'}
-    {sceneState.currentBackground === 'success' && '✨ Perfect choice!'}
-  </div>
-)}
 
-{/* Keep the Door phase headers separate - they work fine */}
-{sceneState.phase === SCENE_PHASES.DOOR2_ACTIVE && !sceneState.door2Completed && (
-  <div className="phase-header">
-    🔤 SPELL SARVADA! Click syllables in order!
-  </div>
-)}
+                {(sceneState.symbolsVisible === 'clear' || sceneState.symbolsVisible === 'all') &&
+                  sceneState.currentGame === 1 &&
+                  sceneState.phase === SCENE_PHASES.SCENARIO_CHOOSING && (
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '12%',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      // Dynamic background based on stage
+                      background: bannerMessage === 'processing'
+                        ? 'linear-gradient(135deg, #FFA500, #FF8C42)'  // Orange during processing
+                        : bannerMessage === 'try-again'
+                          ? 'linear-gradient(135deg, #FF6B6B, #FF8E53)'  // Red when ready to retry
+                          : sceneState.currentBackground === 'success'
+                            ? 'linear-gradient(135deg, #4ECDC4, #44A08D)'  // Green for correct
+                            : 'linear-gradient(135deg, #FFD700, #FFA500)',  // Gold for initial
+                      padding: '15px 30px',
+                      borderRadius: '20px',
+                      fontSize: '20px',
+                      fontWeight: 'bold',
+                      color: '#2C1810',
+                      zIndex: 1000,
+                      boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)',
+                      // Only bounce when clickable AND ready
+                      animation: (sceneState.symbolsClickable && bannerMessage === 'ready')
+                        ? 'bannerBounce 2s infinite'
+                        : bannerMessage === 'try-again'
+                          ? 'bannerPulse 0.8s ease-out'  // One-time pulse when unlocked
+                          : 'none',
+                      border: '3px solid #FF8C42',
+                      textAlign: 'center',
+                      maxWidth: '80%',
+                      transition: 'all 0.4s ease',
+                    }}>
+                      {/* STAGED MESSAGES */}
+                      {bannerMessage === 'initial' && '📖 Read the problem...'}
+                      {bannerMessage === 'ready' && sceneState.symbolsClickable && '🎯 CLICK A SYMBOL to make your choice!'}
+                      {bannerMessage === 'processing' && '🤔 Hmm, let me think...'}
+                      {bannerMessage === 'try-again' && '💭 Try another symbol!'}
+                      {sceneState.currentBackground === 'success' && '✨ Perfect choice!'}
+                    </div>
+                  )}
 
-{sceneState.currentGame === 2 && 
- sceneState.phase === SCENE_PHASES.HELPER_CHOOSING && 
- sceneState.symbolsVisible === 'clear' &&
- !sceneState.selectedHelper && (
-  <div style={{
-    position: 'absolute',
-    bottom: '12%',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    background: 'linear-gradient(135deg, #4ECDC4, #44A08D)',
-    padding: '15px 30px',
-    borderRadius: '20px',
-    fontSize: '20px',
-    fontWeight: 'bold',
-    color: 'white',
-    zIndex: 1000,
-    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)',
-    animation: 'bannerBounce 2s infinite',
-    border: '3px solid #3AAFA9',
-    textAlign: 'center',
-    maxWidth: '80%'
-  }}>
-    💝 Choose a helper to send!
-  </div>
-)}
+                {/* Keep the Door phase headers separate - they work fine */}
+                {sceneState.phase === SCENE_PHASES.DOOR2_ACTIVE && !sceneState.door2Completed && (
+                  <div className="phase-header">
+                    🔤 SPELL SARVADA! Click syllables in order!
+                  </div>
+                )}
 
-               
+                {sceneState.currentGame === 2 &&
+                  sceneState.phase === SCENE_PHASES.HELPER_CHOOSING &&
+                  sceneState.symbolsVisible === 'clear' &&
+                  !sceneState.selectedHelper && (
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '12%',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      background: 'linear-gradient(135deg, #4ECDC4, #44A08D)',
+                      padding: '15px 30px',
+                      borderRadius: '20px',
+                      fontSize: '20px',
+                      fontWeight: 'bold',
+                      color: 'white',
+                      zIndex: 1000,
+                      boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)',
+                      animation: 'bannerBounce 2s infinite',
+                      border: '3px solid #3AAFA9',
+                      textAlign: 'center',
+                      maxWidth: '80%'
+                    }}>
+                      💝 Choose a helper to send!
+                    </div>
+                  )}
+
+
               </>
             )}
 
@@ -1713,7 +1686,7 @@ useEffect(() => {
                   completedWord="Sarvakaryeshu"
                   onDoorComplete={handleDoor1Complete}
                   onSyllablePlaced={handleDoor1SyllablePlaced}
-                    onSyllableAudio={playSyllable}  // ← ADD THIS LINE
+                  onSyllableAudio={playSyllable}  // ← ADD THIS LINE
 
                   sceneTheme="cave-of-secrets"
                   doorImage={doorImage}
@@ -1752,92 +1725,92 @@ useEffect(() => {
             {/* Game 1 - Scenario Window */}
             {sceneState.currentGame === 1 && sceneState.phase === SCENE_PHASES.SCENARIO_CHOOSING && (
               <>
-   <div className="scenario-window">
-  <img src={getCurrentScenarioImage()} alt="Scenario" />
-</div>
+                <div className="scenario-window">
+                  <img src={getCurrentScenarioImage()} alt="Scenario" />
+                </div>
 
-{/* Problem Declaration - OUTSIDE window */}
-{sceneState.showProblemDeclaration && (
-  <div className="character-problem-speech">
-    <p>{getCurrentScenario().problemDeclaration}</p>
-  </div>
-)}
+                {/* Problem Declaration - OUTSIDE window */}
+                {sceneState.showProblemDeclaration && (
+                  <div className="character-problem-speech">
+                    <p>{getCurrentScenario().problemDeclaration}</p>
+                  </div>
+                )}
 
-{/* Character Reaction - OUTSIDE window */}
-{sceneState.characterMessage && (
-  <div className="character-speech-bubble">
-    <p>{sceneState.characterMessage}</p>
-  </div>
-)}
+                {/* Character Reaction - OUTSIDE window */}
+                {sceneState.characterMessage && (
+                  <div className="character-speech-bubble">
+                    <p>{sceneState.characterMessage}</p>
+                  </div>
+                )}
 
-{/* Game 1 Symbols */}
-{sceneState.symbolsVisible === 'clear' && (() => {
-  const scenario = getCurrentScenario();
-  const symbols = [
-    scenario.symbols.wise[0],
-    scenario.symbols.unwise[0],
-    scenario.symbols.wise[1],
-    scenario.symbols.unwise[1]
-  ];
-  
-return symbols.map((symbol, index) => {
-  const isWise = scenario.symbols.wise.includes(symbol);
-  const hasBeenTried = (sceneState.unwiseChoicesTried || []).includes(symbol.id);
-  const isCurrentlyProcessing = currentlyProcessingSymbolRef.current === symbol.id;  // ← NEW
-  
-  return (
-    <div 
-      key={symbol.id} 
-      className={`cave-symbol-individual ${sceneState.symbolsVisible} position-${index + 1}`}
-      style={{
-        opacity: hasBeenTried ? 0.4 
-               : isCurrentlyProcessing ? 0.7  // ← NEW: Dim while processing
-               : 1,
-        filter: hasBeenTried 
-          ? 'grayscale(50%) brightness(0.7)'
-          : (bannerMessage === 'try-again' && !hasBeenTried && sceneState.symbolsClickable)
-            ? 'drop-shadow(0 0 15px #FFD700) brightness(1.2)'
-            : isCurrentlyProcessing  // ← NEW: Show processing state
-              ? 'blur(2px)'
-              : 'none',
-        pointerEvents: (hasBeenTried || isCurrentlyProcessing) ? 'none' : 'auto',  // ← Updated
-        transition: 'all 0.3s ease',
-        transform: hasBeenTried 
-          ? 'scale(0.95)' 
-          : (bannerMessage === 'try-again' && !hasBeenTried && sceneState.symbolsClickable)
-            ? 'scale(1.05)'
-            : isCurrentlyProcessing  // ← NEW: Pulse while processing
-              ? 'scale(1.1)'
-              : 'scale(1)',
-        animation: isCurrentlyProcessing ? 'processingPulse 0.5s ease-in-out' : 'none'  // ← NEW
-      }}
-    >
-      <ClickableElement 
-        id={`symbol-${symbol.id}`} 
-        onClick={() => handleSymbolClick(symbol.id, isWise)}
-        disabled={!sceneState.symbolsClickable || hasBeenTried || isCurrentlyProcessing}  // ← Updated
-      >
-        <div className={`cave-symbol-item ${hasBeenTried ? 'tried-symbol' : ''}`}>
-          <img src={symbol.image} alt={symbol.name} />
-          <span className="symbol-name-text">{symbol.name}</span>
-          
-          {/* Show X for tried symbols */}
-          {hasBeenTried && (
-            <div style={{
-              position: 'absolute',
-              top: '5px',
-              right: '5px',
-              fontSize: '20px'
-            }}>❌</div>
-          )}
-          
-  
-        </div>
-      </ClickableElement>
-    </div>
-  );
-});
-})()}
+                {/* Game 1 Symbols */}
+                {sceneState.symbolsVisible === 'clear' && (() => {
+                  const scenario = getCurrentScenario();
+                  const symbols = [
+                    scenario.symbols.wise[0],
+                    scenario.symbols.unwise[0],
+                    scenario.symbols.wise[1],
+                    scenario.symbols.unwise[1]
+                  ];
+
+                  return symbols.map((symbol, index) => {
+                    const isWise = scenario.symbols.wise.includes(symbol);
+                    const hasBeenTried = (sceneState.unwiseChoicesTried || []).includes(symbol.id);
+                    const isCurrentlyProcessing = currentlyProcessingSymbolRef.current === symbol.id;  // ← NEW
+
+                    return (
+                      <div
+                        key={symbol.id}
+                        className={`cave-symbol-individual ${sceneState.symbolsVisible} position-${index + 1}`}
+                        style={{
+                          opacity: hasBeenTried ? 0.4
+                            : isCurrentlyProcessing ? 0.7  // ← NEW: Dim while processing
+                              : 1,
+                          filter: hasBeenTried
+                            ? 'grayscale(50%) brightness(0.7)'
+                            : (bannerMessage === 'try-again' && !hasBeenTried && sceneState.symbolsClickable)
+                              ? 'drop-shadow(0 0 15px #FFD700) brightness(1.2)'
+                              : isCurrentlyProcessing  // ← NEW: Show processing state
+                                ? 'blur(2px)'
+                                : 'none',
+                          pointerEvents: (hasBeenTried || isCurrentlyProcessing) ? 'none' : 'auto',  // ← Updated
+                          transition: 'all 0.3s ease',
+                          transform: hasBeenTried
+                            ? 'scale(0.95)'
+                            : (bannerMessage === 'try-again' && !hasBeenTried && sceneState.symbolsClickable)
+                              ? 'scale(1.05)'
+                              : isCurrentlyProcessing  // ← NEW: Pulse while processing
+                                ? 'scale(1.1)'
+                                : 'scale(1)',
+                          animation: isCurrentlyProcessing ? 'processingPulse 0.5s ease-in-out' : 'none'  // ← NEW
+                        }}
+                      >
+                        <ClickableElement
+                          id={`symbol-${symbol.id}`}
+                          onClick={() => handleSymbolClick(symbol.id, isWise)}
+                          disabled={!sceneState.symbolsClickable || hasBeenTried || isCurrentlyProcessing}  // ← Updated
+                        >
+                          <div className={`cave-symbol-item ${hasBeenTried ? 'tried-symbol' : ''}`}>
+                            <img src={symbol.image} alt={symbol.name} />
+                            <span className="symbol-name-text">{symbol.name}</span>
+
+                            {/* Show X for tried symbols */}
+                            {hasBeenTried && (
+                              <div style={{
+                                position: 'absolute',
+                                top: '5px',
+                                right: '5px',
+                                fontSize: '20px'
+                              }}>❌</div>
+                            )}
+
+
+                          </div>
+                        </ClickableElement>
+                      </div>
+                    );
+                  });
+                })()}
               </>
             )}
 
@@ -1849,7 +1822,7 @@ return symbols.map((symbol, index) => {
                   completedWord="Sarvada"
                   onDoorComplete={handleDoor2Complete}
                   onSyllablePlaced={handleDoor2SyllablePlaced}
-                    onSyllableAudio={playSyllable}  // ← ADD THIS LINE
+                  onSyllableAudio={playSyllable}  // ← ADD THIS LINE
 
                   sceneTheme="cave-of-secrets"
                   doorImage={doorImage}
@@ -1864,145 +1837,145 @@ return symbols.map((symbol, index) => {
               </div>
             )}
 
-         {/* Game 2 - Hide during celebration */}
-{sceneState.currentGame === 2 && 
- sceneState.phase === SCENE_PHASES.HELPER_CHOOSING && 
- !showCenteredSymbol && 
- !showPowerModal && (
-  <>
-                <div className="scenario-window game2-style">
-                  <img src={getCurrentScenarioImage()} alt="Helper mission" />
-                  {sceneState.showProblemDeclaration && (
-                    <div className="person-problem-speech">
-                      <p>{getCurrentGame2Scenario().problemDeclaration}</p>
-                    </div>
-                  )}
-                  {sceneState.characterMessage && (
-                    <div className="character-speech-bubble">
-                      <p>{sceneState.characterMessage}</p>
-                    </div>
-                  )}
-                </div>
+            {/* Game 2 - Hide during celebration */}
+            {sceneState.currentGame === 2 &&
+              sceneState.phase === SCENE_PHASES.HELPER_CHOOSING &&
+              !showCenteredSymbol &&
+              !showPowerModal && (
+                <>
+                  <div className="scenario-window game2-style">
+                    <img src={getCurrentScenarioImage()} alt="Helper mission" />
+                    {sceneState.showProblemDeclaration && (
+                      <div className="person-problem-speech">
+                        <p>{getCurrentGame2Scenario().problemDeclaration}</p>
+                      </div>
+                    )}
+                    {sceneState.characterMessage && (
+                      <div className="character-speech-bubble">
+                        <p>{sceneState.characterMessage}</p>
+                      </div>
+                    )}
+                  </div>
 // Update helper rendering (around line 1496-1507) with selection visual:
 
-{sceneState.symbolsVisible === 'clear' && 
-  getCurrentGame2Scenario().helpers.map((helper, index) => {
-    const isSelected = sceneState.selectedHelper === helper.id;
-    const isProcessing = game2ProcessingHelperRef.current === helper.id;
-    
-    return (
-      <div 
-        key={helper.id} 
-        className={`helper-symbol position-${index + 1}`}
-        style={{
-          // Once ANY helper selected, hide all others instantly
-          opacity: sceneState.selectedHelper && !isSelected ? 0 : 1,
-          transform: isSelected ? 'scale(1.2)' : 'scale(1)',
-          transition: 'all 0.3s ease',
-          pointerEvents: game2HelperSelectedRef.current ? 'none' : 'auto',  // Lock all after selection
-          filter: isSelected ? 'drop-shadow(0 0 20px #4ECDC4) brightness(1.3)' : 'none'
-        }}
-      >
-        <ClickableElement 
-          id={`helper-${helper.id}`} 
-          onClick={() => handleHelperClick(helper.id)}
-          disabled={game2HelperSelectedRef.current}  // Disable all after any selection
-        >
-          <div className="helper-symbol-item">
-            <img src={helper.image} alt={helper.name} />
-            <span>{helper.name}</span>
-            
-            {/* Show instant selection indicator */}
-            {isSelected && (
+                  {sceneState.symbolsVisible === 'clear' &&
+                    getCurrentGame2Scenario().helpers.map((helper, index) => {
+                      const isSelected = sceneState.selectedHelper === helper.id;
+                      const isProcessing = game2ProcessingHelperRef.current === helper.id;
+
+                      return (
+                        <div
+                          key={helper.id}
+                          className={`helper-symbol position-${index + 1}`}
+                          style={{
+                            // Once ANY helper selected, hide all others instantly
+                            opacity: sceneState.selectedHelper && !isSelected ? 0 : 1,
+                            transform: isSelected ? 'scale(1.2)' : 'scale(1)',
+                            transition: 'all 0.3s ease',
+                            pointerEvents: game2HelperSelectedRef.current ? 'none' : 'auto',  // Lock all after selection
+                            filter: isSelected ? 'drop-shadow(0 0 20px #4ECDC4) brightness(1.3)' : 'none'
+                          }}
+                        >
+                          <ClickableElement
+                            id={`helper-${helper.id}`}
+                            onClick={() => handleHelperClick(helper.id)}
+                            disabled={game2HelperSelectedRef.current}  // Disable all after any selection
+                          >
+                            <div className="helper-symbol-item">
+                              <img src={helper.image} alt={helper.name} />
+                              <span>{helper.name}</span>
+
+                              {/* Show instant selection indicator */}
+                              {isSelected && (
+                                <div style={{
+                                  position: 'absolute',
+                                  top: '-10px',
+                                  right: '-10px',
+                                  background: '#4ECDC4',
+                                  borderRadius: '50%',
+                                  width: '30px',
+                                  height: '30px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  fontSize: '18px',
+                                  animation: 'pop 0.3s ease-out',
+                                  boxShadow: '0 4px 12px rgba(78, 205, 196, 0.6)'
+                                }}>
+                                  ✓
+                                </div>
+                              )}
+                            </div>
+                          </ClickableElement>
+                        </div>
+                      );
+                    })
+                  }
+                </>
+              )}
+
+            {/* Helper Animation - STRICT CHECK ADDED */}
+            {sceneState.showHelperAnimation &&
+              sceneState.selectedHelper &&
+              sceneState.phase !== SCENE_PHASES.COMPLETE && ( // 🛡️ BLOCKS GHOST ANIMATION
+                <HelperSignatureAnimation
+                  helperId={sceneState.selectedHelper}
+                  fromPosition={{
+                    x: getCurrentHelperPosition(sceneState.selectedHelper).x,
+                    y: getCurrentHelperPosition(sceneState.selectedHelper).y
+                  }}
+                  toPosition={{ x: 50, y: 40 }}
+                  onAnimationComplete={handleHelperAnimationComplete}
+                  onAnimationStart={(id, name) => console.log(`🎭 ${name} started`)}
+                />
+              )}
+
+            {/* Ganesha Guidance Message */}
+            {sceneState.ganeshaGuidanceMessage && (
               <div style={{
-                position: 'absolute',
-                top: '-10px',
-                right: '-10px',
-                background: '#4ECDC4',
-                borderRadius: '50%',
-                width: '30px',
-                height: '30px',
+                position: 'fixed',
+                top: 0, left: 0, right: 0, bottom: 0,
+                background: 'rgba(0, 0, 0, 0.7)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '18px',
-                animation: 'pop 0.3s ease-out',
-                boxShadow: '0 4px 12px rgba(78, 205, 196, 0.6)'
+                zIndex: 150
               }}>
-                ✓
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '20px'
+                }}>
+                  {/* ✅ ADD GANESHA IMAGE */}
+                  <img
+                    src={ganeshaIcon}
+                    alt="Ganesha"
+                    style={{
+                      width: '100px',
+                      height: '100px',
+                      filter: 'drop-shadow(0 0 30px rgba(255, 215, 0, 0.8))',
+                      animation: 'ganeshaGlow 2s ease-in-out infinite alternate'
+                    }}
+                  />
+
+                  {/* Message Box */}
+                  <div style={{
+                    background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                    padding: '30px 50px',
+                    borderRadius: '25px',
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                    color: 'white',
+                    textAlign: 'center',
+                    boxShadow: '0 0 40px rgba(255, 215, 0, 0.8)',
+                    animation: 'fadeInScale 0.5s ease-out'
+                  }}>
+                    {sceneState.ganeshaGuidanceMessage}
+                  </div>
+                </div>
               </div>
             )}
-          </div>
-        </ClickableElement>
-      </div>
-    );
-  })
-}
-              </>
-            )}
-
-{/* Helper Animation - STRICT CHECK ADDED */}
-{sceneState.showHelperAnimation && 
- sceneState.selectedHelper && 
- sceneState.phase !== SCENE_PHASES.COMPLETE && ( // 🛡️ BLOCKS GHOST ANIMATION
-  <HelperSignatureAnimation
-    helperId={sceneState.selectedHelper}
-    fromPosition={{ 
-      x: getCurrentHelperPosition(sceneState.selectedHelper).x, 
-      y: getCurrentHelperPosition(sceneState.selectedHelper).y 
-    }}
-    toPosition={{ x: 50, y: 40 }}
-    onAnimationComplete={handleHelperAnimationComplete}
-    onAnimationStart={(id, name) => console.log(`🎭 ${name} started`)}
-  />
-)}
-
-{/* Ganesha Guidance Message */}
-{sceneState.ganeshaGuidanceMessage && (
-  <div style={{
-    position: 'fixed',
-    top: 0, left: 0, right: 0, bottom: 0,
-    background: 'rgba(0, 0, 0, 0.7)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 150
-  }}>
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      gap: '20px'
-    }}>
-      {/* ✅ ADD GANESHA IMAGE */}
-      <img 
-        src={ganeshaIcon}
-        alt="Ganesha"
-        style={{
-          width: '100px',
-          height: '100px',
-          filter: 'drop-shadow(0 0 30px rgba(255, 215, 0, 0.8))',
-          animation: 'ganeshaGlow 2s ease-in-out infinite alternate'
-        }}
-      />
-      
-      {/* Message Box */}
-      <div style={{
-        background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-        padding: '30px 50px',
-        borderRadius: '25px',
-        fontSize: '24px',
-        fontWeight: 'bold',
-        color: 'white',
-        textAlign: 'center',
-        boxShadow: '0 0 40px rgba(255, 215, 0, 0.8)',
-        animation: 'fadeInScale 0.5s ease-out'
-      }}>
-        {sceneState.ganeshaGuidanceMessage}
-      </div>
-    </div>
-  </div>
-)}
 
             {/* Centered Symbol Celebration 
       {showCenteredSymbol && (
@@ -2246,7 +2219,7 @@ return symbols.map((symbol, index) => {
             <RescueModal
               key={currentRescueWord} // ✅ ADD THIS LINE - Forces remount for each word
 
-         show={showRescueModal}
+              show={showRescueModal}
               wordData={currentRescueWord ? RESCUE_CONFIGS[currentRescueWord] : null}
               onComplete={handleRescueComplete}
               profileName={profileName}
@@ -2271,188 +2244,188 @@ return symbols.map((symbol, index) => {
               </div>
             )}
 
-    {showSparkle === 'wise-choice' && (
-  <SparkleAnimation
-    type="magic"
-    count={30}  // More sparkles for correct!
-    color="#4ECDC4"  // Green/teal
-    size={12}
-    duration={2000}
-    fadeOut={true}
-    area="full"
+            {showSparkle === 'wise-choice' && (
+              <SparkleAnimation
+                type="magic"
+                count={30}  // More sparkles for correct!
+                color="#4ECDC4"  // Green/teal
+                size={12}
+                duration={2000}
+                fadeOut={true}
+                area="full"
+              />
+            )}
+
+            {showSparkle === 'unwise-choice' && (
+              <SparkleAnimation
+                type="magic"
+                count={15}  // Fewer sparkles for wrong
+                color="#FF6B6B"  // Red/orange
+                size={8}
+                duration={1000}  // Shorter duration
+                fadeOut={true}
+                area="symbol"  // Just around the symbol, not full screen
+              />
+            )}
+
+
+
+            {/* ==================== DISCOVERY 1: SARVAKARYESHU ==================== */}
+            {showDiscoveryFlip1 && (
+              <SimpleDiscoveryOverlay
+                // STAGE 1: Discovery Moment
+                celebrationTitle="Sarvakaryeshu Mastered!"
+                celebrationText={""Self-Help Power…"\n\nYou found the right Ganesha power for every task! Sarvakaryeshu means 'In All Activities'—you can handle anything!"}
+            celebrationImage={doorImage} // or one of the game scenario images
+
+            // STAGE 2: Mastery Power Reveal
+            powerTitle="Mastery Unlocked!"
+            powerText="You have all the tools you need! Use your powers to finish tasks, try new things, and do your best every day."
+            powerIcon={sarvakaryeshuSymbol}
+
+            buttonText="I Can Do It!"
+            onComplete={() => {
+              console.log("Discovery 1 complete!");
+              setShowDiscoveryFlip1(false);
+
+              // Update sidebar + move to Door 2
+              sceneActions.updateState({
+                phase: SCENE_PHASES.DOOR2_ACTIVE,
+                learnedWords: {
+                  ...sceneState.learnedWords,
+                  sarvakaryeshu: { learned: true, scene: 4 }
+                }
+              });
+            }}
+            showSparkles={true}
   />
 )}
 
-{showSparkle === 'unwise-choice' && (
-  <SparkleAnimation
-    type="magic"
-    count={15}  // Fewer sparkles for wrong
-    color="#FF6B6B"  // Red/orange
-    size={8}
-    duration={1000}  // Shorter duration
-    fadeOut={true}
-    area="symbol"  // Just around the symbol, not full screen
+            {/* ==================== DISCOVERY 2: SARVADA ==================== */}
+            {showDiscoveryFlip2 && (
+              <SimpleDiscoveryOverlay
+                // STAGE 1: Discovery Moment
+                celebrationTitle="Sarvada Revealed!"
+                celebrationText={""Always Ready…"\n\nYou helped your friends! Sarvada means 'Always'—your powers work every day, for everyone."}
+            celebrationImage={doorImage} // or a helper image
+
+            // STAGE 2: Infinite Wisdom Power Reveal
+            powerTitle="Infinite Wisdom Unlocked!"
+            powerText="Ganesha's wisdom is with you—always. Use your powers to be a kind friend, a good helper, and a brave leader."
+            powerIcon={sarvadaSymbol}
+
+            buttonText="The Journey Continues!"
+            onComplete={() => {
+              console.log("Discovery 2 complete!");
+              setShowDiscoveryFlip2(false);
+
+              // Update sidebar + complete scene
+              sceneActions.updateState({
+                phase: SCENE_PHASES.COMPLETE,
+                completed: true,
+                learnedWords: {
+                  sarvakaryeshu: { learned: true, scene: 4 },
+                  sarvada: { learned: true, scene: 4 }
+                }
+              });
+
+              // Show completion screen
+              setShowSparkle('final-fireworks');
+            }}
+
+
+            showSparkles={true}
   />
 )}
 
- 
+            {/* ==================== RESUME POPUP ==================== */}
+            {showResumePopup && (
+              <div style={{
+                position: 'fixed', top: '20%', left: '50%', transform: 'translateX(-50%)',
+                zIndex: 1000, background: 'linear-gradient(135deg, #6A1B9A 0%, #AB47BC 100%)',
+                color: 'white', padding: '20px 40px', borderRadius: '15px',
+                fontFamily: "'Baloo 2', cursive", fontSize: '1.4rem',
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.3)', border: '3px solid #FFD700',
+                textAlign: 'center', animation: 'slideDown 0.3s ease'
+              }}>
+                {resumeMessage}
+              </div>
+            )}
 
-{/* ==================== DISCOVERY 1: SARVAKARYESHU ==================== */}
-{showDiscoveryFlip1 && (
-  <SimpleDiscoveryOverlay
-    // STAGE 1: Discovery Moment
-    celebrationTitle="Sarvakaryeshu Mastered!"
-    celebrationText={""Self-Help Power…"\n\nYou found the right Ganesha power for every task! Sarvakaryeshu means 'In All Activities'—you can handle anything!"}
-    celebrationImage={doorImage} // or one of the game scenario images
-    
-    // STAGE 2: Mastery Power Reveal
-    powerTitle="Mastery Unlocked!"
-    powerText="You have all the tools you need! Use your powers to finish tasks, try new things, and do your best every day."
-    powerIcon={sarvakaryeshuSymbol}
-    
-    buttonText="I Can Do It!"
-    onComplete={() => {
-      console.log("Discovery 1 complete!");
-      setShowDiscoveryFlip1(false);
-      
-      // Update sidebar + move to Door 2
-      sceneActions.updateState({ 
-        phase: SCENE_PHASES.DOOR2_ACTIVE,
-        learnedWords: {
-          ...sceneState.learnedWords,
-          sarvakaryeshu: { learned: true, scene: 4 }
-        }
-      });
-    }}
-    showSparkles={true}
-  />
-)}
+            {sceneState.welcomeShown && !showSceneCompletion && (
+              <BackToMapButton onNavigate={onNavigate} />
+            )}
 
-{/* ==================== DISCOVERY 2: SARVADA ==================== */}
-{showDiscoveryFlip2 && (
-  <SimpleDiscoveryOverlay
-    // STAGE 1: Discovery Moment
-    celebrationTitle="Sarvada Revealed!"
-    celebrationText={""Always Ready…"\n\nYou helped your friends! Sarvada means 'Always'—your powers work every day, for everyone."}
-    celebrationImage={doorImage} // or a helper image
-    
-    // STAGE 2: Infinite Wisdom Power Reveal
-    powerTitle="Infinite Wisdom Unlocked!"
-    powerText="Ganesha's wisdom is with you—always. Use your powers to be a kind friend, a good helper, and a brave leader."
-    powerIcon={sarvadaSymbol}
-    
-    buttonText="The Journey Continues!"
-    onComplete={() => {
-      console.log("Discovery 2 complete!");
-      setShowDiscoveryFlip2(false);
-      
-      // Update sidebar + complete scene
-      sceneActions.updateState({ 
-        phase: SCENE_PHASES.COMPLETE,
-        completed: true,
-        learnedWords: {
-          sarvakaryeshu: { learned: true, scene: 4 },
-          sarvada: { learned: true, scene: 4 }
-        }
-      });
-      
-      // Show completion screen
-   setShowSparkle('final-fireworks');
-    }}
+            {/* Final Fireworks */}
+            {showSparkle === 'final-fireworks' && (
+              <>
+                {/* ✅ ADD GANESHA IMAGE BEHIND FIREWORKS */}
+                <div style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  zIndex: 29, // Just below fireworks (which is 30)
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '20px'
+                }}>
+                  <img
+                    src={ganeshaIcon}
+                    alt="Ganesha Blessing"
+                    style={{
+                      width: '150px',
+                      height: '150px',
+                      filter: 'drop-shadow(0 0 40px rgba(255, 215, 0, 1))',
+                      animation: 'ganeshaBlessing 3s ease-in-out infinite alternate'
+                    }}
+                  />
 
-    
-    showSparkles={true}
-  />
-)}
+                  <div style={{
+                    background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                    color: 'white',
+                    padding: '20px 40px',
+                    borderRadius: '25px',
+                    fontSize: '28px',
+                    fontWeight: 'bold',
+                    textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                    boxShadow: '0 0 30px rgba(255, 215, 0, 0.8)'
+                  }}>
+                    Divine Blessings Complete! 🙏✨
+                  </div>
+                </div>
 
-{/* ==================== RESUME POPUP ==================== */}
-{showResumePopup && (
-  <div style={{
-    position: 'fixed', top: '20%', left: '50%', transform: 'translateX(-50%)',
-    zIndex: 1000, background: 'linear-gradient(135deg, #6A1B9A 0%, #AB47BC 100%)',
-    color: 'white', padding: '20px 40px', borderRadius: '15px',
-    fontFamily: "'Baloo 2', cursive", fontSize: '1.4rem',
-    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.3)', border: '3px solid #FFD700',
-    textAlign: 'center', animation: 'slideDown 0.3s ease'
-  }}>
-    {resumeMessage}
-  </div>
-)}
+                {/* Fireworks Component */}
+                <Fireworks
+                  show={true}
+                  duration={8000}
+                  count={25}
+                  colors={['#FFD700', '#FF8C00', '#FFA500', '#DAA520', '#B8860B']}
+                  onComplete={() => {
+                    console.log('🎯 Sarvakaryeshu-Sarvada fireworks complete');
+                    setShowSparkle(null);
 
-{sceneState.welcomeShown && !showSceneCompletion && (
-  <BackToMapButton onNavigate={onNavigate} />
-)}
+                    const profileId = localStorage.getItem('activeProfileId');
+                    if (profileId) {
+                      GameStateManager.saveGameState('cave-of-secrets', 'sarvakaryeshu-sarvada', {
+                        completed: true,
+                        stars: 8,
+                        sanskritWords: { sarvakaryeshu: true, sarvada: true },
+                        learnedWords: sceneState.learnedWords || {},
+                        phase: 'complete',
+                        timestamp: Date.now()
+                      });
 
-{/* Final Fireworks */}
-{showSparkle === 'final-fireworks' && (
-  <>
-    {/* ✅ ADD GANESHA IMAGE BEHIND FIREWORKS */}
-    <div style={{
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      zIndex: 29, // Just below fireworks (which is 30)
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      gap: '20px'
-    }}>
-      <img 
-        src={ganeshaIcon}
-        alt="Ganesha Blessing"
-        style={{
-          width: '150px',
-          height: '150px',
-          filter: 'drop-shadow(0 0 40px rgba(255, 215, 0, 1))',
-          animation: 'ganeshaBlessing 3s ease-in-out infinite alternate'
-        }}
-      />
-      
-      <div style={{
-        background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-        color: 'white',
-        padding: '20px 40px',
-        borderRadius: '25px',
-        fontSize: '28px',
-        fontWeight: 'bold',
-        textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-        boxShadow: '0 0 30px rgba(255, 215, 0, 0.8)'
-      }}>
-        Divine Blessings Complete! 🙏✨
-      </div>
-    </div>
-    
-    {/* Fireworks Component */}
-    <Fireworks
-      show={true}
-      duration={8000}
-      count={25}
-      colors={['#FFD700', '#FF8C00', '#FFA500', '#DAA520', '#B8860B']}
-      onComplete={() => {
-        console.log('🎯 Sarvakaryeshu-Sarvada fireworks complete');
-        setShowSparkle(null);
-        
-        const profileId = localStorage.getItem('activeProfileId');
-        if (profileId) {
-          GameStateManager.saveGameState('cave-of-secrets', 'sarvakaryeshu-sarvada', {
-            completed: true,
-            stars: 8,
-            sanskritWords: { sarvakaryeshu: true, sarvada: true },
-            learnedWords: sceneState.learnedWords || {},
-            phase: 'complete',
-            timestamp: Date.now()
-          });
-          
-          localStorage.removeItem(`temp_session_${profileId}_cave-of-secrets_sarvakaryeshu-sarvada`);
-          SimpleSceneManager.clearCurrentScene();
-        }
-        
-        setShowSceneCompletion(true);
-      }}
-    />
-  </>
-)}
+                      localStorage.removeItem(`temp_session_${profileId}_cave-of-secrets_sarvakaryeshu-sarvada`);
+                      SimpleSceneManager.clearCurrentScene();
+                    }
+
+                    setShowSceneCompletion(true);
+                  }}
+                />
+              </>
+            )}
 
             {/* Scene Completion */}
             <SceneCompletionCelebration
@@ -2485,7 +2458,7 @@ return symbols.map((symbol, index) => {
                 sarvakaryeshu: appSarvakaryeshu,
                 sarvada: appSarvada
               }}
-                          nextSceneName="Cave of Secrets"
+              nextSceneName="Cave of Secrets"
 
               sceneId="sarvakaryeshu-sarvada"
               onComplete={onComplete}
@@ -2504,21 +2477,21 @@ return symbols.map((symbol, index) => {
                     learnedWords: sceneState.learnedWords || {},
                     chants: { sarvakaryeshu: true, sarvada: true }
                   });
-                     }
-                
+                }
+
                 setTimeout(() => {
                   SimpleSceneManager.setCurrentScene('cave-of-secrets', 'sarvakaryeshu-sarvada', false, false);
                   onNavigate?.('scene-complete-continue');
                 }, 100);
               }}
               onExploreZones={() => {
-  setShowSceneCompletion(false);
-  onNavigate?.('zone-welcome');
-}}
+                setShowSceneCompletion(false);
+                onNavigate?.('zone-welcome');
+              }}
             />
 
 
-    {/* Navigation - Always on top */}
+            {/* Navigation - Always on top */}
             <div style={{ position: 'relative', zIndex: 10000 }}>
               <TocaBocaNav
                 onHome={() => {
@@ -2712,7 +2685,7 @@ return symbols.map((symbol, index) => {
               }
             `}</style>*/}
             {/* Add this to your CSS section */}
-<style>{`
+            <style>{`
   @keyframes bannerBounce {
     0%, 100% { 
       transform: translateX(-50%) translateY(0); 
