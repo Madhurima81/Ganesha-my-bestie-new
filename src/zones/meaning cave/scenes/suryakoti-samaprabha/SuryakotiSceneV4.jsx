@@ -27,6 +27,7 @@ import ProgressiveHintSystem from '../../../../lib/components/interactive/Progre
 import SymbolSceneIntegration from '../../../../lib/components/animation/SymbolSceneIntegration';
 import MagicalCardFlip from '../../../../lib/components/animation/MagicalCardFlip';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
+import HomeButton from '../../../../lib/components/ui/HomeButton';
 
 // Cave-specific components
 import SanskritSidebar from '../../../../lib/components/feedback/SanskritSidebar';
