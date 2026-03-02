@@ -2843,7 +2843,7 @@ if (currentMissionSymbol === 'nirvighnam') {
               }}
               onExploreZones={() => {
   setShowSceneCompletion(false);
-  onNavigate?.('zones');
+  onNavigate?.('zone-welcome');
 }}
             />
 
