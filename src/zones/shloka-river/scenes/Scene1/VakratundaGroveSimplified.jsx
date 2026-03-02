@@ -619,20 +619,17 @@ const VakratundaGroveContent = ({
               </div>
             )}
 
-            {/* 2. VISUAL PAUSE OVERLAY - Dims/blurs background when paused */}
+            {/* ── Pause blur overlay — REMOVED (replaced by home icon) ──
             {showPauseMenu && !isFinalCelebrationActive && (
               <div style={{
-                position: 'fixed',
-                inset: 0,
+                position: 'fixed', inset: 0,
                 background: 'rgba(0, 0, 0, 0.3)',
-                backdropFilter: 'blur(3px)',
-                WebkitBackdropFilter: 'blur(3px)', // Safari support
-                zIndex: 999,
-                pointerEvents: 'none',
-                transition: 'opacity 0.2s ease-out',
-                opacity: 1
+                backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)',
+                zIndex: 999, pointerEvents: 'none',
+                transition: 'opacity 0.2s ease-out', opacity: 1
               }} />
             )}
+            ── End blur overlay ── */}
 
             {/* 3. PAUSE MENU - Using shared component */}
             <PauseMenu
