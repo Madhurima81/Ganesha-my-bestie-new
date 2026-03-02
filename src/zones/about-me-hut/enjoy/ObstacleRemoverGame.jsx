@@ -17,10 +17,13 @@ import SceneManager from "../../../lib/components/scenes/SceneManager";
 import { getOpeningModal } from '../../../lib/config/content';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 
+// Shared Components
+import OpeningModal from '../../shared/components/OpeningModal';
+
 // Import Unified Design System
 import Button from '../../../lib/components/ui/Button/Button';
 import '../../../lib/styles/zone-themes.css';
-import '../../../lib/styles/animations.css'; 
+import '../../../lib/styles/animations.css';
 
 // Import images
 import babyGaneshaImg from './assets/images/baby-ganesha.png';
@@ -66,25 +69,25 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
         sceneId={sceneId}
         initialState={{
           gamePhase: 'intro',
-          
+
           // --- COUNTERS & INTERACTIVE STATES ---
           wish1Taps: 0,
-          
+
           wish2Taps: 0,
           bowlStates: [false, false, false], // Track individual bowls
-          
+
           wish3Taps: 0,
           parkStates: [false, false, false], // Track individual park items (Grass, Butterfly, Slide)
-          
+
           trunkTaps: 0,
-          
+
           // --- CHILD DATA ---
           childDreamDrawing: null, // The saved image string
-          
+
           // --- MODAL SAVING (For Reloads) ---
           currentModal: null, // 'drawing'
           draftData: null,    // Temporary drawing data
-          
+
           // --- COMPLETION ---
           stars: 3,
           completed: false,
@@ -131,7 +134,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const getDiscoveries = () => {
     const items = [];
     const phase = sceneState.gamePhase;
-    
+
     // Logic to show progress badges in header
     const phasesAfterWish1 = ['wish1-complete', 'wish2-intro', 'wish2-active', 'wish2-complete', 'wish3-intro', 'wish3-active', 'wish3-complete', 'all-wishes-complete', 'dream-intro', 'dream-drawing', 'dream-clouded', 'dream-clearing', 'dream-revealed', 'comparison-card', 'ending'];
     if (phasesAfterWish1.includes(phase)) items.push({ name: 'Happiness', emoji: '🌍' });
@@ -152,7 +155,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     if (isReload && !reloadHandledRef.current) {
       reloadHandledRef.current = true;
       const { gamePhase, wish1Taps, wish3Taps, trunkTaps, bowlStates, currentModal, draftData } = sceneState;
-      
+
       console.log("🔄 Reload detected. Phase:", gamePhase, "Modal:", currentModal);
       if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
 
@@ -167,63 +170,63 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       // Add this BEFORE checking gamePhase values:
 
-// CHECK TAP COMPLETION - force phase if taps complete but phase not updated
-if (wish1Taps === 3 && gamePhase === 'wish1-active') {
-  console.log("🔧 Reload fix: Forcing wish1-complete");
-  sceneActions.updateState({ gamePhase: 'wish1-complete' });
-  return;
-}
+      // CHECK TAP COMPLETION - force phase if taps complete but phase not updated
+      if (wish1Taps === 3 && gamePhase === 'wish1-active') {
+        console.log("🔧 Reload fix: Forcing wish1-complete");
+        sceneActions.updateState({ gamePhase: 'wish1-complete' });
+        return;
+      }
 
-if (bowlStates.filter(Boolean).length === 3 && gamePhase === 'wish2-active') {
-  console.log("🔧 Reload fix: Forcing wish2-complete");
-  sceneActions.updateState({ gamePhase: 'wish2-complete' });
-  return;
-}
+      if (bowlStates.filter(Boolean).length === 3 && gamePhase === 'wish2-active') {
+        console.log("🔧 Reload fix: Forcing wish2-complete");
+        sceneActions.updateState({ gamePhase: 'wish2-complete' });
+        return;
+      }
 
-if (wish3Taps === 3 && gamePhase === 'wish3-active') {
-  console.log("🔧 Reload fix: Forcing wish3-complete");
-  sceneActions.updateState({ gamePhase: 'wish3-complete' });
-  return;
-}
+      if (wish3Taps === 3 && gamePhase === 'wish3-active') {
+        console.log("🔧 Reload fix: Forcing wish3-complete");
+        sceneActions.updateState({ gamePhase: 'wish3-complete' });
+        return;
+      }
 
-if (trunkTaps === 3 && (gamePhase === 'dream-clouded' || gamePhase === 'dream-clearing')) {
-  console.log("🔧 Reload fix: Forcing dream-revealed");
-  sceneActions.updateState({ gamePhase: 'dream-revealed' });
-  return;
-}
+      if (trunkTaps === 3 && (gamePhase === 'dream-clouded' || gamePhase === 'dream-clearing')) {
+        console.log("🔧 Reload fix: Forcing dream-revealed");
+        sceneActions.updateState({ gamePhase: 'dream-revealed' });
+        return;
+      }
 
       // Add this right after the drawing modal check:
 
-// 2. CHECK FOR WISH COMPLETION PHASES
-if (gamePhase === 'wish1-complete') {
-  setResumeMessage("Welcome back! Your first wish is complete! ✨");
-  setShowResumePopup(true);
-  resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-  // Let the auto-transition useEffect handle moving to wish2-intro
-  return;
-}
+      // 2. CHECK FOR WISH COMPLETION PHASES
+      if (gamePhase === 'wish1-complete') {
+        setResumeMessage("Welcome back! Your first wish is complete! ✨");
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
+        // Let the auto-transition useEffect handle moving to wish2-intro
+        return;
+      }
 
-if (gamePhase === 'wish2-complete') {
-  setResumeMessage("Welcome back! Two wishes complete! ✨");
-  setShowResumePopup(true);
-  resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-  return;
-}
+      if (gamePhase === 'wish2-complete') {
+        setResumeMessage("Welcome back! Two wishes complete! ✨");
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
+        return;
+      }
 
-if (gamePhase === 'wish3-complete') {
-  setResumeMessage("Welcome back! All three wishes complete! ✨");
-  setShowResumePopup(true);
-  resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-  return;
-}
+      if (gamePhase === 'wish3-complete') {
+        setResumeMessage("Welcome back! All three wishes complete! ✨");
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
+        return;
+      }
 
-if (gamePhase === 'all-wishes-complete') {
-  setResumeMessage("All wishes complete! Time to dream! ✨");
-  setShowResumePopup(true);
-  resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-  // Auto-transition useEffect will handle moving to dream-clouded
-  return;
-}
+      if (gamePhase === 'all-wishes-complete') {
+        setResumeMessage("All wishes complete! Time to dream! ✨");
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
+        // Auto-transition useEffect will handle moving to dream-clouded
+        return;
+      }
 
 
       // 2. PHASE MESSAGES
@@ -239,9 +242,9 @@ if (gamePhase === 'all-wishes-complete') {
       if (gamePhase === 'wish2-active') {
         const filled = bowlStates.filter(Boolean).length;
         if (filled > 0) {
-            setResumeMessage(`Great! You've filled ${filled}/3 bowls!`);
-            setShowResumePopup(true);
-            resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
+          setResumeMessage(`Great! You've filled ${filled}/3 bowls!`);
+          setShowResumePopup(true);
+          resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
         }
         return;
       }
@@ -268,19 +271,19 @@ if (gamePhase === 'all-wishes-complete') {
     const { gamePhase } = sceneState;
 
     if (gamePhase === 'wish1-complete') {
-        timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'wish2-intro' }); }, 4500);
+      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'wish2-intro' }); }, 4500);
     }
     else if (gamePhase === 'wish2-complete') {
-        timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'wish3-intro' }); }, 4500);
+      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'wish3-intro' }); }, 4500);
     }
     else if (gamePhase === 'wish3-complete') {
-        timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'all-wishes-complete' }); }, 4500);
+      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'all-wishes-complete' }); }, 4500);
     }
     else if (gamePhase === 'dream-revealed') {
-        timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'comparison-card' }); }, 2500);
+      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'comparison-card' }); }, 2500);
     }
     else if (gamePhase === 'ending') {
-        timer = setTimeout(() => { sceneActions.updateState({ showingCompletionScreen: true }); }, 1500);
+      timer = setTimeout(() => { sceneActions.updateState({ showingCompletionScreen: true }); }, 1500);
     }
 
     return () => clearTimeout(timer);
@@ -297,7 +300,7 @@ if (gamePhase === 'all-wishes-complete') {
     if (sceneState.wish1Taps >= 3) return;
     const newTaps = sceneState.wish1Taps + 1;
     sceneActions.updateState({ wish1Taps: newTaps });
-    
+
     if (newTaps >= 3) {
       setTimeout(() => { sceneActions.updateState({ gamePhase: 'wish1-complete' }); }, 3000);
     }
@@ -321,7 +324,7 @@ if (gamePhase === 'all-wishes-complete') {
     if (sceneState.wish3Taps >= 3) return;
     const newTaps = sceneState.wish3Taps + 1;
     sceneActions.updateState({ wish3Taps: newTaps });
-    
+
     if (newTaps >= 3) {
       setTimeout(() => { sceneActions.updateState({ gamePhase: 'wish3-complete' }); }, 3000);
     }
@@ -333,18 +336,18 @@ if (gamePhase === 'all-wishes-complete') {
     const newStates = [...sceneState.parkStates];
     newStates[index] = true;
     const count = newStates.filter(Boolean).length;
-    
+
     sceneActions.updateState({ parkStates: newStates, wish3Taps: count });
-    
+
     if (count === 3) {
-        setTimeout(() => { sceneActions.updateState({ gamePhase: 'wish3-complete' }); }, 1000);
+      setTimeout(() => { sceneActions.updateState({ gamePhase: 'wish3-complete' }); }, 1000);
     }
   };
 
   const handleTrunkTap = () => {
     const newTaps = sceneState.trunkTaps + 1;
     sceneActions.updateState({ trunkTaps: newTaps, gamePhase: 'dream-clearing' });
-    
+
     if (newTaps >= 3) {
       setTimeout(() => { sceneActions.updateState({ gamePhase: 'dream-revealed' }); }, 1500);
     }
@@ -355,10 +358,10 @@ if (gamePhase === 'all-wishes-complete') {
   const handleDreamDrawingSave = (data) => {
     setShowDrawingPad(false);
     sceneActions.updateState({
-        childDreamDrawing: data.image,
-        gamePhase: 'dream-clouded',
-        currentModal: null, // Clear modal state
-        draftData: null
+      childDreamDrawing: data.image,
+      gamePhase: 'dream-clouded',
+      currentModal: null, // Clear modal state
+      draftData: null
     });
   };
 
@@ -377,31 +380,20 @@ if (gamePhase === 'all-wishes-complete') {
       )}
 
       {/* Story Progress Header */}
-      {!sceneState.gamePhase.startsWith('dream') && 
-       sceneState.gamePhase !== 'comparison-card' && 
-       sceneState.gamePhase !== 'ending' && (
-        <StoryProgressHeader discoveries={getDiscoveries()} isChildMode={false} />
-      )}
+      {!sceneState.gamePhase.startsWith('dream') &&
+        sceneState.gamePhase !== 'comparison-card' &&
+        sceneState.gamePhase !== 'ending' && (
+          <StoryProgressHeader discoveries={getDiscoveries()} isChildMode={false} />
+        )}
 
-      {/* Intro */}
       {sceneState.gamePhase === 'intro' && (
-        <div className="game-modal-overlay" style={(() => { const theme = getZoneTheme('about-me-hut'); return { '--modal-card-bg': theme.parentBg, '--modal-text-primary': theme.textPrimary, '--modal-btn-bg': theme.buttonActiveBg, '--modal-btn-shadow': theme.glowColor }; })()}>
-          <div className="game-modal-content">
-            <div className="game-modal-character"><img src={babyGaneshaImg} alt="Ganesha" /></div>
-            <div className="dream-card">
-              <h1 className="dream-title">{openingModalContent?.title || 'Our Big Wishes! 🌟'}</h1>
-              <p className="dream-text">
-                {openingModalContent?.description || "Let's make them come true together."}
-              </p>
-              <div className="dream-icon-row">
-                <div className="dream-icon-item"><img src={wishIconEarth} alt="Earth" className="intro-wish-icon" /></div>
-                <div className="dream-icon-item"><img src={wishIconShare} alt="Sharing" className="intro-wish-icon" /></div>
-                <div className="dream-icon-item"><img src={wishIconFlower} alt="Nature" className="intro-wish-icon" /></div>
-              </div>
-              <button className="dream-btn" onClick={handleStartGame}>{openingModalContent?.buttonText || "Yes! Let's do it together 🌱"}</button>
-            </div>
-          </div>
-        </div>
+        <OpeningModal
+          zoneId="about-me-hut"
+          sceneId="dreams-wishes"
+          onStart={handleStartGame}
+          characterImg={babyGaneshaImg}
+          showButton={true}
+        />
       )}
 
       {/* Wish 1 Intro */}
@@ -430,13 +422,13 @@ if (gamePhase === 'all-wishes-complete') {
           <div className="wish-instruction-bubble">Tap the earth 3 times to send smiles! ({sceneState.wish1Taps}/3)</div>
           <div className="wish-interactive-container">
             <div className="earth-container" onClick={handleWish1Tap}>
-                <img src={wishEarthSad} alt="Sad" className="earth-image sad" style={{ opacity: sceneState.wish1Taps === 0 ? 1 : sceneState.wish1Taps === 1 ? 0.6 : sceneState.wish1Taps === 2 ? 0.3 : 0 }}/>
-                <img src={wishEarthHappy} alt="Happy" className={`earth-image happy ${sceneState.wish1Taps >= 3 ? 'complete-glow-pulse' : ''}`} style={{ opacity: sceneState.wish1Taps === 0 ? 0 : sceneState.wish1Taps === 1 ? 0.4 : sceneState.wish1Taps === 2 ? 0.7 : 1 }}/>
+              <img src={wishEarthSad} alt="Sad" className="earth-image sad" style={{ opacity: sceneState.wish1Taps === 0 ? 1 : sceneState.wish1Taps === 1 ? 0.6 : sceneState.wish1Taps === 2 ? 0.3 : 0 }} />
+              <img src={wishEarthHappy} alt="Happy" className={`earth-image happy ${sceneState.wish1Taps >= 3 ? 'complete-glow-pulse' : ''}`} style={{ opacity: sceneState.wish1Taps === 0 ? 0 : sceneState.wish1Taps === 1 ? 0.4 : sceneState.wish1Taps === 2 ? 0.7 : 1 }} />
             </div>
             <div className="faces-container">
-                {Array.from({length: 6}).map((_, i) => (
+              {Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="face-emoji" style={{ transform: `rotate(${i * 60}deg) translate(160px) rotate(-${i * 60}deg)`, opacity: sceneState.wish1Taps >= 2 ? 0.6 : 1, transition: 'all 0.6s ease' }}>{sceneState.wish1Taps >= 3 ? '😊' : sceneState.wish1Taps >= 2 ? '😐' : '😢'}</div>
-                ))}
+              ))}
             </div>
           </div>
         </div>
@@ -449,7 +441,7 @@ if (gamePhase === 'all-wishes-complete') {
           <div className="success-message-large">You made the world smile! 😊✨</div>
           <div className="soft-thank-you">Thank you for helping me 💛</div>
           <div className="wish-checkmark">🌱 1 of 3 wishes complete</div>
-          <div className="celebration-elements">{Array.from({length: 15}).map((_, i) => <div key={i} className="floating-element" style={{left: `${Math.random() * 100}%`, animationDelay: `${Math.random() * 2}s`}}>😊</div>)}</div>
+          <div className="celebration-elements">{Array.from({ length: 15 }).map((_, i) => <div key={i} className="floating-element" style={{ left: `${Math.random() * 100}%`, animationDelay: `${Math.random() * 2}s` }}>😊</div>)}</div>
         </div>
       )}
 
@@ -497,7 +489,7 @@ if (gamePhase === 'all-wishes-complete') {
           <div className="success-message-large">You filled hearts with sharing! ✨</div>
           <div className="soft-thank-you">Thank you for caring so much 💛</div>
           <div className="wish-checkmark">🌱 2 of 3 wishes complete</div>
-          <div className="celebration-elements">{Array.from({length: 15}).map((_, i) => <div key={i} className="floating-element" style={{left: `${Math.random() * 100}%`, animationDelay: `${Math.random() * 2}s`}}>❤️</div>)}</div>
+          <div className="celebration-elements">{Array.from({ length: 15 }).map((_, i) => <div key={i} className="floating-element" style={{ left: `${Math.random() * 100}%`, animationDelay: `${Math.random() * 2}s` }}>❤️</div>)}</div>
         </div>
       )}
 
@@ -529,9 +521,9 @@ if (gamePhase === 'all-wishes-complete') {
             <div className={`park-scene ${sceneState.wish3Taps >= 1 ? 'park-tap1' : ''}`} onClick={handleWish3Tap}>
               <img src={wishGrassDry} alt="Dry" className="park-ground-image dry" style={{ opacity: sceneState.wish3Taps === 0 ? 1 : 0.3 }} />
               <img src={wishGrassGreen} alt="Green" className={`park-ground-image green ${sceneState.wish3Taps >= 3 ? 'complete-glow-pulse' : ''}`} style={{ opacity: sceneState.wish3Taps === 0 ? 0 : 1 }} />
-              
-              {sceneState.wish3Taps >= 1 && <div className="flowers-container">{['🌸', '🌺', '🌻'].map((fl, i) => <div key={i} className="flower pop-in" style={{left: `${20+i*20}%`}}>{fl}</div>)}</div>}
-              {sceneState.wish3Taps >= 2 && <div className="butterflies-container">{['🦋', '🦋'].map((bf, i) => <div key={i} className="butterfly flutter" style={{left: `${30+i*30}%`}}>{bf}</div>)}</div>}
+
+              {sceneState.wish3Taps >= 1 && <div className="flowers-container">{['🌸', '🌺', '🌻'].map((fl, i) => <div key={i} className="flower pop-in" style={{ left: `${20 + i * 20}%` }}>{fl}</div>)}</div>}
+              {sceneState.wish3Taps >= 2 && <div className="butterflies-container">{['🦋', '🦋'].map((bf, i) => <div key={i} className="butterfly flutter" style={{ left: `${30 + i * 30}%` }}>{bf}</div>)}</div>}
               {sceneState.wish3Taps >= 3 && <div className="playground pop-in"><div className="playground-item">🛝</div></div>}
             </div>
           </div>
@@ -545,7 +537,7 @@ if (gamePhase === 'all-wishes-complete') {
           <div className="success-message-large">You made the world green and playful! ✨</div>
           <div className="soft-thank-you">Thank you for helping the Earth 💛</div>
           <div className="wish-checkmark">🌱 3 of 3 wishes complete</div>
-          <div className="celebration-elements">{Array.from({length: 15}).map((_, i) => <div key={i} className="floating-element" style={{left: `${Math.random() * 100}%`}}>🌸</div>)}</div>
+          <div className="celebration-elements">{Array.from({ length: 15 }).map((_, i) => <div key={i} className="floating-element" style={{ left: `${Math.random() * 100}%` }}>🌸</div>)}</div>
         </div>
       )}
 
@@ -595,7 +587,7 @@ if (gamePhase === 'all-wishes-complete') {
         <div className="drawing-overlay">
           <DrawingPad
             prompt="Draw your biggest dream! What do you want to be? 🌟"
-            
+
             initialData={sceneState.draftData} // Restore draft if reloaded
             onAutoSave={(data) => sceneActions.updateState({ draftData: data })} // Save as they draw
 
@@ -613,16 +605,16 @@ if (gamePhase === 'all-wishes-complete') {
         <div className="dream-screen">
           <div className="dream-container">
             <div className="dream-drawing-display">
-                {sceneState.childDreamDrawing && <img src={sceneState.childDreamDrawing} alt="Dream" className="dream-image" style={{ filter: sceneState.trunkTaps === 3 ? 'none' : 'blur(6px)', opacity: 0.5 + (sceneState.trunkTaps * 0.15) }} />}
+              {sceneState.childDreamDrawing && <img src={sceneState.childDreamDrawing} alt="Dream" className="dream-image" style={{ filter: sceneState.trunkTaps === 3 ? 'none' : 'blur(6px)', opacity: 0.5 + (sceneState.trunkTaps * 0.15) }} />}
             </div>
             <div className="clouds-container">
-                {Array.from({length: 3}).map((_, i) => (
-                    <div key={i} className={`dream-cloud cloud-${i+1} ${sceneState.trunkTaps > i ? 'cloud-fade' : ''}`}><img src={cloudImg} alt="Cloud" className="cloud-icon" /></div>
-                ))}
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className={`dream-cloud cloud-${i + 1} ${sceneState.trunkTaps > i ? 'cloud-fade' : ''}`}><img src={cloudImg} alt="Cloud" className="cloud-icon" /></div>
+              ))}
             </div>
             <div className={`ganesha-helper ${sceneState.trunkTaps > 0 ? 'ganesha-blowing' : ''}`} onClick={handleTrunkTap}>
-                <img src={babyGaneshaImg} alt="Ganesha" className="ganesha-trunk bounce-gentle" />
-                {sceneState.trunkTaps > 0 && <div className="wind-puff">💨</div>}
+              <img src={babyGaneshaImg} alt="Ganesha" className="ganesha-trunk bounce-gentle" />
+              {sceneState.trunkTaps > 0 && <div className="wind-puff">💨</div>}
             </div>
           </div>
           <div className="dream-instruction-box">
@@ -636,10 +628,10 @@ if (gamePhase === 'all-wishes-complete') {
         <div className="dream-revealed-screen">
           <div className="dream-glow-container">
             {sceneState.childDreamDrawing && <img src={sceneState.childDreamDrawing} alt="Dream" className="dream-image-glowing" />}
-            <div className="sparkles-container">{Array.from({length: 20}).map((_, i) => <div key={i} className="sparkle-float" style={{left: `${Math.random()*100}%`}}>✨</div>)}</div>
+            <div className="sparkles-container">{Array.from({ length: 20 }).map((_, i) => <div key={i} className="sparkle-float" style={{ left: `${Math.random() * 100}%` }}>✨</div>)}</div>
           </div>
           <img src={babyGaneshaSit} alt="Ganesha" className="ganesha-proud celebrate-scale" />
-          <div className="success-message-large">Your dream will come true!<br/>I believe in you! 🌟</div>
+          <div className="success-message-large">Your dream will come true!<br />I believe in you! 🌟</div>
         </div>
       )}
 
@@ -650,20 +642,20 @@ if (gamePhase === 'all-wishes-complete') {
           <p className="friendship-subtitle">Friends Help Each Other</p>
           <div className="friendship-grid">
             <div className="friend-column">
-                <img src={babyGaneshaSit} alt="Ganesha" className="column-header-image" />
-                <div className="column-label">GANESHA'S WISHES</div>
-                <div className="wishes-list">
-                    <div className="wish-item"><span className="wish-icon">😊</span> Happiness ✓</div>
-                    <div className="wish-item"><span className="wish-icon">🤝</span> Sharing ✓</div>
-                    <div className="wish-item"><span className="wish-icon">🌳</span> Earth ✓</div>
-                </div>
+              <img src={babyGaneshaSit} alt="Ganesha" className="column-header-image" />
+              <div className="column-label">GANESHA'S WISHES</div>
+              <div className="wishes-list">
+                <div className="wish-item"><span className="wish-icon">😊</span> Happiness ✓</div>
+                <div className="wish-item"><span className="wish-icon">🤝</span> Sharing ✓</div>
+                <div className="wish-item"><span className="wish-icon">🌳</span> Earth ✓</div>
+              </div>
             </div>
             <div className="friend-connector"><div className="connector-heart">❤️</div>FRIENDS<div className="connector-heart">❤️</div></div>
             <div className="friend-column">
-                <div className="column-label">YOUR DREAM</div>
-                <div className="dream-display-box">
-                    {sceneState.childDreamDrawing ? <img src={sceneState.childDreamDrawing} alt="Dream" className="dream-thumbnail" /> : "Loading..."}
-                </div>
+              <div className="column-label">YOUR DREAM</div>
+              <div className="dream-display-box">
+                {sceneState.childDreamDrawing ? <img src={sceneState.childDreamDrawing} alt="Dream" className="dream-thumbnail" /> : "Loading..."}
+              </div>
             </div>
           </div>
           <Button
@@ -680,8 +672,8 @@ if (gamePhase === 'all-wishes-complete') {
       {/* Ending */}
       {sceneState.gamePhase === 'ending' && !sceneState.showingCompletionScreen && (
         <div className="ending-screen">
-            <img src={babyGaneshaSit} alt="Ganesha" className="ganesha-final celebrate-scale" />
-            <div className="final-title">Dreams Connected! 🌟</div>
+          <img src={babyGaneshaSit} alt="Ganesha" className="ganesha-final celebrate-scale" />
+          <div className="final-title">Dreams Connected! 🌟</div>
         </div>
       )}
 
@@ -699,7 +691,7 @@ if (gamePhase === 'all-wishes-complete') {
 
       {/* Menu & Help */}
       {sceneState.gamePhase !== 'intro' && <MenuButton onClick={() => setShowSlideMenu(true)} zoneId="about-me-hut" />}
-      
+
       <TocaBocaNav show={showSlideMenu} onClose={() => setShowSlideMenu(false)} zoneId="about-me-hut" onHome={() => onNavigate('home')} onHelp={() => { setShowSlideMenu(false); setShowHelpMenu(true); }} onStartFresh={() => { setShowSlideMenu(false); sceneActions.updateState({ gamePhase: 'intro', wish1Taps: 0, wish2Taps: 0, wish3Taps: 0, bowlStates: [false, false, false], trunkTaps: 0, childDreamDrawing: null }); }} />
       <HelpMenu show={showHelpMenu} onClose={() => setShowHelpMenu(false)} onNavigate={onNavigate} />
 
