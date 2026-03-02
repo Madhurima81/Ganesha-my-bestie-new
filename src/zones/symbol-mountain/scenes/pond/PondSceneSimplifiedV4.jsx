@@ -760,6 +760,7 @@ const PondSceneContent = ({
       <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
         <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
           <div className="pond-scene-container">
+            <HomeButton onNavigate={onNavigate} />
             <div className="pond-background" style={{ backgroundImage: `url(${pondBackground})` }}>
 
               {/* REMOVE OLD MANUAL RENDERCOUNTER, UNIFIED HEADER IS HANDLED BELOW */}
