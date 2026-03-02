@@ -130,6 +130,11 @@ const ICON_MAP = {
     'mandap-flower-icon': flowerIcon,
     'recipe-icon': recipeIcon,
     'serve-icon': serveIcon,
+
+    // Mandap Icons (Temporary Emojis)
+    'mandap-learn-icon': '📚',
+    'mandap-build-icon': '🔨',
+    'mandap-decorate-icon': '✨',
 };
 
 const OpeningModal = ({
