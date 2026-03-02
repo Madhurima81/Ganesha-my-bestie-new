@@ -765,7 +765,9 @@ const SymbolMountainSceneContent = ({
               <SymbolSidebar 
                 discoveredSymbols={{
                   mooshika: true, modak: true, belly: true, lotus: true, trunk: true,
-                  ...(sceneState.discoveredSymbols || {})
+                  ...(sceneState.discoveredSymbols || {}),
+                  // Keep sidebar alias in sync with game-logic alias.
+                  ear: sceneState?.discoveredSymbols?.ear || sceneState?.discoveredSymbols?.ears || false
                 }}
                 onSymbolClick={(id) => console.log(`Symbol clicked: ${id}`)}
               />
@@ -824,7 +826,7 @@ const SymbolMountainSceneContent = ({
                   setShowDiscoveryFlip2(false);
                   setTimeout(() => setShowSparkle('tusk-activate'), 500);
                   sceneActions.updateState({
-                    discoveredSymbols: { ...sceneState.discoveredSymbols, ears: true },
+                    discoveredSymbols: { ...sceneState.discoveredSymbols, ears: true, ear: true },
                     showTuskAssemblyGame: true,
                     tuskGameActive: true,
                     showGaneshaOutline: true,
