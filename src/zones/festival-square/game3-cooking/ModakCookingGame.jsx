@@ -13,7 +13,7 @@ import BackToMapButton from '../../../lib/components/navigation/BackToMapButton'
 
 // Import completion component
 import FestivalSquareCompletion from '../components/FestivalSquareCompletion';
-import GamePauseMenu from '../components/GamePauseMenu';
+import HomeButton from '../../../lib/components/ui/HomeButton';
 import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
 
 // Import assets
