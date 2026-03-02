@@ -552,6 +552,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   return (
     <div className="favorite-food-game">
       <img src={foodBg} alt="Background" className="food-background" />
+      <HomeButton onNavigate={onNavigate} />
 
       {/* Story Progress Header */}
       {!sceneState.gamePhase.includes('child') && sceneState.gamePhase !== 'comparison-card' && sceneState.gamePhase !== 'ending' && (
