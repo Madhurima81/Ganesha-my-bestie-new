@@ -27,7 +27,7 @@ import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal
 import HomeButton from '../../../../lib/components/ui/HomeButton';
 
 import AppSidebar from '../../shared/AppSidebar';
-import OpeningModal from '../../shared/components/OpeningModal';
+import OpeningModal from '../../../shared/components/OpeningModal';
 // REMOVED: import SanskritWordMission (No longer needed)
 import SanskritVoiceRecorder from '../../../../lib/components/audio/SanskritVoiceRecorder';
 
