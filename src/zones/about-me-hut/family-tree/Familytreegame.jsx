@@ -700,8 +700,7 @@ const FamilyTreeGameContent = ({
     sceneState.gamePhase,
     sceneState.showNameModal,
     sceneState.childFamily.length,
-    sceneState.selectedMemberIndex,
-    showPauseMenu
+    sceneState.selectedMemberIndex
   ]);
 
   // ========================================
