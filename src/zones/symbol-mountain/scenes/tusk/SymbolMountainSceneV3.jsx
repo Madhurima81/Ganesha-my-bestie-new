@@ -43,6 +43,7 @@ import Fireworks from '../../../../lib/components/feedback/Fireworks';
 import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
 import SymbolSidebar from '../../shared/components/SymbolSidebar';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
+import HomeButton from '../../../../lib/components/ui/HomeButton';
 import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
 
 // Images
