@@ -1074,35 +1074,8 @@ const FamilyTreeGameContent = ({
     <div className="family-tree-game">
       <img src={familyTreeBg} alt="Background" className="tree-background" />
 
-      {/* Pause Button - Visible after intro */}
-      <PauseButton
-        visible={sceneState.gamePhase !== 'intro'}
-        onClick={() => setShowPauseMenu(true)}
-      />
-
-      {/* Visual Blur Overlay */}
-      <PauseBlurOverlay show={showPauseMenu} />
-
-      {/* Pause Menu */}
-      <PauseMenu
-        show={showPauseMenu}
-        onResume={() => setShowPauseMenu(false)}
-        onBackToMap={() => {
-          setShowPauseMenu(false);
-          stopMusic();
-          onNavigate?.('zones');
-        }}
-        isSoundOn={isSoundOn}
-        onSoundToggle={() => {
-          setIsSoundOn(!isSoundOn);
-          if (isSoundOn) {
-            stopMusic();
-          } else {
-            startMusic();
-          }
-        }}
-        zoneName="About Me Hut"
-      />
+      {/* Home Button */}
+      <HomeButton onNavigate={onNavigate} />
 
       {/* Back to Map Button - Commented out like in Modak */}
       {/* {!sceneState.showingCompletionScreen && (
