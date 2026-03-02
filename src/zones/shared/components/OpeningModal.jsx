@@ -31,17 +31,6 @@ import siblingsPeaceballoon from '../../meaning cave/scenes/sarvakaryeshu-sarvad
 import birthdayIcon from '../../festival-square/Game1-piano/assets/images/name-birthday-icon.png';
 import balloonsIcon from '../../festival-square/Game4-mandapdecor/assets/images/fun_balloons_cluster.png';
 
-// Shloka River App Icons
-import appVakratunda from '../../shloka-river/assets/images/apps/app-Vakratunda.png';
-import appMahakaya from '../../shloka-river/assets/images/apps/app-mahakaya.png';
-import appSuryakoti from '../../shloka-river/assets/images/apps/app-suryakoti.png';
-import appSamaprabha from '../../shloka-river/assets/images/apps/app-samaprabha.png';
-import appNirvighnam from '../../shloka-river/assets/images/apps/app-nirvighnam.png';
-import appKurumedeva from '../../shloka-river/assets/images/apps/app-kurumedeva.png';
-import appSarvakaryeshu from '../../shloka-river/assets/images/apps/app-sarvakaryeshu.png';
-import appSarvada from '../../shloka-river/assets/images/apps/app-sarvada.png';
-import stoneIcon from '../../shloka-river/scenes/Scene3/assets/images/nirvighnam/stone1.png';
-import raftIcon from '../../shloka-river/scenes/scene5/assets/images/raft.png';
 
 // Cave of Secrets (Meaning Cave) Symbols
 import symbolVakratunda from '../../meaning cave/assets/images/symbols/vakratunda-symbol.png';
