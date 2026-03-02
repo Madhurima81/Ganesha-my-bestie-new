@@ -80,17 +80,7 @@ const ICON_MAP = {
     'wish-share': wishIconShare,
     'wish-flower': wishIconFlower,
 
-    // Shloka River Apps
-    'vakratunda-app': appVakratunda,
-    'mahakaya-app': appMahakaya,
-    'suryakoti-app': appSuryakoti,
-    'samaprabha-app': appSamaprabha,
-    'nirvighnam-app': appNirvighnam,
-    'kurumedeva-app': appKurumedeva,
-    'sarvakaryeshu-app': appSarvakaryeshu,
-    'sarvada-app': appSarvada,
-
-    // Cave of Secrets Symbols
+    // Cave of Secrets Symbols (also used for Shloka River)
     'vakratunda': symbolVakratunda,
     'mahakaya': symbolMahakaya,
     'suryakoti': symbolSuryakoti,
