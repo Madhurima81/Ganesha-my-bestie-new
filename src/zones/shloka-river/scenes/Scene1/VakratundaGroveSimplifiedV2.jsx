@@ -22,6 +22,7 @@ import Fireworks from '../../../../lib/components/feedback/Fireworks';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import BackToMapButton from '../../../../lib/components/navigation/BackToMapButton';
 import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
+import OpeningModal from '../../../shared/components/OpeningModal';
 
 // Memory game component (reuse existing)
 import SimplifiedMemoryGame from './components/SimplifiedMemoryGame';
@@ -42,7 +43,7 @@ import appMahakaya from '../assets/images/apps/app-mahakaya.png';
 // Mission images
 import vakratundaBefore from './assets/images/vakratunda-before.png';
 import vakratundaAfter from './assets/images/vakratunda-after.png';
-import mahakayaBefore from './assets/images/mahakaya-before.png'; 
+import mahakayaBefore from './assets/images/mahakaya-before.png';
 import mahakayaAfter from './assets/images/mahakaya-after.png';
 
 // Elephant images for memory game
@@ -83,15 +84,15 @@ const PHASES = {
 };
 
 const powerConfig = {
-  vakratunda: { 
-    name: 'Flexibility Power', 
+  vakratunda: {
+    name: 'Flexibility Power',
     image: appVakratunda,
-    color: '#4ECDC4' 
+    color: '#4ECDC4'
   },
-  mahakaya: { 
-    name: 'Inner Strength', 
+  mahakaya: {
+    name: 'Inner Strength',
     image: appMahakaya,
-    color: '#FF6B35' 
+    color: '#FF6B35'
   }
 };
 
@@ -190,17 +191,17 @@ const VakratundaGroveContent = ({
   const [currentWord, setCurrentWord] = useState(null);
 
   const [isAudioOn, setIsAudioOn] = useState(true);
-const [showGaneshaCelebration, setShowGaneshaCelebration] = useState(false);
+  const [showGaneshaCelebration, setShowGaneshaCelebration] = useState(false);
 
   const [showInitialHeader, setShowInitialHeader] = useState(true);
-const [headerMessage, setHeaderMessage] = useState('');
+  const [headerMessage, setHeaderMessage] = useState('');
 
-const [showFinalGanesha, setShowFinalGanesha] = useState(false);
+  const [showFinalGanesha, setShowFinalGanesha] = useState(false);
 
 
-const [practiceWord, setPracticeWord] = useState(null);
-const [showRecorder, setShowRecorder] = useState(false);
-const [savedRecordings, setSavedRecordings] = useState({}); // { vakratunda: [...], mahakaya: [...] }
+  const [practiceWord, setPracticeWord] = useState(null);
+  const [showRecorder, setShowRecorder] = useState(false);
+  const [savedRecordings, setSavedRecordings] = useState({}); // { vakratunda: [...], mahakaya: [...] }
 
   const timeoutsRef = useRef([]);
   const progressiveHintRef = useRef(null);
@@ -220,30 +221,30 @@ const [savedRecordings, setSavedRecordings] = useState({}); // { vakratunda: [..
   }, []);
 
   // Expose audio functions globally for SanskritWordMission
-useEffect(() => {
-  window.playSanskritAudio = playSyllable;
-  window.playSanskritWord = playWord;
-  
-  return () => {
-    delete window.playSanskritAudio;
-    delete window.playSanskritWord;
-  };
-}, [isAudioOn]); // Re-attach if audio setting changes
+  useEffect(() => {
+    window.playSanskritAudio = playSyllable;
+    window.playSanskritWord = playWord;
 
-// Safety: Show completion screen if scene is marked complete but modal not showing
-useEffect(() => {
-  if (sceneState.phase === PHASES.COMPLETE && 
-      sceneState.completed && 
-      !showSceneCompletion && 
+    return () => {
+      delete window.playSanskritAudio;
+      delete window.playSanskritWord;
+    };
+  }, [isAudioOn]); // Re-attach if audio setting changes
+
+  // Safety: Show completion screen if scene is marked complete but modal not showing
+  useEffect(() => {
+    if (sceneState.phase === PHASES.COMPLETE &&
+      sceneState.completed &&
+      !showSceneCompletion &&
       !showSparkle) {
-    const timer = safeSetTimeout(() => {
-      setShowFinalGanesha(false);
-      setShowSceneCompletion(true);
-    }, 7000); // 7 seconds max wait
-    
-    return () => clearTimeout(timer);
-  }
-}, [sceneState.phase, sceneState.completed, showSceneCompletion, showSparkle]);
+      const timer = safeSetTimeout(() => {
+        setShowFinalGanesha(false);
+        setShowSceneCompletion(true);
+      }, 7000); // 7 seconds max wait
+
+      return () => clearTimeout(timer);
+    }
+  }, [sceneState.phase, sceneState.completed, showSceneCompletion, showSparkle]);
 
   // Audio functions
   const playAudio = (audioPath, volume = 1.0) => {
@@ -258,15 +259,15 @@ useEffect(() => {
   };
 
   // Handle saving a new recording
-const handleSaveRecording = (recordingData) => {
-  setSavedRecordings(prev => {
-    const wordRecordings = prev[recordingData.word] || [];
-    return {
-      ...prev,
-      [recordingData.word]: [...wordRecordings, recordingData]
-    };
-  });
-};
+  const handleSaveRecording = (recordingData) => {
+    setSavedRecordings(prev => {
+      const wordRecordings = prev[recordingData.word] || [];
+      return {
+        ...prev,
+        [recordingData.word]: [...wordRecordings, recordingData]
+      };
+    });
+  };
 
 
 
@@ -287,12 +288,12 @@ const handleSaveRecording = (recordingData) => {
   // Memory game completion
   const handlePhaseComplete = (word) => {
     console.log(`${word} learned!`);
-    
+
     sceneActions.updateState({
       learnedWords: { ...sceneState.learnedWords, [word]: true },
       learnedSyllables: {
         ...sceneState.learnedSyllables,
-        ...(word === 'vakratunda' 
+        ...(word === 'vakratunda'
           ? { va: true, kra: true, tun: true, da: true }
           : { ma: true, ha: true, ka: true, ya: true })
       },
@@ -303,42 +304,42 @@ const handleSaveRecording = (recordingData) => {
     setShowCenteredWord(word);
     setShowSparkle(`${word}-celebration`);
 
-      playWord(word);
-    
-safeSetTimeout(() => {
-  setShowCenteredWord(null);
-  setShowSparkle(`${word}-to-sidebar`);
-  
-  // Unlock app in sidebar
-  sceneActions.updateState({
-    unlockedApps: { ...sceneState.unlockedApps, [word]: true }
-  });
-  
-  safeSetTimeout(() => {
-    setShowSparkle(null);
-    
-    // Show sparkles before Ganesha appears
-    setShowSparkle('ganesha-incoming');
-    
- safeSetTimeout(() => {
-    // Show Ganesha AS sparkles continue
-    setShowGaneshaCelebration(word);
-    
+    playWord(word);
+
     safeSetTimeout(() => {
-      setShowSparkle(null); // Sparkles fade out
-    }, 500);
-      
+      setShowCenteredWord(null);
+      setShowSparkle(`${word}-to-sidebar`);
+
+      // Unlock app in sidebar
+      sceneActions.updateState({
+        unlockedApps: { ...sceneState.unlockedApps, [word]: true }
+      });
+
       safeSetTimeout(() => {
-        setShowGaneshaCelebration(false);
-        setCurrentWord(word);
-        setShowPowerModal(true);
-        sceneActions.updateState({
-          phase: word === 'vakratunda' ? PHASES.VAKRATUNDA_POWER : PHASES.MAHAKAYA_POWER
-        });
-      }, 4000); // 4 seconds Ganesha celebrates with boy
-    }, 800); // 1 second sparkles
-  }, 2000);
-}, 5000);
+        setShowSparkle(null);
+
+        // Show sparkles before Ganesha appears
+        setShowSparkle('ganesha-incoming');
+
+        safeSetTimeout(() => {
+          // Show Ganesha AS sparkles continue
+          setShowGaneshaCelebration(word);
+
+          safeSetTimeout(() => {
+            setShowSparkle(null); // Sparkles fade out
+          }, 500);
+
+          safeSetTimeout(() => {
+            setShowGaneshaCelebration(false);
+            setCurrentWord(word);
+            setShowPowerModal(true);
+            sceneActions.updateState({
+              phase: word === 'vakratunda' ? PHASES.VAKRATUNDA_POWER : PHASES.MAHAKAYA_POWER
+            });
+          }, 4000); // 4 seconds Ganesha celebrates with boy
+        }, 800); // 1 second sparkles
+      }, 2000);
+    }, 5000);
   };
 
   // Power modal handlers
@@ -348,46 +349,46 @@ safeSetTimeout(() => {
 
   };
 
-const handleContinueLearning = () => {
-  setShowPowerModal(false);
-  
-  if (currentWord === 'vakratunda') {
-    // Show Mahakaya story
-    safeSetTimeout(() => {
-      sceneActions.updateState({ phase: PHASES.MAHAKAYA_STORY });
-    }, 500);
-  } else {
-    // Complete scene
-    sceneActions.updateState({
-      phase: PHASES.COMPLETE,
-      stars: 5,
-      completed: true,
-      progress: { percentage: 100, starsEarned: 5, completed: true }
-    });
-    
-    // Show Ganesha AND fireworks together
-    setShowFinalGanesha(true);
-    setShowSparkle('final-fireworks');
-  }
-};
+  const handleContinueLearning = () => {
+    setShowPowerModal(false);
 
-const handleMissionComplete = () => {
-  console.log('âœ… Mission complete for:', currentWord);
-  setShowMission(false);
-  
-  if (currentWord === 'vakratunda') {
-    safeSetTimeout(() => {
-      sceneActions.updateState({ phase: PHASES.MAHAKAYA_STORY });
-    }, 500);
-  } else {
-    sceneActions.updateState({
-      phase: PHASES.COMPLETE,
-      stars: 5,
-      completed: true
-    });
-    safeSetTimeout(() => setShowSparkle('final-fireworks'), 500);
-  }
-};
+    if (currentWord === 'vakratunda') {
+      // Show Mahakaya story
+      safeSetTimeout(() => {
+        sceneActions.updateState({ phase: PHASES.MAHAKAYA_STORY });
+      }, 500);
+    } else {
+      // Complete scene
+      sceneActions.updateState({
+        phase: PHASES.COMPLETE,
+        stars: 5,
+        completed: true,
+        progress: { percentage: 100, starsEarned: 5, completed: true }
+      });
+
+      // Show Ganesha AND fireworks together
+      setShowFinalGanesha(true);
+      setShowSparkle('final-fireworks');
+    }
+  };
+
+  const handleMissionComplete = () => {
+    console.log('âœ… Mission complete for:', currentWord);
+    setShowMission(false);
+
+    if (currentWord === 'vakratunda') {
+      safeSetTimeout(() => {
+        sceneActions.updateState({ phase: PHASES.MAHAKAYA_STORY });
+      }, 500);
+    } else {
+      sceneActions.updateState({
+        phase: PHASES.COMPLETE,
+        stars: 5,
+        completed: true
+      });
+      safeSetTimeout(() => setShowSparkle('final-fireworks'), 500);
+    }
+  };
 
   // Image helpers
   const getBabyElephantImage = (i) => [elephantBabyVa, elephantBabyKra, elephantBabyTun, elephantBabyDa][i];
@@ -405,35 +406,16 @@ const handleMissionComplete = () => {
         <div className="vakratunda-simplified-container">
           <div className="river-background" style={{ backgroundImage: `url(${riverBackground})` }}>
 
-{sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
-  <div className="mission-modal-overlay">
-    <div className="mission-modal">
-      <div className="modal-character">
-        <img src={ganeshaHeadphones} alt="Ganesha" className="character-img" />
-        <div className="character-speech-bubble">
-          Let's save the forest! ðŸŒ³
-        </div>
-      </div>
-      
-      <h2 className="mission-title">Help Ganesha Save the Forest!</h2>
-      <div className="mission-subtitle">2 magical words have special powers!</div>
-      <p className="mission-description">
-        First, learn to chant <strong>VAKRATUNDA</strong> to unlock flexibility power and rescue trapped animals!
-      </p>
-      <button 
-        className="mission-start-btn"
-        onClick={() => {
-          sceneActions.updateState({ 
-            welcomeShown: true,
-            phase: PHASES.VAKRATUNDA_GAME
-          });
-        }}
-      >
-        Start Learning!
-      </button>
-    </div>
-  </div>
-)}
+            <OpeningModal
+              zoneId={zoneId}
+              sceneId={sceneId}
+              onStart={() => sceneActions.updateState({
+                welcomeShown: true,
+                phase: PHASES.VAKRATUNDA_GAME
+              })}
+              characterImg={ganeshaHeadphones}
+              showButton={true}
+            />
 
 
             {/* MEMORY GAME */}
@@ -441,7 +423,7 @@ const handleMissionComplete = () => {
               isActive={sceneState.phase === PHASES.VAKRATUNDA_GAME || sceneState.phase === PHASES.MAHAKAYA_GAME}
               hideElements={showCenteredWord || showPowerModal || showMission || sceneState.phase === PHASES.MAHAKAYA_STORY}
               onPhaseComplete={handlePhaseComplete}
-              onGameComplete={() => {}}
+              onGameComplete={() => { }}
               profileName={profileName}
               getBabyElephantImage={getBabyElephantImage}
               getAdultElephantImage={getAdultElephantImage}
@@ -454,15 +436,15 @@ const handleMissionComplete = () => {
               powerGained={sceneState.learnedWords?.vakratunda}
             />
 
-{/* PERSISTENT BOY CHARACTER - Always visible once game starts */}
-{sceneState.welcomeShown && 
- !showSceneCompletion && (
-  <div className="companion-boy">
-    <img src={boyNamaste} alt="Learning with you" className="boy-companion" />
-  </div>
-)}
+            {/* PERSISTENT BOY CHARACTER - Always visible once game starts */}
+            {sceneState.welcomeShown &&
+              !showSceneCompletion && (
+                <div className="companion-boy">
+                  <img src={boyNamaste} alt="Learning with you" className="boy-companion" />
+                </div>
+              )}
 
-{/* STATIC LEARNING HEADER 
+            {/* STATIC LEARNING HEADER 
 {sceneState.phase === PHASES.VAKRATUNDA_GAME && !showCenteredWord && !showPowerModal && !showMission && (
   <div className="game-phase-header">
     ðŸŽµ Let's Learn to Chant VAKRATUNDA!
@@ -475,44 +457,44 @@ const handleMissionComplete = () => {
   </div>
 )}*/}
 
-       {sceneState.phase === PHASES.MAHAKAYA_STORY && (
-  <div className="mission-modal-overlay">
-    <div className="mission-modal">
-      <div className="modal-character">
-        <img src={ganeshaHeadphones} alt="Ganesha" className="character-img" />
-        <div className="character-speech-bubble">
-          One more to learn! ðŸ’ª
-        </div>
-      </div>
-      
-      <h2 className="mission-title">Great Work!</h2>
-      <div className="mission-subtitle">Now unlock the second power!</div>
-      <p className="mission-description">
-        Learn to chant <strong>MAHAKAYA</strong> to unlock inner strength and save more animals!
-      </p>
-      <button
-        className="story-continue-btn"
-        onClick={() => {
-          sceneActions.updateState({ phase: PHASES.MAHAKAYA_GAME });
-          safeSetTimeout(() => {
-            if (window.simplifiedMemoryGame?.startMahakayaPhase) {
-              window.simplifiedMemoryGame.startMahakayaPhase();
-            }
-          }, 200);
-        }}
-      >
-        Start Learning!
-      </button>
-    </div>
-  </div>
-)}
+            {sceneState.phase === PHASES.MAHAKAYA_STORY && (
+              <div className="mission-modal-overlay">
+                <div className="mission-modal">
+                  <div className="modal-character">
+                    <img src={ganeshaHeadphones} alt="Ganesha" className="character-img" />
+                    <div className="character-speech-bubble">
+                      One more to learn! ðŸ’ª
+                    </div>
+                  </div>
+
+                  <h2 className="mission-title">Great Work!</h2>
+                  <div className="mission-subtitle">Now unlock the second power!</div>
+                  <p className="mission-description">
+                    Learn to chant <strong>MAHAKAYA</strong> to unlock inner strength and save more animals!
+                  </p>
+                  <button
+                    className="story-continue-btn"
+                    onClick={() => {
+                      sceneActions.updateState({ phase: PHASES.MAHAKAYA_GAME });
+                      safeSetTimeout(() => {
+                        if (window.simplifiedMemoryGame?.startMahakayaPhase) {
+                          window.simplifiedMemoryGame.startMahakayaPhase();
+                        }
+                      }, 200);
+                    }}
+                  >
+                    Start Learning!
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* 5-SECOND WORD CELEBRATION */}
             {showCenteredWord && (
               <>
                 <div className="celebration-overlay" />
                 <div className="centered-word-celebration">
-                  <img 
+                  <img
                     src={powerConfig[showCenteredWord]?.image}
                     alt={showCenteredWord}
                     className="celebration-app-icon"
@@ -535,145 +517,145 @@ const handleMissionComplete = () => {
               </>
             )}
 
-{/* SPARKLES BEFORE GANESHA APPEARS */}
-{showSparkle === 'ganesha-incoming' && (
-  <div className="ganesha-sparkle-position">
-    <SparkleAnimation
-      type="burst"
-      count={20}
-      color="#FFD700"
-      size={15}
-      duration={1500}
-      fadeOut={true}
-    />
-  </div>
-)}
+            {/* SPARKLES BEFORE GANESHA APPEARS */}
+            {showSparkle === 'ganesha-incoming' && (
+              <div className="ganesha-sparkle-position">
+                <SparkleAnimation
+                  type="burst"
+                  count={20}
+                  color="#FFD700"
+                  size={15}
+                  duration={1500}
+                  fadeOut={true}
+                />
+              </div>
+            )}
 
-{/* GANESHA CELEBRATION - Fades in next to persistent boy */}
-{showGaneshaCelebration && (
-  <div className="ganesha-celebration-enter">
-    <img src={ganeshaHeadphones} alt="Ganesha" className="ganesha-slides-in" />
-    <div className="ganesha-celebration-bubble">
-      {showGaneshaCelebration === 'vakratunda' ? 'Great job! ðŸŽ‰' : 'Amazing! â­'}
-    </div>
-  </div>
-)}
-          {/* POWER MODAL - POND STYLE */}
-{showPowerModal && (
-  <div className="power-modal-overlay">
-    <div className="power-modal">
-      <h2 className="power-modal-title">
-        {powerConfig[currentWord]?.name} Unlocked!
-      </h2>
-      
-      <div className="power-modal-content">
-        <div className="power-modal-left">
-          <p className="power-modal-text">
-            You can now use this power to help animals in need!
-          </p>
-          <p className="power-modal-subtext">Choose your next action:</p>
-        </div>
-        
-        <div className="power-modal-right">
-          <img 
-            src={powerConfig[currentWord]?.image}
-            alt={currentWord}
-            className="power-modal-icon"
-          />
-          
-          <button className="power-modal-btn save-btn" onClick={handleSaveAnimal}>
-            ðŸ¾ Save an Animal
-          </button>
-          
-          <button className="power-modal-btn continue-btn" onClick={handleContinueLearning}>
-            {currentWord === 'vakratunda' ? 'ðŸŽµ Discover Mahakaya' : 'âœ¨ End Scene'}
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
+            {/* GANESHA CELEBRATION - Fades in next to persistent boy */}
+            {showGaneshaCelebration && (
+              <div className="ganesha-celebration-enter">
+                <img src={ganeshaHeadphones} alt="Ganesha" className="ganesha-slides-in" />
+                <div className="ganesha-celebration-bubble">
+                  {showGaneshaCelebration === 'vakratunda' ? 'Great job! ðŸŽ‰' : 'Amazing! â­'}
+                </div>
+              </div>
+            )}
+            {/* POWER MODAL - POND STYLE */}
+            {showPowerModal && (
+              <div className="power-modal-overlay">
+                <div className="power-modal">
+                  <h2 className="power-modal-title">
+                    {powerConfig[currentWord]?.name} Unlocked!
+                  </h2>
 
-{/* SAVE ANIMAL MISSION - REUSABLE COMPONENT */}
-<SanskritWordMission
-  show={showMission}
-  word={currentWord}
-  beforeImage={missionImages[currentWord]?.before}
-  afterImage={missionImages[currentWord]?.after}
-  powerConfig={powerConfig[currentWord]}
-  onComplete={handleMissionComplete}
-  onCancel={() => {
-    setShowMission(false);
-    setShowPowerModal(true);
-  }}
-/>
+                  <div className="power-modal-content">
+                    <div className="power-modal-left">
+                      <p className="power-modal-text">
+                        You can now use this power to help animals in need!
+                      </p>
+                      <p className="power-modal-subtext">Choose your next action:</p>
+                    </div>
 
-<AppSidebar 
-  unlockedApps={sceneState.unlockedApps || {}}
-  onAppClick={(app) => {
-    setPracticeWord(app.id);
-    setShowRecorder(true); // Direct to recorder
-  }}
-  isReload={isReload}
-  onSaveAppState={(appState) => {
-    sceneActions.updateState({ unlockedApps: appState });
-  }}
-/>
+                    <div className="power-modal-right">
+                      <img
+                        src={powerConfig[currentWord]?.image}
+                        alt={currentWord}
+                        className="power-modal-icon"
+                      />
+
+                      <button className="power-modal-btn save-btn" onClick={handleSaveAnimal}>
+                        ðŸ¾ Save an Animal
+                      </button>
+
+                      <button className="power-modal-btn continue-btn" onClick={handleContinueLearning}>
+                        {currentWord === 'vakratunda' ? 'ðŸŽµ Discover Mahakaya' : 'âœ¨ End Scene'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* SAVE ANIMAL MISSION - REUSABLE COMPONENT */}
+            <SanskritWordMission
+              show={showMission}
+              word={currentWord}
+              beforeImage={missionImages[currentWord]?.before}
+              afterImage={missionImages[currentWord]?.after}
+              powerConfig={powerConfig[currentWord]}
+              onComplete={handleMissionComplete}
+              onCancel={() => {
+                setShowMission(false);
+                setShowPowerModal(true);
+              }}
+            />
+
+            <AppSidebar
+              unlockedApps={sceneState.unlockedApps || {}}
+              onAppClick={(app) => {
+                setPracticeWord(app.id);
+                setShowRecorder(true); // Direct to recorder
+              }}
+              isReload={isReload}
+              onSaveAppState={(appState) => {
+                sceneActions.updateState({ unlockedApps: appState });
+              }}
+            />
 
 
-<SanskritVoiceRecorder
-  chantResult={null}
-  show={showRecorder}
-  word={practiceWord || ''}
-  savedRecordings={savedRecordings}
-  onSaveRecording={handleSaveRecording}
-  onComplete={() => {
-    setShowRecorder(false);
-    setPracticeWord(null);
-  }}
-  onSkip={() => {
-    setShowRecorder(false);
-    setPracticeWord(null);
-  }}
-  title={practiceWord ? powerConfig[practiceWord]?.name : 'Practice Chanting'}
-  appIcon={powerConfig[practiceWord]?.image} // ADD THIS
-  appColor={powerConfig[practiceWord]?.color} // ADD THIS
-  allowSkip={true}
-/>
+            <SanskritVoiceRecorder
+              chantResult={null}
+              show={showRecorder}
+              word={practiceWord || ''}
+              savedRecordings={savedRecordings}
+              onSaveRecording={handleSaveRecording}
+              onComplete={() => {
+                setShowRecorder(false);
+                setPracticeWord(null);
+              }}
+              onSkip={() => {
+                setShowRecorder(false);
+                setPracticeWord(null);
+              }}
+              title={practiceWord ? powerConfig[practiceWord]?.name : 'Practice Chanting'}
+              appIcon={powerConfig[practiceWord]?.image} // ADD THIS
+              appColor={powerConfig[practiceWord]?.color} // ADD THIS
+              allowSkip={true}
+            />
 
-{showSparkle === 'final-fireworks' && (
-  <Fireworks
-    show={true}
-    duration={6000}
-    count={20}
-    colors={['#FFD700', '#FF8C00', '#FFA500']}
-    onComplete={() => {
-      setShowSparkle(null);
-      setShowFinalGanesha(false);
-      
-      // Save and show completion immediately
-      const profileId = localStorage.getItem('activeProfileId');
-      if (profileId) {
-        try {
-          GameStateManager.saveGameState(zoneId, sceneId, {
-            completed: true,
-            stars: 5,
-            learnedWords: sceneState.learnedWords || {},
-            learnedSyllables: sceneState.learnedSyllables || {},
-            unlockedApps: sceneState.unlockedApps || {},
-            timestamp: Date.now()
-          });
-          localStorage.removeItem(`temp_session_${profileId}_${zoneId}_${sceneId}`);
-          SimpleSceneManager.clearCurrentScene();
-        } catch (error) {
-          console.error('Error saving game state:', error);
-        }
-      }
-      
-      setShowSceneCompletion(true);
-    }}
-  />
-)}
+            {showSparkle === 'final-fireworks' && (
+              <Fireworks
+                show={true}
+                duration={6000}
+                count={20}
+                colors={['#FFD700', '#FF8C00', '#FFA500']}
+                onComplete={() => {
+                  setShowSparkle(null);
+                  setShowFinalGanesha(false);
+
+                  // Save and show completion immediately
+                  const profileId = localStorage.getItem('activeProfileId');
+                  if (profileId) {
+                    try {
+                      GameStateManager.saveGameState(zoneId, sceneId, {
+                        completed: true,
+                        stars: 5,
+                        learnedWords: sceneState.learnedWords || {},
+                        learnedSyllables: sceneState.learnedSyllables || {},
+                        unlockedApps: sceneState.unlockedApps || {},
+                        timestamp: Date.now()
+                      });
+                      localStorage.removeItem(`temp_session_${profileId}_${zoneId}_${sceneId}`);
+                      SimpleSceneManager.clearCurrentScene();
+                    } catch (error) {
+                      console.error('Error saving game state:', error);
+                    }
+                  }
+
+                  setShowSceneCompletion(true);
+                }}
+              />
+            )}
 
             {/* TEMPORARY TEST - Remove after debugging 
 <button 
@@ -699,14 +681,14 @@ const handleMissionComplete = () => {
 </button>
 
 {/* FINAL CELEBRATION - Ganesha appears BEFORE completion screen */}
-{showFinalGanesha && !showSceneCompletion && (
-  <div className="final-ganesha-appears">
-    <img src={ganeshaHeadphones} alt="Ganesha" className="ganesha-final-enters" />
-    <div className="ganesha-final-bubble">
-      You're a hero! ðŸŒŸ
-    </div>
-  </div>
-)}
+            {showFinalGanesha && !showSceneCompletion && (
+              <div className="final-ganesha-appears">
+                <img src={ganeshaHeadphones} alt="Ganesha" className="ganesha-final-enters" />
+                <div className="ganesha-final-bubble">
+                  You're a hero! ðŸŒŸ
+                </div>
+              </div>
+            )}
             {/* SCENE COMPLETION */}
             {showSceneCompletion && (
               <SceneCompletionCelebration
@@ -757,7 +739,7 @@ const handleMissionComplete = () => {
               }}
             />
 
-            <BackToMapButton 
+            <BackToMapButton
               onNavigate={onNavigate}
               hideCoach={hideCoach}
               clearManualCloseTracking={clearManualCloseTracking}
