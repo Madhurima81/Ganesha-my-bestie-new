@@ -231,6 +231,12 @@ const VakratundaGroveContent = ({
     showAppDiscovery ||
     sceneState.phase === PHASES.COMPLETE;
 
+  const isCelebrationOrOverlayActive =
+    isFinalCelebrationActive ||
+    !!revealConfig ||          // Block while SymbolAutoReveal is showing
+    showPowerOverlay ||
+    showCenteredWord;
+
   useEffect(() => {
     if (isFinalCelebrationActive && showPauseMenu) {
       setShowPauseMenu(false);
