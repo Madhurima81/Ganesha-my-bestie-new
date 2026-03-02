@@ -1273,37 +1273,17 @@ const NewModakSceneMVPContent = ({
 
               {/* --- OPENING MODAL --- */}
               {sceneState.phase === PHASES.MOOSHIKA_SEARCH && !sceneState.welcomeShown && (
-                <div
-                  className="game-modal-overlay"
-                  style={(() => {
-                    const theme = getZoneTheme(zoneId);
-                    return {
-                      '--modal-card-bg': theme.parentBg,
-                      '--modal-text-primary': theme.textPrimary,
-                      '--modal-btn-bg': theme.buttonActiveBg,
-                      '--modal-btn-shadow': theme.glowColor
-                    };
-                  })()}
-                >
-                  <div className="modak-game-sparkles">
-                    <div className="modak-game-sparkle"></div>
-                    <div className="modak-game-sparkle"></div>
-                    <div className="modak-game-sparkle"></div>
-                    <div className="modak-game-sparkle"></div>
-                  </div>
-
-                  <OpeningModal
-                    zoneId={zoneId}
-                    sceneId={sceneId}
-                    onStart={() => {
-                      playSfx('tap');
-                      setOpeningButtonVisible(false);
-                      sceneActions.updateState({ welcomeShown: true });
-                    }}
-                    characterImg={ganeshaCharacter}
-                    showButton={openingButtonVisible}
-                  />
-                </div>
+                <OpeningModal
+                  zoneId={zoneId}
+                  sceneId={sceneId}
+                  onStart={() => {
+                    playSfx('tap');
+                    setOpeningButtonVisible(false);
+                    sceneActions.updateState({ welcomeShown: true });
+                  }}
+                  characterImg={ganeshaCharacter}
+                  showButton={openingButtonVisible}
+                />
               )}
 
               {/* MUD MOUNDS */}
