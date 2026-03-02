@@ -4,11 +4,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './RiverFinaleEnhanced.css';
 import '../shared/components/OpeningModal.css';
+import OpeningModal from '../../../shared/components/OpeningModal.jsx';
 
 const RiverFinaleEnhanced = ({ onComplete, onBack, onNavigate }) => {
   const [gamePhase, setGamePhase] = useState('intro');
   // Phases: intro, level1, word-complete, level1-complete, level2, shloka-complete, scene-complete
-  
+
   // Level 1: Build Words
   const [currentWordIndex, setCurrentWordIndex] = useState(0); // 0-7
   const [selectedSlot, setSelectedSlot] = useState(null);
@@ -18,15 +19,15 @@ const RiverFinaleEnhanced = ({ onComplete, onBack, onNavigate }) => {
   const [scrambledSyllables, setScrambledSyllables] = useState([]);
   const [showCelebration, setShowCelebration] = useState(false);
   const [hint, setHint] = useState("Tap a lily pad to start!");
-  
+
   // Level 2: Arrange Shloka
   const [selectedShlokaSlot, setSelectedShlokaSlot] = useState(null);
   const [shlokaSlots, setShlokaSlots] = useState(Array(8).fill(null));
   const [usedWords, setUsedWords] = useState([]);
   const [recitationIndex, setRecitationIndex] = useState(-1);
-  
+
   const audioRef = useRef(null);
-  
+
   // 8 Sanskrit words data
   const shlokaWords = [
     {
@@ -262,7 +263,7 @@ const RiverFinaleEnhanced = ({ onComplete, onBack, onNavigate }) => {
       // WRONG ORDER
       setHint("Not quite! Listen to the syllables again 🔊");
       playAudio("/audio/effects/wrong.mp3");
-      
+
       // Shake animation
       setTimeout(() => {
         setSlots(Array(currentWord.syllables.length).fill(null));
@@ -329,7 +330,7 @@ const RiverFinaleEnhanced = ({ onComplete, onBack, onNavigate }) => {
       // CORRECT ORDER!
       setHint("Perfect! The shloka is complete! 🎉");
       setGamePhase('shloka-complete');
-      
+
       // Recite shloka with highlighting
       setTimeout(() => reciteShloka(), 1000);
     } else {
@@ -342,12 +343,12 @@ const RiverFinaleEnhanced = ({ onComplete, onBack, onNavigate }) => {
   // Recite complete shloka with word highlighting
   const reciteShloka = () => {
     setRecitationIndex(0);
-    
+
     const reciteNext = (index) => {
       if (index < 8) {
         setRecitationIndex(index);
         playAudio(shlokaWords[index].wordAudio);
-        
+
         setTimeout(() => {
           reciteNext(index + 1);
         }, 1500);
@@ -357,7 +358,7 @@ const RiverFinaleEnhanced = ({ onComplete, onBack, onNavigate }) => {
         }, 2000);
       }
     };
-    
+
     reciteNext(0);
   };
 
@@ -627,7 +628,7 @@ const RiverFinaleEnhanced = ({ onComplete, onBack, onNavigate }) => {
           <p className="final-message">
             You've mastered the sacred Ganesha Shloka!
           </p>
-          
+
           <div className="final-shloka">
             {shlokaWords.map(word => (
               <div key={word.id} className="final-word">
