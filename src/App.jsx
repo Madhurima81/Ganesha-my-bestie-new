@@ -530,11 +530,11 @@ const getNextScene = (zoneId, currentSceneId) => {
   const sceneProgression = {
     'symbol-mountain': ['modak', 'pond', 'symbol', 'final-scene'],
     'cave-of-secrets': [
-      'vakratunda-mahakaya', 
-      'suryakoti-samaprabha', 
+      'vakratunda-mahakaya',
+      'suryakoti-samaprabha',
       'nirvighnam-kurumedeva',
       'sarvakaryeshu-sarvada',
-      'Cave of Secrets'
+      'final-meaning-scene'
     ],
     // ✅ ADD: Shloka River progression - Sanskrit chant learning journey
     'shloka-river': [
