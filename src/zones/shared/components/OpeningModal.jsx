@@ -27,7 +27,6 @@ import wishIconShare from '../../about-me-hut/enjoy/assets/images/wish-icon-shar
 import wishIconFlower from '../../about-me-hut/enjoy/assets/images/wish-icon-flower.png';
 
 // Shared / Fallback
-import siblingsPeaceballoon from '../../meaning cave/scenes/sarvakaryeshu-sarvada/assets/images/game 2/helpers/siblings_peaceballoon.png';
 import birthdayIcon from '../../festival-square/Game1-piano/assets/images/name-birthday-icon.png';
 import balloonsIcon from '../../festival-square/Game4-mandapdecor/assets/images/fun_balloons_cluster.png';
 
