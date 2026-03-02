@@ -5,11 +5,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import './SarvakaryeshuChantSimplified.css';
-import '../../../shared/components/OpeningModal.css';
 // ... existing imports
 import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
-import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
-import { getOpeningModal } from '../../../../lib/config/content';
+import OpeningModal from '../../../shared/components/OpeningModal';
 
 // Import scene management components
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
