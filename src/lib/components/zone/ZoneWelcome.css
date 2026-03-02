@@ -793,8 +793,8 @@
 .journey-panel {
   display: flex;
   align-items: center;
-  gap: clamp(20px, 2.4vw, 40px);
-  padding: clamp(12px, 1.2vw, 20px) clamp(28px, 3.2vw, 56px);
+  gap: clamp(24px, 2.8vw, 48px);
+  padding: clamp(16px, 1.6vw, 26px) clamp(36px, 4vw, 68px);
   border-radius: 60px;
   background: linear-gradient(180deg, #fffaf0, #ffeec2);
   box-shadow:
@@ -810,8 +810,16 @@
 .journey-left {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: clamp(14px, 1.4vw, 22px);
+  gap: 10px;
+  font-size: clamp(16px, 1.6vw, 26px);
+}
+
+/* Custom stat icon */
+.journey-stat-icon {
+  width: clamp(28px, 2.8vw, 44px);
+  height: clamp(28px, 2.8vw, 44px);
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 /* Step dots */
