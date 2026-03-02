@@ -381,39 +381,13 @@ const RiverFinaleEnhanced = ({ onComplete, onBack, onNavigate }) => {
           INTRO - OPENING MODAL
           ======================================== */}
       {gamePhase === 'intro' && (
-        <div className="game-modal-overlay">
-          <div className="game-modal-content">
-            <div className="game-modal-character">
-              <div className="ganesha-emoji">🐘</div>
-            </div>
-
-            <div className="game-modal-card">
-              <h1 className="game-modal-title">Shloka River Finale! 🌊</h1>
-              <p className="game-modal-subtitle">
-                Build all 8 sacred words, then arrange the complete shloka!
-              </p>
-
-              <div className="game-modal-icons">
-                <div className="game-modal-icon-item">
-                  <div style={{ fontSize: '80px' }}>🪨</div>
-                  <span className="game-modal-icon-label">Build Words</span>
-                </div>
-                <div className="game-modal-icon-item">
-                  <div style={{ fontSize: '80px' }}>⛵</div>
-                  <span className="game-modal-icon-label">Arrange</span>
-                </div>
-                <div className="game-modal-icon-item">
-                  <div style={{ fontSize: '80px' }}>📜</div>
-                  <span className="game-modal-icon-label">Complete!</span>
-                </div>
-              </div>
-
-              <button className="game-modal-button" onClick={handleStartGame}>
-                Begin Journey!
-              </button>
-            </div>
-          </div>
-        </div>
+        <OpeningModal
+          zoneId="shloka-river"
+          sceneId="shloka-river-finale"
+          onStart={handleStartGame}
+          characterImg={'ganeshaHeadphones'}
+          showButton={true}
+        />
       )}
 
       {/* ========================================
