@@ -2,7 +2,6 @@
 // SIMPLIFIED FEEDBACK SYSTEM
 import React, { useState, useRef } from 'react';
 import './RiverFinaleEnhanced.css';
-import '../../../shared/components/OpeningModal.css'; // <--- SHARED MODAL IMPORT
 import GamePauseMenu from '../../core/GamePauseMenu-river';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../../lib/config/content';

@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './Familytreegame.css';
-import '../../shared/components/OpeningModal.css';
 import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
 
 // Import SceneManager & Navigation

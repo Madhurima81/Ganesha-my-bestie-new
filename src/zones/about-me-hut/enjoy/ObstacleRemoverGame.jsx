@@ -3,7 +3,6 @@ import './DreamsWishesGame.css';
 import AboutMeCompletion from "../components/Aboutmecompletion";
 import DrawingPad from '../components/Drawingpad';
 import StoryProgressHeader from '../components/StoryProgressHeader';
-import '../../shared/components/OpeningModal.css';
 
 // Navigation Components
 import BackToMapButton from '../../../lib/components/navigation/BackToMapButton';

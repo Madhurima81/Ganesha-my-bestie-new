@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import OpeningModal from '../../../shared/components/OpeningModal.jsx';
 import './SarvakaryeshuSarvada.css';
-import '../../../shared/components/OpeningModal.css';
 import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
 import ganeshaCharacterCave from './assets/images/ganesha-character-cave.png';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';

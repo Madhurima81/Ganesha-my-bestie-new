@@ -13,7 +13,6 @@ import BackToMapButton from '../../../lib/components/navigation/BackToMapButton'
 // Content Configs
 import { getOpeningModal } from '../../../lib/config/content';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
-import '../../shared/components/OpeningModal.css';
 
 // Shared Components
 import OpeningModal from '../../shared/components/OpeningModal';

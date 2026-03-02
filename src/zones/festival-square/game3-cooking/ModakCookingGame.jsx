@@ -1,7 +1,6 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import OpeningModal from '../../../shared/components/OpeningModal.jsx';
 import './ModakCookingGame.css';
-import '../../shared/components/OpeningModal.css';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../lib/config/content/openingModals';
 

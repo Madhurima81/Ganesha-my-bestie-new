@@ -3,7 +3,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import './VakratundaGroveSimplified.css';
-import '../../../shared/components/OpeningModal.css';
 
 // Scene management
 import SceneManager from "../../../../lib/components/scenes/SceneManager";

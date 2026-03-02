@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './FestivalPianoGame.css';
 import OpeningModal from '../../../shared/components/OpeningModal.jsx';
-import '../../../shared/components/OpeningModal.css'; // <--- SHARED MODAL IMPORT
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../lib/config/content/openingModals';
 

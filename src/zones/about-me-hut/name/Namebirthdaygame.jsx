@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Namebirthdaygame.css';
 import AboutMeCompletion from "../components/Aboutmecompletion";
-import '../../shared/components/OpeningModal.css';
 
 // Import SceneManager & Navigation
 import SceneManager from "../../../lib/components/scenes/SceneManager";
