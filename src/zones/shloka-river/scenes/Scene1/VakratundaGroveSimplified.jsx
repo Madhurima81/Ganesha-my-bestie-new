@@ -815,7 +815,21 @@ const VakratundaGroveContent = ({
               </div>
             )}
 
-            {/* 4. UPDATED POWER OVERLAY (with Play Again for shloka-river) */}
+            {/* ── SYMBOL AUTO-REVEAL (replaces PowerUnlockOverlay) ───────────────
+                 Flip card: symbol image → affirmation → user taps → flies to sidebar */}
+            {revealConfig && (
+              <SymbolAutoReveal
+                key={revealConfig.symbolId}
+                symbolId={revealConfig.symbolId}
+                symbolImage={revealConfig.symbolImage}
+                symbolName={revealConfig.symbolName}
+                affirmation={revealConfig.affirmation}
+                sidebarTargetRect={revealConfig.sidebarTarget}
+                onComplete={() => handleRevealComplete(revealConfig.symbolId)}
+              />
+            )}
+
+            {/* ── PowerUnlockOverlay — COMMENTED OUT (superseded by SymbolAutoReveal) ──
             {showPowerOverlay && currentWord && (
               <PowerUnlockOverlay
                 zoneId={zoneId}
@@ -841,6 +855,7 @@ const VakratundaGroveContent = ({
                 onComplete={handlePowerUnlockComplete}
               />
             )}
+            ── End PowerUnlockOverlay ── */}
 
             {/* 5-SECOND WORD CELEBRATION */}
             {showCenteredWord && (
