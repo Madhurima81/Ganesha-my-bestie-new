@@ -99,7 +99,7 @@ export const OPENING_MODALS = {
     'vakratunda-grove': {
       title: "Bloom and Grow",
       description: "Say the word clearly and watch the flowers bloom.",
-      icons: ['vakratunda-app', 'mahakaya-app'],
+      icons: ['vakratunda', 'mahakaya'],
       buttonText: "Let's Explore",
       character: 'ganesha-headphones'
     },
@@ -107,7 +107,7 @@ export const OPENING_MODALS = {
     'suryakoti-bank': {
       title: "Sun and Smiles",
       description: "Call the light forward and see the world brighten around you.",
-      icons: ['suryakoti-app', 'samaprabha-app'],
+      icons: ['suryakoti', 'samaprabha'],
       buttonText: "Let's Explore",
       character: 'ganesha-headphones'
     },
@@ -115,7 +115,7 @@ export const OPENING_MODALS = {
     'nirvighnam-chant': {
       title: "Clear the Path",
       description: "Chant with steady rhythm and feel the way appear.",
-      icons: ['nirvighnam-app', 'kurumedeva-app'],
+      icons: ['nirvighnam', 'kurumedeva'],
       buttonText: "Let's Explore",
       character: 'ganesha-headphones'
     },
@@ -123,7 +123,7 @@ export const OPENING_MODALS = {
     'sarvakaryeshu-chant': {
       title: "Care and Share",
       description: "Say the words with heart and watch kindness spread.",
-      icons: ['sarvakaryeshu-app', 'sarvada-app'],
+      icons: ['sarvakaryeshu', 'sarvada'],
       iconLabels: ['Day', 'Night'],
       buttonText: "Let's Explore",
       character: 'ganesha-headphones'
@@ -132,7 +132,7 @@ export const OPENING_MODALS = {
     'shloka-river-finale': {
       title: "Chant and Celebrate",
       description: "All the words flow together. Let your voice lead the river.",
-      icons: ['vakratunda-app', 'mahakaya-app', 'suryakoti-app', 'samaprabha-app', 'nirvighnam-app', 'kurumedeva-app', 'sarvakaryeshu-app', 'sarvada-app'],
+      icons: ['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha', 'nirvighnam', 'kurumedeva', 'sarvakaryeshu', 'sarvada'],
       iconLabels: ['VA', 'MA', 'SU', 'SA', 'NI', 'KU', 'SAR', 'SAR'],
       buttonText: "Let's Explore",
       character: 'ganesha-headphones'
