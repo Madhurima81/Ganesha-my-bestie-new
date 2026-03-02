@@ -754,7 +754,7 @@ const VakratundaGroveContent = ({
             {/* VAKRATUNDA MEMORY GAME */}
             <VakratundaGame
               isActive={sceneState.phase === PHASES.VAKRATUNDA_GAME}
-              hideElements={showCenteredWord || showPowerOverlay}
+              hideElements={showCenteredWord || showPowerOverlay || !!revealConfig}
               onPhaseComplete={() => handlePhaseComplete('vakratunda')}
               onGameComplete={() => {}}
               profileName={profileName}
