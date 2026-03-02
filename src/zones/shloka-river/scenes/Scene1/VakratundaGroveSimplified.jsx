@@ -293,24 +293,19 @@ const VakratundaGroveContent = ({
   //   return () => window.removeEventListener('keydown', handleKeyDown);
   // }, [showPauseMenu, sceneState.welcomeShown, isCelebrationOrOverlayActive, showSceneCompletion, sceneState.phase, showPowerOverlay, showCenteredWord, revealConfig]);
 
-  // ========================================
-  // AUTO-PAUSE ON APP BLUR (Mobile/Tab Switch)
-  // ========================================
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      // Don't auto-pause during power overlay, reveal card, word reveal, or other non-interactive overlays
-      const shouldNotPause = showPowerOverlay || !!revealConfig || showCenteredWord || isFinalCelebrationActive || showSceneCompletion || showPauseMenu;
-
-      if (document.hidden && sceneState.welcomeShown && !shouldNotPause) {
-        // Auto-pause when user switches tabs/apps
-        stopVoice();
-        stopIdleTimer();
-        setShowPauseMenu(true);
-      }
-    };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [sceneState.welcomeShown, isFinalCelebrationActive, showSceneCompletion, showPauseMenu, showPowerOverlay, showCenteredWord]);
+  // ── Auto-pause on blur — REMOVED (replaced by home icon) ──
+  // useEffect(() => {
+  //   const handleVisibilityChange = () => {
+  //     const shouldNotPause = showPowerOverlay || !!revealConfig || showCenteredWord || isFinalCelebrationActive || showSceneCompletion || showPauseMenu;
+  //     if (document.hidden && sceneState.welcomeShown && !shouldNotPause) {
+  //       stopVoice();
+  //       stopIdleTimer();
+  //       setShowPauseMenu(true);
+  //     }
+  //   };
+  //   document.addEventListener('visibilitychange', handleVisibilityChange);
+  //   return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  // }, [sceneState.welcomeShown, isFinalCelebrationActive, showSceneCompletion, showPauseMenu, showPowerOverlay, showCenteredWord]);
 
   const safeSetTimeout = (callback, delay) => {
     const id = setTimeout(callback, delay);
