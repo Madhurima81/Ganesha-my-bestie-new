@@ -1236,6 +1236,7 @@ const NewModakSceneMVPContent = ({
   // ========================================
   return (
     <div data-zone="symbol-mountain">
+      <HomeButton onNavigate={onNavigate} />
       {/* Flying Symbol Clone (useSymbolCollection) — superseded by SymbolAutoReveal */}
       {/* {flyingSymbol && <img className="flying-symbol" src={flyingSymbol.src} alt="" style={flightStyle} />} */}
 
