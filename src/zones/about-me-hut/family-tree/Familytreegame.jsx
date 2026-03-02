@@ -10,8 +10,9 @@ import BackToMapButton from '../../../lib/components/navigation/BackToMapButton'
 // Voice Guidance Hook
 import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
 
-// Pause Menu Components
-import { PauseButton, PauseMenu, PauseBlurOverlay, usePauseEnhancements } from '../../../lib/components/ui/PauseMenu';
+// Pause Menu Components (commented out — replaced by HomeButton)
+// import { PauseButton, PauseMenu, PauseBlurOverlay, usePauseEnhancements } from '../../../lib/components/ui/PauseMenu';
+import HomeButton from '../../../lib/components/ui/HomeButton';
 
 // Content Configs
 import { getOpeningModal } from '../../../lib/config/content';
