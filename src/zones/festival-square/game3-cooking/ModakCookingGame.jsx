@@ -1179,25 +1179,6 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
         <span>Start Over</span>
       </div>
 
-      {/* Game Pause Menu */}
-      <GamePauseMenu
-        show={showPauseMenu}
-        gameName="Modak Mastery"
-        currentStars={sceneState.stars}
-        hasDesignOption={false}
-
-        onResume={() => setShowPauseMenu(false)}
-
-        onRestart={() => {
-          setShowPauseMenu(false);
-          resetScene();
-        }}
-
-        onComplete={() => {
-          setShowPauseMenu(false);
-          completeGame();
-        }}
-      />
 
       {/* Festival Square Completion */}
       {showSceneCompletion && (
