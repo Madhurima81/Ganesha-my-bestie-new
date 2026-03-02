@@ -1023,6 +1023,7 @@ sceneActions.updateState({
 
         
         <div className="nirvighnam-chant-container">
+          <HomeButton onNavigate={onNavigate} />
 
 <div 
   className="river-background" 
