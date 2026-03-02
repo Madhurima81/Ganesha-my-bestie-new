@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="2400" height="1800" viewBox="0 0 2400 1800">
+  <defs>
+    <!-- ── SUN gradients ── -->
+    <radialGradient id="sunCenter" cx="0.45" cy="0.4" r="0.5">
+      <stop offset="0%" stop-color="#FFE866"/>
+      <stop offset="100%" stop-color="#F5C830"/>
+    </radialGradient>
+    <linearGradient id="sunRay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFD740"/>
+      <stop offset="100%" stop-color="#F0B020"/>
+    </linearGradient>
+
+    <!-- ── SCALE gradients ── -->
+    <linearGradient id="scaleGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#D4A040"/>
+      <stop offset="100%" stop-color="#B08030"/>
+    </linearGradient>
+    <radialGradient id="greenOrb" cx="0.4" cy="0.35" r="0.55">
+      <stop offset="0%" stop-color="#A8C8A8"/>
+      <stop offset="100%" stop-color="#6A9A6A"/>
+    </radialGradient>
+    <radialGradient id="blueOrb" cx="0.4" cy="0.35" r="0.55">
+      <stop offset="0%" stop-color="#A8C0D8"/>
+      <stop offset="100%" stop-color="#6A90B8"/>
+    </radialGradient>
+
+    <!-- ── PATH gradients ── -->
+    <radialGradient id="pathGreen" cx="0.5" cy="0.5" r="0.55">
+      <stop offset="0%" stop-color="#B8D4A0"/>
+      <stop offset="100%" stop-color="#7AA858"/>
+    </radialGradient>
+    <linearGradient id="pathSand" x1="0.3" y1="0" x2="0.7" y2="1">
+      <stop offset="0%" stop-color="#F0E0B8"/>
+      <stop offset="100%" stop-color="#D8C890"/>
+    </linearGradient>
+
+    <!-- ── HEART gradients ── -->
+    <radialGradient id="heartGrad" cx="0.45" cy="0.35" r="0.6">
+      <stop offset="0%" stop-color="#F0909C"/>
+      <stop offset="100%" stop-color="#D05068"/>
+    </radialGradient>
+    <radialGradient id="heartGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#FFE870" stop-opacity="0.8"/>
+      <stop offset="40%" stop-color="#FFE060" stop-opacity="0.5"/>
+      <stop offset="70%" stop-color="#FFF0A0" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#FFF8D0" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- ── MOUND gradient ── -->
+    <radialGradient id="moundGrad" cx="0.45" cy="0.35" r="0.6">
+      <stop offset="0%" stop-color="#F5DCC0"/>
+      <stop offset="100%" stop-color="#D8B080"/>
+    </radialGradient>
+
+    <!-- ── MOON gradient ── -->
+    <radialGradient id="moonGrad" cx="0.4" cy="0.35" r="0.6">
+      <stop offset="0%" stop-color="#FFF8E0"/>
+      <stop offset="100%" stop-color="#E8D8A8"/>
+    </radialGradient>
+
+    <!-- ── INFINITY gradient ── -->
+    <linearGradient id="infinityGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#A8D0B0"/>
+      <stop offset="100%" stop-color="#78B088"/>
+    </linearGradient>
+
+    <!-- ── REFRESH gradient ── -->
+    <linearGradient id="refreshGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9888C0"/>
+      <stop offset="100%" stop-color="#7868A8"/>
+    </linearGradient>
+
+    <!-- ── Sparkle filter ── -->
+    <filter id="glowFilter" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- ── Drop shadow ── -->
+    <filter id="iconShadow" x="-10%" y="-5%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#C0B8A8" flood-opacity="0.25"/>
+    </filter>
+
+    <!-- ── 4-pointed sparkle ── -->
+    <path id="sparkle4" d="M 0,-1 Q 0.07,-0.07 1,0 Q 0.07,0.07 0,1 Q -0.07,0.07 -1,0 Q -0.07,-0.07 0,-1 Z"/>
+  </defs>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- BACKGROUND (light cream) -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <rect width="2400" height="1800" fill="#F5F0EA"/>
+
+  <!-- Grid positions:
+       Row 1: y=450    Row 2: y=1250
+       Col 1: x=375    Col 2: x=825    Col 3: x=1350    Col 4: x=1900
+  -->
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- 1. SUN (top-left) -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <g id="icon-sun" transform="translate(375,430)">
+    <!-- Sun rays (rounded rectangles around center) -->
+    <g fill="url(#sunRay)">
+      <rect x="-12" y="-130" width="24" height="50" rx="12" transform="rotate(0)"/>
+      <rect x="-12" y="-130" width="24" height="50" rx="12" transform="rotate(45)"/>
+      <rect x="-12" y="-130" width="24" height="50" rx="12" transform="rotate(90)"/>
+      <rect x="-12" y="-130" width="24" height="50" rx="12" transform="rotate(135)"/>
+      <rect x="-12" y="-130" width="24" height="50" rx="12" transform="rotate(180)"/>
+      <rect x="-12" y="-130" width="24" height="50" rx="12" transform="rotate(225)"/>
+      <rect x="-12" y="-130" width="24" height="50" rx="12" transform="rotate(270)"/>
+      <rect x="-12" y="-130" width="24" height="50" rx="12" transform="rotate(315)"/>
+    </g>
+    <!-- Sun center circle -->
+    <circle cx="0" cy="0" r="65" fill="url(#sunCenter)"/>
+    <!-- Highlight -->
+    <ellipse cx="-15" cy="-18" rx="25" ry="20" fill="white" opacity="0.3"/>
+  </g>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- 2. BALANCE SCALE (top-center-left) -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <g id="icon-scale" transform="translate(825,430)">
+    <!-- Base platform -->
+    <rect x="-70" y="100" width="140" height="18" rx="5" fill="url(#scaleGold)"/>
+    <!-- Center pillar -->
+    <rect x="-10" y="-40" width="20" height="145" rx="4" fill="url(#scaleGold)"/>
+    <!-- Top pivot -->
+    <circle cx="0" cy="-45" r="12" fill="#C08830"/>
+    <!-- Beam (horizontal bar) -->
+    <rect x="-130" y="-55" width="260" height="14" rx="4" fill="url(#scaleGold)"/>
+    <!-- Left chain -->
+    <line x1="-115" y1="-42" x2="-115" y2="30" stroke="#C09840" stroke-width="3"/>
+    <!-- Right chain -->
+    <line x1="115" y1="-42" x2="115" y2="30" stroke="#C09840" stroke-width="3"/>
+    <!-- Left green orb (hanging) -->
+    <circle cx="-115" cy="55" r="35" fill="url(#greenOrb)"/>
+    <ellipse cx="-122" cy="45" rx="12" ry="10" fill="white" opacity="0.25"/>
+    <!-- Right blue orb (hanging) -->
+    <circle cx="115" cy="55" r="35" fill="url(#blueOrb)"/>
+    <ellipse cx="108" cy="45" rx="12" ry="10" fill="white" opacity="0.25"/>
+  </g>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- 3. PATH / JOURNEY (top-center-right) -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <g id="icon-path" transform="translate(1350,440)">
+    <!-- Green rounded blob background -->
+    <path d="M -130,-60
+             Q -145,-80 -120,-95
+             Q -60,-115 20,-105
+             Q 100,-95 140,-65
+             Q 165,-30 150,20
+             Q 135,65 90,85
+             Q 30,105 -40,100
+             Q -110,90 -140,50
+             Q -155,15 -130,-60 Z"
+          fill="url(#pathGreen)"/>
+    <!-- Darker green patches -->
+    <path d="M -110,-40 Q -130,-60 -100,-80 Q -60,-85 -40,-60 Q -50,-30 -80,-25 Q -110,-20 -110,-40 Z"
+          fill="#7AAA58" opacity="0.5"/>
+    <path d="M 80,-60 Q 110,-80 135,-55 Q 140,-25 110,-15 Q 80,-10 70,-35 Z"
+          fill="#7AAA58" opacity="0.4"/>
+    <!-- Winding sandy path -->
+    <path d="M -60,-100
+             Q -30,-70 -50,-30
+             Q -70,10 -30,40
+             Q 10,65 50,50
+             Q 90,30 70,0
+             Q 50,-25 80,-55
+             Q 100,-80 130,-70"
+          fill="none" stroke="url(#pathSand)" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Path inner lighter line -->
+    <path d="M -60,-100
+             Q -30,-70 -50,-30
+             Q -70,10 -30,40
+             Q 10,65 50,50
+             Q 90,30 70,0
+             Q 50,-25 80,-55
+             Q 100,-80 130,-70"
+          fill="none" stroke="#F0E0C0" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+  </g>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- 4. HEART WITH GLOW (top-right) -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <g id="icon-heart" transform="translate(1900,430)">
+    <!-- Outer golden glow -->
+    <circle cx="0" cy="0" r="120" fill="url(#heartGlow)"/>
+    <!-- Inner warm glow ring -->
+    <circle cx="0" cy="0" r="85" fill="none" stroke="#FFE870" stroke-width="20" opacity="0.35"/>
+    <!-- Heart shape -->
+    <path d="M 0,55
+             Q -30,80 -60,55
+             Q -90,25 -75,-15
+             Q -60,-50 -30,-55
+             Q -10,-58 0,-40
+             Q 10,-58 30,-55
+             Q 60,-50 75,-15
+             Q 90,25 60,55
+             Q 30,80 0,55 Z"
+          fill="url(#heartGrad)"/>
+    <!-- Heart highlight -->
+    <path d="M -30,-35 Q -45,-25 -40,-5 Q -30,-15 -20,-30 Z"
+          fill="white" opacity="0.3"/>
+    <!-- Sparkles around heart -->
+    <use xlink:href="#sparkle4" transform="translate(-100,-70) scale(8)" fill="#FFE860" opacity="0.7"/>
+    <use xlink:href="#sparkle4" transform="translate(95,-80) scale(10)" fill="#FFE860" opacity="0.8"/>
+    <use xlink:href="#sparkle4" transform="translate(110,40) scale(6)" fill="#FFE860" opacity="0.6"/>
+    <use xlink:href="#sparkle4" transform="translate(-105,50) scale(5)" fill="#FFE860" opacity="0.5"/>
+  </g>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- 5. MOUND / ROCK (bottom-left) -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <g id="icon-mound" transform="translate(375,1250)">
+    <!-- Shadow under mound -->
+    <ellipse cx="0" cy="75" rx="140" ry="20" fill="#D0C8B8" opacity="0.3"/>
+    <!-- Main mound shape -->
+    <path d="M -140,60
+             Q -150,30 -130,-10
+             Q -100,-55 -50,-75
+             Q 0,-85 50,-70
+             Q 110,-45 135,-5
+             Q 150,30 140,60
+             Q 80,80 0,80
+             Q -80,80 -140,60 Z"
+          fill="url(#moundGrad)"/>
+    <!-- Highlight spots -->
+    <ellipse cx="-50" cy="-30" rx="30" ry="18" fill="white" opacity="0.25" transform="rotate(-15,-50,-30)"/>
+    <ellipse cx="20" cy="-45" rx="20" ry="12" fill="white" opacity="0.2" transform="rotate(10,20,-45)"/>
+    <ellipse cx="70" cy="-10" rx="15" ry="10" fill="white" opacity="0.15" transform="rotate(5,70,-10)"/>
+    <!-- Bottom edge shadow -->
+    <path d="M -120,55 Q 0,85 120,55 Q 80,75 0,78 Q -80,75 -120,55 Z"
+          fill="#C09868" opacity="0.3"/>
+  </g>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- 6. CRESCENT MOON (bottom-center-left) -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <g id="icon-moon" transform="translate(825,1250)">
+    <!-- Shadow -->
+    <ellipse cx="10" cy="80" rx="80" ry="15" fill="#D0C8B8" opacity="0.25"/>
+    <!-- Moon crescent (thick crescent shape) -->
+    <path d="M 20,-80
+             Q -50,-70 -75,-20
+             Q -90,30 -60,70
+             Q -30,95 20,90
+             Q -10,70 -15,30
+             Q -15,-15 5,-50
+             Q 25,-75 20,-80 Z"
+          fill="url(#moonGrad)"/>
+    <!-- Outer curve for thickness -->
+    <path d="M 20,-80
+             Q 70,-75 85,-30
+             Q 95,20 70,60
+             Q 50,85 20,90
+             Q -30,95 -60,70
+             Q -90,30 -75,-20
+             Q -50,-70 20,-80 Z
+             M 20,90
+             Q -10,70 -15,30
+             Q -15,-15 5,-50
+             Q 25,-75 20,-80"
+          fill="url(#moonGrad)" fill-rule="evenodd"/>
+    <!-- Moon highlight -->
+    <path d="M 10,-65 Q -25,-55 -40,-25 Q -30,-35 -5,-55 Z"
+          fill="white" opacity="0.35"/>
+    <ellipse cx="30" cy="-30" rx="18" ry="15" fill="white" opacity="0.15"/>
+  </g>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- 7. INFINITY SYMBOL (bottom-center-right) -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <g id="icon-infinity" transform="translate(1350,1250)">
+    <!-- Shadow -->
+    <ellipse cx="0" cy="70" rx="120" ry="18" fill="#B8D0B8" opacity="0.25"/>
+    <!-- Infinity outer (3D thick stroke) -->
+    <path d="M 0,0
+             C -30,-60 -110,-60 -110,0
+             C -110,60 -30,60 0,0
+             C 30,-60 110,-60 110,0
+             C 110,60 30,60 0,0 Z"
+          fill="none" stroke="#88B890" stroke-width="32" stroke-linecap="round"/>
+    <!-- Infinity inner (lighter, for 3D effect) -->
+    <path d="M 0,0
+             C -30,-60 -110,-60 -110,0
+             C -110,60 -30,60 0,0
+             C 30,-60 110,-60 110,0
+             C 110,60 30,60 0,0 Z"
+          fill="none" stroke="url(#infinityGrad)" stroke-width="24" stroke-linecap="round"/>
+    <!-- Top highlight -->
+    <path d="M -15,-5
+             C -40,-50 -95,-50 -95,-5"
+          fill="none" stroke="#C0E0C8" stroke-width="8" stroke-linecap="round" opacity="0.6"/>
+    <path d="M 15,-5
+             C 40,-50 95,-50 95,-5"
+          fill="none" stroke="#C0E0C8" stroke-width="8" stroke-linecap="round" opacity="0.6"/>
+  </g>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- 8. REFRESH / CYCLE ARROW (bottom-right) -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <g id="icon-refresh" transform="translate(1900,1250)">
+    <!-- Shadow -->
+    <ellipse cx="0" cy="85" rx="95" ry="16" fill="#B8B0C8" opacity="0.25"/>
+    <!-- Circular arc (almost full circle, with gap at bottom-right) -->
+    <path d="M 65,-50
+             A 80,80 0 1 0 70,30"
+          fill="none" stroke="#8878A8" stroke-width="28" stroke-linecap="round"/>
+    <!-- Inner lighter stroke for 3D -->
+    <path d="M 65,-50
+             A 80,80 0 1 0 70,30"
+          fill="none" stroke="url(#refreshGrad)" stroke-width="22" stroke-linecap="round"/>
+    <!-- Top highlight on arc -->
+    <path d="M 55,-55
+             A 80,80 0 0 0 -70,-40"
+          fill="none" stroke="#B8A8D0" stroke-width="8" stroke-linecap="round" opacity="0.5"/>
+    <!-- Arrow head at the end (pointing down-right) -->
+    <polygon points="70,30 95,10 55,5" fill="url(#refreshGrad)" stroke="#7060A0" stroke-width="2"/>
+    <!-- Arrow head highlight -->
+    <polygon points="72,28 90,14 62,12" fill="#B0A0C8" opacity="0.3"/>
+  </g>
+
+</svg>

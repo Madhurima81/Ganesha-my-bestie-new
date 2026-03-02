@@ -630,7 +630,6 @@ if (tempData) {
       }}
     >
       <div className="bg-layer"></div>
-      <div className="zone-bg-overlay"></div>
 
       {/* 🔍 TEMPORARY DEBUG BUTTON */}
 <button 

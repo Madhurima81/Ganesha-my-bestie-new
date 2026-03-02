@@ -26,7 +26,12 @@
       "Bash(python3 -c \" import json, sys path = r''C:\\\\Users\\\\Madhurima Agarwal\\\\.claude\\\\projects\\\\C--Users-Madhurima-Agarwal-ganesha-my-bestie\\\\2e434ea8-341d-46c3-9b58-80e162a1804e.jsonl'' keywords = [''flow'', ''zone map'', ''welcome screen'', ''first time'', ''zonepreview'', ''onboarding'', ''screen flow'', ''navigation''] with open\\(path, ''r'', encoding=''utf-8'', errors=''replace''\\) as f: lines = f.readlines\\(\\) for i, line in enumerate\\(lines\\): line = line.strip\\(\\) if not line: continue try: obj = json.loads\\(line\\) msg = obj.get\\(''message'', {}\\) content = msg.get\\(''content'', ''''\\) role = msg.get\\(''role'', ''''\\) texts = [] if isinstance\\(content, list\\): for c in content: if isinstance\\(c, dict\\) and c.get\\(''type''\\) == ''text'': texts.append\\(c.get\\(''text'', ''''\\)\\) elif isinstance\\(content, str\\): texts.append\\(content\\) for text in texts: tl = text.lower\\(\\) if any\\(kw in tl for kw in keywords\\): print\\(f''--- [{role}] line {i} ---''\\) # Find and print surrounding context for kw in keywords: idx = tl.find\\(kw\\) if idx >= 0: start = max\\(0, idx - 200\\) end = min\\(len\\(text\\), idx + 400\\) print\\(f''[keyword: {kw}]''\\) print\\(text[start:end]\\) print\\(\\) break except Exception as e: pass \")",
       "Bash(python3:*)",
       "Bash(node:*)",
-      "Bash(\"C:/Users/Madhurima Agarwal/ganesha-my-bestie/src/pages/CleanMapZone.css\":*)"
+      "Bash(\"C:/Users/Madhurima Agarwal/ganesha-my-bestie/src/pages/CleanMapZone.css\":*)",
+      "Bash(where:*)",
+      "Bash(pip show:*)",
+      "Bash(pip3 show:*)",
+      "Bash(pip install:*)",
+      "Bash(echo:*)"
     ]
   }
 }

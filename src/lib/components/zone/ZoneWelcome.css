@@ -29,18 +29,20 @@
   inset: 0;
   background-image: url('/images/map-background.svg');
   background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center center;
+  background-size: 200%;         /* 200% = full 2× canvas at 1:1 — same as main map */
+  background-position: 50% 50%;
   z-index: 0;
+  transition: background-position 800ms ease, background-size 800ms ease;
 }
 
-/* Zone camera positions — kept for future use when expanded canvas is ready
-.symbol-mountain .bg-layer { background-size: 155%; background-position: 20% 35%; }
-.cave-of-secrets .bg-layer { background-size: 150%; background-position: 50% 45%; }
-.shloka-river    .bg-layer { background-size: 150%; background-position: 75% 40%; }
-.festival-square .bg-layer { background-size: 155%; background-position: 80% 75%; }
-.about-me-hut    .bg-layer { background-size: 150%; background-position: 30% 75%; }
-*/
+/* ── Zone camera positions — 250% zooms in ~25% from main map view ──
+   Positions reference where each zone sits on the 4116×3072 canvas.
+   Fine-tune % values visually per zone. */
+.symbol-mountain .bg-layer { background-size: 250%; background-position: 35% 53%; }
+.cave-of-secrets .bg-layer { background-size: 300%; background-position: 30% 50%; }
+.shloka-river    .bg-layer { background-size: 300%; background-position: 50% 45%; }
+.festival-square .bg-layer { background-size: 400%; background-position: 75% 70%; }
+.about-me-hut    .bg-layer { background-size: 600%; background-position: 38% 62%; }
 
 /* ── Subtle top tint — keeps zone title readable ── */
 .bg-layer::after {

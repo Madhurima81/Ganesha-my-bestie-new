@@ -15,12 +15,16 @@
 
 .map-bg-img {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  left: 50%;
+  top: 50%;
+  width: 200%;
+  height: 200%;
+  transform: translate(-50%, -50%);
   object-fit: cover;
   z-index: 1;
   pointer-events: none;
+  /* 200% scale + centered = only the original zone area (centre of canvas) shows;
+     extended edges are hidden by map-container overflow:hidden */
 }
 
 /* =========================

@@ -82,6 +82,11 @@ const ZONE_IDS = {
   CAVE: 'cave-of-secrets',
 };
 
+// Temporary debug switches for QA checks.
+// Set both back to false after verification.
+const DEBUG_UNLOCK_ALL_ZONES = true;
+const DEBUG_ALWAYS_OPEN_ZONE_WELCOME = true;
+
 const getCompletedScenes = (allProgress, zoneId) => allProgress[zoneId]?.completedScenes || 0;
 
 const getTotalScenes = (zoneId) => {
@@ -95,6 +100,7 @@ const isZoneComplete = (allProgress, zoneId) => {
 };
 
 const isZoneUnlocked = (zoneId, allProgress) => {
+  if (DEBUG_UNLOCK_ALL_ZONES) return true;
   if (zoneId === ZONE_IDS.SYMBOL) return true;
   if (zoneId === ZONE_IDS.RIVER) return getCompletedScenes(allProgress, ZONE_IDS.SYMBOL) >= 1;
   if (zoneId === ZONE_IDS.HUT) return isZoneComplete(allProgress, ZONE_IDS.SYMBOL);
@@ -362,6 +368,11 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles }) => {
 
   const handleZoneClick = (zone, state) => {
     if (state === 'locked' || state === 'unlocking') return;
+
+    if (DEBUG_ALWAYS_OPEN_ZONE_WELCOME) {
+      if (onZoneSelect) onZoneSelect(zone.id);
+      return;
+    }
 
     if (state === 'active') {
       // No progress at all → first time in this zone → go directly to Scene 1

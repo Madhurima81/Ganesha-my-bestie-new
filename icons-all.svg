@@ -1,0 +1,780 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="800"
+   height="800"
+   viewBox="0 0 100 100"
+   version="1.1"
+   id="svg50"
+   sodipodi:docname="icons-all.svg"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview50"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.93875"
+     inkscape:cx="400"
+     inkscape:cy="400"
+     inkscape:window-width="1920"
+     inkscape:window-height="986"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer-loop-arrow" />
+  <defs
+     id="defs6">
+    <!-- Sun: 3-stop radial gradient, center offset top-left -->
+    <radialGradient
+       id="sunGrad"
+       cx="0.38"
+       cy="0.34"
+       r="0.6">
+      <stop
+         offset="0%"
+         stop-color="#F8D76A"
+         id="stop1" />
+      <stop
+         offset="50%"
+         stop-color="#F4C542"
+         id="stop2" />
+      <stop
+         offset="100%"
+         stop-color="#E7B83A"
+         id="stop3" />
+    </radialGradient>
+    <!-- GLOBAL: Soft shadow blur (stdDev 1.5) -->
+    <filter
+       id="softShadow"
+       x="-0.13541255"
+       y="-0.14782737"
+       width="1.2041061"
+       height="1.2957487">
+      <feGaussianBlur
+         in="SourceGraphic"
+         stdDeviation="1.5"
+         id="feGaussianBlur3" />
+    </filter>
+    <!-- Sun shadow: blur 5 (stdDev ~2.5) -->
+    <filter
+       id="sunShadow"
+       x="-0.078947368"
+       y="-0.078947368"
+       width="1.1578947"
+       height="1.1578947">
+      <feGaussianBlur
+         in="SourceGraphic"
+         stdDeviation="2.5"
+         id="feGaussianBlur4" />
+    </filter>
+    <!-- Highlight blur (1.2) -->
+    <filter
+       id="highlightBlur"
+       x="-0.28800001"
+       y="-0.28800001"
+       width="1.576"
+       height="1.576">
+      <feGaussianBlur
+         in="SourceGraphic"
+         stdDeviation="0.6"
+         id="feGaussianBlur5" />
+    </filter>
+    <!-- Scale: pillar subtle vertical gradient -->
+    <linearGradient
+       id="scaleStandGrad"
+       x1="0"
+       y1="0"
+       x2="0"
+       y2="1">
+      <stop
+         offset="0%"
+         stop-color="#F4C542"
+         id="stop5" />
+      <stop
+         offset="100%"
+         stop-color="#D9A62E"
+         id="stop6" />
+    </linearGradient>
+    <!-- Scale shadow: blur 6 (stdDev 3) -->
+    <filter
+       id="scaleShadow"
+       x="-0.10588235"
+       y="-0.15319149"
+       width="1.2117647"
+       height="1.306383">
+      <feGaussianBlur
+         in="SourceGraphic"
+         stdDeviation="3"
+         id="feGaussianBlur6" />
+    </filter>
+  </defs>
+  <!-- 100x100 canvas -->
+  <rect
+     width="100"
+     height="100"
+     fill="#F5F0EA"
+     id="rect6" />
+  <!-- ═══════════════════════ LAYER 1: SUN (LOCKED FINAL) ═══════════════════════ -->
+  <g
+     inkscape:groupmode="layer"
+     inkscape:label="Sun"
+     id="layer-sun"
+     style="display:none">
+    <!-- SHADOW: Union of circle+rays, #000, 10% opacity, blur 5, down 3px -->
+    <g
+       transform="translate(50,53)"
+       opacity="0.1"
+       filter="url(#sunShadow)"
+       id="g14">
+      <rect
+         x="-4"
+         y="-38"
+         width="8"
+         height="18"
+         rx="4"
+         fill="#000000"
+         id="rect7" />
+      <rect
+         x="-4"
+         y="-38"
+         width="8"
+         height="18"
+         rx="4"
+         fill="#000000"
+         transform="rotate(45)"
+         id="rect8" />
+      <rect
+         x="-4"
+         y="-38"
+         width="8"
+         height="18"
+         rx="4"
+         fill="#000000"
+         transform="rotate(90)"
+         id="rect9" />
+      <rect
+         x="-4"
+         y="-38"
+         width="8"
+         height="18"
+         rx="4"
+         fill="#000000"
+         transform="rotate(135)"
+         id="rect10" />
+      <rect
+         x="-4"
+         y="-38"
+         width="8"
+         height="18"
+         rx="4"
+         fill="#000000"
+         transform="scale(-1)"
+         id="rect11" />
+      <rect
+         x="-4"
+         y="-38"
+         width="8"
+         height="18"
+         rx="4"
+         fill="#000000"
+         transform="rotate(-135)"
+         id="rect12" />
+      <rect
+         x="-4"
+         y="-38"
+         width="8"
+         height="18"
+         rx="4"
+         fill="#000000"
+         transform="rotate(-90)"
+         id="rect13" />
+      <rect
+         x="-4"
+         y="-38"
+         width="8"
+         height="18"
+         rx="4"
+         fill="#000000"
+         transform="rotate(-45)"
+         id="rect14" />
+      <circle
+         cx="0"
+         cy="0"
+         r="18"
+         fill="#000000"
+         id="circle14" />
+    </g>
+    <!-- MAIN SUN -->
+    <g
+       transform="translate(50,50)"
+       id="g22">
+      <!-- 8 rounded rays — flat #F4C542, slight breathing space from circle -->
+      <rect
+         x="-4"
+         y="-38"
+         width="8"
+         height="16"
+         rx="4"
+         fill="#f4c542"
+         id="rect15" />
+      <rect
+         x="-4"
+         y="-38"
+         width="8"
+         height="16"
+         rx="4"
+         fill="#f4c542"
+         transform="rotate(45)"
+         id="rect16" />
+      <rect
+         x="-4"
+         y="-38"
+         width="8"
+         height="16"
+         rx="4"
+         fill="#f4c542"
+         transform="rotate(90)"
+         id="rect17" />
+      <rect
+         x="-4"
+         y="-38"
+         width="8"
+         height="16"
+         rx="4"
+         fill="#f4c542"
+         transform="rotate(135)"
+         id="rect18" />
+      <rect
+         x="-4"
+         y="-38"
+         width="8"
+         height="16"
+         rx="4"
+         fill="#f4c542"
+         transform="scale(-1)"
+         id="rect19" />
+      <rect
+         x="-4"
+         y="-38"
+         width="8"
+         height="16"
+         rx="4"
+         fill="#f4c542"
+         transform="rotate(-135)"
+         id="rect20" />
+      <rect
+         x="-4"
+         y="-38"
+         width="8"
+         height="16"
+         rx="4"
+         fill="#f4c542"
+         transform="rotate(-90)"
+         id="rect21" />
+      <rect
+         x="-4"
+         y="-38"
+         width="8"
+         height="16"
+         rx="4"
+         fill="#f4c542"
+         transform="rotate(-45)"
+         id="rect22" />
+      <!-- Center circle — 3-stop radial gradient, center offset top-left -->
+      <circle
+         cx="0"
+         cy="0"
+         r="18"
+         fill="url(#sunGrad)"
+         id="circle22" />
+      <!-- Highlight — light touching surface: white, 22% opacity, blur 1.2, top-left quadrant -->
+      <ellipse
+         cx="-6"
+         cy="-7"
+         rx="5"
+         ry="3"
+         fill="#ffffff"
+         opacity="0.22"
+         filter="url(#highlightBlur)"
+         id="ellipse22" />
+    </g>
+  </g>
+  <!-- ═══════════════════════ LAYER 2: SCALE (FINAL) ═══════════════════════ -->
+  <g
+     inkscape:groupmode="layer"
+     inkscape:label="Scale"
+     id="layer-scale"
+     style="display:inline">
+    <!-- SHADOW: Union shape, #000, 9% opacity, blur 6, down 3px -->
+    <g
+       transform="translate(50,53)"
+       opacity="0.09"
+       filter="url(#scaleShadow)"
+       id="g27">
+      <rect
+         x="-3"
+         y="-20"
+         width="6"
+         height="42"
+         rx="2"
+         fill="#000000"
+         id="rect23" />
+      <rect
+         x="-15"
+         y="20"
+         width="30"
+         height="5"
+         rx="2.5"
+         fill="#000000"
+         id="rect24" />
+      <rect
+         x="-30"
+         y="-22"
+         width="60"
+         height="4"
+         rx="2"
+         fill="#000000"
+         id="rect25" />
+      <line
+         x1="-25"
+         y1="-18"
+         x2="-25"
+         y2="0"
+         stroke="#000000"
+         stroke-width="1.5"
+         id="line25" />
+      <line
+         x1="25"
+         y1="-18"
+         x2="25"
+         y2="0"
+         stroke="#000000"
+         stroke-width="1.5"
+         id="line26" />
+      <circle
+         cx="-25"
+         cy="8"
+         r="9"
+         fill="#000000"
+         id="circle26" />
+      <circle
+         cx="25"
+         cy="8"
+         r="9"
+         fill="#000000"
+         id="circle27" />
+    </g>
+    <!-- MAIN SCALE -->
+    <g
+       transform="translate(50,50)"
+       id="g33">
+      <!-- Vertical pillar — subtle gradient top #F4C542 → bottom #D9A62E -->
+      <rect
+         x="-3"
+         y="-20"
+         width="6"
+         height="42"
+         rx="2"
+         fill="url(#scaleStandGrad)"
+         id="rect27" />
+      <!-- Base platform — flat #F4C542 -->
+      <rect
+         x="-15"
+         y="20"
+         width="30"
+         height="5"
+         rx="2.5"
+         fill="#f4c542"
+         id="rect28" />
+      <!-- Top pivot knob — reduced ~12% (r=2.6) -->
+      <circle
+         cx="0"
+         cy="-22"
+         r="2.5999999"
+         fill="#f4c542"
+         id="circle28" />
+      <!-- Horizontal beam — flat #F4C542 -->
+      <rect
+         x="-30"
+         y="-22"
+         width="60"
+         height="4"
+         rx="2"
+         fill="#f4c542"
+         id="rect29" />
+      <!-- Left string — flat #F4C542 -->
+      <line
+         x1="-25"
+         y1="-18"
+         x2="-25"
+         y2="0"
+         stroke="#f4c542"
+         stroke-width="1.5"
+         id="line29" />
+      <!-- Right string — flat #F4C542 -->
+      <line
+         x1="25"
+         y1="-18"
+         x2="25"
+         y2="0"
+         stroke="#f4c542"
+         stroke-width="1.5"
+         id="line30" />
+      <!-- LEFT PLATE (green) -->
+      <circle
+         cx="-25"
+         cy="8"
+         r="9"
+         fill="#a8c69f"
+         id="circle30" />
+      <!-- Bottom overlay — #7FA87A, 40%, clipped to bottom 35% -->
+      <path
+         d="m -33.6,10.7 a 9,9 0 0 0 17.2,0 z"
+         fill="#7fa87a"
+         opacity="0.4"
+         id="path30" />
+      <!-- Highlight — white, 25%, blur -->
+      <circle
+         cx="-28"
+         cy="5"
+         r="2.5"
+         fill="#ffffff"
+         opacity="0.25"
+         filter="url(#highlightBlur)"
+         id="circle31" />
+      <!-- RIGHT PLATE (blue) -->
+      <circle
+         cx="25"
+         cy="8"
+         r="9"
+         fill="#8fbfd1"
+         id="circle32" />
+      <!-- Bottom overlay — #6EA4B8, 40%, clipped to bottom 35% -->
+      <path
+         d="m 16.4,10.7 a 9,9 0 0 0 17.2,0 z"
+         fill="#6ea4b8"
+         opacity="0.4"
+         id="path32" />
+      <!-- Highlight — white, 25%, blur -->
+      <circle
+         cx="22"
+         cy="5"
+         r="2.5"
+         fill="#ffffff"
+         opacity="0.25"
+         filter="url(#highlightBlur)"
+         id="circle33" />
+    </g>
+  </g>
+  <!-- ═══════════════════════ LAYER 3: PATH ═══════════════════════ -->
+  <g
+     inkscape:groupmode="layer"
+     inkscape:label="Path"
+     id="layer-path"
+     style="display:none">
+    <!-- SHADOW -->
+    <g
+       transform="translate(0,2.5)"
+       opacity="0.1"
+       filter="url(#softShadow)"
+       id="g34">
+      <path
+         d="M 12,52 C 10,38 16,26 26,20 38,14 55,14 68,18 80,22 90,34 90,48 90,58 84,66 74,70 62,76 42,76 28,72 16,68 12,60 12,52 Z"
+         fill="#000000"
+         id="path33" />
+    </g>
+    <!-- MAIN -->
+    <g
+       id="g38">
+      <!-- Base blob — wider, flatter, organic pebble shape -->
+      <path
+         d="M 12,52 C 10,38 16,26 26,20 38,14 55,14 68,18 80,22 90,34 90,48 90,58 84,66 74,70 62,76 42,76 28,72 16,68 12,60 12,52 Z"
+         fill="#a8c69f"
+         id="path34" />
+      <!-- Darker green — left of path -->
+      <path
+         d="M 12,52 C 10,38 16,26 26,20 34,16 40,15 44,16 38,24 34,34 30,44 26,54 28,64 34,70 30,72 28,72 26,71 16,68 12,60 12,52 Z"
+         fill="#7fa87a"
+         opacity="0.55"
+         id="path35" />
+      <!-- Darker green — right of path -->
+      <path
+         d="m 68,18 c 12,4 22,16 22,30 0,10 -6,18 -16,22 -6,3 -12,4 -16,2 6,-8 10,-18 8,-28 -2,-10 0,-20 2,-26 z"
+         fill="#7fa87a"
+         opacity="0.5"
+         id="path36" />
+      <!-- Wide winding S-curve — the sandy path -->
+      <path
+         d="m 40,16 c 2,6 -2,14 -8,22 -6,8 -6,16 2,24 8,8 18,10 26,4 8,-6 10,-16 4,-24 -6,-8 -8,-14 -2,-20 4,-4 10,-5 14,-2"
+         fill="none"
+         stroke="#f0d7a8"
+         stroke-width="11"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         id="path37" />
+      <!-- Lighter center highlight on path -->
+      <path
+         d="m 40,16 c 2,6 -2,14 -8,22 -6,8 -6,16 2,24 8,8 18,10 26,4 8,-6 10,-16 4,-24 -6,-8 -8,-14 -2,-20 4,-4 10,-5 14,-2"
+         fill="none"
+         stroke="#f8e8d0"
+         stroke-width="4"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         opacity="0.5"
+         id="path38" />
+      <!-- Subtle top-left highlight on blob -->
+      <ellipse
+         cx="30"
+         cy="28"
+         rx="10"
+         ry="7"
+         fill="#ffffff"
+         opacity="0.12"
+         id="ellipse38" />
+    </g>
+  </g>
+  <!-- ═══════════════════════ LAYER 4: HEART ═══════════════════════ -->
+  <!--
+    Heart: fill #E98C8C, bottom darker #D96E6E
+    Glow: duplicate heart, fill #F4C542, blur 12, opacity 40%, behind
+    No sparkles.
+    Shadow: global soft shadow
+  -->
+  <g
+     inkscape:groupmode="layer"
+     inkscape:label="Heart"
+     id="layer-heart"
+     style="display:none">
+    <!-- Glow — yellow blurred heart behind, sent to back -->
+    <path
+       d="M 50,68 C 38,76 18,62 18,46 18,34 26,26 36,26 c 6,0 11,4 14,10 3,-6 8,-10 14,-10 10,0 18,8 18,20 0,16 -20,30 -32,22 z"
+       fill="#f4c542"
+       opacity="0.4"
+       filter="url(#softShadow)"
+       id="path39" />
+    <!-- Shadow -->
+    <g
+       transform="translate(0,2.5)"
+       opacity="0.1"
+       filter="url(#softShadow)"
+       id="g40">
+      <path
+         d="M 50,68 C 38,76 18,62 18,46 18,34 26,26 36,26 c 6,0 11,4 14,10 3,-6 8,-10 14,-10 10,0 18,8 18,20 0,16 -20,30 -32,22 z"
+         fill="#000000"
+         id="path40" />
+    </g>
+    <!-- Heart main — #E98C8C -->
+    <path
+       d="M 50,68 C 38,76 18,62 18,46 18,34 26,26 36,26 c 6,0 11,4 14,10 3,-6 8,-10 14,-10 10,0 18,8 18,20 0,16 -20,30 -32,22 z"
+       fill="#e98c8c"
+       id="path41" />
+    <!-- Bottom darker — #D96E6E clipped to bottom half -->
+    <path
+       d="M 50,68 C 38,76 18,62 18,52 26,58 38,66 50,68 62,66 74,58 82,52 82,62 62,76 50,68 Z"
+       fill="#d96e6e"
+       opacity="0.6"
+       id="path42" />
+    <!-- Highlight — white, top-left, <25% -->
+    <ellipse
+       cx="34"
+       cy="38"
+       rx="7"
+       ry="5"
+       fill="#ffffff"
+       opacity="0.35"
+       id="ellipse42" />
+  </g>
+  <!-- ═══════════════════════ LAYER 5: ROCK ═══════════════════════ -->
+  <!--
+    Blob: organic mound shape #E8BE8E
+    Darker bottom: #D6A875
+    White highlight: top-left, <25% opacity
+    Shadow: global soft shadow
+  -->
+  <g
+     inkscape:groupmode="layer"
+     inkscape:label="Rock"
+     id="layer-rock"
+     style="display:none">
+    <!-- SHADOW -->
+    <g
+       transform="translate(0,2.5)"
+       opacity="0.1"
+       filter="url(#softShadow)"
+       id="g43">
+      <path
+         d="M 16,62 C 14,52 18,40 28,34 38,28 50,26 62,28 74,30 86,38 88,50 90,60 84,68 74,72 62,76 38,76 26,72 18,68 16,66 16,62 Z"
+         fill="#000000"
+         id="path43" />
+    </g>
+    <!-- MAIN ROCK -->
+    <g
+       id="g45">
+      <!-- Base blob — organic mound shape -->
+      <path
+         d="M 16,62 C 14,52 18,40 28,34 38,28 50,26 62,28 74,30 86,38 88,50 90,60 84,68 74,72 62,76 38,76 26,72 18,68 16,66 16,62 Z"
+         fill="#e8be8e"
+         id="path44" />
+      <!-- Darker bottom — #D6A875 -->
+      <path
+         d="m 20,66 c -2,-2 -4,-4 -4,-4 2,6 10,10 22,12 12,2 24,2 36,-2 C 84,68 90,60 88,54 86,62 78,70 68,73 56,76 36,74 24,70 22,69 20,68 20,66 Z"
+         fill="#d6a875"
+         opacity="0.65"
+         id="path45" />
+      <!-- Highlight — white, top-left, <25% -->
+      <ellipse
+         cx="36"
+         cy="38"
+         rx="12"
+         ry="7"
+         fill="#ffffff"
+         opacity="0.2"
+         id="ellipse45" />
+    </g>
+  </g>
+  <!-- ═══════════════════════ LAYER 6: MOON ═══════════════════════ -->
+  <!--
+    Circle: #F1DEB5
+    Crescent: overlap circle in #F5F0EA (background color) to cut crescent
+    Darker edge: #E3CFA4
+    White highlight: top-left, <25% opacity
+    Shadow: global soft shadow
+  -->
+  <g
+     inkscape:groupmode="layer"
+     inkscape:label="Moon"
+     id="layer-moon"
+     style="display:none">
+    <!-- SHADOW -->
+    <g
+       transform="translate(0,2.5)"
+       opacity="0.1"
+       filter="url(#softShadow)"
+       id="g46">
+      <circle
+         cx="50"
+         cy="50"
+         r="28"
+         fill="#000000"
+         id="circle45" />
+    </g>
+    <!-- MAIN MOON -->
+    <g
+       id="g47">
+      <!-- Full moon circle -->
+      <circle
+         cx="50"
+         cy="50"
+         r="28"
+         fill="#f1deb5"
+         id="circle46" />
+      <!-- Darker crescent edge — right side shading -->
+      <path
+         d="M 62,24 C 72,30 78,40 78,50 78,60 72,70 62,76 56,72 52,62 52,50 52,38 56,28 62,24 Z"
+         fill="#e3cfa4"
+         opacity="0.5"
+         id="path46" />
+      <!-- Crescent cut — overlap circle in background color to carve crescent -->
+      <circle
+         cx="62"
+         cy="46"
+         r="22"
+         fill="#f5f0ea"
+         id="circle47" />
+      <!-- Highlight — white, top-left, <25% -->
+      <ellipse
+         cx="38"
+         cy="40"
+         rx="8"
+         ry="6"
+         fill="#ffffff"
+         opacity="0.2"
+         id="ellipse47" />
+    </g>
+  </g>
+  <!-- ═══════════════════════ LAYER 7: INFINITY ═══════════════════════ -->
+  <!--
+    Stroke path: figure-8 / infinity, #A8C69F, stroke 8, round cap
+    No fill. Shadow: global soft shadow
+  -->
+  <g
+     inkscape:groupmode="layer"
+     inkscape:label="Infinity"
+     id="layer-infinity"
+     style="display:none">
+    <!-- SHADOW -->
+    <g
+       transform="translate(0,2.5)"
+       opacity="0.1"
+       filter="url(#softShadow)"
+       id="g48">
+      <path
+         d="M 50,50 C 40,36 24,30 18,40 c -6,10 6,24 20,18 6,-4 10,-6 12,-8 2,-2 6,-4 12,-8 14,-6 26,8 20,18 -6,10 -22,4 -32,-10 z"
+         fill="#000000"
+         id="path47" />
+    </g>
+    <!-- MAIN INFINITY -->
+    <path
+       d="M 50,50 C 40,36 24,30 18,40 c -6,10 6,24 20,18 6,-4 10,-6 12,-8 2,-2 6,-4 12,-8 14,-6 26,8 20,18 -6,10 -22,4 -32,-10 z"
+       fill="none"
+       stroke="#a8c69f"
+       stroke-width="8"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       id="path48" />
+  </g>
+  <!-- ═══════════════════════ LAYER 8: LOOP ARROW ═══════════════════════ -->
+  <!--
+    Circular path: #A58BC4 (purple), stroke 7, round cap
+    Arrow head: #8A6FB0 (darker purple), triangle
+    Shadow: global soft shadow
+  -->
+  <g
+     inkscape:groupmode="layer"
+     inkscape:label="Loop Arrow"
+     id="layer-loop-arrow"
+     style="display:none">
+    <!-- SHADOW -->
+    <g
+       transform="translate(0,2.5)"
+       opacity="0.1"
+       filter="url(#softShadow)"
+       id="g49">
+      <path
+         d="m 68,30 a 24,24 0 1 0 4,24"
+         fill="none"
+         stroke="#000000"
+         stroke-width="7"
+         stroke-linecap="round"
+         id="path49" />
+      <polygon
+         points="72,60 66,48 78,48 "
+         fill="#000000"
+         id="polygon49" />
+    </g>
+    <!-- MAIN LOOP ARROW -->
+    <g
+       id="g50">
+      <!-- Circular arc — nearly full circle, open at top-right -->
+      <path
+         d="m 68,30 a 24,24 0 1 0 4,24"
+         fill="none"
+         stroke="#a58bc4"
+         stroke-width="7"
+         stroke-linecap="round"
+         id="path50" />
+      <!-- Arrow head — pointing down-right at arc end -->
+      <polygon
+         points="72,60 66,48 78,48 "
+         fill="#8a6fb0"
+         id="polygon50" />
+    </g>
+  </g>
+</svg>

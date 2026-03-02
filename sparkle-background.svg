@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="2400" height="1800" viewBox="0 0 2400 1800">
+  <defs>
+    <!-- Radial gradient for center glow -->
+    <radialGradient id="centerGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="35%" stop-color="#FEFCFF"/>
+      <stop offset="55%" stop-color="#F3E4FA"/>
+      <stop offset="72%" stop-color="#E4CCEF"/>
+      <stop offset="88%" stop-color="#D6B6E8"/>
+      <stop offset="100%" stop-color="#CCAAE8"/>
+    </radialGradient>
+
+    <!-- Sparkle glow filters -->
+    <filter id="glow" x="-200%" y="-200%" width="500%" height="500%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="glowLarge" x="-200%" y="-200%" width="500%" height="500%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- 4-pointed sparkle star shape -->
+    <path id="star" d="M 0,-1 Q 0.06,-0.06 1,0 Q 0.06,0.06 0,1 Q -0.06,0.06 -1,0 Q -0.06,-0.06 0,-1 Z"/>
+  </defs>
+
+  <!-- Lavender background -->
+  <rect width="2400" height="1800" fill="#CCAAE8"/>
+
+  <!-- Center white glow -->
+  <ellipse cx="1200" cy="900" rx="1100" ry="825" fill="url(#centerGlow)"/>
+
+  <!-- Sparkles -->
+  <g fill="white">
+
+    <!-- Top edge -->
+    <use xlink:href="#star" transform="translate(269,180) scale(20)" opacity="0.7" filter="url(#glow)"/>
+    <use xlink:href="#star" transform="translate(594,114) scale(12.5)" opacity="0.5" filter="url(#glow)"/>
+    <use xlink:href="#star" transform="translate(920,156) scale(10)" opacity="0.4" filter="url(#glow)"/>
+    <use xlink:href="#star" transform="translate(1245,96) scale(14)" opacity="0.5" filter="url(#glow)"/>
+    <use xlink:href="#star" transform="translate(1615,126) scale(12.5)" opacity="0.55" filter="url(#glow)"/>
+    <use xlink:href="#star" transform="translate(1974,150) scale(22.5)" opacity="0.8" filter="url(#glowLarge)"/>
+    <use xlink:href="#star" transform="translate(2165,114) scale(10)" opacity="0.45" filter="url(#glow)"/>
+
+    <!-- Top-right corner -->
+    <use xlink:href="#star" transform="translate(2243,345) scale(25)" opacity="0.85" filter="url(#glowLarge)"/>
+    <use xlink:href="#star" transform="translate(2322,585) scale(12.5)" opacity="0.5" filter="url(#glow)"/>
+
+    <!-- Right edge -->
+    <use xlink:href="#star" transform="translate(2299,870) scale(11)" opacity="0.45" filter="url(#glow)"/>
+    <use xlink:href="#star" transform="translate(2322,1185) scale(15)" opacity="0.55" filter="url(#glow)"/>
+    <use xlink:href="#star" transform="translate(2254,1425) scale(17.5)" opacity="0.7" filter="url(#glow)"/>
+
+    <!-- Bottom-right -->
+    <use xlink:href="#star" transform="translate(2086,1605) scale(14)" opacity="0.55" filter="url(#glow)"/>
+
+    <!-- Bottom edge -->
+    <use xlink:href="#star" transform="translate(1772,1665) scale(20)" opacity="0.7" filter="url(#glow)"/>
+    <use xlink:href="#star" transform="translate(1413,1680) scale(10)" opacity="0.4" filter="url(#glow)"/>
+    <use xlink:href="#star" transform="translate(1032,1695) scale(14)" opacity="0.5" filter="url(#glow)"/>
+    <use xlink:href="#star" transform="translate(695,1644) scale(22.5)" opacity="0.75" filter="url(#glowLarge)"/>
+    <use xlink:href="#star" transform="translate(415,1674) scale(12.5)" opacity="0.5" filter="url(#glow)"/>
+
+    <!-- Bottom-left -->
+    <use xlink:href="#star" transform="translate(191,1575) scale(17.5)" opacity="0.65" filter="url(#glow)"/>
+
+    <!-- Left edge -->
+    <use xlink:href="#star" transform="translate(108,1320) scale(15)" opacity="0.55" filter="url(#glow)"/>
+    <use xlink:href="#star" transform="translate(67,1035) scale(11)" opacity="0.45" filter="url(#glow)"/>
+    <use xlink:href="#star" transform="translate(94,765) scale(20)" opacity="0.7" filter="url(#glow)"/>
+    <use xlink:href="#star" transform="translate(130,504) scale(12.5)" opacity="0.5" filter="url(#glow)"/>
+
+    <!-- Top-left corner -->
+    <use xlink:href="#star" transform="translate(175,285) scale(25)" opacity="0.8" filter="url(#glowLarge)"/>
+
+    <!-- Interior sparkles near glow boundary -->
+    <use xlink:href="#star" transform="translate(460,405) scale(15)" opacity="0.5" filter="url(#glow)"/>
+    <use xlink:href="#star" transform="translate(796,285) scale(9)" opacity="0.35" filter="url(#glow)"/>
+    <use xlink:href="#star" transform="translate(1873,435) scale(17.5)" opacity="0.6" filter="url(#glow)"/>
+    <use xlink:href="#star" transform="translate(2030,735) scale(10)" opacity="0.4" filter="url(#glow)"/>
+    <use xlink:href="#star" transform="translate(415,1245) scale(12.5)" opacity="0.45" filter="url(#glow)"/>
+    <use xlink:href="#star" transform="translate(1918,1275) scale(15)" opacity="0.5" filter="url(#glow)"/>
+    <use xlink:href="#star" transform="translate(1570,285) scale(7.5)" opacity="0.3" filter="url(#glow)"/>
+    <use xlink:href="#star" transform="translate(572,1035) scale(9)" opacity="0.3" filter="url(#glow)"/>
+    <use xlink:href="#star" transform="translate(1705,1380) scale(10)" opacity="0.35" filter="url(#glow)"/>
+    <use xlink:href="#star" transform="translate(359,840) scale(7.5)" opacity="0.3" filter="url(#glow)"/>
+
+    <!-- Tiny dot sparkles -->
+    <circle cx="1122" cy="225" r="4.5" opacity="0.3" filter="url(#glow)"/>
+    <circle cx="348" cy="585" r="5" opacity="0.3" filter="url(#glow)"/>
+    <circle cx="2142" cy="915" r="3.75" opacity="0.25" filter="url(#glow)"/>
+    <circle cx="236" cy="1125" r="5" opacity="0.3" filter="url(#glow)"/>
+    <circle cx="1694" cy="1554" r="4.5" opacity="0.25" filter="url(#glow)"/>
+    <circle cx="796" cy="1515" r="5" opacity="0.28" filter="url(#glow)"/>
+    <circle cx="1312" cy="1710" r="3.75" opacity="0.2" filter="url(#glow)"/>
+    <circle cx="2265" cy="1050" r="3.75" opacity="0.22" filter="url(#glow)"/>
+    <circle cx="56" cy="900" r="4.5" opacity="0.25" filter="url(#glow)"/>
+    <circle cx="1077" cy="90" r="3.75" opacity="0.2" filter="url(#glow)"/>
+  </g>
+</svg>

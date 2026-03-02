@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="100" height="100" viewBox="0 0 100 100">
+
+  <!-- 100x100 canvas, icon 80x80 centered (10px padding) -->
+  <rect width="100" height="100" fill="#F5F0EA"/>
+
+  <!-- Sun icon: fits within 80x80, centered at (50,50) -->
+  <g id="sun" transform="translate(50,50) scale(0.242)">
+
+    <!-- Shadow layer (offset bottom-right by 6,6) -->
+    <g transform="translate(6,6)">
+      <rect x="-20" y="-165" width="40" height="70" rx="20" fill="#D9A93A" transform="rotate(0)"/>
+      <rect x="-20" y="-165" width="40" height="70" rx="20" fill="#D9A93A" transform="rotate(45)"/>
+      <rect x="-20" y="-165" width="40" height="70" rx="20" fill="#D9A93A" transform="rotate(90)"/>
+      <rect x="-20" y="-165" width="40" height="70" rx="20" fill="#D9A93A" transform="rotate(135)"/>
+      <rect x="-20" y="-165" width="40" height="70" rx="20" fill="#D9A93A" transform="rotate(180)"/>
+      <rect x="-20" y="-165" width="40" height="70" rx="20" fill="#D9A93A" transform="rotate(225)"/>
+      <rect x="-20" y="-165" width="40" height="70" rx="20" fill="#D9A93A" transform="rotate(270)"/>
+      <rect x="-20" y="-165" width="40" height="70" rx="20" fill="#D9A93A" transform="rotate(315)"/>
+      <circle cx="0" cy="0" r="85" fill="#D9A93A"/>
+    </g>
+
+    <!-- Main sun (base #F3C64E) — 8 large rounded rays -->
+    <rect x="-20" y="-165" width="40" height="70" rx="20" fill="#F3C64E" transform="rotate(0)"/>
+    <rect x="-20" y="-165" width="40" height="70" rx="20" fill="#F3C64E" transform="rotate(45)"/>
+    <rect x="-20" y="-165" width="40" height="70" rx="20" fill="#F3C64E" transform="rotate(90)"/>
+    <rect x="-20" y="-165" width="40" height="70" rx="20" fill="#F3C64E" transform="rotate(135)"/>
+    <rect x="-20" y="-165" width="40" height="70" rx="20" fill="#F3C64E" transform="rotate(180)"/>
+    <rect x="-20" y="-165" width="40" height="70" rx="20" fill="#F3C64E" transform="rotate(225)"/>
+    <rect x="-20" y="-165" width="40" height="70" rx="20" fill="#F3C64E" transform="rotate(270)"/>
+    <rect x="-20" y="-165" width="40" height="70" rx="20" fill="#F3C64E" transform="rotate(315)"/>
+    <circle cx="0" cy="0" r="85" fill="#F3C64E"/>
+
+    <!-- Single highlight (top-left, <25% coverage) #F8D76E -->
+    <ellipse cx="-25" cy="-28" rx="38" ry="32" fill="#F8D76E" opacity="0.85"/>
+
+  </g>
+
+</svg>
