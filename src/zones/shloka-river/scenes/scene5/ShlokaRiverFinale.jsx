@@ -5,6 +5,8 @@ import './RiverFinaleEnhanced.css';
 import GamePauseMenu from '../../core/GamePauseMenu-river';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../../lib/config/content';
+import OpeningModal from '../../../shared/components/OpeningModal';
+import ganeshaHeadphones from '../assets/images/ganesha_with_headphones.png';
 
 
 // Import background image
