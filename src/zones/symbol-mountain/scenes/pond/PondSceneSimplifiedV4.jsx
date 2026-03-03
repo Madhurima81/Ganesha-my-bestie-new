@@ -9,6 +9,7 @@ import { getCompletionModal } from '../../../../lib/config/content';
 
 // Shared Components
 import OpeningModal from '../../../shared/components/OpeningModal';
+import UnifiedHeaderV2 from '../../../../lib/components/ui/Header/UnifiedHeaderV2';
 
 // --- NEW MASTER LAYOUT & CONFIG ---
 import GameLayout from '../../../../lib/components/layout/GameLayout';
