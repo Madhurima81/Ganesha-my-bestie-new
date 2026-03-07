@@ -39,9 +39,9 @@ import goldenLotusBloomed from './assets/images/golden-lotus-bloomed.png';
 import elephantFull from './assets/images/elephant-full.png';
 import waterElephant from './assets/images/water-elephant.png';
 import mooshikaCoach from "./assets/images/mooshika-coach.png";
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.png';
-import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.png';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.png';
+import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.svg';
+import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.svg';
+import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.svg';
 import symbolLotusColored from '../../shared/images/icons/symbol-lotus-colored.png';
 import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-colored.png';
 

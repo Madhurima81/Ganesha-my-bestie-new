@@ -44,9 +44,9 @@ import popupMooshika from './assets/images/popup-mooshika-info.png';
 import popupBelly from './assets/images/popup-belly-info.png';
 import mooshikaCoach from "./assets/images/mooshika-coach.png";
 // Add these imports after the existing image imports
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.png';
-import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.png';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.png';
+import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.svg';
+import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.svg';
+import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.svg';
 //import backpackImage from './assets/images/backpack.png';  // ← ADD THIS LINE
 
 

@@ -1,4 +1,4 @@
-﻿// zones/symbol-mountain/scenes/symbol/SymbolMountainSceneV3.jsx
+// zones/symbol-mountain/scenes/symbol/SymbolMountainSceneV3.jsx
 // 🎵 Complete Musical Mountain Scene - Final Migration V5
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -58,9 +58,9 @@ import ganeshaComplete from '../tusk/assets/images/ganesha-complete.png';
 import ganeshaCharacter from './assets/images/ganesha-character.png';
 
 // Symbol Icons
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.png';
-import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.png';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.png';
+import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.svg';
+import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.svg';
+import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.svg';
 import symbolLotusColored from '../../shared/images/icons/symbol-lotus-colored.png';
 import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-colored.png';
 import symbolEyesColored from '../../shared/images/icons/symbol-eyes-colored.png';
@@ -925,3 +925,4 @@ const SymbolMountainSceneContent = ({
 };
 
 export default SymbolMountainSceneV3;
+

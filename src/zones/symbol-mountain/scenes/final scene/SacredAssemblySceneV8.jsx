@@ -1,4 +1,4 @@
-﻿// zones/symbol-mountain/scenes/final-scene/SacredAssemblyScene.jsx - V8 DIVINE VERSION
+// zones/symbol-mountain/scenes/final-scene/SacredAssemblyScene.jsx - V8 DIVINE VERSION
 import React, { useState, useEffect, useRef } from 'react';
 import './SacredAssemblyScene.css';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
@@ -39,9 +39,9 @@ import ganeshaStone from './assets/images/ganesha-stone.png';
 import ganeshaDivine from './assets/images/ganesha-divine.png';
 
 // Images - Symbol Icons
-import symbolMooshikaColored from './assets/images/symbol-mooshika-colored.png';
-import symbolModakColored from './assets/images/symbol-modak-colored.png';
-import symbolBellyColored from './assets/images/symbol-belly-colored.png';
+import symbolMooshikaColored from './assets/images/symbol-mooshika-colored.svg';
+import symbolModakColored from './assets/images/symbol-modak-colored.svg';
+import symbolBellyColored from './assets/images/symbol-belly-colored.svg';
 import symbolLotusColored from './assets/images/symbol-lotus-colored.png';
 import symbolTrunkColored from './assets/images/symbol-trunk-colored.png';
 import symbolEyesColored from './assets/images/symbol-eyes-colored.png';
@@ -1171,7 +1171,7 @@ const SacredAssemblyContent = ({
               {/* Wrong Click Feedback */}
               {showSparkle?.startsWith('wrong-zone-') && (
                 <div className="wrong-zone-feedback">
-                  <div className="shake-animation">❌</div>
+                  <div className="shake-animation">?</div>
                   <p className="try-again-text">Try again, little explorer!</p>
                 </div>
               )}
@@ -1576,3 +1576,4 @@ const SacredAssemblyContent = ({
 };
 
 export default SacredAssemblyScene;
+

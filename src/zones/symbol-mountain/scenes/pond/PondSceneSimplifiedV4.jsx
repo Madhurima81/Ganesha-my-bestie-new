@@ -1,4 +1,4 @@
-﻿// zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV3.jsx
+// zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV3.jsx
 
 import React, { useState, useEffect, useRef } from 'react';
 import './PondScene.css';
@@ -52,9 +52,9 @@ import goldenLotusBloomed from './assets/images/golden-lotus-bloomed.png';
 import elephantFull from './assets/images/elephant-full.png';
 import waterElephant from './assets/images/water-elephant.png';
 import mooshikaCoach from "./assets/images/mooshika-coach.png";
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.png';
-import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.png';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.png';
+import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.svg';
+import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.svg';
+import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.svg';
 import symbolLotusColored from '../../shared/images/icons/symbol-lotus-colored.png';
 import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-colored.png';
 
@@ -508,7 +508,7 @@ const PondSceneContent = ({
     }
   };
 
-  // ── SymbolAutoReveal helpers ───────────────────────────────────────────────
+  // -- SymbolAutoReveal helpers -----------------------------------------------
 
   const getSidebarTarget = (symbolId) => document.getElementById(`sidebar-${symbolId}`);
 
@@ -542,7 +542,7 @@ const PondSceneContent = ({
     }
   };
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // -------------------------------------------------------------------------
 
   const handleLotusClick = (index) => {
     if (progressiveHintRef.current?.hideHint) progressiveHintRef.current.hideHint();
@@ -1175,3 +1175,4 @@ const PondSceneContent = ({
 };
 
 export default PondSceneSimplifiedV3;
+

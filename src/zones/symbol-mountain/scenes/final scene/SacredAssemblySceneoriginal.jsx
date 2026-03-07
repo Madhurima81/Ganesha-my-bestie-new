@@ -34,9 +34,9 @@ import ganeshaStone from './assets/images/ganesha-stone.png';
 import ganeshaDivine from './assets/images/ganesha-divine.png';
 
 // Images - Symbol Icons (your existing shared symbols)
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.png';
-import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.png';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.png';
+import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.svg';
+import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.svg';
+import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.svg';
 import symbolLotusColored from '../../shared/images/icons/symbol-lotus-colored.png';
 import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-colored.png';
 import symbolEyesColored from '../../shared/images/icons/symbol-eyes-colored.png';

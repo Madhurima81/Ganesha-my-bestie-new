@@ -1,4 +1,4 @@
-﻿// zones/symbol-mountain/scenes/modak/NewModakSceneV5.jsx
+// zones/symbol-mountain/scenes/modak/NewModakSceneV5.jsx
 // ProgressiveHintSystem with visual disabled state
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -53,14 +53,14 @@ import modak1 from './assets/images/modak-1.png';
 import modak2 from './assets/images/modak-2.png';
 import modak3 from './assets/images/modak-3.png';
 import basket from './assets/images/basket.png';
-import mooshika from '../../shared/images/icons/symbol-mooshika-colored.png';
+import mooshika from '../../shared/images/icons/symbol-mooshika-colored.svg';
 import mudMound from './assets/images/mud-mound.png';
 import rock from './assets/images/rock.png';
 import belly from './assets/images/belly.png';
 import mooshikaCoach from "./assets/images/mooshika-coach.png";
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.png';
-import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.png';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.png';
+import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.svg';
+import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.svg';
+import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.svg';
 
 // Add these imports near your other image imports
 import mooshikaBefore from './assets/images/mooshika-before.png';
@@ -267,7 +267,7 @@ const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false);
 const [showDiscoveryFlip3, setShowDiscoveryFlip3] = useState(false);
 
 const [showDiscovery1, setShowDiscovery1] = useState(false);
-  const [showSlideMenu, setShowSlideMenu] = useState(false);  // ← NEW!
+  const [showSlideMenu, setShowSlideMenu] = useState(false);  // ? NEW!
   const [showHelpMenu, setShowHelpMenu] = useState(false);
 const [isAudioOn, setIsAudioOn] = useState(true);
 
@@ -326,7 +326,7 @@ const discoveryConfig = {
   
   const timeoutsRef = useRef([]);
   const progressiveHintRef = useRef(null);
-  const reloadHandledRef = useRef(false); // 🔧 ADD THIS LINE
+  const reloadHandledRef = useRef(false); // ?? ADD THIS LINE
   const resumePopupTimeoutRef = useRef(null);
 
 
@@ -343,7 +343,7 @@ const discoveryConfig = {
 useEffect(() => {
   return () => {
     timeoutsRef.current.forEach(id => clearTimeout(id));
-    reloadHandledRef.current = false; // 🔧 ADD THIS LINE
+    reloadHandledRef.current = false; // ?? ADD THIS LINE
   };
 }, []);
 
@@ -382,7 +382,7 @@ useEffect(() => {
   if (isReload && !reloadHandledRef.current) {
     reloadHandledRef.current = true;
     
-    console.log("🔄 Reload detected, current phase:", sceneState.phase);
+    console.log("?? Reload detected, current phase:", sceneState.phase);
     
     // ============================================
     // DISCOVERY PHASES - SHOW OVERLAYS AGAIN
@@ -418,7 +418,7 @@ if (sceneState.phase === PHASES.MOOSHIKA_SEARCH &&
 
 // Then the existing MOOSHIKA_SEARCH check for NO progress
 if (sceneState.phase === PHASES.MOOSHIKA_SEARCH) {
-  console.log('📌 Reload during search - No progress yet');
+  console.log('?? Reload during search - No progress yet');
   // Don't show any popup - let them continue searching
   return;
 }
@@ -426,7 +426,7 @@ if (sceneState.phase === PHASES.MOOSHIKA_SEARCH) {
 
     // Discovery 1: Mooshika Found
     if (sceneState.phase === PHASES.MOOSHIKA_FOUND) {
-      console.log('📌 Reload during Discovery 1 - Showing overlay again');
+      console.log('?? Reload during Discovery 1 - Showing overlay again');
       
       // Update sidebar to show mooshika
       sceneActions.updateState({
@@ -446,7 +446,7 @@ if (sceneState.phase === PHASES.MOOSHIKA_SEARCH) {
     
     // Discovery 2: All Modaks Collected
     if (sceneState.phase === PHASES.ALL_COLLECTED) {
-      console.log('📌 Reload during Discovery 2 - Showing overlay again');
+      console.log('?? Reload during Discovery 2 - Showing overlay again');
       
       // Update sidebar to show mooshika + modak
       sceneActions.updateState({
@@ -467,7 +467,7 @@ if (sceneState.phase === PHASES.MOOSHIKA_SEARCH) {
     
     // Discovery 3: Rock Transformed (Belly)
     if (sceneState.phase === PHASES.ROCK_TRANSFORMED) {
-      console.log('📌 Reload during Discovery 3 - Showing overlay again');
+      console.log('?? Reload during Discovery 3 - Showing overlay again');
       
       // Update sidebar to show all symbols
       sceneActions.updateState({
@@ -493,9 +493,9 @@ if (sceneState.phase === PHASES.MOOSHIKA_SEARCH) {
     // Modak Collection Phase
 if (sceneState.phase === PHASES.MODAKS_UNLOCKED || 
     sceneState.phase === PHASES.SOME_COLLECTED) {
-  console.log('📌 Reload during modak collection - Showing resume popup');
+  console.log('?? Reload during modak collection - Showing resume popup');
   
-  // ✅ Define collected FIRST
+  // ? Define collected FIRST
   const collected = sceneState.collectedModaks?.length || 0;
   
   // Update sidebar
@@ -506,7 +506,7 @@ if (sceneState.phase === PHASES.MODAKS_UNLOCKED ||
     }
   });
   
-  // ✅ NOW use collected
+  // ? NOW use collected
   setResumeMessage(
     getResumeMessage(zoneId, sceneId, 'collectionInProgress', { count: collected }) ||
     `Continue collecting modaks! You have ${collected}/3 in the basket!`
@@ -521,15 +521,15 @@ if (sceneState.phase === PHASES.MODAKS_UNLOCKED ||
 // Feeding Phase
 if (sceneState.phase === PHASES.ROCK_VISIBLE || 
     sceneState.phase === PHASES.ROCK_FEEDING) {
-  console.log('📌 Reload during feeding - Showing resume popup');
+  console.log('?? Reload during feeding - Showing resume popup');
   
-  // ✅ DEFINE fedCount FIRST
+  // ? DEFINE fedCount FIRST
   const fedCount = sceneState.rockFeedCount || 0;
   
   // Update sidebar
   sceneActions.updateState({
     rockVisible: true,
-    showFeedingHeader: true, // ← For Bug 1 fix
+    showFeedingHeader: true, // ? For Bug 1 fix
     discoveredSymbols: {
       ...sceneState.discoveredSymbols,
       mooshika: true,
@@ -537,7 +537,7 @@ if (sceneState.phase === PHASES.ROCK_VISIBLE ||
     }
   });
   
-  // ✅ NOW use fedCount in message
+  // ? NOW use fedCount in message
   setResumeMessage(
     getResumeMessage(zoneId, sceneId, 'feedingInProgress', { count: fedCount }) ||
     `Keep feeding the rock with modaks! You have fed ${fedCount}/3!`
@@ -553,7 +553,7 @@ if (sceneState.phase === PHASES.ROCK_VISIBLE ||
     // ============================================
     
     if (sceneState.phase === PHASES.COMPLETE) {
-      console.log('📌 Reload at completion - Showing completion screen');
+      console.log('?? Reload at completion - Showing completion screen');
       
       // Update sidebar to show all symbols
       sceneActions.updateState({
@@ -579,7 +579,7 @@ if (sceneState.phase === PHASES.ROCK_VISIBLE ||
     // ============================================
     
     if (sceneState.phase === PHASES.MOOSHIKA_SEARCH) {
-      console.log('📌 Reload during search - No progress yet');
+      console.log('?? Reload during search - No progress yet');
       // Don't show any popup - let them continue searching
       return;
     }
@@ -588,34 +588,34 @@ if (sceneState.phase === PHASES.ROCK_VISIBLE ||
     // FALLBACK
     // ============================================
     
-    console.log('⚠️ No specific reload condition matched for phase:', sceneState.phase);
+    console.log('?? No specific reload condition matched for phase:', sceneState.phase);
   }
 }, [isReload, sceneState.phase, sceneState.welcomeShown, sceneState.discoveredSymbols]);
 
-// 🔧 Handle reload continuation - WITH DEBUG LOGS
+// ?? Handle reload continuation - WITH DEBUG LOGS
 /*useEffect(() => {
-  console.log('🔍 Reload useEffect triggered');
-  console.log('📊 isReload:', isReload);
-  console.log('📊 reloadHandled:', reloadHandledRef.current);
-  console.log('📊 welcomeShown:', sceneState.welcomeShown);
-  console.log('📊 phase:', sceneState.phase);
+  console.log('?? Reload useEffect triggered');
+  console.log('?? isReload:', isReload);
+  console.log('?? reloadHandled:', reloadHandledRef.current);
+  console.log('?? welcomeShown:', sceneState.welcomeShown);
+  console.log('?? phase:', sceneState.phase);
 
   if (!isReload) {
-    console.log('❌ Skipping: isReload is false');
+    console.log('? Skipping: isReload is false');
     return;
   }
   
   if (reloadHandledRef.current) {
-    console.log('❌ Skipping: Already handled');
+    console.log('? Skipping: Already handled');
     return;
   }
   
   if (!sceneState.welcomeShown) {
-    console.log('❌ Skipping: Welcome not shown');
+    console.log('? Skipping: Welcome not shown');
     return;
   }
 
-  console.log('✅ RELOAD DETECTED - Resuming from phase:', sceneState.phase);
+  console.log('? RELOAD DETECTED - Resuming from phase:', sceneState.phase);
   reloadHandledRef.current = true;
 
 const shouldShowMooshikaModal = 
@@ -628,28 +628,28 @@ const shouldShowBellyModal =
   sceneState.phase === PHASES.ROCK_TRANSFORMED;
 
   if (shouldShowMooshikaModal) {
-    console.log('📌 Showing Mooshika modal');
+    console.log('?? Showing Mooshika modal');
     setTimeout(() => {
       setCurrentMissionSymbol('mooshika');
       setShowPowerModal(true);
     }, 500);
   } 
   else if (shouldShowModakModal) {
-    console.log('📌 Showing Modak modal');
+    console.log('?? Showing Modak modal');
     setTimeout(() => {
       setCurrentMissionSymbol('modak');
       setShowPowerModal(true);
     }, 500);
   } 
   else if (shouldShowBellyModal) {
-    console.log('📌 Showing Belly modal');
+    console.log('?? Showing Belly modal');
     setTimeout(() => {
       setCurrentMissionSymbol('belly');
       setShowPowerModal(true);
     }, 500);
   }
 else if (sceneState.phase === PHASES.MODAKS_UNLOCKED || sceneState.phase === PHASES.SOME_COLLECTED) {
-  console.log('📌 TRIGGERING POPUP for modak collection');
+  console.log('?? TRIGGERING POPUP for modak collection');
   const collected = sceneState.collectedModaks?.length || 0;
   setResumeMessage(`Continue collecting modaks! You have ${collected}/3 in the basket!`);
   setShowResumePopup(true);
@@ -657,7 +657,7 @@ else if (sceneState.phase === PHASES.MODAKS_UNLOCKED || sceneState.phase === PHA
   setTimeout(() => setShowResumePopup(false), 5000);
 }
 else if (sceneState.phase === PHASES.ROCK_VISIBLE || sceneState.phase === PHASES.ROCK_FEEDING) {
-  console.log('📌 TRIGGERING POPUP for rock feeding');
+  console.log('?? TRIGGERING POPUP for rock feeding');
   const fedCount = sceneState.rockFeedCount || 0;
   setResumeMessage(
     getResumeMessage(zoneId, sceneId, 'feedingInProgress', { count: fedCount }) ||
@@ -667,7 +667,7 @@ else if (sceneState.phase === PHASES.ROCK_VISIBLE || sceneState.phase === PHASES
   setTimeout(() => setShowResumePopup(false), 5000);
 }
   else if (sceneState.phase === PHASES.COMPLETE) {
-    console.log('📌 Showing completion');
+    console.log('?? Showing completion');
     if (!sceneState.showingCompletionScreen) {
       setTimeout(() => {
         setShowSceneCompletion(true);
@@ -675,7 +675,7 @@ else if (sceneState.phase === PHASES.ROCK_VISIBLE || sceneState.phase === PHASES
     }
   }
   else {
-    console.log('⚠️ No condition matched for phase:', sceneState.phase);
+    console.log('?? No condition matched for phase:', sceneState.phase);
   }
 
 }, [isReload, sceneState.phase, sceneState.welcomeShown, sceneState.discoveredSymbols]);*/
@@ -853,7 +853,7 @@ setTimeout(() => {
   };
 
   const handleModakInBasketClick = (modakIndex) => {
-// ✅ Smart resume dismiss - hide popup when user clicks basket modak
+// ? Smart resume dismiss - hide popup when user clicks basket modak
   if (showResumePopup) {
     setShowResumePopup(false);
     if (resumePopupTimeoutRef.current) {
@@ -911,11 +911,11 @@ setTimeout(() => {
   
   const getNextDiscoveryText = (currentSymbol) => {
     const nextActions = {
-      mooshika: '🍬 Discover Modak',
-      modak: '🌟 Discover Belly',
-      belly: '✨ End Scene'
+      mooshika: '?? Discover Modak',
+      modak: '?? Discover Belly',
+      belly: '? End Scene'
     };
-    return nextActions[currentSymbol] || '➡️ Continue';
+    return nextActions[currentSymbol] || '?? Continue';
   };
 
   const getPowerDescription = (symbolKey) => {
@@ -958,7 +958,7 @@ const completeSymbolLearning = (symbolKey, symbolData) => {
 
   const handleContinueLearning = () => {
     setShowChoiceButtons(false);
-      setShowPowerModal(false); // 🔧 ADD THIS LINE - Close modal immediately
+      setShowPowerModal(false); // ?? ADD THIS LINE - Close modal immediately
 
     const symbolKey = currentMissionSymbol;
     
@@ -1142,7 +1142,7 @@ const completeSymbolLearning = (symbolKey, symbolData) => {
     {sceneState.phase === PHASES.MOOSHIKA_SEARCH && (
       <UnifiedHeaderV2
         zone="symbol-mountain"
-        title={getSceneHeader(zoneId, sceneId, 'search') || '🔍 WHERE IS MOOSHIKA? Click the mounds!'}
+        title={getSceneHeader(zoneId, sceneId, 'search') || '?? WHERE IS MOOSHIKA? Click the mounds!'}
         currentRound={0}
         totalRounds={3}
       />
@@ -1155,7 +1155,7 @@ const completeSymbolLearning = (symbolKey, symbolData) => {
         title={formatHeader(
           getSceneHeader(zoneId, sceneId, 'collection'),
           { count: sceneState.collectedModaks?.length || 0 }
-        ) || `🍬 HELP MOOSHIKA! Collect ${sceneState.collectedModaks?.length || 0}/3 modaks!`}
+        ) || `?? HELP MOOSHIKA! Collect ${sceneState.collectedModaks?.length || 0}/3 modaks!`}
         currentRound={1}
         totalRounds={3}
       />
@@ -1168,7 +1168,7 @@ const completeSymbolLearning = (symbolKey, symbolData) => {
         title={formatHeader(
           getSceneHeader(zoneId, sceneId, 'feeding'),
           { count: sceneState.rockFeedCount || 0 }
-        ) || `🪨 FEED GANESHA! Share ${sceneState.rockFeedCount || 0}/3 modaks!`}
+        ) || `?? FEED GANESHA! Share ${sceneState.rockFeedCount || 0}/3 modaks!`}
         currentRound={2}
         totalRounds={3}
       />
@@ -1622,7 +1622,7 @@ const completeSymbolLearning = (symbolKey, symbolData) => {
 {/* TEST BUTTON 
 <button
   onClick={() => {
-    console.log('🧪 Test clicked');
+    console.log('?? Test clicked');
     setResumeMessage("TEST - If you see this, popup works!");
     setShowResumePopup(true);
     setTimeout(() => setShowResumePopup(false), 5000);
@@ -1765,7 +1765,7 @@ const completeSymbolLearning = (symbolKey, symbolData) => {
     symbols: { mooshika: true, modak: true, belly: true },
     completed: true
   }}
-  showFireworks={true}  // ← ADD THIS to show fireworks in completion
+  showFireworks={true}  // ? ADD THIS to show fireworks in completion
   onComplete={onComplete}
   onReplay={() => {
     setShowSceneCompletion(false);
@@ -1862,7 +1862,7 @@ const completeSymbolLearning = (symbolKey, symbolData) => {
     
     // STAGE 2: Power Teaching (Button)
     powerTitle="Focus Power Unlocked!"
-    powerText="Your mind is like a little mouse… Sometimes it runs around! But guess what? You can call it back!"
+    powerText="Your mind is like a little mouse� Sometimes it runs around! But guess what? You can call it back!"
     missionText="Let's use this power to collect the modaks!"
     powerIcon={symbolMooshikaColored} // Brain/steering wheel symbol
     
@@ -1878,7 +1878,7 @@ onComplete={() => {
     basketVisible: true,
     discoveredSymbols: {
       ...sceneState.discoveredSymbols,
-      mooshika: true  // ← ADD THIS
+      mooshika: true  // ? ADD THIS
     }
   });
 }}
@@ -1908,13 +1908,13 @@ onComplete={() => {
   
   // Update sidebar - mark Modak as discovered
   sceneActions.updateState({ 
-  phase: PHASES.ROCK_VISIBLE, // ← CHANGE FROM BASKET_READY
+  phase: PHASES.ROCK_VISIBLE, // ? CHANGE FROM BASKET_READY
     basketReady: true,
     rockVisible: true,
-        showFeedingHeader: true, // ← ADD THIS
+        showFeedingHeader: true, // ? ADD THIS
     discoveredSymbols: {
       ...sceneState.discoveredSymbols,
-      modak: true  // ← ADD THIS
+      modak: true  // ? ADD THIS
     }
   });
 }}
@@ -1934,12 +1934,12 @@ onComplete={() => {
     
     // STAGE 2: Power Teaching
     powerTitle="Gratitude Power Complete!"
-    powerText="You helped Mooshika, collected with care, and shared with love. That's what gratitude means — saying thank you by doing good things!"
+    powerText="You helped Mooshika, collected with care, and shared with love. That's what gratitude means � saying thank you by doing good things!"
     powerIcon={symbolBellyColored} // Could show all 3 symbols together
     
     buttonText="Celebrate!"
 onComplete={() => {
-  console.log("Discovery 3: Mission complete! 🎆");
+  console.log("Discovery 3: Mission complete! ??");
   setShowDiscoveryFlip3(false);
   
   // Update sidebar
@@ -1996,7 +1996,7 @@ onComplete={() => {
                   <button 
                     className="modak-game-power-secondary-button"
                     onClick={() => {
-                      console.log(`🔄 Play Again: Restarting ${currentMissionSymbol} discovery`);
+                      console.log(`?? Play Again: Restarting ${currentMissionSymbol} discovery`);
                       setShowPowerModal(false);
                       
                       // Reset to the appropriate phase for the current symbol
@@ -2107,14 +2107,14 @@ onComplete={() => {
 
 {/* ==================== MENU BUTTON (Top-Right) ==================== */}
         <MenuButton
-          onClick={() => setShowSlideMenu(true)}  // ← Opens menu
+          onClick={() => setShowSlideMenu(true)}  // ? Opens menu
           zoneId={zoneId}
         />
 
         {/* ==================== SLIDE MENU ==================== */}
         <TocaBocaNav
-          show={showSlideMenu}                      // ← NEW!
-          onClose={() => setShowSlideMenu(false)}   // ← NEW!
+          show={showSlideMenu}                      // ? NEW!
+          onClose={() => setShowSlideMenu(false)}   // ? NEW!
           zoneId="symbol-mountain"
           onHome={() => {
             // Optional: close menu first, then navigate
@@ -2123,7 +2123,7 @@ onComplete={() => {
           }}
 onHelp={() => {
   setShowSlideMenu(false);
-  setShowHelpMenu(true);  // ← Opens help menu
+  setShowHelpMenu(true);  // ? Opens help menu
 }}
           onStartFresh={resetScene}
           isAudioOn={isAudioOn}
@@ -2132,7 +2132,7 @@ onHelp={() => {
         />
 
 
-{/* ADD THIS WHOLE BLOCK ↓ */}
+{/* ADD THIS WHOLE BLOCK ? */}
 <HelpMenu
   show={showHelpMenu}
   onClose={() => setShowHelpMenu(false)}
@@ -2168,3 +2168,4 @@ onHelp={() => {
 };
 
 export default NewModakScene;
+

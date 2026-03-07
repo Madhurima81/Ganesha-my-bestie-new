@@ -1,4 +1,4 @@
-﻿// zones/symbol-mountain/scenes/modak/NewModakSceneV5.jsx
+// zones/symbol-mountain/scenes/modak/NewModakSceneV5.jsx
 // ProgressiveHintSystem with visual disabled state
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -53,14 +53,14 @@ import modak1 from './assets/images/modak-1.png';
 import modak2 from './assets/images/modak-2.png';
 import modak3 from './assets/images/modak-3.png';
 import basket from './assets/images/basket.png';
-import mooshika from '../../shared/images/icons/symbol-mooshika-colored.png';
+import mooshika from '../../shared/images/icons/symbol-mooshika-colored.svg';
 import mudMound from './assets/images/mud-mound.png';
 import rock from './assets/images/rock.png';
 import belly from './assets/images/belly.png';
 import mooshikaCoach from "./assets/images/mooshika-coach.png";
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.png';
-import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.png';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.png';
+import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.svg';
+import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.svg';
+import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.svg';
 
 // Add these imports near your other image imports
 import mooshikaBefore from './assets/images/mooshika-before.png';
@@ -1382,3 +1382,4 @@ const NewModakSceneContent = ({
 };
 
 export default NewModakScene;
+

@@ -55,9 +55,9 @@ import ganeshaOutline from '../tusk/assets/images/ganesha-outline.png';
 import ganeshaComplete from '../tusk/assets/images/ganesha-complete.png';
 
 // Shared symbol images for completion - ALL 8 SYMBOLS
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.png';
-import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.png';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.png';
+import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.svg';
+import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.svg';
+import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.svg';
 import symbolLotusColored from '../../shared/images/icons/symbol-lotus-colored.png';
 import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-colored.png';
 import symbolEyesColored from '../../shared/images/icons/symbol-eyes-colored.png';

@@ -1,0 +1,37 @@
+/* CalmGoldenFireworks — soft golden burst */
+
+/* Container: fixed so no ancestor z-index or overflow:hidden can bury it */
+.soft-fireworks {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 9500;
+}
+
+/* Each spark: starts at container centre, flies to --x/--y */
+.soft-fireworks span {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle, #FFD76A 0%, #FFB800 60%, transparent 70%);
+  border-radius: 50%;
+  opacity: 0;
+  animation: softBurst var(--duration, 3500ms) ease-out forwards;
+}
+
+@keyframes softBurst {
+  0% {
+    transform: translate(0, 0) scale(0.5);
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(var(--x), var(--y)) scale(1.2);
+    opacity: 0;
+  }
+}

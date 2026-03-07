@@ -28,9 +28,9 @@ import ganeshaStone from './assets/images/ganesha-stone.png';
 import ganeshaDivine from './assets/images/ganesha-divine.png';
 
 // Images - Symbol Icons
-import symbolMooshikaColored from './assets/images/symbol-mooshika-colored.png';
-import symbolModakColored from './assets/images/symbol-modak-colored.png';
-import symbolBellyColored from './assets/images/symbol-belly-colored.png';
+import symbolMooshikaColored from './assets/images/symbol-mooshika-colored.svg';
+import symbolModakColored from './assets/images/symbol-modak-colored.svg';
+import symbolBellyColored from './assets/images/symbol-belly-colored.svg';
 import symbolLotusColored from './assets/images/symbol-lotus-colored.png';
 import symbolTrunkColored from './assets/images/symbol-trunk-colored.png';
 import symbolEyesColored from './assets/images/symbol-eyes-colored.png';
