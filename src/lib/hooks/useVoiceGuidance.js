@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
+import useAppVisibility from './useAppVisibility';
 import {
   getAudioPath,
   getSfxPath,
@@ -36,6 +37,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
   const musicRef = useRef(null);
   const idleTimerRef = useRef(null);
   const lastInteractionRef = useRef(Date.now());
+  const voiceVolumeRef = useRef(voiceVolume); // mutable — setVoiceVolume updates this live
 
   // Refs for idle timer to access current values
   const isPlayingRef = useRef(isPlaying);
@@ -50,6 +52,11 @@ const useVoiceGuidance = (zoneId, sceneId, {
   useEffect(() => {
     currentPhaseRef.current = currentPhase;
   }, [currentPhase]);
+
+  // Keep voiceVolumeRef in sync when the prop changes (e.g. parent passes new volume)
+  useEffect(() => {
+    voiceVolumeRef.current = voiceVolume;
+  }, [voiceVolume]);
 
   // ========================================
   // VOICE PLAYBACK
@@ -74,7 +81,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
     }
 
     const audio = new Audio(path);
-    audio.volume = voiceVolume;
+    audio.volume = voiceVolumeRef.current; // use ref — updated live by setVoiceVolume
 
     // Guard: ensure onEnded is called exactly once
     let callbackFired = false;
@@ -110,7 +117,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
 
     // Reset idle timer on voice play
     lastInteractionRef.current = Date.now();
-  }, [zoneId, sceneId, voiceVolume]);
+  }, [zoneId, sceneId]); // voiceVolume removed — read from ref instead
 
   // Stop voice
   const stopVoice = useCallback(() => {
@@ -118,6 +125,15 @@ const useVoiceGuidance = (zoneId, sceneId, {
       voiceRef.current.pause();
       voiceRef.current = null;
       setIsPlaying(false);
+    }
+  }, []);
+
+  // Set voice volume live — updates currently playing audio AND all future audio
+  const setVoiceVolume = useCallback((vol) => {
+    const clamped = Math.min(1, Math.max(0, vol));
+    voiceVolumeRef.current = clamped;
+    if (voiceRef.current) {
+      voiceRef.current.volume = clamped;
     }
   }, []);
 
@@ -289,7 +305,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
     }
 
     const audio = new Audio(path);
-    audio.volume = voiceVolume;
+    audio.volume = voiceVolume; // always full volume — game audio, never muted by toggle
 
     // Guard: ensure onEnded is called exactly once
     let callbackFired = false;
@@ -342,7 +358,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
     }
 
     const audio = new Audio(path);
-    audio.volume = voiceVolume;
+    audio.volume = voiceVolume; // always full volume — game audio, never muted by toggle
 
     // Guard: ensure onEnded is called exactly once
     let callbackFired = false;
@@ -378,6 +394,38 @@ const useVoiceGuidance = (zoneId, sceneId, {
   }, [voiceVolume]);
 
   // ========================================
+  // APP VISIBILITY (tab switch / phone call)
+  // ========================================
+
+  const musicWasPlayingRef = useRef(false);
+  const voiceWasPlayingRef = useRef(false);
+  const voicePositionRef = useRef(0);
+
+  const handleHide = useCallback(() => {
+    // Snapshot what was playing before pausing
+    musicWasPlayingRef.current = !!(musicRef.current && !musicRef.current.paused);
+    voiceWasPlayingRef.current = !!(voiceRef.current && !voiceRef.current.paused);
+    if (voiceRef.current) voicePositionRef.current = voiceRef.current.currentTime;
+
+    if (musicRef.current) musicRef.current.pause();
+    if (voiceRef.current) voiceRef.current.pause();
+    stopIdleTimer();
+  }, [stopIdleTimer]);
+
+  const handleShow = useCallback(() => {
+    if (musicWasPlayingRef.current && musicRef.current) {
+      musicRef.current.play().catch(() => {});
+    }
+    if (voiceWasPlayingRef.current && voiceRef.current) {
+      voiceRef.current.currentTime = voicePositionRef.current;
+      voiceRef.current.play().catch(() => {});
+    }
+    startIdleTimer();
+  }, [startIdleTimer]);
+
+  useAppVisibility(handleHide, handleShow);
+
+  // ========================================
   // LIFECYCLE
   // ========================================
 
@@ -399,6 +447,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
     // Voice
     playVoice,
     stopVoice,
+    setVoiceVolume,
 
     // Syllable & Word (for memory games)
     playSyllable,
