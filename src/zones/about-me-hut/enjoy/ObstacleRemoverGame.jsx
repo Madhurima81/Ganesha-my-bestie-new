@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import './DreamsWishesGame.css';
-import AboutMeCompletion from "../components/Aboutmecompletion";
+import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
 import DrawingPad from '../components/Drawingpad';
 import StoryProgressHeader from '../components/StoryProgressHeader';
 
@@ -13,7 +13,7 @@ import { obstacleRemoverHelpConfig } from './helpConfig';
 import SceneManager from "../../../lib/components/scenes/SceneManager";
 
 // Content Configs
-import { getOpeningModal } from '../../../lib/config/content';
+import { getOpeningModal, getCompletionModal } from '../../../lib/config/content';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 
 // Shared Components
@@ -118,6 +118,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   // Get content from configs
   const openingModalContent = getOpeningModal('about-me-hut', 'dreams-wishes');
+  const completionModalContent = getCompletionModal('about-me-hut', 'dreams-wishes');
+  const completionIcons = openingModalContent?.icons || ['wish-earth', 'wish-share', 'wish-flower'];
 
   // --- LOCAL UI STATE (Not saved in DB) ---
   const [showSlideMenu, setShowSlideMenu] = useState(false);
@@ -698,16 +700,21 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       {/* Completion Modal */}
       {sceneState.showingCompletionScreen && (
-        <AboutMeCompletion
+        <SceneCompletionCelebration
           show={sceneState.showingCompletionScreen}
+          zoneId="about-me-hut"
+          sceneId="dreams-wishes"
           sceneName="Dreams & Wishes"
-          sceneNumber={4}
-          totalScenes={4}
+          completionTitle={completionModalContent?.title}
+          completionSubtitle={completionModalContent?.subtitle}
+          discoveredSymbols={completionIcons}
+          symbolImages={{
+            'wish-earth': wishIconEarth,
+            'wish-share': wishIconShare,
+            'wish-flower': wishIconFlower
+          }}
           starsEarned={sceneState.stars}
           totalStars={3}
-          discoveredBadges={['wish-maker', 'dream-helper', 'friendship-power']}
-          badgeImages={{}}
-          characterImages={{ babyGanesha: babyGaneshaImg }}
           nextSceneName="Symbol Mountain"
           childName="dream maker"
           onContinue={() => { if (onNavigate) onNavigate('scene-complete-continue'); else if (onComplete) onComplete(); }}

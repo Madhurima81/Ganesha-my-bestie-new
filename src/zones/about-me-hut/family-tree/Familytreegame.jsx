@@ -12,9 +12,11 @@ import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
 // Pause Menu Components (commented out — replaced by HomeButton)
 // import { PauseButton, PauseMenu, PauseBlurOverlay, usePauseEnhancements } from '../../../lib/components/ui/PauseMenu';
 import HomeButton from '../../../lib/components/ui/HomeButton';
+import AudioToggle from '../../../lib/components/ui/AudioToggle/AudioToggle';
+import useAudioPreference from '../../../lib/hooks/useAudioPreference';
 
 // Content Configs
-import { getOpeningModal } from '../../../lib/config/content';
+import { getOpeningModal, getCompletionModal } from '../../../lib/config/content';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 
 // Shared Components
@@ -191,6 +193,8 @@ const FamilyTreeGameContent = ({
 
   // Get content from configs
   const openingModalContent = getOpeningModal('about-me-hut', 'family-tree');
+  const completionModalContent = getCompletionModal('about-me-hut', 'family-tree');
+  const completionIcons = openingModalContent?.icons || ['shiva', 'parvati', 'kartikeya'];
 
   // IMPORTANT: Ensure phase exists (just like Modak code)
   if (!sceneState?.gamePhase) {
@@ -200,9 +204,14 @@ const FamilyTreeGameContent = ({
   // ========================================
   // VOICE GUIDANCE HOOK
   // ========================================
+  const { isAudioOn, toggleAudio, setAudioEnabled } = useAudioPreference();
+  const audioEnabledRef = useRef(isAudioOn);
+  audioEnabledRef.current = isAudioOn;
+
   const {
     playVoice,
     stopVoice,
+    setVoiceVolume,
     playSfx,
     playTap,
     playCorrect,
@@ -222,6 +231,14 @@ const FamilyTreeGameContent = ({
     sfxVolume: 0.7,
     idleTimeout: 10
   });
+
+  // Audio toggle — no syllable/word game audio here, stopVoice() is safe on toggle-off
+  const handleAudioToggle = () => {
+    const nextOn = !isAudioOn;
+    setVoiceVolume(nextOn ? 1 : 0);
+    if (!nextOn) stopVoice();
+    toggleAudio();
+  };
 
   // ========================================
   // PAUSE MENU STATE (commented out — replaced by HomeButton)
@@ -451,17 +468,20 @@ const FamilyTreeGameContent = ({
   useEffect(() => {
     // Play welcome voice when opening modal is shown (phase is intro)
     if (sceneState.gamePhase === 'intro') {
-      // Small delay before starting welcome VO
+      // Audio off (replay): skip VO, show button immediately
+      if (!audioEnabledRef.current) {
+        setOpeningButtonVisible(true);
+        return;
+      }
       const timer = scheduleTimeout(() => {
         playVoice('welcome', () => {
-          // VO finished - show the button with fade-in
-          playSfx('chime'); // Ready cue sound
+          playSfx('chime');
           setOpeningButtonVisible(true);
         });
       }, 800);
       return () => clearTimeout(timer);
     }
-  }, [sceneState.gamePhase]);
+  }, [sceneState.gamePhase, isAudioOn]);
 
   // ========================================
   // CLEANUP: Stop music and timers on unmount
@@ -1075,6 +1095,7 @@ const FamilyTreeGameContent = ({
 
       {/* Home Button */}
       <HomeButton onNavigate={onNavigate} />
+      <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
 
       {/* Back to Map Button - Commented out like in Modak */}
       {/* {!sceneState.showingCompletionScreen && (
@@ -1567,13 +1588,15 @@ const FamilyTreeGameContent = ({
           show={sceneState.showingCompletionScreen}
           zoneId="about-me-hut"
           sceneName="My Family Tree"
+          completionTitle={completionModalContent?.title}
+          completionSubtitle={completionModalContent?.subtitle}
           childName="Family Star"
           sceneId="family-tree"
-          discoveredSymbols={['father', 'mother', 'me']}
+          discoveredSymbols={completionIcons}
           symbolImages={{
-            father: shivaImg,
-            mother: parvatiImg,
-            me: babyGaneshaImg
+            shiva: shivaImg,
+            parvati: parvatiImg,
+            kartikeya: kartikeyaImg
           }}
           nextSceneName="Favorite Food"
           onContinue={() => {
@@ -1581,6 +1604,10 @@ const FamilyTreeGameContent = ({
             else if (onComplete) onComplete();
           }}
           onReplay={() => {
+            audioEnabledRef.current = false;
+            setAudioEnabled(false);
+            setVoiceVolume(0);
+            stopVoice();
             sceneActions.updateState({
               gamePhase: 'intro',
               placedGaneshaMembers: [],
@@ -1602,8 +1629,6 @@ const FamilyTreeGameContent = ({
 };
 
 export default FamilyTreeGame;
-
-
 
 
 

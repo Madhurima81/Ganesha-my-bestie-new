@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Favoritefoodgame.css';
-import AboutMeCompletion from "../components/Aboutmecompletion";
+import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
 import DrawingPad from '../components/Drawingpad';
 import StoryProgressHeader from '../components/StoryProgressHeader';
 import TextInputModal from '../components/Textinputmodal';
@@ -11,7 +11,7 @@ import SceneManager from "../../../lib/components/scenes/SceneManager";
 import BackToMapButton from '../../../lib/components/navigation/BackToMapButton';
 
 // Content Configs
-import { getOpeningModal } from '../../../lib/config/content';
+import { getOpeningModal, getCompletionModal } from '../../../lib/config/content';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 
 // Shared Components
@@ -157,6 +157,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   // Get content from configs
   const openingModalContent = getOpeningModal('about-me-hut', 'favorite-food');
+  const completionModalContent = getCompletionModal('about-me-hut', 'favorite-food');
+  const completionIcons = openingModalContent?.icons || ['food', 'color', 'activity'];
 
   // --- LOCAL UI STATE (Transient) ---
   const [showShake, setShowShake] = useState(null);
@@ -1172,21 +1174,25 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         </div>
       )}
 
-      {/* About Me Completion Screen */}
+      {/* Completion Screen */}
       {sceneState.showingCompletionScreen && (
-        <AboutMeCompletion
+        <SceneCompletionCelebration
           show={sceneState.showingCompletionScreen}
+          zoneId="about-me-hut"
+          sceneId="favorite-food"
           sceneName="My Favorite Things"
-          sceneNumber={2}
-          totalScenes={4}
+          completionTitle={completionModalContent?.title}
+          completionSubtitle={completionModalContent?.subtitle}
+          discoveredSymbols={completionIcons}
+          symbolImages={{
+            food: favIconFood,
+            color: favIconColor,
+            activity: favIconActivity
+          }}
           starsEarned={sceneState.stars}
           totalStars={2}
-          discoveredBadges={['food-finder', 'friend-finder', 'super-finder', 'memory-maker']}
-          badgeImages={{}}
-          characterImages={{ babyGanesha: babyGaneshaImg }}
           nextSceneName="Spell GANESHA"
           childName="super finder"
-
           onContinue={() => {
             setTimeout(() => {
               if (onNavigate) {
@@ -1196,7 +1202,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
               }
             }, 100);
           }}
-
           onReplay={() => {
             sceneActions.updateState({
               randomFoods: shuffleArray(foods),
@@ -1230,7 +1235,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             setShowTextInput(false);
             setTextInputMode(null);
           }}
-
           onBackToMap={() => {
             if (onNavigate) {
               onNavigate('zone-welcome');
@@ -1238,7 +1242,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
               onBack();
             }
           }}
-
           onHome={() => {
             if (onNavigate) {
               onNavigate('home');

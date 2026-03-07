@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Namebirthdaygame.css';
-import AboutMeCompletion from "../components/Aboutmecompletion";
+import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
 
 // Import SceneManager & Navigation
 import SceneManager from "../../../lib/components/scenes/SceneManager";
@@ -13,7 +13,7 @@ import '../../../lib/styles/zone-themes.css';
 import '../../../lib/styles/animations.css';
 
 // Content Configs
-import { getOpeningModal } from '../../../lib/config/content';
+import { getOpeningModal, getCompletionModal } from '../../../lib/config/content';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 
 // Shared Components
@@ -46,6 +46,10 @@ import sepImg from './assets/images/months/september.png';
 import octImg from './assets/images/months/october.png';
 import novImg from './assets/images/months/november.png';
 import decImg from './assets/images/months/december.png';
+
+// Completion icons (reuse opening modal icons)
+import balloonsIcon from '../../festival-square/Game4-mandapdecor/assets/images/fun_balloons_cluster.png';
+import birthdayIcon from '../../festival-square/Game1-piano/assets/images/name-birthday-icon.png';
 
 // Error Boundary
 class ErrorBoundary extends React.Component {
@@ -111,6 +115,8 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   // Get content from configs
   const openingModalContent = getOpeningModal('about-me-hut', 'name-birthday');
+  const completionModalContent = getCompletionModal('about-me-hut', 'name-birthday');
+  const completionIcons = openingModalContent?.icons || ['balloons', 'birthday'];
 
   // --- LOCAL UI STATE ---
   const [showShake, setShowShake] = useState(null);
@@ -955,27 +961,29 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       {/* Completion Modal */}
       {sceneState.showingCompletionScreen && (
-        <AboutMeCompletion
+        <SceneCompletionCelebration
           show={sceneState.showingCompletionScreen}
+          zoneId="about-me-hut"
+          sceneId="name-birthday"
           sceneName="Name & Birthday"
-          sceneNumber={4}
-          totalScenes={4}
-          starsEarned={sceneState.stars}
-          totalStars={2}
-          discoveredBadges={['festival-finder', 'name-master', 'birthday-buddy', 'celebration-star']}
-          badgeImages={{}}
-          characterImages={{ babyGanesha: babyGaneshaImg }}
+          completionTitle={completionModalContent?.title}
+          completionSubtitle={completionModalContent?.subtitle}
+          discoveredSymbols={completionIcons}
+          symbolImages={{
+            balloons: balloonsIcon,
+            birthday: birthdayIcon
+          }}
           nextSceneName="Explore More!"
           childName="festival finder"
           isFinalScene={true}
-
+          starsEarned={sceneState.stars}
+          totalStars={2}
           onContinue={() => {
             setTimeout(() => {
               if (onNavigate) onNavigate('scene-complete-continue');
               else if (onComplete) onComplete();
             }, 100);
           }}
-
           onReplay={() => {
             sceneActions.updateState({
               gamePhase: 'intro',
@@ -992,12 +1000,10 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
               currentLetterIndex: 0
             });
           }}
-
           onBackToMap={() => {
             if (onNavigate) onNavigate('zone-welcome');
             else if (onBack) onBack();
           }}
-
           onHome={() => { if (onNavigate) onNavigate('home'); }}
         />
       )}
