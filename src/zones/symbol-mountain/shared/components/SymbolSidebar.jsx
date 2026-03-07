@@ -3,12 +3,12 @@ import './SymbolSidebar.css';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 
 // Import gray and colored symbol icons
-import symbolBellyColored from '../images/icons/symbol-belly-colored.png';
+import symbolBellyColored from '../images/icons/symbol-belly-colored.svg';
 import symbolEarColored from '../images/icons/symbol-ear-colored.png';
 import symbolEyesColored from '../images/icons/symbol-eyes-colored.png';
 import symbolLotusColored from '../images/icons/symbol-lotus-colored.png';
-import symbolModakColored from '../images/icons/symbol-modak-colored.png';
-import symbolMooshikaColored from '../images/icons/symbol-mooshika-colored.png';
+import symbolModakColored from '../images/icons/symbol-modak-colored.svg';
+import symbolMooshikaColored from '../images/icons/symbol-mooshika-colored.svg';
 import symbolTrunkColored from '../images/icons/symbol-trunk-colored.png';
 import symbolTuskColored from '../images/icons/symbol-tusk-colored.png';
 
@@ -133,6 +133,9 @@ const symbolInfo = {
 // Display order
 const symbolOrder = ['modak', 'mooshika', 'belly', 'lotus', 'trunk', 'eyes', 'ear', 'tusk'];
 
+// SVG icons have internal transparent padding — use larger background-size
+const svgSymbols = ['mooshika', 'modak', 'belly'];
+
 const SymbolSidebar = ({
   discoveredSymbols = {},
   onSymbolClick,
@@ -255,6 +258,7 @@ const SymbolSidebar = ({
               style={{
                 backgroundImage: `url(${symbol.colorIcon})`,
                 cursor: isDiscovered ? 'pointer' : 'not-allowed',
+                backgroundSize: svgSymbols.includes(symbolId) ? '130%' : undefined,
               }}
               title={isDiscovered ? symbol.title : 'Symbol not yet discovered'}
             >
@@ -283,3 +287,4 @@ const SymbolSidebar = ({
 };
 
 export default SymbolSidebar;
+

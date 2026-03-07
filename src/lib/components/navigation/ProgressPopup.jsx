@@ -4,17 +4,17 @@ import './ProgressPopup.css';
 const SYMBOL_SIDEBAR_META = {
   modak: {
     name: 'Modak',
-    image: '/images/symbols-symbolmountain/symbol-modak-colored.png',
+    image: '/images/symbols-symbolmountain/symbol-modak-colored.svg',
     description: 'I share with joy.',
   },
   mooshika: {
     name: 'Mooshika',
-    image: '/images/symbols-symbolmountain/symbol-mooshika-colored.png',
+    image: '/images/symbols-symbolmountain/symbol-mooshika-colored.svg',
     description: 'I can focus.',
   },
   belly: {
     name: 'Big Belly',
-    image: '/images/symbols-symbolmountain/symbol-belly-colored.png',
+    image: '/images/symbols-symbolmountain/symbol-belly-colored.svg',
     description: 'I feel safe inside.',
   },
   lotus: {
@@ -167,5 +167,6 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type }) 
 };
 
 export default ProgressPopup;
+
 
 

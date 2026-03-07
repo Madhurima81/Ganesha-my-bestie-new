@@ -9,9 +9,9 @@ import SymbolPowerMission from '../../shared/components/SymbolPowerMission';
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
 
 // Symbol images (colored versions for sidebar)
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.png';
-import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.png';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.png';
+import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.svg';
+import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.svg';
+import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.svg';
 
 // Mission images (before/after states)
 import mooshikaBefore from './assets/images/mooshika-before.png';
@@ -674,3 +674,4 @@ KEY ELEMENTS:
 - Power modal = No close button, forces user to choose action
 - GameCoach = Shows BEFORE fireworks for final celebration
 */
+

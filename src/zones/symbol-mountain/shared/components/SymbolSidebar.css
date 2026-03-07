@@ -21,7 +21,7 @@
   justify-content: center;
   align-items: center;
   gap: 22px;
-  width: 100px;
+  width: clamp(110px, 8vw, 140px);
   padding: 20px 16px;
 
   background: #F6EFD8;
@@ -33,11 +33,11 @@
 }
 /* Individual icons */
 .ganesha-icon {
-  width: 68px;
-  height: 68px;
+  width: clamp(72px, 6vw, 96px);
+  height: clamp(72px, 6vw, 96px);
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.22);
-  background-size: 82%;
+  background-size: 90%;
   background-repeat: no-repeat;
   background-position: center;
   box-shadow:
@@ -97,7 +97,7 @@
    background shorthand doesn't reset background-size to auto (which
    would make the icon overflow the circle) */
 .ganesha-icon.completed {
-  background-size: 82%;
+  background-size: 90%;
   background-position: center;
   background-repeat: no-repeat;
   box-shadow: 0 0 8px rgba(255, 200, 120, 0.25);
@@ -454,6 +454,12 @@ animation: ganesha-breathe 3.5s ease-in-out infinite;}
   object-fit: contain;
 }
 
+/* SVG icons have internal transparent padding — scale up to fill the circle */
+.symbol-discovery-icon img[src$=".svg"] {
+  transform: scale(1.35);
+  transform-origin: center;
+}
+
 .symbol-discovery-icon:hover {
   transform: scale(1.1);
 }
@@ -513,13 +519,13 @@ animation: ganesha-breathe 3.5s ease-in-out infinite;}
 @media (max-width: 1024px) {
   .ganesha-sidebar {
     right: 18px;
-    width: 100px;
+    width: clamp(100px, 18vw, 120px);
     padding: 20px 14px;
     gap: 20px;
   }
   .ganesha-icon {
-    width: 56px;
-    height: 56px;
+    width: clamp(60px, 10vw, 76px);
+    height: clamp(60px, 10vw, 76px);
   }
 }
 
@@ -527,14 +533,14 @@ animation: ganesha-breathe 3.5s ease-in-out infinite;}
 @media (max-width: 768px) {
   .ganesha-sidebar {
     right: 12px;
-    width: 90px;
+    width: clamp(92px, 22vw, 112px);
     padding: 18px 12px;
     gap: 18px;
   }
 
   .ganesha-icon {
-    width: 52px;
-    height: 52px;
+    width: clamp(56px, 12vw, 72px);
+    height: clamp(56px, 12vw, 72px);
   }
   
   .ganesha-popup-content {
@@ -563,12 +569,12 @@ animation: ganesha-breathe 3.5s ease-in-out infinite;}
 @media (max-width: 480px) {
   .ganesha-sidebar {
     right: 10px;
-    width: 84px;
+    width: clamp(88px, 26vw, 104px);
     padding: 16px 10px;
     gap: 16px;
   }
   .ganesha-icon {
-    width: 48px;
-    height: 48px;
+    width: clamp(52px, 14vw, 66px);
+    height: clamp(52px, 14vw, 66px);
   }
 }

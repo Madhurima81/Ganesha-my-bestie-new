@@ -174,17 +174,17 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame }) => {
       const allSymbols = [
         {
           id: 'modak', displayName: 'Modak',
-          image: '/images/symbols-symbolmountain/symbol-modak-colored.png',
+          image: '/images/symbols-symbolmountain/symbol-modak-colored.svg',
           description: 'I share with joy.'
         },
         {
           id: 'mooshika', displayName: 'Mooshika',
-          image: '/images/symbols-symbolmountain/symbol-mooshika-colored.png',
+          image: '/images/symbols-symbolmountain/symbol-mooshika-colored.svg',
           description: 'I can focus.'
         },
         {
           id: 'belly', displayName: 'Big Belly',
-          image: '/images/symbols-symbolmountain/symbol-belly-colored.png',
+          image: '/images/symbols-symbolmountain/symbol-belly-colored.svg',
           description: 'I feel safe inside.'
         },
         {
@@ -504,3 +504,4 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame }) => {
 };
 
 export default CleanGameWelcomeScreen;
+
