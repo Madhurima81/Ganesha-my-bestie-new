@@ -1,378 +1,179 @@
-// Discovery Overlay Content - Symbol reveals and power teachings
-// ONLY for Learning Zones (Cave, Symbol Mountain, River)
-// Play Zones use regular modals instead
+// Discovery Overlay Content - Symbol reveals and affirmations
+// Learning zones only (Meaning Cave, Symbol Mountain, Shloka River)
 
 export const DISCOVERY_CONTENT = {
-  // ========================================
-  // CAVE OF SECRETS (Meaning Cave)
-  // ========================================
+
   'meaning-cave': {
+
     'vakratunda-mahakaya': {
       vakratunda: {
-        celebration: {
-          title: "Vakratunda Revealed!",
-          text: "A curved path hides a special magic!",
-          icon: 'vakratunda-symbol'
-        },
-        power: {
-          title: "Adaptability Power Unlocked!",
-          text: "Life isn't always straight… but just like Mooshika, you can follow twists and turns and still reach your goal!",
-          affirmation: "I am flexible",
-          buttonText: "⭐ Let's Make Him Grow!"
-        }
+        title: "Vakratunda",
+        affirmation: "I adapt.",
+        icon: 'vakratunda-symbol'
       },
 
       mahakaya: {
-        celebration: {
-          title: "Mahakaya Revealed!",
-          text: "Tiny to mighty—magic is growing!",
-          icon: 'mahakaya-symbol'
-        },
-        power: {
-          title: "Inner Strength Unlocked!",
-          text: "Even when you feel small, you have a big, mighty strength inside— just like Mahakaya!",
-          affirmation: "I am strong",
-          buttonText: "⭐ Feel the Power!"
-        }
+        title: "Mahakaya",
+        affirmation: "I am strong inside.",
+        icon: 'mahakaya-symbol'
       }
     },
 
     'suryakoti-samaprabha': {
       suryakoti: {
-        celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
-          icon: 'suryakoti-symbol'
-        },
-        power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
-        }
+        title: "Suryakoti",
+        affirmation: "I shine brightly.",
+        icon: 'suryakoti-symbol'
       },
 
       samaprabha: {
-        celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
-          icon: 'samaprabha-symbol'
-        },
-        power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
-        }
+        title: "Samaprabha",
+        affirmation: "My light is steady.",
+        icon: 'samaprabha-symbol'
       }
     },
 
     'nirvighnam-kurumedeva': {
       nirvighnam: {
-        celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
-          icon: 'nirvighnam-symbol'
-        },
-        power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
-        }
+        title: "Nirvighnam",
+        affirmation: "I move past obstacles.",
+        icon: 'nirvighnam-symbol'
       },
 
       kurumedeva: {
-        celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
-          icon: 'kurumedeva-symbol'
-        },
-        power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
-        }
+        title: "Kurumedeva",
+        affirmation: "I try my best.",
+        icon: 'kurumedeva-symbol'
       }
     },
 
     'sarvakaryeshu-sarvada': {
       sarvakaryeshu: {
-        celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
-          icon: 'sarvakaryeshu-symbol'
-        },
-        power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
-        }
+        title: "Sarvakaryeshu",
+        affirmation: "I do my work with care.",
+        icon: 'sarvakaryeshu-symbol'
       },
 
       sarvada: {
-        celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
-          icon: 'sarvada-symbol'
-        },
-        power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
-        }
+        title: "Sarvada",
+        affirmation: "I keep going.",
+        icon: 'sarvada-symbol'
       }
     }
   },
 
-  // ========================================
-  // SYMBOL MOUNTAIN
-  // ========================================
   'symbol-mountain': {
+
     'modak': {
       mooshika: {
-        celebration: {
-          title: "You Found Mooshika!",
-          text: "He was hiding, waiting just for you! He has something magical to share!",
-          icon: 'mooshika-happy'
-        },
-        power: {
-          title: "Focus Power Unlocked!",
-          text: "Your mind is like a little mouse… Sometimes it runs around! But guess what? You can call it back!",
-          affirmation: "I can focus",
-          mission: "Let's use this power to collect the modaks!",
-          buttonText: "Let's Collect Modaks!"
-        }
+        title: "Mooshika",
+        affirmation: "I can focus.",
+        icon: 'mooshika-happy'
       },
 
       modak: {
-        celebration: {
-          title: "Amazing Collection!",
-          text: "You gathered all 3 modaks! Mooshika is so proud!",
-          icon: 'modak-basket'
-        },
-        power: {
-          title: "Sharing Power Unlocked!",
-          text: "When you collect something special, it feels even MORE special when you share it with someone you love!",
-          affirmation: "I love to share",
-          buttonText: "Let's Share with Ganesha!"
-        }
+        title: "Modak",
+        affirmation: "I share with joy.",
+        icon: 'modak-basket'
       },
 
       belly: {
-        celebration: {
-          title: "Ganesha is So Happy!",
-          text: "His tummy is full! You completed Mooshika's mission!",
-          icon: 'belly-full'
-        },
-        power: {
-          title: "Gratitude Power Complete!",
-          text: "You helped Mooshika, collected with care, and shared with love. That's what gratitude means — saying thank you by doing good things!",
-          affirmation: "I am grateful",
-          buttonText: "Celebrate!"
-        }
+        title: "Big Belly",
+        affirmation: "I feel safe inside.",
+        icon: 'belly-full'
       }
     },
 
     'pond': {
       lotus: {
-        celebration: {
-          title: "You Found the Golden Lotus!",
-          text: "It has something magical to share!",
-          icon: 'golden-lotus'
-        },
-        power: {
-          title: "Positivity Power Unlocked!",
-          text: "Just like a lotus stays clean in muddy water… you can stay bright and happy even on messy days!",
-          affirmation: "I am positive",
-          buttonText: "Ready to Bloom!"
-        }
+        title: "Lotus",
+        affirmation: "I stay calm and kind.",
+        icon: 'golden-lotus'
       },
 
       trunk: {
-        celebration: {
-          title: "You Found the Elephant's Trunk Magic!",
-          text: "It wants to share its secret with you!",
-          icon: 'water-elephant'
-        },
-        power: {
-          title: "Power Switch Unlocked!",
-          text: "Your trunk can be strong or gentle. And just like that… you can choose how to act!",
-          affirmation: "I can choose",
-          buttonText: "Mission Complete!"
-        }
+        title: "Trunk",
+        affirmation: "I choose how I act.",
+        icon: 'water-elephant'
       }
     },
 
     'tusk': {
       eyes: {
-        celebration: {
-          title: "You Found Ganesha's Eye Magic!",
-          text: "His eyes want to share a special skill with you!",
-          icon: 'ganesha-eyes'
-        },
-        power: {
-          title: "Laser Focus Unlocked!",
-          text: "Small eyes can spot tiny details! With Laser Focus, you can notice little things that others might miss.",
-          affirmation: "I can focus",
-          buttonText: "Focus On!"
-        }
+        title: "Eyes",
+        affirmation: "I notice the good.",
+        icon: 'ganesha-eyes'
       },
 
       ears: {
-        celebration: {
-          title: "You Found Ganesha's Ear Magic!",
-          text: "His big ears have something to teach you!",
-          icon: 'ganesha-ears'
-        },
-        power: {
-          title: "Big Ears Unlocked!",
-          text: "Big ears help you listen carefully! With Listening Power, you can catch every sound and every important clue.",
-          affirmation: "I can listen",
-          buttonText: "Listen Up!"
-        }
+        title: "Ears",
+        affirmation: "I listen with care.",
+        icon: 'ganesha-ears'
       },
 
       tusk: {
-        celebration: {
-          title: "You Found Ganesha's Tusk Magic!",
-          text: "This tusk holds a powerful secret!",
-          icon: 'ganesha-tusk'
-        },
-        power: {
-          title: "Determination Unlocked!",
-          text: "Ganesha finished writing even with one tusk! With Determination Power, you can finish what you start—even when it gets tough.",
-          affirmation: "I am determined",
-          buttonText: "Get It Done!"
-        }
+        title: "Tusk",
+        affirmation: "I finish what I start.",
+        icon: 'ganesha-tusk'
       }
     }
   },
 
-  // ========================================
-  // SHLOKA RIVER
-  // ========================================
   'shloka-river': {
+
     'vakratunda-grove': {
       vakratunda: {
-        celebration: {
-          title: "You Learned Vakratunda!",
-          text: "All 4 syllables mastered!",
-          icon: 'vakratunda-complete'
-        },
-        power: {
-          title: "Flexibility Power!",
-          text: "You can adapt and flow like water!",
-          affirmation: "I am flexible",
-          buttonText: "Continue to Mahakaya!"
-        }
+        title: "Vakratunda",
+        affirmation: "I adapt.",
+        icon: 'vakratunda-complete'
       },
 
       mahakaya: {
-        celebration: {
-          title: "You Learned Mahakaya!",
-          text: "The great verse is yours!",
-          icon: 'mahakaya-complete'
-        },
-        power: {
-          title: "Inner Strength Power!",
-          text: "You carry greatness inside!",
-          affirmation: "I am strong",
-          buttonText: "Complete Scene!"
-        }
+        title: "Mahakaya",
+        affirmation: "I am strong.",
+        icon: 'mahakaya-complete'
       }
     },
 
     'suryakoti-bank': {
       suryakoti: {
-        celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
-          icon: 'suryakoti-complete'
-        },
-        power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
-        }
+        title: "Suryakoti",
+        affirmation: "I shine.",
+        icon: 'suryakoti-complete'
       },
 
       samaprabha: {
-        celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
-          icon: 'samaprabha-complete'
-        },
-        power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
-        }
+        title: "Samaprabha",
+        affirmation: "My light is steady.",
+        icon: 'samaprabha-complete'
       }
     },
 
     'nirvighnam-chant': {
       nirvighnam: {
-        celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
-          icon: 'nirvighnam-complete'
-        },
-        power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
-        }
+        title: "Nirvighnam",
+        affirmation: "I move forward.",
+        icon: 'nirvighnam-complete'
       },
 
       kurumedeva: {
-        celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
-          icon: 'kurumedeva-complete'
-        },
-        power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
-        }
+        title: "Kurumedeva",
+        affirmation: "I do my best.",
+        icon: 'kurumedeva-complete'
       }
     },
 
     'sarvakaryeshu-chant': {
       sarvakaryeshu: {
-        celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
-          icon: 'sarvakaryeshu-complete'
-        },
-        power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
-        }
+        title: "Sarvakaryeshu",
+        affirmation: "I work with care.",
+        icon: 'sarvakaryeshu-complete'
       },
 
       sarvada: {
-        celebration: {
-          title: "TODO: Add title",
-          text: "TODO: Add text",
-          icon: 'sarvada-complete'
-        },
-        power: {
-          title: "TODO: Power title",
-          text: "TODO: Power description",
-          affirmation: "TODO: Affirmation",
-          buttonText: "Continue"
-        }
+        title: "Sarvada",
+        affirmation: "I keep trying.",
+        icon: 'sarvada-complete'
       }
     }
   }
@@ -385,12 +186,12 @@ export const getDiscoveryContent = (zoneId, sceneId, symbolKey) => {
 
 // Helper to get celebration stage content
 export const getCelebrationContent = (zoneId, sceneId, symbolKey) => {
-  return DISCOVERY_CONTENT[zoneId]?.[sceneId]?.[symbolKey]?.celebration || null;
+  return DISCOVERY_CONTENT[zoneId]?.[sceneId]?.[symbolKey] || null;
 };
 
 // Helper to get power stage content
 export const getPowerContent = (zoneId, sceneId, symbolKey) => {
-  return DISCOVERY_CONTENT[zoneId]?.[sceneId]?.[symbolKey]?.power || null;
+  return DISCOVERY_CONTENT[zoneId]?.[sceneId]?.[symbolKey] || null;
 };
 
 // Check if a zone uses discovery overlays (learning zones only)
