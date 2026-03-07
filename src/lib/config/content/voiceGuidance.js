@@ -228,7 +228,7 @@ export const VOICE_SCRIPTS = {
       // ========================================
       welcome: {
         text: "Welcome to Symbol Mountain! Can you find my friend Mooshika? He's hiding somewhere...",
-        file: 'modak-opening-modal.mp3'
+        file: '/audio/voicenew/modak/ganesha_share_modaks.wav'
       },
 
       // ========================================
@@ -236,15 +236,15 @@ export const VOICE_SCRIPTS = {
       // ========================================
       findMooshika: {
         text: "Tap the little mound to find Mooshika!",
-        file: 'modak-find-mooshika.mp3'
+        file: '/audio/voicenew/modak/ganesha_find_mooshika.wav'
       },
       mooshikaFound: {
         text: "You found Mooshika! He's my little mouse friend. He teaches us about FOCUS!",
-        file: 'modak-mooshika-found.mp3'
+        file: '/audio/voicenew/modak/ganesha_found_mooshika.wav'
       },
       focusPower: {
         text: "Your mind is like a little mouse - sometimes it runs around! But YOU can call it back. Say with me: I can focus!",
-        file: 'modak-focus-power.mp3'
+        file: '/audio/voicenew/modak/ganesha_focus.wav'
       },
 
       // ========================================
@@ -252,7 +252,7 @@ export const VOICE_SCRIPTS = {
       // ========================================
       collectStart: {
         text: "Now help Mooshika collect 3 modaks for me! Tap each golden modak you find!",
-        file: 'modak-collect-start.mp3'
+        file: '/audio/voicenew/modak/ganesha_collect_three.wav'
       },
       tapModak: {
         text: "Tap the golden modak!",
@@ -280,7 +280,7 @@ export const VOICE_SCRIPTS = {
       // ========================================
       sharingPower: {
         text: "When you share something special, it feels even MORE special! Say with me: I love to share!",
-        file: 'modak-sharing-power.mp3'
+        file: '/audio/voicenew/modak/ganesha_share_joy.wav'
       },
       // Instruction to feed (tap version)
       shareTap: {
@@ -290,7 +290,7 @@ export const VOICE_SCRIPTS = {
       // Instruction to feed (drag version)
       feedGanesha: {
         text: "Drag the modaks to feed Ganesha!",
-        file: 'modak-feed-ganesha.mp3'
+        file: '/audio/voicenew/modak/ganesha_bring_modaks.wav'
       },
       // Hint for feeding phase (idle hint)
       feedHint: {
@@ -320,7 +320,7 @@ export const VOICE_SCRIPTS = {
       // ========================================
       gratitudePower: {
         text: "You helped Mooshika, collected with care, and shared with love. That's GRATITUDE! Say with me: I am grateful!",
-        file: 'modak-gratitude-power.mp3'
+        file: '/audio/voicenew/modak/ganesha_safe_inside.wav'
       },
       kindHeartPower: {
         text: "You have a kind heart!",
@@ -334,7 +334,7 @@ export const VOICE_SCRIPTS = {
 
       sceneComplete: {
         text: "Amazing work, little explorer! You did it! Focus, sweet reward, and sharing — all done! I'm so proud of you!",
-        file: "modak-scene-complete.mp3"
+        file: '/audio/voicenew/modak/ganesha_proud.wav'
       },
 
       // ========================================
@@ -682,7 +682,9 @@ export const getAudioPath = (zoneId, sceneId, key) => {
   }
 
   // Symbol Mountain zone - legacy path
+  // If file is already an absolute path (starts with /), use it directly
   if (zoneId === 'symbol-mountain') {
+    if (script.file.startsWith('/')) return script.file;
     return `/audio/voice/modak/${script.file}`;
   }
 
