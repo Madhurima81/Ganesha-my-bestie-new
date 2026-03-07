@@ -4,6 +4,7 @@ import './CaveSceneFixed.css';
 import '../../../../lib/styles/zone-themes.css';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../../lib/config/content/openingModals';
+import { getCompletionModal } from '../../../../lib/config/content';
 import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
 import OpeningModal from '../../../shared/components/OpeningModal.jsx';
 
@@ -273,6 +274,7 @@ const CaveSceneContent = ({
     'vakratunda-mahakaya',
     getSceneResetConfig('vakratunda-mahakaya')
   );
+  const completionModalContent = getCompletionModal(zoneId, sceneId);
 
   // State management
   const [showSparkle, setShowSparkle] = useState(null);
@@ -1892,6 +1894,8 @@ const CaveSceneContent = ({
               <SceneCompletionCelebration
                 show={showSceneCompletion}
                 sceneName="Cave of Secrets - Scene 1"
+                completionTitle={completionModalContent?.title}
+                completionSubtitle={completionModalContent?.subtitle}
                 sceneNumber={1}
                 totalScenes={4}
                 starsEarned={sceneState.progress?.starsEarned || 8}

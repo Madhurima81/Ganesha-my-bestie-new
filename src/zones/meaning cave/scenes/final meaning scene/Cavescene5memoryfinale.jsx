@@ -4,6 +4,7 @@ import OpeningModal from '../../../shared/components/OpeningModal.jsx';
 import './Cavescene5memoryfinale.css';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../../lib/config/content/openingModals';
+import { getCompletionModal } from '../../../../lib/config/content';
 
 // Import scene management components
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
@@ -157,6 +158,7 @@ const CaveScene5MemoryFinaleContent = ({
   // Get profile name
   const activeProfile = GameStateManager.getActiveProfile();
   const profileName = activeProfile?.name || 'little explorer';
+  const completionModalContent = getCompletionModal(zoneId, sceneId);
 
   // Local UI state
   const [showRotatingOrbs, setShowRotatingOrbs] = useState(false);
@@ -666,6 +668,8 @@ const CaveScene5MemoryFinaleContent = ({
           <SceneCompletionCelebration
             show={sceneState.showCelebration}
             sceneName="Cave of Secrets"
+            completionTitle={completionModalContent?.title}
+            completionSubtitle={completionModalContent?.subtitle}
             sceneNumber={5}
             totalScenes={5}
             starsEarned={8}

@@ -5,6 +5,7 @@ import './NirvighnamScene.css';
 import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../../lib/config/content/openingModals';
+import { getCompletionModal } from '../../../../lib/config/content';
 
 // Import scene management components
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
@@ -524,6 +525,7 @@ const NirvighnamSceneContent = ({
     'nirvighnam-kurumedeva',
     getSceneResetConfig('nirvighnam-kurumedeva')
   );
+  const completionModalContent = getCompletionModal(zoneId, sceneId);
 
   // State management
   const [showSparkle, setShowSparkle] = useState(null);
@@ -2751,6 +2753,8 @@ if (currentMissionSymbol === 'nirvighnam') {
             <SceneCompletionCelebration
               show={showSceneCompletion}
               sceneName="Obstacle Remover Chamber - Scene 3"
+              completionTitle={completionModalContent?.title}
+              completionSubtitle={completionModalContent?.subtitle}
               sceneNumber={3}
               totalScenes={4}
               starsEarned={sceneState.progress?.starsEarned || 8}

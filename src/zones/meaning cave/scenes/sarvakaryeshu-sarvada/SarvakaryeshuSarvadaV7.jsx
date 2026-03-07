@@ -6,6 +6,7 @@ import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOv
 import ganeshaCharacterCave from './assets/images/ganesha-character-cave.png';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../../lib/config/content/openingModals';
+import { getCompletionModal } from '../../../../lib/config/content';
 
 // Import scene management components
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
@@ -596,6 +597,7 @@ const SarvakaryeshuSarvadaContent = ({
     'sarvakaryeshu-sarvada',
     getSceneResetConfig('sarvakaryeshu-sarvada')
   );
+  const completionModalContent = getCompletionModal(zoneId, sceneId);
 
   // State management
   const [showSparkle, setShowSparkle] = useState(null);
@@ -2432,6 +2434,8 @@ const SarvakaryeshuSarvadaContent = ({
             <SceneCompletionCelebration
               show={showSceneCompletion}
               sceneName="Cave of Secrets - Complete"
+              completionTitle={completionModalContent?.title}
+              completionSubtitle={completionModalContent?.subtitle}
               sceneNumber={4}
               totalScenes={5}
               starsEarned={8}

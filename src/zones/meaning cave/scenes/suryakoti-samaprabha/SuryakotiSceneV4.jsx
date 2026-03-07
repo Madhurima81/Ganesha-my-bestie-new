@@ -4,6 +4,7 @@ import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOv
 import './SuryakotiScene.css';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../../lib/config/content/openingModals';
+import { getCompletionModal } from '../../../../lib/config/content';
 import OpeningModal from '../../../shared/components/OpeningModal.jsx';
 
 // Import scene management components (PROVEN FROM CAVE)
@@ -315,6 +316,7 @@ const SuryakotiSceneContent = ({
     'suryakoti-samaprabha',
     getSceneResetConfig('suryakoti-samaprabha')
   );
+  const completionModalContent = getCompletionModal(zoneId, sceneId);
 
   // State management (PROVEN FROM CAVE)
   const [showSparkle, setShowSparkle] = useState(null);
@@ -2962,6 +2964,8 @@ const SuryakotiSceneContent = ({
             <SceneCompletionCelebration
               show={showSceneCompletion}
               sceneName="Million Suns Chamber - Scene 2"
+              completionTitle={completionModalContent?.title}
+              completionSubtitle={completionModalContent?.subtitle}
               sceneNumber={2}
               totalScenes={4}
               starsEarned={sceneState.progress?.starsEarned || 8}
