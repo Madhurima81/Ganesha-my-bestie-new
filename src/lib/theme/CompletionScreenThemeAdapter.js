@@ -9,14 +9,14 @@ export function applyCompletionScreenTheme(zoneId) {
 
   if (!theme) return;
 
-  // Card
-  root.style.setProperty("--cs-card-bg", theme.menuBg);
+  // Card (neutral base; zone only accents border/glow)
+  root.style.setProperty("--cs-card-bg", "#FFF7EA");
   root.style.setProperty("--cs-card-border", theme.menuBorder);
-  root.style.setProperty("--cs-card-text", theme.textPrimary);
-  root.style.setProperty("--cs-card-subtext", theme.textSecondary);
+  root.style.setProperty("--cs-card-text", "#5D2E0F");
+  root.style.setProperty("--cs-card-subtext", "#6B574A");
 
   // Title
-  root.style.setProperty("--cs-title-color", theme.textPrimary);
+  root.style.setProperty("--cs-title-color", "#5D2E0F");
 
   // Accent / glow
   root.style.setProperty("--cs-accent", theme.accentColor);
@@ -30,7 +30,7 @@ export function applyCompletionScreenTheme(zoneId) {
   root.style.setProperty("--cs-primary-text", "#ffffff");
 
   // Secondary buttons
-  root.style.setProperty("--cs-secondary-bg", theme.buttonBg);
+  root.style.setProperty("--cs-secondary-bg", "#FFF7EA");
   root.style.setProperty("--cs-secondary-border", theme.accentColor);
   root.style.setProperty("--cs-secondary-text", theme.textPrimary);
 

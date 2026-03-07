@@ -38,7 +38,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 50px;
+  gap: 26px;
   padding: 0 60px;
 }
 
@@ -62,6 +62,7 @@
 
 /* Card (Right Side) */
 .game-modal-card {
+  position: relative;
   flex: 0 0 50%;
   max-width: 700px;
   min-height: 600px;
@@ -74,7 +75,20 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  animation: slideInRight 0.6s ease-out;
+  animation: modalEntrance 0.35s ease-out;
+}
+
+/* Speech pointer shown only when character exists */
+.game-modal-character + .game-modal-card::after {
+  content: '';
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  background: #FFF9E6;
+  left: -13px;
+  top: 48%;
+  transform: rotate(45deg);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 .game-modal-title {
@@ -100,8 +114,8 @@
 .game-modal-icons {
   display: flex;
   justify-content: center;
-  gap: 60px;
-  margin: 30px 0 50px;
+  gap: 20px;
+  margin: 20px 0 35px;
   width: 100%;
   flex-wrap: wrap;
 }
@@ -110,7 +124,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
+  gap: 10px;
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -120,23 +134,42 @@
 
 .game-modal-icon-item img,
 .game-modal-icon-circle {
-  width: 140px;
-  height: 140px;
+  width: clamp(120px, 10vw, 175px);
+  height: clamp(120px, 10vw, 175px);
   object-fit: contain;
-  filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.15));
-  animation: iconFloat 3s ease-in-out infinite;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 50%;
-  padding: 12px;
-  border: 4px solid var(--modal-btn-bg, #FF8C00);
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.08));
+  animation: iconFloatSoft 4s ease-in-out infinite;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  border: none;
+}
+
+/* Hard override to beat legacy modal styles elsewhere */
+.game-modal-icons .game-modal-icon-circle,
+.game-modal-icons .game-modal-icon-item img {
+  width: clamp(120px, 10vw, 175px) !important;
+  height: clamp(120px, 10vw, 175px) !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
 .game-modal-icon-circle {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 60px;
-  background: white;
+  font-size: clamp(64px, 5vw, 90px);
+  background: transparent;
+  overflow: visible;
+}
+
+/* SVG icons have internal transparent padding — scale up to fill the circle */
+.game-modal-icon-circle img[src$=".svg"] {
+  transform: scale(1.35);
+  transform-origin: center;
 }
 
 .game-modal-icon-item:nth-child(1) img,
@@ -156,13 +189,11 @@
 
 .game-modal-icon-label {
   font-family: 'Baloo 2', cursive;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--modal-text-primary);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   display: none;
-  /* Labels intentionally hidden by default */
 }
 
 /* --- Button --- */
@@ -170,7 +201,7 @@
   font-family: 'Baloo 2', cursive;
   background: var(--modal-btn-bg);
   color: var(--modal-btn-text);
-  border: none;
+  border: 2px solid var(--modal-btn-border, transparent);
   padding: 20px 60px;
   font-size: 30px;
   font-weight: 800;
@@ -185,7 +216,21 @@
 
 .game-modal-button:hover {
   transform: translateY(-4px);
+  background: var(--modal-btn-bg-hover, var(--modal-btn-bg));
   box-shadow: 0 14px 40px var(--modal-btn-shadow);
+}
+
+/* Force zone-themed button even if older styles are injected elsewhere */
+.game-modal-card .game-modal-button {
+  background: var(--modal-btn-bg) !important;
+  color: var(--modal-btn-text) !important;
+  border: 2px solid var(--modal-btn-border, transparent) !important;
+  box-shadow: 0 10px 28px var(--modal-btn-shadow) !important;
+}
+
+.game-modal-card .game-modal-button:hover {
+  background: var(--modal-btn-bg-hover, var(--modal-btn-bg)) !important;
+  box-shadow: 0 14px 40px var(--modal-btn-shadow) !important;
 }
 
 .game-modal-button:active {
@@ -203,15 +248,15 @@
   }
 }
 
-@keyframes slideInRight {
+@keyframes modalEntrance {
   from {
     opacity: 0;
-    transform: translateX(50px);
+    transform: translateY(30px);
   }
 
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
   }
 }
 
@@ -227,17 +272,14 @@
   }
 }
 
-@keyframes iconFloat {
-
-  0%,
-  100% {
+@keyframes iconFloatSoft {
+  0%, 100% {
     transform: translateY(0);
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.06));
   }
-
   50% {
-    transform: translateY(-10px);
-    filter: drop-shadow(0 15px 25px var(--modal-btn-shadow));
+    transform: translateY(-6px);
+    filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.09));
   }
 }
 
@@ -284,16 +326,15 @@
   }
 
   .game-modal-icons {
-    gap: 20px;
-    margin-bottom: 25px;
+    gap: 14px;
+    margin-bottom: 20px;
   }
 
   .game-modal-icon-item img,
   .game-modal-icon-circle {
-    width: 70px;
-    height: 70px;
-    padding: 8px;
-    border-width: 2px;
+    width: 90px;
+    height: 90px;
+    padding: 0;
   }
 
   .game-modal-icon-circle {
@@ -343,15 +384,15 @@
   }
 
   .game-modal-icons {
-    gap: 30px;
+    gap: 16px;
     margin-bottom: 15px;
   }
 
   .game-modal-icon-item img,
   .game-modal-icon-circle {
-    width: 80px;
-    height: 80px;
-    padding: 8px;
+    width: 100px;
+    height: 100px;
+    padding: 0;
   }
 
   .game-modal-icon-circle {
@@ -381,7 +422,7 @@
 
   .game-modal-icon-item img,
   .game-modal-icon-circle {
-    width: 110px;
-    height: 110px;
+    width: 125px;
+    height: 125px;
   }
 }

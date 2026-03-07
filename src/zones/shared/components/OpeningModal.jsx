@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './OpeningModal.css';
 import { getOpeningModal } from '../../../lib/config/content';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 
 // Icon Mapping for Unified Style
-import symbolMooshikaColored from '../../symbol-mountain/shared/images/icons/symbol-mooshika-colored.png';
-import symbolModakColored from '../../symbol-mountain/shared/images/icons/symbol-modak-colored.png';
-import symbolBellyColored from '../../symbol-mountain/shared/images/icons/symbol-belly-colored.png';
+import symbolMooshikaColored from '../../symbol-mountain/shared/images/icons/symbol-mooshika-colored.svg';
+import symbolModakColored from '../../symbol-mountain/shared/images/icons/symbol-modak-colored.svg';
+import symbolBellyColored from '../../symbol-mountain/shared/images/icons/symbol-belly-colored.svg';
 import symbolLotusColored from '../../symbol-mountain/shared/images/icons/symbol-lotus-colored.png';
 import symbolTrunkColored from '../../symbol-mountain/shared/images/icons/symbol-trunk-colored.png';
 import symbolEyesColored from '../../symbol-mountain/shared/images/icons/symbol-eyes-colored.png';
@@ -116,6 +116,7 @@ const OpeningModal = ({
     onStart,
     characterImg,
     showButton = true,
+    isOpen,
     // Direct content props — use these when not using zoneId+sceneId config lookup
     title: titleProp,
     description: descriptionProp,
@@ -123,6 +124,7 @@ const OpeningModal = ({
     iconLabels: iconLabelsProp,
     buttonText: buttonTextProp,
 }) => {
+    const [internalOpen, setInternalOpen] = useState(true);
     const configContent = (zoneId && sceneId) ? getOpeningModal(zoneId, sceneId) : null;
 
     const content = {
@@ -135,6 +137,9 @@ const OpeningModal = ({
 
     if (!content.title && !content.description) return null;
 
+    const visible = typeof isOpen === 'boolean' ? isOpen : internalOpen;
+    if (!visible) return null;
+
     const theme = zoneId ? getZoneTheme(zoneId) : {};
 
     return (
@@ -142,7 +147,10 @@ const OpeningModal = ({
             '--modal-card-bg': theme.parentBg,
             '--modal-text-primary': theme.textPrimary,
             '--modal-btn-bg': theme.buttonActiveBg,
-            '--modal-btn-shadow': theme.glowColor
+            '--modal-btn-shadow': theme.glowColor,
+            '--modal-btn-border': theme.buttonBorder || 'transparent',
+            '--modal-btn-bg-hover': theme.buttonHoverBg || theme.buttonActiveBg,
+            '--modal-btn-text': '#FFFFFF'
         }}>
             <div className="game-modal-content">
                 <div className="game-modal-character">
@@ -180,7 +188,13 @@ const OpeningModal = ({
                     </div>
 
                     {showButton && (
-                        <button className="game-modal-button reveal" onClick={onStart}>
+                        <button
+                            className="game-modal-button reveal"
+                            onClick={() => {
+                                if (typeof isOpen !== 'boolean') setInternalOpen(false);
+                                if (onStart) onStart();
+                            }}
+                        >
                             {content.buttonText || "Let's Explore"}
                         </button>
                     )}
@@ -191,3 +205,4 @@ const OpeningModal = ({
 };
 
 export default OpeningModal;
+

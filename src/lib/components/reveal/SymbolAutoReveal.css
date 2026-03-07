@@ -71,6 +71,9 @@
   z-index: 10;
 }
 
+/* SVG icons have internal transparent padding */
+.sar-solo[src$=".svg"] { width: 260px; }
+
 .sar-solo--in {
   animation:
     sar-float-in  0.38s cubic-bezier(0.22, 1, 0.36, 1) both,
@@ -178,6 +181,9 @@ transition: transform 0.58s cubic-bezier(0.4, 0, 0.2, 1);}
   animation: sar-breathe 3.2s ease-in-out infinite;
 }
 
+/* SVG icons have internal transparent padding — increase size to compensate */
+.sar-icon[src$=".svg"] { width: 275px; }
+
 @keyframes sar-breathe {
   0%, 100% { transform: scale(1);    }
   50%       { transform: scale(1.06); }
@@ -203,6 +209,8 @@ transition: transform 0.58s cubic-bezier(0.4, 0, 0.2, 1);}
   transition: opacity 0.12s ease;
   pointer-events: none;
 }
+
+.sar-fly-icon[src$=".svg"] { width: 275px; }
 
 .sar-fly-icon.sar-fly-icon--show {
   opacity: 1;
