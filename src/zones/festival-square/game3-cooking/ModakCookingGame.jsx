@@ -3,6 +3,7 @@ import OpeningModal from '../../shared/components/OpeningModal.jsx';
 import './ModakCookingGame.css';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../lib/config/content/openingModals';
+import { getCompletionModal } from '../../../lib/config/content';
 
 // Import scene management components
 import SceneManager from '../../../lib/components/scenes/SceneManager';
@@ -11,7 +12,7 @@ import { getSceneResetConfig } from '../../../lib/config/SceneResetConfigs';
 import BackToMapButton from '../../../lib/components/navigation/BackToMapButton';
 
 // Import completion component
-import FestivalSquareCompletion from '../components/FestivalSquareCompletion';
+import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
 import GamePauseMenu from '../components/GamePauseMenu';
 import HomeButton from '../../../lib/components/ui/HomeButton';
 import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
@@ -36,6 +37,9 @@ import cookedModak from './assets/images/cooked-modak.png';
 import ganeshaChef from './assets/images/ganesha-chef.png';
 import spoon from './assets/images/spoon.png';
 import cookingBadge from './assets/images/cooking-badge.png';
+import recipeIcon from '../assets/images/icons/recipe-icon.png';
+import cookIcon from '../assets/images/icons/cook-icon.png';
+import serveIcon from '../assets/images/icons/serve-icon.png';
 
 // Import additional new assets for enhanced progressions
 import brassBowlWithFlour from './assets/images/brass-bowl-with-flour.png';
@@ -193,6 +197,8 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
   if (!sceneState || !sceneActions) return <div className="loading">Loading...</div>;
 
   const { resetScene } = useSceneReset(sceneActions, 'festival-square', 'game3', getSceneResetConfig('game3'));
+  const completionModalContent = getCompletionModal('festival-square', 'game3');
+  const completionIcons = ['recipe-icon', 'cook-icon', 'serve-icon'];
 
   // Local UI state (non-persisted)
   const [activeElement, setActiveElement] = useState(null);
@@ -1194,32 +1200,36 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       {/* Festival Square Completion */}
       {showSceneCompletion && (
-        <FestivalSquareCompletion
+        <SceneCompletionCelebration
           show={showSceneCompletion}
+          zoneId="festival-square"
+          sceneId="game3"
           sceneName="Modak Mastery"
-          sceneNumber={3}
-          totalScenes={4}
+          completionTitle={completionModalContent?.title}
+          completionSubtitle={completionModalContent?.subtitle}
+          discoveredSymbols={completionIcons}
+          symbolImages={{
+            'recipe-icon': recipeIcon,
+            'cook-icon': cookIcon,
+            'serve-icon': serveIcon
+          }}
           starsEarned={sceneState.stars}
           totalStars={13}
-          discoveredBadges={['cooking']}
-          badgeImages={{
-            cooking: cookingBadge
-          }}
           nextSceneName="Mandap Decoration"
           childName="little chef"
           onContinue={() => {
-            console.log('🍪 MODAK CONTINUE: Going to next game');
+            console.log('MODAK CONTINUE: Going to next game');
             setTimeout(() => {
               onNavigate?.('scene-complete-continue');
             }, 100);
           }}
           onReplay={() => {
-            console.log('🎮 MODAK REPLAY: Play Again');
+            console.log('MODAK REPLAY: Play Again');
             resetScene();
             setShowSceneCompletion(false);
           }}
           onBackToMap={() => {
-            console.log('🗺️ MODAK MAP: Back to Festival Square');
+            console.log('MODAK MAP: Back to Festival Square');
             if (onNavigate) {
               onNavigate('zone-welcome');
             }

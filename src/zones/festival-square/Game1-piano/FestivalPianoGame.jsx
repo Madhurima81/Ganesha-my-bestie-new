@@ -13,7 +13,7 @@ import GameStateManager from "../../../lib/services/GameStateManager";
 import ProgressManager from '../../../lib/services/ProgressManager';
 import SimpleSceneManager from '../../../lib/services/SimpleSceneManager';
 
-import FestivalSquareCompletion from '../components/FestivalSquareCompletion';
+import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
 import GamePauseMenu from '../components/GamePauseMenu';
 import HomeButton from '../../../lib/components/ui/HomeButton';
 import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
@@ -22,6 +22,10 @@ import GameLayout from '../../../lib/components/layout/GameLayout';
 import musicBadge from './assets/images/music-badge.png';
 import ganeshaCompletion from './assets/images/ganesha-musician.png';
 import ganeshaGameScene from './assets/images/ganesha-musician.png';
+import listenIcon from '../assets/images/icons/listen-icon.png';
+import playIcon from '../assets/images/icons/play-icon.png';
+import createIcon from '../assets/images/icons/create-icon.png';
+import { getCompletionModal } from "../../../lib/config/content";
 
 // Game modes
 const GAME_MODES = {
@@ -191,6 +195,8 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
   const [localUIState, setLocalUIState] = useState({ activeKey: null, showSparkle: null, showCulturalNote: null, danceParticles: [] });
   const audioContextRef = useRef(null);
   const timeoutsRef = useRef([]);
+  const completionModalContent = getCompletionModal('festival-square', 'game1');
+  const completionIcons = ['listen-icon', 'play-icon', 'create-icon'];
 
   const [freePlayRecording, setFreePlayRecording] = useState({
     isRecording: false,
@@ -753,25 +759,45 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
               }}
             />
 
-            {sceneState.showSceneCompletion && (<FestivalSquareCompletion show={sceneState.showSceneCompletion} sceneName="Piano Mastery" starsEarned={sceneState.stars || 0} onContinue={() => onNavigate?.('scene-complete-continue')} onReplay={() => {
-              console.log('🎹 PIANO REPLAY: Play Again');
-              sceneActions.updateState({
-                phase: PHASES.DISCOVERY,
-                tapCount: 0,
-                discoveredInstruments: {},
-                celebrationStarted: false,
-                gameStartTime: Date.now(),
-                stars: 0,
-                completed: false,
-                showDoneButton: false,
-                showCompletionBadge: false,
-                showSceneCompletion: false,
-                showingCompletionScreen: false,
-                dancingAnimals: {},
-                showDanceFloor: false,
-                progress: { percentage: 0, starsEarned: 0, completed: false }
-              });
-            }} onBackToMap={() => onNavigate?.('zone-welcome')} />)}
+            {sceneState.showSceneCompletion && (
+              <SceneCompletionCelebration
+                show={sceneState.showSceneCompletion}
+                zoneId="festival-square"
+                sceneId="game1"
+                sceneName="Piano Mastery"
+                completionTitle={completionModalContent?.title}
+                completionSubtitle={completionModalContent?.subtitle}
+                discoveredSymbols={completionIcons}
+                symbolImages={{
+                  'listen-icon': listenIcon,
+                  'play-icon': playIcon,
+                  'create-icon': createIcon
+                }}
+                starsEarned={sceneState.stars || 0}
+                totalStars={8}
+                onContinue={() => onNavigate?.('scene-complete-continue')}
+                onReplay={() => {
+                  console.log('PIANO REPLAY: Play Again');
+                  sceneActions.updateState({
+                    phase: PHASES.DISCOVERY,
+                    tapCount: 0,
+                    discoveredInstruments: {},
+                    celebrationStarted: false,
+                    gameStartTime: Date.now(),
+                    stars: 0,
+                    completed: false,
+                    showDoneButton: false,
+                    showCompletionBadge: false,
+                    showSceneCompletion: false,
+                    showingCompletionScreen: false,
+                    dancingAnimals: {},
+                    showDanceFloor: false,
+                    progress: { percentage: 0, starsEarned: 0, completed: false }
+                  });
+                }}
+                onBackToMap={() => onNavigate?.('zone-welcome')}
+              />
+            )}
           </div>
         </MessageManager>
       </InteractionManager>

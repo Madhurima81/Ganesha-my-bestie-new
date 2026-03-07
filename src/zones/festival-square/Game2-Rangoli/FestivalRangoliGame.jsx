@@ -4,9 +4,13 @@ import './FestivalRangoliGame.css';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../lib/config/content/openingModals';
 
-import FestivalSquareCompletion from '../components/FestivalSquareCompletion';
+import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
 import rangoliArtistBadge from './assets/images/rangoli-badge.png';
 import ganeshaCompletion from './assets/images/ganesha-artist.png';
+import learnIcon from '../assets/images/icons/learn-icon.png';
+import drawIcon from '../assets/images/icons/draw-icon.png';
+import designIcon from '../assets/images/icons/design-icon.png';
+import { getCompletionModal } from "../../../lib/config/content";
 import ganeshaArtist from './assets/images/ganesha-artist.png';
 // In FestivalPianoGame.jsx (or any game inside Game1-piano folder)
 import GamePauseMenu from '../components/GamePauseMenu';
@@ -154,6 +158,8 @@ const FestivalRangoliGame = ({ onComplete, onNavigate, zoneId = 'festival-square
   const [ganeshaMessage, setGaneshaMessage] = useState('');
   const [showGaneshaMessage, setShowGaneshaMessage] = useState(false);
   const [showPauseMenu, setShowPauseMenu] = useState(false);
+  const completionModalContent = getCompletionModal('festival-square', 'game2');
+  const completionIcons = ['learn-icon', 'draw-icon', 'design-icon'];
 
 
   const [showDesignConfirmation, setShowDesignConfirmation] = useState(false);
@@ -995,20 +1001,21 @@ const FestivalRangoliGame = ({ onComplete, onNavigate, zoneId = 'festival-square
 
       {/* Festival Square Completion */}
       {showSceneCompletion && (
-        <FestivalSquareCompletion
+        <SceneCompletionCelebration
           show={showSceneCompletion}
+          zoneId="festival-square"
+          sceneId="game2"
           sceneName="Rangoli Artistry"
-          sceneNumber={2}
-          totalScenes={4}
+          completionTitle={completionModalContent?.title}
+          completionSubtitle={completionModalContent?.subtitle}
+          discoveredSymbols={completionIcons}
+          symbolImages={{
+            'learn-icon': learnIcon,
+            'draw-icon': drawIcon,
+            'design-icon': designIcon
+          }}
           starsEarned={gameState.stars}
           totalStars={8}
-          discoveredBadges={['artist']}
-          badgeImages={{
-            artist: rangoliArtistBadge
-          }}
-          characterImages={{
-            ganeshaMusician: ganeshaCompletion
-          }}
           nextSceneName="Festival Cooking"
           childName="little artist"
 

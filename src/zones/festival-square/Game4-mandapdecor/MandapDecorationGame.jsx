@@ -3,9 +3,10 @@ import OpeningModal from '../../shared/components/OpeningModal.jsx';
 import './MandapDecorationGame.css';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../lib/config/content/openingModals';
+import { getCompletionModal } from '../../../lib/config/content';
 
 import FreeDraggableItem from '../../../lib/components/interactive/FreeDraggableItem';
-import FestivalSquareCompletion from '../components/FestivalSquareCompletion';
+import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
 import GamePauseMenu from '../components/GamePauseMenu';
 import HomeButton from '../../../lib/components/ui/HomeButton';
 import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
@@ -13,6 +14,9 @@ import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
 import PujaSidebar from './components/sidebars/PujaSidebar';
 import FixSidebar from './components/sidebars/FixSidebar';
 import MandapItem from './components/MandapItem';
+import coconutIcon from '../assets/images/icons/mandap-coconut-icon.png';
+import diyaIcon from '../assets/images/icons/mandap-diya-icon.png';
+import flowerIcon from '../assets/images/icons/mandap-flower-icon.png';
 
 // Mission Completion Overlay Component
 const MissionCompletionOverlay = ({
@@ -718,6 +722,8 @@ const MandapDecorationGame = ({ onComplete, onNavigate, zoneId = 'festival-squar
   const [milestoneSparkle, setMilestoneSparkle] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
+  const completionModalContent = getCompletionModal('festival-square', 'game4');
+  const completionIcons = ['mandap-learn-icon', 'mandap-build-icon', 'mandap-decorate-icon'];
   const [nearDeleteZone, setNearDeleteZone] = useState(false);
 
   const [currentMode, setCurrentMode] = useState(GAME_MODES.INTRO);
@@ -2367,20 +2373,21 @@ const MandapDecorationGame = ({ onComplete, onNavigate, zoneId = 'festival-squar
 
         {/* Festival Square Completion */}
         {showSceneCompletion && (
-          <FestivalSquareCompletion
+          <SceneCompletionCelebration
             show={showSceneCompletion}
+            zoneId="festival-square"
+            sceneId="game4"
             sceneName="Mandap Decoration"
-            sceneNumber={1}
-            totalScenes={4}
+            completionTitle={completionModalContent?.title}
+            completionSubtitle={completionModalContent?.subtitle}
+            discoveredSymbols={completionIcons}
+            symbolImages={{
+              'mandap-learn-icon': coconutIcon,
+              'mandap-build-icon': diyaIcon,
+              'mandap-decorate-icon': flowerIcon
+            }}
             starsEarned={gameState.stars}
             totalStars={8}
-            discoveredBadges={['decoration']}
-            badgeImages={{
-              decoration: decorationBadge
-            }}
-            characterImages={{
-              ganeshaMusician: ganeshaImage
-            }}
             nextSceneName="Modak Cooking"
             childName="little decorator"
             onContinue={() => {
