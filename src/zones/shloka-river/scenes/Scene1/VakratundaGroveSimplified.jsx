@@ -25,6 +25,8 @@ import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOv
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
 // import { PauseButton, PauseMenu } from '../../../../lib/components/ui/PauseMenu'; // ← removed: replaced by home icon
 import HomeButton from '../../../../lib/components/ui/HomeButton';
+import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
+import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 
 import AppSidebar from '../../shared/AppSidebar';
 import OpeningModal from '../../../shared/components/OpeningModal';
@@ -33,7 +35,7 @@ import SanskritVoiceRecorder from '../../../../lib/components/audio/SanskritVoic
 
 // Zone Theme
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
-import { getOpeningModal } from '../../../../lib/config/content';
+import { getOpeningModal, getCompletionModal, getDiscoveryContent } from '../../../../lib/config/content';
 
 // Game Components
 import VakratundaGame from './VakratundaGame';
@@ -47,8 +49,8 @@ import smartwatchScreen from '../assets/images/smartwatch-screen.png';
 // Images
 import riverBackground from './assets/images/elephant-grove-bg.png';
 import mooshikaCoach from "./assets/images/mooshika-coach.png";
-import appVakratunda from '../assets/images/apps/app-Vakratunda.png';
-import appMahakaya from '../assets/images/apps/app-mahakaya.png';
+import symbolVakratunda from '../../../meaning cave/assets/images/symbols/vakratunda-symbol.png';
+import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
 
 // Elephant images for memory game
 import elephantBabyVa from './assets/images/vakratunda/elephant-baby-va.png';
@@ -104,14 +106,14 @@ const PHASES = {
 const powerConfig = {
   vakratunda: {
     name: 'Flexibility Power',
-    image: appVakratunda,
+    image: symbolVakratunda,
     color: '#4ECDC4',
     affirmation: 'My trunk bends to find a new way.',
     story: 'When you feel stuck, try a new way.'
   },
   mahakaya: {
     name: 'Inner Strength',
-    image: appMahakaya,
+    image: symbolMahakaya,
     color: '#FF6B35',
     affirmation: 'I am big and strong — and you have strength inside too.',
     story: 'Stand tall. Be brave.'
@@ -196,6 +198,8 @@ const VakratundaGroveContent = ({
 
   const { resetScene } = useSceneReset(sceneActions, zoneId, sceneId, getSceneResetConfig(sceneId));
 
+  const completionModalContent = getCompletionModal(zoneId, sceneId);
+
   const [showSparkle, setShowSparkle] = useState(null);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
   const [showCenteredWord, setShowCenteredWord] = useState(null);
@@ -210,7 +214,12 @@ const VakratundaGroveContent = ({
   const [revealConfig, setRevealConfig] = useState(null);
 
   const [currentWord, setCurrentWord] = useState(null);
-  const [isAudioOn, setIsAudioOn] = useState(true);
+  const { isAudioOn, toggleAudio, setAudioEnabled } = useAudioPreference();
+  // Ref mirror — always in sync with isAudioOn state but readable synchronously
+  // (used in effects/callbacks where React state batching can cause stale reads)
+  const audioEnabledRef = useRef(isAudioOn);
+  audioEnabledRef.current = isAudioOn;
+
   const [showGaneshaCelebration, setShowGaneshaCelebration] = useState(false);
   const [showFinalGanesha, setShowFinalGanesha] = useState(false);
 
@@ -248,6 +257,7 @@ const VakratundaGroveContent = ({
   const {
     playVoice: playVO,
     stopVoice,
+    setVoiceVolume,
     playSyllable,
     playWord: playWordAudio,
     playSfx,
@@ -357,9 +367,9 @@ const VakratundaGroveContent = ({
           unlockedApps: { ...sceneState.unlockedApps, mahakaya: true }
         });
       }, 950);
-      // Show App Discovery screen after bloom settles
+      // Auto-trigger final celebration after 1.5s pause (no App Discovery screen)
       safeSetTimeout(() => {
-        setShowAppDiscovery(true);
+        handleAppDiscoveryCelebrate();
       }, 1500);
     }
   };
@@ -383,17 +393,21 @@ const VakratundaGroveContent = ({
   useEffect(() => {
     // Play welcome voice when opening modal is shown (phase is INITIAL and not yet started)
     if (sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown) {
-      // Small delay before starting welcome VO
+      // Use ref (not state) — avoids stale-closure race when resetScene() delays 100ms
+      if (!audioEnabledRef.current) {
+        setOpeningButtonVisible(true);
+        return;
+      }
+      // Audio on: wait for VO to finish before showing button
       const timer = setTimeout(() => {
         playVO('welcome', () => {
-          // VO finished - show the button with fade-in
-          playSfx('chime'); // Ready cue sound
+          playSfx('chime');
           setOpeningButtonVisible(true);
         });
       }, 800);
       return () => clearTimeout(timer);
     }
-  }, [sceneState.phase, sceneState.welcomeShown]);
+  }, [sceneState.phase, sceneState.welcomeShown, isAudioOn]); // isAudioOn in deps so effect re-runs on toggle
 
   const playAudio = (audioPath, volume = 1.0) => {
     if (!isAudioOn) return Promise.resolve();
@@ -406,11 +420,22 @@ const VakratundaGroveContent = ({
     }
   };
 
-  // Use hook's playWord for word audio
+  // Use hook's playWord for word audio — always plays (game audio, not VO narration)
   const playWord = (word) => {
-    if (isAudioOn) {
-      playWordAudio(word);
+    playWordAudio(word);
+  };
+
+  // Audio toggle handler — volume approach: change volume live so game callbacks always fire.
+  // Turning OFF: set vol 0 (audio silenced but still plays, callbacks intact).
+  //              Stop welcome VO during INITIAL phase only — safe, no game callbacks there.
+  // Turning ON:  restore vol 1 on whatever is currently playing, and future audio.
+  const handleAudioToggle = () => {
+    const nextOn = !isAudioOn;
+    setVoiceVolume(nextOn ? 1 : 0);
+    if (!nextOn && sceneState.phase === PHASES.INITIAL) {
+      stopVoice(); // during opening modal: stop welcome VO cleanly (no game callbacks running)
     }
+    toggleAudio();
   };
 
   // Set current phase for idle hints (game start VO is now handled by AutoPlayMode)
@@ -450,22 +475,21 @@ const VakratundaGroveContent = ({
       phase: word === 'vakratunda' ? PHASES.VAKRATUNDA_COMPLETE : PHASES.MAHAKAYA_COMPLETE
     });
 
-    // Visuals
-    setShowCenteredWord(word);
+    // Visuals — word celebration removed, game stays visible while VO plays
     setShowSparkle(`${word}-celebration`);
     playWord(word);
 
-    // ── Transition: word celebration → SymbolAutoReveal ──────────────────────
+    // ── Transition: VO completes → SymbolAutoReveal ───────────────────────────
     const triggerReveal = () => {
-      setShowCenteredWord(null);
       setShowSparkle(null);
 
-      // Show SymbolAutoReveal flip card
+      // Show SymbolAutoReveal flip card — content from discoveryContent.js
+      const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
       setRevealConfig({
         symbolId: word,
         symbolImage: powerConfig[word].image,
-        symbolName: powerConfig[word].name,
-        affirmation: powerConfig[word].affirmation,
+        symbolName: discoveryData?.title || powerConfig[word].name,
+        affirmation: discoveryData?.affirmation || powerConfig[word].affirmation,
         sidebarTarget: getSidebarTarget(word)
       });
 
@@ -482,10 +506,10 @@ const VakratundaGroveContent = ({
         });
       }, 2000);
     } else {
-      // Audio off fallback - use timed transitions
+      // Audio off fallback — short delay then reveal
       safeSetTimeout(() => {
         triggerReveal();
-      }, 5000);
+      }, 1500);
     }
 
     // ── Old goToPowerOverlay (superseded by SymbolAutoReveal) ──
@@ -590,34 +614,10 @@ const VakratundaGroveContent = ({
       <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
         <div className="vakratunda-simplified-container">
           <HomeButton onNavigate={onNavigate} />
+          <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
           <div className="river-background" style={{ backgroundImage: `url(${riverBackground})` }}>
 
-            {/* HOME BUTTON — replaces PauseButton */}
-            {sceneState.welcomeShown && !isFinalCelebrationActive && (
-              <button
-                type="button"
-                onClick={handleHomeToMainMap}
-                style={{
-                  position: 'fixed',
-                  top: '16px',
-                  left: '16px',
-                  zIndex: 10001,
-                  width: '52px',
-                  height: '52px',
-                  borderRadius: '50%',
-                  border: '2px solid #fff',
-                  background: 'linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%)',
-                  color: '#fff',
-                  fontSize: '24px',
-                  cursor: 'pointer',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
-                }}
-                aria-label="Go to main map"
-                title="Home"
-              >
-                🏠
-              </button>
-            )}
+            {/* HOME BUTTON — inline green button removed; HomeButton component handles this */}
 
             {/* ── PauseButton — REMOVED (replaced by home icon) ──
             <PauseButton
@@ -687,6 +687,7 @@ const VakratundaGroveContent = ({
             <OpeningModal
               zoneId={zoneId}
               sceneId={sceneId}
+              isOpen={!sceneState.welcomeShown}
               onStart={() => {
                 sceneActions.updateState({
                   welcomeShown: true,
@@ -760,6 +761,8 @@ const VakratundaGroveContent = ({
                 symbolName={revealConfig.symbolName}
                 affirmation={revealConfig.affirmation}
                 sidebarTargetRect={revealConfig.sidebarTarget}
+                zoneId={zoneId}
+                sceneId={sceneId}
                 onComplete={() => handleRevealComplete(revealConfig.symbolId)}
               />
             )}
@@ -792,8 +795,8 @@ const VakratundaGroveContent = ({
             )}
             ── End PowerUnlockOverlay ── */}
 
-            {/* 5-SECOND WORD CELEBRATION */}
-            {showCenteredWord && (
+            {/* 5-SECOND WORD CELEBRATION — REMOVED: goes directly to SymbolAutoReveal */}
+            {/* {showCenteredWord && (
               <>
                 <div className="vakratunda-celebration-overlay" />
                 <div className="vakratunda-centered-word-celebration">
@@ -807,10 +810,10 @@ const VakratundaGroveContent = ({
                   </div>
                 </div>
               </>
-            )}
+            )} */}
 
-            {/* App Discovery Screen (centerMode) — shown after Mahakaya Power Overlay */}
-            {showAppDiscovery && (
+            {/* App Discovery Screen (centerMode) — REMOVED: auto-celebration triggers directly after reveal */}
+            {/* {showAppDiscovery && (
               <AppSidebar
                 centerMode={true}
                 unlockedApps={sceneState.unlockedApps || {}}
@@ -825,7 +828,7 @@ const VakratundaGroveContent = ({
                   // stay on discovery screen, no timer restart
                 }}
               />
-            )}
+            )} */}
 
             {/* Side rail AppSidebar — hidden during App Discovery and final celebration */}
             {!showAppDiscovery &&
@@ -896,28 +899,26 @@ const VakratundaGroveContent = ({
               show={showSceneCompletion}
               zoneId={zoneId}
               sceneName="Vakratunda Grove"
+              completionTitle={completionModalContent?.title}
+              completionSubtitle={completionModalContent?.subtitle}
               sceneNumber={1}
               totalScenes={5}
               starsEarned={5}
               totalStars={5}
               discoveredSymbols={['vakratunda', 'mahakaya']}
-              containerType="apps"
-              appImages={{
-                vakratunda: appVakratunda,
-                mahakaya: appMahakaya,
+              containerType="backpack"
+              symbolImages={{
+                vakratunda: symbolVakratunda,
+                mahakaya: symbolMahakaya,
               }}
-              appData={{
+              symbolData={{
                 vakratunda: {
                   title: "Vakratunda - Curved Trunk",
-                  description: "The remover of obstacles with his curved trunk! Practice the sacred sounds: VA-KRA-TUN-DA",
-                  syllables: ['VA', 'KRA', 'TUN', 'DA'],
-                  color: '#4ECDC4'
+                  description: "Remover of obstacles with his curved trunk. Chant: VA-KRA-TUN-DA"
                 },
                 mahakaya: {
                   title: "Mahakaya - Great Body",
-                  description: "The great cosmic form that contains the entire universe within! Practice: MA-HA-KA-YA",
-                  syllables: ['MA', 'HA', 'KA', 'YA'],
-                  color: '#FF6B35'
+                  description: "Great cosmic form that holds the universe. Chant: MA-HA-KA-YA"
                 }
               }}
               savedRecordings={savedRecordings}
@@ -931,8 +932,20 @@ const VakratundaGroveContent = ({
               }}
               onComplete={() => onNavigate?.('zone-welcome')}
               onReplay={() => {
+                // Block VO immediately via ref — resetScene() delays 100ms internally so
+                // the welcome VO effect fires after this event handler. Ref ensures it reads false.
+                audioEnabledRef.current = false;
+                setAudioEnabled(false);
+                setVoiceVolume(0); // mute any currently playing VO narration
+                stopVoice();       // stop it outright (safe — scene is resetting)
+                // Reset all local UI state
                 setShowSceneCompletion(false);
                 setRevealConfig(null);
+                setShowSparkle(null);
+                setShowFinalGanesha(false);
+                setShowGaneshaCelebration(false);
+                setShowPowerOverlay(false);
+                setOpeningButtonVisible(true); // Show button straight away (audio is off = no VO to wait for)
                 resetScene();
               }}
               onContinue={() => {

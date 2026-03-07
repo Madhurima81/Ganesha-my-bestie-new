@@ -71,17 +71,20 @@ import mangoPlate from './assets/images/Samaprabha/mango-plate.png';
 import ganeshaHeadphones from '../assets/images/ganesha_with_headphones.png';
 import smartwatchBase from '../assets/images/smartwatch-base.png';
 import smartwatchScreen from '../assets/images/smartwatch-screen.png';
-import appVakratunda from '../assets/images/apps/app-Vakratunda.png';
-import appMahakaya from '../assets/images/apps/app-mahakaya.png';
+import symbolVakratunda from '../../../meaning cave/assets/images/symbols/vakratunda-symbol.png';
+import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
+import symbolSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.png';
+import symbolSamaprabha from '../../../meaning cave/assets/images/symbols/samaprabha-symbol.png';
+import boyNamaste from '../assets/images/boy-namaste.png';
 import appSuryakoti from '../assets/images/apps/app-suryakoti.png';
 import appSamaprabha from '../assets/images/apps/app-samaprabha.png';
-import boyNamaste from '../assets/images/boy-namaste.png';
 
 // Rescue mission images
 import suryakotiBefore from './assets/images/Suryakoti/suryakoti-before.png';
 import suryakotiAfter from './assets/images/Suryakoti/suryakoti-after.png';
 import samaprabhaBefore from './assets/images/Samaprabha/samaprabha-before.png'; 
 import samaprabhaAfter from './assets/images/Samaprabha/samaprabha-after.png';
+import { getCompletionModal } from '../../../../lib/config/content';
 
 // Updated PHASES constant for separate game approach (like VakratundaGrove)
 const PHASES = {
@@ -222,6 +225,8 @@ const SuryakotiBankContent = ({
   });
 
   if (!sceneState?.phase) sceneActions.updateState({ phase: PHASES.INITIAL });
+
+  const completionModalContent = getCompletionModal(zoneId, sceneId);
 
   // Access GameCoach functionality
   const { showMessage, hideCoach, clearManualCloseTracking } = useGameCoach();
@@ -1826,19 +1831,20 @@ hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || showMission}
             <SceneCompletionCelebration
               show={showSceneCompletion}
               sceneName="Suryakoti Bank"
+              completionTitle={completionModalContent?.title}
+              completionSubtitle={completionModalContent?.subtitle}
               sceneNumber={2}
               totalScenes={5}
               starsEarned={5}
               totalStars={5}
               // Adjust discovered symbols as per your design (accumulated or current)
               discoveredSymbols={['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha']}
-              containerType="smartwatch"
-              containerScreenImage={smartwatchScreen}
-              appImages={{
-                vakratunda: appVakratunda,
-                mahakaya: appMahakaya,
-                suryakoti: appSuryakoti,
-                samaprabha: appSamaprabha,
+              containerType="backpack"
+              symbolImages={{
+                vakratunda: symbolVakratunda,
+                mahakaya: symbolMahakaya,
+                suryakoti: symbolSuryakoti,
+                samaprabha: symbolSamaprabha,
               }}
               nextSceneName="Nirvighnam Chant"
               sceneId="suryakoti-bank"

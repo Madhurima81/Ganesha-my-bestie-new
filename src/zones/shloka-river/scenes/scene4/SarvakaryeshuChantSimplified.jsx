@@ -74,12 +74,14 @@ import daHedgehogSad from './assets/images/sarvada/da-hedgehog-sad.png';
 import ganeshaHeadphones from '../assets/images/ganesha_with_headphones.png';
 import smartwatchBase from '../assets/images/smartwatch-base.png';
 import smartwatchScreen from '../assets/images/smartwatch-screen.png';
-import appVakratunda from '../assets/images/apps/app-Vakratunda.png';
-import appMahakaya from '../assets/images/apps/app-mahakaya.png';
-import appSuryakoti from '../assets/images/apps/app-suryakoti.png';
-import appSamaprabha from '../assets/images/apps/app-samaprabha.png';
-import appNirvighnam from '../assets/images/apps/app-nirvighnam.png';
-import appKurumedeva from '../assets/images/apps/app-kurumedeva.png';
+import symbolVakratunda from '../../../meaning cave/assets/images/symbols/vakratunda-symbol.png';
+import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
+import symbolSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.png';
+import symbolSamaprabha from '../../../meaning cave/assets/images/symbols/samaprabha-symbol.png';
+import symbolNirvighnam from '../../../meaning cave/assets/images/symbols/nirvighnam-symbol.png';
+import symbolKurumedeva from '../../../meaning cave/assets/images/symbols/kurumedeva-symbol.png';
+import symbolSarvakaryeshu from '../../../meaning cave/assets/images/symbols/sarvakaryeshu-symbol.png';
+import symbolSarvada from '../../../meaning cave/assets/images/symbols/sarvada-symbol.png';
 import appSarvakaryeshu from '../assets/images/apps/app-sarvakaryeshu.png';
 import appSarvada from '../assets/images/apps/app-sarvada.png';
 import boyNamaste from '../assets/images/boy-namaste.png';
@@ -89,6 +91,7 @@ import sarvakaryeshuBefore from './assets/images/sarvakaryeshu/sarvakaryeshu-bef
 import sarvakaryeshuAfter from './assets/images/sarvakaryeshu/sarvakaryeshu-after.png';
 import sarvadaBefore from './assets/images/sarvada/sarvada-before.png'; 
 import sarvadaAfter from './assets/images/sarvada/sarvada-after.png';
+import { getCompletionModal } from '../../../../lib/config/content';
 
 // ✅ Clean phase structure (like Scene 2)
 const PHASES = {
@@ -215,6 +218,8 @@ const SarvakaryeshuChantContent = ({
   sceneId
 }) => {
   if (!sceneState?.phase) sceneActions.updateState({ phase: PHASES.INITIAL });
+
+  const completionModalContent = getCompletionModal(zoneId, sceneId);
 
   const { showMessage, hideCoach, clearManualCloseTracking } = useGameCoach();
 
@@ -1198,23 +1203,23 @@ hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || showMission}
             <SceneCompletionCelebration
               show={showSceneCompletion}
               sceneName="Sarvakaryeshu Chant"
+              completionTitle={completionModalContent?.title}
+              completionSubtitle={completionModalContent?.subtitle}
               sceneNumber={4} // Scene 4 (Scene 5 is usually Finale)
               totalScenes={5}
               starsEarned={5}
               totalStars={5}
               discoveredSymbols={['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha', 'nirvighnam', 'kurumedeva', 'sarvakaryeshu', 'sarvada']}
-              containerType="smartwatch"
-              containerImage={smartwatchBase}
-              containerScreenImage={smartwatchScreen}
-              appImages={{
-                vakratunda: appVakratunda,
-                mahakaya: appMahakaya,
-                suryakoti: appSuryakoti,
-                samaprabha: appSamaprabha,
-                nirvighnam: appNirvighnam,
-                kurumedeva: appKurumedeva,
-                sarvakaryeshu: appSarvakaryeshu,
-                sarvada: appSarvada,
+              containerType="backpack"
+              symbolImages={{
+                vakratunda: symbolVakratunda,
+                mahakaya: symbolMahakaya,
+                suryakoti: symbolSuryakoti,
+                samaprabha: symbolSamaprabha,
+                nirvighnam: symbolNirvighnam,
+                kurumedeva: symbolKurumedeva,
+                sarvakaryeshu: symbolSarvakaryeshu,
+                sarvada: symbolSarvada,
               }}
               nextSceneName="Shloka River Finale"
               sceneId="sarvakaryeshu-chant"

@@ -74,10 +74,12 @@ import decor4De from './assets/images/Kurumedeva/decor4-de.png';
 import ganeshaWithHeadphones from '../assets/images/ganesha_with_headphones.png';
 import smartwatchBase from '../assets/images/smartwatch-base.png';
 import smartwatchScreen from '../assets/images/smartwatch-screen.png';
-import appVakratunda from '../assets/images/apps/app-Vakratunda.png';
-import appMahakaya from '../assets/images/apps/app-mahakaya.png';
-import appSuryakoti from '../assets/images/apps/app-suryakoti.png';
-import appSamaprabha from '../assets/images/apps/app-samaprabha.png';
+import symbolVakratunda from '../../../meaning cave/assets/images/symbols/vakratunda-symbol.png';
+import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
+import symbolSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.png';
+import symbolSamaprabha from '../../../meaning cave/assets/images/symbols/samaprabha-symbol.png';
+import symbolNirvighnam from '../../../meaning cave/assets/images/symbols/nirvighnam-symbol.png';
+import symbolKurumedeva from '../../../meaning cave/assets/images/symbols/kurumedeva-symbol.png';
 import appNirvighnam from '../assets/images/apps/app-nirvighnam.png';
 import appKurumedeva from '../assets/images/apps/app-kurumedeva.png';
 import boyNamaste from '../assets/images/boy-namaste.png';
@@ -87,6 +89,7 @@ import nirvighnamBefore from './assets/images/nirvighnam/nirvighnam-before.png';
 import nirvighnamAfter from './assets/images/nirvighnam/nirvighnam-after.png';
 import kurumedevaBefore from './assets/images/Kurumedeva/kurumedeva-before.png'; 
 import kurumedevaAfter from './assets/images/Kurumedeva/kurumedeva-after.png';
+import { getCompletionModal } from '../../../../lib/config/content';
 
 
 
@@ -249,6 +252,8 @@ console.log('🕉️ NirvighnamChantContent render', {
 });
 
   if (!sceneState?.phase) sceneActions.updateState({ phase: PHASES.INITIAL });
+
+  const completionModalContent = getCompletionModal(zoneId, sceneId);
 
   // Access GameCoach functionality
   const { showMessage, hideCoach, clearManualCloseTracking } = useGameCoach();
@@ -1614,20 +1619,21 @@ onClick={() => {
           <SceneCompletionCelebration
             show={showSceneCompletion}
             sceneName="Nirvighnam Chant"
+            completionTitle={completionModalContent?.title}
+            completionSubtitle={completionModalContent?.subtitle}
             sceneNumber={3}
             totalScenes={5}
             starsEarned={5}
             totalStars={5}
             discoveredSymbols={['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha', 'nirvighnam', 'kurumedeva']}
-            containerType="smartwatch"
-            containerScreenImage={smartwatchScreen}
-            appImages={{
-              vakratunda: appVakratunda,
-              mahakaya: appMahakaya,
-              suryakoti: appSuryakoti,
-              samaprabha: appSamaprabha,
-              nirvighnam: appNirvighnam,
-              kurumedeva: appKurumedeva,
+            containerType="backpack"
+            symbolImages={{
+              vakratunda: symbolVakratunda,
+              mahakaya: symbolMahakaya,
+              suryakoti: symbolSuryakoti,
+              samaprabha: symbolSamaprabha,
+              nirvighnam: symbolNirvighnam,
+              kurumedeva: symbolKurumedeva,
             }}
             nextSceneName="Sarvakaryeshu Chant"
             sceneId="nirvighnam-chant"
