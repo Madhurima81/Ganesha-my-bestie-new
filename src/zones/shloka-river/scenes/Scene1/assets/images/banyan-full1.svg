@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 135.46666 135.46666" xmlns="http://www.w3.org/2000/svg">
+  <!-- Wide ground mound -->
+  <ellipse cx="67.73" cy="120" rx="52" ry="11" fill="#A07848"/>
+  <ellipse cx="67.73" cy="118" rx="50" ry="9.5" fill="#CEAD82"/>
+  <ellipse cx="59" cy="115" rx="18" ry="4" fill="#E0C898" opacity="0.55"/>
+
+  <!-- Aerial root - far left -->
+  <path d="M 24,78 Q 22,98 20,118" stroke="#8B6040" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M 24.5,78 Q 22.5,98 20.5,118" stroke="#B5845A" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <!-- Aerial root - left -->
+  <path d="M 40,66 Q 38,92 36,118" stroke="#8B6040" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M 40.5,66 Q 38.5,92 36.5,118" stroke="#B5845A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- Aerial root - right -->
+  <path d="M 96,66 Q 98,92 100,118" stroke="#8B6040" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M 96.5,66 Q 98.5,92 100.5,118" stroke="#B5845A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- Aerial root - far right -->
+  <path d="M 112,78 Q 114,98 116,118" stroke="#8B6040" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M 112.5,78 Q 114.5,98 116.5,118" stroke="#B5845A" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+
+  <!-- Trunk shadow -->
+  <path d="M 74,28 L 82,118 Q 87,120 90,118 L 84,28 Z" fill="#8B6040"/>
+  <!-- Main trunk (flared at base) -->
+  <path d="M 54,28 L 50,118 Q 60,122 68,120 Q 76,122 84,118 L 80,28 Z" fill="#B5845A"/>
+  <!-- Bark texture lines -->
+  <path d="M 58,50 Q 67,53 76,50" stroke="#8B6040" stroke-width="1" fill="none" opacity="0.3"/>
+  <path d="M 57,70 Q 67,74 77,70" stroke="#8B6040" stroke-width="1" fill="none" opacity="0.3"/>
+  <path d="M 55,90 Q 67,94 79,90" stroke="#8B6040" stroke-width="1" fill="none" opacity="0.3"/>
+  <!-- Trunk highlight -->
+  <path d="M 63,38 L 61,110 Q 65,113 66.5,113 L 68.5,38 Z" fill="#D4A070" opacity="0.38"/>
+
+  <!-- Canopy deep shadow -->
+  <ellipse cx="67.73" cy="48" rx="56" ry="34" fill="#3D8828"/>
+  <!-- Side canopy shadows -->
+  <circle cx="18" cy="66" r="24" fill="#4A9030"/>
+  <circle cx="118" cy="66" r="24" fill="#4A9030"/>
+  <!-- Main canopy -->
+  <ellipse cx="67.73" cy="44" rx="54" ry="32" fill="#6BBE46"/>
+  <!-- Leafy top bumps -->
+  <circle cx="24" cy="38" r="18" fill="#6BBE46"/>
+  <circle cx="46" cy="24" r="20" fill="#6BBE46"/>
+  <circle cx="68" cy="18" r="22" fill="#6BBE46"/>
+  <circle cx="90" cy="24" r="20" fill="#6BBE46"/>
+  <circle cx="112" cy="38" r="18" fill="#6BBE46"/>
+  <!-- Highlights -->
+  <circle cx="50" cy="30" r="12" fill="#92D85E" opacity="0.42"/>
+  <circle cx="78" cy="24" r="9" fill="#92D85E" opacity="0.35"/>
+</svg>

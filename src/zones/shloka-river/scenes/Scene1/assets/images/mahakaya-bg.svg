@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="2400" height="1800" viewBox="0 0 635 476" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#D8F0FA"/>
+      <stop offset="100%" stop-color="#B0DDEF"/>
+    </linearGradient>
+    <linearGradient id="riverGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7EC8DC"/>
+      <stop offset="100%" stop-color="#50A8C8"/>
+    </linearGradient>
+    <linearGradient id="meadowGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#B0DC6A"/>
+      <stop offset="70%" stop-color="#88C050"/>
+      <stop offset="100%" stop-color="#68A83A"/>
+    </linearGradient>
+    <linearGradient id="bankGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#88C050"/>
+      <stop offset="100%" stop-color="#58983A"/>
+    </linearGradient>
+  </defs>
+
+  <!-- River / water background (fills entire canvas) -->
+  <rect width="635" height="476" fill="url(#riverGrad)"/>
+
+  <!-- Sky layer at top -->
+  <rect x="0" y="0" width="635" height="120" fill="url(#skyGrad)"/>
+
+  <!-- Main meadow / land — upper area with gently curved bottom edge -->
+  <path d="M 0,0 L 635,0 L 635,195
+           Q 580,230 490,220
+           Q 400,210 317,225
+           Q 235,240 145,220
+           Q 60,205 0,230 Z"
+        fill="url(#meadowGrad)"/>
+
+  <!-- Left riverbank — wider ground extension into the water -->
+  <path d="M 0,230 Q 60,205 145,220 Q 80,265 0,260 Z"
+        fill="url(#bankGrad)"/>
+  <!-- Right riverbank -->
+  <path d="M 635,230 Q 575,205 490,220 Q 555,265 635,260 Z"
+        fill="url(#bankGrad)"/>
+
+  <!-- Meadow highlight (lighter band near the bank transition) -->
+  <path d="M 0,170 Q 80,185 210,178 Q 317,172 425,178 Q 555,185 635,170
+           L 635,185
+           Q 555,200 425,193 Q 317,187 210,193 Q 80,200 0,185 Z"
+        fill="#C8EC88" opacity="0.45"/>
+
+  <!-- Soft shadow at meadow / bank edge -->
+  <path d="M 0,218 Q 60,203 145,218 Q 235,233 317,220 Q 400,207 490,218 Q 580,228 635,218
+           L 635,232 Q 580,242 490,232 Q 400,222 317,235 Q 235,248 145,232 Q 60,218 0,232 Z"
+        fill="#4A8028" opacity="0.22"/>
+
+  <!-- Meadow soft highlight patches -->
+  <ellipse cx="110" cy="110" rx="90" ry="52" fill="#C8EC88" opacity="0.28"/>
+  <ellipse cx="525" cy="100" rx="88" ry="48" fill="#C8EC88" opacity="0.28"/>
+  <ellipse cx="317" cy="130" rx="70" ry="38" fill="#C8EC88" opacity="0.18"/>
+
+  <!-- Soft sky-to-meadow blend at top -->
+  <rect x="0" y="0" width="635" height="60" fill="url(#skyGrad)" opacity="0.55"/>
+
+  <!-- Water ripples -->
+  <path d="M 30,310 Q 317,298 605,310 Q 317,320 30,310 Z" fill="white" opacity="0.10"/>
+  <path d="M 20,370 Q 317,358 615,370 Q 317,380 20,370 Z" fill="white" opacity="0.09"/>
+  <path d="M 25,430 Q 317,418 610,430 Q 317,440 25,430 Z" fill="white" opacity="0.07"/>
+
+  <!-- Water center reflection glow -->
+  <ellipse cx="317" cy="390" rx="180" ry="55" fill="white" opacity="0.06"/>
+
+  <!-- Left bank edge detail -->
+  <path d="M 0,256 Q 35,248 70,255 Q 35,268 0,268 Z" fill="#9ACE58" opacity="0.4"/>
+  <!-- Right bank edge detail -->
+  <path d="M 635,256 Q 600,248 565,255 Q 600,268 635,268 Z" fill="#9ACE58" opacity="0.4"/>
+</svg>

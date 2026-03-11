@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 135.46666 135.46666" xmlns="http://www.w3.org/2000/svg">
+  <!-- Soil mound -->
+  <ellipse cx="67.73" cy="116" rx="20" ry="7" fill="#B8945E"/>
+  <ellipse cx="67.73" cy="114" rx="18" ry="6" fill="#CEAD82"/>
+  <ellipse cx="62" cy="112" rx="7" ry="2" fill="#E0C898" opacity="0.7"/>
+
+  <!-- Stem -->
+  <rect x="65.98" y="82" width="3.5" height="32" rx="1.75" fill="#6BAF4E"/>
+
+  <!-- Left leaf -->
+  <path d="M 65.5,90 C 54,81 39,84 42,93 C 45,102 60,100 65.5,95 Z" fill="#8FD06B"/>
+  <line x1="65" y1="92.5" x2="44" y2="92" stroke="#5FA03C" stroke-width="0.9" stroke-linecap="round"/>
+
+  <!-- Right leaf -->
+  <path d="M 70,90 C 81,81 96,84 93,93 C 90,102 75,100 70,95 Z" fill="#8FD06B"/>
+  <line x1="70.5" y1="92.5" x2="91" y2="92" stroke="#5FA03C" stroke-width="0.9" stroke-linecap="round"/>
+
+  <!-- Top bud -->
+  <circle cx="67.73" cy="80" r="4.5" fill="#6BAF4E"/>
+  <circle cx="66.8" cy="79" r="2.8" fill="#A0DF78"/>
+</svg>

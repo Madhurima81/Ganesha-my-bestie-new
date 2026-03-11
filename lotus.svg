@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 255" width="300" height="255">
+
+  <!-- Lily pad -->
+  <ellipse cx="150" cy="220" rx="118" ry="30" fill="#4caf50" stroke="#111" stroke-width="5"/>
+  <!-- Lily pad vein -->
+  <line x1="150" y1="190" x2="150" y2="244" stroke="#388e3c" stroke-width="2.5"/>
+
+  <g transform="translate(150, 190)">
+
+    <!-- Outer left wing petal -->
+    <path d="M 0,0 C -38,-5 -42,-52 0,-68 C 42,-52 38,-5 0,0 Z"
+          fill="#d44d8c" stroke="#111" stroke-width="4.5"
+          transform="rotate(-64)"/>
+
+    <!-- Outer right wing petal -->
+    <path d="M 0,0 C -38,-5 -42,-52 0,-68 C 42,-52 38,-5 0,0 Z"
+          fill="#d44d8c" stroke="#111" stroke-width="4.5"
+          transform="rotate(64)"/>
+
+    <!-- Inner left petal -->
+    <path d="M 0,0 C -32,-8 -34,-65 0,-86 C 34,-65 32,-8 0,0 Z"
+          fill="#e8609e" stroke="#111" stroke-width="4.5"
+          transform="rotate(-28)"/>
+    <!-- Inner left highlight -->
+    <path d="M 0,0 C -16,-5 -18,-46 0,-60 C 18,-46 16,-5 0,0 Z"
+          fill="#f4aed0" stroke="none"
+          transform="rotate(-28)"/>
+
+    <!-- Inner right petal -->
+    <path d="M 0,0 C -32,-8 -34,-65 0,-86 C 34,-65 32,-8 0,0 Z"
+          fill="#e8609e" stroke="#111" stroke-width="4.5"
+          transform="rotate(28)"/>
+    <!-- Inner right highlight -->
+    <path d="M 0,0 C -16,-5 -18,-46 0,-60 C 18,-46 16,-5 0,0 Z"
+          fill="#f4aed0" stroke="none"
+          transform="rotate(28)"/>
+
+    <!-- Center front petal (tallest) -->
+    <path d="M 0,0 C -34,-8 -36,-70 0,-94 C 36,-70 34,-8 0,0 Z"
+          fill="#f4afd0" stroke="#111" stroke-width="5"/>
+    <!-- Center highlight -->
+    <path d="M 0,0 C -18,-5 -20,-52 0,-70 C 20,-52 18,-5 0,0 Z"
+          fill="#fce4f0" stroke="none"/>
+
+  </g>
+
+</svg>

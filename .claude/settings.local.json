@@ -31,7 +31,15 @@
       "Bash(pip show:*)",
       "Bash(pip3 show:*)",
       "Bash(pip install:*)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(powershell -Command \"Get-Item ''C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\src\\\\zones\\\\symbol-mountain\\\\shared\\\\images\\\\icons\\\\symbol-belly-colored.png'' | Select-Object Name, Length; Get-Item ''C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\src\\\\zones\\\\symbol-mountain\\\\shared\\\\images\\\\icons\\\\symbol-belly-colored.svg'' | Select-Object Name, Length; Get-Item ''C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\src\\\\zones\\\\symbol-mountain\\\\scenes\\\\final scene\\\\assets\\\\images\\\\symbol-belly-colored.svg'' | Select-Object Name, Length\")",
+      "Bash(powershell -Command \"Get-Item ''C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\src\\\\zones\\\\symbol-mountain\\\\scenes\\\\modak\\\\assets\\\\images\\\\belly.svg'' | Select-Object Name, Length; Get-Item ''C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\src\\\\zones\\\\symbol-mountain\\\\shared\\\\images\\\\icons\\\\symbol-belly-colored.svg'' | Select-Object Name, Length; Get-Item ''C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\src\\\\zones\\\\symbol-mountain\\\\scenes\\\\final scene\\\\assets\\\\images\\\\symbol-belly-colored.svg'' | Select-Object Name, Length\")",
+      "Bash(powershell -Command \"Get-Item ''C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\public\\\\images\\\\symbols-symbolmountain\\\\symbol-belly-colored.svg'' | Select-Object Name, Length; Get-Item ''C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\public\\\\images\\\\symbols-symbolmountain\\\\symbol-modak-colored.svg'' | Select-Object Name, Length; Get-Item ''C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\public\\\\images\\\\symbols-symbolmountain\\\\symbol-mooshika-colored.svg'' | Select-Object Name, Length\")",
+      "Bash(cd /c/Users/\"Madhurima Agarwal\"/ganesha-my-bestie)",
+      "Bash(stat --printf=\"%s %n\\\\n\" src/zones/symbol-mountain/scenes/modak/assets/images/*.svg src/zones/shloka-river/scenes/Scene1/assets/images/*.svg)",
+      "Bash(npm install vite-plugin-svgo --save-dev)",
+      "Bash(npm run dev -- --port 5173 --host)",
+      "mcp__Claude_Preview__preview_start"
     ]
   }
 }
