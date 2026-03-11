@@ -47,7 +47,7 @@ import ganeshaHeadphones from './assets/images/ganesha_with_headphones.png';
 import smartwatchScreen from '../assets/images/smartwatch-screen.png';
 
 // Images
-import riverBackground from './assets/images/elephant-grove-bg.png';
+import riverBackground from './assets/images/vakratundachant-bg-new2.svg';
 import mooshikaCoach from "./assets/images/mooshika-coach.png";
 import symbolVakratunda from '../../../meaning cave/assets/images/symbols/vakratunda-symbol.png';
 import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
@@ -332,6 +332,14 @@ const VakratundaGroveContent = ({
 
   // ── SymbolAutoReveal helpers ──────────────────────────────────────────────
 
+  // Play affirmation VO when the flip card appears
+  useEffect(() => {
+    if (!revealConfig || !isAudioOn) return;
+    const voKey = revealConfig.symbolId === 'vakratunda' ? 'vakratundaPower' : 'mahakayaPower';
+    const id = setTimeout(() => playVO(voKey), 400);
+    return () => clearTimeout(id);
+  }, [revealConfig]);
+
   // Compute delta from card center (viewport center) to sidebar icon center
   const getSidebarTarget = (symbolId) => {
     const el = document.getElementById(`sidebar-${symbolId}`);
@@ -448,6 +456,9 @@ const VakratundaGroveContent = ({
   useEffect(() => {
     if (sceneState.phase === PHASES.MAHAKAYA_GAME) {
       setCurrentPhase('mahakayaGame');
+      if (isAudioOn) {
+        safeSetTimeout(() => playVO('mahakayaGameStart'), 500);
+      }
     }
   }, [sceneState.phase, setCurrentPhase]);
 
@@ -463,9 +474,6 @@ const VakratundaGroveContent = ({
     if (isAudioOn) {
       playVO('chantWordReveal');
     }
-
-    // Word-reveal VO key (matches voiceGuidance.js)
-    const wordRevealKey = word === 'vakratunda' ? 'vakratunda-word-reveal' : 'mahakaya-word-reveal';
 
     // Update State
     const chantKey = word === 'vakratunda' ? 'vakratunda-chant' : 'mahakaya-chant';
@@ -500,11 +508,19 @@ const VakratundaGroveContent = ({
 
     // Word reveal VO -> then transition to SymbolAutoReveal
     if (isAudioOn) {
-      safeSetTimeout(() => {
-        playVO(wordRevealKey, () => {
+      if (word === 'mahakaya') {
+        // mahakaya: after chantWordReveal, play word-reveal VO then reveal
+        safeSetTimeout(() => {
+          playVO('mahakaya-word-reveal', () => {
+            triggerReveal();
+          });
+        }, 2000);
+      } else {
+        // vakratunda: chantWordReveal is sufficient, just reveal after delay
+        safeSetTimeout(() => {
           triggerReveal();
-        });
-      }, 2000);
+        }, 2000);
+      }
     } else {
       // Audio off fallback — short delay then reveal
       safeSetTimeout(() => {

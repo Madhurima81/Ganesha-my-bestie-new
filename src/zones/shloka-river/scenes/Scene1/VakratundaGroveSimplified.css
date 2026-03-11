@@ -97,10 +97,10 @@
   cursor: pointer;
   filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
   transition: transform 0.3s ease;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -100%);
 }
 
-.mahakaya-central-synthesis:hover { transform: translate(-50%, -50%) scale(1.1) !important; }
+.mahakaya-central-synthesis:hover { transform: translate(-50%, -100%) scale(1.1) !important; }
 
 /* ==========================================================================
    3. ANIMATIONS (PULSE & GLOW) - FIXED
@@ -110,7 +110,7 @@
 .vakratunda-clicker-element.singing,
 .mahakaya-clicker-element.singing {
   transform: translate(-50%, -50%) scale(1.2) !important;
-  filter: brightness(1.4) drop-shadow(0 0 15px #FFD700);
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.65));
   transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -120,15 +120,24 @@
   animation: gentle-pulse-centered 2s infinite ease-in-out !important;
 }
 
-.vakratunda-central-synthesis.pulse,
-.mahakaya-central-synthesis.pulse {
+.vakratunda-central-synthesis.pulse {
   animation: gentle-pulse-centered 2s infinite ease-in-out !important;
+}
+
+.mahakaya-central-synthesis.pulse {
+  animation: gentle-pulse-mahakaya 2s infinite ease-in-out !important;
 }
 
 @keyframes gentle-pulse-centered {
   0% { transform: translate(-50%, -50%) scale(1); }
   50% { transform: translate(-50%, -50%) scale(1.05); }
   100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes gentle-pulse-mahakaya {
+  0% { transform: translate(-50%, -100%) scale(1); }
+  50% { transform: translate(-50%, -100%) scale(1.05); }
+  100% { transform: translate(-50%, -100%) scale(1); }
 }
 
 @keyframes gentle-pulse {
@@ -142,47 +151,58 @@
   /* !important ensures this overrides the pulse animation */
   animation: hint-pulse-glow-centered 1.5s infinite ease-in-out !important;
   z-index: 50 !important;
-  filter: drop-shadow(0 0 25px rgba(255, 215, 0, 1)) !important;
+  filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.75)) !important;
 }
 
-.vakratunda-central-synthesis.hint-glow,
-.mahakaya-central-synthesis.hint-glow {
+.vakratunda-central-synthesis.hint-glow {
   animation: hint-pulse-glow-centered 1.5s infinite ease-in-out !important;
 }
 
+.mahakaya-central-synthesis.hint-glow {
+  animation: hint-pulse-glow-mahakaya 1.5s infinite ease-in-out !important;
+}
 
 @keyframes hint-pulse-glow-centered {
   0% {
-    /* Normal State */
-    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8)) brightness(1.05);
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
     transform: translate(-50%, -50%) scale(1);
   }
   50% {
-    /* Glowing State - Bright Gold */
-    filter: drop-shadow(0 0 35px rgba(255, 215, 0, 1)) brightness(1.15);
-    transform: translate(-50%, -50%) scale(1.15);
+    filter: drop-shadow(0 0 18px rgba(255, 215, 0, 0.85));
+    transform: translate(-50%, -50%) scale(1.1);
   }
   100% {
-    /* Normal State */
-    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8)) brightness(1.05);
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
     transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes hint-pulse-glow-mahakaya {
+  0% {
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
+    transform: translate(-50%, -100%) scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 18px rgba(255, 215, 0, 0.85));
+    transform: translate(-50%, -100%) scale(1.1);
+  }
+  100% {
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
+    transform: translate(-50%, -100%) scale(1);
   }
 }
 
 @keyframes hint-pulse-glow {
   0% {
-    /* Normal State */
-    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8)) brightness(1.05);
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
     transform: scale(1);
   }
   50% {
-    /* Glowing State - Bright Gold */
-    filter: drop-shadow(0 0 35px rgba(255, 215, 0, 1)) brightness(1.15);
-    transform: scale(1.15);
+    filter: drop-shadow(0 0 18px rgba(255, 215, 0, 0.85));
+    transform: scale(1.1);
   }
   100% {
-    /* Normal State */
-    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8)) brightness(1.05);
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
     transform: scale(1);
   }
 }

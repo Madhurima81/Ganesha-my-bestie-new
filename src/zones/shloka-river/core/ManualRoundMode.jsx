@@ -740,6 +740,7 @@ const renderPreviousCentralElements = () => {
     // Use first index (0) for central element
     const budImage = getInitialImage(0);
     const bloomImage = getRewardImage(0);
+    const isMahakaya = gamePrefix === 'mahakaya';
 
     return (
       <div
@@ -767,7 +768,7 @@ const renderPreviousCentralElements = () => {
           opacity: isFullyBloomed ? 0 : (1 - centralBloomProgress / 100),
           transition: 'opacity 0.5s ease'
         }}>
-          <img src={budImage} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="bud" />
+          <img src={budImage} style={{ width: '100%', height: '100%', objectFit: 'contain', ...(isMahakaya ? { objectPosition: 'center bottom' } : {}) }} alt="bud" />
         </div>
 
         {/* Bloom layer (fades in as blooms) */}
@@ -779,7 +780,7 @@ const renderPreviousCentralElements = () => {
           transform: `scale(${0.6 + (centralBloomProgress / 100) * 0.4})`,
           transition: 'all 0.5s ease'
         }}>
-          <img src={bloomImage} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="bloom" />
+          <img src={bloomImage} style={{ width: '100%', height: '100%', objectFit: 'contain', ...(isMahakaya ? { objectPosition: 'center bottom' } : {}) }} alt="bloom" />
         </div>
 
         {/* Glow effect when ready */}

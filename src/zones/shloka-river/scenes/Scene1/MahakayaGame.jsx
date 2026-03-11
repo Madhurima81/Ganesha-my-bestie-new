@@ -5,16 +5,12 @@ import React from 'react';
 import MemoryGameEngine from '../../core/MemoryGameEngine';
 import { getGameConfig } from '../../configs/gameConfigs';
 
-import elephantHa from './assets/images/mahakaya/elephant-ha.png';
-import elephantKa from './assets/images/mahakaya/elephant-ka.png';
-import elephantMa from './assets/images/mahakaya/elephant-ma.png';
-import elephantYa from './assets/images/mahakaya/elephant-ya.png';
+import elephantSvg from './assets/images/elephant.svg';
 
-import seedImage from './assets/images/mahakaya/seed.png';
-import flowerMa from './assets/images/mahakaya/ma-flower.png';
-import flowerHa from './assets/images/mahakaya/ha-flower.png';
-import flowerKa from './assets/images/mahakaya/ka-flower.png';
-import flowerYa from './assets/images/mahakaya/ya-flower.png';
+import banyanSprout from './assets/images/banyan-sprout.svg';
+import banyanSapling from './assets/images/banyan-sapling.svg';
+import banyanHalf from './assets/images/banyan-half.svg';
+import banyanFull from './assets/images/banyan-full.svg';
 
 
 const MahakayaGame = ({
@@ -49,18 +45,17 @@ const MahakayaGame = ({
 
   // ✅ BUG 6 & 8: Map BOTH initial and reward asset getters
 const assetGetters = {
-    // Clickers
-    getElephantMaImage: () => elephantMa,
-    getElephantHaImage: () => elephantHa,
-    getElephantKaImage: () => elephantKa,
-    getElephantYaImage: () => elephantYa,
+    // Clickers - single elephant for all
+    getElephantMaImage: () => elephantSvg,
+    getElephantHaImage: () => elephantSvg,
+    getElephantKaImage: () => elephantSvg,
+    getElephantYaImage: () => elephantSvg,
 
-    // Rewards
-    getSeedImage: () => seedImage, // Same seed for all
-    getFlowerMaImage: () => flowerMa,
-    getFlowerHaImage: () => flowerHa,
-    getFlowerKaImage: () => flowerKa,
-    getFlowerYaImage: () => flowerYa,
+    // Rewards - banyan tree growth progression
+    getBanyanSproutImage:  () => banyanSprout,
+    getBanyanSaplingImage: () => banyanSapling,
+    getBanyanHalfImage:    () => banyanHalf,
+    getBanyanFullImage:    () => banyanFull,
   };
 
   if (!gameConfig) {

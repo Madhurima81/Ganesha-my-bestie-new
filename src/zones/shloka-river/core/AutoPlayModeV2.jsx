@@ -578,10 +578,12 @@ const AutoPlayModeV2 = ({
       wasChildActionPendingRef.current = false;
 
       if (gameConfig.id === 'vakratunda' || gameConfig.id === 'mahakaya') {
-        const position = gameConfig.elements.clicker.positions[syllableIndex];
-        if (position) {
-          setWaterSprayPosition({ left: position.left, top: position.top });
-          safeSetTimeout(() => setWaterSprayPosition(null), 1000);
+        const srcPos = gameConfig.elements.clicker?.positionsByRound?.[currentRound]?.[syllableIndex]
+                    || gameConfig.elements.clicker.positions[syllableIndex];
+        const tgtPos = gameConfig.elements.centralSynthesis?.positions?.[currentRound - 1];
+        if (srcPos) {
+          setWaterSprayPosition({ source: srcPos, target: tgtPos || null });
+          safeSetTimeout(() => setWaterSprayPosition(null), 1300);
         }
       }
 
@@ -593,7 +595,10 @@ const AutoPlayModeV2 = ({
 
       const totalSyllables = currentSequence.length;
       const progressPerClick = Math.floor(80 / totalSyllables);
-      setCentralBloomProgress(newPlayerInput.length * progressPerClick);
+      // Mahakaya uses instant pop reveal — keep progress at 0 until the central tree tap
+      if (gameConfig.id !== 'mahakaya') {
+        setCentralBloomProgress(newPlayerInput.length * progressPerClick);
+      }
 
       setSingingSyllable(clickedSyllable);
       playSyllableAudio(clickedSyllable, () => {
@@ -681,10 +686,9 @@ const AutoPlayModeV2 = ({
     setGamePhase('celebration');
 
     if (voiceGuidanceRef.current?.playVoice) {
-      const encouragements = ['encourageAmazing', 'encourageFantastic', 'encourageGreatJob', 'encouragePerfect', 'encourageWellDone', 'encourageWonderful'];
-      const randomEncouragement = encouragements[Math.floor(Math.random() * encouragements.length)];
-      lastInterruptibleVORef.current = randomEncouragement;
-      voiceGuidanceRef.current.playVoice(randomEncouragement);
+      const roundVOKey = `${gamePrefix}Round${currentRound}`;
+      lastInterruptibleVORef.current = roundVOKey;
+      voiceGuidanceRef.current.playVoice(roundVOKey);
     }
 
     safeSetTimeout(() => {
@@ -860,7 +864,7 @@ const AutoPlayModeV2 = ({
     if (isTarget && !clicked) className += ' pulse';
     if (showIdleHint && isTarget && !clicked) className += ' hint-glow';
     return (
-      <button key={`elephant-${syllable}`} className={className} style={{ position: 'absolute', left: position.left, top: position.top, transform: 'translate(-50%, -50%)', border: 'none', background: 'transparent', cursor: isTarget ? 'pointer' : 'default', zIndex: 20, borderRadius: '50%', opacity: isTarget || clicked ? 1 : 0.4, transition: 'all 0.3s ease', ...(elephantSize && { width: elephantSize, height: elephantSize, minWidth: elephantSize, minHeight: elephantSize }) }} onClick={() => handleElephantClick(index)} disabled={!isTarget}>
+      <button key={`elephant-${syllable}`} className={className} style={{ position: 'absolute', left: position.left, top: position.top, transform: 'translate(-50%, -50%)', border: 'none', background: 'transparent', cursor: isTarget ? 'pointer' : 'default', zIndex: 20, borderRadius: '50%', opacity: isTarget || clicked ? 1 : 0.6, transition: 'all 0.3s ease', ...(elephantSize && { width: elephantSize, height: elephantSize, minWidth: elephantSize, minHeight: elephantSize }) }} onClick={() => handleElephantClick(index)} disabled={!isTarget}>
         <img
           src={getImage(index)}
           alt=""
@@ -871,8 +875,13 @@ const AutoPlayModeV2 = ({
             transform: shouldFlip ? 'scaleX(-1)' : 'none'
           }}
         />
+        {/* Speech bubble above elephant */}
+        <div style={{ position: 'absolute', top: '-52px', left: '50%', transform: 'translateX(-50%)', background: clicked ? '#C8F2C2' : 'white', color: '#2E7D32', padding: '8px 16px', borderRadius: '14px', fontSize: 'clamp(14px, 1.8vw, 20px)', fontWeight: 700, letterSpacing: '0.5px', boxShadow: '0 2px 8px rgba(0,0,0,0.18)', border: `2px solid ${clicked ? '#81C784' : 'rgba(76,175,80,0.3)'}`, whiteSpace: 'nowrap', zIndex: 25, transition: 'all 0.18s ease-out' }}>
+          {syllable}
+          {/* Tail pointing down */}
+          <div style={{ position: 'absolute', bottom: '-10px', left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '10px solid transparent', borderRight: '10px solid transparent', borderTop: `10px solid ${clicked ? '#C8F2C2' : 'white'}` }} />
+        </div>
         {singing && <div style={{ position: 'absolute', top: '-20px', left: '50%', fontSize: '20px', animation: 'musicNote 0.6s' }}>🎵</div>}
-        <div style={{ position: 'absolute', bottom: '-34px', left: '50%', transform: clicked ? 'translateX(-50%) scale(1.08)' : 'translateX(-50%) scale(1)', transition: 'all 0.18s ease-out', background: clicked ? '#C8F2C2' : 'rgba(255,255,255,0.85)', color: '#2E7D32', padding: '8px 14px', borderRadius: '16px', fontSize: 'clamp(14px, 1.8vw, 20px)', fontWeight: 700, letterSpacing: '0.5px', boxShadow: '0 2px 6px rgba(0,0,0,0.15)', border: '1px solid rgba(0,0,0,0.08)', whiteSpace: 'nowrap' }}>{syllable}</div>
         {clicked && <div style={{ position: 'absolute', top: '10px', right: '10px', width: '24px', height: '24px', background: '#4CAF50', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>✓</div>}
       </button>
     );
@@ -948,6 +957,7 @@ const AutoPlayModeV2 = ({
     const getRewardImage = assetGetters[rewardKey];
     if (!getInitialImage || !getRewardImage) return null;
     const isFullyBloomed = centralBloomProgress === 100;
+    const isMahakaya = gamePrefix === 'mahakaya';
     const budImage = getInitialImage(0);
     const bloomImage = getRewardImage(0);
     let className = `${gamePrefix}-central-synthesis`;
@@ -956,13 +966,26 @@ const AutoPlayModeV2 = ({
       if (showIdleHint) className += ' hint-glow';
     }
     return (
-      <div className={className} onClick={centralElementGlowing ? handleCentralElementClick : undefined} style={{ position: 'absolute', left: position.left, top: position.top, transform: 'translate(-50%, -50%)', zIndex: 20, cursor: centralElementGlowing ? 'pointer' : 'default', transition: 'all 0.5s ease', pointerEvents: centralElementGlowing ? 'auto' : 'none', ...(position.size && { width: position.size, height: position.size, minWidth: position.size, minHeight: position.size }) }}>
-        <div style={{ position: 'absolute', width: '100%', height: '100%', opacity: isFullyBloomed ? 0 : (1 - centralBloomProgress / 100), transition: 'opacity 0.5s ease' }}>
-          <img src={budImage} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="bud" />
-        </div>
-        <div style={{ position: 'absolute', width: '100%', height: '100%', opacity: centralBloomProgress / 100, transform: `scale(${0.6 + (centralBloomProgress / 100) * 0.4})`, transition: 'all 0.5s ease' }}>
-          <img src={bloomImage} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="bloom" />
-        </div>
+      <div className={className} onClick={centralElementGlowing ? handleCentralElementClick : undefined} style={{ position: 'absolute', left: position.left, top: position.top, transform: isMahakaya ? 'translate(-50%, -100%)' : 'translate(-50%, -50%)', zIndex: 20, cursor: centralElementGlowing ? 'pointer' : 'default', transition: isMahakaya ? 'filter 0.3s ease, opacity 0.3s ease' : 'all 0.5s ease', pointerEvents: centralElementGlowing ? 'auto' : 'none', ...(position.size && { width: position.size, height: position.size, minWidth: position.size, minHeight: position.size }) }}>
+        {isMahakaya ? (
+          <>
+            <div style={{ position: 'absolute', width: '100%', height: '100%', opacity: isFullyBloomed ? 0 : 1 }}>
+              <img src={budImage} style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center bottom' }} alt="tree" />
+            </div>
+            <div style={{ position: 'absolute', width: '100%', height: '100%', opacity: isFullyBloomed ? 1 : 0, animation: isFullyBloomed ? 'mahakayaPopIn 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards' : 'none' }}>
+              <img src={bloomImage} style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center bottom' }} alt="grown tree" />
+            </div>
+          </>
+        ) : (
+          <>
+            <div style={{ position: 'absolute', width: '100%', height: '100%', opacity: isFullyBloomed ? 0 : (1 - centralBloomProgress / 100), transition: 'opacity 0.5s ease' }}>
+              <img src={budImage} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="bud" />
+            </div>
+            <div style={{ position: 'absolute', width: '100%', height: '100%', opacity: centralBloomProgress / 100, transition: 'opacity 0.5s ease' }}>
+              <img src={bloomImage} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="bloom" />
+            </div>
+          </>
+        )}
         <div style={{ position: 'absolute', bottom: '-36px', left: '50%', transform: 'translateX(-50%) scale(' + (centralElementGlowing ? 1.08 : 1) + ')', transition: 'all 0.2s ease-out', background: isFullyBloomed ? 'linear-gradient(180deg, #FFF7CC, #FFE082)' : 'rgba(255,255,255,0.9)', color: '#7A5C00', padding: '8px 14px', borderRadius: '16px', fontSize: 'clamp(14px, 1.8vw, 20px)', fontWeight: 700, letterSpacing: '0.6px', whiteSpace: 'nowrap', border: '2px solid rgba(255,215,0,0.6)', boxShadow: isFullyBloomed ? '0 4px 14px rgba(255,215,0,0.35)' : '0 2px 6px rgba(0,0,0,0.12)', textTransform: 'capitalize' }}>
           {currentSequence.join('')}
         </div>
@@ -1023,7 +1046,38 @@ const AutoPlayModeV2 = ({
       )}
 
       {!hideElements && showWaitBanner && <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'rgba(255, 152, 0, 0.95)', color: 'white', padding: '20px 40px', borderRadius: '20px', fontSize: '18px', fontWeight: 'bold', zIndex: 100, animation: 'fadeInOut 1.5s' }}>{waitBannerMessage}</div>}
-      {!hideElements && waterSprayPosition && <div style={{ position: 'absolute', left: waterSprayPosition.left, top: waterSprayPosition.top, transform: 'translateY(-100%)', fontSize: '48px', animation: 'waterSplash 1s', zIndex: 100, pointerEvents: 'none' }}>💦</div>}
+      {!hideElements && waterSprayPosition?.source && (() => {
+        const src = waterSprayPosition.source;
+        const tgt = waterSprayPosition.target;
+        const sx = parseFloat(src.left);
+        const sy = parseFloat(src.top);
+        const tx = tgt ? parseFloat(tgt.left) : sx;
+        const ty = tgt ? parseFloat(tgt.top) : sy - 20;
+        const dx = tx - sx;   // delta in vw (container = 100vw)
+        const dy = ty - sy;   // delta in vh (container = 100vh)
+        const arcLift = -22;  // vh lift at arc peak
+        const name = `wArc_${Math.round(sx)}_${Math.round(sy)}`;
+        return (
+          <div key={name} style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 100 }}>
+            <style>{`
+              @keyframes ${name} {
+                0%   { transform: translate(0vw,              0vh)                  scale(1);    opacity: 1;   }
+                45%  { transform: translate(${dx*0.45}vw,    ${dy*0.45+arcLift}vh) scale(1.15); opacity: 0.9; }
+                100% { transform: translate(${dx}vw,         ${dy}vh)              scale(0.5);  opacity: 0;   }
+              }
+            `}</style>
+            {Array.from({ length: 8 }).map((_, i) => {
+              const spread = (i - 3.5) * 1.8;
+              const size   = 9 + (i % 3) * 3;
+              return (
+                <div key={i} style={{ position: 'absolute', left: `${sx}%`, top: `${sy}%`, transform: `translate(calc(-50% + ${spread}px), -50%)`, pointerEvents: 'none' }}>
+                  <div style={{ fontSize: `${size}px`, animation: `${name} ${660 + i*38}ms cubic-bezier(0.2,0.8,0.6,1) ${i*72}ms both`, display: 'inline-block' }}>💧</div>
+                </div>
+              );
+            })}
+          </div>
+        );
+      })()}
       
       {!hideElements && (
         <>
@@ -1049,14 +1103,14 @@ const AutoPlayModeV2 = ({
         @keyframes musicNote { 0% { transform: translateX(-50%) translateY(0); opacity: 0; } 50% { transform: translateX(-50%) translateY(-10px); opacity: 1; } 100% { transform: translateX(-50%) translateY(-20px); opacity: 0; } }
         @keyframes rewardAppear { 0% { transform: translate(-50%,-50%) scale(0) rotate(-180deg); opacity: 0; } 100% { transform: translate(-50%,-50%) scale(1) rotate(0deg); opacity: 1; } }
         @keyframes sparkle { 0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); } 50% { opacity: 0.5; transform: translateX(-50%) scale(1.2); } }
-        @keyframes waterSplash { 0% { transform: translate(-50%,-100%) scale(0.5); opacity: 1; } 50% { transform: translate(-50%,-150%) scale(1.2); opacity: 0.8; } 100% { transform: translate(-50%,-200%) scale(1.5); opacity: 0; } }
-        @keyframes sparkleBurst1 { 0% { opacity: 1; transform: translate(-50%, 0) scale(0.5); } 100% { opacity: 0; transform: translate(-50%, -30px) scale(1.3); } }
+@keyframes sparkleBurst1 { 0% { opacity: 1; transform: translate(-50%, 0) scale(0.5); } 100% { opacity: 0; transform: translate(-50%, -30px) scale(1.3); } }
         @keyframes sparkleBurst2 { 0% { opacity: 1; transform: scale(0.5); } 100% { opacity: 0; transform: translate(15px, -20px) scale(1.2); } }
         @keyframes sparkleBurst3 { 0% { opacity: 1; transform: scale(0.5); } 100% { opacity: 0; transform: translate(-10px, 20px) scale(1.1); } }
         @keyframes sparkleBurst4 { 0% { opacity: 1; transform: scale(0.5); } 100% { opacity: 0; transform: translate(-20px, -10px) scale(1.2); } }
         @keyframes sparkleBurst5 { 0% { opacity: 1; transform: scale(0.5); } 100% { opacity: 0; } }
         @keyframes starGlowV2 { 0%, 100% { filter: drop-shadow(0 0 4px rgba(255,215,0,0.6)); } 50% { filter: drop-shadow(0 0 12px rgba(255,215,0,1)); } }
         @keyframes starPopIn { 0% { transform: scale(0) rotate(-180deg); opacity: 0; } 60% { transform: scale(1.3) rotate(10deg); opacity: 1; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+        @keyframes mahakayaPopIn { 0% { transform: scale(0.2); opacity: 0; } 55% { transform: scale(1.18); opacity: 1; } 75% { transform: scale(0.93); } 100% { transform: scale(1.0); opacity: 1; } }
       `}</style>
     </div>
   );

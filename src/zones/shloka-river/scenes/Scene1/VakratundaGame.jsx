@@ -5,19 +5,12 @@ import React from 'react';
 import MemoryGameEngine from '../../core/MemoryGameEngine';
 import { getGameConfig } from '../../configs/gameConfigs';
 
-import elephantBabyVa from './assets/images/vakratunda/elephant-baby-va.png';
-import elephantBabyKra from './assets/images/vakratunda/elephant-baby-kra.png';
-import elephantBabyTun from './assets/images/vakratunda/elephant-baby-tun.png';
-import elephantBabyDa from './assets/images/vakratunda/elephant-baby-da.png';
+import elephantSvg from './assets/images/elephant.svg';
 
-import budVa from './assets/images/vakratunda/va-bud.png';
-import budKra from './assets/images/vakratunda/kra-bud.png';
-import budTun from './assets/images/vakratunda/tun-bud.png';
-import budDa from './assets/images/vakratunda/da-bud.png';
-import lotusVa from './assets/images/vakratunda/va-lotus.png';
-import lotusKra from './assets/images/vakratunda/kra-lotus.png';
-import lotusTun from './assets/images/vakratunda/tun-lotus.png';
-import lotusDa from './assets/images/vakratunda/da-lotus.png';
+import lotusBud from './assets/images/lotus-bud.svg';
+import lotusbitBloom from './assets/images/lotus-bit-bloom.svg';
+import lotusHalfBloom from './assets/images/lotus-half-bloom.svg';
+import lotusFullBloom from './assets/images/lotus-full-bloom.svg';
 
 const VakratundaGame = ({
   isActive,
@@ -54,19 +47,17 @@ const VakratundaGame = ({
   // ✅ BUG 6 & 8: Map BOTH initial and reward asset getters
   // These names MUST match gameConfig's assetGetterInitial and assetGetterReward fields
 const assetGetters = {
-    // Clickers
-    getElephantVaImage: () => elephantBabyVa,
-    getElephantKraImage: () => elephantBabyKra,
-    getElephantTunImage: () => elephantBabyTun,
-    getElephantDaImage: () => elephantBabyDa,
+    // Clickers - single elephant for all
+    getElephantVaImage: () => elephantSvg,
+    getElephantKraImage: () => elephantSvg,
+    getElephantTunImage: () => elephantSvg,
+    getElephantDaImage: () => elephantSvg,
 
-    // Round Rewards
-    getBudVaImage: () => budVa,
-    getLotusVaImage: () => lotusVa,
-    getBudTunImage: () => budTun,
-    getLotusTunImage: () => lotusTun,
-    getBudKraImage: () => budKra,
-    getLotusKraImage: () => lotusKra,
+    // Round Rewards - lotus progression
+    getLotusBudImage: () => lotusBud,
+    getLotusbitBloomImage: () => lotusbitBloom,
+    getLotusHalfBloomImage: () => lotusHalfBloom,
+    getLotusFullBloomImage: () => lotusFullBloom,
   };
 
   // Validation: Make sure config exists
