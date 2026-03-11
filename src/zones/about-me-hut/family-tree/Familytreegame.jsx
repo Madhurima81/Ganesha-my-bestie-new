@@ -256,20 +256,14 @@ const FamilyTreeGameContent = ({
   // ========================================
   // GANESHA PHASE VO STATE
   // ========================================
-  const [choiceModalPlayed, setChoiceModalPlayed] = useState(false);
   const [funFactModalPlayed, setFunFactModalPlayed] = useState(false);
-  const [infoModalPlayed, setInfoModalPlayed] = useState(false);
-  const [isPlayingWrongVO, setIsPlayingWrongVO] = useState(false); // Block taps during wrong choice VO
+  const [isPlayingWrongVO, setIsPlayingWrongVO] = useState(false); // Block taps during wrong choice animation
 
   // ========================================
   // TRANSITION & CHILD PHASE VO STATE
   // ========================================
   const [transitionButtonVisible, setTransitionButtonVisible] = useState(false);
-  const [childStartPlayed, setChildStartPlayed] = useState(false);
-  const [namePromptPlayed, setNamePromptPlayed] = useState(false);
-  const [namePromptCount, setNamePromptCount] = useState(0); // Track how many times name modal opened (1-2-3 Rule)
   const [childProgressCount, setChildProgressCount] = useState(0); // Track which progress VO to play
-  const namePromptTimerRef = useRef(null); // Idle timer for name prompt replay
 
   // --- LOCAL REFS & STATE (Not persisted in SceneManager) ---
   const mediaRecorderRef = useRef(null);
@@ -284,7 +278,6 @@ const FamilyTreeGameContent = ({
   const [resumeMessage, setResumeMessage] = useState('');
   const isPausedRef = useRef(false);
   const scheduledTimeoutsRef = useRef([]);
-  const ganeshaIdleHintTimerRef = useRef(null);
   const childIdleVOTimerRef = useRef(null);
 
   const clearScheduledTimeouts = () => {
@@ -498,41 +491,6 @@ const FamilyTreeGameContent = ({
     };
   }, []);
 
-  // ========================================
-  // GANESHA PHASE: Play tap circle instruction when phase starts
-  // ========================================
-  useEffect(() => {
-    if (sceneState.gamePhase === 'ganeshaTree') {
-      // Play tap circle instruction VO
-      scheduleTimeout(() => {
-        playVoice('tapCircle');
-      }, 500);
-    }
-  }, [sceneState.gamePhase]);
-
-  // ========================================
-  // GANESHA PHASE: Play question VO when choice modal opens
-  // ========================================
-  useEffect(() => {
-    if (sceneState.showChoiceModal && sceneState.selectedCircle && !choiceModalPlayed) {
-      setChoiceModalPlayed(true);
-
-      // Map circleId to VO file
-      const questionVOMap = {
-        'father': 'whoFather',
-        'mother': 'whoMother',
-        'brother': 'whoBrother',
-        'myself': 'whoMyself'
-      };
-
-      const voKey = questionVOMap[sceneState.selectedCircle];
-      if (voKey) {
-        scheduleTimeout(() => {
-          playVoice(voKey);
-        }, 300);
-      }
-    }
-  }, [sceneState.showChoiceModal, sceneState.selectedCircle, choiceModalPlayed]);
 
   // ========================================
   // GANESHA PHASE: Play fun fact VO when modal opens
@@ -546,7 +504,6 @@ const FamilyTreeGameContent = ({
         'father': 'factFather',
         'mother': 'factMother',
         'brother': 'factBrother',
-        'myself': 'factMyself'
       };
 
       const voKey = funFactVOMap[sceneState.selectedCircle];
@@ -558,32 +515,6 @@ const FamilyTreeGameContent = ({
     }
   }, [sceneState.showFunFactModal, funFactModalPlayed]);
 
-  // ========================================
-  // GANESHA PHASE: Play info VO when tapping placed member (flipped card)
-  // ========================================
-  useEffect(() => {
-    if (sceneState.flippedMember && !infoModalPlayed) {
-      setInfoModalPlayed(true);
-
-      // Map member id to info VO
-      const infoVOMap = {
-        'father': 'infoFather',
-        'mother': 'infoMother',
-        'brother': 'infoBrother',
-        'myself': 'infoMyself'
-      };
-
-      const voKey = infoVOMap[sceneState.flippedMember];
-      if (voKey) {
-        scheduleTimeout(() => {
-          playVoice(voKey);
-        }, 300);
-      }
-    } else if (!sceneState.flippedMember) {
-      // Reset when card is unflipped
-      setInfoModalPlayed(false);
-    }
-  }, [sceneState.flippedMember, infoModalPlayed]);
 
   // ========================================
   // GANESHA PHASE: Play "all placed" VO when all 4 members placed
@@ -624,66 +555,6 @@ const FamilyTreeGameContent = ({
     }
   }, [sceneState.gamePhase]);
 
-  // ========================================
-  // CHILD PHASE: Play child start VO when phase begins
-  // ========================================
-  useEffect(() => {
-    if (sceneState.gamePhase === 'childInput' && !childStartPlayed) {
-      setChildStartPlayed(true);
-      stopVoice();
-
-      scheduleTimeout(() => {
-        playVoice('childStart');
-      }, 500);
-    }
-  }, [sceneState.gamePhase, childStartPlayed]);
-
-  // ========================================
-  // GANESHA TREE: Idle hint VO
-  // First hint: 10s when 0 placed, otherwise 15s
-  // Then repeat every 15s while still idle/tappable
-  // ========================================
-  useEffect(() => {
-    if (ganeshaIdleHintTimerRef.current) {
-      clearTimeout(ganeshaIdleHintTimerRef.current);
-      ganeshaIdleHintTimerRef.current = null;
-    }
-
-    const inGaneshaTree = sceneState.gamePhase === 'ganeshaTree';
-    const hasBlockingOverlay =
-      sceneState.showChoiceModal ||
-      sceneState.showFunFactModal ||
-      sceneState.flippedMember ||
-      sceneState.isSequencePlaying;
-    const allPlaced = sceneState.placedGaneshaMembers.length === ganeshaFamily.length;
-
-    if (!inGaneshaTree || hasBlockingOverlay || allPlaced) return;
-
-    const firstDelay = sceneState.placedGaneshaMembers.length === 0 ? 10000 : 15000;
-
-    const scheduleNextHint = (delayMs) => {
-      ganeshaIdleHintTimerRef.current = scheduleTimeout(() => {
-        playVoice('hintTap');
-        scheduleNextHint(15000);
-      }, delayMs);
-    };
-
-    scheduleNextHint(firstDelay);
-
-    return () => {
-      if (ganeshaIdleHintTimerRef.current) {
-        clearTimeout(ganeshaIdleHintTimerRef.current);
-        ganeshaIdleHintTimerRef.current = null;
-      }
-    };
-  }, [
-    sceneState.gamePhase,
-    sceneState.showChoiceModal,
-    sceneState.showFunFactModal,
-    sceneState.flippedMember,
-    sceneState.isSequencePlaying,
-    sceneState.placedGaneshaMembers.length
-  ]);
 
   // ========================================
   // CHILD TREE: Idle hint VO (15s, repeating like ganesha)
@@ -722,57 +593,6 @@ const FamilyTreeGameContent = ({
     sceneState.selectedMemberIndex
   ]);
 
-  // ========================================
-  // CHILD PHASE: Play name prompt VO when name modal opens
-  // Rule:
-  // 1st-2nd open -> immediate full prompt
-  // 3rd open -> immediate short prompt
-  // 4th+ open -> only idle short prompt after 10s
-  // ========================================
-  useEffect(() => {
-    // Clear any existing timer when modal state changes
-    if (namePromptTimerRef.current) {
-      clearTimeout(namePromptTimerRef.current);
-      namePromptTimerRef.current = null;
-    }
-
-    if (sceneState.showNameModal && sceneState.currentFamilyType && !namePromptPlayed) {
-      setNamePromptPlayed(true);
-
-      // Increment the counter
-      const newCount = namePromptCount + 1;
-      setNamePromptCount(newCount);
-
-      // 1st-2nd: full prompt immediately
-      if (newCount === 1 || newCount === 2) {
-        scheduleTimeout(() => {
-          playVoice('namePrompt');
-        }, 300);
-      }
-
-      // 3rd: short prompt immediately
-      if (newCount === 3) {
-        scheduleTimeout(() => {
-          playVoice('namePromptShort');
-        }, 300);
-      }
-
-      // 4th+: only play short prompt after 10s idle (using scheduleTimeout for pause-awareness)
-      if (newCount >= 4) {
-        namePromptTimerRef.current = scheduleTimeout(() => {
-          playVoice('namePromptShort');
-        }, 10000);
-      }
-    }
-
-    // Cleanup timer when modal closes
-    return () => {
-      if (namePromptTimerRef.current) {
-        clearTimeout(namePromptTimerRef.current);
-        namePromptTimerRef.current = null;
-      }
-    };
-  }, [sceneState.showNameModal, sceneState.currentFamilyType]);
 
   // ========================================
   // OLD: Removed childProgressFull logic - now using milestone system in handleAddFamilyMember
@@ -788,14 +608,8 @@ const FamilyTreeGameContent = ({
       setFinalRevealPlayed(true);
       stopVoice();
 
-      // Play final reveal VO
       scheduleTimeout(() => {
-        playVoice('finalReveal', () => {
-          // After final reveal, wait briefly, then play second VO directly (no celebration SFX)
-          scheduleTimeout(() => {
-            playVoice('sceneComplete');
-          }, 500);
-        });
+        playVoice('sceneComplete');
       }, 500);
     }
   }, [sceneState.gamePhase, finalRevealPlayed]);
@@ -838,8 +652,6 @@ const FamilyTreeGameContent = ({
       wrongChoice: null
     });
 
-    // Reset choice modal VO state
-    setChoiceModalPlayed(false);
   };
 
   const handleChoiceSelection = (choice) => {
@@ -852,23 +664,32 @@ const FamilyTreeGameContent = ({
     recordInteraction();
 
     if (choice.isCorrect) {
-      // Play deity name VO
-      const deityVOMap = {
-        'shiva': 'shiva',      // Maps to shiva.wav
-        'parvati': 'parvati',  // Maps to parvati-mata.wav
-        'kartikeya': 'kartikeya', // Maps to kartikeya.wav
-        'ganesha': 'ganesha'   // Maps to ganesha.wav
+      // Play relationship VO then deity name VO after placement
+      const correctRelationVOMap = {
+        'father': 'correctFather',
+        'mother': 'correctMother',
+        'brother': 'correctBrother',
+        'myself': 'correctMyself'
+      };
+      const deityNameVOMap = {
+        'shiva': 'shiva',
+        'parvati': 'parvati',
+        'kartikeya': 'kartikeya',
+        'ganesha': 'ganesha'
       };
 
-      const deityVO = deityVOMap[choice.id];
-      if (deityVO) {
-        playVoice(deityVO);
-      }
+      const relationVO = correctRelationVOMap[sceneState.selectedCircle];
+      const deityNameVO = deityNameVOMap[choice.id];
 
-      // Play correct choice VO after deity name (increased delay to let deity name finish)
-      scheduleTimeout(() => {
-        playCorrect('correctChoice');
-      }, 1800);
+      if (relationVO) {
+        playVoice(relationVO, () => {
+          if (deityNameVO) {
+            scheduleTimeout(() => playVoice(deityNameVO), 300);
+          }
+        });
+      } else if (deityNameVO) {
+        playVoice(deityNameVO);
+      }
 
       sceneActions.updateState({ isSequencePlaying: true, showYouGotIt: choice.id });
       scheduleTimeout(() => sceneActions.updateState({ correctChoiceId: choice.id }), 800);
@@ -892,69 +713,25 @@ const FamilyTreeGameContent = ({
         setFunFactModalPlayed(false);
       }, 3800); // Increased delay to let "correct choice" VO finish before fun fact plays
     } else {
-      // WRONG CHOICE - Simple Flow with blocking:
-      // 1. Block further taps
-      // 2. Play deity name → Wait 1s → Play wrong choice VO → Shake + fade
-      // 3. Unblock taps
-
-      // Block taps during wrong VO sequence
+      // WRONG CHOICE - Shake/fade animation, no VOs
       setIsPlayingWrongVO(true);
 
-      const wrongDeityVOMap = {
-        'vishnu': 'vishnu',      // Maps to vishnu.wav
-        'brahma': 'brahma',      // Maps to brahma.wav
-        'lakshmi': 'lakshmi',    // Maps to lakshmi-mata.wav
-        'saraswati': 'saraswati', // Maps to saraswati-mata.wav
-        'hanuman': 'hanuman',    // Maps to hanuman.wav
-        'krishna': 'krishna',    // Maps to krishna.wav
-        'mushak': 'mushak',      // Maps to mushak.wav
-        'kartikeya': 'kartikeya' // Maps to kartikeya.wav (when wrong choice for "myself")
-      };
+      // Trigger shake/fade animation
+      sceneActions.updateState({ wrongChoice: choice.id });
 
-      const wrongDeityVO = wrongDeityVOMap[choice.id];
-
-      // Step 1: Play deity name VO with callback
-      if (wrongDeityVO) {
-        playVoice(wrongDeityVO, () => {
-          // Step 2: After deity name finishes, wait 1 second
-          scheduleTimeout(() => {
-            // Step 3: Play wrong choice VO with callback
-            playVoice('wrongChoice', () => {
-              // Step 4: Unblock taps after both VOs finish
-              setIsPlayingWrongVO(false);
-            });
-
-            // Trigger shake/fade animation
-            sceneActions.updateState({ wrongChoice: choice.id });
-
-            // Clear animation and disable choice after fade completes
-            scheduleTimeout(() => {
-              sceneActions.updateState({
-                wrongChoice: null,
-                disabledChoices: [...sceneState.disabledChoices, choice.id]
-              });
-            }, 1500);
-          }, 1000);
+      // Clear animation, disable choice, and unblock taps after fade
+      scheduleTimeout(() => {
+        sceneActions.updateState({
+          wrongChoice: null,
+          disabledChoices: [...sceneState.disabledChoices, choice.id]
         });
-      }
+        setIsPlayingWrongVO(false);
+      }, 1500);
     }
   };
 
   const handleCloseFunFact = () => {
     sceneActions.updateState({ showFunFactModal: null, isSequencePlaying: false });
-
-    // Play progress VO after closing fun fact modal
-    const placedCount = sceneState.placedGaneshaMembers.length + 1; // +1 because we just placed one
-
-    if (placedCount === 1) {
-      scheduleTimeout(() => playVoice('progressFirst'), 300);
-    } else if (placedCount === 2) {
-      scheduleTimeout(() => playVoice('progressMid'), 300);
-    } else if (placedCount === 3) {
-      scheduleTimeout(() => playVoice('progressNearFull'), 300);
-    } else if (placedCount === 4) {
-      // Will play when "All Done" button appears
-    }
   };
 
   const handleGaneshaTreeDone = () => {
@@ -979,7 +756,6 @@ const FamilyTreeGameContent = ({
       showNameModal: true
     });
     setAudioBlob(null);
-    setNamePromptPlayed(false); // Reset for new modal
   };
 
   const startRecording = async () => {
@@ -1055,23 +831,13 @@ const FamilyTreeGameContent = ({
       if (prevRow2Count < 7 && row2Count >= 7) newlyCompletedRow = 2;
       if (prevRow3Count < 7 && row3Count >= 7) newlyCompletedRow = 3;
 
-      // Row completion VO only when a new row completes and it's 1st or 2nd completed row
-      if (newlyCompletedRow && completedRowsAfter > completedRowsBefore && completedRowsAfter <= 2) {
-        if (newlyCompletedRow === 1) playVoice('rowLimitGrandparents');
-        else if (newlyCompletedRow === 2) playVoice('rowLimitElders');
-        else if (newlyCompletedRow === 3) playVoice('rowLimitSiblingsPets');
-      }
-      // Progress milestones (1, 5, 10, 16, 21)
-      else if (memberCount === 1) {
-        playVoice('childProgressStart'); // "Nice! Your tree has started growing."
-      } else if (memberCount === 5) {
-        playVoice('childProgressSmall'); // "Beautiful! You added someone to your family tree."
+      // Progress milestones
+      if (memberCount === 1) {
+        playVoice('childProgressStart');
       } else if (memberCount === 10) {
-        playVoice('childProgressMid'); // "Look at that! Your family tree is getting bigger."
-      } else if (memberCount === 16) {
-        playVoice('childProgressNearFull'); // "Mmm. Your tree is filling with love."
+        playVoice('childProgressMid');
       } else if (memberCount === 21) {
-        playVoice('childProgressComplete'); // "Aha! Your family tree is full of love!"
+        playVoice('childProgressComplete');
       }
     };
 
@@ -1311,8 +1077,6 @@ const FamilyTreeGameContent = ({
                 setTransitionButtonVisible(false);
                 sceneActions.updateState({ gamePhase: 'childInput' });
                 scheduleTimeout(() => sceneActions.updateState({ showBottomTray: true }), 100);
-                // Reset child start VO state
-                setChildStartPlayed(false);
               }}
             >
               Add My Family! 🏠
@@ -1441,17 +1205,6 @@ const FamilyTreeGameContent = ({
                     value={sceneState.callName}
                     onChange={(e) => {
                       sceneActions.updateState({ callName: e.target.value });
-                      // Reset idle short-prompt timer while typing
-                      if (namePromptTimerRef.current) {
-                        clearTimeout(namePromptTimerRef.current);
-                        namePromptTimerRef.current = null;
-                      }
-                      // From 4th open onward, replay short prompt only after 10s idle (using scheduleTimeout for pause-awareness)
-                      if (sceneState.showNameModal && namePromptCount >= 4) {
-                        namePromptTimerRef.current = scheduleTimeout(() => {
-                          playVoice('namePromptShort');
-                        }, 10000);
-                      }
                     }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && sceneState.callName.trim()) {
