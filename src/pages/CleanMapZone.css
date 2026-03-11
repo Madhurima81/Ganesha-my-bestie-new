@@ -689,3 +689,22 @@
   background: #f4c430;
   box-shadow: 0 0 8px rgba(244, 196, 48, 0.75), 0 0 3px rgba(244, 196, 48, 0.5);
 }
+
+/* =========================
+   GANESHA GUIDE — base of Symbol Mountain, left of cave door
+========================= */
+.map-ganesha-guide {
+  position: fixed;
+  left: 20%;
+  top: 60%;
+  z-index: 20;
+  pointer-events: none;
+  animation: ganeshaGuideFloat 4s ease-in-out infinite;
+  filter: drop-shadow(0 4px 14px rgba(120, 80, 200, 0.35));
+}
+
+@keyframes ganeshaGuideFloat {
+  0%   { transform: translateY(0px);   }
+  50%  { transform: translateY(-8px);  }
+  100% { transform: translateY(0px);   }
+}

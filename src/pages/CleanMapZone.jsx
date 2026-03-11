@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './CleanMapZone.css';
 import GameStateManager from '../lib/services/GameStateManager';
+import GaneshaCharacter from '../lib/components/character/GaneshaCharacter';
 // import ZonePreviewModal from './components/ZonePreviewModal'; // commented out — no preview modal
 
 const ZONES_DATA = [
@@ -459,6 +460,11 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles }) => {
       <button className="map-back-button" onClick={onBackToWelcome}>
         ← Back
       </button>
+
+      {/* Ganesha Guide — small floating companion, bottom-left */}
+      <div className="map-ganesha-guide" aria-hidden="true">
+        <GaneshaCharacter expression="happy" size={90} />
+      </div>
 
       {/* Profile chip — top right */}
       {activeProfile && (() => {
