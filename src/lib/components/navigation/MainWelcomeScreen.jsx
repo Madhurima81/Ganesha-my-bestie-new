@@ -1,6 +1,7 @@
 // MainWelcomeScreen.jsx - PRODUCTION READY VERSION
 import React, { useState, useEffect } from 'react';
 import PrimaryBtn from '../shared/PrimaryBtn';
+import GaneshaCharacter from '../character/GaneshaCharacter';
 import './MainWelcomeScreen.css';
 
 const MainWelcomeScreen = ({ onStartAdventure }) => {
@@ -19,10 +20,9 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
     };
   }, []);
 
-  // Preload images
+  // Preload images — welcome-ganesha.png removed, now inline SVG
   useEffect(() => {
     const images = [
-      '/images/welcome-ganesha.png',
       '/images/welcome-mooshika.png'
     ];
     
@@ -95,7 +95,7 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
     }, 300);
   };
 
-  // Show loading state while images load
+  // Show loading state while Mooshika image loads
   if (!imagesLoaded) {
     return (
       <div className="main-welcome-container">
@@ -105,13 +105,23 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
           left: '50%',
           transform: 'translate(-50%, -50%)',
           textAlign: 'center',
-          zIndex: 100
+          zIndex: 100,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 16,
         }}>
+          <GaneshaCharacter
+            expression="happy"
+            size={180}
+            style={{ animation: 'ganeshaBreathing 2s ease-in-out infinite' }}
+          />
           <div style={{
-            fontSize: '24px',
+            fontSize: '20px',
             color: '#8e63d9',
             fontFamily: "'Baloo 2', cursive",
-            fontWeight: 700
+            fontWeight: 700,
+            opacity: 0.85,
           }}>
             Loading Ganesha's World...
           </div>
@@ -155,12 +165,11 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
         </div>
       </div>
       
-      {/* GANESHA - Now with breathing animation */}
+      {/* GANESHA - Inline SVG component with breathing animation */}
       <div className={`welcome-ganesha-image-container ${showButton ? 'visible' : ''}`}>
         <div className="ganesha-wrap">
-          <img
-            src="/images/welcome-ganesha.png"
-            alt="Ganesha"
+          <GaneshaCharacter
+            expression="happy"
             className="welcome-ganesha-image"
           />
         </div>

@@ -51,7 +51,8 @@
   z-index: 2;
 }
 
-.game-modal-character img {
+.game-modal-character img,
+.game-modal-character .game-modal-ganesha {
   width: 100%;
   max-width: 720px;
   height: auto;
@@ -304,7 +305,8 @@
     flex: 0 0 auto;
   }
 
-  .game-modal-character img {
+  .game-modal-character img,
+  .game-modal-character .game-modal-ganesha {
     width: 180px;
   }
 
@@ -361,7 +363,8 @@
     flex: 0 0 25%;
   }
 
-  .game-modal-character img {
+  .game-modal-character img,
+  .game-modal-character .game-modal-ganesha {
     max-height: 280px;
     width: auto;
   }

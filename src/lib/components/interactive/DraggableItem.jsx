@@ -22,6 +22,8 @@ const DraggableItem = ({
   const isDraggingRef   = useRef(false);
   const dragModeRef     = useRef('dropzone');
   const originalSizeRef = useRef({ width: 0, height: 0, touchOffsetX: 0, touchOffsetY: 0 });
+  const dragStartTimeRef = useRef(0);
+  const DRAG_START_DELAY_MS = 40;
 
   // ── State only for rendering (opacity, draggable attr) ────────────────────
   const [isDragging, setIsDragging] = useState(false);
@@ -65,6 +67,7 @@ const DraggableItem = ({
       // Set refs SYNCHRONOUSLY — no React async delay
       isDraggingRef.current = true;
       dragModeRef.current   = mode;
+      dragStartTimeRef.current = Date.now();
 
       // Update state for render (draggable attr / opacity) — async is fine here
       setIsDragging(true);
@@ -82,6 +85,7 @@ const DraggableItem = ({
     const handleTouchMove = (e) => {
       // Use ref — always current, no stale closure issue
       if (!isDraggingRef.current) return;
+      if (Date.now() - dragStartTimeRef.current < DRAG_START_DELAY_MS) return;
 
       const touch   = e.touches[0];
       // Use the recorded grab-point offset so the element stays exactly where
@@ -177,6 +181,7 @@ const DraggableItem = ({
     const mode = (allowFreeMovement || onPositionUpdate) ? 'free' : 'dropzone';
     isDraggingRef.current = true;
     dragModeRef.current   = mode;
+    dragStartTimeRef.current = Date.now();
     setIsDragging(true);
     setDragMode(mode);
 
@@ -202,6 +207,7 @@ const DraggableItem = ({
 
       const handleMouseMove = (moveEvent) => {
         if (!elementRef.current) return;
+        if (Date.now() - dragStartTimeRef.current < DRAG_START_DELAY_MS) return;
         // Use the recorded grab-point so the element stays under the click spot
         const offsetX = originalSizeRef.current.touchOffsetX;
         const offsetY = originalSizeRef.current.touchOffsetY;

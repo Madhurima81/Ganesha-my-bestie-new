@@ -1,5 +1,6 @@
 // GaneshaWelcome.jsx - Welcome message from Ganesha
 import React, { useState, useEffect } from 'react';
+import GaneshaCharacter from '../../lib/components/character/GaneshaCharacter';
 import './GaneshaWelcome.css';
 
 const GaneshaWelcome = ({ onClose, showOnFirstVisit = true }) => {
@@ -34,18 +35,12 @@ const GaneshaWelcome = ({ onClose, showOnFirstVisit = true }) => {
       <div className="ganesha-welcome-card" onClick={(e) => e.stopPropagation()}>
         {/* Ganesha Character */}
         <div className="ganesha-welcome-character">
-          <img 
-            src="/images/welcome-ganesha.png" 
-            alt="Ganesha"
-            className="ganesha-welcome-image"
-            onError={(e) => {
-              e.target.style.display = 'none';
-              e.target.nextElementSibling.style.display = 'block';
-            }}
+          <GaneshaCharacter
+            className="ganesha-welcome-avatar"
+            expression="happy"
+            size={160}
+            aria-label="Ganesha"
           />
-          <div className="ganesha-welcome-emoji" style={{ display: 'none' }}>
-            🐘
-          </div>
         </div>
 
         {/* Decorative Sparkles */}
@@ -85,3 +80,4 @@ const GaneshaWelcome = ({ onClose, showOnFirstVisit = true }) => {
 };
 
 export default GaneshaWelcome;
+

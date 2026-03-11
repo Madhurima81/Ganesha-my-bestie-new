@@ -54,7 +54,8 @@
   z-index: 10;
 }
 
-.ganesha-welcome-image {
+.ganesha-welcome-image,
+.ganesha-welcome-avatar {
   width: 140px;
   height: 140px;
   object-fit: contain;
@@ -232,7 +233,8 @@
     padding: 35px 25px 25px;
   }
 
-  .ganesha-welcome-image {
+  .ganesha-welcome-image,
+  .ganesha-welcome-avatar {
     width: 120px;
     height: 120px;
   }
@@ -268,7 +270,8 @@
     padding: 30px 20px 20px;
   }
 
-  .ganesha-welcome-image {
+  .ganesha-welcome-image,
+  .ganesha-welcome-avatar {
     width: 100px;
     height: 100px;
   }

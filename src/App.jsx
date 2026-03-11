@@ -3,6 +3,7 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import './App.css';
 import './Enhanced.css'
+import GaneshaCharacter from './lib/components/character/GaneshaCharacter';
 
 import MainWelcomeScreen from './lib/components/navigation/MainWelcomeScreen';
 import CleanGameWelcomeScreen from './lib/components/navigation/CleanGameWelcomeScreen';
@@ -809,9 +810,8 @@ chants: result?.chants || result?.chantedVerses || {},
     {/* Ganesha Character */}
     <div className="loading-ganesha-container">
       <div className="loading-ganesha-glow"></div>
-      <img
-        src="/images/welcome-ganesha.png"
-        alt="Ganesha"
+      <GaneshaCharacter
+        expression="happy"
         className="loading-ganesha"
       />
     </div>

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import './ZonePreviewModal.css';
 import PrimaryBtn from '../../lib/components/shared/PrimaryBtn';
 import { getZoneTheme } from '../../lib/config/ZoneThemes';
+import GaneshaCharacter from '../../lib/components/character/GaneshaCharacter';
 
 const zoneContent = {
   'symbol-mountain': {
@@ -122,11 +123,11 @@ const ZonePreviewModal = ({ zone, onClose, onStartZone }) => {
         <span className="portal-close-btn" onClick={handleClose}>×</span>
 
         {/* Mascot */}
-        <img
-          src={content.image}
-          alt={zone.name}
-          className="portal-mascot"
-          onError={(e) => { e.target.style.display = 'none'; }}
+        <GaneshaCharacter
+          className="portal-mascot portal-ganesha"
+          expression="happy"
+          size={220}
+          aria-label="Ganesha"
         />
 
         {/* Title */}

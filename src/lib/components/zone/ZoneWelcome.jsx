@@ -8,6 +8,7 @@ import ScreenHeader from '../shared/ScreenHeader';
 import GameStateManager from '../../services/GameStateManager';
 import CulturalProgressExtractor from '../../services/CulturalProgressExtractor';
 import HomeButton from '../ui/HomeButton';
+import GaneshaCharacter from '../character/GaneshaCharacter';
 
 
 //import ProgressManager from '../../services/ProgressManager';
@@ -677,6 +678,9 @@ if (tempData) {
 
       <div className="zone-title-top">
         <ScreenHeader title={zoneData.name} glowColor="gold" />
+        <div className="zone-ganesha-welcome" aria-hidden="true">
+          <GaneshaCharacter expression="excited" size={110} />
+        </div>
       </div>
 
       {/* Scene Icons Grid */}

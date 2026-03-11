@@ -1383,6 +1383,33 @@ button[style*="position: fixed"][style*="background: purple"] {
   }
 }
 
+/* =========================
+   GANESHA WELCOME CHARACTER — sits beside the zone title
+========================= */
+.zone-title-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.zone-ganesha-welcome {
+  flex-shrink: 0;
+  animation: zoneGaneshaEntrance 0.6s cubic-bezier(0.22, 1, 0.36, 1) both,
+             zoneGaneshaFloat 3.5s ease-in-out 0.6s infinite;
+  filter: drop-shadow(0 4px 16px rgba(255, 200, 80, 0.4));
+}
+
+@keyframes zoneGaneshaEntrance {
+  from { opacity: 0; transform: scale(0.6) translateY(16px); }
+  to   { opacity: 1; transform: scale(1)   translateY(0px);  }
+}
+
+@keyframes zoneGaneshaFloat {
+  0%   { transform: translateY(0px);  }
+  50%  { transform: translateY(-6px); }
+  100% { transform: translateY(0px);  }
+}
+
 /* Mobile adjustments */
 @media (max-width: 768px) {
   .zone-complete-badge {
@@ -1392,5 +1419,9 @@ button[style*="position: fixed"][style*="background: purple"] {
 
   .zone-complete-check {
     font-size: 24px;
+  }
+
+  .zone-ganesha-welcome {
+    display: none; /* hide on small phones to avoid crowding the title */
   }
 }
