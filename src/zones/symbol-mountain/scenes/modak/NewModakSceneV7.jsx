@@ -290,9 +290,9 @@ const NewModakSceneMVPContent = ({
     recordInteraction
   } = useVoiceGuidance(zoneId, sceneId, {
     enableMusic: true,
-    musicVolume: 0.2,
+    musicVolume: 0.1,
     voiceVolume: 1,
-    sfxVolume: 0.7,
+    sfxVolume: 0.35,
     idleTimeout: 20
   });
 
@@ -325,6 +325,7 @@ const NewModakSceneMVPContent = ({
   // Track final celebration completion (VO + fireworks sync)
   const [sceneCompleteVOFinished, setSceneCompleteVOFinished] = useState(false);
   const [fireworksFinished, setFireworksFinished] = useState(false);
+  const idleHintsEnabled = false;
 
   // ========================================
   // TIMER / FLOW STATE
@@ -402,7 +403,7 @@ const NewModakSceneMVPContent = ({
 
   const handlePauseCore = () => {
     stopVoice();
-    stopIdleTimer();
+    if (idleHintsEnabled) stopIdleTimer();
   };
 
   const resumePhaseAfterPause = () => {
@@ -424,35 +425,24 @@ const NewModakSceneMVPContent = ({
     // SPECIAL CASE: Replay completion VOs during transition phases
     // This handles the gap between completion and power overlay
     if (sceneState.phase === PHASES.ALL_COLLECTED) {
-      startIdleTimer();
+      if (idleHintsEnabled) startIdleTimer();
       return;
     }
 
     if (sceneState.phase === PHASES.ROCK_TRANSFORMED) {
-      startIdleTimer();
+      if (idleHintsEnabled) startIdleTimer();
       return;
     }
 
     // If initial instruction hasn't finished playing, replay it
     if (currentGamePhase && !initialInstructionPlayed[currentGamePhase]) {
       replayInitialInstruction(currentGamePhase);
-      startIdleTimer();
+      if (idleHintsEnabled) startIdleTimer();
     } else {
       // Initial instruction already played - use silent resume + idle timer
       restoreCurrentPhase();
-      startIdleTimer();
+      if (idleHintsEnabled) startIdleTimer();
     }
-  };
-
-  const handleHomeToMainMap = () => {
-    handlePauseCore();
-    stopMusic();
-    const activeProfileId = localStorage.getItem('activeProfileId');
-    if (activeProfileId) {
-      localStorage.removeItem(`temp_session_${activeProfileId}_symbol-mountain_modak`);
-    }
-    SimpleSceneManager.clearCurrentScene();
-    onNavigate?.('direct-to-map');
   };
 
   // ========================================
@@ -580,7 +570,7 @@ const NewModakSceneMVPContent = ({
       clearCelebrationTimer();
       celebrationRunIdRef.current += 1;
       stopMusic();
-      stopIdleTimer();
+      if (idleHintsEnabled) stopIdleTimer();
     };
   }, []);
 
@@ -622,7 +612,7 @@ const NewModakSceneMVPContent = ({
       setTimeout(() => {
         playVoice('collectStart');
         setCurrentPhase('collectModaks');
-        startIdleTimer();
+        if (idleHintsEnabled) startIdleTimer();
       }, 500);
     }
 
@@ -631,7 +621,7 @@ const NewModakSceneMVPContent = ({
       setTimeout(() => {
         playVoice('collectStart');
         setCurrentPhase('collectModaks');
-        startIdleTimer();
+        if (idleHintsEnabled) startIdleTimer();
       }, 500);
     }
 
@@ -655,7 +645,7 @@ const NewModakSceneMVPContent = ({
       setTimeout(() => {
         playVoice('feedGanesha');
         setCurrentPhase('shareWithGanesha');
-        startIdleTimer();
+        if (idleHintsEnabled) startIdleTimer();
       }, 500);
     }
 
@@ -664,7 +654,7 @@ const NewModakSceneMVPContent = ({
       setTimeout(() => {
         playVoice('feedGanesha');
         setCurrentPhase('shareWithGanesha');
-        startIdleTimer();
+        if (idleHintsEnabled) startIdleTimer();
       }, 500);
     }
 
@@ -711,7 +701,7 @@ const NewModakSceneMVPContent = ({
         });
         setCurrentPhase('findMooshika');
         setAppState('play');
-        startIdleTimer();
+        if (idleHintsEnabled) startIdleTimer();
       }, 500);
     }
   }, [sceneState.welcomeShown]);
@@ -721,22 +711,30 @@ const NewModakSceneMVPContent = ({
     if (sceneState.phase === PHASES.MODAKS_UNLOCKED || sceneState.phase === PHASES.SOME_COLLECTED) {
       setCurrentPhase('collectModaks');
       // Restart idle timer for this phase
-      stopIdleTimer();
-      startIdleTimer();
+      if (idleHintsEnabled) {
+        stopIdleTimer();
+        startIdleTimer();
+      }
     } else if (sceneState.phase === PHASES.ROCK_VISIBLE || sceneState.phase === PHASES.ROCK_FEEDING) {
       setCurrentPhase('shareWithGanesha');
       // Restart idle timer for this phase
-      stopIdleTimer();
-      startIdleTimer();
+      if (idleHintsEnabled) {
+        stopIdleTimer();
+        startIdleTimer();
+      }
     } else if (sceneState.phase === PHASES.ROCK_TRANSFORMED || sceneState.phase === PHASES.COMPLETE) {
       // Scene is ending - stop idle timer and clear phase
-      stopIdleTimer();
+      if (idleHintsEnabled) stopIdleTimer();
       setCurrentPhase(null);
     }
   }, [sceneState.phase]);
 
   // Repeating auto-glow hint ï¿½ first glow at 20s, then pulse off/on every 12-15s
   useEffect(() => {
+    if (!idleHintsEnabled) {
+      setShowHintGlow(false);
+      return;
+    }
     let firstTimer;
     let repeatTimer;
 
@@ -810,7 +808,7 @@ const NewModakSceneMVPContent = ({
   useEffect(() => {
     if (showDiscoveryFlip3) {
       // Stop idle timer - scene is essentially complete
-      stopIdleTimer();
+      if (idleHintsEnabled) stopIdleTimer();
       setDiscoveryButtonVisible(false);
 
       const timer = setTimeout(() => {
@@ -853,6 +851,20 @@ const NewModakSceneMVPContent = ({
 
 
   // -- SymbolAutoReveal helpers ----------------------------------------------
+
+  // Play affirmation VO when the flip card appears
+  useEffect(() => {
+    if (!revealConfig) return;
+    const voMap = {
+      mooshika: 'focusPower',
+      modak: 'sharingPower',
+      belly: 'gratitudePower'
+    };
+    const voKey = voMap[revealConfig.symbolId];
+    if (!voKey) return;
+    const id = setTimeout(() => playVoice(voKey), 400);
+    return () => clearTimeout(id);
+  }, [revealConfig]);
 
   // Compute delta from card center (viewport center) to sidebar icon center
   const getSidebarTarget = (symbolId) => {
@@ -951,7 +963,7 @@ const NewModakSceneMVPContent = ({
     if (moundIndex === sceneState.correctMound) {
       // 1. STOP THE SEARCH VOICE IMMEDIATELY
       stopVoice(); // Cut any playing VO so it doesn't overlap with success sound
-      stopIdleTimer();
+      if (idleHintsEnabled) stopIdleTimer();
       stopMusic(); // Optional: Dip music volume if you have that capability, or stop it
 
       // 2. PLAY SUCCESS VOICE (The "Yay" moment)
@@ -1029,16 +1041,9 @@ const NewModakSceneMVPContent = ({
 
     const collectedCount = collectedModaks.length;
 
-    // Play progress voice
-    if (collectedCount === 1) {
-      playCorrect('collectProgress1');
-    } else if (collectedCount === 2) {
-      playCorrect('collectProgress2');
-    }
-
     if (collectedCount === 3) {
       // Stop idle timer during transition
-      stopIdleTimer();
+      if (idleHintsEnabled) stopIdleTimer();
 
       playSfx('celebration');
       // Show celebration sparkles immediately
@@ -1155,7 +1160,7 @@ const NewModakSceneMVPContent = ({
   };
 
   const resetScene = () => {
-    stopIdleTimer();
+    if (idleHintsEnabled) stopIdleTimer();
     clearCelebrationTimer();
     celebrationRunIdRef.current += 1;
     celebrationTimeRemainingRef.current = 0;
@@ -1218,32 +1223,6 @@ const NewModakSceneMVPContent = ({
       <HomeButton onNavigate={onNavigate} />
       {/* Flying Symbol Clone (useSymbolCollection) ï¿½ superseded by SymbolAutoReveal */}
       {/* {flyingSymbol && <img className="flying-symbol" src={flyingSymbol.src} alt="" style={flightStyle} />} */}
-
-      {sceneState.welcomeShown && !isFinalCelebrationActive && (
-        <button
-          type="button"
-          onClick={handleHomeToMainMap}
-          style={{
-            position: 'fixed',
-            top: '16px',
-            left: '16px',
-            zIndex: 10001,
-            width: '52px',
-            height: '52px',
-            borderRadius: '50%',
-            border: '2px solid #fff',
-            background: 'linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%)',
-            color: '#fff',
-            fontSize: '24px',
-            cursor: 'pointer',
-            boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
-          }}
-          aria-label="Go to main map"
-          title="Home"
-        >
-          🏠
-        </button>
-      )}
 
       <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
         <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
@@ -1434,58 +1413,48 @@ const NewModakSceneMVPContent = ({
                       alt="Collection Basket"
                       style={{ width: '100%', height: '100%' }}
                     />
+                    {sceneState.collectedModaks?.map((modakIndex, displayIndex) => {
+                      const canDrag = sceneState.rockVisible && sceneState.rockFeedCount < 3;
+
+                      return (
+                        <div
+                          key={`collected-${modakIndex}-${displayIndex}`}
+                          className={`modak-game-modak modak-game-modak-collected-${displayIndex + 1}
+                            ${showHintGlow && sceneState.rockVisible ? 'modak-game-hint-glow' : ''}`}
+                          style={{
+                            position: 'absolute',
+                            zIndex: 15,
+                            animation: canDrag ? 'none' : 'modak-game-modakToBasket 0.8s ease-out'
+                          }}
+                        >
+                          <DraggableItem
+                            id={`basket-modak-${modakIndex}`}
+                            data={{ type: 'basket-modak', index: modakIndex }}
+                            disabled={!canDrag}
+                            onDragStart={(id, data) => {
+                              console.log('Dragging from basket:', id, data);
+                              recordInteraction();
+                            }}
+                            onDragEnd={(id) => console.log('Basket drag ended:', id)}
+                          >
+                            <img
+                              src={getModakImage(modakIndex)}
+                              alt={`Collected Modak ${modakIndex + 1}`}
+                              style={{
+                                width: '100%',
+                                height: '100%',
+                                filter: 'brightness(1.1) saturate(1.2)',
+                                cursor: canDrag ? 'grab' : 'default'
+                              }}
+                            />
+                          </DraggableItem>
+                          <SparkleAnimation type="star" count={8} color="#ffd700" size={6} duration={1500} fadeOut={true} area="full" />
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
-
-              {sceneState.collectedModaks?.map((modakIndex, displayIndex) => {
-                const canDrag = sceneState.rockVisible && sceneState.rockFeedCount < 3;
-                // Triangle arrangement: left, top-center, right — all inside the basket bowl
-                const basketPositions = [
-                  { top: '47%', left: '10%' },
-                  { top: '41%', left: '15%' },
-                  { top: '47%', left: '20%' },
-                ];
-                const pos = basketPositions[displayIndex] ?? { top: '44%', left: '14%' };
-
-                return (
-                  <div
-                    key={`collected-${modakIndex}-${displayIndex}`}
-                    className={`modak-game-modak modak-game-modak-collected-${displayIndex + 1}
-                      ${showHintGlow && sceneState.rockVisible ? 'modak-game-hint-glow' : ''}`}
-                    style={{
-                      position: 'absolute',
-                      top: pos.top,
-                      left: pos.left,
-                      zIndex: 15,
-                      animation: canDrag ? 'none' : 'modak-game-modakToBasket 0.8s ease-out'
-                    }}
-                  >
-                    <DraggableItem
-                      id={`basket-modak-${modakIndex}`}
-                      data={{ type: 'basket-modak', index: modakIndex }}
-                      disabled={!canDrag}
-                      onDragStart={(id, data) => {
-                        console.log('Dragging from basket:', id, data);
-                        recordInteraction();
-                      }}
-                      onDragEnd={(id) => console.log('Basket drag ended:', id)}
-                    >
-                      <img
-                        src={getModakImage(modakIndex)}
-                        alt={`Collected Modak ${modakIndex + 1}`}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          filter: 'brightness(1.1) saturate(1.2)',
-                          cursor: canDrag ? 'grab' : 'default'
-                        }}
-                      />
-                    </DraggableItem>
-                    <SparkleAnimation type="star" count={8} color="#ffd700" size={6} duration={1500} fadeOut={true} area="full" />
-                  </div>
-                );
-              })}
 
               {/* ROCK/BELLY - Drop zone for feeding */}
               {sceneState.rockVisible && (
@@ -1576,13 +1545,9 @@ const NewModakSceneMVPContent = ({
             />
 
              <CalmGoldenFireworks
-              show={showSparkle === 'final-fireworks'}
-              particles={14}
-              duration={3500}
-              onComplete={() => {
-                setShowSparkle(null);
-                setFireworksFinished(true);
-              }}
+             show={showSparkle === 'final-fireworks'}
+             particles={14}
+             duration={3500}
               />
 
 
