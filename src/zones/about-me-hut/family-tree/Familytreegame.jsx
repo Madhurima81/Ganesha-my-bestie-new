@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useGameSounds } from '../../../lib/hooks/useGameSounds';
 import './Familytreegame.css';
 import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
 
@@ -231,6 +232,8 @@ const FamilyTreeGameContent = ({
     sfxVolume: 0.7,
     idleTimeout: 10
   });
+
+  const { playUiTap, playWrongTap, playSparkle, playBloom, playChime, playGlow, playTwinkle } = useGameSounds();
 
   // Audio toggle — no syllable/word game audio here, stopVoice() is safe on toggle-off
   const handleAudioToggle = () => {
@@ -664,6 +667,7 @@ const FamilyTreeGameContent = ({
     recordInteraction();
 
     if (choice.isCorrect) {
+      playSparkle();
       // Play relationship VO then deity name VO after placement
       const correctRelationVOMap = {
         'father': 'correctFather',
@@ -705,6 +709,7 @@ const FamilyTreeGameContent = ({
       scheduleTimeout(() => {
         const member = ganeshaFamily.find(m => m.id === sceneState.selectedCircle);
         const correctDeity = deityChoices[sceneState.selectedCircle].find(d => d.isCorrect);
+        playChime();
         sceneActions.updateState({
           showFunFactModal: { ...member, ...correctDeity },
           justPlacedId: null
@@ -714,6 +719,7 @@ const FamilyTreeGameContent = ({
       }, 3800); // Increased delay to let "correct choice" VO finish before fun fact plays
     } else {
       // WRONG CHOICE - Shake/fade animation, no VOs
+      playWrongTap();
       setIsPlayingWrongVO(true);
 
       // Trigger shake/fade animation
@@ -1141,7 +1147,7 @@ const FamilyTreeGameContent = ({
           {sceneState.childFamily.length > 0 && (
             <button
               className={`tray-done-btn ${sceneState.childFamily.length >= 21 ? 'tray-done-btn-attention' : ''}`}
-              onClick={() => sceneActions.updateState({ gamePhase: 'sideBySide' })}
+              onClick={() => { playGlow(); sceneActions.updateState({ gamePhase: 'sideBySide' }); }}
             >
               <span className="tray-done-main">Done!</span>
               <span className="tray-done-sub">Finish Tree</span>
@@ -1305,7 +1311,7 @@ const FamilyTreeGameContent = ({
             <button className="make-another-btn" onClick={() => sceneActions.updateState({ childFamily: [], gamePhase: 'childInput' })}>
               🌳 Make Another Tree
             </button>
-            <button className="family-tree-end-game-btn" onClick={() => sceneActions.updateState({ showingCompletionScreen: true, completed: true, stars: 3 })}>
+            <button className="family-tree-end-game-btn" onClick={() => { playTwinkle(); sceneActions.updateState({ showingCompletionScreen: true, completed: true, stars: 3 }); }}>
               End Game ✨
             </button>
           </div>

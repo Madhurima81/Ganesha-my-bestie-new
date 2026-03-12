@@ -2,6 +2,7 @@
 // FIXED: Removed SanskritWordMission, connected PowerUnlockOverlay directly to next phase
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useGameSounds } from '../../../../lib/hooks/useGameSounds';
 import './VakratundaGroveSimplified.css';
 
 // Scene management
@@ -274,6 +275,8 @@ const VakratundaGroveContent = ({
     idleTimeout: 20
   });
 
+  const { playUiTap, playBloom, playChime, playGlow, playTwinkle } = useGameSounds();
+
   // Track whether recorder popup is open — pause game voice when it is
   const [isRecorderOpen, setIsRecorderOpen] = useState(false);
 
@@ -493,6 +496,7 @@ const VakratundaGroveContent = ({
 
       // Show SymbolAutoReveal flip card — content from discoveryContent.js
       const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
+      playChime();
       setRevealConfig({
         symbolId: word,
         symbolImage: powerConfig[word].image,
@@ -705,6 +709,7 @@ const VakratundaGroveContent = ({
               sceneId={sceneId}
               isOpen={!sceneState.welcomeShown}
               onStart={() => {
+                playUiTap();
                 sceneActions.updateState({
                   welcomeShown: true,
                   phase: PHASES.VAKRATUNDA_GAME

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ganesha My Bestie — Sound Preview</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #fdf6ee;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    color: #3d2b1f;
+  }
+  h1 { font-size: 1.6rem; margin-bottom: 6px; color: #7b3f00; }
+  p.sub { color: #9b6a3e; font-size: 0.9rem; margin-bottom: 32px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    width: 100%;
+    max-width: 860px;
+  }
+  .card {
+    background: #fff9f2;
+    border: 2px solid #e8d5bc;
+    border-radius: 16px;
+    padding: 20px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: transform 0.1s, border-color 0.15s, background 0.15s;
+    user-select: none;
+  }
+  .card:hover { border-color: #c49a6c; background: #fff3e8; }
+  .card:active { transform: scale(0.97); }
+  .card.playing { border-color: #e07b39; background: #fff0e0; }
+  .emoji { font-size: 2.4rem; }
+  .label { font-size: 0.95rem; font-weight: 600; color: #5c3317; }
+  .desc { font-size: 0.75rem; color: #9b7557; text-align: center; line-height: 1.4; }
+  .volume-row {
+    margin-top: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+    color: #7b5535;
+  }
+  input[type=range] { width: 180px; accent-color: #c07a2e; }
+  .note {
+    margin-top: 24px;
+    font-size: 0.78rem;
+    color: #b08060;
+    max-width: 600px;
+    text-align: center;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+<h1>🪷 Ganesha My Bestie — Sound Preview</h1>
+<p class="sub">Click a card to hear the sound. Sounds are synthesized via Web Audio API.</p>
+
+<div class="grid" id="grid"></div>
+
+<div class="volume-row">
+  🔊 Master Volume
+  <input type="range" id="volSlider" min="0" max="100" value="80">
+  <span id="volLabel">80%</span>
+</div>
+
+<p class="note">
+  All sounds are generated in-browser — no files needed.<br>
+  Drop MP3 files into <code>/public/audio/fx/</code> to override any sound.<br>
+  Open DevTools console for any audio errors.
+</p>
+
+<script>
+// ── Audio Context ──────────────────────────────────────────────────────────
+let _ctx = null;
+let _masterGain = null;
+let _sfxGain = null;
+
+function getCtx() {
+  if (!_ctx) {
+    _ctx = new (window.AudioContext || window.webkitAudioContext)();
+    _masterGain = _ctx.createGain();
+    _masterGain.gain.value = 0.8;
+    _masterGain.connect(_ctx.destination);
+    _sfxGain = _ctx.createGain();
+    _sfxGain.connect(_masterGain);
+  }
+  if (_ctx.state === 'suspended') _ctx.resume();
+  return _ctx;
+}
+
+function osc(ctx, { type = 'sine', freq, startTime, attack = 0.005, peak, decay, detune = 0 }) {
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.type = type;
+  o.frequency.setValueAtTime(freq, startTime);
+  if (detune) o.detune.setValueAtTime(detune, startTime);
+  o.connect(g);
+  g.connect(_sfxGain);
+  g.gain.setValueAtTime(0, startTime);
+  g.gain.linearRampToValueAtTime(peak, startTime + attack);
+  g.gain.exponentialRampToValueAtTime(0.001, startTime + attack + decay);
+  o.start(startTime);
+  o.stop(startTime + attack + decay + 0.02);
+}
+
+// ── Sound Definitions ──────────────────────────────────────────────────────
+
+const sounds = [
+  {
+    id: 'uiTap',
+    emoji: '👆',
+    label: 'UI Tap',
+    desc: 'Button presses, general taps',
+    duration: 150,
+    play() {
+      const ctx = getCtx(), now = ctx.currentTime, vol = 0.32;
+      osc(ctx, { freq: 420, startTime: now, attack: 0.004, peak: vol * 0.6, decay: 0.07 });
+      osc(ctx, { type: 'triangle', freq: 420, startTime: now, attack: 0.005, peak: vol * 0.3, decay: 0.07 });
+      osc(ctx, { freq: 840, startTime: now, attack: 0.004, peak: vol * 0.06, decay: 0.04 });
+    }
+  },
+  {
+    id: 'wrongTap',
+    emoji: '🤔',
+    label: 'Wrong Tap',
+    desc: 'Wrong mound / wrong answer — gentle, not punishing',
+    duration: 350,
+    play() {
+      const ctx = getCtx(), now = ctx.currentTime, vol = 0.28;
+      osc(ctx, { freq: 330, startTime: now,        attack: 0.005, peak: vol * 0.7,  decay: 0.12 });
+      osc(ctx, { type: 'triangle', freq: 330, startTime: now, attack: 0.005, peak: vol * 0.2, decay: 0.10 });
+      osc(ctx, { freq: 247, startTime: now + 0.09, attack: 0.005, peak: vol * 0.6,  decay: 0.14 });
+      osc(ctx, { type: 'triangle', freq: 247, startTime: now + 0.09, attack: 0.005, peak: vol * 0.18, decay: 0.12 });
+    }
+  },
+  {
+    id: 'sparkle',
+    emoji: '✨',
+    label: 'Magic Sparkle',
+    desc: 'Correct tap, finding Mooshika, collecting modak',
+    duration: 450,
+    play() {
+      const ctx = getCtx(), now = ctx.currentTime, vol = 0.48;
+      const notes = [1318.5, 1568, 1975.5, 2637];
+      const detunes = [2, -2, 3, -2];
+      notes.forEach((freq, i) => {
+        const t = now + i * 0.03;
+        osc(ctx, { freq, startTime: t, attack: 0.006, peak: vol * 0.28, decay: 0.28, detune: detunes[i] });
+        osc(ctx, { type: 'triangle', freq: freq * 0.998, startTime: t, attack: 0.009, peak: vol * 0.12, decay: 0.22, detune: -detunes[i] });
+      });
+    }
+  },
+  {
+    id: 'bloom',
+    emoji: '🌸',
+    label: 'Magic Bloom',
+    desc: 'Basket appears, rock transforms, phase complete',
+    duration: 900,
+    play() {
+      const ctx = getCtx(), now = ctx.currentTime, vol = 0.50;
+      const notes = [587.33, 659.25, 783.99, 880, 1174.66];
+      notes.forEach((freq, i) => {
+        const t = now + i * 0.1;
+        osc(ctx, { freq, startTime: t, attack: 0.01, peak: vol * 0.25, decay: 0.42 });
+        osc(ctx, { type: 'triangle', freq, startTime: t, attack: 0.012, peak: vol * 0.18, decay: 0.38 });
+      });
+      osc(ctx, { type: 'triangle', freq: 2200, startTime: now + 0.2, attack: 0.2, peak: vol * 0.02, decay: 0.4 });
+    }
+  },
+  {
+    id: 'glow',
+    emoji: '🌟',
+    label: 'Divine Glow',
+    desc: 'Scene completion, mission done',
+    duration: 1600,
+    play() {
+      const ctx = getCtx(), now = ctx.currentTime, vol = 0.52;
+      [261.63, 392, 523.25].forEach((freq) => {
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = 'sine';
+        o.frequency.setValueAtTime(freq, now);
+        o.connect(g);
+        g.connect(_sfxGain);
+        g.gain.setValueAtTime(0, now);
+        g.gain.linearRampToValueAtTime(vol * 0.28, now + 0.4);
+        g.gain.setValueAtTime(vol * 0.28, now + 0.8);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
+        o.start(now);
+        o.stop(now + 1.55);
+      });
+    }
+  },
+  {
+    id: 'twinkle',
+    emoji: '🎉',
+    label: 'Celebration Twinkle',
+    desc: 'Final celebration, all tasks complete',
+    duration: 900,
+    play() {
+      const ctx = getCtx(), now = ctx.currentTime, vol = 0.55;
+      const pattern = [1318.5, 1174.66, 987.77, 880, 987.77, 1174.66, 1318.5, 1568];
+      pattern.forEach((carrierFreq, i) => {
+        const t = now + i * 0.075;
+        const mod = ctx.createOscillator(), modGain = ctx.createGain();
+        mod.frequency.setValueAtTime(carrierFreq * 2.2, t);
+        modGain.gain.setValueAtTime(carrierFreq * 0.28, t);
+        modGain.gain.exponentialRampToValueAtTime(1, t + 0.3);
+        const carrier = ctx.createOscillator(), carrierGain = ctx.createGain();
+        carrier.frequency.setValueAtTime(carrierFreq, t);
+        mod.connect(modGain);
+        modGain.connect(carrier.frequency);
+        carrier.connect(carrierGain);
+        carrierGain.connect(_sfxGain);
+        carrierGain.gain.setValueAtTime(0, t);
+        carrierGain.gain.linearRampToValueAtTime(vol * 0.22, t + 0.004);
+        carrierGain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+        mod.start(t); carrier.start(t);
+        mod.stop(t + 0.33); carrier.stop(t + 0.33);
+      });
+    }
+  },
+  {
+    id: 'chime',
+    emoji: '🔔',
+    label: 'Card Reveal Chime',
+    desc: 'Discovery overlay, fun fact modal, flip card',
+    duration: 600,
+    play() {
+      const ctx = getCtx(), now = ctx.currentTime, vol = 0.44;
+      osc(ctx, { freq: 780,  startTime: now, attack: 0.01,  peak: vol * 0.55, decay: 0.48 });
+      osc(ctx, { freq: 1560, startTime: now, attack: 0.012, peak: vol * 0.1,  decay: 0.38 });
+    }
+  },
+];
+
+// ── Build UI ───────────────────────────────────────────────────────────────
+
+const grid = document.getElementById('grid');
+
+sounds.forEach(s => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="emoji">${s.emoji}</div>
+    <div class="label">${s.label}</div>
+    <div class="desc">${s.desc}</div>
+  `;
+  card.addEventListener('click', () => {
+    card.classList.add('playing');
+    s.play();
+    setTimeout(() => card.classList.remove('playing'), s.duration);
+  });
+  grid.appendChild(card);
+});
+
+// ── Volume Slider ──────────────────────────────────────────────────────────
+
+const volSlider = document.getElementById('volSlider');
+const volLabel = document.getElementById('volLabel');
+volSlider.addEventListener('input', () => {
+  const v = volSlider.value / 100;
+  if (_masterGain) _masterGain.gain.value = v;
+  volLabel.textContent = volSlider.value + '%';
+});
+</script>
+</body>
+</html>
