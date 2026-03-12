@@ -2,6 +2,7 @@
 // FIXED: Removed SanskritWordMission, connected PowerUnlockOverlay directly to next phase
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useGameSounds } from '../../../../lib/hooks/useGameSounds';
 import './VakratundaGroveSimplified.css';
 import '../../../shared/components/OpeningModal.css';
 
@@ -263,6 +264,8 @@ const VakratundaGroveContent = ({
     idleTimeout: 20
   });
 
+  const { playUiTap, playBloom, playChime, playGlow, playTwinkle } = useGameSounds();
+
   // Track whether recorder popup is open — pause game voice when it is
   const [isRecorderOpen, setIsRecorderOpen] = useState(false);
 
@@ -429,6 +432,8 @@ const VakratundaGroveContent = ({
   const handlePhaseComplete = (word) => {
     console.log(`${word} learned!`);
 
+    playBloom();
+
     // Stop idle timer — game is done, no more hints
     stopIdleTimer();
     setCurrentPhase(null);
@@ -460,6 +465,7 @@ const VakratundaGroveContent = ({
       setShowSparkle(null);
 
       // Show SymbolAutoReveal flip card
+      playChime();
       setRevealConfig({
         symbolId:    word,
         symbolImage: powerConfig[word].image,
@@ -529,6 +535,9 @@ const VakratundaGroveContent = ({
   const handleAppDiscoveryCelebrate = () => {
     setShowAppDiscovery(false);
     console.log('🎉 Triggering Final Celebration from App Discovery');
+
+    playGlow();
+    setTimeout(() => playTwinkle(), 600);
 
     // Play scene complete VO
     if (isAudioOn) {
@@ -725,6 +734,7 @@ const VakratundaGroveContent = ({
                         <VOGatedButton
                           visible={openingButtonVisible}
                           onClick={() => {
+                            playUiTap();
                             sceneActions.updateState({
                               welcomeShown: true,
                               phase: PHASES.VAKRATUNDA_GAME

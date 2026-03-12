@@ -2,6 +2,7 @@
 // ProgressiveHintSystem with visual disabled state
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useGameSounds } from '../../../../lib/hooks/useGameSounds';
 import './ModakScene.css';
 import '../../../shared/components/OpeningModal.css'; 
 import '../../../../lib/styles/zone-themes.css';
@@ -230,6 +231,8 @@ const NewModakSceneContent = ({
   // Get content from configs
   const openingModalContent = getOpeningModal(zoneId, sceneId);
 
+  const { playUiTap, playWrongTap, playSparkle, playBloom, playGlow, playTwinkle, playChime } = useGameSounds();
+
   const [showHintGlow, setShowHintGlow] = useState(false);
   const [showSparkle, setShowSparkle] = useState(null);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
@@ -421,6 +424,8 @@ const NewModakSceneContent = ({
         
         if (!sceneState.showingCompletionScreen) {
           setTimeout(() => {
+            playGlow();
+            setTimeout(() => playTwinkle(), 600);
             setShowSceneCompletion(true);
           }, 500);
         }
@@ -477,6 +482,7 @@ const NewModakSceneContent = ({
     moundStates[moundIndex - 1] = 1;
 
     if (moundIndex === sceneState.correctMound) {
+      playSparkle();
       setShowSparkle('mooshika-found');
       const moundPositions = { 1: { top: '45%', left: '25%' }, 2: { top: '55%', left: '75%' }, 3: { top: '60%', left: '30%' }, 4: { top: '60%', left: '50%' }, 5: { top: '60%', left: '60%' } };
       
@@ -505,10 +511,12 @@ const NewModakSceneContent = ({
 
       // Trigger Discovery Flip 1 - Found Mooshika!
       setTimeout(() => {
+        playChime();
         setShowDiscoveryFlip1(true);
       }, 2000);
 
     } else {
+      playWrongTap();
       setShowSparkle(`mound-${moundIndex}`);
       sceneActions.updateState({ moundStates });
       setTimeout(() => setShowSparkle(null), 1000);
@@ -534,11 +542,12 @@ const NewModakSceneContent = ({
     const collectedModaks = [...(sceneState.collectedModaks || [])];
     collectedModaks.push(modakIndex);
     
+    playSparkle();
     setShowSparkle(`modak-${modakIndex}`);
     setTimeout(() => setShowSparkle(null), 1000);
-    
+
     const collectedCount = collectedModaks.length;
-    
+
     if (collectedCount === 3) {
       sceneActions.updateState({ 
         modakStates,
@@ -548,14 +557,16 @@ const NewModakSceneContent = ({
       });
       
       setTimeout(() => {
+        playBloom();
         sceneActions.updateState({
           basketFull: true,
           phase: PHASES.ALL_COLLECTED
         });
-      }, 1000); 
+      }, 1000);
 
       // Trigger Discovery Flip 2 - All Modaks Collected!
       setTimeout(() => {
+        playChime();
         setShowDiscoveryFlip2(true);
       }, 2500);
     } else {
@@ -586,8 +597,9 @@ const NewModakSceneContent = ({
     const newFeedCount = sceneState.rockFeedCount + 1;
     const newBellySize = newFeedCount * 33.33;
     
+    playUiTap();
     setShowSparkle('rock-feeding');
-    
+
     sceneActions.updateState({
       collectedModaks: newCollectedModaks,
       rockFeedCount: newFeedCount,
@@ -598,6 +610,7 @@ const NewModakSceneContent = ({
     
     if (newFeedCount >= 3) {
       setTimeout(() => {
+        playBloom();
         setShowSparkle('belly-transform');
         sceneActions.updateState({
           rockTransformed: true,
@@ -606,6 +619,7 @@ const NewModakSceneContent = ({
 
         // Trigger Discovery Flip 3 - Mission Complete!
         setTimeout(() => {
+          playChime();
           setShowDiscoveryFlip3(true);
         }, 3500);
 
@@ -866,6 +880,7 @@ const NewModakSceneContent = ({
                         <button
                           className="game-modal-button"
                           onClick={() => {
+                            playUiTap();
                             sceneActions.updateState({ welcomeShown: true });
                           }}
                         >
