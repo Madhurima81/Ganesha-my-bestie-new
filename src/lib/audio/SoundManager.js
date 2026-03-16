@@ -18,8 +18,19 @@ function getCtx() {
     _sfxGain.connect(_masterGain);
     _ambientGain = _ctx.createGain();
     _ambientGain.connect(_masterGain);
+
+    // Suspend/resume with page visibility so no SFX fires while tab is hidden
+    document.addEventListener('visibilitychange', () => {
+      if (!_ctx) return;
+      if (document.hidden) {
+        _ctx.suspend();
+      } else {
+        _ctx.resume();
+      }
+    });
   }
-  if (_ctx.state === 'suspended') _ctx.resume();
+  // Only resume on explicit user-visible call (not when page is hidden)
+  if (_ctx.state === 'suspended' && !document.hidden) _ctx.resume();
   return _ctx;
 }
 

@@ -1,4 +1,5 @@
 // GameStateManager.js - Updated with Zone Progress Accumulation Fix
+import { cloudSync } from './CloudSync';
 
 class GameStateManager {
   constructor() {
@@ -143,10 +144,13 @@ scenes: ['family-tree', 'dreams-wishes', 'favorite-food', 'name-birthday']
     
     // Set as active profile
     this.setActiveProfile(profileId);
-    
+
     // Initialize game progress for this profile
     this.initializeProfileProgress(profileId);
-    
+
+    // Sync to cloud (async, non-blocking)
+    cloudSync.pushProfiles();
+
     console.log('🎯 Profile creation complete, returning:', newProfile);
     return newProfile;
   }
@@ -339,7 +343,10 @@ scenes: ['family-tree', 'dreams-wishes', 'favorite-food', 'name-birthday']
       this.activeProfileId = null;
       localStorage.removeItem('activeProfileId');
     }
-    
+
+    // Sync deletion to cloud (async, non-blocking)
+    cloudSync.deleteProfile(profileId);
+
     return true;
   }
 
@@ -535,6 +542,9 @@ gameProgress.zones[zoneId].scenes[sceneId] = {
   
   // ✅ 9. Update profile summary stats
   this.updateProfileStats(gameProgress.totalStars, gameProgress.completedScenes);
+
+  // Sync to cloud (debounced 3s, non-blocking)
+  cloudSync.pushProgress(this.activeProfileId);
 
   // 🚫 TEMPORARILY DISABLE OUR BULLETPROOF SYSTEMS
   this.backupProgress();

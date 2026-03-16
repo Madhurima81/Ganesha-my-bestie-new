@@ -36,7 +36,8 @@ export const ClickableElement = ({
   onClick,
   completed = false,
   onInteraction,
-  zone = "default-zone"
+  zone = "default-zone",
+  disableTransformFeedback = false
 }) => {
   const handleClick = () => {
     if (onInteraction) {
@@ -52,6 +53,7 @@ export const ClickableElement = ({
       onClick={handleClick}
       zone={zone}
       completed={completed ? "true" : undefined}
+      disableTransformFeedback={disableTransformFeedback}
     >
       {children}
     </InteractiveElementWrapper>

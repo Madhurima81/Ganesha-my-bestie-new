@@ -27,7 +27,8 @@ const useVoiceGuidance = (zoneId, sceneId, {
   musicVolume = 0.3,
   voiceVolume = 1,
   sfxVolume = 0.7,
-  idleTimeout = 10
+  idleTimeout = 10,
+  resumeDelay = 0   // ms to wait before resuming audio after tab return (e.g. 3000 for 3-2-1)
 } = {}) => {
   const [isPlaying, setIsPlayingState] = useState(false);
   const [currentPhase, setCurrentPhase] = useState(null);
@@ -38,6 +39,11 @@ const useVoiceGuidance = (zoneId, sceneId, {
   const idleTimerRef = useRef(null);
   const lastInteractionRef = useRef(Date.now());
   const voiceVolumeRef = useRef(voiceVolume); // mutable — setVoiceVolume updates this live
+  const isHiddenRef = useRef(typeof document !== 'undefined' ? document.hidden : false);
+  const pendingVoiceRef = useRef(null);
+  // Track the currently-playing voice key+callback so handleHide can store them
+  const activeVoiceKeyRef = useRef(null);
+  const activeVoiceCallbackRef = useRef(null);
 
   // Refs for idle timer to access current values
   const isPlayingRef = useRef(isPlaying);
@@ -63,6 +69,11 @@ const useVoiceGuidance = (zoneId, sceneId, {
   // ========================================
 
   const playVoice = useCallback((key, onEnded) => {
+    if (isHiddenRef.current) {
+      pendingVoiceRef.current = { key, onEnded };
+      return;
+    }
+
     const path = getAudioPath(zoneId, sceneId, key);
     if (!path) {
       console.warn(`Voice not found: ${key} for ${zoneId}/${sceneId}`);
@@ -94,6 +105,8 @@ const useVoiceGuidance = (zoneId, sceneId, {
     audio.onended = () => {
       setIsPlaying(false);
       voiceRef.current = null;
+      activeVoiceKeyRef.current = null;
+      activeVoiceCallbackRef.current = null;
       fireCallback();
     };
 
@@ -101,16 +114,22 @@ const useVoiceGuidance = (zoneId, sceneId, {
       console.error(`Error playing voice ${key}:`, e);
       setIsPlaying(false);
       voiceRef.current = null;
+      activeVoiceKeyRef.current = null;
+      activeVoiceCallbackRef.current = null;
       // Still call onEnded so the flow continues even if audio fails
       fireCallback();
     };
 
     voiceRef.current = audio;
+    activeVoiceKeyRef.current = key;
+    activeVoiceCallbackRef.current = onEnded ?? null;
     setIsPlaying(true);
     audio.play().catch(err => {
       console.error('Voice play failed:', err);
       setIsPlaying(false);
       voiceRef.current = null;
+      activeVoiceKeyRef.current = null;
+      activeVoiceCallbackRef.current = null;
       // Still call onEnded so the flow continues even if audio fails
       fireCallback();
     });
@@ -122,8 +141,15 @@ const useVoiceGuidance = (zoneId, sceneId, {
   // Stop voice
   const stopVoice = useCallback(() => {
     if (voiceRef.current) {
+      // Clear handlers BEFORE pausing — prevents a queued 'ended' event on the
+      // old audio from firing after the new audio is already assigned to voiceRef,
+      // which would null-out voiceRef and break tab-switch pausing for the new VO.
+      voiceRef.current.onended = null;
+      voiceRef.current.onerror = null;
       voiceRef.current.pause();
       voiceRef.current = null;
+      activeVoiceKeyRef.current = null;
+      activeVoiceCallbackRef.current = null;
       setIsPlaying(false);
     }
   }, []);
@@ -398,32 +424,60 @@ const useVoiceGuidance = (zoneId, sceneId, {
   // ========================================
 
   const musicWasPlayingRef = useRef(false);
-  const voiceWasPlayingRef = useRef(false);
-  const voicePositionRef = useRef(0);
+  // Stores the voice key+callback that was mid-play when app was hidden,
+  // so we can replay from start on return (mid-sentence resume is jarring for kids).
+  const interruptedVoiceRef = useRef(null);
 
   const handleHide = useCallback(() => {
-    // Snapshot what was playing before pausing
+    isHiddenRef.current = true;
+
     musicWasPlayingRef.current = !!(musicRef.current && !musicRef.current.paused);
-    voiceWasPlayingRef.current = !!(voiceRef.current && !voiceRef.current.paused);
-    if (voiceRef.current) voicePositionRef.current = voiceRef.current.currentTime;
+
+    // Store key+callback of interrupted voice so we can do a full replay on return
+    if (voiceRef.current && !voiceRef.current.paused && activeVoiceKeyRef.current) {
+      interruptedVoiceRef.current = {
+        key: activeVoiceKeyRef.current,
+        onEnded: activeVoiceCallbackRef.current,
+      };
+    }
 
     if (musicRef.current) musicRef.current.pause();
-    if (voiceRef.current) voiceRef.current.pause();
+    if (voiceRef.current) {
+      voiceRef.current.onended = null;
+      voiceRef.current.onerror = null;
+      voiceRef.current.pause();
+      voiceRef.current = null;
+    }
+    activeVoiceKeyRef.current = null;
+    activeVoiceCallbackRef.current = null;
+    setIsPlaying(false);
     stopIdleTimer();
   }, [stopIdleTimer]);
 
   const handleShow = useCallback(() => {
+    isHiddenRef.current = false;
+
     if (musicWasPlayingRef.current && musicRef.current) {
       musicRef.current.play().catch(() => {});
     }
-    if (voiceWasPlayingRef.current && voiceRef.current) {
-      voiceRef.current.currentTime = voicePositionRef.current;
-      voiceRef.current.play().catch(() => {});
-    }
-    startIdleTimer();
-  }, [startIdleTimer]);
 
-  useAppVisibility(handleHide, handleShow);
+    // Replay interrupted voice only if it had an onEnded callback —
+    // meaning the game is blocked waiting for it (e.g. instruction VOs).
+    // Pure celebratory VOs (no onEnded) are skipped: scene has moved on visually.
+    if (interruptedVoiceRef.current?.key) {
+      const { key, onEnded } = interruptedVoiceRef.current;
+      interruptedVoiceRef.current = null;
+      if (onEnded) playVoice(key, onEnded);
+    } else if (pendingVoiceRef.current) {
+      const { key, onEnded } = pendingVoiceRef.current;
+      pendingVoiceRef.current = null;
+      playVoice(key, onEnded);
+    }
+
+    startIdleTimer();
+  }, [playVoice, startIdleTimer]);
+
+  useAppVisibility(handleHide, handleShow, { resumeDelay });
 
   // ========================================
   // LIFECYCLE

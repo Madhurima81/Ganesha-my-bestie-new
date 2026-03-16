@@ -12,6 +12,7 @@ const InteractiveElementWrapper = ({
   preservePosition = true,
   zone = 'pond-zone', // Default zone
   completed = false, // New prop to indicate if action is completed
+  disableTransformFeedback = false,
   ...rest
 }) => {
   // Default tooltip style for child-friendly tooltips
@@ -26,8 +27,9 @@ const InteractiveElementWrapper = ({
           tooltipClassName={tooltipClassName}
           style={{ width: '100%', height: '100%' }}
           completed={completed}
-
->          {children}
+          disableTransformFeedback={disableTransformFeedback}
+        >
+          {children}
         </InteractiveElement>
       </div>
     );
@@ -41,6 +43,7 @@ const InteractiveElementWrapper = ({
       style={style}
       tooltipClassName={tooltipClassName}
       completed={completed}
+      disableTransformFeedback={disableTransformFeedback}
 
 
       {...rest}

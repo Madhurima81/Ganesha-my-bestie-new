@@ -12,6 +12,7 @@ const InteractiveElement = ({
   glowEffect = true, // Add option for glow effect
   glowColor = 'rgba(255, 255, 255, 0.7)', // Default glow color
   completed = false, // New prop to track if action is completed
+  disableTransformFeedback = false,
   ...rest
 }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -93,7 +94,7 @@ const InteractiveElement = ({
   
   return (
     <div
-      className={`interactive-element ${isPressed ? 'pressed' : ''} ${!hasInteracted && !isCompleted ? 'new' : ''} ${className}`}
+      className={`interactive-element ${!disableTransformFeedback && isPressed ? 'pressed' : ''} ${!disableTransformFeedback && !hasInteracted && !isCompleted ? 'new' : ''} ${className}`}
       onClick={handleInteraction}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -116,7 +117,9 @@ const InteractiveElement = ({
         ...rest.style,
         // Add a pulsing glow effect for uninteracted elements
         boxShadow: showGlow && !hasInteracted && !isCompleted ? `0 0 20px ${glowColor}` : 'none',
-        transition: 'box-shadow 0.5s ease-in-out, transform 0.2s ease',
+        transition: disableTransformFeedback
+          ? 'box-shadow 0.5s ease-in-out'
+          : 'box-shadow 0.5s ease-in-out, transform 0.2s ease',
       }}
       {...rest}
     >
