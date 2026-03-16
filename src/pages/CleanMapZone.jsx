@@ -161,6 +161,16 @@ const playUnlockChime = (intensity = 'normal') => {
   }
 };
 
+// Mushika pop position — where Mushika appears when each zone is tapped.
+// Values are CSS fixed-position coordinates (% of viewport).
+const ZONE_MUSHIKA_POS = {
+  'symbol-mountain': { left: '21%',  top:    '36%'  },
+  'cave-of-secrets': { left: '40%',  top:    '42%'  },
+  'shloka-river':    { right: '19%', top:    '38%'  },
+  'festival-square': { right: '17%', bottom: '30%'  },
+  'about-me-hut':    { left: '14%',  bottom: '32%'  },
+};
+
 // Zone layout config: tap area + label position classes
 const ZONE_LAYOUT = {
   'symbol-mountain': {
@@ -236,7 +246,12 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles }) => {
   // const [showZoneModal, setShowZoneModal] = useState(false); // removed — no preview modal
   const [activeProfile, setActiveProfile] = useState(null);
   const [unlockingZones, setUnlockingZones] = useState({});
+  const [mushikaPop, setMushikaPop] = useState(null); // { zone, state } | null
+  const [isMuted, setIsMuted] = useState(false);
   const unlockTimersRef = useRef({});
+  const mushikaTimerRef = useRef(null);
+  const ambientRef = useRef(null);
+  const fadingRef = useRef(null);
   const prevZoneStatesRef = useRef(null);
 
   useEffect(() => {
@@ -268,8 +283,82 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles }) => {
   useEffect(() => {
     return () => {
       Object.values(unlockTimersRef.current).forEach(clearTimeout);
+      if (mushikaTimerRef.current) clearTimeout(mushikaTimerRef.current);
     };
   }, []);
+
+  // ── Ambient sound: fade in on mount, pause on tab-hide, resume on show ──────
+  useEffect(() => {
+    const audio = ambientRef.current;
+    if (!audio) return;
+
+    const TARGET_VOL = 0.35;
+
+    const fadeIn = () => {
+      clearInterval(fadingRef.current);
+      audio.volume = 0;
+      audio.play().catch(() => {}); // browser may block; resolved by interaction below
+      fadingRef.current = setInterval(() => {
+        const next = Math.min(audio.volume + 0.025, TARGET_VOL);
+        audio.volume = next;
+        if (next >= TARGET_VOL) clearInterval(fadingRef.current);
+      }, 80); // ~1.1s fade-in
+    };
+
+    // Try auto-play immediately
+    fadeIn();
+
+    // Fallback: start on first user interaction if autoplay was blocked
+    const onFirstInteraction = () => {
+      if (audio.paused && !isMuted) fadeIn();
+      document.removeEventListener('click',      onFirstInteraction);
+      document.removeEventListener('touchstart', onFirstInteraction);
+    };
+    document.addEventListener('click',      onFirstInteraction);
+    document.addEventListener('touchstart', onFirstInteraction);
+
+    // Pause when tab is hidden, resume when visible
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        clearInterval(fadingRef.current);
+        audio.pause();
+      } else if (!audio.dataset.muted) {
+        fadeIn();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    return () => {
+      clearInterval(fadingRef.current);
+      audio.pause();
+      document.removeEventListener('click',            onFirstInteraction);
+      document.removeEventListener('touchstart',       onFirstInteraction);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const toggleMute = () => {
+    const audio = ambientRef.current;
+    if (!audio) return;
+    if (isMuted) {
+      delete audio.dataset.muted;
+      audio.volume = 0;
+      audio.play().catch(() => {});
+      // fade back in
+      clearInterval(fadingRef.current);
+      fadingRef.current = setInterval(() => {
+        const next = Math.min(audio.volume + 0.025, 0.35);
+        audio.volume = next;
+        if (next >= 0.35) clearInterval(fadingRef.current);
+      }, 80);
+      setIsMuted(false);
+    } else {
+      audio.dataset.muted = '1';
+      clearInterval(fadingRef.current);
+      audio.pause();
+      setIsMuted(true);
+    }
+  };
 
   useEffect(() => {
     const nextStates = {};
@@ -367,28 +456,45 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles }) => {
 
   const dotsVisible = getDotsVisible();
 
-  const handleZoneClick = (zone, state) => {
-    if (state === 'locked' || state === 'unlocking') return;
-
+  // Navigate after the Mushika pop finishes
+  const navigateToZone = (zone, state) => {
     if (DEBUG_ALWAYS_OPEN_ZONE_WELCOME) {
       if (onZoneSelect) onZoneSelect(zone.id);
       return;
     }
-
     if (state === 'active') {
-      // No progress at all → first time in this zone → go directly to Scene 1
       const firstScene = ZONE_FIRST_SCENES[zone.id];
       if (onZoneSelect) onZoneSelect(zone.id, firstScene);
     } else {
-      // in-progress or completed → returning user → go to zone welcome (scene picker)
       if (onZoneSelect) onZoneSelect(zone.id);
     }
+  };
+
+  const handleZoneClick = (zone, state) => {
+    if (state === 'locked' || state === 'unlocking') return;
+    if (mushikaPop) return; // already mid-animation — block double-tap
+
+    // Show Mushika pop, then navigate after 1.4s
+    setMushikaPop({ zone, state });
+    mushikaTimerRef.current = setTimeout(() => {
+      setMushikaPop(null);
+      navigateToZone(zone, state);
+    }, 1400);
   };
 
   // const handleStartZone = (zone) => { ... }; // removed — no preview modal
 
   return (
     <div className="map-container morning">
+
+      {/* Ambient sound — hidden, controlled via ambientRef */}
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+      <audio
+        ref={ambientRef}
+        src="/audio/ambient/map%20ambient%20sound.wav"
+        loop
+        preload="auto"
+      />
 
       {/* Background image */}
       <img
@@ -398,9 +504,15 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles }) => {
       />
 
       {/* Drifting clouds — CSS shapes, no image needed */}
-      <div className="map-cloud map-cloud-1" aria-hidden="true" />
-      <div className="map-cloud map-cloud-2" aria-hidden="true" />
-      <div className="map-cloud map-cloud-3" aria-hidden="true" />
+
+      {/* River shimmer — light-on-water effect over Shloka River */}
+
+      {/* Mountain mist — soft fog at base of Symbol Mountain */}
+      <div className="map-mountain-mist" aria-hidden="true">
+        <div className="mist-blob mist-blob-1" />
+        <div className="mist-blob mist-blob-2" />
+        <div className="mist-blob mist-blob-3" />
+      </div>
 
       {/* Atmospheric overlay */}
       <div className="map-bg-overlay" aria-hidden="true" />
@@ -456,10 +568,6 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles }) => {
         );
       })}
 
-      {/* Back Button */}
-      <button className="map-back-button" onClick={onBackToWelcome}>
-        ← Back
-      </button>
 
       {/* Ganesha Guide — small floating companion, bottom-left */}
       <div className="map-ganesha-guide" aria-hidden="true">
@@ -487,6 +595,41 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles }) => {
           </button>
         );
       })()}
+
+      {/* Sound toggle — bottom-left corner */}
+      <button
+        className={`map-sound-toggle${isMuted ? ' muted' : ''}`}
+        onClick={toggleMute}
+        title={isMuted ? 'Turn sound on' : 'Turn sound off'}
+        aria-label={isMuted ? 'Unmute ambient sound' : 'Mute ambient sound'}
+      >
+        <img
+          src={isMuted ? '/images/icons/icon-sound-off.svg' : '/images/icons/icon-sound-on.svg'}
+          alt=""
+          className="map-sound-toggle__icon"
+        />
+      </button>
+
+      {/* Mushika Zone-Click Pop
+          Appears when a zone is tapped; speech bubble shows zone name.
+          Auto-dismisses when navigation fires after ~1.4s.            */}
+      {mushikaPop && (
+        <div
+          className="mushika-pop-overlay"
+          style={ZONE_MUSHIKA_POS[mushikaPop.zone.id]}
+          aria-hidden="true"
+        >
+          <div className="mushika-pop-bubble">
+            {mushikaPop.zone.name.replace('\n', ' ')}
+          </div>
+          <img
+            src="/images/welcome-mooshika1.png"
+            alt=""
+            className="mushika-pop-img"
+            onError={e => { e.target.src = '/images/mooshika.png'; }}
+          />
+        </div>
+      )}
 
       {/* Zone Preview Modal — commented out, no longer used
       {showZoneModal && selectedZone && (

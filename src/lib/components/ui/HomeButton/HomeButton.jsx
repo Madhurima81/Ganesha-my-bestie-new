@@ -2,8 +2,8 @@ import React from 'react';
 import './HomeButton.css';
 
 /**
- * HomeButton — simple fixed home icon shown in every scene and zone welcome.
- * Tapping navigates back to the main map.
+ * HomeButton — fixed home icon shown in every scene and zone welcome.
+ * Lavender circle style matching the profile chip on the map.
  */
 const HomeButton = ({ onNavigate, position = 'top-left' }) => {
   const handleHome = () => {
@@ -16,25 +16,11 @@ const HomeButton = ({ onNavigate, position = 'top-left' }) => {
       onClick={handleHome}
       aria-label="Go back to zone"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 48 48"
-        fill="none"
+      <img
+        src="/images/icons/icon-home.svg"
+        alt=""
         className="home-button__icon"
-      >
-        {/* Roof */}
-        <path
-          d="M24 6L4 22h6v18h10V28h8v12h10V22h6L24 6z"
-          fill="#FFFFFF"
-          stroke="#FFFFFF"
-          strokeWidth="1"
-          strokeLinejoin="round"
-        />
-        {/* Door */}
-        <rect x="19" y="28" width="10" height="12" rx="2" fill="#F4A261" />
-        {/* Chimney */}
-        <rect x="30" y="10" width="5" height="8" rx="1" fill="#FFFFFF" />
-      </svg>
+      />
     </button>
   );
 };

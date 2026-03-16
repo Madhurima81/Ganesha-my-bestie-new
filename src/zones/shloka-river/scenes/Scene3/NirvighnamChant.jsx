@@ -369,7 +369,7 @@ console.log('ðŸ•‰ï¸ NirvighnamChantContent render', {
   };
 
       const handleSaveCombinedGameState = (gameState) => {
-  console.log('Ã°Å¸'Â¾ Saving combined game state:', gameState);
+  console.log('Saving combined game state:', gameState);
   
   sceneActions.updateState({
     combinedGameState: gameState

@@ -201,18 +201,16 @@ const SymbolSidebar = ({
                 const symbol = symbolInfo[symbolId];
                 const isHighlighted = highlightSymbols.includes(symbolId);
                 const isTapped = tappedSymbols[symbolId];
+                const needsAttention = !isTapped;
 
                 return (
                   <div
                     key={symbolId}
                     id={`sidebar-${symbolId}`}
-                    className={`symbol-discovery-icon ${isHighlighted ? 'symbol-discovery-pulse' : ''} ${isTapped ? 'symbol-discovery-tapped' : ''}`}
+                    className={`symbol-discovery-icon ${isHighlighted ? 'symbol-discovery-pulse' : ''} ${isTapped ? 'symbol-discovery-tapped' : ''} ${needsAttention ? 'symbol-discovery-soft-glow' : ''}`}
                     onClick={() => handleSymbolClick(symbolId)}
                   >
                     <img src={symbol.colorIcon} alt={symbol.title} />
-                    {!isTapped && (
-                      <div className="tap-indicator">TAP!</div>
-                    )}
                   </div>
                 );
               })}
@@ -247,13 +245,13 @@ const SymbolSidebar = ({
         {displaySymbols.map((symbolId) => {
           const symbol = symbolInfo[symbolId];
           const isDiscovered = discoveredSymbols[symbolId];
-          const needsTap = isDiscovered && !tappedSymbols[symbolId];
+          const needsAttention = isDiscovered && !tappedSymbols[symbolId];
 
           return (
             <div
               key={symbolId}
               id={`sidebar-${symbolId}`}
-              className={getIconClass(symbolId)}
+              className={`${getIconClass(symbolId)} ${needsAttention ? 'ganesha-icon-soft-glow' : ''}`}
               onClick={() => handleSymbolClick(symbolId)}
               style={{
                 backgroundImage: `url(${symbol.colorIcon})`,
@@ -262,9 +260,6 @@ const SymbolSidebar = ({
               }}
               title={isDiscovered ? symbol.title : 'Symbol not yet discovered'}
             >
-              {needsTap && (
-                <div className="tap-indicator">TAP!</div>
-              )}
             </div>
           );
         })}

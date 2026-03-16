@@ -31,7 +31,6 @@ const ZONE_CONTENT_TYPES = {
 const ZoneWelcome = ({ 
   zoneData,           // Zone configuration object
   onSceneSelect,      // Function to navigate to specific scene
-  onBackToMap,        // Function to return to map
   onNavigate          // General navigation function
 }) => {
   const [sceneProgress, setSceneProgress] = useState({});
@@ -597,15 +596,6 @@ if (tempData) {
   }
 };
 
-  const handleBackToMap = () => {
-    console.log('⬅️ Back to map clicked');
-    if (onBackToMap) {
-      onBackToMap();
-    } else if (onNavigate) {
-      onNavigate('map');
-    }
-  };
-
   const renderStars = (count) => {
     return Array.from({ length: 3 }, (_, i) => (
       <span key={i} className={`scene-star ${i < count ? 'earned' : 'empty'}`}>
@@ -670,11 +660,6 @@ if (tempData) {
 >
   🔍 DEBUG STATUS
 </button>
-
-      {/* Back to Map Button */}
-      <button className="zone-back-button" onClick={handleBackToMap}>
-        ← Back to Map
-      </button>
 
       <div className="zone-title-top">
         <ScreenHeader title={zoneData.name} glowColor="gold" />
