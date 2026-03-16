@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 82">
+  <!-- Left upper wing -->
+  <path d="M45,38 Q28,10 10,16 Q8,30 25,40 Q34,44 45,40 Z" fill="#87CEFA"/>
+  <!-- Right upper wing -->
+  <path d="M45,38 Q62,10 80,16 Q82,30 65,40 Q56,44 45,40 Z" fill="#87CEFA"/>
+  <!-- Left lower wing -->
+  <path d="M44,44 Q24,50 16,64 Q26,70 40,58 Q44,52 44,46 Z" fill="#6BB8F0"/>
+  <!-- Right lower wing -->
+  <path d="M46,44 Q66,50 74,64 Q64,70 50,58 Q46,52 46,46 Z" fill="#6BB8F0"/>
+  <!-- Wing highlight spots -->
+  <circle cx="28" cy="26" r="5" fill="rgba(255,255,255,0.35)"/>
+  <circle cx="62" cy="26" r="5" fill="rgba(255,255,255,0.35)"/>
+  <circle cx="26" cy="54" r="3.5" fill="rgba(255,255,255,0.25)"/>
+  <circle cx="64" cy="54" r="3.5" fill="rgba(255,255,255,0.25)"/>
+  <!-- Body -->
+  <ellipse cx="45" cy="44" rx="4.5" ry="20" fill="#5C3A1E"/>
+  <!-- Head -->
+  <circle cx="45" cy="24" r="5" fill="#5C3A1E"/>
+  <!-- Antennae -->
+  <path d="M43,20 Q36,10 32,5" stroke="#5C3A1E" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <circle cx="31" cy="4" r="3" fill="#5C3A1E"/>
+  <path d="M47,20 Q54,10 58,5" stroke="#5C3A1E" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <circle cx="59" cy="4" r="3" fill="#5C3A1E"/>
+</svg>

@@ -1,5 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { VitePWA } from 'vite-plugin-pwa'
+import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
 import fs from 'fs'
 import path from 'path'
 
@@ -40,7 +42,74 @@ function caseSensitivePlugin() {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [caseSensitivePlugin(), react()],
+  plugins: [
+    caseSensitivePlugin(),
+    react(),
+    // PNG → WebP conversion only — SVGs are untouched (clean in Inkscape first)
+    ViteImageOptimizer({
+      test: /\.(png|jpe?g)$/i,   // only raster images
+      png:  { quality: 82 },
+      jpeg: { quality: 82 },
+      jpg:  { quality: 82 },
+    }),
+    VitePWA({
+      registerType: 'autoUpdate',
+      // Use existing public/manifest.json — don't let the plugin override it
+      manifest: false,
+      workbox: {
+        // Precache only JS/CSS/HTML + small icons — NOT full images or audio (too large)
+        globPatterns: ['**/*.{js,css,html}', 'icons/*.{png,svg,ico}'],
+        // Explicitly exclude large asset folders from precache scan
+        globIgnores: ['**/audio/**', '**/images/**', '**/words/**'],
+        // Hard cap: skip anything over 500 KB in the precache sweep
+        maximumFileSizeToCacheInBytes: 1 * 1024 * 1024,
+        // Serve offline.html when a page navigation fails (no connection)
+        navigateFallback: '/offline.html',
+        navigateFallbackDenylist: [/^\/api\//],
+        runtimeCaching: [
+          // Audio: cache-first, keep indefinitely
+          {
+            urlPattern: /\/audio\/.+\.(mp3|wav)$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'ganesha-audio',
+              expiration: { maxEntries: 300 },
+              cacheableResponse: { statuses: [0, 200] }
+            }
+          },
+          // Images not in build output (public/images): cache-first, 30 days
+          {
+            urlPattern: /\/images\/.+\.(png|jpg|jpeg|svg|webp)$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'ganesha-images',
+              expiration: { maxEntries: 150, maxAgeSeconds: 30 * 24 * 60 * 60 },
+              cacheableResponse: { statuses: [0, 200] }
+            }
+          },
+          // Google Fonts stylesheet: stale-while-revalidate
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'google-fonts-stylesheets',
+              expiration: { maxEntries: 5, maxAgeSeconds: 365 * 24 * 60 * 60 }
+            }
+          },
+          // Google Fonts files: cache-first, 1 year
+          {
+            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-webfonts',
+              expiration: { maxEntries: 20, maxAgeSeconds: 365 * 24 * 60 * 60 },
+              cacheableResponse: { statuses: [0, 200] }
+            }
+          }
+        ]
+      }
+    })
+  ],
   
   server: {
     hmr: {

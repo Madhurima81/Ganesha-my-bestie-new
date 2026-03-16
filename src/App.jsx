@@ -1,21 +1,22 @@
 // App.jsx - Updated with Dynamic Scene Loading System
 
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import './App.css';
 import './Enhanced.css'
 import GaneshaCharacter from './lib/components/character/GaneshaCharacter';
 
-import MainWelcomeScreen from './lib/components/navigation/MainWelcomeScreen';
-import CleanGameWelcomeScreen from './lib/components/navigation/CleanGameWelcomeScreen';
-import CleanProfileSelector from './lib/components/navigation/CleanProfileSelector';
-import CleanMapZone from './pages/CleanMapZone';
-import ZoneWelcome from './lib/components/zone/ZoneWelcome';
+const MainWelcomeScreen    = lazy(() => import('./lib/components/navigation/MainWelcomeScreen'));
+const CleanGameWelcomeScreen = lazy(() => import('./lib/components/navigation/CleanGameWelcomeScreen'));
+const CleanProfileSelector = lazy(() => import('./lib/components/navigation/CleanProfileSelector'));
+const CleanMapZone         = lazy(() => import('./pages/CleanMapZone'));
+const ZoneWelcome          = lazy(() => import('./lib/components/zone/ZoneWelcome'));
 import { getZoneConfig } from './lib/components/zone/ZoneConfig';
 import GameStateManager from './lib/services/GameStateManager';
 import { GameCoachProvider } from './lib/components/coach/GameCoach';
 import ProgressManager from './lib/services/ProgressManager';
 import SimpleSceneManager from './lib/services/SimpleSceneManager';
-import { initializeSounds } from './lib/utils/SoundManager';
+// initializeSounds replaced by initAudioService() in main.jsx (AudioService/Howler)
+import { Analytics } from './lib/services/analytics';
 
 const SCENE_MAPPING = {
   'symbol-mountain': {
@@ -71,22 +72,28 @@ const [loadingStep, setLoadingStep] = useState(''); // ADD THIS LINE
   console.log('🌟 Clean App rendering - current view:', currentView);
   console.log('🎯 Current zone:', currentZone, 'Current scene:', currentScene);
   
-  // 🎯 DYNAMIC SCENE LOADER: Load scene component dynamically
+  // 🎯 DYNAMIC SCENE LOADER: cached so React.lazy() is never called twice for the same scene
+  const _sceneCache = useRef({});
   const loadSceneComponent = (zoneId, sceneId) => {
+    const key = `${zoneId}/${sceneId}`;
+    if (_sceneCache.current[key]) return _sceneCache.current[key];
+
     const zoneMapping = SCENE_MAPPING[zoneId];
     if (!zoneMapping) {
       console.error(`🚫 Zone "${zoneId}" not found in SCENE_MAPPING`);
       return null;
     }
-    
+
     const sceneLoader = zoneMapping[sceneId];
     if (!sceneLoader) {
       console.error(`🚫 Scene "${sceneId}" not found in zone "${zoneId}"`);
       return null;
     }
-    
+
     console.log(`🎯 Loading scene: ${zoneId}/${sceneId}`);
-    return lazy(sceneLoader);
+    const Component = lazy(sceneLoader);
+    _sceneCache.current[key] = Component;
+    return Component;
   };
 
   // 🎯 PLACEHOLDER SCENE: For scenes that don't exist yet
@@ -256,8 +263,7 @@ const initializeApp = async () => {
     setLoadingProgress(0);
     setLoadingStep('Starting your adventure...');
     
-    // Step 1: Initialize Sound System (20%)
-    await initializeSounds();
+    // Step 1: Sound system already initialised via initAudioService() in main.jsx
     setLoadingProgress(20);
     setLoadingStep('Loading magical sounds...');
     await new Promise(resolve => setTimeout(resolve, 300));
@@ -484,7 +490,8 @@ const handleContinue = (targetZone, targetScene) => {
 
   const handleZoneSelect = (zoneId, sceneId = null) => {
   console.log('🎯 Zone selected:', zoneId, sceneId ? `Scene: ${sceneId}` : 'No scene');
-  
+  Analytics.zoneEntered(zoneId);
+
   setCurrentZone(zoneId);
   
   if (sceneId) {
@@ -799,6 +806,7 @@ chants: result?.chants || result?.chantedVerses || {},
       image: 'images/ganesha-character.png',
       position: 'top-right'
     }}>
+    <Suspense fallback={<div className="enhanced-loading-screen" />}>
 {currentView === 'loading' && (
   <div className="enhanced-loading-screen">
 
@@ -993,6 +1001,7 @@ if (tempData.playAgainRequested) {
           <button onClick={() => setCurrentView('map')}>Go to Map</button>
         </div>
       )}
+    </Suspense>
     </GameCoachProvider>
   );
 }

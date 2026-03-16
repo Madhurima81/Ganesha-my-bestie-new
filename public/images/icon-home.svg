@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56">
+  <!-- Background rounded square -->
+  <rect width="56" height="56" rx="12" ry="12" fill="#2D3250"/>
+  <!-- House roof (triangle) -->
+  <polygon points="28,10 10,28 46,28" fill="white"/>
+  <!-- Roof ridge cap -->
+  <rect x="24" y="8" width="8" height="5" rx="2" fill="white"/>
+  <!-- House body -->
+  <rect x="14" y="27" width="28" height="20" rx="2" fill="white"/>
+  <!-- Door -->
+  <rect x="22" y="34" width="12" height="13" rx="3" fill="#2D3250"/>
+</svg>

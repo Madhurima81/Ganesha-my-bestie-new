@@ -8,8 +8,16 @@ import GaneshaExpressionTest from './lib/components/character/GaneshaExpressionT
 //import AppV1 from './AppV1.jsx'
 
 import './index.css'
+import { cloudSync } from './lib/services/CloudSync'
+import { initAnalytics } from './lib/services/analytics'
+import { initErrorMonitoring } from './lib/services/errorMonitoring'
+import { initAudioService } from './lib/services/AudioService'
 
-// test 2
+// Initialise services (all no-ops if env keys are missing)
+initErrorMonitoring();   // Sentry — init first so it catches early errors
+initAnalytics();         // PostHog
+cloudSync.init();        // Supabase cloud sync
+initAudioService();      // Preload Howler SFX instances
 
 const isExpressionPreview = new URLSearchParams(window.location.search).get('preview') === 'ganesha';
 
