@@ -1748,7 +1748,11 @@ const SuryakotiBankContent = ({
                   completed: true,
                   stars: 5,
                   syllables: sceneState.learnedSyllables,
-                  words: sceneState.learnedWords
+                  words: sceneState.learnedWords,
+                  chantedVerses: {
+                    'suryakoti-chant': true,
+                    'samaprabha-chant': true
+                  }
                 });
 
                 GameStateManager.saveGameState('shloka-river', 'suryakoti-bank', {

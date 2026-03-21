@@ -8,7 +8,9 @@ import ScreenHeader from '../shared/ScreenHeader';
 import GameStateManager from '../../services/GameStateManager';
 import CulturalProgressExtractor from '../../services/CulturalProgressExtractor';
 import HomeButton from '../ui/HomeButton';
-import GaneshaCharacter from '../character/GaneshaCharacter';
+import GaneshaPresence from '../character/GaneshaPresence';
+import ProfileChip from '../navigation/ProfileChip';
+import GaneshaSceneWhisper from '../GaneshaSceneWhisper';
 
 
 //import ProgressManager from '../../services/ProgressManager';
@@ -36,6 +38,8 @@ const ZoneWelcome = ({
   const [sceneProgress, setSceneProgress] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [culturalData, setCulturalData] = useState(null); // ← ADD THIS LINE
+  const [isHomeExiting, setIsHomeExiting] = useState(false);
+  const [profileChipPulse, setProfileChipPulse] = useState(false);
 
   console.log('🏔️ ZoneWelcome rendered for zone:', zoneData?.name);
 
@@ -75,6 +79,16 @@ const ZoneWelcome = ({
     loadSceneProgress();
     setIsLoading(false);
   }, [zoneData]);
+
+  useEffect(() => {
+    const shouldPulse = sessionStorage.getItem('zone_welcome_profile_chip_pulse') === '1';
+    if (!shouldPulse) return;
+
+    sessionStorage.removeItem('zone_welcome_profile_chip_pulse');
+    setProfileChipPulse(true);
+    const timer = setTimeout(() => setProfileChipPulse(false), 850);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Add this line:
 
@@ -356,21 +370,22 @@ if (tempData) {
   try {
     const tempState = JSON.parse(tempData);
     
-    // ✅ NEW: Check for completion screen showing (still in-progress)
+    // Completion celebration was showing — treat as completed, show Replay only
     if (tempState.showingCompletionScreen === true) {
-      console.log(`🎬 COMPLETION SCREEN: ${scene.id} showing completion screen`);
-      return { status: 'in-progress', stars: tempState.stars || 0 };
+      console.log(`🎬 COMPLETION SCREEN: ${scene.id} → treating as completed, show Replay only`);
+      return { status: 'completed', stars: tempState.stars || progress?.stars || 0 };
     }
       
       // ✅ SCENE-SPECIFIC COMPLETION DETECTION
       let isCompleteInTemp = false;
       
       if (scene.id === 'modak') {
-        // Modak is complete if: phase is complete OR rockTransformed OR completed flag
+        // Modak is complete if: completed flag, phase complete, OR rock_transformed
+        // (rock_transformed = all gameplay done, fireworks/VO auto-playing, nothing left to interact with)
         isCompleteInTemp = (
           tempState.completed === true ||
-          tempState.phase === 'complete' 
-          //tempState.rockTransformed === true
+          tempState.phase === 'complete' ||
+          tempState.phase === 'rock_transformed'
         );
       } else if (scene.id === 'pond') {
         // Pond is complete if: phase is complete OR (elephantTransformed AND goldenLotusBloom) OR completed flag
@@ -397,6 +412,43 @@ if (tempData) {
     (tempState.placedSymbols && Object.keys(tempState.placedSymbols).length === 8) ||
     tempState.stars === 8
   );
+      } else if (scene.id === 'vakratunda-grove') {
+        // Complete if: both words learned, mahakaya_power phase (both games done,
+        // in final reveal — SceneManager stops saving after this), or explicitly complete
+        isCompleteInTemp = (
+          tempState.completed === true ||
+          tempState.phase === 'complete' ||
+          tempState.phase === 'mahakaya_power' ||
+          (tempState.learnedWords?.vakratunda === true && tempState.learnedWords?.mahakaya === true)
+        );
+      } else if (scene.id === 'family-tree') {
+        // Complete if: sideBySide phase reached (both trees shown) OR completion screen showing
+        isCompleteInTemp = (
+          tempState.completed === true ||
+          tempState.gamePhase === 'sideBySide' ||
+          tempState.showingCompletionScreen === true
+        );
+      } else if (scene.id === 'name-birthday') {
+        // Complete if: completion screen showing or completed flag
+        isCompleteInTemp = (
+          tempState.completed === true ||
+          tempState.showingCompletionScreen === true ||
+          tempState.phase === 'complete'
+        );
+      } else if (scene.id === 'favorite-food') {
+        // Complete if: completion screen showing or completed flag
+        isCompleteInTemp = (
+          tempState.completed === true ||
+          tempState.showingCompletionScreen === true ||
+          tempState.phase === 'complete'
+        );
+      } else if (scene.id === 'dreams-wishes') {
+        // Complete if: completion screen showing or completed flag
+        isCompleteInTemp = (
+          tempState.completed === true ||
+          tempState.showingCompletionScreen === true ||
+          tempState.phase === 'complete'
+        );
       } else {
         // Generic completion check
         isCompleteInTemp = (
@@ -417,6 +469,7 @@ if (tempData) {
   (tempState.gamePhase && !['intro', 'initial'].includes(tempState.gamePhase)) ||
   tempState.discoveredSymbols && Object.keys(tempState.discoveredSymbols).length > 0 ||
   tempState.mooshikaFound ||
+  tempState.moundStates?.some(state => state === 1) ||   // ✅ any mound tapped = in-progress
   tempState.collectedModaks?.length > 0 ||
   tempState.placedGaneshaMembers?.length > 0 ||
   tempState.childFamily?.length > 0 ||
@@ -455,6 +508,37 @@ if (tempData) {
   const getCardAccentColor = () => {
     const theme = getZoneTheme(zoneData?.id);
     return theme?.accentColor || '#9b7be8';
+  };
+
+  const getZoneWelcomeGaneshaState = () => {
+    if (!zoneData?.scenes?.length) return null;
+
+    const sceneStatuses = zoneData.scenes.map((scene) => ({
+      scene,
+      status: getSceneStatus(scene).status
+    }));
+
+    const completedCount = sceneStatuses.filter((entry) => entry.status === 'completed').length;
+    const allDone = completedCount === zoneData.scenes.length;
+
+    if (allDone) {
+      return { pose: 'celebration', slot: 'top', size: 128 };
+    }
+
+    const nextPendingIndex = sceneStatuses.findIndex(
+      (entry) => entry.status !== 'completed'
+    );
+    const slot = nextPendingIndex >= 0 ? `scene-${nextPendingIndex + 1}` : 'scene-1';
+
+    if (completedCount === 0) {
+      return { pose: 'pointing', slot, size: 112 };
+    }
+
+    if (completedCount === 1) {
+      return { pose: 'thumbs_up', slot, size: 114 };
+    }
+
+    return { pose: 'okay', slot, size: 110 };
   };
 
   // ✅ MVP: Only scene 1 is playable in each zone — scenes 2+ are "Coming Soon"
@@ -612,16 +696,23 @@ if (tempData) {
     );
   }
 
+  const zoneWelcomeGaneshaState = getZoneWelcomeGaneshaState();
+
   return (
     <div
-      className={`zone-welcome-container screen ${zoneData.id}`}
+      className={`zone-welcome-container screen ${zoneData.id} ${isHomeExiting ? 'zone-welcome-exiting' : ''}`}
       data-zone={zoneData.id}
       style={{
         '--zone-bg': `url('${zoneData.background}')`,
         '--zone-text-primary': getZoneTheme(zoneData.id)?.textPrimary || '#6B5416'
       }}
     >
-      <HomeButton onNavigate={onNavigate} />
+      <HomeButton
+        onNavigate={onNavigate}
+        onPrepareNavigate={() => setIsHomeExiting(true)}
+        transitionMs={130}
+      />
+      <ProfileChip onNavigate={onNavigate} pulseOnce={profileChipPulse} />
       <div className="bg-layer"></div>
 
       {/* 🔍 TEMPORARY DEBUG BUTTON */}
@@ -663,13 +754,34 @@ if (tempData) {
 
       <div className="zone-title-top">
         <ScreenHeader title={zoneData.name} glowColor="gold" />
-        <div className="zone-ganesha-welcome" aria-hidden="true">
-          <GaneshaCharacter expression="excited" size={110} />
-        </div>
+      </div>
+
+      {/* Zone Welcome Whisper — Ganesha greets child on zone entry */}
+      <div style={{ padding: '0 1rem 0.5rem', display: 'flex', justifyContent: 'flex-start' }}>
+        <GaneshaSceneWhisper
+          type="zone-welcome"
+          sceneId={zoneData.id}
+          childName={GameStateManager.getActiveProfile()?.name || ''}
+          childAge={GameStateManager.getActiveProfile()?.age || 7}
+          autoPlay={true}
+          size="medium"
+        />
       </div>
 
       {/* Scene Icons Grid */}
       <div className="zone-scenes-container cards-wrapper" data-zone={zoneData.id}>
+        {zoneWelcomeGaneshaState && (
+          <div
+            className={`zone-ganesha-presence zone-ganesha-presence--${zoneWelcomeGaneshaState.slot}`}
+            aria-hidden="true"
+          >
+            <GaneshaPresence
+              pose={zoneWelcomeGaneshaState.pose}
+              size={zoneWelcomeGaneshaState.size}
+              breathing={zoneWelcomeGaneshaState.pose === 'celebration' ? 'slow' : 'gentle'}
+            />
+          </div>
+        )}
         <div className="scenes-horizontal-container">
           {zoneData.scenes.map((scene, index) => {
             const status = getSceneStatus(scene);
@@ -760,6 +872,17 @@ if (tempData) {
                     <div className="scene-name">
                       {scene.name}
                     </div>
+                    {/* Scene Invite Whisper — tap Ganesha to hear what's inside */}
+                    {status.status !== 'locked' && (
+                      <GaneshaSceneWhisper
+                        type="scene-invite"
+                        sceneId={scene.id}
+                        childName={GameStateManager.getActiveProfile()?.name || ''}
+                        childAge={GameStateManager.getActiveProfile()?.age || 7}
+                        autoPlay={false}
+                        size="small"
+                      />
+                    )}
                   </div>
 
                   {/* ✨ NEW: Integrated Action Area (Bottom) */}

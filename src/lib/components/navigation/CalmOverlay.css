@@ -1,0 +1,302 @@
+/* ═══════════════════════════════════════════════════════════════
+   CalmOverlay.css — Tiny Story Calm Experience
+   Tone: calm · slow · safe · minimal stimulation
+   NO timers · NO progress bars · NO gamification
+   Fonts: Baloo 2 (labels) · Nunito (body) — NO EXCEPTIONS
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Full-screen veil backdrop ─────────────────────────────────────────────── */
+
+.co-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Start invisible */
+  background:             rgba(80, 60, 120, 0);
+  backdrop-filter:        blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+
+  transition:
+    background              0.40s ease,
+    backdrop-filter         0.40s ease,
+    -webkit-backdrop-filter 0.40s ease;
+
+  pointer-events: none;
+}
+
+/* Final visible state — spec: rgba(80,60,120,0.38) + blur(6px) */
+.co-veil-visible {
+  background:             rgba(80, 60, 120, 0.38);
+  backdrop-filter:        blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  pointer-events: all;
+  cursor: pointer; /* signal tap-to-close */
+}
+
+/* Exit */
+.co-veil-exit {
+  background:             rgba(80, 60, 120, 0)   !important;
+  backdrop-filter:        blur(0px)              !important;
+  -webkit-backdrop-filter: blur(0px)             !important;
+  pointer-events: none;
+}
+
+
+/* ── Floating particles ────────────────────────────────────────────────────── */
+
+.co-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.co-particle {
+  position: absolute;
+  border-radius: 50%;
+  animation: co-float 7s ease-in-out infinite;
+}
+
+@keyframes co-float {
+  0%   { transform: translateY(0)     scale(1);    opacity: 0.28; }
+  50%  { transform: translateY(-24px) scale(1.20); opacity: 0.65; }
+  100% { transform: translateY(0)     scale(1);    opacity: 0.28; }
+}
+
+
+/* ── Ganesha watermark ─────────────────────────────────────────────────────── */
+
+.co-watermark {
+  position: absolute;
+  font-size: 220px;
+  opacity: 0.045;
+  user-select: none;
+  pointer-events: none;
+  top:  50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: co-wm-pulse 10s ease-in-out infinite;
+}
+
+@keyframes co-wm-pulse {
+  0%, 100% { opacity: 0.035; transform: translate(-50%, -50%) scale(1);    }
+  50%       { opacity: 0.058; transform: translate(-50%, -50%) scale(1.04); }
+}
+
+
+/* ── Story panel ─────────────────────────────────────────────────────────────
+   Spec: background rgba(255,255,255,0.82) · blur(18px) · radius 26px
+         padding 28px 26px 32px · shadow 0 18px 40px rgba(60,40,120,0.18)
+         width 320px · max-width 86vw · text-align: center
+───────────────────────────────────────────────────────────────────────────── */
+
+.co-panel {
+  position:  relative;
+  width:     480px;
+  max-width: 90vw;
+
+  background:             rgba(255, 255, 255, 0.82);
+  backdrop-filter:        blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: 26px;
+  padding:    36px 40px 40px;
+  box-shadow: 0 18px 40px rgba(60, 40, 120, 0.18);
+
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  text-align:     center;
+  cursor: default; /* panel doesn't dismiss on click */
+
+  /* Entry: invisible + shifted down */
+  opacity:    0;
+  transform:  translateY(20px);
+  transition: opacity 0.36s ease-out, transform 0.36s ease-out;
+}
+
+.co-panel-visible {
+  opacity:   1;
+  transform: translateY(0);
+}
+
+.co-panel-exit {
+  opacity:    0 !important;
+  transform:  translateY(12px) !important;
+  transition: opacity 0.26s ease-in, transform 0.26s ease-in !important;
+}
+
+
+/* ── Soft close ✕ ──────────────────────────────────────────────────────────── */
+
+.co-close {
+  position:   absolute;
+  top:   12px;
+  right: 14px;
+  background: none;
+  border:     none;
+  cursor:     pointer;
+  font-size:  15px;
+  color:  rgba(90, 78, 130, 0.40); /* spec: opacity 40% */
+  padding:    8px;
+  line-height: 1;
+  border-radius: 50%;
+  min-width:  32px;
+  min-height: 32px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.co-close:hover,
+.co-close:focus-visible {
+  color:       rgba(90, 78, 130, 0.85);
+  background:  rgba(90, 78, 130, 0.08);
+  outline:     none;
+}
+
+
+/* ── Symbol micro icon ─────────────────────────────────────────────────────── */
+/* Spec: font-size 28px · opacity 70% · margin-bottom 12px               */
+
+.co-symbol-icon {
+  display:       block;
+  font-size:     28px;
+  opacity:       0.70;
+  margin-top:    4px;
+  margin-bottom: 12px;
+  line-height:   1;
+}
+
+
+/* ── Technique label ───────────────────────────────────────────────────────── */
+/* Spec: 13px · letter-spacing 0.12em · uppercase · #7B6F98 · weight 500  */
+
+.co-technique-label {
+  font-family:     'Baloo 2', cursive;
+  font-size:       13px;
+  font-weight:     500;
+  letter-spacing:  0.12em;
+  text-transform:  uppercase;
+  color:           #7B6F98;
+  margin:          0 0 0 0;
+  line-height:     1.4;
+}
+
+
+/* ── Story text ────────────────────────────────────────────────────────────── */
+/* Spec: 17px · line-height 1.6 · color #4A4458 · weight 400              */
+/*       max-width 260px · text-align center · margin 16px auto           */
+
+.co-story-text {
+  font-family: 'Nunito', sans-serif;
+  font-size:   17px;
+  font-weight: 400;
+  line-height: 1.6;
+  color:       #4A4458;
+  max-width:   380px;
+  margin:      16px auto 0;
+}
+
+
+/* ── Breathing ripple area ─────────────────────────────────────────────────── */
+/* Spec: base 72px · #CFC6F3 · opacity 35%                                 */
+/*       ripple: expandFade 4s · scale 1→1.6 · opacity 0.5→0              */
+
+.co-breath-area {
+  position: relative;
+  width:    116px; /* room for 72px × 1.6 = 115.2px */
+  height:   116px;
+  display:        flex;
+  align-items:    center;
+  justify-content: center;
+  margin-top: 20px;
+  flex-shrink: 0;
+}
+
+/* Static base circle */
+.co-breath-base {
+  width:         72px;
+  height:        72px;
+  border-radius: 50%;
+  background:    #CFC6F3;
+  opacity:       0.35;
+  z-index:       1;
+}
+
+/* Ripple — positioned absolute to sit on top of base */
+.co-breath-ripple {
+  position:      absolute;
+  width:         72px;
+  height:        72px;
+  border-radius: 50%;
+  background:    #CFC6F3;
+  opacity:       0;
+  z-index:       2;
+}
+
+.co-ripple-active {
+  animation: co-expand-fade 4s ease-in-out infinite;
+}
+
+@keyframes co-expand-fade {
+  0%   { transform: scale(1.00); opacity: 0.50; }
+  75%  { transform: scale(1.56); opacity: 0.04; }
+  100% { transform: scale(1.60); opacity: 0;    }
+}
+
+
+/* ── Breath cue text ───────────────────────────────────────────────────────── */
+/* Spec: 14px · color #8A82A6 · margin-top 14px                           */
+
+.co-breath-cue {
+  font-family: 'Nunito', sans-serif;
+  font-size:   14px;
+  font-weight: 400;
+  color:       #8A82A6;
+  margin:      14px 0 0;
+
+  /* Re-mount via React key → fade-in on every phase change */
+  animation: co-cue-appear 0.40s ease-out both;
+}
+
+@keyframes co-cue-appear {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+
+/* ── Closure line ──────────────────────────────────────────────────────────── */
+/* Spec: 14px · color #6E6590 · font-style italic · margin-top 12px       */
+/* Fades in after 3 cycles complete                                        */
+
+.co-closure-line {
+  font-family: 'Nunito', sans-serif;
+  font-size:   14px;
+  font-style:  italic;
+  color:       #6E6590;
+  margin:      12px 0 0;
+
+  opacity:    0;
+  transform:  translateY(6px);
+  transition: opacity 0.60s ease, transform 0.60s ease;
+  min-height: 20px; /* prevent layout shift */
+}
+
+.co-closure-visible {
+  opacity:   1;
+  transform: translateY(0);
+}
+
+
+/* ── Mobile ────────────────────────────────────────────────────────────────── */
+
+@media (max-width: 400px) {
+  .co-panel {
+    padding:    24px 18px 26px;
+    border-radius: 22px;
+  }
+  .co-story-text { font-size: 16px; }
+  .co-watermark  { font-size: 130px; }
+}

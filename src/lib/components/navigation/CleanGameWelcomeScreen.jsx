@@ -10,7 +10,7 @@ import CulturalProgressExtractor from '../../services/CulturalProgressExtractor'
 import ProgressPopup from './ProgressPopup';
 import GameIcon from '../ui/GameIcon';
 
-const CleanGameWelcomeScreen = ({ onContinue, onNewGame }) => {
+const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
   const [profiles, setProfiles] = useState({});
   const [currentProfile, setCurrentProfile] = useState(null);
   const [showProfileSelector, setShowProfileSelector] = useState(false);
@@ -145,13 +145,85 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame }) => {
     setShowProfileSelector(true);
   };
 
-  const handleContinue = () => {
-    const resumeLocation = SimpleSceneManager.getCurrentScene();
-    if (resumeLocation) {
-      onContinue(resumeLocation.zone, resumeLocation.scene);
-    } else {
-      onNewGame();
+  // Returns { zone, scene } for the most recently played location.
+  // scene is null if that session was completed → caller goes to zone-welcome.
+  // scene is set if session was mid-game → caller resumes that scene.
+  const getLastPlayedLocation = (profileId) => {
+    if (!profileId) return null;
+
+    const ZONE_SCENES = [
+      { zone: 'symbol-mountain',  scenes: ['pond', 'modak', 'symbol', 'final-scene'] },
+      { zone: 'cave-of-secrets',  scenes: ['vakratunda-mahakaya', 'suryakoti-samaprabha', 'nirvighnam-kurumedeva', 'sarvakaryeshu-sarvada', 'mantra-assembly'] },
+      { zone: 'shloka-river',     scenes: ['vakratunda-grove', 'suryakoti-bank', 'nirvighnam-chant', 'sarvakaryeshu-chant', 'shloka-river-finale'] },
+      { zone: 'festival-square',  scenes: ['game1', 'game2', 'game3', 'game4'] },
+      { zone: 'about-me-hut',     scenes: ['family-tree', 'name-birthday', 'favorite-things', 'obstacle-remover'] },
+    ];
+
+    // 1. Scan temp sessions — most recently touched wins
+    let latestZone = null;
+    let latestScene = null;
+    let latestCompleted = false;
+    let latestTimestamp = 0;
+
+    for (const { zone, scenes } of ZONE_SCENES) {
+      for (const scene of scenes) {
+        const raw = localStorage.getItem(`temp_session_${profileId}_${zone}_${scene}`);
+        if (!raw) continue;
+        try {
+          const data = JSON.parse(raw);
+          const ts = data?.timestamp || 1;
+          if (ts > latestTimestamp) {
+            latestTimestamp = ts;
+            latestZone = zone;
+            latestScene = scene;
+            // Treat as completed if any completion signal is present
+            latestCompleted = !!(
+              data.completed === true ||
+              data.phase === 'complete' ||
+              data.phase === 'all_complete' ||
+              data.phase === 'zone-complete' ||
+              data.showingCompletionScreen === true ||
+              data.showingZoneCompletion === true
+            );
+          }
+        } catch {
+          if (!latestZone) { latestZone = zone; latestScene = scene; latestCompleted = false; }
+        }
+      }
     }
+
+    if (latestZone) {
+      return { zone: latestZone, scene: latestCompleted ? null : latestScene };
+    }
+
+    // 2. Permanent progress fallback — last zone with any completed scene → zone-welcome
+    try {
+      const gameProgress = GameStateManager.getGameProgress();
+      const zones = gameProgress?.zones || {};
+      for (const { zone } of [...ZONE_SCENES].reverse()) {
+        const zoneData = zones[zone];
+        if (zoneData?.scenes && Object.values(zoneData.scenes).some(s => s.completed)) {
+          return { zone, scene: null };
+        }
+      }
+    } catch (e) {}
+
+    return null;
+  };
+
+  const handleContinue = () => {
+    const profileId = localStorage.getItem('activeProfileId');
+    const location = getLastPlayedLocation(profileId);
+
+    if (location) {
+      // scene set   → mid-game → resume that scene
+      // scene null  → completed → go to zone welcome
+      onContinue(location.zone, location.scene);
+      return;
+    }
+
+    // Nothing found → map
+    onNewGame();
   };
 
   const handleNewGame = () => {
@@ -474,6 +546,33 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame }) => {
                 Switch Explorer
               </button>
             </>
+          )}
+
+          {/* Parent Corner — subtle, below main actions */}
+          {onParentCorner && (
+            <button
+              onClick={onParentCorner}
+              style={{
+                background: 'none',
+                border: '1.5px solid #C4B5F4',
+                borderRadius: '24px',
+                padding: '10px 20px',
+                cursor: 'pointer',
+                fontFamily: 'Nunito, sans-serif',
+                fontSize: '13px',
+                fontWeight: '600',
+                color: '#8B7AB0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                width: '100%',
+                marginTop: '4px',
+                minHeight: '44px',
+              }}
+            >
+              👨‍👩‍👧 Parent Corner
+            </button>
           )}
         </div>
       </div>

@@ -409,7 +409,17 @@ const handleFireworksComplete = () => {
       // Update progress manager
       ProgressManager.updateSceneCompletion(profileId, zoneId, sceneId, {
         completed: true,
-        stars: 8
+        stars: 8,
+        chantedVerses: {
+          'vakratunda-chant': true,
+          'mahakaya-chant': true,
+          'suryakoti-chant': true,
+          'samaprabha-chant': true,
+          'nirvighnam-chant': true,
+          'kurumedeva-chant': true,
+          'sarvakaryeshu-chant': true,
+          'sarvada-chant': true
+        }
       });
       
       // 🎯 ADD THIS LINE - Clear temp session storage

@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
+import './GaneshaCharacter.css';
 
 // ─── SVG element IDs (new ganesha-final.svg) ──────────────────────────────────
 // layer18 → eyes:       g54 (left), g61 (right)
@@ -34,6 +35,25 @@ const MOUTH_C = {
   encouraging: 'c 0,0 7.83564,12.05878 25.07835,10.18808 17.10645,-1.85592 21.56854,-10.18995 21.5517,-10.18808',
 };
 
+const POSE_GROUP_IDS = [
+  'hand-fist',
+  'hand-victory',
+  'hand-thumbsup',
+  'hand-ok',
+  'hand-blessing',
+  'g7',
+  'g73',
+  'g75',
+  'g105',
+];
+const POSE_GROUP_MAP = {
+  blessing: ['hand-blessing'],
+  pointing: ['hand-fist', 'g73'],
+  thumbs_up: ['hand-thumbsup', 'g105'],
+  okay: ['hand-ok', 'g7'],
+  celebration: ['hand-victory', 'g75'],
+};
+
 // ─── Expression config ────────────────────────────────────────────────────────
 // eyeRy : iris vertical radius (default 7.5, bigger = wider eyes)
 // browDY: added to g65's translateY — negative = raise brows, positive = lower
@@ -52,8 +72,9 @@ let _svgPromise = null;
 function loadSvgOnce() {
   if (_svgText)    return Promise.resolve(_svgText);
   if (_svgPromise) return _svgPromise;
-  _svgPromise = fetch('/images/ganesha-final.svg')
-    .then(r => r.text())
+  _svgPromise = fetch('/images/ganesha-final-new.svg')
+    .then((r) => (r.ok ? r.text() : Promise.reject(new Error('ganesha-final-new.svg not found'))))
+    .catch(() => fetch('/images/ganesha-final.svg').then(r => r.text()))
     .then(text => { _svgText = text; return text; });
   return _svgPromise;
 }
@@ -97,12 +118,28 @@ function applyExpression(container, expression) {
   }
 }
 
+function applyPose(container, pose = 'blessing') {
+  const svg = container.querySelector('svg');
+  if (!svg) return;
+
+  const visibleIds = POSE_GROUP_MAP[pose] || POSE_GROUP_MAP.blessing;
+  POSE_GROUP_IDS.forEach((id) => {
+    const node = svg.querySelector(`#${id}`);
+    if (!node) return;
+    node.style.display = visibleIds.includes(id) ? 'inline' : 'none';
+  });
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 export default function GaneshaCharacter({
   expression = 'happy',
+  pose       = 'blessing',
   size       = 200,
+  breathing  = false,
+  blink      = false,
   className  = '',
   style      = {},
+  ...rest
 }) {
   const containerRef  = useRef(null);
   const injectedRef   = useRef(false);
@@ -130,12 +167,50 @@ export default function GaneshaCharacter({
   useEffect(() => {
     if (!ready || !injectedRef.current || !containerRef.current) return;
     applyExpression(containerRef.current, expression);
-  }, [expression, ready]);
+    applyPose(containerRef.current, pose);
+  }, [expression, pose, ready]);
+
+  useEffect(() => {
+    if (!ready || !injectedRef.current || !containerRef.current || !blink) return undefined;
+
+    let resetTimer = null;
+    const blinkInterval = setInterval(() => {
+      if (!containerRef.current) return;
+
+      const svg = containerRef.current.querySelector('svg');
+      if (!svg) return;
+
+      const leftEye = svg.querySelector('#ellipse47');
+      const rightEye = svg.querySelector('#ellipse58');
+      if (leftEye) leftEye.setAttribute('ry', '0.7');
+      if (rightEye) rightEye.setAttribute('ry', '0.7');
+
+      resetTimer = setTimeout(() => {
+        if (!containerRef.current) return;
+        applyExpression(containerRef.current, expression);
+      }, 130);
+    }, 3200);
+
+    return () => {
+      clearInterval(blinkInterval);
+      if (resetTimer) clearTimeout(resetTimer);
+    };
+  }, [blink, expression, ready]);
+
+  const breathClass =
+    breathing === true
+      ? 'ganesha-character--breathing-slow'
+      : typeof breathing === 'string' && breathing
+        ? `ganesha-character--breathing-${breathing}`
+        : '';
+
+  const rootClassName = ['ganesha-character', breathClass, className].filter(Boolean).join(' ');
 
   return (
     <div
       ref={containerRef}
-      className={className}
+      className={rootClassName}
+      {...rest}
       style={{
         display:     'inline-block',
         width:       size,

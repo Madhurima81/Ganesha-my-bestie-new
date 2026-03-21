@@ -66,6 +66,7 @@ import SymbolSidebar from '../../shared/components/SymbolSidebar';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import HomeButton from '../../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle';
+import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOverlay';
 
@@ -143,6 +144,7 @@ const PHASES = {
   ROCK_TRANSFORMED: 'rock_transformed',
   COMPLETE: 'complete'
 };
+const MINI_THUMBS_UP_ICON = '/images/hand-thumbsup.svg';
 
 const powerConfig = {
   mooshika: {
@@ -287,6 +289,15 @@ const NewModakSceneMVPContent = ({
   // ========================================
   // VOICE GUIDANCE HOOK
   // ========================================
+
+  // Keep a live ref to sceneState so onReturnHint never has stale closures
+  const sceneStateRef = useRef(sceneState);
+  sceneStateRef.current = sceneState;
+
+  // Stable callback passed to useVoiceGuidance; actual impl assigned after safeSetTimeout is ready
+  const onReturnHintImplRef = useRef(null);
+  const onReturnHint = useCallback(() => onReturnHintImplRef.current?.(), []);
+
   const {
     playVoice,
     stopVoice,
@@ -303,7 +314,8 @@ const NewModakSceneMVPContent = ({
     voiceVolume: 1,
     sfxVolume: 0.35,
     idleTimeout: 20,
-    resumeDelay: RESUME_DELAY_MS   // waits for countdown before replaying VO / music
+    resumeDelay: RESUME_DELAY_MS,  // waits for countdown before replaying VO / music
+    onReturnHint,                  // called when child returns with no VO queued
   });
 
   // Refs that point to pauseCelebrationTransition / resumeCelebrationTransition
@@ -311,7 +323,11 @@ const NewModakSceneMVPContent = ({
   const pauseCelebRef = useRef(null);
   const resumeCelebRef = useRef(null);
   const onPauseHide = useCallback(() => pauseCelebRef.current?.(), []);
-  const onPauseShow = useCallback(() => resumeCelebRef.current?.(), []);
+  const onPauseShow = useCallback(() => {
+    resumeCelebRef.current?.();
+    // Reset hint timers so the child gets a fresh 12-15s window after returning
+    setHintResetKey(k => k + 1);
+  }, []);
 
   // Drop-in for safeSetTimeout — auto-pauses on tab hide, resumes after countdown
   const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({
@@ -381,6 +397,35 @@ const NewModakSceneMVPContent = ({
   const hasShownDragHintRef = useRef(false);
   const [showIdleGestureHint, setShowIdleGestureHint] = useState(false);
   const idleHintsEnabled = true;
+  const miniGestureTimerRef = useRef(null);
+  const [miniGesture, setMiniGesture] = useState({
+    show: false,
+    target: 'center',
+    durationMs: 1500,
+    key: 0
+  });
+
+  // Incremented each time the child returns from a tab switch (after countdown).
+  // Adding this to the hint useEffect deps forces timers to reset to a fresh
+  // 12-15s window so hint glow never fires during or right after the return VO.
+  const [hintResetKey, setHintResetKey] = useState(0);
+
+  const triggerMiniGesture = useCallback((target = 'center', durationMs = 1500) => {
+    if (miniGestureTimerRef.current) {
+      clearTimeout(miniGestureTimerRef.current);
+      miniGestureTimerRef.current = null;
+    }
+    setMiniGesture(prev => ({
+      show: true,
+      target,
+      durationMs,
+      key: prev.key + 1
+    }));
+    miniGestureTimerRef.current = setTimeout(() => {
+      setMiniGesture(prev => ({ ...prev, show: false }));
+      miniGestureTimerRef.current = null;
+    }, durationMs);
+  }, []);
 
   // ========================================
   // TIMER / FLOW STATE
@@ -410,6 +455,32 @@ const NewModakSceneMVPContent = ({
     !!revealConfig ||          // Block while SymbolAutoReveal is showing
     sceneState.phase === PHASES.ALL_COLLECTED || // Block during modak completion ? reveal transition
     sceneState.phase === PHASES.ROCK_TRANSFORMED; // Block during feeding completion ? reveal transition
+
+  // Phase-aware hint when child returns from a tab switch with no VO queued (Bug 3).
+  // Uses refs so the callback never has stale closures.
+  const isCelebRef = useRef(false);
+  isCelebRef.current = isCelebrationOrOverlayActive;
+  onReturnHintImplRef.current = () => {
+    const s = sceneStateRef.current;
+    if (!s?.welcomeShown || isCelebRef.current) return;
+    const phase = s.phase;
+    safeSetTimeout(() => {
+      if (phase === PHASES.MOOSHIKA_SEARCH) {
+        playVoice('findMooshika');
+        setCurrentPhase('findMooshika');
+      } else if (phase === PHASES.MOOSHIKA_FOUND) {
+        // SymbolAutoReveal card flip is about to show — stop any replayed VO
+        // so it doesn't talk over the flip animation.
+        stopVoice();
+      } else if (phase === PHASES.MODAKS_UNLOCKED || phase === PHASES.SOME_COLLECTED) {
+        playVoice('collectStart');
+        setCurrentPhase('collectModaks');
+      } else if (phase === PHASES.ROCK_VISIBLE || phase === PHASES.ROCK_FEEDING) {
+        playVoice('feedGanesha');
+        setCurrentPhase('shareWithGanesha');
+      }
+    }, 500);
+  };
 
   const isFinalCelebrationActive =
     showSparkle === 'final-fireworks' ||
@@ -628,6 +699,10 @@ const NewModakSceneMVPContent = ({
     return () => {
       clearAllTimeouts();
       clearCelebrationTimer();
+      if (miniGestureTimerRef.current) {
+        clearTimeout(miniGestureTimerRef.current);
+        miniGestureTimerRef.current = null;
+      }
       celebrationRunIdRef.current += 1;
       stopMusic();
       if (idleHintsEnabled) stopIdleTimer();
@@ -652,10 +727,21 @@ const NewModakSceneMVPContent = ({
       }
     }
 
-    // 2. RESTORE MOOSHIKA POPUP (Power Unlock 1)
-    // If Mooshika is found but we haven't unlocked modaks yet, show the popup again.
+    // 2. RESTORE MOOSHIKA CARD FLIP (Power Unlock 1)
+    // Mooshika found but card flip (SymbolAutoReveal) not yet shown.
+    // Old system used showDiscoveryFlip1 — now we trigger setRevealConfig directly.
+    // Short delay so Mooshika has time to render in her saved position first.
     if (sceneState.phase === PHASES.MOOSHIKA_FOUND) {
-      setShowDiscoveryFlip1(true);
+      setTimeout(() => {
+        playChime();
+        setRevealConfig({
+          symbolId: 'mooshika',
+          symbolImage: symbolMooshikaColored,
+          symbolName: 'Mooshika',
+          affirmation: 'I can focus.',
+          sidebarTarget: getSidebarTarget('mooshika')
+        });
+      }, 1200);
     }
 
     // 3. RESET PARTIAL MODAK COLLECTION
@@ -685,10 +771,20 @@ const NewModakSceneMVPContent = ({
       }, 500);
     }
 
-    // 4. RESTORE MODAK POPUP (Power Unlock 2)
-    // If all modaks collected but rock isn't visible yet, show the popup again.
+    // 4. RESTORE MODAK CARD FLIP (Power Unlock 2)
+    // All modaks collected but SymbolAutoReveal for modak not yet shown.
+    // Old system used showDiscoveryFlip2 — now trigger setRevealConfig directly.
     if (sceneState.phase === PHASES.ALL_COLLECTED && !sceneState.rockVisible) {
-      setShowDiscoveryFlip2(true);
+      setTimeout(() => {
+        playChime();
+        setRevealConfig({
+          symbolId: 'modak',
+          symbolImage: symbolModakColored,
+          symbolName: 'Modak',
+          affirmation: 'I share with joy.',
+          sidebarTarget: getSidebarTarget('modak')
+        });
+      }, 1200);
     }
 
     // 5. RESET PARTIAL FEEDING
@@ -720,12 +816,21 @@ const NewModakSceneMVPContent = ({
       }, 500);
     }
 
-    // 6. RESTORE BELLY POPUP & FIREWORKS (Power Unlock 3)
-    // If rock is transformed but scene isn't marked 'completed', user was likely
-    // watching fireworks or the final popup. Show popup again to replay the ending.
+    // 6. RESTORE BELLY CARD FLIP (Power Unlock 3)
+    // Rock transformed but SymbolAutoReveal for belly not yet shown.
+    // Old system used showDiscoveryFlip3 — now trigger setRevealConfig directly.
     if (sceneState.phase === PHASES.ROCK_TRANSFORMED && !sceneState.completed) {
       hasShownDragHintRef.current = true; // Don't re-show drag hint on reload
-      setShowDiscoveryFlip3(true);
+      setTimeout(() => {
+        playChime();
+        setRevealConfig({
+          symbolId: 'belly',
+          symbolImage: symbolBellyColored,
+          symbolName: 'Big Belly',
+          affirmation: 'I feel safe inside.',
+          sidebarTarget: getSidebarTarget('belly')
+        });
+      }, 1200);
     }
 
   }, []); // Empty dependency array ensures this runs only ONCE on reload
@@ -794,6 +899,9 @@ const NewModakSceneMVPContent = ({
 
   // Premium hint cadence: hint 1 (glow) at 12-15s, hint 2 (glow+gesture) at 18-22s total inactivity, hint 3+ every 25-35s
   useEffect(() => {
+    // ── Diagnostic: always log so we can verify effect is running ──
+    console.log(`[hint] effect ran — phase="${sceneState?.phase}" welcomeShown=${sceneState?.welcomeShown} resetKey=${hintResetKey}`);
+
     if (!idleHintsEnabled) {
       setShowHintGlow(false);
       setShowIdleGestureHint(false);
@@ -809,31 +917,41 @@ const NewModakSceneMVPContent = ({
       PHASES.ROCK_FEEDING
     ];
 
-    if (glowPhases.includes(sceneState?.phase) && sceneState?.welcomeShown) {
+    const phaseMatch = glowPhases.includes(sceneState?.phase);
+    console.log(`[hint] condition — phaseMatch=${phaseMatch} welcomeShown=${!!sceneState?.welcomeShown} → ${phaseMatch && sceneState?.welcomeShown ? 'ARMING' : 'SKIPPING'}`);
+
+    if (phaseMatch && sceneState?.welcomeShown) {
+      const hint1Delay = 12000 + Math.floor(Math.random() * 3000);
+      const hint2Delay = 6000 + Math.floor(Math.random() * 2000);
+      const hint3GapMs = 25000 + Math.floor(Math.random() * 10000);
+      console.log(`[hint] ARMED — hint1 in ${hint1Delay}ms, hint2 in +${hint2Delay}ms, hint3+ every ${hint3GapMs}ms`);
 
       // Hint 1: glow only, 12-15s after inactivity
       hint1Timer = setTimeout(() => {
+        console.log(`[hint] ✅ HINT-1 fired → glow ON (phase=${sceneState.phase})`);
         setShowHintGlow(true);
 
         // Hint 2: glow flash + gesture, 6-8s after hint 1 => 18-22s total inactivity
         hint2Timer = setTimeout(() => {
+          console.log(`[hint] HINT-2 fired → glow flash + gesture (phase=${sceneState.phase})`);
           setShowHintGlow(false);
           hint2bTimer = setTimeout(() => setShowHintGlow(true), 400);
           setShowIdleGestureHint(true);
           hint2HideTimer = setTimeout(() => setShowIdleGestureHint(false), 3500);
 
           // Hint 3+: every 25-35s after the previous hint
-          const gapMs = 25000 + Math.floor(Math.random() * 10000);
           repeatInterval = setInterval(() => {
+            console.log(`[hint] HINT-3+ fired → glow flash + gesture (phase=${sceneState.phase})`);
             setShowHintGlow(false);
             setTimeout(() => setShowHintGlow(true), 400);
             setShowIdleGestureHint(true);
             setTimeout(() => setShowIdleGestureHint(false), 3500);
-          }, gapMs);
-        }, 6000 + Math.floor(Math.random() * 2000)); // 6-8s after hint 1
-      }, 12000 + Math.floor(Math.random() * 3000)); // 12-15s after inactivity
+          }, hint3GapMs);
+        }, hint2Delay);
+      }, hint1Delay);
 
       return () => {
+        console.log(`[hint] cleanup phase=${sceneState.phase} resetKey=${hintResetKey}`);
         clearTimeout(hint1Timer);
         clearTimeout(hint2Timer);
         clearTimeout(hint2bTimer);
@@ -843,10 +961,11 @@ const NewModakSceneMVPContent = ({
         setShowIdleGestureHint(false);
       };
     } else {
+      console.log(`[hint] ⛔ SKIPPED — phase="${sceneState?.phase}" (in glowPhases: ${phaseMatch}) welcomeShown=${sceneState?.welcomeShown}`);
       setShowHintGlow(false);
       setShowIdleGestureHint(false);
     }
-  }, [sceneState?.phase, sceneState?.welcomeShown]);
+  }, [sceneState?.phase, sceneState?.welcomeShown, hintResetKey]);
 
   // ========================================
   // FIX: Handle Discovery Overlay Logic via useEffect
@@ -855,17 +974,13 @@ const NewModakSceneMVPContent = ({
   // 1. Handle Focus Power (Mooshika) Overlay
   useEffect(() => {
     if (showDiscoveryFlip1) {
-      // Ensure button is hidden initially
       setDiscoveryButtonVisible(false);
-
-      // Add a small delay to allow modal to animate in, then play VO
       const timer = setTimeout(() => {
         playVoice('focusPower', () => {
           playChime();
-          setDiscoveryButtonVisible(true); // Show button when VO ends
+          setDiscoveryButtonVisible(true);
         });
       }, 500);
-
       return () => clearTimeout(timer);
     }
   }, [showDiscoveryFlip1]);
@@ -944,7 +1059,8 @@ const NewModakSceneMVPContent = ({
     };
     const voKey = voMap[revealConfig.symbolId];
     if (!voKey) return;
-    const id = setTimeout(() => playVoice(voKey), 400);
+    // replayOnReturn: true — card is still on screen when child returns, replay VO so they know what to do
+    const id = setTimeout(() => playVoice(voKey, null, { replayOnReturn: true }), 400);
     return () => clearTimeout(id);
   }, [revealConfig]);
 
@@ -1025,7 +1141,15 @@ const NewModakSceneMVPContent = ({
       }, 950);
 
     } else if (symbolId === 'belly') {
-      // 950ms: bloom fully done ? icon settles into found state
+      // Release gratitudePower ("I feel safe inside") from interruptedVoiceRef tracking.
+      // Without this, if the child switches tab in the 2450ms window before triggerFireworks
+      // fires, handleShow will replay gratitudePower on return — which then races with
+      // sceneComplete VO and its setSceneCompleteVOFinished callback never fires → frozen.
+      // stopVoice() here is safe: if VO already finished it's a no-op; if still playing
+      // we intentionally cut it since the card has been accepted and we're moving on.
+      stopVoice();
+
+      // 950ms: bloom fully done → icon settles into found state
       safeSetTimeout(() => {
         sceneActions.updateState({
           discoveredSymbols: { ...sceneState.discoveredSymbols, belly: true }
@@ -1058,6 +1182,7 @@ const NewModakSceneMVPContent = ({
 
       // 2. PLAY SUCCESS VOICE (The "Yay" moment)
       playSparkle();
+      triggerMiniGesture('mound', 1500);
       playVoice('mooshikaFound');
       setShowSparkle('mooshika-found');
 
@@ -1072,16 +1197,16 @@ const NewModakSceneMVPContent = ({
         moundsVanishing: true
       });
 
-      // AUTO-PARK VISUALS
-      setTimeout(() => {
+      // AUTO-PARK VISUALS — safeSetTimeout so Mooshika doesn't move while tab is hidden
+      safeSetTimeout(() => {
         sceneActions.updateState({
           mooshikaPosition: { top: '48%', left: '45%' }
         });
         // Tiny speech bubble for visual flavor
-        setTimeout(() => {
+        safeSetTimeout(() => {
           //setMooshikaSpeechMessage("I'll wait here! Find the Modaks!");
           setShowMooshikaSpeech(true);
-          setTimeout(() => setShowMooshikaSpeech(false), 3000);
+          safeSetTimeout(() => setShowMooshikaSpeech(false), 3000);
         }, 500);
       }, 1500);
 
@@ -1111,6 +1236,10 @@ const NewModakSceneMVPContent = ({
       setShowSparkle(`mound-${moundIndex}`);
       sceneActions.updateState({ moundStates });
       setTimeout(() => setShowSparkle(null), 1000);
+      // Clear hint visuals immediately — glow + gesture stop on any interaction
+      setShowHintGlow(false);
+      setShowIdleGestureHint(false);
+      setHintResetKey(k => k + 1); // re-arm fresh 12-15s hint window from this point
     }
   };
 
@@ -1118,6 +1247,10 @@ const NewModakSceneMVPContent = ({
     recordInteraction();
     stopVoice(); // Cut any playing VO (idle hint / collect instruction) before tap SFX
     playUiTap();
+    // Clear hint visuals immediately on every modak tap
+    setShowHintGlow(false);
+    setShowIdleGestureHint(false);
+    setHintResetKey(k => k + 1);
 
     if (!sceneState.modaksUnlocked) return;
     if (sceneState.modakStates[modakIndex] === 1) return;
@@ -1133,6 +1266,11 @@ const NewModakSceneMVPContent = ({
     setTimeout(() => setShowSparkle(null), 1000);
 
     const collectedCount = collectedModaks.length;
+    if (collectedCount === 3) {
+      triggerMiniGesture('center', 2000);
+    } else {
+      triggerMiniGesture('modak', 1500);
+    }
 
     if (collectedCount === 3) {
       // Stop idle timer during transition
@@ -1201,6 +1339,10 @@ const NewModakSceneMVPContent = ({
     recordInteraction();
     stopVoice(); // Cut any playing VO (idle hint / feed instruction) before feed SFX
     playUiTap();
+    // Clear hint visuals immediately on every rock drop
+    setShowHintGlow(false);
+    setShowIdleGestureHint(false);
+    setHintResetKey(k => k + 1);
 
     const newCollectedModaks = sceneState.collectedModaks.filter(i => i !== modakIndex);
     const newFeedCount = sceneState.rockFeedCount + 1;
@@ -1208,6 +1350,11 @@ const NewModakSceneMVPContent = ({
 
     setShowSparkle('rock-feeding');
     playSparkle();
+    if (newFeedCount >= 3) {
+      triggerMiniGesture('rock', 2000);
+    } else {
+      triggerMiniGesture('rock', 1500);
+    }
 
     sceneActions.updateState({
       collectedModaks: newCollectedModaks,
@@ -1318,7 +1465,8 @@ const NewModakSceneMVPContent = ({
   // ========================================
   return (
     <div data-zone="symbol-mountain">
-      <HomeButton onNavigate={onNavigate} />
+      <HomeButton onNavigate={(dest) => { stopVoice(); onNavigate?.(dest); }} />
+      <ZoneBadgeButton zoneId="symbol-mountain" onBack={() => { stopVoice(); onNavigate?.('zone-welcome'); }} />
       <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
       {/* Flying Symbol Clone (useSymbolCollection) ï¿½ superseded by SymbolAutoReveal */}
       {/* {flyingSymbol && <img className="flying-symbol" src={flyingSymbol.src} alt="" style={flightStyle} />} */}
@@ -1619,11 +1767,27 @@ const NewModakSceneMVPContent = ({
                     <span className="modak-tap-hint-hand on-modak">👆</span>
                   </div>
                 ) : sceneState.phase === PHASES.MOOSHIKA_SEARCH ? (
-                  // MOOSHIKA_SEARCH: tap gesture over a mound
-                  <div className="modak-drag-hint-overlay" aria-hidden="true">
-                    <span className="modak-tap-hint-hand on-mound">👆</span>
+                  // MOOSHIKA_SEARCH: mini thumbs-up cue over a mound
+                  <div
+                    key={`idle-mound-${hintResetKey}-${sceneState.phase}`}
+                    className="ganesha-gesture-cue modak-mini-ganesha-cue modak-mini-ganesha-cue--mound modak-mini-ganesha-cue--idle"
+                    aria-hidden="true"
+                  >
+                    <img className="modak-mini-gesture-icon" src={MINI_THUMBS_UP_ICON} alt="" />
                   </div>
                 ) : null
+              )}
+
+              {/* MINI THUMBS-UP CUE — micro rewards + reassurance across phase transitions */}
+              {miniGesture.show && (
+                <div
+                  key={`mini-gesture-${miniGesture.key}`}
+                  className={`ganesha-gesture-cue modak-mini-ganesha-cue modak-mini-ganesha-cue--${miniGesture.target}`}
+                  style={{ '--mini-cue-duration': `${miniGesture.durationMs}ms` }}
+                  aria-hidden="true"
+                >
+                  <img className="modak-mini-gesture-icon" src={MINI_THUMBS_UP_ICON} alt="" />
+                </div>
               )}
 
               {/* SYMBOL LEARNING SPARKLES */}
@@ -1730,6 +1894,7 @@ const NewModakSceneMVPContent = ({
                 }}
                 onNextScene={() => {
                   console.log("Next scene clicked");
+                  stopVoice();
                   SimpleSceneManager.setCurrentScene('symbol-mountain', 'pond', false, false);
                   onNavigate?.('scene-complete-continue');
                 }}

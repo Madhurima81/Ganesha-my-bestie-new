@@ -112,6 +112,7 @@ export default defineConfig({
   ],
   
   server: {
+    host: true,   // expose on local network so iPad/Android can connect via IP
     hmr: {
       protocol: 'ws'
     },

@@ -60,6 +60,19 @@ export const VOICE_SCRIPTS = {
         file: '/audio/voicenew/vakratundachant/vakratunda-mahakaya-I am strong.wav'
       },
 
+      // ── Shared instructions — uncomment to activate when VO is ready ───────
+      // instructionListen:         { text: "Listen carefully!",                      file: 'instruction_watch_and_listen.mp3' },
+      // instructionTapAndRepeat:   { text: "Tap and repeat!",                        file: 'instruction_tap_and_repeat.mp3' },
+      // instructionTapTheElephant: { text: "Tap the elephant!",                      file: 'instruction_tap_the_elephant.mp3' },
+      // instructionTapLotus:       { text: "Tap the lotus!",                         file: 'instruction_tap_lotus.mp3' },
+      // instructionTapLotusWord:   { text: "Tap the lotus to hear the word!",        file: 'instruction_tap_lotus_word.mp3' },
+      // instructionTapLotusUnlock: { text: "Tap the lotus to unlock the full word!", file: 'instruction_tap_lotus_unlock.mp3' },
+      // hintLookForGlow:           { text: "Look for the glowing one!",              file: 'hint_look_for_glow.mp3' },
+      // hintTapTheShiny:           { text: "Tap the shiny syllable!",                file: 'hint_tap_the_shiny.mp3' },
+      // errorOops:                 { text: "Oops!",                                  file: 'error_oops.mp3' },
+      // errorNotQuite:             { text: "Not quite! Try again!",                  file: 'error_not_quite.mp3' },
+      // errorLetsTryAgain:         { text: "Let's try again!",                       file: 'error_lets_try_again.mp3' },
+
       // Word celebration (plays when a word is fully learned)
       chantWordReveal: {
         text: "Wonderful!",
@@ -168,6 +181,14 @@ export const VOICE_SCRIPTS = {
       },
 
       // ========================================
+      // GANESHA PHASE - INSTRUCTIONS
+      // ========================================
+      tapCircle: {
+        text: "Tap a circle to meet my family!",
+        file: 'family-tree-tap-circle.wav'
+      },
+
+      // ========================================
       // GANESHA PHASE - DEITY NAMES (plays after deity is placed)
       // ========================================
       shiva: {
@@ -212,20 +233,56 @@ export const VOICE_SCRIPTS = {
       // ========================================
       factFather: {
         text: "My father is calm and strong. He protects us and teaches me peace.",
-        file: '/audio/voicenew/familytree/ganesha_shiva_fact.wav'
+        file: 'family-tree-fact-father.wav'
       },
       factMother: {
         text: "My mother is kind and loving. She gives the best hugs and keeps me safe.",
-        file: '/audio/voicenew/familytree/ganesha_parvati_fact.wav'
+        file: 'family-tree-fact-mother.wav'
       },
       factBrother: {
         text: "My brother is very brave. He travels the world on his peacock.",
-        file: '/audio/voicenew/familytree/ganesha_kartikeya_fact.wav'
+        file: 'family-tree-fact-brother.wav'
+      },
+      factMyself: {
+        text: "That's me! I love modaks and helping my friends.",
+        file: 'family-tree-fact-myself.wav'
+      },
+
+      // ========================================
+      // GANESHA PHASE - INFO (tap placed avatar)
+      // ========================================
+      infoFather: {
+        text: "This is my father.",
+        file: 'family-tree-info-father.wav'
+      },
+      infoMother: {
+        text: "This is my mother.",
+        file: 'family-tree-info-mother.wav'
+      },
+      infoBrother: {
+        text: "This is my brother.",
+        file: 'family-tree-info-brother.wav'
+      },
+      infoMyself: {
+        text: "This is me!",
+        file: 'family-tree-info-myself.wav'
       },
 
       // ========================================
       // GANESHA PHASE - PROGRESS
       // ========================================
+      progressFirst: {
+        text: "Great start!",
+        file: 'family-tree-progress-first-ganesha.wav'
+      },
+      progressNearFull: {
+        text: "Almost done with my family!",
+        file: 'family-tree-progress-near-full-ganesha.wav'
+      },
+      hintTap: {
+        text: "Tap a circle to meet my family!",
+        file: 'family-tree-hint-tap.wav'
+      },
       allPlaced: {
         text: "You met my whole family! Families make us feel safe.",
         file: '/audio/voicenew/familytree/ganesha_family_safe.wav'
@@ -242,17 +299,29 @@ export const VOICE_SCRIPTS = {
       // ========================================
       // CHILD PHASE
       // ========================================
+      childStart: {
+        text: "Now it's your turn! Add your family to the tree.",
+        file: 'family-tree-child-start.wav'
+      },
       childHint: {
-        text: "So many people care about you!",
-        file: '/audio/voicenew/familytree/ganesha_people_care.wav'
+        text: "Tap someone below to add to your tree!",
+        file: 'family-tree-child-hint.wav'
       },
       childProgressStart: {
-        text: "Your tree is growing…",
-        file: '/audio/voicenew/familytree/ganesha_tree_growing.wav'
+        text: "Nice! Your tree has started growing.",
+        file: 'family-tree-child-progress1.wav'
+      },
+      childProgressSmall: {
+        text: "Beautiful! You added someone to your family tree.",
+        file: 'family-tree-child-progress2.wav'
       },
       childProgressMid: {
-        text: "Your family fills this space with love.",
-        file: '/audio/voicenew/familytree/ganesha_family_love.wav'
+        text: "Look at that! Your family tree is getting bigger.",
+        file: 'family-tree-child-progress3.wav'
+      },
+      childProgressNearFull: {
+        text: "Mmm. Your tree is filling with love.",
+        file: 'family-tree-child-progress-1full.wav'
       },
       childProgressComplete: {
         text: "Look at your beautiful family tree… So many people care about you.",

@@ -28,7 +28,8 @@ const useVoiceGuidance = (zoneId, sceneId, {
   voiceVolume = 1,
   sfxVolume = 0.7,
   idleTimeout = 10,
-  resumeDelay = 0   // ms to wait before resuming audio after tab return (e.g. 3000 for 3-2-1)
+  resumeDelay = 0,  // ms to wait before resuming audio after tab return (e.g. 3000 for 3-2-1)
+  onReturnHint = null  // called when tab resumes with no VO queued — scene provides a hint
 } = {}) => {
   const [isPlaying, setIsPlayingState] = useState(false);
   const [currentPhase, setCurrentPhase] = useState(null);
@@ -41,9 +42,14 @@ const useVoiceGuidance = (zoneId, sceneId, {
   const voiceVolumeRef = useRef(voiceVolume); // mutable — setVoiceVolume updates this live
   const isHiddenRef = useRef(typeof document !== 'undefined' ? document.hidden : false);
   const pendingVoiceRef = useRef(null);
-  // Track the currently-playing voice key+callback so handleHide can store them
+  // Track the currently-playing voice key+callback+flags so handleHide can store them
   const activeVoiceKeyRef = useRef(null);
   const activeVoiceCallbackRef = useRef(null);
+  const activeVoiceReplayRef = useRef(true);  // whether to replay on tab return
+  // Belt-and-suspenders: cleanup fn for the per-audio visibilitychange listener
+  const audioVisibilityCleanupRef = useRef(null);
+  // Called from handleShow when no VO is replayed — scene provides context-aware hint
+  const onReturnHintRef = useRef(null);
 
   // Refs for idle timer to access current values
   const isPlayingRef = useRef(isPlaying);
@@ -64,11 +70,19 @@ const useVoiceGuidance = (zoneId, sceneId, {
     voiceVolumeRef.current = voiceVolume;
   }, [voiceVolume]);
 
+  // Keep onReturnHint ref in sync so handleShow never has a stale callback
+  useEffect(() => {
+    onReturnHintRef.current = onReturnHint;
+  }, [onReturnHint]);
+
   // ========================================
   // VOICE PLAYBACK
   // ========================================
 
-  const playVoice = useCallback((key, onEnded) => {
+  // replayOnReturn: whether to replay this VO when the child returns from a tab switch.
+  // Default true. Pass false for celebratory one-shot VOs where the scene has moved on
+  // (e.g. mooshikaFound) so we don't replay "You found Mooshika!" after the child returns.
+  const playVoice = useCallback((key, onEnded, { replayOnReturn = true } = {}) => {
     if (isHiddenRef.current) {
       pendingVoiceRef.current = { key, onEnded };
       return;
@@ -76,14 +90,16 @@ const useVoiceGuidance = (zoneId, sceneId, {
 
     const path = getAudioPath(zoneId, sceneId, key);
     if (!path) {
-      console.warn(`Voice not found: ${key} for ${zoneId}/${sceneId}`);
-      // ⭐ FIX: Still call onEnded so flow continues even if audio path not found
       if (onEnded) onEnded();
       return;
     }
 
+    // Tear down previous audio's belt-and-suspenders listener before replacing it
+    audioVisibilityCleanupRef.current?.();
+    audioVisibilityCleanupRef.current = null;
+
     // Stop any currently playing voice - clear handlers BEFORE pausing
-    // to prevent the old audio's abort/error from firing the old callback
+    // to prevent the old audio's queued 'ended' event from nulling out voiceRef
     if (voiceRef.current) {
       voiceRef.current.onended = null;
       voiceRef.current.onerror = null;
@@ -92,7 +108,13 @@ const useVoiceGuidance = (zoneId, sceneId, {
     }
 
     const audio = new Audio(path);
-    audio.volume = voiceVolumeRef.current; // use ref — updated live by setVoiceVolume
+    audio.volume = voiceVolumeRef.current;
+
+    // Belt-and-suspenders: directly pause this audio element on tab hide,
+    // independent of voiceRef tracking — handles any ref-timing edge cases.
+    const onTabHide = () => { if (document.hidden) audio.pause(); };
+    document.addEventListener('visibilitychange', onTabHide);
+    audioVisibilityCleanupRef.current = () => document.removeEventListener('visibilitychange', onTabHide);
 
     // Guard: ensure onEnded is called exactly once
     let callbackFired = false;
@@ -102,39 +124,38 @@ const useVoiceGuidance = (zoneId, sceneId, {
       if (onEnded) onEnded();
     };
 
-    audio.onended = () => {
-      setIsPlaying(false);
+    const cleanupAndClear = () => {
+      audioVisibilityCleanupRef.current?.();
+      audioVisibilityCleanupRef.current = null;
       voiceRef.current = null;
       activeVoiceKeyRef.current = null;
       activeVoiceCallbackRef.current = null;
-      fireCallback();
+      activeVoiceReplayRef.current = true;
+      setIsPlaying(false);
     };
 
+    audio.onended = () => { cleanupAndClear(); fireCallback(); };
     audio.onerror = (e) => {
       console.error(`Error playing voice ${key}:`, e);
-      setIsPlaying(false);
-      voiceRef.current = null;
-      activeVoiceKeyRef.current = null;
-      activeVoiceCallbackRef.current = null;
-      // Still call onEnded so the flow continues even if audio fails
+      cleanupAndClear();
       fireCallback();
     };
 
     voiceRef.current = audio;
     activeVoiceKeyRef.current = key;
     activeVoiceCallbackRef.current = onEnded ?? null;
+    activeVoiceReplayRef.current = replayOnReturn;
     setIsPlaying(true);
+
     audio.play().catch(err => {
+      // AbortError = play() interrupted by pause() during tab hide.
+      // Keep refs alive so handleShow can replay it on return.
+      if (err.name === 'AbortError') return;
       console.error('Voice play failed:', err);
-      setIsPlaying(false);
-      voiceRef.current = null;
-      activeVoiceKeyRef.current = null;
-      activeVoiceCallbackRef.current = null;
-      // Still call onEnded so the flow continues even if audio fails
+      cleanupAndClear();
       fireCallback();
     });
 
-    // Reset idle timer on voice play
     lastInteractionRef.current = Date.now();
   }, [zoneId, sceneId]); // voiceVolume removed — read from ref instead
 
@@ -144,12 +165,15 @@ const useVoiceGuidance = (zoneId, sceneId, {
       // Clear handlers BEFORE pausing — prevents a queued 'ended' event on the
       // old audio from firing after the new audio is already assigned to voiceRef,
       // which would null-out voiceRef and break tab-switch pausing for the new VO.
+      audioVisibilityCleanupRef.current?.();
+      audioVisibilityCleanupRef.current = null;
       voiceRef.current.onended = null;
       voiceRef.current.onerror = null;
       voiceRef.current.pause();
       voiceRef.current = null;
       activeVoiceKeyRef.current = null;
       activeVoiceCallbackRef.current = null;
+      activeVoiceReplayRef.current = true;
       setIsPlaying(false);
     }
   }, []);
@@ -433,23 +457,34 @@ const useVoiceGuidance = (zoneId, sceneId, {
 
     musicWasPlayingRef.current = !!(musicRef.current && !musicRef.current.paused);
 
-    // Store key+callback of interrupted voice so we can do a full replay on return
-    if (voiceRef.current && !voiceRef.current.paused && activeVoiceKeyRef.current) {
+    // Store interrupted voice — include replayOnReturn so handleShow knows whether to replay
+    if (voiceRef.current && activeVoiceKeyRef.current) {
       interruptedVoiceRef.current = {
         key: activeVoiceKeyRef.current,
         onEnded: activeVoiceCallbackRef.current,
+        replayOnReturn: activeVoiceReplayRef.current,
       };
     }
 
     if (musicRef.current) musicRef.current.pause();
     if (voiceRef.current) {
-      voiceRef.current.onended = null;
-      voiceRef.current.onerror = null;
-      voiceRef.current.pause();
+      // Belt-and-suspenders listener already paused the audio element directly;
+      // still clean up refs and handlers for correctness.
+      audioVisibilityCleanupRef.current?.();
+      audioVisibilityCleanupRef.current = null;
+      const dying = voiceRef.current;
+      dying.onended = null;
+      dying.onerror = null;
+      dying.pause();
+      // Release the media resource so the browser cannot auto-resume this
+      // orphaned element on pageshow/visibilitychange (iOS Safari, Chrome Android).
+      // Handlers are already cleared above so the emptied event is harmless.
+      dying.src = '';
       voiceRef.current = null;
     }
     activeVoiceKeyRef.current = null;
     activeVoiceCallbackRef.current = null;
+    activeVoiceReplayRef.current = true;
     setIsPlaying(false);
     stopIdleTimer();
   }, [stopIdleTimer]);
@@ -461,17 +496,25 @@ const useVoiceGuidance = (zoneId, sceneId, {
       musicRef.current.play().catch(() => {});
     }
 
-    // Replay interrupted voice only if it had an onEnded callback —
-    // meaning the game is blocked waiting for it (e.g. instruction VOs).
-    // Pure celebratory VOs (no onEnded) are skipped: scene has moved on visually.
+    let voiceWillPlay = false;
+
     if (interruptedVoiceRef.current?.key) {
-      const { key, onEnded } = interruptedVoiceRef.current;
+      const { key, onEnded, replayOnReturn } = interruptedVoiceRef.current;
       interruptedVoiceRef.current = null;
-      if (onEnded) playVoice(key, onEnded);
+      if (replayOnReturn) {
+        playVoice(key, onEnded);
+        voiceWillPlay = true;
+      }
     } else if (pendingVoiceRef.current) {
       const { key, onEnded } = pendingVoiceRef.current;
       pendingVoiceRef.current = null;
       playVoice(key, onEnded);
+      voiceWillPlay = true;
+    }
+
+    // No VO queued — give the scene a chance to play a contextual reminder
+    if (!voiceWillPlay) {
+      onReturnHintRef.current?.();
     }
 
     startIdleTimer();

@@ -4,15 +4,18 @@ import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import './App.css';
 import './Enhanced.css'
 import GaneshaCharacter from './lib/components/character/GaneshaCharacter';
+import DailyDarePopup from './lib/components/twg/DailyDarePopup';
+import TimeWithGaneshaHub from './lib/components/twg/TimeWithGaneshaHub';
 
-const MainWelcomeScreen    = lazy(() => import('./lib/components/navigation/MainWelcomeScreen'));
+const MainWelcomeScreen      = lazy(() => import('./lib/components/navigation/MainWelcomeScreen'));
 const CleanGameWelcomeScreen = lazy(() => import('./lib/components/navigation/CleanGameWelcomeScreen'));
-const CleanProfileSelector = lazy(() => import('./lib/components/navigation/CleanProfileSelector'));
+const CleanProfileSelector   = lazy(() => import('./lib/components/navigation/CleanProfileSelector'));
+const ParentDashboard        = lazy(() => import('./lib/components/navigation/ParentDashboard'));
 const CleanMapZone         = lazy(() => import('./pages/CleanMapZone'));
 const ZoneWelcome          = lazy(() => import('./lib/components/zone/ZoneWelcome'));
 import { getZoneConfig } from './lib/components/zone/ZoneConfig';
 import GameStateManager from './lib/services/GameStateManager';
-import { GameCoachProvider } from './lib/components/coach/GameCoach';
+// import { GameCoachProvider } from './lib/components/coach/GameCoach'; // disabled — GameCoach not used (CLAUDE.md)
 import ProgressManager from './lib/services/ProgressManager';
 import SimpleSceneManager from './lib/services/SimpleSceneManager';
 // initializeSounds replaced by initAudioService() in main.jsx (AudioService/Howler)
@@ -68,6 +71,8 @@ function App() {
   const [isInitialized, setIsInitialized] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0); // ADD THIS LINE
 const [loadingStep, setLoadingStep] = useState(''); // ADD THIS LINE
+const [showDarePopup, setShowDarePopup] = useState(false);
+const previousViewRef = useRef('loading');
   
   console.log('🌟 Clean App rendering - current view:', currentView);
   console.log('🎯 Current zone:', currentZone, 'Current scene:', currentScene);
@@ -212,7 +217,7 @@ const [loadingStep, setLoadingStep] = useState(''); // ADD THIS LINE
     };
   }, []);
 
-  // Smart preloading for better performance
+// Smart preloading for better performance
 useEffect(() => {
   if (currentZone && currentScene) {
     // Preload next scene in sequence
@@ -226,6 +231,14 @@ useEffect(() => {
     }
   }
 }, [currentZone, currentScene]);
+
+  useEffect(() => {
+    const previousView = previousViewRef.current;
+    if (previousView === 'scene' && currentView === 'zone-welcome') {
+      sessionStorage.setItem('zone_welcome_profile_chip_pulse', '1');
+    }
+    previousViewRef.current = currentView;
+  }, [currentView]);
   
   // 🔄 REPLACE the initializeApp function in App.jsx with this simple version:
 
@@ -349,11 +362,20 @@ const initializeApp = async () => {
     
     console.log('✅ App initialization complete');
     setIsInitialized(true);
-    
+
     // Determine starting view
     if (hasExistingProfiles && activeProfileId) {
-      console.log('🎮 Existing profile found, going to map');
-setCurrentView('profile-welcome');
+      // TWG: dare day? show dare first — skip profile-welcome until dare closes
+      const today = new Date().toISOString().split('T')[0];
+      const lastDareDate = localStorage.getItem('gmb_last_dare_date');
+      if (lastDareDate !== today) {
+        console.log('🎯 Dare day — showing DailyDarePopup before welcome screen');
+        setShowDarePopup(true);
+        // currentView stays 'loading' — dare is full screen, no flash
+      } else {
+        console.log('🎮 No dare today — going straight to welcome screen');
+        setCurrentView('profile-welcome');
+      }
     } else if (hasExistingProfiles) {
       console.log('👤 Profiles exist but none active, going to profile selection');
       setCurrentView('profile-welcome');
@@ -416,34 +438,41 @@ const handleContinue = (targetZone, targetScene) => {
   try {
     console.log('🚀 CONTINUE: Received parameters:', { targetZone, targetScene });
     restoreDefaultStyles();
-    
-    // ✅ FIXED: Check SimpleSceneManager for actual resume data
+
+    // Zone only (no scene) → go to zone welcome
+    if (targetZone && !targetScene) {
+      console.log('✅ CONTINUE: Zone only → zone-welcome for', targetZone);
+      setCurrentZone(targetZone);
+      setCurrentScene(null);
+      setCurrentView('zone-welcome');
+      return;
+    }
+
+    // Check SimpleSceneManager for an in-progress scene
     const shouldResume = SimpleSceneManager.shouldResumeScene();
     console.log('🧪 CONTINUE: SimpleSceneManager says:', shouldResume);
-    
+
     let zoneToLoad, sceneToLoad;
-    
+
     if (shouldResume && shouldResume.zone && shouldResume.scene) {
-      // Use the actual resume data
       zoneToLoad = shouldResume.zone;
       sceneToLoad = shouldResume.scene;
       console.log('✅ CONTINUE: Using resume data:', { zoneToLoad, sceneToLoad });
     } else if (targetZone && targetScene) {
-      // Use passed parameters
       zoneToLoad = targetZone;
       sceneToLoad = targetScene;
       console.log('✅ CONTINUE: Using passed parameters:', { zoneToLoad, sceneToLoad });
     } else {
-      // Fallback to defaults
-      zoneToLoad = 'symbol-mountain';
-      sceneToLoad = 'modak';
-      console.log('✅ CONTINUE: Using fallback defaults:', { zoneToLoad, sceneToLoad });
+      // Last fallback: map
+      console.log('✅ CONTINUE: No data found → map');
+      setCurrentView('map');
+      return;
     }
-    
+
     setCurrentZone(zoneToLoad);
     setCurrentScene(sceneToLoad);
     setCurrentView('scene');
-    
+
   } catch (error) {
     console.error('❌ CONTINUE: Error:', error);
     setCurrentView('map');
@@ -490,6 +519,13 @@ const handleContinue = (targetZone, targetScene) => {
 
   const handleZoneSelect = (zoneId, sceneId = null) => {
   console.log('🎯 Zone selected:', zoneId, sceneId ? `Scene: ${sceneId}` : 'No scene');
+
+  // TWG is not a regular zone — go to its full-screen hub
+  if (zoneId === 'twg') {
+    setCurrentView('twg');
+    return;
+  }
+
   Analytics.zoneEntered(zoneId);
 
   setCurrentZone(zoneId);
@@ -600,10 +636,13 @@ const getNextScene = (zoneId, currentSceneId) => {
     
     switch (destination) {
       case 'home':
-              SimpleSceneManager.clearCurrentScene(); // ✅ ADD THIS LINE
+        SimpleSceneManager.clearCurrentScene();
         setCurrentZone(null);
         setCurrentScene(null);
-  setCurrentView('profile-welcome');    // ← CORRECT DESTINATION
+        setCurrentView('profile-welcome');
+        break;
+      case 'parent-dashboard':
+        setCurrentView('parent-dashboard');
         break;
       case 'zones':
       case 'map':
@@ -799,13 +838,10 @@ chants: result?.chants || result?.chantedVerses || {},
     return getZoneConfig(currentZone);
   };
   
-  // Render different views - wrapped with GameCoachProvider
+  // Render different views
   return (
-    <GameCoachProvider defaultConfig={{
-      name: 'Ganesha',
-      image: 'images/ganesha-character.png',
-      position: 'top-right'
-    }}>
+    <>
+    {/* GameCoachProvider disabled — not used per CLAUDE.md */}
     <Suspense fallback={<div className="enhanced-loading-screen" />}>
 {currentView === 'loading' && (
   <div className="enhanced-loading-screen">
@@ -886,12 +922,23 @@ chants: result?.chants || result?.chantedVerses || {},
       )}
       
       {currentView === 'profile-welcome' && (
-                  <div className="view-transition">
-        <CleanGameWelcomeScreen
-          onContinue={handleContinue}
-          onNewGame={handleNewGame}
-        />
-          </div>
+        <div className="view-transition">
+          <CleanGameWelcomeScreen
+            onContinue={handleContinue}
+            onNewGame={handleNewGame}
+            onParentCorner={() => setCurrentView('parent-dashboard')}
+          />
+        </div>
+      )}
+
+      {currentView === 'parent-dashboard' && (
+        <div className="view-transition">
+          <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', backgroundColor: '#FAF6EE' }}>Loading...</div>}>
+            <ParentDashboard
+              onBack={() => setCurrentView('profile-welcome')}
+            />
+          </Suspense>
+        </div>
       )}
       
       {/* First-time profile creation — skips dashboard, goes straight to map */}
@@ -925,10 +972,15 @@ chants: result?.chants || result?.chantedVerses || {},
           onZoneSelect={handleZoneSelect}
                 onBackToWelcome={() => setCurrentView('profile-welcome')}
                 onGoToProfiles={() => setCurrentView('profile-welcome')}
+          onTWGOpen={() => setCurrentView('twg')}
           currentZone={currentZone}
           highlightedScene={currentScene}
         />
           </div>
+      )}
+
+      {currentView === 'twg' && (
+        <TimeWithGaneshaHub onNavigate={handleNavigate} />
       )}
       
       {currentView === 'zone-welcome' && currentZone && (
@@ -994,7 +1046,7 @@ if (tempData.playAgainRequested) {
       })()}
       
       {/* Fallback view */}
-      {!['loading', 'error', 'main-welcome', 'profile-welcome', 'profile-create', 'profile-selector', 'map', 'zone-welcome', 'scene'].includes(currentView) && (
+      {!['loading', 'error', 'main-welcome', 'profile-welcome', 'profile-create', 'profile-selector', 'map', 'zone-welcome', 'scene', 'parent-dashboard', 'twg'].includes(currentView) && (
         <div className="unknown-view-error">
           <h2>Error: Unknown view state</h2>
           <p>Current view: {currentView}</p>
@@ -1002,7 +1054,15 @@ if (tempData.playAgainRequested) {
         </div>
       )}
     </Suspense>
-    </GameCoachProvider>
+    {/* TWG: Daily Dare Popup — fires once per day; z-index 3000 covers all views */}
+    {showDarePopup && (
+      <DailyDarePopup onClose={() => {
+        setShowDarePopup(false);
+        setCurrentView('profile-welcome');
+      }} />
+    )}
+    {/* </GameCoachProvider> */}
+    </>
   );
 }
 

@@ -1920,16 +1920,20 @@ appImages={{
                   completed: true,
                   stars: 5,
                   syllables: sceneState.learnedSyllables,
-                  words: sceneState.learnedWords
+                  words: sceneState.learnedWords,
+                  chantedVerses: {
+                    'sarvakaryeshu-chant': true,
+                    'sarvada-chant': true
+                  }
                 });
-                
+
                 GameStateManager.saveGameState('shloka-river', 'sarvakaryeshu-chant', {
                   completed: true,
                   stars: 5,
                   syllables: sceneState.learnedSyllables,
                   words: sceneState.learnedWords
                 });
-                
+
                 console.log('SARVAKARYESHU CONTINUE: Completion data saved');
               }
 

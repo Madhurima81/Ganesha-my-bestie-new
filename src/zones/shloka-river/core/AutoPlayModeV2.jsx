@@ -6,6 +6,7 @@ import { useSafeClick } from './hooks/useSafeClick';
 import UniversalPauseButton from './UniversalPauseButton';
 import PauseModal from './PauseModal';
 import './SharedGameUI.css';
+import SyllableVoiceChallenge from './SyllableVoiceChallenge';
 
 const AutoPlayModeV2 = ({
   gameConfig,
@@ -41,6 +42,11 @@ const AutoPlayModeV2 = ({
   const [showWaitBanner, setShowWaitBanner] = useState(false);
   const [showPauseModal, setShowPauseModal] = useState(false);
   const [isPauseButtonLocked, setIsPauseButtonLocked] = useState(false);
+
+  // ── Voice challenge (Duolingo-style) ──────────────────────────────────────
+  // Shown after kid taps elephant in non-final rounds.
+  // { syllable, displayLabel, onComplete } | null
+  const [voiceChallenge, setVoiceChallenge] = useState(null);
 
   // Hint State
   const [showIdleHint, setShowIdleHint] = useState(false);
@@ -455,7 +461,22 @@ const AutoPlayModeV2 = ({
     safeSetTimeout(() => {
       if (isPausedRef.current) return;
       setShowLotusSparkles(false);
-      handleRoundSuccess();
+      // Voice challenge: say the assembled word before advancing to next round
+      const fullWord = currentSequence.join('');
+      const wordAudioFile = gameConfig.audio.completeWordByRound?.[currentRound] || gameConfig.audio.completeWordFile;
+      setVoiceChallenge({
+        syllable: fullWord,
+        displayLabel: fullWord.toUpperCase(),
+        replayAudio: wordAudioFile ? () => { const a = new Audio(wordAudioFile); a.play().catch(() => {}); } : undefined,
+        stopAudio: () => {
+          if (voiceGuidanceRef.current?.stopVoice) voiceGuidanceRef.current.stopVoice();
+          if (currentAudioRef.current) { currentAudioRef.current.pause(); currentAudioRef.current = null; }
+        },
+        onComplete: () => {
+          setVoiceChallenge(null);
+          handleRoundSuccess();
+        },
+      });
     }, naturalDelay(400, 700));
   };
 
@@ -606,32 +627,64 @@ const AutoPlayModeV2 = ({
         if (isPausedRef.current) return;
 
         setSingingSyllable(null);
-        const nextIdx = currentSyllableIndex + 1;
 
-        if (nextIdx >= currentSequence.length) {
-          pendingLotusTransitionRef.current = true;
-          safeSetTimeout(() => {
-            if (isPausedRef.current) return;
+        // ── Voice challenge insertion point ──────────────────────────────
+        // Capture the next-flow as a closure so we can defer it until after
+        // the child has had a chance to repeat the syllable (or skip).
+        //
+        // Use syllableIndex (the verified click parameter) rather than
+        // currentSyllableIndex (React state) so the closure can never read
+        // a stale state value — the guard on line 592 already proved they
+        // are equal, but state reads inside an async audio callback can
+        // lag behind committed renders.
+        const nextIdx = syllableIndex + 1;
+
+        const proceedToNext = () => {
+          if (nextIdx >= currentSequence.length) {
+            pendingLotusTransitionRef.current = true;
+            safeSetTimeout(() => {
+              if (isPausedRef.current) return;
+              pendingLotusTransitionRef.current = false;
+              setCentralElementGlowing(true);
+              setGamePhase('waiting_lotus');
+              setCanPlayerClick(true);
+              wasChildActionPendingRef.current = true;
+              flowInProgressRef.current = false;
+              if (voiceGuidanceRef.current?.playVoice) {
+                const centralVO = getCentralTapVO();
+                lastInterruptibleVORef.current = centralVO;
+                voiceGuidanceRef.current.playVoice(centralVO);
+              }
+            }, naturalDelay(400, 700));
+          } else {
             pendingLotusTransitionRef.current = false;
-            setCentralElementGlowing(true);
-            setGamePhase('waiting_lotus');
-            setCanPlayerClick(true);
-            wasChildActionPendingRef.current = true;
-            flowInProgressRef.current = false;
-            if (voiceGuidanceRef.current?.playVoice) {
-              const centralVO = getCentralTapVO();
-              lastInterruptibleVORef.current = centralVO;
-              voiceGuidanceRef.current.playVoice(centralVO);
-            }
-          }, naturalDelay(400, 700));
+            setCurrentSyllableIndex(nextIdx);
+            safeSetTimeout(() => {
+              if (isPausedRef.current) return;
+              flowInProgressRef.current = false;
+              startSyllableFlow(nextIdx);
+            }, naturalDelay(600, 1000));
+          }
+        };
+
+        // Show voice challenge only in learning rounds (not the final assembly round)
+        const isLastRound = currentRound === maxRound;
+        if (!isLastRound) {
+          setVoiceChallenge({
+            syllable: clickedSyllable,
+            displayLabel: clickedSyllable.toUpperCase(),
+            replayAudio: () => playSyllableAudio(clickedSyllable, () => {}),
+            stopAudio: () => {
+              if (voiceGuidanceRef.current?.stopVoice) voiceGuidanceRef.current.stopVoice();
+              if (currentAudioRef.current) { currentAudioRef.current.pause(); currentAudioRef.current = null; }
+            },
+            onComplete: () => {
+              setVoiceChallenge(null);
+              proceedToNext();
+            },
+          });
         } else {
-          pendingLotusTransitionRef.current = false;
-          setCurrentSyllableIndex(nextIdx);
-          safeSetTimeout(() => {
-            if (isPausedRef.current) return;
-            flowInProgressRef.current = false;
-            startSyllableFlow(nextIdx);
-          }, naturalDelay(600, 1000));
+          proceedToNext();
         }
       });
     });
@@ -1112,6 +1165,18 @@ const AutoPlayModeV2 = ({
         @keyframes starPopIn { 0% { transform: scale(0) rotate(-180deg); opacity: 0; } 60% { transform: scale(1.3) rotate(10deg); opacity: 1; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
         @keyframes mahakayaPopIn { 0% { transform: scale(0.2); opacity: 0; } 55% { transform: scale(1.18); opacity: 1; } 75% { transform: scale(0.93); } 100% { transform: scale(1.0); opacity: 1; } }
       `}</style>
+
+      {/* ── Duolingo-style syllable voice challenge ── */}
+      {voiceChallenge && (
+        <SyllableVoiceChallenge
+          syllable={voiceChallenge.syllable}
+          displayLabel={voiceChallenge.displayLabel}
+          onComplete={voiceChallenge.onComplete}
+          replayAudio={voiceChallenge.replayAudio}
+          stopAudio={voiceChallenge.stopAudio}
+          mooshikaImage={voiceGuidance?.characterImage}
+        />
+      )}
     </div>
   );
 };

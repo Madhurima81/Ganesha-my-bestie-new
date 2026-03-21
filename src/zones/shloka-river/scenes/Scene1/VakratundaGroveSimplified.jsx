@@ -1,7 +1,7 @@
 ﻿// zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx
 // FIXED: Removed SanskritWordMission, connected PowerUnlockOverlay directly to next phase
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useGameSounds } from '../../../../lib/hooks/useGameSounds';
 import './VakratundaGroveSimplified.css';
 
@@ -27,12 +27,15 @@ import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal
 // import { PauseButton, PauseMenu } from '../../../../lib/components/ui/PauseMenu'; // ← removed: replaced by home icon
 import HomeButton from '../../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
+import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
+import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
+import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
+import ResumeCountdown from '../../../../lib/components/feedback/ResumeCountdown';
 
 import AppSidebar from '../../shared/AppSidebar';
 import OpeningModal from '../../../shared/components/OpeningModal';
 // REMOVED: import SanskritWordMission (No longer needed)
-import SanskritVoiceRecorder from '../../../../lib/components/audio/SanskritVoiceRecorder';
 
 // Zone Theme
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
@@ -92,6 +95,9 @@ const VOGatedButton = ({ visible, onClick, children, className = '', style = {} 
 };
 
 // ========================================
+
+// Shared countdown duration — matches useVoiceGuidance + usePauseAwareTimeout
+const RESUME_DELAY_MS = 3000;
 
 const PHASES = {
   INITIAL: 'initial',
@@ -232,7 +238,6 @@ const VakratundaGroveContent = ({
 
   const [savedRecordings, setSavedRecordings] = useState({});
   const [showAppDiscovery, setShowAppDiscovery] = useState(false);
-  const timeoutsRef = useRef([]);
   const activeProfile = GameStateManager.getActiveProfile();
   const profileName = activeProfile?.name || 'explorer';
   const isFinalCelebrationActive =
@@ -272,13 +277,15 @@ const VakratundaGroveContent = ({
     enableMusic: false,
     voiceVolume: 1,
     sfxVolume: 0.7,
-    idleTimeout: 20
+    idleTimeout: 12,            // organic hint — fires ~12s after last interaction
+    resumeDelay: RESUME_DELAY_MS, // audio waits for 3-2-1 countdown after tab return
   });
 
   const { playUiTap, playBloom, playChime, playGlow, playTwinkle } = useGameSounds();
 
   // Track whether recorder popup is open — pause game voice when it is
   const [isRecorderOpen, setIsRecorderOpen] = useState(false);
+
 
   // ── ESC key pause handler — REMOVED (replaced by home icon) ──
   // useEffect(() => {
@@ -321,16 +328,27 @@ const VakratundaGroveContent = ({
   //   return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   // }, [sceneState.welcomeShown, isFinalCelebrationActive, showSceneCompletion, showPauseMenu, showPowerOverlay, showCenteredWord]);
 
-  const safeSetTimeout = (callback, delay) => {
-    const id = setTimeout(callback, delay);
-    timeoutsRef.current.push(id);
-    return id;
-  };
+  // Pause/resume refs — stop celebration timers on tab hide, restart on show
+  const pauseCelebRef = useRef(null);
+  const onPauseHide = useCallback(() => pauseCelebRef.current?.(), []);
+  const onPauseShow = useCallback(() => {
+    if ([PHASES.VAKRATUNDA_GAME, PHASES.MAHAKAYA_GAME].includes(sceneState.phase)) {
+      startIdleTimer();
+    }
+  }, [sceneState.phase, startIdleTimer]);
+
+  // Drop-in safeSetTimeout — auto-pauses on tab hide, resumes after countdown
+  const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({
+    onHide: onPauseHide,
+    onShow: onPauseShow,
+    resumeDelay: RESUME_DELAY_MS,
+  });
+
+  // 3-2-1 countdown display — shown when child switches back to tab/app
+  const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
 
   useEffect(() => {
-    return () => {
-      timeoutsRef.current.forEach(id => clearTimeout(id));
-    };
+    return () => clearAllTimeouts();
   }, []);
 
   // ── SymbolAutoReveal helpers ──────────────────────────────────────────────
@@ -362,26 +380,36 @@ const VakratundaGroveContent = ({
     setRevealConfig(null);
 
     if (symbolId === 'vakratunda') {
-      // 950ms: bloom fully done → advance to Mahakaya game
-      safeSetTimeout(() => {
-        sceneActions.updateState({
-          unlockedApps: { ...sceneState.unlockedApps, vakratunda: true },
-          phase: PHASES.MAHAKAYA_GAME,
-          mahakayaGameState: null // Ensure Mahakaya always starts from first syllable
-        });
-      }, 950);
+      // Capture current unlockedApps now (before recorder opens) to avoid stale closure
+      const appsNow = sceneState.unlockedApps;
+
+      const advanceToMahakaya = () => {
+        safeSetTimeout(() => {
+          sceneActions.updateState({
+            unlockedApps: { ...appsNow, vakratunda: true },
+            phase: PHASES.MAHAKAYA_GAME,
+            mahakayaGameState: null
+          });
+        }, 950);
+      };
+
+      advanceToMahakaya();
 
     } else if (symbolId === 'mahakaya') {
-      // 950ms: bloom fully done → mark app unlocked
-      safeSetTimeout(() => {
-        sceneActions.updateState({
-          unlockedApps: { ...sceneState.unlockedApps, mahakaya: true }
-        });
-      }, 950);
-      // Auto-trigger final celebration after 1.5s pause (no App Discovery screen)
-      safeSetTimeout(() => {
-        handleAppDiscoveryCelebrate();
-      }, 1500);
+      const appsNow = sceneState.unlockedApps;
+
+      const advanceToCelebration = () => {
+        safeSetTimeout(() => {
+          sceneActions.updateState({
+            unlockedApps: { ...appsNow, mahakaya: true }
+          });
+        }, 950);
+        safeSetTimeout(() => {
+          handleAppDiscoveryCelebrate();
+        }, 1500);
+      };
+
+      advanceToCelebration();
     }
   };
 
@@ -399,21 +427,19 @@ const VakratundaGroveContent = ({
 
   // ========================================
   // VOICE: Play welcome on OPENING MODAL (before game starts)
-  // Button appears only after VO finishes
+  // Button is visible immediately (like ModakScene)
   // ========================================
   useEffect(() => {
     // Play welcome voice when opening modal is shown (phase is INITIAL and not yet started)
     if (sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown) {
+      setOpeningButtonVisible(true);
       // Use ref (not state) — avoids stale-closure race when resetScene() delays 100ms
       if (!audioEnabledRef.current) {
-        setOpeningButtonVisible(true);
         return;
       }
-      // Audio on: wait for VO to finish before showing button
       const timer = setTimeout(() => {
         playVO('welcome', () => {
           playSfx('chime');
-          setOpeningButtonVisible(true);
         });
       }, 800);
       return () => clearTimeout(timer);
@@ -449,21 +475,34 @@ const VakratundaGroveContent = ({
     toggleAudio();
   };
 
-  // Set current phase for idle hints (game start VO is now handled by AutoPlayMode)
+  // Set current phase + start organic idle hint timer when game phases begin
   useEffect(() => {
     if (sceneState.phase === PHASES.VAKRATUNDA_GAME && sceneState.welcomeShown) {
       setCurrentPhase('vakratundaGame');
+      startIdleTimer(); // hints fire after ~12s of no interaction
     }
   }, [sceneState.phase, sceneState.welcomeShown, setCurrentPhase]);
 
   useEffect(() => {
     if (sceneState.phase === PHASES.MAHAKAYA_GAME) {
       setCurrentPhase('mahakayaGame');
+      startIdleTimer(); // hints fire after ~12s of no interaction
       if (isAudioOn) {
         safeSetTimeout(() => playVO('mahakayaGameStart'), 500);
       }
     }
   }, [sceneState.phase, setCurrentPhase]);
+
+  // On Continue (isReload=true): clear saved mini-game states so games restart fresh
+  // instead of resuming a potentially frozen mid-game state
+  useEffect(() => {
+    if (isReload) {
+      sceneActions.updateState({
+        vakratundaGameState: null,
+        mahakayaGameState: null,
+      });
+    }
+  }, []); // intentionally runs only on mount
 
   // Memory game completion
   const handlePhaseComplete = (word) => {
@@ -634,7 +673,9 @@ const VakratundaGroveContent = ({
       <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
         <div className="vakratunda-simplified-container">
           <HomeButton onNavigate={onNavigate} />
+          <ZoneBadgeButton zoneId="shloka-river" onBack={() => onNavigate?.('zone-welcome')} />
           <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
+          <ResumeCountdown value={countdownValue} />
           <div className="river-background" style={{ backgroundImage: `url(${riverBackground})` }}>
 
             {/* HOME BUTTON — inline green button removed; HomeButton component handles this */}
@@ -710,6 +751,7 @@ const VakratundaGroveContent = ({
               isOpen={!sceneState.welcomeShown}
               onStart={() => {
                 playUiTap();
+                stopVoice();
                 sceneActions.updateState({
                   welcomeShown: true,
                   phase: PHASES.VAKRATUNDA_GAME
@@ -734,7 +776,7 @@ const VakratundaGroveContent = ({
               isReload={isReload}
               savedGameState={sceneState.vakratundaGameState}
               onSaveGameState={(state) => handleSaveComponentState('vakratundaGame', state)}
-              voiceGuidance={{ playVoice: playVO, playSfx, stopVoice }}
+              voiceGuidance={{ playVoice: playVO, playSfx, stopVoice, characterImage: mooshikaCoach }}
               isPaused={isRecorderOpen}
             />
 
@@ -754,7 +796,7 @@ const VakratundaGroveContent = ({
               isReload={isReload}
               savedGameState={sceneState.mahakayaGameState}
               onSaveGameState={(state) => handleSaveComponentState('mahakayaGame', state)}
-              voiceGuidance={{ playVoice: playVO, playSfx, stopVoice }}
+              voiceGuidance={{ playVoice: playVO, playSfx, stopVoice, characterImage: mooshikaCoach }}
               isPaused={isRecorderOpen}
             />
 
@@ -896,6 +938,7 @@ const VakratundaGroveContent = ({
                         words: sceneState.learnedWords || {},
                         syllables: sceneState.learnedSyllables || {},
                         apps: sceneState.unlockedApps || {},
+                        chantedVerses: sceneState.chantedVerses || {},
                         timestamp: Date.now()
                       });
                       localStorage.removeItem(`temp_session_${profileId}_${zoneId}_${sceneId}`);
@@ -915,6 +958,7 @@ const VakratundaGroveContent = ({
                 <img src={ganeshaHeadphones} alt="Ganesha" className="vakratunda-ganesha-final-enters" />
               </div>
             )}
+
 
             <SceneCompletionCelebration
               show={showSceneCompletion}

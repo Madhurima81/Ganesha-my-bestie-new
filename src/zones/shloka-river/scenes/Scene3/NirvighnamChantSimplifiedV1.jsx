@@ -1551,7 +1551,11 @@ const NirvighnamChantContent = ({
                   completed: true,
                   stars: 5,
                   syllables: sceneState.learnedSyllables,
-                  words: sceneState.learnedWords
+                  words: sceneState.learnedWords,
+                  chantedVerses: {
+                    'nirvighnam-chant': true,
+                    'kurumedeva-chant': true
+                  }
                 });
 
                 GameStateManager.saveGameState('shloka-river', 'nirvighnam-chant', {

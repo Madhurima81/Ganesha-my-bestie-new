@@ -313,17 +313,20 @@
 /* ===========================
    HINTS & MOOSHIKA SPEECH
    =========================== */
+/* ===========================
+   HINTS & MOOSHIKA SPEECH
+   =========================== */
 .modak-game-hint-glow {
   animation: modak-game-strongPulse 1.5s ease-in-out infinite !important;
-  filter: drop-shadow(0 0 14px rgba(255, 230, 163, 0.35)) !important;
+  filter: drop-shadow(0 0 20px rgba(255, 230, 163, 0.6)) !important;
   z-index: 20;
 }
 
 .modak-game-hint-glow::before {
   content: '';
   position: absolute;
-  top: -10px; left: -10px; right: -10px; bottom: -10px;
-  background: radial-gradient(circle, rgba(255, 230, 163, 0.3) 0%, transparent 70%);
+  top: -15px; left: -15px; right: -15px; bottom: -15px;
+  background: radial-gradient(circle, rgba(255, 230, 163, 0.5) 0%, transparent 70%);
   border-radius: 50%;
   animation: modak-game-glowExpand 1.5s ease-in-out infinite;
   pointer-events: none;
@@ -331,15 +334,64 @@
 }
 
 @keyframes modak-game-strongPulse {
-  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(255, 230, 163, 0.25)); }
-  50% { transform: scale(1.08); filter: drop-shadow(0 0 18px rgba(255, 230, 163, 0.35)); }
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(255, 230, 163, 0.4)); }
+  50% { transform: scale(1.15); filter: drop-shadow(0 0 35px rgba(255, 230, 163, 0.9)); }
 }
 
 @keyframes modak-game-glowExpand {
-  0%, 100% { transform: scale(1); opacity: 0.25; }
-  50% { transform: scale(1.2); opacity: 0.35; }
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.3); opacity: 0.8; background: radial-gradient(circle, rgba(255, 230, 163, 0.7) 0%, transparent 70%); }
 }
 
+/* ===========================
+   HINT GLOW — modaks
+   =========================== */
+@keyframes modak-game-glowPulseOnly {
+  0%, 100% { 
+    filter: drop-shadow(0 0 8px rgba(255, 220, 120, 0.5)); 
+    transform: scale(1); 
+  }
+  50% { 
+    filter: drop-shadow(0 0 40px rgba(255, 220, 120, 1))
+            drop-shadow(0 0 25px rgba(255, 180, 60, 1))
+            drop-shadow(0 0 15px rgba(255, 140, 0, 0.9)); 
+    transform: scale(1.15); /* Added strong physical scale */
+  }
+}
+
+.modak-game-modak.modak-game-hint-glow {
+  animation: modak-game-glowPulseOnly 1.4s ease-in-out infinite !important;
+}
+.modak-game-modak.modak-game-hint-glow::before {
+  animation: none !important;
+  display: none !important;
+}
+.modak-game-modak .interactive-element,
+.modak-game-modak .interactive-element:hover,
+.modak-game-modak .interactive-element.pressed,
+.modak-game-modak .interactive-element.new {
+  transform: none !important;
+  animation: none !important;
+}
+
+/* ===========================
+   HINT GLOW — mounds
+   =========================== */
+@keyframes modak-game-moundGlowPulse {
+  0%, 100% { 
+    filter: drop-shadow(0 0 8px rgba(255, 220, 80, 0.5)); 
+    transform: scale(1); 
+  }
+  50% { 
+    filter: drop-shadow(0 0 40px rgba(255, 220, 80, 1))
+            drop-shadow(0 0 25px rgba(255, 160, 0, 0.9)); 
+    transform: scale(1.15); /* Added strong physical scale */
+  }
+}
+
+.modak-game-mud-mound.modak-game-hint-glow {
+  animation: modak-game-moundGlowPulse 1.4s ease-in-out infinite !important;
+}
 .modak-game-mooshika-speech-bubble {
   position: absolute;
   bottom: 100%; left: 50%;
@@ -427,14 +479,26 @@
 .modak-game-modak-2 { top: 45%; left: 30%; }
 .modak-game-modak-3 { top: 55%; left: 75%; }
 
-/* Glow hint on modaks: filter-only pulse (no scale = no size change on tap) */
+/* ===========================
+   HINT GLOW — modaks (field + basket)
+   Scale + filter for maximum visibility
+   =========================== */
 @keyframes modak-game-glowPulseOnly {
-  0%, 100% { filter: drop-shadow(0 0 6px rgba(255, 220, 120, 0.5)); }
-  50%       { filter: drop-shadow(0 0 22px rgba(255, 220, 120, 0.95)) drop-shadow(0 0 10px rgba(255, 180, 60, 0.65)); }
+  0%, 100% {
+    filter: drop-shadow(0 0 0px rgba(255, 220, 120, 0));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 14px rgba(255, 255, 200, 1))
+            drop-shadow(0 0 32px rgba(255, 210, 60, 1))
+            drop-shadow(0 0 52px rgba(255, 160, 0, 0.85));
+    transform: scale(1.13);
+  }
 }
 
 .modak-game-modak.modak-game-hint-glow {
-  animation: modak-game-glowPulseOnly 1.5s ease-in-out infinite !important;
+  animation: modak-game-glowPulseOnly 1.1s ease-in-out infinite !important;
+  transform-origin: center center;
 }
 .modak-game-modak.modak-game-hint-glow::before {
   animation: none !important;
@@ -445,6 +509,79 @@
 .modak-game-modak .interactive-element.pressed,
 .modak-game-modak .interactive-element.new {
   transform: none !important;
+  animation: none !important;
+}
+
+/* ===========================
+   BASKET MODAK HINT GLOW — filter only (no transform)
+   CSS transform on a parent breaks position:fixed in DraggableItem —
+   the dragged element becomes viewport-positioned relative to the scaled
+   parent instead of the viewport, causing a drag offset.
+   Override with a glow-only animation that uses filter but no transform.
+   =========================== */
+@keyframes modak-game-basketModakGlowOnly {
+  0%, 100% {
+    filter: drop-shadow(0 0 0px rgba(255, 220, 120, 0));
+  }
+  50% {
+    filter: drop-shadow(0 0 14px rgba(255, 255, 200, 1))
+            drop-shadow(0 0 32px rgba(255, 210, 60, 1))
+            drop-shadow(0 0 52px rgba(255, 160, 0, 0.85));
+  }
+}
+
+div[class*="modak-game-modak-collected"].modak-game-hint-glow {
+  animation: modak-game-basketModakGlowOnly 1.1s ease-in-out infinite !important;
+  transform: none !important;
+}
+
+/* ===========================
+   HINT GLOW — mounds
+   Scale + filter so it's impossible to miss
+   =========================== */
+@keyframes modak-game-moundGlowPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 0px rgba(255, 210, 0, 0));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(255, 255, 180, 1))
+            drop-shadow(0 0 28px rgba(255, 210, 0, 1))
+            drop-shadow(0 0 46px rgba(255, 140, 0, 0.9));
+    transform: scale(1.15);
+  }
+}
+
+.modak-game-mud-mound.modak-game-hint-glow {
+  animation: modak-game-moundGlowPulse 1.1s ease-in-out infinite !important;
+  transform-origin: center bottom;
+}
+
+/* When strong hint glow is active, silence the soft background pulse inside */
+.modak-game-mud-mound.modak-game-hint-glow .interactive-element,
+.modak-game-mud-mound.modak-game-hint-glow .interactive-element.new {
+  animation: none !important;
+  box-shadow: none !important;
+}
+
+/* ===========================
+   MOUND PULSE — soften the default InteractiveElement attention pulse
+   The global `.new` class (pulse animation) and boxShadow toggle are too
+   aggressive on mounds — replace with a barely-there glow.
+   =========================== */
+@keyframes modak-game-moundSoftAttention {
+  0%, 100% { filter: none; }
+  50%       { filter: drop-shadow(0 0 5px rgba(255, 200, 80, 0.28)); }
+}
+
+.modak-game-mud-mound .interactive-element {
+  box-shadow: none !important;
+}
+.modak-game-mud-mound .interactive-element.new {
+  animation: modak-game-moundSoftAttention 3.5s ease-in-out infinite !important;
+}
+.modak-game-mud-mound .interactive-element.pressed {
+  transform: scale(0.95) !important;
   animation: none !important;
 }
 
@@ -872,9 +1009,9 @@ div[class*="modak-game-modak-collected"]:active {
 
 /* === 6. iPAD PRO 12.9" & DESKTOP (Large Screens) === */
 @media (min-width: 1251px) {
-  
+
   /* 1. GIANT HEADER */
-  .modak-game-phase-header { 
+  .modak-game-phase-header {
     font-size: 28px;
     padding: 18px 50px;
     top: 50px;
@@ -890,8 +1027,8 @@ div[class*="modak-game-modak-collected"]:active {
     left: 8%;
     overflow: visible;
     --basket-modak-size: 130px;
-    --basket-modak-top: 46%;
-    --basket-modak-top-mid: 38%;
+    --basket-modak-top: 36%;
+    --basket-modak-top-mid: 28%;
     --basket-modak-left-1: 16%;
     --basket-modak-left-2: 34%;
     --basket-modak-left-3: 50%;
@@ -909,7 +1046,7 @@ div[class*="modak-game-modak-collected"]:active {
   .modak-game-rock-container { width: 300px; top: 38%; left: 60%; }
 
   /* 4. GIANT COLLECTED MODAKS — sized/positioned via basket vars */
-  
+
   /* 5. COUNTER */
   .modak-game-counter { width: 320px; height: 65px; font-size: 24px; }
 }
@@ -989,7 +1126,6 @@ div[class*="discovery"] img {
 /* ===========================
    TAP GESTURE HINT
    (ghost hand — shown from 2nd idle hint in MOOSHIKA_SEARCH & MODAKS_UNLOCKED)
-   Two-tap motion then fade. Replace 👆 emoji with real asset later.
    =========================== */
 .modak-tap-hint-hand {
   position: absolute;
@@ -1001,31 +1137,72 @@ div[class*="discovery"] img {
   transform-origin: center bottom;
 }
 
-/* Over mound-1 (top: 45%, left: 25%) */
+/* Over mound-1 (top: 45%, left: 25%) — finger lands exactly on center */
 .modak-tap-hint-hand.on-mound {
-  left: 23%;
-  top: 36%;
+  left: 27%;
+  top: 48%; /* Moved down drastically to land ON the mound */
 }
 
-/* Over modak-2 (top: 45%, left: 30%) */
+/* Over modak-2 (top: 45%, left: 30%) — finger lands exactly on center */
 .modak-tap-hint-hand.on-modak {
-  left: 28%;
-  top: 36%;
+  left: 33%;
+  top: 50%; /* Moved down drastically to land ON the modak */
+}
+
+.modak-mini-ganesha-cue {
+  --mini-cue-duration: 1.5s;
+  animation-duration: var(--mini-cue-duration);
+}
+
+.modak-mini-gesture-icon {
+  width: clamp(52px, 5vw, 76px);
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.2));
+}
+
+.modak-mini-ganesha-cue--idle {
+  --mini-cue-duration: 3.5s;
+}
+
+.modak-mini-ganesha-cue--mound {
+  left: 24%;
+  top: 43%;
+}
+
+.modak-mini-ganesha-cue--modak {
+  left: 31%;
+  top: 47%;
+}
+
+.modak-mini-ganesha-cue--rock {
+  left: 69%;
+  top: 40%;
+}
+
+.modak-mini-ganesha-cue--center {
+  left: 50%;
+  top: 30%;
+  transform: translate(-50%, -50%);
 }
 
 @keyframes modak-tap-hint-move {
   0%   { opacity: 0;   transform: translateY(-12px) scale(1); }
   15%  { opacity: 1;   transform: translateY(0)     scale(1.1); }
-  30%  { opacity: 1;   transform: translateY(8px)   scale(0.95); } /* tap 1 down */
-  44%  { opacity: 1;   transform: translateY(-4px)  scale(1.05); } /* lift */
-  58%  { opacity: 1;   transform: translateY(8px)   scale(0.95); } /* tap 2 down */
-  72%  { opacity: 1;   transform: translateY(-4px)  scale(1.05); } /* lift */
-  87%  { opacity: 0.4; transform: translateY(-10px) scale(1); }
-  100% { opacity: 0;   transform: translateY(-16px) scale(0.9); }
+  30%  { opacity: 1;   transform: translateY(12px)  scale(0.95); } /* Deeper tap 1 down */
+  44%  { opacity: 1;   transform: translateY(-6px)  scale(1.05); } /* lift */
+  58%  { opacity: 1;   transform: translateY(12px)  scale(0.95); } /* Deeper tap 2 down */
+  72%  { opacity: 1;   transform: translateY(-6px)  scale(1.05); } /* lift */
+  87%  { opacity: 0.4; transform: translateY(-12px) scale(1); }
+  100% { opacity: 0;   transform: translateY(-20px) scale(0.9); }
 }
 
 /* Mobile: mound and modak positions shift slightly */
 @media (max-width: 600px) {
-  .modak-tap-hint-hand.on-mound { left: 20%; top: 38%; }
-  .modak-tap-hint-hand.on-modak { left: 24%; top: 38%; }
+  .modak-tap-hint-hand.on-mound { left: 25%; top: 49%; }
+  .modak-tap-hint-hand.on-modak { left: 32%; top: 52%; }
+  .modak-mini-ganesha-cue--mound { left: 22%; top: 45%; }
+  .modak-mini-ganesha-cue--modak { left: 30%; top: 49%; }
+  .modak-mini-ganesha-cue--rock { left: 66%; top: 43%; }
+  .modak-mini-ganesha-cue--center { top: 34%; }
 }

@@ -1,0 +1,46 @@
+.ganesha-character {
+  transform-origin: center center;
+}
+
+.ganesha-character--breathing-slow {
+  animation: ganeshaBreathSlow 3.8s ease-in-out infinite;
+}
+
+.ganesha-character--breathing-gentle {
+  animation: ganeshaBreathSlow 4.4s ease-in-out infinite;
+}
+
+.ganesha-character--breathing-soft {
+  animation: ganeshaBreathSlow 5s ease-in-out infinite;
+}
+
+@keyframes ganeshaBreathSlow {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+.ganesha-gesture-cue {
+  position: absolute;
+  z-index: 60;
+  pointer-events: none;
+  animation: ganeshaCueFade 1.5s ease-out forwards;
+}
+
+@keyframes ganeshaCueFade {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.86);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px) scale(1.04);
+  }
+}

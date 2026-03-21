@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useGameCoach } from "../coach/GameCoach";
 import './SceneCompletionCelebration.css';
 import '../../../zones/symbol-mountain/shared/components/SymbolSidebar.css';
@@ -6,6 +6,8 @@ import GameStateManager from "../../services/GameStateManager";
 import SanskritVoiceRecorder from '../audio/SanskritVoiceRecorder';
 import { applyCompletionScreenTheme } from "../../theme/CompletionScreenThemeAdapter";
 import { applyRecorderTheme } from "../../theme/RecorderThemeAdapter";
+import GaneshaPresence from '../character/GaneshaPresence';
+import GaneshaSceneWhisper from '../GaneshaSceneWhisper';
 
 const SceneCompletionCelebration = ({
   show = false,
@@ -88,12 +90,31 @@ const SceneCompletionCelebration = ({
     });
   }, [show, discoveredSymbols]);
 
+  // Stamp temp session as completed when celebration shows.
+  // This ensures "Continue Journey" navigates to zone-welcome (not back into the scene).
+  useEffect(() => {
+    if (!show || !sceneId || !resolvedZoneId) return;
+    const profileId = localStorage.getItem('activeProfileId');
+    if (!profileId) return;
+    const tempKey = `temp_session_${profileId}_${resolvedZoneId}_${sceneId}`;
+    try {
+      const existing = JSON.parse(localStorage.getItem(tempKey) || '{}');
+      localStorage.setItem(tempKey, JSON.stringify({
+        ...existing,
+        showingCompletionScreen: true,
+        completed: true,
+        phase: 'complete',
+        timestamp: Date.now(),
+      }));
+    } catch (e) {}
+  }, [show, sceneId, resolvedZoneId]);
+
 const handleAction = (callback, skipComplete = false) => {
   if (!skipComplete && onComplete && completionData) {
-    console.log('ðŸŽ¯ SceneCompletion handleAction called');
-    console.log('ðŸŽ¯ sceneId:', sceneId);
-    console.log('ðŸŽ¯ completionData:', completionData);
-    console.log('ðŸŽ¯ completionData.chantedVerses:', completionData.chantedVerses);
+    console.log('🎯 SceneCompletion handleAction called');
+    console.log('🎯 sceneId:', sceneId);
+    console.log('🎯 completionData:', completionData);
+    console.log('🎯 completionData.chantedVerses:', completionData.chantedVerses);
     onComplete(sceneId, completionData);
   }
   callback?.();
@@ -112,200 +133,224 @@ const handleAction = (callback, skipComplete = false) => {
   return (
     <div className={`celebration-backdrop${isExiting ? ' exiting' : ''}`}>
 
-      {/* Main Card */}
-      <div className={`celebration-card${isExiting ? ' exiting' : ''}`}>
-
-        {/* Text Header */}
-        <div className="celebration-header">
-          <div className="title-text">{completionTitle || 'ðŸŒŸ You Did It!'}</div>
-          <div className="subtitle-text">{completionSubtitle || `${sceneName} is glowing because of you!`}</div>
+      {/* Main Container added to match OpeningModal layout */}
+      <div className="celebration-content">
+        <div className="completion-ganesha-left" aria-hidden="true">
+          <GaneshaPresence
+            pose="blessing"
+            size={450}
+            breathing="slow"
+          />
         </div>
 
-        <div className="celebration-body">
+        {/* Main Card */}
+        <div className={`celebration-card${isExiting ? ' exiting' : ''}`}>
 
-          {/* Symbol/App Trophy Row */}
-          <div className="celebration-image-section">
-            {containerType === 'backpack' && symbolsInContainer.length > 0 ? (
-              <>
-                <div className="trophy-symbols-row">
-                  {symbolsInContainer.map((symbol, index) => (
-                    <div
-                      key={symbol}
-                      className={`trophy-symbol ${symbolData[symbol] ? 'trophy-symbol-tappable' : ''}`}
-                      onClick={() => symbolData[symbol] && setSelectedSymbol(symbol)}
-                      style={{ animationDelay: `${index * 0.2}s` }}
-                    >
-                      <div className="trophy-symbol-glow">
-                        {symbolImages[symbol] ?
-                          <img src={symbolImages[symbol]} alt={symbol} className="trophy-symbol-img" /> :
-                          <span style={{ fontSize: '64px' }}>â­</span>
-                        }
-                      </div>
-                      {symbolData[symbol] && (
-                        <p className="trophy-symbol-name">{symbol.charAt(0).toUpperCase() + symbol.slice(1)}</p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </>
-            ) : containerType === 'apps' && discoveredSymbols.length > 0 ? (
-              /* App Trophy Row â€” tapping opens the voice recorder */
-              <>
-                <div className="trophy-symbols-row">
-                  {discoveredSymbols.map((appId, index) => (
-                    <div
-                      key={appId}
-                      className="trophy-symbol trophy-symbol-tappable"
-                      onClick={() => {
-                        applyRecorderTheme(resolvedZoneId);
-                        setSelectedApp(appId);
-                      }}
-                      style={{ animationDelay: `${index * 0.2}s` }}
-                    >
-                      <div className="trophy-symbol-glow">
-                        {appImages[appId] ?
-                          <img src={appImages[appId]} alt={appId} className="trophy-symbol-img" /> :
-                          <span style={{ fontSize: '64px' }}>ðŸŽµ</span>
-                        }
-                      </div>
-                      <p className="trophy-symbol-name">
-                        {appId.charAt(0).toUpperCase() + appId.slice(1)}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </>
-            ) : containerType === 'smartwatch' ? (
-              <div className="container-holder">
-                <img src="/images/smartwatch-screen.png" alt="Smartwatch" className="backpack-image" />
-              </div>
-            ) : (
-              <div className="container-holder">
-                <img src="/images/meaning-journal.png" alt="Journal" className="backpack-image" />
-              </div>
-            )}
+          {/* Text Header */}
+          <div className="celebration-header">
+            <div className="title-text">{completionTitle || '🌟 You Did It!'}</div>
+            <div className="subtitle-text">{completionSubtitle || `${sceneName} is glowing because of you!`}</div>
+            {/* Scene Bridge Whisper — Ganesha speaks before child moves on */}
+            <div style={{ marginTop: '0.75rem' }}>
+              <GaneshaSceneWhisper
+                type="scene-bridge"
+                sceneId={`${sceneId}-complete`}
+                childName={childName !== 'Little Explorer' ? childName : ''}
+                childAge={7}
+                autoPlay={true}
+                size="medium"
+              />
+            </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="celebration-actions-section">
+          <div className="celebration-body">
 
-            {!isFinalScene ? (
-              <>
-                {/* PRIMARY ACTION (if provided) */}
-                {primaryAction && (
-                  <div className="primary-action-container">
-                    <button
-                      className="celebration-btn celebration-btn-primary"
-                      onClick={() => handleAction(primaryAction.onClick)}
-                    >
-                      {primaryAction.icon && <span className="btn-icon">{primaryAction.icon}</span>}
-                      {primaryAction.text}
-                    </button>
-                    {primaryAction.subtext && (
-                      <p className="primary-action-subtext">{primaryAction.subtext}</p>
-                    )}
+            {/* Symbol/App Trophy Row */}
+            <div className="celebration-image-section">
+              {containerType === 'backpack' && symbolsInContainer.length > 0 ? (
+                <>
+                  <div className="trophy-symbols-row">
+                    {symbolsInContainer.map((symbol, index) => (
+                      <div
+                        key={symbol}
+                        className={`trophy-symbol ${symbolData[symbol] ? 'trophy-symbol-tappable' : ''}`}
+                        onClick={() => symbolData[symbol] && setSelectedSymbol(symbol)}
+                        style={{ animationDelay: `${index * 0.2}s` }}
+                      >
+                        <div className="trophy-symbol-glow">
+                          {symbolImages[symbol] ?
+                            <img src={symbolImages[symbol]} alt={symbol} className="trophy-symbol-img" /> :
+                            <span style={{ fontSize: '64px' }}>⭐</span>
+                          }
+                        </div>
+                        {symbolData[symbol] && (
+                          <p className="trophy-symbol-name">{symbol.charAt(0).toUpperCase() + symbol.slice(1)}</p>
+                        )}
+                      </div>
+                    ))}
                   </div>
-                )}
+                </>
+              ) : containerType === 'apps' && discoveredSymbols.length > 0 ? (
+                /* App Trophy Row — tapping opens the voice recorder */
+                <>
+                  <div className="trophy-symbols-row">
+                    {discoveredSymbols.map((appId, index) => (
+                      <div
+                        key={appId}
+                        className="trophy-symbol trophy-symbol-tappable"
+                        onClick={() => {
+                          applyRecorderTheme(resolvedZoneId);
+                          setSelectedApp(appId);
+                        }}
+                        style={{ animationDelay: `${index * 0.2}s` }}
+                      >
+                        <div className="trophy-symbol-glow">
+                          {appImages[appId] ?
+                            <img src={appImages[appId]} alt={appId} className="trophy-symbol-img" /> :
+                            <span style={{ fontSize: '64px' }}>🎵</span>
+                          }
+                        </div>
+                        <p className="trophy-symbol-name">
+                          {appId.charAt(0).toUpperCase() + appId.slice(1)}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : containerType === 'smartwatch' ? (
+                <div className="container-holder">
+                  <img src="/images/smartwatch-screen.png" alt="Smartwatch" className="backpack-image" />
+                </div>
+              ) : (
+                <div className="container-holder">
+                  <img src="/images/meaning-journal.png" alt="Journal" className="backpack-image" />
+                </div>
+              )}
+            </div>
 
-                {/* Keep Exploring â€” primary CTA (only when no custom primaryAction) */}
-                {!primaryAction && (
-                  <button
-                    className="celebration-btn celebration-btn-orange"
-                    onClick={() => {
-                      const currentZone = GameStateManager.currentZone || 'symbol-mountain';
-                      const nextSceneInfo = GameStateManager.getNextScene(currentZone, sceneId);
-                      if (nextSceneInfo) {
-                        GameStateManager.clearSceneState(nextSceneInfo.zone, nextSceneInfo.scene);
-                      }
-                      handleContinueWithAnimation(() => handleAction(onContinue));
-                    }}
-                  >
-                    Keep Exploring
-                  </button>
-                )}
+            {/* Action Buttons */}
+            <div className="celebration-actions-section">
 
-                {/* Secondary / Tertiary actions */}
-                {!primaryAction ? (
-                  <>
-                    {/* 2nd tier: Explore Scenes */}
+              {!isFinalScene ? (
+                <>
+                  {/* PRIMARY ACTION (if provided) */}
+                  {primaryAction && (
+                    <div className="primary-action-container">
+                      <button
+                        className="celebration-btn celebration-btn-primary"
+                        onClick={() => handleAction(primaryAction.onClick)}
+                      >
+                        {primaryAction.icon && <span className="btn-icon">{primaryAction.icon}</span>}
+                        {primaryAction.text}
+                      </button>
+                      {primaryAction.subtext && (
+                        <p className="primary-action-subtext">{primaryAction.subtext}</p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Keep Exploring — primary CTA (only when no custom primaryAction) */}
+                  {!primaryAction && (
                     <button
-                      className="celebration-btn celebration-btn-teal"
-                      onClick={() => handleAction(onExploreZones)}
-                    >
-                      Explore Scenes
-                    </button>
-                    {/* 3rd tier: Play Again â€” smallest, least prominent */}
-                    <button
-                      className="celebration-btn-replay"
-                      onClick={() => handleAction(onReplay, true)}
-                    >
-                      Play Again
-                    </button>
-                  </>
-                ) : (
-                  <div className="celebration-actions-row">
-                    <button
-                      className="celebration-btn celebration-btn-teal celebration-btn-ghost"
-                      onClick={() => handleAction(onReplay, true)}
-                    >
-                      Play Again
-                    </button>
-                    <button
-                      className="celebration-btn celebration-btn-teal"
+                      className="celebration-btn celebration-btn-orange"
                       onClick={() => {
                         const currentZone = GameStateManager.currentZone || 'symbol-mountain';
                         const nextSceneInfo = GameStateManager.getNextScene(currentZone, sceneId);
                         if (nextSceneInfo) {
                           GameStateManager.clearSceneState(nextSceneInfo.zone, nextSceneInfo.scene);
                         }
-                        handleAction(onContinue);
+                        handleContinueWithAnimation(() => handleAction(onContinue));
                       }}
                     >
-                      Next Scene
+                      Keep Exploring
+                    </button>
+                  )}
+
+                  {/* Secondary / Tertiary actions */}
+                  {!primaryAction ? (
+                    <>
+                      {/* 2nd tier: Explore Scenes */}
+                      <button
+                        className="celebration-btn celebration-btn-teal"
+                        onClick={() => handleAction(onExploreZones)}
+                      >
+                        Explore Scenes
+                      </button>
+                      {/* 3rd tier: Play Again — smallest, least prominent */}
+                      <button
+                        className="celebration-btn-replay"
+                        onClick={() => handleAction(onReplay, true)}
+                      >
+                        Play Again
+                      </button>
+                    </>
+                  ) : (
+                    <div className="celebration-actions-row">
+                      <button
+                        className="celebration-btn celebration-btn-teal celebration-btn-ghost"
+                        onClick={() => handleAction(onReplay, true)}
+                      >
+                        Play Again
+                      </button>
+                      <button
+                        className="celebration-btn celebration-btn-teal"
+                        onClick={() => {
+                          const currentZone = GameStateManager.currentZone || 'symbol-mountain';
+                          const nextSceneInfo = GameStateManager.getNextScene(currentZone, sceneId);
+                          if (nextSceneInfo) {
+                            GameStateManager.clearSceneState(nextSceneInfo.zone, nextSceneInfo.scene);
+                          }
+                          handleAction(onContinue);
+                        }}
+                      >
+                        Next Scene
+                      </button>
+                      <button
+                        className="celebration-btn celebration-btn-teal"
+                        onClick={() => handleAction(onExploreZones)}
+                      >
+                        Back to Zone
+                      </button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  <button
+                    className="celebration-btn celebration-btn-orange"
+                    onClick={() => handleAction(onExploreZones)}
+                  >
+                    Explore Zones
+                  </button>
+                  <div className="celebration-actions-row">
+                    <button
+                      className="celebration-btn celebration-btn-teal"
+                      onClick={() => handleAction(onReplay, true)}
+                    >
+                      Replay Zone
                     </button>
                     <button
                       className="celebration-btn celebration-btn-teal"
-                      onClick={() => handleAction(onExploreZones)}
+                      onClick={() => handleAction(onHome)}
                     >
-                      Back to Zone
+                      Go Home
                     </button>
                   </div>
-                )}
-              </>
-            ) : (
-              <>
-                <button
-                  className="celebration-btn celebration-btn-orange"
-                  onClick={() => handleAction(onExploreZones)}
-                >
-                  Explore Zones
-                </button>
-                <div className="celebration-actions-row">
-                  <button
-                    className="celebration-btn celebration-btn-teal"
-                    onClick={() => handleAction(onReplay, true)}
-                  >
-                    Replay Zone
-                  </button>
-                  <button
-                    className="celebration-btn celebration-btn-teal"
-                    onClick={() => handleAction(onHome)}
-                  >
-                    Go Home
-                  </button>
-                </div>
-              </>
-            )}
+                </>
+              )}
 
+            </div>
           </div>
         </div>
+
       </div>
+      {/* End Main Container */}
 
       {/* Symbol popup - when tapping backpack symbols */}
       {selectedSymbol && symbolData[selectedSymbol] && (
         <div className="ganesha-popup-overlay" onClick={() => setSelectedSymbol(null)} style={{ zIndex: 9999 }}>
           <div className="ganesha-popup-content" onClick={(e) => e.stopPropagation()}>
-            <button className="ganesha-popup-close-btn" onClick={() => setSelectedSymbol(null)}>Ã—</button>
+            <button className="ganesha-popup-close-btn" onClick={() => setSelectedSymbol(null)}>×</button>
             <div className="ganesha-popup-img-container">
               {symbolImages[selectedSymbol] && (
                 <img src={symbolImages[selectedSymbol]} alt={selectedSymbol} className="ganesha-popup-custom-img" />

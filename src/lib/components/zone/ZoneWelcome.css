@@ -14,6 +14,12 @@
   margin: 0;
   padding: 0;
   animation: zoneWelcomeSlideIn 0.5s ease-out;
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.zone-welcome-container.zone-welcome-exiting {
+  opacity: 0;
+  transform: scale(0.995);
 }
 
 
@@ -1384,19 +1390,76 @@ button[style*="position: fixed"][style*="background: purple"] {
 }
 
 /* =========================
-   GANESHA WELCOME CHARACTER — sits beside the zone title
+   ZONE WELCOME GANESHA PRESENCE
 ========================= */
-.zone-title-top {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.zone-ganesha-welcome {
-  flex-shrink: 0;
+.zone-ganesha-presence {
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
   animation: zoneGaneshaEntrance 0.6s cubic-bezier(0.22, 1, 0.36, 1) both,
              zoneGaneshaFloat 3.5s ease-in-out 0.6s infinite;
   filter: drop-shadow(0 4px 16px rgba(255, 200, 80, 0.4));
+}
+
+.zone-ganesha-presence--top {
+  left: 50%;
+  top: 11%;
+}
+
+.zone-ganesha-presence--scene-1 {
+  left: 40%;
+  top: 82%;
+}
+
+.zone-ganesha-presence--scene-2 {
+  left: 20%;
+  top: 56%;
+}
+
+.zone-ganesha-presence--scene-3 {
+  left: 60%;
+  top: 56%;
+}
+
+.zone-ganesha-presence--scene-4 {
+  left: 40%;
+  top: 30%;
+}
+
+.zone-ganesha-presence--scene-5 {
+  left: 56%;
+  top: 35%;
+}
+
+.cave-of-secrets .zone-ganesha-presence--scene-1,
+.shloka-river .zone-ganesha-presence--scene-1 {
+  left: 12%;
+  top: 79%;
+}
+
+.cave-of-secrets .zone-ganesha-presence--scene-2,
+.shloka-river .zone-ganesha-presence--scene-2 {
+  left: 40%;
+  top: 79%;
+}
+
+.cave-of-secrets .zone-ganesha-presence--scene-3,
+.shloka-river .zone-ganesha-presence--scene-3 {
+  left: 68%;
+  top: 79%;
+}
+
+.cave-of-secrets .zone-ganesha-presence--scene-4,
+.shloka-river .zone-ganesha-presence--scene-4 {
+  left: 24%;
+  top: 35%;
+}
+
+.cave-of-secrets .zone-ganesha-presence--scene-5,
+.shloka-river .zone-ganesha-presence--scene-5 {
+  left: 56%;
+  top: 35%;
 }
 
 @keyframes zoneGaneshaEntrance {
@@ -1421,7 +1484,7 @@ button[style*="position: fixed"][style*="background: purple"] {
     font-size: 24px;
   }
 
-  .zone-ganesha-welcome {
+  .zone-ganesha-presence {
     display: none; /* hide on small phones to avoid crowding the title */
   }
 }

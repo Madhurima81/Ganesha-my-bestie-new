@@ -836,14 +836,16 @@
 }
 
 /* =========================
-   GANESHA GUIDE — base of Symbol Mountain, left of cave door
+   GANESHA GUIDE
 ========================= */
 .map-ganesha-guide {
   position: fixed;
-  left: 20%;
-  top: 60%;
   z-index: 20;
   pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.map-ganesha-guide__float {
   animation: ganeshaGuideFloat 4s ease-in-out infinite;
   filter: drop-shadow(0 4px 14px rgba(120, 80, 200, 0.35));
 }
@@ -915,4 +917,50 @@
   0%   { transform: scale(0);    opacity: 0; }
   65%  { transform: scale(1.1);              }
   100% { transform: scale(1);    opacity: 1; }
+}
+
+/* ── TWG floating button — bottom-centre ── */
+.map-twg-btn {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  background: linear-gradient(180deg, #9a73d9 0%, #7f5ac7 100%);
+  border: none;
+  border-radius: 80px;
+  padding: 16px 36px;
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(16px, 1.8vw, 22px);
+  font-weight: 800;
+  color: #FFFFFF;
+  cursor: pointer;
+  min-height: 60px;
+  white-space: nowrap;
+  box-shadow:
+    0 5px 0 #5a3fa0,
+    0 8px 24px rgba(103, 82, 184, 0.40);
+  animation: twgBtnPulse 2.8s ease-in-out infinite;
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+
+.map-twg-btn:hover,
+.map-twg-btn:focus-visible {
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow:
+    0 7px 0 #5a3fa0,
+    0 12px 32px rgba(103, 82, 184, 0.50);
+  outline: none;
+}
+
+.map-twg-btn:active {
+  transform: translateX(-50%) translateY(2px);
+  box-shadow:
+    0 2px 0 #5a3fa0,
+    0 4px 12px rgba(103, 82, 184, 0.30);
+}
+
+@keyframes twgBtnPulse {
+  0%, 100% { box-shadow: 0 5px 0 #5a3fa0, 0 8px 24px rgba(103, 82, 184, 0.40); }
+  50%       { box-shadow: 0 5px 0 #5a3fa0, 0 12px 32px rgba(103, 82, 184, 0.55); }
 }

@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './CleanMapZone.css';
 import GameStateManager from '../lib/services/GameStateManager';
-import GaneshaCharacter from '../lib/components/character/GaneshaCharacter';
+import GaneshaPresence from '../lib/components/character/GaneshaPresence';
 // import ZonePreviewModal from './components/ZonePreviewModal'; // commented out — no preview modal
 
 const ZONES_DATA = [
@@ -200,6 +200,27 @@ const ZONE_LAYOUT = {
   },
 };
 
+const MAP_ZONE_ORDER = [
+  'symbol-mountain',
+  'shloka-river',
+  'cave-of-secrets',
+  'festival-square',
+  'about-me-hut',
+];
+
+const MAP_GANESHA_ZONE_POS = {
+  'symbol-mountain': { left: '31%', top: '50%' },
+  'cave-of-secrets': { left: '48%', top: '42%' },
+  'shloka-river': { left: '66%', top: '44%' },
+  'festival-square': { left: '69%', top: '67%' },
+  'about-me-hut': { left: '28%', top: '70%' },
+};
+
+const MAP_GANESHA_ALL_DONE_POS = {
+  left: '50%',
+  top: '83%',
+};
+
 // Resolve avatar string/emoji → animal id for image path
 const getAnimalId = (avatar) => {
   if (!avatar) return null;
@@ -222,6 +243,98 @@ const getZoneState = (zoneId, allProgress) => {
   return 'active';
 };
 
+const isZoneDone = (allProgress, zoneId) => {
+  const zone = allProgress[zoneId];
+  return !!zone && zone.totalScenes > 0 && zone.completedScenes >= zone.totalScenes;
+};
+
+const getMapGaneshaState = (allProgress, unlockingZones) => {
+  const zoneIds = MAP_ZONE_ORDER.filter((zoneId) => allProgress[zoneId]);
+  if (zoneIds.length === 0) {
+    return {
+      pose: 'pointing',
+      size: 88,
+      position: {
+        ...MAP_GANESHA_ZONE_POS['symbol-mountain'],
+        transform: 'translate(-50%, -50%)',
+      },
+    };
+  }
+
+  const allZonesCompleted = zoneIds.every((zoneId) => isZoneDone(allProgress, zoneId));
+  if (allZonesCompleted) {
+    return {
+      pose: 'celebration',
+      size: 112,
+      position: {
+        ...MAP_GANESHA_ALL_DONE_POS,
+        transform: 'translate(-50%, -50%)',
+      },
+    };
+  }
+
+  const unlockingZoneId = Object.keys(unlockingZones || {})[0];
+  if (unlockingZoneId && MAP_GANESHA_ZONE_POS[unlockingZoneId]) {
+    return {
+      pose: 'thumbs_up',
+      size: 92,
+      position: {
+        ...MAP_GANESHA_ZONE_POS[unlockingZoneId],
+        transform: 'translate(-50%, -50%)',
+      },
+    };
+  }
+
+  const unlockedPendingZones = MAP_ZONE_ORDER.filter((zoneId) => {
+    if (!allProgress[zoneId]) return false;
+    if (!isZoneUnlocked(zoneId, allProgress)) return false;
+    return !isZoneDone(allProgress, zoneId);
+  });
+
+  if (unlockedPendingZones.length === 1) {
+    const zoneId = unlockedPendingZones[0];
+    return {
+      pose: 'pointing',
+      size: 90,
+      position: {
+        ...MAP_GANESHA_ZONE_POS[zoneId],
+        transform: 'translate(-50%, -50%)',
+      },
+    };
+  }
+
+  const recommendedZone = unlockedPendingZones[0] || 'symbol-mountain';
+  return {
+    pose: 'thumbs_up',
+    size: 92,
+    position: {
+      ...(MAP_GANESHA_ZONE_POS[recommendedZone] || MAP_GANESHA_ZONE_POS['symbol-mountain']),
+      transform: 'translate(-50%, -50%)',
+    },
+  };
+};
+
+const getMushikaSeenKey = (zoneId) => {
+  const profileId = localStorage.getItem('activeProfileId') || 'default';
+  return `mushika_zone_seen_${profileId}_${zoneId}`;
+};
+
+const hasSeenMushikaPop = (zoneId) => {
+  try {
+    return localStorage.getItem(getMushikaSeenKey(zoneId)) === '1';
+  } catch {
+    return false;
+  }
+};
+
+const markMushikaPopSeen = (zoneId) => {
+  try {
+    localStorage.setItem(getMushikaSeenKey(zoneId), '1');
+  } catch {
+    // best effort only
+  }
+};
+
 // First scene for each zone — used for direct entry on first visit
 const ZONE_FIRST_SCENES = {
   'symbol-mountain':  'modak',
@@ -240,7 +353,7 @@ const ZONE_SCENES = {
   'about-me-hut':     ['family-tree', 'favorite-food', 'dreams-wishes', 'name-birthday'],
 };
 
-const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles }) => {
+const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen }) => {
   const [zoneProgress, setZoneProgress] = useState({});
   // const [selectedZone, setSelectedZone] = useState(null);  // removed — no preview modal
   // const [showZoneModal, setShowZoneModal] = useState(false); // removed — no preview modal
@@ -455,6 +568,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles }) => {
   };
 
   const dotsVisible = getDotsVisible();
+  const mapGaneshaState = getMapGaneshaState(zoneProgress, unlockingZones);
 
   // Navigate after the Mushika pop finishes
   const navigateToZone = (zone, state) => {
@@ -473,6 +587,14 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles }) => {
   const handleZoneClick = (zone, state) => {
     if (state === 'locked' || state === 'unlocking') return;
     if (mushikaPop) return; // already mid-animation — block double-tap
+
+    // Show only first time per zone (scoped by active profile).
+    if (hasSeenMushikaPop(zone.id)) {
+      navigateToZone(zone, state);
+      return;
+    }
+
+    markMushikaPopSeen(zone.id);
 
     // Show Mushika pop, then navigate after 1.4s
     setMushikaPop({ zone, state });
@@ -569,10 +691,22 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles }) => {
       })}
 
 
-      {/* Ganesha Guide — small floating companion, bottom-left */}
-      <div className="map-ganesha-guide" aria-hidden="true">
-        <GaneshaCharacter expression="happy" size={90} />
-      </div>
+      {/* Map Ganesha presence */}
+      {mapGaneshaState && (
+        <div
+          className="map-ganesha-guide"
+          style={mapGaneshaState.position}
+          aria-hidden="true"
+        >
+          <div className="map-ganesha-guide__float">
+            <GaneshaPresence
+              pose={mapGaneshaState.pose}
+              size={mapGaneshaState.size}
+              breathing={mapGaneshaState.pose === 'celebration' ? 'slow' : 'gentle'}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Profile chip — top right */}
       {activeProfile && (() => {
@@ -641,6 +775,16 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles }) => {
         />
       )}
       */}
+
+      {/* TWG floating button — bottom-centre, above zone labels */}
+      <button
+        className="map-twg-btn"
+        onClick={() => (onTWGOpen ? onTWGOpen() : onZoneSelect?.('twg'))}
+        aria-label="Time with Ganesha"
+      >
+        Time with Ganesha 🐘
+      </button>
+
     </div>
   );
 };

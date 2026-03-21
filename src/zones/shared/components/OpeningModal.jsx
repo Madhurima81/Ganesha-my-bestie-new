@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './OpeningModal.css';
 import { getOpeningModal } from '../../../lib/config/content';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
-import GaneshaCharacter from '../../../lib/components/character/GaneshaCharacter';
+import GaneshaPresence from '../../../lib/components/character/GaneshaPresence';
 
 // Icon Mapping for Unified Style
 import symbolMooshikaColored from '../../symbol-mountain/shared/images/icons/symbol-mooshika-colored.svg';
@@ -155,11 +155,19 @@ const OpeningModal = ({
         }}>
             <div className="game-modal-content">
                 <div className="game-modal-character">
-                    <GaneshaCharacter
+                    <GaneshaPresence
                         className="game-modal-ganesha"
-                        expression="happy"
+                        pose="blessing"
                         size={520}
+                        breathing="gentle"
+                        blink
                         aria-label="Ganesha"
+                        style={{
+                            width: 'min(520px, 100%)',
+                            height: 'auto',
+                            aspectRatio: '1 / 1',
+                            flexShrink: 1,
+                        }}
                     />
                 </div>
                 <div className="game-modal-card">

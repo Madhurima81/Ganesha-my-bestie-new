@@ -276,6 +276,7 @@ static SCENE_METADATA = {
     // ✅ ADD THESE MISSING LINES - Shloka River specific data
   syllables: completionData.syllables || {},     // 🎯 MISSING - Shloka River syllables
   words: completionData.words || {},             // 🎯 MISSING - Shloka River words
+  chantedVerses: completionData.chantedVerses || {},  // 🎯 Shloka River chanted verses
 
         completedAt: timestamp,
         lastPlayed: timestamp
