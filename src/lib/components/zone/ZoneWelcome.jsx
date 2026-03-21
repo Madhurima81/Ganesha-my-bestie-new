@@ -756,7 +756,7 @@ if (tempData) {
         <ScreenHeader title={zoneData.name} glowColor="gold" />
       </div>
 
-      {/* Zone Welcome Whisper — Ganesha greets child on zone entry */}
+      {/* Zone Welcome Whisper — auto-plays on entry, auto-dismisses 2s after voice ends */}
       <div style={{ padding: '0 1rem 0.5rem', display: 'flex', justifyContent: 'flex-start' }}>
         <GaneshaSceneWhisper
           type="zone-welcome"
@@ -764,6 +764,7 @@ if (tempData) {
           childName={GameStateManager.getActiveProfile()?.name || ''}
           childAge={GameStateManager.getActiveProfile()?.age || 7}
           autoPlay={true}
+          autoDismissMs={2000}
           size="medium"
         />
       </div>
@@ -872,8 +873,10 @@ if (tempData) {
                     <div className="scene-name">
                       {scene.name}
                     </div>
-                    {/* Scene Invite Whisper — tap Ganesha to hear what's inside */}
-                    {status.status !== 'locked' && (
+                    {/* Scene Invite Whisper — tap Ganesha to hear what's inside.
+                        Only on available/in-progress cards. Completed = child
+                        already knows this scene; locked = nothing to tease yet. */}
+                    {(status.status === 'available' || status.status === 'in-progress') && (
                       <GaneshaSceneWhisper
                         type="scene-invite"
                         sceneId={scene.id}
