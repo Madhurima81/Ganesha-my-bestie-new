@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './Namebirthdaygame.css';
 import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
 
@@ -19,6 +19,15 @@ import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 // Shared Components
 import OpeningModal from '../../shared/components/OpeningModal';
 import HomeButton from '../../../lib/components/ui/HomeButton';
+import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
+import AudioToggle from '../../../lib/components/ui/AudioToggle';
+import useAudioPreference from '../../../lib/hooks/useAudioPreference';
+import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
+import { useGaneshaVoice } from '../../../lib/hooks/useGaneshaVoice';
+import useResumeCountdown from '../../../lib/hooks/useResumeCountdown';
+import ResumeCountdown from '../../../lib/components/feedback/ResumeCountdown';
+import usePauseAwareTimeout from '../../../lib/hooks/usePauseAwareTimeout';
+import { useGameSounds } from '../../../lib/hooks/useGameSounds';
 
 // Import images
 import nameBg from './assets/images/name-bg.png';
@@ -110,6 +119,38 @@ const NameBirthdayGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
 // 2. CONTENT COMPONENT
 // =========================================================
 const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplete, onNavigate, onBack }) => {
+  const RESUME_DELAY_MS = 3000;
+
+  const VOICE_LINES = {
+    // Opening Modal
+    opening: "Hello, little friend! Let's learn something special about each other.",
+
+    // Name Balloons
+    nameBalloons: "Can you find the letters of my name? Pop the balloons… in the right order!",
+    nameComplete: "You did it! My name is Ganesha! Thank you for helping me spell it!",
+
+    // Child Name
+    childNameIntro: "Now I know my name… but what is your name?",
+    childNameInput: "Tap the letters… and spell your name!",
+    childNameComplete: "{childName}… what a beautiful name! I'm happy to meet you.",
+
+    // Birthday Intro
+    birthdayIntro: "Now let's discover something else about me. Can you find which festival is my birthday?",
+    birthdayChoice: "Look carefully… Which festival is my birthday?",
+    birthdayCorrect: "Yes! Ganesh Chaturthi is my birthday! That is when everyone celebrates me.",
+
+    // Child Birthday
+    childBirthdayIntro: "Now I know your name, {childName}. When is your birthday?",
+    childBirthdayMonth: "Tap the month you were born.",
+    childBirthdayDate: "And which day… in {monthName}?",
+    childBirthdayComplete: "{monthName} {date}! That's a wonderful birthday! I will remember it.",
+
+    // Besties Card
+    bestiesCard: "Now we know something special about each other. Your birthday… and my birthday. We are friends!",
+
+    // Completion
+    complete: "You learned something beautiful today. Thank you for being my friend!"
+  };
 
   if (!sceneState) return <div>Loading...</div>;
 
@@ -117,6 +158,36 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const openingModalContent = getOpeningModal('about-me-hut', 'name-birthday');
   const completionModalContent = getCompletionModal('about-me-hut', 'name-birthday');
   const completionIcons = openingModalContent?.icons || ['balloons', 'birthday'];
+  // ── Resume Delay (shared across pause/resume logic) ──────────────────────────
+  const RESUME_DELAY_MS = 3000;
+
+  const { isAudioOn, toggleAudio } = useAudioPreference();
+
+  // ── Callbacks for pause/resume ────────────────────────────────────────────────
+  const onReturnHint = () => {
+    // Optional: trigger visual hint on return
+  };
+
+  // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
+  const { startIdleTimer, stopIdleTimer, setCurrentPhase, stopVoice, setVoiceVolume, startMusic, stopMusic } = useVoiceGuidance(
+    'about-me-hut', 'name-birthday', {
+      enableMusic: true,
+      musicVolume: 0.06,
+      idleTimeout: 20,
+      resumeDelay: RESUME_DELAY_MS,  // ← Wait before replaying VO
+      onReturnHint                     // ← Called when child returns
+    }
+  );
+  const { playUiTap, playWrongTap, playSparkle, playChime, setGlobalVolume } = useGameSounds();
+  const { speak, stop: stopSpokenVoice } = useGaneshaVoice();
+  useEffect(() => { startIdleTimer(); return () => stopIdleTimer(); }, [startIdleTimer, stopIdleTimer]);
+  useEffect(() => { setCurrentPhase(sceneState?.gamePhase ?? null); }, [sceneState?.gamePhase, setCurrentPhase]);
+  useEffect(() => {
+    if (isAudioOn && sceneState.gamePhase !== 'intro' && !sceneState.showingCompletionScreen) startMusic();
+    else stopMusic();
+  }, [isAudioOn, sceneState.gamePhase, sceneState.showingCompletionScreen, startMusic, stopMusic]);
+  useEffect(() => { setGlobalVolume(isAudioOn ? 1 : 0); }, [isAudioOn, setGlobalVolume]);
+  useEffect(() => () => stopMusic(), [stopMusic]);
 
   // --- LOCAL UI STATE ---
   const [showShake, setShowShake] = useState(null);
@@ -131,6 +202,42 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const resumePopupTimeoutRef = useRef(null);
   const [showResumePopup, setShowResumePopup] = useState(false);
   const [resumeMessage, setResumeMessage] = useState('');
+  const [openingButtonVisible] = useState(true);
+  const phaseVoiceRef = useRef({});
+  const [showReturnHint, setShowReturnHint] = useState(false);
+  const returnHintTimerRef = useRef(null);
+  const miniGestureTimerRef = useRef(null);
+  const [miniGesture, setMiniGesture] = useState({
+    show: false,
+    durationMs: 1200,
+    key: 0,
+    icon: '/images/hand-thumbsup.svg'
+  });
+  const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
+  const triggerMiniGesture = useCallback((durationMs = 1200, icon = '/images/hand-thumbsup.svg') => {
+    if (miniGestureTimerRef.current) {
+      clearTimeout(miniGestureTimerRef.current);
+      miniGestureTimerRef.current = null;
+    }
+    setMiniGesture((prev) => ({
+      show: true,
+      durationMs,
+      key: prev.key + 1,
+      icon
+    }));
+    miniGestureTimerRef.current = setTimeout(() => {
+      setMiniGesture((prev) => ({ ...prev, show: false }));
+      miniGestureTimerRef.current = null;
+    }, durationMs);
+  }, []);
+  const speakLine = (text, options = {}) => {
+    if (!isAudioOn || !text) {
+      options.onEnd?.();
+      return;
+    }
+    const { onEnd, moment = 'encouragement' } = options;
+    speak(text, { age: 7, style: 'child', moment, onEnd });
+  };
 
   // --- DATA ---
   const nameLetters = [
@@ -198,6 +305,14 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
   ];
 
   const encouragingPhrases = ["Let's try the next one 🌼", "Look closely 👀", "You've got this 💛"];
+  const LETTER_VO_MAP = {
+    A: 'Ay',
+    G: 'Gee',
+    N: 'Enn',
+    E: 'Ee',
+    S: 'Ess',
+    H: 'Aitch'
+  };
 
   // --- RELOAD DETECTION & RESTORATION ---
   useEffect(() => {
@@ -257,13 +372,6 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
       if (gamePhase === 'birthday-correct') {
         console.log("🔧 Reload during birthday-correct, jumping to child-birthday-intro");
         sceneActions.updateState({ gamePhase: 'child-birthday-intro' });
-        return;
-      }
-
-      if (gamePhase === 'birthday-correct') {
-        setResumeMessage("You found it! Moving ahead...");
-        setShowResumePopup(true);
-        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 2000);
         return;
       }
 
@@ -358,9 +466,148 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
     };
   }, [sceneState.gamePhase, sceneActions]);
 
+  useEffect(() => {
+    if (sceneState.gamePhase === 'intro') {
+      phaseVoiceRef.current = {};
+      const timer = setTimeout(() => {
+        speakLine(VOICE_LINES.opening, { moment: 'greeting' });
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [sceneState.gamePhase, isAudioOn]);
+
+  useEffect(() => {
+    // Name Balloons
+    if (sceneState.gamePhase === 'name-balloons' && !phaseVoiceRef.current.nameBalloons) {
+      phaseVoiceRef.current.nameBalloons = true;
+      speakLine(VOICE_LINES.nameBalloons);
+    }
+
+    // Name Complete
+    if (sceneState.gamePhase === 'name-complete' && !phaseVoiceRef.current.nameComplete) {
+      phaseVoiceRef.current.nameComplete = true;
+      speakLine(VOICE_LINES.nameComplete, { moment: 'celebration' });
+    }
+
+    // Child Name Intro
+    if (sceneState.gamePhase === 'child-name-intro' && !phaseVoiceRef.current.childNameIntro) {
+      phaseVoiceRef.current.childNameIntro = true;
+      speakLine(VOICE_LINES.childNameIntro);
+    }
+
+    // Child Name Input
+    if (sceneState.gamePhase === 'child-name-input' && !phaseVoiceRef.current.childNameInput) {
+      phaseVoiceRef.current.childNameInput = true;
+      speakLine(VOICE_LINES.childNameInput);
+    }
+
+    // Child Name Complete
+    if (sceneState.gamePhase === 'child-name-complete' && !phaseVoiceRef.current.childNameComplete) {
+      phaseVoiceRef.current.childNameComplete = true;
+      const nameCompleteLine = VOICE_LINES.childNameComplete.replace('{childName}', sceneState.childName || 'little friend');
+      speakLine(nameCompleteLine, { moment: 'celebration' });
+    }
+
+    // Birthday Intro
+    if (sceneState.gamePhase === 'birthday-intro' && !phaseVoiceRef.current.birthdayIntro) {
+      phaseVoiceRef.current.birthdayIntro = true;
+      speakLine(VOICE_LINES.birthdayIntro);
+    }
+
+    // Birthday Choice
+    if (sceneState.gamePhase === 'birthday-choice' && !phaseVoiceRef.current.birthdayChoice) {
+      phaseVoiceRef.current.birthdayChoice = true;
+      speakLine(VOICE_LINES.birthdayChoice);
+    }
+
+    // Birthday Correct
+    if (sceneState.gamePhase === 'birthday-correct' && !phaseVoiceRef.current.birthdayCorrect) {
+      phaseVoiceRef.current.birthdayCorrect = true;
+      speakLine(VOICE_LINES.birthdayCorrect, { moment: 'celebration' });
+    }
+
+    // Child Birthday Intro
+    if (sceneState.gamePhase === 'child-birthday-intro' && !phaseVoiceRef.current.childBirthdayIntro) {
+      phaseVoiceRef.current.childBirthdayIntro = true;
+      const birthdayIntroLine = VOICE_LINES.childBirthdayIntro.replace('{childName}', sceneState.childName || 'little friend');
+      speakLine(birthdayIntroLine);
+    }
+
+    // Child Birthday Month
+    if (sceneState.gamePhase === 'child-birthday-month' && !phaseVoiceRef.current.childBirthdayMonth) {
+      phaseVoiceRef.current.childBirthdayMonth = true;
+      speakLine(VOICE_LINES.childBirthdayMonth);
+    }
+
+    // Child Birthday Date
+    if (sceneState.gamePhase === 'child-birthday-date' && !phaseVoiceRef.current.childBirthdayDate) {
+      phaseVoiceRef.current.childBirthdayDate = true;
+      const dateLines = VOICE_LINES.childBirthdayDate.replace('{monthName}', sceneState.childBirthdayMonthName || 'month');
+      speakLine(dateLines);
+    }
+
+    // Child Birthday Complete
+    if (sceneState.gamePhase === 'child-birthday-complete' && !phaseVoiceRef.current.childBirthdayComplete) {
+      phaseVoiceRef.current.childBirthdayComplete = true;
+      let completeLine = VOICE_LINES.childBirthdayComplete
+        .replace('{monthName}', sceneState.childBirthdayMonthName || 'month')
+        .replace('{date}', sceneState.childBirthdayDate || 'date');
+      speakLine(completeLine, { moment: 'celebration' });
+    }
+
+    // Besties Card
+    if (sceneState.gamePhase === 'besties-card' && !phaseVoiceRef.current.bestiesCard) {
+      phaseVoiceRef.current.bestiesCard = true;
+      speakLine(VOICE_LINES.bestiesCard, { moment: 'closing' });
+    }
+  }, [sceneState.gamePhase, sceneState.childName, sceneState.childBirthdayMonthName, sceneState.childBirthdayDate, isAudioOn]);
+
+  useEffect(() => {
+    if (sceneState.showingCompletionScreen && !phaseVoiceRef.current.completeVo) {
+      phaseVoiceRef.current.completeVo = true;
+      speakLine(VOICE_LINES.complete, { moment: 'closing' });
+    }
+  }, [sceneState.showingCompletionScreen, isAudioOn]);
+
+  useEffect(() => () => stopSpokenVoice(), [stopSpokenVoice]);
+  useEffect(() => {
+    return () => {
+      if (returnHintTimerRef.current) clearTimeout(returnHintTimerRef.current);
+      if (miniGestureTimerRef.current) clearTimeout(miniGestureTimerRef.current);
+    };
+  }, []);
+
+  usePauseAwareTimeout({
+    onHide: () => {
+      stopVoice();
+      stopSpokenVoice();
+      setShowReturnHint(false);
+      if (returnHintTimerRef.current) {
+        clearTimeout(returnHintTimerRef.current);
+        returnHintTimerRef.current = null;
+      }
+      // Clear phase VO ref to allow replay after resume countdown
+      phaseVoiceRef.current = {};
+    },
+    onShow: () => {
+      triggerMiniGesture(1200);
+      setShowReturnHint(true);
+      if (returnHintTimerRef.current) clearTimeout(returnHintTimerRef.current);
+      returnHintTimerRef.current = setTimeout(() => {
+        setShowReturnHint(false);
+        returnHintTimerRef.current = null;
+      }, 2200);
+      onReturnHint();
+    },
+    resumeDelay: RESUME_DELAY_MS
+  });
+
   // --- HANDLERS ---
 
   const handleStartGame = () => {
+    stopVoice();
+    stopSpokenVoice();
+    setVoiceVolume(isAudioOn ? 1 : 0);
     sceneActions.updateState({ gamePhase: 'name-balloons' });
   };
 
@@ -371,21 +618,30 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
     const clickedLetter = nameLetters[letterIndex].letter;
 
     if (clickedLetter !== currentNeededLetter) {
+      playWrongTap();
       setShakeWrongBalloon(letterId);
       setTimeout(() => setShakeWrongBalloon(null), 500);
       return;
     }
 
+    playUiTap();
+    playSparkle();
     const newPopped = [...sceneState.poppedLetters, letterId];
     sceneActions.updateState({
       poppedLetters: newPopped,
       currentLetterIndex: sceneState.currentLetterIndex + 1
     });
+    if (isAudioOn) {
+      const voicedLetter = LETTER_VO_MAP[clickedLetter] || clickedLetter;
+      speak(voicedLetter, { age: 7, style: 'child', moment: 'encouragement' });
+    }
+    triggerMiniGesture(900);
 
     setShowConfetti(true);
     setTimeout(() => setShowConfetti(false), 500);
 
     if (newPopped.length === nameLetters.length) {
+      playChime();
       setInstructionMessage('Amazing! All balloons popped! 🎉');
       setTimeout(() => {
         sceneActions.updateState({ gamePhase: 'name-complete' });
@@ -396,6 +652,7 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleStartBirthdayChoice = () => {
+    playUiTap();
     sceneActions.updateState({ wrongFestivals: [], gamePhase: 'birthday-choice' });
     setShowShake(null);
   };
@@ -420,12 +677,16 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     if (festival.correct) {
       // Correct!
+      playSparkle();
+      playChime();
+      triggerMiniGesture(1100);
       sceneActions.updateState({
         selectedFestival: festivalId,
         gamePhase: 'birthday-correct'
       });
     } else {
       // 1. TRIGGER SHAKE ONLY (No Active/Flipped state yet)
+      playWrongTap();
       setShowShake(festivalId);
       setInstructionMessage("Oops! Not that one... 🙊");
 
@@ -460,10 +721,12 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleChildNameLetterClick = (letter) => {
+    playUiTap();
     sceneActions.updateState({ childNameLetters: [...sceneState.childNameLetters, letter] });
   };
 
   const handleChildNameBackspace = () => {
+    playUiTap();
     sceneActions.updateState({ childNameLetters: sceneState.childNameLetters.slice(0, -1) });
   };
 
@@ -471,14 +734,17 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
     const name = sceneState.childNameLetters.join('');
     if (name.length < 2) return;
 
+    playChime();
     sceneActions.updateState({
       childName: name,
       gamePhase: 'child-name-complete'
     });
+    triggerMiniGesture(1000);
     localStorage.setItem('childName', name);
   };
 
   const handleMonthSelect = (monthData) => {
+    playUiTap();
     sceneActions.updateState({
       childBirthdayMonth: monthData.month,
       childBirthdayMonthName: monthData.name,
@@ -487,11 +753,13 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleDateSelect = (date) => {
+    playChime();
     sceneActions.updateState({
       childBirthdayDate: date,
       gamePhase: 'child-birthday-complete',
       completed: true // Mark completed here so it saves
     });
+    triggerMiniGesture(1200);
     localStorage.setItem('childBirthday', `${sceneState.childBirthdayMonth}-${date}`);
   };
 
@@ -515,15 +783,62 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
     <div className="name-birthday-game" data-zone="about-me-hut">
       <div className="game-background" style={{ backgroundImage: `url(${nameBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
       <HomeButton onNavigate={onNavigate} />
+      <ZoneBadgeButton zoneId="about-me-hut" onBack={() => onNavigate?.('zone-welcome')} />
+      <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
+      <ResumeCountdown value={countdownValue} />
+      {showReturnHint && (
+        <div style={{
+          position: 'fixed',
+          top: '18px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 1200,
+          background: 'rgba(46, 28, 13, 0.88)',
+          color: '#FFF9E8',
+          padding: '10px 16px',
+          borderRadius: '999px',
+          fontWeight: 700,
+          fontSize: '14px',
+          letterSpacing: '0.2px',
+          boxShadow: '0 8px 20px rgba(0,0,0,0.22)'
+        }}>
+          Welcome back, let's continue
+        </div>
+      )}
+      {miniGesture.show && (
+        <div
+          key={`name-mini-gesture-${miniGesture.key}`}
+          style={{
+            position: 'fixed',
+            left: '50%',
+            top: '42%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 1300,
+            pointerEvents: 'none',
+            animation: `nameGesturePop ${miniGesture.durationMs}ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards`
+          }}
+        >
+          <img src={miniGesture.icon} alt="" style={{ width: '62px', height: '62px' }} />
+        </div>
+      )}
+      <style>{`
+        @keyframes nameGesturePop {
+          0% { opacity: 0; transform: translate(-50%, -50%) scale(0.6) rotate(-8deg); }
+          20% { opacity: 1; transform: translate(-50%, -50%) scale(1.08) rotate(0deg); }
+          100% { opacity: 0; transform: translate(-50%, -58%) scale(1); }
+        }
+      `}</style>
 
       {/* Intro */}
-      <OpeningModal
-        zoneId="about-me-hut"
-        sceneId="name-birthday"
-        onStart={handleStartGame}
-        characterImg={babyGaneshaImg}
-        showButton={true} // Name game doesn't seem to have VO gating on the intro button
-      />
+      {sceneState.gamePhase === 'intro' && (
+        <OpeningModal
+          zoneId="about-me-hut"
+          sceneId="name-birthday"
+          onStart={handleStartGame}
+          characterImg={babyGaneshaImg}
+          showButton={openingButtonVisible}
+        />
+      )}
 
       {/* Back Button */}
       {sceneState.gamePhase !== 'intro' && !sceneState.showingCompletionScreen && (
@@ -973,11 +1288,16 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
             balloons: balloonsIcon,
             birthday: birthdayIcon
           }}
-          nextSceneName="Explore More!"
+          nextSceneName="What We Love"
           childName="festival finder"
-          isFinalScene={true}
+          isFinalScene={false}
           starsEarned={sceneState.stars}
           totalStars={2}
+          completionData={{
+            completed: true,
+            stars: sceneState.stars || 2,
+            childName: sceneState.childName || ''
+          }}
           onContinue={() => {
             setTimeout(() => {
               if (onNavigate) onNavigate('scene-complete-continue');

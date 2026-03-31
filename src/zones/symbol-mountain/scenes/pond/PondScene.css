@@ -68,31 +68,90 @@
 }
 
 /* Lotus positions and styles */
+/* Gesture cue positions — pond-specific */
+.modak-mini-ganesha-cue--lotus {
+  left: 38%;
+  top: 42%;
+}
+
+/* Mini gesture sizing (match Modak) */
+.modak-mini-ganesha-cue {
+  --mini-cue-duration: 1.5s;
+  animation-duration: var(--mini-cue-duration);
+}
+
+.modak-mini-gesture-icon {
+  width: clamp(52px, 5vw, 76px);
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.2));
+}
+
+.modak-mini-ganesha-cue--idle {
+  --mini-cue-duration: 3.5s;
+}
+
+.pond-idle-hint-hand {
+  position: absolute;
+  display: block;
+  font-size: clamp(36px, 5vw, 54px);
+  line-height: 1;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+  animation: pond-idle-hint-pulse 2.6s ease-in-out infinite;
+  will-change: transform, opacity;
+  transform-origin: center bottom;
+}
+
+@keyframes pond-idle-hint-pulse {
+  0%, 100% { opacity: 0.0; transform: scale(0.98); }
+  20% { opacity: 1; }
+  50% { opacity: 1; transform: scale(1.06); }
+  80% { opacity: 0.2; }
+}
+
 .lotus {
   position: absolute;
-  width: 15%;
+  width: 18%;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: transform 0.2s, opacity 0.2s;
+  opacity: 0.92;
+  animation: lotusPulse 9s ease-in-out infinite;
 }
 
 .lotus:hover {
-  transform: scale(1.05);
+  transform: scale(1.03);
+  opacity: 0.85;
 }
 
 .lotus-1 {
-  left: 35%;
-  top: 45%;
+  left: 30%;
+  top: 56%;
 }
 
 .lotus-2 {
-  left: 60%;
-  top: 60%;
+  left: 43%;
+  top: 62%;
 }
 
 .lotus-3 {
-  left: 30%;
-  top: 70%;
+  left: 57%;
+  top: 56%;
 }
+
+@keyframes lotusPulse {
+  0%, 100% { transform: scale(1.2); opacity: 0.92; }
+  50% { transform: scale(1.008); opacity: 0.82; }
+}
+
+/* Force lotus size/opacity/pulse/position to win over any media query overrides */
+.pond-scene-container .lotus {
+  width: 18% !important;
+  opacity: 0.92 !important;
+  /*animation: lotusPulse 9s ease-in-out infinite !important;*/
+}
+.pond-scene-container .lotus-1 { left: 30% !important; top: 56% !important; }
+.pond-scene-container .lotus-2 { left: 43% !important; top: 62% !important; }
+.pond-scene-container .lotus-3 { left: 57% !important; top: 56% !important; }
 
 /* SLEEK LOTUS COUNTER - New slim design */
 .lotus-counter {
@@ -204,17 +263,19 @@
 
 /* Golden lotus pulsing when clickable */
 .golden-lotus-container:not(.blooming) {
-  animation: goldenPulse 2s ease-in-out infinite;
+  animation: goldenPulse 5s ease-in-out infinite;
 }
 
 @keyframes goldenPulse {
-  0%, 100% { 
+  0%, 100% {
     transform: scale(1);
-    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));
+    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.2));
+    opacity: 0.9;
   }
-  50% { 
-    transform: scale(1.05);
-    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+  50% {
+    transform: scale(1.02);
+    filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.45));
+    opacity: 1;
   }
 }
 
@@ -249,13 +310,13 @@
   transform: translate(-50%, -50%);
   background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
   pointer-events: none;
-  animation: golden-glow 2s ease-in-out infinite;
+  animation: golden-glow 5s ease-in-out infinite;
   z-index: -1;
 }
 
 @keyframes golden-glow {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 0.8; }
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.4; }
 }
 
 /* Elephant partial styles */
@@ -461,15 +522,79 @@
     0 0 30px rgba(255, 255, 255, 0.4);
 }
 
-/* Enhanced Arc Animation Class */
+/* Enhanced Arc Animation Class (legacy — kept for compatibility) */
 .water-drop.enhanced-arc {
   opacity: 1;
   animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  
-  /* Add sparkle animation */
-  animation: 
+  animation:
     fixedWaterArc 2s forwards,
     waterSparkle 0.6s ease-in-out infinite;
+}
+
+/* ── Proper source→target water arc (trunk → golden lotus) ── */
+.pond-water-drop {
+  position: absolute;
+  pointer-events: none;
+  z-index: 25;
+  animation: pondWaterArc var(--duration) cubic-bezier(0.25, 0.46, 0.45, 0.94) var(--delay) forwards;
+  filter: drop-shadow(0 2px 6px rgba(0, 150, 220, 0.4));
+}
+
+.pond-water-trail {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: radial-gradient(circle, #4ECDC4, #44A08D);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 24;
+  animation: pondWaterTrail var(--duration) cubic-bezier(0.25, 0.46, 0.45, 0.94) var(--delay) forwards;
+  opacity: var(--opacity);
+}
+
+@keyframes pondWaterArc {
+  0% {
+    left: var(--start-x);
+    top: var(--start-y);
+    opacity: 1;
+    transform: translateX(var(--spread)) scale(var(--size)) rotate(var(--rotation));
+  }
+  50% {
+    left: calc((var(--start-x) + var(--end-x)) / 2);
+    top: calc((var(--start-y) + var(--end-y)) / 2 - var(--arc-height));
+    opacity: 0.85;
+    transform: translateX(var(--spread)) scale(calc(var(--size) * 1.2)) rotate(calc(var(--rotation) + 90deg));
+  }
+  90% {
+    opacity: 0.4;
+  }
+  100% {
+    left: var(--end-x);
+    top: var(--end-y);
+    opacity: 0;
+    transform: translateX(var(--spread)) scale(calc(var(--size) * 0.7)) rotate(calc(var(--rotation) + 180deg));
+  }
+}
+
+@keyframes pondWaterTrail {
+  0% {
+    left: var(--start-x);
+    top: var(--start-y);
+    opacity: var(--opacity);
+    transform: scale(1);
+  }
+  50% {
+    left: calc((var(--start-x) + var(--end-x)) / 2);
+    top: calc((var(--start-y) + var(--end-y)) / 2 - var(--arc-height));
+    opacity: calc(var(--opacity) * 0.6);
+    transform: scale(1.5);
+  }
+  100% {
+    left: var(--end-x);
+    top: var(--end-y);
+    opacity: 0;
+    transform: scale(0.8);
+  }
 }
 
 /* Wobble version of the arc (optional - more playful) */
@@ -657,21 +782,11 @@
   text-align: center !important;
 }
 
-/* Media queries for responsive design */
+/* Small screen adjustments — lotus size/position locked via .pond-scene-container overrides */
 @media (max-width: 768px) {
-  /*.pond-scene-container {
-    padding-top: 30px;
-    padding-bottom: 70px;
-  }*/
-  
-  .lotus {
-    width: 20%;
-  }
-  
   .elephant-partial {
     width: 30%;
   }
-  
   .lotus-counter {
     width: 160px;
     height: 36px;
@@ -679,69 +794,68 @@
     top: 10px;
     left: 10px;
   }
-  
   .counter-icon {
     width: 20px;
     height: 20px;
   }
-  
   .counter-display {
     font-size: 13px;
   }
 }
 
-/* Portrait orientation adjustments */
+/* Portrait orientation adjustments — positions locked via .pond-scene-container overrides above */
 @media (orientation: portrait) {
-/*.pond-scene-container {
-    padding-top: 30px;
-    padding-bottom: 70px;
-  }*/
-  
-  .lotus {
-    width: 30%;
-  }
-
   .elephant-partial {
     width: 30%;
-  }
-  
-  .lotus-1 {
-    left: 20%;
-    top: 50%;
-  }
-  
-  .lotus-2 {
-    left: 75%;
-    top: 60%;
-  }
-  
-  .lotus-3 {
-    left: 25%;
-    top: 70%;
-  }
-  
-  .elephant-partial {
     right: -15%;
     bottom: 30%;
   }
-  
   .lotus-counter {
     top: 10px;
     left: 10px;
   }
 }
 
-/* SIMPLE HINT GLOW - Just light pulse */
+/* ── Suppress interactive-element pulse on lotus / golden lotus / elephant ──
+   InteractiveElement.css applies `animation: pulse 2s infinite` to every
+   .interactive-element.new — override it here so the pond keeps its own
+   gentle lotusPulse animation instead of the faster pulse. */
+.lotus .interactive-element,
+.lotus .interactive-element.new,
+.lotus .interactive-element:hover,
+.lotus .interactive-element.pressed,
+.golden-lotus-container .interactive-element,
+.golden-lotus-container .interactive-element.new,
+.golden-lotus-container .interactive-element:hover,
+.elephant-partial .interactive-element,
+.elephant-partial .interactive-element.new {
+  animation: none !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* SIMPLE HINT GLOW - Pseudo-element so we don't override element animations */
 .hint-glow {
+  position: relative;
+  overflow: visible;
+}
+
+.hint-glow::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
   animation: simple-glow-pulse 1.5s ease-in-out infinite;
 }
 
 @keyframes simple-glow-pulse {
-  0%, 100% { 
-    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
   }
-  50% { 
-    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 1));
+  50% {
+    box-shadow: 0 0 18px 6px rgba(255, 215, 0, 0.85);
   }
 }
 
