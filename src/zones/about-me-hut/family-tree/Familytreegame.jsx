@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useGameSounds } from '../../../lib/hooks/useGameSounds';
 import './Familytreegame.css';
 import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
@@ -14,7 +14,11 @@ import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
 // import { PauseButton, PauseMenu, PauseBlurOverlay, usePauseEnhancements } from '../../../lib/components/ui/PauseMenu';
 import HomeButton from '../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../lib/components/ui/AudioToggle/AudioToggle';
+import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
 import useAudioPreference from '../../../lib/hooks/useAudioPreference';
+import useResumeCountdown from '../../../lib/hooks/useResumeCountdown';
+import ResumeCountdown from '../../../lib/components/feedback/ResumeCountdown';
+import usePauseAwareTimeout from '../../../lib/hooks/usePauseAwareTimeout';
 
 // Content Configs
 import { getOpeningModal, getCompletionModal } from '../../../lib/config/content';
@@ -205,9 +209,15 @@ const FamilyTreeGameContent = ({
   // ========================================
   // VOICE GUIDANCE HOOK
   // ========================================
+  const RESUME_DELAY_MS = 3000;
   const { isAudioOn, toggleAudio, setAudioEnabled } = useAudioPreference();
   const audioEnabledRef = useRef(isAudioOn);
   audioEnabledRef.current = isAudioOn;
+
+  const onReturnHint = useCallback(() => {
+    // Called when child returns to tab — triggers idle timer reset in useVoiceGuidance
+    setCurrentPhase(sceneState?.gamePhase ?? null);
+  }, [sceneState?.gamePhase, setCurrentPhase]);
 
   const {
     playVoice,
@@ -227,10 +237,12 @@ const FamilyTreeGameContent = ({
     recordInteraction
   } = useVoiceGuidance('about-me-hut', 'family-tree', {
     enableMusic: true,
-    musicVolume: 0.2,
+    musicVolume: 0.07,
     voiceVolume: 1,
     sfxVolume: 0.7,
-    idleTimeout: 10
+    idleTimeout: 10,
+    resumeDelay: RESUME_DELAY_MS,
+    onReturnHint
   });
 
   const { playUiTap, playWrongTap, playSparkle, playBloom, playChime, playGlow, playTwinkle } = useGameSounds();
@@ -240,6 +252,7 @@ const FamilyTreeGameContent = ({
     const nextOn = !isAudioOn;
     setVoiceVolume(nextOn ? 1 : 0);
     if (!nextOn) stopVoice();
+    if (nextOn) setShowVoiceOffPill(false);
     toggleAudio();
   };
 
@@ -254,7 +267,8 @@ const FamilyTreeGameContent = ({
   // ========================================
   // VO-GATED BUTTON STATE
   // ========================================
-  const [openingButtonVisible, setOpeningButtonVisible] = useState(false);
+  const [openingButtonVisible, setOpeningButtonVisible] = useState(true);
+  const [showVoiceOffPill, setShowVoiceOffPill] = useState(false);
 
   // ========================================
   // GANESHA PHASE VO STATE
@@ -267,6 +281,7 @@ const FamilyTreeGameContent = ({
   // ========================================
   const [transitionButtonVisible, setTransitionButtonVisible] = useState(false);
   const [childProgressCount, setChildProgressCount] = useState(0); // Track which progress VO to play
+  const ganeshaTreeDoneClickedRef = useRef(false);
 
   // --- LOCAL REFS & STATE (Not persisted in SceneManager) ---
   const mediaRecorderRef = useRef(null);
@@ -281,21 +296,52 @@ const FamilyTreeGameContent = ({
   const [resumeMessage, setResumeMessage] = useState('');
   const isPausedRef = useRef(false);
   const scheduledTimeoutsRef = useRef([]);
-  const childIdleVOTimerRef = useRef(null);
+  const [showReturnHint, setShowReturnHint] = useState(false);
+  const prevCountdownRef = useRef(null);
+  const childStartTimerRef = useRef(null);
+  const tapCircleTimerRef = useRef(null);
 
-  const clearScheduledTimeouts = () => {
-    scheduledTimeoutsRef.current.forEach((id) => clearTimeout(id));
-    scheduledTimeoutsRef.current = [];
-  };
+  // Resume Countdown & Pause-Aware Timeout
+  const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
 
+  const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({
+    onHide: () => {
+      // On tab hide: stop voice, clear pause flag
+      stopVoice();
+      setShowReturnHint(false);
+    },
+    onShow: () => {
+      // On tab resume: trigger idle timer reset
+      onReturnHint?.();
+    },
+    resumeDelay: RESUME_DELAY_MS
+  });
+
+  // Show pointing hint on first unplaced circle when child returns from tab switch
+  useEffect(() => {
+    if (countdownValue === null && prevCountdownRef.current !== null) {
+      // Countdown just finished — show hint if in ganeshaTree phase with circles remaining
+      const canShowHint =
+        sceneState.gamePhase === 'ganeshaTree' &&
+        sceneState.placedGaneshaMembers.length < 4 &&
+        !sceneState.isSequencePlaying &&
+        !sceneState.showFunFactModal &&
+        !sceneState.showChoiceModal &&
+        !sceneState.flippedMember;
+
+      if (canShowHint) {
+        setShowReturnHint(true);
+        if (isAudioOn) playVoice('hintTap');
+        const id = setTimeout(() => setShowReturnHint(false), 3000);
+        return () => clearTimeout(id);
+      }
+    }
+    prevCountdownRef.current = countdownValue;
+  }, [countdownValue]);
+
+  // scheduleTimeout now uses pause-aware timeout management
   const scheduleTimeout = (fn, delay) => {
-    const id = window.setTimeout(() => {
-      scheduledTimeoutsRef.current = scheduledTimeoutsRef.current.filter((t) => t !== id);
-      if (isPausedRef.current) return;
-      fn();
-    }, delay);
-    scheduledTimeoutsRef.current.push(id);
-    return id;
+    return safeSetTimeout(fn, delay);
   };
 
   // --- DATA DEFINITIONS ---
@@ -372,6 +418,24 @@ const FamilyTreeGameContent = ({
 
       // Clear any existing timeouts
       if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
+
+      // Always clear transient modal/overlay states on reload — never restore mid-modal
+      sceneActions.updateState({
+        showChoiceModal: false,
+        selectedCircle: null,
+        currentChoices: [],
+        wrongChoice: null,
+        disabledChoices: [],
+        correctChoiceId: null,
+        showFunFactModal: null,
+        isSequencePlaying: false,
+        flippedMember: null,
+        showNameModal: false,
+        currentFamilyType: null,
+        callName: '',
+        justPlacedId: null,
+        showTreeSparkles: false,
+      });
 
       // 1. INTRO - Don't show popup
       if (gamePhase === 'intro') {
@@ -459,40 +523,65 @@ const FamilyTreeGameContent = ({
 
   // ========================================
   // VOICE: Play welcome on OPENING MODAL (before game starts)
-  // Button appears only after VO finishes
+  // Button is visible immediately (like ModakScene)
   // ========================================
   useEffect(() => {
     // Play welcome voice when opening modal is shown (phase is intro)
     if (sceneState.gamePhase === 'intro') {
-      // Audio off (replay): skip VO, show button immediately
-      if (!audioEnabledRef.current) {
-        setOpeningButtonVisible(true);
-        return;
-      }
+      setOpeningButtonVisible(true);
+      // Always play welcome VO on opening modal — regardless of audio preference.
+      // Audio-off is applied in handleStartGame when "Let's Explore" is tapped.
       const timer = scheduleTimeout(() => {
         playVoice('welcome', () => {
           playSfx('chime');
-          setOpeningButtonVisible(true);
         });
       }, 800);
       return () => clearTimeout(timer);
     }
+  }, [sceneState.gamePhase]);
+
+  // Show "Voice is off" nudge pill when game begins with audio off
+  // Only fires when game phase starts (not on opening modal)
+  useEffect(() => {
+    if (sceneState.gamePhase === 'ganeshaTree' && !isAudioOn) {
+      const timer = setTimeout(() => setShowVoiceOffPill(true), 800);
+      return () => clearTimeout(timer);
+    }
   }, [sceneState.gamePhase, isAudioOn]);
+
+  // Auto-dismiss pill after 5s so child has time to notice and tap the toggle
+  useEffect(() => {
+    if (!showVoiceOffPill) return;
+    const timer = setTimeout(() => setShowVoiceOffPill(false), 5000);
+    return () => clearTimeout(timer);
+  }, [showVoiceOffPill]);
+
+  // ========================================
+  // MOUNT SYNC: Sync voice volume with stored audio preference
+  // Skip intro phase — welcome VO should always play on opening modal.
+  // Mute is applied in handleStartGame when game begins.
+  // On continue/reload to a non-intro phase, mute immediately.
+  // ========================================
+  useEffect(() => {
+    if (!isAudioOn && sceneState.gamePhase !== 'intro') {
+      setVoiceVolume(0);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ========================================
   // CLEANUP: Stop music and timers on unmount
   // ========================================
   useEffect(() => {
     return () => {
-      clearScheduledTimeouts();
+      clearAllTimeouts();
+      if (tapCircleTimerRef.current) {
+        clearTimeout(tapCircleTimerRef.current);
+        tapCircleTimerRef.current = null;
+      }
       stopMusic();
       stopIdleTimer();
-      if (childIdleVOTimerRef.current) {
-        clearTimeout(childIdleVOTimerRef.current);
-        childIdleVOTimerRef.current = null;
-      }
     };
-  }, []);
+  }, [clearAllTimeouts, stopMusic, stopIdleTimer]);
 
 
   // ========================================
@@ -507,14 +596,11 @@ const FamilyTreeGameContent = ({
         'father': 'factFather',
         'mother': 'factMother',
         'brother': 'factBrother',
+        'myself': 'factMyself',
       };
 
       const voKey = funFactVOMap[sceneState.selectedCircle];
-      if (voKey) {
-        scheduleTimeout(() => {
-          playVoice(voKey);
-        }, 300);
-      }
+      if (voKey) playVoice(voKey);
     }
   }, [sceneState.showFunFactModal, funFactModalPlayed]);
 
@@ -542,59 +628,79 @@ const FamilyTreeGameContent = ({
   ]);
 
   // ========================================
+  // GANESHA PHASE: Play tapCircle hint 3.5s after phase begins
+  // ========================================
+  useEffect(() => {
+    if (tapCircleTimerRef.current) {
+      clearTimeout(tapCircleTimerRef.current);
+      tapCircleTimerRef.current = null;
+    }
+
+    const canPlayTapHint =
+      sceneState.gamePhase === 'ganeshaTree' &&
+      sceneState.placedGaneshaMembers.length === 0 &&
+      !sceneState.showChoiceModal &&
+      !sceneState.showFunFactModal &&
+      !sceneState.isSequencePlaying;
+
+    if (canPlayTapHint) {
+      tapCircleTimerRef.current = setTimeout(() => {
+        playVoice('tapCircle');
+        tapCircleTimerRef.current = null;
+      }, 3500);
+    }
+
+    return () => {
+      if (tapCircleTimerRef.current) {
+        clearTimeout(tapCircleTimerRef.current);
+        tapCircleTimerRef.current = null;
+      }
+    };
+  }, [
+    sceneState.gamePhase,
+    sceneState.placedGaneshaMembers.length,
+    sceneState.showChoiceModal,
+    sceneState.showFunFactModal,
+    sceneState.isSequencePlaying
+  ]);
+
+  useEffect(() => {
+    if (sceneState.showChoiceModal) {
+      stopVoice();
+    }
+  }, [sceneState.showChoiceModal]);
+
+  // ========================================
+  // CHILD PHASE: Play childStart VO 3.5s after phase begins (fresh start only)
+  // ========================================
+  useEffect(() => {
+    if (sceneState.gamePhase === 'childInput' && sceneState.childFamily.length === 0) {
+      childStartTimerRef.current = scheduleTimeout(() => {
+        childStartTimerRef.current = null;
+        playVoice('childStart');
+      }, 3500);
+      return () => {
+        clearTimeout(childStartTimerRef.current);
+        childStartTimerRef.current = null;
+      };
+    }
+  }, [sceneState.gamePhase]);
+
+  // ========================================
   // TRANSITION PHASE: Play transition VO
   // ========================================
   useEffect(() => {
     if (sceneState.gamePhase === 'transition') {
-      setTransitionButtonVisible(false);
       stopVoice();
 
       scheduleTimeout(() => {
-        playVoice('transition', () => {
-          playSfx('chime');
-          setTransitionButtonVisible(true);
-        });
+        playVoice('transition');
+        setTransitionButtonVisible(true);
       }, 500);
     }
   }, [sceneState.gamePhase]);
 
 
-  // ========================================
-  // CHILD TREE: Idle hint VO (15s, repeating like ganesha)
-  // ========================================
-  useEffect(() => {
-    if (childIdleVOTimerRef.current) {
-      clearTimeout(childIdleVOTimerRef.current);
-      childIdleVOTimerRef.current = null;
-    }
-
-    const inChildInput = sceneState.gamePhase === 'childInput';
-    const hasBlockingOverlay = sceneState.showNameModal;
-    const isChildTreeComplete = sceneState.childFamily.length >= 21;
-
-    if (!inChildInput || hasBlockingOverlay || isChildTreeComplete) return;
-
-    const scheduleNextHint = () => {
-      childIdleVOTimerRef.current = scheduleTimeout(() => {
-        playVoice('childHint');
-        scheduleNextHint();
-      }, 15000);
-    };
-
-    scheduleNextHint();
-
-    return () => {
-      if (childIdleVOTimerRef.current) {
-        clearTimeout(childIdleVOTimerRef.current);
-        childIdleVOTimerRef.current = null;
-      }
-    };
-  }, [
-    sceneState.gamePhase,
-    sceneState.showNameModal,
-    sceneState.childFamily.length,
-    sceneState.selectedMemberIndex
-  ]);
 
 
   // ========================================
@@ -619,7 +725,8 @@ const FamilyTreeGameContent = ({
 
   // --- EVENT HANDLERS (Using sceneActions) ---
   const handleStartGame = () => {
-    // Start background music
+    stopVoice();
+    if (!isAudioOn) setVoiceVolume(0); // Apply audio-off preference when game begins
     startMusic();
 
     // Transition to game
@@ -629,9 +736,17 @@ const FamilyTreeGameContent = ({
   const handleClickCircle = (circleId) => {
     if (sceneState.isSequencePlaying) return;
     if (sceneState.showFunFactModal || sceneState.showChoiceModal) return;
+    setShowReturnHint(false);
 
-    // Check if already placed (Using Array.includes instead of Set.has)
+    // Check if already placed — play info VO and flip card
     if (sceneState.placedGaneshaMembers.includes(circleId)) {
+      const infoVOMap = {
+        'father': 'infoFather',
+        'mother': 'infoMother',
+        'brother': 'infoBrother',
+        'myself': 'infoMyself'
+      };
+      playVoice(infoVOMap[circleId]);
       sceneActions.updateState({
         flippedMember: sceneState.flippedMember === circleId ? null : circleId,
         tappedMembers: sceneState.tappedMembers.includes(circleId)
@@ -668,55 +783,41 @@ const FamilyTreeGameContent = ({
 
     if (choice.isCorrect) {
       playSparkle();
-      // Play relationship VO then deity name VO after placement
+      // Play relation VO, but don't gate game progression on VO callbacks.
       const correctRelationVOMap = {
         'father': 'correctFather',
         'mother': 'correctMother',
         'brother': 'correctBrother',
         'myself': 'correctMyself'
       };
-      const deityNameVOMap = {
-        'shiva': 'shiva',
-        'parvati': 'parvati',
-        'kartikeya': 'kartikeya',
-        'ganesha': 'ganesha'
-      };
-
-      const relationVO = correctRelationVOMap[sceneState.selectedCircle];
-      const deityNameVO = deityNameVOMap[choice.id];
+      const selectedCircle = sceneState.selectedCircle;
+      const relationVO = correctRelationVOMap[selectedCircle];
 
       if (relationVO) {
-        playVoice(relationVO, () => {
-          if (deityNameVO) {
-            scheduleTimeout(() => playVoice(deityNameVO), 300);
-          }
-        });
-      } else if (deityNameVO) {
-        playVoice(deityNameVO);
+        playVoice(relationVO);
       }
 
+      setFunFactModalPlayed(false);
       sceneActions.updateState({ isSequencePlaying: true, showYouGotIt: choice.id });
       scheduleTimeout(() => sceneActions.updateState({ correctChoiceId: choice.id }), 800);
       scheduleTimeout(() => sceneActions.updateState({ showYouGotIt: null }), 1400);
       scheduleTimeout(() => {
         sceneActions.updateState({
           showChoiceModal: false,
-          placedGaneshaMembers: [...sceneState.placedGaneshaMembers, sceneState.selectedCircle],
+          placedGaneshaMembers: [...sceneState.placedGaneshaMembers, selectedCircle],
           correctChoiceId: null
         });
       }, 1600);
-      scheduleTimeout(() => sceneActions.updateState({ justPlacedId: sceneState.selectedCircle }), 1700);
+      scheduleTimeout(() => sceneActions.updateState({ justPlacedId: selectedCircle }), 1700);
       scheduleTimeout(() => {
-        const member = ganeshaFamily.find(m => m.id === sceneState.selectedCircle);
-        const correctDeity = deityChoices[sceneState.selectedCircle].find(d => d.isCorrect);
+        const member = ganeshaFamily.find(m => m.id === selectedCircle);
+        const correctDeity = deityChoices[selectedCircle].find(d => d.isCorrect);
         playChime();
         sceneActions.updateState({
           showFunFactModal: { ...member, ...correctDeity },
           justPlacedId: null
         });
-        // Reset fun fact modal VO state
-        setFunFactModalPlayed(false);
-      }, 3800); // Increased delay to let "correct choice" VO finish before fun fact plays
+      }, 1800);
     } else {
       // WRONG CHOICE - Shake/fade animation, no VOs
       playWrongTap();
@@ -737,10 +838,15 @@ const FamilyTreeGameContent = ({
   };
 
   const handleCloseFunFact = () => {
+    stopVoice();
     sceneActions.updateState({ showFunFactModal: null, isSequencePlaying: false });
   };
 
   const handleGaneshaTreeDone = () => {
+    if (ganeshaTreeDoneClickedRef.current) return;
+    ganeshaTreeDoneClickedRef.current = true;
+    stopVoice();
+    playChime();
     sceneActions.updateState({ showTreeSparkles: true });
     scheduleTimeout(() => {
       sceneActions.updateState({
@@ -752,6 +858,11 @@ const FamilyTreeGameContent = ({
   };
 
   const handleSelectFamilyType = (type) => {
+    // Cancel childStart VO if user taps before 3.5s timer fires
+    if (childStartTimerRef.current) {
+      clearTimeout(childStartTimerRef.current);
+      childStartTimerRef.current = null;
+    }
     stopVoice();
     playTap();
     recordInteraction();
@@ -837,9 +948,13 @@ const FamilyTreeGameContent = ({
       if (prevRow2Count < 7 && row2Count >= 7) newlyCompletedRow = 2;
       if (prevRow3Count < 7 && row3Count >= 7) newlyCompletedRow = 3;
 
-      // Progress milestones
+      // Progress milestones (most kids add ~8 max, 21 is the limit)
       if (memberCount === 1) {
         playVoice('childProgressStart');
+      } else if (memberCount === 3) {
+        playVoice('childProgressSmall');
+      } else if (memberCount === 7) {
+        playVoice('childProgressNearFull');
       } else if (memberCount === 10) {
         playVoice('childProgressMid');
       } else if (memberCount === 21) {
@@ -867,7 +982,15 @@ const FamilyTreeGameContent = ({
 
       {/* Home Button */}
       <HomeButton onNavigate={onNavigate} />
+      <ZoneBadgeButton zoneId="about-me-hut" onBack={() => { onNavigate?.('zone-welcome') || onBack?.(); }} />
       <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
+      {showVoiceOffPill && (
+        <div className="voice-off-pill">
+          <span className="voice-off-pill__icon">🔇</span>
+          Voice is off · Tap to hear story
+        </div>
+      )}
+      <ResumeCountdown value={countdownValue} />
 
       {/* Back to Map Button - Commented out like in Modak */}
       {/* {!sceneState.showingCompletionScreen && (
@@ -884,8 +1007,6 @@ const FamilyTreeGameContent = ({
             zoneId="about-me-hut"
             sceneId="family-tree"
             onStart={() => {
-              playSfx('tap');
-              setOpeningButtonVisible(false);
               handleStartGame();
             }}
             characterImg={babyGaneshaImg}
@@ -920,7 +1041,9 @@ const FamilyTreeGameContent = ({
 
           <img src={familyTree} alt="Family Tree" className="tree-overlay" />
 
-          {ganeshaFamily.map(member => (
+          {(() => {
+            const firstUnplacedId = ganeshaFamily.find(m => !sceneState.placedGaneshaMembers.includes(m.id))?.id;
+            return ganeshaFamily.map(member => (
             <div
               key={member.id}
               className={`circle-spot-with-label ${sceneState.isSequencePlaying ? 'blocked' : ''}`}
@@ -928,16 +1051,22 @@ const FamilyTreeGameContent = ({
               onClick={() => handleClickCircle(member.id)}
             >
               {!sceneState.placedGaneshaMembers.includes(member.id) ? (
-                <div className={`empty-circle ${!sceneState.isSequencePlaying ? 'empty-circle-hint-glow' : ''}`} />
+                <div className={`empty-circle ${!sceneState.isSequencePlaying ? 'empty-circle-hint-glow' : ''}`}>
+                  {showReturnHint && member.id === firstUnplacedId && (
+                    <span style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '72px', animation: 'bounce 0.6s ease-in-out infinite alternate', pointerEvents: 'none', zIndex: 20 }}>👆</span>
+                  )}
+                </div>
               ) : (
                 <div className={`placed-deity ${sceneState.justPlacedId === member.id ? 'just-placed-glow' : ''}`}>
                   <div className="deity-front">
                     <div className="deity-circle">
                       <img src={getPlacedDeityImage(member.id).image} alt="Deity" className="deity-image" />
                     </div>
+                    {/* Tap hint commented out
                     {!sceneState.tappedMembers.includes(member.id) && (
                       <div className="tap-to-learn">👆 Tap!</div>
                     )}
+                    */}
                   </div>
                   {sceneState.justPlacedId === member.id && (
                     <div className="circle-celebration-sparkles">
@@ -951,7 +1080,8 @@ const FamilyTreeGameContent = ({
               )}
               <div className="circle-label">{member.role}</div>
             </div>
-          ))}
+          ));
+          })()}
 
           {sceneState.showChoiceModal && (
             <div className="modal-overlay" >
@@ -980,27 +1110,16 @@ const FamilyTreeGameContent = ({
                         <img src={choice.image} alt={choice.name} />
                       </div>
                       <div className="family-choice-name">{choice.name}</div>
-
-                      {/* "You got it!" text removed - using VO only */}
-
-                      {sceneState.correctChoiceId === choice.id && (
-                        <div className="correct-checkmark">
-                          <div className="checkmark-circle"><div className="checkmark-icon">✓</div></div>
-                        </div>
-                      )}
-
-                      {sceneState.correctChoiceId === choice.id && (
-                        <div className="card-sparkles">
-                          <span className="sparkle sparkle-1">✨</span>
-                          <span className="sparkle sparkle-2">✨</span>
-                          <span className="sparkle sparkle-3">✨</span>
-                          <span className="sparkle sparkle-4">✨</span>
-                        </div>
-                      )}
                     </button>
                   ))}
                 </div>
-                {/* Wrong feedback text removed - using VO only */}
+
+                {/* Ganesha thumbs-up — floats above cards on correct choice */}
+                {sceneState.showYouGotIt && (
+                  <div className="choice-thumbsup-cue" key={sceneState.showYouGotIt}>
+                    <img src="/images/hand-thumbsup.svg" alt="" className="choice-thumbsup-icon" />
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -1020,7 +1139,11 @@ const FamilyTreeGameContent = ({
           )}
 
           {sceneState.placedGaneshaMembers.length === ganeshaFamily.length && !sceneState.showFunFactModal && !sceneState.isSequencePlaying && (
-            <button className="tree-done-btn done-btn-pulse" onClick={handleGaneshaTreeDone}>
+            <button
+              className="tree-done-btn done-btn-pulse"
+              onClick={handleGaneshaTreeDone}
+              disabled={sceneState.showTreeSparkles}
+            >
               All Done! ✨
             </button>
           )}
@@ -1079,6 +1202,7 @@ const FamilyTreeGameContent = ({
               visible={transitionButtonVisible}
               className="continue-btn-simple"
               onClick={() => {
+                stopVoice();
                 playSfx('tap');
                 setTransitionButtonVisible(false);
                 sceneActions.updateState({ gamePhase: 'childInput' });
@@ -1319,6 +1443,7 @@ const FamilyTreeGameContent = ({
       )}
 
       {/* Resume Popup */}
+      {/* Resume popup commented out
       {showResumePopup && (
         <div style={{
           position: 'fixed',
@@ -1340,6 +1465,7 @@ const FamilyTreeGameContent = ({
           {resumeMessage}
         </div>
       )}
+      */}
 
       {/* Completion Modal */}
       {sceneState.showingCompletionScreen && (
@@ -1357,7 +1483,12 @@ const FamilyTreeGameContent = ({
             parvati: parvatiImg,
             kartikeya: kartikeyaImg
           }}
-          nextSceneName="Favorite Food"
+          nextSceneName="Let's Be Friends"
+          completionData={{
+            completed: true,
+            stars: 3,
+            childFamily: sceneState.childFamily || []
+          }}
           onContinue={() => {
             if (onNavigate) onNavigate('scene-complete-continue');
             else if (onComplete) onComplete();
