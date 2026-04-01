@@ -1031,9 +1031,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Child Food Choice */}
       {sceneState.gamePhase === 'child-food-choice' && (
         <div className="choice-screen">
-          <div className="ganesha-waiting">
-            <img src={babyGaneshaImg} alt="Baby Ganesha" className="ganesha-small bounce-gentle" />
-          </div>
           <div className="kid-choices-grid">
             {kidFoods.map((food, index) => (
               <button
@@ -1068,9 +1065,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Child Color Choice */}
       {sceneState.gamePhase === 'child-color-choice' && (
         <div className="choice-screen">
-          <div className="ganesha-waiting">
-            <img src={babyGaneshaImg} alt="Baby Ganesha" className="ganesha-small bounce-gentle" />
-          </div>
           <div className="color-palette-grid">
             {kidColors.map((color, index) => (
               <button
@@ -1098,9 +1092,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Child Activity Choice */}
       {sceneState.gamePhase === 'child-activity-choice' && (
         <div className="choice-screen">
-          <div className="ganesha-waiting">
-            <img src={babyGaneshaImg} alt="Baby Ganesha" className="ganesha-small bounce-gentle" />
-          </div>
           <div className="kid-choices-grid child-activity-scene">
             {kidActivities.map((activity, index) => (
               <button
