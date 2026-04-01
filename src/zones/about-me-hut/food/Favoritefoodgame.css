@@ -556,6 +556,7 @@
   border: none !important;
   box-shadow: none !important;
   padding: 0 !important;
+  outline: none !important;
   
   /* Fixed width to ensure 4 fit per row */
   width: 180px !important; 
