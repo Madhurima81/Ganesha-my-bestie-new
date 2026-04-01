@@ -1,0 +1,102 @@
+/* ─────────────────────────────────────────
+   DareView.css
+   Dare-only modal overlay on TWG Hub
+   ───────────────────────────────────────── */
+
+/* Backdrop — semi-transparent, closes on tap */
+.dare-view-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(30, 20, 60, 0.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: dvFadeIn 0.25s ease-out;
+}
+
+@keyframes dvFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Card */
+.dare-view-card {
+  background: #FAF6EE;
+  border-radius: 32px;
+  padding: clamp(36px, 5vw, 64px) clamp(36px, 5vw, 64px);
+  width: min(580px, 88vw);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 24px 72px rgba(30, 20, 60, 0.30);
+  animation: dvSlideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes dvSlideUp {
+  from { opacity: 0; transform: translateY(32px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+/* "Today's dare" eyebrow */
+.dare-view-eyebrow {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(13px, 1.3vw, 18px);
+  font-weight: 700;
+  color: #B8A8D8;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin: 0;
+}
+
+/* Category badge */
+.dare-view-badge {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(103, 82, 184, 0.10);
+  border-radius: 40px;
+  padding: 7px 20px;
+  align-self: flex-start;
+}
+
+.dare-view-badge-label {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: clamp(13px, 1.4vw, 18px);
+  color: #6752B8;
+}
+
+/* Dare text — the main message */
+.dare-view-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(20px, 2.4vw, 34px);
+  font-weight: 700;
+  color: #3D2A6B;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Buttons */
+.dare-view-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.dare-view-secondary {
+  background: white;
+  border: 2px solid #C4B5F4;
+  border-radius: 80px;
+  padding: clamp(14px, 1.5vw, 18px) clamp(28px, 3vw, 48px);
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: clamp(15px, 1.5vw, 22px);
+  color: #8B7AB0;
+  cursor: pointer;
+  width: 100%;
+  min-height: 60px;
+  transition: background 0.15s;
+}
+.dare-view-secondary:hover { background: #F0EBF8; }

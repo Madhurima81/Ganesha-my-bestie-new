@@ -1,0 +1,243 @@
+/* ===================================
+   DOORWAY SCENE ROOT
+=================================== */
+
+.door-scene {
+  position: fixed;
+  inset: 0;
+  z-index: 3100;
+  overflow: hidden;
+  font-family: "Nunito", sans-serif;
+}
+
+/* background image */
+.door-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1.05);
+}
+
+/* calm vignette overlay — strong enough to fully block chat behind */
+.door-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+      circle at 50% 35%,
+      rgba(255,240,200,0.10),
+      rgba(40,25,90,0.78)
+    );
+  backdrop-filter: blur(4px);
+}
+
+/* ===================================
+   GANESHA
+=================================== */
+
+.door-ganesha {
+  position: absolute;
+  left: 5%;
+  bottom: 6%;
+  width: min(30vw, 380px);
+  z-index: 2;
+  animation: doorFloat 5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes doorFloat {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+/* ===================================
+   TITLE BLOCK
+=================================== */
+
+.door-title-wrap {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  width: 90vw;
+  max-width: 720px;
+  z-index: 3;
+}
+
+.door-title {
+  font-family: "Baloo 2", cursive;
+  font-size: clamp(32px, 3.2vw, 48px);
+  color: #FFF7E6;
+  text-shadow: 0 6px 22px rgba(255,230,160,0.35);
+  line-height: 1.2;
+}
+
+.door-subtitle {
+  margin-top: 6px;
+  font-size: clamp(18px, 1.6vw, 24px);
+  color: rgba(255,255,255,0.8);
+}
+
+/* ===================================
+   OPTION STACK
+=================================== */
+
+.door-options {
+  position: absolute;
+  right: 8%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(520px, 44vw);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  z-index: 3;
+}
+
+/* option card base */
+.door-option {
+  border-radius: 60px;                              /* pill shape */
+  padding: 16px 24px 16px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 80px;                                 /* touch target ≥ 60px */
+  border: 1.5px solid rgba(255,255,255,0.35);
+  transition: transform .18s ease, box-shadow .18s ease;
+  user-select: none;
+}
+
+.door-option:hover,
+.door-option:focus-visible {
+  transform: translateY(-6px) scale(1.02);
+  outline: none;
+}
+
+.door-option:active {
+  transform: scale(0.96);
+}
+
+/* ===================================
+   INDIVIDUAL OPTION COLOURS
+=================================== */
+
+/* breathing / mindfulness */
+.door-option.breath {
+  background: linear-gradient(180deg, #FFD27A, #F5A623);
+  box-shadow: 0 12px 30px rgba(255,180,70,0.45);
+}
+
+/* affirmation / gratitude */
+.door-option.affirm {
+  background: linear-gradient(180deg, #C9B8FF, #9C84FF);
+  box-shadow: 0 12px 30px rgba(150,120,255,0.45);
+}
+
+/* hum / movement */
+.door-option.hum {
+  background: linear-gradient(180deg, #7ED6C8, #39AFA3);
+  box-shadow: 0 12px 30px rgba(60,180,170,0.45);
+}
+
+/* ===================================
+   OPTION ICON + TEXT
+=================================== */
+
+/* Icon circle — frosted circle on left of each pill */
+.door-option-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.door-option-title {
+  font-family: "Baloo 2", cursive;
+  font-size: clamp(18px, 1.8vw, 24px);
+  font-weight: 800;
+  color: white;
+  line-height: 1.2;
+}
+
+.door-option-desc {
+  font-size: clamp(13px, 1.1vw, 17px);
+  color: rgba(255,255,255,0.9);
+  margin-top: 2px;
+}
+
+/* ===================================
+   TALK LINK
+=================================== */
+
+.door-talk-link {
+  position: absolute;
+  bottom: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: "Nunito", sans-serif;
+  font-size: clamp(16px, 1.4vw, 20px);
+  color: rgba(255,255,255,0.75);
+  background: none;
+  border: none;
+  text-decoration: none;               /* no underline — plain quiet text */
+  cursor: pointer;
+  transition: opacity .18s ease;
+  padding: 14px 32px;
+  min-height: 52px;                    /* proper touch target */
+  z-index: 3;
+  white-space: nowrap;
+}
+
+.door-talk-link:hover {
+  opacity: 0.7;
+}
+
+/* ===================================
+   ENTRY ANIMATION
+=================================== */
+
+.door-scene-enter {
+  animation: doorFade 0.6s ease;
+}
+
+@keyframes doorFade {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===================================
+   TABLET / MOBILE ADJUSTMENTS
+=================================== */
+
+@media (max-width: 768px) {
+  .door-options {
+    right: 50%;
+    transform: translate(50%, -50%);
+    width: min(480px, 88vw);
+    top: 55%;
+  }
+
+  .door-ganesha {
+    width: min(40vw, 180px);
+    left: 2%;
+    bottom: 2%;
+  }
+
+  .door-title-wrap {
+    top: 8%;
+  }
+}

@@ -1,0 +1,262 @@
+/* CompletionScreen.css
+   ─────────────────────────────────────────────────────────
+   Emotional closure screen after every guided experience.
+   Deliberately calm and minimal.
+   No stars. No scores. No confetti.
+   Felt shift only.
+   ───────────────────────────────────────────────────────── */
+
+
+/* ─────────────────────────────────────────────
+   SCENE ROOT
+───────────────────────────────────────────── */
+
+.cs-scene {
+  position: fixed;
+  inset: 0;
+  z-index: 3200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Nunito', sans-serif;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.cs-scene.cs-visible {
+  opacity: 1;
+}
+
+
+/* ─────────────────────────────────────────────
+   PARTICLES — very subtle
+───────────────────────────────────────────── */
+
+.cs-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.cs-particle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.25;
+  animation: cs-particle-rise linear infinite;
+}
+
+@keyframes cs-particle-rise {
+  from { transform: translateY(0);      opacity: 0.3; }
+  80%  {                                opacity: 0.2; }
+  to   { transform: translateY(-160px); opacity: 0;   }
+}
+
+
+/* ─────────────────────────────────────────────
+   CONTENT WRAPPER
+───────────────────────────────────────────── */
+
+.cs-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 40px 24px;
+  width: min(90%, 480px);
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+
+/* ─────────────────────────────────────────────
+   SYMBOL ORB
+───────────────────────────────────────────── */
+
+.cs-orb-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.cs-orb {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: cs-orb-breathe 4s ease-in-out infinite;
+}
+
+.cs-orb-emoji {
+  font-size: 40px;
+  filter: drop-shadow(0 0 8px rgba(255,255,255,0.6));
+  user-select: none;
+}
+
+@keyframes cs-orb-breathe {
+  0%,  100% { transform: scale(0.96); filter: brightness(0.9);  }
+  50%        { transform: scale(1.06); filter: brightness(1.15); }
+}
+
+
+/* ─────────────────────────────────────────────
+   COMPLETION MESSAGE
+   Single sentence. Max 8 words.
+   Large. Centred. Glowing softly.
+───────────────────────────────────────────── */
+
+.cs-message {
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(22px, 5vw, 32px);
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.3;
+  animation: cs-message-rise 0.8s ease;
+}
+
+@keyframes cs-message-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+
+/* ─────────────────────────────────────────────
+   SAFETY ADD-ON LINE
+   Smaller. Softer. Never alarming.
+───────────────────────────────────────────── */
+
+.cs-addon {
+  font-size: clamp(13px, 2.8vw, 16px);
+  color: rgba(255, 255, 255, 0.65);
+  font-style: italic;
+  max-width: 340px;
+  line-height: 1.5;
+  animation: cs-message-rise 1s ease 0.3s both;
+}
+
+
+/* ─────────────────────────────────────────────
+   GANESHA SIGN-OFF
+───────────────────────────────────────────── */
+
+.cs-ganesha-line {
+  font-size: clamp(13px, 2.5vw, 15px);
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 1px;
+  margin-top: -8px;
+}
+
+
+/* ─────────────────────────────────────────────
+   ACTION BUTTONS
+───────────────────────────────────────────── */
+
+.cs-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.cs-btn {
+  width: 100%;
+  min-height: 52px;
+  border-radius: 26px;
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(15px, 3.2vw, 18px);
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.15s ease, filter 0.15s ease;
+  padding: 0 24px;
+}
+
+.cs-btn:active {
+  transform: scale(0.96);
+}
+
+.cs-btn-emoji {
+  font-size: 18px;
+}
+
+/* Primary — filled with zone accent */
+.cs-btn-primary {
+  color: #ffffff;
+}
+
+.cs-btn-primary:hover {
+  filter: brightness(1.1);
+}
+
+/* Secondary — frosted glass */
+.cs-btn-secondary {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.cs-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* Ghost — text only */
+.cs-btn-ghost {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: underline;
+  font-size: clamp(14px, 2.8vw, 16px);
+  min-height: 44px;
+}
+
+.cs-btn-ghost:hover {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .cs-content {
+    gap: 18px;
+    padding: 32px 20px;
+  }
+
+  .cs-orb {
+    width: 80px;
+    height: 80px;
+  }
+
+  .cs-orb-emoji {
+    font-size: 32px;
+  }
+
+  .cs-message {
+    font-size: 22px;
+  }
+
+  .cs-btn {
+    min-height: 48px;
+    font-size: 15px;
+  }
+}
+
+@media (min-height: 700px) {
+  .cs-content {
+    gap: 28px;
+  }
+}

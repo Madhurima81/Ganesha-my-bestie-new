@@ -1,0 +1,165 @@
+/* SuggestionBubble.css
+   ─────────────────────────────────────────────────────────
+   Inline suggestion bubble — lives inside the chat scroll.
+   Feels like Ganesha is speaking, not the system.
+   ───────────────────────────────────────────────────────── */
+
+
+/* ── Container ──────────────────────────────────────────── */
+
+.twg-suggestion {
+  display: flex;
+  justify-content: flex-start;
+  margin: 12px 0 18px;
+  animation: suggestFadeUp 0.45s ease;
+  position: relative;
+}
+
+@keyframes suggestFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* ── Bubble ─────────────────────────────────────────────── */
+
+.twg-suggestion-bubble {
+  max-width: 420px;
+  padding: 16px 18px 18px;
+  border-radius: 26px;
+  position: relative;
+
+  background: linear-gradient(
+    180deg,
+    #FFF7E6,
+    #FDEFD2
+  );
+
+  border: 1.5px solid rgba(255, 190, 120, 0.35);
+
+  box-shadow:
+    0 6px 18px rgba(255, 170, 90, 0.25);
+}
+
+/* Speech bubble tail pointing left (Ganesha is on left) */
+.twg-suggestion-bubble::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 20px;
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 12px solid #FFF7E6;
+  filter: drop-shadow(-2px 0 2px rgba(255,170,90,0.15));
+}
+
+
+/* ── Ganesha badge ──────────────────────────────────────── */
+
+.twg-suggestion-badge {
+  position: absolute;
+  top: -10px;
+  left: 14px;
+  font-size: 18px;
+  background: #fff;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(255, 150, 60, 0.25);
+  border: 1.5px solid rgba(255, 190, 120, 0.4);
+}
+
+
+/* ── Message text ───────────────────────────────────────── */
+
+.twg-suggestion-text {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 1.4;
+  color: #5A4A7A;
+  margin-bottom: 14px;
+  margin-top: 6px;
+}
+
+
+/* ── Action row ─────────────────────────────────────────── */
+
+.twg-suggestion-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+
+/* ── Buttons ────────────────────────────────────────────── */
+
+.twg-suggest-btn {
+  border-radius: 40px;
+  padding: 10px 18px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  min-height: 40px;
+  border: none;
+}
+
+.twg-suggest-btn:active {
+  transform: scale(0.95) !important;
+}
+
+/* Primary — purple gradient */
+.twg-suggest-btn.primary {
+  background: linear-gradient(180deg, #9A7BFF, #6F52D9);
+  color: white;
+  box-shadow: 0 6px 14px rgba(90, 60, 170, 0.35);
+}
+
+.twg-suggest-btn.primary:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 8px 18px rgba(90, 60, 170, 0.45);
+}
+
+/* Ghost — soft bordered */
+.twg-suggest-btn.ghost {
+  background: rgba(255, 255, 255, 0.65);
+  border: 1.5px solid rgba(140, 120, 200, 0.35);
+  color: #6F52D9;
+}
+
+.twg-suggest-btn.ghost:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(140, 120, 200, 0.6);
+}
+
+
+/* ── Responsive ─────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .twg-suggestion-bubble {
+    max-width: 90vw;
+    padding: 14px 16px 16px;
+  }
+
+  .twg-suggestion-text {
+    font-size: 15px;
+  }
+
+  .twg-suggest-btn {
+    font-size: 13px;
+    padding: 9px 16px;
+  }
+}

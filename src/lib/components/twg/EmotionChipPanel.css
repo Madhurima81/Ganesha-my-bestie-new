@@ -1,0 +1,91 @@
+/* ─────────────────────────────────────────
+   EmotionChipPanel.css — LOCKED
+   Soft feeling buttons — NOT game power buttons
+   ───────────────────────────────────────── */
+
+/* Panel container — sacred card feel inside chat */
+.emotion-panel {
+  padding: 18px 14px;
+  background: rgba(103, 82, 184, 0.04);
+  border-radius: 22px;
+  margin: 10px 0;
+}
+
+/* Prompt text — gentle invitation, not form stress */
+.emotion-prompt {
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(17px, 1.9vw, 24px);
+  font-weight: 700;
+  color: #6752B8;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+/* Grid — 4 cols on tablet, responsive */
+.emotion-chip-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+/* Base chip — soft touch feel, large tap target */
+.emotion-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 8px;
+  border-radius: 20px;
+  border: none;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 4px 14px rgba(103, 82, 184, 0.12);
+  cursor: pointer;
+  min-height: 88px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.emotion-chip:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px rgba(103, 82, 184, 0.22);
+}
+
+.emotion-chip:active {
+  transform: scale(0.96);
+  transition: transform 0.08s ease;
+}
+
+/* Emotion colour coding — helps non-reading children choose */
+.emotion-chip--angry    { background: rgba(255, 120, 100, 0.18); }
+.emotion-chip--worried  { background: rgba(120, 150, 255, 0.18); }
+.emotion-chip--sad      { background: rgba(140, 180, 255, 0.22); }
+.emotion-chip--confused { background: rgba(180, 150, 255, 0.18); }
+.emotion-chip--happy    { background: rgba(255, 215, 70,  0.25); }
+.emotion-chip--tired    { background: rgba(180, 150, 200, 0.18); }
+.emotion-chip--talk     { background: rgba(196, 181, 244, 0.28); }
+
+/* Emoji — visually dominant */
+.chip-emoji {
+  font-size: clamp(28px, 3.5vw, 42px);
+  line-height: 1;
+}
+
+/* Label */
+.chip-label {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(11px, 1.1vw, 15px);
+  font-weight: 700;
+  color: #5A4A7A;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Phone — 2 cols */
+@media (max-width: 600px) {
+  .emotion-chip-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .emotion-chip {
+    min-height: 76px;
+  }
+}

@@ -1,0 +1,178 @@
+{
+  "meta": {
+    "version": "1.0",
+    "phase_engine": "arrival → settle → release → affirmation → symbol_moment → completion",
+    "total_templates": 8,
+    "note": "affirmation_line is a dynamic slot. System inserts from affirmation_bank based on emotion context."
+  },
+
+  "intensity_scale": {
+    "mild":   { "settle_duration": 10, "release_duration": 8,  "total_phases": 4 },
+    "medium": { "settle_duration": 15, "release_duration": 10, "total_phases": 5 },
+    "strong": { "settle_duration": 20, "release_duration": 15, "total_phases": 6 }
+  },
+
+  "templates": [
+
+    {
+      "template_id": "TEMP_STILL_STAR_01",
+      "template_name": "Star Calm Focus",
+      "template_type": "still_focus_journey",
+      "emotional_goal": "slow_thoughts",
+      "primary_emotion_family": ["anxiety", "overwhelm", "confusion"],
+      "focus_object_type": "star_light",
+      "default_soundscape": "cave_echo",
+      "preferred_zone": "cave",
+      "energy_shift_result": "focus",
+      "phases": [
+        { "phase": "arrival",       "type": "focus_object",   "asset": "star",        "text": "One tiny star is shining just for you. Come and look at it.", "duration": 8 },
+        { "phase": "settle",        "type": "breath_sync",    "pattern": "slow",      "text": "Breathe in slowly… and breathe out. Let your eyes go soft.", "duration": 15 },
+        { "phase": "release",       "type": "imagination_fx", "effect": "cloud_clear","text": "Watch your busy thoughts float away like clouds. The sky gets clear.", "duration": 10 },
+        { "phase": "affirmation",   "type": "affirmation",    "text": "{{affirmation_line}}", "duration": 8 },
+        { "phase": "symbol_moment", "type": "symbol_glow",    "symbol": "eyes",       "text": "Ganesha's wise eyes glow softly. You carry this clarity now.", "duration": 6 },
+        { "phase": "completion",    "type": "completion",     "next": "return_game",  "text": "Your mind is clear and bright." }
+      ]
+    },
+
+    {
+      "template_id": "TEMP_BREATH_FLOW_01",
+      "template_name": "Lotus Bloom Healing",
+      "template_type": "breath_journey",
+      "emotional_goal": "soothe_body",
+      "primary_emotion_family": ["sadness", "loneliness", "disappointment"],
+      "focus_object_type": "breathing_orb",
+      "default_soundscape": "flowing_water",
+      "preferred_zone": "river",
+      "energy_shift_result": "settle",
+      "phases": [
+        { "phase": "arrival",       "type": "focus_object",   "asset": "lotus",        "text": "Come and rest near the quiet flowing river with Ganesha.", "duration": 8 },
+        { "phase": "settle",        "type": "breath_sync",    "pattern": "wave",       "text": "Let your breath rise like a soft wave… and fall gently.", "duration": 15 },
+        { "phase": "release",       "type": "imagination_fx", "effect": "river_flow",  "text": "See your sad feelings floating gently downstream. You can let them go.", "duration": 10 },
+        { "phase": "affirmation",   "type": "affirmation",    "text": "{{affirmation_line}}", "duration": 8 },
+        { "phase": "symbol_moment", "type": "symbol_glow",    "symbol": "lotus",       "text": "The lotus blooms after rain. So do you. Always.", "duration": 6 },
+        { "phase": "completion",    "type": "completion",     "next": "return_game",   "text": "Your heart feels softer and lighter now." }
+      ]
+    },
+
+    {
+      "template_id": "TEMP_MOVE_RELEASE_01",
+      "template_name": "Trunk Power Release",
+      "template_type": "movement_journey",
+      "emotional_goal": "release_energy",
+      "primary_emotion_family": ["anger", "frustration", "hyper_energy"],
+      "focus_object_type": "stone_block",
+      "default_soundscape": "mountain_wind",
+      "preferred_zone": "mountain",
+      "energy_shift_result": "release",
+      "phases": [
+        { "phase": "arrival",       "type": "focus_object",   "asset": "stone",         "text": "You are on the mountain with Ganesha. A big stone is in your way.", "duration": 8 },
+        { "phase": "settle",        "type": "breath_sync",    "pattern": "box",         "text": "Breathe in strong… hold… breathe out long… hold. Feel your power.", "duration": 15 },
+        { "phase": "release",       "type": "imagination_fx", "effect": "shake_out",    "text": "Now PUSH the stone. Stamp your feet. Shake your whole body. Let it ALL out.", "duration": 10 },
+        { "phase": "affirmation",   "type": "affirmation",    "text": "{{affirmation_line}}", "duration": 8 },
+        { "phase": "symbol_moment", "type": "symbol_glow",    "symbol": "trunk",        "text": "Ganesha's strong trunk glows. That same strength lives inside you.", "duration": 6 },
+        { "phase": "completion",    "type": "completion",     "next": "return_game",    "text": "The path is clear. You are ready." }
+      ]
+    },
+
+    {
+      "template_id": "TEMP_BREATH_BALLOON_01",
+      "template_name": "Belly Wave Safety",
+      "template_type": "breath_journey",
+      "emotional_goal": "feel_safe",
+      "primary_emotion_family": ["fear", "anxiety", "change"],
+      "focus_object_type": "breathing_orb",
+      "default_soundscape": "forest_birds",
+      "preferred_zone": "hut",
+      "energy_shift_result": "settle",
+      "phases": [
+        { "phase": "arrival",       "type": "focus_object",   "asset": "breath_orb",        "text": "Come inside the warm safe hut. Ganesha is right here with you.", "duration": 8 },
+        { "phase": "settle",        "type": "breath_sync",    "pattern": "wave",             "text": "Put one hand on your belly. Feel it rise… and fall. Rise… and fall.", "duration": 15 },
+        { "phase": "release",       "type": "imagination_fx", "effect": "soft_light_expand", "text": "A warm soft light grows in your belly. It spreads through your whole body.", "duration": 10 },
+        { "phase": "affirmation",   "type": "affirmation",    "text": "{{affirmation_line}}", "duration": 8 },
+        { "phase": "symbol_moment", "type": "symbol_glow",    "symbol": "belly",             "text": "Ganesha's round belly glows with peace. You carry this peace too.", "duration": 6 },
+        { "phase": "completion",    "type": "completion",     "next": "return_game",         "text": "You are safe. You are held. You are okay." }
+      ]
+    },
+
+    {
+      "template_id": "TEMP_MOVE_GROUND_01",
+      "template_name": "Mooshika Brave Steps",
+      "template_type": "movement_journey",
+      "emotional_goal": "stabilise",
+      "primary_emotion_family": ["fear", "change", "overwhelm"],
+      "focus_object_type": "glowing_footsteps",
+      "default_soundscape": "forest_birds",
+      "preferred_zone": "forest",
+      "energy_shift_result": "focus",
+      "phases": [
+        { "phase": "arrival",       "type": "focus_object",   "asset": "mouse_light",        "text": "Mooshika is lighting the path ahead. One glowing step at a time.", "duration": 8 },
+        { "phase": "settle",        "type": "breath_sync",    "pattern": "slow",             "text": "Take a slow breath in. And out. Your feet are on the ground. Feel that.", "duration": 15 },
+        { "phase": "release",       "type": "imagination_fx", "effect": "path_glow_forward", "text": "Take one step forward. Then another. Each step lights up. You are moving.", "duration": 10 },
+        { "phase": "affirmation",   "type": "affirmation",    "text": "{{affirmation_line}}", "duration": 8 },
+        { "phase": "symbol_moment", "type": "symbol_glow",    "symbol": "mooshika",          "text": "Mooshika glows brightly. Small and brave. Just like you.", "duration": 6 },
+        { "phase": "completion",    "type": "completion",     "next": "return_game",         "text": "You took the brave steps. You are moving forward." }
+      ]
+    },
+
+    {
+      "template_id": "TEMP_AFFIRM_CONF_01",
+      "template_name": "Tusk Confidence Rise",
+      "template_type": "affirmation_imprint",
+      "emotional_goal": "confidence_awaken",
+      "primary_emotion_family": ["shame", "jealousy", "embarrassment"],
+      "focus_object_type": "aura_circle",
+      "default_soundscape": "festival_drum_soft",
+      "preferred_zone": "festival",
+      "energy_shift_result": "uplift",
+      "phases": [
+        { "phase": "arrival",       "type": "focus_object",   "asset": "golden_peak",    "text": "Stand in the festival square. Ganesha is dancing. The light is bright.", "duration": 8 },
+        { "phase": "settle",        "type": "breath_sync",    "pattern": "box",          "text": "Breathe in tall. Stand up straight. Feel your feet on the ground.", "duration": 15 },
+        { "phase": "release",       "type": "imagination_fx", "effect": "sunrise_expand","text": "A golden light rises inside your chest. It grows bigger with each breath.", "duration": 10 },
+        { "phase": "affirmation",   "type": "affirmation",    "text": "{{affirmation_line}}", "duration": 8 },
+        { "phase": "symbol_moment", "type": "symbol_glow",    "symbol": "tusk",          "text": "Ganesha's tusk glows gold. Strong and unbreakable. That is you.", "duration": 6 },
+        { "phase": "completion",    "type": "completion",     "next": "return_game",     "text": "You are ready to shine again. Go show them." }
+      ]
+    },
+
+    {
+      "template_id": "TEMP_STILL_COMFORT_01",
+      "template_name": "Ears Listening Calm",
+      "template_type": "still_focus_journey",
+      "emotional_goal": "feel_heard",
+      "primary_emotion_family": ["anger", "loneliness", "moral_confusion"],
+      "focus_object_type": "sound_ripple",
+      "default_soundscape": "forest_birds",
+      "preferred_zone": "forest",
+      "energy_shift_result": "reconnect",
+      "phases": [
+        { "phase": "arrival",       "type": "focus_object",   "asset": "sound_ripple",       "text": "Come into the quiet forest. Ganesha's big ears are listening. So are we.", "duration": 8 },
+        { "phase": "settle",        "type": "breath_sync",    "pattern": "slow",             "text": "Breathe slowly. Let your shoulders drop. Let your jaw go soft.", "duration": 15 },
+        { "phase": "release",       "type": "imagination_fx", "effect": "forest_wind_soften","text": "A gentle wind moves through the trees. It carries your feelings softly away.", "duration": 10 },
+        { "phase": "affirmation",   "type": "affirmation",    "text": "{{affirmation_line}}", "duration": 8 },
+        { "phase": "symbol_moment", "type": "symbol_glow",    "symbol": "ears",              "text": "Ganesha's ears glow warm. You were heard. You always will be.", "duration": 6 },
+        { "phase": "completion",    "type": "completion",     "next": "return_game",         "text": "You feel lighter. You are not alone." }
+      ]
+    },
+
+    {
+      "template_id": "TEMP_CREATIVE_EXPRESS_01",
+      "template_name": "Modak Joy Motivation",
+      "template_type": "imagination_expression",
+      "emotional_goal": "restore_motivation",
+      "primary_emotion_family": ["disappointment", "shame", "sadness"],
+      "focus_object_type": "colour_cloud",
+      "default_soundscape": "festival_drum_soft",
+      "preferred_zone": "festival",
+      "energy_shift_result": "uplift",
+      "phases": [
+        { "phase": "arrival",       "type": "focus_object",   "asset": "glowing_modak",       "text": "Colourful clouds are floating all around you. Each one is a feeling.", "duration": 8 },
+        { "phase": "settle",        "type": "breath_sync",    "pattern": "wave",              "text": "Breathe in slowly. Let your hands float up gently. Feel the colour around you.", "duration": 15 },
+        { "phase": "release",       "type": "imagination_fx", "effect": "sparkle_energy_fill","text": "Now move your hands and shape the colours. Let the feelings become something beautiful.", "duration": 10 },
+        { "phase": "affirmation",   "type": "affirmation",    "text": "{{affirmation_line}}", "duration": 8 },
+        { "phase": "symbol_moment", "type": "symbol_glow",    "symbol": "modak",              "text": "The modak glows warm and sweet. Your effort is always worth something.", "duration": 6 },
+        { "phase": "completion",    "type": "completion",     "next": "return_game",          "text": "Your heart feels lighter and free. Your effort brings joy." }
+      ]
+    }
+
+  ]
+}

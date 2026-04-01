@@ -52,6 +52,14 @@ const MOMENT_ADJUSTMENTS = {
   default:       { rate:  0.00, pitch:  0.00 },
 }
 
+// Optional style layer on top of age + moment tuning.
+// 'ganesha' keeps the current warm/deep profile.
+// 'child' makes delivery lighter and more playful for testing.
+const STYLE_ADJUSTMENTS = {
+  ganesha: { rate: 0.00, pitch: 0.00, volume: 0.92 },
+  child:   { rate: 0.08, pitch: 0.16, volume: 0.98 },
+}
+
 // ─── Phonetic Map ─────────────────────────────────────────────────────────────
 // Rewrites Indian names + Sanskrit words into sounds an American/UK voice
 // can pronounce correctly. Used when Rishi is not available.
@@ -149,12 +157,19 @@ export const useGaneshaVoice = () => {
 
   // ── Core speak ───────────────────────────────────────────────────────────────
   const speak = useCallback((text, options = {}) => {
-    if (!window.speechSynthesis) return
-    if (!text?.trim()) return
+    if (!window.speechSynthesis) {
+      options?.onEnd?.()
+      return
+    }
+    if (!text?.trim()) {
+      options?.onEnd?.()
+      return
+    }
 
     const {
       age     = 7,
       moment  = 'default',
+      style   = 'ganesha',
       onStart = null,
       onEnd   = null,
       onError = null,
@@ -168,13 +183,14 @@ export const useGaneshaVoice = () => {
       const tier = getAgeTier(age)
       const base = AGE_SETTINGS[tier]
       const adj  = MOMENT_ADJUSTMENTS[moment] || MOMENT_ADJUSTMENTS.default
+      const styleAdj = STYLE_ADJUSTMENTS[style] || STYLE_ADJUSTMENTS.ganesha
 
       const isRishi    = voiceRef.current?.name?.includes('Rishi')
       const processed  = phoneticize(addNaturalPauses(text), isRishi)
       const u = new SpeechSynthesisUtterance(processed)
-      u.rate   = Math.max(0.5, Math.min(1.5, base.rate  + adj.rate))
-      u.pitch  = Math.max(0.5, Math.min(1.5, base.pitch + adj.pitch))
-      u.volume = 0.92 // slight softening removes digital harshness
+      u.rate   = Math.max(0.5, Math.min(1.5, base.rate  + adj.rate + styleAdj.rate))
+      u.pitch  = Math.max(0.5, Math.min(1.5, base.pitch + adj.pitch + styleAdj.pitch))
+      u.volume = Math.max(0.5, Math.min(1.0, styleAdj.volume))
 
       // FIX: only set lang when no explicit voice is found.
       // Setting lang + an explicit voice can cause Chrome to ignore the voice.
@@ -185,11 +201,17 @@ export const useGaneshaVoice = () => {
         u.lang = 'en-IN' // Indian English fallback — warm for NRI families
       }
 
-      u.onstart = () => { setIsSpeaking(true);  onStart?.() }
-      u.onend   = () => { setIsSpeaking(false); onEnd?.()   }
-      u.onerror = (e) => { setIsSpeaking(false); onError?.(e) }
+      u.onstart = () => { setIsSpeaking(true); onStart?.() }
+      u.onend   = () => { setIsSpeaking(false); onEnd?.() }
+      u.onerror = (e) => {
+        setIsSpeaking(false)
+        onError?.(e)
+        onEnd?.()
+      }
 
       utteranceRef.current = u
+      // Some browsers leave speech synthesis paused after tab/background changes.
+      try { window.speechSynthesis.resume() } catch {}
       window.speechSynthesis.speak(u)
     }, 50)
   }, [])

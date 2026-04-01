@@ -1,0 +1,356 @@
+/* GuidedExperienceScene.css
+   ─────────────────────────────────────────────────────────
+   Styles for the Guided Experience Scene component.
+   Import this in GuidedExperienceScene.jsx:
+     import './GuidedExperienceScene.css'
+   Then remove the injectKeyframes() call and inline
+   animation strings — use className instead.
+   ───────────────────────────────────────────────────────── */
+
+
+/* ─────────────────────────────────────────────
+   SCENE CONTAINER
+───────────────────────────────────────────── */
+
+.gmb-experience-scene {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Nunito', sans-serif;
+  animation: gmb-scene-enter 0.6s ease;
+}
+
+.gmb-experience-scene.exiting {
+  animation: gmb-scene-exit 0.4s ease forwards;
+}
+
+
+/* ─────────────────────────────────────────────
+   BACKGROUND DRIFT LAYER
+   Very slow — subconscious calming effect
+───────────────────────────────────────────── */
+
+.gmb-bg-layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0.6;
+  z-index: 0;
+  animation: gmb-bg-drift 40s ease-in-out infinite;
+}
+
+
+/* ─────────────────────────────────────────────
+   PARTICLE LAYER
+   Tiny floating dots — adds life without distraction
+───────────────────────────────────────────── */
+
+.gmb-particle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.35;
+  animation: gmb-particle-float linear infinite;
+}
+
+
+/* ─────────────────────────────────────────────
+   FOCUS OBJECT
+   Centre-screen breathing anchor
+───────────────────────────────────────────── */
+
+.gmb-focus-object {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 5;
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Phase animation states — toggled by className */
+
+.gmb-focus-object.arrival {
+  animation: gmb-breathe-soft 4s ease-in-out infinite;
+}
+
+.gmb-focus-object.settle {
+  animation: gmb-breathe-med 4s ease-in-out infinite;
+}
+
+.gmb-focus-object.release {
+  animation: gmb-breathe-big 3s ease-in-out infinite;
+}
+
+.gmb-focus-object.affirmation {
+  animation: gmb-gentle-hold 5s ease-in-out infinite;
+}
+
+.gmb-focus-object.symbol_moment {
+  animation: gmb-symbol-pulse 4s ease-in-out infinite;
+}
+
+.gmb-focus-object.completion {
+  animation: gmb-breathe-soft 5s ease-in-out infinite;
+}
+
+
+/* ─────────────────────────────────────────────
+   PHASE PROGRESS DOTS
+   Constellation-style at top centre
+───────────────────────────────────────────── */
+
+.gmb-phase-progress {
+  position: absolute;
+  top: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  z-index: 10;
+}
+
+.gmb-progress-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  transition: all 0.4s ease;
+}
+
+.gmb-progress-dot.active {
+  width: 12px;
+  height: 12px;
+  background: #ffc845;
+  box-shadow: 0 0 10px #ffc845;
+}
+
+/* Zone-specific active dot colours */
+.gmb-theme-river   .gmb-progress-dot.active { background: #4dd9f5; box-shadow: 0 0 10px #4dd9f5; }
+.gmb-theme-cave    .gmb-progress-dot.active { background: #a87fff; box-shadow: 0 0 10px #a87fff; }
+.gmb-theme-hut     .gmb-progress-dot.active { background: #ff9933; box-shadow: 0 0 10px #ff9933; }
+.gmb-theme-forest  .gmb-progress-dot.active { background: #4caf50; box-shadow: 0 0 10px #4caf50; }
+.gmb-theme-festival .gmb-progress-dot.active { background: #e91e63; box-shadow: 0 0 10px #e91e63; }
+
+
+/* ─────────────────────────────────────────────
+   PHASE INSTRUCTION TEXT
+   Frosted glass card at bottom
+───────────────────────────────────────────── */
+
+.gmb-phase-text {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  width: min(85%, 420px);
+  padding: 16px 28px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(16px, 4vw, 22px);
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.5;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.gmb-phase-text.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+
+/* ─────────────────────────────────────────────
+   CONTROLS
+   Back button + icon buttons top corners
+───────────────────────────────────────────── */
+
+.gmb-back-btn {
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 20px;
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 6px 14px;
+  cursor: pointer;
+  z-index: 10;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s ease;
+}
+
+.gmb-back-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.gmb-controls {
+  position: absolute;
+  top: 5%;
+  right: 5%;
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+
+.gmb-control-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.gmb-control-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.gmb-control-btn:active {
+  transform: scale(0.93);
+}
+
+
+/* ─────────────────────────────────────────────
+   PAUSE LABEL
+───────────────────────────────────────────── */
+
+.gmb-paused-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -180px);
+  color: rgba(255, 255, 255, 0.55);
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  z-index: 10;
+}
+
+
+/* ─────────────────────────────────────────────
+   KEYFRAME ANIMATIONS
+───────────────────────────────────────────── */
+
+/* Scene transitions */
+@keyframes gmb-scene-enter {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+
+@keyframes gmb-scene-exit {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* Background */
+@keyframes gmb-bg-drift {
+  0%,  100% { transform: scale(1)    translateY(0px);  }
+  50%        { transform: scale(1.03) translateY(-8px); }
+}
+
+/* Particles */
+@keyframes gmb-particle-float {
+  from { transform: translateY(0);      opacity: 0.4; }
+  80%  { opacity: 0.3; }
+  to   { transform: translateY(-140px); opacity: 0;  }
+}
+
+/* Focus object breathing — 3 intensities */
+@keyframes gmb-breathe-soft {
+  0%,  100% { transform: scale(0.95); filter: brightness(0.9);  }
+  50%        { transform: scale(1.05); filter: brightness(1.1);  }
+}
+
+@keyframes gmb-breathe-med {
+  0%,  100% { transform: scale(0.92); filter: brightness(0.85); }
+  50%        { transform: scale(1.12); filter: brightness(1.2);  }
+}
+
+@keyframes gmb-breathe-big {
+  0%,  100% { transform: scale(0.85); filter: brightness(0.8);  }
+  50%        { transform: scale(1.2);  filter: brightness(1.3);  }
+}
+
+/* Affirmation — subtle hold */
+@keyframes gmb-gentle-hold {
+  0%,  100% { transform: scale(1.03); filter: brightness(1.0);  }
+  50%        { transform: scale(1.08); filter: brightness(1.15); }
+}
+
+/* Symbol moment — hue shift pulse */
+@keyframes gmb-symbol-pulse {
+  0%,  100% { transform: scale(1.0);  filter: hue-rotate(0deg)   brightness(1.0); }
+  33%        { transform: scale(1.08); filter: hue-rotate(20deg)  brightness(1.2); }
+  66%        { transform: scale(1.12); filter: hue-rotate(-20deg) brightness(1.1); }
+}
+
+
+/* ─────────────────────────────────────────────
+   ZONE BACKGROUND GRADIENTS
+   Applied as .gmb-theme-[zone] on root element
+───────────────────────────────────────────── */
+
+.gmb-theme-mountain { background: radial-gradient(ellipse at 60% 40%, #1a2a4a 0%, #0c1624 100%); }
+.gmb-theme-river    { background: radial-gradient(ellipse at 40% 60%, #0a2a3a 0%, #051520 100%); }
+.gmb-theme-cave     { background: radial-gradient(ellipse at 50% 50%, #1a0a2e 0%, #080410 100%); }
+.gmb-theme-hut      { background: radial-gradient(ellipse at 50% 70%, #2a1a0a 0%, #150c04 100%); }
+.gmb-theme-forest   { background: radial-gradient(ellipse at 40% 40%, #0a2a0a 0%, #041004 100%); }
+.gmb-theme-festival { background: radial-gradient(ellipse at 50% 50%, #2a0a1a 0%, #150408 100%); }
+
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE — tablet + mobile
+───────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .gmb-phase-text {
+    font-size: 16px;
+    padding: 14px 20px;
+    bottom: 8%;
+  }
+
+  .gmb-back-btn {
+    font-size: 13px;
+    padding: 5px 12px;
+  }
+
+  .gmb-control-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 768px) {
+  .gmb-phase-text {
+    font-size: 20px;
+  }
+}

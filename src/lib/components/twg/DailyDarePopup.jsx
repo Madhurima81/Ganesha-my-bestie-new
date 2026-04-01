@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import GaneshaPresence from '../character/GaneshaPresence';
 import PrimaryBtn from '../shared/PrimaryBtn';
 import { getTodaysDare } from '../../config/dareBank';
+import { addModakToJar } from '../coReg/GratitudeJar';
 import { useGaneshaVoice, speakDareSequence } from '../../hooks/useGaneshaVoice';
 import './DailyDarePopup.css';
 
@@ -80,15 +81,9 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
   const categoryInfo  = CATEGORY_CONFIG[dare?.category] || { label: "Today's Dare" };
   const dareText      = dare?.text || "Do one kind thing for someone today — and don't tell them it was you.";
 
-  // Ganesha speaks the prompt on mount
+  // Cleanup only — no auto-speak on mount (blocked by browser autoplay policy)
   useEffect(() => {
-    const timer = setTimeout(() => {
-      speak(
-        `${getGreeting(childName)}. Before today's adventure — what made you smile yesterday?`,
-        { age: childAge, moment: 'greeting' }
-      );
-    }, 800);
-    return () => { clearTimeout(timer); stop(); };
+    return () => stop();
   }, []);
 
   // ── Mic ─────────────────────────────────────────────────────────────────────
@@ -98,31 +93,55 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
       setShowTypeBox(true);
       return;
     }
-    window.speechSynthesis?.cancel(); // stop Ganesha speaking first
+
+    // Tap = user gesture → browser allows audio now
+    // Ganesha speaks the prompt, then mic starts after he finishes
+    speak(
+      `${getGreeting(childName)}. Before today's adventure — what made you smile yesterday?`,
+      {
+        age: childAge,
+        moment: 'greeting',
+        onEnd: () => startRecognition(),
+      }
+    );
+  };
+
+  const startRecognition = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
 
     const recognition = new SpeechRecognition();
-    recognition.lang         = 'en-US';
-    recognition.interimResults = true;
+    recognition.lang            = 'en-US';
+    recognition.interimResults  = true;
     recognition.maxAlternatives = 1;
+    recognition.continuous      = true; // keep listening through pauses
     recognitionRef.current = recognition;
 
     recognition.onstart  = () => setMicState('listening');
     recognition.onresult = (e) => {
+      // Accumulate all results so far
       const transcript = Array.from(e.results)
         .map(r => r[0].transcript)
-        .join('');
+        .join(' ');
       setSpokenText(transcript);
     };
-    recognition.onend = () => setMicState('done');
-    recognition.onerror = () => {
+    // Don't auto-stop on silence — child taps Done when ready
+    recognition.onend = () => {
+      // Only fires if browser force-stops (e.g. timeout) — treat as done
+      if (micState === 'listening') setMicState('done');
+    };
+    recognition.onerror = (e) => {
+      if (e.error === 'no-speech') return; // ignore silence gaps, keep mic open
       setMicState('idle');
       setShowTypeBox(true);
     };
     recognition.start();
   };
 
-  const stopListening = () => {
+  // Child taps Done — stops recording, moves to done state
+  const handleMicDone = () => {
     recognitionRef.current?.stop();
+    setMicState('done');
   };
 
   // ── Beat handlers ────────────────────────────────────────────────────────────
@@ -130,8 +149,7 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
     const trimmed = gratitudeText.trim();
     if (trimmed) {
       localStorage.setItem('gmb_gratitude_today', trimmed);
-      const count = parseInt(localStorage.getItem('gmb_gratitude_jar_count') || '0', 10);
-      localStorage.setItem('gmb_gratitude_jar_count', String(count + 1));
+      addModakToJar(trimmed); // adds to jar + fires gmb_jar_updated event
     }
     setBeat(2);
     // Ganesha responds to gratitude then reads the dare
@@ -163,22 +181,21 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
 
       <div className="dare-body">
 
-        {/* Left: Ganesha */}
+        {/* Left: Ganesha — wrapper controls size, not GaneshaPresence */}
         <div className="dare-ganesha-col">
-          <GaneshaPresence
-            pose={beat === 1 ? 'blessing' : 'pointing'}
-            expression={beat === 1 ? 'encouraging' : 'excited'}
-            size={500}
-            breathing="gentle"
-            blink
-            style={{
-              width: 'min(500px, 42vw)',
-              height: 'auto',
-              aspectRatio: '1 / 1',
-              filter: 'drop-shadow(0 12px 32px rgba(40,20,80,0.35))',
-              transform: 'scaleX(-1)',
-            }}
-          />
+          <div style={{
+            width: 'min(460px, 38vw)',
+            filter: 'drop-shadow(0 12px 32px rgba(40,20,80,0.35))',
+            transform: 'scaleX(-1)',
+          }}>
+            <GaneshaPresence
+              pose={beat === 1 ? 'blessing' : 'pointing'}
+              expression={beat === 1 ? 'encouraging' : 'excited'}
+              size={460}
+              breathing="gentle"
+              blink
+            />
+          </div>
         </div>
 
         {/* Right: content panel */}
@@ -201,8 +218,8 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
                   {/* Mic button */}
                   <button
                     className={`dare-mic-btn ${micState === 'listening' ? 'dare-mic-btn--listening' : ''} ${micState === 'done' ? 'dare-mic-btn--done' : ''}`}
-                    onClick={micState === 'listening' ? stopListening : startListening}
-                    aria-label={micState === 'listening' ? 'Stop recording' : 'Tap to speak'}
+                    onClick={micState === 'idle' || micState === 'done' ? startListening : undefined}
+                    aria-label="Tap to speak"
                   >
                     <svg viewBox="0 0 24 24" fill="none" className="dare-mic-icon">
                       <rect x="9" y="2" width="6" height="12" rx="3" fill="currentColor"/>
@@ -216,7 +233,7 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
                   {/* State label */}
                   <p className="dare-mic-label">
                     {micState === 'idle'      && 'Tap to tell Ganesha'}
-                    {micState === 'listening' && 'Listening...'}
+                    {micState === 'listening' && 'Take your time...'}
                     {micState === 'done'      && 'Got it!'}
                   </p>
 
@@ -225,13 +242,22 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
                     <p className="dare-transcript">{spokenText}</p>
                   )}
 
+                  {/* Done button — only visible while listening */}
+                  {micState === 'listening' && (
+                    <button className="dare-mic-done-btn" onClick={handleMicDone}>
+                      Done
+                    </button>
+                  )}
+
                   {/* Type option — secondary */}
-                  <button
-                    className="dare-type-toggle"
-                    onClick={() => setShowTypeBox(true)}
-                  >
-                    or type instead
-                  </button>
+                  {micState !== 'listening' && (
+                    <button
+                      className="dare-type-toggle"
+                      onClick={() => setShowTypeBox(true)}
+                    >
+                      or type instead
+                    </button>
+                  )}
                 </div>
               )}
 
@@ -266,13 +292,9 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
             </>
           )}
 
-          {/* ── Beat 2: Ganesha responds + Dare ── */}
+          {/* ── Beat 2: Dare reveal ── */}
           {beat === 2 && (
             <>
-              <p className="dare-warm">{warmResponse}</p>
-
-              <hr className="dare-divider" />
-
               <div className="dare-badge">
                 <span className="dare-badge-label">{categoryInfo.label}</span>
               </div>

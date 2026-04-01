@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import GaneshaPresence from '../character/GaneshaPresence';
 import HomeButton from '../ui/HomeButton/HomeButton';
 import TalkToGanesha from './TalkToGanesha';
+import ShlokaCoach from './ShlokaCoach';
+import DareView from './DareView';
+import CoRegToolkit from '../coReg/CoRegToolkit';
 import './TimeWithGaneshaHub.css';
 
 const TOMORROW_HOOKS = [
@@ -110,36 +113,60 @@ export default function TimeWithGaneshaHub({ onNavigate }) {
 
   // ── Main Hub ──────────────────────────────────────────────────────
   return (
-    <div className="twg-hub">
+    <div className="twg-screen">
       <HomeButton onNavigate={onNavigate} />
 
-      <h1 className="twg-hub__greeting">{greeting}</h1>
-      <p className="twg-hub__sub">How do you want to spend time with me today?</p>
-
-      {/* Central Ganesha */}
-      <div className="twg-hub__ganesha">
-        <GaneshaPresence
-          pose="blessing"
-          expression="happy"
-          size={280}
-          breathing="gentle"
-          blink
-        />
+      {/* Header */}
+      <div className="twg-header">
+        {greeting}
+        <span className="twg-sub">How do you want to spend time with me today?</span>
       </div>
 
-      {/* 5 Mode Tiles */}
-      <div className="twg-hub__tiles">
-        {MODES.map(mode => (
-          <button
-            key={mode.id}
-            className="twg-hub__tile"
-            onClick={() => handleModeSelect(mode.id)}
-          >
-            <span className="twg-hub__tile-emoji">{mode.emoji}</span>
-            <span className="twg-hub__tile-label">{mode.label}</span>
-          </button>
-        ))}
+      {/* Ganesha glow + character — bottom left */}
+      <div className="twg-ganesha-glow" />
+      <div className="twg-ganesha">
+        <GaneshaPresence pose="blessing" expression="happy" size={320} breathing="gentle" blink />
       </div>
+
+      {/* Activity arc — 5 badges */}
+      <div className="twg-arc">
+        <button className="twg-badge badge-talk"   onClick={() => handleModeSelect('talk')}>
+          <span className="twg-badge-emoji">🗣️</span>
+          <span className="twg-badge-label">Talk to Me</span>
+        </button>
+        <button className="twg-badge badge-story"  onClick={() => handleModeSelect('story')}>
+          <span className="twg-badge-emoji">📖</span>
+          <span className="twg-badge-label">Story Time</span>
+        </button>
+        <button className="twg-badge badge-shloka" onClick={() => handleModeSelect('shloka')}>
+          <span className="twg-badge-emoji">🕉️</span>
+          <span className="twg-badge-label">Shloka</span>
+        </button>
+        <button className="twg-badge badge-dare"   onClick={() => handleModeSelect('dare')}>
+          <span className="twg-badge-emoji">🎯</span>
+          <span className="twg-badge-label">Daily Dare</span>
+        </button>
+        <button className="twg-badge badge-fun"    onClick={() => handleModeSelect('just')}>
+          <span className="twg-badge-emoji">🌟</span>
+          <span className="twg-badge-label">Just Do Something</span>
+        </button>
+      </div>
+
+      {/* Prompt bubble */}
+      <div className="twg-prompt">
+        What would you like to do today, {childName}?
+      </div>
+
+      {/* Platform + mic — tap to Talk to Ganesha */}
+      <div className="twg-platform" />
+      <button className="twg-mic" onClick={() => handleModeSelect('talk')} aria-label="Talk to Ganesha">
+        <svg viewBox="0 0 24 24" fill="none">
+          <rect x="9" y="2" width="6" height="12" rx="3" fill="currentColor"/>
+          <path d="M5 10a7 7 0 0 0 14 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+          <line x1="12" y1="19" x2="12" y2="22" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+          <line x1="9"  y1="22" x2="15" y2="22" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+        </svg>
+      </button>
 
       {/* TalkToGanesha modal overlay */}
       {activeMode === 'talk' && (
@@ -152,8 +179,44 @@ export default function TimeWithGaneshaHub({ onNavigate }) {
         />
       )}
 
-      {/* Coming-soon overlay for Session 4–6 modes */}
-      {activeMode && activeMode !== 'talk' && (
+      {/* ShlokaCoach modal overlay */}
+      {activeMode === 'shloka' && (
+        <ShlokaCoach
+          shlokaId="vakratunda-mahakaya"
+          childName={childName}
+          childAge={childAge}
+          onComplete={() => setActiveMode(null)}
+          onClose={() => setActiveMode(null)}
+        />
+      )}
+
+      {/* Just Do Something — CoReg Toolkit full screen */}
+      {activeMode === 'just' && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 50,
+        }}>
+          <CoRegToolkit
+            zone="Yellow"
+            childName={childName}
+            childAge={childAge}
+            feeling="universal"
+            onComplete={() => setActiveMode(null)}
+            onClose={() => setActiveMode(null)}
+          />
+        </div>
+      )}
+
+      {/* Daily Dare modal overlay */}
+      {activeMode === 'dare' && (
+        <DareView
+          childName={childName}
+          childAge={childAge}
+          onClose={() => setActiveMode(null)}
+        />
+      )}
+
+      {/* Coming-soon overlay for other unbuilt modes */}
+      {activeMode && activeMode !== 'talk' && activeMode !== 'shloka' && activeMode !== 'just' && activeMode !== 'dare' && (
         <div className="twg-coming-soon" onClick={() => setActiveMode(null)}>
           <div className="twg-coming-soon__card" onClick={e => e.stopPropagation()}>
             <span style={{ fontSize: 52 }}>
@@ -177,3 +240,4 @@ export default function TimeWithGaneshaHub({ onNavigate }) {
     </div>
   );
 }
+

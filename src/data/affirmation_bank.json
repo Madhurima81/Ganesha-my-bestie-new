@@ -1,0 +1,678 @@
+{
+  "calm_safety": [
+    {
+      "id": "C1",
+      "line": "My breath makes me safe",
+      "breath": "exhale",
+      "emotions": [
+        "fear",
+        "overwhelm",
+        "anxiety"
+      ]
+    },
+    {
+      "id": "C2",
+      "line": "I am held in calm light",
+      "breath": "exhale",
+      "emotions": [
+        "fear",
+        "sadness"
+      ]
+    },
+    {
+      "id": "C3",
+      "line": "Slow and steady feels good",
+      "breath": "exhale",
+      "emotions": [
+        "overwhelm",
+        "anxiety"
+      ]
+    },
+    {
+      "id": "C4",
+      "line": "My body can become quiet",
+      "breath": "exhale",
+      "emotions": [
+        "overwhelm",
+        "hyper_energy"
+      ]
+    },
+    {
+      "id": "C5",
+      "line": "I am safe in this moment",
+      "breath": "exhale",
+      "emotions": [
+        "fear",
+        "anxiety"
+      ]
+    },
+    {
+      "id": "C6",
+      "line": "The storm can pass through me",
+      "breath": "exhale",
+      "emotions": [
+        "anger",
+        "overwhelm"
+      ]
+    },
+    {
+      "id": "C7",
+      "line": "I can soften and rest",
+      "breath": "exhale",
+      "emotions": [
+        "anger",
+        "overwhelm"
+      ]
+    },
+    {
+      "id": "C8",
+      "line": "Calm grows inside me",
+      "breath": "exhale",
+      "emotions": [
+        "fear",
+        "anxiety",
+        "overwhelm"
+      ]
+    },
+    {
+      "id": "C9",
+      "line": "My breath makes me calm",
+      "breath": "exhale",
+      "emotions": [
+        "anxiety",
+        "overwhelm"
+      ]
+    },
+    {
+      "id": "C10",
+      "line": "Quiet waves live in me",
+      "breath": "exhale",
+      "emotions": [
+        "overwhelm",
+        "anxiety"
+      ]
+    },
+    {
+      "id": "C11",
+      "line": "My body knows how to rest",
+      "breath": "exhale",
+      "emotions": [
+        "overwhelm",
+        "hyper_energy"
+      ]
+    },
+    {
+      "id": "C12",
+      "line": "Warm light lives in me",
+      "breath": "inhale",
+      "emotions": [
+        "fear",
+        "sadness",
+        "loneliness"
+      ]
+    }
+  ],
+  "courage_trying": [
+    {
+      "id": "T1",
+      "line": "Step by step I find a way",
+      "breath": "inhale",
+      "emotions": [
+        "frustration",
+        "change",
+        "anxiety"
+      ]
+    },
+    {
+      "id": "T2",
+      "line": "I bend and grow",
+      "breath": "inhale",
+      "emotions": [
+        "anger",
+        "frustration"
+      ]
+    },
+    {
+      "id": "T3",
+      "line": "I can try once more",
+      "breath": "inhale",
+      "emotions": [
+        "frustration",
+        "shame"
+      ]
+    },
+    {
+      "id": "T4",
+      "line": "Strong and gentle both live in me",
+      "breath": "inhale",
+      "emotions": [
+        "anger",
+        "frustration"
+      ]
+    },
+    {
+      "id": "T5",
+      "line": "Each try makes me braver",
+      "breath": "inhale",
+      "emotions": [
+        "fear",
+        "shame"
+      ]
+    },
+    {
+      "id": "T6",
+      "line": "I move forward slowly",
+      "breath": "inhale",
+      "emotions": [
+        "fear",
+        "change",
+        "anxiety"
+      ]
+    },
+    {
+      "id": "T7",
+      "line": "I can begin again",
+      "breath": "inhale",
+      "emotions": [
+        "frustration",
+        "disappointment"
+      ]
+    },
+    {
+      "id": "T8",
+      "line": "My effort is my power",
+      "breath": "inhale",
+      "emotions": [
+        "frustration",
+        "shame"
+      ]
+    },
+    {
+      "id": "T9",
+      "line": "I bend and grow stronger",
+      "breath": "inhale",
+      "emotions": [
+        "anger",
+        "frustration"
+      ]
+    },
+    {
+      "id": "T10",
+      "line": "Step by step I am brave",
+      "breath": "inhale",
+      "emotions": [
+        "fear",
+        "change"
+      ]
+    },
+    {
+      "id": "T11",
+      "line": "Strong heart gentle mind",
+      "breath": "inhale",
+      "emotions": [
+        "anger"
+      ]
+    },
+    {
+      "id": "T12",
+      "line": "My effort is my power",
+      "breath": "inhale",
+      "emotions": [
+        "frustration",
+        "shame"
+      ]
+    }
+  ],
+  "confidence_belief": [
+    {
+      "id": "B1",
+      "line": "I am learning every day",
+      "breath": "inhale",
+      "emotions": [
+        "shame",
+        "frustration"
+      ]
+    },
+    {
+      "id": "B2",
+      "line": "My path is my own",
+      "breath": "inhale",
+      "emotions": [
+        "jealousy",
+        "shame",
+        "comparison"
+      ]
+    },
+    {
+      "id": "B3",
+      "line": "I carry quiet strength",
+      "breath": "inhale",
+      "emotions": [
+        "shame",
+        "fear"
+      ]
+    },
+    {
+      "id": "B4",
+      "line": "I can rise again",
+      "breath": "inhale",
+      "emotions": [
+        "shame",
+        "disappointment"
+      ]
+    },
+    {
+      "id": "B5",
+      "line": "Small steps still count",
+      "breath": "exhale",
+      "emotions": [
+        "shame",
+        "frustration"
+      ]
+    },
+    {
+      "id": "B6",
+      "line": "I trust my growing self",
+      "breath": "inhale",
+      "emotions": [
+        "shame",
+        "anxiety"
+      ]
+    },
+    {
+      "id": "B7",
+      "line": "I am more than this moment",
+      "breath": "inhale",
+      "emotions": [
+        "shame",
+        "disappointment"
+      ]
+    },
+    {
+      "id": "B8",
+      "line": "I can stand tall inside",
+      "breath": "inhale",
+      "emotions": [
+        "shame",
+        "fear"
+      ]
+    },
+    {
+      "id": "B9",
+      "line": "My effort makes me shine",
+      "breath": "inhale",
+      "emotions": [
+        "shame",
+        "frustration"
+      ]
+    },
+    {
+      "id": "B10",
+      "line": "I learn each time I try",
+      "breath": "inhale",
+      "emotions": [
+        "shame",
+        "frustration"
+      ]
+    },
+    {
+      "id": "B11",
+      "line": "I am growing every day",
+      "breath": "inhale",
+      "emotions": [
+        "shame",
+        "anxiety"
+      ]
+    },
+    {
+      "id": "B12",
+      "line": "I am complete exactly as I am",
+      "breath": "exhale",
+      "emotions": [
+        "shame",
+        "comparison",
+        "jealousy"
+      ]
+    }
+  ],
+  "connection_belonging": [
+    {
+      "id": "N1",
+      "line": "I am not alone",
+      "breath": "exhale",
+      "emotions": [
+        "loneliness",
+        "sadness"
+      ]
+    },
+    {
+      "id": "N2",
+      "line": "Kind hearts can find me",
+      "breath": "exhale",
+      "emotions": [
+        "loneliness",
+        "rejection"
+      ]
+    },
+    {
+      "id": "N3",
+      "line": "I can share my light",
+      "breath": "inhale",
+      "emotions": [
+        "loneliness",
+        "shame"
+      ]
+    },
+    {
+      "id": "N4",
+      "line": "I belong in this world",
+      "breath": "exhale",
+      "emotions": [
+        "loneliness",
+        "shame"
+      ]
+    },
+    {
+      "id": "N5",
+      "line": "My heart can reach others",
+      "breath": "inhale",
+      "emotions": [
+        "loneliness",
+        "sadness"
+      ]
+    },
+    {
+      "id": "N6",
+      "line": "Friendship can grow slowly",
+      "breath": "exhale",
+      "emotions": [
+        "loneliness",
+        "rejection"
+      ]
+    },
+    {
+      "id": "N7",
+      "line": "I matter here",
+      "breath": "exhale",
+      "emotions": [
+        "loneliness",
+        "shame",
+        "invisibility"
+      ]
+    },
+    {
+      "id": "N8",
+      "line": "Warmth can return",
+      "breath": "inhale",
+      "emotions": [
+        "sadness",
+        "loneliness"
+      ]
+    },
+    {
+      "id": "N9",
+      "line": "Love stays close to me",
+      "breath": "exhale",
+      "emotions": [
+        "sadness",
+        "loneliness",
+        "fear"
+      ]
+    },
+    {
+      "id": "N10",
+      "line": "Kindness begins in my heart",
+      "breath": "inhale",
+      "emotions": [
+        "moral",
+        "jealousy"
+      ]
+    },
+    {
+      "id": "N11",
+      "line": "I am worthy of love and belonging",
+      "breath": "exhale",
+      "emotions": [
+        "shame",
+        "loneliness"
+      ]
+    },
+    {
+      "id": "N12",
+      "line": "I am seen and I always matter",
+      "breath": "exhale",
+      "emotions": [
+        "shame",
+        "loneliness"
+      ]
+    }
+  ],
+  "emotional_release": [
+    {
+      "id": "R1",
+      "line": "Tears can help me heal",
+      "breath": "exhale",
+      "emotions": [
+        "sadness",
+        "grief"
+      ]
+    },
+    {
+      "id": "R2",
+      "line": "Heavy feelings can melt",
+      "breath": "exhale",
+      "emotions": [
+        "sadness",
+        "shame",
+        "guilt"
+      ]
+    },
+    {
+      "id": "R3",
+      "line": "Softness is safe",
+      "breath": "exhale",
+      "emotions": [
+        "sadness",
+        "fear",
+        "shame"
+      ]
+    },
+    {
+      "id": "R4",
+      "line": "I can let this go gently",
+      "breath": "exhale",
+      "emotions": [
+        "sadness",
+        "guilt",
+        "anger"
+      ]
+    },
+    {
+      "id": "R5",
+      "line": "My heart can bloom again",
+      "breath": "inhale",
+      "emotions": [
+        "sadness",
+        "disappointment"
+      ]
+    },
+    {
+      "id": "R6",
+      "line": "Feeling is part of growing",
+      "breath": "exhale",
+      "emotions": [
+        "sadness",
+        "guilt"
+      ]
+    },
+    {
+      "id": "R7",
+      "line": "I can rest in kindness",
+      "breath": "exhale",
+      "emotions": [
+        "sadness",
+        "shame"
+      ]
+    },
+    {
+      "id": "R8",
+      "line": "Light can return slowly",
+      "breath": "inhale",
+      "emotions": [
+        "sadness",
+        "loneliness"
+      ]
+    },
+    {
+      "id": "R9",
+      "line": "Sad clouds will pass away",
+      "breath": "exhale",
+      "emotions": [
+        "sadness"
+      ]
+    },
+    {
+      "id": "R10",
+      "line": "I can bloom again today",
+      "breath": "inhale",
+      "emotions": [
+        "sadness",
+        "disappointment"
+      ]
+    },
+    {
+      "id": "R11",
+      "line": "I am good and growing every day",
+      "breath": "inhale",
+      "emotions": [
+        "shame",
+        "guilt"
+      ]
+    },
+    {
+      "id": "R12",
+      "line": "My heart is healing right now",
+      "breath": "exhale",
+      "emotions": [
+        "sadness",
+        "grief",
+        "hurt"
+      ]
+    }
+  ],
+  "focus_clarity": [
+    {
+      "id": "F1",
+      "line": "One thing at a time",
+      "breath": "exhale",
+      "emotions": [
+        "overwhelm",
+        "anxiety",
+        "confusion"
+      ]
+    },
+    {
+      "id": "F2",
+      "line": "My mind can become clear",
+      "breath": "inhale",
+      "emotions": [
+        "anxiety",
+        "overwhelm",
+        "confusion"
+      ]
+    },
+    {
+      "id": "F3",
+      "line": "I can see the next step",
+      "breath": "inhale",
+      "emotions": [
+        "anxiety",
+        "overwhelm"
+      ]
+    },
+    {
+      "id": "F4",
+      "line": "Quiet helps me think",
+      "breath": "exhale",
+      "emotions": [
+        "overwhelm",
+        "anxiety"
+      ]
+    },
+    {
+      "id": "F5",
+      "line": "I return to the present",
+      "breath": "exhale",
+      "emotions": [
+        "anxiety",
+        "overwhelm"
+      ]
+    },
+    {
+      "id": "F6",
+      "line": "I move with steady focus",
+      "breath": "inhale",
+      "emotions": [
+        "anxiety",
+        "overwhelm"
+      ]
+    },
+    {
+      "id": "F7",
+      "line": "I can listen inside",
+      "breath": "exhale",
+      "emotions": [
+        "anxiety",
+        "confusion"
+      ]
+    },
+    {
+      "id": "F8",
+      "line": "Clarity can grow",
+      "breath": "inhale",
+      "emotions": [
+        "confusion",
+        "anxiety",
+        "overwhelm"
+      ]
+    },
+    {
+      "id": "F9",
+      "line": "My mind is clear and bright",
+      "breath": "inhale",
+      "emotions": [
+        "anxiety",
+        "overwhelm"
+      ]
+    },
+    {
+      "id": "F10",
+      "line": "One small step is enough",
+      "breath": "exhale",
+      "emotions": [
+        "overwhelm",
+        "anxiety",
+        "shame"
+      ]
+    },
+    {
+      "id": "F11",
+      "line": "I choose calm and steady",
+      "breath": "exhale",
+      "emotions": [
+        "anxiety",
+        "overwhelm"
+      ]
+    },
+    {
+      "id": "F12",
+      "line": "My breath makes me steady",
+      "breath": "exhale",
+      "emotions": [
+        "anxiety",
+        "fear",
+        "overwhelm"
+      ]
+    }
+  ]
+}

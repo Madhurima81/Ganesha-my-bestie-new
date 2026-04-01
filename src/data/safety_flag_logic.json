@@ -1,0 +1,125 @@
+{
+  "meta": {
+    "version": "1.0",
+    "description": "Safety escalation rules for Talk with Ganesha chat system. Defines when and how to surface adult support suggestions. Never clinical. Always warm.",
+    "tone_rule": "Warmth first. Referral second. Never alarm. Never diagnose."
+  },
+  "safety_tiers": {
+    "tier_0_none": {
+      "label": "No flag",
+      "description": "Standard emotional experience. No safety action needed.",
+      "chat_behaviour": "normal",
+      "doorway_behaviour": "normal",
+      "example_scenarios": [
+        "ANGER_TOY_SHARED_01",
+        "FEAR_EXAM_01",
+        "SADNESS_FRIEND_NOT_PLAY_01"
+      ]
+    },
+    "tier_1_monitor": {
+      "label": "Monitor",
+      "description": "Emotion is heavy but not acute. Watch for escalation across sessions.",
+      "chat_behaviour": "Add one warm optional check-in line after doorway offer. Do not push.",
+      "doorway_behaviour": "normal \u2014 offer experience as usual",
+      "suggested_line_after_offer": "And if this feeling keeps coming back \u2014 it might help to talk to someone you really trust about it.",
+      "example_scenarios": [
+        "SHAME_SELF_TALK_01",
+        "SHAME_INVISIBLE_01",
+        "SHAME_BAD_KID_01",
+        "FEAR_FAMILY_SICK_01"
+      ]
+    },
+    "tier_2_suggest_adult": {
+      "label": "Suggest adult support",
+      "description": "Scenario carries significant emotional weight. Gentle adult referral is appropriate.",
+      "chat_behaviour": "Weave adult referral naturally into conversation \u2014 never as a separate clinical statement.",
+      "doorway_behaviour": "Still offer experience. Referral is alongside, not instead of.",
+      "suggested_line_pattern": "This is the kind of thing worth sharing with someone who loves you. Not because something is wrong \u2014 but because you deserve real support alongside Ganesha.",
+      "example_scenarios": [
+        "SHAME_WEIGHT_01",
+        "SHAME_BURDEN_01",
+        "FEAR_SCARY_VIDEO_01",
+        "SADNESS_PET_LOSS_01",
+        "SADNESS_BEREAVEMENT_01",
+        "MORAL_BYSTANDER_01",
+        "MORAL_DIGITAL_SAFETY_01",
+        "FEAR_MEDICAL_01"
+      ]
+    }
+  },
+  "negative_self_language_flags": {
+    "description": "Words or phrases that trigger Deep Support Mode + Tier 1 minimum.",
+    "flag_patterns": [
+      "I am stupid",
+      "I am ugly",
+      "nobody likes me",
+      "I can't do anything right",
+      "I am bad",
+      "I am worthless",
+      "I hate myself",
+      "I wish I wasn't here",
+      "nobody cares",
+      "I am a burden",
+      "I don't matter",
+      "I am useless",
+      "what's wrong with me",
+      "I always mess up",
+      "I am so dumb"
+    ],
+    "routing_action": "Force DEEP_SUPPORT mode. Set safety_flag = tier_1_monitor minimum.",
+    "note": "'I wish I wasn't here' or 'nobody would care if I was gone' \u2192 escalate to tier_2_suggest_adult immediately and hold doorway."
+  },
+  "withdrawal_signals": {
+    "description": "Behavioural patterns in chat that indicate emotional withdrawal.",
+    "signals": [
+      "Single word replies after initial message (ok, fine, idk, whatever)",
+      "Silence \u2014 no response for 60+ seconds after Ganesha speaks",
+      "Emoji-only replies (especially \ud83d\ude36 \ud83d\ude41 \ud83d\ude1e \ud83d\udc94)",
+      "Child says 'never mind' or 'forget it' or 'it doesn't matter'"
+    ],
+    "routing_action": "Slow down. Do not push doorway. Use one gentle re-invitation line. Wait.",
+    "re_invitation_line": "You don't have to talk if you don't want to. I'm right here whenever you're ready."
+  },
+  "repetition_signals": {
+    "description": "Child keeps returning to same emotion or scenario across sessions.",
+    "detection_rule": "Same primary_emotion triggered 3+ times in 7 days",
+    "routing_action": "On 3rd+ trigger \u2014 add tier_1 check-in line at end of experience completion screen.",
+    "completion_line": "You've been carrying this feeling a lot lately. It might help to talk to someone you trust about it too \u2014 not just Ganesha."
+  },
+  "escalation_language_rules": {
+    "never_say": [
+      "You should talk to a therapist",
+      "This sounds serious",
+      "I'm worried about you",
+      "Are you okay?",
+      "Do you feel safe?",
+      "This is a mental health issue"
+    ],
+    "always_say_instead": [
+      "Someone who loves you would want to know you're feeling this",
+      "This is worth sharing with a grown-up you trust",
+      "You deserve real support \u2014 not just from Ganesha",
+      "Is there someone at home you could tell about this feeling?"
+    ],
+    "tone_anchors": [
+      "warm",
+      "non-alarmist",
+      "non-clinical",
+      "hopeful",
+      "inviting not pushing"
+    ]
+  },
+  "ganesha_safety_lines_bank": {
+    "tier_1_monitor": [
+      "And if this feeling keeps coming back \u2014 it might help to share it with someone who loves you.",
+      "You don't have to carry this one alone. A grown-up you trust would want to know.",
+      "Ganesha is always here. And so are the people who love you."
+    ],
+    "tier_2_suggest_adult": [
+      "This feeling is real and it matters. Is there a parent or someone at home you could tell about it?",
+      "You deserve support that's bigger than just Ganesha. Someone who loves you would want to hear this.",
+      "This is worth saying out loud to a grown-up you trust. Not because something is wrong \u2014 but because you matter.",
+      "Can you think of one person at home you'd feel okay telling? Even just a little bit of this?"
+    ]
+  }
+}

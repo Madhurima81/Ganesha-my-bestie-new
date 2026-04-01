@@ -1,0 +1,356 @@
+{
+  "calm": [
+    {
+      "id": "CAL_01",
+      "message": "Your breath feels softer now.",
+      "age_fit": "5-12",
+      "mode": "both"
+    },
+    {
+      "id": "CAL_02",
+      "message": "Your body is calmer.",
+      "age_fit": "5-9",
+      "mode": "fast"
+    },
+    {
+      "id": "CAL_03",
+      "message": "The storm has become quieter.",
+      "age_fit": "5-12",
+      "mode": "both"
+    },
+    {
+      "id": "CAL_04",
+      "message": "You are safe in this moment.",
+      "age_fit": "5-12",
+      "mode": "both"
+    },
+    {
+      "id": "CAL_05",
+      "message": "Your heart is settling gently.",
+      "age_fit": "5-12",
+      "mode": "both"
+    },
+    {
+      "id": "CAL_06",
+      "message": "Calm is growing inside you.",
+      "age_fit": "5-12",
+      "mode": "both"
+    },
+    {
+      "id": "CAL_07",
+      "message": "Something settled just now.",
+      "age_fit": "8-12",
+      "mode": "deep"
+    },
+    {
+      "id": "CAL_08",
+      "message": "The noise got quieter.",
+      "age_fit": "7-12",
+      "mode": "both"
+    }
+  ],
+  "brave": [
+    {
+      "id": "COU_01",
+      "message": "Your strength is waking up.",
+      "age_fit": "5-12",
+      "mode": "both"
+    },
+    {
+      "id": "COU_02",
+      "message": "You moved through something hard.",
+      "age_fit": "7-12",
+      "mode": "deep"
+    },
+    {
+      "id": "COU_03",
+      "message": "Your path feels more open now.",
+      "age_fit": "5-12",
+      "mode": "both"
+    },
+    {
+      "id": "COU_04",
+      "message": "Bravery is growing in you.",
+      "age_fit": "5-10",
+      "mode": "both"
+    },
+    {
+      "id": "COU_05",
+      "message": "You found a new way forward.",
+      "age_fit": "5-12",
+      "mode": "both"
+    },
+    {
+      "id": "COU_06",
+      "message": "Your effort is shining.",
+      "age_fit": "5-10",
+      "mode": "fast"
+    },
+    {
+      "id": "COU_07",
+      "message": "You stood strong inside.",
+      "age_fit": "7-12",
+      "mode": "deep"
+    },
+    {
+      "id": "COU_08",
+      "message": "A new try feels possible.",
+      "age_fit": "5-12",
+      "mode": "both"
+    }
+  ],
+  "hopeful": [
+    {
+      "id": "HRT_01",
+      "message": "Your heart feels lighter now.",
+      "age_fit": "5-12",
+      "mode": "both"
+    },
+    {
+      "id": "HRT_02",
+      "message": "Some heaviness has melted away.",
+      "age_fit": "7-12",
+      "mode": "deep"
+    },
+    {
+      "id": "HRT_03",
+      "message": "Warmth is touching you again.",
+      "age_fit": "5-12",
+      "mode": "both"
+    },
+    {
+      "id": "HRT_04",
+      "message": "Gentle strength is with you.",
+      "age_fit": "5-12",
+      "mode": "both"
+    },
+    {
+      "id": "HRT_05",
+      "message": "You are healing step by step.",
+      "age_fit": "5-12",
+      "mode": "both"
+    },
+    {
+      "id": "HRT_06",
+      "message": "The heavy part is a little lighter.",
+      "age_fit": "7-12",
+      "mode": "both"
+    },
+    {
+      "id": "HRT_07",
+      "message": "Something in you is still growing.",
+      "age_fit": "8-12",
+      "mode": "deep"
+    },
+    {
+      "id": "HRT_08",
+      "message": "You allowed the feeling to move.",
+      "age_fit": "8-12",
+      "mode": "deep"
+    }
+  ],
+  "connected": [
+    {
+      "id": "CON_01",
+      "message": "You are not alone now.",
+      "age_fit": "5-12",
+      "mode": "both"
+    },
+    {
+      "id": "CON_02",
+      "message": "A warm thread connects you.",
+      "age_fit": "7-12",
+      "mode": "deep"
+    },
+    {
+      "id": "CON_03",
+      "message": "Your heart reached outward.",
+      "age_fit": "8-12",
+      "mode": "deep"
+    },
+    {
+      "id": "CON_04",
+      "message": "Belonging can grow again.",
+      "age_fit": "7-12",
+      "mode": "both"
+    },
+    {
+      "id": "CON_05",
+      "message": "You opened a small door.",
+      "age_fit": "5-12",
+      "mode": "both"
+    },
+    {
+      "id": "CON_06",
+      "message": "Your light touched the world.",
+      "age_fit": "5-12",
+      "mode": "both"
+    },
+    {
+      "id": "CON_07",
+      "message": "You matter to more than you know.",
+      "age_fit": "8-12",
+      "mode": "deep"
+    },
+    {
+      "id": "CON_08",
+      "message": "Ganesha sees you. Always has.",
+      "age_fit": "5-12",
+      "mode": "both"
+    }
+  ],
+  "focused": [
+    {
+      "id": "CLR_01",
+      "message": "Your mind feels clearer now.",
+      "age_fit": "5-12",
+      "mode": "both"
+    },
+    {
+      "id": "CLR_02",
+      "message": "The path ahead looks simpler.",
+      "age_fit": "7-12",
+      "mode": "both"
+    },
+    {
+      "id": "CLR_03",
+      "message": "You can see the next step.",
+      "age_fit": "5-12",
+      "mode": "both"
+    },
+    {
+      "id": "CLR_04",
+      "message": "Quiet focus has returned.",
+      "age_fit": "8-12",
+      "mode": "deep"
+    },
+    {
+      "id": "CLR_05",
+      "message": "Your thoughts are settling.",
+      "age_fit": "7-12",
+      "mode": "both"
+    },
+    {
+      "id": "CLR_06",
+      "message": "You are ready to continue.",
+      "age_fit": "5-12",
+      "mode": "fast"
+    },
+    {
+      "id": "CLR_07",
+      "message": "One step. That is enough to begin.",
+      "age_fit": "7-12",
+      "mode": "both"
+    },
+    {
+      "id": "CLR_08",
+      "message": "Clarity is growing.",
+      "age_fit": "8-12",
+      "mode": "deep"
+    }
+  ],
+  "motivated": [
+    {
+      "id": "MOT_01",
+      "message": "You reset. Now go.",
+      "age_fit": "8-12",
+      "mode": "fast"
+    },
+    {
+      "id": "MOT_02",
+      "message": "Ready to try again.",
+      "age_fit": "5-12",
+      "mode": "fast"
+    },
+    {
+      "id": "MOT_03",
+      "message": "Something shifted. Take it back with you.",
+      "age_fit": "8-12",
+      "mode": "deep"
+    },
+    {
+      "id": "MOT_04",
+      "message": "Your effort is real. Go put it somewhere good.",
+      "age_fit": "8-12",
+      "mode": "deep"
+    },
+    {
+      "id": "MOT_05",
+      "message": "Something brave just happened.",
+      "age_fit": "7-12",
+      "mode": "deep"
+    },
+    {
+      "id": "MOT_06",
+      "message": "One more try has a different shape now.",
+      "age_fit": "8-12",
+      "mode": "deep"
+    },
+    {
+      "id": "MOT_07",
+      "message": "Bravery is growing in you.",
+      "age_fit": "5-10",
+      "mode": "both"
+    },
+    {
+      "id": "MOT_08",
+      "message": "Ganesha is behind you. Go.",
+      "age_fit": "5-12",
+      "mode": "both"
+    }
+  ],
+  "relaxed": [
+    {
+      "id": "REL_01",
+      "message": "Your body did its job. Let it rest now.",
+      "age_fit": "5-12",
+      "mode": "both"
+    },
+    {
+      "id": "REL_02",
+      "message": "All that energy found somewhere to go.",
+      "age_fit": "5-12",
+      "mode": "both"
+    },
+    {
+      "id": "REL_03",
+      "message": "Slower. Softer. Right where you need to be.",
+      "age_fit": "5-12",
+      "mode": "both"
+    },
+    {
+      "id": "REL_04",
+      "message": "Loose and easy. Stay here a moment.",
+      "age_fit": "7-12",
+      "mode": "deep"
+    },
+    {
+      "id": "REL_05",
+      "message": "Nothing to do right now. That is allowed.",
+      "age_fit": "8-12",
+      "mode": "deep"
+    },
+    {
+      "id": "REL_06",
+      "message": "The restlessness found a home.",
+      "age_fit": "7-12",
+      "mode": "both"
+    },
+    {
+      "id": "REL_07",
+      "message": "Quiet enough now.",
+      "age_fit": "5-12",
+      "mode": "fast"
+    },
+    {
+      "id": "REL_08",
+      "message": "The big energy settled.",
+      "age_fit": "5-10",
+      "mode": "fast"
+    }
+  ],
+  "safety_addon": {
+    "monitor": "If this feeling keeps coming back \u2014 someone who loves you would want to know.",
+    "suggest_adult_support": "This is worth sharing with a grown-up you trust. You do not have to carry it alone."
+  }
+}

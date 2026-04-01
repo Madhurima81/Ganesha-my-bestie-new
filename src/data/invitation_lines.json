@@ -1,0 +1,406 @@
+{
+  "energy_release": [
+    {
+      "id": "ER_01",
+      "line": "Shall we move this strong feeling together?",
+      "intensity": "high",
+      "symbol": null
+    },
+    {
+      "id": "ER_02",
+      "line": "Let us try a powerful elephant step.",
+      "intensity": "high",
+      "symbol": "trunk"
+    },
+    {
+      "id": "ER_03",
+      "line": "We can help this energy find a path.",
+      "intensity": "medium",
+      "symbol": null
+    },
+    {
+      "id": "ER_04",
+      "line": "Want to push this feeling out gently?",
+      "intensity": "high",
+      "symbol": null
+    },
+    {
+      "id": "ER_05",
+      "line": "Let us do one brave action together.",
+      "intensity": "medium",
+      "symbol": null
+    },
+    {
+      "id": "ER_06",
+      "line": "We can turn this heat into strength.",
+      "intensity": "medium",
+      "symbol": null
+    },
+    {
+      "id": "ER_07",
+      "line": "Shall we try a quick strength moment?",
+      "intensity": "medium",
+      "symbol": null
+    },
+    {
+      "id": "ER_08",
+      "line": "Let us clear the path step by step.",
+      "intensity": "medium",
+      "symbol": "mooshika"
+    },
+    {
+      "id": "ER_09",
+      "line": "Shall we stomp this out together?",
+      "intensity": "high",
+      "symbol": "trunk"
+    },
+    {
+      "id": "ER_10",
+      "line": "We can give that feeling somewhere to go.",
+      "intensity": "high",
+      "symbol": null
+    }
+  ],
+  "safety_grounding": [
+    {
+      "id": "SG_01",
+      "line": "Would you like to feel a little safer with me?",
+      "intensity": "high",
+      "symbol": null
+    },
+    {
+      "id": "SG_02",
+      "line": "Let us make your breath soft together.",
+      "intensity": "high",
+      "symbol": "belly"
+    },
+    {
+      "id": "SG_03",
+      "line": "We can create a quiet safe space now.",
+      "intensity": "high",
+      "symbol": null
+    },
+    {
+      "id": "SG_04",
+      "line": "Shall we try a small calming light?",
+      "intensity": "medium",
+      "symbol": "mooshika"
+    },
+    {
+      "id": "SG_05",
+      "line": "We can slow everything down gently.",
+      "intensity": "high",
+      "symbol": null
+    },
+    {
+      "id": "SG_06",
+      "line": "Would you like to hold a safe feeling inside?",
+      "intensity": "high",
+      "symbol": "belly"
+    },
+    {
+      "id": "SG_07",
+      "line": "Let us walk one peaceful step together.",
+      "intensity": "medium",
+      "symbol": null
+    },
+    {
+      "id": "SG_08",
+      "line": "We can make the storm softer now.",
+      "intensity": "medium",
+      "symbol": "ears"
+    },
+    {
+      "id": "SG_09",
+      "line": "Shall we try a small calm adventure?",
+      "intensity": "low",
+      "symbol": null
+    },
+    {
+      "id": "SG_10",
+      "line": "Would you like to feel your feet on the ground?",
+      "intensity": "medium",
+      "symbol": null
+    }
+  ],
+  "soothing_comfort": [
+    {
+      "id": "SC_01",
+      "line": "Shall we help your heart feel lighter?",
+      "intensity": "high",
+      "symbol": "lotus"
+    },
+    {
+      "id": "SC_02",
+      "line": "Let us sit with this feeling softly.",
+      "intensity": "high",
+      "symbol": null
+    },
+    {
+      "id": "SC_03",
+      "line": "We can let this heaviness melt slowly.",
+      "intensity": "medium",
+      "symbol": null
+    },
+    {
+      "id": "SC_04",
+      "line": "Would you like a gentle comfort moment?",
+      "intensity": "medium",
+      "symbol": null
+    },
+    {
+      "id": "SC_05",
+      "line": "Let us bring a little warmth inside.",
+      "intensity": "medium",
+      "symbol": "modak"
+    },
+    {
+      "id": "SC_06",
+      "line": "We can float this feeling away together.",
+      "intensity": "medium",
+      "symbol": "lotus"
+    },
+    {
+      "id": "SC_07",
+      "line": "Shall we try a quiet healing step?",
+      "intensity": "medium",
+      "symbol": null
+    },
+    {
+      "id": "SC_08",
+      "line": "We can make space for a softer feeling.",
+      "intensity": "high",
+      "symbol": null
+    },
+    {
+      "id": "SC_09",
+      "line": "Want to try something gentle together?",
+      "intensity": "high",
+      "symbol": null
+    },
+    {
+      "id": "SC_10",
+      "line": "Let us give your heart a soft moment.",
+      "intensity": "medium",
+      "symbol": "lotus"
+    }
+  ],
+  "connection_belonging": [
+    {
+      "id": "CB_01",
+      "line": "Shall we call some friendly light together?",
+      "intensity": "medium",
+      "symbol": null
+    },
+    {
+      "id": "CB_02",
+      "line": "We can make your heart feel less alone.",
+      "intensity": "high",
+      "symbol": null
+    },
+    {
+      "id": "CB_03",
+      "line": "Let us send a small warm signal outward.",
+      "intensity": "medium",
+      "symbol": "modak"
+    },
+    {
+      "id": "CB_04",
+      "line": "Would you like to create a connection moment?",
+      "intensity": "medium",
+      "symbol": null
+    },
+    {
+      "id": "CB_05",
+      "line": "We can open a tiny friendship door.",
+      "intensity": "low",
+      "symbol": "mooshika"
+    },
+    {
+      "id": "CB_06",
+      "line": "Shall we light a togetherness lamp?",
+      "intensity": "medium",
+      "symbol": null
+    },
+    {
+      "id": "CB_07",
+      "line": "We can help your heart reach out gently.",
+      "intensity": "medium",
+      "symbol": "ears"
+    },
+    {
+      "id": "CB_08",
+      "line": "Let us try a sharing breath together.",
+      "intensity": "medium",
+      "symbol": null
+    },
+    {
+      "id": "CB_09",
+      "line": "Shall we remind your heart it is not alone?",
+      "intensity": "high",
+      "symbol": null
+    },
+    {
+      "id": "CB_10",
+      "line": "We can find one warm thread to hold onto.",
+      "intensity": "high",
+      "symbol": "lotus"
+    }
+  ],
+  "courage_building": [
+    {
+      "id": "CU_01",
+      "line": "Shall we find your inner strength together?",
+      "intensity": "medium",
+      "symbol": "tusk"
+    },
+    {
+      "id": "CU_02",
+      "line": "We can take one brave step now.",
+      "intensity": "medium",
+      "symbol": null
+    },
+    {
+      "id": "CU_03",
+      "line": "Let us try a small success moment.",
+      "intensity": "low",
+      "symbol": null
+    },
+    {
+      "id": "CU_04",
+      "line": "Would you like to wake up your courage?",
+      "intensity": "medium",
+      "symbol": null
+    },
+    {
+      "id": "CU_05",
+      "line": "We can grow a little confidence spark.",
+      "intensity": "low",
+      "symbol": null
+    },
+    {
+      "id": "CU_06",
+      "line": "Shall we climb one gentle step?",
+      "intensity": "medium",
+      "symbol": null
+    },
+    {
+      "id": "CU_07",
+      "line": "We can help your power rise slowly.",
+      "intensity": "medium",
+      "symbol": "tusk"
+    },
+    {
+      "id": "CU_08",
+      "line": "Let us begin again together.",
+      "intensity": "high",
+      "symbol": null
+    },
+    {
+      "id": "CU_09",
+      "line": "Want to try something that might help?",
+      "intensity": "high",
+      "symbol": null
+    },
+    {
+      "id": "CU_10",
+      "line": "Shall we do one small thing together?",
+      "intensity": "high",
+      "symbol": null
+    }
+  ],
+  "slowing_focus": [
+    {
+      "id": "SF_01",
+      "line": "Shall we slow our steps together?",
+      "intensity": "high",
+      "symbol": null
+    },
+    {
+      "id": "SF_02",
+      "line": "We can make your body quiet like moonlight.",
+      "intensity": "medium",
+      "symbol": "belly"
+    },
+    {
+      "id": "SF_03",
+      "line": "Let us try a gentle pause moment.",
+      "intensity": "medium",
+      "symbol": null
+    },
+    {
+      "id": "SF_04",
+      "line": "Would you like to feel steady inside?",
+      "intensity": "medium",
+      "symbol": null
+    },
+    {
+      "id": "SF_05",
+      "line": "We can glide into calm together.",
+      "intensity": "medium",
+      "symbol": "lotus"
+    },
+    {
+      "id": "SF_06",
+      "line": "Shall we soften the speed a little?",
+      "intensity": "high",
+      "symbol": null
+    },
+    {
+      "id": "SF_07",
+      "line": "We can help your breath become slow.",
+      "intensity": "high",
+      "symbol": "belly"
+    },
+    {
+      "id": "SF_08",
+      "line": "Let us try a peaceful tiny step.",
+      "intensity": "medium",
+      "symbol": null
+    },
+    {
+      "id": "SF_09",
+      "line": "Want to settle this restlessness together?",
+      "intensity": "high",
+      "symbol": null
+    },
+    {
+      "id": "SF_10",
+      "line": "Shall we find one quiet thing to follow?",
+      "intensity": "medium",
+      "symbol": "eyes"
+    }
+  ],
+  "safety_mode": [
+    {
+      "id": "SAF_01",
+      "line": "Would you like to try something together, or just sit with me?",
+      "intensity": "high",
+      "symbol": null
+    },
+    {
+      "id": "SAF_02",
+      "line": "We can do something very small \u2014 only if you want to.",
+      "intensity": "high",
+      "symbol": null
+    },
+    {
+      "id": "SAF_03",
+      "line": "Shall we just breathe for a moment? Nothing more.",
+      "intensity": "high",
+      "symbol": null
+    },
+    {
+      "id": "SAF_04",
+      "line": "I am here either way. Want to try one tiny thing?",
+      "intensity": "high",
+      "symbol": null
+    },
+    {
+      "id": "SAF_05",
+      "line": "You do not have to do anything. But we could try something small.",
+      "intensity": "high",
+      "symbol": null
+    }
+  ]
+}
