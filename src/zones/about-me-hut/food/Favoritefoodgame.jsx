@@ -494,16 +494,16 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     const { gamePhase } = sceneState;
 
     if (gamePhase === 'food-correct') {
-      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'color-choice', wrongChoices: [] }); }, 2500);
+      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'color-choice', wrongChoices: [] }); }, 4500);
     }
     else if (gamePhase === 'color-correct') {
-      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'activity-choice', wrongChoices: [] }); }, 2500);
+      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'activity-choice', wrongChoices: [] }); }, 4500);
     }
     else if (gamePhase === 'activity-correct') {
-      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'friend-intro', wrongChoices: [] }); }, 2500);
+      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'friend-intro', wrongChoices: [] }); }, 4500);
     }
     else if (gamePhase === 'friend-correct') {
-      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'child-intro', wrongChoices: [] }); }, 2500);
+      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'child-intro', wrongChoices: [] }); }, 4500);
     }
     else if (gamePhase === 'friend-celebration') {
       timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'comparison-card' }); }, 3000);
