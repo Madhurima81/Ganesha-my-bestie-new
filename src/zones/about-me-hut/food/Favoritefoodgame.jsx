@@ -18,7 +18,7 @@ import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 import OpeningModal from '../../shared/components/OpeningModal';
 
 // --- EXISTING ASSETS ---
-import foodBg from './assets/images/food-bg.png';
+import foodBg from './assets/images/fav_background.jpg';
 import babyGaneshaImg from './assets/images/baby-ganesha.png';
 import babyGaneshaSit from './assets/images/baby-ganesha-sit.png';
 
@@ -468,7 +468,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           setShowResumePopup(true);
           resumePopupTimeoutRef.current = setTimeout(() => {
             setShowResumePopup(false);
-            sceneActions.updateState({ gamePhase: 'child-friend-intro' });
+            sceneActions.updateState({ gamePhase: 'child-friend-input' });
           }, 3000);
         } else {
           setResumeMessage(`Welcome back! Ready to pick (or draw) your favorite activity? ⚽`);
@@ -1133,22 +1133,9 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       )}
 
       {/* Child Friend Intro */}
-      {sceneState.gamePhase === 'child-friend-intro' && (
-        <div className="intro-overlay">
-          <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
-          <div className="child-card">
-            <div className="child-card-text">My best friend is... 👫</div>
-            <button className="child-card-button" onClick={() => { playUiTap(); sceneActions.updateState({ gamePhase: 'child-friend-input' }); }}>Tap to tell!</button>
-          </div>
-        </div>
-      )}
-
       {/* Child Friend Input */}
       {sceneState.gamePhase === 'child-friend-input' && (
         <div className="friend-input-screen">
-          <div className="ganesha-waiting">
-            <img src={babyGaneshaImg} alt="Baby Ganesha" className="ganesha-small bounce-gentle" />
-          </div>
           <LetterInputKeyboard
             onConfirm={(name) => {
               playChime();
