@@ -32,7 +32,7 @@ import familyTreeBg from './assets/images/family tree bg.png';
 import familyTree from './assets/images/family-tree.png';
 
 // Correct Answers
-import babyGaneshaImg from '../../../public/images/ganesha-final-new.svg';
+import babyGaneshaImg from '/images/ganesha-final-new.svg';
 import shivaImg from './assets/images/ganesha/family-shiva.png';
 import parvatiImg from './assets/images/ganesha/family-parvati.png';
 import kartikeyaImg from './assets/images/ganesha/family-kartkeya.png';

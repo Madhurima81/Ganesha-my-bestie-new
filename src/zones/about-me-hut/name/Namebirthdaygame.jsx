@@ -31,8 +31,8 @@ import { useGameSounds } from '../../../lib/hooks/useGameSounds';
 
 // Import images
 import nameBg from './assets/images/name-bg.png';
-import babyGaneshaImg from '../../../public/images/ganesha-final-new.svg';
-import babyGaneshaSit from '../../../public/images/ganesha-final-new.svg';
+import babyGaneshaImg from '/images/ganesha-final-new.svg';
+import babyGaneshaSit from '/images/ganesha-final-new.svg';
 
 // Festival icons
 import holiIcon from './assets/images/holi.png';
