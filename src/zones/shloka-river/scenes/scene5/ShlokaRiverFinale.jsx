@@ -3,6 +3,13 @@
 import React, { useState, useRef } from 'react';
 import './RiverFinaleEnhanced.css';
 import GamePauseMenu from '../../core/GamePauseMenu-river';
+import HomeButton from '../../../../lib/components/ui/HomeButton';
+import AudioToggle from '../../../../lib/components/ui/AudioToggle';
+import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
+import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
+import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
+import { getCompletionModal } from '../../../../lib/config/content';
+import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../../lib/config/content';
 import OpeningModal from '../../../shared/components/OpeningModal';
@@ -12,7 +19,7 @@ import ganeshaHeadphones from '../assets/images/ganesha_with_headphones.png';
 // Import background image
 import bgImage from './assets/images/bg.png';
 
-const ShlokaRiverFinale = ({ onComplete, onBack }) => {
+const ShlokaRiverFinale = ({ onComplete, onBack, onNavigate }) => {
   // Game state
   const [gamePhase, setGamePhase] = useState('intro');
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
@@ -40,6 +47,15 @@ const ShlokaRiverFinale = ({ onComplete, onBack }) => {
   const [selectedWordForPractice, setSelectedWordForPractice] = useState(null);
   const [selectedLevelMode, setSelectedLevelMode] = useState(null); // 'level1', 'level2', 'both'
   const [showPauseMenu, setShowPauseMenu] = useState(false);
+  const { isAudioOn, toggleAudio } = useAudioPreference();
+  // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
+  const { startIdleTimer, stopIdleTimer, setCurrentPhase } = useVoiceGuidance(
+    'shloka-river', 'shloka-river-finale', { enableMusic: false, idleTimeout: 20 }
+  );
+  useEffect(() => { startIdleTimer(); return () => stopIdleTimer(); }, [startIdleTimer, stopIdleTimer]);
+  useEffect(() => { setCurrentPhase(gamePhase); }, [gamePhase, setCurrentPhase]);
+  const completionModalContent = getCompletionModal('shloka-river', 'shloka-river-finale');
+  const showSceneCompletion = gamePhase === 'scene-complete';
 
   const audioRef = useRef(null);
 
@@ -457,6 +473,12 @@ const ShlokaRiverFinale = ({ onComplete, onBack }) => {
 
   return (
     <div className="river-finale-container">
+      <HomeButton onNavigate={(dest) => { if (onNavigate) onNavigate(dest); else onBack?.(); }} />
+      <ZoneBadgeButton
+        zoneId="shloka-river"
+        onBack={() => { if (onNavigate) onNavigate('zone-welcome'); else onBack?.(); }}
+      />
+      <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
       {/* Background */}
       <div
         className="river-bg"
@@ -783,37 +805,34 @@ const ShlokaRiverFinale = ({ onComplete, onBack }) => {
       )}
 
       {/* SCENE COMPLETE */}
-      {gamePhase === 'scene-complete' && (
-        <div className="game-screen final-screen">
-          <div className="final-ganesha">🐘</div>
-          <h1 className="final-title">Shloka River Complete! 🎉🌊</h1>
-          <p className="final-message">You've mastered the sacred Ganesha Shloka!</p>
-
-          <div className="final-shloka">
-            {shlokaWords.map(word => (
-              <div key={word.id} className="final-word-item">
-                <strong>{word.word}</strong>
-                <span>{word.meaning}</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="final-buttons">
-            <button className="final-btn replay" onClick={() => {
-              setGamePhase('intro');
-              setCurrentWordIndex(0);
-              setCompletedWords([]);
-              setShlokaSlots(Array(8).fill(null));
-              setUsedWords([]);
-            }}>
-              Play Again 🔄
-            </button>
-            <button className="final-btn continue" onClick={onComplete}>
-              Continue Journey! ✨
-            </button>
-          </div>
-        </div>
-      )}
+      <SceneCompletionCelebration
+        show={showSceneCompletion}
+        zoneId="shloka-river"
+        sceneName="Shloka River Finale"
+        completionTitle={completionModalContent?.title}
+        completionSubtitle={completionModalContent?.subtitle}
+        sceneNumber={5}
+        totalScenes={5}
+        starsEarned={5}
+        totalStars={5}
+        discoveredSymbols={[]}
+        sceneId="shloka-river-finale"
+        completionData={{ stars: 5, completed: true }}
+        onComplete={() => {
+          onNavigate?.('zone-welcome');
+          onComplete?.();
+        }}
+        onReplay={() => {
+          setGamePhase('intro');
+          setCurrentWordIndex(0);
+          setCompletedWords([]);
+          setShlokaSlots(Array(8).fill(null));
+          setUsedWords([]);
+        }}
+        onContinue={() => {
+          onNavigate?.('zone-welcome');
+        }}
+      />
 
       {/* Add at the end, just before the final closing </div> of river-finale-container: */}
       <GamePauseMenu

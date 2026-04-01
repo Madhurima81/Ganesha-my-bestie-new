@@ -60,7 +60,7 @@ const musicalInstruments = {
 };
 
 const defaultInstrumentPositions = {
-  1: { x: 15, y: 35, type: 'tabla' },
+  1: { x: 75, y: 35, type: 'tabla' },
   2: { x: 75, y: 25, type: 'flute' },
   3: { x: 45, y: 45, type: 'bells' },
   4: { x: 25, y: 70, type: 'cymbals' }
@@ -69,6 +69,7 @@ const defaultInstrumentPositions = {
 const EyesTelescopeGame = ({ 
   isActive = false,
   instrumentPositions = defaultInstrumentPositions,
+  instrumentSizes = {},
   discoveryRadius = 15,
   onInstrumentFound,
   onAllInstrumentsFound,
@@ -227,16 +228,16 @@ const EyesTelescopeGame = ({
   return (
     <div className="eyes-telescope-game-inline" style={inlineContainerStyle}>
       
-      {/* 🟢 UNIFIED HEADER - DYNAMIC TEXT CHANGE */}
-      <UnifiedHeaderV2 
+      {/* 🟢 UNIFIED HEADER - commented out
+      <UnifiedHeaderV2
         zone="symbol-mountain"
-        // Dynamically switch text based on fallback state
-        title={clickableFallbackEnabled 
-          ? "CLICK GLOWING INSTRUMENTS!" 
+        title={clickableFallbackEnabled
+          ? "CLICK GLOWING INSTRUMENTS!"
           : "DRAG TELESCOPE! Find hidden instruments!"}
         currentRound={foundInstruments.length}
         totalRounds={4}
       />
+      */}
       
       <FreeDraggableItem
         id="divine-telescope"
@@ -252,7 +253,7 @@ const EyesTelescopeGame = ({
         disabled={gameComplete}
         className={`telescope-container ${telescopeDragging ? 'dragging' : ''}`}
         style={{
-          width: '80px', height: '80px', zIndex: 25,
+          width: '160px', height: '160px', zIndex: 25,
           opacity: clickableFallbackEnabled ? 0.5 : 1
         }}
         bounds={{ top: 5, left: 5, right: 90, bottom: 90 }}
@@ -279,6 +280,10 @@ const EyesTelescopeGame = ({
           const isDiscovered = foundInstruments.includes(instrumentData.type);
           const shouldGlow = !isDiscovered && showInstrumentGlow;
           const isClickable = !isDiscovered && clickableFallbackEnabled;
+          const sizeConfig = instrumentSizes[instrumentData.type]?.eyes || {};
+          const discoveredSize = sizeConfig.discovered || 290;
+          const glowSize = sizeConfig.glow || 150;
+          const hiddenSize = sizeConfig.hidden || 120;
           
           return (
             <div 
@@ -288,9 +293,9 @@ const EyesTelescopeGame = ({
                 position: 'absolute',
                 top: `${instrumentData.y}%`,
                 left: `${instrumentData.x}%`,
-                width: isDiscovered ? '90px' : (shouldGlow ? '50px' : '40px'),
-                height: isDiscovered ? '90px' : (shouldGlow ? '50px' : '40px'),
-                opacity: isDiscovered ? 1 : (shouldGlow ? 0.4 : 0),
+                width: `${isDiscovered ? discoveredSize : (shouldGlow ? glowSize : hiddenSize)}px`,
+                height: `${isDiscovered ? discoveredSize : (shouldGlow ? glowSize : hiddenSize)}px`,
+                opacity: isDiscovered ? 1 : (shouldGlow ? 0.45 : 0),
                 transition: 'all 0.5s ease',
                 transform: 'translate(-50%, -50%)',
                 zIndex: 15,
@@ -322,14 +327,23 @@ const EyesTelescopeGame = ({
       
       <style>{`
         @keyframes popIn { 0% { transform: translate(-50%, -20px); opacity: 0; } 100% { transform: translate(-50%, 0); opacity: 1; } }
-        .telescope-container { animation: gentlePulse 2s ease-in-out infinite; }
-        @keyframes gentlePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-        .discovered-instrument.discovered { animation: instrumentGlow 2s infinite; }
-        @keyframes instrumentGlow { 50% { filter: brightness(1.3) drop-shadow(0 0 8px rgba(255, 255, 255, 0.7)); } }
-        .discovered-instrument.glowing-hint { animation: undiscoveredGlow 2s ease-in-out infinite; }
-        @keyframes undiscoveredGlow { 50% { opacity: 0.5; filter: brightness(1.4) drop-shadow(0 0 16px rgba(255, 215, 0, 1)); } }
-        .discovered-instrument.clickable-fallback { animation: clickablePulse 1.5s ease-in-out infinite; }
-        @keyframes clickablePulse { 50% { transform: translate(-50%, -50%) scale(1.15); filter: brightness(1.5) drop-shadow(0 0 20px rgba(76, 175, 80, 1)); } }
+        .telescope-container { animation: gentlePulse 3.8s ease-in-out infinite; }
+        @keyframes gentlePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.015); } }
+        .discovered-instrument.discovered { animation: instrumentGlow 3.4s ease-in-out infinite; }
+        @keyframes instrumentGlow {
+          0%, 100% { filter: brightness(1) drop-shadow(0 0 2px rgba(255, 255, 255, 0.15)); }
+          50% { filter: brightness(1.08) drop-shadow(0 0 5px rgba(255, 255, 255, 0.35)); }
+        }
+        .discovered-instrument.glowing-hint { animation: undiscoveredGlow 3.2s ease-in-out infinite; }
+        @keyframes undiscoveredGlow {
+          0%, 100% { opacity: 0.42; filter: brightness(1.05) drop-shadow(0 0 4px rgba(255, 215, 0, 0.35)); }
+          50% { opacity: 0.6; filter: brightness(1.12) drop-shadow(0 0 8px rgba(255, 215, 0, 0.55)); }
+        }
+        .discovered-instrument.clickable-fallback { animation: clickablePulse 2.6s ease-in-out infinite; }
+        @keyframes clickablePulse {
+          0%, 100% { transform: translate(-50%, -50%) scale(1); filter: brightness(1.05) drop-shadow(0 0 5px rgba(76, 175, 80, 0.35)); }
+          50% { transform: translate(-50%, -50%) scale(1.05); filter: brightness(1.12) drop-shadow(0 0 8px rgba(76, 175, 80, 0.55)); }
+        }
       `}</style>
     </div>
   );

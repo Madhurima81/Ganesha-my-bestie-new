@@ -261,9 +261,10 @@
   box-shadow: none !important;
 }
 
-/* Golden lotus pulsing when clickable */
+/* Golden lotus pulsing when clickable (disabled to reduce initial glow) */
 .golden-lotus-container:not(.blooming) {
-  animation: goldenPulse 5s ease-in-out infinite;
+  animation: none;
+  filter: none;
 }
 
 @keyframes goldenPulse {
@@ -834,29 +835,43 @@
   box-shadow: none !important;
 }
 
-/* SIMPLE HINT GLOW - Pseudo-element so we don't override element animations */
-.hint-glow {
-  position: relative;
-  overflow: visible;
+/* SIMPLE HINT GLOW - scope to pond to override global .hint-glow */
+.pond-scene-container .hint-glow {
+  animation: none !important;
+  filter: none !important;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
-.hint-glow::after {
-  content: '';
+/* Hint 2 pointer (pond-specific) */
+.pond-hint-pointer {
   position: absolute;
-  inset: -6px;
-  border-radius: inherit;
+  font-size: clamp(36px, 5vw, 54px);
+  line-height: 1;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+  animation: pond-hint-pointer-pulse 2s ease-in-out infinite;
+  z-index: 60;
   pointer-events: none;
-  box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+}
+
+.pond-hint-pointer--lotus { left: 38%; top: 42%; }
+.pond-hint-pointer--golden-lotus { left: 50%; top: 35%; transform: translateX(-50%); }
+.pond-hint-pointer--elephant { left: 68%; top: 38%; }
+
+@keyframes pond-hint-pointer-pulse {
+  0%, 100% { opacity: 0.0; transform: scale(0.98); }
+  20% { opacity: 1; }
+  50% { opacity: 1; transform: scale(1.06); }
+  80% { opacity: 0.2; }
+}
+
+.pond-scene-container .hint-glow img {
   animation: simple-glow-pulse 1.5s ease-in-out infinite;
 }
 
 @keyframes simple-glow-pulse {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
-  }
-  50% {
-    box-shadow: 0 0 18px 6px rgba(255, 215, 0, 0.85);
-  }
+  0%, 100% { filter: drop-shadow(0 0 0 rgba(255, 215, 0, 0)); }
+  50% { filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.85)); }
 }
 
 /* ============================================

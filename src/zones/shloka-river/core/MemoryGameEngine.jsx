@@ -23,7 +23,8 @@ const MemoryGameEngine = ({
   onSaveGameState,
   gamePrefix = 'default',
   voiceGuidance = null,  // ⭐ VOICE GUIDANCE
-    isPaused = false // <--- 1. ADD THIS HERE
+  isPaused = false,
+  onMicroWin,            // micro-reward gesture callback — passed through to mode components
 }) => {
 
  
@@ -183,8 +184,9 @@ useEffect(() => {
   powerGained,
   assetGetters,
   gamePrefix,
-  voiceGuidance,  // ⭐ VOICE GUIDANCE
-      isPaused, // <--- 2. ADD THIS HERE
+  voiceGuidance,
+  isPaused,
+  onMicroWin,
 
 
   onPhaseComplete: (data) => {

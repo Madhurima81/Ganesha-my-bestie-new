@@ -56,6 +56,41 @@ import flowerIcon from '../../festival-square/assets/images/icons/mandap-flower-
 import recipeIcon from '../../festival-square/assets/images/icons/recipe-icon.png';
 import serveIcon from '../../festival-square/assets/images/icons/serve-icon.png';
 
+const stopAllOpeningVoAudio = () => {
+    // Stop <audio> elements (scene VO, effects, etc.) universally.
+    if (typeof document !== 'undefined') {
+        document.querySelectorAll('audio').forEach((audioEl) => {
+            try {
+                audioEl.pause();
+                audioEl.currentTime = 0;
+            } catch {
+                // Best-effort stop: ignore individual media errors.
+            }
+        });
+    }
+
+    // Stop Web Speech utterances if any scene uses speechSynthesis.
+    if (typeof window !== 'undefined' && window.speechSynthesis?.cancel) {
+        window.speechSynthesis.cancel();
+    }
+
+    // Stop Howler audio globally when available.
+    if (typeof window !== 'undefined' && window.Howler?.stop) {
+        try {
+            window.Howler.stop();
+        } catch {
+            // Ignore if Howler is not initialized yet.
+        }
+    }
+
+    // Let scene-specific audio managers opt-in to this global stop signal.
+    if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('ganesha:stop-all-audio', {
+            detail: { source: 'OpeningModal', reason: 'lets-explore-click' }
+        }));
+    }
+};
+
 const ICON_MAP = {
     // Symbol Mountain
     'mooshika': symbolMooshikaColored,
@@ -205,6 +240,7 @@ const OpeningModal = ({
                         <button
                             className="game-modal-button reveal"
                             onClick={() => {
+                                stopAllOpeningVoAudio();
                                 if (typeof isOpen !== 'boolean') setInternalOpen(false);
                                 if (onStart) onStart();
                             }}

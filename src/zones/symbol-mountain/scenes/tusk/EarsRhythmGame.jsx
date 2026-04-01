@@ -42,6 +42,13 @@ const musicalInstruments = {
   }
 };
 
+const defaultEarInstrumentPositions = {
+  tabla: { x: 15, y: 35 },
+  flute: { x: 75, y: 25 },
+  bells: { x: 45, y: 45 },
+  cymbals: { x: 25, y: 70 }
+};
+
 // ✅ NEW: Generate random rhythm sequences
 const generateRandomSequence = (discoveredInstruments, noteId) => {
   const availableInstruments = Object.keys(discoveredInstruments);
@@ -70,6 +77,8 @@ const EarsRhythmGame = ({
   isActive = false,
   currentNote = 'note1',
   discoveredInstruments = {},
+  instrumentPositions = defaultEarInstrumentPositions,
+  instrumentSizes = {},
   onSequenceComplete,
   onGameComplete,
   onClose,
@@ -290,12 +299,12 @@ useEffect(() => {
         const elements = document.querySelectorAll(`[data-instrument="${inst}"]`);
         elements.forEach(element => {
           element.style.filter = 'drop-shadow(0 0 20px gold)';
-          element.style.transform = 'scale(1.15)';
+          element.style.transform = 'translate(-50%, -50%) scale(1.08)';
           element.style.transition = 'all 0.5s ease';
           
           setTimeout(() => {
             element.style.filter = '';
-            element.style.transform = '';
+            element.style.transform = 'translate(-50%, -50%) scale(1)';
           }, 1000);
         });
       }, idx * 1200); // Stagger each glow
@@ -592,95 +601,14 @@ const continueToNextRound = () => {
       <span>Ready to learn the pattern?</span>
     )}
     
-    {/* Watching Phase - Show instrument images */}
+    {/* Watching Phase - just text label */}
     {gamePhase === 'playing' && isSequencePlaying && (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'center' }}>
-        <span>👀 Watch:</span>
-        {currentSequence.map((inst, idx) => {
-          const isShown = idx < sequenceItemsShown;
-          const instrument = musicalInstruments[inst];
-          
-          return (
-            <div key={idx} style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              border: '2px solid #8B4513',
-              background: 'white',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              opacity: isShown ? 1 : 0.3,
-              transition: 'opacity 0.3s'
-            }}>
-              <img 
-                src={instrument.image} 
-                alt={instrument.name}
-                style={{
-                  width: '30px',
-                  height: '30px',
-                  objectFit: 'contain'
-                }}
-              />
-            </div>
-          );
-        })}
-      </div>
+      <span>👀 Watch the pattern!</span>
     )}
-    
-    {/* Tapping Phase - Show instrument images with checkmarks */}
+
+    {/* Tapping Phase - just text label */}
     {gamePhase === 'listening' && canPlayerClick && (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'center' }}>
-        <span>👆 Tap:</span>
-        {currentSequence.map((inst, idx) => {
-          const isCompleted = playerInput.length > idx;
-          const instrument = musicalInstruments[inst];
-          
-          return (
-            <div key={idx} style={{
-              position: 'relative',
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              border: isCompleted ? '3px solid #4CAF50' : '2px solid #8B4513',
-              background: 'white',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <img 
-                src={instrument.image} 
-                alt={instrument.name}
-                style={{
-                  width: '30px',
-                  height: '30px',
-                  objectFit: 'contain',
-                  opacity: isCompleted ? 0.5 : 1
-                }}
-              />
-              {isCompleted && (
-                <div style={{
-                  position: 'absolute',
-                  top: '-5px',
-                  right: '-5px',
-                  background: '#4CAF50',
-                  borderRadius: '50%',
-                  width: '20px',
-                  height: '20px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '14px',
-                  color: 'white',
-                  fontWeight: 'bold'
-                }}>
-                  ✓
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+      <span>👆 Tap the same pattern!</span>
     )}
     
 {/* Success Phase - Different messages per round */}
@@ -710,38 +638,40 @@ const continueToNextRound = () => {
 {/* Round Progress Indicator */}
 <div style={{
   position: 'absolute',
-  top: '15px',
-  right: '15px',
+  bottom: '24px',
+  left: '50%',
+  transform: 'translateX(-50%)',
   display: 'flex',
-  gap: '8px',
-  zIndex: 40
+  gap: '16px',
+  zIndex: 40,
+  alignItems: 'center'
 }}>
   {['note1', 'note2', 'note3'].map((note, index) => {
     const roundNum = index + 1;
-    const isCompleted = note < currentNote; // Completed if we're past this note
+    const isCompleted = false;
     const isCurrent = note === currentNote;
-    const isLocked = note > currentNote;
-    
+
     return (
       <div
         key={note}
         style={{
-          width: '32px',
-          height: '32px',
+          width: '48px',
+          height: '48px',
           borderRadius: '50%',
           background: isCompleted
-            ? '#4CAF50'  // Green (completed)
-            : isCurrent 
-              ? '#FFD700'  // Gold (current)
-              : '#E0E0E0', // Gray (locked)
+            ? '#FFB300'
+            : isCurrent
+              ? '#FFD700'
+              : 'rgba(255,255,255,0.35)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '14px',
+          fontSize: '18px',
           fontWeight: 'bold',
-          color: isCompleted || isCurrent ? 'white' : '#999',
-          border: isCurrent ? '3px solid #FF9800' : 'none',
-          boxShadow: isCurrent ? '0 0 10px rgba(255, 152, 0, 0.5)' : 'none',
+          fontFamily: 'Baloo 2',
+          color: isCompleted || isCurrent ? 'white' : 'rgba(255,255,255,0.7)',
+          border: isCurrent ? '3px solid #FF9800' : '2px solid rgba(255,255,255,0.4)',
+          boxShadow: isCurrent ? '0 0 16px rgba(255, 152, 0, 0.7)' : 'none',
           transition: 'all 0.3s ease'
         }}
       >
@@ -750,7 +680,78 @@ const continueToNextRound = () => {
     );
   })}
 </div>
-      
+
+{/* Sequence Tracker Strip — centered, below header */}
+{(gamePhase === 'playing' || gamePhase === 'listening') && currentSequence.length > 0 && (
+  <div style={{
+    position: 'absolute',
+    top: '220px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    display: 'flex',
+    gap: '16px',
+    alignItems: 'center',
+    zIndex: 31
+  }}>
+    {currentSequence.map((inst, idx) => {
+      const instrument = musicalInstruments[inst];
+      const isShown = gamePhase === 'playing' ? idx < sequenceItemsShown : true;
+      const isActive = gamePhase === 'playing' && idx === sequenceItemsShown - 1;
+      const patternSize = instrumentSizes[inst]?.pattern || 100;
+      const trackerSize = Math.max(patternSize + 28, 110);
+
+      return (
+        <div key={idx} style={{
+          position: 'relative',
+          width: `${trackerSize}px`,
+          height: `${trackerSize}px`,
+          borderRadius: '50%',
+          background: isActive
+              ? 'rgba(255, 215, 0, 0.25)'
+              : 'rgba(255,255,255,0.15)',
+          border: isActive
+              ? '3px solid #FFD700'
+              : '2px solid rgba(255,255,255,0.4)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          opacity: isShown ? 1 : 0.25,
+          transition: 'all 0.3s ease',
+          boxShadow: isActive ? '0 0 16px rgba(255,215,0,0.7)' : 'none'
+        }}>
+          <img
+            src={instrument.image}
+            alt={instrument.name}
+            style={{
+              width: `${patternSize}px`,
+              height: `${patternSize}px`,
+              objectFit: 'contain',
+              transform: 'scale(1.12)'
+            }}
+          />
+          {false && (
+            <div style={{
+              position: 'absolute',
+              top: '-6px',
+              right: '-6px',
+              background: '#4CAF50',
+              borderRadius: '50%',
+              width: '22px',
+              height: '22px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '13px',
+              color: 'white',
+              fontWeight: 'bold'
+            }}>✓</div>
+          )}
+        </div>
+      );
+    })}
+  </div>
+)}
+
 {/* Play Sequence Button - ONLY on very first round */}
 {gamePhase === 'waiting' && currentNote === 'note1' && playerInput.length === 0 && !isCountingDown && (
   <button 
@@ -794,14 +795,9 @@ const continueToNextRound = () => {
           const isPlaying = playingInstrument === instrumentType;
           const isClickable = canPlayerClick;
           
- const instrumentPositions = {
-  tabla: { x: 20, y: 30 },     // Top left
-  flute: { x: 80, y: 45 },     // Top right  
-  bells: { x: 25, y: 55 },     // Bottom left
-  cymbals: { x: 90, y: 60 }    // Bottom right
-};
-          
-          const position = instrumentPositions[instrumentType];
+          const position = instrumentPositions[instrumentType]
+            || Object.values(instrumentPositions).find((pos) => pos?.type === instrumentType);
+          const earSize = instrumentSizes[instrumentType]?.ears || 290;
           if (!position) return null;
           
           return (
@@ -813,28 +809,22 @@ style={{
   position: 'absolute',
   top: `${position.y}%`,
   left: `${position.x}%`,
-  width: '90px',  // ← BIGGER
-  height: '90px', // ← BIGGER
-  border: isPlaying 
-    ? '6px solid #FFD700'  // ← THICKER when playing
-    : isClickable 
-      ? '4px solid #4CAF50'  // ← GREEN when clickable
-      : '3px solid #ccc',
+  width: `${earSize}px`,
+  height: `${earSize}px`,
+  border: 'none',
+  outline: 'none',
   borderRadius: '50%',
-  overflow: 'visible', // ← CHANGED from 'hidden' to show animations
+  overflow: 'visible',
   transition: 'all 0.3s ease',
-  background: 'white',
+  background: 'transparent',
+  WebkitTapHighlightColor: 'transparent',
   cursor: isClickable ? 'pointer' : 'default',
-  opacity: isClickable || isPlaying ? 1 : 0.7,
-  transform: `translate(-50%, -50%) ${isPlaying ? 'scale(1.5) rotate(5deg)' : 'scale(1)'}`, // ← BIGGER scale
-  boxShadow: isPlaying 
-    ? `0 0 60px ${instrument.color}, 
-       0 0 120px ${instrument.color},
-       inset 0 0 40px rgba(255, 255, 255, 0.8)` // ← MEGA GLOW
-    : isClickable 
-      ? '0 0 20px #4CAF50, 0 4px 15px rgba(0,0,0,0.3)' // ← GREEN glow
-      : '0 4px 12px rgba(0,0,0,0.2)',
-  filter: isPlaying ? 'brightness(1.3)' : 'brightness(1)',
+  opacity: isClickable || isPlaying ? 1 : 0.65,
+  transform: `translate(-50%, -50%) ${isPlaying ? 'scale(1.08)' : 'scale(1)'}`,
+  boxShadow: 'none',
+  filter: isPlaying
+    ? 'drop-shadow(0 0 14px rgba(255, 196, 64, 0.95)) brightness(1.12)'
+    : 'none',
   zIndex: isPlaying ? 35 : 30
 }}
               onClick={() => handleInstrumentClick(instrumentType)}
@@ -843,7 +833,7 @@ style={{
               <img 
                 src={instrument.image}
                 alt={instrument.name}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
               />
               
               {/* Instrument name label */}
@@ -869,12 +859,19 @@ style={{
       
       
 <style>{`
-  .ears-rhythm-game-inline button:hover {
-    transform: scale(1.05);
+  .ears-rhythm-game-inline button[data-instrument]:hover {
+    transform: translate(-50%, -50%) scale(1.04);
   }
   
-  .ears-rhythm-game-inline button:active {
-    transform: scale(0.98);
+  .ears-rhythm-game-inline button[data-instrument]:active {
+    transform: translate(-50%, -50%) scale(0.98);
+  }
+
+  .ears-rhythm-game-inline button[data-instrument]:focus,
+  .ears-rhythm-game-inline button[data-instrument]:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
   }
   
   @keyframes clickPulse {

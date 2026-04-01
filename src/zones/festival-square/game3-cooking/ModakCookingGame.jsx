@@ -15,6 +15,10 @@ import BackToMapButton from '../../../lib/components/navigation/BackToMapButton'
 import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
 import GamePauseMenu from '../components/GamePauseMenu';
 import HomeButton from '../../../lib/components/ui/HomeButton';
+import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
+import AudioToggle from '../../../lib/components/ui/AudioToggle';
+import useAudioPreference from '../../../lib/hooks/useAudioPreference';
+import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
 import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
 
 // Import assets
@@ -195,6 +199,14 @@ const ModakCookingGame = ({ onComplete, onNavigate, zoneId = 'festival-square', 
 
 const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplete, onNavigate, zoneId, sceneId }) => {
   if (!sceneState || !sceneActions) return <div className="loading">Loading...</div>;
+
+  const { isAudioOn, toggleAudio } = useAudioPreference();
+  // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
+  const { startIdleTimer, stopIdleTimer, setCurrentPhase } = useVoiceGuidance(
+    zoneId, sceneId, { enableMusic: false, idleTimeout: 20 }
+  );
+  useEffect(() => { startIdleTimer(); return () => stopIdleTimer(); }, [startIdleTimer, stopIdleTimer]);
+  useEffect(() => { setCurrentPhase(sceneState?.phase ?? null); }, [sceneState?.phase, setCurrentPhase]);
 
   const { resetScene } = useSceneReset(sceneActions, 'festival-square', 'game3', getSceneResetConfig('game3'));
   const completionModalContent = getCompletionModal('festival-square', 'game3');
@@ -853,6 +865,8 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
       <div className="cooking-background" style={{ backgroundImage: `url(${cookingBg})` }} />
 
       <HomeButton onNavigate={onNavigate} />
+      <ZoneBadgeButton zoneId="festival-square" onBack={() => onNavigate?.('zone-welcome')} />
+      <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
 
       {/* Progress Board - ICONS ONLY */}
       <div className="progress-board">
@@ -1217,6 +1231,10 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
           totalStars={13}
           nextSceneName="Mandap Decoration"
           childName="little chef"
+          completionData={{
+            completed: true,
+            stars: sceneState.stars || 13
+          }}
           onContinue={() => {
             console.log('MODAK CONTINUE: Going to next game');
             setTimeout(() => {
@@ -1251,8 +1269,8 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
         }}
         onHelp={() => console.log('Show help')}
         onParentMenu={() => console.log('Parent menu')}
-        isAudioOn={true}
-        onAudioToggle={() => console.log('Toggle audio')}
+        isAudioOn={isAudioOn}
+        onAudioToggle={toggleAudio}
         onZonesClick={() => {
           if (onNavigate) onNavigate('zones');
         }}

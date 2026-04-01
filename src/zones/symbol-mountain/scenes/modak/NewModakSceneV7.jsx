@@ -346,6 +346,7 @@ const NewModakSceneMVPContent = ({
 
   const { isAudioOn, toggleAudio } = useAudioPreference();
 
+  // ── Idle hint (glow ring + gesture) ─────────────────────────────────────
   // Wire AudioToggle → VO volume: mutes narration only, SFX + game flow unaffected
   useEffect(() => {
     setVoiceVolume(isAudioOn ? 1 : 0);
@@ -487,9 +488,9 @@ const NewModakSceneMVPContent = ({
     showSceneCompletion;
 
   const showPersistentEndOverlay =
-    sceneState.phase === PHASES.ROCK_TRANSFORMED ||
-    showSparkle === 'final-fireworks' ||
-    showSceneCompletion;
+    (sceneState.phase === PHASES.ROCK_TRANSFORMED ||
+    showSparkle === 'final-fireworks') &&
+    !showSceneCompletion;
 
   // Get current game phase for initial instruction tracking
   const getCurrentGamePhase = () => {
@@ -582,7 +583,7 @@ const NewModakSceneMVPContent = ({
   // Ready = VO done, button visible
   // ========================================
   const [appState, setAppState] = useState('listen'); // 'listen' | 'ready' | 'play'
-  const [openingButtonVisible, setOpeningButtonVisible] = useState(false);
+  const [openingButtonVisible] = useState(true);
   const [discoveryButtonVisible, setDiscoveryButtonVisible] = useState(false);
 
   // Configuration for the Overlay Text/Images
@@ -844,9 +845,8 @@ const NewModakSceneMVPContent = ({
     if (sceneState.phase === PHASES.MOOSHIKA_SEARCH && !sceneState.welcomeShown) {
       // Small delay before starting welcome VO
       const timer = setTimeout(() => {
-        // Show button immediately (don't wait for VO to finish)
+        // Button shows immediately from start
         playChime();
-        setOpeningButtonVisible(true);
         setAppState('ready');
         playVoice('welcome');
       }, 800);
@@ -1486,7 +1486,6 @@ const NewModakSceneMVPContent = ({
                   sceneId={sceneId}
                   onStart={() => {
                     playUiTap();
-                    setOpeningButtonVisible(false);
                     sceneActions.updateState({ welcomeShown: true });
                   }}
                   characterImg={ganeshaCharacter}
@@ -1777,6 +1776,8 @@ const NewModakSceneMVPContent = ({
                   </div>
                 ) : null
               )}
+
+
 
               {/* MINI THUMBS-UP CUE — micro rewards + reassurance across phase transitions */}
               {miniGesture.show && (

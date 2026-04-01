@@ -15,7 +15,12 @@ import ganeshaArtist from './assets/images/ganesha-artist.png';
 // In FestivalPianoGame.jsx (or any game inside Game1-piano folder)
 import GamePauseMenu from '../components/GamePauseMenu';
 import HomeButton from '../../../lib/components/ui/HomeButton';
+import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
+import AudioToggle from '../../../lib/components/ui/AudioToggle';
 import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
+import useAudioPreference from '../../../lib/hooks/useAudioPreference';
+import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
+import SceneManager from '../../../lib/components/scenes/SceneManager';
 
 // 🎨 DESIGN COMPLETION OVERLAY COMPONENT
 const DesignCompletionOverlay = ({
@@ -127,8 +132,15 @@ const COLOR_PALETTE = [
   '#4D96FF', '#2BCDC1', '#FFB6C1', '#87CEEB', '#DDA0DD', '#F0E68C'
 ];
 
-const FestivalRangoliGame = ({ onComplete, onNavigate, zoneId = 'festival-square', sceneId = 'game2' }) => {
+const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete, onNavigate, zoneId, sceneId }) => {
   // Game state
+  const { isAudioOn, toggleAudio } = useAudioPreference();
+  // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
+  const { startIdleTimer, stopIdleTimer, setCurrentPhase } = useVoiceGuidance(
+    zoneId, sceneId, { enableMusic: false, idleTimeout: 20 }
+  );
+  useEffect(() => { startIdleTimer(); return () => stopIdleTimer(); }, [startIdleTimer, stopIdleTimer]);
+
   const [gameState, setGameState] = useState({
     phase: PHASES.INTRODUCTION,
     selectedDesign: null,
@@ -142,6 +154,7 @@ const FestivalRangoliGame = ({ onComplete, onNavigate, zoneId = 'festival-square
     showDesignComplete: false,
     completedDesignData: null
   });
+  useEffect(() => { setCurrentPhase(gameState.phase); }, [gameState.phase, setCurrentPhase]);
 
   // Saved progress for each design
   const [savedDesigns, setSavedDesigns] = useState({});
@@ -702,6 +715,8 @@ const FestivalRangoliGame = ({ onComplete, onNavigate, zoneId = 'festival-square
       <div className="rangoli-background" />
 
       <HomeButton onNavigate={onNavigate} />
+      <ZoneBadgeButton zoneId="festival-square" onBack={() => onNavigate?.('zone-welcome')} />
+      <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
 
 
       {/* Opening Modal - Replaces Introduction Scene */}
@@ -1018,7 +1033,11 @@ const FestivalRangoliGame = ({ onComplete, onNavigate, zoneId = 'festival-square
           totalStars={8}
           nextSceneName="Festival Cooking"
           childName="little artist"
-
+          completionData={{
+            completed: true,
+            stars: gameState.stars || 8,
+            badges: { artist: true }
+          }}
           onContinue={() => {
             console.log('🎨 RANGOLI CONTINUE: Going to next game + preserving resume');
 
@@ -1099,8 +1118,8 @@ const FestivalRangoliGame = ({ onComplete, onNavigate, zoneId = 'festival-square
         }}
         onHelp={() => console.log('Show help')}
         onParentMenu={() => console.log('Parent menu')}
-        isAudioOn={true}
-        onAudioToggle={() => console.log('Toggle audio')}
+        isAudioOn={isAudioOn}
+        onAudioToggle={toggleAudio}
         onZonesClick={() => onNavigate?.('zones')}
         onStartFresh={() => {
           // Reset ENTIRE game - back to introduction
@@ -1127,5 +1146,16 @@ const FestivalRangoliGame = ({ onComplete, onNavigate, zoneId = 'festival-square
     </div>
   );
 };
+
+const FestivalRangoliGame = ({ onComplete, onNavigate, zoneId = 'festival-square', sceneId = 'game2' }) => (
+  <SceneManager zoneId={zoneId} sceneId={sceneId} initialState={{ phase: 'intro' }}>
+    {({ sceneState, sceneActions, isReload }) => (
+      <FestivalRangoliContent
+        sceneState={sceneState} sceneActions={sceneActions} isReload={isReload}
+        onComplete={onComplete} onNavigate={onNavigate} zoneId={zoneId} sceneId={sceneId}
+      />
+    )}
+  </SceneManager>
+);
 
 export default FestivalRangoliGame;

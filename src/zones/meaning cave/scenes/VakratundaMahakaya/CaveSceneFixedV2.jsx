@@ -5,7 +5,10 @@ import '../../../../lib/styles/zone-themes.css';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../../lib/config/content/openingModals';
 import { getCompletionModal } from '../../../../lib/config/content';
-import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
+// import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay'; // ← superseded by SymbolAutoReveal
+import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
+import useIdleNudge from '../../../../lib/hooks/useIdleNudge';
+import IdleHint from '../../../../lib/components/idle/IdleHint';
 import OpeningModal from '../../../shared/components/OpeningModal.jsx';
 
 // Import scene management components
@@ -24,12 +27,17 @@ import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
 import CulturalCelebrationModal from '../../../../lib/components/progress/CulturalCelebrationModal';
 import CulturalProgressExtractor from '../../../../lib/services/CulturalProgressExtractor';
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
-import Fireworks from '../../../../lib/components/feedback/Fireworks';
+import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
+import CalmGoldenFireworks from '../../../../lib/components/feedback/CalmGoldenFireworks';
 import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
 import SymbolSceneIntegration from '../../../../lib/components/animation/SymbolSceneIntegration';
 import MagicalCardFlip from '../../../../lib/components/animation/MagicalCardFlip';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import HomeButton from '../../../../lib/components/ui/HomeButton';
+import AudioToggle from '../../../../lib/components/ui/AudioToggle';
+import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
+import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
+import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
 
 import useSceneReset from '../../../../lib/hooks/useSceneReset';
 import { getSceneResetConfig } from '../../../../lib/config/SceneResetConfigs';
@@ -275,6 +283,15 @@ const CaveSceneContent = ({
     getSceneResetConfig('vakratunda-mahakaya')
   );
   const completionModalContent = getCompletionModal(zoneId, sceneId);
+  const { isAudioOn, toggleAudio } = useAudioPreference();
+  const primaryRef = useRef(null);
+  const { isIdle, resetIdle } = useIdleNudge(20000);
+  // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
+  const { startIdleTimer, stopIdleTimer, setCurrentPhase } = useVoiceGuidance(
+    zoneId, sceneId, { enableMusic: false, idleTimeout: 20 }
+  );
+  useEffect(() => { startIdleTimer(); return () => stopIdleTimer(); }, [startIdleTimer, stopIdleTimer]);
+  useEffect(() => { setCurrentPhase(sceneState?.phase ?? null); }, [sceneState?.phase, setCurrentPhase]);
 
   // State management
   const [showSparkle, setShowSparkle] = useState(null);
@@ -290,9 +307,11 @@ const CaveSceneContent = ({
   const [showPowerMission, setShowPowerMission] = useState(false); // Can be used if needed
   const [currentMissionSymbol, setCurrentMissionSymbol] = useState(null);
 
-  // Discovery overlay states
+  // Discovery overlay states — superseded by SymbolAutoReveal
   const [showDiscoveryFlip1, setShowDiscoveryFlip1] = useState(false);
   const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false);
+  // ── SymbolAutoReveal state ─────────────────────────────────────────────────
+  const [revealConfig, setRevealConfig] = useState(null);
 
   // Resume popup
   const [showResumePopup, setShowResumePopup] = useState(false);
@@ -541,7 +560,7 @@ const CaveSceneContent = ({
         }
       });
 
-      setTimeout(() => setShowDiscoveryFlip1(true), 500);
+      setTimeout(() => setRevealConfig({ symbolId: 'vakratunda', symbolImage: powerConfig.vakratunda.image, symbolName: 'Vakratunda', affirmation: 'I adapt.', sidebarTarget: getSidebarTarget('vakratunda') }), 500);
       return;
     }
 
@@ -555,7 +574,7 @@ const CaveSceneContent = ({
         }
       });
 
-      setTimeout(() => setShowDiscoveryFlip2(true), 500);
+      setTimeout(() => setRevealConfig({ symbolId: 'mahakaya', symbolImage: powerConfig.mahakaya.image, symbolName: 'Mahakaya', affirmation: 'I am strong inside.', sidebarTarget: getSidebarTarget('mahakaya') }), 500);
       return;
     }
 
@@ -711,7 +730,7 @@ const CaveSceneContent = ({
 
       // Trigger discovery overlay immediately
       setTimeout(() => {
-        setShowDiscoveryFlip1(true);
+        setRevealConfig({ symbolId: 'vakratunda', symbolImage: powerConfig.vakratunda.image, symbolName: 'Vakratunda', affirmation: 'I adapt.', sidebarTarget: getSidebarTarget('vakratunda') });
       }, 500);
 
       return;
@@ -730,7 +749,7 @@ const CaveSceneContent = ({
 
       // Trigger discovery overlay immediately
       setTimeout(() => {
-        setShowDiscoveryFlip2(true);
+        setRevealConfig({ symbolId: 'mahakaya', symbolImage: powerConfig.mahakaya.image, symbolName: 'Mahakaya', affirmation: 'I am strong inside.', sidebarTarget: getSidebarTarget('mahakaya') });
       }, 500);
 
       return;
@@ -784,7 +803,7 @@ const CaveSceneContent = ({
         }
       });
       
-      setTimeout(() => setShowDiscoveryFlip1(true), 500);
+      setTimeout(() => setRevealConfig({ symbolId: 'vakratunda', symbolImage: powerConfig.vakratunda.image, symbolName: 'Vakratunda', affirmation: 'I adapt.', sidebarTarget: getSidebarTarget('vakratunda') }), 500);
       return;
     }
     
@@ -798,7 +817,7 @@ const CaveSceneContent = ({
         }
       });
       
-      setTimeout(() => setShowDiscoveryFlip2(true), 500);
+      setTimeout(() => setRevealConfig({ symbolId: 'mahakaya', symbolImage: powerConfig.mahakaya.image, symbolName: 'Mahakaya', affirmation: 'I am strong inside.', sidebarTarget: getSidebarTarget('mahakaya') }), 500);
       return;
     }
   
@@ -815,7 +834,7 @@ const CaveSceneContent = ({
     
     // Trigger discovery overlay immediately
     setTimeout(() => {
-      setShowDiscoveryFlip1(true);
+      setRevealConfig({ symbolId: 'vakratunda', symbolImage: powerConfig.vakratunda.image, symbolName: 'Vakratunda', affirmation: 'I adapt.', sidebarTarget: getSidebarTarget('vakratunda') });
     }, 500);
     
     return;
@@ -834,7 +853,7 @@ const CaveSceneContent = ({
     
     // Trigger discovery overlay immediately
     setTimeout(() => {
-      setShowDiscoveryFlip2(true);
+      setRevealConfig({ symbolId: 'mahakaya', symbolImage: powerConfig.mahakaya.image, symbolName: 'Mahakaya', affirmation: 'I am strong inside.', sidebarTarget: getSidebarTarget('mahakaya') });
     }, 500);
     
     return;
@@ -980,6 +999,7 @@ const CaveSceneContent = ({
 
 
   const handleDoor1SyllablePlaced = (syllable) => {
+    resetIdle();
     if (showResumePopup) {
       setShowResumePopup(false);
       if (resumePopupTimeoutRef.current) {
@@ -1029,6 +1049,7 @@ const CaveSceneContent = ({
   };
 
   const handleDoor2SyllablePlaced = (syllable) => {
+    resetIdle();
     if (showResumePopup) {
       setShowResumePopup(false);
       if (resumePopupTimeoutRef.current) {
@@ -1089,12 +1110,13 @@ const CaveSceneContent = ({
 
     safeSetTimeout(() => {
       setTimeout(() => {
-        setShowDiscoveryFlip1(true);
+        setRevealConfig({ symbolId: 'vakratunda', symbolImage: powerConfig.vakratunda.image, symbolName: 'Vakratunda', affirmation: 'I adapt.', sidebarTarget: getSidebarTarget('vakratunda') });
       }, 1500);
     }, 500);
   };
 
   const handleStoneClick = (stoneId) => {
+    resetIdle();
 
     const stone = sceneState.floatingStones.find(s => s.id === stoneId);
     if (!stone || stone.clicked) return;
@@ -1149,7 +1171,7 @@ const CaveSceneContent = ({
 
     safeSetTimeout(() => {
       setTimeout(() => {
-        setShowDiscoveryFlip2(true);
+        setRevealConfig({ symbolId: 'mahakaya', symbolImage: powerConfig.mahakaya.image, symbolName: 'Mahakaya', affirmation: 'I am strong inside.', sidebarTarget: getSidebarTarget('mahakaya') });
       }, 1500);
     }, 500);
   };
@@ -1246,6 +1268,35 @@ const CaveSceneContent = ({
     }
   };
 
+  // ── SymbolAutoReveal helpers ───────────────────────────────────────────────
+  const getSidebarTarget = (symbolId) => {
+    const el = document.getElementById(`sidebar-${symbolId}`);
+    if (!el) return { x: 220, y: 0 };
+    const r = el.getBoundingClientRect();
+    return { x: (r.left + r.width / 2) - (window.innerWidth / 2), y: (r.top + r.height / 2) - (window.innerHeight / 2) };
+  };
+
+  const handleRevealComplete = (symbolId) => {
+    setRevealConfig(null);
+    if (symbolId === 'vakratunda') {
+      safeSetTimeout(() => {
+        sceneActions.updateState({
+          phase: CAVE_PHASES.DOOR2_ACTIVE,
+          learnedWords: { ...sceneState.learnedWords, vakratunda: { learned: true, scene: 1 } }
+        });
+      }, 950);
+    } else if (symbolId === 'mahakaya') {
+      safeSetTimeout(() => {
+        sceneActions.updateState({
+          phase: CAVE_PHASES.COMPLETE,
+          completed: true,
+          learnedWords: { vakratunda: { learned: true, scene: 1 }, mahakaya: { learned: true, scene: 1 } }
+        });
+        setShowSparkle('final-fireworks');
+      }, 950);
+    }
+  };
+
   if (!sceneState) {
     return <div className="loading">Loading cave scene...</div>;
   }
@@ -1256,6 +1307,8 @@ const CaveSceneContent = ({
         <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
           <div className="pond-scene-container" data-phase={sceneState.phase}>
             <HomeButton onNavigate={onNavigate} />
+            <ZoneBadgeButton zoneId="cave-of-secrets" onBack={() => onNavigate?.('zone-welcome')} />
+            <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
             <div className="pond-background" style={{ backgroundImage: `url(${caveBackground})` }}>
 
               {/* OPENING INSTRUCTION SCREEN */}
@@ -1566,7 +1619,7 @@ const CaveSceneContent = ({
 
               {/* Door 1 Component */}
               {(sceneState.phase === CAVE_PHASES.DOOR1_ACTIVE || sceneState.phase === CAVE_PHASES.DOOR1_COMPLETE) && (
-                <div className="door1-area" id="door1-area">
+                <div className="door1-area" id="door1-area" ref={primaryRef}>
                   <DoorComponent
                     key={`door1-${sceneState.door1CurrentStep}-${sceneState.door1Completed}`}
                     syllables={['Va', 'kra', 'tun', 'da']}
@@ -1599,8 +1652,11 @@ const CaveSceneContent = ({
                     modalButtonColor="#FFA500"
                     modalButtonTextColor="#FFFFFF"
                     modalCardBorderColor="#FFA500"
-                  />        </div>
+                  />
+                </div>
               )}
+
+              <IdleHint isIdle={isIdle} targetRef={primaryRef} gesturePosition="above" />
 
               {/* Door 1 Sparkles */}
               {showSparkle === 'door1-completing' && (
@@ -1836,6 +1892,19 @@ const CaveSceneContent = ({
                 />
               )}
 
+              {/* ── SymbolAutoReveal (replaces SimpleDiscoveryOverlay above — those blocks are dead code) ── */}
+              {revealConfig && (
+                <SymbolAutoReveal
+                  key={revealConfig.symbolId}
+                  symbolId={revealConfig.symbolId}
+                  symbolImage={revealConfig.symbolImage}
+                  symbolName={revealConfig.symbolName}
+                  affirmation={revealConfig.affirmation}
+                  sidebarTargetRect={revealConfig.sidebarTarget}
+                  onComplete={() => handleRevealComplete(revealConfig.symbolId)}
+                />
+              )}
+
               {/* ==================== RESUME POPUP ==================== */}
               {showResumePopup && (
                 <div style={{
@@ -1861,32 +1930,37 @@ const CaveSceneContent = ({
 
               {/* Final Fireworks */}
               {showSparkle === 'final-fireworks' && (
-                <Fireworks
-                  show={true}
-                  duration={8000}
-                  count={25}
-                  colors={['#FFD700', '#FF8C00', '#FFA500', '#DAA520', '#B8860B']}
-                  onComplete={() => {
-                    setShowSparkle(null);
+                <>
+                  <FireworksCompletion
+                    show={showSparkle === 'final-fireworks'}
+                    showCard={false}
+                  />
+                  <CalmGoldenFireworks
+                    show={showSparkle === 'final-fireworks'}
+                    particles={14}
+                    duration={3500}
+                    onComplete={() => {
+                      setShowSparkle(null);
 
-                    const profileId = localStorage.getItem('activeProfileId');
-                    if (profileId) {
-                      GameStateManager.saveGameState('cave-of-secrets', 'vakratunda-mahakaya', {
-                        completed: true,
-                        stars: 8,
-                        sanskritWords: { vakratunda: true, mahakaya: true },
-                        learnedWords: sceneState.learnedWords || {},
-                        phase: 'complete',
-                        timestamp: Date.now()
-                      });
+                      const profileId = localStorage.getItem('activeProfileId');
+                      if (profileId) {
+                        GameStateManager.saveGameState('cave-of-secrets', 'vakratunda-mahakaya', {
+                          completed: true,
+                          stars: 8,
+                          sanskritWords: { vakratunda: true, mahakaya: true },
+                          learnedWords: sceneState.learnedWords || {},
+                          phase: 'complete',
+                          timestamp: Date.now()
+                        });
 
-                      localStorage.removeItem(`temp_session_${profileId}_cave-of-secrets_vakratunda-mahakaya`);
-                      SimpleSceneManager.clearCurrentScene();
-                    }
+                        localStorage.removeItem(`temp_session_${profileId}_cave-of-secrets_vakratunda-mahakaya`);
+                        SimpleSceneManager.clearCurrentScene();
+                      }
 
-                    setShowSceneCompletion(true);
-                  }}
-                />
+                      setShowSceneCompletion(true);
+                    }}
+                  />
+                </>
               )}
 
 
@@ -1996,8 +2070,8 @@ const CaveSceneContent = ({
                   onProgress={() => setShowCulturalCelebration(true)}
                   onHelp={() => console.log('Show help')}
                   onParentMenu={() => console.log('Parent menu')}
-                  isAudioOn={true}
-                  onAudioToggle={() => console.log('Toggle audio')}
+                  isAudioOn={isAudioOn}
+                  onAudioToggle={toggleAudio}
                   onZonesClick={() => onNavigate?.('zones')}
                   onStartFresh={() => resetScene()}
                   currentProgress={{

@@ -35,10 +35,9 @@ const MahakayaGame = ({
   savedGameState,
   onSaveGameState,
 
-  // Voice Guidance - ⭐ NEW
   voiceGuidance,
-   // ⭐ ADD THIS: Receive the pause signal from the scene
-  isPaused
+  isPaused,
+  onMicroWin,
 }) => {
 
   const gameConfig = getGameConfig('mahakaya');
@@ -84,9 +83,9 @@ const assetGetters = {
       savedGameState={savedGameState}
       onSaveGameState={onSaveGameState}
       gamePrefix="mahakaya"
-      voiceGuidance={voiceGuidance}        // ⭐ VOICE GUIDANCE
-            isPaused={isPaused} 
-
+      voiceGuidance={voiceGuidance}
+      isPaused={isPaused}
+      onMicroWin={onMicroWin}
     />
   );
 };

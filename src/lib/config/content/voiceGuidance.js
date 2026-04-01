@@ -165,6 +165,91 @@ export const VOICE_SCRIPTS = {
         file: '/audio/voicenew/modak/ganesha_proud.wav'
       },
     }
+    ,
+    'final-scene': {
+      openingModalPrompt: {
+        text: "All my symbols are ready... let's place them together.",
+        file: '/audio/voicenew/sacredassembly/opening-modal-ready-together.wav'
+      },
+
+      cardEyes: {
+        text: "My big eyes see everything.",
+        file: '/audio/voicenew/sacredassembly/card-eyes.wav'
+      },
+      cardEars: {
+        text: "My big ears hear everything.",
+        file: '/audio/voicenew/sacredassembly/card-ears.wav'
+      },
+      cardTrunk: {
+        text: "My trunk is strong and helps me.",
+        file: '/audio/voicenew/sacredassembly/card-trunk.wav'
+      },
+      cardTusk: {
+        text: "My tusk helps me stay brave.",
+        file: '/audio/voicenew/sacredassembly/card-tusk.wav'
+      },
+      cardModak: {
+        text: "I share sweetness with my modak.",
+        file: '/audio/voicenew/sacredassembly/card-modak.wav'
+      },
+      cardLotus: {
+        text: "My lotus helps me stay calm.",
+        file: '/audio/voicenew/sacredassembly/card-lotus.wav'
+      },
+      cardBelly: {
+        text: "My big belly holds lots of love.",
+        file: '/audio/voicenew/sacredassembly/card-belly.wav'
+      },
+      cardMooshika: {
+        text: "My little friend helps guide me.",
+        file: '/audio/voicenew/sacredassembly/card-mooshika.wav'
+      },
+
+      onboardingTapRightPart: {
+        text: "Tap the right part of me.",
+        file: '/audio/voicenew/sacredassembly/onboarding-tap-right-part.wav'
+      },
+
+      correctYes: {
+        text: "Yes!",
+        file: '/audio/voicenew/sacredassembly/correct-yes.wav'
+      },
+      correctThatsRight: {
+        text: "That's right!",
+        file: '/audio/voicenew/sacredassembly/correct-thats-right.wav'
+      },
+      correctYouFoundIt: {
+        text: "You found it!",
+        file: '/audio/voicenew/sacredassembly/correct-you-found-it.wav'
+      },
+      correctWellDone: {
+        text: "Well done!",
+        file: '/audio/voicenew/sacredassembly/correct-well-done.wav'
+      },
+
+      wrongTryAgain: {
+        text: "Hmm... try again.",
+        file: '/audio/voicenew/sacredassembly/wrong-try-again.wav'
+      },
+
+      idleLookCarefully: {
+        text: "Look carefully...",
+        file: '/audio/voicenew/sacredassembly/idle-look-carefully.wav'
+      },
+
+      finalYouFoundAll: {
+        text: "You found all my symbols...",
+        file: '/audio/voicenew/sacredassembly/final-you-found-all.wav'
+      },
+      finalNowComplete: {
+        text: "Now I am complete.",
+        file: '/audio/voicenew/sacredassembly/final-now-complete.wav'
+      },
+      finalAlwaysWithYou: {
+        text: "And I am always with you.",
+        file: '/audio/voicenew/sacredassembly/final-always-with-you.wav'
+      }
+    }
   },
 
   // ========================================
@@ -335,7 +420,8 @@ export const VOICE_SCRIPTS = {
         text: "Look at our family trees. Connected by love.",
         file: '/audio/voicenew/familytree/ganesha_connected_love.wav'
       }
-    }
+    },
+    
   },
 
   // ========================================

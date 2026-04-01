@@ -65,6 +65,98 @@
   z-index: 1;
 }
 
+.ganesha-gesture-cue {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  overflow: visible;
+}
+
+.modak-mini-ganesha-cue {
+  --mini-cue-duration: 1.5s;
+  animation-duration: var(--mini-cue-duration);
+}
+
+.modak-mini-gesture-icon {
+  width: clamp(52px, 5vw, 76px);
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.2));
+}
+
+.modak-mini-ganesha-cue--eyes {
+  left: 18%;
+  top: 23%;
+  animation: symbolGesturePopItem var(--mini-cue-duration) cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.modak-mini-ganesha-cue--ears {
+  left: 76%;
+  top: 34%;
+  animation: symbolGesturePopItem var(--mini-cue-duration) cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.modak-mini-ganesha-cue--note {
+  right: 4%;
+  top: 18%;
+  animation: symbolGesturePopItem var(--mini-cue-duration) cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.modak-mini-ganesha-cue--center {
+  left: 50%;
+  top: 30%;
+  transform: translate(-50%, -50%);
+  animation: symbolGesturePopCenter var(--mini-cue-duration) cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.symbol-hint-pointer {
+  position: absolute;
+  z-index: 45;
+  pointer-events: none;
+  animation: symbol-hint-pointer-pulse 2s ease-in-out infinite;
+}
+
+.symbol-hint-pointer-emoji {
+  display: block;
+  font-size: clamp(48px, 4.8vw, 72px);
+  line-height: 1;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.22));
+}
+
+.symbol-hint-pointer--eyes {
+  left: 18%;
+  top: 18%;
+}
+
+.symbol-hint-pointer--ears {
+  left: 75%;
+  top: 28%;
+}
+
+.symbol-hint-pointer--note {
+  right: 4%;
+  top: 12%;
+}
+
+@keyframes symbol-hint-pointer-pulse {
+  0%, 100% { opacity: 0; transform: scale(0.95); }
+  20% { opacity: 1; }
+  50% { opacity: 1; transform: scale(1.06); }
+  80% { opacity: 0.25; }
+}
+
+@keyframes symbolGesturePopItem {
+  0% { opacity: 0; transform: scale(0.25) translateY(12px); }
+  70% { opacity: 1; transform: scale(1.08) translateY(-4px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes symbolGesturePopCenter {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.25) translateY(24px); }
+  70% { opacity: 1; transform: translate(-50%, -50%) scale(1.1) translateY(-6px); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1) translateY(0); }
+}
+
 /* ================================
    MAIN SYMBOL CONTAINERS
    ================================ */
@@ -72,10 +164,10 @@
 /* 👁️ EYES SYMBOL - Musical Discovery */
 .eyes-symbol-container {
   position: absolute;
-  top: 25%;
-  left: 20%;
-  width: 80px;
-  height: 60px;
+  top: 45%;
+  left: 50%;
+  width: 160px;
+  height: 120px;
   cursor: pointer;
   transition: all 0.3s ease;
   z-index: 10;
@@ -83,27 +175,27 @@
 }
 
 .eyes-symbol-container:hover {
-  transform: scale(1.05);
+  transform: none;
   filter: drop-shadow(0 0 15px var(--eyes-blue));
 }
 
 .eyes-symbol-container.active {
-  animation: symbolPulse 2s ease-in-out infinite;
+  animation: none;
   filter: drop-shadow(0 0 20px var(--eyes-blue));
 }
 
 .eyes-symbol-container.completed {
   filter: brightness(1.2) saturate(1.3) drop-shadow(0 0 25px var(--divine-gold));
-  animation: completedGlow 3s ease-in-out infinite;
+  animation: none;
 }
 
 /* 👂 EARS SYMBOL - Musical Rhythm */
 .ears-symbol-container {
   position: absolute;
   top: 35%;
-  right: 15%;
-  width: 100px;
-  height: 80px;
+  right: 45%;
+  width: 180px;
+  height: 150px;
   cursor: pointer;
   transition: all 0.3s ease;
   z-index: 10;
@@ -111,22 +203,30 @@
 }
 
 .ears-symbol-container:hover {
-  transform: scale(1.05);
+  transform: none;
   filter: drop-shadow(0 0 15px var(--ears-orange));
 }
 
 .ears-symbol-container.active {
-  animation: symbolPulse 2s ease-in-out infinite;
+  animation: none;
   filter: drop-shadow(0 0 20px var(--ears-orange));
 }
 
 .ears-symbol-container.completed {
   filter: brightness(1.2) saturate(1.3) drop-shadow(0 0 25px var(--divine-gold));
-  animation: completedGlow 3s ease-in-out infinite;
+  animation: none;
 }
 
 .ears-symbol-container.materialized {
-  animation: symbolMaterialize 2s ease-out;
+  animation: none;
+}
+
+/* Keep idle-hint targets position-locked (no transform-driven drift). */
+.eyes-symbol-container.hint-glow,
+.ears-symbol-container.hint-glow,
+.eyes-symbol-container.hint-glow:hover,
+.ears-symbol-container.hint-glow:hover {
+  transform: none !important;
 }
 
 /* ================================

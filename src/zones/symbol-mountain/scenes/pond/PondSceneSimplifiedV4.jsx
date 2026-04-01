@@ -1,6 +1,6 @@
 // zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV3.jsx
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './PondScene.css';
 import '../../../../lib/styles/zone-themes.css'; // Ensure theme vars are loaded
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
@@ -9,7 +9,6 @@ import { getCompletionModal } from '../../../../lib/config/content';
 
 // Shared Components
 import OpeningModal from '../../../shared/components/OpeningModal';
-import UnifiedHeaderV2 from '../../../../lib/components/ui/Header/UnifiedHeaderV2';
 
 // --- NEW MASTER LAYOUT & CONFIG ---
 import GameLayout from '../../../../lib/components/layout/GameLayout';
@@ -27,18 +26,27 @@ import ProgressManager from '../../../../lib/services/ProgressManager';
 import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
 
 import useSceneReset from '../../../../lib/hooks/useSceneReset';
-import BackToMapButton from '../../../../lib/components/navigation/BackToMapButton';
 import { getSceneResetConfig } from '../../../../lib/config/SceneResetConfigs';
+import { useGameSounds } from '../../../../lib/hooks/useGameSounds';
+import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
+import { useGaneshaVoice } from '../../../../lib/hooks/useGaneshaVoice';
+import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
+import AudioToggle from '../../../../lib/components/ui/AudioToggle';
+import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
+import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
+import ResumeCountdown from '../../../../lib/components/feedback/ResumeCountdown';
 
 // UI Components
 import CulturalCelebrationModal from '../../../../lib/components/progress/CulturalCelebrationModal';
 import CulturalProgressExtractor from '../../../../lib/services/CulturalProgressExtractor';
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
-import Fireworks from '../../../../lib/components/feedback/Fireworks';
-import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
+import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
+import CalmGoldenFireworks from '../../../../lib/components/feedback/CalmGoldenFireworks';
+import WaterSprayArc from '../../../shloka-river/scenes/Scene1/components/WaterSprayArc';
 import SymbolSidebar from '../../shared/components/SymbolSidebar';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import HomeButton from '../../../../lib/components/ui/HomeButton';
+import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import SymbolPowerMission from '../../shared/components/SymbolPowerMission';
 import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
@@ -65,6 +73,12 @@ import trunkBefore from './assets/images/trunk-before.png';
 import trunkAfter from './assets/images/trunk-after.png';
 import ganeshaCharacter from './assets/images/ganesha-character.png';
 
+const RESUME_DELAY_MS = 3000;
+
+const MINI_THUMBS_UP_ICON = '/images/hand-thumbsup.svg';
+const MINI_VICTORY_ICON   = '/images/hand-victory.svg';
+const MINI_OK_ICON        = '/images/hand-ok.svg';
+
 const PHASES = {
   INITIAL: 'initial',
   SOME_BLOOMED: 'some_bloomed',
@@ -74,6 +88,18 @@ const PHASES = {
   ELEPHANT_TRANSFORMED: 'elephant_transformed',
   GOLDEN_BLOOM: 'golden_bloom',
   COMPLETE: 'complete'
+};
+
+const VOICE_LINES = {
+  opening: "My pond is ready. Let's bloom it together.",
+  lotusRound: 'My lotus helps me stay calm. Tap the lotuses.',
+  goldenLotus: 'Beautiful. Now tap my golden lotus.',
+  elephant: 'Tap me. My trunk is ready to awaken.',
+  trunkRound: 'My trunk is strong and helps me. Tap to reveal it.',
+  idleLotus: 'Look carefully at the lotuses.',
+  idleGolden: 'Look for the golden lotus.',
+  idleElephant: 'Tap me to continue.',
+  complete: 'You found my lotus and my trunk. Now I am shining with you.'
 };
 
 const powerConfig = {
@@ -215,11 +241,14 @@ const PondSceneContent = ({
 
   const [showSparkle, setShowSparkle] = useState(null);
   const [showHintGlow, setShowHintGlow] = useState(false);
+  const [showIdleGestureHint, setShowIdleGestureHint] = useState(false);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
   const [showCulturalCelebration, setShowCulturalCelebration] = useState(false);
   const [showCenteredSymbol, setShowCenteredSymbol] = useState(null);
   const [showPowerModal, setShowPowerModal] = useState(false);
   const [showPowerMission, setShowPowerMission] = useState(false);
+  const [activeWaterSpray, setActiveWaterSpray] = useState(null);
+  const [fireworksFinished, setFireworksFinished] = useState(false);
   const [currentMissionSymbol, setCurrentMissionSymbol] = useState(null);
 
   // Discovery overlay states
@@ -236,13 +265,36 @@ const PondSceneContent = ({
   const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false); // eslint-disable-line no-unused-vars
   const [revealConfig, setRevealConfig] = useState(null);
 
-  // Audio State
-  const [isAudioOn, setIsAudioOn] = useState(true);
+  // Mini gesture cue
+  const [miniGesture, setMiniGesture] = useState({ show: false, target: 'center', durationMs: 1500, key: 0, icon: MINI_THUMBS_UP_ICON });
+  const triggerMiniGesture = useCallback((target = 'center', durationMs = 1500, icon = MINI_THUMBS_UP_ICON) => {
+    setMiniGesture(prev => ({ show: true, target, durationMs, key: prev.key + 1, icon }));
+    setTimeout(() => setMiniGesture(prev => ({ ...prev, show: false })), durationMs);
+  }, []);
+
+  // Audio
+  const { isAudioOn, toggleAudio } = useAudioPreference();
+  const { speak, stop: stopSpokenVoice } = useGaneshaVoice();
+  const { playUiTap, playBloom, playChime, playGlow, playTwinkle, setGlobalVolume } = useGameSounds();
+  const { startMusic, stopMusic, setVoiceVolume } = useVoiceGuidance(
+    zoneId, sceneId, {
+      enableMusic: true,
+      musicVolume: 0.06,
+      sfxVolume: 0.35,
+      idleTimeout: 20,
+      resumeDelay: RESUME_DELAY_MS,
+    }
+  );
+  useEffect(() => { setVoiceVolume(isAudioOn ? 1 : 0); }, [isAudioOn, setVoiceVolume]);
+  useEffect(() => { if (sceneState?.welcomeShown) startMusic(); }, [sceneState?.welcomeShown]);
+  useEffect(() => {
+    setGlobalVolume(0.5);
+    return () => { stopMusic(); setGlobalVolume(1.0); };
+  }, []);
 
   // Resume popup timeout ref
   const resumePopupTimeoutRef = useRef(null);
 
-  const timeoutsRef = useRef([]);
   const progressiveHintRef = useRef(null);
   const reloadHandledRef = useRef(false);
   const activeDropsRef = useRef(new Set());
@@ -250,20 +302,69 @@ const PondSceneContent = ({
 
   const activeProfile = GameStateManager.getActiveProfile();
   const profileName = activeProfile?.name || 'little explorer';
+  const lastAnnouncedPromptRef = useRef(null);
+  const openingVoPlayedRef = useRef(false);
+  const idleVoGateRef = useRef(false);
 
-  const safeSetTimeout = (callback, delay) => {
-    const id = setTimeout(callback, delay);
-    timeoutsRef.current.push(id);
-    return id;
-  };
+  const speakPondPrompt = useCallback((key) => {
+    if (!isAudioOn || !VOICE_LINES[key]) return;
+    speak(VOICE_LINES[key], {
+      age: 11,
+      style: 'child',
+      moment: key === 'complete' ? 'celebration' : 'encouragement'
+    });
+  }, [isAudioOn, speak]);
+
+  const getPromptKeyForPhase = useCallback(() => {
+    if (!sceneState?.welcomeShown) return 'opening';
+    if (sceneState?.phase === PHASES.COMPLETE) return 'complete';
+    if (sceneState?.phase === PHASES.ELEPHANT_TRANSFORMED && !sceneState?.completed) return 'trunkRound';
+    if (sceneState?.phase === PHASES.ELEPHANT_VISIBLE && !sceneState?.elephantTransformed) return 'elephant';
+    if (sceneState?.phase === PHASES.GOLDEN_VISIBLE && !sceneState?.elephantVisible) return 'goldenLotus';
+    if (sceneState?.phase === PHASES.INITIAL || sceneState?.phase === PHASES.SOME_BLOOMED) return 'lotusRound';
+    return null;
+  }, [
+    sceneState?.completed,
+    sceneState?.elephantTransformed,
+    sceneState?.elephantVisible,
+    sceneState?.phase,
+    sceneState?.welcomeShown
+  ]);
+
+  const onPauseHide = useCallback(() => {
+    stopSpokenVoice();
+  }, [stopSpokenVoice]);
+  const onPauseShow = useCallback(() => {
+    const replayKey = getPromptKeyForPhase();
+    if (replayKey) speakPondPrompt(replayKey);
+  }, [getPromptKeyForPhase, speakPondPrompt]);
+
+  const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({
+    onHide: onPauseHide,
+    onShow: onPauseShow,
+    resumeDelay: RESUME_DELAY_MS,
+  });
+
+  const triggerWaterSpray = useCallback(() => {
+    const sourcePosition = { left: '72%', top: '48%' };
+    const targetPosition = { left: '45%', top: '45%' }; // golden lotus area
+    const key = Date.now() + Math.random();
+    setActiveWaterSpray({ key, sourcePosition, targetPosition, phase: 'vakratunda' });
+    safeSetTimeout(() => {
+      setActiveWaterSpray(null);
+    }, 1500);
+  }, [safeSetTimeout]);
+
+  const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
 
   useEffect(() => {
     return () => {
-      timeoutsRef.current.forEach(id => clearTimeout(id));
+      clearAllTimeouts();
+      stopSpokenVoice();
       activeDropsRef.current.clear();
       reloadHandledRef.current = false;
     };
-  }, []);
+  }, [clearAllTimeouts, stopSpokenVoice]);
 
   // Auto-glow effect
   useEffect(() => {
@@ -288,76 +389,112 @@ const PondSceneContent = ({
     }
   }, [sceneState?.phase, sceneState?.welcomeShown, showPowerModal, showPowerMission]);
 
-  // ==================== RELOAD HANDLING ====================
   useEffect(() => {
-    if (!isReload || reloadHandledRef.current || !sceneState.welcomeShown) {
+    const promptKey = getPromptKeyForPhase();
+    if (!promptKey || revealConfig || showSceneCompletion) return;
+    if (lastAnnouncedPromptRef.current === promptKey) return;
+
+    lastAnnouncedPromptRef.current = promptKey;
+    const timer = setTimeout(() => speakPondPrompt(promptKey), promptKey === 'complete' ? 250 : 500);
+    return () => clearTimeout(timer);
+  }, [getPromptKeyForPhase, revealConfig, showSceneCompletion, speakPondPrompt]);
+
+  // Hint 2: show pointing emoji shortly after glow appears
+  useEffect(() => {
+    if (!showHintGlow) {
+      setShowIdleGestureHint(false);
+      idleVoGateRef.current = false;
       return;
     }
+    const showTimer = setTimeout(() => setShowIdleGestureHint(true), 2000);
+    const hideTimer = setTimeout(() => setShowIdleGestureHint(false), 5500);
+    return () => {
+      clearTimeout(showTimer);
+      clearTimeout(hideTimer);
+    };
+  }, [showHintGlow]);
 
-    console.log('🔄 RELOAD DETECTED - Resuming from phase:', sceneState.phase);
-    reloadHandledRef.current = true;
+  useEffect(() => {
+    if (!showIdleGestureHint) return;
+    if (idleVoGateRef.current) return;
 
-    // Discovery 1: Golden Lotus Found
-    if (sceneState.phase === PHASES.ALL_BLOOMED) {
-      sceneActions.updateState({
-        discoveredSymbols: { ...sceneState.discoveredSymbols, lotus: true }
-      });
-      safeSetTimeout(() => setRevealConfig({
-        symbolId: 'lotus',
-        symbolName: 'Lotus',
-        affirmation: 'I bloom in the mud!',
-        symbolImage: symbolLotusColored
-      }), 500);
-      return;
-    }
+    let idleKey = 'idleLotus';
+    if (sceneState?.phase === PHASES.GOLDEN_VISIBLE) idleKey = 'idleGolden';
+    if (sceneState?.phase === PHASES.ELEPHANT_VISIBLE) idleKey = 'idleElephant';
+    speakPondPrompt(idleKey);
+    idleVoGateRef.current = true;
+  }, [sceneState?.phase, showIdleGestureHint, speakPondPrompt]);
 
-    // Discovery 2: Elephant Trunk Magic
-    if (sceneState.phase === PHASES.ELEPHANT_TRANSFORMED) {
-      sceneActions.updateState({
-        discoveredSymbols: { lotus: true, trunk: true }
-      });
-      safeSetTimeout(() => setRevealConfig({
-        symbolId: 'trunk',
-        symbolName: 'Trunk',
-        affirmation: 'Strong and gentle!',
-        symbolImage: symbolTrunkColored
-      }), 500);
-      return;
-    }
+  // ==================== RELOAD / RESUME LOGIC ====================
+  // Runs once on mount — same pattern as Modak (empty deps, no isReload check).
+  useEffect(() => {
+    if (!sceneState?.welcomeShown) return;
 
-    // Lotus Blooming Phase
-    if (sceneState.phase === PHASES.INITIAL || sceneState.phase === PHASES.SOME_BLOOMED) {
+    // 1. RESET PARTIAL LOTUS BLOOMING
+    // 1 or 2 lotuses bloomed but not all 3 → reset to start of lotus phase.
+    // Matches Modak's "reset partial mound search / partial modak collection" pattern.
+    if (sceneState.phase === PHASES.SOME_BLOOMED) {
       const bloomed = sceneState.lotusStates?.filter(s => s === 1).length || 0;
-      setResumeMessage(`Continue blooming lotuses! You have ${bloomed}/3 bloomed!`);
-      setShowResumePopup(true);
-      setTimeout(() => setShowResumePopup(false), 5000);
-      return;
-    }
-
-    // Elephant Phase
-    if (sceneState.phase === PHASES.GOLDEN_VISIBLE ||
-      sceneState.phase === PHASES.ELEPHANT_VISIBLE) {
-      sceneActions.updateState({
-        discoveredSymbols: { ...sceneState.discoveredSymbols, lotus: true }
-      });
-      setResumeMessage("Click the elephant's trunk to spray water!");
-      setShowResumePopup(true);
-      setTimeout(() => setShowResumePopup(false), 5000);
-      return;
-    }
-
-    // Completion Phase
-    if (sceneState.phase === PHASES.COMPLETE) {
-      sceneActions.updateState({
-        discoveredSymbols: { lotus: true, trunk: true }
-      });
-      if (!sceneState.showingCompletionScreen) {
-        setTimeout(() => setShowSceneCompletion(true), 500);
+      if (bloomed > 0 && bloomed < 3) {
+        sceneActions.updateState({
+          lotusStates: [0, 0, 0],
+          phase: PHASES.INITIAL,
+          progress: { percentage: 0, starsEarned: 0, completed: false }
+        });
+        return;
       }
+      // All 3 bloomed but phase hasn't advanced to ALL_BLOOMED yet (rare mid-transition reload):
+      if (bloomed === 3) {
+        setTimeout(() => {
+          playChime();
+          setRevealConfig({
+            symbolId: 'lotus',
+            symbolName: 'Lotus',
+            affirmation: 'I bloom in the mud!',
+            symbolImage: symbolLotusColored
+          });
+        }, 1200);
+        return;
+      }
+    }
+
+    // 2. RESTORE LOTUS CARD FLIP
+    // All 3 bloomed (ALL_BLOOMED phase) but card not yet shown / dismissed.
+    if (sceneState.phase === PHASES.ALL_BLOOMED) {
+      setTimeout(() => {
+        playChime();
+        setRevealConfig({
+          symbolId: 'lotus',
+          symbolName: 'Lotus',
+          affirmation: 'I bloom in the mud!',
+          symbolImage: symbolLotusColored
+        });
+      }, 1200);
       return;
     }
 
-  }, [isReload, sceneState.phase, sceneState.welcomeShown]);
+    // 3. RESTORE TRUNK CARD FLIP
+    // Elephant done (ELEPHANT_TRANSFORMED phase) but card not yet shown / dismissed.
+    if (sceneState.phase === PHASES.ELEPHANT_TRANSFORMED && !sceneState.completed) {
+      setTimeout(() => {
+        playChime();
+        setRevealConfig({
+          symbolId: 'trunk',
+          symbolName: 'Trunk',
+          affirmation: 'Strong and gentle!',
+          symbolImage: symbolTrunkColored
+        });
+      }, 1200);
+      return;
+    }
+
+    // 4. RESTORE COMPLETION SCREEN
+    if (sceneState.phase === PHASES.COMPLETE && !sceneState.showingCompletionScreen) {
+      setTimeout(() => setShowSceneCompletion(true), 500);
+      return;
+    }
+
+  }, []); // Empty array — runs once on mount, same as Modak
 
   // Completion message
   useEffect(() => {
@@ -510,7 +647,15 @@ const PondSceneContent = ({
 
   // -- SymbolAutoReveal helpers -----------------------------------------------
 
-  const getSidebarTarget = (symbolId) => document.getElementById(`sidebar-${symbolId}`);
+  const getSidebarTarget = useCallback((symbolId) => {
+    const el = document.getElementById(`sidebar-${symbolId}`);
+    if (!el) return { x: 220, y: 0 };
+    const r = el.getBoundingClientRect();
+    return {
+      x: (r.left + r.width / 2) - (window.innerWidth / 2),
+      y: (r.top + r.height / 2) - (window.innerHeight / 2),
+    };
+  }, []);
 
   const triggerFireworks = () => {
     setShowSparkle('final-fireworks');
@@ -520,23 +665,22 @@ const PondSceneContent = ({
     setRevealConfig(null);
 
     if (symbolId === 'lotus') {
-      // 950ms delay — lets sidebar bloom animation fully settle before React re-render
+      // Update phase immediately — prevents reload handler re-triggering card during 950ms window
+      sceneActions.updateState({ phase: PHASES.GOLDEN_VISIBLE });
+      // discoveredSymbols + goldenLotusVisible delayed 950ms to protect sidebar bloom animation
       safeSetTimeout(() => {
         sceneActions.updateState({
-          phase: PHASES.GOLDEN_VISIBLE,
           goldenLotusVisible: true,
           discoveredSymbols: { ...sceneState.discoveredSymbols, lotus: true }
         });
       }, 950);
 
     } else if (symbolId === 'trunk') {
-      // 950ms — bloom protection; 2450ms — 950ms bloom + 1500ms hold before fireworks
+      // Update phase immediately — prevents reload handler re-triggering card during 950ms window
+      sceneActions.updateState({ phase: PHASES.COMPLETE, completed: true });
+      // discoveredSymbols delayed 950ms to protect sidebar bloom animation
       safeSetTimeout(() => {
-        sceneActions.updateState({
-          phase: PHASES.COMPLETE,
-          completed: true,
-          discoveredSymbols: { lotus: true, trunk: true }
-        });
+        sceneActions.updateState({ discoveredSymbols: { lotus: true, trunk: true } });
       }, 950);
       safeSetTimeout(() => triggerFireworks(), 2450);
     }
@@ -556,11 +700,13 @@ const PondSceneContent = ({
     const lotusStates = [...(sceneState.lotusStates || [0, 0, 0])];
 
     if (lotusStates[index] === 1) {
+      playUiTap();
       setShowSparkle(`lotus-${index}`);
       setTimeout(() => setShowSparkle(null), 1500);
       return;
     }
 
+    playBloom();
     lotusStates[index] = 1;
     setShowSparkle(`lotus-${index}`);
     setTimeout(() => setShowSparkle(null), 1500);
@@ -568,13 +714,15 @@ const PondSceneContent = ({
     const bloomedCount = lotusStates.filter(s => s === 1).length;
 
     if (bloomedCount === 3) {
+      playChime();
+      triggerMiniGesture('center', 2500, MINI_VICTORY_ICON);
       sceneActions.updateState({
         lotusStates,
         phase: PHASES.SOME_BLOOMED,
         progress: { percentage: 50, starsEarned: 4 }
       });
 
-      setTimeout(() => {
+      safeSetTimeout(() => {
         sceneActions.updateState({
           allLotusBloom: true,
           phase: PHASES.ALL_BLOOMED
@@ -588,6 +736,7 @@ const PondSceneContent = ({
       }, 1000);
 
     } else {
+      triggerMiniGesture('lotus', 1200, MINI_THUMBS_UP_ICON);
       sceneActions.updateState({
         lotusStates,
         phase: PHASES.SOME_BLOOMED,
@@ -601,17 +750,21 @@ const PondSceneContent = ({
     if (!sceneState || !sceneActions) return;
 
     if (sceneState.goldenLotusBloom) {
+      playUiTap();
       setShowSparkle('golden-lotus-bloom');
       setTimeout(() => setShowSparkle(null), 1500);
       return;
     }
 
     if (sceneState.elephantVisible) {
+      playUiTap();
       setShowSparkle('golden-lotus-clicked');
       setTimeout(() => setShowSparkle(null), 1500);
       return;
     }
 
+    playBloom();
+    triggerMiniGesture('center', 1500, MINI_OK_ICON);
     setShowSparkle('golden-lotus-clicked');
 
     safeSetTimeout(() => {
@@ -634,6 +787,7 @@ const PondSceneContent = ({
     }
     if (!sceneState || !sceneActions || sceneState.elephantTransformed) return;
 
+    playUiTap();
     setShowSparkle('elephant');
 
     const elephant = document.getElementById('elephant-container');
@@ -653,7 +807,7 @@ const PondSceneContent = ({
         let dropCount = 0;
         const maxDrops = 15;
 
-        createWaterDrop();
+        triggerWaterSpray();
         dropCount++;
 
         const waterInterval = setInterval(() => {
@@ -662,6 +816,9 @@ const PondSceneContent = ({
             safeSetTimeout(() => {
               sceneActions.updateState({ trunkActive: false });
               setShowSparkle(null);
+              playGlow();
+              setTimeout(() => playTwinkle(), 600);
+              triggerMiniGesture('center', 2500, MINI_VICTORY_ICON);
               safeSetTimeout(() => setRevealConfig({
                 symbolId: 'trunk',
                 symbolName: 'Trunk',
@@ -671,7 +828,7 @@ const PondSceneContent = ({
             }, 1000);
             return;
           }
-          createWaterDrop();
+          triggerWaterSpray();
           dropCount++;
         }, 150);
 
@@ -742,6 +899,34 @@ const PondSceneContent = ({
 
   const isFinalCelebrationActive = showSparkle === 'final-fireworks' || showSceneCompletion;
 
+  // Fireworks completion handler (matches Modak-style fireworks swap)
+  useEffect(() => {
+    if (showSparkle !== 'final-fireworks') return;
+    setFireworksFinished(false);
+    const timer = setTimeout(() => {
+      setShowSparkle(null);
+      setFireworksFinished(true);
+
+      const profileId = localStorage.getItem('activeProfileId');
+      if (profileId) {
+        GameStateManager.saveGameState('symbol-mountain', 'pond', {
+          completed: true,
+          stars: 5,
+          symbols: { lotus: true, trunk: true },
+          phase: 'complete',
+          timestamp: Date.now()
+        });
+
+        localStorage.removeItem(`temp_session_${profileId}_symbol-mountain_pond`);
+        SimpleSceneManager.clearCurrentScene();
+      }
+
+      setShowSceneCompletion(true);
+    }, 4000);
+
+    return () => clearTimeout(timer);
+  }, [showSparkle]);
+
   if (!sceneState) {
     return <div className="loading">Loading scene state...</div>;
   }
@@ -755,7 +940,8 @@ const PondSceneContent = ({
       onHome={() => onNavigate?.('home')}
       onReplay={resetScene}
       isAudioOn={isAudioOn}
-      onAudioToggle={() => setIsAudioOn(!isAudioOn)}
+      onAudioToggle={toggleAudio}
+      showMenu={false}
     >
       <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
         <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
@@ -765,46 +951,19 @@ const PondSceneContent = ({
 
               {/* REMOVE OLD MANUAL RENDERCOUNTER, UNIFIED HEADER IS HANDLED BELOW */}
 
-              {/* Phase Headers */}
-              {!showPowerModal && !showPowerMission && sceneState.welcomeShown && (
-                <>
-                  {/* 1. LOTUS BLOOMING PHASE */}
-                  {(sceneState.phase === PHASES.INITIAL || sceneState.phase === PHASES.SOME_BLOOMED) && (
-                    <UnifiedHeaderV2
-                      zone="symbol-mountain"
-                      title="BLOOM THE LOTUSES!"
-                      // Count how many are bloomed (value 1)
-                      currentRound={sceneState.lotusStates?.filter(s => s === 1).length || 0}
-                      totalRounds={3}
-                    />
-                  )}
-
-                  {/* 2. GOLDEN LOTUS PHASE */}
-                  {sceneState.goldenLotusVisible && !sceneState.elephantVisible && (
-                    <UnifiedHeaderV2
-                      zone="symbol-mountain"
-                      title="CLICK THE GOLDEN LOTUS!"
-                      currentRound={0} // Just text, no progress needed yet
-                      totalRounds={1}
-                    />
-                  )}
-
-                  {/* 3. ELEPHANT SPRAYING PHASE */}
-                  {sceneState.phase === PHASES.ELEPHANT_VISIBLE && (
-                    <UnifiedHeaderV2
-                      zone="symbol-mountain"
-                      title="HELP THE ELEPHANT! Click trunk to spray water!"
-                      currentRound={sceneState.trunkActive ? 1 : 0}
-                      totalRounds={1}
-                    />
-                  )}
-                </>
-              )}
+              {/* UnifiedHeaderV2 disabled per request */}
 
               <OpeningModal
                 zoneId={zoneId}
                 sceneId={sceneId}
-                onStart={() => sceneActions.updateState({ welcomeShown: true })}
+                isOpen={!sceneState.welcomeShown}
+                onStart={() => {
+                  sceneActions.updateState({ welcomeShown: true });
+                  if (!openingVoPlayedRef.current) {
+                    speakPondPrompt('opening');
+                    openingVoPlayedRef.current = true;
+                  }
+                }}
                 characterImg={ganeshaCharacter}
                 showButton={true}
               />
@@ -826,6 +985,19 @@ const PondSceneContent = ({
                   )}
                 </div>
               ))}
+
+              {/* Hint 2 pointer (idle gesture) */}
+              {showIdleGestureHint && (() => {
+                const idleTarget =
+                  sceneState?.phase === PHASES.ELEPHANT_VISIBLE ? 'elephant' :
+                  sceneState?.phase === PHASES.GOLDEN_VISIBLE ? 'golden-lotus' :
+                  'lotus';
+                return (
+                  <div className={`pond-hint-pointer pond-hint-pointer--${idleTarget}`} aria-hidden="true">
+                    👆
+                  </div>
+                );
+              })()}
 
               {/* All lotuses sparkle */}
               {showSparkle === 'all-lotuses' && (
@@ -887,28 +1059,18 @@ const PondSceneContent = ({
                 </div>
               )}
 
-              {/* Water Drops */}
-              {(sceneState.waterDrops || []).map(drop => (
-                <div
-                  key={drop.id}
-                  className="water-drop enhanced-arc"
-                  style={{
-                    fontSize: `${drop.size * 1.5 + 2}vh`,
-                    right: `${drop.startRight}%`,
-                    bottom: `${drop.startBottom}%`,
-                    transform: `rotate(${drop.rotation}deg)`,
-                    opacity: drop.opacity,
-                    '--delta-x': `${drop.deltaX}vw`,
-                    '--delta-y': `${drop.deltaY}vh`,
-                    '--arc-height': `${drop.arcHeight}vh`,
-                    '--duration': `${drop.duration}s`,
-                    animation: `fixedWaterArc var(--duration) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`,
-                    animationFillMode: 'forwards'
-                  }}
-                >
-                  💧
-                </div>
-              ))}
+              {/* Water Spray Arc (Vakratunda Grove style) */}
+              {activeWaterSpray && (
+                <WaterSprayArc
+                  key={activeWaterSpray.key}
+                  sourcePosition={activeWaterSpray.sourcePosition}
+                  targetPosition={activeWaterSpray.targetPosition}
+                  isActive={true}
+                  dropCount={22}
+                  duration={1700}
+                  phase={activeWaterSpray.phase}
+                />
+              )}
 
               {/* Symbol Learning Sparkles */}
               {showSparkle === 'lotus-to-sidebar' && (
@@ -923,24 +1085,18 @@ const PondSceneContent = ({
                 </div>
               )}
 
-              {/* PROGRESSIVE HINT SYSTEM */}
-              {sceneState.welcomeShown && (
-                <ProgressiveHintSystem
-                  ref={progressiveHintRef}
-                  sceneId={sceneId}
-                  sceneState={sceneState}
-                  hintConfigs={getHintConfigs()}
-                  characterImage={mooshikaCoach}
-                  initialDelay={12000}
-                  hintDisplayTime={10000}
-                  position="bottom-right"
-                  iconSize={60}
-                  zIndex={2000}
-                  enabled={shouldEnableHints()}
-                  disabledMessage="Great job!"
-                  onHintShown={() => setShowHintGlow(true)}
-                  onHintHidden={() => setShowHintGlow(false)}
-                />
+              {/* ProgressiveHintSystem disabled per request */}
+
+              {/* MINI GESTURE CUE — thumbs up / victory / ok */}
+              {miniGesture.show && (
+                <div
+                  key={`mini-gesture-${miniGesture.key}`}
+                  className={`ganesha-gesture-cue modak-mini-ganesha-cue modak-mini-ganesha-cue--${miniGesture.target}`}
+                  style={{ '--mini-cue-duration': `${miniGesture.durationMs}ms` }}
+                  aria-hidden="true"
+                >
+                  <img className="modak-mini-gesture-icon" src={miniGesture.icon} alt="" />
+                </div>
               )}
             </div>
 
@@ -994,34 +1150,16 @@ const PondSceneContent = ({
               }}
             />
 
-            {/* Fireworks */}
-            {showSparkle === 'final-fireworks' && (
-              <Fireworks
-                show={true}
-                duration={4000}
-                count={15}
-                colors={['#FFD700', '#FF1493', '#00CED1', '#98FB98', '#FF6347', '#9370DB']}
-                onComplete={() => {
-                  setShowSparkle(null);
-
-                  const profileId = localStorage.getItem('activeProfileId');
-                  if (profileId) {
-                    GameStateManager.saveGameState('symbol-mountain', 'pond', {
-                      completed: true,
-                      stars: 5,
-                      symbols: { lotus: true, trunk: true },
-                      phase: 'complete',
-                      timestamp: Date.now()
-                    });
-
-                    localStorage.removeItem(`temp_session_${profileId}_symbol-mountain_pond`);
-                    SimpleSceneManager.clearCurrentScene();
-                  }
-
-                  setShowSceneCompletion(true);
-                }}
-              />
-            )}
+            {/* Fireworks (Modak-style) */}
+            <FireworksCompletion
+              show={showSparkle === 'final-fireworks'}
+              showCard={false}
+            />
+            <CalmGoldenFireworks
+              show={showSparkle === 'final-fireworks'}
+              particles={14}
+              duration={3500}
+            />
 
             {/* DISCOVERY 1: GOLDEN LOTUS — disabled; SymbolAutoReveal handles this now */}
             {false && showDiscoveryFlip1 && (
@@ -1073,11 +1211,12 @@ const PondSceneContent = ({
             {/* SYMBOL AUTO REVEAL */}
             {revealConfig && (
               <SymbolAutoReveal
+                key={revealConfig.symbolId}
                 symbolId={revealConfig.symbolId}
                 symbolName={revealConfig.symbolName}
                 affirmation={revealConfig.affirmation}
                 symbolImage={revealConfig.symbolImage}
-                sidebarTarget={getSidebarTarget(revealConfig.symbolId)}
+                sidebarTargetRect={getSidebarTarget(revealConfig.symbolId)}
                 onComplete={() => handleRevealComplete(revealConfig.symbolId)}
               />
             )}
@@ -1144,9 +1283,7 @@ const PondSceneContent = ({
 
             {/* DELETE MANUAL TOCABOCA NAV - GameLayout HANDLES THIS NOW */}
 
-            {sceneState.welcomeShown && !showSceneCompletion && (
-              <BackToMapButton onNavigate={onNavigate} />
-            )}
+            {/* BackToMapButton disabled per request */}
 
             <CulturalCelebrationModal
               show={showCulturalCelebration}
@@ -1170,6 +1307,11 @@ const PondSceneContent = ({
           </div>
         </MessageManager>
       </InteractionManager>
+
+      <ZoneBadgeButton zoneId="symbol-mountain" onBack={() => onNavigate?.('zone-welcome')} />
+      <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
+      {/* 3-2-1 resume countdown — renders on top of everything when child returns to tab */}
+      <ResumeCountdown value={countdownValue} />
     </GameLayout>
   );
 };

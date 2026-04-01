@@ -17,10 +17,14 @@ import ProgressManager from "../../../../lib/services/ProgressManager";
 import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import HomeButton from '../../../../lib/components/ui/HomeButton';
+import AudioToggle from '../../../../lib/components/ui/AudioToggle';
+import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import BackToMapButton from '../../../../lib/components/navigation/BackToMapButton';
 import RotatingOrbsEffect from '../../../../lib/components/feedback/RotatingOrbsEffect';
 import SymbolSidebar from '../../components/SymbolSidebar'; // ✅ Added Sidebar
 import Fireworks from '../../../../lib/components/feedback/Fireworks';
+import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
+import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
 
 // Import assets
 import bgFinal from './assets/images/bg-final.png';
@@ -162,7 +166,14 @@ const CaveScene5MemoryFinaleContent = ({
 
   // Local UI state
   const [showRotatingOrbs, setShowRotatingOrbs] = useState(false);
-  const [isAudioOn, setIsAudioOn] = useState(true);
+  const { isAudioOn, toggleAudio } = useAudioPreference();
+  // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
+  const { startIdleTimer, stopIdleTimer, setCurrentPhase } = useVoiceGuidance(
+    zoneId, sceneId, { enableMusic: false, idleTimeout: 20 }
+  );
+  useEffect(() => { startIdleTimer(); return () => stopIdleTimer(); }, [startIdleTimer, stopIdleTimer]);
+  useEffect(() => { setCurrentPhase(sceneState?.phase ?? null); }, [sceneState?.phase, setCurrentPhase]);
+
   const [showFireworks, setShowFireworks] = useState(false);
 
   // Hint System State
@@ -393,6 +404,8 @@ const CaveScene5MemoryFinaleContent = ({
           style={{ backgroundImage: `url(${bgFinal})` }}
         >
           <HomeButton onNavigate={onNavigate} />
+          <ZoneBadgeButton zoneId="cave-of-secrets" onBack={() => onNavigate?.('zone-welcome')} />
+          <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
           {/* ✅ NEW OPENING SCREEN: Final Challenge */}
           <OpeningModal
             zoneId={zoneId}
@@ -722,7 +735,7 @@ const CaveScene5MemoryFinaleContent = ({
               total: 1
             }}
             isAudioOn={isAudioOn}
-            onAudioToggle={() => setIsAudioOn(!isAudioOn)}
+            onAudioToggle={toggleAudio}
           />
         </div>
       </MessageManager>

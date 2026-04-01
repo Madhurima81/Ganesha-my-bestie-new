@@ -1,7 +1,10 @@
 ﻿// zones/cave-of-secrets/scenes/suryakoti-samaprabha/SuryakotiScene.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
+// import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay'; // ← superseded by SymbolAutoReveal
 import './SuryakotiScene.css';
+import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
+import useIdleNudge from '../../../../lib/hooks/useIdleNudge';
+import IdleHint from '../../../../lib/components/idle/IdleHint';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../../lib/config/content/openingModals';
 import { getCompletionModal } from '../../../../lib/config/content';
@@ -22,12 +25,17 @@ import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
 import CulturalCelebrationModal from '../../../../lib/components/progress/CulturalCelebrationModal';
 import CulturalProgressExtractor from '../../../../lib/services/CulturalProgressExtractor';
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
-import Fireworks from '../../../../lib/components/feedback/Fireworks';
+import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
+import CalmGoldenFireworks from '../../../../lib/components/feedback/CalmGoldenFireworks';
 import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
 import SymbolSceneIntegration from '../../../../lib/components/animation/SymbolSceneIntegration';
 import MagicalCardFlip from '../../../../lib/components/animation/MagicalCardFlip';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import HomeButton from '../../../../lib/components/ui/HomeButton';
+import AudioToggle from '../../../../lib/components/ui/AudioToggle';
+import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
+import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
+import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
 
 // Cave-specific components
 import SanskritSidebar from '../../../../lib/components/feedback/SanskritSidebar';
@@ -317,6 +325,15 @@ const SuryakotiSceneContent = ({
     getSceneResetConfig('suryakoti-samaprabha')
   );
   const completionModalContent = getCompletionModal(zoneId, sceneId);
+  const { isAudioOn, toggleAudio } = useAudioPreference();
+  const primaryRef = useRef(null);
+  const { isIdle, resetIdle } = useIdleNudge(20000);
+  // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
+  const { startIdleTimer, stopIdleTimer, setCurrentPhase } = useVoiceGuidance(
+    zoneId, sceneId, { enableMusic: false, idleTimeout: 20 }
+  );
+  useEffect(() => { startIdleTimer(); return () => stopIdleTimer(); }, [startIdleTimer, stopIdleTimer]);
+  useEffect(() => { setCurrentPhase(sceneState?.phase ?? null); }, [sceneState?.phase, setCurrentPhase]);
 
   // State management (PROVEN FROM CAVE)
   const [showSparkle, setShowSparkle] = useState(null);
@@ -345,9 +362,11 @@ const SuryakotiSceneContent = ({
 
   const [isManualReset, setIsManualReset] = useState(false);
 
-  // Discovery overlay states
-  const [showDiscoveryFlip1, setShowDiscoveryFlip1] = useState(false);
-  const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false);
+  // Discovery overlay states — superseded by SymbolAutoReveal
+  const [showDiscoveryFlip1, setShowDiscoveryFlip1] = useState(false); // kept for guard compat
+  const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false); // kept for guard compat
+  // ── SymbolAutoReveal state ─────────────────────────────────────────────────
+  const [revealConfig, setRevealConfig] = useState(null);
 
   const [discovery1Triggered, setDiscovery1Triggered] = useState(false);
   const [discovery2Triggered, setDiscovery2Triggered] = useState(false);
@@ -375,6 +394,35 @@ const SuryakotiSceneContent = ({
     const id = setTimeout(callback, delay);
     timeoutsRef.current.push(id);
     return id;
+  };
+
+  // ── SymbolAutoReveal helpers ──────────────────────────────────────────────
+  const getSidebarTarget = (symbolId) => {
+    const el = document.getElementById(`sidebar-${symbolId}`);
+    if (!el) return { x: 220, y: 0 };
+    const r = el.getBoundingClientRect();
+    return { x: (r.left + r.width / 2) - (window.innerWidth / 2), y: (r.top + r.height / 2) - (window.innerHeight / 2) };
+  };
+
+  const handleRevealComplete = (symbolId) => {
+    setRevealConfig(null);
+    if (symbolId === 'suryakoti') {
+      safeSetTimeout(() => {
+        sceneActions.updateState({
+          phase: CAVE_PHASES.DOOR2_ACTIVE,
+          learnedWords: { ...sceneState.learnedWords, suryakoti: { learned: true, scene: 2 } }
+        });
+      }, 950);
+    } else if (symbolId === 'samaprabha') {
+      safeSetTimeout(() => {
+        sceneActions.updateState({
+          phase: CAVE_PHASES.COMPLETE,
+          completed: true,
+          learnedWords: { suryakoti: { learned: true, scene: 2 }, samaprabha: { learned: true, scene: 2 } }
+        });
+        setShowSparkle('final-fireworks');
+      }, 950);
+    }
   };
 
   const playAudio = (audioPath, volume = 1.0) => {
@@ -475,7 +523,7 @@ const SuryakotiSceneContent = ({
         }
       });
 
-      setTimeout(() => setShowDiscoveryFlip1(true), 500);
+      setTimeout(() => setRevealConfig({ symbolId: 'suryakoti', symbolImage: suryakotiSymbol, symbolName: 'Suryakoti', affirmation: 'I shine bright.', sidebarTarget: getSidebarTarget('suryakoti') }), 500);
       return;
     }
 
@@ -490,7 +538,7 @@ const SuryakotiSceneContent = ({
         }
       });
 
-      setTimeout(() => setShowDiscoveryFlip2(true), 500);
+      setTimeout(() => setRevealConfig({ symbolId: 'samaprabha', symbolImage: samaprabhaSymbol, symbolName: 'Samaprabha', affirmation: 'I share my light.', sidebarTarget: getSidebarTarget('samaprabha') }), 500);
       return;
     }
 
@@ -572,7 +620,7 @@ const SuryakotiSceneContent = ({
 
         // ⚡️ ADD THIS: Force the overlay to open immediately
         setTimeout(() => {
-          setShowDiscoveryFlip1(true);
+          setRevealConfig({ symbolId: 'suryakoti', symbolImage: suryakotiSymbol, symbolName: 'Suryakoti', affirmation: 'I shine bright.', sidebarTarget: getSidebarTarget('suryakoti') });
         }, 500);
 
         return;
@@ -619,7 +667,7 @@ const SuryakotiSceneContent = ({
 
         // ⚡️ ADD THIS: Force the overlay to open immediately
         setTimeout(() => {
-          setShowDiscoveryFlip2(true);
+          setRevealConfig({ symbolId: 'samaprabha', symbolImage: samaprabhaSymbol, symbolName: 'Samaprabha', affirmation: 'I share my light.', sidebarTarget: getSidebarTarget('samaprabha') });
         }, 500);
 
         return;
@@ -1290,7 +1338,7 @@ const SuryakotiSceneContent = ({
 
     safeSetTimeout(() => {
       setTimeout(() => {
-        setShowDiscoveryFlip1(true);  // ✅ Trigger discovery overlay
+        setRevealConfig({ symbolId: 'suryakoti', symbolImage: suryakotiSymbol, symbolName: 'Suryakoti', affirmation: 'I shine bright.', sidebarTarget: getSidebarTarget('suryakoti') });  // ✅ Trigger discovery overlay
       }, 1500);
     }, 500);
   };
@@ -1413,12 +1461,13 @@ const SuryakotiSceneContent = ({
 
     safeSetTimeout(() => {
       setTimeout(() => {
-        setShowDiscoveryFlip2(true);  // ✅ Trigger discovery overlay
+        setRevealConfig({ symbolId: 'samaprabha', symbolImage: samaprabhaSymbol, symbolName: 'Samaprabha', affirmation: 'I share my light.', sidebarTarget: getSidebarTarget('samaprabha') });  // ✅ Trigger discovery overlay
       }, 1500);
     }, 500);
   };
 
   const handleSunClick = (sunIndex) => {
+    resetIdle();
     if (showResumePopup) {
       setShowResumePopup(false);
       if (resumePopupTimeoutRef.current) {
@@ -1606,6 +1655,7 @@ const SuryakotiSceneContent = ({
   };
 
   const handleHintButtonClick = () => {
+    resetIdle();
     console.log("Cave hint button clicked");
   };
 
@@ -1622,6 +1672,8 @@ const SuryakotiSceneContent = ({
       >
         <div className="pond-scene-container" data-phase={sceneState.phase}>
           <HomeButton onNavigate={onNavigate} />
+          <ZoneBadgeButton zoneId="cave-of-secrets" onBack={() => onNavigate?.('zone-welcome')} />
+          <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
           {/* GRADUAL BACKGROUND BLENDING */}
           <div className="pond-background" style={{ position: 'relative', width: '100%', height: '100%' }}>
 
@@ -2190,6 +2242,7 @@ const SuryakotiSceneContent = ({
                     return (
                       <div
                         key={sunIndex}
+                        ref={sunIndex === 1 ? primaryRef : null}
                         className={`healing-sun healing-sun-${sunIndex}`}
                         onClick={() => handleSunClick(sunIndex)}
                         style={{ cursor: isUsed ? 'default' : 'pointer' }}
@@ -2207,6 +2260,8 @@ const SuryakotiSceneContent = ({
                       </div>
                     );
                   })}
+
+                  <IdleHint isIdle={isIdle} targetRef={primaryRef} gesturePosition="above" />
 
                   {/* 3 Children - Show scared or happy face */}
                   {(() => {
@@ -2833,34 +2888,39 @@ const SuryakotiSceneContent = ({
 
             {/* Final Fireworks */}
             {showSparkle === 'final-fireworks' && (
-              <Fireworks
-                show={true}
-                duration={8000}
-                count={25}
-                colors={['#FFD700', '#FF8C00', '#FFA500', '#DAA520', '#B8860B']}
-                onComplete={() => {
-                  console.log('🎯 Suryakoti fireworks complete');
-                  setShowSparkle(null);
+              <>
+                <FireworksCompletion
+                  show={showSparkle === 'final-fireworks'}
+                  showCard={false}
+                />
+                <CalmGoldenFireworks
+                  show={showSparkle === 'final-fireworks'}
+                  particles={14}
+                  duration={3500}
+                  onComplete={() => {
+                    console.log('🎯 Suryakoti fireworks complete');
+                    setShowSparkle(null);
 
-                  const profileId = localStorage.getItem('activeProfileId');
-                  if (profileId) {
-                    GameStateManager.saveGameState('cave-of-secrets', 'suryakoti-samaprabha', {
-                      completed: true,
-                      stars: 8,
-                      sanskritWords: { suryakoti: true, samaprabha: true },
-                      learnedWords: sceneState.learnedWords || {},  // ← ADD THIS
-                      phase: 'complete',
-                      timestamp: Date.now()
-                    });
+                    const profileId = localStorage.getItem('activeProfileId');
+                    if (profileId) {
+                      GameStateManager.saveGameState('cave-of-secrets', 'suryakoti-samaprabha', {
+                        completed: true,
+                        stars: 8,
+                        sanskritWords: { suryakoti: true, samaprabha: true },
+                        learnedWords: sceneState.learnedWords || {},  // ← ADD THIS
+                        phase: 'complete',
+                        timestamp: Date.now()
+                      });
 
-                    localStorage.removeItem(`temp_session_${profileId}_cave-of-secrets_suryakoti-samaprabha`);
-                    SimpleSceneManager.clearCurrentScene();
-                    console.log('✅ SURYAKOTI: Completion saved and temp session cleared');
-                  }
+                      localStorage.removeItem(`temp_session_${profileId}_cave-of-secrets_suryakoti-samaprabha`);
+                      SimpleSceneManager.clearCurrentScene();
+                      console.log('✅ SURYAKOTI: Completion saved and temp session cleared');
+                    }
 
-                  setShowSceneCompletion(true);
-                }}
-              />
+                    setShowSceneCompletion(true);
+                  }}
+                />
+              </>
             )}
 
             {/* ==================== DISCOVERY 1: SURYAKOTI (Million Suns) ==================== */}
@@ -2931,6 +2991,19 @@ const SuryakotiSceneContent = ({
                 showSparkles={true}
               />
             )}
+            {/* ── SymbolAutoReveal ── */}
+            {revealConfig && (
+              <SymbolAutoReveal
+                key={revealConfig.symbolId}
+                symbolId={revealConfig.symbolId}
+                symbolImage={revealConfig.symbolImage}
+                symbolName={revealConfig.symbolName}
+                affirmation={revealConfig.affirmation}
+                sidebarTargetRect={revealConfig.sidebarTarget}
+                onComplete={() => handleRevealComplete(revealConfig.symbolId)}
+              />
+            )}
+
             {/* ==================== RESUME POPUP ==================== */}
             {showResumePopup && (
               <div style={{
@@ -3076,8 +3149,8 @@ const SuryakotiSceneContent = ({
                 }}
                 onHelp={() => console.log('Show help')}
                 onParentMenu={() => console.log('Parent menu')}
-                isAudioOn={true}
-                onAudioToggle={() => console.log('Toggle audio')}
+                isAudioOn={isAudioOn}
+                onAudioToggle={toggleAudio}
                 onZonesClick={() => {
                   onNavigate?.('zones');
                 }}

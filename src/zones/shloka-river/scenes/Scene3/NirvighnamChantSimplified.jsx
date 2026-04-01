@@ -2,8 +2,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './NirvighnamChantSimplified.css';
 // ... existing imports
-import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
+// import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay'; // ← superseded by SymbolAutoReveal
 import OpeningModal from '../../../shared/components/OpeningModal';
+import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
+import useIdleNudge from '../../../../lib/hooks/useIdleNudge';
+import IdleHint from '../../../../lib/components/idle/IdleHint';
 
 // Import scene management components
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
@@ -14,12 +17,15 @@ import { useGameCoach } from '../../../../lib/components/coach/GameCoach';
 import ProgressManager from '../../../../lib/services/ProgressManager';
 import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
 import HomeButton from '../../../../lib/components/ui/HomeButton';
+import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
+import AudioToggle from '../../../../lib/components/ui/AudioToggle';
 import mooshikaCoach from "./assets/images/mooshika-coach.png";
 
 // UI Components
 import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
-import Fireworks from '../../../../lib/components/feedback/Fireworks';
+import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
+import CalmGoldenFireworks from '../../../../lib/components/feedback/CalmGoldenFireworks';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 
 // Import the thin wrapper game components
@@ -35,6 +41,8 @@ import ProgressiveHintSystem from '../../../../lib/components/interactive/Progre
 import SaveAnimalMission from '../../../../lib/components/missions/SaveAnimalMission';
 import BackToMapButton from '../../../../lib/components/navigation/BackToMapButton';
 import SanskritWordMission from '../../shared/SanskritWordMission';
+import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
+import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
 
 
 
@@ -299,7 +307,15 @@ const [showPowerModal, setShowPowerModal] = useState(false);
 
   const [showKurumedevaStory, setShowKurumedevaStory] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [isAudioOn, setIsAudioOn] = useState(true);
+  const { isAudioOn, toggleAudio } = useAudioPreference();
+  const primaryRef = useRef(null);
+  const { isIdle, resetIdle } = useIdleNudge(20000);
+  // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
+  const { startIdleTimer, stopIdleTimer, setCurrentPhase } = useVoiceGuidance(
+    zoneId, sceneId, { enableMusic: false, idleTimeout: 20 }
+  );
+  useEffect(() => { startIdleTimer(); return () => stopIdleTimer(); }, [startIdleTimer, stopIdleTimer]);
+  useEffect(() => { setCurrentPhase(sceneState?.phase ?? null); }, [sceneState?.phase, setCurrentPhase]);
 
      const [forceMemoryGameReset, setForceMemoryGameReset] = useState(false); // ADD THIS LINE
     const [rescuePhase, setRescuePhase] = useState('problem');
@@ -312,8 +328,10 @@ const [showPowerModal, setShowPowerModal] = useState(false);
   const [modeSelected, setModeSelected] = useState(false); // Prevent loops
 
   // Add with other useState hooks
-const [showDiscoveryFlip1, setShowDiscoveryFlip1] = useState(false);
-const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false);
+const [showDiscoveryFlip1, setShowDiscoveryFlip1] = useState(false); // kept for reload-guard compat
+const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false); // kept for reload-guard compat
+  // ── SymbolAutoReveal state ──────────────────────────────────────────────
+  const [revealConfig, setRevealConfig] = useState(null);
   const reloadHandledRef = useRef(false);
 
 
@@ -322,6 +340,35 @@ const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false);
     const id = setTimeout(callback, delay);
     timeoutsRef.current.push(id);
     return id;
+  };
+
+  // ── SymbolAutoReveal helpers ──────────────────────────────────────────────
+  const getSidebarTarget = (symbolId) => {
+    const el = document.getElementById(`sidebar-${symbolId}`);
+    if (!el) return { x: 220, y: 0 };
+    const r = el.getBoundingClientRect();
+    return {
+      x: (r.left + r.width / 2) - (window.innerWidth / 2),
+      y: (r.top + r.height / 2) - (window.innerHeight / 2)
+    };
+  };
+
+  const handleRevealComplete = (symbolId) => {
+    setRevealConfig(null);
+    if (symbolId === 'nirvighnam') {
+      safeSetTimeout(() => {
+        sceneActions.updateState({ phase: PHASES.KURUMEDEVA_GAME_ACTIVE });
+        setTimeout(() => {
+          setModeForPhase('kurumedeva');
+          setShowModeSelection(true);
+          setModeSelected(false);
+        }, 500);
+      }, 950);
+    } else if (symbolId === 'kurumedeva') {
+      safeSetTimeout(() => {
+        setShowSparkle('final-fireworks');
+      }, 950);
+    }
   };
 
   const playAudio = (audioPath, volume = 1.0) => {
@@ -372,22 +419,16 @@ const playWord = (word) => {
   playAudio(`/audio/words/${word}.mp3`);
 };
 
-  const toggleAudio = () => {
-    const newAudioState = !isAudioOn;
-    setIsAudioOn(newAudioState);
-    
-    // Save preference to localStorage
-    localStorage.setItem('sanskritGameAudio', newAudioState.toString());
-    
-    // Stop all currently playing audio if muting
-    if (!newAudioState) {
+  const handleAudioToggle = () => {
+    const nextOn = !isAudioOn;
+    if (!nextOn) {
       document.querySelectorAll('audio').forEach(audio => {
         audio.pause();
         audio.currentTime = 0;
       });
     }
-    
-    console.log(`Audio ${newAudioState ? 'enabled' : 'muted'}`);
+    toggleAudio();
+    console.log(`Audio ${nextOn ? 'enabled' : 'muted'}`);
   };
 
   useEffect(() => {
@@ -423,14 +464,6 @@ useEffect(() => {
 }, [sceneState.phase, sceneState.completed, showSceneCompletion, showSparkle]);
 
 
-  // Load audio preference on component mount
-  useEffect(() => {
-    const savedAudioPreference = localStorage.getItem('sanskritGameAudio');
-    if (savedAudioPreference !== null) {
-      setIsAudioOn(savedAudioPreference === 'true');
-    }
-  }, []);
-
 
 // ==================== RELOAD LOGIC ====================
 
@@ -461,15 +494,15 @@ useEffect(() => {
     }
     // -----------------------------------------------------
 
-    // Discovery 1
+    // Discovery 1 — restored via SymbolAutoReveal
     if (sceneState.phase === PHASES.NIRVIGHNAM_LEARNING) {
-      setTimeout(() => setShowDiscoveryFlip1(true), 500);
+      setTimeout(() => setRevealConfig({ symbolId: 'nirvighnam', symbolImage: symbolNirvighnam, symbolName: 'Nirvighnam', affirmation: 'I clear the way.', sidebarTarget: getSidebarTarget('nirvighnam') }), 500);
       return;
     }
 
-    // Discovery 2
+    // Discovery 2 — restored via SymbolAutoReveal
     if (sceneState.phase === PHASES.KURUMEDEVA_LEARNING) {
-      setTimeout(() => setShowDiscoveryFlip2(true), 500);
+      setTimeout(() => setRevealConfig({ symbolId: 'kurumedeva', symbolImage: symbolKurumedeva, symbolName: 'Kurumedeva', affirmation: 'I like to help.', sidebarTarget: getSidebarTarget('kurumedeva') }), 500);
       return;
     }
 
@@ -676,9 +709,9 @@ const handlePhaseComplete = (phase) => {
 
       playWord('nirvighnam');
 
-      // 3. Trigger Discovery Overlay 1
+      // 3. Trigger SymbolAutoReveal (replaces SimpleDiscoveryOverlay)
       safeSetTimeout(() => {
-        setShowDiscoveryFlip1(true);
+        setRevealConfig({ symbolId: 'nirvighnam', symbolImage: symbolNirvighnam, symbolName: 'Nirvighnam', affirmation: 'I clear the way.', sidebarTarget: getSidebarTarget('nirvighnam') });
       }, 1500);
 
     } else if (phase === 'kurumedeva') {
@@ -702,9 +735,9 @@ const handlePhaseComplete = (phase) => {
       setNirvighnamPowerGained(true);
       playWord('kurumedeva');
       
-      // 3. Trigger Discovery Overlay 2
+      // 3. Trigger SymbolAutoReveal (replaces SimpleDiscoveryOverlay)
       safeSetTimeout(() => {
-        setShowDiscoveryFlip2(true);
+        setRevealConfig({ symbolId: 'kurumedeva', symbolImage: symbolKurumedeva, symbolName: 'Kurumedeva', affirmation: 'I like to help.', sidebarTarget: getSidebarTarget('kurumedeva') });
       }, 1500);
     }
   };
@@ -764,6 +797,7 @@ const handleContinueLearning = () => {
 };
 
   const handleAppClick = (appType) => {
+    resetIdle();
     setCurrentPracticeWord(appType);
     setShowAudioPractice(true);
   };
@@ -1013,6 +1047,7 @@ sceneActions.updateState({
   };
 
   const handleHintButtonClick = () => {
+    resetIdle();
     console.log("Sacred hint button clicked");
   };
 
@@ -1027,6 +1062,8 @@ sceneActions.updateState({
         
         <div className="nirvighnam-chant-container">
           <HomeButton onNavigate={onNavigate} />
+          <ZoneBadgeButton zoneId="shloka-river" onBack={() => onNavigate?.('zone-welcome')} />
+          <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
 
 <div 
   className="river-background" 
@@ -1041,7 +1078,7 @@ sceneActions.updateState({
 {/* ⭐ NIRVIGHNAM GAME - Scene-controlled mode */}
 <NirvighnamGame
   isActive={sceneState.phase === PHASES.NIRVIGHNAM_GAME_ACTIVE}
-hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || showMission}
+hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || !!revealConfig || showMission}
   onPhaseComplete={handlePhaseComplete}
   onGameComplete={handleGameComplete}
   profileName={profileName}
@@ -1081,7 +1118,7 @@ hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || showMission}
 {/* ⭐ KURUMEDEVA GAME - Scene-controlled mode */}
 <KurumeDevaGame
   isActive={sceneState.phase === PHASES.KURUMEDEVA_GAME_ACTIVE}
-hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || showMission}
+hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || !!revealConfig || showMission}
   onPhaseComplete={handlePhaseComplete}
   onGameComplete={handleGameComplete}
   profileName={profileName}
@@ -1271,75 +1308,21 @@ hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || showMission}
               </div>
             )}
 
-            {/* ==================== DISCOVERY 1: NIRVIGHNAM (Clearing Obstacles) ==================== */}
-{showDiscoveryFlip1 && (
-  <SimpleDiscoveryOverlay
-    celebrationTitle="Nirvighnam Chanted!"
-    celebrationText={
-      <>
-        You moved the rocks and helped the animals!
-        <br /><br />
-        Nir-vigh-nam means clearing blocks from the path.
-      </>
-    }
-    celebrationImage={appNirvighnam}
-    
-    powerTitle="I Clear the Way!"
-    powerText="When something feels stuck, you don't give up. You find a way forward."
-    powerIcon={appNirvighnam}
-    
-    buttonText="What Is My Power?"
-    onComplete={() => {
-      console.log("Discovery 1: Nirvighnam complete!");
-      setShowDiscoveryFlip1(false);
-      
-      // Update sidebar + set phase for NEXT game
-      sceneActions.updateState({ 
-        phase: PHASES.KURUMEDEVA_GAME_ACTIVE,
-        unlockedApps: { ...sceneState.unlockedApps, nirvighnam: true }
-      });
-            
-      // Trigger mode selection for next game
-      setTimeout(() => {
-        setModeForPhase('kurumedeva');
-        setShowModeSelection(true);
-        setModeSelected(false);
-      }, 500);
-    }}
-    showSparkles={true}
-  />
-)}
+            {/* ── SimpleDiscoveryOverlay COMMENTED OUT — superseded by SymbolAutoReveal ──
+{showDiscoveryFlip1 && ( <SimpleDiscoveryOverlay celebrationTitle="Nirvighnam Chanted!" ... /> )}
+{showDiscoveryFlip2 && ( <SimpleDiscoveryOverlay celebrationTitle="Kurumedeva Chanted!" ... /> )}
+── End SimpleDiscoveryOverlay ── */}
 
-{/* ==================== DISCOVERY 2: KURUMEDEVA (Helping Actions) ==================== */}
-{showDiscoveryFlip2 && (
-  <SimpleDiscoveryOverlay
-    celebrationTitle="Kurumedeva Chanted!"
-    celebrationText={
-      <>
-        The temple looks beautiful!
-        <br /><br />
-        Ku-ru-me-de-va means turning good thoughts into helpful actions.
-      </>
-    }
-    celebrationImage={appKurumedeva}
-    
-    powerTitle="I Like to Help!"
-    powerText="You help with your hands and your heart. You make things better just by helping."
-    powerIcon={appKurumedeva}
-    
-    buttonText="Feel My Power!"
-    onComplete={() => {
-      console.log("Discovery 2: Kurumedeva complete!");
-      setShowDiscoveryFlip2(false);
-      
-      // Update sidebar
-      sceneActions.updateState({ 
-        unlockedApps: { ...sceneState.unlockedApps, kurumedeva: true }
-      });
-
- setShowSparkle('final-fireworks');
-    }}
-    showSparkles={true}
+{/* ── SymbolAutoReveal (replaces SimpleDiscoveryOverlay) ── */}
+{revealConfig && (
+  <SymbolAutoReveal
+    key={revealConfig.symbolId}
+    symbolId={revealConfig.symbolId}
+    symbolImage={revealConfig.symbolImage}
+    symbolName={revealConfig.symbolName}
+    affirmation={revealConfig.affirmation}
+    sidebarTargetRect={revealConfig.sidebarTarget}
+    onComplete={() => handleRevealComplete(revealConfig.symbolId)}
   />
 )}
 
@@ -1359,23 +1342,28 @@ hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || showMission}
   }}
 />
 
-<AppSidebar 
-  unlockedApps={{
-    vakratunda: true,      // From Scene 1
-    mahakaya: true,        // From Scene 1
-    suryakoti: true,       // From Scene 2
-    samaprabha: true,      // From Scene 2
-    ...(sceneState.unlockedApps || {})  // nirvighnam, kurumedeva
-  }}
-  onAppClick={(app) => {
-    setCurrentPracticeWord(app.id);
-    setShowAudioPractice(true);
-  }}
-  isReload={isReload}
-  onSaveAppState={(appState) => {
-    sceneActions.updateState({ unlockedApps: appState });
-  }}
-/>
+<div ref={primaryRef}>
+  <AppSidebar 
+    unlockedApps={{
+      vakratunda: true,      // From Scene 1
+      mahakaya: true,        // From Scene 1
+      suryakoti: true,       // From Scene 2
+      samaprabha: true,      // From Scene 2
+      ...(sceneState.unlockedApps || {})  // nirvighnam, kurumedeva
+    }}
+    onAppClick={(app) => {
+      resetIdle();
+      setCurrentPracticeWord(app.id);
+      setShowAudioPractice(true);
+    }}
+    isReload={isReload}
+    onSaveAppState={(appState) => {
+      sceneActions.updateState({ unlockedApps: appState });
+    }}
+  />
+</div>
+
+<IdleHint isIdle={isIdle} targetRef={primaryRef} gesturePosition="above" />
 
        {/* 5-SECOND WORD CELEBRATION 
 {showCenteredWord && (
@@ -1576,43 +1564,48 @@ onClick={() => {
 
 {/* ✅ FIREWORKS: Save & Cleanup (Enables Replay) */}
 {showSparkle === 'final-fireworks' && (
-  <Fireworks
-    show={true}
-    duration={8000}
-    count={25}
-    colors={['#FFD700', '#FF8C00', '#FFA500', '#DAA520', '#B8860B']}
-    onComplete={() => {
-      console.log('🎯 Nirvighnam chant fireworks complete');
-      setShowSparkle(null);
-      
-      const profileId = localStorage.getItem('activeProfileId');
-      if (profileId) {
-        const finalChants = { 
-          'nirvighnam-chant': true, 
-          'kurumedeva-chant': true 
-        };
-
-        // 1. Save to GameStateManager
-        GameStateManager.saveGameState('shloka-river', 'nirvighnam-chant', {
-          completed: true,
-          stars: 5,
-          syllables: sceneState?.learnedSyllables || {},
-          words: sceneState?.learnedWords || {},
-          unlocked: sceneState?.unlockedApps || {},
-          chantedVerses: finalChants, // ✅ Save Chants
-          phase: 'complete',
-          timestamp: Date.now()
-        });
+  <>
+    <FireworksCompletion
+      show={showSparkle === 'final-fireworks'}
+      showCard={false}
+    />
+    <CalmGoldenFireworks
+      show={showSparkle === 'final-fireworks'}
+      particles={14}
+      duration={3500}
+      onComplete={() => {
+        console.log('🎯 Nirvighnam chant fireworks complete');
+        setShowSparkle(null);
         
-        // 2. Clear Session (REQUIRED for "Replay" button to show)
-        localStorage.removeItem(`temp_session_${profileId}_shloka-river_nirvighnam-chant`);
-        SimpleSceneManager.clearCurrentScene();
-        console.log('✅ nirvighnam chant: Completion saved and temp session cleared');
-      }
-      
-      setShowSceneCompletion(true);
-    }}
-  />
+        const profileId = localStorage.getItem('activeProfileId');
+        if (profileId) {
+          const finalChants = { 
+            'nirvighnam-chant': true, 
+            'kurumedeva-chant': true 
+          };
+
+          // 1. Save to GameStateManager
+          GameStateManager.saveGameState('shloka-river', 'nirvighnam-chant', {
+            completed: true,
+            stars: 5,
+            syllables: sceneState?.learnedSyllables || {},
+            words: sceneState?.learnedWords || {},
+            unlocked: sceneState?.unlockedApps || {},
+            chantedVerses: finalChants, // ✅ Save Chants
+            phase: 'complete',
+            timestamp: Date.now()
+          });
+          
+          // 2. Clear Session (REQUIRED for "Replay" button to show)
+          localStorage.removeItem(`temp_session_${profileId}_shloka-river_nirvighnam-chant`);
+          SimpleSceneManager.clearCurrentScene();
+          console.log('✅ nirvighnam chant: Completion saved and temp session cleared');
+        }
+        
+        setShowSceneCompletion(true);
+      }}
+    />
+  </>
 )}
           
 {/* ✅ CELEBRATION: Double-Lock Save on Continue */}
@@ -1766,8 +1759,8 @@ onClick={() => {
             }}
             onHelp={() => console.log('Show help')}
             onParentMenu={() => console.log('Parent menu')}
-            isAudioOn={true}
-            onAudioToggle={() => console.log('Toggle audio')}
+            isAudioOn={isAudioOn}
+            onAudioToggle={handleAudioToggle}
             onZonesClick={() => {
               if (hideCoach) hideCoach();
               if (clearManualCloseTracking) clearManualCloseTracking();

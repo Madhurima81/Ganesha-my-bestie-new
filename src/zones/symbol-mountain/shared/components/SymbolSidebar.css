@@ -21,7 +21,7 @@
   justify-content: center;
   align-items: center;
   gap: 22px;
-  width: clamp(110px, 8vw, 140px);
+  width: clamp(110px, 8vw, 200px);
   padding: 20px 16px;
 
   background: #F6EFD8;
@@ -33,8 +33,8 @@
 }
 /* Individual icons */
 .ganesha-icon {
-  width: clamp(72px, 6vw, 96px);
-  height: clamp(72px, 6vw, 96px);
+  width: clamp(72px, 6vw, 140px);
+  height: clamp(72px, 6vw, 140px);
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.22);
   background-size: 90%;

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useGameCoach } from "../coach/GameCoach";
 import './SceneCompletionCelebration.css';
 import '../../../zones/symbol-mountain/shared/components/SymbolSidebar.css';
 import GameStateManager from "../../services/GameStateManager";
@@ -7,7 +6,6 @@ import SanskritVoiceRecorder from '../audio/SanskritVoiceRecorder';
 import { applyCompletionScreenTheme } from "../../theme/CompletionScreenThemeAdapter";
 import { applyRecorderTheme } from "../../theme/RecorderThemeAdapter";
 import GaneshaPresence from '../character/GaneshaPresence';
-import GaneshaSceneWhisper from '../GaneshaSceneWhisper';
 
 const SceneCompletionCelebration = ({
   show = false,
@@ -16,12 +14,14 @@ const SceneCompletionCelebration = ({
   completionSubtitle = null,
   discoveredSymbols = [],
   symbolImages = {},
+  badgeImage = null,
   symbolData = {}, // { symbolId: { title, description } }
   nextSceneName = "Next Adventure",
   primaryAction = null, // NEW: { text, icon, onClick, subtext }
   onContinue,
   onReplay,
   onExploreZones,
+  onBackToMap,
   onHome,
   sceneId = 'pond',
   completionData = null,
@@ -92,6 +92,7 @@ const SceneCompletionCelebration = ({
 
   // Stamp temp session as completed when celebration shows.
   // This ensures "Continue Journey" navigates to zone-welcome (not back into the scene).
+  // Also saves to permanent storage (GameStateManager) so replay doesn't erase completion.
   useEffect(() => {
     if (!show || !sceneId || !resolvedZoneId) return;
     const profileId = localStorage.getItem('activeProfileId');
@@ -106,6 +107,17 @@ const SceneCompletionCelebration = ({
         phase: 'complete',
         timestamp: Date.now(),
       }));
+    } catch (e) {}
+
+    // Persist completion to permanent storage so it survives replay/refresh
+    try {
+      const saveData = {
+        completed: true,
+        stars: completionData?.stars || starsEarned || 3,
+        ...(completionData || {}),
+        phase: 'complete',
+      };
+      GameStateManager.saveGameState(resolvedZoneId, sceneId, saveData);
     } catch (e) {}
   }, [show, sceneId, resolvedZoneId]);
 
@@ -127,6 +139,7 @@ const handleAction = (callback, skipComplete = false) => {
       callback?.();
     }, 700);
   };
+  const handleExplore = onExploreZones || onBackToMap;
 
   if (!show) return null;
 
@@ -137,9 +150,17 @@ const handleAction = (callback, skipComplete = false) => {
       <div className="celebration-content">
         <div className="completion-ganesha-left" aria-hidden="true">
           <GaneshaPresence
+            className="completion-ganesha"
             pose="blessing"
-            size={450}
-            breathing="slow"
+            size={520}
+            breathing="gentle"
+            blink
+            style={{
+              width: 'min(520px, 100%)',
+              height: 'auto',
+              aspectRatio: '1 / 1',
+              flexShrink: 1,
+            }}
           />
         </div>
 
@@ -150,24 +171,21 @@ const handleAction = (callback, skipComplete = false) => {
           <div className="celebration-header">
             <div className="title-text">{completionTitle || '🌟 You Did It!'}</div>
             <div className="subtitle-text">{completionSubtitle || `${sceneName} is glowing because of you!`}</div>
-            {/* Scene Bridge Whisper — Ganesha speaks before child moves on */}
-            <div style={{ marginTop: '0.75rem' }}>
-              <GaneshaSceneWhisper
-                type="scene-bridge"
-                sceneId={`${sceneId}-complete`}
-                childName={childName !== 'Little Explorer' ? childName : ''}
-                childAge={7}
-                autoPlay={true}
-                size="medium"
-              />
-            </div>
           </div>
 
           <div className="celebration-body">
 
             {/* Symbol/App Trophy Row */}
             <div className="celebration-image-section">
-              {containerType === 'backpack' && symbolsInContainer.length > 0 ? (
+              {badgeImage ? (
+                <div className="completion-badge-holder">
+                  <img
+                    src={badgeImage}
+                    alt={`${sceneName} badge`}
+                    className="completion-badge completion-badge-img"
+                  />
+                </div>
+              ) : containerType === 'backpack' && symbolsInContainer.length > 0 ? (
                 <>
                   <div className="trophy-symbols-row">
                     {symbolsInContainer.map((symbol, index) => (
@@ -272,7 +290,7 @@ const handleAction = (callback, skipComplete = false) => {
                       {/* 2nd tier: Explore Scenes */}
                       <button
                         className="celebration-btn celebration-btn-teal"
-                        onClick={() => handleAction(onExploreZones)}
+                        onClick={() => handleAction(handleExplore)}
                       >
                         Explore Scenes
                       </button>
@@ -307,7 +325,7 @@ const handleAction = (callback, skipComplete = false) => {
                       </button>
                       <button
                         className="celebration-btn celebration-btn-teal"
-                        onClick={() => handleAction(onExploreZones)}
+                        onClick={() => handleAction(handleExplore)}
                       >
                         Back to Zone
                       </button>
@@ -318,7 +336,7 @@ const handleAction = (callback, skipComplete = false) => {
                 <>
                   <button
                     className="celebration-btn celebration-btn-orange"
-                    onClick={() => handleAction(onExploreZones)}
+                    onClick={() => handleAction(handleExplore)}
                   >
                     Explore Zones
                   </button>

@@ -2,7 +2,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import OpeningModal from '../../../shared/components/OpeningModal.jsx';
 import './SarvakaryeshuSarvada.css';
-import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
+// import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay'; // ← superseded by SymbolAutoReveal
+import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
+import useIdleNudge from '../../../../lib/hooks/useIdleNudge';
+import IdleHint from '../../../../lib/components/idle/IdleHint';
 import ganeshaCharacterCave from './assets/images/ganesha-character-cave.png';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../../lib/config/content/openingModals';
@@ -21,10 +24,15 @@ import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
 import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
 import CulturalCelebrationModal from '../../../../lib/components/progress/CulturalCelebrationModal';
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
-import Fireworks from '../../../../lib/components/feedback/Fireworks';
+import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
+import CalmGoldenFireworks from '../../../../lib/components/feedback/CalmGoldenFireworks';
 import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import HomeButton from '../../../../lib/components/ui/HomeButton';
+import AudioToggle from '../../../../lib/components/ui/AudioToggle';
+import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
+import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
+import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
 
 // Scene-specific components
 import SymbolSidebar from '../../components/SymbolSidebar';
@@ -598,6 +606,15 @@ const SarvakaryeshuSarvadaContent = ({
     getSceneResetConfig('sarvakaryeshu-sarvada')
   );
   const completionModalContent = getCompletionModal(zoneId, sceneId);
+  const { isAudioOn, toggleAudio } = useAudioPreference();
+  const primaryRef = useRef(null);
+  const { isIdle, resetIdle } = useIdleNudge(20000);
+  // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
+  const { startIdleTimer, stopIdleTimer, setCurrentPhase } = useVoiceGuidance(
+    zoneId, sceneId, { enableMusic: false, idleTimeout: 20 }
+  );
+  useEffect(() => { startIdleTimer(); return () => stopIdleTimer(); }, [startIdleTimer, stopIdleTimer]);
+  useEffect(() => { setCurrentPhase(sceneState?.phase ?? null); }, [sceneState?.phase, setCurrentPhase]);
 
   // State management
   const [showSparkle, setShowSparkle] = useState(null);
@@ -626,8 +643,11 @@ const SarvakaryeshuSarvadaContent = ({
   const game2HelperSelectedRef = useRef(false);  // Track if ANY helper selected
   const game2ProcessingHelperRef = useRef(null); // Track which helper is processing
 
-  const [showDiscoveryFlip1, setShowDiscoveryFlip1] = useState(false);
-  const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false);
+  // Discovery overlay states — superseded by SymbolAutoReveal
+  const [showDiscoveryFlip1, setShowDiscoveryFlip1] = useState(false); // kept for guard compat
+  const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false); // kept for guard compat
+  // ── SymbolAutoReveal state ─────────────────────────────────────────────────
+  const [revealConfig, setRevealConfig] = useState(null);
   const [showResumePopup, setShowResumePopup] = useState(false);
   const [resumeMessage, setResumeMessage] = useState('');
   const resumePopupTimeoutRef = useRef(null);
@@ -852,6 +872,35 @@ const SarvakaryeshuSarvadaContent = ({
     return id;
   };
 
+  // ── SymbolAutoReveal helpers ──────────────────────────────────────────────
+  const getSidebarTarget = (symbolId) => {
+    const el = document.getElementById(`sidebar-${symbolId}`);
+    if (!el) return { x: 220, y: 0 };
+    const r = el.getBoundingClientRect();
+    return { x: (r.left + r.width / 2) - (window.innerWidth / 2), y: (r.top + r.height / 2) - (window.innerHeight / 2) };
+  };
+
+  const handleRevealComplete = (symbolId) => {
+    setRevealConfig(null);
+    if (symbolId === 'sarvakaryeshu') {
+      safeSetTimeout(() => {
+        sceneActions.updateState({
+          phase: SCENE_PHASES.DOOR2_ACTIVE,
+          learnedWords: { ...sceneState.learnedWords, sarvakaryeshu: { learned: true, scene: 4 } }
+        });
+      }, 950);
+    } else if (symbolId === 'sarvada') {
+      safeSetTimeout(() => {
+        sceneActions.updateState({
+          phase: SCENE_PHASES.COMPLETE,
+          completed: true,
+          learnedWords: { sarvakaryeshu: { learned: true, scene: 4 }, sarvada: { learned: true, scene: 4 } }
+        });
+        setShowSparkle('final-fireworks');
+      }, 950);
+    }
+  };
+
   const playAudio = (audioPath, volume = 1.0) => {
     try {
       const audio = new Audio(audioPath);
@@ -966,6 +1015,7 @@ const SarvakaryeshuSarvadaContent = ({
 
   // After character selection, show Ganesha message
   const handleCharacterSelect = (character) => {
+    resetIdle();
     setShowSparkle('character-selected');
     sceneActions.updateState({
       selectedCharacter: character,
@@ -1027,6 +1077,7 @@ const SarvakaryeshuSarvadaContent = ({
   };
 
   const handleSymbolClick = (symbolId, isWise) => {
+    resetIdle();
     if (showResumePopup) {
       setShowResumePopup(false);
       if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
@@ -1181,7 +1232,7 @@ const SarvakaryeshuSarvadaContent = ({
 
     // ✅ Trigger Discovery 1
     safeSetTimeout(() => {
-      setShowDiscoveryFlip1(true);
+      setRevealConfig({ symbolId: 'sarvakaryeshu', symbolImage: sarvakaryeshuSymbol, symbolName: 'Sarvakaryeshu', affirmation: 'I can do things.', sidebarTarget: getSidebarTarget('sarvakaryeshu') });
     }, 1500);
   };
 
@@ -1267,6 +1318,7 @@ const SarvakaryeshuSarvadaContent = ({
   };
 
   const handleHelperClick = (helperId) => {
+    resetIdle();
     if (showResumePopup) {
       setShowResumePopup(false);
       if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
@@ -1366,7 +1418,7 @@ const SarvakaryeshuSarvadaContent = ({
 
     // ✅ Trigger Discovery 2
     safeSetTimeout(() => {
-      setShowDiscoveryFlip2(true);
+      setRevealConfig({ symbolId: 'sarvada', symbolImage: sarvadaSymbol, symbolName: 'Sarvada', affirmation: 'I help always.', sidebarTarget: getSidebarTarget('sarvada') });
     }, 1500);
   };
 
@@ -1459,6 +1511,8 @@ const SarvakaryeshuSarvadaContent = ({
       <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
         <div className="scene-container" data-phase={sceneState.phase}>
           <HomeButton onNavigate={onNavigate} />
+          <ZoneBadgeButton zoneId="cave-of-secrets" onBack={() => onNavigate?.('zone-welcome')} />
+          <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
           <div className="scene-background" style={{ backgroundImage: `url(${sceneBackground})` }}>
 
             {/* ✅ OPENING SCREEN: Sarvakaryeshu Sarvada */}
@@ -1683,7 +1737,7 @@ const SarvakaryeshuSarvadaContent = ({
 
             {/* Door 1 */}
             {sceneState.phase === SCENE_PHASES.DOOR1_ACTIVE && (
-              <div className="door1-area">
+              <div className="door1-area" ref={primaryRef}>
                 <DoorComponent
                   syllables={['Sar', 'va', 'kar', 'yeshu']}
                   completedWord="Sarvakaryeshu"
@@ -1703,6 +1757,8 @@ const SarvakaryeshuSarvadaContent = ({
                 />
               </div>
             )}
+
+            <IdleHint isIdle={isIdle} targetRef={primaryRef} gesturePosition="above" />
 
             {/* Character Selection */}
             {sceneState.phase === SCENE_PHASES.CHARACTER_SELECT && (
@@ -2341,6 +2397,19 @@ const SarvakaryeshuSarvadaContent = ({
               />
             )}
 
+            {/* ── SymbolAutoReveal ── */}
+            {revealConfig && (
+              <SymbolAutoReveal
+                key={revealConfig.symbolId}
+                symbolId={revealConfig.symbolId}
+                symbolImage={revealConfig.symbolImage}
+                symbolName={revealConfig.symbolName}
+                affirmation={revealConfig.affirmation}
+                sidebarTargetRect={revealConfig.sidebarTarget}
+                onComplete={() => handleRevealComplete(revealConfig.symbolId)}
+              />
+            )}
+
             {/* ==================== RESUME POPUP ==================== */}
             {showResumePopup && (
               <div style={{
@@ -2400,11 +2469,14 @@ const SarvakaryeshuSarvadaContent = ({
                 </div>
 
                 {/* Fireworks Component */}
-                <Fireworks
-                  show={true}
-                  duration={8000}
-                  count={25}
-                  colors={['#FFD700', '#FF8C00', '#FFA500', '#DAA520', '#B8860B']}
+                <FireworksCompletion
+                  show={showSparkle === 'final-fireworks'}
+                  showCard={false}
+                />
+                <CalmGoldenFireworks
+                  show={showSparkle === 'final-fireworks'}
+                  particles={14}
+                  duration={3500}
                   onComplete={() => {
                     console.log('🎯 Sarvakaryeshu-Sarvada fireworks complete');
                     setShowSparkle(null);
@@ -2466,6 +2538,15 @@ const SarvakaryeshuSarvadaContent = ({
               nextSceneName="Cave of Secrets"
 
               sceneId="sarvakaryeshu-sarvada"
+              zoneId="cave-of-secrets"
+              completionData={{
+                completed: true,
+                stars: 8,
+                symbols: {},
+                sanskritWords: { sarvakaryeshu: true, sarvada: true },
+                learnedWords: sceneState?.learnedWords || {},
+                chants: { sarvakaryeshu: true, sarvada: true }
+              }}
               onComplete={onComplete}
               onReplay={() => {
                 setShowSceneCompletion(false);
@@ -2509,8 +2590,8 @@ const SarvakaryeshuSarvadaContent = ({
                 }}
                 onHelp={() => console.log('Show help')}
                 onParentMenu={() => console.log('Parent menu')}
-                isAudioOn={true}
-                onAudioToggle={() => console.log('Toggle audio')}
+                isAudioOn={isAudioOn}
+                onAudioToggle={toggleAudio}
                 onZonesClick={() => {
                   onNavigate?.('zones');
                 }}

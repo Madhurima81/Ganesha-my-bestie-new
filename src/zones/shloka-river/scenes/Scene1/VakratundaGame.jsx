@@ -35,10 +35,9 @@ const VakratundaGame = ({
   savedGameState,
   onSaveGameState,
 
-  // Voice Guidance - ⭐ NEW
   voiceGuidance,
-   // ⭐ ADD THIS: Receive the pause signal from the scene
-  isPaused 
+  isPaused,
+  onMicroWin,
 }) => {
 
   // Get Vakratunda config from your gameConfigs.js
@@ -83,9 +82,9 @@ const assetGetters = {
       savedGameState={savedGameState}
       onSaveGameState={onSaveGameState}
       gamePrefix="vakratunda"
-      voiceGuidance={voiceGuidance}        // ⭐ VOICE GUIDANCE
-            isPaused={isPaused} 
-
+      voiceGuidance={voiceGuidance}
+      isPaused={isPaused}
+      onMicroWin={onMicroWin}
     />
   );
 };

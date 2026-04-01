@@ -571,14 +571,14 @@ div[class*="modak-game-modak-collected"].modak-game-hint-glow {
    =========================== */
 @keyframes modak-game-moundSoftAttention {
   0%, 100% { filter: none; }
-  50%       { filter: drop-shadow(0 0 5px rgba(255, 200, 80, 0.28)); }
+  50%       { filter: drop-shadow(0 0 3px rgba(255, 200, 80, 0.18)); }
 }
 
 .modak-game-mud-mound .interactive-element {
   box-shadow: none !important;
 }
 .modak-game-mud-mound .interactive-element.new {
-  animation: modak-game-moundSoftAttention 3.5s ease-in-out infinite !important;
+  animation: modak-game-moundSoftAttention 6s ease-in-out infinite !important;
 }
 .modak-game-mud-mound .interactive-element.pressed {
   transform: scale(0.95) !important;

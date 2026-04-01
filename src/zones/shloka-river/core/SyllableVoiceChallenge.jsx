@@ -10,73 +10,59 @@ import './SyllableVoiceChallenge.css';
 // Rule: variants must sound phonetically similar — NOT just visually close.
 // "kra" ≠ "kar" (different consonant order), so "kar" is NOT a variant.
 const ACCEPTED_VARIANTS = {
-  // Vakratunda
-  va:   ['va', 'vaa', 'vah', 'waa', 'wah', 'vuh', 'wa'],
-  kra:  ['kra', 'kraa', 'krah', 'kraw', 'gra', 'graa', 'cra'],
-  tun:  ['tun', 'toon', 'tuhn', 'thun', 'tunn', 'tund', 'ton', 'dun', 'done', 'tuhnd'],
-  da:   ['da', 'daa', 'dah', 'duh', 'tha', 'dar', 'the', 'dhar', 'dur'],
-  // Mahakaya
-  ma:   ['ma', 'maa', 'mah', 'muh', 'mar', 'maa', 'ba', 'baa'],
-  ha:   ['ha', 'haa', 'hah', 'huh', 'har', 'her', 'huh', 'ah'],
-  ka:   ['ka', 'kaa', 'kah', 'gah', 'cah', 'car', 'kuh', 'cuh', 'gar', 'kar'],
-  ya:   ['ya', 'yaa', 'yah', 'yuh', 'yar', 'yeah', 'yea', 'ia'],
-  // Nirvighnam
-  nir:  ['nir', 'neer', 'near', 'neer', 'nur', 'nihr'],
-  vigh: ['vigh', 'vig', 'wig', 'veeg', 'vick'],
-  nam:  ['nam', 'naam', 'num', 'naum', 'nuhm'],
-  // Kurumedeva
-  ku:   ['ku', 'koo', 'coo', 'kuh'],
-  ru:   ['ru', 'roo', 'rue', 'ruh'],
-  me:   ['me', 'mee', 'may', 'meh'],
-  deva: ['deva', 'dayva', 'daiva', 'diva'],
-  // Suryakoti / Samaprabha
-  sur:  ['sur', 'soor', 'suur', 'ser', 'suhr'],
-  ko:   ['ko', 'koh', 'kow', 'go'],
-  ti:   ['ti', 'tee', 'tih', 'thee'],
+  // ── Single syllables ──────────────────────────────────────────────────────
+  // Rule: first consonant MUST match. No rhymes. Accent drift only.
+  va:   ['va', 'vaa', 'vah', 'vuh'],                        // removed: wa, waa, wah (w≠v for short match)
+  kra:  ['kra', 'kraa', 'krah', 'kraw'],                    // removed: gra, graa, cra (different consonant cluster)
+  tun:  ['tun', 'toon', 'tuhn', 'tunn', 'tund'],            // removed: dun, done, thun — rhymes
+  da:   ['da', 'daa', 'dah', 'duh', 'tha', 'dhar'],         // removed: the, dur, dar — too generic
+  ma:   ['ma', 'maa', 'mah', 'muh'],                        // removed: ba, baa — rhymes (b≠m)
+  ha:   ['ha', 'haa', 'hah', 'huh'],                        // removed: ah — too generic, matches everything
+  ka:   ['ka', 'kaa', 'kah', 'kuh', 'gah', 'gar'],         // kept: g≈k in many accents
+  ya:   ['ya', 'yaa', 'yah', 'yuh', 'yar'],                 // removed: yeah, yea (diphthong), ia
+  nir:  ['nir', 'neer', 'nihr', 'nur'],                     // removed: near (too English)
+  vigh: ['vigh', 'vig', 'veeg', 'vick'],                    // removed: wig (w≠v)
+  nam:  ['nam', 'naam', 'nuhm'],                            // removed: num, naum — too far
+  ku:   ['ku', 'koo', 'kuh'],                               // removed: coo (English word)
+  ru:   ['ru', 'roo', 'ruh'],                               // removed: rue (English word)
+  me:   ['me', 'mee', 'meh'],                               // removed: may (diphthong drift)
+  deva: ['deva', 'dayva', 'daiva'],                         // removed: diva (English, totally different)
+  sur:  ['sur', 'soor', 'suur', 'suhr'],                    // removed: ser (too far for short)
+  ko:   ['ko', 'koh', 'kow'],                               // removed: go (g≠k)
+  ti:   ['ti', 'tee', 'tih'],                               // removed: thee (th≠t)
   sa:   ['sa', 'saa', 'sah', 'suh'],
-  pra:  ['pra', 'praa', 'prah', 'fra'],
-  bha:  ['bha', 'bhaa', 'bah', 'baa', 'buh'],
-  // Sarvakaryeshu / Sarvada
-  sar:  ['sar', 'saar', 'saur', 'ser'],
-  kar:  ['kar', 'kaar', 'car', 'gar'],
-  ye:   ['ye', 'yeh', 'yay', 'yee'],
-  shu:  ['shu', 'shoo', 'shoe', 'chu'],
+  pra:  ['pra', 'praa', 'prah'],                            // removed: fra (f≠p)
+  bha:  ['bha', 'bhaa', 'bah', 'buh'],                      // removed: baa (too generic)
+  sar:  ['sar', 'saar', 'saur'],                            // removed: ser (too far)
+  kar:  ['kar', 'kaar', 'car'],                             // removed: gar (g≈k only for ka, not kar)
+  ye:   ['ye', 'yeh', 'yay'],                               // removed: yee (too far)
+  shu:  ['shu', 'shoo', 'shoe'],                            // removed: chu (ch≠sh)
 
-  // ── Full / partial words (lotus tap challenge) ────────────────────────────
-  // Vakratunda accumulations
-  vakra:         ['vakra', 'vak-ra', 'wacra', 'vackra', 'vakraa'],
-  vakratun:      ['vakratun', 'vakratoon', 'vakra-tun', 'vakratum', 'vakratan'],
-  vakratunda:    ['vakratunda', 'vakra-tunda', 'vakratunde', 'wacratunda', 'vakrathunda'],
-  // Mahakaya accumulations
-  maha:          ['maha', 'maa-ha', 'maha', 'maaha'],
-  mahaka:        ['mahaka', 'maha-ka', 'mahaaka', 'mahaga'],
-  mahakaya:      ['mahakaya', 'maha-kaya', 'mahakaia', 'mahakaia', 'mahakia'],
-  // Suryakoti accumulations
-  sur:           ['sur', 'sir', 'suur', 'seer', 'ser'],
-  surya:         ['surya', 'soorya', 'suriya', 'suuria', 'suria'],
-  suryako:       ['suryako', 'soorya-ko', 'suriako', 'suryagoh'],
-  suryakoti:     ['suryakoti', 'soorya-koti', 'suryakothy', 'suryakodi', 'surjakoti'],
-  // Samaprabha accumulations
-  sama:          ['sama', 'saa-ma', 'saama', 'sham-a'],
-  samapr:        ['samapr', 'sama-pr', 'samapra', 'shamapr'],
-  samapra:       ['samapra', 'sama-pra', 'shamapra'],
-  samaprabha:    ['samaprabha', 'sama-prabha', 'samaprava', 'shamaprabha', 'samaprabba'],
-  // Nirvighnam accumulations
-  nir:           ['nir', 'near', 'neer', 'ner', 'nur'],
+  // ── Accumulated / multi-syllable words ───────────────────────────────────
+  // These are longer — fuzzy Levenshtein still applies, so variants can be looser
+  vakra:         ['vakra', 'vak-ra', 'vakraa'],
+  vakratun:      ['vakratun', 'vakratoon', 'vakra-tun'],
+  vakratunda:    ['vakratunda', 'vakra-tunda', 'vakratunde', 'vakrathunda'],
+  maha:          ['maha', 'maa-ha', 'maaha'],
+  mahaka:        ['mahaka', 'maha-ka', 'mahaaka'],
+  mahakaya:      ['mahakaya', 'maha-kaya', 'mahakaia', 'mahakia'],
+  surya:         ['surya', 'soorya', 'suriya', 'suuria'],
+  suryako:       ['suryako', 'soorya-ko', 'suriako'],
+  suryakoti:     ['suryakoti', 'soorya-koti', 'suryakody', 'suryakodi'],
+  sama:          ['sama', 'saa-ma', 'saama'],
+  samapra:       ['samapra', 'sama-pra'],
+  samaprabha:    ['samaprabha', 'sama-prabha', 'samaprava', 'samaprabba'],
   nirvigh:       ['nirvigh', 'nir-vigh', 'nirvick', 'nirvig'],
-  nirvighnam:    ['nirvighnam', 'nir-vighnam', 'nirvignam', 'nirvignum', 'nirvignaam'],
-  // Kurumedeva accumulations
+  nirvighnam:    ['nirvighnam', 'nir-vighnam', 'nirvignam', 'nirvignum'],
   kuru:          ['kuru', 'koo-roo', 'kuroo', 'kuruu'],
-  kurume:        ['kurume', 'kuru-me', 'kurumay', 'kurumi'],
-  kurumedeva:    ['kurumedeva', 'kuru-medeva', 'kurumideva', 'kurumadeva', 'gurumideva'],
-  // Sarvakaryeshu accumulations
-  sarva:         ['sarva', 'sar-va', 'sarwa', 'saruva'],
-  sarvaka:       ['sarvaka', 'sarva-ka', 'sarvaga', 'sarwaka'],
-  sarvakar:      ['sarvakar', 'sarva-kar', 'sarvacar'],
-  sarvakary:     ['sarvakary', 'sarva-kary', 'sarvakare'],
+  kurume:        ['kurume', 'kuru-me', 'kurumay'],
+  kurumedeva:    ['kurumedeva', 'kuru-medeva', 'kurumideva', 'kurumadeva'],
+  sarva:         ['sarva', 'sar-va', 'sarwa'],
+  sarvaka:       ['sarvaka', 'sarva-ka', 'sarwaka'],
+  sarvakar:      ['sarvakar', 'sarva-kar'],
+  sarvakary:     ['sarvakary', 'sarva-kary'],
   sarvakaryeshu: ['sarvakaryeshu', 'sarva-karyeshu', 'sarvakarieshu', 'sarvakaryashu'],
-  // Sarvada accumulations
-  sarvada:       ['sarvada', 'sarva-da', 'sarvatha', 'sarwada'],
+  sarvada:       ['sarvada', 'sarva-da', 'sarwada'],
 };
 
 // ── Levenshtein distance ───────────────────────────────────────────────────
@@ -96,42 +82,47 @@ function levenshtein(a, b) {
 }
 
 // ── Phonetic matcher ───────────────────────────────────────────────────────
-// Thresholds are length-aware: short syllables (≤4 chars) need closer matches
-// because a 1-char error on "kra" is much bigger than on "vakratunda".
+// Short syllables (≤3 chars): exact variant match only — no fuzzy.
+// Levenshtein of 1 on a 2-char word = 50% error = rhyme territory.
+// Long syllables (4+ chars): fuzzy Levenshtein with tighter ratios.
 function matchSyllable(target, spokenText) {
   if (!spokenText || !spokenText.trim()) return 'notHeard';
 
   const normalize = s => s.toLowerCase().replace(/[^a-z]/g, '');
   const t = normalize(target);
-  const accepted = ACCEPTED_VARIANTS[t] || [t];
+  const accepted = (ACCEPTED_VARIANTS[t] || [t]).map(normalize);
+  const isShort = t.length <= 3; // va, kra, ma, ha, ko, ti etc.
 
-  // Build candidate list: individual words AND the space-stripped full string.
-  // Space-stripped handles Chrome splitting multi-syllable targets into words,
-  // e.g. "vakra tunda" → also test "vakratunda" against the target directly.
+  // Build candidates: individual words + space-collapsed string
   const rawWords = spokenText.toLowerCase().split(/\s+/).map(normalize).filter(Boolean);
-  const collapsed = rawWords.join(''); // "vakra tunda" → "vakratunda"
-  const candidates = collapsed !== rawWords.join('') || rawWords.length > 1
-    ? [...rawWords, collapsed]
-    : rawWords;
+  const collapsed = rawWords.join('');
+  const candidates = rawWords.length > 1 ? [...rawWords, collapsed] : rawWords;
 
+  // ── Phase 1: Exact variant match (all lengths) ────────────────────────
   for (const word of candidates) {
-    for (const variant of accepted) {
-      const v = normalize(variant);
-      if (word === v) return 'perfect';
-      if (levenshtein(word, v) <= 1) return 'perfect';
+    if (accepted.includes(word)) return 'perfect';
+  }
+
+  // ── Phase 2: Levenshtein ≤1 — only for long syllables ────────────────
+  // Skip for short syllables: 1 error on "ma" matches "ba", "na", "ta" etc.
+  if (!isShort) {
+    for (const word of candidates) {
+      for (const v of accepted) {
+        if (levenshtein(word, v) <= 1) return 'perfect';
+      }
     }
   }
 
-  // Fuzzy fallback — length-aware thresholds
-  const isShort = t.length <= 4;
-  const perfectRatio = isShort ? 0.25 : 0.25;
-  const goodRatio    = isShort ? 0.40 : 0.45;
-
-  for (const word of candidates) {
-    const dist = levenshtein(t, word);
-    const ratio = dist / Math.max(t.length, word.length, 1);
-    if (ratio <= perfectRatio) return 'perfect';
-    if (ratio <= goodRatio)    return 'good';
+  // ── Phase 3: Fuzzy ratio — only for long syllables (4+ chars) ─────────
+  // Short syllables never reach here — too many false positives.
+  if (!isShort) {
+    for (const word of candidates) {
+      // Compare against the target itself (for accumulated words not in variants)
+      const dist = levenshtein(t, word);
+      const ratio = dist / Math.max(t.length, word.length, 1);
+      if (ratio <= 0.25) return 'perfect';
+      if (ratio <= 0.38) return 'good';
+    }
   }
 
   return 'tryAgain';

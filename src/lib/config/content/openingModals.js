@@ -204,10 +204,10 @@ export const OPENING_MODALS = {
 
     'favorite-food': {
       title: "What We Love",
-      description: "Favorites tell a story. Share what you enjoy most.",
+      description: "Let's discover our favorite things.",
       icons: ['food', 'color', 'activity'],
       iconLabels: ['Food', 'Color', 'Activity'],
-      buttonText: "Let's Explore",
+      buttonText: "Let's Discover",
       character: 'baby-ganesha-sit'
     },
 

@@ -18,6 +18,7 @@ const AutoPlayModeV2 = ({
   onGameComplete,
   voiceGuidance = null,
   isPaused = false, // Receives state from parent
+  onMicroWin,      // micro-reward gesture callback
 }) => {
 
   const { safeClick } = useSafeClick(300);
@@ -613,6 +614,9 @@ const AutoPlayModeV2 = ({
       setRoundClicks(prev => ({ ...prev, [`elephant-${clickedSyllable}`]: true }));
       setActivatedElephants(prev => ({ ...prev, [`elephant-${clickedSyllable}`]: true }));
       setVisualRewards(prev => ({ ...prev, [`visual-${clickedSyllable}`]: true }));
+
+      // micro-reward: correct syllable tapped
+      onMicroWin?.();
 
       const totalSyllables = currentSequence.length;
       const progressPerClick = Math.floor(80 / totalSyllables);

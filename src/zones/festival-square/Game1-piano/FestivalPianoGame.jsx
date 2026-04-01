@@ -16,8 +16,12 @@ import SimpleSceneManager from '../../../lib/services/SimpleSceneManager';
 import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
 import GamePauseMenu from '../components/GamePauseMenu';
 import HomeButton from '../../../lib/components/ui/HomeButton';
+import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
+import AudioToggle from '../../../lib/components/ui/AudioToggle';
 import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
 import GameLayout from '../../../lib/components/layout/GameLayout';
+import useAudioPreference from '../../../lib/hooks/useAudioPreference';
+import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
 
 import musicBadge from './assets/images/music-badge.png';
 import ganeshaCompletion from './assets/images/ganesha-musician.png';
@@ -193,6 +197,14 @@ const FestivalPianoGame = ({ onComplete, onNavigate, zoneId = 'festival-square',
 // 🎮 CONTENT COMPONENT
 const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, onNavigate, zoneId, sceneId }) => {
   const [localUIState, setLocalUIState] = useState({ activeKey: null, showSparkle: null, showCulturalNote: null, danceParticles: [] });
+  const { isAudioOn, toggleAudio } = useAudioPreference();
+  // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
+  const { startIdleTimer, stopIdleTimer, setCurrentPhase } = useVoiceGuidance(
+    zoneId, sceneId, { enableMusic: false, idleTimeout: 20 }
+  );
+  useEffect(() => { startIdleTimer(); return () => stopIdleTimer(); }, [startIdleTimer, stopIdleTimer]);
+  useEffect(() => { setCurrentPhase(sceneState?.phase ?? null); }, [sceneState?.phase, setCurrentPhase]);
+
   const audioContextRef = useRef(null);
   const timeoutsRef = useRef([]);
   const completionModalContent = getCompletionModal('festival-square', 'game1');
@@ -736,6 +748,8 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
             />
 
             <HomeButton onNavigate={onNavigate} />
+            <ZoneBadgeButton zoneId="festival-square" onBack={() => onNavigate?.('zone-welcome')} />
+            <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
 
             <GamePauseMenu
               show={sceneState.showPauseMenu}
@@ -775,6 +789,10 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
                 }}
                 starsEarned={sceneState.stars || 0}
                 totalStars={8}
+                completionData={{
+                  completed: true,
+                  stars: sceneState.stars || 8
+                }}
                 onContinue={() => onNavigate?.('scene-complete-continue')}
                 onReplay={() => {
                   console.log('PIANO REPLAY: Play Again');

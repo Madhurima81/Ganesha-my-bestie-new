@@ -19,7 +19,8 @@ import { getSceneResetConfig } from '../../../../lib/config/SceneResetConfigs';
 
 // UI Components
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
-import Fireworks from '../../../../lib/components/feedback/Fireworks';
+import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
+import CalmGoldenFireworks from '../../../../lib/components/feedback/CalmGoldenFireworks';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
 import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOverlay'; // ← superseded by SymbolAutoReveal
@@ -32,6 +33,8 @@ import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
 import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
 import ResumeCountdown from '../../../../lib/components/feedback/ResumeCountdown';
+import GaneshaGestureCue from '../../../../lib/components/gesture/GaneshaGestureCue';
+import { useMiniGesture } from '../../../../lib/hooks/useMiniGesture';
 
 import AppSidebar from '../../shared/AppSidebar';
 import OpeningModal from '../../../shared/components/OpeningModal';
@@ -206,6 +209,8 @@ const VakratundaGroveContent = ({
   const { resetScene } = useSceneReset(sceneActions, zoneId, sceneId, getSceneResetConfig(sceneId));
 
   const completionModalContent = getCompletionModal(zoneId, sceneId);
+
+  const { miniGesture, triggerMiniGesture } = useMiniGesture();
 
   const [showSparkle, setShowSparkle] = useState(null);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
@@ -508,6 +513,9 @@ const VakratundaGroveContent = ({
   const handlePhaseComplete = (word) => {
     console.log(`${word} learned!`);
 
+    // Sanskrit moment — full word learned → blessing gesture
+    triggerMiniGesture('blessing', 'center', 2500);
+
     // Stop idle timer — game is done, no more hints
     stopIdleTimer();
     setCurrentPhase(null);
@@ -765,6 +773,7 @@ const VakratundaGroveContent = ({
             <VakratundaGame
               isActive={sceneState.phase === PHASES.VAKRATUNDA_GAME}
               hideElements={showCenteredWord || showPowerOverlay || !!revealConfig}
+              onMicroWin={() => triggerMiniGesture('thumbsup', 'item', 1200)}
               onPhaseComplete={() => handlePhaseComplete('vakratunda')}
               onGameComplete={() => { }}
               profileName={profileName}
@@ -785,6 +794,7 @@ const VakratundaGroveContent = ({
               isActive={sceneState.phase === PHASES.MAHAKAYA_GAME}
               hideElements={showCenteredWord || showPowerOverlay || !!revealConfig}
               powerGained={sceneState.learnedWords?.vakratunda}
+              onMicroWin={() => triggerMiniGesture('thumbsup', 'item', 1200)}
               onPhaseComplete={() => handlePhaseComplete('mahakaya')}
               onGameComplete={() => { }}
               profileName={profileName}
@@ -919,37 +929,57 @@ const VakratundaGroveContent = ({
                 />
               )}
 
-            {showSparkle === 'final-fireworks' && (
-              <Fireworks
-                show={true}
-                duration={6000}
-                onComplete={() => {
-                  setShowSparkle(null);
-                  setShowFinalGanesha(false);
-
-                  // Save completion data
-                  const profileId = localStorage.getItem('activeProfileId');
-                  if (profileId) {
-                    try {
-                      GameStateManager.saveGameState(zoneId, sceneId, {
-                        completed: true,
-                        stars: 5,
-                        phase: PHASES.COMPLETE,
-                        words: sceneState.learnedWords || {},
-                        syllables: sceneState.learnedSyllables || {},
-                        apps: sceneState.unlockedApps || {},
-                        chantedVerses: sceneState.chantedVerses || {},
-                        timestamp: Date.now()
-                      });
-                      localStorage.removeItem(`temp_session_${profileId}_${zoneId}_${sceneId}`);
-                      SimpleSceneManager.clearCurrentScene();
-                    } catch (error) {
-                      console.error('Error saving game state:', error);
-                    }
-                  }
-                  setShowSceneCompletion(true);
-                }}
+            {/* ── GANESHA MICRO-REWARD GESTURE CUE ────────────────────────────────
+                 blessing/center = Sanskrit word complete (phase win)
+                 thumbsup/item   = single correct tap (micro win, fired by sub-games)
+                 Sits above game content, below celebration overlays (z-index 200/999) */}
+            {miniGesture.show && (
+              <GaneshaGestureCue
+                key={miniGesture.key}
+                gestureType={miniGesture.type}
+                position={miniGesture.position}
+                size={120}
               />
+            )}
+
+            {showSparkle === 'final-fireworks' && (
+              <>
+                <FireworksCompletion
+                  show={showSparkle === 'final-fireworks'}
+                  showCard={false}
+                />
+                <CalmGoldenFireworks
+                  show={showSparkle === 'final-fireworks'}
+                  particles={14}
+                  duration={3500}
+                  onComplete={() => {
+                    setShowSparkle(null);
+                    setShowFinalGanesha(false);
+
+                    // Save completion data
+                    const profileId = localStorage.getItem('activeProfileId');
+                    if (profileId) {
+                      try {
+                        GameStateManager.saveGameState(zoneId, sceneId, {
+                          completed: true,
+                          stars: 5,
+                          phase: PHASES.COMPLETE,
+                          words: sceneState.learnedWords || {},
+                          syllables: sceneState.learnedSyllables || {},
+                          apps: sceneState.unlockedApps || {},
+                          chantedVerses: sceneState.chantedVerses || {},
+                          timestamp: Date.now()
+                        });
+                        localStorage.removeItem(`temp_session_${profileId}_${zoneId}_${sceneId}`);
+                        SimpleSceneManager.clearCurrentScene();
+                      } catch (error) {
+                        console.error('Error saving game state:', error);
+                      }
+                    }
+                    setShowSceneCompletion(true);
+                  }}
+                />
+              </>
             )}
 
             {/* FINAL CELEBRATION */}

@@ -9,7 +9,12 @@ import FreeDraggableItem from '../../../lib/components/interactive/FreeDraggable
 import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
 import GamePauseMenu from '../components/GamePauseMenu';
 import HomeButton from '../../../lib/components/ui/HomeButton';
+import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
+import AudioToggle from '../../../lib/components/ui/AudioToggle';
 import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
+import useAudioPreference from '../../../lib/hooks/useAudioPreference';
+import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
+import SceneManager from '../../../lib/components/scenes/SceneManager';
 
 import PujaSidebar from './components/sidebars/PujaSidebar';
 import FixSidebar from './components/sidebars/FixSidebar';
@@ -692,8 +697,15 @@ const MANDAP_ZONES = {
   'base-floor': { x: 55, y: 73, width: 10, height: 10 }               // Floor
 };
 
-const MandapDecorationGame = ({ onComplete, onNavigate, zoneId = 'festival-square', sceneId = 'game4' }) => {
+const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplete, onNavigate, zoneId, sceneId }) => {
   // Game state
+  const { isAudioOn, toggleAudio } = useAudioPreference();
+  // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
+  const { startIdleTimer, stopIdleTimer, setCurrentPhase } = useVoiceGuidance(
+    zoneId, sceneId, { enableMusic: false, idleTimeout: 20 }
+  );
+  useEffect(() => { startIdleTimer(); return () => stopIdleTimer(); }, [startIdleTimer, stopIdleTimer]);
+
   const [gameState, setGameState] = useState(() => {
     const savedState = loadGameState();
     if (savedState) {
@@ -714,6 +726,7 @@ const MandapDecorationGame = ({ onComplete, onNavigate, zoneId = 'festival-squar
       showDoneButton: false
     };
   });
+  useEffect(() => { setCurrentPhase(gameState.phase); }, [gameState.phase, setCurrentPhase]);
 
   // UI state
   const [highlightedZones, setHighlightedZones] = useState(new Set());
@@ -1444,6 +1457,8 @@ const MandapDecorationGame = ({ onComplete, onNavigate, zoneId = 'festival-squar
         <TocaBocaNav
           onHome={() => onNavigate?.('home')}
           onZonesClick={() => onNavigate?.('zones')}
+          isAudioOn={isAudioOn}
+          onAudioToggle={toggleAudio}
         />
       </>
     );
@@ -1661,6 +1676,8 @@ const MandapDecorationGame = ({ onComplete, onNavigate, zoneId = 'festival-squar
         )}
 
         <HomeButton onNavigate={onNavigate} />
+        <ZoneBadgeButton zoneId="festival-square" onBack={() => onNavigate?.('zone-welcome')} />
+        <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
 
 
 
@@ -2390,6 +2407,11 @@ const MandapDecorationGame = ({ onComplete, onNavigate, zoneId = 'festival-squar
             totalStars={8}
             nextSceneName="Modak Cooking"
             childName="little decorator"
+            completionData={{
+              completed: true,
+              stars: gameState.stars || 8,
+              badges: { decoration: true }
+            }}
             onContinue={() => {
               console.log('🏛️ MANDAP CONTINUE: Completed all Festival games!');
 
@@ -2482,8 +2504,8 @@ const MandapDecorationGame = ({ onComplete, onNavigate, zoneId = 'festival-squar
           }}
           onHelp={() => console.log('Show help')}
           onParentMenu={() => console.log('Parent menu')}
-          isAudioOn={true}
-          onAudioToggle={() => console.log('Toggle audio')}
+          isAudioOn={isAudioOn}
+          onAudioToggle={toggleAudio}
           onZonesClick={() => {
             if (onNavigate) onNavigate('zones');
           }}
@@ -2520,5 +2542,16 @@ const MandapDecorationGame = ({ onComplete, onNavigate, zoneId = 'festival-squar
   // If somehow no mode matches, show loading
   return <div>Loading...</div>;
 };
+
+const MandapDecorationGame = ({ onComplete, onNavigate, zoneId = 'festival-square', sceneId = 'game4' }) => (
+  <SceneManager zoneId={zoneId} sceneId={sceneId} initialState={{ phase: 'intro' }}>
+    {({ sceneState, sceneActions, isReload }) => (
+      <MandapDecorationContent
+        sceneState={sceneState} sceneActions={sceneActions} isReload={isReload}
+        onComplete={onComplete} onNavigate={onNavigate} zoneId={zoneId} sceneId={sceneId}
+      />
+    )}
+  </SceneManager>
+);
 
 export default MandapDecorationGame;
