@@ -158,8 +158,6 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const openingModalContent = getOpeningModal('about-me-hut', 'name-birthday');
   const completionModalContent = getCompletionModal('about-me-hut', 'name-birthday');
   const completionIcons = openingModalContent?.icons || ['balloons', 'birthday'];
-  // ── Resume Delay (shared across pause/resume logic) ──────────────────────────
-  const RESUME_DELAY_MS = 3000;
 
   const { isAudioOn, toggleAudio } = useAudioPreference();
 
