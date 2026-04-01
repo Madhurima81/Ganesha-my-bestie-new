@@ -325,7 +325,15 @@ export const GameCoachProvider = ({ children, defaultConfig }) => {
 export const useGameCoach = () => {
   const context = useContext(GameCoachContext);
   if (!context) {
-    throw new Error('useGameCoach must be used within GameCoachProvider');
+    return {
+      showMessage: () => {},
+      hideCoach: () => {},
+      forceCleanup: () => {},
+      clearManualCloseTracking: () => {},
+      setCoachConfig: () => {},
+      isVisible: false,
+      debugCoach: () => ({})
+    };
   }
   return context;
 };

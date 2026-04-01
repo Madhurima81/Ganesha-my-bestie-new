@@ -87,7 +87,7 @@
   transform: 
     translate(-50%, -50%) 
     rotate(var(--rotation)) 
-    translateX(200px) 
+    translateX(var(--orb-radius, 200px))
     rotate(calc(-1 * var(--rotation)));
   animation: orbAppear 1s ease-out var(--delay) both;
 }
@@ -120,7 +120,7 @@
     transform: 
       translate(-50%, -50%) 
       rotate(var(--rotation)) 
-      translateX(200px) 
+      translateX(var(--orb-radius, 200px))
       rotate(calc(-1 * var(--rotation)))
       scale(1); 
   }
@@ -130,14 +130,14 @@
   0%, 100% { transform: 
     translate(-50%, -50%) 
     rotate(var(--rotation)) 
-    translateX(200px) 
+    translateX(var(--orb-radius, 200px))
     rotate(calc(-1 * var(--rotation)))
     scale(1); 
   }
   50% { transform: 
     translate(-50%, -50%) 
     rotate(var(--rotation)) 
-    translateX(200px) 
+    translateX(var(--orb-radius, 200px))
     rotate(calc(-1 * var(--rotation)))
     scale(1.06); 
   }
@@ -148,14 +148,14 @@
     transform: 
       translate(-50%, -50%) 
       rotate(var(--rotation)) 
-      translateX(200px) 
+      translateX(var(--orb-radius, 200px))
       rotate(calc(-1 * var(--rotation)));
   }
   100% { 
     transform: 
       translate(-50%, -50%) 
       rotate(var(--rotation)) 
-      translateX(120px) 
+      translateX(calc(var(--orb-radius, 200px) * 0.6))
       rotate(calc(-1 * var(--rotation)));
   }
 }

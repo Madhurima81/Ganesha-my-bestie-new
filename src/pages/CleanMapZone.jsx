@@ -68,9 +68,9 @@ const ZONES_DATA = [
     unlockNote: 'Complete Symbol Mountain',
     scenes: [
       { id: 'family-tree', name: 'Family Tree' },
-      { id: 'dreams-wishes', name: 'Dreams & Wishes' },
+      { id: 'name-birthday', name: 'Name & Birthday' },
       { id: 'favorite-food', name: 'Favorite Food' },
-      { id: 'name-birthday', name: 'Name & Birthday' }
+      { id: 'dreams-wishes', name: 'Dreams & Wishes' }
     ]
   }
 ];
@@ -350,7 +350,7 @@ const ZONE_SCENES = {
   'cave-of-secrets':  ['vakratunda-mahakaya', 'suryakoti-samaprabha', 'nirvighnam-kurumedeva', 'sarvakaryeshu-sarvada', 'mantra-assembly'],
   'shloka-river':     ['vakratunda-grove', 'suryakoti-bank', 'nirvighnam-chant', 'sarvakaryeshu-chant', 'shloka-river-finale'],
   'festival-square':  ['game1', 'game2', 'game3', 'game4'],
-  'about-me-hut':     ['family-tree', 'favorite-food', 'dreams-wishes', 'name-birthday'],
+  'about-me-hut':     ['family-tree', 'name-birthday', 'favorite-food', 'dreams-wishes'],
 };
 
 const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen }) => {
@@ -515,6 +515,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
 
   const loadBasicProgress = () => {
     try {
+      const profileId = localStorage.getItem('activeProfileId');
       const progressData = {};
       ZONES_DATA.forEach(zone => {
         const sceneIds = zone.scenes.map(scene => scene.id);
@@ -525,6 +526,31 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
           if (progress?.completed) {
             completedScenes++;
             totalStars += progress.stars || 0;
+            return;
+          }
+          // Also check temp session — catches scenes completed before permanent save
+          if (profileId) {
+            const tempKey = `temp_session_${profileId}_${zone.id}_${sceneId}`;
+            try {
+              const tempState = JSON.parse(localStorage.getItem(tempKey) || 'null');
+              if (tempState) {
+                const isCompleteInTemp = (
+                  tempState.completed === true ||
+                  tempState.phase === 'complete' ||
+                  tempState.showingCompletionScreen === true ||
+                  tempState.phase === 'rock_transformed' ||
+                  // modak-specific: all 3 symbols collected
+                  (sceneId === 'modak' &&
+                    tempState.discoveredSymbols?.mooshika === true &&
+                    tempState.discoveredSymbols?.modak === true &&
+                    tempState.discoveredSymbols?.belly === true)
+                );
+                if (isCompleteInTemp) {
+                  completedScenes++;
+                  totalStars += tempState.stars || 0;
+                }
+              }
+            } catch (e) {}
           }
         });
         progressData[zone.id] = {
@@ -655,21 +681,24 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         const isDisabled = state === 'locked' || state === 'unlocking';
         const unlockClass = unlockIntensity === 'master' ? 'zone-unlock-master' : '';
         const labelState = state === 'unlocking' ? 'active' : state;
+        const isSymbolMountainZone = zone.id === 'symbol-mountain';
 
         return (
-          <React.Fragment key={zone.id}>
+          <div key={zone.id} className={`zone-group ${state === 'completed' ? 'zone-complete' : ''}`}>
             {/* Tap area */}
             <div
-              className={`${layout.zoneClass} zone-state-${state} ${unlockClass}`.trim()}
+              className={`${layout.zoneClass} zone-state-${state} ${unlockClass} ${isSymbolMountainZone ? 'symbol-mountain-door' : ''}`.trim()}
               onClick={() => handleZoneClick(zone, state)}
               aria-disabled={isDisabled}
             >
               {/* Completed check badge only — no permanent rings/borders */}
-              {state === 'completed' && <div className="zone-check-badge" aria-hidden="true">✓</div>}
+              {state === 'completed' && (
+                <div className={`zone-check-badge ${isSymbolMountainZone ? 'zone-checkmark' : ''}`} aria-hidden="true">✓</div>
+              )}
             </div>
 
             {/* Label */}
-            <div className={`${layout.labelClass} label-state-${labelState}`}>
+            <div className={`${layout.labelClass} label-state-${labelState} ${isSymbolMountainZone ? 'zone-title' : ''}`}>
               {zone.name.split('\n').map((line, i) => (
                 <span key={i}>{line}{i < zone.name.split('\n').length - 1 && <br/>}</span>
               ))}
@@ -686,7 +715,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
                 </div>
               )}
             </div>
-          </React.Fragment>
+          </div>
         );
       })}
 

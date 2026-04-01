@@ -25,6 +25,7 @@ const GameLayout = ({
 
   // 4. UI Options
   showMenuLabel = false,  // Show "Menu" label under hamburger
+  showMenu = true,        // Show menu button + nav + help
   showPauseButton = false, // Show pause button in top-left
   onPause             // Function to handle pause
 }) => {
@@ -52,11 +53,13 @@ const GameLayout = ({
       {children}
 
       {/* B. THE MENU BUTTON (Floating Top Right) */}
-      <MenuButton
-        onClick={() => setShowNav(true)}
-        zoneId={zoneId}
-        showLabel={showMenuLabel}
-      />
+      {showMenu && (
+        <MenuButton
+          onClick={() => setShowNav(true)}
+          zoneId={zoneId}
+          showLabel={showMenuLabel}
+        />
+      )}
 
       {/* C. THE PAUSE BUTTON (Floating Top Left) - Optional */}
       {showPauseButton && onPause && (
@@ -73,25 +76,29 @@ const GameLayout = ({
       )}
 
       {/* D. THE NAVIGATION DRAWER */}
-      <TocaBocaNav
-        show={showNav}
-        onClose={() => setShowNav(false)}
-        onHelp={handleOpenHelp}
-        onHome={onHome}
-        onStartFresh={onReplay}
-        isAudioOn={isAudioOn}
-        onAudioToggle={onAudioToggle}
-        zoneId={zoneId}
-      />
+      {showMenu && (
+        <TocaBocaNav
+          show={showNav}
+          onClose={() => setShowNav(false)}
+          onHelp={handleOpenHelp}
+          onHome={onHome}
+          onStartFresh={onReplay}
+          isAudioOn={isAudioOn}
+          onAudioToggle={onAudioToggle}
+          zoneId={zoneId}
+        />
+      )}
 
       {/* E. THE HELP POPUP */}
-      <HelpMenu
-        show={showHelp}
-        onClose={() => setShowHelp(false)}
-        helpConfig={helpConfig}
-        sceneState={sceneState}
-        zoneId={zoneId}
-      />
+      {showMenu && (
+        <HelpMenu
+          show={showHelp}
+          onClose={() => setShowHelp(false)}
+          helpConfig={helpConfig}
+          sceneState={sceneState}
+          zoneId={zoneId}
+        />
+      )}
       
     </div>
   );

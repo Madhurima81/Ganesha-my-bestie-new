@@ -6,6 +6,7 @@ import './Enhanced.css'
 import GaneshaCharacter from './lib/components/character/GaneshaCharacter';
 import DailyDarePopup from './lib/components/twg/DailyDarePopup';
 import TimeWithGaneshaHub from './lib/components/twg/TimeWithGaneshaHub';
+import GaneshaEngineTest  from './lib/components/twg/GaneshaEngineTest';
 
 const MainWelcomeScreen      = lazy(() => import('./lib/components/navigation/MainWelcomeScreen'));
 const CleanGameWelcomeScreen = lazy(() => import('./lib/components/navigation/CleanGameWelcomeScreen'));
@@ -52,10 +53,10 @@ const SCENE_MAPPING = {
     'game4': () => import('./zones/festival-square/Game4-mandapdecor/MandapDecorationGame.jsx')
   },
 'about-me-hut': {
-  'family-tree': () => import('./zones/about-me-hut/name/Namebirthdaygame.jsx'),
-  'favorite-food': () => import('./zones/about-me-hut/family-tree/Familytreegame.jsx'),
-  'dreams-wishes': () => import('./zones/about-me-hut/food/Favoritefoodgame.jsx'),
-  'name-birthday': () => import('./zones/about-me-hut/enjoy/ObstacleRemoverGame.jsx')
+  'family-tree':   () => import('./zones/about-me-hut/family-tree/Familytreegame.jsx'),
+  'favorite-food': () => import('./zones/about-me-hut/food/Favoritefoodgame.jsx'),
+  'dreams-wishes': () => import('./zones/about-me-hut/enjoy/ObstacleRemoverGame.jsx'),
+  'name-birthday': () => import('./zones/about-me-hut/name/Namebirthdaygame.jsx')
 }
 
 };
@@ -64,6 +65,11 @@ const SCENE_MAPPING = {
 const GameStateManagerClass = GameStateManager.constructor;
 
 function App() {
+  // DEV: ?engine-test in URL → show engine test harness only
+  if (typeof window !== 'undefined' && window.location.search.includes('engine-test')) {
+    return <GaneshaEngineTest />;
+  }
+
   const [currentView, setCurrentView] = useState('loading');
   const [currentZone, setCurrentZone] = useState(null);
   const [currentScene, setCurrentScene] = useState(null);
@@ -590,7 +596,7 @@ const getNextScene = (zoneId, currentSceneId) => {
     ],
       'festival-square': ['game1', 'game2', 'game3', 'game4'],
     // ✅ About Me Hut — circular (last scene loops back to first)
-    'about-me-hut': ['family-tree', 'favorite-food', 'dreams-wishes', 'name-birthday']
+    'about-me-hut': ['family-tree', 'name-birthday', 'favorite-food', 'dreams-wishes']
   };
 
   const scenes = sceneProgression[zoneId];
@@ -843,7 +849,7 @@ chants: result?.chants || result?.chantedVerses || {},
     <>
     {/* GameCoachProvider disabled — not used per CLAUDE.md */}
     <Suspense fallback={<div className="enhanced-loading-screen" />}>
-{currentView === 'loading' && (
+{currentView === 'loading' && !showDarePopup && (
   <div className="enhanced-loading-screen">
 
     {/* Layer 1 — Atmospheric overlay (center lift + edge depth) */}

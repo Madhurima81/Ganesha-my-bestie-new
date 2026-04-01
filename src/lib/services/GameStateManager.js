@@ -45,7 +45,7 @@ static ZONES = {
     id: 5,
     name: 'About Me Hut',
     icon: '🏡',
-scenes: ['family-tree', 'dreams-wishes', 'favorite-food', 'name-birthday']
+scenes: ['family-tree', 'name-birthday', 'favorite-food', 'dreams-wishes']
   }
   // ✅ REMOVE: All the placeholder zones (ocean-depths, sky-kingdom, etc.)
 };
@@ -95,8 +95,8 @@ scenes: ['family-tree', 'dreams-wishes', 'favorite-food', 'name-birthday']
  
 
   // 🔧 FIXED: Create a new profile - now accepts direct avatar and color values
-  createProfile(name, avatar, color) {
-    console.log('🎯 GameStateManager.createProfile called with:', { name, avatar, color });
+  createProfile(name, avatar, color, age) {
+    console.log('🎯 GameStateManager.createProfile called with:', { name, avatar, color, age });
     
     let profiles = this.getProfiles();
     
@@ -124,6 +124,7 @@ scenes: ['family-tree', 'dreams-wishes', 'favorite-food', 'name-birthday']
       name: name.substring(0, 12), // Limit name length for UI
       avatar: avatar || '🦉', // Use the passed avatar directly (emoji or animal ID)
       color: color || '#8B4513', // Use the passed color directly
+      age: age || null,
       createdAt: Date.now(),
       lastPlayed: Date.now(),
       totalStars: 0,

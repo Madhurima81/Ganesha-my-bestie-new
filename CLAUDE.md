@@ -253,7 +253,7 @@ When asked to fill NAVIGATION.md for a scene:
 | T03 | FWKS / new V/O system | TBD | — |
 | T04 | SoundToggle | TBD | TBD |
 | T05 | HomeButton | YES | TBD |
-| T06 | AudioSymbolReveal | TBD | TBD |
+| T06 | SymbolAutoReveal | YES | TBD |
 | T07 | useVoiceGuidance hook | YES | — |
 | T08 | useAppVisibility hook | YES | — |
 | T09 | useVoiceGuidance hook | YES | — |

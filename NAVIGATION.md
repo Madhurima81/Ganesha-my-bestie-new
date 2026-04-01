@@ -61,19 +61,20 @@ User has not interacted for X seconds.
 - [ ] Phase 4:
 
 **Tab Switch**
-- Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING
+- Status: [ ✔️] EXISTS  [ ] PARTIAL  [ ] MISSING
 - Line reference:
-- Notes:
+- Notes: working except during mooshika found v/o 
 
 **Continue / Resume**
-- Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING
+- Status: [✔️ ] EXISTS  [ ] PARTIAL  [ ] MISSING
 - Line reference:
-- Notes:
+- Notes: Working
 
 **Idle Hints**
-- Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING
+- Status: [✔️ ] EXISTS  [ ] PARTIAL  [ ] MISSING
 - Line reference:
-- Notes:
+- Notes: Need to change emoji position
+
 
 **Gaps to fix:**
 - [ ]
@@ -86,16 +87,16 @@ User has not interacted for X seconds.
 - [ ]
 
 **Tab Switch**
-- Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING
-- Notes:
+- Status: [✔️ ] EXISTS  [ ] PARTIAL  [ ] MISSING
+- Notes: Need to check after vo
 
 **Continue / Resume**
-- Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING
-- Notes:
+- Status: [✔️ ] EXISTS  [ ] PARTIAL  [ ] MISSING
+- Notes: in phase inbtw restarts phase, on card reveal restarts the card 
 
 **Idle Hints**
-- Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING
-- Notes:
+- Status: [✔️ ] EXISTS  [ ] PARTIAL  [ ] MISSING
+- Notes: Need to change emoji position
 
 **Gaps to fix:**
 - [ ]

@@ -1,14 +1,41 @@
-// ParentDashboard.jsx — Parent Calm Guide for Ganesha My Bestie
+// ParentDashboard.jsx — Parent Dashboard v2 for Ganesha My Bestie
 // Design register: premium, calm, adult — NOT child-facing UI
 // Fonts: Baloo 2 (headings) · Nunito (body) — NO EXCEPTIONS
+//
+// v2 upgrades:
+//   - PIN gate via PinScreen
+//   - 7 tabs: Guidance (existing) + Overview / Emotions /
+//             Kindness / Sessions / Stories / Settings
+//   - All localStorage analytics from dashboardData.js
+//   - DESSA strength-spotting language throughout
+//   - WeeklyCard canvas share sheet
 
-import React, { useState, useEffect } from 'react';
-import './ParentDashboard.css';
-import CalmOverlay from './CalmOverlay';
-import CulturalProgressExtractor from '../../services/CulturalProgressExtractor';
-import GameStateManager from '../../services/GameStateManager';
+import React, { useState, useEffect } from 'react'
+import './ParentDashboard.css'
+import CalmOverlay   from './CalmOverlay'
+import PinScreen     from '../dashboard/PinScreen'
+import WeeklyCard    from '../dashboard/WeeklyCard'
+import CulturalProgressExtractor from '../../services/CulturalProgressExtractor'
+import GameStateManager          from '../../services/GameStateManager'
+import {
+  getThisWeekSessions,
+  getTWGSessions,
+  getZoneCounts,
+  getCASELCounts,
+  getTechniqueCounts,
+  getTopItem,
+  toStrengthLanguage,
+  getKindnessActs,
+  getGratitudeJar,
+  getDareLog,
+  getDareStreak,
+  getWeeklyStories,
+  unlockExtraTime,
+  isExtraTimeUnlocked,
+  clearPin,
+} from '../../utils/dashboardData'
 
-// ─── Symbol content ────────────────────────────────────────────────────────────
+// ─── Symbol content (unchanged from v1) ────────────────────────
 
 const SYMBOL_DATA = {
   mooshika: {
@@ -163,9 +190,9 @@ const SYMBOL_DATA = {
     chant: 'Sarvakaryeshu Sarvada',
     activity: 'Finish one small task together tonight — folding, drawing — all the way to the end.',
   },
-};
+}
 
-const SYMBOL_ORDER = ['modak', 'mooshika', 'belly', 'lotus', 'trunk', 'eyes', 'ear', 'tusk'];
+const SYMBOL_ORDER = ['modak', 'mooshika', 'belly', 'lotus', 'trunk', 'eyes', 'ear', 'tusk']
 
 const GETTING_STARTED = {
   id: null,
@@ -185,264 +212,923 @@ const GETTING_STARTED = {
   ritual: ['Sit together quietly before sleep', 'Say together 3 times: "Vakratunda Mahakaya"', 'Ask: "What was the best part of your day?"'],
   chant: 'Vakratunda Mahakaya',
   activity: 'Play Ganesha My Bestie together for 10 minutes and discover your first symbol.',
-};
+}
 
-// ─── Component ─────────────────────────────────────────────────────────────────
+// ─── v2 color tokens ────────────────────────────────────────────
+const CV = {
+  saffron:    '#FF9933',
+  deepOrange: '#FF5722',
+  gold:       '#FFD700',
+  brown:      '#5D2E0F',
+  softBrown:  '#8B4513',
+  cream:      '#FFF8E7',
+  lightCream: '#FFF3E0',
+  green:      '#2E7D32',
+  purple:     '#6A1B9A',
+  blue:       '#0288D1',
+  red:        '#C62828',
+}
+
+const ZONE_COLORS = {
+  Red:    { bg: '#FFEBEE', text: '#C62828', border: '#EF9A9A', emoji: '🔴' },
+  Yellow: { bg: '#FFFDE7', text: '#F57F17', border: '#FFF176', emoji: '🟡' },
+  Blue:   { bg: '#E3F2FD', text: '#1565C0', border: '#90CAF9', emoji: '🔵' },
+  Green:  { bg: '#E8F5E9', text: '#2E7D32', border: '#A5D6A7', emoji: '🟢' },
+}
+
+const CASEL_COLORS = {
+  'Self-Awareness':              '#6A1B9A',
+  'Self-Management':             '#0288D1',
+  'Social Awareness':            '#2E7D32',
+  'Relationship Skills':         '#FF6F00',
+  'Responsible Decision-Making': '#C62828',
+}
+
+const SEL_TIPS = {
+  Red:    `Your child is frequently in the Red Zone — high emotions like anger or fear. Try "5 fingers breathing" together: trace each finger slowly while breathing in and out. Consistent routines help Red Zone children feel safe. Always validate first: "I can see you're really angry. That makes sense."`,
+  Yellow: `Your child is often in the Yellow Zone — worried or excited. Help them name the feeling: "Is your body feeling fast and buzzy?" Try "heavy work" like carrying books or pushing against a wall to help regulate. A worry jar works well for this age.`,
+  Blue:   `Your child is frequently in the Blue Zone — sad, tired, or withdrawn. Movement helps — even 5 minutes of dancing shifts the zone. Ask open questions: "What would make your body feel a tiny bit better?" Check for adequate sleep and recurring stressors.`,
+  Green:  `Your child is mostly in the Green Zone — calm, happy, ready to learn. This is the ideal time to build emotional vocabulary. Read books about feelings together. Celebrate this balance!`,
+}
+
+// ─── Main component ─────────────────────────────────────────────
 
 export default function ParentDashboard({ onBack }) {
-  const [childName,      setChildName]      = useState('');
-  const [profileAvatar,  setProfileAvatar]  = useState('monkey');
-  const [currentSymbol,  setCurrentSymbol]  = useState(null);
-  const [selectedSymbol, setSelectedSymbol] = useState(null);
-  const [discoveredList, setDiscoveredList] = useState([]);
-  const [ritualDone,       setRitualDone]       = useState(false);
-  const [toast,            setToast]            = useState('');
-  const [showStory,        setShowStory]        = useState(false);
-  const [showCalmOverlay,  setShowCalmOverlay]  = useState(false);
+  // ── PIN gate ──────────────────────────────────────────────────
+  const [unlocked, setUnlocked] = useState(false)
 
+  // ── Tab ───────────────────────────────────────────────────────
+  const [activeTab, setActiveTab] = useState('guidance')
+
+  // ── Guidance tab state (v1 preserved) ────────────────────────
+  const [childName,      setChildName]      = useState('')
+  const [currentSymbol,  setCurrentSymbol]  = useState(null)
+  const [selectedSymbol, setSelectedSymbol] = useState(null)
+  const [discoveredList, setDiscoveredList] = useState([])
+  const [ritualDone,     setRitualDone]     = useState(false)
+  const [toast,          setToast]          = useState('')
+  const [showStory,      setShowStory]      = useState(false)
+  const [showCalmOverlay, setShowCalmOverlay] = useState(false)
+
+  // ── Analytics tab state ───────────────────────────────────────
+  const [showWeeklyCard, setShowWeeklyCard] = useState(false)
+  const [extraUnlocked,  setExtraUnlocked]  = useState(isExtraTimeUnlocked())
+
+  // ── Load profile + symbol data on mount ──────────────────────
   useEffect(() => {
-    const activeId = localStorage.getItem('activeProfileId');
-
-    const stored = localStorage.getItem('childName') || '';
+    const activeId = localStorage.getItem('activeProfileId')
+    const stored   = localStorage.getItem('childName') || ''
     if (stored) {
-      setChildName(stored);
+      setChildName(stored)
     } else if (activeId) {
       try {
-        const p = GameStateManager.getProfiles()?.profiles?.[activeId];
-        if (p?.name) setChildName(p.name);
-      } catch (_) {}
-    }
-
-    if (activeId) {
-      try {
-        const p    = GameStateManager.getProfiles()?.profiles?.[activeId];
-        const map  = { '🐵':'monkey','🦚':'peacock','🐿️':'squirrel','🐯':'tiger' };
-        const list = ['monkey','peacock','squirrel','tiger'];
-        if (p?.avatar) setProfileAvatar(list.includes(p.avatar) ? p.avatar : (map[p.avatar] || 'monkey'));
+        const p = GameStateManager.getProfiles()?.profiles?.[activeId]
+        if (p?.name) setChildName(p.name)
       } catch (_) {}
     }
 
     try {
-      const data       = CulturalProgressExtractor.getCulturalProgressData();
-      const discovered = (data.discoveredSymbols || []).map(s => (s.name || s.id || '').toLowerCase());
+      const data       = CulturalProgressExtractor.getCulturalProgressData()
+      const discovered = (data.discoveredSymbols || []).map(s =>
+        (s.name || s.id || '').toLowerCase())
       const orderedKeys = SYMBOL_ORDER.filter(key =>
-        discovered.some(d => d.includes(key) || key.includes(d))
-      );
-      setDiscoveredList(orderedKeys);
-      const latestKey = orderedKeys[orderedKeys.length - 1];
-      setCurrentSymbol(latestKey ? SYMBOL_DATA[latestKey] : null);
+        discovered.some(d => d.includes(key) || key.includes(d)))
+      setDiscoveredList(orderedKeys)
+      const latestKey = orderedKeys[orderedKeys.length - 1]
+      setCurrentSymbol(latestKey ? SYMBOL_DATA[latestKey] : null)
     } catch (_) {
-      setCurrentSymbol(null);
-      setDiscoveredList([]);
+      setCurrentSymbol(null)
+      setDiscoveredList([])
     }
 
-    const rKey = `parent_ritual_done_${new Date().toDateString()}`;
-    setRitualDone(localStorage.getItem(rKey) === 'true');
-  }, []);
+    const rKey = `parent_ritual_done_${new Date().toDateString()}`
+    setRitualDone(localStorage.getItem(rKey) === 'true')
+  }, [])
 
-  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(''), 3200); };
+  // ── Analytics data (derived, no state needed) ─────────────────
+  const weekSessions  = getThisWeekSessions()
+  const allSessions   = getTWGSessions()
+  const zoneCounts    = getZoneCounts(weekSessions)
+  const caselCounts   = getCASELCounts(weekSessions)
+  const techCounts    = getTechniqueCounts(weekSessions)
+  const kindnessActs  = getKindnessActs()
+  const gratitudeJar  = getGratitudeJar()
+  const dareStreak    = getDareStreak()
+  const weeklyStories = getWeeklyStories()
+
+  const topCasel = getTopItem(caselCounts)
+  const topZone  = getTopItem(zoneCounts)
+
+  const thisWeekActs = kindnessActs.filter(a => {
+    const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000
+    return new Date(a.date).getTime() > weekAgo
+  })
+
+  // ── Helpers ───────────────────────────────────────────────────
+  const showToast = (msg) => {
+    setToast(msg)
+    setTimeout(() => setToast(''), 3200)
+  }
 
   const handleRitualDone = () => {
-    localStorage.setItem(`parent_ritual_done_${new Date().toDateString()}`, 'true');
-    setRitualDone(true);
-  };
-  const handlePdf  = () => showToast('Practice sheets coming very soon.');
+    localStorage.setItem(
+      `parent_ritual_done_${new Date().toDateString()}`, 'true')
+    setRitualDone(true)
+  }
 
-  // Calm overlay handlers
-  const handleBeginTogether    = () => setShowCalmOverlay(true);
-  const handleCalmOverlayClose = () => setShowCalmOverlay(false);
+  const handleBeginTogether    = () => setShowCalmOverlay(true)
+  const handleCalmOverlayClose = () => setShowCalmOverlay(false)
   const handleCalmOverlayDone  = () => {
-    setShowCalmOverlay(false);
-    showToast('You helped your child reset. 🌟');
-  };
+    setShowCalmOverlay(false)
+    showToast('You helped your child reset. 🌟')
+  }
 
   const handleChipTap = (key) => {
-    const s = SYMBOL_DATA[key];
-    setSelectedSymbol(sym.id === s?.id ? null : s);
-    setShowStory(false);
-  };
+    const s = SYMBOL_DATA[key]
+    setSelectedSymbol(sym => sym?.id === s?.id ? null : s)
+    setShowStory(false)
+  }
 
-  const sym  = selectedSymbol || currentSymbol || GETTING_STARTED;
-  const name = childName || 'Your child';
+  const handleUnlockTime = () => {
+    unlockExtraTime()
+    setExtraUnlocked(true)
+  }
+
+  const sym  = selectedSymbol || currentSymbol || GETTING_STARTED
+  const name = childName || 'Your child'
+
+  // ── PIN gate ──────────────────────────────────────────────────
+  if (!unlocked) {
+    return <PinScreen onSuccess={() => setUnlocked(true)} />
+  }
+
+  // ── Tabs config ───────────────────────────────────────────────
+  const tabs = [
+    { id: 'guidance',  label: 'Guidance',  emoji: '🐘' },
+    { id: 'overview',  label: 'Overview',  emoji: '📊' },
+    { id: 'emotions',  label: 'Emotions',  emoji: '💛' },
+    { id: 'kindness',  label: 'Kindness',  emoji: '🌸' },
+    { id: 'sessions',  label: 'Sessions',  emoji: '🗣️' },
+    { id: 'stories',   label: 'Stories',   emoji: '📖' },
+    { id: 'settings',  label: 'Settings',  emoji: '⚙️' },
+  ]
 
   return (
     <div className="pd-root">
       <div className="pd-bg-overlay" />
 
-      {/* ── Scrollable content area ─────────────────────────────────── */}
-      <div className="pd-scroll">
+      {/* ── v2 Header (replaces scroll-only card header) ───────── */}
+      <div style={{
+        background: `linear-gradient(135deg, ${CV.saffron}, ${CV.deepOrange})`,
+        padding: '1rem 1.2rem',
+        display: 'flex', justifyContent: 'space-between',
+        alignItems: 'center',
+        position: 'sticky', top: 0, zIndex: 50,
+      }}>
+        <div>
+          <h1 style={{
+            fontFamily: 'Baloo 2, cursive',
+            fontSize: '1.2rem', color: 'white',
+            margin: 0, fontWeight: 800,
+          }}>
+            🔒 Parent Dashboard
+          </h1>
+          <p style={{
+            color: 'rgba(255,255,255,0.82)',
+            fontSize: '0.78rem', margin: 0,
+            fontFamily: 'Nunito, sans-serif',
+          }}>
+            {name}'s journey
+          </p>
+        </div>
+        <button
+          onClick={onBack}
+          style={{
+            background: 'rgba(255,255,255,0.2)',
+            border: 'none', borderRadius: '50%',
+            width: 36, height: 36, cursor: 'pointer',
+            color: 'white', fontSize: '1.1rem',
+          }}
+        >
+          ✕
+        </button>
+      </div>
 
-        {/* ══ GLASS CARD — single unified container ════════════════════ */}
-        <div className="pd-guidance-card">
+      {/* ── Tab bar ───────────────────────────────────────────────── */}
+      <div style={{
+        display: 'flex', overflowX: 'auto',
+        background: 'white',
+        borderBottom: '2px solid rgba(255,215,0,0.3)',
+        padding: '0 0.4rem',
+        gap: '0.1rem',
+        position: 'sticky', top: 62, zIndex: 40,
+      }}>
+        {tabs.map(t => (
+          <button
+            key={t.id}
+            onClick={() => setActiveTab(t.id)}
+            style={{
+              background: 'none', border: 'none',
+              padding: '0.65rem 0.75rem',
+              fontFamily: 'Nunito, sans-serif',
+              fontWeight: 700, fontSize: '0.78rem',
+              cursor: 'pointer', whiteSpace: 'nowrap',
+              color: activeTab === t.id ? CV.deepOrange : CV.softBrown,
+              borderBottom: activeTab === t.id
+                ? `2.5px solid ${CV.deepOrange}` : '2.5px solid transparent',
+            }}
+          >
+            {t.emoji} {t.label}
+          </button>
+        ))}
+      </div>
 
-          {/* ── Back button ──────────────────────────────────────────── */}
-          <button className="pd-back-btn" onClick={onBack} aria-label="Back">←</button>
+      {/* ══════════════════════════════════════════════════════════
+          TAB CONTENT
+      ══════════════════════════════════════════════════════════ */}
+      <div className="pd-scroll" style={{ paddingTop: 0 }}>
 
-          {/* ══ HEADER ═══════════════════════════════════════════════════ */}
-          <header className="pd-header">
-            <p className="pd-header-label">Parent Guidance</p>
-            <h1 className="pd-header-title">Using the "{sym.growthWord}" Symbol</h1>
-            <p className="pd-header-sub">Simple ways to support {name} during the day</p>
-          </header>
+        {/* ── GUIDANCE TAB (v1 content — fully preserved) ───────── */}
+        {activeTab === 'guidance' && (
+          <div className="pd-guidance-card">
 
-          {/* ══ SYMBOL STRIP ═════════════════════════════════════════════ */}
-          <section className="pd-symbol-strip">
-            <div className="pd-strip-top">
-              <p className="pd-strip-heading">Symbols {name} Has Learned</p>
-              <p className="pd-strip-count">{discoveredList.length} of 8</p>
+            <header className="pd-header">
+              <p className="pd-header-label">Parent Guidance</p>
+              <h1 className="pd-header-title">
+                Using the "{sym.growthWord}" Symbol
+              </h1>
+              <p className="pd-header-sub">
+                Simple ways to support {name} during the day
+              </p>
+            </header>
+
+            {/* Symbol strip */}
+            <section className="pd-symbol-strip">
+              <div className="pd-strip-top">
+                <p className="pd-strip-heading">Symbols {name} Has Learned</p>
+                <p className="pd-strip-count">{discoveredList.length} of 8</p>
+              </div>
+              <div className="pd-symbols-row">
+                {discoveredList.length === 0 ? (
+                  <p className="pd-strip-empty">
+                    Start exploring to unlock symbol guides.
+                  </p>
+                ) : (
+                  SYMBOL_ORDER
+                    .filter(key => discoveredList.includes(key))
+                    .map(key => {
+                      const s        = SYMBOL_DATA[key]
+                      const isActive = sym.id === s?.id
+                      return (
+                        <button
+                          key={key}
+                          className={`pd-symbol-chip${isActive ? ' pd-symbol-chip-active' : ''}`}
+                          onClick={() => handleChipTap(key)}
+                          title={s?.name}
+                        >
+                          <span className="pd-chip-emoji">{s?.emoji}</span>
+                          <span className="pd-chip-label">{s?.name}</span>
+                        </button>
+                      )
+                    })
+                )}
+              </div>
+              <p className="pd-strip-foot">
+                Tap any symbol to see how you can use it in daily life
+              </p>
+            </section>
+
+            {/* Main grid */}
+            <div className="pd-grid">
+              <div className="pd-col-left">
+                {/* During Difficult Moments */}
+                <section className="pd-guidance-section pd-section-calm">
+                  <h2 className="pd-section-title">During Difficult Moments</h2>
+                  <p className="pd-section-context">
+                    When {name} feels upset, overwhelmed, or frustrated…
+                  </p>
+                  <div className="pd-moment-steps">
+                    {sym.moment.map((step, i) => (
+                      <div key={i} className="pd-moment-step-row">
+                        <span className="pd-moment-step-icon">
+                          {(sym.momentIcons || [])[i] || '·'}
+                        </span>
+                        <p className="pd-section-body">{step}</p>
+                      </div>
+                    ))}
+                  </div>
+                  {showStory && (
+                    <div className="pd-story-box">
+                      <p className="pd-story-text">{sym.resetStory}</p>
+                    </div>
+                  )}
+                  <div className="pd-moment-btns">
+                    <button className="pd-cta-calm" onClick={handleBeginTogether}>
+                      Begin Together
+                    </button>
+                    <button
+                      className="pd-cta-ghost"
+                      onClick={() => setShowStory(s => !s)}
+                    >
+                      {showStory ? 'Close story' : 'A story to share'}
+                    </button>
+                  </div>
+                </section>
+
+                {/* Heart-to-Heart */}
+                <section className="pd-guidance-section pd-section-connect">
+                  <h2 className="pd-section-title">Heart-to-Heart</h2>
+                  <p className="pd-section-context">
+                    Ask at dinner or on the way home
+                  </p>
+                  <div className="pd-questions-list">
+                    {sym.dinnerQuestions.map((q, i) => (
+                      <p key={i} className="pd-connect-question">{q}</p>
+                    ))}
+                  </div>
+                  <p className="pd-section-footnote">
+                    No right answers — listen more, fix less
+                  </p>
+                </section>
+              </div>
+
+              <div className="pd-col-right">
+                <section className="pd-guidance-section pd-section-ritual">
+                  <h2 className="pd-section-title pd-section-title-center">
+                    End the Day with Ganesha
+                  </h2>
+                  <ol className="pd-ritual-steps">
+                    {sym.ritual.map((step, i) => (
+                      <li key={i} className="pd-step-row">
+                        <div className="pd-num-circle">{i + 1}</div>
+                        <p className="pd-section-body">{step}</p>
+                      </li>
+                    ))}
+                  </ol>
+                  <button className="pd-cta-audio">
+                    Listen to the chant together ›
+                  </button>
+                  <div className="pd-ritual-cta">
+                    {ritualDone ? (
+                      <div className="pd-ritual-done-box">
+                        <p className="pd-ritual-done-text">Done for tonight</p>
+                      </div>
+                    ) : (
+                      <button
+                        className="pd-cta-calm pd-cta-calm-full"
+                        onClick={handleRitualDone}
+                      >
+                        We Did Our Ritual Tonight
+                      </button>
+                    )}
+                  </div>
+                </section>
+              </div>
             </div>
 
-            <div className="pd-symbols-row">
-              {discoveredList.length === 0 ? (
-                <p className="pd-strip-empty">
-                  Start exploring to unlock symbol guides.
+            {/* Practice strip */}
+            <section className="pd-practice-strip">
+              <div className="pd-practice-info">
+                <p className="pd-practice-title">{sym.name} Practice Sheet</p>
+                <p className="pd-practice-sub">{sym.activity}</p>
+              </div>
+              <button
+                className="pd-cta-download"
+                onClick={() => showToast('Practice sheets coming very soon.')}
+              >
+                Download
+              </button>
+            </section>
+          </div>
+        )}
+
+        {/* ── OVERVIEW TAB ─────────────────────────────────────────── */}
+        {activeTab === 'overview' && (
+          <AnalyticsWrap>
+            {/* Summary cards */}
+            <div style={{
+              display: 'grid', gridTemplateColumns: '1fr 1fr',
+              gap: '0.7rem', marginBottom: '1rem',
+            }}>
+              <SummaryCard emoji="🐘" label="TWG sessions"
+                value={weekSessions.length} sublabel="this week"
+                color={CV.saffron} />
+              <SummaryCard emoji="🎯" label="Dare streak"
+                value={`${dareStreak} day${dareStreak !== 1 ? 's' : ''}`}
+                sublabel={dareStreak >= 7 ? '🌟 Amazing!' : 'keep going!'}
+                color={CV.deepOrange} />
+              <SummaryCard emoji="💛" label="Kind acts"
+                value={thisWeekActs.length} sublabel="this week"
+                color={CV.green} />
+              <SummaryCard emoji="🍬" label="Gratitude jar"
+                value={`${gratitudeJar.count}/7`}
+                sublabel={gratitudeJar.count >= 7
+                  ? 'Story ready! 📖' : 'modaks'}
+                color={CV.purple} />
+            </div>
+
+            {/* DESSA strength highlight */}
+            {topCasel && (
+              <div style={{
+                background: '#F3E5F5', border: '2px solid #CE93D8',
+                borderRadius: 16, padding: '1rem', marginBottom: '1rem',
+              }}>
+                <div style={{ fontSize: '1.3rem', marginBottom: '0.3rem' }}>🌟</div>
+                <p style={{
+                  fontFamily: 'Baloo 2, cursive',
+                  fontSize: '0.9rem', color: CV.purple,
+                  margin: '0 0 0.2rem', fontWeight: 700,
+                }}>
+                  This week's strength
                 </p>
-              ) : (
-                SYMBOL_ORDER
-                  .filter(key => discoveredList.includes(key))
-                  .map(key => {
-                    const s = SYMBOL_DATA[key];
-                    const isActive = sym.id === s?.id;
-                    return (
-                      <button
-                        key={key}
-                        className={`pd-symbol-chip${isActive ? ' pd-symbol-chip-active' : ''}`}
-                        onClick={() => handleChipTap(key)}
-                        title={s?.name}
-                      >
-                        <span className="pd-chip-emoji">{s?.emoji}</span>
-                        <span className="pd-chip-label">{s?.name}</span>
-                      </button>
-                    );
-                  })
+                <p style={{
+                  fontFamily: 'Nunito, sans-serif',
+                  fontSize: '1rem', color: CV.purple,
+                  margin: 0, fontWeight: 800,
+                }}>
+                  {name} {toStrengthLanguage(topCasel[0], topCasel[1])}
+                </p>
+              </div>
+            )}
+
+            {/* Top zone + tip */}
+            {topZone && (() => {
+              const z = ZONE_COLORS[topZone[0]]
+              return (
+                <div style={{
+                  background: z.bg, border: `2px solid ${z.border}`,
+                  borderRadius: 16, padding: '1rem', marginBottom: '1rem',
+                }}>
+                  <p style={{
+                    fontFamily: 'Baloo 2, cursive',
+                    fontSize: '0.88rem', color: z.text,
+                    margin: '0 0 0.3rem', fontWeight: 700,
+                  }}>
+                    {z.emoji} Most common zone this week
+                  </p>
+                  <p style={{
+                    fontFamily: 'Nunito, sans-serif',
+                    fontSize: '0.95rem', color: z.text,
+                    margin: '0 0 0.5rem', fontWeight: 800,
+                  }}>
+                    {topZone[0]} Zone ({topZone[1]} session{topZone[1] !== 1 ? 's' : ''})
+                  </p>
+                  <p style={{
+                    fontFamily: 'Nunito, sans-serif',
+                    fontSize: '0.82rem', color: z.text,
+                    margin: 0, opacity: 0.8, lineHeight: 1.6,
+                  }}>
+                    {SEL_TIPS[topZone[0]]}
+                  </p>
+                  <p style={{
+                    fontFamily: 'Nunito, sans-serif',
+                    fontSize: '0.7rem', color: z.text,
+                    margin: '0.4rem 0 0', opacity: 0.5,
+                  }}>
+                    Source: CASEL / Zones of Regulation
+                  </p>
+                </div>
+              )
+            })()}
+
+            {/* Weekly story CTA */}
+            {gratitudeJar.count >= 7 && (
+              <button
+                onClick={() => setShowWeeklyCard(true)}
+                style={{
+                  width: '100%',
+                  background: `linear-gradient(135deg, ${CV.saffron}, ${CV.deepOrange})`,
+                  border: 'none', borderRadius: 16,
+                  color: 'white', padding: '1rem',
+                  fontFamily: 'Baloo 2, cursive',
+                  fontWeight: 700, fontSize: '1rem',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 16px rgba(255,87,34,0.3)',
+                  marginBottom: '1rem',
+                }}
+              >
+                📖 This week's story is ready — share it!
+              </button>
+            )}
+
+            {/* Extra time unlock */}
+            <div style={{
+              background: 'white',
+              border: '2px solid rgba(255,215,0,0.4)',
+              borderRadius: 16, padding: '1rem',
+            }}>
+              <p style={{
+                fontFamily: 'Baloo 2, cursive',
+                fontSize: '0.9rem', color: CV.brown,
+                margin: '0 0 0.4rem', fontWeight: 700,
+              }}>
+                ⏱️ Extra Time with Ganesha
+              </p>
+              <p style={{
+                fontFamily: 'Nunito, sans-serif',
+                fontSize: '0.82rem', color: CV.softBrown,
+                margin: '0 0 0.7rem', lineHeight: 1.6,
+              }}>
+                {extraUnlocked
+                  ? '✅ Extra time unlocked for today'
+                  : `${name} has used today's 5 minutes. Give them extra time?`}
+              </p>
+              {!extraUnlocked && (
+                <button onClick={handleUnlockTime} style={{
+                  background: `linear-gradient(135deg, ${CV.saffron}, ${CV.deepOrange})`,
+                  border: 'none', borderRadius: 999,
+                  color: 'white', padding: '0.6rem 1.4rem',
+                  fontFamily: 'Baloo 2, cursive',
+                  fontWeight: 700, fontSize: '0.88rem',
+                  cursor: 'pointer',
+                }}>
+                  Give 5 more minutes 🐘
+                </button>
               )}
             </div>
+          </AnalyticsWrap>
+        )}
 
-            <p className="pd-strip-foot">
-              Tap any symbol to see how you can use it in daily life
-            </p>
-          </section>
+        {/* ── EMOTIONS TAB ─────────────────────────────────────────── */}
+        {activeTab === 'emotions' && (
+          <AnalyticsWrap>
+            <SectionHead>Zones of Regulation — this week</SectionHead>
 
-          {/* ══ MAIN GRID ════════════════════════════════════════════════ */}
-          <div className="pd-grid">
-
-            {/* ── LEFT COLUMN ──────────────────────────────────────────── */}
-            <div className="pd-col-left">
-
-              {/* During Difficult Moments */}
-              <section className="pd-guidance-section pd-section-calm">
-                <h2 className="pd-section-title">During Difficult Moments</h2>
-                <p className="pd-section-context">
-                  When {name} feels upset, overwhelmed, or frustrated…
-                </p>
-
-                <div className="pd-moment-steps">
-                  {sym.moment.map((step, i) => (
-                    <div key={i} className="pd-moment-step-row">
-                      <span className="pd-moment-step-icon">
-                        {(sym.momentIcons || [])[i] || '·'}
-                      </span>
-                      <p className="pd-section-body">{step}</p>
-                    </div>
-                  ))}
-                </div>
-
-                {showStory && (
-                  <div className="pd-story-box">
-                    <p className="pd-story-text">{sym.resetStory}</p>
+            {/* Zone bar chart */}
+            {Object.entries(zoneCounts).map(([zone, count]) => {
+              const z   = ZONE_COLORS[zone]
+              const max = Math.max(...Object.values(zoneCounts), 1)
+              return (
+                <div key={zone} style={{
+                  display: 'flex', alignItems: 'center',
+                  gap: '0.6rem', marginBottom: '0.7rem',
+                }}>
+                  <span style={{ fontSize: '0.9rem', width: 16 }}>{z.emoji}</span>
+                  <span style={{
+                    fontFamily: 'Nunito, sans-serif',
+                    fontSize: '0.82rem', color: z.text,
+                    width: 58, fontWeight: 700,
+                  }}>{zone}</span>
+                  <div style={{
+                    flex: 1, background: '#eee',
+                    borderRadius: 999, height: 12, overflow: 'hidden',
+                  }}>
+                    <div style={{
+                      width: `${(count / max) * 100}%`,
+                      height: '100%', background: z.text,
+                      borderRadius: 999, transition: 'width 0.6s ease',
+                    }} />
                   </div>
-                )}
-
-                <div className="pd-moment-btns">
-                  <button className="pd-cta-calm" onClick={handleBeginTogether}>
-                    Begin Together
-                  </button>
-                  <button
-                    className="pd-cta-ghost"
-                    onClick={() => setShowStory(s => !s)}
-                  >
-                    {showStory ? 'Close story' : 'A story to share'}
-                  </button>
+                  <span style={{
+                    fontFamily: 'Nunito, sans-serif',
+                    fontSize: '0.8rem', color: CV.softBrown,
+                    width: 20, textAlign: 'right',
+                  }}>{count}</span>
                 </div>
-              </section>
+              )
+            })}
 
-              {/* Heart-to-Heart Connection */}
-              <section className="pd-guidance-section pd-section-connect">
-                <h2 className="pd-section-title">Heart-to-Heart</h2>
-                <p className="pd-section-context">Ask at dinner or on the way home</p>
-
-                <div className="pd-questions-list">
-                  {sym.dinnerQuestions.map((q, i) => (
-                    <p key={i} className="pd-connect-question">{q}</p>
-                  ))}
+            <SectionHead style={{ marginTop: '1.2rem' }}>SEL Skills practised</SectionHead>
+            {Object.entries(caselCounts)
+              .sort((a, b) => b[1] - a[1])
+              .map(([skill, count]) => (
+                <div key={skill} style={{
+                  background: 'white',
+                  border: '1.5px solid rgba(255,215,0,0.4)',
+                  borderRadius: 12, padding: '0.7rem 0.9rem',
+                  marginBottom: '0.5rem',
+                  display: 'flex', justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}>
+                  <div>
+                    <span style={{
+                      display: 'inline-block', width: 8, height: 8,
+                      borderRadius: '50%',
+                      background: CASEL_COLORS[skill] || CV.purple,
+                      marginRight: 8,
+                    }} />
+                    <span style={{
+                      fontFamily: 'Nunito, sans-serif',
+                      fontSize: '0.88rem', color: CV.brown, fontWeight: 700,
+                    }}>{skill}</span>
+                  </div>
+                  <span style={{
+                    fontFamily: 'Baloo 2, cursive',
+                    fontSize: '0.9rem', color: CV.softBrown, fontWeight: 700,
+                  }}>{count}×</span>
                 </div>
+              ))}
 
-                <p className="pd-section-footnote">
-                  No right answers — listen more, fix less
-                </p>
-              </section>
-
-            </div>{/* /col-left */}
-
-            {/* ── RIGHT COLUMN ─────────────────────────────────────────── */}
-            <div className="pd-col-right">
-              <section className="pd-guidance-section pd-section-ritual">
-                <h2 className="pd-section-title pd-section-title-center">
-                  End the Day with Ganesha
-                </h2>
-
-                <ol className="pd-ritual-steps">
-                  {sym.ritual.map((step, i) => (
-                    <li key={i} className="pd-step-row">
-                      <div className="pd-num-circle">{i + 1}</div>
-                      <p className="pd-section-body">{step}</p>
-                    </li>
-                  ))}
-                </ol>
-
-                <button className="pd-cta-audio">
-                  Listen to the chant together ›
-                </button>
-
-                <div className="pd-ritual-cta">
-                  {ritualDone ? (
-                    <div className="pd-ritual-done-box">
-                      <p className="pd-ritual-done-text">Done for tonight</p>
+            {Object.keys(techCounts).length > 0 && (
+              <>
+                <SectionHead style={{ marginTop: '1.2rem' }}>
+                  Co-regulation tools used
+                </SectionHead>
+                {Object.entries(techCounts)
+                  .sort((a, b) => b[1] - a[1])
+                  .map(([tech, count]) => (
+                    <div key={tech} style={{
+                      display: 'flex', justifyContent: 'space-between',
+                      padding: '0.5rem 0',
+                      borderBottom: '1px solid rgba(255,215,0,0.2)',
+                      fontFamily: 'Nunito, sans-serif',
+                      fontSize: '0.88rem', color: CV.brown,
+                    }}>
+                      <span style={{ textTransform: 'capitalize' }}>
+                        {tech.replace(/_/g, ' ')}
+                      </span>
+                      <span style={{ color: CV.softBrown, opacity: 0.7 }}>
+                        {count}×
+                      </span>
                     </div>
-                  ) : (
-                    <button className="pd-cta-calm pd-cta-calm-full" onClick={handleRitualDone}>
-                      We Did Our Ritual Tonight
-                    </button>
-                  )}
-                </div>
-              </section>
-            </div>{/* /col-right */}
+                  ))}
+              </>
+            )}
 
-          </div>{/* /grid */}
+            {weekSessions.length === 0 && (
+              <EmptyState emoji="💛" message="No TWG sessions this week yet." />
+            )}
+          </AnalyticsWrap>
+        )}
 
-          {/* ══ PRACTICE STRIP ═══════════════════════════════════════════ */}
-          <section className="pd-practice-strip">
-            <div className="pd-practice-info">
-              <p className="pd-practice-title">{sym.name} Practice Sheet</p>
-              <p className="pd-practice-sub">{sym.activity}</p>
+        {/* ── KINDNESS TAB ─────────────────────────────────────────── */}
+        {activeTab === 'kindness' && (
+          <AnalyticsWrap>
+            {/* Dare streak banner */}
+            <div style={{
+              background: 'linear-gradient(135deg, #FFF3E0, #FFE0B2)',
+              border: `2px solid ${CV.gold}`,
+              borderRadius: 16, padding: '1rem',
+              marginBottom: '1rem', textAlign: 'center',
+            }}>
+              <div style={{ fontSize: '2rem', marginBottom: '0.3rem' }}>🎯</div>
+              <p style={{
+                fontFamily: 'Baloo 2, cursive',
+                fontSize: '1.3rem', color: CV.brown,
+                margin: 0, fontWeight: 800,
+              }}>
+                {dareStreak} day streak
+              </p>
+              <p style={{
+                fontFamily: 'Nunito, sans-serif',
+                fontSize: '0.82rem', color: CV.softBrown,
+                margin: '0.2rem 0 0',
+              }}>
+                {dareStreak >= 7
+                  ? '🌟 A full week of dares! Story unlocked!'
+                  : `${7 - dareStreak} more days for weekly story`}
+              </p>
             </div>
-            <button className="pd-cta-download" onClick={handlePdf}>
-              Download
-            </button>
-          </section>
 
-        </div>{/* /pd-guidance-card */}
-      </div>{/* /pd-scroll */}
+            <SectionHead>{name}'s kind acts this week</SectionHead>
+            {thisWeekActs.length === 0 ? (
+              <EmptyState emoji="🌸"
+                message="No kindness acts logged yet this week." />
+            ) : (
+              thisWeekActs.map(act => (
+                <div key={act.id} style={{
+                  background: 'white',
+                  border: '1.5px solid rgba(255,215,0,0.4)',
+                  borderRadius: 12, padding: '0.8rem',
+                  marginBottom: '0.5rem',
+                }}>
+                  <p style={{
+                    fontFamily: 'Nunito, sans-serif',
+                    fontSize: '0.9rem', color: CV.brown,
+                    margin: '0 0 0.3rem', fontWeight: 700,
+                  }}>
+                    "{act.text}"
+                  </p>
+                  <div style={{
+                    display: 'flex', justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                    <span style={{
+                      background: CV.lightCream, borderRadius: 999,
+                      padding: '0.15rem 0.6rem',
+                      fontSize: '0.72rem', color: CV.softBrown,
+                      fontFamily: 'Nunito, sans-serif',
+                      fontWeight: 700, textTransform: 'capitalize',
+                    }}>
+                      {act.category}
+                    </span>
+                    <span style={{
+                      fontSize: '0.72rem', color: CV.softBrown,
+                      opacity: 0.5, fontFamily: 'Nunito, sans-serif',
+                    }}>
+                      {new Date(act.date).toLocaleDateString(
+                        'en-IN', { day: 'numeric', month: 'short' })}
+                    </span>
+                  </div>
+                </div>
+              ))
+            )}
 
-      {/* ── Floating calm FAB ─────────────────────────────────────── */}
-      <button className="pd-quick-calm-fab" onClick={handleBeginTogether} aria-label="Quick calm">
-        🌸
-      </button>
+            <SectionHead style={{ marginTop: '1.2rem' }}>
+              Gratitude jar — {gratitudeJar.count}/7 modaks
+            </SectionHead>
+            <div style={{
+              display: 'flex', gap: 6, flexWrap: 'wrap',
+              marginBottom: '0.8rem',
+            }}>
+              {Array.from({ length: 7 }).map((_, i) => (
+                <span key={i} style={{
+                  fontSize: '1.5rem',
+                  opacity: i < gratitudeJar.count ? 1 : 0.2,
+                }}>🍬</span>
+              ))}
+            </div>
+            {(gratitudeJar.items || []).slice(-7).map((item, i) => (
+              <div key={i} style={{
+                fontFamily: 'Nunito, sans-serif',
+                fontSize: '0.85rem', color: CV.brown,
+                padding: '0.3rem 0',
+                borderBottom: '1px solid rgba(255,215,0,0.2)',
+              }}>
+                🌸 {item.text || item}
+              </div>
+            ))}
+          </AnalyticsWrap>
+        )}
 
-      {/* ── Toast ──────────────────────────────────────────────────── */}
+        {/* ── SESSIONS TAB ─────────────────────────────────────────── */}
+        {activeTab === 'sessions' && (
+          <AnalyticsWrap>
+            <SectionHead>Recent TWG sessions</SectionHead>
+            {allSessions.length === 0 ? (
+              <EmptyState emoji="🗣️"
+                message="No sessions yet. Let your child talk to Ganesha!" />
+            ) : (
+              [...allSessions].reverse().slice(0, 15).map(s => {
+                const z = ZONE_COLORS[s.zone] || ZONE_COLORS.Green
+                return (
+                  <div key={s.id} style={{
+                    border: `1.5px solid ${z.border}`,
+                    background: z.bg,
+                    borderRadius: 14, padding: '0.8rem',
+                    marginBottom: '0.5rem',
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start', gap: '0.5rem',
+                    }}>
+                      <div style={{ flex: 1 }}>
+                        {s.input && (
+                          <p style={{
+                            fontFamily: 'Nunito, sans-serif',
+                            fontSize: '0.88rem', color: CV.brown,
+                            fontWeight: 700, margin: '0 0 0.3rem',
+                          }}>
+                            "{s.input}"
+                          </p>
+                        )}
+                        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                          {s.zone && (
+                            <Tag text={`${z.emoji} ${s.zone} Zone`} color={z.text} />
+                          )}
+                          {s.caselSkill && (
+                            <Tag
+                              text={`🧠 ${s.caselSkill}`}
+                              color={CASEL_COLORS[s.caselSkill] || CV.purple}
+                            />
+                          )}
+                        </div>
+                      </div>
+                      <span style={{
+                        fontFamily: 'Nunito, sans-serif',
+                        fontSize: '0.72rem', color: CV.softBrown,
+                        opacity: 0.6, whiteSpace: 'nowrap',
+                      }}>
+                        {new Date(s.date).toLocaleDateString(
+                          'en-IN', { day: 'numeric', month: 'short' })}
+                      </span>
+                    </div>
+                  </div>
+                )
+              })
+            )}
+          </AnalyticsWrap>
+        )}
+
+        {/* ── STORIES TAB ──────────────────────────────────────────── */}
+        {activeTab === 'stories' && (
+          <AnalyticsWrap>
+            <SectionHead>Weekly story cards</SectionHead>
+            <p style={{
+              fontFamily: 'Nunito, sans-serif',
+              fontSize: '0.85rem', color: CV.softBrown,
+              marginBottom: '1rem', lineHeight: 1.6, opacity: 0.7,
+            }}>
+              Generated when gratitude jar reaches 7 modaks.
+              Share with family on WhatsApp. 💛
+            </p>
+            {weeklyStories.length === 0 ? (
+              <EmptyState emoji="📖"
+                message={`Fill the gratitude jar to unlock ${name}'s first weekly story.`} />
+            ) : (
+              weeklyStories.map(story => (
+                <div key={story.id} style={{
+                  background: 'white',
+                  border: '2px solid rgba(255,215,0,0.5)',
+                  borderRadius: 16, padding: '1rem',
+                  marginBottom: '0.8rem',
+                }}>
+                  <div style={{
+                    display: 'flex', justifyContent: 'space-between',
+                    alignItems: 'center', marginBottom: '0.5rem',
+                  }}>
+                    <span style={{
+                      fontFamily: 'Baloo 2, cursive',
+                      fontSize: '0.9rem', color: CV.brown, fontWeight: 700,
+                    }}>
+                      {story.weekOf}
+                    </span>
+                    <span style={{
+                      fontSize: '0.72rem', color: CV.softBrown,
+                      opacity: 0.5, fontFamily: 'Nunito, sans-serif',
+                    }}>
+                      {new Date(story.date).toLocaleDateString(
+                        'en-IN', { day: 'numeric', month: 'short' })}
+                    </span>
+                  </div>
+                  <p style={{
+                    fontFamily: 'Nunito, sans-serif',
+                    fontSize: '0.88rem', color: CV.brown,
+                    lineHeight: 1.6, margin: '0 0 0.8rem',
+                  }}>
+                    {story.summary}
+                  </p>
+                  <button
+                    onClick={() => setShowWeeklyCard(story)}
+                    style={{
+                      background: `linear-gradient(135deg, ${CV.saffron}, ${CV.deepOrange})`,
+                      border: 'none', borderRadius: 999,
+                      color: 'white', padding: '0.5rem 1.2rem',
+                      fontFamily: 'Baloo 2, cursive',
+                      fontWeight: 700, fontSize: '0.85rem',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    📤 Share this story
+                  </button>
+                </div>
+              ))
+            )}
+          </AnalyticsWrap>
+        )}
+
+        {/* ── SETTINGS TAB ─────────────────────────────────────────── */}
+        {activeTab === 'settings' && (
+          <AnalyticsWrap>
+            <SectionHead>Dashboard settings</SectionHead>
+
+            <SettingRow
+              label="Daily TWG sessions"
+              sublabel="How many 5-min sessions per day"
+              value="1"
+            />
+            <SettingRow
+              label="Change PIN"
+              sublabel="Update your 4-digit parent PIN"
+              action={() => {
+                clearPin()
+                setUnlocked(false)
+              }}
+              actionLabel="Change"
+            />
+            <SettingRow
+              label="Clear session history"
+              sublabel="Remove all logged TWG sessions"
+              action={() => {
+                if (window.confirm('Clear all session history?')) {
+                  localStorage.removeItem('gmb_twg_sessions')
+                  window.location.reload()
+                }
+              }}
+              actionLabel="Clear"
+              danger
+            />
+          </AnalyticsWrap>
+        )}
+
+      </div>{/* /scroll */}
+
+      {/* Floating calm FAB — only on Guidance tab */}
+      {activeTab === 'guidance' && (
+        <button
+          className="pd-quick-calm-fab"
+          onClick={handleBeginTogether}
+          aria-label="Quick calm"
+        >
+          🌸
+        </button>
+      )}
+
+      {/* Toast */}
       {toast && <div className="pd-toast">{toast}</div>}
 
-      {/* ── Calm Overlay ───────────────────────────────────────────── */}
+      {/* Calm Overlay */}
       {showCalmOverlay && (
         <CalmOverlay
           sym={sym}
@@ -451,6 +1137,158 @@ export default function ParentDashboard({ onBack }) {
           onDone={handleCalmOverlayDone}
         />
       )}
+
+      {/* Weekly Card modal */}
+      {showWeeklyCard && (
+        <WeeklyCard
+          childName={name}
+          storyData={showWeeklyCard === true ? null : showWeeklyCard}
+          gratitudeItems={gratitudeJar.items || []}
+          topStrength={topCasel}
+          dareStreak={dareStreak}
+          onClose={() => setShowWeeklyCard(false)}
+        />
+      )}
     </div>
-  );
+  )
+}
+
+// ─── Small reusable components ─────────────────────────────────
+
+function AnalyticsWrap({ children }) {
+  return (
+    <div style={{
+      padding: '1.2rem',
+      maxWidth: 560, margin: '0 auto',
+      animation: 'pd-fadeUp 0.35s ease',
+    }}>
+      <style>{`
+        @keyframes pd-fadeUp {
+          from { opacity:0; transform:translateY(8px) }
+          to   { opacity:1; transform:translateY(0) }
+        }
+      `}</style>
+      {children}
+    </div>
+  )
+}
+
+function SectionHead({ children, style }) {
+  return (
+    <h3 style={{
+      fontFamily: 'Baloo 2, cursive',
+      fontSize: '1rem', color: '#5D2E0F',
+      margin: '0 0 0.8rem',
+      ...style,
+    }}>
+      {children}
+    </h3>
+  )
+}
+
+function SummaryCard({ emoji, label, value, sublabel, color }) {
+  return (
+    <div style={{
+      background: 'white',
+      border: '2px solid rgba(255,215,0,0.4)',
+      borderRadius: 16, padding: '0.9rem', textAlign: 'center',
+    }}>
+      <div style={{ fontSize: '1.5rem', marginBottom: '0.2rem' }}>{emoji}</div>
+      <div style={{
+        fontFamily: 'Baloo 2, cursive',
+        fontSize: '1.3rem', fontWeight: 800,
+        color: color || '#5D2E0F',
+      }}>
+        {value}
+      </div>
+      <div style={{
+        fontFamily: 'Nunito, sans-serif',
+        fontSize: '0.75rem', color: '#8B4513', fontWeight: 700,
+      }}>
+        {label}
+      </div>
+      <div style={{
+        fontFamily: 'Nunito, sans-serif',
+        fontSize: '0.7rem', color: '#8B4513', opacity: 0.5,
+      }}>
+        {sublabel}
+      </div>
+    </div>
+  )
+}
+
+function Tag({ text, color }) {
+  return (
+    <span style={{
+      background: color, color: 'white', borderRadius: 999,
+      padding: '0.15rem 0.6rem', fontSize: '0.72rem',
+      fontFamily: 'Nunito, sans-serif', fontWeight: 700,
+    }}>
+      {text}
+    </span>
+  )
+}
+
+function EmptyState({ emoji, message }) {
+  return (
+    <div style={{ textAlign: 'center', padding: '2rem 1rem', opacity: 0.5 }}>
+      <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>{emoji}</div>
+      <p style={{
+        fontFamily: 'Nunito, sans-serif',
+        fontSize: '0.88rem', color: '#8B4513',
+      }}>
+        {message}
+      </p>
+    </div>
+  )
+}
+
+function SettingRow({ label, sublabel, value, action, actionLabel, danger }) {
+  return (
+    <div style={{
+      background: 'white',
+      border: '1.5px solid rgba(255,215,0,0.4)',
+      borderRadius: 14, padding: '0.9rem',
+      marginBottom: '0.6rem',
+      display: 'flex', justifyContent: 'space-between',
+      alignItems: 'center',
+    }}>
+      <div>
+        <p style={{
+          fontFamily: 'Nunito, sans-serif',
+          fontSize: '0.9rem', color: '#5D2E0F',
+          margin: 0, fontWeight: 700,
+        }}>
+          {label}
+        </p>
+        <p style={{
+          fontFamily: 'Nunito, sans-serif',
+          fontSize: '0.78rem', color: '#8B4513',
+          margin: 0, opacity: 0.6,
+        }}>
+          {sublabel}
+        </p>
+      </div>
+      {action ? (
+        <button onClick={action} style={{
+          background: danger ? '#FFEBEE' : '#FFF3E0',
+          border: `1.5px solid ${danger ? '#EF9A9A' : '#FFD700'}`,
+          borderRadius: 999, padding: '0.4rem 0.9rem',
+          fontFamily: 'Nunito, sans-serif', fontWeight: 700,
+          fontSize: '0.82rem',
+          color: danger ? '#C62828' : '#5D2E0F',
+          cursor: 'pointer',
+        }}>
+          {actionLabel}
+        </button>
+      ) : (
+        <span style={{
+          fontFamily: 'Baloo 2, cursive',
+          fontWeight: 700, color: '#FF9933',
+        }}>
+          {value}
+        </span>
+      )}
+    </div>
+  )
 }

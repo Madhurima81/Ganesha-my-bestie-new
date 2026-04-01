@@ -795,6 +795,41 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   width: 100%;
 }
 
+/* Age chip row */
+.age-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(6px, 0.8vw, 12px);
+  justify-content: center;
+  margin-bottom: clamp(4px, 0.5vw, 8px);
+}
+
+.age-chip {
+  min-width: clamp(44px, 5vw, 64px);
+  height: clamp(44px, 5vw, 64px);
+  border-radius: 50%;
+  border: 2.5px solid #c4b5f4;
+  background: #fff;
+  color: #6d4fc2;
+  font-family: var(--font-title);
+  font-size: clamp(15px, 1.6vw, 22px);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+.age-chip:hover {
+  background: #ede9fb;
+  border-color: #7c4dff;
+}
+
+.age-chip.active {
+  background: #7c4dff;
+  border-color: #7c4dff;
+  color: #fff;
+  transform: scale(1.1);
+}
+
 /* Friend Grid — 4 columns */
 .friend-grid {
   display: grid;

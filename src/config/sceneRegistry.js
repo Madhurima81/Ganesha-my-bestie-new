@@ -165,7 +165,7 @@ export const SCENE_REGISTRY = [
     zone: 'about-me-hut',
     zoneName: 'About Me Hut',
     displayName: 'Family Tree',
-    file: 'src/zones/about-me-hut/name/Namebirthdaygame.jsx',
+    file: 'src/zones/about-me-hut/family-tree/Familytreegame.jsx',
   },
   {
     id: 'favorite-food',
@@ -173,7 +173,7 @@ export const SCENE_REGISTRY = [
     zone: 'about-me-hut',
     zoneName: 'About Me Hut',
     displayName: 'Favorite Food',
-    file: 'src/zones/about-me-hut/family-tree/Familytreegame.jsx',
+    file: 'src/zones/about-me-hut/food/Favoritefoodgame.jsx',
   },
   {
     id: 'dreams-wishes',
@@ -181,7 +181,7 @@ export const SCENE_REGISTRY = [
     zone: 'about-me-hut',
     zoneName: 'About Me Hut',
     displayName: 'Dreams and Wishes',
-    file: 'src/zones/about-me-hut/food/Favoritefoodgame.jsx',
+    file: 'src/zones/about-me-hut/enjoy/ObstacleRemoverGame.jsx',
   },
   {
     id: 'name-birthday',
@@ -189,7 +189,7 @@ export const SCENE_REGISTRY = [
     zone: 'about-me-hut',
     zoneName: 'About Me Hut',
     displayName: 'Name and Birthday',
-    file: 'src/zones/about-me-hut/enjoy/ObstacleRemoverGame.jsx',
+    file: 'src/zones/about-me-hut/name/Namebirthdaygame.jsx',
   },
 ];
 

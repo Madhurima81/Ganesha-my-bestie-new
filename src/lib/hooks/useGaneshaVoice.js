@@ -56,8 +56,8 @@ const MOMENT_ADJUSTMENTS = {
 // 'ganesha' keeps the current warm/deep profile.
 // 'child' makes delivery lighter and more playful for testing.
 const STYLE_ADJUSTMENTS = {
-  ganesha: { rate: 0.00, pitch: 0.00, volume: 0.92 },
-  child:   { rate: 0.08, pitch: 0.16, volume: 0.98 },
+  ganesha: { rate: 0.00, pitch: 0.00, volume: 0.65 },
+  child:   { rate: 0.08, pitch: 0.16, volume: 0.75 },
 }
 
 // ─── Phonetic Map ─────────────────────────────────────────────────────────────

@@ -185,8 +185,7 @@ box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
   letter-spacing: 0.3px;
 }
 
-/* Remove completion visuals */
-.stat-clean-row.completed,
+/* Remove completion badge only; keep completed rows visible */
 .completion-badge {
   display: none;
 }

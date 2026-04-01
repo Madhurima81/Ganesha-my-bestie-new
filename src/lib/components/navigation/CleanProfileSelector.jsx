@@ -14,6 +14,7 @@ const CleanProfileSelector = ({
   const [showCreateProfile, setShowCreateProfile] = useState(forceCreate);
   const [newProfileName, setNewProfileName] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState('monkey');
+  const [selectedAge, setSelectedAge] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
   const [showInfo, setShowInfo] = useState(false);
   const [manageModeId, setManageModeId] = useState(null); // stores the profile id being managed
@@ -48,13 +49,15 @@ const CleanProfileSelector = ({
       const selectedAnimal = animalAvatars.find(animal => animal.id === selectedAvatar);
       const newProfile = GameStateManager.createProfile(
         newProfileName.trim(),
-        selectedAnimal?.id || 'monkey', 
-        '#000000'
+        selectedAnimal?.id || 'monkey',
+        '#000000',
+        selectedAge
       );
       
       if (newProfile && newProfile.id) {
         setNewProfileName('');
         setSelectedAvatar('monkey');
+        setSelectedAge(null);
         setShowCreateProfile(false);
         loadProfiles();
         onProfileSelect(newProfile.id);
@@ -114,6 +117,20 @@ const CleanProfileSelector = ({
                 className="name-input"
                 autoFocus
               />
+
+              <p className="pick-friend-label">How old are you?</p>
+              <div className="age-chip-row">
+                {[5,6,7,8,9,10,11,12].map(age => (
+                  <button
+                    key={age}
+                    className={`age-chip ${selectedAge === age ? 'active' : ''}`}
+                    onClick={() => setSelectedAge(age)}
+                    type="button"
+                  >
+                    {age}
+                  </button>
+                ))}
+              </div>
 
               <p className="pick-friend-label">Pick your Forest Friend</p>
 

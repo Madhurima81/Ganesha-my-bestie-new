@@ -238,7 +238,7 @@ const FamilyTreeGameContent = ({
   } = useVoiceGuidance('about-me-hut', 'family-tree', {
     enableMusic: true,
     musicVolume: 0.07,
-    voiceVolume: 1,
+    voiceVolume: 0.65,
     sfxVolume: 0.7,
     idleTimeout: 10,
     resumeDelay: RESUME_DELAY_MS,

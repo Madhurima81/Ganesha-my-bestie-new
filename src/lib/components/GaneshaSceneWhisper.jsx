@@ -75,6 +75,8 @@ export default function GaneshaSceneWhisper({
     clearTimeout(dismissTimerRef.current)
     stop()
     setVisible(false)
+    // Treat dismiss as "heard" — child saw and interacted with the whisper
+    onDone?.()
   }
 
   const playLine = (e) => {

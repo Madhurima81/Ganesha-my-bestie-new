@@ -106,6 +106,7 @@ const loadSceneProgress = () => {
     if (isCompleted && !isActualReload) {
       console.log('🎮 SCENE: Starting fresh replay of completed scene');
       localStorage.removeItem(replayKey);
+      localStorage.removeItem(normalKey);  // ← FIX: Also clear temp_session to prevent stale completion markers
       setIsReplay(true);
       setIsReload(false);
       return {

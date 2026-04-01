@@ -8,9 +8,7 @@ import ScreenHeader from '../shared/ScreenHeader';
 import GameStateManager from '../../services/GameStateManager';
 import CulturalProgressExtractor from '../../services/CulturalProgressExtractor';
 import HomeButton from '../ui/HomeButton';
-import GaneshaPresence from '../character/GaneshaPresence';
 import ProfileChip from '../navigation/ProfileChip';
-import GaneshaSceneWhisper from '../GaneshaSceneWhisper';
 
 
 //import ProgressManager from '../../services/ProgressManager';
@@ -40,6 +38,8 @@ const ZoneWelcome = ({
   const [culturalData, setCulturalData] = useState(null); // ← ADD THIS LINE
   const [isHomeExiting, setIsHomeExiting] = useState(false);
   const [profileChipPulse, setProfileChipPulse] = useState(false);
+  // Tracks which scene whispers the child has heard — drives re-render to hide Ganesha
+  const [heardWhispers, setHeardWhispers] = useState({});
 
   console.log('🏔️ ZoneWelcome rendered for zone:', zoneData?.name);
 
@@ -161,7 +161,8 @@ const loadSceneProgress = () => {
       
       // ✅ NEW: Check SceneManager's temporary storage for in-progress
       const tempKey = `temp_session_${activeProfileId}_${zoneData.id}_${scene.id}`;
-      const tempData = localStorage.getItem(tempKey);
+      const replayKey = `replay_session_${activeProfileId}_${zoneData.id}_${scene.id}`;
+      const tempData = localStorage.getItem(tempKey) || localStorage.getItem(replayKey);
       let hasInProgressData = false;
       let progressPercentage = 0;
       let tempStars = 0;
@@ -350,18 +351,17 @@ const renderStatCard = (cardType, stats) => {
 const getSceneStatus = (scene) => {
   const progress = sceneProgress[scene.id];
   const isUnlocked = checkSceneUnlocked(scene);
-  
+
   if (!isUnlocked) {
     return { status: 'locked', stars: 0 };
   }
-  
+
   if (!progress) return { status: 'available', stars: 0 };
 
-  
-  
   const activeProfileId = localStorage.getItem('activeProfileId');
   const tempKey = `temp_session_${activeProfileId}_${zoneData.id}_${scene.id}`;
-  const tempData = localStorage.getItem(tempKey);
+  const replayKey = `replay_session_${activeProfileId}_${zoneData.id}_${scene.id}`;
+  const tempData = localStorage.getItem(tempKey) || localStorage.getItem(replayKey);
   
 
   
@@ -380,12 +380,16 @@ if (tempData) {
       let isCompleteInTemp = false;
       
       if (scene.id === 'modak') {
-        // Modak is complete if: completed flag, phase complete, OR rock_transformed
-        // (rock_transformed = all gameplay done, fireworks/VO auto-playing, nothing left to interact with)
+        // Modak is complete if: completed flag, phase complete, rock_transformed,
+        // OR all 3 symbols collected (discoveredSymbols is the only trace left when
+        // the temp session was partially reset after completion)
         isCompleteInTemp = (
           tempState.completed === true ||
           tempState.phase === 'complete' ||
-          tempState.phase === 'rock_transformed'
+          tempState.phase === 'rock_transformed' ||
+          (tempState.discoveredSymbols?.mooshika === true &&
+           tempState.discoveredSymbols?.modak === true &&
+           tempState.discoveredSymbols?.belly === true)
         );
       } else if (scene.id === 'pond') {
         // Pond is complete if: phase is complete OR (elephantTransformed AND goldenLotusBloom) OR completed flag
@@ -468,6 +472,7 @@ if (tempData) {
   tempState.phase && !['initial', 'mooshika_search'].includes(tempState.phase) ||
   (tempState.gamePhase && !['intro', 'initial'].includes(tempState.gamePhase)) ||
   tempState.discoveredSymbols && Object.keys(tempState.discoveredSymbols).length > 0 ||
+  tempState.placedSymbols && Object.keys(tempState.placedSymbols).length > 0 ||
   tempState.mooshikaFound ||
   tempState.moundStates?.some(state => state === 1) ||   // ✅ any mound tapped = in-progress
   tempState.collectedModaks?.length > 0 ||
@@ -501,9 +506,90 @@ if (tempData) {
   if (progress.stars > 0) {
     return { status: 'in-progress', stars: progress.stars || 0 };
   }
+
+  // Fallback: if Symbol Mountain has progress in later scenes, Modak should not show "Start".
+  // This handles inconsistent saved completion flags for the first scene.
+  if (zoneData?.id === 'symbol-mountain' && scene.id === 'modak') {
+    const laterSceneIds = ['pond', 'symbol', 'final-scene'];
+    const hasLaterProgress = laterSceneIds.some((id) => {
+      const p = sceneProgress[id];
+      if (p?.completed || (p?.stars || 0) > 0 || (p?.progress?.percentage || 0) > 0) return true;
+
+      const profileId = localStorage.getItem('activeProfileId');
+      const key = `temp_session_${profileId}_${zoneData.id}_${id}`;
+      const raw = localStorage.getItem(key);
+      if (!raw) return false;
+
+      try {
+        const temp = JSON.parse(raw);
+        return (
+          temp?.completed === true ||
+          temp?.showingCompletionScreen === true ||
+          temp?.phase === 'complete' ||
+          temp?.phase === 'all_complete' ||
+          temp?.phase === 'zone-complete' ||
+          temp?.stars > 0 ||
+          (temp?.progress?.percentage || 0) > 0
+        );
+      } catch {
+        return false;
+      }
+    });
+
+    if (hasLaterProgress) {
+      return { status: 'completed', stars: progress?.stars || 0 };
+    }
+  }
   
   return { status: 'available', stars: 0 };
 };
+
+// ⭐ PROGRESS DOTS — reads ONLY from permanent storage (GameStateManager).
+// Completely separate from getSceneStatus so replay sessions never affect dot count.
+// Same pattern as CulturalProgressExtractor for symbol count.
+const getPermanentCompletedCount = () => {
+  try {
+    const gameProgress = GameStateManager.getGameProgress();
+    const zoneScenes = gameProgress.zones?.[zoneData?.id]?.scenes || {};
+    return (zoneData?.scenes || []).filter(
+      scene => zoneScenes[scene.id]?.completed === true
+    ).length;
+  } catch (e) {
+    return 0;
+  }
+};
+
+  // ── Scene Whisper heard-tracking ──────────────────────────────────────────
+  // Persisted per profile + zone + scene in localStorage.
+  // Ganesha appears next to a scene ONLY the first time it unlocks.
+  // Once the child taps (or dismisses), it is gone forever for that scene.
+
+  const _whisperKey = (sceneId) => {
+    const pid = localStorage.getItem('activeProfileId') || 'default';
+    return `gsw_heard_${pid}_${zoneData?.id}_${sceneId}`;
+  };
+
+  const hasHeardWhisper = (sceneId) => {
+    if (heardWhispers[sceneId]) return true;
+    try { return localStorage.getItem(_whisperKey(sceneId)) === '1'; } catch { return false; }
+  };
+
+  const markWhisperHeard = (sceneId) => {
+    try { localStorage.setItem(_whisperKey(sceneId), '1'); } catch {}
+    setHeardWhispers(prev => ({ ...prev, [sceneId]: true }));
+  };
+
+  // Show invite-whisper only when:
+  //   1. At least one scene is still locked (progressive unlock is active)
+  //   2. This scene just became 'available' (freshly unlocked, not started)
+  //   3. Child hasn't heard this whisper yet
+  const shouldShowInviteWhisper = (scene, status) => {
+    if (!zoneData?.scenes) return false;
+    const anyLocked = zoneData.scenes.some(s => getSceneStatus(s).status === 'locked');
+    if (!anyLocked) return false;                   // all unlocked → no whispers
+    if (status.status !== 'available') return false; // only on fresh unlocks
+    return !hasHeardWhisper(scene.id);
+  };
 
   const getCardAccentColor = () => {
     const theme = getZoneTheme(zoneData?.id);
@@ -697,10 +783,14 @@ if (tempData) {
   }
 
   const zoneWelcomeGaneshaState = getZoneWelcomeGaneshaState();
+  const zoneCompletedCount = (zoneData?.scenes || []).filter(
+    (scene) => getSceneStatus(scene).status === 'completed'
+  ).length;
+  const isZoneComplete = zoneCompletedCount >= (zoneData?.scenes?.length || 0) && (zoneData?.scenes?.length || 0) > 0;
 
   return (
     <div
-      className={`zone-welcome-container screen ${zoneData.id} ${isHomeExiting ? 'zone-welcome-exiting' : ''}`}
+      className={`zone-welcome-container screen ${zoneData.id} ${isHomeExiting ? 'zone-welcome-exiting' : ''} ${isZoneComplete ? 'zone-complete' : ''}`}
       data-zone={zoneData.id}
       style={{
         '--zone-bg': `url('${zoneData.background}')`,
@@ -752,37 +842,21 @@ if (tempData) {
   🔍 DEBUG STATUS
 </button>
 
-      <div className="zone-title-top">
+      <div className="zone-title-top zone-title">
         <ScreenHeader title={zoneData.name} glowColor="gold" />
+        {isZoneComplete && (
+          <>
+            <span className="zone-sparkle" style={{ top: '-8px', left: '10%' }}>✦</span>
+            <span className="zone-sparkle" style={{ top: '2px', right: '12%', animationDelay: '0.8s' }}>✦</span>
+          </>
+        )}
       </div>
 
-      {/* Zone Welcome Whisper — auto-plays on entry, auto-dismisses 2s after voice ends */}
-      <div style={{ padding: '0 1rem 0.5rem', display: 'flex', justifyContent: 'flex-start' }}>
-        <GaneshaSceneWhisper
-          type="zone-welcome"
-          sceneId={zoneData.id}
-          childName={GameStateManager.getActiveProfile()?.name || ''}
-          childAge={GameStateManager.getActiveProfile()?.age || 7}
-          autoPlay={true}
-          autoDismissMs={2000}
-          size="medium"
-        />
-      </div>
+      {/* Zone Welcome Whisper removed per request */}
 
       {/* Scene Icons Grid */}
       <div className="zone-scenes-container cards-wrapper" data-zone={zoneData.id}>
-        {zoneWelcomeGaneshaState && (
-          <div
-            className={`zone-ganesha-presence zone-ganesha-presence--${zoneWelcomeGaneshaState.slot}`}
-            aria-hidden="true"
-          >
-            <GaneshaPresence
-              pose={zoneWelcomeGaneshaState.pose}
-              size={zoneWelcomeGaneshaState.size}
-              breathing={zoneWelcomeGaneshaState.pose === 'celebration' ? 'slow' : 'gentle'}
-            />
-          </div>
-        )}
+        {/* Ganesha presence removed per request */}
         <div className="scenes-horizontal-container">
           {zoneData.scenes.map((scene, index) => {
             const status = getSceneStatus(scene);
@@ -797,7 +871,7 @@ if (tempData) {
             return (
               <div
                 key={scene.id}
-                className={`zone-scene-card zone-card zone-${index + 1} ${status.status} ${
+                className={`zone-scene-card scene-card zone-card zone-${index + 1} ${status.status} ${
                   highlightedScene === scene.id ? 'highlighted' : ''
                 } ${status.status === 'locked' ? 'locked-scene' : 'unlocked-scene'} ${
                   isNextScene ? 'next-scene' : ''
@@ -823,7 +897,7 @@ if (tempData) {
                 )}
 
                 {(status.status === 'completed' || sceneProgress[scene.id]?.completed === true) && (
-                  <div className="scene-complete-badge">✓</div>
+                  <div className="scene-complete-badge scene-complete-icon">✓</div>
                 )}
 
                 <div className="zone-inner">
@@ -873,19 +947,10 @@ if (tempData) {
                     <div className="scene-name">
                       {scene.name}
                     </div>
-                    {/* Scene Invite Whisper — tap Ganesha to hear what's inside.
-                        Only on available/in-progress cards. Completed = child
-                        already knows this scene; locked = nothing to tease yet. */}
-                    {(status.status === 'available' || status.status === 'in-progress') && (
-                      <GaneshaSceneWhisper
-                        type="scene-invite"
-                        sceneId={scene.id}
-                        childName={GameStateManager.getActiveProfile()?.name || ''}
-                        childAge={GameStateManager.getActiveProfile()?.age || 7}
-                        autoPlay={false}
-                        size="small"
-                      />
-                    )}
+                    {/* Scene Invite Whisper — appears only the FIRST TIME a scene
+                        unlocks. Tapping plays Ganesha's invite. Heard/dismissed
+                        = marked done in localStorage, Ganesha gone from this card. */}
+                    {/* Scene invite whisper removed per request */}
                   </div>
 
                   {/* ✨ NEW: Integrated Action Area (Bottom) */}
@@ -893,7 +958,7 @@ if (tempData) {
                     {status.status === 'in-progress' ? (
                       <div className="action-split-container">
                         <button 
-                          className="action-button-split zone-btn continue"
+                          className="action-button-split zone-btn continue btn-continue"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleSceneClick(scene, 'continue');
@@ -902,7 +967,7 @@ if (tempData) {
 Continue                            
                         </button>
                         <button 
-                          className="action-button-split zone-btn replay"
+                          className="action-button-split zone-btn replay btn-replay"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleSceneClick(scene, 'replay');
@@ -913,7 +978,7 @@ Continue
                       </div>
                     ) : (
                       <button 
-                        className={`action-button-integrated zone-btn ${status.status}`}
+                        className={`action-button-integrated zone-btn ${status.status} ${status.status === 'completed' ? 'btn-replay' : ''}`}
                         onClick={(e) => {
                           e.stopPropagation();
                               console.log('Button clicked!', scene.id); // ✨ DEBUG LOG
@@ -939,8 +1004,11 @@ Continue
   {Object.keys(sceneProgress).length > 0 ? (() => {
     const zoneStats = getZoneStats();
     const totalScenes = zoneStats.total;
-    const completedCount = zoneStats.completed;
+    // ⭐ Use permanent-only count — never affected by replay/temp sessions
+    // Same pattern as symbol count (CulturalProgressExtractor). Keeps dots stable.
+    const completedCount = getPermanentCompletedCount();
     const symbolCount = zoneStats.symbols || zoneStats.chants || zoneStats.stories || zoneStats.meanings || 0;
+    const allScenesCompleted = completedCount >= totalScenes && totalScenes > 0;
 
     const statIcon =
       zoneData?.id === 'symbol-mountain' ? '/images/icons/zone_stat_symbol.svg' :
@@ -954,16 +1022,23 @@ Continue
       zoneData?.id === 'cave-of-secrets' ? 'Meanings' : 'Points';
 
     return (
-      <div className="journey-panel">
+      <div className="journey-panel zone-progress">
         {statIcon && (
           <div className="journey-left">
             <img src={statIcon} alt={statLabel} className="journey-stat-icon" />
-            <span>{symbolCount}/8 {statLabel}</span>
+            <div className="journey-left-text">
+              <span className="journey-left-main zone-progress-label">
+                {allScenesCompleted ? `All ${statLabel} Completed` : `${symbolCount}/8 ${statLabel}`}
+              </span>
+              {allScenesCompleted && (
+                <span className="journey-left-sub">Zone Complete</span>
+              )}
+            </div>
           </div>
         )}
         <div className="journey-steps">
           {Array.from({ length: totalScenes }, (_, i) => (
-            <span key={i} className={`step ${i < completedCount ? 'done' : ''}`} />
+            <span key={i} className={`step progress-dot ${i < completedCount ? 'done' : ''}`} />
           ))}
         </div>
       </div>
@@ -983,4 +1058,5 @@ Continue
 
 
 export default ZoneWelcome;
+
 
