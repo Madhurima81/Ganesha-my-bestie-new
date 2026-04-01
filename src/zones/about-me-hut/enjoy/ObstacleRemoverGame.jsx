@@ -35,8 +35,8 @@ import '../../../lib/styles/zone-themes.css';
 import '../../../lib/styles/animations.css';
 
 // Import images
-import babyGaneshaImg from './assets/images/baby-ganesha.png';
-import babyGaneshaSit from './assets/images/baby-ganesha-sit.png';
+import babyGaneshaImg from '../../../public/images/ganesha-final-new.svg';
+import babyGaneshaSit from '../../../public/images/ganesha-final-new.svg';
 import dreamsBg from './assets/images/dream-bg.png';
 
 // Wish Icons
