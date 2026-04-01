@@ -970,7 +970,6 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Child Name Input */}
       {sceneState.gamePhase === 'child-name-input' && (
         <div className="child-name-input-screen">
-          <div className="child-input-ganesha"><img src={babyGaneshaImg} alt="Ganesha" className="ganesha-watching bounce-gentle" /></div>
           <div className="child-instruction-bubble">Tap the letters to spell your name! 🎈</div>
           <div className="child-name-display">
             {sceneState.childNameLetters.length === 0 ? <div className="name-placeholder">Your Name Here</div> : sceneState.childNameLetters.map((letter, index) => <div key={index} className="child-name-letter pop-in">{letter}</div>)}
@@ -1033,7 +1032,6 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Birthday Month */}
       {sceneState.gamePhase === 'child-birthday-month' && (
         <div className="child-birthday-month-screen">
-          <div className="child-input-ganesha"><img src={babyGaneshaImg} alt="Ganesha" className="ganesha-watching bounce-gentle" /></div>
 
           <div className="child-instruction-bubble">Tap the month you were born! 🗓️</div>
 
@@ -1058,7 +1056,6 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Birthday Date */}
       {sceneState.gamePhase === 'child-birthday-date' && (
         <div className="child-birthday-date-screen">
-          <div className="child-input-ganesha"><img src={babyGaneshaImg} alt="Ganesha" className="ganesha-watching bounce-gentle" /></div>
           <div className="child-instruction-bubble">Which day in {sceneState.childBirthdayMonthName}? 📅</div>
           <div className="date-picker-grid">
             {Array.from({ length: getDaysInMonth(sceneState.childBirthdayMonth) }, (_, i) => i + 1).map((date) => (

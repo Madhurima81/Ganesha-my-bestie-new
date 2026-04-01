@@ -660,7 +660,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Wish 1 Active */}
       {sceneState.gamePhase === 'wish1-active' && (
         <div className="wish-screen">
-          <div className="ganesha-watching"><img src={babyGaneshaImg} alt="Ganesha" className="ganesha-small bounce-gentle" /></div>
           <div className="wish-instruction-bubble">Tap the earth 3 times to send smiles! ({sceneState.wish1Taps}/3)</div>
           <div className="wish-interactive-container">
             <div className="earth-container" onClick={handleWish1Tap}>
@@ -712,7 +711,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Wish 2 Active */}
       {sceneState.gamePhase === 'wish2-active' && (
         <div className="wish-screen">
-          <div className="ganesha-watching"><img src={babyGaneshaImg} alt="Ganesha" className="ganesha-small bounce-gentle" /></div>
           <div className="wish-instruction-bubble">Tap the bowls 3 times to fill them! ({sceneState.wish2Taps}/3)</div>
           <div className="wish-interactive-container">
             <div className="bowls-container">
@@ -763,7 +761,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Wish 3 Active */}
       {sceneState.gamePhase === 'wish3-active' && (
         <div className="wish-screen">
-          <div className="ganesha-watching"><img src={babyGaneshaImg} alt="Ganesha" className="ganesha-small bounce-gentle" /></div>
           <div className="wish-instruction-bubble">Tap the park 3 times to make it bloom! ({sceneState.wish3Taps}/3)</div>
           <div className="wish-interactive-container">
             <div className={`park-scene ${sceneState.wish3Taps >= 1 ? 'park-tap1' : ''}`} onClick={handleWish3Tap}>
