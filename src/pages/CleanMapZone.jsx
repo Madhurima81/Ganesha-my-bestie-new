@@ -23,8 +23,8 @@ const ZONES_DATA = [
     id: 'cave-of-secrets',
     name: 'Cave of Secrets',
     sequence: 1,
-    unlockRequires: ['symbol-mountain', 'shloka-river'],
-    unlockNote: 'Unlocks after Symbol Mountain + Shloka River',
+    unlockRequires: 'shloka-river',
+    unlockNote: 'Complete Shloka River',
     scenes: [
       { id: 'vakratunda-mahakaya', name: 'Vakratunda Mahakaya' },
       { id: 'suryakoti-samaprabha', name: 'Suryakoti Samaprabha' },
@@ -38,7 +38,7 @@ const ZONES_DATA = [
     name: 'Shloka\nRiver',
     sequence: 1,
     unlockRequires: 'symbol-mountain',
-    unlockNote: 'Complete 1 Symbol Mountain scene',
+    unlockNote: 'Complete 2 Symbol Mountain scenes',
     scenes: [
       { id: 'vakratunda-grove', name: 'Vakratunda Grove' },
       { id: 'suryakoti-bank', name: 'Suryakoti Bank' },
@@ -51,8 +51,8 @@ const ZONES_DATA = [
     id: 'festival-square',
     name: 'Festival\nSquare',
     sequence: 1,
-    unlockRequires: 'shloka-river',
-    unlockNote: 'Complete Shloka River',
+    unlockRequires: 'cave-of-secrets',
+    unlockNote: 'Complete Cave of Secrets',
     scenes: [
       { id: 'game1', name: 'Game 1' },
       { id: 'game2', name: 'Game 2' },
@@ -83,9 +83,25 @@ const ZONE_IDS = {
   CAVE: 'cave-of-secrets',
 };
 
+const MAP_ZONE_UNLOCK_VO = {
+  [ZONE_IDS.SYMBOL]: 'Look! Symbol Mountain is ready to explore!',
+  [ZONE_IDS.RIVER]: 'Look! The Shloka River is flowing!',
+  [ZONE_IDS.HUT]: 'Come inside! The About Me Hut is open!',
+  [ZONE_IDS.CAVE]: 'The cave doors are opening!',
+  [ZONE_IDS.FESTIVAL]: 'The festival has begun!',
+};
+
+const MAP_ZONE_COMPLETION_VO = {
+  [ZONE_IDS.SYMBOL]: 'Wonderful! You discovered all the symbols of Symbol Mountain.',
+  [ZONE_IDS.RIVER]: 'Beautiful chanting! You completed the Shloka River.',
+  [ZONE_IDS.CAVE]: 'Amazing! You uncovered all the secrets of the cave.',
+  [ZONE_IDS.FESTIVAL]: 'What a celebration! You finished everything in Festival Square.',
+  [ZONE_IDS.HUT]: 'I loved learning about you! You completed the About Me Hut.',
+};
+
 // Temporary debug switches for QA checks.
 // Set both back to false after verification.
-const DEBUG_UNLOCK_ALL_ZONES = true;
+const DEBUG_UNLOCK_ALL_ZONES = false;
 const DEBUG_ALWAYS_OPEN_ZONE_WELCOME = true;
 
 const getCompletedScenes = (allProgress, zoneId) => allProgress[zoneId]?.completedScenes || 0;
@@ -103,12 +119,10 @@ const isZoneComplete = (allProgress, zoneId) => {
 const isZoneUnlocked = (zoneId, allProgress) => {
   if (DEBUG_UNLOCK_ALL_ZONES) return true;
   if (zoneId === ZONE_IDS.SYMBOL) return true;
-  if (zoneId === ZONE_IDS.RIVER) return getCompletedScenes(allProgress, ZONE_IDS.SYMBOL) >= 1;
+  if (zoneId === ZONE_IDS.RIVER) return getCompletedScenes(allProgress, ZONE_IDS.SYMBOL) >= 2;
   if (zoneId === ZONE_IDS.HUT) return isZoneComplete(allProgress, ZONE_IDS.SYMBOL);
-  if (zoneId === ZONE_IDS.FESTIVAL) return isZoneComplete(allProgress, ZONE_IDS.RIVER);
-  if (zoneId === ZONE_IDS.CAVE) {
-    return isZoneComplete(allProgress, ZONE_IDS.SYMBOL) && isZoneComplete(allProgress, ZONE_IDS.RIVER);
-  }
+  if (zoneId === ZONE_IDS.CAVE) return isZoneComplete(allProgress, ZONE_IDS.RIVER);
+  if (zoneId === ZONE_IDS.FESTIVAL) return isZoneComplete(allProgress, ZONE_IDS.CAVE);
   return true;
 };
 
@@ -319,6 +333,48 @@ const getMushikaSeenKey = (zoneId) => {
   return `mushika_zone_seen_${profileId}_${zoneId}`;
 };
 
+const getZoneUnlockVoSeenKey = (zoneId) => {
+  const profileId = localStorage.getItem('activeProfileId') || 'default';
+  return `map_zone_unlock_vo_seen_${profileId}_${zoneId}`;
+};
+
+const hasSeenZoneUnlockVo = (zoneId) => {
+  try {
+    return localStorage.getItem(getZoneUnlockVoSeenKey(zoneId)) === '1';
+  } catch {
+    return false;
+  }
+};
+
+const markZoneUnlockVoSeen = (zoneId) => {
+  try {
+    localStorage.setItem(getZoneUnlockVoSeenKey(zoneId), '1');
+  } catch {
+    // best effort only
+  }
+};
+
+const getZoneCompletionVoSeenKey = (zoneId) => {
+  const profileId = localStorage.getItem('activeProfileId') || 'default';
+  return `map_zone_completion_vo_seen_${profileId}_${zoneId}`;
+};
+
+const hasSeenZoneCompletionVo = (zoneId) => {
+  try {
+    return localStorage.getItem(getZoneCompletionVoSeenKey(zoneId)) === '1';
+  } catch {
+    return false;
+  }
+};
+
+const markZoneCompletionVoSeen = (zoneId) => {
+  try {
+    localStorage.setItem(getZoneCompletionVoSeenKey(zoneId), '1');
+  } catch {
+    // best effort only
+  }
+};
+
 const hasSeenMushikaPop = (zoneId) => {
   try {
     return localStorage.getItem(getMushikaSeenKey(zoneId)) === '1';
@@ -362,10 +418,38 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   const [mushikaPop, setMushikaPop] = useState(null); // { zone, state } | null
   const [isMuted, setIsMuted] = useState(false);
   const unlockTimersRef = useRef({});
+  const voiceTimersRef = useRef([]);
   const mushikaTimerRef = useRef(null);
   const ambientRef = useRef(null);
   const fadingRef = useRef(null);
   const prevZoneStatesRef = useRef(null);
+
+  const speakMapVoEvents = (events = []) => {
+    if (!Array.isArray(events) || events.length === 0) return;
+    if (typeof window === 'undefined' || isMuted) return;
+    if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return;
+
+    // Clear any queued lines from previous transition bursts.
+    voiceTimersRef.current.forEach(clearTimeout);
+    voiceTimersRef.current = [];
+    window.speechSynthesis.cancel();
+
+    events.forEach(({ text, delay = 0 }) => {
+      if (!text) return;
+      const timerId = setTimeout(() => {
+        try {
+          const utterance = new window.SpeechSynthesisUtterance(text);
+          utterance.rate = 1.02;
+          utterance.pitch = 1;
+          utterance.volume = 0.9;
+          window.speechSynthesis.speak(utterance);
+        } catch {
+          // best effort only
+        }
+      }, delay);
+      voiceTimersRef.current.push(timerId);
+    });
+  };
 
   useEffect(() => {
     const profile = GameStateManager.getActiveProfile();
@@ -396,6 +480,10 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   useEffect(() => {
     return () => {
       Object.values(unlockTimersRef.current).forEach(clearTimeout);
+      voiceTimersRef.current.forEach(clearTimeout);
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
       if (mushikaTimerRef.current) clearTimeout(mushikaTimerRef.current);
     };
   }, []);
@@ -469,18 +557,35 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       audio.dataset.muted = '1';
       clearInterval(fadingRef.current);
       audio.pause();
+      voiceTimersRef.current.forEach(clearTimeout);
+      voiceTimersRef.current = [];
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
       setIsMuted(true);
     }
   };
 
   useEffect(() => {
     const nextStates = {};
+    const newlyUnlockedZoneIds = [];
+    const newlyCompletedZoneIds = [];
+
     ZONES_DATA.forEach(zone => {
       nextStates[zone.id] = getZoneState(zone.id, zoneProgress);
     });
 
     if (!prevZoneStatesRef.current) {
       prevZoneStatesRef.current = nextStates;
+
+      const isBrandNewJourney = (zoneProgress[ZONE_IDS.SYMBOL]?.completedScenes || 0) === 0
+        && Object.entries(zoneProgress).every(
+          ([zoneId, p]) => zoneId === ZONE_IDS.SYMBOL || (p?.completedScenes || 0) === 0
+        );
+      if (isBrandNewJourney && !hasSeenZoneUnlockVo(ZONE_IDS.SYMBOL)) {
+        speakMapVoEvents([{ text: MAP_ZONE_UNLOCK_VO[ZONE_IDS.SYMBOL], delay: 300 }]);
+        markZoneUnlockVoSeen(ZONE_IDS.SYMBOL);
+      }
       return;
     }
 
@@ -490,6 +595,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       const nextState = nextStates[zoneId];
 
       if (prevState === 'locked' && nextState === 'active') {
+        newlyUnlockedZoneIds.push(zoneId);
         const unlockIntensity = zoneId === ZONE_IDS.CAVE ? 'master' : 'normal';
 
         if (unlockTimersRef.current[zoneId]) {
@@ -508,10 +614,41 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
           delete unlockTimersRef.current[zoneId];
         }, 1200);
       }
+
+      if (prevState !== 'completed' && nextState === 'completed') {
+        newlyCompletedZoneIds.push(zoneId);
+      }
     });
 
+    const unlockLines = newlyUnlockedZoneIds
+      .filter((zoneId) => !hasSeenZoneUnlockVo(zoneId))
+      .map((zoneId) => {
+        markZoneUnlockVoSeen(zoneId);
+        return MAP_ZONE_UNLOCK_VO[zoneId];
+      })
+      .filter(Boolean);
+    const completionLines = newlyCompletedZoneIds
+      .filter((zoneId) => !hasSeenZoneCompletionVo(zoneId))
+      .map((zoneId) => {
+        markZoneCompletionVoSeen(zoneId);
+        return MAP_ZONE_COMPLETION_VO[zoneId];
+      })
+      .filter(Boolean);
+
+    const voEvents = [];
+    unlockLines.forEach((line, index) => {
+      // Unlock VO starts shortly after glow/chime begin.
+      voEvents.push({ text: line, delay: 300 + (index * 2200) });
+    });
+    const completionStartDelay = unlockLines.length > 0 ? (300 + unlockLines.length * 2200) : 0;
+    completionLines.forEach((line, index) => {
+      voEvents.push({ text: line, delay: completionStartDelay + (index * 2200) });
+    });
+
+    speakMapVoEvents(voEvents);
+
     prevZoneStatesRef.current = nextStates;
-  }, [zoneProgress]);
+  }, [zoneProgress, isMuted]);
 
   const loadBasicProgress = () => {
     try {
@@ -586,10 +723,10 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     // Progressive unlock for first-time users
     return {
       'symbol-mountain':  true,
-      'shloka-river':     smCompleted >= 1,
-      'cave-of-secrets':  smCompleted >= 2,
-      'festival-square':  smCompleted >= 3,
-      'about-me-hut':     smCompleted >= 4,
+      'shloka-river':     smCompleted >= 2,
+      'about-me-hut':     isZoneComplete(zoneProgress, ZONE_IDS.SYMBOL),
+      'cave-of-secrets':  isZoneComplete(zoneProgress, ZONE_IDS.RIVER),
+      'festival-square':  isZoneComplete(zoneProgress, ZONE_IDS.CAVE),
     };
   };
 

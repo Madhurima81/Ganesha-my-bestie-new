@@ -20,7 +20,7 @@ import stone3NamCol from './assets/images/nirvighnam/stone3-col.png';
 const NirvighnamGame = ({
   selectedMode, skipModeSelection, isActive, isReload, savedGameState,
   onSaveGameState, onPhaseComplete, onGameComplete, hideElements,
-  isAudioOn, playAudio, profileName, RainbowComponent
+  isAudioOn, playAudio, profileName, RainbowComponent, onMicroWin
 }) => {
   const gameConfig = getGameConfig('nirvighnam');
 
@@ -63,6 +63,7 @@ return (
       playAudio={playAudio}
       profileName={profileName}
       WaterSprayComponent={RainbowComponent}
+      onMicroWin={onMicroWin}
     />
   );
 };

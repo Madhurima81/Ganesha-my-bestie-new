@@ -1,5 +1,5 @@
 ﻿// zones/shloka-river/scenes/Scene3/NirvighnamChant.jsx - Scene 3 with Stone/Decoration mechanics
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './NirvighnamChantSimplified.css';
 // ... existing imports
 // import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay'; // ← superseded by SymbolAutoReveal
@@ -43,6 +43,11 @@ import BackToMapButton from '../../../../lib/components/navigation/BackToMapButt
 import SanskritWordMission from '../../shared/SanskritWordMission';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
+import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
+import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
+import ResumeCountdown from '../../../../lib/components/feedback/ResumeCountdown';
+import GaneshaGestureCue from '../../../../lib/components/gesture/GaneshaGestureCue';
+import { useMiniGesture } from '../../../../lib/hooks/useMiniGesture';
 
 
 
@@ -168,6 +173,9 @@ class ErrorBoundary extends React.Component {
     return this.props.children;
   }
 }
+
+// Shared countdown duration — must match across useVoiceGuidance + usePauseAwareTimeout
+const RESUME_DELAY_MS = 3000;
 
 const NirvighnamChant = ({
   onComplete,
@@ -308,14 +316,19 @@ const [showPowerModal, setShowPowerModal] = useState(false);
   const [showKurumedevaStory, setShowKurumedevaStory] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const { isAudioOn, toggleAudio } = useAudioPreference();
+  const { miniGesture, triggerMiniGesture } = useMiniGesture();
   const primaryRef = useRef(null);
   const { isIdle, resetIdle } = useIdleNudge(20000);
   // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
   const { startIdleTimer, stopIdleTimer, setCurrentPhase } = useVoiceGuidance(
-    zoneId, sceneId, { enableMusic: false, idleTimeout: 20 }
+    zoneId, sceneId, { enableMusic: false, idleTimeout: 20, resumeDelay: RESUME_DELAY_MS }
   );
   useEffect(() => { startIdleTimer(); return () => stopIdleTimer(); }, [startIdleTimer, stopIdleTimer]);
   useEffect(() => { setCurrentPhase(sceneState?.phase ?? null); }, [sceneState?.phase, setCurrentPhase]);
+
+  const pauseCelebRef = useRef(null);
+  const onPauseHide = useCallback(() => pauseCelebRef.current?.(), []);
+  const onPauseShow = useCallback(() => { pauseCelebRef.current?.(); }, []);
 
      const [forceMemoryGameReset, setForceMemoryGameReset] = useState(false); // ADD THIS LINE
     const [rescuePhase, setRescuePhase] = useState('problem');
@@ -335,12 +348,15 @@ const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false); // kept for
   const reloadHandledRef = useRef(false);
 
 
-  // Safe setTimeout function
-  const safeSetTimeout = (callback, delay) => {
-    const id = setTimeout(callback, delay);
-    timeoutsRef.current.push(id);
-    return id;
-  };
+  // Drop-in for safeSetTimeout — auto-pauses on tab hide, resumes after countdown
+  const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({
+    onHide: onPauseHide,
+    onShow: onPauseShow,
+    resumeDelay: RESUME_DELAY_MS,
+  });
+
+  // 3-2-1 countdown display — fires immediately on tab show
+  const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
 
   // ── SymbolAutoReveal helpers ──────────────────────────────────────────────
   const getSidebarTarget = (symbolId) => {
@@ -432,10 +448,8 @@ const playWord = (word) => {
   };
 
   useEffect(() => {
-    return () => {
-      timeoutsRef.current.forEach(id => clearTimeout(id));
-    };
-  }, []);
+    return () => { clearAllTimeouts(); };
+  }, [clearAllTimeouts]);
 
   // Expose audio functions globally for SanskritWordMission
 useEffect(() => {
@@ -1064,8 +1078,9 @@ sceneActions.updateState({
           <HomeButton onNavigate={onNavigate} />
           <ZoneBadgeButton zoneId="shloka-river" onBack={() => onNavigate?.('zone-welcome')} />
           <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
+          <ResumeCountdown value={countdownValue} />
 
-<div 
+<div
   className="river-background" 
   style={{
     backgroundImage: `url(${backgroundImage})`, // CHANGED: use simple variable
@@ -1079,6 +1094,7 @@ sceneActions.updateState({
 <NirvighnamGame
   isActive={sceneState.phase === PHASES.NIRVIGHNAM_GAME_ACTIVE}
 hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || !!revealConfig || showMission}
+  onMicroWin={() => triggerMiniGesture('thumbsup', 'item', 1200)}
   onPhaseComplete={handlePhaseComplete}
   onGameComplete={handleGameComplete}
   profileName={profileName}
@@ -1119,6 +1135,7 @@ hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || !!revealConfig || show
 <KurumeDevaGame
   isActive={sceneState.phase === PHASES.KURUMEDEVA_GAME_ACTIVE}
 hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || !!revealConfig || showMission}
+  onMicroWin={() => triggerMiniGesture('thumbsup', 'item', 1200)}
   onPhaseComplete={handlePhaseComplete}
   onGameComplete={handleGameComplete}
   profileName={profileName}
@@ -1146,6 +1163,17 @@ hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || !!revealConfig || show
   onSaveGameState={(gameState) => handleSaveComponentState('kurumedevaGame', gameState)}
 
 />
+{/* ── GANESHA MICRO-REWARD GESTURE CUE ──────────────────────────────
+     thumbsup/item = single correct tap (micro win, fired by sub-games) */}
+{miniGesture.show && (
+  <GaneshaGestureCue
+    key={miniGesture.key}
+    gestureType={miniGesture.type}
+    position={miniGesture.position}
+    size={120}
+  />
+)}
+
 {/* ==================== SCENE 3 INTRO: CLEAR & BUILD ==================== */}
 {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
   <OpeningModal

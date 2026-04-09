@@ -42,7 +42,8 @@ const SamaprabhaGame = ({
   profileName,
 
   // Optional components
-  RainbowComponent
+  RainbowComponent,
+  onMicroWin
 }) => {
   const gameConfig = getGameConfig('samaprabha');
 
@@ -90,6 +91,7 @@ const SamaprabhaGame = ({
       playAudio={playAudio}
       profileName={profileName}
       WaterSprayComponent={RainbowComponent}
+      onMicroWin={onMicroWin}
             //gamePrefix="samaprabha"  // ← ADD THIS LINE!
 
     />

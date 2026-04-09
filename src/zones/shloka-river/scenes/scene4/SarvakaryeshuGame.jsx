@@ -19,7 +19,7 @@ import yeshuRabbitSad from './assets/images/sarvakaryeshu/yeshu-rabbit-sad.png';
 const SarvakaryeshuGame = ({
   selectedMode, skipModeSelection, isActive, isReload, savedGameState,
   onSaveGameState, onPhaseComplete, onGameComplete, hideElements,
-  isAudioOn, playAudio, profileName, RainbowComponent
+  isAudioOn, playAudio, profileName, RainbowComponent, onMicroWin
 }) => {
   const gameConfig = getGameConfig('sarvakaryeshu');
 
@@ -59,6 +59,7 @@ const SarvakaryeshuGame = ({
       playAudio={playAudio}
       profileName={profileName}
       WaterSprayComponent={RainbowComponent}
+      onMicroWin={onMicroWin}
     />
   );
 };

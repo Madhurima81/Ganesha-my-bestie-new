@@ -169,7 +169,7 @@ const AppSidebar = ({
               }}
               title={isUnlocked ? app.title : 'Locked'}
             >
-              {needsTap && <div className="tap-indicator">TAP!</div>}
+              {needsTap && <div className="glow-indicator" />}
             </div>
           );
         })}

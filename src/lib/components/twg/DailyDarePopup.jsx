@@ -81,9 +81,17 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
   const categoryInfo  = CATEGORY_CONFIG[dare?.category] || { label: "Today's Dare" };
   const dareText      = dare?.text || "Do one kind thing for someone today — and don't tell them it was you.";
 
+  const stopAllDareVoice = () => {
+    recognitionRef.current?.stop?.();
+    stop();
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+  };
+
   // Cleanup only — no auto-speak on mount (blocked by browser autoplay policy)
   useEffect(() => {
-    return () => stop();
+    return () => stopAllDareVoice();
   }, []);
 
   // ── Mic ─────────────────────────────────────────────────────────────────────
@@ -157,6 +165,7 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
   };
 
   const handleAcceptDare = () => {
+    stopAllDareVoice();
     const today = new Date().toISOString().split('T')[0];
     localStorage.setItem('gmb_last_dare_date', today);
     if (dare) {
@@ -167,6 +176,7 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
   };
 
   const handleRemindLater = () => {
+    stopAllDareVoice();
     localStorage.setItem('gmb_last_dare_date', new Date().toISOString().split('T')[0]);
     onClose();
   };

@@ -17,7 +17,7 @@ import daHedgehogSad from './assets/images/sarvada/da-hedgehog-sad.png';
 const SarvadaGame = ({
   selectedMode, skipModeSelection, isActive, isReload, savedGameState,
   onSaveGameState, onPhaseComplete, onGameComplete, hideElements,
-  isAudioOn, playAudio, profileName, RainbowComponent
+  isAudioOn, playAudio, profileName, RainbowComponent, onMicroWin
 }) => {
   const gameConfig = getGameConfig('sarvada');
 
@@ -54,6 +54,7 @@ const SarvadaGame = ({
       playAudio={playAudio}
       profileName={profileName}
       WaterSprayComponent={RainbowComponent}
+      onMicroWin={onMicroWin}
     />
   );
 };

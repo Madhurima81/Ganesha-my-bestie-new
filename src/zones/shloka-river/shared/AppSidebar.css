@@ -91,6 +91,31 @@
   }
 }
 
+/* Glow indicator — pulsing ring around app icon when tappable */
+.glow-indicator {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  right: -8px;
+  bottom: -8px;
+  border-radius: 50%;
+  background: transparent;
+  border: 2px solid transparent;
+  box-shadow: 0 0 0 0 var(--zone-accent-color, rgba(255, 215, 0, 0.6));
+  animation: glow-pulse 1.8s ease-in-out infinite;
+  z-index: 9;
+  pointer-events: none;
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 var(--zone-accent-color, rgba(255, 215, 0, 0.6));
+  }
+  50% {
+    box-shadow: 0 0 0 12px var(--zone-accent-color, rgba(255, 215, 0, 0));
+  }
+}
+
 /* Tap indicator */
 .tap-indicator {
   position: absolute;

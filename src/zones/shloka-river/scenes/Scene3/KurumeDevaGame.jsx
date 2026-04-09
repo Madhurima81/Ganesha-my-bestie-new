@@ -19,7 +19,7 @@ import decor4De from './assets/images/Kurumedeva/decor4-de.png';
 const KurumeDevaGame = ({
   selectedMode, skipModeSelection, isActive, isReload, savedGameState,
   onSaveGameState, onPhaseComplete, onGameComplete, hideElements,
-  isAudioOn, playAudio, profileName, RainbowComponent
+  isAudioOn, playAudio, profileName, RainbowComponent, onMicroWin
 }) => {
 
   // Get KurumeDeva config
@@ -66,6 +66,7 @@ return (
       playAudio={playAudio}
       profileName={profileName}
       WaterSprayComponent={RainbowComponent}
+      onMicroWin={onMicroWin}
     />
   );
 };

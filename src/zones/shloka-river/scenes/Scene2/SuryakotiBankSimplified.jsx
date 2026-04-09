@@ -1,5 +1,5 @@
 ﻿// zones/shloka-river/scenes/Scene2/SuryakotiBank.jsx - Updated with Combined Memory Game
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './SuryakotiBankSimplified.css';
 // ... existing imports
 // import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay'; // ← superseded by SymbolAutoReveal
@@ -46,6 +46,11 @@ import ProgressiveHintSystem from '../../../../lib/components/interactive/Progre
 import SaveAnimalMission from '../../../../lib/components/missions/SaveAnimalMission';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
+import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
+import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
+import ResumeCountdown from '../../../../lib/components/feedback/ResumeCountdown';
+import GaneshaGestureCue from '../../../../lib/components/gesture/GaneshaGestureCue';
+import { useMiniGesture } from '../../../../lib/hooks/useMiniGesture';
 
 // Images - Suryakoti scene assets
 import suryakotiBankBg from './assets/images/Scene2-bg.png';
@@ -138,6 +143,9 @@ class ErrorBoundary extends React.Component {
     return this.props.children;
   }
 }
+
+// Shared countdown duration — must match across useVoiceGuidance + usePauseAwareTimeout
+const RESUME_DELAY_MS = 3000;
 
 const SuryakotiBank = ({
   onComplete,
@@ -289,14 +297,19 @@ const [currentWord, setCurrentWord] = useState(null);  // ⭐ ADD THIS LINE
   const [showSamaprabhaStory, setShowSamaprabhaStory] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const { isAudioOn, toggleAudio } = useAudioPreference();
+  const { miniGesture, triggerMiniGesture } = useMiniGesture();
   const primaryRef = useRef(null);
   const { isIdle, resetIdle } = useIdleNudge(20000);
   // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
   const { startIdleTimer, stopIdleTimer, setCurrentPhase } = useVoiceGuidance(
-    zoneId, sceneId, { enableMusic: false, idleTimeout: 20 }
+    zoneId, sceneId, { enableMusic: false, idleTimeout: 20, resumeDelay: RESUME_DELAY_MS }
   );
   useEffect(() => { startIdleTimer(); return () => stopIdleTimer(); }, [startIdleTimer, stopIdleTimer]);
   useEffect(() => { setCurrentPhase(sceneState?.phase ?? null); }, [sceneState?.phase, setCurrentPhase]);
+
+  const pauseCelebRef = useRef(null);
+  const onPauseHide = useCallback(() => pauseCelebRef.current?.(), []);
+  const onPauseShow = useCallback(() => { pauseCelebRef.current?.(); }, []);
 
     const [forceMemoryGameReset, setForceMemoryGameReset] = useState(false); // ADD THIS LINE
   const [rescuePhase, setRescuePhase] = useState('problem');
@@ -338,12 +351,15 @@ const missionImages = {
   samaprabha: { before: samaprabhaBefore, after: samaprabhaAfter }
 };
 
-  // Safe setTimeout function
-  const safeSetTimeout = (callback, delay) => {
-    const id = setTimeout(callback, delay);
-    timeoutsRef.current.push(id);
-    return id;
-  };
+  // Drop-in for safeSetTimeout — auto-pauses on tab hide, resumes after countdown
+  const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({
+    onHide: onPauseHide,
+    onShow: onPauseShow,
+    resumeDelay: RESUME_DELAY_MS,
+  });
+
+  // 3-2-1 countdown display — fires immediately on tab show
+  const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
 
   // ── SymbolAutoReveal helpers ──────────────────────────────────────────────
   const getSidebarTarget = (symbolId) => {
@@ -402,8 +418,7 @@ const resetScene = (showConfirm = true) => {
   setForceMemoryGameReset(true);
   
   // STEP 2: Clear all timeouts first to prevent conflicts
-  timeoutsRef.current.forEach(id => clearTimeout(id));
-  timeoutsRef.current = [];
+  clearAllTimeouts();
   
   // STEP 3: Clear ALL local React state variables immediately
   setShowSparkle(null);
@@ -530,10 +545,8 @@ const onDeleteAppRecording = (recordingId, word) => {
 
   // Cleanup timeouts on unmount
   useEffect(() => {
-    return () => {
-      timeoutsRef.current.forEach(id => clearTimeout(id));
-    };
-  }, []);
+    return () => { clearAllTimeouts(); };
+  }, [clearAllTimeouts]);
 
     // Expose audio functions globally for SanskritWordMission
   useEffect(() => {
@@ -1249,6 +1262,7 @@ const handlePhaseComplete = (word) => {
           <HomeButton onNavigate={onNavigate} />
           <ZoneBadgeButton zoneId="shloka-river" onBack={() => onNavigate?.('zone-welcome')} />
           <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
+          <ResumeCountdown value={countdownValue} />
           <div className="river-background" style={{ backgroundImage: `url(${suryakotiBankBg})` }}>
 
    {/* ==================== SHLOKA RIVER INSTRUCTION MODAL ==================== */}
@@ -1385,6 +1399,7 @@ hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || !!revealConfig || show
               getSunOrbImage={getSunOrbImage}
 
               // Scene integration
+              onMicroWin={() => triggerMiniGesture('thumbsup', 'item', 1200)}
               onPhaseComplete={() => handlePhaseComplete('suryakoti')}
               onGameComplete={() => handleGameComplete('suryakoti')}
               profileName={profileName}
@@ -1420,6 +1435,7 @@ hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || !!revealConfig || show
     getRainbowBhaImage={() => rainbowPurple}*/
 
               // Scene integration
+              onMicroWin={() => triggerMiniGesture('thumbsup', 'item', 1200)}
               onPhaseComplete={() => handlePhaseComplete('samaprabha')}
               onGameComplete={() => handleGameComplete('samaprabha')}
               profileName={profileName}
@@ -1434,7 +1450,18 @@ hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || !!revealConfig || show
               onSaveGameState={(gameState) => handleSaveComponentState('samaprabhaGame', gameState)}
             />
 
-            {/* Story Introduction - Show immediately when scene starts 
+            {/* ── GANESHA MICRO-REWARD GESTURE CUE ──────────────────────────────
+                 thumbsup/item = single correct tap (micro win, fired by sub-games) */}
+            {miniGesture.show && (
+              <GaneshaGestureCue
+                key={miniGesture.key}
+                gestureType={miniGesture.type}
+                position={miniGesture.position}
+                size={120}
+              />
+            )}
+
+            {/* Story Introduction - Show immediately when scene starts
             {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
               <div style={{
                 position: 'absolute',

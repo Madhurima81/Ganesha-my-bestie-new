@@ -26,7 +26,15 @@ export default function DareView({ childName, childAge = 7, onClose }) {
   const categoryInfo = CATEGORY_CONFIG[dare?.category] || { label: "Today's Dare" };
   const dareText     = dare?.text || "Do one kind thing for someone today — and don't tell them it was you.";
 
+  const stopDareVoice = () => {
+    stop();
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+  };
+
   const handleAccept = () => {
+    stopDareVoice();
     const today = new Date().toISOString().split('T')[0];
     localStorage.setItem('gmb_last_dare_date', today);
     if (dare) {
@@ -37,6 +45,7 @@ export default function DareView({ childName, childAge = 7, onClose }) {
   };
 
   const handleLater = () => {
+    stopDareVoice();
     localStorage.setItem('gmb_last_dare_date', new Date().toISOString().split('T')[0]);
     onClose();
   };
@@ -49,11 +58,11 @@ export default function DareView({ childName, childAge = 7, onClose }) {
         moment: 'dare',
       });
     }, 300);
-    return () => { clearTimeout(timer); stop(); };
+    return () => { clearTimeout(timer); stopDareVoice(); };
   }, []);
 
   return (
-    <div className="dare-view-backdrop" onClick={onClose}>
+    <div className="dare-view-backdrop" onClick={() => { stopDareVoice(); onClose(); }}>
       <div className="dare-view-card" onClick={e => e.stopPropagation()}>
 
         <p className="dare-view-eyebrow">Today's dare</p>

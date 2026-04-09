@@ -16,7 +16,7 @@ import sunOrb from '../assets/images/Suryakoti/suryakoti-sun.png';
 const SuryakotiGame = ({
   selectedMode, skipModeSelection, isActive, isReload, savedGameState,
   onSaveGameState, onPhaseComplete, onGameComplete, hideElements,
-  isAudioOn, playAudio, profileName, RainbowComponent
+  isAudioOn, playAudio, profileName, RainbowComponent, onMicroWin
 }) => {
   const gameConfig = getGameConfig('suryakoti');
 
@@ -53,7 +53,8 @@ const SuryakotiGame = ({
       playAudio={playAudio}
       profileName={profileName}
       WaterSprayComponent={RainbowComponent}
-            //gamePrefix="suryakoti"  
+      onMicroWin={onMicroWin}
+            //gamePrefix="suryakoti"
 
     />
   );
