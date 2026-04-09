@@ -8,157 +8,122 @@ Comprehensive scene-by-scene flow, interactions, and structure. Updated as new V
 
 ### Scene 01 — Modak
 
-<!-- ========================================
-OLD CONTENT (Pre-recorded VO version)
-Kept for reference — Updated to Web Speech API TTS
-======================================== -->
-<!--
-OLD VERSION:
+**Opening Modal**
 - Title: "Share the Modaks"
 - Description: "Mooshika is nearby. Can you find him before he scurries away?"
-- 5 mounds, find correct one
-- Collect 3 modaks into basket
-- Drag modak to Ganesha
-- Affirmations: "I can focus." / "I share with joy." / "I feel safe inside."
-- VO: "Let's share the mo-dahks" etc (pre-recorded MP3s)
--->
-
-**Updated:** Web Speech API (TTS) — Finalized VO structure
-
-**Opening Modal**
-- Title: "Find the Modaks"
-- Description: "Mooshika is nearby. Let's find the sweet modaks together."
 - Icons: Mooshika · Modak · Belly
 - Button: "Let's Explore"
-
-**VO on modal load:**
-> "Mooshika is nearby…
-> Let's find the sweet modaks together."
-
----
+- VO: "Let's share the mo-dahks."
 
 **Phase 1 — Find Mooshika**
 - 5 mud mounds, Mooshika hidden under one
-- VO: "Mooshika is hiding under one of these mounds. Tap a mound and let's look."
+- VO: "Can you find Mooshika?"
 - Child taps mounds → correct one reveals Mooshika (sparkle + cheer)
-- VO on success: "You found my friend Mooshika!"
-- Symbol Reveal: Mooshika card blooms
-  - **Text:** "Looking closely helps us focus."
+- VO on success: "You found my friend Mooshika."
+- Symbol Reveal: Mooshika card blooms | Affirmation: "I can focus."
+- VO: "I can focus..."
 - Idle hints: glow pulse (12-15s) → glow flash + gesture (18-22s)
 
 **Phase 2 — Collect the Modaks**
-- VO: "Look! Sweet modaks. Tap the modaks and place them in the basket."
+- VO: "Let's collect three mo-dahks."
 - 3 golden modaks appear, basket visible
-- Child taps modaks → they fly into basket with plop + sparkle
+- Child taps each modak into basket → plop + sparkle
 - Counter: 1/3 → 2/3 → 3/3
-- VO when basket complete: "Wonderful… we found them all."
-- Symbol Reveal: Modak card blooms
-  - **Text:** "Sweet rewards come after effort."
+- Symbol Reveal: Modak card blooms | Affirmation: "I share with joy."
+- VO: "I share with joy..."
 
 **Phase 3 — Feed Ganesha**
-- VO: "Now drag the modaks to me."
-- Ganesha's belly glows, basket with modaks visible
+- VO: "Bring the mo-dahks to me."
+- Ganesha's belly glows
 - Child drags modak from basket to Ganesha → transformation sparkle + belly symbol lights up
-- VO: "Ahh… thank you."
-- Symbol Reveal: Big Belly card blooms
-  - **Text:** "A calm belly keeps the heart steady."
+- Symbol Reveal: Big Belly card blooms | Affirmation: "I feel safe inside."
+- VO: "I feel... safe inside."
 
 **Scene Complete**
-- SceneCompletionCelebration: golden fireworks + confetti + temple bells
-- VO: "You helped Mooshika find the modaks… and shared them with me. Come… the mountain path is opening."
-- Completion Modal:
-  - **Title:** "You Shared the Modaks!"
-  - **Description:** "Mooshika helped you find the sweetness."
-  - **Button:** "Continue the Journey"
+- SceneCompletionCelebration: golden fireworks + confetti
+- VO: "You focused... and you shared. I am proud of you."
+- Completion Modal: "You Shared the Modaks!" / "You helped Mooshika find the sweetness."
 
 ---
 
 ### Scene 02 — Pond
 
 **Opening Modal**
-- Title: "The Golden Lotus"
-- Description: "A golden lotus waits to bloom on the pond."
+- Title: "Wake the Lotus"
+- Description: "The pond rests quietly. A golden lotus is waiting to bloom."
 - Icons: Lotus · Trunk
 - Button: "Let's Explore"
-
-**VO on modal load:**
-> "A golden lotus waits to bloom on the pond.
-> Let's help it bloom."
-
----
+- VO: "My pond is ready. Let's bloom it together."
 
 **Phase 1 — Bloom the Lotuses**
-- VO: "These lotus flowers are still sleeping. Tap the lotuses to help them bloom."
+- VO: "My lotus helps me stay calm. Tap the lotuses."
 - 3 closed lotus flowers on water
 - Child taps each → lotus blooms with water splash + sparkle + calm chime
 - Counter: 1/3 → 2/3 → 3/3
-- VO when complete: "Beautiful… the pond is ready."
-- Symbol Reveal: Lotus card blooms
-  - **Text:** "Like the lotus… we can stay calm."
+- Symbol Reveal: Lotus card blooms | Affirmation: "I stay calm and kind."
 - Idle hints: glow pulse (12-15s) → glow flash + gesture (18-22s)
 
 **Phase 2 — Tap the Golden Lotus**
-- VO: "Look… the golden lotus bud. Tap it."
+- VO: "Beautiful. Now tap my golden lotus."
 - Golden lotus appears in pond center
-- Child taps → golden bloom with radiant glow + big sparkle + celebratory chime
+- Child taps → golden lotus bud with radiant glow + big sparkle + celebratory chime
+- On tapping the golden lotus the elephant shows 
 - Idle hints: glow pulse → glow flash + gesture
 
 **Phase 3 — Tap Ganesha's Elephant**
-- VO: "Can you see the elephant? Tap it."
+- VO: "Tap me. My trunk is ready to awaken."
 - Elephant body visible, trunk folded
 - Child taps elephant → trunk animates upward, glows, water spray arc animation
-- VO when bloom happens: "Ahh… the golden lotus has bloomed."
-- Symbol Reveal: Trunk card blooms
-  - **Text:** "My trunk bends… and finds a way."
-- Idle hints: glow pulse → glow flash + gesture
+- Symbol Reveal: Trunk card blooms | Affirmation: "I choose how I act."
+- VO: "My trunk is strong and helps me. Tap to reveal it."
+- Idle hints: "Tap me to continue."
 
 **Scene Complete**
 - SceneCompletionCelebration: calm golden fireworks + soft confetti
-- VO: "You helped the golden lotus bloom. Come… the path ahead is shining."
-- Completion Modal: "The Golden Lotus Bloomed" / "You helped the golden lotus bloom beautifully."
+- VO: "You found my lotus and my trunk. Now I am shining with you."
+- Completion Modal: "The Lotus Has Bloomed!" / "The golden petals opened with your help."
 
 ---
 
 ### Scene 03 — Symbol Mountain (Eyes, Ears, Tusk)
 
 **Opening Modal**
-- Title: "A Hidden Power Awaits"
-- Description: "Look closely and listen well to reveal it."
+- Title: "Play the Notes"
+- Description: "The mountain is listening. Follow the rhythm and see what awakens."
 - Icons: Eyes · Ears · Tusk
-- Button: "Let's Discover"
+- Button: "Let's Explore"
 - VO: "My symbols are ready. Let's discover them together."
 
 **Phase 1 — Eyes Game**
 - VO: "My big eyes see everything. Tap my eyes."
-- Child taps eyes to reveal matching pairs/symbols
+- Child taps eyes to reveal a telescope lens. drag the telescope lems to find 4 hidden instruments 
 - Symbol Reveal: Eyes card blooms | Affirmation: "I notice the good."
-- Idle hints: "Look carefully at my eyes."
+- Idle hints: glow
 
 **Phase 2 — Ears Game**
 - VO: "My big ears hear everything. Tap my ears and match the rhythm."
-- Audio-based matching game, tap ears to match sounds
+- on tapping ear matching sound to instrument game. After each correct round a singing note turns golden.3 rounds - 3 golden notes  
 - Symbol Reveal: Ears card blooms | Affirmation: "I listen with care."
-- Idle hints: "Listen carefully to my ears."
+
 
 **Phase 3 — Tusk Game**
 - VO: "My tusk helps me stay brave. Tap the golden notes."
-- Tap golden note symbols in sequence
+- Tap the 3 golden notes and the tusk gradually glows and ganesha shows
 - Symbol Reveal: Tusk card blooms | Affirmation: "I finish what I start."
-- Idle hints: "Look carefully at the golden notes."
 
 **Scene Complete**
 - VO: "You found my eyes, ears, and tusk. Now I am shining with you."
-- Completion Modal: "Ganesha Shines Bright" / "Your focus awakened Ganesha’s shining power."
+- Completion Modal: "The Mountain Has Awakened!" / "The rhythm echoed and the symbols stirred."
 
 ---
 
 ### Scene 04 — Sacred Assembly (Final Symbol Mountain Scene)
 
 **Opening Modal**
-- Title: "The Symbols Are Waiting"
-- Description: "All of Ganesha’s symbols are ready to come together."
+- Title: "Shine Together"
+- Description: "All the symbols are ready. Place them gently and watch them glow."
 - Icons: Eyes · Trunk · Lotus
-- Button: "Let’s Discover"
+- Button: "Let's Explore"
 
 **Interaction**
 - Child places/arranges all Symbol Mountain symbols from previous scenes
@@ -167,7 +132,7 @@ OLD VERSION:
 
 **Scene Complete**
 - SceneCompletionCelebration: grand golden fireworks
-- Completion Modal: "Everything Came Together" / "You brought all of Ganesha’s symbols together beautifully."
+- Completion Modal: "The Symbols Shine as One!" / "The mountain glows brighter because of you."
 
 ---
 
@@ -407,10 +372,10 @@ OLD VERSION:
 ### Scene 10 — Vakratunda Grove
 
 **Opening Modal**
-- Title: "Something Beautiful Is Growing"
-- Description: "A tiny wonder is ready to grow with you."
+- Title: "Grow the Lotus"
+- Description: "Let's grow something beautiful together. Watch the lotus bloom."
 - Icons: Vakratunda · Mahakaya
-- Button: "Let’s Discover"
+- Button: "Let's Grow"
 
 **VO on modal load:** "Let's grow something beautiful together."
 
@@ -503,7 +468,7 @@ OLD VERSION:
 - SceneCompletionCelebration: river-themed golden fireworks with lotus + tree imagery
 - Final scene shows both lotus (blooming) and banyan tree (strong) side by side
 - VO: (Celebration VO TBD)
-- Completion Modal: "Look What You Grew" / "The lotus blooms and the great tree rises."
+- Completion Modal: "The Lotus and Tree Are Ready!" / "Flexibility and strength flow through you."
 
 ---
 
@@ -807,69 +772,84 @@ OLD VERSION:
 
 ## ZONE 5 — ABOUT ME HUT (Scenes 19–22)
 
+
+
+---
+
 ### Scene 19 — Family Tree
 
 **Opening Modal**
-- Title: "Your Family"
-- Description: "Every family is special. Let's discover the people who love you."
+- Title: //"Meet My Family"// A Special Circle of Love
+- Description: //"Let's build our family trees together."//
+- Let’s discover the loving families that shape us.
 - Button: "Let's Explore"
+- VO: "Let's meet the people who love us most."
 
-**Interaction**
-- Child sees a family tree template with empty spaces
-- Child enters/selects family member names for:
-  - Grandparents (maternal and paternal, if applicable)
-  - Parents/Guardians
-  - Siblings
-  - Self (center of tree)
-  - Extended family (aunts, uncles, cousins, as applicable)
+---
 
-**Phases:**
+**Part 1 — Ganesha's Family Tree**
 
-**Phase 1 — Enter Primary Family**
-- Child enters names for parents/guardians
-- For each entry: name is typed or selected
-- Name appears on the tree + sparkle animation
-- Counter: 1/2 → 2/2 family members entered
+**Father**
+- VO: "Can you find my father on the tree? Tap the circle!"
+- Child taps the Father circle → choice modal opens (Shiva, Vishnu, Brahma)
+- VO on correct: "Yes! That's my father, Shiva Ji! He is calm and strong."
+- VO on wrong: "Hmm, not quite. Try again!"
+- Idle hint: "My father carries a trident and has long matted hair."
 
-**Phase 2 — Add Siblings**
-- Child can add siblings (optional, 0-4)
-- Names entered, displayed on tree
-- Each addition triggers sparkle
+**Mother**
+- VO: "Now find my mother!"
+- Child taps the Mother circle → choice modal opens (Parvati, Lakshmi, Saraswati)
+- VO on correct: "Yes! That's my mother, Parvati Mata! She is kind and loving."
+- VO on wrong: "Hmm, not quite. Try again!"
+- Idle hint: "My mother is gentle and wears a beautiful red sari."
 
-**Phase 3 — Add Grandparents**
-- Child adds grandparents (optional, 0-4)
-- Branches extend upward on tree
-- Tree grows visually as family is added
+**Brother**
+- VO: "Can you find my brother?"
+- Child taps the Brother circle → choice modal opens (Kartikeya, Hanuman, Krishna)
+- VO on correct: "Yes! That's my brother, Kartikeya! He rides a peacock."
+- VO on wrong: "Hmm, not quite. Try again!"
+- Idle hint: "My brave brother rides a peacock."
 
-**Phase 4 — Add Self**
-- Child enters their own name
-- Self appears at center of tree
-- Special highlight/glow on their name
+**Myself**
+- VO: "And last — can you find me?"
+- Child taps the Me circle → choice modal opens (Ganesha, Mushak, Kartikeya)
+- VO on correct: "Hehe, yes! That's me! I love modaks!"
+- VO on wrong: "Hmm, not quite. Try again!"
+- Idle hint: "That's me! I have an elephant head."
 
-**Phase 5 — Celebrate & Review**
-- Complete family tree displays
-- All members' names glow with warm light
-- Ganesha celebrates the family unit
-- Tree animates gently (branches sway, connection lines glow)
+**Ganesha Tree Complete**
+- VO: "You built my whole family tree! Now let's build yours!"
+- Button: "All Done!" → transitions to Part 2
 
-**Cultural Note:**
-- Tree supports non-traditional family structures:
-  - Single parent families
-  - Guardian-led families
-  - Blended families
-  - Extended family as primary caregivers
-- Language is inclusive: "people who love you" rather than traditional "mother/father"
+---
+
+**Part 2 — Child's Family Tree**
+
+**Transition**
+- VO: "Now it's your turn. Tap the family members who belong in your tree!"
+
+**Adding family members**
+- Child taps from the bottom tray: Dad, Mom, Grandpa, Grandma, Brother, Sister, Myself, Pet
+- Each tap adds the member to the child's tree
+- VO on first tap: "Who's in your family? Tap them to add!"
+- VO on 2nd/3rd member added: "Your family is growing! Who else?"
+- VO on 4th+ member added: "What a wonderful family!"
+
+**Name input (on tap of placed member)**
+- VO: "What do you call them? Type their name!"
+- Child types nickname (e.g., Papa, Didi, Nani)
+- VO on confirmation: "What a lovely name!"
 
 **Scene Complete**
-- SceneCompletionCelebration: family-themed golden fireworks
-- Ganesha appears with all symbols around the tree
-- Completion Modal: "Your Family Shines!" / "The people who love you are your greatest blessing."
+- VO: "Now we both have our family trees. Families make us who we are!"
+- SceneCompletionCelebration: warm fireworks + confetti
+- Completion Modal: "Our Families Are Beautiful!" / "Every family is special and full of love."
 
 ### Scene 20 — Favorite Food
 
 **Opening Modal**
-- Title: "Discover Our Favorites"
-- Description: "Let's learn what makes us special."
+- Title: "Our Favorite Things"
+- Description: "Let's see the little things we both love."
 - Button: "Let's Explore"
 - VO: "Let's discover our favorite things."
 
@@ -927,13 +907,34 @@ OLD VERSION:
 **Scene Complete**
 - VO: "Now we know each other better. I'm happy we're friends!"
 - SceneCompletionCelebration: warm fireworks + confetti
-- Completion Modal: "We're Best Friends!" / "We understand each other now."
+
+Completion Modal
+
+Title
+Our Favorite Things
+
+Description
+Now we know the things we each love.
+
+Button
+Continue the Journey ✨
 
 ---
 
 ### Scene 21 — Dreams & Wishes (Obstacle Remover Game)
 
 **Part 1 — Ganesha Removes Obstacles** (Learning phase)
+
+Opening Modal
+
+Title
+Dream Big Together
+
+Description
+Every dream begins with a little wish.
+
+Button
+Let’s Explore
 
 **Wish 1 — Earth (Happiness)**
 - Setup VO: "Look at the Earth... It's sad because it needs care."
@@ -976,9 +977,31 @@ OLD VERSION:
 - VO: "You learned something powerful today... You can remove obstacles. Keep dreaming, little one. I will be with you."
 - SceneCompletionCelebration: warm, encouraging fireworks
 
+Completion Modal
+
+Title
+Your Dream Is Taking Shape
+
+Description
+You cleared the way for your dream.
+
+Button
+Continue the Journey ✨
+
 ---
 
 ### Scene 22 — Name & Birthday
+
+Opening Modal
+
+Title
+Let’s Be Friends
+
+Description
+“Let’s share our names and special days.”
+
+Button
+Let’s Explore
 
 **Interaction**
 - Child enters their name
@@ -987,8 +1010,7 @@ OLD VERSION:
 
 **Scene Complete**
 - Personalized celebration
-- Completion Modal: "[Child's name], you are special!" / "I'm so happy to know you."
-
+- Completion Modal: "We're Best Friends!" / "Now we know each other a little better."
 ---
 
 ---
@@ -1013,3 +1035,6 @@ OLD VERSION:
 2. Record/finalize audio for all scenes
 3. Test scene flows with audio
 4. Refine interactions based on child testing
+
+
+

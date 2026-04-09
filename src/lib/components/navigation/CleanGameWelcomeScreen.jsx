@@ -171,7 +171,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
         if (!raw) continue;
         try {
           const data = JSON.parse(raw);
-          const ts = data?.timestamp || 1;
+          const ts = data?.lastSaved || data?.timestamp || 1;
           if (ts > latestTimestamp) {
             latestTimestamp = ts;
             latestZone = zone;
@@ -493,17 +493,27 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
                   className={`stat-clean-row ${isZoneComplete(culturalProgress.symbols) ? 'completed' : ''}`}
                   onClick={() => handleProgressBoxClick('symbols')}
                 >
-                  {isZoneComplete(culturalProgress.symbols) && <div className="completion-badge"><span className="star-icon">⭐</span></div>}
-                  <GameIcon name="zone_stat_symbols" size={32} className="stat-icon-clean" />
-                  <span className="stat-text-clean">{culturalProgress.symbols} Symbols</span>
+                  <div className="stat-icon-wrap">
+                    <GameIcon name="zone_stat_symbols" size={32} className="stat-icon-clean" />
+                    {isZoneComplete(culturalProgress.symbols) && (
+                      <span className="stat-complete-check" aria-hidden="true">✓</span>
+                    )}
+                  </div>
+                  <span className={`stat-text-clean ${isZoneComplete(culturalProgress.symbols) ? 'all-symbols-discovered' : ''}`}>
+                    {isZoneComplete(culturalProgress.symbols) ? 'All symbols are discovered' : `${culturalProgress.symbols} Symbols`}
+                  </span>
                 </div>
                 
                 <div 
                   className={`stat-clean-row ${isZoneComplete(culturalProgress.meanings) ? 'completed' : ''}`}
                   onClick={() => handleProgressBoxClick('meanings')}
                 >
-                  {isZoneComplete(culturalProgress.meanings) && <div className="completion-badge"><span className="star-icon">⭐</span></div>}
-                  <GameIcon name="zone_stat_meanings" size={32} className="stat-icon-clean" />
+                  <div className="stat-icon-wrap">
+                    <GameIcon name="zone_stat_meanings" size={32} className="stat-icon-clean" />
+                    {isZoneComplete(culturalProgress.meanings) && (
+                      <span className="stat-complete-check" aria-hidden="true">✓</span>
+                    )}
+                  </div>
                   <span className="stat-text-clean">{culturalProgress.meanings} Meanings</span>
                 </div>
                 
@@ -511,8 +521,12 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
                   className={`stat-clean-row ${isZoneComplete(culturalProgress.chants) ? 'completed' : ''}`}
                   onClick={() => handleProgressBoxClick('chants')}
                 >
-                  {isZoneComplete(culturalProgress.chants) && <div className="completion-badge"><span className="star-icon">⭐</span></div>}
-                  <GameIcon name="zone_stat_chants" size={32} className="stat-icon-clean" />
+                  <div className="stat-icon-wrap">
+                    <GameIcon name="zone_stat_chants" size={32} className="stat-icon-clean" />
+                    {isZoneComplete(culturalProgress.chants) && (
+                      <span className="stat-complete-check" aria-hidden="true">✓</span>
+                    )}
+                  </div>
                   <span className="stat-text-clean">{culturalProgress.chants} Chants</span>
                 </div>
               </div>

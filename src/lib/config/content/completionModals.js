@@ -5,7 +5,7 @@ export const COMPLETION_MODALS = {
   'symbol-mountain': {
     modak: {
       title: 'You Shared the Modaks!',
-      subtitle: 'You helped Mooshika find the sweetness.'
+      subtitle: 'You found Mooshika and shared the sweet modaks. Wonderful work, little friend.'
     },
     pond: {
       title: 'The Lotus Has Bloomed!',
@@ -87,20 +87,20 @@ export const COMPLETION_MODALS = {
 
 'about-me-hut': {
   'name-birthday': {
-    title: 'We Are Friends Now!',
-    subtitle: 'You shared a little about yourself.'
+    title: "We're Best Friends!",
+    subtitle: 'Now we know each other a little better.'
   },
   'family-tree': {
-    title: 'Your World Shines Bright!',
-    subtitle: 'It is filled with things that matter to you.'
+    title: 'Our Families Are Beautiful!',
+    subtitle: 'Every family is special and full of love.'
   },
   'favorite-food': {
-    title: 'Your Favorites Tell a Story!',
-    subtitle: 'They show what makes you smile.'
+    title: 'Our Favorite Things',
+    subtitle: 'Now we know the things we each love.'
   },
   'dreams-wishes': {
-    title: 'Your Dreams Are Taking Shape!',
-    subtitle: 'They are growing with you.'
+    title: 'Your Dream Is Taking Shape',
+    subtitle: 'You cleared the way for your dream.'
   }
 }
 };

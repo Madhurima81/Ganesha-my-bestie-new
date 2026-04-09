@@ -1,152 +1,68 @@
-﻿# Content Master â€” All 22 Scenes Text
+# Content Master — All 22 Scenes Text
 
 Complete content audit: opening modals, symbol reveals, completion modals, and all scene text.
 
 ---
 
-## SCENE 01 â€” MODAK (Symbol Mountain)
+## SCENE 01 — MODAK (Symbol Mountain)
 
-<!--
-OLD CONTENT â€” Updated 2026-04-06
 ### Opening Modal
 - **Title:** "Share the Modaks"
-- **Description:** "Mooshika is nearby. Can you find him before he scurries away?"
+- **Description:** Mooshika is hiding nearby. Find him and share the sweet modaks.
 - **Button Text:** "Let's Explore"
-
-### Idle Hints
-
-#### Phase 1 â€” Find Mooshika
-- **Hint 1 (12-15s):** Glow ring pulses on the correct mound
-- **Hint 2 (18-22s):** Glow ring flashes + Ganesha gesture points toward it
-
-#### Phase 2 â€” Collect Modaks
-- **Hint 1 (12-15s):** Glow ring pulses on nearest uncollected modak
-- **Hint 2 (18-22s):** Glow ring flashes + Ganesha gesture points at it
-
-#### Phase 3 â€” Feed Ganesha
-- **Hint 1 (12-15s):** Glow ring pulses on the basket / modak
-- **Hint 2 (18-22s):** Glow ring flashes + drag arrow animates from basket toward Ganesha
 
 ### Symbol Reveals
 #### Mooshika
 - **Title:** "Mooshika"
 - **Affirmation:** "I can focus."
-- **Power Name:** Divine Guidance
+
 
 #### Modak
 - **Title:** "Modak"
 - **Affirmation:** "I share with joy."
+-
 
 #### Big Belly
 - **Title:** "Big Belly"
 - **Affirmation:** "I feel safe inside."
 
+
 ### Completion Modal
 - **Title:** "You Shared the Modaks!"
-- **Subtitle:** "You helped Mooshika find the sweetness."
-- **Button Text:** "Continue the Journey ✨"
--->
+- **Subtitle:** You found Mooshika and shared the sweet modaks. Wonderful work, little friend.
+- **Button Text:** "Back to Map" / "Next Scene"/ Play Again
 
 ---
 
-### Opening Modal (FINALIZED)
-- **Title:** "Share the Modaks"
-- **Description:** "Mooshika is hiding nearby. Find him and share the sweet modaks."
-- **Button Text:** "Let's Explore"
-
-### Idle Hints (FINALIZED)
-
-#### Phase 1 â€” Find Mooshika
-- **Hint 1 (12-15s):** Glow ring pulses on the correct mound
-- **Hint 2 (18-22s):** Glow ring flashes + Ganesha gesture points toward it
-
-#### Phase 2 â€” Collect Modaks
-- **Hint 1 (12-15s):** Glow ring pulses on nearest uncollected modak
-- **Hint 2 (18-22s):** Glow ring flashes + Ganesha gesture points at it
-
-#### Phase 3 â€” Feed Ganesha
-- **Hint 1 (12-15s):** Glow ring pulses on the basket
-- **Hint 2 (18-22s):** Glow ring flashes + drag arrow animates from basket toward Ganesha
-
-### Symbol Reveals (FINALIZED)
-
-#### Symbol 1: Mooshika
-- **Title:** "Mooshika"
-- **Symbol Meaning:** "Looking closely helps us focus."
-
-#### Symbol 2: Modak
-- **Title:** "Modak"
-- **Symbol Meaning:** "Sweet rewards come after effort."
-
-#### Symbol 3: Big Belly
-- **Title:** "Big Belly"
-- **Symbol Meaning:** "A calm belly keeps the heart steady."
-
-### Completion Modal (FINALIZED)
-- **Title:** "You Shared the Modaks"
-- **Description:** "You found Mooshika and shared the sweet modaks. Wonderful work, little friend."
-- **Button Text:** "Continue the Journey"
-
----
-
-## SCENE 02 â€” POND (Symbol Mountain)
-
-### Opening Modal (FINALIZED)
-- **Title:** "The Golden Lotus"
-- **Description:** "A golden lotus waits to bloom on the pond."
-- **Button Text:** "Let's Explore"
-
-### Idle Hints (FINALIZED)
-
-#### Phase 1 â€” Bloom the Lotuses
-- **Hint 1 (12-15s):** Glow ring pulses on unopened lotus
-- **Hint 2 (18-22s):** Glow ring flashes + Ganesha gesture points to unopened lotus
-
-#### Phase 2 â€” Tap the Golden Lotus
-- **Hint 1 (12-15s):** Glow ring pulses on golden lotus bud
-- **Hint 2 (18-22s):** Glow ring flashes + Ganesha gesture points to golden lotus
-
-#### Phase 3 â€” Tap Ganesha's Elephant
-- **Hint 1 (12-15s):** Glow ring pulses on elephant
-- **Hint 2 (18-22s):** Glow ring flashes + gesture points to elephant
-
-### Symbol Reveals (FINALIZED)
-
-#### Symbol 1: Lotus
-- **Title:** "Lotus"
-- **Symbol Meaning:** "Like the lotusâ€¦ we can stay calm."
-
-#### Symbol 2: Trunk
-- **Title:** "Trunk"
-- **Symbol Meaning:** "My trunk bendsâ€¦ and finds a way."
-
-### Completion Modal (FINALIZED)
-- **Title:** "The Golden Lotus Bloomed"
-- **Description:** "You helped the golden lotus bloom beautifully."
-- **Button Text:** "Continue the Journey"
-
----
-
-## SCENE 03 â€” SYMBOL MOUNTAIN / TUSK (Symbol Mountain)
+## SCENE 02 — POND (Symbol Mountain)
 
 ### Opening Modal
-- **Title:** "A Hidden Power Awaits"
-- **Description:** "Look closely and listen well to reveal it."
-- **Button Text:** "Let's Discover"
+- **Title:** "Wake the Lotus"
+- **Description:** "The pond rests quietly. A golden lotus is waiting to bloom."
+- **Button Text:** "Let's Explore"
 
-### Idle Hints
+### Symbol Reveals
+#### Lotus
+- **Title:** "Lotus"
+- **Affirmation:** "I stay calm and kind."
 
-#### Phase 1 â€” Eyes Game
-- **Hint 1 (12-15s):** "Look carefully at my eyes."
-- **Hint 2 (18-22s):** Glow ring flashes + gesture points to eyes
+#### Trunk
+- **Title:** "Trunk"
+- **Affirmation:** "I choose how I act."
 
-#### Phase 2 â€” Ears Game
-- **Hint 1 (12-15s):** "Listen carefully to my ears."
-- **Hint 2 (18-22s):** Glow ring flashes + gesture points to ears
+### Completion Modal
+- **Title:** "The Lotus Has Bloomed!"
+- **Subtitle:** "The golden petals opened with your help."
+- **Button Text:** "Back to Map" / "Next Scene"
 
-#### Phase 3 â€” Tusk Game
-- **Hint 1 (12-15s):** "Look carefully at the golden notes."
-- **Hint 2 (18-22s):** Glow ring flashes + gesture points to notes
+---
+
+## SCENE 03 — SYMBOL MOUNTAIN / TUSK (Symbol Mountain)
+
+### Opening Modal
+- **Title:** "Play the Notes"
+- **Description:** "The mountain is listening. Follow the rhythm and see what awakens."
+- **Button Text:** "Let's Explore"
 
 ### Symbol Reveals
 #### Eyes
@@ -162,31 +78,27 @@ OLD CONTENT â€” Updated 2026-04-06
 - **Affirmation:** "I finish what I start."
 
 ### Completion Modal
-- **Title:** "Ganesha Shines Bright"
-- **Description:** "Your focus awakened Ganesha’s shining power."
-- **Button Text:** "Continue the Journey ✨"
+- **Title:** "The Mountain Has Awakened!"
+- **Subtitle:** "The rhythm echoed and the symbols stirred."
+- **Button Text:** "Back to Map" / "Next Scene"
 
 ---
 
-## SCENE 04 â€” SACRED ASSEMBLY (Symbol Mountain)
+## SCENE 04 — SACRED ASSEMBLY (Symbol Mountain)
 
 ### Opening Modal
-- **Title:** "The Symbols Are Waiting"
-- **Description:** "All of Ganesha’s symbols are ready to come together."
-- **Button Text:** "Let’s Discover"
-
-### Idle Hints
-- **Hint 1 (12-15s):** "Tap the symbols to place them."
-- **Hint 2 (18-22s):** Glow pulse on symbols â†’ glow flash + gesture points
+- **Title:** "Shine Together"
+- **Description:** "All the symbols are ready. Place them gently and watch them glow."
+- **Button Text:** "Let's Explore"
 
 ### Completion Modal
-- **Title:** "Everything Came Together"
-- **Description:** "You brought all of Ganesha’s symbols together beautifully."
-- **Button Text:** "Continue the Journey ✨"
+- **Title:** "The Symbols Shine as One!"
+- **Subtitle:** "The mountain glows brighter because of you."
+- **Button Text:** "Back to Map" / "Next Scene"
 
 ---
 
-## SCENE 05 â€” VAKRATUNDA & MAHAKAYA (Cave of Secrets)
+## SCENE 05 — VAKRATUNDA & MAHAKAYA (Cave of Secrets)
 
 ### Opening Modal
 - **Title:** "Enter the Cave"
@@ -197,19 +109,21 @@ OLD CONTENT â€” Updated 2026-04-06
 #### Vakratunda
 - **Title:** "Vakratunda"
 - **Affirmation:** "I adapt."
+- **Power Name:** Curved Trunk Power
 
 #### Mahakaya
 - **Title:** "Mahakaya"
 - **Affirmation:** "I am strong inside."
+- **Power Name:** Mighty Form Power
 
 ### Completion Modal
 - **Title:** "Your Strength Is Rising!"
 - **Subtitle:** "You placed each stone with care."
-- **Button Text:** "Continue the Journey ✨"
+- **Button Text:** "Back to Map" / "Next Scene"
 
 ---
 
-## SCENE 06 â€” SURYAKOTI & SAMAPRABHA (Cave of Secrets)
+## SCENE 06 — SURYAKOTI & SAMAPRABHA (Cave of Secrets)
 
 ### Opening Modal
 - **Title:** "The Shining Cave"
@@ -220,19 +134,21 @@ OLD CONTENT â€” Updated 2026-04-06
 #### Suryakoti
 - **Title:** "Suryakoti"
 - **Affirmation:** "I shine brightly."
+- **Power Name:** Sun Light Power
 
 #### Samaprabha
 - **Title:** "Samaprabha"
 - **Affirmation:** "My light is steady."
+- **Power Name:** Steady Light Power
 
 ### Completion Modal
 - **Title:** "The Cave Is Filled with Light!"
 - **Subtitle:** "The hidden suns are shining now."
-- **Button Text:** "Continue the Journey ✨"
+- **Button Text:** "Back to Map" / "Next Scene"
 
 ---
 
-## SCENE 07 â€” NIRVIGHNAM & KURUMEDEVA (Cave of Secrets)
+## SCENE 07 — NIRVIGHNAM & KURUMEDEVA (Cave of Secrets)
 
 ### Opening Modal
 - **Title:** "The Bridge of Wisdom"
@@ -243,19 +159,21 @@ OLD CONTENT â€” Updated 2026-04-06
 #### Nirvighnam
 - **Title:** "Nirvighnam"
 - **Affirmation:** "I move past obstacles."
+- **Power Name:** Clear Path Power
 
 #### Kurumedeva
 - **Title:** "Kurumedeva"
 - **Affirmation:** "I try my best."
+- **Power Name:** Mountain Climber Power
 
 ### Completion Modal
 - **Title:** "The Bridge Stands Clear!"
 - **Subtitle:** "The path forward is open."
-- **Button Text:** "Continue the Journey ✨"
+- **Button Text:** "Back to Map" / "Next Scene"
 
 ---
 
-## SCENE 08 â€” SARVAKARYESHU & SARVADA (Cave of Secrets)
+## SCENE 08 — SARVAKARYESHU & SARVADA (Cave of Secrets)
 
 ### Opening Modal
 - **Title:** "The Final Doors"
@@ -266,19 +184,21 @@ OLD CONTENT â€” Updated 2026-04-06
 #### Sarvakaryeshu
 - **Title:** "Sarvakaryeshu"
 - **Affirmation:** "I do my work with care."
+- **Power Name:** Careful Worker Power
 
 #### Sarvada
 - **Title:** "Sarvada"
 - **Affirmation:** "I keep going."
+- **Power Name:** Never Give Up Power
 
 ### Completion Modal
 - **Title:** "Your Choice Was Wise!"
 - **Subtitle:** "You listened closely before you chose."
-- **Button Text:** "Continue the Journey ✨"
+- **Button Text:** "Back to Map" / "Next Scene"
 
 ---
 
-## SCENE 09 â€” CAVE FINALE (Cave of Secrets)
+## SCENE 09 — CAVE FINALE (Cave of Secrets)
 
 ### Opening Modal
 - **Title:** "All Eight Words"
@@ -288,60 +208,38 @@ OLD CONTENT â€” Updated 2026-04-06
 ### Completion Modal
 - **Title:** "The Cave Is Complete!"
 - **Subtitle:** "All eight Sanskrit words are now yours."
-- **Button Text:** "Continue the Journey ✨"
+- **Button Text:** "Back to Map" / "Next Scene"
 
 ---
 
-## SCENE 10 â€” VAKRATUNDA GROVE (Shloka River)
+## SCENE 10 — VAKRATUNDA GROVE (Shloka River)
 
 ### Opening Modal
-- **Title:** "Something Beautiful Is Growing"
-- **Description:** "A tiny wonder is ready to grow with you."
-- **Button Text:** "Let’s Discover"
-
-### Idle Hints
-
-#### Round 1 â€” First Petal Opens
-- **Hint 1 (12-15s):** "Tap the lotus to open it."
-- **Hint 2 (18-22s):** Glow pulse on lotus â†’ glow flash + gesture points to lotus
-
-#### Round 2 â€” More Petals Unfold
-- **Hint 1 (12-15s):** "Keep tapping to bloom the lotus."
-- **Hint 2 (18-22s):** Glow pulse on lotus â†’ glow flash + gesture points to lotus
-
-#### Round 3 â€” Lotus Fully Blooms
-- **Hint 1 (12-15s):** "One more tap to fully bloom the lotus."
-- **Hint 2 (18-22s):** Glow pulse on lotus â†’ glow flash + gesture points to lotus
-
-#### Round 1 â€” Sapling Sprouts
-- **Hint 1 (12-15s):** "Tap the sapling to help it grow."
-- **Hint 2 (18-22s):** Glow pulse on sapling â†’ glow flash + gesture points to sapling
-
-#### Round 2 â€” Tree Grows Strong
-- **Hint 1 (12-15s):** "Keep tapping to grow the tree stronger."
-- **Hint 2 (18-22s):** Glow pulse on tree â†’ glow flash + gesture points to tree
-
-#### Round 3 â€” Banyan Tree is Mighty
-- **Hint 1 (12-15s):** "One more tap to make the tree mighty."
-- **Hint 2 (18-22s):** Glow pulse on tree â†’ glow flash + gesture points to tree
+- **Title:** "Grow the Lotus"
+- **Description:** "Let's grow something beautiful together. Watch the lotus bloom."
+- **Button Text:** "Let's Grow"
 
 ### Symbol Reveals
 #### Vakratunda
 - **Title:** "Vakratunda"
 - **Affirmation:** "I adapt."
+- **Power Name:** Flexibility Power
+- **Power Story:** "When you feel stuck, try a new way. Like the lotus, you can bend and find beauty in any direction."
 
 #### Mahakaya
 - **Title:** "Mahakaya"
 - **Affirmation:** "I am strong."
+- **Power Name:** Inner Strength
+- **Power Story:** "Big and strong, with roots that go deep. You have strength inside you too."
 
 ### Completion Modal
-- **Title:** "Look What You Grew"
-- **Description:** "The lotus blooms and the great tree rises."
-- **Button Text:** "Continue the Journey 🌸🌳"
+- **Title:** "The Lotus and Tree Are Ready!"
+- **Subtitle:** "Flexibility and strength flow through you."
+- **Button Text:** "Back to Map" / "Next Scene"
 
 ---
 
-## SCENE 11 â€” SURYAKOTI BANK (Shloka River)
+## SCENE 11 — SURYAKOTI BANK (Shloka River)
 
 ### Opening Modal
 - **Title:** "The Second Shloka"
@@ -352,19 +250,21 @@ OLD CONTENT â€” Updated 2026-04-06
 #### Suryakoti
 - **Title:** "Suryakoti"
 - **Affirmation:** "I shine."
+- **Power Name:** (TBD)
 
 #### Samaprabha
 - **Title:** "Samaprabha"
 - **Affirmation:** "My light is steady."
+- **Power Name:** (TBD)
 
 ### Completion Modal
 - **Title:** "You Learned Suryakoti!"
 - **Subtitle:** "The sun's wisdom shines within you."
-- **Button Text:** "Continue the Journey ✨"
+- **Button Text:** "Back to Map" / "Next Scene"
 
 ---
 
-## SCENE 12 â€” NIRVIGHNAM CHANT (Shloka River)
+## SCENE 12 — NIRVIGHNAM CHANT (Shloka River)
 
 ### Opening Modal
 - **Title:** "Clear the Path"
@@ -375,19 +275,21 @@ OLD CONTENT â€” Updated 2026-04-06
 #### Nirvighnam
 - **Title:** "Nirvighnam"
 - **Affirmation:** "I move forward."
+- **Power Name:** (TBD)
 
 #### Kurumedeva
 - **Title:** "Kurumedeva"
 - **Affirmation:** "I do my best."
+- **Power Name:** (TBD)
 
 ### Completion Modal
 - **Title:** "You Learned Nirvighnam!"
 - **Subtitle:** "The path forward is open."
-- **Button Text:** "Continue the Journey ✨"
+- **Button Text:** "Back to Map" / "Next Scene"
 
 ---
 
-## SCENE 13 â€” SARVAKARYESHU CHANT (Shloka River)
+## SCENE 13 — SARVAKARYESHU CHANT (Shloka River)
 
 ### Opening Modal
 - **Title:** "Work with Purpose"
@@ -398,24 +300,26 @@ OLD CONTENT â€” Updated 2026-04-06
 #### Sarvakaryeshu
 - **Title:** "Sarvakaryeshu"
 - **Affirmation:** "I work with care."
+- **Power Name:** (TBD)
 
 #### Sarvada
 - **Title:** "Sarvada"
 - **Affirmation:** "I keep trying."
+- **Power Name:** (TBD)
 
 ### Completion Modal
 - **Title:** "You Learned Sarvakaryeshu!"
 - **Subtitle:** "Purpose flows through your actions."
-- **Button Text:** "Continue the Journey ✨"
+- **Button Text:** "Back to Map" / "Next Scene"
 
 ---
 
-## SCENE 14 â€” SHLOKA RIVER FINALE (Shloka River)
+## SCENE 14 — SHLOKA RIVER FINALE (Shloka River)
 
 ### Opening Modal
 - **Title:** "The River Flows as One"
 - **Description:** "All four shlokas unite in harmony. Sing them together."
-- **Button Text:** "Let's Celebrate"
+- **Button Text:** "Let's Explore"
 
 ### Symbol Reveals
 #### Vakratunda (Reminder)
@@ -433,11 +337,11 @@ OLD CONTENT â€” Updated 2026-04-06
 ### Completion Modal
 - **Title:** "The Shloka River Flows Through You!"
 - **Subtitle:** "All four sacred words are now yours."
-- **Button Text:** "Continue the Journey ✨"
+- **Button Text:** "Back to Map" / "Next Scene"
 
 ---
 
-## SCENE 15 â€” PIANO GAME (Festival Square)
+## SCENE 15 — PIANO GAME (Festival Square)
 
 ### Opening Modal
 - **Title:** "Play the Music"
@@ -447,11 +351,11 @@ OLD CONTENT â€” Updated 2026-04-06
 ### Completion Modal
 - **Title:** "You Made Music!"
 - **Subtitle:** "Your melody will echo in the festival forever."
-- **Button Text:** "Continue the Journey ✨"
+- **Button Text:** "Back to Map" / "Next Scene"
 
 ---
 
-## SCENE 16 â€” RANGOLI GAME (Festival Square)
+## SCENE 16 — RANGOLI GAME (Festival Square)
 
 ### Opening Modal
 - **Title:** "Create Rangoli"
@@ -461,11 +365,11 @@ OLD CONTENT â€” Updated 2026-04-06
 ### Completion Modal
 - **Title:** "Rangoli Complete!"
 - **Subtitle:** "The colors welcome the festival."
-- **Button Text:** "Continue the Journey ✨"
+- **Button Text:** "Back to Map" / "Next Scene"
 
 ---
 
-## SCENE 17 â€” MODAK COOKING GAME (Festival Square)
+## SCENE 17 — MODAK COOKING GAME (Festival Square)
 
 ### Opening Modal
 - **Title:** "Cook the Modaks"
@@ -475,11 +379,11 @@ OLD CONTENT â€” Updated 2026-04-06
 ### Completion Modal
 - **Title:** "Modaks Are Ready!"
 - **Subtitle:** "You cooked with love and care."
-- **Button Text:** "Continue the Journey ✨"
+- **Button Text:** "Back to Map" / "Next Scene"
 
 ---
 
-## SCENE 18 â€” MANDAP DECORATION (Festival Square)
+## SCENE 18 — MANDAP DECORATION (Festival Square)
 
 ### Opening Modal
 - **Title:** "Decorate the Mandap"
@@ -489,11 +393,11 @@ OLD CONTENT â€” Updated 2026-04-06
 ### Completion Modal
 - **Title:** "The Mandap Is Ready!"
 - **Subtitle:** "The festival space glows with your creation."
-- **Button Text:** "Continue the Journey ✨"
+- **Button Text:** "Back to Map" / "Next Scene"
 
 ---
 
-## SCENE 19 â€” FAMILY TREE (About Me Hut)
+## SCENE 19 — FAMILY TREE (About Me Hut)
 
 ### Opening Modal
 - **Title:** "Your Family"
@@ -507,18 +411,18 @@ OLD CONTENT â€” Updated 2026-04-06
 ### Completion Modal
 - **Title:** "Your Family Shines!"
 - **Subtitle:** "The people who love you are your greatest blessing."
-- **Button Text:** "Continue the Journey ✨"
+- **Button Text:** "Back to Map" / "Next Scene"
 
 ---
 
-## SCENE 20 â€” FAVORITE FOOD (About Me Hut)
+## SCENE 20 — FAVORITE FOOD (About Me Hut)
 
 ### Opening Modal
-- **Title:** "Discover Our Favorites"
-- **Description:** "Let's learn what makes us special."
+- **Title:** "Our Favorite Things"
+- **Description:** "Let's see the little things we both love."
 - **Button Text:** "Let's Explore"
 
-### Part 1 â€” Ganesha's Favorites
+### Part 1 — Ganesha's Favorites
 
 #### Food Question
 - **Prompt:** "Can you guess my favourite food?"
@@ -540,7 +444,7 @@ OLD CONTENT â€” Updated 2026-04-06
 - **Options:** (Mooshika is correct)
 - **Correct Response:** "Yes! Mooshika is my little mouse friend!"
 
-### Part 2 â€” Child's Favorites
+### Part 2 — Child's Favorites
 
 #### Transition
 - **Text:** "Now it's time to learn about YOU! Let's find out what makes you special."
@@ -567,20 +471,20 @@ OLD CONTENT â€” Updated 2026-04-06
 - **Text:** "Now we know each other better. I'm happy we're friends!"
 
 ### Completion Modal
-- **Title:** "We're Best Friends!"
-- **Subtitle:** "We understand each other now."
-- **Button Text:** "Continue the Journey ✨"
+- **Title:** "Our Favorite Things"
+- **Subtitle:** "Now we know the things we each love."
+- **Button Text:** "Back to Map" / "Next Scene"
 
 ---
 
-## SCENE 21 â€” DREAMS & WISHES (About Me Hut)
+## SCENE 21 — DREAMS & WISHES (About Me Hut)
 
 ### Opening Modal
 - **Title:** "Dream Big Together"
 - **Description:** "Obstacles cannot stop your dreams. Let's discover your wishes."
 - **Button Text:** "Let's Dream"
 
-### Part 1 â€” Ganesha's Wishes
+### Part 1 — Ganesha's Wishes
 
 #### Wish 1 Setup
 - **Text:** "Look at the Earth... It's sad because it needs care."
@@ -609,7 +513,7 @@ OLD CONTENT â€” Updated 2026-04-06
 #### Wish 3 Celebration
 - **Text:** "Yes! ... It's blooming! When we help things grow... the world becomes beautiful."
 
-### Part 2 â€” Child's Dream
+### Part 2 — Child's Dream
 
 #### Dream Intro
 - **Text:** "I want to show you something... We all have dreams inside us. Draw your dream here... What do you wish for?"
@@ -629,24 +533,24 @@ OLD CONTENT â€” Updated 2026-04-06
 ### Completion Modal
 - **Title:** "Your Dreams Are Sacred!"
 - **Subtitle:** "Keep dreaming, little one. I will be with you."
-- **Button Text:** "Continue the Journey ✨"
+- **Button Text:** "Back to Map" / "Next Scene"
 
 ---
 
-## SCENE 22 â€” NAME & BIRTHDAY (About Me Hut)
+## SCENE 22 — NAME & BIRTHDAY (About Me Hut)
 
 ### Opening Modal
-- **Title:** "You Are Special"
-- **Description:** "Tell me your name and when you celebrate your birthday!"
-- **Button Text:** "Let's Celebrate"
+- **Title:** "Let's Be Friends"
+- **Description:** "Let's share our names and special days."
+- **Button Text:** "Let's Explore"
 
 ### Form Labels & Prompts
 - **Name Prompt:** "What is your name?"
 - **Birthday Prompt:** "When do you celebrate your birthday?"
 
 ### Completion Modal
-- **Title:** "[Child's Name], You Are Special!"
-- **Subtitle:** "I'm so happy to know you."
+- **Title:** "We're Best Friends!"
+- **Subtitle:** "Now we know each other a little better."
 - **Button Text:** "Back to Map" / "Back to Home"
 
 ---
@@ -655,28 +559,28 @@ OLD CONTENT â€” Updated 2026-04-06
 
 | Scene | Zone | Opening Modal | Symbol Reveals | Other Content | Completion Modal |
 |-------|------|---------------|----------------|----------------|-----------------|
-| 01 | Symbol Mountain | âœ… | âœ… (3) | â€” | âœ… |
-| 02 | Symbol Mountain | âœ… | âœ… (2) | â€” | âœ… |
-| 03 | Symbol Mountain | âœ… | âœ… (3) | â€” | âœ… |
-| 04 | Symbol Mountain | âœ… | â€” | â€” | âœ… |
-| 05 | Cave of Secrets | âœ… | âœ… (2) | â€” | âœ… |
-| 06 | Cave of Secrets | âœ… | âœ… (2) | â€” | âœ… |
-| 07 | Cave of Secrets | âœ… | âœ… (2) | â€” | âœ… |
-| 08 | Cave of Secrets | âœ… | âœ… (2) | â€” | âœ… |
-| 09 | Cave of Secrets | âœ… | â€” | â€” | âœ… |
-| 10 | Shloka River | âœ… | âœ… (2) | â€” | âœ… |
-| 11 | Shloka River | âœ… | âœ… (2) | â€” | âœ… |
-| 12 | Shloka River | âœ… | âœ… (2) | â€” | âœ… |
-| 13 | Shloka River | âœ… | âœ… (2) | â€” | âœ… |
-| 14 | Shloka River | âœ… | âœ… (4) | â€” | âœ… |
-| 15 | Festival Square | âœ… | â€” | â€” | âœ… |
-| 16 | Festival Square | âœ… | â€” | â€” | âœ… |
-| 17 | Festival Square | âœ… | â€” | â€” | âœ… |
-| 18 | Festival Square | âœ… | â€” | â€” | âœ… |
-| 19 | About Me Hut | âœ… | â€” | âœ… (Form) | âœ… |
-| 20 | About Me Hut | âœ… | â€” | âœ… (Prompts) | âœ… |
-| 21 | About Me Hut | âœ… | â€” | âœ… (Prompts) | âœ… |
-| 22 | About Me Hut | âœ… | â€” | âœ… (Form) | âœ… |
+| 01 | Symbol Mountain | ✅ | ✅ (3) | — | ✅ |
+| 02 | Symbol Mountain | ✅ | ✅ (2) | — | ✅ |
+| 03 | Symbol Mountain | ✅ | ✅ (3) | — | ✅ |
+| 04 | Symbol Mountain | ✅ | — | — | ✅ |
+| 05 | Cave of Secrets | ✅ | ✅ (2) | — | ✅ |
+| 06 | Cave of Secrets | ✅ | ✅ (2) | — | ✅ |
+| 07 | Cave of Secrets | ✅ | ✅ (2) | — | ✅ |
+| 08 | Cave of Secrets | ✅ | ✅ (2) | — | ✅ |
+| 09 | Cave of Secrets | ✅ | — | — | ✅ |
+| 10 | Shloka River | ✅ | ✅ (2) | — | ✅ |
+| 11 | Shloka River | ✅ | ✅ (2) | — | ✅ |
+| 12 | Shloka River | ✅ | ✅ (2) | — | ✅ |
+| 13 | Shloka River | ✅ | ✅ (2) | — | ✅ |
+| 14 | Shloka River | ✅ | ✅ (4) | — | ✅ |
+| 15 | Festival Square | ✅ | — | — | ✅ |
+| 16 | Festival Square | ✅ | — | — | ✅ |
+| 17 | Festival Square | ✅ | — | — | ✅ |
+| 18 | Festival Square | ✅ | — | — | ✅ |
+| 19 | About Me Hut | ✅ | — | ✅ (Form) | ✅ |
+| 20 | About Me Hut | ✅ | — | ✅ (Prompts) | ✅ |
+| 21 | About Me Hut | ✅ | — | ✅ (Prompts) | ✅ |
+| 22 | About Me Hut | ✅ | — | ✅ (Form) | ✅ |
 
 ---
 
@@ -687,4 +591,3 @@ OLD CONTENT â€” Updated 2026-04-06
 3. Finalize power stories for scenes 11-14
 4. Add completion modal VO (scene endings)
 5. Localization/translation prep if needed
-

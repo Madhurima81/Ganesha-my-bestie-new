@@ -442,45 +442,28 @@ const initializeApp = async () => {
 
 const handleContinue = (targetZone, targetScene) => {
   try {
-    console.log('🚀 CONTINUE: Received parameters:', { targetZone, targetScene });
     restoreDefaultStyles();
 
-    // Zone only (no scene) → go to zone welcome
-    if (targetZone && !targetScene) {
-      console.log('✅ CONTINUE: Zone only → zone-welcome for', targetZone);
+    if (!targetZone) {
+      setCurrentView('map');
+      return;
+    }
+
+    // Zone only (completed scene) → zone welcome
+    if (!targetScene) {
       setCurrentZone(targetZone);
       setCurrentScene(null);
       setCurrentView('zone-welcome');
       return;
     }
 
-    // Check SimpleSceneManager for an in-progress scene
-    const shouldResume = SimpleSceneManager.shouldResumeScene();
-    console.log('🧪 CONTINUE: SimpleSceneManager says:', shouldResume);
-
-    let zoneToLoad, sceneToLoad;
-
-    if (shouldResume && shouldResume.zone && shouldResume.scene) {
-      zoneToLoad = shouldResume.zone;
-      sceneToLoad = shouldResume.scene;
-      console.log('✅ CONTINUE: Using resume data:', { zoneToLoad, sceneToLoad });
-    } else if (targetZone && targetScene) {
-      zoneToLoad = targetZone;
-      sceneToLoad = targetScene;
-      console.log('✅ CONTINUE: Using passed parameters:', { zoneToLoad, sceneToLoad });
-    } else {
-      // Last fallback: map
-      console.log('✅ CONTINUE: No data found → map');
-      setCurrentView('map');
-      return;
-    }
-
-    setCurrentZone(zoneToLoad);
-    setCurrentScene(sceneToLoad);
+    // Mid-game scene → resume directly
+    setCurrentZone(targetZone);
+    setCurrentScene(targetScene);
     setCurrentView('scene');
 
   } catch (error) {
-    console.error('❌ CONTINUE: Error:', error);
+    console.error('Error in handleContinue:', error);
     setCurrentView('map');
   }
 };
@@ -595,7 +578,7 @@ const getNextScene = (zoneId, currentSceneId) => {
       'shloka-river-finale'    // Scene 5: Complete chant assembly
     ],
       'festival-square': ['game1', 'game2', 'game3', 'game4'],
-    // ✅ About Me Hut — circular (last scene loops back to first)
+    // ✅ About Me Hut progression
     'about-me-hut': ['family-tree', 'name-birthday', 'favorite-food', 'dreams-wishes']
   };
 
@@ -612,8 +595,8 @@ const getNextScene = (zoneId, currentSceneId) => {
   }
 
   if (currentIndex === scenes.length - 1) {
-    // ✅ About Me Hut & Festival Square: circular — loop back to first scene
-    if (zoneId === 'about-me-hut' || zoneId === 'festival-square') {
+    // ✅ Festival Square: circular — loop back to first scene
+    if (zoneId === 'festival-square') {
       console.log(`🔄 CIRCULAR: ${currentSceneId} → ${scenes[0]} in ${zoneId}`);
       return scenes[0];
     }
@@ -862,6 +845,7 @@ chants: result?.chants || result?.chantedVerses || {},
       <div className="loading-ganesha-glow"></div>
       <GaneshaCharacter
         expression="happy"
+        size="100%"
         className="loading-ganesha"
       />
     </div>

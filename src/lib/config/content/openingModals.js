@@ -9,7 +9,7 @@ export const OPENING_MODALS = {
   'symbol-mountain': {
     'modak': {
       title: "Share the Modaks",
-      description: "Mooshika is nearby. Can you find him before he scurries away?",
+      description: "Mooshika is hiding nearby. Find him and share the sweet modaks.",
       icons: ['mooshika', 'modak', 'belly'],
       buttonText: "Let's Explore",
       character: 'ganesha-happy'
@@ -186,7 +186,7 @@ export const OPENING_MODALS = {
   'about-me-hut': {
     'name-birthday': {
       title: "Let's Be Friends",
-      description: "Ganesha would love to know you. Share a little about yourself.",
+      description: "Let's share our names and special days.",
       icons: ['balloons', 'birthday'],
       iconLabels: ['Name', 'Birthday'],
       buttonText: "Let's Explore",
@@ -194,8 +194,8 @@ export const OPENING_MODALS = {
     },
 
     'family-tree': {
-      title: "Our Special World",
-      description: "Every family is unique. Show what makes yours special.",
+      title: "Our families",
+      description: "Let's discover the loving families that shape us.",
       icons: ['shiva', 'parvati', 'kartikeya'],
       iconLabels: ['Father', 'Mother', 'Brother'],
       buttonText: "Let's Explore",
@@ -203,17 +203,17 @@ export const OPENING_MODALS = {
     },
 
     'favorite-food': {
-      title: "What We Love",
-      description: "Let's discover our favorite things.",
+      title: "Our Favorite Things",
+      description: "Let's see the little things we both love.",
       icons: ['food', 'color', 'activity'],
       iconLabels: ['Food', 'Color', 'Activity'],
-      buttonText: "Let's Discover",
+      buttonText: "Let's Explore",
       character: 'baby-ganesha-sit'
     },
 
     'dreams-wishes': {
       title: "Dream Big Together",
-      description: "Every dream begins with a thought. See where yours can lead.",
+      description: "Every dream begins with a little wish.",
       icons: ['wish-earth', 'wish-share', 'wish-flower'],
       iconLabels: ['Earth', 'Share', 'Flower'],
       buttonText: "Let's Explore",

@@ -245,7 +245,7 @@ export const ZONE_CONFIGS = {
     scenes: [
       {
     id: 'family-tree',
-    name: "Our Special World",
+    name: "Our families",
         emoji: '👨‍👩‍👦',
         iconImage: '/images/zones/about-me-hut/family-tree-icon.png',
         description: 'Help Ganesha complete his family tree',
@@ -255,13 +255,24 @@ export const ZONE_CONFIGS = {
         position: { top: 30, left: 25 }
       },
       {
+           id: 'name-birthday',
+    name: "Let's Be Friends",
+        emoji: '🎈',
+        iconImage: '/images/zones/about-me-hut/name-birthday-icon.png',
+        description: 'Spell GANESHA and find his birthday festival',
+        unlocked: false,
+        order: 2,
+        totalStars: 2,
+        position: { top: 40, left: 70 }
+      },
+      {
      id: 'favorite-food',
-    name: 'What We Love',
+    name: 'Our Favorite Things',
         emoji: '🍕',
         iconImage: '/images/zones/about-me-hut/favorite-things-icon.png',
         description: 'Find Ganesha\'s favorite food and best friend',
-        unlocked: true,
-        order: 2,
+        unlocked: false,
+        order: 3,
         totalStars: 2,
         position: { top: 50, left: 60 }
       },
@@ -271,21 +282,10 @@ export const ZONE_CONFIGS = {
         emoji: '🪔',
         iconImage: '/images/zones/about-me-hut/obstacle-remover-icon.png',
         description: 'Clear obstacles with joy, peace, and love',
-        unlocked: true,
-        order: 3,
+        unlocked: false,
+        order: 4,
         totalStars: 3,
         position: { top: 70, left: 35 }
-      },
-      {
-           id: 'name-birthday',
-    name: "Let's Be Friends",
-        emoji: '🎈',
-        iconImage: '/images/zones/about-me-hut/name-birthday-icon.png',
-        description: 'Spell GANESHA and find his birthday festival',
-        unlocked: true,
-        order: 4,
-        totalStars: 2,
-        position: { top: 40, left: 70 }
       }
     ]
   }
