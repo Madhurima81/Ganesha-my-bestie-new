@@ -1,78 +1,68 @@
 # Voice Guidance Draft: Favorite Food Scene
 ## about-me-hut / favorite-food
 
-**Status:** Draft for review — NO FILES RECORDED YET
+**Status:** Synced with current VO in `Favoritefoodgame.jsx`
 
 ---
 
 ## PART 1: GANESHA'S STORY (Child learns about Ganesha)
 
-### Opening Modal
-```
-welcome: {
-  text: "Let's discover what makes me special. My favorite things tell my story.",
+### Opening
+```js
+opening: {
+  text: "Let's discover our favorite things.",
   file: '/audio/voicenew/favoritefood/ganesha_favorite_opening.wav'
 }
 ```
 
 ### Food Phase
-```
+```js
 foodQuestion: {
-  text: "Which food do you think is my favorite?",
+  text: "Hmm... can you guess my favourite food?",
   file: '/audio/voicenew/favoritefood/ganesha_food_question.wav'
 }
 
-foodCorrect: {
-  text: "Yes! Modak is my favorite. Sweet and yummy!",
-  file: '/audio/voicenew/favoritefood/ganesha_food_correct.wav'
+foodQuestionFollowup: {
+  text: "Tap the one you think I love.",
+  file: '/audio/voicenew/favoritefood/ganesha_food_question_followup.wav'
 }
 
-foodWrong: {
-  text: "Not that one! Try again.",
-  file: '/audio/voicenew/favoritefood/ganesha_food_wrong.wav'
+foodCorrect: {
+  text: "Yes! Modak is my favourite. Sweet and yummy!",
+  file: '/audio/voicenew/favoritefood/ganesha_food_correct.wav'
 }
 ```
 
 ### Color Phase
-```
+```js
 colorQuestion: {
-  text: "What's my favorite color?",
+  text: "Can you guess my favourite color?",
   file: '/audio/voicenew/favoritefood/ganesha_color_question.wav'
 }
 
 colorCorrect: {
-  text: "Right! I love yellow like the sun!",
+  text: "Yes! Yellow is my favourite color, bright like the sun!",
   file: '/audio/voicenew/favoritefood/ganesha_color_correct.wav'
-}
-
-colorWrong: {
-  text: "Not that one! Try again.",
-  file: '/audio/voicenew/favoritefood/ganesha_color_wrong.wav'
 }
 ```
 
 ### Activity Phase
-```
+```js
 activityQuestion: {
-  text: "What do I love to do?",
+  text: "Can you guess my favourite activity?",
   file: '/audio/voicenew/favoritefood/ganesha_activity_question.wav'
 }
 
 activityCorrect: {
-  text: "Yes! I love to help my friends!",
+  text: "Yes! I love to dance. It makes me so happy!",
   file: '/audio/voicenew/favoritefood/ganesha_activity_correct.wav'
-}
-
-activityWrong: {
-  text: "Not that one! Try again.",
-  file: '/audio/voicenew/favoritefood/ganesha_activity_wrong.wav'
 }
 ```
 
 ### Friend Phase
-```
+```js
 friendQuestion: {
-  text: "Who is my best friend?",
+  text: "Can you guess who my best friend is?",
   file: '/audio/voicenew/favoritefood/ganesha_friend_question.wav'
 }
 
@@ -80,22 +70,17 @@ friendCorrect: {
   text: "Yes! Mooshika is my little mouse friend!",
   file: '/audio/voicenew/favoritefood/ganesha_friend_correct.wav'
 }
-
-friendWrong: {
-  text: "Not that one! Try again.",
-  file: '/audio/voicenew/favoritefood/ganesha_friend_wrong.wav'
-}
 ```
 
 ### Transition to Child's Turn
-```
-transitionCard: {
-  text: "Now I know you better. Let's discover YOUR favorite things!",
+```js
+transition: {
+  text: "Now let's discover your favorite things! It's your turn. Tell me what makes you special.",
   file: '/audio/voicenew/favoritefood/ganesha_transition_to_child.wav'
 }
 
 childIntro: {
-  text: "It's your turn! Tell me what makes you special.",
+  text: "Now it's time to learn about YOU! Let's find out what makes you special.",
   file: '/audio/voicenew/favoritefood/ganesha_child_intro.wav'
 }
 ```
@@ -105,22 +90,22 @@ childIntro: {
 ## PART 2: CHILD'S STORY (Child tells Ganesha about themselves)
 
 ### Child's Food
-```
+```js
 childFoodQuestion: {
-  text: "What's YOUR favorite food?",
+  text: "What's your favorite food?",
   file: '/audio/voicenew/favoritefood/ganesha_child_food_question.wav'
 }
 
 childFoodCorrect: {
-  text: "Mmm, that's yummy!",
+  text: "Mmm! That sounds yummy!",
   file: '/audio/voicenew/favoritefood/ganesha_child_food_correct.wav'
 }
 ```
 
 ### Child's Color
-```
+```js
 childColorQuestion: {
-  text: "What's YOUR favorite color?",
+  text: "What's your favorite color?",
   file: '/audio/voicenew/favoritefood/ganesha_child_color_question.wav'
 }
 
@@ -128,25 +113,35 @@ childColorCorrect: {
   text: "That's a beautiful color!",
   file: '/audio/voicenew/favoritefood/ganesha_child_color_correct.wav'
 }
+
+childColorMatch: {
+  text: "Wow! We both love yellow!",
+  file: '/audio/voicenew/favoritefood/ganesha_child_color_match.wav'
+}
 ```
 
 ### Child's Activity
-```
+```js
 childActivityQuestion: {
-  text: "What do YOU love to do?",
+  text: "What do you love to do?",
   file: '/audio/voicenew/favoritefood/ganesha_child_activity_question.wav'
 }
 
 childActivityCorrect: {
-  text: "That sounds fun! I love that too!",
+  text: "That sounds like fun!",
   file: '/audio/voicenew/favoritefood/ganesha_child_activity_correct.wav'
+}
+
+childActivityMatch: {
+  text: "Haha! We both love dancing!",
+  file: '/audio/voicenew/favoritefood/ganesha_child_activity_match.wav'
 }
 ```
 
 ### Child's Best Friend
-```
+```js
 childFriendQuestion: {
-  text: "Who is YOUR best friend?",
+  text: "Who is your best friend?",
   file: '/audio/voicenew/favoritefood/ganesha_child_friend_question.wav'
 }
 
@@ -156,45 +151,36 @@ childFriendCorrect: {
 }
 
 friendCelebration: {
-  text: "We're connected — your heart and mine. We know each other now!",
+  text: "Now we know each other better. I'm happy we're friends!",
   file: '/audio/voicenew/favoritefood/ganesha_friend_celebration.wav'
 }
 ```
 
-### Scene Complete
-```
-sceneComplete: {
-  text: "You shared your favorite things with me. That makes you special. Come back and tell me more!",
-  file: '/audio/voicenew/favoritefood/ganesha_scene_complete.wav'
+## IDLE HINT LINES (Ganesha Choices)
+```js
+foodHint: {
+  text: "My favourite sweet looks like a little mountain.",
+  file: '/audio/voicenew/favoritefood/ganesha_food_hint.wav'
+}
+
+colorHint: {
+  text: "My favourite color shines like the bright sun.",
+  file: '/audio/voicenew/favoritefood/ganesha_color_hint.wav'
+}
+
+activityHint: {
+  text: "My favourite activity is when my feet move to music.",
+  file: '/audio/voicenew/favoritefood/ganesha_activity_hint.wav'
+}
+
+friendHint: {
+  text: "My tiny friend scurries very fast.",
+  file: '/audio/voicenew/favoritefood/ganesha_friend_hint.wav'
 }
 ```
 
 ---
 
-## RECORDING NOTES
-
-**Tone:** Warm, curious, celebratory. Ganesha is discovering the child's personality.
-
-**Audience:** 5–12 year olds
-
-**Wrong answers:** Keep gentle, never harsh. "Not that one! Try again."
-
-**Correct answers:** Match the moment:
-- Food/color/activity correct: Small celebration (joy, affirmation)
-- Friend correct: Bigger celebration (emotional connection)
-- Scene complete: Warmth + invitation to return
-
-**Optional SFX backing:**
-- After each correct answer: small chime or sparkle SFX
-- After friend celebration: softer, longer celebration sound
-
----
-
-## Next Steps
-
-1. **Madhurima reviews** — approve text or suggest rewrites
-2. **Record all 20 audio files** (following modak VO pattern)
-3. **Add to voiceGuidance.js** under `'about-me-hut': { 'favorite-food': { ... } }`
-4. **Remove speech bubbles** from FavoritefoodGame.jsx once VO is live
-5. **Test phase transitions** — confirm VO triggers at right moments
-
+## Notes
+- Removed outdated draft lines (older question/correct variants) to match current game VO exactly.
+- `foodQuestionFollowup` is spoken as a second line after a short pause.
