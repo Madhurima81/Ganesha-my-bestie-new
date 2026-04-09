@@ -2270,6 +2270,8 @@ color: #7A4A00;
 }
 
 .child-letter-tile {
+  position: relative;
+  overflow: visible;
   width: 65px;
   height: 65px;
   background: white;
@@ -2864,5 +2866,64 @@ color: #7A4A00;
   }
   100% {
     transform: scale(1);
+  }
+}
+/* =============================================
+   IDLE HINT BUBBLE — name-balloons + birthday-choice
+   ============================================= */
+
+.idle-hint-bubble {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 2px solid #FFD700;
+  border-radius: 22px;
+  padding: 10px 18px;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(0.82rem, 2vw, 0.98rem);
+  font-weight: 600;
+  color: #5D4037;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.14), 0 0 0 1px rgba(255, 215, 0, 0.3);
+  max-width: 280px;
+  text-align: left;
+  line-height: 1.45;
+  z-index: 60;
+  pointer-events: none;
+  animation: idleHintFadeIn 0.45s ease-out;
+}
+
+/* Balloons phase: bottom-center, above balloons */
+.idle-hint-bubble--balloons {
+  bottom: 13%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Festival phase: top-center, below Ganesha */
+.idle-hint-bubble--festival {
+  top: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.idle-hint-icon {
+  font-size: 1.1em;
+  flex-shrink: 0;
+}
+
+.idle-hint-text {
+  flex: 1;
+}
+
+@keyframes idleHintFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
   }
 }

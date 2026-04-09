@@ -28,9 +28,10 @@ import useResumeCountdown from '../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../lib/components/feedback/ResumeCountdown';
 import usePauseAwareTimeout from '../../../lib/hooks/usePauseAwareTimeout';
 import { useGameSounds } from '../../../lib/hooks/useGameSounds';
+import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation';
 
 // Import images
-import nameBg from './assets/images/name-bg.png';
+import nameBg from './assets/images/name_background.jpg';
 import babyGaneshaImg from '/images/ganesha-final-new.svg';
 import babyGaneshaSit from '/images/ganesha-final-new.svg';
 
@@ -134,7 +135,7 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
     childNameInput: "Tap the letters… and spell your name!",
     childNameComplete: "{childName}… what a beautiful name! I'm happy to meet you.",
 
-    // Birthday Intro
+    // Birthday
     birthdayIntro: "Now let's discover something else about me. Can you find which festival is my birthday?",
     birthdayChoice: "Look carefully… Which festival is my birthday?",
     birthdayCorrect: "Yes! Ganesh Chaturthi is my birthday! That is when everyone celebrates me.",
@@ -148,6 +149,10 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
     // Besties Card
     bestiesCard: "Now we know something special about each other. Your birthday… and my birthday. We are friends!",
 
+    // Idle Hints
+    nameBalloonHint: "Look closely… which balloon comes next?",
+    birthdayHint: "Look at the clues carefully… which festival is my birthday?",
+
     // Completion
     complete: "You learned something beautiful today. Thank you for being my friend!"
   };
@@ -160,6 +165,8 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const completionIcons = openingModalContent?.icons || ['balloons', 'birthday'];
 
   const { isAudioOn, toggleAudio } = useAudioPreference();
+  const audioEnabledRef = useRef(isAudioOn);
+  audioEnabledRef.current = isAudioOn;
 
   // ── Callbacks for pause/resume ────────────────────────────────────────────────
   const onReturnHint = () => {
@@ -185,6 +192,15 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
     else stopMusic();
   }, [isAudioOn, sceneState.gamePhase, sceneState.showingCompletionScreen, startMusic, stopMusic]);
   useEffect(() => { setGlobalVolume(isAudioOn ? 1 : 0); }, [isAudioOn, setGlobalVolume]);
+
+  // Stop all voice when audio is toggled off
+  useEffect(() => {
+    if (!isAudioOn) {
+      stopVoice();
+      stopSpokenVoice();
+    }
+  }, [isAudioOn, stopVoice, stopSpokenVoice]);
+
   useEffect(() => () => stopMusic(), [stopMusic]);
 
   // --- LOCAL UI STATE ---
@@ -194,6 +210,8 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const [instructionMessage, setInstructionMessage] = useState('Pop the balloons in order! 🎈');
   const [showHintModal, setShowHintModal] = useState(false);
   const [availableLetters] = useState('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''));
+  const [childLetterSparkle, setChildLetterSparkle] = useState({ show: false, key: 0, targetIndex: null });
+  const childLetterSparkleTimeoutRef = useRef(null);
 
   // Reload Logic Refs
   const reloadHandledRef = useRef(false);
@@ -205,6 +223,16 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const [showReturnHint, setShowReturnHint] = useState(false);
   const returnHintTimerRef = useRef(null);
   const miniGestureTimerRef = useRef(null);
+
+  // Idle hint system — name-balloons + birthday-choice phases
+  // 0: none, 1: wobble, 2: VO spoken, 3: glow
+  const [idleHintLevel, setIdleHintLevel] = useState(0);
+  const idleHintTimersRef = useRef([]);
+  const idlePhaseRef = useRef(null);
+  // Mirror ref so usePauseAwareTimeout onShow can read current phase without stale closures
+  const gamePhaseRef = useRef(sceneState.gamePhase);
+  gamePhaseRef.current = sceneState.gamePhase;
+
   const [miniGesture, setMiniGesture] = useState({
     show: false,
     durationMs: 1200,
@@ -311,6 +339,35 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
     S: 'Ess',
     H: 'Aitch'
   };
+
+  // --- IDLE HINTS ---
+  // Pattern: wobble (8s) → VO (16s) → glow (26s)
+
+  const stopIdleHints = useCallback(() => {
+    idleHintTimersRef.current.forEach(id => clearTimeout(id));
+    idleHintTimersRef.current = [];
+    idlePhaseRef.current = null;
+    setIdleHintLevel(0);
+  }, []);
+
+  const startIdleHints = useCallback((phase) => {
+    idleHintTimersRef.current.forEach(id => clearTimeout(id));
+    idleHintTimersRef.current = [];
+    idlePhaseRef.current = phase;
+    setIdleHintLevel(0);
+
+    const t1 = setTimeout(() => {
+      if (idlePhaseRef.current === phase) setIdleHintLevel(1); // wobble
+    }, 8000);
+    const t2 = setTimeout(() => {
+      if (idlePhaseRef.current === phase) setIdleHintLevel(2); // VO fires (see useEffect below)
+    }, 16000);
+    const t3 = setTimeout(() => {
+      if (idlePhaseRef.current === phase) setIdleHintLevel(3); // glow
+    }, 26000);
+
+    idleHintTimersRef.current = [t1, t2, t3];
+  }, []);
 
   // --- RELOAD DETECTION & RESTORATION ---
   useEffect(() => {
@@ -567,11 +624,39 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }
   }, [sceneState.showingCompletionScreen, isAudioOn]);
 
+  // ========================================
+  // IDLE HINT: start/stop based on active phase
+  // ========================================
+  useEffect(() => {
+    if (sceneState.gamePhase === 'name-balloons') {
+      startIdleHints('nameBalloons');
+    } else if (sceneState.gamePhase === 'birthday-choice') {
+      startIdleHints('birthdayChoice');
+    } else {
+      stopIdleHints();
+    }
+    return () => stopIdleHints();
+  }, [sceneState.gamePhase, startIdleHints, stopIdleHints]);
+
+  // Fire VO when idle hint reaches level 2
+  useEffect(() => {
+    if (idleHintLevel !== 2 || !audioEnabledRef.current) return;
+    const phase = gamePhaseRef.current;
+    stopSpokenVoice();
+    if (phase === 'name-balloons') {
+      speak(VOICE_LINES.nameBalloonHint, { age: 7, style: 'child', moment: 'encouragement' });
+    } else if (phase === 'birthday-choice') {
+      speak(VOICE_LINES.birthdayHint, { age: 7, style: 'child', moment: 'encouragement' });
+    }
+  }, [idleHintLevel]);
+
   useEffect(() => () => stopSpokenVoice(), [stopSpokenVoice]);
   useEffect(() => {
     return () => {
       if (returnHintTimerRef.current) clearTimeout(returnHintTimerRef.current);
       if (miniGestureTimerRef.current) clearTimeout(miniGestureTimerRef.current);
+      if (childLetterSparkleTimeoutRef.current) clearTimeout(childLetterSparkleTimeoutRef.current);
+      idleHintTimersRef.current.forEach(id => clearTimeout(id));
     };
   }, []);
 
@@ -584,6 +669,8 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
         clearTimeout(returnHintTimerRef.current);
         returnHintTimerRef.current = null;
       }
+      // Kill idle hint timers so they don't fire in background + hide bubble
+      stopIdleHints();
       // Clear phase VO ref to allow replay after resume countdown
       phaseVoiceRef.current = {};
     },
@@ -596,6 +683,10 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
         returnHintTimerRef.current = null;
       }, 2200);
       onReturnHint();
+      // Restart idle hints for whichever phase is still active when child returns
+      const phase = gamePhaseRef.current;
+      if (phase === 'name-balloons') startIdleHints('nameBalloons');
+      else if (phase === 'birthday-choice') startIdleHints('birthdayChoice');
     },
     resumeDelay: RESUME_DELAY_MS
   });
@@ -619,9 +710,11 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
       playWrongTap();
       setShakeWrongBalloon(letterId);
       setTimeout(() => setShakeWrongBalloon(null), 500);
+      startIdleHints('nameBalloons'); // reset idle timer on any tap
       return;
     }
 
+    startIdleHints('nameBalloons'); // reset idle timer on correct tap
     playUiTap();
     playSparkle();
     const newPopped = [...sceneState.poppedLetters, letterId];
@@ -639,6 +732,7 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
     setTimeout(() => setShowConfetti(false), 500);
 
     if (newPopped.length === nameLetters.length) {
+      stopIdleHints(); // done — no more hints needed
       playChime();
       setInstructionMessage('Amazing! All balloons popped! 🎉');
       setTimeout(() => {
@@ -662,6 +756,8 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     // If another card is open, close it first (optional, prevents multi-open)
     if (sceneState.flippedCards.length > 0) return;
+
+    startIdleHints('birthdayChoice'); // reset idle timer on every festival tap
 
     // CHECK: Is this card ALREADY marked as wrong?
     // If yes, we skip the shake/delay and just let them read the info again.
@@ -718,9 +814,24 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
     sceneActions.updateState({ flippedCards: newFlipped });
   };
 
-  const handleChildNameLetterClick = (letter) => {
+  const handleChildNameLetterClick = (letter, index) => {
     playUiTap();
     sceneActions.updateState({ childNameLetters: [...sceneState.childNameLetters, letter] });
+
+    if (childLetterSparkleTimeoutRef.current) {
+      clearTimeout(childLetterSparkleTimeoutRef.current);
+    }
+
+    setChildLetterSparkle(prev => ({
+      show: true,
+      key: prev.key + 1,
+      targetIndex: index
+    }));
+
+    childLetterSparkleTimeoutRef.current = setTimeout(() => {
+      setChildLetterSparkle(prev => ({ ...prev, show: false, targetIndex: null }));
+      childLetterSparkleTimeoutRef.current = null;
+    }, 1500);
   };
 
   const handleChildNameBackspace = () => {
@@ -839,15 +950,16 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
       )}
 
       {/* Back Button */}
-      {sceneState.gamePhase !== 'intro' && !sceneState.showingCompletionScreen && (
+      {/* {sceneState.gamePhase !== 'intro' && !sceneState.showingCompletionScreen && (
         <BackToMapButton onNavigate={onNavigate} />
-      )}
+      )} */}
 
       {/* Name Balloons Phase */}
       {sceneState.gamePhase === 'name-balloons' && (
         <div className="name-phase">
           <div className="ganesha-center"><img src={babyGaneshaImg} alt="Baby Ganesha" className="ganesha-waiting bounce-gentle" /></div>
-          <div className="instruction-bubble">{instructionMessage}</div>
+          {/* instruction-bubble removed — VO handles this via nameBalloons line */}
+          {/* <div className="instruction-bubble">{instructionMessage}</div> */}
 
           <div className="letter-tracker">
             {nameLetters.map((item, index) => {
@@ -856,6 +968,14 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
             })}
             <div className="tracker-progress">{sceneState.currentLetterIndex} of {nameLetters.length}</div>
           </div>
+
+          {/* Idle hint bubble — appears after 10s / 20s / 35s of no interaction */}
+          {/* {idleHintText && (
+            <div className="idle-hint-bubble idle-hint-bubble--balloons" role="status" aria-live="polite">
+              <span className="idle-hint-icon">💡</span>
+              <span className="idle-hint-text">{idleHintText}</span>
+            </div>
+          )} */}
 
           <Button
             variant="secondary"
@@ -876,7 +996,12 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
             {nameLetters.map((item, index) => !sceneState.poppedLetters.includes(item.id) && (
               <button
                 key={item.id}
-                className={`balloon-btn float-balloon ${shakeWrongBalloon === item.id ? 'shake-wrong' : ''}`}
+                className={[
+                  'balloon-btn float-balloon',
+                  shakeWrongBalloon === item.id ? 'shake-wrong' : '',
+                  nameLetters[sceneState.currentLetterIndex]?.id === item.id && (idleHintLevel === 1 || idleHintLevel === 2) ? 'idle-wobble' : '',
+                  nameLetters[sceneState.currentLetterIndex]?.id === item.id && idleHintLevel >= 3 ? 'idle-glow' : ''
+                ].filter(Boolean).join(' ')}
                 onClick={() => handlePopBalloon(item.id, index)}
                 style={{ left: item.left, top: item.top, '--balloon-color': item.color, animationDelay: `${index * 0.2}s` }}
               >
@@ -954,7 +1079,8 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
         <div className="child-intro-overlay">
           <img src={babyGaneshaImg} alt="Baby Ganesha" className="child-intro-ganesha bounce" />
           <div className="child-intro-card">
-            <h2 className="child-intro-title">Hi! I am Ganesha.</h2>
+            {/* h2 removed — VO handles "Now I know my name… but what is your name?" */}
+            {/* <h2 className="child-intro-title">Hi! I am Ganesha.</h2> */}
             <Button
               variant="primary"
               size="large"
@@ -970,7 +1096,8 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Child Name Input */}
       {sceneState.gamePhase === 'child-name-input' && (
         <div className="child-name-input-screen">
-          <div className="child-instruction-bubble">Tap the letters to spell your name! 🎈</div>
+          {/* instruction bubble removed — VO handles "Tap the letters… and spell your name!" */}
+          {/* <div className="child-instruction-bubble">Tap the letters to spell your name! 🎈</div> */}
           <div className="child-name-display">
             {sceneState.childNameLetters.length === 0 ? <div className="name-placeholder">Your Name Here</div> : sceneState.childNameLetters.map((letter, index) => <div key={index} className="child-name-letter pop-in">{letter}</div>)}
           </div>
@@ -993,7 +1120,28 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
             </Button>
           </div>
           <div className="child-letter-keyboard">
-            {availableLetters.map((letter, index) => <button key={index} className="child-letter-tile bounce-gentle" onClick={() => handleChildNameLetterClick(letter)} style={{ animationDelay: `${index * 0.02}s` }}>{letter}</button>)}
+            {availableLetters.map((letter, index) => (
+              <button
+                key={index}
+                className="child-letter-tile bounce-gentle"
+                onClick={() => handleChildNameLetterClick(letter, index)}
+                style={{ animationDelay: `${index * 0.02}s` }}
+              >
+                {letter}
+                {childLetterSparkle.show && childLetterSparkle.targetIndex === index && (
+                  <SparkleAnimation
+                    key={`child-letter-sparkle-${childLetterSparkle.key}-${index}`}
+                    type="star"
+                    count={15}
+                    color="#ff9ebd"
+                    size={10}
+                    duration={1500}
+                    fadeOut={true}
+                    area="full"
+                  />
+                )}
+              </button>
+            ))}
           </div>
         </div>
       )}
@@ -1004,7 +1152,8 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <div className="celebration-ganesha"><img src={babyGaneshaSit} alt="Happy Ganesha" className="ganesha-celebrate celebrate-scale" /></div>
           <div className="child-name-reveal">
             <div className="child-name-text glow-text">{sceneState.childName}!</div>
-            <p className="ganesha-compliment">What a beautiful name! 🌟</p>
+            {/* compliment text removed — VO handles "{childName}… what a beautiful name!" */}
+            {/* <p className="ganesha-compliment">What a beautiful name! 🌟</p> */}
           </div>
           <div className="celebration-confetti">{Array.from({ length: 20 }).map((_, i) => <div key={i} className="confetti-piece" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}>🎉</div>)}</div>
         </div>
@@ -1015,8 +1164,9 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
         <div className="child-bday-intro-overlay">
           <img src={babyGaneshaImg} alt="Baby Ganesha" className="child-bday-intro-ganesha bounce" />
           <div className="child-bday-intro-card">
-            <h2 className="child-bday-intro-title">Now I know YOUR name, {sceneState.childName}! 🎈</h2>
-            <p className="child-bday-intro-text">But when is YOUR birthday? 🎂</p>
+            {/* header & text removed — VO handles "Now I know your name, {childName}. When is your birthday?" */}
+            {/* <h2 className="child-bday-intro-title">Now I know YOUR name, {sceneState.childName}! 🎈</h2> */}
+            {/* <p className="child-bday-intro-text">But when is YOUR birthday? 🎂</p> */}
             <Button
               variant="primary"
               size="large"
@@ -1033,7 +1183,8 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {sceneState.gamePhase === 'child-birthday-month' && (
         <div className="child-birthday-month-screen">
 
-          <div className="child-instruction-bubble">Tap the month you were born! 🗓️</div>
+          {/* instruction bubble removed — VO handles "Tap the month you were born." */}
+          {/* <div className="child-instruction-bubble">Tap the month you were born! 🗓️</div> */}
 
           <div className="month-festivals-grid">
             {monthFestivals.map((monthData, index) => (
@@ -1056,7 +1207,8 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Birthday Date */}
       {sceneState.gamePhase === 'child-birthday-date' && (
         <div className="child-birthday-date-screen">
-          <div className="child-instruction-bubble">Which day in {sceneState.childBirthdayMonthName}? 📅</div>
+          {/* instruction bubble removed — VO handles "And which day… in {monthName}?" */}
+          {/* <div className="child-instruction-bubble">Which day in {sceneState.childBirthdayMonthName}? 📅</div> */}
           <div className="date-picker-grid">
             {Array.from({ length: getDaysInMonth(sceneState.childBirthdayMonth) }, (_, i) => i + 1).map((date) => (
               <button key={date} className="date-picker-button bounce-gentle" onClick={() => handleDateSelect(date)} style={{ animationDelay: `${date * 0.02}s` }}>{date}</button>
@@ -1084,7 +1236,8 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <div className="celebration-ganesha"><img src={babyGaneshaSit} alt="Happy Ganesha" className="ganesha-celebrate celebrate-scale" /></div>
           <div className="child-birthday-reveal">
             <div className="child-birthday-text glow-text">{sceneState.childBirthdayMonthName} {sceneState.childBirthdayDate}!</div>
-            <p className="ganesha-birthday-response">{getGaneshaResponse()}</p>
+            {/* response text removed — VO handles "{monthName} {date}! That's a wonderful birthday!" */}
+            {/* <p className="ganesha-birthday-response">{getGaneshaResponse()}</p> */}
           </div>
           <div className="celebration-confetti">{Array.from({ length: 20 }).map((_, i) => <div key={i} className="confetti-piece" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}>🎂</div>)}</div>
         </div>
@@ -1093,8 +1246,9 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Besties Card */}
       {sceneState.gamePhase === 'besties-card' && (
         <div className="besties-overlay">
-          <h1 className="besties-title">BEST FRIENDS FOREVER! 💖</h1>
-          <div className="besties-subtitle">We both love celebrations!</div>
+          {/* title & subtitle removed — VO handles "Now we know something special about each other. We are friends!" */}
+          {/* <h1 className="besties-title">BEST FRIENDS FOREVER! 💖</h1> */}
+          {/* <div className="besties-subtitle">We both love celebrations!</div> */}
           <div className="besties-cards">
             <div className="besties-card">
               <img src={babyGaneshaSit} alt="Ganesha" className="besties-avatar" />
@@ -1131,8 +1285,9 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
         <div className="bday-quest-overlay">
           <img src={babyGaneshaImg} alt="Baby Ganesha" className="bday-quest-ganesha bounce" />
           <div className="bday-quest-card">
-            <h2 className="bday-quest-title">Let's Find My Birthday 🎂</h2>
-            <p className="bday-quest-text">My birthday is a joyful day when people celebrate together.<br />It comes during the festival season.</p>
+            {/* header & text removed — VO handles "Now let's discover something else about me..." */}
+            {/* <h2 className="bday-quest-title">Let's Find My Birthday 🎂</h2> */}
+            {/* <p className="bday-quest-text">My birthday is a joyful day when people celebrate together.<br />It comes during the festival season.</p> */}
             <Button
               variant="primary"
               size="large"
@@ -1155,16 +1310,23 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
             <img src={babyGaneshaImg} alt="Baby Ganesha" className="birthday-ganesha-small bounce-gentle" />
           </div>
 
-          {/* 2. DYNAMIC HEADER BUBBLE */}
-          <div className="birthday-speech-bubble">
+          {/* Idle hint bubble — appears after 10s / 20s / 35s of no interaction */}
+          {/* {idleHintText && (
+            <div className="idle-hint-bubble idle-hint-bubble--festival" role="status" aria-live="polite">
+              <span className="idle-hint-icon">💡</span>
+              <span className="idle-hint-text">{idleHintText}</span>
+            </div>
+          )} */}
+
+          {/* speech bubble removed — VO handles "Look carefully… Which festival is my birthday?" */}
+          {/* <div className="birthday-speech-bubble">
             <span className="bubble-main-text">Which festival is my birthday? 🎊</span>
             <span className="bubble-instruction-small">
-              {/* If a card is open (flipped), show "Tap to close", else show "Tap to choose" */}
               {sceneState.flippedCards.length > 0
                 ? "Tap anywhere to close ✖"
                 : "Tap a card to guess (or ⓘ to peek) ✨"}
             </span>
-          </div>
+          </div> */}
 
           {/* 3. Cards Container */}
           <div className="birthday-choices-container">
@@ -1186,7 +1348,13 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 <div key={festival.id} className={`birthday-card-container ${isFlipped ? 'container-active' : ''}`}>
 
                   <button
-                    className={`birthday-choice-card heartbeat-card ${isFlipped ? 'card-info-open' : ''} ${isWrong ? 'birthday-wrong' : ''}`}
+                    className={[
+                      'birthday-choice-card heartbeat-card',
+                      isFlipped ? 'card-info-open' : '',
+                      isWrong ? 'birthday-wrong' : '',
+                      festival.correct && (idleHintLevel === 1 || idleHintLevel === 2) ? 'idle-wobble' : '',
+                      festival.correct && idleHintLevel >= 3 ? 'idle-glow' : ''
+                    ].filter(Boolean).join(' ')}
                     onClick={() => handleFestivalClick(festival.id)}
                     /* FIX: Only disable if A card is open, but allow clicking this one even if wrong */
                     disabled={sceneState.flippedCards.length > 0 && !isFlipped}
