@@ -180,6 +180,11 @@ export const useGaneshaVoice = () => {
 
     // 50ms delay after cancel avoids Chrome TTS bug
     setTimeout(() => {
+      // Don't speak when tab is hidden — prevents VO playing in background on tab switch
+      if (document.hidden) {
+        options?.onEnd?.()
+        return
+      }
       const tier = getAgeTier(age)
       const base = AGE_SETTINGS[tier]
       const adj  = MOMENT_ADJUSTMENTS[moment] || MOMENT_ADJUSTMENTS.default

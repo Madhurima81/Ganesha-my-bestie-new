@@ -2,6 +2,40 @@
    DREAMS & WISHES GAME STYLES
 ======================================== */
 
+/* ========================================
+   CUSTOM BUTTON STYLING FOR SCENE 21
+   (Override unified-button to match zone-btn)
+======================================== */
+.unified-button--primary {
+  border: none !important;
+  border-radius: 40px !important;
+  background: #A8D96E !important;
+  box-shadow:
+    0 4px 0 rgba(140, 180, 70, 0.5),
+    0 10px 18px rgba(140, 180, 70, 0.15),
+    inset 0 2px 6px rgba(255, 255, 255, 0.6) !important;
+  padding: clamp(10px, 1vw, 16px) clamp(16px, 1.8vw, 32px) !important;
+  font-size: clamp(18px, 1.7vw, 24px) !important;
+}
+
+.unified-button--primary:hover:not(:disabled) {
+  background: #98CC58 !important;
+  box-shadow:
+    0 6px 0 rgba(120, 160, 50, 0.5),
+    0 12px 20px rgba(140, 180, 70, 0.2),
+    inset 0 2px 6px rgba(255, 255, 255, 0.6) !important;
+  transform: translateY(-2px) !important;
+}
+
+.unified-button--primary:active:not(:disabled) {
+  background: #88C040 !important;
+  box-shadow:
+    0 2px 0 rgba(100, 140, 40, 0.5),
+    0 6px 12px rgba(140, 180, 70, 0.1),
+    inset 0 2px 6px rgba(255, 255, 255, 0.6) !important;
+  transform: translateY(0) !important;
+}
+
 .dreams-wishes-game {
   position: relative;
   width: 100%;
@@ -57,11 +91,8 @@
   max-width: 600px;
   width: 90%;
 
-  /* Soft Golden Glow Shadow using zone variables */
-  box-shadow:
-    0 20px 50px var(--zone-current-shadow),
-    inset 0 0 0 3px rgba(255, 255, 255, 0.8),
-    0 0 0 4px var(--play-joy-gold);
+  /* Soft drop shadow */
+  box-shadow: 0 7px 18px rgba(0, 0, 0, 0.15);
 
   animation: dreamFloatIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -205,13 +236,13 @@
 ======================================== */
 
 /* 1. SLOW DOWN THE BACKGROUND FADE */
-.intro-overlay {
+.dreams-wishes-game .intro-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(255, 244, 214, 0.45);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -222,6 +253,13 @@
   animation: fadeIn 1.2s ease-out forwards; 
 }
 
+/* Completion modal overlay tint: only backdrop brightness, no modal card changes */
+.dreams-wishes-game .dreams-completion-overlay-tint .celebration-backdrop {
+  background: rgba(255, 244, 214, 0.45);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
 /* 2. DELAY THE CARD POP-UP (So background fades first) - Using zone colors */
 .wish-intro-card {
   background: var(--zone-current-base);
@@ -230,9 +268,7 @@
   padding: 45px 50px;
   text-align: center;
   max-width: 550px;
-  box-shadow:
-    0 15px 40px var(--zone-current-shadow),
-    inset 0 0 0 2px #FFFFFF;
+  box-shadow: 0 7px 18px rgba(0, 0, 0, 0.15);
   position: relative;
 
   /* CHANGED: Added 0.5s delay so it doesn't slam in immediately */
@@ -318,7 +354,67 @@
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
+/* Compact progress header used during active wish scenes */
+.game-header-hud {
+  position: absolute;
+  top: 48px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 90;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
 
+.wish-progress-header {
+  min-width: 320px;
+  max-width: 390px;
+  width: min(92vw, 390px);
+  background: #ffe4a5;
+  border: 2px solid #f0c15c;
+  border-radius: 18px;
+  box-shadow: 0 3px 0 #e0a74f, 0 9px 14px rgba(0, 0, 0, 0.14);
+  padding: 12px 16px 11px;
+}
+
+.wish-progress-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 16px;
+  font-weight: 700;
+  color: #6a3f1e;
+  text-align: center;
+  margin-bottom: 6px;
+  line-height: 1.15;
+}
+
+.wish-smiley-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  line-height: 1;
+}
+
+.wish-smiley-icon {
+  font-size: 24px;
+  opacity: 0.45;
+  transform: scale(0.95);
+  transition: all 0.25s ease;
+}
+
+.wish-smiley-icon.filled {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.wish-progress-count {
+  margin-top: 6px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: #6a3f1e;
+  text-align: center;
+}
 /* ========================================= */
 /* YELLOW SPEECH BUBBLE – POLISHED VERSION   */
 /* ========================================= */
@@ -407,7 +503,7 @@
 /* 1. Main Interactive Container */
 .wish-interactive-container {
   position: absolute;
-  top: 55%; /* Move down slightly to clear text */
+  top: 60%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
@@ -424,8 +520,8 @@
 /* 2. Earth Container (Size Control) */
 .earth-container {
   position: relative;
-  width: 280px;  /* <--- CHANGE EARTH SIZE HERE */
-  height: 280px; /* <--- KEEP SAME AS WIDTH */
+  width: 420px;
+  height: 420px;
   cursor: pointer;
   transition: transform 0.2s ease;
 }
@@ -462,13 +558,13 @@
 /* 5. Individual Faces */
 .face-emoji {
   position: absolute;
-  font-size: 45px; /* <--- CHANGE SMILEY SIZE HERE */
+  font-size: 60px;
   
   /* Centered by default, then moved by transform in JS */
   top: 50%;
   left: 50%;
-  margin-top: -22px;  /* Half of font-size to center perfectly */
-  margin-left: -22px;
+  margin-top: -30px;
+  margin-left: -30px;
   
   transition: all 0.6s ease;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
@@ -837,9 +933,9 @@
   width: 600px;
   height: 400px;
   background: white;
-  border: 6px solid #8B4513;
+  border: none;
   border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   overflow: visible; /* Allow Ganesha to extend outside */
 }
 
@@ -881,26 +977,28 @@
 }
 
 .cloud-icon {
-  width: 140px;
-  height: 100px;
+  width: 80px;
+  height: 50px;
   object-fit: contain;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.15));
+  filter: drop-shadow(none);
+  opacity: 0.7;
+  color: #D9D9E6;
 }
 
-/* Cloud Positions */
+/* Cloud Positions - scattered lightly */
 .cloud-1 {
-  top: 10%;
-  left: 12%;
+  top: 15%;
+  left: 20%;
 }
 
 .cloud-2 {
-  top: 40%;
-  right: 15%;
+  top: 35%;
+  right: 25%;
 }
 
 .cloud-3 {
-  bottom: 18%;
-  left: 30%;
+  top: 55%;
+  left: 35%;
 }
 
 /* Cloud Float */
@@ -909,27 +1007,31 @@
   50% { transform: translateY(-12px); }
 }
 
-/* Cloud Fade Away When Tapped */
+/* Cloud Fade Away When Tapped - magical clearing */
 .cloud-fade {
-  animation: cloudBlowAway 1s ease-out forwards !important;
+  animation: cloudMagicalClear 0.5s ease-out forwards !important;
 }
 
-@keyframes cloudBlowAway {
+@keyframes cloudMagicalClear {
   0% {
-    opacity: 1;
-    transform: translateX(0) translateY(0) scale(1);
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.6);
   }
   100% {
     opacity: 0;
-    transform: translateX(-180px) translateY(-120px) scale(0.2) rotate(-25deg);
+    transform: scale(0);
   }
 }
 
 /* Ganesha Helper - Bottom Right, Outside Container */
 .ganesha-helper {
   position: absolute;
-  bottom: -60px;
-  right: -70px;
+  bottom: -170px;
+  right: -190px;
   z-index: 10;
   cursor: pointer;
   transition: transform 0.2s ease;
@@ -958,21 +1060,6 @@
 @keyframes trunkBlow {
   0%, 100% { transform: rotate(0deg); }
   50% { transform: rotate(-8deg) scale(1.05); }
-}
-
-/* Wind Puff Effect */
-.wind-puff {
-  position: absolute;
-  top: 20%;
-  left: -30px;
-  font-size: 40px;
-  animation: puffOut 0.6s ease-out;
-  pointer-events: none;
-}
-
-@keyframes puffOut {
-  0% { transform: scale(0); opacity: 1; }
-  100% { transform: translateX(-80px) scale(1.5); opacity: 0; }
 }
 
 /* Golden Success Puff */
@@ -1097,37 +1184,107 @@ font-weight: 700;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: 80px;
   z-index: 30;
 }
 
-.dream-glow-container {
-  position: relative;
-  width: 500px;
-  height: 350px;
-  margin-bottom: 40px;
+/* Sparkles Container */
+.reveal-sparkles-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 400px;
+  pointer-events: none;
+  z-index: 10;
 }
 
-.dream-image-glowing {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border: 5px solid #FFD700;
-  border-radius: 20px;
-  box-shadow: 0 0 40px rgba(255, 215, 0, 0.8),
-              0 0 60px rgba(255, 215, 0, 0.6),
-              0 0 80px rgba(255, 215, 0, 0.4);
-  animation: dreamGlow 2s ease-in-out infinite;
+.reveal-sparkle {
+  position: absolute;
+  font-size: 28px;
+  animation: revealSparkle 1.2s ease-out forwards;
+  opacity: 0;
 }
 
-@keyframes dreamGlow {
-  0%, 100% {
-    box-shadow: 0 0 40px rgba(255, 215, 0, 0.8),
-                0 0 60px rgba(255, 215, 0, 0.6);
+@keyframes revealSparkle {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0);
   }
   50% {
-    box-shadow: 0 0 60px rgba(255, 215, 0, 1),
-                0 0 80px rgba(255, 215, 0, 0.8);
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.3;
+    transform: translateY(-60px) scale(1);
+  }
+}
+
+/* Dream Cloud Shape */
+.dream-cloud-shape {
+  position: relative;
+  width: 600px;
+  height: 400px;
+  background: #FFFFFF;
+  border: 3px solid #F2D7A7;
+  border-radius: 150px 150px 100px 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 0 30px rgba(242, 215, 167, 0.4),
+    0 8px 20px rgba(0, 0, 0, 0.1);
+  animation: cloudScaleIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  margin-bottom: 60px;
+  z-index: 2;
+}
+
+@keyframes cloudScaleIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.dream-cloud-image {
+  width: 85%;
+  height: 85%;
+  object-fit: contain;
+  animation: dreamImageFadeIn 0.6s ease-out 0.3s forwards;
+  opacity: 0;
+}
+
+@keyframes dreamImageFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Ganesha on Stage */
+.ganesha-stage-reveal {
+  width: 200px;
+  height: auto;
+  animation: ganeshaBounce 1s ease-out forwards;
+  z-index: 3;
+}
+
+@keyframes ganeshaBounce {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 
@@ -1146,6 +1303,12 @@ font-weight: 700;
   animation: sparkleFloat 2s ease-in-out infinite;
 }
 
+.sparkle-float.soft-sparkle {
+  font-size: 12px;
+  color: rgba(255, 215, 0, 0.6);
+  animation: softSparkleFloat 3s ease-in-out infinite;
+}
+
 @keyframes sparkleFloat {
   0%, 100% {
     opacity: 0;
@@ -1154,6 +1317,17 @@ font-weight: 700;
   50% {
     opacity: 1;
     transform: translateY(-30px) scale(1);
+  }
+}
+
+@keyframes softSparkleFloat {
+  0%, 100% {
+    opacity: 0.3;
+    transform: translateY(0) scale(0.8);
+  }
+  50% {
+    opacity: 0.6;
+    transform: translateY(-15px) scale(1);
   }
 }
 
@@ -1235,47 +1409,42 @@ font-weight: 700;
   font-size: 42px;
   font-weight: 900;
   letter-spacing: 1px;
-  color: #ff8a00; /* Warm Orange */
+  color: #5A4A3F;
   text-align: center;
-  text-shadow:
-    0 2px 0 #fff2cc,
-    0 6px 14px rgba(255, 140, 0, 0.35);
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.5);
   margin: 0 0 10px 0;
   animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .friendship-subtitle {
   font-family: 'Nunito', sans-serif;
-  font-size: 20px;
-  color: #8B4513; /* Dark Wood Brown */
-  font-weight: 700;
+  font-size: 18px;
+  color: #7A6A5F;
+  font-weight: 500;
   margin-bottom: 30px;
-  text-shadow: 0 1px 4px rgba(255, 255, 255, 0.6);
+  text-shadow: none;
 }
 
-/* 3. The Layout Grid (2 Columns + Center) */
+/* 3. The Layout Grid (2 Columns) */
 .friendship-grid {
   display: flex;
   justify-content: center;
   align-items: flex-start; /* Align tops */
-  gap: 30px;
+  gap: 15px;
   margin-bottom: 40px;
   width: 100%;
   max-width: 900px;
 }
 
-/* 4. The Glass Columns */
+/* 4. The Cards */
 .friend-column {
   flex: 1;
-  /* Semi-transparent white card */
-  background: rgba(255, 255, 255, 0.65); 
+  background: #FFF6E8;
   border-radius: 24px;
   padding: 25px;
-  
-  /* Soft Glass Shadow */
-  box-shadow:
-    0 10px 30px rgba(120, 90, 20, 0.15),
-    inset 0 0 0 2px rgba(255, 255, 255, 0.6);
+
+  /* Soft drop shadow */
+  box-shadow: 0 7px 18px rgba(0, 0, 0, 0.15);
     
   display: flex;
   flex-direction: column;
@@ -1366,6 +1535,26 @@ font-weight: 700;
   color: #5D4037;
   text-align: center;
   line-height: 1.1;
+}
+
+/* Dream Display Box */
+.dream-display-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 180px;
+  background: #FFFFFF;
+  border: 3px solid #F2D7A7;
+  border-radius: 14px;
+  padding: 15px;
+}
+
+.dream-thumbnail {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+  border-radius: 0;
 }
 
 /* 6. Center Connector */

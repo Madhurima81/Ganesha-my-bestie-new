@@ -1,15 +1,10 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './DreamsWishesGame.css';
 import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
 import DrawingPad from '../components/Drawingpad';
 import StoryProgressHeader from '../components/StoryProgressHeader';
 
 // Navigation Components
-import BackToMapButton from '../../../lib/components/navigation/BackToMapButton';
-import MenuButton from '../../../lib/components/navigation/MenuButton';
-import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
-import HelpMenu from '../../../lib/components/help/HelpMenu';
-import { obstacleRemoverHelpConfig } from './helpConfig';
 import SceneManager from "../../../lib/components/scenes/SceneManager";
 
 // Content Configs
@@ -28,6 +23,7 @@ import { useGameSounds } from '../../../lib/hooks/useGameSounds';
 import usePauseAwareTimeout from '../../../lib/hooks/usePauseAwareTimeout';
 import useResumeCountdown from '../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../lib/components/feedback/ResumeCountdown';
+import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation';
 
 // Import Unified Design System
 import Button from '../../../lib/components/ui/Button/Button';
@@ -37,7 +33,7 @@ import '../../../lib/styles/animations.css';
 // Import images
 import babyGaneshaImg from '/images/ganesha-final-new.svg';
 import babyGaneshaSit from '/images/ganesha-final-new.svg';
-import dreamsBg from './assets/images/dream-bg.png';
+import dreamsBg from './assets/images/dream_background.jpg';
 
 // Wish Icons
 import wishIconEarth from './assets/images/wish-icon-earth.png';
@@ -47,10 +43,12 @@ import wishIconShare from './assets/images/wish-icon-share.png';
 // Wish Images
 import wishEarthSad from './assets/images/wish-images/wish-earth-sad.png';
 import wishEarthHappy from './assets/images/wish-images/wish-earth-happy.png';
-import wishGrassDry from './assets/images/wish-images/wish-grass-dry.png';
-import wishGrassGreen from './assets/images/wish-images/wish-grass-green.png';
 import wishBowlEmpty from './assets/images/wish-images/wish-bowl-empty.png';
 import wishBowlFull from './assets/images/wish-images/wish-bowl-full.png';
+import wishForest1 from './assets/images/wish-images/wish-forest-1.png';
+import wishForest2 from './assets/images/wish-images/wish-forest-2.png';
+import wishForest3 from './assets/images/wish-images/wish-forest-3.png';
+import wishForest4 from './assets/images/wish-images/wish-forest-4.png';
 import cloudImg from './assets/images/cloud.png';
 
 // Error Boundary
@@ -81,11 +79,14 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
 
           // --- COUNTERS & INTERACTIVE STATES ---
           wish1Taps: 0,
+          wish1FinalMoment: false,
 
           wish2Taps: 0,
+          wish2FinalMoment: false,
           bowlStates: [false, false, false], // Track individual bowls
 
           wish3Taps: 0,
+          wish3FinalMoment: false,
           parkStates: [false, false, false], // Track individual park items (Grass, Butterfly, Slide)
 
           trunkTaps: 0,
@@ -128,29 +129,29 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     opening: "Let's discover… how we can make wishes come true!",
 
     // Wish 1
-    wish1Intro: "My first wish… is for a happy world. Oh no… the Earth looks a little sad. Can you help make it smile?",
-    wish1Active: "Tap the Earth… to help it smile!",
-    wish1Complete: "Look! … The Earth is smiling! Thank you for helping the world.",
+    wish1Intro: "My wish is for a happy world... Let's help make it smile.",
+    wish1Active: "Tap the Earth to help it smile!",
+    wish1Complete: "The Earth is smiling. Thank you for helping the world.",
 
     // Wish 2
-    wish2Intro: "My second wish… is to share with everyone. When we share… no one feels hungry or alone.",
-    wish2Active: "Tap the bowls… to fill them with sharing!",
-    wish2Complete: "Wonderful! … The bowls are full! Sharing makes hearts happy.",
+    wish2Intro: "My second wish… is to share our food. So no one stays hungry.",
+    wish2Active: "Tap the bowl to fill with food.",
+    wish2Complete: "Wonderful! The bowls are full. Sharing makes everyone happy.",
 
     // Wish 3
-    wish3Intro: "My last wish… is for a green world full of play. Let's help this park grow!",
-    wish3Active: "Tap the park… to help it bloom!",
-    wish3Complete: "Wow! … The park is alive and happy! You helped nature grow.",
+    wish3Intro: "My last wish… is for a green world full of life. Let’s help this forest grow!",
+    wish3Active: "Tap the forest to help it grow!",
+    wish3Complete: "Wow! The forest is full of life. You helped nature grow.",
 
-    // All Wishes Complete
-    allWishesComplete: "You did it! You helped make the world brighter. Now… it's your turn.",
+    // All Wishes Complete (now combined with drawing intro)
+    allWishesComplete: "You made the world brighter. Now it's your turn. Draw your happy wish.",
 
     // Dream Phases
-    dreamIntro: "We all have dreams inside us. Draw your dream… on this magic canvas.",
-    dreamDrawing: "What would you love to dream?",
-    dreamClouded: "Your dream is beautiful! Oh look… clouds are hiding it. Sometimes obstacles hide our dreams.",
-    dreamClearing: "Tap my trunk… to move the clouds! Keep going… you're clearing them!",
-    dreamRevealed: "There it is… your dream! What a beautiful dream. I believe in you.",
+    // dreamIntro: (REMOVED — merged into allWishesComplete)
+    dreamDrawing: "What would you draw?",
+    dreamClouded: "Your dream is beautiful… but clouds are hiding it. Tap my trunk to clear them.",
+    dreamClearing: "Keep tapping my trunk to clear the clouds!",
+    dreamRevealed: "There it is… your dream. Dream big, little friend. I believe in you.",
 
     // Comparison Card
     comparison: "My wishes… and your dream… When we help each other… dreams grow stronger.",
@@ -167,17 +168,22 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const completionIcons = openingModalContent?.icons || ['wish-earth', 'wish-share', 'wish-flower'];
 
   // --- LOCAL UI STATE (Not saved in DB) ---
-  const [showSlideMenu, setShowSlideMenu] = useState(false);
-  const [showHelpMenu, setShowHelpMenu] = useState(false);
   // ── Resume Delay (shared across pause/resume logic) ──────────────────────────
   const RESUME_DELAY_MS = 3000;
+  const IDLE_HINT_DELAY_MS = 15000;
 
   const { isAudioOn, toggleAudio } = useAudioPreference();
 
-  // ── Callbacks for pause/resume ────────────────────────────────────────────────
-  const onReturnHint = () => {
-    // Optional: trigger visual hint on return
-  };
+  const [returnHintNonce, setReturnHintNonce] = useState(0);
+  const lastInteractionAtRef = useRef(Date.now());
+  const markInteraction = useCallback(() => {
+    lastInteractionAtRef.current = Date.now();
+  }, []);
+
+  // ── Callback for pause/resume (fires after resumeDelay via useVoiceGuidance) ─
+  const onReturnHint = useCallback(() => {
+    setReturnHintNonce(n => n + 1);
+  }, []);
 
   // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
   const { startIdleTimer, stopIdleTimer, setCurrentPhase, stopVoice, setVoiceVolume, startMusic, stopMusic } = useVoiceGuidance(
@@ -190,7 +196,11 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }
   );
   const { playUiTap, playSparkle, playChime, setGlobalVolume } = useGameSounds();
-  const { speak, stop: stopSpokenVoice } = useGaneshaVoice();
+  const { speak, stop: stopSpokenVoice, isSpeaking } = useGaneshaVoice();
+  const isSpeakingRef = useRef(false);
+  useEffect(() => {
+    isSpeakingRef.current = isSpeaking;
+  }, [isSpeaking]);
   useEffect(() => { startIdleTimer(); return () => stopIdleTimer(); }, [startIdleTimer, stopIdleTimer]);
   useEffect(() => { setCurrentPhase(sceneState?.gamePhase ?? null); }, [sceneState?.gamePhase, setCurrentPhase]);
   useEffect(() => {
@@ -198,6 +208,15 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     else stopMusic();
   }, [isAudioOn, sceneState.gamePhase, sceneState.showingCompletionScreen, startMusic, stopMusic]);
   useEffect(() => { setGlobalVolume(isAudioOn ? 1 : 0); }, [isAudioOn, setGlobalVolume]);
+
+  // Stop all voice when audio is toggled off
+  useEffect(() => {
+    if (!isAudioOn) {
+      stopVoice();
+      stopSpokenVoice();
+    }
+  }, [isAudioOn, stopVoice, stopSpokenVoice]);
+
   useEffect(() => () => stopMusic(), [stopMusic]);
 
   // ── Resume Countdown & Pause-Aware Timeout ──────────────────────────────────
@@ -218,11 +237,14 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     },
     onShow: () => {
       // On tab resume: resume celebration
+      // NOTE: do NOT call onReturnHint here — useVoiceGuidance already calls it
+      // after resumeDelay when no VO is queued. Calling it here too causes a
+      // double-increment of returnHintNonce which stomps the VO and corrupts phaseVoiceRef.
       resumeCelebRef.current?.();
-      onReturnHint?.();
     },
     resumeDelay: RESUME_DELAY_MS  // ← Timers sync with audio resume
   });
+  useEffect(() => clearAllTimeouts, [clearAllTimeouts]);
 
   const [showDrawingPad, setShowDrawingPad] = useState(false); // Controls visibility
 
@@ -231,6 +253,22 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const [showResumePopup, setShowResumePopup] = useState(false);
   const [resumeMessage, setResumeMessage] = useState('');
   const [openingButtonVisible] = useState(true);
+
+  // Mini gesture (thumbs up) on successful taps
+  const [miniGesture, setMiniGesture] = useState({
+    show: false,
+    target: 'center',
+    durationMs: 1500,
+    key: 0
+  });
+  const miniGestureTimerRef = useRef(null);
+  const wish1SparkleCancelRef = useRef(null);
+  const [wish1Sparkle, setWish1Sparkle] = useState({ type: null, key: 0 });
+  const wish2SparkleCancelRef = useRef(null);
+  const [wish2Sparkle, setWish2Sparkle] = useState({ type: null, key: 0, targetIndex: null });
+  const wish3SparkleCancelRef = useRef(null);
+  const [wish3Sparkle, setWish3Sparkle] = useState({ type: null, key: 0 });
+
   const phaseVoiceRef = useRef({});
   const speakLine = (text, options = {}) => {
     if (!isAudioOn || !text) {
@@ -241,19 +279,119 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     speak(text, { age: 7, style: 'child', moment, onEnd });
   };
 
+  const interruptCurrentVoice = () => {
+    stopVoice();
+    stopSpokenVoice();
+  };
+
+  const triggerWish1Sparkle = useCallback((type, durationMs = 1500) => {
+    wish1SparkleCancelRef.current?.();
+    setWish1Sparkle(prev => ({ type, key: prev.key + 1 }));
+    wish1SparkleCancelRef.current = safeSetTimeout(() => {
+      setWish1Sparkle(prev => ({ ...prev, type: null }));
+      wish1SparkleCancelRef.current = null;
+    }, durationMs + 50);
+  }, [safeSetTimeout]);
+
+  const triggerWish2Sparkle = useCallback((type, durationMs = 1500, targetIndex = null) => {
+    wish2SparkleCancelRef.current?.();
+    setWish2Sparkle(prev => ({ type, key: prev.key + 1, targetIndex }));
+    wish2SparkleCancelRef.current = safeSetTimeout(() => {
+      setWish2Sparkle(prev => ({ ...prev, type: null, targetIndex: null }));
+      wish2SparkleCancelRef.current = null;
+    }, durationMs + 50);
+  }, [safeSetTimeout]);
+
+  const triggerWish3Sparkle = useCallback((type, durationMs = 1500) => {
+    wish3SparkleCancelRef.current?.();
+    setWish3Sparkle(prev => ({ type, key: prev.key + 1 }));
+    wish3SparkleCancelRef.current = safeSetTimeout(() => {
+      setWish3Sparkle(prev => ({ ...prev, type: null }));
+      wish3SparkleCancelRef.current = null;
+    }, durationMs + 50);
+  }, [safeSetTimeout]);
+
+  const getPhaseReminderLine = useCallback((phase) => {
+    switch (phase) {
+      case 'wish1-active':
+        return "Tap the Earth to help it smile.";
+      case 'wish2-active':
+        return "Tap each bowl to fill it with food.";
+      case 'wish3-active':
+        return "Tap the forest to help it grow.";
+      case 'dream-clouded':
+      case 'dream-clearing':
+        if (sceneState.dreamRevealed) return null;
+        return "Tap my trunk to clear the clouds.";
+      default:
+        return null;
+    }
+  }, [sceneState.dreamRevealed]);
+
+  const getResumeVoiceLine = useCallback((phase) => {
+    switch (phase) {
+      case 'wish1-intro':
+        return VOICE_LINES.wish1Intro;
+      case 'wish1-active':
+        return VOICE_LINES.wish1Active;
+      case 'wish2-intro':
+        return VOICE_LINES.wish2Intro;
+      case 'wish2-active':
+        return VOICE_LINES.wish2Active;
+      case 'wish3-intro':
+        return VOICE_LINES.wish3Intro;
+      case 'wish3-active':
+        return VOICE_LINES.wish3Active;
+      case 'all-wishes-complete':
+        return VOICE_LINES.allWishesComplete;
+      // case 'dream-intro': (removed — merged into all-wishes-complete)
+      case 'dream-drawing':
+        return VOICE_LINES.dreamDrawing;
+      case 'dream-clouded':
+      case 'dream-clearing':
+        if (sceneState.dreamRevealed) return VOICE_LINES.dreamRevealed;
+        return VOICE_LINES.dreamClouded;
+      case 'dream-revealed':
+        return VOICE_LINES.dreamRevealed;
+      case 'comparison-card':
+        return VOICE_LINES.comparison;
+      case 'ending':
+        return VOICE_LINES.ending;
+      default:
+        return null;
+    }
+  }, [VOICE_LINES, sceneState.dreamRevealed]);
+
+  const triggerMiniGesture = useCallback((target = 'center', durationMs = 1500) => {
+    if (miniGestureTimerRef.current) {
+      clearTimeout(miniGestureTimerRef.current);
+      miniGestureTimerRef.current = null;
+    }
+    setMiniGesture(prev => ({
+      show: true,
+      target,
+      durationMs,
+      key: prev.key + 1
+    }));
+    miniGestureTimerRef.current = setTimeout(() => {
+      setMiniGesture(prev => ({ ...prev, show: false }));
+      miniGestureTimerRef.current = null;
+    }, durationMs);
+  }, []);
+
   // --- HELPERS ---
   const getDiscoveries = () => {
     const items = [];
     const phase = sceneState.gamePhase;
 
     // Logic to show progress badges in header
-    const phasesAfterWish1 = ['wish1-complete', 'wish2-intro', 'wish2-active', 'wish2-complete', 'wish3-intro', 'wish3-active', 'wish3-complete', 'all-wishes-complete', 'dream-intro', 'dream-drawing', 'dream-clouded', 'dream-clearing', 'dream-revealed', 'comparison-card', 'ending'];
+    const phasesAfterWish1 = ['wish1-complete', 'wish2-intro', 'wish2-active', 'wish2-complete', 'wish3-intro', 'wish3-active', 'wish3-complete', 'all-wishes-complete', 'dream-drawing', 'dream-clouded', 'dream-clearing', 'comparison-card', 'ending'];
     if (phasesAfterWish1.includes(phase)) items.push({ name: 'Happiness', emoji: '🌍' });
 
-    const phasesAfterWish2 = ['wish2-complete', 'wish3-intro', 'wish3-active', 'wish3-complete', 'all-wishes-complete', 'dream-intro', 'dream-drawing', 'dream-clouded', 'dream-clearing', 'dream-revealed', 'comparison-card', 'ending'];
+    const phasesAfterWish2 = ['wish2-complete', 'wish3-intro', 'wish3-active', 'wish3-complete', 'all-wishes-complete', 'dream-drawing', 'dream-clouded', 'dream-clearing', 'comparison-card', 'ending'];
     if (phasesAfterWish2.includes(phase)) items.push({ name: 'Sharing', emoji: '🥣' });
 
-    const phasesAfterWish3 = ['wish3-complete', 'all-wishes-complete', 'dream-intro', 'dream-drawing', 'dream-clouded', 'dream-clearing', 'dream-revealed', 'comparison-card', 'ending'];
+    const phasesAfterWish3 = ['wish3-complete', 'all-wishes-complete', 'dream-drawing', 'dream-clouded', 'dream-clearing', 'comparison-card', 'ending'];
     if (phasesAfterWish3.includes(phase)) items.push({ name: 'Nature', emoji: '🌸' });
 
     if (sceneState.childDreamDrawing) items.push({ name: 'My Dream', image: sceneState.childDreamDrawing });
@@ -265,69 +403,170 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   useEffect(() => {
     if (isReload && !reloadHandledRef.current) {
       reloadHandledRef.current = true;
-      const { gamePhase, wish1Taps, wish3Taps, trunkTaps, bowlStates, currentModal, draftData } = sceneState;
+      const { gamePhase, wish1Taps, wish3Taps, trunkTaps, bowlStates, currentModal, dreamRevealed } = sceneState;
 
       console.log("🔄 Reload detected. Phase:", gamePhase, "Modal:", currentModal);
       if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
+      // Always stop any in-flight VO on reload before phase restoration.
+      interruptCurrentVoice();
+      phaseVoiceRef.current = {};
+      setShowDrawingPad(false);
 
-      // 1. RESTORE DRAWING IF OPEN
+      // 1. DRAWING MODAL - restart from drawing intro modal.
       if (currentModal === 'drawing') {
-        setResumeMessage("Welcome back! We saved your drawing! 🎨");
-        setShowResumePopup(true);
-        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
-        setShowDrawingPad(true); // Re-open the pad
-        return;
-      }
-
-      // Add this BEFORE checking gamePhase values:
-
-      // CHECK TAP COMPLETION - force phase if taps complete but phase not updated
-      if (wish1Taps === 3 && gamePhase === 'wish1-active') {
-        console.log("🔧 Reload fix: Forcing wish1-complete");
-        sceneActions.updateState({ gamePhase: 'wish1-complete' });
-        return;
-      }
-
-      if (bowlStates.filter(Boolean).length === 3 && gamePhase === 'wish2-active') {
-        console.log("🔧 Reload fix: Forcing wish2-complete");
-        sceneActions.updateState({ gamePhase: 'wish2-complete' });
-        return;
-      }
-
-      if (wish3Taps === 3 && gamePhase === 'wish3-active') {
-        console.log("🔧 Reload fix: Forcing wish3-complete");
-        sceneActions.updateState({ gamePhase: 'wish3-complete' });
-        return;
-      }
-
-      if (trunkTaps === 3 && (gamePhase === 'dream-clouded' || gamePhase === 'dream-clearing')) {
-        console.log("🔧 Reload fix: Forcing dream-revealed");
-        sceneActions.updateState({ gamePhase: 'dream-revealed' });
-        return;
-      }
-
-      // Add this right after the drawing modal check:
-
-      // 2. CHECK FOR WISH COMPLETION PHASES
-      if (gamePhase === 'wish1-complete') {
-        setResumeMessage("Welcome back! Your first wish is complete! ✨");
+        setResumeMessage("Let's start your drawing again!");
         setShowResumePopup(true);
         resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-        // Let the auto-transition useEffect handle moving to wish2-intro
+        sceneActions.updateState({
+          gamePhase: 'all-wishes-complete',
+          currentModal: null,
+          draftData: null
+        });
+        phaseVoiceRef.current = {};
+        return;
+      }
+
+      // 2. INTRO PHASES - RESTART FROM BEGINNING
+      // On continue in Wish 1 intro, restart the intro
+      if (gamePhase === 'wish1-intro') {
+        setResumeMessage("Let's try that again! 🌍");
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
+        phaseVoiceRef.current = {}; // Reset VO so intro replays
+        return;
+      }
+
+      // On continue in Wish 2 intro, restart the intro
+      if (gamePhase === 'wish2-intro') {
+        setResumeMessage("Let's try that again! 🥣");
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
+        phaseVoiceRef.current = {}; // Reset VO so intro replays
+        return;
+      }
+
+      // On continue in Wish 3 intro, restart the intro
+      if (gamePhase === 'wish3-intro') {
+        setResumeMessage("Let's try that again! 🌸");
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
+        phaseVoiceRef.current = {}; // Reset VO so intro replays
+        return;
+      }
+
+      // 3. ACTIVE PHASES - JUMP BACK TO INTRO WITH COUNTERS RESET
+      // On continue in Wish 1 active (in between tapping), jump back to wish1-intro
+      if (gamePhase === 'wish1-active') {
+        setResumeMessage("Let's hear the wish again! 🌍");
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
+        sceneActions.updateState({
+          gamePhase: 'wish1-intro',
+          wish1Taps: 0,
+          wish1FinalMoment: false
+        });
+        // Block stale active/final VO (effect may run once before state update settles).
+        phaseVoiceRef.current = { wish1Active: true, wish1FinalMomentVo: true };
+        return;
+      }
+
+      // On continue in Wish 2 active (in between tapping), jump back to wish2-intro
+      if (gamePhase === 'wish2-active') {
+        setResumeMessage("Let's hear the wish again! 🥣");
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
+        sceneActions.updateState({
+          gamePhase: 'wish2-intro',
+          bowlStates: [false, false, false],
+          wish2FinalMoment: false
+        });
+        // Block stale active/final VO (effect may run once before state update settles).
+        phaseVoiceRef.current = { wish2Active: true, wish2FinalMomentVo: true };
+        return;
+      }
+
+      // On continue in Wish 3 active (in between tapping), jump back to wish3-intro
+      if (gamePhase === 'wish3-active') {
+        setResumeMessage("Let's hear the wish again! 🌸");
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
+        sceneActions.updateState({
+          gamePhase: 'wish3-intro',
+          wish3Taps: 0,
+          parkStates: [false, false, false],
+          wish3FinalMoment: false
+        });
+        // Block stale active/final VO (effect may run once before state update settles).
+        phaseVoiceRef.current = { wish3Active: true, wish3FinalMomentVo: true };
+        return;
+      }
+
+      // 4. DREAM PHASES
+      // 4a. If drawing phase was active without modal flag, restart from drawing intro modal.
+      if (gamePhase === 'dream-drawing') {
+        setResumeMessage("Let's start your drawing again!");
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
+        sceneActions.updateState({
+          gamePhase: 'all-wishes-complete',
+          currentModal: null,
+          draftData: null
+        });
+        phaseVoiceRef.current = {};
+        return;
+      }
+
+      // 4b. If child was mid-clearing (1-2 taps), restart clearing from beginning (all 3 clouds).
+      if (gamePhase === 'dream-clearing' && !dreamRevealed) {
+        setResumeMessage("Welcome back! Let's clear the clouds from the start.");
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
+        sceneActions.updateState({
+          gamePhase: 'dream-clearing',
+          trunkTaps: 0,
+          dreamRevealed: false
+        });
+        phaseVoiceRef.current = {};
+        return;
+      }
+
+      // 4c. For clouded or already revealed states, resume as-is.
+      if (gamePhase === 'dream-clouded' || dreamRevealed) {
+        setResumeMessage("Welcome back! Let's continue your dream.");
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
+        // Keep existing dream phase state as-is.
+        phaseVoiceRef.current = {};
+        return;
+      }
+
+      // 5. COMPLETION PHASES — reset to the wish intro so the child replays from the start.
+      // Block both stale VO paths: the phase effect (wish1Complete) AND the
+      // wish1FinalMoment effect (wish1FinalMomentVo) — both fire "Thank you" otherwise.
+      if (gamePhase === 'wish1-complete') {
+        setResumeMessage("Let's hear the wish again! 🌍");
+        setShowResumePopup(true);
+        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
+        sceneActions.updateState({ gamePhase: 'wish1-intro', wish1Taps: 0, wish1FinalMoment: false });
+        phaseVoiceRef.current = { wish1Complete: true, wish1FinalMomentVo: true };
         return;
       }
 
       if (gamePhase === 'wish2-complete') {
-        setResumeMessage("Welcome back! Two wishes complete! ✨");
+        setResumeMessage("Let's hear the wish again! 🥣");
         setShowResumePopup(true);
         resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
+        sceneActions.updateState({ gamePhase: 'wish2-intro', bowlStates: [false, false, false], wish2FinalMoment: false });
+        phaseVoiceRef.current = { wish2Complete: true, wish2FinalMomentVo: true };
         return;
       }
 
       if (gamePhase === 'wish3-complete') {
-        setResumeMessage("Welcome back! All three wishes complete! ✨");
+        setResumeMessage("Let's hear the wish again! 🌸");
         setShowResumePopup(true);
         resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
+        sceneActions.updateState({ gamePhase: 'wish3-intro', wish3Taps: 0, parkStates: [false, false, false], wish3FinalMoment: false });
+        phaseVoiceRef.current = { wish3Complete: true, wish3FinalMomentVo: true };
         return;
       }
 
@@ -335,90 +574,54 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
         setResumeMessage("All wishes complete! Time to dream! ✨");
         setShowResumePopup(true);
         resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-        // Auto-transition useEffect will handle moving to dream-clouded
         return;
       }
 
-
-      // 2. PHASE MESSAGES
       if (gamePhase === 'intro') return;
-
-      if (gamePhase === 'wish1-active' && wish1Taps > 0) {
-        setResumeMessage(`Keep tapping! You've tapped ${wish1Taps}/3 times!`);
-        setShowResumePopup(true);
-        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
-        return;
-      }
-
-      if (gamePhase === 'wish2-active') {
-        const filled = bowlStates.filter(Boolean).length;
-        if (filled > 0) {
-          setResumeMessage(`Great! You've filled ${filled}/3 bowls!`);
-          setShowResumePopup(true);
-          resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
-        }
-        return;
-      }
-
-      if (gamePhase === 'wish3-active' && wish3Taps > 0) {
-        setResumeMessage(`Keep going! ${wish3Taps}/3 parts of the park are green!`);
-        setShowResumePopup(true);
-        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
-        return;
-      }
-
-      if ((gamePhase === 'dream-clouded' || gamePhase === 'dream-clearing') && trunkTaps > 0) {
-        setResumeMessage(`Keep clearing the clouds! ${trunkTaps}/3 done!`);
-        setShowResumePopup(true);
-        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
-        return;
-      }
     }
   }, [isReload, sceneState.gamePhase, sceneState.currentModal]);
 
   // --- AUTO-TRANSITION HANDLER ---
   useEffect(() => {
-    let timer;
+    let cancel;
     const { gamePhase } = sceneState;
 
     if (gamePhase === 'wish1-complete') {
-      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'wish2-intro' }); }, 4500);
+      cancel = safeSetTimeout(() => { sceneActions.updateState({ gamePhase: 'wish2-intro', wish1FinalMoment: false }); }, 4500);
     }
-    else if (gamePhase === 'wish2-complete') {
-      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'wish3-intro' }); }, 4500);
-    }
-    else if (gamePhase === 'wish3-complete') {
-      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'all-wishes-complete' }); }, 4500);
-    }
-    else if (gamePhase === 'dream-revealed') {
-      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'comparison-card' }); }, 2500);
-    }
-    else if (gamePhase === 'ending') {
-      timer = setTimeout(() => { sceneActions.updateState({ showingCompletionScreen: true }); }, 1500);
+    else if (sceneState.dreamRevealed) {
+      cancel = safeSetTimeout(() => { sceneActions.updateState({ gamePhase: 'comparison-card' }); }, 6000);
     }
 
-    return () => clearTimeout(timer);
-  }, [sceneState.gamePhase]);
+    return () => cancel?.();
+  }, [sceneState.gamePhase, sceneState.dreamRevealed, safeSetTimeout]);
 
   useEffect(() => {
     if (sceneState.gamePhase === 'intro') {
       phaseVoiceRef.current = {};
-      const timer = setTimeout(() => {
+      const cancel = safeSetTimeout(() => {
         speakLine(VOICE_LINES.opening, { moment: 'greeting' });
       }, 400);
-      return () => clearTimeout(timer);
+      return () => cancel?.();
     }
-  }, [sceneState.gamePhase, isAudioOn]);
+  }, [sceneState.gamePhase, isAudioOn, safeSetTimeout]);
 
   useEffect(() => {
+    // Guard: on the very first render after a reload, the reload-detection effect
+    // hasn't run yet (effects fire in declaration order). Skip ALL VO here so the
+    // stale saved phase never fires its line. Once the reload handler sets
+    // reloadHandledRef.current = true and calls updateState, this effect re-runs
+    // with the corrected phase and the correct phaseVoiceRef flags already in place.
+    if (isReload && !reloadHandledRef.current) return;
+
     // Wish 1
     if (sceneState.gamePhase === 'wish1-intro' && !phaseVoiceRef.current.wish1Intro) {
       phaseVoiceRef.current.wish1Intro = true;
-      speakLine(VOICE_LINES.wish1Intro);
+      speakLine(VOICE_LINES.wish1Intro, { moment: 'story' });
     }
     if (sceneState.gamePhase === 'wish1-active' && !phaseVoiceRef.current.wish1Active) {
       phaseVoiceRef.current.wish1Active = true;
-      speakLine(VOICE_LINES.wish1Active);
+      speakLine(VOICE_LINES.wish1Active, { moment: 'encouragement' });
     }
     if (sceneState.gamePhase === 'wish1-complete' && !phaseVoiceRef.current.wish1Complete) {
       phaseVoiceRef.current.wish1Complete = true;
@@ -428,109 +631,243 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     // Wish 2
     if (sceneState.gamePhase === 'wish2-intro' && !phaseVoiceRef.current.wish2Intro) {
       phaseVoiceRef.current.wish2Intro = true;
-      speakLine(VOICE_LINES.wish2Intro);
+      speakLine(VOICE_LINES.wish2Intro, { moment: 'story' });
     }
     if (sceneState.gamePhase === 'wish2-active' && !phaseVoiceRef.current.wish2Active) {
       phaseVoiceRef.current.wish2Active = true;
-      speakLine(VOICE_LINES.wish2Active);
-    }
-    if (sceneState.gamePhase === 'wish2-complete' && !phaseVoiceRef.current.wish2Complete) {
-      phaseVoiceRef.current.wish2Complete = true;
-      speakLine(VOICE_LINES.wish2Complete, { moment: 'celebration' });
+      speakLine(VOICE_LINES.wish2Active, { moment: 'encouragement' });
     }
 
     // Wish 3
     if (sceneState.gamePhase === 'wish3-intro' && !phaseVoiceRef.current.wish3Intro) {
       phaseVoiceRef.current.wish3Intro = true;
-      speakLine(VOICE_LINES.wish3Intro);
+      speakLine(VOICE_LINES.wish3Intro, { moment: 'story' });
     }
     if (sceneState.gamePhase === 'wish3-active' && !phaseVoiceRef.current.wish3Active) {
       phaseVoiceRef.current.wish3Active = true;
-      speakLine(VOICE_LINES.wish3Active);
-    }
-    if (sceneState.gamePhase === 'wish3-complete' && !phaseVoiceRef.current.wish3Complete) {
-      phaseVoiceRef.current.wish3Complete = true;
-      speakLine(VOICE_LINES.wish3Complete, { moment: 'celebration' });
+      speakLine(VOICE_LINES.wish3Active, { moment: 'encouragement' });
     }
 
     // All Wishes Complete
     if (sceneState.gamePhase === 'all-wishes-complete' && !phaseVoiceRef.current.allWishesComplete) {
       phaseVoiceRef.current.allWishesComplete = true;
-      speakLine(VOICE_LINES.allWishesComplete);
+      speakLine(VOICE_LINES.allWishesComplete, { moment: 'celebration' });
     }
 
     // Dream Phases
-    if (sceneState.gamePhase === 'dream-intro' && !phaseVoiceRef.current.dreamIntro) {
-      phaseVoiceRef.current.dreamIntro = true;
-      speakLine(VOICE_LINES.dreamIntro);
-    }
+    // dream-intro now handled by all-wishes-complete VO above
+    // if (sceneState.gamePhase === 'dream-intro' && !phaseVoiceRef.current.dreamIntro) {
+    //   phaseVoiceRef.current.dreamIntro = true;
+    //   speakLine(VOICE_LINES.dreamIntro, { moment: 'coregulation' });
+    // }
     if (sceneState.gamePhase === 'dream-drawing' && !phaseVoiceRef.current.dreamDrawing) {
       phaseVoiceRef.current.dreamDrawing = true;
-      speakLine(VOICE_LINES.dreamDrawing);
+      speakLine(VOICE_LINES.dreamDrawing, { moment: 'coregulation' });
     }
-    if (sceneState.gamePhase === 'dream-clouded' && !phaseVoiceRef.current.dreamClouded) {
+    if (sceneState.gamePhase === 'dream-clouded' && !sceneState.dreamRevealed && !phaseVoiceRef.current.dreamClouded) {
       phaseVoiceRef.current.dreamClouded = true;
-      speakLine(VOICE_LINES.dreamClouded);
+      speakLine(VOICE_LINES.dreamClouded, { moment: 'story' });
     }
-    if (sceneState.gamePhase === 'dream-clearing' && !phaseVoiceRef.current.dreamClearing) {
+    if (sceneState.gamePhase === 'dream-clearing' && !sceneState.dreamRevealed && !phaseVoiceRef.current.dreamClearing) {
       phaseVoiceRef.current.dreamClearing = true;
-      speakLine(VOICE_LINES.dreamClearing);
+      speakLine(VOICE_LINES.dreamClearing, { moment: 'encouragement' });
     }
-    if (sceneState.gamePhase === 'dream-revealed' && !phaseVoiceRef.current.dreamRevealed) {
+    if (sceneState.dreamRevealed && !phaseVoiceRef.current.dreamRevealed) {
       phaseVoiceRef.current.dreamRevealed = true;
       speakLine(VOICE_LINES.dreamRevealed, { moment: 'celebration' });
     }
 
-    // Comparison Card
-    if (sceneState.gamePhase === 'comparison-card' && !phaseVoiceRef.current.comparison) {
-      phaseVoiceRef.current.comparison = true;
-      speakLine(VOICE_LINES.comparison);
-    }
+    // Comparison Card - VO removed
+    // if (sceneState.gamePhase === 'comparison-card' && !phaseVoiceRef.current.comparison) {
+    //   phaseVoiceRef.current.comparison = true;
+    //   speakLine(VOICE_LINES.comparison, { moment: 'story' });
+    // }
 
     // Ending
     if (sceneState.gamePhase === 'ending' && !phaseVoiceRef.current.ending) {
       phaseVoiceRef.current.ending = true;
       speakLine(VOICE_LINES.ending, { moment: 'closing' });
     }
-  }, [sceneState.gamePhase, isAudioOn]);
+  }, [sceneState.gamePhase, sceneState.dreamRevealed, isAudioOn]);
 
+  // Completion screen VO removed
   useEffect(() => {
     if (sceneState.showingCompletionScreen && !phaseVoiceRef.current.completeVo) {
       phaseVoiceRef.current.completeVo = true;
-      // Completion screen uses the 'ending' line
-      speakLine(VOICE_LINES.ending, { moment: 'closing' });
+      // No VO on completion modal
     }
   }, [sceneState.showingCompletionScreen, isAudioOn]);
 
+  // Ensure no in-progress VO bleeds into the completion modal.
+  useEffect(() => {
+    if (!sceneState.showingCompletionScreen) return;
+    stopVoice();
+    stopSpokenVoice();
+  }, [sceneState.showingCompletionScreen, stopVoice, stopSpokenVoice]);
+
+  // Wish 1 final in-scene VO (reliable trigger after last tap state is set)
+  useEffect(() => {
+    if (isReload && !reloadHandledRef.current) return;
+    if (sceneState.wish1FinalMoment && !phaseVoiceRef.current.wish1FinalMomentVo) {
+      phaseVoiceRef.current.wish1FinalMomentVo = true;
+      speakLine(VOICE_LINES.wish1Complete, { moment: 'celebration' });
+    }
+    if (!sceneState.wish1FinalMoment) {
+      phaseVoiceRef.current.wish1FinalMomentVo = false;
+    }
+  }, [sceneState.wish1FinalMoment, isAudioOn]);
+
+  useEffect(() => {
+    if (isReload && !reloadHandledRef.current) return;
+    if (sceneState.wish2FinalMoment && !phaseVoiceRef.current.wish2FinalMomentVo) {
+      phaseVoiceRef.current.wish2FinalMomentVo = true;
+      speakLine(VOICE_LINES.wish2Complete, { moment: 'celebration' });
+    }
+    if (!sceneState.wish2FinalMoment) {
+      phaseVoiceRef.current.wish2FinalMomentVo = false;
+    }
+  }, [sceneState.wish2FinalMoment, isAudioOn]);
+
+  useEffect(() => {
+    if (isReload && !reloadHandledRef.current) return;
+    if (sceneState.wish3FinalMoment && !phaseVoiceRef.current.wish3FinalMomentVo) {
+      phaseVoiceRef.current.wish3FinalMomentVo = true;
+      speakLine(VOICE_LINES.wish3Complete, { moment: 'celebration' });
+    }
+    if (!sceneState.wish3FinalMoment) {
+      phaseVoiceRef.current.wish3FinalMomentVo = false;
+    }
+  }, [sceneState.wish3FinalMoment, isAudioOn]);
+
   useEffect(() => () => stopSpokenVoice(), [stopSpokenVoice]);
+
+  // Replay a contextual phase hint after tab/app return.
+  // useVoiceGuidance calls onReturnHint after RESUME_DELAY_MS.
+  useEffect(() => {
+    // During reload restore, suppress return-hint VO from stale saved phase.
+    if (isReload && !reloadHandledRef.current) return;
+    if (!returnHintNonce || !isAudioOn || sceneState.showingCompletionScreen || showDrawingPad) return;
+    const line = getResumeVoiceLine(sceneState.gamePhase) || getPhaseReminderLine(sceneState.gamePhase);
+    if (!line) return;
+
+    // Clear only the specific phase VO key, NOT the entire object
+    // This allows phase-specific VOs to trigger after resume
+    const phase = sceneState.gamePhase;
+    if (phase === 'wish1-intro') phaseVoiceRef.current.wish1Intro = false;
+    else if (phase === 'wish1-active') phaseVoiceRef.current.wish1Active = false;
+    else if (phase === 'wish2-intro') phaseVoiceRef.current.wish2Intro = false;
+    else if (phase === 'wish2-active') phaseVoiceRef.current.wish2Active = false;
+    else if (phase === 'wish3-intro') phaseVoiceRef.current.wish3Intro = false;
+    else if (phase === 'wish3-active') phaseVoiceRef.current.wish3Active = false;
+    else if (phase === 'dream-clouded') phaseVoiceRef.current.dreamClouded = false;
+    else if (phase === 'dream-clearing') phaseVoiceRef.current.dreamClearing = false;
+
+    speakLine(line, { moment: 'encouragement' });
+    const resumeNonce = returnHintNonce;
+    const retry = setTimeout(() => {
+      if (
+        !document.hidden &&
+        isAudioOn &&
+        !sceneState.showingCompletionScreen &&
+        !showDrawingPad &&
+        returnHintNonce === resumeNonce &&
+        !isSpeakingRef.current
+      ) {
+        speakLine(line, { moment: 'encouragement' });
+      }
+    }, 700);
+    return () => clearTimeout(retry);
+  }, [isReload, returnHintNonce, isAudioOn, sceneState.gamePhase, sceneState.showingCompletionScreen, showDrawingPad, getResumeVoiceLine, getPhaseReminderLine]);
+
+  // Idle hints (scene-level), similar behavior to other scenes.
+  useEffect(() => {
+    if (!isAudioOn || sceneState.showingCompletionScreen || showDrawingPad) return;
+    const intervalId = setInterval(() => {
+      const line = getPhaseReminderLine(sceneState.gamePhase);
+      if (!line) return;
+      const idleFor = Date.now() - lastInteractionAtRef.current;
+      if (idleFor >= IDLE_HINT_DELAY_MS) {
+        speakLine(line, { moment: 'encouragement' });
+        lastInteractionAtRef.current = Date.now();
+      }
+    }, 1000);
+    return () => clearInterval(intervalId);
+  }, [isAudioOn, sceneState.gamePhase, sceneState.showingCompletionScreen, showDrawingPad, getPhaseReminderLine]);
+
+  // Reset idle timer on major phase/modal transitions
+  useEffect(() => {
+    markInteraction();
+  }, [sceneState.gamePhase, showDrawingPad, markInteraction]);
 
 
   // --- GAMEPLAY HANDLERS ---
 
   const handleStartGame = () => {
+    markInteraction();
+    interruptCurrentVoice();
     playUiTap();
-    stopVoice();
-    stopSpokenVoice();
     setVoiceVolume(isAudioOn ? 1 : 0);
     sceneActions.updateState({ gamePhase: 'wish1-intro' });
   };
 
   const handleWish1Tap = () => {
     if (sceneState.wish1Taps >= 3) return;
+    markInteraction();
+    interruptCurrentVoice();
     playUiTap();
+    triggerMiniGesture('center', 1500);
     const newTaps = sceneState.wish1Taps + 1;
     sceneActions.updateState({ wish1Taps: newTaps });
 
     if (newTaps >= 3) {
+      triggerWish1Sparkle('all', 1500);
       playSparkle();
       playChime();
-      setTimeout(() => { sceneActions.updateState({ gamePhase: 'wish1-complete' }); }, 3000);
+      sceneActions.updateState({ wish1FinalMoment: true });
+      safeSetTimeout(() => {
+        sceneActions.updateState({ gamePhase: 'wish2-intro', wish1FinalMoment: false });
+      }, 4200);
+    } else {
+      triggerWish1Sparkle('single', 1500);
     }
   };
 
+  useEffect(() => {
+    if (sceneState.gamePhase !== 'wish1-active' && wish1Sparkle.type !== null) {
+      wish1SparkleCancelRef.current?.();
+      wish1SparkleCancelRef.current = null;
+      setWish1Sparkle(prev => ({ ...prev, type: null }));
+    }
+  }, [sceneState.gamePhase, wish1Sparkle.type]);
+
+  useEffect(() => {
+    if (sceneState.gamePhase !== 'wish2-active' && wish2Sparkle.type !== null) {
+      wish2SparkleCancelRef.current?.();
+      wish2SparkleCancelRef.current = null;
+      setWish2Sparkle(prev => ({ ...prev, type: null, targetIndex: null }));
+    }
+  }, [sceneState.gamePhase, wish2Sparkle.type]);
+
+  useEffect(() => {
+    if (sceneState.gamePhase !== 'wish3-active' && wish3Sparkle.type !== null) {
+      wish3SparkleCancelRef.current?.();
+      wish3SparkleCancelRef.current = null;
+      setWish3Sparkle(prev => ({ ...prev, type: null }));
+    }
+  }, [sceneState.gamePhase, wish3Sparkle.type]);
+
+  useEffect(() => () => {
+    wish1SparkleCancelRef.current?.();
+    wish2SparkleCancelRef.current?.();
+    wish3SparkleCancelRef.current?.();
+  }, []);
+
   const handleWish2Tap = (index) => {
     if (sceneState.bowlStates[index] === true) return;
+    markInteraction();
+    interruptCurrentVoice();
     playUiTap();
+    triggerMiniGesture('center', 1500);
 
     const newStates = [...sceneState.bowlStates];
     newStates[index] = true;
@@ -539,28 +876,46 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     sceneActions.updateState({ bowlStates: newStates, wish2Taps: count });
 
     if (count === 3) {
+      triggerWish2Sparkle('all', 1500);
       playSparkle();
       playChime();
-      setTimeout(() => { sceneActions.updateState({ gamePhase: 'wish2-complete' }); }, 3000);
+      // Trigger completion VO immediately on final tap (more reliable than waiting for effect timing).
+      phaseVoiceRef.current.wish2FinalMomentVo = true;
+      speakLine(VOICE_LINES.wish2Complete, { moment: 'celebration' });
+      sceneActions.updateState({ wish2FinalMoment: true });
+      safeSetTimeout(() => { sceneActions.updateState({ gamePhase: 'wish3-intro', wish2FinalMoment: false }); }, 4200);
+    } else {
+      triggerWish2Sparkle('single', 1500, index);
     }
   };
 
   const handleWish3Tap = () => {
     if (sceneState.wish3Taps >= 3) return;
+    markInteraction();
+    interruptCurrentVoice();
     playUiTap();
+    triggerMiniGesture('center', 1500);
     const newTaps = sceneState.wish3Taps + 1;
     sceneActions.updateState({ wish3Taps: newTaps });
 
     if (newTaps >= 3) {
+      triggerWish3Sparkle('all', 1500);
       playSparkle();
       playChime();
-      setTimeout(() => { sceneActions.updateState({ gamePhase: 'wish3-complete' }); }, 3000);
+      // Trigger completion VO immediately on final tap (prevents missed/cut playback).
+      phaseVoiceRef.current.wish3FinalMomentVo = true;
+      speakLine(VOICE_LINES.wish3Complete, { moment: 'celebration' });
+      sceneActions.updateState({ wish3FinalMoment: true });
+      safeSetTimeout(() => { sceneActions.updateState({ gamePhase: 'all-wishes-complete', wish3FinalMoment: false }); }, 5600);
+    } else {
+      triggerWish3Sparkle('single', 1500);
     }
   };
 
   // Specific handler for individual park items (optional enhancement from your code logic)
   const handleParkTap = (index) => {
     if (sceneState.parkStates[index] === true) return;
+    markInteraction();
     playUiTap();
     const newStates = [...sceneState.parkStates];
     newStates[index] = true;
@@ -571,11 +926,13 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     if (count === 3) {
       playSparkle();
       playChime();
-      setTimeout(() => { sceneActions.updateState({ gamePhase: 'wish3-complete' }); }, 1000);
+      sceneActions.updateState({ wish3FinalMoment: true });
+      safeSetTimeout(() => { sceneActions.updateState({ gamePhase: 'all-wishes-complete', wish3FinalMoment: false }); }, 1000);
     }
   };
 
   const handleTrunkTap = () => {
+    markInteraction();
     playUiTap();
     const newTaps = sceneState.trunkTaps + 1;
     sceneActions.updateState({ trunkTaps: newTaps, gamePhase: 'dream-clearing' });
@@ -583,13 +940,14 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     if (newTaps >= 3) {
       playSparkle();
       playChime();
-      setTimeout(() => { sceneActions.updateState({ gamePhase: 'dream-revealed' }); }, 1500);
+      sceneActions.updateState({ dreamRevealed: true });
     }
   };
 
   // --- DRAWING HANDLERS ---
 
   const handleDreamDrawingSave = (data) => {
+    markInteraction();
     playChime();
     setShowDrawingPad(false);
     sceneActions.updateState({
@@ -601,6 +959,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleDrawingCancel = () => {
+    markInteraction();
     playUiTap();
     setShowDrawingPad(false);
     sceneActions.updateState({ currentModal: null, draftData: null });
@@ -612,11 +971,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       <HomeButton onNavigate={onNavigate} />
       <ZoneBadgeButton zoneId="about-me-hut" onBack={() => onNavigate?.('zone-welcome')} />
       <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
-
-      {/* Back Button */}
-      {sceneState.gamePhase !== 'intro' && !sceneState.showingCompletionScreen && (
-        <BackToMapButton onNavigate={onNavigate} />
-      )}
 
       {/* Story Progress Header */}
       {!sceneState.gamePhase.startsWith('dream') &&
@@ -641,17 +995,19 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
           <div className="wish-intro-card">
             <p className="wish-intro-text">My first wish is for a happy world.</p>
-            <p className="wish-intro-text">The world looks a little sad right now 😔</p>
+            <p className="wish-intro-text">The world looks a little sad right now</p>
             <Button
               variant="primary"
               size="large"
               onClick={() => {
+                interruptCurrentVoice();
                 playUiTap();
+                phaseVoiceRef.current.wish1Active = false; // allow VO to fire fresh on entry
                 sceneActions.updateState({ gamePhase: 'wish1-active' });
               }}
               className="heartbeat-delayed"
             >
-              Let's Make Them Smile! 😊
+              Let's Make Them Smile!
             </Button>
           </div>
         </div>
@@ -660,15 +1016,53 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Wish 1 Active */}
       {sceneState.gamePhase === 'wish1-active' && (
         <div className="wish-screen">
-          <div className="wish-instruction-bubble">Tap the earth 3 times to send smiles! ({sceneState.wish1Taps}/3)</div>
+          <div className="game-header-hud">
+            {/* Header instruction commented out - using progress header instead */}
+            {/* <div className="wish-instruction-bubble">Tap the earth 3 times to send smiles! ({sceneState.wish1Taps}/3)</div> */}
+            <div className="wish-progress-header">
+              <div className="wish-progress-title">Wish 1: Make Earth Smile</div>
+              <div className="wish-smiley-row">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <span key={i} className={`wish-smiley-icon ${i < sceneState.wish1Taps ? 'filled' : ''}`}>
+                    {i < sceneState.wish1Taps ? '😊' : '😶'}
+                  </span>
+                ))}
+              </div>
+              <div className="wish-progress-count">{sceneState.wish1Taps}/3</div>
+            </div>
+          </div>
           <div className="wish-interactive-container">
             <div className="earth-container" onClick={handleWish1Tap}>
               <img src={wishEarthSad} alt="Sad" className="earth-image sad" style={{ opacity: sceneState.wish1Taps === 0 ? 1 : sceneState.wish1Taps === 1 ? 0.6 : sceneState.wish1Taps === 2 ? 0.3 : 0 }} />
               <img src={wishEarthHappy} alt="Happy" className={`earth-image happy ${sceneState.wish1Taps >= 3 ? 'complete-glow-pulse' : ''}`} style={{ opacity: sceneState.wish1Taps === 0 ? 0 : sceneState.wish1Taps === 1 ? 0.4 : sceneState.wish1Taps === 2 ? 0.7 : 1 }} />
+              {wish1Sparkle.type === 'single' && (
+                <SparkleAnimation
+                  key={`wish1-single-${wish1Sparkle.key}`}
+                  type="star"
+                  count={15}
+                  color="#ff9ebd"
+                  size={10}
+                  duration={1500}
+                  fadeOut={true}
+                  area="full"
+                />
+              )}
+              {wish1Sparkle.type === 'all' && (
+                <SparkleAnimation
+                  key={`wish1-all-${wish1Sparkle.key}`}
+                  type="magic"
+                  count={20}
+                  color="lightblue"
+                  size={10}
+                  duration={1500}
+                  fadeOut={true}
+                  area="full"
+                />
+              )}
             </div>
             <div className="faces-container">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="face-emoji" style={{ transform: `rotate(${i * 60}deg) translate(160px) rotate(-${i * 60}deg)`, opacity: sceneState.wish1Taps >= 2 ? 0.6 : 1, transition: 'all 0.6s ease' }}>{sceneState.wish1Taps >= 3 ? '😊' : sceneState.wish1Taps >= 2 ? '😐' : '😢'}</div>
+                <div key={i} className="face-emoji" style={{ transform: `rotate(${i * 60}deg) translate(240px) rotate(-${i * 60}deg)`, opacity: sceneState.wish1Taps >= 2 ? 0.6 : 1, transition: 'all 0.6s ease' }}>{sceneState.wish1Taps >= 3 ? '😊' : sceneState.wish1Taps >= 2 ? '😐' : '😢'}</div>
               ))}
             </div>
           </div>
@@ -676,6 +1070,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       )}
 
       {/* Wish 1 Complete */}
+      {/*
       {sceneState.gamePhase === 'wish1-complete' && (
         <div className="wish-complete-screen">
           <img src={babyGaneshaSit} alt="Happy Ganesha" className="ganesha-celebrate celebrate-scale" />
@@ -685,24 +1080,27 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <div className="celebration-elements">{Array.from({ length: 15 }).map((_, i) => <div key={i} className="floating-element" style={{ left: `${Math.random() * 100}%`, animationDelay: `${Math.random() * 2}s` }}>😊</div>)}</div>
         </div>
       )}
+      */}
 
       {/* Wish 2 Intro */}
       {sceneState.gamePhase === 'wish2-intro' && (
         <div className="intro-overlay">
           <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
           <div className="wish-intro-card">
-            <p className="wish-intro-text">My second wish is that no one feels hungry or alone.</p>
-            <p className="wish-intro-text">Let's share with everyone! 🤝</p>
+            <p className="wish-intro-text">My second wish is that no one feels hungry.</p>
+            <p className="wish-intro-text">Let's share our food with everyone!</p>
             <Button
               variant="primary"
               size="large"
               onClick={() => {
+                interruptCurrentVoice();
                 playUiTap();
+                phaseVoiceRef.current.wish2Active = false; // allow VO to fire fresh on entry
                 sceneActions.updateState({ gamePhase: 'wish2-active' });
               }}
               className="heartbeat-delayed"
             >
-              Let's Share! 🍎
+              Let's Share!
             </Button>
           </div>
         </div>
@@ -711,21 +1109,59 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Wish 2 Active */}
       {sceneState.gamePhase === 'wish2-active' && (
         <div className="wish-screen">
-          <div className="wish-instruction-bubble">Tap the bowls 3 times to fill them! ({sceneState.wish2Taps}/3)</div>
+          <div className="game-header-hud">
+            {/* Header instruction commented out - using progress header instead */}
+            {/* <div className="wish-instruction-bubble">Tap the bowls 3 times to fill them! ({sceneState.wish2Taps}/3)</div> */}
+            <div className="wish-progress-header">
+              <div className="wish-progress-title">Wish 2: Fill The Bowls</div>
+              <div className="wish-smiley-row">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <span key={i} className={`wish-smiley-icon ${i < sceneState.wish2Taps ? 'filled' : ''}`}>
+                    {i < sceneState.wish2Taps ? '😊' : '😶'}
+                  </span>
+                ))}
+              </div>
+              <div className="wish-progress-count">{sceneState.wish2Taps}/3</div>
+            </div>
+          </div>
           <div className="wish-interactive-container">
             <div className="bowls-container">
               {sceneState.bowlStates.map((isFilled, index) => (
                 <div key={index} className={`bowl ${isFilled ? 'bowl-filled' : 'bowl-empty'}`} onClick={() => handleWish2Tap(index)}>
                   <img src={isFilled ? wishBowlFull : wishBowlEmpty} alt={`Bowl ${index + 1}`} className={`bowl-image ${isFilled ? 'bowl-glow-bounce' : ''}`} />
-                  {isFilled && <div className="bowl-food pop-in">🍚</div>}
+                  {wish2Sparkle.type === 'single' && wish2Sparkle.targetIndex === index && (
+                    <SparkleAnimation
+                      key={`wish2-single-${wish2Sparkle.key}-${index}`}
+                      type="star"
+                      count={15}
+                      color="#ff9ebd"
+                      size={10}
+                      duration={1500}
+                      fadeOut={true}
+                      area="full"
+                    />
+                  )}
                 </div>
               ))}
+              {wish2Sparkle.type === 'all' && (
+                <SparkleAnimation
+                  key={`wish2-all-${wish2Sparkle.key}`}
+                  type="magic"
+                  count={20}
+                  color="lightblue"
+                  size={10}
+                  duration={1500}
+                  fadeOut={true}
+                  area="full"
+                />
+              )}
             </div>
           </div>
         </div>
       )}
 
       {/* Wish 2 Complete */}
+      {/*
       {sceneState.gamePhase === 'wish2-complete' && (
         <div className="wish-complete-screen">
           <img src={babyGaneshaSit} alt="Happy Ganesha" className="ganesha-celebrate celebrate-scale" />
@@ -735,24 +1171,27 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <div className="celebration-elements">{Array.from({ length: 15 }).map((_, i) => <div key={i} className="floating-element" style={{ left: `${Math.random() * 100}%`, animationDelay: `${Math.random() * 2}s` }}>❤️</div>)}</div>
         </div>
       )}
+      */}
 
       {/* Wish 3 Intro */}
       {sceneState.gamePhase === 'wish3-intro' && (
         <div className="intro-overlay">
           <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
           <div className="wish-intro-card">
-            <p className="wish-intro-text">My last wish is for a green, happy world.</p>
-            <p className="wish-intro-text">Where kids can run, play, and smile outside! 🌿</p>
+            <p className="wish-intro-text">My last wish is for a green world full of life.</p>
+            <p className="wish-intro-text">Let's help this forest grow!</p>
             <Button
               variant="primary"
               size="large"
               onClick={() => {
+                interruptCurrentVoice();
                 playUiTap();
+                phaseVoiceRef.current.wish3Active = false; // allow VO to fire fresh on entry
                 sceneActions.updateState({ gamePhase: 'wish3-active' });
               }}
               className="heartbeat-delayed"
             >
-              Let's Make It Green! 🌸
+              Let's Make It Green!
             </Button>
           </div>
         </div>
@@ -761,21 +1200,59 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Wish 3 Active */}
       {sceneState.gamePhase === 'wish3-active' && (
         <div className="wish-screen">
-          <div className="wish-instruction-bubble">Tap the park 3 times to make it bloom! ({sceneState.wish3Taps}/3)</div>
+          <div className="game-header-hud">
+            {/* Header instruction commented out - using progress header instead */}
+            {/* <div className="wish-instruction-bubble">Tap the park 3 times to make it bloom! ({sceneState.wish3Taps}/3)</div> */}
+            <div className="wish-progress-header">
+              <div className="wish-progress-title">Wish 3: Grow The Forest</div>
+              <div className="wish-smiley-row">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <span key={i} className={`wish-smiley-icon ${i < sceneState.wish3Taps ? 'filled' : ''}`}>
+                    {i < sceneState.wish3Taps ? '😊' : '😶'}
+                  </span>
+                ))}
+              </div>
+              <div className="wish-progress-count">{sceneState.wish3Taps}/3</div>
+            </div>
+          </div>
           <div className="wish-interactive-container">
-            <div className={`park-scene ${sceneState.wish3Taps >= 1 ? 'park-tap1' : ''}`} onClick={handleWish3Tap}>
-              <img src={wishGrassDry} alt="Dry" className="park-ground-image dry" style={{ opacity: sceneState.wish3Taps === 0 ? 1 : 0.3 }} />
-              <img src={wishGrassGreen} alt="Green" className={`park-ground-image green ${sceneState.wish3Taps >= 3 ? 'complete-glow-pulse' : ''}`} style={{ opacity: sceneState.wish3Taps === 0 ? 0 : 1 }} />
-
-              {sceneState.wish3Taps >= 1 && <div className="flowers-container">{['🌸', '🌺', '🌻'].map((fl, i) => <div key={i} className="flower pop-in" style={{ left: `${20 + i * 20}%` }}>{fl}</div>)}</div>}
-              {sceneState.wish3Taps >= 2 && <div className="butterflies-container">{['🦋', '🦋'].map((bf, i) => <div key={i} className="butterfly flutter" style={{ left: `${30 + i * 30}%` }}>{bf}</div>)}</div>}
-              {sceneState.wish3Taps >= 3 && <div className="playground pop-in"><div className="playground-item">🛝</div></div>}
+            <div className="park-scene" onClick={handleWish3Tap}>
+              <img
+                src={[wishForest1, wishForest2, wishForest3, wishForest4][sceneState.wish3Taps]}
+                alt="Growing forest"
+                className={`park-ground-image green ${sceneState.wish3Taps >= 3 ? 'complete-glow-pulse' : ''}`}
+              />
+              {wish3Sparkle.type === 'single' && (
+                <SparkleAnimation
+                  key={`wish3-single-${wish3Sparkle.key}`}
+                  type="star"
+                  count={15}
+                  color="#ff9ebd"
+                  size={10}
+                  duration={1500}
+                  fadeOut={true}
+                  area="full"
+                />
+              )}
+              {wish3Sparkle.type === 'all' && (
+                <SparkleAnimation
+                  key={`wish3-all-${wish3Sparkle.key}`}
+                  type="magic"
+                  count={20}
+                  color="lightblue"
+                  size={10}
+                  duration={1500}
+                  fadeOut={true}
+                  area="full"
+                />
+              )}
             </div>
           </div>
         </div>
       )}
 
       {/* Wish 3 Complete */}
+      {/*
       {sceneState.gamePhase === 'wish3-complete' && (
         <div className="wish-complete-screen">
           <img src={babyGaneshaSit} alt="Happy Ganesha" className="ganesha-celebrate celebrate-scale" />
@@ -785,57 +1262,62 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <div className="celebration-elements">{Array.from({ length: 15 }).map((_, i) => <div key={i} className="floating-element" style={{ left: `${Math.random() * 100}%` }}>🌸</div>)}</div>
         </div>
       )}
+      */}
 
-      {/* All Wishes Complete */}
+      {/* All Wishes Complete → Combined Modal (Goes straight to drawing) */}
       {sceneState.gamePhase === 'all-wishes-complete' && (
         <div className="intro-overlay">
           <img src={babyGaneshaSit} alt="Baby Ganesha" className="intro-ganesha celebrate-scale" />
           <div className="wish-intro-card">
-            <p className="wish-intro-text">WOW! You made the world brighter! ✨</p>
-            <p className="wish-intro-text">Now it's your turn 💛<br />What would you love to wish for?</p>
+            <p className="wish-intro-text">You made the world brighter!</p>
+            <p className="wish-intro-text">Now it's your turn.<br />Draw your happy wish on this magic canvas!</p>
             <Button
               variant="primary"
               size="large"
               onClick={() => {
+                interruptCurrentVoice();
                 playUiTap();
-                sceneActions.updateState({ gamePhase: 'dream-intro' });
+                setShowDrawingPad(true);
+                sceneActions.updateState({ gamePhase: 'dream-drawing', currentModal: 'drawing' });
               }}
               className="heartbeat-delayed"
             >
-              Tell Me Your Dream! 💭
+              Start Drawing
             </Button>
           </div>
         </div>
       )}
 
-      {/* Dream Intro */}
+      {/* Dream Intro — Commented out, now merged into all-wishes-complete modal */}
+      {/*
       {sceneState.gamePhase === 'dream-intro' && (
         <div className="intro-overlay">
           <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
           <div className="wish-intro-card">
-            <p className="wish-intro-text">Draw a happy wish on this magic canvas! ✨</p>
-            <p className="wish-intro-text">What would you love to draw today? 🎨</p>
+            <p className="wish-intro-text">Draw a happy wish on this magic canvas!</p>
+            <p className="wish-intro-text">What would you love to draw today?</p>
             <Button
               variant="primary"
               size="large"
               onClick={() => {
                 playUiTap();
                 setShowDrawingPad(true);
-                sceneActions.updateState({ gamePhase: 'dream-drawing', currentModal: 'drawing' }); // Set modal state
+                sceneActions.updateState({ gamePhase: 'dream-drawing', currentModal: 'drawing' });
               }}
               className="heartbeat-delayed"
             >
-              Start Drawing! ✏️
+              Start Drawing!
             </Button>
           </div>
         </div>
       )}
+      */}
 
       {/* Drawing Pad */}
       {showDrawingPad && (
         <div className="drawing-overlay">
           <DrawingPad
-            prompt="Draw your biggest dream! What do you want to be? 🌟"
+            prompt="Draw your dream"
 
             initialData={sceneState.draftData} // Restore draft if reloaded
             onAutoSave={(data) => sceneActions.updateState({ draftData: data })} // Save as they draw
@@ -852,9 +1334,17 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Dream Clouded / Clearing */}
       {(sceneState.gamePhase === 'dream-clouded' || sceneState.gamePhase === 'dream-clearing') && (
         <div className="dream-screen">
+          {/* Sparkles when dream revealed */}
+          {sceneState.dreamRevealed && (
+            <SparkleAnimation
+              type="magic"
+              duration={2000}
+              area="full"
+            />
+          )}
           <div className="dream-container">
             <div className="dream-drawing-display">
-              {sceneState.childDreamDrawing && <img src={sceneState.childDreamDrawing} alt="Dream" className="dream-image" style={{ filter: sceneState.trunkTaps === 3 ? 'none' : 'blur(6px)', opacity: 0.5 + (sceneState.trunkTaps * 0.15) }} />}
+              {sceneState.childDreamDrawing && <img src={sceneState.childDreamDrawing} alt="Dream" className="dream-image" style={{ filter: sceneState.dreamRevealed ? 'none' : (sceneState.trunkTaps === 3 ? 'none' : 'blur(6px)'), opacity: sceneState.dreamRevealed ? 1 : (0.5 + (sceneState.trunkTaps * 0.15)), boxShadow: sceneState.dreamRevealed ? '0 0 40px rgba(242, 215, 167, 0.6), 0 0 80px rgba(242, 215, 167, 0.3)' : 'none' }} />}
             </div>
             <div className="clouds-container">
               {Array.from({ length: 3 }).map((_, i) => (
@@ -863,73 +1353,89 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             </div>
             <div className={`ganesha-helper ${sceneState.trunkTaps > 0 ? 'ganesha-blowing' : ''}`} onClick={handleTrunkTap}>
               <img src={babyGaneshaImg} alt="Ganesha" className="ganesha-trunk bounce-gentle" />
-              {sceneState.trunkTaps > 0 && <div className="wind-puff">💨</div>}
             </div>
           </div>
-          <div className="dream-instruction-box">
+          {/* Instruction box hidden */}
+          {/* <div className="dream-instruction-box">
             {sceneState.trunkTaps === 0 ? "Tap my trunk 3 times to move the clouds! ☁️" : sceneState.trunkTaps < 3 ? `Tap again! (${sceneState.trunkTaps}/3)` : "Yay! Your dream is clear now! 🌟"}
-          </div>
+          </div> */}
         </div>
       )}
 
-      {/* Dream Revealed */}
-      {sceneState.gamePhase === 'dream-revealed' && (
-        <div className="dream-revealed-screen">
-          <div className="dream-glow-container">
-            {sceneState.childDreamDrawing && <img src={sceneState.childDreamDrawing} alt="Dream" className="dream-image-glowing" />}
-            <div className="sparkles-container">{Array.from({ length: 20 }).map((_, i) => <div key={i} className="sparkle-float" style={{ left: `${Math.random() * 100}%` }}>✨</div>)}</div>
-          </div>
-          <img src={babyGaneshaSit} alt="Ganesha" className="ganesha-proud celebrate-scale" />
-          <div className="success-message-large">Your dream will come true!<br />I believe in you! 🌟</div>
-        </div>
-      )}
 
       {/* Comparison Card */}
-      {sceneState.gamePhase === 'comparison-card' && (
+      {sceneState.gamePhase === 'comparison-card' && !sceneState.showingCompletionScreen && (
         <div className="friendship-overlay">
-          <h1 className="friendship-title">Dreams Come Together! ✨</h1>
-          <p className="friendship-subtitle">Friends Help Each Other</p>
+          {/* Subtle background sparkles */}
+          <SparkleAnimation
+            type="star"
+            duration={3000}
+            area="full"
+          />
+          <h1 className="friendship-title">Dreams Come Together</h1>
+          <p className="friendship-subtitle">When we help the world, dreams grow.</p>
           <div className="friendship-grid">
-            <div className="friend-column">
+            <div className="friend-column ganesha-card">
               <img src={babyGaneshaSit} alt="Ganesha" className="column-header-image" />
-              <div className="column-label">GANESHA'S WISHES</div>
+              <div className="column-label">Ganesha's Wishes</div>
+              <div className="friend-items-grid">
+                <div className="friend-item">
+                  <div className="friend-item-label">Wish 1</div>
+                  <img src={wishEarthHappy} alt="Happy Earth wish" className="friend-item-img" />
+                  <div className="friend-item-text">Happiness</div>
+                </div>
+                <div className="friend-item">
+                  <div className="friend-item-label">Wish 2</div>
+                  <img src={wishBowlFull} alt="Sharing wish" className="friend-item-img" />
+                  <div className="friend-item-text">Sharing</div>
+                </div>
+                <div className="friend-item">
+                  <div className="friend-item-label">Wish 3</div>
+                  <img src={wishForest4} alt="Green world wish" className="friend-item-img" />
+                  <div className="friend-item-text">Green World</div>
+                </div>
+              </div>
+              {/*
               <div className="wishes-list">
                 <div className="wish-item"><span className="wish-icon">😊</span> Happiness ✓</div>
                 <div className="wish-item"><span className="wish-icon">🤝</span> Sharing ✓</div>
                 <div className="wish-item"><span className="wish-icon">🌳</span> Earth ✓</div>
               </div>
+              */}
             </div>
-            <div className="friend-connector"><div className="connector-heart">❤️</div>FRIENDS<div className="connector-heart">❤️</div></div>
-            <div className="friend-column">
-              <div className="column-label">YOUR DREAM</div>
+            <div className="friend-column you-card">
+              <div className="column-label">Your Dream</div>
               <div className="dream-display-box">
                 {sceneState.childDreamDrawing ? <img src={sceneState.childDreamDrawing} alt="Dream" className="dream-thumbnail" /> : "Loading..."}
               </div>
             </div>
           </div>
           <Button
-            variant="info"
+            variant="primary"
             size="large"
             onClick={() => {
               playChime();
-              sceneActions.updateState({ gamePhase: 'ending', completed: true });
+              sceneActions.updateState({ showingCompletionScreen: true, completed: true });
             }}
             className="heartbeat-gentle"
           >
-            🎉 Finish Game
+            Continue
           </Button>
         </div>
       )}
 
       {/* Ending */}
+      {/*
       {sceneState.gamePhase === 'ending' && !sceneState.showingCompletionScreen && (
         <div className="ending-screen">
           <img src={babyGaneshaSit} alt="Ganesha" className="ganesha-final celebrate-scale" />
           <div className="final-title">Dreams Connected! 🌟</div>
         </div>
       )}
+      */}
 
-      {/* Resume Popup */}
+      {/* Resume Popup - Removed */}
+      {/*
       {showResumePopup && (
         <div style={{
           position: 'fixed', top: '20%', left: '50%', transform: 'translateX(-50%)',
@@ -940,45 +1446,55 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
           {resumeMessage}
         </div>
       )}
+      */}
 
       {/* Resume Countdown */}
       <ResumeCountdown value={countdownValue} />
 
-      {/* Menu & Help */}
-      {sceneState.gamePhase !== 'intro' && <MenuButton onClick={() => setShowSlideMenu(true)} zoneId="about-me-hut" />}
-
-      <TocaBocaNav show={showSlideMenu} onClose={() => setShowSlideMenu(false)} zoneId="about-me-hut" onHome={() => onNavigate('home')} onHelp={() => { setShowSlideMenu(false); setShowHelpMenu(true); }} onStartFresh={() => { playUiTap(); setShowSlideMenu(false); sceneActions.updateState({ gamePhase: 'intro', wish1Taps: 0, wish2Taps: 0, wish3Taps: 0, bowlStates: [false, false, false], trunkTaps: 0, childDreamDrawing: null }); }} isAudioOn={isAudioOn} onAudioToggle={toggleAudio} />
-      <HelpMenu show={showHelpMenu} onClose={() => setShowHelpMenu(false)} onNavigate={onNavigate} />
+      {/* Mini Gesture (Thumbs Up) on Success */}
+      {miniGesture.show && (
+        <div
+          key={`mini-gesture-${miniGesture.key}`}
+          className={`ganesha-gesture-cue ganesha-gesture-cue--${miniGesture.target}`}
+          style={{ '--mini-cue-duration': `${miniGesture.durationMs}ms` }}
+          aria-hidden="true"
+        >
+          <img className="mini-gesture-icon" src="/images/hand-thumbsup.svg" alt="" />
+        </div>
+      )}
 
       {/* Completion Modal */}
       {sceneState.showingCompletionScreen && (
-        <SceneCompletionCelebration
-          show={sceneState.showingCompletionScreen}
-          zoneId="about-me-hut"
-          sceneId="dreams-wishes"
-          sceneName="Dreams & Wishes"
-          completionTitle={completionModalContent?.title}
-          completionSubtitle={completionModalContent?.subtitle}
-          discoveredSymbols={completionIcons}
-          symbolImages={{
-            'wish-earth': wishIconEarth,
-            'wish-share': wishIconShare,
-            'wish-flower': wishIconFlower
-          }}
-          starsEarned={sceneState.stars}
-          totalStars={3}
-          nextSceneName="Symbol Mountain"
-          childName="dream maker"
-          isFinalScene={true}
-          completionData={{
-            completed: true,
-            stars: sceneState.stars || 3
-          }}
-          onContinue={() => { playUiTap(); if (onNavigate) onNavigate('scene-complete-continue'); else if (onComplete) onComplete(); }}
-          onReplay={() => { playUiTap(); sceneActions.updateState({ gamePhase: 'intro', wish1Taps: 0, wish2Taps: 0, wish3Taps: 0, bowlStates: [false, false, false], trunkTaps: 0, childDreamDrawing: null, showingCompletionScreen: false, completed: false }); }}
-          onBackToMap={() => { if (onNavigate) onNavigate('zone-welcome'); else if (onBack) onBack(); }}
-          onHome={() => { if (onNavigate) onNavigate('home'); }}
-        />
+        <div className="dreams-completion-overlay-tint">
+          <SceneCompletionCelebration
+            show={sceneState.showingCompletionScreen}
+            zoneId="about-me-hut"
+            sceneId="dreams-wishes"
+            sceneName="Dreams & Wishes"
+            completionTitle={completionModalContent?.title}
+            completionSubtitle={completionModalContent?.subtitle}
+            discoveredSymbols={completionIcons}
+            symbolImages={{
+              'wish-earth': wishIconEarth,
+              'wish-share': wishIconShare,
+              'wish-flower': wishIconFlower
+            }}
+            starsEarned={sceneState.stars}
+            totalStars={3}
+            nextSceneName="About Me Hut Complete"
+            childName="dream maker"
+            isFinalScene={true}
+            completionData={{
+              completed: true,
+              stars: sceneState.stars || 3
+            }}
+            onContinue={() => { playUiTap(); if (onNavigate) onNavigate('scene-complete-continue'); else if (onComplete) onComplete(); }}
+            onExploreZones={() => { playUiTap(); if (onNavigate) onNavigate('zones'); }}
+            onReplay={() => { playUiTap(); sceneActions.updateState({ gamePhase: 'intro', wish1Taps: 0, wish1FinalMoment: false, wish2Taps: 0, wish2FinalMoment: false, wish3Taps: 0, wish3FinalMoment: false, bowlStates: [false, false, false], trunkTaps: 0, childDreamDrawing: null, showingCompletionScreen: false, completed: false }); }}
+            onBackToMap={() => { if (onNavigate) onNavigate('zone-welcome'); else if (onBack) onBack(); }}
+            onHome={() => { if (onNavigate) onNavigate('home'); }}
+          />
+        </div>
       )}
     </div>
   );

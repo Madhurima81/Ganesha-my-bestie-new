@@ -66,6 +66,10 @@ Before every task, Claude Code must:
 ### Additional things
 - [ ] T34 · Parent Dashboard
 - [ ] T35 · DailyDare and gratitude
+- [ ] T37 · Scene 20 freeze sign-off (favorite-food nav: continue + tab-switch)
+- [x] T38 · Scene 21 continue/resume behavior — restart phases on continue (wish1/2/3 intro & active, dream phases)
+- [x] T39 · Scene 21 voice bug fix — return hint now clears only phase-specific VO key, allows subsequent VOs to play
+- [x] T40 · Scene 21 combined modal — merge "all-wishes-complete" + "dream-intro" into single modal, skip dream-intro phase, go straight to drawing
 
 
 
@@ -99,10 +103,10 @@ Before every task, Claude Code must:
 | 16 | game2-rangoli | FestivalRangoliGame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
 | 17 | game3-cooking | ModakCookingGame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
 | 18 | game4-mandap | MandapDecorationGame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 19 | family-tree | Namebirthdaygame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 20 | favorite-food | Familytreegame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 21 | dreams-wishes | Favoritefoodgame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 22 | name-birthday | ObstacleRemoverGame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
+| 19 | family-tree | Familytreegame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
+| 20 | favorite-food | Favoritefoodgame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
+| 21 | dreams-wishes | ObstacleRemoverGame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
+| 22 | name-birthday | Namebirthdaygame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
 
 ### Voice & Audio
 
@@ -127,7 +131,7 @@ Before every task, Claude Code must:
 | 17 | game3-cooking | ModakCookingGame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
 | 18 | game4-mandap | MandapDecorationGame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
 | 19 | family-tree | Namebirthdaygame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
-| 20 | favorite-food | Familytreegame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
+| 20 | favorite-food | Favoritefoodgame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
 | 21 | dreams-wishes | Favoritefoodgame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
 | 22 | name-birthday | ObstacleRemoverGame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
 
@@ -158,7 +162,7 @@ Before every task, Claude Code must:
 | 17 | game3-cooking | ModakCookingGame | [ ] | [x] | [--] | [ ] |
 | 18 | game4-mandap | MandapDecorationGame | [ ] | [x] | [--] | [ ] |
 | 19 | family-tree | Namebirthdaygame | [ ] | [x] | [--] | [ ] |
-| 20 | favorite-food | Familytreegame | [ ] | [x] | [--] | [ ] |
+| 20 | favorite-food | Favoritefoodgame | [ ] | [x] | [--] | [ ] |
 | 21 | dreams-wishes | Favoritefoodgame | [ ] | [x] | [--] | [ ] |
 | 22 | name-birthday | ObstacleRemoverGame | [ ] | [x] | [--] | [ ] |
 
@@ -199,7 +203,7 @@ Before every task, Claude Code must:
 | 17 | game3-cooking | ModakCookingGame | [--] | [ ] |
 | 18 | game4-mandap | MandapDecorationGame | [--] | [ ] |
 | 19 | family-tree | Namebirthdaygame | [--] | [ ] |
-| 20 | favorite-food | Familytreegame | [--] | [ ] |
+| 20 | favorite-food | Favoritefoodgame | [--] | [ ] |
 | 21 | dreams-wishes | Favoritefoodgame | [--] | [ ] |
 | 22 | name-birthday | ObstacleRemoverGame | [--] | [ ] |
 
@@ -226,7 +230,7 @@ Before every task, Claude Code must:
 | 17 | game3-cooking | ModakCookingGame | [ ] | [ ] | [ ] |
 | 18 | game4-mandap | MandapDecorationGame | [ ] | [ ] | [ ] |
 | 19 | family-tree | Namebirthdaygame | [ ] | [ ] | [ ] |
-| 20 | favorite-food | Familytreegame | [ ] | [ ] | [ ] |
+| 20 | favorite-food | Favoritefoodgame | [ ] | [ ] | [ ] |
 | 21 | dreams-wishes | Favoritefoodgame | [ ] | [ ] | [ ] |
 | 22 | name-birthday | ObstacleRemoverGame | [ ] | [ ] | [ ] |
 

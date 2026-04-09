@@ -208,7 +208,7 @@ const DrawingPad = ({
       {/* Done Button */}
       <div className="drawing-actions">
           <button className="done-btn" onClick={handleSave}>
-            Done Drawing!
+            Done Drawing
           </button>
           
           {onCancel && (
