@@ -176,6 +176,16 @@ box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
   opacity: 0.85;
 }
 
+.stat-icon-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(42px, 4vw, 60px);
+  height: clamp(42px, 4vw, 60px);
+  margin-right: 8px;
+}
+
 .stat-text-clean {
   font-family: 'Nunito', sans-serif;
   font-weight: 600;
@@ -185,9 +195,27 @@ box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
   letter-spacing: 0.3px;
 }
 
-/* Remove completion badge only; keep completed rows visible */
-.completion-badge {
-  display: none;
+.stat-complete-check {
+  position: absolute;
+  top: -4px;
+  right: -8px;
+  width: clamp(14px, 1.3vw, 18px);
+  height: clamp(14px, 1.3vw, 18px);
+  border-radius: 50%;
+  background: #ffc850;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: clamp(9px, 0.8vw, 12px);
+  line-height: 1;
+  box-shadow: 0 2px 5px rgba(200, 140, 0, 0.35);
+  z-index: 2;
+}
+
+.stat-text-clean.all-symbols-discovered {
+  font-size: clamp(12px, 1.35vw, 18px);
 }
 
 /* ========================================== */

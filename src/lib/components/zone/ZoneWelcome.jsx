@@ -9,6 +9,7 @@ import GameStateManager from '../../services/GameStateManager';
 import CulturalProgressExtractor from '../../services/CulturalProgressExtractor';
 import HomeButton from '../ui/HomeButton';
 import ProfileChip from '../navigation/ProfileChip';
+import GaneshaPresence from '../character/GaneshaPresence';
 
 
 //import ProgressManager from '../../services/ProgressManager';
@@ -608,7 +609,7 @@ const getPermanentCompletedCount = () => {
     const allDone = completedCount === zoneData.scenes.length;
 
     if (allDone) {
-      return { pose: 'celebration', slot: 'top', size: 128 };
+      return { pose: 'celebration', slot: 'top', size: 150 };
     }
 
     const nextPendingIndex = sceneStatuses.findIndex(
@@ -617,22 +618,21 @@ const getPermanentCompletedCount = () => {
     const slot = nextPendingIndex >= 0 ? `scene-${nextPendingIndex + 1}` : 'scene-1';
 
     if (completedCount === 0) {
-      return { pose: 'pointing', slot, size: 112 };
+      return { pose: 'pointing', slot, size: 132 };
     }
 
     if (completedCount === 1) {
-      return { pose: 'thumbs_up', slot, size: 114 };
+      return { pose: 'thumbs_up', slot, size: 136 };
     }
 
-    return { pose: 'okay', slot, size: 110 };
+    return { pose: 'okay', slot, size: 130 };
   };
 
   // ✅ MVP: Only scene 1 is playable in each zone — scenes 2+ are "Coming Soon"
   const MVP_FIRST_SCENE_ONLY = false;
 
-  // ✅ ALL SCENES UNLOCKED — remove this line to re-enable sequential locking
+  // Progressive unlock: first scene is open; next scenes open via completion/auto-unlock.
   const checkSceneUnlocked = (scene) => {
-    return true;
     if (!zoneData || !zoneData.scenes) return false;
 
     // ✅ MVP LOCK: Only the first scene is unlocked in MVP mode
@@ -856,7 +856,18 @@ const getPermanentCompletedCount = () => {
 
       {/* Scene Icons Grid */}
       <div className="zone-scenes-container cards-wrapper" data-zone={zoneData.id}>
-        {/* Ganesha presence removed per request */}
+        {zoneWelcomeGaneshaState && (
+          <div
+            className={`zone-ganesha-presence zone-ganesha-presence--${zoneWelcomeGaneshaState.slot}`}
+            aria-hidden="true"
+          >
+            <GaneshaPresence
+              pose={zoneWelcomeGaneshaState.pose}
+              size={zoneWelcomeGaneshaState.size}
+              breathing={zoneWelcomeGaneshaState.pose === 'celebration' ? 'slow' : 'gentle'}
+            />
+          </div>
+        )}
         <div className="scenes-horizontal-container">
           {zoneData.scenes.map((scene, index) => {
             const status = getSceneStatus(scene);

@@ -728,7 +728,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
           }}
           starsEarned={sceneState.stars}
           totalStars={3}
-          nextSceneName="Symbol Mountain"
+          nextSceneName="About Me Hut Complete"
           childName="dream maker"
           isFinalScene={true}
           completionData={{
