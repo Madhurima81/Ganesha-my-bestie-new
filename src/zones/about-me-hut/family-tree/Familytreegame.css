@@ -1113,6 +1113,7 @@
 }
 
 .choice-card {
+  position: relative; /* needed for idle-hint-sparkle overlay */
   background: linear-gradient(180deg,
       #FFF7F0 0%,
       #FFF1E6 100%);
@@ -1200,6 +1201,7 @@
 }
 
 .choice-image {
+  position: relative;
   width: 80px;
   /* Ensure a fixed box for the image */
   height: 80px;
@@ -4460,3 +4462,49 @@
   90%  { opacity: 1; transform: translateY(0px); }
   100% { opacity: 0; transform: translateY(6px); }
 }
+
+/* =========================================
+   IDLE HINT ANIMATIONS (6s-22s)
+   ========================================= */
+/* Hint Level 1: Tiny Wobble (catches motion attention) */
+.choice-image.idle-wobble {
+  animation: idleWobble 0.5s ease-in-out 1;
+}
+
+@keyframes idleWobble {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.005);
+  }
+}
+
+/* Hint Level 2+: Soft Glow Pulse */
+.choice-image.idle-glow {
+  animation: idleGlowPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes idleGlowPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 0px rgba(255, 215, 0, 0));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.7));
+  }
+}
+
+/* Hint Level 3: Glow + Sparkle + Bounce (22s) */
+.choice-image.idle-sparkle {
+  animation: idleGlowPulse 1.2s ease-in-out infinite, idleBounce 1.4s ease-in-out infinite;
+}
+
+@keyframes idleBounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+

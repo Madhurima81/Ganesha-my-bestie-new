@@ -272,7 +272,7 @@ const handleAction = (callback, skipComplete = false) => {
                     <button
                       className="celebration-btn celebration-btn-orange"
                       onClick={() => {
-                        const currentZone = GameStateManager.currentZone || 'symbol-mountain';
+                        const currentZone = resolvedZoneId || GameStateManager.currentZone || 'symbol-mountain';
                         const nextSceneInfo = GameStateManager.getNextScene(currentZone, sceneId);
                         if (nextSceneInfo) {
                           GameStateManager.clearSceneState(nextSceneInfo.zone, nextSceneInfo.scene);

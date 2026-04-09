@@ -9,6 +9,7 @@ import BackToMapButton from '../../../lib/components/navigation/BackToMapButton'
 
 // Voice Guidance Hook
 import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
+import { useGaneshaVoice } from '../../../lib/hooks/useGaneshaVoice';
 
 // Pause Menu Components (commented out — replaced by HomeButton)
 // import { PauseButton, PauseMenu, PauseBlurOverlay, usePauseEnhancements } from '../../../lib/components/ui/PauseMenu';
@@ -214,10 +215,12 @@ const FamilyTreeGameContent = ({
   const audioEnabledRef = useRef(isAudioOn);
   audioEnabledRef.current = isAudioOn;
 
+  const setCurrentPhaseRef = useRef(null);
+
   const onReturnHint = useCallback(() => {
     // Called when child returns to tab — triggers idle timer reset in useVoiceGuidance
-    setCurrentPhase(sceneState?.gamePhase ?? null);
-  }, [sceneState?.gamePhase, setCurrentPhase]);
+    setCurrentPhaseRef.current?.(sceneState?.gamePhase ?? null);
+  }, [sceneState?.gamePhase]);
 
   const {
     playVoice,
@@ -244,8 +247,12 @@ const FamilyTreeGameContent = ({
     resumeDelay: RESUME_DELAY_MS,
     onReturnHint
   });
+  setCurrentPhaseRef.current = setCurrentPhase;
 
   const { playUiTap, playWrongTap, playSparkle, playBloom, playChime, playGlow, playTwinkle } = useGameSounds();
+
+  // Web Speech API for idle hint VO (arbitrary text)
+  const { speak: speakHint, stop: stopSpokenVoice } = useGaneshaVoice();
 
   // Audio toggle — no syllable/word game audio here, stopVoice() is safe on toggle-off
   const handleAudioToggle = () => {
@@ -301,18 +308,62 @@ const FamilyTreeGameContent = ({
   const childStartTimerRef = useRef(null);
   const tapCircleTimerRef = useRef(null);
 
+  // Mini gesture (thumbs up) on successful taps
+  const [miniGesture, setMiniGesture] = useState({
+    show: false,
+    target: 'center',
+    durationMs: 1500,
+    key: 0
+  });
+  const miniGestureTimerRef = useRef(null);
+
+  // Idle hint system (choice modal)
+  const [idleHintLevel, setIdleHintLevel] = useState(0); // 0=none, 1=wobble, 2=glow, 3=sparkle
+  const idleHintTimersRef = useRef([]);
+  const modalOpenCountRef = useRef({}); // tracks open count per circle id
+  // Mirror refs so usePauseAwareTimeout callbacks can read current state without stale closures
+  const showChoiceModalRef = useRef(sceneState.showChoiceModal);
+  showChoiceModalRef.current = sceneState.showChoiceModal;
+  const selectedCircleRef = useRef(sceneState.selectedCircle);
+  selectedCircleRef.current = sceneState.selectedCircle;
+
   // Resume Countdown & Pause-Aware Timeout
   const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
 
   const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({
     onHide: () => {
-      // On tab hide: stop voice, clear pause flag
+      // On tab hide: stop all voices + kill idle hint timers so they don't fire in background
       stopVoice();
+      stopSpokenVoice();
       setShowReturnHint(false);
+      // Clear idle hint timers and hide glow
+      idleHintTimersRef.current.forEach(id => clearTimeout(id));
+      idleHintTimersRef.current = [];
+      setIdleHintLevel(0);
     },
     onShow: () => {
       // On tab resume: trigger idle timer reset
       onReturnHint?.();
+      // Restart idle hints if choice modal is still open when child returns
+      if (showChoiceModalRef.current && selectedCircleRef.current) {
+        const circle = selectedCircleRef.current;
+        const openCount = modalOpenCountRef.current[circle] || 1;
+        const t1 = openCount > 1 ? 4000 : 6000;
+        const t2 = openCount > 1 ? 10000 : 14000;
+        const t3 = openCount > 1 ? 16000 : 22000;
+        idleHintTimersRef.current.forEach(id => clearTimeout(id));
+        idleHintTimersRef.current = [];
+        const timer1 = setTimeout(() => setIdleHintLevel(1), t1);
+        const timer2 = setTimeout(() => {
+          setIdleHintLevel(2);
+          if (audioEnabledRef.current && IDLE_HINT_VO[circle]) {
+            stopSpokenVoice();
+            speakHint(IDLE_HINT_VO[circle], { age: 7, style: 'child', moment: 'encouragement' });
+          }
+        }, t2);
+        const timer3 = setTimeout(() => setIdleHintLevel(3), t3);
+        idleHintTimersRef.current = [timer1, timer2, timer3];
+      }
     },
     resumeDelay: RESUME_DELAY_MS
   });
@@ -342,6 +393,31 @@ const FamilyTreeGameContent = ({
   // scheduleTimeout now uses pause-aware timeout management
   const scheduleTimeout = (fn, delay) => {
     return safeSetTimeout(fn, delay);
+  };
+
+  const triggerMiniGesture = useCallback((target = 'center', durationMs = 1500) => {
+    if (miniGestureTimerRef.current) {
+      clearTimeout(miniGestureTimerRef.current);
+      miniGestureTimerRef.current = null;
+    }
+    setMiniGesture(prev => ({
+      show: true,
+      target,
+      durationMs,
+      key: prev.key + 1
+    }));
+    miniGestureTimerRef.current = setTimeout(() => {
+      setMiniGesture(prev => ({ ...prev, show: false }));
+      miniGestureTimerRef.current = null;
+    }, durationMs);
+  }, []);
+
+  // --- IDLE HINT VO CLUES (spoken via Web Speech API) ---
+  const IDLE_HINT_VO = {
+    father: "My father carries a trident and has long matted hair.",
+    mother: "My mother is gentle and wears a beautiful red sari.",
+    brother: "My brave brother rides a peacock.",
+    myself: "That's me! I have an elephant head."
   };
 
   // --- DATA DEFINITIONS ---
@@ -664,11 +740,49 @@ const FamilyTreeGameContent = ({
     sceneState.isSequencePlaying
   ]);
 
+  // ========================================
+  // CHOICE MODAL: Stop voice + run idle hint progression
+  // 6s wobble → 6s glow → 14s VO clue → 22s sparkle (no further hints)
+  // ========================================
   useEffect(() => {
-    if (sceneState.showChoiceModal) {
+    // Always clear running hint timers first
+    idleHintTimersRef.current.forEach(id => clearTimeout(id));
+    idleHintTimersRef.current = [];
+    setIdleHintLevel(0);
+
+    if (sceneState.showChoiceModal && sceneState.selectedCircle) {
       stopVoice();
+
+      const circle = sceneState.selectedCircle;
+
+      const timer1 = setTimeout(() => {
+        setIdleHintLevel(1); // wobble on correct card at 6s
+      }, 6000);
+
+      const timer2 = setTimeout(() => {
+        setIdleHintLevel(2); // glow at 6s (immediately follows wobble)
+      }, 6000);
+
+      const timer3 = setTimeout(() => {
+        // keep glow + play VO clue at 14s
+        if (audioEnabledRef.current && IDLE_HINT_VO[circle]) {
+          stopSpokenVoice();
+          speakHint(IDLE_HINT_VO[circle], { age: 7, style: 'child', moment: 'encouragement' });
+        }
+      }, 14000);
+
+      const timer4 = setTimeout(() => {
+        setIdleHintLevel(3); // sparkle at 22s — no further hints after this
+      }, 22000);
+
+      idleHintTimersRef.current = [timer1, timer2, timer3, timer4];
     }
-  }, [sceneState.showChoiceModal]);
+
+    return () => {
+      idleHintTimersRef.current.forEach(id => clearTimeout(id));
+      idleHintTimersRef.current = [];
+    };
+  }, [sceneState.showChoiceModal, sceneState.selectedCircle]);
 
   // ========================================
   // CHILD PHASE: Play childStart VO 3.5s after phase begins (fresh start only)
@@ -797,6 +911,7 @@ const FamilyTreeGameContent = ({
         playVoice(relationVO);
       }
 
+      triggerMiniGesture('center', 1500);
       setFunFactModalPlayed(false);
       sceneActions.updateState({ isSequencePlaying: true, showYouGotIt: choice.id });
       scheduleTimeout(() => sceneActions.updateState({ correctChoiceId: choice.id }), 800);
@@ -992,6 +1107,18 @@ const FamilyTreeGameContent = ({
       )}
       <ResumeCountdown value={countdownValue} />
 
+      {/* Mini Gesture (Thumbs Up) on Success */}
+      {miniGesture.show && (
+        <div
+          key={`mini-gesture-${miniGesture.key}`}
+          className={`ganesha-gesture-cue ganesha-gesture-cue--${miniGesture.target}`}
+          style={{ '--mini-cue-duration': `${miniGesture.durationMs}ms` }}
+          aria-hidden="true"
+        >
+          <img className="mini-gesture-icon" src="/images/hand-thumbsup.svg" alt="" />
+        </div>
+      )}
+
       {/* Back to Map Button - Commented out like in Modak */}
       {/* {!sceneState.showingCompletionScreen && (
         <BackToMapButton onNavigate={onNavigate} />
@@ -1097,7 +1224,11 @@ const FamilyTreeGameContent = ({
                   {sceneState.currentChoices.map(choice => (
                     <button
                       key={choice.id}
-                      className={`choice-card ${sceneState.wrongChoice === choice.id ? 'wrong-shake' : ''} ${sceneState.correctChoiceId === choice.id && choice.isCorrect ? 'correct-card-hit' : ''}`}
+                      className={[
+                        'choice-card',
+                        sceneState.wrongChoice === choice.id ? 'wrong-shake' : '',
+                        sceneState.correctChoiceId === choice.id && choice.isCorrect ? 'correct-card-hit' : ''
+                      ].filter(Boolean).join(' ')}
                       onClick={() => handleChoiceSelection(choice)}
                       disabled={
                         sceneState.disabledChoices.includes(choice.id) ||
@@ -1106,7 +1237,12 @@ const FamilyTreeGameContent = ({
                         sceneState.showYouGotIt !== null
                       }
                     >
-                      <div className="choice-image">
+                      <div className={[
+                        'choice-image',
+                        choice.isCorrect && idleHintLevel === 1 ? 'idle-wobble' : '',
+                        choice.isCorrect && idleHintLevel === 2 ? 'idle-glow' : '',
+                        choice.isCorrect && idleHintLevel >= 3 ? 'idle-sparkle' : ''
+                      ].filter(Boolean).join(' ')}>
                         <img src={choice.image} alt={choice.name} />
                       </div>
                       <div className="family-choice-name">{choice.name}</div>
