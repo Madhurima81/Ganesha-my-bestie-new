@@ -21,7 +21,6 @@ import indiaMapImage from './assets/images/ganeshaplace/india-map.png';
 import mglass from './assets/images/ganeshaplace/mglass.png';
 import mumbaiIcon from './assets/images/ganeshaplace/mumbai.png';
 import varansiIcon from './assets/images/ganeshaplace/Varanasi.png';
-import hampiIcon from './assets/images/ganeshaplace/hampi.png';
 import tamilNaduIcon from './assets/images/ganeshaplace/TamilNadu.png';
 
 // ─── PHASE 2: REGION ICONS ────────────────────────────────────────
@@ -152,7 +151,6 @@ const PHASE1_LOCATIONS = [
   { name: 'Varanasi', icon: varansiIcon, x: 65, y: 20, emoji: '🕌' },
   { name: 'Mumbai', icon: mumbaiIcon, x: 15, y: 48, emoji: '🏛️' },
   { name: 'Tamil Nadu', icon: tamilNaduIcon, x: 52, y: 78, emoji: '🙏' },
-  { name: 'Hampi', icon: hampiIcon, x: 40, y: 63, emoji: '🏺' },
 ];
 
 const HEART_POSITIONS = [
