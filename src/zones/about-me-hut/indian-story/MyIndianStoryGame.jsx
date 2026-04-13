@@ -95,7 +95,7 @@ const INDIA_REGIONS = [
   { id: 'north',     label: 'North India',                   states: 'Punjab, Haryana, UP, Delhi',              emoji: '??', icon: northIcon,     color: '#7B9FD4', mapTop: '18%', mapLeft: '40%', ganeshaFact: 'In Varanasi, my name echoes across the ghats every morning! ??' },
   { id: 'northwest', label: 'Rajasthan & Gujarat',           states: 'Rajasthan, Gujarat',                      emoji: '???', icon: westIcon,      color: '#E8A040', mapTop: '34%', mapLeft: '22%', ganeshaFact: 'In Gujarat, every home has a tiny Ganesha by the door for good luck! ??' },
   { id: 'west',      label: 'Maharashtra',                   states: 'Mumbai, Pune, Nagpur',                    emoji: '??', icon: westIcon,      color: '#FF9933', mapTop: '52%', mapLeft: '32%', ganeshaFact: 'Mumbai\'s Siddhivinayak temple is one of my most beloved homes! ??' },
-  { id: 'central',   label: 'Madhya Pradesh',                states: 'MP, Chhattisgarh',                        emoji: '??', icon: centralIcon,   color: '#5BA85A', mapTop: '45%', mapLeft: '45%', ganeshaFact: 'The forests here are full of my mouse Mushika\'s friends! ??' },
+  { id: 'central',   label: 'Central India',                 states: 'MP, Chhattisgarh',                        emoji: '??', icon: centralIcon,   color: '#5BA85A', mapTop: '45%', mapLeft: '45%', ganeshaFact: 'The forests here are full of my mouse Mushika\'s friends! ??' },
   { id: 'east',      label: 'East India',                    states: 'West Bengal, Odisha, Jharkhand, Bihar',   emoji: '??', icon: eastIcon,      color: '#4A9BB5', mapTop: '48%', mapLeft: '58%', ganeshaFact: 'In Kolkata, Durga Puja celebrations are so grand � I always visit! ??' },
   { id: 'northeast', label: 'Northeast India',               states: 'Assam, Meghalaya, Manipur, & more',       emoji: '??', icon: northEastIcon, color: '#B565A7', mapTop: '30%', mapLeft: '68%', ganeshaFact: 'The tea gardens here are magical � even I stop for a cup! ?' },
   { id: 'south',     label: 'South India',                   states: 'Tamil Nadu, Kerala, Karnataka, Telangana', emoji: '??', icon: southIcon,     color: '#2E7D32', mapTop: '70%', mapLeft: '44%', ganeshaFact: 'In Tamil Nadu, I am called Pillaiyar � the noble child! ??' },
@@ -881,14 +881,11 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
           {/* India Map Container with Region Badges */}
           <div style={{
             position: 'relative',
-            width: '860px',
-            aspectRatio: '1 / 1',
-            margin: '70px auto 0',
+            width: '900px',
+            height: '980px',
+            margin: '120px auto 0',
             maxWidth: '90vw',
             overflow: 'visible',
-            background: '#A9D3E3',
-            borderRadius: '28px',
-            boxShadow: '0 14px 30px rgba(0,0,0,0.15)',
           }}>
             {/* Map */}
             <img
@@ -896,10 +893,10 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
               alt="India Map"
               style={{
                 position: 'absolute',
-                inset: '36px',
-                width: 'calc(100% - 72px)',
-                height: 'calc(100% - 72px)',
-                objectFit: 'contain',
+                inset: 0,
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
                 display: 'block',
               }}
             />
@@ -928,10 +925,10 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
                   transition: 'all 0.2s ease',
                 }}
               >
-                <img src={region.icon} alt={region.label} style={{ width: '36px', height: '36px', objectFit: 'contain', margin: '0 auto 6px', display: 'block' }} />
+                <img src={region.icon} alt={region.label} style={{ width: '46px', height: '46px', objectFit: 'contain', margin: '0 auto 8px', display: 'block' }} />
                 <div style={{
                   fontFamily: "'Baloo 2', cursive",
-                  fontSize: '11px',
+                  fontSize: '13px',
                   fontWeight: 700,
                   color: '#5D2E0F',
                   lineHeight: '1.2',
@@ -1035,63 +1032,135 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
               opacity: isChildHomeContinueEnabled ? 1 : 0.85,
             }}
           >
-            Continue ?
+            Continue {'\u2192'}
           </button>
         </div>
       )}
-      {/* Language Phase */}
+      {/* Language Phase — Language Guess Mini-Game */}
       {step === STEPS.LANGUAGE && (
-        <div style={{ paddingTop: '40px', paddingBottom: '40px' }}>
+        <div style={{ paddingTop: '60px', paddingBottom: '80px', minHeight: '100vh' }}>
           <StoryProgressHeader discoveries={selectedLanguages} isChildMode={false} />
-          {langGuessPhase === 'guessing' && (
-            <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-              <audio src="/audio/sanskrit-vakratunda.mp3" controls style={{ marginTop: '20px' }} />
-            </div>
-          )}
+
+          {/* Play Button */}
+          <div style={{ textAlign: 'center', marginTop: '120px', marginBottom: '80px' }}>
+            <button
+              onClick={() => {
+                setLangGuessPhase('revealed');
+              }}
+              disabled={langGuessPhase === 'revealed'}
+              style={{
+                width: '160px',
+                height: '160px',
+                borderRadius: '50%',
+                backgroundColor: '#FF8A2B',
+                border: 'none',
+                cursor: langGuessPhase === 'guessing' ? 'pointer' : 'not-allowed',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '70px',
+                boxShadow: '0 8px 24px rgba(255, 138, 43, 0.4)',
+                transition: 'all 0.2s',
+                margin: '0 auto',
+                animation: langGuessPhase === 'guessing' ? 'pulse 1.5s ease-in-out infinite' : 'none',
+              }}
+            >
+              ▶️
+            </button>
+          </div>
+
+          {/* Language Cards Grid - 2x2 */}
           {langGuessPhase === 'revealed' && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '15px', maxWidth: '800px', margin: '0 auto' }}>
-              {LANGUAGES.map((lang) => (
+            <div style={{
+              maxWidth: '900px',
+              margin: '0 auto',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: '48px',
+              padding: '0 24px',
+            }}>
+              {[
+                { id: 'hindi', label: 'Hindi', script: 'हिंदी', icon: '🪔', color: '#FF9933' },
+                { id: 'tamil', label: 'Tamil', script: 'தமிழ்', icon: '🏛️', color: '#E91E63' },
+                { id: 'sanskrit', label: 'Sanskrit', script: 'संस्कृत', icon: '📜', color: '#FFD700' },
+                { id: 'telugu', label: 'Telugu', script: 'తెలుగు', icon: '🎭', color: '#9C27B0' },
+              ].map((lang) => (
                 <button
                   key={lang.id}
                   onClick={() => toggleLanguage(lang)}
                   style={{
-                    padding: '16px',
-                    borderRadius: '12px',
-                    border: selectedLanguages.find(l => l.id === lang.id) ? `3px solid ${lang.color}` : '2px solid #ccc',
-                    backgroundColor: selectedLanguages.find(l => l.id === lang.id) ? lang.color + '20' : '#fff',
+                    width: '100%',
+                    minHeight: '280px',
+                    padding: '28px',
+                    borderRadius: '28px',
+                    border: selectedLanguages.find(l => l.id === lang.id) ? `4px solid #FFD76A` : '3px solid #E0E0E0',
+                    backgroundColor: selectedLanguages.find(l => l.id === lang.id) ? '#FFFBE9' : '#FFFFFF',
                     cursor: 'pointer',
-                    fontSize: '14px',
-                    fontFamily: "'Baloo 2', cursive",
-                    fontWeight: 700,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '16px',
+                    transition: 'all 0.2s',
+                    boxShadow: selectedLanguages.find(l => l.id === lang.id)
+                      ? '0 8px 24px rgba(255, 215, 106, 0.3)'
+                      : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    transform: selectedLanguages.find(l => l.id === lang.id) ? 'scale(1.05)' : 'scale(1)',
                   }}
                 >
-                  {lang.script}
-                  <div style={{ fontSize: '12px', marginTop: '4px' }}>{lang.label}</div>
+                  <div style={{ fontSize: '80px' }}>{lang.icon}</div>
+                  <div style={{
+                    fontFamily: "'Baloo 2', cursive",
+                    fontSize: '28px',
+                    fontWeight: 700,
+                    color: '#654321',
+                  }}>
+                    {lang.label}
+                  </div>
+                  <div style={{
+                    fontFamily: "'Nunito', sans-serif",
+                    fontSize: '20px',
+                    color: '#8B6914',
+                  }}>
+                    {lang.script}
+                  </div>
                 </button>
               ))}
             </div>
           )}
+
+          {/* Continue Button */}
           {selectedLanguages.length > 0 && langGuessPhase === 'revealed' && (
             <button
               onClick={() => setStep(STEPS.FESTIVALS)}
               style={{
-                marginTop: '40px',
+                marginTop: '80px',
                 display: 'block',
-                margin: '40px auto 0',
-                padding: '16px 32px',
+                margin: '80px auto 0',
+                padding: '18px 48px',
                 backgroundColor: '#FF9933',
                 color: '#fff',
                 border: 'none',
-                borderRadius: '12px',
-                fontSize: '18px',
+                borderRadius: '16px',
+                fontSize: '20px',
                 fontFamily: "'Baloo 2', cursive",
                 fontWeight: 700,
                 cursor: 'pointer',
+                boxShadow: '0 6px 16px rgba(255, 153, 51, 0.3)',
               }}
             >
               Next: Festivals 🎉
             </button>
           )}
+
+          {/* Pulse Animation */}
+          <style>{`
+            @keyframes pulse {
+              0% { transform: scale(1); }
+              50% { transform: scale(1.08); }
+              100% { transform: scale(1); }
+            }
+          `}</style>
         </div>
       )}
 
