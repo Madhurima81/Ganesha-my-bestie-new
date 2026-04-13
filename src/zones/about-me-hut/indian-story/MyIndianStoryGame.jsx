@@ -750,17 +750,20 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
               }
             `}</style>
 
-            {/* Ganesha in center of map */}
-            <div style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              zIndex: 3,
-              pointerEvents: 'none',
-            }}>
-              <img src={babyGaneshaImg} alt="Ganesha" style={{ width: '200px', height: 'auto' }} />
-            </div>
+            {/* Ganesha appears only after all locations discovered */}
+            {showCelebration && (
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                zIndex: 3,
+                pointerEvents: 'none',
+                animation: 'popIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              }}>
+                <img src={babyGaneshaImg} alt="Ganesha" style={{ width: '200px', height: 'auto' }} />
+              </div>
+            )}
 
             {/* Draggable Magnifying Glass using FreeDraggableItem */}
             <FreeDraggableItem
@@ -803,7 +806,21 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
               color: '#654321',
               lineHeight: '1.6',
             }}>
-              <div style={{ fontSize: '32px', marginBottom: '12px' }}>🐘</div>
+              <div style={{ marginBottom: '12px' }}>
+                {activeSpotFact.icon ? (
+                  <img
+                    src={activeSpotFact.icon}
+                    alt={activeSpotFact.name}
+                    style={{ width: '64px', height: '64px', objectFit: 'contain', margin: '0 auto', display: 'block' }}
+                  />
+                ) : (
+                  <img
+                    src={babyGaneshaImg}
+                    alt="Ganesha"
+                    style={{ width: '64px', height: '64px', objectFit: 'contain', margin: '0 auto', display: 'block' }}
+                  />
+                )}
+              </div>
               <div>{activeSpotFact.fact}</div>
             </div>
           )}
@@ -942,7 +959,7 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
                 transition: 'all 0.2s ease',
               }}
             >
-              🌍 Elsewhere
+              Elsewhere
             </button>
           </div>
 
