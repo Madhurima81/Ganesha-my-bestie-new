@@ -1166,64 +1166,74 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
 
       {/* Festivals Phase */}
       {step === STEPS.FESTIVALS && (
-        <div style={{ paddingTop: '40px', paddingBottom: '40px' }}>
+        <div style={{ paddingTop: '80px', paddingBottom: '80px' }}>
           <StoryProgressHeader discoveries={selectedFestivals} isChildMode={false} />
           {guessPhase === 'revealed' && (
-            <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '24px', fontWeight: 900, color: '#654321', textAlign: 'center', marginBottom: '20px' }}>
+            <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 24px' }}>
+              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '36px', fontWeight: 900, color: '#654321', textAlign: 'center', marginBottom: '48px', marginTop: '40px' }}>
                 Popular Festivals
               </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '40px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '40px', marginBottom: '80px' }}>
                 {COMMON_FESTIVALS.filter(Boolean).map((fest) => (
                   <button
                     key={fest.id}
                     onClick={() => toggleFestival(fest)}
                     style={{
-                      padding: '20px',
-                      borderRadius: '16px',
-                      border: selectedFestivals.find(f => f.id === fest.id) ? '3px solid #FFD700' : '2px solid #ddd',
-                      backgroundColor: selectedFestivals.find(f => f.id === fest.id) ? '#FFD70030' : '#fff',
+                      padding: '28px',
+                      borderRadius: '24px',
+                      border: selectedFestivals.find(f => f.id === fest.id) ? '4px solid #FFD700' : '3px solid #E0E0E0',
+                      backgroundColor: selectedFestivals.find(f => f.id === fest.id) ? '#FFFBE9' : '#FFFFFF',
                       cursor: 'pointer',
-                      fontSize: '64px',
-                      minHeight: '140px',
+                      fontSize: '88px',
+                      minHeight: '220px',
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '8px',
+                      gap: '16px',
+                      transition: 'all 0.2s',
+                      boxShadow: selectedFestivals.find(f => f.id === fest.id)
+                        ? '0 8px 24px rgba(255, 215, 0, 0.3)'
+                        : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                      transform: selectedFestivals.find(f => f.id === fest.id) ? 'scale(1.05)' : 'scale(1)',
                     }}
                   >
                     {fest.emoji}
-                    <div style={{ fontSize: '14px', fontFamily: "'Nunito', sans-serif", color: '#666' }}>{fest.label}</div>
+                    <div style={{ fontSize: '20px', fontFamily: "'Baloo 2', cursive", fontWeight: 700, color: '#654321' }}>{fest.label}</div>
                   </button>
                 ))}
               </div>
 
-              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '24px', fontWeight: 900, color: '#654321', textAlign: 'center', marginBottom: '20px' }}>
+              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '36px', fontWeight: 900, color: '#654321', textAlign: 'center', marginBottom: '48px' }}>
                 More Festivals
               </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '40px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '40px', marginBottom: '80px' }}>
                 {OTHER_FESTIVALS.filter(Boolean).map((fest) => (
                   <button
                     key={fest.id}
                     onClick={() => toggleFestival(fest)}
                     style={{
-                      padding: '20px',
-                      borderRadius: '16px',
-                      border: selectedFestivals.find(f => f.id === fest.id) ? '3px solid #FFD700' : '2px solid #ddd',
-                      backgroundColor: selectedFestivals.find(f => f.id === fest.id) ? '#FFD70030' : '#fff',
+                      padding: '28px',
+                      borderRadius: '24px',
+                      border: selectedFestivals.find(f => f.id === fest.id) ? '4px solid #FFD700' : '3px solid #E0E0E0',
+                      backgroundColor: selectedFestivals.find(f => f.id === fest.id) ? '#FFFBE9' : '#FFFFFF',
                       cursor: 'pointer',
-                      fontSize: '64px',
-                      minHeight: '140px',
+                      fontSize: '88px',
+                      minHeight: '220px',
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '8px',
+                      gap: '16px',
+                      transition: 'all 0.2s',
+                      boxShadow: selectedFestivals.find(f => f.id === fest.id)
+                        ? '0 8px 24px rgba(255, 215, 0, 0.3)'
+                        : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                      transform: selectedFestivals.find(f => f.id === fest.id) ? 'scale(1.05)' : 'scale(1)',
                     }}
                   >
                     {fest.emoji}
-                    <div style={{ fontSize: '14px', fontFamily: "'Nunito', sans-serif", color: '#666' }}>{fest.label}</div>
+                    <div style={{ fontSize: '20px', fontFamily: "'Baloo 2', cursive", fontWeight: 700, color: '#654321' }}>{fest.label}</div>
                   </button>
                 ))}
               </div>
@@ -1233,16 +1243,17 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
                   onClick={() => setStep(STEPS.ORIGIN_CARD)}
                   style={{
                     display: 'block',
-                    margin: '0 auto',
-                    padding: '16px 32px',
+                    margin: '80px auto 0',
+                    padding: '18px 48px',
                     backgroundColor: '#FF9933',
                     color: '#fff',
                     border: 'none',
-                    borderRadius: '12px',
-                    fontSize: '18px',
+                    borderRadius: '16px',
+                    fontSize: '20px',
                     fontFamily: "'Baloo 2', cursive",
                     fontWeight: 700,
                     cursor: 'pointer',
+                    boxShadow: '0 6px 16px rgba(255, 153, 51, 0.3)',
                   }}
                 >
                   See Our Story 🌟
