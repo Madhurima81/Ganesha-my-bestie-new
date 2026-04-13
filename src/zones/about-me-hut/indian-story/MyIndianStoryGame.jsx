@@ -61,11 +61,13 @@ import christmasIcon from './assets/images/festivals/xmas.png';
 // ─── STEP CONSTANTS ───────────────────────────────────────────────
 const STEPS = {
   OPENING: 'opening',
-  GANESHA_HOME: 'ganesha_home',
-  CHILD_HOME: 'child_home',
-  LANGUAGE: 'language',
-  FESTIVALS: 'festivals',
-  ORIGIN_CARD: 'origin_card',
+  GANESHA_HOME: 'ganesha_home',        // Phase 1
+  CHILD_HOME: 'child_home',            // Phase 2
+  LANGUAGE_GANESHA: 'language_ganesha', // Phase 3: Guess Ganesha's language
+  LANGUAGE_CHILD: 'language_child',     // Phase 4: Child chooses their languages
+  FESTIVALS_GANESHA: 'festivals_ganesha', // Phase 5: Guess Ganesha's festival
+  FESTIVALS_CHILD: 'festivals_child',   // Phase 6: Child chooses their festivals
+  ORIGIN_CARD: 'origin_card',           // Phase 7: Story origin card
   COMPLETE: 'complete',
 };
 
@@ -73,8 +75,10 @@ const STORAGE_KEY = 'gmb_indian_story';
 const RESUMABLE_STEPS = new Set([
   STEPS.GANESHA_HOME,
   STEPS.CHILD_HOME,
-  STEPS.LANGUAGE,
-  STEPS.FESTIVALS,
+  STEPS.LANGUAGE_GANESHA,
+  STEPS.LANGUAGE_CHILD,
+  STEPS.FESTIVALS_GANESHA,
+  STEPS.FESTIVALS_CHILD,
   STEPS.ORIGIN_CARD,
 ]);
 
@@ -93,14 +97,13 @@ const REGION_ICONS = {
 
 const INDIA_REGIONS = [
   { id: 'north',     label: 'North India',                   states: 'Punjab, Haryana, UP, Delhi',              emoji: '??', icon: northIcon,     color: '#7B9FD4', mapTop: '18%', mapLeft: '40%', ganeshaFact: 'In Varanasi, my name echoes across the ghats every morning! ??' },
-  { id: 'northwest', label: 'Rajasthan & Gujarat',           states: 'Rajasthan, Gujarat',                      emoji: '???', icon: westIcon,      color: '#E8A040', mapTop: '34%', mapLeft: '22%', ganeshaFact: 'In Gujarat, every home has a tiny Ganesha by the door for good luck! ??' },
-  { id: 'west',      label: 'Maharashtra',                   states: 'Mumbai, Pune, Nagpur',                    emoji: '??', icon: westIcon,      color: '#FF9933', mapTop: '52%', mapLeft: '32%', ganeshaFact: 'Mumbai\'s Siddhivinayak temple is one of my most beloved homes! ??' },
+  { id: 'west',      label: 'West India',                    states: 'Maharashtra, Goa',                        emoji: '??', icon: westIcon,      color: '#FF9933', mapTop: '52%', mapLeft: '32%', ganeshaFact: 'Mumbai\'s Siddhivinayak temple is one of my most beloved homes! ??' },
   { id: 'central',   label: 'Central India',                 states: 'MP, Chhattisgarh',                        emoji: '??', icon: centralIcon,   color: '#5BA85A', mapTop: '45%', mapLeft: '45%', ganeshaFact: 'The forests here are full of my mouse Mushika\'s friends! ??' },
   { id: 'east',      label: 'East India',                    states: 'West Bengal, Odisha, Jharkhand, Bihar',   emoji: '??', icon: eastIcon,      color: '#4A9BB5', mapTop: '48%', mapLeft: '58%', ganeshaFact: 'In Kolkata, Durga Puja celebrations are so grand � I always visit! ??' },
   { id: 'northeast', label: 'Northeast India',               states: 'Assam, Meghalaya, Manipur, & more',       emoji: '??', icon: northEastIcon, color: '#B565A7', mapTop: '30%', mapLeft: '68%', ganeshaFact: 'The tea gardens here are magical � even I stop for a cup! ?' },
   { id: 'south',     label: 'South India',                   states: 'Tamil Nadu, Kerala, Karnataka, Telangana', emoji: '??', icon: southIcon,     color: '#2E7D32', mapTop: '70%', mapLeft: '44%', ganeshaFact: 'In Tamil Nadu, I am called Pillaiyar � the noble child! ??' },
   { id: 'kailash',   label: 'Mount Kailash! ???',            states: 'Where Amma & Appa live!',                  emoji: '???', icon: desertIcon,    color: '#5C6BC0', mapTop: '8%',  mapLeft: '42%', ganeshaFact: 'KAILASH?! That\'s where my Amma and Appa live! But where does YOUR family live on Earth?', isKailash: true },
-  { id: 'other',     label: 'My family is from elsewhere',   states: 'Outside India or multiple states',         emoji: '??', icon: null,           color: '#888', mapTop: '50%', mapLeft: '50%', ganeshaFact: 'Wherever your family is from, India lives in your heart! ??' },
+  { id: 'other',     label: 'Outside India',                 states: 'Outside India or multiple states',         emoji: '??', icon: null,           color: '#888', mapTop: '50%', mapLeft: '50%', ganeshaFact: 'Wherever your family is from, India lives in your heart! ??' },
 ];
 
 const LANGUAGES = [
@@ -146,6 +149,14 @@ const OTHER_FESTIVALS = [
   FESTIVALS.find(f => f.id === 'eid'),
   FESTIVALS.find(f => f.id === 'christmas'),
 ];
+
+const FESTIVAL_GUESS_CARDS = [
+  FESTIVALS.find(f => f.id === 'pongal'),
+  FESTIVALS.find(f => f.id === 'holi'),
+  FESTIVALS.find(f => f.id === 'janmashtami'),
+  FESTIVALS.find(f => f.id === 'ganesh'),
+  FESTIVALS.find(f => f.id === 'diwali'),
+].filter(Boolean);
 
 const PHASE1_LOCATIONS = [
   { name: 'Varanasi', icon: varansiIcon, x: 49, y: 34 },
@@ -283,11 +294,13 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
   // Speak on step change
   useEffect(() => {
     const voiceMap = {
-      [STEPS.OPENING]:      { text: VOICE.opening,      moment: 'greeting'    },
-      [STEPS.GANESHA_HOME]: { text: VOICE.ganesha_home, moment: 'story'       },
-      [STEPS.LANGUAGE]:     { text: langVoice,           moment: 'default'     },
-      [STEPS.FESTIVALS]:    { text: festVoice,           moment: 'celebration' },
-      [STEPS.ORIGIN_CARD]:  { text: VOICE.origin_card,  moment: 'gratitude'   },
+      [STEPS.OPENING]:           { text: VOICE.opening,      moment: 'greeting'    },
+      [STEPS.GANESHA_HOME]:      { text: VOICE.ganesha_home, moment: 'story'       },
+      [STEPS.LANGUAGE_GANESHA]:  { text: langVoice,           moment: 'default'     },
+      [STEPS.LANGUAGE_CHILD]:    { text: langVoice,           moment: 'default'     },
+      [STEPS.FESTIVALS_GANESHA]: { text: festVoice,           moment: 'default'     },
+      [STEPS.FESTIVALS_CHILD]:   { text: festVoice,           moment: 'celebration' },
+      [STEPS.ORIGIN_CARD]:       { text: VOICE.origin_card,  moment: 'gratitude'   },
     };
     const info = voiceMap[step];
     if (info) speakIfUnmuted(info.text, { age: childAge, moment: info.moment });
@@ -339,12 +352,12 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
       setRevealedSpots([]);
       setActiveSpotFact(null);
     }
-    if (step === STEPS.FESTIVALS) {
+    if (step === STEPS.FESTIVALS_GANESHA || step === STEPS.FESTIVALS_CHILD) {
       setGuessPhase('guessing');
       setWrongGuesses(new Set());
       setShakeGuess(null);
     }
-    if (step === STEPS.LANGUAGE) {
+    if (step === STEPS.LANGUAGE_GANESHA) {
       setLangGuessPhase('guessing');
       setWrongLangGuesses(new Set());
       setShakeLang(null);
@@ -493,7 +506,7 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
       speakIfUnmuted(VOICE.language_correct, { age: childAge, moment: 'celebration' });
       setTimeout(() => {
         setLangGuessPhase('revealed');
-        setStep(STEPS.FESTIVALS);
+        setStep(STEPS.LANGUAGE_CHILD);
       }, 3000);
     } else {
       setWrongLangGuesses(prev => new Set(prev).add(guessLang.id));
@@ -506,21 +519,23 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
   // Handle festival guess
   const handleFestivalGuess = (fest) => {
     playUiTap();
+    if (wrongGuesses.has(fest.id)) return;
     const isCorrect = fest.id === 'ganesh';
 
     if (isCorrect) {
       setGuessPhase('correct');
       playChime();
-      speakIfUnmuted('YES! Ganesh Chaturthi is MY festival! 🎉', { age: childAge, moment: 'celebration' });
+      triggerSparkle('all', 1200);
+      speakIfUnmuted('Yes! Ganesh Chaturthi is my favorite festival!', { age: childAge, moment: 'celebration' });
       setTimeout(() => {
         setGuessPhase('revealed');
-        setStep(STEPS.FESTIVALS);
+        setStep(STEPS.FESTIVALS_CHILD);
       }, 3000);
     } else {
       setWrongGuesses(prev => new Set(prev).add(fest.id));
       setShakeGuess(fest.id);
-      speakIfUnmuted('Nice! That\'s a wonderful festival.', { age: childAge, moment: 'default' });
-      setTimeout(() => setShakeGuess(null), 500);
+      speakIfUnmuted(`${fest.label}! Try another one.`, { age: childAge, moment: 'default' });
+      setTimeout(() => setShakeGuess(null), 300);
     }
   };
 
@@ -580,11 +595,13 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '4px' }}>
           {[
             { label: 'Opening', value: STEPS.OPENING },
-            { label: 'Ganesha', value: STEPS.GANESHA_HOME },
-            { label: 'Region', value: STEPS.CHILD_HOME },
-            { label: 'Language', value: STEPS.LANGUAGE },
-            { label: 'Festivals', value: STEPS.FESTIVALS },
-            { label: 'Origin', value: STEPS.ORIGIN_CARD },
+            { label: 'Phase1', value: STEPS.GANESHA_HOME },
+            { label: 'Phase2', value: STEPS.CHILD_HOME },
+            { label: 'Phase3', value: STEPS.LANGUAGE_GANESHA },
+            { label: 'Phase4', value: STEPS.LANGUAGE_CHILD },
+            { label: 'Phase5', value: STEPS.FESTIVALS_GANESHA },
+            { label: 'Phase6', value: STEPS.FESTIVALS_CHILD },
+            { label: 'Phase7', value: STEPS.ORIGIN_CARD },
             { label: 'Complete', value: STEPS.COMPLETE },
           ].map((phase) => (
             <button
@@ -1000,7 +1017,7 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
               }}
             >
               <img src={otherLangIcon} alt="Elsewhere" style={{ width: '30px', height: '30px', objectFit: 'contain', margin: '0 auto 6px', display: 'block' }} />
-              Elsewhere
+              Outside India
             </button>
 
             <style>{`
@@ -1014,7 +1031,7 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
 
           {/* Continue Button */}
           <button
-            onClick={() => setStep(STEPS.LANGUAGE)}
+            onClick={() => setStep(STEPS.LANGUAGE_GANESHA)}
             disabled={!isChildHomeContinueEnabled}
             style={{
               marginTop: '140px',
@@ -1036,8 +1053,123 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
           </button>
         </div>
       )}
-      {/* Language Phase — Language Guess Mini-Game */}
-      {step === STEPS.LANGUAGE && (
+      {/* Language Ganesha Phase — 4 Language Guess Game */}
+      {step === STEPS.LANGUAGE_GANESHA && (
+        <div style={{ paddingTop: '60px', paddingBottom: '80px', minHeight: '100vh' }}>
+          {/* Play Button Section */}
+          <div style={{ textAlign: 'center', marginTop: '120px', marginBottom: '80px' }}>
+            <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '24px', fontWeight: 700, color: '#654321', marginBottom: '40px' }}>
+              Listen and guess my language!
+            </div>
+            <button
+              onClick={() => {
+                playUiTap();
+                // Play Sanskrit audio
+                const audio = new Audio('/audio/sanskrit-vakratunda.mp3');
+                audio.play().catch(e => console.log('Audio play error:', e));
+              }}
+              disabled={langGuessPhase === 'correct'}
+              style={{
+                width: '160px',
+                height: '160px',
+                borderRadius: '50%',
+                backgroundColor: '#FF8A2B',
+                border: 'none',
+                cursor: langGuessPhase === 'correct' ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 8px 24px rgba(255, 138, 43, 0.4)',
+                transition: 'all 0.2s',
+                margin: '0 auto',
+                animation: langGuessPhase !== 'correct' ? 'pulse 1.5s ease-in-out infinite' : 'none',
+                opacity: langGuessPhase === 'correct' ? 0.5 : 1,
+              }}
+            >
+              <img src={playLangIcon} alt="Play" style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
+            </button>
+          </div>
+
+          {/* Language Cards Grid — 2x2 (Always Visible) */}
+          <div style={{
+            maxWidth: '900px',
+            margin: '0 auto',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: '48px',
+            padding: '0 24px',
+            marginBottom: '80px',
+          }}>
+            {[
+              { id: 'hindi', label: 'Hindi', script: 'हिंदी', icon: hindiLangIcon, color: '#FF9933' },
+              { id: 'tamil', label: 'Tamil', script: 'தமிழ்', icon: tamilLangIcon, color: '#E91E63' },
+              { id: 'sanskrit', label: 'Sanskrit', script: 'संस्कृत', icon: sanskritLangIcon, color: '#FFD700' },
+              { id: 'telugu', label: 'Telugu', script: 'తెలుగు', icon: teluguLangIcon, color: '#9C27B0' },
+            ].map((lang) => (
+              <button
+                key={lang.id}
+                onClick={() => handleLanguageGuess(lang)}
+                disabled={wrongLangGuesses.has(lang.id) || langGuessPhase === 'correct'}
+                style={{
+                  width: '100%',
+                  minHeight: '280px',
+                  padding: '28px',
+                  borderRadius: '28px',
+                  border: shakeLang === lang.id ? `4px solid #FF6B6B` : `4px solid #E0E0E0`,
+                  backgroundColor: wrongLangGuesses.has(lang.id) ? '#F5F5F5' : '#FFFFFF',
+                  cursor: (wrongLangGuesses.has(lang.id) || langGuessPhase === 'correct') ? 'not-allowed' : 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '16px',
+                  transition: 'all 0.2s',
+                  boxShadow: shakeLang === lang.id
+                    ? '0 8px 24px rgba(255, 107, 107, 0.3)'
+                    : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                  transform: shakeLang === lang.id ? 'scale(0.95)' : 'scale(1)',
+                  opacity: wrongLangGuesses.has(lang.id) ? 0.5 : 1,
+                  animation: shakeLang === lang.id ? 'shake 0.3s ease-in-out' : 'none',
+                }}
+              >
+                <img src={lang.icon} alt={lang.label} style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
+                <div style={{
+                  fontFamily: "'Baloo 2', cursive",
+                  fontSize: '28px',
+                  fontWeight: 700,
+                  color: '#654321',
+                }}>
+                  {lang.label}
+                </div>
+                <div style={{
+                  fontFamily: "'Nunito', sans-serif",
+                  fontSize: '20px',
+                  color: '#8B6914',
+                }}>
+                  {lang.script}
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* Shake Animation */}
+          <style>{`
+            @keyframes pulse {
+              0% { transform: scale(1); }
+              50% { transform: scale(1.08); }
+              100% { transform: scale(1); }
+            }
+            @keyframes shake {
+              0%, 100% { transform: translateX(0) scale(1); }
+              25% { transform: translateX(-8px) scale(0.95); }
+              75% { transform: translateX(8px) scale(0.95); }
+            }
+          `}</style>
+        </div>
+      )}
+
+      {/* Language Child Phase — 12 Language Selection */}
+      {step === STEPS.LANGUAGE_CHILD && (
         <div style={{ paddingTop: '60px', paddingBottom: '80px', minHeight: '100vh' }}>
           <StoryProgressHeader discoveries={selectedLanguages} isChildMode={false} />
 
@@ -1172,7 +1304,7 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
             {/* Continue Button */}
             {selectedLanguages.length > 0 && (
               <button
-                onClick={() => setStep(STEPS.FESTIVALS)}
+                onClick={() => setStep(STEPS.FESTIVALS_GANESHA)}
                 style={{
                   display: 'block',
                   margin: '60px auto 0',
@@ -1195,8 +1327,117 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
         </div>
       )}
 
-      {/* Festivals Phase */}
-      {step === STEPS.FESTIVALS && (
+      {/* Festivals Ganesha Phase — 4 Festival Guess Game */}
+      {step === STEPS.FESTIVALS_GANESHA && (
+        <div style={{ paddingTop: '60px', paddingBottom: '80px', minHeight: '100vh' }}>
+          {/* Play Button Section */}
+          <div style={{ textAlign: 'center', marginTop: '120px', marginBottom: '80px' }}>
+            <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '24px', fontWeight: 700, color: '#654321', marginBottom: '40px' }}>
+              Guess my favorite festival!
+            </div>
+            <button
+              onClick={() => {
+                playUiTap();
+                setGuessPhase('revealed');
+              }}
+              disabled={guessPhase === 'revealed'}
+              style={{
+                width: '160px',
+                height: '160px',
+                borderRadius: '50%',
+                backgroundColor: '#FF8A2B',
+                border: 'none',
+                cursor: guessPhase === 'guessing' ? 'pointer' : 'not-allowed',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '70px',
+                boxShadow: '0 8px 24px rgba(255, 138, 43, 0.4)',
+                transition: 'all 0.2s',
+                margin: '0 auto',
+                animation: guessPhase === 'guessing' ? 'pulse 1.5s ease-in-out infinite' : 'none',
+                opacity: guessPhase === 'revealed' ? 0.5 : 1,
+              }}
+            >
+              ▶️
+            </button>
+          </div>
+
+          {/* Festival Cards Grid — 2x2 */}
+          {guessPhase === 'revealed' && (
+            <div style={{
+              maxWidth: '900px',
+              margin: '0 auto',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: '48px',
+              padding: '0 24px',
+              marginBottom: '80px',
+            }}>
+              {[
+                { id: 'pongal', label: 'Pongal', emoji: '🌾', icon: pongalIcon },
+                { id: 'holi', label: 'Holi', emoji: '🎨', icon: holiIcon },
+                { id: 'janmashtami', label: 'Janmashtami', emoji: '🎭', icon: janmashtamiIcon },
+                { id: 'ganesh', label: 'Ganesh Chaturthi', emoji: '🎉', icon: chaturthiIcon },
+              ].map((fest) => (
+                <button
+                  key={fest.id}
+                  onClick={() => handleFestivalGuess(fest)}
+                  disabled={wrongGuesses.has(fest.id)}
+                  style={{
+                    width: '100%',
+                    minHeight: '280px',
+                    padding: '28px',
+                    borderRadius: '28px',
+                    border: shakeGuess === fest.id ? `4px solid #FF6B6B` : `4px solid #E0E0E0`,
+                    backgroundColor: wrongGuesses.has(fest.id) ? '#F5F5F5' : '#FFFFFF',
+                    cursor: wrongGuesses.has(fest.id) ? 'not-allowed' : 'pointer',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '16px',
+                    transition: 'all 0.2s',
+                    boxShadow: shakeGuess === fest.id
+                      ? '0 8px 24px rgba(255, 107, 107, 0.3)'
+                      : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    transform: shakeGuess === fest.id ? 'scale(0.95)' : 'scale(1)',
+                    opacity: wrongGuesses.has(fest.id) ? 0.5 : 1,
+                    animation: shakeGuess === fest.id ? 'shake 0.3s ease-in-out' : 'none',
+                  }}
+                >
+                  <img src={fest.icon} alt={fest.label} style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
+                  <div style={{
+                    fontFamily: "'Baloo 2', cursive",
+                    fontSize: '28px',
+                    fontWeight: 700,
+                    color: '#654321',
+                  }}>
+                    {fest.label}
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Shake Animation */}
+          <style>{`
+            @keyframes pulse {
+              0% { transform: scale(1); }
+              50% { transform: scale(1.08); }
+              100% { transform: scale(1); }
+            }
+            @keyframes shake {
+              0%, 100% { transform: translateX(0) scale(1); }
+              25% { transform: translateX(-8px) scale(0.95); }
+              75% { transform: translateX(8px) scale(0.95); }
+            }
+          `}</style>
+        </div>
+      )}
+
+      {/* Festivals Child Phase — Festival Selection */}
+      {step === STEPS.FESTIVALS_CHILD && (
         <div style={{ paddingTop: '80px', paddingBottom: '80px' }}>
           <StoryProgressHeader discoveries={selectedFestivals} isChildMode={false} />
           {guessPhase === 'revealed' && (
@@ -1636,3 +1877,4 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
     </div>
   );
 }
+
