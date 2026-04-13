@@ -1064,9 +1064,8 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
             <button
               onClick={() => {
                 playUiTap();
-                // Play Sanskrit audio
-                const audio = new Audio('/audio/sanskrit-vakratunda.mp3');
-                audio.play().catch(e => console.log('Audio play error:', e));
+                // Speak Sanskrit mantra using Ganesha voice
+                speakIfUnmuted('Vakratunda Mahakaya', { age: childAge, moment: 'default' });
               }}
               disabled={langGuessPhase === 'correct'}
               style={{
