@@ -863,7 +863,7 @@ const SymbolMountainSceneContent = ({
                   profileName={profileName}
                   initialDiscoveredInstruments={sceneState.discoveredInstruments || {}}
                   initialFoundInstruments={sceneState.foundInstruments || []}
-                  isReload={isAudioOn && sceneState.showEyesTelescopeGame}
+                  isReload={isReload && sceneState.showEyesTelescopeGame}
                   onInstrumentFound={(instrumentType, allFound, discovered) => {
                     resetHintCadence();
                     playSparkle();

@@ -45,7 +45,7 @@ static ZONES = {
     id: 5,
     name: 'About Me Hut',
     icon: '🏡',
-scenes: ['family-tree', 'name-birthday', 'favorite-food', 'dreams-wishes']
+scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
   }
   // ✅ REMOVE: All the placeholder zones (ocean-depths, sky-kingdom, etc.)
 };
