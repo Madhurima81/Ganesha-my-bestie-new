@@ -96,9 +96,9 @@ const INDIA_REGIONS = [
   { id: 'northwest', label: 'Rajasthan & Gujarat',           states: 'Rajasthan, Gujarat',                      emoji: '???', icon: westIcon,      color: '#E8A040', mapTop: '36%', mapLeft: '24%', ganeshaFact: 'In Gujarat, every home has a tiny Ganesha by the door for good luck! ??' },
   { id: 'west',      label: 'Maharashtra',                   states: 'Mumbai, Pune, Nagpur',                    emoji: '??', icon: westIcon,      color: '#FF9933', mapTop: '52%', mapLeft: '29%', ganeshaFact: 'Mumbai\'s Siddhivinayak temple is one of my most beloved homes! ??' },
   { id: 'central',   label: 'Madhya Pradesh',                states: 'MP, Chhattisgarh',                        emoji: '??', icon: centralIcon,   color: '#5BA85A', mapTop: '45%', mapLeft: '43%', ganeshaFact: 'The forests here are full of my mouse Mushika\'s friends! ??' },
-  { id: 'east',      label: 'East India',                    states: 'West Bengal, Odisha, Jharkhand, Bihar',   emoji: '??', icon: eastIcon,      color: '#4A9BB5', mapTop: '48%', mapLeft: '56%', ganeshaFact: 'In Kolkata, Durga Puja celebrations are so grand — I always visit! ??' },
-  { id: 'northeast', label: 'Northeast India',               states: 'Assam, Meghalaya, Manipur, & more',       emoji: '??', icon: northEastIcon, color: '#B565A7', mapTop: '33%', mapLeft: '63%', ganeshaFact: 'The tea gardens here are magical — even I stop for a cup! ?' },
-  { id: 'south',     label: 'South India',                   states: 'Tamil Nadu, Kerala, Karnataka, Telangana', emoji: '??', icon: southIcon,     color: '#2E7D32', mapTop: '69%', mapLeft: '42%', ganeshaFact: 'In Tamil Nadu, I am called Pillaiyar — the noble child! ??' },
+  { id: 'east',      label: 'East India',                    states: 'West Bengal, Odisha, Jharkhand, Bihar',   emoji: '??', icon: eastIcon,      color: '#4A9BB5', mapTop: '48%', mapLeft: '56%', ganeshaFact: 'In Kolkata, Durga Puja celebrations are so grand ï¿½ I always visit! ??' },
+  { id: 'northeast', label: 'Northeast India',               states: 'Assam, Meghalaya, Manipur, & more',       emoji: '??', icon: northEastIcon, color: '#B565A7', mapTop: '33%', mapLeft: '63%', ganeshaFact: 'The tea gardens here are magical ï¿½ even I stop for a cup! ?' },
+  { id: 'south',     label: 'South India',                   states: 'Tamil Nadu, Kerala, Karnataka, Telangana', emoji: '??', icon: southIcon,     color: '#2E7D32', mapTop: '69%', mapLeft: '42%', ganeshaFact: 'In Tamil Nadu, I am called Pillaiyar ï¿½ the noble child! ??' },
   { id: 'kailash',   label: 'Mount Kailash! ???',            states: 'Where Amma & Appa live!',                  emoji: '???', icon: desertIcon,    color: '#5C6BC0', mapTop: '8%',  mapLeft: '42%', ganeshaFact: 'KAILASH?! That\'s where my Amma and Appa live! But where does YOUR family live on Earth?', isKailash: true },
   { id: 'other',     label: 'My family is from elsewhere',   states: 'Outside India or multiple states',         emoji: '??', icon: null,           color: '#888', mapTop: '50%', mapLeft: '50%', ganeshaFact: 'Wherever your family is from, India lives in your heart! ??' },
 ];
@@ -165,7 +165,7 @@ const HEART_POSITIONS = [
 const GANESHA_SPOTS = [
   { name: 'Varanasi Ghats', icon: varansiIcon, fact: 'In Varanasi, my name echoes across the ghats every morning! ??' },
   { name: 'Mumbai Temple', icon: mumbaiIcon, fact: 'Siddhivinayak temple in Mumbai is one of my most beloved homes! ??' },
-  { name: 'Tamil Nadu Shrine', icon: tamilNaduIcon, fact: 'In Tamil Nadu, I am called Pillaiyar — the noble child! ??' },
+  { name: 'Tamil Nadu Shrine', icon: tamilNaduIcon, fact: 'In Tamil Nadu, I am called Pillaiyar ï¿½ the noble child! ??' },
   { name: 'Hampi Ruins', icon: hampiIcon, fact: 'Hampi\'s ancient temples are full of my blessings! ?' },
 ];
 
@@ -645,7 +645,10 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
       {/* Ganesha Home Phase */}
       {step === STEPS.GANESHA_HOME && (
         <div style={{ minHeight: '100vh', paddingTop: '40px', paddingBottom: '40px' }}>
-          <StoryProgressHeader discoveries={discoveredLocations.length > 0 ? PHASE1_LOCATIONS.slice(0, discoveredLocations.length) : []} isChildMode={false} />
+          <StoryProgressHeader
+            discoveries={discoveredLocations.length > 0 ? PHASE1_LOCATIONS.slice(0, discoveredLocations.length).map(loc => ({ ...loc, image: loc.icon })) : []}
+            isChildMode={false}
+          />
 
           {/* Progress indicator */}
           <div style={{ textAlign: 'center', marginBottom: '20px', fontFamily: "'Baloo 2', cursive", fontSize: '18px', fontWeight: 700, color: '#654321' }}>
