@@ -92,13 +92,13 @@ const REGION_ICONS = {
 };
 
 const INDIA_REGIONS = [
-  { id: 'north',     label: 'North India',                   states: 'Punjab, Haryana, UP, Delhi',              emoji: '??', icon: northIcon,     color: '#7B9FD4', mapTop: '24%', mapLeft: '41%', ganeshaFact: 'In Varanasi, my name echoes across the ghats every morning! ??' },
-  { id: 'northwest', label: 'Rajasthan & Gujarat',           states: 'Rajasthan, Gujarat',                      emoji: '???', icon: westIcon,      color: '#E8A040', mapTop: '36%', mapLeft: '24%', ganeshaFact: 'In Gujarat, every home has a tiny Ganesha by the door for good luck! ??' },
-  { id: 'west',      label: 'Maharashtra',                   states: 'Mumbai, Pune, Nagpur',                    emoji: '??', icon: westIcon,      color: '#FF9933', mapTop: '52%', mapLeft: '29%', ganeshaFact: 'Mumbai\'s Siddhivinayak temple is one of my most beloved homes! ??' },
-  { id: 'central',   label: 'Madhya Pradesh',                states: 'MP, Chhattisgarh',                        emoji: '??', icon: centralIcon,   color: '#5BA85A', mapTop: '45%', mapLeft: '43%', ganeshaFact: 'The forests here are full of my mouse Mushika\'s friends! ??' },
-  { id: 'east',      label: 'East India',                    states: 'West Bengal, Odisha, Jharkhand, Bihar',   emoji: '??', icon: eastIcon,      color: '#4A9BB5', mapTop: '48%', mapLeft: '56%', ganeshaFact: 'In Kolkata, Durga Puja celebrations are so grand � I always visit! ??' },
-  { id: 'northeast', label: 'Northeast India',               states: 'Assam, Meghalaya, Manipur, & more',       emoji: '??', icon: northEastIcon, color: '#B565A7', mapTop: '33%', mapLeft: '63%', ganeshaFact: 'The tea gardens here are magical � even I stop for a cup! ?' },
-  { id: 'south',     label: 'South India',                   states: 'Tamil Nadu, Kerala, Karnataka, Telangana', emoji: '??', icon: southIcon,     color: '#2E7D32', mapTop: '69%', mapLeft: '42%', ganeshaFact: 'In Tamil Nadu, I am called Pillaiyar � the noble child! ??' },
+  { id: 'north',     label: 'North India',                   states: 'Punjab, Haryana, UP, Delhi',              emoji: '??', icon: northIcon,     color: '#7B9FD4', mapTop: '18%', mapLeft: '40%', ganeshaFact: 'In Varanasi, my name echoes across the ghats every morning! ??' },
+  { id: 'northwest', label: 'Rajasthan & Gujarat',           states: 'Rajasthan, Gujarat',                      emoji: '???', icon: westIcon,      color: '#E8A040', mapTop: '34%', mapLeft: '22%', ganeshaFact: 'In Gujarat, every home has a tiny Ganesha by the door for good luck! ??' },
+  { id: 'west',      label: 'Maharashtra',                   states: 'Mumbai, Pune, Nagpur',                    emoji: '??', icon: westIcon,      color: '#FF9933', mapTop: '52%', mapLeft: '32%', ganeshaFact: 'Mumbai\'s Siddhivinayak temple is one of my most beloved homes! ??' },
+  { id: 'central',   label: 'Madhya Pradesh',                states: 'MP, Chhattisgarh',                        emoji: '??', icon: centralIcon,   color: '#5BA85A', mapTop: '45%', mapLeft: '45%', ganeshaFact: 'The forests here are full of my mouse Mushika\'s friends! ??' },
+  { id: 'east',      label: 'East India',                    states: 'West Bengal, Odisha, Jharkhand, Bihar',   emoji: '??', icon: eastIcon,      color: '#4A9BB5', mapTop: '48%', mapLeft: '58%', ganeshaFact: 'In Kolkata, Durga Puja celebrations are so grand � I always visit! ??' },
+  { id: 'northeast', label: 'Northeast India',               states: 'Assam, Meghalaya, Manipur, & more',       emoji: '??', icon: northEastIcon, color: '#B565A7', mapTop: '30%', mapLeft: '68%', ganeshaFact: 'The tea gardens here are magical � even I stop for a cup! ?' },
+  { id: 'south',     label: 'South India',                   states: 'Tamil Nadu, Kerala, Karnataka, Telangana', emoji: '??', icon: southIcon,     color: '#2E7D32', mapTop: '70%', mapLeft: '44%', ganeshaFact: 'In Tamil Nadu, I am called Pillaiyar � the noble child! ??' },
   { id: 'kailash',   label: 'Mount Kailash! ???',            states: 'Where Amma & Appa live!',                  emoji: '???', icon: desertIcon,    color: '#5C6BC0', mapTop: '8%',  mapLeft: '42%', ganeshaFact: 'KAILASH?! That\'s where my Amma and Appa live! But where does YOUR family live on Earth?', isKailash: true },
   { id: 'other',     label: 'My family is from elsewhere',   states: 'Outside India or multiple states',         emoji: '??', icon: null,           color: '#888', mapTop: '50%', mapLeft: '50%', ganeshaFact: 'Wherever your family is from, India lives in your heart! ??' },
 ];
@@ -181,6 +181,7 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
   const [mglassPosition, setMglassPosition] = useState({ top: '30%', left: '20%' });
   const [showCelebration, setShowCelebration] = useState(false);
   const [showPhase1Sparkle, setShowPhase1Sparkle] = useState(null);
+  const [isChildHomeContinueEnabled, setIsChildHomeContinueEnabled] = useState(false);
 
   // Language phase state
   const [langGuessPhase, setLangGuessPhase] = useState('guessing');
@@ -208,10 +209,20 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
   const discoveredRef = useRef(new Set());
   const miniGestureTimerRef = useRef(null);
   const sparkleCancelRef = useRef(null);
+  const childHomeEntryVoiceTimerRef = useRef(null);
+  const childHomeIdleTimerRef = useRef(null);
+  const childHomePostSelectTimerRef = useRef(null);
   const lastDiscoveryTime = useRef(0);
 
   // Stop voice on unmount
-  useEffect(() => { return () => stop(); }, []);
+  useEffect(() => {
+    return () => {
+      stop();
+      if (childHomeEntryVoiceTimerRef.current) clearTimeout(childHomeEntryVoiceTimerRef.current);
+      if (childHomeIdleTimerRef.current) clearTimeout(childHomeIdleTimerRef.current);
+      if (childHomePostSelectTimerRef.current) clearTimeout(childHomePostSelectTimerRef.current);
+    };
+  }, []);
 
   // Audio & Music Setup
   useEffect(() => {
@@ -254,7 +265,9 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
   const VOICE = {
     opening:        `Hi ${childName}! I am Ganesha — your new bestie! Let's find out where you and I both come from!`,
     ganesha_home:   `I hide in four special places across India! Drag the magnifying glass to find me! 🔍`,
-    child_home:     `Now tell me… where does your family live in India? Tap your home on the map!`,
+    child_home_entry_1: `Now tell me... where does your family live in India?`,
+    child_home_entry_2: `Tap your home on the map!`,
+    child_home_idle: `Look carefully... where is your home?`,
     language_guess:   `I speak many languages! Can you guess which language I am speaking right now?`,
     language_audio:   `Vakratunda Mahakaya Suryakoti Samaprabha!`,
     language_correct: `Yes! That is Sanskrit! The language of all mantras and shlokas!`,
@@ -272,14 +285,38 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
     const voiceMap = {
       [STEPS.OPENING]:      { text: VOICE.opening,      moment: 'greeting'    },
       [STEPS.GANESHA_HOME]: { text: VOICE.ganesha_home, moment: 'story'       },
-      [STEPS.CHILD_HOME]:   { text: VOICE.child_home,   moment: 'default'     },
       [STEPS.LANGUAGE]:     { text: langVoice,           moment: 'default'     },
       [STEPS.FESTIVALS]:    { text: festVoice,           moment: 'celebration' },
       [STEPS.ORIGIN_CARD]:  { text: VOICE.origin_card,  moment: 'gratitude'   },
     };
     const info = voiceMap[step];
     if (info) speakIfUnmuted(info.text, { age: childAge, moment: info.moment });
-  }, [step]);
+  }, [step, VOICE.opening, VOICE.ganesha_home, VOICE.origin_card, langVoice, festVoice, speakIfUnmuted, childAge]);
+
+  // Child Home entry VO sequence
+  useEffect(() => {
+    if (step !== STEPS.CHILD_HOME) return;
+    if (childHomeEntryVoiceTimerRef.current) clearTimeout(childHomeEntryVoiceTimerRef.current);
+    speakIfUnmuted(VOICE.child_home_entry_1, { age: childAge, moment: 'default' });
+    childHomeEntryVoiceTimerRef.current = setTimeout(() => {
+      speakIfUnmuted(VOICE.child_home_entry_2, { age: childAge, moment: 'default' });
+    }, 1000);
+    return () => {
+      if (childHomeEntryVoiceTimerRef.current) clearTimeout(childHomeEntryVoiceTimerRef.current);
+    };
+  }, [step, VOICE.child_home_entry_1, VOICE.child_home_entry_2, speakIfUnmuted, childAge]);
+
+  // Child Home idle hint (4s of no selection)
+  useEffect(() => {
+    if (step !== STEPS.CHILD_HOME || selectedRegion) return;
+    if (childHomeIdleTimerRef.current) clearTimeout(childHomeIdleTimerRef.current);
+    childHomeIdleTimerRef.current = setTimeout(() => {
+      speakIfUnmuted(VOICE.child_home_idle, { age: childAge, moment: 'default' });
+    }, 4000);
+    return () => {
+      if (childHomeIdleTimerRef.current) clearTimeout(childHomeIdleTimerRef.current);
+    };
+  }, [step, selectedRegion, VOICE.child_home_idle, speakIfUnmuted, childAge]);
 
   // Load saved data ONLY if coming from mid-scene resume (not fresh entry)
   useEffect(() => {
@@ -312,6 +349,10 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
       setWrongLangGuesses(new Set());
       setShakeLang(null);
       setLangWrongReaction(null);
+    }
+    if (step === STEPS.CHILD_HOME) {
+      setSelectedRegion(null);
+      setIsChildHomeContinueEnabled(false);
     }
   }, [step]);
 
@@ -401,11 +442,18 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
     playUiTap();
     triggerMiniGesture(1500);
     triggerSparkle('single', 1500);
+    if (childHomeIdleTimerRef.current) clearTimeout(childHomeIdleTimerRef.current);
+    if (childHomePostSelectTimerRef.current) clearTimeout(childHomePostSelectTimerRef.current);
     setSelectedRegion(region);
+    setIsChildHomeContinueEnabled(false);
     speakIfUnmuted(`Ah! Your family lives here!`, { age: childAge, moment: 'story' });
-    setTimeout(() => {
-      speakIfUnmuted(`That's your home! India is full of wonderful places.`, { age: childAge, moment: 'story' });
-    }, 2000);
+    childHomePostSelectTimerRef.current = setTimeout(() => {
+      speakIfUnmuted(`That's your home!`, { age: childAge, moment: 'story' });
+      childHomePostSelectTimerRef.current = setTimeout(() => {
+        speakIfUnmuted(`India is full of wonderful places.`, { age: childAge, moment: 'story' });
+        setIsChildHomeContinueEnabled(true);
+      }, 900);
+    }, 900);
     saveProgress(region, null, null);
   };
 
@@ -644,7 +692,7 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
       {step === STEPS.GANESHA_HOME && (
         <div style={{ minHeight: '100vh', paddingTop: '40px', paddingBottom: '40px' }}>
           <StoryProgressHeader
-            discoveries={discoveredLocations.length > 0 ? PHASE1_LOCATIONS.slice(0, discoveredLocations.length).map(loc => ({ ...loc, image: loc.icon })) : []}
+            discoveries={discoveredLocations.length > 0 ? discoveredLocations.map(idx => ({ ...PHASE1_LOCATIONS[idx], image: PHASE1_LOCATIONS[idx].icon })) : []}
             isChildMode={false}
           />
 
@@ -822,34 +870,6 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
               <div>{activeSpotFact.fact}</div>
             </div>
           )}
-
-          {/* Celebration */}
-          {showCelebration && (
-            <div style={{
-              marginTop: '40px',
-              textAlign: 'center',
-              animation: 'popIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
-            }}>
-              <img src={babyGaneshaImg} alt="Ganesha" style={{ width: '200px', height: 'auto', marginBottom: '20px' }} />
-              <div style={{ fontSize: '72px', marginBottom: '16px' }}>🎉</div>
-              <div style={{
-                fontFamily: "'Baloo 2', cursive",
-                fontSize: '28px',
-                fontWeight: 700,
-                color: '#FF6F00',
-              }}>
-                You found all my hiding places!
-              </div>
-              <div style={{
-                fontFamily: "'Nunito', sans-serif",
-                fontSize: '16px',
-                color: '#666',
-                marginTop: '12px',
-              }}>
-                I am everywhere in India! 🇮🇳
-              </div>
-            </div>
-          )}
         </div>
       )}
 
@@ -861,11 +881,14 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
           {/* India Map Container with Region Badges */}
           <div style={{
             position: 'relative',
-            width: '900px',
-            height: '980px',
-            margin: '120px auto 0',
+            width: '860px',
+            aspectRatio: '1 / 1',
+            margin: '70px auto 0',
             maxWidth: '90vw',
             overflow: 'visible',
+            background: '#A9D3E3',
+            borderRadius: '28px',
+            boxShadow: '0 14px 30px rgba(0,0,0,0.15)',
           }}>
             {/* Map */}
             <img
@@ -873,16 +896,16 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
               alt="India Map"
               style={{
                 position: 'absolute',
-                inset: 0,
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
+                inset: '36px',
+                width: 'calc(100% - 72px)',
+                height: 'calc(100% - 72px)',
+                objectFit: 'contain',
                 display: 'block',
               }}
             />
 
             {/* Region Badges on Map */}
-            {INDIA_REGIONS.filter(r => r.id !== 'kailash').map((region) => (
+            {INDIA_REGIONS.filter(r => r.id !== 'kailash' && r.id !== 'other').map((region) => (
               <button
                 key={region.id}
                 onClick={() => handleRegionSelect(region)}
@@ -890,19 +913,19 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
                   position: 'absolute',
                   top: region.mapTop,
                   left: region.mapLeft,
-                  transform: 'translate(-50%, -50%)',
+                  transform: selectedRegion?.id === region.id ? 'translate(-50%, -50%) scale(1.08)' : 'translate(-50%, -50%)',
                   width: '120px',
                   padding: '12px 16px',
-                  background: selectedRegion?.id === region.id ? '#FFE7A3' : '#FFFAF0',
+                  background: selectedRegion?.id === region.id ? '#FFE7A3' : '#FFFFFF',
                   border: selectedRegion?.id === region.id ? '3px solid #F4B942' : '2px solid #ccc',
                   borderRadius: '16px',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  boxShadow: selectedRegion?.id === region.id
+                    ? '0 10px 20px rgba(0,0,0,0.2), 0 0 0 5px rgba(108,195,255,0.5)'
+                    : '0 4px 12px rgba(0,0,0,0.15)',
                   cursor: 'pointer',
-                  fontSize: '20px',
                   textAlign: 'center',
                   zIndex: 5,
                   transition: 'all 0.2s ease',
-                  transform: selectedRegion?.id === region.id ? 'translate(-50%, -50%) scale(1.08)' : 'translate(-50%, -50%)',
                 }}
               >
                 <img src={region.icon} alt={region.label} style={{ width: '36px', height: '36px', objectFit: 'contain', margin: '0 auto 6px', display: 'block' }} />
@@ -918,6 +941,24 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
               </button>
             ))}
 
+            {/* Selected region highlight on map */}
+            {selectedRegion && selectedRegion.id !== 'other' && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: selectedRegion.mapTop,
+                  left: selectedRegion.mapLeft,
+                  width: '90px',
+                  height: '90px',
+                  borderRadius: '50%',
+                  background: 'radial-gradient(circle, rgba(108,195,255,0.62) 0%, rgba(108,195,255,0.18) 60%, rgba(108,195,255,0) 100%)',
+                  transform: 'translate(-50%, -50%)',
+                  pointerEvents: 'none',
+                  zIndex: 3,
+                }}
+              />
+            )}
+
             {/* House Icon on Selected Region */}
             {selectedRegion && (
               <div
@@ -928,7 +969,7 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
                   transform: 'translate(-50%, -120%)',
                   fontSize: '48px',
                   zIndex: 10,
-                  animation: 'popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                  animation: 'housePop 0.45s ease-out',
                 }}
               >
                 🏠
@@ -942,50 +983,62 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
                 position: 'absolute',
                 bottom: '-80px',
                 left: '50%',
-                transform: 'translateX(-50%)',
-                padding: '12px 24px',
-                background: selectedRegion?.id === 'other' ? '#FFE7A3' : '#FFFAF0',
+                transform: selectedRegion?.id === 'other' ? 'translateX(-50%) scale(1.08)' : 'translateX(-50%)',
+                width: '120px',
+                padding: '12px 10px',
+                background: selectedRegion?.id === 'other' ? '#FFE7A3' : '#FFFFFF',
                 border: selectedRegion?.id === 'other' ? '3px solid #F4B942' : '2px solid #ccc',
                 borderRadius: '16px',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                boxShadow: selectedRegion?.id === 'other'
+                  ? '0 10px 20px rgba(0,0,0,0.2), 0 0 0 5px rgba(108,195,255,0.5)'
+                  : '0 4px 12px rgba(0,0,0,0.15)',
                 cursor: 'pointer',
                 fontFamily: "'Baloo 2', cursive",
-                fontSize: '14px',
+                fontSize: '12px',
                 fontWeight: 700,
                 color: '#5D2E0F',
                 zIndex: 5,
                 transition: 'all 0.2s ease',
+                textAlign: 'center',
               }}
             >
+              <img src={otherLangIcon} alt="Elsewhere" style={{ width: '30px', height: '30px', objectFit: 'contain', margin: '0 auto 6px', display: 'block' }} />
               Elsewhere
             </button>
+
+            <style>{`
+              @keyframes housePop {
+                0% { transform: translate(-50%, -120%) scale(0); }
+                70% { transform: translate(-50%, -120%) scale(1.1); }
+                100% { transform: translate(-50%, -120%) scale(1); }
+              }
+            `}</style>
           </div>
 
           {/* Continue Button */}
-          {selectedRegion && (
-            <button
-              onClick={() => setStep(STEPS.LANGUAGE)}
-              style={{
-                marginTop: '140px',
-                display: 'block',
-                margin: '140px auto 0',
-                padding: '16px 32px',
-                backgroundColor: '#FF9933',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '12px',
-                fontSize: '18px',
-                fontFamily: "'Baloo 2', cursive",
-                fontWeight: 700,
-                cursor: 'pointer',
-              }}
-            >
-              Continue →
-            </button>
-          )}
+          <button
+            onClick={() => setStep(STEPS.LANGUAGE)}
+            disabled={!isChildHomeContinueEnabled}
+            style={{
+              marginTop: '140px',
+              display: 'block',
+              margin: '140px auto 0',
+              padding: '16px 32px',
+              backgroundColor: isChildHomeContinueEnabled ? '#FF9933' : '#D4D4D4',
+              color: isChildHomeContinueEnabled ? '#fff' : '#777',
+              border: 'none',
+              borderRadius: '12px',
+              fontSize: '18px',
+              fontFamily: "'Baloo 2', cursive",
+              fontWeight: 700,
+              cursor: isChildHomeContinueEnabled ? 'pointer' : 'not-allowed',
+              opacity: isChildHomeContinueEnabled ? 1 : 0.85,
+            }}
+          >
+            Continue ?
+          </button>
         </div>
       )}
-
       {/* Language Phase */}
       {step === STEPS.LANGUAGE && (
         <div style={{ paddingTop: '40px', paddingBottom: '40px' }}>
