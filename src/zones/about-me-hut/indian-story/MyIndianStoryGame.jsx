@@ -149,10 +149,10 @@ const OTHER_FESTIVALS = [
 ];
 
 const PHASE1_LOCATIONS = [
-  { name: 'Varanasi', icon: varansiIcon, x: 54, y: 25, emoji: '🕌' },
-  { name: 'Mumbai', icon: mumbaiIcon, x: 25, y: 48, emoji: '🏛️' },
-  { name: 'Tamil Nadu', icon: tamilNaduIcon, x: 50, y: 68, emoji: '🙏' },
-  { name: 'Hampi', icon: hampiIcon, x: 32, y: 52, emoji: '🏺' },
+  { name: 'Varanasi', icon: varansiIcon, x: 65, y: 20, emoji: '🕌' },
+  { name: 'Mumbai', icon: mumbaiIcon, x: 15, y: 48, emoji: '🏛️' },
+  { name: 'Tamil Nadu', icon: tamilNaduIcon, x: 52, y: 78, emoji: '🙏' },
+  { name: 'Hampi', icon: hampiIcon, x: 40, y: 63, emoji: '🏺' },
 ];
 
 const HEART_POSITIONS = [
@@ -491,6 +491,79 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
     <div className="mis-wrapper">
       <img src={bgImage} alt="Background" className="mis-background" />
 
+      {/* DEBUG: Test Controls Panel */}
+      <div style={{
+        position: 'fixed',
+        top: '16px',
+        right: '16px',
+        zIndex: 1000,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '8px',
+        background: 'rgba(0, 0, 0, 0.85)',
+        padding: '12px',
+        borderRadius: '8px',
+        maxWidth: '220px',
+      }}>
+        {/* Reset Button */}
+        <button
+          onClick={() => {
+            clearProgress();
+            setStep(STEPS.OPENING);
+            setSelectedRegion(null);
+            setSelectedLanguages([]);
+            setSelectedFestivals([]);
+            setDiscoveredLocations([]);
+            setMglassPosition({ top: '30%', left: '20%' });
+            setShowCelebration(false);
+          }}
+          style={{
+            padding: '6px 10px',
+            background: 'rgba(255, 0, 0, 0.8)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '4px',
+            fontSize: '11px',
+            fontWeight: 700,
+            cursor: 'pointer',
+            fontFamily: "'Nunito', sans-serif",
+          }}
+        >
+          🔄 Reset All
+        </button>
+
+        {/* Phase Jump Buttons */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '4px' }}>
+          {[
+            { label: 'Opening', value: STEPS.OPENING },
+            { label: 'Ganesha', value: STEPS.GANESHA_HOME },
+            { label: 'Region', value: STEPS.CHILD_HOME },
+            { label: 'Language', value: STEPS.LANGUAGE },
+            { label: 'Festivals', value: STEPS.FESTIVALS },
+            { label: 'Origin', value: STEPS.ORIGIN_CARD },
+            { label: 'Complete', value: STEPS.COMPLETE },
+          ].map((phase) => (
+            <button
+              key={phase.value}
+              onClick={() => setStep(phase.value)}
+              style={{
+                padding: '4px 8px',
+                background: step === phase.value ? '#4CAF50' : '#666',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '4px',
+                fontSize: '10px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                fontFamily: "'Nunito', sans-serif",
+              }}
+            >
+              {phase.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Sparkles */}
       {sparkleState.type && (
         <SparkleAnimation
@@ -756,34 +829,118 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
       {step === STEPS.CHILD_HOME && (
         <div style={{ paddingTop: '40px', paddingBottom: '40px' }}>
           <StoryProgressHeader discoveries={selectedRegion ? [selectedRegion] : []} isChildMode={false} />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', maxWidth: '600px', margin: '0 auto' }}>
-            {INDIA_REGIONS.map((region) => (
+
+          {/* India Map Container with Region Badges */}
+          <div style={{
+            position: 'relative',
+            width: '900px',
+            height: '980px',
+            margin: '120px auto 0',
+            maxWidth: '90vw',
+            overflow: 'visible',
+          }}>
+            {/* Map */}
+            <img
+              src={indiaMapImage}
+              alt="India Map"
+              style={{
+                position: 'absolute',
+                inset: 0,
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                display: 'block',
+              }}
+            />
+
+            {/* Region Badges on Map */}
+            {INDIA_REGIONS.filter(r => r.id !== 'kailash').map((region) => (
               <button
                 key={region.id}
                 onClick={() => handleRegionSelect(region)}
                 style={{
-                  padding: '20px',
+                  position: 'absolute',
+                  top: region.mapTop,
+                  left: region.mapLeft,
+                  transform: 'translate(-50%, -50%)',
+                  width: '120px',
+                  padding: '12px 16px',
+                  background: selectedRegion?.id === region.id ? '#FFE7A3' : '#FFFAF0',
+                  border: selectedRegion?.id === region.id ? '3px solid #F4B942' : '2px solid #ccc',
                   borderRadius: '16px',
-                  border: selectedRegion?.id === region.id ? `3px solid ${region.color}` : '2px solid #ccc',
-                  backgroundColor: selectedRegion?.id === region.id ? region.color + '20' : '#fff',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                   cursor: 'pointer',
-                  fontSize: '18px',
-                  fontFamily: "'Baloo 2', cursive",
-                  fontWeight: 700,
+                  fontSize: '20px',
+                  textAlign: 'center',
+                  zIndex: 5,
+                  transition: 'all 0.2s ease',
+                  transform: selectedRegion?.id === region.id ? 'translate(-50%, -50%) scale(1.08)' : 'translate(-50%, -50%)',
                 }}
               >
-                {region.emoji}
-                <div style={{ fontSize: '14px', marginTop: '8px' }}>{region.label}</div>
+                <div style={{ fontSize: '20px', marginBottom: '6px' }}>{region.emoji}</div>
+                <div style={{
+                  fontFamily: "'Baloo 2', cursive",
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  color: '#5D2E0F',
+                  lineHeight: '1.2',
+                }}>
+                  {region.label}
+                </div>
               </button>
             ))}
+
+            {/* House Icon on Selected Region */}
+            {selectedRegion && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: selectedRegion.mapTop,
+                  left: selectedRegion.mapLeft,
+                  transform: 'translate(-50%, -120%)',
+                  fontSize: '48px',
+                  zIndex: 10,
+                  animation: 'popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                }}
+              >
+                🏠
+              </div>
+            )}
+
+            {/* Elsewhere Option - Below Map */}
+            <button
+              onClick={() => handleRegionSelect(INDIA_REGIONS.find(r => r.id === 'other'))}
+              style={{
+                position: 'absolute',
+                bottom: '-80px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                padding: '12px 24px',
+                background: selectedRegion?.id === 'other' ? '#FFE7A3' : '#FFFAF0',
+                border: selectedRegion?.id === 'other' ? '3px solid #F4B942' : '2px solid #ccc',
+                borderRadius: '16px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                cursor: 'pointer',
+                fontFamily: "'Baloo 2', cursive",
+                fontSize: '14px',
+                fontWeight: 700,
+                color: '#5D2E0F',
+                zIndex: 5,
+                transition: 'all 0.2s ease',
+              }}
+            >
+              🌍 Elsewhere
+            </button>
           </div>
+
+          {/* Continue Button */}
           {selectedRegion && (
             <button
               onClick={() => setStep(STEPS.LANGUAGE)}
               style={{
-                marginTop: '40px',
+                marginTop: '140px',
                 display: 'block',
-                margin: '40px auto 0',
+                margin: '140px auto 0',
                 padding: '16px 32px',
                 backgroundColor: '#FF9933',
                 color: '#fff',
@@ -795,7 +952,7 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
                 cursor: 'pointer',
               }}
             >
-              Next: Languages 🗣️
+              Continue →
             </button>
           )}
         </div>

@@ -84,7 +84,19 @@
       "Bash(curl -s http://127.0.0.1:37777/api/status)",
       "Bash(curl -s http://127.0.0.1:37777/api/health)",
       "WebSearch",
-      "WebFetch(domain:www.youtube.com)"
+      "WebFetch(domain:www.youtube.com)",
+      "Skill(claude-api)",
+      "Skill(claude-api:*)",
+      "Bash(powershell -command \"Select-String -Path ''C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\src\\\\zones\\\\symbol-mountain\\\\scenes\\\\modak\\\\NewModakSceneV7.jsx'' -Pattern ''triggerMiniGesture''\")",
+      "Bash(powershell -command \"Get-ChildItem ''C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\src\\\\zones\\\\symbol-mountain\\\\scenes\\\\modak\\\\'' | Sort-Object LastWriteTime -Descending | Select-Object Name, LastWriteTime | Format-Table -AutoSize\")",
+      "Bash(powershell -command \"Select-String -Path ''C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\src\\\\zones\\\\symbol-mountain\\\\scenes\\\\modak\\\\NewModakSceneV7.backup-2026-03-14.jsx'' -Pattern ''MINI_THUMBS|miniGesture|triggerMiniGesture|mini-ganesha-cue'' | Select-Object -First 30 | Format-Table LineNumber, Line -AutoSize\")",
+      "Bash(powershell -command \"Select-String -Path ''C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\src\\\\zones\\\\symbol-mountain\\\\scenes\\\\modak\\\\NewModakSceneV7 before idle hint comp.jsx'' -Pattern ''triggerMiniGesture\\\\\\('' | Format-Table LineNumber, Line -AutoSize\")",
+      "Bash(powershell -command \"Select-String -Path ''C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\src\\\\zones\\\\symbol-mountain\\\\scenes\\\\modak\\\\NewModakSceneV7.jsx'' -Pattern ''triggerMiniGesture\\\\\\('' | Format-Table LineNumber, Line -AutoSize\")",
+      "Bash(powershell -command \"Select-String -Path ''C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\src\\\\zones\\\\symbol-mountain\\\\scenes\\\\modak\\\\NewModakSceneV7.jsx'' -Pattern ''triggerMiniGesture|GaneshaGestureCue|useMiniGesture|MINI_THUMBS'' | Format-Table LineNumber, Line -AutoSize\")",
+      "Bash(grep -n \"currentView === ''''scene''''\\\\|currentView === ''''zone''''\\\\|scene-view\\\\|game-view\\\\|gameView\\\\|sceneContainer\" src/App.jsx)",
+      "Bash(grep -r \"\"\"jsx\"\"\" \"C:/Users/Madhurima Agarwal/ganesha-my-bestie/package.json\")",
+      "Bash(find 'C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\public' -type f \\\\\\(-name *.mp3 -o -name *.wav -o -name *.ogg \\\\\\))",
+      "Bash(\"C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\src\\\\zones\\\\about-me-hut\\\\family-tree\\\\Familytreegame.css\":*)"
     ]
   }
 }
