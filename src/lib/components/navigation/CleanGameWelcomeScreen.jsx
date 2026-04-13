@@ -156,7 +156,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
       { zone: 'cave-of-secrets',  scenes: ['vakratunda-mahakaya', 'suryakoti-samaprabha', 'nirvighnam-kurumedeva', 'sarvakaryeshu-sarvada', 'mantra-assembly'] },
       { zone: 'shloka-river',     scenes: ['vakratunda-grove', 'suryakoti-bank', 'nirvighnam-chant', 'sarvakaryeshu-chant', 'shloka-river-finale'] },
       { zone: 'festival-square',  scenes: ['game1', 'game2', 'game3', 'game4'] },
-      { zone: 'about-me-hut',     scenes: ['family-tree', 'name-birthday', 'favorite-food', 'dreams-wishes'] },
+      { zone: 'about-me-hut',     scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story'] },
     ];
 
     // 1. Scan temp sessions — most recently touched wins

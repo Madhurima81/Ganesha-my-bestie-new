@@ -1,0 +1,819 @@
+﻿/* ═══════════════════════════════════════════════
+   MY INDIAN STORY GAME — About Me Hut, Game 4
+   About Me Hut palette: warm brown + coral
+   Fonts: Baloo 2 (headings) · Nunito (body)
+═══════════════════════════════════════════════ */
+
+:root {
+  --hut-brown: #795548;
+  --hut-coral: #FF6B6B;
+  --hut-gold: #FFD700;
+  --hut-saffron: #FF9933;
+  --hut-cream: #FFF8E7;
+  --hut-orange: #FF5722;
+  --hut-green: #2E7D32;
+}
+
+/* ── WRAPPER ── */
+.mis-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(160deg, #FFF8E7 0%, #FFE0CC 100%);
+  font-family: 'Nunito', sans-serif;
+  padding: 16px 16px 80px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ── MUTE / REPLAY BUTTON ── */
+.mis-mute-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.85);
+  border: 2px solid rgba(121,85,72,0.2);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.mis-mute-btn:hover { background: #fff; transform: scale(1.1); }
+
+/* ── TAPPABLE GANESHA FACE ── */
+.mis-g-face-tap {
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.mis-g-face-tap:active { transform: scale(0.9); }
+.mis-g-face-tap::after {
+  content: '👆';
+  position: absolute;
+  bottom: -6px;
+  right: -6px;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+/* Show hint on first render only — CSS approach */
+/* ── BACK BUTTON — handled by BackToMapButton component ── */
+
+/* ── PROGRESS DOTS ── */
+.mis-progress {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding-top: 52px;
+  margin-bottom: 20px;
+}
+
+.mis-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(121,85,72,0.2);
+  transition: all 0.3s;
+}
+.mis-dot.active {
+  background: var(--hut-saffron);
+  width: 24px;
+  border-radius: 5px;
+}
+.mis-dot.done { background: rgba(255,153,51,0.5); }
+
+/* ── STEP CONTAINER ── */
+.mis-step {
+  max-width: 520px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: stepIn 0.35s ease;
+}
+
+@keyframes stepIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── GANESHA SPEECH ── */
+.mis-ganesha-speak {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.mis-g-face {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--hut-saffron), var(--hut-orange));
+  border: 3px solid var(--hut-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  flex-shrink: 0;
+  animation: gFaceBounce 2.5s ease-in-out infinite;
+}
+@keyframes gFaceBounce {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-5px); }
+}
+
+.mis-bubble {
+  background: #fff;
+  border: 2px solid var(--hut-saffron);
+  border-radius: 16px;
+  padding: 14px 16px;
+  font-size: 14px;
+  color: #5D2E0F;
+  line-height: 1.6;
+  flex: 1;
+  position: relative;
+}
+.mis-bubble::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 16px;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 10px solid var(--hut-saffron);
+}
+.mis-bubble-hint {
+  display: block;
+  font-size: 12px;
+  color: var(--hut-saffron);
+  margin-top: 6px;
+  font-weight: 700;
+}
+
+/* ── TAP TO DISCOVER SPOTS ── */
+.mis-spot {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: transform 0.2s;
+}
+.mis-spot:active { transform: scale(0.9); }
+
+/* Hidden state — glowing ? button */
+.mis-spot.hidden .mis-spot-question {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--hut-saffron), var(--hut-orange));
+  color: #fff;
+  font-family: 'Baloo 2', cursive;
+  font-size: 18px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 0 rgba(255,153,51,0.6);
+  animation: qPulse 1.8s ease-in-out infinite;
+}
+@keyframes qPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(255,153,51,0.6); }
+  70%  { box-shadow: 0 0 0 10px rgba(255,153,51,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255,153,51,0); }
+}
+
+/* Revealed state */
+.mis-spot.revealed {
+  opacity: 1;
+  transform: scale(1);
+  animation: spotPop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes spotPop {
+  from { transform: scale(0.3); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+.mis-spot-pulse {
+  position: absolute;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: rgba(255,153,51,0.3);
+  animation: spotPulse 1.5s ease-in-out infinite;
+}
+@keyframes spotPulse {
+  0%,100% { transform: scale(1); opacity: 0.6; }
+  50%     { transform: scale(1.8); opacity: 0; }
+}
+.mis-spot-emoji {
+  font-size: 20px;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+.mis-spot-name {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--hut-brown);
+  background: rgba(255,248,231,0.92);
+  padding: 2px 5px;
+  border-radius: 6px;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+/* Fact bubble — appears when spot tapped */
+.mis-spot-fact-bubble {
+  background: #fff;
+  border: 2px solid var(--hut-gold);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  animation: stepIn 0.25s ease;
+}
+.mis-spot-fact-emoji { font-size: 26px; flex-shrink: 0; }
+.mis-spot-fact-bubble strong {
+  font-family: 'Baloo 2', cursive;
+  font-size: 13px;
+  color: var(--hut-brown);
+  display: block;
+}
+.mis-spot-fact-bubble p {
+  font-size: 12px;
+  color: rgba(93,46,15,0.7);
+  margin: 2px 0 0;
+}
+
+/* ? hint styling in bubble */
+.mis-q-hint {
+  display: inline-block;
+  background: var(--hut-saffron);
+  color: #fff;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 20px;
+  font-weight: 800;
+  font-size: 13px;
+  margin: 0 2px;
+}
+
+/* Counter pips */
+.mis-spots-counter {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+.mis-spot-pip {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: rgba(121,85,72,0.2);
+  transition: all 0.3s;
+}
+.mis-spot-pip.found {
+  background: var(--hut-saffron);
+  box-shadow: 0 0 6px rgba(255,153,51,0.5);
+}
+
+/* ── KAILASH REACTION ── */
+.mis-reaction-bubble.kailash-reaction {
+  background: linear-gradient(135deg, #E8EAF6, #EDE7F6);
+  border-color: #7986CB;
+}
+.mis-reaction-bubble.kailash-reaction span { font-size: 28px; }
+
+/* ── MAP AREA ── */
+.mis-map-container {
+  display: flex;
+  justify-content: center;
+}
+.mis-india-map {
+  position: relative;
+  width: 240px;
+  height: 260px;
+}
+.mis-india-svg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+}
+
+/* ── REGIONS GRID ── */
+.mis-regions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.mis-region-btn {
+  background: #fff;
+  border: 2px solid rgba(121,85,72,0.2);
+  border-radius: 14px;
+  padding: 12px 10px;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: all 0.2s;
+  min-height: 72px;
+}
+.mis-region-btn:active { transform: scale(0.97); }
+.mis-region-btn.selected {
+  background: linear-gradient(135deg, var(--region-color, #FF9933) 0%, color-mix(in srgb, var(--region-color, #FF9933) 70%, white) 100%);
+  border-color: var(--region-color, #FF9933);
+  color: #fff;
+}
+.mis-region-emoji { font-size: 22px; }
+.mis-region-label {
+  font-family: 'Baloo 2', cursive;
+  font-size: 13px;
+  font-weight: 700;
+  color: #5D2E0F;
+  line-height: 1.2;
+}
+.mis-region-btn.selected .mis-region-label { color: #fff; }
+.mis-region-states {
+  font-size: 11px;
+  color: rgba(93,46,15,0.6);
+  line-height: 1.3;
+}
+.mis-region-btn.selected .mis-region-states { color: rgba(255,255,255,0.8); }
+
+/* Ganesha reaction bubble */
+.mis-reaction-bubble {
+  background: linear-gradient(135deg, #FFF3E0, #FFF8E7);
+  border: 2px solid var(--hut-saffron);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  animation: stepIn 0.3s ease;
+}
+.mis-reaction-bubble span { font-size: 24px; flex-shrink: 0; }
+.mis-reaction-bubble p { font-size: 13px; color: #5D2E0F; line-height: 1.5; margin: 0; }
+
+/* ── LANGUAGE GRID ── */
+.mis-lang-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+.mis-lang-btn {
+  background: #fff;
+  border: 2px solid rgba(121,85,72,0.15);
+  border-radius: 12px;
+  padding: 10px 6px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s;
+  min-height: 64px;
+}
+.mis-lang-btn:active { transform: scale(0.95); }
+.mis-lang-btn.selected {
+  background: color-mix(in srgb, var(--lang-color, #FF9933) 15%, white);
+  border-color: var(--lang-color, #FF9933);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--lang-color, #FF9933) 30%, transparent);
+}
+.mis-lang-script {
+  font-size: 16px;
+  font-weight: 700;
+  color: #5D2E0F;
+  line-height: 1;
+}
+.mis-lang-btn.selected .mis-lang-script { color: var(--lang-color, #FF9933); }
+.mis-lang-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(93,46,15,0.7);
+  text-align: center;
+}
+
+/* ── GUESS GRID (Step 4a) ── */
+.mis-guess-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.mis-guess-btn {
+  background: #fff;
+  border: 2px solid rgba(121,85,72,0.2);
+  border-radius: 16px;
+  padding: 16px 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+  min-height: 90px;
+}
+.mis-guess-btn:active { transform: scale(0.95); }
+.mis-guess-btn.ganesha-option {
+  border-color: rgba(255,215,0,0.4);
+  background: linear-gradient(135deg, rgba(255,215,0,0.06), rgba(255,153,51,0.06));
+}
+.mis-guess-btn.wrong {
+  opacity: 0.35;
+  background: #f5f5f5;
+  border-color: #ddd;
+  cursor: not-allowed;
+  transform: none;
+}
+.mis-guess-btn.shake { animation: guessShake 0.5s ease; }
+@keyframes guessShake {
+  0%,100% { transform: translateX(0); }
+  20%     { transform: translateX(-8px); }
+  40%     { transform: translateX(8px); }
+  60%     { transform: translateX(-6px); }
+  80%     { transform: translateX(6px); }
+}
+.mis-guess-emoji { font-size: 36px; }
+.mis-guess-label {
+  font-family: 'Baloo 2', cursive;
+  font-size: 13px;
+  font-weight: 700;
+  color: #5D2E0F;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* ── CORRECT GUESS CELEBRATION ── */
+.mis-guess-correct { align-items: center; text-align: center; padding-top: 20px; }
+.mis-correct-burst {
+  font-size: 64px;
+  animation: burstIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  margin-bottom: 8px;
+}
+@keyframes burstIn {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+.mis-chaturthi-reveal {
+  font-family: 'Baloo 2', cursive;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--hut-brown);
+  background: linear-gradient(135deg, rgba(255,215,0,0.25), rgba(255,153,51,0.2));
+  border: 2px solid var(--hut-gold);
+  border-radius: 16px;
+  padding: 12px 20px;
+  margin-top: 12px;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* ── SEMICIRCLE WHEEL (Step 4b) ── */
+.mis-wheel-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.mis-wheel-arc {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  height: 220px;
+  /* Semicircle background */
+  background: linear-gradient(180deg,
+    rgba(255,248,231,0.9) 0%,
+    rgba(255,220,150,0.3) 100%);
+  border-radius: 180px 180px 0 0;
+  border: 2px solid rgba(255,153,51,0.25);
+  border-bottom: none;
+  overflow: visible;
+}
+
+/* Season colour bands on arc — subtle backgrounds */
+.mis-wheel-arc::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 180px 180px 0 0;
+  background: conic-gradient(
+    from 180deg at 50% 100%,
+    rgba(100,181,246,0.15) 0deg 45deg,
+    rgba(165,214,167,0.15) 45deg 90deg,
+    rgba(255,204,128,0.15) 90deg 135deg,
+    rgba(239,154,154,0.15) 135deg 180deg
+  );
+  pointer-events: none;
+}
+
+.mis-wheel-centre {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--hut-saffron), var(--hut-orange));
+  border: 3px solid var(--hut-gold);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 4;
+  box-shadow: 0 4px 16px rgba(255,153,51,0.4);
+}
+.mis-wheel-centre span { font-size: 24px; line-height: 1; }
+.mis-wheel-centre small {
+  font-size: 8px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  line-height: 1.2;
+  font-family: 'Nunito', sans-serif;
+}
+
+/* Season labels */
+.mis-season-label {
+  position: absolute;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: 'Baloo 2', cursive;
+  color: rgba(93,46,15,0.5);
+  pointer-events: none;
+}
+.mis-season-spring  { top: 55%; left:  8%; }
+.mis-season-monsoon { top: 8%;  left: 44%; transform: translateX(-50%); }
+.mis-season-autumn  { top: 55%; right: 8%; }
+
+/* Festival bubbles on arc */
+.mis-wheel-bubble {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid rgba(121,85,72,0.2);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  transition: all 0.2s;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.mis-wheel-bubble:active { transform: translate(-50%,-50%) scale(0.9); }
+
+/* Season tints */
+.mis-wheel-bubble.mis-season-spring  { border-color: rgba(165,214,167,0.6); }
+.mis-wheel-bubble.mis-season-monsoon { border-color: rgba(100,181,246,0.6); }
+.mis-wheel-bubble.mis-season-autumn  { border-color: rgba(239,154,154,0.6); }
+.mis-wheel-bubble.mis-season-winter  { border-color: rgba(179,229,252,0.6); }
+
+.mis-wheel-bubble.selected {
+  background: linear-gradient(135deg, rgba(255,153,51,0.15), rgba(255,87,34,0.1));
+  border-color: var(--hut-saffron);
+  transform: translate(-50%,-50%) scale(1.15);
+  box-shadow: 0 0 12px rgba(255,153,51,0.4);
+}
+.mis-wheel-bubble.ganesha-bubble {
+  border-color: var(--hut-gold);
+  background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,153,51,0.1));
+  box-shadow: 0 0 10px rgba(255,215,0,0.4);
+  width: 58px;
+  height: 58px;
+  z-index: 3;
+}
+.mis-wheel-bubble.ganesha-bubble.selected {
+  box-shadow: 0 0 18px rgba(255,215,0,0.6);
+}
+.mis-wheel-emoji { font-size: 22px; line-height: 1; }
+.mis-wheel-name {
+  font-size: 7px;
+  font-weight: 700;
+  color: #5D2E0F;
+  text-align: center;
+  line-height: 1.2;
+  font-family: 'Nunito', sans-serif;
+  max-width: 48px;
+  display: none; /* shown on selected */
+}
+.mis-wheel-bubble.selected .mis-wheel-name { display: block; }
+
+/* Festival reaction bubble */
+.mis-fest-reaction {
+  background: #fff;
+  border: 2px solid var(--hut-saffron);
+  border-radius: 14px;
+  padding: 10px 14px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  animation: stepIn 0.25s ease;
+  max-width: 320px;
+  width: 100%;
+}
+.mis-fest-reaction span { font-size: 24px; flex-shrink: 0; }
+.mis-fest-reaction p {
+  font-size: 13px;
+  color: #5D2E0F;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Selected festivals summary */
+.mis-selected-fests {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  max-width: 360px;
+}
+.mis-selected-fest-chip {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: rgba(255,153,51,0.12);
+  border: 1px solid rgba(255,153,51,0.35);
+  color: #5D2E0F;
+  font-family: 'Nunito', sans-serif;
+}
+
+/* ── ORIGIN CARD ── */
+.mis-step-card { align-items: center; }
+
+.mis-origin-card {
+  background: linear-gradient(160deg, #FFF8E7, #FFE8CC);
+  border: 3px solid var(--hut-gold);
+  border-radius: 20px;
+  padding: 20px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(255,153,51,0.25);
+  opacity: 0;
+  transform: translateY(20px) scale(0.96);
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.mis-origin-card.revealed {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.mis-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.mis-card-header h3 {
+  font-family: 'Baloo 2', cursive;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--hut-brown);
+}
+.mis-card-header span { font-size: 20px; }
+
+.mis-card-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.mis-card-section {
+  flex: 1;
+  background: rgba(255,255,255,0.7);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+}
+.mis-card-section-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--hut-saffron);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.mis-card-section-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #5D2E0F;
+  line-height: 1.4;
+}
+.mis-card-emoji { font-size: 24px; }
+.mis-card-connector { font-size: 20px; flex-shrink: 0; }
+
+.mis-card-lang-row,
+.mis-card-fest-row {
+  margin-bottom: 12px;
+}
+.mis-card-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--hut-brown);
+  display: block;
+  margin-bottom: 6px;
+}
+.mis-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.mis-card-tag {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: rgba(255,153,51,0.12);
+  border: 1px solid rgba(255,153,51,0.3);
+  color: #5D2E0F;
+}
+.mis-card-tag.shared-tag {
+  background: rgba(255,215,0,0.2);
+  border-color: var(--hut-gold);
+  font-weight: 800;
+}
+
+.mis-card-shared-moment {
+  background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,153,51,0.15));
+  border: 2px solid var(--hut-gold);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #5D2E0F;
+  text-align: center;
+  margin-bottom: 10px;
+  animation: shimmer 2s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0%,100% { box-shadow: 0 0 8px rgba(255,215,0,0.3); }
+  50%      { box-shadow: 0 0 16px rgba(255,215,0,0.6); }
+}
+
+.mis-card-footer {
+  text-align: center;
+  font-family: 'Baloo 2', cursive;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--hut-saffron);
+  margin-top: 6px;
+}
+
+/* ── NEXT / CTA BUTTONS ── */
+.mis-next-btn {
+  background: linear-gradient(135deg, var(--hut-saffron), var(--hut-orange));
+  color: #fff;
+  font-family: 'Baloo 2', cursive;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 16px;
+  width: 100%;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(255,87,34,0.3);
+  transition: all 0.2s;
+  min-height: 52px;
+}
+.mis-next-btn:active { transform: translateY(2px); }
+.mis-next-btn:disabled {
+  background: linear-gradient(135deg, #ccc, #bbb);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.mis-complete-btn {
+  background: linear-gradient(135deg, var(--hut-gold), var(--hut-saffron));
+  color: #5D2E0F;
+  box-shadow: 0 6px 20px rgba(255,215,0,0.4);
+  font-size: 17px;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 400px) {
+  .mis-regions-grid { grid-template-columns: 1fr; }
+  .mis-lang-grid { grid-template-columns: 1fr 1fr; }
+  .mis-fest-grid { grid-template-columns: 1fr 1fr; }
+  .mis-india-map { width: 200px; height: 220px; }
+}
+
+@media (min-width: 600px) {
+  .mis-wrapper { padding: 24px 24px 80px; }
+  .mis-india-map { width: 280px; height: 300px; }
+  .mis-bubble { font-size: 15px; }
+}
+

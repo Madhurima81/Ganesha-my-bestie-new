@@ -184,12 +184,12 @@ export const SCENE_REGISTRY = [
     file: 'src/zones/about-me-hut/enjoy/ObstacleRemoverGame.jsx',
   },
   {
-    id: 'name-birthday',
+    id: 'my-indian-story',
     sceneNum: 22,
     zone: 'about-me-hut',
     zoneName: 'About Me Hut',
-    displayName: 'Name and Birthday',
-    file: 'src/zones/about-me-hut/name/Namebirthdaygame.jsx',
+    displayName: 'My Indian Story',
+    file: 'src/zones/about-me-hut/indian-story/MyIndianStoryGame.jsx',
   },
 ];
 

@@ -239,7 +239,7 @@ export const ZONE_CONFIGS = {
     difficulty: 'beginner',
     learningFocus: 'Self-introduction and family relationships',
     unlocked: true,
-    totalStars: 11,
+    totalStars: 12,
     requiredStars: 0,
     sequence: 5,
     scenes: [
@@ -255,35 +255,35 @@ export const ZONE_CONFIGS = {
         position: { top: 30, left: 25 }
       },
       {
-           id: 'name-birthday',
-    name: "Let's Be Friends",
-        emoji: '🎈',
-        iconImage: '/images/zones/about-me-hut/name-birthday-icon.png',
-        description: 'Spell GANESHA and find his birthday festival',
+        id: 'my-indian-story',
+        name: 'My Indian Story',
+        emoji: '🌏',
+        iconImage: '/images/zones/about-me-hut/my-indian-story-icon.png',
+        description: 'Discover where you and Ganesha come from in India',
         unlocked: false,
-        order: 2,
-        totalStars: 2,
+        order: 4,
+        totalStars: 3,
         position: { top: 40, left: 70 }
       },
       {
-     id: 'favorite-food',
-    name: 'Our Favorite Things',
+        id: 'favorite-food',
+        name: 'Our Favorite Things',
         emoji: '🍕',
         iconImage: '/images/zones/about-me-hut/favorite-things-icon.png',
         description: 'Find Ganesha\'s favorite food and best friend',
         unlocked: false,
-        order: 3,
+        order: 2,
         totalStars: 2,
         position: { top: 50, left: 60 }
       },
       {
-     id: 'dreams-wishes',
-    name: 'Dream Big Together',
+        id: 'dreams-wishes',
+        name: 'Dream Big Together',
         emoji: '🪔',
         iconImage: '/images/zones/about-me-hut/obstacle-remover-icon.png',
         description: 'Clear obstacles with joy, peace, and love',
         unlocked: false,
-        order: 4,
+        order: 3,
         totalStars: 3,
         position: { top: 70, left: 35 }
       }

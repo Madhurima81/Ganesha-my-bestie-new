@@ -86,9 +86,9 @@ export const COMPLETION_MODALS = {
 },
 
 'about-me-hut': {
-  'name-birthday': {
-    title: "We're Best Friends!",
-    subtitle: 'Now we know each other a little better.'
+  'my-indian-story': {
+    title: 'Our Indian Story Is Complete!',
+    subtitle: 'You and Ganesha share the roots of India.'
   },
   'family-tree': {
     title: 'Our Families Are Beautiful!',

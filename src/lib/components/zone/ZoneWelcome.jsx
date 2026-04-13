@@ -433,7 +433,7 @@ if (tempData) {
           tempState.gamePhase === 'sideBySide' ||
           tempState.showingCompletionScreen === true
         );
-      } else if (scene.id === 'name-birthday') {
+      } else if (scene.id === 'my-indian-story') {
         // Complete if: completion screen showing or completed flag
         isCompleteInTemp = (
           tempState.completed === true ||

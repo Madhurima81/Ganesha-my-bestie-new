@@ -193,20 +193,21 @@ export const SCENE_HEADERS = {
   // ABOUT ME HUT (Play Zone)
   // ========================================
   'about-me-hut': {
-    // Scene 1: Name & Birthday
-    'name-birthday': {
-      'name-balloons': "Pop the balloons in order! 🎈",
-      'name-complete': "Amazing! All balloons popped! 🎉",
-      'child-name-intro': "Hi! I am Ganesha.",
-      'child-name-input': "Tap the letters to spell your name! 🎈",
-      'child-name-complete': "What a beautiful name! 🌟",
-      'birthday-intro': "Let's Find My Birthday 🎂",
-      'birthday-choice': "Which festival is my birthday? 🎊",
-      'birthday-correct': "Yes! Ganesh Chaturthi is my birthday! 🎉",
-      'child-birthday-intro': "But when is YOUR birthday? 🎂",
-      'child-birthday-month': "Tap the month you were born! 🗓️",
-      'child-birthday-date': "Which day in {month}? 📅",
-      'besties-card': "BEST FRIENDS FOREVER! 💖"
+    // Scene 1: My Indian Story
+    'my-indian-story': {
+      'ganesha-home': "Where do I come from, Ganesha? 🗺️",
+      'ganesha-region': "Ganesha's India: A Sacred Map 🏡",
+      'ganesha-fact': "Here's where Ganesha is most loved! 🌟",
+      'child-home': "Now, where is YOUR India? 🏠",
+      'region-choice': "Which region is your home? 📍",
+      'region-selected': "How wonderful! Let's find more... 🌏",
+      'language-intro': "What languages do we speak? 🗣️",
+      'language-choice': "Tap a language we both know! 💬",
+      'language-selected': "Beautiful! You speak {language}! 🎉",
+      'festivals-intro': "Which festivals do we celebrate? 🪔",
+      'festival-choice': "Tap a festival we both love! 🎊",
+      'festival-selected': "Yes! {festival} is wonderful! 🌟",
+      'origin-card': "Our Shared Indian Story 💖"
     },
 
     // Scene 2: Family Tree

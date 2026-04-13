@@ -184,11 +184,11 @@ export const OPENING_MODALS = {
   // ABOUT ME HUT
   // ========================================
   'about-me-hut': {
-    'name-birthday': {
-      title: "Let's Be Friends",
-      description: "Let's share our names and special days.",
-      icons: ['balloons', 'birthday'],
-      iconLabels: ['Name', 'Birthday'],
+    'my-indian-story': {
+      title: "My Indian Story",
+      description: "Ganesha and you discover where you both come from in India.",
+      icons: ['🗺️', '🏡', '🌟'],
+      iconLabels: ['Map', 'Home', 'Story'],
       buttonText: "Let's Explore",
       character: 'baby-ganesha-sit'
     },

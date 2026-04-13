@@ -1,0 +1,1141 @@
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import './MyIndianStoryGame.css';
+import '../../shared/components/OpeningModal.css';
+import AboutMeCompletion from '../components/Aboutmecompletion';
+import { useGaneshaVoice } from '../../../lib/hooks/useGaneshaVoice';
+import { useGameSounds } from '../../../lib/hooks/useGameSounds';
+import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
+import HomeButton from '../../../lib/components/ui/HomeButton';
+import AudioToggle from '../../../lib/components/ui/AudioToggle/AudioToggle';
+import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
+import useAudioPreference from '../../../lib/hooks/useAudioPreference';
+import StoryProgressHeader from '../components/StoryProgressHeader';
+import bgImage from './assets/images/name_background.jpg';
+import babyGaneshaImg from '/images/ganesha-final-new.svg';
+import OpeningModal from '../../shared/components/OpeningModal';
+
+// ─── PHASE 1: NEW IMPORTS ─────────────────────────────────────────
+import FreeDraggableItem from '../../../lib/components/interactive/FreeDraggableItem';
+import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation';
+import indiaMapImage from './assets/images/ganeshaplace/india-map.png';
+import mglass from './assets/images/ganeshaplace/mglass.png';
+import mumbaiIcon from './assets/images/ganeshaplace/mumbai.png';
+import varansiIcon from './assets/images/ganeshaplace/Varanasi.png';
+import hampiIcon from './assets/images/ganeshaplace/hampi.png';
+import tamilNaduIcon from './assets/images/ganeshaplace/TamilNadu.png';
+
+// ─── PHASE 2: REGION ICONS ────────────────────────────────────────
+import northIcon from './assets/images/ganeshaplace/north.png';
+import northEastIcon from './assets/images/ganeshaplace/north-east.png';
+import westIcon from './assets/images/ganeshaplace/west.png';
+import centralIcon from './assets/images/ganeshaplace/central.png';
+import eastIcon from './assets/images/ganeshaplace/east.png';
+import southIcon from './assets/images/ganeshaplace/south.png';
+import desertIcon from './assets/images/ganeshaplace/dessert.png';
+
+// ─── PHASE 3: LANGUAGE ICONS & PLAY BUTTON ────────────────────────
+import hindiLangIcon from './assets/images/languages/hindi.png';
+import tamilLangIcon from './assets/images/languages/Tamil.png';
+import sanskritLangIcon from './assets/images/languages/Sanskrit.png';
+import teluguLangIcon from './assets/images/languages/Telugu.png';
+import marathiLangIcon from './assets/images/languages/Marathi.png';
+import gujaratiLangIcon from './assets/images/languages/Gujarati.png';
+import bengaliLangIcon from './assets/images/languages/Bengali.png';
+import kannadaLangIcon from './assets/images/languages/Kannada.png';
+import malayalamLangIcon from './assets/images/languages/malyalam.png';
+import punjabiLangIcon from './assets/images/languages/Punjabi.png';
+import englishLangIcon from './assets/images/languages/English.png';
+import otherLangIcon from './assets/images/languages/otherlanguage.png';
+import playLangIcon from './assets/images/languages/play-language.png';
+
+// ─── PHASE 4: FESTIVAL ICONS ──────────────────────────────────────
+import pongalIcon from './assets/images/festivals/pongal.png';
+import holiIcon from './assets/images/festivals/holi.png';
+import janmashtamiIcon from './assets/images/festivals/janmashtami.png';
+import chaturthiIcon from './assets/images/festivals/chaturthi.png';
+import navratriIcon from './assets/images/festivals/sakranti.png';
+import diwaliIcon from './assets/images/festivals/diwali.png';
+import onamIcon from './assets/images/festivals/onam.png';
+import eidIcon from './assets/images/festivals/eid.png';
+import christmasIcon from './assets/images/festivals/xmas.png';
+
+// ─── STEP CONSTANTS ───────────────────────────────────────────────
+const STEPS = {
+  OPENING: 'opening',
+  GANESHA_HOME: 'ganesha_home',
+  CHILD_HOME: 'child_home',
+  LANGUAGE: 'language',
+  FESTIVALS: 'festivals',
+  ORIGIN_CARD: 'origin_card',
+  COMPLETE: 'complete',
+};
+
+const STORAGE_KEY = 'gmb_indian_story';
+const RESUMABLE_STEPS = new Set([
+  STEPS.GANESHA_HOME,
+  STEPS.CHILD_HOME,
+  STEPS.LANGUAGE,
+  STEPS.FESTIVALS,
+  STEPS.ORIGIN_CARD,
+]);
+
+// ─── DATA ─────────────────────────────────────────────────────────
+const REGION_ICONS = {
+  north: northIcon,
+  northwest: westIcon,
+  west: westIcon,
+  central: centralIcon,
+  east: eastIcon,
+  northeast: northEastIcon,
+  south: southIcon,
+  kailash: null,
+  other: null,
+};
+
+const INDIA_REGIONS = [
+  { id: 'north',     label: 'North India',                   states: 'Punjab, Haryana, UP, Delhi',              emoji: '❄️', icon: northIcon,     color: '#7B9FD4', mapTop: '18%', mapLeft: '40%', ganeshaFact: 'In Varanasi, my name echoes across the ghats every morning! 🕌' },
+  { id: 'northwest', label: 'Rajasthan & Gujarat',           states: 'Rajasthan, Gujarat',                      emoji: '🏜️', icon: westIcon,      color: '#E8A040', mapTop: '32%', mapLeft: '18%', ganeshaFact: 'In Gujarat, every home has a tiny Ganesha by the door for good luck! 🚪' },
+  { id: 'west',      label: 'Maharashtra',                   states: 'Mumbai, Pune, Nagpur',                    emoji: '🐘', icon: westIcon,      color: '#FF9933', mapTop: '50%', mapLeft: '22%', ganeshaFact: 'Mumbai\'s Siddhivinayak temple is one of my most beloved homes! 🍬' },
+  { id: 'central',   label: 'Madhya Pradesh',                states: 'MP, Chhattisgarh',                        emoji: '🌿', icon: centralIcon,   color: '#5BA85A', mapTop: '42%', mapLeft: '42%', ganeshaFact: 'The forests here are full of my mouse Mushika\'s friends! 🐭' },
+  { id: 'east',      label: 'East India',                    states: 'West Bengal, Odisha, Jharkhand, Bihar',   emoji: '🌊', icon: eastIcon,      color: '#4A9BB5', mapTop: '48%', mapLeft: '58%', ganeshaFact: 'In Kolkata, Durga Puja celebrations are so grand — I always visit! 🎊' },
+  { id: 'northeast', label: 'Northeast India',               states: 'Assam, Meghalaya, Manipur, & more',       emoji: '🌸', icon: northEastIcon, color: '#B565A7', mapTop: '28%', mapLeft: '72%', ganeshaFact: 'The tea gardens here are magical — even I stop for a cup! ☕' },
+  { id: 'south',     label: 'South India',                   states: 'Tamil Nadu, Kerala, Karnataka, Telangana', emoji: '🌴', icon: southIcon,     color: '#2E7D32', mapTop: '65%', mapLeft: '45%', ganeshaFact: 'In Tamil Nadu, I am called Pillaiyar — the noble child! 🙏' },
+  { id: 'kailash',   label: 'Mount Kailash! 🏔️',            states: 'Where Amma & Appa live!',                  emoji: '🏔️', icon: desertIcon,    color: '#5C6BC0', mapTop: '8%',  mapLeft: '42%', ganeshaFact: 'KAILASH?! That\'s where my Amma and Appa live! But where does YOUR family live on Earth?', isKailash: true },
+  { id: 'other',     label: 'My family is from elsewhere',   states: 'Outside India or multiple states',         emoji: '🌍', icon: null,           color: '#888', mapTop: '50%', mapLeft: '50%', ganeshaFact: 'Wherever your family is from, India lives in your heart! 💛' },
+];
+
+const LANGUAGES = [
+  { id: 'hindi',      label: 'Hindi',      script: 'हिंदी',      icon: hindiLangIcon,      color: '#FF9933' },
+  { id: 'tamil',      label: 'Tamil',      script: 'தமிழ்',     icon: tamilLangIcon,      color: '#E91E63' },
+  { id: 'telugu',     label: 'Telugu',     script: 'తెలుగు',    icon: teluguLangIcon,     color: '#9C27B0' },
+  { id: 'marathi',    label: 'Marathi',    script: 'मराठी',     icon: marathiLangIcon,    color: '#FF5722' },
+  { id: 'gujarati',   label: 'Gujarati',   script: 'ગુજરાતી',   icon: gujaratiLangIcon,   color: '#FF9800' },
+  { id: 'bengali',    label: 'Bengali',    script: 'বাংলা',     icon: bengaliLangIcon,    color: '#2196F3' },
+  { id: 'kannada',    label: 'Kannada',    script: 'ಕನ್ನಡ',     icon: kannadaLangIcon,    color: '#4CAF50' },
+  { id: 'malayalam',  label: 'Malayalam',  script: 'മലയാളം',   icon: malayalamLangIcon,  color: '#00BCD4' },
+  { id: 'punjabi',    label: 'Punjabi',    script: 'ਪੰਜਾਬੀ',    icon: punjabiLangIcon,    color: '#8BC34A' },
+  { id: 'sanskrit',   label: 'Sanskrit',   script: 'संस्कृत',    icon: sanskritLangIcon,   color: '#FFD700' },
+  { id: 'english',    label: 'English',    script: 'English',    icon: englishLangIcon,    color: '#795548' },
+  { id: 'other',      label: 'Other',      script: '🌍',        icon: otherLangIcon,      color: '#9E9E9E' },
+];
+
+const FESTIVALS = [
+  { id: 'pongal',        label: 'Pongal',         emoji: '🌾', icon: pongalIcon,        season: 'winter', seasonLabel: 'Winter',  angle: 30,  ganeshaReact: 'Pongal! The harvest festival! 🌾', guessOption: true },
+  { id: 'holi',          label: 'Holi',           emoji: '🎨', icon: holiIcon,          season: 'spring', seasonLabel: 'Spring',  angle: 60,  ganeshaReact: 'Holi! The festival of colors! 🎨', guessOption: true },
+  { id: 'janmashtami',   label: 'Janmashtami',    emoji: '🎭', icon: janmashtamiIcon,   season: 'summer', seasonLabel: 'Summer',  angle: 120, ganeshaReact: 'Janmashtami! My friend Krishna\'s birthday! 🎭', guessOption: true },
+  { id: 'ganesh',        label: 'Ganesh Chaturthi', emoji: '🎉', icon: chaturthiIcon,    season: 'autumn', seasonLabel: 'Autumn',  angle: 180, ganeshaReact: 'Ganesh Chaturthi! MY festival! 🎉', guessOption: true, isGanesha: true },
+  { id: 'durga_puja',    label: 'Durga Puja',     emoji: '⚔️', icon: navratriIcon,      season: 'autumn', seasonLabel: 'Autumn',  angle: 155, ganeshaReact: 'Durga Puja celebrations are grand and joyful! 🎊', guessOption: false },
+  { id: 'diwali',        label: 'Diwali',         emoji: '💡', icon: diwaliIcon,        season: 'autumn', seasonLabel: 'Autumn',  angle: 210, ganeshaReact: 'Diwali! The festival of lights! 💡', guessOption: false },
+  { id: 'navratri',      label: 'Navratri',       emoji: '🎭', icon: navratriIcon,      season: 'autumn', seasonLabel: 'Autumn',  angle: 170, ganeshaReact: 'Navratri! Nine nights of celebration! 🎭', guessOption: false },
+  { id: 'onam',          label: 'Onam',           emoji: '🌺', icon: onamIcon,          season: 'summer', seasonLabel: 'Summer',  angle: 135, ganeshaReact: 'Onam! Kerala\'s beautiful harvest festival! 🌺', guessOption: false },
+  { id: 'eid',           label: 'Eid',            emoji: '🌙', icon: eidIcon,           season: 'spring', seasonLabel: 'Spring',  angle: 45,  ganeshaReact: 'Eid! A time of joy and togetherness! 🌙', guessOption: false },
+  { id: 'christmas',     label: 'Christmas',      emoji: '🎄', icon: christmasIcon,     season: 'winter', seasonLabel: 'Winter',  angle: 0,   ganeshaReact: 'Christmas! A festival of love and lights! 🎄', guessOption: false },
+];
+
+const COMMON_FESTIVALS = [
+  FESTIVALS.find(f => f.id === 'holi'),
+  FESTIVALS.find(f => f.id === 'janmashtami'),
+  FESTIVALS.find(f => f.id === 'pongal'),
+  FESTIVALS.find(f => f.id === 'diwali'),
+];
+
+const OTHER_FESTIVALS = [
+  FESTIVALS.find(f => f.id === 'ganesh'),
+  FESTIVALS.find(f => f.id === 'navratri'),
+  FESTIVALS.find(f => f.id === 'durga_puja'),
+  FESTIVALS.find(f => f.id === 'onam'),
+  FESTIVALS.find(f => f.id === 'eid'),
+  FESTIVALS.find(f => f.id === 'christmas'),
+];
+
+const PHASE1_LOCATIONS = [
+  { name: 'Varanasi', icon: varansiIcon, x: 54, y: 25 },
+  { name: 'Mumbai', icon: mumbaiIcon, x: 25, y: 48 },
+  { name: 'Tamil Nadu', icon: tamilNaduIcon, x: 45, y: 65 },
+  { name: 'Hampi', icon: hampiIcon, x: 42, y: 58 },
+];
+
+const GANESHA_SPOTS = [
+  { name: 'Varanasi Ghats', fact: 'In Varanasi, my name echoes across the ghats every morning! 🕌' },
+  { name: 'Mumbai Temple', fact: 'Siddhivinayak temple in Mumbai is one of my most beloved homes! 🍬' },
+  { name: 'Tamil Nadu Shrine', fact: 'In Tamil Nadu, I am called Pillaiyar — the noble child! 🙏' },
+  { name: 'Hampi Ruins', fact: 'Hampi\'s ancient temples are full of my blessings! ✨' },
+];
+
+export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, childName = 'friend', childAge = 8 }) {
+  // ─── STATE ───────────────────────────────────────────────────────
+  const [step, setStep] = useState(STEPS.OPENING);
+  const [selectedRegion, setSelectedRegion] = useState(null);
+  const [selectedLanguages, setSelectedLanguages] = useState([]);
+  const [selectedFestivals, setSelectedFestivals] = useState([]);
+
+  // Phase 1 state
+  const [discoveredLocations, setDiscoveredLocations] = useState([]);
+  const [revealedSpots, setRevealedSpots] = useState([]);
+  const [activeSpotFact, setActiveSpotFact] = useState(null);
+  const [mglassPosition, setMglassPosition] = useState({ top: '30%', left: '20%' });
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [showPhase1Sparkle, setShowPhase1Sparkle] = useState(null);
+
+  // Language phase state
+  const [langGuessPhase, setLangGuessPhase] = useState('guessing');
+  const [wrongLangGuesses, setWrongLangGuesses] = useState(new Set());
+  const [shakeLang, setShakeLang] = useState(null);
+  const [langWrongReaction, setLangWrongReaction] = useState(null);
+
+  // Festival phase state
+  const [guessPhase, setGuessPhase] = useState('guessing');
+  const [wrongGuesses, setWrongGuesses] = useState(new Set());
+  const [shakeGuess, setShakeGuess] = useState(null);
+  const [activeFestReaction, setActiveFestReaction] = useState(null);
+
+  // Gesture & sparkle
+  const [miniGesture, setMiniGesture] = useState({ show: false, target: 'center', durationMs: 1500, key: 0 });
+  const [sparkleState, setSparkleState] = useState({ type: null, key: 0 });
+
+  // Audio & voices
+  const { isAudioOn, toggleAudio } = useAudioPreference();
+  const { speak, stop } = useGaneshaVoice();
+  const { playUiTap, playSparkle, playChime } = useGameSounds();
+  const { setCurrentPhase } = useVoiceGuidance({ childName, childAge, idleTimeout: 25 });
+
+  // Refs
+  const discoveredRef = useRef(new Set());
+  const miniGestureTimerRef = useRef(null);
+  const sparkleCancelRef = useRef(null);
+  const lastDiscoveryTime = useRef(0);
+
+  // Stop voice on unmount
+  useEffect(() => { return () => stop(); }, []);
+
+  // Audio & Music Setup
+  useEffect(() => {
+    setCurrentPhase(step);
+  }, [step, setCurrentPhase]);
+
+  // Gesture & Sparkle triggers
+  const triggerMiniGesture = useCallback((durationMs = 1500) => {
+    if (miniGestureTimerRef.current) clearTimeout(miniGestureTimerRef.current);
+    setMiniGesture(prev => ({
+      show: true,
+      target: 'center',
+      key: prev.key + 1
+    }));
+    miniGestureTimerRef.current = setTimeout(() => {
+      setMiniGesture(prev => ({ ...prev, show: false }));
+    }, durationMs);
+  }, []);
+
+  const triggerSparkle = useCallback((type, durationMs = 1500) => {
+    if (sparkleCancelRef.current) clearTimeout(sparkleCancelRef.current);
+    setSparkleState(prev => ({ type, key: prev.key + 1 }));
+    sparkleCancelRef.current = setTimeout(() => {
+      setSparkleState(prev => ({ ...prev, type: null }));
+    }, durationMs + 50);
+  }, []);
+
+  // Audio toggle handler
+  const handleAudioToggle = useCallback(() => {
+    toggleAudio();
+    if (isAudioOn) stop();
+  }, [isAudioOn, toggleAudio, stop]);
+
+  // Audio-gated speak
+  const speakIfUnmuted = useCallback((text, opts) => {
+    if (isAudioOn) speak(text, opts);
+  }, [isAudioOn, speak]);
+
+  // Voice lines
+  const VOICE = {
+    opening:        `Hi ${childName}! I am Ganesha — your new bestie! Let's find out where you and I both come from!`,
+    ganesha_home:   `I hide in four special places across India! Drag the magnifying glass to find me! 🔍`,
+    child_home:     `Now tell me… where does your family live in India? Tap your home on the map!`,
+    language_guess:   `I speak many languages! Can you guess which language I am speaking right now?`,
+    language_audio:   `Vakratunda Mahakaya Suryakoti Samaprabha!`,
+    language_correct: `Yes! That is Sanskrit! The language of all mantras and shlokas!`,
+    language_wheel:   `Which language does your family speak at home?`,
+    festivals_guess:  `I have one favourite festival above all others! Can you guess which one it is?`,
+    festivals_wheel:  `Amazing! Which festivals does your family celebrate?`,
+    origin_card:      `Look at this, ${childName}! You and I are connected — right here in India!`,
+  };
+
+  const langVoice = langGuessPhase === 'revealed' ? VOICE.language_wheel : VOICE.language_guess;
+  const festVoice = guessPhase === 'revealed' ? VOICE.festivals_wheel : VOICE.festivals_guess;
+
+  // Speak on step change
+  useEffect(() => {
+    const voiceMap = {
+      [STEPS.OPENING]:      { text: VOICE.opening,      moment: 'greeting'    },
+      [STEPS.GANESHA_HOME]: { text: VOICE.ganesha_home, moment: 'story'       },
+      [STEPS.CHILD_HOME]:   { text: VOICE.child_home,   moment: 'default'     },
+      [STEPS.LANGUAGE]:     { text: langVoice,           moment: 'default'     },
+      [STEPS.FESTIVALS]:    { text: festVoice,           moment: 'celebration' },
+      [STEPS.ORIGIN_CARD]:  { text: VOICE.origin_card,  moment: 'gratitude'   },
+    };
+    const info = voiceMap[step];
+    if (info) speakIfUnmuted(info.text, { age: childAge, moment: info.moment });
+  }, [step]);
+
+  // Load saved data
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      const savedStep = RESUMABLE_STEPS.has(saved.step) ? saved.step : null;
+      if (!savedStep) return;
+
+      if (savedStep === STEPS.GANESHA_HOME || savedStep === STEPS.CHILD_HOME) {
+        setSelectedRegion(null);
+        setSelectedLanguages([]);
+        setSelectedFestivals([]);
+      }
+      if (savedStep === STEPS.LANGUAGE) {
+        setSelectedRegion(saved.region || null);
+        setSelectedLanguages([]);
+        setSelectedFestivals([]);
+      }
+      if (savedStep === STEPS.FESTIVALS) {
+        setSelectedRegion(saved.region || null);
+        setSelectedLanguages(saved.languages || []);
+        setSelectedFestivals([]);
+      }
+      if (savedStep === STEPS.ORIGIN_CARD) {
+        setSelectedRegion(saved.region || null);
+        setSelectedLanguages(saved.languages || []);
+        setSelectedFestivals(saved.festivals || []);
+      }
+      setStep(savedStep);
+    } catch (e) {}
+  }, []);
+
+  // Reset state when entering each step
+  useEffect(() => {
+    if (step === STEPS.GANESHA_HOME) {
+      setDiscoveredLocations([]);
+      discoveredRef.current = new Set();
+      setShowCelebration(false);
+      setShowPhase1Sparkle(null);
+      setMglassPosition({ top: '30%', left: '20%' });
+      setRevealedSpots([]);
+      setActiveSpotFact(null);
+    }
+    if (step === STEPS.FESTIVALS) {
+      setGuessPhase('guessing');
+      setWrongGuesses(new Set());
+      setShakeGuess(null);
+    }
+    if (step === STEPS.LANGUAGE) {
+      setLangGuessPhase('guessing');
+      setWrongLangGuesses(new Set());
+      setShakeLang(null);
+      setLangWrongReaction(null);
+    }
+  }, [step]);
+
+  // Step 1 UX: once all locations are found, advance
+  useEffect(() => {
+    if (step !== STEPS.GANESHA_HOME) return;
+    if (discoveredLocations.length !== PHASE1_LOCATIONS.length) return;
+    setShowCelebration(false);
+    const t1 = setTimeout(() => {
+      setShowCelebration(true);
+      triggerSparkle('all', 2000);
+      speakIfUnmuted('You found all my hiding places! I am everywhere in India!', { age: childAge, moment: 'celebration' });
+    }, 1500);
+    const t2 = setTimeout(() => setStep(STEPS.CHILD_HOME), 4000);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [step, discoveredLocations.length]);
+
+  // Save progress
+  const saveProgress = (region, langs, fests, stepValue = step) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        region: region ?? selectedRegion,
+        languages: langs ?? selectedLanguages,
+        festivals: fests ?? selectedFestivals,
+        step: stepValue,
+        completedAt: new Date().toISOString(),
+      }));
+    } catch (e) {}
+  };
+
+  const clearProgress = useCallback(() => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {}
+  }, []);
+
+  // Persist phase on reload
+  useEffect(() => {
+    if (!RESUMABLE_STEPS.has(step)) return;
+    saveProgress(null, null, null, step);
+  }, [step, selectedRegion, selectedLanguages, selectedFestivals]);
+
+  // Handle spot tap
+  const handleSpotTap = (index) => {
+    const spot = GANESHA_SPOTS[index];
+    if (revealedSpots.includes(index)) {
+      setActiveSpotFact({ index, ...spot });
+      speakIfUnmuted(spot.fact, { age: childAge, moment: 'story' });
+      return;
+    }
+  };
+
+  // Check location discovery
+  const checkLocationDiscovery = useCallback((percentX, percentY) => {
+    PHASE1_LOCATIONS.forEach((loc, idx) => {
+      const locX = GANESHA_SPOTS[idx] ? 50 : 50;
+      if (Math.abs(percentX - locX) < 8 && Math.abs(percentY - (30 + idx * 15)) < 8) {
+        discoverLocation(idx);
+      }
+    });
+  }, []);
+
+  const discoverLocation = useCallback((index) => {
+    if (discoveredRef.current.has(index)) return;
+    discoveredRef.current.add(index);
+
+    setDiscoveredLocations(prev => [...prev, index]);
+    playSparkle();
+    triggerMiniGesture(1500);
+    triggerSparkle('single', 1500);
+    setShowPhase1Sparkle(`location-${index}`);
+    setTimeout(() => setShowPhase1Sparkle(null), 1500);
+
+    const location = PHASE1_LOCATIONS[index];
+    speakIfUnmuted(location.name, { age: childAge, moment: 'story' });
+  }, [playSparkle, triggerMiniGesture, triggerSparkle, speakIfUnmuted, childAge]);
+
+  // Handle magnifying glass move
+  const handleMglassMove = useCallback((newPosition) => {
+    setMglassPosition(newPosition);
+    const percentX = parseFloat(newPosition.left);
+    const percentY = parseFloat(newPosition.top);
+    checkLocationDiscovery(percentX, percentY);
+  }, [checkLocationDiscovery]);
+
+  // Handle region select
+  const handleRegionSelect = (region) => {
+    playUiTap();
+    triggerMiniGesture(1500);
+    triggerSparkle('single', 1500);
+    setSelectedRegion(region);
+    speakIfUnmuted(`Ah! Your family lives here!`, { age: childAge, moment: 'story' });
+    setTimeout(() => {
+      speakIfUnmuted(`That's your home! India is full of wonderful places.`, { age: childAge, moment: 'story' });
+    }, 2000);
+    saveProgress(region, null, null);
+  };
+
+  // Handle language toggle
+  const toggleLanguage = (lang) => {
+    playUiTap();
+    triggerMiniGesture(1500);
+    triggerSparkle('single', 1500);
+    setSelectedLanguages(prev => {
+      const exists = prev.find(l => l.id === lang.id);
+      if (exists) return prev.filter(l => l.id !== lang.id);
+      return [...prev, lang];
+    });
+    speakIfUnmuted('Great choice!', { age: childAge, moment: 'encouragement' });
+  };
+
+  // Handle festival toggle
+  const toggleFestival = (fest) => {
+    playUiTap();
+    if (selectedFestivals.length >= 4) return;
+    setSelectedFestivals(prev => {
+      if (prev.length >= 4) return prev;
+      return [...prev, fest];
+    });
+    setActiveFestReaction({ emoji: fest.emoji, text: 'Nice! That\'s a wonderful festival.' });
+    speakIfUnmuted('Nice! That\'s a wonderful festival.', { age: childAge, moment: 'encouragement' });
+    setTimeout(() => setActiveFestReaction(null), 2800);
+  };
+
+  // Handle language guess
+  const handleLanguageGuess = (guessLang) => {
+    playUiTap();
+    const isCorrect = guessLang.id === 'sanskrit';
+
+    if (isCorrect) {
+      setLangGuessPhase('correct');
+      speakIfUnmuted(VOICE.language_correct, { age: childAge, moment: 'celebration' });
+      setTimeout(() => {
+        setLangGuessPhase('revealed');
+        setStep(STEPS.FESTIVALS);
+      }, 3000);
+    } else {
+      setWrongLangGuesses(prev => new Set(prev).add(guessLang.id));
+      setShakeLang(guessLang.id);
+      speakIfUnmuted('Not quite! Try again!', { age: childAge, moment: 'default' });
+      setTimeout(() => setShakeLang(null), 500);
+    }
+  };
+
+  // Handle festival guess
+  const handleFestivalGuess = (fest) => {
+    playUiTap();
+    const isCorrect = fest.id === 'ganesh';
+
+    if (isCorrect) {
+      setGuessPhase('correct');
+      playChime();
+      speakIfUnmuted('YES! Ganesh Chaturthi is MY festival! 🎉', { age: childAge, moment: 'celebration' });
+      setTimeout(() => {
+        setGuessPhase('revealed');
+        setStep(STEPS.FESTIVALS);
+      }, 3000);
+    } else {
+      setWrongGuesses(prev => new Set(prev).add(fest.id));
+      setShakeGuess(fest.id);
+      speakIfUnmuted('Nice! That\'s a wonderful festival.', { age: childAge, moment: 'default' });
+      setTimeout(() => setShakeGuess(null), 500);
+    }
+  };
+
+  // Complete scene
+  const handleComplete = () => {
+    saveProgress(selectedRegion, selectedLanguages, selectedFestivals, STEPS.COMPLETE);
+    setStep(STEPS.COMPLETE);
+  };
+
+  // ─── RENDER ───────────────────────────────────────────────────
+  return (
+    <div className="mis-wrapper">
+      <img src={bgImage} alt="Background" className="mis-background" />
+
+      {/* Sparkles */}
+      {sparkleState.type && (
+        <SparkleAnimation
+          type={sparkleState.type}
+          count={20}
+          color="rgba(255, 215, 0, 0.6)"
+          size={6}
+          duration={3000}
+          fadeOut={true}
+          area="full"
+          key={sparkleState.key}
+        />
+      )}
+
+      {/* Opening Modal */}
+      {step === STEPS.OPENING && (
+        <OpeningModal
+          zoneId="about-me-hut"
+          sceneId="my-indian-story"
+          title="My Indian Story"
+          description={`Ganesha and ${childName} discover their shared roots in India!`}
+          icons={['🗺️', '🏡', '🌟']}
+          iconLabels={["Ganesha's India", 'Your Home', 'Origin Card']}
+          buttonText="Let's Explore! 🇮🇳"
+          onStart={() => {
+            stop();
+            clearProgress();
+            setSelectedRegion(null);
+            setSelectedLanguages([]);
+            setSelectedFestivals([]);
+            setStep(STEPS.GANESHA_HOME);
+          }}
+          showButton={true}
+        />
+      )}
+
+      {/* Completion Screen */}
+      {step === STEPS.COMPLETE && (
+        <AboutMeCompletion
+          show={true}
+          sceneName="My Indian Story"
+          sceneNumber={4}
+          totalScenes={4}
+          starsEarned={2}
+          totalStars={2}
+          discoveredBadges={['culture-explorer']}
+          characterImages={{ babyGanesha: babyGaneshaImg }}
+          isFinalScene={true}
+          onContinue={() => {
+            if (onNavigate) {
+              onNavigate('zone-complete');
+            } else if (onComplete) {
+              onComplete();
+            }
+          }}
+          onReplay={() => {
+            clearProgress();
+            setSelectedRegion(null);
+            setSelectedLanguages([]);
+            setSelectedFestivals([]);
+            setStep(STEPS.OPENING);
+          }}
+          onBackToMap={() => {
+            if (onNavigate) {
+              onNavigate('zone-welcome');
+            } else if (onBack) {
+              onBack();
+            }
+          }}
+          onHome={() => {
+            if (onNavigate) {
+              onNavigate('home');
+            } else if (onBack) {
+              onBack();
+            }
+          }}
+          sceneId="my-indian-story"
+        />
+      )}
+
+      {/* Ganesha Home Phase */}
+      {step === STEPS.GANESHA_HOME && (
+        <div style={{ paddingTop: '40px', paddingBottom: '40px' }}>
+          <StoryProgressHeader discoveries={[]} isChildMode={false} />
+          <img src={indiaMapImage} alt="India Map" style={{ width: '100%', maxWidth: '600px', display: 'block', margin: '0 auto' }} />
+          <FreeDraggableItem
+            initialPosition={mglassPosition}
+            onMove={handleMglassMove}
+            elementName="mglass"
+            image={mglass}
+            constraints={{ top: '10%', left: '10%', right: '85%', bottom: '80%' }}
+          />
+          {showCelebration && (
+            <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '48px' }}>
+              🎉 Found them all! 🎉
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Child Home Phase */}
+      {step === STEPS.CHILD_HOME && (
+        <div style={{ paddingTop: '40px', paddingBottom: '40px' }}>
+          <StoryProgressHeader discoveries={selectedRegion ? [selectedRegion] : []} isChildMode={false} />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', maxWidth: '600px', margin: '0 auto' }}>
+            {INDIA_REGIONS.map((region) => (
+              <button
+                key={region.id}
+                onClick={() => handleRegionSelect(region)}
+                style={{
+                  padding: '20px',
+                  borderRadius: '16px',
+                  border: selectedRegion?.id === region.id ? `3px solid ${region.color}` : '2px solid #ccc',
+                  backgroundColor: selectedRegion?.id === region.id ? region.color + '20' : '#fff',
+                  cursor: 'pointer',
+                  fontSize: '18px',
+                  fontFamily: "'Baloo 2', cursive",
+                  fontWeight: 700,
+                }}
+              >
+                {region.emoji}
+                <div style={{ fontSize: '14px', marginTop: '8px' }}>{region.label}</div>
+              </button>
+            ))}
+          </div>
+          {selectedRegion && (
+            <button
+              onClick={() => setStep(STEPS.LANGUAGE)}
+              style={{
+                marginTop: '40px',
+                display: 'block',
+                margin: '40px auto 0',
+                padding: '16px 32px',
+                backgroundColor: '#FF9933',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '12px',
+                fontSize: '18px',
+                fontFamily: "'Baloo 2', cursive",
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              Next: Languages 🗣️
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Language Phase */}
+      {step === STEPS.LANGUAGE && (
+        <div style={{ paddingTop: '40px', paddingBottom: '40px' }}>
+          <StoryProgressHeader discoveries={selectedLanguages} isChildMode={false} />
+          {langGuessPhase === 'guessing' && (
+            <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+              <audio src="/audio/sanskrit-vakratunda.mp3" controls style={{ marginTop: '20px' }} />
+            </div>
+          )}
+          {langGuessPhase === 'revealed' && (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '15px', maxWidth: '800px', margin: '0 auto' }}>
+              {LANGUAGES.map((lang) => (
+                <button
+                  key={lang.id}
+                  onClick={() => toggleLanguage(lang)}
+                  style={{
+                    padding: '16px',
+                    borderRadius: '12px',
+                    border: selectedLanguages.find(l => l.id === lang.id) ? `3px solid ${lang.color}` : '2px solid #ccc',
+                    backgroundColor: selectedLanguages.find(l => l.id === lang.id) ? lang.color + '20' : '#fff',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontFamily: "'Baloo 2', cursive",
+                    fontWeight: 700,
+                  }}
+                >
+                  {lang.script}
+                  <div style={{ fontSize: '12px', marginTop: '4px' }}>{lang.label}</div>
+                </button>
+              ))}
+            </div>
+          )}
+          {selectedLanguages.length > 0 && langGuessPhase === 'revealed' && (
+            <button
+              onClick={() => setStep(STEPS.FESTIVALS)}
+              style={{
+                marginTop: '40px',
+                display: 'block',
+                margin: '40px auto 0',
+                padding: '16px 32px',
+                backgroundColor: '#FF9933',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '12px',
+                fontSize: '18px',
+                fontFamily: "'Baloo 2', cursive",
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              Next: Festivals 🎉
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Festivals Phase */}
+      {step === STEPS.FESTIVALS && (
+        <div style={{ paddingTop: '40px', paddingBottom: '40px' }}>
+          <StoryProgressHeader discoveries={selectedFestivals} isChildMode={false} />
+          {guessPhase === 'revealed' && (
+            <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '24px', fontWeight: 900, color: '#654321', textAlign: 'center', marginBottom: '20px' }}>
+                Popular Festivals
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '40px' }}>
+                {COMMON_FESTIVALS.filter(Boolean).map((fest) => (
+                  <button
+                    key={fest.id}
+                    onClick={() => toggleFestival(fest)}
+                    style={{
+                      padding: '20px',
+                      borderRadius: '16px',
+                      border: selectedFestivals.find(f => f.id === fest.id) ? '3px solid #FFD700' : '2px solid #ddd',
+                      backgroundColor: selectedFestivals.find(f => f.id === fest.id) ? '#FFD70030' : '#fff',
+                      cursor: 'pointer',
+                      fontSize: '64px',
+                      minHeight: '140px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    {fest.emoji}
+                    <div style={{ fontSize: '14px', fontFamily: "'Nunito', sans-serif", color: '#666' }}>{fest.label}</div>
+                  </button>
+                ))}
+              </div>
+
+              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '24px', fontWeight: 900, color: '#654321', textAlign: 'center', marginBottom: '20px' }}>
+                More Festivals
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '40px' }}>
+                {OTHER_FESTIVALS.filter(Boolean).map((fest) => (
+                  <button
+                    key={fest.id}
+                    onClick={() => toggleFestival(fest)}
+                    style={{
+                      padding: '20px',
+                      borderRadius: '16px',
+                      border: selectedFestivals.find(f => f.id === fest.id) ? '3px solid #FFD700' : '2px solid #ddd',
+                      backgroundColor: selectedFestivals.find(f => f.id === fest.id) ? '#FFD70030' : '#fff',
+                      cursor: 'pointer',
+                      fontSize: '64px',
+                      minHeight: '140px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    {fest.emoji}
+                    <div style={{ fontSize: '14px', fontFamily: "'Nunito', sans-serif", color: '#666' }}>{fest.label}</div>
+                  </button>
+                ))}
+              </div>
+
+              {selectedFestivals.length > 0 && (
+                <button
+                  onClick={() => setStep(STEPS.ORIGIN_CARD)}
+                  style={{
+                    display: 'block',
+                    margin: '0 auto',
+                    padding: '16px 32px',
+                    backgroundColor: '#FF9933',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '12px',
+                    fontSize: '18px',
+                    fontFamily: "'Baloo 2', cursive",
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  See Our Story 🌟
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Origin Card Phase */}
+      {step === STEPS.ORIGIN_CARD && (
+        <div style={{
+          background: 'linear-gradient(160deg, #FFFBF0 0%, #FFF9E8 100%)',
+          minHeight: '100vh',
+          paddingBottom: '60px',
+        }}>
+          <SparkleAnimation
+            type="star"
+            count={20}
+            color="rgba(255, 215, 0, 0.6)"
+            size={6}
+            duration={3000}
+            fadeOut={true}
+            area="full"
+          />
+
+          <div style={{textAlign: 'center', marginBottom: '32px', paddingTop: '40px'}}>
+            <h1 style={{
+              fontFamily: "'Baloo 2', cursive",
+              fontSize: '28px',
+              fontWeight: 700,
+              color: '#FF9933',
+              margin: '0 0 8px 0',
+            }}>
+              Our Story Connects! 🌟
+            </h1>
+            <p style={{
+              fontFamily: "'Nunito', sans-serif",
+              fontSize: '16px',
+              color: '#666',
+              margin: 0,
+            }}>
+              When families share their roots, magic happens.
+            </p>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '20px',
+            maxWidth: '800px',
+            margin: '0 auto 32px',
+          }}>
+            {/* LEFT COLUMN — Ganesha's Story */}
+            <div style={{
+              background: '#FFF6E8',
+              borderRadius: '24px',
+              padding: '25px',
+              boxShadow: '0 7px 18px rgba(0, 0, 0, 0.15)',
+            }}>
+              <div style={{
+                textAlign: 'center',
+                marginBottom: '16px',
+              }}>
+                <div style={{
+                  fontSize: '72px',
+                  lineHeight: '1',
+                }}>🐘</div>
+              </div>
+
+              <div style={{
+                fontFamily: "'Baloo 2', cursive",
+                fontSize: '24px',
+                fontWeight: 900,
+                color: '#654321',
+                textAlign: 'center',
+                marginBottom: '20px',
+              }}>
+                Ganesha's Story
+              </div>
+
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '16px',
+              }}>
+                <div style={{
+                  background: '#FFFFFF',
+                  borderRadius: '18px',
+                  padding: '15px 10px',
+                  textAlign: 'center',
+                  boxShadow: '0 6px 14px rgba(139, 69, 19, 0.12)',
+                }}>
+                  <div style={{
+                    fontFamily: "'Nunito', sans-serif",
+                    fontSize: '12px',
+                    color: '#999',
+                    marginBottom: '6px',
+                  }}>
+                    Home
+                  </div>
+                  <div style={{
+                    fontFamily: "'Baloo 2', cursive",
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    color: '#FF9933',
+                  }}>
+                    All of India 🇮🇳
+                  </div>
+                </div>
+
+                <div style={{
+                  background: '#FFFFFF',
+                  borderRadius: '18px',
+                  padding: '15px 10px',
+                  textAlign: 'center',
+                  boxShadow: '0 6px 14px rgba(139, 69, 19, 0.12)',
+                }}>
+                  <div style={{
+                    fontFamily: "'Nunito', sans-serif",
+                    fontSize: '12px',
+                    color: '#999',
+                    marginBottom: '6px',
+                  }}>
+                    Languages
+                  </div>
+                  <div style={{
+                    fontFamily: "'Baloo 2', cursive",
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    color: '#FF9933',
+                  }}>
+                    Sanskrit 🕉️
+                  </div>
+                </div>
+
+                <div style={{
+                  background: '#FFFFFF',
+                  borderRadius: '18px',
+                  padding: '15px 10px',
+                  textAlign: 'center',
+                  boxShadow: '0 6px 14px rgba(139, 69, 19, 0.12)',
+                }}>
+                  <div style={{
+                    fontFamily: "'Nunito', sans-serif",
+                    fontSize: '12px',
+                    color: '#999',
+                    marginBottom: '6px',
+                  }}>
+                    Special Day
+                  </div>
+                  <div style={{
+                    fontFamily: "'Baloo 2', cursive",
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    color: '#FF9933',
+                  }}>
+                    Ganesh Chaturthi 🎉
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* RIGHT COLUMN — Child's Story */}
+            <div style={{
+              background: '#FFF6E8',
+              borderRadius: '24px',
+              padding: '25px',
+              boxShadow: '0 7px 18px rgba(0, 0, 0, 0.15)',
+            }}>
+              <div style={{
+                textAlign: 'center',
+                marginBottom: '16px',
+              }}>
+                <div style={{
+                  fontSize: '72px',
+                  lineHeight: '1',
+                }}>
+                  {childName.charAt(0).toUpperCase()}
+                </div>
+              </div>
+
+              <div style={{
+                fontFamily: "'Baloo 2', cursive",
+                fontSize: '24px',
+                fontWeight: 900,
+                color: '#654321',
+                textAlign: 'center',
+                marginBottom: '20px',
+              }}>
+                {childName}'s Story
+              </div>
+
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '16px',
+              }}>
+                <div style={{
+                  background: '#FFFFFF',
+                  borderRadius: '18px',
+                  padding: '15px 10px',
+                  textAlign: 'center',
+                  boxShadow: '0 6px 14px rgba(139, 69, 19, 0.12)',
+                }}>
+                  <div style={{
+                    fontFamily: "'Nunito', sans-serif",
+                    fontSize: '12px',
+                    color: '#999',
+                    marginBottom: '6px',
+                  }}>
+                    Family Home
+                  </div>
+                  <div style={{
+                    fontFamily: "'Baloo 2', cursive",
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    color: '#E91E63',
+                  }}>
+                    {selectedRegion?.label || '?'}
+                  </div>
+                </div>
+
+                <div style={{
+                  background: '#FFFFFF',
+                  borderRadius: '18px',
+                  padding: '15px 10px',
+                  textAlign: 'center',
+                  boxShadow: '0 6px 14px rgba(139, 69, 19, 0.12)',
+                }}>
+                  <div style={{
+                    fontFamily: "'Nunito', sans-serif",
+                    fontSize: '12px',
+                    color: '#999',
+                    marginBottom: '6px',
+                  }}>
+                    Languages at Home
+                  </div>
+                  <div style={{
+                    fontFamily: "'Baloo 2', cursive",
+                    fontSize: '13px',
+                    fontWeight: 700,
+                    color: '#E91E63',
+                    lineHeight: '1.4',
+                  }}>
+                    {selectedLanguages.map(l => l.label).join(', ') || '?'}
+                  </div>
+                </div>
+
+                <div style={{
+                  background: '#FFFFFF',
+                  borderRadius: '18px',
+                  padding: '15px 10px',
+                  textAlign: 'center',
+                  boxShadow: '0 6px 14px rgba(139, 69, 19, 0.12)',
+                }}>
+                  <div style={{
+                    fontFamily: "'Nunito', sans-serif",
+                    fontSize: '12px',
+                    color: '#999',
+                    marginBottom: '6px',
+                  }}>
+                    Celebrations
+                  </div>
+                  <div style={{
+                    fontFamily: "'Baloo 2', cursive",
+                    fontSize: '13px',
+                    fontWeight: 700,
+                    color: '#E91E63',
+                    lineHeight: '1.4',
+                  }}>
+                    {selectedFestivals.map(f => f.label).join(', ') || '?'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {selectedFestivals.find(f => f.id === 'ganesh') && (
+            <div style={{
+              background: 'linear-gradient(160deg, #FFE0B2, #FFD180)',
+              borderRadius: '16px',
+              padding: '24px',
+              textAlign: 'center',
+              marginBottom: '32px',
+              boxShadow: '0 6px 16px rgba(255, 152, 0, 0.25)',
+            }}>
+              <div style={{
+                fontFamily: "'Baloo 2', cursive",
+                fontSize: '20px',
+                fontWeight: 700,
+                color: '#FF6F00',
+                marginBottom: '8px',
+              }}>
+                🐘 We Both Celebrate Ganesh Chaturthi! 🎉
+              </div>
+              <div style={{
+                fontFamily: "'Nunito', sans-serif",
+                fontSize: '14px',
+                color: '#E65100',
+              }}>
+                We are true besties! Our roots connect us across the world. 💛
+              </div>
+            </div>
+          )}
+
+          <div style={{
+            textAlign: 'center',
+            marginBottom: '24px',
+          }}>
+            <p style={{
+              fontFamily: "'Nunito', sans-serif",
+              fontSize: '16px',
+              color: '#666',
+              lineHeight: '1.6',
+            }}>
+              <strong>Your roots are your superpower!</strong><br/>
+              When you know where you come from,<br/>
+              you know where you're going. 🌟
+            </p>
+          </div>
+
+          <button
+            onClick={() => {
+              playUiTap();
+              playChime();
+              handleComplete();
+            }}
+            style={{
+              display: 'block',
+              margin: '0 auto',
+              backgroundColor: '#FF9933',
+              fontSize: '18px',
+              fontWeight: 700,
+              padding: '16px 32px',
+              borderRadius: '12px',
+              border: 'none',
+              color: '#fff',
+              cursor: 'pointer',
+              fontFamily: "'Baloo 2', cursive",
+            }}
+          >
+            Our Story is Complete! 🎉
+          </button>
+        </div>
+      )}
+
+    </div>
+  );
+}

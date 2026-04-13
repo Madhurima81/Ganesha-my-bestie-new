@@ -611,38 +611,38 @@ export const MODAL_CONTENT = {
   // ABOUT ME HUT - Play Zone Modals
   // ========================================
   'about-me-hut': {
-    // Scene 1: Name & Birthday
-    'name-birthday': {
-      hint: {
-        title: "Hint",
-        description: "My name is: G-A-N-E-S-H-A. Pop the balloons in this order!",
-        buttonText: "Got It!"
+    // Scene 1: My Indian Story
+    'my-indian-story': {
+      regionInfo: {
+        title: "Ganesha's Home in India 🗺️",
+        description: "I am worshipped in every part of India! Each region celebrates me in their own special way.",
+        buttonText: "Tell Me More! 🌟"
       },
 
-      childNameIntro: {
-        title: "Hi! I am Ganesha.",
-        description: "",
-        buttonText: "What is your name? 👋"
+      childRegionChoice: {
+        title: "Your Turn! 🏠",
+        description: "Now you tell me: where are you from in India?",
+        buttonText: "Show Me on the Map! 📍"
       },
 
-      birthdayIntro: {
-        title: "Let's Find My Birthday 🎂",
-        description: "My birthday is a joyful day when people celebrate together. It comes during the festival season.",
-        buttonText: "Let's Explore 🌼"
+      languageIntro: {
+        title: "Many Languages, One Ganesha 🗣️",
+        description: "People speak different languages, but they all say my name with love!",
+        buttonText: "Which Languages Do You Speak? 💬"
       },
 
-      childBirthdayIntro: {
-        title: "Now I know YOUR name, {childName}! 🎈",
-        description: "But when is YOUR birthday? 🎂",
-        buttonText: "Tell You My Birthday! 🎉"
+      festivalIntro: {
+        title: "Festival Celebrations 🪔",
+        description: "We celebrate different festivals, but Ganesha Chaturthi is extra special!",
+        buttonText: "Which Festivals Do You Love? 🎊"
       },
 
-      bestiesCard: {
-        title: "BEST FRIENDS FOREVER! 💖",
-        subtitle: "We both love celebrations!",
+      originCard: {
+        title: "Our Shared Indian Story 💖",
+        subtitle: "You and I come from the same beautiful land!",
         ganeshaInfo: {
-          birthday: "Ganesh Chaturthi",
-          month: "Aug-Sept 🐘"
+          region: "All of India",
+          languages: "Sanskrit, Hindi & More 🗣️"
         },
         buttonText: "Finish Game ✨"
       }
@@ -962,12 +962,12 @@ export const RESUME_MESSAGES = {
   },
 
   'about-me-hut': {
-    'name-birthday': {
-      nameBalloons: "Great! You've popped {count}/7 balloons!",
-      childNameInput: "Continue typing your name! ({count} letters typed)",
-      birthdayChoice: "Keep trying! You've eliminated {count} options!",
-      childBirthdayMonth: "You picked {month}! Now pick the date. 📅",
-      bestiesCard: "Welcome back! Here's your bestie card! 💖"
+    'my-indian-story': {
+      ganeshaRegion: "You've discovered {region}! Ganesha's story lives here 🌟",
+      childRegionChoice: "You picked {region}! Welcome home! 🏠",
+      languageChoice: "You speak {language}! That's wonderful! 🗣️",
+      festivalChoice: "You celebrate {festival}! So do many across India! 🎉",
+      originCard: "Welcome back! Your Indian story awaits! 🗺️"
     },
 
     'family-tree': {

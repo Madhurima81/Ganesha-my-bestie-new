@@ -68,9 +68,9 @@ const ZONES_DATA = [
     unlockNote: 'Complete Symbol Mountain',
     scenes: [
       { id: 'family-tree', name: 'Family Tree' },
-      { id: 'name-birthday', name: 'Name & Birthday' },
       { id: 'favorite-food', name: 'Favorite Food' },
-      { id: 'dreams-wishes', name: 'Dreams & Wishes' }
+      { id: 'dreams-wishes', name: 'Dreams & Wishes' },
+      { id: 'my-indian-story', name: 'My Indian Story' }
     ]
   }
 ];
@@ -406,7 +406,7 @@ const ZONE_SCENES = {
   'cave-of-secrets':  ['vakratunda-mahakaya', 'suryakoti-samaprabha', 'nirvighnam-kurumedeva', 'sarvakaryeshu-sarvada', 'mantra-assembly'],
   'shloka-river':     ['vakratunda-grove', 'suryakoti-bank', 'nirvighnam-chant', 'sarvakaryeshu-chant', 'shloka-river-finale'],
   'festival-square':  ['game1', 'game2', 'game3', 'game4'],
-  'about-me-hut':     ['family-tree', 'name-birthday', 'favorite-food', 'dreams-wishes'],
+  'about-me-hut':     ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story'],
 };
 
 const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen }) => {

@@ -56,7 +56,7 @@ const SCENE_MAPPING = {
   'family-tree':   () => import('./zones/about-me-hut/family-tree/Familytreegame.jsx'),
   'favorite-food': () => import('./zones/about-me-hut/food/Favoritefoodgame.jsx'),
   'dreams-wishes': () => import('./zones/about-me-hut/enjoy/ObstacleRemoverGame.jsx'),
-  'name-birthday': () => import('./zones/about-me-hut/name/Namebirthdaygame.jsx')
+  'my-indian-story': () => import('./zones/about-me-hut/indian-story/MyIndianStoryGame.jsx')
 }
 
 };
@@ -162,20 +162,20 @@ const previousViewRef = useRef('loading');
   );
 
   // 🎯 SCENE LOADING COMPONENT: Handle dynamic loading with error boundaries
-  const SceneLoader = ({ zoneId, sceneId, onNavigate, onComplete, onSceneSelect }) => {
+  const SceneLoader = ({ zoneId, sceneId, onNavigate, onComplete, onSceneSelect, childName, childAge }) => {
     const SceneComponent = loadSceneComponent(zoneId, sceneId);
-    
+
     if (!SceneComponent) {
       console.log(`🎯 Scene ${zoneId}/${sceneId} not implemented, showing placeholder`);
       return (
-        <PlaceholderScene 
-          zoneId={zoneId} 
-          sceneId={sceneId} 
+        <PlaceholderScene
+          zoneId={zoneId}
+          sceneId={sceneId}
           onNavigate={onNavigate}
         />
       );
     }
-    
+
     return (
 <Suspense fallback={
   <div className="elegant-scene-loader">
@@ -197,12 +197,14 @@ const previousViewRef = useRef('loading');
     </div>
   </div>
 }>
-        <SceneComponent 
+        <SceneComponent
           onNavigate={onNavigate}
           onComplete={onComplete}
           onSceneSelect={onSceneSelect}
           zoneId={zoneId}
           sceneId={sceneId}
+          childName={childName}
+          childAge={childAge}
         />
       </Suspense>
     );
@@ -579,7 +581,7 @@ const getNextScene = (zoneId, currentSceneId) => {
     ],
       'festival-square': ['game1', 'game2', 'game3', 'game4'],
     // ✅ About Me Hut progression
-    'about-me-hut': ['family-tree', 'name-birthday', 'favorite-food', 'dreams-wishes']
+    'about-me-hut': ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
   };
 
   const scenes = sceneProgression[zoneId];
@@ -1025,12 +1027,14 @@ if (tempData.playAgainRequested) {
         applySceneStyles();
         
         return (
-          <SceneLoader 
+          <SceneLoader
             zoneId={currentZone}
             sceneId={currentScene}
             onNavigate={handleNavigate}
             onComplete={handleSceneComplete}
             onSceneSelect={handleSceneSelect}
+            childName={currentProfile?.name || 'friend'}
+            childAge={currentProfile?.age || 8}
           />
         );
       })()}
