@@ -1339,152 +1339,68 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
       {/* Festivals Ganesha Phase — 5 Festival Guess Game (2x3 Grid) */}
       {step === STEPS.FESTIVALS_GANESHA && (
         <div style={{
-          background: 'linear-gradient(160deg, #FFFBF0 0%, #FFF9E8 100%)',
           minHeight: '100vh',
-          paddingTop: '120px',
+          paddingTop: '60px',
           paddingBottom: '80px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
         }}>
-          {/* Festival Cards — 2x3 Grid (2 top, 3 bottom) */}
+          {/* Festival Cards — 2x3 Grid (2 top, 3 bottom) - Same size as Phase 3 Language Cards */}
           <div style={{
-            maxWidth: '600px',
-            margin: '0 auto 120px',
+            maxWidth: '900px',
+            margin: '0 auto',
             display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '32px',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: '48px',
             padding: '0 24px',
+            marginBottom: '80px',
           }}>
-            {/* TOP ROW: 2 cards centered */}
-            <div style={{ gridColumn: '1 / 2' }}></div>
-            <button
-              key="pongal"
-              onClick={() => handleFestivalGuess(FESTIVALS.find(f => f.id === 'pongal'))}
-              disabled={wrongGuesses.has('pongal')}
-              style={{
-                width: '100px',
-                height: '100px',
-                borderRadius: '16px',
-                border: 'none',
-                backgroundColor: wrongGuesses.has('pongal') ? '#F5F5F5' : '#FFFFFF',
-                cursor: wrongGuesses.has('pongal') ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0px 6px 12px rgba(0,0,0,0.12)',
-                transition: 'all 0.3s',
-                transform: shakeGuess === 'pongal' ? 'scale(0.95)' : 'scale(1)',
-                opacity: wrongGuesses.has('pongal') ? 0.3 : 1,
-                filter: wrongGuesses.has('pongal') ? 'grayscale(20%)' : 'none',
-                animation: shakeGuess === 'pongal' ? 'shake 0.3s ease-in-out' : 'popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0s',
-              }}
-            >
-              <img src={pongalIcon} alt="Pongal" style={{ width: '60px', height: '60px', objectFit: 'contain' }} />
-            </button>
-            <button
-              key="holi"
-              onClick={() => handleFestivalGuess(FESTIVALS.find(f => f.id === 'holi'))}
-              disabled={wrongGuesses.has('holi')}
-              style={{
-                width: '100px',
-                height: '100px',
-                borderRadius: '16px',
-                border: 'none',
-                backgroundColor: wrongGuesses.has('holi') ? '#F5F5F5' : '#FFFFFF',
-                cursor: wrongGuesses.has('holi') ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0px 6px 12px rgba(0,0,0,0.12)',
-                transition: 'all 0.3s',
-                transform: shakeGuess === 'holi' ? 'scale(0.95)' : 'scale(1)',
-                opacity: wrongGuesses.has('holi') ? 0.3 : 1,
-                filter: wrongGuesses.has('holi') ? 'grayscale(20%)' : 'none',
-                animation: shakeGuess === 'holi' ? 'shake 0.3s ease-in-out' : 'popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.05s',
-              }}
-            >
-              <img src={holiIcon} alt="Holi" style={{ width: '60px', height: '60px', objectFit: 'contain' }} />
-            </button>
-            <div style={{ gridColumn: '3 / 4' }}></div>
-
-            {/* BOTTOM ROW: 3 cards */}
-            <button
-              key="janmashtami"
-              onClick={() => handleFestivalGuess(FESTIVALS.find(f => f.id === 'janmashtami'))}
-              disabled={wrongGuesses.has('janmashtami')}
-              style={{
-                width: '100px',
-                height: '100px',
-                borderRadius: '16px',
-                border: 'none',
-                backgroundColor: wrongGuesses.has('janmashtami') ? '#F5F5F5' : '#FFFFFF',
-                cursor: wrongGuesses.has('janmashtami') ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0px 6px 12px rgba(0,0,0,0.12)',
-                transition: 'all 0.3s',
-                transform: shakeGuess === 'janmashtami' ? 'scale(0.95)' : 'scale(1)',
-                opacity: wrongGuesses.has('janmashtami') ? 0.3 : 1,
-                filter: wrongGuesses.has('janmashtami') ? 'grayscale(20%)' : 'none',
-                animation: shakeGuess === 'janmashtami' ? 'shake 0.3s ease-in-out' : 'popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s',
-              }}
-            >
-              <img src={janmashtamiIcon} alt="Janmashtami" style={{ width: '60px', height: '60px', objectFit: 'contain' }} />
-            </button>
-            <button
-              key="ganesh"
-              onClick={() => handleFestivalGuess(FESTIVALS.find(f => f.id === 'ganesh'))}
-              disabled={wrongGuesses.has('ganesh')}
-              style={{
-                width: '100px',
-                height: '100px',
-                borderRadius: '16px',
-                border: 'none',
-                backgroundColor: guessPhase === 'correct' ? '#FFF4D8' : (wrongGuesses.has('ganesh') ? '#F5F5F5' : '#FFFFFF'),
-                borderColor: guessPhase === 'correct' ? '#FFC857' : 'transparent',
-                borderWidth: guessPhase === 'correct' ? '2px' : '0',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: guessPhase === 'correct'
-                  ? '0 0 20px rgba(255, 200, 87, 0.6), 0px 6px 12px rgba(0,0,0,0.12)'
-                  : '0px 6px 12px rgba(0,0,0,0.12)',
-                transition: 'all 0.3s',
-                transform: guessPhase === 'correct' ? 'scale(1.05)' : 'scale(1)',
-                opacity: guessPhase === 'correct' || !wrongGuesses.has('ganesh') ? 1 : 0.3,
-                filter: wrongGuesses.has('ganesh') ? 'grayscale(20%)' : 'none',
-                animation: guessPhase === 'correct' ? 'glow 0.6s ease-in-out' : 'popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s',
-              }}
-            >
-              <img src={chaturthiIcon} alt="Ganesh Chaturthi" style={{ width: '60px', height: '60px', objectFit: 'contain' }} />
-            </button>
-            <button
-              key="diwali"
-              onClick={() => handleFestivalGuess(FESTIVALS.find(f => f.id === 'diwali'))}
-              disabled={wrongGuesses.has('diwali')}
-              style={{
-                width: '100px',
-                height: '100px',
-                borderRadius: '16px',
-                border: 'none',
-                backgroundColor: wrongGuesses.has('diwali') ? '#F5F5F5' : '#FFFFFF',
-                cursor: wrongGuesses.has('diwali') ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0px 6px 12px rgba(0,0,0,0.12)',
-                transition: 'all 0.3s',
-                transform: shakeGuess === 'diwali' ? 'scale(0.95)' : 'scale(1)',
-                opacity: wrongGuesses.has('diwali') ? 0.3 : 1,
-                filter: wrongGuesses.has('diwali') ? 'grayscale(20%)' : 'none',
-                animation: shakeGuess === 'diwali' ? 'shake 0.3s ease-in-out' : 'popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s',
-              }}
-            >
-              <img src={diwaliIcon} alt="Diwali" style={{ width: '60px', height: '60px', objectFit: 'contain' }} />
-            </button>
+            {[
+              { id: 'pongal', label: 'Pongal', icon: pongalIcon },
+              { id: 'holi', label: 'Holi', icon: holiIcon },
+              { id: 'janmashtami', label: 'Janmashtami', icon: janmashtamiIcon },
+              { id: 'ganesh', label: 'Ganesh Chaturthi', icon: chaturthiIcon },
+              { id: 'diwali', label: 'Diwali', icon: diwaliIcon },
+            ].map((fest, idx) => (
+              <button
+                key={fest.id}
+                onClick={() => handleFestivalGuess(FESTIVALS.find(f => f.id === fest.id))}
+                disabled={wrongGuesses.has(fest.id) || guessPhase === 'correct'}
+                style={{
+                  width: '100%',
+                  minHeight: '280px',
+                  padding: '28px',
+                  borderRadius: '28px',
+                  border: shakeGuess === fest.id ? `4px solid #FF6B6B` : `4px solid #E0E0E0`,
+                  backgroundColor: wrongGuesses.has(fest.id) ? '#F5F5F5' : '#FFFFFF',
+                  cursor: (wrongGuesses.has(fest.id) || guessPhase === 'correct') ? 'not-allowed' : 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '16px',
+                  transition: 'all 0.3s',
+                  boxShadow: shakeGuess === fest.id
+                    ? '0 8px 24px rgba(255, 107, 107, 0.3)'
+                    : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                  transform: shakeGuess === fest.id ? 'scale(0.95)' : 'scale(1)',
+                  opacity: wrongGuesses.has(fest.id) ? 0.3 : 1,
+                  filter: wrongGuesses.has(fest.id) ? 'grayscale(20%)' : 'none',
+                  animation: shakeGuess === fest.id ? 'shake 0.3s ease-in-out' : 'popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) ' + (idx * 0.05) + 's',
+                }}
+              >
+                <img src={fest.icon} alt={fest.label} style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
+                <div style={{
+                  fontFamily: "'Baloo 2', cursive",
+                  fontSize: '28px',
+                  fontWeight: 700,
+                  color: '#654321',
+                }}>
+                  {fest.label}
+                </div>
+              </button>
+            ))}
           </div>
 
           {/* Correct Celebration Sparkle */}
