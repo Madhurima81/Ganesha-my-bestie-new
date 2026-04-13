@@ -1045,16 +1045,17 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
           <div style={{ textAlign: 'center', marginTop: '120px', marginBottom: '80px' }}>
             <button
               onClick={() => {
-                setLangGuessPhase('revealed');
+                // Play audio for the selected language
+                const audioElement = document.getElementById('language-audio');
+                if (audioElement) audioElement.play();
               }}
-              disabled={langGuessPhase === 'revealed'}
               style={{
                 width: '160px',
                 height: '160px',
                 borderRadius: '50%',
                 backgroundColor: '#FF8A2B',
                 border: 'none',
-                cursor: langGuessPhase === 'guessing' ? 'pointer' : 'not-allowed',
+                cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -1062,75 +1063,74 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
                 boxShadow: '0 8px 24px rgba(255, 138, 43, 0.4)',
                 transition: 'all 0.2s',
                 margin: '0 auto',
-                animation: langGuessPhase === 'guessing' ? 'pulse 1.5s ease-in-out infinite' : 'none',
+                animation: 'pulse 1.5s ease-in-out infinite',
               }}
             >
               ▶️
             </button>
+            <audio id="language-audio" src="/audio/sanskrit-vakratunda.mp3" style={{ display: 'none' }} />
           </div>
 
-          {/* Language Cards Grid - 2x2 */}
-          {langGuessPhase === 'revealed' && (
-            <div style={{
-              maxWidth: '900px',
-              margin: '0 auto',
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '48px',
-              padding: '0 24px',
-            }}>
-              {[
-                { id: 'hindi', label: 'Hindi', script: 'हिंदी', icon: '🪔', color: '#FF9933' },
-                { id: 'tamil', label: 'Tamil', script: 'தமிழ்', icon: '🏛️', color: '#E91E63' },
-                { id: 'sanskrit', label: 'Sanskrit', script: 'संस्कृत', icon: '📜', color: '#FFD700' },
-                { id: 'telugu', label: 'Telugu', script: 'తెలుగు', icon: '🎭', color: '#9C27B0' },
-              ].map((lang) => (
-                <button
-                  key={lang.id}
-                  onClick={() => toggleLanguage(lang)}
-                  style={{
-                    width: '100%',
-                    minHeight: '280px',
-                    padding: '28px',
-                    borderRadius: '28px',
-                    border: selectedLanguages.find(l => l.id === lang.id) ? `4px solid #FFD76A` : '3px solid #E0E0E0',
-                    backgroundColor: selectedLanguages.find(l => l.id === lang.id) ? '#FFFBE9' : '#FFFFFF',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '16px',
-                    transition: 'all 0.2s',
-                    boxShadow: selectedLanguages.find(l => l.id === lang.id)
-                      ? '0 8px 24px rgba(255, 215, 106, 0.3)'
-                      : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                    transform: selectedLanguages.find(l => l.id === lang.id) ? 'scale(1.05)' : 'scale(1)',
-                  }}
-                >
-                  <div style={{ fontSize: '80px' }}>{lang.icon}</div>
-                  <div style={{
-                    fontFamily: "'Baloo 2', cursive",
-                    fontSize: '28px',
-                    fontWeight: 700,
-                    color: '#654321',
-                  }}>
-                    {lang.label}
-                  </div>
-                  <div style={{
-                    fontFamily: "'Nunito', sans-serif",
-                    fontSize: '20px',
-                    color: '#8B6914',
-                  }}>
-                    {lang.script}
-                  </div>
-                </button>
-              ))}
-            </div>
-          )}
+          {/* Language Cards Grid - 2x2 (visible from start) */}
+          <div style={{
+            maxWidth: '900px',
+            margin: '0 auto',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: '48px',
+            padding: '0 24px',
+          }}>
+            {[
+              { id: 'hindi', label: 'Hindi', script: 'हिंदी', icon: hindiLangIcon },
+              { id: 'tamil', label: 'Tamil', script: 'தமிழ்', icon: tamilLangIcon },
+              { id: 'sanskrit', label: 'Sanskrit', script: 'संस्कृत', icon: sanskritLangIcon },
+              { id: 'telugu', label: 'Telugu', script: 'తెలుగు', icon: teluguLangIcon },
+            ].map((lang) => (
+              <button
+                key={lang.id}
+                onClick={() => toggleLanguage(lang)}
+                style={{
+                  width: '100%',
+                  minHeight: '280px',
+                  padding: '28px',
+                  borderRadius: '28px',
+                  border: selectedLanguages.find(l => l.id === lang.id) ? `4px solid #FFD76A` : '3px solid #E0E0E0',
+                  backgroundColor: selectedLanguages.find(l => l.id === lang.id) ? '#FFFBE9' : '#FFFFFF',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '16px',
+                  transition: 'all 0.2s',
+                  boxShadow: selectedLanguages.find(l => l.id === lang.id)
+                    ? '0 8px 24px rgba(255, 215, 106, 0.3)'
+                    : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                  transform: selectedLanguages.find(l => l.id === lang.id) ? 'scale(1.05)' : 'scale(1)',
+                }}
+              >
+                <img src={lang.icon} alt={lang.label} style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
+                <div style={{
+                  fontFamily: "'Baloo 2', cursive",
+                  fontSize: '28px',
+                  fontWeight: 700,
+                  color: '#654321',
+                }}>
+                  {lang.label}
+                </div>
+                <div style={{
+                  fontFamily: "'Nunito', sans-serif",
+                  fontSize: '20px',
+                  color: '#8B6914',
+                }}>
+                  {lang.script}
+                </div>
+              </button>
+            ))}
+          </div>
 
           {/* Continue Button */}
-          {selectedLanguages.length > 0 && langGuessPhase === 'revealed' && (
+          {selectedLanguages.length > 0 && (
             <button
               onClick={() => setStep(STEPS.FESTIVALS)}
               style={{
