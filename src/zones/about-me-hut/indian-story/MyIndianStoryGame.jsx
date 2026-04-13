@@ -1326,110 +1326,186 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
         </div>
       )}
 
-      {/* Festivals Ganesha Phase — 4 Festival Guess Game */}
+      {/* Festivals Ganesha Phase — 5 Festival Guess Game (2x3 Grid) */}
       {step === STEPS.FESTIVALS_GANESHA && (
-        <div style={{ paddingTop: '60px', paddingBottom: '80px', minHeight: '100vh' }}>
-          {/* Play Button Section */}
-          <div style={{ textAlign: 'center', marginTop: '120px', marginBottom: '80px' }}>
-            <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '24px', fontWeight: 700, color: '#654321', marginBottom: '40px' }}>
-              Guess my favorite festival!
-            </div>
+        <div style={{
+          background: 'linear-gradient(160deg, #FFFBF0 0%, #FFF9E8 100%)',
+          minHeight: '100vh',
+          paddingTop: '120px',
+          paddingBottom: '80px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}>
+          {/* Festival Cards — 2x3 Grid (2 top, 3 bottom) */}
+          <div style={{
+            maxWidth: '600px',
+            margin: '0 auto 120px',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: '32px',
+            padding: '0 24px',
+          }}>
+            {/* TOP ROW: 2 cards centered */}
+            <div style={{ gridColumn: '1 / 2' }}></div>
             <button
-              onClick={() => {
-                playUiTap();
-                setGuessPhase('revealed');
-              }}
-              disabled={guessPhase === 'revealed'}
+              key="pongal"
+              onClick={() => handleFestivalGuess(FESTIVALS.find(f => f.id === 'pongal'))}
+              disabled={wrongGuesses.has('pongal')}
               style={{
-                width: '160px',
-                height: '160px',
-                borderRadius: '50%',
-                backgroundColor: '#FF8A2B',
+                width: '100px',
+                height: '100px',
+                borderRadius: '16px',
                 border: 'none',
-                cursor: guessPhase === 'guessing' ? 'pointer' : 'not-allowed',
+                backgroundColor: wrongGuesses.has('pongal') ? '#F5F5F5' : '#FFFFFF',
+                cursor: wrongGuesses.has('pongal') ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '70px',
-                boxShadow: '0 8px 24px rgba(255, 138, 43, 0.4)',
-                transition: 'all 0.2s',
-                margin: '0 auto',
-                animation: guessPhase === 'guessing' ? 'pulse 1.5s ease-in-out infinite' : 'none',
-                opacity: guessPhase === 'revealed' ? 0.5 : 1,
+                boxShadow: '0px 6px 12px rgba(0,0,0,0.12)',
+                transition: 'all 0.3s',
+                transform: shakeGuess === 'pongal' ? 'scale(0.95)' : 'scale(1)',
+                opacity: wrongGuesses.has('pongal') ? 0.3 : 1,
+                filter: wrongGuesses.has('pongal') ? 'grayscale(20%)' : 'none',
+                animation: shakeGuess === 'pongal' ? 'shake 0.3s ease-in-out' : 'popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0s',
               }}
             >
-              ▶️
+              <img src={pongalIcon} alt="Pongal" style={{ width: '60px', height: '60px', objectFit: 'contain' }} />
+            </button>
+            <button
+              key="holi"
+              onClick={() => handleFestivalGuess(FESTIVALS.find(f => f.id === 'holi'))}
+              disabled={wrongGuesses.has('holi')}
+              style={{
+                width: '100px',
+                height: '100px',
+                borderRadius: '16px',
+                border: 'none',
+                backgroundColor: wrongGuesses.has('holi') ? '#F5F5F5' : '#FFFFFF',
+                cursor: wrongGuesses.has('holi') ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0px 6px 12px rgba(0,0,0,0.12)',
+                transition: 'all 0.3s',
+                transform: shakeGuess === 'holi' ? 'scale(0.95)' : 'scale(1)',
+                opacity: wrongGuesses.has('holi') ? 0.3 : 1,
+                filter: wrongGuesses.has('holi') ? 'grayscale(20%)' : 'none',
+                animation: shakeGuess === 'holi' ? 'shake 0.3s ease-in-out' : 'popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.05s',
+              }}
+            >
+              <img src={holiIcon} alt="Holi" style={{ width: '60px', height: '60px', objectFit: 'contain' }} />
+            </button>
+            <div style={{ gridColumn: '3 / 4' }}></div>
+
+            {/* BOTTOM ROW: 3 cards */}
+            <button
+              key="janmashtami"
+              onClick={() => handleFestivalGuess(FESTIVALS.find(f => f.id === 'janmashtami'))}
+              disabled={wrongGuesses.has('janmashtami')}
+              style={{
+                width: '100px',
+                height: '100px',
+                borderRadius: '16px',
+                border: 'none',
+                backgroundColor: wrongGuesses.has('janmashtami') ? '#F5F5F5' : '#FFFFFF',
+                cursor: wrongGuesses.has('janmashtami') ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0px 6px 12px rgba(0,0,0,0.12)',
+                transition: 'all 0.3s',
+                transform: shakeGuess === 'janmashtami' ? 'scale(0.95)' : 'scale(1)',
+                opacity: wrongGuesses.has('janmashtami') ? 0.3 : 1,
+                filter: wrongGuesses.has('janmashtami') ? 'grayscale(20%)' : 'none',
+                animation: shakeGuess === 'janmashtami' ? 'shake 0.3s ease-in-out' : 'popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s',
+              }}
+            >
+              <img src={janmashtamiIcon} alt="Janmashtami" style={{ width: '60px', height: '60px', objectFit: 'contain' }} />
+            </button>
+            <button
+              key="ganesh"
+              onClick={() => handleFestivalGuess(FESTIVALS.find(f => f.id === 'ganesh'))}
+              disabled={wrongGuesses.has('ganesh')}
+              style={{
+                width: '100px',
+                height: '100px',
+                borderRadius: '16px',
+                border: 'none',
+                backgroundColor: guessPhase === 'correct' ? '#FFF4D8' : (wrongGuesses.has('ganesh') ? '#F5F5F5' : '#FFFFFF'),
+                borderColor: guessPhase === 'correct' ? '#FFC857' : 'transparent',
+                borderWidth: guessPhase === 'correct' ? '2px' : '0',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: guessPhase === 'correct'
+                  ? '0 0 20px rgba(255, 200, 87, 0.6), 0px 6px 12px rgba(0,0,0,0.12)'
+                  : '0px 6px 12px rgba(0,0,0,0.12)',
+                transition: 'all 0.3s',
+                transform: guessPhase === 'correct' ? 'scale(1.05)' : 'scale(1)',
+                opacity: guessPhase === 'correct' || !wrongGuesses.has('ganesh') ? 1 : 0.3,
+                filter: wrongGuesses.has('ganesh') ? 'grayscale(20%)' : 'none',
+                animation: guessPhase === 'correct' ? 'glow 0.6s ease-in-out' : 'popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s',
+              }}
+            >
+              <img src={chaturthiIcon} alt="Ganesh Chaturthi" style={{ width: '60px', height: '60px', objectFit: 'contain' }} />
+            </button>
+            <button
+              key="diwali"
+              onClick={() => handleFestivalGuess(FESTIVALS.find(f => f.id === 'diwali'))}
+              disabled={wrongGuesses.has('diwali')}
+              style={{
+                width: '100px',
+                height: '100px',
+                borderRadius: '16px',
+                border: 'none',
+                backgroundColor: wrongGuesses.has('diwali') ? '#F5F5F5' : '#FFFFFF',
+                cursor: wrongGuesses.has('diwali') ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0px 6px 12px rgba(0,0,0,0.12)',
+                transition: 'all 0.3s',
+                transform: shakeGuess === 'diwali' ? 'scale(0.95)' : 'scale(1)',
+                opacity: wrongGuesses.has('diwali') ? 0.3 : 1,
+                filter: wrongGuesses.has('diwali') ? 'grayscale(20%)' : 'none',
+                animation: shakeGuess === 'diwali' ? 'shake 0.3s ease-in-out' : 'popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s',
+              }}
+            >
+              <img src={diwaliIcon} alt="Diwali" style={{ width: '60px', height: '60px', objectFit: 'contain' }} />
             </button>
           </div>
 
-          {/* Festival Cards Grid — 2x2 */}
-          {guessPhase === 'revealed' && (
-            <div style={{
-              maxWidth: '900px',
-              margin: '0 auto',
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '48px',
-              padding: '0 24px',
-              marginBottom: '80px',
-            }}>
-              {[
-                { id: 'pongal', label: 'Pongal', emoji: '🌾', icon: pongalIcon },
-                { id: 'holi', label: 'Holi', emoji: '🎨', icon: holiIcon },
-                { id: 'janmashtami', label: 'Janmashtami', emoji: '🎭', icon: janmashtamiIcon },
-                { id: 'ganesh', label: 'Ganesh Chaturthi', emoji: '🎉', icon: chaturthiIcon },
-              ].map((fest) => (
-                <button
-                  key={fest.id}
-                  onClick={() => handleFestivalGuess(fest)}
-                  disabled={wrongGuesses.has(fest.id)}
-                  style={{
-                    width: '100%',
-                    minHeight: '280px',
-                    padding: '28px',
-                    borderRadius: '28px',
-                    border: shakeGuess === fest.id ? `4px solid #FF6B6B` : `4px solid #E0E0E0`,
-                    backgroundColor: wrongGuesses.has(fest.id) ? '#F5F5F5' : '#FFFFFF',
-                    cursor: wrongGuesses.has(fest.id) ? 'not-allowed' : 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '16px',
-                    transition: 'all 0.2s',
-                    boxShadow: shakeGuess === fest.id
-                      ? '0 8px 24px rgba(255, 107, 107, 0.3)'
-                      : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                    transform: shakeGuess === fest.id ? 'scale(0.95)' : 'scale(1)',
-                    opacity: wrongGuesses.has(fest.id) ? 0.5 : 1,
-                    animation: shakeGuess === fest.id ? 'shake 0.3s ease-in-out' : 'none',
-                  }}
-                >
-                  <img src={fest.icon} alt={fest.label} style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
-                  <div style={{
-                    fontFamily: "'Baloo 2', cursive",
-                    fontSize: '28px',
-                    fontWeight: 700,
-                    color: '#654321',
-                  }}>
-                    {fest.label}
-                  </div>
-                </button>
-              ))}
-            </div>
+          {/* Correct Celebration Sparkle */}
+          {guessPhase === 'correct' && (
+            <SparkleAnimation
+              type="star"
+              count={20}
+              color="rgba(255, 200, 87, 0.8)"
+              size={6}
+              duration={2000}
+              fadeOut={true}
+              area="full"
+              key={sparkleState.key}
+            />
           )}
 
-          {/* Shake Animation */}
+          {/* Animations */}
           <style>{`
-            @keyframes pulse {
-              0% { transform: scale(1); }
-              50% { transform: scale(1.08); }
-              100% { transform: scale(1); }
+            @keyframes popIn {
+              0% { transform: scale(0.9); opacity: 0; }
+              100% { transform: scale(1); opacity: 1; }
             }
             @keyframes shake {
               0%, 100% { transform: translateX(0) scale(1); }
-              25% { transform: translateX(-8px) scale(0.95); }
-              75% { transform: translateX(8px) scale(0.95); }
+              25% { transform: translateX(-6px) scale(0.95); }
+              75% { transform: translateX(6px) scale(0.95); }
+            }
+            @keyframes glow {
+              0% { box-shadow: 0 0 0 rgba(255, 200, 87, 0.6), 0px 6px 12px rgba(0,0,0,0.12); }
+              50% { box-shadow: 0 0 25px rgba(255, 200, 87, 0.8), 0px 6px 12px rgba(0,0,0,0.12); }
+              100% { box-shadow: 0 0 20px rgba(255, 200, 87, 0.6), 0px 6px 12px rgba(0,0,0,0.12); }
             }
           `}</style>
         </div>
