@@ -265,14 +265,26 @@
   background: var(--zone-current-base);
   border: 3px solid var(--zone-current-soft);
   border-radius: 35px;
-  padding: 45px 50px;
+  width: min(92vw, 760px);
+  max-width: 760px;
+  padding: 48px 64px;
   text-align: center;
-  max-width: 550px;
+  min-height: 280px;
   box-shadow: 0 7px 18px rgba(0, 0, 0, 0.15);
   position: relative;
 
   /* CHANGED: Added 0.5s delay so it doesn't slam in immediately */
   animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.5s backwards;
+}
+
+.wish-intro-card .heartbeat-delayed {
+  width: min(100%, 500px);
+  min-width: 450px;
+  white-space: nowrap;
+}
+
+.wish-intro-card .wish-intro-text:nth-of-type(2) {
+  white-space: nowrap;
 }
 
 /* Ensure the fadeIn keyframe is simple */
@@ -286,6 +298,162 @@
   height: 200px;
   object-fit: contain;
   margin-bottom: 30px;
+}
+
+/* ========================================
+   WISH 1 INTRO TUNING (SCENE 20 ONLY)
+======================================== */
+
+.wish1-intro-overlay {
+  position: relative;
+}
+
+.wish1-intro-ganesha {
+  width: clamp(320px, 32vw, 360px);
+  height: clamp(320px, 32vw, 360px);
+  margin-bottom: 8px;
+  z-index: 3;
+}
+
+.wish1-intro-card {
+  width: min(92vw, 760px);
+  min-height: 320px;
+  padding: 54px 72px;
+  margin-top: 52px;
+  z-index: 3;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
+}
+
+.wish1-intro-card::before {
+  content: "";
+  position: absolute;
+  inset: -56px -72px -72px -72px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 251, 227, 0.8) 0%,
+    rgba(255, 251, 227, 0.42) 42%,
+    rgba(255, 251, 227, 0) 75%
+  );
+  z-index: -1;
+  pointer-events: none;
+}
+
+.wish1-intro-line1 {
+  margin-bottom: 18px;
+}
+
+.wish1-intro-line2 {
+  white-space: nowrap;
+  margin-bottom: 36px;
+}
+
+.wish1-intro-btn {
+  width: min(100%, 500px);
+  min-width: 450px;
+  min-height: 78px;
+  padding: 20px 56px !important;
+  border-radius: 999px !important;
+  font-size: 26px !important;
+  white-space: nowrap;
+}
+
+.wish1-intro-sparkles {
+  position: absolute;
+  left: 50%;
+  top: 57%;
+  transform: translate(-50%, -50%);
+  width: min(86vw, 780px);
+  height: min(72vh, 560px);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.wish1-intro-sparkle {
+  position: absolute;
+  font-size: clamp(26px, 3.2vw, 34px);
+  color: #ffd86b;
+  text-shadow: 0 0 12px rgba(255, 216, 107, 0.85);
+  animation: sparkleFloat 2.8s ease-in-out infinite;
+}
+
+.sparkle-top-left {
+  top: 23%;
+  left: 14%;
+  animation-delay: 0s;
+}
+
+.sparkle-top-right {
+  top: 19%;
+  right: 14%;
+  animation-delay: 0.4s;
+}
+
+.sparkle-bottom-left {
+  bottom: 18%;
+  left: 18%;
+  animation-delay: 0.8s;
+}
+
+.sparkle-bottom-right {
+  bottom: 16%;
+  right: 18%;
+  animation-delay: 1.1s;
+}
+
+@media (max-width: 1024px) {
+  .wish1-intro-ganesha {
+    width: clamp(260px, 34vw, 320px);
+    height: clamp(260px, 34vw, 320px);
+  }
+
+  .wish1-intro-card {
+    width: min(94vw, 720px);
+    min-height: 290px;
+    padding: 48px 60px;
+    margin-top: 46px;
+  }
+
+  .wish1-intro-btn {
+    min-width: 400px;
+    min-height: 72px;
+    font-size: 24px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .wish1-intro-ganesha {
+    width: clamp(190px, 40vw, 250px);
+    height: clamp(190px, 40vw, 250px);
+  }
+
+  .wish1-intro-card {
+    min-height: 260px;
+    padding: 38px 28px;
+    margin-top: 36px;
+  }
+
+  .wish1-intro-line1 {
+    margin-bottom: 14px;
+  }
+
+  .wish1-intro-line2 {
+    white-space: normal;
+    margin-bottom: 28px;
+  }
+
+  .wish1-intro-btn {
+    min-width: 0;
+    min-height: 64px;
+    font-size: 21px !important;
+    padding: 16px 30px !important;
+    white-space: normal;
+  }
+
+  .wish1-intro-sparkles {
+    top: 60%;
+    width: min(94vw, 680px);
+    height: min(70vh, 480px);
+  }
 }
 
 .intro-speech {
@@ -685,10 +853,10 @@
   z-index: 20;
 
   /* Size */
-  width: 550px;
-  height: 380px;
+  width: 680px;
+  height: 460px;
   
-  cursor: pointer;
+  cursor: default;
   border-radius: 30px;
   overflow: hidden; /* Keeps images inside rounded corners */
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
@@ -1781,6 +1949,29 @@ font-weight: 700;
   }
 }
 
+@keyframes bubbleFloat {
+  0%   { transform: translateY(0);      opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(-160vh); opacity: 0; }
+}
+
+@keyframes foodFloat {
+  0%   { transform: translateX(0);    opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateX(120vw); opacity: 0; }
+}
+
+@keyframes glowPulse {
+  0%, 100% { transform: scale(1);   box-shadow: 0 0 12px rgba(255,215,0,0.5); }
+  50%       { transform: scale(1.3); box-shadow: 0 0 24px rgba(255,215,0,0.9); }
+}
+
+@keyframes spotReveal {
+  0%   { transform: scale(0) rotate(-15deg); opacity: 0; }
+  60%  { transform: scale(1.3) rotate(5deg);  opacity: 1; }
+  100% { transform: scale(1)   rotate(0deg);  opacity: 1; }
+}
+
 @keyframes bubbleBounce {
   0% {
     transform: translateX(-50%) scale(0.8);
@@ -1859,6 +2050,23 @@ font-weight: 700;
 ======================================== */
 
 @media (max-width: 768px) {
+  .wish-intro-card {
+    width: min(94vw, 680px);
+    max-width: 680px;
+    min-height: 240px;
+    padding: 36px 28px;
+  }
+
+  .wish-intro-card .heartbeat-delayed {
+    min-width: 0;
+    width: 100%;
+    white-space: normal;
+  }
+
+  .wish-intro-card .wish-intro-text:nth-of-type(2) {
+    white-space: normal;
+  }
+
   .intro-speech {
     padding: 20px 30px;
     max-width: 90%;
@@ -1882,8 +2090,8 @@ font-weight: 700;
   }
 
   .park-scene {
-    width: 350px;
-    height: 250px;
+    width: 440px;
+    height: 300px;
   }
 
   .dream-container {
