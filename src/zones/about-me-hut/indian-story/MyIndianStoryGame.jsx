@@ -57,6 +57,9 @@ import diwaliIcon from './assets/images/festivals/diwali.png';
 import onamIcon from './assets/images/festivals/onam.png';
 import eidIcon from './assets/images/festivals/eid.png';
 import christmasIcon from './assets/images/festivals/xmas.png';
+import durga_pujaIcon from './assets/images/festivals/durgapuja.png';
+import dussehra_Icon from './assets/images/festivals/dussehra.png';
+import rakhi_Icon from './assets/images/festivals/rakhi.png';
 
 // ─── STEP CONSTANTS ───────────────────────────────────────────────
 const STEPS = {
@@ -122,32 +125,38 @@ const LANGUAGES = [
 ];
 
 const FESTIVALS = [
-  { id: 'pongal',        label: 'Pongal',         emoji: '🌾', icon: pongalIcon,        season: 'winter', seasonLabel: 'Winter',  angle: 30,  ganeshaReact: 'Pongal! The harvest festival! 🌾', guessOption: true },
-  { id: 'holi',          label: 'Holi',           emoji: '🎨', icon: holiIcon,          season: 'spring', seasonLabel: 'Spring',  angle: 60,  ganeshaReact: 'Holi! The festival of colors! 🎨', guessOption: true },
-  { id: 'janmashtami',   label: 'Janmashtami',    emoji: '🎭', icon: janmashtamiIcon,   season: 'summer', seasonLabel: 'Summer',  angle: 120, ganeshaReact: 'Janmashtami! My friend Krishna\'s birthday! 🎭', guessOption: true },
-  { id: 'ganesh',        label: 'Ganesh Chaturthi', emoji: '🎉', icon: chaturthiIcon,    season: 'autumn', seasonLabel: 'Autumn',  angle: 180, ganeshaReact: 'Ganesh Chaturthi! MY festival! 🎉', guessOption: true, isGanesha: true },
-  { id: 'durga_puja',    label: 'Durga Puja',     emoji: '⚔️', icon: navratriIcon,      season: 'autumn', seasonLabel: 'Autumn',  angle: 155, ganeshaReact: 'Durga Puja celebrations are grand and joyful! 🎊', guessOption: false },
-  { id: 'diwali',        label: 'Diwali',         emoji: '💡', icon: diwaliIcon,        season: 'autumn', seasonLabel: 'Autumn',  angle: 210, ganeshaReact: 'Diwali! The festival of lights! 💡', guessOption: false },
-  { id: 'navratri',      label: 'Navratri',       emoji: '🎭', icon: navratriIcon,      season: 'autumn', seasonLabel: 'Autumn',  angle: 170, ganeshaReact: 'Navratri! Nine nights of celebration! 🎭', guessOption: false },
-  { id: 'onam',          label: 'Onam',           emoji: '🌺', icon: onamIcon,          season: 'summer', seasonLabel: 'Summer',  angle: 135, ganeshaReact: 'Onam! Kerala\'s beautiful harvest festival! 🌺', guessOption: false },
-  { id: 'eid',           label: 'Eid',            emoji: '🌙', icon: eidIcon,           season: 'spring', seasonLabel: 'Spring',  angle: 45,  ganeshaReact: 'Eid! A time of joy and togetherness! 🌙', guessOption: false },
-  { id: 'christmas',     label: 'Christmas',      emoji: '🎄', icon: christmasIcon,     season: 'winter', seasonLabel: 'Winter',  angle: 0,   ganeshaReact: 'Christmas! A festival of love and lights! 🎄', guessOption: false },
+  { id: 'pongal',        label: 'Pongal',            emoji: '🌾', icon: pongalIcon,          season: 'winter', seasonLabel: 'Winter',  angle: 30,  ganeshaReact: 'Pongal! The harvest festival! 🌾', guessOption: true },
+  { id: 'holi',          label: 'Holi',              emoji: '🎨', icon: holiIcon,            season: 'spring', seasonLabel: 'Spring',  angle: 60,  ganeshaReact: 'Holi! The festival of colors! 🎨', guessOption: true },
+  { id: 'janmashtami',   label: 'Janmashtami',       emoji: '🎭', icon: janmashtamiIcon,     season: 'summer', seasonLabel: 'Summer',  angle: 120, ganeshaReact: 'Janmashtami! My friend Krishna\'s birthday! 🎭', guessOption: true },
+  { id: 'ganesh',        label: 'Ganesh Chaturthi',  emoji: '🎉', icon: chaturthiIcon,       season: 'autumn', seasonLabel: 'Autumn',  angle: 180, ganeshaReact: 'Ganesh Chaturthi! MY festival! 🎉', guessOption: true, isGanesha: true },
+  { id: 'durga_puja',    label: 'Durga Puja',        emoji: '⚔️', icon: durga_pujaIcon,      season: 'autumn', seasonLabel: 'Autumn',  angle: 155, ganeshaReact: 'Durga Puja celebrations are grand and joyful! 🎊', guessOption: false },
+  { id: 'diwali',        label: 'Diwali',            emoji: '💡', icon: diwaliIcon,          season: 'autumn', seasonLabel: 'Autumn',  angle: 210, ganeshaReact: 'Diwali! The festival of lights! 💡', guessOption: false },
+  { id: 'navratri',      label: 'Navratri',          emoji: '🎭', icon: navratriIcon,        season: 'autumn', seasonLabel: 'Autumn',  angle: 170, ganeshaReact: 'Navratri! Nine nights of celebration! 🎭', guessOption: false },
+  { id: 'onam',          label: 'Onam',              emoji: '🌺', icon: onamIcon,            season: 'summer', seasonLabel: 'Summer',  angle: 135, ganeshaReact: 'Onam! Kerala\'s beautiful harvest festival! 🌺', guessOption: false },
+  { id: 'eid',           label: 'Eid',               emoji: '🌙', icon: eidIcon,             season: 'spring', seasonLabel: 'Spring',  angle: 45,  ganeshaReact: 'Eid! A time of joy and togetherness! 🌙', guessOption: false },
+  { id: 'christmas',     label: 'Christmas',         emoji: '🎄', icon: christmasIcon,       season: 'winter', seasonLabel: 'Winter',  angle: 0,   ganeshaReact: 'Christmas! A festival of love and lights! 🎄', guessOption: false },
+  { id: 'dussehra',      label: 'Dussehra',          emoji: '🏹', icon: dussehra_Icon,       season: 'autumn', seasonLabel: 'Autumn',  angle: 165, ganeshaReact: 'Dussehra! Victory over evil! 🏹', guessOption: false },
+  { id: 'rakhi',         label: 'Raksha Bandhan',    emoji: '🎀', icon: rakhi_Icon,          season: 'summer', seasonLabel: 'Summer',  angle: 140, ganeshaReact: 'Raksha Bandhan! A celebration of love! 🎀', guessOption: false },
 ];
 
+// Common Festivals (top row - 4 cards)
 const COMMON_FESTIVALS = [
-  FESTIVALS.find(f => f.id === 'holi'),
-  FESTIVALS.find(f => f.id === 'janmashtami'),
-  FESTIVALS.find(f => f.id === 'pongal'),
   FESTIVALS.find(f => f.id === 'diwali'),
-];
-
-const OTHER_FESTIVALS = [
+  FESTIVALS.find(f => f.id === 'holi'),
   FESTIVALS.find(f => f.id === 'ganesh'),
   FESTIVALS.find(f => f.id === 'navratri'),
-  FESTIVALS.find(f => f.id === 'durga_puja'),
+];
+
+// Other Festivals (bottom grid - 8 cards)
+const OTHER_FESTIVALS = [
+  FESTIVALS.find(f => f.id === 'pongal'),
   FESTIVALS.find(f => f.id === 'onam'),
+  FESTIVALS.find(f => f.id === 'janmashtami'),
+  FESTIVALS.find(f => f.id === 'durga_puja'),
+  FESTIVALS.find(f => f.id === 'dussehra'),
   FESTIVALS.find(f => f.id === 'eid'),
   FESTIVALS.find(f => f.id === 'christmas'),
+  FESTIVALS.find(f => f.id === 'rakhi'),
 ];
 
 const FESTIVAL_GUESS_CARDS = [
@@ -486,14 +495,15 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
   // Handle festival toggle
   const toggleFestival = (fest) => {
     playUiTap();
-    if (selectedFestivals.length >= 4) return;
+    triggerMiniGesture(1500);
+    triggerSparkle('single', 1500);
     setSelectedFestivals(prev => {
+      const exists = prev.find(f => f.id === fest.id);
+      if (exists) return prev.filter(f => f.id !== fest.id);
       if (prev.length >= 4) return prev;
       return [...prev, fest];
     });
-    setActiveFestReaction({ emoji: fest.emoji, text: 'Nice! That\'s a wonderful festival.' });
     speakIfUnmuted('Nice! That\'s a wonderful festival.', { age: childAge, moment: 'encouragement' });
-    setTimeout(() => setActiveFestReaction(null), 2800);
   };
 
   // Handle language guess
@@ -1511,103 +1521,180 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
         </div>
       )}
 
-      {/* Festivals Child Phase — Festival Selection */}
+      {/* Festivals Child Phase — Festival Selection (2-Section Layout) */}
       {step === STEPS.FESTIVALS_CHILD && (
-        <div style={{ paddingTop: '80px', paddingBottom: '80px' }}>
-          <StoryProgressHeader discoveries={selectedFestivals} isChildMode={false} />
-          {guessPhase === 'revealed' && (
-            <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 24px' }}>
-              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '36px', fontWeight: 900, color: '#654321', textAlign: 'center', marginBottom: '48px', marginTop: '40px' }}>
-                Popular Festivals
+        <div style={{
+          background: 'linear-gradient(160deg, #FFFBF0 0%, #FFF9E8 100%)',
+          minHeight: '100vh',
+          paddingTop: '60px',
+          paddingBottom: '80px',
+        }}>
+          {/* Voiceover Prompt */}
+          <div style={{
+            fontFamily: "'Baloo 2', cursive",
+            fontSize: '22px',
+            fontWeight: 700,
+            color: '#654321',
+            textAlign: 'center',
+            marginBottom: '60px',
+          }}>
+            Every family celebrates different festivals. Tap the ones your family celebrates!
+          </div>
+
+          <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
+            {/* COMMON FESTIVALS (Top Row - 4 cards) */}
+            <div style={{ marginBottom: '80px' }}>
+              <h3 style={{
+                fontFamily: "'Baloo 2', cursive",
+                fontSize: '28px',
+                fontWeight: 700,
+                color: '#8B6914',
+                textAlign: 'center',
+                marginBottom: '40px',
+              }}>
+                Common Festivals
               </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '40px', marginBottom: '80px' }}>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(4, 1fr)',
+                gap: '32px',
+                marginBottom: '40px',
+              }}>
                 {COMMON_FESTIVALS.filter(Boolean).map((fest) => (
                   <button
                     key={fest.id}
                     onClick={() => toggleFestival(fest)}
+                    disabled={selectedFestivals.length >= 4 && !selectedFestivals.find(f => f.id === fest.id)}
                     style={{
-                      padding: '28px',
-                      borderRadius: '24px',
-                      border: selectedFestivals.find(f => f.id === fest.id) ? '4px solid #FFD700' : '3px solid #E0E0E0',
-                      backgroundColor: selectedFestivals.find(f => f.id === fest.id) ? '#FFFBE9' : '#FFFFFF',
-                      cursor: 'pointer',
-                      fontSize: '88px',
-                      minHeight: '220px',
+                      width: '100%',
+                      minHeight: '160px',
+                      padding: '20px',
+                      borderRadius: '20px',
+                      border: selectedFestivals.find(f => f.id === fest.id) ? '2px solid #FFC857' : '2px solid #E0E0E0',
+                      backgroundColor: selectedFestivals.find(f => f.id === fest.id) ? '#FFF4D8' : '#FFFFFF',
+                      cursor: (selectedFestivals.length >= 4 && !selectedFestivals.find(f => f.id === fest.id)) ? 'not-allowed' : 'pointer',
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '16px',
-                      transition: 'all 0.2s',
+                      gap: '12px',
+                      transition: 'all 0.3s',
                       boxShadow: selectedFestivals.find(f => f.id === fest.id)
-                        ? '0 8px 24px rgba(255, 215, 0, 0.3)'
+                        ? '0 6px 16px rgba(255, 200, 87, 0.4)'
                         : '0 4px 12px rgba(0, 0, 0, 0.1)',
                       transform: selectedFestivals.find(f => f.id === fest.id) ? 'scale(1.05)' : 'scale(1)',
+                      opacity: (selectedFestivals.length >= 4 && !selectedFestivals.find(f => f.id === fest.id)) ? 0.6 : 1,
                     }}
                   >
-                    {fest.emoji}
-                    <div style={{ fontSize: '20px', fontFamily: "'Baloo 2', cursive", fontWeight: 700, color: '#654321' }}>{fest.label}</div>
+                    <img src={fest.icon} alt={fest.label} style={{ width: '50px', height: '50px', objectFit: 'contain' }} />
+                    <div style={{
+                      fontFamily: "'Baloo 2', cursive",
+                      fontSize: '14px',
+                      fontWeight: 700,
+                      color: '#654321',
+                    }}>
+                      {fest.label}
+                    </div>
                   </button>
                 ))}
               </div>
+            </div>
 
-              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '36px', fontWeight: 900, color: '#654321', textAlign: 'center', marginBottom: '48px' }}>
-                More Festivals
+            {/* OTHER FESTIVALS (Bottom Grid - 8 cards in 4x2) */}
+            <div>
+              <h3 style={{
+                fontFamily: "'Baloo 2', cursive",
+                fontSize: '28px',
+                fontWeight: 700,
+                color: '#8B6914',
+                textAlign: 'center',
+                marginBottom: '40px',
+              }}>
+                Other Festivals
               </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '40px', marginBottom: '80px' }}>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(4, 1fr)',
+                gap: '32px',
+                marginBottom: '60px',
+              }}>
                 {OTHER_FESTIVALS.filter(Boolean).map((fest) => (
                   <button
                     key={fest.id}
                     onClick={() => toggleFestival(fest)}
+                    disabled={selectedFestivals.length >= 4 && !selectedFestivals.find(f => f.id === fest.id)}
                     style={{
-                      padding: '28px',
-                      borderRadius: '24px',
-                      border: selectedFestivals.find(f => f.id === fest.id) ? '4px solid #FFD700' : '3px solid #E0E0E0',
-                      backgroundColor: selectedFestivals.find(f => f.id === fest.id) ? '#FFFBE9' : '#FFFFFF',
-                      cursor: 'pointer',
-                      fontSize: '88px',
-                      minHeight: '220px',
+                      width: '100%',
+                      minHeight: '160px',
+                      padding: '20px',
+                      borderRadius: '20px',
+                      border: selectedFestivals.find(f => f.id === fest.id) ? '2px solid #FFC857' : '2px solid #E0E0E0',
+                      backgroundColor: selectedFestivals.find(f => f.id === fest.id) ? '#FFF4D8' : '#FFFFFF',
+                      cursor: (selectedFestivals.length >= 4 && !selectedFestivals.find(f => f.id === fest.id)) ? 'not-allowed' : 'pointer',
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '16px',
-                      transition: 'all 0.2s',
+                      gap: '12px',
+                      transition: 'all 0.3s',
                       boxShadow: selectedFestivals.find(f => f.id === fest.id)
-                        ? '0 8px 24px rgba(255, 215, 0, 0.3)'
+                        ? '0 6px 16px rgba(255, 200, 87, 0.4)'
                         : '0 4px 12px rgba(0, 0, 0, 0.1)',
                       transform: selectedFestivals.find(f => f.id === fest.id) ? 'scale(1.05)' : 'scale(1)',
+                      opacity: (selectedFestivals.length >= 4 && !selectedFestivals.find(f => f.id === fest.id)) ? 0.6 : 1,
                     }}
                   >
-                    {fest.emoji}
-                    <div style={{ fontSize: '20px', fontFamily: "'Baloo 2', cursive", fontWeight: 700, color: '#654321' }}>{fest.label}</div>
+                    <img src={fest.icon} alt={fest.label} style={{ width: '50px', height: '50px', objectFit: 'contain' }} />
+                    <div style={{
+                      fontFamily: "'Baloo 2', cursive",
+                      fontSize: '14px',
+                      fontWeight: 700,
+                      color: '#654321',
+                    }}>
+                      {fest.label}
+                    </div>
                   </button>
                 ))}
               </div>
-
-              {selectedFestivals.length > 0 && (
-                <button
-                  onClick={() => setStep(STEPS.ORIGIN_CARD)}
-                  style={{
-                    display: 'block',
-                    margin: '80px auto 0',
-                    padding: '18px 48px',
-                    backgroundColor: '#FF9933',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '16px',
-                    fontSize: '20px',
-                    fontFamily: "'Baloo 2', cursive",
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    boxShadow: '0 6px 16px rgba(255, 153, 51, 0.3)',
-                  }}
-                >
-                  See Our Story 🌟
-                </button>
-              )}
             </div>
-          )}
+
+            {/* Selection Count */}
+            {selectedFestivals.length > 0 && (
+              <div style={{
+                textAlign: 'center',
+                marginBottom: '40px',
+                fontFamily: "'Nunito', sans-serif",
+                fontSize: '14px',
+                color: '#8B6914',
+                fontWeight: 600,
+              }}>
+                Pick up to 4 festivals. {selectedFestivals.length} of 4 selected
+              </div>
+            )}
+
+            {/* Continue Button */}
+            {selectedFestivals.length > 0 && (
+              <button
+                onClick={() => setStep(STEPS.ORIGIN_CARD)}
+                style={{
+                  display: 'block',
+                  margin: '60px auto 0',
+                  padding: '18px 48px',
+                  backgroundColor: '#FF9933',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '24px',
+                  fontSize: '20px',
+                  fontFamily: "'Baloo 2', cursive",
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  boxShadow: '0 6px 16px rgba(255, 153, 51, 0.3)',
+                }}
+              >
+                See Our Story 🌟
+              </button>
+            )}
+          </div>
         </div>
       )}
 
