@@ -41,6 +41,7 @@ const ACCEPTED_VARIANTS = {
   // ── Accumulated / multi-syllable words ───────────────────────────────────
   // These are longer — fuzzy Levenshtein still applies, so variants can be looser
   vakra:         ['vakra', 'vak-ra', 'vakraa'],
+  tunda:         ['tunda', 'toon-da', 'tundaa', 'tundaa'],
   vakratun:      ['vakratun', 'vakratoon', 'vakra-tun'],
   vakratunda:    ['vakratunda', 'vakra-tunda', 'vakratunde', 'vakrathunda'],
   maha:          ['maha', 'maa-ha', 'maaha'],
@@ -64,6 +65,17 @@ const ACCEPTED_VARIANTS = {
   sarvakaryeshu: ['sarvakaryeshu', 'sarva-karyeshu', 'sarvakarieshu', 'sarvakaryashu'],
   sarvada:       ['sarvada', 'sarva-da', 'sarwada'],
 };
+
+// Words in this set are judged only by explicit accepted variants (no fuzzy fallback).
+// This prevents near-sounding but incorrect outputs like "kanda" for "tunda".
+const STRICT_VARIANT_WORDS = new Set([
+  'vakra',
+  'tunda',
+  'vakratunda',
+  'maha',
+  'kaya',
+  'mahakaya',
+]);
 
 // ── Levenshtein distance ───────────────────────────────────────────────────
 function levenshtein(a, b) {
@@ -92,6 +104,7 @@ function matchSyllable(target, spokenText) {
   const t = normalize(target);
   const accepted = (ACCEPTED_VARIANTS[t] || [t]).map(normalize);
   const isShort = t.length <= 3; // va, kra, ma, ha, ko, ti etc.
+  const strictVariantsOnly = STRICT_VARIANT_WORDS.has(t);
 
   // Build candidates: individual words + space-collapsed string
   const rawWords = spokenText.toLowerCase().split(/\s+/).map(normalize).filter(Boolean);
@@ -102,6 +115,8 @@ function matchSyllable(target, spokenText) {
   for (const word of candidates) {
     if (accepted.includes(word)) return 'perfect';
   }
+
+  if (strictVariantsOnly) return 'tryAgain';
 
   // ── Phase 2: Levenshtein ≤1 — only for long syllables ────────────────
   // Skip for short syllables: 1 error on "ma" matches "ba", "na", "ta" etc.
@@ -143,24 +158,24 @@ const FEEDBACK = {
     bg: 'linear-gradient(160deg, #FFFBEB 0%, #FEF3C7 100%)',
   },
   good: {
-    emoji: '🌟',
-    title: 'Great try!',
+    emoji: '✨',
+    title: 'Good job!',
     messages: [
-      "So close — keep going!",
-      'Mooshika heard you! Beautiful try!',
-      "That's lovely — keep going!",
-      'Almost perfect — you rock!',
+      'Good job!',
+      'Amazing!',
+      'Wonderful!',
+      'Excellent!',
     ],
     titleColor: '#059669',
     bg: 'linear-gradient(160deg, #F0FDF4 0%, #DCFCE7 100%)',
   },
   tryAgain: {
-    emoji: '🐭',
-    title: 'One more try!',
+    emoji: '🎤',
+    title: 'Almost there!',
     messages: [
-      "Mooshika wants to hear you!",
-      "So close! Say it out loud!",
-      "Let's try together!",
+      'Almost there!',
+      'Try again!',
+      "You've got this!",
     ],
     titleColor: '#EA580C',
     bg: 'linear-gradient(160deg, #FFF7ED 0%, #FFEDD5 100%)',
@@ -177,6 +192,9 @@ const SyllableVoiceChallenge = ({
   mooshikaImage,  // path to mooshika-coach.png
   replayAudio,    // () => void — replays the syllable/word audio (Duolingo retry loop)
   stopAudio,      // () => void — stops all game audio before mic opens (prevents bleed)
+  inline = false, // true → renders as card only (no backdrop overlay); parent controls positioning
+  simpleMode = false, // true → simplified success/fail copy for custom scene flow
+  autoContinueOnSuccessMs = 0, // >0 → auto-close on success after delay
 }) => {
   const [phase, setPhase] = useState('prompt');  // prompt | listening | result | replaying
   const [result, setResult] = useState(null);    // null | 'perfect' | 'good' | 'tryAgain'
@@ -188,6 +206,7 @@ const SyllableVoiceChallenge = ({
   const recognitionRef  = useRef(null);
   const waveTimerRef    = useRef(null);
   const autoStartTimer  = useRef(null);
+  const autoCloseTimer  = useRef(null);
   const MAX_ATTEMPTS    = 3;
 
   const supportsRecognition =
@@ -365,10 +384,22 @@ const SyllableVoiceChallenge = ({
   useEffect(() => {
     return () => {
       clearTimeout(autoStartTimer.current);
+      clearTimeout(autoCloseTimer.current);
       clearInterval(waveTimerRef.current);
       recognitionRef.current?.abort();
     };
   }, []);
+
+  useEffect(() => {
+    if (!autoContinueOnSuccessMs) return;
+    if (phase !== 'result') return;
+    if (!(result === 'perfect' || result === 'good')) return;
+    clearTimeout(autoCloseTimer.current);
+    autoCloseTimer.current = setTimeout(() => {
+      onComplete?.();
+    }, autoContinueOnSuccessMs);
+    return () => clearTimeout(autoCloseTimer.current);
+  }, [phase, result, autoContinueOnSuccessMs, onComplete]);
 
   // ── Handlers ──────────────────────────────────────────────────────────────
   const handleClose = () => {
@@ -393,13 +424,15 @@ const SyllableVoiceChallenge = ({
   // ── Render ─────────────────────────────────────────────────────────────────
   const isSuccess = result === 'perfect' || result === 'good';
   const fb = result ? FEEDBACK[result] : null;
+  const resultTitle = simpleMode
+    ? (isSuccess ? 'Amazing!' : 'Almost there!')
+    : fb?.title;
 
-  return (
-    <div className="svc-overlay" onClick={(e) => e.target === e.currentTarget && handleClose()}>
-      <div className="svc-card" style={fb ? { background: fb.bg } : {}}>
+  const card = (
+    <div className={`svc-card${inline ? ' svc-card--inline' : ''}`} style={fb ? { background: fb.bg } : {}}>
 
-        {/* × close button — always visible */}
-        <button className="svc-close" onClick={handleClose} aria-label="Close">×</button>
+      {/* × close button — always visible */}
+      <button className="svc-close" onClick={handleClose} aria-label="Close">×</button>
 
         {/* Floating stars on success */}
         {stars.map(s => (
@@ -456,37 +489,32 @@ const SyllableVoiceChallenge = ({
         {/* ── Result phase ── */}
         {phase === 'result' && fb && (
           <div className="svc-body svc-body--result">
-            <div className="svc-result-emoji">{fb.emoji}</div>
+            {!simpleMode && <div className="svc-result-emoji">{fb.emoji}</div>}
             <div className="svc-result-title" style={{ color: fb.titleColor }}>
-              {/* When attempts are exhausted on a tryAgain, show a different title */}
-              {result === 'tryAgain' && attempts >= MAX_ATTEMPTS
-                ? 'Keep practising! 💪'
-                : fb.title}
+              {resultTitle}
             </div>
-            <p className="svc-result-msg">{feedbackMsg}</p>
 
             <div className="svc-actions">
               {result === 'tryAgain' && attempts < MAX_ATTEMPTS ? (
-                <>
-                  <button className="svc-btn svc-btn--retry" onClick={handleRetry}>
-                    Try Again!
-                  </button>
-                  <button className="svc-btn svc-btn--skip" onClick={handleClose}>
-                    Keep Going
-                  </button>
-                </>
-              ) : (
-                <button
-                  className={`svc-btn ${isSuccess ? 'svc-btn--continue' : 'svc-btn--skip'}`}
-                  onClick={handleClose}
-                >
-                  {isSuccess ? 'Keep Going! →' : "Let's Continue!"}
+                <button className="svc-btn svc-btn--retry" onClick={handleRetry}>
+                  Try Again
                 </button>
-              )}
+              ) : !(simpleMode && isSuccess && autoContinueOnSuccessMs > 0) ? (
+                <button className="svc-btn svc-btn--continue" onClick={handleClose}>
+                  Continue →
+                </button>
+              ) : null}
             </div>
           </div>
         )}
       </div>
+  );
+
+  if (inline) return card;
+
+  return (
+    <div className="svc-overlay" onClick={(e) => e.target === e.currentTarget && handleClose()}>
+      {card}
     </div>
   );
 };

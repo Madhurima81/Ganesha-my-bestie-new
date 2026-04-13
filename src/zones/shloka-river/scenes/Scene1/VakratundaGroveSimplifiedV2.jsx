@@ -1,82 +1,97 @@
-﻿// zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx
-// Clean implementation following Pond scene pattern
+// zones/shloka-river/scenes/Scene1/VakratundaGroveSimplifiedV2.jsx
+// Original V2 structure preserved exactly.
+// Only change: VakratundaGame + MahakayaGame replaced with new chanting mechanic (SVC inline).
 
 import React, { useState, useEffect, useRef } from 'react';
 import './VakratundaGroveSimplified.css';
 
 // Scene management
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
+import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
 import MessageManager from "../../../../lib/components/scenes/MessageManager";
 import InteractionManager from "../../../../lib/components/scenes/InteractionManager";
 import GameStateManager from "../../../../lib/services/GameStateManager";
-import { useGameCoach } from '../../../../lib/components/coach/GameCoach';
-import ProgressManager from '../../../../lib/services/ProgressManager';
 import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
 import useSceneReset from '../../../../lib/hooks/useSceneReset';
 import { getSceneResetConfig } from '../../../../lib/config/SceneResetConfigs';
 
 // UI Components
-import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
-import Fireworks from '../../../../lib/components/feedback/Fireworks';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
-import BackToMapButton from '../../../../lib/components/navigation/BackToMapButton';
 import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
-import OpeningModal from '../../../shared/components/OpeningModal';
+import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOverlay';
+import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
+import HomeButton from '../../../../lib/components/ui/HomeButton';
+import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
+import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 
-// Memory game component (reuse existing)
-import SimplifiedMemoryGame from './components/SimplifiedMemoryGame';
 import AppSidebar from '../../shared/AppSidebar';
-import SanskritWordMission from '../../shared/SanskritWordMission';
-//import AppPracticeModal from '../../shared/AppPracticeModal';
+import OpeningModal from '../../../shared/components/OpeningModal';
 import SanskritVoiceRecorder from '../../../../lib/components/audio/SanskritVoiceRecorder';
 
+// Zone Theme
+import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
+import { getOpeningModal, getCompletionModal, getDiscoveryContent } from '../../../../lib/config/content';
+
+// NEW: SVC for inline voice challenge
+import SyllableVoiceChallenge from '../../core/SyllableVoiceChallenge';
+
+// NEW: Water spray animation
+import WaterSprayArc from './components/WaterSprayArc';
+
 // Character images
-import boyNamaste from './assets/images/boy-namaste.png';
 import ganeshaHeadphones from './assets/images/ganesha_with_headphones.png';
-// Images
-import riverBackground from './assets/images/elephant-grove-bg.png';
 import mooshikaCoach from "./assets/images/mooshika-coach.png";
-import appVakratunda from '../assets/images/apps/app-Vakratunda.png';
-import appMahakaya from '../assets/images/apps/app-mahakaya.png';
 
-// Mission images
-import vakratundaBefore from './assets/images/vakratunda-before.png';
-import vakratundaAfter from './assets/images/vakratunda-after.png';
-import mahakayaBefore from './assets/images/mahakaya-before.png';
-import mahakayaAfter from './assets/images/mahakaya-after.png';
+// Background — updated to new SVG
+import riverBackground from './assets/images/vakratundachant-bg-new2.svg';
 
-// Elephant images for memory game
-import elephantBabyVa from './assets/images/vakratunda/elephant-baby-va.png';
-import elephantBabyKra from './assets/images/vakratunda/elephant-baby-kra.png';
-import elephantBabyTun from './assets/images/vakratunda/elephant-baby-tun.png';
-import elephantBabyDa from './assets/images/vakratunda/elephant-baby-da.png';
-import elephantHa from './assets/images/mahakaya/elephant-ha.png';
-import elephantKa from './assets/images/mahakaya/elephant-ka.png';
-import elephantMa from './assets/images/mahakaya/elephant-ma.png';
-import elephantYa from './assets/images/mahakaya/elephant-ya.png';
+// Symbol images (used in powerConfig + SceneCompletionCelebration)
+import symbolVakratunda from '../../../meaning cave/assets/images/symbols/vakratunda-symbol.png';
+import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
 
-// Singers & Rewards
-import budVa from './assets/images/vakratunda/va-bud.png';
-import budKra from './assets/images/vakratunda/kra-bud.png';
-import budTun from './assets/images/vakratunda/tun-bud.png';
-import budDa from './assets/images/vakratunda/da-bud.png';
-import lotusVa from './assets/images/vakratunda/va-lotus.png';
-import lotusKra from './assets/images/vakratunda/kra-lotus.png';
-import lotusTun from './assets/images/vakratunda/tun-lotus.png';
-import lotusDa from './assets/images/vakratunda/da-lotus.png';
-import seedImage from './assets/images/mahakaya/seed.png';
-import flowerMa from './assets/images/mahakaya/ma-flower.png';
-import flowerHa from './assets/images/mahakaya/ha-flower.png';
-import flowerKa from './assets/images/mahakaya/ka-flower.png';
-import flowerYa from './assets/images/mahakaya/ya-flower.png';
+// NEW: Chanting game assets
+import elephantImg  from './assets/images/elephant.svg';
+import lotusBud     from './assets/images/lotus-bud.svg';
+import lotusHalf    from './assets/images/lotus-half-bloom.svg';
+import lotusFull    from './assets/images/lotus-full-bloom.svg';
+import banyanSprout from './assets/images/banyan-sprout.svg';
+import banyanSapling from './assets/images/banyan-sapling.svg';
+import banyanHalf   from './assets/images/banyan-half.svg';
+import banyanFull   from './assets/images/banyan-full.svg';
+
+// ── Chanting game config ───────────────────────────────────────────────────
+const PARTS = {
+  vakratunda: [
+    { syllable: 'vakra',      label: 'VAKRA',      audio: '/audio/syllables/vakratunda - vakra.mp3', activeElephant: 1 },
+    { syllable: 'tunda',      label: 'TUNDA',      audio: '/audio/syllables/vakratunda-tun.mp3',    activeElephant: 2 },
+    { syllable: 'vakratunda', label: 'VAKRATUNDA', audio: '/audio/words/vakratunda.mp3',             activeElephant: 'both' },
+  ],
+  mahakaya: [
+    { syllable: 'maha',     label: 'MAHA',     audio: '/audio/syllables/maha-mahakaya.mp3',      activeElephant: 1 },
+    { syllable: 'kaya',     label: 'KAYA',     audio: '/audio/syllables/kaya-mahakaya.mp3',      activeElephant: 2 },
+    { syllable: 'mahakaya', label: 'MAHAKAYA', audio: '/audio/words/mahakaya.mp3',               activeElephant: 'both' },
+  ],
+};
+const LOTUS_IMAGES  = [lotusBud, lotusHalf, lotusFull, lotusFull];
+const BANYAN_IMAGES = [banyanSprout, banyanSapling, banyanHalf, banyanFull];
+
+// ── Unchanged constants ────────────────────────────────────────────────────
+const VOGatedButton = ({ visible, onClick, children, className = '', style = {} }) => {
+  if (!visible) return null;
+  return (
+    <button onClick={onClick} className={className} style={{ ...style, animation: 'buttonFadeIn 0.35s ease-out', opacity: 1, transform: 'translateY(0)' }}>
+      {children}
+      <style>{`@keyframes buttonFadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+    </button>
+  );
+};
 
 const PHASES = {
   INITIAL: 'initial',
   VAKRATUNDA_GAME: 'vakratunda_game',
   VAKRATUNDA_COMPLETE: 'vakratunda_complete',
   VAKRATUNDA_POWER: 'vakratunda_power',
-  MAHAKAYA_STORY: 'mahakaya_story',
   MAHAKAYA_GAME: 'mahakaya_game',
   MAHAKAYA_COMPLETE: 'mahakaya_complete',
   MAHAKAYA_POWER: 'mahakaya_power',
@@ -84,675 +99,681 @@ const PHASES = {
 };
 
 const powerConfig = {
-  vakratunda: {
-    name: 'Flexibility Power',
-    image: appVakratunda,
-    color: '#4ECDC4'
-  },
-  mahakaya: {
-    name: 'Inner Strength',
-    image: appMahakaya,
-    color: '#FF6B35'
-  }
+  vakratunda: { name: 'Flexibility Power', image: symbolVakratunda, color: '#4ECDC4', affirmation: 'My trunk bends to find a new way.', story: 'When you feel stuck, try a new way.' },
+  mahakaya:   { name: 'Inner Strength',    image: symbolMahakaya,   color: '#FF6B35', affirmation: 'I am big and strong — and you have strength inside too.', story: 'Stand tall. Be brave.' }
 };
 
-const missionImages = {
-  vakratunda: { before: vakratundaBefore, after: vakratundaAfter },
-  mahakaya: { before: mahakayaBefore, after: mahakayaAfter }
-};
-
-// Error Boundary
+// ── ErrorBoundary (unchanged) ──────────────────────────────────────────────
 class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false };
-  }
-  static getDerivedStateFromError(error) {
-    return { hasError: true };
-  }
-  componentDidCatch(error, errorInfo) {
-    console.error("ErrorBoundary:", error, errorInfo);
-  }
+  constructor(props) { super(props); this.state = { hasError: false }; }
+  static getDerivedStateFromError(error) { return { hasError: true }; }
   render() {
-    if (this.state.hasError) {
-      return (
-        <div className="error-boundary">
-          <h2>Something went wrong.</h2>
-          <button onClick={() => window.location.reload()}>Reload</button>
-        </div>
-      );
-    }
+    if (this.state.hasError) return (
+      <div className="error-boundary">
+        <h2>Something went wrong.</h2>
+        <button onClick={() => window.location.reload()}>Reload</button>
+      </div>
+    );
     return this.props.children;
   }
 }
 
-const VakratundaGroveSimplified = ({
-  onComplete,
-  onNavigate,
-  zoneId = 'shloka-river',
-  sceneId = 'vakratunda-grove'
-}) => {
-  return (
-    <ErrorBoundary>
-      <SceneManager
-        zoneId={zoneId}
-        sceneId={sceneId}
-        initialState={{
-          phase: PHASES.INITIAL,
-          learnedWords: { vakratunda: false, mahakaya: false },
-          learnedSyllables: {
-            va: false, kra: false, tun: false, da: false,
-            ma: false, ha: false, ka: false, ya: false
-          },
-          unlockedApps: {},
-          welcomeShown: false,
-          currentPopup: null,
-          showingCompletionScreen: false,
-          stars: 0,
-          completed: false,
-          progress: { percentage: 0, starsEarned: 0, completed: false }
-        }}
-      >
-        {({ sceneState, sceneActions, isReload }) => (
-          <VakratundaGroveContent
-            sceneState={sceneState}
-            sceneActions={sceneActions}
-            isReload={isReload}
-            onComplete={onComplete}
-            onNavigate={onNavigate}
-            zoneId={zoneId}
-            sceneId={sceneId}
-          />
-        )}
-      </SceneManager>
-    </ErrorBoundary>
-  );
-};
+// ── Outer shell (unchanged) ────────────────────────────────────────────────
+const VakratundaGroveSimplified = ({ onComplete, onNavigate, zoneId = 'shloka-river', sceneId = 'vakratunda-grove' }) => (
+  <ErrorBoundary>
+    <SceneManager
+      zoneId={zoneId}
+      sceneId={sceneId}
+      initialState={{
+        phase: PHASES.INITIAL,
+        learnedWords: { vakratunda: false, mahakaya: false },
+        chantedVerses: {},
+        learnedSyllables: {},
+        unlockedApps: {},
+        welcomeShown: false,
+        currentPopup: null,
+        showingCompletionScreen: false,
+        stars: 0,
+        completed: false,
+        progress: { percentage: 0, starsEarned: 0, completed: false },
+      }}
+    >
+      {({ sceneState, sceneActions, isReload }) => (
+        <VakratundaGroveContent
+          sceneState={sceneState}
+          sceneActions={sceneActions}
+          isReload={isReload}
+          onComplete={onComplete}
+          onNavigate={onNavigate}
+          zoneId={zoneId}
+          sceneId={sceneId}
+        />
+      )}
+    </SceneManager>
+  </ErrorBoundary>
+);
 
-const VakratundaGroveContent = ({
-  sceneState,
-  sceneActions,
-  isReload,
-  onComplete,
-  onNavigate,
-  zoneId,
-  sceneId
-}) => {
+// ── Content component ──────────────────────────────────────────────────────
+const VakratundaGroveContent = ({ sceneState, sceneActions, isReload, onComplete, onNavigate, zoneId, sceneId }) => {
   if (!sceneState?.phase) sceneActions.updateState({ phase: PHASES.INITIAL });
 
-  const { showMessage, hideCoach, clearManualCloseTracking } = useGameCoach();
   const { resetScene } = useSceneReset(sceneActions, zoneId, sceneId, getSceneResetConfig(sceneId));
+  const completionModalContent = getCompletionModal(zoneId, sceneId);
 
-  const [showSparkle, setShowSparkle] = useState(null);
-  const [showSceneCompletion, setShowSceneCompletion] = useState(false);
-  const [showCenteredWord, setShowCenteredWord] = useState(null);
-  const [showPowerModal, setShowPowerModal] = useState(false);
-  const [showMission, setShowMission] = useState(false);
-  const [currentWord, setCurrentWord] = useState(null);
-
-  const [isAudioOn, setIsAudioOn] = useState(true);
+  // ── State (unchanged from original) ──────────────────────────────────────
+  const [showSparkle, setShowSparkle]                   = useState(null);
+  const [showSceneCompletion, setShowSceneCompletion]   = useState(false);
+  const [showCenteredWord, setShowCenteredWord]         = useState(null);
+  const [showPowerOverlay, setShowPowerOverlay]         = useState(false);
+  const [showPowerButton, setShowPowerButton]           = useState(false);
+  const [showPracticeAgainButton, setShowPracticeAgainButton] = useState(false);
+  const [revealConfig, setRevealConfig]                 = useState(null);
+  const [currentWord, setCurrentWord]                   = useState(null);
+  const { isAudioOn, toggleAudio, setAudioEnabled }     = useAudioPreference();
+  const audioEnabledRef                                 = useRef(isAudioOn);
+  audioEnabledRef.current                               = isAudioOn;
   const [showGaneshaCelebration, setShowGaneshaCelebration] = useState(false);
+  const [showFinalGanesha, setShowFinalGanesha]         = useState(false);
+  const [openingButtonVisible, setOpeningButtonVisible] = useState(true);
+  const [savedRecordings, setSavedRecordings]           = useState({});
+  const [showAppDiscovery, setShowAppDiscovery]         = useState(false);
+  const [isRecorderOpen, setIsRecorderOpen]             = useState(false);
 
-  const [showInitialHeader, setShowInitialHeader] = useState(true);
-  const [headerMessage, setHeaderMessage] = useState('');
-
-  const [showFinalGanesha, setShowFinalGanesha] = useState(false);
-
-
-  const [practiceWord, setPracticeWord] = useState(null);
-  const [showRecorder, setShowRecorder] = useState(false);
-  const [savedRecordings, setSavedRecordings] = useState({}); // { vakratunda: [...], mahakaya: [...] }
-
-  const timeoutsRef = useRef([]);
-  const progressiveHintRef = useRef(null);
+  const timeoutsRef   = useRef([]);
   const activeProfile = GameStateManager.getActiveProfile();
-  const profileName = activeProfile?.name || 'explorer';
+  const profileName   = activeProfile?.name || 'explorer';
 
+  const isFinalCelebrationActive =
+    showSparkle === 'final-fireworks' || showFinalGanesha || showSceneCompletion ||
+    showAppDiscovery || sceneState.phase === PHASES.COMPLETE;
+
+  const isCelebrationOrOverlayActive =
+    isFinalCelebrationActive || !!revealConfig || showPowerOverlay || showCenteredWord;
+
+  // ── NEW: Chanting game state ───────────────────────────────────────────────
+  const currentPart   = sceneState.phase === PHASES.MAHAKAYA_GAME ? 'mahakaya' : 'vakratunda';
+  const [chantStep,      setChantStep]      = useState(0);
+  const [lotusState,     setLotusState]     = useState(0);
+  const [banyanState,    setBanyanState]    = useState(0);
+  const [wordFragments,  setWordFragments]  = useState([]);
+  const [wordMerged,     setWordMerged]     = useState(false);
+  const [el1State,       setEl1State]       = useState('neutral');
+  const [el2State,       setEl2State]       = useState('neutral');
+  const [awaitingTap,    setAwaitingTap]    = useState(false);
+  const [activeElephant, setActiveElephant] = useState(null);
+  const [awaitingElTap,  setAwaitingElTap]  = useState(false);
+  const [svcActive,      setSvcActive]      = useState(false);
+  const [svcElephant,    setSvcElephant]    = useState(null);
+  const [tapGlow,        setTapGlow]        = useState(false);
+  const [svcResult,      setSvcResult]      = useState(null); // { word, elephant } to trigger water spray after success
+  const [ganeshaWord,    setGaneshaWord]    = useState(null); // Ganesha celebration word ("Good job!", "Amazing!", etc.)
+  const audioRef = useRef(null);
+  const el1Ref = useRef(null);
+  const el2Ref = useRef(null);
+  const plantRef = useRef(null);
+  const idleT1   = useRef(null);
+  const idleT2   = useRef(null);
+
+  // ── safeSetTimeout (unchanged) ────────────────────────────────────────────
   const safeSetTimeout = (callback, delay) => {
     const id = setTimeout(callback, delay);
     timeoutsRef.current.push(id);
     return id;
   };
+  useEffect(() => () => timeoutsRef.current.forEach(id => clearTimeout(id)), []);
 
+  // ── useVoiceGuidance (unchanged) ──────────────────────────────────────────
+  const {
+    playVoice: playVO, stopVoice, setVoiceVolume,
+    playWord: playWordAudio, playSfx,
+    isPlaying: isVOPlaying,
+    setCurrentPhase, startIdleTimer, stopIdleTimer
+  } = useVoiceGuidance(zoneId, sceneId, { enableMusic: false, voiceVolume: 1, sfxVolume: 0.7, idleTimeout: 20 });
+
+  // ── SymbolAutoReveal helpers (unchanged) ──────────────────────────────────
+  const getSidebarTarget = (symbolId) => {
+    const el = document.getElementById(`sidebar-${symbolId}`);
+    if (!el) return { x: 220, y: 0 };
+    const r = el.getBoundingClientRect();
+    return { x: (r.left + r.width / 2) - (window.innerWidth / 2), y: (r.top + r.height / 2) - (window.innerHeight / 2) };
+  };
+
+  const handleRevealComplete = (symbolId) => {
+    setRevealConfig(null);
+    if (symbolId === 'vakratunda') {
+      safeSetTimeout(() => {
+        sceneActions.updateState({ unlockedApps: { ...sceneState.unlockedApps, vakratunda: true }, phase: PHASES.MAHAKAYA_GAME });
+      }, 950);
+    } else if (symbolId === 'mahakaya') {
+      safeSetTimeout(() => {
+        sceneActions.updateState({ unlockedApps: { ...sceneState.unlockedApps, mahakaya: true } });
+      }, 950);
+      safeSetTimeout(() => handleAppDiscoveryCelebrate(), 1500);
+    }
+  };
+
+  const handleHomeToMainMap = () => {
+    stopVoice(); stopIdleTimer();
+    const activeProfileId = localStorage.getItem('activeProfileId');
+    if (activeProfileId) localStorage.removeItem(`temp_session_${activeProfileId}_${zoneId}_${sceneId}`);
+    SimpleSceneManager.clearCurrentScene();
+    onNavigate?.('direct-to-map');
+  };
+
+  // ── Opening modal VO (unchanged) ──────────────────────────────────────────
   useEffect(() => {
-    return () => {
-      timeoutsRef.current.forEach(id => clearTimeout(id));
-    };
-  }, []);
-
-  // Expose audio functions globally for SanskritWordMission
-  useEffect(() => {
-    window.playSanskritAudio = playSyllable;
-    window.playSanskritWord = playWord;
-
-    return () => {
-      delete window.playSanskritAudio;
-      delete window.playSanskritWord;
-    };
-  }, [isAudioOn]); // Re-attach if audio setting changes
-
-  // Safety: Show completion screen if scene is marked complete but modal not showing
-  useEffect(() => {
-    if (sceneState.phase === PHASES.COMPLETE &&
-      sceneState.completed &&
-      !showSceneCompletion &&
-      !showSparkle) {
-      const timer = safeSetTimeout(() => {
-        setShowFinalGanesha(false);
-        setShowSceneCompletion(true);
-      }, 7000); // 7 seconds max wait
-
+    if (sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown) {
+      if (!audioEnabledRef.current) { setOpeningButtonVisible(true); return; }
+      const timer = setTimeout(() => {
+        playVO('welcome', () => { playSfx('chime'); setOpeningButtonVisible(true); });
+      }, 800);
       return () => clearTimeout(timer);
     }
-  }, [sceneState.phase, sceneState.completed, showSceneCompletion, showSparkle]);
+  }, [sceneState.phase, sceneState.welcomeShown, isAudioOn]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Audio functions
+  // ── Audio helpers (unchanged) ─────────────────────────────────────────────
   const playAudio = (audioPath, volume = 1.0) => {
     if (!isAudioOn) return Promise.resolve();
     try {
-      const audio = new Audio(audioPath);
-      audio.volume = volume;
-      return audio.play().catch(() => Promise.resolve());
-    } catch {
-      return Promise.resolve();
-    }
+      if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+      const a = new Audio(audioPath); a.volume = volume;
+      audioRef.current = a;
+      return a.play().catch(() => Promise.resolve());
+    } catch { return Promise.resolve(); }
   };
 
-  // Handle saving a new recording
-  const handleSaveRecording = (recordingData) => {
-    setSavedRecordings(prev => {
-      const wordRecordings = prev[recordingData.word] || [];
-      return {
-        ...prev,
-        [recordingData.word]: [...wordRecordings, recordingData]
-      };
-    });
+  const playWord = (word) => playWordAudio(word);
+
+  const handleAudioToggle = () => {
+    const nextOn = !isAudioOn;
+    setVoiceVolume(nextOn ? 1 : 0);
+    if (!nextOn && sceneState.phase === PHASES.INITIAL) stopVoice();
+    toggleAudio();
   };
 
+  // ── Idle phase tracking (unchanged) ───────────────────────────────────────
+  useEffect(() => {
+    if (sceneState.phase === PHASES.VAKRATUNDA_GAME && sceneState.welcomeShown) setCurrentPhase('vakratundaGame');
+  }, [sceneState.phase, sceneState.welcomeShown, setCurrentPhase]);
 
+  useEffect(() => {
+    if (sceneState.phase === PHASES.MAHAKAYA_GAME) setCurrentPhase('mahakayaGame');
+  }, [sceneState.phase, setCurrentPhase]);
 
-  const playSyllable = (syllable) => {
-    const map = {
-      'va': 'vakratunda-va', 'kra': 'vakratunda-kra',
-      'tun': 'vakratunda-tun', 'da': 'vakratunda-da',
-      'ma': 'mahakaya-ma', 'ha': 'mahakaya-ha',
-      'ka': 'mahakaya-ka', 'ya': 'mahakaya-ya'
-    };
-    playAudio(`/audio/syllables/${map[syllable] || syllable}.mp3`);
-  };
-
-  const playWord = (word) => {
-    playAudio(`/audio/words/${word}.mp3`);
-  };
-
-  // Memory game completion
+  // ── handlePhaseComplete (unchanged — SymbolAutoReveal triggered here) ──────
   const handlePhaseComplete = (word) => {
-    console.log(`${word} learned!`);
+    stopIdleTimer(); setCurrentPhase(null);
+    if (isAudioOn) playVO('chantWordReveal');
 
+    const wordRevealKey = word === 'vakratunda' ? 'vakratunda-word-reveal' : 'mahakaya-word-reveal';
+    const chantKey = word === 'vakratunda' ? 'vakratunda-chant' : 'mahakaya-chant';
     sceneActions.updateState({
       learnedWords: { ...sceneState.learnedWords, [word]: true },
-      learnedSyllables: {
-        ...sceneState.learnedSyllables,
-        ...(word === 'vakratunda'
-          ? { va: true, kra: true, tun: true, da: true }
-          : { ma: true, ha: true, ka: true, ya: true })
-      },
+      chantedVerses: { ...sceneState.chantedVerses, [chantKey]: true },
       phase: word === 'vakratunda' ? PHASES.VAKRATUNDA_COMPLETE : PHASES.MAHAKAYA_COMPLETE
     });
 
-    // Show 5-second celebration
-    setShowCenteredWord(word);
     setShowSparkle(`${word}-celebration`);
-
     playWord(word);
 
+    const triggerReveal = () => {
+      setShowSparkle(null);
+      const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
+      setRevealConfig({
+        symbolId: word,
+        symbolImage: powerConfig[word].image,
+        symbolName: discoveryData?.title || powerConfig[word].name,
+        affirmation: discoveryData?.affirmation || powerConfig[word].affirmation,
+        sidebarTarget: getSidebarTarget(word)
+      });
+      sceneActions.updateState({ phase: word === 'vakratunda' ? PHASES.VAKRATUNDA_POWER : PHASES.MAHAKAYA_POWER });
+    };
+
+    if (isAudioOn) {
+      safeSetTimeout(() => playVO(wordRevealKey, () => triggerReveal()), 2000);
+    } else {
+      safeSetTimeout(() => triggerReveal(), 1500);
+    }
+  };
+
+  const handlePowerUnlockComplete = () => {
+    setShowPowerOverlay(false); stopVoice();
+    if (currentWord === 'vakratunda') {
+      sceneActions.updateState({ phase: PHASES.MAHAKAYA_GAME });
+    } else {
+      setShowAppDiscovery(true);
+    }
+  };
+
+  const handleAppDiscoveryCelebrate = () => {
+    setShowAppDiscovery(false);
+    if (isAudioOn) playVO('sceneComplete');
+    sceneActions.updateState({ phase: PHASES.COMPLETE, stars: 5, completed: true, progress: { percentage: 100, starsEarned: 5, completed: true } });
+    setShowFinalGanesha(true);
+    setShowSparkle('final-fireworks');
+  };
+
+  const handleFinalCelebrationComplete = () => {
+    setShowSparkle(null);
+    setShowFinalGanesha(false);
+    const profileId = localStorage.getItem('activeProfileId');
+    if (profileId) {
+      try {
+        GameStateManager.saveGameState(zoneId, sceneId, {
+          completed: true, stars: 5, phase: PHASES.COMPLETE,
+          words: sceneState.learnedWords || {},
+          syllables: sceneState.learnedSyllables || {},
+          apps: sceneState.unlockedApps || {},
+          timestamp: Date.now()
+        });
+        localStorage.removeItem(`temp_session_${profileId}_${zoneId}_${sceneId}`);
+        SimpleSceneManager.clearCurrentScene();
+      } catch (error) { console.error('Error saving game state:', error); }
+    }
+    setShowSceneCompletion(true);
+  };
+
+  const handlePlayAgain = () => {
+    setShowPowerOverlay(false);
+    if (currentWord === 'vakratunda') {
+      sceneActions.updateState({ phase: PHASES.VAKRATUNDA_GAME, learnedWords: { ...sceneState.learnedWords, vakratunda: false } });
+    } else if (currentWord === 'mahakaya') {
+      sceneActions.updateState({ phase: PHASES.MAHAKAYA_GAME, learnedWords: { ...sceneState.learnedWords, mahakaya: false } });
+    }
+    setCurrentWord(null);
+  };
+
+  // ── NEW: Phase transition resets chanting state ───────────────────────────
+  useEffect(() => {
+    if (sceneState.phase === PHASES.VAKRATUNDA_GAME) {
+      setChantStep(0); setLotusState(0); setWordFragments([]); setWordMerged(false);
+      setEl1State('neutral'); setEl2State('neutral');
+      safeSetTimeout(() => setAwaitingTap(true), 400);
+    } else if (sceneState.phase === PHASES.MAHAKAYA_GAME) {
+      setChantStep(0); setBanyanState(0); setWordFragments([]); setWordMerged(false);
+      setEl1State('neutral'); setEl2State('neutral');
+      safeSetTimeout(() => setAwaitingTap(true), 400);
+    } else {
+      setAwaitingTap(false);
+    }
+  }, [sceneState.phase]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── NEW: Idle hint glow ───────────────────────────────────────────────────
+  useEffect(() => {
+    clearTimeout(idleT1.current); clearTimeout(idleT2.current); setTapGlow(false);
+    if (!awaitingTap) return;
+    idleT2.current = setTimeout(() => setTapGlow(true), 19000);
+    return () => { clearTimeout(idleT1.current); clearTimeout(idleT2.current); };
+  }, [awaitingTap, currentPart, chantStep]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── NEW: Plant tap ────────────────────────────────────────────────────────
+  const handlePlantTap = () => {
+    if (!awaitingTap || svcActive || isCelebrationOrOverlayActive) return;
+    clearTimeout(idleT1.current); clearTimeout(idleT2.current);
+    setTapGlow(false); setAwaitingTap(false);
+
+    const cfg = PARTS[currentPart][chantStep];
+    if (cfg.activeElephant === 1 || cfg.activeElephant === 'both') setEl1State('encourage');
+    if (cfg.activeElephant === 2 || cfg.activeElephant === 'both') setEl2State('encourage');
+
+    playAudio(cfg.audio);
+
     safeSetTimeout(() => {
-      setShowCenteredWord(null);
-      setShowSparkle(`${word}-to-sidebar`);
-
-      // Unlock app in sidebar
-      sceneActions.updateState({
-        unlockedApps: { ...sceneState.unlockedApps, [word]: true }
-      });
-
-      safeSetTimeout(() => {
-        setShowSparkle(null);
-
-        // Show sparkles before Ganesha appears
-        setShowSparkle('ganesha-incoming');
-
-        safeSetTimeout(() => {
-          // Show Ganesha AS sparkles continue
-          setShowGaneshaCelebration(word);
-
-          safeSetTimeout(() => {
-            setShowSparkle(null); // Sparkles fade out
-          }, 500);
-
-          safeSetTimeout(() => {
-            setShowGaneshaCelebration(false);
-            setCurrentWord(word);
-            setShowPowerModal(true);
-            sceneActions.updateState({
-              phase: word === 'vakratunda' ? PHASES.VAKRATUNDA_POWER : PHASES.MAHAKAYA_POWER
-            });
-          }, 4000); // 4 seconds Ganesha celebrates with boy
-        }, 800); // 1 second sparkles
-      }, 2000);
-    }, 5000);
+      setEl1State('neutral'); setEl2State('neutral');
+      setActiveElephant(cfg.activeElephant);
+      setAwaitingElTap(true);
+    }, 1600);
   };
 
-  // Power modal handlers
-  const handleSaveAnimal = () => {
-    setShowPowerModal(false);
-    setShowMission(true);
-
+  // ── NEW: Elephant tap ─────────────────────────────────────────────────────
+  const handleElephantTap = (num) => {
+    if (!awaitingElTap) return;
+    const cfg = PARTS[currentPart][chantStep];
+    if (cfg.activeElephant !== num && cfg.activeElephant !== 'both') return;
+    setAwaitingElTap(false); setSvcElephant(num); setSvcActive(true);
+    stopVoice();
+    if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
   };
 
-  const handleContinueLearning = () => {
-    setShowPowerModal(false);
+  // ── NEW: SVC complete — advances step or calls handlePhaseComplete ─────────
+  const handleSvcComplete = () => {
+    setSvcActive(false); setSvcElephant(null); setActiveElephant(null); setAwaitingElTap(false);
 
-    if (currentWord === 'vakratunda') {
-      // Show Mahakaya story
-      safeSetTimeout(() => {
-        sceneActions.updateState({ phase: PHASES.MAHAKAYA_STORY });
-      }, 500);
+    const cfg = PARTS[currentPart][chantStep];
+    const celebrationWords = ['Good job!', 'Amazing!', 'Wonderful!', 'Excellent!'];
+    const randomWord = celebrationWords[Math.floor(Math.random() * celebrationWords.length)];
+    setGaneshaWord(randomWord);
+
+    if (cfg.activeElephant === 1 || cfg.activeElephant === 'both') setEl1State('celebrate');
+    if (cfg.activeElephant === 2 || cfg.activeElephant === 'both') setEl2State('celebrate');
+
+    // Trigger water spray after celebration word displays
+    safeSetTimeout(() => {
+      setSvcResult({ syllable: cfg.syllable, elephant: cfg.activeElephant });
+      setGaneshaWord(null);
+    }, 600);
+
+    safeSetTimeout(() => { setEl1State('neutral'); setEl2State('neutral'); }, 2200);
+
+    if (currentPart === 'vakratunda') {
+      if (chantStep === 0) {
+        setWordFragments(['VAKRA']); setLotusState(1);
+        safeSetTimeout(() => { setChantStep(1); setAwaitingTap(true); setSvcResult(null); }, 1800);
+      } else if (chantStep === 1) {
+        setWordFragments(['VAKRA', 'TUNDA']); setLotusState(2);
+        safeSetTimeout(() => { setChantStep(2); setAwaitingTap(true); setSvcResult(null); }, 1800);
+      } else {
+        setWordMerged(true); setLotusState(3); playSfx('chime');
+        safeSetTimeout(() => { setSvcResult(null); handlePhaseComplete('vakratunda'); }, 1500);
+      }
     } else {
-      // Complete scene
-      sceneActions.updateState({
-        phase: PHASES.COMPLETE,
-        stars: 5,
-        completed: true,
-        progress: { percentage: 100, starsEarned: 5, completed: true }
-      });
-
-      // Show Ganesha AND fireworks together
-      setShowFinalGanesha(true);
-      setShowSparkle('final-fireworks');
+      if (chantStep === 0) {
+        setWordFragments(['MAHA']); setBanyanState(1);
+        safeSetTimeout(() => { setChantStep(1); setAwaitingTap(true); setSvcResult(null); }, 1800);
+      } else if (chantStep === 1) {
+        setWordFragments(['MAHA', 'KAYA']); setBanyanState(2);
+        safeSetTimeout(() => { setChantStep(2); setAwaitingTap(true); setSvcResult(null); }, 1800);
+      } else {
+        setWordMerged(true); setBanyanState(3); playSfx('chime');
+        safeSetTimeout(() => { setSvcResult(null); handlePhaseComplete('mahakaya'); }, 1500);
+      }
     }
   };
 
-  const handleMissionComplete = () => {
-    console.log('âœ… Mission complete for:', currentWord);
-    setShowMission(false);
-
-    if (currentWord === 'vakratunda') {
-      safeSetTimeout(() => {
-        sceneActions.updateState({ phase: PHASES.MAHAKAYA_STORY });
-      }, 500);
-    } else {
-      sceneActions.updateState({
-        phase: PHASES.COMPLETE,
-        stars: 5,
-        completed: true
-      });
-      safeSetTimeout(() => setShowSparkle('final-fireworks'), 500);
-    }
+  // ── NEW: SVC audio helpers ────────────────────────────────────────────────
+  const replayChantAudio = () => {
+    const cfg = PARTS[currentPart]?.[chantStep];
+    if (cfg) playAudio(cfg.audio);
+  };
+  const stopChantAudio = () => {
+    if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+    stopVoice();
   };
 
-  // Image helpers
-  const getBabyElephantImage = (i) => [elephantBabyVa, elephantBabyKra, elephantBabyTun, elephantBabyDa][i];
-  const getAdultElephantImage = (i) => [elephantMa, elephantHa, elephantKa, elephantYa][i];
-  const getBudImage = (i) => [budVa, budKra, budTun, budDa][i];
-  const getLotusImage = (i) => [lotusVa, lotusKra, lotusTun, lotusDa][i];
-  const getSeedImage = () => seedImage;
-  const getFlowerImage = (i) => [flowerMa, flowerHa, flowerKa, flowerYa][i];
-
+  // ── Derived render values ─────────────────────────────────────────────────
   if (!sceneState) return <div className="loading">Loading...</div>;
+
+  const isChantingActive = sceneState.phase === PHASES.VAKRATUNDA_GAME || sceneState.phase === PHASES.MAHAKAYA_GAME;
+  const cfg              = PARTS[currentPart][chantStep];
+  const plantImg         = currentPart === 'vakratunda' ? LOTUS_IMAGES[Math.min(lotusState, 3)] : BANYAN_IMAGES[Math.min(banyanState, 3)];
+  const isFullBloom      = (currentPart === 'vakratunda' && lotusState === 3) || (currentPart === 'mahakaya' && banyanState === 3);
+
+  const showBubble1 = awaitingElTap
+    ? (activeElephant === 1 || activeElephant === 'both')
+    : (svcActive && svcElephant === 1);
+  const showBubble2 = awaitingElTap
+    ? (activeElephant === 2 || activeElephant === 'both')
+    : (svcActive && svcElephant === 2);
+
+  useEffect(() => {
+    if (showSparkle !== 'final-fireworks') return;
+    const id = setTimeout(() => handleFinalCelebrationComplete(), 2600);
+    return () => clearTimeout(id);
+  }, [showSparkle]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
       <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
         <div className="vakratunda-simplified-container">
+          <HomeButton onNavigate={onNavigate} />
+          <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
           <div className="river-background" style={{ backgroundImage: `url(${riverBackground})` }}>
 
-            <OpeningModal
-              zoneId={zoneId}
-              sceneId={sceneId}
-              onStart={() => sceneActions.updateState({
-                welcomeShown: true,
-                phase: PHASES.VAKRATUNDA_GAME
-              })}
-              characterImg={ganeshaHeadphones}
-              showButton={true}
-            />
-
-
-            {/* MEMORY GAME */}
-            <SimplifiedMemoryGame
-              isActive={sceneState.phase === PHASES.VAKRATUNDA_GAME || sceneState.phase === PHASES.MAHAKAYA_GAME}
-              hideElements={showCenteredWord || showPowerModal || showMission || sceneState.phase === PHASES.MAHAKAYA_STORY}
-              onPhaseComplete={handlePhaseComplete}
-              onGameComplete={() => { }}
-              profileName={profileName}
-              getBabyElephantImage={getBabyElephantImage}
-              getAdultElephantImage={getAdultElephantImage}
-              getBudImage={getBudImage}
-              getLotusImage={getLotusImage}
-              getSeedImage={getSeedImage}
-              getFlowerImage={getFlowerImage}
-              isAudioOn={isAudioOn}
-              playAudio={playAudio}
-              powerGained={sceneState.learnedWords?.vakratunda}
-            />
-
-            {/* PERSISTENT BOY CHARACTER - Always visible once game starts */}
-            {sceneState.welcomeShown &&
-              !showSceneCompletion && (
-                <div className="companion-boy">
-                  <img src={boyNamaste} alt="Learning with you" className="boy-companion" />
-                </div>
-              )}
-
-            {/* STATIC LEARNING HEADER 
-{sceneState.phase === PHASES.VAKRATUNDA_GAME && !showCenteredWord && !showPowerModal && !showMission && (
-  <div className="game-phase-header">
-    ðŸŽµ Let's Learn to Chant VAKRATUNDA!
-  </div>
-)}
-
-{sceneState.phase === PHASES.MAHAKAYA_GAME && !showCenteredWord && !showPowerModal && !showMission && (
-  <div className="game-phase-header">
-    ðŸŽµ Let's Learn to Chant MAHAKAYA!
-  </div>
-)}*/}
-
-            {sceneState.phase === PHASES.MAHAKAYA_STORY && (
-              <div className="mission-modal-overlay">
-                <div className="mission-modal">
-                  <div className="modal-character">
-                    <img src={ganeshaHeadphones} alt="Ganesha" className="character-img" />
-                    <div className="character-speech-bubble">
-                      One more to learn! ðŸ’ª
-                    </div>
-                  </div>
-
-                  <h2 className="mission-title">Great Work!</h2>
-                  <div className="mission-subtitle">Now unlock the second power!</div>
-                  <p className="mission-description">
-                    Learn to chant <strong>MAHAKAYA</strong> to unlock inner strength and save more animals!
-                  </p>
-                  <button
-                    className="story-continue-btn"
-                    onClick={() => {
-                      sceneActions.updateState({ phase: PHASES.MAHAKAYA_GAME });
-                      safeSetTimeout(() => {
-                        if (window.simplifiedMemoryGame?.startMahakayaPhase) {
-                          window.simplifiedMemoryGame.startMahakayaPhase();
-                        }
-                      }, 200);
-                    }}
-                  >
-                    Start Learning!
-                  </button>
-                </div>
+            {/* DEV TEST BUTTONS */}
+            {sceneState.welcomeShown && !showPowerOverlay && !showCenteredWord && (
+              <div style={{ position: 'fixed', top: 10, right: 10, zIndex: 99999, display: 'flex', gap: '6px', flexDirection: 'column' }}>
+                <button onClick={() => handlePhaseComplete('vakratunda')} style={{ padding: '6px 12px', fontSize: '11px', fontWeight: 'bold', background: '#4ECDC4', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', opacity: 0.85 }}>⚡ Test Vakratunda Reveal</button>
+                <button onClick={() => handlePhaseComplete('mahakaya')} style={{ padding: '6px 12px', fontSize: '11px', fontWeight: 'bold', background: '#FF6B35', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', opacity: 0.85 }}>⚡ Test Mahakaya Reveal</button>
               </div>
             )}
 
-            {/* 5-SECOND WORD CELEBRATION */}
-            {showCenteredWord && (
+            {/* OPENING MODAL (unchanged) */}
+            <OpeningModal
+              zoneId={zoneId}
+              sceneId={sceneId}
+              isOpen={!sceneState.welcomeShown}
+              onStart={() => sceneActions.updateState({ welcomeShown: true, phase: PHASES.VAKRATUNDA_GAME })}
+              characterImg={ganeshaHeadphones}
+              showButton={openingButtonVisible}
+            />
+
+            {/* ── NEW CHANTING GAME (replaces VakratundaGame + MahakayaGame) ── */}
+            {isChantingActive && !isCelebrationOrOverlayActive && (
               <>
-                <div className="celebration-overlay" />
-                <div className="centered-word-celebration">
-                  <img
-                    src={powerConfig[showCenteredWord]?.image}
-                    alt={showCenteredWord}
-                    className="celebration-app-icon"
-                  />
-                  <div className="celebration-word-text">
-                    {showCenteredWord.toUpperCase()}
+                {/* Word stage — top centre */}
+                {wordFragments.length > 0 && (
+                  <div className="grove-word-stage">
+                    {wordMerged ? (
+                      <span className="grove-fragment grove-fragment--merged">
+                        {currentPart === 'vakratunda' ? 'VAKRATUNDA' : 'MAHAKAYA'}
+                      </span>
+                    ) : (
+                      wordFragments.map((f, i) => (
+                        <span key={i} className="grove-fragment grove-fragment--float">{f}</span>
+                      ))
+                    )}
                   </div>
-                  <div className="celebration-sparkles">
-                    <SparkleAnimation
-                      type="glitter"
-                      count={30}
-                      color={powerConfig[showCenteredWord]?.color}
-                      size={12}
-                      duration={5000}
-                      fadeOut={true}
-                      area="full"
+                )}
+
+                {/* Stage: Elephant1 · Plant · Elephant2 */}
+                <div className="grove-stage">
+
+                  {/* Elephant 1 */}
+                  <div className="grove-elephant grove-elephant--left">
+                    {showBubble1 && (
+                      <div className="grove-speech-bubble grove-speech-bubble--left">
+                        {svcActive && svcElephant === 1 ? (
+                          <SyllableVoiceChallenge
+                            syllable={cfg.syllable}
+                            displayLabel={cfg.label}
+                            onComplete={handleSvcComplete}
+                            replayAudio={replayChantAudio}
+                            stopAudio={stopChantAudio}
+                            inline={true}
+                          />
+                        ) : (
+                          <span className="grove-bubble-text">Say {cfg.label}! 🎤</span>
+                        )}
+                      </div>
+                    )}
+                    <img
+                      ref={el1Ref}
+                      src={elephantImg}
+                      alt="Elephant 1"
+                      className={`grove-elephant-img grove-elephant-img--${el1State}`}
+                      style={{ width: 320, minWidth: 320, maxWidth: 'none', height: 'auto' }}
+                      onClick={() => handleElephantTap(1)}
+                      draggable={false}
                     />
                   </div>
+
+                  {/* Lotus / Banyan */}
+                  <div className="grove-plant-area">
+                    <img
+                      ref={plantRef}
+                      src={plantImg}
+                      alt={currentPart === 'vakratunda' ? 'Lotus' : 'Banyan tree'}
+                      className={['grove-plant', awaitingTap ? 'grove-plant--tappable' : '', tapGlow ? 'grove-plant--glow' : '', isFullBloom ? 'grove-plant--bloomed' : ''].filter(Boolean).join(' ')}
+                      onClick={handlePlantTap}
+                      draggable={false}
+                    />
+                  </div>
+
+                  {/* Elephant 2 (mirrored) */}
+                  <div className="grove-elephant grove-elephant--right">
+                    {showBubble2 && (
+                      <div className="grove-speech-bubble grove-speech-bubble--right">
+                        {svcActive && svcElephant === 2 ? (
+                          <SyllableVoiceChallenge
+                            syllable={cfg.syllable}
+                            displayLabel={cfg.label}
+                            onComplete={handleSvcComplete}
+                            replayAudio={replayChantAudio}
+                            stopAudio={stopChantAudio}
+                            inline={true}
+                          />
+                        ) : (
+                          <span className="grove-bubble-text">Say {cfg.label}! 🎤</span>
+                        )}
+                      </div>
+                    )}
+                    <img
+                      ref={el2Ref}
+                      src={elephantImg}
+                      alt="Elephant 2"
+                      className={`grove-elephant-img grove-elephant-img--${el2State} grove-elephant-img--mirror`}
+                      style={{ width: 320, minWidth: 320, maxWidth: 'none', height: 'auto' }}
+                      onClick={() => handleElephantTap(2)}
+                      draggable={false}
+                    />
+                  </div>
+
+                </div>{/* grove-stage */}
+
+                {/* Ganesha celebration word */}
+                {ganeshaWord && (
+                  <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '36px', fontFamily: 'Baloo 2', fontWeight: 700, color: '#2E7D32', textShadow: '0 0 20px rgba(255, 215, 0, 0.6)', zIndex: 100, animation: 'ganeshaWordFloat 0.8s ease-out both', pointerEvents: 'none' }}>
+                    {ganeshaWord}
+                    <style>{`@keyframes ganeshaWordFloat { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); } 50% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -120%) scale(1.1); } }`}</style>
+                  </div>
+                )}
+
+                {/* Water spray animations — triggered after SVC success */}
+                {svcResult && el1Ref.current && plantRef.current && (svcResult.elephant === 1 || svcResult.elephant === 'both') && (
+                  <WaterSprayArc
+                    isActive={true}
+                    sourcePosition={{ left: ((el1Ref.current.getBoundingClientRect().left + el1Ref.current.getBoundingClientRect().width / 2) / window.innerWidth * 100).toFixed(1) + '%', top: ((el1Ref.current.getBoundingClientRect().top + el1Ref.current.getBoundingClientRect().height * 0.3) / window.innerHeight * 100).toFixed(1) + '%' }}
+                    targetPosition={{ left: ((plantRef.current.getBoundingClientRect().left + plantRef.current.getBoundingClientRect().width / 2) / window.innerWidth * 100).toFixed(1) + '%', top: ((plantRef.current.getBoundingClientRect().top + plantRef.current.getBoundingClientRect().height * 0.2) / window.innerHeight * 100).toFixed(1) + '%' }}
+                    duration={1500}
+                    phase={currentPart}
+                  />
+                )}
+                {svcResult && el2Ref.current && plantRef.current && (svcResult.elephant === 2 || svcResult.elephant === 'both') && (
+                  <WaterSprayArc
+                    isActive={true}
+                    sourcePosition={{ left: ((el2Ref.current.getBoundingClientRect().left + el2Ref.current.getBoundingClientRect().width / 2) / window.innerWidth * 100).toFixed(1) + '%', top: ((el2Ref.current.getBoundingClientRect().top + el2Ref.current.getBoundingClientRect().height * 0.3) / window.innerHeight * 100).toFixed(1) + '%' }}
+                    targetPosition={{ left: ((plantRef.current.getBoundingClientRect().left + plantRef.current.getBoundingClientRect().width / 2) / window.innerWidth * 100).toFixed(1) + '%', top: ((plantRef.current.getBoundingClientRect().top + plantRef.current.getBoundingClientRect().height * 0.2) / window.innerHeight * 100).toFixed(1) + '%' }}
+                    duration={1500}
+                    phase={currentPart}
+                  />
+                )}
+
+                {/* River */}
+                <div className="grove-river">
+                  <div className="grove-river-wave" />
+                  <div className="grove-river-wave grove-river-wave--2" />
                 </div>
               </>
             )}
+            {/* ── END CHANTING GAME ── */}
 
-            {/* SPARKLES BEFORE GANESHA APPEARS */}
-            {showSparkle === 'ganesha-incoming' && (
-              <div className="ganesha-sparkle-position">
+            {/* GANESHA CELEBRATION (unchanged) */}
+            {showGaneshaCelebration && (
+              <div className="vakratunda-ganesha-celebration-enter">
+                <img src={ganeshaHeadphones} alt="Ganesha" className="vakratunda-ganesha-slides-in" />
+              </div>
+            )}
+
+            {/* SYMBOL AUTO-REVEAL (unchanged) */}
+            {revealConfig && (
+              <SymbolAutoReveal
+                key={revealConfig.symbolId}
+                symbolId={revealConfig.symbolId}
+                symbolImage={revealConfig.symbolImage}
+                symbolName={revealConfig.symbolName}
+                affirmation={revealConfig.affirmation}
+                sidebarTargetRect={revealConfig.sidebarTarget}
+                zoneId={zoneId}
+                sceneId={sceneId}
+                onComplete={() => handleRevealComplete(revealConfig.symbolId)}
+              />
+            )}
+
+            {/* APPSIDEBAR (unchanged) */}
+            {!showAppDiscovery && !isFinalCelebrationActive && !(sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown) && (
+              <AppSidebar
+                unlockedApps={sceneState.unlockedApps || {}}
+                savedRecordings={savedRecordings}
+                isReload={isReload}
+                onPopupOpen={() => { stopVoice(); stopIdleTimer(); setIsRecorderOpen(true); }}
+                onPopupClose={() => {
+                  setIsRecorderOpen(false);
+                  if ([PHASES.VAKRATUNDA_GAME, PHASES.MAHAKAYA_GAME].includes(sceneState.phase) && !showPowerOverlay && !showCenteredWord) startIdleTimer();
+                }}
+              />
+            )}
+
+            {/* CALM FINAL CELEBRATION */}
+            {showSparkle === 'final-fireworks' && (
+              <div style={{
+                position: 'fixed',
+                inset: 0,
+                pointerEvents: 'none',
+                zIndex: 80,
+                background: 'radial-gradient(circle at 50% 70%, rgba(255, 215, 0, 0.16), rgba(255,255,255,0) 55%)'
+              }}>
                 <SparkleAnimation
-                  type="burst"
-                  count={20}
+                  type="glitter"
+                  count={28}
                   color="#FFD700"
-                  size={15}
-                  duration={1500}
+                  size={10}
+                  duration={2400}
                   fadeOut={true}
+                  area="full"
                 />
               </div>
             )}
 
-            {/* GANESHA CELEBRATION - Fades in next to persistent boy */}
-            {showGaneshaCelebration && (
-              <div className="ganesha-celebration-enter">
-                <img src={ganeshaHeadphones} alt="Ganesha" className="ganesha-slides-in" />
-                <div className="ganesha-celebration-bubble">
-                  {showGaneshaCelebration === 'vakratunda' ? 'Great job! ðŸŽ‰' : 'Amazing! â­'}
-                </div>
-              </div>
-            )}
-            {/* POWER MODAL - POND STYLE */}
-            {showPowerModal && (
-              <div className="power-modal-overlay">
-                <div className="power-modal">
-                  <h2 className="power-modal-title">
-                    {powerConfig[currentWord]?.name} Unlocked!
-                  </h2>
-
-                  <div className="power-modal-content">
-                    <div className="power-modal-left">
-                      <p className="power-modal-text">
-                        You can now use this power to help animals in need!
-                      </p>
-                      <p className="power-modal-subtext">Choose your next action:</p>
-                    </div>
-
-                    <div className="power-modal-right">
-                      <img
-                        src={powerConfig[currentWord]?.image}
-                        alt={currentWord}
-                        className="power-modal-icon"
-                      />
-
-                      <button className="power-modal-btn save-btn" onClick={handleSaveAnimal}>
-                        ðŸ¾ Save an Animal
-                      </button>
-
-                      <button className="power-modal-btn continue-btn" onClick={handleContinueLearning}>
-                        {currentWord === 'vakratunda' ? 'ðŸŽµ Discover Mahakaya' : 'âœ¨ End Scene'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* SAVE ANIMAL MISSION - REUSABLE COMPONENT */}
-            <SanskritWordMission
-              show={showMission}
-              word={currentWord}
-              beforeImage={missionImages[currentWord]?.before}
-              afterImage={missionImages[currentWord]?.after}
-              powerConfig={powerConfig[currentWord]}
-              onComplete={handleMissionComplete}
-              onCancel={() => {
-                setShowMission(false);
-                setShowPowerModal(true);
-              }}
-            />
-
-            <AppSidebar
-              unlockedApps={sceneState.unlockedApps || {}}
-              onAppClick={(app) => {
-                setPracticeWord(app.id);
-                setShowRecorder(true); // Direct to recorder
-              }}
-              isReload={isReload}
-              onSaveAppState={(appState) => {
-                sceneActions.updateState({ unlockedApps: appState });
-              }}
-            />
-
-
-            <SanskritVoiceRecorder
-              chantResult={null}
-              show={showRecorder}
-              word={practiceWord || ''}
-              savedRecordings={savedRecordings}
-              onSaveRecording={handleSaveRecording}
-              onComplete={() => {
-                setShowRecorder(false);
-                setPracticeWord(null);
-              }}
-              onSkip={() => {
-                setShowRecorder(false);
-                setPracticeWord(null);
-              }}
-              title={practiceWord ? powerConfig[practiceWord]?.name : 'Practice Chanting'}
-              appIcon={powerConfig[practiceWord]?.image} // ADD THIS
-              appColor={powerConfig[practiceWord]?.color} // ADD THIS
-              allowSkip={true}
-            />
-
-            {showSparkle === 'final-fireworks' && (
-              <Fireworks
-                show={true}
-                duration={6000}
-                count={20}
-                colors={['#FFD700', '#FF8C00', '#FFA500']}
-                onComplete={() => {
-                  setShowSparkle(null);
-                  setShowFinalGanesha(false);
-
-                  // Save and show completion immediately
-                  const profileId = localStorage.getItem('activeProfileId');
-                  if (profileId) {
-                    try {
-                      GameStateManager.saveGameState(zoneId, sceneId, {
-                        completed: true,
-                        stars: 5,
-                        learnedWords: sceneState.learnedWords || {},
-                        learnedSyllables: sceneState.learnedSyllables || {},
-                        unlockedApps: sceneState.unlockedApps || {},
-                        timestamp: Date.now()
-                      });
-                      localStorage.removeItem(`temp_session_${profileId}_${zoneId}_${sceneId}`);
-                      SimpleSceneManager.clearCurrentScene();
-                    } catch (error) {
-                      console.error('Error saving game state:', error);
-                    }
-                  }
-
-                  setShowSceneCompletion(true);
-                }}
-              />
-            )}
-
-            {/* TEMPORARY TEST - Remove after debugging 
-<button 
-  onClick={() => {
-    console.log('Forcing modal show');
-    sceneActions.updateState({ phase: PHASES.INITIAL, welcomeShown: false });
-  }}
-  style={{
-    position: 'fixed',
-    top: '100px',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    zIndex: 99999,
-    background: 'red',
-    color: 'white',
-    padding: '10px 20px',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer'
-  }}
->
-  FORCE SHOW MODAL
-</button>
-
-{/* FINAL CELEBRATION - Ganesha appears BEFORE completion screen */}
+            {/* FINAL GANESHA (unchanged) */}
             {showFinalGanesha && !showSceneCompletion && (
-              <div className="final-ganesha-appears">
-                <img src={ganeshaHeadphones} alt="Ganesha" className="ganesha-final-enters" />
-                <div className="ganesha-final-bubble">
-                  You're a hero! ðŸŒŸ
-                </div>
+              <div className="vakratunda-final-ganesha-appears">
+                <img src={ganeshaHeadphones} alt="Ganesha" className="vakratunda-ganesha-final-enters" />
               </div>
             )}
-            {/* SCENE COMPLETION */}
-            {showSceneCompletion && (
-              <SceneCompletionCelebration
-                show={true}
-                sceneName="Vakratunda Grove"
-                sceneNumber={1}
-                totalScenes={5}
-                starsEarned={5}
-                totalStars={5}
-                discoveredSymbols={['vakratunda', 'mahakaya']}
-                nextSceneName="Suryakoti Bank"
-                sceneId={sceneId}
-                completionData={{
-                  stars: 5,
-                  words: sceneState.learnedWords,
-                  completed: true
-                }}
-                onComplete={onComplete}
-                onReplay={() => {
-                  setShowSceneCompletion(false);
-                  resetScene();
-                }}
-                onContinue={() => {
-                  if (clearManualCloseTracking) clearManualCloseTracking();
-                  if (hideCoach) hideCoach();
-                  setTimeout(() => onNavigate?.('scene-complete-continue'), 100);
-                }}
-              />
-            )}
 
-            {/* NAVIGATION */}
-            <TocaBocaNav
-              onHome={() => {
-                if (hideCoach) hideCoach();
-                if (clearManualCloseTracking) clearManualCloseTracking();
-                setTimeout(() => onNavigate?.('home'), 100);
+            {/* SCENE COMPLETION (unchanged) */}
+            <SceneCompletionCelebration
+              show={showSceneCompletion}
+              zoneId={zoneId}
+              sceneName="Vakratunda Grove"
+              completionTitle={completionModalContent?.title}
+              completionSubtitle={completionModalContent?.subtitle}
+              sceneNumber={1}
+              totalScenes={5}
+              starsEarned={5}
+              totalStars={5}
+              discoveredSymbols={['vakratunda', 'mahakaya']}
+              containerType="backpack"
+              symbolImages={{ vakratunda: symbolVakratunda, mahakaya: symbolMahakaya }}
+              symbolData={{
+                vakratunda: { title: "Vakratunda - Curved Trunk", description: "Remover of obstacles with his curved trunk. Chant: VA-KRA-TUN-DA" },
+                mahakaya:   { title: "Mahakaya - Great Body",    description: "Great cosmic form that holds the universe. Chant: MA-HA-KA-YA" }
               }}
-              onZonesClick={() => {
-                if (hideCoach) hideCoach();
-                if (clearManualCloseTracking) clearManualCloseTracking();
-                setTimeout(() => onNavigate?.('zones'), 100);
+              savedRecordings={savedRecordings}
+              nextSceneName="Suryakoti Bank"
+              sceneId="vakratunda-grove"
+              completionData={{ stars: 5, syllables: sceneState.learnedSyllables, words: sceneState.learnedWords, completed: true }}
+              onComplete={() => onNavigate?.('zone-welcome')}
+              onReplay={() => {
+                audioEnabledRef.current = false;
+                setAudioEnabled(false); setVoiceVolume(0); stopVoice();
+                setShowSceneCompletion(false); setRevealConfig(null); setShowSparkle(null);
+                setShowFinalGanesha(false); setShowGaneshaCelebration(false); setShowPowerOverlay(false);
+                setOpeningButtonVisible(true);
+                resetScene();
               }}
-              onStartFresh={() => resetScene()}
-              currentProgress={{
-                stars: sceneState.stars || 0,
-                completed: sceneState.completed ? 1 : 0,
-                total: 1
-              }}
-            />
-
-            <BackToMapButton
-              onNavigate={onNavigate}
-              hideCoach={hideCoach}
-              clearManualCloseTracking={clearManualCloseTracking}
+              onContinue={() => onNavigate?.('scene-complete-continue')}
             />
 
             <ProgressiveHintSystem
-              ref={progressiveHintRef}
+              ref={useRef(null)}
               sceneId={sceneId}
               sceneState={sceneState}
               hintConfigs={[]}
               characterImage={mooshikaCoach}
               enabled={false}
             />
+
           </div>
         </div>
       </MessageManager>

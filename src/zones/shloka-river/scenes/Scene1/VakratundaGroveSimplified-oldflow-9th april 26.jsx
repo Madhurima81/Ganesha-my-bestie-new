@@ -310,6 +310,7 @@ const VakratundaGroveContent = ({
       if (onEnded) onEnded();
       return;
     }
+
     try {
       synth.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
@@ -344,10 +345,12 @@ const VakratundaGroveContent = ({
       instructionTapLily: 'Tap the lily.',
       instructionTapLilyUnlock: 'Tap the lily.',
     };
+
     if (webSpeechMap[key]) {
       speakWebSpeech(webSpeechMap[key], onEnded);
       return;
     }
+
     if (onEnded) onEnded();
   }, [speakWebSpeech]);
 
@@ -435,7 +438,7 @@ const VakratundaGroveContent = ({
     const voKey = revealConfig.symbolId === 'vakratunda' ? 'vakratundaPower' : 'mahakayaPower';
     const id = setTimeout(() => playGuidanceVoice(voKey), 400);
     return () => clearTimeout(id);
-  }, [revealConfig, isAudioOn, playGuidanceVoice]);
+  }, [revealConfig]);
 
   // Compute delta from card center (viewport center) to sidebar icon center
   const getSidebarTarget = (symbolId) => {
@@ -520,7 +523,7 @@ const VakratundaGroveContent = ({
       }, 800);
       return () => clearTimeout(timer);
     }
-  }, [sceneState.phase, sceneState.welcomeShown, isAudioOn, playGuidanceVoice]); // isAudioOn in deps so effect re-runs on toggle
+  }, [sceneState.phase, sceneState.welcomeShown, isAudioOn]); // isAudioOn in deps so effect re-runs on toggle
 
   const playAudio = (audioPath, volume = 1.0) => {
     if (!isAudioOn) return Promise.resolve();
@@ -563,6 +566,9 @@ const VakratundaGroveContent = ({
     if (sceneState.phase === PHASES.MAHAKAYA_GAME) {
       setCurrentPhase('mahakayaGame');
       startIdleTimer(); // hints fire after ~12s of no interaction
+      if (isAudioOn) {
+        safeSetTimeout(() => playGuidanceVoice('mahakayaGameStart'), 500);
+      }
     }
   }, [sceneState.phase, setCurrentPhase]);
 
@@ -670,7 +676,7 @@ const VakratundaGroveContent = ({
   // ✅ FIXED: Direct transitions, no "Save Animal" mission
   const handlePowerUnlockComplete = () => {
     setShowPowerOverlay(false);
-    stopVoice(); // Stop any playing VO
+    stopAllVoice(); // Stop any playing VO
 
     if (currentWord === 'vakratunda') {
       console.log('🔄 Moving to Mahakaya Phase');
@@ -855,7 +861,6 @@ const VakratundaGroveContent = ({
               onSaveGameState={(state) => handleSaveComponentState('vakratundaGame', state)}
               voiceGuidance={{ playVoice: playGuidanceVoice, playSfx, stopVoice: stopAllVoice, characterImage: mooshikaCoach }}
               isPaused={isRecorderOpen}
-              startRound={3}
             />
 
             {/* MAHAKAYA MEMORY GAME */}
@@ -877,7 +882,6 @@ const VakratundaGroveContent = ({
               onSaveGameState={(state) => handleSaveComponentState('mahakayaGame', state)}
               voiceGuidance={{ playVoice: playGuidanceVoice, playSfx, stopVoice: stopAllVoice, characterImage: mooshikaCoach }}
               isPaused={isRecorderOpen}
-              startRound={3}
             />
 
             {/* PERSISTENT BOY CHARACTER (Commented out per user request) */}

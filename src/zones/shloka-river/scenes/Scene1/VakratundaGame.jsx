@@ -38,6 +38,7 @@ const VakratundaGame = ({
   voiceGuidance,
   isPaused,
   onMicroWin,
+  startRound = 1,
 }) => {
 
   // Get Vakratunda config from your gameConfigs.js
@@ -85,6 +86,7 @@ const assetGetters = {
       voiceGuidance={voiceGuidance}
       isPaused={isPaused}
       onMicroWin={onMicroWin}
+      startRound={startRound}
     />
   );
 };

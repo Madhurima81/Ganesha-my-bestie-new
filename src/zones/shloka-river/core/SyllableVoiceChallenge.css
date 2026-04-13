@@ -205,6 +205,42 @@
   color: #fff;
 }
 
+/* ── Inline mode (no backdrop; card sits inside parent speech bubble) ─────── */
+.svc-card--inline {
+  max-width: 100%;
+  border-radius: 20px;
+  padding: 20px 20px 28px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+  animation: svcPopIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.svc-card--inline .svc-body,
+.svc-card--inline .svc-body--result {
+  padding-left: 0; /* no Mooshika in inline mode */
+}
+.svc-card--inline .svc-syllable {
+  font-size: 52px;
+}
+.svc-card--inline .svc-prompt-text {
+  font-size: 18px;
+}
+.svc-card--inline .svc-waveform {
+  height: 44px;
+}
+.svc-card--inline .svc-result-emoji {
+  font-size: 40px;
+}
+.svc-card--inline .svc-result-title {
+  font-size: 28px;
+}
+.svc-card--inline .svc-result-msg {
+  font-size: 16px;
+}
+.svc-card--inline .svc-btn {
+  padding: 12px 28px;
+  font-size: 16px;
+  min-width: 100px;
+}
+
 /* ── Keyframe animations ─────────────────────────────────────────────────── */
 @keyframes svcFadeIn {
   from { opacity: 0; }

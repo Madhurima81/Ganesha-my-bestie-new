@@ -38,6 +38,7 @@ const MahakayaGame = ({
   voiceGuidance,
   isPaused,
   onMicroWin,
+  startRound = 1,
 }) => {
 
   const gameConfig = getGameConfig('mahakaya');
@@ -86,6 +87,7 @@ const assetGetters = {
       voiceGuidance={voiceGuidance}
       isPaused={isPaused}
       onMicroWin={onMicroWin}
+      startRound={startRound}
     />
   );
 };

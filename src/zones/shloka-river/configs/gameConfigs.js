@@ -52,8 +52,8 @@ export const GAME_CONFIGS = {
                     { left: '75%', top: '28%', size: 'clamp(200px, 38vw, 480px)', flip: true  }, // index 1 → da
                 ],
                 3: [                                                                              // Round 3: vakra, tunda
-                    { left: '22%', top: '28%', size: 'clamp(200px, 38vw, 480px)', flip: false }, // index 0 → vakra
-                    { left: '75%', top: '28%', size: 'clamp(200px, 38vw, 480px)', flip: true  }, // index 1 → tunda
+                    { left: '22%', top: '52%', size: 'clamp(200px, 38vw, 480px)', flip: false }, // index 0 → vakra
+                    { left: '75%', top: '52%', size: 'clamp(200px, 38vw, 480px)', flip: true  }, // index 1 → tunda
                 ],
             },
             // fallback flat positions (used if positionsByRound not found)

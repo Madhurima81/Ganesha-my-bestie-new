@@ -25,6 +25,7 @@ const MemoryGameEngine = ({
   voiceGuidance = null,  // ⭐ VOICE GUIDANCE
   isPaused = false,
   onMicroWin,            // micro-reward gesture callback — passed through to mode components
+  startRound = 1,
 }) => {
 
  
@@ -227,6 +228,7 @@ onSaveGameState: (state) => {
           {...commonProps}
           isReload={isReload}
           savedGameState={savedGameState}
+          startRound={startRound}
         />
       )}
 

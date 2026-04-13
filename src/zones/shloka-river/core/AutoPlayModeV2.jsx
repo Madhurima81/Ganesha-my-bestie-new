@@ -19,13 +19,14 @@ const AutoPlayModeV2 = ({
   voiceGuidance = null,
   isPaused = false, // Receives state from parent
   onMicroWin,      // micro-reward gesture callback
+  startRound = 1,
 }) => {
 
   const { safeClick } = useSafeClick(300);
 
   // Core game state
   const [gamePhase, setGamePhase] = useState('waiting');
-  const [currentRound, setCurrentRound] = useState(1);
+  const [currentRound, setCurrentRound] = useState(startRound);
   const [currentSequence, setCurrentSequence] = useState([]);
   const [currentSyllableIndex, setCurrentSyllableIndex] = useState(0);
   const [playerInput, setPlayerInput] = useState([]);
@@ -413,6 +414,7 @@ const AutoPlayModeV2 = ({
   };
 
   const maxRound = gameConfig ? Object.keys(gameConfig.syllables).length : 3;
+  const effectiveStartRound = Math.min(Math.max(startRound || 1, 1), maxRound);
   
   const getSequenceForRound = (round) => gameConfig.syllables[round] || [];
 
@@ -525,34 +527,23 @@ const AutoPlayModeV2 = ({
       return;
     }
 
-    const isLastRound = currentRound === maxRound;
+    setGamePhase('playing_syllable');
+    setCanPlayerClick(false);
+    wasChildActionPendingRef.current = false;
 
-    if (isLastRound) {
-      setGamePhase('listening_syllable');
-      setCanPlayerClick(true);
-      wasChildActionPendingRef.current = true;
-      flowInProgressRef.current = false;
-      if (voiceGuidanceRef.current?.playVoice) {
-        lastInterruptibleVORef.current = 'instructionTapTheElephant';
-        voiceGuidanceRef.current.playVoice('instructionTapTheElephant');
-      }
-    } else {
-      setGamePhase('playing_syllable');
-      setCanPlayerClick(false);
-      wasChildActionPendingRef.current = false;
+    // Only play intro guidance once at the first tappable elephant of the configured start round.
+    const isFirstElephantOfGame = currentRound === effectiveStartRound && syllableIdx === 0;
 
-      // Only play "Listen carefully" + "Tap and repeat" for the very first elephant of Round 1
-      const isFirstElephantOfGame = currentRound === 1 && syllableIdx === 0;
+    const runAudioSequence = () => {
+        if (isPausedRef.current) { flowInProgressRef.current = false; return; }
 
-      const runAudioSequence = () => {
-          if (isPausedRef.current) { flowInProgressRef.current = false; return; }
+        setSingingSyllable(syllable);
+        const started = playSyllableAudio(syllable, () => {
+            setSingingSyllable(null);
 
-          setSingingSyllable(syllable);
-          const started = playSyllableAudio(syllable, () => {
-              setSingingSyllable(null);
+            if (isPausedRef.current) { flowInProgressRef.current = false; return; }
 
-              if (isPausedRef.current) { flowInProgressRef.current = false; return; }
-
+              const postAudioDelay = isFirstElephantOfGame ? 1000 : naturalDelay(400, 700);
               safeSetTimeout(() => {
                 if (isPausedRef.current) { flowInProgressRef.current = false; return; }
                 setGamePhase('listening_syllable');
@@ -563,24 +554,23 @@ const AutoPlayModeV2 = ({
                   lastInterruptibleVORef.current = 'instructionTapAndRepeat';
                   voiceGuidanceRef.current.playVoice('instructionTapAndRepeat');
                 }
-              }, naturalDelay(400, 700));
+              }, postAudioDelay);
             });
-          if (!started) {
-            setSingingSyllable(null);
-            flowInProgressRef.current = false;
-            return;
-          }
-      };
+        if (!started) {
+          setSingingSyllable(null);
+          flowInProgressRef.current = false;
+          return;
+        }
+    };
 
-      if (voiceGuidanceRef.current?.playVoice && isFirstElephantOfGame) {
-        lastInterruptibleVORef.current = 'instructionListen';
-        voiceGuidanceRef.current.playVoice('instructionListen', () => {
-             if (isPausedRef.current) { flowInProgressRef.current = false; return; }
-             safeSetTimeout(runAudioSequence, naturalDelay(500, 800));
-        });
-      } else {
-        runAudioSequence();
-      }
+    if (voiceGuidanceRef.current?.playVoice && isFirstElephantOfGame) {
+      lastInterruptibleVORef.current = 'instructionListen';
+      voiceGuidanceRef.current.playVoice('instructionListen', () => {
+           if (isPausedRef.current) { flowInProgressRef.current = false; return; }
+           safeSetTimeout(runAudioSequence, naturalDelay(500, 800));
+      });
+    } else {
+      runAudioSequence();
     }
   };
 
@@ -599,14 +589,98 @@ const AutoPlayModeV2 = ({
       setCanPlayerClick(false);
       wasChildActionPendingRef.current = false;
 
-      if (gameConfig.id === 'vakratunda' || gameConfig.id === 'mahakaya') {
-        const srcPos = gameConfig.elements.clicker?.positionsByRound?.[currentRound]?.[syllableIndex]
-                    || gameConfig.elements.clicker.positions[syllableIndex];
-        const tgtPos = gameConfig.elements.centralSynthesis?.positions?.[currentRound - 1];
-        if (srcPos) {
-          setWaterSprayPosition({ source: srcPos, target: tgtPos || null });
-          safeSetTimeout(() => setWaterSprayPosition(null), 1300);
+      const isCustomElephantFlow =
+        (gameConfig.id === 'vakratunda' || gameConfig.id === 'mahakaya') &&
+        currentRound === effectiveStartRound &&
+        (syllableIndex === 0 || syllableIndex === 1);
+
+      const triggerSprayForTap = () => {
+        if (gameConfig.id === 'vakratunda' || gameConfig.id === 'mahakaya') {
+          const srcPos = gameConfig.elements.clicker?.positionsByRound?.[currentRound]?.[syllableIndex]
+                      || gameConfig.elements.clicker.positions[syllableIndex];
+          const tgtPos = gameConfig.elements.centralSynthesis?.positions?.[currentRound - 1];
+          if (srcPos) {
+            setWaterSprayPosition({ source: srcPos, target: tgtPos || null });
+            safeSetTimeout(() => setWaterSprayPosition(null), 1300);
+          }
         }
+      };
+
+      if (!isCustomElephantFlow) {
+        triggerSprayForTap();
+      }
+
+      const totalSyllables = currentSequence.length;
+      const progressPerClick = Math.floor(80 / totalSyllables);
+
+      // Custom Vakratunda flow:
+      // - no second syllable replay on tap
+      // - no instant bloom on tap
+      // - proceed only after SVC completes/closes/fallbacks
+      if (isCustomElephantFlow) {
+        const nextIdx = syllableIndex + 1;
+        const newPlayerInput = [...playerInput, clickedSyllable];
+
+        const applyTapSuccess = () => {
+          setPlayerInput(newPlayerInput);
+          setRoundClicks(prev => ({ ...prev, [`elephant-${clickedSyllable}`]: true }));
+          setActivatedElephants(prev => ({ ...prev, [`elephant-${clickedSyllable}`]: true }));
+          setVisualRewards(prev => ({ ...prev, [`visual-${clickedSyllable}`]: true }));
+          onMicroWin?.();
+          triggerSprayForTap();
+          if (gameConfig.id !== 'mahakaya') {
+            setCentralBloomProgress(newPlayerInput.length * progressPerClick);
+          }
+        };
+
+        const proceedToNext = () => {
+          applyTapSuccess();
+          if (nextIdx >= currentSequence.length) {
+            pendingLotusTransitionRef.current = true;
+            safeSetTimeout(() => {
+              if (isPausedRef.current) return;
+              pendingLotusTransitionRef.current = false;
+              setCentralElementGlowing(true);
+              setGamePhase('waiting_lotus');
+              setCanPlayerClick(true);
+              wasChildActionPendingRef.current = true;
+              flowInProgressRef.current = false;
+              if (voiceGuidanceRef.current?.playVoice) {
+                const centralVO = getCentralTapVO();
+                lastInterruptibleVORef.current = centralVO;
+                voiceGuidanceRef.current.playVoice(centralVO);
+              }
+            }, naturalDelay(400, 700));
+          } else {
+            pendingLotusTransitionRef.current = false;
+            setCurrentSyllableIndex(nextIdx);
+            safeSetTimeout(() => {
+              if (isPausedRef.current) return;
+              flowInProgressRef.current = false;
+              startSyllableFlow(nextIdx);
+            }, naturalDelay(600, 1000));
+          }
+        };
+
+        setVoiceChallenge({
+          syllable: clickedSyllable,
+          displayLabel: clickedSyllable.toUpperCase(),
+          replayAudio: () => {},
+          stopAudio: () => {
+            if (voiceGuidanceRef.current?.stopVoice) voiceGuidanceRef.current.stopVoice();
+            if (currentAudioRef.current) { currentAudioRef.current.pause(); currentAudioRef.current = null; }
+          },
+          inline: true,
+          targetRound: currentRound,
+          targetIndex: syllableIndex,
+          simpleMode: true,
+          autoContinueOnSuccessMs: 900,
+          onComplete: () => {
+            setVoiceChallenge(null);
+            proceedToNext();
+          },
+        });
+        return;
       }
 
       const newPlayerInput = [...playerInput, clickedSyllable];
@@ -618,8 +692,6 @@ const AutoPlayModeV2 = ({
       // micro-reward: correct syllable tapped
       onMicroWin?.();
 
-      const totalSyllables = currentSequence.length;
-      const progressPerClick = Math.floor(80 / totalSyllables);
       // Mahakaya uses instant pop reveal — keep progress at 0 until the central tree tap
       if (gameConfig.id !== 'mahakaya') {
         setCentralBloomProgress(newPlayerInput.length * progressPerClick);
@@ -644,6 +716,12 @@ const AutoPlayModeV2 = ({
         const nextIdx = syllableIndex + 1;
 
         const proceedToNext = () => {
+          if (isCustomElephantFlow) {
+            triggerSprayForTap();
+            if (gameConfig.id !== 'mahakaya') {
+              setCentralBloomProgress(newPlayerInput.length * progressPerClick);
+            }
+          }
           if (nextIdx >= currentSequence.length) {
             pendingLotusTransitionRef.current = true;
             safeSetTimeout(() => {
@@ -673,7 +751,7 @@ const AutoPlayModeV2 = ({
 
         // Show voice challenge only in learning rounds (not the final assembly round)
         const isLastRound = currentRound === maxRound;
-        if (!isLastRound) {
+        if (!isLastRound || isCustomElephantFlow) {
           setVoiceChallenge({
             syllable: clickedSyllable,
             displayLabel: clickedSyllable.toUpperCase(),
@@ -682,6 +760,11 @@ const AutoPlayModeV2 = ({
               if (voiceGuidanceRef.current?.stopVoice) voiceGuidanceRef.current.stopVoice();
               if (currentAudioRef.current) { currentAudioRef.current.pause(); currentAudioRef.current = null; }
             },
+            inline: false,
+            targetRound: currentRound,
+            targetIndex: syllableIndex,
+            simpleMode: false,
+            autoContinueOnSuccessMs: 0,
             onComplete: () => {
               setVoiceChallenge(null);
               proceedToNext();
@@ -855,7 +938,7 @@ const AutoPlayModeV2 = ({
       }
     }
   };
-  const handleExitToMenu = () => { setShowPauseModal(false); clearAllTimers(); setGamePhase('waiting'); setCurrentRound(1); };
+  const handleExitToMenu = () => { setShowPauseModal(false); clearAllTimers(); setGamePhase('waiting'); setCurrentRound(effectiveStartRound); };
 
   // ==========================================
   // INITIALIZATION
@@ -869,8 +952,8 @@ const AutoPlayModeV2 = ({
     hasInitializedRef.current = true;
     gameStartVOPlayedRef.current = false;
     waitingForGameStartVORef.current = false;
-    startNewRound(1);
-  }, [isActive, gameConfig]);
+    startNewRound(effectiveStartRound);
+  }, [isActive, gameConfig, effectiveStartRound]);
 
   useEffect(() => {
     if (gamePhase === 'waiting' && currentSequence.length > 0) {
@@ -913,6 +996,17 @@ const AutoPlayModeV2 = ({
     const clicked = hasElephantBeenClicked(syllable);
     const singing = isElephantSinging(syllable);
     const isTarget = isCurrentTarget(index);
+    const isCustomBubble =
+      (gameConfig.id === 'vakratunda' || gameConfig.id === 'mahakaya') &&
+      currentRound === effectiveStartRound &&
+      (index === 0 || index === 1);
+    const showSayPromptBubble =
+      isCustomBubble &&
+      canPlayerClick &&
+      isTarget &&
+      !clicked &&
+      !voiceChallenge;
+    const bubbleText = showSayPromptBubble ? `Say ${syllable}` : syllable;
     // Read size and flip from config — fallback to CSS class size if not set
     const elephantSize = position.size || undefined;
     const shouldFlip = position.flip === true;
@@ -934,7 +1028,7 @@ const AutoPlayModeV2 = ({
         />
         {/* Speech bubble above elephant */}
         <div style={{ position: 'absolute', top: '-52px', left: '50%', transform: 'translateX(-50%)', background: clicked ? '#C8F2C2' : 'white', color: '#2E7D32', padding: '8px 16px', borderRadius: '14px', fontSize: 'clamp(14px, 1.8vw, 20px)', fontWeight: 700, letterSpacing: '0.5px', boxShadow: '0 2px 8px rgba(0,0,0,0.18)', border: `2px solid ${clicked ? '#81C784' : 'rgba(76,175,80,0.3)'}`, whiteSpace: 'nowrap', zIndex: 25, transition: 'all 0.18s ease-out' }}>
-          {syllable}
+          {bubbleText}
           {/* Tail pointing down */}
           <div style={{ position: 'absolute', bottom: '-10px', left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '10px solid transparent', borderRight: '10px solid transparent', borderTop: `10px solid ${clicked ? '#C8F2C2' : 'white'}` }} />
         </div>
@@ -974,6 +1068,7 @@ const AutoPlayModeV2 = ({
   };
 
   const renderPreviousCentralElements = () => {
+    if (effectiveStartRound > 1) return null;
     if (!gameConfig.elements.centralSynthesis?.showPreviousRounds) return null;
     if (!currentRound || currentRound === 1) return null;
 
@@ -1015,8 +1110,29 @@ const AutoPlayModeV2 = ({
     if (!getInitialImage || !getRewardImage) return null;
     const isFullyBloomed = centralBloomProgress === 100;
     const isMahakaya = gamePrefix === 'mahakaya';
-    const budImage = getInitialImage(0);
-    const bloomImage = getRewardImage(0);
+    const isVakratundaStartRoundCustom =
+      gameConfig.id === 'vakratunda' && currentRound === effectiveStartRound && effectiveStartRound > 1;
+    const isMahakayaStartRoundCustom =
+      gameConfig.id === 'mahakaya' && currentRound === effectiveStartRound && effectiveStartRound > 1;
+
+    const budImage = isVakratundaStartRoundCustom
+      ? (assetGetters.getLotusBudImage ? assetGetters.getLotusBudImage(0) : getInitialImage(0))
+      : getInitialImage(0);
+    const bloomImage = isVakratundaStartRoundCustom
+      ? (assetGetters.getLotusFullBloomImage ? assetGetters.getLotusFullBloomImage(0) : getRewardImage(0))
+      : getRewardImage(0);
+    const banyanSproutImage = isMahakayaStartRoundCustom
+      ? (assetGetters.getBanyanSproutImage ? assetGetters.getBanyanSproutImage(0) : getInitialImage(0))
+      : budImage;
+    const banyanSaplingImage = isMahakayaStartRoundCustom
+      ? (assetGetters.getBanyanSaplingImage ? assetGetters.getBanyanSaplingImage(0) : getInitialImage(0))
+      : budImage;
+    const banyanHalfImage = isMahakayaStartRoundCustom
+      ? (assetGetters.getBanyanHalfImage ? assetGetters.getBanyanHalfImage(0) : getRewardImage(0))
+      : bloomImage;
+    const banyanFullImage = isMahakayaStartRoundCustom
+      ? (assetGetters.getBanyanFullImage ? assetGetters.getBanyanFullImage(0) : getRewardImage(0))
+      : bloomImage;
     let className = `${gamePrefix}-central-synthesis`;
     if (centralElementGlowing) {
       className += ' pulse';
@@ -1024,13 +1140,47 @@ const AutoPlayModeV2 = ({
     }
     return (
       <div className={className} onClick={centralElementGlowing ? handleCentralElementClick : undefined} style={{ position: 'absolute', left: position.left, top: position.top, transform: isMahakaya ? 'translate(-50%, -100%)' : 'translate(-50%, -50%)', zIndex: 20, cursor: centralElementGlowing ? 'pointer' : 'default', transition: isMahakaya ? 'filter 0.3s ease, opacity 0.3s ease' : 'all 0.5s ease', pointerEvents: centralElementGlowing ? 'auto' : 'none', ...(position.size && { width: position.size, height: position.size, minWidth: position.size, minHeight: position.size }) }}>
-        {isMahakaya ? (
+        {isMahakayaStartRoundCustom ? (
+          <div style={{ position: 'absolute', width: '100%', height: '100%' }}>
+            <img
+              src={
+                playerInput.includes('lotus')
+                  ? banyanFullImage
+                  : playerInput.length >= 2
+                    ? banyanHalfImage
+                    : playerInput.length >= 1
+                      ? banyanSaplingImage
+                      : banyanSproutImage
+              }
+              style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center bottom' }}
+              alt="banyan stage"
+            />
+          </div>
+        ) : isMahakaya ? (
           <>
             <div style={{ position: 'absolute', width: '100%', height: '100%', opacity: isFullyBloomed ? 0 : 1 }}>
               <img src={budImage} style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center bottom' }} alt="tree" />
             </div>
             <div style={{ position: 'absolute', width: '100%', height: '100%', opacity: isFullyBloomed ? 1 : 0, animation: isFullyBloomed ? 'mahakayaPopIn 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards' : 'none' }}>
               <img src={bloomImage} style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center bottom' }} alt="grown tree" />
+            </div>
+          </>
+        ) : isVakratundaStartRoundCustom ? (
+          <>
+            <div style={{ position: 'absolute', width: '100%', height: '100%' }}>
+              <img
+                src={
+                  playerInput.includes('lotus')
+                    ? (assetGetters.getLotusFullBloomImage ? assetGetters.getLotusFullBloomImage(0) : bloomImage)
+                    : playerInput.length >= 2
+                      ? (assetGetters.getLotusHalfBloomImage ? assetGetters.getLotusHalfBloomImage(0) : bloomImage)
+                      : playerInput.length >= 1
+                        ? (assetGetters.getLotusbitBloomImage ? assetGetters.getLotusbitBloomImage(0) : bloomImage)
+                        : budImage
+                }
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                alt="lotus stage"
+              />
             </div>
           </>
         ) : (
@@ -1062,6 +1212,17 @@ const AutoPlayModeV2 = ({
 
   if (!isActive || !gameConfig) return null;
 
+  const getClickerPosition = (round, index) => {
+    const positionsByRound = gameConfig.elements.clicker?.positionsByRound;
+    return (positionsByRound?.[round]?.[index])
+      || gameConfig.elements.clicker?.positions?.[index]
+      || { left: '50%', top: '50%' };
+  };
+
+  const inlineChallengePos = (voiceChallenge?.inline && typeof voiceChallenge?.targetIndex === 'number')
+    ? getClickerPosition(voiceChallenge.targetRound || currentRound, voiceChallenge.targetIndex)
+    : null;
+
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 20 }}>
       {!hideElements && (
@@ -1073,7 +1234,7 @@ const AutoPlayModeV2 = ({
       <PauseModal isOpen={showPauseModal} onContinue={handleContinue} onExit={handleExitToMenu} />
 
       {/* ⭐ Round reward stars — one star pops in after each round's lotus is tapped */}
-      {!hideElements && gamePhase !== 'phase_complete' && (
+      {!hideElements && gamePhase !== 'phase_complete' && effectiveStartRound <= 1 && (
         <div style={{
           position: 'absolute',
           top: '60px',
@@ -1172,14 +1333,43 @@ const AutoPlayModeV2 = ({
 
       {/* ── Duolingo-style syllable voice challenge ── */}
       {voiceChallenge && (
-        <SyllableVoiceChallenge
-          syllable={voiceChallenge.syllable}
-          displayLabel={voiceChallenge.displayLabel}
-          onComplete={voiceChallenge.onComplete}
-          replayAudio={voiceChallenge.replayAudio}
-          stopAudio={voiceChallenge.stopAudio}
-          mooshikaImage={voiceGuidance?.characterImage}
-        />
+        voiceChallenge.inline && inlineChallengePos ? (
+          <div
+            style={{
+              position: 'absolute',
+              left: inlineChallengePos.left,
+              top: inlineChallengePos.top,
+              transform: 'translate(-50%, -110%)',
+              width: 'min(300px, 36vw)',
+              zIndex: 260,
+              pointerEvents: 'auto',
+            }}
+          >
+            <SyllableVoiceChallenge
+              syllable={voiceChallenge.syllable}
+              displayLabel={voiceChallenge.displayLabel}
+              onComplete={voiceChallenge.onComplete}
+              replayAudio={voiceChallenge.replayAudio}
+              stopAudio={voiceChallenge.stopAudio}
+              mooshikaImage={null}
+              inline={true}
+              simpleMode={!!voiceChallenge.simpleMode}
+              autoContinueOnSuccessMs={voiceChallenge.autoContinueOnSuccessMs || 0}
+            />
+          </div>
+        ) : (
+          <SyllableVoiceChallenge
+            syllable={voiceChallenge.syllable}
+            displayLabel={voiceChallenge.displayLabel}
+            onComplete={voiceChallenge.onComplete}
+            replayAudio={voiceChallenge.replayAudio}
+            stopAudio={voiceChallenge.stopAudio}
+            mooshikaImage={voiceGuidance?.characterImage}
+            inline={false}
+            simpleMode={!!voiceChallenge.simpleMode}
+            autoContinueOnSuccessMs={voiceChallenge.autoContinueOnSuccessMs || 0}
+          />
+        )
       )}
     </div>
   );
