@@ -149,17 +149,25 @@ const OTHER_FESTIVALS = [
 ];
 
 const PHASE1_LOCATIONS = [
-  { name: 'Varanasi', icon: varansiIcon, x: 54, y: 25 },
-  { name: 'Mumbai', icon: mumbaiIcon, x: 25, y: 48 },
-  { name: 'Tamil Nadu', icon: tamilNaduIcon, x: 45, y: 65 },
-  { name: 'Hampi', icon: hampiIcon, x: 42, y: 58 },
+  { name: 'Varanasi', icon: varansiIcon, x: 54, y: 25, emoji: '🕌' },
+  { name: 'Mumbai', icon: mumbaiIcon, x: 25, y: 48, emoji: '🏛️' },
+  { name: 'Tamil Nadu', icon: tamilNaduIcon, x: 50, y: 68, emoji: '🙏' },
+  { name: 'Hampi', icon: hampiIcon, x: 32, y: 52, emoji: '🏺' },
+];
+
+const HEART_POSITIONS = [
+  { top: '20%', left: '15%' },
+  { top: '35%', left: '80%' },
+  { top: '65%', left: '25%' },
+  { top: '75%', left: '70%' },
+  { top: '50%', left: '50%' },
 ];
 
 const GANESHA_SPOTS = [
-  { name: 'Varanasi Ghats', fact: 'In Varanasi, my name echoes across the ghats every morning! 🕌' },
-  { name: 'Mumbai Temple', fact: 'Siddhivinayak temple in Mumbai is one of my most beloved homes! 🍬' },
-  { name: 'Tamil Nadu Shrine', fact: 'In Tamil Nadu, I am called Pillaiyar — the noble child! 🙏' },
-  { name: 'Hampi Ruins', fact: 'Hampi\'s ancient temples are full of my blessings! ✨' },
+  { name: 'Varanasi Ghats', emoji: '🕌', fact: 'In Varanasi, my name echoes across the ghats every morning! 🕌' },
+  { name: 'Mumbai Temple', emoji: '🏛️', fact: 'Siddhivinayak temple in Mumbai is one of my most beloved homes! 🍬' },
+  { name: 'Tamil Nadu Shrine', emoji: '🙏', fact: 'In Tamil Nadu, I am called Pillaiyar — the noble child! 🙏' },
+  { name: 'Hampi Ruins', emoji: '🏺', fact: 'Hampi\'s ancient temples are full of my blessings! ✨' },
 ];
 
 export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, childName = 'friend', childAge = 8 }) {
@@ -276,34 +284,13 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
     if (info) speakIfUnmuted(info.text, { age: childAge, moment: info.moment });
   }, [step]);
 
-  // Load saved data
+  // Load saved data ONLY if coming from mid-scene resume (not fresh entry)
   useEffect(() => {
+    // Always start with opening modal on fresh entry
+    // Only load saved progress if user explicitly clicked "Continue" from completion screen
+    // For now, always clear and start fresh - opening modal will handle resume logic
     try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-      const savedStep = RESUMABLE_STEPS.has(saved.step) ? saved.step : null;
-      if (!savedStep) return;
-
-      if (savedStep === STEPS.GANESHA_HOME || savedStep === STEPS.CHILD_HOME) {
-        setSelectedRegion(null);
-        setSelectedLanguages([]);
-        setSelectedFestivals([]);
-      }
-      if (savedStep === STEPS.LANGUAGE) {
-        setSelectedRegion(saved.region || null);
-        setSelectedLanguages([]);
-        setSelectedFestivals([]);
-      }
-      if (savedStep === STEPS.FESTIVALS) {
-        setSelectedRegion(saved.region || null);
-        setSelectedLanguages(saved.languages || []);
-        setSelectedFestivals([]);
-      }
-      if (savedStep === STEPS.ORIGIN_CARD) {
-        setSelectedRegion(saved.region || null);
-        setSelectedLanguages(saved.languages || []);
-        setSelectedFestivals(saved.festivals || []);
-      }
-      setStep(savedStep);
+      localStorage.removeItem(STORAGE_KEY);
     } catch (e) {}
   }, []);
 
@@ -586,19 +573,180 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
 
       {/* Ganesha Home Phase */}
       {step === STEPS.GANESHA_HOME && (
-        <div style={{ paddingTop: '40px', paddingBottom: '40px' }}>
-          <StoryProgressHeader discoveries={[]} isChildMode={false} />
-          <img src={indiaMapImage} alt="India Map" style={{ width: '100%', maxWidth: '600px', display: 'block', margin: '0 auto' }} />
-          <FreeDraggableItem
-            initialPosition={mglassPosition}
-            onMove={handleMglassMove}
-            elementName="mglass"
-            image={mglass}
-            constraints={{ top: '10%', left: '10%', right: '85%', bottom: '80%' }}
-          />
+        <div style={{ minHeight: '100vh', paddingTop: '40px', paddingBottom: '40px' }}>
+          <StoryProgressHeader discoveries={discoveredLocations.length > 0 ? PHASE1_LOCATIONS.slice(0, discoveredLocations.length) : []} isChildMode={false} />
+
+          {/* Progress indicator */}
+          <div style={{ textAlign: 'center', marginBottom: '20px', fontFamily: "'Baloo 2', cursive", fontSize: '18px', fontWeight: 700, color: '#654321' }}>
+            Found: {discoveredLocations.length} / {PHASE1_LOCATIONS.length} 🔍
+          </div>
+
+          {/* India Map Container */}
+          <div style={{
+            position: 'relative',
+            width: '900px',
+            height: '980px',
+            margin: '120px auto 0',
+            maxWidth: '90vw',
+            overflow: 'visible',
+          }}>
+            {/* Map */}
+            <img
+              src={indiaMapImage}
+              alt="India Map"
+              style={{
+                position: 'absolute',
+                inset: 0,
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                display: 'block',
+              }}
+            />
+
+            {/* Invisible location targets for discovery */}
+            {GANESHA_SPOTS.map((spot, idx) => (
+              <div
+                key={idx}
+                style={{
+                  position: 'absolute',
+                  top: PHASE1_LOCATIONS[idx] ? `${PHASE1_LOCATIONS[idx].y}%` : '50%',
+                  left: PHASE1_LOCATIONS[idx] ? `${PHASE1_LOCATIONS[idx].x}%` : '50%',
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  pointerEvents: 'none',
+                  zIndex: 1,
+                }}
+              />
+            ))}
+
+            {/* Discovered location icons */}
+            {discoveredLocations.map((idx) => {
+              const loc = PHASE1_LOCATIONS[idx];
+              return (
+                <div
+                  key={`discovered-${idx}`}
+                  style={{
+                    position: 'absolute',
+                    top: loc ? `${loc.y}%` : '50%',
+                    left: loc ? `${loc.x}%` : '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '120px',
+                    height: '120px',
+                    zIndex: 5,
+                    animation: 'popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                    filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.3))',
+                  }}
+                >
+                  {loc?.icon && (
+                    <img src={loc.icon} alt={loc.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  )}
+                </div>
+              );
+            })}
+
+            {/* Floating hearts on celebration */}
+            {showCelebration && HEART_POSITIONS.map((pos, i) => (
+              <div
+                key={`heart-${i}`}
+                style={{
+                  position: 'absolute',
+                  top: pos.top,
+                  left: pos.left,
+                  fontSize: '48px',
+                  zIndex: 10,
+                  animation: `floatUp 2s ease-out ${i * 0.15}s forwards`,
+                  pointerEvents: 'none',
+                }}
+              >
+                💖
+              </div>
+            ))}
+
+            <style>{`
+              @keyframes popIn {
+                from { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+                to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+              }
+              @keyframes floatUp {
+                0% { transform: translateY(0); opacity: 1; }
+                100% { transform: translateY(-120px); opacity: 0; }
+              }
+            `}</style>
+
+            {/* Draggable Magnifying Glass using FreeDraggableItem */}
+            <FreeDraggableItem
+              id="magnifying-glass"
+              position={mglassPosition}
+              onPositionChange={(newPos) => handleMglassMove(newPos)}
+              bounds={{ top: 0, left: 0, right: 100, bottom: 100 }}
+              style={{
+                width: '160px',
+                height: '160px',
+                zIndex: 20,
+                cursor: 'grab',
+              }}
+            >
+              <img
+                src={mglass}
+                alt="Magnifying Glass"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  pointerEvents: 'none',
+                }}
+              />
+            </FreeDraggableItem>
+          </div>
+
+          {/* Fact Display */}
+          {activeSpotFact && (
+            <div style={{
+              maxWidth: '600px',
+              margin: '30px auto 0',
+              background: '#ADD8E6',
+              borderRadius: '16px',
+              padding: '20px',
+              boxShadow: '0 6px 16px rgba(0,0,0,0.1)',
+              textAlign: 'center',
+              fontFamily: "'Nunito', sans-serif",
+              fontSize: '16px',
+              color: '#654321',
+              lineHeight: '1.6',
+            }}>
+              <div style={{ fontSize: '32px', marginBottom: '12px' }}>🐘</div>
+              <div>{activeSpotFact.fact}</div>
+            </div>
+          )}
+
+          {/* Celebration */}
           {showCelebration && (
-            <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '48px' }}>
-              🎉 Found them all! 🎉
+            <div style={{
+              marginTop: '40px',
+              textAlign: 'center',
+              animation: 'popIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
+            }}>
+              <img src={babyGaneshaImg} alt="Ganesha" style={{ width: '200px', height: 'auto', marginBottom: '20px' }} />
+              <div style={{ fontSize: '72px', marginBottom: '16px' }}>🎉</div>
+              <div style={{
+                fontFamily: "'Baloo 2', cursive",
+                fontSize: '28px',
+                fontWeight: 700,
+                color: '#FF6F00',
+              }}>
+                You found all my hiding places!
+              </div>
+              <div style={{
+                fontFamily: "'Nunito', sans-serif",
+                fontSize: '16px',
+                color: '#666',
+                marginTop: '12px',
+              }}>
+                I am everywhere in India! 🇮🇳
+              </div>
             </div>
           )}
         </div>
