@@ -357,7 +357,7 @@
   width: 160px;
   height: 160px;
   object-fit: contain;
-  filter: drop-shadow(0 8px 20px rgba(255, 215, 0, 0.5));
+  filter: drop-shadow(0 4px 10px rgba(255, 215, 0, 0.22));
 }
 
 .celebrate-scale {
@@ -374,6 +374,10 @@
   top: 55%;
   left: 50%;
   transform: translate(-50%, -50%);
+  background: transparent;
+  border: none;
+  outline: none;
+  box-shadow: none;
 }
 
 .name-text {
@@ -382,9 +386,13 @@
   font-weight: 900;
   color: #FFD700;
   text-align: center;
+  background: transparent;
+  border: none;
+  outline: none;
+  box-shadow: none;
   text-shadow: 
     3px 3px 6px rgba(0, 0, 0, 0.5),
-    0 0 30px rgba(255, 215, 0, 0.8);
+    0 0 18px rgba(255, 215, 0, 0.45);
   letter-spacing: 8px;
 }
 
@@ -396,13 +404,13 @@
   0%, 100% { 
     text-shadow: 
       3px 3px 6px rgba(0, 0, 0, 0.5),
-      0 0 30px rgba(255, 215, 0, 0.8);
+      0 0 18px rgba(255, 215, 0, 0.45);
   }
   50% { 
     text-shadow: 
       3px 3px 6px rgba(0, 0, 0, 0.5),
-      0 0 50px rgba(255, 215, 0, 1),
-      0 0 70px rgba(255, 165, 0, 0.6);
+      0 0 26px rgba(255, 215, 0, 0.62),
+      0 0 36px rgba(255, 165, 0, 0.32);
   }
 }
 
