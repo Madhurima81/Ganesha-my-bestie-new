@@ -1524,7 +1524,6 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
       {/* Festivals Child Phase — Festival Selection (2-Section Layout) */}
       {step === STEPS.FESTIVALS_CHILD && (
         <div style={{
-          background: 'linear-gradient(160deg, #FFFBF0 0%, #FFF9E8 100%)',
           minHeight: '100vh',
           paddingTop: '60px',
           paddingBottom: '80px',
