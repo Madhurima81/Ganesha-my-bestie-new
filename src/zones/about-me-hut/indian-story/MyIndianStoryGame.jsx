@@ -151,7 +151,6 @@ const PHASE1_LOCATIONS = [
   { name: 'Varanasi', icon: varansiIcon, x: 49, y: 34 },
   { name: 'Mumbai', icon: mumbaiIcon, x: 31, y: 54 },
   { name: 'Tamil Nadu', icon: tamilNaduIcon, x: 45, y: 80 },
-  { name: 'Hampi', icon: hampiIcon, x: 39, y: 67 },
 ];
 
 const HEART_POSITIONS = [
@@ -166,7 +165,6 @@ const GANESHA_SPOTS = [
   { name: 'Varanasi Ghats', icon: varansiIcon, fact: 'In Varanasi, my name echoes across the ghats every morning! ??' },
   { name: 'Mumbai Temple', icon: mumbaiIcon, fact: 'Siddhivinayak temple in Mumbai is one of my most beloved homes! ??' },
   { name: 'Tamil Nadu Shrine', icon: tamilNaduIcon, fact: 'In Tamil Nadu, I am called Pillaiyar � the noble child! ??' },
-  { name: 'Hampi Ruins', icon: hampiIcon, fact: 'Hampi\'s ancient temples are full of my blessings! ?' },
 ];
 
 export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, childName = 'friend', childAge = 8 }) {
