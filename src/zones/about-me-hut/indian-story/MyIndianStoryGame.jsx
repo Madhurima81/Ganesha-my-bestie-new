@@ -1041,126 +1041,157 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
         <div style={{ paddingTop: '60px', paddingBottom: '80px', minHeight: '100vh' }}>
           <StoryProgressHeader discoveries={selectedLanguages} isChildMode={false} />
 
-          {/* Play Button */}
-          <div style={{ textAlign: 'center', marginTop: '120px', marginBottom: '80px' }}>
-            <button
-              onClick={() => {
-                // Play audio for the selected language
-                const audioElement = document.getElementById('language-audio');
-                if (audioElement) audioElement.play();
-              }}
-              style={{
-                width: '160px',
-                height: '160px',
-                borderRadius: '50%',
-                backgroundColor: '#FF8A2B',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '70px',
-                boxShadow: '0 8px 24px rgba(255, 138, 43, 0.4)',
-                transition: 'all 0.2s',
-                margin: '0 auto',
-                animation: 'pulse 1.5s ease-in-out infinite',
-              }}
-            >
-              ▶️
-            </button>
-            <audio id="language-audio" src="/audio/sanskrit-vakratunda.mp3" style={{ display: 'none' }} />
+          {/* Ganesha Speech Bubble */}
+          <div style={{ textAlign: 'center', marginTop: '40px', marginBottom: '60px', paddingX: '24px' }}>
+            <div style={{
+              display: 'inline-block',
+              backgroundColor: '#FFE8A3',
+              borderRadius: '24px',
+              padding: '16px 24px',
+              fontFamily: "'Baloo 2', cursive",
+              fontSize: '18px',
+              fontWeight: 700,
+              color: '#654321',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              maxWidth: '600px',
+            }}>
+              Namaste! {selectedLanguages.length > 0 ? `I love hearing ${selectedLanguages.map(l => l.label).join(' & ')}! 🙏` : 'Which languages do you speak at home? 🗣️'}
+            </div>
           </div>
 
-          {/* Language Cards Grid - 2x2 (visible from start) */}
-          <div style={{
-            maxWidth: '900px',
-            margin: '0 auto',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: '48px',
-            padding: '0 24px',
-          }}>
-            {[
-              { id: 'hindi', label: 'Hindi', script: 'हिंदी', icon: hindiLangIcon },
-              { id: 'tamil', label: 'Tamil', script: 'தமிழ்', icon: tamilLangIcon },
-              { id: 'sanskrit', label: 'Sanskrit', script: 'संस्कृत', icon: sanskritLangIcon },
-              { id: 'telugu', label: 'Telugu', script: 'తెలుగు', icon: teluguLangIcon },
-            ].map((lang) => (
+          <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 24px' }}>
+            {/* Most Spoken At Home */}
+            <div style={{ marginBottom: '80px' }}>
+              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '28px', fontWeight: 700, color: '#8B6914', textAlign: 'center', marginBottom: '40px' }}>
+                Most Spoken At Home
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '32px', marginBottom: '40px' }}>
+                {[
+                  LANGUAGES.find(l => l.id === 'hindi'),
+                  LANGUAGES.find(l => l.id === 'english'),
+                  LANGUAGES.find(l => l.id === 'tamil'),
+                  LANGUAGES.find(l => l.id === 'marathi'),
+                ].filter(Boolean).map((lang) => (
+                  <button
+                    key={lang.id}
+                    onClick={() => toggleLanguage(lang)}
+                    disabled={selectedLanguages.length >= 3 && !selectedLanguages.find(l => l.id === lang.id)}
+                    style={{
+                      width: '100%',
+                      minHeight: '160px',
+                      padding: '20px',
+                      borderRadius: '20px',
+                      border: selectedLanguages.find(l => l.id === lang.id) ? `4px solid #FFD76A` : '2px solid #E0E0E0',
+                      backgroundColor: selectedLanguages.find(l => l.id === lang.id) ? '#FFFBE9' : '#FFFFFF',
+                      cursor: selectedLanguages.length >= 3 && !selectedLanguages.find(l => l.id === lang.id) ? 'not-allowed' : 'pointer',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '12px',
+                      transition: 'all 0.2s',
+                      boxShadow: selectedLanguages.find(l => l.id === lang.id) ? '0 6px 16px rgba(255, 215, 106, 0.3)' : '0 2px 6px rgba(0, 0, 0, 0.08)',
+                      transform: selectedLanguages.find(l => l.id === lang.id) ? 'scale(1.05)' : 'scale(1)',
+                      opacity: selectedLanguages.length >= 3 && !selectedLanguages.find(l => l.id === lang.id) ? 0.6 : 1,
+                      position: 'relative',
+                    }}
+                  >
+                    {selectedLanguages.find(l => l.id === lang.id) && <div style={{ fontSize: '18px', position: 'absolute', top: '8px', right: '12px', fontWeight: 'bold' }}>✓</div>}
+                    <img src={lang.icon} alt={lang.label} style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
+                    <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '16px', fontWeight: 700, color: '#654321' }}>
+                      {lang.label}
+                    </div>
+                    <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: '12px', color: '#8B6914' }}>
+                      {lang.script}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* More Languages */}
+            <div>
+              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '28px', fontWeight: 700, color: '#8B6914', textAlign: 'center', marginBottom: '40px' }}>
+                More Languages
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '32px', marginBottom: '60px' }}>
+                {[
+                  LANGUAGES.find(l => l.id === 'gujarati'),
+                  LANGUAGES.find(l => l.id === 'bengali'),
+                  LANGUAGES.find(l => l.id === 'kannada'),
+                  LANGUAGES.find(l => l.id === 'malayalam'),
+                  LANGUAGES.find(l => l.id === 'punjabi'),
+                  LANGUAGES.find(l => l.id === 'telugu'),
+                  LANGUAGES.find(l => l.id === 'sanskrit'),
+                  LANGUAGES.find(l => l.id === 'other'),
+                ].filter(Boolean).map((lang) => (
+                  <button
+                    key={lang.id}
+                    onClick={() => toggleLanguage(lang)}
+                    disabled={selectedLanguages.length >= 3 && !selectedLanguages.find(l => l.id === lang.id)}
+                    style={{
+                      width: '100%',
+                      minHeight: '160px',
+                      padding: '20px',
+                      borderRadius: '20px',
+                      border: selectedLanguages.find(l => l.id === lang.id) ? `4px solid #FFD76A` : '2px solid #E0E0E0',
+                      backgroundColor: selectedLanguages.find(l => l.id === lang.id) ? '#FFFBE9' : '#FFFFFF',
+                      cursor: selectedLanguages.length >= 3 && !selectedLanguages.find(l => l.id === lang.id) ? 'not-allowed' : 'pointer',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '12px',
+                      transition: 'all 0.2s',
+                      boxShadow: selectedLanguages.find(l => l.id === lang.id) ? '0 6px 16px rgba(255, 215, 106, 0.3)' : '0 2px 6px rgba(0, 0, 0, 0.08)',
+                      transform: selectedLanguages.find(l => l.id === lang.id) ? 'scale(1.05)' : 'scale(1)',
+                      opacity: selectedLanguages.length >= 3 && !selectedLanguages.find(l => l.id === lang.id) ? 0.6 : 1,
+                      position: 'relative',
+                    }}
+                  >
+                    {selectedLanguages.find(l => l.id === lang.id) && <div style={{ fontSize: '18px', position: 'absolute', top: '8px', right: '12px', fontWeight: 'bold' }}>✓</div>}
+                    <img src={lang.icon} alt={lang.label} style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
+                    <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '16px', fontWeight: 700, color: '#654321' }}>
+                      {lang.label}
+                    </div>
+                    <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: '12px', color: '#8B6914' }}>
+                      {lang.script}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Selection Counter */}
+            {selectedLanguages.length > 0 && (
+              <div style={{ textAlign: 'center', marginBottom: '40px', fontFamily: "'Nunito', sans-serif", fontSize: '14px', color: '#8B6914', fontWeight: 600 }}>
+                Pick up to 3 languages. {selectedLanguages.length} of 3 selected
+              </div>
+            )}
+
+            {/* Continue Button */}
+            {selectedLanguages.length > 0 && (
               <button
-                key={lang.id}
-                onClick={() => toggleLanguage(lang)}
+                onClick={() => setStep(STEPS.FESTIVALS)}
                 style={{
-                  width: '100%',
-                  minHeight: '280px',
-                  padding: '28px',
-                  borderRadius: '28px',
-                  border: selectedLanguages.find(l => l.id === lang.id) ? `4px solid #FFD76A` : '3px solid #E0E0E0',
-                  backgroundColor: selectedLanguages.find(l => l.id === lang.id) ? '#FFFBE9' : '#FFFFFF',
+                  display: 'block',
+                  margin: '60px auto 0',
+                  padding: '18px 48px',
+                  backgroundColor: '#FFD76A',
+                  color: '#654321',
+                  border: 'none',
+                  borderRadius: '24px',
+                  fontSize: '20px',
+                  fontFamily: "'Baloo 2', cursive",
+                  fontWeight: 700,
                   cursor: 'pointer',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '16px',
-                  transition: 'all 0.2s',
-                  boxShadow: selectedLanguages.find(l => l.id === lang.id)
-                    ? '0 8px 24px rgba(255, 215, 106, 0.3)'
-                    : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                  transform: selectedLanguages.find(l => l.id === lang.id) ? 'scale(1.05)' : 'scale(1)',
+                  boxShadow: '0 6px 16px rgba(255, 215, 106, 0.4)',
                 }}
               >
-                <img src={lang.icon} alt={lang.label} style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
-                <div style={{
-                  fontFamily: "'Baloo 2', cursive",
-                  fontSize: '28px',
-                  fontWeight: 700,
-                  color: '#654321',
-                }}>
-                  {lang.label}
-                </div>
-                <div style={{
-                  fontFamily: "'Nunito', sans-serif",
-                  fontSize: '20px',
-                  color: '#8B6914',
-                }}>
-                  {lang.script}
-                </div>
+                We speak {selectedLanguages.map(l => l.label).join(' & ')}! →
               </button>
-            ))}
+            )}
           </div>
-
-          {/* Continue Button */}
-          {selectedLanguages.length > 0 && (
-            <button
-              onClick={() => setStep(STEPS.FESTIVALS)}
-              style={{
-                marginTop: '80px',
-                display: 'block',
-                margin: '80px auto 0',
-                padding: '18px 48px',
-                backgroundColor: '#FF9933',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '16px',
-                fontSize: '20px',
-                fontFamily: "'Baloo 2', cursive",
-                fontWeight: 700,
-                cursor: 'pointer',
-                boxShadow: '0 6px 16px rgba(255, 153, 51, 0.3)',
-              }}
-            >
-              Next: Festivals 🎉
-            </button>
-          )}
-
-          {/* Pulse Animation */}
-          <style>{`
-            @keyframes pulse {
-              0% { transform: scale(1); }
-              50% { transform: scale(1.08); }
-              100% { transform: scale(1); }
-            }
-          `}</style>
         </div>
       )}
 
