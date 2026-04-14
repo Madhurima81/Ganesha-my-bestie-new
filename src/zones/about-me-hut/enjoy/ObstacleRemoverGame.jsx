@@ -45,6 +45,10 @@ import wishEarthSad from './assets/images/wish-images/wish-earth-sad.png';
 import wishEarthHappy from './assets/images/wish-images/wish-earth-happy.png';
 import wishBowlEmpty from './assets/images/wish-images/wish-bowl-empty.png';
 import wishBowlFull from './assets/images/wish-images/wish-bowl-full.png';
+import plateImg from './assets/images/wish-images/plate.png';
+import cowImg from '../food/assets/images/cow.png';
+import mouseImg from '../food/assets/images/mouse.png';
+import peacockImg from '../food/assets/images/peacock.png';
 import appleImg from './assets/images/wish-images/apple.png';
 import bananaImg from './assets/images/wish-images/banana.png';
 import breadImg from './assets/images/wish-images/bread.png';
@@ -1581,9 +1585,13 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   onClick={() => handleWish2PlateClick(index)}
                   onDragOver={(event) => event.preventDefault()}
                   onDrop={(event) => handleWish2PlateDrop(index, event)}
-                  style={wish2IdleLevel >= 3 && index === firstUnfilledBowlIndex ? { border: '3px dashed #f7cc7a', borderRadius: '16px' } : undefined}
+                  style={{
+                    position: 'relative',
+                    cursor: 'pointer',
+                    ...(wish2IdleLevel >= 3 && index === firstUnfilledBowlIndex ? { border: '3px dashed #f7cc7a', borderRadius: '16px' } : {})
+                  }}
                 >
-                  <img src={isFilled ? wishBowlFull : wishBowlEmpty} alt={`Bowl ${index + 1}`} className={`bowl-image ${isFilled ? 'bowl-glow-bounce' : ''}`} />
+                  <img src={plateImg} alt={`Plate ${index + 1}`} className={`bowl-image ${isFilled ? 'bowl-glow-bounce' : ''}`} />
                   {isFilled && (sceneState.wish2PlateFoods || [null, null, null])[index] && (
                     <img
                       src={WISH2_FOOD_ASSETS[(sceneState.wish2PlateFoods || [null, null, null])[index]]}
@@ -1630,6 +1638,12 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   area="full"
                 />
               )}
+              {/* Animals to feed */}
+              <div style={{ position: 'absolute', bottom: '-60px', left: '50%', transform: 'translateX(-50%)', width: '100%', display: 'flex', justifyContent: 'space-around', alignItems: 'flex-end', paddingBottom: '20px' }}>
+                <img src={cowImg} alt="Cow" style={{ height: '80px', objectFit: 'contain', opacity: 0.8 }} />
+                <img src={mouseImg} alt="Mouse" style={{ height: '70px', objectFit: 'contain', opacity: 0.8 }} />
+                <img src={peacockImg} alt="Peacock" style={{ height: '85px', objectFit: 'contain', opacity: 0.8 }} />
+              </div>
             </div>
           </div>
         </div>
