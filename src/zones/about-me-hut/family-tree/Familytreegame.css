@@ -1352,6 +1352,7 @@
 
 /* Fun Fact Modal */
 .fun-fact-modal {
+  display: none;
   /* 1. Size Control */
   width: 90%;
   max-width: 700px;

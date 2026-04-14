@@ -687,6 +687,15 @@ const FamilyTreeGameContent = ({
     }
   }, [sceneState.correctChoiceId, funFactModalPlayed]);
 
+  // ========================================
+  // Auto-close fun fact modal (without stopping VO)
+  // ========================================
+  useEffect(() => {
+    if (sceneState.showFunFactModal) {
+      // Immediately reset state without stopping voice (VO plays in background)
+      sceneActions.updateState({ showFunFactModal: null, isSequencePlaying: false });
+    }
+  }, [sceneState.showFunFactModal]);
 
   // ========================================
   // GANESHA PHASE: Play "all placed" VO when all 4 members placed
