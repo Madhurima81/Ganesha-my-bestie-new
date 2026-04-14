@@ -46,8 +46,10 @@ export default defineConfig({
     caseSensitivePlugin(),
     react(),
     // PNG → WebP conversion only — SVGs are untouched (clean in Inkscape first)
+    // Skip icons folder to avoid optimization issues
     ViteImageOptimizer({
       test: /\.(png|jpe?g)$/i,   // only raster images
+      exclude: ['**/icons/**'],   // Don't optimize icons
       png:  { quality: 82 },
       jpeg: { quality: 82 },
       jpg:  { quality: 82 },
@@ -159,6 +161,10 @@ export default defineConfig({
             './src/zones/festival-square/Game2-Rangoli/FestivalRangoliGame.jsx',
             './src/zones/festival-square/game3-cooking/ModakCookingGame.jsx',
             './src/zones/festival-square/Game4-mandapdecor/MandapDecorationGame.jsx'
+          ],
+
+          'zone-about-me-hut': [
+            './src/zones/about-me-hut/indian-story/MyIndianStoryGame.jsx'
           ]
         }
       }

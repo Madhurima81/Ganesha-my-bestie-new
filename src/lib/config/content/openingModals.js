@@ -184,15 +184,14 @@ export const OPENING_MODALS = {
   // ABOUT ME HUT
   // ========================================
   'about-me-hut': {
-    'my-indian-story': {
-      title: "My Indian Story",
-      description: "Ganesha and you discover where you both come from in India.",
-      icons: ['🗺️', '🏡', '🌟'],
-      iconLabels: ['Map', 'Home', 'Story'],
-      buttonText: "Let's Explore",
-      character: 'baby-ganesha-sit'
-    },
-
+'my-indian-story': {
+  title: "My Indian Story",
+  description: "Let's share our homes, languages, and festivals from across India.",
+  icons: ['map', 'home', 'festival'],
+  iconLabels: ['Where We Live', 'Home', 'Festivals'],
+  buttonText: "Let's Explore",
+  character: 'baby-ganesha-sit'
+},
     'family-tree': {
       title: "Our families",
       description: "Let's discover the loving families that shape us.",

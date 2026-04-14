@@ -13,43 +13,33 @@ This is a multi-part story scene where Ganesha shares three wishes for the world
 ## Tech Stack Reminders
 
 - Functional component, no TypeScript
-- Inline styles only — no new CSS files
+
 - Fonts: `'Baloo 2', cursive` for all headings, titles, buttons — `'Nunito', sans-serif` for all body text, instructions, labels
 - Touch targets minimum 60x60px on all interactive elements
 - No hover states — touch first
-- BackToMapButton at top always
 - useSceneReset hook wired up
 - SceneCompletionCelebration on final win
 - ProgressManager.updateProgress() on completion
 - Mute button present — audio must not autoplay before user interaction
 
----
 
-## Color Scheme — About Me Hut Zone
-
-```js
-background: '#1a0a2e'        // deep night sky
-primary: '#FFD700'           // gold
-accent: '#FF9933'            // saffron
-surface: 'rgba(255,255,255,0.08)'
-border: 'rgba(255,255,255,0.15)'
-success: '#43e97b'
-text: '#ffffff'
-textMuted: 'rgba(255,255,255,0.7)'
-```
-
----
 
 ## Scene Flow — State Machine
 
 ```
 INTRO
   ↓
-WISH_1_INTRO → WISH_1_GAME → WISH_1_COMPLETE
+WISH_1_ACTIVE — Ganesha VO plays as game loads, bubbles appear after 2s
   ↓
-WISH_2_INTRO → WISH_2_GAME → WISH_2_COMPLETE
+WISH_1_COMPLETE
   ↓
-WISH_3_INTRO → WISH_3_GAME → WISH_3_COMPLETE
+WISH_2_ACTIVE — same pattern
+  ↓
+WISH_2_COMPLETE
+  ↓
+WISH_3_ACTIVE — same pattern
+  ↓
+WISH_3_COMPLETE
   ↓
 TRANSITION_TO_DREAM
   ↓
@@ -57,8 +47,11 @@ DREAM_DRAW
   ↓
 TRANSITION_TO_REVEAL
   ↓
-CLOUD_CLEAR → DREAM_REVEAL → SCENE_COMPLETE
-```
+CLOUD_CLEAR
+  ↓
+DREAM_REVEAL
+  ↓
+SCENE_COMPLETE
 
 Use a single `phase` state string to drive all rendering. No nested state machines.
 
@@ -71,7 +64,7 @@ const [phase, setPhase] = useState('INTRO')
 ## Phase 1 — INTRO
 
 **Layout:**
-- Ganesha emoji/illustration centred, floating animation (translateY -10px loop, 3s ease-in-out)
+- Ganesha illustration centred, floating animation (translateY -10px loop, 3s ease-in-out)
 - Speech bubble below Ganesha
 - One button
 

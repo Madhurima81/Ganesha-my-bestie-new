@@ -695,11 +695,8 @@ const SarvakaryeshuSarvada = ({
 showHelperOnScreen: false,
 helperScreenPosition: { x: 25, y: 30 }, // Where helper appears on screen
 helperImageData: null, // Current helper image and data
-// Added to initial state:
-helperReadyToSend: false, // ✅ NEW: Controls send button visibility
-
-helperReadyToSend: false, // Controls send button visibility  
-isCompletingScenario: false, // ← ADD THIS: Prevents clicks during completion
+helperReadyToSend: false, // Controls send button visibility
+isCompletingScenario: false, // Prevents clicks during completion
           
           // Sanskrit learning
           learnedWords: {

@@ -632,6 +632,12 @@
   gap: 10px;
   overflow: visible !important;
   /* CRITICAL FIX */
+  transition: transform 0.18s ease-out;
+}
+
+/* Tap feedback — subtle scale animation */
+.circle-spot-with-label:active {
+  animation: circleTapFeedback 0.18s ease-out;
 }
 
 .empty-circle {
@@ -640,22 +646,22 @@
   position: relative;
   border-radius: 50%;
 
-  /* warm gold dashed ring — visible against tree background */
-  border: 4px dashed rgba(255, 193, 7, 0.7) !important;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1) !important;
+  /* Soft leaf glow — no dashed border */
+  border: none !important;
+  box-shadow: none !important;
   background:
     radial-gradient(circle at center,
-      rgba(220, 255, 220, 0.35) 0%,
-      rgba(180, 230, 180, 0.18) 55%,
-      rgba(120, 180, 120, 0.08) 100%);
+      rgba(159, 226, 125, 0.45) 0%,
+      rgba(159, 226, 125, 0.25) 40%,
+      rgba(159, 226, 125, 0) 70%);
 
   transition: transform 0.3s ease;
 }
 
-/* Breathing gold pulse — both animations synced at 2.2s */
+/* Soft green leaf glow pulse — pulsing every 1.6s */
 .empty-circle-hint-glow {
-  animation: family-tree-targetPulse 2.2s ease-in-out infinite;
-  filter: drop-shadow(0 0 18px rgba(255, 215, 0, 0.9));
+  animation: family-tree-leafPulse 1.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 12px rgba(159, 226, 125, 0.5));
 }
 
 .empty-circle-hint-glow::before {
@@ -667,34 +673,34 @@
   bottom: -12px;
   border-radius: 50%;
   pointer-events: none;
-  background: radial-gradient(circle, rgba(255, 215, 0, 0.25) 0%, transparent 72%);
-  animation: family-tree-glowExpand 2.2s ease-in-out infinite;
+  background: radial-gradient(circle, rgba(159, 226, 125, 0.35) 0%, transparent 72%);
+  animation: family-tree-leafGlowPulse 1.6s ease-in-out infinite;
   z-index: -1;
 }
 
-@keyframes family-tree-targetPulse {
+@keyframes family-tree-leafPulse {
   0%,
   100% {
     transform: scale(1);
-    filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.65));
+    filter: drop-shadow(0 0 10px rgba(159, 226, 125, 0.4));
+  }
+
+  50% {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 18px rgba(159, 226, 125, 0.65));
+  }
+}
+
+@keyframes family-tree-leafGlowPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
   }
 
   50% {
     transform: scale(1.08);
-    filter: drop-shadow(0 0 28px rgba(255, 215, 0, 1));
-  }
-}
-
-@keyframes family-tree-glowExpand {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.55;
-  }
-
-  50% {
-    transform: scale(1.12);
-    opacity: 1;
+    opacity: 0.75;
   }
 }
 
@@ -723,19 +729,41 @@
 
 
 .circle-label {
-  background: #FFEFE6;
-  /* warm cream */
-  color: #6A3B2C;
-  /* bark brown */
+  /* Wooden tag style — warm tan */
+  background: #F6E8C8;
+  color: #6B4F2C;
+  border: 2px solid #D8C4A0;
 
-  padding: 6px 16px;
-  border-radius: 999px;
+  padding: 8px 18px;
+  border-radius: 18px;
 
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', cursive;
   font-size: 0.95rem;
   font-weight: 600;
+  letter-spacing: 0.3px;
 
-  box-shadow: 0 2px 6px rgba(106, 59, 44, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+
+  /* Wooden tag aesthetic */
+  position: relative;
+  z-index: 20;
+
+  /* Subtle "string" illusion above */
+  margin-top: -4px;
+  padding-top: 12px;
+}
+
+/* Optional: Add a tiny string-like effect */
+.circle-label::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 6px;
+  background: linear-gradient(to bottom, rgba(139, 69, 19, 0.5), rgba(139, 69, 19, 0.2));
+  border-radius: 1px;
 }
 
 
@@ -4026,6 +4054,21 @@
 
   50% {
     opacity: 1;
+  }
+}
+
+/* Tap Feedback — Subtle Scale Animation */
+@keyframes circleTapFeedback {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.06);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 

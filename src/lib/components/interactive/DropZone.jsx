@@ -155,11 +155,10 @@ const DropZone = ({
     }
   };
 
-  // 🔧 FIXED: Combine styles properly without border conflicts
+  // Remove visual feedback border — no green box
   const dropZoneStyle = {
-    // Don't mix border and borderColor - use one or the other
-    border: isOver ? '3px solid #4CAF50' : '3px solid transparent',
-background: isOver ? 'rgba(76, 175, 80, 0.1)' : 'transparent',
+    border: 'none',
+    background: 'transparent',
     transition: 'all 0.3s ease',
     ...style // Apply user styles after defaults
   };

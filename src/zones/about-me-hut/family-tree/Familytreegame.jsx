@@ -29,8 +29,8 @@ import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 import OpeningModal from '../../shared/components/OpeningModal';
 
 // --- IMPORT ASSETS (Ganesha's Family & Distractors) ---
-import familyTreeBg from './assets/images/family tree bg.png';
-import familyTree from './assets/images/family-tree.png';
+import familyTreeBg from './assets/images/family_background.jpg';
+import familyTree from './assets/images/family_tree.png';
 
 // Correct Answers
 import babyGaneshaImg from '/images/ganesha-final-new.svg';
@@ -424,25 +424,29 @@ const FamilyTreeGameContent = ({
   const ganeshaFamily = [
     {
       id: 'father', role: 'Father', correctAnswer: 'shiva',
-      position: { top: '30%', left: '35%' },
+      position: { top: '28%', left: '32%' },
+      // Centered on left foliage lobe
       introTitle: '🔱 My Father!', introText: 'He is calm and strong 🕉️',
       flipTitle: 'My Father', funFact: 'My father is calm and strong. He protects us and teaches me peace 🕉️'
     },
     {
       id: 'mother', role: 'Mother', correctAnswer: 'parvati',
-      position: { top: '30%', right: '25%' },
+      position: { top: '28%', right: '20%' },
+      // Centered on right foliage lobe
       introTitle: '🌸 My Mother!', introText: 'She is kind and loving 💗',
       flipTitle: 'My Mother', funFact: 'My mother is kind and loving. She gives the best hugs and keeps me safe 💗'
     },
     {
       id: 'brother', role: 'Brother', correctAnswer: 'kartikeya',
-      position: { bottom: '25%', left: '45%' },
+      position: { bottom: '28%', left: '42%' },
+      // Lower left area near trunk
       introTitle: '🦚 My Brother!', introText: 'He is brave and fast 🦚',
       flipTitle: 'My Brother', funFact: 'My brother is very brave. He travels the world on his peacock 🦚'
     },
     {
       id: 'myself', role: 'Me', correctAnswer: 'ganesha',
-      position: { bottom: '25%', right: '30%' },
+      position: { bottom: '28%', right: '28%' },
+      // Lower right area near trunk
       introTitle: "😊 That's Me!", introText: 'I love modaks 🍬',
       flipTitle: 'Me', funFact: "That's me! I love modaks and helping my friends 😊"
     }

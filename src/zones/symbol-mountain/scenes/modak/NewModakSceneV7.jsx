@@ -68,6 +68,7 @@ import HomeButton from '../../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
+import { useGaneshaVoice } from '../../../../lib/hooks/useGaneshaVoice';
 import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOverlay';
 
 // Images
@@ -145,6 +146,30 @@ const PHASES = {
   COMPLETE: 'complete'
 };
 const MINI_THUMBS_UP_ICON = '/images/hand-thumbsup.svg';
+
+const MODAK_WEB_SPEECH_VO = {
+  welcome: 'Welcome to Symbol Mountain! Can you find my friend Mooshika?',
+  findMooshika: "Tap the little mounds. Let's find Mooshika!",
+  mooshikaFound: 'You found Mooshika! My little mouse friend.',
+  focusPower: 'Mooshika helps us focus. Say with me: I can focus!',
+  collectStart: 'Now help Mooshika. Find three golden modaks!',
+  sharingPower: 'Sharing makes joy grow. Say with me: I love to share!',
+  feedGanesha: 'Drag the modaks to Ganesha.',
+  gratitudePower: 'You helped a friend. Say with me: I am grateful.',
+  sceneComplete: "Amazing work! You focused, you shared, and you helped a friend. I'm proud of you!",
+};
+
+const MODAK_WEB_SPEECH_MOMENT = {
+  welcome: 'greeting',
+  findMooshika: 'default',
+  mooshikaFound: 'celebration',
+  focusPower: 'encouragement',
+  collectStart: 'default',
+  sharingPower: 'encouragement',
+  feedGanesha: 'default',
+  gratitudePower: 'gratitude',
+  sceneComplete: 'celebration',
+};
 
 const powerConfig = {
   mooshika: {
@@ -299,8 +324,7 @@ const NewModakSceneMVPContent = ({
   const onReturnHint = useCallback(() => onReturnHintImplRef.current?.(), []);
 
   const {
-    playVoice,
-    stopVoice,
+    stopVoice: stopRecordedVoice,
     setVoiceVolume,
     startMusic,
     stopMusic,
@@ -325,7 +349,7 @@ const NewModakSceneMVPContent = ({
   const onPauseHide = useCallback(() => pauseCelebRef.current?.(), []);
   const onPauseShow = useCallback(() => {
     resumeCelebRef.current?.();
-    // Reset hint timers so the child gets a fresh 12-15s window after returning
+    // Reset hints so return starts a fresh 10s/18s/26s ladder.
     setHintResetKey(k => k + 1);
   }, []);
 
@@ -345,12 +369,45 @@ const NewModakSceneMVPContent = ({
   } = useGameSounds();
 
   const { isAudioOn, toggleAudio } = useAudioPreference();
+  const { speak, stop: stopSpokenVoice } = useGaneshaVoice();
+
+  const stopVoice = useCallback(() => {
+    stopRecordedVoice();
+    stopSpokenVoice();
+  }, [stopRecordedVoice, stopSpokenVoice]);
+
+  // Web Speech VO adapter for the locked Modak V7 script.
+  // Keeps all existing playVoice(key, onEnded) trigger points intact.
+  const playVoice = useCallback((key, onEnded, _options = {}) => {
+    stopRecordedVoice();
+    const text = MODAK_WEB_SPEECH_VO[key];
+
+    if (!text) {
+      onEnded?.();
+      return;
+    }
+
+    if (!isAudioOn) {
+      onEnded?.();
+      return;
+    }
+
+    speak(text, {
+      age: 7,
+      moment: MODAK_WEB_SPEECH_MOMENT[key] || 'default',
+      onEnd: onEnded || null,
+      onError: () => onEnded?.(),
+    });
+  }, [isAudioOn, speak, stopRecordedVoice]);
 
   // ── Idle hint (glow ring + gesture) ─────────────────────────────────────
   // Wire AudioToggle → VO volume: mutes narration only, SFX + game flow unaffected
   useEffect(() => {
-    setVoiceVolume(isAudioOn ? 1 : 0);
-  }, [isAudioOn, setVoiceVolume]);
+    setVoiceVolume(0);
+    if (!isAudioOn) {
+      stopSpokenVoice();
+    }
+  }, [isAudioOn, setVoiceVolume, stopSpokenVoice]);
 
   // Analytics: scene started on mount
   useEffect(() => {
@@ -407,9 +464,14 @@ const NewModakSceneMVPContent = ({
   });
 
   // Incremented each time the child returns from a tab switch (after countdown).
-  // Adding this to the hint useEffect deps forces timers to reset to a fresh
-  // 12-15s window so hint glow never fires during or right after the return VO.
+  // Adding this to the hint effects forces a full reset:
+  // clear visuals, idle level=0, and restart the 10s/18s/26s ladder.
   const [hintResetKey, setHintResetKey] = useState(0);
+  const [idleHintLevel, setIdleHintLevel] = useState(0);
+  const lastIdleInteractionAtRef = useRef(Date.now());
+  const IDLE_HINT_L1_MS = 10000;
+  const IDLE_HINT_L2_MS = 18000;
+  const IDLE_HINT_L3_MS = 26000;
 
   const triggerMiniGesture = useCallback((target = 'center', durationMs = 1500) => {
     if (miniGestureTimerRef.current) {
@@ -897,18 +959,21 @@ const NewModakSceneMVPContent = ({
     }
   }, [sceneState.phase]);
 
-  // Premium hint cadence: hint 1 (glow) at 12-15s, hint 2 (glow+gesture) at 18-22s total inactivity, hint 3+ every 25-35s
+  // Reset hook:
+  // 1) clear current visuals
+  // 2) reset idle level to 0
+  // 3) restart countdown from "now"
   useEffect(() => {
-    // ── Diagnostic: always log so we can verify effect is running ──
-    console.log(`[hint] effect ran — phase="${sceneState?.phase}" welcomeShown=${sceneState?.welcomeShown} resetKey=${hintResetKey}`);
+    if (!idleHintsEnabled) return;
+    setShowHintGlow(false);
+    setShowIdleGestureHint(false);
+    setIdleHintLevel(0);
+    lastIdleInteractionAtRef.current = Date.now();
+  }, [hintResetKey, idleHintsEnabled]);
 
-    if (!idleHintsEnabled) {
-      setShowHintGlow(false);
-      setShowIdleGestureHint(false);
-      return;
-    }
-    let hint1Timer, hint2Timer, hint2bTimer, hint2HideTimer, repeatInterval;
-
+  // Deterministic idle ladder: Level 1 @10s, Level 2 @18s, Level 3 @26s.
+  useEffect(() => {
+    if (!idleHintsEnabled) return;
     const glowPhases = [
       PHASES.MOOSHIKA_SEARCH,
       PHASES.MODAKS_UNLOCKED,
@@ -916,56 +981,46 @@ const NewModakSceneMVPContent = ({
       PHASES.ROCK_VISIBLE,
       PHASES.ROCK_FEEDING
     ];
+    const isHintPhase = glowPhases.includes(sceneState?.phase) && !!sceneState?.welcomeShown;
 
-    const phaseMatch = glowPhases.includes(sceneState?.phase);
-    console.log(`[hint] condition — phaseMatch=${phaseMatch} welcomeShown=${!!sceneState?.welcomeShown} → ${phaseMatch && sceneState?.welcomeShown ? 'ARMING' : 'SKIPPING'}`);
-
-    if (phaseMatch && sceneState?.welcomeShown) {
-      const hint1Delay = 12000 + Math.floor(Math.random() * 3000);
-      const hint2Delay = 6000 + Math.floor(Math.random() * 2000);
-      const hint3GapMs = 25000 + Math.floor(Math.random() * 10000);
-      console.log(`[hint] ARMED — hint1 in ${hint1Delay}ms, hint2 in +${hint2Delay}ms, hint3+ every ${hint3GapMs}ms`);
-
-      // Hint 1: glow only, 12-15s after inactivity
-      hint1Timer = setTimeout(() => {
-        console.log(`[hint] ✅ HINT-1 fired → glow ON (phase=${sceneState.phase})`);
-        setShowHintGlow(true);
-
-        // Hint 2: glow flash + gesture, 6-8s after hint 1 => 18-22s total inactivity
-        hint2Timer = setTimeout(() => {
-          console.log(`[hint] HINT-2 fired → glow flash + gesture (phase=${sceneState.phase})`);
-          setShowHintGlow(false);
-          hint2bTimer = setTimeout(() => setShowHintGlow(true), 400);
-          setShowIdleGestureHint(true);
-          hint2HideTimer = setTimeout(() => setShowIdleGestureHint(false), 3500);
-
-          // Hint 3+: every 25-35s after the previous hint
-          repeatInterval = setInterval(() => {
-            console.log(`[hint] HINT-3+ fired → glow flash + gesture (phase=${sceneState.phase})`);
-            setShowHintGlow(false);
-            setTimeout(() => setShowHintGlow(true), 400);
-            setShowIdleGestureHint(true);
-            setTimeout(() => setShowIdleGestureHint(false), 3500);
-          }, hint3GapMs);
-        }, hint2Delay);
-      }, hint1Delay);
-
-      return () => {
-        console.log(`[hint] cleanup phase=${sceneState.phase} resetKey=${hintResetKey}`);
-        clearTimeout(hint1Timer);
-        clearTimeout(hint2Timer);
-        clearTimeout(hint2bTimer);
-        clearTimeout(hint2HideTimer);
-        clearInterval(repeatInterval);
-        setShowHintGlow(false);
-        setShowIdleGestureHint(false);
-      };
-    } else {
-      console.log(`[hint] ⛔ SKIPPED — phase="${sceneState?.phase}" (in glowPhases: ${phaseMatch}) welcomeShown=${sceneState?.welcomeShown}`);
+    if (!isHintPhase) {
+      setIdleHintLevel(0);
       setShowHintGlow(false);
       setShowIdleGestureHint(false);
+      return;
     }
-  }, [sceneState?.phase, sceneState?.welcomeShown, hintResetKey]);
+
+    const tick = setInterval(() => {
+      const idleFor = Date.now() - lastIdleInteractionAtRef.current;
+      let nextLevel = 0;
+      if (idleFor >= IDLE_HINT_L3_MS) nextLevel = 3;
+      else if (idleFor >= IDLE_HINT_L2_MS) nextLevel = 2;
+      else if (idleFor >= IDLE_HINT_L1_MS) nextLevel = 1;
+      setIdleHintLevel(prev => (prev === nextLevel ? prev : nextLevel));
+    }, 250);
+
+    return () => clearInterval(tick);
+  }, [sceneState?.phase, sceneState?.welcomeShown, idleHintsEnabled]);
+
+  // Visual mapping per level.
+  useEffect(() => {
+    if (!idleHintsEnabled) return;
+    const glowPhases = [
+      PHASES.MOOSHIKA_SEARCH,
+      PHASES.MODAKS_UNLOCKED,
+      PHASES.SOME_COLLECTED,
+      PHASES.ROCK_VISIBLE,
+      PHASES.ROCK_FEEDING
+    ];
+    const isHintPhase = glowPhases.includes(sceneState?.phase) && !!sceneState?.welcomeShown;
+    if (!isHintPhase) {
+      setShowHintGlow(false);
+      setShowIdleGestureHint(false);
+      return;
+    }
+    setShowHintGlow(idleHintLevel >= 2);
+    setShowIdleGestureHint(idleHintLevel >= 3);
+  }, [idleHintLevel, sceneState?.phase, sceneState?.welcomeShown, idleHintsEnabled]);
 
   // ========================================
   // FIX: Handle Discovery Overlay Logic via useEffect
@@ -1167,6 +1222,10 @@ const NewModakSceneMVPContent = ({
   const handleMoundClick = (moundIndex) => {
     recordInteraction();
     playUiTap();
+    setShowHintGlow(false);
+    setShowIdleGestureHint(false);
+    // Re-arm idle ladder from this interaction point.
+    setHintResetKey(k => k + 1);
 
     if (!sceneState || !sceneActions) return;
     if (sceneState.phase !== PHASES.MOOSHIKA_SEARCH) return;
@@ -1239,7 +1298,6 @@ const NewModakSceneMVPContent = ({
       // Clear hint visuals immediately — glow + gesture stop on any interaction
       setShowHintGlow(false);
       setShowIdleGestureHint(false);
-      setHintResetKey(k => k + 1); // re-arm fresh 12-15s hint window from this point
     }
   };
 

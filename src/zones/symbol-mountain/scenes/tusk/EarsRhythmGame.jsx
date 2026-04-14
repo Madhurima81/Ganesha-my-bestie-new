@@ -107,6 +107,13 @@ console.log('🎵 EarsRhythmGame inline render:', {
   const [canPlayerClick, setCanPlayerClick] = useState(false);
   const [playingInstrument, setPlayingInstrument] = useState(null);
   const [sequenceItemsShown, setSequenceItemsShown] = useState(0);
+  const [idleHintLevel, setIdleHintLevel] = useState(0);
+  const lastIdleInteractionAtRef = useRef(Date.now());
+  const idleHintStageRef = useRef({ level2: false, level3: false });
+  const wasListeningActiveRef = useRef(false);
+  const IDLE_HINT_L1_MS = 10000;
+  const IDLE_HINT_L2_MS = 18000;
+  const IDLE_HINT_L3_MS = 26000;
 
   // Add these to your state declarations at the top:
 const [countdown, setCountdown] = useState(0);
@@ -127,6 +134,12 @@ const [isCountingDown, setIsCountingDown] = useState(false);
     const timeout = setTimeout(callback, delay);
     timeoutsRef.current.push(timeout);
     return timeout;
+  };
+
+  const resetIdleHints = () => {
+    lastIdleInteractionAtRef.current = Date.now();
+    setIdleHintLevel(0);
+    idleHintStageRef.current = { level2: false, level3: false };
   };
 
 
@@ -277,7 +290,7 @@ setSequenceItemsShown(initialSequenceItemsShown);
     };
   }, []);
 
-  // Add this useEffect after your other useEffects:
+// Add this useEffect after your other useEffects:
 useEffect(() => {
   if (gamePhase === 'waiting' && currentSequence.length > 0 && !isCountingDown) {
     safeSetTimeout(() => {
@@ -286,33 +299,68 @@ useEffect(() => {
   }
 }, [gamePhase, currentSequence, isCountingDown]);
 
-// Auto-hint glow after 20 seconds of inactivity
+// Deterministic idle ladder for listening phase:
+// L1 @ 10s (no visual), L2 @ 18s (glow hint), L3 @ 26s (stronger glow hint).
 useEffect(() => {
-  if (gamePhase !== 'listening' || !canPlayerClick) return;
-  
-  const hintTimer = setTimeout(() => {
-    console.log('💡 Showing hint glow for sequence:', currentSequence);
-    
-    // Show glowing hints for each instrument in sequence
-    currentSequence.forEach((inst, idx) => {
-      setTimeout(() => {
-        const elements = document.querySelectorAll(`[data-instrument="${inst}"]`);
-        elements.forEach(element => {
-          element.style.filter = 'drop-shadow(0 0 20px gold)';
-          element.style.transform = 'translate(-50%, -50%) scale(1.08)';
-          element.style.transition = 'all 0.5s ease';
-          
-          setTimeout(() => {
-            element.style.filter = '';
-            element.style.transform = 'translate(-50%, -50%) scale(1)';
-          }, 1000);
-        });
-      }, idx * 1200); // Stagger each glow
-    });
-  }, 20000); // 20 seconds
-  
-  return () => clearTimeout(hintTimer);
-}, [gamePhase, canPlayerClick, currentSequence]);
+  const listeningActive = gamePhase === 'listening' && canPlayerClick && !isSequencePlaying && currentSequence.length > 0;
+  if (listeningActive && !wasListeningActiveRef.current) {
+    resetIdleHints();
+  }
+  wasListeningActiveRef.current = listeningActive;
+
+  if (!listeningActive) {
+    setIdleHintLevel(0);
+    idleHintStageRef.current = { level2: false, level3: false };
+    return;
+  }
+
+  const tick = setInterval(() => {
+    const idleFor = Date.now() - lastIdleInteractionAtRef.current;
+    let nextLevel = 0;
+    if (idleFor >= IDLE_HINT_L3_MS) nextLevel = 3;
+    else if (idleFor >= IDLE_HINT_L2_MS) nextLevel = 2;
+    else if (idleFor >= IDLE_HINT_L1_MS) nextLevel = 1;
+    setIdleHintLevel(prev => (prev === nextLevel ? prev : nextLevel));
+  }, 250);
+
+  return () => clearInterval(tick);
+}, [gamePhase, canPlayerClick, isSequencePlaying, currentSequence.length]);
+
+const triggerSequenceHintGlow = (isStrong = false) => {
+  const glowStrength = isStrong ? '0 0 26px rgba(255, 215, 0, 0.95)' : '0 0 18px rgba(255, 215, 0, 0.85)';
+  const scale = isStrong ? '1.12' : '1.08';
+  const pulseMs = isStrong ? 1200 : 900;
+
+  currentSequence.forEach((inst, idx) => {
+    safeSetTimeout(() => {
+      const elements = document.querySelectorAll(`[data-instrument="${inst}"]`);
+      elements.forEach(element => {
+        element.style.filter = `drop-shadow(${glowStrength})`;
+        element.style.transform = `translate(-50%, -50%) scale(${scale})`;
+        element.style.transition = 'all 0.45s ease';
+
+        safeSetTimeout(() => {
+          element.style.filter = '';
+          element.style.transform = 'translate(-50%, -50%) scale(1)';
+        }, pulseMs);
+      });
+    }, idx * 1100);
+  });
+};
+
+useEffect(() => {
+  const listeningActive = gamePhase === 'listening' && canPlayerClick && !isSequencePlaying && currentSequence.length > 0;
+  if (!listeningActive) return;
+
+  if (idleHintLevel >= 2 && !idleHintStageRef.current.level2) {
+    idleHintStageRef.current.level2 = true;
+    triggerSequenceHintGlow(false);
+  }
+  if (idleHintLevel >= 3 && !idleHintStageRef.current.level3) {
+    idleHintStageRef.current.level3 = true;
+    triggerSequenceHintGlow(true);
+  }
+}, [idleHintLevel, gamePhase, canPlayerClick, isSequencePlaying, currentSequence.length]);
 
   // Play sound function
   const playInstrumentSound = async (instrumentType) => {
@@ -383,6 +431,7 @@ useEffect(() => {
   };
 
 const startCountdown = () => {
+  resetIdleHints();
   setIsCountingDown(true);
   setCountdown(3);
   
@@ -407,6 +456,7 @@ const startCountdown = () => {
   // Play the sequence
   const handlePlaySequence = async () => {
     if (isSequencePlaying || currentSequence.length === 0) return;
+    resetIdleHints();
 
     // Ensure audio context is running on user interaction
     if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
@@ -460,6 +510,7 @@ const startCountdown = () => {
       console.log('🚫 Player click ignored - not ready');
       return;
     }
+    resetIdleHints();
 
     // Ensure audio context is running on user interaction
     if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
@@ -511,6 +562,7 @@ if (window.saveEarsGameState) {
 // Handle correct sequence completion
 const handleSequenceSuccess = () => {
   console.log('✅ Sequence matched!');
+  resetIdleHints();
   setGamePhase('success');
   setCanPlayerClick(false);
   
@@ -528,6 +580,7 @@ const handleSequenceSuccess = () => {
   // Handle replaying the current round
 const replayRound = (noteNumber) => {
   console.log(`🔄 Replaying round: note${noteNumber}`);
+  resetIdleHints();
   
   // Generate new random sequence for the same note
   const sequence = generateRandomSequence(discoveredInstruments, `note${noteNumber}`);
@@ -544,6 +597,7 @@ const replayRound = (noteNumber) => {
 // Continue to next round
 const continueToNextRound = () => {
   console.log('➡️ Continuing to next round');
+  resetIdleHints();
   
   // Let the parent component handle progression
   if (onSequenceComplete) {
@@ -553,6 +607,7 @@ const continueToNextRound = () => {
 
   // Handle wrong input
   const handleSequenceError = () => {
+    resetIdleHints();
     setGamePhase('error');
     setCanPlayerClick(false);
     setPlayerInput([]);

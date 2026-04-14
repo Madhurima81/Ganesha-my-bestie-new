@@ -305,6 +305,16 @@ const PondSceneContent = ({
   const lastAnnouncedPromptRef = useRef(null);
   const openingVoPlayedRef = useRef(false);
   const idleVoGateRef = useRef(false);
+  const [hintResetKey, setHintResetKey] = useState(0);
+  const [idleHintLevel, setIdleHintLevel] = useState(0);
+  const lastIdleInteractionAtRef = useRef(Date.now());
+  const IDLE_HINT_L1_MS = 10000;
+  const IDLE_HINT_L2_MS = 18000;
+  const IDLE_HINT_L3_MS = 26000;
+
+  const rearmIdleHints = useCallback(() => {
+    setHintResetKey(k => k + 1);
+  }, []);
 
   const speakPondPrompt = useCallback((key) => {
     if (!isAudioOn || !VOICE_LINES[key]) return;
@@ -337,7 +347,8 @@ const PondSceneContent = ({
   const onPauseShow = useCallback(() => {
     const replayKey = getPromptKeyForPhase();
     if (replayKey) speakPondPrompt(replayKey);
-  }, [getPromptKeyForPhase, speakPondPrompt]);
+    rearmIdleHints();
+  }, [getPromptKeyForPhase, speakPondPrompt, rearmIdleHints]);
 
   const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({
     onHide: onPauseHide,
@@ -366,28 +377,17 @@ const PondSceneContent = ({
     };
   }, [clearAllTimeouts, stopSpokenVoice]);
 
-  // Auto-glow effect
+  // Reset hook:
+  // 1) clear current hint visuals
+  // 2) reset idle hint level to 0
+  // 3) restart the level timer from now
   useEffect(() => {
-    const glowPhases = [
-      PHASES.INITIAL,
-      PHASES.SOME_BLOOMED,
-      PHASES.GOLDEN_VISIBLE,
-      PHASES.ELEPHANT_VISIBLE
-    ];
-
-    if (glowPhases.includes(sceneState?.phase) &&
-      sceneState?.welcomeShown &&
-      !showPowerModal &&
-      !showPowerMission) {
-      const timer = setTimeout(() => {
-        setShowHintGlow(true);
-      }, 20000);
-
-      return () => clearTimeout(timer);
-    } else {
-      setShowHintGlow(false);
-    }
-  }, [sceneState?.phase, sceneState?.welcomeShown, showPowerModal, showPowerMission]);
+    setShowHintGlow(false);
+    setShowIdleGestureHint(false);
+    setIdleHintLevel(0);
+    idleVoGateRef.current = false;
+    lastIdleInteractionAtRef.current = Date.now();
+  }, [hintResetKey]);
 
   useEffect(() => {
     const promptKey = getPromptKeyForPhase();
@@ -399,20 +399,79 @@ const PondSceneContent = ({
     return () => clearTimeout(timer);
   }, [getPromptKeyForPhase, revealConfig, showSceneCompletion, speakPondPrompt]);
 
-  // Hint 2: show pointing emoji shortly after glow appears
+  // Deterministic idle ladder:
+  // L1 @ 10s (no visual), L2 @ 18s (glow), L3 @ 26s (glow + gesture).
   useEffect(() => {
-    if (!showHintGlow) {
+    const hintPhases = [
+      PHASES.INITIAL,
+      PHASES.SOME_BLOOMED,
+      PHASES.GOLDEN_VISIBLE,
+      PHASES.ELEPHANT_VISIBLE
+    ];
+    const isHintPhase = hintPhases.includes(sceneState?.phase)
+      && sceneState?.welcomeShown
+      && !showPowerModal
+      && !showPowerMission
+      && !revealConfig
+      && !showSceneCompletion;
+
+    if (!isHintPhase) {
+      setIdleHintLevel(0);
+      setShowHintGlow(false);
       setShowIdleGestureHint(false);
-      idleVoGateRef.current = false;
       return;
     }
-    const showTimer = setTimeout(() => setShowIdleGestureHint(true), 2000);
-    const hideTimer = setTimeout(() => setShowIdleGestureHint(false), 5500);
-    return () => {
-      clearTimeout(showTimer);
-      clearTimeout(hideTimer);
-    };
-  }, [showHintGlow]);
+
+    const tick = setInterval(() => {
+      const idleFor = Date.now() - lastIdleInteractionAtRef.current;
+      let nextLevel = 0;
+      if (idleFor >= IDLE_HINT_L3_MS) nextLevel = 3;
+      else if (idleFor >= IDLE_HINT_L2_MS) nextLevel = 2;
+      else if (idleFor >= IDLE_HINT_L1_MS) nextLevel = 1;
+      setIdleHintLevel(prev => (prev === nextLevel ? prev : nextLevel));
+    }, 250);
+
+    return () => clearInterval(tick);
+  }, [
+    sceneState?.phase,
+    sceneState?.welcomeShown,
+    showPowerModal,
+    showPowerMission,
+    revealConfig,
+    showSceneCompletion
+  ]);
+
+  useEffect(() => {
+    const hintPhases = [
+      PHASES.INITIAL,
+      PHASES.SOME_BLOOMED,
+      PHASES.GOLDEN_VISIBLE,
+      PHASES.ELEPHANT_VISIBLE
+    ];
+    const isHintPhase = hintPhases.includes(sceneState?.phase)
+      && sceneState?.welcomeShown
+      && !showPowerModal
+      && !showPowerMission
+      && !revealConfig
+      && !showSceneCompletion;
+
+    if (!isHintPhase) {
+      setShowHintGlow(false);
+      setShowIdleGestureHint(false);
+      return;
+    }
+
+    setShowHintGlow(idleHintLevel >= 2);
+    setShowIdleGestureHint(idleHintLevel >= 3);
+  }, [
+    idleHintLevel,
+    sceneState?.phase,
+    sceneState?.welcomeShown,
+    showPowerModal,
+    showPowerMission,
+    revealConfig,
+    showSceneCompletion
+  ]);
 
   useEffect(() => {
     if (!showIdleGestureHint) return;
@@ -424,6 +483,19 @@ const PondSceneContent = ({
     speakPondPrompt(idleKey);
     idleVoGateRef.current = true;
   }, [sceneState?.phase, showIdleGestureHint, speakPondPrompt]);
+
+  // Re-arm hints when phase/context changes.
+  useEffect(() => {
+    rearmIdleHints();
+  }, [
+    sceneState?.phase,
+    sceneState?.welcomeShown,
+    showPowerModal,
+    showPowerMission,
+    revealConfig,
+    showSceneCompletion,
+    rearmIdleHints
+  ]);
 
   // ==================== RELOAD / RESUME LOGIC ====================
   // Runs once on mount — same pattern as Modak (empty deps, no isReload check).
@@ -689,6 +761,7 @@ const PondSceneContent = ({
   // -------------------------------------------------------------------------
 
   const handleLotusClick = (index) => {
+    rearmIdleHints();
     if (progressiveHintRef.current?.hideHint) progressiveHintRef.current.hideHint();
     if (showResumePopup) {
       setShowResumePopup(false);
@@ -746,6 +819,7 @@ const PondSceneContent = ({
   };
 
   const handleGoldenLotusClick = () => {
+    rearmIdleHints();
     if (progressiveHintRef.current?.hideHint) progressiveHintRef.current.hideHint();
     if (!sceneState || !sceneActions) return;
 
@@ -780,6 +854,7 @@ const PondSceneContent = ({
   };
 
   const handleElephantClick = () => {
+    rearmIdleHints();
     if (progressiveHintRef.current?.hideHint) progressiveHintRef.current.hideHint();
     if (showResumePopup) {
       setShowResumePopup(false);
@@ -958,6 +1033,7 @@ const PondSceneContent = ({
                 sceneId={sceneId}
                 isOpen={!sceneState.welcomeShown}
                 onStart={() => {
+                  rearmIdleHints();
                   sceneActions.updateState({ welcomeShown: true });
                   if (!openingVoPlayedRef.current) {
                     speakPondPrompt('opening');
