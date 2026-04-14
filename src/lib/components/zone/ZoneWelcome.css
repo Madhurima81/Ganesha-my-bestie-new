@@ -513,7 +513,7 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  padding: 36px 32px 28px;
+  padding: 40px 32px 28px;
   text-align: center;
   width: 100%;
 }
@@ -530,30 +530,31 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
+  margin-bottom: 22px;
   position: relative;
 }
 
 .icon-circle {
-  width: clamp(92px, 9.2vw, 150px);
-  height: clamp(92px, 9.2vw, 150px);
-  border-radius: 50%;
+  width: auto;
+  height: auto;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 10px;
-  background: color-mix(in srgb, var(--zone-color) 20%, white);
+  margin: 0;
+  background: transparent;
+  position: relative;
 }
 
 .scene-emoji {
-  font-size: clamp(50px, 5.4vw, 86px);
+  font-size: clamp(72px, 7.6vw, 80px);
   margin: 0;
   transition: transform 0.3s ease;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
 }
 
 .zone-scene-card:hover .scene-emoji {
-  transform: scale(1.08);
+  transform: scale(1.04);
 }
 
 .zone-scene-card.locked .scene-emoji {
@@ -562,16 +563,16 @@
 
 /* Scene Icon Image Styles */
 .scene-icon-img {
-  width: clamp(56px, 6.2vw, 95px);
-  height: clamp(56px, 6.2vw, 95px);
+  width: 80px;
+  height: 80px;
   object-fit: contain;
   margin: 0;
   transition: transform 0.3s ease;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
 }
 
 .zone-scene-card:hover .scene-icon-img {
-  transform: scale(1.08);
+  transform: scale(1.04);
 }
 
 .zone-scene-card.locked .scene-icon-img {
@@ -623,8 +624,10 @@
 .scene-name-area {
   width: 100%;
   text-align: center;
-  margin-bottom: 16px;
-  flex-grow: 1;
+  padding-top: 4px;
+  margin-bottom: 14px;
+  flex-grow: 0;
+  min-height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -632,7 +635,7 @@
 
 .scene-name {
   font-family: 'Baloo 2', cursive;
-  font-size: clamp(16px, 1.7vw, 26px);
+  font-size: 22px;
   font-weight: 800;
   color: #3E2723;
   margin: 0;
@@ -919,8 +922,8 @@
   }
 
   .icon-circle {
-    width: 80px;
-    height: 80px;
+    width: auto;
+    height: auto;
   }
 
   .scene-emoji {
@@ -928,12 +931,12 @@
   }
 
   .scene-icon-img {
-    width: 56px;
-    height: 56px;
+    width: 76px;
+    height: 76px;
   }
 
   .scene-name {
-    font-size: 17px;
+    font-size: 19px;
   }
 
   .zone-btn {
@@ -987,8 +990,8 @@
   }
 
   .icon-circle {
-    width: 70px;
-    height: 70px;
+    width: auto;
+    height: auto;
   }
 
   .scene-emoji {
@@ -996,12 +999,12 @@
   }
 
   .scene-icon-img {
-    width: 52px;
-    height: 52px;
+    width: 72px;
+    height: 72px;
   }
 
   .scene-name {
-    font-size: 15px;
+    font-size: 17px;
   }
 
   .zone-btn {
@@ -1026,8 +1029,8 @@
   }
 
   .icon-circle {
-    width: 96px;
-    height: 96px;
+    width: auto;
+    height: auto;
   }
 
   .scene-emoji {
@@ -1035,12 +1038,12 @@
   }
 
   .scene-icon-img {
-    width: 64px;
-    height: 64px;
+    width: 80px;
+    height: 80px;
   }
 
 .scene-name {
-  font-size: 20px;
+  font-size: 22px;
   }
 }
 
@@ -1065,8 +1068,8 @@
   }
 
   .icon-circle {
-    width: 72px;
-    height: 72px;
+    width: auto;
+    height: auto;
   }
 
   .scene-emoji {
@@ -1074,12 +1077,12 @@
   }
 
   .scene-icon-img {
-    width: 52px;
-    height: 52px;
+    width: 68px;
+    height: 68px;
   }
 
   .scene-name {
-    font-size: 15px;
+    font-size: 17px;
   }
 
   .zone-btn {
@@ -1123,6 +1126,17 @@ button[style*="position: fixed"][style*="background: purple"] {
 .zone-scene-card.in-progress:hover,
 .zone-scene-card.completed:hover {
   transform: translate(-50%, calc(-50% - 5px));
+}
+
+/* Active card focus: stronger for kids */
+.zone-scene-card.highlighted .zone-card,
+.zone-scene-card.in-progress .zone-card,
+.zone-scene-card.next-scene .zone-card {
+  transform: scale(1.03);
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.12),
+    0 6px 16px rgba(0, 0, 0, 0.08),
+    0 0 0 3px color-mix(in srgb, var(--zone-color) 22%, transparent);
 }
 
 /* Next recommended scene - static highlight only */

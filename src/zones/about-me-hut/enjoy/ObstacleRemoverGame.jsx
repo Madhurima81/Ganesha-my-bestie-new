@@ -39,6 +39,9 @@ import dreamsBg from './assets/images/dream_background.jpg';
 import wishIconEarth from './assets/images/wish-icon-earth.png';
 import wishIconFlower from './assets/images/wish-icon-flower.png';
 import wishIconShare from './assets/images/wish-icon-share.png';
+import wishHeartIcon from './assets/images/heart-icon.png';
+import wishStarIcon from './assets/images/shootingstar-icon.png';
+import wishWorldIcon from './assets/images/world-icon.png';
 
 // Wish Images
 import wishEarthSad from './assets/images/wish-images/wish-earth-sad.png';
@@ -205,7 +208,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   // Get content from configs
   const openingModalContent = getOpeningModal('about-me-hut', 'dreams-wishes');
   const completionModalContent = getCompletionModal('about-me-hut', 'dreams-wishes');
-  const completionIcons = openingModalContent?.icons || ['wish-earth', 'wish-share', 'wish-flower'];
+  const completionIcons = openingModalContent?.icons || ['wish-heart', 'wish-star', 'wish-world'];
 
   // --- LOCAL UI STATE (Not saved in DB) ---
   // ── Resume Delay (shared across pause/resume logic) ──────────────────────────
@@ -1989,6 +1992,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             completionSubtitle={completionModalContent?.subtitle}
             discoveredSymbols={completionIcons}
             symbolImages={{
+              'wish-heart': wishHeartIcon,
+              'wish-star': wishStarIcon,
+              'wish-world': wishWorldIcon,
               'wish-earth': wishIconEarth,
               'wish-share': wishIconShare,
               'wish-flower': wishIconFlower

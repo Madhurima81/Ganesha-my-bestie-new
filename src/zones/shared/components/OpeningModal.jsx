@@ -18,14 +18,23 @@ import symbolTuskColored from '../../symbol-mountain/shared/images/icons/symbol-
 import shivaImg from '../../about-me-hut/family-tree/assets/images/ganesha/family-shiva.png';
 import parvatiImg from '../../about-me-hut/family-tree/assets/images/ganesha/family-parvati.png';
 import kartikeyaImg from '../../about-me-hut/family-tree/assets/images/ganesha/family-kartkeya.png';
-import favFoodImg from '../../about-me-hut/food/assets/images/fav-icon-food.png';
-import favColorImg from '../../about-me-hut/food/assets/images/fav-icon-color.png';
-import favActivityImg from '../../about-me-hut/food/assets/images/fav-icon-activity.png';
+import favFoodImg from '../../about-me-hut/food/assets/images/food-icon.png';
+import favColorImg from '../../about-me-hut/food/assets/images/color-icon.png';
+import favActivityImg from '../../about-me-hut/food/assets/images/sports-icon.png';
+import familyIconImg from '../../about-me-hut/family-tree/assets/images/family-icon.png';
+import heartIconImg from '../../about-me-hut/family-tree/assets/images/heart-icon.png';
+import homeIconImg from '../../about-me-hut/family-tree/assets/images/house-icon.png';
+import indianStoryHouseIcon from '../../about-me-hut/indian-story/assets/images/house-icon.png';
+import indianStoryLanguageIcon from '../../about-me-hut/indian-story/assets/images/language-icon.png';
+import indianStoryFestivalIcon from '../../about-me-hut/indian-story/assets/images/festival-icon.png';
 
 // Dreams & Wishes Icons
 import wishIconEarth from '../../about-me-hut/enjoy/assets/images/wish-icon-earth.png';
 import wishIconShare from '../../about-me-hut/enjoy/assets/images/wish-icon-share.png';
 import wishIconFlower from '../../about-me-hut/enjoy/assets/images/wish-icon-flower.png';
+import wishHeartIcon from '../../about-me-hut/enjoy/assets/images/heart-icon.png';
+import wishStarIcon from '../../about-me-hut/enjoy/assets/images/shootingstar-icon.png';
+import wishWorldIcon from '../../about-me-hut/enjoy/assets/images/world-icon.png';
 
 // Shared / Fallback
 import birthdayIcon from '../../festival-square/Game1-piano/assets/images/name-birthday-icon.png';
@@ -109,11 +118,20 @@ const ICON_MAP = {
     'food': favFoodImg,
     'color': favColorImg,
     'activity': favActivityImg,
+    'family': familyIconImg,
+    'heart': heartIconImg,
+    'home': homeIconImg,
+    'story-home': indianStoryHouseIcon,
+    'story-language': indianStoryLanguageIcon,
+    'story-festival': indianStoryFestivalIcon,
     'balloons': balloonsIcon,
     'birthday': birthdayIcon,
     'wish-earth': wishIconEarth,
     'wish-share': wishIconShare,
     'wish-flower': wishIconFlower,
+    'wish-heart': wishHeartIcon,
+    'wish-star': wishStarIcon,
+    'wish-world': wishWorldIcon,
 
     // Cave of Secrets Symbols (also used for Shloka River)
     'vakratunda': symbolVakratunda,

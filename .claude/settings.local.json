@@ -96,7 +96,13 @@
       "Bash(grep -n \"currentView === ''''scene''''\\\\|currentView === ''''zone''''\\\\|scene-view\\\\|game-view\\\\|gameView\\\\|sceneContainer\" src/App.jsx)",
       "Bash(grep -r \"\"\"jsx\"\"\" \"C:/Users/Madhurima Agarwal/ganesha-my-bestie/package.json\")",
       "Bash(find 'C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\public' -type f \\\\\\(-name *.mp3 -o -name *.wav -o -name *.ogg \\\\\\))",
-      "Bash(\"C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\src\\\\zones\\\\about-me-hut\\\\family-tree\\\\Familytreegame.css\":*)"
+      "Bash(\"C:\\\\Users\\\\Madhurima Agarwal\\\\ganesha-my-bestie\\\\src\\\\zones\\\\about-me-hut\\\\family-tree\\\\Familytreegame.css\":*)",
+      "Bash(npm run:*)",
+      "Bash(curl -s http://localhost:5173)",
+      "Bash(banana)",
+      "Bash(bread\")",
+      "Bash(curl -s http://localhost:5174)",
+      "Bash(xargs basename:*)"
     ]
   }
 }

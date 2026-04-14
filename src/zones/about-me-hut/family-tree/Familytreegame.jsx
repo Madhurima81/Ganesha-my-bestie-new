@@ -57,6 +57,9 @@ import childBrotherImg from './assets/images/child/family-brother.png';
 import childSisterImg from './assets/images/child/family-sister.png';
 import childMyselfImg from './assets/images/child/family-myself.png';
 import childPetImg from './assets/images/child/family-pet.png';
+import familyIconImg from './assets/images/family-icon.png';
+import heartIconImg from './assets/images/heart-icon.png';
+import homeIconImg from './assets/images/house-icon.png';
 
 // ========================================
 // VO-GATED BUTTON COMPONENT
@@ -200,7 +203,7 @@ const FamilyTreeGameContent = ({
   // Get content from configs
   const openingModalContent = getOpeningModal('about-me-hut', 'family-tree');
   const completionModalContent = getCompletionModal('about-me-hut', 'family-tree');
-  const completionIcons = openingModalContent?.icons || ['shiva', 'parvati', 'kartikeya'];
+  const completionIcons = openingModalContent?.icons || ['home', 'heart', 'family'];
 
   // IMPORTANT: Ensure phase exists (just like Modak code)
   if (!sceneState?.gamePhase) {
@@ -426,29 +429,29 @@ const FamilyTreeGameContent = ({
       id: 'father', role: 'Father', correctAnswer: 'shiva',
       position: { top: '28%', left: '32%' },
       // Centered on left foliage lobe
-      introTitle: '🔱 My Father!', introText: 'He is calm and strong 🕉️',
-      flipTitle: 'My Father', funFact: 'My father is calm and strong. He protects us and teaches me peace 🕉️'
+      introTitle: 'My Father', introText: 'He is calm and strong',
+      flipTitle: 'My Father', funFact: 'My father is calm and strong. He protects us and teaches me peace'
     },
     {
       id: 'mother', role: 'Mother', correctAnswer: 'parvati',
       position: { top: '28%', right: '20%' },
       // Centered on right foliage lobe
-      introTitle: '🌸 My Mother!', introText: 'She is kind and loving 💗',
-      flipTitle: 'My Mother', funFact: 'My mother is kind and loving. She gives the best hugs and keeps me safe 💗'
+      introTitle: 'My Mother', introText: 'She is kind and loving',
+      flipTitle: 'My Mother', funFact: 'My mother is kind and loving. She gives the best hugs and keeps me safe'
     },
     {
       id: 'brother', role: 'Brother', correctAnswer: 'kartikeya',
       position: { bottom: '28%', left: '42%' },
       // Lower left area near trunk
-      introTitle: '🦚 My Brother!', introText: 'He is brave and fast 🦚',
-      flipTitle: 'My Brother', funFact: 'My brother is very brave. He travels the world on his peacock 🦚'
+      introTitle: 'My Brother', introText: 'He is brave and fast',
+      flipTitle: 'My Brother', funFact: 'My brother is very brave. He travels the world on his peacock'
     },
     {
       id: 'myself', role: 'Me', correctAnswer: 'ganesha',
       position: { bottom: '28%', right: '28%' },
       // Lower right area near trunk
-      introTitle: "😊 That's Me!", introText: 'I love modaks 🍬',
-      flipTitle: 'Me', funFact: "That's me! I love modaks and helping my friends 😊"
+      introTitle: "That's Me", introText: 'I love modaks',
+      flipTitle: 'Me', funFact: "That's me! I love modaks and helping my friends"
     }
   ];
 
@@ -1220,8 +1223,8 @@ const FamilyTreeGameContent = ({
                 <button className="modal-close-btn" onClick={() => sceneActions.updateState({ showChoiceModal: false })}>×</button>
                 <h2 className="choice-title">
                   {ganeshaFamily.find(m => m.id === sceneState.selectedCircle)?.id === 'myself'
-                    ? "Who is Ganesha? 🤔"
-                    : `Who is Ganesha's ${ganeshaFamily.find(m => m.id === sceneState.selectedCircle)?.role}? 🤔`
+                    ? "Who is Ganesha?"
+                    : `Who is Ganesha's ${ganeshaFamily.find(m => m.id === sceneState.selectedCircle)?.role}?`
                   }
                 </h2>
                 <div className="choice-options">
@@ -1273,7 +1276,7 @@ const FamilyTreeGameContent = ({
                 </div>
                 <h3 className="modal-title">{sceneState.showFunFactModal.introTitle}</h3>
                 <p className="modal-fact-text">{sceneState.showFunFactModal.introText}</p>
-                <button className="modal-cool-btn" onClick={handleCloseFunFact}>Cool! ✨</button>
+                <button className="modal-cool-btn" onClick={handleCloseFunFact}>Cool!</button>
               </div>
             </div>
           )}
@@ -1619,9 +1622,9 @@ const FamilyTreeGameContent = ({
           sceneId="family-tree"
           discoveredSymbols={completionIcons}
           symbolImages={{
-            shiva: shivaImg,
-            parvati: parvatiImg,
-            kartikeya: kartikeyaImg
+            home: homeIconImg,
+            heart: heartIconImg,
+            family: familyIconImg
           }}
           nextSceneName="Let's Be Friends"
           completionData={{

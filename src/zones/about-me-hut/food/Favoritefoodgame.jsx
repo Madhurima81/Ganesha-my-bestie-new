@@ -32,9 +32,9 @@ import cowImg from './assets/images/animal/fav-cow.png';
 import peacockImg from './assets/images/animal/fav-peacock.png';
 
 // Icons
-import favIconFood from './assets/images/fav-icon-food.png';
-import favIconColor from './assets/images/fav-icon-color.png';
-import favIconActivity from './assets/images/fav-icon-activity.png';
+import favIconFood from './assets/images/food-icon.png';
+import favIconColor from './assets/images/color-icon.png';
+import favIconActivity from './assets/images/sports-icon.png';
 
 // Colors
 import redImg from './assets/images/color/fav-red.png';

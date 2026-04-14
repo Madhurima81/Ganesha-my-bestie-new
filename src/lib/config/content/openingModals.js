@@ -187,16 +187,16 @@ export const OPENING_MODALS = {
 'my-indian-story': {
   title: "My Indian Story",
   description: "Let's share our homes, languages, and festivals from across India.",
-  icons: ['map', 'home', 'festival'],
-  iconLabels: ['Where We Live', 'Home', 'Festivals'],
+  icons: ['story-home', 'story-language', 'story-festival'],
+  iconLabels: ['Home', 'Language', 'Festival'],
   buttonText: "Let's Explore",
   character: 'baby-ganesha-sit'
 },
     'family-tree': {
       title: "Our families",
       description: "Let's discover the loving families that shape us.",
-      icons: ['shiva', 'parvati', 'kartikeya'],
-      iconLabels: ['Father', 'Mother', 'Brother'],
+      icons: ['home', 'heart', 'family'],
+      iconLabels: ['Home', 'Heart', 'Family'],
       buttonText: "Let's Explore",
       character: 'baby-ganesha-sit'
     },
@@ -213,8 +213,8 @@ export const OPENING_MODALS = {
     'dreams-wishes': {
       title: "Dream Big Together",
       description: "Every dream begins with a little wish.",
-      icons: ['wish-earth', 'wish-share', 'wish-flower'],
-      iconLabels: ['Earth', 'Share', 'Flower'],
+      icons: ['wish-heart', 'wish-star', 'wish-world'],
+      iconLabels: ['Heart', 'Star', 'World'],
       buttonText: "Let's Explore",
       character: 'baby-ganesha-sit'
     }

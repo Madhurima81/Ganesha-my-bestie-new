@@ -18,6 +18,9 @@ import bgImage from './assets/images/name_background.jpg';
 import babyGaneshaImg from '/images/ganesha-final-new.svg';
 import OpeningModal from '../../shared/components/OpeningModal';
 import SceneManager from '../../../lib/components/scenes/SceneManager';
+import storyHouseIcon from './assets/images/house-icon.png';
+import storyLanguageIcon from './assets/images/language-icon.png';
+import storyFestivalIcon from './assets/images/festival-icon.png';
 
 // ─── PHASE 1: NEW IMPORTS ─────────────────────────────────────────
 import FreeDraggableItem from '../../../lib/components/interactive/FreeDraggableItem';
@@ -973,8 +976,8 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
           sceneId="my-indian-story"
           title="My Indian Story"
           description="Let's share our homes, languages, and festivals from across India."
-          icons={['map', 'home', 'festival']}
-          iconLabels={['Where We Live', 'Home', 'Festivals']}
+          icons={['story-home', 'story-language', 'story-festival']}
+          iconLabels={['Home', 'Language', 'Festival']}
           buttonText="Let's Explore"
           onStart={() => {
             stop();
@@ -990,11 +993,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
       {/* Completion Screen */}
       {phase === STEPS.COMPLETE && (() => {
-        const completionIcons = [
-          ...(selectedRegion ? [{ image: selectedRegion.icon, label: selectedRegion.label }] : []),
-          ...selectedLanguages.map(lang => ({ image: lang.icon, label: lang.label })),
-          ...selectedFestivals.map(fest => ({ image: fest.icon, label: fest.label }))
-        ];
+        const completionIcons = ['story-home', 'story-language', 'story-festival'];
 
         return (
         <SceneCompletionCelebration
@@ -1007,9 +1006,9 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
           sceneId="indian-story"
           discoveredSymbols={completionIcons}
           symbolImages={{
-            region: selectedRegion?.icon || northIcon,
-            languages: hindiLangIcon,
-            festivals: diwaliIcon
+            'story-home': storyHouseIcon,
+            'story-language': storyLanguageIcon,
+            'story-festival': storyFestivalIcon
           }}
           nextSceneName="Let's Be Friends"
           completionData={{
