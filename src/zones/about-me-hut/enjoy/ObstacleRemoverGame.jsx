@@ -1638,12 +1638,12 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   area="full"
                 />
               )}
-              {/* Animals to feed */}
-              <div style={{ position: 'absolute', bottom: '-60px', left: '50%', transform: 'translateX(-50%)', width: '100%', display: 'flex', justifyContent: 'space-around', alignItems: 'flex-end', paddingBottom: '20px' }}>
-                <img src={cowImg} alt="Cow" style={{ height: '80px', objectFit: 'contain', opacity: 0.8 }} />
-                <img src={mouseImg} alt="Mouse" style={{ height: '70px', objectFit: 'contain', opacity: 0.8 }} />
-                <img src={peacockImg} alt="Peacock" style={{ height: '85px', objectFit: 'contain', opacity: 0.8 }} />
-              </div>
+            </div>
+            {/* Animals to feed - positioned below the plates */}
+            <div style={{ position: 'absolute', bottom: '8%', left: '50%', transform: 'translateX(-50%)', width: '70%', display: 'flex', justifyContent: 'space-around', alignItems: 'flex-end', zIndex: 5 }}>
+              <img src={cowImg} alt="Cow" style={{ height: '80px', objectFit: 'contain', opacity: 0.85 }} />
+              <img src={mouseImg} alt="Mouse" style={{ height: '70px', objectFit: 'contain', opacity: 0.85 }} />
+              <img src={peacockImg} alt="Peacock" style={{ height: '85px', objectFit: 'contain', opacity: 0.85 }} />
             </div>
           </div>
         </div>
