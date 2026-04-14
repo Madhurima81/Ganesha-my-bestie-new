@@ -269,6 +269,10 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const wish3SparkleCancelRef = useRef(null);
   const [wish3Sparkle, setWish3Sparkle] = useState({ type: null, key: 0 });
 
+  // Bubble tap game (wish 1)
+  const [bubbles, setBubbles] = useState([]);
+  const bubbleCounterRef = useRef(0);
+
   const phaseVoiceRef = useRef({});
   const speakLine = (text, options = {}) => {
     if (!isAudioOn || !text) {
@@ -832,6 +836,20 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }
   };
 
+  // Bubble tap — kind = advance earth, unkind = just disappears
+  const handleBubbleTap = (bubble) => {
+    markInteraction();
+    interruptCurrentVoice();
+    playUiTap();
+    if (bubble.voiceLine) {
+      speakLine(bubble.voiceLine, { moment: 'encouragement' });
+    }
+    setBubbles(prev => prev.filter(b => b.id !== bubble.id));
+    if (bubble.type === 'kind') {
+      handleWish1Tap();
+    }
+  };
+
   useEffect(() => {
     if (sceneState.gamePhase !== 'wish1-active' && wish1Sparkle.type !== null) {
       wish1SparkleCancelRef.current?.();
@@ -861,6 +879,43 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     wish2SparkleCancelRef.current?.();
     wish3SparkleCancelRef.current?.();
   }, []);
+
+  // Bubble spawner effect for Wish 1
+  useEffect(() => {
+    if (sceneState.gamePhase !== 'wish1-active') {
+      setBubbles([]);
+      return;
+    }
+
+    const bubbleData = [
+      { type: 'kind', voiceLine: 'That makes me smile! 😊' },
+      { type: 'kind', voiceLine: 'Keep helping! 💛' },
+      { type: 'unkind', voiceLine: null },
+      { type: 'unkind', voiceLine: null },
+    ];
+
+    const spawnBubble = () => {
+      if (sceneState.wish1Taps >= 3) return;
+      const data = bubbleData[Math.floor(Math.random() * bubbleData.length)];
+      const newBubble = {
+        id: bubbleCounterRef.current++,
+        ...data,
+        left: Math.random() * 80 + 10,
+        top: Math.random() * 60 + 10,
+      };
+      setBubbles(prev => [...prev, newBubble]);
+      safeSetTimeout(() => {
+        setBubbles(prev => prev.filter(b => b.id !== newBubble.id));
+      }, 3000);
+    };
+
+    spawnBubble();
+    const recurringInterval = setInterval(spawnBubble, 2000);
+
+    return () => {
+      clearInterval(recurringInterval);
+    };
+  }, [sceneState.gamePhase, sceneState.wish1Taps, safeSetTimeout]);
 
   const handleWish2Tap = (index) => {
     if (sceneState.bowlStates[index] === true) return;
@@ -1063,6 +1118,27 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             <div className="faces-container">
               {Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="face-emoji" style={{ transform: `rotate(${i * 60}deg) translate(240px) rotate(-${i * 60}deg)`, opacity: sceneState.wish1Taps >= 2 ? 0.6 : 1, transition: 'all 0.6s ease' }}>{sceneState.wish1Taps >= 3 ? '😊' : sceneState.wish1Taps >= 2 ? '😐' : '😢'}</div>
+              ))}
+            </div>
+            {/* Bubbles */}
+            <div style={{ position: 'absolute', inset: 0, pointerEvents: 'auto' }}>
+              {bubbles.map(bubble => (
+                <div
+                  key={bubble.id}
+                  onClick={() => handleBubbleTap(bubble)}
+                  style={{
+                    position: 'absolute',
+                    left: `${bubble.left}%`,
+                    top: `${bubble.top}%`,
+                    cursor: 'pointer',
+                    fontSize: '48px',
+                    userSelect: 'none',
+                    animation: `float 3s ease-out forwards`,
+                    transform: 'translate(-50%, -50%)',
+                  }}
+                >
+                  💭
+                </div>
               ))}
             </div>
           </div>

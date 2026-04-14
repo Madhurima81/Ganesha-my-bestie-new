@@ -2045,6 +2045,17 @@ font-weight: 700;
   }
 }
 
+@keyframes float {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateY(-100px);
+  }
+}
+
 /* ========================================
    RESPONSIVE
 ======================================== */
