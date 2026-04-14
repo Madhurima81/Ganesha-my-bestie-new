@@ -155,13 +155,13 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     rice: riceImg,
   };
   const WISH2_FOOD_POSITIONS = {
-    banana: { left: '50%', top: '16%' },
-    bread: { left: '20%', top: '57%' },
-    apple: { left: '30%', top: '50%' },
-    milk: { left: '40%', top: '44%' },
-    rice: { left: '50%', top: '43%' },
-    brocolli: { left: '60%', top: '44%' },
-    carrot: { left: '70%', top: '50%' },
+    banana: { left: '50%', top: '12%' },
+    bread: { left: '15%', top: '35%' },
+    apple: { left: '25%', top: '28%' },
+    milk: { left: '35%', top: '22%' },
+    rice: { left: '50%', top: '20%' },
+    brocolli: { left: '65%', top: '22%' },
+    carrot: { left: '75%', top: '28%' },
   };
 
   const VOICE_LINES = {
@@ -1546,8 +1546,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                     left: pos.left,
                     top: pos.top,
                     transform: 'translate(-50%, -50%)',
-                    width: '84px',
-                    height: '84px',
+                    width: '130px',
+                    height: '130px',
                     borderRadius: '50%',
                     background: selectedWish2FoodKey === foodKey ? 'rgba(255,242,203,0.35)' : 'transparent',
                     border: selectedWish2FoodKey === foodKey ? '2px solid #E8BA52' : 'none',
@@ -1562,7 +1562,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                     transition: 'opacity 0.25s ease',
                   }}
                 >
-                  <img src={WISH2_FOOD_ASSETS[foodKey]} alt={foodKey} style={{ width: '70%', height: '70%', objectFit: 'contain' }} />
+                  <img src={WISH2_FOOD_ASSETS[foodKey]} alt={foodKey} style={{ width: '75%', height: '75%', objectFit: 'contain' }} />
                 </div>
                 );
               })}
