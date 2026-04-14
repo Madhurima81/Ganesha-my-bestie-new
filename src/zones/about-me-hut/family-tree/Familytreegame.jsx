@@ -457,19 +457,19 @@ const FamilyTreeGameContent = ({
 
   const deityChoices = {
     father: [
-      { id: 'shiva', name: 'Shiva Ji', image: shivaImg, type: 'img', isCorrect: true },
-      { id: 'vishnu', name: 'Vishnu Ji', image: vishnuImg, type: 'img', isCorrect: false },
-      { id: 'brahma', name: 'Brahma Ji', image: brahmaImg, type: 'img', isCorrect: false }
+      { id: 'shiva', name: 'Shiva', image: shivaImg, type: 'img', isCorrect: true },
+      { id: 'vishnu', name: 'Vishnu', image: vishnuImg, type: 'img', isCorrect: false },
+      { id: 'brahma', name: 'Brahma', image: brahmaImg, type: 'img', isCorrect: false }
     ],
     mother: [
-      { id: 'parvati', name: 'Parvati Mata', image: parvatiImg, type: 'img', isCorrect: true },
-      { id: 'lakshmi', name: 'Lakshmi Mata', image: lakshmiImg, type: 'img', isCorrect: false },
-      { id: 'saraswati', name: 'Saraswati Mata', image: saraswatiImg, type: 'img', isCorrect: false }
+      { id: 'parvati', name: 'Parvati Ma', image: parvatiImg, type: 'img', isCorrect: true },
+      { id: 'lakshmi', name: 'Lakshmi Ma', image: lakshmiImg, type: 'img', isCorrect: false },
+      { id: 'saraswati', name: 'Saraswati Ma', image: saraswatiImg, type: 'img', isCorrect: false }
     ],
     brother: [
       { id: 'kartikeya', name: 'Kartikeya', image: kartikeyaImg, type: 'img', isCorrect: true },
-      { id: 'hanuman', name: 'Hanuman Ji', image: hanumanImg, type: 'img', isCorrect: false },
-      { id: 'krishna', name: 'Krishna Ji', image: krishnaImg, type: 'img', isCorrect: false }
+      { id: 'hanuman', name: 'Hanuman', image: hanumanImg, type: 'img', isCorrect: false },
+      { id: 'krishna', name: 'Krishna', image: krishnaImg, type: 'img', isCorrect: false }
     ],
     myself: [
       { id: 'ganesha', name: 'Ganesha', image: babyGaneshaImg, type: 'img', isCorrect: true },
@@ -668,10 +668,10 @@ const FamilyTreeGameContent = ({
 
 
   // ========================================
-  // GANESHA PHASE: Play fun fact VO when modal opens
+  // GANESHA PHASE: Play fun fact VO when correct choice is made
   // ========================================
   useEffect(() => {
-    if (sceneState.showFunFactModal && !funFactModalPlayed) {
+    if (sceneState.correctChoiceId && !funFactModalPlayed) {
       setFunFactModalPlayed(true);
 
       // Map member id to fun fact VO
@@ -685,7 +685,7 @@ const FamilyTreeGameContent = ({
       const voKey = funFactVOMap[sceneState.selectedCircle];
       if (voKey) playVoice(voKey);
     }
-  }, [sceneState.showFunFactModal, funFactModalPlayed]);
+  }, [sceneState.correctChoiceId, funFactModalPlayed]);
 
 
   // ========================================
@@ -882,7 +882,8 @@ const FamilyTreeGameContent = ({
     playTap();
     recordInteraction();
 
-    // Open modal
+    // Open modal and play voice guidance
+    const member = ganeshaFamily.find(m => m.id === circleId);
     sceneActions.updateState({
       disabledChoices: [],
       selectedCircle: circleId,
@@ -890,6 +891,16 @@ const FamilyTreeGameContent = ({
       showChoiceModal: true,
       wrongChoice: null
     });
+
+    // Play voice guidance: "Tap my Father" etc.
+    if (isAudioOn && member) {
+      scheduleTimeout(() => {
+        const guidanceText = member.id === 'myself'
+          ? "Tap to choose who I am"
+          : `Tap my ${member.role}`;
+        speakLine(guidanceText, { moment: 'thinking' });
+      }, 300);
+    }
 
   };
 
@@ -1173,15 +1184,16 @@ const FamilyTreeGameContent = ({
             </div>
           </div>
 
-          <img src={familyTree} alt="Family Tree" className="tree-overlay" />
+          <div className="tree-and-circles-wrapper">
+            <img src={familyTree} alt="Family Tree" className="tree-overlay" />
 
-          {(() => {
-            const firstUnplacedId = ganeshaFamily.find(m => !sceneState.placedGaneshaMembers.includes(m.id))?.id;
-            return ganeshaFamily.map(member => (
-            <div
-              key={member.id}
-              className={`circle-spot-with-label ${sceneState.isSequencePlaying ? 'blocked' : ''}`}
-              style={member.position}
+            {(() => {
+              const firstUnplacedId = ganeshaFamily.find(m => !sceneState.placedGaneshaMembers.includes(m.id))?.id;
+              return ganeshaFamily.map(member => (
+              <div
+                key={member.id}
+                className={`circle-spot-with-label ${sceneState.isSequencePlaying ? 'blocked' : ''}`}
+                style={member.position}
               onClick={() => handleClickCircle(member.id)}
             >
               {!sceneState.placedGaneshaMembers.includes(member.id) ? (
@@ -1216,23 +1228,23 @@ const FamilyTreeGameContent = ({
             </div>
           ));
           })()}
+          </div>
 
           {sceneState.showChoiceModal && (
-            <div className="modal-overlay" >
-              <div className="choice-modal">
-                <button className="modal-close-btn" onClick={() => sceneActions.updateState({ showChoiceModal: false })}>×</button>
-                <h2 className="choice-title">
+            <div className="choice-screen-integrated">
+              <div className="choice-screen-container">
+                <h2 className="choice-title-screen">
                   {ganeshaFamily.find(m => m.id === sceneState.selectedCircle)?.id === 'myself'
                     ? "Who is Ganesha?"
                     : `Who is Ganesha's ${ganeshaFamily.find(m => m.id === sceneState.selectedCircle)?.role}?`
                   }
                 </h2>
-                <div className="choice-options">
-                  {sceneState.currentChoices.map(choice => (
+                <div className="choices-container-integrated">
+                  {sceneState.currentChoices.map((choice, index) => (
                     <button
                       key={choice.id}
                       className={[
-                        'choice-card',
+                        'choice-card-integrated',
                         sceneState.wrongChoice === choice.id ? 'wrong-shake' : '',
                         sceneState.correctChoiceId === choice.id && choice.isCorrect ? 'correct-card-hit' : ''
                       ].filter(Boolean).join(' ')}
@@ -1243,30 +1255,32 @@ const FamilyTreeGameContent = ({
                         sceneState.correctChoiceId !== null ||
                         sceneState.showYouGotIt !== null
                       }
+                      style={{ animationDelay: `${index * 0.15}s` }}
                     >
                       <div className={[
-                        'choice-image',
+                        'choice-image-integrated',
                         choice.isCorrect && idleHintLevel === 1 ? 'idle-wobble' : '',
                         choice.isCorrect && idleHintLevel === 2 ? 'idle-glow' : '',
                         choice.isCorrect && idleHintLevel >= 3 ? 'idle-sparkle' : ''
                       ].filter(Boolean).join(' ')}>
                         <img src={choice.image} alt={choice.name} />
                       </div>
-                      <div className="family-choice-name">{choice.name}</div>
+                      <div className="choice-name-integrated">{choice.name}</div>
                     </button>
                   ))}
                 </div>
 
-                {/* Ganesha thumbs-up — floats above cards on correct choice */}
-                {sceneState.showYouGotIt && (
+                {/* Ganesha thumbs-up — commented out (using voice-over only) */}
+                {/* {sceneState.showYouGotIt && (
                   <div className="choice-thumbsup-cue" key={sceneState.showYouGotIt}>
                     <img src="/images/hand-thumbsup.svg" alt="" className="choice-thumbsup-icon" />
                   </div>
-                )}
+                )} */}
               </div>
             </div>
           )}
 
+          {/* Fun fact modal — commented out (using flip card overlay instead) */}
           {sceneState.showFunFactModal && (
             <div className="modal-overlay modal-overlay-fade">
               <div className="fun-fact-modal fun-fact-modal-slide" data-from={sceneState.selectedCircle}>
