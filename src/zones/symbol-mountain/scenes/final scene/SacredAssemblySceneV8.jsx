@@ -1247,6 +1247,7 @@ const SacredAssemblyContent = ({
         sceneState={sceneState}
         sceneActions={sceneActions}
       >
+        {!showSceneCompletion && (
         <div className="sacred-assembly-container">
           <HomeButton onNavigate={onNavigate} />
           <ZoneBadgeButton zoneId="symbol-mountain" onBack={() => onNavigate?.('zone-welcome')} />
@@ -1749,6 +1750,7 @@ const SacredAssemblyContent = ({
             onClose={() => setShowCulturalCelebration(false)}
           />
         </div>
+        )}
       </MessageManager>
     </InteractionManager>
   );
