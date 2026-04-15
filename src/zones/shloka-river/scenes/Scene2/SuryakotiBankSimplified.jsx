@@ -1264,6 +1264,8 @@ const handlePhaseComplete = (word) => {
           <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
           <ResumeCountdown value={countdownValue} />
           <div className="river-background" style={{ backgroundImage: `url(${suryakotiBankBg})` }}>
+            {!showSceneCompletion && (
+            <>
 
    {/* ==================== SHLOKA RIVER INSTRUCTION MODAL ==================== */}
 {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
@@ -1768,6 +1770,8 @@ hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || !!revealConfig || show
                 fadeOut={true}
                 area="full"
               />
+            )}
+            </>
             )}
           </div>
 

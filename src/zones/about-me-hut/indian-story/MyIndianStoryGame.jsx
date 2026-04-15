@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './MyIndianStoryGame.css';
 import '../../shared/components/OpeningModal.css';
-import '../comparisoncard.css';
 import SceneCompletionCelebration from '../../../lib/components/celebration/SceneCompletionCelebration';
+import AboutMeComparisonCard from '../components/AboutMeComparisonCard';
 import { useGaneshaVoice } from '../../../lib/hooks/useGaneshaVoice';
 import { useGameSounds } from '../../../lib/hooks/useGameSounds';
 import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
@@ -2250,89 +2250,79 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
       {/* Origin Card Phase */}
       {phase === STEPS.ORIGIN_CARD && phase !== STEPS.COMPLETE && (
-        <div className="comparison-overlay">
-          <h1 className="comparison-title">Our Story Connects</h1>
-          <p className="comparison-subtitle">When families share their roots, magic happens.</p>
-
-          <div className="comparison-grid">
-            {/* LEFT COLUMN — Ganesha's Connection */}
-            <div className="comparison-column">
+        <AboutMeComparisonCard
+          title="Our Story Connects"
+          subtitle="When families share their roots, magic happens."
+          onContinue={() => {
+            playUiTap();
+            playChime();
+            handleComplete();
+          }}
+          leftColumn={{
+            header: (
               <img
                 src={babyGaneshaImg}
                 alt="Ganesha"
-                className="comparison-column-header-image"
+                style={{
+                  width: '96px',
+                  height: '96px',
+                  objectFit: 'contain',
+                  filter: 'drop-shadow(0 5px 10px rgba(0,0,0,0.2))'
+                }}
               />
-              <div className="comparison-column-label">Ganesha's Connection</div>
-
-              <div className="comparison-items-grid">
-                <div className="comparison-item">
-                  <div className="comparison-item-label">Home</div>
-                  <img src={northIcon} alt="India" className="comparison-item-img" />
-                  <div className="comparison-item-text">All of India</div>
-                </div>
-
-                <div className="comparison-item">
-                  <div className="comparison-item-label">Language</div>
-                  <img src={sanskritLangIcon} alt="Sanskrit" className="comparison-item-img" />
-                  <div className="comparison-item-text">Sanskrit</div>
-                </div>
-
-                <div className="comparison-item" style={{gridColumn: '1 / -1'}}>
-                  <div className="comparison-item-label">Celebration</div>
-                  <img src={chaturthiIcon} alt="Ganesh Chaturthi" className="comparison-item-img" />
-                  <div className="comparison-item-text">Ganesh Chaturthi</div>
-                </div>
-              </div>
-            </div>
-
-            {/* RIGHT COLUMN — Child's Connection */}
-            <div className="comparison-column">
-              <div className="comparison-child-avatar">
+            ),
+            title: "Ganesha's Connection",
+            items: [
+              { label: 'Home', imageSrc: northIcon, imageAlt: 'India', text: 'All of India' },
+              { label: 'Language', imageSrc: sanskritLangIcon, imageAlt: 'Sanskrit', text: 'Sanskrit' },
+              { label: 'Celebration', imageSrc: chaturthiIcon, imageAlt: 'Ganesh Chaturthi', text: 'Ganesh Chaturthi', wide: true }
+            ]
+          }}
+          rightColumn={{
+            header: (
+              <div
+                style={{
+                  width: '96px',
+                  height: '96px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #4ECDC4, #44A08D)',
+                  border: '4px solid white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontFamily: "'Baloo 2', cursive",
+                  fontSize: '40px',
+                  color: 'white',
+                  boxShadow: '0 5px 15px rgba(0,0,0,0.2)'
+                }}
+              >
                 {childName.charAt(0).toUpperCase()}
               </div>
-              <div className="comparison-column-label">
-                {childName}'s Connection
-              </div>
-
-              <div className="comparison-items-grid">
-                <div className="comparison-item">
-                  <div className="comparison-item-label">Home</div>
-                  <img src={selectedRegion?.icon || northIcon} alt={selectedRegion?.label} className="comparison-item-img" />
-                  <div className="comparison-item-text">
-                    {selectedRegion?.label?.split(' ')[0] || '?'}
-                  </div>
-                </div>
-
-                <div className="comparison-item">
-                  <div className="comparison-item-label">Languages</div>
-                  <img src={hindiLangIcon} alt="Languages" className="comparison-item-img" />
-                  <div className="comparison-item-text">
-                    {selectedLanguages.length > 0 ? selectedLanguages.length : '?'}
-                  </div>
-                </div>
-
-                <div className="comparison-item" style={{gridColumn: '1 / -1'}}>
-                  <div className="comparison-item-label">Celebrations</div>
-                  <img src={diwaliIcon} alt="Celebrations" className="comparison-item-img" />
-                  <div className="comparison-item-text">
-                    {selectedFestivals.length > 0 ? selectedFestivals.length : '?'}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <button
-            onClick={() => {
-              playUiTap();
-              playChime();
-              handleComplete();
-            }}
-            className="comparison-btn"
-          >
-            Continue
-          </button>
-        </div>
+            ),
+            title: `${childName}'s Connection`,
+            items: [
+              {
+                label: 'Home',
+                imageSrc: selectedRegion?.icon || northIcon,
+                imageAlt: selectedRegion?.label || 'Home',
+                text: selectedRegion?.label?.split(' ')[0] || '?'
+              },
+              {
+                label: 'Languages',
+                imageSrc: hindiLangIcon,
+                imageAlt: 'Languages',
+                text: selectedLanguages.length > 0 ? `${selectedLanguages.length}` : '?'
+              },
+              {
+                label: 'Celebrations',
+                imageSrc: diwaliIcon,
+                imageAlt: 'Celebrations',
+                text: selectedFestivals.length > 0 ? `${selectedFestivals.length}` : '?',
+                wide: true
+              }
+            ]
+          }}
+        />
       )}
 
     </div>

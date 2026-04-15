@@ -1081,7 +1081,7 @@ sceneActions.updateState({
           <ResumeCountdown value={countdownValue} />
 
 <div
-  className="river-background" 
+  className="river-background"
   style={{
     backgroundImage: `url(${backgroundImage})`, // CHANGED: use simple variable
     backgroundSize: 'cover',
@@ -1089,6 +1089,8 @@ sceneActions.updateState({
     backgroundRepeat: 'no-repeat'
   }}
 >
+{!showSceneCompletion && (
+<>
 
 {/* ⭐ NIRVIGHNAM GAME - Scene-controlled mode */}
 <NirvighnamGame
@@ -1635,9 +1637,9 @@ onClick={() => {
     />
   </>
 )}
-          
+
 {/* ✅ CELEBRATION: Double-Lock Save on Continue */}
-          <SceneCompletionCelebration
+  <SceneCompletionCelebration
             show={showSceneCompletion}
             sceneName="Nirvighnam Chant"
             completionTitle={completionModalContent?.title}

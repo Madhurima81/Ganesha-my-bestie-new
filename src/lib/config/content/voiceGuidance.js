@@ -261,8 +261,8 @@ export const VOICE_SCRIPTS = {
       // OPENING MODAL
       // ========================================
       welcome: {
-        text: "This is my family. They make me who I am.",
-        file: '/audio/voicenew/familytree/ganesha_family_intro.wav'
+        text: "Let's meet my family, then yours.",
+        useWebSpeech: true
       },
 
       // ========================================

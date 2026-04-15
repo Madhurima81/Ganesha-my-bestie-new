@@ -40,9 +40,9 @@
   position: absolute;
   left: 50%;
   top: 56%;
-  width: min(980px, 92vw);
+  width: min(1200px, 94vw);
   height: auto;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(1.50);
   object-fit: contain;
   pointer-events: none;
   z-index: 1;
@@ -675,6 +675,7 @@
   overflow: visible !important;
   /* CRITICAL FIX */
   transition: transform 0.18s ease-out;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Tap feedback — subtle scale animation */
@@ -3784,12 +3785,16 @@
   top: -30%;
   left: -30%;
   pointer-events: none;
+  z-index: 35;
+  overflow: visible;
 }
 
 .circle-sparkle {
   position: absolute;
   font-size: 35px;
   animation: circleSparkleOrbit 2.5s ease-out;
+  z-index: 36;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.85));
 }
 
 .cs-1 {
@@ -3881,7 +3886,7 @@
 /* During sequence, show subtle loading indicator on circles */
 .circle-spot-with-label.blocked {
   pointer-events: none;
-  opacity: 0.5;
+  opacity: 1;
   cursor: not-allowed;
 }
 

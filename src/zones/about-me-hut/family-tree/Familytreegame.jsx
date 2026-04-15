@@ -549,7 +549,7 @@ const FamilyTreeGameContent = ({
 
       // 3. GANESHA TREE - All placed
       if (gamePhase === 'ganeshaTree' && placedGaneshaMembers && placedGaneshaMembers.length === 4) {
-        setResumeMessage(`Amazing! You completed Ganesha's family tree! Tap "All Done!" to continue.`);
+        setResumeMessage(`Amazing! You completed Ganesha's family tree! Tap "Continue" to continue.`);
         setShowResumePopup(true);
         resumePopupTimeoutRef.current = scheduleTimeout(() => setShowResumePopup(false), 5000);
         return;
@@ -629,9 +629,18 @@ const FamilyTreeGameContent = ({
       // Always play welcome VO on opening modal — regardless of audio preference.
       // Audio-off is applied in handleStartGame when "Let's Explore" is tapped.
       const timer = scheduleTimeout(() => {
-        playVoice('welcome', () => {
+        // Check if welcome uses Web Speech API
+        const welcomeScript = getVoiceScript('about-me-hut', 'family-tree', 'welcome');
+        if (welcomeScript?.useWebSpeech) {
+          // Use Web Speech API
+          speakHint(welcomeScript.text);
           playSfx('chime');
-        });
+        } else {
+          // Use file-based audio
+          playVoice('welcome', () => {
+            playSfx('chime');
+          });
+        }
       }, 800);
       return () => clearTimeout(timer);
     }
@@ -701,14 +710,12 @@ const FamilyTreeGameContent = ({
       !sceneState.showFunFactModal &&
       !sceneState.isSequencePlaying
     ) {
-      // Speak one clean "all placed" line when button becomes visible.
+      // Wait 4 seconds for correct choice VO to finish before playing allPlaced VO
       scheduleTimeout(() => {
         if (isAudioOn) {
-          stopVoice();
-          stopSpokenVoice();
           speakHint("Great! You met my loving family!", { age: 7, style: 'child', moment: 'celebration' });
         }
-      }, 500);
+      }, 4000);
     }
   }, [
     sceneState.gamePhase,
@@ -927,6 +934,10 @@ const FamilyTreeGameContent = ({
     if (choice.isCorrect) {
       playSparkle();
       const selectedCircle = sceneState.selectedCircle;
+      const placementRevealDelayMs = 1600;
+      const preFunFactSparkleMs = 1200;
+      const funFactOpenDelayMs = placementRevealDelayMs + preFunFactSparkleMs;
+      const sequenceFailsafeDelayMs = funFactOpenDelayMs + 900;
       const correctSpeechMap = {
         father: "Shiva, my father. He's calm and strong.",
         mother: "Parvati, my mother. She's kind and loving.",
@@ -947,10 +958,10 @@ const FamilyTreeGameContent = ({
         sceneActions.updateState({
           showChoiceModal: false,
           placedGaneshaMembers: [...sceneState.placedGaneshaMembers, selectedCircle],
-          correctChoiceId: null
+          correctChoiceId: null,
+          justPlacedId: selectedCircle
         });
-      }, 1600);
-      scheduleTimeout(() => sceneActions.updateState({ justPlacedId: selectedCircle }), 1700);
+      }, placementRevealDelayMs);
       scheduleTimeout(() => {
         const member = ganeshaFamily.find(m => m.id === selectedCircle);
         const correctDeity = deityChoices[selectedCircle].find(d => d.isCorrect);
@@ -959,16 +970,21 @@ const FamilyTreeGameContent = ({
           showFunFactModal: { ...member, ...correctDeity },
           justPlacedId: null
         });
-      }, 1800);
+      }, funFactOpenDelayMs);
 
       // FAILSAFE: Reset isSequencePlaying after fun fact modal opens to prevent click-blocking
       scheduleTimeout(() => {
         sceneActions.updateState({ isSequencePlaying: false });
-      }, 2500);
+      }, sequenceFailsafeDelayMs);
     } else {
       // WRONG CHOICE - Shake/fade animation, no VOs
       playWrongTap();
       setIsPlayingWrongVO(true);
+
+      // RESET IDLE HINTS on wrong choice
+      idleHintTimersRef.current.forEach(id => clearTimeout(id));
+      idleHintTimersRef.current = [];
+      setIdleHintLevel(0);
 
       // Speak tapped deity name on wrong click:
       // use recorded VO key when available, otherwise fallback to Web Speech.
@@ -1353,7 +1369,7 @@ const FamilyTreeGameContent = ({
               onClick={handleGaneshaTreeDone}
               disabled={sceneState.showTreeSparkles}
             >
-              All Done! ✨
+              Continue
             </button>
           )}
         </>

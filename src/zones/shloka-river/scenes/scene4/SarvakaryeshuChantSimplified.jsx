@@ -733,7 +733,7 @@ const handleSaveComponentState = (componentType, componentState) => {
           <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
           <ResumeCountdown value={countdownValue} />
           <div
-            className="river-background" 
+            className="river-background"
             style={{
               backgroundImage: `url(${getCurrentBackground()})`,
               backgroundSize: 'cover',
@@ -741,6 +741,8 @@ const handleSaveComponentState = (componentType, componentState) => {
               backgroundRepeat: 'no-repeat'
             }}
           >
+          {!showSceneCompletion && (
+          <>
 
   {/* ==================== SCENE 4 INTRO: EVERY DAY, ALWAYS ==================== */}
 {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
@@ -1220,6 +1222,8 @@ hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || !!revealConfig || show
                 />
               </>
             )}
+          </>
+          )}
 
 {/* ✅ CELEBRATION: Double-Lock Save on Continue */}
             <SceneCompletionCelebration

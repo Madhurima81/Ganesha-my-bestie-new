@@ -487,6 +487,9 @@ const ShlokaRiverFinale = ({ onComplete, onBack, onNavigate }) => {
 
       <audio ref={audioRef} />
 
+      {!showSceneCompletion && (
+      <>
+
       {/* INTRO SCREEN */}
       {gamePhase === 'intro' && (
         <OpeningModal
@@ -802,6 +805,8 @@ const ShlokaRiverFinale = ({ onComplete, onBack, onNavigate }) => {
             </div>
           )}
         </div>
+      )}
+      </>
       )}
 
       {/* SCENE COMPLETE */}
