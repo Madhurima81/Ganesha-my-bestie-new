@@ -1791,21 +1791,18 @@
 }
 
 .member-name-small {
-  background: #fffaf6;
-  /* warm off-white, not stark white */
+  background: rgba(241, 229, 161, 0.9);
+  /* Match Ganesha tree label color */
   padding: 6px 14px;
   border-radius: 16px;
 
   font-family: 'Baloo 2', cursive;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #5a3a2a;
-  /* warm brown, matches hut/tree */
-
-
+  color: #5D4037;
+  /* Match Ganesha tree label text color */
 
   border: 1.5px solid rgba(180, 140, 110, 0.25);
-
 
   pointer-events: none;
   /* label should never steal taps */
@@ -2418,7 +2415,7 @@
   font-family: 'Baloo', cursive;
   font-size: 4.3rem;
   font-weight: 700;
-  color: #e56d32;
+  color: #8B4513;
   text-align: center;
   margin-bottom: 18px;
   text-shadow:
@@ -2925,12 +2922,19 @@
   animation-delay: 0.6s;
 }
 
+/* Force-hide old middle connector hearts on comparison view */
+.side-by-side-screen .magic-connector,
+.side-by-side-screen .connector-heart {
+  display: none !important;
+}
+
 /* ========================================= */
 /* ACTION BUTTONS                            */
 /* ========================================= */
 
 .action-buttons {
   display: flex;
+  justify-content: center;
   gap: 22px;
   z-index: 60;
   margin-top: -38px;

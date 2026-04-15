@@ -1563,7 +1563,7 @@ const FamilyTreeGameContent = ({
           ))}
 
           <h1 className="reveal-title">Look at Our Family Trees!</h1>
-          <p className="reveal-subtitle">Connected by Love 💛</p>
+          <p className="reveal-subtitle">Connected by Love</p>
 
           <div className="two-trees-container">
             {/* LEFT CARD: Ganesha */}
@@ -1584,13 +1584,6 @@ const FamilyTreeGameContent = ({
                   );
                 })}
               </div>
-            </div>
-
-            {/* MIDDLE: Magic Connector */}
-            <div className="magic-connector">
-              <span className="connector-heart">❤️</span>
-              <span className="connector-heart">💖</span>
-              <span className="connector-heart">✨</span>
             </div>
 
             {/* RIGHT CARD: Your Family */}
@@ -1617,11 +1610,8 @@ const FamilyTreeGameContent = ({
           </div>
 
           <div className="action-buttons">
-            <button className="make-another-btn" onClick={() => sceneActions.updateState({ childFamily: [], gamePhase: 'childInput' })}>
-              🌳 Make Another Tree
-            </button>
             <button className="family-tree-end-game-btn" onClick={() => { playTwinkle(); sceneActions.updateState({ showingCompletionScreen: true, completed: true, stars: 3 }); }}>
-              End Game ✨
+              Continue
             </button>
           </div>
         </div>
