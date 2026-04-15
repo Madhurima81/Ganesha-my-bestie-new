@@ -427,28 +427,28 @@ const FamilyTreeGameContent = ({
   const ganeshaFamily = [
     {
       id: 'father', role: 'Father', correctAnswer: 'shiva',
-      position: { top: '28%', left: '32%' },
+      position: { top: '38%', left: '40%' },
       // Centered on left foliage lobe
       introTitle: 'My Father', introText: 'He is calm and strong',
       flipTitle: 'My Father', funFact: 'My father is calm and strong. He protects us and teaches me peace'
     },
     {
       id: 'mother', role: 'Mother', correctAnswer: 'parvati',
-      position: { top: '28%', right: '20%' },
+      position: { top: '38%', right: '30%' },
       // Centered on right foliage lobe
       introTitle: 'My Mother', introText: 'She is kind and loving',
       flipTitle: 'My Mother', funFact: 'My mother is kind and loving. She gives the best hugs and keeps me safe'
     },
     {
       id: 'brother', role: 'Brother', correctAnswer: 'kartikeya',
-      position: { bottom: '28%', left: '42%' },
+      position: { top: '60%', left: '41%' },
       // Lower left area near trunk
       introTitle: 'My Brother', introText: 'He is brave and fast',
       flipTitle: 'My Brother', funFact: 'My brother is very brave. He travels the world on his peacock'
     },
     {
       id: 'myself', role: 'Me', correctAnswer: 'ganesha',
-      position: { bottom: '28%', right: '28%' },
+      position: { top: '60%', right: '30%' },
       // Lower right area near trunk
       introTitle: "That's Me", introText: 'I love modaks',
       flipTitle: 'Me', funFact: "That's me! I love modaks and helping my friends"
@@ -965,14 +965,17 @@ const FamilyTreeGameContent = ({
       playWrongTap();
       setIsPlayingWrongVO(true);
 
-      // Trigger shake/fade animation
-      sceneActions.updateState({ wrongChoice: choice.id });
+      // Lock this wrong choice immediately so it stays faded.
+      const nextDisabledChoices = [...new Set([...sceneState.disabledChoices, choice.id])];
+      sceneActions.updateState({
+        wrongChoice: choice.id,
+        disabledChoices: nextDisabledChoices
+      });
 
-      // Clear animation, disable choice, and unblock taps after fade
+      // Clear shake marker and unblock taps after feedback.
       scheduleTimeout(() => {
         sceneActions.updateState({
-          wrongChoice: null,
-          disabledChoices: [...sceneState.disabledChoices, choice.id]
+          wrongChoice: null
         });
         setIsPlayingWrongVO(false);
       }, 1500);
@@ -1155,7 +1158,7 @@ const FamilyTreeGameContent = ({
       {sceneState.gamePhase === 'intro' && (
         <>
           <div className="ganesha-tree-wrapper">
-            <img src={familyTree} alt="Family Tree" className="tree-overlay" />
+            <img src={familyTree} alt="Family Tree" className="tree-overlay intro-tree-overlay" />
           </div>
           <OpeningModal
             zoneId="about-me-hut"
@@ -1194,7 +1197,7 @@ const FamilyTreeGameContent = ({
           </div>
 
           <div className="tree-and-circles-wrapper">
-            <img src={familyTree} alt="Family Tree" className="tree-overlay" />
+            <img src={familyTree} alt="Family Tree" className="tree-overlay ganesha-tree-overlay" />
 
             {(() => {
               const firstUnplacedId = ganeshaFamily.find(m => !sceneState.placedGaneshaMembers.includes(m.id))?.id;
@@ -1255,6 +1258,7 @@ const FamilyTreeGameContent = ({
                       className={[
                         'choice-card-integrated',
                         sceneState.wrongChoice === choice.id ? 'wrong-shake' : '',
+                        sceneState.disabledChoices.includes(choice.id) ? 'wrong-choice-locked' : '',
                         sceneState.correctChoiceId === choice.id && choice.isCorrect ? 'correct-card-hit' : ''
                       ].filter(Boolean).join(' ')}
                       onClick={() => handleChoiceSelection(choice)}
@@ -1385,7 +1389,7 @@ const FamilyTreeGameContent = ({
       {sceneState.gamePhase === 'childInput' && (
         <>
           <button className="back-btn" onClick={() => sceneActions.updateState({ gamePhase: 'transition' })}>← Back</button>
-          <img src={familyTree} alt="Family Tree" className="tree-overlay" />
+          <img src={familyTree} alt="Family Tree" className="tree-overlay child-tree-overlay" />
 
           {/* Header instruction commented out - using VO instead */}
           {/* {sceneState.childFamily.length < 3 && (

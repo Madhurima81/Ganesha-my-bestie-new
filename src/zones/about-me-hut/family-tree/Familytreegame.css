@@ -10,6 +10,13 @@
   height: 100vh;
   overflow: hidden;
   font-family: 'Nunito', sans-serif;
+  /* Scene 19 layout knobs: adjust these only */
+  --scene-tree-width: min(1400px, 94vw);
+  --scene-tree-scale: 1.5;
+  --scene-tree-top: 62%;
+  --scene-tree-left: 52%;
+  --scene-circle-y-offset: -90px;
+  --scene-choice-row-y-offset: -450px;
 }
 
 .tree-background {
@@ -20,6 +27,33 @@
   height: 100%;
   object-fit: cover;
   z-index: 0;
+}
+
+.ganesha-tree-wrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.tree-overlay.intro-tree-overlay,
+.tree-overlay.child-tree-overlay {
+  position: absolute;
+  left: 50%;
+  top: 56%;
+  width: min(980px, 92vw);
+  height: auto;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.tree-overlay.child-tree-overlay {
+  left: var(--scene-tree-left);
+  top: var(--scene-tree-top);
+  width: var(--scene-tree-width);
+  transform: translate(-50%, -50%) scale(var(--scene-tree-scale));
+  transform-origin: bottom center;
 }
 
 /* Part Indicator */
@@ -606,34 +640,32 @@
 .tree-and-circles-wrapper {
   position: relative;
   width: 100%;
-  height: auto;
-  min-height: 500px;
+  height: calc(100vh - 120px);
+  min-height: 620px;
   margin: 0 auto;
-  padding-bottom: 40px;
+  padding-bottom: 0;
+  overflow: visible;
 }
 
 /* 2. THE TREE IMAGE */
-.tree-overlay {
-  width: 100%;
-  height: 100%;
+.tree-and-circles-wrapper .ganesha-tree-overlay {
+  width: var(--scene-tree-width);
+  height: auto;
   object-fit: contain;
-  position: relative;
-  /* Relative to wrapper */
-  top: auto;
-  left: auto;
-  /* Reset old absolute positioning */
-  transform: none;
+  position: absolute;
+  top: var(--scene-tree-top);
+  left: var(--scene-tree-left);
+  transform: translate(-50%, -50%) scale(var(--scene-tree-scale));
   z-index: 1;
   pointer-events: none;
   transform-origin: bottom center;
-  animation: treeSway 6s ease-in-out infinite alternate;
 }
 
 /* Circle spots with labels */
 /* UPDATED: Allows the card to pop out */
 .circle-spot-with-label {
   position: absolute;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, calc(-50% + var(--scene-circle-y-offset)));
   z-index: 10;
   cursor: pointer;
   display: flex;
@@ -739,42 +771,27 @@
 
 
 .circle-label {
-  /* Wooden tag style — warm tan */
-  background: #F6E8C8;
-  color: #6B4F2C;
-  border: 2px solid #D8C4A0;
-
-  padding: 8px 18px;
-  border-radius: 18px;
-
+  background: rgba(241, 229, 161, 0.9);
+  color: #5D4037;
+  border: none;
+  padding: 4px 14px;
+  border-radius: 20px;
   font-family: 'Baloo 2', cursive;
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 800;
   letter-spacing: 0.3px;
-
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
-
-  /* Wooden tag aesthetic */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   position: relative;
   z-index: 20;
-
-  /* Subtle "string" illusion above */
-  margin-top: -4px;
-  padding-top: 12px;
+  margin-top: -2px;
 }
+
 
 /* Optional: Add a tiny string-like effect */
 .circle-label::before {
-  content: '';
-  position: absolute;
-  top: -4px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 2px;
-  height: 6px;
-  background: linear-gradient(to bottom, rgba(139, 69, 19, 0.5), rgba(139, 69, 19, 0.2));
-  border-radius: 1px;
+  display: none;
 }
+
 
 
 
@@ -974,7 +991,7 @@
 /* Restored per user request, but without dimensions to allow scaling */
 .deity-circle {
   border-radius: 50%;
-  background: white;
+  background: #F8EAC9;
   padding: 8px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
   display: flex;
@@ -1113,7 +1130,8 @@
   display: flex;
   flex-direction: row;
   gap: 16px;
-  margin-top: -350px;
+  margin-top: 0;
+  transform: translateY(var(--scene-choice-row-y-offset));
   justify-content: center;
   align-items: center;
   flex-wrap: nowrap;
@@ -1132,7 +1150,7 @@
   flex: 1 1 auto;
   min-width: 300px;
   height: 340px;
-  background: #FFFDF8;
+  background: #f8f1e2;
   border: 0px solid #F2D7A6;
   border-radius: 18px;
   cursor: pointer;
@@ -1161,6 +1179,20 @@
 .choice-card-integrated:disabled {
   cursor: not-allowed;
   opacity: 0.7;
+}
+
+.choice-card-integrated.wrong-choice-locked {
+  opacity: 0.38 !important;
+  filter: grayscale(0.55) saturate(0.75);
+  box-shadow: 0 4px 10px rgba(60, 20, 10, 0.12);
+}
+
+.choice-card-integrated.wrong-choice-locked .choice-image-integrated {
+  opacity: 0.62;
+}
+
+.choice-card-integrated.wrong-choice-locked .choice-name-integrated {
+  opacity: 0.75;
 }
 
 .choice-card-integrated.correct-card-hit {
@@ -1193,7 +1225,7 @@
   font-family: 'Nunito', sans-serif;
   font-size: 22px;
   font-weight: 600;
-  color: #333;
+  color: #5D4037;
   text-align: center;
   line-height: 1.2;
 }
@@ -1352,7 +1384,6 @@
 
 /* Fun Fact Modal */
 .fun-fact-modal {
-  display: none;
   /* 1. Size Control */
   width: 90%;
   max-width: 700px;
@@ -2217,7 +2248,6 @@
   max-width: 650px; /* Increased from 500px */
   width: 90%;
   box-shadow: 0 20px 40px rgba(60, 40, 20, 0.18);
-  animation: modal-bounce-in 0.6s ease-out;
   transform: scale(1.3);
   position: relative;
   text-align: center;
@@ -3137,7 +3167,7 @@
   }
 
   .tree-overlay {
-    width: 85%;
+    width: 95%;
   }
 
   .child-family-tree {
