@@ -1568,7 +1568,7 @@ const FamilyTreeGameContent = ({
       )}
 
       {/* SIDE BY SIDE (Magical Reveal) */}
-      {sceneState.gamePhase === 'sideBySide' && (
+      {sceneState.gamePhase === 'sideBySide' && !sceneState.showingCompletionScreen && (
         <div className="side-by-side-screen">
           {[...Array(45)].map((_, i) => (
             <div
