@@ -1531,6 +1531,7 @@ const NewModakSceneMVPContent = ({
 
       <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
         <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
+          {!sceneState.showingCompletionScreen && (
           <div className="modak-game-container">
             {showPersistentEndOverlay && !revealConfig && (
               <div className="modak-game-end-overlay" />
@@ -2083,6 +2084,7 @@ const NewModakSceneMVPContent = ({
               />
             )}
           </div>
+          )}
         </MessageManager>
       </InteractionManager>
 

@@ -786,6 +786,7 @@ const SymbolMountainSceneContent = ({
             <HomeButton onNavigate={onNavigate} />
             <ZoneBadgeButton zoneId="symbol-mountain" onBack={() => onNavigate?.('zone-welcome')} />
             <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
+            {!showSceneCompletion && (
             <div className="mountain-background" style={{ backgroundImage: `url(${mountainBackground})` }}>
 
               <OpeningModal
@@ -1032,6 +1033,7 @@ const SymbolMountainSceneContent = ({
 
               <CulturalCelebrationModal show={showCulturalCelebration} onClose={() => setShowCulturalCelebration(false)} {...CulturalProgressExtractor.getCulturalProgressData()} />
             </div>
+            )}
 
             {/* 3-2-1 RESUME COUNTDOWN — shows on tab return */}
             <ResumeCountdown value={countdownValue} />

@@ -1022,6 +1022,7 @@ const PondSceneContent = ({
         <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
           <div className="pond-scene-container">
             <HomeButton onNavigate={onNavigate} />
+            {!showSceneCompletion && (
             <div className="pond-background" style={{ backgroundImage: `url(${pondBackground})` }}>
 
               {/* REMOVE OLD MANUAL RENDERCOUNTER, UNIFIED HEADER IS HANDLED BELOW */}
@@ -1175,6 +1176,7 @@ const PondSceneContent = ({
                 </div>
               )}
             </div>
+            )}
 
             {/* Resume Popup */}
             {showResumePopup && (
