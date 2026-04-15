@@ -2415,7 +2415,7 @@
   font-family: 'Baloo', cursive;
   font-size: 4.3rem;
   font-weight: 700;
-  color: #8B4513;
+  color: #5D4037;
   text-align: center;
   margin-bottom: 18px;
   text-shadow: none;
@@ -2425,7 +2425,7 @@
 .reveal-subtitle {
   font-family: 'Nunito', sans-serif;
   font-size: 2rem;
-  color: #8B4513;
+  color: #5D4037;
   text-align: center;
   margin: 0 0 64px 0;
   /* Reduced from 40px */
@@ -2456,7 +2456,7 @@
 
 .tree-column {
   flex: 1;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 252, 242, 0.98);
   border-radius: 24px;
   padding: 36px;
   display: flex;
@@ -2600,7 +2600,7 @@
   width: 90px; /* Increased from 70px */
   height: 90px; /* Increased from 70px */
   border-radius: 50%;
-  background: rgba(255, 248, 220, 0.98);
+  background: rgba(255, 252, 242, 0.98);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2626,7 +2626,7 @@
   color: #3E2723;
   font-weight: 800;
   margin: 0;
-  background: rgba(255, 248, 220, 0.98);
+  background: rgba(255, 252, 242, 0.98);
   padding: 4px 10px;
   border-radius: 10px;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
@@ -2686,7 +2686,7 @@
   color: #3E2723;
   font-weight: 700;
   margin: 0;
-  background: rgba(255, 248, 220, 0.98);
+  background: rgba(255, 252, 242, 0.98);
   padding: 5px 14px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);

@@ -846,9 +846,10 @@ const FamilyTreeGameContent = ({
       setFinalRevealPlayed(true);
       stopVoice();
 
-      scheduleTimeout(() => {
-        playVoice('sceneComplete');
-      }, 500);
+      // No VO for this screen - let the visual moment speak for itself
+      // scheduleTimeout(() => {
+      //   playVoice('sceneComplete');
+      // }, 500);
     }
   }, [sceneState.gamePhase, finalRevealPlayed]);
 
@@ -1584,7 +1585,7 @@ const FamilyTreeGameContent = ({
             />
           ))}
 
-          <h1 className="reveal-title">Look at Our Family Trees!</h1>
+          <h1 className="reveal-title">Our Family Trees!</h1>
           <p className="reveal-subtitle">Connected by Love</p>
 
           <div className="two-trees-container">
