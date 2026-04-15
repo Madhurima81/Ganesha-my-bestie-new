@@ -24,6 +24,7 @@ import usePauseAwareTimeout from '../../../lib/hooks/usePauseAwareTimeout';
 // Content Configs
 import { getOpeningModal, getCompletionModal } from '../../../lib/config/content';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
+import { getVoiceScript } from '../../../lib/config/content/voiceGuidance';
 
 // Shared Components
 import OpeningModal from '../../shared/components/OpeningModal';
@@ -283,7 +284,6 @@ const FamilyTreeGameContent = ({
   // ========================================
   // GANESHA PHASE VO STATE
   // ========================================
-  const [funFactModalPlayed, setFunFactModalPlayed] = useState(false);
   const [isPlayingWrongVO, setIsPlayingWrongVO] = useState(false); // Block taps during wrong choice animation
 
   // ========================================
@@ -417,10 +417,10 @@ const FamilyTreeGameContent = ({
 
   // --- IDLE HINT VO CLUES (spoken via Web Speech API) ---
   const IDLE_HINT_VO = {
-    father: "My father carries a trident and has long matted hair.",
-    mother: "My mother is gentle and wears a beautiful red sari.",
-    brother: "My brave brother rides a peacock.",
-    myself: "That's me! I have an elephant head."
+    father: "My father carries a trident.",
+    mother: "My mother wears a beautiful golden sari.",
+    brother: "My brother rides a peacock.",
+    myself: "I have an elephant head."
   };
 
   // --- DATA DEFINITIONS ---
@@ -476,6 +476,20 @@ const FamilyTreeGameContent = ({
       { id: 'mushak', name: 'Mushak', image: mouseImg, type: 'img', isCorrect: false },
       { id: 'kartikeya', name: 'Kartikeya', image: kartikeyaImg, type: 'img', isCorrect: false }
     ]
+  };
+
+  const deityNameVoiceKeyMap = {
+    shiva: 'shiva',
+    parvati: 'parvati',
+    kartikeya: 'kartikeya',
+    ganesha: 'ganesha',
+    vishnu: 'vishnu',
+    brahma: 'brahma',
+    lakshmi: 'lakshmi',
+    saraswati: 'saraswati',
+    hanuman: 'hanuman',
+    krishna: 'krishna',
+    mushak: 'mushak'
   };
 
   const familyMemberTypes = [
@@ -666,26 +680,6 @@ const FamilyTreeGameContent = ({
     };
   }, [clearAllTimeouts, stopMusic, stopIdleTimer]);
 
-
-  // ========================================
-  // GANESHA PHASE: Play fun fact VO when correct choice is made
-  // ========================================
-  useEffect(() => {
-    if (sceneState.correctChoiceId && !funFactModalPlayed) {
-      setFunFactModalPlayed(true);
-
-      // Map member id to fun fact VO
-      const funFactVOMap = {
-        'father': 'factFather',
-        'mother': 'factMother',
-        'brother': 'factBrother',
-        'myself': 'factMyself',
-      };
-
-      const voKey = funFactVOMap[sceneState.selectedCircle];
-      if (voKey) playVoice(voKey);
-    }
-  }, [sceneState.correctChoiceId, funFactModalPlayed]);
 
   // ========================================
   // Auto-close fun fact modal (without stopping VO)
@@ -901,13 +895,14 @@ const FamilyTreeGameContent = ({
       wrongChoice: null
     });
 
-    // Play voice guidance: "Tap my Father" etc.
+    // Play Web Speech guidance when choice cards open.
     if (isAudioOn && member) {
       scheduleTimeout(() => {
+        stopSpokenVoice();
         const guidanceText = member.id === 'myself'
-          ? "Tap to choose who I am"
-          : `Tap my ${member.role}`;
-        speakLine(guidanceText, { moment: 'thinking' });
+          ? "Tap to choose me."
+          : `Tap to choose my ${member.role.toLowerCase()}.`;
+        speakHint(guidanceText, { age: 7, style: 'child', moment: 'thinking' });
       }, 300);
     }
 
@@ -919,27 +914,26 @@ const FamilyTreeGameContent = ({
 
     // Stop any playing VO
     stopVoice();
+    stopSpokenVoice();
     playTap();
     recordInteraction();
 
     if (choice.isCorrect) {
       playSparkle();
-      // Play relation VO, but don't gate game progression on VO callbacks.
-      const correctRelationVOMap = {
-        'father': 'correctFather',
-        'mother': 'correctMother',
-        'brother': 'correctBrother',
-        'myself': 'correctMyself'
-      };
       const selectedCircle = sceneState.selectedCircle;
-      const relationVO = correctRelationVOMap[selectedCircle];
-
-      if (relationVO) {
-        playVoice(relationVO);
+      const correctSpeechMap = {
+        father: "Shiva, my father. He's calm and strong.",
+        mother: "Parvati, my mother. She's kind and loving.",
+        brother: "Kartikeya, my brother. He's very brave.",
+        myself: "That's me, Ganesha! I love to help."
+      };
+      if (isAudioOn && correctSpeechMap[selectedCircle]) {
+        scheduleTimeout(() => {
+          speakHint(correctSpeechMap[selectedCircle], { age: 7, style: 'child', moment: 'encouragement' });
+        }, 120);
       }
 
       triggerMiniGesture('center', 1500);
-      setFunFactModalPlayed(false);
       sceneActions.updateState({ isSequencePlaying: true, showYouGotIt: choice.id });
       scheduleTimeout(() => sceneActions.updateState({ correctChoiceId: choice.id }), 800);
       scheduleTimeout(() => sceneActions.updateState({ showYouGotIt: null }), 1400);
@@ -960,10 +954,27 @@ const FamilyTreeGameContent = ({
           justPlacedId: null
         });
       }, 1800);
+
+      // FAILSAFE: Reset isSequencePlaying after fun fact modal opens to prevent click-blocking
+      scheduleTimeout(() => {
+        sceneActions.updateState({ isSequencePlaying: false });
+      }, 2500);
     } else {
       // WRONG CHOICE - Shake/fade animation, no VOs
       playWrongTap();
       setIsPlayingWrongVO(true);
+
+      // Speak tapped deity name on wrong click:
+      // use recorded VO key when available, otherwise fallback to Web Speech.
+      if (isAudioOn) {
+        const nameVoiceKey = deityNameVoiceKeyMap[choice.id] || choice.id;
+        const hasRecordedName = !!getVoiceScript('about-me-hut', 'family-tree', nameVoiceKey);
+        if (hasRecordedName) {
+          playVoice(nameVoiceKey);
+        } else {
+          speakHint(choice.name, { age: 7, style: 'child', moment: 'thinking' });
+        }
+      }
 
       // Lock this wrong choice immediately so it stays faded.
       const nextDisabledChoices = [...new Set([...sceneState.disabledChoices, choice.id])];

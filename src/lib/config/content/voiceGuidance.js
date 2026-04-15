@@ -286,11 +286,39 @@ export const VOICE_SCRIPTS = {
       },
       kartikeya: {
         text: "Kartikeya",
-        file: '/audio/voicenew/familytree/ganesha_kartikeya_name.wav'
+        file: '/audio/voicenew/familytree/kartikeya.wav'
       },
       ganesha: {
         text: "Ganesha",
         file: '/audio/voicenew/familytree/ganesha_name.wav'
+      },
+      vishnu: {
+        text: "Vishnu",
+        file: '/audio/voicenew/familytree/vishnu.wav'
+      },
+      lakshmi: {
+        text: "Lakshmi",
+        file: '/audio/voicenew/familytree/lakshmi.wav'
+      },
+      hanuman: {
+        text: "Hanuman",
+        file: '/audio/voicenew/familytree/hanuman.wav'
+      },
+      krishna: {
+        text: "Krishna",
+        file: '/audio/voicenew/familytree/krishna.wav'
+      },
+      mushak: {
+        text: "Mushak",
+        file: '/audio/voicenew/familytree/mushak.wav'
+      },
+      brahma: {
+        text: "Brahma",
+        file: '/audio/voicenew/familytree/brahma.wav'
+      },
+      saraswati: {
+        text: "Saraswati",
+        file: '/audio/voicenew/familytree/saraswati.wav'
       },
 
       // ========================================
