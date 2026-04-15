@@ -753,6 +753,8 @@ const VakratundaGroveContent = ({
           <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
           <ResumeCountdown value={countdownValue} />
           <div className="river-background" style={{ backgroundImage: `url(${riverBackground})` }}>
+            {!showSceneCompletion && (
+            <>
 
             {/* HOME BUTTON — inline green button removed; HomeButton component handles this */}
 
@@ -1058,7 +1060,8 @@ const VakratundaGroveContent = ({
                 <img src={ganeshaHeadphones} alt="Ganesha" className="vakratunda-ganesha-final-enters" />
               </div>
             )}
-
+            </>
+            )}
 
             <SceneCompletionCelebration
               show={showSceneCompletion}

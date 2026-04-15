@@ -1,0 +1,196 @@
+.aboutme-comparison-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  overflow: hidden;
+  padding: 28px 20px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: radial-gradient(ellipse at center, rgba(255, 244, 224, 0.9), rgba(255, 220, 180, 0.7));
+  backdrop-filter: blur(5px);
+}
+
+.aboutme-comparison-title {
+  margin: 0 0 18px;
+  color: #5d4037;
+  font-family: 'Baloo', cursive;
+  font-size: clamp(2rem, 4.2vw, 4.3rem);
+  font-weight: 700;
+  text-align: center;
+}
+
+.aboutme-comparison-subtitle {
+  margin: 0 0 64px;
+  color: #5d4037;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(1rem, 1.75vw, 2rem);
+  font-weight: 700;
+  text-align: center;
+}
+
+.aboutme-comparison-grid {
+  width: 100%;
+  max-width: 1500px;
+  margin-bottom: 22px;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 26px;
+  flex-wrap: wrap;
+}
+
+.aboutme-comparison-column {
+  flex: 1;
+  min-width: 460px;
+  max-width: 680px;
+  border-radius: 24px;
+  padding: 30px 28px 26px;
+  background: rgba(255, 252, 242, 0.98);
+  box-shadow: 0 10px 30px rgba(120, 90, 20, 0.15), inset 0 0 0 2px rgba(255, 255, 255, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.aboutme-comparison-column-header {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 96px;
+}
+
+.aboutme-comparison-column-title {
+  margin: 0;
+  color: #3e2723;
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(1.8rem, 2.5vw, 2.8rem);
+  font-weight: 700;
+  text-align: center;
+}
+
+.aboutme-comparison-items-grid {
+  width: 100%;
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.aboutme-comparison-item {
+  min-height: 156px;
+  border-radius: 16px;
+  background: rgba(255, 252, 242, 0.98);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  padding: 10px 10px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+}
+
+.aboutme-comparison-item.is-wide {
+  grid-column: 1 / -1;
+}
+
+.aboutme-comparison-item-label {
+  color: #5d4037;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.aboutme-comparison-item-media {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aboutme-comparison-item-img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.aboutme-comparison-item-text {
+  color: #3e2723;
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.aboutme-comparison-column-footer {
+  margin-top: 8px;
+  color: #5d4037;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.aboutme-comparison-continue-btn {
+  margin-top: auto;
+  margin-bottom: 32px;
+  border: none;
+  border-radius: 25px;
+  padding: 24px 64px;
+  background: linear-gradient(135deg, #4caf50, #45a049);
+  color: #fff;
+  font-family: 'Baloo 2', cursive;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.aboutme-comparison-continue-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.6);
+}
+
+.aboutme-comparison-continue-btn:active {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 1200px) {
+  .aboutme-comparison-column {
+    min-width: 420px;
+  }
+}
+
+@media (max-width: 980px) {
+  .aboutme-comparison-overlay {
+    overflow-y: auto;
+    padding-bottom: 22px;
+  }
+
+  .aboutme-comparison-subtitle {
+    margin-bottom: 34px;
+  }
+
+  .aboutme-comparison-grid {
+    gap: 18px;
+  }
+
+  .aboutme-comparison-column {
+    min-width: min(92vw, 560px);
+    max-width: 92vw;
+  }
+
+  .aboutme-comparison-continue-btn {
+    margin-top: 12px;
+    margin-bottom: 8px;
+    font-size: 26px;
+    padding: 20px 52px;
+  }
+}
+
