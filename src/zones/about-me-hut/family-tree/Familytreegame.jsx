@@ -701,16 +701,21 @@ const FamilyTreeGameContent = ({
       !sceneState.showFunFactModal &&
       !sceneState.isSequencePlaying
     ) {
-      // Play "all placed" VO when button becomes visible
+      // Speak one clean "all placed" line when button becomes visible.
       scheduleTimeout(() => {
-        playVoice('allPlaced');
+        if (isAudioOn) {
+          stopVoice();
+          stopSpokenVoice();
+          speakHint("Great! You met my loving family!", { age: 7, style: 'child', moment: 'celebration' });
+        }
       }, 500);
     }
   }, [
     sceneState.gamePhase,
     sceneState.placedGaneshaMembers.length,
     sceneState.showFunFactModal,
-    sceneState.isSequencePlaying
+    sceneState.isSequencePlaying,
+    isAudioOn
   ]);
 
   // ========================================
@@ -1376,8 +1381,7 @@ const FamilyTreeGameContent = ({
           <div className="transition-card-simple">
             <h2 className="transition-title">Your Turn!</h2>
             <p className="transition-text">
-              That's my family! Now, I want to see your world.<br />
-              Who are the special people in your house?
+              Show me your family!
             </p>
             <VOGatedButton
               visible={transitionButtonVisible}
@@ -1390,7 +1394,7 @@ const FamilyTreeGameContent = ({
                 scheduleTimeout(() => sceneActions.updateState({ showBottomTray: true }), 100);
               }}
             >
-              Add My Family! 🏠
+              Continue
             </VOGatedButton>
           </div>
         </div>

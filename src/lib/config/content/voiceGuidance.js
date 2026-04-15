@@ -397,7 +397,7 @@ export const VOICE_SCRIPTS = {
         file: 'family-tree-hint-tap.wav'
       },
       allPlaced: {
-        text: "You met my whole family! Families make us feel safe.",
+        text: "Great! You met my loving family!",
         file: '/audio/voicenew/familytree/ganesha_family_safe.wav'
       },
 
@@ -405,7 +405,7 @@ export const VOICE_SCRIPTS = {
       // TRANSITION MODAL
       // ========================================
       transition: {
-        text: "Now… let's build your family tree.",
+        text: "Show me your family!",
         file: '/audio/voicenew/familytree/ganesha_build_tree.wav'
       },
 

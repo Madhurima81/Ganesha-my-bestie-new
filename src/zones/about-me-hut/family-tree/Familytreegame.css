@@ -4385,28 +4385,28 @@
 
 /* Simple button - no red! */
 .continue-btn-simple {
-  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-  color: white;
-
+  display: block;
+  margin: 20px auto 0;
+  background-color: #FF9933;
+  color: #fff;
   border: none;
-  padding: 8px 45px;
-  font-family: 'Baloo', cursive;
-  font-size: 2.8rem;
+  padding: 18px 48px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 20px;
   font-weight: 700;
-  border-radius: 20px;
+  border-radius: 24px;
   cursor: pointer;
-  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 6px 16px rgba(255, 153, 51, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .continue-btn-simple:hover {
   transform: translateY(-1px);
-  box-shadow: 0 12px 30px rgba(76, 175, 80, 0.5);
+  box-shadow: 0 8px 20px rgba(255, 153, 51, 0.4);
 }
 
 .continue-btn-simple:active {
   transform: translateY(-1px);
-  /* NO background change */
 }
 
 /* ========================================
