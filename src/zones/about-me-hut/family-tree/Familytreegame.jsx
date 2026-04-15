@@ -1145,6 +1145,28 @@ const FamilyTreeGameContent = ({
       <HomeButton onNavigate={onNavigate} />
       <ZoneBadgeButton zoneId="about-me-hut" onBack={() => { onNavigate?.('zone-welcome') || onBack?.(); }} />
       <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
+
+      {/* TEST BUTTONS - DEV ONLY */}
+      {process.env.NODE_ENV === 'development' && (
+        <div style={{
+          position: 'fixed',
+          bottom: 80,
+          right: 10,
+          zIndex: 9999,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4px',
+          padding: '8px',
+          background: 'rgba(0,0,0,0.7)',
+          borderRadius: '8px'
+        }}>
+          <button onClick={() => sceneActions.updateState({ gamePhase: 'ganeshaTree', placedGaneshaMembers: [] })} style={{ padding: '4px 8px', fontSize: '10px', cursor: 'pointer' }}>Test: Ganesha</button>
+          <button onClick={() => sceneActions.updateState({ gamePhase: 'childInput', childFamily: [], placedGaneshaMembers: ['father', 'mother', 'brother', 'myself'] })} style={{ padding: '4px 8px', fontSize: '10px', cursor: 'pointer' }}>Test: Child Input</button>
+          <button onClick={() => sceneActions.updateState({ gamePhase: 'transition', placedGaneshaMembers: ['father', 'mother', 'brother', 'myself'] })} style={{ padding: '4px 8px', fontSize: '10px', cursor: 'pointer' }}>Test: Transition</button>
+          <button onClick={() => sceneActions.updateState({ gamePhase: 'sideBySide', childFamily: [{ id: 1, image: childDadImg, label: 'Dad', color: '#6BB6FF', callName: 'Papa', row: 2 }] })} style={{ padding: '4px 8px', fontSize: '10px', cursor: 'pointer' }}>Test: Reveal</button>
+          <button onClick={() => sceneActions.updateState({ showingCompletionScreen: true, completed: true })} style={{ padding: '4px 8px', fontSize: '10px', cursor: 'pointer' }}>Test: Complete</button>
+        </div>
+      )}
       {showVoiceOffPill && (
         <div className="voice-off-pill">
           <span className="voice-off-pill__icon">🔇</span>
