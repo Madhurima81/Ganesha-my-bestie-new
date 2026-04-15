@@ -1615,7 +1615,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       )}
 
       {/* COMPARISON CARD */}
-      {sceneState.gamePhase === 'comparison-card' && (
+      {sceneState.gamePhase === 'comparison-card' && !sceneState.showingCompletionScreen && (
         <div className="friendship-overlay">
           <h1 className="friendship-title">You and Ganesha are friends forever! ✨</h1>
           <p className="friendship-subtitle">Ganesha loves knowing about you 💛</p>

@@ -2249,7 +2249,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       )}
 
       {/* Origin Card Phase */}
-      {phase === STEPS.ORIGIN_CARD && (
+      {phase === STEPS.ORIGIN_CARD && phase !== STEPS.COMPLETE && (
         <div className="comparison-overlay">
           <h1 className="comparison-title">Our Story Connects</h1>
           <p className="comparison-subtitle">When families share their roots, magic happens.</p>
