@@ -678,10 +678,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Tap feedback — subtle scale animation */
-.circle-spot-with-label:active {
-  animation: circleTapFeedback 0.18s ease-out;
-}
+/* Tap feedback removed — card zoom provides focus */
 
 .empty-circle {
   width: 250px;
@@ -772,7 +769,7 @@
 
 
 .circle-label {
-  background: rgba(241, 229, 161, 0.9);
+  background: rgba(255, 248, 220, 0.85);
   color: #5D4037;
   border: none;
   padding: 4px 14px;
@@ -1200,6 +1197,41 @@
   border-color: #7BC96F;
   box-shadow: 0 0 12px rgba(123, 201, 111, 0.8);
   animation: correctPulse 0.6s ease-out;
+}
+
+/* Soft sparkle burst on correct tap (aligned with FavoriteFood feel) */
+.choice-soft-sparkles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 8;
+}
+
+.choice-soft-sparkle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.96) 0%, rgba(255, 233, 170, 0.88) 50%, rgba(255, 215, 120, 0) 100%);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.6);
+  animation: choiceSoftSparkleFloat 0.9s ease-out forwards;
+  box-shadow: 0 0 10px rgba(255, 237, 190, 0.85);
+}
+
+@keyframes choiceSoftSparkleFloat {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  25% {
+    opacity: 0.95;
+    transform: translate(-50%, -60%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -90%) scale(1.25);
+  }
 }
 
 .choice-card-integrated.wrong-shake {
@@ -1792,7 +1824,7 @@
 }
 
 .member-name-small {
-  background: rgba(241, 229, 161, 0.9);
+  background: rgba(255, 248, 220, 0.85);
   /* Match Ganesha tree label color */
   padding: 6px 14px;
   border-radius: 16px;
@@ -1803,7 +1835,7 @@
   color: #5D4037;
   /* Match Ganesha tree label text color */
 
-  border: 1.5px solid rgba(180, 140, 110, 0.25);
+  border: none;
 
   pointer-events: none;
   /* label should never steal taps */
@@ -2085,7 +2117,7 @@
   font-weight: 800 !important;
 
   /* Add a small white pill background so text is readable */
-  background: rgba(241, 229, 161, 0.9);
+  background: rgba(255, 248, 220, 0.85);
   padding: 4px 14px;
   border-radius: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
@@ -2598,19 +2630,19 @@
 /* Avatars Style */
 .reveal-avatar,
 .mini-image {
-  width: 90px; /* Increased from 70px */
-  height: 90px; /* Increased from 70px */
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   background: rgba(255, 252, 242, 0.98);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px; /* Increased from 6px */
+  padding: 6px;
   overflow: hidden;
   box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.2),
     0 0 0 3px rgba(255, 255, 255, 0.5);
-  margin-bottom: 6px; /* Increased from 4px */
+  margin-bottom: 5px;
 }
 
 .reveal-avatar img,
@@ -2623,12 +2655,12 @@
 .mini-name,
 .reveal-name {
   font-family: 'Nunito', sans-serif;
-  font-size: 1.1rem; /* Increased from 0.85rem */
-  color: #3E2723;
+  font-size: 1rem;
+  color: #5D4037;
   font-weight: 800;
   margin: 0;
-  background: rgba(255, 252, 242, 0.98);
-  padding: 4px 10px;
+  background: rgba(255, 248, 220, 0.85);
+  padding: 3px 9px;
   border-radius: 10px;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
   white-space: nowrap;
@@ -2651,19 +2683,15 @@
 /* Icon images for Ganesha's family in comparison */
 .ganesha-comparison-img {
   width: 108px !important;
-  /* BIGGER than game icons */
   height: 108px !important;
   border-radius: 50%;
-  background: white;
+  background: #F8EAC9;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 8px;
   overflow: hidden;
-  box-shadow:
-    0 6px 18px rgba(0, 0, 0, 0.3),
-    0 0 0 4px rgba(255, 215, 0, 0.4);
-  /* Gold border */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
   margin-bottom: 5px;
   transition: transform 0.3s ease;
 }
@@ -2684,15 +2712,15 @@
 .ganesha-comparison-label {
   font-family: 'Baloo 2', cursive;
   font-size: 1.15rem !important;
-  color: #3E2723;
+  color: #5D4037;
   font-weight: 700;
   margin: 0;
-  background: rgba(255, 252, 242, 0.98);
+  background: rgba(255, 248, 220, 0.85);
   padding: 5px 14px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   white-space: nowrap;
-  border: 2px solid rgba(255, 215, 0, 0.3);
+  border: none;
 }
 
 /* ========================================= */
@@ -2701,28 +2729,28 @@
 
 /* Override the dynamic positioning with fixed positions */
 .ganesha-comparison-icon:nth-child(5) {
-  bottom: 14% !important;
-  left: 60% !important;
+  bottom: 22% !important;
+  left: 68% !important;
   right: auto !important;
 }
 
 .ganesha-comparison-icon:nth-child(2) {
   /* Father - Top Right */
-  top: 30% !important;
+  top: 18% !important;
   left: 34% !important;
   right: auto !important;
 }
 
 .ganesha-comparison-icon:nth-child(3) {
   /* Mother - Top Left */
-  top: 30% !important;
+  top: 18% !important;
   left: 66% !important;
 }
 
 .ganesha-comparison-icon:nth-child(4) {
   /* Brother*/
-  bottom: 14% !important;
-  left: 40% !important;
+  bottom: 22% !important;
+  left: 32% !important;
   right: auto !important;
   top: auto !important;
 }
@@ -2741,18 +2769,15 @@
 }
 
 .reveal-row-1 {
-  top: 1.5% !important;
-  /* Moved UP */
+  top: -2% !important;
 }
 
 .reveal-row-2 {
-  top: 31% !important;
-  /* Moved UP */
+  top: 24% !important;
 }
 
 .reveal-row-3 {
-  top: 58% !important;
-  /* Moved UP */
+  top: 48% !important;
 }
 
 .reveal-member {
@@ -2768,15 +2793,15 @@
 
 /* Base size: 1-6 members (comfortable) */
 .tree-column:last-child .reveal-avatar {
-  width: 102px;
-  height: 102px;
+  width: 82px;
+  height: 82px;
   padding: 6px;
   transition: all 0.3s ease;
 }
 
 .tree-column:last-child .reveal-name {
-  font-size: 1.1rem;
-  padding: 6px 12px;
+  font-size: 0.98rem;
+  padding: 4px 10px;
   transition: all 0.3s ease;
 }
 
@@ -2784,47 +2809,47 @@
 .tree-column:last-child .tree-visual[data-member-count="7"] .reveal-avatar,
 .tree-column:last-child .tree-visual[data-member-count="8"] .reveal-avatar,
 .tree-column:last-child .tree-visual[data-member-count="9"] .reveal-avatar {
-  width: 74px !important;
-  height: 74px !important;
+  width: 62px !important;
+  height: 62px !important;
   padding: 5px;
 }
 
 .tree-column:last-child .tree-visual[data-member-count="7"] .reveal-name,
 .tree-column:last-child .tree-visual[data-member-count="8"] .reveal-name,
 .tree-column:last-child .tree-visual[data-member-count="9"] .reveal-name {
-  font-size: 0.9rem !important;
-  padding: 3px 8px;
+  font-size: 0.82rem !important;
+  padding: 2px 7px;
 }
 
 /* Crowded tree: 10-12 members */
 .tree-column:last-child .tree-visual[data-member-count="10"] .reveal-avatar,
 .tree-column:last-child .tree-visual[data-member-count="11"] .reveal-avatar,
 .tree-column:last-child .tree-visual[data-member-count="12"] .reveal-avatar {
-  width: 66px !important;
-  height: 66px !important;
+  width: 56px !important;
+  height: 56px !important;
   padding: 4px;
 }
 
 .tree-column:last-child .tree-visual[data-member-count="10"] .reveal-name,
 .tree-column:last-child .tree-visual[data-member-count="11"] .reveal-name,
 .tree-column:last-child .tree-visual[data-member-count="12"] .reveal-name {
-  font-size: 0.82rem !important;
-  padding: 2px 7px;
+  font-size: 0.75rem !important;
+  padding: 2px 6px;
 }
 
 /* Very crowded: 13-15 members */
 .tree-column:last-child .tree-visual[data-member-count="13"] .reveal-avatar,
 .tree-column:last-child .tree-visual[data-member-count="14"] .reveal-avatar,
 .tree-column:last-child .tree-visual[data-member-count="15"] .reveal-avatar {
-  width: 58px !important;
-  height: 58px !important;
+  width: 50px !important;
+  height: 50px !important;
   padding: 3px;
 }
 
 .tree-column:last-child .tree-visual[data-member-count="13"] .reveal-name,
 .tree-column:last-child .tree-visual[data-member-count="14"] .reveal-name,
 .tree-column:last-child .tree-visual[data-member-count="15"] .reveal-name {
-  font-size: 0.75rem !important;
+  font-size: 0.7rem !important;
   padding: 2px 6px;
 }
 
@@ -2835,8 +2860,8 @@
 .tree-column:last-child .tree-visual[data-member-count="19"] .reveal-avatar,
 .tree-column:last-child .tree-visual[data-member-count="20"] .reveal-avatar,
 .tree-column:last-child .tree-visual[data-member-count="21"] .reveal-avatar {
-  width: 52px !important;
-  height: 52px !important;
+  width: 44px !important;
+  height: 44px !important;
   padding: 2px;
 }
 
@@ -2846,8 +2871,8 @@
 .tree-column:last-child .tree-visual[data-member-count="19"] .reveal-name,
 .tree-column:last-child .tree-visual[data-member-count="20"] .reveal-name,
 .tree-column:last-child .tree-visual[data-member-count="21"] .reveal-name {
-  font-size: 0.72rem !important;
-  padding: 2px 5px;
+  font-size: 0.66rem !important;
+  padding: 1px 5px;
 }
 
 /* Also adjust row spacing for crowded trees */
@@ -2945,25 +2970,43 @@
 }
 
 .family-tree-end-game-btn {
-  background: linear-gradient(135deg, #4CAF50, #45A049);
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
   color: white;
   border: none;
-  border-radius: 25px;
-  padding: 24px 64px;
-  font-family: 'Baloo 2', cursive;
-  font-size: 30px;
+  border-radius: 50px;
+  padding: 18px 45px;
+  font-family: 'Baloo', cursive;
+  font-size: 2.5rem;
   font-weight: 700;
-  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+  box-shadow:
+    0 8px 25px rgba(76, 175, 80, 0.4),
+    0 0 0 0 rgba(76, 175, 80, 0.5);
   z-index: 10;
+  white-space: nowrap;
+  animation: sideBySideDonePulseGreen 2s ease-in-out infinite;
 }
 
 .family-tree-end-game-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.6);
+  box-shadow:
+    0 12px 30px rgba(76, 175, 80, 0.5),
+    0 0 0 0 rgba(76, 175, 80, 0.5);
 }
 
 .family-tree-end-game-btn:active {
   transform: translateY(-1px);
+}
+
+@keyframes sideBySideDonePulseGreen {
+  0%,
+  100% {
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 8px 35px rgba(76, 175, 80, 0.6);
+    transform: scale(1.05);
+  }
 }
 
 /* ========================================= */
@@ -4060,19 +4103,6 @@
 }
 
 /* Tap Feedback — Subtle Scale Animation */
-@keyframes circleTapFeedback {
-  0% {
-    transform: translate(-50%, -50%) scale(1);
-  }
-
-  50% {
-    transform: translate(-50%, -50%) scale(1.06);
-  }
-
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -4340,57 +4370,78 @@
 /* Card */
 .transition-card-simple {
   background: white;
-  padding: 80px;
-  /* Increased padding for larger modal */
+  width: min(86vw, 760px);
+  min-height: 420px;
+  padding: clamp(40px, 5.5vw, 72px);
   border-radius: 40px;
-  /* Increased radius */
-  max-width: 1000px;
-  /* Increased from 800px */
   text-align: center;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .transition-title {
   font-family: 'Baloo', cursive;
-  font-size: 3rem;
-  /* Increased from 2.5rem */
+  font-size: clamp(2.8rem, 4.8vw, 4rem);
   color: #8B4513;
-  margin: 0 0 25px 0;
+  margin: 0 0 20px 0;
 }
 
 .transition-text {
   font-family: 'Nunito', sans-serif;
-  font-size: 1.8rem;
-  /* Increased from 1.2rem */
+  font-size: clamp(1.35rem, 2.4vw, 2.1rem);
   color: #5D4037;
-  line-height: 1.7;
-  margin: 0 0 40px 0;
+  line-height: 1.6;
+  margin: 0 0 34px 0;
 }
 
-/* Simple button - no red! */
+/* Match the earlier green "Continue" button style */
 .continue-btn-simple {
   display: block;
-  margin: 20px auto 0;
-  background-color: #FF9933;
-  color: #fff;
+  margin: 24px auto 0;
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
   border: none;
-  padding: 18px 48px;
-  font-family: 'Baloo 2', cursive;
-  font-size: 20px;
+  padding: 20px 54px;
+  font-family: 'Baloo', cursive;
+  font-size: clamp(1.8rem, 3.2vw, 2.3rem);
   font-weight: 700;
-  border-radius: 24px;
+  border-radius: 50px;
   cursor: pointer;
-  box-shadow: 0 6px 16px rgba(255, 153, 51, 0.3);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow:
+    0 8px 25px rgba(76, 175, 80, 0.4),
+    0 0 0 0 rgba(76, 175, 80, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  white-space: nowrap;
+  min-width: 260px;
 }
 
 .continue-btn-simple:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(255, 153, 51, 0.4);
+  transform: translateY(-3px);
+  box-shadow:
+    0 12px 30px rgba(76, 175, 80, 0.5),
+    0 0 0 0 rgba(76, 175, 80, 0.5);
 }
 
 .continue-btn-simple:active {
   transform: translateY(-1px);
+}
+
+.continue-btn-simple.done-btn-pulse {
+  animation: transitionContinuePulse 2s ease-in-out infinite;
+}
+
+@keyframes transitionContinuePulse {
+  0%,
+  100% {
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 8px 35px rgba(76, 175, 80, 0.6);
+    transform: scale(1.05);
+  }
 }
 
 /* ========================================
@@ -4553,5 +4604,11 @@
   50% {
     transform: scale(1.08);
   }
+}
+
+/* Final override: disable old star-based circle sparkles completely */
+.circle-celebration-sparkles,
+.circle-sparkle {
+  display: none !important;
 }
 
