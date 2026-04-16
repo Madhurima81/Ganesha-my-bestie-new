@@ -2689,8 +2689,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px;
-  overflow: hidden;
+  overflow: visible;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
   margin-bottom: 5px;
   transition: transform 0.3s ease;
@@ -2730,7 +2729,7 @@
 /* Override the dynamic positioning with fixed positions */
 .ganesha-comparison-icon:nth-child(5) {
   bottom: 22% !important;
-  left: 68% !important;
+  left: 64% !important;
   right: auto !important;
 }
 
@@ -2746,11 +2745,10 @@
   top: 18% !important;
   left: 66% !important;
 }
-
 .ganesha-comparison-icon:nth-child(4) {
-  /* Brother*/
+  /* Brother - Kartikeya */
   bottom: 22% !important;
-  left: 32% !important;
+  left: 16% !important;
   right: auto !important;
   top: auto !important;
 }
