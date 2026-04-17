@@ -106,7 +106,7 @@ Before every task, Claude Code must:
 | 19 | family-tree | Familytreegame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
 | 20 | favorite-food | Favoritefoodgame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
 | 21 | dreams-wishes | ObstacleRemoverGame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 22 | name-birthday | Namebirthdaygame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
+| 22 | my-indian-story | MyIndianStoryGame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
 
 ### Voice & Audio
 
@@ -130,10 +130,10 @@ Before every task, Claude Code must:
 | 16 | game2-rangoli | FestivalRangoliGame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
 | 17 | game3-cooking | ModakCookingGame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
 | 18 | game4-mandap | MandapDecorationGame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
-| 19 | family-tree | Namebirthdaygame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
+| 19 | family-tree | Familytreegame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
 | 20 | favorite-food | Favoritefoodgame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
-| 21 | dreams-wishes | Favoritefoodgame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
-| 22 | name-birthday | ObstacleRemoverGame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
+| 21 | dreams-wishes | ObstacleRemoverGame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
+| 22 | my-indian-story | MyIndianStoryGame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
 
 > T14 · T15 · T16 are content creation tasks — mark [x] once files are recorded/created, not per scene.
 
@@ -161,10 +161,10 @@ Before every task, Claude Code must:
 | 16 | game2-rangoli | FestivalRangoliGame | [ ] | [x] | [--] | [ ] |
 | 17 | game3-cooking | ModakCookingGame | [ ] | [x] | [--] | [ ] |
 | 18 | game4-mandap | MandapDecorationGame | [ ] | [x] | [--] | [ ] |
-| 19 | family-tree | Namebirthdaygame | [ ] | [x] | [--] | [ ] |
+| 19 | family-tree | Familytreegame | [ ] | [x] | [--] | [ ] |
 | 20 | favorite-food | Favoritefoodgame | [ ] | [x] | [--] | [ ] |
-| 21 | dreams-wishes | Favoritefoodgame | [ ] | [x] | [--] | [ ] |
-| 22 | name-birthday | ObstacleRemoverGame | [ ] | [x] | [--] | [ ] |
+| 21 | dreams-wishes | ObstacleRemoverGame | [ ] | [x] | [--] | [ ] |
+| 22 | my-indian-story | MyIndianStoryGame | [ ] | [x] | [--] | [~] |
 
 ### Ganesha & Mooshika Presence
 
@@ -202,10 +202,10 @@ Before every task, Claude Code must:
 | 16 | game2-rangoli | FestivalRangoliGame | [--] | [ ] |
 | 17 | game3-cooking | ModakCookingGame | [--] | [ ] |
 | 18 | game4-mandap | MandapDecorationGame | [--] | [ ] |
-| 19 | family-tree | Namebirthdaygame | [--] | [ ] |
+| 19 | family-tree | Familytreegame | [--] | [ ] |
 | 20 | favorite-food | Favoritefoodgame | [--] | [ ] |
-| 21 | dreams-wishes | Favoritefoodgame | [--] | [ ] |
-| 22 | name-birthday | ObstacleRemoverGame | [--] | [ ] |
+| 21 | dreams-wishes | ObstacleRemoverGame | [--] | [ ] |
+| 22 | my-indian-story | MyIndianStoryGame | [--] | [ ] |
 
 ### Quality & Audit
 
@@ -229,10 +229,10 @@ Before every task, Claude Code must:
 | 16 | game2-rangoli | FestivalRangoliGame | [ ] | [ ] | [ ] |
 | 17 | game3-cooking | ModakCookingGame | [ ] | [ ] | [ ] |
 | 18 | game4-mandap | MandapDecorationGame | [ ] | [ ] | [ ] |
-| 19 | family-tree | Namebirthdaygame | [ ] | [ ] | [ ] |
+| 19 | family-tree | Familytreegame | [ ] | [ ] | [ ] |
 | 20 | favorite-food | Favoritefoodgame | [ ] | [ ] | [ ] |
-| 21 | dreams-wishes | Favoritefoodgame | [ ] | [ ] | [ ] |
-| 22 | name-birthday | ObstacleRemoverGame | [ ] | [ ] | [ ] |
+| 21 | dreams-wishes | ObstacleRemoverGame | [ ] | [ ] | [ ] |
+| 22 | my-indian-story | MyIndianStoryGame | [ ] | [ ] | [ ] |
 
 ---
 
