@@ -51,76 +51,76 @@
 
 ---
 
-## SCENE 19 — FAMILY TREE (Familytreegame.jsx)
+## SCENE 19 — FAMILY TREE (Familytreegame.jsx) ✅
 
 **Phases:** intro → ganeshaTree → transition → childInput → sideBySide
 
 ### 19A · TAB SWITCH — PRODUCTION BLOCKER
-- [ ] **onHide: stops all voice (stopVoice + stopSpokenVoice), clears idle hint timers, resets idleHintLevel to 0**
-- [ ] **onShow: triggers return hint VO, restarts idle hint timers if choice modal is still open**
-- [ ] After resumeDelay countdown clears → pointing hint arrow shows on first unplaced circle
-- [ ] Tab switch in ganeshaTree (no choice modal open) → returns cleanly, no VO replay spam
-- [ ] Tab switch with choice modal open → modal still visible on return, idle hints restart
-- [ ] Tab switch in childInput (name modal open) → modal still visible, draft text preserved
-- [ ] Tab switch in sideBySide → comparison card still visible on return
-- [ ] **No duplicate timers after tab return in any phase**
+- [x] **onHide: stops all voice (stopVoice + stopSpokenVoice), clears idle hint timers, resets idleHintLevel to 0**
+- [x] **onShow: triggers return hint VO, restarts idle hint timers if choice modal is still open**
+- [x] After resumeDelay countdown clears → pointing hint arrow shows on first unplaced circle
+- [x] Tab switch in ganeshaTree (no choice modal open) → returns cleanly, no VO replay spam
+- [x] Tab switch with choice modal open → modal still visible on return, idle hints restart
+- [x] Tab switch in childInput (name modal open) → modal still visible, draft text preserved
+- [x] Tab switch in sideBySide → comparison card still visible on return
+- [x] **No duplicate timers after tab return in any phase**
 
 ### 19B · RELOAD / CONTINUE — PRODUCTION BLOCKER
-- [ ] Reload in intro → no popup, opening modal shows fresh
-- [ ] **Reload in ganeshaTree (1–3 placed) → resume popup 'You've placed X/4 family members' + placed deities remain**
-- [ ] **Reload in ganeshaTree (all 4 placed) → resume popup 'Amazing! You completed Ganesha's tree!' + tree intact**
-- [ ] **Reload in childInput (some family added) → resume popup 'You've added X family members' + family avatars preserved**
-- [ ] Reload in transition or sideBySide → UI shows as-is, no popup needed
-- [ ] **ALL transient states cleared on reload: showChoiceModal, wrongChoice, showFunFactModal, showNameModal, justPlacedId, showTreeSparkles**
-- [ ] Resume popup auto-dismisses after 5s — does not block gameplay
-- [ ] **Completion 'Next Scene' → next scene; 'Replay' → full state cleared**
+- [x] Reload in intro → no popup, opening modal shows fresh
+- [x] **Reload in ganeshaTree (1–3 placed) → resume popup 'You've placed X/4 family members' + placed deities remain**
+- [x] **Reload in ganeshaTree (all 4 placed) → resume popup 'Amazing! You completed Ganesha's tree!' + tree intact**
+- [x] **Reload in childInput (some family added) → resume popup 'You've added X family members' + family avatars preserved**
+- [x] Reload in transition or sideBySide → UI shows as-is, no popup needed
+- [x] **ALL transient states cleared on reload: showChoiceModal, wrongChoice, showFunFactModal, showNameModal, justPlacedId, showTreeSparkles**
+- [x] Resume popup auto-dismisses after 5s — does not block gameplay
+- [x] **Completion 'Next Scene' → next scene; 'Replay' → full state cleared**
 
 ### 19C · IDLE HINTS
-- [ ] idleHintLevel 1: correct option wobbles (idle-wobble class)
-- [ ] **idleHintLevel 2: correct option glows (idle-glow class) + VO hint plays per-circle**
-- [ ] idleHintLevel 3: sparkle effect on correct option (idle-sparkle class)
-- [ ] **Pointer emoji appears at level 3 on correct option, hides on interaction**
-- [ ] Choosing wrong option resets idle hint cycle (timer restarts)
-- [ ] Idle hints restart on tab return if choice modal still open (faster on 2nd+ open)
-- [ ] No idle hints in childInput or sideBySide — acceptable gap, not a blocker
+- [x] idleHintLevel 1: correct option wobbles (idle-wobble class)
+- [x] **idleHintLevel 2: correct option glows (idle-glow class) + VO hint plays per-circle**
+- [x] idleHintLevel 3: sparkle effect on correct option (idle-sparkle class)
+- [x] **Pointer emoji appears at level 3 on correct option, hides on interaction**
+- [x] Choosing wrong option resets idle hint cycle (timer restarts)
+- [x] Idle hints restart on tab return if choice modal still open (faster on 2nd+ open)
+- [x] No idle hints in childInput or sideBySide — acceptable gap, not a blocker
 
 ### 19D · VISUAL ASSETS
-- [ ] Background (family_background.jpg) — No 404
-- [ ] Family tree overlay (family_tree.png) — No stretch
-- [ ] 4 correct deity images (Shiva, Parvati, Kartikeya, Baby Ganesha) — All load
-- [ ] 8 distractor deity images (Brahma, Vishnu, Lakshmi, etc.) — All load
-- [ ] 7 child family avatars (Dad, Mom, Grandpa, Grandma, Brother, Sister, Myself, Pet) — All load
-- [ ] Family / heart / home icons — All load
-- [ ] Opening modal image + completion modal icons — Correct
-- [ ] Sparkle / confetti layer — Above gameplay
+- [x] Background (family_background.jpg) — No 404
+- [x] Family tree overlay (family_tree.png) — No stretch
+- [x] 4 correct deity images (Shiva, Parvati, Kartikeya, Baby Ganesha) — All load
+- [x] 8 distractor deity images (Brahma, Vishnu, Lakshmi, etc.) — All load
+- [x] 7 child family avatars (Dad, Mom, Grandpa, Grandma, Brother, Sister, Myself, Pet) — All load
+- [x] Family / heart / home icons — All load
+- [x] Opening modal image + completion modal icons — Correct
+- [x] Sparkle / confetti layer — Above gameplay
 
 ### 19E · CORE MECHANICS
-- [ ] Circle tap → Opens choice modal for that slot
-- [ ] Correct deity choice → Sparkle + VO, deity placed in correct slot
-- [ ] Wrong choice → Gentle wiggle, user can retry, no progress lost
-- [ ] Placement lock → Placed slot read-only, tap shows fun-fact modal
-- [ ] Sequence lock → Cannot open next slot while current in progress
-- [ ] childInput transition → All 4 deities placed → transition phase → child input prompt
-- [ ] Child avatar tap → Opens name input modal for that slot
-- [ ] Name input → Text saves, call name persists to comparison card
-- [ ] sideBySide phase → Ganesha's 4 + child's family shown side-by-side, all names visible
-- [ ] Completion → sideBySide complete → SceneCompletionCelebration, ProgressManager called
+- [x] Circle tap → Opens choice modal for that slot
+- [x] Correct deity choice → Sparkle + VO, deity placed in correct slot
+- [x] Wrong choice → Gentle wiggle, user can retry, no progress lost
+- [x] Placement lock → Placed slot read-only, tap shows fun-fact modal
+- [x] Sequence lock → Cannot open next slot while current in progress
+- [x] childInput transition → All 4 deities placed → transition phase → child input prompt
+- [x] Child avatar tap → Opens name input modal for that slot
+- [x] Name input → Text saves, call name persists to comparison card
+- [x] sideBySide phase → Ganesha's 4 + child's family shown side-by-side, all names visible
+- [x] Completion → sideBySide complete → SceneCompletionCelebration, ProgressManager called
 
 ### 19F · VOICE & VO CHECKLIST
-- [ ] Intro / opening modal VO → Opening modal loads
-- [ ] ganeshaTree entry VO → Phase enters from intro
-- [ ] Per-circle idle hint VO → idleHintLevel 2 per open circle
-- [ ] Correct placement VO → Correct deity chosen
-- [ ] Wrong choice VO → Wrong deity chosen
-- [ ] Fun-fact / info VO → Already-placed slot tapped
-- [ ] Transition VO → transition phase enters
-- [ ] childInput entry VO → childInput phase enters
-- [ ] Name input prompt VO → Name modal opens per slot
-- [ ] sideBySide / comparison VO → sideBySide phase enters
-- [ ] Return hint VO → Tab return
-- [ ] Tap SFX → All taps
-- [ ] Sparkle SFX → Correct placements + completion
-- [ ] **Audio toggle OFF → Any VO playing — All stop immediately — BLOCKER**
+- [x] Intro / opening modal VO → Opening modal loads
+- [x] ganeshaTree entry VO → Phase enters from intro
+- [x] Per-circle idle hint VO → idleHintLevel 2 per open circle
+- [x] Correct placement VO → Correct deity chosen
+- [x] Wrong choice VO → Wrong deity chosen
+- [x] Fun-fact / info VO → Already-placed slot tapped
+- [x] Transition VO → transition phase enters
+- [x] childInput entry VO → childInput phase enters
+- [x] Name input prompt VO → Name modal opens per slot
+- [x] sideBySide / comparison VO → sideBySide phase enters
+- [x] Return hint VO → Tab return
+- [x] Tap SFX → All taps
+- [x] Sparkle SFX → Correct placements + completion
+- [x] **Audio toggle OFF → Any VO playing — All stop immediately — BLOCKER**
 
 ---
 
