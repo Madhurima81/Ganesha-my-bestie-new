@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './OpeningModal.css';
 import { getOpeningModal } from '../../../lib/config/content';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 import GaneshaPresence from '../../../lib/components/character/GaneshaPresence';
+import useAppVisibility from '../../../lib/hooks/useAppVisibility';
 
 // Icon Mapping for Unified Style
 import symbolMooshikaColored from '../../symbol-mountain/shared/images/icons/symbol-mooshika-colored.svg';
@@ -64,6 +65,56 @@ import diyaIcon from '../../festival-square/assets/images/icons/mandap-diya-icon
 import flowerIcon from '../../festival-square/assets/images/icons/mandap-flower-icon.png';
 import recipeIcon from '../../festival-square/assets/images/icons/recipe-icon.png';
 import serveIcon from '../../festival-square/assets/images/icons/serve-icon.png';
+
+const CTA_POST_VO_GAP_MS = 5000;
+const CTA_FALLBACK_TOTAL_MS = 12000;
+const CTA_VO_POLL_INTERVAL_MS = 250;
+const CTA_HINT_TEXT = 'Tap the button to begin!';
+const AUDIO_PREF_KEY = 'ganesha_audio_enabled';
+
+const isGlobalAudioEnabled = () => {
+    try {
+        const saved = localStorage.getItem(AUDIO_PREF_KEY);
+        return saved === null ? true : saved === 'true';
+    } catch {
+        return true;
+    }
+};
+
+const playOpeningCtaHint = () => {
+    if (typeof window === 'undefined') return;
+    if (!isGlobalAudioEnabled()) return;
+    if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return;
+
+    try {
+        const utterance = new window.SpeechSynthesisUtterance(CTA_HINT_TEXT);
+        utterance.rate = 0.95;
+        utterance.pitch = 1;
+        utterance.volume = 1;
+        window.speechSynthesis.speak(utterance);
+    } catch {
+        // Ignore speech API errors on unsupported devices/browsers.
+    }
+};
+
+const isOpeningVoActive = () => {
+    if (typeof window === 'undefined') return false;
+
+    const webSpeechSpeaking = Boolean(window.speechSynthesis?.speaking);
+    const activeAudioElements =
+        typeof document !== 'undefined'
+            ? Array.from(document.querySelectorAll('audio')).filter(
+                (audioEl) =>
+                    !audioEl.paused &&
+                    !audioEl.ended &&
+                    !audioEl.loop &&
+                    !audioEl.muted &&
+                    audioEl.volume > 0
+            )
+            : [];
+
+    return webSpeechSpeaking || activeAudioElements.length > 0;
+};
 
 const stopAllOpeningVoAudio = () => {
     // Stop <audio> elements (scene VO, effects, etc.) universally.
@@ -179,6 +230,12 @@ const OpeningModal = ({
     buttonText: buttonTextProp,
 }) => {
     const [internalOpen, setInternalOpen] = useState(true);
+    const [showIdleCtaHint, setShowIdleCtaHint] = useState(false);
+    const voMonitorTimerRef = useRef(null);
+    const hintTriggeredRef = useRef(false);
+    const sawOpeningVoRef = useRef(false);
+    const lastVoActiveAtRef = useRef(0);
+    const monitorStartedAtRef = useRef(0);
     const configContent = (zoneId && sceneId) ? getOpeningModal(zoneId, sceneId) : null;
 
     const content = {
@@ -188,13 +245,112 @@ const OpeningModal = ({
         iconLabels: iconLabelsProp ?? configContent?.iconLabels,
         buttonText: buttonTextProp ?? configContent?.buttonText,
     };
-
-    if (!content.title && !content.description) return null;
-
+    const hasContent = Boolean(content.title || content.description);
     const visible = typeof isOpen === 'boolean' ? isOpen : internalOpen;
-    if (!visible) return null;
-
     const theme = zoneId ? getZoneTheme(zoneId) : {};
+
+    const clearCtaHintTimers = () => {
+        if (voMonitorTimerRef.current) {
+            clearInterval(voMonitorTimerRef.current);
+            voMonitorTimerRef.current = null;
+        }
+    };
+
+    // Tab visibility: reset hint timer on tab switch (matching idle hint behavior in scenes)
+    useAppVisibility(
+        () => {
+            // onHide: clear the hint timer
+            clearCtaHintTimers();
+            setShowIdleCtaHint(false);
+        },
+        () => {
+            // onShow: restart monitoring from fresh state
+            if (hasContent && visible && showButton && !hintTriggeredRef.current) {
+                sawOpeningVoRef.current = false;
+                monitorStartedAtRef.current = Date.now();
+                lastVoActiveAtRef.current = monitorStartedAtRef.current;
+
+                voMonitorTimerRef.current = setInterval(() => {
+                    if (hintTriggeredRef.current) return;
+
+                    const now = Date.now();
+                    const voActive = isOpeningVoActive();
+
+                    if (voActive) {
+                        sawOpeningVoRef.current = true;
+                        lastVoActiveAtRef.current = now;
+                        return;
+                    }
+
+                    if (sawOpeningVoRef.current && now - lastVoActiveAtRef.current >= CTA_POST_VO_GAP_MS) {
+                        hintTriggeredRef.current = true;
+                        setShowIdleCtaHint(true);
+                        playOpeningCtaHint();
+                        clearCtaHintTimers();
+                        return;
+                    }
+
+                    if (!sawOpeningVoRef.current && now - monitorStartedAtRef.current >= CTA_FALLBACK_TOTAL_MS) {
+                        hintTriggeredRef.current = true;
+                        setShowIdleCtaHint(true);
+                        playOpeningCtaHint();
+                        clearCtaHintTimers();
+                    }
+                }, CTA_VO_POLL_INTERVAL_MS);
+            }
+        }
+    );
+
+    useEffect(() => {
+        setShowIdleCtaHint(false);
+        hintTriggeredRef.current = false;
+        clearCtaHintTimers();
+
+        if (!hasContent || !visible || !showButton) return undefined;
+
+        const triggerHint = () => {
+            if (hintTriggeredRef.current) return;
+            hintTriggeredRef.current = true;
+            setShowIdleCtaHint(true);
+            playOpeningCtaHint();
+            clearCtaHintTimers();
+        };
+
+        sawOpeningVoRef.current = false;
+        monitorStartedAtRef.current = Date.now();
+        lastVoActiveAtRef.current = monitorStartedAtRef.current;
+
+        voMonitorTimerRef.current = setInterval(() => {
+            if (hintTriggeredRef.current) return;
+
+            const now = Date.now();
+            const voActive = isOpeningVoActive();
+
+            if (voActive) {
+                sawOpeningVoRef.current = true;
+                lastVoActiveAtRef.current = now;
+                return;
+            }
+
+            // Normal path: Intro VO played, then stayed idle for desired gap.
+            if (sawOpeningVoRef.current && now - lastVoActiveAtRef.current >= CTA_POST_VO_GAP_MS) {
+                triggerHint();
+                return;
+            }
+
+            // Fallback: no VO detected at all on this device/scene.
+            if (!sawOpeningVoRef.current && now - monitorStartedAtRef.current >= CTA_FALLBACK_TOTAL_MS) {
+                triggerHint();
+            }
+        }, CTA_VO_POLL_INTERVAL_MS);
+
+        return () => {
+            clearCtaHintTimers();
+        };
+    }, [hasContent, visible, showButton, zoneId, sceneId]);
+
+    if (!hasContent) return null;
+    if (!visible) return null;
 
     return (
         <div className="game-modal-overlay" style={{
@@ -256,8 +412,11 @@ const OpeningModal = ({
 
                     {showButton && (
                         <button
-                            className="game-modal-button reveal"
+                            className={`game-modal-button reveal ${showIdleCtaHint ? 'cta-idle-prompt' : ''}`}
                             onClick={() => {
+                                hintTriggeredRef.current = true;
+                                clearCtaHintTimers();
+                                setShowIdleCtaHint(false);
                                 stopAllOpeningVoAudio();
                                 if (typeof isOpen !== 'boolean') setInternalOpen(false);
                                 if (onStart) onStart();

@@ -16,6 +16,15 @@ import { useEffect, useRef } from 'react';
 const useAppVisibility = (onHide, onShow, { resumeDelay = 0 } = {}) => {
   const resumeTimerRef = useRef(null);
 
+  // Keep latest callbacks in refs so event listeners never need to re-register.
+  // Without this, inline onHide/onShow functions (new refs every render) cause
+  // the effect to re-run, which calls cancelPendingResume() during the 3s countdown
+  // window — killing the pending onShow before it fires.
+  const onHideRef = useRef(onHide);
+  const onShowRef = useRef(onShow);
+  useEffect(() => { onHideRef.current = onHide; }, [onHide]);
+  useEffect(() => { onShowRef.current = onShow; }, [onShow]);
+
   useEffect(() => {
     let hiddenState = typeof document !== 'undefined' ? document.hidden : false;
 
@@ -30,7 +39,7 @@ const useAppVisibility = (onHide, onShow, { resumeDelay = 0 } = {}) => {
       if (hiddenState) return;
       hiddenState = true;
       cancelPendingResume(); // tab re-hid before countdown finished → cancel resume
-      onHide?.();
+      onHideRef.current?.();
     };
 
     const runShow = () => {
@@ -40,10 +49,10 @@ const useAppVisibility = (onHide, onShow, { resumeDelay = 0 } = {}) => {
         // Hold off calling onShow until countdown expires
         resumeTimerRef.current = setTimeout(() => {
           resumeTimerRef.current = null;
-          onShow?.();
+          onShowRef.current?.();
         }, resumeDelay);
       } else {
-        onShow?.();
+        onShowRef.current?.();
       }
     };
 
@@ -66,7 +75,7 @@ const useAppVisibility = (onHide, onShow, { resumeDelay = 0 } = {}) => {
       window.removeEventListener('pageshow', runShow);
       cancelPendingResume();
     };
-  }, [onHide, onShow, resumeDelay]);
+  }, [resumeDelay]); // callbacks read via refs — no re-register on every render
 };
 
 export default useAppVisibility;

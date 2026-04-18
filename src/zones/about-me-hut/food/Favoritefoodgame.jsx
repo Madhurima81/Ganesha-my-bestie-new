@@ -162,7 +162,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   const VOICE_LINES = {
     // Opening Screen
-    opening: "Let's discover our favorite things.",
+    opening: "Let's find my favorite things and yours!",
 
     // Ganesha Section - Food
     foodQuestion: "Hmm... can you guess my favourite food?",
@@ -309,10 +309,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const [discoveryFly, setDiscoveryFly] = useState(null);
 
   // Idle hint state for Ganesha choices
-  // 0: none, 1: wobble@6s, 2: glow@6s, 3: VO@15s + pointer emoji, 4: sparkle@22s, 5: pulse@34s, 6: pulse@46s
+  // 0: none, 1: wobble@6s, 2: glow@6s, 3: VO@15s, 4: sparkle@22s, 5: pulse@34s, 6: pulse@46s
   const [idleHintLevel, setIdleHintLevel] = useState(0);
-  const [showPointerHint, setShowPointerHint] = useState(false);
-  const pointerHintTimerRef = useRef(null);
   const idleTimerRef = useRef(null);
   const idlePhaseRef = useRef(null);
 
@@ -469,7 +467,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     return () => {
       if (discoveryFlyTimeoutRef.current) clearTimeout(discoveryFlyTimeoutRef.current);
       if (miniGestureTimerRef.current) clearTimeout(miniGestureTimerRef.current);
-      if (pointerHintTimerRef.current) clearTimeout(pointerHintTimerRef.current);
     };
   }, []);
 
@@ -745,12 +742,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     const t3 = setTimeout(() => {
       if (idlePhaseRef.current === currentPhase) {
         setIdleHintLevel(3); // VO clue at 15s
-        // Show pointer emoji hint alongside VO
-        setShowPointerHint(true);
-        if (pointerHintTimerRef.current) clearTimeout(pointerHintTimerRef.current);
-        pointerHintTimerRef.current = setTimeout(() => {
-          setShowPointerHint(false);
-        }, 3500);
         // Play hint VO based on phase
         const hintMap = {
           'food-choice': VOICE_LINES.foodHint,
@@ -789,10 +780,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   // Reset idle hints on any user interaction (choice click)
   const resetIdleHints = () => {
     setIdleHintLevel(0);
-    setShowPointerHint(false);
     idlePhaseRef.current = null;
     if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
-    if (pointerHintTimerRef.current) clearTimeout(pointerHintTimerRef.current);
   };
 
   // --- HANDLERS ---
@@ -1089,25 +1078,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         </div>
       )}
 
-      {/* Pointer Emoji Hint (Hint Level 3) */}
-      {showPointerHint && (
-        <div
-          className="idle-pointer-hint"
-          style={{
-            position: 'absolute',
-            left: '50%',
-            top: '50%',
-            transform: 'translate(-50%, -50%)',
-            fontSize: '72px',
-            zIndex: 65,
-            pointerEvents: 'none',
-            animation: 'idlePointerBounce 1s ease-in-out infinite'
-          }}
-          aria-hidden="true"
-        >
-          👉
-        </div>
-      )}
 
       {/* Story Progress Header */}
       {!sceneState.gamePhase.includes('child') && sceneState.gamePhase !== 'comparison-card' && sceneState.gamePhase !== 'ending' && (

@@ -267,7 +267,7 @@ const handleAction = (callback, skipComplete = false) => {
                     </div>
                   )}
 
-                  {/* Keep Exploring — primary CTA (only when no custom primaryAction) */}
+                  {/* Next Scene — primary CTA (only when no custom primaryAction) */}
                   {!primaryAction && (
                     <button
                       className="celebration-btn celebration-btn-orange"
@@ -280,19 +280,19 @@ const handleAction = (callback, skipComplete = false) => {
                         handleContinueWithAnimation(() => handleAction(onContinue));
                       }}
                     >
-                      Keep Exploring
+                      Next Scene
                     </button>
                   )}
 
                   {/* Secondary / Tertiary actions */}
                   {!primaryAction ? (
                     <>
-                      {/* 2nd tier: Explore Scenes */}
+                      {/* 2nd tier: Back to Zone */}
                       <button
                         className="celebration-btn celebration-btn-teal"
                         onClick={() => handleAction(handleExplore)}
                       >
-                        Explore Scenes
+                        Back
                       </button>
                       {/* 3rd tier: Play Again — smallest, least prominent */}
                       <button

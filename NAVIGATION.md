@@ -327,17 +327,29 @@ User has not interacted for X seconds.
 
 ---
 
-### Scene 19 — Family Tree (Namebirthdaygame)
+### Scene 19 — Family Tree (Familytreegame)
 
 **Phases found in JSX:**
-- [ ]
+- [x] intro — opening modal
+- [x] ganeshaTree — tap circles, place Ganesha's 4 family members (Shiva, Parvati, Kartikeya, Baby Ganesha)
+- [x] transition — celebration bridge before child input
+- [x] childInput — child builds their own family tree (taps slots, selects avatars, enters call names)
+- [x] sideBySide — final comparison: Ganesha's family vs child's family
 
-**Tab Switch** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
-**Continue / Resume** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
-**Idle Hints** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
+**Tab Switch**
+- Status: [x] EXISTS  [ ] PARTIAL  [ ] MISSING
+- Notes: usePauseAwareTimeout wired with onHide (stops voice, clears idle hint timers, resets idleHintLevel to 0) and onShow (triggers return hint VO, restarts idle hint timers if choice modal is still open with faster progression on 2nd+ open). After resumeDelay countdown clears, shows pointing hint arrow on first unplaced circle in ganeshaTree phase.
+
+**Continue / Resume**
+- Status: [x] EXISTS  [ ] PARTIAL  [ ] MISSING
+- Notes: Reload PRESERVES progress (placed members stay). Resume popup appears and auto-dismisses after 5s. Cases: ganeshaTree (1–3 placed) → "You've placed X/4 family members. Keep going!" | ganeshaTree (4 placed) → "Amazing! You completed Ganesha's tree!" | childInput (some added) → "You've added X family members!" | intro → no popup, modal opens fresh | transition/sideBySide → shows UI as-is, no popup. Transient modal states always cleared on reload (showChoiceModal, wrongChoice, showFunFactModal, etc.)
+
+**Idle Hints**
+- Status: [x] EXISTS  [ ] PARTIAL  [ ] MISSING
+- Notes: idleHintLevel (0–3) active in ganeshaTree phase only (when choice modal is open). Wobble (1) → glow (2) → sparkle + VO hint per-circle (3). idleHintTimersRef tracks timers; all cleared on tab hide. Not present in childInput or sideBySide phases.
 
 **Gaps to fix:**
-- [ ]
+- [ ] Idle hints not present in childInput phase — child may stall on name input with no nudge (T27)
 
 ---
 
@@ -434,17 +446,33 @@ User has not interacted for X seconds.
 
 ---
 
-### Scene 22 — Name Birthday (Namebirthdaygame)
+### Scene 22 — My Indian Story (MyIndianStoryGame)
 
 **Phases found in JSX:**
-- [ ]
+- [x] opening
+- [x] ganesha_home — drag magnifying glass over India map, discover 3 Ganesha locations
+- [x] child_home — child selects their region of India (or Outside India / Kailash)
+- [x] language_ganesha — child guesses which language Ganesha knows
+- [x] language_child — child picks up to 3 languages they know
+- [x] festivals_ganesha — child guesses Ganesha's favourite festival
+- [x] festivals_child — child picks up to 4 festivals they celebrate
+- [x] origin_card — story origin card reveals
+- [x] complete
 
-**Tab Switch** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
-**Continue / Resume** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
-**Idle Hints** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
+**Tab Switch**
+- Status: [x] EXISTS  [ ] PARTIAL  [ ] MISSING
+- Notes: handled via usePauseAwareTimeout (which internally calls useAppVisibility). onHide: stop() pauses all voice. onShow: onReturnHint() replays return hint VO. All safeSetTimeout timers pause automatically.
+
+**Continue / Resume**
+- Status: [x] EXISTS  [ ] PARTIAL  [ ] MISSING
+- Notes: RESUMABLE_STEPS covers all phases except opening and complete. useResumeCountdown shows 3s countdown popup before resuming. localStorage saves selectedRegion, selectedLanguages, selectedFestivals, current step. On reload, selections restore from sceneState and phase resumes exactly where left off.
+
+**Idle Hints**
+- Status: [~] EXISTS  [ ] PARTIAL  [ ] MISSING
+- Notes: ganeshaHomeIdleLevel (0–3) active only in ganesha_home phase — glow → repeating glow → steady glow + pointer. Other phases (child_home, language, festivals) have NO idle hints yet. T27 still PENDING.
 
 **Gaps to fix:**
-- [ ]
+- [ ] Idle hints missing in child_home, language_ganesha, language_child, festivals_ganesha, festivals_child phases (T27)
 
 ---
 

@@ -324,9 +324,8 @@ const FamilyTreeGameContent = ({
   const miniGestureTimerRef = useRef(null);
 
   // Idle hint system (choice modal)
-  const [idleHintLevel, setIdleHintLevel] = useState(0); // 0=none, 1=wobble, 2=glow, 3=sparkle
+  const [idleHintLevel, setIdleHintLevel] = useState(0); // 0=none, 1=hint, 2=hint-strong, 3=hint-final
   const idleHintTimersRef = useRef([]);
-  const modalOpenCountRef = useRef({}); // tracks open count per circle id
   // Mirror refs so usePauseAwareTimeout callbacks can read current state without stale closures
   const showChoiceModalRef = useRef(sceneState.showChoiceModal);
   showChoiceModalRef.current = sceneState.showChoiceModal;
@@ -335,6 +334,34 @@ const FamilyTreeGameContent = ({
   // Track if wrong answer VO is currently playing — block replay on tab return
   const isPlayingWrongVORef = useRef(false);
   isPlayingWrongVORef.current = isPlayingWrongVO;
+  const IDLE_HINT_FIRST_DELAY_MS = 10000;
+  const IDLE_HINT_STEP_MS = 8000;
+
+  const startChoiceIdleHintFlow = (circleId) => {
+    if (!circleId) return;
+
+    idleHintTimersRef.current.forEach(id => clearTimeout(id));
+    idleHintTimersRef.current = [];
+    setIdleHintLevel(0);
+
+    const level1Timer = setTimeout(() => {
+      setIdleHintLevel(1);
+    }, IDLE_HINT_FIRST_DELAY_MS);
+
+    const level2Timer = setTimeout(() => {
+      setIdleHintLevel(2);
+      if (audioEnabledRef.current && IDLE_HINT_VO[circleId]) {
+        stopSpokenVoice();
+        speakHint(IDLE_HINT_VO[circleId], { age: 7, style: 'child', moment: 'encouragement' });
+      }
+    }, IDLE_HINT_FIRST_DELAY_MS + IDLE_HINT_STEP_MS);
+
+    const level3Timer = setTimeout(() => {
+      setIdleHintLevel(3);
+    }, IDLE_HINT_FIRST_DELAY_MS + (2 * IDLE_HINT_STEP_MS));
+
+    idleHintTimersRef.current = [level1Timer, level2Timer, level3Timer];
+  };
 
   // Resume Countdown & Pause-Aware Timeout
   const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
@@ -367,23 +394,7 @@ const FamilyTreeGameContent = ({
       onReturnHint?.();
       // Restart idle hints if choice modal is still open when child returns
       if (showChoiceModalRef.current && selectedCircleRef.current) {
-        const circle = selectedCircleRef.current;
-        const openCount = modalOpenCountRef.current[circle] || 1;
-        const t1 = openCount > 1 ? 4000 : 6000;
-        const t2 = openCount > 1 ? 10000 : 14000;
-        const t3 = openCount > 1 ? 16000 : 22000;
-        idleHintTimersRef.current.forEach(id => clearTimeout(id));
-        idleHintTimersRef.current = [];
-        const timer1 = setTimeout(() => setIdleHintLevel(1), t1);
-        const timer2 = setTimeout(() => {
-          setIdleHintLevel(2);
-          if (audioEnabledRef.current && IDLE_HINT_VO[circle]) {
-            stopSpokenVoice();
-            speakHint(IDLE_HINT_VO[circle], { age: 7, style: 'child', moment: 'encouragement' });
-          }
-        }, t2);
-        const timer3 = setTimeout(() => setIdleHintLevel(3), t3);
-        idleHintTimersRef.current = [timer1, timer2, timer3];
+        startChoiceIdleHintFlow(selectedCircleRef.current);
       }
     },
     resumeDelay: RESUME_DELAY_MS
@@ -404,9 +415,14 @@ const FamilyTreeGameContent = ({
 
       if (canShowHint) {
         setShowReturnHint(true);
-        if (isAudioOn) playVoice('hintTap');
-        const id = setTimeout(() => setShowReturnHint(false), 3000);
-        return () => clearTimeout(id);
+        const voiceDelayId = setTimeout(() => {
+          if (isAudioOn) playVoice('tapCircle');
+        }, 2000);
+        const hideId = setTimeout(() => setShowReturnHint(false), 3000);
+        return () => {
+          clearTimeout(voiceDelayId);
+          clearTimeout(hideId);
+        };
       }
     }
     prevCountdownRef.current = countdownValue;
@@ -756,17 +772,23 @@ const FamilyTreeGameContent = ({
 
     if (allPlacedSequenceStartedRef.current) return;
     allPlacedSequenceStartedRef.current = true;
+    console.log("🎉 allPlaced sequence STARTED");
 
-    // Keep this gap short after the final placement sequence unlocks.
-    // Effective timeline is now ~4.4s from final correct tap
-    // (3.7s placement sequence + 0.7s allPlaced lead-in), down from ~7.7s.
-    const ALL_PLACED_VO_DELAY_MS = 700;
+    // Wait for last deity VO to complete (varies by deity: 2.5-3.5s) + 1s gap
+    // Using 5000ms to safely account for all deity VOs + TTS variation
+    const ALL_PLACED_VO_DELAY_MS = 5000;
     const ALL_PLACED_SPARKLE_MS = 2500;
 
     allPlacedSequenceTimerRef.current = scheduleTimeout(() => {
-      stopSpokenVoice();
+      console.log("🎉 allPlaced timeout FIRED, calling speakHint");
+      stopVoice();
       if (isAudioOn) {
-        playVoice('allPlaced');
+        const allPlacedScript = getVoiceScript('about-me-hut', 'family-tree', 'allPlaced');
+        console.log("🎉 allPlaced script text:", allPlacedScript?.text);
+        speakHint(
+          allPlacedScript?.text || "Great! You met my loving family!",
+          { age: 7, style: 'child', moment: 'celebration' }
+        );
       }
       sceneActions.updateState({ showTreeSparkles: true });
       allPlacedSparkleTimerRef.current = scheduleTimeout(() => {
@@ -868,7 +890,7 @@ const FamilyTreeGameContent = ({
 
   // ========================================
   // CHOICE MODAL: Stop voice + run idle hint progression
-  // 6s wobble → 6s glow → 14s VO clue → 22s sparkle (no further hints)
+  // 10s hint → 18s hint+VO → 26s stronger hint (aligned with Scene 22)
   // ========================================
   useEffect(() => {
     // Always clear running hint timers first
@@ -878,30 +900,7 @@ const FamilyTreeGameContent = ({
 
     if (sceneState.showChoiceModal && sceneState.selectedCircle) {
       stopVoice();
-
-      const circle = sceneState.selectedCircle;
-
-      const timer1 = setTimeout(() => {
-        setIdleHintLevel(1); // wobble on correct card at 6s
-      }, 6000);
-
-      const timer2 = setTimeout(() => {
-        setIdleHintLevel(2); // glow at 6s (immediately follows wobble)
-      }, 6000);
-
-      const timer3 = setTimeout(() => {
-        // keep glow + play VO clue at 14s
-        if (audioEnabledRef.current && IDLE_HINT_VO[circle]) {
-          stopSpokenVoice();
-          speakHint(IDLE_HINT_VO[circle], { age: 7, style: 'child', moment: 'encouragement' });
-        }
-      }, 14000);
-
-      const timer4 = setTimeout(() => {
-        setIdleHintLevel(3); // sparkle at 22s — no further hints after this
-      }, 22000);
-
-      idleHintTimersRef.current = [timer1, timer2, timer3, timer4];
+      startChoiceIdleHintFlow(sceneState.selectedCircle);
     }
 
     return () => {
@@ -1027,6 +1026,8 @@ const FamilyTreeGameContent = ({
   const handleChoiceSelection = (choice) => {
     // Block if wrong VO is currently playing
     if (isPlayingWrongVO) return;
+    // Prevent duplicate success sequence triggers while keeping cards visually clickable.
+    if (sceneState.correctChoiceId !== null || sceneState.showYouGotIt !== null || sceneState.isSequencePlaying) return;
 
     // Stop any playing VO
     stopVoice();
@@ -1081,7 +1082,7 @@ const FamilyTreeGameContent = ({
         sceneActions.updateState({ isSequencePlaying: false });
       }, sequenceFailsafeDelayMs);
     } else {
-      // WRONG CHOICE - Shake/fade animation, no VOs
+      // WRONG CHOICE - Shake only (match Scene 22)
       playWrongTap();
       setIsPlayingWrongVO(true);
 
@@ -1102,11 +1103,9 @@ const FamilyTreeGameContent = ({
         }
       }
 
-      // Lock this wrong choice immediately so it stays faded.
-      const nextDisabledChoices = [...new Set([...sceneState.disabledChoices, choice.id])];
+      // Shake only — no fade/lock (like Scene 22)
       sceneActions.updateState({
-        wrongChoice: choice.id,
-        disabledChoices: nextDisabledChoices
+        wrongChoice: choice.id
       });
 
       // Clear shake marker and unblock taps after feedback.
@@ -1120,38 +1119,15 @@ const FamilyTreeGameContent = ({
         // but the useEffect won't re-fire because showChoiceModal/selectedCircle didn't change.
         const circle = selectedCircleRef.current;
         if (circle) {
-          idleHintTimersRef.current.forEach(id => clearTimeout(id));
-          idleHintTimersRef.current = [];
-          const t1 = setTimeout(() => setIdleHintLevel(1), 6000);
-          const t2 = setTimeout(() => setIdleHintLevel(2), 6000);
-          const t3 = setTimeout(() => {
-            if (audioEnabledRef.current && IDLE_HINT_VO[circle]) {
-              stopSpokenVoice();
-              speakHint(IDLE_HINT_VO[circle], { age: 7, style: 'child', moment: 'encouragement' });
-            }
-          }, 14000);
-          const t4 = setTimeout(() => setIdleHintLevel(3), 22000);
-          idleHintTimersRef.current = [t1, t2, t3, t4];
+          startChoiceIdleHintFlow(circle);
         }
-      }, 1500);
+      }, 500);
     }
   };
 
   const handleCloseFunFact = () => {
     stopVoice();
     sceneActions.updateState({ showFunFactModal: null, isSequencePlaying: false });
-  };
-
-  const handleReplayWrongAnswerVO = (choice) => {
-    // Replay VO for wrong answer card on tap (learning/review)
-    playTap();
-    const nameVoiceKey = deityNameVoiceKeyMap[choice.id] || choice.id;
-    const hasRecordedName = !!getVoiceScript('about-me-hut', 'family-tree', nameVoiceKey);
-    if (hasRecordedName) {
-      playVoice(nameVoiceKey);
-    } else {
-      speakHint(choice.name, { age: 7, style: 'child', moment: 'thinking' });
-    }
   };
 
   const handleGaneshaTreeDone = () => {
@@ -1435,30 +1411,15 @@ const FamilyTreeGameContent = ({
                       className={[
                         'choice-card-integrated',
                         sceneState.wrongChoice === choice.id ? 'wrong-shake' : '',
-                        sceneState.disabledChoices.includes(choice.id) ? 'wrong-choice-locked' : '',
-                        sceneState.correctChoiceId === choice.id && choice.isCorrect ? 'correct-card-hit' : ''
+                        sceneState.correctChoiceId === choice.id && choice.isCorrect ? 'scene19-correct-hit' : '',
+                        choice.isCorrect && idleHintLevel === 1 ? 'hint' : '',
+                        choice.isCorrect && idleHintLevel === 2 ? 'hint-strong' : '',
+                        choice.isCorrect && idleHintLevel >= 3 ? 'hint-final' : ''
                       ].filter(Boolean).join(' ')}
-                      onClick={() => {
-                        // Replay VO on faded (disabled) wrong answer cards
-                        if (sceneState.disabledChoices.includes(choice.id)) {
-                          handleReplayWrongAnswerVO(choice);
-                        } else {
-                          handleChoiceSelection(choice);
-                        }
-                      }}
-                      disabled={
-                        sceneState.wrongChoice !== null ||
-                        sceneState.correctChoiceId !== null ||
-                        sceneState.showYouGotIt !== null
-                      }
+                      onClick={() => handleChoiceSelection(choice)}
                       style={{ animationDelay: `${index * 0.15}s` }}
                     >
-                      <div className={[
-                        'choice-image-integrated',
-                        choice.isCorrect && idleHintLevel === 1 ? 'idle-wobble' : '',
-                        choice.isCorrect && idleHintLevel === 2 ? 'idle-glow' : '',
-                        choice.isCorrect && idleHintLevel >= 3 ? 'idle-sparkle' : ''
-                      ].filter(Boolean).join(' ')}>
+                      <div className="choice-image-integrated">
                         <img src={choice.image} alt={choice.name} />
                       </div>
                       <div className="choice-name-integrated">{choice.name}</div>
@@ -1870,7 +1831,7 @@ const FamilyTreeGameContent = ({
             childFamily: sceneState.childFamily || []
           }}
           onContinue={() => {
-            if (onNavigate) onNavigate('scene-complete-continue');
+            if (onNavigate) onNavigate('favorite-food');
             else if (onComplete) onComplete();
           }}
           onReplay={() => {

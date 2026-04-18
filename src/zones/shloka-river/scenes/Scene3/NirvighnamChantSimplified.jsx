@@ -1556,7 +1556,6 @@ onClick={() => {
                 area="full"
               />
             )}
-          </div>
 
           {/* Characters visible during fireworks */}
           {showSparkle === 'final-fireworks' && (
@@ -1637,6 +1636,9 @@ onClick={() => {
     />
   </>
 )}
+
+          </>
+        )}
 
 {/* ✅ CELEBRATION: Double-Lock Save on Continue */}
   <SceneCompletionCelebration
@@ -1983,6 +1985,7 @@ onClick={() => {
           }}>
             Start Fresh
           </div>
+        </div>
         </div>
       </MessageManager>
     </InteractionManager>

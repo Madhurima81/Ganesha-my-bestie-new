@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import useAppVisibility from './useAppVisibility';
 
 /**
@@ -19,6 +19,16 @@ import useAppVisibility from './useAppVisibility';
 const usePauseAwareTimeout = ({ onHide, onShow, resumeDelay = 0 } = {}) => {
   const pendingRef = useRef([]);
 
+  // Keep latest callbacks in refs so pauseAll/resumeAll never need to change identity.
+  // If onHide/onShow were in useCallback deps, they'd create new refs every render
+  // (since they're inline functions), which would propagate into useAppVisibility
+  // and cause its effect to re-register — cancelling the pending onShow timer
+  // during the 3s countdown window on tab return.
+  const onHideRef = useRef(onHide);
+  const onShowRef = useRef(onShow);
+  useEffect(() => { onHideRef.current = onHide; }, [onHide]);
+  useEffect(() => { onShowRef.current = onShow; }, [onShow]);
+
   // Schedule (or re-schedule) a single entry
   const scheduleEntry = useCallback((entry) => {
     entry.startedAt = Date.now();
@@ -38,16 +48,16 @@ const usePauseAwareTimeout = ({ onHide, onShow, resumeDelay = 0 } = {}) => {
         entry.remaining = Math.max(0, entry.remaining - (now - entry.startedAt));
       }
     });
-    onHide?.();
-  }, [onHide]);
+    onHideRef.current?.();
+  }, []); // stable ref — no deps needed
 
   // Resume: reschedule all paused entries with remaining time
   const resumeAll = useCallback(() => {
     pendingRef.current.forEach(entry => {
       if (entry.id === null) scheduleEntry(entry);
     });
-    onShow?.();
-  }, [onShow, scheduleEntry]);
+    onShowRef.current?.();
+  }, [scheduleEntry]); // stable ref — onShow read via ref
 
   useAppVisibility(pauseAll, resumeAll, { resumeDelay });
 

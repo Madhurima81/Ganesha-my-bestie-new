@@ -321,7 +321,7 @@
 ### 22A · PHASES
 - [ ] opening — Intro modal
 - [ ] ganesha_home — Drag magnifying glass over India map to discover Ganesha's 3 locations
-- [ ] child_home — Child selects their region of India (7 options + Kailash + Outside India)
+- [ ] child_home — Child selects their region of India (6 options + Outside India)
 - [ ] language_ganesha — Child guesses which language Ganesha speaks
 - [ ] language_child — Child picks up to 3 languages they know from grid of 12
 - [ ] festivals_ganesha — Child guesses Ganesha's favourite festival from 5 cards
@@ -403,7 +403,7 @@
 - [ ] India map image (india-map.png) — Correct scale on mobile + desktop
 - [ ] Magnifying glass (mglass.png) — Draggable, renders above map
 - [ ] 3 Ganesha spot icons (Varanasi, Mumbai, TamilNadu) — Visible on map at correct positions
-- [ ] 7 region icons — All load, no missing
+- [ ] 6 region icons — All load, no missing
 - [ ] 12 language icons — All 12 load
 - [ ] Play language icon — Renders correctly in language grid
 - [ ] 12 festival icons — All 12 load
@@ -417,7 +417,7 @@
 - [ ] Opening modal text — Ganesha 1st person, explains mechanic, age 5–12 friendly
 - [ ] Completion modal subtitle — 'We' language, celebratory
 - [ ] Affirmation line — Culturally grounded
-- [ ] 7 region ganeshaFact strings — Correct geography, no factual errors, joyful tone
+- [ ] 6 region ganeshaFact strings — Correct geography, no factual errors, joyful tone
 - [ ] Kailash special reaction — Ganesha redirects to 'but where on Earth?' — handled gracefully
 - [ ] 12 language script labels — All scripts render correctly — no tofu boxes
 - [ ] Festival ganeshaReact strings (12 festivals) — Accurate, culturally respectful, no stereotypes
@@ -532,7 +532,7 @@
 - [ ] Checklist cannot fully clear until files exist
 
 #### **S22 Content Review**
-- [ ] All 7 region ganeshaFact strings verified
+- [ ] All 6 region ganeshaFact strings verified
 - [ ] 12 festival ganeshaReact strings verified
 - [ ] origin_card story text verified
 - [ ] Need cultural accuracy review before shipping

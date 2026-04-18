@@ -261,7 +261,7 @@ export const VOICE_SCRIPTS = {
       // OPENING MODAL
       // ========================================
       welcome: {
-        text: "Let's meet my family, then yours.",
+        text: "Let's meet my family and yours!",
         useWebSpeech: true
       },
 
@@ -394,7 +394,7 @@ export const VOICE_SCRIPTS = {
       },
       hintTap: {
         text: "Tap a circle to meet my family!",
-        file: 'family-tree-hint-tap.wav'
+        file: '/audio/family-tree/family-tree-hint-tap.wav'
       },
       allPlaced: {
         text: "Great! You met my loving family!",

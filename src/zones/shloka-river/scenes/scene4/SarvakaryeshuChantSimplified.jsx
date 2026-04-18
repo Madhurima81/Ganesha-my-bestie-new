@@ -1097,6 +1097,7 @@ hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || !!revealConfig || show
               onHintButtonClick={handleHintButtonClick} 
               enabled={true}
             />
+            */}
 
             {/* Enhanced Sparkle Effects */}
             {showSparkle === 'sarvakaryeshu-complete' && (
@@ -1134,7 +1135,6 @@ hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || !!revealConfig || show
                 area="full"
               />
             )}
-          </div>
 
           {/* Characters visible during fireworks */}
           {showSparkle === 'final-fireworks' && (
@@ -1339,6 +1339,7 @@ hideElements={showDiscoveryFlip1 || showDiscoveryFlip2 || !!revealConfig || show
   <BackToMapButton onNavigate={onNavigate} />
 )}
 
+        </div>
         </div>
       </MessageManager>
     </InteractionManager>

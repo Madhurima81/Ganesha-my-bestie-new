@@ -324,7 +324,7 @@
   gap: 10px;
 }
 .mis-region-btn {
-  background: #fff;
+  background: #f8f1e2;
   border: 2px solid rgba(121,85,72,0.2);
   border-radius: 14px;
   padding: 12px 10px;
@@ -379,7 +379,7 @@
   gap: 8px;
 }
 .mis-lang-btn {
-  background: #fff;
+  background: #f8f1e2;
   border: 2px solid rgba(121,85,72,0.15);
   border-radius: 12px;
   padding: 10px 6px;
@@ -418,7 +418,7 @@
   gap: 12px;
 }
 .mis-guess-btn {
-  background: #fff;
+  background: #f8f1e2;
   border: 2px solid rgba(121,85,72,0.2);
   border-radius: 16px;
   padding: 16px 10px;
@@ -814,12 +814,276 @@
   font-size: 17px;
 }
 
+/* Scene 22 unified continue button (matches Scene 19 green style + motion) */
+.mis-continue-btn-uniform {
+  display: block;
+  margin: 24px auto 0;
+  background: linear-gradient(135deg, #4CAF50 0%, #45A049 100%);
+  color: #fff;
+  border: none;
+  padding: 20px 54px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 28px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  white-space: nowrap;
+  min-width: 260px;
+  transform: var(--mis-continue-transform, none);
+  animation: misContinuePulse 2s ease-in-out infinite;
+}
+
+.mis-continue-btn-uniform:hover:not(:disabled) {
+  transform: var(--mis-continue-hover-transform, translateY(-3px));
+  box-shadow: 0 12px 30px rgba(76, 175, 80, 0.5);
+}
+
+.mis-continue-btn-uniform:active:not(:disabled) {
+  transform: var(--mis-continue-active-transform, translateY(-1px));
+}
+
+.mis-continue-btn-uniform:disabled {
+  background: #D4D4D4;
+  color: #777;
+  cursor: not-allowed;
+  opacity: 0.85;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  animation: none;
+}
+
+@keyframes misContinuePulse {
+  0%,
+  100% {
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+  }
+  50% {
+    box-shadow: 0 8px 35px rgba(76, 175, 80, 0.6);
+  }
+}
+
+/* Scene 22 Origin card: match Family Tree comparison card sizing */
+.mis-origin-compare .aboutme-comparison-grid {
+  gap: 44px;
+}
+
+.mis-origin-compare .aboutme-comparison-column {
+  min-width: 510px;
+  max-width: 680px;
+  padding: 36px;
+}
+
+.mis-origin-compare .aboutme-comparison-title {
+  font-size: 4.3rem;
+  margin-bottom: 18px;
+}
+
+.mis-origin-compare .aboutme-comparison-subtitle {
+  font-size: 2rem;
+  margin: 0 0 64px 0;
+}
+
+.mis-origin-compare .aboutme-comparison-continue-btn {
+  margin-top: -38px;
+  margin-bottom: 70px;
+  border-radius: 50px;
+  padding: 18px 45px;
+  font-family: 'Baloo', cursive;
+  font-size: 2.5rem;
+  box-shadow:
+    0 8px 25px rgba(76, 175, 80, 0.4),
+    0 0 0 0 rgba(76, 175, 80, 0.5);
+  animation: misOriginContinuePulse 2s ease-in-out infinite;
+}
+
+.mis-origin-compare .aboutme-comparison-continue-btn:hover {
+  box-shadow:
+    0 12px 30px rgba(76, 175, 80, 0.5),
+    0 0 0 0 rgba(76, 175, 80, 0.5);
+}
+
+@keyframes misOriginContinuePulse {
+  0%,
+  100% {
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+  }
+  50% {
+    box-shadow: 0 8px 35px rgba(76, 175, 80, 0.6);
+  }
+}
+
+@media (max-width: 1200px) {
+  .mis-origin-compare .aboutme-comparison-column {
+    min-width: 420px;
+  }
+}
+
+@media (max-width: 980px) {
+  .mis-origin-compare .aboutme-comparison-grid {
+    gap: 18px;
+  }
+
+  .mis-origin-compare .aboutme-comparison-column {
+    min-width: min(92vw, 560px);
+    max-width: 92vw;
+    padding: 30px 28px 26px;
+  }
+
+  .mis-origin-compare .aboutme-comparison-title {
+    font-size: clamp(2rem, 4.2vw, 4.3rem);
+  }
+
+  .mis-origin-compare .aboutme-comparison-subtitle {
+    font-size: clamp(1rem, 1.75vw, 2rem);
+    margin-bottom: 34px;
+  }
+
+  .mis-origin-compare .aboutme-comparison-continue-btn {
+    margin-top: 12px;
+    margin-bottom: 8px;
+    font-size: 26px;
+    padding: 20px 52px;
+  }
+}
+
+/* Freeze override: keep Scene 22 origin card at Family Tree sizing on iPad-class viewports too */
+.mis-origin-compare .aboutme-comparison-grid {
+  gap: 44px !important;
+}
+
+.mis-origin-compare .aboutme-comparison-column {
+  min-width: 510px !important;
+  max-width: 680px !important;
+  padding: 36px !important;
+}
+
+.mis-origin-compare .aboutme-comparison-title {
+  font-size: 4.3rem !important;
+  margin-bottom: 18px !important;
+}
+
+.mis-origin-compare .aboutme-comparison-subtitle {
+  font-size: 2rem !important;
+  margin: 0 0 64px 0 !important;
+}
+
 /* ── CORRECT CARD WITH GLOW PULSE ── */
 .card {
   position: relative;
   border-radius: 16px;
-  background: #ffffff;
+  background: #f8f1e2;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:focus,
+.card:focus-visible {
+  outline: none;
+}
+
+/* Apply this class for hint */
+.card.hint {
+  position: relative;
+  overflow: visible;
+  isolation: isolate;
+}
+
+/* Glow layer */
+.card.hint::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  pointer-events: none;
+  box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+  border: 2px solid rgba(255, 215, 0, 0);
+  z-index: 3;
+  animation: hintGlow 1.2s ease-in-out 1;
+}
+
+/* Soft pulse animation */
+@keyframes hintGlow {
+  0% {
+    box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+  }
+  50% {
+    box-shadow: 0 0 14px rgba(255, 215, 0, 0.75);
+    border-color: rgba(255, 215, 0, 0.82);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+    border-color: rgba(255, 215, 0, 0);
+  }
+}
+
+/* Apply for Level 2 hint */
+.card.hint-strong {
+  position: relative;
+  overflow: visible;
+  isolation: isolate;
+}
+
+/* Glow layer */
+.card.hint-strong::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  pointer-events: none;
+  box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+  border: 2px solid rgba(255, 215, 0, 0);
+  z-index: 3;
+  animation: guidedGlow 1.6s ease-in-out 2; /* 2 pulses */
+}
+
+/* Stronger pulse than Level 1 */
+@keyframes guidedGlow {
+  0% {
+    box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(255, 215, 0, 0.85);
+    border-color: rgba(255, 215, 0, 0.88);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+    border-color: rgba(255, 215, 0, 0);
+  }
+}
+
+/* Apply for Level 3 hint */
+.card.hint-final {
+  position: relative;
+  overflow: visible;
+  isolation: isolate;
+}
+
+/* Glow layer */
+.card.hint-final::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  pointer-events: none;
+  box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+  border: 2px solid rgba(255, 215, 0, 0);
+  z-index: 3;
+  animation: finalGlow 2s ease-in-out 3; /* 3 pulses */
+}
+
+/* Strongest pulse (still soft, not harsh) */
+@keyframes finalGlow {
+  0% {
+    box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(255, 215, 0, 0.92);
+    border-color: rgba(255, 215, 0, 0.92);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+    border-color: rgba(255, 215, 0, 0);
+  }
 }
 
 .card.selected {
@@ -879,4 +1143,3 @@
   .mis-india-map { width: 280px; height: 300px; }
   .mis-bubble { font-size: 15px; }
 }
-

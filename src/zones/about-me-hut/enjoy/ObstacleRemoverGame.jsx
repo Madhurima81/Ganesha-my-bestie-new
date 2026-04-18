@@ -169,7 +169,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   const VOICE_LINES = {
     // Opening Modal
-    opening: "Let's discover… how we can make wishes come true!",
+    opening: "Let's discover my dreams and yours.",
 
     // Wish 1
     wish1Intro: "I have three giant wishes for the whole world! Will you help me make them come true?",

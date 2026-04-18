@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symbol Mountain - Production Freeze Checklist</title>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                padding: 0;
+                margin: 0;
+                background: white;
+            }
+            h1, h2, h3 {
+                page-break-after: avoid;
+            }
+            .section {
+                page-break-inside: avoid;
+            }
+            .page-break {
+                page-break-after: always;
+            }
+            table {
+                page-break-inside: avoid;
+            }
+            ul, ol {
+                page-break-inside: avoid;
+            }
+        }
+
+        /* Headings */
+        h1 {
+            font-family: 'Baloo 2', sans-serif;
+            color: #FF5722;
+            border-bottom: 4px solid #FFD700;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-family: 'Baloo 2', sans-serif;
+            color: #FF5722;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 600;
+            border-bottom: 2px solid #FFE8D6;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-family: 'Baloo 2', sans-serif;
+            color: #555;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        h4 {
+            font-family: 'Baloo 2', sans-serif;
+            color: #666;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Lists */
+        ul {
+            list-style: none;
+            margin: 15px 0;
+            padding-left: 0;
+        }
+
+        li {
+            padding: 8px 0;
+            padding-left: 30px;
+            position: relative;
+            margin-bottom: 5px;
+        }
+
+        li:before {
+            content: "☐";
+            position: absolute;
+            left: 0;
+            font-size: 18px;
+            color: #FF5722;
+            font-weight: bold;
+        }
+
+        ol {
+            list-style-position: inside;
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        ol li {
+            padding: 8px 0;
+            padding-left: 10px;
+        }
+
+        /* Code Blocks & Pre */
+        pre {
+            background: #F5F5F5;
+            border-left: 4px solid #FF5722;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 3px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        code {
+            background: #F5F5F5;
+            padding: 2px 6px;
+            border-radius: 2px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+
+        th {
+            background: #FF5722;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-family: 'Baloo 2', sans-serif;
+            border: 1px solid #E64A19;
+        }
+
+        td {
+            padding: 12px;
+            border: 1px solid #DDD;
+        }
+
+        tr:nth-child(even) {
+            background: #FFF8F0;
+        }
+
+        /* Tags & Labels */
+        .badge {
+            display: inline-block;
+            background: #795548;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .blocker {
+            background: #D32F2F;
+        }
+
+        .highlight {
+            background: #FFF59D;
+            padding: 15px;
+            border-left: 4px solid #FFD700;
+            margin: 15px 0;
+            border-radius: 3px;
+        }
+
+        .highlight strong {
+            color: #D32F2F;
+        }
+
+        strong {
+            color: #FF5722;
+            font-weight: 600;
+        }
+
+        em {
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Section Container */
+        .section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border-radius: 5px;
+            background: #FAFAFA;
+        }
+
+        .section h3 {
+            margin-top: 0;
+        }
+
+        /* Table of Contents */
+        .toc {
+            background: #FFF8F0;
+            border-left: 4px solid #FFD700;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 3px;
+        }
+
+        .toc ul {
+            margin: 10px 0;
+            padding-left: 20px;
+            list-style: decimal;
+        }
+
+        .toc li:before {
+            content: none;
+        }
+
+        .toc li {
+            padding: 5px 0;
+            padding-left: 0;
+        }
+
+        .toc a {
+            color: #FF5722;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        /* Stats Box */
+        .stats {
+            background: #FBE9E7;
+            border-left: 4px solid #795548;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+
+        .stats strong {
+            color: #795548;
+        }
+
+        /* Header & Footer */
+        .page-header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #FFD700;
+            margin-bottom: 30px;
+        }
+
+        .page-header p {
+            color: #666;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .page-header .subtitle {
+            color: #FF5722;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* Divider */
+        hr {
+            border: none;
+            border-top: 1px solid #EEE;
+            margin: 30px 0;
+        }
+
+        /* Links */
+        a {
+            color: #FF5722;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Sign-off Table */
+        .signoff-table {
+            margin-top: 30px;
+        }
+
+        .signoff-table table {
+            margin-top: 20px;
+        }
+
+        .signoff-table th {
+            background: #FF5722;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #EEE;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            h2 {
+                font-size: 18px;
+            }
+            table {
+                font-size: 13px;
+            }
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Page Header -->
+<div class="page-header">
+    <h1>Symbol Mountain</h1>
+    <p><strong>Production Freeze Checklist</strong></p>
+    <p>Scenes 01-04: Complete Production Readiness Verification</p>
+    <div class="subtitle">
+        <p>Last Updated: 2026-04-17</p>
+        <p>Status: Ready for Comprehensive Freeze Review</p>
+    </div>
+</div>
+
+<!-- Table of Contents -->
+<div class="toc">
+    <h3 style="margin-top: 0; color: #FF5722;">Quick Navigation</h3>
+    <ul>
+        <li><a href="#master-gate">Master Gate (All Scenes)</a></li>
+        <li><a href="#scene-01">Scene 01 - Modak</a></li>
+        <li><a href="#scene-02">Scene 02 - Pond</a></li>
+        <li><a href="#scene-03">Scene 03 - Symbol</a></li>
+        <li><a href="#scene-04">Scene 04 - Sacred Assembly (Detailed)</a></li>
+        <li><a href="#cross-scene">Cross-Scene Features</a></li>
+        <li><a href="#sign-off">Final Sign-Off</a></li>
+    </ul>
+</div>
+
+<hr>
+
+<!-- Master Gate Section -->
+<h2 id="master-gate">🚪 Master Gate: All 4 Scenes Must Pass These Core Requirements</h2>
+
+<div class="section">
+    <h3>MG-1: Shared Chrome (T01-T10, T13, T18-T22)</h3>
+
+    <h4>Opening Modal (T01)</h4>
+    <ul>
+        <li>Imported from correct shared path (<code>../../shared/components/OpeningModal</code>)</li>
+        <li>Rendered on scene mount (first phase)</li>
+        <li>Baloo 2 title font — no system fonts</li>
+        <li>Nunito description text — correct weight</li>
+        <li>Action button is ≥60px touch target</li>
+        <li>CTA explains mechanic clearly in age 5-12 language</li>
+        <li>Does NOT re-trigger on tab return</li>
+        <li>VO narration syncs to modal text</li>
+        <li>Modal closes cleanly on CTA tap — no lingering overlay</li>
+        <li>Correct zone color scheme applied (Symbol Mountain = #FF5722 primary)</li>
+    </ul>
+
+    <h4>Completion Celebration (T02)</h4>
+    <ul>
+        <li>SceneCompletionCelebration imported from correct path</li>
+        <li>Fires exactly on win condition (no early/late trigger)</li>
+        <li>Title and subtitle displayed correctly</li>
+        <li>Affirmation line present and culturally grounded</li>
+        <li>"Continue" button advances to next scene</li>
+        <li>"Replay" button fully resets scene state (localStorage cleared)</li>
+        <li>Confetti/sparkles fire ONCE only — no loop</li>
+        <li>Ganesha presence visible (pose=blessing or appropriate)</li>
+        <li>Modal closes cleanly after button tap — no stuck overlay</li>
+        <li>ProgressManager.updateProgress() called on completion</li>
+    </ul>
+
+    <h4>Audio Toggle (T04)</h4>
+    <ul>
+        <li>AudioToggle component renders (usually top-right UI area)</li>
+        <li><strong class="blocker">Toggle OFF stops ALL VO lines immediately with no stutter</strong></li>
+        <li><strong class="blocker">Toggle OFF stops ALL SFX (tap, chime, sparkle) immediately</strong></li>
+        <li>Toggle ON resumes VO queue without replay or skip</li>
+        <li>Audio preference persists across tab switch via localStorage</li>
+        <li>Audio preference persists across scene reload</li>
+        <li>Audio preference persists across all 4 Symbol Mountain scenes</li>
+        <li>Visual indicator clear (toggle style changes visually)</li>
+        <li>Muted state indicator visible to child users</li>
+    </ul>
+
+    <h4>Home Button (T05)</h4>
+    <ul>
+        <li>HomeButton visible in consistent position (usually top-left)</li>
+        <li>Mid-scene tap opens confirmation dialog</li>
+        <li>"Cancel" returns to scene with no state change</li>
+        <li>"Home" calls ProgressManager.updateProgress() before navigation</li>
+        <li>Navigates safely to home/map screen</li>
+        <li>Button is ≥60px touch target</li>
+    </ul>
+
+    <h4>Zone Badge (T13)</h4>
+    <ul>
+        <li>ZoneBadgeButton displays correct zone label (Symbol Mountain)</li>
+        <li>Zone color scheme applied (#FF5722 primary, #FFD700 accent)</li>
+        <li>Badge updates progress bar (1/4 → 2/4 → 3/4 → 4/4)</li>
+        <li>Badge position consistent across all 4 scenes</li>
+        <li>Shows completion checkmark (✓) after zone fully complete</li>
+    </ul>
+
+    <h4>Voice Guidance (T07 + T09)</h4>
+    <ul>
+        <li>useVoiceGuidance hook integrated in main component</li>
+        <li>idleTimeout configured (typically 15-20s)</li>
+        <li>resumeDelay set (typically 3000ms)</li>
+        <li>enableMusic set appropriately</li>
+        <li>Return hint VO plays after tab return (after resumeDelay)</li>
+        <li>Idle hint VO plays on inactivity</li>
+        <li>stopVoice() called on scene unmount</li>
+        <li>No stale voice refs after tab switch</li>
+    </ul>
+
+    <h4>Tab Visibility + Pause (T08)</h4>
+    <ul>
+        <li>usePauseAwareTimeout hook integrated</li>
+        <li>onHide: stops all VO (stopVoice + stopSpokenVoice)</li>
+        <li>onHide: clears idle hint timers</li>
+        <li>onHide: pauses celebration if showing</li>
+        <li>onShow: resumes celebration</li>
+        <li>onShow: triggers return hint VO after resumeDelay</li>
+        <li>No duplicate timers after tab return</li>
+        <li>No stuck animations (spinning, pulsing) after return</li>
+    </ul>
+
+    <h4>Gesture Mapping (T18)</h4>
+    <ul>
+        <li>Ganesha gesture defined per scene phase</li>
+        <li>Blessing pose on completion</li>
+        <li>Pointing/nudging pose during idle hints</li>
+        <li>Wave or celebrate pose on symbol reveal</li>
+        <li>Gesture transitions smoothly (no stutter)</li>
+        <li>Gesture timing aligns with VO/sparkle moments</li>
+    </ul>
+
+    <h4>Image Audit (T19)</h4>
+    <ul>
+        <li>Zero 404s in DevTools Network tab</li>
+        <li>Background image correct per scene (no wrong fallback)</li>
+        <li>All symbol icon variants load (colored + gray where applicable)</li>
+        <li>Popup/card images match per-symbol content</li>
+        <li>Side rail icons load correctly</li>
+        <li>Completion modal badge image loads</li>
+        <li>No missing PNG/SVG in any phase</li>
+    </ul>
+
+    <h4>Responsive Design (T20)</h4>
+    <ul>
+        <li>Desktop (1280×800): all text readable, no overflow</li>
+        <li>Tablet (768×1024): touch targets all ≥60px, layout adapts</li>
+        <li>Mobile (375×812): cards/modals fit viewport, scrollable if needed</li>
+        <li>clamp() functions used for responsive scaling (no hardcoded px)</li>
+        <li>Font scaling tested at all breakpoints</li>
+        <li>Images scale proportionally (no stretching/squishing)</li>
+    </ul>
+
+    <h4>Test Cases (T21)</h4>
+    <ul>
+        <li>Test matrix documented in TESTCASES.md</li>
+        <li>Edge cases logged (rapid tap, tab switch mid-phase, reload timing)</li>
+        <li>All critical paths tested (early phase, mid phase, completion)</li>
+        <li>Cross-browser tested (Chrome, Safari, Firefox if applicable)</li>
+    </ul>
+
+    <h4>Idle Hints (T22)</h4>
+    <ul>
+        <li>Idle hint VO triggers after configured delay (15-20s typically)</li>
+        <li>Hint targets correct interactive element per phase</li>
+        <li>Pointer emoji or glow animation visible</li>
+        <li>Hint clears on any user interaction</li>
+        <li>Hint clears on phase transition</li>
+        <li>Hint does NOT re-trigger after cleared in same phase</li>
+        <li>Reload mid-hint clears hint state safely</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h3>MG-2: State Persistence & Resume</h3>
+
+    <h4>Reload Behavior (All Scenes)</h4>
+    <ul>
+        <li>Reload in <code>intro</code> phase → opening modal shows fresh (no resume popup)</li>
+        <li>Reload in active gameplay phase → safe state restored (no stuck card/modal)</li>
+        <li>Resume countdown displays (typically 3s) if resuming mid-scene</li>
+        <li>Resume countdown does NOT block gameplay</li>
+        <li>All transient UI states cleared on reload (modals, popovers, overlays)</li>
+        <li>Completion state persists (if already won, don't restart)</li>
+        <li>Symbol unlocks persist (side rail shows correct state)</li>
+        <li>localStorage keys correctly namespaced (no cross-scene collision)</li>
+    </ul>
+
+    <h4>Tab Switch Behavior (All Scenes)</h4>
+    <ul>
+        <li>Tab switch away: VO stops, timers pause, celebration pauses</li>
+        <li>Tab switch back: completion resumes visually (no jank)</li>
+        <li>Tab switch back: return hint VO plays after resumeDelay</li>
+        <li>No duplicate VO lines after tab return (stale ref cleanup)</li>
+        <li>No duplicate sparkle/animation timers after return</li>
+        <li>Mid-modal tab switch: modal still visible on return</li>
+        <li>Mid-drag/interaction tab switch: can resume safely (no hung state)</li>
+    </ul>
+</div>
+
+<hr class="page-break">
+
+<!-- Scene 01 -->
+<h2 id="scene-01">🎨 Scene 01 - Modak (NewModakSceneV7)</h2>
+
+<div class="highlight">
+    <strong>Phase Sequence:</strong>
+    <pre>intro
+  → mooshika-search (find Mooshika in scene)
+  → modak-collect (collect modaks into basket)
+  → modak-feed (drag modaks from basket to rock)
+  → belly-reveal (Ganesha belly shows Modak symbol)
+  → symbol-card (flip card shows symbol, affirmation, meaning)
+  → completion</pre>
+</div>
+
+<div class="section">
+    <h3>S01-A: Visual Assets & Layout</h3>
+
+    <h4>Background & Main Assets</h4>
+    <ul>
+        <li>Background image (scene1-background.jpg or similar) loads with no 404</li>
+        <li>Background fills viewport without tiling or stretching</li>
+        <li>Mooshika sprite renders at correct size</li>
+        <li>Modak sprites (multiple instances) render crisply</li>
+        <li>Basket asset appears on-screen when active</li>
+        <li>Rock asset positioned correctly</li>
+        <li>Ganesha belly area visually aligns with reveal moment</li>
+        <li>All assets use Symbol Mountain color scheme (#FF5722 accents)</li>
+    </ul>
+
+    <h4>Symbol Card UI</h4>
+    <ul>
+        <li>Card appears with smooth animation (scale/fade)</li>
+        <li>Card front shows symbol icon (Modak)</li>
+        <li>Card back shows "Modak" text + association ("Ganesha's favorite sweet")</li>
+        <li>Card affirmation line ("I enjoy sweet moments") renders</li>
+        <li>Card close/dismiss button is ≥60px</li>
+        <li>Card flies to sidebar smoothly on completion (no jump)</li>
+        <li>Card lands in sidebar icon position</li>
+        <li>Sidebar icon highlights when new symbol unlocked</li>
+    </ul>
+
+    <h4>Sparkle/Fireworks</h4>
+    <ul>
+        <li>Sparkles appear on modak tap (collection)</li>
+        <li>Sparkles appear on correct drop (basket → rock)</li>
+        <li>Fireworks trigger on symbol reveal (belly)</li>
+        <li>Fireworks trigger on card completion (move to sidebar)</li>
+        <li>Sparkles/fireworks render ABOVE all game elements (z-index)</li>
+        <li>No clipping at viewport edges</li>
+        <li>Animation duration is satisfying (not too fast/slow)</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h3>S01-B: Game Mechanics</h3>
+
+    <h4>Mooshika Discovery</h4>
+    <ul>
+        <li>Mooshika tap (or click) registers as interaction</li>
+        <li>Discovery triggers phase transition to modak-collect</li>
+        <li>Discovery VO plays ("I love modaks...")</li>
+        <li>Visual feedback (glow, bounce) on Mooshika</li>
+    </ul>
+
+    <h4>Modak Collection</h4>
+    <ul>
+        <li>Modak tap increments collection counter</li>
+        <li>Counter updates visually (1/5, 2/5, etc. or similar)</li>
+        <li>Basket visual updates (modaks appear in basket)</li>
+        <li>Collection continues until threshold reached</li>
+        <li>Reaching threshold auto-advances to modak-feed phase</li>
+    </ul>
+
+    <h4>Modak Feed Mechanic</h4>
+    <ul>
+        <li>Drag from basket to rock hitbox detects correctly</li>
+        <li>Correct drop triggers sparkle + celebration</li>
+        <li>Wrong drop (off target) returns modak to basket with gentle feedback</li>
+        <li>Drop counter increments per successful feed</li>
+        <li>Feed threshold triggers belly reveal phase</li>
+    </ul>
+
+    <h4>Belly Reveal</h4>
+    <ul>
+        <li>Ganesha belly visually changes (opens, glows, reveals symbol)</li>
+        <li>Symbol icon (Modak) displays on belly</li>
+        <li>Completion VO plays ("Look! The Modak symbol...")</li>
+        <li>Transition to symbol-card phase is smooth</li>
+    </ul>
+
+    <h4>Symbol Card Flow</h4>
+    <ul>
+        <li>Card appears with flip animation</li>
+        <li>Card content (name, meaning, affirmation) displays correctly</li>
+        <li>Card can be flipped between front/back (if interaction enabled)</li>
+        <li>Card tap-to-fly works (flies to sidebar)</li>
+        <li>Sidebar icon locked/unlocked state updates</li>
+        <li>Completion modal triggers after card settles</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h3>S01-C & S01-D: Voice, Hints, Reload & Resume</h3>
+
+    <h4>VO Triggers</h4>
+    <ul>
+        <li>Intro VO ("Modak is my favorite sweet...") plays once on scene enter</li>
+        <li>Mooshika discovery VO plays once ("I love modaks...")</li>
+        <li>Collection phase encouragement VO plays ("Collect more modaks...")</li>
+        <li>Feed phase instruction VO plays ("Feed me the modaks...")</li>
+        <li>Belly reveal celebration VO plays ("The Modak symbol is unlocked...")</li>
+        <li>Completion VO plays on card completion</li>
+        <li>No VO lines duplicate after tab switch/reload</li>
+        <li>All VO uses age 5-12 friendly language</li>
+    </ul>
+
+    <h4>Idle Hints & Tab Switch</h4>
+    <ul>
+        <li>Idle hint triggers after 15s+ inactivity in active phase</li>
+        <li>Hint targets correct object (Mooshika, modak, basket, rock per phase)</li>
+        <li>Tab return: return hint VO plays after 3s resume delay</li>
+        <li>Return hint contextual ("You were collecting modaks...")</li>
+        <li>Hint does NOT re-trigger mid-phase</li>
+    </ul>
+
+    <h4>Reload Scenarios</h4>
+    <ul>
+        <li>Reload in mooshika-search → Mooshika still findable, phase restarts</li>
+        <li>Reload in modak-collect (5/5 collected) → counter preserved, ready to feed</li>
+        <li>Reload in modak-feed (2/3 fed) → fed count preserved, continue feeding</li>
+        <li>Reload in belly-reveal → reveals still showing, card ready</li>
+        <li>Reload after completion → completion state persists (no restart)</li>
+        <li>Resume countdown shows "Resuming in 3..." for active phases</li>
+    </ul>
+</div>
+
+<hr class="page-break">
+
+<!-- Scene 02 -->
+<h2 id="scene-02">🌸 Scene 02 - Pond (PondSceneSimplifiedV4)</h2>
+
+<div class="highlight">
+    <strong>Phase Sequence:</strong>
+    <pre>intro
+  → lotus-waiting (lotus flowers wait to bloom)
+  → lotus-bloom (tap to bloom each lotus)
+  → golden-lotus (optional: special golden lotus interaction)
+  → trunk-reveal (elephant trunk reveals symbol)
+  → symbol-card (flip card reveals symbol meaning)
+  → completion</pre>
+</div>
+
+<div class="section">
+    <h3>S02-A: Visual Assets & Layout</h3>
+
+    <h4>Background & Main Assets</h4>
+    <ul>
+        <li>Background image (pond scene) loads with no 404</li>
+        <li>Lotus flowers render at correct positions (grid or scattered)</li>
+        <li>Lotus closed/bloomed states both visible and animate smoothly</li>
+        <li>Golden lotus (if used) visually distinct from regular lotus</li>
+        <li>Elephant/trunk asset positioned correctly</li>
+        <li>Water/ripple effects visible (if animated)</li>
+        <li>All colors match Calm theme (soft greens, blues, Symbol Mountain accents)</li>
+    </ul>
+
+    <h4>Lotus Bloom Animation</h4>
+    <ul>
+        <li>Lotus closed state (bud, folded petals)</li>
+        <li>Lotus bloom state (open petals, golden center)</li>
+        <li>Transition animation smooth (0.5-1s duration)</li>
+        <li>Bloom sparkle/glow effect visible</li>
+        <li>Audio feedback (soft chime or water sound) on bloom</li>
+    </ul>
+
+    <h4>Trunk Reveal & Symbol Card</h4>
+    <ul>
+        <li>Trunk emerges from water smoothly</li>
+        <li>Symbol card appears after trunk reveal</li>
+        <li>Card visuals correct (Lotus symbol, meaning, affirmation)</li>
+        <li>Card flies to sidebar on completion</li>
+        <li>Sidebar icon updates (Lotus unlocked)</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h3>S02-B: Game Mechanics</h3>
+
+    <h4>Lotus Tap Mechanics</h4>
+    <ul>
+        <li>Lotus tap registers reliably (hitbox correct)</li>
+        <li>Tap triggers bloom animation</li>
+        <li>Already-bloomed lotus cannot be re-tapped (locked state)</li>
+        <li>Bloom counter increments</li>
+        <li>Visual feedback (sparkle/glow) on tap</li>
+    </ul>
+
+    <h4>Progression Requirements</h4>
+    <ul>
+        <li>All lotus blooms required before trunk reveal</li>
+        <li>Lotus order does NOT matter (can bloom any lotus)</li>
+        <li>Golden lotus (if any) counted toward threshold</li>
+        <li>Reaching threshold auto-triggers trunk reveal</li>
+    </ul>
+
+    <h4>Trunk Reveal & Completion</h4>
+    <ul>
+        <li>Trunk emerges after threshold reached</li>
+        <li>Trunk reveal VO plays ("The trunk appears...")</li>
+        <li>Symbol card appears (auto or on trunk tap)</li>
+        <li>Card displays Lotus symbol + meaning + affirmation</li>
+        <li>Card move to sidebar triggers completion modal</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h3>S02-C & S02-D: Voice, Hints, Reload & Resume</h3>
+
+    <h4>VO Triggers</h4>
+    <ul>
+        <li>Intro VO ("This pond is calm and beautiful...")</li>
+        <li>Bloom encouragement VO ("Tap the lotus to make it bloom...")</li>
+        <li>All-bloomed transition VO ("The lotus is so beautiful...")</li>
+        <li>Trunk reveal VO ("Look! The trunk brings the symbol...")</li>
+        <li>Completion VO on card move to sidebar</li>
+    </ul>
+
+    <h4>Idle Hints & Reload</h4>
+    <ul>
+        <li>Idle hint triggers after 15s+ in bloom phase</li>
+        <li>Reload in intro → opening modal shows fresh</li>
+        <li>Reload in lotus-bloom (3/5 bloomed) → bloom count preserved, continue</li>
+        <li>Reload after trunk-reveal → trunk still visible</li>
+        <li>Reload after completion → completion state persists</li>
+    </ul>
+</div>
+
+<hr class="page-break">
+
+<!-- Scene 03 -->
+<h2 id="scene-03">👁️ Scene 03 - Symbol (SymbolMountainSceneV3)</h2>
+
+<div class="highlight">
+    <strong>Phase Sequence:</strong>
+    <pre>intro
+  → eyes-game (telescope/sight interaction)
+  → ears-game (rhythm/listening interaction)
+  → tusk-game (assembly/construction interaction)
+  → all-complete (all 3 sub-games done)
+  → completion</pre>
+</div>
+
+<div class="section">
+    <h3>S03-A: Visual Assets & Layout</h3>
+
+    <ul>
+        <li><strong>Eyes Game:</strong> Telescope/viewing asset renders, symbol preview visible through telescope, focus/zoom animation</li>
+        <li><strong>Ears Game:</strong> Musical notes/instruments render, rhythm pattern visual (if shown) correct, audio visualizer or animation</li>
+        <li><strong>Tusk Game:</strong> Assembly puzzle pieces visible and draggable, tusk shape updates as pieces placed, completed tusk renders with glow</li>
+        <li><strong>Progress & Sidebar:</strong> Progress indicator (3 sub-games) visible, sidebar shows symbols as unlocked, icon states update</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h3>S03-B: Game Mechanics</h3>
+
+    <h4>Eyes, Ears, Tusk Games</h4>
+    <ul>
+        <li>Eyes: Tap/click telescope → opens/zooms → eyes symbol preview shown → unlocks and card appears</li>
+        <li>Ears: Musical notes play → child interaction (tap/hold notes) → celebration → unlocks and card appears</li>
+        <li>Tusk: Puzzle pieces visible and draggable → correct placement locks piece → progress bar updates → all pieces placed triggers celebration</li>
+    </ul>
+
+    <h4>All-Complete Transition</h4>
+    <ul>
+        <li>After all 3 games done, final celebration triggers</li>
+        <li>Fireworks appear</li>
+        <li>Completion modal appears</li>
+        <li>All 3 symbols visible in sidebar</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h3>S03-C & S03-D: Voice, Hints, Reload & Resume</h3>
+
+    <h4>VO & Idle Hints</h4>
+    <ul>
+        <li>Eyes game entry VO ("Look through the telescope...")</li>
+        <li>Ears game entry VO ("Listen to the rhythm...")</li>
+        <li>Tusk game entry VO ("Assemble the tusk...")</li>
+        <li>Idle hints contextual to sub-game phase (glow/pointer)</li>
+    </ul>
+
+    <h4>Reload Safety</h4>
+    <ul>
+        <li>Reload in eyes-game (unlocked) → eyes still unlocked, eyes card gone</li>
+        <li>Reload in ears-game (mid-rhythm) → rhythm phase resets (safe)</li>
+        <li>Reload in tusk-game (1/3 pieces) → piece count preserved</li>
+        <li>Reload after all-complete → all 3 symbols persist in sidebar</li>
+    </ul>
+</div>
+
+<hr class="page-break">
+
+<!-- Scene 04 -->
+<h2 id="scene-04">🏛️ Scene 04 - Sacred Assembly (SacredAssemblySceneV8) [MOST COMPLEX]</h2>
+
+<div class="highlight">
+    <strong>Phase Sequence:</strong>
+    <pre>intro
+  → round-start (card appears, lands on side)
+  → card-play (card flips, guide arrow appears, child taps symbol)
+  → round-feedback (celebration or retry)
+  → [repeat for all 8 symbols]
+  → round-8-complete (all symbols placed)
+  → completion</pre>
+</div>
+
+<div class="stats">
+    <strong>⚠️ CRITICAL SCENE:</strong> This is the most complex Symbol Mountain scene. All mechanics must be rock-solid for production.
+</div>
+
+<div class="section">
+    <h3>S04-A: Visual Layout & Assembly Canvas</h3>
+
+    <h4>Sacred Background & Canvas</h4>
+    <ul>
+        <li>Sacred Assembly background loads with no 404</li>
+        <li>Ganesha silhouette/base rendered correctly</li>
+        <li>All 8 symbol drop zones (head, neck, arms, torso, legs) visible</li>
+        <li>Drop zones have subtle visual guides (color, glow, or outline)</li>
+        <li>Drop zone hitboxes are generous (easy to hit on mobile)</li>
+        <li>Progress bar/counter visible ("1/8", "2/8", etc.)</li>
+        <li>Symbol count updates as each is placed</li>
+    </ul>
+
+    <h4>Card Position & Movement</h4>
+    <ul>
+        <li><strong>Appearance:</strong> Card appears with entrance animation (scale + fade), lands in card-slot position (left side, typically)</li>
+        <li><strong>Flipped State:</strong> Card flips smoothly (left to right rotation), content visible: symbol name + association text, guide arrow appears from card toward Ganesha</li>
+        <li><strong>Side Movement:</strong> After correct placement, card slides LEFT off-screen smoothly (duration ~0.5s), off-screen card does NOT linger, new card appears on-screen</li>
+    </ul>
+
+    <h4>Card Content Mapping (CRITICAL)</h4>
+    <ul>
+        <li>Card 1: Head symbol + "The head helps me think"</li>
+        <li>Card 2: Neck symbol + "The neck connects..."</li>
+        <li>Card 3: Right arm symbol + "The right arm..."</li>
+        <li>Card 4: Left arm symbol + "The left arm..."</li>
+        <li>Card 5: Torso symbol + "The belly holds..."</li>
+        <li>Card 6: Right leg symbol + "The right leg..."</li>
+        <li>Card 7: Left leg symbol + "The left leg..."</li>
+        <li>Card 8: Final symbol + "All together, we are whole"</li>
+        <li><strong style="color: #D32F2F;">ALL TEXT IS CORRECT (not swapped or wrong symbol)</strong></li>
+    </ul>
+
+    <h4>Sidebar & Symbol Display</h4>
+    <ul>
+        <li>Sidebar shows all 8 symbol icons in a vertical rail</li>
+        <li>Icons display correctly (correct color, not stretched)</li>
+        <li>As symbols are placed, sidebar icons light up/glow</li>
+        <li>Locked symbols (not yet placed) have muted appearance</li>
+        <li>Unlocked symbols have full color + glow</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h3>S04-C: Symbol Tap/Placement Mechanics (CRITICAL)</h3>
+
+    <h4>Symbol Selection & Zone Detection</h4>
+    <ul>
+        <li>Symbol icon (on card or separate UI) is tappable (≥60px target)</li>
+        <li>Tap registers correctly (no double-tap needed)</li>
+        <li>Visual feedback on tap (glow, scale, highlight)</li>
+        <li>Tapping wrong symbol (not current card symbol) does nothing</li>
+        <li>Tapping correct zone places symbol</li>
+        <li>Correct zone visual updates (symbol appears in zone, zone locks)</li>
+        <li>Sparkle/celebration plays on correct placement</li>
+        <li>Round advances immediately after correct placement</li>
+    </ul>
+
+    <h4>Wrong Zone & Already-Placed Protection</h4>
+    <ul>
+        <li>Tapping wrong zone gives gentle feedback (shake, sound, or brief red flash)</li>
+        <li>Wrong zone does NOT place symbol or lock</li>
+        <li>After wrong tap, child can retry immediately (no delay)</li>
+        <li>Tapping zone with already-placed symbol does nothing</li>
+        <li>Zone is visually locked (appears grayed out or with checkmark)</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h3>S04-D & S04-E: Round Flow & Voice</h3>
+
+    <h4>Round Sequence</h4>
+    <ul>
+        <li>Card appears (round N of 8)</li>
+        <li>Card shows correct symbol + association text</li>
+        <li>Guide arrow appears</li>
+        <li>Child taps correct zone</li>
+        <li>Placement triggers celebration (sparkle + brief VO)</li>
+        <li>Card slides off-screen</li>
+        <li>New card appears (round N+1)</li>
+        <li>Pattern repeats through round 8</li>
+    </ul>
+
+    <h4>Round 8 & Completion</h4>
+    <ul>
+        <li>After 8th correct placement, special celebration triggers (larger fireworks)</li>
+        <li>Completion modal appears showing "All 8 symbols placed!"</li>
+        <li>Progress bar shows 8/8</li>
+        <li>All symbol zones show placed symbols</li>
+        <li>ProgressManager.updateProgress() called</li>
+    </ul>
+
+    <h4>VO Triggers</h4>
+    <ul>
+        <li>Opening modal VO plays once ("Welcome to the Sacred Assembly...")</li>
+        <li>Intro VO before first round ("Let's place each symbol...") plays once per session</li>
+        <li>Card VO plays as card flips (not before)</li>
+        <li>VO timing: does NOT exceed card-play phase</li>
+        <li>Idle hint VO triggers after 15s+ inactivity (once per round)</li>
+        <li>Return hint VO contextual to current round on tab return</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h3>S04-F & S04-G: Idle Hints, Gestures, Reload & Tab Switch</h3>
+
+    <h4>Visual Idle Hints & Ganesha Gestures</h4>
+    <ul>
+        <li>Idle level 1 (after 5s): Ganesha or current zone glows/pulses</li>
+        <li>Idle level 2 (after 10s): Pointer emoji appears near target zone</li>
+        <li>Idle level 3 (after 15s): Guide arrow thickens/brightens as nudge</li>
+        <li>All hints clear on interaction (symbol tap or zone tap)</li>
+        <li>Ganesha gestures: waves (round start) → points (play) → celebrates (correct placement) → shakes gently (wrong placement)</li>
+    </ul>
+
+    <h4>Reload Scenarios (CRITICAL)</h4>
+    <ul>
+        <li>Reload in Round 1 (Card Appearing): Card re-appears and animates, round counter shows "1/8"</li>
+        <li>Reload in Round 3 (Mid-Play): Round counter shows "3/8", zones 1-2 show placed symbols, Card 3 appears (flipped, arrow visible)</li>
+        <li>Reload in Round 5 (Card Sliding): Round counter shows "5/8", zones 1-4 show placed symbols, card completes slide or restarts (graceful recovery)</li>
+        <li>Reload After Round 8: Modal still visible, all 8 symbols placed and visible, all buttons functional</li>
+    </ul>
+
+    <h4>Tab Switch Scenarios</h4>
+    <ul>
+        <li>Tab away: VO stops, timers pause, card frozen</li>
+        <li>Tab back (3s later): Completion resumes visually, return hint VO plays, guide arrow re-appears</li>
+        <li>Tab switch during celebration: Sparkle pauses, card slide resumes smoothly, no duplication</li>
+        <li>Tab switch in Round 8: Fireworks resume, completion modal appears, safe navigation</li>
+    </ul>
+
+    <h4>Edge Cases</h4>
+    <ul>
+        <li>Double-tap symbol: Recognized as single tap (no duplicate placement)</li>
+        <li>Tap multiple zones in succession: Only first correct tap registers</li>
+        <li>Rapid tapping: Only first tap counts (symbol "locks" after tap)</li>
+        <li>Modal interruptions: Home button opens confirmation, "Cancel" resumes safely</li>
+    </ul>
+</div>
+
+<hr class="page-break">
+
+<!-- Cross-Scene Features -->
+<h2 id="cross-scene">🔗 Cross-Scene Features</h2>
+
+<div class="section">
+    <h3>Symbol Sidebar Popup System</h3>
+
+    <h4>Sidebar Icon Behavior</h4>
+    <ul>
+        <li>Sidebar displays all 8 symbols (vertical rail, right or left side)</li>
+        <li>Locked symbols appear muted/grayed out</li>
+        <li>Unlocked symbols appear bright + glow</li>
+        <li>Newly unlocked symbols highlight/pulse briefly</li>
+        <li>Icon size consistent across all scenes</li>
+    </ul>
+
+    <h4>Popup Interaction</h4>
+    <ul>
+        <li>Tap unlocked symbol icon → popup overlay appears</li>
+        <li>Popup shows symbol name (e.g., "Modak")</li>
+        <li>Popup shows symbol meaning/association (e.g., "Symbol of sweetness and devotion")</li>
+        <li>Popup shows "Close" button (clear, ≥60px)</li>
+        <li>Popup does NOT pause current phase (child can close and continue)</li>
+        <li>Popup z-index correct (above gameplay, below alerts)</li>
+    </ul>
+
+    <h4>Popup Content Accuracy (ALL 8 SYMBOLS)</h4>
+    <ul>
+        <li>Symbol 1: Modak — Correct image + meaning</li>
+        <li>Symbol 2: Lotus — Correct image + meaning</li>
+        <li>Symbol 3: Eyes — Correct image + meaning</li>
+        <li>Symbol 4: Ears — Correct image + meaning</li>
+        <li>Symbol 5: Tusk — Correct image + meaning</li>
+        <li>Symbol 6: Trunk — Correct image + meaning</li>
+        <li>Symbol 7: Mouse (Mooshika) — Correct image + meaning</li>
+        <li>Symbol 8: Pot/Modak (variant) — Correct image + meaning</li>
+        <li><strong style="color: #D32F2F;">All meanings culturally accurate + age-appropriate</strong></li>
+    </ul>
+
+    <h4>Sidebar Persistence</h4>
+    <ul>
+        <li>Unlocked state persists across scenes</li>
+        <li>Unlocked state persists across reload</li>
+        <li>Symbol progression order respected (Scene 1 unlocks Modak, etc.)</li>
+    </ul>
+</div>
+
+<hr class="page-break">
+
+<!-- Final Sign-Off -->
+<h2 id="sign-off">✅ Final Sign-Off</h2>
+
+<div class="section">
+    <h3>FS-1: Complete Test Matrix</h3>
+
+    <h4>Desktop Testing (1280×800)</h4>
+    <ul>
+        <li>Scene 01 (Modak): Full playthrough, all phases</li>
+        <li>Scene 02 (Pond): Full playthrough, all lotus bloomed</li>
+        <li>Scene 03 (Symbol): All 3 sub-games completed</li>
+        <li>Scene 04 (Sacred Assembly): All 8 rounds completed</li>
+        <li>All 4 scenes with Audio ON</li>
+        <li>All 4 scenes with Audio OFF</li>
+        <li>Tab switch tested in early/mid/late phase of each scene</li>
+        <li>Mid-scene reload tested at least 2x per scene (different phases)</li>
+        <li>DevTools Console: Zero blocking errors or red logs</li>
+        <li>DevTools Network: Zero 404 assets, all images load</li>
+    </ul>
+
+    <h4>Mobile Testing (375×812)</h4>
+    <ul>
+        <li>Scene 01-04: Layout responsive (no overflow, readable text)</li>
+        <li>All tap targets ≥60px on mobile (test on actual device if possible)</li>
+        <li>Touch interactions responsive (no lag > 100ms)</li>
+        <li>Card/popup positioning correct on small screen</li>
+        <li>Font scaling appropriate (clamp() functions working)</li>
+    </ul>
+
+    <h4>Tablet Testing (768×1024)</h4>
+    <ul>
+        <li>Intermediate viewport testing (landscape + portrait)</li>
+        <li>Touch targets sized appropriately</li>
+        <li>Sidebar and main UI layout adapt smoothly</li>
+    </ul>
+
+    <h4>Cross-Browser Testing</h4>
+    <ul>
+        <li>Chrome (latest): Smooth, no jank</li>
+        <li>Safari (iOS + macOS): Smooth, no jank</li>
+        <li>Firefox (if applicable): Smooth, no jank</li>
+    </ul>
+
+    <h4>Audio & VO Verification</h4>
+    <ul>
+        <li>All VO files (.mp3) load correctly (no 404)</li>
+        <li>VO timing syncs with animations</li>
+        <li>All SFX (tap, sparkle, chime) trigger at correct moments</li>
+        <li>Audio toggle mutes/unmutes all sounds</li>
+        <li>Audio preference persists across reload</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h3>FS-2: Production Readiness Checklist</h3>
+
+    <h4>Code Quality</h4>
+    <ul>
+        <li>No TypeScript errors in any scene file</li>
+        <li>No eslint warnings that block deployment</li>
+        <li>All imports reference correct shared paths</li>
+        <li>LocalStorage keys properly namespaced</li>
+    </ul>
+
+    <h4>Performance</h4>
+    <ul>
+        <li>Scene load time < 2 seconds (on 3G)</li>
+        <li>Animations smooth (60 FPS target, no dropped frames)</li>
+        <li>No memory leaks on tab switch or reload (DevTools Memory check)</li>
+        <li>Asset files optimized (images compressed, no oversized PNG)</li>
+    </ul>
+
+    <h4>Documentation</h4>
+    <ul>
+        <li>Scene phase diagram documented (ascii or markdown)</li>
+        <li>VO mapping documented (which VO line plays at which phase)</li>
+        <li>localStorage key schema documented</li>
+        <li>Asset paths documented (background, symbols, popups)</li>
+    </ul>
+
+    <h4>Compliance</h4>
+    <ul>
+        <li>No copyrighted content (all assets proprietary or licensed)</li>
+        <li>All Sanskrit text reviewed for cultural accuracy</li>
+        <li>All content reviewed for age-appropriateness (5-12 years)</li>
+    </ul>
+</div>
+
+<div class="section signoff-table">
+    <h3>FS-3: QA & Production Sign-Off</h3>
+
+    <table>
+        <tr>
+            <th>Role</th>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+            <td>QA Tester</td>
+            <td>_________________</td>
+            <td>_________________</td>
+            <td>PENDING</td>
+        </tr>
+        <tr>
+            <td>Senior UI/UX Reviewer</td>
+            <td>_________________</td>
+            <td>_________________</td>
+            <td>PENDING</td>
+        </tr>
+        <tr>
+            <td>Scene Owner / Madhurima</td>
+            <td>_________________</td>
+            <td>_________________</td>
+            <td>PENDING</td>
+        </tr>
+    </table>
+</div>
+
+<div class="section">
+    <h3>FS-4: Deployment Checklist</h3>
+
+    <ul>
+        <li>All critical blockers (Red items) resolved</li>
+        <li>All test cases passed</li>
+        <li>All 3 sign-offs obtained</li>
+        <li>Release notes prepared (if applicable)</li>
+        <li>Rollback plan documented (if applicable)</li>
+        <li>Deployment scheduled (date/time)</li>
+        <li>Post-deployment smoke test plan ready</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h3>Notes & Known Issues</h3>
+
+    <h4>Known Limitations</h4>
+    <ul>
+        <li>Scene 03 rhythm game: if rhythm is difficult for young children, consider adding visual beat indicator</li>
+        <li>Scene 04: if card-slide sometimes jerky on older mobile devices, consider reducing duration</li>
+    </ul>
+
+    <h4>Future Enhancements (Post-Freeze)</h4>
+    <ul>
+        <li>Symbol Sidebar: add detailed symbol encyclopedia entries</li>
+        <li>Idle Hints: add more granular levels (wobble → glow → VO → sparkle → voice)</li>
+        <li>Gesture System: expand Ganesha pose library with T28 implementation</li>
+        <li>VO: consider pre-recorded MP3s (T14) instead of TTS for production polish</li>
+    </ul>
+</div>
+
+<hr>
+
+<!-- Footer -->
+<div class="footer">
+    <p><strong>End of Symbol Mountain Production Freeze Checklist</strong></p>
+    <p>Last Updated: 2026-04-17</p>
+    <p>Prepared for: Ganesha My Bestie Production Freeze Review</p>
+    <p style="margin-top: 20px; font-size: 11px;">
+        This document is printer-friendly. Print this page (Ctrl+P or Cmd+P) and select "Save as PDF" to create a shareable checklist.
+    </p>
+</div>
+
+</body>
+</html>

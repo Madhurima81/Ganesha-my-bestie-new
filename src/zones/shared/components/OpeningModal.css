@@ -216,6 +216,7 @@
   background: var(--modal-btn-bg);
   color: var(--modal-btn-text);
   border: 2px solid var(--modal-btn-border, transparent);
+  min-height: 80px;
   padding: 24px 80px;
   font-size: 34px;
   font-weight: 800;
@@ -226,7 +227,10 @@
   text-transform: capitalize;
   white-space: nowrap;
   margin-top: 20px;
-  animation: ctaPulse 2.4s ease-in-out 1.9s infinite;
+}
+
+.game-modal-button.cta-idle-prompt {
+  animation: ctaPulse 1.8s ease-in-out infinite;
 }
 
 .game-modal-button:hover {
@@ -382,6 +386,7 @@
 
   .game-modal-button {
     font-size: 20px;
+    min-height: 60px;
     padding: 15px 40px;
     width: 100%;
   }
@@ -441,6 +446,7 @@
 
   .game-modal-button {
     font-size: 20px;
+    min-height: 60px;
     padding: 10px 40px;
     margin-top: 10px;
   }

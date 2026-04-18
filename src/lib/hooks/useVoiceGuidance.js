@@ -502,13 +502,19 @@ const useVoiceGuidance = (zoneId, sceneId, {
       const { key, onEnded, replayOnReturn } = interruptedVoiceRef.current;
       interruptedVoiceRef.current = null;
       if (replayOnReturn) {
-        playVoice(key, onEnded);
+        // 2-second pause before replay to avoid collision with hint reset
+        setTimeout(() => {
+          playVoice(key, onEnded);
+        }, 2000);
         voiceWillPlay = true;
       }
     } else if (pendingVoiceRef.current) {
       const { key, onEnded } = pendingVoiceRef.current;
       pendingVoiceRef.current = null;
-      playVoice(key, onEnded);
+      // 2-second pause before replay to avoid collision with hint reset
+      setTimeout(() => {
+        playVoice(key, onEnded);
+      }, 2000);
       voiceWillPlay = true;
     }
 

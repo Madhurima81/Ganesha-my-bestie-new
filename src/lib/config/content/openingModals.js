@@ -186,7 +186,7 @@ export const OPENING_MODALS = {
   'about-me-hut': {
 'my-indian-story': {
   title: "My Indian Story",
-  description: "Let's share our homes, languages, and festivals from across India.",
+  description: "Let's explore my Indian story and yours!",
   icons: ['story-home', 'story-language', 'story-festival'],
   iconLabels: ['Home', 'Language', 'Festival'],
   buttonText: "Let's Explore",
@@ -194,7 +194,7 @@ export const OPENING_MODALS = {
 },
     'family-tree': {
       title: "Our families",
-      description: "Let's discover the loving families that shape us.",
+      description: "Let's meet my family and yours!",
       icons: ['home', 'heart', 'family'],
       iconLabels: ['Home', 'Heart', 'Family'],
       buttonText: "Let's Explore",
@@ -203,7 +203,7 @@ export const OPENING_MODALS = {
 
     'favorite-food': {
       title: "Our Favorite Things",
-      description: "Let's see the little things we both love.",
+      description: "Let's find my favorite things and yours!",
       icons: ['food', 'color', 'activity'],
       iconLabels: ['Food', 'Color', 'Activity'],
       buttonText: "Let's Explore",
@@ -212,7 +212,7 @@ export const OPENING_MODALS = {
 
     'dreams-wishes': {
       title: "Dream Big Together",
-      description: "Every dream begins with a little wish.",
+      description: "Let's discover my dreams and yours.",
       icons: ['wish-heart', 'wish-star', 'wish-world'],
       iconLabels: ['Heart', 'Star', 'World'],
       buttonText: "Let's Explore",

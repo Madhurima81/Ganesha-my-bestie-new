@@ -285,14 +285,14 @@
   background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
   color: white;
   border: none;
-  border-radius: 34px;
+  border-radius: 50px;
 
   font-family: 'Baloo', cursive;
-  font-size: 2.25rem;
+  font-size: 2.5rem;
   font-weight: 700;
   line-height: 1.05;
 
-  padding: 18px 42px 16px;
+  padding: 18px 45px;
   min-height: 88px;
   min-width: 230px;
   white-space: normal;
@@ -304,15 +304,19 @@
   justify-content: center;
   gap: 4px;
 
-  box-shadow: 0 10px 24px rgba(67, 233, 123, 0.42);
-  transition: all 0.25s ease;
+  box-shadow:
+    0 8px 25px rgba(76, 175, 80, 0.4),
+    0 0 0 0 rgba(76, 175, 80, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 /* Hover State */
 .tray-done-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 25px rgba(67, 233, 123, 0.5);
+  box-shadow:
+    0 12px 30px rgba(76, 175, 80, 0.5),
+    0 0 0 0 rgba(76, 175, 80, 0.5);
 }
 
 /* Click/Active State */
@@ -321,7 +325,7 @@
 }
 
 .tray-done-main {
-  font-size: 2.2rem;
+  font-size: 2.5rem;
   font-weight: 800;
   line-height: 1;
 }
@@ -1035,7 +1039,7 @@
   font-size: 1.4rem;
   color: #D9534F;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1154,8 +1158,8 @@
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 8px 20px rgba(60, 20, 10, 0.25);
-  animation: choiceCardFadeIn 0.4s ease-out forwards;
-  opacity: 0;
+  animation: none;
+  opacity: 1;
 }
 
 @keyframes choiceCardFadeIn {
@@ -1176,27 +1180,13 @@
 
 .choice-card-integrated:disabled {
   cursor: not-allowed;
-  opacity: 0.7;
+  opacity: 1;
 }
 
-.choice-card-integrated.wrong-choice-locked {
-  opacity: 0.38 !important;
-  filter: grayscale(0.55) saturate(0.75);
-  box-shadow: 0 4px 10px rgba(60, 20, 10, 0.12);
-}
-
-.choice-card-integrated.wrong-choice-locked .choice-image-integrated {
-  opacity: 0.62;
-}
-
-.choice-card-integrated.wrong-choice-locked .choice-name-integrated {
-  opacity: 0.75;
-}
-
-.choice-card-integrated.correct-card-hit {
-  border-color: #7BC96F;
-  box-shadow: 0 0 12px rgba(123, 201, 111, 0.8);
-  animation: correctPulse 0.6s ease-out;
+/* Prevent global App.css button focus ring (green outline) on Scene 19 cards */
+.choice-card-integrated:focus,
+.choice-card-integrated:focus-visible {
+  outline: none !important;
 }
 
 /* Soft sparkle burst on correct tap (aligned with FavoriteFood feel) */
@@ -1234,9 +1224,7 @@
   }
 }
 
-.choice-card-integrated.wrong-shake {
-  animation: wrongShake 0.3s ease-in-out;
-}
+/* REMOVED: conflicting animation (see scene19WrongShake override ~line 4609) */
 
 .choice-image-integrated {
   width: 250px;
@@ -2705,6 +2693,11 @@
   height: 100%;
   object-fit: contain;
   display: block;
+}
+
+/* Visual centering tweak: Ganesha PNG sits slightly lower than Kartikeya */
+.ganesha-comparison-icon:nth-child(5) .ganesha-comparison-photo {
+  transform: translateY(-5px);
 }
 
 /* Labels for Ganesha's family in comparison */
@@ -4608,5 +4601,155 @@
 .circle-celebration-sparkles,
 .circle-sparkle {
   display: none !important;
+}
+
+/* Scene 19 freeze override: align wrong/success card feedback with Scene 22 */
+.choice-card-integrated.wrong-shake {
+  animation: scene19WrongShake 0.35s ease !important;
+  opacity: 1 !important;
+}
+
+@keyframes scene19WrongShake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+  100% { transform: translateX(0); }
+}
+
+
+.choice-card-integrated.scene19-correct-hit {
+  transform: scale(1.05);
+  box-shadow:
+    0 0 0 4px rgba(255, 204, 0, 0.6),
+    0 8px 16px rgba(0, 0, 0, 0.15) !important;
+  border-color: rgba(255, 204, 0, 0.65) !important;
+  background-color: #f8f1e2 !important;
+  opacity: 1 !important;
+  animation: scene19CorrectGlowPulse 1s ease-out 1 !important;
+}
+
+.choice-card-integrated.scene19-correct-hit::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  box-shadow: 0 0 14px rgba(255, 204, 0, 0.5);
+  opacity: 0.7;
+  pointer-events: none;
+  animation: scene19CorrectHalo 1s ease-out 1;
+}
+
+@keyframes scene19CorrectGlowPulse {
+  0% {
+    transform: scale(1);
+    box-shadow:
+      0 0 0 0 rgba(255, 204, 0, 0),
+      0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow:
+      0 0 0 4px rgba(255, 204, 0, 0.65),
+      0 8px 18px rgba(0, 0, 0, 0.16);
+  }
+  100% {
+    transform: scale(1.05);
+    box-shadow:
+      0 0 0 4px rgba(255, 204, 0, 0.6),
+      0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+}
+
+@keyframes scene19CorrectHalo {
+  0% {
+    box-shadow: 0 0 0 rgba(255, 204, 0, 0);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(255, 204, 0, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.4);
+  }
+}
+
+/* Scene 19 idle hint visuals aligned with Scene 22 card hint flow */
+.choice-card-integrated.hint,
+.choice-card-integrated.hint-strong,
+.choice-card-integrated.hint-final {
+  position: relative;
+  overflow: visible;
+  isolation: isolate;
+}
+
+.choice-card-integrated.hint::after,
+.choice-card-integrated.hint-strong::after,
+.choice-card-integrated.hint-final::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  pointer-events: none;
+  box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+  border: 2px solid rgba(255, 215, 0, 0);
+  z-index: 3;
+}
+
+.choice-card-integrated.hint::after {
+  animation: scene19HintGlow 1.2s ease-in-out 1;
+}
+
+.choice-card-integrated.hint-strong::after {
+  animation: scene19GuidedGlow 1.6s ease-in-out 2;
+}
+
+.choice-card-integrated.hint-final::after {
+  animation: scene19FinalGlow 2s ease-in-out 3;
+}
+
+@keyframes scene19HintGlow {
+  0% {
+    box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+    border-color: rgba(255, 215, 0, 0);
+  }
+  50% {
+    box-shadow: 0 0 14px rgba(255, 215, 0, 0.75);
+    border-color: rgba(255, 215, 0, 0.82);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+    border-color: rgba(255, 215, 0, 0);
+  }
+}
+
+@keyframes scene19GuidedGlow {
+  0% {
+    box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+    border-color: rgba(255, 215, 0, 0);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(255, 215, 0, 0.85);
+    border-color: rgba(255, 215, 0, 0.88);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+    border-color: rgba(255, 215, 0, 0);
+  }
+}
+
+@keyframes scene19FinalGlow {
+  0% {
+    box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+    border-color: rgba(255, 215, 0, 0);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(255, 215, 0, 0.92);
+    border-color: rgba(255, 215, 0, 0.92);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+    border-color: rgba(255, 215, 0, 0);
+  }
 }
 

@@ -161,8 +161,57 @@
   transform: translateY(-1px);
 }
 
+/* Reusable large sizing profile used by Family Tree / Story cards */
+.aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-grid {
+  gap: 44px;
+}
+
+.aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-column {
+  min-width: 510px;
+  max-width: 680px;
+  padding: 36px;
+}
+
+.aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-title {
+  font-size: 4.3rem;
+  margin-bottom: 18px;
+}
+
+.aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-continue-btn {
+  margin-top: -38px;
+  margin-bottom: 70px;
+  border-radius: 50px;
+  padding: 18px 45px;
+  font-family: 'Baloo', cursive;
+  font-size: 2.5rem;
+  box-shadow:
+    0 8px 25px rgba(76, 175, 80, 0.4),
+    0 0 0 0 rgba(76, 175, 80, 0.5);
+  animation: aboutmeFamilyContinuePulse 2s ease-in-out infinite;
+}
+
+.aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-continue-btn:hover {
+  box-shadow:
+    0 12px 30px rgba(76, 175, 80, 0.5),
+    0 0 0 0 rgba(76, 175, 80, 0.5);
+}
+
+@keyframes aboutmeFamilyContinuePulse {
+  0%,
+  100% {
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+  }
+  50% {
+    box-shadow: 0 8px 35px rgba(76, 175, 80, 0.6);
+  }
+}
+
 @media (max-width: 1200px) {
   .aboutme-comparison-column {
+    min-width: 420px;
+  }
+
+  .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-column {
     min-width: 420px;
   }
 }
@@ -186,6 +235,27 @@
     max-width: 92vw;
   }
 
+  .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-grid {
+    gap: 18px;
+  }
+
+  .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-column {
+    min-width: min(92vw, 560px);
+    max-width: 92vw;
+    padding: 30px 28px 26px;
+  }
+
+  .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-title {
+    font-size: clamp(2rem, 4.2vw, 4.3rem);
+  }
+
+  .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-continue-btn {
+    margin-top: 12px;
+    margin-bottom: 8px;
+    font-size: 26px;
+    padding: 20px 52px;
+  }
+
   .aboutme-comparison-continue-btn {
     margin-top: 12px;
     margin-bottom: 8px;
@@ -193,4 +263,3 @@
     padding: 20px 52px;
   }
 }
-
