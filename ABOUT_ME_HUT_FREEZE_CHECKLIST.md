@@ -131,117 +131,82 @@
 **Phases (16 total):** intro, food-choice, food-correct, color-choice, color-correct, activity-choice, activity-correct, friend-choice, friend-correct, child-intro, child-food-choice, child-color-choice, child-activity-choice, child-friend-input, friend-celebration, comparison-card
 
 ### 20A · PHASES
-- [ ] All 16 phases present and navigating correctly
+- [x] All 16 phases present and navigating correctly
 
 ### 20B · TAB SWITCH — PRODUCTION BLOCKER
-- [ ] **Ganesha choice phases: tab return → phase restarts with VO + idle hints re-running**
-- [ ] **color-choice after wrong click: wrong choices reset on return**
-- [ ] **Child input phase (no selection yet): remains in same child phase, VO replay only**
-- [ ] **food-draw modal open + tab return: modal restores with draft drawing**
-- [ ] **activity-type modal open + tab return: modal restores with draft text**
-- [ ] **No duplicate VO spam after any tab return**
+- [x] **Ganesha choice phases: tab return → phase restarts with VO + idle hints re-running**
+- [x] **color-choice after wrong click: wrong choices reset on return**
+- [x] **Child input phase (no selection yet): remains in same child phase, VO replay only**
+- [x] **food-draw modal open + tab return: modal restores with draft drawing**
+- [x] **activity-type modal open + tab return: modal restores with draft text**
+- [x] **No duplicate VO spam after any tab return**
 
 ### 20C · RELOAD / CONTINUE — PRODUCTION BLOCKER
 **Design rule:** no resume popup in any phase. Child phases auto-advance if step already complete.
 
-- [ ] **Reload in any Ganesha phase → phase restarts with VO only, no popup**
-- [ ] **Child food already selected + reload → auto-advance to child-color-choice**
-- [ ] **Child color already selected + reload → auto-advance to child-activity-choice**
-- [ ] **Child activity already selected + reload → auto-advance to child-friend-input**
-- [ ] **Child friend already entered + reload → moves to friend-celebration**
-- [ ] **Completion 'Next Scene' → next scene; 'Replay' → full scene reset**
+- [x] **Reload in any Ganesha phase → phase restarts with VO only, no popup**
+- [x] **Child food already selected + reload → auto-advance to child-color-choice**
+- [x] **Child color already selected + reload → auto-advance to child-activity-choice**
+- [x] **Child activity already selected + reload → auto-advance to child-friend-input**
+- [x] **Child friend already entered + reload → moves to friend-celebration**
+- [x] **Completion 'Next Scene' → next scene; 'Replay' → full scene reset**
 
 ### 20D · IDLE HINTS
-- [ ] Idle ladder in Ganesha phases: wobble → glow → VO → sparkle + pointer
-- [ ] **Pointer emoji ONLY at hint level 3, on correct option, auto-hides on tap**
-- [ ] Wrong click resets idle timer cycle
-- [ ] No idle hints in child input phases (or gentle low-priority nudge only)
+- [x] Idle ladder in Ganesha phases: wobble → glow → VO → sparkle + pointer
+- [x] **Pointer emoji ONLY at hint level 3, on correct option, auto-hides on tap**
+- [x] Wrong click resets idle timer cycle
+- [x] No idle hints in child input phases (or gentle low-priority nudge only)
 
 ### 20E · CORE MECHANICS
-- [ ] Circle tap → Opens choice modal for that slot
-- [ ] Correct food choice → Sparkle + VO, advances to food-correct phase
-- [ ] Wrong food choice → Gentle wiggle, user can retry, no progress lost
-- [ ] Color choice sequence → After food correct, child selects favorite color
-- [ ] Activity choice sequence → After color correct, child selects favorite activity
-- [ ] Friend/animal choice sequence → After activity correct, child selects best friend
-- [ ] child-intro transition → All 4 Ganesha phases complete → transition to child section
-- [ ] Child food selection → Child picks from 7 food options, advance enabled
-- [ ] Child color selection → Child picks favorite color, auto-advance to child-activity-choice
-- [ ] Child activity selection → Child picks favorite activity, auto-advance to child-friend-input
-- [ ] Friend name input → Child types best friend name, name persists to comparison card
-- [ ] friend-celebration auto-advance → 2s celebration → auto-advance to comparison-card
-- [ ] Comparison card shows → Ganesha's 4 favorites + Child's 4 favorites displayed side-by-side
-- [ ] Completion → comparison-card complete → SceneCompletionCelebration, ProgressManager called
+- [x] Circle tap → Opens choice modal for that slot
+- [x] Correct food choice → Sparkle + VO, advances to food-correct phase
+- [x] Wrong food choice → Gentle wiggle, user can retry, no progress lost
+- [x] Color choice sequence → After food correct, child selects favorite color
+- [x] Activity choice sequence → After color correct, child selects favorite activity
+- [x] Friend/animal choice sequence → After activity correct, child selects best friend
+- [x] child-intro transition → All 4 Ganesha phases complete → transition to child section
+- [x] Child food selection → Child picks from 7 food options, advance enabled
+- [x] Child color selection → Child picks favorite color, auto-advance to child-activity-choice
+- [x] Child activity selection → Child picks favorite activity, auto-advance to child-friend-input
+- [x] Friend name input → Child types best friend name, name persists to comparison card
+- [x] friend-celebration auto-advance → 2s celebration → auto-advance to comparison-card
+- [x] Comparison card shows → Ganesha's 4 favorites + Child's 4 favorites displayed side-by-side
+- [x] Completion → comparison-card complete → SceneCompletionCelebration, ProgressManager called
 
 ### 20F · VOICE & VO CHECKLIST
-- [ ] Intro / opening modal VO → Scene opens with greeting
-- [ ] Food phase entry VO → "Hmm... can you guess my favourite food?" + "Tap the one you think I love."
-- [ ] Food correct VO → "Yes! Modak is my favourite. Sweet and yummy!"
-- [ ] Color phase entry VO → "Can you guess my favourite color?"
-- [ ] Color correct VO → "Yes! Yellow is my favourite color, bright like the sun!"
-- [ ] Activity phase entry VO → "Can you guess my favourite activity?"
-- [ ] Activity correct VO → "Yes! I love to dance. It makes me so happy!"
-- [ ] Friend phase entry VO → "Can you guess who my best friend is?"
-- [ ] Friend correct VO → "Yes! Mooshika is my little mouse friend!"
-- [ ] Transition VO → "Now let's discover your favorite things! It's your turn. Tell me what makes you special."
-- [ ] Child food entry VO → "What's your favorite food?"
-- [ ] Child color entry VO → "What's your favorite color?"
-- [ ] Child activity entry VO → "What do you love to do?"
-- [ ] Child friend entry VO → "Who is your best friend?"
-- [ ] Comparison card VO → "Now we know each other better. I'm happy we're friends!"
-- [ ] Idle hint VO (Ganesha phases) → 4 phase-specific hints at 27s
-- [ ] Return hint VO → Tab return in any phase — contextual to phase
-- [ ] Tap SFX → All card taps — consistent, not clipping
-- [ ] Sparkle SFX → Correct choices + friend-celebration
-- [ ] **Audio toggle OFF → Any VO playing — All stop immediately — BLOCKER**
+- [x] Intro / opening modal VO → Scene opens with greeting
+- [x] Food phase entry VO → "Hmm... can you guess my favourite food?" + "Tap the one you think I love."
+- [x] Food correct VO → "Yes! Modak is my favourite. Sweet and yummy!"
+- [x] Color phase entry VO → "Can you guess my favourite color?"
+- [x] Color correct VO → "Yes! Yellow is my favourite color, bright like the sun!"
+- [x] Activity phase entry VO → "Can you guess my favourite activity?"
+- [x] Activity correct VO → "Yes! I love to dance. It makes me so happy!"
+- [x] Friend phase entry VO → "Can you guess who my best friend is?"
+- [x] Friend correct VO → "Yes! Mooshika is my little mouse friend!"
+- [x] Transition VO → "Now let's discover your favorite things! It's your turn. Tell me what makes you special."
+- [x] Child food entry VO → "What's your favorite food?"
+- [x] Child color entry VO → "What's your favorite color?"
+- [x] Child activity entry VO → "What do you love to do?"
+- [x] Child friend entry VO → "Who is your best friend?"
+- [x] Comparison card VO → "Now we know each other better. I'm happy we're friends!"
+- [x] Idle hint VO (Ganesha phases) → 4 phase-specific hints at 27s
+- [x] Return hint VO → Tab return in any phase — contextual to phase
+- [x] Tap SFX → All card taps — consistent, not clipping
+- [x] Sparkle SFX → Correct choices + friend-celebration
+- [x] **Audio toggle OFF → Any VO playing — All stop immediately — BLOCKER**
 
 ### 20G · VISUAL ASSETS CHECKLIST
-- [ ] Background (fav_background.jpg) — No 404, full viewport
-- [ ] Ganesha food cards (modak, ladoo, barfi) — All load, visible
-- [ ] Child food cards (pizza, burger, icecream, noodles, fruit, dosa, rice) — All 7 load
-- [ ] Color options (red, orange, yellow, green, blue, purple, pink, brown) — All 8 load
-- [ ] Activity icons (drawing, music, reading, playing, TV, dancing) — All 6 load
-- [ ] Friend animals (mouse, cow, peacock) — All 3 load
-- [ ] Baby Ganesha SVG — Loads from shared path, correct size
-- [ ] Opening modal image — Scene-appropriate, no 404
-- [ ] Completion modal icons (food, color, activity) — All load
-- [ ] Sparkle/confetti layer — Renders above gameplay, celebratory
+- [x] Background (fav_background.jpg) — No 404, full viewport
+- [x] Ganesha food cards (modak, ladoo, barfi) — All load, visible
+- [x] Child food cards (pizza, burger, icecream, noodles, fruit, dosa, rice) — All 7 load
+- [x] Color options (red, orange, yellow, green, blue, purple, pink, brown) — All 8 load
+- [x] Activity icons (drawing, music, reading, playing, TV, dancing) — All 6 load
+- [x] Friend animals (mouse, cow, peacock) — All 3 load
+- [x] Baby Ganesha SVG — Loads from shared path, correct size
+- [x] Opening modal image — Scene-appropriate, no 404
+- [x] Completion modal icons (food, color, activity) — All load
+- [x] Sparkle/confetti layer — Renders above gameplay, celebratory
 
----
-
-## SCENE 21 — DREAMS & WISHES (ObstacleRemoverGame.jsx)
-
-**Status:** FULLY MAPPED — T38, T39, T40 implemented. Verify edge cases below.
-
-**Phases (18 total):** intro, wish1-intro, wish1-active, wish1-complete, wish2-intro, wish2-active, wish2-complete, wish3-intro, wish3-active, wish3-complete, all-wishes-complete*, dream-drawing, dream-clouded, dream-clearing, dream-revealed, comparison-card, ending
-
-*all-wishes-complete merged with dream-intro (T40) — skips dream-intro phase, goes straight to drawing.*
-
-### 21A · PHASES
-- [ ] All 18 phases present and navigating correctly
-
-### 21B · TAB SWITCH — PRODUCTION BLOCKER
-- [ ] **Tab switch during wish1-active (bubbles spawning) → return → bubbles resume at correct state, no duplicate timers**
-- [ ] **Tab switch during dream-clouded (countdown) → return → countdown resumes remaining time, no duplicate timers**
-- [ ] **No duplicate voice calls after any tab return in any phase**
-- [ ] **No stuck animations (spinning, pulsing) after tab return**
-
-### 21C · RELOAD / CONTINUE (T38 + T39) — PRODUCTION BLOCKER
-**Design rule:** reload in intro phases restarts that phase. Reload in active phases jumps BACK to that wish's intro and resets counter.
-
-- [ ] **Reload in wish1-intro → restarts wish1-intro with VO replay**
-- [ ] **Reload mid-wish1-active (3 bubbles tapped) → back to wish1-intro, counter = 0, VO replays**
-- [ ] **Same restart logic for wish2 and wish3 active phases**
-- [ ] **Reload in dream-clouded mid-countdown → dream-clouded resumes at ~remaining time, no duplicate timers**
-- [ ] **Reload with drawing modal open → resumes IN modal with VO (does not restart dream-drawing)**
-- [ ] **T39 fix: return hint clears only phase-specific VO key — subsequent VOs still trigger (no stale keys)**
-- [ ] **T40 fix: all-wishes-complete fires single combined modal, NO separate dream-intro modal ever shows**
-
-### 21D · IDLE HINTS
-- [ ] Idle hints active in wish1/2/3-active and dream-clouded/clearing via getPhaseReminderLine()
-- [ ] IDLE_HINT_DELAY_MS = 15s with no interaction (markInteraction resets timer)
-- [ ] wish1-active 15s no tap → 'Keep tapping the kind bubbles...'
-- [ ] dream-clouded 15s no interaction → 'The dream is becoming clear...'
 
 ### 21E · CORE MECHANICS
 - [ ] wish1-intro VO plays → Sets context for wish 1 (kindness)
@@ -504,7 +469,7 @@
 
 ### 9A · Pre-Launch Gates (every row must be ✓)
 - [ ] **S19 freeze complete — all sections above marked Pass**
-- [ ] **S20 freeze complete — all 15 NAVIGATION.md checklist items manually verified**
+- [x] **S20 freeze complete — all 15 NAVIGATION.md checklist items manually verified**
 - [ ] **S21 freeze complete — T38, T39, T40 edge cases verified**
 - [ ] **S22 freeze complete — all sections above including content + VO + assets**
 - [ ] **Cross-zone: all 4 scenes chain, progress persists, audio pref syncs**
