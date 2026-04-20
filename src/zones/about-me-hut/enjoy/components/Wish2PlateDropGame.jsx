@@ -171,17 +171,21 @@ const Wish2PlateDropGame = ({
         ))}
 
         {/* Animals next to each plate */}
-        {[cowImg, mouseImg, peacockImg].map((animal, index) => (
+        {[
+          { src: cowImg, height: '145px' },
+          { src: mouseImg, height: '110px' },
+          { src: peacockImg, height: '155px' },
+        ].map((animal, index) => (
           <img
             key={index}
-            src={animal}
+            src={animal.src}
             alt="animal"
             style={{
               position: 'absolute',
               left: `calc(${WISH2_PLATE_POSITIONS[index]?.left} + 90px)`,
               top: WISH2_PLATE_POSITIONS[index]?.top,
               transform: 'translateY(-50%)',
-              height: '80px',
+              height: animal.height,
               objectFit: 'contain',
               pointerEvents: 'none',
               zIndex: 10,
