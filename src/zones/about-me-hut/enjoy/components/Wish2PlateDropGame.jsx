@@ -170,6 +170,25 @@ const Wish2PlateDropGame = ({
           </KidsDropZone>
         ))}
 
+        {/* Animals next to each plate */}
+        {[cowImg, mouseImg, peacockImg].map((animal, index) => (
+          <img
+            key={index}
+            src={animal}
+            alt="animal"
+            style={{
+              position: 'absolute',
+              left: `calc(${WISH2_PLATE_POSITIONS[index]?.left} + 90px)`,
+              top: WISH2_PLATE_POSITIONS[index]?.top,
+              transform: 'translateY(-50%)',
+              height: '80px',
+              objectFit: 'contain',
+              pointerEvents: 'none',
+              zIndex: 10,
+            }}
+          />
+        ))}
+
         {/* idle hint under first unfilled plate */}
         {wish2IdleLevel >= 3 && firstUnfilledBowlIndex >= 0 && (
           <div style={{

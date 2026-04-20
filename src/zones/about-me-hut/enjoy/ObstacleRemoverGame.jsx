@@ -51,9 +51,9 @@ import wishEarthHappy from './assets/images/wish-images/wish-earth-happy.png';
 import wishBowlEmpty from './assets/images/wish-images/wish-bowl-empty.png';
 import wishBowlFull from './assets/images/wish-images/wish-bowl-full.png';
 import plateImg from './assets/images/wish-images/plate.png';
-import cowImg from '../food/assets/images/cow.png';
-import mouseImg from '../food/assets/images/mouse.png';
-import peacockImg from '../food/assets/images/peacock.png';
+import cowImg from './assets/images/wish-images/fav-cow.png';
+import mouseImg from './assets/images/wish-images/fav-mouse.png';
+import peacockImg from './assets/images/wish-images/fav-peacock.png';
 import appleImg from './assets/images/wish-images/apple.png';
 import bananaImg from './assets/images/wish-images/banana.png';
 import breadImg from './assets/images/wish-images/bread.png';
@@ -171,8 +171,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     rice: { left: '70%', top: '38%' },
   };
   const WISH2_PLATE_POSITIONS = [
-    { left: '50%', top: '74%' },
-    { left: '35%', top: '84%' },
+    { left: '56%', top: '74%' },
+    { left: '45%', top: '84%' },
     { left: '65%', top: '84%' },
   ];
   const WISH2_PLATE_LAYOUT = {
