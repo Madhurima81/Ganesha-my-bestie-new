@@ -3,7 +3,7 @@
   inset: 0;
   z-index: 50;
   overflow: hidden;
-  padding: 28px 20px 18px;
+  padding: 80px 20px 18px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -75,7 +75,7 @@
   width: 100%;
   margin-top: 8px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 16px;
 }
 
@@ -94,6 +94,10 @@
 }
 
 .aboutme-comparison-item.is-wide {
+  grid-column: 1 / -1;
+}
+
+.aboutme-comparison-item:first-child {
   grid-column: 1 / -1;
 }
 
@@ -167,19 +171,37 @@
 }
 
 .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-column {
-  min-width: 510px;
-  max-width: 680px;
-  padding: 36px;
+  min-width: 540px;
+  max-width: 720px;
+  padding: 42px;
+}
+
+.aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-items-grid {
+  gap: 28px;
+}
+
+.aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-item {
+  min-height: 220px;
+}
+
+.aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-item-media {
+  width: 110px;
+  height: 110px;
+}
+
+.aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-item-img {
+  width: 110px;
+  height: 110px;
 }
 
 .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-title {
   font-size: 4.3rem;
-  margin-bottom: 18px;
+  margin-bottom: 58px;
 }
 
 .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-continue-btn {
-  margin-top: -38px;
-  margin-bottom: 70px;
+  margin-top: 60px;
+  margin-bottom: 32px;
   border-radius: 50px;
   padding: 18px 45px;
   font-family: 'Baloo', cursive;

@@ -56,3 +56,6 @@ src/**/*_backup*.jsx
 src/**/*_backup*.css
 src/**/*_backup*.ts
 src/**/*_backup*.tsx
+
+# Google Drive temp upload artifacts
+.tmp.driveupload/

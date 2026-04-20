@@ -707,7 +707,9 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
         setShowReturnHint(false);
         returnHintTimerRef.current = null;
       }, 2200);
-      onReturnHint();
+      // IMPORTANT: Do NOT call onReturnHint here.
+      // useVoiceGuidance already invokes onReturnHint after resumeDelay when
+      // no VO is queued. Calling it here too can double-trigger return logic.
       // Restart idle hints for whichever phase is still active when child returns
       const phase = gamePhaseRef.current;
       if (phase === 'name-balloons') startIdleHints('nameBalloons');

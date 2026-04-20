@@ -1978,3 +1978,22 @@
     writing-mode: horizontal-tb;
   }
 }
+
+/* ========================================= */
+/* RESPONSIVE UX POLISH (400-600px gap)      */
+/* ========================================= */
+@media (max-width: 600px) {
+  .bowls-container {
+    gap: 12px;
+  }
+
+  .park-scene {
+    width: 240px;
+    height: 180px;
+  }
+
+  .dream-container {
+    width: 85%;
+    height: 240px;
+  }
+}

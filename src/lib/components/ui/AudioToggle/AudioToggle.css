@@ -8,9 +8,9 @@
   position: fixed;
   z-index: 9999;
 
-  /* Tap target: 52–64 px */
-  width:  clamp(52px, 5.5vw, 68px);
-  height: clamp(52px, 5.5vw, 68px);
+  /* Tap target: 60–68 px (meets 60px minimum touch target) */
+  width:  clamp(60px, 5.5vw, 68px);
+  height: clamp(60px, 5.5vw, 68px);
 
   /* Lavender circle — same as profile chip + home button */
   border-radius: 50%;

@@ -7,8 +7,8 @@ const LetterInputKeyboard = ({
   minLetters = 2,
   maxLetters = 20,
   placeholder = "Type your Friend's Name",
-  confirmButtonText = "That's My Friend! ✓",
-  deleteButtonText = "⌫ Delete"
+  confirmButtonText = "That's My Friend!",
+  deleteButtonText = "Delete"
 }) => {
   const [letters, setLetters] = useState([]);
   const [systemInput, setSystemInput] = useState('');
@@ -129,10 +129,11 @@ const LetterInputKeyboard = ({
 
       {/* Helper hint */}
       <div className="keyboard-hint">
-        💡 Type or click letters • Press Enter to confirm
+        Type or click letters. Press Enter to confirm.
       </div>
     </div>
   );
 };
 
 export default LetterInputKeyboard;
+

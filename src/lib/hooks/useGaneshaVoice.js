@@ -133,6 +133,7 @@ export const useGaneshaVoice = () => {
   const [voicesLoaded, setVoicesLoaded] = useState(false)
   const utteranceRef = useRef(null)
   const voiceRef     = useRef(null)
+  const speakTimerRef = useRef(null)
 
   // ── Load voices ──────────────────────────────────────────────────────────────
   // Voices load asynchronously on most browsers — must wait for voiceschanged
@@ -175,11 +176,16 @@ export const useGaneshaVoice = () => {
       onError = null,
     } = options
 
+    if (speakTimerRef.current) {
+      clearTimeout(speakTimerRef.current)
+      speakTimerRef.current = null
+    }
     window.speechSynthesis.cancel()
     setIsSpeaking(false)
 
     // 50ms delay after cancel avoids Chrome TTS bug
-    setTimeout(() => {
+    speakTimerRef.current = setTimeout(() => {
+      speakTimerRef.current = null
       // Don't speak when tab is hidden — prevents VO playing in background on tab switch
       if (document.hidden) {
         options?.onEnd?.()
@@ -223,6 +229,10 @@ export const useGaneshaVoice = () => {
 
   // ── Stop ─────────────────────────────────────────────────────────────────────
   const stop = useCallback(() => {
+    if (speakTimerRef.current) {
+      clearTimeout(speakTimerRef.current)
+      speakTimerRef.current = null
+    }
     window.speechSynthesis?.cancel()
     setIsSpeaking(false)
   }, [])
@@ -251,7 +261,13 @@ export const useGaneshaVoice = () => {
   }, [speak])
 
   // ── Cleanup ──────────────────────────────────────────────────────────────────
-  useEffect(() => () => { window.speechSynthesis?.cancel() }, [])
+  useEffect(() => () => {
+    if (speakTimerRef.current) {
+      clearTimeout(speakTimerRef.current)
+      speakTimerRef.current = null
+    }
+    window.speechSynthesis?.cancel()
+  }, [])
 
   return {
     speak,

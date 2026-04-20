@@ -5,9 +5,11 @@ import DrawingPad from '../components/Drawingpad';
 import StoryProgressHeader from '../components/StoryProgressHeader';
 import TextInputModal from '../components/Textinputmodal';
 import LetterInputKeyboard from '../components/LetterInputKeyboard';
+import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation';
 
 // Import SceneManager & Navigation
 import SceneManager from "../../../lib/components/scenes/SceneManager";
+import AboutMeComparisonCard from '../components/AboutMeComparisonCard';
 
 // Content Configs
 import { getOpeningModal, getCompletionModal } from '../../../lib/config/content';
@@ -162,54 +164,52 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   const VOICE_LINES = {
     // Opening Screen
-    opening: "Let's find my favorite things and yours!",
+    opening: "Let's explore my favorite things and yours!",
 
     // Ganesha Section - Food
-    foodQuestion: "Hmm... can you guess my favourite food?",
-    foodCorrect: "Yes! Modak is my favourite. Sweet and yummy!",
+    foodQuestion: "Tap my favorite food.",
+    foodCorrect: "Yes! Modak is my favorite!",
 
     // Ganesha Section - Color
-    colorQuestion: "Can you guess my favourite color?",
-    colorCorrect: "Yes! Yellow is my favourite color, bright like the sun!",
+    colorQuestion: "Tap my favorite color.",
+    colorCorrect: "Yes! Yellow is my favorite!",
 
     // Ganesha Section - Activity
-    activityQuestion: "Can you guess my favourite activity?",
-    activityCorrect: "Yes! I love to dance. It makes me so happy!",
+    activityQuestion: "Tap my favorite activity.",
+    activityCorrect: "Yes! I love to dance!",
 
     // Ganesha Section - Friend
-    friendQuestion: "Can you guess who my best friend is?",
-    friendCorrect: "Yes! Mooshika is my little mouse friend!",
+    friendQuestion: "Tap my best friend.",
+    friendCorrect: "Yes! Mooshika is my friend!",
 
     // Transition to Child Section
-    transition: "Now let's discover your favorite things! It's your turn. Tell me what makes you special.",
-    childIntro: "Now it's time to learn about YOU! Let's find out what makes you special.",
+    transition: "Now it's your turn!",
+    childIntro: "Now it's your turn!",
 
     // Child Section - Food
-    childFoodQuestion: "What's your favorite food?",
-    childFoodCorrect: "Mmm! That sounds yummy!",
+    childFoodQuestion: "Tap your favorite food.",
+    childFoodCorrect: "Yummy!",
 
     // Child Section - Color
-    childColorQuestion: "What's your favorite color?",
-    childColorCorrect: "That's a beautiful color!",
-    childColorMatch: "Wow! We both love yellow!",
+    childColorQuestion: "Tap your favorite color.",
+    childColorCorrect: "Nice choice!",
 
     // Child Section - Activity
-    childActivityQuestion: "What do you love to do?",
+    childActivityQuestion: "Tap what you love to do.",
     childActivityCorrect: "That sounds like fun!",
-    childActivityMatch: "Haha! We both love dancing!",
 
     // Child Section - Friend
-    childFriendQuestion: "Who is your best friend?",
-    childFriendCorrect: "What a wonderful friend to have!",
+    childFriendQuestion: "Type the name of your best friend.",
+    childFriendCorrect: "That's lovely!",
 
     // Connection Moment (emotional beat)
-    friendCelebration: "Now we know each other better. I'm happy we're friends!",
+    friendCelebration: "Now we know each other!",
 
     // Idle Hints (Ganesha Section)
-    foodHint: "My favourite sweet looks like a little mountain.",
-    colorHint: "My favourite color shines like the bright sun.",
-    activityHint: "My favourite activity is when my feet move to music.",
-    friendHint: "My tiny friend scurries very fast."
+    foodHint: "Look for the sweet I love.",
+    colorHint: "Look for the color of the sun.",
+    activityHint: "I love moving to music.",
+    friendHint: "My tiny friend runs very fast."
   };
 
   if (!sceneState) return <div>Loading...</div>;
@@ -219,31 +219,35 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const completionModalContent = getCompletionModal('about-me-hut', 'favorite-food');
   const completionIcons = openingModalContent?.icons || ['food', 'color', 'activity'];
 
-  // ── Resume Delay (shared across pause/resume logic) ──────────────────────────
+  // â”€â”€ Resume Delay (shared across pause/resume logic) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const RESUME_DELAY_MS = 3000;
-  const DISCOVERY_FLY_TOTAL_MS = 5200;
-  const DISCOVERY_CENTER_REACH_MS = 1200;
-  const CHILD_SELECTION_ADVANCE_DELAY_MS = DISCOVERY_FLY_TOTAL_MS + 2000;
-  const CHILD_FRIEND_ADVANCE_DELAY_MS = DISCOVERY_FLY_TOTAL_MS + 2000;
+  const DISCOVERY_FLY_TOTAL_MS = 3200;
+  const DISCOVERY_CENTER_REACH_MS = 900;
+  const GANESHA_CORRECT_ADVANCE_DELAY_MS = 2600;
+  const GANESHA_FOOD_CORRECT_ADVANCE_DELAY_MS = 3600;
+  const GANESHA_FRIEND_CORRECT_ADVANCE_DELAY_MS = 3800;
+  const FRIEND_CELEBRATION_ADVANCE_DELAY_MS = 600;
+  const CHILD_SELECTION_ADVANCE_DELAY_MS = 3800;
+  const CHILD_FRIEND_ADVANCE_DELAY_MS = 3800;
 
   const { isAudioOn, toggleAudio } = useAudioPreference();
 
-  // ── Callbacks for pause/resume ────────────────────────────────────────────────
+  // â”€â”€ Callbacks for pause/resume â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const onReturnHint = () => {
     // Optional: trigger visual hint on return (e.g., mini gesture, glow)
   };
 
-  // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
+  // â”€â”€ T08/T09: visibility + idle timer infrastructure â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const { startIdleTimer, stopIdleTimer, setCurrentPhase, stopVoice, setVoiceVolume, startMusic, stopMusic } = useVoiceGuidance(
     'about-me-hut', 'favorite-food', {
       enableMusic: true,
       musicVolume: 0.06,
       idleTimeout: 20,
-      resumeDelay: RESUME_DELAY_MS,  // ← Wait before replaying VO
-      onReturnHint                     // ← Called when child returns
+      resumeDelay: RESUME_DELAY_MS,  // â† Wait before replaying VO
+      onReturnHint                     // â† Called when child returns
     }
   );
-  const { playUiTap, playWrongTap, playSparkle, playChime, setGlobalVolume } = useGameSounds();
+  const { playUiTap, playSparkle, playChime, setGlobalVolume } = useGameSounds();
   const { speak, stop: stopSpokenVoice } = useGaneshaVoice();
   useEffect(() => { startIdleTimer(); return () => stopIdleTimer(); }, [startIdleTimer, stopIdleTimer]);
   useEffect(() => { setCurrentPhase(sceneState?.gamePhase ?? null); }, [sceneState?.gamePhase, setCurrentPhase]);
@@ -256,7 +260,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   // Modak V7 pattern: volume 0 keeps MP3 VO playing silently so it resumes mid-sentence on unmute
   useEffect(() => { setVoiceVolume(isAudioOn ? 1 : 0); }, [isAudioOn, setVoiceVolume]);
 
-  // Web Speech API TTS (useGaneshaVoice): pause/resume instead of cancel — keeps utterance alive
+  // Web Speech API TTS (useGaneshaVoice): pause/resume instead of cancel â€” keeps utterance alive
   useEffect(() => {
     if (!isAudioOn) {
       window.speechSynthesis?.pause();
@@ -265,9 +269,25 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }
   }, [isAudioOn]);
 
+  // Prevent stale VO at scene boundaries without cancelling reload replays
+  // during normal state updates.
+  useEffect(() => {
+    stopVoice();
+    stopSpokenVoice();
+    window.speechSynthesis?.cancel?.();
+    return () => {
+      stopVoice();
+      stopSpokenVoice();
+      window.speechSynthesis?.cancel?.();
+    };
+    // Intentionally mount/unmount only: rerunning on every callback identity
+    // change can cancel the delayed reload entry VO.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => () => stopMusic(), [stopMusic]);
 
-  // ── Resume Countdown & Pause-Aware Timeout ──────────────────────────────────
+  // â”€â”€ Resume Countdown & Pause-Aware Timeout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
 
   // Pause/Resume refs for celebration transition
@@ -282,16 +302,50 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       pauseCelebRef.current?.();
       // Clear phaseVoiceRef so VO can replay after resume delay
       phaseVoiceRef.current = {};
+      setDiscoveryFly(null);
+      setSparkleState(prev => ({ ...prev, active: false }));
+      setMiniGesture(prev => ({ ...prev, show: false }));
     },
     onShow: () => {
       // On tab resume: resume celebration + reset idle hints
       resumeCelebRef.current?.();
-      onReturnHint?.();
+      setResumeHintCycleKey(prev => prev + 1);
+      const ganeshaChoicePhases = ['food-choice', 'color-choice', 'activity-choice', 'friend-choice'];
+      if (ganeshaChoicePhases.includes(sceneState?.gamePhase)) {
+        setShowShake(null);
+        sceneActions.updateState({
+          wrongChoices: [],
+          correctChoiceId: null
+        });
+      }
+      // IMPORTANT: Do NOT call onReturnHint here.
+      // useVoiceGuidance already invokes onReturnHint after resumeDelay when
+      // no VO is queued. Calling it here too can double-trigger return logic.
       resetIdleHints();
     },
-    resumeDelay: RESUME_DELAY_MS  // ← Timers sync with audio resume
+    resumeDelay: RESUME_DELAY_MS,
+    resumePending: false
   });
 
+  const audioStopFnsRef = useRef({ stopVoice, stopSpokenVoice, clearAllTimeouts });
+  useEffect(() => {
+    audioStopFnsRef.current = { stopVoice, stopSpokenVoice, clearAllTimeouts };
+  }, [stopVoice, stopSpokenVoice, clearAllTimeouts]);
+
+  const hardStopSceneAudio = useCallback(() => {
+    const stopFns = audioStopFnsRef.current;
+    stopFns.stopVoice();
+    stopFns.stopSpokenVoice();
+    stopFns.clearAllTimeouts();
+    window.speechSynthesis?.cancel?.();
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', hardStopSceneAudio);
+    return () => {
+      window.removeEventListener('beforeunload', hardStopSceneAudio);
+    };
+  }, [hardStopSceneAudio]);
   // --- LOCAL UI STATE (Transient) ---
   const [showShake, setShowShake] = useState(null);
   const [showDrawingPad, setShowDrawingPad] = useState(false);
@@ -304,15 +358,13 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const [showChildFoodTools, setShowChildFoodTools] = useState(false);
   const [showChildActivityTools, setShowChildActivityTools] = useState(false);
 
-  const [feedbackMessage, setFeedbackMessage] = useState("");
-  const [isFeedbackShaking, setIsFeedbackShaking] = useState(false);
   const [discoveryFly, setDiscoveryFly] = useState(null);
 
-  // Idle hint state for Ganesha choices
-  // 0: none, 1: wobble@6s, 2: glow@6s, 3: VO@15s, 4: sparkle@22s, 5: pulse@34s, 6: pulse@46s
+  // Idle hint state for Ganesha choices (0: none, 1: wobble@10s, 2: VO@18s, 3: strong glow@26s)
   const [idleHintLevel, setIdleHintLevel] = useState(0);
+  const [resumeHintCycleKey, setResumeHintCycleKey] = useState(0);
+  const idleHintVoiceRef = useRef(false);
   const idleTimerRef = useRef(null);
-  const idlePhaseRef = useRef(null);
 
   // Mini gesture (thumbs up) on successful taps
   const [miniGesture, setMiniGesture] = useState({
@@ -322,9 +374,16 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     key: 0
   });
   const miniGestureTimerRef = useRef(null);
+  const [sparkleState, setSparkleState] = useState({ active: false, key: 0, type: 'single' });
+  const sparkleTimerRef = useRef(null);
 
   // Reload Logic Refs
   const reloadHandledRef = useRef(false);
+  const hasHydratedOnceRef = useRef(false);
+  const suppressCelebrationVoOnReloadRef = useRef(false);
+  const suppressPhaseVoUntilReloadSettlesRef = useRef(false);
+  const expectedReloadPhaseRef = useRef(null);
+  const lastChildCompletionResumeKeyRef = useRef(0);
   const resumePopupTimeoutRef = useRef(null);
   const [openingButtonVisible] = useState(true);
   const phaseVoiceRef = useRef({});
@@ -372,30 +431,65 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }, durationMs);
   }, []);
 
-  const speakLine = (text, options = {}) => {
+  const triggerSparkleFx = useCallback((type = 'single', durationMs = 1700) => {
+    if (sparkleTimerRef.current) {
+      clearTimeout(sparkleTimerRef.current);
+      sparkleTimerRef.current = null;
+    }
+    setSparkleState(prev => ({ active: true, key: prev.key + 1, type }));
+    sparkleTimerRef.current = setTimeout(() => {
+      setSparkleState(prev => ({ ...prev, active: false }));
+      sparkleTimerRef.current = null;
+    }, durationMs + 80);
+  }, []);
+
+  const speakLine = useCallback((text, options = {}) => {
     if (!isAudioOn || !text) {
       options.onEnd?.();
       return;
     }
     const { onEnd, moment = 'encouragement' } = options;
     speak(text, { age: 7, style: 'child', moment, onEnd });
-  };
-  const interruptCurrentVoice = () => {
+  }, [isAudioOn, speak]);
+  const interruptCurrentVoice = useCallback(() => {
     stopVoice();
     stopSpokenVoice();
-  };
+  }, [stopVoice, stopSpokenVoice]);
+  const speakOptionName = useCallback((name) => {
+    if (!name) return;
+    speakLine(name, { moment: 'thinking' });
+  }, [speakLine]);
+  const advanceToChildPhase = useCallback((nextPhase, extraState = {}) => {
+    const nextVoiceKeyMap = {
+      'child-color-choice': 'childColorQuestion',
+      'child-activity-choice': 'childActivityQuestion',
+      'child-friend-input': 'childFriendQuestion'
+    };
+    interruptCurrentVoice();
+    if (nextPhase === 'child-friend-intro') {
+      phaseVoiceRef.current.childFriendQuestion = false;
+    }
+    const nextVoiceKey = nextVoiceKeyMap[nextPhase];
+    if (nextVoiceKey) {
+      phaseVoiceRef.current[nextVoiceKey] = false;
+    }
+    sceneActions.updateState({
+      ...extraState,
+      gamePhase: nextPhase
+    });
+  }, [interruptCurrentVoice, sceneActions]);
 
   // --- CONSTANT DATA ---
   const foods = [
-    { id: 'modak', name: 'Modak', image: modakImg, emoji: '🥟', correct: true },
-    { id: 'ladoo', name: 'Ladoo', image: ladooImg, emoji: '🍪', correct: false },
-    { id: 'barfi', name: 'Barfi', image: barfiImg, emoji: '🥞', correct: false }
+    { id: 'modak', name: 'Modak', image: modakImg, emoji: 'ðŸ¥Ÿ', correct: true },
+    { id: 'ladoo', name: 'Ladoo', image: ladooImg, emoji: 'ðŸª', correct: false },
+    { id: 'barfi', name: 'Barfi', image: barfiImg, emoji: 'ðŸ¥ž', correct: false }
   ];
 
   const friends = [
-    { id: 'mouse', name: 'Mushika', image: mouseImg, emoji: '🐭', correct: true },
-    { id: 'cow', name: 'Cow', image: cowImg, emoji: '🐮', correct: false },
-    { id: 'peacock', name: 'Peacock', image: peacockImg, emoji: '🦚', correct: false }
+    { id: 'mouse', name: 'Mushika', image: mouseImg, emoji: 'ðŸ­', correct: true },
+    { id: 'cow', name: 'Cow', image: cowImg, emoji: 'ðŸ®', correct: false },
+    { id: 'peacock', name: 'Peacock', image: peacockImg, emoji: 'ðŸ¦š', correct: false }
   ];
 
   const colors = [
@@ -413,33 +507,33 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   ];
 
   const kidFoods = [
-    { id: 'pizza', name: 'Pizza', image: pizzaImg, emoji: '🍕' },
-    { id: 'burger', name: 'Burger', image: burgerImg, emoji: '🍔' },
-    { id: 'ice-cream', name: 'Ice Cream', image: icecreamImg, emoji: '🍦' },
-    { id: 'dosa', name: 'Dosa', image: dosaImg, emoji: '🥞' },
-    { id: 'noodles', name: 'Noodles', image: noodlesImg, emoji: '🍜' },
-    { id: 'fruit', name: 'Fruit', image: fruitImg, emoji: '🍎' },
-    { id: 'rice', name: 'Rice', image: riceImg, emoji: '🍚' }
+    { id: 'pizza', name: 'Pizza', image: pizzaImg, emoji: 'ðŸ•' },
+    { id: 'burger', name: 'Burger', image: burgerImg, emoji: 'ðŸ”' },
+    { id: 'ice-cream', name: 'Ice Cream', image: icecreamImg, emoji: 'ðŸ¦' },
+    { id: 'dosa', name: 'Dosa', image: dosaImg, emoji: 'ðŸ¥ž' },
+    { id: 'noodles', name: 'Noodles', image: noodlesImg, emoji: 'ðŸœ' },
+    { id: 'fruit', name: 'Fruit', image: fruitImg, emoji: 'ðŸŽ' },
+    { id: 'rice', name: 'Rice', image: riceImg, emoji: 'ðŸš' }
   ];
 
   const kidActivities = [
-    { id: 'sports', name: 'Playing', image: actPlayingImg, emoji: '⚽' },
-    { id: 'reading', name: 'Reading', image: actReadingImg, emoji: '📚' },
-    { id: 'drawing', name: 'Drawing', image: actDrawImg, emoji: '🎨' },
-    { id: 'dancing', name: 'Dancing', image: actDancingImg, emoji: '💃' },
-    { id: 'tv', name: 'Watching TV', image: actTvImg, emoji: '📺' },
-    { id: 'games', name: 'Video Games', image: actPlayingImg, emoji: '🎮' }
+    { id: 'sports', name: 'Playing', image: actPlayingImg, emoji: 'âš½' },
+    { id: 'reading', name: 'Reading', image: actReadingImg, emoji: 'ðŸ“š' },
+    { id: 'drawing', name: 'Drawing', image: actDrawImg, emoji: 'ðŸŽ¨' },
+    { id: 'dancing', name: 'Dancing', image: actDancingImg, emoji: 'ðŸ’ƒ' },
+    { id: 'tv', name: 'Watching TV', image: actTvImg, emoji: 'ðŸ“º' },
+    { id: 'games', name: 'Video Games', image: actPlayingImg, emoji: 'ðŸŽ®' }
   ];
 
   const kidColors = [
-    { id: 'red', name: 'Red', image: redImg, emoji: '❤️' },
-    { id: 'orange', name: 'Orange', image: orangeImg, emoji: '🧡' },
-    { id: 'yellow', name: 'Yellow', image: yellowImg, emoji: '💛' },
-    { id: 'green', name: 'Green', image: greenImg, emoji: '💚' },
-    { id: 'blue', name: 'Blue', image: blueImg, emoji: '💙' },
-    { id: 'purple', name: 'Purple', image: purpleImg, emoji: '💜' },
-    { id: 'pink', name: 'Pink', image: pinkImg, emoji: '💗' },
-    { id: 'brown', name: 'Brown', image: brownImg, emoji: '🤎' },
+    { id: 'red', name: 'Red', image: redImg, emoji: 'â¤ï¸' },
+    { id: 'orange', name: 'Orange', image: orangeImg, emoji: 'ðŸ§¡' },
+    { id: 'yellow', name: 'Yellow', image: yellowImg, emoji: 'ðŸ’›' },
+    { id: 'green', name: 'Green', image: greenImg, emoji: 'ðŸ’š' },
+    { id: 'blue', name: 'Blue', image: blueImg, emoji: 'ðŸ’™' },
+    { id: 'purple', name: 'Purple', image: purpleImg, emoji: 'ðŸ’œ' },
+    { id: 'pink', name: 'Pink', image: pinkImg, emoji: 'ðŸ’—' },
+    { id: 'brown', name: 'Brown', image: brownImg, emoji: 'ðŸ¤Ž' },
   ];
 
   // --- INITIALIZATION ---
@@ -467,6 +561,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     return () => {
       if (discoveryFlyTimeoutRef.current) clearTimeout(discoveryFlyTimeoutRef.current);
       if (miniGestureTimerRef.current) clearTimeout(miniGestureTimerRef.current);
+      if (sparkleTimerRef.current) clearTimeout(sparkleTimerRef.current);
     };
   }, []);
 
@@ -519,8 +614,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     if (isReload && !reloadHandledRef.current) {
       reloadHandledRef.current = true;
       const { gamePhase, currentModal } = sceneState;
+      suppressPhaseVoUntilReloadSettlesRef.current = true;
+      expectedReloadPhaseRef.current = gamePhase;
 
-      console.log("🔄 Reload detected. Phase:", gamePhase, "Modal:", currentModal);
+      console.log("ðŸ”„ Reload detected. Phase:", gamePhase, "Modal:", currentModal);
 
       if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
       // --- 1. RESTORE MODALS (Drawing/Typing) ---
@@ -541,113 +638,328 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         return; // Stop here if we restored a modal
       }
 
-      const ganeshaChoicePhases = ['food-choice', 'color-choice', 'activity-choice', 'friend-choice'];
+      const ganeshaRestartPhaseMap = {
+        'food-choice': 'food-choice',
+        'food-correct': 'food-choice',
+        'color-choice': 'color-choice',
+        'color-correct': 'color-choice',
+        'activity-choice': 'activity-choice',
+        'activity-correct': 'activity-choice',
+        'friend-intro': 'friend-choice',
+        'friend-choice': 'friend-choice',
+        'friend-correct': 'friend-choice'
+      };
       const childPhases = ['child-food-choice', 'child-color-choice', 'child-activity-choice', 'child-friend-input'];
 
-      if (ganeshaChoicePhases.includes(gamePhase)) {
-        // Restart current Ganesha phase: replay phase VO + restart idle hint flow.
+      const restartPhase = ganeshaRestartPhaseMap[gamePhase];
+      if (restartPhase) {
+        expectedReloadPhaseRef.current = restartPhase;
+        // Reload rule: in any Ganesha phase (choice/hint/celebration), restart from phase entry.
+        const wasCelebrationPhase = ['food-correct', 'color-correct', 'activity-correct', 'friend-correct'].includes(gamePhase);
+        suppressCelebrationVoOnReloadRef.current = wasCelebrationPhase;
+        clearAllTimeouts();
+        interruptCurrentVoice();
         phaseVoiceRef.current = {};
         resetIdleHints();
         setShowShake(null);
-        setFeedbackMessage("");
-        setIsFeedbackShaking(false);
-        sceneActions.updateState({
+        const restartDiscoveryCountMap = {
+          'food-choice': 0,
+          'color-choice': 1,
+          'activity-choice': 2,
+          'friend-choice': 3
+        };
+        const maxDiscoveries = restartDiscoveryCountMap[restartPhase] ?? 0;
+        const restartState = {
+          gamePhase: restartPhase,
           wrongChoices: [],
-          correctChoiceId: null
-        });
+          correctChoiceId: null,
+          storyDiscoveries: (sceneState.storyDiscoveries || []).slice(0, maxDiscoveries)
+        };
+        if (restartPhase === 'food-choice') restartState.selectedFood = null;
+        if (restartPhase === 'friend-choice') restartState.selectedFriend = null;
+        sceneActions.updateState(restartState);
+
+        // Force replay of Ganesha entry VO after reload settle.
+        const ganeshaEntryVoMap = {
+          'food-choice': VOICE_LINES.foodQuestion,
+          'color-choice': VOICE_LINES.colorQuestion,
+          'activity-choice': VOICE_LINES.activityQuestion,
+          'friend-choice': VOICE_LINES.friendQuestion
+        };
+        const ganeshaVoiceKeyMap = {
+          'food-choice': 'foodQuestion',
+          'color-choice': 'colorQuestion',
+          'activity-choice': 'activityQuestion',
+          'friend-choice': 'friendQuestion'
+        };
+        const ganeshaEntryLine = ganeshaEntryVoMap[restartPhase];
+        const ganeshaVoiceKey = ganeshaVoiceKeyMap[restartPhase];
+        if (ganeshaEntryLine && ganeshaVoiceKey) {
+          // Audio-safe replay on reload:
+          // only mark as played when we actually speak.
+          // If audio isn't ready yet, keep flag false so phase effect can speak later.
+          phaseVoiceRef.current[ganeshaVoiceKey] = false;
+          if (isAudioOn) {
+            phaseVoiceRef.current[ganeshaVoiceKey] = true;
+            safeSetTimeout(() => {
+              speakLine(ganeshaEntryLine, { moment: 'thinking' });
+            }, 160);
+          }
+        }
         return;
       }
 
       if (childPhases.includes(gamePhase)) {
-        // Keep child phase as-is; only allow question VO to replay.
-        // If a child sub-step was already completed before reload, move forward without popup.
+        expectedReloadPhaseRef.current = gamePhase;
+        // Reload rule for child phases:
+        // restart same phase, replay entry VO, and rollback child discoveries for that phase.
+        clearAllTimeouts();
+        interruptCurrentVoice();
         phaseVoiceRef.current = {};
-        if (gamePhase === 'child-food-choice' && (sceneState.childFoodChoice || sceneState.childFoodDrawing || sceneState.childFoodText)) {
-          sceneActions.updateState({ gamePhase: 'child-color-choice' });
-          return;
+        const childRestartDiscoveryCountMap = {
+          'child-food-choice': 0,
+          'child-color-choice': 1,
+          'child-activity-choice': 2,
+          'child-friend-input': 3
+        };
+        const childMaxDiscoveries = childRestartDiscoveryCountMap[gamePhase] ?? 0;
+        const restartChildState = {
+          gamePhase,
+          childDiscoveries: (sceneState.childDiscoveries || []).slice(0, childMaxDiscoveries)
+        };
+        if (gamePhase === 'child-food-choice') {
+          restartChildState.childFoodChoice = null;
+          restartChildState.childFoodDrawing = null;
+          restartChildState.childFoodText = null;
         }
-        if (gamePhase === 'child-color-choice' && sceneState.childColor) {
-          sceneActions.updateState({ gamePhase: 'child-activity-choice' });
-          return;
+        if (gamePhase === 'child-color-choice') {
+          restartChildState.childColor = null;
+          restartChildState.childColorName = '';
         }
-        if (gamePhase === 'child-activity-choice' && (sceneState.childActivityChoice || sceneState.childActivityDrawing || sceneState.childActivityText)) {
-          sceneActions.updateState({ gamePhase: 'child-friend-input' });
-          return;
+        if (gamePhase === 'child-activity-choice') {
+          restartChildState.childActivityChoice = null;
+          restartChildState.childActivityDrawing = null;
+          restartChildState.childActivityText = null;
         }
-        if (gamePhase === 'child-friend-input' && sceneState.childFriendName) {
-          sceneActions.updateState({ gamePhase: 'friend-celebration' });
-          return;
+        if (gamePhase === 'child-friend-input') {
+          restartChildState.childFriendName = '';
+          restartChildState.childFriendLetters = [];
+        }
+        sceneActions.updateState(restartChildState);
+
+        // Since gamePhase stays the same here, phase-entry effect won't re-run.
+        // Replay child entry VO explicitly after reset settles.
+        const childEntryVoMap = {
+          'child-food-choice': VOICE_LINES.childFoodQuestion,
+          'child-color-choice': VOICE_LINES.childColorQuestion,
+          'child-activity-choice': VOICE_LINES.childActivityQuestion,
+          'child-friend-input': VOICE_LINES.childFriendQuestion
+        };
+        const childVoiceKeyMap = {
+          'child-food-choice': 'childFoodQuestion',
+          'child-color-choice': 'childColorQuestion',
+          'child-activity-choice': 'childActivityQuestion',
+          'child-friend-input': 'childFriendQuestion'
+        };
+        const childEntryLine = childEntryVoMap[gamePhase];
+        const childVoiceKey = childVoiceKeyMap[gamePhase];
+        if (childEntryLine && childVoiceKey) {
+          phaseVoiceRef.current[childVoiceKey] = false;
+          suppressPhaseVoUntilReloadSettlesRef.current = false;
+          expectedReloadPhaseRef.current = null;
+          if (isAudioOn) {
+            // Mark as played BEFORE scheduling (same pattern as Ganesha branch).
+            // This blocks the initial-mount VO effect from double-speaking,
+            // and lets safeSetTimeout be the single source of the replay.
+            phaseVoiceRef.current[childVoiceKey] = true;
+            safeSetTimeout(() => {
+              speakLine(childEntryLine, { moment: 'thinking' });
+            }, 160);
+          }
         }
         return;
       }
     }
-  }, [isReload, sceneState.gamePhase]);
+  }, [isReload, sceneState.gamePhase, isAudioOn]);
 
   // Auto-transition Handler (Fixes frozen screens)
   useEffect(() => {
-    let timer;
+    let cancelTimer = null;
     const { gamePhase } = sceneState;
 
     if (gamePhase === 'food-correct') {
-      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'color-choice', wrongChoices: [] }); }, 4500);
+      cancelTimer = safeSetTimeout(() => { sceneActions.updateState({ gamePhase: 'color-choice', wrongChoices: [] }); }, GANESHA_FOOD_CORRECT_ADVANCE_DELAY_MS);
     }
     else if (gamePhase === 'color-correct') {
-      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'activity-choice', wrongChoices: [] }); }, 4500);
+      cancelTimer = safeSetTimeout(() => { sceneActions.updateState({ gamePhase: 'activity-choice', wrongChoices: [] }); }, GANESHA_CORRECT_ADVANCE_DELAY_MS);
     }
     else if (gamePhase === 'activity-correct') {
-      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'friend-choice', wrongChoices: [] }); }, 4500);
+      cancelTimer = safeSetTimeout(() => { sceneActions.updateState({ gamePhase: 'friend-choice', wrongChoices: [] }); }, GANESHA_CORRECT_ADVANCE_DELAY_MS);
     }
     else if (gamePhase === 'friend-intro') {
       // Backward compatibility for existing saved states that may still have friend-intro.
-      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'friend-choice', wrongChoices: [] }); }, 0);
+      cancelTimer = safeSetTimeout(() => { sceneActions.updateState({ gamePhase: 'friend-choice', wrongChoices: [] }); }, 0);
     }
     else if (gamePhase === 'friend-correct') {
-      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'child-intro', wrongChoices: [] }); }, 4500);
+      cancelTimer = safeSetTimeout(() => { sceneActions.updateState({ gamePhase: 'child-intro', wrongChoices: [] }); }, GANESHA_FRIEND_CORRECT_ADVANCE_DELAY_MS);
     }
     else if (gamePhase === 'child-friend-intro') {
       // Auto-transition from intro to input screen
-      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'child-friend-input' }); }, 0);
+      cancelTimer = safeSetTimeout(() => { sceneActions.updateState({ gamePhase: 'child-friend-input' }); }, 0);
     }
     else if (gamePhase === 'friend-celebration') {
-      timer = setTimeout(() => { sceneActions.updateState({ gamePhase: 'comparison-card' }); }, 2000);
+      cancelTimer = safeSetTimeout(() => { sceneActions.updateState({ gamePhase: 'comparison-card' }); }, FRIEND_CELEBRATION_ADVANCE_DELAY_MS);
     }
 
-    return () => clearTimeout(timer);
-  }, [sceneState.gamePhase]);
+    return () => cancelTimer?.();
+  }, [
+    sceneState.gamePhase,
+    GANESHA_CORRECT_ADVANCE_DELAY_MS,
+    GANESHA_FOOD_CORRECT_ADVANCE_DELAY_MS,
+    GANESHA_FRIEND_CORRECT_ADVANCE_DELAY_MS,
+    FRIEND_CELEBRATION_ADVANCE_DELAY_MS,
+    safeSetTimeout,
+    resumeHintCycleKey
+  ]);
 
   useEffect(() => {
     if (sceneState.gamePhase === 'intro') {
       phaseVoiceRef.current = {};
-      const timer = setTimeout(() => {
+      const cancelTimer = safeSetTimeout(() => {
         speakLine(VOICE_LINES.opening, { moment: 'greeting' });
       }, 400);
-      return () => clearTimeout(timer);
+      return () => cancelTimer?.();
     }
-  }, [sceneState.gamePhase, isAudioOn]);
+  }, [sceneState.gamePhase, isAudioOn, resumeHintCycleKey, safeSetTimeout]);
 
   useEffect(() => {
+    if (!resumeHintCycleKey || !isAudioOn || sceneState.showingCompletionScreen) return;
+    if (lastChildCompletionResumeKeyRef.current === resumeHintCycleKey) return;
+    lastChildCompletionResumeKeyRef.current = resumeHintCycleKey;
+
+    let completionLine = null;
+    let nextPhase = null;
+    let afterAdvance = null;
+
+    if (
+      sceneState.gamePhase === 'child-food-choice' &&
+      (sceneState.childFoodChoice || sceneState.childFoodDrawing || sceneState.childFoodText)
+    ) {
+      completionLine = VOICE_LINES.childFoodCorrect;
+      nextPhase = 'child-color-choice';
+      phaseVoiceRef.current.childFoodQuestion = true;
+      afterAdvance = () => setSelectedKidFoodId(null);
+    } else if (sceneState.gamePhase === 'child-color-choice' && sceneState.childColor) {
+      completionLine = VOICE_LINES.childColorCorrect;
+      nextPhase = 'child-activity-choice';
+      phaseVoiceRef.current.childColorQuestion = true;
+      afterAdvance = () => setSelectedKidColorId(null);
+    } else if (
+      sceneState.gamePhase === 'child-activity-choice' &&
+      (sceneState.childActivityChoice || sceneState.childActivityDrawing || sceneState.childActivityText)
+    ) {
+      completionLine = VOICE_LINES.childActivityCorrect;
+      nextPhase = 'child-friend-intro';
+      phaseVoiceRef.current.childActivityQuestion = true;
+      afterAdvance = () => setSelectedKidActivityId(null);
+    } else if (sceneState.gamePhase === 'child-friend-input' && sceneState.childFriendName) {
+      completionLine = VOICE_LINES.childFriendCorrect;
+      nextPhase = 'friend-celebration';
+      phaseVoiceRef.current.childFriendQuestion = true;
+    }
+
+    if (!completionLine || !nextPhase) return;
+
+    clearAllTimeouts();
+    interruptCurrentVoice();
+
+    safeSetTimeout(() => {
+      speakLine(completionLine, { moment: 'celebration' });
+    }, 160);
+
+    safeSetTimeout(() => {
+      playSparkle();
+      playChime();
+      if (nextPhase === 'friend-celebration') {
+        sceneActions.updateState({ gamePhase: nextPhase });
+      } else {
+        advanceToChildPhase(nextPhase);
+      }
+      afterAdvance?.();
+    }, CHILD_SELECTION_ADVANCE_DELAY_MS);
+  }, [
+    resumeHintCycleKey,
+    isAudioOn,
+    sceneState.showingCompletionScreen,
+    sceneState.gamePhase,
+    sceneState.childFoodChoice,
+    sceneState.childFoodDrawing,
+    sceneState.childFoodText,
+    sceneState.childColor,
+    sceneState.childActivityChoice,
+    sceneState.childActivityDrawing,
+    sceneState.childActivityText,
+    sceneState.childFriendName,
+    interruptCurrentVoice,
+    speakLine,
+    playSparkle,
+    playChime,
+    advanceToChildPhase,
+    sceneActions,
+    safeSetTimeout,
+    clearAllTimeouts
+  ]);
+
+  useEffect(() => {
+    const celebrationPhases = ['food-correct', 'color-correct', 'activity-correct', 'friend-correct'];
+
+    // Reload stabilization guard:
+    // block stale VO from pre-restore phases until the expected reload phase is active.
+    if (suppressPhaseVoUntilReloadSettlesRef.current) {
+      const expectedPhase = expectedReloadPhaseRef.current;
+      if (!expectedPhase || sceneState.gamePhase !== expectedPhase) return;
+      suppressPhaseVoUntilReloadSettlesRef.current = false;
+      expectedReloadPhaseRef.current = null;
+    }
+
+    // Reload race guard:
+    // when user reloads during a celebration phase, we restart to choice phase.
+    // Prevent stale pre-restart celebration render from speaking once.
+    if (suppressCelebrationVoOnReloadRef.current && celebrationPhases.includes(sceneState.gamePhase)) {
+      return;
+    }
+    if (!celebrationPhases.includes(sceneState.gamePhase)) {
+      suppressCelebrationVoOnReloadRef.current = false;
+    }
+
+    if (!hasHydratedOnceRef.current) {
+      hasHydratedOnceRef.current = true;
+      if (celebrationPhases.includes(sceneState.gamePhase)) {
+        return;
+      }
+    }
+
+    // Collect all timeouts for cleanup
+    const timers = [];
+
     // Ganesha's questions
     if (sceneState.gamePhase === 'food-choice' && !phaseVoiceRef.current.foodQuestion) {
+      phaseVoiceRef.current.foodCorrect = false;
       phaseVoiceRef.current.foodQuestion = true;
-      // Two-part VO with pause
-      speakLine(VOICE_LINES.foodQuestion, {
-        moment: 'thinking',
-        onEnd: () => {
-          setTimeout(() => {
-            speakLine("Tap the one you think I love.", { moment: 'thinking' });
-          }, 800);
-        }
-      });
+      speakLine(VOICE_LINES.foodQuestion, { moment: 'thinking' });
     }
     if (sceneState.gamePhase === 'color-choice' && !phaseVoiceRef.current.colorQuestion) {
+      phaseVoiceRef.current.colorCorrect = false;
       phaseVoiceRef.current.colorQuestion = true;
       speakLine(VOICE_LINES.colorQuestion, { moment: 'thinking' });
     }
     if (sceneState.gamePhase === 'activity-choice' && !phaseVoiceRef.current.activityQuestion) {
+      phaseVoiceRef.current.activityCorrect = false;
       phaseVoiceRef.current.activityQuestion = true;
       speakLine(VOICE_LINES.activityQuestion, { moment: 'thinking' });
     }
     if (sceneState.gamePhase === 'friend-choice' && !phaseVoiceRef.current.friendQuestion) {
+      phaseVoiceRef.current.friendCorrect = false;
       phaseVoiceRef.current.friendQuestion = true;
       speakLine(VOICE_LINES.friendQuestion, { moment: 'thinking' });
     }
@@ -700,87 +1012,67 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       const comparisonVoTimer = setTimeout(() => {
         speakLine(VOICE_LINES.friendCelebration, { moment: 'celebration' });
       }, 1000);
-      return () => clearTimeout(comparisonVoTimer);
+      timers.push(comparisonVoTimer);
     }
-  }, [sceneState.gamePhase, isAudioOn]);
+
+    return () => timers.forEach(clearTimeout);
+  }, [sceneState.gamePhase, isAudioOn, resumeHintCycleKey]);
 
   // Completion VO intentionally disabled for scene completion screen.
-
-  useEffect(() => () => stopSpokenVoice(), [stopSpokenVoice]);
-
-  // ── Idle Hint System (Ganesha choices: food, color, activity, friend) ──
+  // â”€â”€ Idle Hint System (Scene 22 pattern: 10s wobble -> 18s glow+VO -> 26s stronger glow) â”€â”€
   useEffect(() => {
     const ganeshaPhases = ['food-choice', 'color-choice', 'activity-choice', 'friend-choice'];
     const currentPhase = sceneState.gamePhase;
 
     // Only run for Ganesha choice phases
-    if (!ganeshaPhases.includes(currentPhase)) {
+    if (!ganeshaPhases.includes(currentPhase) || showShake) {
       if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
       setIdleHintLevel(0);
-      setShowPointerHint(false);
-      idlePhaseRef.current = null;
+      idleHintVoiceRef.current = false;
       return;
     }
 
-    // Track which phase we're in
-    idlePhaseRef.current = currentPhase;
-
     // Reset idle hints when entering a new phase
     setIdleHintLevel(0);
-    setShowPointerHint(false);
+    idleHintVoiceRef.current = false;
     if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
 
-    // Set up idle hint progression: 6s wobble → 6s glow → 15s VO → 22s sparkle → 34s pulse → 46s pulse
-    const t1 = setTimeout(() => {
-      if (idlePhaseRef.current === currentPhase) setIdleHintLevel(1); // Wobble at 6s (motion catches attention)
-    }, 6000);
+    // Level 1 @ 10s: Wobble
+    idleTimerRef.current = setTimeout(() => {
+      setIdleHintLevel(1);
 
-    const t2 = setTimeout(() => {
-      if (idlePhaseRef.current === currentPhase) setIdleHintLevel(2); // Static glow at 6s
-    }, 6000);
-
-    const t3 = setTimeout(() => {
-      if (idlePhaseRef.current === currentPhase) {
-        setIdleHintLevel(3); // VO clue at 15s
-        // Play hint VO based on phase
-        const hintMap = {
-          'food-choice': VOICE_LINES.foodHint,
-          'color-choice': VOICE_LINES.colorHint,
-          'activity-choice': VOICE_LINES.activityHint,
-          'friend-choice': VOICE_LINES.friendHint
-        };
-        if (hintMap[currentPhase]) {
-          speakLine(hintMap[currentPhase], { moment: 'encouragement' });
+      // Level 2 @ 18s: Wobble + VO hint (speak once)
+      idleTimerRef.current = setTimeout(() => {
+        setIdleHintLevel(2);
+        if (!idleHintVoiceRef.current) {
+          const hintMap = {
+            'food-choice': VOICE_LINES.foodHint,
+            'color-choice': VOICE_LINES.colorHint,
+            'activity-choice': VOICE_LINES.activityHint,
+            'friend-choice': VOICE_LINES.friendHint
+          };
+          if (hintMap[currentPhase]) {
+            speakLine(hintMap[currentPhase], { moment: 'encouragement' });
+            idleHintVoiceRef.current = true;
+          }
         }
-      }
-    }, 15000);
 
-    const t4 = setTimeout(() => {
-      if (idlePhaseRef.current === currentPhase) setIdleHintLevel(4); // Glow + sparkle at 22s
-    }, 22000);
-
-    const t5 = setTimeout(() => {
-      if (idlePhaseRef.current === currentPhase) setIdleHintLevel(5); // Glow pulse again at 34s
-    }, 34000);
-
-    const t6 = setTimeout(() => {
-      if (idlePhaseRef.current === currentPhase) setIdleHintLevel(6); // Glow pulse again at 46s
-    }, 46000);
+        // Level 3 @ 26s: Strong glow (visual only)
+        idleTimerRef.current = setTimeout(() => {
+          setIdleHintLevel(3);
+        }, 8000);
+      }, 8000);
+    }, 10000);
 
     return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
-      clearTimeout(t4);
-      clearTimeout(t5);
-      clearTimeout(t6);
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
     };
-  }, [sceneState.gamePhase, sceneState.wrongChoices.length]);
+  }, [sceneState.gamePhase, showShake, resumeHintCycleKey]);
 
   // Reset idle hints on any user interaction (choice click)
   const resetIdleHints = () => {
     setIdleHintLevel(0);
-    idlePhaseRef.current = null;
+    idleHintVoiceRef.current = false;
     if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
   };
 
@@ -795,17 +1087,17 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleFoodClick = (foodId) => {
-    if (sceneState.wrongChoices.includes(foodId) || sceneState.correctChoiceId) return;
+    playUiTap();
+    if (sceneState.correctChoiceId) return;
     interruptCurrentVoice();
     resetIdleHints();
     const food = foods.find(f => f.id === foodId);
     if (food.correct) {
-      playUiTap();
       playSparkle();
       triggerMiniGesture('food', 1500);
+      triggerSparkleFx('all', 1700);
       sceneActions.updateState({ correctChoiceId: foodId });
-      setFeedbackMessage("");
-      setTimeout(() => {
+      safeSetTimeout(() => {
         playChime();
         triggerDiscoveryFly({ image: modakImg, name: 'Modak' }, { isModak: true });
         sceneActions.updateState({
@@ -816,79 +1108,71 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         });
       }, 1000);
     } else {
-      playWrongTap();
+      speakOptionName(food?.name);
       setShowShake(foodId);
-      setFeedbackMessage("Oops! Try again! 🥟");
-      setIsFeedbackShaking(true);
-      setTimeout(() => sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, foodId] }), 100);
-      setTimeout(() => { setShowShake(null); setIsFeedbackShaking(false); }, 500);
-      setTimeout(() => setFeedbackMessage(""), 2000);
+      sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, foodId] });
+      safeSetTimeout(() => setShowShake(null), 500);
     }
   };
 
   const handleColorClick = (colorId) => {
-    if (sceneState.wrongChoices.includes(colorId)) return;
+    playUiTap();
+    if (sceneState.correctChoiceId) return;
     interruptCurrentVoice();
     resetIdleHints();
     const color = colors.find(c => c.id === colorId);
     if (color.correct) {
-      playUiTap();
       playSparkle();
       triggerMiniGesture('color', 1500);
+      triggerSparkleFx('all', 1700);
       playChime();
       triggerDiscoveryFly({ image: yellowImg, name: 'Yellow' });
       sceneActions.updateState({
         storyDiscoveries: [...sceneState.storyDiscoveries, { image: yellowImg, name: 'Yellow' }],
         gamePhase: 'color-correct'
       });
-      setFeedbackMessage("");
     } else {
-      playWrongTap();
+      speakOptionName(color?.name);
       setShowShake(colorId);
-      setFeedbackMessage("Oops! Not that one, try again! 🙈");
-      setIsFeedbackShaking(true);
-      setTimeout(() => sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, colorId] }), 100);
-      setTimeout(() => { setShowShake(null); setIsFeedbackShaking(false); }, 500);
-      setTimeout(() => setFeedbackMessage(""), 2000);
+      sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, colorId] });
+      safeSetTimeout(() => setShowShake(null), 500);
     }
   };
 
   const handleActivityClick = (activityId) => {
-    if (sceneState.wrongChoices.includes(activityId)) return;
+    playUiTap();
+    if (sceneState.correctChoiceId) return;
     interruptCurrentVoice();
     resetIdleHints();
     const activity = activities.find(a => a.id === activityId);
     if (activity.correct) {
-      playUiTap();
       playSparkle();
       triggerMiniGesture('activity', 1500);
+      triggerSparkleFx('all', 1700);
       playChime();
       triggerDiscoveryFly({ image: actDancingImg, name: 'Dancing' });
       sceneActions.updateState({
         storyDiscoveries: [...sceneState.storyDiscoveries, { image: actDancingImg, name: 'Dancing' }],
         gamePhase: 'activity-correct'
       });
-      setFeedbackMessage("");
     } else {
-      playWrongTap();
+      speakOptionName(activity?.name);
       setShowShake(activityId);
-      setFeedbackMessage("Oops! Try again! 💃");
-      setIsFeedbackShaking(true);
-      setTimeout(() => sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, activityId] }), 100);
-      setTimeout(() => { setShowShake(null); setIsFeedbackShaking(false); }, 500);
-      setTimeout(() => setFeedbackMessage(""), 2000);
+      sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, activityId] });
+      safeSetTimeout(() => setShowShake(null), 500);
     }
   };
 
   const handleFriendClick = (friendId) => {
-    if (sceneState.wrongChoices.includes(friendId)) return;
+    playUiTap();
+    if (sceneState.correctChoiceId) return;
     interruptCurrentVoice();
     resetIdleHints();
     const friend = friends.find(f => f.id === friendId);
     if (friend.correct) {
-      playUiTap();
       playSparkle();
       triggerMiniGesture('friend', 1500);
+      triggerSparkleFx('all', 1700);
       playChime();
       triggerDiscoveryFly({ image: mouseImg, name: 'Mushika' });
       sceneActions.updateState({
@@ -896,15 +1180,11 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         storyDiscoveries: [...sceneState.storyDiscoveries, { image: mouseImg, name: 'Mushika' }],
         gamePhase: 'friend-correct'
       });
-      setFeedbackMessage("");
     } else {
-      playWrongTap();
+      speakOptionName(friend?.name);
       setShowShake(friendId);
-      setFeedbackMessage("Not my best friend! Try again! 🐭");
-      setIsFeedbackShaking(true);
-      setTimeout(() => sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, friendId] }), 100);
-      setTimeout(() => { setShowShake(null); setIsFeedbackShaking(false); }, 500);
-      setTimeout(() => setFeedbackMessage(""), 2000);
+      sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, friendId] });
+      safeSetTimeout(() => setShowShake(null), 500);
     }
   };
 
@@ -916,25 +1196,26 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     playUiTap();
     setSelectedKidFoodId(foodId);
     const selected = kidFoods.find(f => f.id === foodId);
+    speakOptionName(selected?.name);
     sceneActions.updateState({
       childFoodChoice: foodId,
       childDiscoveries: [{ image: selected.image, name: selected.name }]
     });
+    triggerMiniGesture('center', 1200);
+    triggerSparkleFx('single', 1500);
 
-    setTimeout(() => {
+    safeSetTimeout(() => {
       triggerDiscoveryFly({ image: selected.image, name: selected.name }, { isChild: true });
     }, 200);
 
-    setTimeout(() => {
+    safeSetTimeout(() => {
       speakLine(VOICE_LINES.childFoodCorrect, { moment: 'celebration' });
     }, DISCOVERY_CENTER_REACH_MS);
 
-    setTimeout(() => {
+    safeSetTimeout(() => {
       playSparkle();
       playChime();
-      sceneActions.updateState({
-        gamePhase: 'child-color-choice'
-      });
+      advanceToChildPhase('child-color-choice');
       setSelectedKidFoodId(null);
     }, CHILD_SELECTION_ADVANCE_DELAY_MS);
   };
@@ -948,10 +1229,21 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     sceneActions.updateState({
       childFoodDrawing: data.image,
       childDiscoveries: [{ image: data.image, name: 'My Food' }],
-      gamePhase: 'child-color-choice',
       currentModal: null,
       draftData: null
     });
+    triggerMiniGesture('center', 1200);
+    triggerSparkleFx('single', 1500);
+
+    safeSetTimeout(() => {
+      speakLine(VOICE_LINES.childFoodCorrect, { moment: 'celebration' });
+    }, DISCOVERY_CENTER_REACH_MS);
+
+    safeSetTimeout(() => {
+      playSparkle();
+      playChime();
+      advanceToChildPhase('child-color-choice');
+    }, CHILD_SELECTION_ADVANCE_DELAY_MS);
   };
 
   const handleKidColorClick = (colorId) => {
@@ -960,6 +1252,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     playUiTap();
     setSelectedKidColorId(colorId);
     const selectedColor = kidColors.find(c => c.id === colorId);
+    speakOptionName(selectedColor?.name);
     sceneActions.updateState({
       childColor: selectedColor.image || selectedColor.color,
       childColorName: selectedColor.name,
@@ -969,25 +1262,22 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         name: selectedColor.name
       }]
     });
+    triggerMiniGesture('center', 1200);
+    triggerSparkleFx('single', 1500);
     triggerDiscoveryFly({
       image: selectedColor.image,
       emoji: selectedColor.emoji,
       name: selectedColor.name
     }, { isChild: true });
 
-    setTimeout(() => {
-      const colorLine = colorId === 'yellow'
-        ? VOICE_LINES.childColorMatch
-        : VOICE_LINES.childColorCorrect;
-      speakLine(colorLine, { moment: 'celebration' });
+    safeSetTimeout(() => {
+      speakLine(VOICE_LINES.childColorCorrect, { moment: 'celebration' });
     }, DISCOVERY_CENTER_REACH_MS);
 
-    setTimeout(() => {
+    safeSetTimeout(() => {
       playSparkle();
       playChime();
-      sceneActions.updateState({
-        gamePhase: 'child-activity-choice'
-      });
+      advanceToChildPhase('child-activity-choice');
       setSelectedKidColorId(null);
     }, CHILD_SELECTION_ADVANCE_DELAY_MS);
   };
@@ -998,25 +1288,23 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     playUiTap();
     setSelectedKidActivityId(activityId);
     const selected = kidActivities.find(a => a.id === activityId);
+    speakOptionName(selected?.name);
     sceneActions.updateState({
       childActivityChoice: activityId,
       childDiscoveries: [...sceneState.childDiscoveries, { image: selected.image, name: selected.name }]
     });
+    triggerMiniGesture('center', 1200);
+    triggerSparkleFx('single', 1500);
     triggerDiscoveryFly({ image: selected.image, name: selected.name }, { isChild: true });
 
-    setTimeout(() => {
-      const activityLine = activityId === 'dancing'
-        ? VOICE_LINES.childActivityMatch
-        : VOICE_LINES.childActivityCorrect;
-      speakLine(activityLine, { moment: 'celebration' });
+    safeSetTimeout(() => {
+      speakLine(VOICE_LINES.childActivityCorrect, { moment: 'celebration' });
     }, DISCOVERY_CENTER_REACH_MS);
 
-    setTimeout(() => {
+    safeSetTimeout(() => {
       playSparkle();
       playChime();
-      sceneActions.updateState({
-        gamePhase: 'child-friend-intro'
-      });
+      advanceToChildPhase('child-friend-intro');
       setSelectedKidActivityId(null);
     }, CHILD_SELECTION_ADVANCE_DELAY_MS);
   };
@@ -1030,10 +1318,21 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     sceneActions.updateState({
       childActivityDrawing: data.image,
       childDiscoveries: [...sceneState.childDiscoveries, { image: data.image, name: 'My Activity' }],
-      gamePhase: 'child-friend-intro',
       currentModal: null,
       draftData: null
     });
+    triggerMiniGesture('center', 1200);
+    triggerSparkleFx('single', 1500);
+
+    safeSetTimeout(() => {
+      speakLine(VOICE_LINES.childActivityCorrect, { moment: 'celebration' });
+    }, DISCOVERY_CENTER_REACH_MS);
+
+    safeSetTimeout(() => {
+      playSparkle();
+      playChime();
+      advanceToChildPhase('child-friend-intro');
+    }, CHILD_SELECTION_ADVANCE_DELAY_MS);
   };
 
   const handleDrawingCancel = () => {
@@ -1047,8 +1346,16 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   return (
     <div className="favorite-food-game">
       <img src={foodBg} alt="Background" className="food-background" />
-      <HomeButton onNavigate={onNavigate} />
-      <ZoneBadgeButton zoneId="about-me-hut" onBack={() => onNavigate?.('zone-welcome')} />
+      <HomeButton onNavigate={(...args) => {
+        interruptCurrentVoice();
+        clearAllTimeouts();
+        onNavigate?.(...args);
+      }} />
+      <ZoneBadgeButton zoneId="about-me-hut" onBack={() => {
+        interruptCurrentVoice();
+        clearAllTimeouts();
+        onNavigate?.('zone-welcome');
+      }} />
       <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
 
       {discoveryFly && (
@@ -1063,6 +1370,21 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           ) : (
             <span className="discovery-fly-emoji">{discoveryFly.emoji}</span>
           )}
+        </div>
+      )}
+
+      {sparkleState.active && (
+        <div className="favorite-sparkle-overlay" key={`favorite-sparkle-${sparkleState.key}`}>
+          <SparkleAnimation
+            type="magic"
+            count={sparkleState.type === 'all' ? 42 : 14}
+            color={sparkleState.type === 'all' ? 'rgba(255, 214, 102, 0.92)' : 'rgba(255, 210, 92, 0.98)'}
+            size={sparkleState.type === 'all' ? 12 : 10}
+            duration={sparkleState.type === 'all' ? 2400 : 1700}
+            fadeOut
+            area="full"
+            key={sparkleState.key}
+          />
         </div>
       )}
 
@@ -1111,16 +1433,16 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             {sceneState.randomFoods.map((food, index) => (
               <button
                 key={food.id}
-                className={`choice-card ${showShake === food.id ? 'shake' : ''} ${sceneState.wrongChoices.includes(food.id) ? 'wrong' : ''} ${sceneState.correctChoiceId === food.id ? 'correct' : ''} bounce-gentle`}
+                className={`choice-card ${showShake === food.id ? 'wrong' : ''} ${sceneState.correctChoiceId === food.id ? 'correct' : ''}`}
                 onClick={() => handleFoodClick(food.id)}
                 style={{ animationDelay: `${index * 0.2}s` }}
-                disabled={sceneState.wrongChoices.includes(food.id) || sceneState.correctChoiceId !== null}
+                disabled={sceneState.correctChoiceId !== null}
               >
                 <div className="choice-image-container">
                   <img
                     src={food.image}
                     alt={food.name}
-                    className={`choice-image ${food.correct && idleHintLevel === 1 ? 'idle-wobble' : ''} ${food.correct && idleHintLevel >= 2 ? 'idle-glow' : ''} ${food.correct && idleHintLevel >= 4 ? 'idle-sparkle' : ''}`}
+                    className={`choice-image ${food.correct && idleHintLevel === 1 ? 'hint' : ''} ${food.correct && idleHintLevel === 2 ? 'hint-strong' : ''} ${food.correct && idleHintLevel === 3 ? 'hint-final' : ''}`}
                   />
                 </div>
                 <div className="choice-name">{food.name}</div>
@@ -1136,15 +1458,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <div className="ganesha-happy">
             <img src={babyGaneshaSit} alt="Happy Ganesha" className="ganesha-celebrate" />
           </div>
-          {/* <div className="correct-food">
-            <img src={foods.find(f => f.id === sceneState.selectedFood).image} alt="Modak" className="food-in-hand pop-in modak-special" />
-          </div> */}
-          <div className="celebration-sparkles">
-            {Array.from({ length: 15 }).map((_, i) => (
-              <div key={i} className="sparkle" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}>✨</div>
-            ))}
+          <div className="correct-food">
+            <img src={modakImg} alt="Modak" className="food-in-hand pop-in modak-special" />
           </div>
-          {/* <div className="success-message">Yes! Modak is my favorite! 🎉</div> */}
+          {/* <div className="success-message">Yes! Modak is my favorite! ðŸŽ‰</div> */}
         </div>
       )}
 
@@ -1159,16 +1476,16 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             {sceneState.randomColors.map((color, index) => (
               <button
                 key={color.id}
-                className={`choice-card ${showShake === color.id ? 'shake' : ''} ${sceneState.wrongChoices.includes(color.id) ? 'wrong' : ''} ${sceneState.correctChoiceId === color.id ? 'correct' : ''} bounce-gentle`}
+                className={`choice-card ${showShake === color.id ? 'wrong' : ''} ${sceneState.correctChoiceId === color.id ? 'correct' : ''}`}
                 onClick={() => handleColorClick(color.id)}
                 style={{ animationDelay: `${index * 0.2}s` }}
-                disabled={sceneState.wrongChoices.includes(color.id) || sceneState.correctChoiceId !== null}
+                disabled={sceneState.correctChoiceId !== null}
               >
                 <div className="choice-image-container">
                   <img
                     src={color.image}
                     alt={color.name}
-                    className={`choice-image ${color.correct && idleHintLevel === 1 ? 'idle-wobble' : ''} ${color.correct && idleHintLevel >= 2 ? 'idle-glow' : ''} ${color.correct && idleHintLevel >= 4 ? 'idle-sparkle' : ''}`}
+                    className={`choice-image ${color.correct && idleHintLevel === 1 ? 'hint' : ''} ${color.correct && idleHintLevel === 2 ? 'hint-strong' : ''} ${color.correct && idleHintLevel === 3 ? 'hint-final' : ''}`}
                   />
                 </div>
                 <div className="choice-name">{color.name}</div>
@@ -1184,15 +1501,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <div className="ganesha-happy">
             <img src={babyGaneshaSit} alt="Happy Ganesha" className="ganesha-celebrate" />
           </div>
-          {/* <div className="correct-food">
+          <div className="correct-food">
             <img src={yellowImg} alt="Yellow" className="food-in-hand pop-in" style={{ width: '180px', height: '180px' }} />
-          </div> */}
-          <div className="celebration-sparkles">
-            {Array.from({ length: 15 }).map((_, i) => (
-              <div key={i} className="sparkle" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}>✨</div>
-            ))}
           </div>
-          {/* <div className="success-message">Yes! Orange is my favorite color! 🧡</div> */}
+          {/* <div className="success-message">Yes! Orange is my favorite color! ðŸ§¡</div> */}
         </div>
       )}
 
@@ -1207,16 +1519,16 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             {sceneState.randomActivities.map((activity, index) => (
               <button
                 key={activity.id}
-                className={`choice-card ${showShake === activity.id ? 'shake' : ''} ${sceneState.wrongChoices.includes(activity.id) ? 'wrong' : ''} ${sceneState.correctChoiceId === activity.id ? 'correct' : ''} bounce-gentle`}
+                className={`choice-card ${showShake === activity.id ? 'wrong' : ''} ${sceneState.correctChoiceId === activity.id ? 'correct' : ''}`}
                 onClick={() => handleActivityClick(activity.id)}
                 style={{ animationDelay: `${index * 0.2}s` }}
-                disabled={sceneState.wrongChoices.includes(activity.id) || sceneState.correctChoiceId !== null}
+                disabled={sceneState.correctChoiceId !== null}
               >
                 <div className="choice-image-container">
                   <img
                     src={activity.image}
                     alt={activity.name}
-                    className={`choice-image ${activity.correct && idleHintLevel === 1 ? 'idle-wobble' : ''} ${activity.correct && idleHintLevel >= 2 ? 'idle-glow' : ''} ${activity.correct && idleHintLevel >= 4 ? 'idle-sparkle' : ''}`}
+                    className={`choice-image ${activity.correct && idleHintLevel === 1 ? 'hint' : ''} ${activity.correct && idleHintLevel === 2 ? 'hint-strong' : ''} ${activity.correct && idleHintLevel === 3 ? 'hint-final' : ''}`}
                   />
                 </div>
                 <div className="choice-name">{activity.name}</div>
@@ -1232,15 +1544,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <div className="ganesha-happy">
             <img src={babyGaneshaSit} alt="Happy Ganesha" className="ganesha-celebrate" />
           </div>
-          {/* <div className="correct-food">
+          <div className="correct-food">
             <img src={actDancingImg} alt="Dancing" className="food-in-hand pop-in" style={{ width: '180px', height: '180px' }} />
-          </div> */}
-          <div className="celebration-sparkles">
-            {Array.from({ length: 15 }).map((_, i) => (
-              <div key={i} className="sparkle" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}>✨</div>
-            ))}
           </div>
-          {/* <div className="success-message">Yes! I love Dancing! 💃✨</div> */}
+          {/* <div className="success-message">Yes! I love Dancing! ðŸ’ƒâœ¨</div> */}
         </div>
       )}
 
@@ -1250,7 +1557,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
           <div className="friend-intro-box">
             <h2 className="friend-intro-text">Great! Now find my best friend!</h2>
-            <button className="friend-intro-btn" onClick={handleStartFriendChoice}>Find Friend! 🌟</button>
+            <button className="friend-intro-btn" onClick={handleStartFriendChoice}>Find Friend! ðŸŒŸ</button>
           </div>
         </div>
       )} */}
@@ -1266,16 +1573,16 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             {sceneState.randomFriends.map((friend, index) => (
               <button
                 key={friend.id}
-                className={`choice-card ${showShake === friend.id ? 'shake' : ''} ${sceneState.wrongChoices.includes(friend.id) ? 'wrong' : ''} ${sceneState.correctChoiceId === friend.id ? 'correct' : ''} bounce-gentle`}
+                className={`choice-card ${showShake === friend.id ? 'wrong' : ''} ${sceneState.correctChoiceId === friend.id ? 'correct' : ''}`}
                 onClick={() => handleFriendClick(friend.id)}
                 style={{ animationDelay: `${index * 0.2}s` }}
-                disabled={sceneState.wrongChoices.includes(friend.id) || sceneState.correctChoiceId !== null}
+                disabled={sceneState.correctChoiceId !== null}
               >
                 <div className="choice-image-container">
                   <img
                     src={friend.image}
                     alt={friend.name}
-                    className={`choice-image ${friend.correct && idleHintLevel === 1 ? 'idle-wobble' : ''} ${friend.correct && idleHintLevel >= 2 ? 'idle-glow' : ''} ${friend.correct && idleHintLevel >= 4 ? 'idle-sparkle' : ''}`}
+                    className={`choice-image ${friend.correct && idleHintLevel === 1 ? 'hint' : ''} ${friend.correct && idleHintLevel === 2 ? 'hint-strong' : ''} ${friend.correct && idleHintLevel === 3 ? 'hint-final' : ''}`}
                   />
                 </div>
                 <div className="choice-name">{friend.name}</div>
@@ -1291,12 +1598,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <div className="friends-together">
             <img src={babyGaneshaSit} alt="Ganesha" className="ganesha-with-friend" />
           </div>
-          <div className="celebration-sparkles">
-            {Array.from({ length: 15 }).map((_, i) => (
-              <div key={i} className="sparkle heart" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}>💕</div>
-            ))}
+          <div className="correct-food">
+            <img src={mouseImg} alt="Mushika" className="food-in-hand pop-in" style={{ width: '180px', height: '180px' }} />
           </div>
-          {/* <div className="success-message">Yes! Mushika is my best friend! 🐭✨</div> */}
+          {/* <div className="success-message">Yes! Mushika is my best friend! ðŸ­âœ¨</div> */}
         </div>
       )}
 
@@ -1305,10 +1610,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         <div className="intro-overlay">
           <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
           <div className="child-phase-modal">
-            <h2 className="child-phase-title">Now it's your turn! 😊</h2>
-            <p className="child-phase-subtext">Tell me about you.</p>
+            <h2 className="child-phase-title">Your turn!</h2>
+            <p className="child-phase-subtext">Show me your favorites!</p>
             <button className="child-phase-button" onClick={() => sceneActions.updateState({ gamePhase: 'child-food-choice' })}>
-              Tell Me about You!✨
+              Show Me!
             </button>
           </div>
         </div>
@@ -1345,7 +1650,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                       setShowDrawingPad(true);
                       setDrawingMode('food');
                       sceneActions.updateState({ currentModal: 'food-draw' }); // Track modal
-                    }}>✏ Draw</button>
+                    }}>âœ Draw</button>
                     <button className="child-food-tool-btn type" onClick={() => {
                       playUiTap();
                       setShowChildFoodTools(false);
@@ -1366,6 +1671,20 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   +
                 </button>
               </div>
+            </div>
+          )}
+
+          {!discoveryFly && (selectedKidFoodId || sceneState.childFoodChoice || sceneState.childFoodDrawing || sceneState.childFoodText) && (
+            <div className="child-completion-object">
+              {sceneState.childFoodText ? (
+                <div className="child-completion-text">{sceneState.childFoodText}</div>
+              ) : (
+                <img
+                  src={sceneState.childFoodDrawing || kidFoods.find(f => f.id === (sceneState.childFoodChoice || selectedKidFoodId))?.image}
+                  alt="Your favorite food"
+                  className="child-completion-image"
+                />
+              )}
             </div>
           )}
         </div>
@@ -1397,6 +1716,24 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
               </button>
             ))}
           </div>
+          )}
+
+          {!discoveryFly && (selectedKidColorId || sceneState.childColor) && (
+            <div className="child-completion-object">
+              {sceneState.childColor?.startsWith?.('#') ? (
+                <div
+                  className="child-completion-color-swatch"
+                  style={{ background: sceneState.childColor }}
+                  aria-label={sceneState.childColorName || 'Your favorite color'}
+                />
+              ) : (
+                <img
+                  src={sceneState.childColor || kidColors.find(c => c.id === selectedKidColorId)?.image}
+                  alt={sceneState.childColorName || kidColors.find(c => c.id === selectedKidColorId)?.name || 'Your favorite color'}
+                  className="child-completion-image"
+                />
+              )}
+            </div>
           )}
         </div>
       )}
@@ -1432,7 +1769,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                       setShowDrawingPad(true);
                       setDrawingMode('activity');
                       sceneActions.updateState({ currentModal: 'activity-draw' }); // Track modal
-                    }}>{'✏ Draw'}</button>
+                    }}>{'âœ Draw'}</button>
                     <button className="child-food-tool-btn type" onClick={() => {
                       playUiTap();
                       setShowChildActivityTools(false);
@@ -1455,6 +1792,20 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
               </div>
             </div>
           )}
+
+          {!discoveryFly && (selectedKidActivityId || sceneState.childActivityChoice || sceneState.childActivityDrawing || sceneState.childActivityText) && (
+            <div className="child-completion-object">
+              {sceneState.childActivityText ? (
+                <div className="child-completion-text">{sceneState.childActivityText}</div>
+              ) : (
+                <img
+                  src={sceneState.childActivityDrawing || kidActivities.find(a => a.id === (sceneState.childActivityChoice || selectedKidActivityId))?.image}
+                  alt="Your favorite activity"
+                  className="child-completion-image"
+                />
+              )}
+            </div>
+          )}
         </div>
       )}
 
@@ -1469,13 +1820,15 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
               sceneActions.updateState({
                 childFriendName: name,
                 childFriendLetters: name.split(''),
-                childDiscoveries: [...sceneState.childDiscoveries, { emoji: '👤', name: name }]
+                childDiscoveries: [...sceneState.childDiscoveries, { name: name }]
               });
-              triggerDiscoveryFly({ emoji: '👤', name }, { isChild: true });
-              setTimeout(() => {
+              triggerMiniGesture('center', 1200);
+              triggerSparkleFx('single', 1500);
+              triggerDiscoveryFly({ name }, { isChild: true });
+              safeSetTimeout(() => {
                 speakLine(VOICE_LINES.childFriendCorrect, { moment: 'celebration' });
               }, DISCOVERY_CENTER_REACH_MS);
-              setTimeout(() => {
+              safeSetTimeout(() => {
                 sceneActions.updateState({
                   gamePhase: 'friend-celebration'
                 });
@@ -1494,8 +1847,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             minLetters={2}
             maxLetters={20}
             placeholder="Type your Friend's Name"
-            confirmButtonText="That's My Friend! ✓"
-            deleteButtonText="⌫ Delete"
+            confirmButtonText="That's My Friend!"
+            deleteButtonText="Delete"
           />
         </div>
       )}
@@ -1504,7 +1857,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {showDrawingPad && (
         <div className="drawing-overlay">
           <DrawingPad
-            prompt={drawingMode === 'food' ? "Draw your favorite food! 🍕" : "Draw your favorite activity! ⚽"}
+            prompt={drawingMode === 'food' ? "Draw your favorite food! ðŸ•" : "Draw your favorite activity! âš½"}
 
             initialData={sceneState.draftData} // Restore draft
             onAutoSave={(data) => sceneActions.updateState({ draftData: data })} // Auto-save on stroke
@@ -1526,14 +1879,25 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             playChime();
             setShowTextInput(false);
             setTextInputMode(null);
-            triggerDiscoveryFly({ emoji: '✏️', name: text }, { isChild: true });
+            triggerDiscoveryFly({ emoji: 'âœï¸', name: text }, { isChild: true });
             sceneActions.updateState({
               childFoodText: text,
-              childDiscoveries: [{ emoji: '✏️', name: text }],
-              gamePhase: 'child-color-choice',
+              childDiscoveries: [{ emoji: 'âœï¸', name: text }],
               currentModal: null, // Clear modal
               draftData: null
             });
+            triggerMiniGesture('center', 1200);
+            triggerSparkleFx('single', 1500);
+
+            safeSetTimeout(() => {
+              speakLine(VOICE_LINES.childFoodCorrect, { moment: 'celebration' });
+            }, DISCOVERY_CENTER_REACH_MS);
+
+            safeSetTimeout(() => {
+              playSparkle();
+              playChime();
+              advanceToChildPhase('child-color-choice');
+            }, CHILD_SELECTION_ADVANCE_DELAY_MS);
           }}
           onCancel={() => {
             playUiTap();
@@ -1556,14 +1920,25 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             playChime();
             setShowTextInput(false);
             setTextInputMode(null);
-            triggerDiscoveryFly({ emoji: '✏️', name: text }, { isChild: true });
+            triggerDiscoveryFly({ emoji: 'âœï¸', name: text }, { isChild: true });
             sceneActions.updateState({
               childActivityText: text,
-              childDiscoveries: [...sceneState.childDiscoveries.slice(0, 2), { emoji: '✏️', name: text }],
-              gamePhase: 'child-friend-intro',
+              childDiscoveries: [...sceneState.childDiscoveries.slice(0, 2), { emoji: 'âœï¸', name: text }],
               currentModal: null, // Clear modal
               draftData: null
             });
+            triggerMiniGesture('center', 1200);
+            triggerSparkleFx('single', 1500);
+
+            safeSetTimeout(() => {
+              speakLine(VOICE_LINES.childActivityCorrect, { moment: 'celebration' });
+            }, DISCOVERY_CENTER_REACH_MS);
+
+            safeSetTimeout(() => {
+              playSparkle();
+              playChime();
+              advanceToChildPhase('child-friend-intro');
+            }, CHILD_SELECTION_ADVANCE_DELAY_MS);
           }}
           onCancel={() => {
             playUiTap();
@@ -1575,133 +1950,104 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         />
       )}
 
-      {/* Friend Celebration Phase */}
-      {sceneState.gamePhase === 'friend-celebration' && (
-        <div className="choice-screen">
-          <div className="ganesha-waiting">
-            <img src={babyGaneshaImg} alt="Baby Ganesha" className="ganesha-small bounce-gentle" />
-          </div>
-        </div>
-      )}
 
       {/* COMPARISON CARD */}
       {sceneState.gamePhase === 'comparison-card' && !sceneState.showingCompletionScreen && (
-        <div className="friendship-overlay">
-          <h1 className="friendship-title">You and Ganesha are friends forever! ✨</h1>
-          <p className="friendship-subtitle">Ganesha loves knowing about you 💛</p>
-
-          <div className="friendship-grid">
-            {/* --- LEFT: GANESHA --- */}
-            <div className="friend-column ganesha-card">
-              <img src={babyGaneshaSit} alt="Ganesha" className="column-header-image" />
-              <div className="column-label">GANESHA</div>
-              <div className="friend-items-grid">
-                <div className="friend-item">
-                  <span className="friend-item-label">Food</span>
-                  <img src={modakImg} alt="Modak" className="friend-item-img" />
-                  <span className="friend-item-text">Modak</span>
-                </div>
-                <div className="friend-item">
-                  <span className="friend-item-label">Color</span>
-                  <img src={yellowImg} alt="Yellow" className="friend-item-img" />
-                  <span className="friend-item-text">Yellow</span>
-                </div>
-                <div className="friend-item">
-                  <span className="friend-item-label">Activity</span>
-                  <img src={actDancingImg} alt="Dancing" className="friend-item-img" />
-                  <span className="friend-item-text">Dancing</span>
-                </div>
-                <div className="friend-item">
-                  <span className="friend-item-label">Friend</span>
-                  <img src={mouseImg} alt="Mushika" className="friend-item-img" />
-                  <span className="friend-item-text">Mushika</span>
-                </div>
-              </div>
-            </div>
-
-            {/* --- CENTER: CONNECTOR --- */}
-            <div className="friend-connector-hearts" aria-hidden="true">
-              <div className="connector-heart heart-1">♥</div>
-              <div className="connector-heart heart-2">♥</div>
-              <div className="connector-heart heart-3">♥</div>
-            </div>
-
-            {/* --- RIGHT: YOU --- */}
-            <div className="friend-column you-card">
-              <div className="child-avatar-display">
-                {sceneState.childFriendName.charAt(0) || 'U'}
-              </div>
-              <div className="column-label">YOU</div>
-
-              <div className="friend-items-grid">
-                {/* Food */}
-                <div className="friend-item">
-                  <span className="friend-item-label">Food</span>
-                  {sceneState.childFoodText ? (
-                    <div className="friend-item-typed-text">{sceneState.childFoodText}</div>
-                  ) : sceneState.childFoodDrawing ? (
-                    <img src={sceneState.childFoodDrawing} alt="Draw" className="friend-item-img" style={{ borderRadius: '4px' }} />
-                  ) : sceneState.childFoodChoice ? (
-                    <img src={kidFoods.find(f => f.id === sceneState.childFoodChoice)?.image} alt="Food" className="friend-item-img" />
-                  ) : (
-                    <div style={{ fontSize: '20px' }}>🤷</div>
-                  )}
-                  <span className="friend-item-text">
-                    {sceneState.childFoodText ? sceneState.childFoodText : sceneState.childFoodDrawing ? 'Drawing' : kidFoods.find(f => f.id === sceneState.childFoodChoice)?.name}
-                  </span>
-                </div>
-                {/* Color */}
-                <div className="friend-item">
-                  <span className="friend-item-label">Color</span>
-                  {sceneState.childColor && sceneState.childColor.startsWith('#') ? (
-                    <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: sceneState.childColor }}></div>
-                  ) : (
-                    <img src={sceneState.childColor} alt={sceneState.childColorName} className="friend-item-img" />
-                  )}
-                  <span className="friend-item-text">{sceneState.childColorName}</span>
-                </div>
-                {/* Activity */}
-                <div className="friend-item">
-                  <span className="friend-item-label">Activity</span>
-                  {sceneState.childActivityText ? (
-                    <div className="friend-item-typed-text">{sceneState.childActivityText}</div>
-                  ) : sceneState.childActivityDrawing ? (
-                    <img src={sceneState.childActivityDrawing} alt="Draw" className="friend-item-img" style={{ borderRadius: '4px' }} />
-                  ) : sceneState.childActivityChoice ? (
-                    <img src={kidActivities.find(a => a.id === sceneState.childActivityChoice)?.image} alt="Activity" className="friend-item-img" />
-                  ) : (
-                    <div style={{ fontSize: '20px' }}>🤷</div>
-                  )}
-                  <span className="friend-item-text">
-                    {sceneState.childActivityText ? sceneState.childActivityText : sceneState.childActivityDrawing ? 'Drawing' : kidActivities.find(a => a.id === sceneState.childActivityChoice)?.name}
-                  </span>
-                </div>
-                {/* Friend */}
-                <div className="friend-item">
-                  <span className="friend-item-label">Best Friend</span>
-                  <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#8B4513' }}>
-                    {sceneState.childFriendName.charAt(0)}
-                  </div>
-                  <span className="friend-item-text">{sceneState.childFriendName}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-          <button
-            className="primary-cta"
-            onClick={() => {
-              playChime();
-              sceneActions.updateState({
-                completed: true,
-                showingCompletionScreen: true
-              });
-            }}
-          >
-            🎉 Finish Game
-          </button>
-        </div>
+        <AboutMeComparisonCard
+          title="You and Ganesha are friends forever!"
+          leftColumn={{
+            header: <img src={babyGaneshaSit} alt="Ganesha" className="column-header-image" />,
+            title: 'GANESHA',
+            items: [
+              { id: 'g-food', label: 'FOOD', imageSrc: modakImg, imageAlt: 'Modak', text: 'Modak' },
+              { id: 'g-color', label: 'COLOR', imageSrc: yellowImg, imageAlt: 'Yellow', text: 'Yellow' },
+              { id: 'g-activity', label: 'ACTIVITY', imageSrc: actDancingImg, imageAlt: 'Dancing', text: 'Dancing' },
+              { id: 'g-friend', label: 'FRIEND', imageSrc: mouseImg, imageAlt: 'Mushika', text: 'Mushika' },
+            ]
+          }}
+          rightColumn={{
+            header: <div className="child-avatar-display">{sceneState.childFriendName?.charAt(0)?.toUpperCase() || 'U'}</div>,
+            title: 'YOU',
+            items: [
+              {
+                id: 'c-food',
+                custom: (
+                  <>
+                    <div className="aboutme-comparison-item-label">FOOD</div>
+                    <div className="aboutme-comparison-item-media">
+                      {sceneState.childFoodText ? (
+                        <div className="food-comparison-typed">{sceneState.childFoodText}</div>
+                      ) : sceneState.childFoodDrawing ? (
+                        <img src={sceneState.childFoodDrawing} alt="Your food" className="aboutme-comparison-item-img" style={{ borderRadius: '4px' }} />
+                      ) : (
+                        <img src={kidFoods.find(f => f.id === sceneState.childFoodChoice)?.image} alt="Your food" className="aboutme-comparison-item-img" />
+                      )}
+                    </div>
+                    <div className="aboutme-comparison-item-text">
+                      {sceneState.childFoodText || (sceneState.childFoodDrawing ? 'Drawing' : kidFoods.find(f => f.id === sceneState.childFoodChoice)?.name)}
+                    </div>
+                  </>
+                )
+              },
+              {
+                id: 'c-color',
+                custom: (
+                  <>
+                    <div className="aboutme-comparison-item-label">COLOR</div>
+                    <div className="aboutme-comparison-item-media">
+                      {sceneState.childColor?.startsWith('#') ? (
+                        <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: sceneState.childColor }} />
+                      ) : (
+                        <img src={sceneState.childColor} alt={sceneState.childColorName} className="aboutme-comparison-item-img" />
+                      )}
+                    </div>
+                    <div className="aboutme-comparison-item-text">{sceneState.childColorName}</div>
+                  </>
+                )
+              },
+              {
+                id: 'c-activity',
+                custom: (
+                  <>
+                    <div className="aboutme-comparison-item-label">ACTIVITY</div>
+                    <div className="aboutme-comparison-item-media">
+                      {sceneState.childActivityText ? (
+                        <div className="food-comparison-typed">{sceneState.childActivityText}</div>
+                      ) : sceneState.childActivityDrawing ? (
+                        <img src={sceneState.childActivityDrawing} alt="Your activity" className="aboutme-comparison-item-img" style={{ borderRadius: '4px' }} />
+                      ) : (
+                        <img src={kidActivities.find(a => a.id === sceneState.childActivityChoice)?.image} alt="Your activity" className="aboutme-comparison-item-img" />
+                      )}
+                    </div>
+                    <div className="aboutme-comparison-item-text">
+                      {sceneState.childActivityText || (sceneState.childActivityDrawing ? 'Drawing' : kidActivities.find(a => a.id === sceneState.childActivityChoice)?.name)}
+                    </div>
+                  </>
+                )
+              },
+              {
+                id: 'c-friend',
+                custom: (
+                  <>
+                    <div className="aboutme-comparison-item-label">BEST FRIEND</div>
+                    <div className="aboutme-comparison-item-media" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'linear-gradient(145deg, #64c5c0, #49a8a2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Baloo 2', cursive", fontSize: '30px', fontWeight: '800', color: '#fff' }}>
+                        {sceneState.childFriendName?.charAt(0)?.toUpperCase()}
+                      </div>
+                    </div>
+                    <div className="aboutme-comparison-item-text">{sceneState.childFriendName}</div>
+                  </>
+                )
+              }
+            ]
+          }}
+          onContinue={() => {
+            playChime();
+            hardStopSceneAudio();
+            sceneActions.updateState({ completed: true, showingCompletionScreen: true });
+          }}
+          continueLabel="Continue"
+        />
       )}
 
       {/* Resume Countdown */}
@@ -1726,6 +2072,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           totalStars={2}
           nextSceneName="Dream Big Together"
           childName="super finder"
+          isFinalScene={false}
           completionData={{
             completed: true,
             stars: sceneState.stars || 2,
@@ -1735,9 +2082,11 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           }}
           onContinue={() => {
             playUiTap();
+            hardStopSceneAudio();
             setTimeout(() => {
+              hardStopSceneAudio();
               if (onNavigate) {
-                onNavigate('scene-complete-continue');
+                onNavigate('dreams-wishes');
               } else if (onComplete) {
                 onComplete();
               }
@@ -1745,6 +2094,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           }}
           onReplay={() => {
             playUiTap();
+            hardStopSceneAudio();
             sceneActions.updateState({
               randomFoods: shuffleArray(foods),
               randomFriends: shuffleArray(friends),
@@ -1791,10 +2141,129 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           }}
         />
       )}
+
+      {/* DEBUG: Test Controls Panel */}
+      <div style={{
+        position: 'fixed',
+        top: '16px',
+        right: '16px',
+        zIndex: 1000,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '8px',
+        background: 'rgba(0, 0, 0, 0.85)',
+        padding: '12px',
+        borderRadius: '8px',
+        maxWidth: '220px',
+      }}>
+        {/* Reset Button */}
+        <button
+          onClick={() => {
+            sceneActions.updateState({
+              gamePhase: 'intro',
+              randomFoods: shuffleArray(foods),
+              randomFriends: shuffleArray(friends),
+              randomColors: shuffleArray(colors),
+              randomActivities: shuffleArray(activities),
+              selectedFood: null,
+              selectedFriend: null,
+              wrongChoices: [],
+              correctChoiceId: null,
+              storyDiscoveries: [],
+              childDiscoveries: [],
+              childFoodChoice: null,
+              childFoodDrawing: null,
+              childFoodText: null,
+              childColor: null,
+              childColorName: '',
+              childActivityChoice: null,
+              childActivityDrawing: null,
+              childActivityText: null,
+              childFriendName: '',
+              childFriendLetters: [],
+              currentModal: null,
+              draftData: null,
+              showingCompletionScreen: false
+            });
+            resetIdleHints();
+            setShowShake(null);
+          }}
+          style={{
+            padding: '6px 10px',
+            background: 'rgba(255, 0, 0, 0.8)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '4px',
+            fontSize: '11px',
+            fontWeight: 700,
+            cursor: 'pointer',
+            fontFamily: "'Nunito', sans-serif",
+          }}
+        >
+          ðŸ”„ Reset All
+        </button>
+
+        {/* Reload Button */}
+        <button
+          onClick={() => window.location.reload()}
+          style={{
+            padding: '6px 10px',
+            background: 'rgba(33, 150, 243, 0.8)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '4px',
+            fontSize: '11px',
+            fontWeight: 700,
+            cursor: 'pointer',
+            fontFamily: "'Nunito', sans-serif",
+          }}
+        >
+          ðŸ” Reload
+        </button>
+
+        {/* Phase Jump Buttons */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '4px' }}>
+          {[
+            { label: 'Intro', value: 'intro' },
+            { label: 'Food', value: 'food-choice' },
+            { label: 'Color', value: 'color-choice' },
+            { label: 'Activity', value: 'activity-choice' },
+            { label: 'Friend', value: 'friend-choice' },
+            { label: 'C-Intro', value: 'child-intro' },
+            { label: 'C-Food', value: 'child-food-choice' },
+            { label: 'C-Color', value: 'child-color-choice' },
+            { label: 'C-Activity', value: 'child-activity-choice' },
+            { label: 'C-Friend', value: 'child-friend-input' },
+            { label: 'Celebrate', value: 'friend-celebration' },
+            { label: 'Done', value: 'completion' },
+          ].map((phaseOption) => (
+            <button
+              key={phaseOption.value}
+              onClick={() => {
+                resetIdleHints();
+                setShowShake(null);
+                sceneActions.updateState({ gamePhase: phaseOption.value });
+              }}
+              style={{
+                padding: '4px 8px',
+                background: sceneState.gamePhase === phaseOption.value ? '#4CAF50' : '#666',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '4px',
+                fontSize: '10px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                fontFamily: "'Nunito', sans-serif",
+              }}
+            >
+              {phaseOption.label}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
 
 export default FavoriteFoodGame;
-
 

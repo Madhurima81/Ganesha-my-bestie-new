@@ -211,11 +211,11 @@ export const OPENING_MODALS = {
     },
 
     'dreams-wishes': {
-      title: "Dream Big Together",
-      description: "Let's discover my dreams and yours.",
+      title: "Dream Together",
+      description: "Let’s help and dream together!",
       icons: ['wish-heart', 'wish-star', 'wish-world'],
       iconLabels: ['Heart', 'Star', 'World'],
-      buttonText: "Let's Explore",
+      buttonText: "Let’s Start",
       character: 'baby-ganesha-sit'
     }
   }

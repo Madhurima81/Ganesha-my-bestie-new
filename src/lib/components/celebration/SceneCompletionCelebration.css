@@ -72,6 +72,42 @@
   margin-top: 10px;
 }
 
+.celebration-soft-sparkles {
+  position: absolute;
+  inset: -12px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.soft-sparkle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 243, 173, 0.95) 0%, rgba(255, 208, 96, 0.2) 72%, rgba(255, 208, 96, 0) 100%);
+  box-shadow: 0 0 16px rgba(255, 215, 120, 0.55);
+  opacity: 0.35;
+  animation: softSparkleFloat 3.2s ease-in-out infinite;
+}
+
+.soft-sparkle-1 { top: 8%; left: 10%; animation-delay: 0s; }
+.soft-sparkle-2 { top: 18%; right: 9%; animation-delay: 0.4s; }
+.soft-sparkle-3 { top: 48%; left: -1%; animation-delay: 0.9s; }
+.soft-sparkle-4 { top: 52%; right: -2%; animation-delay: 1.4s; }
+.soft-sparkle-5 { bottom: 14%; left: 16%; animation-delay: 1.9s; }
+.soft-sparkle-6 { bottom: 10%; right: 14%; animation-delay: 2.3s; }
+
+@keyframes softSparkleFloat {
+  0%, 100% {
+    transform: translateY(0) scale(0.9);
+    opacity: 0.25;
+  }
+  50% {
+    transform: translateY(-5px) scale(1.08);
+    opacity: 0.65;
+  }
+}
+
 .completion-ganesha-left {
   flex: 0 0 35%;
   display: flex;

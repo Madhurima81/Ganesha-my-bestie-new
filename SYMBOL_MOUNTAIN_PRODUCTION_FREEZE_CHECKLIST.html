@@ -24,25 +24,120 @@
 
         /* Print Styles */
         @media print {
+            @page {
+                size: A4;
+                margin: 10mm 9mm;
+            }
+
             body {
                 padding: 0;
                 margin: 0;
                 background: white;
+                max-width: none;
+                font-size: 12px;
+                line-height: 1.32;
             }
             h1, h2, h3 {
                 page-break-after: avoid;
             }
             .section {
-                page-break-inside: avoid;
+                page-break-inside: auto;
+                break-inside: auto;
             }
             .page-break {
-                page-break-after: always;
+                page-break-after: auto;
+                break-after: auto;
             }
             table {
-                page-break-inside: avoid;
+                page-break-inside: auto;
+                break-inside: auto;
             }
             ul, ol {
-                page-break-inside: avoid;
+                page-break-inside: auto;
+                break-inside: auto;
+            }
+
+            h1 {
+                font-size: 24px;
+                margin-bottom: 14px;
+                padding-bottom: 8px;
+                border-bottom-width: 2px;
+            }
+
+            h2 {
+                font-size: 17px;
+                margin-top: 16px;
+                margin-bottom: 9px;
+                padding-bottom: 5px;
+            }
+
+            h3 {
+                font-size: 14px;
+                margin-top: 10px;
+                margin-bottom: 6px;
+            }
+
+            h4 {
+                font-size: 12px;
+                margin-top: 8px;
+                margin-bottom: 4px;
+            }
+
+            .section {
+                margin-bottom: 8px;
+                padding: 7px 8px;
+                background: transparent;
+            }
+
+            ul, ol {
+                margin: 6px 0;
+            }
+
+            li {
+                padding: 2px 0 2px 22px;
+                margin-bottom: 1px;
+            }
+
+            li:before {
+                font-size: 13px;
+            }
+
+            ol {
+                padding-left: 14px;
+            }
+
+            ol li {
+                padding-left: 6px;
+            }
+
+            table {
+                margin: 8px 0;
+            }
+
+            th, td {
+                padding: 6px 7px;
+                font-size: 11px;
+            }
+
+            pre, code {
+                font-size: 11px;
+            }
+
+            .toc {
+                padding: 10px;
+                margin: 10px 0;
+            }
+
+            .stats, .highlight {
+                padding: 8px 10px;
+                margin: 8px 0;
+            }
+
+            .badge {
+                font-size: 10px;
+                padding: 3px 8px;
+                margin-right: 5px;
+                margin-bottom: 5px;
             }
         }
 

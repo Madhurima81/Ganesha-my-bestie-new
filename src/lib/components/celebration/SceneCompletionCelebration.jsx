@@ -166,6 +166,14 @@ const handleAction = (callback, skipComplete = false) => {
 
         {/* Main Card */}
         <div className={`celebration-card${isExiting ? ' exiting' : ''}`}>
+          <div className="celebration-soft-sparkles" aria-hidden="true">
+            <span className="soft-sparkle soft-sparkle-1" />
+            <span className="soft-sparkle soft-sparkle-2" />
+            <span className="soft-sparkle soft-sparkle-3" />
+            <span className="soft-sparkle soft-sparkle-4" />
+            <span className="soft-sparkle soft-sparkle-5" />
+            <span className="soft-sparkle soft-sparkle-6" />
+          </div>
 
           {/* Text Header */}
           <div className="celebration-header">
@@ -249,113 +257,83 @@ const handleAction = (callback, skipComplete = false) => {
             {/* Action Buttons */}
             <div className="celebration-actions-section">
 
-              {!isFinalScene ? (
-                <>
-                  {/* PRIMARY ACTION (if provided) */}
-                  {primaryAction && (
-                    <div className="primary-action-container">
-                      <button
-                        className="celebration-btn celebration-btn-primary"
-                        onClick={() => handleAction(primaryAction.onClick)}
-                      >
-                        {primaryAction.icon && <span className="btn-icon">{primaryAction.icon}</span>}
-                        {primaryAction.text}
-                      </button>
-                      {primaryAction.subtext && (
-                        <p className="primary-action-subtext">{primaryAction.subtext}</p>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Next Scene — primary CTA (only when no custom primaryAction) */}
-                  {!primaryAction && (
+              <>
+                {/* PRIMARY ACTION (if provided) */}
+                {primaryAction && (
+                  <div className="primary-action-container">
                     <button
-                      className="celebration-btn celebration-btn-orange"
-                      onClick={() => {
-                        const currentZone = resolvedZoneId || GameStateManager.currentZone || 'symbol-mountain';
-                        const nextSceneInfo = GameStateManager.getNextScene(currentZone, sceneId);
-                        if (nextSceneInfo) {
-                          GameStateManager.clearSceneState(nextSceneInfo.zone, nextSceneInfo.scene);
-                        }
-                        handleContinueWithAnimation(() => handleAction(onContinue));
-                      }}
+                      className="celebration-btn celebration-btn-primary"
+                      onClick={() => handleAction(primaryAction.onClick)}
                     >
-                      Next Scene
+                      {primaryAction.icon && <span className="btn-icon">{primaryAction.icon}</span>}
+                      {primaryAction.text}
                     </button>
-                  )}
+                    {primaryAction.subtext && (
+                      <p className="primary-action-subtext">{primaryAction.subtext}</p>
+                    )}
+                  </div>
+                )}
 
-                  {/* Secondary / Tertiary actions */}
-                  {!primaryAction ? (
-                    <>
-                      {/* 2nd tier: Back to Zone */}
-                      <button
-                        className="celebration-btn celebration-btn-teal"
-                        onClick={() => handleAction(handleExplore)}
-                      >
-                        Back
-                      </button>
-                      {/* 3rd tier: Play Again — smallest, least prominent */}
-                      <button
-                        className="celebration-btn-replay"
-                        onClick={() => handleAction(onReplay, true)}
-                      >
-                        Play Again
-                      </button>
-                    </>
-                  ) : (
-                    <div className="celebration-actions-row">
-                      <button
-                        className="celebration-btn celebration-btn-teal celebration-btn-ghost"
-                        onClick={() => handleAction(onReplay, true)}
-                      >
-                        Play Again
-                      </button>
-                      <button
-                        className="celebration-btn celebration-btn-teal"
-                        onClick={() => {
-                          const currentZone = GameStateManager.currentZone || 'symbol-mountain';
-                          const nextSceneInfo = GameStateManager.getNextScene(currentZone, sceneId);
-                          if (nextSceneInfo) {
-                            GameStateManager.clearSceneState(nextSceneInfo.zone, nextSceneInfo.scene);
-                          }
-                          handleAction(onContinue);
-                        }}
-                      >
-                        Next Scene
-                      </button>
-                      <button
-                        className="celebration-btn celebration-btn-teal"
-                        onClick={() => handleAction(handleExplore)}
-                      >
-                        Back to Zone
-                      </button>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <>
+                {/* Primary CTA */}
+                {!primaryAction && (
                   <button
                     className="celebration-btn celebration-btn-orange"
-                    onClick={() => handleAction(handleExplore)}
+                    onClick={() => {
+                      if (isFinalScene) {
+                        handleContinueWithAnimation(() => handleAction(onHome || onContinue || handleExplore));
+                        return;
+                      }
+                      const currentZone = resolvedZoneId || GameStateManager.currentZone || 'symbol-mountain';
+                      const nextSceneInfo = GameStateManager.getNextScene(currentZone, sceneId);
+                      if (nextSceneInfo) {
+                        GameStateManager.clearSceneState(nextSceneInfo.zone, nextSceneInfo.scene);
+                      }
+                      handleContinueWithAnimation(() => handleAction(onContinue));
+                    }}
                   >
-                    Explore Zones
+                    {isFinalScene ? 'Home' : 'Next Adventure'}
                   </button>
-                  <div className="celebration-actions-row">
+                )}
+
+                {/* Secondary / Tertiary actions */}
+                {!primaryAction ? (
+                  <>
                     <button
                       className="celebration-btn celebration-btn-teal"
+                      onClick={() => handleAction(handleExplore)}
+                    >
+                      Back
+                    </button>
+                    <button
+                      className="celebration-btn-replay"
                       onClick={() => handleAction(onReplay, true)}
                     >
-                      Replay Zone
+                      Play Again
+                    </button>
+                  </>
+                ) : (
+                  <div className="celebration-actions-row">
+                    <button
+                      className="celebration-btn celebration-btn-teal celebration-btn-ghost"
+                      onClick={() => handleAction(onReplay, true)}
+                    >
+                      Play Again
                     </button>
                     <button
                       className="celebration-btn celebration-btn-teal"
-                      onClick={() => handleAction(onHome)}
+                      onClick={() => handleAction(isFinalScene ? (onHome || onContinue || handleExplore) : onContinue)}
                     >
-                      Go Home
+                      {isFinalScene ? 'Home' : 'Next Adventure'}
+                    </button>
+                    <button
+                      className="celebration-btn celebration-btn-teal"
+                      onClick={() => handleAction(handleExplore)}
+                    >
+                      Back to Zone
                     </button>
                   </div>
-                </>
-              )}
+                )}
+              </>
 
             </div>
           </div>

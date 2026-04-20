@@ -11,13 +11,17 @@ import useAppVisibility from './useAppVisibility';
  * @param {Object}   options
  * @param {function} options.onHide - Extra callback on hide  (e.g. pause celebration timer)
  * @param {function} options.onShow - Extra callback on show  (e.g. resume celebration timer)
+ * @param {boolean}  options.resumePending - Whether timers that were pending on hide should resume.
+ *                                           Set false for scene-owned resume where the current
+ *                                           phase should replay/restart cleanly after return.
  *
  * @returns {{ safeSetTimeout, clearAll }}
  *   safeSetTimeout(callback, delay) — schedules callback, returns a cancel fn
  *   clearAll()                      — cancels all pending timeouts (call on unmount)
  */
-const usePauseAwareTimeout = ({ onHide, onShow, resumeDelay = 0 } = {}) => {
+const usePauseAwareTimeout = ({ onHide, onShow, resumeDelay = 0, resumePending = true } = {}) => {
   const pendingRef = useRef([]);
+  const resumePendingRef = useRef(resumePending);
 
   // Keep latest callbacks in refs so pauseAll/resumeAll never need to change identity.
   // If onHide/onShow were in useCallback deps, they'd create new refs every render
@@ -28,6 +32,7 @@ const usePauseAwareTimeout = ({ onHide, onShow, resumeDelay = 0 } = {}) => {
   const onShowRef = useRef(onShow);
   useEffect(() => { onHideRef.current = onHide; }, [onHide]);
   useEffect(() => { onShowRef.current = onShow; }, [onShow]);
+  useEffect(() => { resumePendingRef.current = resumePending; }, [resumePending]);
 
   // Schedule (or re-schedule) a single entry
   const scheduleEntry = useCallback((entry) => {
@@ -53,6 +58,11 @@ const usePauseAwareTimeout = ({ onHide, onShow, resumeDelay = 0 } = {}) => {
 
   // Resume: reschedule all paused entries with remaining time
   const resumeAll = useCallback(() => {
+    if (!resumePendingRef.current) {
+      pendingRef.current = [];
+      onShowRef.current?.();
+      return;
+    }
     pendingRef.current.forEach(entry => {
       if (entry.id === null) scheduleEntry(entry);
     });

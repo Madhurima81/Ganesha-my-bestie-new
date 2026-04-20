@@ -390,8 +390,9 @@ const FamilyTreeGameContent = ({
         return; // Don't trigger return hint — wait for wrong answer phase to end
       }
 
-      // On tab resume: trigger idle timer reset (only if NOT in wrong answer phase)
-      onReturnHint?.();
+      // IMPORTANT: Do NOT call onReturnHint here.
+      // useVoiceGuidance already invokes onReturnHint after resumeDelay when
+      // no VO is queued. Calling it here too can double-trigger return logic.
       // Restart idle hints if choice modal is still open when child returns
       if (showChoiceModalRef.current && selectedCircleRef.current) {
         startChoiceIdleHintFlow(selectedCircleRef.current);
@@ -1818,6 +1819,7 @@ const FamilyTreeGameContent = ({
           completionSubtitle={completionModalContent?.subtitle}
           childName="Family Star"
           sceneId="family-tree"
+          isFinalScene={false}
           discoveredSymbols={completionIcons}
           symbolImages={{
             home: homeIconImg,

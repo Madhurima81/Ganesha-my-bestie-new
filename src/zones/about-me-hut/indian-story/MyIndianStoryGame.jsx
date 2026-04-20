@@ -254,6 +254,7 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
             onBack={onBack}
             childName={childName}
             childAge={childAge}
+            sceneId={sceneId}
           />
         )}
       </SceneManager>
@@ -264,7 +265,7 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
 // =========================================================
 // 2. CONTENT COMPONENT
 // =========================================================
-function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComplete, onNavigate, onBack, childName = 'friend', childAge = 8 }) {
+function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComplete, onNavigate, onBack, childName = 'friend', childAge = 8, sceneId = 'my-indian-story' }) {
   // ─── PHASE (from SceneManager - single source of truth) ───────────
   const phase = sceneState.phase || STEPS.OPENING;
 
@@ -301,7 +302,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
   // Gesture & sparkle
   const [miniGesture, setMiniGesture] = useState({ show: false, target: 'center', position: null, durationMs: 1500, key: 0 });
-  const [sparkleState, setSparkleState] = useState({ type: null, key: 0 });
+  const [sparkleState, setSparkleState] = useState({ type: null, key: 0, position: null, radius: 180 });
 
   // Idle Hint Level for Ganesha Home Phase
   const [ganeshaHomeIdleLevel, setGaneshaHomeIdleLevel] = useState(0);
@@ -326,7 +327,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const onReturnHint = useCallback(() => {
     setReturnHintNonce(n => n + 1);
   }, []);
-  const { setCurrentPhase } = useVoiceGuidance('about-me-hut', 'indian-story', {
+  const { setCurrentPhase, startMusic, stopMusic } = useVoiceGuidance('about-me-hut', 'indian-story', {
     enableMusic: true,
     musicVolume: 0.07,
     voiceVolume: 0.65,
@@ -336,16 +337,6 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     onReturnHint,
   });
   const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
-  const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({
-    onHide: () => {
-      stop();
-    },
-    onShow: () => {
-      onReturnHint();
-    },
-    resumeDelay: RESUME_DELAY_MS
-  });
-
   // Refs
   const discoveredRef = useRef(new Set());
   const miniGestureTimerRef = useRef(null);
@@ -362,15 +353,26 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const festivalSelectionIdleHintVoiceRef = useRef(false);
   const languagePlayNudgeTimeoutRef = useRef(null);
   const languagePlayNudgeIntervalRef = useRef(null);
+  const phase1ReturnHintTimerCancelRef = useRef(null);
   const phaseEnteredAtRef = useRef(Date.now());
   const entryVoPlayedForPhaseRef = useRef(null);
+  const lastHandledReturnHintNonceRef = useRef(0);
   const lastDiscoveryTime = useRef(0);
   const reloadHandledRef = useRef(false);
+
+  const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({
+    onHide: () => {
+      stop();
+    },
+    onShow: () => {},
+    resumeDelay: RESUME_DELAY_MS
+  });
 
   // Stop voice on unmount
   useEffect(() => {
     return () => {
       stop();
+      stopMusic();
       clearAllTimeouts();
       if (miniGestureTimerRef.current) clearTimeout(miniGestureTimerRef.current);
       if (sparkleCancelRef.current) clearTimeout(sparkleCancelRef.current);
@@ -380,8 +382,12 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       if (childHomePostSelectTimerRef.current) clearTimeout(childHomePostSelectTimerRef.current);
       if (languagePlayNudgeTimeoutRef.current) clearTimeout(languagePlayNudgeTimeoutRef.current);
       if (languagePlayNudgeIntervalRef.current) clearInterval(languagePlayNudgeIntervalRef.current);
+      if (phase1ReturnHintTimerCancelRef.current) {
+        phase1ReturnHintTimerCancelRef.current();
+        phase1ReturnHintTimerCancelRef.current = null;
+      }
     };
-  }, [stop, clearAllTimeouts]);
+  }, [stop, stopMusic, clearAllTimeouts]);
 
 
   // Audio & Music Setup
@@ -422,12 +428,31 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     }, durationMs);
   }, []);
 
-  const triggerSparkle = useCallback((type, durationMs = 1500) => {
+  const triggerSparkle = useCallback((typeOrOptions, durationMs = 1500) => {
+    let sparkleType = 'single';
+    let sparkleDuration = durationMs;
+    let sparklePosition = null;
+    let sparkleRadius = 180;
+
+    if (typeof typeOrOptions === 'string') {
+      sparkleType = typeOrOptions;
+    } else if (typeOrOptions && typeof typeOrOptions === 'object') {
+      sparkleType = typeOrOptions.type ?? 'single';
+      sparkleDuration = typeOrOptions.durationMs ?? durationMs;
+      sparklePosition = typeOrOptions.position ?? null;
+      sparkleRadius = typeOrOptions.radius ?? 180;
+    }
+
     if (sparkleCancelRef.current) clearTimeout(sparkleCancelRef.current);
-    setSparkleState(prev => ({ type, key: prev.key + 1 }));
+    setSparkleState(prev => ({
+      type: sparkleType,
+      key: prev.key + 1,
+      position: sparklePosition,
+      radius: sparkleRadius
+    }));
     sparkleCancelRef.current = setTimeout(() => {
-      setSparkleState(prev => ({ ...prev, type: null }));
-    }, durationMs + 50);
+      setSparkleState(prev => ({ ...prev, type: null, position: null }));
+    }, sparkleDuration + 50);
   }, []);
 
   const triggerPhase1SpotSparkle = useCallback((spotIndex, durationMs = 1200) => {
@@ -471,8 +496,9 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     festivals_wheel:  `Tap the festivals you celebrate.`,
     festivals_child_idle: `Tap the cards to choose.`,
     festivals_confirmed: `Lovely! These are your festivals.`,
-    origin_card:      `Our stories connect in India, ${childName}!`,
+    origin_card:      `Our stories connect in India!`,
     phase1_complete:  `You found my special places! I am everywhere!`,
+    completion_screen: `We shared our stories together!`,
   };
 
   const activeProfile = GameStateManager.getCurrentProfile?.() || null;
@@ -492,6 +518,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       [STEPS.FESTIVALS_GANESHA]: { text: VOICE.festivals_guess, moment: 'default'     },
       [STEPS.FESTIVALS_CHILD]:   { text: VOICE.festivals_wheel, moment: 'celebration' },
       [STEPS.ORIGIN_CARD]:       { text: VOICE.origin_card,  moment: 'gratitude'   },
+      [STEPS.COMPLETE]:          { text: VOICE.completion_screen, moment: 'celebration' },
     };
     const info = voiceMap[phase];
     if (!info?.text) return;
@@ -528,7 +555,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       case STEPS.FESTIVALS_CHILD:
         return 'Tap the festivals you celebrate.';
       case STEPS.ORIGIN_CARD:
-        return `Our stories connect in India, ${childName}!`;
+        return 'Our stories connect in India!';
       default:
         return null;
     }
@@ -536,6 +563,50 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
   useEffect(() => {
     if (!returnHintNonce) return;
+    if (lastHandledReturnHintNonceRef.current === returnHintNonce) return;
+    lastHandledReturnHintNonceRef.current = returnHintNonce;
+    // Reset per-phase idle hint state/timers immediately on tab return
+    if (phase === STEPS.CHILD_HOME) {
+      childHomeIdleHintVoiceRef.current = false;
+      if (childHomeIdleHintTimerRef.current) {
+        clearTimeout(childHomeIdleHintTimerRef.current);
+        childHomeIdleHintTimerRef.current = null;
+      }
+    }
+    if (phase === STEPS.LANGUAGE_CHILD) {
+      languageSelectionIdleHintVoiceRef.current = false;
+      if (languageSelectionIdleHintTimerRef.current) {
+        clearTimeout(languageSelectionIdleHintTimerRef.current);
+        languageSelectionIdleHintTimerRef.current = null;
+      }
+    }
+    if (phase === STEPS.FESTIVALS_CHILD) {
+      festivalSelectionIdleHintVoiceRef.current = false;
+      if (festivalSelectionIdleHintTimerRef.current) {
+        clearTimeout(festivalSelectionIdleHintTimerRef.current);
+        festivalSelectionIdleHintTimerRef.current = null;
+      }
+    }
+    if (phase === STEPS.LANGUAGE_GANESHA) {
+      setLangGuessIdleLevel(0);
+      langGuessIdleVoiceRef.current = false;
+      if (langGuessIdleTimerRef.current) {
+        clearTimeout(langGuessIdleTimerRef.current);
+        langGuessIdleTimerRef.current = null;
+      }
+      if (languagePlayNudgeTimeoutRef.current) {
+        clearTimeout(languagePlayNudgeTimeoutRef.current);
+        languagePlayNudgeTimeoutRef.current = null;
+      }
+    }
+    if (phase === STEPS.FESTIVALS_GANESHA) {
+      setFestGuessIdleLevel(0);
+      festGuessIdleVoiceRef.current = false;
+      if (festGuessIdleTimerRef.current) {
+        clearTimeout(festGuessIdleTimerRef.current);
+        festGuessIdleTimerRef.current = null;
+      }
+    }
     // Reset shake states on tab return
     if (shakeLang !== null) {
       console.log('[Tab Return] Clearing shake state for language guess');
@@ -557,8 +628,20 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     // play one reminder after a short pause to avoid abrupt overlap.
     if (phase === STEPS.GANESHA_HOME) {
       if (discoveredLocations.length === PHASE1_LOCATIONS.length) return;
+      // On every tab return, reset idle hint visuals/VO gate immediately.
+      setGaneshaHomeIdleLevel(0);
+      ganeshaHomeIdleVoiceRef.current = false;
+      if (ganeshaHomeIdleTimerRef.current) {
+        clearTimeout(ganeshaHomeIdleTimerRef.current);
+        ganeshaHomeIdleTimerRef.current = null;
+      }
+      if (phase1ReturnHintTimerCancelRef.current) {
+        phase1ReturnHintTimerCancelRef.current();
+        phase1ReturnHintTimerCancelRef.current = null;
+      }
       const phase1Line = 'Drag the magnifying glass to find me.';
-      safeSetTimeout(() => {
+      phase1ReturnHintTimerCancelRef.current = safeSetTimeout(() => {
+        phase1ReturnHintTimerCancelRef.current = null;
         const phase1ReturnKey = `about-me-hut:my-indian-story:${phase}:resume:${phase1Line}`;
         if (wasStepVoSpokenRecently(phase1ReturnKey)) return;
         speakIfUnmuted(phase1Line, { age: childAge, moment: 'encouragement' });
@@ -567,20 +650,31 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     }
 
     // Special sequencing for Language Ganesha on tab return:
-    // If play was already pressed, replay mantra first, then reminder after 2s.
+    // If play was already pressed before cards appeared, replay the full mantra
+    // from the beginning, then reveal cards. This keeps tab-return behavior
+    // aligned with the normal Play button flow.
     // This avoids overlap between return hint and idle/prompt VO.
     if (phase === STEPS.LANGUAGE_GANESHA) {
       if (hasPressedLanguagePlay) {
-        const resumeMantraKey = `about-me-hut:my-indian-story:${phase}:resume:mantra`;
-        if (!wasStepVoSpokenRecently(resumeMantraKey)) {
-          speakIfUnmuted('Vakratunda Mahakaya', { age: childAge, moment: 'default' });
+        if (!showLanguageCards) {
+          const revealCards = () => setShowLanguageCards(true);
+          const resumeMantraKey = `about-me-hut:my-indian-story:${phase}:resume:${VOICE.language_audio}`;
+          if (!wasStepVoSpokenRecently(resumeMantraKey)) {
+            speakIfUnmuted(VOICE.language_audio, {
+              age: childAge,
+              moment: 'default',
+              onEnd: () => safeSetTimeout(revealCards, 200),
+              onError: () => safeSetTimeout(revealCards, 200)
+            });
+            safeSetTimeout(revealCards, 7000);
+          }
+          return;
         }
-        safeSetTimeout(() => {
-          const followupLine = VOICE.language_guess;
-          const resumeFollowupKey = `about-me-hut:my-indian-story:${phase}:resume:${followupLine}`;
-          if (wasStepVoSpokenRecently(resumeFollowupKey)) return;
+        const followupLine = VOICE.language_guess;
+        const resumeFollowupKey = `about-me-hut:my-indian-story:${phase}:resume:${followupLine}`;
+        if (!wasStepVoSpokenRecently(resumeFollowupKey)) {
           speakIfUnmuted(followupLine, { age: childAge, moment: 'encouragement' });
-        }, 2000);
+        }
         return;
       }
       const prePlayLine = VOICE.language_play_hint;
@@ -596,7 +690,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     const returnHintVoiceKey = `about-me-hut:my-indian-story:${phase}:${line}`;
     if (wasStepVoSpokenRecently(returnHintVoiceKey)) return;
     speakIfUnmuted(line, { age: childAge, moment: 'encouragement' });
-  }, [returnHintNonce, isAudioOn, getPhaseReminderLine, phase, speakIfUnmuted, childAge, shakeLang, shakeGuess, hasPressedLanguagePlay, safeSetTimeout, discoveredLocations.length, VOICE.language_guess, VOICE.language_play_hint]);
+  }, [returnHintNonce, isAudioOn, getPhaseReminderLine, phase, speakIfUnmuted, childAge, shakeLang, shakeGuess, hasPressedLanguagePlay, showLanguageCards, safeSetTimeout, discoveredLocations.length, VOICE.language_audio, VOICE.language_guess, VOICE.language_play_hint]);
 
   // Child Home entry VO — single combined line, immediate
   useEffect(() => {
@@ -646,7 +740,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     } catch (e) {}
   }, [isReload, phase, sceneActions]);
 
-  // ── RELOAD: Restart each phase (clear state, replay entry VO) ─────────
+  // ── RELOAD: Restart each phase state; entry VO is handled by phase-entry effects ─────────
   useEffect(() => {
     if (!isReload || reloadHandledRef.current) return;
     if (phase === STEPS.OPENING || phase === STEPS.COMPLETE) return;
@@ -661,10 +755,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       setShowCelebration(false);
       setGaneshaHomeIdleLevel(0);
       ganeshaHomeIdleVoiceRef.current = false;
-      setTimeout(() => {
-        speakIfUnmuted(VOICE.ganesha_home, { age: childAge, moment: 'default' });
-        setCurrentPhase('ganesha_home');
-      }, 500);
+      setCurrentPhase('ganesha_home');
       return;
     }
 
@@ -672,10 +763,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     if (phase === STEPS.CHILD_HOME) {
       setSelectedRegion(null);
       setIsChildHomeContinueEnabled(false);
-      setTimeout(() => {
-        speakIfUnmuted(VOICE.child_home_entry, { age: childAge, moment: 'default' });
-        setCurrentPhase('child_home');
-      }, 500);
+      setCurrentPhase('child_home');
       return;
     }
 
@@ -689,10 +777,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       setHasPressedLanguagePlay(false);
       setLangGuessIdleLevel(0);
       langGuessIdleVoiceRef.current = false;
-      setTimeout(() => {
-        speakIfUnmuted(VOICE.language_play_first, { age: childAge, moment: 'default' });
-        setCurrentPhase('language_ganesha');
-      }, 500);
+      setCurrentPhase('language_ganesha');
       return;
     }
 
@@ -701,10 +786,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       setSelectedLanguages([]);
       setSwappingOutLangId(null);
       setShowLangSelectionHelper(false);
-      setTimeout(() => {
-        speakIfUnmuted(VOICE.language_wheel, { age: childAge, moment: 'default' });
-        setCurrentPhase('language_child');
-      }, 500);
+      setCurrentPhase('language_child');
       return;
     }
 
@@ -716,10 +798,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       setActiveFestReaction(null);
       setFestGuessIdleLevel(0);
       festGuessIdleVoiceRef.current = false;
-      setTimeout(() => {
-        speakIfUnmuted(VOICE.festivals_guess, { age: childAge, moment: 'default' });
-        setCurrentPhase('festivals_ganesha');
-      }, 500);
+      setCurrentPhase('festivals_ganesha');
       return;
     }
 
@@ -728,19 +807,13 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       setSelectedFestivals([]);
       setSwappingOutFestId(null);
       setShowFestSelectionHelper(false);
-      setTimeout(() => {
-        speakIfUnmuted(VOICE.festivals_wheel, { age: childAge, moment: 'default' });
-        setCurrentPhase('festivals_child');
-      }, 500);
+      setCurrentPhase('festivals_child');
       return;
     }
 
     // Phase 7: Origin Card — replay entry VO
     if (phase === STEPS.ORIGIN_CARD) {
-      setTimeout(() => {
-        speakIfUnmuted(VOICE.origin_card, { age: childAge, moment: 'story' });
-        setCurrentPhase('origin_card');
-      }, 500);
+      setCurrentPhase('origin_card');
       return;
     }
 
@@ -778,6 +851,10 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   useEffect(() => {
     if (phase !== STEPS.GANESHA_HOME) return;
     if (discoveredLocations.length !== PHASE1_LOCATIONS.length) return;
+    if (phase1ReturnHintTimerCancelRef.current) {
+      phase1ReturnHintTimerCancelRef.current();
+      phase1ReturnHintTimerCancelRef.current = null;
+    }
     setShowCelebration(false);
     let advanced = false;
     let cancelAdvance = null;
@@ -807,7 +884,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       cancel1?.();
       cancelAdvance?.();
     };
-  }, [phase, discoveredLocations.length, safeSetTimeout, triggerSparkle, speakIfUnmuted, childAge, VOICE.phase1_complete, isAudioOn, sceneActions]);
+  }, [phase, discoveredLocations.length, safeSetTimeout, triggerSparkle, speakIfUnmuted, childAge, VOICE.phase1_complete, isAudioOn]);
 
   // Ganesha Home: Idle hint progression (Level 1 @ 10s, Level 2 @ 18s, Level 3 @ 26s)
   useEffect(() => {
@@ -874,21 +951,23 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   useEffect(() => {
     if (phase !== STEPS.CHILD_HOME || selectedRegion) return;
     if (childHomeIdleHintTimerRef.current) clearTimeout(childHomeIdleHintTimerRef.current);
+    childHomeIdleHintVoiceRef.current = false;
     childHomeIdleHintTimerRef.current = setTimeout(() => {
       if (!childHomeIdleHintVoiceRef.current && isAudioOn) {
-        speak(VOICE.child_home_entry, { age: childAge, moment: 'default' });
+        speak(VOICE.child_home_idle, { age: childAge, moment: 'default' });
         childHomeIdleHintVoiceRef.current = true;
       }
     }, 6500);
     return () => {
       if (childHomeIdleHintTimerRef.current) clearTimeout(childHomeIdleHintTimerRef.current);
     };
-  }, [phase, selectedRegion, childAge, isAudioOn, speak, VOICE.child_home_entry]);
+  }, [phase, selectedRegion, childAge, isAudioOn, speak, VOICE.child_home_idle, returnHintNonce]);
 
   // Language Child: Idle hint (6-7s of no selection)
   useEffect(() => {
     if (phase !== STEPS.LANGUAGE_CHILD || selectedLanguages.length > 0) return;
     if (languageSelectionIdleHintTimerRef.current) clearTimeout(languageSelectionIdleHintTimerRef.current);
+    languageSelectionIdleHintVoiceRef.current = false;
     languageSelectionIdleHintTimerRef.current = setTimeout(() => {
       if (!languageSelectionIdleHintVoiceRef.current && isAudioOn) {
         speak(VOICE.language_child_idle, { age: childAge, moment: 'default' });
@@ -898,12 +977,13 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     return () => {
       if (languageSelectionIdleHintTimerRef.current) clearTimeout(languageSelectionIdleHintTimerRef.current);
     };
-  }, [phase, selectedLanguages.length, childAge, isAudioOn, speak, VOICE.language_child_idle]);
+  }, [phase, selectedLanguages.length, childAge, isAudioOn, speak, VOICE.language_child_idle, returnHintNonce]);
 
   // Festivals Child: Idle hint (6-7s of no selection)
   useEffect(() => {
     if (phase !== STEPS.FESTIVALS_CHILD || selectedFestivals.length > 0) return;
     if (festivalSelectionIdleHintTimerRef.current) clearTimeout(festivalSelectionIdleHintTimerRef.current);
+    festivalSelectionIdleHintVoiceRef.current = false;
     festivalSelectionIdleHintTimerRef.current = setTimeout(() => {
       if (!festivalSelectionIdleHintVoiceRef.current && isAudioOn) {
         speak(VOICE.festivals_child_idle, { age: childAge, moment: 'default' });
@@ -913,7 +993,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     return () => {
       if (festivalSelectionIdleHintTimerRef.current) clearTimeout(festivalSelectionIdleHintTimerRef.current);
     };
-  }, [phase, selectedFestivals.length, childAge, isAudioOn, speak, VOICE.festivals_child_idle]);
+  }, [phase, selectedFestivals.length, childAge, isAudioOn, speak, VOICE.festivals_child_idle, returnHintNonce]);
 
   // Language Ganesha: Idle hint progression (Level 1 @ 10s, Level 2 @ 18s, Level 3 @ 26s)
   useEffect(() => {
@@ -1070,10 +1150,14 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   }, [checkLocationDiscovery, phase, ganeshaHomeIdleLevel]);
 
   // Handle region select
-  const handleRegionSelect = (region) => {
+  const handleRegionSelect = (region, event) => {
     playUiTap();
     triggerMiniGesture(1500);
-    triggerSparkle('single', 1500);
+    const regionRect = event?.currentTarget?.getBoundingClientRect?.();
+    const regionSparklePosition = regionRect
+      ? { x: regionRect.left + regionRect.width / 2, y: regionRect.top + regionRect.height / 2 }
+      : null;
+    triggerSparkle({ type: 'single', durationMs: 1200, position: regionSparklePosition, radius: 170 });
     if (childHomeIdleTimerRef.current) clearTimeout(childHomeIdleTimerRef.current);
     if (childHomePostSelectTimerRef.current) clearTimeout(childHomePostSelectTimerRef.current);
     if (childHomeIdleHintTimerRef.current) clearTimeout(childHomeIdleHintTimerRef.current);
@@ -1094,10 +1178,14 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   };
 
   // Handle language toggle
-  const toggleLanguage = (lang) => {
+  const toggleLanguage = (lang, event) => {
     playUiTap();
     triggerMiniGesture(1500);
-    triggerSparkle('single', 1500);
+    const langRect = event?.currentTarget?.getBoundingClientRect?.();
+    const langSparklePosition = langRect
+      ? { x: langRect.left + langRect.width / 2, y: langRect.top + langRect.height / 2 }
+      : null;
+    triggerSparkle({ type: 'single', durationMs: 1200, position: langSparklePosition, radius: 170 });
     // Reset idle hints on language selection
     if (langGuessIdleLevel > 0) {
       console.log('[Idle Hint Language] Reset: Child selected language');
@@ -1134,10 +1222,14 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   };
 
   // Handle festival toggle
-  const toggleFestival = (fest) => {
+  const toggleFestival = (fest, event) => {
     playUiTap();
     triggerMiniGesture(1500);
-    triggerSparkle('single', 1500);
+    const festRect = event?.currentTarget?.getBoundingClientRect?.();
+    const festSparklePosition = festRect
+      ? { x: festRect.left + festRect.width / 2, y: festRect.top + festRect.height / 2 }
+      : null;
+    triggerSparkle({ type: 'single', durationMs: 1200, position: festSparklePosition, radius: 170 });
     // Reset idle hints on festival selection
     if (festGuessIdleLevel > 0) {
       console.log('[Idle Hint Festival] Reset: Child selected festival');
@@ -1215,7 +1307,6 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   // Handle festival guess
   const handleFestivalGuess = (fest) => {
     playUiTap();
-    if (wrongGuesses.has(fest.id)) return;
     const isCorrect = fest.id === 'ganesh';
 
     if (isCorrect) {
@@ -1244,8 +1335,11 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
         safeSetTimeout(goToFestivalChildPhase, 1200);
       }
     } else {
-      setWrongGuesses(prev => new Set(prev).add(fest.id));
-      setShakeGuess(fest.id);
+      if (!wrongGuesses.has(fest.id)) {
+        setWrongGuesses(prev => new Set(prev).add(fest.id));
+      }
+      setShakeGuess(null);
+      safeSetTimeout(() => setShakeGuess(fest.id), 0);
       safeSetTimeout(() => setShakeGuess(null), 500);
     }
   };
@@ -1253,8 +1347,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   // Complete scene
   const handleComplete = () => {
     saveProgress(selectedRegion, selectedLanguages, selectedFestivals, STEPS.COMPLETE);
-    sceneActions.updateState({ completed: true, phase: STEPS.COMPLETE });
-    sceneActions.updateState({ phase: STEPS.COMPLETE });
+    sceneActions.updateState({ completed: true, phase: STEPS.COMPLETE, showingCompletionScreen: true });
   };
 
   // ─── RENDER ───────────────────────────────────────────────────
@@ -1343,19 +1436,73 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
       {/* Sparkles */}
       {sparkleState.type && (
-        <div style={{ position: 'absolute', inset: 0, zIndex: 120, pointerEvents: 'none' }}>
+        <div
+          style={
+            sparkleState.type === 'single' && sparkleState.position
+              ? {
+                  position: 'fixed',
+                  left: sparkleState.position.x,
+                  top: sparkleState.position.y,
+                  width: sparkleState.radius,
+                  height: sparkleState.radius,
+                  transform: 'translate(-50%, -50%)',
+                  zIndex: 1500,
+                  pointerEvents: 'none'
+                }
+              : { position: 'fixed', inset: 0, zIndex: 1500, pointerEvents: 'none' }
+          }
+        >
           <SparkleAnimation
-            type={sparkleState.type === 'all' ? 'magic' : 'star'}
-            count={sparkleState.type === 'all' ? 42 : 24}
-            color={sparkleState.type === 'all' ? 'rgba(255, 214, 102, 0.92)' : 'rgba(255, 200, 87, 0.82)'}
-            size={sparkleState.type === 'all' ? 12 : 8}
-            duration={sparkleState.type === 'all' ? 2400 : 1300}
+            type={sparkleState.type === 'all' ? 'magic' : 'magic'}
+            count={sparkleState.type === 'all' ? 42 : 14}
+            color={sparkleState.type === 'all' ? 'rgba(255, 214, 102, 0.92)' : 'rgba(255, 210, 92, 0.98)'}
+            size={sparkleState.type === 'all' ? 12 : 10}
+            duration={sparkleState.type === 'all' ? 2400 : 1700}
             fadeOut={true}
             area="full"
             key={sparkleState.key}
           />
         </div>
       )}
+
+      {/* Center mini gesture (used across child phases and celebration taps) */}
+      {miniGesture.show && miniGesture.target === 'center' && (
+        <div
+          key={`center-mini-gesture-${miniGesture.key}`}
+          style={{
+            position: 'fixed',
+            left: '50%',
+            top: '28%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 170,
+            pointerEvents: 'none',
+            fontSize: 48,
+            lineHeight: 1,
+            animation: `misMiniGestureCenterPop ${miniGesture.durationMs}ms ease-out forwards`,
+            filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.18))'
+          }}
+          aria-hidden="true"
+        >
+          <img
+            src="/images/hand-thumbsup.svg"
+            alt=""
+            style={{
+              width: '56px',
+              height: '56px',
+              display: 'block',
+              filter: 'drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25))'
+            }}
+          />
+        </div>
+      )}
+      <style>{`
+        @keyframes misMiniGestureCenterPop {
+          0% { opacity: 0; transform: translate(-50%, -42%) scale(0.75); }
+          18% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+          62% { opacity: 1; transform: translate(-50%, -52%) scale(1); }
+          100% { opacity: 0; transform: translate(-50%, -58%) scale(0.92); }
+        }
+      `}</style>
 
       {/* Opening Modal */}
       {phase === STEPS.OPENING && (
@@ -1364,6 +1511,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
           sceneId="my-indian-story"
           onStart={() => {
             stop();
+            startMusic();
             clearProgress();
             setSelectedRegion(null);
             setSelectedLanguages([]);
@@ -1384,9 +1532,10 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
           zoneId="about-me-hut"
           sceneName="My Indian Story"
           completionTitle="Our Stories Connect!"
-          completionSubtitle="You discovered where your roots meet Ganesha's world."
+          completionSubtitle="You explored your world with me!"
           childName={childName || 'Friend'}
           sceneId="indian-story"
+          isFinalScene={true}
           discoveredSymbols={completionIcons}
           symbolImages={{
             'story-home': storyHouseIcon,
@@ -1402,8 +1551,8 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
             selectedFestivals: selectedFestivals
           }}
           onContinue={() => {
-            if (onNavigate) onNavigate('scene-complete-continue');
-            else if (onComplete) onComplete();
+            if (onComplete) onComplete(sceneId, { stars: 3, completed: true });
+            if (onNavigate) onNavigate('zone-welcome');
           }}
           onReplay={() => {
             clearProgress();
@@ -1735,7 +1884,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
             {INDIA_REGIONS.filter(r => r.id !== 'kailash' && r.id !== 'other').map((region) => (
               <button
                 key={region.id}
-                onClick={() => handleRegionSelect(region)}
+                onClick={(event) => handleRegionSelect(region, event)}
                 style={{
                   position: 'absolute',
                   top: region.mapTop,
@@ -1805,7 +1954,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
             {/* Outside India - Near South India Border */}
             <button
-              onClick={() => handleRegionSelect(INDIA_REGIONS.find(r => r.id === 'other'))}
+              onClick={(event) => handleRegionSelect(INDIA_REGIONS.find(r => r.id === 'other'), event)}
               style={{
                 position: 'absolute',
                 top: '82%',
@@ -2094,7 +2243,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
                 ].filter(Boolean).map((lang) => (
                   <button
                     key={lang.id}
-                    onClick={() => toggleLanguage(lang)}
+                    onClick={(event) => toggleLanguage(lang, event)}
                     disabled={false}
                     style={{
                       width: '100%',
@@ -2148,7 +2297,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
                 ].filter(Boolean).map((lang) => (
                   <button
                     key={lang.id}
-                    onClick={() => toggleLanguage(lang)}
+                    onClick={(event) => toggleLanguage(lang, event)}
                     disabled={false}
                     style={{
                       width: '100%',
@@ -2249,10 +2398,11 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
               justifyContent: 'center',
               gap: '48px',
               marginBottom: '48px',
+              flexWrap: 'wrap',
             }}>
               <button
                 key="pongal"
-                className={`card ${shakeGuess === 'pongal' ? 'wrong' : ''}`}
+                className={`card mis-fest-guess-card ${shakeGuess === 'pongal' ? 'wrong' : ''}`}
                 onClick={() => {
                   setFestGuessIdleLevel(0);
                   festGuessIdleVoiceRef.current = false;
@@ -2261,8 +2411,8 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
                 }}
                 disabled={guessPhase === 'correct'}
                 style={{
-                  width: '220px',
-                  height: '220px',
+                  width: 'clamp(128px, 28vw, 220px)',
+                  height: 'clamp(128px, 28vw, 220px)',
                   padding: '20px',
                   border: 'none',
                   backgroundColor: '#F8F1E2',
@@ -2276,11 +2426,11 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
                   opacity: 1,
                 }}
               >
-                <img src={pongalIcon} alt="Pongal" style={{ width: '200px', height: '200px', objectFit: 'contain' }} />
+                <img src={pongalIcon} alt="Pongal" style={{ width: '82%', height: '82%', objectFit: 'contain' }} />
               </button>
               <button
                 key="holi"
-                className={`card ${shakeGuess === 'holi' ? 'wrong' : ''}`}
+                className={`card mis-fest-guess-card ${shakeGuess === 'holi' ? 'wrong' : ''}`}
                 onClick={() => {
                   setFestGuessIdleLevel(0);
                   festGuessIdleVoiceRef.current = false;
@@ -2289,8 +2439,8 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
                 }}
                 disabled={guessPhase === 'correct'}
                 style={{
-                  width: '220px',
-                  height: '220px',
+                  width: 'clamp(128px, 28vw, 220px)',
+                  height: 'clamp(128px, 28vw, 220px)',
                   padding: '20px',
                   border: 'none',
                   backgroundColor: '#F8F1E2',
@@ -2304,7 +2454,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
                   opacity: 1,
                 }}
               >
-                <img src={holiIcon} alt="Holi" style={{ width: '200px', height: '200px', objectFit: 'contain' }} />
+                <img src={holiIcon} alt="Holi" style={{ width: '82%', height: '82%', objectFit: 'contain' }} />
               </button>
             </div>
 
@@ -2313,10 +2463,11 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
               display: 'flex',
               justifyContent: 'center',
               gap: '48px',
+              flexWrap: 'wrap',
             }}>
               <button
                 key="janmashtami"
-                className={`card ${shakeGuess === 'janmashtami' ? 'wrong' : ''}`}
+                className={`card mis-fest-guess-card ${shakeGuess === 'janmashtami' ? 'wrong' : ''}`}
                 onClick={() => {
                   setFestGuessIdleLevel(0);
                   festGuessIdleVoiceRef.current = false;
@@ -2325,8 +2476,8 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
                 }}
                 disabled={guessPhase === 'correct'}
                 style={{
-                  width: '220px',
-                  height: '220px',
+                  width: 'clamp(128px, 28vw, 220px)',
+                  height: 'clamp(128px, 28vw, 220px)',
                   padding: '20px',
                   border: 'none',
                   backgroundColor: '#F8F1E2',
@@ -2340,11 +2491,11 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
                   opacity: 1,
                 }}
               >
-                <img src={janmashtamiIcon} alt="Janmashtami" style={{ width: '200px', height: '200px', objectFit: 'contain' }} />
+                <img src={janmashtamiIcon} alt="Janmashtami" style={{ width: '82%', height: '82%', objectFit: 'contain' }} />
               </button>
               <button
                 key="ganesh"
-                className={`card ${guessPhase === 'correct' ? 'selected' : ''} ${festGuessIdleLevel === 1 ? 'hint' : ''} ${festGuessIdleLevel === 2 ? 'hint-strong' : ''} ${festGuessIdleLevel === 3 ? 'hint-final' : ''}`}
+                className={`card mis-fest-guess-card ${guessPhase === 'correct' ? 'selected' : ''} ${festGuessIdleLevel === 1 ? 'hint' : ''} ${festGuessIdleLevel === 2 ? 'hint-strong' : ''} ${festGuessIdleLevel === 3 ? 'hint-final' : ''}`}
                 onClick={() => {
                   setFestGuessIdleLevel(0);
                   festGuessIdleVoiceRef.current = false;
@@ -2353,8 +2504,8 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
                 }}
                 disabled={guessPhase === 'correct'}
                 style={{
-                  width: '220px',
-                  height: '220px',
+                  width: 'clamp(128px, 28vw, 220px)',
+                  height: 'clamp(128px, 28vw, 220px)',
                   padding: '20px',
                   border: 'none',
                   backgroundColor: '#F8F1E2',
@@ -2370,11 +2521,11 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
                   animation: guessPhase === 'correct' ? 'none' : undefined,
                 }}
               >
-                <img src={modakImage} alt="Ganesh Chaturthi - Modak" style={{ width: '200px', height: '200px', objectFit: 'contain' }} />
+                <img src={modakImage} alt="Ganesh Chaturthi - Modak" style={{ width: '82%', height: '82%', objectFit: 'contain' }} />
               </button>
               <button
                 key="diwali"
-                className={`card ${shakeGuess === 'diwali' ? 'wrong' : ''}`}
+                className={`card mis-fest-guess-card ${shakeGuess === 'diwali' ? 'wrong' : ''}`}
                 onClick={() => {
                   setFestGuessIdleLevel(0);
                   festGuessIdleVoiceRef.current = false;
@@ -2383,8 +2534,8 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
                 }}
                 disabled={guessPhase === 'correct'}
                 style={{
-                  width: '220px',
-                  height: '220px',
+                  width: 'clamp(128px, 28vw, 220px)',
+                  height: 'clamp(128px, 28vw, 220px)',
                   padding: '20px',
                   border: 'none',
                   backgroundColor: '#F8F1E2',
@@ -2398,14 +2549,14 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
                   opacity: 1,
                 }}
               >
-                <img src={diwaliIcon} alt="Diwali" style={{ width: '200px', height: '200px', objectFit: 'contain' }} />
+                <img src={diwaliIcon} alt="Diwali" style={{ width: '82%', height: '82%', objectFit: 'contain' }} />
               </button>
             </div>
           </div>
 
           {/* Correct Celebration Sparkle */}
           {guessPhase === 'correct' && (
-            <div style={{ position: 'absolute', inset: 0, zIndex: 120, pointerEvents: 'none' }}>
+            <div style={{ position: 'fixed', inset: 0, zIndex: 1500, pointerEvents: 'none' }}>
               <SparkleAnimation
                 type="star"
                 count={20}
@@ -2486,7 +2637,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
                 {COMMON_FESTIVALS.filter(Boolean).map((fest) => (
                   <button
                     key={fest.id}
-                    onClick={() => toggleFestival(fest)}
+                    onClick={(event) => toggleFestival(fest, event)}
                     disabled={false}
                     style={{
                       width: '100%',
@@ -2548,7 +2699,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
                 {OTHER_FESTIVALS.filter(Boolean).map((fest) => (
                   <button
                     key={fest.id}
-                    onClick={() => toggleFestival(fest)}
+                    onClick={(event) => toggleFestival(fest, event)}
                     disabled={false}
                     style={{
                       width: '100%',
@@ -2667,7 +2818,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
             title: "Ganesha's Story",
             items: [
               { label: 'Home', imageSrc: northIcon, imageAlt: 'India', text: 'All of India' },
-              { label: 'Language', imageSrc: sanskritLangIcon, imageAlt: 'Sanskrit', text: 'Sanskrit' },
+              { label: 'Language', imageSrc: sanskritLangIcon, imageAlt: 'Sanskrit', text: 'Sanskrit', wide: true },
               { label: 'Celebration', imageSrc: chaturthiIcon, imageAlt: 'Ganesh Chaturthi', text: 'Ganesh Chaturthi', wide: true }
             ]
           }}
@@ -2686,32 +2837,57 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
                   fontFamily: "'Baloo 2', cursive",
                   fontSize: '40px',
                   color: 'white',
-                  boxShadow: '0 5px 15px rgba(0,0,0,0.2)'
+                  boxShadow: '0 5px 15px rgba(0,0,0,0.2)',
+                  overflow: 'hidden'
                 }}
               >
-                {profileAvatar}
+                {activeProfile?.icon ? (
+                  <img src={activeProfile.icon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : activeProfile?.profileIcon ? (
+                  <img src={activeProfile.profileIcon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  profileAvatar
+                )}
               </div>
             ),
             title: `${profileDisplayName}'s Story`,
             items: [
+              // Row 1: Home
               {
                 label: 'Home',
                 imageSrc: selectedRegion?.icon || northIcon,
                 imageAlt: selectedRegion?.label || 'Home',
                 text: selectedRegion?.label?.split(' ')[0] || '?'
               },
+              // Row 2: Languages (grouped custom rendering)
               {
-                label: 'Languages',
-                imageSrc: hindiLangIcon,
-                imageAlt: 'Languages',
-                text: selectedLanguages.length > 0 ? `${selectedLanguages.length}` : '?'
+                label: 'Language',
+                wide: true,
+                custom: (
+                  <div style={{ display: 'flex', gap: '48px', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
+                    {selectedLanguages.map(lang => (
+                      <div key={lang.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+                        <img src={lang?.icon} alt={lang?.label} style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
+                        <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '16px', fontWeight: 700, color: '#3e2723', textAlign: 'center' }}>{lang?.label}</div>
+                      </div>
+                    ))}
+                  </div>
+                )
               },
+              // Row 3: Festivals (grouped custom rendering)
               {
-                label: 'Celebrations',
-                imageSrc: diwaliIcon,
-                imageAlt: 'Celebrations',
-                text: selectedFestivals.length > 0 ? `${selectedFestivals.length}` : '?',
-                wide: true
+                label: 'Festivals',
+                wide: true,
+                custom: (
+                  <div style={{ display: 'flex', gap: '48px', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
+                    {selectedFestivals.map(fest => (
+                      <div key={fest.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+                        <img src={fest?.icon} alt={fest?.label} style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
+                        <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '16px', fontWeight: 700, color: '#3e2723', textAlign: 'center' }}>{fest?.label}</div>
+                      </div>
+                    ))}
+                  </div>
+                )
               }
             ]
           }}
