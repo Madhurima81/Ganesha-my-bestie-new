@@ -6,6 +6,7 @@ import StoryProgressHeader from '../components/StoryProgressHeader';
 
 // Navigation Components
 import SceneManager from "../../../lib/components/scenes/SceneManager";
+import GameStateManager from "../../../lib/services/GameStateManager";
 
 // Content Configs
 import { getOpeningModal, getCompletionModal } from '../../../lib/config/content';
@@ -24,6 +25,7 @@ import usePauseAwareTimeout from '../../../lib/hooks/usePauseAwareTimeout';
 import useResumeCountdown from '../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../lib/components/feedback/ResumeCountdown';
 import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation';
+import Wish2PlateDropGame from './components/Wish2PlateDropGame';
 
 // Import Unified Design System
 import Button from '../../../lib/components/ui/Button/Button';
@@ -63,6 +65,12 @@ import wishForest1 from './assets/images/wish-images/wish-forest-1.png';
 import wishForest2 from './assets/images/wish-images/wish-forest-2.png';
 import wishForest3 from './assets/images/wish-images/wish-forest-3.png';
 import wishForest4 from './assets/images/wish-images/wish-forest-4.png';
+import baseImg from './assets/images/wish-images/base.png';
+import flowerImg from './assets/images/wish-images/flower.png';
+import bushImg from './assets/images/wish-images/bush.png';
+import treeImg from './assets/images/wish-images/tree.png';
+import butterflyImg from './assets/images/wish-images/butterfly.png';
+import birdImg from './assets/images/wish-images/bird.png';
 import helpingImg from './assets/images/wish-images/helping.png';
 import sharingImg from './assets/images/wish-images/sharing.png';
 import huggingImg from './assets/images/wish-images/hugging.png';
@@ -107,7 +115,7 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
           wish2FinalMoment: false,
           bowlStates: [false, false, false], // Track individual bowls
           wish2PlateFoods: [null, null, null],
-          wish2FoodPool: ['apple', 'banana', 'bread', 'brocolli', 'carrot', 'milk', 'rice'],
+          wish2FoodPool: ['apple', 'banana', 'rice'],
 
           wish3Taps: 0,
           wish3FinalMoment: false,
@@ -147,7 +155,7 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
 // 2. CONTENT COMPONENT
 // =========================================================
 const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplete, onNavigate, onBack }) => {
-  const WISH2_FOOD_KEYS = ['apple', 'banana', 'bread', 'brocolli', 'carrot', 'milk', 'rice'];
+  const WISH2_FOOD_KEYS = ['apple', 'banana', 'rice'];
   const WISH2_FOOD_ASSETS = {
     apple: appleImg,
     banana: bananaImg,
@@ -158,50 +166,67 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     rice: riceImg,
   };
   const WISH2_FOOD_POSITIONS = {
-    banana: { left: '50%', top: '12%' },
-    bread: { left: '15%', top: '35%' },
-    apple: { left: '25%', top: '28%' },
-    milk: { left: '35%', top: '22%' },
-    rice: { left: '50%', top: '20%' },
-    brocolli: { left: '65%', top: '22%' },
-    carrot: { left: '75%', top: '28%' },
+    apple: { left: '30%', top: '38%' },
+    banana: { left: '50%', top: '30%' },
+    rice: { left: '70%', top: '38%' },
+  };
+  const WISH2_PLATE_POSITIONS = [
+    { left: '50%', top: '74%' },
+    { left: '35%', top: '84%' },
+    { left: '65%', top: '84%' },
+  ];
+  const WISH2_PLATE_LAYOUT = {
+    containerLeft: 50,
+    containerTop: 57,
+    containerWidth: 74,
+    containerHeight: 42,
   };
 
   const VOICE_LINES = {
     // Opening Modal
-    opening: "Let's discover my dreams and yours.",
+    opening: "Let’s help and dream together!",
 
     // Wish 1
-    wish1Intro: "I have three giant wishes for the whole world! Will you help me make them come true?",
-    wish1Active: "My wish is for a kinder world. Tap the bubbles that show kind actions!",
-    wish1Complete: "The Earth is smiling. Thank you for helping the world.",
+    wish1Intro: "Let's make the world smile!",
+    wish1Active: "Tap the kind actions.",
+    wish1Complete: "You made the world kinder!",
 
     // Wish 2
     wish2Intro: "My second wish… is to share our food. So no one stays hungry.",
-    wish2Active: "My next wish is to share our food. Drag the food to the plates so everyone can eat.",
-    wish2Complete: "Wonderful! The bowls are full. Sharing makes everyone happy.",
+    wish2Active: "Drag food to the plates.",
+    wish2Complete: "Everyone has food now!",
 
     // Wish 3
     wish3Intro: "My last wish… is for a green world full of life. Let’s help this forest grow!",
-    wish3Active: "My last wish is for a green world. Tap the spots on the land and help the garden grow.",
-    wish3Complete: "Wow! The forest is full of life. You helped nature grow.",
+    wish3Active: "Tap to grow the garden.",
+    wish3Complete: "The world is green and happy!",
 
     // All Wishes Complete (now combined with drawing intro)
-    allWishesComplete: "You made the world brighter. Now it's your turn. Draw your happy wish.",
+    allWishesComplete: "Now it’s your turn! Draw your happy dream.",
 
     // Dream Phases
     // dreamIntro: (REMOVED — merged into allWishesComplete)
-    dreamDrawing: "What would you draw?",
-    dreamClouded: "Your dream is beautiful… but clouds are hiding it. Tap my trunk to clear them.",
-    dreamClearing: "Keep tapping my trunk to clear the clouds!",
-    dreamRevealed: "There it is… your dream. Dream big, little friend. I believe in you.",
+    dreamDrawing: "Draw your happy dream.",
+    dreamClouded: "Tap my trunk to clear the clouds.",
+    dreamClearing: "Keep tapping to clear the clouds!",
+    dreamRevealed: "Your dream is beautiful!",
 
     // Comparison Card
-    comparison: "My wishes… and your dream… When we help each other… dreams grow stronger.",
+    comparison: "Our dreams grow together!",
 
     // Ending
-    ending: "Dream big, little friend. I'm always cheering for you."
+    ending: "Keep dreaming and helping!",
+
+    // Idle hints
+    wish1Hint: "Look for the kind actions.",
+    wish2Hint: "Try dragging food to the plates.",
+    wish3Hint: "Tap the forest to make it grow."
   };
+
+  // Profile Display
+  const activeProfile = GameStateManager.getCurrentProfile?.() || null;
+  const profileDisplayName = (activeProfile?.name || 'Friend').trim();
+  const profileAvatar = activeProfile?.avatar ? activeProfile.avatar : profileDisplayName.charAt(0).toUpperCase();
 
   if (!sceneState) return <div>Loading...</div>;
 
@@ -317,7 +342,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   useEffect(() => clearAllTimeouts, [clearAllTimeouts]);
 
   const [showDrawingPad, setShowDrawingPad] = useState(false); // Controls visibility
-  const [draggedWish2FoodKey, setDraggedWish2FoodKey] = useState(null);
   const [selectedWish2FoodKey, setSelectedWish2FoodKey] = useState(null);
 
   const reloadHandledRef = useRef(false);
@@ -362,7 +386,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     stopSpokenVoice();
   };
 
-  const triggerWish1Sparkle = useCallback((type, durationMs = 1500) => {
+  const triggerWish1Sparkle = useCallback((type, durationMs = 1700) => {
     wish1SparkleCancelRef.current?.();
     setWish1Sparkle(prev => ({ type, key: prev.key + 1 }));
     wish1SparkleCancelRef.current = safeSetTimeout(() => {
@@ -371,7 +395,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }, durationMs + 50);
   }, [safeSetTimeout]);
 
-  const triggerWish2Sparkle = useCallback((type, durationMs = 1500, targetIndex = null) => {
+  const triggerWish2Sparkle = useCallback((type, durationMs = 1700, targetIndex = null) => {
     wish2SparkleCancelRef.current?.();
     setWish2Sparkle(prev => ({ type, key: prev.key + 1, targetIndex }));
     wish2SparkleCancelRef.current = safeSetTimeout(() => {
@@ -380,7 +404,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }, durationMs + 50);
   }, [safeSetTimeout]);
 
-  const triggerWish3Sparkle = useCallback((type, durationMs = 1500) => {
+  const triggerWish3Sparkle = useCallback((type, durationMs = 1700) => {
     wish3SparkleCancelRef.current?.();
     setWish3Sparkle(prev => ({ type, key: prev.key + 1 }));
     wish3SparkleCancelRef.current = safeSetTimeout(() => {
@@ -950,6 +974,105 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     return () => clearInterval(intervalId);
   }, [isAudioOn, sceneState.gamePhase, sceneState.showingCompletionScreen, showDrawingPad, getPhaseReminderLine]);
 
+  // Wish 1 Idle Hint Progression (10s → 18s → 26s, matching Scene 20 pattern)
+  useEffect(() => {
+    if (sceneState.gamePhase !== 'wish1-active' || sceneState.wish1Taps >= 3) {
+      setWish1IdleLevel(0);
+      idleVoFlagsRef.current.wish1Level2 = false;
+      idleVoFlagsRef.current.wish1Level3 = false;
+      return;
+    }
+
+    const timerRef = { id: null };
+    timerRef.id = safeSetTimeout(() => {
+      setWish1IdleLevel(1);
+
+      timerRef.id = safeSetTimeout(() => {
+        setWish1IdleLevel(2);
+        if (!idleVoFlagsRef.current.wish1Level2) {
+          speakLine(VOICE_LINES.wish1Hint, { moment: 'encouragement' });
+          idleVoFlagsRef.current.wish1Level2 = true;
+        }
+
+        timerRef.id = safeSetTimeout(() => {
+          setWish1IdleLevel(3);
+        }, 8000);
+      }, 8000);
+    }, 10000);
+
+    return () => {
+      if (timerRef.id) {
+        clearTimeout(timerRef.id);
+      }
+    };
+  }, [sceneState.gamePhase, sceneState.wish1Taps, safeSetTimeout]);
+
+  // Wish 2 Idle Hint Progression (10s → 18s → 26s)
+  useEffect(() => {
+    if (sceneState.gamePhase !== 'wish2-active' || sceneState.wish2Taps >= 3) {
+      setWish2IdleLevel(0);
+      idleVoFlagsRef.current.wish2Level2 = false;
+      idleVoFlagsRef.current.wish2Level3 = false;
+      return;
+    }
+
+    const timerRef = { id: null };
+    timerRef.id = safeSetTimeout(() => {
+      setWish2IdleLevel(1);
+
+      timerRef.id = safeSetTimeout(() => {
+        setWish2IdleLevel(2);
+        if (!idleVoFlagsRef.current.wish2Level2) {
+          speakLine(VOICE_LINES.wish2Hint, { moment: 'encouragement' });
+          idleVoFlagsRef.current.wish2Level2 = true;
+        }
+
+        timerRef.id = safeSetTimeout(() => {
+          setWish2IdleLevel(3);
+        }, 8000);
+      }, 8000);
+    }, 10000);
+
+    return () => {
+      if (timerRef.id) {
+        clearTimeout(timerRef.id);
+      }
+    };
+  }, [sceneState.gamePhase, sceneState.wish2Taps, safeSetTimeout]);
+
+  // Wish 3 Idle Hint Progression (10s → 18s → 26s)
+  useEffect(() => {
+    if (sceneState.gamePhase !== 'wish3-active' || sceneState.wish3Taps >= 3) {
+      setWish3IdleLevel(0);
+      idleVoFlagsRef.current.wish3Level2 = false;
+      idleVoFlagsRef.current.wish3Level3 = false;
+      return;
+    }
+
+    const timerRef = { id: null };
+    timerRef.id = safeSetTimeout(() => {
+      setWish3IdleLevel(1);
+
+      timerRef.id = safeSetTimeout(() => {
+        setWish3IdleLevel(2);
+        if (!idleVoFlagsRef.current.wish3Level2) {
+          speakLine(VOICE_LINES.wish3Hint, { moment: 'encouragement' });
+          idleVoFlagsRef.current.wish3Level2 = true;
+        }
+
+        timerRef.id = safeSetTimeout(() => {
+          setWish3IdleLevel(3);
+        }, 8000);
+      }, 8000);
+    }, 10000);
+
+    return () => {
+      if (timerRef.id) {
+        clearTimeout(timerRef.id);
+      }
+    };
+  }, [sceneState.gamePhase, sceneState.wish3Taps, safeSetTimeout]);
+
   // Reset idle timer on major phase/modal transitions
   useEffect(() => {
     markInteraction();
@@ -982,11 +1105,16 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     if (newTaps >= 3) {
       if (fromBubble) {
-        triggerWish1Sparkle('all', 1500);
+        triggerWish1Sparkle('all', 2400);
       }
       playSparkle();
       playChime();
+      // Pre-mark as spoken so effect won't trigger it, then delay the actual VO
+      phaseVoiceRef.current.wish1FinalMomentVo = true;
       sceneActions.updateState({ wish1FinalMoment: true });
+      safeSetTimeout(() => {
+        speakLine(VOICE_LINES.wish1Complete, { moment: 'celebration' });
+      }, 1000);
       safeSetTimeout(() => {
         sceneActions.updateState({
           gamePhase: 'wish2-active',
@@ -1000,7 +1128,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       }, 4200);
     } else {
       if (fromBubble) {
-        triggerWish1Sparkle('single', 1500);
+        triggerWish1Sparkle('single', 1700);
       }
     }
   };
@@ -1160,23 +1288,23 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       updates.wish1Taps = 3;
       updates.wish2Taps = 3;
       updates.bowlStates = [true, true, true];
-      updates.wish2PlateFoods = ['apple', 'banana', 'bread'];
-      updates.wish2FoodPool = ['brocolli', 'carrot', 'milk', 'rice'];
+      updates.wish2PlateFoods = ['apple', 'banana', 'rice'];
+      updates.wish2FoodPool = [];
     }
     if (phase === 'wish3-active') {
       updates.wish1Taps = 3;
       updates.wish2Taps = 3;
       updates.bowlStates = [true, true, true];
-      updates.wish2PlateFoods = ['apple', 'banana', 'bread'];
-      updates.wish2FoodPool = ['brocolli', 'carrot', 'milk', 'rice'];
+      updates.wish2PlateFoods = ['apple', 'banana', 'rice'];
+      updates.wish2FoodPool = [];
     }
     if (phase === 'wish3-complete') {
       updates.wish1Taps = 3;
       updates.wish2Taps = 3;
       updates.wish3Taps = 3;
       updates.bowlStates = [true, true, true];
-      updates.wish2PlateFoods = ['apple', 'banana', 'bread'];
-      updates.wish2FoodPool = ['brocolli', 'carrot', 'milk', 'rice'];
+      updates.wish2PlateFoods = ['apple', 'banana', 'rice'];
+      updates.wish2FoodPool = [];
     }
     sceneActions.updateState(updates);
     markInteraction();
@@ -1207,11 +1335,10 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       wish2PlateFoods: newPlateFoods,
       wish2FoodPool: newFoodPool,
     });
-    setDraggedWish2FoodKey(null);
     setSelectedWish2FoodKey(null);
 
     if (count === 3) {
-      triggerWish2Sparkle('all', 1500);
+      triggerWish2Sparkle('all', 2400);
       playSparkle();
       playChime();
       // Trigger completion VO immediately on final tap (more reliable than waiting for effect timing).
@@ -1228,14 +1355,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
         });
       }, 4200);
     } else {
-      triggerWish2Sparkle('single', 1500, index);
+      triggerWish2Sparkle('single', 1700, index);
     }
-  };
-
-  const handleWish2PlateDrop = (index, event) => {
-    event.preventDefault();
-    const transferred = event.dataTransfer?.getData('text/plain');
-    handleWish2FoodDrop(index, transferred || draggedWish2FoodKey);
   };
 
   const handleWish2PlateClick = (index) => {
@@ -1253,7 +1374,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     sceneActions.updateState({ wish3Taps: newTaps });
 
     if (newTaps >= 3) {
-      triggerWish3Sparkle('all', 1500);
+      triggerWish3Sparkle('all', 2400);
       playSparkle();
       playChime();
       // Trigger completion VO immediately on final tap (prevents missed/cut playback).
@@ -1262,7 +1383,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       sceneActions.updateState({ wish3FinalMoment: true });
       safeSetTimeout(() => { sceneActions.updateState({ gamePhase: 'all-wishes-complete', wish3FinalMoment: false }); }, 5600);
     } else {
-      triggerWish3Sparkle('single', 1500);
+      triggerWish3Sparkle('single', 1700);
     }
   };
 
@@ -1393,11 +1514,11 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 <div style={{ position: 'absolute', inset: 0, zIndex: 40, pointerEvents: 'none' }}>
                   <SparkleAnimation
                     key={`wish1-single-${wish1Sparkle.key}`}
-                    type="star"
-                    count={15}
-                    color="#ff9ebd"
+                    type="magic"
+                    count={14}
+                    color="rgba(255, 210, 92, 0.98)"
                     size={10}
-                    duration={1500}
+                    duration={1700}
                     fadeOut={true}
                     area="full"
                   />
@@ -1408,10 +1529,10 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   <SparkleAnimation
                     key={`wish1-all-${wish1Sparkle.key}`}
                     type="magic"
-                    count={20}
-                    color="lightblue"
-                    size={10}
-                    duration={1500}
+                    count={42}
+                    color="rgba(255, 214, 102, 0.92)"
+                    size={12}
+                    duration={2400}
                     fadeOut={true}
                     area="full"
                   />
@@ -1429,6 +1550,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 <div
                   key={bubble.id}
                   onClick={() => handleBubbleTap(bubble)}
+                  className={`bubble ${bubble.type === 'kind' && wish1IdleLevel === 1 ? 'hint' : ''} ${bubble.type === 'kind' && wish1IdleLevel === 2 ? 'hint-strong' : ''} ${bubble.type === 'kind' && wish1IdleLevel === 3 ? 'hint-final' : ''}`}
                   style={{
                     position: 'absolute',
                     left: `${bubble.left}%`,
@@ -1507,149 +1629,25 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       {/* Wish 2 Active */}
       {sceneState.gamePhase === 'wish2-active' && (
-        <div className="wish-screen">
-          <div className="game-header-hud">
-            {/* Header instruction commented out - using progress header instead */}
-            {/* <div className="wish-instruction-bubble">Tap the bowls 3 times to fill them! ({sceneState.wish2Taps}/3)</div> */}
-            <div className="wish-progress-header">
-              <div className="wish-progress-title">Wish 2: Fill The Bowls</div>
-              <div className="wish-smiley-row">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <span key={i} className={`wish-smiley-icon ${i < sceneState.wish2Taps ? 'filled' : ''}`}>
-                    {i < sceneState.wish2Taps ? '😊' : '😶'}
-                  </span>
-                ))}
-              </div>
-              <div className="wish-progress-count">{sceneState.wish2Taps}/3</div>
-            </div>
-          </div>
-          <div className="wish-interactive-container">
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                zIndex: 25,
-                pointerEvents: 'none',
-              }}
-            >
-              {WISH2_FOOD_KEYS.map((foodKey) => {
-                const isAvailable = (sceneState.wish2FoodPool || WISH2_FOOD_KEYS).includes(foodKey);
-                const pos = WISH2_FOOD_POSITIONS[foodKey];
-                return (
-                <div
-                  key={foodKey}
-                  draggable
-                  onDragStart={(event) => {
-                    setDraggedWish2FoodKey(foodKey);
-                    event.dataTransfer?.setData('text/plain', foodKey);
-                  }}
-                  onClick={() => setSelectedWish2FoodKey(foodKey)}
-                  style={{
-                    position: 'absolute',
-                    left: pos.left,
-                    top: pos.top,
-                    transform: 'translate(-50%, -50%)',
-                    width: '130px',
-                    height: '130px',
-                    borderRadius: '50%',
-                    background: selectedWish2FoodKey === foodKey ? 'rgba(255,242,203,0.35)' : 'transparent',
-                    border: selectedWish2FoodKey === foodKey ? '2px solid #E8BA52' : 'none',
-                    boxShadow: 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: isAvailable ? 'grab' : 'default',
-                    userSelect: 'none',
-                    pointerEvents: isAvailable ? 'auto' : 'none',
-                    opacity: isAvailable ? 1 : 0,
-                    transition: 'opacity 0.25s ease',
-                  }}
-                >
-                  <img src={WISH2_FOOD_ASSETS[foodKey]} alt={foodKey} style={{ width: '75%', height: '75%', objectFit: 'contain' }} />
-                </div>
-                );
-              })}
-            </div>
-            <div
-              className="bowls-container"
-              style={{
-                position: 'absolute',
-                left: '50%',
-                top: '73%',
-                transform: 'translate(-50%, -50%)',
-                width: '64%',
-                gap: '72px',
-              }}
-            >
-              {sceneState.bowlStates.map((isFilled, index) => (
-                <div
-                  key={index}
-                  className={`bowl ${isFilled ? 'bowl-filled' : 'bowl-empty'} ${wish2IdleLevel >= 1 && !isFilled ? 'heartbeat-gentle' : ''}`}
-                  onClick={() => handleWish2PlateClick(index)}
-                  onDragOver={(event) => event.preventDefault()}
-                  onDrop={(event) => handleWish2PlateDrop(index, event)}
-                  style={{
-                    position: 'relative',
-                    cursor: 'pointer',
-                    ...(wish2IdleLevel >= 3 && index === firstUnfilledBowlIndex ? { border: '3px dashed #f7cc7a', borderRadius: '16px' } : {})
-                  }}
-                >
-                  <img src={plateImg} alt={`Plate ${index + 1}`} className={`bowl-image ${isFilled ? 'bowl-glow-bounce' : ''}`} />
-                  {isFilled && (sceneState.wish2PlateFoods || [null, null, null])[index] && (
-                    <img
-                      src={WISH2_FOOD_ASSETS[(sceneState.wish2PlateFoods || [null, null, null])[index]]}
-                      alt="Food on plate"
-                      style={{
-                        position: 'absolute',
-                        width: '45%',
-                        height: '45%',
-                        objectFit: 'contain',
-                        top: '25%',
-                        left: '27%',
-                        pointerEvents: 'none',
-                      }}
-                    />
-                  )}
-                  {wish2Sparkle.type === 'single' && wish2Sparkle.targetIndex === index && (
-                    <SparkleAnimation
-                      key={`wish2-single-${wish2Sparkle.key}-${index}`}
-                      type="star"
-                      count={15}
-                      color="#ff9ebd"
-                      size={10}
-                      duration={1500}
-                      fadeOut={true}
-                      area="full"
-                    />
-                  )}
-                </div>
-              ))}
-              {wish2IdleLevel >= 3 && firstUnfilledBowlIndex >= 0 && (
-                <div style={{ position: 'absolute', bottom: '-22px', left: '50%', transform: 'translateX(-50%)', fontWeight: 700, color: '#8B5E34' }}>
-                  Try this plate
-                </div>
-              )}
-              {wish2Sparkle.type === 'all' && (
-                <SparkleAnimation
-                  key={`wish2-all-${wish2Sparkle.key}`}
-                  type="magic"
-                  count={20}
-                  color="lightblue"
-                  size={10}
-                  duration={1500}
-                  fadeOut={true}
-                  area="full"
-                />
-              )}
-            </div>
-            {/* Animals to feed - positioned below the plates */}
-            <div style={{ position: 'absolute', bottom: '8%', left: '50%', transform: 'translateX(-50%)', width: '70%', display: 'flex', justifyContent: 'space-around', alignItems: 'flex-end', zIndex: 5 }}>
-              <img src={cowImg} alt="Cow" style={{ height: '80px', objectFit: 'contain', opacity: 0.85 }} />
-              <img src={mouseImg} alt="Mouse" style={{ height: '70px', objectFit: 'contain', opacity: 0.85 }} />
-              <img src={peacockImg} alt="Peacock" style={{ height: '85px', objectFit: 'contain', opacity: 0.85 }} />
-            </div>
-          </div>
-        </div>
+        <Wish2PlateDropGame
+          sceneState={sceneState}
+          wish2IdleLevel={wish2IdleLevel}
+          firstUnfilledBowlIndex={firstUnfilledBowlIndex}
+          selectedWish2FoodKey={selectedWish2FoodKey}
+          setSelectedWish2FoodKey={setSelectedWish2FoodKey}
+          markInteraction={markInteraction}
+          handleWish2FoodDrop={handleWish2FoodDrop}
+          handleWish2PlateClick={handleWish2PlateClick}
+          wish2Sparkle={wish2Sparkle}
+          WISH2_FOOD_KEYS={WISH2_FOOD_KEYS}
+          WISH2_FOOD_ASSETS={WISH2_FOOD_ASSETS}
+          WISH2_FOOD_POSITIONS={WISH2_FOOD_POSITIONS}
+          WISH2_PLATE_POSITIONS={WISH2_PLATE_POSITIONS}
+          plateImg={plateImg}
+          cowImg={cowImg}
+          mouseImg={mouseImg}
+          peacockImg={peacockImg}
+        />
       )}
 
       {/* Wish 2 Complete */}
@@ -1693,8 +1691,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {sceneState.gamePhase === 'wish3-active' && (
         <div className="wish-screen">
           <div className="game-header-hud">
-            {/* Header instruction commented out - using progress header instead */}
-            {/* <div className="wish-instruction-bubble">Tap the park 3 times to make it bloom! ({sceneState.wish3Taps}/3)</div> */}
             <div className="wish-progress-header">
               <div className="wish-progress-title">Wish 3: Grow The Forest</div>
               <div className="wish-smiley-row">
@@ -1708,24 +1704,122 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             </div>
           </div>
           <div className="wish-interactive-container">
-            <div className="park-scene" onClick={handleWish3Tap}>
+            <div className="park-scene" style={{ position: 'relative', overflow: 'hidden' }}>
+              {/* Base landscape image */}
               <img
-                src={[wishForest1, wishForest2, wishForest3, wishForest4][sceneState.wish3Taps]}
-                alt="Growing forest"
+                src={baseImg}
+                alt="Forest landscape"
                 className={`park-ground-image green ${sceneState.wish3Taps >= 3 ? 'complete-glow-pulse' : ''}`}
                 style={wish3IdleLevel >= 1 ? { filter: 'drop-shadow(0 0 14px rgba(255, 231, 160, 0.85))' } : undefined}
               />
-              {wish3IdleLevel >= 3 && sceneState.wish3Taps < 3 && (
-                <div style={{ position: 'absolute', top: '8%', left: '50%', transform: 'translateX(-50%)', fontSize: '42px' }}>👇</div>
+
+              {/* Hotspot 0: Left - Flower reveal */}
+              <div
+                onClick={() => handleParkTap(0)}
+                className={`${wish3IdleLevel === 1 && !sceneState.parkStates[0] ? 'hint' : ''} ${wish3IdleLevel === 2 && !sceneState.parkStates[0] ? 'hint-strong' : ''} ${wish3IdleLevel === 3 && !sceneState.parkStates[0] ? 'hint-final' : ''}`}
+                style={{
+                  position: 'absolute',
+                  left: '18%',
+                  bottom: '25%',
+                  width: '120px',
+                  height: '140px',
+                  cursor: sceneState.parkStates[0] ? 'default' : 'pointer',
+                  background: sceneState.parkStates[0] ? '' : 'rgba(255, 200, 87, 0.12)',
+                  border: sceneState.parkStates[0] ? '' : '2px dashed rgba(255, 200, 87, 0.5)',
+                  borderRadius: '50%',
+                  zIndex: 10,
+                  transition: 'all 0.2s ease',
+                }}
+              />
+              {sceneState.parkStates[0] && (
+                <img
+                  src={flowerImg}
+                  alt="Flower"
+                  style={{ position: 'absolute', left: '8%', bottom: '15%', width: '190px', height: 'auto', zIndex: 5 }}
+                />
               )}
+
+              {/* Hotspot 1: Center - Bush + Butterfly reveal */}
+              <div
+                onClick={() => handleParkTap(1)}
+                className={`${wish3IdleLevel === 1 && !sceneState.parkStates[1] ? 'hint' : ''} ${wish3IdleLevel === 2 && !sceneState.parkStates[1] ? 'hint-strong' : ''} ${wish3IdleLevel === 3 && !sceneState.parkStates[1] ? 'hint-final' : ''}`}
+                style={{
+                  position: 'absolute',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  bottom: '40%',
+                  width: '140px',
+                  height: '160px',
+                  cursor: sceneState.parkStates[1] ? 'default' : 'pointer',
+                  background: sceneState.parkStates[1] ? '' : 'rgba(255, 200, 87, 0.12)',
+                  border: sceneState.parkStates[1] ? '' : '2px dashed rgba(255, 200, 87, 0.5)',
+                  borderRadius: '50%',
+                  zIndex: 10,
+                  transition: 'all 0.2s ease',
+                }}
+              />
+              {sceneState.parkStates[1] && (
+                <>
+                  <img
+                    src={bushImg}
+                    alt="Bush"
+                    style={{ position: 'absolute', left: '48%', transform: 'translateX(-50%)', bottom: '12%', width: '210px', height: 'auto', zIndex: 5 }}
+                  />
+                  <img
+                    src={butterflyImg}
+                    alt="Butterfly"
+                    style={{ position: 'absolute', left: '55%', transform: 'translateX(-50%)', bottom: '35%', width: '80px', height: 'auto', zIndex: 6 }}
+                  />
+                </>
+              )}
+
+              {/* Hotspot 2: Right - Tree + Bird reveal */}
+              <div
+                onClick={() => handleParkTap(2)}
+                className={`${wish3IdleLevel === 1 && !sceneState.parkStates[2] ? 'hint' : ''} ${wish3IdleLevel === 2 && !sceneState.parkStates[2] ? 'hint-strong' : ''} ${wish3IdleLevel === 3 && !sceneState.parkStates[2] ? 'hint-final' : ''}`}
+                style={{
+                  position: 'absolute',
+                  right: '18%',
+                  bottom: '25%',
+                  width: '140px',
+                  height: '180px',
+                  cursor: sceneState.parkStates[2] ? 'default' : 'pointer',
+                  background: sceneState.parkStates[2] ? '' : 'rgba(255, 200, 87, 0.12)',
+                  border: sceneState.parkStates[2] ? '' : '2px dashed rgba(255, 200, 87, 0.5)',
+                  borderRadius: '50%',
+                  zIndex: 10,
+                  transition: 'all 0.2s ease',
+                }}
+              />
+              {sceneState.parkStates[2] && (
+                <>
+                  <img
+                    src={treeImg}
+                    alt="Tree"
+                    style={{ position: 'absolute', right: '5%', bottom: '5%', width: '300px', height: 'auto', zIndex: 5 }}
+                  />
+                  <img
+                    src={birdImg}
+                    alt="Bird"
+                    style={{ position: 'absolute', right: '18%', bottom: '50%', width: '90px', height: 'auto', zIndex: 6 }}
+                  />
+                </>
+              )}
+
+              {/* Idle hint */}
+              {wish3IdleLevel >= 3 && sceneState.wish3Taps < 3 && (
+                <div style={{ position: 'absolute', top: '8%', left: '50%', transform: 'translateX(-50%)', fontSize: '42px', zIndex: 20 }}>👇</div>
+              )}
+
+              {/* Sparkle animations */}
               {wish3Sparkle.type === 'single' && (
                 <SparkleAnimation
                   key={`wish3-single-${wish3Sparkle.key}`}
-                  type="star"
-                  count={15}
-                  color="#ff9ebd"
+                  type="magic"
+                  count={14}
+                  color="rgba(255, 210, 92, 0.98)"
                   size={10}
-                  duration={1500}
+                  duration={1700}
                   fadeOut={true}
                   area="full"
                 />
@@ -1734,10 +1828,10 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 <SparkleAnimation
                   key={`wish3-all-${wish3Sparkle.key}`}
                   type="magic"
-                  count={20}
-                  color="lightblue"
-                  size={10}
-                  duration={1500}
+                  count={42}
+                  color="rgba(255, 214, 102, 0.92)"
+                  size={12}
+                  duration={2400}
                   fadeOut={true}
                   area="full"
                 />
@@ -1868,12 +1962,12 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             duration={3000}
             area="full"
           />
-          <h1 className="friendship-title">Dreams Come Together</h1>
+          <h1 className="friendship-title">Our Dreams Together</h1>
           <p className="friendship-subtitle">When we help the world, dreams grow.</p>
           <div className="friendship-grid">
             <div className="friend-column ganesha-card">
               <img src={babyGaneshaSit} alt="Ganesha" className="column-header-image" />
-              <div className="column-label">Ganesha's Wishes</div>
+              <div className="column-label">My Wishes</div>
               <div className="friend-items-grid">
                 <div className="friend-item">
                   <div className="friend-item-label">Wish 1</div>
@@ -1900,23 +1994,48 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
               */}
             </div>
             <div className="friend-column you-card">
-              <div className="column-label">Your Dream</div>
+              {activeProfile?.icon ? (
+                <img
+                  src={activeProfile.icon}
+                  alt="Profile"
+                  style={{ width: '120px', height: '120px', borderRadius: '50%', objectFit: 'cover', marginBottom: '10px', boxShadow: '0 5px 15px rgba(0,0,0,0.2)' }}
+                />
+              ) : (
+                <div
+                  style={{
+                    width: '120px',
+                    height: '120px',
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #4ECDC4, #44A08D)',
+                    border: '4px solid white',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: "'Baloo 2', cursive",
+                    fontSize: '50px',
+                    color: 'white',
+                    boxShadow: '0 5px 15px rgba(0,0,0,0.2)',
+                    marginBottom: '10px',
+                  }}
+                >
+                  {profileAvatar}
+                </div>
+              )}
+              <div className="column-label">{profileDisplayName}'s Dream</div>
               <div className="dream-display-box">
                 {sceneState.childDreamDrawing ? <img src={sceneState.childDreamDrawing} alt="Dream" className="dream-thumbnail" /> : "Loading..."}
               </div>
             </div>
           </div>
-          <Button
-            variant="primary"
-            size="large"
+          <button
             onClick={() => {
               playChime();
               sceneActions.updateState({ showingCompletionScreen: true, completed: true });
             }}
-            className="heartbeat-gentle"
+            className="continue-btn-simple done-btn-pulse"
           >
             Continue
-          </Button>
+          </button>
         </div>
       )}
 
@@ -2003,12 +2122,12 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             totalStars={3}
             nextSceneName="About Me Hut Complete"
             childName="dream maker"
-            isFinalScene={true}
+            isFinalScene={false}
             completionData={{
               completed: true,
               stars: sceneState.stars || 3
             }}
-            onContinue={() => { playUiTap(); if (onNavigate) onNavigate('scene-complete-continue'); else if (onComplete) onComplete(); }}
+            onContinue={() => { playUiTap(); if (onNavigate) onNavigate('my-indian-story'); else if (onComplete) onComplete(); }}
             onExploreZones={() => { playUiTap(); if (onNavigate) onNavigate('zones'); }}
             onReplay={() => { playUiTap(); sceneActions.updateState({ gamePhase: 'intro', wish1Taps: 0, wish1FinalMoment: false, wish2Taps: 0, wish2FinalMoment: false, wish3Taps: 0, wish3FinalMoment: false, bowlStates: [false, false, false], wish2PlateFoods: [null, null, null], wish2FoodPool: [...WISH2_FOOD_KEYS], trunkTaps: 0, childDreamDrawing: null, showingCompletionScreen: false, completed: false }); }}
             onBackToMap={() => { if (onNavigate) onNavigate('zone-welcome'); else if (onBack) onBack(); }}
