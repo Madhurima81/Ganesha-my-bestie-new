@@ -20,6 +20,7 @@ import useAudioPreference from '../../../lib/hooks/useAudioPreference';
 import useResumeCountdown from '../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../lib/components/feedback/ResumeCountdown';
 import usePauseAwareTimeout from '../../../lib/hooks/usePauseAwareTimeout';
+import GameStateManager from '../../../lib/services/GameStateManager';
 
 // Content Configs
 import { getOpeningModal, getCompletionModal } from '../../../lib/config/content';
@@ -205,6 +206,16 @@ const FamilyTreeGameContent = ({
   const openingModalContent = getOpeningModal('about-me-hut', 'family-tree');
   const completionModalContent = getCompletionModal('about-me-hut', 'family-tree');
   const completionIcons = openingModalContent?.icons || ['home', 'heart', 'family'];
+  const activeProfile = GameStateManager.getCurrentProfile?.() || null;
+  const profileDisplayName = (activeProfile?.name || 'Friend').trim();
+  const rawProfileAvatar = activeProfile?.avatar;
+  const profileAvatar = (typeof rawProfileAvatar === 'string' && rawProfileAvatar.trim().length <= 2)
+    ? rawProfileAvatar
+    : profileDisplayName.charAt(0).toUpperCase();
+  const FINAL_VO = {
+    comparison: "All families are full of love.",
+    completion: "Our families are special. Now let's find our favorite things!"
+  };
 
   // IMPORTANT: Ensure phase exists (just like Modak code)
   if (!sceneState?.gamePhase) {
@@ -951,18 +962,36 @@ const FamilyTreeGameContent = ({
   // FINAL SCENE: Play final reveal and scene complete VOs
   // ========================================
   const [finalRevealPlayed, setFinalRevealPlayed] = useState(false);
+  const completionVoPlayedRef = useRef(false);
 
   useEffect(() => {
     if (sceneState.gamePhase === 'sideBySide' && !finalRevealPlayed) {
       setFinalRevealPlayed(true);
       stopVoice();
-
-      // No VO for this screen - let the visual moment speak for itself
-      // scheduleTimeout(() => {
-      //   playVoice('sceneComplete');
-      // }, 500);
+      stopSpokenVoice();
+      if (isAudioOn) {
+        scheduleTimeout(() => {
+          speakHint(FINAL_VO.comparison, { age: 7, style: 'child', moment: 'celebration' });
+        }, 500);
+      }
     }
-  }, [sceneState.gamePhase, finalRevealPlayed]);
+  }, [sceneState.gamePhase, finalRevealPlayed, isAudioOn, stopVoice, stopSpokenVoice, speakHint]);
+
+  useEffect(() => {
+    if (!sceneState.showingCompletionScreen) {
+      completionVoPlayedRef.current = false;
+      return;
+    }
+    if (completionVoPlayedRef.current) return;
+    completionVoPlayedRef.current = true;
+    stopVoice();
+    stopSpokenVoice();
+    if (isAudioOn) {
+      scheduleTimeout(() => {
+        speakHint(FINAL_VO.completion, { age: 7, style: 'child', moment: 'celebration' });
+      }, 180);
+    }
+  }, [sceneState.showingCompletionScreen, isAudioOn, stopVoice, stopSpokenVoice, speakHint]);
 
   // --- EVENT HANDLERS (Using sceneActions) ---
   const handleStartGame = () => {
@@ -1729,8 +1758,8 @@ const FamilyTreeGameContent = ({
             />
           ))}
 
-          <h1 className="reveal-title">Our Family Trees!</h1>
-          <p className="reveal-subtitle">Connected by Love</p>
+          <h1 className="reveal-title">Our Families!</h1>
+          <p className="reveal-subtitle">All families are full of love.</p>
 
           <div className="two-trees-container">
             {/* LEFT CARD: Ganesha */}
@@ -1755,7 +1784,33 @@ const FamilyTreeGameContent = ({
 
             {/* RIGHT CARD: Your Family */}
             <div className="tree-column slide-in-right">
-              <h3 className="tree-heading">Your Family</h3>
+              <div
+                style={{
+                  width: '74px',
+                  height: '74px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #4ECDC4, #44A08D)',
+                  border: '3px solid #fff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontFamily: "'Baloo 2', cursive",
+                  fontSize: '30px',
+                  color: '#fff',
+                  boxShadow: '0 5px 12px rgba(0,0,0,0.2)',
+                  overflow: 'hidden',
+                  margin: '0 auto 10px'
+                }}
+              >
+                {activeProfile?.icon ? (
+                  <img src={activeProfile.icon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : activeProfile?.profileIcon ? (
+                  <img src={activeProfile.profileIcon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  profileAvatar
+                )}
+              </div>
+              <h3 className="tree-heading">{profileDisplayName}'s Family</h3>
               <p className="tree-location">Your Home</p>
 
               <div className="tree-visual" data-member-count={sceneState.childFamily.length}>
