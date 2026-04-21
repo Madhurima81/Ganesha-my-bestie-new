@@ -1166,6 +1166,19 @@
 .favorite-food-game .aboutme-comparison-items-grid {
   grid-template-columns: 1fr 1fr;
 }
+.favorite-food-game .aboutme-comparison-title {
+  margin-bottom: 120px;
+}
+.favorite-food-game .aboutme-comparison-column {
+  min-height: 680px;
+}
+.favorite-food-game .aboutme-comparison-item {
+  min-height: 220px;
+  padding: 18px 12px 18px;
+}
+.favorite-food-game .aboutme-comparison-continue-btn {
+  margin-top: 20px;
+}
 .favorite-food-game .aboutme-comparison-item:first-child {
   grid-column: auto;
 }

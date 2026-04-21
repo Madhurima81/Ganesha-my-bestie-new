@@ -10,6 +10,7 @@ import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation
 // Import SceneManager & Navigation
 import SceneManager from "../../../lib/components/scenes/SceneManager";
 import AboutMeComparisonCard from '../components/AboutMeComparisonCard';
+import GameStateManager from '../../../lib/services/GameStateManager';
 
 // Content Configs
 import { getOpeningModal, getCompletionModal } from '../../../lib/config/content';
@@ -212,8 +213,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     childFriendCorrect: "That's lovely!",
 
     // Connection Moment (emotional beat)
-    friendCelebration: "We're friends now!",
-    friendCelebrationNextAdventure: "Let's go to the next adventure!",
+    friendCelebration: "We like so many fun things!",
+    completionCelebration: "Now we know what we both love! Now let's make our dreams come true!",
 
     // Idle Hints (Ganesha Section)
     foodHint: "Look for the sweet I love.",
@@ -228,6 +229,12 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const openingModalContent = getOpeningModal('about-me-hut', 'favorite-food');
   const completionModalContent = getCompletionModal('about-me-hut', 'favorite-food');
   const completionIcons = openingModalContent?.icons || ['food', 'color', 'activity'];
+  const activeProfile = GameStateManager.getCurrentProfile?.() || null;
+  const profileDisplayName = (activeProfile?.name || sceneState.childFriendName || 'You').trim();
+  const rawProfileAvatar = activeProfile?.avatar;
+  const profileAvatar = (typeof rawProfileAvatar === 'string' && rawProfileAvatar.trim().length <= 2)
+    ? rawProfileAvatar
+    : profileDisplayName.charAt(0).toUpperCase();
 
   // â”€â”€ Resume Delay (shared across pause/resume logic) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const RESUME_DELAY_MS = 3000;
@@ -1091,15 +1098,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     if (sceneState.gamePhase === 'comparison-card' && !phaseVoiceRef.current.friendCelebration) {
       phaseVoiceRef.current.friendCelebration = true;
       const comparisonVoTimer = setTimeout(() => {
-        speakLine(VOICE_LINES.friendCelebration, {
-          moment: 'celebration',
-          onEnd: () => {
-            const followupVoTimer = setTimeout(() => {
-              speakLine(VOICE_LINES.friendCelebrationNextAdventure, { moment: 'encouragement' });
-            }, 280); // tiny pause between lines
-            timers.push(followupVoTimer);
-          }
-        });
+        speakLine(VOICE_LINES.friendCelebration, { moment: 'celebration' });
       }, 1000);
       timers.push(comparisonVoTimer);
     }
@@ -1107,7 +1106,20 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     return () => timers.forEach(clearTimeout);
   }, [sceneState.gamePhase, isAudioOn, resumeHintCycleKey]);
 
-  // Completion VO intentionally disabled for scene completion screen.
+  // Completion VO (single guided line)
+  useEffect(() => {
+    if (sceneState.showingCompletionScreen && !phaseVoiceRef.current.completionCelebration) {
+      phaseVoiceRef.current.completionCelebration = true;
+      const completionVoTimer = setTimeout(() => {
+        speakLine(VOICE_LINES.completionCelebration, { moment: 'celebration' });
+      }, 180);
+      return () => clearTimeout(completionVoTimer);
+    }
+    if (!sceneState.showingCompletionScreen) {
+      phaseVoiceRef.current.completionCelebration = false;
+    }
+  }, [sceneState.showingCompletionScreen, isAudioOn]);
+
   // â”€â”€ Idle Hint System (Scene 22 pattern: 10s wobble -> 18s glow+VO -> 26s stronger glow) â”€â”€
   useEffect(() => {
     const ganeshaPhases = ['food-choice', 'color-choice', 'activity-choice', 'friend-choice'];
@@ -2106,8 +2118,34 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             ]
           }}
           rightColumn={{
-            header: <div className="child-avatar-display">{sceneState.childFriendName?.charAt(0)?.toUpperCase() || 'U'}</div>,
-            title: 'YOU',
+            header: (
+              <div
+                style={{
+                  width: '96px',
+                  height: '96px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #4ECDC4, #44A08D)',
+                  border: '4px solid white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontFamily: "'Baloo 2', cursive",
+                  fontSize: '40px',
+                  color: 'white',
+                  boxShadow: '0 5px 15px rgba(0,0,0,0.2)',
+                  overflow: 'hidden'
+                }}
+              >
+                {activeProfile?.icon ? (
+                  <img src={activeProfile.icon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : activeProfile?.profileIcon ? (
+                  <img src={activeProfile.profileIcon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  profileAvatar
+                )}
+              </div>
+            ),
+            title: profileDisplayName,
             items: [
               {
                 id: 'c-food',
@@ -2170,10 +2208,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 custom: (
                   <>
                     <div className="aboutme-comparison-item-label">BEST FRIEND</div>
-                    <div className="aboutme-comparison-item-media" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'linear-gradient(145deg, #64c5c0, #49a8a2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Baloo 2', cursive", fontSize: '30px', fontWeight: '800', color: '#fff' }}>
-                        {sceneState.childFriendName?.charAt(0)?.toUpperCase()}
-                      </div>
+                    <div className="aboutme-comparison-item-media">
+                      <img src={friendsImg} alt="Best friend" className="aboutme-comparison-item-img" />
                     </div>
                     <div className="aboutme-comparison-item-text">{sceneState.childFriendName}</div>
                   </>
