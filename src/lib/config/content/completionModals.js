@@ -87,19 +87,19 @@ export const COMPLETION_MODALS = {
 
   'about-me-hut': {
   'my-indian-story': {
-    title: 'Our Indian Story Is Complete!',
-    subtitle: 'You and Ganesha share the roots of India.'
+    title: 'Your Story Is Special!',
+    subtitle: 'You are part of India’s story.'
   },
   'family-tree': {
-    title: 'Our Families Are Beautiful!',
-    subtitle: 'Every family is special and full of love.'
+    title: 'Our Families Are Special!',
+    subtitle: 'Every family is full of love.'
   },
   'favorite-food': {
-    title: 'Our Favorite Things',
-    subtitle: 'Now we know the things we each love.'
+    title: 'We Know Each Other!',
+    subtitle: 'Now we know what we both love.'
   },
   'dreams-wishes': {
-    title: 'Keep Dreaming Together',
+    title: 'Your Dream Shines!',
     subtitle: 'Your dream makes the world brighter.'
   }
 }

@@ -277,7 +277,7 @@ const handleAction = (callback, skipComplete = false) => {
                 {/* Primary CTA */}
                 {!primaryAction && (
                   <button
-                    className="celebration-btn celebration-btn-orange"
+                    className={`celebration-btn celebration-btn-orange ${!isFinalScene ? 'celebration-btn-guided-pulse' : ''}`.trim()}
                     onClick={() => {
                       if (isFinalScene) {
                         handleContinueWithAnimation(() => handleAction(onHome || onContinue || handleExplore));
