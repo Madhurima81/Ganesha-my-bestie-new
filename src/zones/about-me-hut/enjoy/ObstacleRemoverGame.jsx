@@ -171,9 +171,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     rice: { left: '70%', top: '38%' },
   };
   const WISH2_PLATE_POSITIONS = [
-    { left: '56%', top: '74%' },
-    { left: '45%', top: '84%' },
-    { left: '65%', top: '84%' },
+    { left: '50%', top: '70%' },
+    { left: '33%', top: '83%' },
+    { left: '67%', top: '83%' },
   ];
   const WISH2_PLATE_LAYOUT = {
     containerLeft: 50,
@@ -238,7 +238,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   // --- LOCAL UI STATE (Not saved in DB) ---
   // ── Resume Delay (shared across pause/resume logic) ──────────────────────────
   const RESUME_DELAY_MS = 3000;
-  const IDLE_HINT_DELAY_MS = 15000;
 
   const { isAudioOn, toggleAudio } = useAudioPreference();
 
@@ -246,6 +245,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const [wish1IdleLevel, setWish1IdleLevel] = useState(0);
   const [wish2IdleLevel, setWish2IdleLevel] = useState(0);
   const [wish3IdleLevel, setWish3IdleLevel] = useState(0);
+  const [childIdleLevel, setChildIdleLevel] = useState(0);
   const idleVoFlagsRef = useRef({
     wish1Level2: false,
     wish1Level3: false,
@@ -253,27 +253,28 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     wish2Level3: false,
     wish3Level2: false,
     wish3Level3: false,
+    childLevel2: false,
+    childLevel3: false,
   });
-  const resetIdleHintsForActiveWish = useCallback((phase) => {
-    if (phase === 'wish1-active') {
-      setWish1IdleLevel(0);
-      idleVoFlagsRef.current.wish1Level2 = false;
-      idleVoFlagsRef.current.wish1Level3 = false;
-    } else if (phase === 'wish2-active') {
-      setWish2IdleLevel(0);
-      idleVoFlagsRef.current.wish2Level2 = false;
-      idleVoFlagsRef.current.wish2Level3 = false;
-    } else if (phase === 'wish3-active') {
-      setWish3IdleLevel(0);
-      idleVoFlagsRef.current.wish3Level2 = false;
-      idleVoFlagsRef.current.wish3Level3 = false;
-    }
+  const resetIdleHintsForActiveWish = useCallback(() => {
+    setWish1IdleLevel(0);
+    setWish2IdleLevel(0);
+    setWish3IdleLevel(0);
+    setChildIdleLevel(0);
+    idleVoFlagsRef.current.wish1Level2 = false;
+    idleVoFlagsRef.current.wish1Level3 = false;
+    idleVoFlagsRef.current.wish2Level2 = false;
+    idleVoFlagsRef.current.wish2Level3 = false;
+    idleVoFlagsRef.current.wish3Level2 = false;
+    idleVoFlagsRef.current.wish3Level3 = false;
+    idleVoFlagsRef.current.childLevel2 = false;
+    idleVoFlagsRef.current.childLevel3 = false;
   }, []);
   const lastInteractionAtRef = useRef(Date.now());
   const markInteraction = useCallback(() => {
     lastInteractionAtRef.current = Date.now();
-    resetIdleHintsForActiveWish(sceneState.gamePhase);
-  }, [resetIdleHintsForActiveWish, sceneState.gamePhase]);
+    resetIdleHintsForActiveWish();
+  }, [resetIdleHintsForActiveWish]);
 
   // ── Callback for pause/resume (fires after resumeDelay via useVoiceGuidance) ─
   const onReturnHint = useCallback(() => {
@@ -367,6 +368,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   // Bubble tap game (wish 1)
   const [bubbles, setBubbles] = useState([]);
+  const [shakingBubbleId, setShakingBubbleId] = useState(null);
   const bubbleCounterRef = useRef(0);
   const removedWish1BubbleKeysRef = useRef(new Set());
   const activeWish1BubbleKeysRef = useRef(new Set());
@@ -556,14 +558,14 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
         return;
       }
 
-      // 3. ACTIVE PHASES - JUMP BACK TO INTRO WITH COUNTERS RESET
-      // On continue in Wish 1 active (in between tapping), jump back to wish1-intro
+      // 3. ACTIVE PHASES - RESTART THE PHASE WITH COUNTERS RESET
+      // On continue in Wish 1 active (in between tapping), restart wish1-active
       if (gamePhase === 'wish1-active') {
-        setResumeMessage("Let's hear the wish again! 🌍");
+        setResumeMessage("Let's try that again! 🌍");
         setShowResumePopup(true);
         resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
         sceneActions.updateState({
-          gamePhase: 'wish1-intro',
+          gamePhase: 'wish1-active',
           wish1Taps: 0,
           wish1FinalMoment: false
         });
@@ -607,16 +609,12 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       }
 
       // 4. DREAM PHASES
-      // 4a. If drawing phase was active without modal flag, restart from drawing intro modal.
+      // 4a. If drawing phase was active, preserve drawing and continue.
       if (gamePhase === 'dream-drawing') {
-        setResumeMessage("Let's start your drawing again!");
+        setResumeMessage("Welcome back! Your drawing is waiting. ✨");
         setShowResumePopup(true);
         resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-        sceneActions.updateState({
-          gamePhase: 'all-wishes-complete',
-          currentModal: null,
-          draftData: null
-        });
+        // Keep drawing phase and preserve all drawing data
         phaseVoiceRef.current = {};
         return;
       }
@@ -649,10 +647,10 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       // Block both stale VO paths: the phase effect (wish1Complete) AND the
       // wish1FinalMoment effect (wish1FinalMomentVo) — both fire "Thank you" otherwise.
       if (gamePhase === 'wish1-complete') {
-        setResumeMessage("Let's hear the wish again! 🌍");
+        setResumeMessage("Let's try that again! 🌍");
         setShowResumePopup(true);
         resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-        sceneActions.updateState({ gamePhase: 'wish1-intro', wish1Taps: 0, wish1FinalMoment: false });
+        sceneActions.updateState({ gamePhase: 'wish1-active', wish1Taps: 0, wish1FinalMoment: false });
         phaseVoiceRef.current = { wish1Complete: true, wish1FinalMomentVo: true };
         return;
       }
@@ -953,125 +951,25 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
           speakLine("Tap each glowing spot to help the garden grow.", { moment: 'encouragement' });
           idleVoFlagsRef.current.wish3Level3 = true;
         }
+        return;
+      }
+
+      const isChildPhase = (phase === 'dream-clouded' || phase === 'dream-clearing') && !sceneState.dreamRevealed;
+      if (isChildPhase) {
+        if (level !== childIdleLevel) setChildIdleLevel(level);
+        if (level >= 2 && !idleVoFlagsRef.current.childLevel2) {
+          speakLine("Tap my trunk to clear the clouds.", { moment: 'encouragement' });
+          idleVoFlagsRef.current.childLevel2 = true;
+        }
+        if (level >= 3 && !idleVoFlagsRef.current.childLevel3) {
+          idleVoFlagsRef.current.childLevel3 = true;
+        }
+        return;
       }
     }, 500);
 
     return () => clearInterval(intervalId);
-  }, [isAudioOn, sceneState.gamePhase, sceneState.showingCompletionScreen, showDrawingPad, wish1IdleLevel, wish2IdleLevel, wish3IdleLevel]);
-
-  // Idle hints (scene-level), similar behavior to other scenes.
-  useEffect(() => {
-    if (!isAudioOn || sceneState.showingCompletionScreen || showDrawingPad) return;
-    const intervalId = setInterval(() => {
-      const line = getPhaseReminderLine(sceneState.gamePhase);
-      if (!line) return;
-      const idleFor = Date.now() - lastInteractionAtRef.current;
-      if (idleFor >= IDLE_HINT_DELAY_MS) {
-        speakLine(line, { moment: 'encouragement' });
-        lastInteractionAtRef.current = Date.now();
-      }
-    }, 1000);
-    return () => clearInterval(intervalId);
-  }, [isAudioOn, sceneState.gamePhase, sceneState.showingCompletionScreen, showDrawingPad, getPhaseReminderLine]);
-
-  // Wish 1 Idle Hint Progression (10s → 18s → 26s, matching Scene 20 pattern)
-  useEffect(() => {
-    if (sceneState.gamePhase !== 'wish1-active' || sceneState.wish1Taps >= 3) {
-      setWish1IdleLevel(0);
-      idleVoFlagsRef.current.wish1Level2 = false;
-      idleVoFlagsRef.current.wish1Level3 = false;
-      return;
-    }
-
-    const timerRef = { id: null };
-    timerRef.id = safeSetTimeout(() => {
-      setWish1IdleLevel(1);
-
-      timerRef.id = safeSetTimeout(() => {
-        setWish1IdleLevel(2);
-        if (!idleVoFlagsRef.current.wish1Level2) {
-          speakLine(VOICE_LINES.wish1Hint, { moment: 'encouragement' });
-          idleVoFlagsRef.current.wish1Level2 = true;
-        }
-
-        timerRef.id = safeSetTimeout(() => {
-          setWish1IdleLevel(3);
-        }, 8000);
-      }, 8000);
-    }, 10000);
-
-    return () => {
-      if (timerRef.id) {
-        clearTimeout(timerRef.id);
-      }
-    };
-  }, [sceneState.gamePhase, sceneState.wish1Taps, safeSetTimeout]);
-
-  // Wish 2 Idle Hint Progression (10s → 18s → 26s)
-  useEffect(() => {
-    if (sceneState.gamePhase !== 'wish2-active' || sceneState.wish2Taps >= 3) {
-      setWish2IdleLevel(0);
-      idleVoFlagsRef.current.wish2Level2 = false;
-      idleVoFlagsRef.current.wish2Level3 = false;
-      return;
-    }
-
-    const timerRef = { id: null };
-    timerRef.id = safeSetTimeout(() => {
-      setWish2IdleLevel(1);
-
-      timerRef.id = safeSetTimeout(() => {
-        setWish2IdleLevel(2);
-        if (!idleVoFlagsRef.current.wish2Level2) {
-          speakLine(VOICE_LINES.wish2Hint, { moment: 'encouragement' });
-          idleVoFlagsRef.current.wish2Level2 = true;
-        }
-
-        timerRef.id = safeSetTimeout(() => {
-          setWish2IdleLevel(3);
-        }, 8000);
-      }, 8000);
-    }, 10000);
-
-    return () => {
-      if (timerRef.id) {
-        clearTimeout(timerRef.id);
-      }
-    };
-  }, [sceneState.gamePhase, sceneState.wish2Taps, safeSetTimeout]);
-
-  // Wish 3 Idle Hint Progression (10s → 18s → 26s)
-  useEffect(() => {
-    if (sceneState.gamePhase !== 'wish3-active' || sceneState.wish3Taps >= 3) {
-      setWish3IdleLevel(0);
-      idleVoFlagsRef.current.wish3Level2 = false;
-      idleVoFlagsRef.current.wish3Level3 = false;
-      return;
-    }
-
-    const timerRef = { id: null };
-    timerRef.id = safeSetTimeout(() => {
-      setWish3IdleLevel(1);
-
-      timerRef.id = safeSetTimeout(() => {
-        setWish3IdleLevel(2);
-        if (!idleVoFlagsRef.current.wish3Level2) {
-          speakLine(VOICE_LINES.wish3Hint, { moment: 'encouragement' });
-          idleVoFlagsRef.current.wish3Level2 = true;
-        }
-
-        timerRef.id = safeSetTimeout(() => {
-          setWish3IdleLevel(3);
-        }, 8000);
-      }, 8000);
-    }, 10000);
-
-    return () => {
-      if (timerRef.id) {
-        clearTimeout(timerRef.id);
-      }
-    };
-  }, [sceneState.gamePhase, sceneState.wish3Taps, safeSetTimeout]);
+  }, [isAudioOn, sceneState.gamePhase, sceneState.dreamRevealed, sceneState.showingCompletionScreen, showDrawingPad, wish1IdleLevel, wish2IdleLevel, wish3IdleLevel, childIdleLevel]);
 
   // Reset idle timer on major phase/modal transitions
   useEffect(() => {
@@ -1133,20 +1031,40 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }
   };
 
-  // Bubble tap — kind actions advance wish progress; unkind actions disappear.
+  // Bubble tap — kind actions advance wish progress; unkind actions shake + dim.
   const handleBubbleTap = (bubble) => {
     markInteraction();
     interruptCurrentVoice();
     playUiTap();
-    if (bubble.voiceLine) {
-      speakLine(bubble.voiceLine, { moment: 'encouragement' });
-    }
-    setBubbles(prev => prev.filter(b => b.id !== bubble.id));
-    if (bubble.actionKey) {
-      removedWish1BubbleKeysRef.current.add(bubble.actionKey);
-    }
+
     if (bubble.type === 'kind') {
+      // Kind action: speak and advance progress
+      if (bubble.voiceLine) {
+        speakLine(bubble.voiceLine, { moment: 'encouragement' });
+      }
+      setBubbles(prev => prev.filter(b => b.id !== bubble.id));
+      if (bubble.actionKey) {
+        removedWish1BubbleKeysRef.current.add(bubble.actionKey);
+      }
       handleWish1Tap({ fromBubble: true });
+    } else {
+      // Unkind action: shake, dim, play angry word, keep bubble
+      setShakingBubbleId(bubble.id);
+
+      // Play angry word based on action type
+      const angryWords = {
+        angry: 'Angry',
+        fight: 'Fight',
+        hit: 'Hit',
+        teasing: 'Teasing'
+      };
+      const word = angryWords[bubble.actionKey] || 'No';
+      speakLine(word, { moment: 'encouragement' });
+
+      // Remove shake class after 200ms (animation + dim duration)
+      safeSetTimeout(() => {
+        setShakingBubbleId(null);
+      }, 200);
     }
   };
 
@@ -1188,6 +1106,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   useEffect(() => {
     if (sceneState.gamePhase !== 'wish1-active') {
       setBubbles([]);
+      setShakingBubbleId(null);
       removedWish1BubbleKeysRef.current.clear();
       activeWish1BubbleKeysRef.current.clear();
       return;
@@ -1480,7 +1399,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 phaseVoiceRef.current.wish1Active = false; // allow VO to fire fresh on entry
                 sceneActions.updateState({ gamePhase: 'wish1-active' });
               }}
-              className="heartbeat-delayed"
             >
               Let's Make Them Smile!
             </Button>
@@ -1549,40 +1467,51 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
               {bubbles.map(bubble => (
                 <div
                   key={bubble.id}
-                  onClick={() => handleBubbleTap(bubble)}
-                  className={`bubble ${bubble.type === 'kind' && wish1IdleLevel === 1 ? 'hint' : ''} ${bubble.type === 'kind' && wish1IdleLevel === 2 ? 'hint-strong' : ''} ${bubble.type === 'kind' && wish1IdleLevel === 3 ? 'hint-final' : ''}`}
+                  className={shakingBubbleId === bubble.id ? 'bubble-wrong-shake' : ''}
                   style={{
                     position: 'absolute',
                     left: `${bubble.left}%`,
                     top: `${bubble.top}%`,
-                    cursor: 'pointer',
-                    userSelect: 'none',
-                    animation: `bubbleFloat ${bubble.lifetimeS || 12}s linear forwards`,
-                    transform: 'translate(-50%, -50%)',
                     width: '255px',
                     height: '255px',
-                    borderRadius: '50%',
-                    border: 'none',
-                    background: bubble.type === 'kind' ? '#FFF4DE' : '#F0E2CC',
-                    boxShadow: bubble.type === 'kind' && wish1IdleLevel >= 2
-                      ? 'inset 0 8px 14px rgba(255,255,255,0.6), inset 0 -8px 16px rgba(173,126,57,0.28), 0 0 0 3px rgba(255,220,130,0.5), 0 8px 18px rgba(86,56,24,0.22)'
-                      : 'inset 0 8px 14px rgba(255,255,255,0.55), inset 0 -8px 16px rgba(142,101,46,0.24), 0 8px 18px rgba(86,56,24,0.18)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    overflow: 'hidden',
-                    pointerEvents: 'auto',
+                    pointerEvents: 'none',
                   }}
                 >
-                  <img
-                    src={bubble.image}
-                    alt={bubble.type === 'kind' ? 'Kind action' : 'Unkind action'}
+                  <div
+                    onClick={() => handleBubbleTap(bubble)}
+                    className={`bubble ${bubble.type === 'kind' && wish1IdleLevel === 1 ? 'hint' : ''} ${bubble.type === 'kind' && wish1IdleLevel === 2 ? 'hint-strong' : ''} ${bubble.type === 'kind' && wish1IdleLevel === 3 ? 'hint-final' : ''}`}
                     style={{
-                      width: '78%',
-                      height: '78%',
-                      objectFit: 'contain',
+                      position: 'absolute',
+                      inset: 0,
+                      cursor: 'pointer',
+                      userSelect: 'none',
+                      animation: `bubbleFloat ${bubble.lifetimeS || 12}s linear forwards`,
+                      transform: 'translate(-50%, -50%)',
+                      width: '255px',
+                      height: '255px',
+                      borderRadius: '50%',
+                      border: 'none',
+                      background: bubble.type === 'kind' ? '#FFF4DE' : '#F0E2CC',
+                      boxShadow: bubble.type === 'kind' && wish1IdleLevel >= 2
+                        ? 'inset 0 8px 14px rgba(255,255,255,0.6), inset 0 -8px 16px rgba(173,126,57,0.28), 0 0 0 3px rgba(255,220,130,0.5), 0 8px 18px rgba(86,56,24,0.22)'
+                        : 'inset 0 8px 14px rgba(255,255,255,0.55), inset 0 -8px 16px rgba(142,101,46,0.24), 0 8px 18px rgba(86,56,24,0.18)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      overflow: 'hidden',
+                      pointerEvents: 'auto',
                     }}
-                  />
+                  >
+                    <img
+                      src={bubble.image}
+                      alt={bubble.type === 'kind' ? 'Kind action' : 'Unkind action'}
+                      style={{
+                        width: '78%',
+                        height: '78%',
+                        objectFit: 'contain',
+                      }}
+                    />
+                  </div>
                 </div>
               ))}
             </div>
@@ -1619,7 +1548,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 phaseVoiceRef.current.wish2Active = false; // allow VO to fire fresh on entry
                 sceneActions.updateState({ gamePhase: 'wish2-active' });
               }}
-              className="heartbeat-delayed"
             >
               Let's Share!
             </Button>
@@ -1679,7 +1607,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 phaseVoiceRef.current.wish3Active = false; // allow VO to fire fresh on entry
                 sceneActions.updateState({ gamePhase: 'wish3-active' });
               }}
-              className="heartbeat-delayed"
             >
               Let's Make It Green!
             </Button>
@@ -1870,7 +1797,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 setShowDrawingPad(true);
                 sceneActions.updateState({ gamePhase: 'dream-drawing', currentModal: 'drawing' });
               }}
-              className="heartbeat-delayed"
             >
               Start Drawing
             </Button>
@@ -1894,7 +1820,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 setShowDrawingPad(true);
                 sceneActions.updateState({ gamePhase: 'dream-drawing', currentModal: 'drawing' });
               }}
-              className="heartbeat-delayed"
             >
               Start Drawing!
             </Button>
@@ -1941,9 +1866,20 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 <div key={i} className={`dream-cloud cloud-${i + 1} ${sceneState.trunkTaps > i ? 'cloud-fade' : ''}`}><img src={cloudImg} alt="Cloud" className="cloud-icon" /></div>
               ))}
             </div>
-            <div className={`ganesha-helper ${sceneState.trunkTaps > 0 ? 'ganesha-blowing' : ''}`} onClick={handleTrunkTap}>
+            <div
+              className={`ganesha-helper ${sceneState.trunkTaps > 0 ? 'ganesha-blowing' : ''} ${childIdleLevel === 1 ? 'hint' : ''} ${childIdleLevel === 2 ? 'hint-strong' : ''} ${childIdleLevel === 3 ? 'hint-final' : ''}`}
+              onClick={handleTrunkTap}
+              style={{
+                filter: childIdleLevel >= 2 ? 'drop-shadow(0 0 14px rgba(255, 231, 160, 0.9))' : 'none',
+              }}
+            >
               <img src={babyGaneshaImg} alt="Ganesha" className="ganesha-trunk bounce-gentle" />
             </div>
+            {childIdleLevel >= 3 && !sceneState.dreamRevealed && (
+              <div style={{ position: 'absolute', bottom: '8%', left: '50%', transform: 'translateX(-50%)', fontSize: '40px', zIndex: 12 }}>
+                👆
+              </div>
+            )}
           </div>
           {/* Instruction box hidden */}
           {/* <div className="dream-instruction-box">
