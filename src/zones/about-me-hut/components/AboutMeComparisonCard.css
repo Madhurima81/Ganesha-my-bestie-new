@@ -12,7 +12,7 @@
 }
 
 .aboutme-comparison-title {
-  margin: 0 0 18px;
+  margin: 0 0 34px;
   color: #5d4037;
   font-family: 'Baloo', cursive;
   font-size: clamp(2rem, 4.2vw, 4.3rem);
@@ -21,7 +21,7 @@
 }
 
 .aboutme-comparison-subtitle {
-  margin: 0 0 64px;
+  margin: 0 0 78px;
   color: #5d4037;
   font-family: 'Nunito', sans-serif;
   font-size: clamp(1rem, 1.75vw, 2rem);
@@ -141,7 +141,7 @@
 
 .aboutme-comparison-continue-btn {
   margin-top: auto;
-  margin-bottom: 32px;
+  margin-bottom: 56px;
   border: none;
   border-radius: 25px;
   padding: 24px 64px;
