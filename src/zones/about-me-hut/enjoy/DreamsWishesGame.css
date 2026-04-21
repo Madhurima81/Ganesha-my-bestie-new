@@ -2203,3 +2203,108 @@ font-weight: 700;
   animation: bubbleWrongShake 0.35s ease, bubbleWrongDim 0.2s ease !important;
 }
 
+/* ========================================= */
+/* WISH 1 IDLE HINT VISUALS                 */
+/* (Classes are applied in ObstacleRemoverGame.jsx) */
+/* ========================================= */
+.dreams-wishes-game .wish1-bubble-shell.hint,
+.dreams-wishes-game .wish1-bubble-shell.hint-glow,
+.dreams-wishes-game .wish1-bubble-shell.hint-strng,
+.dreams-wishes-game .wish1-bubble-shell.hint-strong,
+.dreams-wishes-game .wish1-bubble-shell.hint-final {
+  position: relative;
+}
+
+.dreams-wishes-game .wish1-bubble-shell.hint > .bubble {
+  position: relative;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 96, 0.28));
+}
+
+.dreams-wishes-game .wish1-bubble-shell.hint-glow > .bubble,
+.dreams-wishes-game .wish1-bubble-shell.hint-strong > .bubble {
+  position: relative;
+  filter: drop-shadow(0 0 14px rgba(255, 215, 96, 0.55));
+}
+
+.dreams-wishes-game .wish1-bubble-shell.hint-strng > .bubble,
+.dreams-wishes-game .wish1-bubble-shell.hint-final > .bubble {
+  position: relative;
+  filter: drop-shadow(0 0 18px rgba(255, 215, 96, 0.72));
+}
+
+.dreams-wishes-game .wish1-bubble-shell.hint > .bubble::after,
+.dreams-wishes-game .wish1-bubble-shell.hint-glow > .bubble::after,
+.dreams-wishes-game .wish1-bubble-shell.hint-strng > .bubble::after,
+.dreams-wishes-game .wish1-bubble-shell.hint-strong > .bubble::after,
+.dreams-wishes-game .wish1-bubble-shell.hint-final > .bubble::after {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  pointer-events: none;
+  border: 2px solid rgba(255, 215, 96, 0.42);
+  opacity: 0;
+}
+
+.dreams-wishes-game .wish1-bubble-shell.hint-glow > .bubble::after,
+.dreams-wishes-game .wish1-bubble-shell.hint-strong > .bubble::after {
+  border-width: 3px;
+  border-color: rgba(255, 215, 96, 0.78);
+}
+
+.dreams-wishes-game .wish1-bubble-shell.hint-strng > .bubble::after,
+.dreams-wishes-game .wish1-bubble-shell.hint-final > .bubble::after {
+  border-width: 3px;
+  border-color: rgba(255, 215, 96, 0.96);
+}
+
+.dreams-wishes-game .wish1-bubble-shell.hint-strng > .bubble::before,
+.dreams-wishes-game .wish1-bubble-shell.hint-final > .bubble::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 243, 189, 0.95);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.dreams-wishes-game .wish1-bubble-shell.hint > .bubble::after {
+  animation: wishHintRingSoft 2s ease-in-out 1;
+}
+
+.dreams-wishes-game .wish1-bubble-shell.hint-glow > .bubble::after,
+.dreams-wishes-game .wish1-bubble-shell.hint-strong > .bubble::after {
+  animation: wishHintRingStrong 1.2s ease-in-out 3;
+}
+
+.dreams-wishes-game .wish1-bubble-shell.hint-strng > .bubble::after,
+.dreams-wishes-game .wish1-bubble-shell.hint-final > .bubble::after {
+  animation: wishHintRingFinal 1s ease-in-out 4;
+}
+
+.dreams-wishes-game .wish1-bubble-shell.hint-strng > .bubble::before,
+.dreams-wishes-game .wish1-bubble-shell.hint-final > .bubble::before {
+  animation: wishHintOuterFinal 1.15s ease-in-out 4;
+}
+
+@keyframes wishHintRingSoft {
+  0%, 100% { opacity: 0; transform: scale(1); }
+  35%, 70% { opacity: 0.72; transform: scale(1.03); }
+}
+
+@keyframes wishHintRingStrong {
+  0%, 100% { opacity: 0; transform: scale(1); }
+  45% { opacity: 0.88; transform: scale(1.07); }
+}
+
+@keyframes wishHintRingFinal {
+  0%, 100% { opacity: 0; transform: scale(1); }
+  45% { opacity: 1; transform: scale(1.1); }
+}
+
+@keyframes wishHintOuterFinal {
+  0%, 100% { opacity: 0; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.14); }
+}
+

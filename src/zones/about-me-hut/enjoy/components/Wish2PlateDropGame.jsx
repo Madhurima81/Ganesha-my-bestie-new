@@ -7,8 +7,8 @@ import { KidsDraggable, KidsDropZone } from '../../../../lib/components/interact
 // Food positions and plate positions are both full-screen % values.
 
 const FOOD_SIZE = 160;   // px
-const PLATE_WIDTH = 180;   // px - wider
-const PLATE_HEIGHT = 70;   // px - flat like a plate
+const PLATE_WIDTH = 320;   // px - wider
+const PLATE_HEIGHT = 140;   // px - flat like a plate
 
 const Wish2PlateDropGame = ({
   sceneState,
@@ -114,25 +114,32 @@ const Wish2PlateDropGame = ({
               width: `${PLATE_WIDTH}px`,
               height: `${PLATE_HEIGHT}px`,
               borderRadius: '50%',
-              // Circle styling — this IS the plate visually
-              background: isFilled
-                ? 'rgba(255, 255, 255, 0.92)'
-                : 'rgba(255, 255, 255, 0.75)',
-              border: isFilled
-                ? '3px solid #c8a96e'
-                : wish2IdleLevel >= 1
-                  ? '3px solid #f7cc7a'
-                  : '3px solid #ddc49a',
-              boxShadow: isFilled
-                ? '0 4px 16px rgba(180,140,80,0.25)'
-                : '0 2px 8px rgba(180,140,80,0.15)',
+              background: 'transparent',
+              border: 'none',
+              boxShadow: 'none',
               zIndex: 20,
               cursor: isFilled ? 'default' : 'pointer',
               transition: 'all 0.3s ease',
             }}
-            className={`${wish2IdleLevel >= 1 && !isFilled ? 'heartbeat-gentle' : ''}`}
             onClick={() => handleWish2PlateClick(index)}
           >
+            {/* plate image — pure decoration, sits inside the circle */}
+            <img
+              src={plateImg}
+              alt=""
+              style={{
+                position: 'absolute',
+                width: '210%',
+                height: '210%',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                objectFit: 'contain',
+                pointerEvents: 'none',
+                zIndex: 1,
+              }}
+            />
+
             {/* food on plate after drop */}
             {isFilled && (sceneState.wish2PlateFoods || [])[index] && (
               <img
@@ -172,7 +179,7 @@ const Wish2PlateDropGame = ({
 
         {/* Animals next to each plate */}
         {[
-          { src: cowImg, height: '145px' },
+          { src: cowImg, height: '245px' },
           { src: mouseImg, height: '110px' },
           { src: peacockImg, height: '155px' },
         ].map((animal, index) => (
@@ -192,23 +199,6 @@ const Wish2PlateDropGame = ({
             }}
           />
         ))}
-
-        {/* idle hint under first unfilled plate */}
-        {wish2IdleLevel >= 3 && firstUnfilledBowlIndex >= 0 && (
-          <div style={{
-            position: 'absolute',
-            left: WISH2_PLATE_POSITIONS[firstUnfilledBowlIndex]?.left || '50%',
-            top: `calc(${WISH2_PLATE_POSITIONS[firstUnfilledBowlIndex]?.top} + ${PLATE_HEIGHT / 2 + 6}px)`,
-            transform: 'translateX(-50%)',
-            fontWeight: 700,
-            fontSize: '14px',
-            color: '#8B5E34',
-            pointerEvents: 'none',
-            zIndex: 25,
-          }}>
-            Try this plate ↑
-          </div>
-        )}
 
         {/* all-plates completion sparkle */}
         {wish2Sparkle.type === 'all' && (
@@ -232,4 +222,3 @@ const Wish2PlateDropGame = ({
 };
 
 export default Wish2PlateDropGame;
-

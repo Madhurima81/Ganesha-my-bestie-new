@@ -87,7 +87,7 @@ class ErrorBoundary extends React.Component {
 // =========================================================
 // 1. MAIN WRAPPER (Handles SceneManager)
 // =========================================================
-const FavoriteFoodGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-hut', sceneId = 'favorite-things' }) => {
+const FavoriteFoodGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-hut', sceneId = 'favorite-food' }) => {
   return (
     <ErrorBoundary>
       <SceneManager

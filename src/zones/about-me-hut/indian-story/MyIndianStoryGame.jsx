@@ -228,7 +228,7 @@ class ErrorBoundary extends React.Component {
 // =========================================================
 // 1. MAIN WRAPPER
 // =========================================================
-export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, childName = 'friend', childAge = 8, zoneId = 'about-me-hut', sceneId = 'indian-story' }) {
+export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, childName = 'friend', childAge = 8, zoneId = 'about-me-hut', sceneId = 'my-indian-story' }) {
   return (
     <ErrorBoundary>
       <SceneManager
@@ -327,7 +327,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const onReturnHint = useCallback(() => {
     setReturnHintNonce(n => n + 1);
   }, []);
-  const { setCurrentPhase, startMusic, stopMusic } = useVoiceGuidance('about-me-hut', 'indian-story', {
+  const { setCurrentPhase, startMusic, stopMusic } = useVoiceGuidance('about-me-hut', 'my-indian-story', {
     enableMusic: true,
     musicVolume: 0.07,
     voiceVolume: 0.65,
@@ -864,6 +864,10 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       sceneActions.updateState({ phase: STEPS.CHILD_HOME });
     };
 
+    // Let the final place-name VO finish before phase completion VO starts.
+    const elapsedSinceLastDiscovery = Date.now() - lastDiscoveryTime.current;
+    const completionDelayMs = Math.max(1500, 2600 - elapsedSinceLastDiscovery);
+
     const cancel1 = safeSetTimeout(() => {
       setShowCelebration(true);
       triggerSparkle('all', 2000);
@@ -879,7 +883,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       } else {
         cancelAdvance = safeSetTimeout(goToChildHome, 1200);
       }
-    }, 1500);
+    }, completionDelayMs);
     return () => {
       cancel1?.();
       cancelAdvance?.();
@@ -1096,17 +1100,18 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   }, []);
 
   // Persist phase and selections on reload
-  useEffect(() => {
-    if (!RESUMABLE_STEPS.has(phase)) return;
+useEffect(() => {
+  if (!RESUMABLE_STEPS.has(phase)) return;
+  // Only save if there's actual data
+  if (selectedRegion || selectedLanguages.length > 0 || selectedFestivals.length > 0) {
     saveProgress(null, null, null, phase);
-    // Also update sceneState for proper reload restoration
     sceneActions.updateState({
       selectedRegion: selectedRegion || undefined,
       selectedLanguages: selectedLanguages?.length > 0 ? selectedLanguages : undefined,
       selectedFestivals: selectedFestivals?.length > 0 ? selectedFestivals : undefined,
     });
-  }, [phase, selectedRegion, selectedLanguages, selectedFestivals, sceneActions]);
-
+  }
+}, [phase, selectedRegion, selectedLanguages, selectedFestivals, sceneActions]);
 
   // Check location discovery
   const checkLocationDiscovery = useCallback((percentX, percentY) => {
@@ -1117,11 +1122,12 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     });
   }, []);
 
-  const discoverLocation = useCallback((index) => {
-    if (discoveredRef.current.has(index)) return;
-    discoveredRef.current.add(index);
+const discoverLocation = useCallback((index) => {
+  if (discoveredRef.current.has(index)) return;
+  discoveredRef.current.add(index);
+  lastDiscoveryTime.current = Date.now();
 
-    const location = PHASE1_LOCATIONS[index];
+  const location = PHASE1_LOCATIONS[index];
     setDiscoveredLocations(prev => [...prev, index]);
     playSparkle();
     triggerMiniGesture({
@@ -1345,11 +1351,19 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   };
 
   // Complete scene
-  const handleComplete = () => {
-    saveProgress(selectedRegion, selectedLanguages, selectedFestivals, STEPS.COMPLETE);
-    sceneActions.updateState({ completed: true, phase: STEPS.COMPLETE, showingCompletionScreen: true });
-  };
-
+const handleComplete = () => {
+  saveProgress(selectedRegion, selectedLanguages, selectedFestivals, STEPS.COMPLETE);
+  sceneActions.updateState({ completed: true, phase: STEPS.COMPLETE, showingCompletionScreen: true });
+  
+  // ⭐ ADD THIS - Save to ProgressManager's storage
+  const profileId = GameStateManager.getCurrentProfile()?.id;
+  if (profileId) {
+    ProgressManager.updateSceneCompletion(profileId, 'about-me-hut', 'my-indian-story', {
+      completed: true,
+      stars: 3
+    });
+  }
+};
   // ─── RENDER ───────────────────────────────────────────────────
   return (
     <div className="mis-wrapper">
@@ -1512,7 +1526,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
           onStart={() => {
             stop();
             startMusic();
-            clearProgress();
+            //clearProgress();
             setSelectedRegion(null);
             setSelectedLanguages([]);
             setSelectedFestivals([]);
@@ -1534,7 +1548,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
           completionTitle="Our Stories Connect!"
           completionSubtitle="You explored your world with me!"
           childName={childName || 'Friend'}
-          sceneId="indian-story"
+          sceneId="my-indian-story"
           isFinalScene={true}
           discoveredSymbols={completionIcons}
           symbolImages={{
@@ -1555,7 +1569,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
             if (onNavigate) onNavigate('zone-welcome');
           }}
           onReplay={() => {
-            clearProgress();
+            //clearProgress();
             setSelectedRegion(null);
             setSelectedLanguages([]);
             setSelectedFestivals([]);

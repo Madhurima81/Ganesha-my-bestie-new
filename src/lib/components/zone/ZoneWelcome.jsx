@@ -41,6 +41,7 @@ const ZoneWelcome = ({
   const [profileChipPulse, setProfileChipPulse] = useState(false);
   // Tracks which scene whispers the child has heard — drives re-render to hide Ganesha
   const [heardWhispers, setHeardWhispers] = useState({});
+  const [confetti, setConfetti] = useState([]);
 
   console.log('🏔️ ZoneWelcome rendered for zone:', zoneData?.name);
 
@@ -111,12 +112,34 @@ useEffect(() => {
       setCulturalData(null);
     }
   };
-  
+
   // Load initially and when scene progress changes
   if (Object.keys(sceneProgress).length > 0) {
     loadCulturalData();
   }
 }, [sceneProgress, zoneData?.id]); // Reload when scenes update
+
+// 🎉 Zone completion confetti effect
+useEffect(() => {
+  const completedCount = (zoneData?.scenes || []).filter(
+    (scene) => getSceneStatus(scene).status === 'completed'
+  ).length;
+  const isZoneComplete = completedCount >= (zoneData?.scenes?.length || 0) && (zoneData?.scenes?.length || 0) > 0;
+
+  if (isZoneComplete && confetti.length === 0) {
+    // Generate 15-20 confetti pieces
+    const confettiCount = Math.floor(Math.random() * 6) + 15;
+    const newConfetti = Array.from({ length: confettiCount }, (_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      delay: Math.random() * 0.2
+    }));
+    setConfetti(newConfetti);
+    // Clear confetti after animation ends
+    const timer = setTimeout(() => setConfetti([]), 1500);
+    return () => clearTimeout(timer);
+  }
+}, [sceneProgress, zoneData?.scenes]);
 
 // Debug useEffect to check scene statuses
 useEffect(() => {
@@ -797,6 +820,22 @@ const getPermanentCompletedCount = () => {
         '--zone-text-primary': getZoneTheme(zoneData.id)?.textPrimary || '#6B5416'
       }}
     >
+      {/* Confetti container */}
+      {confetti.length > 0 && (
+        <div className="zone-confetti">
+          {confetti.map((piece) => (
+            <span
+              key={piece.id}
+              style={{
+                left: `${piece.left}%`,
+                top: '-20px',
+                animationDelay: `${piece.delay}s`
+              }}
+            />
+          ))}
+        </div>
+      )}
+
       <HomeButton
         onNavigate={onNavigate}
         onPrepareNavigate={() => setIsHomeExiting(true)}
