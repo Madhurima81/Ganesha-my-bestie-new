@@ -496,9 +496,9 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     festivals_wheel:  `Tap the festivals you celebrate.`,
     festivals_child_idle: `Tap the cards to choose.`,
     festivals_confirmed: `Lovely! These are your festivals.`,
-    origin_card:      `Our stories connect in India!`,
+    origin_card:      `We are part of India!`,
     phase1_complete:  `You found my special places! I am everywhere!`,
-    completion_screen: `We shared our stories together!`,
+    completion_screen: `Your story is special. We're all connected!`,
   };
 
   const activeProfile = GameStateManager.getCurrentProfile?.() || null;
@@ -522,15 +522,16 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     };
     const info = voiceMap[phase];
     if (!info?.text) return;
+    if (!isAudioOn) return;
     const phaseEntryKey = `${phase}:${info.text}`;
     if (entryVoPlayedForPhaseRef.current === phaseEntryKey) return;
     const stepVoiceKey = `about-me-hut:my-indian-story:${phase}:${info.text}`;
-    if (wasStepVoSpokenRecently(stepVoiceKey)) return;
-    if (isAudioOn) {
-      speak(info.text, { age: childAge, moment: info.moment });
-      entryVoPlayedForPhaseRef.current = phaseEntryKey;
-    }
-  }, [phase, childAge, isAudioOn, speak]);
+    const shouldBypassRecentDedupe = isReload && !reloadHandledRef.current;
+    if (!shouldBypassRecentDedupe && wasStepVoSpokenRecently(stepVoiceKey)) return;
+    speak(info.text, { age: childAge, moment: info.moment });
+    RECENT_STEP_VO.set(stepVoiceKey, Date.now());
+    entryVoPlayedForPhaseRef.current = phaseEntryKey;
+  }, [phase, childAge, isAudioOn, isReload, speak]);
 
   // LANGUAGE_GANESHA: Play reminder VO when cards are revealed
   useEffect(() => {
@@ -695,17 +696,20 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   // Child Home entry VO — single combined line, immediate
   useEffect(() => {
     if (phase !== STEPS.CHILD_HOME) return;
+    if (!isAudioOn) return;
     if (childHomeEntryVoiceTimerRef.current) clearTimeout(childHomeEntryVoiceTimerRef.current);
     const childHomeEntryKey = `${phase}:${VOICE.child_home_entry}`;
     if (entryVoPlayedForPhaseRef.current === childHomeEntryKey) return;
     const childHomeStepVoiceKey = `about-me-hut:my-indian-story:${phase}:${VOICE.child_home_entry}`;
-    if (wasStepVoSpokenRecently(childHomeStepVoiceKey)) return;
+    const shouldBypassRecentDedupe = isReload && !reloadHandledRef.current;
+    if (!shouldBypassRecentDedupe && wasStepVoSpokenRecently(childHomeStepVoiceKey)) return;
     speakIfUnmuted(VOICE.child_home_entry, { age: childAge, moment: 'default' });
+    RECENT_STEP_VO.set(childHomeStepVoiceKey, Date.now());
     entryVoPlayedForPhaseRef.current = childHomeEntryKey;
     return () => {
       if (childHomeEntryVoiceTimerRef.current) clearTimeout(childHomeEntryVoiceTimerRef.current);
     };
-  }, [phase, VOICE.child_home_entry, speakIfUnmuted, childAge]);
+  }, [phase, VOICE.child_home_entry, speakIfUnmuted, childAge, isAudioOn, isReload]);
 
   // Child Home idle hint (4s of no selection)
   useEffect(() => {
@@ -720,16 +724,31 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     };
   }, [phase, selectedRegion, VOICE.child_home_idle, speakIfUnmuted, childAge]);
 
-  // Reload restore: if browser reload lands at opening, recover last saved scene step
-  // so reload inside scene resumes/restarts that phase instead of showing opening modal.
+  // Reload restore: recover last saved scene step on reload.
+  // If SceneManager restore is slightly stale (debounced save race), prefer the later saved step.
   useEffect(() => {
-    if (!isReload || phase !== STEPS.OPENING) return;
+    if (!isReload) return;
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return;
       const saved = JSON.parse(raw);
       const savedStep = saved?.step;
       if (!savedStep || !RESUMABLE_STEPS.has(savedStep)) return;
+      const stepOrder = {
+        [STEPS.OPENING]: 0,
+        [STEPS.GANESHA_HOME]: 1,
+        [STEPS.CHILD_HOME]: 2,
+        [STEPS.LANGUAGE_GANESHA]: 3,
+        [STEPS.LANGUAGE_CHILD]: 4,
+        [STEPS.FESTIVALS_GANESHA]: 5,
+        [STEPS.FESTIVALS_CHILD]: 6,
+        [STEPS.ORIGIN_CARD]: 7,
+        [STEPS.COMPLETE]: 8,
+      };
+      const currentOrder = stepOrder[phase] ?? 0;
+      const savedOrder = stepOrder[savedStep] ?? 0;
+      const shouldRestoreSavedStep = phase === STEPS.OPENING || savedOrder > currentOrder;
+      if (!shouldRestoreSavedStep) return;
 
       sceneActions.updateState({
         phase: savedStep,
@@ -746,6 +765,8 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     if (phase === STEPS.OPENING || phase === STEPS.COMPLETE) return;
 
     reloadHandledRef.current = true;
+    entryVoPlayedForPhaseRef.current = null;
+    RECENT_STEP_VO.clear();
 
     // Phase 1: Ganesha Home — reset discovered locations
     if (phase === STEPS.GANESHA_HOME) {
@@ -1545,8 +1566,8 @@ const handleComplete = () => {
           show={phase === STEPS.COMPLETE}
           zoneId="about-me-hut"
           sceneName="My Indian Story"
-          completionTitle="Our Stories Connect!"
-          completionSubtitle="You explored your world with me!"
+          completionTitle="Your Story Is Special!"
+          completionSubtitle="You are part of India’s story."
           childName={childName || 'Friend'}
           sceneId="my-indian-story"
           isFinalScene={true}
@@ -2005,6 +2026,7 @@ const handleComplete = () => {
                 const goToLanguagePhase = () => {
                   if (advanced) return;
                   advanced = true;
+                  saveProgress(selectedRegion, null, null, STEPS.LANGUAGE_GANESHA);
                   sceneActions.updateState({ phase: STEPS.LANGUAGE_GANESHA });
                 };
 
