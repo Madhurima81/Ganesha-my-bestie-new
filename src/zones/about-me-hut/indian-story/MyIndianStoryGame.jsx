@@ -86,6 +86,7 @@ const STEPS = {
 
 const STORAGE_KEY = 'gmb_indian_story';
 const RESUME_DELAY_MS = 3000;
+const OPENING_VO_VOLUME = 0.55;
 const STEP_VO_DEDUPE_MS = 5000;
 const RECENT_STEP_VO = new Map();
 
@@ -126,7 +127,7 @@ const INDIA_REGIONS = [
   { id: 'northeast', label: 'Northeast India',               states: 'Assam, Meghalaya, Manipur, & more',       emoji: '??', icon: northEastIcon, color: '#B565A7', mapTop: '30%', mapLeft: '77%', ganeshaFact: 'The tea gardens here are magical � even I stop for a cup! ?' },
   { id: 'south',     label: 'South India',                   states: 'Tamil Nadu, Kerala, Karnataka, Telangana', emoji: '??', icon: southIcon,     color: '#2E7D32', mapTop: '70%', mapLeft: '32%', ganeshaFact: 'In Tamil Nadu, I am called Pillaiyar � the noble child! ??' },
   { id: 'kailash',   label: 'Mount Kailash! ???',            states: 'Where Amma & Appa live!',                  emoji: '???', icon: desertIcon,    color: '#5C6BC0', mapTop: '8%',  mapLeft: '42%', ganeshaFact: 'KAILASH?! That\'s where my Amma and Appa live! But where does YOUR family live on Earth?', isKailash: true },
-  { id: 'other',     label: 'Outside India',                 states: 'Outside India or multiple states',         emoji: '??', icon: null,           color: '#888', mapTop: '50%', mapLeft: '50%', ganeshaFact: 'Wherever your family is from, India lives in your heart! ??' },
+  { id: 'other',     label: 'Outside India',                 states: 'Outside India or multiple states',         emoji: '??', icon: null,           color: '#888', mapTop: '64%', mapLeft: '86%', ganeshaFact: 'Wherever your family is from, India lives in your heart! ??' },
 ];
 
 const LANGUAGES = [
@@ -327,7 +328,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const onReturnHint = useCallback(() => {
     setReturnHintNonce(n => n + 1);
   }, []);
-  const { setCurrentPhase, startMusic, stopMusic } = useVoiceGuidance('about-me-hut', 'my-indian-story', {
+  const { setCurrentPhase, startMusic, stopMusic, playVoice, stopVoice, setVoiceVolume } = useVoiceGuidance('about-me-hut', 'my-indian-story', {
     enableMusic: true,
     musicVolume: 0.07,
     voiceVolume: 0.65,
@@ -504,6 +505,10 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const activeProfile = GameStateManager.getCurrentProfile?.() || null;
   const profileDisplayName = (activeProfile?.name || childName || 'Friend').trim();
   const rawProfileAvatar = activeProfile?.avatar;
+  const PROFILE_ANIMAL_IDS = ['monkey', 'peacock', 'squirrel', 'tiger'];
+  const PROFILE_EMOJI_TO_ANIMAL = { '🐵': 'monkey', '🦚': 'peacock', '🐿️': 'squirrel', '🐯': 'tiger' };
+  const profileAnimalId = PROFILE_ANIMAL_IDS.includes(rawProfileAvatar) ? rawProfileAvatar : (PROFILE_EMOJI_TO_ANIMAL[rawProfileAvatar] || null);
+  const profileAvatarImage = profileAnimalId ? `/images/new-explorer-${profileAnimalId}.png` : null;
   const profileAvatar = (typeof rawProfileAvatar === 'string' && rawProfileAvatar.trim().length <= 2)
     ? rawProfileAvatar
     : profileDisplayName.charAt(0).toUpperCase();
@@ -511,7 +516,6 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   // Speak on step change — Entry VOs only (LANGUAGE_GANESHA entry VO only)
   useEffect(() => {
     const voiceMap = {
-      [STEPS.OPENING]:           { text: VOICE.opening,      moment: 'greeting'    },
       [STEPS.GANESHA_HOME]:      { text: VOICE.ganesha_home, moment: 'story'       },
       [STEPS.LANGUAGE_GANESHA]:  { text: VOICE.language_play_first, moment: 'default' }, // Entry VO only
       [STEPS.LANGUAGE_CHILD]:    { text: VOICE.language_wheel, moment: 'default'     },
@@ -532,6 +536,14 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     RECENT_STEP_VO.set(stepVoiceKey, Date.now());
     entryVoPlayedForPhaseRef.current = phaseEntryKey;
   }, [phase, childAge, isAudioOn, isReload, speak]);
+
+  // Opening VO: dedicated path for reliability on scene entry.
+  useEffect(() => {
+    if (phase === STEPS.OPENING && isAudioOn) {
+      setVoiceVolume(OPENING_VO_VOLUME);
+      playVoice('opening');
+    }
+  }, [phase, isAudioOn, playVoice, setVoiceVolume]);
 
   // LANGUAGE_GANESHA: Play reminder VO when cards are revealed
   useEffect(() => {
@@ -1545,7 +1557,9 @@ const handleComplete = () => {
           zoneId="about-me-hut"
           sceneId="my-indian-story"
           onStart={() => {
+            stopVoice(); // Stop file-based opening VO immediately on CTA tap
             stop();
+            setVoiceVolume(isAudioOn ? 1 : 0);
             startMusic();
             //clearProgress();
             setSelectedRegion(null);
@@ -1590,18 +1604,80 @@ const handleComplete = () => {
             if (onNavigate) onNavigate('zone-welcome');
           }}
           onReplay={() => {
-            //clearProgress();
+            clearAllTimeouts();
+            stopVoice();
+            stop();
+            stopMusic();
+            clearProgress();
+
+            if (ganeshaHomeIdleTimerRef.current) clearTimeout(ganeshaHomeIdleTimerRef.current);
+            if (langGuessIdleTimerRef.current) clearTimeout(langGuessIdleTimerRef.current);
+            if (festGuessIdleTimerRef.current) clearTimeout(festGuessIdleTimerRef.current);
+            if (phase1SpotSparkleTimerRef.current) clearTimeout(phase1SpotSparkleTimerRef.current);
+            if (childHomeEntryVoiceTimerRef.current) clearTimeout(childHomeEntryVoiceTimerRef.current);
+            if (childHomeIdleTimerRef.current) clearTimeout(childHomeIdleTimerRef.current);
+            if (childHomePostSelectTimerRef.current) clearTimeout(childHomePostSelectTimerRef.current);
+            if (childHomeIdleHintTimerRef.current) clearTimeout(childHomeIdleHintTimerRef.current);
+            if (languageSelectionIdleHintTimerRef.current) clearTimeout(languageSelectionIdleHintTimerRef.current);
+            if (festivalSelectionIdleHintTimerRef.current) clearTimeout(festivalSelectionIdleHintTimerRef.current);
+            if (languagePlayNudgeTimeoutRef.current) clearTimeout(languagePlayNudgeTimeoutRef.current);
+            if (languagePlayNudgeIntervalRef.current) clearInterval(languagePlayNudgeIntervalRef.current);
+            if (phase1ReturnHintTimerCancelRef.current) phase1ReturnHintTimerCancelRef.current();
+            if (miniGestureTimerRef.current) clearTimeout(miniGestureTimerRef.current);
+            if (sparkleCancelRef.current) sparkleCancelRef.current();
+
+            discoveredRef.current = new Set();
+            ganeshaHomeIdleVoiceRef.current = false;
+            langGuessIdleVoiceRef.current = false;
+            festGuessIdleVoiceRef.current = false;
+            childHomeIdleHintVoiceRef.current = false;
+            languageSelectionIdleHintVoiceRef.current = false;
+            festivalSelectionIdleHintVoiceRef.current = false;
+            entryVoPlayedForPhaseRef.current = null;
+            reloadHandledRef.current = false;
+            RECENT_STEP_VO.clear();
+
             setSelectedRegion(null);
             setSelectedLanguages([]);
             setSelectedFestivals([]);
-            sceneActions.updateState({ phase: STEPS.OPENING });
+            setDiscoveredLocations([]);
+            setMglassPosition({ top: '30%', left: '20%' });
+            setShowCelebration(false);
+            setIsChildHomeContinueEnabled(false);
+            setHasPressedLanguagePlay(false);
+            setShowLanguageCards(false);
+            setGaneshaHomeIdleLevel(0);
+            setLangGuessIdleLevel(0);
+            setFestGuessIdleLevel(0);
+            setLangGuessPhase('guessing');
+            setWrongLangGuesses(new Set());
+            setShakeLang(null);
+            setLangWrongReaction(null);
+            setSwappingOutLangId(null);
+            setShowLangSelectionHelper(false);
+            setGuessPhase('guessing');
+            setWrongGuesses(new Set());
+            setShakeGuess(null);
+            setActiveFestReaction(null);
+            setSwappingOutFestId(null);
+            setShowFestSelectionHelper(false);
+            sceneActions.updateState({
+              phase: STEPS.OPENING,
+              selectedRegion: null,
+              selectedLanguages: [],
+              selectedFestivals: [],
+              discoveredLocations: [],
+              showCelebration: false,
+              completed: false,
+              showingCompletionScreen: false
+            });
           }}
           onExploreZones={() => {
             if (onNavigate) onNavigate('zone-welcome');
             else if (onBack) onBack();
           }}
           onHome={() => {
-            if (onNavigate) onNavigate('home');
+            if (onNavigate) onNavigate('map');
           }}
         />
         );
@@ -2881,6 +2957,8 @@ const handleComplete = () => {
                   <img src={activeProfile.icon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : activeProfile?.profileIcon ? (
                   <img src={activeProfile.profileIcon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : profileAvatarImage ? (
+                  <img src={profileAvatarImage} alt={profileDisplayName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
                   profileAvatar
                 )}
