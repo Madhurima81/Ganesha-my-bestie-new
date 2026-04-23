@@ -19,38 +19,38 @@
 **Freeze Decision:** Shared chrome accepted for freeze.
 
 ### 1A · Opening Modal (T01)
-- [ ] Opens on scene entry, no fade lag
-- [ ] Baloo 2 title, Nunito description — no system fonts
-- [ ] Action explains mechanic clearly, age 5–12 language
-- [ ] CTA button touch-friendly ≥ 60 px
-- [ ] Does NOT re-trigger on tab return
-- [ ] VO narration syncs to modal text (if present)
-- [ ] Closes cleanly — no lingering overlay or z-index ghost
+- [x] Opens on scene entry, no fade lag
+- [x] Baloo 2 title, Nunito description — no system fonts
+- [x] Action explains mechanic clearly, age 5–12 language
+- [x] CTA button touch-friendly ≥ 70 px
+- [x] Does NOT re-trigger on tab return
+- [x] VO narration syncs to modal text (if present)
+- [x] Closes cleanly — no lingering overlay or z-index ghost
 
 ### 1B · Completion Modal (T02) + SceneCompletionCelebration
-- [ ] Fires on win condition — SceneCompletionCelebration renders
-- [ ] 'We' language subtitle — celebratory tone
-- [ ] Affirmation line present and correct for scene theme
-- [ ] 'Next Scene' → next scene (or zone welcome if S22 is last)
-- [ ] 'Replay' → full scene reset, all state cleared
-- [ ] Confetti/sparkles fire once only, don't loop
-- [ ] Modal closes on Continue/Replay — no stuck overlay
+- [x] Fires on win condition — SceneCompletionCelebration renders
+- [x] 'We' language subtitle — celebratory tone
+- [x] Affirmation line present and correct for scene theme
+- [x] 'Next Scene' → next scene (or zone welcome if S22 is last)
+- [x] 'Replay' → full scene reset, all state cleared
+- [x] Confetti/sparkles fire once only, don't loop
+- [x] Modal closes on Continue/Replay — no stuck overlay
 
 ### 1C · Audio Toggle (T04) + Audio Preference Persistence
-- [ ] **Toggle OFF stops ALL VO lines immediately with no stutter**
-- [ ] **Toggle OFF stops ALL FX sounds (tap, chime, sparkle) immediately**
-- [ ] Toggle ON resumes queue without replaying or skipping
-- [ ] **Web Speech API: stopSpokenVoice() cancels in-flight utterance immediately — no tail-end bleed**
-- [ ] **Preference persists across tab switch and hard reload via localStorage**
-- [ ] **Preference persists across all 4 About Me scenes**
-- [ ] Visual indicator clear (■ vs ■) and readable
+- [x] **Toggle OFF stops ALL VO lines immediately with no stutter**
+- [x] **Toggle OFF stops ALL FX sounds (tap, chime, sparkle) immediately**
+- [x] Toggle ON resumes queue without replaying or skipping
+- [x] **Web Speech API: stopSpokenVoice() cancels in-flight utterance immediately — no tail-end bleed**
+- [x] **Preference persists across tab switch and hard reload via localStorage**
+- [x] **Preference persists across all 4 About Me scenes**
+- [x] Visual indicator clear (■ vs ■) and readable
 
 ### 1D · Home Button (T05) + Zone Badge (T13)
-- [ ] **Home button mid-scene → confirmation dialog appears**
-- [ ] 'Cancel' → returns to scene, no state change
-- [ ] **'Home' → ProgressManager.updateProgress() called before navigation**
-- [ ] Zone badge displays correct label, zone colour scheme applied
-- [ ] Both components consistent position across all 4 scenes
+- [x] **Home button mid-scene → confirmation dialog appears**
+- [x] 'Cancel' → returns to scene, no state change
+- [x] **'Home' → ProgressManager.updateProgress() called before navigation**
+- [x] Zone badge displays correct label, zone colour scheme applied
+- [x] Both components consistent position across all 4 scenes
 
 ---
 
@@ -110,32 +110,32 @@
 - [x] Completion → sideBySide complete → SceneCompletionCelebration, ProgressManager called
 
 ### 19F · VOICE & VO CHECKLIST
-- [x] Intro / opening modal VO → Opening modal loads
-- [x] ganeshaTree entry VO → Phase enters from intro
-- [x] Per-circle idle hint VO → idleHintLevel 2 per open circle
-- [x] Correct placement VO → Correct deity chosen
-- [x] Wrong choice VO → Wrong deity chosen
-- [x] Fun-fact / info VO → Already-placed slot tapped
-- [x] Transition VO → transition phase enters
-- [x] childInput entry VO → childInput phase enters
-- [x] Name input prompt VO → Name modal opens per slot
-- [x] sideBySide / comparison VO → sideBySide phase enters
-- [x] Return hint VO → Tab return
-- [x] Tap SFX → All taps
-- [x] Sparkle SFX → Correct placements + completion
-- [x] **Audio toggle OFF → Any VO playing — All stop immediately — BLOCKER**
+- [x] Intro / opening modal VO → Opening modal loads [Web Speech]
+- [x] ganeshaTree entry VO → Phase enters from intro [Pre-recorded]
+- [x] Per-circle idle hint VO → idleHintLevel 2 per open circle [Web Speech]
+- [x] Correct placement VO → Correct deity chosen [Pre-recorded]
+- [x] Wrong choice VO → Wrong deity chosen [Pre-recorded]
+- [x] Fun-fact / info VO → Already-placed slot tapped [Pre-recorded]
+- [x] Transition VO → transition phase enters [Pre-recorded]
+- [x] childInput entry VO → childInput phase enters [Pre-recorded]
+- [x] Name input prompt VO → Name modal opens per slot [Pre-recorded]
+- [x] sideBySide / comparison VO → sideBySide phase enters [Pre-recorded]
+- [x] Return hint VO → Tab return [Pre-recorded]
+- [x] Tap SFX → All taps [SFX]
+- [x] Sparkle SFX → Correct placements + completion [SFX]
+- [x] **Audio toggle OFF → Any VO playing — All stop immediately — BLOCKER** [Both]
 
 
 ### 19G · UX POLISH
-- [ ] Correct placement: sparkle + scale-up feels satisfying and immediate (not delayed)
-- [ ] Wrong choice: wiggle is gentle, not harsh — child not discouraged
-- [ ] **Placed deity slots: visually distinct from empty slots at a glance**
-- [ ] Fun-fact modal: dismisses cleanly, no stuck overlay
-- [ ] Transition phase: clear visual handoff — Ganesha tree complete → child tree begins
-- [ ] sideBySide layout: both trees balanced, names readable, no overflow on mobile
-- [ ] All tap targets ≥ 60 px — circles, choice cards, name modal input
-- [ ] Text contrast readable on family_background across all phases
-- [ ] Z-index correct: choice modal > sparkle > tree overlay > background
+- [x] Correct placement: sparkle + scale-up feels satisfying and immediate (not delayed)
+- [x] Wrong choice: wiggle is gentle, not harsh — child not discouraged
+- [x] **Placed deity slots: visually distinct from empty slots at a glance**
+- [x] Fun-fact modal: dismisses cleanly, no stuck overlay
+- [x] Transition phase: clear visual handoff — Ganesha tree complete → child tree begins
+- [x] sideBySide layout: both trees balanced, names readable, no overflow on mobile
+- [x] All tap targets ≥ 70 px — circles, choice cards, name modal input
+- [x] Text contrast readable on family_background across all phases
+- [x] Z-index correct: choice modal > sparkle > tree overlay > background
 - [ ] Mobile: family tree fits viewport, no horizontal scroll
 
 ---
@@ -190,26 +190,26 @@
 - [x] Completion → comparison-card complete → SceneCompletionCelebration, ProgressManager called
 
 ### 20F · VOICE & VO CHECKLIST
-- [x] Intro / opening modal VO → Scene opens with greeting
-- [x] Food phase entry VO → "Hmm... can you guess my favourite food?" + "Tap the one you think I love."
-- [x] Food correct VO → "Yes! Modak is my favourite. Sweet and yummy!"
-- [x] Color phase entry VO → "Can you guess my favourite color?"
-- [x] Color correct VO → "Yes! Yellow is my favourite color, bright like the sun!"
-- [x] Activity phase entry VO → "Can you guess my favourite activity?"
-- [x] Activity correct VO → "Yes! I love to dance. It makes me so happy!"
-- [x] Friend phase entry VO → "Can you guess who my best friend is?"
-- [x] Friend correct VO → "Yes! Mooshika is my little mouse friend!"
-- [x] Transition VO → "Now let's discover your favorite things! It's your turn. Tell me what makes you special."
-- [x] Child food entry VO → "What's your favorite food?"
-- [x] Child color entry VO → "What's your favorite color?"
-- [x] Child activity entry VO → "What do you love to do?"
-- [x] Child friend entry VO → "Who is your best friend?"
-- [x] Comparison card VO → "Now we know each other better. I'm happy we're friends!"
-- [x] Idle hint VO (Ganesha phases) → 4 phase-specific hints at 27s
-- [x] Return hint VO → Tab return in any phase — contextual to phase
-- [x] Tap SFX → All card taps — consistent, not clipping
-- [x] Sparkle SFX → Correct choices + friend-celebration
-- [x] **Audio toggle OFF → Any VO playing — All stop immediately — BLOCKER**
+- [x] Intro / opening modal VO → Scene opens with greeting [Pre-recorded]
+- [x] Food phase entry VO → "Hmm... can you guess my favourite food?" + "Tap the one you think I love." [Web Speech]
+- [x] Food correct VO → "Yes! Modak is my favourite. Sweet and yummy!" [Web Speech]
+- [x] Color phase entry VO → "Can you guess my favourite color?" [Web Speech]
+- [x] Color correct VO → "Yes! Yellow is my favourite color, bright like the sun!" [Web Speech]
+- [x] Activity phase entry VO → "Can you guess my favourite activity?" [Web Speech]
+- [x] Activity correct VO → "Yes! I love to dance. It makes me so happy!" [Web Speech]
+- [x] Friend phase entry VO → "Can you guess who my best friend is?" [Web Speech]
+- [x] Friend correct VO → "Yes! Mooshika is my little mouse friend!" [Web Speech]
+- [x] Transition VO → "Now let's discover your favorite things! It's your turn. Tell me what makes you special." [Web Speech]
+- [x] Child food entry VO → "What's your favorite food?" [Web Speech]
+- [x] Child color entry VO → "What's your favorite color?" [Web Speech]
+- [x] Child activity entry VO → "What do you love to do?" [Web Speech]
+- [x] Child friend entry VO → "Who is your best friend?" [Web Speech]
+- [x] Comparison card VO → "Now we know each other better. I'm happy we're friends!" [Web Speech]
+- [x] Idle hint VO (Ganesha phases) → 4 phase-specific hints at 27s [Web Speech]
+- [x] Return hint VO → Tab return in any phase — contextual to phase [Web Speech]
+- [x] Tap SFX → All card taps — consistent, not clipping [SFX]
+- [x] Sparkle SFX → Correct choices + friend-celebration [SFX]
+- [x] **Audio toggle OFF → Any VO playing — All stop immediately — BLOCKER** [Both]
 
 ### 20G · VISUAL ASSETS CHECKLIST
 - [x] Background (fav_background.jpg) — No 404, full viewport
@@ -232,7 +232,7 @@
 - [ ] Text input (food-type / activity-type): keyboard does not obscure input field on mobile
 - [ ] Comparison card: Ganesha's vs child's data clearly labelled, warm friendly layout
 - [ ] friend-celebration animation: 2s window feels celebratory not rushed
-- [ ] All tap targets ≥ 60 px — choice cards, child selection grid, drawing tools
+- [ ] All tap targets ≥ 70 px — choice cards, child selection grid, drawing tools
 - [ ] Text contrast readable on fav_background in all 16 phases
 - [ ] Z-index correct: modals > sparkle > gameplay cards > background
 - [ ] Mobile: card grid scrolls/wraps without overflow, no clipped images
@@ -329,31 +329,31 @@
 - [ ] Completion → All phases done → SceneCompletionCelebration, ProgressManager called
 
 ### 21F · VOICE & VO CHECKLIST
-- [ ] Opening modal VO → "Let's help and dream together!"
-- [ ] wish1-intro VO → "Let's make the world smile!"
-- [ ] wish1-active entry VO → "Tap the kind actions."
-- [ ] wish1-complete VO → "You made the world kinder!"
-- [ ] wish2-intro VO → "My second wish… is to share our food. So no one stays hungry."
-- [ ] wish2-active entry VO → "Drag food to the plates."
-- [ ] wish2-complete VO → "Everyone has food now!"
-- [ ] wish3-intro VO → "My last wish… is for a green world full of life. Let's help this forest grow!"
-- [ ] wish3-active entry VO → "Tap to grow the garden."
-- [ ] wish3-complete VO → "The world is green and happy!"
-- [ ] all-wishes-complete transition VO → "Now it's your turn! Draw your happy dream."
-- [ ] dream-drawing prompt VO → "Draw your happy dream."
-- [ ] dream-clouded entry VO → "Tap my trunk to clear the clouds."
-- [ ] dream-clearing nudge VO → "Keep tapping to clear the clouds!"
-- [ ] dream-revealed VO → "Your dream is beautiful!"
-- [ ] Comparison card VO → "Our dreams grow together!"
-- [ ] Ending VO → "Keep dreaming and helping!"
-- [ ] wish1 idle hint VO → "Look for the kind actions."
-- [ ] wish2 idle hint VO → "Try dragging food to the plates."
-- [ ] wish3 idle hint VO → "Tap the forest to make it grow."
-- [ ] Return hint VO → Tab return in any phase — contextual to phase
-- [ ] Idle hint VO (wish phases) → Contextual nudge at 15s+ idle
-- [ ] Tap SFX → All bubble/spot taps — consistent, celebratory tone
-- [ ] Sparkle SFX → Correct actions, kind bubbles, forest reveals
-- [ ] **Audio toggle OFF → Any VO playing — All stop immediately — BLOCKER**
+- [ ] Opening modal VO → "Let's help and dream together!" [Pre-recorded]
+- [ ] wish1-intro VO → "Let's make the world smile!" [Web Speech]
+- [ ] wish1-active entry VO → "Tap the kind actions." [Web Speech]
+- [ ] wish1-complete VO → "You made the world kinder!" [Web Speech]
+- [ ] wish2-intro VO → "My second wish… is to share our food. So no one stays hungry." [Web Speech]
+- [ ] wish2-active entry VO → "Drag food to the plates." [Web Speech]
+- [ ] wish2-complete VO → "Everyone has food now!" [Web Speech]
+- [ ] wish3-intro VO → "My last wish… is for a green world full of life. Let's help this forest grow!" [Web Speech]
+- [ ] wish3-active entry VO → "Tap to grow the garden." [Web Speech]
+- [ ] wish3-complete VO → "The world is green and happy!" [Web Speech]
+- [ ] all-wishes-complete transition VO → "Now it's your turn!" [Web Speech]
+- [ ] dream-drawing prompt VO → "Draw your happy dream." [Web Speech]
+- [ ] dream-clouded entry VO → "Tap my trunk to clear the clouds." [Web Speech]
+- [ ] dream-clearing nudge VO → "Keep tapping to clear the clouds!" [Web Speech]
+- [ ] dream-revealed VO → "Wow, that's a beautiful dream!" [Web Speech]
+- [ ] Comparison card VO → "This can help the world!" [Web Speech]
+- [ ] Ending VO → "Keep dreaming and helping!" [Web Speech]
+- [ ] wish1 idle hint VO → "Look for the kind actions." [Web Speech]
+- [ ] wish2 idle hint VO → "Try dragging food to the plates." [Web Speech]
+- [ ] wish3 idle hint VO → "Tap the forest to make it grow." [Web Speech]
+- [ ] Return hint VO → Tab return in any phase — contextual to phase [Web Speech]
+- [ ] Idle hint VO (wish phases) → Contextual nudge at 15s+ idle [Web Speech]
+- [ ] Tap SFX → All bubble/spot taps — consistent, celebratory tone [SFX]
+- [ ] Sparkle SFX → Correct actions, kind bubbles, forest reveals [SFX]
+- [ ] **Audio toggle OFF → Any VO playing — All stop immediately — BLOCKER** [Both]
 
 ### 21G · VISUAL ASSETS CHECKLIST
 - [ ] Background (dream_background.jpg) — No 404, full viewport
@@ -378,7 +378,7 @@
 - [ ] dream-drawing canvas: large enough, responsive to touch, clear save/submit action
 - [ ] Trunk tap clouds: progressive fade feels magical, child understands causality
 - [ ] Comparison card: wishes + dream shown warmly, child's drawing displayed with pride
-- [ ] All tap targets ≥ 60 px — bubbles, food items, forest spots, Ganesha trunk, drawing tools
+- [ ] All tap targets ≥ 70 px — bubbles, food items, forest spots, Ganesha trunk, drawing tools
 - [ ] Text contrast readable on dream_background in all phases
 - [ ] Z-index correct: drawing modal > wish overlays > gameplay > background
 - [ ] Mobile: bubbles don't spawn off-screen, drag targets accessible without scroll
@@ -474,25 +474,25 @@
 - [ ] Festival cap enforcement → Cannot select more than 4 festivals — 5th tap blocked or replaces
 
 ### 22F · VOICE & VO CHECKLIST
-- [ ] Opening modal VO → opening phase
-- [ ] ganesha_home entry VO → Phase enters
-- [ ] Location discovery VO → Each spot tapped/discovered
-- [ ] ganesha_home idle hint VO → ganeshaHomeIdleLevel 2–3
-- [ ] child_home entry VO → Phase enters
-- [ ] Region selection VO → Region tapped
-- [ ] language_ganesha entry VO → Phase enters
-- [ ] Wrong guess VO → Wrong language/festival tapped
-- [ ] Correct guess VO → Correct language/festival tapped
-- [ ] language_child entry VO → Phase enters
-- [ ] festivals_ganesha entry VO → Phase enters
-- [ ] Festival react VO → Each festival tapped in festivals_child
-- [ ] festivals_child entry VO → Phase enters
-- [ ] origin_card VO → origin_card phase enters
-- [ ] Return hint VO → Tab return in any RESUMABLE phase
-- [ ] Tap SFX → All card taps
-- [ ] Sparkle SFX → Correct guess + location discover
-- [ ] Shake SFX / feedback → Wrong guess
-- [ ] **Audio toggle OFF → During any VO — All stop immediately — BLOCKER**
+- [ ] Opening modal VO → opening phase [Pre-recorded]
+- [ ] ganesha_home entry VO → Phase enters [Web Speech]
+- [ ] Location discovery VO → Each spot tapped/discovered [Web Speech]
+- [ ] ganesha_home idle hint VO → ganeshaHomeIdleLevel 2–3 [Web Speech]
+- [ ] child_home entry VO → Phase enters [Web Speech]
+- [ ] Region selection VO → Region tapped [Web Speech]
+- [ ] language_ganesha entry VO → Phase enters [Web Speech]
+- [ ] Wrong guess VO → Wrong language/festival tapped [Web Speech]
+- [ ] Correct guess VO → Correct language/festival tapped [Web Speech]
+- [ ] language_child entry VO → Phase enters [Web Speech]
+- [ ] festivals_ganesha entry VO → Phase enters [Web Speech]
+- [ ] Festival react VO → Each festival tapped in festivals_child [Web Speech]
+- [ ] festivals_child entry VO → Phase enters [Web Speech]
+- [ ] origin_card VO → origin_card phase enters [Web Speech]
+- [ ] Return hint VO → Tab return in any RESUMABLE phase [Web Speech]
+- [ ] Tap SFX → All card taps [SFX]
+- [ ] Sparkle SFX → Correct guess + location discover [SFX]
+- [ ] Shake SFX / feedback → Wrong guess [SFX]
+- [ ] **Audio toggle OFF → During any VO — All stop immediately — BLOCKER** [Both]
 
 ### 22G · VISUAL ASSETS CHECKLIST
 - [ ] Background (name_background.jpg) — Full viewport, no tile
@@ -540,7 +540,7 @@
 - [ ] Comparison card: selected region/languages/festivals all appear correctly, warm layout
 - [ ] Text contrast readable on all backgrounds and in all 9 phases
 - [ ] Z-index correct: modal > sparkle > overlay > gameplay
-- [ ] All tap targets ≥ 60 px — region cards, language cards, festival cards all touchable
+- [ ] All tap targets ≥ 70 px — region cards, language cards, festival cards all touchable
 - [ ] Mobile: cards grid scrolls or wraps without overflow, no clipped icons
 - [ ] SymbolSidebar does NOT appear in this scene
 
@@ -689,3 +689,5 @@
 - Mark items with `[x]` as you complete them
 - Focus on RED BOLD items first — these are blockers
 - Update as you test each scene
+
+
