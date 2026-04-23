@@ -109,23 +109,21 @@
 - [x] sideBySide phase → Ganesha's 4 + child's family shown side-by-side, all names visible
 - [x] Completion → sideBySide complete → SceneCompletionCelebration, ProgressManager called
 
-### 19F · VOICE & VO CHECKLIST
-- [x] Intro / opening modal VO → Opening modal loads [Web Speech]
-- [x] ganeshaTree entry VO → Phase enters from intro [Pre-recorded]
-- [x] Per-circle idle hint VO → idleHintLevel 2 per open circle [Web Speech]
-- [x] Correct placement VO → Correct deity chosen [Pre-recorded]
-- [x] Wrong choice VO → Wrong deity chosen [Pre-recorded]
-- [x] Fun-fact / info VO → Already-placed slot tapped [Pre-recorded]
-- [x] Transition VO → transition phase enters [Pre-recorded]
-- [x] childInput entry VO → childInput phase enters [Pre-recorded]
-- [x] Name input prompt VO → Name modal opens per slot [Pre-recorded]
-- [x] sideBySide / comparison VO → sideBySide phase enters [Pre-recorded]
-- [x] Return hint VO → Tab return [Pre-recorded]
-- [x] Tap SFX → All taps [SFX]
-- [x] Sparkle SFX → Correct placements + completion [SFX]
-- [x] **Audio toggle OFF → Any VO playing — All stop immediately — BLOCKER** [Both]
-
-
+### 19F � VOICE & VO CHECKLIST
+- [x] Intro / opening modal VO -> "Let's meet my family and yours!" [Web Speech]
+- [x] ganeshaTree entry VO -> "Tap a circle to meet my family!" [Pre-recorded]
+- [x] Per-circle idle hint VO -> idleHintLevel 2 per open circle [Web Speech]
+- [x] Correct placement VO -> relationship reveal per correct deity [Pre-recorded]
+- [x] Wrong choice VO -> gentle retry line on wrong deity [Pre-recorded]
+- [x] Fun-fact / info VO -> already-placed slot tapped [Pre-recorded]
+- [x] Transition VO -> "Show me your family!" [Pre-recorded]
+- [x] childInput entry VO -> "Now it's your turn! Add your family to the tree." [Pre-recorded]
+- [x] Name input prompt VO -> name modal opens per slot [Pre-recorded]
+- [x] sideBySide / comparison VO -> final comparison line [Pre-recorded]
+- [x] Return hint VO -> Tab return [Pre-recorded]
+- [x] Tap SFX -> All taps [SFX]
+- [x] Sparkle SFX -> Correct placements + completion [SFX]
+- [x] **Audio toggle OFF -> Any VO playing - All stop immediately - BLOCKER** [Both]
 ### 19G · UX POLISH
 - [x] Correct placement: sparkle + scale-up feels satisfying and immediate (not delayed)
 - [x] Wrong choice: wiggle is gentle, not harsh — child not discouraged
@@ -189,28 +187,27 @@
 - [x] Comparison card shows → Ganesha's 4 favorites + Child's 4 favorites displayed side-by-side
 - [x] Completion → comparison-card complete → SceneCompletionCelebration, ProgressManager called
 
-### 20F · VOICE & VO CHECKLIST
-- [x] Intro / opening modal VO → Scene opens with greeting [Pre-recorded]
-- [x] Food phase entry VO → "Hmm... can you guess my favourite food?" + "Tap the one you think I love." [Web Speech]
-- [x] Food correct VO → "Yes! Modak is my favourite. Sweet and yummy!" [Web Speech]
-- [x] Color phase entry VO → "Can you guess my favourite color?" [Web Speech]
-- [x] Color correct VO → "Yes! Yellow is my favourite color, bright like the sun!" [Web Speech]
-- [x] Activity phase entry VO → "Can you guess my favourite activity?" [Web Speech]
-- [x] Activity correct VO → "Yes! I love to dance. It makes me so happy!" [Web Speech]
-- [x] Friend phase entry VO → "Can you guess who my best friend is?" [Web Speech]
-- [x] Friend correct VO → "Yes! Mooshika is my little mouse friend!" [Web Speech]
-- [x] Transition VO → "Now let's discover your favorite things! It's your turn. Tell me what makes you special." [Web Speech]
-- [x] Child food entry VO → "What's your favorite food?" [Web Speech]
-- [x] Child color entry VO → "What's your favorite color?" [Web Speech]
-- [x] Child activity entry VO → "What do you love to do?" [Web Speech]
-- [x] Child friend entry VO → "Who is your best friend?" [Web Speech]
-- [x] Comparison card VO → "Now we know each other better. I'm happy we're friends!" [Web Speech]
-- [x] Idle hint VO (Ganesha phases) → 4 phase-specific hints at 27s [Web Speech]
-- [x] Return hint VO → Tab return in any phase — contextual to phase [Web Speech]
-- [x] Tap SFX → All card taps — consistent, not clipping [SFX]
-- [x] Sparkle SFX → Correct choices + friend-celebration [SFX]
-- [x] **Audio toggle OFF → Any VO playing — All stop immediately — BLOCKER** [Both]
-
+### 20F � VOICE & VO CHECKLIST
+- [x] Intro / opening modal VO -> Scene opens with greeting [Pre-recorded]
+- [x] Food phase entry VO -> "Tap my favorite food." [Web Speech]
+- [x] Food correct VO -> "Yes! Modak is my favorite!" [Web Speech]
+- [x] Color phase entry VO -> "Tap my favorite color." [Web Speech]
+- [x] Color correct VO -> "Yes! Yellow is my favorite!" [Web Speech]
+- [x] Activity phase entry VO -> "Tap my favorite activity." [Web Speech]
+- [x] Activity correct VO -> "Yes! I love to dance!" [Web Speech]
+- [x] Friend phase entry VO -> "Tap my best friend." [Web Speech]
+- [x] Friend correct VO -> "Yes! Mooshika is my friend!" [Web Speech]
+- [x] Transition VO -> "Now it's your turn!" [Web Speech]
+- [x] Child food entry VO -> "Tap your favorite food." [Web Speech]
+- [x] Child color entry VO -> "Tap your favorite color." [Web Speech]
+- [x] Child activity entry VO -> "Tap what you love to do." [Web Speech]
+- [x] Child friend entry VO -> "Type the name of your best friend." [Web Speech]
+- [x] Comparison card VO -> "We like so many fun things!" [Web Speech]
+- [x] Idle hint VO (Ganesha phases) -> phase-specific hints (food/color/activity/friend) [Web Speech]
+- [x] Return hint VO -> Tab return in any phase - contextual to phase [Web Speech]
+- [x] Tap SFX -> All card taps - consistent, not clipping [SFX]
+- [x] Sparkle SFX -> Correct choices + friend-celebration [SFX]
+- [x] **Audio toggle OFF -> Any VO playing - All stop immediately - BLOCKER** [Both]
 ### 20G · VISUAL ASSETS CHECKLIST
 - [x] Background (fav_background.jpg) — No 404, full viewport
 - [x] Ganesha food cards (modak, ladoo, barfi) — All load, visible
@@ -328,33 +325,32 @@
 - [ ] Comparison card → Wishes + dream shown side-by-side
 - [ ] Completion → All phases done → SceneCompletionCelebration, ProgressManager called
 
-### 21F · VOICE & VO CHECKLIST
-- [ ] Opening modal VO → "Let's help and dream together!" [Pre-recorded]
-- [ ] wish1-intro VO → "Let's make the world smile!" [Web Speech]
-- [ ] wish1-active entry VO → "Tap the kind actions." [Web Speech]
-- [ ] wish1-complete VO → "You made the world kinder!" [Web Speech]
-- [ ] wish2-intro VO → "My second wish… is to share our food. So no one stays hungry." [Web Speech]
-- [ ] wish2-active entry VO → "Drag food to the plates." [Web Speech]
-- [ ] wish2-complete VO → "Everyone has food now!" [Web Speech]
-- [ ] wish3-intro VO → "My last wish… is for a green world full of life. Let's help this forest grow!" [Web Speech]
-- [ ] wish3-active entry VO → "Tap to grow the garden." [Web Speech]
-- [ ] wish3-complete VO → "The world is green and happy!" [Web Speech]
-- [ ] all-wishes-complete transition VO → "Now it's your turn!" [Web Speech]
-- [ ] dream-drawing prompt VO → "Draw your happy dream." [Web Speech]
-- [ ] dream-clouded entry VO → "Tap my trunk to clear the clouds." [Web Speech]
-- [ ] dream-clearing nudge VO → "Keep tapping to clear the clouds!" [Web Speech]
-- [ ] dream-revealed VO → "Wow, that's a beautiful dream!" [Web Speech]
-- [ ] Comparison card VO → "This can help the world!" [Web Speech]
-- [ ] Ending VO → "Keep dreaming and helping!" [Web Speech]
-- [ ] wish1 idle hint VO → "Look for the kind actions." [Web Speech]
-- [ ] wish2 idle hint VO → "Try dragging food to the plates." [Web Speech]
-- [ ] wish3 idle hint VO → "Tap the forest to make it grow." [Web Speech]
-- [ ] Return hint VO → Tab return in any phase — contextual to phase [Web Speech]
-- [ ] Idle hint VO (wish phases) → Contextual nudge at 15s+ idle [Web Speech]
-- [ ] Tap SFX → All bubble/spot taps — consistent, celebratory tone [SFX]
-- [ ] Sparkle SFX → Correct actions, kind bubbles, forest reveals [SFX]
-- [ ] **Audio toggle OFF → Any VO playing — All stop immediately — BLOCKER** [Both]
-
+### 21F � VOICE & VO CHECKLIST
+- [ ] Opening modal VO -> "Let's help and dream together!" [Pre-recorded]
+- [ ] wish1-intro VO -> "Let's make the world smile!" [Web Speech]
+- [ ] wish1-active entry VO -> "Tap the kind actions." [Web Speech]
+- [ ] wish1-complete VO -> "You made the world kinder!" [Web Speech]
+- [ ] wish2-intro VO -> "My second wish... is to share our food. So no one stays hungry." [Web Speech]
+- [ ] wish2-active entry VO -> "Drag food to the plates." [Web Speech]
+- [ ] wish2-complete VO -> "Everyone has food now!" [Web Speech]
+- [ ] wish3-intro VO -> "My last wish... is for a green world full of life. Let's help this forest grow!" [Web Speech]
+- [ ] wish3-active entry VO -> "Tap to grow the garden." [Web Speech]
+- [ ] wish3-complete VO -> "The world is green and happy!" [Web Speech]
+- [ ] all-wishes-complete transition VO -> "Now it's your turn!" [Web Speech]
+- [ ] dream-drawing prompt VO -> "Draw your happy dream." [Web Speech]
+- [ ] dream-clouded entry VO -> "Tap my trunk to clear the clouds." [Web Speech]
+- [ ] dream-clearing nudge VO -> "Keep tapping to clear the clouds!" [Web Speech]
+- [ ] dream-revealed VO -> "Wow, that's a beautiful dream!" [Web Speech]
+- [ ] Comparison card VO -> "This can help the world!" [Web Speech]
+- [ ] Ending VO -> "Keep dreaming and helping!" [Web Speech]
+- [ ] wish1 idle hint VO -> "Look for the kind actions." [Web Speech]
+- [ ] wish2 idle hint VO -> "Try dragging food to the plates." [Web Speech]
+- [ ] wish3 idle hint VO -> "Tap the forest to make it grow." [Web Speech]
+- [ ] Return hint VO -> Tab return in any phase - contextual to phase [Web Speech]
+- [ ] Idle hint VO (wish phases) -> contextual nudge at idle threshold [Web Speech]
+- [ ] Tap SFX -> All bubble/spot taps - consistent, celebratory tone [SFX]
+- [ ] Sparkle SFX -> Correct actions, kind bubbles, forest reveals [SFX]
+- [ ] **Audio toggle OFF -> Any VO playing - All stop immediately - BLOCKER** [Both]
 ### 21G · VISUAL ASSETS CHECKLIST
 - [ ] Background (dream_background.jpg) — No 404, full viewport
 - [ ] wish1-active bubble images → Kind actions (helping, sharing, hugging, gifting) + Unkind actions (angry, fighting, hitting, teasing) — All 8 load
@@ -473,27 +469,26 @@
 - [ ] Language cap enforcement → Cannot select more than 3 languages — 4th tap blocked or replaces
 - [ ] Festival cap enforcement → Cannot select more than 4 festivals — 5th tap blocked or replaces
 
-### 22F · VOICE & VO CHECKLIST
-- [ ] Opening modal VO → opening phase [Pre-recorded]
-- [ ] ganesha_home entry VO → Phase enters [Web Speech]
-- [ ] Location discovery VO → Each spot tapped/discovered [Web Speech]
-- [ ] ganesha_home idle hint VO → ganeshaHomeIdleLevel 2–3 [Web Speech]
-- [ ] child_home entry VO → Phase enters [Web Speech]
-- [ ] Region selection VO → Region tapped [Web Speech]
-- [ ] language_ganesha entry VO → Phase enters [Web Speech]
-- [ ] Wrong guess VO → Wrong language/festival tapped [Web Speech]
-- [ ] Correct guess VO → Correct language/festival tapped [Web Speech]
-- [ ] language_child entry VO → Phase enters [Web Speech]
-- [ ] festivals_ganesha entry VO → Phase enters [Web Speech]
-- [ ] Festival react VO → Each festival tapped in festivals_child [Web Speech]
-- [ ] festivals_child entry VO → Phase enters [Web Speech]
-- [ ] origin_card VO → origin_card phase enters [Web Speech]
-- [ ] Return hint VO → Tab return in any RESUMABLE phase [Web Speech]
-- [ ] Tap SFX → All card taps [SFX]
-- [ ] Sparkle SFX → Correct guess + location discover [SFX]
-- [ ] Shake SFX / feedback → Wrong guess [SFX]
-- [ ] **Audio toggle OFF → During any VO — All stop immediately — BLOCKER** [Both]
-
+### 22F � VOICE & VO CHECKLIST
+- [ ] Opening modal VO -> "Tap to explore my India story and yours!" [Pre-recorded]
+- [ ] ganesha_home entry VO -> "Drag the magnifying glass to find me." [Web Speech]
+- [ ] Location discovery VO -> discovery callouts + phase completion line [Web Speech]
+- [ ] ganesha_home idle hint VO -> ganeshaHomeIdleLevel 2-3 hints [Web Speech]
+- [ ] child_home entry VO -> "Tap where your family lives in India." [Web Speech]
+- [ ] Region selection VO -> region confirmation line [Web Speech]
+- [ ] language_ganesha entry VO -> "Tap play to listen." [Web Speech]
+- [ ] Wrong guess VO -> wrong language/festival tapped [Web Speech]
+- [ ] Correct guess VO -> "Yes! That's Sanskrit - the language of many mantras." [Web Speech]
+- [ ] language_child entry VO -> "Tap up to three languages you speak." [Web Speech]
+- [ ] festivals_ganesha entry VO -> "Tap my favorite festival." [Web Speech]
+- [ ] Festival react VO -> festival selection/confirmation lines [Web Speech]
+- [ ] festivals_child entry VO -> "Tap the festivals you celebrate." [Web Speech]
+- [ ] origin_card VO -> "We are part of India!" [Web Speech]
+- [ ] Return hint VO -> Tab return in any resumable phase [Web Speech]
+- [ ] Tap SFX -> All card taps [SFX]
+- [ ] Sparkle SFX -> Correct guess + location discover [SFX]
+- [ ] Shake SFX / feedback -> Wrong guess [SFX]
+- [ ] **Audio toggle OFF -> During any VO - All stop immediately - BLOCKER** [Both]
 ### 22G · VISUAL ASSETS CHECKLIST
 - [ ] Background (name_background.jpg) — Full viewport, no tile
 - [ ] India map image (india-map.png) — Correct scale on mobile + desktop
@@ -689,5 +684,7 @@
 - Mark items with `[x]` as you complete them
 - Focus on RED BOLD items first — these are blockers
 - Update as you test each scene
+
+
 
 
