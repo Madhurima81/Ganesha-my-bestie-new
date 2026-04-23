@@ -80,6 +80,9 @@ import fightImg from './assets/images/wish-images/fight.png';
 import hitImg from './assets/images/wish-images/hit.png';
 import teasingImg from './assets/images/wish-images/teasing.png';
 import cloudImg from './assets/images/cloud.png';
+import kindnessHeaderIcon from './assets/images/story-header/kindness-icon.png';
+import sharingHeaderIcon from './assets/images/story-header/sharing-icon.png';
+import natureHeaderIcon from './assets/images/story-header/nature-icon.png';
 
 // Error Boundary
 class ErrorBoundary extends React.Component {
@@ -122,6 +125,7 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
           parkStates: [false, false, false], // Track individual park items (Grass, Butterfly, Slide)
 
           trunkTaps: 0,
+          storyDiscoveries: [],
 
           // --- CHILD DATA ---
           childDreamDrawing: null, // The saved image string
@@ -201,19 +205,19 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     wish3Active: "Tap to grow the garden.",
     wish3Complete: "The world is green and happy!",
 
-    // All Wishes Complete (now combined with drawing intro)
-    allWishesComplete: "Now it’s your turn! Draw your happy dream.",
+    // All Wishes Complete
+    allWishesComplete: "Now it’s your turn!",
 
     // Dream Phases
     // dreamIntro: (REMOVED — merged into allWishesComplete)
     dreamDrawing: "Draw your happy dream.",
     dreamClouded: "Tap my trunk to clear the clouds.",
     dreamClearing: "Keep tapping to clear the clouds!",
-    dreamRevealed: "Your dream is beautiful!",
+    dreamRevealed: "Wow, that’s a beautiful dream!",
 
     // Comparison Card
-    comparison: "Your dream can help the world!",
-    completionCelebration: "Your dream is shining bright! Now let's discover your story!",
+    comparison: "This can help the world!",
+    completionCelebration: "It’s shining bright! Now let’s discover your story!",
 
     // Ending
     ending: "Keep dreaming and helping!",
@@ -227,7 +231,14 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   // Profile Display
   const activeProfile = GameStateManager.getCurrentProfile?.() || null;
   const profileDisplayName = (activeProfile?.name || 'Friend').trim();
-  const profileAvatar = activeProfile?.avatar ? activeProfile.avatar : profileDisplayName.charAt(0).toUpperCase();
+  const PROFILE_ANIMAL_IDS = ['monkey', 'peacock', 'squirrel', 'tiger'];
+  const PROFILE_EMOJI_TO_ANIMAL = { '🐵': 'monkey', '🦚': 'peacock', '🐿️': 'squirrel', '🐯': 'tiger' };
+  const rawAvatar = activeProfile?.avatar;
+  const profileAnimalId = PROFILE_ANIMAL_IDS.includes(rawAvatar) ? rawAvatar : (PROFILE_EMOJI_TO_ANIMAL[rawAvatar] || null);
+  const profileAvatarImage = profileAnimalId ? `/images/new-explorer-${profileAnimalId}.png` : null;
+  const profileAvatar = (typeof rawAvatar === 'string' && rawAvatar.trim().length <= 2)
+    ? rawAvatar
+    : profileDisplayName.charAt(0).toUpperCase();
 
   if (!sceneState) return <div>Loading...</div>;
 
@@ -239,6 +250,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   // --- LOCAL UI STATE (Not saved in DB) ---
   // ── Resume Delay (shared across pause/resume logic) ──────────────────────────
   const RESUME_DELAY_MS = 3000;
+  const OPENING_VO_VOLUME = 0.55;
 
   const { isAudioOn, toggleAudio } = useAudioPreference();
 
@@ -283,7 +295,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   }, []);
 
   // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
-  const { startIdleTimer, stopIdleTimer, setCurrentPhase, stopVoice, setVoiceVolume, startMusic, stopMusic } = useVoiceGuidance(
+  const { startIdleTimer, stopIdleTimer, setCurrentPhase, stopVoice, setVoiceVolume, startMusic, stopMusic, playVoice } = useVoiceGuidance(
     'about-me-hut', 'dreams-wishes', {
       enableMusic: true,
       musicVolume: 0.06,
@@ -319,6 +331,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   }, [isAudioOn, stopVoice, stopSpokenVoice]);
 
   useEffect(() => () => stopMusic(), [stopMusic]);
+  useEffect(() => () => {
+    if (discoveryFlyTimeoutRef.current) clearTimeout(discoveryFlyTimeoutRef.current);
+  }, []);
 
   // ── Resume Countdown & Pause-Aware Timeout ──────────────────────────────────
   const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
@@ -330,11 +345,18 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({
     onHide: () => {
-      // On tab hide: stop voice, pause celebration
+      // On tab hide: stop voice, pause celebration, clear bubbles.
+      // Bubble expire timers are safeSetTimeouts — cleared by clearAll.
+      // Without clearing bubbles here, stale bubbles sit on screen forever on return.
+      // removedWish1BubbleKeysRef is NOT cleared — it tracks already-tapped kind bubbles
+      // so they don't respawn and give the child double credit.
       stopVoice();
       stopSpokenVoice();
       wish1SpawnLoopCancelRef.current?.();
       wish1SpawnLoopCancelRef.current = null;
+      setBubbles([]);
+      activeWish1BubbleKeysRef.current.clear();
+      setSelectedWish2FoodKey(null); // Cancel any in-flight wish2 drag
       pauseCelebRef.current?.();
       // Clear phaseVoiceRef so VO can replay after resume delay
       phaseVoiceRef.current = {};
@@ -351,15 +373,14 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   useEffect(() => clearAllTimeouts, [clearAllTimeouts]);
 
   const [showDrawingPad, setShowDrawingPad] = useState(false); // Controls visibility
+  const [showDreamContinue, setShowDreamContinue] = useState(false); // Continue button after dream reveal magic moment
+  const [ganeshaReactKey, setGaneshaReactKey] = useState(0); // Triggers ganesha bounce on dream reveal
   const [selectedWish2FoodKey, setSelectedWish2FoodKey] = useState(null);
 
-  const reloadHandledRef = useRef(false);
-  const hasHydratedOnceRef = useRef(false);
-  const suppressCelebrationVoOnReloadRef = useRef(false);
-  const suppressPhaseVoUntilReloadSettlesRef = useRef(false);
-  const blockPhaseVoDuringReloadReplayRef = useRef(false);
-  const expectedReloadPhaseRef = useRef(null);
   const resumePopupTimeoutRef = useRef(null);
+  // Blocks the ongoing phase VO effect on the first render of a reload session only.
+  // The reload useEffect clears this after firing its own VO, so phase transitions
+  // after reload work normally.
   const [showResumePopup, setShowResumePopup] = useState(false);
   const [resumeMessage, setResumeMessage] = useState('');
   const [openingButtonVisible] = useState(true);
@@ -378,6 +399,40 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const [wish2Sparkle, setWish2Sparkle] = useState({ type: null, key: 0, targetIndex: null });
   const wish3SparkleCancelRef = useRef(null);
   const [wish3Sparkle, setWish3Sparkle] = useState({ type: null, key: 0 });
+  const [discoveryFly, setDiscoveryFly] = useState(null);
+  const discoveryFlyTimeoutRef = useRef(null);
+  const lastCheerIndexRef = useRef(-1);
+  const DISCOVERY_FLY_TOTAL_MS = 2200;
+  const DISCOVERY_FLY_START_DELAY_MS = 800;
+  const DISCOVERY_CENTER_REACH_MS = 900;
+  const COMPLETION_CHEER_DELAY_MS = 550;
+  const PHASE_BREATHER_MS = 1500;
+  const WISH1_FINAL_ICON_DELAY_MS = 1400;
+  const WISH1_FINAL_CHEER_DELAY_MS = 1700;
+
+  const appendUniqueDiscovery = useCallback((discoveries, item) => {
+    if (!item?.name) return discoveries || [];
+    const list = Array.isArray(discoveries) ? discoveries : [];
+    if (list.some(d => d?.name === item.name)) return list;
+    return [...list, item];
+  }, []);
+
+  const triggerDiscoveryFly = useCallback((item, options = {}) => {
+    if (!item) return;
+    const { durationMs = DISCOVERY_FLY_TOTAL_MS } = options;
+    setDiscoveryFly({
+      key: `${Date.now()}-${Math.random()}`,
+      image: item.image,
+      emoji: item.emoji,
+      name: item.name,
+      durationMs
+    });
+    if (discoveryFlyTimeoutRef.current) clearTimeout(discoveryFlyTimeoutRef.current);
+    discoveryFlyTimeoutRef.current = setTimeout(() => {
+      setDiscoveryFly(null);
+      discoveryFlyTimeoutRef.current = null;
+    }, durationMs);
+  }, []);
 
   // Bubble tap game (wish 1)
   const [bubbles, setBubbles] = useState([]);
@@ -421,52 +476,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     };
   }, [hardStopSceneAudio]);
 
-  // Reload restore can occasionally drop early TTS calls in this scene.
-  // Retry multiple times and keep normal phase VO effect paused until replay starts.
-  const replayPhaseVoiceOnReload = useCallback((voiceKey, line, moment = 'encouragement') => {
-    if (!line) return;
-    blockPhaseVoDuringReloadReplayRef.current = true;
-    phaseVoiceRef.current[voiceKey] = false;
-    let started = false;
-
-    const attemptSpeak = () => {
-      if (!isAudioOnRef.current) {
-        phaseVoiceRef.current[voiceKey] = false;
-        return;
-      }
-      speak(line, {
-        age: 7,
-        style: 'child',
-        moment,
-        onStart: () => {
-          started = true;
-          phaseVoiceRef.current[voiceKey] = true;
-          blockPhaseVoDuringReloadReplayRef.current = false;
-        },
-        onError: () => {
-          phaseVoiceRef.current[voiceKey] = false;
-        }
-      });
-    };
-
-    const retryDelays = [450, 1200, 2200, 3400];
-    retryDelays.forEach((delayMs, index) => {
-      safeSetTimeout(() => {
-        if (started) return;
-        if (!isSpeakingRef.current) {
-          attemptSpeak();
-        }
-        if (index === retryDelays.length - 1) {
-          safeSetTimeout(() => {
-            if (!started) {
-              blockPhaseVoDuringReloadReplayRef.current = false;
-            }
-          }, 900);
-        }
-      }, delayMs);
-    });
-  }, [safeSetTimeout, speak]);
-
   const triggerWish1Sparkle = useCallback((type, durationMs = 1700) => {
     wish1SparkleCancelRef.current?.();
     setWish1Sparkle(prev => ({ type, key: prev.key + 1 }));
@@ -503,9 +512,10 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       case 'wish3-active':
         return null;
       case 'dream-clouded':
-      case 'dream-clearing':
         if (sceneState.dreamRevealed) return null;
         return "Tap my trunk to clear the clouds.";
+      case 'dream-clearing':
+        return null;
       default:
         return null;
     }
@@ -533,9 +543,11 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       case 'dream-drawing':
         return VOICE_LINES.dreamDrawing;
       case 'dream-clouded':
-      case 'dream-clearing':
         if (sceneState.dreamRevealed) return VOICE_LINES.dreamRevealed;
         return VOICE_LINES.dreamClouded;
+      case 'dream-clearing':
+        if (sceneState.dreamRevealed) return VOICE_LINES.dreamRevealed;
+        return null;
       case 'dream-revealed':
         return VOICE_LINES.dreamRevealed;
       case 'comparison-card':
@@ -546,57 +558,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
         return null;
     }
   }, [VOICE_LINES, sceneState.dreamRevealed]);
-
-  useEffect(() => {
-    const celebrationPhases = ['wish1-complete', 'wish2-complete', 'wish3-complete', 'all-wishes-complete'];
-
-    if (suppressCelebrationVoOnReloadRef.current && celebrationPhases.includes(sceneState.gamePhase)) {
-      return;
-    }
-    if (!celebrationPhases.includes(sceneState.gamePhase)) {
-      suppressCelebrationVoOnReloadRef.current = false;
-    }
-
-    if (!hasHydratedOnceRef.current) {
-      hasHydratedOnceRef.current = true;
-      if (celebrationPhases.includes(sceneState.gamePhase)) {
-        return;
-      }
-    }
-
-    if (sceneState.gamePhase === 'wish1-intro' && !phaseVoiceRef.current.wish1Intro) {
-      phaseVoiceRef.current.wish1Intro = true;
-      speakLine(VOICE_LINES.wish1Intro, { moment: 'story' });
-    }
-    if (sceneState.gamePhase === 'wish2-intro' && !phaseVoiceRef.current.wish2Intro) {
-      phaseVoiceRef.current.wish2Intro = true;
-      speakLine(VOICE_LINES.wish2Intro, { moment: 'story' });
-    }
-    if (sceneState.gamePhase === 'wish3-intro' && !phaseVoiceRef.current.wish3Intro) {
-      phaseVoiceRef.current.wish3Intro = true;
-      speakLine(VOICE_LINES.wish3Intro, { moment: 'story' });
-    }
-    if (sceneState.gamePhase === 'all-wishes-complete' && !phaseVoiceRef.current.allWishesComplete) {
-      phaseVoiceRef.current.allWishesComplete = true;
-      speakLine(VOICE_LINES.allWishesComplete, { moment: 'story' });
-    }
-    if (sceneState.gamePhase === 'dream-drawing' && !phaseVoiceRef.current.dreamDrawing) {
-      phaseVoiceRef.current.dreamDrawing = true;
-      speakLine(VOICE_LINES.dreamDrawing, { moment: 'story' });
-    }
-    if (sceneState.gamePhase === 'dream-clouded' && !phaseVoiceRef.current.dreamClouded) {
-      phaseVoiceRef.current.dreamClouded = true;
-      speakLine(VOICE_LINES.dreamClouded, { moment: 'thinking' });
-    }
-    if (sceneState.gamePhase === 'comparison-card' && !phaseVoiceRef.current.comparison) {
-      phaseVoiceRef.current.comparison = true;
-      speakLine(VOICE_LINES.comparison, { moment: 'story' });
-    }
-    if (sceneState.gamePhase === 'ending' && !phaseVoiceRef.current.ending) {
-      phaseVoiceRef.current.ending = true;
-      speakLine(VOICE_LINES.ending, { moment: 'celebration' });
-    }
-  }, [sceneState.gamePhase, isAudioOn, speakLine]);
 
   const triggerMiniGesture = useCallback((target = 'center', durationMs = 1500) => {
     if (miniGestureTimerRef.current) {
@@ -617,252 +578,154 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   // --- HELPERS ---
   const getDiscoveries = () => {
-    const items = [];
-    const phase = sceneState.gamePhase;
-
-    // Logic to show progress badges in header
-    const phasesAfterWish1 = ['wish1-complete', 'wish2-intro', 'wish2-active', 'wish2-complete', 'wish3-intro', 'wish3-active', 'wish3-complete', 'all-wishes-complete', 'dream-drawing', 'dream-clouded', 'dream-clearing', 'comparison-card', 'ending'];
-    if (phasesAfterWish1.includes(phase)) items.push({ name: 'Happiness', emoji: '🌍' });
-
-    const phasesAfterWish2 = ['wish2-complete', 'wish3-intro', 'wish3-active', 'wish3-complete', 'all-wishes-complete', 'dream-drawing', 'dream-clouded', 'dream-clearing', 'comparison-card', 'ending'];
-    if (phasesAfterWish2.includes(phase)) items.push({ name: 'Sharing', emoji: '🥣' });
-
-    const phasesAfterWish3 = ['wish3-complete', 'all-wishes-complete', 'dream-drawing', 'dream-clouded', 'dream-clearing', 'comparison-card', 'ending'];
-    if (phasesAfterWish3.includes(phase)) items.push({ name: 'Nature', emoji: '🌸' });
-
+    const items = Array.isArray(sceneState.storyDiscoveries) ? [...sceneState.storyDiscoveries] : [];
     if (sceneState.childDreamDrawing) items.push({ name: 'My Dream', image: sceneState.childDreamDrawing });
-
     return items;
   };
 
+  const getCompletionCheer = useCallback(() => {
+    const cheers = ['Awesome!', 'Amazing!', 'Great job!', 'Wonderful!', 'Fantastic!', 'Brilliant!'];
+    const pool =
+      cheers.length > 1
+        ? cheers.filter((_, idx) => idx !== lastCheerIndexRef.current)
+        : cheers;
+    const picked = pool[Math.floor(Math.random() * pool.length)];
+    lastCheerIndexRef.current = cheers.indexOf(picked);
+    return picked;
+  }, []);
+
+  const queueCompletionWithCheer = useCallback((completionLine, options = {}) => {
+    const { startDelayMs = COMPLETION_CHEER_DELAY_MS } = options;
+    const cheer = getCompletionCheer();
+    safeSetTimeout(() => {
+      speakLine(`${cheer} ${completionLine}`, { moment: 'celebration' });
+    }, startDelayMs);
+  }, [getCompletionCheer, safeSetTimeout]);
+
   // --- RELOAD DETECTION & RESTORATION ---
+  // Runs once on mount. For each saved phase: reset any partial state,
+  // then play the phase entry VO after a short settle delay.
+  // Mirrors the pattern in NewModakSceneV7 — no guards, no suppress flags, just speak.
   useEffect(() => {
-    if (isReload && !reloadHandledRef.current) {
-      reloadHandledRef.current = true;
-      const { gamePhase, wish1Taps, wish3Taps, trunkTaps, bowlStates, currentModal, dreamRevealed } = sceneState;
-      const celebrationPhases = ['wish1-complete', 'wish2-complete', 'wish3-complete', 'all-wishes-complete'];
-      suppressPhaseVoUntilReloadSettlesRef.current = true;
-      expectedReloadPhaseRef.current = gamePhase;
-      suppressCelebrationVoOnReloadRef.current = celebrationPhases.includes(gamePhase);
+    if (!isReload) return;
 
-      console.log("🔄 Reload detected. Phase:", gamePhase, "Modal:", currentModal);
-      if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
-      // Always stop any in-flight VO on reload before phase restoration.
-      interruptCurrentVoice();
-      phaseVoiceRef.current = {};
-      setShowDrawingPad(false);
+    const { gamePhase, dreamRevealed, currentModal } = sceneState;
+    // Pre-seed phaseVoiceRef flags so the phase-VO effect won't double-fire; we speak explicitly below.
+    phaseVoiceRef.current = {};
+    stopVoice();
+    stopSpokenVoice();
 
-      // 1. DRAWING MODAL - restart from drawing intro modal.
-      if (currentModal === 'drawing') {
-        setResumeMessage("Let's start your drawing again!");
-        setShowResumePopup(true);
-        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-        sceneActions.updateState({
-          gamePhase: 'all-wishes-complete',
-          currentModal: null,
-          draftData: null
-        });
-        phaseVoiceRef.current = {};
-        return;
-      }
-
-      // 2. INTRO PHASES - RESTART FROM BEGINNING
-      // On continue in Wish 1 intro, restart the intro
-      if (gamePhase === 'wish1-intro') {
-        setResumeMessage("Let's try that again! 🌍");
-        setShowResumePopup(true);
-        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-        phaseVoiceRef.current = {};
-        suppressPhaseVoUntilReloadSettlesRef.current = false;
-        expectedReloadPhaseRef.current = null;
-        replayPhaseVoiceOnReload('wish1Intro', VOICE_LINES.wish1Intro, 'story');
-        return;
-      }
-
-      // On continue in Wish 2 intro, restart the intro
-      if (gamePhase === 'wish2-intro') {
-        setResumeMessage("Let's try that again! 🥣");
-        setShowResumePopup(true);
-        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-        phaseVoiceRef.current = {};
-        suppressPhaseVoUntilReloadSettlesRef.current = false;
-        expectedReloadPhaseRef.current = null;
-        replayPhaseVoiceOnReload('wish2Intro', VOICE_LINES.wish2Intro, 'story');
-        return;
-      }
-
-      // On continue in Wish 3 intro, restart the intro
-      if (gamePhase === 'wish3-intro') {
-        setResumeMessage("Let's try that again! 🌸");
-        setShowResumePopup(true);
-        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-        phaseVoiceRef.current = {};
-        suppressPhaseVoUntilReloadSettlesRef.current = false;
-        expectedReloadPhaseRef.current = null;
-        replayPhaseVoiceOnReload('wish3Intro', VOICE_LINES.wish3Intro, 'story');
-        return;
-      }
-
-      // 3. ACTIVE PHASES - RESTART THE PHASE WITH COUNTERS RESET
-      // On continue in Wish 1 active (in between tapping), restart wish1-active
-      if (gamePhase === 'wish1-active') {
-        setResumeMessage("Let's try that again! 🌍");
-        setShowResumePopup(true);
-        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-        sceneActions.updateState({
-          gamePhase: 'wish1-active',
-          wish1Taps: 0,
-          wish1FinalMoment: false
-        });
-        // On reload we keep the same gamePhase, so the phase VO effect won't re-run.
-        // Replay wish1 active guidance explicitly.
-        phaseVoiceRef.current = { wish1FinalMomentVo: true };
-        replayPhaseVoiceOnReload('wish1Active', VOICE_LINES.wish1Active, 'encouragement');
-        return;
-      }
-
-      // On continue in Wish 2 active (in between tapping), restart Wish 2 active
-      if (gamePhase === 'wish2-active') {
-        setResumeMessage("Let's hear the wish again! 🥣");
-        setShowResumePopup(true);
-        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-        sceneActions.updateState({
-          gamePhase: 'wish2-active',
-          wish2Taps: 0,
-          bowlStates: [false, false, false],
-          wish2PlateFoods: [null, null, null],
-          wish2FoodPool: [...WISH2_FOOD_KEYS],
-          wish2FinalMoment: false
-        });
-        phaseVoiceRef.current = { wish2FinalMomentVo: true };
-        replayPhaseVoiceOnReload('wish2Active', VOICE_LINES.wish2Active, 'encouragement');
-        return;
-      }
-
-      // On continue in Wish 3 active (in between tapping), restart Wish 3 active
-      if (gamePhase === 'wish3-active') {
-        setResumeMessage("Let's hear the wish again! 🌸");
-        setShowResumePopup(true);
-        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-        sceneActions.updateState({
-          gamePhase: 'wish3-active',
-          wish3Taps: 0,
-          parkStates: [false, false, false],
-          wish3FinalMoment: false
-        });
-        phaseVoiceRef.current = { wish3FinalMomentVo: true };
-        replayPhaseVoiceOnReload('wish3Active', VOICE_LINES.wish3Active, 'encouragement');
-        return;
-      }
-
-      // 4. DREAM PHASES
-      // 4a. If drawing phase was active, preserve drawing and continue.
-      if (gamePhase === 'dream-drawing') {
-        setResumeMessage("Welcome back! Your drawing is waiting. ✨");
-        setShowResumePopup(true);
-        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-        // Keep drawing phase and preserve all drawing data
-        phaseVoiceRef.current = {};
-        suppressPhaseVoUntilReloadSettlesRef.current = false;
-        expectedReloadPhaseRef.current = null;
-        replayPhaseVoiceOnReload('dreamDrawing', VOICE_LINES.dreamDrawing, 'coregulation');
-        return;
-      }
-
-      // 4b. If child was mid-clearing (1-2 taps), restart clearing from beginning (all 3 clouds).
-      if (gamePhase === 'dream-clearing' && !dreamRevealed) {
-        setResumeMessage("Welcome back! Let's clear the clouds from the start.");
-        setShowResumePopup(true);
-        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-        sceneActions.updateState({
-          gamePhase: 'dream-clearing',
-          trunkTaps: 0,
-          dreamRevealed: false
-        });
-        phaseVoiceRef.current = {};
-        suppressPhaseVoUntilReloadSettlesRef.current = false;
-        expectedReloadPhaseRef.current = null;
-        replayPhaseVoiceOnReload('dreamClearing', VOICE_LINES.dreamClearing, 'encouragement');
-        return;
-      }
-
-      // 4c. For clouded or already revealed states, resume as-is.
-      if (gamePhase === 'dream-clouded' || dreamRevealed) {
-        setResumeMessage("Welcome back! Let's continue your dream.");
-        setShowResumePopup(true);
-        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-        // Keep existing dream phase state as-is.
-        phaseVoiceRef.current = {};
-        suppressPhaseVoUntilReloadSettlesRef.current = false;
-        expectedReloadPhaseRef.current = null;
-        if (dreamRevealed) {
-          replayPhaseVoiceOnReload('dreamRevealed', VOICE_LINES.dreamRevealed, 'celebration');
-        } else {
-          replayPhaseVoiceOnReload('dreamClouded', VOICE_LINES.dreamClouded, 'story');
-        }
-        return;
-      }
-
-      // 5. COMPLETION PHASES — reset to the wish intro so the child replays from the start.
-      // Block both stale VO paths: the phase effect (wish1Complete) AND the
-      // wish1FinalMoment effect (wish1FinalMomentVo) — both fire "Thank you" otherwise.
-      if (gamePhase === 'wish1-complete') {
-        setResumeMessage("Let's try that again! 🌍");
-        setShowResumePopup(true);
-        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-        sceneActions.updateState({ gamePhase: 'wish1-active', wish1Taps: 0, wish1FinalMoment: false });
-        phaseVoiceRef.current = { wish1Complete: true, wish1FinalMomentVo: true };
-        return;
-      }
-
-      if (gamePhase === 'wish2-complete') {
-        setResumeMessage("Let's hear the wish again! 🥣");
-        setShowResumePopup(true);
-        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-        sceneActions.updateState({
-          gamePhase: 'wish2-active',
-          wish2Taps: 0,
-          bowlStates: [false, false, false],
-          wish2PlateFoods: [null, null, null],
-          wish2FoodPool: [...WISH2_FOOD_KEYS],
-          wish2FinalMoment: false
-        });
-        phaseVoiceRef.current = { wish2Complete: true, wish2FinalMomentVo: true };
-        return;
-      }
-
-      if (gamePhase === 'wish3-complete') {
-        setResumeMessage("Let's hear the wish again! 🌸");
-        setShowResumePopup(true);
-        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-        sceneActions.updateState({ gamePhase: 'wish3-active', wish3Taps: 0, parkStates: [false, false, false], wish3FinalMoment: false });
-        phaseVoiceRef.current = { wish3Complete: true, wish3FinalMomentVo: true };
-        return;
-      }
-
-      if (gamePhase === 'all-wishes-complete') {
-        setResumeMessage("All wishes complete! Time to dream! ✨");
-        setShowResumePopup(true);
-        resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 3000);
-        phaseVoiceRef.current = {};
-        suppressPhaseVoUntilReloadSettlesRef.current = false;
-        expectedReloadPhaseRef.current = null;
-        replayPhaseVoiceOnReload('allWishesComplete', VOICE_LINES.allWishesComplete, 'celebration');
-        return;
-      }
-
-      if (gamePhase === 'intro') {
-        // Clear suppression flags so the phase VO effect can run cleanly after reload.
-        // Use replayPhaseVoiceOnReload so the opening line gets the same retry
-        // safety net as every other phase (browser TTS may not be ready at 400ms).
-        phaseVoiceRef.current = {};
-        suppressPhaseVoUntilReloadSettlesRef.current = false;
-        expectedReloadPhaseRef.current = null;
-        replayPhaseVoiceOnReload('opening', VOICE_LINES.opening, 'greeting');
-        return;
-      }
+    // Drawing modal was open — resume drawing phase with preserved draft
+    if (currentModal === 'drawing') {
+      phaseVoiceRef.current.dreamDrawing = true;
+      sceneActions.updateState({ gamePhase: 'dream-drawing' });
+      setShowDrawingPad(true);
+      safeSetTimeout(() => { speakLine(VOICE_LINES.dreamDrawing, { moment: 'coregulation' }); }, 500);
+      return;
     }
-  }, [isReload, sceneState.gamePhase, sceneState.currentModal, replayPhaseVoiceOnReload]);
+
+    // Completion phases — roll back to the active phase and replay its VO
+    if (gamePhase === 'wish1-complete') {
+      phaseVoiceRef.current.wish1Active = true;
+      sceneActions.updateState({ gamePhase: 'wish1-active', wish1Taps: 0, wish1FinalMoment: false });
+      safeSetTimeout(() => { speakLine(VOICE_LINES.wish1Active, { moment: 'encouragement' }); }, 500);
+      return;
+    }
+    if (gamePhase === 'wish2-complete') {
+      phaseVoiceRef.current.wish2Active = true;
+      sceneActions.updateState({ gamePhase: 'wish2-active', wish2Taps: 0, bowlStates: [false, false, false], wish2PlateFoods: [null, null, null], wish2FoodPool: [...WISH2_FOOD_KEYS], wish2FinalMoment: false });
+      safeSetTimeout(() => { speakLine(VOICE_LINES.wish2Active, { moment: 'encouragement' }); }, 500);
+      return;
+    }
+    if (gamePhase === 'wish3-complete') {
+      phaseVoiceRef.current.wish3Active = true;
+      sceneActions.updateState({ gamePhase: 'wish3-active', wish3Taps: 0, parkStates: [false, false, false], wish3FinalMoment: false });
+      safeSetTimeout(() => { speakLine(VOICE_LINES.wish3Active, { moment: 'encouragement' }); }, 500);
+      return;
+    }
+
+    // Active phases — reset counters, replay entry VO
+    if (gamePhase === 'wish1-active') {
+      phaseVoiceRef.current.wish1Active = true;
+      sceneActions.updateState({ wish1Taps: 0, wish1FinalMoment: false });
+      safeSetTimeout(() => { speakLine(VOICE_LINES.wish1Active, { moment: 'encouragement' }); }, 500);
+      return;
+    }
+    if (gamePhase === 'wish2-active') {
+      phaseVoiceRef.current.wish2Active = true;
+      sceneActions.updateState({ wish2Taps: 0, bowlStates: [false, false, false], wish2PlateFoods: [null, null, null], wish2FoodPool: [...WISH2_FOOD_KEYS], wish2FinalMoment: false });
+      safeSetTimeout(() => { speakLine(VOICE_LINES.wish2Active, { moment: 'encouragement' }); }, 500);
+      return;
+    }
+    if (gamePhase === 'wish3-active') {
+      phaseVoiceRef.current.wish3Active = true;
+      sceneActions.updateState({ wish3Taps: 0, parkStates: [false, false, false], wish3FinalMoment: false });
+      safeSetTimeout(() => { speakLine(VOICE_LINES.wish3Active, { moment: 'encouragement' }); }, 500);
+      return;
+    }
+
+    // Intro phases — replay entry VO as-is
+    if (gamePhase === 'wish1-intro') {
+      phaseVoiceRef.current.wish1Intro = true;
+      safeSetTimeout(() => { speakLine(VOICE_LINES.wish1Intro, { moment: 'story' }); }, 500);
+      return;
+    }
+    if (gamePhase === 'wish2-intro') {
+      phaseVoiceRef.current.wish2Intro = true;
+      safeSetTimeout(() => { speakLine(VOICE_LINES.wish2Intro, { moment: 'story' }); }, 500);
+      return;
+    }
+    if (gamePhase === 'wish3-intro') {
+      phaseVoiceRef.current.wish3Intro = true;
+      safeSetTimeout(() => { speakLine(VOICE_LINES.wish3Intro, { moment: 'story' }); }, 500);
+      return;
+    }
+
+    // All wishes complete
+    if (gamePhase === 'all-wishes-complete') {
+      phaseVoiceRef.current.allWishesComplete = true;
+      safeSetTimeout(() => { speakLine(VOICE_LINES.allWishesComplete, { moment: 'celebration' }); }, 500);
+      return;
+    }
+
+    // Dream phases
+    if (gamePhase === 'dream-drawing') {
+      phaseVoiceRef.current.dreamDrawing = true;
+      safeSetTimeout(() => { speakLine(VOICE_LINES.dreamDrawing, { moment: 'coregulation' }); }, 500);
+      return;
+    }
+    if (gamePhase === 'dream-clearing' && !dreamRevealed) {
+      phaseVoiceRef.current.dreamClouded = true;
+      sceneActions.updateState({ trunkTaps: 0, dreamRevealed: false });
+      safeSetTimeout(() => { speakLine(VOICE_LINES.dreamClouded, { moment: 'thinking' }); }, 500);
+      return;
+    }
+    if (gamePhase === 'dream-clouded') {
+      phaseVoiceRef.current.dreamClouded = true;
+      safeSetTimeout(() => { speakLine(VOICE_LINES.dreamClouded, { moment: 'thinking' }); }, 500);
+      return;
+    }
+
+    // Intro / comparison / ending — just replay VO
+    if (gamePhase === 'intro') {
+      phaseVoiceRef.current.opening = true;
+      safeSetTimeout(() => {
+        setVoiceVolume(isAudioOnRef.current ? OPENING_VO_VOLUME : 0);
+        playVoice('opening');
+      }, 500);
+      return;
+    }
+    if (gamePhase === 'comparison-card') {
+      phaseVoiceRef.current.comparison = true;
+      safeSetTimeout(() => { speakLine(VOICE_LINES.comparison, { moment: 'story' }); }, 500);
+      return;
+    }
+    if (gamePhase === 'ending') {
+      phaseVoiceRef.current.ending = true;
+      safeSetTimeout(() => { speakLine(VOICE_LINES.ending, { moment: 'closing' }); }, 500);
+      return;
+    }
+  }, []); // Runs once on mount only
 
   // --- AUTO-TRANSITION HANDLER ---
   useEffect(() => {
@@ -883,30 +746,30 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       }, 4500);
     }
     else if (sceneState.dreamRevealed) {
-      cancel = safeSetTimeout(() => { sceneActions.updateState({ gamePhase: 'comparison-card' }); }, 6000);
+      // Magical moment: sparkles + glow up; Ganesha bounces at 900ms; VO fires from its own effect;
+      // auto-advance to comparison card after the VO + pause.
+      const bounceTimer = safeSetTimeout(() => { setGaneshaReactKey(k => k + 1); }, 900);
+      cancel = safeSetTimeout(() => { sceneActions.updateState({ gamePhase: 'comparison-card' }); }, 5000);
+      return () => { bounceTimer?.(); cancel?.(); };
     }
 
     return () => cancel?.();
   }, [sceneState.gamePhase, sceneState.dreamRevealed, safeSetTimeout]);
 
   useEffect(() => {
-    if (sceneState.gamePhase === 'intro') {
-      phaseVoiceRef.current = {};
+    // Opening modal intro VO — matches working Family Tree pattern:
+    // 800ms delay gives the audio pipeline time to initialize on first mount,
+    // and the cleanup cancels the pending call if phase changes before it fires.
+    // We set phaseVoiceRef.current.opening INSIDE the timer (not before) so a
+    // silently-failed playVoice can be retried on the next render.
+    if (sceneState.gamePhase === 'intro' && !phaseVoiceRef.current.opening) {
       const cancel = safeSetTimeout(() => {
-        speakLine(VOICE_LINES.opening, { moment: 'greeting' });
-      }, 400);
+        phaseVoiceRef.current.opening = true;
+        setVoiceVolume(isAudioOn ? OPENING_VO_VOLUME : 0);
+        playVoice('opening');
+      }, 800);
       return () => cancel?.();
     }
-  }, [sceneState.gamePhase, isAudioOn, safeSetTimeout]);
-
-  useEffect(() => {
-    // Guard: on the very first render after a reload, the reload-detection effect
-    // hasn't run yet (effects fire in declaration order). Skip ALL VO here so the
-    // stale saved phase never fires its line. Once the reload handler sets
-    // reloadHandledRef.current = true and calls updateState, this effect re-runs
-    // with the corrected phase and the correct phaseVoiceRef flags already in place.
-    if (isReload && !reloadHandledRef.current) return;
-    if (blockPhaseVoDuringReloadReplayRef.current) return;
 
     // Wish 1
     if (sceneState.gamePhase === 'wish1-intro' && !phaseVoiceRef.current.wish1Intro) {
@@ -919,7 +782,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }
     if (sceneState.gamePhase === 'wish1-complete' && !phaseVoiceRef.current.wish1Complete) {
       phaseVoiceRef.current.wish1Complete = true;
-      speakLine(VOICE_LINES.wish1Complete, { moment: 'celebration' });
+      queueCompletionWithCheer(VOICE_LINES.wish1Complete, { startDelayMs: 0 });
     }
 
     // Wish 2
@@ -964,25 +827,26 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }
     if (sceneState.gamePhase === 'dream-clearing' && !sceneState.dreamRevealed && !phaseVoiceRef.current.dreamClearing) {
       phaseVoiceRef.current.dreamClearing = true;
-      speakLine(VOICE_LINES.dreamClearing, { moment: 'encouragement' });
     }
     if (sceneState.dreamRevealed && !phaseVoiceRef.current.dreamRevealed) {
       phaseVoiceRef.current.dreamRevealed = true;
       speakLine(VOICE_LINES.dreamRevealed, { moment: 'celebration' });
     }
 
-    // Comparison Card - VO removed
-    // if (sceneState.gamePhase === 'comparison-card' && !phaseVoiceRef.current.comparison) {
-    //   phaseVoiceRef.current.comparison = true;
-    //   speakLine(VOICE_LINES.comparison, { moment: 'story' });
-    // }
+    // Comparison Card
+    if (sceneState.gamePhase === 'comparison-card' && !phaseVoiceRef.current.comparison) {
+      phaseVoiceRef.current.comparison = true;
+      safeSetTimeout(() => {
+        speakLine(VOICE_LINES.comparison, { moment: 'story' });
+      }, 200);
+    }
 
     // Ending
     if (sceneState.gamePhase === 'ending' && !phaseVoiceRef.current.ending) {
       phaseVoiceRef.current.ending = true;
       speakLine(VOICE_LINES.ending, { moment: 'closing' });
     }
-  }, [sceneState.gamePhase, sceneState.dreamRevealed, isAudioOn]);
+  }, [sceneState.gamePhase, sceneState.dreamRevealed, isAudioOn, playVoice]);
 
   // Completion screen VO (single guided line)
   useEffect(() => {
@@ -1012,10 +876,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   // Wish 1 final in-scene VO (reliable trigger after last tap state is set)
   useEffect(() => {
-    if (isReload && !reloadHandledRef.current) return;
     if (sceneState.wish1FinalMoment && !phaseVoiceRef.current.wish1FinalMomentVo) {
       phaseVoiceRef.current.wish1FinalMomentVo = true;
-      speakLine(VOICE_LINES.wish1Complete, { moment: 'celebration' });
+      queueCompletionWithCheer(VOICE_LINES.wish1Complete, { startDelayMs: 0 });
     }
     if (!sceneState.wish1FinalMoment) {
       phaseVoiceRef.current.wish1FinalMomentVo = false;
@@ -1023,10 +886,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   }, [sceneState.wish1FinalMoment, isAudioOn]);
 
   useEffect(() => {
-    if (isReload && !reloadHandledRef.current) return;
     if (sceneState.wish2FinalMoment && !phaseVoiceRef.current.wish2FinalMomentVo) {
       phaseVoiceRef.current.wish2FinalMomentVo = true;
-      speakLine(VOICE_LINES.wish2Complete, { moment: 'celebration' });
+      queueCompletionWithCheer(VOICE_LINES.wish2Complete, { startDelayMs: 0 });
     }
     if (!sceneState.wish2FinalMoment) {
       phaseVoiceRef.current.wish2FinalMomentVo = false;
@@ -1034,23 +896,27 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   }, [sceneState.wish2FinalMoment, isAudioOn]);
 
   useEffect(() => {
-    if (isReload && !reloadHandledRef.current) return;
     if (sceneState.wish3FinalMoment && !phaseVoiceRef.current.wish3FinalMomentVo) {
       phaseVoiceRef.current.wish3FinalMomentVo = true;
-      speakLine(VOICE_LINES.wish3Complete, { moment: 'celebration' });
+      queueCompletionWithCheer(VOICE_LINES.wish3Complete, { startDelayMs: 0 });
     }
     if (!sceneState.wish3FinalMoment) {
       phaseVoiceRef.current.wish3FinalMomentVo = false;
     }
   }, [sceneState.wish3FinalMoment, isAudioOn]);
 
-  useEffect(() => () => stopSpokenVoice(), [stopSpokenVoice]);
+  useEffect(() => () => {
+    // On unmount (navigation away), stop all voice + pending reload VO timeouts
+    // so VO from this scene doesn't spill onto the next screen.
+    stopSpokenVoice();
+    audioStopFnsRef.current?.stopVoice?.();
+    audioStopFnsRef.current?.clearAllTimeouts?.();
+    window.speechSynthesis?.cancel?.();
+  }, [stopSpokenVoice]);
 
   // Replay a contextual phase hint after tab/app return.
   // useVoiceGuidance calls onReturnHint after RESUME_DELAY_MS.
   useEffect(() => {
-    // During reload restore, suppress return-hint VO from stale saved phase.
-    if (isReload && !reloadHandledRef.current) return;
     if (!returnHintNonce || !isAudioOn || sceneState.showingCompletionScreen || showDrawingPad) return;
     const line = getResumeVoiceLine(sceneState.gamePhase) || getPhaseReminderLine(sceneState.gamePhase);
     if (!line) return;
@@ -1084,77 +950,142 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     return () => clearTimeout(retry);
   }, [isReload, returnHintNonce, isAudioOn, sceneState.gamePhase, sceneState.showingCompletionScreen, showDrawingPad, getResumeVoiceLine, getPhaseReminderLine]);
 
-  // Wish-specific idle ladders (10s / 18s / 26s).
+  // ── Wish 1 idle hint ladder (setTimeout, not setInterval) ───────────────────
+  // Bubbles keep floating. The hint class is applied briefly then removed so the
+  // CSS animation (finite pulse/glow) plays once and the bubble returns to normal.
+  // Same pattern as FavoriteFoodGame — level fires → animation plays → level resets.
+  //   Level 1 @ 10s : hint       → ring pulses once  (wishHintRingSoft, 1 cycle, ~2s)
+  //   Level 2 @ 18s : hint-strong → ring pulses 3×   (wishHintRingStrong, 3 cycles, ~3.6s) + VO
+  //   Level 3 @ 26s : hint-final  → ring pulses 4×   (wishHintRingFinal, 4 cycles, ~4s) + VO
+  //   After level 3 animation the class stays (child is stuck — keep static glow).
   useEffect(() => {
+    if (sceneState.gamePhase !== 'wish1-active') {
+      setWish1IdleLevel(0);
+      idleVoFlagsRef.current.wish1Level2 = false;
+      idleVoFlagsRef.current.wish1Level3 = false;
+      return;
+    }
     if (!isAudioOn || sceneState.showingCompletionScreen || showDrawingPad) return;
 
-    const getLevel = (idleForMs) => {
-      if (idleForMs >= 26000) return 3;
-      if (idleForMs >= 18000) return 2;
-      if (idleForMs >= 10000) return 1;
-      return 0;
-    };
+    setWish1IdleLevel(0);
+    idleVoFlagsRef.current.wish1Level2 = false;
+    idleVoFlagsRef.current.wish1Level3 = false;
 
-    const intervalId = setInterval(() => {
-      const phase = sceneState.gamePhase;
-      const idleFor = Date.now() - lastInteractionAtRef.current;
-      const level = getLevel(idleFor);
+    let t1 = null;
+    let t1Clear = null;
+    let t2 = null;
+    let t2Clear = null;
+    let t3 = null;
 
-      if (phase === 'wish1-active') {
-        if (level !== wish1IdleLevel) setWish1IdleLevel(level);
-        if (level >= 2 && !idleVoFlagsRef.current.wish1Level2) {
+    // Level 1 @ 10s — soft pulse once (~2s), then clear
+    t1 = setTimeout(() => {
+      setWish1IdleLevel(1);
+      t1Clear = setTimeout(() => setWish1IdleLevel(0), 2200); // clear after animation finishes
+
+      // Level 2 @ 18s — 3 pulses (~3.6s) + VO hint, then clear
+      t2 = setTimeout(() => {
+        setWish1IdleLevel(2);
+        if (!idleVoFlagsRef.current.wish1Level2) {
           speakLine("Look for the kind action bubbles.", { moment: 'encouragement' });
           idleVoFlagsRef.current.wish1Level2 = true;
         }
-        if (level >= 3 && !idleVoFlagsRef.current.wish1Level3) {
-          speakLine("Tap the bubbles that show helping, sharing, hugging, and gifting.", { moment: 'encouragement' });
-          idleVoFlagsRef.current.wish1Level3 = true;
-        }
-        return;
-      }
+        t2Clear = setTimeout(() => setWish1IdleLevel(0), 3800); // clear after animation finishes
 
-      if (phase === 'wish2-active') {
-        if (level !== wish2IdleLevel) setWish2IdleLevel(level);
-        if (level >= 2 && !idleVoFlagsRef.current.wish2Level2) {
-          speakLine("Drag any food to a plate.", { moment: 'encouragement' });
-          idleVoFlagsRef.current.wish2Level2 = true;
-        }
-        if (level >= 3 && !idleVoFlagsRef.current.wish2Level3) {
-          // Wish 2 VO policy: speak only at level 2, keep level 3 visual-only.
-          idleVoFlagsRef.current.wish2Level3 = true;
-        }
-        return;
-      }
+        // Level 3 @ 26s — 4 pulses + VO, stays on (child needs max help)
+        t3 = setTimeout(() => {
+          setWish1IdleLevel(3);
+          if (!idleVoFlagsRef.current.wish1Level3) {
+            speakLine("Tap the bubbles that show helping, sharing, hugging, and gifting.", { moment: 'encouragement' });
+            idleVoFlagsRef.current.wish1Level3 = true;
+          }
+          // No clear — level 3 stays as persistent static glow
+        }, 8000); // 18s + 8s = 26s
+      }, 8000); // 10s + 8s = 18s
+    }, 10000);
 
-      if (phase === 'wish3-active') {
-        if (level !== wish3IdleLevel) setWish3IdleLevel(level);
-        if (level >= 2 && !idleVoFlagsRef.current.wish3Level2) {
-          speakLine("Tap the glowing spots on the land.", { moment: 'encouragement' });
-          idleVoFlagsRef.current.wish3Level2 = true;
-        }
-        if (level >= 3 && !idleVoFlagsRef.current.wish3Level3) {
-          speakLine("Tap each glowing spot to help the garden grow.", { moment: 'encouragement' });
-          idleVoFlagsRef.current.wish3Level3 = true;
-        }
-        return;
-      }
+    return () => {
+      if (t1) clearTimeout(t1);
+      if (t1Clear) clearTimeout(t1Clear);
+      if (t2) clearTimeout(t2);
+      if (t2Clear) clearTimeout(t2Clear);
+      if (t3) clearTimeout(t3);
+    };
+  }, [sceneState.gamePhase, isAudioOn, sceneState.showingCompletionScreen, showDrawingPad]);
 
-      const isChildPhase = (phase === 'dream-clouded' || phase === 'dream-clearing') && !sceneState.dreamRevealed;
-      if (isChildPhase) {
-        if (level !== childIdleLevel) setChildIdleLevel(level);
-        if (level >= 2 && !idleVoFlagsRef.current.childLevel2) {
-          speakLine("Tap my trunk to clear the clouds.", { moment: 'encouragement' });
-          idleVoFlagsRef.current.childLevel2 = true;
-        }
-        if (level >= 3 && !idleVoFlagsRef.current.childLevel3) {
-          idleVoFlagsRef.current.childLevel3 = true;
-        }
-        return;
-      }
-    }, 500);
+  // ── Wish 2, 3, dream phases — setTimeout ladders (same pattern as wish1) ────
+  // Level fires → class on → animation plays → level resets to 0 → element back to normal.
+  // Level 3 stays on (child genuinely stuck).
+  useEffect(() => {
+    const phase = sceneState.gamePhase;
+    const isWish2 = phase === 'wish2-active';
+    const isWish3 = phase === 'wish3-active';
+    const isDream = (phase === 'dream-clouded' || phase === 'dream-clearing') && !sceneState.dreamRevealed;
 
-    return () => clearInterval(intervalId);
-  }, [isAudioOn, sceneState.gamePhase, sceneState.dreamRevealed, sceneState.showingCompletionScreen, showDrawingPad, wish1IdleLevel, wish2IdleLevel, wish3IdleLevel, childIdleLevel]);
+    if (!isWish2 && !isWish3 && !isDream) {
+      setWish2IdleLevel(0);
+      setWish3IdleLevel(0);
+      setChildIdleLevel(0);
+      idleVoFlagsRef.current.wish2Level2 = false;
+      idleVoFlagsRef.current.wish2Level3 = false;
+      idleVoFlagsRef.current.wish3Level2 = false;
+      idleVoFlagsRef.current.wish3Level3 = false;
+      idleVoFlagsRef.current.childLevel2 = false;
+      idleVoFlagsRef.current.childLevel3 = false;
+      return;
+    }
+    if (!isAudioOn || sceneState.showingCompletionScreen || showDrawingPad) return;
+
+    const setLevel = isWish2 ? setWish2IdleLevel : isWish3 ? setWish3IdleLevel : setChildIdleLevel;
+    const voL2Flag = isWish2 ? 'wish2Level2' : isWish3 ? 'wish3Level2' : 'childLevel2';
+    const voL3Flag = isWish2 ? 'wish2Level3' : isWish3 ? 'wish3Level3' : 'childLevel3';
+    const voL2Line = isWish2 ? "Drag any food to a plate."
+      : isWish3 ? "Tap the glowing spots on the land."
+      : "Keep tapping to clear the clouds!";
+    const voL3Line = isWish3 ? "Tap each glowing spot to help the garden grow." : null;
+
+    setLevel(0);
+    idleVoFlagsRef.current[voL2Flag] = false;
+    idleVoFlagsRef.current[voL3Flag] = false;
+
+    let t1 = null;
+    let t1Clear = null;
+    let t2 = null;
+    let t2Clear = null;
+    let t3 = null;
+
+    // Level 1 @ 10s — soft pulse once (~2s), then clear
+    t1 = setTimeout(() => {
+      setLevel(1);
+      t1Clear = setTimeout(() => setLevel(0), 2200);
+
+      // Level 2 @ 18s — 3 pulses + VO, then clear
+      t2 = setTimeout(() => {
+        setLevel(2);
+        if (!idleVoFlagsRef.current[voL2Flag]) {
+          speakLine(voL2Line, { moment: 'encouragement' });
+          idleVoFlagsRef.current[voL2Flag] = true;
+        }
+        t2Clear = setTimeout(() => setLevel(0), 3800);
+
+        // Level 3 @ 26s — 4 pulses + VO (if any), stays on
+        t3 = setTimeout(() => {
+          setLevel(3);
+          if (voL3Line && !idleVoFlagsRef.current[voL3Flag]) {
+            speakLine(voL3Line, { moment: 'encouragement' });
+            idleVoFlagsRef.current[voL3Flag] = true;
+          }
+        }, 8000);
+      }, 8000);
+    }, 10000);
+
+    return () => {
+      if (t1) clearTimeout(t1);
+      if (t1Clear) clearTimeout(t1Clear);
+      if (t2) clearTimeout(t2);
+      if (t2Clear) clearTimeout(t2Clear);
+      if (t3) clearTimeout(t3);
+    };
+  }, [isAudioOn, sceneState.gamePhase, sceneState.dreamRevealed, sceneState.showingCompletionScreen, showDrawingPad]);
 
   // Reset idle timer on major phase/modal transitions
   useEffect(() => {
@@ -1187,6 +1118,10 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     sceneActions.updateState({ wish1Taps: newTaps });
 
     if (newTaps >= 3) {
+      const discovery = { name: 'Kindness', image: kindnessHeaderIcon };
+      safeSetTimeout(() => {
+        triggerDiscoveryFly(discovery);
+      }, fromBubble ? WISH1_FINAL_ICON_DELAY_MS : DISCOVERY_FLY_START_DELAY_MS);
       if (fromBubble) {
         triggerWish1Sparkle('all', 2400);
       }
@@ -1194,10 +1129,17 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       playChime();
       // Pre-mark as spoken so effect won't trigger it, then delay the actual VO
       phaseVoiceRef.current.wish1FinalMomentVo = true;
-      sceneActions.updateState({ wish1FinalMoment: true });
+      sceneActions.updateState({
+        wish1FinalMoment: true
+      });
       safeSetTimeout(() => {
-        speakLine(VOICE_LINES.wish1Complete, { moment: 'celebration' });
-      }, 1000);
+        sceneActions.updateState({
+          storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, discovery)
+        });
+      }, (fromBubble ? WISH1_FINAL_ICON_DELAY_MS : DISCOVERY_FLY_START_DELAY_MS) + DISCOVERY_CENTER_REACH_MS);
+      queueCompletionWithCheer(VOICE_LINES.wish1Complete, {
+        startDelayMs: fromBubble ? WISH1_FINAL_CHEER_DELAY_MS : COMPLETION_CHEER_DELAY_MS
+      });
       safeSetTimeout(() => {
         sceneActions.updateState({
           gamePhase: 'wish2-active',
@@ -1208,7 +1150,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
           wish2FoodPool: [...WISH2_FOOD_KEYS],
           wish2FinalMoment: false
         });
-      }, 4200);
+      }, 4200 + PHASE_BREATHER_MS);
     } else {
       if (fromBubble) {
         triggerWish1Sparkle('single', 1700);
@@ -1364,7 +1306,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       wish1SpawnLoopCancelRef.current?.();
       wish1SpawnLoopCancelRef.current = null;
     };
-  }, [sceneState.gamePhase, sceneState.wish1Taps, safeSetTimeout, wish1IdleLevel]);
+  }, [sceneState.gamePhase, sceneState.wish1Taps, safeSetTimeout]);
 
   const firstUnfilledBowlIndex = sceneState.bowlStates.findIndex(filled => !filled);
 
@@ -1394,6 +1336,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     wish2FoodPool: [...WISH2_FOOD_KEYS],
     parkStates: [false, false, false],
     trunkTaps: 0,
+    storyDiscoveries: [],
     dreamRevealed: false,
     childDreamDrawing: null,
     currentModal: null,
@@ -1406,6 +1349,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     const base = getTestResetState();
     const updates = { ...base, gamePhase: phase };
     if (phase === 'wish1-complete') updates.wish1Taps = 3;
+    if (['wish2-active', 'wish2-complete', 'wish3-active', 'wish3-complete', 'all-wishes-complete', 'dream-drawing', 'dream-clouded', 'dream-clearing', 'comparison-card', 'ending'].includes(phase)) {
+      updates.storyDiscoveries = appendUniqueDiscovery(updates.storyDiscoveries, { name: 'Kindness', image: kindnessHeaderIcon });
+    }
     if (phase === 'wish2-active') updates.wish1Taps = 3;
     if (phase === 'wish2-complete') {
       updates.wish1Taps = 3;
@@ -1413,6 +1359,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       updates.bowlStates = [true, true, true];
       updates.wish2PlateFoods = ['apple', 'banana', 'rice'];
       updates.wish2FoodPool = [];
+      updates.storyDiscoveries = appendUniqueDiscovery(updates.storyDiscoveries, { name: 'Sharing', image: sharingHeaderIcon });
     }
     if (phase === 'wish3-active') {
       updates.wish1Taps = 3;
@@ -1420,6 +1367,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       updates.bowlStates = [true, true, true];
       updates.wish2PlateFoods = ['apple', 'banana', 'rice'];
       updates.wish2FoodPool = [];
+      updates.storyDiscoveries = appendUniqueDiscovery(updates.storyDiscoveries, { name: 'Sharing', image: sharingHeaderIcon });
     }
     if (phase === 'wish3-complete') {
       updates.wish1Taps = 3;
@@ -1428,10 +1376,12 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       updates.bowlStates = [true, true, true];
       updates.wish2PlateFoods = ['apple', 'banana', 'rice'];
       updates.wish2FoodPool = [];
+      updates.storyDiscoveries = appendUniqueDiscovery(updates.storyDiscoveries, { name: 'Sharing', image: sharingHeaderIcon });
+      updates.storyDiscoveries = appendUniqueDiscovery(updates.storyDiscoveries, { name: 'Nature', image: natureHeaderIcon });
     }
     sceneActions.updateState(updates);
     markInteraction();
-  }, [getTestResetState, markInteraction, sceneActions]);
+  }, [appendUniqueDiscovery, getTestResetState, markInteraction, sceneActions]);
 
   const handleWish2FoodDrop = (index, foodKey) => {
     if (!foodKey) return;
@@ -1461,13 +1411,24 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     setSelectedWish2FoodKey(null);
 
     if (count === 3) {
+      const discovery = { name: 'Sharing', image: sharingHeaderIcon };
+      safeSetTimeout(() => {
+        triggerDiscoveryFly(discovery);
+      }, DISCOVERY_FLY_START_DELAY_MS);
       triggerWish2Sparkle('all', 2400);
       playSparkle();
       playChime();
       // Trigger completion VO immediately on final tap (more reliable than waiting for effect timing).
       phaseVoiceRef.current.wish2FinalMomentVo = true;
-      speakLine(VOICE_LINES.wish2Complete, { moment: 'celebration' });
-      sceneActions.updateState({ wish2FinalMoment: true });
+      queueCompletionWithCheer(VOICE_LINES.wish2Complete, { startDelayMs: COMPLETION_CHEER_DELAY_MS });
+      sceneActions.updateState({
+        wish2FinalMoment: true
+      });
+      safeSetTimeout(() => {
+        sceneActions.updateState({
+          storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, discovery)
+        });
+      }, DISCOVERY_FLY_START_DELAY_MS + DISCOVERY_CENTER_REACH_MS);
       safeSetTimeout(() => {
         sceneActions.updateState({
           gamePhase: 'wish3-active',
@@ -1476,7 +1437,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
           parkStates: [false, false, false],
           wish3FinalMoment: false
         });
-      }, 4200);
+      }, 4200 + PHASE_BREATHER_MS);
     } else {
       triggerWish2Sparkle('single', 1700, index);
     }
@@ -1497,14 +1458,25 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     sceneActions.updateState({ wish3Taps: newTaps });
 
     if (newTaps >= 3) {
+      const discovery = { name: 'Nature', image: natureHeaderIcon };
+      safeSetTimeout(() => {
+        triggerDiscoveryFly(discovery);
+      }, DISCOVERY_FLY_START_DELAY_MS);
       triggerWish3Sparkle('all', 2400);
       playSparkle();
       playChime();
       // Trigger completion VO immediately on final tap (prevents missed/cut playback).
       phaseVoiceRef.current.wish3FinalMomentVo = true;
-      speakLine(VOICE_LINES.wish3Complete, { moment: 'celebration' });
-      sceneActions.updateState({ wish3FinalMoment: true });
-      safeSetTimeout(() => { sceneActions.updateState({ gamePhase: 'all-wishes-complete', wish3FinalMoment: false }); }, 5600);
+      queueCompletionWithCheer(VOICE_LINES.wish3Complete, { startDelayMs: COMPLETION_CHEER_DELAY_MS });
+      sceneActions.updateState({
+        wish3FinalMoment: true
+      });
+      safeSetTimeout(() => {
+        sceneActions.updateState({
+          storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, discovery)
+        });
+      }, DISCOVERY_FLY_START_DELAY_MS + DISCOVERY_CENTER_REACH_MS);
+      safeSetTimeout(() => { sceneActions.updateState({ gamePhase: 'all-wishes-complete', wish3FinalMoment: false }); }, 5600 + PHASE_BREATHER_MS);
     } else {
       triggerWish3Sparkle('single', 1700);
     }
@@ -1514,7 +1486,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const handleParkTap = (index) => {
     if (sceneState.parkStates[index] === true) return;
     markInteraction();
+    interruptCurrentVoice();
     playUiTap();
+    triggerMiniGesture('center', 1500);
     const newStates = [...sceneState.parkStates];
     newStates[index] = true;
     const count = newStates.filter(Boolean).length;
@@ -1522,23 +1496,51 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     sceneActions.updateState({ parkStates: newStates, wish3Taps: count });
 
     if (count === 3) {
+      const discovery = { name: 'Nature', image: natureHeaderIcon };
+      safeSetTimeout(() => {
+        triggerDiscoveryFly(discovery);
+      }, DISCOVERY_FLY_START_DELAY_MS);
+      triggerWish3Sparkle('all', 2400);
       playSparkle();
       playChime();
-      sceneActions.updateState({ wish3FinalMoment: true });
-      safeSetTimeout(() => { sceneActions.updateState({ gamePhase: 'all-wishes-complete', wish3FinalMoment: false }); }, 1000);
+      // Ensure completion VO is spoken before advancing to drawing intro.
+      phaseVoiceRef.current.wish3FinalMomentVo = true;
+      queueCompletionWithCheer(VOICE_LINES.wish3Complete, { startDelayMs: COMPLETION_CHEER_DELAY_MS });
+      sceneActions.updateState({
+        wish3FinalMoment: true
+      });
+      safeSetTimeout(() => {
+        sceneActions.updateState({
+          storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, discovery)
+        });
+      }, DISCOVERY_FLY_START_DELAY_MS + DISCOVERY_CENTER_REACH_MS);
+      safeSetTimeout(() => {
+        sceneActions.updateState({ gamePhase: 'all-wishes-complete', wish3FinalMoment: false });
+      }, 4200 + PHASE_BREATHER_MS);
+    } else {
+      triggerWish3Sparkle('single', 1700);
+      playSparkle();
     }
   };
 
   const handleTrunkTap = () => {
     markInteraction();
     playUiTap();
+    triggerMiniGesture('center', 1500);
     const newTaps = sceneState.trunkTaps + 1;
     sceneActions.updateState({ trunkTaps: newTaps, gamePhase: 'dream-clearing' });
 
     if (newTaps >= 3) {
+      triggerWish3Sparkle('all', 2200);
       playSparkle();
       playChime();
+      // Explicitly speak reveal VO at reveal moment for reliability.
+      phaseVoiceRef.current.dreamRevealed = true;
+      speakLine(VOICE_LINES.dreamRevealed, { moment: 'celebration' });
       sceneActions.updateState({ dreamRevealed: true });
+    } else {
+      triggerWish3Sparkle('single', 1500);
+      playSparkle();
     }
   };
 
@@ -1576,6 +1578,21 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
         sceneState.gamePhase !== 'ending' && (
           <StoryProgressHeader discoveries={getDiscoveries()} isChildMode={false} />
         )}
+
+      {discoveryFly && (
+        <div
+          key={discoveryFly.key}
+          className="discovery-fly"
+          style={{ '--discovery-duration': `${discoveryFly.durationMs || DISCOVERY_FLY_TOTAL_MS}ms` }}
+          aria-hidden="true"
+        >
+          {discoveryFly.image ? (
+            <img src={discoveryFly.image} alt={discoveryFly.name} className="discovery-fly-image" />
+          ) : (
+            <span className="discovery-fly-emoji">{discoveryFly.emoji}</span>
+          )}
+        </div>
+      )}
 
       {sceneState.gamePhase === 'intro' && (
         <OpeningModal
@@ -1629,7 +1646,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             </div>
           </div>
           <div className="wish-interactive-container">
-            <div className="earth-container" onClick={handleWish1Tap}>
+            <div className="earth-container earth-readonly">
               <img src={wishEarthSad} alt="Sad" className="earth-image sad" style={{ opacity: sceneState.wish1Taps === 0 ? 1 : sceneState.wish1Taps === 1 ? 0.6 : sceneState.wish1Taps === 2 ? 0.3 : 0 }} />
               <img src={wishEarthHappy} alt="Happy" className={`earth-image happy ${sceneState.wish1Taps >= 3 ? 'complete-glow-pulse' : ''}`} style={{ opacity: sceneState.wish1Taps === 0 ? 0 : sceneState.wish1Taps === 1 ? 0.4 : sceneState.wish1Taps === 2 ? 0.7 : 1 }} />
               {wish1Sparkle.type === 'single' && (
@@ -1674,9 +1691,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   className={`wish1-bubble-shell ${shakingBubbleId === bubble.id ? 'bubble-wrong-shake' : ''} ${
                     bubble.type === 'kind' && wish1IdleLevel === 1 ? 'hint' : ''
                   } ${
-                    bubble.type === 'kind' && wish1IdleLevel === 2 ? 'hint-glow' : ''
+                    bubble.type === 'kind' && wish1IdleLevel === 2 ? 'hint-strong' : ''
                   } ${
-                    bubble.type === 'kind' && wish1IdleLevel === 3 ? 'hint-strng' : ''
+                    bubble.type === 'kind' && wish1IdleLevel === 3 ? 'hint-final' : ''
                   }`}
                   style={{
                     position: 'absolute',
@@ -1847,7 +1864,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 src={baseImg}
                 alt="Forest landscape"
                 className={`park-ground-image green ${sceneState.wish3Taps >= 3 ? 'complete-glow-pulse' : ''}`}
-                style={wish3IdleLevel >= 1 ? { filter: 'drop-shadow(0 0 14px rgba(255, 231, 160, 0.85))' } : undefined}
+                style={wish3IdleLevel === 1 || wish3IdleLevel === 2 || wish3IdleLevel === 3 ? { filter: 'drop-shadow(0 0 14px rgba(255, 231, 160, 0.85))' } : undefined}
               />
 
               {/* Hotspot 0: Left - Flower reveal */}
@@ -2059,17 +2076,44 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Dream Clouded / Clearing */}
       {(sceneState.gamePhase === 'dream-clouded' || sceneState.gamePhase === 'dream-clearing') && (
         <div className="dream-screen">
+          {wish3Sparkle.type && !sceneState.dreamRevealed && (
+            <div className="dream-clearing-sparkles">
+              <SparkleAnimation
+                key={`dream-cloud-${wish3Sparkle.type}-${wish3Sparkle.key}`}
+                type="magic"
+                count={wish3Sparkle.type === 'all' ? 42 : 22}
+                color="rgba(255, 214, 102, 0.98)"
+                size={wish3Sparkle.type === 'all' ? 14 : 12}
+                duration={wish3Sparkle.type === 'all' ? 2200 : 1500}
+                fadeOut={true}
+                area="full"
+              />
+            </div>
+          )}
           {/* Sparkles when dream revealed */}
           {sceneState.dreamRevealed && (
-            <SparkleAnimation
-              type="magic"
-              duration={2000}
-              area="full"
-            />
+            <div className="dream-clearing-sparkles">
+              <SparkleAnimation
+                type="magic"
+                duration={2000}
+                area="full"
+              />
+            </div>
           )}
           <div className="dream-container">
             <div className="dream-drawing-display">
-              {sceneState.childDreamDrawing && <img src={sceneState.childDreamDrawing} alt="Dream" className="dream-image" style={{ filter: sceneState.dreamRevealed ? 'none' : (sceneState.trunkTaps === 3 ? 'none' : 'blur(6px)'), opacity: sceneState.dreamRevealed ? 1 : (0.5 + (sceneState.trunkTaps * 0.15)), boxShadow: sceneState.dreamRevealed ? '0 0 40px rgba(242, 215, 167, 0.6), 0 0 80px rgba(242, 215, 167, 0.3)' : 'none' }} />}
+              {sceneState.dreamRevealed && <div className="canvas-glow" />}
+              {sceneState.childDreamDrawing && <img src={sceneState.childDreamDrawing} alt="Dream" className={`dream-image ${sceneState.dreamRevealed ? 'dream-image-pulse' : ''}`} style={{ filter: sceneState.dreamRevealed ? 'none' : (sceneState.trunkTaps === 3 ? 'none' : 'blur(6px)'), opacity: sceneState.dreamRevealed ? 1 : (0.5 + (sceneState.trunkTaps * 0.15)), boxShadow: sceneState.dreamRevealed ? '0 0 40px rgba(242, 215, 167, 0.6), 0 0 80px rgba(242, 215, 167, 0.3)' : 'none', position: 'relative', zIndex: 2 }} />}
+              {sceneState.dreamRevealed && (
+                <div className="sparkle-ring">
+                  <span className="sparkle s1" />
+                  <span className="sparkle s2" />
+                  <span className="sparkle s3" />
+                  <span className="sparkle s4" />
+                  <span className="sparkle s5" />
+                  <span className="sparkle s6" />
+                </div>
+              )}
             </div>
             <div className="clouds-container">
               {Array.from({ length: 3 }).map((_, i) => (
@@ -2077,10 +2121,11 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
               ))}
             </div>
             <div
-              className={`ganesha-helper ${sceneState.trunkTaps > 0 ? 'ganesha-blowing' : ''} ${childIdleLevel === 1 ? 'hint' : ''} ${childIdleLevel === 2 ? 'hint-strong' : ''} ${childIdleLevel === 3 ? 'hint-final' : ''}`}
+              key={`ganesha-helper-${ganeshaReactKey}`}
+              className={`ganesha-helper ${sceneState.trunkTaps > 0 ? 'ganesha-blowing' : ''} ${childIdleLevel === 1 ? 'hint' : ''} ${childIdleLevel === 2 ? 'hint-strong' : ''} ${childIdleLevel === 3 ? 'hint-final' : ''} ${ganeshaReactKey > 0 && sceneState.dreamRevealed ? 'ganesha-react' : ''}`}
               onClick={handleTrunkTap}
               style={{
-                filter: childIdleLevel >= 2 ? 'drop-shadow(0 0 14px rgba(255, 231, 160, 0.9))' : 'none',
+                filter: childIdleLevel === 2 || childIdleLevel === 3 ? 'drop-shadow(0 0 14px rgba(255, 231, 160, 0.9))' : 'none',
               }}
             >
               <img src={babyGaneshaImg} alt="Ganesha" className="ganesha-trunk bounce-gentle" />
@@ -2117,17 +2162,17 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
               <div className="friend-items-grid">
                 <div className="friend-item">
                   <div className="friend-item-label">Wish 1</div>
-                  <img src={wishEarthHappy} alt="Happy Earth wish" className="friend-item-img" />
+                  <img src={kindnessHeaderIcon} alt="Kindness wish" className="friend-item-img" />
                   <div className="friend-item-text">Happiness</div>
                 </div>
                 <div className="friend-item">
                   <div className="friend-item-label">Wish 2</div>
-                  <img src={wishBowlFull} alt="Sharing wish" className="friend-item-img" />
+                  <img src={sharingHeaderIcon} alt="Sharing wish" className="friend-item-img" />
                   <div className="friend-item-text">Sharing</div>
                 </div>
                 <div className="friend-item">
                   <div className="friend-item-label">Wish 3</div>
-                  <img src={wishForest4} alt="Green world wish" className="friend-item-img" />
+                  <img src={natureHeaderIcon} alt="Nature wish" className="friend-item-img" />
                   <div className="friend-item-text">Green World</div>
                 </div>
               </div>
@@ -2145,6 +2190,12 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   src={activeProfile.icon}
                   alt="Profile"
                   style={{ width: '120px', height: '120px', borderRadius: '50%', objectFit: 'cover', marginBottom: '10px', boxShadow: '0 5px 15px rgba(0,0,0,0.2)' }}
+                />
+              ) : profileAvatarImage ? (
+                <img
+                  src={profileAvatarImage}
+                  alt={profileDisplayName}
+                  style={{ width: '120px', height: '120px', borderRadius: '50%', objectFit: 'cover', marginBottom: '10px', boxShadow: '0 5px 15px rgba(0,0,0,0.2)', border: '4px solid white' }}
                 />
               ) : (
                 <div
@@ -2278,7 +2329,12 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             onReplay={() => {
               playUiTap();
               hardStopSceneAudio();
-              phaseVoiceRef.current = {};
+              // Pre-set the opening flag so intro-VO effect won't double-fire; we speak explicitly.
+              phaseVoiceRef.current = { opening: true };
+              safeSetTimeout(() => {
+                setVoiceVolume(isAudioOn ? OPENING_VO_VOLUME : 0);
+                playVoice('opening');
+              }, 500);
 
               sceneActions.updateState({
                 gamePhase: 'intro',
@@ -2291,8 +2347,13 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 bowlStates: [false, false, false],
                 wish2PlateFoods: [null, null, null],
                 wish2FoodPool: [...WISH2_FOOD_KEYS],
+                parkStates: [false, false, false],
                 trunkTaps: 0,
+                storyDiscoveries: [],
+                dreamRevealed: false,
                 childDreamDrawing: null,
+                draftData: null,
+                currentModal: null,
                 showingCompletionScreen: false,
                 completed: false
               });

@@ -257,8 +257,8 @@
 /* UNIFIED GAME HEADER (HUD) */
 .game-header-hud {
   position: absolute;
-  top: 40px;
-  /* Lowered slightly */
+  top: 8px;
+  /* Moved higher above tree */
   left: 50%;
   transform: translateX(-50%);
   z-index: 90;
@@ -438,9 +438,11 @@
 
 /* 3. The Big Hearts */
 .heart-icon {
-  font-size: 2.5rem;
-  /* BIGGER as requested */
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+  font-size: 2.9rem;
+  /* Slightly bigger hearts */
+  color: #ffffff;
+  text-shadow: none;
+  filter: none;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   opacity: 0.5;
   /* Dim when empty */
@@ -449,10 +451,10 @@
 
 .heart-icon.filled {
   opacity: 1;
-  transform: scale(1.2);
-  /* Pop up when filled */
-  filter: drop-shadow(0 0 10px rgba(255, 50, 50, 0.6));
-  animation: heartBeat 0.5s ease-in-out;
+  transform: scale(1.05);
+  /* Keep simple, no pulse/glow */
+  filter: none;
+  animation: none;
 }
 
 @keyframes heartBeat {
@@ -506,14 +508,14 @@
   /* Bright Red */
   opacity: 1;
 
-  /* The Animation */
-  animation: activeHeartbeat 2s linear infinite;
+  /* Keep static (no pulse) */
+  animation: none;
 
   /* Ensure it pulses from the center */
   transform-origin: center center;
 
-  /* Add a subtle glow for extra magic */
-  filter: drop-shadow(0 0 5px rgba(255, 71, 87, 0.6));
+  /* Remove dark/extra outline look */
+  filter: none;
 }
 
 /* 3. Optional: Stagger the hearts so they don't beat in perfect unison (looks more organic) */
@@ -684,67 +686,76 @@
 
 /* Tap feedback removed — card zoom provides focus */
 
-.empty-circle {
-  width: 250px;
-  height: 250px;
+.tap-hitbox {
+  width: 210px;
+  height: 210px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-circle,
+.tap-circle {
+  width: 210px;
+  height: 210px;
   position: relative;
   border-radius: 50%;
-
-  /* Soft leaf glow — no dashed border */
-  border: none !important;
-  box-shadow: none !important;
-  background:
-    radial-gradient(circle at center,
-      rgba(159, 226, 125, 0.45) 0%,
-      rgba(159, 226, 125, 0.25) 40%,
-      rgba(159, 226, 125, 0) 70%);
-
+  border: 3px solid #ffffff;
+  box-shadow:
+    0 0 0 8px rgba(255, 255, 255, 0.42),
+    0 12px 26px rgba(27, 82, 23, 0.3);
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.16) 30%, rgba(255, 255, 255, 0) 65%);
   transition: transform 0.3s ease;
 }
 
-/* Soft green leaf glow pulse — pulsing every 1.6s */
+/* Soft pulse to signal "tap me" */
 .empty-circle-hint-glow {
-  animation: family-tree-leafPulse 1.6s ease-in-out infinite;
-  filter: drop-shadow(0 0 12px rgba(159, 226, 125, 0.5));
+  animation: pulseTap 1.6s ease-in-out infinite;
 }
 
 .empty-circle-hint-glow::before {
   content: '';
   position: absolute;
-  top: -12px;
-  left: -12px;
-  right: -12px;
-  bottom: -12px;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
   border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.45);
   pointer-events: none;
-  background: radial-gradient(circle, rgba(159, 226, 125, 0.35) 0%, transparent 72%);
-  animation: family-tree-leafGlowPulse 1.6s ease-in-out infinite;
+  animation: pulseTap 1.6s ease-in-out infinite;
+}
+
+/* Tiny sparkle hint */
+.empty-circle-hint-glow::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 10px;
+  height: 10px;
+  background: #fff3b0;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #fff3b0;
+  pointer-events: none;
   z-index: -1;
 }
 
-@keyframes family-tree-leafPulse {
-  0%,
-  100% {
+@keyframes pulseTap {
+  0% {
     transform: scale(1);
-    filter: drop-shadow(0 0 10px rgba(159, 226, 125, 0.4));
+    opacity: 1;
   }
 
   50% {
-    transform: scale(1.05);
-    filter: drop-shadow(0 0 18px rgba(159, 226, 125, 0.65));
+    transform: scale(1.04);
+    opacity: 0.82;
   }
-}
 
-@keyframes family-tree-leafGlowPulse {
-  0%,
   100% {
     transform: scale(1);
-    opacity: 0.5;
-  }
-
-  50% {
-    transform: scale(1.08);
-    opacity: 0.75;
+    opacity: 1;
   }
 }
 
@@ -4751,5 +4762,21 @@
     box-shadow: 0 0 0 rgba(255, 215, 0, 0);
     border-color: rgba(255, 215, 0, 0);
   }
+}
+
+/* Scene 19 HUD final lock: force progress bar position + size */
+.family-tree-game .game-header-hud {
+  top: 50px !important;
+  z-index: 130 !important;
+}
+
+.family-tree-game .hud-hearts-row {
+  padding: 10px 24px !important;
+  gap: 18px !important;
+}
+
+.family-tree-game .heart-icon {
+  font-size: 3.2rem !important;
+  line-height: 1 !important;
 }
 

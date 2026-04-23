@@ -214,7 +214,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     // Connection Moment (emotional beat)
     friendCelebration: "We like so many fun things!",
-    completionCelebration: "Now we know what we both love! Now let's make our dreams come true!",
+    completionCelebration: "We know what we both love! Let's make our dreams come true!",
 
     // Idle Hints (Ganesha Section)
     foodHint: "Look for the sweet I love.",
@@ -232,12 +232,17 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const activeProfile = GameStateManager.getCurrentProfile?.() || null;
   const profileDisplayName = (activeProfile?.name || sceneState.childFriendName || 'You').trim();
   const rawProfileAvatar = activeProfile?.avatar;
+  const PROFILE_ANIMAL_IDS = ['monkey', 'peacock', 'squirrel', 'tiger'];
+  const PROFILE_EMOJI_TO_ANIMAL = { '🐵': 'monkey', '🦚': 'peacock', '🐿️': 'squirrel', '🐯': 'tiger' };
+  const profileAnimalId = PROFILE_ANIMAL_IDS.includes(rawProfileAvatar) ? rawProfileAvatar : (PROFILE_EMOJI_TO_ANIMAL[rawProfileAvatar] || null);
+  const profileAvatarImage = profileAnimalId ? `/images/new-explorer-${profileAnimalId}.png` : null;
   const profileAvatar = (typeof rawProfileAvatar === 'string' && rawProfileAvatar.trim().length <= 2)
     ? rawProfileAvatar
     : profileDisplayName.charAt(0).toUpperCase();
 
   // â”€â”€ Resume Delay (shared across pause/resume logic) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const RESUME_DELAY_MS = 3000;
+  const OPENING_VO_VOLUME = 0.55;
   const DISCOVERY_FLY_TOTAL_MS = 3200;
   const DISCOVERY_CENTER_REACH_MS = 900;
   const PHASE_VO_BUFFER_MS = 1000;
@@ -257,7 +262,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   // â”€â”€ T08/T09: visibility + idle timer infrastructure â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  const { startIdleTimer, stopIdleTimer, setCurrentPhase, stopVoice, setVoiceVolume, startMusic, stopMusic } = useVoiceGuidance(
+  const { startIdleTimer, stopIdleTimer, setCurrentPhase, stopVoice, setVoiceVolume, startMusic, stopMusic, playVoice } = useVoiceGuidance(
     'about-me-hut', 'favorite-food', {
       enableMusic: true,
       musicVolume: 0.06,
@@ -383,7 +388,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const [idleHintLevel, setIdleHintLevel] = useState(0);
   const [resumeHintCycleKey, setResumeHintCycleKey] = useState(0);
   const idleHintVoiceRef = useRef(false);
-  const idleTimerRef = useRef(null);
+  const ganeshaIdleTimerRef = useRef(null);
+  const childIdleTimerRef = useRef(null);
   const childEntryVoRepeatRef = useRef(false);
 
   // Mini gesture (thumbs up) on successful taps
@@ -899,12 +905,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   useEffect(() => {
     if (sceneState.gamePhase === 'intro') {
       phaseVoiceRef.current = {};
-      const cancelTimer = safeSetTimeout(() => {
-        speakLine(VOICE_LINES.opening, { moment: 'greeting' });
-      }, 400);
-      return () => cancelTimer?.();
+      setVoiceVolume(isAudioOn ? OPENING_VO_VOLUME : 0);
+      playVoice('opening');
     }
-  }, [sceneState.gamePhase, isAudioOn, resumeHintCycleKey, safeSetTimeout]);
+  }, [sceneState.gamePhase, isAudioOn, playVoice, setVoiceVolume]);
 
   useEffect(() => {
     if (!resumeHintCycleKey || !isAudioOn || sceneState.showingCompletionScreen) return;
@@ -919,13 +923,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       sceneState.gamePhase === 'child-food-choice' &&
       (sceneState.childFoodChoice || sceneState.childFoodDrawing || sceneState.childFoodText)
     ) {
-      const selectedFoodName = sceneState.childFoodText
-        || (sceneState.childFoodDrawing ? 'My Food' : null)
-        || kidFoods.find(f => f.id === sceneState.childFoodChoice)?.name
-        || null;
-      completionLine = selectedFoodName
-        ? `${selectedFoodName}. ${VOICE_LINES.childFoodCorrect}`
-        : VOICE_LINES.childFoodCorrect;
+      completionLine = VOICE_LINES.childFoodCorrect;
       nextPhase = 'child-color-choice';
       phaseVoiceRef.current.childFoodQuestion = true;
       afterAdvance = () => setSelectedKidFoodId(null);
@@ -1127,7 +1125,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     // Only run for Ganesha choice phases
     if (!ganeshaPhases.includes(currentPhase) || showShake) {
-      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+      if (ganeshaIdleTimerRef.current) clearTimeout(ganeshaIdleTimerRef.current);
       setIdleHintLevel(0);
       idleHintVoiceRef.current = false;
       return;
@@ -1136,14 +1134,14 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     // Reset idle hints when entering a new phase
     setIdleHintLevel(0);
     idleHintVoiceRef.current = false;
-    if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+    if (ganeshaIdleTimerRef.current) clearTimeout(ganeshaIdleTimerRef.current);
 
     // Level 1 @ 10s: Wobble
-    idleTimerRef.current = setTimeout(() => {
+    ganeshaIdleTimerRef.current = setTimeout(() => {
       setIdleHintLevel(1);
 
       // Level 2 @ 18s: Wobble + VO hint (speak once)
-      idleTimerRef.current = setTimeout(() => {
+      ganeshaIdleTimerRef.current = setTimeout(() => {
         setIdleHintLevel(2);
         if (!idleHintVoiceRef.current) {
           const hintMap = {
@@ -1159,14 +1157,14 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         }
 
         // Level 3 @ 26s: Strong glow (visual only)
-        idleTimerRef.current = setTimeout(() => {
+        ganeshaIdleTimerRef.current = setTimeout(() => {
           setIdleHintLevel(3);
         }, 8000);
       }, 8000);
     }, 10000);
 
     return () => {
-      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+      if (ganeshaIdleTimerRef.current) clearTimeout(ganeshaIdleTimerRef.current);
     };
   }, [sceneState.gamePhase, showShake, resumeHintCycleKey]);
 
@@ -1177,17 +1175,17 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     // Only run for child choice phases
     if (!childPhases.includes(currentPhase)) {
-      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+      if (childIdleTimerRef.current) clearTimeout(childIdleTimerRef.current);
       childEntryVoRepeatRef.current = false;
       return;
     }
 
     // Reset flag when entering a new child phase
     childEntryVoRepeatRef.current = false;
-    if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+    if (childIdleTimerRef.current) clearTimeout(childIdleTimerRef.current);
 
     // @ 10s: Repeat entry VO (once)
-    idleTimerRef.current = setTimeout(() => {
+    childIdleTimerRef.current = setTimeout(() => {
       if (!childEntryVoRepeatRef.current) {
         const voMap = {
           'child-food-choice': VOICE_LINES.childFoodQuestion,
@@ -1203,7 +1201,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }, 10000);
 
     return () => {
-      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+      if (childIdleTimerRef.current) clearTimeout(childIdleTimerRef.current);
     };
   }, [sceneState.gamePhase, isAudioOn]);
 
@@ -1212,7 +1210,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     setIdleHintLevel(0);
     idleHintVoiceRef.current = false;
     childEntryVoRepeatRef.current = false;
-    if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+    if (ganeshaIdleTimerRef.current) clearTimeout(ganeshaIdleTimerRef.current);
+    if (childIdleTimerRef.current) clearTimeout(childIdleTimerRef.current);
   };
 
   // --- HANDLERS ---
@@ -1241,10 +1240,14 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         triggerDiscoveryFly({ image: modakImg, name: 'Modak' }, { isModak: true, durationMs: GANESHA_FOOD_CORRECT_ADVANCE_DELAY_MS });
         sceneActions.updateState({
           selectedFood: foodId,
-          storyDiscoveries: [{ image: modakImg, name: 'Modak' }],
           gamePhase: 'food-correct',
           correctChoiceId: null
         });
+        safeSetTimeout(() => {
+          sceneActions.updateState({
+            storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, { image: modakImg, name: 'Modak' })
+          });
+        }, DISCOVERY_CENTER_REACH_MS);
       }, 1000);
     } else {
       speakOptionName(food?.name);
@@ -1268,9 +1271,13 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       triggerDiscoveryFly({ image: yellowImg, name: 'Yellow' }, { durationMs: GANESHA_CORRECT_ADVANCE_DELAY_MS });
       sceneActions.updateState({
         correctChoiceId: colorId,
-        storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, { image: yellowImg, name: 'Yellow' }),
         gamePhase: 'color-correct'
       });
+      safeSetTimeout(() => {
+        sceneActions.updateState({
+          storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, { image: yellowImg, name: 'Yellow' })
+        });
+      }, DISCOVERY_CENTER_REACH_MS);
     } else {
       speakOptionName(color?.name);
       setShowShake(colorId);
@@ -1293,9 +1300,13 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       triggerDiscoveryFly({ image: activity.image, name: activity.name }, { durationMs: GANESHA_CORRECT_ADVANCE_DELAY_MS });
       sceneActions.updateState({
         correctChoiceId: activityId,
-        storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, { image: activity.image, name: activity.name }),
         gamePhase: 'activity-correct'
       });
+      safeSetTimeout(() => {
+        sceneActions.updateState({
+          storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, { image: activity.image, name: activity.name })
+        });
+      }, DISCOVERY_CENTER_REACH_MS);
     } else {
       speakOptionName(activity?.name);
       setShowShake(activityId);
@@ -1319,9 +1330,13 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       sceneActions.updateState({
         correctChoiceId: friendId,
         selectedFriend: friendId,
-        storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, { image: mouseImg, name: 'Mushika' }),
         gamePhase: 'friend-correct'
       });
+      safeSetTimeout(() => {
+        sceneActions.updateState({
+          storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, { image: mouseImg, name: 'Mushika' })
+        });
+      }, DISCOVERY_CENTER_REACH_MS);
     } else {
       speakOptionName(friend?.name);
       setShowShake(friendId);
@@ -1351,10 +1366,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }, 200);
 
     safeSetTimeout(() => {
-      const line = selected?.name
-        ? `${selected.name}. ${VOICE_LINES.childFoodCorrect}`
-        : VOICE_LINES.childFoodCorrect;
-      speakLine(line, { moment: 'celebration' });
+      speakLine(VOICE_LINES.childFoodCorrect, { moment: 'celebration' });
     }, DISCOVERY_CENTER_REACH_MS);
 
     safeSetTimeout(() => {
@@ -1381,7 +1393,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     triggerSparkleFx('single', 1500);
 
     safeSetTimeout(() => {
-      speakLine(`My Food. ${VOICE_LINES.childFoodCorrect}`, { moment: 'celebration' });
+      speakLine(VOICE_LINES.childFoodCorrect, { moment: 'celebration' });
     }, DISCOVERY_CENTER_REACH_MS);
 
     safeSetTimeout(() => {
@@ -2041,8 +2053,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             triggerSparkleFx('single', 1500);
 
             safeSetTimeout(() => {
-              const line = text ? `${text}. ${VOICE_LINES.childFoodCorrect}` : VOICE_LINES.childFoodCorrect;
-              speakLine(line, { moment: 'celebration' });
+              speakLine(VOICE_LINES.childFoodCorrect, { moment: 'celebration' });
             }, DISCOVERY_CENTER_REACH_MS);
 
             safeSetTimeout(() => {
@@ -2140,6 +2151,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   <img src={activeProfile.icon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : activeProfile?.profileIcon ? (
                   <img src={activeProfile.profileIcon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : profileAvatarImage ? (
+                  <img src={profileAvatarImage} alt={profileDisplayName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
                   profileAvatar
                 )}

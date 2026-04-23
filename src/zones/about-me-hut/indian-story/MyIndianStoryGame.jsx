@@ -127,7 +127,7 @@ const INDIA_REGIONS = [
   { id: 'northeast', label: 'Northeast India',               states: 'Assam, Meghalaya, Manipur, & more',       emoji: '??', icon: northEastIcon, color: '#B565A7', mapTop: '30%', mapLeft: '77%', ganeshaFact: 'The tea gardens here are magical � even I stop for a cup! ?' },
   { id: 'south',     label: 'South India',                   states: 'Tamil Nadu, Kerala, Karnataka, Telangana', emoji: '??', icon: southIcon,     color: '#2E7D32', mapTop: '70%', mapLeft: '32%', ganeshaFact: 'In Tamil Nadu, I am called Pillaiyar � the noble child! ??' },
   { id: 'kailash',   label: 'Mount Kailash! ???',            states: 'Where Amma & Appa live!',                  emoji: '???', icon: desertIcon,    color: '#5C6BC0', mapTop: '8%',  mapLeft: '42%', ganeshaFact: 'KAILASH?! That\'s where my Amma and Appa live! But where does YOUR family live on Earth?', isKailash: true },
-  { id: 'other',     label: 'Outside India',                 states: 'Outside India or multiple states',         emoji: '??', icon: null,           color: '#888', mapTop: '64%', mapLeft: '86%', ganeshaFact: 'Wherever your family is from, India lives in your heart! ??' },
+  { id: 'other',     label: 'Outside India',                 states: 'Outside India or multiple states',         emoji: '??', icon: null,           color: '#888', mapTop: '70%', mapLeft: '76%', ganeshaFact: 'Wherever your family is from, India lives in your heart! ??' },
 ];
 
 const LANGUAGES = [
@@ -1624,7 +1624,7 @@ const handleComplete = () => {
             if (languagePlayNudgeIntervalRef.current) clearInterval(languagePlayNudgeIntervalRef.current);
             if (phase1ReturnHintTimerCancelRef.current) phase1ReturnHintTimerCancelRef.current();
             if (miniGestureTimerRef.current) clearTimeout(miniGestureTimerRef.current);
-            if (sparkleCancelRef.current) sparkleCancelRef.current();
+            if (sparkleCancelRef.current) clearTimeout(sparkleCancelRef.current);
 
             discoveredRef.current = new Set();
             ganeshaHomeIdleVoiceRef.current = false;
@@ -2063,13 +2063,16 @@ const handleComplete = () => {
               </div>
             )}
 
-            {/* Outside India - Near South India Border */}
+            {/* Outside India - Uses INDIA_REGIONS coordinates */}
+            {(() => {
+              const outsideIndiaRegion = INDIA_REGIONS.find(r => r.id === 'other');
+              return (
             <button
-              onClick={(event) => handleRegionSelect(INDIA_REGIONS.find(r => r.id === 'other'), event)}
+              onClick={(event) => handleRegionSelect(outsideIndiaRegion, event)}
               style={{
                 position: 'absolute',
-                top: '82%',
-                left: '36%',
+                top: outsideIndiaRegion?.mapTop || '82%',
+                left: outsideIndiaRegion?.mapLeft || '36%',
                 transform: selectedRegion?.id === 'other' ? 'translate(-50%, -50%) scale(1.08)' : 'translate(-50%, -50%)',
                 width: '120px',
                 padding: '12px 10px',
@@ -2092,6 +2095,8 @@ const handleComplete = () => {
               <img src={otherLangIcon} alt="Elsewhere" style={{ width: '30px', height: '30px', objectFit: 'contain', margin: '0 auto 6px', display: 'block' }} />
               Outside India
             </button>
+              );
+            })()}
 
             {/* Continue Button — Positioned Below Map */}
             <button

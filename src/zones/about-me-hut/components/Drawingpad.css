@@ -289,6 +289,26 @@
   box-shadow: 0 6px 16px rgba(126, 217, 87, 0.4);
 }
 
+.download-btn {
+  margin-top: 20px;
+  padding: 12px 20px;
+  background: #FFB84D;
+  color: #5a3a00;
+  border: none;
+  border-radius: 14px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 184, 77, 0.3);
+  transition: all 0.3s ease;
+}
+
+.download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 184, 77, 0.4);
+}
+
 .cancel-link {
   margin-top: 10px;
   background: none;

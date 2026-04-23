@@ -888,6 +888,64 @@
   }
 }
 
+/* Wish hint glow states (used by wish1 bubbles, wish3 hotspots, and dream trunk helper) */
+.dreams-wishes-game .hint {
+  border-color: rgba(255, 214, 102, 0.95) !important;
+  background: rgba(255, 241, 178, 0.2) !important;
+  box-shadow:
+    0 0 0 2px rgba(255, 214, 102, 0.55),
+    0 0 16px rgba(255, 214, 102, 0.5);
+  animation: wishHintRingSoft 2s ease-in-out 1;
+}
+
+.dreams-wishes-game .hint-strong {
+  border-color: rgba(255, 188, 73, 1) !important;
+  background: rgba(255, 225, 128, 0.24) !important;
+  box-shadow:
+    0 0 0 3px rgba(255, 188, 73, 0.65),
+    0 0 22px rgba(255, 188, 73, 0.65);
+  animation: wishHintRingStrong 1.2s ease-in-out 3;
+}
+
+.dreams-wishes-game .hint-final {
+  border-color: rgba(255, 160, 64, 1) !important;
+  background: rgba(255, 208, 102, 0.28) !important;
+  box-shadow:
+    0 0 0 3px rgba(255, 160, 64, 0.75),
+    0 0 30px rgba(255, 160, 64, 0.8),
+    0 0 44px rgba(255, 220, 120, 0.55);
+  animation: wishHintRingFinal 1s ease-in-out 4;
+}
+
+.dreams-wishes-game .ganesha-helper.hint .ganesha-trunk {
+  filter: drop-shadow(0 0 10px rgba(255, 214, 102, 0.65));
+}
+
+.dreams-wishes-game .ganesha-helper.hint-strong .ganesha-trunk {
+  filter: drop-shadow(0 0 14px rgba(255, 188, 73, 0.85));
+}
+
+.dreams-wishes-game .ganesha-helper.hint-final .ganesha-trunk {
+  filter:
+    drop-shadow(0 0 16px rgba(255, 160, 64, 0.95))
+    drop-shadow(0 0 24px rgba(255, 220, 120, 0.6));
+}
+
+@keyframes wishHintRingSoft {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+@keyframes wishHintRingStrong {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+@keyframes wishHintRingFinal {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
 /* Flowers Bloom - Appear progressively */
 .flowers-bloom {
   position: absolute;

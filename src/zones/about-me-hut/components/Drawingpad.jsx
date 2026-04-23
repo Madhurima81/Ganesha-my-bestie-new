@@ -121,6 +121,16 @@ const DrawingPad = ({
       onSave({ image: imageData });
     }
   };
+
+  const handleDownload = () => {
+    const imageData = canvasRef.current.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.href = imageData;
+    link.download = 'my-dream.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
   
   const colors = [
     '#FFA500', // Orange
@@ -210,7 +220,11 @@ const DrawingPad = ({
           <button className="done-btn" onClick={handleSave}>
             Done Drawing
           </button>
-          
+
+          <button className="download-btn" onClick={handleDownload} title="Save to device">
+            💾 Save
+          </button>
+
           {onCancel && (
             <button className="cancel-link" onClick={onCancel}>
               Cancel
