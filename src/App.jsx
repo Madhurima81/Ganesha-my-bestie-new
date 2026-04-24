@@ -615,6 +615,16 @@ const getNextScene = (zoneId, currentSceneId) => {
   const handleNavigate = (destination) => {
     console.log('🎯 Navigate to:', destination);
     //restoreDefaultStyles(); // Always restore styles when navigating
+
+    // Allow scenes to navigate directly by sceneId (e.g. "favorite-food", "dreams-wishes").
+    // If destination matches a scene in the current zone, open it directly.
+    const zoneScenes = currentZone ? SCENE_MAPPING[currentZone] : null;
+    if (zoneScenes && zoneScenes[destination]) {
+      setCurrentScene(destination);
+      setCurrentView('scene');
+      SimpleSceneManager.setCurrentScene(currentZone, destination);
+      return;
+    }
     
     // Save current location before navigating away
     if (currentZone && currentScene) {

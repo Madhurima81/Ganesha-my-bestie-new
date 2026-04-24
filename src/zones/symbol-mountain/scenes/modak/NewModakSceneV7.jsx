@@ -20,8 +20,7 @@ import GameStateManager from "../../../../lib/services/GameStateManager";
 import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
 import CulturalCelebrationModal from '../../../../lib/components/progress/CulturalCelebrationModal';
 import CulturalProgressExtractor from '../../../../lib/services/CulturalProgressExtractor';
-import DraggableItem from '../../../../lib/components/interactive/DraggableItem';
-import DropZone from '../../../../lib/components/interactive/DropZone';
+import { KidsDraggable, KidsDropZone } from '../../../../lib/components/interactive/KidsDraggable';
 import FreeDraggableItem from '../../../../lib/components/interactive/FreeDraggableItem';
 
 // Analytics
@@ -1735,15 +1734,11 @@ const NewModakSceneMVPContent = ({
                             animation: canDrag ? 'none' : 'modak-game-modakToBasket 0.8s ease-out'
                           }}
                         >
-                          <DraggableItem
+                          <KidsDraggable
                             id={`basket-modak-${modakIndex}`}
                             data={{ type: 'basket-modak', index: modakIndex }}
                             disabled={!canDrag}
-                            onDragStart={(id, data) => {
-                              console.log('Dragging from basket:', id, data);
-                              recordInteraction();
-                            }}
-                            onDragEnd={(id) => console.log('Basket drag ended:', id)}
+                            onDragStart={() => recordInteraction()}
                           >
                             <img
                               src={getModakImage(modakIndex)}
@@ -1755,7 +1750,7 @@ const NewModakSceneMVPContent = ({
                                 cursor: canDrag ? 'grab' : 'default'
                               }}
                             />
-                          </DraggableItem>
+                          </KidsDraggable>
                           <SparkleAnimation type="star" count={8} color="#ffd700" size={6} duration={1500} fadeOut={true} area="full" />
                         </div>
                       );
@@ -1767,9 +1762,9 @@ const NewModakSceneMVPContent = ({
               {/* ROCK/BELLY - Drop zone for feeding */}
               {sceneState.rockVisible && (
                 <div className="modak-game-rock-container breathing">
-                  <DropZone
+                  <KidsDropZone
                     id="feeding-rock"
-                    acceptTypes={['basket-modak']}
+                    accepts="basket-modak"
                     onDrop={handleRockFeed}
                     disabled={sceneState.rockFeedCount >= 3}
                     style={{
@@ -1789,7 +1784,7 @@ const NewModakSceneMVPContent = ({
                         transition: 'transform 0.8s ease-out'
                       }}
                     />
-                  </DropZone>
+                  </KidsDropZone>
 
                   {(showSparkle === 'rock-feeding' || showSparkle === 'belly-transform') && (
                     <SparkleAnimation

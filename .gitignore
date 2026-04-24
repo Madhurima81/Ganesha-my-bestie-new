@@ -59,3 +59,7 @@ src/**/*_backup*.tsx
 
 # Google Drive temp upload artifacts
 .tmp.driveupload/
+.tmp.drivedownload/
+
+# Generated local quarantine reports
+docs/reports/image-quarantine-report-*.csv

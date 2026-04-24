@@ -1,7 +1,7 @@
 ---
 name: ganesha-my-bestie
-description: >
-  Master skill for building Ganesha My Bestie — a children's cultural education PWA for NRI families.
+description: >,
+Master skill for building Ganesha My Bestie — a children's cultural education PWA for NRI families.
   Use this skill whenever Madhurima asks to build, fix, or add anything to Ganesha My Bestie: new scenes,
   mini-games, components, zones, audio, navigation, animations, or any React/Vite code for this project.
   Also trigger for marketing content, pricing, zone structure, or UX decisions related to this app.
@@ -91,10 +91,7 @@ src/
 ├── hooks/
 │   └── useSceneReset.js          — reset hook
 ├── config/
-│   ├── SceneResetConfigs.js      — per-scene reset rules
-│   └── sceneWhisperConfig.js     — GaneshaSceneWhisper voice lines (all zones)
-├── lib/components/
-│   └── GaneshaSceneWhisper.jsx   — shared personalisation whisper component
+│   └── SceneResetConfigs.js      — per-scene reset rules
 └── zones/
     ├── zone1-symbol-mountain/
     ├── zone2-cave-of-secrets/
@@ -102,48 +99,6 @@ src/
     ├── zone4-festival-square/
     └── zone5-about-me-hut/
 ```
-
----
-
-## Scene ID Master Map (App.jsx SCENE_MAPPING)
-
-These are the **real scene IDs** used at runtime. Always use these when passing `sceneId` to any component.
-
-```js
-// symbol-mountain
-'modak'                  → NewModakSceneV7.jsx          (modak cooking)
-'pond'                   → PondSceneSimplifiedV4.jsx     (lotus pond)
-'symbol'                 → SymbolMountainSceneV3         (broken tusk)
-'final-scene'            → SacredAssemblySceneV8         (all 8 symbols)
-
-// cave-of-secrets
-'vakratunda-mahakaya'    → CaveSceneFixedV2              (Vakratunda + Mahakaya)
-'suryakoti-samaprabha'   → SuryakotiSceneV4              (Suryakoti + Samaprabha)
-'nirvighnam-kurumedeva'  → NirvighnamSceneV5             (Nirvighnam + Kurumedeva)
-'sarvakaryeshu-sarvada'  → SarvakaryeshuSarvadaV7        (Sarvakaryeshu + Sarvada)
-'final-meaning-scene'    → Cavescene5memoryfinale        (memory match finale)
-
-// shloka-river
-'vakratunda-grove'       → VakratundaGroveSimplified
-'suryakoti-bank'         → SuryakotiBankSimplified
-'nirvighnam-chant'       → NirvighnamChantSimplified
-'sarvakaryeshu-chant'    → SarvakaryeshuChantSimplified
-'shloka-river-finale'    → ShlokaRiverFinale
-
-// festival-square
-'game1'                  → FestivalPianoGame
-'game2'                  → FestivalRangoliGame
-'game3'                  → ModakCookingGame
-'game4'                  → MandapDecorationGame
-
-// about-me-hut  ⚠️ keys are swapped vs file names — fix needed
-'family-tree'            → Namebirthdaygame.jsx    (card says Family Tree)
-'favorite-food'          → Familytreegame.jsx      (card says Favorite Food)
-'dreams-wishes'          → Favoritefoodgame.jsx    (card says Dreams & Wishes)
-'name-birthday'          → ObstacleRemoverGame.jsx (card says Name & Birthday)
-```
-
-> **About Me Hut bug:** SCENE_MAPPING keys and JSX files are mismatched. The card labels shown to the child are correct; the loaded components are wrong. Needs a fix in App.jsx.
 
 ---
 
@@ -321,233 +276,10 @@ When writing marketing copy for this app, always use:
 
 ## Quick Reference: Zone Color Schemes
 
-These are the **exact values from `src/lib/config/ZoneThemes.js`** — use `getZoneTheme(zoneId)` in code.
-
-| Zone ID | accentColor | textPrimary | menuBg | btnTop | btnShadow |
-|---------|-------------|-------------|--------|--------|-----------|
-| `symbol-mountain` | `#F4C430` | `#6B5416` | cream/gold gradient | `#FFDA5A` | `#B8920A` |
-| `cave-of-secrets` | `#C85A2E` | `#6B2F1A` | amber/rust gradient | `#E07045` | `#8B2E0A` |
-| `shloka-river` | `#4A9B87` | `#1B4D3E` | aqua/sage gradient | `#5FBEA8` | `#1A6B5A` |
-| `festival-square` | `#E67E22` | `#8B4513` | marigold gradient | `#F4962A` | `#A84E00` |
-| `about-me-hut` | `#D89566` | `#7D4520` | clay/ochre gradient | `#E8AA7A` | `#9A5A20` |
-
----
-
-## App Shell UI System — Navigation Screens
-
-These are the colors/styles for ALL navigation screens (Welcome Back, Profile Selector, Map, TWG Hub).
-**Different from zone modals** — do NOT use saffron/orange here.
-
-```js
-// App shell tokens (src/lib/components/navigation/CleanGameWelcomeScreen.css)
-const APP_SHELL = {
-  background:   "url('/images/profile-background.png') center/cover",  // purple forest
-  bgTint:       'rgba(40, 30, 70, 0.45)',       // dark purple overlay on top of bg
-  cardBg:       '#FAF6EE',                       // warm cream card
-  cardRadius:   32,
-  cardShadow:   '0 6px 16px rgba(60, 40, 80, 0.06)',
-  titleColor:   '#6752B8',                       // Baloo 2, purple
-  bodyColor:    '#5A4A7A',                       // Nunito
-  subtleColor:  '#8B7AB0',                       // hints, labels, secondary text
-  borderColor:  '#C4B5F4',                       // input borders, dividers
-  primaryBtn:   'linear-gradient(180deg, #9a73d9, #7f5ac7)',  // import PrimaryBtn component
-  primaryShadow:'#5a3fa0',
-};
-```
-
-**Background:** Always `profile-background.png` + dark purple tint layer (`rgba(40,30,70,0.45)`)
-**Card:** `#FAF6EE`, `borderRadius: 32px`, centered, max-width ~620–980px
-**Primary button:** Import `PrimaryBtn` from `src/lib/components/shared/PrimaryBtn` — purple gradient, no override needed
-**Secondary button:** `white` bg, `2px solid #C4B5F4` border, `#8B7AB0` text, `borderRadius: 80px`
-**Parent Corner button:** `border: 1.5px solid #C4B5F4`, `color: #8B7AB0`, `background: none`
-
-### Two-column layout (for TWG screens with Ganesha)
-```jsx
-// Ganesha left 38%, card right 54%, marginRight: -48 on Ganesha pulls card close
-// Speech bubble pointer: absolute div, left: -13, top: 46%, rotate(45deg), bg: #FAF6EE
-// Ganesha: transform scaleX(-1) so he faces the card
-```
-
----
-
-## UI Component System
-
-### Button Hierarchy
-
-**1. PrimaryBtn** — the purple 3D pill (main CTA on any screen)
-```jsx
-import PrimaryBtn from 'src/lib/components/shared/PrimaryBtn';
-<PrimaryBtn label="Continue Journey" onClick={fn} size="md" fullWidth />
-// sizes: 'sm' | 'md' | 'lg'
-// Default color: purple gradient (#9a73d9 → #7f5ac7)
-```
-
-**Zone-colored PrimaryBtn** — for in-scene CTAs (e.g. "Start", "Keep Exploring"):
-Inject CSS vars to override the purple to the zone's color:
-```jsx
-import { getZoneTheme } from 'src/lib/config/ZoneThemes';
-const theme = getZoneTheme('shloka-river');
-<PrimaryBtn
-  label="Let's Explore"
-  onClick={fn}
-  size="md"
-  style={{
-    '--btn-color-top': theme.btnTop,
-    '--btn-color-base': theme.accentColor,
-    '--btn-color-shadow': theme.btnShadow,
-    '--btn-color-glow': theme.glowColor,
-  }}
-/>
-```
-
-**2. Secondary button** — white outlined pill (second action, e.g. "Explore Scenes"):
-```jsx
-<button className="secondary-btn" onClick={fn}>Explore Scenes</button>
-// Styling: white/transparent bg, zone-accent border, zone textPrimary color
-// Inline equivalent:
-<button style={{
-  background: 'white',
-  border: `2px solid ${theme.accentColor}`,
-  borderRadius: '80px',
-  padding: '14px 36px',
-  color: theme.textPrimary,
-  fontFamily: "'Baloo 2', cursive",
-  fontWeight: 700,
-  fontSize: '18px',
-  cursor: 'pointer',
-  width: '100%',
-}}>Explore Scenes</button>
-```
-
-**3. Parent Corner button** — subtle, de-emphasized (always below main actions):
-```jsx
-<button style={{
-  background: 'none',
-  border: '1.5px solid #C4B5F4',
-  borderRadius: '24px',
-  padding: '10px 20px',
-  fontFamily: 'Nunito, sans-serif',
-  fontSize: '13px',
-  fontWeight: 600,
-  color: '#8B7AB0',
-  width: '100%',
-  minHeight: '44px',
-}}>👨‍👩‍👧 Parent Corner</button>
-```
-
-**4. Text/ghost action** — e.g. "Play Again" (least prominent):
-```jsx
-<button style={{
-  background: 'none', border: 'none',
-  color: '#94A3B8', fontFamily: 'Nunito, sans-serif',
-  fontSize: '14px', cursor: 'pointer',
-}}>Play Again</button>
-```
-
----
-
-### Modal / Overlay Pattern
-
-Used for all pop-ups, challenges, confirmations. The SyllableVoiceChallenge is the canonical reference.
-
-```jsx
-// Backdrop
-<div style={{
-  position: 'absolute', inset: 0, zIndex: 400,
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-  background: 'rgba(0, 0, 0, 0.50)',
-  animation: 'fadeIn 0.22s ease-out',
-  padding: '24px',
-}}>
-  {/* Card */}
-  <div style={{
-    position: 'relative',
-    width: '100%', maxWidth: '780px',
-    background: 'linear-gradient(160deg, #FFFBF0 0%, #FFF9E8 100%)',
-    borderRadius: '36px',
-    padding: '52px 56px 80px',
-    boxShadow: '0 12px 48px rgba(0,0,0,0.28), 0 4px 16px rgba(0,0,0,0.14)',
-    animation: 'popIn 0.38s cubic-bezier(0.34, 1.56, 0.64, 1)',
-    overflow: 'hidden',
-  }}>
-    {/* × close */}
-    <button style={{
-      position: 'absolute', top: 14, right: 16,
-      width: 36, height: 36, borderRadius: '50%',
-      border: 'none', background: 'rgba(0,0,0,0.08)',
-      fontSize: 20, cursor: 'pointer',
-    }}>×</button>
-    {/* content */}
-  </div>
-</div>
-```
-
-**Keyframes to define** (add as `<style>` or in CSS file):
-```css
-@keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
-@keyframes popIn   { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-@keyframes bounce  { 0% { transform: translateY(0); } 30% { transform: translateY(-14px); } 100% { transform: translateY(0); } }
-```
-
----
-
-### Scene Opening Modal Pattern
-
-Every scene starts with an intro modal (see `OpeningModal` component):
-- Title in Baloo 2, bold
-- Instruction text in Nunito
-- Two icons (modak `🌙` + Ganesha figure) as visual cue
-- Single CTA: zone-colored `PrimaryBtn` labeled "Let's Explore"
-- Background: warm cream `linear-gradient(160deg, #FFFBF0, #FFF9E8)`
-
-### Scene Completion Modal Pattern
-
-After win condition (from screenshots):
-- Title: "The Flowers Have Bloomed!" style — Baloo 2, warm color
-- Subtitle in Nunito, slate gray
-- Two buttons stacked:
-  1. PrimaryBtn (zone color) → "Keep Exploring"
-  2. Secondary btn → "Explore Scenes"
-  3. Ghost text → "Play Again"
-- Floating star burst animation on success
-
----
-
-### Feedback / Result Colors (used in voice challenges, games)
-
-```js
-const RESULT_STYLES = {
-  perfect: { bg: 'linear-gradient(160deg, #FFFBEB, #FEF3C7)', titleColor: '#D97706' }, // amber
-  good:    { bg: 'linear-gradient(160deg, #F0FDF4, #DCFCE7)', titleColor: '#059669' }, // green
-  tryAgain:{ bg: 'linear-gradient(160deg, #FFF7ED, #FFEDD5)', titleColor: '#EA580C' }, // orange
-};
-```
-
----
-
-### How to Apply Zone Theme in a New Feature
-
-```jsx
-import { getZoneTheme } from 'src/lib/config/ZoneThemes';
-
-export default function MyNewFeature({ zoneId = 'shloka-river', onBack }) {
-  const theme = getZoneTheme(zoneId);
-
-  return (
-    <div style={{ background: theme.menuBg, color: theme.textPrimary, fontFamily: theme.fontFamilyBody }}>
-      <h1 style={{ fontFamily: theme.fontFamily, color: theme.textPrimary }}>Title</h1>
-      {/* Zone-accented primary CTA */}
-      <PrimaryBtn
-        label="Continue"
-        onClick={onBack}
-        style={{
-          '--btn-color-top': theme.btnTop,
-          '--btn-color-base': theme.accentColor,
-          '--btn-color-shadow': theme.btnShadow,
-          '--btn-color-glow': theme.glowColor,
-        }}
-      />
-    </div>
-  );
-}
-```
+| Zone | Primary | Accent | Background |
+|------|---------|--------|------------|
+| Symbol Mountain | Deep orange `#FF5722` | Gold `#FFD700` | Warm cream `#FFF8E7` |
+| Cave of Secrets | Deep purple `#6A1B9A` | Teal `#00BCD4` | Dark `#1A0A2E` |
+| Shloka River | Forest green `#2E7D32` | Sky blue `#03A9F4` | Light green `#E8F5E9` |
+| Festival Square | Hot pink `#E91E63` | Saffron `#FF9933` | Festive cream `#FFF3E0` |
+| About Me Hut | Warm brown `#795548` | Coral `#FF6B6B` | Cozy beige `#FBE9E7` |

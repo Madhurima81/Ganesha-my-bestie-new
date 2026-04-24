@@ -46,9 +46,6 @@ export const KidsDraggable = ({
       isDraggingRef.current = true;
       onDragStart?.(id, data);
 
-      // Ghost the original
-      el.style.opacity = '0.35';
-
       // Create floating clone that follows the finger
       const rect = el.getBoundingClientRect();
       const clone = el.cloneNode(true);
@@ -120,23 +117,33 @@ export const KidsDraggable = ({
     const onPointerCancel = () => {
       if (!isDraggingRef.current) return;
       isDraggingRef.current = false;
-      el.style.opacity = '';
+      el.style.opacity = ''; // Restore — was set to 0.35 in onPointerDown
       if (cloneRef.current) {
         cloneRef.current.remove();
         cloneRef.current = null;
       }
     };
 
+    // Safety net: pointercancel fires on iOS for system interruptions (app switch,
+    // incoming call, screen lock) but some edge cases may miss it.
+    // visibilitychange is a guaranteed fallback — same cleanup as pointercancel.
+    const onVisibilityChange = () => {
+      if (!document.hidden) return;
+      onPointerCancel();
+    };
+
     el.addEventListener('pointerdown',   onPointerDown,   { passive: false });
     el.addEventListener('pointermove',   onPointerMove,   { passive: true });
     el.addEventListener('pointerup',     onPointerUp);
     el.addEventListener('pointercancel', onPointerCancel);
+    document.addEventListener('visibilitychange', onVisibilityChange);
 
     return () => {
       el.removeEventListener('pointerdown',   onPointerDown);
       el.removeEventListener('pointermove',   onPointerMove);
       el.removeEventListener('pointerup',     onPointerUp);
       el.removeEventListener('pointercancel', onPointerCancel);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
       // Safety: remove any orphaned clone on unmount
       if (cloneRef.current) {
         cloneRef.current.remove();

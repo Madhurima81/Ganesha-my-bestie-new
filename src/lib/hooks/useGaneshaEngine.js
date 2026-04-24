@@ -20,14 +20,14 @@
 
 import { useState, useCallback, useRef } from 'react'
 
-import toolLibrary     from '../../data/doorway_tool_library.json'
-import routingMap      from '../../data/doorway_routing_map.json'
-import templates       from '../../data/experience_templates.json'
-import affirmationBank from '../../data/affirmation_bank.json'
-import completionMsgs  from '../../data/completion_messages.json'
-import invitationLines from '../../data/invitation_lines.json'
-import safetyFlags     from '../../data/safety_flag_logic.json'
-import scenarioDb      from '../../data/emotion_scenario_master_database.json'
+import toolLibrary     from '../data/doorway_tool_library.json'
+import routingMap      from '../data/doorway_routing_map.json'
+import templates       from '../data/experience_templates.json'
+import affirmationBank from '../data/affirmation_bank.json'
+import completionMsgs  from '../data/completion_messages.json'
+import invitationLines from '../data/invitation_lines.json'
+import safetyFlags     from '../data/safety_flag_logic.json'
+import scenarioDb      from '../data/emotion_scenario_master_database.json'
 
 // ─────────────────────────────────────────────────────────
 // INITIAL SESSION STATE

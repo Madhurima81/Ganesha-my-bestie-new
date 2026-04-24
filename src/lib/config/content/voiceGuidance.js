@@ -449,6 +449,24 @@ export const VOICE_SCRIPTS = {
         file: '/audio/voicenew/familytree/ganesha_connected_love.wav'
       }
     },
+    'favorite-food': {
+      opening: {
+        text: "Let's explore my favorite things and yours!",
+        file: '/audio/about-me-hut/favorite-food/opening.wav'
+      }
+    },
+    'dreams-wishes': {
+      opening: {
+        text: "Let’s help and dream together!",
+        file: '/audio/about-me-hut/dreams-wishes/opening.wav'
+      }
+    },
+    'my-indian-story': {
+      opening: {
+        text: "Tap to explore my India story and yours!",
+        file: '/audio/about-me-hut/my-indian-story/opening.wav'
+      }
+    },
     
   },
 
@@ -494,22 +512,21 @@ export const getAudioPath = (zoneId, sceneId, key) => {
   const script = getVoiceScript(zoneId, sceneId, key);
   if (!script) return null;
 
+  // Absolute paths should work across all zones/scenes.
+  if (script.file?.startsWith('/')) return script.file;
+
   // Shloka River zone
   if (zoneId === 'shloka-river') {
-    if (script.file.startsWith('/')) return script.file;
     return `/audio/voiceover/INSTRUCTIONS/${script.file}`;
   }
 
   // Symbol Mountain zone - legacy path
-  // If file is already an absolute path (starts with /), use it directly
   if (zoneId === 'symbol-mountain') {
-    if (script.file.startsWith('/')) return script.file;
     return `/audio/voice/modak/${script.file}`;
   }
 
   // About Me Hut zone - family tree
   if (zoneId === 'about-me-hut' && sceneId === 'family-tree') {
-    if (script.file.startsWith('/')) return script.file;
     return `/audio/family-tree/${script.file}`;
   }
 
