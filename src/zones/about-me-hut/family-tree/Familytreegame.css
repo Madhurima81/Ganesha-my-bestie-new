@@ -1044,8 +1044,10 @@
   right: 12px;
   background: #FFE6D9;
   border: none;
-  width: 28px;
-  height: 28px;
+  width: 72px;
+  height: 72px;
+  min-width: 72px;
+  min-height: 72px;
   border-radius: 50%;
   font-size: 1.4rem;
   color: #D9534F;
@@ -1912,8 +1914,10 @@
   position: absolute;
   top: -8px;
   right: -8px;
-  width: 28px;
-  height: 28px;
+  width: 72px;
+  height: 72px;
+  min-width: 72px;
+  min-height: 72px;
   border-radius: 50%;
   background: #FF6B6B;
   /* soft coral red */
@@ -2398,6 +2402,7 @@
   color: #054D3B;
   border: none;
   padding: 16px 50px;
+  min-height: 72px;
   font-family: 'Baloo 2', cursive;
   font-size: 1.3rem;
   font-weight: 700;
@@ -2488,7 +2493,7 @@
 
 .tree-column {
   flex: 1;
-  background: rgba(255, 252, 242, 0.98);
+  background: #FFF6E8;
   border-radius: 24px;
   padding: 36px;
   display: flex;
@@ -3201,8 +3206,8 @@
   }
 
   .member-avatar-small {
-    width: 60px;
-    height: 60px;
+    width: 72px;
+    height: 72px;
     font-size: 2rem;
   }
 

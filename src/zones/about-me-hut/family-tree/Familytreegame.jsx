@@ -1891,10 +1891,27 @@ const FamilyTreeGameContent = ({
 
  <div className="two-trees-container">
  {/* LEFT CARD: Ganesha */}
- <div className="tree-column slide-in-left">
- <h3 className="tree-heading">Ganesha's Family</h3>
- <p className="tree-location">Mount Kailash</p>
- <div className="tree-visual">
+              <div className="tree-column slide-in-left">
+                <div
+                  style={{
+                    width: '80px',
+                    height: '80px',
+                    margin: '0 auto 6px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.2))'
+                  }}
+                >
+                  <img
+                    src={babyGaneshaImg}
+                    alt="Ganesha icon"
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                  />
+                </div>
+                <h3 className="tree-heading">Ganesha's Family</h3>
+                <p className="tree-location">Mount Kailash</p>
+                <div className="tree-visual">
  <img src={familyTree} alt="Tree" className="reveal-tree-img" />
  {ganeshaFamily.map(member => {
  const deity = getPlacedDeityImage(member.id);
@@ -1913,15 +1930,15 @@ const FamilyTreeGameContent = ({
  {/* RIGHT CARD: Your Family */}
  <div className="tree-column slide-in-right">
  <div
- style={{
- width: '74px',
- height: '74px',
- borderRadius: '50%',
- background: 'linear-gradient(135deg, #4ECDC4, #44A08D)',
- border: '3px solid #fff',
- display: 'flex',
- alignItems: 'center',
- justifyContent: 'center',
+style={{
+width: '74px',
+height: '74px',
+borderRadius: '50%',
+background: (activeProfile?.icon || activeProfile?.profileIcon || profileAvatarImage) ? 'transparent' : 'linear-gradient(135deg, #4ECDC4, #44A08D)',
+border: (activeProfile?.icon || activeProfile?.profileIcon || profileAvatarImage) ? 'none' : '3px solid #fff',
+display: 'flex',
+alignItems: 'center',
+justifyContent: 'center',
  fontFamily: "'Baloo 2', cursive",
  fontSize: '30px',
  color: '#fff',
@@ -2047,8 +2064,3 @@ const FamilyTreeGameContent = ({
 };
 
 export default FamilyTreeGame;
-
-
-
-
-

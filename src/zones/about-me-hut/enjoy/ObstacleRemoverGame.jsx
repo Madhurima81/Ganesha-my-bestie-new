@@ -1212,7 +1212,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   }, [sceneState.gamePhase, wish2Sparkle.type]);
 
   useEffect(() => {
-    if (sceneState.gamePhase !== 'wish3-active' && wish3Sparkle.type !== null) {
+    const allowWish3SparklePhases = new Set(['wish3-active', 'dream-clouded', 'dream-clearing']);
+    if (!allowWish3SparklePhases.has(sceneState.gamePhase) && wish3Sparkle.type !== null) {
       wish3SparkleCancelRef.current?.();
       wish3SparkleCancelRef.current = null;
       setWish3Sparkle(prev => ({ ...prev, type: null }));

@@ -36,6 +36,13 @@
   transform: translateY(0) !important;
 }
 
+/* Scene 21 touch-target safety: keep CTA controls above 70px */
+.dreams-wishes-game .unified-button,
+.dreams-wishes-game .unified-button--large {
+  min-height: 72px !important;
+  min-width: 72px;
+}
+
 .dreams-wishes-game {
   position: relative;
   width: 100%;
@@ -1110,7 +1117,7 @@
 .dream-clearing-sparkles {
   position: absolute;
   inset: 0;
-  z-index: 12;
+  z-index: 30;
   pointer-events: none;
 }
 
@@ -1826,7 +1833,7 @@ font-weight: 700;
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: flex-start; /* Align tops */
+  align-items: stretch; /* Keep both cards equal height */
   gap: 40px;
   margin-top: 80px;
   margin-bottom: 40px;
@@ -2375,6 +2382,7 @@ font-weight: 700;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   white-space: nowrap;
   min-width: 260px;
+  min-height: 72px;
 }
 
 .continue-btn-simple:hover {
@@ -2534,7 +2542,7 @@ font-weight: 700;
    DREAM REVEALED - Magical Moment
    ============================================ */
 
-/* Soft golden glow behind the drawing */
+/* Soft golden glow over the drawing */
 .canvas-glow {
   position: absolute;
   top: 50%;
@@ -2550,7 +2558,8 @@ font-weight: 700;
   );
   border-radius: 50%;
   pointer-events: none;
-  z-index: 1;
+  z-index: 4;
+  mix-blend-mode: screen;
   opacity: 0;
   animation: canvasGlowIn 1.2s ease-out forwards, canvasGlowPulse 3s ease-in-out 1.2s infinite;
 }
