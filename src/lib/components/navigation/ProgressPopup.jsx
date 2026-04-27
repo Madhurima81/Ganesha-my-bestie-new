@@ -4,42 +4,42 @@ import './ProgressPopup.css';
 const SYMBOL_SIDEBAR_META = {
   modak: {
     name: 'Modak',
-    image: '/images/symbols-symbolmountain/symbol-modak-colored.svg',
+    image: '/images/symbols-symbolmountain/symbol-modak-new.png',
     description: 'I share with joy.',
   },
   mooshika: {
     name: 'Mooshika',
-    image: '/images/symbols-symbolmountain/symbol-mooshika-colored.svg',
+    image: '/images/symbols-symbolmountain/symbol-mooshika-new.png',
     description: 'I can focus.',
   },
   belly: {
     name: 'Big Belly',
-    image: '/images/symbols-symbolmountain/symbol-belly-colored.svg',
+    image: '/images/symbols-symbolmountain/symbol-belly-new.png',
     description: 'I feel safe inside.',
   },
   lotus: {
     name: 'Lotus',
-    image: '/images/symbols-symbolmountain/symbol-lotus-colored.png',
+    image: '/images/symbols-symbolmountain/symbol-lotus-new.png',
     description: 'I stay calm and kind.',
   },
   trunk: {
     name: 'Trunk',
-    image: '/images/symbols-symbolmountain/symbol-trunk-colored.png',
+    image: '/images/symbols-symbolmountain/symbol-trunk-new.png',
     description: 'I am strong and gentle.',
   },
   eyes: {
     name: 'Eyes',
-    image: '/images/symbols-symbolmountain/symbol-eyes-colored.png',
+    image: '/images/symbols-symbolmountain/symbol-eyes-new.png',
     description: 'I notice the good.',
   },
   ear: {
     name: 'Ears',
-    image: '/images/symbols-symbolmountain/symbol-ear-colored.png',
+    image: '/images/symbols-symbolmountain/symbol-ears-new.png',
     description: 'I listen with care.',
   },
   tusk: {
     name: 'Tusk',
-    image: '/images/symbols-symbolmountain/symbol-tusk-colored.png',
+    image: '/images/symbols-symbolmountain/symbol-tusk-new.png',
     description: 'I finish what I start.',
   },
 };

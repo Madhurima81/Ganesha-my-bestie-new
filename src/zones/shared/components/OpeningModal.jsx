@@ -6,14 +6,14 @@ import GaneshaPresence from '../../../lib/components/character/GaneshaPresence';
 import useAppVisibility from '../../../lib/hooks/useAppVisibility';
 
 // Icon Mapping for Unified Style
-import symbolMooshikaColored from '../../symbol-mountain/shared/images/icons/symbol-mooshika-colored.svg';
-import symbolModakColored from '../../symbol-mountain/shared/images/icons/symbol-modak-colored.svg';
-import symbolBellyColored from '../../symbol-mountain/shared/images/icons/symbol-belly-colored.svg';
-import symbolLotusColored from '../../symbol-mountain/shared/images/icons/symbol-lotus-colored.png';
-import symbolTrunkColored from '../../symbol-mountain/shared/images/icons/symbol-trunk-colored.png';
-import symbolEyesColored from '../../symbol-mountain/shared/images/icons/symbol-eyes-colored.png';
-import symbolEarsColored from '../../symbol-mountain/shared/images/icons/symbol-ear-colored.png';
-import symbolTuskColored from '../../symbol-mountain/shared/images/icons/symbol-tusk-colored.png';
+import symbolMooshikaColored from '../../symbol-mountain/shared/images/icons/symbol-mooshika-new.png';
+import symbolModakColored from '../../symbol-mountain/shared/images/icons/symbol-modak-new.png';
+import symbolBellyColored from '../../symbol-mountain/shared/images/icons/symbol-belly-new.png';
+import symbolLotusColored from '../../symbol-mountain/shared/images/icons/symbol-lotus-new.png';
+import symbolTrunkColored from '../../symbol-mountain/shared/images/icons/symbol-trunk-new.png';
+import symbolEyesColored from '../../symbol-mountain/shared/images/icons/symbol-eyes-new.png';
+import symbolEarsColored from '../../symbol-mountain/shared/images/icons/symbol-ears-new.png';
+import symbolTuskColored from '../../symbol-mountain/shared/images/icons/symbol-tusk-new.png';
 
 // About Me Icons
 import shivaImg from '../../about-me-hut/family-tree/assets/images/ganesha/family-shiva.png';

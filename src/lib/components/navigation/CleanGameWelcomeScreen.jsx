@@ -246,42 +246,42 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
       const allSymbols = [
         {
           id: 'modak', displayName: 'Modak',
-          image: '/images/symbols-symbolmountain/symbol-modak-colored.svg',
+          image: '/images/symbols-symbolmountain/symbol-modak-new.png',
           description: 'I share with joy.'
         },
         {
           id: 'mooshika', displayName: 'Mooshika',
-          image: '/images/symbols-symbolmountain/symbol-mooshika-colored.svg',
+          image: '/images/symbols-symbolmountain/symbol-mooshika-new.png',
           description: 'I can focus.'
         },
         {
           id: 'belly', displayName: 'Big Belly',
-          image: '/images/symbols-symbolmountain/symbol-belly-colored.svg',
+          image: '/images/symbols-symbolmountain/symbol-belly-new.png',
           description: 'I feel safe inside.'
         },
         {
           id: 'lotus', displayName: 'Lotus',
-          image: '/images/symbols-symbolmountain/symbol-lotus-colored.png',
+          image: '/images/symbols-symbolmountain/symbol-lotus-new.png',
           description: 'I stay calm and kind.'
         },
         {
           id: 'trunk', displayName: 'Trunk',
-          image: '/images/symbols-symbolmountain/symbol-trunk-colored.png',
+          image: '/images/symbols-symbolmountain/symbol-trunk-new.png',
           description: 'I am strong and gentle.'
         },
         {
           id: 'eyes', displayName: 'Eyes',
-          image: '/images/symbols-symbolmountain/symbol-eyes-colored.png',
+          image: '/images/symbols-symbolmountain/symbol-eyes-new.png',
           description: 'I notice the good.'
         },
         {
           id: 'ear', displayName: 'Ears',
-          image: '/images/symbols-symbolmountain/symbol-ear-colored.png',
+          image: '/images/symbols-symbolmountain/symbol-ears-new.png',
           description: 'I listen with care.'
         },
         {
           id: 'tusk', displayName: 'Tusk',
-          image: '/images/symbols-symbolmountain/symbol-tusk-colored.png',
+          image: '/images/symbols-symbolmountain/symbol-tusk-new.png',
           description: 'I finish what I start.'
         }
       ];

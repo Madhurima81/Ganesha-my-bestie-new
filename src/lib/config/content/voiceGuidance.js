@@ -173,36 +173,69 @@ export const VOICE_SCRIPTS = {
       },
 
       cardEyes: {
-        text: "My big eyes see everything.",
+        text: "Eyes.",
         file: '/audio/voicenew/sacredassembly/card-eyes.wav'
       },
       cardEars: {
-        text: "My big ears hear everything.",
+        text: "Ears.",
         file: '/audio/voicenew/sacredassembly/card-ears.wav'
       },
       cardTrunk: {
-        text: "My trunk is strong and helps me.",
+        text: "Trunk.",
         file: '/audio/voicenew/sacredassembly/card-trunk.wav'
       },
       cardTusk: {
-        text: "My tusk helps me stay brave.",
+        text: "Tusk.",
         file: '/audio/voicenew/sacredassembly/card-tusk.wav'
       },
       cardModak: {
-        text: "I share sweetness with my modak.",
+        text: "Modak.",
         file: '/audio/voicenew/sacredassembly/card-modak.wav'
       },
       cardLotus: {
-        text: "My lotus helps me stay calm.",
+        text: "Lotus.",
         file: '/audio/voicenew/sacredassembly/card-lotus.wav'
       },
       cardBelly: {
-        text: "My big belly holds lots of love.",
+        text: "Belly.",
         file: '/audio/voicenew/sacredassembly/card-belly.wav'
       },
       cardMooshika: {
-        text: "My little friend helps guide me.",
+        text: "Mooshika.",
         file: '/audio/voicenew/sacredassembly/card-mooshika.wav'
+      },
+
+      hintEyes: {
+        text: "I notice the good.",
+        file: '/audio/voicenew/sacredassembly/hint-eyes.wav'
+      },
+      hintEars: {
+        text: "I listen with care.",
+        file: '/audio/voicenew/sacredassembly/hint-ears.wav'
+      },
+      hintTrunk: {
+        text: "I clear my path.",
+        file: '/audio/voicenew/sacredassembly/hint-trunk.wav'
+      },
+      hintTusk: {
+        text: "I finish what I start.",
+        file: '/audio/voicenew/sacredassembly/hint-tusk.wav'
+      },
+      hintModak: {
+        text: "I share with joy.",
+        file: '/audio/voicenew/sacredassembly/hint-modak.wav'
+      },
+      hintLotus: {
+        text: "I stay calm.",
+        file: '/audio/voicenew/sacredassembly/hint-lotus.wav'
+      },
+      hintBelly: {
+        text: "I feel safe inside.",
+        file: '/audio/voicenew/sacredassembly/hint-belly.wav'
+      },
+      hintMooshika: {
+        text: "I can focus.",
+        file: '/audio/voicenew/sacredassembly/hint-mooshika.wav'
       },
 
       onboardingTapRightPart: {
@@ -211,30 +244,25 @@ export const VOICE_SCRIPTS = {
       },
 
       correctYes: {
-        text: "Yes!",
+        text: "Yes.",
         file: '/audio/voicenew/sacredassembly/correct-yes.wav'
       },
       correctThatsRight: {
-        text: "That's right!",
+        text: "Beautiful.",
         file: '/audio/voicenew/sacredassembly/correct-thats-right.wav'
       },
       correctYouFoundIt: {
-        text: "You found it!",
+        text: "You remember.",
         file: '/audio/voicenew/sacredassembly/correct-you-found-it.wav'
       },
       correctWellDone: {
-        text: "Well done!",
+        text: "Perfect.",
         file: '/audio/voicenew/sacredassembly/correct-well-done.wav'
       },
 
       wrongTryAgain: {
         text: "Hmm... try again.",
         file: '/audio/voicenew/sacredassembly/wrong-try-again.wav'
-      },
-
-      idleLookCarefully: {
-        text: "Look carefully...",
-        file: '/audio/voicenew/sacredassembly/idle-look-carefully.wav'
       },
 
       finalYouFoundAll: {

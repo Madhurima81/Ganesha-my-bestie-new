@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useGaneshaVoice } from "../../hooks/useGaneshaVoice";
 import "./SymbolAutoReveal.css";
 
 /**
@@ -32,6 +33,8 @@ export default function SymbolAutoReveal({
   // 'icon' → 'card' → 'flip' → 'ready' → 'fly'
   const [phase, setPhase] = useState("icon");
   const timers = useRef([]);
+  const { speak, stop: stopSpokenVoice } = useGaneshaVoice();
+  const voPlayedRef = useRef(false);
 
   const after = (fn, ms) => {
     const id = setTimeout(fn, ms);
@@ -50,8 +53,45 @@ export default function SymbolAutoReveal({
   // Step 5: flip complete → ready state
   after(() => setPhase("ready"), 380 + 420 + 280 + 580);
 
-  return () => timers.current.forEach(clearTimeout);
+  return () => {
+    timers.current.forEach(clearTimeout);
+    stopSpokenVoice();
+  };
 }, []);
+
+  // ── VO: fires once when card reaches "ready" state ───────────────────────
+  // 1.5s delay after ready lets the child see + read the affirmation first,
+  // then the voice gently nudges them to tap. Plays once per reveal.
+  useEffect(() => {
+    if (phase !== "ready" || voPlayedRef.current) return;
+    voPlayedRef.current = true;
+
+    const cleanAffirmation = (affirmation || "")
+      .trim()
+      .replace(/\s+/g, " ")
+      .replace(/[.!?]+$/, "");
+    const sayWithMeLine = cleanAffirmation
+      ? `Say with me, ${cleanAffirmation}.`
+      : `Say with me, ${symbolName}.`;
+
+    const affirmationTimer = setTimeout(() => {
+      speak(sayWithMeLine, {
+        age: 6,
+        style: "child",
+        moment: "encouragement"
+      });
+    }, 450);
+
+    const collectHintTimer = setTimeout(() => {
+      speak("Tap anywhere to collect.", {
+        age: 6,
+        style: "child",
+        moment: "encouragement"
+      });
+    }, 5000);
+
+    timers.current.push(affirmationTimer, collectHintTimer);
+  }, [phase, speak, affirmation, symbolName]);
 
 //What These Numbers Mean (So You Don’t Forget Later)
 
@@ -82,6 +122,9 @@ export default function SymbolAutoReveal({
 
   const handleTap = () => {
     if (phase !== "ready") return;
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+    stopSpokenVoice();           // cut VO immediately on tap so it doesn't trail
     setPhase("fly");
     after(() => onComplete?.(), 1150);
   };
@@ -139,6 +182,7 @@ export default function SymbolAutoReveal({
           className={[
             "sar-card",
             flipped ? "sar-flipped"    : "",
+            phase === "ready" ? "sar-ready" : "",
             flying  ? "sar-collapsing" : "",
           ].filter(Boolean).join(" ")}
         >
@@ -162,7 +206,7 @@ export default function SymbolAutoReveal({
             <div className={`sar-back-body${flying ? " sar-back-body--gone" : ""}`}>
               <h3 className="sar-name">{symbolName}</h3>
               <p  className="sar-affirmation">{affirmation}</p>
-              <span className={`sar-hint${phase === "ready" ? " sar-hint--pulse" : ""}`}>
+              <span className="sar-hint">
                 Tap to collect
               </span>
             </div>

@@ -149,6 +149,11 @@ transition: transform 0.58s cubic-bezier(0.4, 0, 0.2, 1);}
   transition: background 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
 }
 
+/* Keep wrapper animation-free during flight for smooth transform interpolation */
+.sar-wrap.sar-wrap--fly {
+  animation: none !important;
+}
+
 
 /* ═══════════════════════════════════════════════════════════════════════════
    6. CARD FACES  (front & back share base)
@@ -194,7 +199,11 @@ transition: transform 0.58s cubic-bezier(0.4, 0, 0.2, 1);}
    8. BACK FACE — affirmation + fly-icon placeholder
    ═══════════════════════════════════════════════════════════════════════════ */
 .sar-back {
-  transform: rotateY(180deg);
+  /* translateZ(0) forces a fresh GPU layer so rotated text rasterizes crisply.
+     Without this, Chrome blurs text on 3D-flipped faces (preserve-3d + rotateY). */
+  transform: rotateY(180deg) translateZ(0);
+  -webkit-font-smoothing: subpixel-antialiased;
+  text-rendering: geometricPrecision;
 }
 
 /* Shown in place of text when flying (card visually becomes just the icon) */
@@ -241,7 +250,7 @@ transition: transform 0.58s cubic-bezier(0.4, 0, 0.2, 1);}
   color: #3D2A1E;
   margin: 0;
   text-align: center;
-  -webkit-font-smoothing: subpixel-antialiased;
+  -webkit-font-smoothing: antialiased;
 }
 
 .sar-affirmation {
@@ -252,29 +261,19 @@ transition: transform 0.58s cubic-bezier(0.4, 0, 0.2, 1);}
   line-height: 1.4;
   margin: 0;
   text-align: center;
-  -webkit-font-smoothing: subpixel-antialiased;
+  -webkit-font-smoothing: antialiased;
 }
 
 .sar-hint {
   font-family: 'Nunito', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  color: #8C7A6B;
+  font-size: 16px;             /* up from 15 — minimum size for child legibility */
+  font-weight: 700;            /* up from 600 — Nunito at small size needs heavier weight */
+  color: #6B5A4D;              /* slightly darker for contrast */
   letter-spacing: 0.4px;
-  -webkit-font-smoothing: subpixel-antialiased;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Gentle pulse once card is ready — draws the eye without demanding */
-.sar-hint--pulse {
-  animation: sar-hint-pulse 2s ease-in-out 0.2s infinite;
-}
-
-
-@keyframes sar-hint-pulse {
-  0%, 100% { opacity: 0.6;  transform: scale(1);    }
-  50%       { opacity: 1;   transform: scale(1.05); }
-}
-
 
 /* ═══════════════════════════════════════════════════════════════════════════
    10. SIDEBAR BLOOM
@@ -285,12 +284,12 @@ transition: transform 0.58s cubic-bezier(0.4, 0, 0.2, 1);}
    discoveredSymbols is updated.
    ═══════════════════════════════════════════════════════════════════════════ */
 .sar-sidebar-bloom {
-  animation: sar-sidebar-bloom-anim 1.4s ease-out forwards !important;
+  animation: sar-sidebar-bloom-anim 1.9s ease-out forwards !important;
 }
 
 @keyframes sar-sidebar-bloom-anim {
   0%   { transform: scale(1); filter: brightness(0.9); }
-  40%  { transform: scale(1.15); filter: brightness(1.15); }
+  45%  { transform: scale(1.06); filter: brightness(1.08); }
   100% { transform: scale(1); filter: brightness(1); }
 }
 

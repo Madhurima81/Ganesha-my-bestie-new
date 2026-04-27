@@ -23,6 +23,9 @@ export const KidsDraggable = ({
   disabled = false,
   onDragStart,
   onDragEnd,
+  dragScale = 1.08,
+  dragFilter = 'drop-shadow(0 8px 16px rgba(0,0,0,0.25))',
+  dragBorderRadius = '50%',
   children,
   style = {},
 }) => {
@@ -59,10 +62,10 @@ export const KidsDraggable = ({
       clone.style.zIndex = '9999';
       clone.style.pointerEvents = 'none';
       clone.style.opacity = '1';
-      clone.style.transform = 'scale(1.08)';
+      clone.style.transform = `scale(${dragScale})`;
       clone.style.transition = 'transform 0.1s ease';
-      clone.style.borderRadius = '50%';
-      clone.style.filter = 'drop-shadow(0 8px 16px rgba(0,0,0,0.25))';
+      clone.style.borderRadius = dragBorderRadius;
+      clone.style.filter = dragFilter;
       clone.setAttribute('aria-hidden', 'true');
       document.body.appendChild(clone);
       cloneRef.current = clone;
@@ -150,7 +153,7 @@ export const KidsDraggable = ({
         cloneRef.current = null;
       }
     };
-  }, [id, data, disabled, onDragStart, onDragEnd]);
+  }, [id, data, disabled, onDragStart, onDragEnd, dragScale, dragFilter, dragBorderRadius]);
 
   return (
     <div

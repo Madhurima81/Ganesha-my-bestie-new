@@ -9,7 +9,7 @@ import './DailyDarePopup.css';
 // ── Warm responses (no emojis) ──────────────────────────────────────────────
 const WARM_RESPONSES = [
   "That warms my heart. Happiness shared is happiness doubled.",
-  "You noticed something beautiful — that is a superpower.",
+  "You noticed something beautiful - that is a superpower.",
   "A grateful heart is a brave heart. You already have both.",
   "The world is full of little smiles waiting to be noticed. You found one.",
   "That makes me happy too. You are very good at this.",
@@ -20,15 +20,15 @@ const WARM_RESPONSES = [
   "I knew you had good things to remember. You always do. Now let us go do more.",
 ];
 
-// ── Keyword-based response — free, no API needed ────────────────────────────
+// ── Keyword-based response - free, no API needed ────────────────────────────
 const getGratitudeResponse = (text) => {
   const t = (text || '').toLowerCase();
   if (t.match(/mama|mom|mother|papa|dad|father|family|brother|sister|nana|dadi|nani|grandma|grandpa/))
-    return "Family time — the best kind.";
+    return "Family time - the best kind.";
   if (t.match(/play|game|cricket|football|roblox|minecraft|lego|outside/))
     return "Playing makes the heart happy.";
   if (t.match(/food|eat|dinner|lunch|breakfast|pizza|modak|dosa|chocolate|snack|sweet/))
-    return "Good food and good feelings — a perfect combination.";
+    return "Good food and good feelings - a perfect combination.";
   if (t.match(/friend|school|class|teacher|classmate/))
     return "Friends make everything brighter.";
   if (t.match(/sleep|rest|dream|nap/))
@@ -36,22 +36,35 @@ const getGratitudeResponse = (text) => {
   if (t.match(/read|book|story|comic/))
     return "A child who loves stories is never alone.";
   if (t.match(/draw|paint|art|colour|color|craft/))
-    return "Creating something beautiful — that is a special gift.";
+    return "Creating something beautiful - that is a special gift.";
   if (t.match(/music|sing|dance|song/))
     return "Music and joy go together. Always.";
-  // fallback — rotate from bank so it never feels stale
+  // fallback - rotate from bank so it never feels stale
   const today = new Date().toISOString().split('T')[0];
   const seed  = today.split('-').reduce((acc, n) => acc + parseInt(n, 10), 0);
   return WARM_RESPONSES[seed % WARM_RESPONSES.length];
 };
 
+// ── Category labels (warmer, no "Dare") ─────────────────────────────────────
 const CATEGORY_CONFIG = {
-  kindness:   { label: 'Kindness Dare' },
-  compassion: { label: 'Compassion Dare' },
-  gratitude:  { label: 'Gratitude Dare' },
-  cultural:   { label: 'Cultural Dare' },
-  courage:    { label: 'Courage Dare' },
+  kindness:   { label: "Today's Kindness" },
+  compassion: { label: "Today's Heart" },
+  gratitude:  { label: "Today's Thank You" },
+  cultural:   { label: "Today's Tradition" },
+  courage:    { label: "Today's Brave Step" },
 };
+
+// ── Celebration lines (rotated randomly) ────────────────────────────────────
+// Spoken aloud after "I'll do it!" - kept name-free so TTS never mispronounces
+// Indian names. The visible "Yay, Arjun!" headline still personalises the moment.
+const CELEBRATION_LINES = [
+  "Yay! I knew you'd say yes!",
+  "You have such a kind heart!",
+  "That makes me so happy!",
+  "I'm so proud of you!",
+  "High five! Let's make today amazing!",
+  "You're my favourite human!",
+];
 
 const getGreeting = (name) => {
   const hour = new Date().getHours();
@@ -68,18 +81,27 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
 
   const { speak, stop } = useGaneshaVoice();
 
-  const [beat, setBeat]               = useState(1);
-  const [micState, setMicState]       = useState('idle');   // idle | listening | done
-  const [spokenText, setSpokenText]   = useState('');
-  const [showTypeBox, setShowTypeBox] = useState(false);
-  const [typedText, setTypedText]     = useState('');
+  const [beat, setBeat]                 = useState(1);
+  const [micState, setMicState]         = useState('idle');   // idle | listening | done
+  const [spokenText, setSpokenText]     = useState('');
+  const [showTypeBox, setShowTypeBox]   = useState(false);
+  const [typedText, setTypedText]       = useState('');
+  const [showCelebration, setShowCelebration] = useState(false);
 
   const recognitionRef = useRef(null);
 
   const gratitudeText = spokenText || typedText;
   const warmResponse  = getGratitudeResponse(gratitudeText);
-  const categoryInfo  = CATEGORY_CONFIG[dare?.category] || { label: "Today's Dare" };
-  const dareText      = dare?.text || "Do one kind thing for someone today — and don't tell them it was you.";
+  const categoryInfo  = CATEGORY_CONFIG[dare?.category] || { label: "Today's Mission" };
+  const dareText      = dare?.text || "Do one kind thing for someone today.";
+
+  // Has the child given any gratitude input yet?
+  const hasGratitudeInput = !!gratitudeText.trim() || micState === 'done';
+
+  // Age-adaptive prompt
+  const subtitleText = childAge <= 7
+    ? "What made you smile yesterday?"
+    : "Before today's adventure - what made you smile yesterday?";
 
   const stopAllDareVoice = () => {
     recognitionRef.current?.stop?.();
@@ -89,7 +111,7 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
     }
   };
 
-  // Cleanup only — no auto-speak on mount (blocked by browser autoplay policy)
+  // Cleanup only - no auto-speak on mount (blocked by browser autoplay policy)
   useEffect(() => {
     return () => stopAllDareVoice();
   }, []);
@@ -102,16 +124,20 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
       return;
     }
 
-    // Tap = user gesture → browser allows audio now
+    // Tap = user gesture - browser allows audio now
     // Ganesha speaks the prompt, then mic starts after he finishes
-    speak(
-      `${getGreeting(childName)}. Before today's adventure — what made you smile yesterday?`,
-      {
-        age: childAge,
-        moment: 'greeting',
-        onEnd: () => startRecognition(),
-      }
-    );
+    // NOTE: We deliberately do NOT include the child's name in the spoken prompt.
+    // Web Speech API mispronounces Indian names ("Arjun" -> "are-jun"), which
+    // breaks the bestie bond. Visual UI keeps the name; voice stays universal.
+    const promptText = childAge <= 7
+      ? "Hey there! What made you smile yesterday?"
+      : "Hey there! Before today's adventure - what made you smile yesterday?";
+
+    speak(promptText, {
+      age: childAge,
+      moment: 'greeting',
+      onEnd: () => startRecognition(),
+    });
   };
 
   const startRecognition = () => {
@@ -133,9 +159,9 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
         .join(' ');
       setSpokenText(transcript);
     };
-    // Don't auto-stop on silence — child taps Done when ready
+    // Don't auto-stop on silence - child taps Done when ready
     recognition.onend = () => {
-      // Only fires if browser force-stops (e.g. timeout) — treat as done
+      // Only fires if browser force-stops (e.g. timeout) - treat as done
       if (micState === 'listening') setMicState('done');
     };
     recognition.onerror = (e) => {
@@ -146,10 +172,20 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
     recognition.start();
   };
 
-  // Child taps Done — stops recording, moves to done state
+  // Child taps Done - stops recording, moves to done state
   const handleMicDone = () => {
     recognitionRef.current?.stop();
     setMicState('done');
+  };
+
+  // Child taps "Try again" - speech recognition often misses words, especially
+  // for Indian-accented English. Clear transcript and restart cleanly.
+  const handleTryAgain = () => {
+    recognitionRef.current?.stop?.();
+    setSpokenText('');
+    setMicState('idle');
+    // Restart recognition immediately - skip the prompt voice-over
+    setTimeout(() => startRecognition(), 200);
   };
 
   // ── Beat handlers ────────────────────────────────────────────────────────────
@@ -164,34 +200,43 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
     speakDareSequence(speak, warmResponse, dareText, childAge);
   };
 
+  // ── "Tell me again" - re-reads the mission aloud ─────────────────────────────
+  const handleTellMeAgain = () => {
+    stopAllDareVoice();
+    speak(dareText, { age: childAge, moment: 'reread' });
+  };
+
+  // ── Accept dare → CELEBRATE → close ─────────────────────────────────────────
   const handleAcceptDare = () => {
     stopAllDareVoice();
+
+    // Save commitment
     const today = new Date().toISOString().split('T')[0];
     localStorage.setItem('gmb_last_dare_date', today);
     if (dare) {
       localStorage.setItem('gmb_today_dare_id', dare.id);
       localStorage.setItem('gmb_today_dare_category', dare.category);
     }
-    onClose();
-  };
 
-  const handleRemindLater = () => {
-    stopAllDareVoice();
-    localStorage.setItem('gmb_last_dare_date', new Date().toISOString().split('T')[0]);
-    onClose();
+    // Show celebration screen
+    setShowCelebration(true);
+
+    // Ganesha celebrates with a random warm line (name-free for TTS safety)
+    const celebrationLine = CELEBRATION_LINES[Math.floor(Math.random() * CELEBRATION_LINES.length)];
+    speak(celebrationLine, { age: childAge, moment: 'celebration' });
+
+    // Auto-close after 3.5 seconds (enough for voice + sparkle to land)
+    setTimeout(() => {
+      onClose();
+    }, 3500);
   };
 
   return (
     <div className="dare-root" role="dialog" aria-modal="true">
 
-      {/* Top peek */}
-      <div className="dare-topbar">
-        Welcome back, {childName}
-      </div>
-
       <div className="dare-body">
 
-        {/* Left: Ganesha — wrapper controls size, not GaneshaPresence */}
+        {/* Left: Ganesha - wrapper controls size, not GaneshaPresence */}
         <div className="dare-ganesha-col">
           <div style={{
             width: 'min(460px, 38vw)',
@@ -199,8 +244,8 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
             transform: 'scaleX(-1)',
           }}>
             <GaneshaPresence
-              pose={beat === 1 ? 'blessing' : 'pointing'}
-              expression={beat === 1 ? 'encouraging' : 'excited'}
+              pose={showCelebration ? 'blessing' : (beat === 1 ? 'blessing' : 'pointing')}
+              expression={showCelebration ? 'excited' : (beat === 1 ? 'encouraging' : 'excited')}
               size={460}
               breathing="gentle"
               blink
@@ -211,15 +256,25 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
         {/* Right: content panel */}
         <div className="dare-panel">
 
+          {/* ── CELEBRATION (shown after "I'll do it!") ── */}
+          {showCelebration && (
+            <div className="dare-celebration">
+              <div className="dare-celebration-sparkles">✨ ✨ ✨</div>
+              <h2 className="dare-celebration-text">Yay, {childName}!</h2>
+              <p className="dare-celebration-sub">Ganesha is so proud of you</p>
+            </div>
+          )}
+
           {/* ── Beat 1: Gratitude check-in ── */}
-          {beat === 1 && (
+          {!showCelebration && beat === 1 && (
             <>
+              <div className="dare-daily-badge">
+                ✨ Today's Special Moment
+              </div>
+
               <h1 className="dare-title">{getGreeting(childName)}</h1>
 
-              <p className="dare-subtitle">
-                Before today's adventure —<br />
-                what made you smile yesterday?
-              </p>
+              <p className="dare-subtitle">{subtitleText}</p>
 
               {/* Voice-first input */}
               {!showTypeBox && (
@@ -252,14 +307,26 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
                     <p className="dare-transcript">{spokenText}</p>
                   )}
 
-                  {/* Done button — only visible while listening */}
+                  {/* Done button - only visible while listening */}
                   {micState === 'listening' && (
                     <button className="dare-mic-done-btn" onClick={handleMicDone}>
                       Done
                     </button>
                   )}
 
-                  {/* Type option — secondary */}
+                  {/* When mic is done with text - kid can re-record if it heard wrong.
+                      Indian-accented English often gets transcribed incorrectly,
+                      so we always offer a graceful retry. */}
+                  {micState === 'done' && spokenText && (
+                    <div className="dare-transcript-actions">
+                      <button className="dare-transcript-retry" onClick={handleTryAgain}>
+                        Try again
+                      </button>
+                      <span className="dare-transcript-hint">or tap Next if it looks right</span>
+                    </div>
+                  )}
+
+                  {/* Type option - secondary */}
                   {micState !== 'listening' && (
                     <button
                       className="dare-type-toggle"
@@ -291,19 +358,22 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
                 </div>
               )}
 
-              <div className="dare-btn-next">
-                <PrimaryBtn
-                  label="Next"
-                  onClick={handleNextBeat}
-                  size="md"
-                  fullWidth
-                />
-              </div>
+              {/* "Next" only appears once child has given input */}
+              {hasGratitudeInput && (
+                <div className="dare-btn-next">
+                  <PrimaryBtn
+                    label="Next"
+                    onClick={handleNextBeat}
+                    size="md"
+                    fullWidth
+                  />
+                </div>
+              )}
             </>
           )}
 
           {/* ── Beat 2: Dare reveal ── */}
-          {beat === 2 && (
+          {!showCelebration && beat === 2 && (
             <>
               <div className="dare-badge">
                 <span className="dare-badge-label">{categoryInfo.label}</span>
@@ -313,13 +383,13 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
 
               <div className="dare-btn-actions">
                 <PrimaryBtn
-                  label="I'll do it"
+                  label="I'll do it!"
                   onClick={handleAcceptDare}
                   size="md"
                   fullWidth
                 />
-                <button className="dare-btn-secondary" onClick={handleRemindLater}>
-                  Remind me later
+                <button className="dare-btn-secondary" onClick={handleTellMeAgain}>
+                  Tell me again
                 </button>
               </div>
             </>
