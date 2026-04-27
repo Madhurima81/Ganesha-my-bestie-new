@@ -5,7 +5,7 @@ import mudMound from './assets/images/mud-mound.png';
 import modak1 from './assets/images/modak-1.png';
 import basket from './assets/images/basket.png';
 import belly from './assets/images/belly.png';
-import mooshika from '../../shared/images/icons/symbol-mooshika-colored.svg';
+import mooshika from '../../shared/images/icons/symbol-mooshika-new.png';
 
 const PHASES = {
   MOOSHIKA_SEARCH: 'mooshika_search',

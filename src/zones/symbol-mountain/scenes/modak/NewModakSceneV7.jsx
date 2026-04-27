@@ -1,4 +1,4 @@
-// zones/symbol-mountain/scenes/modak/NewModakSceneV7_MVP.jsx
+﻿// zones/symbol-mountain/scenes/modak/NewModakSceneV7_MVP.jsx
 // MVP Version: Voice-guided, minimal UI (no header, no help menu)
 // Like Khan Academy Kids / Lingokids approach
 
@@ -80,8 +80,6 @@ import modak3 from './assets/images/modak-new.png';
 import basket from './assets/images/modak-plate.png';
 import mooshika from './assets/images/mooshika-new.png';
 import mudMound from './assets/images/mound.svg';
-import rock from './assets/images/rock.png';
-import belly from './assets/images/belly.png';
 import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.png';
 import symbolModakColored from '../../shared/images/icons/symbol-modak-new.png';
 import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.png';
@@ -147,14 +145,18 @@ const PHASES = {
 };
 const MINI_THUMBS_UP_ICON = '/images/hand-thumbsup.svg';
 const MODAK_POSITION_SLOTS = [
-  { top: '32%', left: '9%' },
-  { top: '31.5%', left: '24%' },
-  { top: '31.5%', left: '38%' },
-  { top: '32%', left: '52%' },
-  { top: '32%', left: '66%' },
-  { top: '36%', left: '79%' }
+  { top: '43.3%', left: '8.2%' },
+  { top: '36%', left: '26.6%' },
+  { top: '48.7%', left: '84.5%' },
+  { top: '40%', left: '68.1%' },
+  { top: '35%', left: '66.8%' },
+  { top: '40.9%', left: '15.8%' },
+  { top: '35%', left: '38.3%' },
+  { top: '38.5%', left: '3.2%' }
 ];
 const SHOW_MODAK_SLOT_DEBUG = false;
+const SHOW_ALL_MODAK_SLOTS_PREVIEW = false;
+const GANESHA_SIT_FEED_IMAGE = '/images/ganesha-sit.svg';
 
 const pickRandomModakSlots = () => {
   const indices = MODAK_POSITION_SLOTS.map((_, i) => i);
@@ -165,6 +167,13 @@ const pickRandomModakSlots = () => {
   return indices.slice(0, 3);
 };
 
+const getFeedingGaneshaScale = (feedCount, transformed) => {
+  const growthSteps = [0.1, 0.6, 1.05, 1.5];
+  const stepIndex = Math.min(Math.max(feedCount, 0), growthSteps.length - 1);
+  const baseScale = growthSteps[stepIndex];
+  return transformed ? Math.max(baseScale, 1.5) : baseScale;
+};
+
 const MODAK_WEB_SPEECH_VO = {
   welcome: 'Welcome to Symbol Mountain! Can you find my friend Mooshika?',
   findMooshika: "Tap the little mounds. Let's find Mooshika!",
@@ -172,8 +181,10 @@ const MODAK_WEB_SPEECH_VO = {
   mooshikaFound: 'You found Mooshika! My little mouse friend.',
   focusPower: 'Mooshika helps us focus. Say with me: I can focus!',
   collectStart: 'Now help Mooshika. Tap the modaks to collect them.',
+  collectIdleHint: 'Look behind the trees and bushes. Tap the modaks.',
   sharingPower: 'Sharing makes joy grow. Say with me: I love to share!',
   feedGanesha: 'Drag the modaks to Ganesha.',
+  feedIdleHint: 'Drag a modak from the plate to Ganesha.',
   gratitudePower: 'You helped a friend. Say with me: I am grateful.',
   sceneComplete: "Amazing work! You focused, you shared, and you helped a friend. I'm proud of you!",
 };
@@ -185,8 +196,10 @@ const MODAK_WEB_SPEECH_MOMENT = {
   mooshikaFound: 'celebration',
   focusPower: 'encouragement',
   collectStart: 'default',
+  collectIdleHint: 'default',
   sharingPower: 'encouragement',
   feedGanesha: 'default',
+  feedIdleHint: 'default',
   gratitudePower: 'gratitude',
   sceneComplete: 'celebration',
 };
@@ -506,6 +519,8 @@ const NewModakSceneMVPContent = ({
   const [hintResetKey, setHintResetKey] = useState(0);
   const [idleHintLevel, setIdleHintLevel] = useState(0);
   const phase1IdleVoPlayedRef = useRef(false);
+  const modakIdleVoPlayedRef = useRef(false);
+  const feedIdleVoPlayedRef = useRef(false);
   const lastIdleInteractionAtRef = useRef(Date.now());
   const IDLE_HINT_L1_MS = 10000;
   const IDLE_HINT_L2_MS = 18000;
@@ -1015,6 +1030,8 @@ const NewModakSceneMVPContent = ({
     setShowIdleGestureHint(false);
     setIdleHintLevel(0);
     phase1IdleVoPlayedRef.current = false;
+    modakIdleVoPlayedRef.current = false;
+    feedIdleVoPlayedRef.current = false;
     lastIdleInteractionAtRef.current = Date.now();
   }, [hintResetKey, idleHintsEnabled]);
 
@@ -1076,6 +1093,36 @@ const NewModakSceneMVPContent = ({
     if (idleHintLevel >= 2 && !phase1IdleVoPlayedRef.current) {
       phase1IdleVoPlayedRef.current = true;
       playVoice('findMooshikaIdle');
+    }
+  }, [idleHintLevel, sceneState?.phase, sceneState?.welcomeShown, idleHintsEnabled, playVoice]);
+
+  // Modak phase idle VO: play once at level 2 (hint-strong), reset on interaction/hintResetKey.
+  useEffect(() => {
+    if (!idleHintsEnabled) return;
+    if (!sceneState?.welcomeShown) return;
+    const isModakPhase =
+      sceneState?.phase === PHASES.MODAKS_UNLOCKED ||
+      sceneState?.phase === PHASES.SOME_COLLECTED;
+    if (!isModakPhase) return;
+
+    if (idleHintLevel >= 2 && !modakIdleVoPlayedRef.current) {
+      modakIdleVoPlayedRef.current = true;
+      playVoice('collectIdleHint');
+    }
+  }, [idleHintLevel, sceneState?.phase, sceneState?.welcomeShown, idleHintsEnabled, playVoice]);
+
+  // Feed phase idle VO: play once at level 2 (hint-strong), reset on interaction/hintResetKey.
+  useEffect(() => {
+    if (!idleHintsEnabled) return;
+    if (!sceneState?.welcomeShown) return;
+    const isFeedPhase =
+      sceneState?.phase === PHASES.ROCK_VISIBLE ||
+      sceneState?.phase === PHASES.ROCK_FEEDING;
+    if (!isFeedPhase) return;
+
+    if (idleHintLevel >= 2 && !feedIdleVoPlayedRef.current) {
+      feedIdleVoPlayedRef.current = true;
+      playVoice('feedIdleHint');
     }
   }, [idleHintLevel, sceneState?.phase, sceneState?.welcomeShown, idleHintsEnabled, playVoice]);
 
@@ -1748,6 +1795,20 @@ const NewModakSceneMVPContent = ({
                 );
               })}
 
+              {/* TEMP CHECK MODE: show modak visual at all slots for final position tuning */}
+              {SHOW_ALL_MODAK_SLOTS_PREVIEW && MODAK_POSITION_SLOTS.map((slot, idx) => (
+                <div
+                  key={`modak-slot-preview-${idx}`}
+                  className="modak-slot-anchor modak-slot-preview"
+                  style={{ top: slot.top, left: slot.left }}
+                  aria-hidden="true"
+                >
+                  <div className="modak-game-modak modak-game-modak-field modak-slot-preview-card">
+                    <img src={modak1} alt="" />
+                  </div>
+                </div>
+              ))}
+
               {/* MODAKS COMPLETE CELEBRATION SPARKLES */}
               {showSparkle === 'modaks-complete' && (
                 <>
@@ -1859,6 +1920,9 @@ const NewModakSceneMVPContent = ({
                           <KidsDraggable
                             id={`basket-modak-${modakIndex}`}
                             data={{ type: 'basket-modak', index: modakIndex }}
+                            dragScale={1}
+                            dragFilter="none"
+                            dragBorderRadius="0"
                             disabled={!canDrag}
                             onDragStart={() => recordInteraction()}
                           >
@@ -1881,7 +1945,7 @@ const NewModakSceneMVPContent = ({
                 </div>
               )}
 
-              {/* ROCK/BELLY - Drop zone for feeding */}
+              {/* GANESHA FEEDING TARGET - grows with each modak drop */}
               {sceneState.rockVisible && (
                 <div className="modak-game-rock-container breathing">
                   <KidsDropZone
@@ -1896,13 +1960,13 @@ const NewModakSceneMVPContent = ({
                     }}
                   >
                     <img
-                      src={sceneState.rockTransformed ? belly : rock}
-                      alt={sceneState.rockTransformed ? "Ganesha's Belly" : "Sacred Rock"}
+                      src={GANESHA_SIT_FEED_IMAGE}
+                      alt="Ganesha"
                       style={{
                         width: '100%',
                         height: '100%',
                         cursor: 'default',
-                        transform: `scale(${1 + (sceneState.rockBellySize / 100) * 0.3})`,
+                        transform: `scale(${getFeedingGaneshaScale(sceneState.rockFeedCount, sceneState.rockTransformed)})`,
                         transition: 'transform 0.8s ease-out'
                       }}
                     />
