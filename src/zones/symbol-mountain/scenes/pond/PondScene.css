@@ -65,6 +65,27 @@
   background-repeat: no-repeat !important;
   margin: 0 !important;
   padding: 0 !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.pond-bg-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+.pond-bg-overlay--mid {
+  z-index: 6;
+}
+
+.pond-bg-overlay--front {
+  z-index: 13;
 }
 
 /* Lotus positions and styles */
@@ -111,11 +132,14 @@
 
 .lotus {
   position: absolute;
-  width: 18%;
+  width: 13%;
+  min-width: 70px;
+  min-height: 70px;
   cursor: pointer;
   transition: transform 0.2s, opacity 0.2s;
   opacity: 0.92;
   animation: lotusPulse 9s ease-in-out infinite;
+  z-index: 16;
 }
 
 .lotus:hover {
@@ -125,33 +149,33 @@
 
 .lotus-1 {
   left: 30%;
-  top: 56%;
+  top: 58%;
 }
 
 .lotus-2 {
   left: 43%;
-  top: 62%;
+  top: 64%;
 }
 
 .lotus-3 {
   left: 57%;
-  top: 56%;
+  top: 58%;
 }
 
 @keyframes lotusPulse {
-  0%, 100% { transform: scale(1.2); opacity: 0.92; }
-  50% { transform: scale(1.008); opacity: 0.82; }
+  0%, 100% { transform: scale(1); opacity: 0.92; }
+  50% { transform: scale(1.03); opacity: 0.86; }
 }
 
 /* Force lotus size/opacity/pulse/position to win over any media query overrides */
 .pond-scene-container .lotus {
-  width: 18% !important;
+  width: 13% !important;
   opacity: 0.92 !important;
   /*animation: lotusPulse 9s ease-in-out infinite !important;*/
 }
-.pond-scene-container .lotus-1 { left: 30% !important; top: 56% !important; }
-.pond-scene-container .lotus-2 { left: 43% !important; top: 62% !important; }
-.pond-scene-container .lotus-3 { left: 57% !important; top: 56% !important; }
+.pond-scene-container .lotus-1 { left: 30% !important; top: 58% !important; }
+.pond-scene-container .lotus-2 { left: 43% !important; top: 64% !important; }
+.pond-scene-container .lotus-3 { left: 57% !important; top: 58% !important; }
 
 /* SLEEK LOTUS COUNTER - New slim design */
 .lotus-counter {
@@ -223,15 +247,17 @@
 /* Golden lotus container */
 .golden-lotus-container {
   position: absolute !important;
-  left: 45% !important;
+  left: 48% !important;
   top: 45% !important;
-  width: 15% !important;
-  height: 15% !important;
+  width: 16% !important;
+  height: 16% !important;
+  min-width: 78px;
+  min-height: 78px;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   transition: none !important;
-  z-index: 5;
+  z-index: 17;
     opacity: 1 !important;  /* ← ADD THIS LINE */
 
 }
@@ -267,6 +293,10 @@
   filter: none;
 }
 
+.golden-lotus-container:not(.blooming) img {
+  transform: scale(0.82) !important;
+}
+
 @keyframes goldenPulse {
   0%, 100% {
     transform: scale(1);
@@ -283,6 +313,7 @@
 /* Bloom animation without position change */
 .golden-lotus-container.blooming img {
   animation: gentle-bloom 0.6s ease-out forwards;
+  transform: scale(1.12) !important;
 }
 
 @keyframes gentle-bloom {
@@ -323,12 +354,16 @@
 /* Elephant partial styles */
 .elephant-partial {
   position: absolute;
-  width: 25%;
-  right: -15%;
-  bottom: 35%;
+  width: 19%;
+  min-width: 70px;
+  min-height: 70px;
+  left: 2%;
+  right: auto;
+  top: 25%;
+  bottom: auto;
   cursor: pointer;
-  z-index: 4;
-  transition: none;
+  z-index: 5;
+  transition: left 1.2s ease-out, top 1.2s ease-out, right 1.2s ease-out, bottom 1.2s ease-out, transform 0.4s ease-out;
 }
 
 /* Elephant stays in position after animation */
@@ -339,9 +374,21 @@
 
 /* Position locking for elephant */
 .elephant-position-locked {
-  right: 4% !important;
+  left: 23% !important;
+  right: auto !important;
+  top: 30% !important;
+  bottom: auto !important;
+  z-index: 18 !important;
   animation: none !important;
-  transition: none !important;
+  transition: left 1.2s ease-out, top 1.2s ease-out, right 1.2s ease-out, bottom 1.2s ease-out, transform 0.4s ease-out !important;
+}
+
+.elephant-partial img {
+  transform: none;
+}
+
+.elephant-position-locked img {
+  transform: none;
 }
 
 /* Transform animation for elephant */
@@ -808,8 +855,10 @@
 @media (orientation: portrait) {
   .elephant-partial {
     width: 30%;
-    right: -15%;
-    bottom: 30%;
+    left: 2%;
+    right: auto;
+    top: 25%;
+    bottom: auto;
   }
   .lotus-counter {
     top: 10px;
@@ -841,6 +890,34 @@
   filter: none !important;
   transform: none !important;
   box-shadow: none !important;
+}
+
+/* Idle hint ladder (About Me style): hint -> hint-strong -> hint-final */
+.pond-scene-container .hint img {
+  animation: pond-hint-level-1 1.6s ease-in-out infinite;
+}
+
+.pond-scene-container .hint-strong img {
+  animation: pond-hint-level-2 1.25s ease-in-out infinite;
+}
+
+.pond-scene-container .hint-final img {
+  animation: pond-hint-level-3 1s ease-in-out infinite;
+}
+
+@keyframes pond-hint-level-1 {
+  0%, 100% { filter: drop-shadow(0 0 0 rgba(255, 209, 102, 0)); }
+  50% { filter: drop-shadow(0 0 10px rgba(255, 209, 102, 0.8)); }
+}
+
+@keyframes pond-hint-level-2 {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(255, 196, 0, 0.65)); transform: scale(1); }
+  50% { filter: drop-shadow(0 0 16px rgba(255, 196, 0, 0.95)); transform: scale(1.03); }
+}
+
+@keyframes pond-hint-level-3 {
+  0%, 100% { filter: drop-shadow(0 0 12px rgba(255, 170, 0, 0.75)); transform: scale(1); }
+  50% { filter: drop-shadow(0 0 24px rgba(255, 170, 0, 1)); transform: scale(1.06); }
 }
 
 /* Hint 2 pointer (pond-specific) */
@@ -1605,6 +1682,252 @@
   .pond-power-primary-button { font-size: 20px; padding: 16px 45px; }
   .pond-power-secondary-buttons { flex-direction: column; }
   .pond-power-secondary-button { font-size: 16px; padding: 12px 30px; }
+}
+
+/* ==================== V5 FLOW STYLE EXTRACTION ==================== */
+.pond-lotus-hold-target {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
+
+.pond-lotus-hold-target:focus,
+.pond-lotus-hold-target:focus-visible,
+.pond-lotus-hold-target:active {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.pond-hold-ring {
+  position: absolute;
+  inset: -12%;
+  width: 124%;
+  height: 124%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.pond-lotus-image {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 2;
+  transition: transform 0.1s linear;
+  pointer-events: none;
+}
+
+.pond-fish-overlay {
+  position: absolute;
+  top: 60%;
+  left: -30%;
+  width: 34%;
+  height: 20%;
+  pointer-events: none;
+  z-index: 3;
+  animation: pondFishSwim 4s ease-in-out infinite;
+}
+
+.pond-fish-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.pond-ripple-overlay {
+  position: absolute;
+  inset: -15%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.pond-lotus-sparkle {
+  pointer-events: none;
+}
+
+.pond-fit-image {
+  width: 100%;
+  height: 100%;
+}
+
+.pond-drag-path-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 28;
+}
+
+.pond-petal-stone {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
+  pointer-events: none;
+  z-index: 29;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.pond-drop-handle {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 56px;
+  height: 64px;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  z-index: 30;
+  filter: drop-shadow(0 4px 10px rgba(0, 100, 200, 0.55));
+}
+
+.pond-drop-handle.drop-magic-pulsing {
+  animation: dropMagicPulse 400ms cubic-bezier(0.22, 0.7, 0.2, 1) forwards !important;
+}
+
+.pond-drop-handle.drop-magic-bursting {
+  animation: dropMagicBurst 300ms ease-out forwards !important;
+}
+
+.pond-drop-svg {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.pond-symbol-stream {
+  position: absolute;
+  width: 300px;
+  height: 200px;
+  z-index: 15;
+  pointer-events: none;
+}
+
+.pond-symbol-stream--lotus {
+  top: 25%;
+  left: 30%;
+}
+
+.pond-symbol-stream--trunk {
+  top: 60%;
+  right: 25%;
+}
+
+.pond-drop-to-lotus-stream {
+  position: absolute;
+  transform: translate(-25%, -35%);
+  pointer-events: none;
+  z-index: 31;
+}
+
+.pond-resume-popup {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  padding: 30px 50px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  z-index: 9999;
+  font-family: 'Baloo 2', cursive;
+  font-size: 28px;
+  font-weight: bold;
+  color: #5D2E0F;
+  text-align: center;
+  max-width: 80%;
+  border: 4px solid #FF8C00;
+}
+
+.pond-power-overlay-block {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(3px);
+  z-index: 499;
+  animation: pond-fadeIn 0.3s ease-out;
+}
+
+@keyframes pondPetalPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.85; }
+  50% { transform: translate(-50%, -50%) scale(1.18); opacity: 1; }
+}
+
+@keyframes pondDropPulse {
+  0%, 100% { filter: drop-shadow(0 4px 10px rgba(0, 100, 200, 0.55)); }
+  50% { filter: drop-shadow(0 4px 18px rgba(0, 170, 255, 0.9)); }
+}
+
+@keyframes dropMagicPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    filter: drop-shadow(0 4px 10px rgba(0, 100, 200, 0.55));
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.34) rotate(180deg);
+    filter: drop-shadow(0 8px 24px rgba(255, 198, 71, 0.85));
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.2) rotate(360deg);
+    filter: drop-shadow(0 7px 18px rgba(255, 198, 71, 0.65));
+  }
+}
+
+@keyframes dropMagicBurst {
+  0% {
+    transform: translate(-50%, -50%) scale(1.2) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(0.7) rotate(30deg);
+    opacity: 0;
+  }
+}
+
+@keyframes lotusWiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+
+.golden-lotus-container.golden-lotus-wiggling img {
+  animation: lotusWiggle 200ms ease-in-out !important;
+}
+
+@keyframes pondFishSwim {
+  0% { transform: translateX(0) scaleX(1); opacity: 0; }
+  15% { opacity: 0.85; }
+  85% { opacity: 0.85; }
+  100% { transform: translateX(380%) scaleX(1); opacity: 0; }
+}
+
+.pond-soft-ripple {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(180, 220, 255, 0.55);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pond-soft-ripple--1 { animation: pondSoftRipple 3s ease-out infinite; }
+.pond-soft-ripple--2 { animation: pondSoftRipple 3s ease-out 1.5s infinite; }
+
+@keyframes pondSoftRipple {
+  0% { transform: scale(0.6); opacity: 0.7; }
+  100% { transform: scale(1.4); opacity: 0; }
 }
 
 /* ==================== PRINT STYLES ==================== */

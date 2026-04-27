@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pond Petal Picker</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --accent: #2563eb;
+      --ok: #059669;
+      --danger: #dc2626;
+      --ring: #93c5fd;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .group {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      padding: 6px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      background: #fff;
+    }
+    label.small {
+      font-size: 12px;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    input[type="file"] {
+      max-width: 240px;
+      font-size: 12px;
+    }
+    input[type="number"] {
+      width: 64px;
+      padding: 6px 8px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 12px;
+    }
+    button {
+      border: 1px solid #d1d5db;
+      background: #fff;
+      color: var(--text);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    button:hover { border-color: #9ca3af; }
+    button.primary {
+      border-color: var(--accent);
+      color: #fff;
+      background: var(--accent);
+    }
+    button.ok {
+      border-color: var(--ok);
+      color: #fff;
+      background: var(--ok);
+    }
+    button.danger {
+      border-color: var(--danger);
+      color: #fff;
+      background: var(--danger);
+    }
+    .point-btn.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--ring);
+    }
+    .status {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .stage-wrap {
+      width: 100%;
+      overflow: auto;
+      border: 1px dashed #d1d5db;
+      border-radius: 12px;
+      background: #f9fafb;
+      padding: 10px;
+    }
+    .stage {
+      position: relative;
+      width: min(100%, 1024px);
+      aspect-ratio: 16 / 9;
+      margin: 0 auto;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #eef2ff;
+      cursor: crosshair;
+    }
+    .layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+      user-select: none;
+    }
+    .elephant-guide {
+      position: absolute;
+      z-index: 4;
+      pointer-events: none;
+      user-select: none;
+      opacity: 0.88;
+      transform: translate(-50%, -50%);
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.35));
+    }
+    .elephant-guide.fallback {
+      width: 130px;
+      height: 90px;
+      border: 2px dashed rgba(30, 64, 175, 0.7);
+      border-radius: 14px;
+      background: rgba(147, 197, 253, 0.25);
+      color: #1e3a8a;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8px;
+    }
+    .golden-guide {
+      position: absolute;
+      z-index: 4;
+      pointer-events: none;
+      user-select: none;
+      opacity: 0.9;
+      transform: translate(-50%, -50%);
+      filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.3));
+    }
+    .golden-guide.fallback {
+      width: 90px;
+      height: 90px;
+      border: 2px dashed rgba(180, 83, 9, 0.8);
+      border-radius: 999px;
+      background: rgba(253, 224, 71, 0.22);
+      color: #92400e;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8px;
+    }
+    .marker {
+      position: absolute;
+      min-width: 40px;
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 999px;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 24px;
+      text-align: center;
+      pointer-events: none;
+      z-index: 5;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.35);
+    }
+    .hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 190px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      padding: 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      resize: vertical;
+      background: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+      <div class="toolbar">
+        <div class="group">
+          <label class="small">Background
+            <input id="bgInput" type="file" accept="image/*" />
+          </label>
+          <label class="small">Overlay (optional)
+            <input id="overlayInput" type="file" accept="image/*" />
+          </label>
+          <label class="small">Elephant image (optional)
+            <input id="elephantInput" type="file" accept="image/*" />
+          </label>
+          <label class="small">Golden lotus image (optional)
+            <input id="goldenInput" type="file" accept="image/*" />
+          </label>
+          <label class="small">Decimals
+            <input id="decimals" type="number" min="0" max="4" value="1" />
+          </label>
+        </div>
+        <div class="group">
+          <label class="small">
+            <input id="showElephantGuide" type="checkbox" checked />
+            Show elephant guide
+          </label>
+          <label class="small">Elephant left %
+            <input id="eleLeft" type="number" min="0" max="100" step="0.1" value="11.5" />
+          </label>
+          <label class="small">Elephant top %
+            <input id="eleTop" type="number" min="0" max="100" step="0.1" value="34.5" />
+          </label>
+          <label class="small">Elephant width %
+            <input id="eleWidth" type="number" min="1" max="80" step="0.1" value="19" />
+          </label>
+        </div>
+        <div class="group">
+          <label class="small">
+            <input id="showGoldenGuide" type="checkbox" checked />
+            Show golden guide
+          </label>
+          <label class="small">Golden left %
+            <input id="goldLeft" type="number" min="0" max="100" step="0.1" value="48" />
+          </label>
+          <label class="small">Golden top %
+            <input id="goldTop" type="number" min="0" max="100" step="0.1" value="45" />
+          </label>
+          <label class="small">Golden width %
+            <input id="goldWidth" type="number" min="1" max="80" step="0.1" value="16" />
+          </label>
+        </div>
+        <div class="group">
+          <button id="clearBtn" class="danger" type="button">Clear</button>
+          <button id="copyJsonBtn" class="ok" type="button">Copy JSON</button>
+          <button id="copyConstBtn" class="primary" type="button">Copy JS Consts</button>
+        </div>
+      </div>
+      <div id="status" class="status">Select a point button, then click stage to place/update it.</div>
+    </div>
+
+    <div class="card">
+      <div id="pointButtons" class="toolbar"></div>
+    </div>
+
+    <div class="card">
+      <div class="stage-wrap">
+        <div id="stage" class="stage" aria-label="Pond coordinate picking stage">
+          <img id="bgLayer" class="layer" alt="" />
+          <img id="overlayLayer" class="layer" alt="" />
+          <img id="elephantGuide" class="elephant-guide" alt="Elephant guide" />
+          <div id="elephantGuideFallback" class="elephant-guide fallback">Elephant start guide</div>
+          <img id="goldenGuide" class="golden-guide" alt="Golden lotus guide" />
+          <div id="goldenGuideFallback" class="golden-guide fallback">Golden lotus guide</div>
+        </div>
+      </div>
+      <div class="hint">Recommended order: Drop Start -> P1 -> P2 -> P3 -> Golden Target</div>
+    </div>
+
+    <div class="card">
+      <textarea id="output" spellcheck="false" readonly></textarea>
+    </div>
+  </div>
+
+  <script>
+    const POINTS = [
+      { key: 'dropStart', label: 'Drop Start', chip: 'DS', color: '#0284c7' },
+      { key: 'p1', label: 'P1', chip: 'P1', color: '#ca8a04' },
+      { key: 'p2', label: 'P2', chip: 'P2', color: '#a16207' },
+      { key: 'p3', label: 'P3', chip: 'P3', color: '#92400e' },
+      { key: 'goldenTarget', label: 'Golden Target', chip: 'GL', color: '#dc2626' }
+    ];
+
+    const bgInput = document.getElementById('bgInput');
+    const overlayInput = document.getElementById('overlayInput');
+    const elephantInput = document.getElementById('elephantInput');
+    const goldenInput = document.getElementById('goldenInput');
+    const decimalsInput = document.getElementById('decimals');
+    const showElephantGuide = document.getElementById('showElephantGuide');
+    const eleLeft = document.getElementById('eleLeft');
+    const eleTop = document.getElementById('eleTop');
+    const eleWidth = document.getElementById('eleWidth');
+    const showGoldenGuide = document.getElementById('showGoldenGuide');
+    const goldLeft = document.getElementById('goldLeft');
+    const goldTop = document.getElementById('goldTop');
+    const goldWidth = document.getElementById('goldWidth');
+    const clearBtn = document.getElementById('clearBtn');
+    const copyJsonBtn = document.getElementById('copyJsonBtn');
+    const copyConstBtn = document.getElementById('copyConstBtn');
+    const stage = document.getElementById('stage');
+    const bgLayer = document.getElementById('bgLayer');
+    const overlayLayer = document.getElementById('overlayLayer');
+    const elephantGuide = document.getElementById('elephantGuide');
+    const elephantGuideFallback = document.getElementById('elephantGuideFallback');
+    const goldenGuide = document.getElementById('goldenGuide');
+    const goldenGuideFallback = document.getElementById('goldenGuideFallback');
+    const output = document.getElementById('output');
+    const status = document.getElementById('status');
+    const pointButtons = document.getElementById('pointButtons');
+
+    let values = {};
+    let activeKey = POINTS[0].key;
+
+    function setStatus(text) {
+      status.textContent = text;
+    }
+
+    function round(v) {
+      const d = Math.max(0, Math.min(4, Number(decimalsInput.value || 1)));
+      const m = 10 ** d;
+      return Math.round(v * m) / m;
+    }
+
+    function toObjectUrl(file) {
+      return URL.createObjectURL(file);
+    }
+
+    function markerEl(pointDef, value) {
+      const el = document.createElement('div');
+      el.className = 'marker';
+      el.style.left = value.x + '%';
+      el.style.top = value.y + '%';
+      el.style.background = pointDef.color;
+      el.textContent = pointDef.chip;
+      return el;
+    }
+
+    function orderedJson() {
+      return POINTS.map((p) => ({
+        key: p.key,
+        label: p.label,
+        x: values[p.key]?.x ?? null,
+        y: values[p.key]?.y ?? null
+      }));
+    }
+
+    function jsConsts() {
+      const ds = values.dropStart || { x: null, y: null };
+      const p1 = values.p1 || { x: null, y: null };
+      const p2 = values.p2 || { x: null, y: null };
+      const p3 = values.p3 || { x: null, y: null };
+      const gt = values.goldenTarget || { x: null, y: null };
+
+      return [
+        `const DROP_START_POINT = { x: ${ds.x}, y: ${ds.y} };`,
+        `const PETAL_STEPPING_STONES = [`,
+        `  { id: 'p1', x: ${p1.x}, y: ${p1.y} },`,
+        `  { id: 'p2', x: ${p2.x}, y: ${p2.y} },`,
+        `  { id: 'p3', x: ${p3.x}, y: ${p3.y} }`,
+        `];`,
+        `const GOLDEN_LOTUS_TARGET_POINT = { x: ${gt.x}, y: ${gt.y} };`
+      ].join('\n');
+    }
+
+    function firstMissingKey() {
+      for (const p of POINTS) {
+        if (!values[p.key]) return p.key;
+      }
+      return null;
+    }
+
+    function renderButtons() {
+      pointButtons.innerHTML = '';
+      POINTS.forEach((p) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'point-btn' + (activeKey === p.key ? ' active' : '');
+        const placed = values[p.key] ? ` (${values[p.key].x}, ${values[p.key].y})` : '';
+        btn.textContent = `${p.label}${placed}`;
+        btn.onclick = () => {
+          activeKey = p.key;
+          render();
+        };
+        pointButtons.appendChild(btn);
+      });
+    }
+
+    function renderElephantGuide() {
+      const enabled = !!showElephantGuide.checked;
+      const left = Number(eleLeft.value || 11.5);
+      const top = Number(eleTop.value || 34.5);
+      const width = Number(eleWidth.value || 19);
+
+      const common = (el) => {
+        el.style.left = left + '%';
+        el.style.top = top + '%';
+        el.style.width = width + '%';
+      };
+
+      if (!enabled) {
+        elephantGuide.style.display = 'none';
+        elephantGuideFallback.style.display = 'none';
+        return;
+      }
+
+      if (elephantGuide.src) {
+        common(elephantGuide);
+        elephantGuide.style.display = 'block';
+        elephantGuideFallback.style.display = 'none';
+      } else {
+        common(elephantGuideFallback);
+        elephantGuide.style.display = 'none';
+        elephantGuideFallback.style.display = 'flex';
+      }
+    }
+
+    function renderGoldenGuide() {
+      const enabled = !!showGoldenGuide.checked;
+      const left = Number(goldLeft.value || 48);
+      const top = Number(goldTop.value || 45);
+      const width = Number(goldWidth.value || 16);
+
+      const common = (el) => {
+        el.style.left = left + '%';
+        el.style.top = top + '%';
+        el.style.width = width + '%';
+      };
+
+      if (!enabled) {
+        goldenGuide.style.display = 'none';
+        goldenGuideFallback.style.display = 'none';
+        return;
+      }
+
+      if (goldenGuide.src) {
+        common(goldenGuide);
+        goldenGuide.style.display = 'block';
+        goldenGuideFallback.style.display = 'none';
+      } else {
+        common(goldenGuideFallback);
+        goldenGuide.style.display = 'none';
+        goldenGuideFallback.style.display = 'flex';
+      }
+    }
+
+    function render() {
+      stage.querySelectorAll('.marker').forEach((el) => el.remove());
+      POINTS.forEach((p) => {
+        const v = values[p.key];
+        if (v) stage.appendChild(markerEl(p, v));
+      });
+
+      output.value = [
+        'JSON:',
+        JSON.stringify(orderedJson(), null, 2),
+        '',
+        'JS consts:',
+        jsConsts()
+      ].join('\n');
+
+      renderButtons();
+      renderElephantGuide();
+      renderGoldenGuide();
+      const missing = firstMissingKey();
+      if (missing) {
+        const next = POINTS.find((p) => p.key === missing);
+        setStatus(`Click stage to set ${POINTS.find((p) => p.key === activeKey).label}. Next recommended: ${next.label}.`);
+      } else {
+        setStatus('All points placed. Click any point button to update it.');
+      }
+    }
+
+    function tryLoadDefaultElephantGuide() {
+      const defaultPath = '../src/zones/symbol-mountain/scenes/pond/assets/images/elephant-new.png';
+      elephantGuide.onload = () => render();
+      elephantGuide.onerror = () => render();
+      elephantGuide.src = defaultPath;
+    }
+
+    function tryLoadDefaultGoldenGuide() {
+      const defaultPath = '../src/zones/symbol-mountain/scenes/pond/assets/images/goldenlotus-bud-new.png';
+      goldenGuide.onload = () => render();
+      goldenGuide.onerror = () => render();
+      goldenGuide.src = defaultPath;
+    }
+
+    bgInput.addEventListener('change', () => {
+      const file = bgInput.files && bgInput.files[0];
+      if (!file) return;
+      bgLayer.src = toObjectUrl(file);
+      setStatus(`Background loaded: ${file.name}`);
+    });
+
+    overlayInput.addEventListener('change', () => {
+      const file = overlayInput.files && overlayInput.files[0];
+      if (!file) return;
+      overlayLayer.src = toObjectUrl(file);
+      setStatus(`Overlay loaded: ${file.name}`);
+    });
+
+    elephantInput.addEventListener('change', () => {
+      const file = elephantInput.files && elephantInput.files[0];
+      if (!file) return;
+      elephantGuide.src = toObjectUrl(file);
+      setStatus(`Elephant guide loaded: ${file.name}`);
+      render();
+    });
+
+    goldenInput.addEventListener('change', () => {
+      const file = goldenInput.files && goldenInput.files[0];
+      if (!file) return;
+      goldenGuide.src = toObjectUrl(file);
+      setStatus(`Golden guide loaded: ${file.name}`);
+      render();
+    });
+
+    [showElephantGuide, eleLeft, eleTop, eleWidth].forEach((el) => {
+      el.addEventListener('input', render);
+      el.addEventListener('change', render);
+    });
+
+    [showGoldenGuide, goldLeft, goldTop, goldWidth].forEach((el) => {
+      el.addEventListener('input', render);
+      el.addEventListener('change', render);
+    });
+
+    stage.addEventListener('click', (evt) => {
+      const rect = stage.getBoundingClientRect();
+      const x = round(((evt.clientX - rect.left) / rect.width) * 100);
+      const y = round(((evt.clientY - rect.top) / rect.height) * 100);
+
+      values[activeKey] = { x, y };
+      const missing = firstMissingKey();
+      if (missing && missing !== activeKey) {
+        activeKey = missing;
+      }
+      render();
+    });
+
+    clearBtn.addEventListener('click', () => {
+      values = {};
+      activeKey = POINTS[0].key;
+      render();
+      setStatus('Cleared. Start again from Drop Start.');
+    });
+
+    copyJsonBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(JSON.stringify(orderedJson(), null, 2));
+        setStatus('Copied JSON.');
+      } catch (e) {
+        setStatus('Clipboard blocked. Copy from output box.');
+      }
+    });
+
+    copyConstBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(jsConsts());
+        setStatus('Copied JS consts.');
+      } catch (e) {
+        setStatus('Clipboard blocked. Copy from output box.');
+      }
+    });
+
+    tryLoadDefaultElephantGuide();
+    tryLoadDefaultGoldenGuide();
+    render();
+  </script>
+</body>
+</html>

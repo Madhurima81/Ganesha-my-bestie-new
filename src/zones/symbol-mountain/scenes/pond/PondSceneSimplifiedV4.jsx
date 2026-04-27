@@ -1,4 +1,10 @@
-// zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV3.jsx
+// zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV5.jsx
+// V5 GAMEPLAY UPDATE (locked spec):
+//   Phase 1 — Hold to bloom (3 lotuses, escalating focus: clean / fish swim-by / soft ripples)
+//   Phase 2 — Tap golden bud → baby elephant emerges and grows
+//   Phase 3 — Drag water drop along curved petal path (3 stepping stones, soft snap)
+//   Phase 4 — Final reveal (existing flow preserved)
+// All non-gameplay systems (reload, hints, audio, voice, sidebar, completion) untouched.
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './PondScene.css';
@@ -42,7 +48,6 @@ import CulturalProgressExtractor from '../../../../lib/services/CulturalProgress
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
 import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
 import CalmGoldenFireworks from '../../../../lib/components/feedback/CalmGoldenFireworks';
-import WaterSprayArc from '../../../shloka-river/scenes/Scene1/components/WaterSprayArc';
 import SymbolSidebar from '../../shared/components/SymbolSidebar';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import HomeButton from '../../../../lib/components/ui/HomeButton';
@@ -52,19 +57,20 @@ import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOv
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
 
 // Images
-import pondBackground from './assets/images/pond-background.png';
-import lotusClosed from './assets/images/lotus-closed.png';
-import lotusBloomed from './assets/images/lotus-bloomed.png';
-import goldenLotusClosed from './assets/images/golden-lotus-closed.png';
-import goldenLotusBloomed from './assets/images/golden-lotus-bloomed.png';
-import elephantFull from './assets/images/elephant-full.png';
-import waterElephant from './assets/images/water-elephant.png';
+import pondGameBg from './assets/images/pond-game-bg.png';
+import pondGameTreeOverlay from './assets/images/pond-game-tree.png';
+import lotusClosed from './assets/images/lotus-closed-new.png';
+import lotusBloomed from './assets/images/lotus-bloomed-new.png';
+import goldenLotusClosed from './assets/images/goldenlotus-bud-new.png';
+import goldenLotusBloomed from './assets/images/goldenlotus-bloom-new.png';
+import pondFishImage from './assets/images/fish-new.png';
+import elephantFull from './assets/images/elephant-new.png';
 import mooshikaCoach from "./assets/images/mooshika-coach.png";
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.svg';
-import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.svg';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.svg';
-import symbolLotusColored from '../../shared/images/icons/symbol-lotus-colored.png';
-import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-colored.png';
+import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.png';
+import symbolModakColored from '../../shared/images/icons/symbol-modak-new.png';
+import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.png';
+import symbolLotusColored from '../../shared/images/icons/symbol-lotus-new.png';
+import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new.png';
 
 // Mission images
 import lotusBefore from './assets/images/lotus-before.png';
@@ -92,14 +98,14 @@ const PHASES = {
 
 const VOICE_LINES = {
   opening: "My pond is ready. Let's bloom it together.",
-  lotusRound: 'My lotus helps me stay calm. Tap the lotuses.',
-  goldenLotus: 'Beautiful. Now tap my golden lotus.',
-  elephant: 'Tap me. My trunk is ready to awaken.',
-  trunkRound: 'My trunk is strong and helps me. Tap to reveal it.',
-  idleLotus: 'Look carefully at the lotuses.',
-  idleGolden: 'Look for the golden lotus.',
-  idleElephant: 'Tap me to continue.',
-  complete: 'You found my lotus and my trunk. Now I am shining with you.'
+  lotusRound: 'My lotus stays calm. Press and hold to make it bloom.',
+  goldenLotus: 'Beautiful. Now tap my golden bud.',
+  elephant: 'My trunk is flexible. Drag the water along the path.',
+  trunkRound: 'Follow the curve. The water will reach my lotus.',
+  idleLotus: 'Press and hold a lotus.',
+  idleGolden: 'Tap the golden bud.',
+  idleElephant: 'Drag the water drop along the path.',
+  complete: 'You stayed calm and went with the flow. Now I am shining with you.'
 };
 
 const powerConfig = {
@@ -119,6 +125,44 @@ const missionImages = {
   lotus: { before: lotusBefore, after: lotusAfter },
   trunk: { before: trunkBefore, after: trunkAfter }
 };
+
+// ==================== V5 GAMEPLAY CONFIG ====================
+// Hold-to-bloom: each lotus has its own hold duration + ambient distraction.
+// Distractions are VISUAL ONLY — they never interrupt the hold mechanically.
+const LOTUS_HOLD_CONFIG = [
+  { id: 0, holdMs: 1500, ambient: 'none'    }, // Lotus 1: clean, easy success
+  { id: 1, holdMs: 1500, ambient: 'fish'    }, // Lotus 2: fish swims by (visual only)
+  { id: 2, holdMs: 2000, ambient: 'ripples' }  // Lotus 3: soft ripples (visual only)
+];
+
+// Forgiving release: when finger lifts, glow shrinks at 2× speed.
+// Within 1s of release, hold resumes from current value.
+// After 1s, hold resets to 0.
+const HOLD_DECAY_MULTIPLIER = 2;
+const HOLD_RESET_GRACE_MS = 1000;
+
+// Drag-along-curve: 3 petal stepping stones along a gentle curve from
+// elephant trunk (left) → golden lotus (center). Coordinates are %.
+// The drop "snaps" forward when the finger is within SNAP_RADIUS_PCT.
+const DROP_START_POINT = { x: 42, y: 34.2 };
+const GOLDEN_LOTUS_TARGET_POINT = { x: 52, y: 46.7 };
+const PETAL_STEPPING_STONES = [
+  { id: 'p1', x: 47.8, y: 35 },
+  { id: 'p2', x: 52.7, y: 38.5 },
+  { id: 'p3', x: 53.9, y: 47.5 }
+];
+const PETAL_SNAP_RADIUS_PCT = 8;       // % of viewport diagonal
+const DROP_FADE_MS = 400;              // off-path fade duration
+const PETAL_STEP_LOCK_MS = 250;        // prevent instant multi-step snaps
+const ELEPHANT_MOVE_DURATION_MS = 1200;
+const DROP_APPEAR_BUFFER_MS = 120;
+const TRUNK_SPARKLE_DURATION_MS = 1000;
+const DROP_MAGIC_PULSE_MS = 400;
+const DROP_MAGIC_STREAM_MS = 300;
+const DROP_MAGIC_PRE_BLOOM_PAUSE_MS = 120;
+const POND_OVERLAY_MID = pondGameTreeOverlay;
+const POND_OVERLAY_FRONT = '';
+// =============================================================
 
 const discoveryConfig = {
   lotus: {
@@ -170,7 +214,7 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-const PondSceneSimplifiedV3 = ({
+const PondSceneSimplifiedV5 = ({
   onComplete,
   onNavigate,
   zoneId = 'symbol-mountain',
@@ -240,14 +284,11 @@ const PondSceneContent = ({
   const completionModalContent = getCompletionModal(zoneId, sceneId);
 
   const [showSparkle, setShowSparkle] = useState(null);
-  const [showHintGlow, setShowHintGlow] = useState(false);
-  const [showIdleGestureHint, setShowIdleGestureHint] = useState(false);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
   const [showCulturalCelebration, setShowCulturalCelebration] = useState(false);
   const [showCenteredSymbol, setShowCenteredSymbol] = useState(null);
   const [showPowerModal, setShowPowerModal] = useState(false);
   const [showPowerMission, setShowPowerMission] = useState(false);
-  const [activeWaterSpray, setActiveWaterSpray] = useState(null);
   const [fireworksFinished, setFireworksFinished] = useState(false);
   const [currentMissionSymbol, setCurrentMissionSymbol] = useState(null);
 
@@ -265,6 +306,32 @@ const PondSceneContent = ({
   const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false); // eslint-disable-line no-unused-vars
   const [revealConfig, setRevealConfig] = useState(null);
 
+  // ==================== V5 HOLD-TO-BLOOM STATE ====================
+  // holdProgress: 0–1 per lotus. Drives the glow ring + petal-open animation.
+  const [holdProgress, setHoldProgress] = useState([0, 0, 0]);
+  const holdTimersRef = useRef([null, null, null]);     // active hold rAF ids
+  const holdReleaseRef = useRef([null, null, null]);    // release decay rAF ids
+  const holdResetTimerRef = useRef([null, null, null]); // 1s grace timers
+  const holdStartedAtRef = useRef([0, 0, 0]);
+
+  // ==================== V5 DRAG-PATH STATE ====================
+  // dragActive: whether finger is currently dragging the water drop.
+  // dropPosition: current % position of the drop (or null = at start).
+  // currentPetal: index of last reached petal (-1 = none yet, 2 = at lotus).
+  const [dragActive, setDragActive] = useState(false);
+  const [dropPosition, setDropPosition] = useState(null);
+  const [currentPetal, setCurrentPetal] = useState(-1);
+  const [dropFading, setDropFading] = useState(false);
+  const [dropMagicPhase, setDropMagicPhase] = useState(null);
+  const dragContainerRef = useRef(null);
+  const petalAdvanceLockUntilRef = useRef(0);
+  const dropCompletedRef = useRef(false);
+  const isDevMode =
+    (typeof import.meta !== 'undefined' && import.meta.env?.DEV) ||
+    (typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production');
+  // ================================================================
+
+
   // Mini gesture cue
   const [miniGesture, setMiniGesture] = useState({ show: false, target: 'center', durationMs: 1500, key: 0, icon: MINI_THUMBS_UP_ICON });
   const triggerMiniGesture = useCallback((target = 'center', durationMs = 1500, icon = MINI_THUMBS_UP_ICON) => {
@@ -275,20 +342,25 @@ const PondSceneContent = ({
   // Audio
   const { isAudioOn, toggleAudio } = useAudioPreference();
   const { speak, stop: stopSpokenVoice } = useGaneshaVoice();
-  const { playUiTap, playBloom, playChime, playGlow, playTwinkle, setGlobalVolume } = useGameSounds();
-  const { startMusic, stopMusic, setVoiceVolume } = useVoiceGuidance(
+  const { setGlobalVolume } = useGameSounds();
+  const { startMusic, stopMusic, setVoiceVolume, playTap, playCorrect, playPowerUnlock, playCelebration } = useVoiceGuidance(
     zoneId, sceneId, {
       enableMusic: true,
       musicVolume: 0.06,
-      sfxVolume: 0.35,
+      sfxVolume: 0.2,
       idleTimeout: 20,
       resumeDelay: RESUME_DELAY_MS,
     }
   );
+  const playUiTap = playTap;
+  const playBloom = playCorrect;
+  const playChime = playCorrect;
+  const playGlow = playPowerUnlock;
+  const playTwinkle = playCelebration;
   useEffect(() => { setVoiceVolume(isAudioOn ? 1 : 0); }, [isAudioOn, setVoiceVolume]);
   useEffect(() => { if (sceneState?.welcomeShown) startMusic(); }, [sceneState?.welcomeShown]);
   useEffect(() => {
-    setGlobalVolume(0.5);
+    setGlobalVolume(0.35);
     return () => { stopMusic(); setGlobalVolume(1.0); };
   }, []);
 
@@ -300,8 +372,6 @@ const PondSceneContent = ({
   const activeDropsRef = useRef(new Set());
   const MAX_WATER_DROPS = 15;
 
-  const activeProfile = GameStateManager.getActiveProfile();
-  const profileName = activeProfile?.name || 'little explorer';
   const lastAnnouncedPromptRef = useRef(null);
   const openingVoPlayedRef = useRef(false);
   const idleVoGateRef = useRef(false);
@@ -356,16 +426,6 @@ const PondSceneContent = ({
     resumeDelay: RESUME_DELAY_MS,
   });
 
-  const triggerWaterSpray = useCallback(() => {
-    const sourcePosition = { left: '72%', top: '48%' };
-    const targetPosition = { left: '45%', top: '45%' }; // golden lotus area
-    const key = Date.now() + Math.random();
-    setActiveWaterSpray({ key, sourcePosition, targetPosition, phase: 'vakratunda' });
-    safeSetTimeout(() => {
-      setActiveWaterSpray(null);
-    }, 1500);
-  }, [safeSetTimeout]);
-
   const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
 
   useEffect(() => {
@@ -382,8 +442,6 @@ const PondSceneContent = ({
   // 2) reset idle hint level to 0
   // 3) restart the level timer from now
   useEffect(() => {
-    setShowHintGlow(false);
-    setShowIdleGestureHint(false);
     setIdleHintLevel(0);
     idleVoGateRef.current = false;
     lastIdleInteractionAtRef.current = Date.now();
@@ -400,7 +458,7 @@ const PondSceneContent = ({
   }, [getPromptKeyForPhase, revealConfig, showSceneCompletion, speakPondPrompt]);
 
   // Deterministic idle ladder:
-  // L1 @ 10s (no visual), L2 @ 18s (glow), L3 @ 26s (glow + gesture).
+  // L1 @ 10s (hint), L2 @ 18s (hint-strong), L3 @ 26s (hint-final + gesture).
   useEffect(() => {
     const hintPhases = [
       PHASES.INITIAL,
@@ -417,8 +475,6 @@ const PondSceneContent = ({
 
     if (!isHintPhase) {
       setIdleHintLevel(0);
-      setShowHintGlow(false);
-      setShowIdleGestureHint(false);
       return;
     }
 
@@ -441,40 +497,16 @@ const PondSceneContent = ({
     showSceneCompletion
   ]);
 
-  useEffect(() => {
-    const hintPhases = [
-      PHASES.INITIAL,
-      PHASES.SOME_BLOOMED,
-      PHASES.GOLDEN_VISIBLE,
-      PHASES.ELEPHANT_VISIBLE
-    ];
-    const isHintPhase = hintPhases.includes(sceneState?.phase)
-      && sceneState?.welcomeShown
-      && !showPowerModal
-      && !showPowerMission
-      && !revealConfig
-      && !showSceneCompletion;
-
-    if (!isHintPhase) {
-      setShowHintGlow(false);
-      setShowIdleGestureHint(false);
-      return;
-    }
-
-    setShowHintGlow(idleHintLevel >= 2);
-    setShowIdleGestureHint(idleHintLevel >= 3);
-  }, [
-    idleHintLevel,
-    sceneState?.phase,
-    sceneState?.welcomeShown,
-    showPowerModal,
-    showPowerMission,
-    revealConfig,
-    showSceneCompletion
-  ]);
+  const hintClassName = idleHintLevel === 1
+    ? 'hint'
+    : idleHintLevel === 2
+      ? 'hint-strong'
+      : idleHintLevel >= 3
+        ? 'hint-final'
+        : '';
 
   useEffect(() => {
-    if (!showIdleGestureHint) return;
+    if (idleHintLevel < 2) return;
     if (idleVoGateRef.current) return;
 
     let idleKey = 'idleLotus';
@@ -482,7 +514,7 @@ const PondSceneContent = ({
     if (sceneState?.phase === PHASES.ELEPHANT_VISIBLE) idleKey = 'idleElephant';
     speakPondPrompt(idleKey);
     idleVoGateRef.current = true;
-  }, [sceneState?.phase, showIdleGestureHint, speakPondPrompt]);
+  }, [idleHintLevel, sceneState?.phase, speakPondPrompt]);
 
   // Re-arm hints when phase/context changes.
   useEffect(() => {
@@ -546,8 +578,9 @@ const PondSceneContent = ({
     }
 
     // 3. RESTORE TRUNK CARD FLIP
-    // Elephant done (ELEPHANT_TRANSFORMED phase) but card not yet shown / dismissed.
-    if (sceneState.phase === PHASES.ELEPHANT_TRANSFORMED && !sceneState.completed) {
+    // Only restore trunk card after successful water trace (GOLDEN_BLOOM).
+    // ELEPHANT_TRANSFORMED is now the active drag phase and should not auto-flip.
+    if (sceneState.phase === PHASES.GOLDEN_BLOOM && !sceneState.completed) {
       setTimeout(() => {
         playChime();
         setRevealConfig({
@@ -568,19 +601,7 @@ const PondSceneContent = ({
 
   }, []); // Empty array — runs once on mount, same as Modak
 
-  // Completion message
-  useEffect(() => {
-    if (!sceneState) return;
-    if (sceneState.phase === PHASES.COMPLETE && !sceneState.masteryShown) {
-      const timer = setTimeout(() => {
-        setResumeMessage(`Amazing work, ${profileName}! You've discovered the Sacred Lotus and Divine Trunk!`);
-        setShowResumePopup(true);
-        setTimeout(() => setShowResumePopup(false), 4000);
-        sceneActions.updateState({ masteryShown: true });
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [sceneState?.phase, sceneState?.masteryShown, profileName]);
+  // Completion message intentionally disabled for Pond (remove orange popup).
 
   // Water Drop Creation
   const createWaterDrop = () => {
@@ -760,24 +781,17 @@ const PondSceneContent = ({
 
   // -------------------------------------------------------------------------
 
-  const handleLotusClick = (index) => {
-    rearmIdleHints();
-    if (progressiveHintRef.current?.hideHint) progressiveHintRef.current.hideHint();
-    if (showResumePopup) {
-      setShowResumePopup(false);
-      clearTimeout(resumePopupTimeoutRef.current);
-    }
+  // ==================== V5 PHASE 1 — HOLD TO BLOOM ====================
+  // Press and hold a lotus. A glow ring fills around it (1.5s for lotus 1 & 2,
+  // 2s for lotus 3). Releasing early shrinks the glow at 2× speed; if the
+  // child re-presses within 1s, hold resumes from current value. After 1s
+  // grace, hold fully resets. No fail state, no reset on the lotus that's
+  // already bloomed.
+
+  const completeLotusBloom = useCallback((index) => {
     if (!sceneState || !sceneActions) return;
-    if (!sceneState.welcomeShown) sceneActions.updateState({ welcomeShown: true });
-
     const lotusStates = [...(sceneState.lotusStates || [0, 0, 0])];
-
-    if (lotusStates[index] === 1) {
-      playUiTap();
-      setShowSparkle(`lotus-${index}`);
-      setTimeout(() => setShowSparkle(null), 1500);
-      return;
-    }
+    if (lotusStates[index] === 1) return; // already bloomed
 
     playBloom();
     lotusStates[index] = 1;
@@ -816,7 +830,134 @@ const PondSceneContent = ({
         progress: { ...sceneState.progress, percentage: 10 * bloomedCount }
       });
     }
+  }, [sceneState, sceneActions, playBloom, playChime, triggerMiniGesture, safeSetTimeout]);
+
+  const handleLotusHoldStart = (index) => {
+    rearmIdleHints();
+    if (progressiveHintRef.current?.hideHint) progressiveHintRef.current.hideHint();
+    if (showResumePopup) {
+      setShowResumePopup(false);
+      clearTimeout(resumePopupTimeoutRef.current);
+    }
+    if (!sceneState || !sceneActions) return;
+    if (!sceneState.welcomeShown) sceneActions.updateState({ welcomeShown: true });
+
+    const lotusStates = sceneState.lotusStates || [0, 0, 0];
+    if (lotusStates[index] === 1) {
+      // Already bloomed — keep tap acknowledgment for replay-ability
+      playUiTap();
+      setShowSparkle(`lotus-${index}`);
+      setTimeout(() => setShowSparkle(null), 1500);
+      return;
+    }
+
+    // Cancel any active release decay or reset timer for this lotus
+    if (holdReleaseRef.current[index]) {
+      cancelAnimationFrame(holdReleaseRef.current[index]);
+      holdReleaseRef.current[index] = null;
+    }
+    if (holdResetTimerRef.current[index]) {
+      clearTimeout(holdResetTimerRef.current[index]);
+      holdResetTimerRef.current[index] = null;
+    }
+
+    const cfg = LOTUS_HOLD_CONFIG[index];
+    const startProgress = holdProgress[index]; // resume from current value
+    const startTime = performance.now();
+    holdStartedAtRef.current[index] = startTime;
+
+    const tick = (now) => {
+      const elapsed = now - startTime;
+      const added = elapsed / cfg.holdMs;
+      const next = Math.min(1, startProgress + added);
+
+      setHoldProgress(prev => {
+        const updated = [...prev];
+        updated[index] = next;
+        return updated;
+      });
+
+      if (next >= 1) {
+        holdTimersRef.current[index] = null;
+        completeLotusBloom(index);
+        // Reset progress AFTER bloom so glow ring fades naturally
+        setTimeout(() => {
+          setHoldProgress(prev => {
+            const updated = [...prev];
+            updated[index] = 0;
+            return updated;
+          });
+        }, 600);
+        return;
+      }
+
+      holdTimersRef.current[index] = requestAnimationFrame(tick);
+    };
+
+    holdTimersRef.current[index] = requestAnimationFrame(tick);
   };
+
+  const handleLotusHoldEnd = (index) => {
+    if (!sceneState) return;
+    const lotusStates = sceneState.lotusStates || [0, 0, 0];
+    if (lotusStates[index] === 1) return; // already bloomed, ignore
+
+    // Cancel active hold tick
+    if (holdTimersRef.current[index]) {
+      cancelAnimationFrame(holdTimersRef.current[index]);
+      holdTimersRef.current[index] = null;
+    }
+
+    // Begin gentle decay at 2× the fill speed
+    const cfg = LOTUS_HOLD_CONFIG[index];
+    const decayDurationMs = cfg.holdMs / HOLD_DECAY_MULTIPLIER;
+    const startProgress = holdProgress[index];
+    if (startProgress <= 0) return;
+
+    const startTime = performance.now();
+    const decayTick = (now) => {
+      const elapsed = now - startTime;
+      const shrinkRatio = elapsed / decayDurationMs;
+      const next = Math.max(0, startProgress - shrinkRatio);
+
+      setHoldProgress(prev => {
+        const updated = [...prev];
+        updated[index] = next;
+        return updated;
+      });
+
+      if (next <= 0) {
+        holdReleaseRef.current[index] = null;
+        return;
+      }
+      holdReleaseRef.current[index] = requestAnimationFrame(decayTick);
+    };
+    holdReleaseRef.current[index] = requestAnimationFrame(decayTick);
+
+    // Hard reset after grace window (in case decay is slow / paused)
+    holdResetTimerRef.current[index] = setTimeout(() => {
+      if (holdReleaseRef.current[index]) {
+        cancelAnimationFrame(holdReleaseRef.current[index]);
+        holdReleaseRef.current[index] = null;
+      }
+      setHoldProgress(prev => {
+        const updated = [...prev];
+        updated[index] = 0;
+        return updated;
+      });
+      holdResetTimerRef.current[index] = null;
+    }, HOLD_RESET_GRACE_MS);
+  };
+
+  // Cleanup hold timers on unmount
+  useEffect(() => {
+    return () => {
+      holdTimersRef.current.forEach(id => id && cancelAnimationFrame(id));
+      holdReleaseRef.current.forEach(id => id && cancelAnimationFrame(id));
+      holdResetTimerRef.current.forEach(id => id && clearTimeout(id));
+    };
+  }, []);
+  // =====================================================================
 
   const handleGoldenLotusClick = () => {
     rearmIdleHints();
@@ -853,6 +994,13 @@ const PondSceneContent = ({
     }, 500);
   };
 
+  // ==================== V5 PHASE 3 — DRAG WATER ALONG CURVE ====================
+  // Tap elephant → it slides into final position. Then the curved petal path
+  // appears with a pulsing water drop at the start. Child drags the drop along
+  // the path. Drop "snaps" forward when finger is near the next petal.
+  // Going off-path = drop fades softly (0.4s) and reappears at start.
+  // No fail state.
+
   const handleElephantClick = () => {
     rearmIdleHints();
     if (progressiveHintRef.current?.hideHint) progressiveHintRef.current.hideHint();
@@ -861,55 +1009,229 @@ const PondSceneContent = ({
       clearTimeout(resumePopupTimeoutRef.current);
     }
     if (!sceneState || !sceneActions || sceneState.elephantTransformed) return;
+    if (sceneState.phase !== PHASES.ELEPHANT_VISIBLE) return;
 
     playUiTap();
+    triggerMiniGesture('center', 1500, MINI_OK_ICON);
     setShowSparkle('elephant');
+    safeSetTimeout(() => {
+      // Mark elephant as transformed and ACTIVATE DRAG PHASE
+      // (instead of auto-spray, the child now drags the drop themselves)
+      sceneActions.updateState({
+        elephantTransformed: true,
+        trunkActive: true,
+        phase: PHASES.ELEPHANT_TRANSFORMED
+      });
 
-    const elephant = document.getElementById('elephant-container');
-    if (elephant) {
-      elephant.classList.add('elephant-slide-in');
-
+      // Trunk-tip handoff: wait for elephant movement to finish,
+      // then show sparkle and spawn the drop from trunk.
+      setCurrentPetal(-1);
+      setDropPosition(null);
+      setDropFading(false);
+      setDropMagicPhase(null);
+      dropCompletedRef.current = false;
+      petalAdvanceLockUntilRef.current = 0;
       safeSetTimeout(() => {
-        elephant.style.right = '4%';
-        elephant.classList.add('elephant-position-locked');
+        setShowSparkle('trunk-tip');
+        safeSetTimeout(() => {
+          setShowSparkle(null);
+          setDropPosition({ x: DROP_START_POINT.x, y: DROP_START_POINT.y });
+        }, TRUNK_SPARKLE_DURATION_MS);
+      }, ELEPHANT_MOVE_DURATION_MS + DROP_APPEAR_BUFFER_MS);
+    }, 500);
+  };
 
-        sceneActions.updateState({
-          elephantTransformed: true,
-          trunkActive: true,
-          phase: PHASES.ELEPHANT_TRANSFORMED
-        });
+  // Helper: compute distance between two %-coords (normalized for aspect)
+  const pctDistance = (a, b) => {
+    const dx = a.x - b.x;
+    const dy = a.y - b.y;
+    return Math.sqrt(dx * dx + dy * dy);
+  };
 
-        let dropCount = 0;
-        const maxDrops = 15;
+  // Pointer position → % within the drag container
+  const getPctFromEvent = (e) => {
+    const container = dragContainerRef.current;
+    if (!container) return null;
+    const rect = container.getBoundingClientRect();
+    const clientX = e.clientX ?? e.touches?.[0]?.clientX;
+    const clientY = e.clientY ?? e.touches?.[0]?.clientY;
+    if (clientX == null) return null;
+    return {
+      x: ((clientX - rect.left) / rect.width) * 100,
+      y: ((clientY - rect.top) / rect.height) * 100
+    };
+  };
 
-        triggerWaterSpray();
-        dropCount++;
+  const handleDropPointerDown = (e) => {
+    if (sceneState?.goldenLotusBloom || dropFading || dropCompletedRef.current) return;
+    setDragActive(true);
+    rearmIdleHints();
+    e.preventDefault?.();
+  };
 
-        const waterInterval = setInterval(() => {
-          if (dropCount >= maxDrops) {
-            clearInterval(waterInterval);
-            safeSetTimeout(() => {
-              sceneActions.updateState({ trunkActive: false });
-              setShowSparkle(null);
-              playGlow();
-              setTimeout(() => playTwinkle(), 600);
-              triggerMiniGesture('center', 2500, MINI_VICTORY_ICON);
-              safeSetTimeout(() => setRevealConfig({
-                symbolId: 'trunk',
-                symbolName: 'Trunk',
-                affirmation: 'Strong and gentle!',
-                symbolImage: symbolTrunkColored
-              }), 2000);
-            }, 1000);
-            return;
-          }
-          triggerWaterSpray();
-          dropCount++;
-        }, 150);
+  const completeDragToLotus = () => {
+    if (dropCompletedRef.current) return;
+    dropCompletedRef.current = true;
+    setDragActive(false);
+    setDropFading(false);
+    petalAdvanceLockUntilRef.current = 0;
 
-        timeoutsRef.current.push(waterInterval);
-      }, 1000);
+    // Beat 1: drop comes alive (pulse + spin)
+    setDropMagicPhase('pulsing');
+    playChime();
+
+    // Beat 2: burst into stream sparkles
+    safeSetTimeout(() => {
+      setDropMagicPhase('bursting');
+      setShowSparkle('drop-to-lotus-stream');
+    }, DROP_MAGIC_PULSE_MS);
+
+    // Beat 3: tiny pause then bloom
+    safeSetTimeout(() => {
+      setShowSparkle('golden-lotus-wiggle');
+    }, DROP_MAGIC_PULSE_MS + DROP_MAGIC_STREAM_MS);
+
+    safeSetTimeout(() => {
+      setDropPosition(null);
+      setDropMagicPhase(null);
+      setShowSparkle('golden-lotus-bloom');
+      sceneActions.updateState({
+        trunkActive: false,
+        goldenLotusBloom: true,
+        phase: PHASES.GOLDEN_BLOOM
+      });
+      playGlow();
+      safeSetTimeout(() => playTwinkle(), 400);
+      triggerMiniGesture('center', 2500, MINI_VICTORY_ICON);
+      safeSetTimeout(() => setRevealConfig({
+        symbolId: 'trunk',
+        symbolName: 'Trunk',
+        affirmation: 'Strong and gentle!',
+        symbolImage: symbolTrunkColored
+      }), 2400);
+    }, DROP_MAGIC_PULSE_MS + DROP_MAGIC_STREAM_MS + DROP_MAGIC_PRE_BLOOM_PAUSE_MS);
+
+    // Clear the stream sparkle once it lands.
+    safeSetTimeout(() => {
+      setShowSparkle((prev) => (prev === 'drop-to-lotus-stream' ? null : prev));
+    }, DROP_MAGIC_PULSE_MS + DROP_MAGIC_STREAM_MS);
+  };
+
+  const handleDropPointerMove = (e) => {
+    if (!dragActive) return;
+    const pct = getPctFromEvent(e);
+    if (!pct) return;
+
+    setDropPosition(pct);
+
+    // Check if near next petal — snap and advance
+    const nextIdx = currentPetal + 1;
+    if (nextIdx < PETAL_STEPPING_STONES.length) {
+      const nextPetal = PETAL_STEPPING_STONES[nextIdx];
+      const stepLockActive = Date.now() < petalAdvanceLockUntilRef.current;
+      if (!stepLockActive && pctDistance(pct, nextPetal) < PETAL_SNAP_RADIUS_PCT) {
+        setCurrentPetal(nextIdx);
+        setDropPosition({ x: nextPetal.x, y: nextPetal.y });
+        playUiTap();
+        petalAdvanceLockUntilRef.current = Date.now() + PETAL_STEP_LOCK_MS;
+
+        // Reaching the final petal now completes immediately (no extra drop phase).
+        if (nextIdx === PETAL_STEPPING_STONES.length - 1) {
+          completeDragToLotus();
+          return;
+        }
+      }
     }
+
+    // Off-path detection: if far from all path points, fade
+    const allPoints = [
+      { x: DROP_START_POINT.x, y: DROP_START_POINT.y }, // start
+      ...PETAL_STEPPING_STONES,
+      { x: GOLDEN_LOTUS_TARGET_POINT.x, y: GOLDEN_LOTUS_TARGET_POINT.y }  // golden lotus
+    ];
+    const minDist = Math.min(...allPoints.map(p => pctDistance(pct, p)));
+    if (minDist > PETAL_SNAP_RADIUS_PCT * 2.5) {
+      // Drop went off-path
+      setDragActive(false);
+      setDropFading(true);
+      dropCompletedRef.current = false;
+      setTimeout(() => {
+        setCurrentPetal(-1);
+        setDropPosition({ x: DROP_START_POINT.x, y: DROP_START_POINT.y });
+        setDropFading(false);
+        setDropMagicPhase(null);
+        petalAdvanceLockUntilRef.current = 0;
+      }, DROP_FADE_MS);
+    }
+  };
+
+  const handleDropPointerUp = () => {
+    if (!dragActive) return;
+    setDragActive(false);
+
+    // Fallback completion path (for release exactly at end step)
+    if (currentPetal === PETAL_STEPPING_STONES.length - 1) {
+      completeDragToLotus();
+    } else {
+      // Released mid-path — gently fade and reset
+      setDropFading(true);
+      dropCompletedRef.current = false;
+      setTimeout(() => {
+        setCurrentPetal(-1);
+        setDropPosition({ x: DROP_START_POINT.x, y: DROP_START_POINT.y });
+        setDropFading(false);
+        setDropMagicPhase(null);
+        petalAdvanceLockUntilRef.current = 0;
+      }, DROP_FADE_MS);
+    }
+  };
+  // ==============================================================================
+
+  const jumpToElephantPhaseForTesting = () => {
+    if (!sceneState || !sceneActions) return;
+    clearAllTimeouts();
+    if (resumePopupTimeoutRef.current) {
+      clearTimeout(resumePopupTimeoutRef.current);
+      resumePopupTimeoutRef.current = null;
+    }
+    sceneActions.updateState({
+      welcomeShown: true,
+      lotusStates: [1, 1, 1],
+      allLotusBloom: true,
+      goldenLotusVisible: true,
+      goldenLotusBloom: false,
+      elephantVisible: true,
+      elephantTransformed: false,
+      trunkActive: false,
+      phase: PHASES.ELEPHANT_VISIBLE,
+      currentFocus: 'elephant',
+      completed: false,
+      showingCompletionScreen: false,
+      currentPopup: null,
+      discoveredSymbols: { ...(sceneState.discoveredSymbols || {}), lotus: true },
+      progress: { ...(sceneState.progress || {}), percentage: 70, starsEarned: 4, completed: false }
+    });
+    setShowSceneCompletion(false);
+    setShowCulturalCelebration(false);
+    setFireworksFinished(false);
+    setShowCenteredSymbol(null);
+    setShowPowerModal(false);
+    setShowPowerMission(false);
+    setCurrentMissionSymbol(null);
+    setDiscoveryStep('hidden');
+    setIsDiscoveryFading(false);
+    setDiscoveryItem(null);
+    setRevealConfig(null);
+    setShowResumePopup(false);
+    setResumeMessage('');
+    setDropPosition(null);
+    setCurrentPetal(-1);
+    setDropFading(false);
+    setDropMagicPhase(null);
+    petalAdvanceLockUntilRef.current = 0;
+    dropCompletedRef.current = false;
+    setShowSparkle(null);
+    rearmIdleHints();
   };
 
   const shouldEnableHints = () => {
@@ -920,7 +1242,7 @@ const PondSceneContent = ({
   const getHintConfigs = () => [
     {
       id: 'lotus-hint',
-      message: 'Click the lotus flowers!',
+      message: 'Press and hold a lotus 🌸',
       position: { bottom: '60%', left: '30%', transform: 'translateX(-50%)' },
       condition: (sceneState) => {
         if (!sceneState) return false;
@@ -931,7 +1253,7 @@ const PondSceneContent = ({
     },
     {
       id: 'elephant-hint',
-      message: 'Click the elephant!',
+      message: 'Tap the elephant 🐘',
       position: { bottom: '60%', right: '20%', transform: 'translateX(50%)' },
       condition: (sceneState) => {
         if (!sceneState) return false;
@@ -940,7 +1262,7 @@ const PondSceneContent = ({
     },
     {
       id: 'golden-hint',
-      message: 'Click the golden lotus!',
+      message: 'Tap the golden bud ✨',
       position: { bottom: '60%', left: '45%', transform: 'translateX(-50%)' },
       condition: (sceneState) => {
         if (!sceneState) return false;
@@ -1022,8 +1344,18 @@ const PondSceneContent = ({
         <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
           <div className="pond-scene-container">
             <HomeButton onNavigate={onNavigate} />
-            {!showSceneCompletion && (
-            <div className="pond-background" style={{ backgroundImage: `url(${pondBackground})` }}>
+            <div
+              ref={dragContainerRef}
+              className="pond-background"
+              style={{ backgroundImage: `url(${pondGameBg})` }}
+              onPointerMove={dragActive ? handleDropPointerMove : undefined}
+              onPointerUp={dragActive ? handleDropPointerUp : undefined}
+              onPointerLeave={dragActive ? handleDropPointerUp : undefined}
+              onContextMenu={(e) => e.preventDefault()}
+            >
+              {POND_OVERLAY_MID ? (
+                <div className="pond-bg-overlay pond-bg-overlay--mid" style={{ backgroundImage: `url(${POND_OVERLAY_MID})` }} aria-hidden="true" />
+              ) : null}
 
               {/* REMOVE OLD MANUAL RENDERCOUNTER, UNIFIED HEADER IS HANDLED BELOW */}
 
@@ -1045,26 +1377,125 @@ const PondSceneContent = ({
                 showButton={true}
               />
 
-              {/* Lotus flowers */}
-              {[0, 1, 2].map((index) => (
-                <div key={index} className={`lotus lotus-${index + 1} ${showHintGlow && sceneState.lotusStates?.[index] === 0 ? 'hint-glow' : ''}`}>
-                  <ClickableElement
-                    id={`lotus-${index}`}
-                    onClick={() => handleLotusClick(index)}
-                    completed={(sceneState.lotusStates || [])[index] === 1}
-                    zone="pond-zone"
-                    data-element={`lotus-${index + 1}`}
+              {isDevMode && (
+                <button
+                  type="button"
+                  onClick={jumpToElephantPhaseForTesting}
+                  style={{
+                    position: 'absolute',
+                    top: '14px',
+                    right: '14px',
+                    zIndex: 200,
+                    border: 'none',
+                    borderRadius: '999px',
+                    padding: '8px 14px',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    color: '#3B2A0B',
+                    background: 'linear-gradient(135deg, #FFE7A8 0%, #FFD26D 100%)',
+                    boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Test Elephant Phase
+                </button>
+              )}
+
+              {/* Lotus flowers — V5: HOLD TO BLOOM */}
+              {[0, 1, 2].map((index) => {
+                const cfg = LOTUS_HOLD_CONFIG[index];
+                const isBloomed = (sceneState.lotusStates || [])[index] === 1;
+                const progress = holdProgress[index] || 0;
+                return (
+                  <div
+                    key={index}
+                    className={`lotus lotus-${index + 1} ${!isBloomed ? hintClassName : ''}`}
                   >
-                    <img src={getLotusImage(index)} alt={`Lotus ${index + 1}`} style={{ width: '100%', height: '100%' }} />
-                  </ClickableElement>
-                  {showSparkle === `lotus-${index}` && (
+                    {/* Hold target — uses pointer events for cross-device support */}
+                    <div
+                      id={`lotus-${index}`}
+                      role="button"
+                      aria-label={`Hold to bloom lotus ${index + 1}`}
+                      data-element={`lotus-${index + 1}`}
+                      onPointerDown={(e) => {
+                        e.preventDefault?.();
+                        if (!isBloomed) handleLotusHoldStart(index);
+                      }}
+                      onPointerUp={() => !isBloomed && handleLotusHoldEnd(index)}
+                      onPointerLeave={() => !isBloomed && handleLotusHoldEnd(index)}
+                      onPointerCancel={() => !isBloomed && handleLotusHoldEnd(index)}
+                      className="pond-lotus-hold-target"
+                      style={{ cursor: isBloomed ? 'default' : 'pointer' }}
+                    >
+                      {/* Glow ring — fills as hold progresses (no progress bar UI) */}
+                      {!isBloomed && progress > 0 && (
+                        <svg
+                          viewBox="0 0 100 100"
+                          className="pond-hold-ring"
+                          aria-hidden="true"
+                        >
+                          <circle
+                            cx="50"
+                            cy="50"
+                            r="46"
+                            fill="none"
+                            stroke="#FFD86B"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeDasharray={`${2 * Math.PI * 46}`}
+                            strokeDashoffset={`${2 * Math.PI * 46 * (1 - progress)}`}
+                            transform="rotate(-90 50 50)"
+                            style={{
+                              filter: `drop-shadow(0 0 ${4 + progress * 8}px rgba(255, 216, 107, ${0.5 + progress * 0.4}))`,
+                              transition: 'filter 0.1s linear',
+                            }}
+                          />
+                        </svg>
+                      )}
+
+                      <img
+                        src={getLotusImage(index)}
+                        alt={`Lotus ${index + 1}`}
+                        className="pond-lotus-image"
+                        style={{
+                          // Subtle scale during hold — feels like the lotus is "stirring"
+                          transform: !isBloomed && progress > 0 ? `scale(${1 + progress * 0.06})` : 'scale(1)',
+                        }}
+                        draggable={false}
+                      />
+
+                      {/* Ambient distraction overlays — VISUAL ONLY, never interrupt hold */}
+                      {!isBloomed && cfg.ambient === 'fish' && (
+                        <div aria-hidden="true" className="pond-fish-overlay">
+                          <img src={pondFishImage} alt="" className="pond-fish-image" draggable={false} />
+                        </div>
+                      )}
+
+                      {!isBloomed && cfg.ambient === 'ripples' && (
+                        <div aria-hidden="true" className="pond-ripple-overlay">
+                          <div className="pond-soft-ripple pond-soft-ripple--1" />
+                          <div className="pond-soft-ripple pond-soft-ripple--2" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Existing sparkle layer for lotus bloom celebration */}
+              {[0, 1, 2].map((index) => (
+                showSparkle === `lotus-${index}` && (
+                  <div
+                    key={`sparkle-${index}`}
+                    className={`lotus lotus-${index + 1} pond-lotus-sparkle`}
+                  >
                     <SparkleAnimation type="star" count={15} color="#ff9ebd" size={10} duration={1500} fadeOut={true} area="full" />
-                  )}
-                </div>
+                  </div>
+                )
               ))}
 
-              {/* Hint 2 pointer (idle gesture) */}
-              {showIdleGestureHint && (() => {
+              {/* Final idle hint pointer */}
+              {idleHintLevel >= 3 && (() => {
                 const idleTarget =
                   sceneState?.phase === PHASES.ELEPHANT_VISIBLE ? 'elephant' :
                   sceneState?.phase === PHASES.GOLDEN_VISIBLE ? 'golden-lotus' :
@@ -1085,14 +1516,14 @@ const PondSceneContent = ({
 
               {/* Golden lotus */}
               {sceneState.goldenLotusVisible && (
-                <div className={`golden-lotus-container ${sceneState.goldenLotusBloom ? 'blooming' : ''} ${showHintGlow && !sceneState.goldenLotusBloom && !sceneState.elephantVisible ? 'hint-glow' : ''}`}>
+                <div className={`golden-lotus-container ${sceneState.goldenLotusBloom ? 'blooming' : ''} ${showSparkle === 'golden-lotus-wiggle' ? 'golden-lotus-wiggling' : ''} ${!sceneState.goldenLotusBloom && !sceneState.elephantVisible ? hintClassName : ''}`}>
                   <ClickableElement
                     id="golden-lotus"
                     onClick={handleGoldenLotusClick}
                     completed={sceneState.goldenLotusBloom}
                     zone="golden-zone"
                   >
-                    <img src={sceneState.goldenLotusBloom ? goldenLotusBloomed : goldenLotusClosed} alt="Golden Lotus" style={{ width: '100%', height: '100%' }} />
+                    <img src={sceneState.goldenLotusBloom ? goldenLotusBloomed : goldenLotusClosed} alt="Golden Lotus" className="pond-fit-image" />
                   </ClickableElement>
                   {(showSparkle === 'golden-lotus' || showSparkle === 'golden-lotus-clicked' || showSparkle === 'golden-lotus-bloom') && (
                     <SparkleAnimation
@@ -1111,7 +1542,7 @@ const PondSceneContent = ({
               {/* Elephant */}
               {sceneState.elephantVisible && (
                 <div
-                  className={`elephant-partial ${sceneState.elephantTransformed ? 'elephant-position-locked' : ''} ${showHintGlow && !sceneState.elephantTransformed ? 'hint-glow' : ''}`}
+                  className={`elephant-partial ${sceneState.elephantTransformed ? 'elephant-position-locked' : ''} ${!sceneState.elephantTransformed ? hintClassName : ''}`}
                   id="elephant-container"
                 >
                   <ClickableElement
@@ -1120,7 +1551,7 @@ const PondSceneContent = ({
                     completed={sceneState.elephantTransformed}
                     zone="elephant-zone"
                   >
-                    <img src={sceneState.elephantTransformed ? waterElephant : elephantFull} alt="Elephant" style={{ width: '100%', height: '100%' }} />
+                    <img src={elephantFull} alt="Elephant" className="pond-fit-image" />
                   </ClickableElement>
                   {(showSparkle === 'elephant' || showSparkle === 'elephant-appear') && (
                     <SparkleAnimation
@@ -1136,29 +1567,123 @@ const PondSceneContent = ({
                 </div>
               )}
 
-              {/* Water Spray Arc (Vakratunda Grove style) */}
-              {activeWaterSpray && (
-                <WaterSprayArc
-                  key={activeWaterSpray.key}
-                  sourcePosition={activeWaterSpray.sourcePosition}
-                  targetPosition={activeWaterSpray.targetPosition}
-                  isActive={true}
-                  dropCount={22}
-                  duration={1700}
-                  phase={activeWaterSpray.phase}
-                />
+              {/* V5 PHASE 3 — DRAG WATER ALONG CURVE */}
+              {sceneState.elephantTransformed && !sceneState.goldenLotusBloom && dropPosition && (
+                <>
+                  {/* Petal stepping stones */}
+                  {PETAL_STEPPING_STONES.map((p, idx) => {
+                    const reached = idx <= currentPetal;
+                    const isNext = idx === currentPetal + 1;
+                    return (
+                      <div
+                        key={p.id}
+                        aria-hidden="true"
+                        className="pond-petal-stone"
+                        style={{
+                          left: `${p.x}%`,
+                          top: `${p.y}%`,
+                          background: reached
+                            ? 'radial-gradient(circle, #FFD86B 0%, #FFB347 100%)'
+                            : 'radial-gradient(circle, rgba(255,216,107,0.55) 0%, rgba(255,179,71,0.35) 100%)',
+                          boxShadow: reached
+                            ? '0 0 16px rgba(255, 216, 107, 0.85)'
+                            : '0 0 8px rgba(255, 216, 107, 0.45)',
+                          animation: reached
+                            ? 'none'
+                            : isNext
+                              ? 'pondPetalPulse 1.2s ease-in-out infinite'
+                              : 'pondPetalPulse 2.4s ease-in-out infinite',
+                          opacity: reached ? 1 : isNext ? 1 : 0.5,
+                          transform: isNext ? 'translate(-50%, -50%) scale(1.08)' : 'translate(-50%, -50%)',
+                        }}
+                      />
+                    );
+                  })}
+
+                  {/* The draggable water drop */}
+                  <div
+                    role="button"
+                    aria-label="Drag the water drop along the curved path"
+                    onPointerDown={handleDropPointerDown}
+                    className={`pond-drop-handle ${dropMagicPhase === 'pulsing' ? 'drop-magic-pulsing' : ''} ${dropMagicPhase === 'bursting' ? 'drop-magic-bursting' : ''}`}
+                    style={{
+                      left: `${dropPosition.x}%`,
+                      top: `${dropPosition.y}%`,
+                      cursor: dragActive ? 'grabbing' : 'grab',
+                      opacity: dropFading ? 0 : 1,
+                      transition: dragActive
+                        ? 'opacity 0.4s ease-out'
+                        : 'left 0.25s ease-out, top 0.25s ease-out, opacity 0.4s ease-out',
+                      animation: !dragActive && !dropMagicPhase && currentPetal === -1
+                        ? 'pondDropPulse 1.4s ease-in-out infinite'
+                        : 'none',
+                    }}
+                  >
+                    <svg viewBox="0 0 46 52" className="pond-drop-svg">
+                      <path
+                        d="M 23 4 C 23 4, 8 22, 8 34 C 8 44, 15 50, 23 50 C 31 50, 38 44, 38 34 C 38 22, 23 4, 23 4 Z"
+                        fill="url(#dropGradient)"
+                        stroke="#5BB3E8"
+                        strokeWidth="1.5"
+                      />
+                      <ellipse cx="18" cy="22" rx="4" ry="6" fill="#FFFFFF" opacity="0.7" />
+                      <defs>
+                        <radialGradient id="dropGradient" cx="35%" cy="30%" r="70%">
+                          <stop offset="0%" stopColor="#B8E5FB" />
+                          <stop offset="60%" stopColor="#5BB3E8" />
+                          <stop offset="100%" stopColor="#3A8FCB" />
+                        </radialGradient>
+                      </defs>
+                    </svg>
+                  </div>
+                </>
               )}
+
+              {POND_OVERLAY_FRONT ? (
+                <div className="pond-bg-overlay pond-bg-overlay--front" style={{ backgroundImage: `url(${POND_OVERLAY_FRONT})` }} aria-hidden="true" />
+              ) : null}
 
               {/* Symbol Learning Sparkles */}
               {showSparkle === 'lotus-to-sidebar' && (
-                <div style={{ position: 'absolute', top: '25%', left: '30%', width: '300px', height: '200px', zIndex: 15, pointerEvents: 'none' }}>
+                <div className="pond-symbol-stream pond-symbol-stream--lotus">
                   <SparkleAnimation type="stream" count={20} color="#4ECDC4" size={10} duration={3000} fadeOut={true} area="full" />
                 </div>
               )}
 
               {showSparkle === 'trunk-to-sidebar' && (
-                <div style={{ position: 'absolute', top: '60%', right: '25%', width: '300px', height: '200px', zIndex: 15, pointerEvents: 'none' }}>
+                <div className="pond-symbol-stream pond-symbol-stream--trunk">
                   <SparkleAnimation type="stream" count={20} color="#FFD700" size={10} duration={3000} fadeOut={true} area="full" />
+                </div>
+              )}
+
+              {showSparkle === 'drop-to-lotus-stream' && (
+                <div
+                  className="pond-drop-to-lotus-stream"
+                  style={{
+                    left: `${PETAL_STEPPING_STONES[PETAL_STEPPING_STONES.length - 1].x}%`,
+                    top: `${PETAL_STEPPING_STONES[PETAL_STEPPING_STONES.length - 1].y}%`,
+                    width: `${Math.abs(GOLDEN_LOTUS_TARGET_POINT.x - PETAL_STEPPING_STONES[PETAL_STEPPING_STONES.length - 1].x) + 14}%`,
+                    height: `${Math.abs(GOLDEN_LOTUS_TARGET_POINT.y - PETAL_STEPPING_STONES[PETAL_STEPPING_STONES.length - 1].y) + 14}%`,
+                  }}
+                >
+                  <SparkleAnimation type="stream" count={14} color="#9BE6FF" size={9} duration={DROP_MAGIC_STREAM_MS + 100} fadeOut={true} area="full" />
+                </div>
+              )}
+
+              {showSparkle === 'trunk-tip' && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: `${DROP_START_POINT.x}%`,
+                    top: `${DROP_START_POINT.y}%`,
+                    width: '84px',
+                    height: '84px',
+                    transform: 'translate(-50%, -50%)',
+                    pointerEvents: 'none',
+                    zIndex: 40,
+                  }}
+                >
+                  <SparkleAnimation type="magic" count={16} color="#5BB3E8" size={10} duration={TRUNK_SPARKLE_DURATION_MS} fadeOut={true} area="full" />
                 </div>
               )}
 
@@ -1176,43 +1701,16 @@ const PondSceneContent = ({
                 </div>
               )}
             </div>
-            )}
 
             {/* Resume Popup */}
-            {showResumePopup && (
-              <div style={{
-                position: 'fixed',
-                top: '20%',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-                padding: '30px 50px',
-                borderRadius: '20px',
-                boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
-                zIndex: 9999,
-                fontFamily: 'Baloo 2, cursive',
-                fontSize: '28px',
-                fontWeight: 'bold',
-                color: '#5D2E0F',
-                textAlign: 'center',
-                maxWidth: '80%',
-                border: '4px solid #FF8C00'
-              }}>
+              {showResumePopup && (
+              <div className="pond-resume-popup">
                 {resumeMessage}
               </div>
             )}
 
             {/* New Overlay Block for SymbolPowerMission */}
-            {showPowerMission && (
-              <div style={{
-                position: 'fixed',
-                top: 0, left: 0, right: 0, bottom: 0,
-                background: 'rgba(0, 0, 0, 0.7)',
-                backdropFilter: 'blur(3px)',
-                zIndex: 499,
-                animation: 'fadeIn 0.3s ease-out'
-              }} />
-            )}
+            {showPowerMission && <div className="pond-power-overlay-block" />}
 
             {/* Symbol Power Mission */}
             <SymbolPowerMission
@@ -1267,7 +1765,7 @@ const PondSceneContent = ({
               <SimpleDiscoveryOverlay
                 celebrationTitle="You Found the Elephant's Trunk Magic!"
                 celebrationText="It wants to share its secret with you!"
-                celebrationImage={waterElephant}
+                celebrationImage={elephantFull}
                 powerTitle="Power Switch Unlocked!"
                 powerText="Your trunk can be strong or gentle. And just like that… you can choose how to act!"
                 powerIcon={symbolTrunkColored}
@@ -1303,6 +1801,7 @@ const PondSceneContent = ({
             {showSceneCompletion && (
               <SceneCompletionCelebration
                 show={true}
+                zoneId={zoneId}
                 sceneName="Pond Adventure"
                 completionTitle={completionModalContent?.title}
                 completionSubtitle={completionModalContent?.subtitle}
@@ -1394,5 +1893,5 @@ const PondSceneContent = ({
   );
 };
 
-export default PondSceneSimplifiedV3;
+export default PondSceneSimplifiedV5;
 
