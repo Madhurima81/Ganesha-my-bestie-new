@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Modak Slot Picker</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --accent: #2563eb;
+      --danger: #dc2626;
+      --ok: #059669;
+      --ring: #93c5fd;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .toolbar .group {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 6px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      background: #fff;
+    }
+    label.small {
+      font-size: 12px;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    input[type="file"] {
+      max-width: 240px;
+      font-size: 12px;
+    }
+    input[type="number"] {
+      width: 64px;
+      padding: 6px 8px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 12px;
+    }
+    button {
+      border: 1px solid #d1d5db;
+      background: #fff;
+      color: var(--text);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    button:hover { border-color: #9ca3af; }
+    button.primary {
+      border-color: var(--accent);
+      color: #fff;
+      background: var(--accent);
+    }
+    button.danger {
+      border-color: var(--danger);
+      color: #fff;
+      background: var(--danger);
+    }
+    button.ok {
+      border-color: var(--ok);
+      color: #fff;
+      background: var(--ok);
+    }
+    .status {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .stage-wrap {
+      width: 100%;
+      overflow: auto;
+      border: 1px dashed #d1d5db;
+      border-radius: 12px;
+      background: #f9fafb;
+      padding: 10px;
+    }
+    .stage {
+      position: relative;
+      width: min(100%, 1024px);
+      aspect-ratio: 16 / 9;
+      margin: 0 auto;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #eef2ff;
+      cursor: crosshair;
+    }
+    .layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+      user-select: none;
+    }
+    .overlay {
+      opacity: 1;
+    }
+    .marker {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(220, 38, 38, 0.45);
+      border: 2px solid rgba(220, 38, 38, 0.95);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 16px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
+      pointer-events: none;
+      z-index: 5;
+    }
+    .hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 160px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      padding: 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      resize: vertical;
+      background: #fff;
+    }
+    .footer {
+      font-size: 12px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+      <div class="toolbar">
+        <div class="group">
+          <label class="small">Background
+            <input id="bgInput" type="file" accept="image/*" />
+          </label>
+          <label class="small">Overlay (optional)
+            <input id="overlayInput" type="file" accept="image/*" />
+          </label>
+        </div>
+        <div class="group">
+          <label class="small">Target slots
+            <input id="slotCount" type="number" min="1" max="20" value="8" />
+          </label>
+          <label class="small">Decimals
+            <input id="decimals" type="number" min="0" max="4" value="1" />
+          </label>
+        </div>
+        <div class="group">
+          <button id="undoBtn" type="button">Undo</button>
+          <button id="clearBtn" class="danger" type="button">Clear</button>
+          <button id="copyBtn" class="ok" type="button">Copy JSON</button>
+          <button id="copyConstBtn" class="primary" type="button">Copy JS Const</button>
+        </div>
+      </div>
+      <div id="status" class="status">Load a background, then click the stage to place slots.</div>
+    </div>
+
+    <div class="card">
+      <div class="stage-wrap">
+        <div id="stage" class="stage" aria-label="Coordinate picking stage">
+          <img id="bgLayer" class="layer" alt="" />
+          <img id="overlayLayer" class="layer overlay" alt="" />
+        </div>
+      </div>
+      <div class="hint">Tip: click where the center of each modak should be. We use percentages so it scales across devices.</div>
+    </div>
+
+    <div class="card">
+      <textarea id="output" spellcheck="false" readonly></textarea>
+      <div class="footer">Paste into <code>MODAK_POSITION_SLOTS</code> in <code>NewModakSceneV7.jsx</code>.</div>
+    </div>
+  </div>
+
+  <script>
+    const bgInput = document.getElementById('bgInput');
+    const overlayInput = document.getElementById('overlayInput');
+    const slotCount = document.getElementById('slotCount');
+    const decimalsInput = document.getElementById('decimals');
+    const undoBtn = document.getElementById('undoBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const copyConstBtn = document.getElementById('copyConstBtn');
+    const stage = document.getElementById('stage');
+    const bgLayer = document.getElementById('bgLayer');
+    const overlayLayer = document.getElementById('overlayLayer');
+    const output = document.getElementById('output');
+    const status = document.getElementById('status');
+
+    /** @type {{x:number,y:number}[]} */
+    let points = [];
+
+    function setStatus(text) {
+      status.textContent = text;
+    }
+
+    function readFileAsObjectUrl(file, cb) {
+      if (!file) return;
+      const url = URL.createObjectURL(file);
+      cb(url);
+    }
+
+    function markerEl(index, p) {
+      const el = document.createElement('div');
+      el.className = 'marker';
+      el.style.left = p.x + '%';
+      el.style.top = p.y + '%';
+      el.textContent = String(index + 1);
+      return el;
+    }
+
+    function round(v) {
+      const d = Math.max(0, Math.min(4, Number(decimalsInput.value || 1)));
+      const m = 10 ** d;
+      return Math.round(v * m) / m;
+    }
+
+    function render() {
+      const old = stage.querySelectorAll('.marker');
+      old.forEach((n) => n.remove());
+
+      points.forEach((p, i) => {
+        stage.appendChild(markerEl(i, p));
+      });
+
+      const json = points.map((p) => ({ top: `${p.y}%`, left: `${p.x}%` }));
+      output.value = JSON.stringify(json, null, 2);
+
+      const target = Number(slotCount.value || 8);
+      setStatus(`Slots: ${points.length}/${target}. Click stage to add. Undo/Clear available.`);
+    }
+
+    function addPointFromClick(evt) {
+      const rect = stage.getBoundingClientRect();
+      const x = ((evt.clientX - rect.left) / rect.width) * 100;
+      const y = ((evt.clientY - rect.top) / rect.height) * 100;
+      points.push({ x: round(x), y: round(y) });
+      render();
+    }
+
+    bgInput.addEventListener('change', () => {
+      const file = bgInput.files && bgInput.files[0];
+      if (!file) return;
+      readFileAsObjectUrl(file, (url) => {
+        bgLayer.src = url;
+        setStatus(`Background loaded: ${file.name}`);
+      });
+    });
+
+    overlayInput.addEventListener('change', () => {
+      const file = overlayInput.files && overlayInput.files[0];
+      if (!file) return;
+      readFileAsObjectUrl(file, (url) => {
+        overlayLayer.src = url;
+        setStatus(`Overlay loaded: ${file.name}`);
+      });
+    });
+
+    stage.addEventListener('click', (evt) => {
+      addPointFromClick(evt);
+    });
+
+    undoBtn.addEventListener('click', () => {
+      points.pop();
+      render();
+    });
+
+    clearBtn.addEventListener('click', () => {
+      points = [];
+      render();
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(output.value);
+        setStatus('Copied JSON to clipboard.');
+      } catch {
+        setStatus('Could not copy automatically. Select and copy from the box below.');
+      }
+    });
+
+    copyConstBtn.addEventListener('click', async () => {
+      const arr = points.map((p) => `  { top: '${p.y}%', left: '${p.x}%' }`);
+      const text = `const MODAK_POSITION_SLOTS = [\n${arr.join(',\n')}\n];\n`;
+      try {
+        await navigator.clipboard.writeText(text);
+        setStatus('Copied JS const to clipboard.');
+      } catch {
+        output.value = text;
+        setStatus('Could not copy automatically. JS const placed in output box.');
+      }
+    });
+
+    slotCount.addEventListener('change', render);
+    decimalsInput.addEventListener('change', () => {
+      points = points.map((p) => ({ x: round(p.x), y: round(p.y) }));
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
+
