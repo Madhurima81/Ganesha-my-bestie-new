@@ -72,18 +72,19 @@ import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOv
 
 // Images
 //import forestBackground from './assets/images/forest-background.png';
-import forestBackground from './assets/images/modak-game-bg.svg';
-import modak1 from './assets/images/modak-1.svg';
-import modak2 from './assets/images/modak-2.svg';
-import modak3 from './assets/images/modak-3.svg';
-import basket from './assets/images/basket.svg';
-import mooshika from './assets/images/mooshika.svg';
+import forestBackground from './assets/images/modak-game-bg.jpg';
+import foregroundOverlay from './assets/images/modak-game-overlay.png';
+import modak1 from './assets/images/modak-new.png';
+import modak2 from './assets/images/modak-new.png';
+import modak3 from './assets/images/modak-new.png';
+import basket from './assets/images/modak-plate.png';
+import mooshika from './assets/images/mooshika-new.png';
 import mudMound from './assets/images/mound.svg';
 import rock from './assets/images/rock.png';
 import belly from './assets/images/belly.png';
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.svg';
-import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.svg';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.svg';
+import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.png';
+import symbolModakColored from '../../shared/images/icons/symbol-modak-new.png';
+import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.png';
 import mooshikaBefore from './assets/images/mooshika-before.png';
 import mooshikaAfter from './assets/images/mooshika-after.png';
 import modakBefore from './assets/images/modak-before.png';
@@ -145,13 +146,32 @@ const PHASES = {
   COMPLETE: 'complete'
 };
 const MINI_THUMBS_UP_ICON = '/images/hand-thumbsup.svg';
+const MODAK_POSITION_SLOTS = [
+  { top: '32%', left: '9%' },
+  { top: '31.5%', left: '24%' },
+  { top: '31.5%', left: '38%' },
+  { top: '32%', left: '52%' },
+  { top: '32%', left: '66%' },
+  { top: '36%', left: '79%' }
+];
+const SHOW_MODAK_SLOT_DEBUG = false;
+
+const pickRandomModakSlots = () => {
+  const indices = MODAK_POSITION_SLOTS.map((_, i) => i);
+  for (let i = indices.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indices[i], indices[j]] = [indices[j], indices[i]];
+  }
+  return indices.slice(0, 3);
+};
 
 const MODAK_WEB_SPEECH_VO = {
   welcome: 'Welcome to Symbol Mountain! Can you find my friend Mooshika?',
   findMooshika: "Tap the little mounds. Let's find Mooshika!",
+  findMooshikaIdle: 'Tap the small brown hills. Mooshika is hiding in one of them!',
   mooshikaFound: 'You found Mooshika! My little mouse friend.',
   focusPower: 'Mooshika helps us focus. Say with me: I can focus!',
-  collectStart: 'Now help Mooshika. Find three golden modaks!',
+  collectStart: 'Now help Mooshika. Tap the modaks to collect them.',
   sharingPower: 'Sharing makes joy grow. Say with me: I love to share!',
   feedGanesha: 'Drag the modaks to Ganesha.',
   gratitudePower: 'You helped a friend. Say with me: I am grateful.',
@@ -161,6 +181,7 @@ const MODAK_WEB_SPEECH_VO = {
 const MODAK_WEB_SPEECH_MOMENT = {
   welcome: 'greeting',
   findMooshika: 'default',
+  findMooshikaIdle: 'default',
   mooshikaFound: 'celebration',
   focusPower: 'encouragement',
   collectStart: 'default',
@@ -250,6 +271,7 @@ const NewModakSceneMVP = ({
           moundsVanishing: false,
 
           modakStates: [0, 0, 0],
+          modakSlotIndices: pickRandomModakSlots(),
           modaksUnlocked: false,
           basketVisible: false,
           basketFull: false,
@@ -310,6 +332,14 @@ const NewModakSceneMVPContent = ({
 
   if (!sceneState?.phase) sceneActions.updateState({ phase: PHASES.MOOSHIKA_SEARCH });
 
+  // Backfill randomized modak slots for older saved state objects.
+  useEffect(() => {
+    const hasValidSlots = Array.isArray(sceneState?.modakSlotIndices) && sceneState.modakSlotIndices.length === 3;
+    if (!hasValidSlots) {
+      sceneActions.updateState({ modakSlotIndices: pickRandomModakSlots() });
+    }
+  }, [sceneState?.modakSlotIndices, sceneActions]);
+
   // ========================================
   // VOICE GUIDANCE HOOK
   // ========================================
@@ -330,7 +360,11 @@ const NewModakSceneMVPContent = ({
     startIdleTimer,
     stopIdleTimer,
     setCurrentPhase,
-    recordInteraction
+    recordInteraction,
+    playTap,
+    playCorrect,
+    playPowerUnlock,
+    playCelebration
   } = useVoiceGuidance(zoneId, sceneId, {
     enableMusic: true,
     musicVolume: 0.1,
@@ -363,9 +397,12 @@ const NewModakSceneMVPContent = ({
   // so the visual matches the 3000ms audio/timer resume delay above.
   const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
 
-  const {
-    playUiTap, playWrongTap, playSparkle, playBloom, playChime, playGlow, playTwinkle
-  } = useGameSounds();
+  const { playSparkle, playWrongTap } = useGameSounds();
+  const playUiTap = playTap;
+  const playBloom = playCorrect;
+  const playChime = playCorrect;
+  const playGlow = playPowerUnlock;
+  const playTwinkle = playCelebration;
 
   const { isAudioOn, toggleAudio } = useAudioPreference();
   const { speak, stop: stopSpokenVoice } = useGaneshaVoice();
@@ -423,7 +460,6 @@ const NewModakSceneMVPContent = ({
   const openingModalContent = getOpeningModal(zoneId, sceneId);
   const completionModalContent = getCompletionModal(zoneId, sceneId);
 
-  const [showHintGlow, setShowHintGlow] = useState(false);
   const [showSparkle, setShowSparkle] = useState(null);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
   const [showCulturalCelebration, setShowCulturalCelebration] = useState(false);
@@ -453,6 +489,8 @@ const NewModakSceneMVPContent = ({
   const [showDragHint, setShowDragHint] = useState(false);
   const hasShownDragHintRef = useRef(false);
   const [showIdleGestureHint, setShowIdleGestureHint] = useState(false);
+  const [wrongMoundIndex, setWrongMoundIndex] = useState(null);
+  const wrongMoundShakeTimerRef = useRef(null);
   const idleHintsEnabled = true;
   const miniGestureTimerRef = useRef(null);
   const [miniGesture, setMiniGesture] = useState({
@@ -467,6 +505,7 @@ const NewModakSceneMVPContent = ({
   // clear visuals, idle level=0, and restart the 10s/18s/26s ladder.
   const [hintResetKey, setHintResetKey] = useState(0);
   const [idleHintLevel, setIdleHintLevel] = useState(0);
+  const phase1IdleVoPlayedRef = useRef(false);
   const lastIdleInteractionAtRef = useRef(Date.now());
   const IDLE_HINT_L1_MS = 10000;
   const IDLE_HINT_L2_MS = 18000;
@@ -487,6 +526,15 @@ const NewModakSceneMVPContent = ({
       setMiniGesture(prev => ({ ...prev, show: false }));
       miniGestureTimerRef.current = null;
     }, durationMs);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (wrongMoundShakeTimerRef.current) {
+        clearTimeout(wrongMoundShakeTimerRef.current);
+        wrongMoundShakeTimerRef.current = null;
+      }
+    };
   }, []);
 
   // ========================================
@@ -964,9 +1012,9 @@ const NewModakSceneMVPContent = ({
   // 3) restart countdown from "now"
   useEffect(() => {
     if (!idleHintsEnabled) return;
-    setShowHintGlow(false);
     setShowIdleGestureHint(false);
     setIdleHintLevel(0);
+    phase1IdleVoPlayedRef.current = false;
     lastIdleInteractionAtRef.current = Date.now();
   }, [hintResetKey, idleHintsEnabled]);
 
@@ -984,7 +1032,6 @@ const NewModakSceneMVPContent = ({
 
     if (!isHintPhase) {
       setIdleHintLevel(0);
-      setShowHintGlow(false);
       setShowIdleGestureHint(false);
       return;
     }
@@ -1013,13 +1060,24 @@ const NewModakSceneMVPContent = ({
     ];
     const isHintPhase = glowPhases.includes(sceneState?.phase) && !!sceneState?.welcomeShown;
     if (!isHintPhase) {
-      setShowHintGlow(false);
       setShowIdleGestureHint(false);
       return;
     }
-    setShowHintGlow(idleHintLevel >= 2);
+    // Gesture cue appears only at level 3.
     setShowIdleGestureHint(idleHintLevel >= 3);
   }, [idleHintLevel, sceneState?.phase, sceneState?.welcomeShown, idleHintsEnabled]);
+
+  // Phase 1 idle VO: play once at level 2 (hint-glow), reset on interaction/hintResetKey.
+  useEffect(() => {
+    if (!idleHintsEnabled) return;
+    if (!sceneState?.welcomeShown) return;
+    if (sceneState?.phase !== PHASES.MOOSHIKA_SEARCH) return;
+
+    if (idleHintLevel >= 2 && !phase1IdleVoPlayedRef.current) {
+      phase1IdleVoPlayedRef.current = true;
+      playVoice('findMooshikaIdle');
+    }
+  }, [idleHintLevel, sceneState?.phase, sceneState?.welcomeShown, idleHintsEnabled, playVoice]);
 
   // ========================================
   // FIX: Handle Discovery Overlay Logic via useEffect
@@ -1221,7 +1279,7 @@ const NewModakSceneMVPContent = ({
   const handleMoundClick = (moundIndex) => {
     recordInteraction();
     playUiTap();
-    setShowHintGlow(false);
+    setWrongMoundIndex(null);
     setShowIdleGestureHint(false);
     // Re-arm idle ladder from this interaction point.
     setHintResetKey(k => k + 1);
@@ -1230,9 +1288,9 @@ const NewModakSceneMVPContent = ({
     if (sceneState.phase !== PHASES.MOOSHIKA_SEARCH) return;
 
     const moundStates = [...(sceneState.moundStates || [0, 0, 0, 0, 0])];
-    moundStates[moundIndex - 1] = 1;
 
     if (moundIndex === sceneState.correctMound) {
+      moundStates[moundIndex - 1] = 1;
       // 1. STOP THE SEARCH VOICE IMMEDIATELY
       stopVoice(); // Cut any playing VO so it doesn't overlap with success sound
       if (idleHintsEnabled) stopIdleTimer();
@@ -1288,14 +1346,21 @@ const NewModakSceneMVPContent = ({
       // }, 4800);
 
     } else {
-      // Wrong mound - stop any idle hint VO, then play SFX + VO
+      // Wrong mound - Scene 22 style: wrong SFX + shake only (no fade/lock)
       stopVoice();
       playWrongTap();
       setShowSparkle(`mound-${moundIndex}`);
-      sceneActions.updateState({ moundStates });
+      if (wrongMoundShakeTimerRef.current) {
+        clearTimeout(wrongMoundShakeTimerRef.current);
+        wrongMoundShakeTimerRef.current = null;
+      }
+      setWrongMoundIndex(moundIndex);
+      wrongMoundShakeTimerRef.current = setTimeout(() => {
+        setWrongMoundIndex(null);
+        wrongMoundShakeTimerRef.current = null;
+      }, 350);
       setTimeout(() => setShowSparkle(null), 1000);
       // Clear hint visuals immediately — glow + gesture stop on any interaction
-      setShowHintGlow(false);
       setShowIdleGestureHint(false);
     }
   };
@@ -1305,7 +1370,6 @@ const NewModakSceneMVPContent = ({
     stopVoice(); // Cut any playing VO (idle hint / collect instruction) before tap SFX
     playUiTap();
     // Clear hint visuals immediately on every modak tap
-    setShowHintGlow(false);
     setShowIdleGestureHint(false);
     setHintResetKey(k => k + 1);
 
@@ -1397,7 +1461,6 @@ const NewModakSceneMVPContent = ({
     stopVoice(); // Cut any playing VO (idle hint / feed instruction) before feed SFX
     playUiTap();
     // Clear hint visuals immediately on every rock drop
-    setShowHintGlow(false);
     setShowIdleGestureHint(false);
     setHintResetKey(k => k + 1);
 
@@ -1478,6 +1541,7 @@ const NewModakSceneMVPContent = ({
       moundsVanished: false,
       moundsVanishing: false,
       modakStates: [0, 0, 0],
+      modakSlotIndices: pickRandomModakSlots(),
       modaksUnlocked: false,
       basketVisible: false,
       basketFull: false,
@@ -1504,7 +1568,6 @@ const NewModakSceneMVPContent = ({
 
     setShowSparkle(null);
     setShowMooshikaSpeech(false);
-    setShowHintGlow(false);
     setShowDiscoveryFlip1(false);
     setShowDiscoveryFlip2(false);
     setShowDiscoveryFlip3(false);
@@ -1556,7 +1619,16 @@ const NewModakSceneMVPContent = ({
                 <div
                   className={`modak-game-mud-mound modak-game-mound-${index}
                     ${sceneState.moundsVanishing ? 'fade-out' : ''}
-                    ${showHintGlow && sceneState.phase === PHASES.MOOSHIKA_SEARCH ? 'modak-game-hint-glow' : ''}`}
+                    ${wrongMoundIndex === index ? 'wrong-shake' : ''}
+                    ${sceneState.phase === PHASES.MOOSHIKA_SEARCH
+                      ? (idleHintLevel === 1
+                        ? 'hint'
+                        : idleHintLevel === 2
+                          ? 'hint-strong'
+                          : idleHintLevel >= 3
+                            ? 'hint-final'
+                            : '')
+                      : ''}`}
                   key={`mound-${index}`}
                 >
 
@@ -1645,17 +1717,36 @@ const NewModakSceneMVPContent = ({
               {/* MODAKS APPEARING SPARKLES */}
               {showSparkle === 'modaks-appearing' && (
                 <>
-                  <div style={{ position: 'absolute', top: '45%', left: '70%', width: '80px', height: '80px', zIndex: 11 }}>
-                    <SparkleAnimation type="magic" count={15} color="#ffd700" size={10} duration={2000} fadeOut={true} area="full" />
-                  </div>
-                  <div style={{ position: 'absolute', top: '45%', left: '30%', width: '80px', height: '80px', zIndex: 11 }}>
-                    <SparkleAnimation type="magic" count={15} color="#ffd700" size={10} duration={2000} fadeOut={true} area="full" />
-                  </div>
-                  <div style={{ position: 'absolute', top: '55%', left: '75%', width: '80px', height: '80px', zIndex: 11 }}>
-                    <SparkleAnimation type="magic" count={15} color="#ffd700" size={10} duration={2000} fadeOut={true} area="full" />
-                  </div>
+                  {[0, 1, 2].map((slotRenderIndex) => {
+                    const slotIndex = sceneState.modakSlotIndices?.[slotRenderIndex] ?? slotRenderIndex;
+                    const slot = MODAK_POSITION_SLOTS[slotIndex] || MODAK_POSITION_SLOTS[slotRenderIndex];
+                    return (
+                      <div
+                        key={`modak-appear-sparkle-${slotRenderIndex}`}
+                        style={{ position: 'absolute', top: slot.top, left: slot.left, transform: 'translate(-50%, -50%)', width: '80px', height: '80px', zIndex: 11 }}
+                      >
+                        <SparkleAnimation type="magic" count={15} color="#ffd700" size={10} duration={2000} fadeOut={true} area="full" />
+                      </div>
+                    );
+                  })}
                 </>
               )}
+
+              {/* TEMP DEBUG: visualize selected slot centers for this run */}
+              {SHOW_MODAK_SLOT_DEBUG && (sceneState.modakSlotIndices || []).map((slotIndex, idx) => {
+                const slot = MODAK_POSITION_SLOTS[slotIndex];
+                if (!slot) return null;
+                return (
+                  <div
+                    key={`modak-slot-debug-${slotIndex}-${idx}`}
+                    className="modak-slot-debug-circle"
+                    style={{ top: slot.top, left: slot.left }}
+                    aria-hidden="true"
+                  >
+                    {slotIndex + 1}
+                  </div>
+                );
+              })}
 
               {/* MODAKS COMPLETE CELEBRATION SPARKLES */}
               {showSparkle === 'modaks-complete' && (
@@ -1675,38 +1766,57 @@ const NewModakSceneMVPContent = ({
               {/* MODAKS */}
               {sceneState.modaksUnlocked && [0, 1, 2].map((index) => {
                 if (sceneState.modakStates[index] === 1) return null;
+                const slotIndex = sceneState.modakSlotIndices?.[index] ?? index;
+                const slot = MODAK_POSITION_SLOTS[slotIndex] || MODAK_POSITION_SLOTS[index];
+                const isModakHintPhase =
+                  sceneState.phase === PHASES.MODAKS_UNLOCKED ||
+                  sceneState.phase === PHASES.SOME_COLLECTED;
+                const modakHintClass = isModakHintPhase
+                  ? (idleHintLevel === 1
+                    ? 'hint'
+                    : idleHintLevel === 2
+                      ? 'hint-strong'
+                      : idleHintLevel >= 3
+                        ? 'hint-final'
+                        : '')
+                  : '';
 
                 return (
                   <div
-                    className={`modak-game-modak modak-game-modak-${index + 1}
-                      ${showHintGlow && sceneState.modaksUnlocked ? 'modak-game-hint-glow' : ''}`}
+                    className="modak-slot-anchor"
                     key={`modak-${index}`}
+                    style={{ top: slot.top, left: slot.left }}
                   >
-                    <ClickableElement
-                      id={`modak-${index}`}
-                      onClick={() => handleModakClick(index)}
-                      completed={false}
-                      zone="modak-zone"
-                      disableTransformFeedback={true}
+                    <div
+                      className={`modak-game-modak modak-game-modak-field modak-game-modak-field-${index + 1}
+                        ${modakHintClass}`}
                     >
-                      <img
-                        src={getModakImage(index)}
-                        alt={`Modak ${index + 1}`}
-                        style={{ width: '100%', height: '100%', cursor: 'pointer' }}
-                      />
-                    </ClickableElement>
+                      <ClickableElement
+                        id={`modak-${index}`}
+                        onClick={() => handleModakClick(index)}
+                        completed={false}
+                        zone="modak-zone"
+                        disableTransformFeedback={true}
+                      >
+                        <img
+                          src={getModakImage(index)}
+                          alt={`Modak ${index + 1}`}
+                          style={{ width: '100%', height: '100%', cursor: 'pointer' }}
+                        />
+                      </ClickableElement>
 
-                    {showSparkle === `modak-${index}` && (
-                      <SparkleAnimation
-                        type="star"
-                        count={15}
-                        color="#ffd700"
-                        size={10}
-                        duration={1500}
-                        fadeOut={true}
-                        area="full"
-                      />
-                    )}
+                      {showSparkle === `modak-${index}` && (
+                        <SparkleAnimation
+                          type="star"
+                          count={15}
+                          color="#ffd700"
+                          size={10}
+                          duration={1500}
+                          fadeOut={true}
+                          area="full"
+                        />
+                      )}
+                    </div>
                   </div>
                 );
               })}
@@ -1722,12 +1832,24 @@ const NewModakSceneMVPContent = ({
                     />
                     {sceneState.collectedModaks?.map((modakIndex, displayIndex) => {
                       const canDrag = sceneState.rockVisible && sceneState.rockFeedCount < 3;
+                      const isRockHintPhase =
+                        sceneState.phase === PHASES.ROCK_VISIBLE ||
+                        sceneState.phase === PHASES.ROCK_FEEDING;
+                      const rockHintClass = isRockHintPhase
+                        ? (idleHintLevel === 1
+                          ? 'hint'
+                          : idleHintLevel === 2
+                            ? 'hint-strong'
+                            : idleHintLevel >= 3
+                              ? 'hint-final'
+                              : '')
+                        : '';
 
                       return (
                         <div
                           key={`collected-${modakIndex}-${displayIndex}`}
                           className={`modak-game-modak modak-game-modak-collected-${displayIndex + 1}
-                            ${showHintGlow && sceneState.rockVisible ? 'modak-game-hint-glow' : ''}`}
+                            ${rockHintClass}`}
                           style={{
                             position: 'absolute',
                             zIndex: 15,
@@ -1815,10 +1937,8 @@ const NewModakSceneMVPContent = ({
                     <span className="modak-drag-hint-hand">👆</span>
                   </div>
                 ) : sceneState.modaksUnlocked ? (
-                  // MODAKS_UNLOCKED: tap gesture over a field modak
-                  <div className="modak-drag-hint-overlay" aria-hidden="true">
-                    <span className="modak-tap-hint-hand on-modak">👆</span>
-                  </div>
+                  // MODAKS_UNLOCKED: no pointer emoji in freeze copy
+                  null
                 ) : sceneState.phase === PHASES.MOOSHIKA_SEARCH ? (
                   // MOOSHIKA_SEARCH: mini thumbs-up cue over a mound
                   <div
@@ -1861,6 +1981,14 @@ const NewModakSceneMVPContent = ({
                   <SparkleAnimation type="stream" count={20} color="#FF8C42" size={10} duration={3000} fadeOut={true} area="full" />
                 </div>
               )}
+
+              {/* Foreground occlusion layer (trees + bushes) shown throughout scene */}
+              <img
+                src={foregroundOverlay}
+                alt=""
+                className="modak-game-foreground-overlay"
+                aria-hidden="true"
+              />
 
             </div>
 
