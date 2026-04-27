@@ -39,11 +39,11 @@ import popup1 from './assets/images/popup-1.png';
 import popupGolden from './assets/images/popup-golden.png';
 import popupTrunk from './assets/images/popup-trunk.png';
 import mooshikaCoach from "./assets/images/mooshika-coach.png";
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.svg';
-import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.svg';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.svg';
-import symbolLotusColored from '../../shared/images/icons/symbol-lotus-colored.png';
-import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-colored.png';
+import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.png';
+import symbolModakColored from '../../shared/images/icons/symbol-modak-new.png';
+import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.png';
+import symbolLotusColored from '../../shared/images/icons/symbol-lotus-new.png';
+import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new.png';
 
 
 const PHASES = {
