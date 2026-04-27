@@ -6,7 +6,7 @@ import './SymbolMountainFlipbook.css';
 
 // ✅ ACTUAL SCENE IMPORTS - Lazy load your existing scenes
 const ModakScene = lazy(() => import('./scenes/modak/NewModakSceneV5'));
-const PondScene = lazy(() => import('./scenes/pond/PondSceneSimplifiedV3'));
+const PondScene = lazy(() => import('./scenes/pond/PondSceneSimplifiedV4'));
 const TuskScene = lazy(() => import('./scenes/tusk/SymbolMountainSceneV3'));
 const AssemblyScene = lazy(() => import('./scenes/final scene/SacredAssemblySceneV8'));
 

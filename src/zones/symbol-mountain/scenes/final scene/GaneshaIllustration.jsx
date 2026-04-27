@@ -104,11 +104,13 @@ const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null
             <button
               key={`hit-${hitId}`}
               type="button"
+              className="ganesha-hitbox-btn"
               aria-label={`Tap ${zoneId}`}
               onClick={(e) => {
                 e.stopPropagation();
                 if (!disabled) onZoneClick?.(zoneId);
               }}
+              onMouseDown={(e) => e.currentTarget.blur()}
               style={{
                 position: 'absolute',
                 ...box,
@@ -122,6 +124,8 @@ const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null
                 backgroundColor: 'transparent',
                 zIndex: zoneId === activeZoneId ? 999 : (HITBOX_Z_INDEX[zoneId] || 1),
                 padding: 0,
+                outline: 'none',
+                boxShadow: 'none',
                 // display: 'flex', // debug label layout
                 // alignItems: 'center',
                 // justifyContent: 'center',

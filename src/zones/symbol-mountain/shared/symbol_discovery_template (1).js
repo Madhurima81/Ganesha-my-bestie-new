@@ -9,9 +9,9 @@ import SymbolPowerMission from '../../shared/components/SymbolPowerMission';
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
 
 // Symbol images (colored versions for sidebar)
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.svg';
-import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.svg';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.svg';
+import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.png';
+import symbolModakColored from '../../shared/images/icons/symbol-modak-new.png';
+import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.png';
 
 // Mission images (before/after states)
 import mooshikaBefore from './assets/images/mooshika-before.png';

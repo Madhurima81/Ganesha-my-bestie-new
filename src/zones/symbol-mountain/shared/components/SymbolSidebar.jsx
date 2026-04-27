@@ -3,14 +3,14 @@ import './SymbolSidebar.css';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 
 // Import gray and colored symbol icons
-import symbolBellyColored from '../images/icons/symbol-belly-colored.svg';
-import symbolEarColored from '../images/icons/symbol-ear-colored.png';
-import symbolEyesColored from '../images/icons/symbol-eyes-colored.png';
-import symbolLotusColored from '../images/icons/symbol-lotus-colored.png';
-import symbolModakColored from '../images/icons/symbol-modak-colored.svg';
-import symbolMooshikaColored from '../images/icons/symbol-mooshika-colored.svg';
-import symbolTrunkColored from '../images/icons/symbol-trunk-colored.png';
-import symbolTuskColored from '../images/icons/symbol-tusk-colored.png';
+import symbolBellyColored from '../images/icons/symbol-belly-new.png';
+import symbolEarColored from '../images/icons/symbol-ears-new.png';
+import symbolEyesColored from '../images/icons/symbol-eyes-new.png';
+import symbolLotusColored from '../images/icons/symbol-lotus-new.png';
+import symbolModakColored from '../images/icons/symbol-modak-new.png';
+import symbolMooshikaColored from '../images/icons/symbol-mooshika-new.png';
+import symbolTrunkColored from '../images/icons/symbol-trunk-new.png';
+import symbolTuskColored from '../images/icons/symbol-tusk-new.png';
 
 // Symbol Information
 /*const symbolInfo = {

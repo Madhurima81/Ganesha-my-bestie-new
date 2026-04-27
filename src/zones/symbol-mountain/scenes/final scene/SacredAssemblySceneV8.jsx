@@ -49,14 +49,14 @@ import ganeshaStone from './assets/images/ganesha-stone.png';
 import ganeshaDivine from './assets/images/ganesha-divine.png';
 
 // Images - Symbol Icons
-import symbolMooshikaColored from './assets/images/symbol-mooshika-colored.svg';
-import symbolModakColored from './assets/images/symbol-modak-colored.svg';
-import symbolBellyColored from './assets/images/symbol-belly-colored.svg';
-import symbolLotusColored from './assets/images/symbol-lotus-colored.png';
-import symbolTrunkColored from './assets/images/symbol-trunk-colored.png';
-import symbolEyesColored from './assets/images/symbol-eyes-colored.png';
-import symbolEarsColored from './assets/images/symbol-ear-colored.png';
-import symbolTuskColored from './assets/images/symbol-tusk-colored.png';
+import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.png';
+import symbolModakColored from '../../shared/images/icons/symbol-modak-new.png';
+import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.png';
+import symbolLotusColored from '../../shared/images/icons/symbol-lotus-new.png';
+import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new.png';
+import symbolEyesColored from '../../shared/images/icons/symbol-eyes-new.png';
+import symbolEarsColored from '../../shared/images/icons/symbol-ears-new.png';
+import symbolTuskColored from '../../shared/images/icons/symbol-tusk-new.png';
 
 // Body Part Overlays - ADD THESE
 import ganeshaFaded from './assets/images/ganesha-faded.png';
@@ -410,18 +410,18 @@ const SacredAssemblyContent = ({
     isSpeaking: isGaneshaSpeaking
   } = useGaneshaVoice();
   const {
-    playUiTap,
-    playWrongTap,
     playSparkle,
-    playChime,
-    playGlow,
-    playTwinkle,
     setGlobalVolume
   } = useGameSounds();
   // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
-  const { startIdleTimer, stopIdleTimer, setCurrentPhase, startMusic, stopMusic, setVoiceVolume, playVoice } = useVoiceGuidance(
+  const { startIdleTimer, stopIdleTimer, setCurrentPhase, startMusic, stopMusic, setVoiceVolume, playVoice, playTap, playCorrect, playWrong, playPowerUnlock, playCelebration } = useVoiceGuidance(
     zoneId, sceneId, { enableMusic: true, musicVolume: 0.06, sfxVolume: 0.35, idleTimeout: 20 }
   );
+  const playUiTap = playTap;
+  const playWrongTap = playWrong;
+  const playChime = playCorrect;
+  const playGlow = playPowerUnlock;
+  const playTwinkle = playCelebration;
   useEffect(() => { startIdleTimer(); return () => stopIdleTimer(); }, [startIdleTimer, stopIdleTimer]);
   useEffect(() => { setCurrentPhase(sceneState?.phase ?? null); }, [sceneState?.phase, setCurrentPhase]);
   useEffect(() => { setVoiceVolume(isAudioOn ? 1 : 0); }, [isAudioOn, setVoiceVolume]);
@@ -479,6 +479,16 @@ const SacredAssemblyContent = ({
     belly: 'cardBelly',
     mooshika: 'cardMooshika'
   }), []);
+  const HINT_VO_MAP = useMemo(() => ({
+    eyes: 'hintEyes',
+    ears: 'hintEars',
+    trunk: 'hintTrunk',
+    tusk: 'hintTusk',
+    modak: 'hintModak',
+    lotus: 'hintLotus',
+    belly: 'hintBelly',
+    mooshika: 'hintMooshika'
+  }), []);
   const CORRECT_VO_ROTATION = useMemo(
     () => ['correctYes', 'correctThatsRight', 'correctYouFoundIt', 'correctWellDone'],
     []
@@ -487,7 +497,7 @@ const SacredAssemblyContent = ({
   const getMomentForVoiceKey = useCallback((key) => {
     if (key === 'openingModalPrompt') return 'greeting';
     if (key.startsWith('correct')) return 'celebration';
-    if (key.startsWith('wrong') || key.startsWith('idle') || key.startsWith('onboarding')) return 'encouragement';
+    if (key.startsWith('wrong') || key.startsWith('hint') || key.startsWith('onboarding')) return 'encouragement';
     if (key.startsWith('final')) return 'closing';
     return 'story';
   }, []);
@@ -550,7 +560,8 @@ const SacredAssemblyContent = ({
           onboardingPlayedAtRef.current = Date.now();
         }
       } else {
-        playSceneVoice('idleLookCarefully', null, { replayOnReturn: false, auto: true });
+        const hintVoKey = HINT_VO_MAP[currentSymbolId];
+        if (hintVoKey) playSceneVoice(hintVoKey, null, { replayOnReturn: false, auto: true });
       }
       return;
     }
@@ -563,6 +574,7 @@ const SacredAssemblyContent = ({
   }, [
     CARD_VO_MAP,
     CORRECT_VO_ROTATION,
+    HINT_VO_MAP,
     cardPhase,
     isAudioOn,
     playSceneVoice,
@@ -581,7 +593,7 @@ const SacredAssemblyContent = ({
     { resumeDelay: RESUME_DELAY_MS }
   );
 
-  // Zone state: idle | wrong | correct | placed | hint
+  // Zone state: idle | wrong | correct | placed | hint | hint-strong | hint-final
   const initZoneStates = (placedSymbols = {}) => {
     const states = {};
     ['eyes','ears','trunk','tusk','belly','left-hand','right-hand','base'].forEach(z => { states[z] = 'idle'; });
@@ -619,7 +631,7 @@ const SacredAssemblyContent = ({
     }
   }, [CARD_VO_MAP, cardPhase, playChime, playSceneVoice, playSparkle, playUiTap, sceneState?.currentAssociationSymbol, sceneState?.currentRound]);
 
-  // Play-phase VO sequence: card VO when card lands, idle hint after 10s silence
+  // Play-phase VO sequence: card VO when card lands, then 3-level idle hint escalation
   useEffect(() => {
     if (cardPhase !== 'play') return;
     const currentSymbol = SACRED_SYMBOLS.find(s => s.id === sceneState?.currentAssociationSymbol);
@@ -637,26 +649,45 @@ const SacredAssemblyContent = ({
       }
     }, 2500);
 
-    // Idle hint — 10s of no tap → one visual blink + VO
-    const hintTimer = setTimeout(() => {
-      if (!idleNudgePlayedRef.current) {
-        playSceneVoice('idleLookCarefully', null, { replayOnReturn: false });
-        idleNudgePlayedRef.current = true;
-      }
+    const hintLevel1Timer = setTimeout(() => {
       setZoneStates(prev => {
         if (prev[correctZone] === 'idle') return { ...prev, [correctZone]: 'hint' };
         return prev;
       });
-      setTimeout(() => {
-        setZoneStates(prev => (prev[correctZone] === 'hint' ? { ...prev, [correctZone]: 'idle' } : prev));
-      }, 700);
     }, 10000);
+
+    const hintLevel2Timer = setTimeout(() => {
+      setZoneStates(prev => {
+        if (prev[correctZone] === 'hint' || prev[correctZone] === 'idle') {
+          return { ...prev, [correctZone]: 'hint-strong' };
+        }
+        return prev;
+      });
+      if (!idleNudgePlayedRef.current) {
+        const hintVoKey = HINT_VO_MAP[currentSymbol.id];
+        if (hintVoKey) {
+          playSceneVoice(hintVoKey, null, { replayOnReturn: false });
+          idleNudgePlayedRef.current = true;
+        }
+      }
+    }, 18000);
+
+    const hintLevel3Timer = setTimeout(() => {
+      setZoneStates(prev => {
+        if (prev[correctZone] === 'hint-strong' || prev[correctZone] === 'hint' || prev[correctZone] === 'idle') {
+          return { ...prev, [correctZone]: 'hint-final' };
+        }
+        return prev;
+      });
+    }, 26000);
 
     return () => {
       clearTimeout(cardVoTimer);
-      clearTimeout(hintTimer);
+      clearTimeout(hintLevel1Timer);
+      clearTimeout(hintLevel2Timer);
+      clearTimeout(hintLevel3Timer);
     };
-  }, [cardPhase, sceneState?.currentAssociationSymbol]);
+  }, [cardPhase, HINT_VO_MAP, sceneState?.currentAssociationSymbol]);
 
   const safeSetTimeout = (callback, delay) => {
     const id = setTimeout(callback, delay);
@@ -873,6 +904,18 @@ const SacredAssemblyContent = ({
   const handleZoneClick = (zoneId) => {
     if (!sceneState || !sceneActions) return;
     if (cardPhase !== 'play') return;
+
+    setZoneStates(prev => {
+      const next = { ...prev };
+      let changed = false;
+      Object.keys(next).forEach(z => {
+        if (next[z] === 'hint' || next[z] === 'hint-strong' || next[z] === 'hint-final') {
+          next[z] = 'idle';
+          changed = true;
+        }
+      });
+      return changed ? next : prev;
+    });
 
     const currentSymbol = SACRED_SYMBOLS.find(s => s.id === sceneState.currentAssociationSymbol);
     if (!currentSymbol) return;
@@ -1326,10 +1369,7 @@ const SacredAssemblyContent = ({
             );
           })()}
 
-          {/* Guide arrow — points from card to Ganesha */}
-          {cardPhase === 'play' && (
-            <div className="guide-arrow">👉</div>
-          )}
+          {/* Guide arrow removed */}
 
           {/* SimpleGameCoach COMMENTED OUT 
           <SimpleGameCoach
@@ -1345,20 +1385,6 @@ const SacredAssemblyContent = ({
             className="sacred-background"
             style={{ backgroundImage: `url(${sacredBackground})` }}
           >
-            {/* Progress Display */}
-            <div className="assembly-progress">
-              <div className="progress-text">
-                <span style={{ fontSize: '16px' }}>🏔️</span>
-                {Object.keys(sceneState.placedSymbols || {}).length}/8 symbols
-              </div>
-              <div
-                className="assembly-progress-fill"
-                style={{
-                  width: `${(Object.keys(sceneState.placedSymbols || {}).length / 8) * 100}%`
-                }}
-              />
-            </div>
-
             {/* Ganesha — ganesha-sit.svg with click zones */}
             <div
               className={`ganesha-assembly-container ${ganeshaReaction}`}
@@ -1371,25 +1397,18 @@ const SacredAssemblyContent = ({
                 baseOpacity={getGaneshaOpacity()}
               />
 
-              {/* Hint glow + tap pointer — pure divs on top, never touches SVG */}
+              {/* Hint glow only — 3-level idle escalation with no pointer emoji */}
               {Object.entries(zoneStates).map(([zoneId, state]) => {
-                if (state !== 'hint') return null;
+                if (state !== 'hint' && state !== 'hint-strong' && state !== 'hint-final') return null;
                 const pos = ZONE_HINT_POSITIONS[zoneId];
                 if (!pos) return null;
                 return (
-                  <React.Fragment key={`hint-${zoneId}`}>
-                    <div
-                      className="zone-hint-overlay"
-                      style={{ top: pos.top, left: pos.left }}
-                    />
-                    <div
-                      className="zone-hint-pointer"
-                      style={{ top: pos.top, left: pos.left }}
-                      aria-hidden="true"
-                    >
-                      👆
-                    </div>
-                  </React.Fragment>
+                  <div
+                    key={`hint-${zoneId}`}
+                    className="zone-hint-overlay"
+                    data-hint-level={state}
+                    style={{ top: pos.top, left: pos.left }}
+                  />
                 );
               })}
 

@@ -34,14 +34,14 @@ import ganeshaStone from './assets/images/ganesha-stone.png';
 import ganeshaDivine from './assets/images/ganesha-divine.png';
 
 // Images - Symbol Icons (your existing shared symbols)
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.svg';
-import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.svg';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.svg';
-import symbolLotusColored from '../../shared/images/icons/symbol-lotus-colored.png';
-import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-colored.png';
-import symbolEyesColored from '../../shared/images/icons/symbol-eyes-colored.png';
-import symbolEarsColored from '../../shared/images/icons/symbol-ear-colored.png';
-import symbolTuskColored from '../../shared/images/icons/symbol-tusk-colored.png';
+import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.png';
+import symbolModakColored from '../../shared/images/icons/symbol-modak-new.png';
+import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.png';
+import symbolLotusColored from '../../shared/images/icons/symbol-lotus-new.png';
+import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new.png';
+import symbolEyesColored from '../../shared/images/icons/symbol-eyes-new.png';
+import symbolEarsColored from '../../shared/images/icons/symbol-ears-new.png';
+import symbolTuskColored from '../../shared/images/icons/symbol-tusk-new.png';
 
 // Coach image (reuse from pond)
 import mooshikaCoach from "../pond/assets/images/mooshika-coach.png";
