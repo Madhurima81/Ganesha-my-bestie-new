@@ -222,11 +222,62 @@
 }
 
 /* Keep idle-hint targets position-locked (no transform-driven drift). */
-.eyes-symbol-container.hint-glow,
-.ears-symbol-container.hint-glow,
-.eyes-symbol-container.hint-glow:hover,
-.ears-symbol-container.hint-glow:hover {
+.eyes-symbol-container.hint,
+.eyes-symbol-container.hint-strong,
+.eyes-symbol-container.hint-final,
+.ears-symbol-container.hint,
+.ears-symbol-container.hint-strong,
+.ears-symbol-container.hint-final,
+.eyes-symbol-container.hint:hover,
+.eyes-symbol-container.hint-strong:hover,
+.eyes-symbol-container.hint-final:hover,
+.ears-symbol-container.hint:hover,
+.ears-symbol-container.hint-strong:hover,
+.ears-symbol-container.hint-final:hover {
   transform: none !important;
+}
+
+/* Idle ladder visual intensity: hint -> hint-strong -> hint-final */
+.symbol-mountain-scene-container .eyes-symbol-container.hint img,
+.symbol-mountain-scene-container .ears-symbol-container.hint img {
+  animation: symbol-idle-hint-1 1.6s ease-in-out infinite;
+}
+
+.symbol-mountain-scene-container .eyes-symbol-container.hint-strong img,
+.symbol-mountain-scene-container .ears-symbol-container.hint-strong img {
+  animation: symbol-idle-hint-2 1.25s ease-in-out infinite;
+}
+
+.symbol-mountain-scene-container .eyes-symbol-container.hint-final img,
+.symbol-mountain-scene-container .ears-symbol-container.hint-final img {
+  animation: symbol-idle-hint-3 1s ease-in-out infinite;
+}
+
+.symbol-mountain-scene-container .tusk-note.hint {
+  box-shadow: 0 0 10px rgba(255, 209, 102, 0.8);
+}
+
+.symbol-mountain-scene-container .tusk-note.hint-strong {
+  box-shadow: 0 0 16px rgba(255, 196, 0, 0.95);
+}
+
+.symbol-mountain-scene-container .tusk-note.hint-final {
+  box-shadow: 0 0 24px rgba(255, 170, 0, 1);
+}
+
+@keyframes symbol-idle-hint-1 {
+  0%, 100% { filter: drop-shadow(0 0 0 rgba(255, 209, 102, 0)); }
+  50% { filter: drop-shadow(0 0 10px rgba(255, 209, 102, 0.8)); }
+}
+
+@keyframes symbol-idle-hint-2 {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(255, 196, 0, 0.65)); transform: scale(1); }
+  50% { filter: drop-shadow(0 0 16px rgba(255, 196, 0, 0.95)); transform: scale(1.03); }
+}
+
+@keyframes symbol-idle-hint-3 {
+  0%, 100% { filter: drop-shadow(0 0 12px rgba(255, 170, 0, 0.75)); transform: scale(1); }
+  50% { filter: drop-shadow(0 0 24px rgba(255, 170, 0, 1)); transform: scale(1.06); }
 }
 
 /* ================================

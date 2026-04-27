@@ -3,40 +3,41 @@
 // 🎵 INLINE rhythm listening game component - WITH RANDOM SEQUENCES
 
 import React, { useState, useEffect, useRef } from 'react';
+import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
 
 // Import your actual musical instrument images
-import musicalTabla from './assets/images/musical-tabla-colored.png';
-import musicalFlute from './assets/images/musical-flute-colored.png';
-import musicalBells from './assets/images/musical-bells-colored.png';
-import musicalCymbals from './assets/images/musical-cymbals-colored.png';
+import musicalTabla from './assets/images/tabla-new.png';
+import musicalFlute from './assets/images/flute-new.png';
+import musicalHarmonium from './assets/images/harmonium-new.png';
+import musicalTanpura from './assets/images/tanpura-new.png';
 
 // Musical instruments data
 const musicalInstruments = {
-  tabla: { 
-    image: musicalTabla, 
-    emoji: '🥁', 
+  tabla: {
+    image: musicalTabla,
+    emoji: '🥁',
     name: 'Tabla',
     frequency: 220,
     color: '#8d6e63'
   },
-  flute: { 
-    image: musicalFlute, 
-    emoji: '🎵', 
+  flute: {
+    image: musicalFlute,
+    emoji: '🎵',
     name: 'Flute',
     frequency: 660,
     color: '#8bc34a'
   },
-  bells: { 
-    image: musicalBells, 
-    emoji: '🔔', 
-    name: 'Bells',
+  harmonium: {
+    image: musicalHarmonium,
+    emoji: '🎹',
+    name: 'Harmonium',
     frequency: 440,
     color: '#ffd700'
   },
-  cymbals: { 
-    image: musicalCymbals, 
-    emoji: '🎶', 
-    name: 'Cymbals',
+  tanpura: {
+    image: musicalTanpura,
+    emoji: '🎸',
+    name: 'Tanpura',
     frequency: 880,
     color: '#42a5f5'
   }
@@ -45,8 +46,8 @@ const musicalInstruments = {
 const defaultEarInstrumentPositions = {
   tabla: { x: 15, y: 35 },
   flute: { x: 75, y: 25 },
-  bells: { x: 45, y: 45 },
-  cymbals: { x: 25, y: 70 }
+  harmonium: { x: 45, y: 45 },
+  tanpura: { x: 25, y: 70 }
 };
 
 // ✅ NEW: Generate random rhythm sequences
@@ -81,9 +82,9 @@ const EarsRhythmGame = ({
   instrumentSizes = {},
   onSequenceComplete,
   onGameComplete,
+  onGuidanceEvent,
   onClose,
-  profileName = 'little explorer',
-    isReload = false,                          // Flag indicating reload
+  isReload = false,                          // Flag indicating reload
   initialGamePhase = 'waiting',              // Restored game phase
   initialPlayerInput = [],                   // Restored player input
   initialCurrentSequence = [],               // ← ADD: Restored sequence
@@ -91,6 +92,7 @@ const EarsRhythmGame = ({
   sequenceJustCompleted = false,             // Post-sequence reload flag
   lastCompletedNote = null                   // Which note was just completed
 }) => {
+const MINI_THUMBS_UP_ICON = '/images/hand-thumbsup.svg';
 console.log('🎵 EarsRhythmGame inline render:', { 
   isActive, 
   currentNote,
@@ -106,10 +108,14 @@ console.log('🎵 EarsRhythmGame inline render:', {
   const [isSequencePlaying, setIsSequencePlaying] = useState(false);
   const [canPlayerClick, setCanPlayerClick] = useState(false);
   const [playingInstrument, setPlayingInstrument] = useState(null);
+  const [tapSparkleOn, setTapSparkleOn] = useState(null);
+  const [tapGestureOn, setTapGestureOn] = useState(null);
   const [sequenceItemsShown, setSequenceItemsShown] = useState(0);
   const [idleHintLevel, setIdleHintLevel] = useState(0);
+  const [sequenceHintClasses, setSequenceHintClasses] = useState({});
   const lastIdleInteractionAtRef = useRef(Date.now());
   const idleHintStageRef = useRef({ level2: false, level3: false });
+  const wrongTapsThisRoundRef = useRef(0);
   const wasListeningActiveRef = useRef(false);
   const IDLE_HINT_L1_MS = 10000;
   const IDLE_HINT_L2_MS = 18000;
@@ -118,6 +124,10 @@ console.log('🎵 EarsRhythmGame inline render:', {
   // Add these to your state declarations at the top:
 const [countdown, setCountdown] = useState(0);
 const [isCountingDown, setIsCountingDown] = useState(false);
+
+  const emitGuidance = (eventKey, payload = {}) => {
+    if (onGuidanceEvent) onGuidanceEvent(eventKey, payload);
+  };
 
   // Audio context ref
   const audioContextRef = useRef(null);
@@ -139,6 +149,7 @@ const [isCountingDown, setIsCountingDown] = useState(false);
   const resetIdleHints = () => {
     lastIdleInteractionAtRef.current = Date.now();
     setIdleHintLevel(0);
+    setSequenceHintClasses({});
     idleHintStageRef.current = { level2: false, level3: false };
   };
 
@@ -207,6 +218,7 @@ useEffect(() => {
       setGamePhase(initialGamePhase);
 setSequenceItemsShown(initialCurrentSequence.length); // Show full sequence during reload
 setCanPlayerClick(initialGamePhase === 'listening');
+      wrongTapsThisRoundRef.current = 0;
       
       // ✅ POST-SEQUENCE RELOAD: Auto-continue if sequence was just completed
       if (sequenceJustCompleted && lastCompletedNote) {
@@ -225,54 +237,11 @@ setCanPlayerClick(initialGamePhase === 'listening');
       setGamePhase('waiting');
       setCanPlayerClick(false);
       setSequenceItemsShown(0);
+      wrongTapsThisRoundRef.current = 0;
       clearAllTimeouts();
     }
   }
 }, [isActive, currentNote, discoveredInstruments, isReload]); // ← Added isReload dependency
-
-// ✅ UPDATED: Set up random sequence when note changes
-
-/*useEffect(() => {
-  console.log('🔍 SEQUENCE SETUP DEBUG:', {
-    isActive,
-    currentNote,
-    discoveredInstruments: Object.keys(discoveredInstruments),
-    isReload,                    
-    initialGamePhase,            
-    initialPlayerInput           
-  });
-  
-  if (isActive && currentNote && Object.keys(discoveredInstruments).length > 0) {
-    if (isReload && initialPlayerInput && initialPlayerInput.length > 0) {
-      console.log('🔄 RELOAD DETECTED: Restoring game state', {
-        initialGamePhase,
-        initialPlayerInput
-      });
-      
-      // ✅ RESTORE: Generate sequence and restore state
-      const sequence = generateRandomSequence(discoveredInstruments, currentNote);
-      setCurrentSequence(sequence);
-      setPlayerInput(initialPlayerInput);
-      setGamePhase(initialGamePhase);
-      setCanPlayerClick(initialGamePhase === 'listening');
-setSequenceItemsShown(initialSequenceItemsShown);
-      
-      console.log(`🔄 RESTORED: Game state - Phase: ${initialGamePhase}, Input: ${initialPlayerInput.length}/${sequence.length}`);
-      
-    } else {
-      console.log('🎵 NEW GAME: Generating fresh sequence');
-      const sequence = generateRandomSequence(discoveredInstruments, currentNote);
-      setCurrentSequence(sequence);
-      setPlayerInput([]);
-      setGamePhase('waiting');
-      setCanPlayerClick(false);
-      setSequenceItemsShown(0);
-      clearAllTimeouts();
-      
-      console.log(`🎵 Set up random sequence for ${currentNote}:`, sequence);
-    }
-  }
-}, [isActive, currentNote, discoveredInstruments, isReload]);*/
 
   // Cleanup on unmount
   useEffect(() => {
@@ -310,6 +279,7 @@ useEffect(() => {
 
   if (!listeningActive) {
     setIdleHintLevel(0);
+    setSequenceHintClasses({});
     idleHintStageRef.current = { level2: false, level3: false };
     return;
   }
@@ -327,23 +297,19 @@ useEffect(() => {
 }, [gamePhase, canPlayerClick, isSequencePlaying, currentSequence.length]);
 
 const triggerSequenceHintGlow = (isStrong = false) => {
-  const glowStrength = isStrong ? '0 0 26px rgba(255, 215, 0, 0.95)' : '0 0 18px rgba(255, 215, 0, 0.85)';
-  const scale = isStrong ? '1.12' : '1.08';
+  const hintClass = isStrong ? 'hint-final' : 'hint-strong';
   const pulseMs = isStrong ? 1200 : 900;
 
   currentSequence.forEach((inst, idx) => {
     safeSetTimeout(() => {
-      const elements = document.querySelectorAll(`[data-instrument="${inst}"]`);
-      elements.forEach(element => {
-        element.style.filter = `drop-shadow(${glowStrength})`;
-        element.style.transform = `translate(-50%, -50%) scale(${scale})`;
-        element.style.transition = 'all 0.45s ease';
-
-        safeSetTimeout(() => {
-          element.style.filter = '';
-          element.style.transform = 'translate(-50%, -50%) scale(1)';
-        }, pulseMs);
-      });
+      setSequenceHintClasses(prev => ({ ...prev, [inst]: hintClass }));
+      safeSetTimeout(() => {
+        setSequenceHintClasses(prev => {
+          const next = { ...prev };
+          delete next[inst];
+          return next;
+        });
+      }, pulseMs);
     }, idx * 1100);
   });
 };
@@ -355,12 +321,23 @@ useEffect(() => {
   if (idleHintLevel >= 2 && !idleHintStageRef.current.level2) {
     idleHintStageRef.current.level2 = true;
     triggerSequenceHintGlow(false);
+    emitGuidance('idleEars');
   }
   if (idleHintLevel >= 3 && !idleHintStageRef.current.level3) {
     idleHintStageRef.current.level3 = true;
     triggerSequenceHintGlow(true);
   }
 }, [idleHintLevel, gamePhase, canPlayerClick, isSequencePlaying, currentSequence.length]);
+
+useEffect(() => {
+  if (gamePhase === 'waiting') emitGuidance('waiting');
+  if (gamePhase === 'playing') emitGuidance('playing');
+  if (gamePhase === 'listening') emitGuidance('listening');
+  if (gamePhase === 'success') {
+    const roundNum = ['note1', 'note2', 'note3'].indexOf(currentNote) + 1;
+    emitGuidance(`successRound${roundNum}`);
+  }
+}, [gamePhase, currentNote]);
 
   // Play sound function
   const playInstrumentSound = async (instrumentType) => {
@@ -474,6 +451,7 @@ const startCountdown = () => {
     setCanPlayerClick(false);
     setPlayerInput([]);
     setSequenceItemsShown(0);
+    wrongTapsThisRoundRef.current = 0;
     
     currentSequence.forEach((instrument, index) => {
       safeSetTimeout(() => {
@@ -527,9 +505,13 @@ const startCountdown = () => {
     // Play sound and visual feedback
     playInstrumentSound(instrumentType);
     setPlayingInstrument(instrumentType);
+    setTapSparkleOn(instrumentType);
+    setTapGestureOn(instrumentType);
     
     safeSetTimeout(() => {
       setPlayingInstrument(null);
+      setTapSparkleOn(null);
+      setTapGestureOn(null);
     }, 300);
     
     const newPlayerInput = [...playerInput, instrumentType];
@@ -563,6 +545,7 @@ if (window.saveEarsGameState) {
 const handleSequenceSuccess = () => {
   console.log('✅ Sequence matched!');
   resetIdleHints();
+  wrongTapsThisRoundRef.current = 0;
   setGamePhase('success');
   setCanPlayerClick(false);
   
@@ -577,46 +560,31 @@ const handleSequenceSuccess = () => {
   }, 2000); // 2 second celebration pause
 };
 
-  // Handle replaying the current round
-const replayRound = (noteNumber) => {
-  console.log(`🔄 Replaying round: note${noteNumber}`);
-  resetIdleHints();
-  
-  // Generate new random sequence for the same note
-  const sequence = generateRandomSequence(discoveredInstruments, `note${noteNumber}`);
-  setCurrentSequence(sequence);
-  setPlayerInput([]);
-  setGamePhase('waiting');
-  setCanPlayerClick(false);
-  setSequenceItemsShown(0);
-  clearAllTimeouts();
-  
-  console.log(`🔄 Replay sequence for note${noteNumber}:`, sequence);
-};
-
-// Continue to next round
-const continueToNextRound = () => {
-  console.log('➡️ Continuing to next round');
-  resetIdleHints();
-  
-  // Let the parent component handle progression
-  if (onSequenceComplete) {
-    onSequenceComplete(currentNote);
-  }
-};
-
   // Handle wrong input
   const handleSequenceError = () => {
     resetIdleHints();
+    wrongTapsThisRoundRef.current += 1;
+    const wrongCount = wrongTapsThisRoundRef.current;
     setGamePhase('error');
     setCanPlayerClick(false);
     setPlayerInput([]);
-    
+
+    if (wrongCount === 1) {
+      emitGuidance('wrongFirstTime');
+      safeSetTimeout(() => {
+        setGamePhase('listening');
+        setCanPlayerClick(true);
+      }, 900);
+      return;
+    }
+
+    emitGuidance('wrongSecondTime');
     safeSetTimeout(() => {
-      console.log('🔄 Replaying sequence after error');
+      console.log('🔄 Replaying sequence after 2nd wrong tap');
+      wrongTapsThisRoundRef.current = 0;
       setSequenceItemsShown(0);
       handlePlaySequence();
-    }, 2000);
+    }, 1500);
   };
 
   if (!isActive) {
@@ -625,69 +593,7 @@ const continueToNextRound = () => {
 
   return (
     <div className="ears-rhythm-game-inline" style={inlineContainerStyle}>
-
-     {/* Dynamic Header - Shows game phase and pattern */}
-<div style={{
-  position: 'absolute',
-  top: '140px',
-  left: '50%',
-  transform: 'translateX(-50%)',
-  background: 'linear-gradient(135deg, rgba(255, 248, 220, 0.95), rgba(255, 228, 181, 0.95))',
-  padding: '15px 30px',
-  borderRadius: '20px',
-  border: '3px solid #D2691E',
-  boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
-  zIndex: 30,
-  fontFamily: 'Baloo 2'
-}}>
-  <div style={{
-    fontSize: '24px',
-    fontWeight: 'bold',
-    color: '#8B4513',
-    textAlign: 'center'
-  }}>
-    {/* Get Ready Phase */}
-    {isCountingDown && countdown > 0 && (
-      <span>Get Ready... {countdown}</span>
-    )}
-    
-    {/* Waiting Phase */}
-    {!isCountingDown && gamePhase === 'waiting' && (
-      <span>Ready to learn the pattern?</span>
-    )}
-    
-    {/* Watching Phase - just text label */}
-    {gamePhase === 'playing' && isSequencePlaying && (
-      <span>👀 Watch the pattern!</span>
-    )}
-
-    {/* Tapping Phase - just text label */}
-    {gamePhase === 'listening' && canPlayerClick && (
-      <span>👆 Tap the same pattern!</span>
-    )}
-    
-{/* Success Phase - Different messages per round */}
-{gamePhase === 'success' && (
-  <div style={{ textAlign: 'center' }}>
-    <div style={{ fontSize: '36px', marginBottom: '10px' }}>
-      {currentNote === 'note1' ? '🎉' : 
-       currentNote === 'note2' ? '🌟' : 
-       '✨🎊✨'}
-    </div>
-    <div>
-      {currentNote === 'note1' ? 'Awesome! You got it!' : 
-       currentNote === 'note2' ? 'Great job! One more to go!' : 
-       'Amazing! All rounds complete!'}
-    </div>
-  </div>
-)}
-    
-    {/* Error Phase */}
-    {gamePhase === 'error' && (
-      <span>💫 Try again - Listen carefully!</span>
-    )}
-  </div>
-</div>
+      {/* Header removed: guidance is VO-driven */}
       
 
 {/* Round Progress Indicator */}
@@ -703,8 +609,9 @@ const continueToNextRound = () => {
 }}>
   {['note1', 'note2', 'note3'].map((note, index) => {
     const roundNum = index + 1;
-    const isCompleted = false;
-    const isCurrent = note === currentNote;
+    const currentRoundNum = ['note1', 'note2', 'note3'].indexOf(currentNote) + 1;
+    const isCompleted = roundNum < currentRoundNum || (gamePhase === 'success' && roundNum === currentRoundNum);
+    const isCurrent = note === currentNote && !isCompleted;
 
     return (
       <div
@@ -740,7 +647,7 @@ const continueToNextRound = () => {
 {(gamePhase === 'playing' || gamePhase === 'listening') && currentSequence.length > 0 && (
   <div style={{
     position: 'absolute',
-    top: '220px',
+    top: '160px',
     left: '50%',
     transform: 'translateX(-50%)',
     display: 'flex',
@@ -807,8 +714,8 @@ const continueToNextRound = () => {
   </div>
 )}
 
-{/* Play Sequence Button - ONLY on very first round */}
-{gamePhase === 'waiting' && currentNote === 'note1' && playerInput.length === 0 && !isCountingDown && (
+{/* Play Sequence Button */}
+{gamePhase === 'waiting' && playerInput.length === 0 && !isCountingDown && (
   <button 
     style={inlinePlayButtonStyle}
     onClick={handlePlaySequence}
@@ -849,6 +756,23 @@ const continueToNextRound = () => {
           const instrument = musicalInstruments[instrumentType];
           const isPlaying = playingInstrument === instrumentType;
           const isClickable = canPlayerClick;
+          const isCurrentSequenceInstrument = currentSequence.includes(instrumentType);
+          const baseHintClass = isClickable && isCurrentSequenceInstrument && idleHintLevel === 1
+            ? 'hint'
+            : isClickable && isCurrentSequenceInstrument && idleHintLevel === 2
+              ? 'hint-strong'
+              : isClickable && isCurrentSequenceInstrument && idleHintLevel >= 3
+                ? 'hint-final'
+                : '';
+          const flashHintClass = sequenceHintClasses[instrumentType] || '';
+          const activeHintClass = flashHintClass || baseHintClass;
+          const hintFilter = activeHintClass === 'hint-final'
+            ? 'drop-shadow(0 0 20px rgba(255, 170, 0, 1)) brightness(1.18)'
+            : activeHintClass === 'hint-strong'
+              ? 'drop-shadow(0 0 14px rgba(255, 196, 0, 0.95)) brightness(1.14)'
+              : activeHintClass === 'hint'
+                ? 'drop-shadow(0 0 10px rgba(255, 209, 102, 0.8)) brightness(1.1)'
+                : 'none';
           
           const position = instrumentPositions[instrumentType]
             || Object.values(instrumentPositions).find((pos) => pos?.type === instrumentType);
@@ -858,8 +782,8 @@ const continueToNextRound = () => {
           return (
             <button
               key={instrumentType}
-                data-instrument={instrumentType}  // ← ADD THIS LINE
-             // REPLACE with:
+              className={activeHintClass}
+              data-instrument={instrumentType}
 style={{
   position: 'absolute',
   top: `${position.y}%`,
@@ -879,7 +803,7 @@ style={{
   boxShadow: 'none',
   filter: isPlaying
     ? 'drop-shadow(0 0 14px rgba(255, 196, 64, 0.95)) brightness(1.12)'
-    : 'none',
+    : hintFilter,
   zIndex: isPlaying ? 35 : 30
 }}
               onClick={() => handleInstrumentClick(instrumentType)}
@@ -890,6 +814,22 @@ style={{
                 alt={instrument.name}
                 style={{ width: '100%', height: '100%', objectFit: 'contain' }}
               />
+              {tapSparkleOn === instrumentType && (
+                <SparkleAnimation
+                  type="star"
+                  count={10}
+                  color="#ffd54f"
+                  size={8}
+                  duration={700}
+                  fadeOut={true}
+                  area="full"
+                />
+              )}
+              {tapGestureOn === instrumentType && (
+                <div className="ears-mini-gesture" aria-hidden="true">
+                  <img src={MINI_THUMBS_UP_ICON} alt="" />
+                </div>
+              )}
               
               {/* Instrument name label */}
               <div style={{ 
@@ -927,6 +867,28 @@ style={{
     outline: none !important;
     box-shadow: none !important;
     border: none !important;
+  }
+  .ears-rhythm-game-inline .ears-mini-gesture {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 42px;
+    height: 42px;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.25));
+    animation: earsMiniGesturePop 0.8s ease-out;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .ears-rhythm-game-inline .ears-mini-gesture img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  @keyframes earsMiniGesturePop {
+    0% { opacity: 0; transform: translateX(-50%) translateY(6px) scale(0.85); }
+    30% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1.06); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-10px) scale(1); }
   }
   
   @keyframes clickPulse {
@@ -1112,3 +1074,5 @@ const inlineTrackerItemStyle = {
 };
 
 export default EarsRhythmGame;
+
+

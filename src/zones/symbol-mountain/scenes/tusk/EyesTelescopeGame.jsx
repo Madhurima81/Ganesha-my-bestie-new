@@ -4,61 +4,28 @@
 import React, { useState, useEffect, useRef } from 'react';
 import FreeDraggableItem from '../../../../lib/components/interactive/FreeDraggableItem';
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
+import { useGaneshaVoice } from '../../../../lib/hooks/useGaneshaVoice';
+import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 
 // Import images
-import musicalTabla from './assets/images/musical-tabla-colored.png';
-import musicalFlute from './assets/images/musical-flute-colored.png';
-import musicalBells from './assets/images/musical-bells-colored.png';
-import musicalCymbals from './assets/images/musical-cymbals-colored.png';
-
-// Enhanced Divine Telescope SVG
-const telescope = `data:image/svg+xml;base64,${btoa(`
-<svg width="150" height="150" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="75" cy="75" r="70" fill="none" stroke="#8B4513" stroke-width="8"/>
-  <circle cx="75" cy="75" r="62" fill="url(#lensGradient)"/>
-  <circle cx="75" cy="75" r="55" fill="url(#glassGradient)" opacity="0.9"/>
-  <ellipse cx="60" cy="60" rx="20" ry="25" fill="url(#reflectionGradient)" opacity="0.6"/>
-  <line x1="75" y1="35" x2="75" y2="115" stroke="rgba(255,255,255,0.8)" stroke-width="2"/>
-  <line x1="35" y1="75" x2="115" y2="75" stroke="rgba(255,255,255,0.8)" stroke-width="2"/>
-  <circle cx="75" cy="75" r="15" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2"/>
-  <circle cx="75" cy="75" r="68" fill="none" stroke="url(#glowGradient)" stroke-width="4" opacity="0.7"/>
-  <defs>
-    <radialGradient id="lensGradient" cx="0.5" cy="0.5">
-      <stop offset="0%" stop-color="rgba(255,255,255,0.1)"/>
-      <stop offset="70%" stop-color="rgba(0,0,0,0.3)"/>
-      <stop offset="100%" stop-color="rgba(0,0,0,0.8)"/>
-    </radialGradient>
-    <radialGradient id="glassGradient" cx="0.5" cy="0.5">
-      <stop offset="0%" stop-color="rgba(135,206,235,0.2)"/>
-      <stop offset="50%" stop-color="rgba(135,206,235,0.1)"/>
-      <stop offset="100%" stop-color="rgba(0,0,0,0.1)"/>
-    </radialGradient>
-    <radialGradient id="reflectionGradient" cx="0.3" cy="0.3">
-      <stop offset="0%" stop-color="rgba(255,255,255,0.8)"/>
-      <stop offset="70%" stop-color="rgba(255,255,255,0.3)"/>
-      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
-    </radialGradient>
-    <radialGradient id="glowGradient" cx="0.5" cy="0.5">
-      <stop offset="0%" stop-color="#FFD700"/>
-      <stop offset="50%" stop-color="#FFA500"/>
-      <stop offset="100%" stop-color="#FF8C00"/>
-    </radialGradient>
-  </defs>
-</svg>
-`)}`;
+import musicalTabla from './assets/images/tabla-new.png';
+import musicalFlute from './assets/images/flute-new.png';
+import musicalHarmonium from './assets/images/harmonium-new.png';
+import musicalTanpura from './assets/images/tanpura-new.png';
+import mglass from './assets/images/mglass.png';
 
 const musicalInstruments = {
   tabla: { image: musicalTabla, name: 'Tabla', emoji: '🥁' },
   flute: { image: musicalFlute, name: 'Flute', emoji: '🎵' },
-  bells: { image: musicalBells, name: 'Bells', emoji: '🔔' },
-  cymbals: { image: musicalCymbals, name: 'Cymbals', emoji: '🎶' }
+  harmonium: { image: musicalHarmonium, name: 'Harmonium', emoji: '🎹' },
+  tanpura: { image: musicalTanpura, name: 'Tanpura', emoji: '🎸' }
 };
 
 const defaultInstrumentPositions = {
   1: { x: 75, y: 35, type: 'tabla' },
   2: { x: 75, y: 25, type: 'flute' },
-  3: { x: 45, y: 45, type: 'bells' },
-  4: { x: 25, y: 70, type: 'cymbals' }
+  3: { x: 45, y: 45, type: 'harmonium' },
+  4: { x: 25, y: 70, type: 'tanpura' }
 };
 
 const EyesTelescopeGame = ({ 
@@ -69,30 +36,33 @@ const EyesTelescopeGame = ({
   onInstrumentFound,
   onAllInstrumentsFound,
   onClose,
-  profileName = 'little explorer',
   initialDiscoveredInstruments = {},
   initialFoundInstruments = [],
   isReload = false
 }) => {
   const [telescopePosition, setTelescopePosition] = useState({ top: '50%', left: '50%' });
   const [telescopeDragging, setTelescopeDragging] = useState(false);
+  const [proximityState, setProximityState] = useState('cool');
   const [foundInstruments, setFoundInstruments] = useState(initialFoundInstruments);
   const [discoveredInstruments, setDiscoveredInstruments] = useState(initialDiscoveredInstruments);
   const [showSparkle, setShowSparkle] = useState(null);
+  const [showGestureOn, setShowGestureOn] = useState(null);
   const [gameComplete, setGameComplete] = useState(false);
   
   const [idleHintLevel, setIdleHintLevel] = useState(0);
   const lastIdleInteractionAtRef = useRef(Date.now());
+  const idleHintVoiceRef = useRef(false);
   const IDLE_HINT_L1_MS = 10000;
   const IDLE_HINT_L2_MS = 18000;
   const IDLE_HINT_L3_MS = 26000;
-  const [showInstrumentGlow, setShowInstrumentGlow] = useState(false);
+  const { isAudioOn } = useAudioPreference();
+  const { speak, stop } = useGaneshaVoice();
 
   const timeoutsRef = useRef([]);
   const markIdleInteraction = () => {
     lastIdleInteractionAtRef.current = Date.now();
     setIdleHintLevel(0);
-    setShowInstrumentGlow(false);
+    idleHintVoiceRef.current = false;
   };
 
   const safeSetTimeout = (callback, delay) => {
@@ -108,18 +78,22 @@ const EyesTelescopeGame = ({
         setDiscoveredInstruments(initialDiscoveredInstruments);
         setGameComplete(initialFoundInstruments.length === 4);
         setShowSparkle(null);
+        setShowGestureOn(null);
+        setProximityState('cool');
         lastIdleInteractionAtRef.current = Date.now();
         setIdleHintLevel(0);
-        setShowInstrumentGlow(false);
+        idleHintVoiceRef.current = false;
       } else {
         setFoundInstruments([]);
         setDiscoveredInstruments({});
         setGameComplete(false);
         setShowSparkle(null);
+        setShowGestureOn(null);
+        setProximityState('cool');
         setTelescopePosition({ top: '50%', left: '50%' });
         lastIdleInteractionAtRef.current = Date.now();
         setIdleHintLevel(0);
-        setShowInstrumentGlow(false);
+        idleHintVoiceRef.current = false;
       }
     }
   }, [isActive, isReload]);
@@ -127,7 +101,7 @@ const EyesTelescopeGame = ({
   useEffect(() => {
     if (!isActive || gameComplete || foundInstruments.length >= 4) {
       setIdleHintLevel(0);
-      setShowInstrumentGlow(false);
+      idleHintVoiceRef.current = false;
       return;
     }
 
@@ -144,32 +118,56 @@ const EyesTelescopeGame = ({
   }, [isActive, gameComplete, foundInstruments.length]);
 
   useEffect(() => {
-    if (!isActive || gameComplete || foundInstruments.length >= 4) {
-      setShowInstrumentGlow(false);
-      return;
-    }
-    // L2 onward: glow only (no auto-click fallback)
-    setShowInstrumentGlow(idleHintLevel >= 2);
-  }, [isActive, idleHintLevel, gameComplete, foundInstruments.length]);
-
-  useEffect(() => {
     return () => {
       timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
+      stop();
     };
-  }, []);
+  }, [stop]);
+
+  useEffect(() => {
+    if (!isActive || gameComplete || foundInstruments.length >= 4) {
+      idleHintVoiceRef.current = false;
+      return;
+    }
+
+    if (idleHintLevel < 2) {
+      idleHintVoiceRef.current = false;
+      return;
+    }
+
+    if (!idleHintVoiceRef.current && isAudioOn) {
+      speak('Drag the magnifying glass to find the instruments.', {
+        age: 11,
+        moment: 'default'
+      });
+      idleHintVoiceRef.current = true;
+    }
+  }, [idleHintLevel, isActive, gameComplete, foundInstruments.length, isAudioOn, speak]);
 
   const checkInstrumentDiscovery = (telescopeX, telescopeY) => {
+    let nearestUndiscoveredDistance = Infinity;
+
     Object.keys(instrumentPositions).forEach(instrumentId => {
       const instrumentPos = instrumentPositions[instrumentId];
       const distance = Math.sqrt(
         Math.pow(telescopeX - instrumentPos.x, 2) + 
         Math.pow(telescopeY - instrumentPos.y, 2)
       );
-      
+
+      if (!foundInstruments.includes(instrumentPos.type) && distance < nearestUndiscoveredDistance) {
+        nearestUndiscoveredDistance = distance;
+      }
+
       if (distance < discoveryRadius && !foundInstruments.includes(instrumentPos.type)) {
         discoverInstrument(instrumentPos.type);
       }
     });
+
+    if (nearestUndiscoveredDistance < discoveryRadius * 1.6 && nearestUndiscoveredDistance >= discoveryRadius) {
+      setProximityState('warm');
+    } else {
+      setProximityState('cool');
+    }
   };
 
   const discoverInstrument = (instrumentType) => {
@@ -184,9 +182,11 @@ const EyesTelescopeGame = ({
     setFoundInstruments(newFoundInstruments);
     setDiscoveredInstruments(newDiscoveredInstruments);
     setShowSparkle(`instrument-${instrumentType}-found`);
+    setShowGestureOn(instrumentType);
     
     safeSetTimeout(() => {
       setShowSparkle(null);
+      setShowGestureOn(null);
     }, 2000);
     
     if (onInstrumentFound) {
@@ -194,7 +194,6 @@ const EyesTelescopeGame = ({
     }
     
     if (newFoundInstruments.length === 4) {
-      setShowInstrumentGlow(false);
       safeSetTimeout(() => {
         handleGameComplete(newFoundInstruments, newDiscoveredInstruments);
       }, 1500);
@@ -204,7 +203,6 @@ const EyesTelescopeGame = ({
   const handleGameComplete = (finalFoundInstruments, finalDiscoveredInstruments) => {
     setGameComplete(true);
     setShowSparkle('all-instruments-found');
-    setShowInstrumentGlow(false);
     
     safeSetTimeout(() => {
       if (onAllInstrumentsFound) {
@@ -219,7 +217,7 @@ const EyesTelescopeGame = ({
     <div className="eyes-telescope-game-inline" style={inlineContainerStyle}>
       
       <FreeDraggableItem
-        id="divine-telescope"
+        id="magnifying-glass"
         position={telescopePosition}
         onPositionChange={(newPosition) => {
           setTelescopePosition(newPosition);
@@ -234,35 +232,46 @@ const EyesTelescopeGame = ({
         }}
         onDragEnd={() => setTelescopeDragging(false)}
         disabled={gameComplete}
-        className={`telescope-container ${telescopeDragging ? 'dragging' : ''}`}
+        className={`magnifier-container ${telescopeDragging ? 'dragging' : ''}`}
         style={{
           width: '160px', height: '160px', zIndex: 25,
-          opacity: 1
+          cursor: 'grab',
+          opacity: 1,
+          animation: idleHintLevel >= 1 ? 'idleWobble 0.5s ease-in-out infinite' : 'none'
         }}
         bounds={{ top: 5, left: 5, right: 90, bottom: 90 }}
       >
         <img 
-          src={telescope} 
-          alt="Telescope" 
+          src={mglass}
+          alt="Magnifying Glass"
           style={{ 
             width: '100%', height: '100%',
-            filter: telescopeDragging ? 'brightness(1.2)' : 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.4))',
+            objectFit: 'contain',
+            filter: telescopeDragging 
+              ? (proximityState === 'warm'
+                  ? 'brightness(1.2) drop-shadow(0 0 16px rgba(255, 215, 0, 0.7))'
+                  : 'brightness(1.15) drop-shadow(0 2px 8px rgba(0,0,0,0.3))')
+              : 'drop-shadow(0 1px 4px rgba(0,0,0,0.2))',
+            transform: telescopeDragging ? 'scale(1.05)' : 'scale(1)',
+            transition: 'transform 0.15s ease, filter 0.15s ease',
             pointerEvents: 'none'
           }}
         />
-        <div style={{
-          position: 'absolute', top: '50%', left: '50%', width: '160px', height: '160px',
-          border: telescopeDragging ? '2px dashed rgba(135, 206, 235, 0.6)' : 'none',
-          borderRadius: '50%', transform: 'translate(-50%, -50%)', pointerEvents: 'none'
-        }} />
       </FreeDraggableItem>
       
       <div className="discovered-instruments-container">
         {Object.keys(instrumentPositions).map(instrumentId => {
           const instrumentData = instrumentPositions[instrumentId];
           const isDiscovered = foundInstruments.includes(instrumentData.type);
-          const shouldGlow = !isDiscovered && showInstrumentGlow;
-          const isStrongGlow = !isDiscovered && showInstrumentGlow && idleHintLevel >= 3;
+          const hintClassName = !isDiscovered && idleHintLevel === 1
+            ? 'hint'
+            : !isDiscovered && idleHintLevel === 2
+              ? 'hint-strong'
+              : !isDiscovered && idleHintLevel >= 3
+                ? 'hint-final'
+                : '';
+          const shouldHint = !isDiscovered && idleHintLevel >= 1;
+          const hintOpacity = idleHintLevel >= 3 ? 0.68 : idleHintLevel === 2 ? 0.55 : 0.42;
           const sizeConfig = instrumentSizes[instrumentData.type]?.eyes || {};
           const discoveredSize = sizeConfig.discovered || 290;
           const glowSize = sizeConfig.glow || 150;
@@ -271,14 +280,14 @@ const EyesTelescopeGame = ({
           return (
             <div 
               key={instrumentId}
-              className={`discovered-instrument ${isDiscovered ? 'discovered' : ''} ${shouldGlow ? 'glowing-hint' : ''} ${isStrongGlow ? 'glowing-hint-strong' : ''}`}
+              className={`discovered-instrument ${isDiscovered ? 'discovered' : ''} ${hintClassName}`}
               style={{
                 position: 'absolute',
                 top: `${instrumentData.y}%`,
                 left: `${instrumentData.x}%`,
-                width: `${isDiscovered ? discoveredSize : (shouldGlow ? glowSize : hiddenSize)}px`,
-                height: `${isDiscovered ? discoveredSize : (shouldGlow ? glowSize : hiddenSize)}px`,
-                opacity: isDiscovered ? 1 : (shouldGlow ? 0.45 : 0),
+                width: `${isDiscovered ? discoveredSize : (shouldHint ? glowSize : hiddenSize)}px`,
+                height: `${isDiscovered ? discoveredSize : (shouldHint ? glowSize : hiddenSize)}px`,
+                opacity: isDiscovered ? 1 : (shouldHint ? hintOpacity : 0),
                 transition: 'all 0.5s ease',
                 transform: 'translate(-50%, -50%)',
                 zIndex: 15,
@@ -286,13 +295,13 @@ const EyesTelescopeGame = ({
                 cursor: 'default'
               }}
             >
-              <img 
-                src={musicalInstruments[instrumentData.type].image} 
-                alt={instrumentData.type}
-                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-              />
               {showSparkle === `instrument-${instrumentData.type}-found` && (
                 <SparkleAnimation type="star" count={15} color="rgba(135, 206, 235, 0.8)" size={8} duration={1500} fadeOut={true} area="full" />
+              )}
+              {showGestureOn === instrumentData.type && (
+                <div className="eyes-mini-gesture" aria-hidden="true">
+                  <img src="/images/hand-thumbsup.svg" alt="" />
+                </div>
               )}
             </div>
           );
@@ -309,22 +318,51 @@ const EyesTelescopeGame = ({
       
       <style>{`
         @keyframes popIn { 0% { transform: translate(-50%, -20px); opacity: 0; } 100% { transform: translate(-50%, 0); opacity: 1; } }
-        .telescope-container { animation: gentlePulse 3.8s ease-in-out infinite; }
-        @keyframes gentlePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.015); } }
+        @keyframes idleWobble {
+          0%, 100% { transform: rotate(-3deg); }
+          50% { transform: rotate(3deg); }
+        }
         .discovered-instrument.discovered { animation: instrumentGlow 3.4s ease-in-out infinite; }
         @keyframes instrumentGlow {
           0%, 100% { filter: brightness(1) drop-shadow(0 0 2px rgba(255, 255, 255, 0.15)); }
           50% { filter: brightness(1.08) drop-shadow(0 0 5px rgba(255, 255, 255, 0.35)); }
         }
-        .discovered-instrument.glowing-hint { animation: undiscoveredGlow 3.2s ease-in-out infinite; }
-        @keyframes undiscoveredGlow {
-          0%, 100% { opacity: 0.42; filter: brightness(1.05) drop-shadow(0 0 4px rgba(255, 215, 0, 0.35)); }
-          50% { opacity: 0.6; filter: brightness(1.12) drop-shadow(0 0 8px rgba(255, 215, 0, 0.55)); }
+        .discovered-instrument.hint { animation: undiscoveredHint 1.6s ease-in-out infinite; }
+        @keyframes undiscoveredHint {
+          0%, 100% { filter: brightness(1.05) drop-shadow(0 0 6px rgba(255, 209, 102, 0.5)); }
+          50% { filter: brightness(1.1) drop-shadow(0 0 10px rgba(255, 209, 102, 0.8)); }
         }
-        .discovered-instrument.glowing-hint-strong { animation: undiscoveredGlowStrong 2.2s ease-in-out infinite; }
-        @keyframes undiscoveredGlowStrong {
-          0%, 100% { opacity: 0.5; filter: brightness(1.08) drop-shadow(0 0 8px rgba(255, 215, 0, 0.55)); }
-          50% { opacity: 0.7; filter: brightness(1.16) drop-shadow(0 0 12px rgba(255, 215, 0, 0.75)); }
+        .discovered-instrument.hint-strong { animation: undiscoveredHintStrong 1.25s ease-in-out infinite; }
+        @keyframes undiscoveredHintStrong {
+          0%, 100% { filter: brightness(1.08) drop-shadow(0 0 8px rgba(255, 196, 0, 0.7)); }
+          50% { filter: brightness(1.14) drop-shadow(0 0 14px rgba(255, 196, 0, 0.95)); }
+        }
+        .discovered-instrument.hint-final { animation: undiscoveredHintFinal 1s ease-in-out infinite; }
+        @keyframes undiscoveredHintFinal {
+          0%, 100% { filter: brightness(1.1) drop-shadow(0 0 10px rgba(255, 170, 0, 0.85)); }
+          50% { filter: brightness(1.18) drop-shadow(0 0 18px rgba(255, 170, 0, 1)); }
+        }
+        .eyes-mini-gesture {
+          position: absolute;
+          top: -16px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 42px;
+          height: 42px;
+          pointer-events: none;
+          z-index: 5;
+          animation: eyesMiniGesturePop 1.1s ease-out;
+          filter: drop-shadow(0 2px 8px rgba(0,0,0,0.25));
+        }
+        .eyes-mini-gesture img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+        }
+        @keyframes eyesMiniGesturePop {
+          0% { opacity: 0; transform: translateX(-50%) translateY(6px) scale(0.85); }
+          25% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1.08); }
+          100% { opacity: 0; transform: translateX(-50%) translateY(-10px) scale(1); }
         }
       `}</style>
     </div>

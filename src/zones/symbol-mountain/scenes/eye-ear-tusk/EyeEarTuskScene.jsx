@@ -38,9 +38,9 @@ import popupTusk from './assets/images/popup-tusk-info.png';
 import coachImage from "./assets/images/ganesha-coach.png";
 
 // Symbol images for completion
-import symbolEyeColored from '../../shared/images/icons/symbol-eyes-colored.png';
-import symbolEarColored from '../../shared/images/icons/symbol-ear-colored.png';
-import symbolTuskColored from '../../shared/images/icons/symbol-tusk-colored.png';
+import symbolEyeColored from '../../shared/images/icons/symbol-eyes-new.png';
+import symbolEarColored from '../../shared/images/icons/symbol-ears-new.png';
+import symbolTuskColored from '../../shared/images/icons/symbol-tusk-new.png';
 
 // 🎯 SIMPLIFIED PHASES - Just 3 discoveries
 const PHASES = {

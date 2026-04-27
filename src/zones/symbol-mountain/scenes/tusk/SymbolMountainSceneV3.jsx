@@ -62,9 +62,9 @@ import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal
 
 // Images
 import mountainBackground from '../tusk/assets/images/rock-background.jpg';
-import ganeshaEyes from '../../shared/images/icons/symbol-eyes-colored.png';
-import ganeshaEars from '../../shared/images/icons/symbol-ear-colored.png';
-import ganeshaTusk from '../../shared/images/icons/symbol-tusk-colored.png';
+import ganeshaEyes from '../../shared/images/icons/symbol-eyes-new.png';
+import ganeshaEars from '../../shared/images/icons/symbol-ears-new.png';
+import ganeshaTusk from '../../shared/images/icons/symbol-tusk-new.png';
 
 // Character/Coach images
 import eyesCoach from '../tusk/assets/images/mooshika-coach.png';
@@ -73,26 +73,26 @@ import ganeshaComplete from '../tusk/assets/images/ganesha-complete.png';
 import ganeshaCharacter from './assets/images/ganesha-character.png';
 
 // Symbol Icons
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.svg';
-import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.svg';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.svg';
-import symbolLotusColored from '../../shared/images/icons/symbol-lotus-colored.png';
-import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-colored.png';
-import symbolEyesColored from '../../shared/images/icons/symbol-eyes-colored.png';
-import symbolEarColored from '../../shared/images/icons/symbol-ear-colored.png';
-import symbolTuskColored from '../../shared/images/icons/symbol-tusk-colored.png';
+import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.png';
+import symbolModakColored from '../../shared/images/icons/symbol-modak-new.png';
+import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.png';
+import symbolLotusColored from '../../shared/images/icons/symbol-lotus-new.png';
+import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new.png';
+import symbolEyesColored from '../../shared/images/icons/symbol-eyes-new.png';
+import symbolEarColored from '../../shared/images/icons/symbol-ears-new.png';
+import symbolTuskColored from '../../shared/images/icons/symbol-tusk-new.png';
 
 // Musical instrument images
-import musicalTabla from '../tusk/assets/images/musical-tabla-colored.png';
-import musicalFlute from '../tusk/assets/images/musical-flute-colored.png';
-import musicalBells from '../tusk/assets/images/musical-bells-colored.png';
-import musicalCymbals from '../tusk/assets/images/musical-cymbals-colored.png';
+import musicalTabla from '../tusk/assets/images/tabla-new.png';
+import musicalFlute from '../tusk/assets/images/flute-new.png';
+import musicalHarmonium from '../tusk/assets/images/harmonium-new.png';
+import musicalTanpura from '../tusk/assets/images/tanpura-new.png';
 
 const musicalInstruments = {
   tabla: { image: musicalTabla, name: 'Tabla' },
   flute: { image: musicalFlute, name: 'Flute' },
-  bells: { image: musicalBells, name: 'Bells' },
-  cymbals: { image: musicalCymbals, name: 'Cymbals' }
+  harmonium: { image: musicalHarmonium, name: 'Harmonium' },
+  tanpura: { image: musicalTanpura, name: 'Tanpura' }
 };
 
 // Shared countdown duration — must match across useResumeCountdown + usePauseAwareTimeout
@@ -108,6 +108,11 @@ const VOICE_LINES = {
   eyes: 'My big eyes see everything. Tap my eyes.',
   ears: 'My big ears hear everything. Tap my ears and match the rhythm.',
   tusk: 'My tusk helps me stay brave. Tap the golden notes.',
+  successRound1: 'Yes! Good ears.',
+  successRound2: 'Great listening, friend!',
+  successRound3: 'Amazing! Big ears, just like mine.',
+  wrongFirstTime: 'Almost! Try again.',
+  wrongSecondTime: "Let's listen together.",
   idleEyes: 'Look carefully at my eyes.',
   idleEars: 'Listen carefully to my ears.',
   idleTusk: 'Look carefully at the golden notes.',
@@ -136,8 +141,8 @@ const NOTE_STATES = {
 const instrumentPositions = {
   1: { x: 20, y: 50, type: 'tabla' },
   2: { x: 80, y: 45, type: 'flute' },
-  3: { x: 30, y: 75, type: 'bells' },
-  4: { x: 70, y: 70, type: 'cymbals' }
+  3: { x: 30, y: 75, type: 'harmonium' },
+  4: { x: 70, y: 70, type: 'tanpura' }
 };
 
 const instrumentPositionsByType = Object.values(instrumentPositions).reduce((acc, item) => {
@@ -148,8 +153,8 @@ const instrumentPositionsByType = Object.values(instrumentPositions).reduce((acc
 const instrumentSizesByType = {
   tabla: { eyes: { discovered: 290, glow: 150, hidden: 120 }, ears: 290, pattern: 102 },
   flute: { eyes: { discovered: 290, glow: 150, hidden: 120 }, ears: 290, pattern: 102 },
-  bells: { eyes: { discovered: 350, glow: 150, hidden: 120 }, ears: 390, pattern: 102 },
-  cymbals: { eyes: { discovered: 200, glow: 150, hidden: 120 }, ears: 200, pattern: 102 }
+  harmonium: { eyes: { discovered: 350, glow: 150, hidden: 120 }, ears: 390, pattern: 102 },
+  tanpura: { eyes: { discovered: 200, glow: 150, hidden: 120 }, ears: 200, pattern: 102 }
 };
 
 // Musical note data
@@ -263,7 +268,6 @@ const SymbolMountainSceneContent = ({
 
   // Local UI states
   const [showSparkle, setShowSparkle] = useState(null);
-  const [showHintGlow, setShowHintGlow] = useState(false);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
   const [showCulturalCelebration, setShowCulturalCelebration] = useState(false);
 
@@ -300,6 +304,11 @@ const SymbolMountainSceneContent = ({
   const idleHintsEnabled = true;
   // Incremented each time child returns from a tab switch — resets hint timer
   const [hintResetKey, setHintResetKey] = useState(0);
+  const [idleHintLevel, setIdleHintLevel] = useState(0);
+  const lastIdleInteractionAtRef = useRef(Date.now());
+  const IDLE_HINT_L1_MS = 10000;
+  const IDLE_HINT_L2_MS = 18000;
+  const IDLE_HINT_L3_MS = 26000;
 
   const [showResumePopup, setShowResumePopup] = useState(false);
   const [resumeMessage, setResumeMessage] = useState('');
@@ -310,7 +319,7 @@ const SymbolMountainSceneContent = ({
   const idleVoGateRef = useRef(false);
 
   // ── Voice guidance (music + SFX enabled) ─────────────────────────────────
-  const { startMusic, stopMusic } = useVoiceGuidance(
+  const { startMusic, stopMusic, playTap, playCorrect, playPowerUnlock } = useVoiceGuidance(
     zoneId, sceneId, { enableMusic: true, musicVolume: 0.1, voiceVolume: 1, sfxVolume: 0.35, idleTimeout: 20 }
   );
   useEffect(() => {
@@ -319,7 +328,10 @@ const SymbolMountainSceneContent = ({
   }, [sceneState?.welcomeShown, startMusic, stopMusic]);
 
   // ── SFX ──────────────────────────────────────────────────────────────────
-  const { playUiTap, playSparkle, playChime, playGlow } = useGameSounds();
+  const { playSparkle } = useGameSounds();
+  const playUiTap = playTap;
+  const playChime = playCorrect;
+  const playGlow = playPowerUnlock;
 
   // ── Resume countdown (3-2-1 on tab return) ───────────────────────────────
   const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
@@ -329,6 +341,10 @@ const SymbolMountainSceneContent = ({
     onHide: () => {},
     onShow: () => {
       setHintResetKey(k => k + 1); // restart hint cadence on tab return
+      setIdleHintLevel(0);
+      setShowIdleGestureHint(false);
+      idleVoGateRef.current = false;
+      lastIdleInteractionAtRef.current = Date.now();
       const replayKey = getPromptKeyForPhase();
       if (replayKey) speakScenePrompt(replayKey);
     },
@@ -349,10 +365,20 @@ const SymbolMountainSceneContent = ({
   });
 
   const resetHintCadence = useCallback(() => {
-    setShowHintGlow(false);
+    setIdleHintLevel(0);
     setShowIdleGestureHint(false);
+    idleVoGateRef.current = false;
+    lastIdleInteractionAtRef.current = Date.now();
     setHintResetKey(k => k + 1);
   }, []);
+
+  const hintClassName = idleHintLevel === 1
+    ? 'hint'
+    : idleHintLevel === 2
+      ? 'hint-strong'
+      : idleHintLevel >= 3
+        ? 'hint-final'
+        : '';
 
   const speakScenePrompt = useCallback((key) => {
     if (!isAudioOn || !VOICE_LINES[key]) return;
@@ -416,52 +442,48 @@ const SymbolMountainSceneContent = ({
     stopSpokenVoice();
   }, [isAudioOn, stopSpokenVoice]);
 
-  // ── Premium hint cadence: glow at 12-15s, glow+gesture at 18-22s, repeat every 25-35s
-  // Same pattern as NewModakSceneV7. hintResetKey resets this on tab return.
+  // Deterministic idle hint ladder:
+  // L1 @ 10s (hint), L2 @ 18s (hint-strong), L3 @ 26s (hint-final + pointer).
   useEffect(() => {
-    if (!idleHintsEnabled) {
-      setShowHintGlow(false);
+    const hintPhases = [PHASES.EYES_GAME, PHASES.EARS_GAME, PHASES.TUSK_GAME];
+    const isHintPhase = idleHintsEnabled
+      && hintPhases.includes(sceneState?.phase)
+      && sceneState?.welcomeShown
+      && !sceneState?.showEyesTelescopeGame
+      && !sceneState?.showEarsRhythmGame
+      && !revealConfig
+      && !showSceneCompletion;
+
+    if (!isHintPhase) {
+      setIdleHintLevel(0);
       setShowIdleGestureHint(false);
       return;
     }
-    let hint1Timer, hint2Timer, hint2bTimer, hint2HideTimer, repeatInterval;
-    const glowPhases = [PHASES.EYES_GAME, PHASES.EARS_GAME, PHASES.TUSK_GAME];
-    const active = glowPhases.includes(sceneState?.phase) && sceneState?.welcomeShown
-      && !sceneState?.showEyesTelescopeGame && !sceneState?.showEarsRhythmGame;
 
-    if (active) {
-      const hint1Delay = 12000 + Math.floor(Math.random() * 3000);
-      const hint2Delay = 6000  + Math.floor(Math.random() * 2000);
-      const hint3GapMs = 25000 + Math.floor(Math.random() * 10000);
-      hint1Timer = setTimeout(() => {
-        setShowHintGlow(true);
-        hint2Timer = setTimeout(() => {
-          setShowHintGlow(false);
-          hint2bTimer = setTimeout(() => setShowHintGlow(true), 400);
-          setShowIdleGestureHint(true);
-          hint2HideTimer = setTimeout(() => setShowIdleGestureHint(false), 3500);
-          repeatInterval = setInterval(() => {
-            setShowHintGlow(false);
-            setTimeout(() => setShowHintGlow(true), 400);
-            setShowIdleGestureHint(true);
-            setTimeout(() => setShowIdleGestureHint(false), 3500);
-          }, hint3GapMs);
-        }, hint2Delay);
-      }, hint1Delay);
-      return () => {
-        clearTimeout(hint1Timer);
-        clearTimeout(hint2Timer);
-        clearTimeout(hint2bTimer);
-        clearTimeout(hint2HideTimer);
-        clearInterval(repeatInterval);
-        setShowHintGlow(false);
-        setShowIdleGestureHint(false);
-      };
-    } else {
-      setShowHintGlow(false);
-      setShowIdleGestureHint(false);
-    }
-  }, [sceneState?.phase, sceneState?.welcomeShown, sceneState?.showEyesTelescopeGame, sceneState?.showEarsRhythmGame, hintResetKey]);
+    const tick = setInterval(() => {
+      const idleFor = Date.now() - lastIdleInteractionAtRef.current;
+      let nextLevel = 0;
+      if (idleFor >= IDLE_HINT_L3_MS) nextLevel = 3;
+      else if (idleFor >= IDLE_HINT_L2_MS) nextLevel = 2;
+      else if (idleFor >= IDLE_HINT_L1_MS) nextLevel = 1;
+      setIdleHintLevel(prev => (prev === nextLevel ? prev : nextLevel));
+    }, 250);
+
+    return () => clearInterval(tick);
+  }, [
+    hintResetKey,
+    idleHintsEnabled,
+    revealConfig,
+    sceneState?.phase,
+    sceneState?.showEarsRhythmGame,
+    sceneState?.showEyesTelescopeGame,
+    sceneState?.welcomeShown,
+    showSceneCompletion
+  ]);
+
+  useEffect(() => {
+    setShowIdleGestureHint(idleHintLevel >= 3);
+  }, [idleHintLevel]);
 
   useEffect(() => {
     if (!sceneState?.welcomeShown || revealConfig || showSceneCompletion) return;
@@ -498,7 +520,7 @@ const SymbolMountainSceneContent = ({
   ]);
 
   useEffect(() => {
-    if (!showIdleGestureHint) {
+    if (idleHintLevel < 2) {
       idleVoGateRef.current = false;
       return;
     }
@@ -513,7 +535,7 @@ const SymbolMountainSceneContent = ({
       speakScenePrompt(idleKey);
       idleVoGateRef.current = true;
     }
-  }, [sceneState?.phase, showIdleGestureHint, speakScenePrompt]);
+  }, [sceneState?.phase, idleHintLevel, speakScenePrompt]);
 
   // Reload Handling
   useEffect(() => {
@@ -570,6 +592,8 @@ const SymbolMountainSceneContent = ({
     if (sceneState.eyesGameComplete) return;
     playUiTap();
     triggerMiniGesture('eyes', 1200, MINI_THUMBS_UP_ICON);
+    setShowSparkle('eyes-tap');
+    setTimeout(() => setShowSparkle(null), 900);
     if (!sceneState.welcomeShown) sceneActions.updateState({ welcomeShown: true });
 
     sceneActions.updateState({
@@ -585,6 +609,8 @@ const SymbolMountainSceneContent = ({
     if (!sceneState.earsVisible || sceneState.earsGameComplete) return;
     playUiTap();
     triggerMiniGesture('ears', 1200, MINI_THUMBS_UP_ICON);
+    setShowSparkle('ears-tap');
+    setTimeout(() => setShowSparkle(null), 900);
 
     sceneActions.updateState({
       showEarsRhythmGame: true,
@@ -821,12 +847,23 @@ const SymbolMountainSceneContent = ({
               {/* EYES SYMBOL */}
               {sceneState.welcomeShown && !sceneState.discoveredSymbols?.eyes && (
                 <div
-                  className={`eyes-symbol-container ${sceneState.eyesGameComplete ? 'completed' : 'active'} ${showHintGlow && sceneState.phase === PHASES.EYES_GAME ? 'hint-glow' : ''}`}
+                  className={`eyes-symbol-container ${sceneState.eyesGameComplete ? 'completed' : 'active'} ${sceneState.phase === PHASES.EYES_GAME ? hintClassName : ''}`}
                   onClick={handleEyesClick}
                 >
                   <ClickableElement id="eyes-symbol" onClick={handleEyesClick} completed={sceneState.eyesGameComplete} zone="eyes-zone">
                     <img src={ganeshaEyes} alt="Divine Eyes" style={{ width: '100%', height: '100%', cursor: 'pointer' }} />
                   </ClickableElement>
+                  {(showSparkle === 'eyes-tap' || showSparkle === 'eyes-complete') && (
+                    <SparkleAnimation
+                      type={showSparkle === 'eyes-complete' ? 'magic' : 'star'}
+                      count={showSparkle === 'eyes-complete' ? 24 : 12}
+                      color={showSparkle === 'eyes-complete' ? '#64b5f6' : '#90caf9'}
+                      size={12}
+                      duration={1400}
+                      fadeOut={true}
+                      area="full"
+                    />
+                  )}
                 </div>
               )}
 
@@ -889,13 +926,23 @@ const SymbolMountainSceneContent = ({
               {/* EARS SYMBOL */}
               {sceneState.earsVisible && !sceneState.discoveredSymbols?.ears && (
                 <div
-                  className={`ears-symbol-container ${sceneState.earsGameComplete ? 'completed' : 'active'} materialized ${showHintGlow && sceneState.earsVisible && !sceneState.earsGameComplete ? 'hint-glow' : ''}`}
+                  className={`ears-symbol-container ${sceneState.earsGameComplete ? 'completed' : 'active'} materialized ${sceneState.phase === PHASES.EARS_GAME && sceneState.earsVisible && !sceneState.earsGameComplete ? hintClassName : ''}`}
                   onClick={handleEarsClick}
                 >
                   <ClickableElement id="ears-symbol" onClick={handleEarsClick} completed={sceneState.earsGameComplete} zone="ears-zone">
                     <img src={ganeshaEars} alt="Sacred Ears" style={{ width: '100%', height: '100%', cursor: 'pointer' }} />
                   </ClickableElement>
-                  {showSparkle === 'ears-materialize' && <SparkleAnimation type="glitter" count={30} color="gold" size={15} duration={2000} fadeOut={true} area="full" />}
+                  {(showSparkle === 'ears-materialize' || showSparkle === 'ears-tap' || showSparkle === 'ears-round-complete' || showSparkle === 'ears-complete-final') && (
+                    <SparkleAnimation
+                      type={showSparkle === 'ears-complete-final' ? 'magic' : 'glitter'}
+                      count={showSparkle === 'ears-complete-final' ? 28 : 16}
+                      color={showSparkle === 'ears-complete-final' ? '#ffd54f' : 'gold'}
+                      size={15}
+                      duration={2000}
+                      fadeOut={true}
+                      area="full"
+                    />
+                  )}
                 </div>
               )}
 
@@ -916,6 +963,7 @@ const SymbolMountainSceneContent = ({
                   sequenceJustCompleted={sceneState.earsSequenceJustCompleted || false}
                   readyForNextNote={sceneState.earsReadyForNextNote || false}
                   lastCompletedNote={sceneState.earsLastCompletedNote || null}
+                  onGuidanceEvent={(eventKey) => speakScenePrompt(eventKey)}
                   onSequenceComplete={(noteId) => {
                     const newNoteStates = { ...sceneState.musicalNoteStates, [noteId]: 'golden' };
                     sceneActions.updateState({
@@ -947,12 +995,24 @@ const SymbolMountainSceneContent = ({
 
               {/* MUSICAL NOTES */}
               {sceneState.musicalNotesVisible && (
-                <div style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', flexDirection: 'column', gap: '12px', zIndex: 40 }}>
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '8%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    gap: '12px',
+                    zIndex: 40
+                  }}
+                >
                   {musicalNoteData.map((note) => {
                     const state = musicalNoteStates[note.id];
                     return (
                       <div
                         key={note.id}
+                        className={`tusk-note ${state === NOTE_STATES.ACTIVE && sceneState.phase === PHASES.TUSK_GAME ? hintClassName : ''}`}
                         style={{
                           position: 'relative', width: '60px', height: '60px', borderRadius: '50%',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -1008,6 +1068,17 @@ const SymbolMountainSceneContent = ({
                       }}
                     />
                   </div>
+                  {(showSparkle === 'tusk-feeding' || showSparkle === 'tusk-activate' || showSparkle === 'tusk-complete' || showSparkle === 'ganesha-complete') && (
+                    <SparkleAnimation
+                      type={showSparkle === 'tusk-complete' || showSparkle === 'ganesha-complete' ? 'magic' : 'star'}
+                      count={showSparkle === 'tusk-feeding' ? 12 : 24}
+                      color={showSparkle === 'tusk-feeding' ? '#fff176' : '#ffd54f'}
+                      size={12}
+                      duration={1500}
+                      fadeOut={true}
+                      area="full"
+                    />
+                  )}
                 </div>
               )}
 

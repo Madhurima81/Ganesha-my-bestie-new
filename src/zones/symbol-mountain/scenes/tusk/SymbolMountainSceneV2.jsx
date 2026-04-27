@@ -38,9 +38,9 @@ import SceneCompletionCelebration from '../../../../lib/components/celebration/S
 
 // Images - Background and Symbols
 import mountainBackground from '../tusk/assets/images/rock-background.png';
-import ganeshaEyes from '../../shared/images/icons/symbol-eyes-colored.png';
-import ganeshaEars from '../../shared/images/icons/symbol-ear-colored.png';
-import ganeshaTusk from '../../shared/images/icons/symbol-tusk-colored.png';
+import ganeshaEyes from '../../shared/images/icons/symbol-eyes-new.png';
+import ganeshaEars from '../../shared/images/icons/symbol-ears-new.png';
+import ganeshaTusk from '../../shared/images/icons/symbol-tusk-new.png';
 
 // Popup images
 import popupEyes from '../tusk/assets/images/popup-eyes-info.png';
@@ -51,14 +51,14 @@ import ganeshaOutline from '../tusk/assets/images/ganesha-outline.png';
 import ganeshaComplete from '../tusk/assets/images/ganesha-complete.png';
 
 // Shared symbol images for completion - ALL 8 SYMBOLS
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-colored.svg';
-import symbolModakColored from '../../shared/images/icons/symbol-modak-colored.svg';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-colored.svg';
-import symbolLotusColored from '../../shared/images/icons/symbol-lotus-colored.png';
-import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-colored.png';
-import symbolEyesColored from '../../shared/images/icons/symbol-eyes-colored.png';
-import symbolEarColored from '../../shared/images/icons/symbol-ear-colored.png';
-import symbolTuskColored from '../../shared/images/icons/symbol-tusk-colored.png';
+import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.png';
+import symbolModakColored from '../../shared/images/icons/symbol-modak-new.png';
+import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.png';
+import symbolLotusColored from '../../shared/images/icons/symbol-lotus-new.png';
+import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new.png';
+import symbolEyesColored from '../../shared/images/icons/symbol-eyes-new.png';
+import symbolEarColored from '../../shared/images/icons/symbol-ears-new.png';
+import symbolTuskColored from '../../shared/images/icons/symbol-tusk-new.png';
 
 // Import your actual musical instrument images
 import musicalTabla from '../tusk/assets/images/musical-tabla-colored.png';

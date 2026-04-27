@@ -7,9 +7,9 @@ import musicalTabla from './assets/images/musical-tabla-colored.png';
 import musicalFlute from './assets/images/musical-flute-colored.png';
 import musicalBells from './assets/images/musical-bells-colored.png';
 import musicalCymbals from './assets/images/musical-cymbals-colored.png';
-import ganeshaEyes from '../../shared/images/icons/symbol-eyes-colored.png';
-import ganeshaEars from '../../shared/images/icons/symbol-ear-colored.png';
-import ganeshaTusk from '../../shared/images/icons/symbol-tusk-colored.png';
+import ganeshaEyes from '../../shared/images/icons/symbol-eyes-new.png';
+import ganeshaEars from '../../shared/images/icons/symbol-ears-new.png';
+import ganeshaTusk from '../../shared/images/icons/symbol-tusk-new.png';
 
 // Phase constants (matching your scene)
 const PHASES = {
