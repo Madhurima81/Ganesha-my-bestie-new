@@ -7,9 +7,14 @@ import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimat
 
 // Import your actual musical instrument images
 import musicalTabla from './assets/images/tabla-new.png';
-import musicalFlute from './assets/images/flute-new.png';
+import musicalDholak from './assets/images/dholak-new.png';
 import musicalHarmonium from './assets/images/harmonium-new.png';
 import musicalTanpura from './assets/images/tanpura-new.png';
+import replayIcon from './assets/images/replay.png';
+import tablaSample from './assets/audio/Tabla.wav';
+import dholSample from './assets/audio/dhol.mp3';
+import harmoniumSample from './assets/audio/harmonium.mp3';
+import tanpuraSample from './assets/audio/tanpra.mp3';
 
 // Musical instruments data
 const musicalInstruments = {
@@ -20,10 +25,10 @@ const musicalInstruments = {
     frequency: 220,
     color: '#8d6e63'
   },
-  flute: {
-    image: musicalFlute,
-    emoji: '🎵',
-    name: 'Flute',
+  dholak: {
+    image: musicalDholak,
+    emoji: '🥁',
+    name: 'Dholak',
     frequency: 660,
     color: '#8bc34a'
   },
@@ -44,36 +49,66 @@ const musicalInstruments = {
 };
 
 const defaultEarInstrumentPositions = {
-  tabla: { x: 15, y: 35 },
-  flute: { x: 75, y: 25 },
-  harmonium: { x: 45, y: 45 },
-  tanpura: { x: 25, y: 70 }
+  tabla: { x: 39, y: 44 },
+  dholak: { x: 64, y: 72 },
+  harmonium: { x: 23, y: 71 },
+  tanpura: { x: 86, y: 47 }
 };
 
-// ✅ NEW: Generate random rhythm sequences
+const instrumentAudioSources = {
+  tabla: tablaSample,
+  dholak: dholSample,
+  harmonium: harmoniumSample,
+  tanpura: tanpuraSample
+};
+
+// ✅ Generate random rhythm sequences with constraints:
+//   - No more than 2 of the same instrument in a row
+//   - At least 2 different instruments must appear
 const generateRandomSequence = (discoveredInstruments, noteId) => {
-  const availableInstruments = Object.keys(discoveredInstruments);
-  
-  // Progressive difficulty
-  const sequenceConfigs = {
-    note1: { length: 2, useInstruments: 2 }, // Easy: 2 beats, 2 different instruments
-    note2: { length: 3, useInstruments: 3 }, // Medium: 3 beats, 3 different instruments  
-    note3: { length: 4, useInstruments: 4 }  // Hard: 4 beats, all instruments
-  };
-  
-  const config = sequenceConfigs[noteId] || { length: 2, useInstruments: 2 };
-  const instrumentPool = availableInstruments.slice(0, Math.min(config.useInstruments, availableInstruments.length));
-  
-  const sequence = [];
-  for (let i = 0; i < config.length; i++) {
-    const randomInstrument = instrumentPool[Math.floor(Math.random() * instrumentPool.length)];
-    sequence.push(randomInstrument);
-  }
-  
-  console.log(`🎲 Generated random sequence for ${noteId}:`, sequence);
-  return sequence;
-};
+  const discoveredKeys = Object.keys(discoveredInstruments || {});
+  const truthyKeys = discoveredKeys.filter((key) => Boolean(discoveredInstruments[key]));
+  const availableInstruments = truthyKeys.length > 0 ? truthyKeys : discoveredKeys;
 
+  const sequenceConfigs = {
+    note1: { length: 2, useInstruments: 2 },
+    note2: { length: 3, useInstruments: 3 },
+    note3: { length: 4, useInstruments: 4 }
+  };
+
+  const config = sequenceConfigs[noteId] || { length: 2, useInstruments: 2 };
+  const poolSize = Math.min(config.useInstruments, availableInstruments.length);
+
+  const fisherYates = (arr) => {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+
+  const instrumentPool = fisherYates(availableInstruments).slice(0, poolSize);
+  if (instrumentPool.length === 0) return [];
+
+  // Keep only minimum variety guarantee (2 unique), allowing repeats in longer rounds.
+  const requiredUnique = Math.min(2, config.length, instrumentPool.length);
+  const guaranteed = fisherYates(instrumentPool).slice(0, requiredUnique);
+
+  const sequence = [...guaranteed];
+  while (sequence.length < config.length) {
+    const candidate = instrumentPool[Math.floor(Math.random() * instrumentPool.length)];
+    const wouldBe3InRow =
+      sequence.length >= 2 &&
+      sequence[sequence.length - 1] === candidate &&
+      sequence[sequence.length - 2] === candidate;
+    if (!wouldBe3InRow) sequence.push(candidate);
+  }
+
+  const finalSequence = fisherYates(sequence);
+  console.log(`Generated random sequence for ${noteId}:`, finalSequence);
+  return finalSequence;
+};
 const EarsRhythmGame = ({ 
   isActive = false,
   currentNote = 'note1',
@@ -110,16 +145,22 @@ console.log('🎵 EarsRhythmGame inline render:', {
   const [playingInstrument, setPlayingInstrument] = useState(null);
   const [tapSparkleOn, setTapSparkleOn] = useState(null);
   const [tapGestureOn, setTapGestureOn] = useState(null);
+  // 🔧 Counter forces React to re-render even when same instrument is tapped twice in a row
+  const [tapTick, setTapTick] = useState(0);
+  // 🔧 Which tracker slot is currently being played during sequence playback (position-only, no reveal)
+  const [activePlaybackSlot, setActivePlaybackSlot] = useState(null);
+  // 🔧 Wrong shake: which scene instrument should shake (NOT the tracker)
+  const [wrongShakeInstrument, setWrongShakeInstrument] = useState(null);
   const [sequenceItemsShown, setSequenceItemsShown] = useState(0);
-  const [idleHintLevel, setIdleHintLevel] = useState(0);
-  const [sequenceHintClasses, setSequenceHintClasses] = useState({});
-  const lastIdleInteractionAtRef = useRef(Date.now());
-  const idleHintStageRef = useRef({ level2: false, level3: false });
+  const [patternTapFeedback, setPatternTapFeedback] = useState({});
   const wrongTapsThisRoundRef = useRef(0);
-  const wasListeningActiveRef = useRef(false);
-  const IDLE_HINT_L1_MS = 10000;
-  const IDLE_HINT_L2_MS = 18000;
-  const IDLE_HINT_L3_MS = 26000;
+  const replayHintGivenRef = useRef(false);
+  const [replayHintPulseOn, setReplayHintPulseOn] = useState(false);
+  const [trackerCelebrateOn, setTrackerCelebrateOn] = useState(false);
+  const roundStartVoPlayedRef = useRef({ note1: false, note2: false, note3: false });
+  const roundTapVoPlayedRef = useRef({ note1: false, note2: false, note3: false });
+  const roundSequenceStartedRef = useRef({ note1: false, note2: false, note3: false });
+  const [gameIntroDelayActive, setGameIntroDelayActive] = useState(false);
 
   // Add these to your state declarations at the top:
 const [countdown, setCountdown] = useState(0);
@@ -131,6 +172,7 @@ const [isCountingDown, setIsCountingDown] = useState(false);
 
   // Audio context ref
   const audioContextRef = useRef(null);
+  const instrumentAudioRefs = useRef({});
   const timeoutsRef = useRef([]);
 
   // Clean up timeouts
@@ -146,12 +188,7 @@ const [isCountingDown, setIsCountingDown] = useState(false);
     return timeout;
   };
 
-  const resetIdleHints = () => {
-    lastIdleInteractionAtRef.current = Date.now();
-    setIdleHintLevel(0);
-    setSequenceHintClasses({});
-    idleHintStageRef.current = { level2: false, level3: false };
-  };
+  const resetIdleHints = () => {};
 
 
 
@@ -185,6 +222,25 @@ const [isCountingDown, setIsCountingDown] = useState(false);
       }
       audioContextRef.current = null;
     }
+  }, [isActive]);
+
+  // Preload real instrument samples
+  useEffect(() => {
+    if (!isActive) return;
+    Object.entries(instrumentAudioSources).forEach(([key, src]) => {
+      const audio = new Audio(src);
+      audio.preload = 'auto';
+      instrumentAudioRefs.current[key] = audio;
+    });
+
+    return () => {
+      Object.values(instrumentAudioRefs.current).forEach((audio) => {
+        if (!audio) return;
+        audio.pause();
+        audio.currentTime = 0;
+      });
+      instrumentAudioRefs.current = {};
+    };
   }, [isActive]);
 // ✅ ENHANCED: Handle both new games and reloads (Eyes game pattern)
 useEffect(() => {
@@ -237,7 +293,14 @@ setCanPlayerClick(initialGamePhase === 'listening');
       setGamePhase('waiting');
       setCanPlayerClick(false);
       setSequenceItemsShown(0);
+      setPatternTapFeedback({});
       wrongTapsThisRoundRef.current = 0;
+      replayHintGivenRef.current = false;
+      roundTapVoPlayedRef.current[currentNote] = false;
+      roundSequenceStartedRef.current[currentNote] = false;
+      setReplayHintPulseOn(false);
+      setActivePlaybackSlot(null);
+      setWrongShakeInstrument(null);
       clearAllTimeouts();
     }
   }
@@ -261,150 +324,63 @@ setCanPlayerClick(initialGamePhase === 'listening');
 
 // Add this useEffect after your other useEffects:
 useEffect(() => {
-  if (gamePhase === 'waiting' && currentSequence.length > 0 && !isCountingDown) {
+  if (gamePhase !== 'waiting' || currentSequence.length === 0 || isCountingDown || gameIntroDelayActive) return;
+
+  const startRoundSequenceOnce = () => {
+    if (roundSequenceStartedRef.current[currentNote]) return;
+    roundSequenceStartedRef.current[currentNote] = true;
+    setGameIntroDelayActive(false);
+    handlePlaySequence();
+  };
+
+  const startKeyByRound = {
+    note1: 'startRound1',
+    note2: 'startRound2',
+    // Round 3: no extra start VO (prevents overlap/cut with completion lines)
+    note3: null
+  };
+  const startKey = startKeyByRound[currentNote];
+
+  if (startKey && !roundStartVoPlayedRef.current[currentNote]) {
+    roundStartVoPlayedRef.current[currentNote] = true;
+    setGameIntroDelayActive(true);
+    emitGuidance(startKey, {
+      onEnd: () => {
+        safeSetTimeout(() => {
+          startRoundSequenceOnce();
+        }, 1200);
+      }
+    });
+    // Failsafe in case onEnd never fires on some device/browser.
     safeSetTimeout(() => {
-      startCountdown();
-    }, 1000); // Wait 1 second, then start countdown
-  }
-}, [gamePhase, currentSequence, isCountingDown]);
-
-// Deterministic idle ladder for listening phase:
-// L1 @ 10s (no visual), L2 @ 18s (glow hint), L3 @ 26s (stronger glow hint).
-useEffect(() => {
-  const listeningActive = gamePhase === 'listening' && canPlayerClick && !isSequencePlaying && currentSequence.length > 0;
-  if (listeningActive && !wasListeningActiveRef.current) {
-    resetIdleHints();
-  }
-  wasListeningActiveRef.current = listeningActive;
-
-  if (!listeningActive) {
-    setIdleHintLevel(0);
-    setSequenceHintClasses({});
-    idleHintStageRef.current = { level2: false, level3: false };
+      startRoundSequenceOnce();
+    }, 12000);
     return;
   }
 
-  const tick = setInterval(() => {
-    const idleFor = Date.now() - lastIdleInteractionAtRef.current;
-    let nextLevel = 0;
-    if (idleFor >= IDLE_HINT_L3_MS) nextLevel = 3;
-    else if (idleFor >= IDLE_HINT_L2_MS) nextLevel = 2;
-    else if (idleFor >= IDLE_HINT_L1_MS) nextLevel = 1;
-    setIdleHintLevel(prev => (prev === nextLevel ? prev : nextLevel));
-  }, 250);
-
-  return () => clearInterval(tick);
-}, [gamePhase, canPlayerClick, isSequencePlaying, currentSequence.length]);
-
-const triggerSequenceHintGlow = (isStrong = false) => {
-  const hintClass = isStrong ? 'hint-final' : 'hint-strong';
-  const pulseMs = isStrong ? 1200 : 900;
-
-  currentSequence.forEach((inst, idx) => {
-    safeSetTimeout(() => {
-      setSequenceHintClasses(prev => ({ ...prev, [inst]: hintClass }));
-      safeSetTimeout(() => {
-        setSequenceHintClasses(prev => {
-          const next = { ...prev };
-          delete next[inst];
-          return next;
-        });
-      }, pulseMs);
-    }, idx * 1100);
-  });
-};
-
-useEffect(() => {
-  const listeningActive = gamePhase === 'listening' && canPlayerClick && !isSequencePlaying && currentSequence.length > 0;
-  if (!listeningActive) return;
-
-  if (idleHintLevel >= 2 && !idleHintStageRef.current.level2) {
-    idleHintStageRef.current.level2 = true;
-    triggerSequenceHintGlow(false);
-    emitGuidance('idleEars');
-  }
-  if (idleHintLevel >= 3 && !idleHintStageRef.current.level3) {
-    idleHintStageRef.current.level3 = true;
-    triggerSequenceHintGlow(true);
-  }
-}, [idleHintLevel, gamePhase, canPlayerClick, isSequencePlaying, currentSequence.length]);
+  safeSetTimeout(() => {
+    startRoundSequenceOnce();
+  }, 300);
+}, [gamePhase, currentSequence, isCountingDown, gameIntroDelayActive, currentNote]);
 
 useEffect(() => {
   if (gamePhase === 'waiting') emitGuidance('waiting');
-  if (gamePhase === 'playing') emitGuidance('playing');
-  if (gamePhase === 'listening') emitGuidance('listening');
-  if (gamePhase === 'success') {
-    const roundNum = ['note1', 'note2', 'note3'].indexOf(currentNote) + 1;
-    emitGuidance(`successRound${roundNum}`);
-  }
 }, [gamePhase, currentNote]);
-
-  // Play sound function
-  const playInstrumentSound = async (instrumentType) => {
-    if (!audioContextRef.current) {
-      console.log('🔇 No audio context available');
-      return;
-    }
-
+  // Play instrument sample only (no legacy synth fallback).
+  const playInstrumentSound = async (instrumentType, volume = 0.85) => {
     try {
-      // Resume audio context on user interaction (required by browsers)
-      if (audioContextRef.current.state === 'suspended') {
-        console.log('🔊 Resuming suspended audio context...');
-        await audioContextRef.current.resume();
+      const sampleAudio = instrumentAudioRefs.current[instrumentType];
+      if (sampleAudio) {
+        // Clone per trigger to avoid missed playback when sounds fire quickly in sequence.
+        const shot = sampleAudio.cloneNode(true);
+        shot.volume = volume;
+        await shot.play();
+        return true;
       }
-      
-      const instrument = musicalInstruments[instrumentType];
-      if (!instrument) {
-        console.log('🔇 Instrument not found:', instrumentType);
-        return;
-      }
-
-      console.log(`🔊 Playing sound for ${instrumentType} at ${instrument.frequency}Hz`);
-
-      const oscillator = audioContextRef.current.createOscillator();
-      const gainNode = audioContextRef.current.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContextRef.current.destination);
-      
-      oscillator.frequency.value = instrument.frequency;
-      oscillator.type = 'sine';
-      
-      // Set volume envelope
-      const currentTime = audioContextRef.current.currentTime;
-      gainNode.gain.setValueAtTime(0, currentTime);
-      gainNode.gain.linearRampToValueAtTime(0.3, currentTime + 0.01); // Quick attack
-      gainNode.gain.exponentialRampToValueAtTime(0.01, currentTime + 0.5); // Decay
-      
-      oscillator.start(currentTime);
-      oscillator.stop(currentTime + 0.5);
-      
-      console.log(`✅ Sound played successfully for ${instrumentType}`);
     } catch (error) {
-      console.warn('🔇 Sound playback failed:', error);
-      
-      // Fallback: try to create a simple beep
-      try {
-        const oscillator = audioContextRef.current.createOscillator();
-        const gainNode = audioContextRef.current.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContextRef.current.destination);
-        
-        oscillator.frequency.value = 440; // Simple A note
-        oscillator.type = 'sine';
-        
-        gainNode.gain.setValueAtTime(0.1, audioContextRef.current.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContextRef.current.currentTime + 0.3);
-        
-        oscillator.start();
-        oscillator.stop(audioContextRef.current.currentTime + 0.3);
-        
-        console.log('🔊 Fallback beep played');
-      } catch (fallbackError) {
-        console.warn('🔇 Even fallback sound failed:', fallbackError);
-      }
+      console.warn('Sample playback failed:', error);
     }
+    return false;
   };
 
 const startCountdown = () => {
@@ -451,34 +427,79 @@ const startCountdown = () => {
     setCanPlayerClick(false);
     setPlayerInput([]);
     setSequenceItemsShown(0);
+    setPatternTapFeedback({});
+    setActivePlaybackSlot(null);
+    setWrongShakeInstrument(null);
     wrongTapsThisRoundRef.current = 0;
+    replayHintGivenRef.current = false;
+    roundTapVoPlayedRef.current[currentNote] = false;
+    setReplayHintPulseOn(false);
     
     currentSequence.forEach((instrument, index) => {
       safeSetTimeout(() => {
         console.log(`🎵 Playing instrument ${index + 1}/${currentSequence.length}: ${instrument}`);
         
-        // Show this sequence item
+        // 🔧 Track WHICH slot is playing (position only — tracker stays mystery, no instrument reveal)
+        setActivePlaybackSlot(index);
+        // Keep sequenceItemsShown for legacy reload compatibility, but tracker no longer reveals from it
         setSequenceItemsShown(index + 1);
         
-        // Visual feedback
+        // Scene instrument pulses (this is fine — kid sees which instrument made which sound = teaching)
         setPlayingInstrument(instrument);
         playInstrumentSound(instrument);
         
-        // Clear visual feedback
+        // Clear scene instrument pulse
         safeSetTimeout(() => {
           setPlayingInstrument(null);
-        }, 600);
+        }, 700);
         
         // After last instrument
         if (index === currentSequence.length - 1) {
           safeSetTimeout(() => {
+            // 🔧 Brief "your turn" pause — clear active slot, all mystery circles pulse together
+            setActivePlaybackSlot(null);
             setIsSequencePlaying(false);
             setGamePhase('listening');
             setCanPlayerClick(true);
-            console.log('🎵 Sequence complete, player can now input');
-          }, 800);
+            if (currentNote === 'note1' && !roundTapVoPlayedRef.current.note1) {
+              roundTapVoPlayedRef.current.note1 = true;
+              safeSetTimeout(() => {
+                emitGuidance('round1TapNow');
+              }, 500);
+            }
+            console.log('🎵 Sequence complete, player can now tap');
+          }, 900); // Slightly longer breath before "your turn"
         }
-      }, index * 1200);
+      }, index * 1100); // 1100ms between beats (was 1200) — feels more musical
+    });
+  };
+
+  const playRemainingSequence = (fromIndex, volume = 0.55) => {
+    if (isSequencePlaying || fromIndex >= currentSequence.length) return;
+    setIsSequencePlaying(true);
+    setGamePhase('playing');
+    setCanPlayerClick(false);
+
+    currentSequence.slice(fromIndex).forEach((instrument, relativeIndex) => {
+      const absoluteIndex = fromIndex + relativeIndex;
+      safeSetTimeout(() => {
+        setActivePlaybackSlot(absoluteIndex);
+        setPlayingInstrument(instrument);
+        playInstrumentSound(instrument, volume);
+
+        safeSetTimeout(() => {
+          setPlayingInstrument(null);
+        }, 650);
+
+        if (absoluteIndex === currentSequence.length - 1) {
+          safeSetTimeout(() => {
+            setActivePlaybackSlot(null);
+            setIsSequencePlaying(false);
+            setGamePhase('listening');
+            setCanPlayerClick(true);
+          }, 850);
+        }
+      }, relativeIndex * 1000);
     });
   };
 
@@ -502,42 +523,76 @@ const startCountdown = () => {
 
     console.log(`🎵 Player clicked: ${instrumentType}`);
     
-    // Play sound and visual feedback
+    // 🔧 Bump tapTick FIRST to force React re-render even on same-instrument repeat tap
+    setTapTick((t) => t + 1);
+    
+    // Play sound + scene instrument pulse
     playInstrumentSound(instrumentType);
     setPlayingInstrument(instrumentType);
-    setTapSparkleOn(instrumentType);
-    setTapGestureOn(instrumentType);
     
     safeSetTimeout(() => {
       setPlayingInstrument(null);
-      setTapSparkleOn(null);
-      setTapGestureOn(null);
-    }, 300);
+    }, 400);
     
     const newPlayerInput = [...playerInput, instrumentType];
     const currentIndex = newPlayerInput.length - 1;
+    const expected = currentSequence[currentIndex];
     
-    // Check if correct
-    if (newPlayerInput[currentIndex] === currentSequence[currentIndex]) {
+    // ✅ Check if correct
+    if (instrumentType === expected) {
       console.log(`✅ Correct! Position ${currentIndex + 1}/${currentSequence.length}`);
       setPlayerInput(newPlayerInput);
+      // Sparkle + thumbs-up gesture on the tapped instrument
+      setTapSparkleOn(instrumentType);
+      setTapGestureOn(instrumentType);
+      // Lock this slot in green — STAYS for the rest of the round
+      setPatternTapFeedback((prev) => ({
+        ...prev,
+        [currentIndex]: 'correct'
+      }));
+      // Clear sparkle/gesture after animation completes (700ms matches SparkleAnimation duration)
+      safeSetTimeout(() => {
+        setTapSparkleOn(null);
+        setTapGestureOn(null);
+      }, 750);
+      // Clear any leftover wrong-shake from previous attempt on this slot
+      setWrongShakeInstrument(null);
 
-// ✅ ENHANCED: Save state AND sequence after each correct input
-if (window.saveEarsGameState) {
-  window.saveEarsGameState({
-    gamePhase: 'listening',
-    playerInput: newPlayerInput,
-    currentSequence: currentSequence,        // ← ADD: Save the sequence!
-    sequenceItemsShown: sequenceItemsShown   // ← ADD: Save the display count!
-  });
-}
+      // Save state for reload
+      if (window.saveEarsGameState) {
+        window.saveEarsGameState({
+          gamePhase: 'listening',
+          playerInput: newPlayerInput,
+          currentSequence: currentSequence,
+          sequenceItemsShown: sequenceItemsShown
+        });
+      }
+
       // Check if sequence complete
       if (newPlayerInput.length === currentSequence.length) {
         handleSequenceSuccess();
       }
     } else {
-      console.log(`❌ Wrong! Expected: ${currentSequence[currentIndex]}, Got: ${instrumentType}`);
-      handleSequenceError();
+      // ❌ Wrong tap — DON'T wipe progress. Just shake the scene instrument and let kid retry this slot.
+      console.log(`❌ Wrong! Expected: ${expected}, Got: ${instrumentType} at slot ${currentIndex}`);
+      
+      // Shake the scene instrument they tapped (NOT the tracker)
+      setWrongShakeInstrument(instrumentType);
+      safeSetTimeout(() => {
+        setWrongShakeInstrument(null);
+      }, 550);
+
+      wrongTapsThisRoundRef.current += 1;
+      if (wrongTapsThisRoundRef.current >= 3 && !replayHintGivenRef.current) {
+        replayHintGivenRef.current = true;
+        safeSetTimeout(() => {
+          emitGuidance('replayHint');
+          setReplayHintPulseOn(true);
+          safeSetTimeout(() => setReplayHintPulseOn(false), 2400);
+        }, 900);
+      }
+      
+      // playerInput is NOT updated — kid retries the same slot with previous correct taps locked in
     }
   };
 
@@ -548,44 +603,24 @@ const handleSequenceSuccess = () => {
   wrongTapsThisRoundRef.current = 0;
   setGamePhase('success');
   setCanPlayerClick(false);
-  
-  // ✨ Show celebration for 2 seconds before completing
+  setReplayHintPulseOn(false);
+  // Celebration beat: tracker bounces while scene instruments are dimmed.
+  safeSetTimeout(() => setTrackerCelebrateOn(true), 600);
+  safeSetTimeout(() => setTrackerCelebrateOn(false), 1400);
+
+  // Hand off to parent for note light-up sequence.
   safeSetTimeout(() => {
     if (onSequenceComplete) {
       onSequenceComplete(currentNote);
     }
-    if (onGameComplete) {
+    if (currentNote === 'note3' && onGameComplete) {
       onGameComplete();
     }
-  }, 2000); // 2 second celebration pause
+  }, 1200);
 };
 
-  // Handle wrong input
-  const handleSequenceError = () => {
-    resetIdleHints();
-    wrongTapsThisRoundRef.current += 1;
-    const wrongCount = wrongTapsThisRoundRef.current;
-    setGamePhase('error');
-    setCanPlayerClick(false);
-    setPlayerInput([]);
-
-    if (wrongCount === 1) {
-      emitGuidance('wrongFirstTime');
-      safeSetTimeout(() => {
-        setGamePhase('listening');
-        setCanPlayerClick(true);
-      }, 900);
-      return;
-    }
-
-    emitGuidance('wrongSecondTime');
-    safeSetTimeout(() => {
-      console.log('🔄 Replaying sequence after 2nd wrong tap');
-      wrongTapsThisRoundRef.current = 0;
-      setSequenceItemsShown(0);
-      handlePlaySequence();
-    }, 1500);
-  };
+  // 🔧 handleSequenceError REMOVED — wrong taps no longer wipe progress or replay sequence.
+  // Wrong tap handling now lives inline in handleInstrumentClick (shake + per-slot wrong tracking).
 
   if (!isActive) {
     return null;
@@ -596,133 +631,167 @@ const handleSequenceSuccess = () => {
       {/* Header removed: guidance is VO-driven */}
       
 
-{/* Round Progress Indicator */}
-<div style={{
-  position: 'absolute',
-  bottom: '24px',
-  left: '50%',
-  transform: 'translateX(-50%)',
-  display: 'flex',
-  gap: '16px',
-  zIndex: 40,
-  alignItems: 'center'
-}}>
-  {['note1', 'note2', 'note3'].map((note, index) => {
-    const roundNum = index + 1;
-    const currentRoundNum = ['note1', 'note2', 'note3'].indexOf(currentNote) + 1;
-    const isCompleted = roundNum < currentRoundNum || (gamePhase === 'success' && roundNum === currentRoundNum);
-    const isCurrent = note === currentNote && !isCompleted;
-
-    return (
-      <div
-        key={note}
-        style={{
-          width: '48px',
-          height: '48px',
-          borderRadius: '50%',
-          background: isCompleted
-            ? '#FFB300'
-            : isCurrent
-              ? '#FFD700'
-              : 'rgba(255,255,255,0.35)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '18px',
-          fontWeight: 'bold',
-          fontFamily: 'Baloo 2',
-          color: isCompleted || isCurrent ? 'white' : 'rgba(255,255,255,0.7)',
-          border: isCurrent ? '3px solid #FF9800' : '2px solid rgba(255,255,255,0.4)',
-          boxShadow: isCurrent ? '0 0 16px rgba(255, 152, 0, 0.7)' : 'none',
-          transition: 'all 0.3s ease'
-        }}
-      >
-        {isCompleted ? '✓' : roundNum}
-      </div>
-    );
-  })}
-</div>
-
-{/* Sequence Tracker Strip — centered, below header */}
-{(gamePhase === 'playing' || gamePhase === 'listening') && currentSequence.length > 0 && (
+{/* 🎵 Sequence Tracker — Mystery circles during playback, reveal on correct tap */}
+{(gamePhase === 'playing' || gamePhase === 'listening' || gamePhase === 'success') && currentSequence.length > 0 && (
   <div style={{
     position: 'absolute',
-    top: '160px',
+    top: '210px',
     left: '50%',
     transform: 'translateX(-50%)',
     display: 'flex',
-    gap: '16px',
+    gap: '20px',
     alignItems: 'center',
+    padding: '14px 22px',
+    background: 'rgba(74, 47, 110, 0.35)',  // Soft purple-tinted strip — pops against sky
+    backdropFilter: 'blur(6px)',
+    borderRadius: '70px',
+    boxShadow: '0 6px 24px rgba(0,0,0,0.18)',
     zIndex: 31
   }}>
     {currentSequence.map((inst, idx) => {
       const instrument = musicalInstruments[inst];
-      const isShown = gamePhase === 'playing' ? idx < sequenceItemsShown : true;
-      const isActive = gamePhase === 'playing' && idx === sequenceItemsShown - 1;
-      const patternSize = instrumentSizes[inst]?.pattern || 100;
-      const trackerSize = Math.max(patternSize + 28, 110);
+      const feedbackState = patternTapFeedback[idx] || null;
+      const isLockedCorrect = feedbackState === 'correct'; // ✅ Revealed + locked green
+      const isPlayingThisSlot = gamePhase === 'playing' && activePlaybackSlot === idx; // Position pulse only
+      // Next-expected slot during listening phase: pulses gently to guide kid
+      const isNextExpected = gamePhase === 'listening' && idx === playerInput.length;
+      
+      const trackerSize = 128;
+      const imageSize = 98;
 
       return (
-        <div key={idx} style={{
-          position: 'relative',
-          width: `${trackerSize}px`,
-          height: `${trackerSize}px`,
-          borderRadius: '50%',
-          background: isActive
-              ? 'rgba(255, 215, 0, 0.25)'
-              : 'rgba(255,255,255,0.15)',
-          border: isActive
-              ? '3px solid #FFD700'
-              : '2px solid rgba(255,255,255,0.4)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          opacity: isShown ? 1 : 0.25,
-          transition: 'all 0.3s ease',
-          boxShadow: isActive ? '0 0 16px rgba(255,215,0,0.7)' : 'none'
-        }}>
-          <img
-            src={instrument.image}
-            alt={instrument.name}
-            style={{
-              width: `${patternSize}px`,
-              height: `${patternSize}px`,
-              objectFit: 'contain',
-              transform: 'scale(1.12)'
-            }}
-          />
-          {false && (
+        <div
+          key={`${idx}-${isLockedCorrect ? 'locked' : 'mystery'}`}
+          style={{
+            position: 'relative',
+            width: `${trackerSize}px`,
+            height: `${trackerSize}px`,
+            borderRadius: '50%',
+            background: isLockedCorrect
+              ? 'rgba(210, 190, 240, 0.38)' // Revealed: same purple family, slightly brighter
+              : isPlayingThisSlot
+                ? 'rgba(255, 215, 0, 0.35)' // Soft gold during this beat's playback
+                : isNextExpected
+                  ? 'rgba(255, 215, 0, 0.18)' // Subtle gold tint for next expected
+                  : 'rgba(255,255,255,0.12)', // Mystery: dim translucent
+            border: isLockedCorrect
+              ? '4px solid #f4c430' // ✅ Yellow completion ring
+              : isPlayingThisSlot
+                ? '3px solid #FFD700'
+                : isNextExpected
+                  ? '3px dashed rgba(255, 215, 0, 0.7)'
+                  : '2px solid rgba(255,255,255,0.35)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.4s ease',
+            boxShadow: isLockedCorrect
+              ? '0 0 22px rgba(244,196,48,0.6), 0 4px 12px rgba(0,0,0,0.15)'
+              : isPlayingThisSlot
+                ? '0 0 18px rgba(255,215,0,0.7)'
+                : 'none',
+            transform: isLockedCorrect ? 'scale(1.05)' : 'scale(1)',
+            animation: isPlayingThisSlot
+              ? 'beatPulse 0.6s ease-out'
+              : isNextExpected
+                ? 'nextSlotBreathe 1.6s ease-in-out infinite'
+                : trackerCelebrateOn
+                  ? 'trackerCelebrate 0.7s ease-in-out'
+                  : 'mysteryBreathe 2.4s ease-in-out infinite'
+          }}
+        >
+          {isLockedCorrect ? (
+            // ✅ REVEALED: instrument image + checkmark
+            <>
+              <img
+                src={instrument.image}
+                alt={instrument.name}
+                style={{
+                  width: `${imageSize}px`,
+                  height: `${imageSize}px`,
+                  objectFit: 'contain',
+                  filter: 'brightness(1.1) saturate(1.15)',
+                  animation: 'revealPop 0.5s ease-out'
+                }}
+              />
+              <div style={{
+                position: 'absolute',
+                top: '-4px',
+                right: '-4px',
+                background: '#f4c430',
+                borderRadius: '50%',
+                width: '28px',
+                height: '28px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '16px',
+                color: 'white',
+                fontWeight: 'bold',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
+                animation: 'revealPop 0.5s ease-out 0.1s both'
+              }}>✓</div>
+            </>
+          ) : (
+            // ❓ MYSTERY: just an empty translucent circle, no icon (round-progress notes already exist at top)
             <div style={{
-              position: 'absolute',
-              top: '-6px',
-              right: '-6px',
-              background: '#4CAF50',
+              width: '14px',
+              height: '14px',
               borderRadius: '50%',
-              width: '22px',
-              height: '22px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '13px',
-              color: 'white',
-              fontWeight: 'bold'
-            }}>✓</div>
+              background: isPlayingThisSlot
+                ? 'rgba(255,215,0,0.95)'
+                : 'rgba(255,255,255,0.4)',
+              transition: 'all 0.3s ease'
+            }} />
           )}
         </div>
       );
     })}
-  </div>
-)}
 
-{/* Play Sequence Button */}
-{gamePhase === 'waiting' && playerInput.length === 0 && !isCountingDown && (
-  <button 
-    style={inlinePlayButtonStyle}
-    onClick={handlePlaySequence}
-    disabled={isSequencePlaying}
-  >
-    🔊 Play Pattern
-  </button>
+    <div
+      aria-hidden="true"
+      style={{
+        width: '1px',
+        height: '60px',
+        background: 'rgba(255,255,255,0.28)'
+      }}
+    />
+
+    <button
+      type="button"
+      onClick={() => playRemainingSequence(0, 0.75)}
+      disabled={isSequencePlaying || gamePhase !== 'listening'}
+      className={replayHintPulseOn ? 'replay-hint-pulse' : ''}
+      style={{
+        border: 'none',
+        background: 'transparent',
+        padding: 0,
+        width: '120px',
+        height: '120px',
+        borderRadius: '50%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        cursor: (isSequencePlaying || gamePhase !== 'listening') ? 'default' : 'pointer',
+        opacity: (isSequencePlaying || gamePhase !== 'listening') ? 0.65 : 1
+      }}
+      aria-label="Replay pattern"
+    >
+      <img
+        src={replayIcon}
+        alt="Replay"
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'contain',
+          transform: 'scale(2.2)',
+          transformOrigin: 'center',
+          filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.25))'
+        }}
+      />
+    </button>
+  </div>
 )}
 
 {/* Countdown display */}
@@ -751,29 +820,17 @@ const handleSequenceSuccess = () => {
       {/* Musical Instruments in their discovered positions */}
 
 <div className="discovered-instruments-clickable" style={{ 
-  pointerEvents: gamePhase === 'playing' ? 'none' : 'auto' 
+  pointerEvents: gamePhase === 'playing' ? 'none' : 'auto',
+  opacity: gamePhase === 'success' ? 0.45 : 1,
+  transition: 'opacity 0.45s ease'
 }}>        {Object.keys(discoveredInstruments).map(instrumentType => {
           const instrument = musicalInstruments[instrumentType];
           const isPlaying = playingInstrument === instrumentType;
           const isClickable = canPlayerClick;
-          const isCurrentSequenceInstrument = currentSequence.includes(instrumentType);
-          const baseHintClass = isClickable && isCurrentSequenceInstrument && idleHintLevel === 1
-            ? 'hint'
-            : isClickable && isCurrentSequenceInstrument && idleHintLevel === 2
-              ? 'hint-strong'
-              : isClickable && isCurrentSequenceInstrument && idleHintLevel >= 3
-                ? 'hint-final'
-                : '';
-          const flashHintClass = sequenceHintClasses[instrumentType] || '';
-          const activeHintClass = flashHintClass || baseHintClass;
-          const hintFilter = activeHintClass === 'hint-final'
-            ? 'drop-shadow(0 0 20px rgba(255, 170, 0, 1)) brightness(1.18)'
-            : activeHintClass === 'hint-strong'
-              ? 'drop-shadow(0 0 14px rgba(255, 196, 0, 0.95)) brightness(1.14)'
-              : activeHintClass === 'hint'
-                ? 'drop-shadow(0 0 10px rgba(255, 209, 102, 0.8)) brightness(1.1)'
-                : 'none';
+          const hintFilter = 'none';
           
+          // 🔧 NEW: wrong-tap shake state (per-instrument)
+          const isShaking = wrongShakeInstrument === instrumentType;
           const position = instrumentPositions[instrumentType]
             || Object.values(instrumentPositions).find((pos) => pos?.type === instrumentType);
           const earSize = instrumentSizes[instrumentType]?.ears || 290;
@@ -782,7 +839,7 @@ const handleSequenceSuccess = () => {
           return (
             <button
               key={instrumentType}
-              className={activeHintClass}
+              className=""
               data-instrument={instrumentType}
 style={{
   position: 'absolute',
@@ -798,12 +855,15 @@ style={{
   background: 'transparent',
   WebkitTapHighlightColor: 'transparent',
   cursor: isClickable ? 'pointer' : 'default',
-  opacity: isClickable || isPlaying ? 1 : 0.65,
+  opacity: isClickable || isPlaying ? 1 : 0.55,
   transform: `translate(-50%, -50%) ${isPlaying ? 'scale(1.08)' : 'scale(1)'}`,
   boxShadow: 'none',
   filter: isPlaying
-    ? 'drop-shadow(0 0 14px rgba(255, 196, 64, 0.95)) brightness(1.12)'
-    : hintFilter,
+      ? 'drop-shadow(0 0 14px rgba(255, 196, 64, 0.95)) brightness(1.12)'
+      : hintFilter,
+  animation: isShaking
+    ? 'sceneInstrumentShake 0.5s ease'
+      : 'none',
   zIndex: isPlaying ? 35 : 30
 }}
               onClick={() => handleInstrumentClick(instrumentType)}
@@ -812,21 +872,29 @@ style={{
               <img 
                 src={instrument.image}
                 alt={instrument.name}
-                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                style={{ width: '100%', height: '100%', objectFit: 'contain', position: 'relative', zIndex: 2 }}
               />
+              {/* 🔧 Key on tapTick forces re-mount on every tap so sparkle/gesture restart cleanly */}
               {tapSparkleOn === instrumentType && (
-                <SparkleAnimation
-                  type="star"
-                  count={10}
-                  color="#ffd54f"
-                  size={8}
-                  duration={700}
-                  fadeOut={true}
-                  area="full"
-                />
+                <div style={{ position: 'absolute', inset: '-20px', zIndex: 12, pointerEvents: 'none' }}>
+                  <SparkleAnimation
+                    key={`sparkle-${instrumentType}-${tapTick}`}
+                    type="star"
+                    count={16}
+                    color="#ffd54f"
+                    size={11}
+                    duration={900}
+                    fadeOut={true}
+                    area="full"
+                  />
+                </div>
               )}
               {tapGestureOn === instrumentType && (
-                <div className="ears-mini-gesture" aria-hidden="true">
+                <div
+                  key={`gesture-${instrumentType}-${tapTick}`}
+                  className="ears-mini-gesture"
+                  aria-hidden="true"
+                >
                   <img src={MINI_THUMBS_UP_ICON} alt="" />
                 </div>
               )}
@@ -899,6 +967,76 @@ style={{
     50% { 
       opacity: 1;
       transform: translateX(-50%) scale(1.1);
+    }
+  }
+  .ears-rhythm-game-inline .replay-hint-pulse {
+    animation: replayHintPulse 1.2s ease-in-out 2;
+  }
+  @keyframes earsPatternWrongShake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-4px); }
+    40% { transform: translateX(4px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(3px); }
+    100% { transform: translateX(0); }
+  }
+  
+  /* 🎵 NEW v2 animations for mystery-circle tracker */
+  
+  /* Mystery circle: gentle breathing, lets kid know it's "alive" but waiting */
+  @keyframes mysteryBreathe {
+    0%, 100% { transform: scale(1); opacity: 0.85; }
+    50% { transform: scale(1.025); opacity: 1; }
+  }
+  
+  /* Beat pulse: position-only feedback during sequence playback (no instrument reveal) */
+  @keyframes beatPulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.12); }
+    100% { transform: scale(1); }
+  }
+  
+  /* Next-expected slot: stronger pulse to guide kid's attention during their turn */
+  @keyframes nextSlotBreathe {
+    0%, 100% {
+      transform: scale(1);
+      box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+    }
+    50% {
+      transform: scale(1.06);
+      box-shadow: 0 0 22px rgba(255, 215, 0, 0.7);
+    }
+  }
+  
+  /* Reveal pop: when a mystery circle reveals its instrument on correct tap */
+  @keyframes revealPop {
+    0% { transform: scale(0.4) rotate(-15deg); opacity: 0; }
+    60% { transform: scale(1.2) rotate(8deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+  
+  /* Scene-instrument shake on wrong tap (replaces the old tracker-shake) */
+  @keyframes sceneInstrumentShake {
+    0% { transform: translate(-50%, -50%) translateX(0); }
+    15% { transform: translate(-50%, -50%) translateX(-4px) rotate(-1deg); }
+    30% { transform: translate(-50%, -50%) translateX(4px) rotate(1deg); }
+    45% { transform: translate(-50%, -50%) translateX(-3px) rotate(-0.7deg); }
+    60% { transform: translate(-50%, -50%) translateX(3px) rotate(0.7deg); }
+    80% { transform: translate(-50%, -50%) translateX(-2px); }
+    100% { transform: translate(-50%, -50%) translateX(0); }
+  }
+  @keyframes trackerCelebrate {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+  }
+  @keyframes replayHintPulse {
+    0%, 100% {
+      transform: scale(1);
+      filter: drop-shadow(0 0 0 rgba(255, 215, 0, 0));
+    }
+    50% {
+      transform: scale(1.04);
+      filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.55));
     }
   }
   
@@ -1074,5 +1212,13 @@ const inlineTrackerItemStyle = {
 };
 
 export default EarsRhythmGame;
+
+
+
+
+
+
+
+
 
 

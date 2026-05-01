@@ -88,6 +88,112 @@
   z-index: 13;
 }
 
+/* ============================================
+   Ganesha reflection in pond water
+   Fires at golden lotus bloom. Feels like
+   he was always there, just now seen.
+   ============================================ */
+.pond-ganesha-reflection {
+  position: absolute;
+  left: 50%;
+  top: 58%;
+  transform: translateX(-50%);
+  width: 38%;
+  max-width: 320px;
+  aspect-ratio: 1 / 1;
+  pointer-events: none;
+  z-index: 4;
+  animation: pondGaneshaReveal 4.8s ease-out forwards;
+  opacity: 0;
+}
+
+.pond-ganesha-reflection__img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: scaleY(-1);
+  filter: blur(2.5px) saturate(0.55) brightness(1.15) sepia(0.18);
+  mix-blend-mode: screen;
+  animation: pondReflectionRipple 6s ease-in-out infinite;
+}
+
+.pond-ganesha-reflection::before {
+  content: '';
+  position: absolute;
+  inset: -10%;
+  z-index: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 200, 80, 0.18) 0%,
+    rgba(255, 200, 80, 0.08) 40%,
+    transparent 70%
+  );
+  animation: pondReflectionGlow 4s ease-out forwards;
+  opacity: 0;
+}
+
+.pond-ganesha-reflection::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 54%;
+  width: 72%;
+  height: 56%;
+  transform: translate(-50%, -50%) scale(0.92);
+  z-index: 2;
+  pointer-events: none;
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse at center, transparent 40%, rgba(255, 218, 120, 0.18) 42%, transparent 46%),
+    radial-gradient(ellipse at center, transparent 55%, rgba(255, 210, 110, 0.14) 57%, transparent 61%),
+    radial-gradient(ellipse at center, transparent 70%, rgba(255, 200, 95, 0.1) 72%, transparent 76%);
+  opacity: 0.12;
+  animation: pondGoldenRippleOverlay 3.8s ease-in-out infinite;
+}
+
+@keyframes pondGaneshaReveal {
+  0% { opacity: 0; }
+  35% { opacity: 0.32; }
+  55% { opacity: 0.55; }
+  75% { opacity: 0.55; }
+  100% { opacity: 0.4; }
+}
+
+@keyframes pondReflectionRipple {
+  0%, 100% {
+    transform: scaleY(-1) scaleX(1) translateY(0);
+    filter: blur(2.5px) saturate(0.55) brightness(1.15) sepia(0.18);
+  }
+  50% {
+    transform: scaleY(-1) scaleX(1.02) translateY(2px);
+    filter: blur(3px) saturate(0.55) brightness(1.18) sepia(0.18);
+  }
+}
+
+@keyframes pondReflectionGlow {
+  0% { opacity: 0; }
+  40% { opacity: 0.9; }
+  100% { opacity: 0.4; }
+}
+
+@keyframes pondGoldenRippleOverlay {
+  0% {
+    opacity: 0.1;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  50% {
+    opacity: 0.22;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0.12;
+    transform: translate(-50%, -50%) scale(0.94);
+  }
+}
+
 /* Lotus positions and styles */
 /* Gesture cue positions — pond-specific */
 .modak-mini-ganesha-cue--lotus {
@@ -138,7 +244,7 @@
   cursor: pointer;
   transition: transform 0.2s, opacity 0.2s;
   opacity: 0.92;
-  animation: lotusPulse 9s ease-in-out infinite;
+  animation: lotusBreathing 4.2s ease-in-out infinite;
   z-index: 16;
 }
 
@@ -153,18 +259,18 @@
 }
 
 .lotus-2 {
-  left: 43%;
-  top: 64%;
+  left: 41%;
+  top: 72%;
 }
 
 .lotus-3 {
-  left: 57%;
-  top: 58%;
+  left: 63%;
+  top: 61%;
 }
 
-@keyframes lotusPulse {
-  0%, 100% { transform: scale(1); opacity: 0.92; }
-  50% { transform: scale(1.03); opacity: 0.86; }
+@keyframes lotusBreathing {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.92; }
+  50% { transform: translateY(-1.5px) scale(1.015); opacity: 0.9; }
 }
 
 /* Force lotus size/opacity/pulse/position to win over any media query overrides */
@@ -174,8 +280,8 @@
   /*animation: lotusPulse 9s ease-in-out infinite !important;*/
 }
 .pond-scene-container .lotus-1 { left: 30% !important; top: 58% !important; }
-.pond-scene-container .lotus-2 { left: 43% !important; top: 64% !important; }
-.pond-scene-container .lotus-3 { left: 57% !important; top: 58% !important; }
+.pond-scene-container .lotus-2 { left: 41% !important; top: 72% !important; }
+.pond-scene-container .lotus-3 { left: 63% !important; top: 61% !important; }
 
 /* SLEEK LOTUS COUNTER - New slim design */
 .lotus-counter {
@@ -894,15 +1000,18 @@
 
 /* Idle hint ladder (About Me style): hint -> hint-strong -> hint-final */
 .pond-scene-container .hint img {
-  animation: pond-hint-level-1 1.6s ease-in-out infinite;
+  animation: pond-hint-level-1 1.6s ease-in-out 1;
+  animation-fill-mode: both;
 }
 
 .pond-scene-container .hint-strong img {
-  animation: pond-hint-level-2 1.25s ease-in-out infinite;
+  animation: pond-hint-level-2 1.25s ease-in-out 3;
+  animation-fill-mode: both;
 }
 
 .pond-scene-container .hint-final img {
-  animation: pond-hint-level-3 1s ease-in-out infinite;
+  animation: pond-hint-level-3 1s ease-in-out 4;
+  animation-fill-mode: both;
 }
 
 @keyframes pond-hint-level-1 {
@@ -1726,13 +1835,13 @@
 
 .pond-fish-overlay {
   position: absolute;
-  top: 60%;
-  left: -30%;
-  width: 34%;
-  height: 20%;
+  top: 42%;
+  left: -12%;
+  width: 82%;
+  height: 46%;
   pointer-events: none;
   z-index: 3;
-  animation: pondFishSwim 4s ease-in-out infinite;
+  animation: pondFishSwim 4.8s ease-in-out infinite;
 }
 
 .pond-fish-image {
@@ -1910,7 +2019,7 @@
   0% { transform: translateX(0) scaleX(1); opacity: 0; }
   15% { opacity: 0.85; }
   85% { opacity: 0.85; }
-  100% { transform: translateX(380%) scaleX(1); opacity: 0; }
+  100% { transform: translateX(150%) scaleX(1); opacity: 0; }
 }
 
 .pond-soft-ripple {
@@ -1928,6 +2037,17 @@
 @keyframes pondSoftRipple {
   0% { transform: scale(0.6); opacity: 0.7; }
   100% { transform: scale(1.4); opacity: 0; }
+}
+
+@media (max-width: 480px) {
+  .pond-ganesha-reflection {
+    width: 50%;
+    top: 60%;
+  }
+
+  .pond-ganesha-reflection__img {
+    filter: blur(2px) saturate(0.55) brightness(1.15) sepia(0.18);
+  }
 }
 
 /* ==================== PRINT STYLES ==================== */

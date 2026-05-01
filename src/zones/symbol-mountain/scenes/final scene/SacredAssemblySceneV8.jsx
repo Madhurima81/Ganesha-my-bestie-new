@@ -47,6 +47,7 @@ import sacredBackground from './assets/images/final_symbol_background.jpg';
 // Images - Ganesha Forms
 import ganeshaStone from './assets/images/ganesha-stone.png';
 import ganeshaDivine from './assets/images/ganesha-divine.png';
+import purpleHeart from './assets/images/purple-heart.svg';
 
 // Images - Symbol Icons
 import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.png';
@@ -115,7 +116,7 @@ const SACRED_SYMBOLS = [
     emoji: '👁️',
     image: symbolEyesColored,
     associationIcon: iconTarget,
-    associationText: "My big eyes help me see everything clearly.",
+    associationText: "I see clearly.",
     bodyPartImage: ganeshaEyes,
     blessing: "Ganesha's divine eyes awaken! May you see truth in all things.",
     bodyPart: 'eyes',
@@ -128,7 +129,7 @@ const SACRED_SYMBOLS = [
     emoji: '👂',
     image: symbolEarsColored,
     associationIcon: iconHeadphones,
-    associationText: "My big ears listen to everything you say.",
+    associationText: "I listen with care.",
     bodyPartImage: ganeshaEars,
     blessing: "Ganesha's sacred ears come alive! May you listen with wisdom and compassion.",
     bodyPart: 'ears',
@@ -141,7 +142,7 @@ const SACRED_SYMBOLS = [
     emoji: '🐘',
     image: symbolTrunkColored,
     associationIcon: iconRoadblock,
-    associationText: "My trunk is strong and helps me move things.",
+    associationText: "I find my way.",
     bodyPartImage: ganeshaTrunk,
     blessing: "Ganesha's mighty trunk awakens! May all obstacles be removed from your path.",
     bodyPart: 'trunk',
@@ -154,7 +155,7 @@ const SACRED_SYMBOLS = [
     emoji: '🦷',
     image: symbolTuskColored,
     associationIcon: iconHammer,
-    associationText: "My tusk helps me stay strong and brave.",
+    associationText: "I finish what I start.",
     bodyPartImage: ganeshaTusk,
     blessing: "Ganesha's powerful tusk glows! May you break through any challenge with determination.",
     bodyPart: 'tusk',
@@ -167,7 +168,7 @@ const SACRED_SYMBOLS = [
     emoji: '🍯',
     image: symbolModakColored,
     associationIcon: iconHoney,
-    associationText: "My modak reminds me to share sweetness.",
+    associationText: "I am full of joy.",
     bodyPartImage: ganeshaLeftHand,
     blessing: "Ganesha's blessing hand awakens! May sweetness and abundance fill your life.",
     bodyPart: 'left-hand',
@@ -180,7 +181,7 @@ const SACRED_SYMBOLS = [
     emoji: '🪷',
     image: symbolLotusColored,
     associationIcon: iconLightbulb,
-    associationText: "My lotus helps me stay calm and peaceful.",
+    associationText: "I stay calm.",
     bodyPartImage: ganeshaRightHand,
     blessing: "Ganesha's wisdom hand comes alive! May purity and enlightenment guide you.",
     bodyPart: 'right-hand',
@@ -193,7 +194,7 @@ const SACRED_SYMBOLS = [
     emoji: '🫄',
     image: symbolBellyColored,
     associationIcon: iconUniverse,
-    associationText: "My big belly holds lots of love inside.",
+    associationText: "I feel good inside.",
     bodyPartImage: ganeshaBelly,
     blessing: "Ganesha's sacred belly awakens! May you hold the universe's love within you.",
     bodyPart: 'belly',
@@ -206,7 +207,7 @@ const SACRED_SYMBOLS = [
     emoji: '🐭',
     image: symbolMooshikaColored,
     associationIcon: iconPath,
-    associationText: "My little friend helps guide me on my path.",
+    associationText: "I can focus.",
     bodyPartImage: ganeshaBase,
     blessing: "Mooshika, Ganesha's divine vehicle awakens! May wisdom guide your every journey, dear child.",
     bodyPart: 'base',
@@ -455,6 +456,16 @@ const SacredAssemblyContent = ({
   const [cardPhase, setCardPhase] = useState('hidden'); // 'hidden' | 'appear' | 'flipped' | 'side' | 'play' | 'feedback'
   const [flyingSymbol, setFlyingSymbol] = useState(null);
   const [ganeshaReaction, setGaneshaReaction] = useState('');
+  const placedCount = Object.keys(sceneState?.placedSymbols || {}).length;
+  const isSceneCompletedState =
+    placedCount === 8 ||
+    sceneState?.completed === true ||
+    sceneState?.phase === 'complete';
+  const isCelebrationRunning =
+    showSparkle === 'final-fireworks' ||
+    isOrbsRunning ||
+    sceneState?.showingZoneCompletion === true ||
+    sceneState?.celebrationActive === true;
   const activeTargetZoneId = useMemo(() => {
     if (cardPhase !== 'play') return null;
     const currentSymbol = SACRED_SYMBOLS.find(s => s.id === sceneState?.currentAssociationSymbol);
@@ -467,7 +478,8 @@ const SacredAssemblyContent = ({
   const cardVoPlayedForRoundRef = useRef(-1); // tracks which round's card VO has already played
   const finalVoPlayedRef = useRef(false);
   const openingModalVoPlayedRef = useRef(false);
-  const correctVoIndexRef = useRef(0);
+  const firstSymbolMilestoneVoPlayedRef = useRef(false);
+  const midProgressMilestoneVoPlayedRef = useRef(false);
 
   const CARD_VO_MAP = useMemo(() => ({
     eyes: 'cardEyes',
@@ -489,14 +501,9 @@ const SacredAssemblyContent = ({
     belly: 'hintBelly',
     mooshika: 'hintMooshika'
   }), []);
-  const CORRECT_VO_ROTATION = useMemo(
-    () => ['correctYes', 'correctThatsRight', 'correctYouFoundIt', 'correctWellDone'],
-    []
-  );
-
   const getMomentForVoiceKey = useCallback((key) => {
     if (key === 'openingModalPrompt') return 'greeting';
-    if (key.startsWith('correct')) return 'celebration';
+    if (key === 'firstSymbolPlaced' || key === 'midProgressWonder') return 'celebration';
     if (key.startsWith('wrong') || key.startsWith('hint') || key.startsWith('onboarding')) return 'encouragement';
     if (key.startsWith('final')) return 'closing';
     return 'story';
@@ -566,14 +573,9 @@ const SacredAssemblyContent = ({
       return;
     }
 
-    if (currentSymbolId && cardPhase === 'feedback') {
-      const lastCorrectIdx =
-        (correctVoIndexRef.current - 1 + CORRECT_VO_ROTATION.length) % CORRECT_VO_ROTATION.length;
-      playSceneVoice(CORRECT_VO_ROTATION[lastCorrectIdx], null, { replayOnReturn: false });
-    }
+    if (currentSymbolId && cardPhase === 'feedback') return;
   }, [
     CARD_VO_MAP,
-    CORRECT_VO_ROTATION,
     HINT_VO_MAP,
     cardPhase,
     isAudioOn,
@@ -642,19 +644,20 @@ const SacredAssemblyContent = ({
     // Card VO — 2.5s after card lands, giving child time to look first
     // Guard prevents double-play if effect re-runs while still in 'play'
     const roundIndex = sceneState?.currentRound ?? -1;
+    const ENTRY_VO_DELAY_MS = 2500;
     const cardVoTimer = setTimeout(() => {
       if (cardVoKey && cardVoPlayedForRoundRef.current !== roundIndex) {
         cardVoPlayedForRoundRef.current = roundIndex;
         playSceneVoice(cardVoKey, null, { replayOnReturn: false });
       }
-    }, 2500);
+    }, ENTRY_VO_DELAY_MS);
 
     const hintLevel1Timer = setTimeout(() => {
       setZoneStates(prev => {
         if (prev[correctZone] === 'idle') return { ...prev, [correctZone]: 'hint' };
         return prev;
       });
-    }, 10000);
+    }, ENTRY_VO_DELAY_MS + 10000);
 
     const hintLevel2Timer = setTimeout(() => {
       setZoneStates(prev => {
@@ -670,7 +673,7 @@ const SacredAssemblyContent = ({
           idleNudgePlayedRef.current = true;
         }
       }
-    }, 18000);
+    }, ENTRY_VO_DELAY_MS + 18000);
 
     const hintLevel3Timer = setTimeout(() => {
       setZoneStates(prev => {
@@ -679,7 +682,7 @@ const SacredAssemblyContent = ({
         }
         return prev;
       });
-    }, 26000);
+    }, ENTRY_VO_DELAY_MS + 26000);
 
     return () => {
       clearTimeout(cardVoTimer);
@@ -700,6 +703,86 @@ const SacredAssemblyContent = ({
     timeoutsRef.current = [];
   };
 
+  const hardResetSceneState = useCallback(() => {
+    clearAllTimeouts();
+    stopGaneshaVoice();
+    GameStateManager.clearSceneState('symbol-mountain', 'final-scene');
+
+    const profileId = localStorage.getItem('activeProfileId');
+    if (profileId) {
+      localStorage.removeItem(`temp_session_${profileId}_symbol-mountain_final-scene`);
+      localStorage.removeItem(`${profileId}_symbol-mountain_final-scene_state`);
+    }
+
+    setShowSparkle(null);
+    setShowMagicalCard(false);
+    setCardContent({});
+    setShowSceneCompletion(false);
+    setShowCulturalCelebration(false);
+    setShowZoneCompletion(false);
+    setIsOrbsRunning(false);
+    setCelebrationZoneId(null);
+    setCardPhase('hidden');
+    setFlyingSymbol(null);
+    setGaneshaReaction('');
+    setZoneStates(initZoneStates({}));
+
+    onboardingPlayedRef.current = false;
+    onboardingPlayedAtRef.current = 0;
+    idleNudgePlayedRef.current = false;
+    cardVoPlayedForRoundRef.current = -1;
+    finalVoPlayedRef.current = false;
+    openingModalVoPlayedRef.current = false;
+    firstSymbolMilestoneVoPlayedRef.current = false;
+    midProgressMilestoneVoPlayedRef.current = false;
+
+    sceneActions.updateState({
+      placedSymbols: {},
+      ganeshaState: GANESHA_STATES.STONE,
+      selectedSymbol: null,
+      highlightedZone: null,
+      currentRound: 0,
+      currentAssociationSymbol: null,
+      glowingZones: [],
+      wrongAttempts: 0,
+      showingAssociationCard: false,
+      symbolQueue: [],
+      placementAnimation: null,
+      currentBlessing: null,
+      blessingsHeard: [],
+      finalBlessingShown: false,
+      phase: 'initial',
+      currentFocus: 'assembly',
+      welcomeShown: false,
+      assemblyWisdomShown: false,
+      masteryShown: false,
+      readyForWisdom: false,
+      gameCoachState: null,
+      lastGameCoachTime: 0,
+      isReloadingGameCoach: false,
+      currentPopup: null,
+      showingCompletionScreen: false,
+      showingZoneCompletion: false,
+      celebrationActive: false,
+      stars: 0,
+      completed: false,
+      onboardingPlayed: false,
+      progress: {
+        percentage: 0,
+        starsEarned: 0,
+        completed: false
+      }
+    });
+  }, [sceneActions, stopGaneshaVoice]);
+
+  // Keep completion UI sticky across tab switch/remount.
+  useEffect(() => {
+    if (sceneState?.showingCompletionScreen && !showSceneCompletion) {
+      setShowSceneCompletion(true);
+      setShowSparkle(null);
+    }
+  }, [sceneState?.showingCompletionScreen, showSceneCompletion]);
+
   useEffect(() => {
     return () => {
       clearAllTimeouts();
@@ -714,7 +797,8 @@ const SacredAssemblyContent = ({
       idleNudgePlayedRef.current = false;
       finalVoPlayedRef.current = false;
       openingModalVoPlayedRef.current = false;
-      correctVoIndexRef.current = 0;
+      firstSymbolMilestoneVoPlayedRef.current = false;
+      midProgressMilestoneVoPlayedRef.current = false;
     }
   }, [sceneState?.welcomeShown, sceneState?.placedSymbols]);
 
@@ -923,9 +1007,6 @@ const SacredAssemblyContent = ({
     const isCorrect = zoneId === currentSymbol.correctZone;
 
     if (isCorrect) {
-      const correctVoKey = CORRECT_VO_ROTATION[correctVoIndexRef.current % CORRECT_VO_ROTATION.length];
-      correctVoIndexRef.current += 1;
-      playSceneVoice(correctVoKey, null, { replayOnReturn: false });
       playUiTap();
       // correct → pop animation → then permanently placed
       setZoneStates(prev => ({ ...prev, [zoneId]: 'correct' }));
@@ -935,12 +1016,14 @@ const SacredAssemblyContent = ({
       handleCorrectPlacement(currentSymbol);
     } else {
       playWrongTap();
+      setGaneshaReaction('wrong');
+      setTimeout(() => setGaneshaReaction(''), 300);
       // wrong → wiggle → snap back to idle
       setZoneStates(prev => ({ ...prev, [zoneId]: 'wrong' }));
       setTimeout(() => {
         setZoneStates(prev => (prev[zoneId] === 'wrong' ? { ...prev, [zoneId]: 'idle' } : prev));
       }, 320);
-      handleWrongPlacement(zoneId);
+      handleWrongPlacement();
     }
   };
 
@@ -1051,6 +1134,14 @@ const SacredAssemblyContent = ({
     const count = Object.keys(newPlacedSymbols).length;
     const percentage = Math.round((count / 8) * 100);
 
+    if (count === 1 && !firstSymbolMilestoneVoPlayedRef.current) {
+      firstSymbolMilestoneVoPlayedRef.current = true;
+      playSceneVoice('firstSymbolPlaced', null, { replayOnReturn: false });
+    } else if ((count === 4 || count === 5) && !midProgressMilestoneVoPlayedRef.current) {
+      midProgressMilestoneVoPlayedRef.current = true;
+      playSceneVoice('midProgressWonder', null, { replayOnReturn: false });
+    }
+
     sceneActions.updateState({
       placedSymbols: newPlacedSymbols,
       showingAssociationCard: false,
@@ -1073,13 +1164,10 @@ const SacredAssemblyContent = ({
   };
 
   // NEW: Handle wrong placement
-  const handleWrongPlacement = (clickedZoneId) => {
+  const handleWrongPlacement = () => {
     if (!sceneState || !sceneActions) return;
 
     const newWrongAttempts = (sceneState.wrongAttempts || 0) + 1;
-    // Show shake animation on wrong zone
-    setShowSparkle(`wrong-zone-${clickedZoneId}`);
-    safeSetTimeout(() => setShowSparkle(null), 800);
 
     // Update wrong attempts count
     sceneActions.updateState({
@@ -1126,6 +1214,23 @@ const SacredAssemblyContent = ({
       sceneActions.updateState({ isReloadingGameCoach: false });
     }
   }, [isReload]);
+
+  // If scene restores as completed, skip opening modal and show completion modal
+  // only when celebration is NOT running (prevents early modal at 8th symbol tap).
+  useEffect(() => {
+    if (!sceneState) return;
+    if (!isSceneCompletedState) return;
+    if (isCelebrationRunning) return;
+
+    if (!sceneState.welcomeShown) {
+      sceneActions.updateState({ welcomeShown: true });
+    }
+
+    if (!showSceneCompletion) {
+      const t = setTimeout(() => setShowSceneCompletion(true), 250);
+      return () => clearTimeout(t);
+    }
+  }, [isCelebrationRunning, isSceneCompletedState, sceneActions, sceneState, showSceneCompletion]);
 
   // RESUME — runs once on mount, handles returning mid-game
   useEffect(() => {
@@ -1290,7 +1395,6 @@ const SacredAssemblyContent = ({
         sceneState={sceneState}
         sceneActions={sceneActions}
       >
-        {!showSceneCompletion && (
         <div className="sacred-assembly-container">
           <HomeButton onNavigate={onNavigate} />
           <ZoneBadgeButton zoneId="symbol-mountain" onBack={() => onNavigate?.('zone-welcome')} />
@@ -1299,7 +1403,7 @@ const SacredAssemblyContent = ({
           <OpeningModal
             zoneId={zoneId}
             sceneId={sceneId}
-            isOpen={!sceneState.welcomeShown}
+            isOpen={!sceneState.welcomeShown && !isSceneCompletedState && !showSceneCompletion}
             onStart={() => {
               sceneActions.updateState({ welcomeShown: true });
             }}
@@ -1320,7 +1424,7 @@ const SacredAssemblyContent = ({
                       key={`heart-${index}`}
                       className={`progress-heart ${isCompleted ? 'filled' : 'empty'} ${isJustCompleted ? 'just-completed' : ''}`}
                     >
-                      💜
+                      <img src={purpleHeart} alt="" className="heart-icon" aria-hidden="true" />
                       {isJustCompleted && (
                         <div className="heart-sparkle-burst">
                           <SparkleAnimation
@@ -1337,9 +1441,6 @@ const SacredAssemblyContent = ({
                     </div>
                   );
                 })}
-              </div>
-              <div className="progress-text">
-                {Object.keys(sceneState.placedSymbols || {}).length}/8 Symbols Awakened
               </div>
             </div>
           )}
@@ -1386,6 +1487,7 @@ const SacredAssemblyContent = ({
             style={{ backgroundImage: `url(${sacredBackground})` }}
           >
             {/* Ganesha — ganesha-sit.svg with click zones */}
+            {!showSceneCompletion && (
             <div
               className={`ganesha-assembly-container ${ganeshaReaction}`}
             >
@@ -1411,13 +1513,6 @@ const SacredAssemblyContent = ({
                   />
                 );
               })}
-
-              {/* Wrong Click Feedback */}
-              {showSparkle?.startsWith('wrong-zone-') && (
-                <div className="wrong-zone-feedback">
-                  <p className="try-again-text">Try again!</p>
-                </div>
-              )}
 
               {showSparkle?.startsWith('celebration-') && celebrationZoneId && (
                 <div
@@ -1479,6 +1574,7 @@ const SacredAssemblyContent = ({
                 );
               })}
             </div>
+            )}
 
 
 
@@ -1723,7 +1819,7 @@ const SacredAssemblyContent = ({
 
           {/* Scene Completion */}
           <SceneCompletionCelebration
-            show={showSceneCompletion}
+            show={showSceneCompletion || sceneState?.showingCompletionScreen}
             sceneName="Symbol Mountain"
             completionTitle={completionModalContent?.title}
             completionSubtitle={completionModalContent?.subtitle}
@@ -1733,7 +1829,7 @@ const SacredAssemblyContent = ({
             totalStars={8}
             discoveredSymbols={[]}
             symbolImages={{}}
-            badgeImage="/images/zones/symbol-mountain/assembly-icon.png"
+            badgeImage={null}
             sceneId="final-scene"
             completionData={{
               stars: 8,
@@ -1758,18 +1854,16 @@ const SacredAssemblyContent = ({
               onNavigate?.('zone-welcome');
             }}
             onReplay={() => {
-              setShowSceneCompletion(false);
-              resetScene();
+              hardResetSceneState();
             }}
           />
 
           {/* Cultural Celebration Modal */}
-          <CulturalCelebrationModal
+        <CulturalCelebrationModal
             show={showCulturalCelebration}
             onClose={() => setShowCulturalCelebration(false)}
           />
         </div>
-        )}
       </MessageManager>
     </InteractionManager>
   );

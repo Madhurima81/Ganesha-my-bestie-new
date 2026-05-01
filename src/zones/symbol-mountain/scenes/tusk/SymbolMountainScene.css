@@ -109,42 +109,6 @@
   animation: symbolGesturePopCenter var(--mini-cue-duration) cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-.symbol-hint-pointer {
-  position: absolute;
-  z-index: 45;
-  pointer-events: none;
-  animation: symbol-hint-pointer-pulse 2s ease-in-out infinite;
-}
-
-.symbol-hint-pointer-emoji {
-  display: block;
-  font-size: clamp(48px, 4.8vw, 72px);
-  line-height: 1;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.22));
-}
-
-.symbol-hint-pointer--eyes {
-  left: 18%;
-  top: 18%;
-}
-
-.symbol-hint-pointer--ears {
-  left: 75%;
-  top: 28%;
-}
-
-.symbol-hint-pointer--note {
-  right: 4%;
-  top: 12%;
-}
-
-@keyframes symbol-hint-pointer-pulse {
-  0%, 100% { opacity: 0; transform: scale(0.95); }
-  20% { opacity: 1; }
-  50% { opacity: 1; transform: scale(1.06); }
-  80% { opacity: 0.25; }
-}
-
 @keyframes symbolGesturePopItem {
   0% { opacity: 0; transform: scale(0.25) translateY(12px); }
   70% { opacity: 1; transform: scale(1.08) translateY(-4px); }
@@ -164,7 +128,7 @@
 /* 👁️ EYES SYMBOL - Musical Discovery */
 .eyes-symbol-container {
   position: absolute;
-  top: 45%;
+  top: 34%;
   left: 50%;
   width: 160px;
   height: 120px;
@@ -187,6 +151,73 @@
 .eyes-symbol-container.completed {
   filter: brightness(1.2) saturate(1.3) drop-shadow(0 0 25px var(--divine-gold));
   animation: none;
+}
+
+/* Locked transition flow: symbol -> sparkle burst -> game */
+.symbol-trigger {
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.symbol-trigger.hide {
+  opacity: 0;
+  transform: scale(0.6);
+  pointer-events: none;
+}
+
+.sparkle-burst {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 30;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(255, 226, 122, 0.8) 35%, rgba(255, 184, 77, 0.4) 60%, rgba(255, 184, 77, 0) 100%);
+  animation: sparkleBurst 0.5s ease-out forwards;
+}
+
+@keyframes sparkleBurst {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.4);
+  }
+}
+
+.magnifier {
+  opacity: 0;
+  transform: scale(0.7);
+}
+
+.magnifier.show {
+  animation: magnifierPop 0.35s ease-out forwards;
+}
+
+@keyframes magnifierPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.magnifier.active {
+  box-shadow: none;
+  border-radius: 50%;
+  filter: drop-shadow(0 0 12px rgba(255, 230, 120, 0.8));
 }
 
 /* 👂 EARS SYMBOL - Musical Rhythm */
@@ -221,6 +252,15 @@
   animation: none;
 }
 
+/* Ears should never auto-pulse on entry (including global interactive-element.new pulse). */
+.ears-symbol-container .interactive-element,
+.ears-symbol-container .interactive-element.new,
+.ears-symbol-container .interactive-element:hover,
+.ears-symbol-container .interactive-element.pressed,
+.ears-symbol-container img {
+  animation: none !important;
+}
+
 /* Keep idle-hint targets position-locked (no transform-driven drift). */
 .eyes-symbol-container.hint,
 .eyes-symbol-container.hint-strong,
@@ -238,19 +278,26 @@
 }
 
 /* Idle ladder visual intensity: hint -> hint-strong -> hint-final */
-.symbol-mountain-scene-container .eyes-symbol-container.hint img,
-.symbol-mountain-scene-container .ears-symbol-container.hint img {
-  animation: symbol-idle-hint-1 1.6s ease-in-out infinite;
+.symbol-mountain-scene-container .eyes-symbol-container.hint img {
+  animation: symbol-idle-hint-1 1.6s ease-in-out 1;
+  animation-fill-mode: both;
 }
 
-.symbol-mountain-scene-container .eyes-symbol-container.hint-strong img,
-.symbol-mountain-scene-container .ears-symbol-container.hint-strong img {
-  animation: symbol-idle-hint-2 1.25s ease-in-out infinite;
+.symbol-mountain-scene-container .eyes-symbol-container.hint-strong img {
+  animation: symbol-idle-hint-2 1.25s ease-in-out 3;
+  animation-fill-mode: both;
 }
 
-.symbol-mountain-scene-container .eyes-symbol-container.hint-final img,
+.symbol-mountain-scene-container .eyes-symbol-container.hint-final img {
+  animation: symbol-idle-hint-3 1s ease-in-out 4;
+  animation-fill-mode: both;
+}
+
+/* Ears: keep static, no pulse animation */
+.symbol-mountain-scene-container .ears-symbol-container.hint img,
+.symbol-mountain-scene-container .ears-symbol-container.hint-strong img,
 .symbol-mountain-scene-container .ears-symbol-container.hint-final img {
-  animation: symbol-idle-hint-3 1s ease-in-out infinite;
+  animation: none !important;
 }
 
 .symbol-mountain-scene-container .tusk-note.hint {
@@ -1592,10 +1639,144 @@
 }
 
 @keyframes gentlePulse {
-  0%, 100% { 
-    transform: scale(1); 
+  0%, 100% {
+    transform: scale(1);
   }
-  50% { 
-    transform: scale(1.15); 
+  50% {
+    transform: scale(1.15);
   }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCENE 3 — TUSK ACTIVATION → GANESHA REVEAL
+   Refined: soft golden glow, no white blow-out, gradual emergence
+   ═══════════════════════════════════════════════════════════════ */
+
+
+/* 1. TUSK — stays same size, just glows golden then softly fades */
+.tusk-final-transform {
+  animation: tuskGoldenFade 1.4s ease-in-out forwards;
+  transform-origin: center;
+}
+
+@keyframes tuskGoldenFade {
+  0% {
+    opacity: 1;
+    filter: drop-shadow(0 0 0 rgba(255, 200, 60, 0));
+  }
+  35% {
+    opacity: 1;
+    filter: drop-shadow(0 0 12px rgba(255, 200, 60, 0.9))
+            drop-shadow(0 0 24px rgba(255, 180, 40, 0.6));
+  }
+  70% {
+    opacity: 0.6;
+    filter: drop-shadow(0 0 18px rgba(255, 200, 60, 1))
+            drop-shadow(0 0 32px rgba(255, 180, 40, 0.7));
+  }
+  100% {
+    opacity: 0;
+    filter: drop-shadow(0 0 22px rgba(255, 200, 60, 0.8));
+  }
+}
+
+
+/* 2. GOLDEN AURA — warm yellow gradient, NO white center */
+.golden-burst {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 280px;
+  height: 280px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 200, 60, 0.55) 0%,
+    rgba(255, 180, 40, 0.4) 30%,
+    rgba(255, 160, 30, 0.2) 55%,
+    transparent 75%
+  );
+  animation: auraExpand 1.6s ease-out forwards;
+  mix-blend-mode: screen;
+}
+
+@keyframes auraExpand {
+  0% {
+    transform: translate(-50%, -50%) scale(0.4);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}
+
+
+/* 3. GANESHA REVEAL — gentle scale, golden tint (no brightness blast) */
+.ganesha-reveal {
+  animation: ganeshaSoftReveal 1.8s cubic-bezier(0.25, 0.8, 0.4, 1) forwards;
+  transform-origin: center bottom;
+}
+
+@keyframes ganeshaSoftReveal {
+  0% {
+    transform: translate(-50%, -50%) scale(0.92);
+    opacity: 0;
+    filter: blur(4px) sepia(0.4) hue-rotate(-10deg) saturate(1.2);
+  }
+  40% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(0.96);
+    filter: blur(2px) sepia(0.25) saturate(1.15);
+  }
+  75% {
+    opacity: 0.95;
+    transform: translate(-50%, -50%) scale(1.01);
+    filter: blur(0) sepia(0.1) saturate(1.05);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    filter: none;
+  }
+}
+
+
+/* 4. SOFT GOLDEN PULSE — settles after reveal (warm, never white) */
+.ganesha-glow {
+  animation: warmDivinePulse 3s ease-in-out infinite;
+}
+
+@keyframes warmDivinePulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(255, 200, 60, 0.3))
+            drop-shadow(0 0 16px rgba(255, 170, 30, 0.15));
+  }
+  50% {
+    filter: drop-shadow(0 0 14px rgba(255, 200, 60, 0.55))
+            drop-shadow(0 0 28px rgba(255, 170, 30, 0.3));
+  }
+}
+
+
+/* OPTIONAL — gentle floating particles around Ganesha (warm gold dust) */
+.golden-dust {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 30% 40%, rgba(255, 200, 60, 0.6) 0%, transparent 2%),
+    radial-gradient(circle at 70% 60%, rgba(255, 180, 40, 0.5) 0%, transparent 2%),
+    radial-gradient(circle at 50% 30%, rgba(255, 220, 100, 0.5) 0%, transparent 2%);
+  animation: dustFloat 4s ease-in-out infinite;
+}
+
+@keyframes dustFloat {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
+  50% { transform: translateY(-8px) scale(1.05); opacity: 0.9; }
 }

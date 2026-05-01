@@ -79,6 +79,8 @@ import trunkBefore from './assets/images/trunk-before.png';
 import trunkAfter from './assets/images/trunk-after.png';
 import ganeshaCharacter from './assets/images/ganesha-character.png';
 
+const GANESHA_REFLECTION_IMAGE = '/images/ganesha-sit.svg';
+
 const RESUME_DELAY_MS = 3000;
 
 const MINI_THUMBS_UP_ICON = '/images/hand-thumbsup.svg';
@@ -97,15 +99,29 @@ const PHASES = {
 };
 
 const VOICE_LINES = {
-  opening: "My pond is ready. Let's bloom it together.",
-  lotusRound: 'My lotus stays calm. Press and hold to make it bloom.',
-  goldenLotus: 'Beautiful. Now tap my golden bud.',
-  elephant: 'My trunk is flexible. Drag the water along the path.',
-  trunkRound: 'Follow the curve. The water will reach my lotus.',
-  idleLotus: 'Press and hold a lotus.',
+  // Entry
+  opening: "A golden lotus is waiting... let's see it bloom.",
+
+  // Lotus phase
+  lotusRound: 'Three lotuses are sleeping. Press and hold... let it bloom.',
+  idleLotus: 'Hold it gently... watch it open.',
+  lotusBloomPower: 'You stayed with it... nice and slow. Say it with me... I stay calm.',
+
+  // Golden lotus phase
+  goldenLotus: 'Look. A golden bud. Tap it.',
   idleGolden: 'Tap the golden bud.',
-  idleElephant: 'Drag the water drop along the path.',
-  complete: 'You stayed calm and went with the flow. Now I am shining with you.'
+
+  // Elephant tap phase (before drag starts)
+  elephant: 'Can you see an elephant? Tap it.',
+  idleElephant: 'Tap the little elephant.',
+
+  // Water drag phase
+  trunkRound: 'Drag the drop. To the golden bud.',
+  dragWaterIdle: 'Drag the drop. To the golden bud.',
+  waterPathPower: "You followed the path... and reached it. Say it with me... I find my way.",
+
+  // Completion
+  complete: 'You stayed calm. You found your way. All yours.'
 };
 
 const powerConfig = {
@@ -289,6 +305,7 @@ const PondSceneContent = ({
   const [showCenteredSymbol, setShowCenteredSymbol] = useState(null);
   const [showPowerModal, setShowPowerModal] = useState(false);
   const [showPowerMission, setShowPowerMission] = useState(false);
+  const [isSymbolPopupOpen, setIsSymbolPopupOpen] = useState(false);
   const [fireworksFinished, setFireworksFinished] = useState(false);
   const [currentMissionSymbol, setCurrentMissionSymbol] = useState(null);
 
@@ -373,7 +390,7 @@ const PondSceneContent = ({
   const MAX_WATER_DROPS = 15;
 
   const lastAnnouncedPromptRef = useRef(null);
-  const openingVoPlayedRef = useRef(false);
+  const resumePromptPlayedRef = useRef(false);
   const idleVoGateRef = useRef(false);
   const [hintResetKey, setHintResetKey] = useState(0);
   const [idleHintLevel, setIdleHintLevel] = useState(0);
@@ -381,6 +398,11 @@ const PondSceneContent = ({
   const IDLE_HINT_L1_MS = 10000;
   const IDLE_HINT_L2_MS = 18000;
   const IDLE_HINT_L3_MS = 26000;
+  const resetIdleBaseline = useCallback(() => {
+    idleVoGateRef.current = false;
+    setIdleHintLevel(0);
+    lastIdleInteractionAtRef.current = Date.now();
+  }, []);
 
   const rearmIdleHints = useCallback(() => {
     setHintResetKey(k => k + 1);
@@ -416,9 +438,12 @@ const PondSceneContent = ({
   }, [stopSpokenVoice]);
   const onPauseShow = useCallback(() => {
     const replayKey = getPromptKeyForPhase();
-    if (replayKey) speakPondPrompt(replayKey);
+    if (replayKey) {
+      resetIdleBaseline();
+      speakPondPrompt(replayKey);
+    }
     rearmIdleHints();
-  }, [getPromptKeyForPhase, speakPondPrompt, rearmIdleHints]);
+  }, [getPromptKeyForPhase, resetIdleBaseline, speakPondPrompt, rearmIdleHints]);
 
   const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({
     onHide: onPauseHide,
@@ -449,13 +474,28 @@ const PondSceneContent = ({
 
   useEffect(() => {
     const promptKey = getPromptKeyForPhase();
-    if (!promptKey || revealConfig || showSceneCompletion) return;
+    if (!promptKey || revealConfig || showSceneCompletion || isSymbolPopupOpen) return;
+    if (promptKey === 'trunkRound' && !dropPosition) return;
     if (lastAnnouncedPromptRef.current === promptKey) return;
 
-    lastAnnouncedPromptRef.current = promptKey;
-    const timer = setTimeout(() => speakPondPrompt(promptKey), promptKey === 'complete' ? 250 : 500);
+    const timer = setTimeout(() => {
+      resetIdleBaseline();
+      speakPondPrompt(promptKey);
+      lastAnnouncedPromptRef.current = promptKey;
+    }, promptKey === 'complete' ? 250 : promptKey === 'trunkRound' ? 850 : 500);
     return () => clearTimeout(timer);
-  }, [getPromptKeyForPhase, revealConfig, showSceneCompletion, speakPondPrompt]);
+  }, [
+    sceneState?.phase,
+    sceneState?.welcomeShown,
+    sceneState?.completed,
+    sceneState?.elephantTransformed,
+    sceneState?.elephantVisible,
+    dropPosition,
+    isSymbolPopupOpen,
+    revealConfig,
+    showSceneCompletion
+  ]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 
   // Deterministic idle ladder:
   // L1 @ 10s (hint), L2 @ 18s (hint-strong), L3 @ 26s (hint-final + gesture).
@@ -464,12 +504,14 @@ const PondSceneContent = ({
       PHASES.INITIAL,
       PHASES.SOME_BLOOMED,
       PHASES.GOLDEN_VISIBLE,
-      PHASES.ELEPHANT_VISIBLE
+      PHASES.ELEPHANT_VISIBLE,
+      PHASES.ELEPHANT_TRANSFORMED
     ];
     const isHintPhase = hintPhases.includes(sceneState?.phase)
       && sceneState?.welcomeShown
       && !showPowerModal
       && !showPowerMission
+      && !isSymbolPopupOpen
       && !revealConfig
       && !showSceneCompletion;
 
@@ -493,6 +535,7 @@ const PondSceneContent = ({
     sceneState?.welcomeShown,
     showPowerModal,
     showPowerMission,
+    isSymbolPopupOpen,
     revealConfig,
     showSceneCompletion
   ]);
@@ -512,6 +555,7 @@ const PondSceneContent = ({
     let idleKey = 'idleLotus';
     if (sceneState?.phase === PHASES.GOLDEN_VISIBLE) idleKey = 'idleGolden';
     if (sceneState?.phase === PHASES.ELEPHANT_VISIBLE) idleKey = 'idleElephant';
+    if (sceneState?.phase === PHASES.ELEPHANT_TRANSFORMED) idleKey = 'dragWaterIdle';
     speakPondPrompt(idleKey);
     idleVoGateRef.current = true;
   }, [idleHintLevel, sceneState?.phase, speakPondPrompt]);
@@ -554,7 +598,7 @@ const PondSceneContent = ({
           setRevealConfig({
             symbolId: 'lotus',
             symbolName: 'Lotus',
-            affirmation: 'I bloom in the mud!',
+            affirmation: 'I stay calm.',
             symbolImage: symbolLotusColored
           });
         }, 1200);
@@ -570,7 +614,7 @@ const PondSceneContent = ({
         setRevealConfig({
           symbolId: 'lotus',
           symbolName: 'Lotus',
-          affirmation: 'I bloom in the mud!',
+          affirmation: 'I stay calm.',
           symbolImage: symbolLotusColored
         });
       }, 1200);
@@ -586,20 +630,88 @@ const PondSceneContent = ({
         setRevealConfig({
           symbolId: 'trunk',
           symbolName: 'Trunk',
-          affirmation: 'Strong and gentle!',
+          affirmation: 'I find my way.',
           symbolImage: symbolTrunkColored
         });
       }, 1200);
       return;
     }
+    // Defensive repair: if a stale save marks completed during trunk reveal phase,
+    // clear it so reload resumes the card flow instead of treating scene as done.
+    if (sceneState.phase === PHASES.GOLDEN_BLOOM && sceneState.completed) {
+      sceneActions.updateState({
+        completed: false,
+        showingCompletionScreen: false,
+        phase: PHASES.GOLDEN_BLOOM
+      });
+      setTimeout(() => {
+        playChime();
+        setRevealConfig({
+          symbolId: 'trunk',
+          symbolName: 'Trunk',
+          affirmation: 'I find my way.',
+          symbolImage: symbolTrunkColored
+        });
+      }, 300);
+      return;
+    }
 
-    // 4. RESTORE COMPLETION SCREEN
+    // 4. RESTORE WATER-DRAG PHASE (ELEPHANT_TRANSFORMED)
+    // On reload during Phase 3, re-seed drag UI state so the drop is visible and interactive.
+    if (sceneState.phase === PHASES.ELEPHANT_TRANSFORMED && !sceneState.goldenLotusBloom) {
+      sceneActions.updateState({
+        elephantTransformed: true,
+        trunkActive: true,
+        phase: PHASES.ELEPHANT_TRANSFORMED
+      });
+      setCurrentPetal(-1);
+      setDropFading(false);
+      setDropMagicPhase(null);
+      dropCompletedRef.current = false;
+      petalAdvanceLockUntilRef.current = 0;
+      // Seed on next tick so render condition sees a stable phase first.
+      setTimeout(() => {
+        setDropPosition({ x: DROP_START_POINT.x, y: DROP_START_POINT.y });
+      }, 80);
+      return;
+    }
+
+    // 5. RESTORE COMPLETION SCREEN
     if (sceneState.phase === PHASES.COMPLETE && !sceneState.showingCompletionScreen) {
       setTimeout(() => setShowSceneCompletion(true), 500);
       return;
     }
 
   }, []); // Empty array — runs once on mount, same as Modak
+
+  // Scene 2 resume/continue VO guard:
+  // when entering with welcomeShown already true (mid-scene continue/reload),
+  // replay the current phase prompt once so guidance never feels silent.
+  useEffect(() => {
+    if (!sceneState?.welcomeShown) return;
+    if (resumePromptPlayedRef.current) return;
+    if (showSceneCompletion || revealConfig || isSymbolPopupOpen) return;
+    const promptKey = getPromptKeyForPhase();
+    if (promptKey === 'trunkRound' && !dropPosition) return;
+    if (!promptKey || promptKey === 'opening') return;
+
+    resumePromptPlayedRef.current = true;
+    const timer = setTimeout(() => {
+      resetIdleBaseline();
+      speakPondPrompt(promptKey);
+      lastAnnouncedPromptRef.current = promptKey;
+    }, promptKey === 'trunkRound' ? 850 : 500);
+    return () => clearTimeout(timer);
+  }, [
+    sceneState?.welcomeShown,
+    showSceneCompletion,
+    revealConfig,
+    isSymbolPopupOpen,
+    dropPosition,
+    getPromptKeyForPhase,
+    resetIdleBaseline,
+    speakPondPrompt
+  ]);
 
   // Completion message intentionally disabled for Pond (remove orange popup).
 
@@ -739,6 +851,18 @@ const PondSceneContent = ({
   };
 
   // -- SymbolAutoReveal helpers -----------------------------------------------
+  // Play power VO when the reveal card appears (Scene 1 parity).
+  useEffect(() => {
+    if (!revealConfig) return;
+    const voMap = {
+      lotus: 'lotusBloomPower',
+      trunk: 'waterPathPower'
+    };
+    const voKey = voMap[revealConfig.symbolId];
+    if (!voKey) return;
+    const id = setTimeout(() => speakPondPrompt(voKey), 400);
+    return () => clearTimeout(id);
+  }, [revealConfig, speakPondPrompt]);
 
   const getSidebarTarget = useCallback((symbolId) => {
     const el = document.getElementById(`sidebar-${symbolId}`);
@@ -770,7 +894,7 @@ const PondSceneContent = ({
 
     } else if (symbolId === 'trunk') {
       // Update phase immediately — prevents reload handler re-triggering card during 950ms window
-      sceneActions.updateState({ phase: PHASES.COMPLETE, completed: true });
+      sceneActions.updateState({ phase: PHASES.COMPLETE, completed: false, showingCompletionScreen: false });
       // discoveredSymbols delayed 950ms to protect sidebar bloom animation
       safeSetTimeout(() => {
         sceneActions.updateState({ discoveredSymbols: { lotus: true, trunk: true } });
@@ -817,7 +941,7 @@ const PondSceneContent = ({
         safeSetTimeout(() => setRevealConfig({
           symbolId: 'lotus',
           symbolName: 'Lotus',
-          affirmation: 'I bloom in the mud!',
+          affirmation: 'I stay calm.',
           symbolImage: symbolLotusColored
         }), 1500);
       }, 1000);
@@ -1106,7 +1230,7 @@ const PondSceneContent = ({
       safeSetTimeout(() => setRevealConfig({
         symbolId: 'trunk',
         symbolName: 'Trunk',
-        affirmation: 'Strong and gentle!',
+        affirmation: 'I find my way.',
         symbolImage: symbolTrunkColored
       }), 2400);
     }, DROP_MAGIC_PULSE_MS + DROP_MAGIC_STREAM_MS + DROP_MAGIC_PRE_BLOOM_PAUSE_MS);
@@ -1324,9 +1448,18 @@ const PondSceneContent = ({
     return () => clearTimeout(timer);
   }, [showSparkle]);
 
+  // Keep completion UI sticky across tab switch/remount.
+  useEffect(() => {
+    if (sceneState?.showingCompletionScreen && !showSceneCompletion) {
+      setShowSceneCompletion(true);
+      setShowSparkle(null);
+    }
+  }, [sceneState?.showingCompletionScreen, showSceneCompletion]);
+
   if (!sceneState) {
     return <div className="loading">Loading scene state...</div>;
   }
+  const isCompletionView = showSceneCompletion || sceneState.showingCompletionScreen;
 
   // 1. WRAP IN GAMELAYOUT
   return (
@@ -1353,6 +1486,8 @@ const PondSceneContent = ({
               onPointerLeave={dragActive ? handleDropPointerUp : undefined}
               onContextMenu={(e) => e.preventDefault()}
             >
+              {!isCompletionView && (
+                <>
               {POND_OVERLAY_MID ? (
                 <div className="pond-bg-overlay pond-bg-overlay--mid" style={{ backgroundImage: `url(${POND_OVERLAY_MID})` }} aria-hidden="true" />
               ) : null}
@@ -1361,21 +1496,18 @@ const PondSceneContent = ({
 
               {/* UnifiedHeaderV2 disabled per request */}
 
-              <OpeningModal
-                zoneId={zoneId}
-                sceneId={sceneId}
-                isOpen={!sceneState.welcomeShown}
-                onStart={() => {
-                  rearmIdleHints();
-                  sceneActions.updateState({ welcomeShown: true });
-                  if (!openingVoPlayedRef.current) {
-                    speakPondPrompt('opening');
-                    openingVoPlayedRef.current = true;
-                  }
-                }}
-                characterImg={ganeshaCharacter}
-                showButton={true}
-              />
+              {sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown && (
+                <OpeningModal
+                  zoneId={zoneId}
+                  sceneId={sceneId}
+                  onStart={() => {
+                    rearmIdleHints();
+                    sceneActions.updateState({ welcomeShown: true });
+                  }}
+                  characterImg={ganeshaCharacter}
+                  showButton={true}
+                />
+              )}
 
               {isDevMode && (
                 <button
@@ -1493,19 +1625,7 @@ const PondSceneContent = ({
                   </div>
                 )
               ))}
-
-              {/* Final idle hint pointer */}
-              {idleHintLevel >= 3 && (() => {
-                const idleTarget =
-                  sceneState?.phase === PHASES.ELEPHANT_VISIBLE ? 'elephant' :
-                  sceneState?.phase === PHASES.GOLDEN_VISIBLE ? 'golden-lotus' :
-                  'lotus';
-                return (
-                  <div className={`pond-hint-pointer pond-hint-pointer--${idleTarget}`} aria-hidden="true">
-                    👆
-                  </div>
-                );
-              })()}
+              {/* Pointer emoji hint removed per request */}
 
               {/* All lotuses sparkle */}
               {showSparkle === 'all-lotuses' && (
@@ -1544,12 +1664,14 @@ const PondSceneContent = ({
                 <div
                   className={`elephant-partial ${sceneState.elephantTransformed ? 'elephant-position-locked' : ''} ${!sceneState.elephantTransformed ? hintClassName : ''}`}
                   id="elephant-container"
+                  style={{ position: 'relative' }}
                 >
                   <ClickableElement
                     id="elephant"
                     onClick={handleElephantClick}
                     completed={sceneState.elephantTransformed}
                     zone="elephant-zone"
+                    style={{ position: 'relative', zIndex: 10 }}
                   >
                     <img src={elephantFull} alt="Elephant" className="pond-fit-image" />
                   </ClickableElement>
@@ -1639,6 +1761,17 @@ const PondSceneContent = ({
                 </>
               )}
 
+              {/* Ganesha reflection in pond water — appears at golden lotus bloom */}
+              {sceneState.goldenLotusBloom && (
+                <div className="pond-ganesha-reflection" aria-hidden="true">
+                  <img
+                    src={GANESHA_REFLECTION_IMAGE}
+                    alt=""
+                    className="pond-ganesha-reflection__img"
+                  />
+                </div>
+              )}
+
               {POND_OVERLAY_FRONT ? (
                 <div className="pond-bg-overlay pond-bg-overlay--front" style={{ backgroundImage: `url(${POND_OVERLAY_FRONT})` }} aria-hidden="true" />
               ) : null}
@@ -1700,42 +1833,50 @@ const PondSceneContent = ({
                   <img className="modak-mini-gesture-icon" src={miniGesture.icon} alt="" />
                 </div>
               )}
+                </>
+              )}
             </div>
 
             {/* Resume Popup */}
-              {showResumePopup && (
+              {!isCompletionView && showResumePopup && (
               <div className="pond-resume-popup">
                 {resumeMessage}
               </div>
             )}
 
             {/* New Overlay Block for SymbolPowerMission */}
-            {showPowerMission && <div className="pond-power-overlay-block" />}
+            {!isCompletionView && showPowerMission && <div className="pond-power-overlay-block" />}
 
             {/* Symbol Power Mission */}
-            <SymbolPowerMission
-              show={showPowerMission}
-              symbolKey={currentMissionSymbol}
-              beforeImage={missionImages[currentMissionSymbol]?.before}
-              afterImage={missionImages[currentMissionSymbol]?.after}
-              powerConfig={powerConfig[currentMissionSymbol]}
-              onComplete={handleMissionComplete}
-              onCancel={() => {
-                setShowPowerMission(false);
-                setShowPowerModal(true);
-              }}
-            />
+            {!isCompletionView && (
+              <SymbolPowerMission
+                show={showPowerMission}
+                symbolKey={currentMissionSymbol}
+                beforeImage={missionImages[currentMissionSymbol]?.before}
+                afterImage={missionImages[currentMissionSymbol]?.after}
+                powerConfig={powerConfig[currentMissionSymbol]}
+                onComplete={handleMissionComplete}
+                onCancel={() => {
+                  setShowPowerMission(false);
+                  setShowPowerModal(true);
+                }}
+              />
+            )}
 
             {/* Fireworks (Modak-style) */}
-            <FireworksCompletion
-              show={showSparkle === 'final-fireworks'}
-              showCard={false}
-            />
-            <CalmGoldenFireworks
-              show={showSparkle === 'final-fireworks'}
-              particles={14}
-              duration={3500}
-            />
+            {!isCompletionView && (
+              <FireworksCompletion
+                show={showSparkle === 'final-fireworks'}
+                showCard={false}
+              />
+            )}
+            {!isCompletionView && (
+              <CalmGoldenFireworks
+                show={showSparkle === 'final-fireworks'}
+                particles={14}
+                duration={3500}
+              />
+            )}
 
             {/* DISCOVERY 1: GOLDEN LOTUS — disabled; SymbolAutoReveal handles this now */}
             {false && showDiscoveryFlip1 && (
@@ -1785,7 +1926,7 @@ const PondSceneContent = ({
             )}
 
             {/* SYMBOL AUTO REVEAL */}
-            {revealConfig && (
+            {!isCompletionView && revealConfig && (
               <SymbolAutoReveal
                 key={revealConfig.symbolId}
                 symbolId={revealConfig.symbolId}
@@ -1793,14 +1934,15 @@ const PondSceneContent = ({
                 affirmation={revealConfig.affirmation}
                 symbolImage={revealConfig.symbolImage}
                 sidebarTargetRect={getSidebarTarget(revealConfig.symbolId)}
+                enableTapHintPrompt={!sceneState?.discoveredSymbols?.lotus}
                 onComplete={() => handleRevealComplete(revealConfig.symbolId)}
               />
             )}
 
             {/* Scene Completion */}
-            {showSceneCompletion && (
+            {isCompletionView && (
               <SceneCompletionCelebration
-                show={true}
+                show={isCompletionView}
                 zoneId={zoneId}
                 sceneName="Pond Adventure"
                 completionTitle={completionModalContent?.title}
@@ -1862,12 +2004,14 @@ const PondSceneContent = ({
 
             {/* BackToMapButton disabled per request */}
 
-            <CulturalCelebrationModal
-              show={showCulturalCelebration}
-              onClose={() => setShowCulturalCelebration(false)}
-            />
+            {!isCompletionView && (
+              <CulturalCelebrationModal
+                show={showCulturalCelebration}
+                onClose={() => setShowCulturalCelebration(false)}
+              />
+            )}
 
-            {sceneState.welcomeShown && !isFinalCelebrationActive && (
+            {!isCompletionView && sceneState.welcomeShown && !isFinalCelebrationActive && (
               <SymbolSidebar
                 discoveredSymbols={{
                   mooshika: true,
@@ -1877,6 +2021,18 @@ const PondSceneContent = ({
                 }}
                 onSymbolClick={(symbolId) => {
                   console.log(`Sidebar symbol clicked: ${symbolId}`);
+                }}
+                onPopupOpen={() => {
+                  setIsSymbolPopupOpen(true);
+                  stopSpokenVoice();
+                  resetIdleBaseline();
+                }}
+                onPopupClose={() => {
+                  setIsSymbolPopupOpen(false);
+                  resetIdleBaseline();
+                  rearmIdleHints();
+                  const replayKey = getPromptKeyForPhase();
+                  if (replayKey) speakPondPrompt(replayKey);
                 }}
               />
             )}
@@ -1894,4 +2050,6 @@ const PondSceneContent = ({
 };
 
 export default PondSceneSimplifiedV5;
+
+
 

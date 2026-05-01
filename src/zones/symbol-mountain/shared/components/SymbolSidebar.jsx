@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import './SymbolSidebar.css';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
+import SymbolCardModal from './SymbolCardModal';
+// FIX 1: named import (was default import — was returning undefined)
+import { symbolCardContent } from './symbolCardContent';
 
 // Import gray and colored symbol icons
 import symbolBellyColored from '../images/icons/symbol-belly-new.png';
@@ -73,61 +76,14 @@ import symbolTuskColored from '../images/icons/symbol-tusk-new.png';
 };*/
 
 const symbolInfo = {
-  modak: {
-    title: "Modak",
-    description: "I share with joy.",
-    colorIcon: symbolModakColored,
-    popupImage: symbolModakColored,
-  },
-
-  mooshika: {
-    title: "Mooshika",
-    description: "I can focus.",
-    colorIcon: symbolMooshikaColored,
-    popupImage: symbolMooshikaColored,
-  },
-
-  belly: {
-    title: "Big Belly",
-    description: "I feel safe inside.",
-    colorIcon: symbolBellyColored,
-    popupImage: symbolBellyColored,
-  },
-
-  lotus: {
-    title: "Lotus",
-    description: "I stay calm and kind.",
-    colorIcon: symbolLotusColored,
-    popupImage: symbolLotusColored,
-  },
-
-  trunk: {
-    title: "Trunk",
-    description: "I am strong and gentle.",
-    colorIcon: symbolTrunkColored,
-    popupImage: symbolTrunkColored,
-  },
-
-  eyes: {
-    title: "Eyes",
-    description: "I notice the good.",
-    colorIcon: symbolEyesColored,
-    popupImage: symbolEyesColored,
-  },
-
-  ear: {
-    title: "Ears",
-    description: "I listen with care.",
-    colorIcon: symbolEarColored,
-    popupImage: symbolEarColored,
-  },
-
-  tusk: {
-    title: "Tusk",
-    description: "I finish what I start.",
-    colorIcon: symbolTuskColored,
-    popupImage: symbolTuskColored,
-  },
+  modak: { title: 'Modak', colorIcon: symbolModakColored },
+  mooshika: { title: 'Mooshika', colorIcon: symbolMooshikaColored },
+  belly: { title: 'Big Belly', colorIcon: symbolBellyColored },
+  lotus: { title: 'Lotus', colorIcon: symbolLotusColored },
+  trunk: { title: 'Trunk', colorIcon: symbolTrunkColored },
+  eyes: { title: 'Eyes', colorIcon: symbolEyesColored },
+  ear: { title: 'Ears', colorIcon: symbolEarColored },
+  tusk: { title: 'Tusk', colorIcon: symbolTuskColored },
 };
 
 // Display order
@@ -222,17 +178,13 @@ const SymbolSidebar = ({
           </div>
         </div>
 
+        {/* FIX 2 + 3: conditional render + correct prop names (symbolId + iconSrc) */}
         {showPopup && selectedSymbol && (
-          <div className="ganesha-popup-overlay" onClick={closePopup}>
-            <div className="ganesha-popup-content" style={zoneThemeVars}>
-              <div className="ganesha-popup-img-container">
-                <img src={symbolInfo[selectedSymbol].popupImage} alt={symbolInfo[selectedSymbol].title} className="ganesha-popup-custom-img" />
-              </div>
-              <h2 className="ganesha-popup-title">{symbolInfo[selectedSymbol].title}</h2>
-              <p className="ganesha-popup-description">{symbolInfo[selectedSymbol].description}</p>
-              <p className="ganesha-popup-tap-hint">Tap anywhere to close</p>
-            </div>
-          </div>
+          <SymbolCardModal
+            symbolId={selectedSymbol}
+            iconSrc={symbolInfo[selectedSymbol]?.colorIcon}
+            onClose={closePopup}
+          />
         )}
       </>
     );
@@ -265,21 +217,16 @@ const SymbolSidebar = ({
         })}
       </div>
 
+      {/* FIX 2 + 3: conditional render + correct prop names (symbolId + iconSrc) */}
       {showPopup && selectedSymbol && (
-        <div className="ganesha-popup-overlay" onClick={closePopup}>
-          <div className="ganesha-popup-content" style={zoneThemeVars}>
-            <div className="ganesha-popup-img-container">
-              <img src={symbolInfo[selectedSymbol].popupImage} alt={symbolInfo[selectedSymbol].title} className="ganesha-popup-custom-img" />
-            </div>
-            <h2 className="ganesha-popup-title">{symbolInfo[selectedSymbol].title}</h2>
-            <p className="ganesha-popup-description">{symbolInfo[selectedSymbol].description}</p>
-            <p className="ganesha-popup-tap-hint">Tap anywhere to close</p>
-          </div>
-        </div>
+        <SymbolCardModal
+          symbolId={selectedSymbol}
+          iconSrc={symbolInfo[selectedSymbol]?.colorIcon}
+          onClose={closePopup}
+        />
       )}
     </>
   );
 };
 
 export default SymbolSidebar;
-

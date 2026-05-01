@@ -33,7 +33,7 @@ const ZONE_Z_INDEX = {
 
 // Keep as array so one zone can have multiple hit areas (ears left + right).
 const ZONE_HITBOXES = [
-  { hitId: 'eyes-main', zoneId: 'eyes', box: { top: '36%', left: '48%', width: '280px', height: '100px', transform: 'translateX(-50%)' } },
+  { hitId: 'eyes-main', zoneId: 'eyes', box: { top: '36%', left: '46%', width: '280px', height: '100px', transform: 'translateX(-50%)' } },
   { hitId: 'ears-left', zoneId: 'ears', box: { top: '24%', left: '13%', width: '200px', height: '340px' } },
   { hitId: 'ears-right', zoneId: 'ears', box: { top: '24%', right: '13%', width: '200px', height: '340px' } },
   { hitId: 'trunk-main', zoneId: 'trunk', box: { top: '45%', left: '50%', width: '220px', height: '240px', transform: 'translateX(-50%)' } },
@@ -69,8 +69,7 @@ const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null
         const state = zoneStates[zoneId] || 'idle';
         const isPlaced = state === 'placed';
         const isCorrect = state === 'correct';
-        const isWrong = state === 'wrong';
-        const opacity = isPlaced || isCorrect ? 1 : isWrong ? 0.4 : 0;
+        const opacity = isPlaced || isCorrect ? 1 : 0;
 
         return (
           <img
@@ -78,7 +77,7 @@ const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null
             src={src}
             alt=""
             draggable={false}
-            className={isWrong ? 'svg-zone-wrong' : isCorrect ? 'svg-zone-correct' : ''}
+            className={isCorrect ? 'svg-zone-correct' : ''}
             style={{
               position: 'absolute',
               inset: 0,

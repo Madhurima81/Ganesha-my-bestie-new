@@ -9,23 +9,23 @@ import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 
 // Import images
 import musicalTabla from './assets/images/tabla-new.png';
-import musicalFlute from './assets/images/flute-new.png';
+import musicalDholak from './assets/images/dholak-new.png';
 import musicalHarmonium from './assets/images/harmonium-new.png';
 import musicalTanpura from './assets/images/tanpura-new.png';
 import mglass from './assets/images/mglass.png';
 
 const musicalInstruments = {
   tabla: { image: musicalTabla, name: 'Tabla', emoji: '🥁' },
-  flute: { image: musicalFlute, name: 'Flute', emoji: '🎵' },
+  dholak: { image: musicalDholak, name: 'Dholak', emoji: '🥁' },
   harmonium: { image: musicalHarmonium, name: 'Harmonium', emoji: '🎹' },
   tanpura: { image: musicalTanpura, name: 'Tanpura', emoji: '🎸' }
 };
 
 const defaultInstrumentPositions = {
-  1: { x: 75, y: 35, type: 'tabla' },
-  2: { x: 75, y: 25, type: 'flute' },
-  3: { x: 45, y: 45, type: 'harmonium' },
-  4: { x: 25, y: 70, type: 'tanpura' }
+  1: { x: 39, y: 44, type: 'tabla' },
+  2: { x: 64, y: 72, type: 'dholak' },
+  3: { x: 23, y: 71, type: 'harmonium' },
+  4: { x: 86, y: 47, type: 'tanpura' }
 };
 
 const EyesTelescopeGame = ({ 
@@ -42,6 +42,7 @@ const EyesTelescopeGame = ({
 }) => {
   const [telescopePosition, setTelescopePosition] = useState({ top: '50%', left: '50%' });
   const [telescopeDragging, setTelescopeDragging] = useState(false);
+  const [showMagnifier, setShowMagnifier] = useState(false);
   const [proximityState, setProximityState] = useState('cool');
   const [foundInstruments, setFoundInstruments] = useState(initialFoundInstruments);
   const [discoveredInstruments, setDiscoveredInstruments] = useState(initialDiscoveredInstruments);
@@ -52,6 +53,7 @@ const EyesTelescopeGame = ({
   const [idleHintLevel, setIdleHintLevel] = useState(0);
   const lastIdleInteractionAtRef = useRef(Date.now());
   const idleHintVoiceRef = useRef(false);
+  const openingVoicePlayedRef = useRef(false);
   const IDLE_HINT_L1_MS = 10000;
   const IDLE_HINT_L2_MS = 18000;
   const IDLE_HINT_L3_MS = 26000;
@@ -73,6 +75,10 @@ const EyesTelescopeGame = ({
 
   useEffect(() => {
     if (isActive) {
+      setShowMagnifier(false);
+      const showTimer = setTimeout(() => setShowMagnifier(true), 200);
+      timeoutsRef.current.push(showTimer);
+      openingVoicePlayedRef.current = false;
       if (isReload && initialFoundInstruments.length > 0) {
         setFoundInstruments(initialFoundInstruments);
         setDiscoveredInstruments(initialDiscoveredInstruments);
@@ -97,6 +103,23 @@ const EyesTelescopeGame = ({
       }
     }
   }, [isActive, isReload]);
+
+  // Play telescope opening VO once when magnifying glass/game appears.
+  useEffect(() => {
+    if (!isActive || gameComplete || foundInstruments.length >= 4) return;
+    if (openingVoicePlayedRef.current) return;
+    if (!isAudioOn) return;
+
+    const timer = setTimeout(() => {
+      speak('Drag the magnifying glass... find the instruments.', {
+        age: 11,
+        moment: 'default'
+      });
+      openingVoicePlayedRef.current = true;
+    }, 450);
+
+    return () => clearTimeout(timer);
+  }, [isActive, gameComplete, foundInstruments.length, isAudioOn, speak]);
 
   useEffect(() => {
     if (!isActive || gameComplete || foundInstruments.length >= 4) {
@@ -136,7 +159,7 @@ const EyesTelescopeGame = ({
     }
 
     if (!idleHintVoiceRef.current && isAudioOn) {
-      speak('Drag the magnifying glass to find the instruments.', {
+      speak('Drag the magnifying glass... look closely.', {
         age: 11,
         moment: 'default'
       });
@@ -183,6 +206,14 @@ const EyesTelescopeGame = ({
     setDiscoveredInstruments(newDiscoveredInstruments);
     setShowSparkle(`instrument-${instrumentType}-found`);
     setShowGestureOn(instrumentType);
+
+    if (isAudioOn) {
+      const instrumentName = musicalInstruments[instrumentType]?.name || instrumentType;
+      speak(instrumentName, {
+        age: 11,
+        moment: 'default'
+      });
+    }
     
     safeSetTimeout(() => {
       setShowSparkle(null);
@@ -232,12 +263,19 @@ const EyesTelescopeGame = ({
         }}
         onDragEnd={() => setTelescopeDragging(false)}
         disabled={gameComplete}
-        className={`magnifier-container ${telescopeDragging ? 'dragging' : ''}`}
+        className={`magnifier magnifier-container ${showMagnifier ? 'show' : ''} ${telescopeDragging ? 'dragging active' : ''}`}
         style={{
-          width: '160px', height: '160px', zIndex: 25,
+          width: '260px', height: '260px', zIndex: 25,
           cursor: 'grab',
           opacity: 1,
-          animation: idleHintLevel >= 1 ? 'idleWobble 0.5s ease-in-out infinite' : 'none'
+          animation:
+            idleHintLevel === 1
+              ? 'idleWobble 0.5s ease-in-out 1'
+              : idleHintLevel === 2
+                ? 'idleWobbleStrong 0.6s ease-in-out 2'
+                : idleHintLevel >= 3
+                  ? 'idleWobbleFinal 0.7s ease-in-out 3'
+                  : 'none'
         }}
         bounds={{ top: 5, left: 5, right: 90, bottom: 90 }}
       >
@@ -295,6 +333,21 @@ const EyesTelescopeGame = ({
                 cursor: 'default'
               }}
             >
+              {isDiscovered ? (
+                <img
+                  src={musicalInstruments[instrumentData.type]?.image}
+                  alt={musicalInstruments[instrumentData.type]?.name || instrumentData.type}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    filter: 'drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25))',
+                    transform: 'none'
+                  }}
+                />
+              ) : (
+                <div className={`undiscovered-glow ${hintClassName}`} aria-hidden="true" />
+              )}
               {showSparkle === `instrument-${instrumentData.type}-found` && (
                 <SparkleAnimation type="star" count={15} color="rgba(135, 206, 235, 0.8)" size={8} duration={1500} fadeOut={true} area="full" />
               )}
@@ -314,33 +367,65 @@ const EyesTelescopeGame = ({
         </div>
       )}
       
-      {onClose && <button style={inlineCloseStyle} onClick={onClose}>✕</button>}
-      
       <style>{`
         @keyframes popIn { 0% { transform: translate(-50%, -20px); opacity: 0; } 100% { transform: translate(-50%, 0); opacity: 1; } }
         @keyframes idleWobble {
           0%, 100% { transform: rotate(-3deg); }
           50% { transform: rotate(3deg); }
         }
+        @keyframes idleWobbleStrong {
+          0%, 100% { transform: rotate(-4deg); }
+          50% { transform: rotate(4deg); }
+        }
+        @keyframes idleWobbleFinal {
+          0%, 100% { transform: rotate(-5deg); }
+          50% { transform: rotate(5deg); }
+        }
         .discovered-instrument.discovered { animation: instrumentGlow 3.4s ease-in-out infinite; }
         @keyframes instrumentGlow {
           0%, 100% { filter: brightness(1) drop-shadow(0 0 2px rgba(255, 255, 255, 0.15)); }
           50% { filter: brightness(1.08) drop-shadow(0 0 5px rgba(255, 255, 255, 0.35)); }
         }
-        .discovered-instrument.hint { animation: undiscoveredHint 1.6s ease-in-out infinite; }
+        .undiscovered-glow {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(100, 181, 246, 0.30) 0%, rgba(100, 181, 246, 0.14) 48%, rgba(100, 181, 246, 0) 72%);
+          border: 2px solid rgba(100, 181, 246, 0.58);
+          box-shadow: 0 0 0 rgba(100, 181, 246, 0);
+        }
+        .discovered-instrument.hint .undiscovered-glow { animation: undiscoveredHint 1.6s ease-in-out 1; }
         @keyframes undiscoveredHint {
-          0%, 100% { filter: brightness(1.05) drop-shadow(0 0 6px rgba(255, 209, 102, 0.5)); }
-          50% { filter: brightness(1.1) drop-shadow(0 0 10px rgba(255, 209, 102, 0.8)); }
+          0%, 100% {
+            box-shadow: 0 0 0 rgba(100, 181, 246, 0);
+            border-color: rgba(100, 181, 246, 0.45);
+          }
+          50% {
+            box-shadow: 0 0 14px rgba(100, 181, 246, 0.78);
+            border-color: rgba(100, 181, 246, 0.84);
+          }
         }
-        .discovered-instrument.hint-strong { animation: undiscoveredHintStrong 1.25s ease-in-out infinite; }
+        .discovered-instrument.hint-strong .undiscovered-glow { animation: undiscoveredHintStrong 1.25s ease-in-out 2; }
         @keyframes undiscoveredHintStrong {
-          0%, 100% { filter: brightness(1.08) drop-shadow(0 0 8px rgba(255, 196, 0, 0.7)); }
-          50% { filter: brightness(1.14) drop-shadow(0 0 14px rgba(255, 196, 0, 0.95)); }
+          0%, 100% {
+            box-shadow: 0 0 0 rgba(100, 181, 246, 0);
+            border-color: rgba(100, 181, 246, 0.58);
+          }
+          50% {
+            box-shadow: 0 0 18px rgba(100, 181, 246, 0.88);
+            border-color: rgba(100, 181, 246, 0.9);
+          }
         }
-        .discovered-instrument.hint-final { animation: undiscoveredHintFinal 1s ease-in-out infinite; }
+        .discovered-instrument.hint-final .undiscovered-glow { animation: undiscoveredHintFinal 1s ease-in-out 3; }
         @keyframes undiscoveredHintFinal {
-          0%, 100% { filter: brightness(1.1) drop-shadow(0 0 10px rgba(255, 170, 0, 0.85)); }
-          50% { filter: brightness(1.18) drop-shadow(0 0 18px rgba(255, 170, 0, 1)); }
+          0%, 100% {
+            box-shadow: 0 0 0 rgba(100, 181, 246, 0);
+            border-color: rgba(100, 181, 246, 0.62);
+          }
+          50% {
+            box-shadow: 0 0 22px rgba(100, 181, 246, 0.92);
+            border-color: rgba(100, 181, 246, 0.92);
+          }
         }
         .eyes-mini-gesture {
           position: absolute;
@@ -371,12 +456,6 @@ const EyesTelescopeGame = ({
 
 const inlineContainerStyle = {
   position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 20, pointerEvents: 'auto'
-};
-
-const inlineCloseStyle = {
-  position: 'absolute', top: '10px', right: '10px', background: 'rgba(255, 255, 255, 0.9)',
-  border: 'none', borderRadius: '50%', width: '30px', height: '30px', fontSize: '16px',
-  cursor: 'pointer', color: '#666', zIndex: 35
 };
 
 export default EyesTelescopeGame;

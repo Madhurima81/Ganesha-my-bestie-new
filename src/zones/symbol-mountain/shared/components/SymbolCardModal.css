@@ -1,0 +1,309 @@
+/* src/zones/zone1-symbol-mountain/components/SymbolCardModal.css
+ *
+ * Voluntary symbol card styles — scaled UP for iPad-kids viewport.
+ * Fonts: Baloo 2 (headings) + Nunito (body) — both pre-loaded in index.html.
+ * Palette: warm cream + warm brown + saffron whisper (Symbol Mountain).
+ *
+ * Sizing strategy: clamp() so the card scales gracefully across
+ * desktop (large) → iPad (medium) → phone (compact).
+ */
+
+/* ============================================
+   BACKDROP — warm dim, blurred, immersive
+   ============================================ */
+.symbol-card-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+
+  background: rgba(46, 30, 14, 0.45);     /* warm brown overlay, not cold black */
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+
+  animation: backdrop-in 200ms ease-out;
+}
+
+.symbol-card-modal-backdrop.exiting {
+  animation: backdrop-out 200ms ease-in forwards;
+}
+
+@keyframes backdrop-in {
+  from { opacity: 0; backdrop-filter: blur(0); -webkit-backdrop-filter: blur(0); }
+  to   { opacity: 1; backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px); }
+}
+
+@keyframes backdrop-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* ============================================
+   CARD CONTAINER — 2-2.5x larger
+   ============================================ */
+.symbol-card-modal {
+  /* Was: max-width 440px. Now scales 720px → 880px → 1000px on big screens */
+  width: clamp(640px, 55vw, 1000px);
+  max-width: 92vw;
+  padding: clamp(40px, 4vw, 64px) clamp(36px, 3.5vw, 56px) clamp(32px, 3vw, 44px);
+  border-radius: clamp(28px, 2.5vw, 40px);
+
+  background: #FFF8E7;                    /* warm cream from design system */
+  box-shadow:
+    0 24px 64px rgba(70, 40, 10, 0.22),
+    0 4px 16px rgba(70, 40, 10, 0.10);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  animation: card-in 280ms cubic-bezier(0.2, 0.8, 0.3, 1);
+  transform-origin: center center;
+}
+
+.symbol-card-modal.exiting {
+  animation: card-out 200ms ease-in forwards;
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes card-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+/* ============================================
+   ICON + GLOW — 2x larger anchor
+   ============================================ */
+.symbol-card__icon-wrap {
+  position: relative;
+  width: clamp(120px, 10vw, 180px);
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: clamp(18px, 1.6vw, 26px);
+}
+
+.symbol-card__icon-glow {
+  display: none;
+}
+
+.symbol-card__icon {
+  position: relative;
+  width: clamp(120px, 10vw, 180px);
+  height: auto;
+  object-fit: contain;
+  z-index: 1;
+  filter: drop-shadow(0 6px 14px rgba(255, 196, 70, 0.35));
+}
+
+@keyframes glow-fade-in {
+  to { opacity: 1; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { transform: scale(1);    opacity: 0.85; }
+  50%      { transform: scale(1.08); opacity: 1; }
+}
+
+/* ============================================
+   TITLE STACK — bigger, tight hierarchy
+   ============================================ */
+.symbol-card__title-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: clamp(24px, 2.2vw, 36px);
+}
+
+.symbol-card__label {
+  display: none;
+}
+
+.symbol-card__ganesha-line {
+  font-family: 'Baloo 2', cursive;
+  margin: 0;
+  color: #3D2817;                          /* deep warm brown */
+  line-height: 1.3;
+}
+
+.symbol-card__ganesha-line.is-hook {
+  font-size: clamp(32px, 2.8vw, 44px);
+  font-weight: 700;
+  margin-bottom: clamp(10px, 0.8vw, 14px);
+}
+
+.symbol-card__ganesha-line.is-teaching {
+  font-size: clamp(22px, 1.9vw, 30px);
+  font-weight: 500;
+  color: #5C4633;
+  max-width: 92%;
+  line-height: 1.4;
+}
+
+/* ============================================
+   INVITATION — left-aligned reflection block, larger
+   ============================================ */
+.symbol-card__invitation {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(12px, 1vw, 16px);
+  width: 100%;
+  padding: clamp(20px, 1.8vw, 28px) clamp(20px, 1.8vw, 28px);
+  margin-top: clamp(8px, 0.6vw, 12px);
+  border-radius: clamp(16px, 1.4vw, 22px);
+  background: rgba(255, 153, 51, 0.06);    /* whisper of saffron */
+  border-left: 4px solid rgba(255, 153, 51, 0.5);
+  text-align: left;
+}
+
+.symbol-card__pointer {
+  font-size: clamp(24px, 2vw, 32px);
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+
+.symbol-card__invitation p {
+  margin: 0;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(20px, 1.7vw, 26px);
+  font-weight: 400;
+  line-height: 1.55;
+  color: #3D2817;
+}
+
+/* ============================================
+   GIFT LINE — soft whisper close, larger
+   ============================================ */
+.symbol-card__gift {
+  margin: clamp(22px, 1.8vw, 30px) 0 0;
+  padding: 0 8px;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(18px, 1.5vw, 24px);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #8B6F47;
+  max-width: 92%;
+}
+
+/* ============================================
+   FOOTER — de-emphasized
+   ============================================ */
+.symbol-card__footer {
+  margin: clamp(24px, 2vw, 32px) 0 0;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(14px, 1.1vw, 17px);
+  font-weight: 400;
+  color: rgba(61, 40, 23, 0.5);            /* 50% opacity */
+  letter-spacing: 0.3px;
+}
+
+/* ============================================
+   RESPONSIVE — iPad portrait
+   ============================================ */
+@media (max-width: 1024px) {
+  .symbol-card-modal {
+    width: clamp(520px, 75vw, 760px);
+    padding: 40px 36px 32px;
+  }
+
+  .symbol-card__icon-wrap {
+    width: 130px;
+  }
+
+  .symbol-card__ganesha-line.is-hook {
+    font-size: 30px;
+  }
+
+  .symbol-card__ganesha-line.is-teaching {
+    font-size: 22px;
+  }
+
+  .symbol-card__invitation p {
+    font-size: 20px;
+  }
+
+  .symbol-card__gift {
+    font-size: 18px;
+  }
+}
+
+/* ============================================
+   RESPONSIVE — phones
+   ============================================ */
+@media (max-width: 640px) {
+  .symbol-card-modal {
+    width: 100%;
+    max-width: 100%;
+    padding: 28px 22px 22px;
+    border-radius: 22px;
+  }
+
+  .symbol-card__icon-wrap {
+    width: 96px;
+  }
+
+  .symbol-card__label {
+    font-size: 16px;
+  }
+
+  .symbol-card__ganesha-line.is-hook {
+    font-size: 24px;
+  }
+
+  .symbol-card__ganesha-line.is-teaching {
+    font-size: 17px;
+  }
+
+  .symbol-card__invitation {
+    padding: 16px 14px;
+  }
+
+  .symbol-card__invitation p {
+    font-size: 16px;
+  }
+
+  .symbol-card__gift {
+    font-size: 15px;
+  }
+
+  .symbol-card__footer {
+    font-size: 13px;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY — respect reduced motion
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .symbol-card-modal,
+  .symbol-card-modal-backdrop,
+  .symbol-card__icon-glow {
+    animation: none !important;
+  }
+
+  .symbol-card__icon-glow {
+    opacity: 1;
+  }
+}

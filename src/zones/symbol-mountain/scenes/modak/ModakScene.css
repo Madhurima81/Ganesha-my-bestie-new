@@ -552,11 +552,11 @@
 }
 
 .modak-game-modak.hint-strong {
-  animation: modak-idle-hint-strong 1.6s ease-in-out 2 !important;
+  animation: modak-idle-hint-strong 1.6s ease-in-out 3 !important;
 }
 
 .modak-game-modak.hint-final {
-  animation: modak-idle-hint-final 2s ease-in-out 3 !important;
+  animation: modak-idle-hint-final 2s ease-in-out 4 !important;
 }
 
 @keyframes modak-idle-hint {
@@ -599,12 +599,12 @@ div[class*="modak-game-modak-collected"].hint {
 }
 
 div[class*="modak-game-modak-collected"].hint-strong {
-  animation: modak-basket-idle-hint-strong 1.6s ease-in-out 2 !important;
+  animation: modak-basket-idle-hint-strong 1.6s ease-in-out 3 !important;
   transform: none !important;
 }
 
 div[class*="modak-game-modak-collected"].hint-final {
-  animation: modak-basket-idle-hint-final 2s ease-in-out 3 !important;
+  animation: modak-basket-idle-hint-final 2s ease-in-out 4 !important;
   transform: none !important;
 }
 
@@ -745,11 +745,11 @@ div[class*="modak-game-modak-collected"].modak-game-hint-glow {
 }
 
 .modak-game-mud-mound.hint-strong {
-  animation: modak-phase1-hint-strong 1.6s ease-in-out 2 !important;
+  animation: modak-phase1-hint-strong 1.6s ease-in-out 3 !important;
 }
 
 .modak-game-mud-mound.hint-final {
-  animation: modak-phase1-hint-final 2s ease-in-out 3 !important;
+  animation: modak-phase1-hint-final 2s ease-in-out 4 !important;
 }
 
 .modak-game-mud-mound.hint::before,
@@ -1341,24 +1341,24 @@ div[class*="discovery"] img {
   transform-origin: center bottom;
 }
 
-/* Moves from basket (left ~18%, top ~55%) toward rock (left ~75%, top ~15%) */
+/* Moves from basket (~18%,55%) toward Ganesha feed target (~58%,46%) */
 @keyframes modak-drag-hint-move {
-  0%   { opacity: 0;   transform: translate(0, 0) scale(1); }
-  14%  { opacity: 1;   transform: translate(0, 0) scale(1.15); }
-  72%  { opacity: 0.9; transform: translate(48vw, -33vh) scale(0.9); }
-  88%  { opacity: 0.4; transform: translate(51vw, -35vh) scale(0.85); }
-  100% { opacity: 0;   transform: translate(53vw, -36vh) scale(0.8); }
+  0%   { opacity: 0;   left: 18%; top: 55%; transform: scale(1); }
+  14%  { opacity: 1;   left: 18%; top: 55%; transform: scale(1.15); }
+  72%  { opacity: 0.9; left: 56%; top: 46%; transform: scale(0.9); }
+  88%  { opacity: 0.4; left: 58%; top: 45%; transform: scale(0.85); }
+  100% { opacity: 0;   left: 59%; top: 44%; transform: scale(0.8); }
 }
 
 /* Mobile: basket and rock are closer together */
 @media (max-width: 600px) {
   .modak-drag-hint-hand { left: 16%; top: 57%; }
   @keyframes modak-drag-hint-move {
-    0%   { opacity: 0;   transform: translate(0, 0) scale(1); }
-    14%  { opacity: 1;   transform: translate(0, 0) scale(1.15); }
-    72%  { opacity: 0.9; transform: translate(38vw, -28vh) scale(0.9); }
-    88%  { opacity: 0.4; transform: translate(41vw, -30vh) scale(0.85); }
-    100% { opacity: 0;   transform: translate(43vw, -31vh) scale(0.8); }
+    0%   { opacity: 0;   left: 16%; top: 57%; transform: scale(1); }
+    14%  { opacity: 1;   left: 16%; top: 57%; transform: scale(1.15); }
+    72%  { opacity: 0.9; left: 54%; top: 48%; transform: scale(0.9); }
+    88%  { opacity: 0.4; left: 56%; top: 47%; transform: scale(0.85); }
+    100% { opacity: 0;   left: 57%; top: 46%; transform: scale(0.8); }
   }
 }
 

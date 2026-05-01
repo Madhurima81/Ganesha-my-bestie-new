@@ -413,32 +413,36 @@
   pointer-events: none;
   transform: translate(-50%, -50%);
   z-index: 20;
-  animation: sacredHintBreath 2.4s ease-in-out infinite;
+  animation: sacredHintBreath 2.4s ease-in-out 1;
+  animation-fill-mode: both;
 }
 
 .zone-hint-overlay[data-hint-level="hint"] {
   background: radial-gradient(circle,
-    rgba(255, 215, 0, 0.18) 0%,
-    rgba(255, 215, 0, 0.07) 45%,
+    rgba(138, 43, 226, 0.28) 0%,
+    rgba(138, 43, 226, 0.12) 45%,
     transparent 72%);
-  opacity: 0.55;
+  opacity: 0.72;
 }
 
 .zone-hint-overlay[data-hint-level="hint-strong"] {
   background: radial-gradient(circle,
-    rgba(255, 215, 0, 0.30) 0%,
-    rgba(255, 215, 0, 0.13) 45%,
+    rgba(138, 43, 226, 0.40) 0%,
+    rgba(138, 43, 226, 0.18) 45%,
     transparent 72%);
-  opacity: 0.85;
+  opacity: 0.92;
+  animation: sacredHintBreath 2.1s ease-in-out 2;
+  animation-fill-mode: both;
 }
 
 .zone-hint-overlay[data-hint-level="hint-final"] {
   background: radial-gradient(circle,
-    rgba(255, 215, 0, 0.42) 0%,
-    rgba(255, 215, 0, 0.20) 45%,
+    rgba(138, 43, 226, 0.52) 0%,
+    rgba(138, 43, 226, 0.26) 45%,
     transparent 75%);
   opacity: 1;
-  animation: sacredHintBreath 1.9s ease-in-out infinite;
+  animation: sacredHintBreath 1.9s ease-in-out 3;
+  animation-fill-mode: both;
 }
 
 @keyframes sacredHintBreath {
@@ -1170,16 +1174,17 @@
   filter: drop-shadow(0 8px 20px rgba(255, 190, 84, 0.35));
 }
 
-.symbol-title {
+.symbol-card .symbol-title {
   font-family: 'Baloo 2', cursive;
-  font-size: 28px;
+  font-size: 36px;
   font-weight: 700;
   color: #5A3B1E;
 }
 
-.symbol-text {
+.symbol-card .symbol-text {
   font-family: 'Nunito', sans-serif;
-  font-size: 18px;
+  font-size: 28px;
+  font-weight: 700;
   color: #6B4F2A;
   line-height: 1.5;
 }
@@ -1507,6 +1512,16 @@
   animation: divineWiggle 0.6s ease-in-out;
 }
 
+.ganesha-assembly-container.wrong {
+  animation: gentleWrongShake 0.28s ease-in-out;
+}
+
+@keyframes gentleWrongShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+
 /* 3. Flying Symbol Animation */
 @keyframes flyToTarget {
   0% {
@@ -1556,27 +1571,39 @@
   display: flex;
   gap: 12px;
   justify-content: center;
-  margin-bottom: 8px;
 }
 
 .progress-heart {
   font-size: 36px;
   position: relative;
   transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  line-height: 1;
 }
 
 .progress-heart.empty {
-  opacity: 0.3;
-  filter: grayscale(100%) brightness(1.5);
+  opacity: 0.4;
   transform: scale(0.9);
 }
 
 .progress-heart.filled {
   opacity: 1;
-  filter: grayscale(0%) drop-shadow(0 0 8px rgba(138, 43, 226, 0.6));
+  filter: drop-shadow(0 0 6px rgba(186, 142, 240, 0.45));
   transform: scale(1);
   animation: heartPulse 0.6s ease-out;
+}
+
+.heart-icon {
+  display: block;
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  opacity: 0.96;
+  filter: none;
+}
+
+.progress-heart.filled .heart-icon {
+  opacity: 1;
+  filter: drop-shadow(0 0 4px rgba(186, 142, 240, 0.35));
 }
 
 .progress-heart.just-completed {
@@ -1589,18 +1616,6 @@
   left: 50%;
   transform: translate(-50%, -50%);
   pointer-events: none;
-}
-
-.progress-text {
-  font-family: 'Baloo', cursive;
-  font-size: 16px;
-  color: #8A2BE2;
-  font-weight: 600;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background: rgba(255, 255, 255, 0.9);
-  padding: 4px 16px;
-  border-radius: 20px;
-  display: inline-block;
 }
 
 @keyframes heartPulse {
