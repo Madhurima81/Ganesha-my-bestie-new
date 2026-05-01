@@ -438,13 +438,12 @@
 
 /* 3. The Big Hearts */
 .heart-icon {
-  font-size: 2.9rem;
-  /* Slightly bigger hearts */
-  color: #ffffff;
-  text-shadow: none;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
   filter: none;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  opacity: 0.5;
+  opacity: 0.42;
   /* Dim when empty */
   transform: scale(0.9);
 }
@@ -453,7 +452,7 @@
   opacity: 1;
   transform: scale(1.05);
   /* Keep simple, no pulse/glow */
-  filter: none;
+  filter: drop-shadow(0 0 5px rgba(186, 142, 240, 0.35));
   animation: none;
 }
 
@@ -504,8 +503,6 @@
 
 /* 2. Apply to FILLED hearts only */
 .heart-icon.filled {
-  color: #FF4757;
-  /* Bright Red */
   opacity: 1;
 
   /* Keep static (no pulse) */

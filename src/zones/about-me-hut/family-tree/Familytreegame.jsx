@@ -61,6 +61,7 @@ import childMyselfImg from './assets/images/child/family-myself.png';
 import childPetImg from './assets/images/child/family-pet.png';
 import familyIconImg from './assets/images/family-icon.png';
 import heartIconImg from './assets/images/heart-icon.png';
+import purpleHeartIconImg from './assets/images/purple-heart.svg';
 import homeIconImg from './assets/images/house-icon.png';
 
 // ========================================
@@ -1497,12 +1498,13 @@ const FamilyTreeGameContent = ({
  )} */}
  <div className="hud-hearts-row">
  {ganeshaFamily.map((m, i) => (
- <span
+ <img
  key={i}
+ src={purpleHeartIconImg}
+ alt=""
+ aria-hidden="true"
  className={`heart-icon ${sceneState.placedGaneshaMembers.includes(m.id)? 'filled': ''}`}
- >
- {String.fromCharCode(sceneState.placedGaneshaMembers.includes(m.id)? 9829: 9825)}
- </span>
+ />
  ))}
  </div>
  </div>
