@@ -102,53 +102,45 @@ export const VOICE_SCRIPTS = {
       // SCENE ENTRY
       // ========================================
       welcome: {
-        text: "Welcome to Symbol Mountain! Can you find my friend Mooshika? He's hiding somewhere...",
-        file: '/audio/voicenew/modak/ganesha_share_modaks.wav'
+        text: "Mooshika is nearby. Let's find the sweet modaks."
       },
 
       // ========================================
       // PHASE 1: FIND MOOSHIKA
       // ========================================
       findMooshika: {
-        text: "Tap the little mound to find Mooshika!",
-        file: '/audio/voicenew/modak/ganesha_find_mooshika.wav'
+        text: "Mooshika is hiding. Tap the mounds to find him."
       },
       mooshikaFound: {
-        text: "You found Mooshika! He's my little mouse friend. He teaches us about FOCUS!",
-        file: '/audio/voicenew/modak/ganesha_found_mooshika.wav'
+        text: "There he is... my little friend."
       },
       focusPower: {
-        text: "Your mind is like a little mouse - sometimes it runs around! But YOU can call it back. Say with me: I can focus!",
-        file: '/audio/voicenew/modak/ganesha_focus.wav'
+        text: "You looked closely... and found him. Say it with me... I can focus."
       },
 
       // ========================================
       // PHASE 2: COLLECT MODAKS
       // ========================================
       collectStart: {
-        text: "Now help Mooshika collect 3 modaks for me! Tap each golden modak you find!",
-        file: '/audio/voicenew/modak/ganesha_collect_three.wav'
+        text: "Look... sweet modaks. Tap them to collect."
       },
 
       // ========================================
       // PHASE 3: SHARE WITH GANESHA
       // ========================================
       sharingPower: {
-        text: "When you share something special, it feels even MORE special! Say with me: I love to share!",
-        file: '/audio/voicenew/modak/ganesha_share_joy.wav'
+        text: "You found them... one by one. That feels good. Say it with me... I am full of joy."
       },
       // Instruction to feed (drag version)
       feedGanesha: {
-        text: "Drag the modaks to feed Ganesha!",
-        file: '/audio/voicenew/modak/ganesha_bring_modaks.wav'
+        text: "Let's enjoy the sweet modaks... drag them here."
       },
 
       // ========================================
       // PHASE 4: SCENE COMPLETE
       // ========================================
       gratitudePower: {
-        text: "You helped Mooshika, collected with care, and shared with love. That's GRATITUDE! Say with me: I am grateful!",
-        file: '/audio/voicenew/modak/ganesha_safe_inside.wav'
+        text: "You gave... and it felt good. Say it with me... I feel good inside."
       },
       kindHeartPower: {
         text: "You have a kind heart!",
@@ -161,14 +153,13 @@ export const VOICE_SCRIPTS = {
       },
 
       sceneComplete: {
-        text: "Amazing work, little explorer! You did it! Focus, sweet reward, and sharing — all done! I'm so proud of you!",
-        file: '/audio/voicenew/modak/ganesha_proud.wav'
+        text: "You found Mooshika. You felt joy. You feel good inside. All yours."
       },
     }
     ,
     'final-scene': {
       openingModalPrompt: {
-        text: "All my symbols are ready... let's place them together.",
+        text: "You found every symbol... let's place them together.",
         file: '/audio/voicenew/sacredassembly/opening-modal-ready-together.wav'
       },
 
@@ -206,36 +197,28 @@ export const VOICE_SCRIPTS = {
       },
 
       hintEyes: {
-        text: "I notice the good.",
-        file: '/audio/voicenew/sacredassembly/hint-eyes.wav'
+        text: "I see clearly."
       },
       hintEars: {
-        text: "I listen with care.",
-        file: '/audio/voicenew/sacredassembly/hint-ears.wav'
+        text: "I listen with care."
       },
       hintTrunk: {
-        text: "I clear my path.",
-        file: '/audio/voicenew/sacredassembly/hint-trunk.wav'
+        text: "I find my way."
       },
       hintTusk: {
-        text: "I finish what I start.",
-        file: '/audio/voicenew/sacredassembly/hint-tusk.wav'
+        text: "I finish what I start."
       },
       hintModak: {
-        text: "I share with joy.",
-        file: '/audio/voicenew/sacredassembly/hint-modak.wav'
+        text: "I am full of joy."
       },
       hintLotus: {
-        text: "I stay calm.",
-        file: '/audio/voicenew/sacredassembly/hint-lotus.wav'
+        text: "I stay calm."
       },
       hintBelly: {
-        text: "I feel safe inside.",
-        file: '/audio/voicenew/sacredassembly/hint-belly.wav'
+        text: "I feel safe inside."
       },
       hintMooshika: {
-        text: "I can focus.",
-        file: '/audio/voicenew/sacredassembly/hint-mooshika.wav'
+        text: "I can focus."
       },
 
       onboardingTapRightPart: {
@@ -243,21 +226,11 @@ export const VOICE_SCRIPTS = {
         file: '/audio/voicenew/sacredassembly/onboarding-tap-right-part.wav'
       },
 
-      correctYes: {
-        text: "Yes.",
-        file: '/audio/voicenew/sacredassembly/correct-yes.wav'
+      firstSymbolPlaced: {
+        text: "Yes... that's exactly right."
       },
-      correctThatsRight: {
-        text: "Beautiful.",
-        file: '/audio/voicenew/sacredassembly/correct-thats-right.wav'
-      },
-      correctYouFoundIt: {
-        text: "You remember.",
-        file: '/audio/voicenew/sacredassembly/correct-you-found-it.wav'
-      },
-      correctWellDone: {
-        text: "Perfect.",
-        file: '/audio/voicenew/sacredassembly/correct-well-done.wav'
+      midProgressWonder: {
+        text: "Look... you're bringing me alive."
       },
 
       wrongTryAgain: {
@@ -274,7 +247,7 @@ export const VOICE_SCRIPTS = {
         file: '/audio/voicenew/sacredassembly/final-now-complete.wav'
       },
       finalAlwaysWithYou: {
-        text: "And I am always with you.",
+        text: "And all my powers... are with you now.",
         file: '/audio/voicenew/sacredassembly/final-always-with-you.wav'
       }
     }

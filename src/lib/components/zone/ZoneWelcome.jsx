@@ -203,6 +203,7 @@ const loadSceneProgress = () => {
             tempState.lotusStates?.some(state => state === 1) ||
             tempState.placedGaneshaMembers?.length > 0 ||
             tempState.childFamily?.length > 0 ||
+            (tempState.phase === 'mooshika_search' && tempState.welcomeShown === true) ||
             (tempState.phase && tempState.phase !== 'mooshika_search' && tempState.phase !== 'initial') ||
             (tempState.gamePhase && !['intro', 'initial'].includes(tempState.gamePhase))
           );
@@ -385,7 +386,37 @@ const getSceneStatus = (scene) => {
   const activeProfileId = localStorage.getItem('activeProfileId');
   const tempKey = `temp_session_${activeProfileId}_${zoneData.id}_${scene.id}`;
   const replayKey = `replay_session_${activeProfileId}_${zoneData.id}_${scene.id}`;
-  const tempData = localStorage.getItem(tempKey) || localStorage.getItem(replayKey);
+  const replaySessionRaw = localStorage.getItem(replayKey);
+  // Prefer replay session when it exists; temp_session can be stale from old runs.
+  const tempData = replaySessionRaw || localStorage.getItem(tempKey);
+  let hasReplaySession = !!replaySessionRaw;
+  let replayIsOpeningState = false;
+
+  if (replaySessionRaw) {
+    try {
+      const replayState = JSON.parse(replaySessionRaw);
+      const phase = replayState?.phase;
+      const isOpeningPhase = !phase || phase === 'initial' || phase === 'mooshika_search';
+      const hasMeaningfulProgress = (
+        replayState?.stars > 0 ||
+        (replayState?.welcomeShown === true && !['initial', 'mooshika_search'].includes(phase || 'initial')) ||
+        replayState?.mooshikaFound === true ||
+        replayState?.moundStates?.some(state => state === 1) ||
+        replayState?.collectedModaks?.length > 0 ||
+        replayState?.lotusStates?.some(state => state === 1) ||
+        replayState?.placedSymbols && Object.keys(replayState.placedSymbols).length > 0 ||
+        (phase && !['initial', 'mooshika_search'].includes(phase)) ||
+        (replayState?.gamePhase && !['intro', 'initial'].includes(replayState.gamePhase))
+      );
+
+      replayIsOpeningState = isOpeningPhase && !hasMeaningfulProgress;
+      if (replayIsOpeningState) {
+        hasReplaySession = false; // Opening modal reload should still show "Replay"
+      }
+    } catch (e) {
+      console.error('Error parsing replay session state:', e);
+    }
+  }
   
 
   
@@ -397,40 +428,37 @@ if (tempData) {
     // Completion celebration was showing — treat as completed, show Replay only
     if (tempState.showingCompletionScreen === true) {
       console.log(`🎬 COMPLETION SCREEN: ${scene.id} → treating as completed, show Replay only`);
-      return { status: 'completed', stars: tempState.stars || progress?.stars || 0 };
+      return { status: 'completed', stars: tempState.stars || progress?.stars || 0, hasReplaySession };
     }
       
       // ✅ SCENE-SPECIFIC COMPLETION DETECTION
       let isCompleteInTemp = false;
       
       if (scene.id === 'modak') {
-        // Modak is complete if: completed flag, phase complete, rock_transformed,
-        // OR all 3 symbols collected (discoveredSymbols is the only trace left when
-        // the temp session was partially reset after completion)
+        // Modak is complete only when explicitly completed/completion phase/screen.
+        // rock_transformed is a pre-completion stage (belly card reveal), so keep Continue.
         isCompleteInTemp = (
           tempState.completed === true ||
           tempState.phase === 'complete' ||
-          tempState.phase === 'rock_transformed' ||
-          (tempState.discoveredSymbols?.mooshika === true &&
-           tempState.discoveredSymbols?.modak === true &&
-           tempState.discoveredSymbols?.belly === true)
+          tempState.showingCompletionScreen === true
         );
       } else if (scene.id === 'pond') {
-        // Pond is complete if: phase is complete OR (elephantTransformed AND goldenLotusBloom) OR completed flag
+        // Pond is complete only when explicitly completed/completion phase/screen.
+        // elephantTransformed+goldenLotusBloom is a pre-completion stage (trunk card reveal).
         isCompleteInTemp = (
           tempState.completed === true ||
           tempState.phase === 'complete' ||
-          (tempState.elephantTransformed === true && tempState.goldenLotusBloom === true)
+          tempState.showingCompletionScreen === true
         );
-        } else if (scene.id === 'symbol') {
-  // Symbol is complete if: phase is all_complete OR ganeshaComplete OR completed flag  
-  isCompleteInTemp = (
-    tempState.completed === true ||
-    //tempState.phase === 'complete' ||
-    tempState.phase === 'all_complete' ||      // ← KEY: Symbol uses 'all_complete'
-    tempState.ganeshaComplete === true         // ← KEY: Symbol completion flag
-  );
-  } else if (scene.id === 'final-scene' || scene.id === 'sacred-assembly') {
+      } else if (scene.id === 'symbol') {
+        // Symbol is complete only when explicitly completed/completion phase/screen.
+        // all_complete is reached before the final completion modal appears.
+        isCompleteInTemp = (
+          tempState.completed === true ||
+          tempState.phase === 'complete' ||
+          tempState.showingCompletionScreen === true
+        );
+      } else if (scene.id === 'final-scene' || scene.id === 'sacred-assembly') {
   // ✅ Sacred Assembly completion detection
   isCompleteInTemp = (
     tempState.completed === true ||
@@ -487,15 +515,29 @@ if (tempData) {
       
       if (isCompleteInTemp) {
         console.log(`🎯 TEMP COMPLETED: ${scene.id} temp session shows completion`);
-        return { status: 'completed', stars: tempState.stars || progress.stars || 0 };
+        return { status: 'completed', stars: tempState.stars || progress.stars || 0, hasReplaySession };
       }
       
       // ✅ NOW check for partial progress (more restrictive)
+      const hasMeaningfulDiscoveredSymbols = (() => {
+        const symbols = tempState.discoveredSymbols || {};
+        if (!symbols || Object.keys(symbols).length === 0) return false;
+
+        // Scene-specific symbol progress checks:
+        // Pond preloads earlier symbols (mooshika/modak/belly), so only lotus/trunk
+        // should count as in-progress for Pond.
+        if (scene.id === 'pond') {
+          return !!(symbols.lotus || symbols.trunk);
+        }
+        return Object.keys(symbols).length > 0;
+      })();
+
       const hasPartialProgress = (
   tempState.stars > 0 ||
+  (tempState.phase === 'mooshika_search' && tempState.welcomeShown === true) ||
   tempState.phase && !['initial', 'mooshika_search'].includes(tempState.phase) ||
   (tempState.gamePhase && !['intro', 'initial'].includes(tempState.gamePhase)) ||
-  tempState.discoveredSymbols && Object.keys(tempState.discoveredSymbols).length > 0 ||
+  hasMeaningfulDiscoveredSymbols ||
   tempState.placedSymbols && Object.keys(tempState.placedSymbols).length > 0 ||
   tempState.mooshikaFound ||
   tempState.moundStates?.some(state => state === 1) ||   // ✅ any mound tapped = in-progress
@@ -511,7 +553,7 @@ if (tempData) {
       
       if (hasPartialProgress) {
         console.log(`🎮 TEMP PROGRESS: ${scene.id} has partial progress`);
-        return { status: 'in-progress', stars: tempState.stars || 0 };
+        return { status: 'in-progress', stars: tempState.stars || 0, hasReplaySession };
       }
       
       console.log(`🔄 TEMP EMPTY: ${scene.id} has empty temp session`);
@@ -524,7 +566,7 @@ if (tempData) {
   // ✅ Fall back to permanent data
   if (progress.completed === true) {
     console.log(`💾 PERMANENT: ${scene.id} is permanently completed`);
-    return { status: 'completed', stars: progress.stars || 0 };
+    return { status: 'completed', stars: progress.stars || 0, hasReplaySession };
   }
   
   if (progress.stars > 0) {
@@ -561,11 +603,11 @@ if (tempData) {
     });
 
     if (hasLaterProgress) {
-      return { status: 'completed', stars: progress?.stars || 0 };
+      return { status: 'completed', stars: progress?.stars || 0, hasReplaySession };
     }
   }
   
-  return { status: 'available', stars: 0 };
+  return { status: 'available', stars: 0, hasReplaySession };
 };
 
 // ⭐ PROGRESS DOTS — reads ONLY from permanent storage (GameStateManager).
@@ -771,6 +813,13 @@ const getPermanentCompletedCount = () => {
     default:
       // Legacy fallback for scenes clicked without specific action
       if (status.status === 'completed') {
+        if (status.hasReplaySession) {
+          console.log('↪ DEFAULT: Completed scene with replay session - continuing replay');
+          if (onSceneSelect) {
+            onSceneSelect(scene.id, { mode: 'continue' });
+          }
+          return;
+        }
         console.log('🎮 DEFAULT: Completed scene - starting replay');
         if (onSceneSelect) {
           onSceneSelect(scene.id, { mode: 'replay' });
@@ -1036,7 +1085,7 @@ Continue
                         }}
                       >
                         {status.status === 'available' && 'Start'}
-                        {status.status === 'completed' && 'Replay'}
+                        {status.status === 'completed' && (status.hasReplaySession ? 'Continue Replay' : 'Replay')}
                         {status.status === 'locked' && 'Coming Soon'}
                       </button>
                     )}

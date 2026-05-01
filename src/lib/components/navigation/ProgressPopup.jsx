@@ -1,48 +1,15 @@
 import React, { useState } from 'react';
 import './ProgressPopup.css';
+import { symbolCardContent } from '../../../zones/symbol-mountain/shared/components/symbolCardContent';
 
-const SYMBOL_SIDEBAR_META = {
-  modak: {
-    name: 'Modak',
-    image: '/images/symbols-symbolmountain/symbol-modak-new.png',
-    description: 'I share with joy.',
-  },
-  mooshika: {
-    name: 'Mooshika',
-    image: '/images/symbols-symbolmountain/symbol-mooshika-new.png',
-    description: 'I can focus.',
-  },
-  belly: {
-    name: 'Big Belly',
-    image: '/images/symbols-symbolmountain/symbol-belly-new.png',
-    description: 'I feel safe inside.',
-  },
-  lotus: {
-    name: 'Lotus',
-    image: '/images/symbols-symbolmountain/symbol-lotus-new.png',
-    description: 'I stay calm and kind.',
-  },
-  trunk: {
-    name: 'Trunk',
-    image: '/images/symbols-symbolmountain/symbol-trunk-new.png',
-    description: 'I am strong and gentle.',
-  },
-  eyes: {
-    name: 'Eyes',
-    image: '/images/symbols-symbolmountain/symbol-eyes-new.png',
-    description: 'I notice the good.',
-  },
-  ear: {
-    name: 'Ears',
-    image: '/images/symbols-symbolmountain/symbol-ears-new.png',
-    description: 'I listen with care.',
-  },
-  tusk: {
-    name: 'Tusk',
-    image: '/images/symbols-symbolmountain/symbol-tusk-new.png',
-    description: 'I finish what I start.',
-  },
-};
+const SYMBOL_SIDEBAR_META = Object.entries(symbolCardContent).reduce((acc, [id, data]) => {
+  acc[id] = {
+    name: data.label || data.title || id,
+    image: data.icon || data.image,
+    description: data.description || data.gift || '',
+  };
+  return acc;
+}, {});
 
 const normalizeSymbolId = (item) => {
   const raw = (item?.id || item?.name || '').toString().toLowerCase().trim();

@@ -73,7 +73,7 @@ export const DISCOVERY_CONTENT = {
 
       modak: {
         title: "Modak",
-        affirmation: "I share with joy.",
+        affirmation: "I am full of joy.",
         icon: 'modak-basket'
       },
 
@@ -87,7 +87,7 @@ export const DISCOVERY_CONTENT = {
     'pond': {
       lotus: {
         title: "Lotus",
-        affirmation: "I stay calm and kind.",
+        affirmation: "I stay calm.",
         icon: 'golden-lotus'
       },
 
@@ -101,7 +101,7 @@ export const DISCOVERY_CONTENT = {
     'tusk': {
       eyes: {
         title: "Eyes",
-        affirmation: "I notice the good.",
+        affirmation: "I see clearly.",
         icon: 'ganesha-eyes'
       },
 

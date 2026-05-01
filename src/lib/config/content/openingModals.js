@@ -16,8 +16,8 @@ export const OPENING_MODALS = {
     },
 
     'pond': {
-      title: "Wake the Lotus",
-      description: "The pond rests quietly. A golden lotus is waiting to bloom.",
+      title: "The Golden Lotus",
+      description: "A golden lotus is waiting to bloom.",
       icons: ['lotus', 'trunk'],
       iconLabels: ['Lotus', 'Trunk'],
       buttonText: "Let's Explore",
@@ -25,8 +25,8 @@ export const OPENING_MODALS = {
     },
 
     'symbol': {
-      title: "Play the Notes",
-      description: "The mountain is listening. Follow the rhythm and see what awakens.",
+      title: "Ganesha's Symbols",
+      description: "Look, listen, and find what awakens the tusk.",
       icons: ['eyes', 'ears', 'tusk'],
       iconLabels: ['Eyes', 'Ears', 'Tusk'],
       buttonText: "Let's Explore",
@@ -34,10 +34,10 @@ export const OPENING_MODALS = {
     },
 
     'final-scene': {
-      title: "Shine Together",
-      description: "All the symbols are ready. Place them gently and watch them glow.",
+      title: "All Symbols Together",
+      description: "Every symbol is ready. Let’s bring them together.",
       icons: ['eyes', 'trunk', 'lotus'],
-      buttonText: "Let's Explore",
+      buttonText: "Let's Begin",
       character: 'ganesha-cave'
     }
   },

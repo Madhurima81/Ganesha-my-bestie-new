@@ -8,16 +8,16 @@ export const COMPLETION_MODALS = {
       subtitle: 'You found Mooshika and shared the sweet modaks. Wonderful work, little friend.'
     },
     pond: {
-      title: 'The Lotus Has Bloomed!',
-      subtitle: 'The golden petals opened with your help.'
+      title: 'The Lotus Has Bloomed',
+      subtitle: 'You helped it bloom. It opened for you.'
     },
     symbol: {
-      title: 'The Mountain Has Awakened!',
-      subtitle: 'The rhythm echoed and the symbols stirred.'
+      title: 'Ganesha Shines',
+      subtitle: 'You saw, you listened, and finished it.'
     },
     'final-scene': {
-      title: 'The Symbols Shine as One!',
-      subtitle: 'The mountain glows brighter because of you.'
+      title: 'Ganesha Shines',
+      subtitle: 'All the symbols are together. Ganesha shines.'
     }
   },
   'cave-of-secrets': {

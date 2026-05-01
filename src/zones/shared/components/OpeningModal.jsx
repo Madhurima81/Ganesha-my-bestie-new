@@ -236,6 +236,7 @@ const OpeningModal = ({
     const sawOpeningVoRef = useRef(false);
     const lastVoActiveAtRef = useRef(0);
     const monitorStartedAtRef = useRef(0);
+    const visibleRef = useRef(false);
     const configContent = (zoneId && sceneId) ? getOpeningModal(zoneId, sceneId) : null;
 
     const content = {
@@ -247,6 +248,7 @@ const OpeningModal = ({
     };
     const hasContent = Boolean(content.title || content.description);
     const visible = typeof isOpen === 'boolean' ? isOpen : internalOpen;
+    visibleRef.current = visible;
     const theme = zoneId ? getZoneTheme(zoneId) : {};
 
     const clearCtaHintTimers = () => {
@@ -302,6 +304,14 @@ const OpeningModal = ({
     );
 
     useEffect(() => {
+        // Modal closed: kill timers and prevent any delayed CTA hint from firing mid-scene.
+        if (!visible) {
+            clearCtaHintTimers();
+            setShowIdleCtaHint(false);
+            hintTriggeredRef.current = true;
+            return undefined;
+        }
+
         setShowIdleCtaHint(false);
         hintTriggeredRef.current = false;
         clearCtaHintTimers();
@@ -310,6 +320,7 @@ const OpeningModal = ({
 
         const triggerHint = () => {
             if (hintTriggeredRef.current) return;
+            if (!visibleRef.current) return;
             hintTriggeredRef.current = true;
             setShowIdleCtaHint(true);
             playOpeningCtaHint();

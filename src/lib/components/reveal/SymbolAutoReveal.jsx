@@ -28,6 +28,8 @@ export default function SymbolAutoReveal({
   symbolName,
   affirmation,
   sidebarTargetRect,
+  enableVoicePrompts = false,
+  enableTapHintPrompt = true,
   onComplete,
 }) {
   // 'icon' → 'card' → 'flip' → 'ready' → 'fly'
@@ -64,6 +66,7 @@ export default function SymbolAutoReveal({
   // then the voice gently nudges them to tap. Plays once per reveal.
   useEffect(() => {
     if (phase !== "ready" || voPlayedRef.current) return;
+    if (!enableVoicePrompts && !enableTapHintPrompt) return;
     voPlayedRef.current = true;
 
     const cleanAffirmation = (affirmation || "")
@@ -74,24 +77,31 @@ export default function SymbolAutoReveal({
       ? `Say with me, ${cleanAffirmation}.`
       : `Say with me, ${symbolName}.`;
 
-    const affirmationTimer = setTimeout(() => {
-      speak(sayWithMeLine, {
-        age: 6,
-        style: "child",
-        moment: "encouragement"
-      });
-    }, 450);
+    let affirmationTimer = null;
+    if (enableVoicePrompts) {
+      affirmationTimer = setTimeout(() => {
+        speak(sayWithMeLine, {
+          age: 6,
+          style: "child",
+          moment: "encouragement"
+        });
+      }, 450);
+      timers.current.push(affirmationTimer);
+    }
 
-    const collectHintTimer = setTimeout(() => {
-      speak("Tap anywhere to collect.", {
-        age: 6,
-        style: "child",
-        moment: "encouragement"
-      });
-    }, 5000);
+    let collectHintTimer = null;
+    if (enableTapHintPrompt) {
+      collectHintTimer = setTimeout(() => {
+        speak("Tap anywhere to close.", {
+          age: 6,
+          style: "child",
+          moment: "encouragement"
+        });
+      }, 5000);
+      timers.current.push(collectHintTimer);
+    }
 
-    timers.current.push(affirmationTimer, collectHintTimer);
-  }, [phase, speak, affirmation, symbolName]);
+  }, [phase, speak, affirmation, symbolName, enableVoicePrompts, enableTapHintPrompt]);
 
 //What These Numbers Mean (So You Don’t Forget Later)
 

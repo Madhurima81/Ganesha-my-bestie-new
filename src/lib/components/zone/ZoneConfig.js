@@ -25,7 +25,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'pond',
-        name: 'Wake the Lotus',
+        name: 'The Golden Lotus',
         emoji: '🪷',
         iconImage: '/images/zones/symbol-mountain/pond-icon.png',
         description: 'Find lotus flowers and meet the elephant',
@@ -35,7 +35,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'symbol',
-        name: 'Play the Notes',
+        name: "Ganesha's Symbols",
         emoji: '😀',
         iconImage: '/images/zones/symbol-mountain/tusk-icon.png',
         description: 'Master the musical tusk assembly',
@@ -343,3 +343,4 @@ export const calculateZoneProgress = (zoneId, progressData = {}) => {
     stars: totalStars
   };
 };
+
