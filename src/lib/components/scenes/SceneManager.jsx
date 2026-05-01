@@ -111,7 +111,7 @@ const loadSceneProgress = () => {
       setIsReload(false);
       return {
         ...initialState,
-        welcomeShown: true,   // skip opening modal + VO for return users
+        welcomeShown: false,  // replay should restart from opening modal + VO
         completed: false,
         stars: 0,
         originalCompletion: permanentState
@@ -205,6 +205,7 @@ const loadSceneProgress = () => {
                    (sceneState.stars === 0 || !sceneState.stars) && 
                    (!sceneState.discoveredSymbols || Object.keys(sceneState.discoveredSymbols).length === 0) &&
                    (!sceneState.lotusStates || sceneState.lotusStates.every(state => state === 0)) &&
+                   (!sceneState.moundStates || sceneState.moundStates.every(state => state === 0)) &&
                    (!sceneState.collectedModaks || sceneState.collectedModaks.length === 0) &&
                    (!sceneState.mooshikaFound || sceneState.mooshikaFound === false) &&
                    (!sceneState.mooshikaVisible || sceneState.mooshikaVisible === false) &&
@@ -212,6 +213,7 @@ const loadSceneProgress = () => {
                    (!sceneState.placedSymbols || Object.keys(sceneState.placedSymbols).length === 0) &&  // ← ADD: Assembly scene check
                    (!sceneState.phase || sceneState.phase === 'initial') &&
                    (!sceneState.gamePhase || sceneState.gamePhase === 'intro') &&
+                   (!sceneState.welcomeShown || sceneState.welcomeShown === false) &&
                    (!sceneState.placedGaneshaMembers || sceneState.placedGaneshaMembers.length === 0) &&
                    (!sceneState.childFamily || sceneState.childFamily.length === 0) &&
                    (!sceneState.interactions || Object.keys(sceneState.interactions).length === 0);
