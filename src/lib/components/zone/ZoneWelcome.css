@@ -1487,6 +1487,17 @@ button[style*="position: fixed"][style*="background: purple"] {
   100% { transform: translateY(0px);  }
 }
 
+/* Celebration bob when zone is complete */
+.zone-ganesha-presence--top:has(+ .zone-mastered-badge),
+.zone-welcome-container.zone-complete .zone-ganesha-presence--top {
+  animation: ganeshaCelebrationBob 1.6s ease-in-out infinite;
+}
+
+@keyframes ganeshaCelebrationBob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
 /* Mobile adjustments */
 @media (max-width: 768px) {
   .zone-complete-badge {
@@ -1604,6 +1615,92 @@ button[style*="position: fixed"][style*="background: purple"] {
   0% { transform: scale(0.95); opacity: 0.6; }
   60% { transform: scale(1.05); opacity: 1; }
   100% { transform: scale(1); }
+}
+
+/* ── ZONE MASTERED BADGE ──────────────────────────
+   Shown only when every scene in the zone is completed.
+   Sits below the zone title, replaces sparkle chars.
+──────────────────────────────────────────────── */
+.zone-mastered-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 4px;
+  animation: masteredFadeIn 0.6s ease-out;
+}
+
+.mastered-text {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: clamp(13px, 1.1vw, 16px);
+  color: #C8860D;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.mastered-line {
+  height: 2px;
+  width: 28px;
+  background: linear-gradient(90deg, transparent, #C8860D, transparent);
+  border-radius: 2px;
+}
+
+@keyframes masteredFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── ZONE COMPLETE CTA ────────────────────────────
+   Shows only when zone is fully mastered.
+   Single banner above scenes — closes the loop for the child.
+──────────────────────────────────────────────── */
+.zone-complete-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px auto 16px;
+  max-width: 92%;
+  padding: 10px 18px;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.18), rgba(255, 153, 51, 0.12));
+  border: 2px solid rgba(200, 134, 13, 0.35);
+  border-radius: 999px;
+  animation: ctaFloatIn 0.7s ease-out;
+}
+
+.zone-complete-cta-text {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 600;
+  font-size: clamp(13px, 1.05vw, 16px);
+  color: #6b4410;
+}
+
+.zone-complete-cta-home-btn {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: clamp(13px, 1.05vw, 16px);
+  color: #fff;
+  background: linear-gradient(135deg, #FF9933, #FF5722);
+  border: none;
+  border-radius: 999px;
+  padding: 6px 16px;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(255, 87, 34, 0.35);
+  min-height: 40px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.zone-complete-cta-home-btn:hover,
+.zone-complete-cta-home-btn:active {
+  transform: scale(1.04);
+  box-shadow: 0 4px 12px rgba(255, 87, 34, 0.5);
+}
+
+@keyframes ctaFloatIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* Sparkle accents on title when zone complete */

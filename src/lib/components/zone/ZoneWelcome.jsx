@@ -98,7 +98,33 @@ const [welcomeMessageShown, setWelcomeMessageShown] = useState(false);
 
 // Import the session manager at the top
 
+// ── VO persistence — once-per-profile-per-zone ──
+const _voKey = (kind) => {
+  const pid = localStorage.getItem('activeProfileId') || 'default';
+  return `gzw_vo_${pid}_${zoneData?.id}_${kind}`;
+};
+const hasHeardZoneVo = (kind) => {
+  try { return localStorage.getItem(_voKey(kind)) === '1'; } catch { return false; }
+};
+const markZoneVoHeard = (kind) => {
+  try { localStorage.setItem(_voKey(kind), '1'); } catch {}
+};
 
+const speakZoneLine = (text) => {
+  if (!text) return;
+  if (typeof window === 'undefined') return;
+  if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return;
+  if (GameStateManager?.isMuted?.()) return;
+  window.speechSynthesis.cancel();
+  const u = new window.SpeechSynthesisUtterance(text);
+  u.rate = 1.02;
+  u.pitch = 1;
+  u.volume = 0.9;
+  const voices = window.speechSynthesis.getVoices?.() || [];
+  const indianVoice = voices.find(v => v.lang === 'en-IN');
+  if (indianVoice) u.voice = indianVoice;
+  window.speechSynthesis.speak(u);
+};
 
 // ✨ DISNEY PATTERN: Load cultural progress data
 useEffect(() => {
@@ -846,6 +872,31 @@ const getPermanentCompletedCount = () => {
     ));
   };
 
+  // VO effect — welcome + completion VO, once-per-profile
+  useEffect(() => {
+    if (!zoneData?.id || isLoading) return;
+
+    const timer = setTimeout(() => {
+      if (isZoneComplete && !hasHeardZoneVo('complete')) {
+        speakZoneLine(`You finished ${zoneData.name.replace('\n', ' ')}! I'm so proud of you.`);
+        markZoneVoHeard('complete');
+        return;
+      }
+
+      if (!hasHeardZoneVo('welcome')) {
+        speakZoneLine(`Welcome to ${zoneData.name.replace('\n', ' ')}! Tap a card to begin.`);
+        markZoneVoHeard('welcome');
+      }
+    }, 600);
+
+    return () => {
+      clearTimeout(timer);
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, [zoneData?.id, isLoading, isZoneComplete]);
+
   if (isLoading || !zoneData) {
     return (
       <div className="zone-welcome-loading">
@@ -933,14 +984,30 @@ const getPermanentCompletedCount = () => {
       <div className="zone-title-top zone-title">
         <ScreenHeader title={zoneData.name} glowColor="gold" />
         {isZoneComplete && (
-          <>
-            <span className="zone-sparkle" style={{ top: '-8px', left: '10%' }}>✦</span>
-            <span className="zone-sparkle" style={{ top: '2px', right: '12%', animationDelay: '0.8s' }}>✦</span>
-          </>
+          <div className="zone-mastered-badge" aria-label="Zone mastered">
+            <span className="mastered-line" aria-hidden="true" />
+            <span className="mastered-text">Mastered</span>
+            <span className="mastered-line" aria-hidden="true" />
+          </div>
         )}
       </div>
 
       {/* Zone Welcome Whisper removed per request */}
+
+      {isZoneComplete && (
+        <div className="zone-complete-cta" role="status">
+          <span className="zone-complete-cta-text">
+            You did it! Tap a card to play again, or
+          </span>
+          <button
+            type="button"
+            className="zone-complete-cta-home-btn"
+            onClick={() => onNavigate?.('home')}
+          >
+            back to map
+          </button>
+        </div>
+      )}
 
       {/* Scene Icons Grid */}
       <div className="zone-scenes-container cards-wrapper" data-zone={zoneData.id}>
@@ -1127,11 +1194,8 @@ Continue
             <img src={statIcon} alt={statLabel} className="journey-stat-icon" />
             <div className="journey-left-text">
               <span className="journey-left-main zone-progress-label">
-                {allScenesCompleted ? `All ${statLabel} Completed` : `${symbolCount}/8 ${statLabel}`}
+                {symbolCount}/{totalScenes} {statLabel}
               </span>
-              {allScenesCompleted && (
-                <span className="journey-left-sub">Zone Complete</span>
-              )}
             </div>
           </div>
         )}
