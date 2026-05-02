@@ -146,43 +146,26 @@ function matchSyllable(target, spokenText) {
 // ── Feedback config ────────────────────────────────────────────────────────
 const FEEDBACK = {
   perfect: {
-    emoji: '⭐',
-    title: 'Amazing!',
-    messages: [
-      'Perfect Sanskrit chanting!',
-      'You sound like a Sanskrit scholar!',
-      'Ganesha is smiling at you!',
-      'Beautiful — just like that!',
-    ],
-    titleColor: '#D97706',
-    bg: 'linear-gradient(160deg, #FFFBEB 0%, #FEF3C7 100%)',
+    emoji: '*', title: 'Wonderful!',
+    messages: ['Beautiful chanting.', 'Just like that.', 'You said it perfectly.'],
+    titleColor: '#7C3AED',
+    bg: 'linear-gradient(160deg, #F5F3FF 0%, #EDE9FE 100%)',
   },
   good: {
-    emoji: '✨',
-    title: 'Good job!',
-    messages: [
-      'Good job!',
-      'Amazing!',
-      'Wonderful!',
-      'Excellent!',
-    ],
+    emoji: '+', title: 'Good job!',
+    messages: ['Nicely done.', 'Keep going.', "You're getting it."],
     titleColor: '#059669',
     bg: 'linear-gradient(160deg, #F0FDF4 0%, #DCFCE7 100%)',
   },
   tryAgain: {
-    emoji: '🎤',
-    title: 'Almost there!',
-    messages: [
-      'Almost there!',
-      'Try again!',
-      "You've got this!",
-    ],
-    titleColor: '#EA580C',
-    bg: 'linear-gradient(160deg, #FFF7ED 0%, #FFEDD5 100%)',
+    emoji: 'Mic', title: 'Almost there',
+    messages: ['Try once more.', "You've got this."],
+    titleColor: '#7C3AED',
+    bg: 'linear-gradient(160deg, #F5F3FF 0%, #EDE9FE 100%)',
   },
 };
 
-const STAR_EMOJIS = ['⭐', '✨', '🌟', '💫', '⭐', '✨', '🌟', '💫', '⭐', '✨', '🌟', '💫'];
+const STAR_EMOJIS = ['*', '+', '*', '+', '*', '+', '*', '+', '*', '+', '*', '+'];
 
 // ── Component ──────────────────────────────────────────────────────────────
 const SyllableVoiceChallenge = ({
@@ -202,6 +185,7 @@ const SyllableVoiceChallenge = ({
   const [feedbackMsg, setFeedbackMsg] = useState('');
   const [waveHeights, setWaveHeights] = useState(Array(14).fill(4));
   const [stars, setStars] = useState([]);
+  const [showTapConfirm, setShowTapConfirm] = useState(false); // iOS fallback — tap to confirm
 
   const recognitionRef  = useRef(null);
   const waveTimerRef    = useRef(null);
@@ -251,12 +235,12 @@ const SyllableVoiceChallenge = ({
     if (phase === 'listening') return; // already running
 
     if (!supportsRecognition) {
-      // No API — show "great try" after brief pause so kid feels heard
+      // iOS / unsupported browser — no auto-pass.
+      // Show waveform animation + a "I said it!" button so the child
+      // actively confirms they attempted it before the game continues.
       setPhase('listening');
       startWave();
-      setTimeout(() => {
-        showResult('good', "Great effort! Let's keep going!");
-      }, 1800);
+      setShowTapConfirm(true);
       return;
     }
 
@@ -311,13 +295,6 @@ const SyllableVoiceChallenge = ({
       setAttempts(newAttempts);
 
       if (!heard) {
-        // Chrome VAD confirmed speech was present but transcription returned nothing.
-        // This happens with short Sanskrit syllables — treat it as a valid attempt
-        // so kids are never penalised for Chrome's accuracy limits on 1-syllable words.
-        if (speechStarted) {
-          showResult('good', "Great try! Keep practising! 🌟");
-          return;
-        }
         if (newAttempts >= MAX_ATTEMPTS) {
           showResult('tryAgain', "Mooshika couldn't hear — let's keep going! 🐭");
         } else {
@@ -332,7 +309,7 @@ const SyllableVoiceChallenge = ({
         const fb = FEEDBACK[matchResult];
         showResult(matchResult, fb.messages[Math.floor(Math.random() * fb.messages.length)]);
       } else if (newAttempts >= MAX_ATTEMPTS) {
-        showResult('good', "Great try! You're almost there! 🌟");
+        showResult('good', "Great try! You're almost there!");
       } else {
         const fb = FEEDBACK.tryAgain;
         showResult('tryAgain', fb.messages[Math.floor(Math.random() * fb.messages.length)]);
@@ -354,7 +331,7 @@ const SyllableVoiceChallenge = ({
         // Timed out waiting for voice — prompt kid to speak louder/sooner
         showResult('tryAgain', newAttempts >= MAX_ATTEMPTS
           ? "Mooshika couldn't hear — let's keep going! 🐭"
-          : "Speak a bit louder! 🎤");
+          : "Lovely effort.");
       } else if (newAttempts >= MAX_ATTEMPTS) {
         showResult('good', "Amazing effort! You're a star! ⭐");
       } else {
@@ -405,6 +382,7 @@ const SyllableVoiceChallenge = ({
   const handleClose = () => {
     recognitionRef.current?.abort();
     clearInterval(waveTimerRef.current);
+    setShowTapConfirm(false);
     onComplete?.();
   };
 
@@ -472,15 +450,33 @@ const SyllableVoiceChallenge = ({
             </div>
 
             {/* Tap-to-speak — kid must tap, mic never auto-opens */}
-            {phase === 'prompt' && (
+            {phase === 'prompt' && !showTapConfirm && (
               <button
                 className="svc-btn svc-btn--mic svc-btn--mic-pulse"
                 onClick={() => {
-                  stopAudio?.();   // pause game audio synchronously — mic capture is async,
-                  startListening(); // so audio is already silent by the time Chrome's mic opens
+                  stopAudio?.();
+                  startListening();
                 }}
               >
-                🎤 Tap & Say It!
+                Say it with me
+              </button>
+            )}
+
+            {/* iOS fallback — no speech recognition available.
+                Child hears the syllable, says it, then taps to confirm.
+                Keeps the pedagogical moment without pretending we heard them. */}
+            {showTapConfirm && (
+              <button
+                className="svc-btn svc-btn--continue"
+                style={{ marginTop: '16px', fontSize: 'clamp(18px, 2.2vw, 22px)' }}
+                onClick={() => {
+                  stopWave();
+                  setShowTapConfirm(false);
+                  burstStars();
+                  showResult('good', "Great! Keep going!");
+                }}
+              >
+                I said it! ✓
               </button>
             )}
           </div>
@@ -520,3 +516,6 @@ const SyllableVoiceChallenge = ({
 };
 
 export default SyllableVoiceChallenge;
+
+
+

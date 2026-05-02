@@ -40,23 +40,12 @@ const MemoryGameEngine = ({
   const [showModeModal, setShowModeModal] = useState(!skipModeSelection && !preSelectedMode);
   const [manualModeKey, setManualModeKey] = useState(0);
 
-   // ⭐ ADD THIS DEBUG LOG
-  console.log("🚂 Engine Rendered. isPaused:", isPaused, "Mode:", selectedMode);
-
 // Initialize mode
 useEffect(() => {
   if (!isActive) return;
 
-  console.log('🔍 DEBUG saved state:', {
-  gameMode: savedGameState?.gameMode,
-  savedGameMode: savedGameState?.savedGameMode,
-  gameId: savedGameState?.gameId,
-  gameState: savedGameState?.gameState
-});
-
   // Priority 1: Use gameMode from saved state (primary source of truth)
   if (savedGameState?.gameMode) {
-    console.log('🔄 [Engine] Using saved gameMode:', savedGameState.gameMode);
     setSelectedMode(savedGameState.gameMode);
     setShowModeModal(false);
     return;
@@ -64,7 +53,6 @@ useEffect(() => {
 
   // Priority 2: Fallback to savedGameMode (legacy support)
   if (savedGameState?.savedGameMode) {
-    console.log('🔄 [Engine] Using legacy savedGameMode:', savedGameState.savedGameMode);
     setSelectedMode(savedGameState.savedGameMode);
     setShowModeModal(false);
     return;
@@ -74,7 +62,6 @@ useEffect(() => {
   if (isReload && savedGameState) {
     // ⭐ ADDED: Validate this state belongs to THIS game
     if (savedGameState.gameId !== gameConfig.id) {
-      console.log('⚠️ [Engine] Ignoring state from different game:', savedGameState.gameId, '(expected:', gameConfig.id + ')');
       // Treat as fresh start
       setSelectedMode(null);
       setShowModeModal(!skipModeSelection && !preSelectedMode);
@@ -87,7 +74,6 @@ useEffect(() => {
       savedGameState.currentSequence?.length > 0;
     
     if (hasMidGameState) {
-      console.log('⚠️ [Engine] Reload mid-game without saved mode - defaulting to manual');
       setSelectedMode('manual');
       setShowModeModal(false);
       return;
@@ -96,20 +82,17 @@ useEffect(() => {
 
   // Priority 4: Pre-selected or skip mode selection
   if (skipModeSelection || preSelectedMode) {
-    console.log('🎮 [Engine] Mode pre-selected or skipped:', preSelectedMode);
     setSelectedMode(preSelectedMode);
     setShowModeModal(false);
     return;
   }
 
   // Priority 5: Fresh start - show mode selection
-  console.log('🆕 [Engine] Fresh start - showing mode selection');
   setSelectedMode(null);
   setShowModeModal(true);
 }, [isActive, isReload, savedGameState, skipModeSelection, preSelectedMode]);
 
   const handleModeSelection = (mode) => {
-    console.log(`🎮 ${gameConfig.displayName}: Mode selected: ${mode}`);
     setSelectedMode(mode);
     setShowModeModal(false);
 
@@ -122,7 +105,6 @@ useEffect(() => {
   };
 
   const handleSwitchToAuto = (manualState) => {
-    console.log('[Mode] Switching from Manual to Auto mode');
     setSelectedMode('auto');
 
     if (onSaveGameState) {
@@ -143,8 +125,6 @@ useEffect(() => {
 
   // ✅ UPDATED: Handle data from Auto Mode exit
   const handleEarlyExit = (autoData) => {
-    console.log('[Engine] Early exit - switching to Manual mode');
-    
     setSelectedMode('manual');
     setShowModeModal(false);
     setManualModeKey(prev => prev + 1); // Force remount
@@ -155,8 +135,6 @@ useEffect(() => {
     const preservedRewards = autoData?.visualRewards || savedGameState?.visualRewards || {};
     const preservedElephants = autoData?.activatedElephants || savedGameState?.activatedElephants || {};
     
-    console.log('[Engine] Restoring manual progress:', preservedRounds);
-
     if (onSaveGameState) {
       const nextState = {
         savedGameMode: 'manual',
@@ -173,7 +151,6 @@ useEffect(() => {
         gamePhase: null
       };
       
-      console.log('[Engine] Saving state for manual mode:', nextState);
       onSaveGameState(nextState);
     }
   };

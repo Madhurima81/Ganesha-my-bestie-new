@@ -56,8 +56,8 @@ import smartwatchScreen from '../assets/images/smartwatch-screen.png';
 // Images
 import riverBackground from './assets/images/vakratundachant-bg-new2.svg';
 import mooshikaCoach from "./assets/images/mooshika-coach.png";
-import symbolVakratunda from '../../../meaning cave/assets/images/symbols/vakratunda-symbol.png';
-import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
+import symbolVakratunda from '../../../symbol-mountain/shared/images/icons/symbol-trunk-new.png';
+import symbolMahakaya from './assets/images/banyan-full-from-download.png';
 
 // Elephant images for memory game
 import elephantBabyVa from './assets/images/vakratunda/elephant-baby-va.png';
@@ -327,16 +327,16 @@ const VakratundaGroveContent = ({
 
   const playGuidanceVoice = useCallback((key, onEnded) => {
     const webSpeechMap = {
-      welcome: 'Welcome. We will chant with the elephants. Listen and repeat.',
-      mahakayaGameStart: 'Great job. Now we begin Mahakaya.',
-      chantWordReveal: 'Amazing chanting.',
-      'mahakaya-word-reveal': 'You unlocked Mahakaya power.',
-      vakratundaPower: 'Vakratunda power unlocked.',
-      mahakayaPower: 'Mahakaya power unlocked.',
-      sceneComplete: 'Wonderful. You completed this scene.',
+      welcome: "Let's bloom the flowers… listen and repeat.",
+      mahakayaGameStart: 'Now Mahakaya… listen and repeat.',
       instructionListen: 'Listen carefully.',
-      instructionTapAndRepeat: 'Tap the elephant to chant.',
-      instructionTapTheElephant: 'Tap the elephant to chant.',
+      instructionTapAndRepeat: 'Tap the elephant… chant with it.',
+      instructionTapTheElephant: 'Tap the elephant… chant with it.',
+      vakratundaSetup: 'You chanted… and made it bloom.',
+      vakratundaClaim: 'Say it with me… I can try a new way.',
+      mahakayaSetup: 'You chanted… and it grew strong.',
+      mahakayaClaim: 'You are strong inside.',
+      sceneComplete: 'You made it bloom. You grew it strong. All yours.',
       instructionTapLotusWord: 'Tap the lotus.',
       instructionTapLotus: 'Tap the lotus.',
       instructionTapLotusUnlock: 'Tap the lotus.',
@@ -429,11 +429,27 @@ const VakratundaGroveContent = ({
 
   // ── SymbolAutoReveal helpers ──────────────────────────────────────────────
 
-  // Play affirmation VO when the flip card appears
+  // Play setup + affirmation VO when the flip card appears (SymbolAutoReveal)
   useEffect(() => {
     if (!revealConfig || !isAudioOn) return;
-    const voKey = revealConfig.symbolId === 'vakratunda' ? 'vakratundaPower' : 'mahakayaPower';
-    const id = setTimeout(() => playGuidanceVoice(voKey), 400);
+    const voMapSetup = {
+      vakratunda: 'vakratundaSetup',
+      mahakaya: 'mahakayaSetup'
+    };
+    const voMapClaim = {
+      vakratunda: 'vakratundaClaim',
+      mahakaya: 'mahakayaClaim'
+    };
+    const setupKey = voMapSetup[revealConfig.symbolId];
+    const claimKey = voMapClaim[revealConfig.symbolId];
+    if (!setupKey || !claimKey) return;
+    // Delay 400ms so VO plays after card animation starts
+    const id = setTimeout(() => {
+      playGuidanceVoice(setupKey, () => {
+        // After setup VO finishes, play affirmation VO
+        playGuidanceVoice(claimKey);
+      });
+    }, 400);
     return () => clearTimeout(id);
   }, [revealConfig, isAudioOn, playGuidanceVoice]);
 

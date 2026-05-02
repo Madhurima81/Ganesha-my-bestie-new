@@ -14,6 +14,7 @@ import symbolTrunkColored from '../../symbol-mountain/shared/images/icons/symbol
 import symbolEyesColored from '../../symbol-mountain/shared/images/icons/symbol-eyes-new.png';
 import symbolEarsColored from '../../symbol-mountain/shared/images/icons/symbol-ears-new.png';
 import symbolTuskColored from '../../symbol-mountain/shared/images/icons/symbol-tusk-new.png';
+import banyanFullMahakaya from '../../shloka-river/scenes/Scene1/assets/images/banyan-full-from-download.png';
 
 // About Me Icons
 import shivaImg from '../../about-me-hut/family-tree/assets/images/ganesha/family-shiva.png';
@@ -43,8 +44,6 @@ import balloonsIcon from '../../festival-square/Game4-mandapdecor/assets/images/
 
 
 // Cave of Secrets (Meaning Cave) Symbols
-import symbolVakratunda from '../../meaning cave/assets/images/symbols/vakratunda-symbol.png';
-import symbolMahakaya from '../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
 import symbolSuryakoti from '../../meaning cave/assets/images/symbols/suryakoti-symbol.png';
 import symbolSamaprabha from '../../meaning cave/assets/images/symbols/samaprabha-symbol.png';
 import symbolNirvighnam from '../../meaning cave/assets/images/symbols/nirvighnam-symbol.png';
@@ -185,8 +184,8 @@ const ICON_MAP = {
     'wish-world': wishWorldIcon,
 
     // Cave of Secrets Symbols (also used for Shloka River)
-    'vakratunda': symbolVakratunda,
-    'mahakaya': symbolMahakaya,
+    'vakratunda': symbolTrunkColored,
+    'mahakaya': banyanFullMahakaya,
     'suryakoti': symbolSuryakoti,
     'samaprabha': symbolSamaprabha,
     'nirvighnam': symbolNirvighnam,

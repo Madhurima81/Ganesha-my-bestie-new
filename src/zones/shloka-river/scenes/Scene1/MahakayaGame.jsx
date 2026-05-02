@@ -5,12 +5,12 @@ import React from 'react';
 import MemoryGameEngine from '../../core/MemoryGameEngine';
 import { getGameConfig } from '../../configs/gameConfigs';
 
-import elephantSvg from './assets/images/elephant.svg';
+import elephantImage from './assets/images/elephant-from-pondscenev4.png';
 
-import banyanSprout from './assets/images/banyan-sprout.svg';
-import banyanSapling from './assets/images/banyan-sapling.svg';
-import banyanHalf from './assets/images/banyan-half.svg';
-import banyanFull from './assets/images/banyan-full.svg';
+import banyanSprout from './assets/images/banyan-sprout-from-download.png';
+import banyanSapling from './assets/images/banyan-sapling-from-download.png';
+import banyanHalf from './assets/images/banyan-half-from-download.png';
+import banyanFull from './assets/images/banyan-full-from-download.png';
 
 
 const MahakayaGame = ({
@@ -46,10 +46,10 @@ const MahakayaGame = ({
   // ✅ BUG 6 & 8: Map BOTH initial and reward asset getters
 const assetGetters = {
     // Clickers - single elephant for all
-    getElephantMaImage: () => elephantSvg,
-    getElephantHaImage: () => elephantSvg,
-    getElephantKaImage: () => elephantSvg,
-    getElephantYaImage: () => elephantSvg,
+    getElephantMaImage: () => elephantImage,
+    getElephantHaImage: () => elephantImage,
+    getElephantKaImage: () => elephantImage,
+    getElephantYaImage: () => elephantImage,
 
     // Rewards - banyan tree growth progression
     getBanyanSproutImage:  () => banyanSprout,

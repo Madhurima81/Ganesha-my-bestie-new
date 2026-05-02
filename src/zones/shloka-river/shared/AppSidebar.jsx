@@ -5,8 +5,8 @@ import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 import { applyRecorderTheme } from '../../../lib/theme/RecorderThemeAdapter';
 
 // Mantra icons — same images as Meaning Cave (colored only, no gray set)
-import vakratundaIcon    from '../../meaning cave/assets/images/symbols/vakratunda-symbol.png';
-import mahakayaIcon      from '../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
+import vakratundaIcon    from '../../symbol-mountain/shared/images/icons/symbol-trunk-new.png';
+import mahakayaIcon      from '../scenes/Scene1/assets/images/banyan-full-from-download.png';
 import suryakotiIcon     from '../../meaning cave/assets/images/symbols/suryakoti-symbol.png';
 import samaprabhaIcon    from '../../meaning cave/assets/images/symbols/samaprabha-symbol.png';
 import nirvighnamIcon    from '../../meaning cave/assets/images/symbols/nirvighnam-symbol.png';

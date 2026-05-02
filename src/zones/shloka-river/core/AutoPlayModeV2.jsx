@@ -670,11 +670,9 @@ const AutoPlayModeV2 = ({
             if (voiceGuidanceRef.current?.stopVoice) voiceGuidanceRef.current.stopVoice();
             if (currentAudioRef.current) { currentAudioRef.current.pause(); currentAudioRef.current = null; }
           },
-          inline: true,
-          targetRound: currentRound,
-          targetIndex: syllableIndex,
+          inline: false,
           simpleMode: true,
-          autoContinueOnSuccessMs: 900,
+          autoContinueOnSuccessMs: 0,
           onComplete: () => {
             setVoiceChallenge(null);
             proceedToNext();
@@ -761,8 +759,6 @@ const AutoPlayModeV2 = ({
               if (currentAudioRef.current) { currentAudioRef.current.pause(); currentAudioRef.current = null; }
             },
             inline: false,
-            targetRound: currentRound,
-            targetIndex: syllableIndex,
             simpleMode: false,
             autoContinueOnSuccessMs: 0,
             onComplete: () => {
@@ -1219,10 +1215,6 @@ const AutoPlayModeV2 = ({
       || { left: '50%', top: '50%' };
   };
 
-  const inlineChallengePos = (voiceChallenge?.inline && typeof voiceChallenge?.targetIndex === 'number')
-    ? getClickerPosition(voiceChallenge.targetRound || currentRound, voiceChallenge.targetIndex)
-    : null;
-
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 20 }}>
       {!hideElements && (
@@ -1333,43 +1325,17 @@ const AutoPlayModeV2 = ({
 
       {/* ── Duolingo-style syllable voice challenge ── */}
       {voiceChallenge && (
-        voiceChallenge.inline && inlineChallengePos ? (
-          <div
-            style={{
-              position: 'absolute',
-              left: inlineChallengePos.left,
-              top: inlineChallengePos.top,
-              transform: 'translate(-50%, -110%)',
-              width: 'min(300px, 36vw)',
-              zIndex: 260,
-              pointerEvents: 'auto',
-            }}
-          >
-            <SyllableVoiceChallenge
-              syllable={voiceChallenge.syllable}
-              displayLabel={voiceChallenge.displayLabel}
-              onComplete={voiceChallenge.onComplete}
-              replayAudio={voiceChallenge.replayAudio}
-              stopAudio={voiceChallenge.stopAudio}
-              mooshikaImage={null}
-              inline={true}
-              simpleMode={!!voiceChallenge.simpleMode}
-              autoContinueOnSuccessMs={voiceChallenge.autoContinueOnSuccessMs || 0}
-            />
-          </div>
-        ) : (
-          <SyllableVoiceChallenge
-            syllable={voiceChallenge.syllable}
-            displayLabel={voiceChallenge.displayLabel}
-            onComplete={voiceChallenge.onComplete}
-            replayAudio={voiceChallenge.replayAudio}
-            stopAudio={voiceChallenge.stopAudio}
-            mooshikaImage={voiceGuidance?.characterImage}
-            inline={false}
-            simpleMode={!!voiceChallenge.simpleMode}
-            autoContinueOnSuccessMs={voiceChallenge.autoContinueOnSuccessMs || 0}
-          />
-        )
+        <SyllableVoiceChallenge
+          syllable={voiceChallenge.syllable}
+          displayLabel={voiceChallenge.displayLabel}
+          onComplete={voiceChallenge.onComplete}
+          replayAudio={voiceChallenge.replayAudio}
+          stopAudio={voiceChallenge.stopAudio}
+          mooshikaImage={voiceGuidance?.characterImage}
+          inline={false}
+          simpleMode={!!voiceChallenge.simpleMode}
+          autoContinueOnSuccessMs={voiceChallenge.autoContinueOnSuccessMs || 0}
+        />
       )}
     </div>
   );

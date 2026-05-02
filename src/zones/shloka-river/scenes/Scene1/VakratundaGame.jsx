@@ -5,12 +5,12 @@ import React from 'react';
 import MemoryGameEngine from '../../core/MemoryGameEngine';
 import { getGameConfig } from '../../configs/gameConfigs';
 
-import elephantSvg from './assets/images/elephant.svg';
+import elephantImage from './assets/images/elephant-from-pondscenev4.png';
 
-import lotusBud from './assets/images/lotus-bud.svg';
-import lotusbitBloom from './assets/images/lotus-bit-bloom.svg';
-import lotusHalfBloom from './assets/images/lotus-half-bloom.svg';
-import lotusFullBloom from './assets/images/lotus-full-bloom.svg';
+import lotusBud from './assets/images/lotus-bud-from-pondscenev4.png';
+import lotusbitBloom from './assets/images/lotus-bit-bloom-from-download.png';
+import lotusHalfBloom from './assets/images/lotus-half-bloom-from-download.png';
+import lotusFullBloom from './assets/images/lotus-full-bloom-from-pondscenev4.png';
 
 const VakratundaGame = ({
   isActive,
@@ -48,10 +48,10 @@ const VakratundaGame = ({
   // These names MUST match gameConfig's assetGetterInitial and assetGetterReward fields
 const assetGetters = {
     // Clickers - single elephant for all
-    getElephantVaImage: () => elephantSvg,
-    getElephantKraImage: () => elephantSvg,
-    getElephantTunImage: () => elephantSvg,
-    getElephantDaImage: () => elephantSvg,
+    getElephantVaImage: () => elephantImage,
+    getElephantKraImage: () => elephantImage,
+    getElephantTunImage: () => elephantImage,
+    getElephantDaImage: () => elephantImage,
 
     // Round Rewards - lotus progression
     getLotusBudImage: () => lotusBud,
