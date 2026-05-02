@@ -1061,6 +1061,9 @@ if (tempData.playAgainRequested) {
     {/* TWG: Daily Dare Popup — fires once per day; z-index 3000 covers all views */}
     {showDarePopup && (
       <DailyDarePopup onClose={() => {
+        if (typeof window !== 'undefined' && window.speechSynthesis) {
+          window.speechSynthesis.cancel();
+        }
         setShowDarePopup(false);
         setCurrentView('profile-welcome');
       }} />

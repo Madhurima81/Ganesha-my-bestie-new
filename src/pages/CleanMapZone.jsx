@@ -25,6 +25,7 @@ const ZONES_DATA = [
     sequence: 1,
     unlockRequires: 'shloka-river',
     unlockNote: 'Complete Shloka River',
+    comingSoon: true, // Demo build: full content not yet wired
     scenes: [
       { id: 'vakratunda-mahakaya', name: 'Vakratunda Mahakaya' },
       { id: 'suryakoti-samaprabha', name: 'Suryakoti Samaprabha' },
@@ -38,7 +39,7 @@ const ZONES_DATA = [
     name: 'Shloka\nRiver',
     sequence: 1,
     unlockRequires: 'symbol-mountain',
-    unlockNote: 'Complete 2 Symbol Mountain scenes',
+    unlockNote: 'Complete 1 Symbol Mountain scene',
     scenes: [
       { id: 'vakratunda-grove', name: 'Vakratunda Grove' },
       { id: 'suryakoti-bank', name: 'Suryakoti Bank' },
@@ -53,6 +54,7 @@ const ZONES_DATA = [
     sequence: 1,
     unlockRequires: 'cave-of-secrets',
     unlockNote: 'Complete Cave of Secrets',
+    comingSoon: true, // Demo build: full content not yet wired
     scenes: [
       { id: 'game1', name: 'Game 1' },
       { id: 'game2', name: 'Game 2' },
@@ -65,7 +67,7 @@ const ZONES_DATA = [
     name: 'About Me Hut',
     sequence: 1,
     unlockRequires: 'symbol-mountain',
-    unlockNote: 'Complete Symbol Mountain',
+    unlockNote: 'Complete 2 Symbol Mountain scenes',
     scenes: [
       { id: 'family-tree', name: 'Family Tree' },
       { id: 'favorite-food', name: 'Favorite Food' },
@@ -84,7 +86,7 @@ const ZONE_IDS = {
 };
 
 const MAP_ZONE_UNLOCK_VO = {
-  [ZONE_IDS.SYMBOL]: 'Look! Symbol Mountain is ready to explore!',
+  [ZONE_IDS.SYMBOL]: "Tap Symbol Mountain — that's where we start!",
   [ZONE_IDS.RIVER]: 'Look! The Shloka River is flowing!',
   [ZONE_IDS.HUT]: 'Come inside! The About Me Hut is open!',
   [ZONE_IDS.CAVE]: 'The cave doors are opening!',
@@ -102,7 +104,7 @@ const MAP_ZONE_COMPLETION_VO = {
 // Temporary debug switches for QA checks.
 // Set both back to false after verification.
 const DEBUG_UNLOCK_ALL_ZONES = false;
-const DEBUG_ALWAYS_OPEN_ZONE_WELCOME = true;
+const DEBUG_ALWAYS_OPEN_ZONE_WELCOME = false;
 
 const getCompletedScenes = (allProgress, zoneId) => allProgress[zoneId]?.completedScenes || 0;
 
@@ -119,8 +121,9 @@ const isZoneComplete = (allProgress, zoneId) => {
 const isZoneUnlocked = (zoneId, allProgress) => {
   if (DEBUG_UNLOCK_ALL_ZONES) return true;
   if (zoneId === ZONE_IDS.SYMBOL) return true;
-  if (zoneId === ZONE_IDS.RIVER) return getCompletedScenes(allProgress, ZONE_IDS.SYMBOL) >= 2;
-  if (zoneId === ZONE_IDS.HUT) return isZoneComplete(allProgress, ZONE_IDS.SYMBOL);
+  // Demo build unlock rhythm — keeps the child engaged across limited content:
+  if (zoneId === ZONE_IDS.RIVER) return getCompletedScenes(allProgress, ZONE_IDS.SYMBOL) >= 1;
+  if (zoneId === ZONE_IDS.HUT) return getCompletedScenes(allProgress, ZONE_IDS.SYMBOL) >= 2;
   if (zoneId === ZONE_IDS.CAVE) return isZoneComplete(allProgress, ZONE_IDS.RIVER);
   if (zoneId === ZONE_IDS.FESTIVAL) return isZoneComplete(allProgress, ZONE_IDS.CAVE);
   return true;
@@ -246,6 +249,10 @@ const getAnimalId = (avatar) => {
 
 // Derive state for a zone given its progress and unlock requirements
 const getZoneState = (zoneId, allProgress) => {
+  // Coming-soon zones override all other states — content not yet wired
+  const zoneDef = ZONES_DATA.find(z => z.id === zoneId);
+  if (zoneDef?.comingSoon) return 'coming-soon';
+
   if (!isZoneUnlocked(zoneId, allProgress)) return 'locked';
 
   const p = allProgress[zoneId];
@@ -411,18 +418,26 @@ const ZONE_SCENES = {
 
 const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen }) => {
   const [zoneProgress, setZoneProgress] = useState({});
+  const [isFirstTimeLoad, setIsFirstTimeLoad] = useState(false);
   // const [selectedZone, setSelectedZone] = useState(null);  // removed — no preview modal
   // const [showZoneModal, setShowZoneModal] = useState(false); // removed — no preview modal
   const [activeProfile, setActiveProfile] = useState(null);
   const [unlockingZones, setUnlockingZones] = useState({});
   const [mushikaPop, setMushikaPop] = useState(null); // { zone, state } | null
   const [isMuted, setIsMuted] = useState(false);
+  const [isGaneshaWalking, setIsGaneshaWalking] = useState(false);
   const unlockTimersRef = useRef({});
+  const unlockStartTimersRef = useRef({});
   const voiceTimersRef = useRef([]);
   const mushikaTimerRef = useRef(null);
   const ambientRef = useRef(null);
   const fadingRef = useRef(null);
   const prevZoneStatesRef = useRef(null);
+  const isFirstTimeLoadRef = useRef(false);
+  const idleNudgeTimerRef = useRef(null);
+  const hasTappedRef = useRef(false);
+  const prevGaneshaPosRef = useRef(null);
+  const walkTimerRef = useRef(null);
 
   const speakMapVoEvents = (events = []) => {
     if (!Array.isArray(events) || events.length === 0) return;
@@ -441,7 +456,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
           const utterance = new window.SpeechSynthesisUtterance(text);
           utterance.rate = 1.02;
           utterance.pitch = 1;
-          utterance.volume = 0.9;
+          utterance.volume = 0.55;
           window.speechSynthesis.speak(utterance);
         } catch {
           // best effort only
@@ -480,7 +495,10 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   useEffect(() => {
     return () => {
       Object.values(unlockTimersRef.current).forEach(clearTimeout);
+      Object.values(unlockStartTimersRef.current).forEach(clearTimeout);
       voiceTimersRef.current.forEach(clearTimeout);
+      if (idleNudgeTimerRef.current) clearTimeout(idleNudgeTimerRef.current);
+      if (walkTimerRef.current) clearTimeout(walkTimerRef.current);
       if (typeof window !== 'undefined' && window.speechSynthesis) {
         window.speechSynthesis.cancel();
       }
@@ -582,9 +600,23 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         && Object.entries(zoneProgress).every(
           ([zoneId, p]) => zoneId === ZONE_IDS.SYMBOL || (p?.completedScenes || 0) === 0
         );
+
+      isFirstTimeLoadRef.current = isBrandNewJourney;
+      setIsFirstTimeLoad(isBrandNewJourney);
+
       if (isBrandNewJourney && !hasSeenZoneUnlockVo(ZONE_IDS.SYMBOL)) {
         speakMapVoEvents([{ text: MAP_ZONE_UNLOCK_VO[ZONE_IDS.SYMBOL], delay: 300 }]);
         markZoneUnlockVoSeen(ZONE_IDS.SYMBOL);
+
+        // Idle nudge: if no tap after 7s, gently re-prompt
+        idleNudgeTimerRef.current = setTimeout(() => {
+          if (!hasTappedRef.current) {
+            speakMapVoEvents([{
+              text: 'Tap Symbol Mountain whenever you are ready!',
+              delay: 0
+            }]);
+          }
+        }, 7000);
       }
       return;
     }
@@ -601,9 +633,20 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         if (unlockTimersRef.current[zoneId]) {
           clearTimeout(unlockTimersRef.current[zoneId]);
         }
+        if (unlockStartTimersRef.current[zoneId]) {
+          clearTimeout(unlockStartTimersRef.current[zoneId]);
+        }
 
-        setUnlockingZones(prev => ({ ...prev, [zoneId]: unlockIntensity }));
+        // Sequenced unlock moment:
+        // 0ms: chime
+        // 800ms: pulse/walk begins
+        // 5000ms: pulse fades
         playUnlockChime(unlockIntensity);
+
+        unlockStartTimersRef.current[zoneId] = setTimeout(() => {
+          setUnlockingZones(prev => ({ ...prev, [zoneId]: unlockIntensity }));
+          delete unlockStartTimersRef.current[zoneId];
+        }, 800);
 
         unlockTimersRef.current[zoneId] = setTimeout(() => {
           setUnlockingZones(prev => {
@@ -612,7 +655,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
             return updated;
           });
           delete unlockTimersRef.current[zoneId];
-        }, 1200);
+        }, 5000);
       }
 
       if (prevState !== 'completed' && nextState === 'completed') {
@@ -624,9 +667,9 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       .filter((zoneId) => !hasSeenZoneUnlockVo(zoneId))
       .map((zoneId) => {
         markZoneUnlockVoSeen(zoneId);
-        return MAP_ZONE_UNLOCK_VO[zoneId];
+        return { text: MAP_ZONE_UNLOCK_VO[zoneId], delay: 2000 };
       })
-      .filter(Boolean);
+      .filter((entry) => !!entry?.text);
     const completionLines = newlyCompletedZoneIds
       .filter((zoneId) => !hasSeenZoneCompletionVo(zoneId))
       .map((zoneId) => {
@@ -637,10 +680,10 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
 
     const voEvents = [];
     unlockLines.forEach((line, index) => {
-      // Unlock VO starts shortly after glow/chime begin.
-      voEvents.push({ text: line, delay: 300 + (index * 2200) });
+      // Unlock VO starts after walk transition completes.
+      voEvents.push({ text: line.text, delay: line.delay + (index * 2200) });
     });
-    const completionStartDelay = unlockLines.length > 0 ? (300 + unlockLines.length * 2200) : 0;
+    const completionStartDelay = unlockLines.length > 0 ? (2000 + unlockLines.length * 2200) : 0;
     completionLines.forEach((line, index) => {
       voEvents.push({ text: line, delay: completionStartDelay + (index * 2200) });
     });
@@ -733,23 +776,88 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   const dotsVisible = getDotsVisible();
   const mapGaneshaState = getMapGaneshaState(zoneProgress, unlockingZones);
 
+  useEffect(() => {
+    const newPos = JSON.stringify(mapGaneshaState.position);
+    if (prevGaneshaPosRef.current && prevGaneshaPosRef.current !== newPos) {
+      setIsGaneshaWalking(true);
+      if (walkTimerRef.current) clearTimeout(walkTimerRef.current);
+      walkTimerRef.current = setTimeout(() => {
+        setIsGaneshaWalking(false);
+      }, 1200);
+    }
+    prevGaneshaPosRef.current = newPos;
+
+    return () => {
+      if (walkTimerRef.current) clearTimeout(walkTimerRef.current);
+    };
+  }, [mapGaneshaState.position]);
+
   // Navigate after the Mushika pop finishes
   const navigateToZone = (zone, state) => {
     if (DEBUG_ALWAYS_OPEN_ZONE_WELCOME) {
       if (onZoneSelect) onZoneSelect(zone.id);
       return;
     }
-    if (state === 'active') {
+    // Symbol Mountain: skip welcome, go straight to first scene (modak)
+    if (state === 'active' && zone.id === ZONE_IDS.SYMBOL) {
       const firstScene = ZONE_FIRST_SCENES[zone.id];
       if (onZoneSelect) onZoneSelect(zone.id, firstScene);
-    } else {
-      if (onZoneSelect) onZoneSelect(zone.id);
+      return;
     }
+    // All other zones: open zone welcome screen
+    if (onZoneSelect) onZoneSelect(zone.id);
   };
 
   const handleZoneClick = (zone, state) => {
-    if (state === 'locked' || state === 'unlocking') return;
+    // Clear idle nudge on any tap
+    hasTappedRef.current = true;
+    if (idleNudgeTimerRef.current) {
+      clearTimeout(idleNudgeTimerRef.current);
+      idleNudgeTimerRef.current = null;
+    }
+
+    // Coming-soon: friendly Mushika pop + VO, no navigation
+    if (state === 'coming-soon') {
+      if (mushikaPop) return;
+      setMushikaPop({ zone, state, headshake: true });
+      speakMapVoEvents([{
+        text: `${zone.name.replace('\n', ' ')} is coming soon! We'll explore it together.`,
+        delay: 200
+      }]);
+      mushikaTimerRef.current = setTimeout(() => {
+        setMushikaPop(null);
+      }, 1800);
+      return;
+    }
+
+    // Locked: friendly Mushika headshake + redirect VO
+    if (state === 'locked') {
+      if (mushikaPop) return;
+      setMushikaPop({ zone, state, headshake: true });
+      speakMapVoEvents([{
+        text: "Not yet! Let's start with Symbol Mountain.",
+        delay: 200
+      }]);
+      mushikaTimerRef.current = setTimeout(() => {
+        setMushikaPop(null);
+      }, 1800);
+      return;
+    }
+
+    if (state === 'unlocking') return;
     if (mushikaPop) return; // already mid-animation — block double-tap
+
+    // First-ever Symbol Mountain tap: skip Mushika pop, skip zone welcome, go straight to modak
+    const isFirstSymbolTap =
+      zone.id === ZONE_IDS.SYMBOL &&
+      isFirstTimeLoad &&
+      !hasSeenMushikaPop(zone.id);
+
+    if (isFirstSymbolTap) {
+      markMushikaPopSeen(zone.id); // mark so future taps follow normal flow
+      navigateToZone(zone, state);
+      return;
+    }
 
     // Show only first time per zone (scoped by active profile).
     if (hasSeenMushikaPop(zone.id)) {
@@ -819,26 +927,35 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         const unlockClass = unlockIntensity === 'master' ? 'zone-unlock-master' : '';
         const labelState = state === 'unlocking' ? 'active' : state;
         const isSymbolMountainZone = zone.id === 'symbol-mountain';
+        const isFirstTimeSymbol =
+          isFirstTimeLoad &&
+          zone.id === ZONE_IDS.SYMBOL &&
+          baseState === 'active';
 
         return (
           <div key={zone.id} className={`zone-group ${state === 'completed' ? 'zone-complete' : ''}`}>
             {/* Tap area */}
             <div
-              className={`${layout.zoneClass} zone-state-${state} ${unlockClass} ${isSymbolMountainZone ? 'symbol-mountain-door' : ''}`.trim()}
+              className={`${layout.zoneClass} zone-state-${state} ${unlockClass} ${isSymbolMountainZone ? 'symbol-mountain-door' : ''} ${isFirstTimeSymbol ? 'zone-state-first-time' : ''}`.trim()}
               onClick={() => handleZoneClick(zone, state)}
               aria-disabled={isDisabled}
             >
-              {/* Completed check badge only — no permanent rings/borders */}
-              {state === 'completed' && (
-                <div className={`zone-check-badge ${isSymbolMountainZone ? 'zone-checkmark' : ''}`} aria-hidden="true">✓</div>
-              )}
             </div>
 
             {/* Label */}
             <div className={`${layout.labelClass} label-state-${labelState} ${isSymbolMountainZone ? 'zone-title' : ''}`}>
+              {state === 'completed' && (
+                <span className="zone-check-badge zone-check-badge--label" aria-hidden="true">✓</span>
+              )}
               {zone.name.split('\n').map((line, i) => (
                 <span key={i}>{line}{i < zone.name.split('\n').length - 1 && <br/>}</span>
               ))}
+              {isFirstTimeSymbol && (
+                <div className="first-time-hint">Tap to start!</div>
+              )}
+              {state === 'coming-soon' && (
+                <div className="coming-soon-pill">Coming Soon</div>
+              )}
               {state === 'locked' && zone.unlockNote && (
                 <div className="unlock-note">{zone.unlockNote}</div>
               )}
@@ -860,13 +977,16 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       {/* Map Ganesha presence */}
       {mapGaneshaState && (
         <div
-          className="map-ganesha-guide"
-          style={mapGaneshaState.position}
+          className={`map-ganesha-guide map-ganesha-wrapper ${isGaneshaWalking ? 'is-walking' : ''}`}
+          style={(() => {
+            const { transform, ...rest } = mapGaneshaState.position;
+            return isGaneshaWalking ? rest : mapGaneshaState.position;
+          })()}
           aria-hidden="true"
         >
           <div className="map-ganesha-guide__float">
             <GaneshaPresence
-              pose={mapGaneshaState.pose}
+              pose={isGaneshaWalking ? 'walking' : mapGaneshaState.pose}
               size={mapGaneshaState.size}
               breathing={mapGaneshaState.pose === 'celebration' ? 'slow' : 'gentle'}
             />

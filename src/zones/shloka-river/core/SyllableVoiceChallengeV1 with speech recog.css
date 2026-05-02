@@ -83,9 +83,7 @@
   flex-direction: column;
   align-items: center;
   padding-left: 0;
-  justify-content: space-between;
-  min-height: 320px;
-  width: 100%;
+  gap: 16px;
 }
 .svc-body--result {
   padding-left: 0;
@@ -142,12 +140,6 @@
   animation: svcStarPop 0.9s ease-out forwards;
   z-index: 20;
 }
-.svc-done-sparkles {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 18;
-}
 
 /* ── Result phase ────────────────────────────────────────────────────────── */
 .svc-result-emoji {
@@ -173,17 +165,13 @@
 .svc-actions {
   display: flex;
   gap: 14px;
-  margin-top: auto;
+  margin-top: 8px;
   flex-wrap: wrap;
   justify-content: center;
 }
-.svc-actions--primary {
-  flex-wrap: nowrap;
-  align-items: center;
-}
 .svc-btn {
   border: none;
-  border-radius: 999px;
+  border-radius: 12px;
   padding: 18px 46px;
   font-size: 22px;
   font-weight: 600;
@@ -299,48 +287,3 @@
   60%  { transform: translate(-50%, calc(-50% - 28px)) scale(1.3); opacity: 1; }
   100% { transform: translate(-50%, calc(-50% - 56px)) scale(0.7); opacity: 0; }
 }
-
-/* Recording indicator (red pulsing dot) */
-.svc-recording-indicator {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 8px;
-}
-.svc-mic-icon {
-  width: 112px;
-  height: 112px;
-  object-fit: contain;
-  animation: svcMicPulse 1.2s ease-in-out infinite, svcMicWiggle 1.6s ease-in-out infinite;
-}
-.svc-rec-label {
-  font-size: 24px;
-  font-weight: 600;
-  color: #7C3AED;
-}
-@keyframes svcMicPulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50%      { transform: scale(1.08); opacity: 0.82; }
-}
-@keyframes svcMicWiggle {
-  0%, 100% { rotate: 0deg; }
-  20%      { rotate: -4deg; }
-  40%      { rotate: 3deg; }
-  60%      { rotate: -2deg; }
-  80%      { rotate: 2deg; }
-}
-
-/* "Hear the syllable again" subtle link */
-.svc-hear-again-link {
-  background: transparent;
-  border: none;
-  color: #7C3AED;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 12px;
-  padding: 6px 12px;
-  border-radius: 12px;
-  transition: background 0.15s;
-}
-.svc-hear-again-link:hover { background: rgba(124, 58, 237, 0.1); }

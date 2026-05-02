@@ -5,7 +5,13 @@ import GameStateManager from '../lib/services/GameStateManager';
 
 console.log('MapZone file loaded');
 
-// Use emoji icons for now
+// Zone badge images (fallback to emoji where needed)
+const zoneBadges = {
+  'symbol-mountain': '/images/zone-badge/icon-symbolmtn.png',
+  'about-me-hut': '/images/zone-badge/icon-aboutme.png'
+};
+
+// Use emoji icons for fallback
 const zoneEmojis = {
   'symbol-mountain': '🏔️',
   'rainbow-valley': '🌈',
@@ -210,6 +216,14 @@ const MapZone = ({ onZoneSelect }) => {
     setSelectedZone(null);
   };
 
+  const renderZoneBadge = (zoneId, altText = 'Zone') => {
+    const badgeSrc = zoneBadges[zoneId];
+    if (badgeSrc) {
+      return <img src={badgeSrc} alt={altText} className="zone-icon-image zone-detail-image" />;
+    }
+    return <span className="zone-icon-emoji-fallback">{zoneEmojis[zoneId]}</span>;
+  };
+
   // Scene Selector Modal
   if (showSceneSelector && selectedZone) {
     return (
@@ -218,7 +232,7 @@ const MapZone = ({ onZoneSelect }) => {
           <button className="close-button" onClick={closeModals}>×</button>
           
           <div className="zone-detail-icon">
-            {zoneEmojis[selectedZone.id]}
+            {renderZoneBadge(selectedZone.id, selectedZone.name)}
           </div>
           
           <h2>{selectedZone.name}</h2>
@@ -297,9 +311,7 @@ const MapZone = ({ onZoneSelect }) => {
           >
             {/* Zone Icon - using emoji */}
             <div className="zone-icon-wrapper">
-              <div className="zone-icon-emoji">
-                {zoneEmojis[zone.id]}
-              </div>
+              {renderZoneBadge(zone.id, zone.name)}
               {!isUnlocked && (
                 <div className="lock-overlay">
                   <span className="lock-icon">🔒</span>
@@ -327,7 +339,7 @@ const MapZone = ({ onZoneSelect }) => {
             <button className="close-button" onClick={closeModals}>×</button>
             
             <div className="zone-detail-icon">
-              {zoneEmojis[selectedZone.id]}
+              {renderZoneBadge(selectedZone.id, selectedZone.name)}
             </div>
             
             <h2>{selectedZone.name}</h2>

@@ -124,13 +124,13 @@ export const DISCOVERY_CONTENT = {
     'vakratunda-grove': {
       vakratunda: {
         title: "Vakratunda",
-        affirmation: "I adapt.",
+        affirmation: "I find a new way",
         icon: 'vakratunda-complete'
       },
 
       mahakaya: {
         title: "Mahakaya",
-        affirmation: "I am strong.",
+        affirmation: "I am strong inside",
         icon: 'mahakaya-complete'
       }
     },

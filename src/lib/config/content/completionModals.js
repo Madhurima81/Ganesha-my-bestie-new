@@ -45,8 +45,8 @@ export const COMPLETION_MODALS = {
 
 'shloka-river': {
   'vakratunda-grove': {
-    title: 'The Flowers Have Bloomed!',
-    subtitle: 'Your voice helped them grow.'
+    title: 'The Grove Has Bloomed',
+    subtitle: 'Your voice made them bloom.'
   },
   'suryakoti-bank': {
     title: 'The Sun Is Shining Bright!',

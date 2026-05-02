@@ -1,19 +1,23 @@
 // ZoneBadgeButton.jsx - Zone badge icon shown in game scenes next to HomeButton
-// Tap → goes back to Zone Welcome (NOT the map)
-// Emojis are placeholders — replace with SVGs later
+// Tap -> goes back to Zone Welcome (NOT the map)
 
 import React from 'react';
 
 const ZONE_BADGES = {
-  'symbol-mountain': { emoji: '🏔️', label: 'Symbol Mountain' },
-  'cave-of-secrets': { emoji: '🦇', label: 'Cave of Secrets' },
-  'shloka-river':    { emoji: '🌊', label: 'Shloka River' },
-  'festival-square': { emoji: '🎪', label: 'Festival Square' },
-  'about-me-hut':    { emoji: '🏠', label: 'About Me Hut' },
+  'symbol-mountain': { image: '/images/zone-badge/icon-symbolmtn.png', emoji: 'SM', label: 'Symbol Mountain' },
+  'cave-of-secrets': { image: '/images/cave-of-secrets-map-icon.png',   emoji: 'CS', label: 'Cave of Secrets' },
+  'shloka-river':    { image: '/images/zone-badge/icon-shlokariver.png', emoji: 'SR', label: 'Shloka River' },
+  'festival-square': { image: '/images/festival-square-map-icon.png',   emoji: 'FS', label: 'Festival Square' },
+  'about-me-hut':    { image: '/images/zone-badge/icon-aboutme.png',    emoji: 'AH', label: 'About Me Hut' },
 };
 
+const NAV_BUTTON_SIZE = 'clamp(52px, 5.5vw, 68px)';
+const NAV_BUTTON_TOP = 'clamp(12px, 1.5vw, 24px)';
+const NAV_BUTTON_LEFT = 'clamp(12px, 1.5vw, 24px)';
+const NAV_BUTTON_GAP = '10px';
+
 const ZoneBadgeButton = ({ zoneId, onBack, style = {} }) => {
-  const badge = ZONE_BADGES[zoneId] || { emoji: '🗺️', label: 'Zone' };
+  const badge = ZONE_BADGES[zoneId] || { emoji: 'ZN', label: 'Zone' };
 
   return (
     <button
@@ -22,26 +26,36 @@ const ZoneBadgeButton = ({ zoneId, onBack, style = {} }) => {
       aria-label={`Back to ${badge.label}`}
       style={{
         position: 'fixed',
-        top: 20,
-        left: 80,
+        top: NAV_BUTTON_TOP,
+        left: `calc(${NAV_BUTTON_LEFT} + ${NAV_BUTTON_SIZE} + ${NAV_BUTTON_GAP})`,
         zIndex: 20000,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        width: 56,
-        height: 56,
+        width: NAV_BUTTON_SIZE,
+        height: NAV_BUTTON_SIZE,
         background: 'rgba(255,255,255,0.92)',
         backdropFilter: 'blur(10px)',
         borderRadius: '50%',
-        border: '2px solid rgba(160,120,220,0.4)',
-        boxShadow: '0 4px 16px rgba(120,80,200,0.2)',
+        border: '3px solid #fff',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
         cursor: 'pointer',
         fontSize: 26,
         lineHeight: 1,
+        overflow: 'hidden',
+        padding: 0,
         ...style,
       }}
     >
-      {badge.emoji}
+      {badge.image ? (
+        <img
+          src={badge.image}
+          alt={badge.label}
+          style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
+        />
+      ) : (
+        badge.emoji
+      )}
     </button>
   );
 };

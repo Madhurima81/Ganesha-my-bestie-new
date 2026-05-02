@@ -7,6 +7,7 @@ const POSE_EXPRESSION_MAP = {
   thumbs_up: 'happy',
   okay: 'happy',
   celebration: 'excited',
+  walking: 'happy',
 };
 
 const GaneshaPresence = ({

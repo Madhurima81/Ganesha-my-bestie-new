@@ -3,7 +3,7 @@ import GaneshaPresence from '../character/GaneshaPresence';
 import PrimaryBtn from '../shared/PrimaryBtn';
 import { getTodaysDare } from '../../config/dareBank';
 import { addModakToJar } from '../coReg/GratitudeJar';
-import { useGaneshaVoice, speakDareSequence } from '../../hooks/useGaneshaVoice';
+import { useGaneshaVoice } from '../../hooks/useGaneshaVoice';
 import './DailyDarePopup.css';
 
 // ── Warm responses (no emojis) ──────────────────────────────────────────────
@@ -89,6 +89,9 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
   const [showCelebration, setShowCelebration] = useState(false);
 
   const recognitionRef = useRef(null);
+  const delayedRecognitionRef = useRef(null);
+  const dareSequenceRef = useRef(null);
+  const closeTimerRef = useRef(null);
 
   const gratitudeText = spokenText || typedText;
   const warmResponse  = getGratitudeResponse(gratitudeText);
@@ -105,6 +108,18 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
 
   const stopAllDareVoice = () => {
     recognitionRef.current?.stop?.();
+    if (delayedRecognitionRef.current) {
+      clearTimeout(delayedRecognitionRef.current);
+      delayedRecognitionRef.current = null;
+    }
+    if (dareSequenceRef.current) {
+      clearTimeout(dareSequenceRef.current);
+      dareSequenceRef.current = null;
+    }
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
     stop();
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       window.speechSynthesis.cancel();
@@ -185,7 +200,10 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
     setSpokenText('');
     setMicState('idle');
     // Restart recognition immediately - skip the prompt voice-over
-    setTimeout(() => startRecognition(), 200);
+    delayedRecognitionRef.current = setTimeout(() => {
+      delayedRecognitionRef.current = null;
+      startRecognition();
+    }, 200);
   };
 
   // ── Beat handlers ────────────────────────────────────────────────────────────
@@ -197,7 +215,17 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
     }
     setBeat(2);
     // Ganesha responds to gratitude then reads the dare
-    speakDareSequence(speak, warmResponse, dareText, childAge);
+    stopAllDareVoice();
+    speak(warmResponse, {
+      age: childAge,
+      moment: 'gratitude',
+      onEnd: () => {
+        dareSequenceRef.current = setTimeout(() => {
+          dareSequenceRef.current = null;
+          speak(`Today's dare. ${dareText}`, { age: childAge, moment: 'dare' });
+        }, 600);
+      },
+    });
   };
 
   // ── "Tell me again" - re-reads the mission aloud ─────────────────────────────
@@ -226,7 +254,9 @@ export default function DailyDarePopup({ onClose, childNameOverride }) {
     speak(celebrationLine, { age: childAge, moment: 'celebration' });
 
     // Auto-close after 3.5 seconds (enough for voice + sparkle to land)
-    setTimeout(() => {
+    closeTimerRef.current = setTimeout(() => {
+      closeTimerRef.current = null;
+      stopAllDareVoice();
       onClose();
     }, 3500);
   };

@@ -433,6 +433,9 @@ const NewModakSceneMVPContent = ({
   const { isAudioOn, toggleAudio } = useAudioPreference();
   const { speak, stop: stopSpokenVoice } = useGaneshaVoice();
   const wasAudioOnRef = useRef(isAudioOn);
+  // -- SymbolAutoReveal state ----------------------------------------------
+  // null = not showing; object = reveal active
+  const [revealConfig, setRevealConfig] = useState(null);
 
   const stopVoice = useCallback(() => {
     stopRecordedVoice();
@@ -525,10 +528,6 @@ const NewModakSceneMVPContent = ({
   const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false);
   const [showDiscoveryFlip3, setShowDiscoveryFlip3] = useState(false);
   const [showSymbolDiscovery, setShowSymbolDiscovery] = useState(false);
-
-  // -- SymbolAutoReveal state ----------------------------------------------
-  // null = not showing; object = reveal active
-  const [revealConfig, setRevealConfig] = useState(null);
 
   // -- useSymbolCollection (superseded by SymbolAutoReveal) ----------------
   // const [currentOverlaySymbol, setCurrentOverlaySymbol] = useState(null);

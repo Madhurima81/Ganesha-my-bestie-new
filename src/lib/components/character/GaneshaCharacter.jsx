@@ -49,6 +49,7 @@ const POSE_GROUP_IDS = [
 const POSE_GROUP_MAP = {
   blessing: ['hand-blessing'],
   pointing: ['hand-fist', 'g73'],
+  walking: ['hand-fist', 'g73'],
   thumbs_up: ['hand-thumbsup', 'g105'],
   okay: ['hand-ok', 'g7'],
   celebration: ['hand-victory', 'g75'],

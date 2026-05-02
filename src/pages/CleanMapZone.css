@@ -191,6 +191,16 @@
   z-index: 2;
 }
 
+/* Completed check near zone title text (not the invisible tap area) */
+.zone-check-badge--label {
+  position: relative;
+  top: -0.15em;
+  right: auto;
+  margin-left: 0.35em;
+  display: inline-flex;
+  vertical-align: middle;
+}
+
 /* ── LOCKED STATE ─────────────────────────────────
    Dimmed, desaturated, no pointer events
 ──────────────────────────────────────────────── */
@@ -845,6 +855,27 @@
   transform: translate(-50%, -50%);
 }
 
+/* —— GANESHA MAP WRAPPER ————————————————————————
+   Smooth walk between zone positions instead of teleport
+—————————————————————————————————————————————————— */
+.map-ganesha-wrapper {
+  position: fixed;
+  transition:
+    left 1.2s cubic-bezier(0.4, 0.0, 0.2, 1),
+    top 1.2s cubic-bezier(0.4, 0.0, 0.2, 1),
+    right 1.2s cubic-bezier(0.4, 0.0, 0.2, 1),
+    bottom 1.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.map-ganesha-wrapper.is-walking {
+  animation: ganeshaWalkBob 0.4s ease-in-out infinite;
+}
+
+@keyframes ganeshaWalkBob {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
+  50%      { transform: translate(-50%, -50%) translateY(-3px); }
+}
+
 .map-ganesha-guide__float {
   animation: ganeshaGuideFloat 4s ease-in-out infinite;
   filter: drop-shadow(0 4px 14px rgba(120, 80, 200, 0.35));
@@ -963,4 +994,72 @@
 @keyframes twgBtnPulse {
   0%, 100% { box-shadow: 0 5px 0 #5a3fa0, 0 8px 24px rgba(103, 82, 184, 0.40); }
   50%       { box-shadow: 0 5px 0 #5a3fa0, 0 12px 32px rgba(103, 82, 184, 0.55); }
+}
+
+/* ── COMING SOON STATE ────────────────────────────
+   Inviting, not punishing — content exists, just not yet wired.
+   Tappable so child gets a friendly Mushika + Ganesha VO response.
+──────────────────────────────────────────────── */
+.zone.zone-state-coming-soon {
+  opacity: 0.85;
+  filter: saturate(0.75);
+  pointer-events: auto;
+  cursor: pointer;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+.zone.zone-state-coming-soon:hover,
+.zone.zone-state-coming-soon:active {
+  opacity: 1;
+  filter: saturate(1);
+}
+
+/* "Coming Soon" pill under the zone label */
+.coming-soon-pill {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 3px 12px;
+  background: rgba(255, 215, 0, 0.92);
+  color: #6b3410;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: clamp(10px, 0.9vw, 13px);
+  border-radius: 999px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+/* Coming-soon labels stay full-color (unlike locked, which is muted) */
+.label.label-state-coming-soon {
+  opacity: 1;
+}
+
+/* —— FIRST-TIME ACTIVE ——————————————————————————————
+   Symbol Mountain on very first map load — extra invitation.
+   Gentle breathing scale + brightness lift to draw the eye.
+———————————————————————————————————————————————————————— */
+.zone.zone-state-first-time {
+  animation: firstTimeBreathing 2.2s ease-in-out infinite;
+}
+
+@keyframes firstTimeBreathing {
+  0%, 100% { transform: scale(1);    filter: brightness(1); }
+  50%      { transform: scale(1.04); filter: brightness(1.08); }
+}
+
+.first-time-hint {
+  display: block;
+  margin-top: 4px;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 600;
+  font-size: clamp(11px, 1vw, 14px);
+  color: #FF5722;
+  animation: hintFade 2s ease-in-out infinite;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+@keyframes hintFade {
+  0%, 100% { opacity: 0.7; }
+  50%      { opacity: 1; }
 }

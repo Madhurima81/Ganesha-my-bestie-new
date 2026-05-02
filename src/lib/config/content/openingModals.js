@@ -97,8 +97,8 @@ export const OPENING_MODALS = {
   // ========================================
   'shloka-river': {
     'vakratunda-grove': {
-      title: "Bloom and Grow",
-      description: "Say the word clearly and watch the flowers bloom.",
+      title: "Bloom the Flowers",
+      description: "Listen and repeat. Watch them bloom.",
       icons: ['vakratunda', 'mahakaya'],
       buttonText: "Let's Explore",
       character: 'ganesha-headphones'

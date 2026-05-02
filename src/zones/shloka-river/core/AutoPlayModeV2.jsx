@@ -356,9 +356,13 @@ const AutoPlayModeV2 = ({
         if (isPausedRef.current || singingSyllableRef.current || lotusAudioPlayingRef.current || currentAudioRef.current) return;
         setShowIdleHint(true);
         if (voiceGuidanceRef.current?.playVoice) {
-          const hints = ['hintTapTheShiny', 'hintLookForGlow'];
-          const randomHint = hints[Math.floor(Math.random() * hints.length)];
-          voiceGuidanceRef.current.playVoice(randomHint);
+          if (gamePhase === 'listening_syllable') {
+            voiceGuidanceRef.current.playVoice('hintTapElephant');
+          } else {
+            const hints = ['hintTapTheShiny', 'hintLookForGlow'];
+            const randomHint = hints[Math.floor(Math.random() * hints.length)];
+            voiceGuidanceRef.current.playVoice(randomHint);
+          }
         }
       };
 
@@ -467,11 +471,10 @@ const AutoPlayModeV2 = ({
       setShowLotusSparkles(false);
       // Voice challenge: say the assembled word before advancing to next round
       const fullWord = currentSequence.join('');
-      const wordAudioFile = gameConfig.audio.completeWordByRound?.[currentRound] || gameConfig.audio.completeWordFile;
       setVoiceChallenge({
         syllable: fullWord,
         displayLabel: fullWord.toUpperCase(),
-        replayAudio: wordAudioFile ? () => { const a = new Audio(wordAudioFile); a.play().catch(() => {}); } : undefined,
+        replayAudio: undefined,
         stopAudio: () => {
           if (voiceGuidanceRef.current?.stopVoice) voiceGuidanceRef.current.stopVoice();
           if (currentAudioRef.current) { currentAudioRef.current.pause(); currentAudioRef.current = null; }
@@ -528,50 +531,18 @@ const AutoPlayModeV2 = ({
       return;
     }
 
-    setGamePhase('playing_syllable');
-    setCanPlayerClick(false);
-    wasChildActionPendingRef.current = false;
+    // No initial syllable autoplay. Start directly in tap mode.
+    setSingingSyllable(null);
+    setGamePhase('listening_syllable');
+    setCanPlayerClick(true);
+    wasChildActionPendingRef.current = true;
+    flowInProgressRef.current = false;
 
-    // Only play intro guidance once at the first tappable elephant of the configured start round.
+    // Only play intro tap guidance once at the first tappable elephant.
     const isFirstElephantOfGame = currentRound === effectiveStartRound && syllableIdx === 0;
-
-    const runAudioSequence = () => {
-        if (isPausedRef.current) { flowInProgressRef.current = false; return; }
-
-        setSingingSyllable(syllable);
-        const started = playSyllableAudio(syllable, () => {
-            setSingingSyllable(null);
-
-            if (isPausedRef.current) { flowInProgressRef.current = false; return; }
-
-              const postAudioDelay = isFirstElephantOfGame ? 1000 : naturalDelay(400, 700);
-              safeSetTimeout(() => {
-                if (isPausedRef.current) { flowInProgressRef.current = false; return; }
-                setGamePhase('listening_syllable');
-                setCanPlayerClick(true);
-                wasChildActionPendingRef.current = true;
-                flowInProgressRef.current = false;
-                if (voiceGuidanceRef.current?.playVoice && !isPausedRef.current && isFirstElephantOfGame) {
-                  lastInterruptibleVORef.current = 'instructionTapAndRepeat';
-                  voiceGuidanceRef.current.playVoice('instructionTapAndRepeat');
-                }
-              }, postAudioDelay);
-            });
-        if (!started) {
-          setSingingSyllable(null);
-          flowInProgressRef.current = false;
-          return;
-        }
-    };
-
-    if (voiceGuidanceRef.current?.playVoice && isFirstElephantOfGame) {
-      lastInterruptibleVORef.current = 'instructionListen';
-      voiceGuidanceRef.current.playVoice('instructionListen', () => {
-           if (isPausedRef.current) { flowInProgressRef.current = false; return; }
-           safeSetTimeout(runAudioSequence, naturalDelay(500, 800));
-      });
-    } else {
-      runAudioSequence();
+    if (voiceGuidanceRef.current?.playVoice && isFirstElephantOfGame && !isPausedRef.current) {
+      lastInterruptibleVORef.current = 'instructionTapAndRepeat';
+      voiceGuidanceRef.current.playVoice('instructionTapAndRepeat');
     }
   };
 
