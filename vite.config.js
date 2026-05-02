@@ -63,8 +63,8 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html}', 'icons/*.{png,svg,ico}'],
         // Explicitly exclude large asset folders from precache scan
         globIgnores: ['**/audio/**', '**/images/**', '**/words/**'],
-        // Hard cap: skip anything over 500 KB in the precache sweep
-        maximumFileSizeToCacheInBytes: 1 * 1024 * 1024,
+        // Hard cap: skip anything over 3 MB in the precache sweep
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         // Serve offline.html when a page navigation fails (no connection)
         navigateFallback: '/offline.html',
         navigateFallbackDenylist: [/^\/api\//],
