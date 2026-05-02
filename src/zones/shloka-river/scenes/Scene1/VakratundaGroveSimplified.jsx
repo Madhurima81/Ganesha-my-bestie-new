@@ -49,7 +49,6 @@ import VakratundaGame from './VakratundaGame';
 import MahakayaGame from './MahakayaGame';
 
 // Character images
-import boyNamaste from './assets/images/boy-namaste.png';
 import ganeshaHeadphones from './assets/images/ganesha_with_headphones.png';
 import smartwatchScreen from '../assets/images/smartwatch-screen.png';
 
@@ -232,8 +231,7 @@ const VakratundaGroveContent = ({
   const audioEnabledRef = useRef(isAudioOn);
   audioEnabledRef.current = isAudioOn;
 
-  const [showGaneshaCelebration, setShowGaneshaCelebration] = useState(false);
-  const [showFinalGanesha, setShowFinalGanesha] = useState(false);
+  const [showTapSparkles, setShowTapSparkles] = useState(false);
 
   // Pause Menu State — removed: replaced by home icon
   // const [showPauseMenu, setShowPauseMenu] = useState(false);
@@ -247,7 +245,6 @@ const VakratundaGroveContent = ({
   const profileName = activeProfile?.name || 'explorer';
   const isFinalCelebrationActive =
     showSparkle === 'final-fireworks' ||
-    showFinalGanesha ||
     showSceneCompletion ||
     showAppDiscovery ||
     sceneState.phase === PHASES.COMPLETE;
@@ -719,10 +716,14 @@ const VakratundaGroveContent = ({
       progress: { percentage: 100, starsEarned: 5, completed: true }
     });
 
-    // Trigger Finale
-    setShowFinalGanesha(true);
     setShowSparkle('final-fireworks');
   };
+
+  const handleElephantMicroWin = useCallback(() => {
+    triggerMiniGesture('thumbsup', 'item', 1200);
+    setShowTapSparkles(true);
+    safeSetTimeout(() => setShowTapSparkles(false), 850);
+  }, [triggerMiniGesture, safeSetTimeout]);
 
   // 🔄 Play Again - Replay the current word's game
   const handlePlayAgain = () => {
@@ -859,7 +860,7 @@ const VakratundaGroveContent = ({
             <VakratundaGame
               isActive={sceneState.phase === PHASES.VAKRATUNDA_GAME}
               hideElements={showCenteredWord || showPowerOverlay || !!revealConfig}
-              onMicroWin={() => triggerMiniGesture('thumbsup', 'item', 1200)}
+              onMicroWin={handleElephantMicroWin}
               onPhaseComplete={() => handlePhaseComplete('vakratunda')}
               onGameComplete={() => { }}
               profileName={profileName}
@@ -881,7 +882,7 @@ const VakratundaGroveContent = ({
               isActive={sceneState.phase === PHASES.MAHAKAYA_GAME}
               hideElements={showCenteredWord || showPowerOverlay || !!revealConfig}
               powerGained={sceneState.learnedWords?.vakratunda}
-              onMicroWin={() => triggerMiniGesture('thumbsup', 'item', 1200)}
+              onMicroWin={handleElephantMicroWin}
               onPhaseComplete={() => handlePhaseComplete('mahakaya')}
               onGameComplete={() => { }}
               profileName={profileName}
@@ -905,10 +906,16 @@ const VakratundaGroveContent = ({
               </div>
             )} */}
 
-            {/* GANESHA CELEBRATION */}
-            {showGaneshaCelebration && (
-              <div className="vakratunda-ganesha-celebration-enter">
-                <img src={ganeshaHeadphones} alt="Ganesha" className="vakratunda-ganesha-slides-in" />
+            {showTapSparkles && (
+              <div className="vakratunda-tap-sparkles">
+                <SparkleAnimation
+                  type="magic"
+                  count={14}
+                  color="#FFD54F"
+                  size={9}
+                  duration={850}
+                  area="full"
+                />
               </div>
             )}
 
@@ -1042,7 +1049,6 @@ const VakratundaGroveContent = ({
                   duration={3500}
                   onComplete={() => {
                     setShowSparkle(null);
-                    setShowFinalGanesha(false);
 
                     // Save completion data
                     const profileId = localStorage.getItem('activeProfileId');
@@ -1068,13 +1074,6 @@ const VakratundaGroveContent = ({
                   }}
                 />
               </>
-            )}
-
-            {/* FINAL CELEBRATION */}
-            {showFinalGanesha && !showSceneCompletion && (
-              <div className="vakratunda-final-ganesha-appears">
-                <img src={ganeshaHeadphones} alt="Ganesha" className="vakratunda-ganesha-final-enters" />
-              </div>
             )}
             </>
             )}
@@ -1126,8 +1125,6 @@ const VakratundaGroveContent = ({
                 setShowSceneCompletion(false);
                 setRevealConfig(null);
                 setShowSparkle(null);
-                setShowFinalGanesha(false);
-                setShowGaneshaCelebration(false);
                 setShowPowerOverlay(false);
                 setOpeningButtonVisible(true); // Show button straight away (audio is off = no VO to wait for)
                 resetScene();
