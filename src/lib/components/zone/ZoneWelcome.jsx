@@ -874,9 +874,15 @@ const getPermanentCompletedCount = () => {
 
   // VO effect — welcome + completion VO, once-per-profile
   useEffect(() => {
-    if (!zoneData?.id || isLoading) return;
+    if (!zoneData?.id || isLoading || !sceneProgress) return;
 
     const timer = setTimeout(() => {
+      // Calculate zone completion inside effect to avoid temporal dead zone
+      const zoneCompletedCount = (zoneData?.scenes || []).filter(
+        (scene) => getSceneStatus(scene).status === 'completed'
+      ).length;
+      const isZoneComplete = zoneCompletedCount >= (zoneData?.scenes?.length || 0) && (zoneData?.scenes?.length || 0) > 0;
+
       if (isZoneComplete && !hasHeardZoneVo('complete')) {
         speakZoneLine(`You finished ${zoneData.name.replace('\n', ' ')}! I'm so proud of you.`);
         markZoneVoHeard('complete');
@@ -895,7 +901,7 @@ const getPermanentCompletedCount = () => {
         window.speechSynthesis.cancel();
       }
     };
-  }, [zoneData?.id, isLoading, isZoneComplete]);
+  }, [zoneData?.id, isLoading, sceneProgress]);
 
   if (isLoading || !zoneData) {
     return (
