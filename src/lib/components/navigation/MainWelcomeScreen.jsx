@@ -135,7 +135,7 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
 
       {/* BACKGROUND IMAGE */}
       <img
-        src="/images/welcome-background.png"
+        src="/images/welcome-background.svg"
         alt=""
         className="welcome-bg-image"
         aria-hidden="true"
