@@ -89,10 +89,10 @@ export default defineConfig({
               cacheableResponse: { statuses: [0, 200] }
             }
           },
-          // Google Fonts stylesheet: stale-while-revalidate
+          // Google Fonts stylesheet: cache-first to avoid offline revalidate fetch errors
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: 'StaleWhileRevalidate',
+            handler: 'CacheFirst',
             options: {
               cacheName: 'google-fonts-stylesheets',
               expiration: { maxEntries: 5, maxAgeSeconds: 365 * 24 * 60 * 60 }

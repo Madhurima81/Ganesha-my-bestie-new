@@ -132,15 +132,6 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
 
   return (
     <div className="main-welcome-container">
-
-      {/* BACKGROUND IMAGE */}
-      <img
-        src="/images/welcome-background.svg"
-        alt=""
-        className="welcome-bg-image"
-        aria-hidden="true"
-      />
-
       {/* TWINKLING STARS */}
       <div className="twinkle-stars" aria-hidden="true">
         <span/><span/><span/><span/><span/><span/>

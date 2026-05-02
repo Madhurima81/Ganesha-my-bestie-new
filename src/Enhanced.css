@@ -11,7 +11,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: url('/images/welcome-background.png') no-repeat center center;
+  background: url('/images/welcome-background.svg') no-repeat center center;
   background-size: cover;
   display: flex;
   flex-direction: column;

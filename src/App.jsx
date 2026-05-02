@@ -297,7 +297,7 @@ const initializeApp = async () => {
 
     // Step 2.5: Preload critical images (50%)
     const criticalImages = [
-      '/images/welcome-background.png',
+      '/images/welcome-background.svg',
       '/images/welcome-board.png',
       '/images/welcome-ganesha.png',
       '/images/welcome-mooshika.png'
