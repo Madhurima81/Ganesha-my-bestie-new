@@ -392,6 +392,7 @@ const PondSceneContent = ({
   const lastAnnouncedPromptRef = useRef(null);
   const resumePromptPlayedRef = useRef(false);
   const idleVoGateRef = useRef(false);
+  const wasAudioOnRef = useRef(isAudioOn);
   const [hintResetKey, setHintResetKey] = useState(0);
   const [idleHintLevel, setIdleHintLevel] = useState(0);
   const lastIdleInteractionAtRef = useRef(Date.now());
@@ -462,6 +463,29 @@ const PondSceneContent = ({
     };
   }, [clearAllTimeouts, stopSpokenVoice]);
 
+  useEffect(() => {
+    const wasAudioOn = wasAudioOnRef.current;
+    wasAudioOnRef.current = isAudioOn;
+
+    if (!wasAudioOn && isAudioOn) {
+      idleVoGateRef.current = false;
+      lastAnnouncedPromptRef.current = null;
+      resumePromptPlayedRef.current = false;
+
+      if (revealConfig?.symbolId) {
+        const voMap = { lotus: 'lotusBloomPower', trunk: 'waterPathPower' };
+        const voKey = voMap[revealConfig.symbolId];
+        if (voKey) {
+          speakPondPrompt(voKey);
+          return;
+        }
+      }
+
+      const replayKey = getPromptKeyForPhase();
+      if (replayKey) speakPondPrompt(replayKey);
+    }
+  }, [isAudioOn, revealConfig, getPromptKeyForPhase, speakPondPrompt]);
+
   // Reset hook:
   // 1) clear current hint visuals
   // 2) reset idle hint level to 0
@@ -473,6 +497,7 @@ const PondSceneContent = ({
   }, [hintResetKey]);
 
   useEffect(() => {
+    if (!isAudioOn) return;
     const promptKey = getPromptKeyForPhase();
     if (!promptKey || revealConfig || showSceneCompletion || isSymbolPopupOpen) return;
     if (promptKey === 'trunkRound' && !dropPosition) return;
@@ -485,6 +510,7 @@ const PondSceneContent = ({
     }, promptKey === 'complete' ? 250 : promptKey === 'trunkRound' ? 850 : 500);
     return () => clearTimeout(timer);
   }, [
+    isAudioOn,
     sceneState?.phase,
     sceneState?.welcomeShown,
     sceneState?.completed,
@@ -576,6 +602,7 @@ const PondSceneContent = ({
   // ==================== RELOAD / RESUME LOGIC ====================
   // Runs once on mount — same pattern as Modak (empty deps, no isReload check).
   useEffect(() => {
+    if (!isAudioOn) return;
     if (!sceneState?.welcomeShown) return;
 
     // 1. RESET PARTIAL LOTUS BLOOMING
@@ -703,6 +730,7 @@ const PondSceneContent = ({
     }, promptKey === 'trunkRound' ? 850 : 500);
     return () => clearTimeout(timer);
   }, [
+    isAudioOn,
     sceneState?.welcomeShown,
     showSceneCompletion,
     revealConfig,
@@ -854,6 +882,7 @@ const PondSceneContent = ({
   // Play power VO when the reveal card appears (Scene 1 parity).
   useEffect(() => {
     if (!revealConfig) return;
+    if (!isAudioOn) return;
     const voMap = {
       lotus: 'lotusBloomPower',
       trunk: 'waterPathPower'
@@ -862,7 +891,7 @@ const PondSceneContent = ({
     if (!voKey) return;
     const id = setTimeout(() => speakPondPrompt(voKey), 400);
     return () => clearTimeout(id);
-  }, [revealConfig, speakPondPrompt]);
+  }, [revealConfig, isAudioOn, speakPondPrompt]);
 
   const getSidebarTarget = useCallback((symbolId) => {
     const el = document.getElementById(`sidebar-${symbolId}`);

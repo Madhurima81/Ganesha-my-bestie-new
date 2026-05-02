@@ -480,6 +480,7 @@ const SacredAssemblyContent = ({
   const openingModalVoPlayedRef = useRef(false);
   const firstSymbolMilestoneVoPlayedRef = useRef(false);
   const midProgressMilestoneVoPlayedRef = useRef(false);
+  const wasAudioOnRef = useRef(isAudioOn);
 
   const CARD_VO_MAP = useMemo(() => ({
     eyes: 'cardEyes',
@@ -584,6 +585,14 @@ const SacredAssemblyContent = ({
     showSceneCompletion,
     showSparkle
   ]);
+
+  useEffect(() => {
+    const wasAudioOn = wasAudioOnRef.current;
+    wasAudioOnRef.current = isAudioOn;
+    if (!wasAudioOn && isAudioOn) {
+      replayVoiceForCurrentPhase();
+    }
+  }, [isAudioOn, replayVoiceForCurrentPhase]);
 
   useAppVisibility(
     () => {
@@ -806,12 +815,13 @@ const SacredAssemblyContent = ({
   useEffect(() => {
     if (sceneState?.welcomeShown) return;           // modal not showing
     if (openingModalVoPlayedRef.current) return;    // already played this session
+    if (!isAudioOn) return;
     const t = setTimeout(() => {
-      openingModalVoPlayedRef.current = true;
-      playSceneVoice('openingModalPrompt', null, { replayOnReturn: false });
+      const started = playSceneVoice('openingModalPrompt', null, { replayOnReturn: false });
+      if (started) openingModalVoPlayedRef.current = true;
     }, 700); // wait for modal entrance animation to finish
     return () => clearTimeout(t);
-  }, [sceneState?.welcomeShown]);
+  }, [sceneState?.welcomeShown, isAudioOn, playSceneVoice]);
 
   const playSound = (type) => {
     // Simple sound effects (you can replace URLs later)

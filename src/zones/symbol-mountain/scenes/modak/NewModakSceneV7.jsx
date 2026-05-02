@@ -432,6 +432,7 @@ const NewModakSceneMVPContent = ({
 
   const { isAudioOn, toggleAudio } = useAudioPreference();
   const { speak, stop: stopSpokenVoice } = useGaneshaVoice();
+  const wasAudioOnRef = useRef(isAudioOn);
 
   const stopVoice = useCallback(() => {
     stopRecordedVoice();
@@ -461,6 +462,34 @@ const NewModakSceneMVPContent = ({
       onError: () => onEnded?.(),
     });
   }, [isAudioOn, speak, stopRecordedVoice]);
+
+  useEffect(() => {
+    const wasAudioOn = wasAudioOnRef.current;
+    wasAudioOnRef.current = isAudioOn;
+
+    if (!wasAudioOn && isAudioOn) {
+      if (sceneState.phase === PHASES.MOOSHIKA_SEARCH && !sceneState.welcomeShown) {
+        playVoice('welcome');
+        return;
+      }
+
+      if (revealConfig?.symbolId) {
+        const voMap = {
+          mooshika: 'focusPower',
+          modak: 'sharingPower',
+          belly: 'gratitudePower'
+        };
+        const voKey = voMap[revealConfig.symbolId];
+        if (voKey) {
+          playVoice(voKey, null, { replayOnReturn: true });
+          return;
+        }
+      }
+
+      const phase = getCurrentGamePhase();
+      if (phase) replayInitialInstruction(phase);
+    }
+  }, [isAudioOn, sceneState.phase, sceneState.welcomeShown, revealConfig, playVoice]);
 
   // ── Idle hint (glow ring + gesture) ─────────────────────────────────────
   // Wire AudioToggle → VO volume: mutes narration only, SFX + game flow unaffected
@@ -1075,6 +1104,7 @@ const NewModakSceneMVPContent = ({
   useEffect(() => {
     // Play welcome voice when opening modal is shown (phase is MOOSHIKA_SEARCH and not yet started)
     if (sceneState.phase === PHASES.MOOSHIKA_SEARCH && !sceneState.welcomeShown) {
+      if (!isAudioOn) return;
       // Small delay before starting welcome VO
       const timer = setTimeout(() => {
         // Button shows immediately from start
@@ -1084,7 +1114,7 @@ const NewModakSceneMVPContent = ({
       }, 800);
       return () => clearTimeout(timer);
     }
-  }, [sceneState.phase, sceneState.welcomeShown]);
+  }, [sceneState.phase, sceneState.welcomeShown, isAudioOn]);
 
   // ========================================
   // VOICE: Play instruction after game starts
@@ -1336,6 +1366,7 @@ const NewModakSceneMVPContent = ({
   // Play affirmation VO when the flip card appears
   useEffect(() => {
     if (!revealConfig) return;
+    if (!isAudioOn) return;
     const voMap = {
       mooshika: 'focusPower',
       modak: 'sharingPower',
@@ -1346,7 +1377,7 @@ const NewModakSceneMVPContent = ({
     // replayOnReturn: true — card is still on screen when child returns, replay VO so they know what to do
     const id = setTimeout(() => playVoice(voKey, null, { replayOnReturn: true }), 400);
     return () => clearTimeout(id);
-  }, [revealConfig]);
+  }, [revealConfig, isAudioOn, playVoice]);
 
   // Compute delta from card center (viewport center) to sidebar icon center
   const getSidebarTarget = (symbolId) => {

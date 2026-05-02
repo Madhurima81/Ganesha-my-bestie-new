@@ -30,6 +30,7 @@ export default function SymbolAutoReveal({
   sidebarTargetRect,
   enableVoicePrompts = false,
   enableTapHintPrompt = true,
+  sayWithMeDelayMs = 450,
   onComplete,
 }) {
   // 'icon' → 'card' → 'flip' → 'ready' → 'fly'
@@ -85,7 +86,7 @@ export default function SymbolAutoReveal({
           style: "child",
           moment: "encouragement"
         });
-      }, 450);
+      }, sayWithMeDelayMs);
       timers.current.push(affirmationTimer);
     }
 
@@ -101,7 +102,7 @@ export default function SymbolAutoReveal({
       timers.current.push(collectHintTimer);
     }
 
-  }, [phase, speak, affirmation, symbolName, enableVoicePrompts, enableTapHintPrompt]);
+  }, [phase, speak, affirmation, symbolName, enableVoicePrompts, enableTapHintPrompt, sayWithMeDelayMs]);
 
 //What These Numbers Mean (So You Don’t Forget Later)
 
