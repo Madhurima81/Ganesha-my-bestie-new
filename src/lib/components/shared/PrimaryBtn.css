@@ -25,9 +25,9 @@
 
   /* 3D shadow + inner highlight */
   box-shadow:
-    0 8px 0 var(--btn-color-shadow, #5a3fa0),
-    0 14px 28px var(--btn-color-glow, rgba(120, 80, 200, 0.35)),
-    inset 0 3px 6px rgba(255, 255, 255, 0.35);
+    0 4px 0 var(--btn-color-shadow, #5a3fa0),
+    0 8px 18px var(--btn-color-glow, rgba(120, 80, 200, 0.22)),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3);
 
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 
@@ -37,7 +37,7 @@
 
 /* Size variants */
 .primary-btn-sm  { font-size: clamp(14px, 1.4vw, 22px); padding: 14px 44px; }
-.primary-btn-md  { font-size: clamp(17px, 2vw, 32px);   padding: clamp(14px,1.5vw,24px) clamp(36px,4vw,72px); }
+.primary-btn-md  { font-size: clamp(15px, 1.7vw, 26px);   padding: clamp(10px,1.1vw,16px) clamp(28px,3vw,56px); }
 .primary-btn-lg  { font-size: clamp(22px, 2.8vw, 48px); padding: clamp(20px,2vw,32px)  clamp(60px,7vw,130px); }
 
 .primary-btn-full { width: 100%; padding-left: 0; padding-right: 0; }
@@ -70,34 +70,34 @@
 @keyframes primaryBtnPulse {
   0%, 100% {
     box-shadow:
-      0 8px 0 var(--btn-color-shadow, #5a3fa0),
-      0 14px 28px var(--btn-color-glow, rgba(120, 80, 200, 0.35)),
-      inset 0 3px 6px rgba(255, 255, 255, 0.35);
+      0 4px 0 var(--btn-color-shadow, #5a3fa0),
+      0 8px 18px var(--btn-color-glow, rgba(120, 80, 200, 0.22)),
+      inset 0 2px 4px rgba(255, 255, 255, 0.3);
   }
   50% {
     box-shadow:
-      0 8px 0 var(--btn-color-shadow, #5a3fa0),
-      0 18px 36px var(--btn-color-glow, rgba(120, 80, 200, 0.5)),
-      inset 0 3px 6px rgba(255, 255, 255, 0.35);
+      0 4px 0 var(--btn-color-shadow, #5a3fa0),
+      0 12px 24px var(--btn-color-glow, rgba(120, 80, 200, 0.35)),
+      inset 0 2px 4px rgba(255, 255, 255, 0.3);
   }
 }
 
 .primary-btn-unified:hover:not(:disabled) {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
   animation: none;
   box-shadow:
-    0 10px 0 var(--btn-color-shadow, #5a3fa0),
-    0 20px 38px var(--btn-color-glow, rgba(120, 80, 200, 0.45)),
-    inset 0 3px 6px rgba(255, 255, 255, 0.4);
+    0 6px 0 var(--btn-color-shadow, #5a3fa0),
+    0 14px 26px var(--btn-color-glow, rgba(120, 80, 200, 0.32)),
+    inset 0 2px 4px rgba(255, 255, 255, 0.35);
 }
 
 .primary-btn-unified:active:not(:disabled) {
-  transform: translateY(5px);
+  transform: translateY(3px);
   animation: none;
   box-shadow:
-    0 3px 0 var(--btn-color-shadow, #5a3fa0),
-    0 6px 14px var(--btn-color-glow, rgba(120, 80, 200, 0.25)),
-    inset 0 5px 10px rgba(0, 0, 0, 0.2);
+    0 1px 0 var(--btn-color-shadow, #5a3fa0),
+    0 4px 10px var(--btn-color-glow, rgba(120, 80, 200, 0.2)),
+    inset 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .primary-btn-unified:disabled {

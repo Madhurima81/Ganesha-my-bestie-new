@@ -252,6 +252,34 @@ box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
   opacity: 0.94;
 }
 
+.primary-btn-unified.continue-journey-btn {
+  width: 100%;
+  padding: 14px 24px;
+  --btn-color-top: #8B6FD8;
+  --btn-color-base: #6B4FB8;
+  --btn-color-shadow: #5b3fa5;
+  --btn-color-glow: rgba(107, 79, 184, 0.25);
+  color: #FFFFFF;
+  font-family: 'Baloo 2', cursive;
+  font-size: 17px;
+  font-weight: 600;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  animation: none;
+}
+
+.primary-btn-unified.continue-journey-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  --btn-color-glow: rgba(107, 79, 184, 0.35);
+}
+
+.primary-btn-unified.continue-journey-btn:active:not(:disabled) {
+  transform: translateY(0);
+  --btn-color-glow: rgba(107, 79, 184, 0.3);
+}
+
 /* ========================================== */
 /* SECONDARY – EXPLORE (quiet stability)     */
 /* ========================================== */

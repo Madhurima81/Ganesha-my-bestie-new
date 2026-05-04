@@ -561,6 +561,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
                 onClick={handleContinue}
                 size="md"
                 fullWidth
+                className="continue-journey-btn"
               />
               <button className="secondary-btn" onClick={handleNewGame}>
                 Explore Scenes
