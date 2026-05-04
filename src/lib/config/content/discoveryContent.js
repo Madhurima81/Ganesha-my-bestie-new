@@ -93,7 +93,7 @@ export const DISCOVERY_CONTENT = {
 
       trunk: {
         title: "Trunk",
-        affirmation: "I choose how I act.",
+        affirmation: "I find my way.",
         icon: 'water-elephant'
       }
     },

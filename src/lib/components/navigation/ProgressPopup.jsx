@@ -1,12 +1,52 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './ProgressPopup.css';
 import { symbolCardContent } from '../../../zones/symbol-mountain/shared/components/symbolCardContent';
+
+const SYMBOL_AFFIRMATIONS = {
+  modak: 'I am full of joy.',
+  mooshika: 'I can focus.',
+  belly: 'I feel safe inside.',
+  lotus: 'I stay calm.',
+  trunk: 'I find my way.',
+  eye: 'I see clearly.',
+  ear: 'I listen with care.',
+  tusk: 'I finish what I start.'
+};
+
+const GRID_OPEN_VO = 'These are your Ganesha powers. Tap any one to remember.';
+
+const GRID_TAP_VO = {
+  modak: 'Modak... I am full of joy.',
+  mooshika: 'Mooshika... I can focus.',
+  belly: 'Belly... I feel safe inside.',
+  lotus: 'Lotus... I stay calm.',
+  trunk: 'Trunk... I find my way.',
+  eye: 'Eyes... I see clearly.',
+  ear: 'Ears... I listen with care.',
+  tusk: 'Tusk... I finish what I start.',
+};
+
+// Action-only VO after popup opens
+const DETAIL_VO = {
+  modak: 'Think of one small moment that made you smile today.',
+  mooshika: 'Pick one tiny thing. Look at it for 3 seconds.',
+  belly: 'Hand on belly. Breathe in... breathe out.',
+  lotus: 'Close your eyes. One slow breath in... and out.',
+  trunk: "Think of something hard today. What's another way?",
+  eye: 'Look around. Find one beautiful thing.',
+  ear: 'Close your eyes. Find the quietest sound.',
+  tusk: 'Pick one small thing you can finish today.',
+};
 
 const SYMBOL_SIDEBAR_META = Object.entries(symbolCardContent).reduce((acc, [id, data]) => {
   acc[id] = {
     name: data.label || data.title || id,
     image: data.icon || data.image,
+    affirmation: data.affirmation || SYMBOL_AFFIRMATIONS[id] || '',
     description: data.description || data.gift || '',
+    ganeshaLines: data.ganeshaLines || [],
+    invitation: data.invitation || '',
+    gift: data.gift || '',
   };
   return acc;
 }, {});
@@ -14,16 +54,111 @@ const SYMBOL_SIDEBAR_META = Object.entries(symbolCardContent).reduce((acc, [id, 
 const normalizeSymbolId = (item) => {
   const raw = (item?.id || item?.name || '').toString().toLowerCase().trim();
   if (raw === 'ears') return 'ear';
+  if (raw === 'eyes') return 'eye';
   return raw;
 };
 
 const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type }) => {
   const [selectedItem, setSelectedItem] = useState(null);
-  const displayTitle = title === 'Meanings Learned' ? 'My Meanings' : title;
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isBreathingCueActive, setIsBreathingCueActive] = useState(false);
+  const displayTitle =
+    title === 'Sacred Symbols'
+      ? 'Your Ganesha Powers'
+      : title === 'Meanings Learned'
+        ? 'My Meanings'
+        : title;
+
+  const openVoPlayedRef = useRef(false);
+  const voTimersRef = useRef([]);
+  const speechEnabledRef = useRef(true);
+
+  const clearVoTimers = () => {
+    voTimersRef.current.forEach((id) => clearTimeout(id));
+    voTimersRef.current = [];
+  };
+
+  const stopVoice = () => {
+    clearVoTimers();
+    speechEnabledRef.current = false;
+    setIsSpeaking(false);
+    setIsBreathingCueActive(false);
+    try {
+      window.speechSynthesis?.cancel();
+    } catch (e) {
+      // no-op
+    }
+  };
+
+  const speakLine = (text, onEnd) => {
+    if (!text) return;
+    if (!window?.speechSynthesis) {
+      onEnd?.();
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.9;
+    utterance.pitch = 1.0;
+    utterance.volume = 1.0;
+
+    utterance.onend = () => onEnd?.();
+    utterance.onerror = () => onEnd?.();
+
+    setIsSpeaking(true);
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const playDetailVo = (symbolId) => {
+    const actionLine = DETAIL_VO[symbolId];
+    if (!actionLine) return;
+
+    speechEnabledRef.current = true;
+    clearVoTimers();
+    setIsBreathingCueActive(false);
+
+    const starter = setTimeout(() => {
+      const isBreathLine =
+        (symbolId === 'lotus' || symbolId === 'belly') &&
+        /breath|rise and fall/i.test(actionLine);
+      setIsBreathingCueActive(isBreathLine);
+
+      speakLine(actionLine, () => {
+        setIsBreathingCueActive(false);
+        setIsSpeaking(false);
+      });
+    }, 1000);
+
+    voTimersRef.current.push(starter);
+  };
+
+  useEffect(() => {
+    if (!isOpen) {
+      stopVoice();
+      setSelectedItem(null);
+      setDetailOpen(false);
+      openVoPlayedRef.current = false;
+      speechEnabledRef.current = true;
+      return;
+    }
+
+    if (type === 'symbols' && !openVoPlayedRef.current) {
+      openVoPlayedRef.current = true;
+      speechEnabledRef.current = true;
+      const t = setTimeout(() => speakLine(GRID_OPEN_VO, () => setIsSpeaking(false)), 250);
+      voTimersRef.current.push(t);
+    }
+
+    return () => {
+      stopVoice();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, type]);
 
   if (!isOpen) return null;
 
-  // Check if an item is in the completed list
   const checkIsCompleted = (item) => {
     if (!completedItems || completedItems.length === 0) return false;
     const itemId = normalizeSymbolId(item);
@@ -37,21 +172,68 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type }) 
   };
 
   const openDetail = (item) => {
+    stopVoice();
+
     if (type === 'symbols') {
       const symbolId = normalizeSymbolId(item);
       const sidebarMeta = SYMBOL_SIDEBAR_META[symbolId];
+      const quickVo = GRID_TAP_VO[symbolId];
+      const tapStartMs = Date.now();
+
       if (sidebarMeta) {
-        setSelectedItem({
+        const detailItem = {
           ...item,
           id: symbolId,
           name: sidebarMeta.name,
           image: sidebarMeta.image,
+          affirmation: sidebarMeta.affirmation,
           description: sidebarMeta.description,
-        });
+          ganeshaLines: sidebarMeta.ganeshaLines,
+          invitation: sidebarMeta.invitation,
+          gift: sidebarMeta.gift,
+        };
+
+        setSelectedItem(detailItem);
+        setDetailOpen(false);
+        const openTimer = setTimeout(() => setDetailOpen(true), 0);
+        voTimersRef.current.push(openTimer);
+
+        // 1) Tap VO during opening transition
+        // 2) Action VO starts only after tap VO completes + modal settle
+        if (quickVo) {
+          speakLine(quickVo, () => {
+            setIsSpeaking(false);
+            const elapsed = Date.now() - tapStartMs;
+            const waitMs = Math.max(150, 900 - elapsed);
+            const voTimer = setTimeout(() => playDetailVo(symbolId), waitMs);
+            voTimersRef.current.push(voTimer);
+          });
+        } else {
+          const voTimer = setTimeout(() => playDetailVo(symbolId), 900);
+          voTimersRef.current.push(voTimer);
+        }
         return;
       }
     }
+
     setSelectedItem(item);
+    setDetailOpen(false);
+    const openTimer = setTimeout(() => setDetailOpen(true), 0);
+    voTimersRef.current.push(openTimer);
+  };
+
+  const closeDetail = () => {
+    stopVoice();
+    setDetailOpen(false);
+    setSelectedItem(null);
+  };
+
+  const handleDetailCardTap = (e) => {
+    e.stopPropagation();
+    if (isSpeaking) {
+      // Skippable on tap
+      stopVoice();
+    }
   };
 
   const getDisplayName = (name) => {
@@ -66,7 +248,7 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type }) 
   };
 
   return (
-    <div className="pp-overlay" onClick={onClose}>
+    <div className={`pp-overlay modal-backdrop ${isOpen ? 'open' : ''}`} onClick={onClose}>
       <div className={`pp-card ${selectedItem ? 'pp-card-blurred' : ''}`} onClick={(e) => e.stopPropagation()}>
         <div className="pp-header">
           <h2 className="pp-title">{displayTitle}</h2>
@@ -77,14 +259,24 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type }) 
             const symbolId = normalizeSymbolId(symbol);
             const sidebarMeta = type === 'symbols' ? SYMBOL_SIDEBAR_META[symbolId] : null;
             const displayItem = sidebarMeta
-              ? { ...symbol, id: symbolId, name: sidebarMeta.name, image: sidebarMeta.image, description: sidebarMeta.description }
+              ? {
+                  ...symbol,
+                  id: symbolId,
+                  name: sidebarMeta.name,
+                  image: sidebarMeta.image,
+                  affirmation: sidebarMeta.affirmation,
+                  description: sidebarMeta.description,
+                  ganeshaLines: sidebarMeta.ganeshaLines,
+                  invitation: sidebarMeta.invitation,
+                  gift: sidebarMeta.gift
+                }
               : symbol;
             const isUnlocked = checkIsCompleted(displayItem);
 
             return (
               <div
                 key={index}
-                className={`pp-item-card ${isUnlocked ? 'unlocked' : 'locked'}`}
+                className={`pp-item-card symbol-tile ${isUnlocked ? 'unlocked' : 'locked'}`}
                 onClick={isUnlocked ? () => openDetail(displayItem) : undefined}
               >
                 <div className="pp-image-container">
@@ -96,35 +288,59 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type }) 
                 </div>
 
                 <p className="pp-item-name">{getDisplayName(displayItem.name)}</p>
+                {type === 'symbols' && displayItem.affirmation ? (
+                  <p className="pp-item-affirmation">{displayItem.affirmation}</p>
+                ) : null}
               </div>
             );
           })}
         </div>
 
-        <button className="pp-action-btn" onClick={onClose}>Close</button>
+        <button className="pp-action-btn" onClick={onClose}>Continue</button>
       </div>
 
       {selectedItem && (
-        <div className="pp-detail-overlay" onClick={(e) => { e.stopPropagation(); setSelectedItem(null); }}>
-          <div className="pp-detail-card" onClick={(e) => e.stopPropagation()}>
-            <button className="pp-detail-close" onClick={() => setSelectedItem(null)}>×</button>
+        <div className={`pp-detail-overlay modal-backdrop ${detailOpen ? 'open' : ''}`} onClick={closeDetail}>
+          <div className={`pp-detail-card symbol-card-modal ${detailOpen ? 'open' : ''}`} onClick={handleDetailCardTap}>
+            <div className={`symbol-content ${detailOpen ? 'open' : ''}`}>
+              <div className={`pp-detail-image-wrapper ${isBreathingCueActive ? 'breathe' : ''}`}>
+                <img src={selectedItem.image} alt={getDisplayName(selectedItem.name)} className="pp-detail-image" />
+              </div>
 
-            <div className="pp-detail-image-wrapper">
-              <img src={selectedItem.image} alt={getDisplayName(selectedItem.name)} className="pp-detail-image" />
+              <h2 className="pp-detail-title">{getDisplayName(selectedItem.name)}</h2>
+
+              {type === 'symbols' && selectedItem.affirmation ? (
+                <p className="pp-detail-affirmation">"{selectedItem.affirmation}"</p>
+              ) : null}
+
+              {type === 'symbols' && selectedItem.ganeshaLines?.length ? (
+                <div className="pp-detail-ganesha-lines">
+                  {selectedItem.ganeshaLines.map((line, idx) => (
+                    <p key={`${selectedItem.id}-line-${idx}`} className="pp-detail-ganesha-line">{line}</p>
+                  ))}
+                </div>
+              ) : null}
+
+              {type === 'symbols' && selectedItem.invitation ? (
+                <div className="pp-detail-invitation">{selectedItem.invitation}</div>
+              ) : null}
+
+              <p className="pp-detail-desc">
+                {type === 'symbols'
+                  ? (selectedItem.gift || selectedItem.description || 'You have discovered this sacred item! Keep exploring to learn more.')
+                  : (selectedItem.description || 'You have discovered this sacred item! Keep exploring to learn more.')}
+              </p>
             </div>
-
-            <h2 className="pp-detail-title">{getDisplayName(selectedItem.name)}</h2>
-
-            <p className="pp-detail-desc">
-              {selectedItem.description || 'You have discovered this sacred item! Keep exploring to learn more.'}
-            </p>
 
             <div className="pp-detail-actions">
               {selectedItem.audio && (
                 <button className="pp-btn-audio" onClick={() => playAudio(selectedItem.audio)}>
-                  <span>🎵</span> Play Sound
+                  <span>??</span> Play Sound
                 </button>
               )}
+              <button className="pp-action-btn pp-action-btn-detail" onClick={(e) => { e.stopPropagation(); closeDetail(); }}>
+                Continue
+              </button>
             </div>
           </div>
         </div>
@@ -134,6 +350,3 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type }) 
 };
 
 export default ProgressPopup;
-
-
-
