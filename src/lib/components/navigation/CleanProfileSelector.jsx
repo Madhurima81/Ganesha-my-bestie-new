@@ -17,7 +17,7 @@ const CleanProfileSelector = ({
   const [showCreateProfile, setShowCreateProfile] = useState(forceCreate);
   const [newProfileName, setNewProfileName] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState('monkey');
-  const [selectedAge, setSelectedAge] = useState(null);
+  const [selectedAge, setSelectedAge] = useState(7);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
   const [showInfo, setShowInfo] = useState(false);
   const [manageModeId, setManageModeId] = useState(null); // stores the profile id being managed
@@ -168,17 +168,20 @@ const CleanProfileSelector = ({
               />
 
               <p className="pick-friend-label">How old are you?</p>
-              <div className="age-chip-row">
-                {[5,6,7,8,9,10,11,12].map(age => (
-                  <button
-                    key={age}
-                    className={`age-chip ${selectedAge === age ? 'active' : ''}`}
-                    onClick={() => setSelectedAge(age)}
-                    type="button"
-                  >
-                    {age}
-                  </button>
-                ))}
+              <div className="age-stepper">
+                <button
+                  className="age-stepper-btn"
+                  onClick={() => setSelectedAge(Math.max(1, (selectedAge || 7) - 1))}
+                  type="button"
+                  aria-label="Decrease age"
+                >−</button>
+                <div className="age-stepper-value" key={selectedAge}>{selectedAge || 7}</div>
+                <button
+                  className="age-stepper-btn"
+                  onClick={() => setSelectedAge((selectedAge || 7) + 1)}
+                  type="button"
+                  aria-label="Increase age"
+                >+</button>
               </div>
 
               <p className="pick-friend-label">Pick your Forest Friend</p>

@@ -712,11 +712,13 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 
 /* Modal Card */
 .explorer-modal {
-  width: clamp(480px, 55vw, 900px);
+  width: clamp(440px, 50vw, 780px);
   max-width: 95%;
+  max-height: 90vh;
+  overflow-y: auto;
   background: #FAF6EE;
-  border-radius: clamp(22px, 2.5vw, 40px);
-  padding: clamp(36px, 4.5vw, 72px) clamp(36px, 5vw, 80px);
+  border-radius: clamp(20px, 2vw, 32px);
+  padding: clamp(24px, 2.8vw, 48px) clamp(28px, 3.5vw, 56px);
   text-align: center;
   box-shadow: 0 18px 38px rgba(60, 40, 80, 0.10);
 
@@ -735,7 +737,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 
 /* ScreenHeader inside modal */
 .explorer-modal .screen-header {
-  margin-bottom: clamp(20px, 2.5vw, 44px);
+  margin-bottom: clamp(14px, 1.6vw, 28px);
   width: 100%;
 }
 
@@ -750,10 +752,10 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 /* "Pick your Forest Friend" label */
 .pick-friend-label {
   font-family: var(--font-title);
-  font-size: clamp(16px, 1.8vw, 34px);
+  font-size: clamp(15px, 1.6vw, 28px);
   font-weight: 700;
   color: #5c3ea6;
-  margin: 0 0 clamp(16px, 1.8vw, 32px) 0;
+  margin: 0 0 clamp(10px, 1.2vw, 20px) 0;
   width: 100%;
   text-align: center;
 }
@@ -767,7 +769,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   font-family: var(--font-body);
   font-size: clamp(15px, 1.6vw, 30px);
   outline: none;
-  margin-bottom: clamp(20px, 2.5vw, 44px);
+  margin-bottom: clamp(14px, 1.6vw, 28px);
   background: #ffffff;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
@@ -795,39 +797,55 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   width: 100%;
 }
 
-/* Age chip row */
-.age-chip-row {
+.age-stepper {
   display: flex;
-  flex-wrap: wrap;
-  gap: clamp(6px, 0.8vw, 12px);
+  align-items: center;
   justify-content: center;
-  margin-bottom: clamp(4px, 0.5vw, 8px);
+  gap: clamp(20px, 3vw, 36px);
+  margin: 8px 0 16px;
 }
 
-.age-chip {
-  min-width: clamp(44px, 5vw, 64px);
-  height: clamp(44px, 5vw, 64px);
+.age-stepper-btn {
+  width: clamp(56px, 7vw, 80px);
+  height: clamp(56px, 7vw, 80px);
   border-radius: 50%;
-  border: 2.5px solid #c4b5f4;
-  background: #fff;
-  color: #6d4fc2;
-  font-family: var(--font-title);
-  font-size: clamp(15px, 1.6vw, 22px);
-  font-weight: 700;
+  border: 3px solid #8B5CF6;
+  background: #FFFFFF;
+  color: #8B5CF6;
+  font-family: 'Baloo 2', system-ui, sans-serif;
+  font-size: clamp(32px, 4vw, 44px);
+  font-weight: 800;
+  line-height: 1;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.age-chip:hover {
-  background: #ede9fb;
-  border-color: #7c4dff;
+.age-stepper-btn:active {
+  transform: scale(0.92);
+  background: #F3EEFF;
+  box-shadow: 0 2px 6px rgba(139, 92, 246, 0.3);
 }
 
-.age-chip.active {
-  background: #7c4dff;
-  border-color: #7c4dff;
-  color: #fff;
-  transform: scale(1.1);
+.age-stepper-value {
+  font-family: 'Baloo 2', system-ui, sans-serif;
+  font-size: clamp(48px, 6vw, 72px);
+  font-weight: 800;
+  color: #5C3EA6;
+  min-width: clamp(70px, 8vw, 100px);
+  text-align: center;
+  line-height: 1;
+  animation: ageBump 0.3s ease;
+}
+
+@keyframes ageBump {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
 }
 
 /* Friend Grid — 4 columns */
