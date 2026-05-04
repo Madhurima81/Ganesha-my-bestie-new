@@ -2,6 +2,7 @@
 /* Path: lib/components/zone/ZoneWelcome.css */
 
 /* Fonts: Baloo 2 for headings, Nunito for body */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;700;800&display=swap');
 
 .zone-welcome-container {
   position: fixed;
@@ -193,7 +194,7 @@
 .loading-spinner {
   font-size: 24px;
   text-align: center;
-  font-family: 'Baloo 2', system-ui, sans-serif;
+  font-family: 'Baloo 2', cursive;
   animation: pulse 2s ease-in-out infinite;
 }
 
@@ -245,7 +246,7 @@
 }
 
 .zone-name-centered {
-  font-family: 'Baloo 2', system-ui, sans-serif;
+  font-family: 'Baloo 2', cursive;
   font-size: 42px;
   font-weight: 800;
   color: #3E2723;
@@ -633,7 +634,7 @@
 }
 
 .scene-name {
-  font-family: 'Baloo 2', system-ui, sans-serif;
+  font-family: 'Baloo 2', cursive;
   font-size: 22px;
   font-weight: 800;
   color: #3E2723;
@@ -1232,7 +1233,7 @@ button[style*="position: fixed"][style*="background: purple"] {
 }
 
 .zone-instruction-text {
-  font-family: 'Baloo 2', system-ui, sans-serif;
+  font-family: 'Baloo 2', cursive;
   font-size: 22px;
   font-weight: 800;
   text-align: center;
@@ -1630,7 +1631,7 @@ button[style*="position: fixed"][style*="background: purple"] {
 }
 
 .mastered-text {
-  font-family: 'Baloo 2', system-ui, sans-serif;
+  font-family: 'Baloo 2', cursive;
   font-weight: 700;
   font-size: clamp(13px, 1.1vw, 16px);
   color: #C8860D;
@@ -1677,7 +1678,7 @@ button[style*="position: fixed"][style*="background: purple"] {
 }
 
 .zone-complete-cta-home-btn {
-  font-family: 'Baloo 2', system-ui, sans-serif;
+  font-family: 'Baloo 2', cursive;
   font-weight: 700;
   font-size: clamp(13px, 1.05vw, 16px);
   color: #fff;
@@ -1713,4 +1714,3 @@ button[style*="position: fixed"][style*="background: purple"] {
   0%, 100% { opacity: 0.6; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.2); }
 }
-
