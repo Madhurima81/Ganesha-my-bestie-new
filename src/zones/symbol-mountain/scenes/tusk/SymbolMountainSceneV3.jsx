@@ -162,11 +162,14 @@ const instrumentPositionsByType = Object.values(instrumentPositions).reduce((acc
   return acc;
 }, {});
 
+const isTablet = typeof window !== 'undefined' && window.innerWidth <= 1024;
+const s = isTablet ? 0.7 : 1;
+
 const instrumentSizesByType = {
-  tabla: { eyes: { discovered: 290, glow: 150, hidden: 120 }, ears: 290, pattern: 102 },
-  dholak: { eyes: { discovered: 290, glow: 150, hidden: 120 }, ears: 290, pattern: 102 },
-  harmonium: { eyes: { discovered: 350, glow: 150, hidden: 120 }, ears: 390, pattern: 102 },
-  tanpura: { eyes: { discovered: 290, glow: 170, hidden: 135 }, ears: 310, pattern: 122 }
+  tabla: { eyes: { discovered: 290*s, glow: 150*s, hidden: 120*s }, ears: 290*s, pattern: 102*s },
+  dholak: { eyes: { discovered: 290*s, glow: 150*s, hidden: 120*s }, ears: 290*s, pattern: 102*s },
+  harmonium: { eyes: { discovered: 350*s, glow: 150*s, hidden: 120*s }, ears: 390*s, pattern: 102*s },
+  tanpura: { eyes: { discovered: 290*s, glow: 170*s, hidden: 135*s }, ears: 310*s, pattern: 122*s }
 };
 
 // Musical note data
