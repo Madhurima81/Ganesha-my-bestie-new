@@ -75,8 +75,8 @@
 /* ===================================== */
 .loading-ganesha-container {
   position: relative;
-  width: 600px;
-  height: 600px;
+  width: clamp(220px, 35vw, 600px);
+  height: clamp(220px, 35vw, 600px);
   margin-bottom: 8px;
   z-index: 2;
   display: flex;
@@ -165,9 +165,9 @@
 }
 
 .loading-title {
-  font-family: 'Baloo 2', cursive, sans-serif;
+  font-family: 'Baloo 2', system-ui, sans-serif;
   font-weight: 700;
-  font-size: 90px !important;
+  font-size: clamp(36px, 6vw, 90px) !important;
   color: #5c3ea6;
   letter-spacing: 0.5px;
   margin-bottom: 0;
@@ -215,7 +215,7 @@
 .loading-subtitle {
   font-family: 'Nunito', sans-serif;
   font-weight: 500;
-  font-size: 40px;
+  font-size: clamp(18px, 2.5vw, 40px);
   color: #6b4fb3;
   margin-top: 18px;
   letter-spacing: 0.5px;
@@ -552,15 +552,6 @@
   .loading-title { font-size: 32px; }
   .loading-subtitle { font-size: 18px; }
   .loading-progress-container { width: 280px; }
-}
-
-/* Tablets */
-@media (min-width: 768px) and (max-width: 1366px) {
-  .loading-ganesha-container { width: 600px; height: 600px; }
-  .loading-title { font-size: 90px !important; }
-  .loading-subtitle { font-size: 40px; }
-  .loading-progress-container { width: 700px; height: 22px; }
-  .bar-sparkles { width: 700px; }
 }
 
 /* Accessibility */
