@@ -207,8 +207,8 @@
 .zone.zone-state-locked {
   opacity: 0.7;
   filter: grayscale(20%);
-  pointer-events: none;
-  cursor: default;
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 /* ── UNLOCKING STATE ──────────────────────────────
@@ -1046,6 +1046,19 @@
 @keyframes firstTimeBreathing {
   0%, 100% { transform: scale(1);    filter: brightness(1); }
   50%      { transform: scale(1.04); filter: brightness(1.08); }
+}
+
+/* Gentle feedback on locked/coming-soon taps */
+.zone.zone-tap-shake {
+  animation: mapZoneGentleShake 0.34s ease-in-out;
+}
+
+@keyframes mapZoneGentleShake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  50% { transform: translateX(2px); }
+  75% { transform: translateX(-1px); }
+  100% { transform: translateX(0); }
 }
 
 .first-time-hint {

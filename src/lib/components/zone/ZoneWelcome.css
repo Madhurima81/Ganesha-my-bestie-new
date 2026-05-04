@@ -546,7 +546,7 @@
 }
 
 .scene-emoji {
-  font-size: clamp(72px, 7.6vw, 80px);
+  font-size: clamp(48px, 5.5vw, 80px);
   margin: 0;
   transition: transform 0.3s ease;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
@@ -562,8 +562,8 @@
 
 /* Scene Icon Image Styles */
 .scene-icon-img {
-  width: 80px;
-  height: 80px;
+  width: clamp(64px, 8vw, 110px);
+  height: clamp(64px, 8vw, 110px);
   object-fit: contain;
   margin: 0;
   transition: transform 0.3s ease;
@@ -634,7 +634,7 @@
 
 .scene-name {
   font-family: 'Baloo 2', system-ui, sans-serif;
-  font-size: 22px;
+  font-size: clamp(16px, 1.7vw, 22px);
   font-weight: 800;
   color: #3E2723;
   margin: 0;
@@ -689,11 +689,11 @@
 /* Zone colored button */
 .zone-btn {
   margin-top: clamp(10px, 1vw, 16px);
-  padding: clamp(10px, 1vw, 16px) clamp(16px, 1.8vw, 32px);
+  padding: clamp(10px, 1.2vw, 16px) clamp(12px, 1.4vw, 20px);
   border-radius: 40px;
   border: none;
   font-weight: 700;
-  font-size: clamp(18px, 1.7vw, 24px); /* Start button size */
+  font-size: clamp(13px, 1.4vw, 18px);
   color: white;
   cursor: pointer;
 
@@ -872,227 +872,6 @@
 /* ZONE-SPECIFIC CARD SIZING (5-card zones)   */
 /* ========================================== */
 /* 5-card zones reuse the same base card sizing */
-
-/* RESPONSIVE DESIGN                          */
-/* ========================================== */
-
-/* Mobile Portrait */
-@media (max-width: 768px) {
-  .zone-name-centered {
-    font-size: 32px;
-  }
-
-  .zone-title-centered {
-    top: 40px;
-  }
-
-  .zone-scenes-container {
-    width: 95%;
-    margin-top: 16vh;
-  }
-
-  .cards-wrapper {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 16px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 10px 5px;
-    height: auto;
-  }
-
-  .zone-1,
-  .zone-2,
-  .zone-3,
-  .zone-4,
-  .zone-5 {
-    top: auto;
-    bottom: auto;
-    left: auto;
-    right: auto;
-    margin: 0;
-  }
-
-  .zone-scene-card {
-    position: relative;
-    width: 200px;
-    min-height: 250px;
-    padding: 6px;
-  }
-
-  .icon-circle {
-    width: auto;
-    height: auto;
-  }
-
-  .scene-emoji {
-    font-size: 56px;
-  }
-
-  .scene-icon-img {
-    width: 76px;
-    height: 76px;
-  }
-
-  .scene-name {
-    font-size: 19px;
-  }
-
-  .zone-btn {
-    font-size: 15px;
-    padding: 12px 14px;
-  }
-
-  .action-button-split.zone-btn {
-    font-size: 13px;
-    padding: 12px;
-  }
-
-  .action-button-split.zone-btn.replay {
-    width: 60px;
-    font-size: 12px;
-  }
-
-  .stats-bottom-bar {
-    bottom: 30px;
-    gap: 10px;
-  }
-
-  .stat-card {
-    padding: 8px 14px;
-  }
-
-  .stat-card-icon {
-    font-size: 20px;
-  }
-
-  .stat-card-text {
-    font-size: 13px;
-  }
-}
-
-/* Extra Small Mobile */
-@media (max-width: 480px) {
-  .zone-name-centered {
-    font-size: 28px;
-  }
-
-  .zone-scenes-container {
-    margin-top: 14vh;
-  }
-
-  .zone-scene-card {
-    width: 160px;
-    min-height: 220px;
-    padding: 16px 12px;
-    position: relative;
-  }
-
-  .icon-circle {
-    width: auto;
-    height: auto;
-  }
-
-  .scene-emoji {
-    font-size: 52px;
-  }
-
-  .scene-icon-img {
-    width: 72px;
-    height: 72px;
-  }
-
-  .scene-name {
-    font-size: 17px;
-  }
-
-  .zone-btn {
-    font-size: 13px;
-    padding: 10px 12px;
-  }
-
-  .stat-card {
-    padding: 6px 12px;
-  }
-
-  .stat-card-text {
-    font-size: 12px;
-  }
-}
-
-/* Tablets */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .zone-scene-card {
-    width: 260px;
-    min-height: 300px;
-  }
-
-  .icon-circle {
-    width: auto;
-    height: auto;
-  }
-
-  .scene-emoji {
-    font-size: 64px;
-  }
-
-  .scene-icon-img {
-    width: 80px;
-    height: 80px;
-  }
-
-.scene-name {
-  font-size: 22px;
-  }
-}
-
-/* Landscape Mode */
-@media (max-height: 600px) and (orientation: landscape) {
-  .zone-title-centered {
-    top: 30px;
-  }
-
-  .zone-name-centered {
-    font-size: 28px;
-  }
-
-  .zone-scenes-container {
-    margin-top: 12vh;
-  }
-
-  .zone-scene-card {
-    width: 180px;
-    min-height: 220px;
-    padding: 16px 14px;
-  }
-
-  .icon-circle {
-    width: auto;
-    height: auto;
-  }
-
-  .scene-emoji {
-    font-size: 52px;
-  }
-
-  .scene-icon-img {
-    width: 68px;
-    height: 68px;
-  }
-
-  .scene-name {
-    font-size: 17px;
-  }
-
-  .zone-btn {
-    font-size: 13px;
-    padding: 10px 12px;
-  }
-
-  .stats-bottom-bar {
-    bottom: 20px;
-  }
-}
 
 /* Debug buttons - hide in production */
 button[style*="position: fixed"][style*="background: orange"],

@@ -34,7 +34,7 @@
   position: relative;
   width: 95%;
   max-width: 1700px;
-  height: 80vh;
+  max-height: 90vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -75,19 +75,21 @@
   position: relative;
   flex: 0 0 50%;
   max-width: 700px;
-  min-height: 600px;
+  min-height: auto;
+  max-height: 85vh;
   background: linear-gradient(180deg, #FFFDF4 0%, #FFF4D8 100%);
   box-shadow:
     0 20px 60px rgba(0,0,0,0.18),
     0 0 0 6px rgba(255,255,255,0.35);
   border-radius: 36px;
-  padding: 70px 60px;
+  padding: 50px 50px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   animation: cardEntry 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
+  overflow-y: auto;
 }
 
 /* Speech pointer shown only when character exists */
@@ -104,21 +106,21 @@
 }
 
 .game-modal-title {
-  font-family: 'Baloo 2', cursive;
-  font-size: 60px !important;
+  font-family: 'Baloo 2', system-ui, sans-serif;
+  font-size: clamp(32px, 4vw, 60px) !important;
   font-weight: 800;
   color: var(--modal-text-primary);
-  margin-bottom: 30px;
+  margin-bottom: 24px;
   line-height: 1.1;
   width: 100%;
 }
 
 .game-modal-subtitle {
   font-family: 'Nunito', sans-serif;
-  font-size: 36px !important;
+  font-size: clamp(18px, 2.2vw, 36px) !important;
   color: var(--modal-text-secondary);
   line-height: 1.4;
-  margin-bottom: 30px !important;
+  margin-bottom: 24px !important;
   max-width: 90%;
 }
 
@@ -202,7 +204,7 @@
 
 
 .game-modal-icon-label {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', system-ui, sans-serif;
   font-size: 20px;
   font-weight: 700;
   color: var(--modal-text-primary);
@@ -212,13 +214,13 @@
 
 /* --- Button --- */
 .game-modal-button {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', system-ui, sans-serif;
   background: var(--modal-btn-bg);
   color: var(--modal-btn-text);
   border: 2px solid var(--modal-btn-border, transparent);
-  min-height: 80px;
-  padding: 24px 80px;
-  font-size: 34px;
+  min-height: 64px;
+  padding: clamp(14px, 2vw, 24px) clamp(40px, 5vw, 80px);
+  font-size: clamp(18px, 2.2vw, 34px);
   font-weight: 800;
   border-radius: 90px;
   cursor: pointer;
@@ -226,7 +228,7 @@
   box-shadow: 0 10px 28px var(--modal-btn-shadow);
   text-transform: capitalize;
   white-space: nowrap;
-  margin-top: 20px;
+  margin-top: 16px;
 }
 
 .game-modal-button.cta-idle-prompt {
@@ -454,21 +456,46 @@
 
 /* iPAD & DESKTOP */
 @media (min-width: 768px) and (max-width: 1024px) {
+  .game-modal-content {
+    max-height: 88vh;
+    padding: 0 30px;
+    gap: 16px;
+  }
+
   .game-modal-card {
-    padding: 50px 40px;
+    padding: 36px 32px;
+    max-height: 80vh;
+  }
+
+  .game-modal-character img,
+  .game-modal-character .game-modal-ganesha {
+    max-width: 380px;
   }
 
   .game-modal-title {
-    font-size: 44px !important;
+    font-size: 36px !important;
+    margin-bottom: 16px;
   }
 
   .game-modal-subtitle {
-    font-size: 24px !important;
+    font-size: 20px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .game-modal-icons {
+    gap: 14px;
+    margin: 12px 0 20px;
   }
 
   .game-modal-icon-item img,
   .game-modal-icon-circle {
-    width: 125px;
-    height: 125px;
+    width: 100px !important;
+    height: 100px !important;
+  }
+
+  .game-modal-button {
+    font-size: 22px;
+    min-height: 56px;
+    padding: 14px 50px;
   }
 }

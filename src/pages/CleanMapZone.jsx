@@ -178,6 +178,61 @@ const playUnlockChime = (intensity = 'normal') => {
   }
 };
 
+const playZoneClickSfx = (zoneState = 'active', muted = false) => {
+  try {
+    if (typeof window === 'undefined') return;
+    if (muted) return;
+    const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextCtor) return;
+
+    const audioCtx = new AudioContextCtor();
+    const now = audioCtx.currentTime;
+    const outputGain = audioCtx.createGain();
+    outputGain.gain.setValueAtTime(0.0001, now);
+    outputGain.connect(audioCtx.destination);
+
+    if (zoneState === 'locked' || zoneState === 'coming-soon') {
+      // Locked/coming-soon: gentle low thud (no punitive buzzer)
+      const osc = audioCtx.createOscillator();
+      const oscGain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(180, now);
+      oscGain.gain.setValueAtTime(0.0001, now);
+      oscGain.gain.linearRampToValueAtTime(0.025, now + 0.02);
+      oscGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+      osc.connect(oscGain);
+      oscGain.connect(outputGain);
+      osc.start(now);
+      osc.stop(now + 0.2);
+    } else if (zoneState === 'active' || zoneState === 'in-progress' || zoneState === 'completed') {
+      // Unlocked/completed: soft invitation whoosh/chime
+      const notes = [
+        { freq: 392, start: 0.00, dur: 0.12, gain: 0.022 },
+        { freq: 523.25, start: 0.07, dur: 0.13, gain: 0.02 },
+      ];
+      notes.forEach((note) => {
+        const osc = audioCtx.createOscillator();
+        const oscGain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(note.freq, now + note.start);
+        oscGain.gain.setValueAtTime(0.0001, now + note.start);
+        oscGain.gain.linearRampToValueAtTime(note.gain, now + note.start + 0.02);
+        oscGain.gain.exponentialRampToValueAtTime(0.0001, now + note.start + note.dur);
+        osc.connect(oscGain);
+        oscGain.connect(outputGain);
+        osc.start(now + note.start);
+        osc.stop(now + note.start + note.dur + 0.02);
+      });
+    }
+
+    setTimeout(() => {
+      audioCtx.close().catch(() => {});
+    }, 320);
+  } catch (error) {
+    // SFX best-effort only
+  }
+};
+
 // Mushika pop position — where Mushika appears when each zone is tapped.
 // Values are CSS fixed-position coordinates (% of viewport).
 const ZONE_MUSHIKA_POS = {
@@ -426,10 +481,12 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   const [mushikaPop, setMushikaPop] = useState(null); // { zone, state } | null
   const [isMuted, setIsMuted] = useState(false);
   const [isGaneshaWalking, setIsGaneshaWalking] = useState(false);
+  const [shakingZoneId, setShakingZoneId] = useState(null);
   const unlockTimersRef = useRef({});
   const unlockStartTimersRef = useRef({});
   const voiceTimersRef = useRef([]);
   const mushikaTimerRef = useRef(null);
+  const shakeTimerRef = useRef(null);
   const ambientRef = useRef(null);
   const fadingRef = useRef(null);
   const prevZoneStatesRef = useRef(null);
@@ -440,10 +497,24 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   const walkTimerRef = useRef(null);
 
   const speakMapVoEvents = (events = []) => {
-    if (!Array.isArray(events) || events.length === 0) return;
-    if (typeof window === 'undefined' || isMuted) return;
-    if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return;
+    if (!Array.isArray(events) || events.length === 0) {
+      console.log('[VO] No events to speak');
+      return;
+    }
+    if (typeof window === 'undefined') {
+      console.log('[VO] Window undefined');
+      return;
+    }
+    if (isMuted) {
+      console.log('[VO] Muted, skipping VO');
+      return;
+    }
+    if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') {
+      console.log('[VO] Speech synthesis not supported');
+      return;
+    }
 
+    console.log('[VO] Speaking events:', events);
     // Clear any queued lines from previous transition bursts.
     voiceTimersRef.current.forEach(clearTimeout);
     voiceTimersRef.current = [];
@@ -453,13 +524,14 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       if (!text) return;
       const timerId = setTimeout(() => {
         try {
+          console.log(`[VO] Speaking (delay ${delay}ms): "${text}"`);
           const utterance = new window.SpeechSynthesisUtterance(text);
           utterance.rate = 1.02;
           utterance.pitch = 1;
           utterance.volume = 0.55;
           window.speechSynthesis.speak(utterance);
-        } catch {
-          // best effort only
+        } catch (e) {
+          console.error('[VO] Error speaking:', e);
         }
       }, delay);
       voiceTimersRef.current.push(timerId);
@@ -503,6 +575,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         window.speechSynthesis.cancel();
       }
       if (mushikaTimerRef.current) clearTimeout(mushikaTimerRef.current);
+      if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
     };
   }, []);
 
@@ -511,7 +584,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     const audio = ambientRef.current;
     if (!audio) return;
 
-    const TARGET_VOL = 0.35;
+    const TARGET_VOL = 0.20;
 
     const fadeIn = () => {
       clearInterval(fadingRef.current);
@@ -566,9 +639,9 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       // fade back in
       clearInterval(fadingRef.current);
       fadingRef.current = setInterval(() => {
-        const next = Math.min(audio.volume + 0.025, 0.35);
+        const next = Math.min(audio.volume + 0.015, 0.20);
         audio.volume = next;
-        if (next >= 0.35) clearInterval(fadingRef.current);
+        if (next >= 0.20) clearInterval(fadingRef.current);
       }, 80);
       setIsMuted(false);
     } else {
@@ -601,10 +674,12 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
           ([zoneId, p]) => zoneId === ZONE_IDS.SYMBOL || (p?.completedScenes || 0) === 0
         );
 
+      console.log('[Map] First load detected. Brand new journey:', isBrandNewJourney);
       isFirstTimeLoadRef.current = isBrandNewJourney;
       setIsFirstTimeLoad(isBrandNewJourney);
 
       if (isBrandNewJourney && !hasSeenZoneUnlockVo(ZONE_IDS.SYMBOL)) {
+        console.log('[Map] Triggering first-time VO');
         speakMapVoEvents([{ text: MAP_ZONE_UNLOCK_VO[ZONE_IDS.SYMBOL], delay: 300 }]);
         markZoneUnlockVoSeen(ZONE_IDS.SYMBOL);
 
@@ -816,8 +891,14 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       idleNudgeTimerRef.current = null;
     }
 
+    // Play zone click SFX (locked = buzz, active = bright tone)
+    playZoneClickSfx(state, isMuted);
+
     // Coming-soon: friendly Mushika pop + VO, no navigation
     if (state === 'coming-soon') {
+      setShakingZoneId(zone.id);
+      if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
+      shakeTimerRef.current = setTimeout(() => setShakingZoneId(null), 360);
       if (mushikaPop) return;
       setMushikaPop({ zone, state, headshake: true });
       speakMapVoEvents([{
@@ -832,6 +913,9 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
 
     // Locked: friendly Mushika headshake + redirect VO
     if (state === 'locked') {
+      setShakingZoneId(zone.id);
+      if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
+      shakeTimerRef.current = setTimeout(() => setShakingZoneId(null), 360);
       if (mushikaPop) return;
       setMushikaPop({ zone, state, headshake: true });
       speakMapVoEvents([{
@@ -936,7 +1020,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
           <div key={zone.id} className={`zone-group ${state === 'completed' ? 'zone-complete' : ''}`}>
             {/* Tap area */}
             <div
-              className={`${layout.zoneClass} zone-state-${state} ${unlockClass} ${isSymbolMountainZone ? 'symbol-mountain-door' : ''} ${isFirstTimeSymbol ? 'zone-state-first-time' : ''}`.trim()}
+              className={`${layout.zoneClass} zone-state-${state} ${unlockClass} ${isSymbolMountainZone ? 'symbol-mountain-door' : ''} ${isFirstTimeSymbol ? 'zone-state-first-time' : ''} ${shakingZoneId === zone.id ? 'zone-tap-shake' : ''}`.trim()}
               onClick={() => handleZoneClick(zone, state)}
               aria-disabled={isDisabled}
             >
