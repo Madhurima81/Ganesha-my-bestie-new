@@ -6,7 +6,7 @@ import ScreenHeader from '../shared/ScreenHeader';
 import './CleanProfileSelector.css';
 
 const PROFILE_CREATE_INTRO_VO_KEY = 'gmb_vo_profile_create_intro_heard';
-const PROFILE_CREATE_INTRO_LINE = "Tell me your name and how old you are. Then we'll go!";
+const PROFILE_CREATE_INTRO_LINE = "Let's create your profile. Type your name and pick a friend.";
 
 const CleanProfileSelector = ({
   onProfileSelect,
@@ -23,6 +23,7 @@ const CleanProfileSelector = ({
   const [manageModeId, setManageModeId] = useState(null); // stores the profile id being managed
   const longPressTimer = React.useRef(null);
   const voiceTimersRef = useRef([]);
+  const hasPlayedFriendChoiceVoRef = useRef(false);
 
   // 🎨 Animal Config: Matches Image 1 Colors
   const animalAvatars = [
@@ -63,6 +64,29 @@ const CleanProfileSelector = ({
       window.speechSynthesis?.cancel();
     };
   }, [forceCreate, showCreateProfile]);
+
+  useEffect(() => {
+    if (!showCreateProfile) {
+      hasPlayedFriendChoiceVoRef.current = false;
+    }
+  }, [showCreateProfile]);
+
+  const handleAvatarSelect = (avatarId) => {
+    setSelectedAvatar(avatarId);
+
+    if (hasPlayedFriendChoiceVoRef.current) return;
+    const audioEnabled = localStorage.getItem('ganesha_audio_enabled');
+    const isAudioOn = audioEnabled === null ? true : audioEnabled === 'true';
+    if (!isAudioOn || !window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return;
+
+    hasPlayedFriendChoiceVoRef.current = true;
+    window.speechSynthesis.cancel();
+    const utterance = new window.SpeechSynthesisUtterance('Nice choice!');
+    utterance.rate = 1.03;
+    utterance.pitch = 1;
+    utterance.volume = 0.9;
+    window.speechSynthesis.speak(utterance);
+  };
 
   const loadProfiles = () => {
     try {
@@ -152,7 +176,7 @@ const CleanProfileSelector = ({
             <div className="explorer-modal">
 
               <ScreenHeader
-                title="Create Your Explorer!"
+                title="Create Your Profile"
                 glowColor="purple"
               />
 
@@ -191,7 +215,7 @@ const CleanProfileSelector = ({
                   <div
                     key={animal.id}
                     className={`friend-card ${selectedAvatar === animal.id ? 'active' : ''}`}
-                    onClick={() => setSelectedAvatar(animal.id)}
+                    onClick={() => handleAvatarSelect(animal.id)}
                   >
                     <img
                       src={`/images/new-explorer-${animal.id}.png`}

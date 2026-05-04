@@ -1,7 +1,6 @@
 // MainWelcomeScreen.jsx - PRODUCTION READY VERSION
 import React, { useState, useEffect, useRef } from 'react';
 import PrimaryBtn from '../shared/PrimaryBtn';
-import GaneshaCharacter from '../character/GaneshaCharacter';
 import { playUiTap } from '../../services/AudioService';
 import './MainWelcomeScreen.css';
 
@@ -156,11 +155,12 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
         </div>
       </div>
       
-      {/* GANESHA - Inline SVG component with breathing animation */}
+      {/* GANESHA */}
       <div className={`welcome-ganesha-image-container ${showButton ? 'visible' : ''}`}>
         <div className="ganesha-wrap">
-          <GaneshaCharacter
-            expression="happy"
+          <img
+            src="/images/ganesha-welcome.png"
+            alt="Ganesha"
             className="welcome-ganesha-image"
           />
         </div>

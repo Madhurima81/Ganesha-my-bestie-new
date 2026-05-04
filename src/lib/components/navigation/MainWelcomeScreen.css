@@ -176,8 +176,8 @@
 }
 
 .welcome-title {
-  font-family: 'Baloo 2', cursive;
-  font-size: 120px !important;
+  font-family: 'Baloo 2', system-ui, sans-serif;
+  font-size: clamp(36px, 6vw, 90px) !important;
   font-weight: 700;
   color: #5c3ea6;
   letter-spacing: 0.5px;
@@ -281,7 +281,7 @@
 }
 
 .welcome-ganesha-image {
-  width: 560px !important;
+  width: clamp(220px, 35vw, 600px) !important;
   height: auto !important;
   animation: ganeshaBreathing 3s ease-in-out infinite;
 }
@@ -289,38 +289,6 @@
 @keyframes ganeshaBreathing {
   0%, 100% { transform: scale(1);    }
   50%       { transform: scale(1.03); }
-}
-
-/* ===================================== */
-/* MOOSHIKA */
-/* ===================================== */
-.welcome-mooshika-image-container {
-  position: absolute;
-  bottom: 20%;
-  left: 15%;
-  z-index: 15;
-  opacity: 0;
-  transition: all 1s ease-out;
-}
-
-.welcome-mooshika-image-container.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.welcome-mooshika-image {
-  width: 280px !important;
-  height: auto !important;
-  animation: mooshikaBounce 2s ease-in-out infinite;
-}
-
-@keyframes mooshikaBounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
 }
 
 /* Content Overlay */
@@ -383,14 +351,12 @@
 /* ========================================== */
 @media (prefers-reduced-motion: reduce) {
   .welcome-ganesha-image,
-  .welcome-mooshika-image,
   .particle {
     animation: none !important;
   }
 
   .welcome-board-container.visible,
   .welcome-ganesha-image-container.visible,
-  .welcome-mooshika-image-container.visible,
   .adventure-button-container.visible {
     transition: opacity 0.3s ease-out;
     transform: none !important;
@@ -409,75 +375,6 @@
 /* RESPONSIVE DESIGN - MEDIA QUERIES */
 /* ========================================== */
 
-/* === 1. MOBILE PORTRAIT === */
-@media (max-width: 600px) {
-  .welcome-title { font-size: 36px !important; }
-  .welcome-title-container { top: 6%; }
-
-  .welcome-ganesha-image-container { bottom: 22%; }
-  .welcome-ganesha-image { width: 200px; }
-
-  .welcome-mooshika-image-container { bottom: 30%; left: 8%; }
-  .welcome-mooshika-image { width: 100px; }
-
-  .adventure-button-container .primary-btn-unified { font-size: 22px; padding: 16px 60px; }
-  .adventure-button-container { margin-bottom: 40px; }
-  .welcome-content-overlay { padding: 20px 15px; }
-}
-
-/* === 2. MOBILE LANDSCAPE === */
-@media (min-width: 568px) and (max-width: 1019px) and (orientation: landscape) {
-  .welcome-title { font-size: 32px !important; }
-  .welcome-title-container { top: 4%; }
-
-  .welcome-ganesha-image-container { bottom: 10%; }
-  .welcome-ganesha-image { width: 150px; }
-
-  .welcome-mooshika-image-container { bottom: 12%; left: 10%; }
-  .welcome-mooshika-image { width: 120px; }
-
-  .adventure-button-container .primary-btn-unified { font-size: 18px; padding: 10px 40px; }
-  .adventure-button-container { margin-bottom: 30px; }
-}
-
-/* === 3. iPAD ALL (Portrait + Landscape) === */
-@media (min-width: 768px) and (min-height: 768px) and (max-width: 1366px) {
-  .welcome-title { font-size: 90px !important; }
-  .welcome-title-container { top: 14%; }
-
-  .welcome-ganesha-image-container { bottom: 10%; }
-  .welcome-ganesha-image { width: 440px !important; }
-
-  .welcome-mooshika-image-container { bottom: 10%; left: 12%; }
-  .welcome-mooshika-image { width: 220px !important; }
-
-}
-
-/* === 4. iPAD PORTRAIT - EVEN BIGGER === */
-@media (min-width: 768px) and (min-height: 1000px) and (orientation: portrait) {
-  .welcome-ganesha-image-container { bottom: 12%; }
-  .welcome-ganesha-image { width: 500px !important; }
-
-  .welcome-mooshika-image-container { bottom: 15%; left: 10%; }
-  .welcome-mooshika-image { width: 240px !important; }
-
-}
-
-/* === 5. iPAD PRO 12.9" — iPad Kids target (2058×1536) === */
-@media (min-width: 1024px) and (min-height: 1366px) {
-  .welcome-title { font-size: 120px !important; }
-  .welcome-ganesha-image-container { bottom: 12%; }
-  .welcome-ganesha-image { width: 680px !important; }
-  .welcome-mooshika-image { width: 280px !important; }
-}
-
-/* === 6. LAPTOPS/CHROMEBOOKS === */
-@media (min-width: 1366px) and (max-height: 900px) {
-  .welcome-ganesha-image { width: 480px !important; }
-  .welcome-mooshika-image { width: 240px !important; }
-  .main-welcome-container { max-width: 1600px; margin: 0 auto; }
-}
-
 /* === 7. VERY SHORT LANDSCAPE === */
 @media (orientation: landscape) and (max-height: 600px) {
   .welcome-title { font-size: 28px !important; }
@@ -485,9 +382,6 @@
 
   .welcome-ganesha-image-container { bottom: -5%; }
   .welcome-ganesha-image { width: 140px; }
-
-  .welcome-mooshika-image-container { bottom: 10%; left: 8%; }
-  .welcome-mooshika-image { width: 90px; }
 
   .adventure-button-container .primary-btn-unified { font-size: 18px; padding: 10px 44px; }
   .adventure-button-container { margin-bottom: 20px; }

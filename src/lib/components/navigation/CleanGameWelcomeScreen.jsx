@@ -1,5 +1,5 @@
 // CleanGameWelcomeScreen.jsx - FINAL CLEAN VERSION
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import GameStateManager from '../../services/GameStateManager';
 import CleanProfileSelector from './CleanProfileSelector';
 import PrimaryBtn from '../shared/PrimaryBtn';
@@ -10,6 +10,7 @@ import CulturalProgressExtractor from '../../services/CulturalProgressExtractor'
 import ProgressPopup from './ProgressPopup';
 import GameIcon from '../ui/GameIcon';
 import { symbolCardContent } from '../../../zones/symbol-mountain/shared/components/symbolCardContent';
+import { playUiTap } from '../../services/AudioService';
 
 const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
   const [profiles, setProfiles] = useState({});
@@ -19,11 +20,58 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
   const [showNewGameConfirm, setShowNewGameConfirm] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [popupData, setPopupData] = useState(null);
+  const ambientRef = useRef(null);
+  const fadeRef = useRef(null);
 
   // Clean initialization
   useEffect(() => {
     initializeClean();
   }, []);
+
+  useEffect(() => {
+    const audio = ambientRef.current;
+    if (!audio) return;
+
+    const TARGET_VOL = 0.16;
+    const fadeIn = () => {
+      clearInterval(fadeRef.current);
+      audio.volume = 0;
+      audio.play().catch(() => {});
+      fadeRef.current = setInterval(() => {
+        const next = Math.min(audio.volume + 0.02, TARGET_VOL);
+        audio.volume = next;
+        if (next >= TARGET_VOL) clearInterval(fadeRef.current);
+      }, 80);
+    };
+
+    fadeIn();
+
+    const onFirstInteraction = () => {
+      if (audio.paused) fadeIn();
+      document.removeEventListener('click', onFirstInteraction);
+      document.removeEventListener('touchstart', onFirstInteraction);
+    };
+    document.addEventListener('click', onFirstInteraction);
+    document.addEventListener('touchstart', onFirstInteraction);
+
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        clearInterval(fadeRef.current);
+        audio.pause();
+      } else {
+        fadeIn();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    return () => {
+      clearInterval(fadeRef.current);
+      audio.pause();
+      document.removeEventListener('click', onFirstInteraction);
+      document.removeEventListener('touchstart', onFirstInteraction);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, [currentProfile, showProfileSelector]);
   
   const initializeClean = () => {
     try {
@@ -141,6 +189,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
   };
   
   const handleBackToProfiles = () => {
+    playUiTap(0.22);
     setCurrentProfile(null);
     setHasProgress(false);
     setShowProfileSelector(true);
@@ -213,6 +262,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
   };
 
   const handleContinue = () => {
+    playUiTap(0.22);
     const profileId = localStorage.getItem('activeProfileId');
     const location = getLastPlayedLocation(profileId);
 
@@ -228,10 +278,12 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
   };
 
   const handleNewGame = () => {
+    playUiTap(0.22);
     onNewGame();
   };
   
   const confirmNewGame = () => {
+    playUiTap(0.22);
     GameStateManager.resetGame();
     setShowNewGameConfirm(false);
     onNewGame();
@@ -241,6 +293,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
   // POPUP DATA HANDLER (Updated with Images & Descriptions)
   // =========================================================
   const handleProgressBoxClick = (type) => {
+    playUiTap(0.2);
     const culturalProgress = CulturalProgressExtractor.getCulturalProgressData();
     
     if (type === 'symbols') {
@@ -390,7 +443,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
       <div className="clean-welcome-overlay page-transition">
         <div className="clean-welcome-content">
           <h1>Loading Profile...</h1>
-          <button onClick={() => setShowProfileSelector(true)}>Select Profile</button>
+          <button onClick={() => { playUiTap(0.22); setShowProfileSelector(true); }}>Select Profile</button>
         </div>
       </div>
     );
@@ -424,7 +477,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
                 const animalId = getAnimalId(currentProfile.avatar);
                 return (
                   <img 
-                    className="profile-avatar-large" 
+                    className={`profile-avatar-large ${animalId === 'squirrel' ? 'squirrel-avatar' : ''}`}
                     src={`/images/new-explorer-${animalId}.png`}
                     alt={currentProfile.name}
                     onError={(e) => { e.target.style.display = 'none'; }}
@@ -465,7 +518,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
                     )}
                   </div>
                   <span className={`stat-text-clean ${isZoneComplete(culturalProgress.symbols) ? 'all-symbols-discovered' : ''}`}>
-                    {isZoneComplete(culturalProgress.symbols) ? 'All symbols are discovered' : `${culturalProgress.symbols} Symbols`}
+                    {isZoneComplete(culturalProgress.symbols) ? 'All discovered' : `${culturalProgress.symbols} Symbols`}
                   </span>
                 </div>
                 
@@ -530,7 +583,10 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
           {/* Parent Corner — subtle, below main actions */}
           {onParentCorner && (
             <button
-              onClick={onParentCorner}
+              onClick={() => {
+                playUiTap(0.22);
+                onParentCorner();
+              }}
               style={{
                 background: 'none',
                 border: '1.5px solid #C4B5F4',
@@ -563,7 +619,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
             <p>This will erase {currentProfile.name}'s current progress.</p>
             <div className="confirm-buttons">
               <button className="confirm-yes-btn" onClick={confirmNewGame}>Yes, Reset Everything</button>
-              <button className="confirm-no-btn" onClick={() => setShowNewGameConfirm(false)}>No, Keep Progress</button>
+              <button className="confirm-no-btn" onClick={() => { playUiTap(0.22); setShowNewGameConfirm(false); }}>No, Keep Progress</button>
             </div>
           </div>
         </div>
@@ -576,6 +632,13 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
         items={popupData?.items || []}
         completedItems={popupData?.completedItems || []}
         type={popupData?.type}
+      />
+      <audio
+        ref={ambientRef}
+        src="/audio/ambient/map%20ambient%20sound.wav"
+        loop
+        preload="auto"
+        style={{ display: 'none' }}
       />
     </div>
   );

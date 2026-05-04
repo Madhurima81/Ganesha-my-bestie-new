@@ -115,6 +115,11 @@ box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
   animation: gentleFloat 8s ease-in-out infinite;
 }
 
+.profile-avatar-large.squirrel-avatar {
+  width: clamp(80px, 9vw, 130px);
+  height: clamp(80px, 9vw, 130px);
+}
+
 @keyframes gentleFloat {
   0%,100% { transform: translateY(0px); }
   50% { transform: translateY(-4px); }
@@ -302,7 +307,7 @@ box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
 
 /* SECONDARY — white with purple outline */
 .secondary-btn {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', system-ui, sans-serif;
   font-weight: 700;
   width: 100%;
   min-height: clamp(52px, 5.5vw, 80px);
@@ -367,23 +372,23 @@ transform: translateY(2px);}
 
 .confirm-dialog {
   background: #FFFDF7;
-  border-radius: 25px;
-  padding: 30px;
-  max-width: 400px;
+  border-radius: clamp(20px, 2vw, 32px);
+  padding: clamp(28px, 3vw, 48px);
+  max-width: clamp(400px, 50vw, 640px);
   width: 90%;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   text-align: center;
 }
 
 .confirm-icon {
-  font-size: 48px;
+  font-size: clamp(48px, 5vw, 80px);
   margin-bottom: 15px;
 }
 
 .confirm-dialog h3 {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', system-ui, sans-serif;
   font-weight: 800;
-  font-size: 24px;
+  font-size: clamp(22px, 2.6vw, 38px);
   color: #C62828;
   margin: 0 0 15px 0;
 }
@@ -391,7 +396,7 @@ transform: translateY(2px);}
 .confirm-dialog p {
   font-family: 'Nunito', sans-serif;
   font-weight: 600;
-  font-size: 14px;
+  font-size: clamp(14px, 1.6vw, 22px);
   color: #0277BD;
   margin: 0 0 20px 0;
   line-height: 1.5;
@@ -401,9 +406,9 @@ transform: translateY(2px);}
   font-family: 'Nunito', sans-serif;
   background: #FFF8E1;
   border-radius: 12px;
-  padding: 12px;
+  padding: clamp(12px, 1.3vw, 20px);
   margin-bottom: 20px;
-  font-size: 13px;
+  font-size: clamp(13px, 1.4vw, 20px);
   color: #0D47A1;
   font-weight: 600;
   display: flex;
@@ -419,12 +424,12 @@ transform: translateY(2px);}
 
 .confirm-yes-btn,
 .confirm-no-btn {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', system-ui, sans-serif;
   font-weight: 700;
-  padding: 12px 20px;
+  padding: clamp(12px, 1.4vw, 20px) clamp(20px, 2vw, 32px);
   border: none;
   border-radius: 50px;
-  font-size: 16px;
+  font-size: clamp(16px, 1.8vw, 26px);
   cursor: pointer;
   transition: transform 0.2s;
   color: white;
