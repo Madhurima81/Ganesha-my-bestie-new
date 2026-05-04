@@ -1,15 +1,20 @@
 // MainWelcomeScreen.jsx - PRODUCTION READY VERSION
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PrimaryBtn from '../shared/PrimaryBtn';
 import GaneshaCharacter from '../character/GaneshaCharacter';
+import { playUiTap } from '../../services/AudioService';
 import './MainWelcomeScreen.css';
+
+const MAIN_WELCOME_VO_KEY = 'gmb_vo_main_welcome_intro_heard';
+const MAIN_WELCOME_VO_LINE = "Hi! I'm Ganesha. Tap Start and let's be besties!";
 
 const MainWelcomeScreen = ({ onStartAdventure }) => {
   const [showButton, setShowButton] = useState(false);
-  const [pulseButton, setPulseButton] = useState(false);
   const [showHintArrow, setShowHintArrow] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
+  const ambientRef = useRef(null);
+  const fadeRef = useRef(null);
+  const voiceTimersRef = useRef([]);
 
   // Track time on screen for analytics
   useEffect(() => {
@@ -20,61 +25,92 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
     };
   }, []);
 
-  // Preload images — welcome-ganesha.png removed, now inline SVG
+  // Animate entrance
   useEffect(() => {
-    const images = [
-      '/images/welcome-mooshika.png'
-    ];
-    
-    let loadedCount = 0;
-    const totalImages = images.length;
-    
-    const imagePromises = images.map(src => {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => {
-          loadedCount++;
-          console.log(`✅ Loaded ${loadedCount}/${totalImages}: ${src}`);
-          resolve();
-        };
-        img.onerror = () => {
-          console.error(`❌ Failed to load: ${src}`);
-          reject(new Error(`Failed to load ${src}`));
-        };
-        img.src = src;
-      });
-    });
-    
-    Promise.all(imagePromises)
-      .then(() => {
-        console.log('🎉 All welcome screen images loaded');
-        setImagesLoaded(true);
-      })
-      .catch(err => {
-        console.error('⚠️ Some images failed to load:', err);
-        // Still show the screen even if some images fail
-        setImagesLoaded(true);
-      });
-  }, []);
-
-  // Animate entrance (only after images loaded)
-  useEffect(() => {
-    if (!imagesLoaded) return;
-    
     const buttonTimer = setTimeout(() => setShowButton(true), 1500);
-    
-    // Add pulse hint after 8 seconds if no click
-    const pulseTimer = setTimeout(() => setPulseButton(true), 8000);
     
     // Add arrow hint after 10 seconds if still no click
     const arrowTimer = setTimeout(() => setShowHintArrow(true), 10000);
     
     return () => {
       clearTimeout(buttonTimer);
-      clearTimeout(pulseTimer);
       clearTimeout(arrowTimer);
     };
-  }, [imagesLoaded]);
+  }, []);
+
+  useEffect(() => {
+    const audioEnabled = localStorage.getItem('ganesha_audio_enabled');
+    const isAudioOn = audioEnabled === null ? true : audioEnabled === 'true';
+    const alreadyHeard = localStorage.getItem(MAIN_WELCOME_VO_KEY) === '1';
+    if (!isAudioOn || alreadyHeard || !window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') {
+      return () => {
+        voiceTimersRef.current.forEach(clearTimeout);
+        window.speechSynthesis?.cancel();
+      };
+    }
+
+    localStorage.setItem(MAIN_WELCOME_VO_KEY, '1');
+    const timerId = setTimeout(() => {
+      const utterance = new window.SpeechSynthesisUtterance(MAIN_WELCOME_VO_LINE);
+      utterance.rate = 1.02;
+      utterance.pitch = 1;
+      utterance.volume = 0.9;
+      window.speechSynthesis.speak(utterance);
+    }, 450);
+    voiceTimersRef.current.push(timerId);
+
+    return () => {
+      voiceTimersRef.current.forEach(clearTimeout);
+      window.speechSynthesis?.cancel();
+    };
+  }, []);
+
+  // Soft ambient bed on welcome screen (same track as map, lower volume)
+  useEffect(() => {
+    const audio = ambientRef.current;
+    if (!audio) return;
+
+    const TARGET_VOL = 0.18;
+
+    const fadeIn = () => {
+      clearInterval(fadeRef.current);
+      audio.volume = 0;
+      audio.play().catch(() => {});
+      fadeRef.current = setInterval(() => {
+        const next = Math.min(audio.volume + 0.02, TARGET_VOL);
+        audio.volume = next;
+        if (next >= TARGET_VOL) clearInterval(fadeRef.current);
+      }, 80);
+    };
+
+    fadeIn();
+
+    const onFirstInteraction = () => {
+      if (audio.paused) fadeIn();
+      document.removeEventListener('click', onFirstInteraction);
+      document.removeEventListener('touchstart', onFirstInteraction);
+    };
+    document.addEventListener('click', onFirstInteraction);
+    document.addEventListener('touchstart', onFirstInteraction);
+
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        clearInterval(fadeRef.current);
+        audio.pause();
+      } else {
+        fadeIn();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    return () => {
+      clearInterval(fadeRef.current);
+      audio.pause();
+      document.removeEventListener('click', onFirstInteraction);
+      document.removeEventListener('touchstart', onFirstInteraction);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, []);
 
   const handleStartAdventure = () => {
     // Prevent double-click spam
@@ -85,50 +121,14 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
     
     setIsStarting(true);
     console.log('🎸 Starting new adventure from main welcome');
-    
-    // TODO: Play sound effect here when audio system is ready
-    // playSound('button-click');
+
+    playUiTap(0.24);
     
     // Add slight delay for visual feedback
     setTimeout(() => {
       onStartAdventure();
     }, 300);
   };
-
-  // Show loading state while Mooshika image loads
-  if (!imagesLoaded) {
-    return (
-      <div className="main-welcome-container">
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          textAlign: 'center',
-          zIndex: 100,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: 16,
-        }}>
-          <GaneshaCharacter
-            expression="happy"
-            size={180}
-            style={{ animation: 'ganeshaBreathing 2s ease-in-out infinite' }}
-          />
-          <div style={{
-            fontSize: '20px',
-            color: '#8e63d9',
-            fontFamily: "'Baloo 2', cursive",
-            fontWeight: 700,
-            opacity: 0.85,
-          }}>
-            Loading Ganesha's World...
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="main-welcome-container">
@@ -166,15 +166,6 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
         </div>
       </div>
       
-      {/* MOOSHIKA - Now with bounce animation */}
-      <div className={`welcome-mooshika-image-container ${showButton ? 'visible' : ''}`}>
-        <img 
-          src="/images/welcome-mooshika.png" 
-          alt="Mooshika"
-          className="welcome-mooshika-image"
-        />
-      </div>
-      
       {/* HINT ARROW - Appears after 10 seconds */}
       <div className={`hint-arrow ${showHintArrow ? 'visible' : ''}`} />
       
@@ -190,7 +181,14 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
           />
         </div>
       </div>
-      
+
+      <audio
+        ref={ambientRef}
+        src="/audio/ambient/map%20ambient%20sound.wav"
+        loop
+        preload="auto"
+        style={{ display: 'none' }}
+      />
     </div>
   );
 };

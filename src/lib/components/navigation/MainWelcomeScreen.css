@@ -355,8 +355,8 @@
 
 /* PrimaryBtn lg size override for welcome screen */
 .adventure-button-container .primary-btn-unified {
-  font-size: clamp(36px, 4vw, 52px);
-  padding: 28px 130px;
+  font-size: clamp(24px, 2.8vw, 34px);
+  padding: 16px 72px;
 }
 
 /* ===================================== */
@@ -436,7 +436,7 @@
   .welcome-mooshika-image-container { bottom: 12%; left: 10%; }
   .welcome-mooshika-image { width: 120px; }
 
-  .adventure-button-container .primary-btn-unified { font-size: 20px; padding: 12px 48px; }
+  .adventure-button-container .primary-btn-unified { font-size: 18px; padding: 10px 40px; }
   .adventure-button-container { margin-bottom: 30px; }
 }
 

@@ -1,9 +1,12 @@
 // CleanProfileSelector.jsx - FIXED: Delete Modal Bug
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import GameStateManager from '../../services/GameStateManager';
 import PrimaryBtn from '../shared/PrimaryBtn';
 import ScreenHeader from '../shared/ScreenHeader';
 import './CleanProfileSelector.css';
+
+const PROFILE_CREATE_INTRO_VO_KEY = 'gmb_vo_profile_create_intro_heard';
+const PROFILE_CREATE_INTRO_LINE = "Tell me your name and how old you are. Then we'll go!";
 
 const CleanProfileSelector = ({
   onProfileSelect,
@@ -19,6 +22,7 @@ const CleanProfileSelector = ({
   const [showInfo, setShowInfo] = useState(false);
   const [manageModeId, setManageModeId] = useState(null); // stores the profile id being managed
   const longPressTimer = React.useRef(null);
+  const voiceTimersRef = useRef([]);
 
   // 🎨 Animal Config: Matches Image 1 Colors
   const animalAvatars = [
@@ -31,6 +35,34 @@ const CleanProfileSelector = ({
   useEffect(() => {
     if (!initialProfiles) loadProfiles();
   }, [initialProfiles]);
+
+  useEffect(() => {
+    const audioEnabled = localStorage.getItem('ganesha_audio_enabled');
+    const isAudioOn = audioEnabled === null ? true : audioEnabled === 'true';
+    const shouldSpeakIntro = forceCreate && showCreateProfile && isAudioOn
+      && localStorage.getItem(PROFILE_CREATE_INTRO_VO_KEY) !== '1';
+    if (!shouldSpeakIntro || !window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') {
+      return () => {
+        voiceTimersRef.current.forEach(clearTimeout);
+        window.speechSynthesis?.cancel();
+      };
+    }
+
+    localStorage.setItem(PROFILE_CREATE_INTRO_VO_KEY, '1');
+    const timerId = setTimeout(() => {
+      const u = new window.SpeechSynthesisUtterance(PROFILE_CREATE_INTRO_LINE);
+      u.rate = 1.02;
+      u.pitch = 1;
+      u.volume = 0.9;
+      window.speechSynthesis.speak(u);
+    }, 450);
+    voiceTimersRef.current.push(timerId);
+
+    return () => {
+      voiceTimersRef.current.forEach(clearTimeout);
+      window.speechSynthesis?.cancel();
+    };
+  }, [forceCreate, showCreateProfile]);
 
   const loadProfiles = () => {
     try {
@@ -55,12 +87,29 @@ const CleanProfileSelector = ({
       );
       
       if (newProfile && newProfile.id) {
+        const createdName = newProfile.name;
+        const audioEnabled = localStorage.getItem('ganesha_audio_enabled');
+        const isAudioOn = audioEnabled === null ? true : audioEnabled === 'true';
+        const canSpeak = isAudioOn && window.speechSynthesis && typeof window.SpeechSynthesisUtterance !== 'undefined';
+
         setNewProfileName('');
         setSelectedAvatar('monkey');
         setSelectedAge(null);
         setShowCreateProfile(false);
         loadProfiles();
-        onProfileSelect(newProfile.id);
+
+        if (canSpeak) {
+          window.speechSynthesis.cancel();
+          const u = new window.SpeechSynthesisUtterance(`Yay, ${createdName}! Let's go!`);
+          u.rate = 1.03;
+          u.pitch = 1.02;
+          u.volume = 0.92;
+          window.speechSynthesis.speak(u);
+          const timerId = setTimeout(() => onProfileSelect(newProfile.id), 950);
+          voiceTimersRef.current.push(timerId);
+        } else {
+          onProfileSelect(newProfile.id);
+        }
       }
     } catch (error) {
       console.error('Error creating profile:', error);
