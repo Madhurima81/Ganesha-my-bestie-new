@@ -728,6 +728,67 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   align-items: center;
 }
 
+.ganesha-onboarding-portrait {
+  display: flex;
+  justify-content: center;
+  margin: -36px 0 8px;
+}
+
+.ganesha-onboarding-portrait img {
+  width: clamp(96px, 9vw, 132px);
+  height: auto;
+  filter: drop-shadow(0 4px 12px rgba(124, 58, 237, 0.3));
+}
+
+.step-dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 6px 0 14px;
+}
+
+.step-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(124, 58, 237, 0.25);
+  transition: background 0.3s ease;
+}
+
+.step-dots span.active {
+  background: #7c3aed;
+}
+
+.create-step-content {
+  width: 100%;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.create-step-heading {
+  font-family: var(--font-title);
+  font-size: clamp(24px, 2.8vw, 46px);
+  font-weight: 800;
+  color: #6752B8;
+  margin: 2px 0 6px;
+}
+
+.create-step-subheading {
+  font-family: var(--font-body);
+  font-size: clamp(14px, 1.4vw, 24px);
+  color: #8f88b1;
+  font-weight: 700;
+  margin: 0 0 clamp(14px, 1.6vw, 24px);
+}
+
+.create-step-echo {
+  font-family: var(--font-body);
+  font-size: clamp(14px, 1.4vw, 24px);
+  color: #8B5CF6;
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+
 .explorer-modal .screen-header-title {
   font-size: clamp(28px, 3.5vw, 54px);
   color: #6752B8;
