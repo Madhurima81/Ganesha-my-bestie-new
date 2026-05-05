@@ -15,7 +15,7 @@ import AudioToggle from '../../../lib/components/ui/AudioToggle/AudioToggle';
 import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
 import useAudioPreference from '../../../lib/hooks/useAudioPreference';
 import StoryProgressHeader from '../components/StoryProgressHeader';
-import bgImage from './assets/images/name_background.jpg';
+import bgImage from './assets/images/name_background.webp';
 import babyGaneshaImg from '/images/ganesha-final-new.svg';
 import OpeningModal from '../../shared/components/OpeningModal';
 import SceneManager from '../../../lib/components/scenes/SceneManager';

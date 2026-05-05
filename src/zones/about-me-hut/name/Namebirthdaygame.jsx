@@ -31,7 +31,7 @@ import { useGameSounds } from '../../../lib/hooks/useGameSounds';
 import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation';
 
 // Import images
-import nameBg from './assets/images/name_background.jpg';
+import nameBg from './assets/images/name_background.webp';
 import babyGaneshaImg from '/images/ganesha-final-new.svg';
 import babyGaneshaSit from '/images/ganesha-final-new.svg';
 

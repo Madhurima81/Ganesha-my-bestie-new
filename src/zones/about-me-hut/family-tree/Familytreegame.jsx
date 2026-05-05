@@ -31,7 +31,7 @@ import { getVoiceScript } from '../../../lib/config/content/voiceGuidance';
 import OpeningModal from '../../shared/components/OpeningModal';
 
 // --- IMPORT ASSETS (Ganesha's Family & Distractors) ---
-import familyTreeBg from './assets/images/family_background.jpg';
+import familyTreeBg from './assets/images/family_background.webp';
 import familyTree from './assets/images/family_tree.png';
 
 // Correct Answers

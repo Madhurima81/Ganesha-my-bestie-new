@@ -35,7 +35,7 @@ import '../../../lib/styles/animations.css';
 // Import images
 import babyGaneshaImg from '/images/ganesha-final-new.svg';
 import babyGaneshaSit from '/images/ganesha-final-new.svg';
-import dreamsBg from './assets/images/dream_background.jpg';
+import dreamsBg from './assets/images/dream_background.webp';
 
 // Wish Icons
 import wishIconEarth from './assets/images/wish-icon-earth.png';

@@ -20,7 +20,7 @@ import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 import OpeningModal from '../../shared/components/OpeningModal';
 
 // --- EXISTING ASSETS ---
-import foodBg from './assets/images/fav_background.jpg';
+import foodBg from './assets/images/fav_background.webp';
 import babyGaneshaImg from '/images/ganesha-final-new.svg';
 import babyGaneshaSit from '/images/ganesha-final-new.svg';
 
