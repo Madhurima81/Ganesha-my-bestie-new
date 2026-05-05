@@ -46,7 +46,7 @@ import sacredBackground from './assets/images/final_symbol_background.webp';
 
 // Images - Ganesha Forms
 import ganeshaStone from './assets/images/ganesha-stone.png';
-import ganeshaDivine from './assets/images/ganesha-divine.png';
+import ganeshaDivine from './assets/images/ganesha-divine.webp';
 import purpleHeart from './assets/images/purple-heart.svg';
 
 // Images - Symbol Icons

@@ -68,8 +68,8 @@ import ganeshaEars from '../../shared/images/icons/symbol-ears-new.png';
 import ganeshaTusk from '../../shared/images/icons/symbol-tusk-new.png';
 
 // Character/Coach images
-import eyesCoach from '../tusk/assets/images/mooshika-coach.png';
-import ganeshaCharacter from './assets/images/ganesha-character.png';
+import eyesCoach from '../tusk/assets/images/mooshika-coach.webp';
+import ganeshaCharacter from './assets/images/ganesha-character.webp';
 
 // Ganesha for tusk assembly (same as ModakV7)
 const GANESHA_SIT_FEED_IMAGE = '/images/ganesha-sit.svg';
