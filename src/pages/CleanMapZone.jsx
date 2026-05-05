@@ -302,6 +302,11 @@ const getAnimalId = (avatar) => {
   return emojiMap[avatar] || null;
 };
 
+const toTitleCase = (value = '') =>
+  String(value)
+    .toLowerCase()
+    .replace(/\b\w/g, (ch) => ch.toUpperCase());
+
 // Derive state for a zone given its progress and unlock requirements
 const getZoneState = (zoneId, allProgress) => {
   // Coming-soon zones override all other states — content not yet wired
@@ -421,6 +426,11 @@ const getZoneCompletionVoSeenKey = (zoneId) => {
   return `map_zone_completion_vo_seen_${profileId}_${zoneId}`;
 };
 
+const getFirstLoadIntroSessionKey = () => {
+  const profileId = localStorage.getItem('activeProfileId') || 'default';
+  return `map_first_load_intro_spoken_${profileId}`;
+};
+
 const hasSeenZoneCompletionVo = (zoneId) => {
   try {
     return localStorage.getItem(getZoneCompletionVoSeenKey(zoneId)) === '1';
@@ -471,7 +481,7 @@ const ZONE_SCENES = {
   'about-me-hut':     ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story'],
 };
 
-const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen }) => {
+const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen, onParentCorner }) => {
   const [zoneProgress, setZoneProgress] = useState({});
   const [isFirstTimeLoad, setIsFirstTimeLoad] = useState(false);
   // const [selectedZone, setSelectedZone] = useState(null);  // removed — no preview modal
@@ -495,6 +505,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   const hasTappedRef = useRef(false);
   const prevGaneshaPosRef = useRef(null);
   const walkTimerRef = useRef(null);
+  const parentHoldTimerRef = useRef(null);
 
   const speakMapVoEvents = (events = []) => {
     if (!Array.isArray(events) || events.length === 0) {
@@ -576,8 +587,31 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       }
       if (mushikaTimerRef.current) clearTimeout(mushikaTimerRef.current);
       if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
+      if (parentHoldTimerRef.current) clearTimeout(parentHoldTimerRef.current);
     };
   }, []);
+
+  const triggerParentCorner = (e) => {
+    e?.stopPropagation?.();
+    onParentCorner?.();
+  };
+
+  const startParentHold = (e) => {
+    e.stopPropagation();
+    if (parentHoldTimerRef.current) clearTimeout(parentHoldTimerRef.current);
+    parentHoldTimerRef.current = setTimeout(() => {
+      onParentCorner?.();
+      parentHoldTimerRef.current = null;
+    }, 900);
+  };
+
+  const endParentHold = (e) => {
+    e?.stopPropagation?.();
+    if (parentHoldTimerRef.current) {
+      clearTimeout(parentHoldTimerRef.current);
+      parentHoldTimerRef.current = null;
+    }
+  };
 
   // ── Ambient sound: fade in on mount, pause on tab-hide, resume on show ──────
   useEffect(() => {
@@ -678,10 +712,19 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       isFirstTimeLoadRef.current = isBrandNewJourney;
       setIsFirstTimeLoad(isBrandNewJourney);
 
-      if (isBrandNewJourney && !hasSeenZoneUnlockVo(ZONE_IDS.SYMBOL)) {
-        console.log('[Map] Triggering first-time VO');
-        speakMapVoEvents([{ text: MAP_ZONE_UNLOCK_VO[ZONE_IDS.SYMBOL], delay: 300 }]);
-        markZoneUnlockVoSeen(ZONE_IDS.SYMBOL);
+      if (isBrandNewJourney) {
+        const introSessionKey = getFirstLoadIntroSessionKey();
+        const spokenThisSession = sessionStorage.getItem(introSessionKey) === '1';
+        const hasSeenUnlockVo = hasSeenZoneUnlockVo(ZONE_IDS.SYMBOL);
+        console.log('[Map] First-time VO gate:', { spokenThisSession, hasSeenUnlockVo });
+
+        // Play once per browser session on brand-new journey, even if stale localStorage flag exists.
+        if (!spokenThisSession) {
+          const firstLine = MAP_ZONE_UNLOCK_VO[ZONE_IDS.SYMBOL];
+          speakMapVoEvents([{ text: firstLine, delay: 300 }]);
+          sessionStorage.setItem(introSessionKey, '1');
+          markZoneUnlockVoSeen(ZONE_IDS.SYMBOL);
+        }
 
         // Idle nudge: if no tap after 7s, gently re-prompt
         idleNudgeTimerRef.current = setTimeout(() => {
@@ -1035,10 +1078,12 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
                 <span key={i}>{line}{i < zone.name.split('\n').length - 1 && <br/>}</span>
               ))}
               {isFirstTimeSymbol && (
-                <div className="first-time-hint">Tap to start!</div>
+                <div className="first-time-hint">Tap to start</div>
               )}
               {state === 'coming-soon' && (
-                <div className="coming-soon-pill">Coming Soon</div>
+                <div className="coming-soon-pill">
+                  {zone.id === 'cave-of-secrets' || zone.id === 'festival-square' ? 'Opening Soon' : 'Coming Soon'}
+                </div>
               )}
               {state === 'locked' && zone.unlockNote && (
                 <div className="unlock-note">{zone.unlockNote}</div>
@@ -1095,24 +1140,27 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
                 activeProfile.avatar || '🧒'
               )}
             </span>
-            <span className="map-profile-name">{activeProfile.name}</span>
+            <span className="profile-pill-name">{toTitleCase(activeProfile.name || '')}</span>
+            <span
+              className="parent-icon"
+              title="Parent Corner (hold)"
+              aria-label="Open Parent Corner (hold)"
+              role="button"
+              tabIndex={0}
+              onClick={(e) => e.stopPropagation()}
+              onPointerDown={startParentHold}
+              onPointerUp={endParentHold}
+              onPointerLeave={endParentHold}
+              onPointerCancel={endParentHold}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') triggerParentCorner(e);
+              }}
+            >
+              <img src="/images/icons/parent-icon.png" alt="" className="parent-icon-img" />
+            </span>
           </button>
         );
       })()}
-
-      {/* Sound toggle — bottom-left corner */}
-      <button
-        className={`map-sound-toggle${isMuted ? ' muted' : ''}`}
-        onClick={toggleMute}
-        title={isMuted ? 'Turn sound on' : 'Turn sound off'}
-        aria-label={isMuted ? 'Unmute ambient sound' : 'Mute ambient sound'}
-      >
-        <img
-          src={isMuted ? '/images/icons/icon-sound-off.svg' : '/images/icons/icon-sound-on.svg'}
-          alt=""
-          className="map-sound-toggle__icon"
-        />
-      </button>
 
       {/* Mushika Zone-Click Pop
           Appears when a zone is tapped; speech bubble shows zone name.
@@ -1148,11 +1196,11 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
 
       {/* TWG floating button — bottom-centre, above zone labels */}
       <button
-        className="map-twg-btn"
+        className="map-twg-btn time-ganesha-btn"
         onClick={() => (onTWGOpen ? onTWGOpen() : onZoneSelect?.('twg'))}
         aria-label="Time with Ganesha"
       >
-        Time with Ganesha 🐘
+        Time with Ganesha
       </button>
 
     </div>

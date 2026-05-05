@@ -7,8 +7,9 @@ import GaneshaCharacter from './lib/components/character/GaneshaCharacter';
 import DailyDarePopup from './lib/components/twg/DailyDarePopup';
 import TimeWithGaneshaHub from './lib/components/twg/TimeWithGaneshaHub';
 import GaneshaEngineTest  from './lib/components/twg/GaneshaEngineTest';
+import TapGate from './components/welcome/TapGate';
+import MainWelcomeScreen from './lib/components/navigation/MainWelcomeScreen';
 
-const MainWelcomeScreen      = lazy(() => import('./lib/components/navigation/MainWelcomeScreen'));
 const CleanGameWelcomeScreen = lazy(() => import('./lib/components/navigation/CleanGameWelcomeScreen'));
 const CleanProfileSelector   = lazy(() => import('./lib/components/navigation/CleanProfileSelector'));
 const ParentDashboard        = lazy(() => import('./lib/components/navigation/ParentDashboard'));
@@ -79,6 +80,7 @@ function App() {
 const [loadingStep, setLoadingStep] = useState(''); // ADD THIS LINE
 const [showDarePopup, setShowDarePopup] = useState(false);
 const previousViewRef = useRef('loading');
+const [audioUnlocked, setAudioUnlocked] = useState(false);
   
   console.log('🌟 Clean App rendering - current view:', currentView);
   console.log('🎯 Current zone:', currentZone, 'Current scene:', currentScene);
@@ -282,17 +284,17 @@ const initializeApp = async () => {
     console.log('🌟 Initializing app...');
     setCurrentView('loading');
     setLoadingProgress(0);
-    setLoadingStep('Starting your adventure...');
+    setLoadingStep('Just a moment… let\'s get ready.');
     
     // Step 1: Sound system already initialised via initAudioService() in main.jsx
     setLoadingProgress(20);
-    setLoadingStep('Loading magical sounds...');
+    setLoadingStep('Bringing in happy sounds…');
     await new Promise(resolve => setTimeout(resolve, 300));
     
     // Step 2: Verify managers are loaded (40%)
     console.log('📦 Managers loaded and ready');
     setLoadingProgress(40);
-    setLoadingStep('Preparing your journey...');
+    setLoadingStep('Getting our world ready…');
     await new Promise(resolve => setTimeout(resolve, 300));
 
     // Step 2.5: Preload critical images (50%)
@@ -320,7 +322,7 @@ const initializeApp = async () => {
 
     await Promise.all(imagePromises);
     setLoadingProgress(50);
-    setLoadingStep('Loading magical images...');
+    setLoadingStep('Adding beautiful pictures…');
     await new Promise(resolve => setTimeout(resolve, 300));
     
     // Step 3: Check for active profile (60%)
@@ -340,13 +342,13 @@ const initializeApp = async () => {
       }
     }
     setLoadingProgress(60);
-    setLoadingStep('Loading your progress...');
+    setLoadingStep('Remembering your progress…');
     await new Promise(resolve => setTimeout(resolve, 300));
     
     // Step 4: Scene Manager ready (80%)
     console.log('🎬 Scene Manager ready');
     setLoadingProgress(80);
-    setLoadingStep('Setting up the world...');
+    setLoadingStep('Setting up your adventure…');
     await new Promise(resolve => setTimeout(resolve, 300));
     
     // Step 5: Check for existing profiles in localStorage (90%)
@@ -360,12 +362,12 @@ const initializeApp = async () => {
       console.warn('⚠️ Could not check profiles:', err);
     }
     setLoadingProgress(90);
-    setLoadingStep('Almost ready...');
+    setLoadingStep('Almost ready, bestie…');
     await new Promise(resolve => setTimeout(resolve, 300));
     
     // Step 6: Complete (100%)
     setLoadingProgress(100);
-    setLoadingStep('Welcome to Ganesha\'s World!');
+    setLoadingStep('Yay… let\'s play!');
     await new Promise(resolve => setTimeout(resolve, 500));
     
     console.log('✅ App initialization complete');
@@ -410,6 +412,7 @@ const initializeApp = async () => {
   // Handle main welcome "New Adventure" click
   const handleStartAdventure = () => {
     console.log('🌟 Start Adventure clicked from main welcome');
+    try { window.speechSynthesis.speak(new SpeechSynthesisUtterance('')); } catch(e) {}
     restoreDefaultStyles();
 
     // First-time users: go straight to profile creation, then map (skip dashboard)
@@ -866,10 +869,7 @@ chants: result?.chants || result?.chantedVerses || {},
     <div className="loading-text-container">
       <div className="title-wrapper">
         <div className="loading-title">
-          Welcome to Ganesha's World
-          <span className="loading-dots">
-            <span>.</span><span>.</span><span>.</span>
-          </span>
+          Ganesha My Bestie
         </div>
       </div>
       <div className="loading-subtitle">
@@ -916,11 +916,19 @@ chants: result?.chants || result?.chantedVerses || {},
       )}
       
       {currentView === 'main-welcome' && (
-                  <div className="view-transition">
-        <MainWelcomeScreen
-          onStartAdventure={handleStartAdventure}
-        />
-          </div>
+        <div className="view-transition">
+          {!audioUnlocked ? (
+            <TapGate
+              onUnlock={() => {
+                setAudioUnlocked(true);
+              }}
+            />
+          ) : (
+            <MainWelcomeScreen
+              onStartAdventure={handleStartAdventure}
+            />
+          )}
+        </div>
       )}
       
       {currentView === 'profile-welcome' && (
@@ -974,6 +982,7 @@ chants: result?.chants || result?.chantedVerses || {},
           onZoneSelect={handleZoneSelect}
                 onBackToWelcome={() => setCurrentView('profile-welcome')}
                 onGoToProfiles={() => setCurrentView('profile-welcome')}
+          onParentCorner={() => setCurrentView('parent-dashboard')}
           onTWGOpen={() => setCurrentView('twg')}
           currentZone={currentZone}
           highlightedScene={currentScene}
