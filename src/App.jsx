@@ -79,8 +79,10 @@ function App() {
   const [loadingProgress, setLoadingProgress] = useState(0); // ADD THIS LINE
 const [loadingStep, setLoadingStep] = useState(''); // ADD THIS LINE
 const [showDarePopup, setShowDarePopup] = useState(false);
+const [showDareChip, setShowDareChip] = useState(false);
 const previousViewRef = useRef('loading');
 const [audioUnlocked, setAudioUnlocked] = useState(false);
+const dareOpenTimerRef = useRef(null);
   
   console.log('🌟 Clean App rendering - current view:', currentView);
   console.log('🎯 Current zone:', currentZone, 'Current scene:', currentScene);
@@ -249,6 +251,42 @@ useEffect(() => {
     }
     previousViewRef.current = currentView;
   }, [currentView]);
+
+  useEffect(() => {
+    if (dareOpenTimerRef.current) {
+      clearTimeout(dareOpenTimerRef.current);
+      dareOpenTimerRef.current = null;
+    }
+
+    if (currentView !== 'map') {
+      setShowDareChip(false);
+      return;
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    const doneToday = localStorage.getItem('gmb_last_dare_date') === today;
+    const openedThisSession = sessionStorage.getItem('gmb_daily_dare_opened') === today;
+
+    if (doneToday) {
+      setShowDareChip(true);
+      return;
+    }
+
+    setShowDareChip(false);
+    if (!openedThisSession) {
+      dareOpenTimerRef.current = setTimeout(() => {
+        setShowDarePopup(true);
+        sessionStorage.setItem('gmb_daily_dare_opened', today);
+      }, 2500);
+    }
+
+    return () => {
+      if (dareOpenTimerRef.current) {
+        clearTimeout(dareOpenTimerRef.current);
+        dareOpenTimerRef.current = null;
+      }
+    };
+  }, [currentView]);
   
   // 🔄 REPLACE the initializeApp function in App.jsx with this simple version:
 
@@ -375,17 +413,7 @@ const initializeApp = async () => {
 
     // Determine starting view
     if (hasExistingProfiles && activeProfileId) {
-      // TWG: dare day? show dare first — skip profile-welcome until dare closes
-      const today = new Date().toISOString().split('T')[0];
-      const lastDareDate = localStorage.getItem('gmb_last_dare_date');
-      if (lastDareDate !== today) {
-        console.log('🎯 Dare day — showing DailyDarePopup before welcome screen');
-        setShowDarePopup(true);
-        // currentView stays 'loading' — dare is full screen, no flash
-      } else {
-        console.log('🎮 No dare today — going straight to welcome screen');
-        setCurrentView('profile-welcome');
-      }
+      setCurrentView('profile-welcome');
     } else if (hasExistingProfiles) {
       console.log('👤 Profiles exist but none active, going to profile selection');
       setCurrentView('profile-welcome');
@@ -977,17 +1005,42 @@ chants: result?.chants || result?.chantedVerses || {},
       )}
 
       {currentView === 'map' && (
-                  <div className="view-transition">
-        <CleanMapZone
-          onZoneSelect={handleZoneSelect}
-                onBackToWelcome={() => setCurrentView('profile-welcome')}
-                onGoToProfiles={() => setCurrentView('profile-welcome')}
-          onParentCorner={() => setCurrentView('parent-dashboard')}
-          onTWGOpen={() => setCurrentView('twg')}
-          currentZone={currentZone}
-          highlightedScene={currentScene}
-        />
-          </div>
+        <div className="view-transition" style={{ position: 'relative' }}>
+          <CleanMapZone
+            onZoneSelect={handleZoneSelect}
+            onBackToWelcome={() => setCurrentView('profile-welcome')}
+            onGoToProfiles={() => setCurrentView('profile-welcome')}
+            onParentCorner={() => setCurrentView('parent-dashboard')}
+            onTWGOpen={() => setCurrentView('twg')}
+            currentZone={currentZone}
+            highlightedScene={currentScene}
+          />
+          {showDareChip && !showDarePopup && (
+            <button
+              type="button"
+              onClick={() => setShowDarePopup(true)}
+              style={{
+                position: 'absolute',
+                left: '50%',
+                bottom: '88px',
+                transform: 'translateX(-50%)',
+                zIndex: 1200,
+                border: 'none',
+                borderRadius: '999px',
+                padding: '10px 16px',
+                background: 'rgba(255,255,255,0.94)',
+                boxShadow: '0 8px 24px rgba(40,20,80,0.2)',
+                color: '#5e49a8',
+                fontWeight: 700,
+                fontSize: '13px',
+                cursor: 'pointer'
+              }}
+              aria-label="Share a happy moment"
+            >
+              ✨ Share a happy moment
+            </button>
+          )}
+        </div>
       )}
 
       {currentView === 'twg' && (
@@ -1074,7 +1127,8 @@ if (tempData.playAgainRequested) {
           window.speechSynthesis.cancel();
         }
         setShowDarePopup(false);
-        setCurrentView('profile-welcome');
+        const today = new Date().toISOString().split('T')[0];
+        setShowDareChip(localStorage.getItem('gmb_last_dare_date') === today);
       }} />
     )}
     {/* </GameCoachProvider> */}

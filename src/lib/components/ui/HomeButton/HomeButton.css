@@ -74,6 +74,27 @@
   }
 }
 
+/* ---- ARMED state: first tap, waiting for confirm ---- */
+.home-button--armed {
+  box-shadow:
+    0 3px 8px rgba(140, 120, 180, 0.18),
+    0 0 0 4px rgba(160, 120, 220, 0.55);
+  animation: homeButtonPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes homeButtonPulse {
+  0%, 100% {
+    box-shadow:
+      0 3px 8px rgba(140, 120, 180, 0.18),
+      0 0 0 4px rgba(160, 120, 220, 0.55);
+  }
+  50% {
+    box-shadow:
+      0 3px 10px rgba(140, 120, 180, 0.22),
+      0 0 0 7px rgba(160, 120, 220, 0.25);
+  }
+}
+
 /* ---- Icon: ~36–44 px inside the bubble ---- */
 .home-button__icon {
   width:  clamp(36px, 3.8vw, 48px);

@@ -26,7 +26,7 @@ import storyFestivalIcon from './assets/images/festival-icon.png';
 // ─── PHASE 1: NEW IMPORTS ─────────────────────────────────────────
 import FreeDraggableItem from '../../../lib/components/interactive/FreeDraggableItem';
 import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation';
-import indiaMapImage from './assets/images/ganeshaplace/india-map.png';
+import indiaMapImage from './assets/images/ganeshaplace/india-map.webp';
 import mglass from './assets/images/ganeshaplace/mglass.png';
 import mumbaiIcon from './assets/images/ganeshaplace/mumbai.png';
 import varansiIcon from './assets/images/ganeshaplace/Varanasi.png';

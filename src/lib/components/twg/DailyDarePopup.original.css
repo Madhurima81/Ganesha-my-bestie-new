@@ -1,0 +1,434 @@
+/* ─────────────────────────────────────────
+   DailyDarePopup.css
+   Full-screen daily dare + gratitude ritual
+   ───────────────────────────────────────── */
+
+/* Root - full screen takeover */
+.dare-root {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  background-image: url('/images/profile-background.png');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  animation: dareFadeIn 0.4s ease-out;
+}
+
+/* Dark purple tint over background */
+.dare-root::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(40, 30, 70, 0.40);
+  pointer-events: none;
+}
+
+@keyframes dareFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Main split row ── */
+.dare-body {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 40px 32px;
+  overflow: hidden;
+}
+
+/* ── Left: Ganesha column ── */
+.dare-ganesha-col {
+  flex: 0 0 36%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: dareGaneshaIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+
+@keyframes dareGaneshaIn {
+  from { opacity: 0; transform: translateX(-40px) scale(0.92); }
+  to   { opacity: 1; transform: translateX(0)     scale(1); }
+}
+
+/* ── Right: content panel ── */
+.dare-panel {
+  position: relative;
+  flex: 0 0 64%;
+  max-width: 880px;
+  background: #FAF6EE;
+  border-radius: 36px;
+  padding: clamp(36px, 4vw, 64px) clamp(36px, 4.5vw, 68px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-self: center;
+  min-height: 520px;
+  max-height: 78vh;
+  margin: 20px 0;
+  box-shadow: 0 24px 72px rgba(40, 20, 80, 0.28), 0 0 0 4px rgba(255, 255, 255, 0.22);
+  overflow-y: auto;
+  animation: darePanelIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+
+@keyframes darePanelIn {
+  from { opacity: 0; transform: translateX(32px) scale(0.97); }
+  to   { opacity: 1; transform: translateX(0)    scale(1); }
+}
+
+/* Speech bubble pointer - points left toward Ganesha */
+.dare-panel::before {
+  content: '';
+  position: absolute;
+  left: -13px;
+  top: 32%;
+  width: 26px;
+  height: 26px;
+  background: #FAF6EE;
+  transform: rotate(45deg);
+  box-shadow: -2px 2px 6px rgba(40, 20, 80, 0.08);
+}
+
+/* ── "Today's Special Moment" badge ── */
+.dare-daily-badge {
+  display: inline-block;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(11px, 1.1vw, 14px);
+  font-weight: 800;
+  color: #9a73d9;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  margin: 0 0 -6px;
+  align-self: flex-start;
+}
+
+/* ── Typography ── */
+.dare-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(32px, 3vw, 60px);
+  font-weight: 800;
+  color: #6752B8;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.dare-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(17px, 2vw, 30px);
+  color: #5A4A7A;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ── Beat 1: Voice area wrapper ── */
+.dare-voice-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+/* ── Mic button ── */
+.dare-mic-btn {
+  position: relative;
+  width: clamp(88px, 10vw, 120px);
+  height: clamp(88px, 10vw, 120px);
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #9a73d9, #7f5ac7);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 28px rgba(103, 82, 184, 0.40);
+  transition: transform 0.15s, box-shadow 0.15s;
+  /* Subtle idle pulse to invite the tap */
+  animation: micIdlePulse 2.4s ease-in-out infinite;
+}
+.dare-mic-btn:active        { transform: scale(0.95); }
+.dare-mic-btn--listening    { background: linear-gradient(135deg, #c084fc, #9a73d9); animation: none; }
+.dare-mic-btn--done         { background: linear-gradient(135deg, #5eead4, #3b82f6); animation: none; }
+
+@keyframes micIdlePulse {
+  0%, 100% { box-shadow: 0 8px 28px rgba(103, 82, 184, 0.40); }
+  50%      { box-shadow: 0 8px 36px rgba(103, 82, 184, 0.55); }
+}
+
+.dare-mic-icon {
+  width: 44%;
+  height: 44%;
+}
+
+/* Pulsing ring when listening */
+.dare-mic-ring {
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  border: 3px solid rgba(154, 115, 217, 0.5);
+  animation: micPulse 1.2s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes micPulse {
+  0%   { transform: scale(1);    opacity: 0.8; }
+  100% { transform: scale(1.45); opacity: 0; }
+}
+
+.dare-mic-label {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(15px, 1.6vw, 22px);
+  font-weight: 600;
+  color: #8B7AB0;
+  margin: 0;
+  text-align: center;
+}
+
+/* Live transcript display */
+.dare-transcript {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(16px, 1.8vw, 24px);
+  color: #3D2A6B;
+  font-style: italic;
+  text-align: center;
+  max-width: 100%;
+  margin: 0;
+  padding: 14px 20px;
+  background: rgba(154, 115, 217, 0.08);
+  border-radius: 16px;
+  line-height: 1.55;
+}
+
+/* Transcript actions row - "Try again" + hint
+   Speech recognition often mishears Indian-accented English, so we always
+   offer a graceful retry path right under the transcript. */
+.dare-transcript-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.dare-transcript-retry {
+  background: white;
+  border: 2px solid #C4B5F4;
+  border-radius: 80px;
+  padding: 10px 28px;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: clamp(14px, 1.5vw, 20px);
+  color: #6752B8;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+.dare-transcript-retry:hover  { background: #F5F0FE; }
+.dare-transcript-retry:active { transform: scale(0.97); }
+
+.dare-transcript-hint {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(12px, 1.2vw, 16px);
+  color: #B8A8D8;
+}
+
+/* "Done" button - appears while mic is listening */
+.dare-mic-done-btn {
+  background: white;
+  border: 2.5px solid #9a73d9;
+  border-radius: 80px;
+  padding: 14px 40px;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: clamp(16px, 1.8vw, 24px);
+  color: #6752B8;
+  cursor: pointer;
+  min-height: 60px;
+  min-width: 160px;
+  transition: background 0.15s, transform 0.1s;
+}
+.dare-mic-done-btn:active {
+  background: #F0EBF8;
+  transform: scale(0.97);
+}
+
+/* "or type instead" toggle */
+.dare-type-toggle {
+  background: none;
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(13px, 1.3vw, 18px);
+  color: #B8A8D8;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 0;
+  transition: color 0.15s;
+}
+.dare-type-toggle:hover { color: #8B7AB0; }
+
+/* ── Beat 1: Gratitude textarea (type fallback) ── */
+.dare-textarea {
+  width: 100%;
+  flex: 1;
+  min-height: clamp(120px, 16vh, 200px);
+  padding: 20px 24px;
+  border-radius: 22px;
+  border: 2px solid #C4B5F4;
+  background: rgba(255, 255, 255, 0.88);
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(17px, 2vw, 26px);
+  color: #3D2A6B;
+  resize: none;
+  outline: none;
+  box-sizing: border-box;
+  line-height: 1.65;
+  box-shadow: inset 0 2px 8px rgba(100, 70, 180, 0.07);
+  transition: border-color 0.2s;
+}
+.dare-textarea:focus        { border-color: #9a73d9; }
+.dare-textarea::placeholder { color: #B8A8D8; }
+
+/* ── Beat 2: Warm response ── */
+.dare-warm {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(15px, 1.7vw, 24px);
+  color: #8B7AB0;
+  font-style: italic;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ── Dare category badge ── */
+.dare-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(103, 82, 184, 0.10);
+  border-radius: 40px;
+  padding: 7px 20px;
+  align-self: flex-start;
+}
+.dare-badge-label {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: clamp(13px, 1.4vw, 19px);
+  color: #6752B8;
+}
+
+/* ── Dare text ── */
+.dare-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(22px, 2.3vw, 36px);
+  font-weight: 700;
+  color: #3D2A6B;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ── Buttons ── */
+.dare-btn-actions {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.dare-btn-next {
+  margin-top: auto;
+  animation: btnFadeIn 0.4s ease-out;
+}
+
+@keyframes btnFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.dare-btn-secondary {
+  background: white;
+  border: 2px solid #C4B5F4;
+  border-radius: 80px;
+  padding: clamp(14px, 1.5vw, 20px) clamp(28px, 3vw, 48px);
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: clamp(15px, 1.6vw, 24px);
+  color: #8B7AB0;
+  cursor: pointer;
+  width: 100%;
+  min-height: 64px;
+  transition: background 0.15s, color 0.15s;
+}
+.dare-btn-secondary:hover { background: #F0EBF8; }
+
+/* ───────────────────────────────────────────
+   ── CELEBRATION SCREEN (after "I'll do it!")
+   ─────────────────────────────────────────── */
+.dare-celebration {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  flex: 1;
+  text-align: center;
+  animation: celebrationIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.dare-celebration-sparkles {
+  font-size: clamp(44px, 5.5vw, 84px);
+  letter-spacing: 8px;
+  animation: sparkleFloat 1.8s ease-in-out infinite;
+}
+
+.dare-celebration-text {
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(40px, 4.5vw, 72px);
+  font-weight: 800;
+  color: #6752B8;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.dare-celebration-sub {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(18px, 2vw, 28px);
+  font-weight: 600;
+  color: #8B7AB0;
+  margin: 0;
+}
+
+@keyframes celebrationIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes sparkleFloat {
+  0%, 100% { transform: translateY(0)     scale(1); }
+  50%      { transform: translateY(-10px) scale(1.05); }
+}
+
+/* ── Mobile: stack vertically ── */
+@media (max-width: 700px) {
+  .dare-body {
+    flex-direction: column;
+    padding: 0 20px 24px;
+  }
+  .dare-ganesha-col {
+    flex: 0 0 auto;
+    margin-bottom: -30px;
+    z-index: 2;
+  }
+  .dare-panel {
+    flex: 0 0 auto;
+    align-self: auto;
+    margin: 0;
+    border-radius: 28px;
+    padding: 40px 24px 28px;
+  }
+  .dare-panel::before { display: none; }
+}

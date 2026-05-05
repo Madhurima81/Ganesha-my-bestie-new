@@ -36,19 +36,19 @@ import familyTree from './assets/images/family_tree.png';
 
 // Correct Answers
 import babyGaneshaImg from '/images/ganesha-final-new.svg';
-import shivaImg from './assets/images/ganesha/family-shiva.png';
-import parvatiImg from './assets/images/ganesha/family-parvati.png';
-import kartikeyaImg from './assets/images/ganesha/family-kartkeya.png';
+import shivaImg from './assets/images/ganesha/family-shiva.webp';
+import parvatiImg from './assets/images/ganesha/family-parvati.webp';
+import kartikeyaImg from './assets/images/ganesha/family-kartkeya.webp';
 
 // Incorrect Answers (Distractors)
-import brahmaImg from './assets/images/ganesha/family-brahma.png';
-import vishnuImg from './assets/images/ganesha/family-vishnu.png';
-import lakshmiImg from './assets/images/ganesha/family-lakshmi.png';
-import saraswatiImg from './assets/images/ganesha/family-saraswati.png';
-import hanumanImg from './assets/images/ganesha/family-hanuman.png';
-import krishnaImg from './assets/images/ganesha/family-krishna.png';
-import mouseImg from './assets/images/ganesha/family-mouse.png';
-import nandiImg from './assets/images/ganesha/family-nandi.png';
+import brahmaImg from './assets/images/ganesha/family-brahma.webp';
+import vishnuImg from './assets/images/ganesha/family-vishnu.webp';
+import lakshmiImg from './assets/images/ganesha/family-lakshmi.webp';
+import saraswatiImg from './assets/images/ganesha/family-saraswati.webp';
+import hanumanImg from './assets/images/ganesha/family-hanuman.webp';
+import krishnaImg from './assets/images/ganesha/family-krishna.webp';
+import mouseImg from './assets/images/ganesha/family-mouse.webp';
+import nandiImg from './assets/images/ganesha/family-nandi.webp';
 
 // --- IMPORT ASSETS (Child's Family) ---
 import childDadImg from './assets/images/child/family-dad.png';
