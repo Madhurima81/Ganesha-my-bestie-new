@@ -49,12 +49,12 @@ import VakratundaGame from './VakratundaGame';
 import MahakayaGame from './MahakayaGame';
 
 // Character images
-import ganeshaHeadphones from './assets/images/ganesha_with_headphones.png';
-import smartwatchScreen from '../assets/images/smartwatch-screen.png';
+import ganeshaHeadphones from './assets/images/ganesha_with_headphones.webp';
+import smartwatchScreen from '../assets/images/smartwatch-screen.webp';
 
 // Images
 import riverBackground from './assets/images/vakratundachant-bg-new2.svg';
-import mooshikaCoach from "./assets/images/mooshika-coach.png";
+import mooshikaCoach from "./assets/images/mooshika-coach.webp";
 import symbolVakratunda from '../../../symbol-mountain/shared/images/icons/symbol-trunk-new.png';
 import symbolMahakaya from './assets/images/banyan-full-from-download.png';
 
