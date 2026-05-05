@@ -83,13 +83,13 @@ import mudMound from './assets/images/mound.svg';
 import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.png';
 import symbolModakColored from '../../shared/images/icons/symbol-modak-new.png';
 import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.png';
-import mooshikaBefore from './assets/images/mooshika-before.png';
-import mooshikaAfter from './assets/images/mooshika-after.png';
-import modakBefore from './assets/images/modak-before.png';
-import modakAfter from './assets/images/modak-after.png';
-import bellyBefore from './assets/images/belly-before.png';
-import bellyAfter from './assets/images/belly-after.png';
-import ganeshaCharacter from './assets/images/ganesha-character.png';
+import mooshikaBefore from './assets/images/mooshika-before.webp';
+import mooshikaAfter from './assets/images/mooshika-after.webp';
+import modakBefore from './assets/images/modak-before.webp';
+import modakAfter from './assets/images/modak-after.webp';
+import bellyBefore from './assets/images/belly-before.webp';
+import bellyAfter from './assets/images/belly-after.webp';
+import ganeshaCharacter from './assets/images/ganesha-character.webp';
 
 // ========================================
 // VO-GATED BUTTON COMPONENT

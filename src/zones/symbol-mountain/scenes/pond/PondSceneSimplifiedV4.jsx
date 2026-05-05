@@ -73,11 +73,11 @@ import symbolLotusColored from '../../shared/images/icons/symbol-lotus-new.png';
 import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new.png';
 
 // Mission images
-import lotusBefore from './assets/images/lotus-before.png';
-import lotusAfter from './assets/images/lotus-after.png';
-import trunkBefore from './assets/images/trunk-before.png';
-import trunkAfter from './assets/images/trunk-after.png';
-import ganeshaCharacter from './assets/images/ganesha-character.png';
+import lotusBefore from './assets/images/lotus-before.webp';
+import lotusAfter from './assets/images/lotus-after.webp';
+import trunkBefore from './assets/images/trunk-before.webp';
+import trunkAfter from './assets/images/trunk-after.webp';
+import ganeshaCharacter from './assets/images/ganesha-character.webp';
 
 const GANESHA_REFLECTION_IMAGE = '/images/ganesha-sit.svg';
 
