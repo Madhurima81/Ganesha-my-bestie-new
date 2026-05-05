@@ -1,10 +1,10 @@
 // MainWelcomeScreen.jsx - PRODUCTION READY VERSION
 import React, { useState, useEffect, useRef } from 'react';
 import PrimaryBtn from '../shared/PrimaryBtn';
+import GaneshaCharacter from '../character/GaneshaCharacter';
 import { playUiTap } from '../../services/AudioService';
 import './MainWelcomeScreen.css';
 
-const MAIN_WELCOME_VO_KEY = 'gmb_vo_main_welcome_intro_heard';
 const MAIN_WELCOME_VO_LINE = "Hi! I'm Ganesha. Tap Start and let's be besties!";
 
 const MainWelcomeScreen = ({ onStartAdventure }) => {
@@ -14,6 +14,8 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
   const ambientRef = useRef(null);
   const fadeRef = useRef(null);
   const voiceTimersRef = useRef([]);
+  const introSpokenRef = useRef(false);
+  const introAttemptRef = useRef(false);
 
   // Track time on screen for analytics
   useEffect(() => {
@@ -40,27 +42,58 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
   useEffect(() => {
     const audioEnabled = localStorage.getItem('ganesha_audio_enabled');
     const isAudioOn = audioEnabled === null ? true : audioEnabled === 'true';
-    const alreadyHeard = localStorage.getItem(MAIN_WELCOME_VO_KEY) === '1';
-    if (!isAudioOn || alreadyHeard || !window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') {
+    if (!isAudioOn || !window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') {
       return () => {
         voiceTimersRef.current.forEach(clearTimeout);
         window.speechSynthesis?.cancel();
       };
     }
 
-    localStorage.setItem(MAIN_WELCOME_VO_KEY, '1');
-    const timerId = setTimeout(() => {
+    const pickVoice = () => {
+      const voices = window.speechSynthesis.getVoices() || [];
+      if (!voices.length) return null;
+      return (
+        voices.find((v) => /en(-|_)?(US|IN|GB)/i.test(v.lang || '')) ||
+        voices.find((v) => /en/i.test(v.lang || '')) ||
+        voices[0]
+      );
+    };
+
+    const speakIntro = () => {
+      if (introSpokenRef.current || introAttemptRef.current) return;
+      introAttemptRef.current = true;
       const utterance = new window.SpeechSynthesisUtterance(MAIN_WELCOME_VO_LINE);
       utterance.rate = 1.02;
       utterance.pitch = 1;
       utterance.volume = 0.9;
+      const voice = pickVoice();
+      if (voice) utterance.voice = voice;
+      utterance.onstart = () => {
+        introSpokenRef.current = true;
+      };
+      utterance.onerror = () => {
+        introAttemptRef.current = false;
+      };
+      window.speechSynthesis.cancel();
       window.speechSynthesis.speak(utterance);
-    }, 450);
+    };
+
+    const timerId = setTimeout(speakIntro, 600);
     voiceTimersRef.current.push(timerId);
+
+    // Fallback: if speech is delayed/blocked, trigger on first interaction.
+    const onFirstInteraction = () => speakIntro();
+    document.addEventListener('pointerdown', onFirstInteraction, { once: true });
+    document.addEventListener('touchstart', onFirstInteraction, { once: true });
+    // Some iOS browsers load voices lazily.
+    window.speechSynthesis.addEventListener?.('voiceschanged', speakIntro, { once: true });
 
     return () => {
       voiceTimersRef.current.forEach(clearTimeout);
       window.speechSynthesis?.cancel();
+      document.removeEventListener('pointerdown', onFirstInteraction);
+      document.removeEventListener('touchstart', onFirstInteraction);
+      window.speechSynthesis.removeEventListener?.('voiceschanged', speakIntro);
     };
   }, []);
 
@@ -69,7 +102,7 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
     const audio = ambientRef.current;
     if (!audio) return;
 
-    const TARGET_VOL = 0.18;
+    const TARGET_VOL = 0.22;
 
     const fadeIn = () => {
       clearInterval(fadeRef.current);
@@ -151,16 +184,18 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
       {/* TITLE TEXT */}
       <div className={`welcome-title-container ${showButton ? 'visible' : ''}`}>
         <div className="welcome-title-wrapper">
-          <h1 className="welcome-title">Ganesha World</h1>
+          <h1 className="welcome-title">Ganesha My Bestie</h1>
+          <p className="welcome-subtitle">Come play with me.</p>
         </div>
       </div>
       
       {/* GANESHA */}
       <div className={`welcome-ganesha-image-container ${showButton ? 'visible' : ''}`}>
         <div className="ganesha-wrap">
-          <img
-            src="/images/ganesha-welcome.png"
-            alt="Ganesha"
+          <GaneshaCharacter
+            expression="happy"
+            pose="blessing"
+            size="100%"
             className="welcome-ganesha-image"
           />
         </div>

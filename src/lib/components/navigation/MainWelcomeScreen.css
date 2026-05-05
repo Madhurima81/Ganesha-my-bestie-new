@@ -136,7 +136,7 @@
 /* ===================================== */
 .welcome-title-container {
   position: absolute;
-  top: 14%;
+  top: 8%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 16;
@@ -240,22 +240,26 @@
 /* ===================================== */
 .welcome-ganesha-image-container {
   position: absolute;
-  bottom: 18%;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 44%;
+  left: 52%;
+  transform: translate(-50%, -50%);
   z-index: 15;
   opacity: 0;
-  transition: all 1s ease-out;
+  transition: opacity 1s ease-out;
 }
 
 .welcome-ganesha-image-container.visible {
   opacity: 1;
-  transform: translateX(-50%) translateY(0);
+  transform: translate(-50%, -50%);
 }
 
 .ganesha-wrap {
   position: relative;
-  display: inline-block;
+  width: clamp(190px, 30vw, 520px);
+  height: clamp(190px, 30vw, 520px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .ganesha-wrap::before {
@@ -281,9 +285,24 @@
 }
 
 .welcome-ganesha-image {
-  width: clamp(220px, 35vw, 600px) !important;
-  height: auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain;
+  display: block;
   animation: ganeshaBreathing 3s ease-in-out infinite;
+}
+
+.welcome-subtitle {
+  margin: 8px 0 0 0;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(18px, 2vw, 34px);
+  font-weight: 700;
+  color: #6b52b5;
+  letter-spacing: 0.2px;
+  text-align: center;
+  text-shadow:
+    0 0 6px rgba(255, 255, 255, 0.35),
+    0 0 14px rgba(180, 140, 255, 0.2);
 }
 
 @keyframes ganeshaBreathing {
@@ -310,21 +329,23 @@
 /* ADVENTURE BUTTON CONTAINER            */
 /* ===================================== */
 .adventure-button-container {
+  position: absolute;
+  left: 50%;
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateX(-50%) translateY(30px);
   transition: all 1s ease-out;
-  margin-bottom: 60px;
+  margin-bottom: 40px;
 }
 
 .adventure-button-container.visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateX(-50%) translateY(0);
 }
 
 /* PrimaryBtn lg size override for welcome screen */
 .adventure-button-container .primary-btn-unified {
-  font-size: clamp(24px, 2.8vw, 34px);
-  padding: 16px 72px;
+  font-size: clamp(18px, 2vw, 24px);
+  padding: 12px 48px;
 }
 
 /* ===================================== */
@@ -378,6 +399,7 @@
 /* === 7. VERY SHORT LANDSCAPE === */
 @media (orientation: landscape) and (max-height: 600px) {
   .welcome-title { font-size: 28px !important; }
+  .welcome-subtitle { font-size: 14px; margin-top: 4px; }
   .welcome-title-container { top: 3%; }
 
   .welcome-ganesha-image-container { bottom: -5%; }
