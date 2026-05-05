@@ -1,0 +1,30 @@
+.tap-gate-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url('/images/welcome-background.svg') no-repeat center center;
+  background-size: cover;
+  z-index: 12000;
+}
+
+.tap-gate-button {
+  border: none;
+  border-radius: 999px;
+  padding: 14px 34px;
+  font-family: 'Baloo 2', system-ui, sans-serif;
+  font-size: clamp(22px, 2.8vw, 34px);
+  font-weight: 700;
+  color: #6b5bb3;
+  background: rgba(124, 93, 232, 0.15);
+  border: 1.5px solid rgba(124, 93, 232, 0.3);
+  box-shadow: 0 4px 10px rgba(60, 40, 80, 0.12);
+  cursor: pointer;
+  transform: scale(0.9);
+  opacity: 0.9;
+}
+
+.tap-gate-button:active {
+  transform: translateY(1px);
+}

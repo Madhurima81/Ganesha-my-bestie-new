@@ -72,7 +72,7 @@ import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOv
 
 // Images
 //import forestBackground from './assets/images/forest-background.png';
-import forestBackground from './assets/images/modak-game-bg.jpg';
+import forestBackground from './assets/images/modak-game-bg.webp';
 import foregroundOverlay from './assets/images/modak-game-overlay.png';
 import modak1 from './assets/images/modak-new.png';
 import modak2 from './assets/images/modak-new.png';

@@ -62,7 +62,7 @@ import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButt
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
 
 // Images
-import mountainBackground from '../tusk/assets/images/symbolmtn_background.jpg';
+import mountainBackground from '../tusk/assets/images/symbolmtn_background.webp';
 import ganeshaEyes from '../../shared/images/icons/symbol-eyes-new.png';
 import ganeshaEars from '../../shared/images/icons/symbol-ears-new.png';
 import ganeshaTusk from '../../shared/images/icons/symbol-tusk-new.png';

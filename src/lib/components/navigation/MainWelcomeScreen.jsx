@@ -5,12 +5,13 @@ import GaneshaCharacter from '../character/GaneshaCharacter';
 import { playUiTap } from '../../services/AudioService';
 import './MainWelcomeScreen.css';
 
-const MAIN_WELCOME_VO_LINE = "Hi! I'm Ganesha. Tap Start and let's be besties!";
+const MAIN_WELCOME_VO_LINE = "Hi bestie... I'm Ganesha. Come play with me.";
 
 const MainWelcomeScreen = ({ onStartAdventure }) => {
   const [showButton, setShowButton] = useState(false);
   const [showHintArrow, setShowHintArrow] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
+  const containerRef = useRef(null);
   const ambientRef = useRef(null);
   const fadeRef = useRef(null);
   const voiceTimersRef = useRef([]);
@@ -41,7 +42,12 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
 
   useEffect(() => {
     const audioEnabled = localStorage.getItem('ganesha_audio_enabled');
-    const isAudioOn = audioEnabled === null ? true : audioEnabled === 'true';
+    let isAudioOn = audioEnabled === null ? true : audioEnabled === 'true';
+    // Welcome screen should recover from stale global mute flags left by replay flows.
+    if (!isAudioOn) {
+      localStorage.setItem('ganesha_audio_enabled', 'true');
+      isAudioOn = true;
+    }
     if (!isAudioOn || !window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') {
       return () => {
         voiceTimersRef.current.forEach(clearTimeout);
@@ -78,8 +84,21 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
       window.speechSynthesis.speak(utterance);
     };
 
-    const timerId = setTimeout(speakIntro, 600);
-    voiceTimersRef.current.push(timerId);
+    const scheduleIntro = () => {
+      const timerId = setTimeout(speakIntro, 500);
+      voiceTimersRef.current.push(timerId);
+    };
+
+    // Start VO after screen fade-in completes, then +500ms.
+    const containerEl = containerRef.current;
+    if (containerEl) {
+      containerEl.addEventListener('animationend', scheduleIntro, { once: true });
+      // Fallback in case animationend doesn't fire on some browsers.
+      const fallbackTimer = setTimeout(scheduleIntro, 1500);
+      voiceTimersRef.current.push(fallbackTimer);
+    } else {
+      scheduleIntro();
+    }
 
     // Fallback: if speech is delayed/blocked, trigger on first interaction.
     const onFirstInteraction = () => speakIntro();
@@ -94,6 +113,7 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
       document.removeEventListener('pointerdown', onFirstInteraction);
       document.removeEventListener('touchstart', onFirstInteraction);
       window.speechSynthesis.removeEventListener?.('voiceschanged', speakIntro);
+      containerEl?.removeEventListener('animationend', scheduleIntro);
     };
   }, []);
 
@@ -101,6 +121,10 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
   useEffect(() => {
     const audio = ambientRef.current;
     if (!audio) return;
+
+    const audioEnabled = localStorage.getItem('ganesha_audio_enabled');
+    const isAudioOn = audioEnabled === null ? true : audioEnabled === 'true';
+    if (!isAudioOn) return;
 
     const TARGET_VOL = 0.22;
 
@@ -163,7 +187,7 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
   };
 
   return (
-    <div className="main-welcome-container">
+    <div ref={containerRef} className="main-welcome-container">
       {/* TWINKLING STARS */}
       <div className="twinkle-stars" aria-hidden="true">
         <span/><span/><span/><span/><span/><span/>

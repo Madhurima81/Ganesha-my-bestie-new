@@ -57,7 +57,7 @@ import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOv
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
 
 // Images
-import pondGameBg from './assets/images/pond-game-bg.png';
+import pondGameBg from './assets/images/pond-game-bg.webp';
 import pondGameTreeOverlay from './assets/images/pond-game-tree.png';
 import lotusClosed from './assets/images/lotus-closed-new.png';
 import lotusBloomed from './assets/images/lotus-bloomed-new.png';

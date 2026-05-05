@@ -23,6 +23,7 @@
   z-index: 1000;
   padding: 20px;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* Semi-transparent overlay */
@@ -52,9 +53,11 @@ box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
 
   max-width: clamp(680px, 65vw, 980px); /* Updated width */
   width: 92%;
+  box-sizing: border-box;
   max-height: 92vh;
+  overflow-x: hidden;
   overflow-y: hidden;
-  padding: clamp(40px, 4vw, 72px) clamp(36px, 5vw, 80px);
+  padding: 36px 32px 48px;
 
   display: flex;
   flex-direction: column;
@@ -79,6 +82,15 @@ box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
   text-shadow: none;
   animation: none;
 
+}
+
+.game-welcome-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(28px, 3.5vw, 54px);
+  color: #6752B8;
+  text-align: center;
+  margin: 0 0 14px;
+  line-height: 1.2;
 }
 
 /* ========================================== */
@@ -115,6 +127,13 @@ box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
   animation: gentleFloat 8s ease-in-out infinite;
 }
 
+.profile-avatar-large.avatar {
+  animation: float 2.5s ease-in-out infinite;
+  width: 80px;
+  height: 80px;
+  margin-bottom: 24px;
+}
+
 .profile-avatar-large.squirrel-avatar {
   width: clamp(80px, 9vw, 130px);
   height: clamp(80px, 9vw, 130px);
@@ -123,6 +142,11 @@ box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
 @keyframes gentleFloat {
   0%,100% { transform: translateY(0px); }
   50% { transform: translateY(-4px); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 
 /* REMOVE NAME UNDER AVATAR */
@@ -246,6 +270,12 @@ box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
   border-radius: 80px;
   box-shadow: 0 4px 12px rgba(120, 90, 200, 0.18);
   transition: background 0.25s ease, opacity 0.25s ease;
+}
+
+.clean-welcome-content .primary-btn {
+  margin-top: 16px;
+  background: linear-gradient(180deg, #9b87f5 0%, #7c5de8 100%);
+  box-shadow: 0 6px 18px rgba(120, 90, 200, 0.25);
 }
 
 .primary-btn:hover {

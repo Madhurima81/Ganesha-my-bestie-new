@@ -42,7 +42,7 @@ import { getSceneResetConfig } from '../../../../lib/config/SceneResetConfigs';
 import ResumeCountdown from '../../../../lib/components/feedback/ResumeCountdown';
 
 // Images - Background
-import sacredBackground from './assets/images/final_symbol_background.jpg';
+import sacredBackground from './assets/images/final_symbol_background.webp';
 
 // Images - Ganesha Forms
 import ganeshaStone from './assets/images/ganesha-stone.png';

@@ -158,30 +158,16 @@
 }
 
 .welcome-title-wrapper::before {
-  content: "";
-  position: absolute;
-  width: 120%;
-  height: 180%;
-  left: -10%;
-  top: -40%;
-  background: radial-gradient(
-    circle,
-    rgba(200, 170, 255, 0.35) 0%,
-    rgba(200, 170, 255, 0.15) 40%,
-    transparent 70%
-  );
-  filter: blur(40px);
-  z-index: -1;
-  pointer-events: none;
+  content: none;
 }
 
 .welcome-title {
   font-family: 'Baloo 2', system-ui, sans-serif;
-  font-size: clamp(36px, 6vw, 90px) !important;
-  font-weight: 700;
+  font-size: 46px !important;
+  font-weight: 600;
   color: #5c3ea6;
   letter-spacing: 0.5px;
-  margin: 0;
+  margin: 0 0 10px 0;
   text-align: center;
   position: relative;
 
@@ -198,16 +184,7 @@
 
 /* Ultra-subtle gold highlight edge */
 .welcome-title::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.2),
-    rgba(255, 255, 255, 0)
-  );
-  mix-blend-mode: soft-light;
-  pointer-events: none;
+  content: none;
 }
 
 @keyframes welcomeSoftPulse {
@@ -240,9 +217,10 @@
 /* ===================================== */
 .welcome-ganesha-image-container {
   position: absolute;
-  top: 44%;
-  left: 52%;
+  top: 50%;
+  left: 54%;
   transform: translate(-50%, -50%);
+  margin-top: -10px;
   z-index: 15;
   opacity: 0;
   transition: opacity 1s ease-out;
@@ -295,9 +273,9 @@
 .welcome-subtitle {
   margin: 8px 0 0 0;
   font-family: 'Nunito', sans-serif;
-  font-size: clamp(18px, 2vw, 34px);
+  font-size: 18px;
   font-weight: 700;
-  color: #6b52b5;
+  color: rgba(80, 60, 140, 0.8);
   letter-spacing: 0.2px;
   text-align: center;
   text-shadow:
@@ -329,17 +307,15 @@
 /* ADVENTURE BUTTON CONTAINER            */
 /* ===================================== */
 .adventure-button-container {
-  position: absolute;
-  left: 50%;
   opacity: 0;
-  transform: translateX(-50%) translateY(30px);
+  transform: translateY(30px);
   transition: all 1s ease-out;
-  margin-bottom: 40px;
+  margin-bottom: 5%;
 }
 
 .adventure-button-container.visible {
   opacity: 1;
-  transform: translateX(-50%) translateY(0);
+  transform: translateY(0);
 }
 
 /* PrimaryBtn lg size override for welcome screen */

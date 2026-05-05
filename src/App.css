@@ -239,11 +239,20 @@ button {
   z-index: 1000;
 }
 
-/* Accessibility - Focus indicators */
+/* Accessibility - Focus indicators (purple-only visual system) */
 button:focus,
+button:focus-visible,
+.primary-btn:focus,
+.primary-btn:focus-visible,
+.primary-btn:active {
+  outline: none;
+  border-color: transparent;
+  box-shadow: 0 6px 0 #5a3fc0;
+}
+
 a:focus,
 input:focus {
-  outline: 2px solid #4CAF50;
+  outline: 2px solid rgba(124, 93, 232, 0.45);
   outline-offset: 2px;
 }
 

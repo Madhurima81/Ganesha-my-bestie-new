@@ -1,4 +1,4 @@
-// CleanProfileSelector.jsx - FIXED: Delete Modal Bug
+﻿// CleanProfileSelector.jsx - FIXED: Delete Modal Bug
 import React, { useState, useEffect, useRef } from 'react';
 import GameStateManager from '../../services/GameStateManager';
 import PrimaryBtn from '../shared/PrimaryBtn';
@@ -14,8 +14,10 @@ const CleanProfileSelector = ({
   const [showCreateProfile, setShowCreateProfile] = useState(forceCreate);
   const [newProfileName, setNewProfileName] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState('monkey');
+  const [avatarTapPulseId, setAvatarTapPulseId] = useState(null);
   const [selectedAge, setSelectedAge] = useState(7);
   const [currentStep, setCurrentStep] = useState(1); // 1=name, 2=age, 3=friend
+  const [isCreatingProfile, setIsCreatingProfile] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
   const [showInfo, setShowInfo] = useState(false);
   const [manageModeId, setManageModeId] = useState(null); // stores the profile id being managed
@@ -46,33 +48,42 @@ const CleanProfileSelector = ({
     const audioEnabled = localStorage.getItem('ganesha_audio_enabled');
     const isAudioOn = audioEnabled === null ? true : audioEnabled === 'true';
     const canSpeak = isAudioOn && window.speechSynthesis && typeof window.SpeechSynthesisUtterance !== 'undefined';
-    const hasName = newProfileName.trim().length > 0;
 
     if (!showCreateProfile || !canSpeak || playedStepVoRef.current[currentStep]) {
-      return () => {
-        voiceTimersRef.current.forEach(clearTimeout);
-      };
+      return;
     }
 
-    const stepLineMap = {
-      1: 'Hi! What should I call you?',
-      2: hasName ? `Nice to meet you, ${newProfileName.trim()}! How old are you?` : 'How old are you?',
-      3: 'Now pick a friend to join your adventure!'
-    };
-
-    const timerId = setTimeout(() => {
+    const entryTimerId = setTimeout(() => {
       window.speechSynthesis.cancel();
-      const u = new window.SpeechSynthesisUtterance(stepLineMap[currentStep]);
-      u.rate = 1.02;
-      u.pitch = 1;
+      const u = new window.SpeechSynthesisUtterance(
+        currentStep === 1 ? 'What should I call you?'
+          : currentStep === 2 ? 'How old are you?'
+            : 'Pick your friend!'
+      );
+      u.rate = currentStep === 3 ? 1.05 : 1.02;
+      u.pitch = currentStep === 3 ? 1.05 : 1;
       u.volume = 0.9;
       window.speechSynthesis.speak(u);
       playedStepVoRef.current[currentStep] = true;
     }, 220);
-    voiceTimersRef.current.push(timerId);
+    let idleTimerId = null;
+
+    if (currentStep === 1 && !newProfileName.trim()) {
+      idleTimerId = setTimeout(() => {
+        if (!newProfileName.trim()) {
+          window.speechSynthesis.cancel();
+          const idleU = new window.SpeechSynthesisUtterance('Tell me your name.');
+          idleU.rate = 1.02;
+          idleU.pitch = 1;
+          idleU.volume = 0.9;
+          window.speechSynthesis.speak(idleU);
+        }
+      }, 2500);
+    }
 
     return () => {
-      voiceTimersRef.current.forEach(clearTimeout);
+      clearTimeout(entryTimerId);
+      if (idleTimerId) clearTimeout(idleTimerId);
     };
   }, [showCreateProfile, currentStep, newProfileName]);
 
@@ -91,6 +102,31 @@ const CleanProfileSelector = ({
 
   const handleAvatarSelect = (avatarId) => {
     setSelectedAvatar(avatarId);
+    setAvatarTapPulseId(avatarId);
+    const pulseTimer = setTimeout(() => setAvatarTapPulseId(null), 140);
+    voiceTimersRef.current.push(pulseTimer);
+
+    // Tiny "pop" using Web Audio so selection feels tactile even without asset files.
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (Ctx) {
+        const ctx = new Ctx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(520, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.07);
+        gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.02, ctx.currentTime + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.08);
+      }
+    } catch (e) {
+      // Non-blocking: skip if audio context is unavailable.
+    }
 
     if (hasPlayedFriendChoiceVoRef.current) return;
     const audioEnabled = localStorage.getItem('ganesha_audio_enabled');
@@ -117,7 +153,8 @@ const CleanProfileSelector = ({
   };
 
   const handleCreateProfile = () => {
-    if (!newProfileName.trim()) return;
+    if (!newProfileName.trim() || isCreatingProfile) return;
+    setIsCreatingProfile(true);
 
     try {
       const selectedAnimal = animalAvatars.find((animal) => animal.id === selectedAvatar);
@@ -137,9 +174,6 @@ const CleanProfileSelector = ({
         setNewProfileName('');
         setSelectedAvatar('monkey');
         setSelectedAge(null);
-        setShowCreateProfile(false);
-        loadProfiles();
-
         if (canSpeak) {
           window.speechSynthesis.cancel();
           const u = new window.SpeechSynthesisUtterance(`Yay, ${createdName}! Let's go!`);
@@ -152,9 +186,12 @@ const CleanProfileSelector = ({
         } else {
           onProfileSelect(newProfile.id);
         }
+      } else {
+        setIsCreatingProfile(false);
       }
     } catch (error) {
       console.error('Error creating profile:', error);
+      setIsCreatingProfile(false);
     }
   };
 
@@ -167,7 +204,7 @@ const CleanProfileSelector = ({
 
   const getAnimalId = (avatarData) => {
     if (['monkey', 'peacock', 'squirrel', 'tiger'].includes(avatarData)) return avatarData;
-    const map = { '🐵': 'monkey', '🦚': 'peacock', '🐿️': 'squirrel', '🐯': 'tiger' };
+    const map = { 'ðŸµ': 'monkey', 'ðŸ¦š': 'peacock', 'ðŸ¿ï¸': 'squirrel', 'ðŸ¯': 'tiger' };
     return map[avatarData] || 'monkey';
   };
 
@@ -191,7 +228,7 @@ const CleanProfileSelector = ({
           <div className="overlay">
             <div className="explorer-modal">
               <div className="ganesha-onboarding-portrait">
-                <img src="/images/ganesha-final.svg" alt="Ganesha" />
+                <img src="/images/ganesha-sit.svg" alt="Ganesha" />
               </div>
 
               <div className="step-dots">
@@ -222,7 +259,7 @@ const CleanProfileSelector = ({
 
                 {currentStep === 2 && (
                   <>
-                    <p className="create-step-echo">Hi {newProfileName.trim()}!</p>
+                    <p className="create-step-echo">{newProfileName.trim()}</p>
                     <h2 className="create-step-heading">How old are you?</h2>
                     <div className="age-stepper">
                       <button
@@ -256,11 +293,12 @@ const CleanProfileSelector = ({
                       {animalAvatars.map((animal) => (
                         <div
                           key={animal.id}
-                          className={`friend-card ${selectedAvatar === animal.id ? 'active' : ''}`}
+                          className={`friend-card ${selectedAvatar === animal.id ? 'active' : ''} ${avatarTapPulseId === animal.id ? 'pop' : ''}`}
                           onClick={() => handleAvatarSelect(animal.id)}
+                          aria-label={animal.name}
+                          role="button"
                         >
                           <img src={`/images/new-explorer-${animal.id}.png`} alt={animal.name} />
-                          <span>{animal.name}</span>
                         </div>
                       ))}
                     </div>
@@ -275,7 +313,7 @@ const CleanProfileSelector = ({
                   else if (currentStep === 2) setCurrentStep(3);
                   else handleCreateProfile();
                 }}
-                disabled={currentStep === 1 && newProfileName.trim().length < 2}
+                disabled={(currentStep === 1 && newProfileName.trim().length < 2) || isCreatingProfile}
                 size="md"
                 fullWidth
               />
