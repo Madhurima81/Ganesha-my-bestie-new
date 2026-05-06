@@ -2059,3 +2059,45 @@
     display: none !important;
   }
 }
+
+/* ===========================================================
+   FIX BLOCK — Pond petal/reflection polish + iPad sizing
+   =========================================================== */
+
+/* 1. Petal stepping stones — softer pulse, iPad scaling */
+.pond-petal-stone {
+  width: clamp(36px, 4vw, 56px) !important;
+  height: clamp(36px, 4vw, 56px) !important;
+}
+
+@keyframes pondPetalPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.85; }
+  50% { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
+}
+
+/* 2. Ganesha reflection — reflection feel, not solid figure */
+.pond-ganesha-reflection {
+  width: clamp(180px, 32%, 280px) !important;
+  top: 60% !important;
+}
+
+.pond-ganesha-reflection__img {
+  filter: blur(4px) saturate(0.45) brightness(1.1) sepia(0.22) !important;
+  opacity: 0.65 !important;
+}
+
+@keyframes pondGaneshaReveal {
+  0% { opacity: 0; }
+  35% { opacity: 0.25; }
+  55% { opacity: 0.4; }
+  100% { opacity: 0.55; }
+}
+
+/* 3. Drop handle — scales with iPad */
+.pond-drop-handle {
+  width: clamp(48px, 5.5vw, 76px) !important;
+  height: clamp(56px, 6.3vw, 88px) !important;
+}
+
+/* 4. Font migration */
+.pond-resume-popup { font-family: 'Baloo 2', system-ui, sans-serif !important; }

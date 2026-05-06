@@ -1745,7 +1745,7 @@ const PondSceneContent = ({
                               ? 'pondPetalPulse 1.2s ease-in-out infinite'
                               : 'pondPetalPulse 2.4s ease-in-out infinite',
                           opacity: reached ? 1 : isNext ? 1 : 0.5,
-                          transform: isNext ? 'translate(-50%, -50%) scale(1.08)' : 'translate(-50%, -50%)',
+                          transform: 'translate(-50%, -50%)',
                         }}
                       />
                     );
