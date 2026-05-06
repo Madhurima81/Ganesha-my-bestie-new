@@ -162,14 +162,34 @@ const instrumentPositionsByType = Object.values(instrumentPositions).reduce((acc
   return acc;
 }, {});
 
-const isTablet = typeof window !== 'undefined' && window.innerWidth <= 1024;
-const s = isTablet ? 0.7 : 1;
-
-const instrumentSizesByType = {
-  tabla: { eyes: { discovered: 290*s, glow: 150*s, hidden: 120*s }, ears: 290*s, pattern: 102*s },
-  dholak: { eyes: { discovered: 290*s, glow: 150*s, hidden: 120*s }, ears: 290*s, pattern: 102*s },
-  harmonium: { eyes: { discovered: 350*s, glow: 150*s, hidden: 120*s }, ears: 390*s, pattern: 102*s },
-  tanpura: { eyes: { discovered: 290*s, glow: 170*s, hidden: 135*s }, ears: 310*s, pattern: 122*s }
+// Responsive sizing — recalculates on resize/rotate
+const useResponsiveScale = () => {
+  const [scale, setScale] = React.useState(() => {
+    if (typeof window === 'undefined') return 1;
+    const w = window.innerWidth;
+    if (w <= 480) return 0.45;      // phone
+    if (w <= 810) return 0.6;       // iPad Mini portrait
+    if (w <= 1024) return 0.7;      // iPad Air / Pro 11 portrait
+    if (w <= 1366) return 0.85;     // iPad Pro 12.9 / landscape
+    return 1;                        // desktop
+  });
+  React.useEffect(() => {
+    const handler = () => {
+      const w = window.innerWidth;
+      if (w <= 480) setScale(0.45);
+      else if (w <= 810) setScale(0.6);
+      else if (w <= 1024) setScale(0.7);
+      else if (w <= 1366) setScale(0.85);
+      else setScale(1);
+    };
+    window.addEventListener('resize', handler);
+    window.addEventListener('orientationchange', handler);
+    return () => {
+      window.removeEventListener('resize', handler);
+      window.removeEventListener('orientationchange', handler);
+    };
+  }, []);
+  return scale;
 };
 
 // Musical note data
@@ -286,6 +306,17 @@ const SymbolMountainSceneContent = ({
 
   const { resetScene } = useSceneReset(sceneActions, 'symbol-mountain', 'symbol', getSceneResetConfig('symbol'));
   const completionModalContent = getCompletionModal(zoneId, sceneId);
+
+  // Responsive scaling hook
+  const s = useResponsiveScale();
+
+  // Responsive instrument sizes
+  const instrumentSizesByType = React.useMemo(() => ({
+    tabla:     { eyes: { discovered: 200*s, glow: 110*s, hidden: 90*s },  ears: 180*s, pattern: 80*s },
+    dholak:    { eyes: { discovered: 200*s, glow: 110*s, hidden: 90*s },  ears: 180*s, pattern: 80*s },
+    harmonium: { eyes: { discovered: 230*s, glow: 110*s, hidden: 90*s },  ears: 220*s, pattern: 80*s },
+    tanpura:   { eyes: { discovered: 200*s, glow: 120*s, hidden: 100*s }, ears: 195*s, pattern: 90*s }
+  }), [s]);
 
   // Local UI states
   const [showSparkle, setShowSparkle] = useState(null);
@@ -1414,7 +1445,7 @@ const SymbolMountainSceneContent = ({
                     )}
                     {/* TUSK — applies golden fade animation when transforming */}
                     {sceneState.tuskPower < 3 && (
-                      <div style={{ position: 'absolute', left: '35%', top: '50%', width: '300px', height: '300px', transform: 'translate(-50%, -50%)', zIndex: 30, pointerEvents: 'none' }}>
+                      <div style={{ position: 'absolute', left: '35%', top: '50%', width: 'clamp(140px, 22vw, 240px)', height: 'clamp(140px, 22vw, 240px)', transform: 'translate(-50%, -50%)', zIndex: 30, pointerEvents: 'none' }}>
                         <img
                           src={ganeshaTusk}
                           alt="Tusk"
@@ -1450,8 +1481,8 @@ const SymbolMountainSceneContent = ({
                           left: '35%',
                           top: '50%',
                           transform: 'translate(-50%, -50%)',
-                          width: '640px',
-                          height: '700px',
+                          width: 'clamp(280px, 50vw, 520px)',
+                          height: 'clamp(310px, 55vw, 570px)',
                           pointerEvents: 'none',
                           zIndex: 10,
                         }}
@@ -1469,7 +1500,7 @@ const SymbolMountainSceneContent = ({
 
                     {/* OPTIONAL — golden dust particles after reveal */}
                     {sceneState.ganeshaComplete && !ganeshaRevealing && (
-                      <div className="golden-dust" style={{ position: 'absolute', width: '640px', height: '700px', left: '35%', top: '50%', transform: 'translate(-50%, -50%)' }} />
+                      <div className="golden-dust" style={{ position: 'absolute', width: 'clamp(280px, 50vw, 520px)', height: 'clamp(310px, 55vw, 570px)', left: '35%', top: '50%', transform: 'translate(-50%, -50%)' }} />
                     )}
                     {(showSparkle === 'tusk-feeding' || showSparkle === 'tusk-activate' || showSparkle === 'tusk-complete' || showSparkle === 'ganesha-complete') && (
                       <SparkleAnimation

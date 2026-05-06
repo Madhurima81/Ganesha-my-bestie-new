@@ -377,7 +377,7 @@
 
 .discovered-instrument.rhythm-available {
   animation: rhythmPulse 1s ease-in-out infinite;
-  transform: translate(-50%, -50%) scale(1.2) !important;
+  transform: translate(-50%, -50%) scale(1.08) !important;
   border: 3px solid #ffd700;
   border-radius: 50%;
 }
@@ -389,7 +389,7 @@
 
 .discovered-instrument.rhythm-playing {
   animation: instrumentPlay 0.8s ease;
-  transform: translate(-50%, -50%) scale(1.4) !important;
+  transform: translate(-50%, -50%) scale(1.15) !important;
   border: 4px solid #00ff00;
   border-radius: 50%;
   box-shadow: 0 0 30px #00ff00;
@@ -517,7 +517,7 @@
   font-weight: bold;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   z-index: 50;
-  font-family: 'Comic Sans MS', cursive;
+  font-family: 'Baloo 2', system-ui, sans-serif;
 }
 
 /* ================================
