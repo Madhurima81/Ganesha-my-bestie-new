@@ -1,25 +1,35 @@
 ﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { getTodaysDare } from '../../config/dareBank';
+import { getTodaysGratitude } from '../../config/gratitudeBank';
+import { DAILY_DARE_CONTENT } from '../../config/content/dailyDareContent';
 import { useGaneshaVoice } from '../../hooks/useGaneshaVoice';
+import micIcon from '../../../zones/shloka-river/core/assets/images/mic-icon.png';
 import './DailyDarePopup.css';
 
 export default function DailyDarePopup({ onClose }) {
   const { speak, stop } = useGaneshaVoice();
+  const childAge = parseInt(localStorage.getItem('gmb_child_age') || '7', 10);
+  const dare = getTodaysDare(childAge);
+  const gratitude = useMemo(() => getTodaysGratitude(childAge), [childAge]);
 
   const [phase, setPhase] = useState('gratitude');
-  const [spokenText, setSpokenText] = useState('');
-  const [typedText, setTypedText] = useState('');
-  const [showTypeInput, setShowTypeInput] = useState(false);
+  const [transcript, setTranscript] = useState('');
+  const [micState, setMicState] = useState('idle'); // idle | listening
+  const [hasRecording, setHasRecording] = useState(false);
+  const [speechSupported, setSpeechSupported] = useState(true);
   const [celebration, setCelebration] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
 
   const recognitionRef = useRef(null);
-  const transitionTimerRef = useRef(null);
+  const shouldKeepListeningRef = useRef(false);
+  const liveTranscriptRef = useRef('');
+  const fadeTimerRef = useRef(null);
   const closeTimerRef = useRef(null);
-  const gratitudeText = useMemo(() => (spokenText || typedText).trim(), [spokenText, typedText]);
 
   const startRecognition = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      setShowTypeInput(true);
+      setSpeechSupported(false);
       return;
     }
 
@@ -30,34 +40,62 @@ export default function DailyDarePopup({ onClose }) {
     recognition.continuous = true;
     recognitionRef.current = recognition;
 
+    shouldKeepListeningRef.current = true;
+    liveTranscriptRef.current = '';
+    setTranscript('');
+    setHasRecording(false);
+    setMicState('listening');
+
     recognition.onresult = (e) => {
-      const transcript = Array.from(e.results)
-        .map((r) => r[0].transcript)
-        .join(' ');
-      setSpokenText(transcript);
+      const text = Array.from(e.results).map((r) => r[0].transcript).join(' ');
+      liveTranscriptRef.current = text;
+      setTranscript(text);
     };
 
-    recognition.onerror = (e) => {
-      if (e.error !== 'no-speech') {
-        setShowTypeInput(true);
+    recognition.onend = () => {
+      if (shouldKeepListeningRef.current) {
+        try {
+          recognition.start();
+          return;
+        } catch (_) {}
       }
+      setMicState('idle');
+      if (liveTranscriptRef.current.trim()) setHasRecording(true);
+    };
+
+    recognition.onerror = () => {
+      shouldKeepListeningRef.current = false;
+      setMicState('idle');
+      if (liveTranscriptRef.current.trim()) setHasRecording(true);
     };
 
     try {
       recognition.start();
+    } catch (_) {
+      setMicState('idle');
+    }
+  };
+
+  const stopRecognition = () => {
+    shouldKeepListeningRef.current = false;
+    try {
+      recognitionRef.current?.stop?.();
     } catch (_) {}
   };
 
-  const onUserInput = () => {
-    if (phase !== 'gratitude' || !gratitudeText || transitionTimerRef.current) return;
+  const reRecord = () => {
+    stopRecognition();
+    setTranscript('');
+    setHasRecording(false);
+    liveTranscriptRef.current = '';
+    setTimeout(startRecognition, 150);
+  };
 
-    localStorage.setItem('gmb_gratitude_today', gratitudeText);
-    speak("That's lovely...");
-
-    transitionTimerRef.current = setTimeout(() => {
-      transitionTimerRef.current = null;
-      setPhase('kindness');
-    }, 1500);
+  const handleGratitudeDone = () => {
+    if (!transcript.trim()) return;
+    stopRecognition();
+    localStorage.setItem('gmb_gratitude_today', transcript.trim());
+    setPhase('kindness');
   };
 
   const handleTry = () => {
@@ -65,83 +103,148 @@ export default function DailyDarePopup({ onClose }) {
 
     const today = new Date().toISOString().split('T')[0];
     localStorage.setItem('gmb_last_dare_date', today);
-    localStorage.setItem('gmb_today_dare_category', 'kindness');
-    localStorage.setItem('gmb_today_dare_id', 'fixed-kindness-001');
+    if (dare) {
+      localStorage.setItem('gmb_today_dare_category', dare.category);
+      localStorage.setItem('gmb_today_dare_id', dare.id);
+    }
+
+    // Let child see the "Yay!" state before fade/close begins.
+    fadeTimerRef.current = setTimeout(() => {
+      fadeTimerRef.current = null;
+      setIsClosing(true);
+    }, 700);
 
     closeTimerRef.current = setTimeout(() => {
       closeTimerRef.current = null;
       onClose();
-    }, 1500);
+    }, 1800);
   };
 
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0];
     const voKey = `gmb_daily_prompt_vo_${today}`;
     if (!localStorage.getItem(voKey)) {
-      speak('What made you smile today?');
+      speak(gratitude.text);
       localStorage.setItem(voKey, '1');
     }
 
     return () => {
-      recognitionRef.current?.stop?.();
-      if (transitionTimerRef.current) clearTimeout(transitionTimerRef.current);
+      shouldKeepListeningRef.current = false;
+      try {
+        recognitionRef.current?.stop?.();
+      } catch (_) {}
+      if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
       if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
       stop();
       if (typeof window !== 'undefined' && window.speechSynthesis) {
         window.speechSynthesis.cancel();
       }
     };
-  }, [speak, stop]);
-
-  useEffect(() => {
-    onUserInput();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spokenText, typedText]);
+  }, [gratitude.text, speak, stop]);
 
   return (
     <div className="dare-root dare-root--map" role="dialog" aria-modal="true">
-      <div className="dare-panel">
-        <button className="dare-close" onClick={onClose} aria-label="Close">✕</button>
+      <div className={`dare-panel ${isClosing ? 'dare-panel--closing' : ''}`}>
+        <button
+          className="dare-close"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onClose();
+          }}
+          aria-label="Close"
+          type="button"
+        >
+          ✕
+        </button>
 
         {phase === 'gratitude' && (
           <>
-            <h2 className="dare-title">What made you smile today?</h2>
+            <h2 className="dare-title">{gratitude.text}</h2>
 
             <div className="dare-voice-area">
-              <button className="dare-mic-btn" onClick={startRecognition} aria-label="Tap to speak">🎤</button>
+              {!hasRecording && (
+                <button
+                  className={`dare-mic-btn ${micState === 'listening' ? 'recording-mic' : ''}`}
+                  onClick={micState === 'listening' ? stopRecognition : startRecognition}
+                  aria-label={micState === 'listening' ? 'Stop recording' : 'Start recording'}
+                  type="button"
+                >
+                  {micState === 'listening' ? (
+                    <span className="dare-pause-icon" aria-hidden="true">
+                      <span />
+                      <span />
+                    </span>
+                  ) : (
+                    <img src={micIcon} alt="" className="dare-mic-icon-img" />
+                  )}
+                </button>
+              )}
 
-              <span className="dare-helper-text">Tap to speak</span>
-              <button className="dare-type-link" onClick={() => setShowTypeInput(true)}>
-                or type
-              </button>
+              <span className="dare-helper-text">
+                {micState === 'listening'
+                  ? "I'm listening..."
+                  : hasRecording
+                  ? 'You can edit, re-record, or tap Done'
+                  : speechSupported
+                  ? 'Tap mic to speak'
+                  : 'Type your answer below'}
+              </span>
+              {micState === 'listening' && <span className="dare-pause-hint">Tap to pause</span>}
 
-              {showTypeInput && (
-                <input
-                  className="dare-inline-input"
-                  value={typedText}
-                  onChange={(e) => setTypedText(e.target.value)}
-                  placeholder="Type here..."
+              {(transcript || hasRecording || !speechSupported || micState === 'listening') && (
+                <textarea
+                  className={`dare-transcript ${micState === 'listening' ? 'recording' : ''}`}
+                  value={transcript}
+                  onChange={(e) => {
+                    setTranscript(e.target.value);
+                    if (e.target.value.trim()) setHasRecording(true);
+                  }}
+                  placeholder={DAILY_DARE_CONTENT.gratitude.typePlaceholder}
                   maxLength={140}
+                  rows={2}
                 />
               )}
 
-              {spokenText && <p className="dare-inline-preview">{spokenText}</p>}
+              {hasRecording && (
+                <div className="dare-action-row">
+                  <button className="dare-secondary-btn" onClick={reRecord} type="button">
+                    Re-record
+                  </button>
+                  <button
+                    className="dare-primary-btn"
+                    onClick={handleGratitudeDone}
+                    disabled={!transcript.trim()}
+                    type="button"
+                  >
+                    Done
+                  </button>
+                </div>
+              )}
             </div>
           </>
         )}
 
         {phase === 'kindness' && (
           <>
-            <h3 className="dare-subtitle">Try this today</h3>
-            <p className="dare-task">Help a grown-up with something they are doing.</p>
+            <p className="dare-subtitle">Try this today</p>
+            <p className="dare-task">{dare.text}</p>
 
             <button
               className={`dare-primary-btn ${celebration ? 'success' : ''}`}
               onClick={handleTry}
               disabled={celebration}
+              type="button"
             >
-              {celebration ? '\uD83D\uDC9B Yay!' : "I'll try"}
+              {celebration ? DAILY_DARE_CONTENT.kindness.successCta : DAILY_DARE_CONTENT.kindness.cta}
             </button>
+            {celebration && (
+              <span className="dare-sparkles" aria-hidden="true">
+                <span className="dare-sparkle s1">✦</span>
+                <span className="dare-sparkle s2">✧</span>
+                <span className="dare-sparkle s3">✦</span>
+              </span>
+            )}
           </>
         )}
       </div>

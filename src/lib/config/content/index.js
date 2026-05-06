@@ -38,6 +38,15 @@ export {
   formatModalContent
 } from './modalContent';
 
+export {
+  DAILY_DARE_CONTENT
+} from './dailyDareContent';
+
+export {
+  GRATITUDE_BANK,
+  getTodaysGratitude
+} from '../gratitudeBank';
+
 // ========================================
 // Usage Examples:
 // ========================================

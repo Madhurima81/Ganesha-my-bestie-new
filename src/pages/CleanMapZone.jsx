@@ -618,7 +618,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     const audio = ambientRef.current;
     if (!audio) return;
 
-    const TARGET_VOL = 0.20;
+    const TARGET_VOL = 0.06;
 
     const fadeIn = () => {
       clearInterval(fadingRef.current);
@@ -673,9 +673,9 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       // fade back in
       clearInterval(fadingRef.current);
       fadingRef.current = setInterval(() => {
-        const next = Math.min(audio.volume + 0.015, 0.20);
+        const next = Math.min(audio.volume + 0.015, 0.06);
         audio.volume = next;
-        if (next >= 0.20) clearInterval(fadingRef.current);
+        if (next >= 0.06) clearInterval(fadingRef.current);
       }, 80);
       setIsMuted(false);
     } else {
@@ -1015,6 +1015,18 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         loop
         preload="auto"
       />
+
+      <button
+        type="button"
+        className={`map-sound-toggle ${isMuted ? 'muted' : ''}`}
+        onClick={toggleMute}
+        aria-label={isMuted ? 'Turn sound on' : 'Turn sound off'}
+        title={isMuted ? 'Sound off (tap to turn on)' : 'Sound on (tap to turn off)'}
+      >
+        <span className="map-sound-toggle__icon" aria-hidden="true">
+          {isMuted ? '🔇' : '🔊'}
+        </span>
+      </button>
 
       {/* Background image */}
       <img

@@ -168,7 +168,7 @@ const pickRandomModakSlots = () => {
 };
 
 const getFeedingGaneshaScale = (feedCount, transformed) => {
-  const growthSteps = [0.55, 0.85, 1.15, 1.5];
+  const growthSteps = [0.72, 0.82, 0.94, 1.08];
   const stepIndex = Math.min(Math.max(feedCount, 0), growthSteps.length - 1);
   const baseScale = growthSteps[stepIndex];
   return transformed ? Math.max(baseScale, 1.5) : baseScale;
@@ -2141,7 +2141,7 @@ const NewModakSceneMVPContent = ({
                         height: '100%',
                         cursor: 'default',
                         transform: `scale(${getFeedingGaneshaScale(sceneState.rockFeedCount, sceneState.rockTransformed)})`,
-                        transition: 'transform 0.8s ease-out'
+                        transition: 'transform 2.2s cubic-bezier(0.34, 1.2, 0.64, 1)'
                       }}
                     />
                   </KidsDropZone>

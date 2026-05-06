@@ -667,7 +667,11 @@
 .map-sound-toggle__icon {
   width:  clamp(28px, 3vw, 38px);
   height: clamp(28px, 3vw, 38px);
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(20px, 2.4vw, 28px);
+  line-height: 1;
 }
 
 .map-sound-toggle:hover {

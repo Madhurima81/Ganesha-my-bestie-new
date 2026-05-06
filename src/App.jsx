@@ -264,21 +264,11 @@ useEffect(() => {
     }
 
     const today = new Date().toISOString().split('T')[0];
-    const doneToday = localStorage.getItem('gmb_last_dare_date') === today;
-    const openedThisSession = sessionStorage.getItem('gmb_daily_dare_opened') === today;
-
-    if (doneToday) {
-      setShowDareChip(true);
-      return;
-    }
-
     setShowDareChip(false);
-    if (!openedThisSession) {
-      dareOpenTimerRef.current = setTimeout(() => {
-        setShowDarePopup(true);
-        sessionStorage.setItem('gmb_daily_dare_opened', today);
-      }, 2500);
-    }
+    dareOpenTimerRef.current = setTimeout(() => {
+      setShowDarePopup(true);
+      sessionStorage.setItem('gmb_daily_dare_opened', today);
+    }, 2500);
 
     return () => {
       if (dareOpenTimerRef.current) {
@@ -1015,6 +1005,28 @@ chants: result?.chants || result?.chantedVerses || {},
             currentZone={currentZone}
             highlightedScene={currentScene}
           />
+          <button
+            type="button"
+            onClick={() => setShowDarePopup(true)}
+            style={{
+              position: 'absolute',
+              left: '16px',
+              top: '16px',
+              zIndex: 1200,
+              border: 'none',
+              borderRadius: '999px',
+              padding: '10px 14px',
+              background: 'rgba(255,255,255,0.94)',
+              boxShadow: '0 8px 24px rgba(40,20,80,0.2)',
+              color: '#5e49a8',
+              fontWeight: 700,
+              fontSize: '12px',
+              cursor: 'pointer'
+            }}
+            aria-label="Test Daily Dare"
+          >
+            Test Daily Dare
+          </button>
           {showDareChip && !showDarePopup && (
             <button
               type="button"
