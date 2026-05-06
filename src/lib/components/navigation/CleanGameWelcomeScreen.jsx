@@ -1,12 +1,14 @@
-// CleanGameWelcomeScreen.jsx - FINAL CLEAN VERSION
+﻿// CleanGameWelcomeScreen.jsx - FINAL CLEAN VERSION
 import React, { useState, useEffect, useRef } from 'react';
 import GameStateManager from '../../services/GameStateManager';
 import CleanProfileSelector from './CleanProfileSelector';
 import PrimaryBtn from '../shared/PrimaryBtn';
+import ScreenHeader from '../shared/ScreenHeader';
 import './CleanGameWelcomeScreen.css';
 import SimpleSceneManager from '../../services/SimpleSceneManager';
 import CulturalProgressExtractor from '../../services/CulturalProgressExtractor';
 import ProgressPopup from './ProgressPopup';
+import GameIcon from '../ui/GameIcon';
 import { symbolCardContent } from '../../../zones/symbol-mountain/shared/components/symbolCardContent';
 import { playUiTap } from '../../services/AudioService';
 
@@ -148,11 +150,26 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
     }
   };
 
+  const isFirstTimeVisit = () => !hasProgress;
+
   const getWelcomeMessage = () => {
-    return {
-      title: `Hi ${currentProfile?.name || ''}, let's go!`,
-      buttonText: { main: 'Start Adventure' }
-    };
+    const isFirstTime = isFirstTimeVisit();
+    
+    if (isFirstTime) {
+      return {
+        title: `Welcome to the Adventure, ${currentProfile.name}!`,
+        subtitle: "Are you excited? Let's begin your magical journey!",
+        progressTitle: "Ready for Adventure",
+        buttonText: { main: "Start Adventure", sub: "Begin your magical journey" }
+      };
+    } else {
+      return {
+        title: `Welcome Back, ${currentProfile.name}!`,
+        subtitle: "Ready to continue your magical journey?",
+        progressTitle: "Your Journey So Far",
+        buttonText: { main: "Continue Journey", sub: "Resume from where you left off" }
+      };
+    }
   };
   
   const handleProfileSelect = (profileId) => {
@@ -179,8 +196,8 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
   };
 
   // Returns { zone, scene } for the most recently played location.
-  // scene is null if that session was completed â†’ caller goes to zone-welcome.
-  // scene is set if session was mid-game â†’ caller resumes that scene.
+  // scene is null if that session was completed → caller goes to zone-welcome.
+  // scene is set if session was mid-game → caller resumes that scene.
   const getLastPlayedLocation = (profileId) => {
     if (!profileId) return null;
 
@@ -192,7 +209,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
       { zone: 'about-me-hut',     scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story'] },
     ];
 
-    // 1. Scan temp sessions â€” most recently touched wins
+    // 1. Scan temp sessions — most recently touched wins
     let latestZone = null;
     let latestScene = null;
     let latestCompleted = false;
@@ -229,7 +246,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
       return { zone: latestZone, scene: latestCompleted ? null : latestScene };
     }
 
-    // 2. Permanent progress fallback â€” last zone with any completed scene â†’ zone-welcome
+    // 2. Permanent progress fallback — last zone with any completed scene → zone-welcome
     try {
       const gameProgress = GameStateManager.getGameProgress();
       const zones = gameProgress?.zones || {};
@@ -250,17 +267,22 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
     const location = getLastPlayedLocation(profileId);
 
     if (location) {
-      // scene set   â†’ mid-game â†’ resume that scene
-      // scene null  â†’ completed â†’ go to zone welcome
+      // scene set   → mid-game → resume that scene
+      // scene null  → completed → go to zone welcome
       onContinue(location.zone, location.scene);
       return;
     }
 
-    // Nothing found â†’ map
+    // Nothing found → map
     onNewGame();
   };
 
   const handleNewGame = () => {
+    playUiTap(0.22);
+    onNewGame();
+  };
+
+  const handleStartAdventure = () => {
     playUiTap(0.22);
     onNewGame();
   };
@@ -303,49 +325,49 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
         { 
           id: 'vakratunda', displayName: "Vakratunda", subtitle: "Curved Trunk!", 
           image: '/images/meanings-caveofsecrets/vakratunda-symbol.png',
-          description: "A curvy trunk that lifts anything â€” tiny or huge! Powerful yet gentle â€” just like Ganesha. âœ¨",
+          description: "A curvy trunk that lifts anything — tiny or huge! Powerful yet gentle — just like Ganesha. ✨",
           audio: '/audio/meanings/vakratunda.mp3'
         },
         { 
           id: 'mahakaya', displayName: "Mahakaya", subtitle: "Mighty Form!", 
           image: '/images/meanings-caveofsecrets/mahakaya-symbol.png',
-          description: "Ganesha's body is big, strong and steady like a mountain! A powerful protector with a warm, loving heart. â¤ï¸",
+          description: "Ganesha's body is big, strong and steady like a mountain! A powerful protector with a warm, loving heart. ❤️",
           audio: '/audio/meanings/mahakaya.mp3'
         },
         { 
           id: 'suryakoti', displayName: "Suryakoti", subtitle: "Brighter Than Suns!", 
           image: '/images/meanings-caveofsecrets/suryakoti-symbol.png',
-          description: "Ganesha shines brighter than millions of suns! His light removes fear and fills us with joy. â˜€ï¸",
+          description: "Ganesha shines brighter than millions of suns! His light removes fear and fills us with joy. ☀️",
           audio: '/audio/meanings/suryakoti.mp3'
         },
         { 
           id: 'samaprabha', displayName: "Samaprabha", subtitle: "Radiant Glow!", 
           image: '/images/meanings-caveofsecrets/samaprabha-symbol.png',
-          description: "A divine glow that brightens everything around him! Where Ganesha is, light and happiness follow. âœ¨",
+          description: "A divine glow that brightens everything around him! Where Ganesha is, light and happiness follow. ✨",
           audio: '/audio/meanings/samaprabha.mp3'
         },
         { 
           id: 'nirvighnam', displayName: "Sarva-Vighnam", subtitle: "Remove All Obstacles!", 
           image: '/images/meanings-caveofsecrets/nirvighnam-symbol.png',
-          description: "Ganesha clears the path when things get tough. Try bravely â€” he helps us move forward. ðŸš§âž¡ï¸âœ¨",
+          description: "Ganesha clears the path when things get tough. Try bravely — he helps us move forward. 🚧➡️✨",
           audio: '/audio/meanings/nirvighnam.mp3'
         },
         { 
           id: 'kurumedeva', displayName: "Kurumedeva", subtitle: "O Lord, Guide Me!", 
           image: '/images/meanings-caveofsecrets/kurumedeva-symbol.png',
-          description: "We ask Ganesha to help us learn and move ahead. With effort + blessings, great things happen. ðŸ§¡",
+          description: "We ask Ganesha to help us learn and move ahead. With effort + blessings, great things happen. 🧡",
           audio: '/audio/meanings/kurumedeva.mp3'
         },
         { 
           id: 'sarvakaryeshu', displayName: "Sarva-Karyeshu", subtitle: "In All Tasks!", 
           image: '/images/meanings-caveofsecrets/sarvakaryeshu-symbol.png',
-          description: "For every work â€” big or small â€” he is with us. We try with focus, he supports with grace. ðŸŒ¿",
+          description: "For every work — big or small — he is with us. We try with focus, he supports with grace. 🌿",
           audio: '/audio/meanings/sarvakaryeshu.mp3'
         },
         { 
           id: 'sarvada', displayName: "Sarvada", subtitle: "Always!", 
           image: '/images/meanings-caveofsecrets/sarvada-symbol.png',
-          description: "Ganesha's love and blessings stay always with us. Forever guiding, forever protecting. ðŸ’›",
+          description: "Ganesha's love and blessings stay always with us. Forever guiding, forever protecting. 💛",
           audio: '/audio/meanings/sarvada.mp3'
         }
       ];
@@ -374,7 +396,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
       ];
       
       const items = allChants.map(c => ({
-        id: c.id, name: c.displayName, image: c.image, description: "Tap to listen to the sacred chant ðŸŽµ", audio: c.audio
+        id: c.id, name: c.displayName, image: c.image, description: "Tap to listen to the sacred chant 🎵", audio: c.audio
       }));
       
       setPopupData({
@@ -435,8 +457,18 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
   return (
     <div className="clean-welcome-overlay page-transition">
       <div className="clean-welcome-content">
-                <h1 className="game-welcome-title">{getWelcomeMessage().title}</h1>
-
+        {(() => {
+          const welcomeMsg = getWelcomeMessage();
+          return (
+            <>
+              <ScreenHeader
+                title={welcomeMsg.title}
+                glowColor="purple"
+              />
+            </>
+          );
+        })()}        
+       
         {/* PROFILE SECTION */}
         <div className="enhanced-profile-section">
           <div className="profile-header">
@@ -449,8 +481,8 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
                 };
                 const animalId = getAnimalId(currentProfile.avatar);
                 return (
-                  <img
-                    className={`profile-avatar-large avatar ${animalId === 'squirrel' ? 'squirrel-avatar' : ''}`}
+                  <img 
+                    className={`profile-avatar-large ${animalId === 'squirrel' ? 'squirrel-avatar' : ''}`}
                     src={`/images/new-explorer-${animalId}.png`}
                     alt={currentProfile.name}
                     onError={(e) => { e.target.style.display = 'none'; }}
@@ -458,19 +490,134 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
                 );
               })()}
             </div>
+            
+            <div className="profile-info">
+              <h2 className="profile-name-large">{currentProfile.name}</h2>
+            </div>
           </div>
+          
+          {/* ✅ NO STAR BANNER HERE - CLEAN LAYOUT */}
+
+          {/* Switch Explorer Button */}
+          {hasProgress && (
+            <button className="change-explorer-btn" onClick={handleBackToProfiles}>
+              Switch Explorer
+            </button>
+          )}
         </div>
+        
+        {/* PROGRESS CARDS (Only for returning users) */}
+        {hasProgress && (
+          <div className="overall-progress">
+            <div className="compact-stats-container">
+              
+              <div className="stats-list-vertical">
+                <div 
+                  className={`stat-clean-row ${isZoneComplete(culturalProgress.symbols) ? 'completed' : ''}`}
+                  onClick={() => handleProgressBoxClick('symbols')}
+                >
+                  <div className="stat-icon-wrap">
+                    <GameIcon name="zone_stat_symbols" size={32} className="stat-icon-clean" />
+                    {isZoneComplete(culturalProgress.symbols) && (
+                      <span className="stat-complete-check" aria-hidden="true">✓</span>
+                    )}
+                  </div>
+                  <span className={`stat-text-clean ${isZoneComplete(culturalProgress.symbols) ? 'all-symbols-discovered' : ''}`}>
+                    {isZoneComplete(culturalProgress.symbols) ? 'All discovered' : `${culturalProgress.symbols} Symbols`}
+                  </span>
+                </div>
+                
+                <div 
+                  className={`stat-clean-row ${isZoneComplete(culturalProgress.meanings) ? 'completed' : ''}`}
+                  onClick={() => handleProgressBoxClick('meanings')}
+                >
+                  <div className="stat-icon-wrap">
+                    <GameIcon name="zone_stat_meanings" size={32} className="stat-icon-clean" />
+                    {isZoneComplete(culturalProgress.meanings) && (
+                      <span className="stat-complete-check" aria-hidden="true">✓</span>
+                    )}
+                  </div>
+                  <span className="stat-text-clean">{culturalProgress.meanings} Meanings</span>
+                </div>
+                
+                <div 
+                  className={`stat-clean-row ${isZoneComplete(culturalProgress.chants) ? 'completed' : ''}`}
+                  onClick={() => handleProgressBoxClick('chants')}
+                >
+                  <div className="stat-icon-wrap">
+                    <GameIcon name="zone_stat_chants" size={32} className="stat-icon-clean" />
+                    {isZoneComplete(culturalProgress.chants) && (
+                      <span className="stat-complete-check" aria-hidden="true">✓</span>
+                    )}
+                  </div>
+                  <span className="stat-text-clean">{culturalProgress.chants} Chants</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* ACTION BUTTONS */}
         <div className="welcome-actions">
-          <PrimaryBtn
-            label="Start Adventure"
-            onClick={handleContinue}
-            size="md"
-            fullWidth
-          />
+          {hasProgress ? (
+            <>
+              <PrimaryBtn
+                label={getWelcomeMessage().buttonText.main}
+                onClick={handleContinue}
+                size="md"
+                fullWidth
+                className="continue-journey-btn"
+              />
+              <button className="secondary-btn" onClick={handleNewGame}>
+                Explore Map
+              </button>
+            </>
+          ) : (
+            <>
+              <PrimaryBtn
+                label="Start Adventure"
+                onClick={handleStartAdventure}
+                size="md"
+                fullWidth
+              />
+              <button className="secondary-btn" onClick={handleBackToProfiles}>
+                Switch Explorer
+              </button>
+            </>
+          )}
+
+          {/* Parent Corner — subtle, below main actions */}
+          {onParentCorner && (
+            <button
+              onClick={() => {
+                playUiTap(0.22);
+                onParentCorner();
+              }}
+              style={{
+                background: 'none',
+                border: '1.5px solid #C4B5F4',
+                borderRadius: '24px',
+                padding: '10px 20px',
+                cursor: 'pointer',
+                fontFamily: 'Nunito, sans-serif',
+                fontSize: '13px',
+                fontWeight: '600',
+                color: '#8B7AB0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                width: '100%',
+                marginTop: '4px',
+                minHeight: '44px',
+              }}
+            >
+              👨‍👩‍👧 Parent Corner
+            </button>
+          )}
         </div>
       </div>
+      
       {showNewGameConfirm && (
         <div className="confirm-overlay">
           <div className="confirm-dialog">
