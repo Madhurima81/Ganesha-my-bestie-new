@@ -28,11 +28,11 @@ const defaultInstrumentPositions = {
   4: { x: 86, y: 47, type: 'tanpura' }
 };
 
-const EyesTelescopeGame = ({ 
+const EyesTelescopeGame = ({
   isActive = false,
   instrumentPositions = defaultInstrumentPositions,
   instrumentSizes = {},
-  discoveryRadius = 15,
+  discoveryRadius = 18,
   onInstrumentFound,
   onAllInstrumentsFound,
   onClose,
@@ -265,7 +265,7 @@ const EyesTelescopeGame = ({
         disabled={gameComplete}
         className={`magnifier magnifier-container ${showMagnifier ? 'show' : ''} ${telescopeDragging ? 'dragging active' : ''}`}
         style={{
-          width: '260px', height: '260px', zIndex: 25,
+          width: 'clamp(140px, 18vw, 240px)', height: 'clamp(140px, 18vw, 240px)', zIndex: 25,
           cursor: 'grab',
           opacity: 1,
           animation:
@@ -277,7 +277,7 @@ const EyesTelescopeGame = ({
                   ? 'idleWobbleFinal 0.7s ease-in-out 3'
                   : 'none'
         }}
-        bounds={{ top: 5, left: 5, right: 90, bottom: 90 }}
+        bounds={{ top: 8, left: 2, right: 98, bottom: 95 }}
       >
         <img 
           src={mglass}
