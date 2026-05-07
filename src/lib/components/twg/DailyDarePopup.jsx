@@ -3,6 +3,7 @@ import { getTodaysDare } from '../../config/dareBank';
 import { getTodaysGratitude } from '../../config/gratitudeBank';
 import { DAILY_DARE_CONTENT } from '../../config/content/dailyDareContent';
 import { useGaneshaVoice } from '../../hooks/useGaneshaVoice';
+import { saveTodayKindnessEntry } from '../../services/KindnessJournal';
 import micIcon from '../../../zones/shloka-river/core/assets/images/mic-icon.png';
 import './DailyDarePopup.css';
 
@@ -84,11 +85,73 @@ export default function DailyDarePopup({ onClose }) {
   };
 
   const reRecord = () => {
-    stopRecognition();
+    // 1. Tell the existing recognition to fully stop and NOT auto-restart.
+    shouldKeepListeningRef.current = false;
+
+    // 2. Clear UI synchronously — stay in listening view (no flicker to idle).
+    liveTranscriptRef.current = '';
     setTranscript('');
     setHasRecording(false);
-    liveTranscriptRef.current = '';
-    setTimeout(startRecognition, 150);
+    setMicState('listening');
+
+    const oldRecognition = recognitionRef.current;
+
+    // 3. Helper that actually starts a fresh recognition instance.
+    const startFresh = () => {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        setSpeechSupported(false);
+        setMicState('idle');
+        return;
+      }
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 1;
+      recognition.continuous = true;
+      recognitionRef.current = recognition;
+      shouldKeepListeningRef.current = true;
+
+      recognition.onresult = (e) => {
+        const text = Array.from(e.results).map((r) => r[0].transcript).join(' ');
+        liveTranscriptRef.current = text;
+        setTranscript(text);
+      };
+      recognition.onend = () => {
+        if (shouldKeepListeningRef.current) {
+          try { recognition.start(); return; } catch (_) {}
+        }
+        setMicState('idle');
+        if (liveTranscriptRef.current.trim()) setHasRecording(true);
+      };
+      recognition.onerror = () => {
+        shouldKeepListeningRef.current = false;
+        setMicState('idle');
+        if (liveTranscriptRef.current.trim()) setHasRecording(true);
+      };
+
+      try { recognition.start(); }
+      catch (_) {
+        // If the mic is still locked, retry once more after a short delay.
+        setTimeout(() => {
+          try { recognition.start(); } catch (__) { setMicState('idle'); }
+        }, 250);
+      }
+    };
+
+    // 4. Wait for OLD recognition's onend to fire before starting fresh.
+    if (oldRecognition) {
+      oldRecognition.onresult = null;
+      oldRecognition.onerror = null;
+      oldRecognition.onend = () => {
+        // Give the browser a moment to fully release the mic before starting fresh.
+        setTimeout(startFresh, 300);
+      };
+      try { oldRecognition.stop(); }
+      catch (_) { setTimeout(startFresh, 300); }
+    } else {
+      startFresh();
+    }
   };
 
   const handleGratitudeDone = () => {
@@ -107,6 +170,12 @@ export default function DailyDarePopup({ onClose }) {
       localStorage.setItem('gmb_today_dare_category', dare.category);
       localStorage.setItem('gmb_today_dare_id', dare.id);
     }
+    saveTodayKindnessEntry({
+      gratitude: transcript.trim(),
+      kindnessTask: dare?.text || '',
+      dareId: dare?.id,
+      dareCategory: dare?.category
+    });
 
     // Let child see the "Yay!" state before fade/close begins.
     fadeTimerRef.current = setTimeout(() => {
@@ -181,16 +250,18 @@ export default function DailyDarePopup({ onClose }) {
                 </button>
               )}
 
-              <span className="dare-helper-text">
-                {micState === 'listening'
-                  ? "I'm listening..."
-                  : hasRecording
-                  ? 'You can edit, re-record, or tap Done'
-                  : speechSupported
-                  ? 'Tap mic to speak'
-                  : 'Type your answer below'}
-              </span>
-              {micState === 'listening' && <span className="dare-pause-hint">Tap to pause</span>}
+              {!hasRecording && (
+                <>
+                  <span className="dare-helper-text">
+                    {micState === 'listening'
+                      ? "I'm listening..."
+                      : speechSupported
+                      ? 'Tap mic to speak'
+                      : 'Type your answer below'}
+                  </span>
+                  {micState === 'listening' && <span className="dare-pause-hint">Tap to pause</span>}
+                </>
+              )}
 
               {(transcript || hasRecording || !speechSupported || micState === 'listening') && (
                 <textarea
