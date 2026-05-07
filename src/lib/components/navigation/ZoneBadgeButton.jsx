@@ -11,10 +11,10 @@ const ZONE_BADGES = {
   'about-me-hut':    { image: '/images/zone-badge/icon-aboutme.png',    emoji: 'AH', label: 'About Me Hut' },
 };
 
-const NAV_BUTTON_SIZE = 'clamp(52px, 5.5vw, 68px)';
-const NAV_BUTTON_TOP = 'clamp(12px, 1.5vw, 24px)';
-const NAV_BUTTON_LEFT = 'clamp(12px, 1.5vw, 24px)';
-const NAV_BUTTON_GAP = '10px';
+const NAV_BUTTON_SIZE = '36px';
+const NAV_BUTTON_TOP = '10px';
+const NAV_BUTTON_LEFT = '10px';
+const NAV_BUTTON_GAP = '8px';
 
 const ZoneBadgeButton = ({ zoneId, onBack, style = {} }) => {
   const badge = ZONE_BADGES[zoneId] || { emoji: 'ZN', label: 'Zone' };
@@ -38,7 +38,7 @@ const ZoneBadgeButton = ({ zoneId, onBack, style = {} }) => {
         backdropFilter: 'blur(10px)',
         borderRadius: '50%',
         border: '3px solid #fff',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1), 0 0 0 2px rgba(255,255,255,0.6)',
         cursor: 'pointer',
         fontSize: 26,
         lineHeight: 1,

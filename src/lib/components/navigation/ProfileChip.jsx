@@ -59,11 +59,11 @@ const ProfileChip = ({ onNavigate, pulseOnce = false }) => {
         zIndex: 20000,
         display: 'flex',
         alignItems: 'center',
-        gap: 10,
-        background: 'rgba(255,255,255,0.92)',
-        backdropFilter: 'blur(10px)',
-        padding: '8px 18px 8px 8px',
-        borderRadius: 999,
+        gap: 'clamp(10px, 1vw, 18px)',
+        background: 'rgba(255,255,255,0.7)',
+        backdropFilter: 'blur(6px)',
+        padding: '6px 10px',
+        borderRadius: 20,
         border: '2px solid rgba(160,120,220,0.4)',
         boxShadow: pulseShadow,
         transform: pulseTransform,
@@ -74,8 +74,8 @@ const ProfileChip = ({ onNavigate, pulseOnce = false }) => {
       }}
     >
       <span style={{
-        width: 'clamp(52px, 5.5vw, 88px)',
-        height: 'clamp(52px, 5.5vw, 88px)',
+        width: '32px',
+        height: '32px',
         borderRadius: '50%',
         background: 'linear-gradient(135deg, #f3eeff, #e4d4ff)',
         border: '2.5px solid rgba(140,100,220,0.35)',
@@ -97,7 +97,7 @@ const ProfileChip = ({ onNavigate, pulseOnce = false }) => {
         )}
       </span>
       <span style={{
-        fontSize: 16,
+        fontSize: 13,
         fontWeight: 800,
         color: '#5c3ea6',
         whiteSpace: 'nowrap',

@@ -292,10 +292,30 @@
   text-shadow: 0 2px 8px rgba(255, 255, 255, 0.7);
   line-height: 1.2;
   text-align: center;
-  pointer-events: none;
+  pointer-events: auto;
   z-index: 10;
   transition: color 0.3s ease, opacity 0.3s ease;
   animation: spiritualBreath 6s ease-in-out infinite; /* no idle glow — only in-progress gets textPulseGold */
+  cursor: pointer;
+}
+
+.label-tap-pulse {
+  animation: labelTapPulse 220ms ease-out;
+}
+
+@keyframes labelTapPulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  45% {
+    transform: scale(1.04);
+    opacity: 0.95;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* ── Label state modifiers ── */
@@ -440,10 +460,10 @@
 }
 
 .about-hut {
-  bottom: 18%;
-  left: 6%;
-  width: 24%;
-  height: 26%;
+  bottom: 14%;
+  left: 3%;
+  width: 30%;
+  height: 34%;
 }
 
 /* =========================
@@ -744,7 +764,7 @@
   .cave-secrets    { width: 24%; height: 16%; }
   .shloka-river    { width: 26%; height: 20%; }
   .festival-square { width: 26%; height: 18%; }
-  .about-hut       { width: 22%; height: 18%; }
+  .about-hut       { bottom: 16%; left: 2%; width: 30%; height: 24%; }
 }
 
 /* =========================

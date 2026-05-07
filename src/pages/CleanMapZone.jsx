@@ -492,11 +492,13 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   const [isMuted, setIsMuted] = useState(false);
   const [isGaneshaWalking, setIsGaneshaWalking] = useState(false);
   const [shakingZoneId, setShakingZoneId] = useState(null);
+  const [pulsingLabelZoneId, setPulsingLabelZoneId] = useState(null);
   const unlockTimersRef = useRef({});
   const unlockStartTimersRef = useRef({});
   const voiceTimersRef = useRef([]);
   const mushikaTimerRef = useRef(null);
   const shakeTimerRef = useRef(null);
+  const labelPulseTimerRef = useRef(null);
   const ambientRef = useRef(null);
   const fadingRef = useRef(null);
   const prevZoneStatesRef = useRef(null);
@@ -910,6 +912,12 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     };
   }, [mapGaneshaState.position]);
 
+  useEffect(() => {
+    return () => {
+      if (labelPulseTimerRef.current) clearTimeout(labelPulseTimerRef.current);
+    };
+  }, []);
+
   // Navigate after the Mushika pop finishes
   const navigateToZone = (zone, state) => {
     if (DEBUG_ALWAYS_OPEN_ZONE_WELCOME) {
@@ -927,6 +935,10 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   };
 
   const handleZoneClick = (zone, state) => {
+    setPulsingLabelZoneId(zone.id);
+    if (labelPulseTimerRef.current) clearTimeout(labelPulseTimerRef.current);
+    labelPulseTimerRef.current = setTimeout(() => setPulsingLabelZoneId(null), 220);
+
     // Clear idle nudge on any tap
     hasTappedRef.current = true;
     if (idleNudgeTimerRef.current) {
@@ -1082,7 +1094,19 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
             </div>
 
             {/* Label */}
-            <div className={`${layout.labelClass} label-state-${labelState} ${isSymbolMountainZone ? 'zone-title' : ''}`}>
+            <div
+              className={`${layout.labelClass} label-state-${labelState} ${isSymbolMountainZone ? 'zone-title' : ''} ${pulsingLabelZoneId === zone.id ? 'label-tap-pulse' : ''}`.trim()}
+              onClick={() => handleZoneClick(zone, state)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleZoneClick(zone, state);
+                }
+              }}
+              aria-label={`Open ${zone.name.replace('\n', ' ')}`}
+            >
               {state === 'completed' && (
                 <span className="zone-check-badge zone-check-badge--label" aria-hidden="true">✓</span>
               )}

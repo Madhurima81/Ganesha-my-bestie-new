@@ -586,35 +586,6 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
             </>
           )}
 
-          {/* Parent Corner — subtle, below main actions */}
-          {onParentCorner && (
-            <button
-              onClick={() => {
-                playUiTap(0.22);
-                onParentCorner();
-              }}
-              style={{
-                background: 'none',
-                border: '1.5px solid #C4B5F4',
-                borderRadius: '24px',
-                padding: '10px 20px',
-                cursor: 'pointer',
-                fontFamily: 'Nunito, sans-serif',
-                fontSize: '13px',
-                fontWeight: '600',
-                color: '#8B7AB0',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px',
-                width: '100%',
-                marginTop: '4px',
-                minHeight: '44px',
-              }}
-            >
-              👨‍👩‍👧 Parent Corner
-            </button>
-          )}
         </div>
       </div>
       
