@@ -734,7 +734,7 @@ export const MODAL_CONTENT = {
           food: "Modak",
           color: "Orange",
           activity: "Dancing",
-          friend: "Mushika"
+          friend: "Mooshika"
         },
         badgeText: "🏆 Friendship Badge Unlocked! 🏆",
         buttonText: "🎉 Finish Game"

@@ -229,7 +229,7 @@ export const SCENE_HEADERS = {
       'activity-correct': "Yes! I love Dancing! 💃✨",
       'friend-intro': "Great! Now find my best friend!",
       'friend-choice': "Who is my best friend? 🤔",
-      'friend-correct': "Yes! Mushika is my best friend! 🐭✨",
+      'friend-correct': "Yes! Mooshika is my best friend! 🐭✨",
       'child-intro': "Now it's your turn! 😊 Tell me about you.",
       'child-food-choice': "What's YOUR favorite food? 🍕",
       'child-color-choice': "What's YOUR favorite color? 🎨",

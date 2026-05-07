@@ -310,7 +310,7 @@ export const VOICE_SCRIPTS = {
         file: '/audio/voicenew/familytree/krishna.wav'
       },
       mushak: {
-        text: "Mushak",
+        text: "Mooshak",
         file: '/audio/voicenew/familytree/mushak.wav'
       },
       brahma: {

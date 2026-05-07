@@ -20,6 +20,7 @@ import GameStateManager from './lib/services/GameStateManager';
 // import { GameCoachProvider } from './lib/components/coach/GameCoach'; // disabled — GameCoach not used (CLAUDE.md)
 import ProgressManager from './lib/services/ProgressManager';
 import SimpleSceneManager from './lib/services/SimpleSceneManager';
+import { getPendingKindnessCheck, resolveKindnessCheck } from './lib/services/KindnessJournal';
 // initializeSounds replaced by initAudioService() in main.jsx (AudioService/Howler)
 import { Analytics } from './lib/services/analytics';
 
@@ -83,6 +84,7 @@ const [showDareChip, setShowDareChip] = useState(false);
 const previousViewRef = useRef('loading');
 const [audioUnlocked, setAudioUnlocked] = useState(false);
 const dareOpenTimerRef = useRef(null);
+const [kindnessCheckEntry, setKindnessCheckEntry] = useState(null);
   
   console.log('🌟 Clean App rendering - current view:', currentView);
   console.log('🎯 Current zone:', currentZone, 'Current scene:', currentScene);
@@ -264,10 +266,18 @@ useEffect(() => {
     }
 
     const today = new Date().toISOString().split('T')[0];
+    const openedTodaySession = sessionStorage.getItem('gmb_daily_dare_opened') === today;
+    const openedTodayLocal = localStorage.getItem('gmb_daily_dare_opened') === today;
+    if (openedTodaySession || openedTodayLocal) {
+      setShowDareChip(localStorage.getItem('gmb_last_dare_date') === today);
+      return;
+    }
+
     setShowDareChip(false);
     dareOpenTimerRef.current = setTimeout(() => {
       setShowDarePopup(true);
       sessionStorage.setItem('gmb_daily_dare_opened', today);
+      localStorage.setItem('gmb_daily_dare_opened', today);
     }, 2500);
 
     return () => {
@@ -277,6 +287,35 @@ useEffect(() => {
       }
     };
   }, [currentView]);
+
+  // Never allow Daily Dare popup to remain open outside map view.
+  useEffect(() => {
+    if (currentView !== 'map' && showDarePopup) {
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+      setShowDarePopup(false);
+    }
+  }, [currentView, showDarePopup]);
+
+  // Phase 1: next-day self-check popup for pending kindness entry.
+  useEffect(() => {
+    if (currentView !== 'map' || showDarePopup) {
+      setKindnessCheckEntry(null);
+      return;
+    }
+    const pending = getPendingKindnessCheck();
+    setKindnessCheckEntry(pending || null);
+  }, [currentView, showDarePopup]);
+
+  const handleKindnessCheck = (completed) => {
+    if (!kindnessCheckEntry?.date) {
+      setKindnessCheckEntry(null);
+      return;
+    }
+    resolveKindnessCheck(kindnessCheckEntry.date, completed);
+    setKindnessCheckEntry(null);
+  };
   
   // 🔄 REPLACE the initializeApp function in App.jsx with this simple version:
 
@@ -1052,6 +1091,65 @@ chants: result?.chants || result?.chantedVerses || {},
               ✨ Share a happy moment
             </button>
           )}
+          {kindnessCheckEntry && !showDarePopup && (
+            <div
+              role="dialog"
+              aria-modal="true"
+              style={{
+                position: 'absolute',
+                left: '50%',
+                bottom: '140px',
+                transform: 'translateX(-50%)',
+                zIndex: 1400,
+                width: 'min(92vw, 480px)',
+                borderRadius: '22px',
+                padding: '16px',
+                background: 'rgba(255,255,255,0.96)',
+                boxShadow: '0 12px 28px rgba(40,20,80,0.22)',
+                border: '1px solid rgba(130,100,200,0.15)',
+                textAlign: 'center'
+              }}
+            >
+              <div style={{ fontWeight: 800, color: '#5e49a8', fontSize: '19px', marginBottom: '6px' }}>
+                Did you do yesterday&apos;s kindness mission?
+              </div>
+              <div style={{ color: '#6b5f8e', fontSize: '14px', marginBottom: '12px' }}>
+                {kindnessCheckEntry.kindnessTask || 'Kindness mission'}
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+                <button
+                  type="button"
+                  onClick={() => handleKindnessCheck(true)}
+                  style={{
+                    border: 'none',
+                    borderRadius: '999px',
+                    padding: '10px 16px',
+                    fontWeight: 800,
+                    color: '#fff',
+                    background: 'linear-gradient(135deg,#40b36b,#2f9d57)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Yes, I did
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleKindnessCheck(false)}
+                  style={{
+                    border: 'none',
+                    borderRadius: '999px',
+                    padding: '10px 16px',
+                    fontWeight: 800,
+                    color: '#5e49a8',
+                    background: '#efe9ff',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Not yet
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -1133,7 +1231,7 @@ if (tempData.playAgainRequested) {
       )}
     </Suspense>
     {/* TWG: Daily Dare Popup — fires once per day; z-index 3000 covers all views */}
-    {showDarePopup && (
+    {showDarePopup && currentView === 'map' && (
       <DailyDarePopup onClose={() => {
         if (typeof window !== 'undefined' && window.speechSynthesis) {
           window.speechSynthesis.cancel();
