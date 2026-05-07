@@ -343,9 +343,6 @@ const PondSceneContent = ({
   const dragContainerRef = useRef(null);
   const petalAdvanceLockUntilRef = useRef(0);
   const dropCompletedRef = useRef(false);
-  const isDevMode =
-    (typeof import.meta !== 'undefined' && import.meta.env?.DEV) ||
-    (typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production');
   // ================================================================
 
 
@@ -1340,53 +1337,6 @@ const PondSceneContent = ({
   };
   // ==============================================================================
 
-  const jumpToElephantPhaseForTesting = () => {
-    if (!sceneState || !sceneActions) return;
-    clearAllTimeouts();
-    if (resumePopupTimeoutRef.current) {
-      clearTimeout(resumePopupTimeoutRef.current);
-      resumePopupTimeoutRef.current = null;
-    }
-    sceneActions.updateState({
-      welcomeShown: true,
-      lotusStates: [1, 1, 1],
-      allLotusBloom: true,
-      goldenLotusVisible: true,
-      goldenLotusBloom: false,
-      elephantVisible: true,
-      elephantTransformed: false,
-      trunkActive: false,
-      phase: PHASES.ELEPHANT_VISIBLE,
-      currentFocus: 'elephant',
-      completed: false,
-      showingCompletionScreen: false,
-      currentPopup: null,
-      discoveredSymbols: { ...(sceneState.discoveredSymbols || {}), lotus: true },
-      progress: { ...(sceneState.progress || {}), percentage: 70, starsEarned: 4, completed: false }
-    });
-    setShowSceneCompletion(false);
-    setShowCulturalCelebration(false);
-    setFireworksFinished(false);
-    setShowCenteredSymbol(null);
-    setShowPowerModal(false);
-    setShowPowerMission(false);
-    setCurrentMissionSymbol(null);
-    setDiscoveryStep('hidden');
-    setIsDiscoveryFading(false);
-    setDiscoveryItem(null);
-    setRevealConfig(null);
-    setShowResumePopup(false);
-    setResumeMessage('');
-    setDropPosition(null);
-    setCurrentPetal(-1);
-    setDropFading(false);
-    setDropMagicPhase(null);
-    petalAdvanceLockUntilRef.current = 0;
-    dropCompletedRef.current = false;
-    setShowSparkle(null);
-    rearmIdleHints();
-  };
-
   const shouldEnableHints = () => {
     const disabledPhases = [PHASES.COMPLETE, PHASES.GOLDEN_BLOOM];
     return !disabledPhases.includes(sceneState?.phase);
@@ -1536,30 +1486,6 @@ const PondSceneContent = ({
                   characterImg={ganeshaCharacter}
                   showButton={true}
                 />
-              )}
-
-              {isDevMode && (
-                <button
-                  type="button"
-                  onClick={jumpToElephantPhaseForTesting}
-                  style={{
-                    position: 'absolute',
-                    top: '14px',
-                    right: '14px',
-                    zIndex: 200,
-                    border: 'none',
-                    borderRadius: '999px',
-                    padding: '8px 14px',
-                    fontSize: '12px',
-                    fontWeight: 700,
-                    color: '#3B2A0B',
-                    background: 'linear-gradient(135deg, #FFE7A8 0%, #FFD26D 100%)',
-                    boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Test Elephant Phase
-                </button>
               )}
 
               {/* Lotus flowers — V5: HOLD TO BLOOM */}

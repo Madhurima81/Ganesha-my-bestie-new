@@ -2101,3 +2101,32 @@
 
 /* 4. Font migration */
 .pond-resume-popup { font-family: 'Baloo 2', system-ui, sans-serif !important; }
+
+/* iPad landscape - short height (Air, Gen 6, Pro 11) */
+@media (min-width: 1024px) and (max-width: 1366px) and (max-height: 900px) and (orientation: landscape) {
+  /* Water drop - drag handle */
+  .pond-drop-handle {
+    width: 52px !important;
+    height: 60px !important;
+  }
+
+  /* Golden lotus - drag target */
+  .golden-lotus-container {
+    width: 11% !important;
+    height: 11% !important;
+    min-width: 70px;
+    min-height: 70px;
+  }
+
+  /* Petal stepping stones along the drag path */
+  .pond-petal-stone {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  /* Ganesha reflection - tighter on landscape */
+  .pond-ganesha-reflection {
+    width: clamp(160px, 24%, 240px) !important;
+    top: 58% !important;
+  }
+}

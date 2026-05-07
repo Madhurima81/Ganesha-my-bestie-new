@@ -249,30 +249,11 @@ const SACRED_COLOR_PALETTE = {
 };
 
 const RESUME_DELAY_MS = 3000;
-
-// Hint overlay positions — approximate center of each body part within the ganesha container
-// These are used to render a glow <div> on top of Ganesha (no SVG manipulation)
-const ZONE_HINT_POSITIONS = {
-  'eyes':       { top: '41%', left: '48%' },
-  'ears':       { top: '43%', left: '67%' },
-  'trunk':      { top: '57%', left: '50%' },
-  'tusk':       { top: '54%', left: '54%' },
-  'left-hand':  { top: '61%', left: '60%' },
-  'right-hand': { top: '48%', left: '73%' },
-  'belly':      { top: '62%', left: '50%' },
-  'base':       { top: '81%', left: '40%' },
-};
-
-const ZONE_SPARKLE_POSITIONS = {
-  eyes: { top: '41%', left: '48%', width: '120px', height: '120px' },
-  ears: { top: '43%', left: '67%', width: '130px', height: '130px' },
-  trunk: { top: '57%', left: '50%', width: '140px', height: '140px' },
-  tusk: { top: '54%', left: '54%', width: '100px', height: '100px' },
-  'left-hand': { top: '61%', left: '60%', width: '120px', height: '120px' },
-  'right-hand': { top: '48%', left: '73%', width: '120px', height: '120px' },
-  belly: { top: '62%', left: '50%', width: '150px', height: '150px' },
-  base: { top: '81%', left: '40%', width: '130px', height: '130px' }
-};
+const NEXT_CARD_BREATHING_DELAY_MS = 3000;     // was 2200 — longer pre-pause
+const VO_CHECK_INTERVAL_MS = 200;
+const VO_WAIT_MAX_MS = 4000;                   // was 3200 — allow longer VO
+const POST_VO_GRACE_MS = 800;                  // NEW — silence after VO ends
+const PLACEMENT_SETTLE_MS = 1200;              // NEW — "look at what you did" beat
 
 // Body part drop zone configurations
 const BODY_PART_ZONES = [
@@ -283,8 +264,56 @@ const BODY_PART_ZONES = [
   { id: 'left-hand', acceptTypes: ['modak'], position: { top: '35%', left: '20%', width: '80px', height: '80px' }, hint: 'Sweet Blessings' },
   { id: 'right-hand', acceptTypes: ['lotus'], position: { top: '38%', right: '12%', width: '80px', height: '80px' }, hint: 'Pure Wisdom' },
   { id: 'belly', acceptTypes: ['belly'], position: { top: '50%', left: '50%', transform: 'translateX(-50%)', width: '160px', height: '120px' }, hint: 'Universe Within' },
-  { id: 'base', acceptTypes: ['mooshika'], position: { bottom: '25%', left: '60%', transform: 'translateX(-50%)', width: '120px', height: '80px' }, hint: 'Divine Vehicle' }
+  // Keep base aligned with GaneshaIllustration hitbox so mooshika glow/sparkles sit correctly.
+  { id: 'base', acceptTypes: ['mooshika'], position: { bottom: '10%', left: '20%', transform: 'translateX(-50%)', width: '180px', height: '180px' }, hint: 'Divine Vehicle' }
 ];
+
+// Keep glow/sparkle anchors in sync with real drop zones so highlights never drift.
+const getPx = (value, fallback) => {
+  if (typeof value !== 'string') return fallback;
+  if (!value.endsWith('px')) return fallback;
+  const n = Number.parseFloat(value);
+  return Number.isFinite(n) ? n : fallback;
+};
+
+const getZoneCenter = (zone) => {
+  const { position } = zone;
+  const widthPx = getPx(position.width, 120);
+  const heightPx = getPx(position.height, 120);
+  const halfW = Math.round(widthPx / 2);
+  const halfH = Math.round(heightPx / 2);
+
+  const left = position.left
+    ? `calc(${position.left} + ${halfW}px)`
+    : position.right
+      ? `calc(100% - ${position.right} - ${halfW}px)`
+      : '50%';
+
+  const top = position.top
+    ? `calc(${position.top} + ${halfH}px)`
+    : position.bottom
+      ? `calc(100% - ${position.bottom} - ${halfH}px)`
+      : '50%';
+
+  return { top, left, widthPx, heightPx };
+};
+
+const ZONE_HINT_POSITIONS = BODY_PART_ZONES.reduce((acc, zone) => {
+  const center = getZoneCenter(zone);
+  acc[zone.id] = { top: center.top, left: center.left };
+  return acc;
+}, {});
+
+const ZONE_SPARKLE_POSITIONS = BODY_PART_ZONES.reduce((acc, zone) => {
+  const center = getZoneCenter(zone);
+  acc[zone.id] = {
+    top: center.top,
+    left: center.left,
+    width: `${Math.max(center.widthPx + 40, 100)}px`,
+    height: `${Math.max(center.heightPx + 40, 100)}px`
+  };
+  return acc;
+}, {});
 
 // Ganesha transformation states
 const GANESHA_STATES = {
@@ -398,6 +427,8 @@ const SacredAssemblyContent = ({
   const [showMagicalCard, setShowMagicalCard] = useState(false);
   const [cardContent, setCardContent] = useState({});
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
+  const [sceneCompleteVOFinished, setSceneCompleteVOFinished] = useState(false);
+  const [fireworksFinished, setFireworksFinished] = useState(false);
   const [showCulturalCelebration, setShowCulturalCelebration] = useState(false);
   const [showZoneCompletion, setShowZoneCompletion] = useState(false);
   // const [hintUsed, setHintUsed] = useState(false);
@@ -416,7 +447,7 @@ const SacredAssemblyContent = ({
   } = useGameSounds();
   // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
   const { startIdleTimer, stopIdleTimer, setCurrentPhase, startMusic, stopMusic, setVoiceVolume, playVoice, playTap, playCorrect, playWrong, playPowerUnlock, playCelebration } = useVoiceGuidance(
-    zoneId, sceneId, { enableMusic: true, musicVolume: 0.06, sfxVolume: 0.35, idleTimeout: 20 }
+    zoneId, sceneId, { enableMusic: true, musicVolume: 0.06, sfxVolume: 0.16, idleTimeout: 20 }
   );
   const playUiTap = playTap;
   const playWrongTap = playWrong;
@@ -456,6 +487,7 @@ const SacredAssemblyContent = ({
   const [cardPhase, setCardPhase] = useState('hidden'); // 'hidden' | 'appear' | 'flipped' | 'side' | 'play' | 'feedback'
   const [flyingSymbol, setFlyingSymbol] = useState(null);
   const [ganeshaReaction, setGaneshaReaction] = useState('');
+  const resumeHandledRef = useRef(false);
   const placedCount = Object.keys(sceneState?.placedSymbols || {}).length;
   const isSceneCompletedState =
     placedCount === 8 ||
@@ -783,14 +815,6 @@ const SacredAssemblyContent = ({
       }
     });
   }, [sceneActions, stopGaneshaVoice]);
-
-  // Keep completion UI sticky across tab switch/remount.
-  useEffect(() => {
-    if (sceneState?.showingCompletionScreen && !showSceneCompletion) {
-      setShowSceneCompletion(true);
-      setShowSparkle(null);
-    }
-  }, [sceneState?.showingCompletionScreen, showSceneCompletion]);
 
   useEffect(() => {
     return () => {
@@ -1132,10 +1156,17 @@ const SacredAssemblyContent = ({
     playGlow();
     setTimeout(() => playTwinkle(), 450);
     setShowSparkle(`celebration-${symbol.id}`);
+
+    // Phase 1: sparkle burst (0–1.2s)
     safeSetTimeout(() => {
       setShowSparkle(null);
+    }, 1200);
+
+    // Phase 2: gentle settle glow on the placed body part (1.2s–2.4s)
+    // Keep celebrationZoneId active longer so child's eyes land on Ganesha
+    safeSetTimeout(() => {
       setCelebrationZoneId(null);
-    }, 1800);
+    }, PLACEMENT_SETTLE_MS * 2);
 
     const newPlacedSymbols = {
       ...sceneState.placedSymbols,
@@ -1165,11 +1196,28 @@ const SacredAssemblyContent = ({
       safeSetTimeout(() => triggerFinalCelebration(), 1500);
     } else {
       const nextRound = (sceneState.currentRound || 0) + 1;
+      // Halfway breathing beat — once, after 4th symbol
+      const isHalfwayMoment = count === 4;
+      const extraHalfwayPause = isHalfwayMoment ? 1500 : 0;
       safeSetTimeout(() => {
         sceneActions.updateState({ currentRound: nextRound });
         setCardPhase('hidden');
-        safeSetTimeout(() => startNextRound(nextRound), 300);
-      }, 1200);
+
+        const waitForVoiceThenStart = (waitedMs = 0) => {
+          // VO finished OR max wait hit → add grace pause, THEN next card
+          if (!isGaneshaSpeaking || waitedMs >= VO_WAIT_MAX_MS) {
+            safeSetTimeout(() => {
+              startNextRound(nextRound);
+            }, POST_VO_GRACE_MS);  // 800ms of silence — the breathing space
+            return;
+          }
+          safeSetTimeout(() => {
+            waitForVoiceThenStart(waitedMs + VO_CHECK_INTERVAL_MS);
+          }, VO_CHECK_INTERVAL_MS);
+        };
+
+        waitForVoiceThenStart();
+      }, NEXT_CARD_BREATHING_DELAY_MS + extraHalfwayPause);
     }
   };
 
@@ -1225,12 +1273,26 @@ const SacredAssemblyContent = ({
     }
   }, [isReload]);
 
-  // If scene restores as completed, skip opening modal and show completion modal
-  // only when celebration is NOT running (prevents early modal at 8th symbol tap).
+  // FINAL CELEBRATION SYNC: Show completion modal 1s after VO + fireworks finish.
+  useEffect(() => {
+    if (!sceneCompleteVOFinished || !fireworksFinished) return;
+    const timer = setTimeout(() => {
+      setShowSceneCompletion(true);
+      setShowSparkle(null);
+      setIsOrbsRunning(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [sceneCompleteVOFinished, fireworksFinished]);
+
+  // Restore-only: if scene was already completed when player returns (not fresh celebration),
+  // show modal directly.
   useEffect(() => {
     if (!sceneState) return;
     if (!isSceneCompletedState) return;
-    if (isCelebrationRunning) return;
+    if (isCelebrationRunning) return; // celebration in progress — let VO gate handle it
+    if (sceneCompleteVOFinished) return;
+    if (sceneState.currentPopup === 'final_fireworks') return;
+    if (sceneState.showingZoneCompletion || sceneState.celebrationActive) return;
 
     if (!sceneState.welcomeShown) {
       sceneActions.updateState({ welcomeShown: true });
@@ -1240,16 +1302,27 @@ const SacredAssemblyContent = ({
       const t = setTimeout(() => setShowSceneCompletion(true), 250);
       return () => clearTimeout(t);
     }
-  }, [isCelebrationRunning, isSceneCompletedState, sceneActions, sceneState, showSceneCompletion]);
+  }, [isCelebrationRunning, isSceneCompletedState, sceneActions, sceneState, showSceneCompletion, sceneCompleteVOFinished]);
 
   // RESUME — runs once on mount, handles returning mid-game
   useEffect(() => {
+    if (resumeHandledRef.current) return;
+    resumeHandledRef.current = true;
+
     if (!sceneState?.welcomeShown) return; // first-time player, OpeningModal handles it
 
     const placed = Object.keys(sceneState.placedSymbols || {}).length;
+    const celebrationInProgress =
+      sceneState.currentPopup === 'final_fireworks' ||
+      sceneState.showingZoneCompletion ||
+      sceneState.celebrationActive ||
+      showSparkle === 'final-fireworks' ||
+      isOrbsRunning;
 
     // Already finished — restore completion screen
     if (placed === 8 || sceneState.phase === 'complete') {
+      // Do not show completion modal while final celebration is still active.
+      if (celebrationInProgress) return;
       setTimeout(() => setShowSceneCompletion(true), 500);
       return;
     }
@@ -1272,7 +1345,7 @@ const SacredAssemblyContent = ({
       setTimeout(() => startNextRound(resumeRound), 700);
     }
 
-  }, []); // empty dep — runs exactly once on mount
+  }, []); // run once on mount; avoids repeated card/audio re-triggers
 
   const getGaneshaOpacity = () => {
     const placedCount = Object.keys(sceneState?.placedSymbols || {}).length;
@@ -1298,11 +1371,14 @@ const SacredAssemblyContent = ({
   const triggerFinalCelebration = () => {
     clearAllTimeouts();
 
-    const profileId = localStorage.getItem('activeProfileId');
+    // Reset gates for a fresh celebration pass.
+    setSceneCompleteVOFinished(false);
+    setFireworksFinished(false);
 
     sceneActions.updateState({
       currentPopup: 'final_fireworks',
-      showingCompletionScreen: true,
+      // Keep completion modal hidden until fireworks/orbs fully finish.
+      showingCompletionScreen: false,
       showingZoneCompletion: true,
       celebrationActive: true,
       phase: 'complete',
@@ -1320,17 +1396,16 @@ const SacredAssemblyContent = ({
 
     setIsOrbsRunning(true);
     setShowSparkle('final-fireworks');
-  };
 
-  const playFinalCompletionVo = () => {
-    if (finalVoPlayedRef.current) return;
-    finalVoPlayedRef.current = true;
-
+    finalVoPlayedRef.current = false;
     playSceneVoice('finalYouFoundAll', () => {
       setTimeout(() => {
         playSceneVoice('finalNowComplete', () => {
           setTimeout(() => {
-            playSceneVoice('finalAlwaysWithYou', null, { replayOnReturn: false });
+            playSceneVoice('finalAlwaysWithYou', () => {
+              finalVoPlayedRef.current = true;
+              setSceneCompleteVOFinished(true);
+            }, { replayOnReturn: false });
           }, 700);
         }, { replayOnReturn: false });
       }, 700);
@@ -1660,7 +1735,14 @@ const SacredAssemblyContent = ({
                   onComplete={() => {
                     setShowSparkle(null);
                     setIsOrbsRunning(false);
-                    playFinalCompletionVo();
+                    setFireworksFinished(true);
+
+                    // Mark celebration finished; modal is shown by VO+fireworks gate effect.
+                    sceneActions.updateState({
+                      showingCompletionScreen: false,
+                      showingZoneCompletion: false,
+                      celebrationActive: false
+                    });
 
                     const profileId = localStorage.getItem('activeProfileId');
                     if (profileId) {
@@ -1682,7 +1764,6 @@ const SacredAssemblyContent = ({
                       SimpleSceneManager.clearCurrentScene();
                     }
 
-                    setShowSceneCompletion(true);
                   }}
                 />
               </>
@@ -1829,7 +1910,7 @@ const SacredAssemblyContent = ({
 
           {/* Scene Completion */}
           <SceneCompletionCelebration
-            show={showSceneCompletion || sceneState?.showingCompletionScreen}
+            show={showSceneCompletion}
             sceneName="Symbol Mountain"
             completionTitle={completionModalContent?.title}
             completionSubtitle={completionModalContent?.subtitle}

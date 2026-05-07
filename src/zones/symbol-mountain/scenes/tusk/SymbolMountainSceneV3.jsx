@@ -151,10 +151,10 @@ const NOTE_STATES = {
 
 // Musical instrument positions
 const instrumentPositions = {
-  1: { x: 39, y: 44, type: 'tabla' },
+  1: { x: 34, y: 44, type: 'tabla' },
   2: { x: 64, y: 72, type: 'dholak' },
   3: { x: 23, y: 71, type: 'harmonium' },
-  4: { x: 86, y: 47, type: 'tanpura' }
+  4: { x: 81, y: 47, type: 'tanpura' }
 };
 
 const instrumentPositionsByType = Object.values(instrumentPositions).reduce((acc, item) => {
@@ -1050,8 +1050,6 @@ const SymbolMountainSceneContent = ({
   }, [sceneState?.showingCompletionScreen, showSceneCompletion]);
 
   const isCompletionView = showSceneCompletion || sceneState?.showingCompletionScreen;
-  const showPhaseTestButtons = true;
-
   // GameLayout replaced with plain div — pause menu removed
   return (
     <div style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden' }}>
@@ -1064,109 +1062,6 @@ const SymbolMountainSceneContent = ({
             <div className="mountain-background" style={{ backgroundImage: `url(${mountainBackground})` }}>
               {!isCompletionView && (
                 <>
-                  {showPhaseTestButtons && (
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: '70px',
-                        left: '20px',
-                        zIndex: 120,
-                        display: 'flex',
-                        gap: '10px'
-                      }}
-                    >
-                      <button
-                        type="button"
-                        onClick={() => {
-                          reloadHandledRef.current = true;
-                          stopSpokenVoice();
-                          sceneActions.updateState({
-                            phase: PHASES.EARS_GAME,
-                            activeGame: 'ears',
-                            currentFocus: 'ears',
-                            welcomeShown: true,
-                            discoveredSymbols: {
-                              ...(sceneState.discoveredSymbols || {}),
-                              eyes: true
-                            },
-                            eyesGameComplete: true,
-                            earsVisible: true,
-                            earsGameComplete: false,
-                            showEarsRhythmGame: true,
-                            currentNote: 'note1',
-                            musicalNotesVisible: false,
-                            showTuskAssemblyGame: false,
-                            tuskGameActive: false,
-                            showGaneshaOutline: false,
-                            tuskPower: 0,
-                            tuskFullyPowered: false,
-                            tuskTransforming: false,
-                            ganeshaComplete: false
-                          });
-                        }}
-                        style={{
-                          padding: '8px 12px',
-                          borderRadius: '10px',
-                          border: '1px solid rgba(255,255,255,0.6)',
-                          background: 'rgba(74, 47, 110, 0.8)',
-                          color: '#fff',
-                          fontWeight: 700,
-                          cursor: 'pointer'
-                        }}
-                      >
-                        Test Phase 2
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          reloadHandledRef.current = true;
-                          stopSpokenVoice();
-                          sceneActions.updateState({
-                            phase: PHASES.TUSK_GAME,
-                            activeGame: 'tusk',
-                            currentFocus: 'tusk',
-                            welcomeShown: true,
-                            discoveredSymbols: {
-                              ...(sceneState.discoveredSymbols || {}),
-                              eyes: true,
-                              ears: true,
-                              ear: true
-                            },
-                            eyesGameComplete: true,
-                            earsVisible: true,
-                            earsGameComplete: true,
-                            showEarsRhythmGame: false,
-                            musicalNotesVisible: true,
-                            musicalNoteStates: {
-                              note1: 'golden',
-                              note2: 'golden',
-                              note3: 'golden'
-                            },
-                            showTuskAssemblyGame: true,
-                            tuskGameActive: true,
-                            showGaneshaOutline: true,
-                            tuskPower: 0,
-                            tuskFullyPowered: false,
-                            tuskTransforming: false,
-                            ganeshaComplete: false
-                          });
-                        }}
-                        style={{
-                          padding: '8px 12px',
-                          borderRadius: '10px',
-                          border: '1px solid rgba(255,255,255,0.6)',
-                          background: 'rgba(74, 47, 110, 0.8)',
-                          color: '#fff',
-                          fontWeight: 700,
-                          cursor: 'pointer'
-                        }}
-                      >
-                        Test Phase 3
-                      </button>
-                    </div>
-                  )}
-
               {!sceneState?.welcomeShown && (
                 <OpeningModal
                   zoneId={zoneId}
@@ -1445,7 +1340,7 @@ const SymbolMountainSceneContent = ({
                     )}
                     {/* TUSK — applies golden fade animation when transforming */}
                     {sceneState.tuskPower < 3 && (
-                      <div style={{ position: 'absolute', left: '35%', top: '50%', width: 'clamp(140px, 22vw, 240px)', height: 'clamp(140px, 22vw, 240px)', transform: 'translate(-50%, -50%)', zIndex: 30, pointerEvents: 'none' }}>
+                      <div style={{ position: 'absolute', left: '35%', top: '50%', width: 'clamp(110px, 14vw, 180px)', height: 'clamp(110px, 14vw, 180px)', transform: 'translate(-50%, -50%)', zIndex: 30, pointerEvents: 'none' }}>
                         <img
                           src={ganeshaTusk}
                           alt="Tusk"

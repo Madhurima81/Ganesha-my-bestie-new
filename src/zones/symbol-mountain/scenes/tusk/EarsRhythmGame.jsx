@@ -626,6 +626,11 @@ const handleSequenceSuccess = () => {
     return null;
   }
 
+  const isLandscape = typeof window !== 'undefined' && window.innerWidth > window.innerHeight;
+  const isCompact = typeof window !== 'undefined' && isLandscape && window.innerWidth <= 1366 && window.innerHeight <= 900;
+  const trackerSize = isCompact ? 80 : 128;
+  const imageSize = isCompact ? 62 : 98;
+
   return (
     <div className="ears-rhythm-game-inline" style={inlineContainerStyle}>
       {/* Header removed: guidance is VO-driven */}
@@ -635,7 +640,7 @@ const handleSequenceSuccess = () => {
 {(gamePhase === 'playing' || gamePhase === 'listening' || gamePhase === 'success') && currentSequence.length > 0 && (
   <div style={{
     position: 'absolute',
-    top: '210px',
+    top: '165px',
     left: '50%',
     transform: 'translateX(-50%)',
     display: 'flex',
@@ -656,9 +661,6 @@ const handleSequenceSuccess = () => {
       // Next-expected slot during listening phase: pulses gently to guide kid
       const isNextExpected = gamePhase === 'listening' && idx === playerInput.length;
       
-      const trackerSize = 128;
-      const imageSize = 98;
-
       return (
         <div
           key={`${idx}-${isLockedCorrect ? 'locked' : 'mystery'}`}
@@ -766,8 +768,8 @@ const handleSequenceSuccess = () => {
         border: 'none',
         background: 'transparent',
         padding: 0,
-        width: '120px',
-        height: '120px',
+        width: `${trackerSize}px`,
+        height: `${trackerSize}px`,
         borderRadius: '50%',
         display: 'flex',
         alignItems: 'center',
@@ -785,7 +787,7 @@ const handleSequenceSuccess = () => {
           width: '100%',
           height: '100%',
           objectFit: 'contain',
-          transform: 'scale(2.2)',
+          transform: 'scale(1.6)',
           transformOrigin: 'center',
           filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.25))'
         }}
