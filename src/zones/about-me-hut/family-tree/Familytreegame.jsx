@@ -493,14 +493,14 @@ const FamilyTreeGameContent = ({
  const ganeshaFamily = [
  {
  id: 'father', role: 'Father', correctAnswer: 'shiva',
- position: { top: '38%', left: '40%' },
+ position: { top: '32%', left: '40%' },
  // Centered on left foliage lobe
  introTitle: 'My Father', introText: 'He is calm and strong',
  flipTitle: 'My Father', funFact: 'My father is calm and strong. He sits in deep meditation high in the mountains.'
  },
  {
  id: 'mother', role: 'Mother', correctAnswer: 'parvati',
- position: { top: '38%', right: '30%' },
+ position: { top: '32%', right: '30%' },
  // Centered on right foliage lobe
  introTitle: 'My Mother', introText: 'She is kind and loving',
  flipTitle: 'My Mother', funFact: 'My mother is kind and loving. She cares for everyone and fills our home with warmth.'
@@ -1421,27 +1421,6 @@ const FamilyTreeGameContent = ({
  <ZoneBadgeButton zoneId="about-me-hut" onBack={() => { onNavigate?.('zone-welcome') || onBack?.(); }} />
  <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
 
- {/* TEST BUTTONS - DEV ONLY */}
- {process.env.NODE_ENV === 'development' && (
- <div style={{
- position: 'fixed',
- bottom: 80,
- right: 10,
- zIndex: 9999,
- display: 'flex',
- flexDirection: 'column',
- gap: '4px',
- padding: '8px',
- background: 'rgba(0,0,0,0.7)',
- borderRadius: '8px'
- }}>
- <button onClick={() => sceneActions.updateState({ gamePhase: 'ganeshaTree', placedGaneshaMembers: [] })} style={{ padding: '4px 8px', fontSize: '10px', cursor: 'pointer' }}>Test: Ganesha</button>
- <button onClick={() => sceneActions.updateState({ gamePhase: 'childInput', childFamily: [], placedGaneshaMembers: ['father', 'mother', 'brother', 'myself'] })} style={{ padding: '4px 8px', fontSize: '10px', cursor: 'pointer' }}>Test: Child Input</button>
- <button onClick={() => sceneActions.updateState({ gamePhase: 'transition', placedGaneshaMembers: ['father', 'mother', 'brother', 'myself'] })} style={{ padding: '4px 8px', fontSize: '10px', cursor: 'pointer' }}>Test: Transition</button>
- <button onClick={() => sceneActions.updateState({ gamePhase: 'sideBySide', childFamily: [{ id: 1, image: childDadImg, label: 'Dad', color: '#6BB6FF', callName: 'Papa', row: 2 }] })} style={{ padding: '4px 8px', fontSize: '10px', cursor: 'pointer' }}>Test: Reveal</button>
- <button onClick={() => sceneActions.updateState({ showingCompletionScreen: true, completed: true })} style={{ padding: '4px 8px', fontSize: '10px', cursor: 'pointer' }}>Test: Complete</button>
- </div>
- )}
  {showVoiceOffPill && (
  <div className="voice-off-pill">
  <span className="voice-off-pill__icon"></span>
@@ -1785,9 +1764,9 @@ const FamilyTreeGameContent = ({
  <div
  className={`bottom-member-tray ${sceneState.showBottomTray? 'tray-visible': ''}`}
  style={{
- justifyContent: 'center', // Center the items
- paddingLeft: '140px', // Push items away from the "Back to Map" button
- paddingRight: '20px' // Balance the padding
+ justifyContent: 'center',
+ paddingLeft: '20px',
+ paddingRight: '20px'
  }}
  >
  {familyMemberTypes.map(type => {
@@ -1894,24 +1873,26 @@ const FamilyTreeGameContent = ({
  <div className="two-trees-container">
  {/* LEFT CARD: Ganesha */}
               <div className="tree-column slide-in-left">
-                <div
-                  style={{
-                    width: '80px',
-                    height: '80px',
-                    margin: '0 auto 6px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.2))'
-                  }}
-                >
-                  <img
-                    src={babyGaneshaImg}
-                    alt="Ganesha icon"
-                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                  />
+                <div className="tree-card-header">
+                  <div
+                    style={{
+                      width: '80px',
+                      height: '80px',
+                      margin: '0',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.2))'
+                    }}
+                  >
+                    <img
+                      src={babyGaneshaImg}
+                      alt="Ganesha icon"
+                      style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                    />
+                  </div>
+                  <h3 className="tree-heading">Ganesha's Family</h3>
                 </div>
-                <h3 className="tree-heading">Ganesha's Family</h3>
                 <p className="tree-location">Mount Kailash</p>
                 <div className="tree-visual">
  <img src={familyTree} alt="Tree" className="reveal-tree-img" />
@@ -1931,6 +1912,7 @@ const FamilyTreeGameContent = ({
 
  {/* RIGHT CARD: Your Family */}
  <div className="tree-column slide-in-right">
+ <div className="tree-card-header">
  <div
 style={{
 width: '74px',
@@ -1946,9 +1928,9 @@ justifyContent: 'center',
  color: '#fff',
  boxShadow: '0 5px 12px rgba(0,0,0,0.2)',
  overflow: 'hidden',
- margin: '0 auto 10px'
- }}
- >
+ margin: '0'
+}}
+>
  {activeProfile?.icon? (
  <img src={activeProfile.icon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
  ): activeProfile?.profileIcon? (
@@ -1960,6 +1942,7 @@ justifyContent: 'center',
  )}
  </div>
  <h3 className="tree-heading">{profileDisplayName}'s Family</h3>
+ </div>
  <p className="tree-location">Your Home</p>
 
  <div className="tree-visual" data-member-count={sceneState.childFamily.length}>
