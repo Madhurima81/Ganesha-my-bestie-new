@@ -65,14 +65,14 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 .sar-solo {
   position: absolute;
-  width: 200px;
+  width: 170px;
   height: auto;
   pointer-events: none;
   z-index: 10;
 }
 
 /* SVG icons have internal transparent padding */
-.sar-solo[src$=".svg"] { width: 260px; }
+.sar-solo[src$=".svg"] { width: 220px; }
 
 .sar-solo--in {
   animation:
@@ -131,8 +131,8 @@ transition: opacity 0.42s ease, transform 0.82s cubic-bezier(0.4, 0, 0.2, 1);}
    5. FLIP CARD
    ═══════════════════════════════════════════════════════════════════════════ */
 .sar-card {
-  width: 420px;
-  height: 500px;
+  width: 360px;
+  height: 420px;
   position: relative;
   transform-style: preserve-3d;
 transition: transform 0.58s cubic-bezier(0.4, 0, 0.2, 1);}
@@ -180,14 +180,14 @@ transition: transform 0.58s cubic-bezier(0.4, 0, 0.2, 1);}
    7. FRONT FACE — icon with gentle breathe
    ═══════════════════════════════════════════════════════════════════════════ */
 .sar-icon {
-  width: 210px;
+  width: 170px;
   height: auto;
   filter: drop-shadow(0 4px 20px rgba(255, 200, 60, 0.38));
   animation: sar-breathe 3.2s ease-in-out infinite;
 }
 
 /* SVG icons have internal transparent padding — increase size to compensate */
-.sar-icon[src$=".svg"] { width: 275px; }
+.sar-icon[src$=".svg"] { width: 220px; }
 
 @keyframes sar-breathe {
   0%, 100% { transform: scale(1);    }
@@ -212,14 +212,14 @@ transition: transform 0.58s cubic-bezier(0.4, 0, 0.2, 1);}
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 210px;
+  width: 170px;
   height: auto;
   opacity: 0;
   transition: opacity 0.12s ease;
   pointer-events: none;
 }
 
-.sar-fly-icon[src$=".svg"] { width: 275px; }
+.sar-fly-icon[src$=".svg"] { width: 220px; }
 
 .sar-fly-icon.sar-fly-icon--show {
   opacity: 1;
@@ -245,7 +245,7 @@ transition: transform 0.58s cubic-bezier(0.4, 0, 0.2, 1);}
    ═══════════════════════════════════════════════════════════════════════════ */
 .sar-name {
   font-family: 'Baloo 2', cursive;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 800;
   color: #3D2A1E;
   margin: 0;
@@ -255,7 +255,7 @@ transition: transform 0.58s cubic-bezier(0.4, 0, 0.2, 1);}
 
 .sar-affirmation {
   font-family: 'Nunito', sans-serif;
-  font-size: 34px;
+  font-size: 28px;
   font-weight: 800;
   color: #2C1F14;
   line-height: 1.4;
@@ -296,6 +296,21 @@ transition: transform 0.58s cubic-bezier(0.4, 0, 0.2, 1);}
 /* ═══════════════════════════════════════════════════════════════════════════
    11. RESPONSIVE
    ═══════════════════════════════════════════════════════════════════════════ */
+/* iPad landscape (Air, Gen 6, Pro 11) - short height */
+@media (min-width: 1024px) and (max-width: 1366px) and (max-height: 900px) and (orientation: landscape) {
+  .sar-card        { width: 320px; height: 380px; }
+  .sar-face        { padding: 28px; border-radius: 26px; }
+  .sar-icon,
+  .sar-fly-icon    { width: 140px; }
+  .sar-icon[src$=".svg"],
+  .sar-fly-icon[src$=".svg"] { width: 180px; }
+  .sar-solo        { width: 140px; }
+  .sar-solo[src$=".svg"] { width: 180px; }
+  .sar-name        { font-size: 18px; }
+  .sar-affirmation { font-size: 24px; }
+  .sar-hint        { font-size: 14px; }
+}
+
 @media (max-width: 768px) {
   .sar-card        { width: 320px; height: 400px; }
   .sar-icon,

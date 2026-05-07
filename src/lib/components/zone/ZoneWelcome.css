@@ -269,7 +269,7 @@
   padding: 0;
 }
 .zone-title-top .screen-header-title {
-  font-size: clamp(36px, 4vw, 72px);
+  font-size: clamp(28px, 3.2vw, 56px);
   color: var(--zone-text-primary, #6B5416);
   text-shadow:
     0 2px 10px rgba(255, 255, 255, 0.9),
@@ -284,12 +284,12 @@
   position: relative;
   z-index: 2;
   width: 100%;
-  margin: 8vh auto 0;
+  margin: clamp(4vh, 6vh, 8vh) auto 0;
 }
 
 .zone-title-top {
   position: absolute;
-  top: 24px;
+  top: clamp(12px, 1.8vh, 24px);
   left: 50%;
   transform: translateX(-50%);
   z-index: 3;
@@ -312,8 +312,8 @@
 .cards-wrapper::before {
   content: "";
   position: absolute;
-  width: 500px;
-  height: 500px;
+  width: clamp(280px, 38vw, 500px);
+  height: clamp(280px, 38vw, 500px);
   left: 50%;
   top: 40%;
   transform: translate(-50%, -50%);
@@ -332,8 +332,8 @@
 .cards-wrapper::after {
   content: "";
   position: absolute;
-  width: 900px;
-  height: 700px;
+  width: clamp(500px, 65vw, 900px);
+  height: clamp(420px, 52vw, 700px);
   left: 50%;
   top: 45%;
   transform: translate(-50%, -50%);
@@ -370,25 +370,25 @@
 /* zone-1 — BOTTOM CENTER (Modak — active/unlocked) */
 .zone-1 {
   left: 50%;
-  top: 83%;
+  top: 82%;
 }
 
 /* zone-2 — MIDDLE LEFT (Sacred Pond) */
 .zone-2 {
-  left: 30%;
-  top: 57%;
+  left: 26%;
+  top: 60%;
 }
 
 /* zone-3 — MIDDLE RIGHT (Sacred Tusk) */
 .zone-3 {
-  left: 70%;
-  top: 57%;
+  left: 74%;
+  top: 60%;
 }
 
 /* zone-4 — TOP CENTER (Sacred Assembly) */
 .zone-4 {
   left: 50%;
-  top: 31%;
+  top: 33%;
 }
 
 /* 5-card fallback */
@@ -454,8 +454,8 @@
 
 .zone-scene-card {
   position: absolute;
-  width: clamp(240px, 21vw, 380px);
-  min-height: clamp(290px, 26vw, 460px);
+  width: clamp(210px, 19.5vw, 360px);
+  min-height: clamp(240px, 22vw, 410px);
   padding: 6px;
   display: flex;
   flex-direction: column;
@@ -467,7 +467,7 @@
 
 /* New base card system */
 .zone-card {
-  border-radius: 28px;
+  border-radius: 18px;
   padding: 6px;
   background: linear-gradient(
     145deg,
@@ -494,25 +494,14 @@
 }
 
 .zone-card::after {
-  content: "";
-  position: absolute;
-  left: 14px;
-  right: 14px;
-  bottom: -14px;
-  height: 24px;
-  border-radius: 24px;
-  background: color-mix(in srgb, var(--zone-accent-color, #000) 25%, transparent);
-  box-shadow:
-    0 10px 20px color-mix(in srgb, var(--zone-accent-color, #000) 40%, black);
-  opacity: 0.25;
-  z-index: -1;
+  content: none;
 }
 
 .zone-inner {
   display: flex;
   flex-direction: column;
   flex: 1;
-  padding: 40px 32px 28px;
+  padding: clamp(12px, 1.4vw, 24px) clamp(14px, 1.8vw, 29px) clamp(10px, 1.2vw, 18px);
   text-align: center;
   width: 100%;
 }
@@ -529,7 +518,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 22px;
+  margin-bottom: clamp(6px, 0.8vw, 12px);
   position: relative;
 }
 
@@ -546,7 +535,7 @@
 }
 
 .scene-emoji {
-  font-size: clamp(48px, 5.5vw, 80px);
+  font-size: clamp(40px, 4.6vw, 72px);
   margin: 0;
   transition: transform 0.3s ease;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
@@ -562,8 +551,8 @@
 
 /* Scene Icon Image Styles */
 .scene-icon-img {
-  width: clamp(64px, 8vw, 110px);
-  height: clamp(64px, 8vw, 110px);
+  width: clamp(54px, 6.8vw, 96px);
+  height: clamp(54px, 6.8vw, 96px);
   object-fit: contain;
   margin: 0;
   transition: transform 0.3s ease;
@@ -623,10 +612,10 @@
 .scene-name-area {
   width: 100%;
   text-align: center;
-  padding-top: 4px;
-  margin-bottom: 14px;
+  padding-top: 0;
+  margin-bottom: clamp(4px, 0.6vw, 8px);
   flex-grow: 0;
-  min-height: 56px;
+  min-height: clamp(28px, 3.2vw, 40px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -634,7 +623,7 @@
 
 .scene-name {
   font-family: 'Baloo 2', system-ui, sans-serif;
-  font-size: clamp(16px, 1.7vw, 22px);
+  font-size: clamp(14px, 1.5vw, 20px);
   font-weight: 800;
   color: #3E2723;
   margin: 0;
@@ -653,17 +642,17 @@
   margin-top: auto;
   display: flex;
   align-items: stretch;
-  gap: 8px;
+  gap: 6px;
 }
 
 /* Single Button Style */
 .action-button-integrated {
   width: 100%;
-  padding: 16px 24px;
+  padding: clamp(9px, 1.1vw, 14px) clamp(10px, 1.3vw, 18px);
   border: none;
   border-radius: 50px;
   font-family: 'Nunito', sans-serif;
-  font-size: 20px;
+  font-size: clamp(12px, 1.3vw, 16px);
   font-weight: 800;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -713,7 +702,8 @@
 
 /* Continue / Replay — same zone-btn but tighter space, keep slightly smaller */
 .action-button-split.zone-btn {
-  font-size: clamp(15px, 1.4vw, 19px);
+  font-size: clamp(13px, 1.2vw, 16px);
+  padding: clamp(8px, 1vw, 12px) clamp(8px, 1.1vw, 12px);
 }
 
 .zone-btn:hover {
@@ -748,14 +738,14 @@
 .action-split-container {
   width: 100%;
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 
 .action-button-split {
   border: none;
   border-radius: 50px;
   font-family: 'Nunito', sans-serif;
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 800;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -801,8 +791,8 @@
 .journey-panel {
   display: flex;
   align-items: center;
-  gap: clamp(24px, 2.8vw, 48px);
-  padding: clamp(16px, 1.6vw, 26px) clamp(36px, 4vw, 68px);
+  gap: clamp(18px, 2.1vw, 34px);
+  padding: clamp(10px, 1vw, 18px) clamp(22px, 2.5vw, 42px);
   border-radius: 60px;
   background: linear-gradient(180deg, #fffaf0, #ffeec2);
   box-shadow:
@@ -818,14 +808,35 @@
 .journey-left {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: clamp(16px, 1.6vw, 26px);
+  gap: 8px;
+  font-size: clamp(13px, 1.25vw, 20px);
+}
+
+/* Compact icon-only replay button for in-progress cards */
+.action-button-split.replay-btn {
+  flex: 0 0 auto;
+  width: clamp(40px, 4vw, 52px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  padding: 0;
+}
+
+.replay-icon {
+  font-size: clamp(20px, 2vw, 26px);
+  font-weight: 700;
+  display: inline-block;
+  transition: transform 0.3s ease;
+  line-height: 1;
+}
+
+.action-button-split.replay-btn:hover .replay-icon {
+  transform: rotate(-180deg);
 }
 
 /* Custom stat icon */
 .journey-stat-icon {
-  width: clamp(28px, 2.8vw, 44px);
-  height: clamp(28px, 2.8vw, 44px);
+  width: clamp(20px, 2vw, 32px);
+  height: clamp(20px, 2vw, 32px);
   object-fit: contain;
   flex-shrink: 0;
 }
@@ -833,12 +844,12 @@
 /* Step dots */
 .journey-steps {
   display: flex;
-  gap: clamp(8px, 0.9vw, 14px);
+  gap: clamp(6px, 0.7vw, 10px);
 }
 
 .step {
-  width: clamp(16px, 1.6vw, 26px);
-  height: clamp(16px, 1.6vw, 26px);
+  width: clamp(12px, 1.1vw, 18px);
+  height: clamp(12px, 1.1vw, 18px);
   border-radius: 50%;
   background: rgba(107, 84, 22, 0.22);
   transition: all 0.3s ease;
@@ -1195,8 +1206,8 @@ button[style*="position: fixed"][style*="background: purple"] {
 }
 
 .zone-ganesha-presence--top {
-  left: 50%;
-  top: 11%;
+  left: 18%;
+  top: 22%;
 }
 
 .zone-ganesha-presence--scene-1 {
@@ -1215,7 +1226,7 @@ button[style*="position: fixed"][style*="background: purple"] {
 }
 
 .zone-ganesha-presence--scene-4 {
-  left: 40%;
+  left: 34%;
   top: 30%;
 }
 

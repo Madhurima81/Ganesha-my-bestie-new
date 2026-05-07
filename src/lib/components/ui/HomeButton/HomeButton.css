@@ -102,3 +102,22 @@
   display: block;
   pointer-events: none;
 }
+
+/* iPad sizing: keep nav controls compact (52-60px range) */
+@media (min-width: 768px) and (max-width: 1366px) {
+  .home-button {
+    width: 36px;
+    height: 36px;
+    opacity: 0.9;
+  }
+
+  .home-button__icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .home-button--top-left {
+    top: 10px;
+    left: 10px;
+  }
+}

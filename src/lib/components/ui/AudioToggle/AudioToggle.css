@@ -77,3 +77,22 @@
   display: block;
   pointer-events: none;
 }
+
+/* iPad sizing: utility control slightly smaller than nav buttons */
+@media (min-width: 768px) and (max-width: 1366px) {
+  .audio-toggle {
+    width: 34px;
+    height: 34px;
+    opacity: 0.85;
+  }
+
+  .audio-toggle__icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .audio-toggle--bottom-right {
+    right: 10px;
+    bottom: 10px;
+  }
+}

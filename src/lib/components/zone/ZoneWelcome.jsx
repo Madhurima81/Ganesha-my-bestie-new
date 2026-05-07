@@ -700,7 +700,7 @@ const getPermanentCompletedCount = () => {
     const allDone = completedCount === zoneData.scenes.length;
 
     if (allDone) {
-      return { pose: 'celebration', slot: 'top', size: 150 };
+      return { pose: 'celebration', slot: 'top', size: 122 };
     }
 
     const nextPendingIndex = sceneStatuses.findIndex(
@@ -709,14 +709,14 @@ const getPermanentCompletedCount = () => {
     const slot = nextPendingIndex >= 0 ? `scene-${nextPendingIndex + 1}` : 'scene-1';
 
     if (completedCount === 0) {
-      return { pose: 'pointing', slot, size: 132 };
+      return { pose: 'pointing', slot, size: 108 };
     }
 
     if (completedCount === 1) {
-      return { pose: 'thumbs_up', slot, size: 136 };
+      return { pose: 'thumbs_up', slot, size: 112 };
     }
 
-    return { pose: 'okay', slot, size: 130 };
+    return { pose: 'okay', slot, size: 106 };
   };
 
   // ✅ MVP: Only scene 1 is playable in each zone — scenes 2+ are "Coming Soon"
@@ -1139,13 +1139,14 @@ const getPermanentCompletedCount = () => {
 Continue                            
                         </button>
                         <button 
-                          className="action-button-split zone-btn replay btn-replay"
+                          className="action-button-split zone-btn replay btn-replay replay-btn"
+                          aria-label="Replay"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleSceneClick(scene, 'replay');
                           }}
                         >
-                          Replay
+                          <span className="replay-icon" aria-hidden="true">↻</span>
                         </button>
                       </div>
                     ) : (
@@ -1158,7 +1159,7 @@ Continue
                         }}
                       >
                         {status.status === 'available' && 'Start'}
-                        {status.status === 'completed' && (status.hasReplaySession ? 'Continue Replay' : 'Replay')}
+                        {status.status === 'completed' && '↻ Play Again'}
                         {status.status === 'locked' && 'Coming Soon'}
                       </button>
                     )}
@@ -1180,6 +1181,9 @@ Continue
     // Same pattern as symbol count (CulturalProgressExtractor). Keeps dots stable.
     const completedCount = getPermanentCompletedCount();
     const symbolCount = zoneStats.symbols || zoneStats.chants || zoneStats.stories || zoneStats.meanings || 0;
+    const displayCount = zoneData?.id === 'symbol-mountain'
+      ? Math.min(completedCount, totalScenes)
+      : symbolCount;
     const allScenesCompleted = completedCount >= totalScenes && totalScenes > 0;
 
     const statIcon =
@@ -1200,7 +1204,7 @@ Continue
             <img src={statIcon} alt={statLabel} className="journey-stat-icon" />
             <div className="journey-left-text">
               <span className="journey-left-main zone-progress-label">
-                {symbolCount}/{totalScenes} {statLabel}
+                {displayCount}/{totalScenes} {statLabel}
               </span>
             </div>
           </div>
