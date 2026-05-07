@@ -50,7 +50,6 @@ import MahakayaGame from './MahakayaGame';
 
 // Character images
 import ganeshaHeadphones from './assets/images/ganesha_with_headphones.webp';
-import smartwatchScreen from '../assets/images/smartwatch-screen.webp';
 
 // Images
 import riverBackground from './assets/images/vakratundachant-bg-new2.svg';
