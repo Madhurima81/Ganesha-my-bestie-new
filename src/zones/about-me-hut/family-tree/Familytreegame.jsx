@@ -539,7 +539,7 @@ const FamilyTreeGameContent = ({
  ],
  myself: [
  { id: 'ganesha', name: 'Ganesha', image: babyGaneshaImg, type: 'img', isCorrect: true },
- { id: 'mushak', name: 'Mushak', image: mouseImg, type: 'img', isCorrect: false },
+ { id: 'mushak', name: 'Mooshak', image: mouseImg, type: 'img', isCorrect: false },
  { id: 'kartikeya', name: 'Kartikeya', image: kartikeyaImg, type: 'img', isCorrect: false }
  ]
  };

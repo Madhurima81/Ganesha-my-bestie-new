@@ -195,7 +195,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   ];
 
   const friends = [
-    { id: 'mouse', name: 'Mushika', image: mouseImg, emoji: '🐭', correct: true },
+    { id: 'mouse', name: 'Mooshika', image: mouseImg, emoji: '🐭', correct: true },
     { id: 'cow', name: 'Cow', image: cowImg, emoji: '🐮', correct: false },
     { id: 'peacock', name: 'Peacock', image: peacockImg, emoji: '🦚', correct: false }
   ];
@@ -482,7 +482,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     if (friend.correct) {
       sceneActions.updateState({
         selectedFriend: friendId,
-        storyDiscoveries: [...sceneState.storyDiscoveries, { image: mouseImg, name: 'Mushika' }],
+        storyDiscoveries: [...sceneState.storyDiscoveries, { image: mouseImg, name: 'Mooshika' }],
         gamePhase: 'friend-correct'
       });
       setFeedbackMessage("");
@@ -785,7 +785,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
               <div key={i} className="sparkle heart" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}>💕</div>
             ))}
           </div>
-          <div className="success-message">Yes! Mushika is my best friend! 🐭✨</div>
+          <div className="success-message">Yes! Mooshika is my best friend! 🐭✨</div>
         </div>
       )}
 
@@ -1064,8 +1064,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 </div>
                 <div className="friend-item">
                   <span className="friend-item-label">Friend</span>
-                  <img src={mouseImg} alt="Mushika" className="friend-item-img" />
-                  <span className="friend-item-text">Mushika</span>
+                  <img src={mouseImg} alt="Mooshika" className="friend-item-img" />
+                  <span className="friend-item-text">Mooshika</span>
                 </div>
               </div>
             </div>

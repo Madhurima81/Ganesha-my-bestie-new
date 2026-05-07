@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <!-- Wooden body gradient: warm gold to brown -->
+    <linearGradient id="woodBody" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E8B66E"/>
+      <stop offset="50%" stop-color="#C7924A"/>
+      <stop offset="100%" stop-color="#9A6B30"/>
+    </linearGradient>
+    <!-- Sharpened tip wood -->
+    <linearGradient id="tipWood" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F5D89C"/>
+      <stop offset="100%" stop-color="#D4A56A"/>
+    </linearGradient>
+    <!-- Eraser (soft cream-pink that fits hut) -->
+    <linearGradient id="eraser" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F5D5A0"/>
+      <stop offset="100%" stop-color="#D9A86E"/>
+    </linearGradient>
+    <!-- Metal ferrule -->
+    <linearGradient id="ferrule" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#8C6A4A"/>
+      <stop offset="50%" stop-color="#6B3E1E"/>
+      <stop offset="100%" stop-color="#4A2810"/>
+    </linearGradient>
+    <!-- Soft drop shadow -->
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2.5"/>
+      <feOffset dx="0" dy="3" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.35"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Pencil rotated diagonally for friendliness, centered in viewBox -->
+  <g filter="url(#softShadow)" transform="rotate(-35 64 64)">
+
+    <!-- Eraser top -->
+    <rect x="20" y="42" width="14" height="20" rx="3" ry="3" fill="url(#eraser)" stroke="#8C6A4A" stroke-width="1.5"/>
+
+    <!-- Metal ferrule (the band between eraser and wood) -->
+    <rect x="34" y="42" width="10" height="20" fill="url(#ferrule)" stroke="#3A1E08" stroke-width="1.2"/>
+    <!-- Ferrule ridges for detail -->
+    <line x1="36.5" y1="44" x2="36.5" y2="60" stroke="#FFD9A0" stroke-width="0.6" opacity="0.4"/>
+    <line x1="40" y1="44" x2="40" y2="60" stroke="#FFD9A0" stroke-width="0.6" opacity="0.4"/>
+
+    <!-- Wooden body (the long shaft) -->
+    <path d="M 44 42
+             L 90 42
+             L 90 62
+             L 44 62
+             Z"
+          fill="url(#woodBody)"
+          stroke="#6B3E1E"
+          stroke-width="1.5"
+          stroke-linejoin="round"/>
+
+    <!-- Highlight stripe on body for depth -->
+    <rect x="44" y="44.5" width="46" height="3" fill="#F5D89C" opacity="0.55" rx="1"/>
+
+    <!-- Sharpened wooden tip -->
+    <path d="M 90 42
+             L 105 52
+             L 90 62
+             Z"
+          fill="url(#tipWood)"
+          stroke="#6B3E1E"
+          stroke-width="1.5"
+          stroke-linejoin="round"/>
+
+    <!-- Pencil lead (graphite tip) -->
+    <path d="M 100 48.5
+             L 109 52
+             L 100 55.5
+             Z"
+          fill="#3A2818"
+          stroke="#1A0F08"
+          stroke-width="0.8"
+          stroke-linejoin="round"/>
+
+    <!-- Tiny shine on lead for life -->
+    <circle cx="103" cy="50.5" r="0.8" fill="#FFF6E8" opacity="0.7"/>
+
+  </g>
+</svg>

@@ -12,10 +12,8 @@
   padding: 10px 18px;
   border-radius: 999px;
 
-  background: rgba(255, 248, 220, 0.88);
-  box-shadow:
-    0 6px 20px rgba(139, 115, 85, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  background: rgba(255, 248, 220, 0.55) !important;
+  box-shadow: 0 2px 8px rgba(139, 115, 85, 0.12) !important;
 
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
@@ -37,8 +35,8 @@
   height: 40px;
   object-fit: cover; /* Changed from contain to cover */
   border-radius: 6px;
-  border: 2px solid #8B4513;
-  background: white; /* White background so we can see if image loads */
+  border: none !important;
+  background: transparent !important;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
 }
 

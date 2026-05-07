@@ -38,6 +38,7 @@ import peacockImg from './assets/images/animal/fav-peacock.png';
 import favIconFood from './assets/images/food-icon.png';
 import favIconColor from './assets/images/color-icon.png';
 import favIconActivity from './assets/images/sports-icon.png';
+import pencilImg from './assets/images/icons/pencil.svg';
 
 // Colors
 import redImg from './assets/images/color/fav-red.png';
@@ -141,6 +142,7 @@ const FavoriteFoodGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
 
           childFriendName: '',
           childFriendLetters: [],
+          friendNameDraft: '',
 
           // Modal Persistence State (NEW)
           currentModal: null, // 'food-draw', 'food-type', 'activity-draw', 'activity-type'
@@ -514,7 +516,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   ];
 
   const friends = [
-    { id: 'mouse', name: 'Mushika', image: mouseImg, emoji: 'ðŸ­', correct: true },
+    { id: 'mouse', name: 'Mooshika', image: mouseImg, emoji: 'ðŸ­', correct: true },
     { id: 'cow', name: 'Cow', image: cowImg, emoji: 'ðŸ®', correct: false },
     { id: 'peacock', name: 'Peacock', image: peacockImg, emoji: 'ðŸ¦š', correct: false }
   ];
@@ -1326,7 +1328,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       triggerMiniGesture('friend', 1500);
       triggerSparkleFx('all', 1700);
       playChime();
-      triggerDiscoveryFly({ image: mouseImg, name: 'Mushika' }, { durationMs: GANESHA_FRIEND_CORRECT_ADVANCE_DELAY_MS });
+      triggerDiscoveryFly({ image: mouseImg, name: 'Mooshika' }, { durationMs: GANESHA_FRIEND_CORRECT_ADVANCE_DELAY_MS });
       sceneActions.updateState({
         correctChoiceId: friendId,
         selectedFriend: friendId,
@@ -1334,7 +1336,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       });
       safeSetTimeout(() => {
         sceneActions.updateState({
-          storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, { image: mouseImg, name: 'Mushika' })
+          storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, { image: mouseImg, name: 'Mooshika' })
         });
       }, DISCOVERY_CENTER_REACH_MS);
     } else {
@@ -1353,16 +1355,17 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     playUiTap();
     setSelectedKidFoodId(foodId);
     const selected = kidFoods.find(f => f.id === foodId);
+    const discoveryImage = selected?.id === 'drawing' ? pencilImg : selected?.image;
     speakOptionName(selected?.name);
     sceneActions.updateState({
       childFoodChoice: foodId,
-      childDiscoveries: [{ image: selected.image, name: selected.name }]
+      childDiscoveries: [{ image: discoveryImage, name: selected.name }]
     });
     triggerMiniGesture('center', 1200);
     triggerSparkleFx('single', 1500);
 
     safeSetTimeout(() => {
-      triggerDiscoveryFly({ image: selected.image, name: selected.name }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
+      triggerDiscoveryFly({ image: discoveryImage, name: selected.name }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
     }, 200);
 
     safeSetTimeout(() => {
@@ -1382,10 +1385,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     playChime();
     setShowDrawingPad(false);
     setDrawingMode(null);
-    triggerDiscoveryFly({ image: data.image, name: 'My Food' }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
+    triggerDiscoveryFly({ image: pencilImg, name: 'My Food' }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
     sceneActions.updateState({
       childFoodDrawing: data.image,
-      childDiscoveries: [{ image: data.image, name: 'My Food' }],
+      childDiscoveries: [{ image: pencilImg, name: 'My Food' }],
       currentModal: null,
       draftData: null
     });
@@ -1445,14 +1448,15 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     playUiTap();
     setSelectedKidActivityId(activityId);
     const selected = kidActivities.find(a => a.id === activityId);
+    const discoveryImage = selected?.id === 'drawing' ? pencilImg : selected?.image;
     speakOptionName(selected?.name);
     sceneActions.updateState({
       childActivityChoice: activityId,
-      childDiscoveries: [...sceneState.childDiscoveries, { image: selected.image, name: selected.name }]
+      childDiscoveries: [...sceneState.childDiscoveries, { image: discoveryImage, name: selected.name }]
     });
     triggerMiniGesture('center', 1200);
     triggerSparkleFx('single', 1500);
-    triggerDiscoveryFly({ image: selected.image, name: selected.name }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
+    triggerDiscoveryFly({ image: discoveryImage, name: selected.name }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
 
     safeSetTimeout(() => {
       speakLine(VOICE_LINES.childActivityCorrect, { moment: 'celebration' });
@@ -1471,10 +1475,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     playChime();
     setShowDrawingPad(false);
     setDrawingMode(null);
-    triggerDiscoveryFly({ image: data.image, name: 'My Activity' }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
+    triggerDiscoveryFly({ image: pencilImg, name: 'My Activity' }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
     sceneActions.updateState({
       childActivityDrawing: data.image,
-      childDiscoveries: [...sceneState.childDiscoveries, { image: data.image, name: 'My Activity' }],
+      childDiscoveries: [...sceneState.childDiscoveries, { image: pencilImg, name: 'My Activity' }],
       currentModal: null,
       draftData: null
     });
@@ -1733,6 +1737,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             {sceneState.randomFriends.map((friend, index) => (
               <button
                 key={friend.id}
+                data-id={friend.id}
                 className={`choice-card ${showShake === friend.id ? 'wrong' : ''} ${sceneState.correctChoiceId === friend.id ? 'correct' : ''}`}
                 onClick={() => handleFriendClick(friend.id)}
                 style={{ animationDelay: `${index * 0.2}s` }}
@@ -1759,9 +1764,9 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             <img src={babyGaneshaSit} alt="Ganesha" className="ganesha-with-friend" />
           </div>
           <div className="correct-food">
-            <img src={mouseImg} alt="Mushika" className="food-in-hand pop-in" style={{ width: '180px', height: '180px' }} />
+            <img src={mouseImg} alt="Mooshika" className="food-in-hand pop-in" style={{ width: '180px', height: '180px' }} />
           </div>
-          {/* <div className="success-message">Yes! Mushika is my best friend! ðŸ­âœ¨</div> */}
+          {/* <div className="success-message">Yes! Mooshika is my best friend! ðŸ­âœ¨</div> */}
         </div>
       )}
 
@@ -1792,7 +1797,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 style={{ animationDelay: `${index * 0.1}s` }}
                 disabled={Boolean(selectedKidFoodId || sceneState.childFoodChoice || sceneState.childFoodDrawing || sceneState.childFoodText)}
               >
-                <img src={food.image} alt={food.name} className="choice-image" style={{ width: '60px', height: '60px' }} />
+                <img src={food.image} alt={food.name} className="choice-image" style={{ width: '80px', height: '80px' }} />
                 <div className="kid-choice-name">{food.name}</div>
               </button>
             ))}
@@ -1803,22 +1808,22 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             <div className="custom-input-options child-food-actions">
               <div className="child-food-tools" ref={childFoodToolsRef}>
                 {showChildFoodTools && (
-                  <>
+                  <div className="child-food-tool-row">
                     <button className="child-food-tool-btn draw" onClick={() => {
                       playUiTap();
                       setShowChildFoodTools(false);
                       setShowDrawingPad(true);
                       setDrawingMode('food');
                       sceneActions.updateState({ currentModal: 'food-draw' }); // Track modal
-                    }}>âœ Draw</button>
+                    }}>Draw</button>
                     <button className="child-food-tool-btn type" onClick={() => {
                       playUiTap();
                       setShowChildFoodTools(false);
                       setShowTextInput(true);
                       setTextInputMode('food');
                       sceneActions.updateState({ currentModal: 'food-type' }); // Track modal
-                    }}>Aa Type</button>
-                  </>
+                    }}>Type</button>
+                  </div>
                 )}
                 <button
                   className={`child-food-tool-plus ${showChildFoodTools ? 'open' : ''}`}
@@ -1911,7 +1916,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 style={{ animationDelay: `${index * 0.1}s` }}
                 disabled={Boolean(sceneState.childActivityChoice || sceneState.childActivityDrawing || sceneState.childActivityText)}
               >
-                <img src={activity.image} alt={activity.name} className="choice-image" style={{ width: '60px', height: '60px' }} />
+                <img src={activity.image} alt={activity.name} className="choice-image" style={{ width: '50px', height: '50px' }} />
                 <div className="kid-choice-name">{activity.name}</div>
               </button>
             ))}
@@ -1922,22 +1927,22 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             <div className="custom-input-options child-activity-actions">
               <div className="child-activity-tools" ref={childActivityToolsRef}>
                 {showChildActivityTools && (
-                  <>
+                  <div className="child-food-tool-row">
                     <button className="child-food-tool-btn draw" onClick={() => {
                       playUiTap();
                       setShowChildActivityTools(false);
                       setShowDrawingPad(true);
                       setDrawingMode('activity');
                       sceneActions.updateState({ currentModal: 'activity-draw' }); // Track modal
-                    }}>{'âœ Draw'}</button>
+                    }}>Draw</button>
                     <button className="child-food-tool-btn type" onClick={() => {
                       playUiTap();
                       setShowChildActivityTools(false);
                       setShowTextInput(true);
                       setTextInputMode('activity');
                       sceneActions.updateState({ currentModal: 'activity-type' }); // Track modal
-                    }}>Aa Type</button>
-                  </>
+                    }}>Type</button>
+                  </div>
                 )}
                 <button
                   className={`child-food-tool-plus ${showChildActivityTools ? 'open' : ''}`}
@@ -1973,14 +1978,62 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Child Friend Input */}
       {sceneState.gamePhase === 'child-friend-input' && !sceneState.childFriendName && (
         <div className="friend-input-screen">
-          <LetterInputKeyboard
-            onConfirm={(name) => {
+          {/*
+            <LetterInputKeyboard
+              onConfirm={(name) => {
+                interruptCurrentVoice();
+                playChime();
+                sceneActions.updateState({
+                  childFriendName: name,
+                  childFriendLetters: name.split(''),
+                  childDiscoveries: [...sceneState.childDiscoveries, { image: friendsImg, name }]
+                });
+                triggerMiniGesture('center', 1200);
+                triggerSparkleFx('single', 1500);
+                triggerDiscoveryFly(
+                  { image: friendsImg, name },
+                  { isChild: true, showNameBelow: true, durationMs: CHILD_FRIEND_ADVANCE_DELAY_MS }
+                );
+                safeSetTimeout(() => {
+                  speakLine(VOICE_LINES.childFriendCorrect, { moment: 'celebration' });
+                }, DISCOVERY_CENTER_REACH_MS);
+                safeSetTimeout(() => {
+                  sceneActions.updateState({
+                    gamePhase: 'friend-celebration'
+                  });
+                }, CHILD_FRIEND_ADVANCE_DELAY_MS);
+
+                localStorage.setItem('childFavorites', JSON.stringify({
+                  food: sceneState.childFoodChoice,
+                  foodDrawing: sceneState.childFoodDrawing,
+                  color: sceneState.childColor,
+                  colorName: sceneState.childColorName,
+                  activity: sceneState.childActivityChoice,
+                  activityDrawing: sceneState.childActivityDrawing,
+                  friend: name
+                }));
+              }}
+              minLetters={2}
+              maxLetters={20}
+              placeholder="Type your Friend's Name"
+              confirmButtonText="That's My Friend!"
+              deleteButtonText="Delete"
+            />
+          */}
+
+          <TextInputModal
+            prompt="What's your friend's name?"
+            maxLength={20}
+            initialValue={sceneState.friendNameDraft || ''}
+            onAutoSave={(val) => sceneActions.updateState({ friendNameDraft: val })}
+            onSave={(name) => {
               interruptCurrentVoice();
               playChime();
               sceneActions.updateState({
                 childFriendName: name,
                 childFriendLetters: name.split(''),
-                childDiscoveries: [...sceneState.childDiscoveries, { image: friendsImg, name }]
+                childDiscoveries: [...sceneState.childDiscoveries, { image: friendsImg, name }],
+                friendNameDraft: ''
               });
               triggerMiniGesture('center', 1200);
               triggerSparkleFx('single', 1500);
@@ -2007,11 +2060,13 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 friend: name
               }));
             }}
-            minLetters={2}
-            maxLetters={20}
-            placeholder="Type your Friend's Name"
-            confirmButtonText="That's My Friend!"
-            deleteButtonText="Delete"
+            onCancel={() => {
+              playUiTap();
+              sceneActions.updateState({
+                friendNameDraft: '',
+                gamePhase: 'child-activity-choice'
+              });
+            }}
           />
         </div>
       )}
@@ -2033,7 +2088,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       {showTextInput && textInputMode === 'food' && (
         <TextInputModal
-          prompt="What's YOUR favorite food?"
+          prompt="What do you love eating?"
 
           initialValue={sceneState.draftData} // Restore text
           onAutoSave={(text) => sceneActions.updateState({ draftData: text })} // Auto-save on type
@@ -2042,10 +2097,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             playChime();
             setShowTextInput(false);
             setTextInputMode(null);
-            triggerDiscoveryFly({ emoji: 'âœï¸', name: text }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
+            triggerDiscoveryFly({ image: pencilImg, name: text }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
             sceneActions.updateState({
               childFoodText: text,
-              childDiscoveries: [{ emoji: 'âœï¸', name: text }],
+              childDiscoveries: [{ image: pencilImg, name: text }],
               currentModal: null, // Clear modal
               draftData: null
             });
@@ -2074,7 +2129,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       {showTextInput && textInputMode === 'activity' && (
         <TextInputModal
-          prompt="What's YOUR favorite activity?"
+          prompt="What do you love doing?"
 
           initialValue={sceneState.draftData} // Restore text
           onAutoSave={(text) => sceneActions.updateState({ draftData: text })} // Auto-save on type
@@ -2083,10 +2138,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             playChime();
             setShowTextInput(false);
             setTextInputMode(null);
-            triggerDiscoveryFly({ emoji: 'âœï¸', name: text }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
+            triggerDiscoveryFly({ image: pencilImg, name: text }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
             sceneActions.updateState({
               childActivityText: text,
-              childDiscoveries: [...sceneState.childDiscoveries.slice(0, 2), { emoji: 'âœï¸', name: text }],
+              childDiscoveries: [...sceneState.childDiscoveries.slice(0, 2), { image: pencilImg, name: text }],
               currentModal: null, // Clear modal
               draftData: null
             });
@@ -2125,7 +2180,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
               { id: 'g-food', label: 'FOOD', imageSrc: modakImg, imageAlt: 'Modak', text: 'Modak' },
               { id: 'g-color', label: 'COLOR', imageSrc: yellowImg, imageAlt: 'Yellow', text: 'Yellow' },
               { id: 'g-activity', label: 'ACTIVITY', imageSrc: kidActSingImg, imageAlt: 'Dancing', text: 'Dancing' },
-              { id: 'g-friend', label: 'FRIEND', imageSrc: mouseImg, imageAlt: 'Mushika', text: 'Mushika' },
+              { id: 'g-friend', label: 'FRIEND', imageSrc: mouseImg, imageAlt: 'Mooshika', text: 'Mooshika' },
             ]
           }}
           rightColumn={{
@@ -2305,6 +2360,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
               childActivityText: null,
               childFriendName: '',
               childFriendLetters: [],
+              friendNameDraft: '',
               showingCompletionScreen: false,
               stars: 2,
               completed: false,
@@ -2331,130 +2387,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         />
       )}
 
-      {/* DEBUG: Test Controls Panel */}
-      <div style={{
-        position: 'fixed',
-        top: '16px',
-        right: '16px',
-        zIndex: 1000,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '8px',
-        background: 'rgba(0, 0, 0, 0.85)',
-        padding: '12px',
-        borderRadius: '8px',
-        maxWidth: '220px',
-      }}>
-        {/* Reset Button */}
-        <button
-          onClick={() => {
-            sceneActions.updateState({
-              gamePhase: 'intro',
-              randomFoods: shuffleArray(foods),
-              randomFriends: shuffleArray(friends),
-              randomColors: shuffleArray(colors),
-              randomActivities: shuffleArray(activities),
-              selectedFood: null,
-              selectedFriend: null,
-              wrongChoices: [],
-              correctChoiceId: null,
-              storyDiscoveries: [],
-              childDiscoveries: [],
-              childFoodChoice: null,
-              childFoodDrawing: null,
-              childFoodText: null,
-              childColor: null,
-              childColorName: '',
-              childActivityChoice: null,
-              childActivityDrawing: null,
-              childActivityText: null,
-              childFriendName: '',
-              childFriendLetters: [],
-              currentModal: null,
-              draftData: null,
-              showingCompletionScreen: false
-            });
-            resetIdleHints();
-            setShowShake(null);
-          }}
-          style={{
-            padding: '6px 10px',
-            background: 'rgba(255, 0, 0, 0.8)',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            fontSize: '11px',
-            fontWeight: 700,
-            cursor: 'pointer',
-            fontFamily: "'Nunito', sans-serif",
-          }}
-        >
-          ðŸ”„ Reset All
-        </button>
-
-        {/* Reload Button */}
-        <button
-          onClick={() => window.location.reload()}
-          style={{
-            padding: '6px 10px',
-            background: 'rgba(33, 150, 243, 0.8)',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            fontSize: '11px',
-            fontWeight: 700,
-            cursor: 'pointer',
-            fontFamily: "'Nunito', sans-serif",
-          }}
-        >
-          ðŸ” Reload
-        </button>
-
-        {/* Phase Jump Buttons */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '4px' }}>
-          {[
-            { label: 'Intro', value: 'intro' },
-            { label: 'Food', value: 'food-choice' },
-            { label: 'Color', value: 'color-choice' },
-            { label: 'Activity', value: 'activity-choice' },
-            { label: 'Friend', value: 'friend-choice' },
-            { label: 'C-Intro', value: 'child-intro' },
-            { label: 'C-Food', value: 'child-food-choice' },
-            { label: 'C-Color', value: 'child-color-choice' },
-            { label: 'C-Activity', value: 'child-activity-choice' },
-            { label: 'C-Friend', value: 'child-friend-input' },
-            { label: 'Celebrate', value: 'friend-celebration' },
-            { label: 'Done', value: 'completion' },
-          ].map((phaseOption) => (
-            <button
-              key={phaseOption.value}
-              onClick={() => {
-                resetIdleHints();
-                setShowShake(null);
-                sceneActions.updateState({ gamePhase: phaseOption.value });
-              }}
-              style={{
-                padding: '4px 8px',
-                background: sceneState.gamePhase === phaseOption.value ? '#4CAF50' : '#666',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '4px',
-                fontSize: '10px',
-                fontWeight: 600,
-                cursor: 'pointer',
-                fontFamily: "'Nunito', sans-serif",
-              }}
-            >
-              {phaseOption.label}
-            </button>
-          ))}
-        </div>
-      </div>
     </div>
   );
 };
 
 export default FavoriteFoodGame;
-
-
-

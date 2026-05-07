@@ -21,14 +21,19 @@ const DrawingPad = ({
   // Initialize canvas & Restore Data
   useEffect(() => {
     const canvas = canvasRef.current;
+
+    // Set canvas resolution from rendered size
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+
     const context = canvas.getContext('2d');
-    
+
     // 1. Basic Setup
     context.lineCap = 'round';
     context.lineJoin = 'round';
     context.strokeStyle = color;
     context.lineWidth = brushSize;
-    
+
     // 2. Fill White Background (Default)
     context.fillStyle = '#ffffff';
     context.fillRect(0, 0, canvas.width, canvas.height);
@@ -145,8 +150,15 @@ const DrawingPad = ({
 
   return (
     <div className="simple-drawing-pad">
-      {/* Title */}
-      <h2 className="simple-title">{prompt}</h2>
+      {/* Title with close button */}
+      <div className="title-row">
+        <h2 className="simple-title">{prompt}</h2>
+        {onCancel && (
+          <button className="close-x-btn" onClick={onCancel} title="Close">
+            ✕
+          </button>
+        )}
+      </div>
       
       {/* Main Container */}
       <div className="simple-container">
@@ -202,8 +214,8 @@ const DrawingPad = ({
         {/* Canvas */}
         <canvas
           ref={canvasRef}
-          width={700}
-          height={450}
+          width={900}
+          height={600}
           className="simple-canvas"
           onMouseDown={startDrawing}
           onMouseMove={draw}
@@ -224,12 +236,6 @@ const DrawingPad = ({
           <button className="download-btn" onClick={handleDownload} title="Save to device">
             💾 Save
           </button>
-
-          {onCancel && (
-            <button className="cancel-link" onClick={onCancel}>
-              Cancel
-            </button>
-          )}
       </div>
     </div>
   );
