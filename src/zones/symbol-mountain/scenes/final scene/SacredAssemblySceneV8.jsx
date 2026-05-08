@@ -274,16 +274,21 @@ const getZoneCenter = (zone) => {
   const halfW = Math.round(widthPx / 2);
   const halfH = Math.round(heightPx / 2);
 
+  // Detect centering transforms — when present, the anchor IS the center.
+  const transformStr = position.transform || '';
+  const isCenteredX = /translateX\(-50%\)|translate\(-50%/.test(transformStr);
+  const isCenteredY = /translateY\(-50%\)|translate\([^,]+,\s*-50%/.test(transformStr);
+
   const left = position.left
-    ? `calc(${position.left} + ${halfW}px)`
+    ? (isCenteredX ? position.left : `calc(${position.left} + ${halfW}px)`)
     : position.right
-      ? `calc(100% - ${position.right} - ${halfW}px)`
+      ? (isCenteredX ? `calc(100% - ${position.right})` : `calc(100% - ${position.right} - ${halfW}px)`)
       : '50%';
 
   const top = position.top
-    ? `calc(${position.top} + ${halfH}px)`
+    ? (isCenteredY ? position.top : `calc(${position.top} + ${halfH}px)`)
     : position.bottom
-      ? `calc(100% - ${position.bottom} - ${halfH}px)`
+      ? (isCenteredY ? `calc(100% - ${position.bottom})` : `calc(100% - ${position.bottom} - ${halfH}px)`)
       : '50%';
 
   return { top, left, widthPx, heightPx };
@@ -305,6 +310,12 @@ const ZONE_SPARKLE_POSITIONS = BODY_PART_ZONES.reduce((acc, zone) => {
   };
   return acc;
 }, {});
+
+if (typeof window !== 'undefined') {
+  console.log('[ZONE DEBUG] Hint positions:', ZONE_HINT_POSITIONS);
+  console.log('[ZONE DEBUG] Sparkle positions:', ZONE_SPARKLE_POSITIONS);
+  console.log('[ZONE DEBUG] Source zones:', GANESHA_ZONES.map(z => ({ id: z.id, pos: z.position })));
+}
 
 // Ganesha transformation states
 const GANESHA_STATES = {
@@ -425,6 +436,7 @@ const SacredAssemblyContent = ({
   // const [hintUsed, setHintUsed] = useState(false);
   const [isOrbsRunning, setIsOrbsRunning] = useState(false);
   const [celebrationZoneId, setCelebrationZoneId] = useState(null);
+  const [hideProgressBar, setHideProgressBar] = useState(false);
   const completionModalContent = getCompletionModal(zoneId, sceneId);
   const { isAudioOn, toggleAudio } = useAudioPreference();
   const {
@@ -1310,6 +1322,15 @@ const SacredAssemblyContent = ({
 
   }, []); // run once on mount; avoids repeated card/audio re-triggers
 
+  // Hide progress bar 1s after all 8 symbols placed — keeps fireworks clean
+  useEffect(() => {
+    const placedCount = Object.keys(sceneState?.placedSymbols || {}).length;
+    if (placedCount >= 8 && !hideProgressBar) {
+      const t = setTimeout(() => setHideProgressBar(true), 1000);
+      return () => clearTimeout(t);
+    }
+  }, [sceneState?.placedSymbols, hideProgressBar]);
+
   const getGaneshaOpacity = () => {
     const placedCount = Object.keys(sceneState?.placedSymbols || {}).length;
     // Keep Ganesha visible from the start; still brighten as symbols are placed.
@@ -1460,7 +1481,7 @@ const SacredAssemblyContent = ({
           />
 
           {/* HEARTS PROGRESS BAR */}
-          {sceneState.welcomeShown && (
+          {sceneState.welcomeShown && !hideProgressBar && (
             <div className="hearts-progress-container">
               <div className="hearts-row">
                 {[0, 1, 2, 3, 4, 5, 6, 7].map((index) => {
@@ -1547,17 +1568,17 @@ const SacredAssemblyContent = ({
                 baseOpacity={getGaneshaOpacity()}
               />
 
-              {/* Hint glow only — 3-level idle escalation with no pointer emoji */}
+              {/* Hint glow only — uses SAME position as hitbox, perfect alignment */}
               {Object.entries(zoneStates).map(([zoneId, state]) => {
                 if (state !== 'hint' && state !== 'hint-strong' && state !== 'hint-final') return null;
-                const pos = ZONE_HINT_POSITIONS[zoneId];
-                if (!pos) return null;
+                const zone = BODY_PART_ZONES.find(z => z.id === zoneId);
+                if (!zone) return null;
                 return (
                   <div
                     key={`hint-${zoneId}`}
                     className="zone-hint-overlay"
                     data-hint-level={state}
-                    style={{ top: pos.top, left: pos.left }}
+                    style={zone.position}
                   />
                 );
               })}
