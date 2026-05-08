@@ -817,15 +817,15 @@
 }
 
 .child-food-tool-plus {
-  width: 72px;
-  height: 72px;
-  min-width: 72px;
-  min-height: 72px;
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
   border-radius: 50%;
   border: none;
   background: #C7924A;
   color: #FFF6E8;
-  font-size: 28px;
+  font-size: 20px;
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   display: flex;
@@ -1246,16 +1246,16 @@
   padding: 18px 12px 18px;
 }
 .favorite-food-game .aboutme-comparison-continue-btn {
-  margin-top: 60px;
-  margin-bottom: 32px;
-  border-radius: 50px;
-  padding: 18px 45px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  border-radius: 22px;
+  padding: 12px 32px;
   font-family: 'Baloo', cursive;
-  font-size: 2.5rem;
+  font-size: 18px;
   box-shadow:
     0 8px 25px rgba(76, 175, 80, 0.4),
     0 0 0 0 rgba(76, 175, 80, 0.5);
-  animation: aboutmeFamilyContinuePulse 2s ease-in-out infinite;
+  animation: none;
 }
 
 .favorite-food-game .aboutme-comparison-continue-btn:hover {
@@ -1626,11 +1626,11 @@
   }
 
   .child-food-tool-plus {
-    width: 56px;
-    height: 56px;
-    min-width: 56px;
-    min-height: 56px;
-    font-size: 22px;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
+    font-size: 20px;
   }
   .child-food-tool-btn {
     min-height: 44px;

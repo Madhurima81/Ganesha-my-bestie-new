@@ -1364,9 +1364,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     triggerMiniGesture('center', 1200);
     triggerSparkleFx('single', 1500);
 
-    safeSetTimeout(() => {
-      triggerDiscoveryFly({ image: discoveryImage, name: selected.name }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
-    }, 200);
+    triggerDiscoveryFly({ image: discoveryImage, name: selected.name }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
 
     safeSetTimeout(() => {
       speakLine(VOICE_LINES.childFoodCorrect, { moment: 'celebration' });
@@ -2075,7 +2073,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {showDrawingPad && (
         <div className="drawing-overlay">
           <DrawingPad
-            prompt={drawingMode === 'food' ? "Draw your favorite food! ðŸ•" : "Draw your favorite activity! âš½"}
+            prompt={drawingMode === 'food' ? "Draw your favorite food!" : "Draw your favorite activity!"}
 
             initialData={sceneState.draftData} // Restore draft
             onAutoSave={(data) => sceneActions.updateState({ draftData: data })} // Auto-save on stroke
