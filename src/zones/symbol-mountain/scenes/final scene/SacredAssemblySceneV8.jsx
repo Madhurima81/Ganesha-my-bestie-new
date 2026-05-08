@@ -250,10 +250,10 @@ const SACRED_COLOR_PALETTE = {
 };
 
 const RESUME_DELAY_MS = 3000;
-const NEXT_CARD_BREATHING_DELAY_MS = 1800;     // was 3000
+const NEXT_CARD_BREATHING_DELAY_MS = 2400;     // was 3000
 const VO_CHECK_INTERVAL_MS = 200;
 const VO_WAIT_MAX_MS = 4000;                   // was 3200 — allow longer VO
-const POST_VO_GRACE_MS = 400;                  // was 800
+const POST_VO_GRACE_MS = 600;                  // was 800
 const PLACEMENT_SETTLE_MS = 1200;              // NEW — "look at what you did" beat
 
 // Body part drop zone configurations — import from shared config
@@ -1201,7 +1201,7 @@ const SacredAssemblyContent = ({
       const nextRound = (sceneState.currentRound || 0) + 1;
       // Halfway breathing beat — once, after 4th symbol
       const isHalfwayMoment = count === 4;
-      const extraHalfwayPause = isHalfwayMoment ? 700 : 0;   // was 1500
+      const extraHalfwayPause = isHalfwayMoment ? 1000 : 0;   // was 1500
       safeSetTimeout(() => {
         sceneActions.updateState({ currentRound: nextRound });
         setCardPhase('hidden');
