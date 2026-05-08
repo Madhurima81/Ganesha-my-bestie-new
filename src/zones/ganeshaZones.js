@@ -8,14 +8,14 @@ export const GANESHA_ZONES = [
     id: 'eyes',
     acceptTypes: ['eyes'],
     hint: 'Divine Sight',
-    position: { top: '36%', left: '50%', transform: 'translateX(-50%)', width: '280px', height: '100px' }
+    position: { top: '28%', left: '54%', transform: 'translateX(-50%)', width: '280px', height: '90px' }
   },
   {
     id: 'ears',
     acceptTypes: ['ears'],
     hint: 'Deep Listening',
     // One hint glow on the right, but two visual hitboxes (left + right ear).
-    position: { top: '24%', right: '13%', width: '200px', height: '340px' },
+    position: { top: '21%', right: '13%', width: '200px', height: '340px' },
     extraHitboxes: [
       { hitId: 'ears-left', box: { top: '24%', left: '13%', width: '200px', height: '340px' } }
     ]
@@ -30,7 +30,7 @@ export const GANESHA_ZONES = [
     id: 'tusk',
     acceptTypes: ['tusk'],
     hint: 'Breaking Barriers',
-    position: { top: '50%', right: '40%', width: '60px', height: '80px' }
+    position: { top: '42%', right: '40%', width: '60px', height: '80px' }
   },
   {
     id: 'left-hand',
