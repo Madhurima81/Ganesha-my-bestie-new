@@ -1,4 +1,5 @@
 import React from 'react';
+import { GANESHA_ZONES, ZONE_VISUAL_Z_INDEX, ZONE_HITBOX_Z_INDEX } from '../../../ganeshaZones';
 import ganeshaBase from './assets/images/ganesha-base.png';
 import ganeshaEyes from './assets/images/ganesha-eyes.png';
 import ganeshaEar from './assets/images/ganesha-ear.png';
@@ -20,40 +21,20 @@ const ZONE_PARTS = {
   base: ganeshaMooshika
 };
 
-const ZONE_Z_INDEX = {
-  base: 1,//mooshika
-  ears: 2,
-  belly: 3,
-  'left-hand': 4,// modak
-  'right-hand': 4,//lotus
-  trunk: 5,
-  tusk: 6,
-  eyes: 7
+// Build flat hitbox list from shared GANESHA_ZONES config.
+// One zone can have multiple hit areas (e.g., ears left + right).
+const buildHitboxes = () => {
+  const list = [];
+  GANESHA_ZONES.forEach(zone => {
+    list.push({ hitId: `${zone.id}-main`, zoneId: zone.id, box: zone.position });
+    (zone.extraHitboxes || []).forEach(extra => {
+      list.push({ hitId: extra.hitId, zoneId: zone.id, box: extra.box });
+    });
+  });
+  return list;
 };
 
-// Keep as array so one zone can have multiple hit areas (ears left + right).
-const ZONE_HITBOXES = [
-  { hitId: 'eyes-main', zoneId: 'eyes', box: { top: '36%', left: '46%', width: '280px', height: '100px', transform: 'translateX(-50%)' } },
-  { hitId: 'ears-left', zoneId: 'ears', box: { top: '24%', left: '13%', width: '200px', height: '340px' } },
-  { hitId: 'ears-right', zoneId: 'ears', box: { top: '24%', right: '13%', width: '200px', height: '340px' } },
-  { hitId: 'trunk-main', zoneId: 'trunk', box: { top: '45%', left: '50%', width: '220px', height: '240px', transform: 'translateX(-50%)' } },
-  { hitId: 'tusk-main', zoneId: 'tusk', box: { top: '50%', right: '40%', width: '60px', height: '80px' } },
-  { hitId: 'left-hand-main', zoneId: 'left-hand', box: { top: '55%', right: '20%', width: '180px', height: '120px' } },
-  { hitId: 'right-hand-main', zoneId: 'right-hand', box: { top: '38%', right: '12%', width: '140px', height: '200px' } },
-  { hitId: 'belly-main', zoneId: 'belly', box: { top: '50%', left: '50%', width: '300px', height: '250px', transform: 'translateX(-50%)' } },
-  { hitId: 'base-main', zoneId: 'base', box: { bottom: '10%', left: '20%', width: '180px', height: '180px', transform: 'translateX(-50%)' } }
-];
-
-const HITBOX_Z_INDEX = {
-  base: 10,
-  belly: 20,
-  'left-hand': 30,
-  'right-hand': 30,
-  ears: 40,
-  trunk: 50,
-  tusk: 60,
-  eyes: 70
-};
+const ZONE_HITBOXES = buildHitboxes();
 
 const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null, baseOpacity = 0.2 }) => {
   return (
@@ -88,7 +69,7 @@ const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null
               transition: isPlaced ? 'opacity 0.5s ease' : 'none',
               pointerEvents: 'none',
               userSelect: 'none',
-              zIndex: ZONE_Z_INDEX[zoneId]
+              zIndex: ZONE_VISUAL_Z_INDEX[zoneId]
             }}
           />
         );
@@ -121,7 +102,7 @@ const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null
                 border: 'none',
                 // backgroundColor: 'rgba(255, 0, 0, 0.3)', // debug only
                 backgroundColor: 'transparent',
-                zIndex: zoneId === activeZoneId ? 999 : (HITBOX_Z_INDEX[zoneId] || 1),
+                zIndex: zoneId === activeZoneId ? 999 : (ZONE_HITBOX_Z_INDEX[zoneId] || 1),
                 padding: 0,
                 outline: 'none',
                 boxShadow: 'none',

@@ -1,6 +1,7 @@
 ﻿// zones/symbol-mountain/scenes/final-scene/SacredAssemblyScene.jsx - V8 DIVINE VERSION
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import './SacredAssemblyScene.css';
+import { GANESHA_ZONES } from '../../../ganeshaZones';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../../lib/config/content/openingModals';
 import { getCompletionModal } from '../../../../lib/config/content';
@@ -249,24 +250,14 @@ const SACRED_COLOR_PALETTE = {
 };
 
 const RESUME_DELAY_MS = 3000;
-const NEXT_CARD_BREATHING_DELAY_MS = 3000;     // was 2200 — longer pre-pause
+const NEXT_CARD_BREATHING_DELAY_MS = 1800;     // was 3000
 const VO_CHECK_INTERVAL_MS = 200;
 const VO_WAIT_MAX_MS = 4000;                   // was 3200 — allow longer VO
-const POST_VO_GRACE_MS = 800;                  // NEW — silence after VO ends
+const POST_VO_GRACE_MS = 400;                  // was 800
 const PLACEMENT_SETTLE_MS = 1200;              // NEW — "look at what you did" beat
 
-// Body part drop zone configurations
-const BODY_PART_ZONES = [
-  { id: 'eyes', acceptTypes: ['eyes'], position: { top: '30%', left: '50%', transform: 'translateX(-50%)', width: '120px', height: '60px' }, hint: 'Divine Sight' },
-  { id: 'ears', acceptTypes: ['ears'], position: { top: '25%', left: '65%', width: '80px', height: '80px' }, hint: 'Deep Listening' },
-  { id: 'trunk', acceptTypes: ['trunk'], position: { top: '35%', left: '50%', transform: 'translateX(-50%)', width: '100px', height: '120px' }, hint: 'Removing Obstacles' },
-  { id: 'tusk', acceptTypes: ['tusk'], position: { top: '40%', right: '40%', width: '60px', height: '80px' }, hint: 'Breaking Barriers' },
-  { id: 'left-hand', acceptTypes: ['modak'], position: { top: '35%', left: '20%', width: '80px', height: '80px' }, hint: 'Sweet Blessings' },
-  { id: 'right-hand', acceptTypes: ['lotus'], position: { top: '38%', right: '12%', width: '80px', height: '80px' }, hint: 'Pure Wisdom' },
-  { id: 'belly', acceptTypes: ['belly'], position: { top: '50%', left: '50%', transform: 'translateX(-50%)', width: '160px', height: '120px' }, hint: 'Universe Within' },
-  // Keep base aligned with GaneshaIllustration hitbox so mooshika glow/sparkles sit correctly.
-  { id: 'base', acceptTypes: ['mooshika'], position: { bottom: '10%', left: '20%', transform: 'translateX(-50%)', width: '180px', height: '180px' }, hint: 'Divine Vehicle' }
-];
+// Body part drop zone configurations — import from shared config
+const BODY_PART_ZONES = GANESHA_ZONES;
 
 // Keep glow/sparkle anchors in sync with real drop zones so highlights never drift.
 const getPx = (value, fallback) => {
@@ -1198,7 +1189,7 @@ const SacredAssemblyContent = ({
       const nextRound = (sceneState.currentRound || 0) + 1;
       // Halfway breathing beat — once, after 4th symbol
       const isHalfwayMoment = count === 4;
-      const extraHalfwayPause = isHalfwayMoment ? 1500 : 0;
+      const extraHalfwayPause = isHalfwayMoment ? 700 : 0;   // was 1500
       safeSetTimeout(() => {
         sceneActions.updateState({ currentRound: nextRound });
         setCardPhase('hidden');
@@ -1273,36 +1264,8 @@ const SacredAssemblyContent = ({
     }
   }, [isReload]);
 
-  // FINAL CELEBRATION SYNC: Show completion modal 1s after VO + fireworks finish.
-  useEffect(() => {
-    if (!sceneCompleteVOFinished || !fireworksFinished) return;
-    const timer = setTimeout(() => {
-      setShowSceneCompletion(true);
-      setShowSparkle(null);
-      setIsOrbsRunning(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [sceneCompleteVOFinished, fireworksFinished]);
-
-  // Restore-only: if scene was already completed when player returns (not fresh celebration),
-  // show modal directly.
-  useEffect(() => {
-    if (!sceneState) return;
-    if (!isSceneCompletedState) return;
-    if (isCelebrationRunning) return; // celebration in progress — let VO gate handle it
-    if (sceneCompleteVOFinished) return;
-    if (sceneState.currentPopup === 'final_fireworks') return;
-    if (sceneState.showingZoneCompletion || sceneState.celebrationActive) return;
-
-    if (!sceneState.welcomeShown) {
-      sceneActions.updateState({ welcomeShown: true });
-    }
-
-    if (!showSceneCompletion) {
-      const t = setTimeout(() => setShowSceneCompletion(true), 250);
-      return () => clearTimeout(t);
-    }
-  }, [isCelebrationRunning, isSceneCompletedState, sceneActions, sceneState, showSceneCompletion, sceneCompleteVOFinished]);
+  // FINAL CELEBRATION: Modal is now shown directly inside RotatingOrbsEffect onComplete
+  // (matches backup pattern). No race-prone useEffect needed.
 
   // RESUME — runs once on mount, handles returning mid-game
   useEffect(() => {
@@ -1638,11 +1601,14 @@ const SacredAssemblyContent = ({
                     style={{
                       position: 'absolute',
                       ...zone.position,
+                      width: '80px',
+                      height: '80px',
+                      transform: 'translate(-50%, -50%)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       pointerEvents: 'none',
-                      zIndex: 60
+                      zIndex: 210
                     }}
                   >
                     <SparkleAnimation
@@ -1735,9 +1701,8 @@ const SacredAssemblyContent = ({
                   onComplete={() => {
                     setShowSparkle(null);
                     setIsOrbsRunning(false);
-                    setFireworksFinished(true);
 
-                    // Mark celebration finished; modal is shown by VO+fireworks gate effect.
+                    // Mark celebration finished
                     sceneActions.updateState({
                       showingCompletionScreen: false,
                       showingZoneCompletion: false,
@@ -1764,6 +1729,8 @@ const SacredAssemblyContent = ({
                       SimpleSceneManager.clearCurrentScene();
                     }
 
+                    // Show completion modal AFTER fireworks/orbs finish (backup pattern)
+                    setShowSceneCompletion(true);
                   }}
                 />
               </>
