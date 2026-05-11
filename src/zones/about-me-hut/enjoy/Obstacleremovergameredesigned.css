@@ -108,13 +108,13 @@
   font-family: 'Baloo', cursive;
   font-size: 1.3rem;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
   transition: all 0.3s ease;
 }
 
 .continue-btn:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.6);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.16);
 }
 
 /* ========================================
@@ -354,7 +354,7 @@
   background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
   color: white;
   transform: scale(1.1);
-  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.5);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.14);
 }
 
 .input-form {
@@ -562,7 +562,7 @@
   padding: 40px;
   border-radius: 20px;
   text-align: center;
-  box-shadow: 0 8px 30px rgba(76, 175, 80, 0.4);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
 }
 
 .power-text {

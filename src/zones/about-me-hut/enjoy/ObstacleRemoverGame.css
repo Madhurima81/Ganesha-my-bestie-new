@@ -219,7 +219,7 @@
 
 .start-btn:hover {
   transform: scale(1.1);
-  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
 }
 
 /* ========================================
@@ -357,7 +357,7 @@
     saturate(1.4)
     drop-shadow(0 0 25px rgba(255, 215, 0, 0.8))
     drop-shadow(0 0 50px rgba(255, 165, 0, 0.5))
-    drop-shadow(0 0 80px rgba(76, 175, 80, 0.4));
+    drop-shadow(0 0 80px rgba(0,0,0,0.12));
   animation: earthPulse 2.5s ease-in-out infinite;
 }
 
@@ -377,7 +377,7 @@
       saturate(1.5)
       drop-shadow(0 0 35px rgba(255, 215, 0, 1))
       drop-shadow(0 0 60px rgba(255, 165, 0, 0.7))
-      drop-shadow(0 0 90px rgba(76, 175, 80, 0.6));
+      drop-shadow(0 0 90px rgba(0,0,0,0.16));
   }
 }
 
@@ -862,7 +862,7 @@
   filter: 
     brightness(1.2) 
     saturate(1.4)
-    drop-shadow(0 0 25px rgba(76, 175, 80, 0.8))
+    drop-shadow(0 0 25px rgba(0,0,0,0.2))
     drop-shadow(0 0 50px rgba(144, 238, 144, 0.6))
     drop-shadow(0 0 80px rgba(255, 215, 0, 0.3));
   animation: parkPulse 2.8s ease-in-out infinite;
@@ -874,7 +874,7 @@
     filter: 
       brightness(1.2) 
       saturate(1.4)
-      drop-shadow(0 0 25px rgba(76, 175, 80, 0.8))
+      drop-shadow(0 0 25px rgba(0,0,0,0.2))
       drop-shadow(0 0 50px rgba(144, 238, 144, 0.6));
   }
   50% { 
@@ -882,7 +882,7 @@
     filter: 
       brightness(1.25) 
       saturate(1.5)
-      drop-shadow(0 0 35px rgba(76, 175, 80, 1))
+      drop-shadow(0 0 35px rgba(0,0,0,0.24))
       drop-shadow(0 0 60px rgba(144, 238, 144, 0.8))
       drop-shadow(0 0 90px rgba(255, 215, 0, 0.5));
   }
@@ -1256,7 +1256,7 @@
   padding: 15px 30px;
   border-radius: 25px;
   border: 3px solid #45a049;
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
 
 .celebration-elements {
@@ -1825,14 +1825,14 @@
   font-size: 22px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
   transition: all 0.3s ease;
   z-index: 10;
 }
 
 .comparison-end-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.6);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.16);
 }
 
 .comparison-confetti {
@@ -2168,3 +2168,4 @@
     height: clamp(280px, 48vh, 440px) !important;
   }
 }
+

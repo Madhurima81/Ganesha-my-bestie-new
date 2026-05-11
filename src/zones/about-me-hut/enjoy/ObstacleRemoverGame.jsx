@@ -170,9 +170,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     rice: riceImg,
   };
   const WISH2_FOOD_POSITIONS = {
-    apple: { left: '30%', top: '38%' },
-    banana: { left: '50%', top: '30%' },
-    rice: { left: '70%', top: '38%' },
+    apple: { left: '30%', top: '45%' },
+    banana: { left: '50%', top: '37%' },
+    rice: { left: '70%', top: '45%' },
   };
   const WISH2_PLATE_POSITIONS = [
     { left: '50%', top: '70%' },
@@ -1607,7 +1607,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       {/* Wish 1 Intro */}
       {sceneState.gamePhase === 'wish1-intro' && (
-        <div className="intro-overlay">
+        <div className="intro-overlay wish1-intro-layout">
           <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
           <div className="wish-intro-card">
             <p className="wish-intro-text">I have three giant wishes for the whole world.</p>
@@ -1647,7 +1647,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             </div>
           </div>
           <div className="wish-interactive-container">
-            <div className="earth-container earth-readonly">
+            <div className="earth-container earth-readonly" style={{ width: '252px', height: '252px' }}>
               <img src={wishEarthSad} alt="Sad" className="earth-image sad" style={{ opacity: sceneState.wish1Taps === 0 ? 1 : sceneState.wish1Taps === 1 ? 0.6 : sceneState.wish1Taps === 2 ? 0.3 : 0 }} />
               <img src={wishEarthHappy} alt="Happy" className={`earth-image happy ${sceneState.wish1Taps >= 3 ? 'complete-glow-pulse' : ''}`} style={{ opacity: sceneState.wish1Taps === 0 ? 0 : sceneState.wish1Taps === 1 ? 0.4 : sceneState.wish1Taps === 2 ? 0.7 : 1 }} />
               {wish1Sparkle.type === 'single' && (
@@ -1681,7 +1681,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             </div>
             <div className="faces-container">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="face-emoji" style={{ transform: `rotate(${i * 60}deg) translate(240px) rotate(-${i * 60}deg)`, opacity: sceneState.wish1Taps >= 2 ? 0.6 : 1, transition: 'all 0.6s ease' }}>{sceneState.wish1Taps >= 3 ? '😊' : sceneState.wish1Taps >= 2 ? '😐' : '😢'}</div>
+                <div key={i} className="face-emoji" style={{ transform: `rotate(${i * 60}deg) translate(155px) rotate(-${i * 60}deg)`, fontSize: '40px', marginTop: '-20px', marginLeft: '-20px', opacity: sceneState.wish1Taps >= 2 ? 0.6 : 1, transition: 'all 0.6s ease' }}>{sceneState.wish1Taps >= 3 ? '😊' : sceneState.wish1Taps >= 2 ? '😐' : '😢'}</div>
               ))}
             </div>
             {/* Bubbles */}
@@ -1700,8 +1700,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                     position: 'absolute',
                     left: `${bubble.left}%`,
                     top: `${bubble.top}%`,
-                    width: '255px',
-                    height: '255px',
+                    width: 'clamp(104px, 12.8vw, 160px)',
+                    height: 'clamp(104px, 12.8vw, 160px)',
                     pointerEvents: 'none',
                   }}
                 >
@@ -1715,8 +1715,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                       userSelect: 'none',
                       animation: `bubbleFloat ${bubble.lifetimeS || 12}s linear forwards`,
                       transform: 'translate(-50%, -50%)',
-                      width: '255px',
-                      height: '255px',
+                      width: 'clamp(104px, 12.8vw, 160px)',
+                      height: 'clamp(104px, 12.8vw, 160px)',
                       borderRadius: '50%',
                       border: 'none',
                       background: bubble.type === 'kind' ? '#FFF4DE' : '#F0E2CC',
@@ -1734,8 +1734,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                       src={bubble.image}
                       alt={bubble.type === 'kind' ? 'Kind action' : 'Unkind action'}
                       style={{
-                        width: '78%',
-                        height: '78%',
+                        width: '74%',
+                        height: '74%',
                         objectFit: 'contain',
                       }}
                     />
@@ -1876,8 +1876,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   position: 'absolute',
                   left: '18%',
                   bottom: '25%',
-                  width: '120px',
-                  height: '140px',
+                  width: '96px',
+                  height: '112px',
                   cursor: sceneState.parkStates[0] ? 'default' : 'pointer',
                   background: sceneState.parkStates[0] ? '' : 'rgba(255, 200, 87, 0.12)',
                   border: sceneState.parkStates[0] ? '' : '2px dashed rgba(255, 200, 87, 0.5)',
@@ -1903,8 +1903,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   left: '50%',
                   transform: 'translateX(-50%)',
                   bottom: '40%',
-                  width: '140px',
-                  height: '160px',
+                  width: '112px',
+                  height: '128px',
                   cursor: sceneState.parkStates[1] ? 'default' : 'pointer',
                   background: sceneState.parkStates[1] ? '' : 'rgba(255, 200, 87, 0.12)',
                   border: sceneState.parkStates[1] ? '' : '2px dashed rgba(255, 200, 87, 0.5)',
@@ -1936,8 +1936,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   position: 'absolute',
                   right: '18%',
                   bottom: '25%',
-                  width: '140px',
-                  height: '180px',
+                  width: '112px',
+                  height: '144px',
                   cursor: sceneState.parkStates[2] ? 'default' : 'pointer',
                   background: sceneState.parkStates[2] ? '' : 'rgba(255, 200, 87, 0.12)',
                   border: sceneState.parkStates[2] ? '' : '2px dashed rgba(255, 200, 87, 0.5)',
@@ -2263,27 +2263,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       {/* Resume Countdown */}
       <ResumeCountdown value={countdownValue} />
-
-      {/* Test Panel */}
-      <div style={{ position: 'fixed', top: 84, right: 16, zIndex: 4000, background: 'rgba(255,255,255,0.95)', border: '1px solid #d8c4a7', borderRadius: 12, padding: 10, width: 230, boxShadow: '0 8px 24px rgba(0,0,0,0.18)' }}>
-        <div style={{ fontWeight: 800, fontSize: 12, marginBottom: 8 }}>TEST PANEL</div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
-          <button onClick={() => jumpToTestPhase('intro')}>Intro</button>
-          <button onClick={() => jumpToTestPhase('wish1-intro')}>W1 Intro</button>
-          <button onClick={() => jumpToTestPhase('wish1-active')}>W1 Active</button>
-          <button onClick={() => jumpToTestPhase('wish1-complete')}>W1 Done</button>
-          <button onClick={() => jumpToTestPhase('wish2-active')}>W2 Active</button>
-          <button onClick={() => jumpToTestPhase('wish2-complete')}>W2 Done</button>
-          <button onClick={() => jumpToTestPhase('wish3-active')}>W3 Active</button>
-          <button onClick={() => jumpToTestPhase('wish3-complete')}>W3 Done</button>
-          <button onClick={() => jumpToTestPhase('dream-drawing')}>Dream Start</button>
-          <button onClick={() => jumpToTestPhase('dream-clouded')}>Clouded</button>
-          <button onClick={() => jumpToTestPhase('dream-clearing')}>Dream Clear</button>
-          <button onClick={() => jumpToTestPhase('comparison-card')}>Compare</button>
-          <button onClick={() => jumpToTestPhase('ending')}>Ending</button>
-          <button onClick={() => jumpToTestPhase('intro')} style={{ gridColumn: '1 / span 2' }}>Reload Scene</button>
-        </div>
-      </div>
 
       {/* Mini Gesture (Thumbs Up) on Success */}
       {miniGesture.show && (
