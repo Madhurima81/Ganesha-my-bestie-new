@@ -508,13 +508,13 @@
   font-weight: 600;
   border-radius: 50px;
   cursor: pointer;
-  box-shadow: 0 8px 20px rgba(67, 233, 123, 0.4);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
   transition: all 0.3s ease;
 }
 
 .continue-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 25px rgba(67, 233, 123, 0.5);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.14);
 }
 
 /* ========================================
@@ -831,12 +831,12 @@
   border-radius: 50px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 20px rgba(67, 233, 123, 0.4);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
 }
 
 .add-member-btn:hover:not(:disabled) {
   transform: translateY(-3px);
-  box-shadow: 0 12px 25px rgba(67, 233, 123, 0.5);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.14);
 }
 
 .add-member-btn:disabled {
