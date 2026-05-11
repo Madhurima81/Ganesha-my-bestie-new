@@ -6,9 +6,9 @@ import { KidsDraggable, KidsDropZone } from '../../../../lib/components/interact
 // Drop zone = the visible circle. No image sizing, no container offset.
 // Food positions and plate positions are both full-screen % values.
 
-const FOOD_SIZE = 160;   // px
-const PLATE_WIDTH = 320;   // px - wider
-const PLATE_HEIGHT = 140;   // px - flat like a plate
+const FOOD_SIZE = 132;   // px (further reduced)
+const PLATE_WIDTH = 264;   // px (further reduced)
+const PLATE_HEIGHT = 116;   // px (further reduced)
 
 const Wish2PlateDropGame = ({
   sceneState,
@@ -52,6 +52,11 @@ const Wish2PlateDropGame = ({
         {WISH2_FOOD_KEYS.map((foodKey) => {
           const isAvailable = (sceneState.wish2FoodPool || WISH2_FOOD_KEYS).includes(foodKey);
           const pos = WISH2_FOOD_POSITIONS[foodKey];
+          const inwardX =
+            foodKey === 'apple' ? 10 :
+            foodKey === 'rice' ? -10 :
+            0;
+
           return (
             <div
               key={foodKey}
@@ -64,7 +69,7 @@ const Wish2PlateDropGame = ({
                 position: 'absolute',
                 left: pos.left,
                 top: pos.top,
-                transform: 'translate(-50%, -50%)',
+                transform: `translate(calc(-50% + ${inwardX}px), -50%)`,
                 width: `${FOOD_SIZE}px`,
                 height: `${FOOD_SIZE}px`,
                 opacity: isAvailable ? 1 : 0,
@@ -179,9 +184,9 @@ const Wish2PlateDropGame = ({
 
         {/* Animals next to each plate */}
         {[
-          { src: cowImg, height: '245px' },
-          { src: mouseImg, height: '110px' },
-          { src: peacockImg, height: '155px' },
+          { src: cowImg, height: '207px', xOffset: 62, yOffset: -20 },
+          { src: mouseImg, height: '93px', xOffset: 90, yOffset: 0 },
+          { src: peacockImg, height: '132px', xOffset: 90, yOffset: 0 },
         ].map((animal, index) => (
           <img
             key={index}
@@ -189,9 +194,9 @@ const Wish2PlateDropGame = ({
             alt="animal"
             style={{
               position: 'absolute',
-              left: `calc(${WISH2_PLATE_POSITIONS[index]?.left} + 90px)`,
+              left: `calc(${WISH2_PLATE_POSITIONS[index]?.left} + ${animal.xOffset}px)`,
               top: WISH2_PLATE_POSITIONS[index]?.top,
-              transform: 'translateY(-50%)',
+              transform: `translateY(calc(-50% + ${animal.yOffset}px))`,
               height: animal.height,
               objectFit: 'contain',
               pointerEvents: 'none',
