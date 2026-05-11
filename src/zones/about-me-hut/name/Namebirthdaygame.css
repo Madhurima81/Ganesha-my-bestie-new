@@ -1813,17 +1813,17 @@ color: #7A4A00;
   font-weight: 700;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.35);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.11);
 }
 
 .birthday-info-choose-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.45);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.13);
 }
 
 .birthday-info-choose-btn:active {
   transform: translateY(0);
-  box-shadow: 0 3px 8px rgba(76, 175, 80, 0.3);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.10);
 }
 
 /* SUBTITLE (festival descriptor) */
@@ -2255,7 +2255,7 @@ color: #7A4A00;
 
 .child-confirm-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
 }
 
 .child-confirm-btn:disabled {
@@ -2823,7 +2823,7 @@ color: #7A4A00;
 
 .continue-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
 }
 
 /* FLOATING CONFETTI */
@@ -2935,3 +2935,4 @@ color: #7A4A00;
     transform: translateX(-50%) translateY(0) scale(1);
   }
 }
+
