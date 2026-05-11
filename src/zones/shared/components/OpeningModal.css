@@ -217,45 +217,58 @@
   font-family: 'Baloo 2', system-ui, sans-serif;
   background: var(--modal-btn-bg);
   color: var(--modal-btn-text);
-  border: 2px solid var(--modal-btn-border, transparent);
+  border: none;
   min-height: 54px;
-  padding: clamp(12px, 1.5vw, 18px) clamp(32px, 4vw, 56px);
-  font-size: clamp(18px, 1.8vw, 24px);
-  font-weight: 800;
-  border-radius: 90px;
+  padding: 16px 28px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 999px;
   cursor: pointer;
-  transition: box-shadow 0.15s ease;
-  box-shadow: 0 10px 28px var(--modal-btn-shadow);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.3s ease,
+    filter 0.3s ease;
+  box-shadow:
+    0 4px 0 rgba(0,0,0,0.12),
+    0 8px 18px rgba(0,0,0,0.12);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
   text-transform: capitalize;
   white-space: nowrap;
   margin-top: 16px;
+  -webkit-tap-highlight-color: transparent;
+  animation: gentleGlow 3.5s ease-in-out infinite;
 }
 
 .game-modal-button.cta-idle-prompt {
-  animation: ctaPulse 1.8s ease-in-out infinite;
+  animation: gentleGlow 3.5s ease-in-out infinite;
 }
 
 .game-modal-button:hover {
-  transform: translateY(-4px);
+  filter: brightness(1.02);
   background: var(--modal-btn-bg-hover, var(--modal-btn-bg));
-  box-shadow: 0 14px 40px var(--modal-btn-shadow);
 }
 
 /* Force zone-themed button even if older styles are injected elsewhere */
 .game-modal-card .game-modal-button {
   background: var(--modal-btn-bg) !important;
   color: var(--modal-btn-text) !important;
-  border: 2px solid var(--modal-btn-border, transparent) !important;
-  box-shadow: 0 10px 28px var(--modal-btn-shadow) !important;
+  border: none !important;
+  box-shadow:
+    0 4px 0 rgba(0,0,0,0.12),
+    0 8px 18px rgba(0,0,0,0.12) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
 .game-modal-card .game-modal-button:hover {
   background: var(--modal-btn-bg-hover, var(--modal-btn-bg)) !important;
-  box-shadow: 0 14px 40px var(--modal-btn-shadow) !important;
+  filter: brightness(1.02);
 }
 
 .game-modal-button:active {
-  transform: translateY(2px);
+  transform: scale(0.97);
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.10);
+  filter: brightness(0.98);
 }
 
 /* --- Animations --- */
@@ -321,10 +334,17 @@
   50%       { transform: scale(1.04); }
 }
 
-/* Step 5 — CTA pulse (starts 1.9s) */
-@keyframes ctaPulse {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-6px); }
+@keyframes gentleGlow {
+  0%, 100% {
+    box-shadow:
+      0 4px 0 rgba(0,0,0,0.12),
+      0 8px 18px rgba(120, 90, 60, 0.18);
+  }
+  50% {
+    box-shadow:
+      0 4px 0 rgba(0,0,0,0.12),
+      0 10px 22px rgba(120, 90, 60, 0.24);
+  }
 }
 
 /* ====================================================== */

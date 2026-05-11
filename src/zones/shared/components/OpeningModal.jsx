@@ -366,10 +366,10 @@ const OpeningModal = ({
         <div className="game-modal-overlay" style={{
             '--modal-card-bg': theme.parentBg,
             '--modal-text-primary': theme.textPrimary,
-            '--modal-btn-bg': theme.buttonActiveBg,
+            '--modal-btn-bg': theme.buttonModalOpeningBg || theme.buttonActiveBg,
             '--modal-btn-shadow': theme.glowColor,
             '--modal-btn-border': theme.buttonBorder || 'transparent',
-            '--modal-btn-bg-hover': theme.buttonHoverBg || theme.buttonActiveBg,
+            '--modal-btn-bg-hover': theme.buttonModalOpeningBg || theme.buttonHoverBg || theme.buttonActiveBg,
             '--modal-btn-text': '#FFFFFF'
         }}>
             <div className="game-modal-content">
