@@ -4,7 +4,7 @@ import Fireworks from './Fireworks';
 
 const RotatingOrbsEffect = ({
   show = false,
-  duration = 6000,
+  duration = 3800,
   symbolImages = {},
   onComplete,
   ganeshaImage,
@@ -12,12 +12,11 @@ const RotatingOrbsEffect = ({
   orbitCenter = { top: '50%', left: '50%' },
   orbSize = 500,
   orbRadius = 200,
+  rotationDuration = 3800,
   showCentralGanesha = true,
   showBuiltInFireworks = true
 }) => {
-  const [currentPhase, setCurrentPhase] = useState('hidden');
   const [orbsVisible, setOrbsVisible] = useState(false);
-  const [ganeshaAwakened, setGaneshaAwakened] = useState(false);
   const [showFireworks, setShowFireworks] = useState(false);
 
   const SACRED_SYMBOLS = Object.keys(symbolImages).map((key, index) => ({
@@ -46,36 +45,21 @@ const RotatingOrbsEffect = ({
 
   useEffect(() => {
     if (!show) {
-      setCurrentPhase('hidden');
       setOrbsVisible(false);
-      setGaneshaAwakened(false);
       setShowFireworks(false);
       return;
     }
 
-    setCurrentPhase('orbs-appearing');
     setOrbsVisible(true);
-
-    setTimeout(() => {
-      setCurrentPhase('ganesha-awakening');
-      setGaneshaAwakened(true);
-    }, 2000);
-
-    setTimeout(() => {
-      setCurrentPhase('convergence');
-    }, 4000);
-
-    setTimeout(() => {
-      setShowFireworks(true);
-    }, 6000);
+    setShowFireworks(showBuiltInFireworks);
 
     setTimeout(() => {
       setShowFireworks(false);
       onComplete?.();
     }, duration);
-  }, [show, duration, onComplete]);
+  }, [show, duration, onComplete, showBuiltInFireworks]);
 
-  if (!show || currentPhase === 'hidden') return null;
+  if (!show) return null;
 
   return (
     <div className="rotating-orbs-effect">
@@ -89,15 +73,16 @@ const RotatingOrbsEffect = ({
             height: `${orbSize}px`
           }}
         >
-          <div className={`orb-circle ${ganeshaAwakened ? 'converging' : ''}`}>
+          <div className="orb-circle">
             {SACRED_SYMBOLS.map((symbol, index) => (
               <div
                 key={symbol.id}
-                className={`sacred-orb orb-${index} ${currentPhase}`}
+                className={`sacred-orb orb-${index} one-pass`}
                 style={{
                   '--rotation': `${symbol.position}deg`,
                   '--delay': `${index * 0.1}s`,
-                  '--orb-radius': `${orbRadius}px`
+                  '--orb-radius': `${orbRadius}px`,
+                  '--rotation-duration': `${rotationDuration}ms`
                 }}
               >
                 <div className="orb-inner">
@@ -114,7 +99,7 @@ const RotatingOrbsEffect = ({
         </div>
       )}
 
-      {showCentralGanesha && ganeshaAwakened && (
+      {showCentralGanesha && (
         <div
           className="central-ganesha-container"
           style={{ top: orbitCenter.top, left: orbitCenter.left }}

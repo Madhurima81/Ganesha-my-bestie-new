@@ -63,8 +63,8 @@
   position: relative;
   width: 100%;
   height: 100%;
-  animation: orbitalRotation 40s linear infinite;  /* Extra slow sacred pacing */
-  transition: all 3s ease;  /* Slower transitions - was 2s */
+  animation: orbitalRotation var(--rotation-duration, 3800ms) linear 1;
+  transition: none;
 }
 
 .orb-circle.converging {
@@ -103,6 +103,12 @@
 
 .sacred-orb.convergence {
   animation: orbFinalGlow 3s ease-in-out infinite var(--delay);  /* Slower glow - was 2s */
+}
+
+.sacred-orb.one-pass {
+  animation:
+    orbAppear 500ms ease-out var(--delay) both,
+    orbPulse 1200ms ease-in-out 1 calc(var(--delay) + 300ms);
 }
 
 @keyframes orbAppear {
