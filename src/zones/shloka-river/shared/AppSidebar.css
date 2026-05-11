@@ -13,16 +13,16 @@
 /* Sidebar container */
 .ganesha-sidebar {
   position: fixed;
-  right: 24px;
+  right: 16px;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 22px;
-  width: 100px;
-  padding: 20px 16px;
+  gap: 14px;
+  width: clamp(72px, 6vw, 110px);
+  padding: 14px 10px;
 
   background: #F6EFD8;
   border-radius: 60px;
@@ -34,8 +34,8 @@
 
 /* Individual icons */
 .ganesha-icon {
-  width: 68px;
-  height: 68px;
+  width: clamp(48px, 4.5vw, 80px);
+  height: clamp(48px, 4.5vw, 80px);
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.35);
   background-size: contain;
@@ -61,9 +61,7 @@
 .symbol-unlocked {
   filter: none;
   opacity: 1;
-  box-shadow:
-    inset 0 0 12px rgba(255, 255, 255, 0.5),
-    0 0 16px rgba(255, 193, 7, 0.45);
+  box-shadow: 0 0 8px rgba(255, 200, 120, 0.25);
   transition: transform 0.2s ease;
 }
 
@@ -91,20 +89,9 @@
   }
 }
 
-/* Glow indicator — pulsing ring around app icon when tappable */
+/* Glow indicator removed for Symbol Mountain parity */
 .glow-indicator {
-  position: absolute;
-  top: -8px;
-  left: -8px;
-  right: -8px;
-  bottom: -8px;
-  border-radius: 50%;
-  background: transparent;
-  border: 2px solid transparent;
-  box-shadow: 0 0 0 0 var(--zone-accent-color, rgba(255, 215, 0, 0.6));
-  animation: glow-pulse 1.8s ease-in-out infinite;
-  z-index: 9;
-  pointer-events: none;
+  display: none;
 }
 
 @keyframes glow-pulse {
@@ -160,14 +147,28 @@
 /* Tablet Responsive */
 @media (max-width: 1024px) {
   .ganesha-sidebar {
-    right: 18px;
-    width: 100px;
-    padding: 20px 14px;
-    gap: 20px;
+    right: 14px;
+    width: clamp(64px, 7vw, 90px);
+    padding: 12px 8px;
+    gap: 12px;
   }
   .ganesha-icon {
-    width: 56px;
-    height: 56px;
+    width: clamp(46px, 5.5vw, 64px);
+    height: clamp(46px, 5.5vw, 64px);
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1366px) and (max-height: 900px) and (orientation: landscape) {
+  .ganesha-sidebar {
+    right: 12px;
+    width: 64px;
+    padding: 8px 6px;
+    gap: 6px;
+  }
+
+  .ganesha-icon {
+    width: 44px !important;
+    height: 44px !important;
   }
 }
 
@@ -175,13 +176,13 @@
 @media (max-width: 768px) {
   .ganesha-sidebar {
     right: 12px;
-    width: 90px;
+    width: clamp(92px, 22vw, 112px);
     padding: 18px 12px;
     gap: 18px;
   }
   .ganesha-icon {
-    width: 52px;
-    height: 52px;
+    width: clamp(56px, 12vw, 72px);
+    height: clamp(56px, 12vw, 72px);
   }
 }
 
@@ -189,13 +190,13 @@
 @media (max-width: 480px) {
   .ganesha-sidebar {
     right: 10px;
-    width: 84px;
+    width: clamp(88px, 26vw, 104px);
     padding: 16px 10px;
     gap: 16px;
   }
   .ganesha-icon {
-    width: 48px;
-    height: 48px;
+    width: clamp(52px, 14vw, 66px);
+    height: clamp(52px, 14vw, 66px);
   }
 }
 

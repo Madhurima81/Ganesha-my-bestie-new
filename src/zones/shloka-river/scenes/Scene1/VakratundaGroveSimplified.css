@@ -605,7 +605,7 @@
 }
 
 .grove-elephant-img {
-  width: clamp(280px, 28vw, 420px);
+  width: clamp(196px, 19.6vw, 294px);
   height: auto;
   cursor: pointer;
   transition: transform 0.2s;
@@ -675,7 +675,7 @@
 }
 
 .grove-plant {
-  width: clamp(130px, 22vw, 210px);
+  width: clamp(91px, 15.4vw, 147px);
   height: auto;
   cursor: pointer;
   transition: transform 0.2s, filter 0.3s;
@@ -713,11 +713,11 @@
   }
 
   .grove-elephant-img {
-    width: clamp(140px, 30vw, 220px);
+    width: clamp(98px, 21vw, 154px);
   }
 
   .grove-plant {
-    width: clamp(92px, 20vw, 132px);
+    width: clamp(64px, 14vw, 92px);
   }
 }
 .grove-river-wave {
@@ -864,3 +864,35 @@
   to   { transform: scale(1);   opacity: 1; }
 }
 
+/* ELEPHANTS */
+.vakratunda-clicker-element {
+  width: clamp(100px, 18vw, 220px);
+  height: clamp(100px, 18vw, 220px);
+  min-width: clamp(100px, 18vw, 220px);
+  min-height: clamp(100px, 18vw, 220px);
+}
+
+.vakratunda-central-synthesis {
+  width: clamp(90px, 16vw, 200px);
+  height: clamp(90px, 16vw, 200px);
+  min-width: clamp(90px, 16vw, 200px);
+  min-height: clamp(90px, 16vw, 200px);
+}
+
+/* GROVE ELEPHANT (grove-stage) */
+.grove-elephant-img {
+  width: clamp(120px, 14vw, 200px);
+}
+
+/* LOTUS / PLANT */
+.grove-plant {
+  width: clamp(70px, 10vw, 120px);
+}
+
+/* TABLET LANDSCAPE OVERRIDE — pull back the 210px override */
+@media (min-width: 768px) and (orientation: landscape) {
+  .vakratunda-clicker-element { width: 160px !important; height: 160px !important; }
+  .vakratunda-central-synthesis { width: 150px !important; height: 150px !important; }
+  .mahakaya-clicker-element { width: 150px !important; height: 150px !important; }
+  .mahakaya-central-synthesis { width: 165px !important; height: 165px !important; }
+}
