@@ -3,7 +3,7 @@
   inset: 0;
   z-index: 50;
   overflow: hidden;
-  padding: 80px 20px 18px;
+  padding: 20px 20px 14px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12,46 +12,47 @@
 }
 
 .aboutme-comparison-title {
-  margin: 0 0 34px;
+  margin: 0 0 4px;
   color: #5d4037;
   font-family: 'Baloo', cursive;
-  font-size: clamp(2rem, 4.2vw, 4.3rem);
+  font-size: clamp(1.4rem, 2.6vw, 2.4rem);
   font-weight: 700;
   text-align: center;
 }
 
 .aboutme-comparison-subtitle {
-  margin: 0 0 78px;
+  margin: 0 0 6px;
   color: #5d4037;
   font-family: 'Nunito', sans-serif;
-  font-size: clamp(1rem, 1.75vw, 2rem);
+  font-size: clamp(0.85rem, 1.2vw, 1.1rem);
   font-weight: 700;
   text-align: center;
 }
 
 .aboutme-comparison-grid {
   width: 100%;
-  max-width: 1500px;
-  margin-bottom: 22px;
+  max-width: 1100px;
+  margin-bottom: 14px;
   display: flex;
   justify-content: center;
   align-items: stretch;
-  gap: 26px;
+  gap: 16px;
   flex-wrap: wrap;
+  transform: translateY(-40px);
 }
 
 .aboutme-comparison-column {
   flex: 1;
-  min-width: 460px;
-  max-width: 680px;
-  border-radius: 24px;
-  padding: 30px 28px 26px;
+  min-width: 340px;
+  max-width: 480px;
+  border-radius: 20px;
+  padding: 18px 20px 18px;
   background: #FFF6E8;
-  box-shadow: 0 10px 30px rgba(120, 90, 20, 0.15), inset 0 0 0 2px rgba(255, 255, 255, 0.6);
+  box-shadow: 0 6px 18px rgba(120, 90, 20, 0.12), inset 0 0 0 2px rgba(255, 255, 255, 0.6);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .aboutme-comparison-column-header {
@@ -59,38 +60,38 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 96px;
+  min-height: 64px;
 }
 
 .aboutme-comparison-column-title {
   margin: 0;
   color: #3e2723;
   font-family: 'Baloo 2', cursive;
-  font-size: clamp(1.8rem, 2.5vw, 2.8rem);
+  font-size: clamp(1.2rem, 1.7vw, 1.7rem);
   font-weight: 700;
   text-align: center;
 }
 
 .aboutme-comparison-items-grid {
   width: 100%;
-  margin-top: 8px;
+  margin-top: 4px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 16px;
+  gap: 10px;
 }
 
 .aboutme-comparison-item {
-  min-height: 156px;
-  border-radius: 16px;
+  min-height: 100px;
+  border-radius: 12px;
   background: rgba(255, 252, 242, 0.98);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  padding: 10px 10px 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 8px 8px 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .aboutme-comparison-item.is-wide {
@@ -104,137 +105,179 @@
 .aboutme-comparison-item-label {
   color: #5d4037;
   font-family: 'Nunito', sans-serif;
-  font-size: 0.95rem;
+  font-size: 0.75rem;
   font-weight: 800;
+  letter-spacing: 0.5px;
 }
 
 .aboutme-comparison-item-media {
-  width: 80px;
-  height: 80px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .aboutme-comparison-item-img {
-  width: 80px;
-  height: 80px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
 }
 
 .aboutme-comparison-item-text {
   color: #3e2723;
   font-family: 'Baloo 2', cursive;
-  font-size: 1.05rem;
+  font-size: 0.85rem;
   font-weight: 700;
   line-height: 1.2;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: normal;
+  overflow-wrap: break-word;
+  hyphens: none;
+  max-width: 100%;
 }
 
 .aboutme-comparison-column-footer {
-  margin-top: 8px;
+  margin-top: 4px;
   color: #5d4037;
   font-family: 'Nunito', sans-serif;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   font-weight: 800;
   text-align: center;
 }
 
 .aboutme-comparison-continue-btn {
   margin-top: auto;
-  margin-bottom: 56px;
+  margin-bottom: 18px;
   border: none;
-  border-radius: 25px;
-  padding: 24px 64px;
-  background: linear-gradient(135deg, #4caf50, #45a049);
+  border-radius: 22px;
+  padding: 12px 38px;
+  background: linear-gradient(180deg, #d99a65 0%, #c9824c 100%);
   color: #fff;
   font-family: 'Baloo 2', cursive;
-  font-size: 30px;
+  font-size: 18px;
   font-weight: 700;
   line-height: 1;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow:
+    0 4px 0 rgba(0,0,0,0.12),
+    0 8px 18px rgba(0,0,0,0.12);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.3s ease,
+    filter 0.3s ease;
 }
 
 .aboutme-comparison-continue-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.6);
+  filter: brightness(1.02);
+  box-shadow:
+    0 4px 0 rgba(0,0,0,0.12),
+    0 8px 18px rgba(0,0,0,0.12);
 }
 
 .aboutme-comparison-continue-btn:active {
-  transform: translateY(-1px);
+  transform: scale(0.97);
+  filter: brightness(0.98);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.10);
 }
 
 /* Reusable large sizing profile used by Family Tree / Story cards */
 .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-grid {
-  gap: 44px;
+  gap: 22px;
 }
 
 .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-column {
-  min-width: 540px;
-  max-width: 720px;
-  padding: 42px;
+  min-width: 380px;
+  max-width: 520px;
+  padding: 24px;
 }
 
 .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-items-grid {
-  gap: 28px;
+  gap: 14px;
 }
 
 .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-item {
-  min-height: 220px;
+  min-height: 140px;
 }
 
 .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-item-media {
-  width: 110px;
-  height: 110px;
+  width: 70px;
+  height: 70px;
 }
 
 .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-item-img {
-  width: 110px;
-  height: 110px;
+  width: 70px;
+  height: 70px;
 }
 
 .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-title {
-  font-size: 4.3rem;
-  margin-bottom: 58px;
+  font-size: 2rem;
+  margin-bottom: 24px;
 }
 
 .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-continue-btn {
-  margin-top: 60px;
-  margin-bottom: 32px;
-  border-radius: 50px;
-  padding: 18px 45px;
+  margin-top: 24px;
+  margin-bottom: 18px;
+  border-radius: 28px;
+  padding: 14px 38px;
   font-family: 'Baloo', cursive;
-  font-size: 2.5rem;
+  font-size: 1.4rem;
   box-shadow:
-    0 8px 25px rgba(76, 175, 80, 0.4),
-    0 0 0 0 rgba(76, 175, 80, 0.5);
-  animation: aboutmeFamilyContinuePulse 2s ease-in-out infinite;
+    0 4px 0 rgba(0,0,0,0.12),
+    0 8px 18px rgba(0,0,0,0.12);
+  animation: aboutmeFamilyContinuePulse 3.5s ease-in-out infinite;
 }
 
 .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-continue-btn:hover {
   box-shadow:
-    0 12px 30px rgba(76, 175, 80, 0.5),
-    0 0 0 0 rgba(76, 175, 80, 0.5);
+    0 4px 0 rgba(0,0,0,0.12),
+    0 8px 18px rgba(0,0,0,0.12);
+}
+
+/* Indian Story final compare: slightly lower cards + slightly taller cards/boxes */
+.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-grid {
+  transform: translateY(70px);
+}
+
+.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-column {
+  padding: 20px 20px 22px;
+}
+
+.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item {
+  min-height: 112px;
+  padding: 10px 8px 12px;
+}
+
+.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item-media,
+.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item-img {
+  width: 52px;
+  height: 52px;
 }
 
 @keyframes aboutmeFamilyContinuePulse {
   0%,
   100% {
-    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+    box-shadow:
+      0 4px 0 rgba(0,0,0,0.12),
+      0 8px 18px rgba(0,0,0,0.12);
   }
   50% {
-    box-shadow: 0 8px 35px rgba(76, 175, 80, 0.6);
+    box-shadow:
+      0 4px 0 rgba(0,0,0,0.12),
+      0 10px 22px rgba(0,0,0,0.15);
   }
 }
 
 @media (max-width: 1200px) {
   .aboutme-comparison-column {
-    min-width: 420px;
+    min-width: 320px;
   }
 
   .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-column {
-    min-width: 420px;
+    min-width: 320px;
   }
 }
 
@@ -274,14 +317,14 @@
   .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-continue-btn {
     margin-top: 12px;
     margin-bottom: 8px;
-    font-size: 26px;
-    padding: 20px 52px;
+    font-size: 16px;
+    padding: 12px 32px;
   }
 
   .aboutme-comparison-continue-btn {
     margin-top: 12px;
     margin-bottom: 8px;
-    font-size: 26px;
-    padding: 20px 52px;
+    font-size: 16px;
+    padding: 12px 32px;
   }
 }

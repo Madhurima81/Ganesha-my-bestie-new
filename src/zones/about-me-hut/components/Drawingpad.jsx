@@ -155,7 +155,7 @@ const DrawingPad = ({
         <h2 className="simple-title">{prompt}</h2>
         {onCancel && (
           <button className="close-x-btn" onClick={onCancel} title="Close">
-            ✕
+            x
           </button>
         )}
       </div>
@@ -183,7 +183,7 @@ const DrawingPad = ({
             onClick={() => setIsEraser(!isEraser)}
             title="Eraser"
           >
-            🧹
+            {'\u{1F9FD}'}
           </button>
           
           {/* Brush Sizes */}
@@ -230,11 +230,11 @@ const DrawingPad = ({
       {/* Done Button */}
       <div className="drawing-actions">
           <button className="done-btn" onClick={handleSave}>
-            Done Drawing
+            Done
           </button>
 
           <button className="download-btn" onClick={handleDownload} title="Save to device">
-            💾 Save
+            Save
           </button>
       </div>
     </div>

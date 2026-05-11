@@ -8,6 +8,12 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: nowrap;
+  width: max-content;
+  max-width: calc(100vw - 80px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
 
   padding: 10px 18px;
   border-radius: 999px;
@@ -27,6 +33,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  min-width: max-content;
 }
 
 /* Icon images */
@@ -55,6 +62,11 @@
   color: #6b3f1d;
   letter-spacing: 0.2px;
   white-space: nowrap;
+  overflow: visible;
+}
+
+.story-strip::-webkit-scrollbar {
+  display: none;
 }
 
 /* Arrow separator */
