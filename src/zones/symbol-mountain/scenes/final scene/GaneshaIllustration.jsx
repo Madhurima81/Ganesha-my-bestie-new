@@ -38,11 +38,12 @@ const ZONE_HITBOXES = buildHitboxes();
 
 const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null, baseOpacity = 0.2 }) => {
   return (
-    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+    <div className="ganesha-illustration-breathing" style={{ width: '100%', height: '100%', position: 'relative' }}>
       <img
         src={ganeshaBase}
         alt="Ganesha"
         draggable={false}
+        className="ganesha-base-breathing"
         style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', opacity: baseOpacity, userSelect: 'none', transition: 'opacity 0.35s ease' }}
       />
 

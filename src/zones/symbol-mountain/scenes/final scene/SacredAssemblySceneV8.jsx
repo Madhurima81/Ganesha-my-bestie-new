@@ -425,6 +425,7 @@ const SacredAssemblyContent = ({
   zoneId,
   sceneId
 }) => {
+  const isDevBuild = process.env.NODE_ENV !== 'production';
   const [showSparkle, setShowSparkle] = useState(null);
   const [showMagicalCard, setShowMagicalCard] = useState(false);
   const [cardContent, setCardContent] = useState({});
@@ -490,6 +491,7 @@ const SacredAssemblyContent = ({
   const [cardPhase, setCardPhase] = useState('hidden'); // 'hidden' | 'appear' | 'flipped' | 'side' | 'play' | 'feedback'
   const [flyingSymbol, setFlyingSymbol] = useState(null);
   const [ganeshaReaction, setGaneshaReaction] = useState('');
+  const devPhaseIndexRef = useRef(0);
   const resumeHandledRef = useRef(false);
   const placedCount = Object.keys(sceneState?.placedSymbols || {}).length;
   const isSceneCompletedState =
@@ -1457,6 +1459,54 @@ const SacredAssemblyContent = ({
     return <div className="loading">Loading sacred assembly...</div>;
   }
 
+  const runDevPhase = () => {
+    // Ensure fully assembled state first so both phases are meaningful.
+    const allPlaced = {};
+    SACRED_SYMBOLS.forEach((symbol) => {
+      allPlaced[symbol.id] = true;
+    });
+
+    sceneActions.updateState({
+      placedSymbols: allPlaced,
+      ganeshaState: GANESHA_STATES.DIVINE,
+      phase: 'complete',
+      completed: true,
+      stars: 8,
+      selectedSymbol: null,
+      highlightedZone: null,
+      placementAnimation: null,
+      progress: {
+        percentage: 100,
+        starsEarned: 8,
+        completed: true
+      },
+      welcomeShown: true,
+      assemblyWisdomShown: true,
+      masteryShown: false,
+      readyForWisdom: false,
+      gameCoachState: null,
+      isReloadingGameCoach: false
+    });
+
+    const phase = devPhaseIndexRef.current % 2;
+    devPhaseIndexRef.current += 1;
+
+    // Phase 0: Fireworks + Orbs
+    if (phase === 0) {
+      setShowSceneCompletion(false);
+      setShowZoneCompletion(false);
+      setIsOrbsRunning(true);
+      setShowSparkle('final-fireworks');
+      return;
+    }
+
+    // Phase 1: Scene completion modal directly
+    setIsOrbsRunning(false);
+    setShowSparkle(null);
+    setShowZoneCompletion(false);
+    setShowSceneCompletion(true);
+  };
+
   return (
     <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
       <MessageManager
@@ -1701,7 +1751,8 @@ const SacredAssemblyContent = ({
                 />
                 <RotatingOrbsEffect
                   show={true}
-                  duration={9000}
+                  duration={3800}
+                  rotationDuration={3800}
                   symbolImages={{
                     mooshika: symbolMooshikaColored,
                     modak: symbolModakColored,
@@ -1714,9 +1765,9 @@ const SacredAssemblyContent = ({
                   }}
                   ganeshaImage={ganeshaDivine}
                   playerName={profileName}
-                  orbitCenter={{ top: '58%', left: '50%' }}
-                  orbSize={430}
-                  orbRadius={165}
+                  orbitCenter={{ top: '55%', left: '60%' }}
+                  orbSize={390}
+                  orbRadius={145}
                   showCentralGanesha={false}
                   showBuiltInFireworks={false}
                   onComplete={() => {
@@ -1865,6 +1916,32 @@ const SacredAssemblyContent = ({
             }}>
               🔄 Start Fresh
             </div>)}
+
+            {isDevBuild && (
+              <button
+                type="button"
+                style={{
+                  position: 'fixed',
+                  top: '88px',
+                  right: '18px',
+                  zIndex: 9999,
+                  background: '#5B3FA5',
+                  color: '#fff',
+                  border: '2px solid rgba(255,255,255,0.9)',
+                  borderRadius: '999px',
+                  padding: '10px 14px',
+                  fontSize: '12px',
+                  fontWeight: 800,
+                  letterSpacing: '0.3px',
+                  cursor: 'pointer',
+                  boxShadow: '0 6px 14px rgba(20,10,40,0.3)'
+                }}
+                onClick={runDevPhase}
+                title="Cycle: Fireworks -> Completion Modal"
+              >
+                DEV Phase
+              </button>
+            )}
           </div>
 
           {/* ProgressiveHintSystem disabled in this scene */}

@@ -398,56 +398,82 @@
   /* transform-box + transform-origin set inline via JS on SVG load */
 }
 
+/* Gentle breathing on the base illustration layer */
+.ganesha-illustration-breathing {
+  transform-origin: 50% 62%;
+  animation: ganeshaIllustrationBreathing 4.8s ease-in-out infinite;
+  will-change: transform;
+}
+
+.ganesha-base-breathing {
+  transform-origin: 50% 62%;
+  animation: ganeshaBaseBreathing 4.8s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes ganeshaIllustrationBreathing {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-2px) scale(1.01); }
+}
+
+@keyframes ganeshaBaseBreathing {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-1px) scale(1.008); }
+}
+
 @keyframes svgPop {
   0%   { transform: scale(1); }
   45%  { transform: scale(1.07); }
   100% { transform: scale(1); }
 }
 
-/* ── Hint overlay — a plain div rendered on top of Ganesha, never touches SVG ── */
+/* ── Hint overlay — uses inline position/size from zone config, matches hitbox exactly ── */
 .zone-hint-overlay {
   position: absolute;
-  width: 110px;
-  height: 110px;
   border-radius: 50%;
   pointer-events: none;
-  transform: translate(-50%, -50%);
   z-index: 20;
-  animation: sacredHintBreath 2.4s ease-in-out 1;
   animation-fill-mode: both;
 }
 
 .zone-hint-overlay[data-hint-level="hint"] {
-  background: radial-gradient(circle,
-    rgba(196, 181, 253, 0.45) 0%,
-    rgba(196, 181, 253, 0.20) 45%,
-    transparent 72%);
-  opacity: 0.75;
+  animation: sacredHintPulse 1.6s ease-in-out 1;
 }
 
 .zone-hint-overlay[data-hint-level="hint-strong"] {
-  background: radial-gradient(circle,
-    rgba(196, 181, 253, 0.60) 0%,
-    rgba(196, 181, 253, 0.30) 45%,
-    transparent 72%);
-  opacity: 0.9;
-  animation: sacredHintBreath 2.1s ease-in-out 2;
-  animation-fill-mode: both;
+  animation: sacredHintPulseStrong 1.5s ease-in-out 2;
 }
 
 .zone-hint-overlay[data-hint-level="hint-final"] {
-  background: radial-gradient(circle,
-    rgba(196, 181, 253, 0.75) 0%,
-    rgba(196, 181, 253, 0.40) 45%,
-    transparent 75%);
-  opacity: 1;
-  animation: sacredHintBreath 1.9s ease-in-out 3;
-  animation-fill-mode: both;
+  animation: sacredHintPulseFinal 1.4s ease-in-out 4;
 }
 
-@keyframes sacredHintBreath {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); }
-  50% { transform: translate(-50%, -50%) scale(1.1); }
+/* Start and END at transparent — glow is invisible at rest, pulses softly, returns to invisible */
+@keyframes sacredHintPulse {
+  0%, 100% {
+    background: radial-gradient(circle, rgba(45, 212, 191, 0) 0%, transparent 65%);
+  }
+  50% {
+    background: radial-gradient(circle, rgba(45, 212, 191, 0.40) 0%, rgba(45, 212, 191, 0.16) 40%, transparent 65%);
+  }
+}
+
+@keyframes sacredHintPulseStrong {
+  0%, 100% {
+    background: radial-gradient(circle, rgba(45, 212, 191, 0) 0%, transparent 68%);
+  }
+  50% {
+    background: radial-gradient(circle, rgba(45, 212, 191, 0.50) 0%, rgba(45, 212, 191, 0.22) 40%, transparent 68%);
+  }
+}
+
+@keyframes sacredHintPulseFinal {
+  0%, 100% {
+    background: radial-gradient(circle, rgba(45, 212, 191, 0) 0%, transparent 70%);
+  }
+  50% {
+    background: radial-gradient(circle, rgba(45, 212, 191, 0.58) 0%, rgba(45, 212, 191, 0.28) 40%, transparent 70%);
+  }
 }
 
 /* ───────────────────────────────────────────── */
