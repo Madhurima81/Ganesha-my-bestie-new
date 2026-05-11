@@ -40,6 +40,26 @@ const SceneCompletionCelebration = ({
   const [selectedApp, setSelectedApp] = useState(null); // for app recorder popup
   const [isExiting, setIsExiting] = useState(false);
   const resolvedZoneId = zoneId || GameStateManager.currentZone || 'symbol-mountain';
+  const isZoneFinalCompletionBadge =
+    isFinalScene &&
+    ['symbol-mountain', 'shloka-river', 'cave-of-secrets'].includes(resolvedZoneId);
+  const finalBadgeConfig = {
+    'symbol-mountain': {
+      icon: '/images/icons/symbols-icon.png',
+      alt: 'Symbol',
+      glowClass: 'symbol-final-icon-glow',
+    },
+    'shloka-river': {
+      icon: '/images/icons/chant-icon.png',
+      alt: 'Chant',
+      glowClass: 'symbol-final-icon-glow-blue',
+    },
+    'cave-of-secrets': {
+      icon: '/images/icons/meanings-icon.png',
+      alt: 'Meaning',
+      glowClass: 'symbol-final-icon-glow-purple',
+    },
+  };
 
   const playChime = () => {
     try {
@@ -152,11 +172,11 @@ const handleAction = (callback, skipComplete = false) => {
           <GaneshaPresence
             className="completion-ganesha"
             pose="blessing"
-            size={520}
+            size={470}
             breathing="gentle"
             blink
             style={{
-              width: 'min(520px, 100%)',
+              width: 'min(470px, 100%)',
               height: 'auto',
               aspectRatio: '1 / 1',
               flexShrink: 1,
@@ -246,6 +266,22 @@ const handleAction = (callback, skipComplete = false) => {
               ) : containerType === 'smartwatch' ? (
                 <div className="container-holder">
                   <img src="/images/smartwatch-screen.png" alt="Smartwatch" className="backpack-image" />
+                </div>
+              ) : isZoneFinalCompletionBadge ? (
+                <div className="symbol-complete-badge-wrap">
+                  <div
+                    className={`symbol-complete-glow ${finalBadgeConfig[resolvedZoneId]?.glowClass || 'symbol-final-icon-glow'}`}
+                    aria-hidden="true"
+                  />
+                  <span className="symbol-sparkle sparkle-1" aria-hidden="true" />
+                  <span className="symbol-sparkle sparkle-2" aria-hidden="true" />
+                  <span className="symbol-sparkle sparkle-3" aria-hidden="true" />
+                  <span className="symbol-sparkle sparkle-4" aria-hidden="true" />
+                  <img
+                    src={finalBadgeConfig[resolvedZoneId]?.icon || '/images/icons/symbols-icon.png'}
+                    alt={finalBadgeConfig[resolvedZoneId]?.alt || 'Symbol'}
+                    className="symbol-complete-badge symbol-final-icon"
+                  />
                 </div>
               ) : (
                 <div className="container-holder">
