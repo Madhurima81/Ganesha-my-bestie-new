@@ -20,15 +20,15 @@
 .svc-card {
   position: relative;
   width: 100%;
-  max-width: 780px;
-  min-height: 480px;
+  max-width: 680px;
+  min-height: 400px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   background: linear-gradient(160deg, #FAF5FF 0%, #E0F2FE 100%);
   border: 3px solid rgba(255, 255, 255, 0.9);
   border-radius: 36px;
-  padding: 52px 56px 80px;
+  padding: 42px 44px 60px;
   overflow: hidden;
   animation: svcPopIn 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
   box-shadow: 0 12px 48px rgba(124, 58, 237, 0.25),
@@ -61,9 +61,9 @@
 /* ── Mooshika ────────────────────────────────────────────────────────────── */
 .svc-mooshika {
   position: absolute;
-  bottom: 32px;
-  left: 32px;
-  width: 120px;
+  bottom: 26px;
+  left: 54px;
+  width: 90px;
   opacity: 0.95;
   pointer-events: none;
   z-index: 2;
@@ -72,6 +72,7 @@
   width: 100%;
   height: auto;
   display: block;
+  animation: svcBreathing 3s ease-in-out infinite;
 }
 .svc-mooshika--bounce img {
   animation: svcBounce 0.55s cubic-bezier(0.36, 0.07, 0.19, 0.97);
@@ -82,9 +83,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-left: 0;
-  justify-content: space-between;
-  min-height: 320px;
+  justify-content: flex-start;
+  padding-top: 8px;
   width: 100%;
 }
 .svc-body--result {
@@ -93,10 +93,12 @@
 
 /* ── Big syllable label ───────────────────────────────────────────────────── */
 .svc-syllable {
-  font-size: clamp(56px, 8vw, 92px);
+  font-size: clamp(44px, 6vw, 72px);
   font-weight: 700;
   line-height: 1;
-  letter-spacing: 1px;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
   color: #5a6fd6;
   animation: none;
   user-select: none;
@@ -173,34 +175,39 @@
 .svc-actions {
   display: flex;
   gap: 14px;
-  margin-top: auto;
+  margin-top: 10px;
   flex-wrap: wrap;
   justify-content: center;
 }
 .svc-actions--primary {
+  margin-top: 10px;
   flex-wrap: nowrap;
   align-items: center;
 }
 .svc-btn {
-  border: none;
+  border: 2px solid transparent;
   border-radius: 999px;
-  padding: 18px 46px;
-  font-size: 22px;
+  padding: 14px 34px;
+  font-size: 18px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.1s, box-shadow 0.1s;
-  box-shadow: 0 4px 10px rgba(139, 124, 246, 0.25);
-  min-width: 160px;
-  transition: all 0.2s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease, background 0.18s ease;
+  box-shadow: 0 4px 10px rgba(77, 168, 157, 0.18);
+  min-width: 140px;
 }
-.svc-btn:active {
-  transform: translateY(2px);
+
+/* Explicit pressed state for touch devices where :active can be inconsistent */
+.svc-btn--pressed {
+  transform: translateY(2px) scale(0.98);
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
+  filter: brightness(0.96);
 }
 
 .svc-btn--mic {
-  background: linear-gradient(180deg, #a78bfa, #8b7cf6);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.72);
+  border: 2px solid rgba(77, 168, 157, 0.32);
+  color: #3f8f84;
+  min-width: 150px;
   animation: svcPopIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.25s both;
 }
 .svc-btn--mic-pulse {
@@ -212,20 +219,75 @@
   50%       { box-shadow: 0 5px 0 rgba(0,0,0,0.15), 0 0 0 12px rgba(124,58,237,0); }
 }
 .svc-btn--continue {
-  background: linear-gradient(135deg, #22C55E, #16A34A);
+  background: linear-gradient(180deg, #63c7bb 0%, #4da89d 100%);
   color: #fff;
+  min-width: 190px;
+}
+
+.svc-stop-circle {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 2px solid rgba(77, 168, 157, 0.3);
+  background: rgba(255, 255, 255, 0.74);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(77, 168, 157, 0.14);
+  transition: transform 0.16s ease, opacity 0.16s ease, box-shadow 0.16s ease;
+  animation: svcPopIn 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.svc-stop-circle:hover {
+  opacity: 0.96;
+  box-shadow: 0 6px 12px rgba(77, 168, 157, 0.18);
+}
+
+.svc-stop-circle:active {
+  opacity: 0.82;
+  transform: translateY(1px) scale(0.97);
+  box-shadow: 0 3px 8px rgba(77, 168, 157, 0.12);
+}
+
+.svc-stop-square {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: #3f8f84;
 }
 .svc-btn--retry {
-  background: linear-gradient(180deg, #a78bfa, #8b7cf6);
-  color: #fff;
+  background: #eef8f6;
+  border: 2px solid #a8d8d0;
+  color: #3f7f77;
+  padding: 12px 26px;
+  min-width: 120px;
+  font-size: 16px;
+  border-radius: 18px;
 }
 .svc-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(139, 124, 246, 0.3);
+  box-shadow: 0 6px 14px rgba(77, 168, 157, 0.24);
+}
+.svc-btn--continue:hover {
+  box-shadow: 0 8px 16px rgba(77, 168, 157, 0.32);
+}
+.svc-btn--continue:active {
+  transform: translateY(2px) scale(0.985);
+  box-shadow: 0 2px 6px rgba(77, 168, 157, 0.2);
+}
+.svc-btn--mic:hover {
+  opacity: 0.96;
+}
+.svc-btn--mic:active {
+  opacity: 0.82;
+  transform: translateY(1px);
+  box-shadow: 0 3px 8px rgba(77, 168, 157, 0.16);
 }
 .svc-btn--skip {
-  background: linear-gradient(135deg, #94A3B8, #64748B);
-  color: #fff;
+  background: #eef8f6;
+  border: 2px solid #a8d8d0;
+  color: #3f7f77;
 }
 
 /* ── Inline mode (no backdrop; card sits inside parent speech bubble) ─────── */
@@ -300,34 +362,30 @@
   100% { transform: translate(-50%, calc(-50% - 56px)) scale(0.7); opacity: 0; }
 }
 
+@keyframes svcBreathing {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.08); }
+}
+
 /* Recording indicator (red pulsing dot) */
 .svc-recording-indicator {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   margin-top: 8px;
+  margin-bottom: 18px;
 }
 .svc-mic-icon {
-  width: 112px;
-  height: 112px;
+  width: 36px;
+  height: 36px;
+  opacity: 0.85;
   object-fit: contain;
-  animation: svcMicPulse 1.2s ease-in-out infinite, svcMicWiggle 1.6s ease-in-out infinite;
 }
 .svc-rec-label {
-  font-size: 24px;
+  font-size: 30px;
   font-weight: 600;
-  color: #7C3AED;
-}
-@keyframes svcMicPulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50%      { transform: scale(1.08); opacity: 0.82; }
-}
-@keyframes svcMicWiggle {
-  0%, 100% { rotate: 0deg; }
-  20%      { rotate: -4deg; }
-  40%      { rotate: 3deg; }
-  60%      { rotate: -2deg; }
-  80%      { rotate: 2deg; }
+  color: #7D6AE8;
 }
 
 /* "Hear the syllable again" subtle link */
@@ -344,3 +402,122 @@
   transition: background 0.15s;
 }
 .svc-hear-again-link:hover { background: rgba(124, 58, 237, 0.1); }
+
+/* ── Record button (mic → stop during recording) ─────────────────────────── */
+.record-btn {
+  width: 74px;
+  height: 74px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #9f7aea 0%, #7c5ce0 100%);
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.42), 0 0 18px rgba(140,110,255,0.24), 0 6px 14px rgba(77,168,157,0.16);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.record-btn:active {
+  transform: translateY(2px) scale(0.97);
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.3), 0 0 12px rgba(140, 110, 255, 0.18), 0 2px 6px rgba(124,92,224,0.12);
+  filter: brightness(0.98);
+}
+
+.record-icon {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mic body */
+.record-icon::before {
+  content: "";
+  width: 12px;
+  height: 18px;
+  border-radius: 10px;
+  background: white;
+  position: absolute;
+  top: 1px;
+}
+
+/* Mic stem */
+.record-icon::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border: 3px solid white;
+  border-top: transparent;
+  border-left-color: white;
+  border-right-color: white;
+  border-bottom-color: white;
+  border-radius: 0 0 10px 10px;
+  position: absolute;
+  bottom: -2px;
+}
+
+/* Recording state */
+.record-btn.recording {
+  transform: translateY(-12px) scale(1.04);
+  box-shadow: 0 0 0 0 rgba(124, 92, 224, 0.35), 0 8px 22px rgba(124, 92, 224, 0.28);
+  animation: pulseGlow 1.6s infinite ease-out;
+}
+
+/* Change mic → stop square during recording */
+.record-btn.recording .record-icon::before {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  top: 4px;
+}
+
+.record-btn.recording .record-icon::after {
+  display: none;
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(124, 92, 224, 0.28), 0 8px 22px rgba(124, 92, 224, 0.24);
+  }
+  70% {
+    box-shadow: 0 0 0 16px rgba(124, 92, 224, 0), 0 8px 22px rgba(124, 92, 224, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(124, 92, 224, 0), 0 8px 22px rgba(124, 92, 224, 0.24);
+  }
+}
+
+.record-label {
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #7c5ce0;
+  opacity: 0.55;
+}
+
+/* Live listening waveform — kid-friendly "I'm hearing you" bars */
+.svc-listening-waves {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 28px;
+  margin-bottom: 14px;
+  opacity: 0.72;
+}
+.svc-listening-bar {
+  width: 5px;
+  height: 6px;
+  background: linear-gradient(to top, #a78bfa, #c4b5fd);
+  border-radius: 4px;
+  animation: svcWaveBounce 1.35s ease-in-out infinite;
+}
+@keyframes svcWaveBounce {
+  0%, 100% { height: 6px; }
+  50%       { height: 18px; }
+}

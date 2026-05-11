@@ -24,9 +24,9 @@ export const GAME_CONFIGS = {
         centralSynthesis: {
             enabled: true,
             positions: [
-                { left: '50%', top: '70%', size: 'clamp(200px, 40vw, 510px)' }, // Round 1
-                { left: '50%', top: '70%', size: 'clamp(200px, 40vw, 510px)' }, // Round 2
-                { left: '50%', top: '70%', size: 'clamp(200px, 40vw, 510px)' }  // Round 3
+                { left: '50%', top: '70%', size: 'clamp(140px, 20vw, 260px)' }, // Round 1
+                { left: '50%', top: '70%', size: 'clamp(140px, 20vw, 260px)' }, // Round 2
+                { left: '50%', top: '70%', size: 'clamp(140px, 20vw, 260px)' }  // Round 3
             ],
             // ✅ Round-Based Rewards (Lotus progression: bud → bit-bloom → half-bloom → full-bloom)
             assetGettersByRound: {
@@ -44,16 +44,16 @@ export const GAME_CONFIGS = {
             // positions per round, per syllable index within that round
             positionsByRound: {
                 1: [                                                                              // Round 1: va, kra
-                    { left: '22%', top: '28%', size: 'clamp(200px, 38vw, 480px)', flip: false }, // index 0 → va
-                    { left: '75%', top: '28%', size: 'clamp(200px, 38vw, 480px)', flip: true  }, // index 1 → kra
+                    { left: '22%', top: '28%', size: 'clamp(160px, 24vw, 300px)', flip: false }, // index 0 → va
+                    { left: '75%', top: '28%', size: 'clamp(160px, 24vw, 300px)', flip: true  }, // index 1 → kra
                 ],
                 2: [                                                                              // Round 2: tun, da
-                    { left: '22%', top: '28%', size: 'clamp(200px, 38vw, 480px)', flip: false }, // index 0 → tun
-                    { left: '75%', top: '28%', size: 'clamp(200px, 38vw, 480px)', flip: true  }, // index 1 → da
+                    { left: '22%', top: '28%', size: 'clamp(160px, 24vw, 300px)', flip: false }, // index 0 → tun
+                    { left: '75%', top: '28%', size: 'clamp(160px, 24vw, 300px)', flip: true  }, // index 1 → da
                 ],
                 3: [                                                                              // Round 3: vakra, tunda
-                    { left: '22%', top: '52%', size: 'clamp(200px, 38vw, 480px)', flip: false }, // index 0 → vakra
-                    { left: '75%', top: '52%', size: 'clamp(200px, 38vw, 480px)', flip: true  }, // index 1 → tunda
+                    { left: '22%', top: '52%', size: 'clamp(160px, 24vw, 300px)', flip: false }, // index 0 → vakra
+                    { left: '75%', top: '52%', size: 'clamp(160px, 24vw, 300px)', flip: true  }, // index 1 → tunda
                 ],
             },
             // fallback flat positions (used if positionsByRound not found)
@@ -131,9 +131,9 @@ export const GAME_CONFIGS = {
         centralSynthesis: {
             enabled: true,
             positions: [
-                { left: '50%', top: '47%', size: 'clamp(180px, 24vw, 310px)' }, // Round 1: tiny sprout — bottom at ground line
-                { left: '50%', top: '47%', size: 'clamp(300px, 42vw, 540px)' }, // Round 2: sapling growing taller
-                { left: '50%', top: '47%', size: 'clamp(420px, 58vw, 760px)' }  // Round 3: massive banyan reaching skyward
+                { left: '50%', top: '47%', size: 'clamp(100px, 14vw, 180px)' }, // Round 1: tiny sprout — bottom at ground line
+                { left: '50%', top: '47%', size: 'clamp(160px, 24vw, 300px)' }, // Round 2: sapling growing taller
+                { left: '50%', top: '47%', size: 'clamp(220px, 32vw, 420px)' }  // Round 3: massive banyan reaching skyward
             ],
             // ✅ Round-Based Rewards (Banyan tree growth: sprout → sapling → half → full)
             assetGettersByRound: {
@@ -150,16 +150,16 @@ export const GAME_CONFIGS = {
             // ✅ Per-round positions with size and flip per element
             positionsByRound: {
                 1: [                                                          // Round 1: ma, ha
-                    { left: '22%', top: '68%', size: '480px', flip: false }, // index 0 → ma
-                    { left: '72%', top: '68%', size: '480px', flip: true  }, // index 1 → ha
+                    { left: '22%', top: '68%', size: 'clamp(160px, 24vw, 300px)', flip: false }, // index 0 → ma
+                    { left: '72%', top: '68%', size: 'clamp(160px, 24vw, 300px)', flip: true  }, // index 1 → ha
                 ],
                 2: [                                                          // Round 2: ka, ya
-                    { left: '22%', top: '68%', size: '480px', flip: false }, // index 0 → ka
-                    { left: '72%', top: '68%', size: '480px', flip: true  }, // index 1 → ya
+                    { left: '22%', top: '68%', size: 'clamp(160px, 24vw, 300px)', flip: false }, // index 0 → ka
+                    { left: '72%', top: '68%', size: 'clamp(160px, 24vw, 300px)', flip: true  }, // index 1 → ya
                 ],
                 3: [                                                          // Round 3: maha, kaya
-                    { left: '22%', top: '68%', size: '480px', flip: false }, // index 0 → maha
-                    { left: '72%', top: '68%', size: '480px', flip: true  }, // index 1 → kaya
+                    { left: '22%', top: '68%', size: 'clamp(160px, 24vw, 300px)', flip: false }, // index 0 → maha
+                    { left: '72%', top: '68%', size: 'clamp(160px, 24vw, 300px)', flip: true  }, // index 1 → kaya
                 ],
             },
             // fallback flat positions

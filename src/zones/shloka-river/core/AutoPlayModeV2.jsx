@@ -77,6 +77,7 @@ const AutoPlayModeV2 = ({
   const lotusAudioSourceRef = useRef(null);   // Track which lotus audio file to replay on resume
   const pendingLotusTransitionRef = useRef(false); // Final elephant tapped, waiting to enter lotus phase
   const singingSyllableRef = useRef(null);
+  const openedSyllablesRef = useRef(new Set());
 
   // Ref-based pause tracking (avoids stale closures in audio callbacks)
   const isPausedRef = useRef(isPaused);
@@ -438,6 +439,7 @@ const AutoPlayModeV2 = ({
     lastInterruptibleVORef.current = null;
     lotusAudioPlayingRef.current = false;
     lotusAudioSourceRef.current = null;
+    openedSyllablesRef.current = new Set();
     pendingLotusTransitionRef.current = false;
 
     setCentralElementGlowing(false);
@@ -552,8 +554,7 @@ const AutoPlayModeV2 = ({
 
       const clickedSyllable = currentSequence[syllableIndex];
       if (!clickedSyllable) return;
-      if (syllableIndex !== currentSyllableIndex) { triggerWaitBanner('Not this one! 🎯', true); return; }
-      if (roundClicks[`elephant-${clickedSyllable}`]) { triggerWaitBanner('Already tapped! 🐘'); return; }
+      // Free-tap mode: any elephant, any order, any number of times
       
       if (voiceGuidanceRef.current?.stopVoice) voiceGuidanceRef.current.stopVoice();
 
@@ -590,8 +591,9 @@ const AutoPlayModeV2 = ({
       // - no instant bloom on tap
       // - proceed only after SVC completes/closes/fallbacks
       if (isCustomElephantFlow) {
-        const nextIdx = syllableIndex + 1;
-        const newPlayerInput = [...playerInput, clickedSyllable];
+        const newPlayerInput = playerInput.includes(clickedSyllable)
+          ? playerInput
+          : [...playerInput, clickedSyllable];
 
         const applyTapSuccess = () => {
           setPlayerInput(newPlayerInput);
@@ -607,7 +609,8 @@ const AutoPlayModeV2 = ({
 
         const proceedToNext = () => {
           applyTapSuccess();
-          if (nextIdx >= currentSequence.length) {
+          const allTapped = currentSequence.every(syl => newPlayerInput.includes(syl));
+          if (allTapped) {
             pendingLotusTransitionRef.current = true;
             safeSetTimeout(() => {
               if (isPausedRef.current) return;
@@ -625,19 +628,19 @@ const AutoPlayModeV2 = ({
             }, naturalDelay(400, 700));
           } else {
             pendingLotusTransitionRef.current = false;
-            setCurrentSyllableIndex(nextIdx);
-            safeSetTimeout(() => {
-              if (isPausedRef.current) return;
-              flowInProgressRef.current = false;
-              startSyllableFlow(nextIdx);
-            }, naturalDelay(600, 1000));
+            flowInProgressRef.current = false;
+            setCanPlayerClick(true);
+            wasChildActionPendingRef.current = true;
           }
         };
 
+        const isFirstOpen = !openedSyllablesRef.current.has(clickedSyllable);
+        openedSyllablesRef.current.add(clickedSyllable);
         setVoiceChallenge({
           syllable: clickedSyllable,
           displayLabel: clickedSyllable.toUpperCase(),
-          replayAudio: () => playSyllableAudio(clickedSyllable, () => {}),
+          playCount: isFirstOpen ? 2 : 1,
+          replayAudio: (onEnded) => playSyllableAudio(clickedSyllable, onEnded || (() => {})),
           stopAudio: () => {
             if (voiceGuidanceRef.current?.stopVoice) voiceGuidanceRef.current.stopVoice();
             if (currentAudioRef.current) { currentAudioRef.current.pause(); currentAudioRef.current = null; }
@@ -653,7 +656,9 @@ const AutoPlayModeV2 = ({
         return;
       }
 
-      const newPlayerInput = [...playerInput, clickedSyllable];
+      const newPlayerInput = playerInput.includes(clickedSyllable)
+        ? playerInput
+        : [...playerInput, clickedSyllable];
       setPlayerInput(newPlayerInput);
       setRoundClicks(prev => ({ ...prev, [`elephant-${clickedSyllable}`]: true }));
       setActivatedElephants(prev => ({ ...prev, [`elephant-${clickedSyllable}`]: true }));
@@ -683,7 +688,6 @@ const AutoPlayModeV2 = ({
         // a stale state value — the guard on line 592 already proved they
         // are equal, but state reads inside an async audio callback can
         // lag behind committed renders.
-        const nextIdx = syllableIndex + 1;
 
         const proceedToNext = () => {
           if (isCustomElephantFlow) {
@@ -692,7 +696,8 @@ const AutoPlayModeV2 = ({
               setCentralBloomProgress(newPlayerInput.length * progressPerClick);
             }
           }
-          if (nextIdx >= currentSequence.length) {
+          const allTapped = currentSequence.every(syl => newPlayerInput.includes(syl));
+          if (allTapped) {
             pendingLotusTransitionRef.current = true;
             safeSetTimeout(() => {
               if (isPausedRef.current) return;
@@ -710,22 +715,22 @@ const AutoPlayModeV2 = ({
             }, naturalDelay(400, 700));
           } else {
             pendingLotusTransitionRef.current = false;
-            setCurrentSyllableIndex(nextIdx);
-            safeSetTimeout(() => {
-              if (isPausedRef.current) return;
-              flowInProgressRef.current = false;
-              startSyllableFlow(nextIdx);
-            }, naturalDelay(600, 1000));
+            flowInProgressRef.current = false;
+            setCanPlayerClick(true);
+            wasChildActionPendingRef.current = true;
           }
         };
 
         // Show voice challenge only in learning rounds (not the final assembly round)
         const isLastRound = currentRound === maxRound;
         if (!isLastRound || isCustomElephantFlow) {
+          const isFirstOpen = !openedSyllablesRef.current.has(clickedSyllable);
+          openedSyllablesRef.current.add(clickedSyllable);
           setVoiceChallenge({
             syllable: clickedSyllable,
             displayLabel: clickedSyllable.toUpperCase(),
-            replayAudio: () => playSyllableAudio(clickedSyllable, () => {}),
+            playCount: isFirstOpen ? 2 : 1,
+            replayAudio: (onEnded) => playSyllableAudio(clickedSyllable, onEnded || (() => {})),
             stopAudio: () => {
               if (voiceGuidanceRef.current?.stopVoice) voiceGuidanceRef.current.stopVoice();
               if (currentAudioRef.current) { currentAudioRef.current.pause(); currentAudioRef.current = null; }
@@ -947,7 +952,7 @@ const AutoPlayModeV2 = ({
   // ==========================================
   const isElephantSinging = (syllable) => singingSyllable === syllable;
   const hasElephantBeenClicked = (syllable) => roundClicks[`elephant-${syllable}`];
-  const isCurrentTarget = (index) => canPlayerClick && index === currentSyllableIndex && !roundClicks[`elephant-${currentSequence[index]}`];
+  const isCurrentTarget = (index) => canPlayerClick;
   const isVisualRewardActive = (syllable) => visualRewards[`visual-${syllable}`];
 
   const renderElephant = (syllable, index) => {
@@ -995,13 +1000,12 @@ const AutoPlayModeV2 = ({
           }}
         />
         {/* Speech bubble above elephant */}
-        <div style={{ position: 'absolute', top: '-52px', left: '50%', transform: 'translateX(-50%)', background: clicked ? '#C8F2C2' : 'white', color: '#2E7D32', padding: '8px 16px', borderRadius: '14px', fontSize: 'clamp(14px, 1.8vw, 20px)', fontWeight: 700, letterSpacing: '0.5px', boxShadow: '0 2px 8px rgba(0,0,0,0.18)', border: `2px solid ${clicked ? '#81C784' : 'rgba(76,175,80,0.3)'}`, whiteSpace: 'nowrap', zIndex: 25, transition: 'all 0.18s ease-out' }}>
+        <div style={{ position: 'absolute', top: '-38px', left: '50%', transform: 'translateX(-50%)', background: clicked ? '#C8F2C2' : 'white', color: '#2E7D32', padding: '5px 11px', borderRadius: '11px', fontSize: 'clamp(11px, 1.2vw, 15px)', fontWeight: 700, letterSpacing: '0.3px', boxShadow: '0 2px 6px rgba(0,0,0,0.15)', border: `2px solid ${clicked ? '#81C784' : 'rgba(76,175,80,0.3)'}`, whiteSpace: 'nowrap', zIndex: 25, transition: 'all 0.18s ease-out' }}>
           {bubbleText}
           {/* Tail pointing down */}
           <div style={{ position: 'absolute', bottom: '-10px', left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '10px solid transparent', borderRight: '10px solid transparent', borderTop: `10px solid ${clicked ? '#C8F2C2' : 'white'}` }} />
         </div>
         {singing && <div style={{ position: 'absolute', top: '-20px', left: '50%', fontSize: '20px', animation: 'musicNote 0.6s' }}>🎵</div>}
-        {clicked && <div style={{ position: 'absolute', top: '10px', right: '10px', width: '24px', height: '24px', background: '#4CAF50', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>✓</div>}
       </button>
     );
   };
@@ -1129,7 +1133,7 @@ const AutoPlayModeV2 = ({
             <div style={{ position: 'absolute', width: '100%', height: '100%', opacity: isFullyBloomed ? 0 : 1 }}>
               <img src={budImage} style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center bottom' }} alt="tree" />
             </div>
-            <div style={{ position: 'absolute', width: '100%', height: '100%', opacity: isFullyBloomed ? 1 : 0, animation: isFullyBloomed ? 'mahakayaPopIn 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards' : 'none' }}>
+            <div style={{ position: 'absolute', width: '100%', height: '100%', opacity: isFullyBloomed ? 1 : 0, animation: isFullyBloomed ? 'mahakayaPopIn 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards' : 'none', transformOrigin: 'center bottom' }}>
               <img src={bloomImage} style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center bottom' }} alt="grown tree" />
             </div>
           </>
@@ -1161,7 +1165,7 @@ const AutoPlayModeV2 = ({
             </div>
           </>
         )}
-        <div style={{ position: 'absolute', bottom: '-36px', left: '50%', transform: 'translateX(-50%) scale(' + (centralElementGlowing ? 1.08 : 1) + ')', transition: 'all 0.2s ease-out', background: isFullyBloomed ? 'linear-gradient(180deg, #FFF7CC, #FFE082)' : 'rgba(255,255,255,0.9)', color: '#7A5C00', padding: '8px 14px', borderRadius: '16px', fontSize: 'clamp(14px, 1.8vw, 20px)', fontWeight: 700, letterSpacing: '0.6px', whiteSpace: 'nowrap', border: '2px solid rgba(255,215,0,0.6)', boxShadow: isFullyBloomed ? '0 4px 14px rgba(255,215,0,0.35)' : '0 2px 6px rgba(0,0,0,0.12)', textTransform: 'capitalize' }}>
+        <div style={{ position: 'absolute', bottom: '-36px', left: '50%', transform: 'translateX(-50%) scale(' + (centralElementGlowing ? 1.08 : 1) + ')', transition: 'all 0.2s ease-out', background: isFullyBloomed ? 'linear-gradient(180deg, #FFF7CC, #FFE082)' : 'rgba(255,255,255,0.9)', color: '#7A5C00', padding: '5px 11px', borderRadius: '16px', fontSize: 'clamp(11px, 1.2vw, 15px)', fontWeight: 700, letterSpacing: '0.6px', whiteSpace: 'nowrap', border: '2px solid rgba(255,215,0,0.6)', boxShadow: isFullyBloomed ? '0 4px 14px rgba(255,215,0,0.35)' : '0 2px 6px rgba(0,0,0,0.12)', textTransform: 'capitalize' }}>
           {currentSequence.join('')}
         </div>
         {showLotusSparkles && (
@@ -1303,6 +1307,7 @@ const AutoPlayModeV2 = ({
           syllable={voiceChallenge.syllable}
           displayLabel={voiceChallenge.displayLabel}
           onComplete={voiceChallenge.onComplete}
+          playCount={voiceChallenge.playCount}
           replayAudio={voiceChallenge.replayAudio}
           stopAudio={voiceChallenge.stopAudio}
           mooshikaImage={voiceGuidance?.characterImage}

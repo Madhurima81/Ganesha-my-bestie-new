@@ -16,7 +16,6 @@ import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation
 import './SyllableVoiceChallenge.css';
 import micIcon from './assets/images/mic-icon.png';
 
-const MAX_RECORDING_FAILSAFE_MS = 20000; // safety only; primary stop is manual button tap
 const SYLLABLE_AUDIO_DELAY_MS = 300;   // brief pause after card opens before audio plays
 const POST_AUDIO_RECORD_DELAY_MS = 120; // brief pause after audio ends before mic opens
 
@@ -27,15 +26,17 @@ const SyllableVoiceChallenge = ({
   mooshikaImage,                  // path to mooshika-coach.png
   replayAudio,                    // () => void — replays the syllable/word audio
   stopAudio,                      // () => void — stops all game audio before mic opens
-  inline = false,                 // true → no backdrop overlay
-  simpleMode = false,             // kept for API compatibility (no longer used internally)
-  autoContinueOnSuccessMs = 0,    // kept for API compatibility
+  inline = false,
+  simpleMode = false,
+  autoContinueOnSuccessMs = 0,
+  playCount = 2,
 }) => {
   // ── State ──────────────────────────────────────────────────────────────────
   const [phase, setPhase] = useState('listening-audio'); // listening-audio | recording | done-recording | playing-back
   const [recordedUrl, setRecordedUrl] = useState(null);
   const [micDenied, setMicDenied] = useState(false);
   const [showDoneSparkles, setShowDoneSparkles] = useState(false);
+  const [donePressed, setDonePressed] = useState(false);
   const [mooshikaBounceKey, setMooshikaBounceKey] = useState(0);
 
   // ── Refs ───────────────────────────────────────────────────────────────────
@@ -95,13 +96,21 @@ const SyllableVoiceChallenge = ({
 
       recorder.start();
       setPhase('recording');
-
-      // Safety auto-stop only (primary stop is manual)
-      recordTimerRef.current = setTimeout(() => {
-        if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-          mediaRecorderRef.current.stop();
-        }
-      }, MAX_RECORDING_FAILSAFE_MS);
+      // Soft beep — universal "your turn" cue
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = 880;
+        gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.15, ctx.currentTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.18);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.2);
+      } catch {}
+      // No auto-stop — kid taps "Tap to stop" when ready
     } catch (err) {
       // Mic denied or unavailable — show fallback (just a Done button, no recording)
       console.warn('[SVC] Mic access denied or unavailable:', err?.name);
@@ -112,35 +121,54 @@ const SyllableVoiceChallenge = ({
     }
   }, [cleanupStream]);
 
-  // ── Initial flow: play syllable audio TWICE → start recording ──────────────
+  // ── Initial flow: play syllable audio based on playCount → start recording ──────────────
   useEffect(() => {
     mountedRef.current = true;
 
-    const ESTIMATED_AUDIO_MS = 1500;
     const GAP_BETWEEN_PLAYS_MS = 400;
 
-    // Play 1
-    audioStartTimerRef.current = setTimeout(() => {
+    const openMic = () => {
       if (!mountedRef.current) return;
-      replayAudio?.();
-      setMooshikaBounceKey(k => k + 1);
+      stopAudio?.();
+      setTimeout(() => {
+        if (mountedRef.current) startRecording();
+      }, POST_AUDIO_RECORD_DELAY_MS);
+    };
 
-      // Play 2 (after first play ends + short gap)
-      audioStartTimerRef.current = setTimeout(() => {
+    const playOnce = (onDone) => {
+      if (replayAudio) {
+        replayAudio((onEnded) => {
+          if (!mountedRef.current) return;
+          onDone?.();
+        });
+      } else {
+        // No audio to play (e.g. lotus phase — audio already played) — go straight to mic
+        onDone?.();
+      }
+    };
+
+    const startPlayback = () => {
+      if (!mountedRef.current) return;
+      playOnce(() => {
         if (!mountedRef.current) return;
-        replayAudio?.();
         setMooshikaBounceKey(k => k + 1);
 
-        // Open mic after second play ends
-        audioStartTimerRef.current = setTimeout(() => {
-          if (!mountedRef.current) return;
-          stopAudio?.();
-          setTimeout(() => {
-            if (mountedRef.current) startRecording();
-          }, POST_AUDIO_RECORD_DELAY_MS);
-        }, ESTIMATED_AUDIO_MS);
-      }, ESTIMATED_AUDIO_MS + GAP_BETWEEN_PLAYS_MS);
-    }, SYLLABLE_AUDIO_DELAY_MS);
+        if (playCount >= 2) {
+          // Play 2 then mic
+          audioStartTimerRef.current = setTimeout(() => {
+            if (!mountedRef.current) return;
+            playOnce(openMic);
+            setMooshikaBounceKey(k => k + 1);
+          }, GAP_BETWEEN_PLAYS_MS);
+        } else {
+          // Play 1 only then mic
+          openMic();
+        }
+      });
+    };
+
+    // Play 1
+    audioStartTimerRef.current = setTimeout(startPlayback, SYLLABLE_AUDIO_DELAY_MS);
 
     return () => {
       mountedRef.current = false;
@@ -153,7 +181,7 @@ const SyllableVoiceChallenge = ({
       if (recordedUrl) URL.revokeObjectURL(recordedUrl);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [playCount, cleanupTimers, cleanupStream, cleanupPlayback, startRecording, stopAudio]);
 
   // ── Playback ───────────────────────────────────────────────────────────────
   const handlePlayback = useCallback(() => {
@@ -188,6 +216,7 @@ const SyllableVoiceChallenge = ({
 
   // ── Done — celebrate and continue ──────────────────────────────────────────
   const handleDone = useCallback(() => {
+    setDonePressed(true);
     setShowDoneSparkles(true);
     setTimeout(() => {
       onComplete?.();
@@ -196,8 +225,11 @@ const SyllableVoiceChallenge = ({
 
   // ── Close (X) ──────────────────────────────────────────────────────────────
   const handleClose = useCallback(() => {
+    cleanupTimers();
+    stopAudio?.();
+    cleanupPlayback();
     onComplete?.();
-  }, [onComplete]);
+  }, [onComplete, cleanupTimers, cleanupPlayback, stopAudio]);
 
   // ── Render helpers ─────────────────────────────────────────────────────────
   const showRecordingIndicator = phase === 'recording';
@@ -234,22 +266,32 @@ const SyllableVoiceChallenge = ({
 
         {/* Recording indicator (red dot pulse) */}
         {showRecordingIndicator && (
-          <div className="svc-recording-indicator">
-            <img src={micIcon} alt="" className="svc-mic-icon" />
-            <span className="svc-rec-label">Now say it!</span>
-          </div>
+          <>
+            <div className="svc-recording-indicator">
+              <img src={micIcon} alt="" className="svc-mic-icon" />
+              <span className="svc-rec-label">Now say it!</span>
+            </div>
+            <div className="svc-listening-waves">
+              {[0, 1, 2, 3, 4, 5, 6].map(i => (
+                <span key={i} className="svc-listening-bar" style={{ animationDelay: `${i * 0.1}s` }} />
+              ))}
+            </div>
+          </>
         )}
 
-        {/* Stop button while recording */}
+        {/* Record button while recording */}
         {showRecordingIndicator && (
-          <div className="svc-actions">
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <button
-              className="svc-btn svc-btn--retry"
+              className="record-btn recording"
               onClick={handleStopRecording}
               type="button"
+              title="Stop recording"
+              aria-label="Stop recording"
             >
-              ⏹ Stop
+              <span className="record-icon"></span>
             </button>
+            <div className="record-label">Tap to stop</div>
           </div>
         )}
 
@@ -257,18 +299,30 @@ const SyllableVoiceChallenge = ({
         {showActions && (
           <div className="svc-actions svc-actions--primary">
             {!micDenied && recordedUrl && (
-              <button
-                className="svc-btn svc-btn--mic"
-                onClick={handlePlayback}
-              >
-                {phase === 'playing-back' ? '⏸ Stop' : '▶ Hear myself'}
-              </button>
+              phase === 'playing-back' ? (
+                <button
+                  className="svc-stop-circle"
+                  onClick={handlePlayback}
+                  type="button"
+                  title="Stop playback"
+                  aria-label="Stop playback"
+                >
+                  <span className="svc-stop-square" />
+                </button>
+              ) : (
+                <button
+                  className="svc-btn svc-btn--mic"
+                  onClick={handlePlayback}
+                >
+                  Hear myself
+                </button>
+              )
             )}
             <button
-              className="svc-btn svc-btn--continue"
+              className={`svc-btn svc-btn--continue${donePressed ? ' svc-btn--pressed' : ''}`}
               onClick={handleDone}
             >
-              ✓ Done
+              Done
             </button>
           </div>
         )}

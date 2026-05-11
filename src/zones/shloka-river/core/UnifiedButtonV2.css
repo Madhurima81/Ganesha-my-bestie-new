@@ -82,6 +82,24 @@
     0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+/* Shloka River — in-scene button palette */
+[data-zone="shloka-river"] .btn-primary {
+  background: linear-gradient(180deg, #63c7bb 0%, #4da89d 100%);
+  box-shadow:
+    0 6px 0 rgba(63, 127, 119, 0.65),
+    0 10px 15px rgba(0, 0, 0, 0.15);
+}
+
+[data-zone="shloka-river"] .btn-secondary {
+  background: #eef8f6;
+  border: 2px solid #a8d8d0;
+  color: #3f7f77;
+  text-shadow: none;
+  box-shadow:
+    0 4px 0 rgba(116, 169, 160, 0.45),
+    0 8px 12px rgba(0, 0, 0, 0.08);
+}
+
 /* 🟡 Gold - Success/Big Win (Continue Adventure, Scene Complete) */
 .btn-success {
   background: linear-gradient(to bottom, #FFB347, #FF8C00);
