@@ -8,14 +8,14 @@ export const GANESHA_ZONES = [
     id: 'eyes',
     acceptTypes: ['eyes'],
     hint: 'Divine Sight',
-    position: { top: '28%', left: '54%', transform: 'translateX(-50%)', width: '280px', height: '90px' }
+    position: { top: '28%', left: '48%', transform: 'translateX(-50%)', width: '280px', height: '90px' }
   },
   {
     id: 'ears',
     acceptTypes: ['ears'],
     hint: 'Deep Listening',
     // One hint glow on the right, but two visual hitboxes (left + right ear).
-    position: { top: '21%', right: '13%', width: '200px', height: '340px' },
+    position: { top: '13%', right: '13%', width: '200px', height: '340px' },
     extraHitboxes: [
       { hitId: 'ears-left', box: { top: '24%', left: '13%', width: '200px', height: '340px' } }
     ]
@@ -62,7 +62,7 @@ export const GANESHA_ZONES = [
 export const ZONE_VISUAL_Z_INDEX = {
   base: 1, ears: 2, belly: 3,
   'left-hand': 4, 'right-hand': 4,
-  trunk: 5, tusk: 6, eyes: 7
+  tusk: 5, trunk: 6, eyes: 7
 };
 
 // Z-index for the clickable hitbox (which zone wins when overlapping)

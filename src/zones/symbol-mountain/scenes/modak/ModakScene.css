@@ -1536,8 +1536,9 @@ div[class*="discovery"] img {
     top: 60%;
     left: 6%;
     --basket-modak-size: 64px;
-    --basket-modak-top: 42% !important;
-    --basket-modak-top-mid: 36% !important;
+    /* Phase 2 fix (iPad landscape): keep collected modaks inside plate bowl */
+    --basket-modak-top: 32% !important;
+    --basket-modak-top-mid: 26% !important;
     --basket-modak-left-1: 18%;
     --basket-modak-left-2: 36%;
     --basket-modak-left-3: 52%;
