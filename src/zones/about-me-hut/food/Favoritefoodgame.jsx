@@ -1473,10 +1473,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     playChime();
     setShowDrawingPad(false);
     setDrawingMode(null);
-    triggerDiscoveryFly({ image: pencilImg, name: 'My Activity' }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
+    triggerDiscoveryFly({ image: data.image, name: 'Drawing' }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
     sceneActions.updateState({
       childActivityDrawing: data.image,
-      childDiscoveries: [...sceneState.childDiscoveries, { image: pencilImg, name: 'My Activity' }],
+      childDiscoveries: [...sceneState.childDiscoveries, { image: data.image, name: 'Drawing' }],
       currentModal: null,
       draftData: null
     });
@@ -2172,8 +2172,12 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         <AboutMeComparisonCard
           title="We're Friends Now!"
           leftColumn={{
-            header: <img src={babyGaneshaSit} alt="Ganesha" className="column-header-image" />,
-            title: 'GANESHA',
+            header: (
+              <div className="profile-header">
+                <img src={babyGaneshaSit} alt="Ganesha" className="column-header-image profile-avatar" />
+                <span className="profile-name">Ganesha</span>
+              </div>
+            ),
             items: [
               { id: 'g-food', label: 'FOOD', imageSrc: modakImg, imageAlt: 'Modak', text: 'Modak' },
               { id: 'g-color', label: 'COLOR', imageSrc: yellowImg, imageAlt: 'Yellow', text: 'Yellow' },
@@ -2183,35 +2187,29 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           }}
           rightColumn={{
             header: (
-              <div
-                style={{
-                  width: '96px',
-                  height: '96px',
-                  borderRadius: '50%',
-                  background: (activeProfile?.icon || activeProfile?.profileIcon || profileAvatarImage) ? 'transparent' : 'linear-gradient(135deg, #4ECDC4, #44A08D)',
-                  border: (activeProfile?.icon || activeProfile?.profileIcon || profileAvatarImage) ? 'none' : '4px solid white',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontFamily: "'Baloo 2', cursive",
-                  fontSize: '40px',
-                  color: 'white',
-                  boxShadow: '0 5px 15px rgba(0,0,0,0.2)',
-                  overflow: 'hidden'
-                }}
-              >
-                {activeProfile?.icon ? (
-                  <img src={activeProfile.icon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : activeProfile?.profileIcon ? (
-                  <img src={activeProfile.profileIcon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : profileAvatarImage ? (
-                  <img src={profileAvatarImage} alt={profileDisplayName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : (
-                  profileAvatar
-                )}
+              <div className="profile-header">
+                <div
+                  className="profile-avatar child-avatar-display"
+                  style={{
+                    background: (activeProfile?.icon || activeProfile?.profileIcon || profileAvatarImage) ? 'transparent' : 'linear-gradient(135deg, #4ECDC4, #44A08D)',
+                    border: (activeProfile?.icon || activeProfile?.profileIcon || profileAvatarImage) ? 'none' : '4px solid white',
+                    boxShadow: '0 5px 15px rgba(0,0,0,0.2)',
+                    overflow: 'hidden'
+                  }}
+                >
+                  {activeProfile?.icon ? (
+                    <img src={activeProfile.icon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : activeProfile?.profileIcon ? (
+                    <img src={activeProfile.profileIcon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : profileAvatarImage ? (
+                    <img src={profileAvatarImage} alt={profileDisplayName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    profileAvatar
+                  )}
+                </div>
+                <span className="profile-name">{profileDisplayName}</span>
               </div>
             ),
-            title: profileDisplayName,
             items: [
               {
                 id: 'c-food',
@@ -2220,7 +2218,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                     <div className="aboutme-comparison-item-label">FOOD</div>
                     <div className="aboutme-comparison-item-media">
                       {sceneState.childFoodText ? (
-                        <div className="food-comparison-typed">{sceneState.childFoodText}</div>
+                        null
                       ) : sceneState.childFoodDrawing ? (
                         <img src={sceneState.childFoodDrawing} alt="Your food" className="aboutme-comparison-item-img" style={{ borderRadius: '4px' }} />
                       ) : (
@@ -2256,7 +2254,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                     <div className="aboutme-comparison-item-label">ACTIVITY</div>
                     <div className="aboutme-comparison-item-media">
                       {sceneState.childActivityText ? (
-                        <div className="food-comparison-typed">{sceneState.childActivityText}</div>
+                        <img src={pencilImg} alt="Activity icon" className="aboutme-comparison-item-img" />
                       ) : sceneState.childActivityDrawing ? (
                         <img src={sceneState.childActivityDrawing} alt="Your activity" className="aboutme-comparison-item-img" style={{ borderRadius: '4px' }} />
                       ) : (
@@ -2271,6 +2269,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
               },
               {
                 id: 'c-friend',
+                className: 'aboutme-best-friend-item',
                 custom: (
                   <>
                     <div className="aboutme-comparison-item-label">BEST FRIEND</div>

@@ -498,7 +498,7 @@
 .child-phase-modal button {
   display: block;
   margin: 8px auto 0;
-  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  background: linear-gradient(180deg, #d99a65 0%, #c9824c 100%);
   color: white;
   border: none;
   padding: 10px 24px !important;
@@ -508,27 +508,30 @@
   border-radius: 50px;
   cursor: pointer;
   box-shadow:
-    0 8px 25px rgba(76, 175, 80, 0.4),
-    0 0 0 0 rgba(76, 175, 80, 0.5);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+    0 4px 0 rgba(0,0,0,0.12),
+    0 8px 18px rgba(0,0,0,0.12);
+  transition:
+    transform 0.08s ease,
+    filter 0.08s ease,
+    box-shadow 0.08s ease;
+  -webkit-tap-highlight-color: transparent;
   white-space: nowrap;
-  animation: transitionContinuePulse 2s ease-in-out infinite;
+  animation: none;
 }
 
 .child-phase-button:hover {
-  transform: translateY(-3px);
-  box-shadow:
-    0 12px 30px rgba(76, 175, 80, 0.5),
-    0 0 0 0 rgba(76, 175, 80, 0.5);
+  filter: brightness(1.02);
 }
 
 .child-phase-button:active {
-  transform: translateY(-1px);
+  transform: translateY(2px) scale(0.985);
+  filter: brightness(0.96);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.10);
 }
 
 /* Match text input Save button to this scene's transition Continue button */
 .favorite-food-game .text-save-btn {
-  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%) !important;
+  background: linear-gradient(180deg, #d99a65 0%, #c9824c 100%) !important;
   color: white !important;
   border: none !important;
   font-family: 'Baloo', cursive !important;
@@ -537,21 +540,23 @@
   border-radius: 50px !important;
   padding: 10px 24px !important;
   box-shadow:
-    0 8px 25px rgba(76, 175, 80, 0.4),
-    0 0 0 0 rgba(76, 175, 80, 0.5) !important;
-  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
-  animation: transitionContinuePulse 2s ease-in-out infinite;
+    0 4px 0 rgba(0,0,0,0.12),
+    0 8px 18px rgba(0,0,0,0.12) !important;
+  transition:
+    transform 0.08s ease,
+    filter 0.08s ease,
+    box-shadow 0.08s ease !important;
+  animation: none;
 }
 
 .favorite-food-game .text-save-btn:hover:not(.disabled) {
-  transform: translateY(-3px);
-  box-shadow:
-    0 12px 30px rgba(76, 175, 80, 0.5),
-    0 0 0 0 rgba(76, 175, 80, 0.5) !important;
+  filter: brightness(1.02);
 }
 
 .favorite-food-game .text-save-btn:active:not(.disabled) {
-  transform: translateY(-1px);
+  transform: translateY(2px) scale(0.985);
+  filter: brightness(0.96);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.10) !important;
 }
 
 .favorite-food-game .text-save-btn.disabled {
@@ -562,12 +567,14 @@
 @keyframes transitionContinuePulse {
   0%,
   100% {
-    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+    box-shadow:
+      0 4px 0 rgba(0,0,0,0.12),
+      0 8px 18px rgba(0,0,0,0.12);
     transform: scale(1);
   }
   50% {
-    box-shadow: 0 8px 35px rgba(76, 175, 80, 0.6);
-    transform: scale(1.05);
+    box-shadow: 0 5px 14px rgba(65, 190, 80, 0.28);
+    transform: scale(1.02);
   }
 }
 
@@ -1235,33 +1242,102 @@
 .favorite-food-game .aboutme-comparison-items-grid {
   grid-template-columns: 1fr 1fr;
 }
+.favorite-food-game .aboutme-comparison-grid {
+  transform: translateY(44px);
+  gap: 14px;
+}
 .favorite-food-game .aboutme-comparison-title {
-  margin-bottom: 120px;
+  margin-top: 8px;
+  margin-bottom: 20px;
+  font-size: clamp(2rem, 4vw, 2.8rem);
 }
 .favorite-food-game .aboutme-comparison-column {
-  min-height: 680px;
+  min-height: auto;
+  max-width: 520px;
+  padding: 24px;
+  gap: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background: #f7f3ea;
+}
+.favorite-food-game .aboutme-comparison-column-header {
+  min-height: 64px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.favorite-food-game .profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.favorite-food-game .profile-header img,
+.favorite-food-game .profile-avatar {
+  width: 60px;
+  height: 60px;
+}
+.favorite-food-game .profile-name {
+  font-size: 21px;
+  font-weight: 600;
+  margin: 0;
+}
+.favorite-food-game .aboutme-comparison-column-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
 }
 .favorite-food-game .aboutme-comparison-item {
-  min-height: 220px;
-  padding: 18px 12px 18px;
+  min-height: 154px;
+  padding: 16px 14px;
+  border-radius: 14px;
+}
+.favorite-food-game .aboutme-comparison-item-text {
+  font-size: 1.12rem;
+  line-height: 1.28;
+}
+.favorite-food-game .aboutme-comparison-item-label {
+  font-size: 12px;
+  opacity: 0.6;
+  letter-spacing: 0.7px;
+}
+.favorite-food-game .aboutme-comparison-items-grid {
+  margin-top: 8px;
+}
+.favorite-food-game .aboutme-comparison-item-media,
+.favorite-food-game .aboutme-comparison-item-img {
+  width: 32px;
+  height: 32px;
+}
+
+/* Child BEST FRIEND icon is visually smaller in source asset, so normalize it */
+.favorite-food-game .aboutme-comparison-item.aboutme-best-friend-item .aboutme-comparison-item-media,
+.favorite-food-game .aboutme-comparison-item.aboutme-best-friend-item .aboutme-comparison-item-img {
+  width: 42px;
+  height: 42px;
 }
 .favorite-food-game .aboutme-comparison-continue-btn {
-  margin-top: 12px;
+  margin-top: 42px;
   margin-bottom: 12px;
   border-radius: 22px;
   padding: 12px 32px;
   font-family: 'Baloo', cursive;
   font-size: 18px;
   box-shadow:
-    0 8px 25px rgba(76, 175, 80, 0.4),
-    0 0 0 0 rgba(76, 175, 80, 0.5);
+    0 4px 0 rgba(0,0,0,0.12),
+    0 8px 18px rgba(0,0,0,0.12);
   animation: none;
 }
 
 .favorite-food-game .aboutme-comparison-continue-btn:hover {
   box-shadow:
-    0 12px 30px rgba(76, 175, 80, 0.5),
-    0 0 0 0 rgba(76, 175, 80, 0.5);
+    0 4px 0 rgba(0,0,0,0.12),
+    0 8px 18px rgba(0,0,0,0.12);
 }
 .favorite-food-game .aboutme-comparison-item:first-child {
   grid-column: auto;
@@ -1314,13 +1390,14 @@
   animation: finalCardIn 0.35s ease-out 0.55s forwards;
 }
 .column-header-image {
-  width: 92px;
-  height: 92px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
 }
 .child-avatar-display {
-  width: 92px;
-  height: 92px;
+  width: 48px;
+  height: 48px;
+  padding: 0;
   border-radius: 50%;
   background: linear-gradient(145deg, #64c5c0, #49a8a2);
   color: #fff;
@@ -1398,8 +1475,8 @@
   color: #fff;
   cursor: pointer;
   box-shadow:
-    0 8px 25px rgba(76, 175, 80, 0.4),
-    0 0 0 0 rgba(76, 175, 80, 0.5);
+    0 8px 25px rgba(0,0,0,0.12),
+    0 0 0 0 rgba(0,0,0,0.14);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   animation: finalButtonIn 0.3s ease-out 1.2s forwards, comparisonContinuePulse 2s ease-in-out 1.5s infinite;
   flex-shrink: 0;
@@ -1410,8 +1487,8 @@
 .primary-cta:hover {
   transform: translateY(-3px);
   box-shadow:
-    0 12px 30px rgba(76, 175, 80, 0.5),
-    0 0 0 0 rgba(76, 175, 80, 0.5);
+    0 12px 30px rgba(0,0,0,0.14),
+    0 0 0 0 rgba(0,0,0,0.14);
 }
 
 .primary-cta:active {
@@ -1462,8 +1539,8 @@
   to { opacity: 1; transform: translateY(0); }
 }
 @keyframes comparisonContinuePulse {
-  0%, 100% { box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4); }
-  50% { box-shadow: 0 8px 35px rgba(76, 175, 80, 0.6); }
+  0%, 100% { box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
+  50% { box-shadow: 0 8px 35px rgba(0,0,0,0.16); }
 }
 @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 .bounce { animation: bounce 2s ease-in-out infinite; }
@@ -1951,3 +2028,4 @@
   padding: 10px 28px !important;
   min-width: unset !important;
 }
+
