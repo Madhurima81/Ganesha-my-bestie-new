@@ -40,7 +40,7 @@ const AutoPlayModeV2 = ({
   const [roundClicks, setRoundClicks] = useState({});
 
   // Animation state
-  const [waterSprayPosition, setWaterSprayPosition] = useState(null);
+  const [waterSprays, setWaterSprays] = useState([]);
   const [waitBannerMessage, setWaitBannerMessage] = useState('');
   const [showWaitBanner, setShowWaitBanner] = useState(false);
   const [showPauseModal, setShowPauseModal] = useState(false);
@@ -159,7 +159,7 @@ const AutoPlayModeV2 = ({
       setCanPlayerClick(false);
 
       // Clear water spray animation if active
-      setWaterSprayPosition(null);
+      setWaterSprays([]);
 
       // Store which syllable was singing (if any) before pause
       if (singingSyllable) {
@@ -471,19 +471,54 @@ const AutoPlayModeV2 = ({
     safeSetTimeout(() => {
       if (isPausedRef.current) return;
       setShowLotusSparkles(false);
-      // Voice challenge: say the assembled word before advancing to next round
       const fullWord = currentSequence.join('');
+      const completeWordAudio = lotusAudioSourceRef.current;
+
       setVoiceChallenge({
         syllable: fullWord,
         displayLabel: fullWord.toUpperCase(),
-        replayAudio: undefined,
+        replayAudio: completeWordAudio ? (onEndedCallback) => {
+          const a = new Audio(completeWordAudio);
+          currentAudioRef.current = a;
+          const finish = () => {
+            currentAudioRef.current = null;
+            onEndedCallback?.();
+          };
+          a.onended = finish;
+          a.onerror = finish;
+          a.play().catch(finish);
+        } : undefined,
         stopAudio: () => {
           if (voiceGuidanceRef.current?.stopVoice) voiceGuidanceRef.current.stopVoice();
           if (currentAudioRef.current) { currentAudioRef.current.pause(); currentAudioRef.current = null; }
         },
         onComplete: () => {
           setVoiceChallenge(null);
-          handleRoundSuccess();
+
+          // Spray from both elephants → lotus
+          const tgtPos = gameConfig.elements.centralSynthesis?.positions?.[currentRound - 1];
+          const positions = gameConfig.elements.clicker?.positionsByRound?.[currentRound]
+                         || gameConfig.elements.clicker?.positions;
+          if (positions && tgtPos) {
+            [positions[0], positions[1]].forEach((src, i) => {
+              if (!src) return;
+              const sprayId = Date.now() + Math.random() + i;
+              setWaterSprays(prev => [...prev, { id: sprayId, source: src, target: tgtPos }]);
+              safeSetTimeout(() => {
+                setWaterSprays(prev => prev.filter(s => s.id !== sprayId));
+              }, 1300);
+            });
+          }
+
+          // Delay bloom until water arrives at lotus
+          safeSetTimeout(() => {
+            setPlayerInput([...currentSequence, 'lotus']);
+            setShowLotusSparkles(true);
+            setCentralBloomProgress(100);
+          }, 900);
+
+          // Round success after bloom transition completes
+          safeSetTimeout(() => handleRoundSuccess(), 1700);
         },
       });
     }, naturalDelay(400, 700));
@@ -573,8 +608,11 @@ const AutoPlayModeV2 = ({
                       || gameConfig.elements.clicker.positions[syllableIndex];
           const tgtPos = gameConfig.elements.centralSynthesis?.positions?.[currentRound - 1];
           if (srcPos) {
-            setWaterSprayPosition({ source: srcPos, target: tgtPos || null });
-            safeSetTimeout(() => setWaterSprayPosition(null), 1300);
+            const sprayId = Date.now() + Math.random();
+            setWaterSprays(prev => [...prev, { id: sprayId, source: srcPos, target: tgtPos || null }]);
+            safeSetTimeout(() => {
+              setWaterSprays(prev => prev.filter(s => s.id !== sprayId));
+            }, 1300);
           }
         }
       };
@@ -596,15 +634,19 @@ const AutoPlayModeV2 = ({
           : [...playerInput, clickedSyllable];
 
         const applyTapSuccess = () => {
-          setPlayerInput(newPlayerInput);
+          // State that should fire immediately (sprays, micro-win, elephant activation)
           setRoundClicks(prev => ({ ...prev, [`elephant-${clickedSyllable}`]: true }));
           setActivatedElephants(prev => ({ ...prev, [`elephant-${clickedSyllable}`]: true }));
           setVisualRewards(prev => ({ ...prev, [`visual-${clickedSyllable}`]: true }));
           onMicroWin?.();
           triggerSprayForTap();
-          if (gameConfig.id !== 'mahakaya') {
-            setCentralBloomProgress(newPlayerInput.length * progressPerClick);
-          }
+          // Delay bloom-driving state until water visually arrives at lotus
+          safeSetTimeout(() => {
+            setPlayerInput(newPlayerInput);
+            if (gameConfig.id !== 'mahakaya') {
+              setCentralBloomProgress(newPlayerInput.length * progressPerClick);
+            }
+          }, 900); // water travel time
         };
 
         const proceedToNext = () => {
@@ -625,7 +667,7 @@ const AutoPlayModeV2 = ({
                 lastInterruptibleVORef.current = centralVO;
                 voiceGuidanceRef.current.playVoice(centralVO);
               }
-            }, naturalDelay(400, 700));
+            }, 1400); // after water (900) + bloom transition (500)
           } else {
             pendingLotusTransitionRef.current = false;
             flowInProgressRef.current = false;
@@ -758,35 +800,13 @@ const AutoPlayModeV2 = ({
       setShowIdleHint(false);
       setCanPlayerClick(false);
       wasChildActionPendingRef.current = false;
-      setPlayerInput([...currentSequence, 'lotus']);
-      setShowLotusSparkles(true);
-      setCentralBloomProgress(100);
       setCentralElementGlowing(false);
+      // No spray, no bloom yet — both happen after popup closes
 
       const completeWordAudio = gameConfig.audio.completeWordByRound?.[currentRound] || gameConfig.audio.completeWordFile;
-
-      if (completeWordAudio) {
-        lotusAudioPlayingRef.current = true;
-        lotusAudioSourceRef.current = completeWordAudio;
-
-        const audio = new Audio(completeWordAudio);
-        currentAudioRef.current = audio; // Track so pause can stop it
-
-        const finishLotusAudio = () => {
-          currentAudioRef.current = null;
-          lotusAudioPlayingRef.current = false;
-          lotusAudioSourceRef.current = null;
-          continueAfterLotusAudio();
-        };
-
-        audio.onended = finishLotusAudio;
-        audio.onerror = finishLotusAudio;
-        audio.play().catch(finishLotusAudio);
-      } else {
-        lotusAudioPlayingRef.current = false;
-        lotusAudioSourceRef.current = null;
-        safeSetTimeout(continueAfterLotusAudio, 500);
-      }
+      lotusAudioSourceRef.current = completeWordAudio || null;
+      lotusAudioPlayingRef.current = false;
+      safeSetTimeout(continueAfterLotusAudio, 300);
     });
   };
 
@@ -1111,36 +1131,54 @@ const AutoPlayModeV2 = ({
       if (showIdleHint) className += ' hint-glow';
     }
     return (
-      <div className={className} onClick={centralElementGlowing ? handleCentralElementClick : undefined} style={{ position: 'absolute', left: position.left, top: position.top, transform: isMahakaya ? 'translate(-50%, -100%)' : 'translate(-50%, -50%)', zIndex: 20, cursor: centralElementGlowing ? 'pointer' : 'default', transition: isMahakaya ? 'filter 0.3s ease, opacity 0.3s ease' : 'all 0.5s ease', pointerEvents: centralElementGlowing ? 'auto' : 'none', ...(position.size && { width: position.size, height: position.size, minWidth: position.size, minHeight: position.size }) }}>
+      <div className={className} onClick={centralElementGlowing ? handleCentralElementClick : undefined} style={{ position: 'absolute', left: position.left, top: position.top, transform: 'translate(-50%, -50%)', zIndex: 20, cursor: centralElementGlowing ? 'pointer' : 'default', transition: 'all 0.5s ease', pointerEvents: centralElementGlowing ? 'auto' : 'none', ...(position.size && { width: position.size, height: position.size, minWidth: position.size, minHeight: position.size }) }}>
         {isMahakayaStartRoundCustom ? (
           <div style={{ position: 'absolute', width: '100%', height: '100%' }}>
             <img
+              key={
+                playerInput.includes('lotus')
+                  ? 'banyan-full'
+                  : playerInput.length >= 2
+                    ? 'banyan-half'
+                    : playerInput.length >= 1
+                      ? 'banyan-sprout'
+                      : 'banyan-sapling'
+              }
               src={
                 playerInput.includes('lotus')
                   ? banyanFullImage
                   : playerInput.length >= 2
                     ? banyanHalfImage
                     : playerInput.length >= 1
-                      ? banyanSaplingImage
-                      : banyanSproutImage
+                      ? banyanSproutImage
+                      : banyanSaplingImage
               }
-              style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center bottom' }}
+              style={{ width: '100%', height: '100%', objectFit: 'contain', animation: 'lotusBloomFade 700ms ease-out' }}
               alt="banyan stage"
             />
           </div>
         ) : isMahakaya ? (
           <>
-            <div style={{ position: 'absolute', width: '100%', height: '100%', opacity: isFullyBloomed ? 0 : 1 }}>
-              <img src={budImage} style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center bottom' }} alt="tree" />
+            <div style={{ position: 'absolute', width: '100%', height: '100%', opacity: isFullyBloomed ? 0 : (1 - centralBloomProgress / 100), transition: 'opacity 0.5s ease' }}>
+              <img src={budImage} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="tree" />
             </div>
-            <div style={{ position: 'absolute', width: '100%', height: '100%', opacity: isFullyBloomed ? 1 : 0, animation: isFullyBloomed ? 'mahakayaPopIn 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards' : 'none', transformOrigin: 'center bottom' }}>
-              <img src={bloomImage} style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center bottom' }} alt="grown tree" />
+            <div style={{ position: 'absolute', width: '100%', height: '100%', opacity: centralBloomProgress / 100, transition: 'opacity 0.5s ease' }}>
+              <img src={bloomImage} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="grown tree" />
             </div>
           </>
         ) : isVakratundaStartRoundCustom ? (
           <>
             <div style={{ position: 'absolute', width: '100%', height: '100%' }}>
               <img
+                key={
+                  playerInput.includes('lotus')
+                    ? 'lotus-full'
+                    : playerInput.length >= 2
+                      ? 'lotus-half'
+                      : playerInput.length >= 1
+                        ? 'lotus-bit'
+                        : 'lotus-bud'
+                }
                 src={
                   playerInput.includes('lotus')
                     ? (assetGetters.getLotusFullBloomImage ? assetGetters.getLotusFullBloomImage(0) : bloomImage)
@@ -1150,7 +1188,7 @@ const AutoPlayModeV2 = ({
                         ? (assetGetters.getLotusbitBloomImage ? assetGetters.getLotusbitBloomImage(0) : bloomImage)
                         : budImage
                 }
-                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                style={{ width: '100%', height: '100%', objectFit: 'contain', animation: 'lotusBloomFade 700ms ease-out' }}
                 alt="lotus stage"
               />
             </div>
@@ -1234,9 +1272,9 @@ const AutoPlayModeV2 = ({
       )}
 
       {!hideElements && showWaitBanner && <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'rgba(255, 152, 0, 0.95)', color: 'white', padding: '20px 40px', borderRadius: '20px', fontSize: '18px', fontWeight: 'bold', zIndex: 100, animation: 'fadeInOut 1.5s' }}>{waitBannerMessage}</div>}
-      {!hideElements && waterSprayPosition?.source && (() => {
-        const src = waterSprayPosition.source;
-        const tgt = waterSprayPosition.target;
+      {!hideElements && waterSprays.map((spray) => {
+        const src = spray.source;
+        const tgt = spray.target;
         const sx = parseFloat(src.left);
         const sy = parseFloat(src.top);
         const tx = tgt ? parseFloat(tgt.left) : sx;
@@ -1244,9 +1282,9 @@ const AutoPlayModeV2 = ({
         const dx = tx - sx;   // delta in vw (container = 100vw)
         const dy = ty - sy;   // delta in vh (container = 100vh)
         const arcLift = -22;  // vh lift at arc peak
-        const name = `wArc_${Math.round(sx)}_${Math.round(sy)}`;
+        const name = `wArc_${Math.round(sx)}_${Math.round(sy)}_${Math.round(spray.id)}`;
         return (
-          <div key={name} style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 100 }}>
+          <div key={spray.id} style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 100 }}>
             <style>{`
               @keyframes ${name} {
                 0%   { transform: translate(0vw,              0vh)                  scale(1);    opacity: 1;   }
@@ -1265,7 +1303,7 @@ const AutoPlayModeV2 = ({
             })}
           </div>
         );
-      })()}
+      })}
       
       {!hideElements && (
         <>

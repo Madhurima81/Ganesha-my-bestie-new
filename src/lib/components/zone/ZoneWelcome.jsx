@@ -1180,22 +1180,12 @@ Continue
     // ⭐ Use permanent-only count — never affected by replay/temp sessions
     // Same pattern as symbol count (CulturalProgressExtractor). Keeps dots stable.
     const completedCount = getPermanentCompletedCount();
-    const symbolCount = zoneStats.symbols || zoneStats.chants || zoneStats.stories || zoneStats.meanings || 0;
-    const displayCount = zoneData?.id === 'symbol-mountain'
-      ? Math.min(completedCount, totalScenes)
-      : symbolCount;
+    const displayCount = Math.min(completedCount, totalScenes);
+    const progressDotsCount = completedCount;
     const allScenesCompleted = completedCount >= totalScenes && totalScenes > 0;
 
-    const statIcon =
-      zoneData?.id === 'symbol-mountain' ? '/images/icons/symbols-icon.png' :
-      zoneData?.id === 'shloka-river'    ? '/images/icons/chant-icon.png' :
-      zoneData?.id === 'cave-of-secrets' ? '/images/icons/meanings-icon.png' : null;
-
-    const statLabel =
-      zoneData?.id === 'symbol-mountain' ? 'Symbols' :
-      zoneData?.id === 'shloka-river'    ? 'Chants'  :
-      zoneData?.id === 'story-treehouse' ? 'Stories' :
-      zoneData?.id === 'cave-of-secrets' ? 'Meanings' : 'Points';
+    const statIcon = '/images/icons/symbols-icon.png';
+    const statLabel = 'Scenes';
 
     return (
       <div className="journey-panel zone-progress">
@@ -1211,7 +1201,7 @@ Continue
         )}
         <div className="journey-steps">
           {Array.from({ length: totalScenes }, (_, i) => (
-            <span key={i} className={`step progress-dot ${i < completedCount ? 'done' : ''}`} />
+            <span key={i} className={`step progress-dot ${i < progressDotsCount ? 'done' : ''}`} />
           ))}
         </div>
       </div>

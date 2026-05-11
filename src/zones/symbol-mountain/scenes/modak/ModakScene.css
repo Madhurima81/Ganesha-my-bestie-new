@@ -239,6 +239,15 @@
 .modak-game-mud-mound:hover { transform: scale(1.05); }
 .modak-game-mud-mound:active { transform: scale(0.95); }
 
+/* Keep center/front mound anchored when it uses translateX(-50%) in responsive layouts */
+.modak-game-mound-4.modak-game-mud-mound:hover {
+  transform: translateX(-50%) scale(1.05) !important;
+}
+
+.modak-game-mound-4.modak-game-mud-mound:active {
+  transform: translateX(-50%) scale(0.95) !important;
+}
+
 .modak-game-mound-1 { top: 45%; left: 25%; }
 .modak-game-mound-2 { top: 55%; left: 75%; }
 .modak-game-mound-3 { top: 60%; left: 30%; }
@@ -1489,11 +1498,11 @@ div[class*="discovery"] img {
       but Vinayaka rock and basket modaks need landscape-tuned positions. */
 @media (min-width: 1024px) and (max-width: 1366px) and (orientation: landscape) and (max-height: 900px) {
   .modak-game-basket-container {
-    width: 320px;
-    height: 220px;
+    width: 340px;
+    height: 235px;
     top: 56%;
     left: 6%;
-    --basket-modak-size: 88px;
+    --basket-modak-size: 94px;
     --basket-modak-top: 44% !important;
     --basket-modak-top-mid: 38% !important;
     --basket-modak-left-1: 16%;
@@ -1531,17 +1540,22 @@ div[class*="discovery"] img {
   .modak-game-mound-5 { top: 65%; left: 70%; }
 
   .modak-game-basket-container {
-    width: 270px;
-    height: 180px;
+    width: 300px;
+    height: 205px;
     top: 60%;
     left: 6%;
-    --basket-modak-size: 64px;
+    --basket-modak-size: 70px;
     /* Phase 2 fix (iPad landscape): keep collected modaks inside plate bowl */
-    --basket-modak-top: 32% !important;
+    --basket-modak-top: calc(32% - 2px) !important;
     --basket-modak-top-mid: 26% !important;
-    --basket-modak-left-1: 18%;
+    --basket-modak-left-1: 22%;
     --basket-modak-left-2: 36%;
-    --basket-modak-left-3: 52%;
+    --basket-modak-left-3: calc(48% - 2px);
+  }
+
+  /* Force right-front collected modak slightly inward for iPad Air landscape */
+  .modak-game-basket-container .modak-game-modak-collected-3 {
+    left: calc(var(--basket-modak-left-3) - 2px) !important;
   }
 
   .modak-game-modak {

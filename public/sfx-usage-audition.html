@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SFX Usage Audition</title>
+  <style>
+    :root {
+      --bg: #f8f6ff;
+      --card: #ffffff;
+      --ink: #2c2440;
+      --muted: #6c6288;
+      --line: #ded8f4;
+      --accent: #6f57c8;
+      --ok: #2f9e6f;
+      --bad: #c73d5b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    .wrap { max-width: 1200px; margin: 0 auto; }
+    h1 { margin: 0 0 8px; font-size: 28px; }
+    p { margin: 0 0 14px; color: var(--muted); }
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin: 12px 0 18px;
+      flex-wrap: wrap;
+    }
+    input[type="search"] {
+      width: 320px;
+      max-width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      font-size: 14px;
+      background: #fff;
+    }
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--accent);
+      color: #fff;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+    }
+    th {
+      background: #f1edff;
+      color: #3f3372;
+      font-size: 13px;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+    }
+    tr:last-child td { border-bottom: 0; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; }
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .ok { background: #e7f8f0; color: var(--ok); }
+    .bad { background: #fdeaf0; color: var(--bad); }
+    .used-in { line-height: 1.5; color: #41385f; }
+    .small { font-size: 12px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>SFX Usage Audition</h1>
+    <p>Preview actual SFX files and see where each sound is used in the game flow.</p>
+    <p class="small">
+      Covers both systems:
+      <span class="mono">/audio/fx/*</span> (SoundManager / AudioService) and
+      <span class="mono">/audio/sfx/*</span> (useVoiceGuidance shared SFX).
+    </p>
+
+    <div class="toolbar">
+      <input id="search" type="search" placeholder="Filter by name / usage / file path..." />
+      <button id="stopAll" type="button">Stop All</button>
+    </div>
+
+    <table id="sfxTable">
+      <thead>
+        <tr>
+          <th style="width:130px;">Preview</th>
+          <th style="width:170px;">SFX Name</th>
+          <th>File Path</th>
+          <th style="width:120px;">Status</th>
+          <th>Used In</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div style="height:20px"></div>
+    <h1 style="font-size:24px;">Scene Voice Cue Audition</h1>
+    <p>Scene-specific spoken/audio cues used during gameplay (example set: Modak mission).</p>
+    <table id="voiceTable">
+      <thead>
+        <tr>
+          <th style="width:130px;">Preview</th>
+          <th style="width:200px;">Cue Name</th>
+          <th>File Path</th>
+          <th style="width:120px;">Status</th>
+          <th>Used In</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    const SFX = [
+      {
+        name: "UI Tap (FX)",
+        path: "/audio/fx/fx_ui_tap.mp3",
+        usedIn: [
+          "Object/button tap feedback in scenes using SoundManager",
+          "Example: Modak scene tap handlers use playUiTap() before interaction logic",
+          "Code refs: src/lib/audio/SoundManager.js, src/zones/symbol-mountain/scenes/modak/NewModakSceneV7.jsx"
+        ]
+      },
+      {
+        name: "Wrong Tap (FX)",
+        path: "/audio/fx/fx_wrong_tap.mp3",
+        usedIn: [
+          "Wrong interaction feedback (gentle error cue)",
+          "Example: wrong mound tap in Modak scene",
+          "Code refs: src/lib/audio/SoundManager.js, src/zones/symbol-mountain/scenes/modak/NewModakSceneV7.jsx"
+        ]
+      },
+      {
+        name: "Magic Sparkle (FX)",
+        path: "/audio/fx/fx_magic_sparkle.mp3",
+        usedIn: [
+          "Correct micro-win moments (found item / collectible feedback)",
+          "Example: Mooshika found sparkle cue",
+          "Code refs: src/lib/audio/SoundManager.js, NewModakSceneV7.jsx"
+        ]
+      },
+      {
+        name: "Magic Bloom (FX)",
+        path: "/audio/fx/fx_magic_bloom.mp3",
+        usedIn: [
+          "Growth / transition / unlock style moments",
+          "Mapped in SoundManager + AudioService for scene-level progression",
+          "Code refs: src/lib/audio/SoundManager.js, src/lib/services/AudioService.js"
+        ]
+      },
+      {
+        name: "Divine Glow (FX)",
+        path: "/audio/fx/fx_divine_glow.mp3",
+        usedIn: [
+          "Completion/holy glow moments",
+          "Mapped in SoundManager + AudioService",
+          "Code refs: src/lib/audio/SoundManager.js, src/lib/services/AudioService.js"
+        ]
+      },
+      {
+        name: "Celebration Twinkle (FX)",
+        path: "/audio/fx/fx_celebration_twinkle.mp3",
+        usedIn: [
+          "Final celebration moments",
+          "Mapped in SoundManager + AudioService",
+          "Code refs: src/lib/audio/SoundManager.js, src/lib/services/AudioService.js"
+        ]
+      },
+      {
+        name: "Card Reveal Chime (FX)",
+        path: "/audio/fx/fx_card_reveal_chime.mp3",
+        usedIn: [
+          "Symbol discovery reveal moments (card flip / auto reveal)",
+          "Example: playChime() before SymbolAutoReveal in Modak flow",
+          "Code refs: src/lib/audio/SoundManager.js, NewModakSceneV7.jsx, src/lib/components/reveal/SymbolAutoReveal.jsx"
+        ]
+      },
+
+      {
+        name: "Tap (Shared SFX)",
+        path: "/audio/sfx/sfx-tap.mp3",
+        usedIn: [
+          "useVoiceGuidance playTap() shared utility",
+          "Generic tap feedback in scenes using the voice guidance hook",
+          "Code refs: src/lib/hooks/useVoiceGuidance.js, src/lib/config/content/voiceGuidance.js"
+        ]
+      },
+      {
+        name: "Error / Oops (Shared SFX)",
+        path: "/audio/sfx/sfx-oops.wav",
+        usedIn: [
+          "useVoiceGuidance playWrong() shared utility",
+          "Wrong input / try-again moments in guided scenes",
+          "Code refs: src/lib/hooks/useVoiceGuidance.js, src/lib/config/content/voiceGuidance.js"
+        ]
+      },
+      {
+        name: "Success (Shared SFX)",
+        path: "/audio/sfx/sfx-success.wav",
+        usedIn: [
+          "useVoiceGuidance playCorrect() shared utility",
+          "Correct answer + optional delayed encouragement voice",
+          "Code refs: src/lib/hooks/useVoiceGuidance.js, src/lib/config/content/voiceGuidance.js"
+        ]
+      },
+      {
+        name: "Power Unlock (Shared SFX)",
+        path: "/audio/sfx/sfx-power-unlock.wav",
+        usedIn: [
+          "useVoiceGuidance playPowerUnlock() sequence",
+          "Unlock moments before affirmation voice",
+          "Code refs: src/lib/hooks/useVoiceGuidance.js"
+        ]
+      },
+      {
+        name: "Celebration (Shared SFX)",
+        path: "/audio/sfx/sfx-celebration.wav",
+        usedIn: [
+          "useVoiceGuidance playCelebration() sequence",
+          "Scene clear / completion moments",
+          "Code refs: src/lib/hooks/useVoiceGuidance.js"
+        ]
+      },
+      {
+        name: "Whoosh (Shared SFX)",
+        path: "/audio/sfx/sfx-whoosh.wav",
+        usedIn: [
+          "Available in shared SFX map for transitions/fly-in moments",
+          "Code refs: src/lib/config/content/voiceGuidance.js"
+        ]
+      },
+      {
+        name: "Pop (Shared SFX)",
+        path: "/audio/sfx/sfx-pop.wav",
+        usedIn: [
+          "Available in shared SFX map for pop/reveal moments",
+          "Code refs: src/lib/config/content/voiceGuidance.js"
+        ]
+      },
+      {
+        name: "Chime (Shared SFX)",
+        path: "/audio/sfx/sfx-chime.wav",
+        usedIn: [
+          "Available in shared SFX map for reveal moments",
+          "Code refs: src/lib/config/content/voiceGuidance.js"
+        ]
+      },
+      {
+        name: "Modak Wrong Tap (Legacy VO SFX)",
+        path: "/audio/voice/modak/modak-wrong-tap.mp3",
+        usedIn: [
+          "Legacy modak voice/sfx pack (scene-specific older path)",
+          "Useful for compare-vs-new wrong tap tone"
+        ]
+      }
+    ];
+
+    const tbody = document.querySelector("#sfxTable tbody");
+    const voiceTbody = document.querySelector("#voiceTable tbody");
+    const search = document.getElementById("search");
+    const stopAllBtn = document.getElementById("stopAll");
+    const activeAudios = new Set();
+
+    function stopAll() {
+      activeAudios.forEach(a => {
+        try { a.pause(); a.currentTime = 0; } catch (_) {}
+      });
+      activeAudios.clear();
+    }
+
+    function createRow(item) {
+      const tr = document.createElement("tr");
+      tr.dataset.search = `${item.name} ${item.path} ${item.usedIn.join(" ")}`.toLowerCase();
+
+      const playTd = document.createElement("td");
+      const btn = document.createElement("button");
+      btn.textContent = "Play";
+      btn.type = "button";
+      btn.addEventListener("click", () => {
+        stopAll();
+        const audio = new Audio(item.path);
+        audio.volume = 0.85;
+        activeAudios.add(audio);
+        audio.play().catch(() => {});
+        audio.addEventListener("ended", () => activeAudios.delete(audio), { once: true });
+      });
+      playTd.appendChild(btn);
+
+      const nameTd = document.createElement("td");
+      nameTd.textContent = item.name;
+
+      const pathTd = document.createElement("td");
+      pathTd.innerHTML = `<span class="mono">${item.path}</span>`;
+
+      const statusTd = document.createElement("td");
+      statusTd.innerHTML = `<span class="pill">Checking…</span>`;
+
+      const usedTd = document.createElement("td");
+      usedTd.className = "used-in";
+      usedTd.innerHTML = item.usedIn.map(x => `• ${x}`).join("<br>");
+
+      tr.append(playTd, nameTd, pathTd, statusTd, usedTd);
+      tbody.appendChild(tr);
+
+      fetch(item.path, { method: "HEAD" })
+        .then(r => {
+          if (r.ok) {
+            statusTd.innerHTML = `<span class="pill ok">Found</span>`;
+          } else {
+            statusTd.innerHTML = `<span class="pill bad">Missing</span>`;
+          }
+        })
+        .catch(() => {
+          statusTd.innerHTML = `<span class="pill bad">Missing</span>`;
+        });
+    }
+
+    const VOICE_CUES = [
+      { name: "Modak Welcome", path: "/audio/voice/modak/modak-welcome.mp3", usedIn: ["Modak scene opening/welcome guidance"] },
+      { name: "Modak Look Around", path: "/audio/voice/modak/modak-look-around.mp3", usedIn: ["Early exploration prompt in Modak scene"] },
+      { name: "Modak Hint: Mound", path: "/audio/voice/modak/modak-hint-mound.mp3", usedIn: ["Idle hint to tap mounds while finding Mooshika"] },
+      { name: "Modak Hint: Mooshika", path: "/audio/voice/modak/modak-hint-mooshika.mp3", usedIn: ["Hint focused on Mooshika discovery step"] },
+      { name: "Modak Wrong Tap", path: "/audio/voice/modak/modak-wrong-tap.mp3", usedIn: ["Wrong tap feedback in legacy Modak voice pack"] },
+      { name: "Modak Try Again", path: "/audio/voice/modak/modak-try-again.mp3", usedIn: ["Gentle retry guidance"] },
+      { name: "Modak Found Mooshika", path: "/audio/voice/modak/modak-mooshika-found.mp3", usedIn: ["Success cue when correct mound is tapped"] },
+      { name: "Modak Collect Start", path: "/audio/voice/modak/modak-collect-start.mp3", usedIn: ["Transition into collect-modaks phase"] },
+      { name: "Modak Tap Modak", path: "/audio/voice/modak/modak-tap-modak.mp3", usedIn: ["Instruction to tap/collect modaks"] },
+      { name: "Modak Collect Complete", path: "/audio/voice/modak/modak-collect-complete.mp3", usedIn: ["Completion of collection step"] },
+      { name: "Modak Feed Ganesha", path: "/audio/voice/modak/modak-feed-ganesha.mp3", usedIn: ["Instruction before feeding sequence"] },
+      { name: "Modak Feed Complete", path: "/audio/voice/modak/modak-feed-complete.mp3", usedIn: ["Completion of feeding step"] },
+      { name: "Modak Scene Complete", path: "/audio/voice/modak/modak-scene-complete.mp3", usedIn: ["Final scene completion cue"] },
+      { name: "Modak Symbol Discovery", path: "/audio/voice/modak/modak-symbol-discovery.mp3", usedIn: ["Symbol discovery/reveal narration"] },
+      { name: "Modak Sharing Power", path: "/audio/voice/modak/modak-sharing-power.mp3", usedIn: ["Power meaning/affirmation cue"] },
+      { name: "Modak Gratitude Power", path: "/audio/voice/modak/modak-gratitude-power.mp3", usedIn: ["Power concept cue (gratitude)"] },
+      { name: "Modak Belly Happy", path: "/audio/voice/modak/modak-belly-happy.mp3", usedIn: ["Belief/reward moment in feed flow"] }
+    ];
+
+    function createVoiceRow(item) {
+      const tr = document.createElement("tr");
+      tr.dataset.search = `${item.name} ${item.path} ${item.usedIn.join(" ")}`.toLowerCase();
+
+      const playTd = document.createElement("td");
+      const btn = document.createElement("button");
+      btn.textContent = "Play";
+      btn.type = "button";
+      btn.addEventListener("click", () => {
+        stopAll();
+        const audio = new Audio(item.path);
+        audio.volume = 0.9;
+        activeAudios.add(audio);
+        audio.play().catch(() => {});
+        audio.addEventListener("ended", () => activeAudios.delete(audio), { once: true });
+      });
+      playTd.appendChild(btn);
+
+      const nameTd = document.createElement("td");
+      nameTd.textContent = item.name;
+
+      const pathTd = document.createElement("td");
+      pathTd.innerHTML = `<span class="mono">${item.path}</span>`;
+
+      const statusTd = document.createElement("td");
+      statusTd.innerHTML = `<span class="pill">Checking…</span>`;
+
+      const usedTd = document.createElement("td");
+      usedTd.className = "used-in";
+      usedTd.innerHTML = item.usedIn.map(x => `• ${x}`).join("<br>");
+
+      tr.append(playTd, nameTd, pathTd, statusTd, usedTd);
+      voiceTbody.appendChild(tr);
+
+      fetch(item.path, { method: "HEAD" })
+        .then(r => {
+          statusTd.innerHTML = r.ok
+            ? `<span class="pill ok">Found</span>`
+            : `<span class="pill bad">Missing</span>`;
+        })
+        .catch(() => {
+          statusTd.innerHTML = `<span class="pill bad">Missing</span>`;
+        });
+    }
+
+    SFX.forEach(createRow);
+    VOICE_CUES.forEach(createVoiceRow);
+
+    search.addEventListener("input", () => {
+      const q = search.value.trim().toLowerCase();
+      [...tbody.querySelectorAll("tr"), ...voiceTbody.querySelectorAll("tr")].forEach(tr => {
+        tr.style.display = tr.dataset.search.includes(q) ? "" : "none";
+      });
+    });
+
+    stopAllBtn.addEventListener("click", stopAll);
+  </script>
+</body>
+</html>

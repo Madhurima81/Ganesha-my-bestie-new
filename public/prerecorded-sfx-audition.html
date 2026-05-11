@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pre-recorded SFX Audition</title>
+  <style>
+    :root {
+      --bg: #f7f5ff;
+      --card: #fff;
+      --ink: #2f264b;
+      --muted: #70678d;
+      --line: #ddd7f3;
+      --accent: #6f57c8;
+      --ok: #2f9e6f;
+      --warn: #c73d5b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 20px;
+      background: var(--bg);
+      font-family: "Segoe UI", system-ui, sans-serif;
+      color: var(--ink);
+    }
+    .wrap { max-width: 1200px; margin: 0 auto; }
+    h1 { margin: 0 0 8px; font-size: 28px; }
+    p { margin: 0 0 12px; color: var(--muted); }
+    .chip {
+      display: inline-block;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 10px;
+      margin-right: 8px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: #4b3d79;
+      background: #f1edff;
+    }
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin: 12px 0 16px;
+      flex-wrap: wrap;
+    }
+    input[type="search"] {
+      width: 360px;
+      max-width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      font-size: 14px;
+    }
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--accent);
+      color: #fff;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 11px;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+    }
+    th {
+      background: #f1edff;
+      color: #3f3372;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: .03em;
+    }
+    tr:last-child td { border-bottom: 0; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; }
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .ok { background: #e7f8f0; color: var(--ok); }
+    .warn { background: #fdeaf0; color: var(--warn); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Pre-recorded SFX Audition</h1>
+    <p>Only file-based sounds are listed here (no synthesized fallback entries).</p>
+    <p>
+      <span class="chip">Core set: /audio/sfx/*</span>
+      <span class="chip">Scene set: /audio/voice/modak/*</span>
+    </p>
+
+    <div class="toolbar">
+      <input id="search" type="search" placeholder="Filter by role / name / path..." />
+      <button id="stopAll" type="button">Stop All</button>
+    </div>
+
+    <table id="tbl">
+      <thead>
+        <tr>
+          <th style="width:120px;">Preview</th>
+          <th style="width:190px;">Role</th>
+          <th style="width:210px;">Name</th>
+          <th>File Path</th>
+          <th style="width:110px;">Status</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    const CORE = [
+      { role: "Tap", name: "UI Tap (Synth fallback)", path: "(synth)", notes: "SoundManager fallback used when /audio/fx/fx_ui_tap.mp3 is missing.", synthId: "uiTapSynth" },
+      { role: "Tap", name: "Shared Tap", path: "audio/sfx/sfx-tap.mp3", notes: "Primary global tap SFX (useVoiceGuidance key: tap)." },
+      { role: "Wrong", name: "Shared Error/Oops", path: "audio/sfx/sfx-oops.wav", notes: "Wrong action feedback (useVoiceGuidance key: error)." },
+      { role: "Success", name: "Shared Success", path: "audio/sfx/sfx-success.wav", notes: "Correct action feedback (useVoiceGuidance key: success)." },
+      { role: "Unlock", name: "Shared Power Unlock", path: "audio/sfx/sfx-power-unlock.wav", notes: "Power unlock transition SFX." },
+      { role: "Celebration", name: "Shared Celebration", path: "audio/sfx/sfx-celebration.wav", notes: "Scene/round celebration moments." },
+      { role: "Transition", name: "Shared Whoosh", path: "audio/sfx/sfx-whoosh.wav", notes: "Movement/fly/reveal transitions." },
+      { role: "Micro Pop", name: "Shared Pop", path: "audio/sfx/sfx-pop.wav", notes: "Quick pop interactions." },
+      { role: "Reveal", name: "Shared Chime", path: "audio/sfx/sfx-chime.wav", notes: "Chime/reveal moments." }
+    ];
+
+    const MODAK = [
+      "modak-wrong-tap.mp3", "modak-try-again.mp3", "modak-mooshika-found.mp3", "modak-collect-start.mp3",
+      "modak-tap-modak.mp3", "modak-collect-complete.mp3", "modak-feed-ganesha.mp3", "modak-feed-complete.mp3",
+      "modak-scene-complete.mp3", "modak-symbol-discovery.mp3", "modak-hint-mound.mp3", "modak-hint-modak.mp3",
+      "modak-hint-mooshika.mp3", "modak-hint-explore.mp3"
+    ].map(n => ({
+      role: "Scene Cue (Modak)",
+      name: n.replace(".mp3", ""),
+      path: `audio/voice/modak/${n}`,
+      notes: "Scene-specific pre-recorded guidance/cue."
+    }));
+
+    const DATA = [...CORE, ...MODAK];
+    const tbody = document.querySelector("#tbl tbody");
+    const search = document.getElementById("search");
+    const stopAllBtn = document.getElementById("stopAll");
+    const active = new Set();
+
+    const stopAll = () => {
+      active.forEach(a => { try { a.pause(); a.currentTime = 0; } catch (_) {} });
+      active.clear();
+    };
+
+    // Minimal synth replica of SoundManager UI tap for audition
+    let _ctx = null;
+    function getCtx() {
+      if (!_ctx) _ctx = new (window.AudioContext || window.webkitAudioContext)();
+      if (_ctx.state === "suspended") _ctx.resume();
+      return _ctx;
+    }
+    function playUiTapSynth() {
+      const ctx = getCtx();
+      const now = ctx.currentTime;
+      const mk = (type, freq, peak, decay, attack = 0.004) => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = type;
+        o.frequency.setValueAtTime(freq, now);
+        o.connect(g);
+        g.connect(ctx.destination);
+        g.gain.setValueAtTime(0, now);
+        g.gain.linearRampToValueAtTime(peak, now + attack);
+        g.gain.exponentialRampToValueAtTime(0.001, now + attack + decay);
+        o.start(now);
+        o.stop(now + attack + decay + 0.02);
+      };
+      mk("sine", 420, 0.19, 0.07);
+      mk("triangle", 420, 0.10, 0.07, 0.005);
+      mk("sine", 840, 0.02, 0.04);
+    }
+
+    function row(item) {
+      const tr = document.createElement("tr");
+      tr.dataset.search = `${item.role} ${item.name} ${item.path} ${item.notes}`.toLowerCase();
+
+      const play = document.createElement("td");
+      const btn = document.createElement("button");
+      btn.textContent = "Play";
+      btn.type = "button";
+      btn.onclick = () => {
+        stopAll();
+        if (item.synthId === "uiTapSynth") {
+          playUiTapSynth();
+          return;
+        }
+        const a = new Audio(item.path);
+        a.volume = 0.9;
+        active.add(a);
+        a.play().catch(() => {});
+        a.addEventListener("ended", () => active.delete(a), { once: true });
+      };
+      play.appendChild(btn);
+
+      const role = document.createElement("td");
+      role.textContent = item.role;
+
+      const name = document.createElement("td");
+      name.textContent = item.name;
+
+      const path = document.createElement("td");
+      path.innerHTML = `<span class="mono">${item.path}</span>`;
+
+      const status = document.createElement("td");
+      status.innerHTML = `<span class="pill">Checking…</span>`;
+
+      const notes = document.createElement("td");
+      notes.textContent = item.notes;
+
+      tr.append(play, role, name, path, status, notes);
+      tbody.appendChild(tr);
+
+      // Detect availability via the audio element itself (works better across dev servers)
+      if (item.synthId) {
+        status.innerHTML = `<span class="pill ok">Synth</span>`;
+        return;
+      }
+      const probe = new Audio(item.path);
+      let done = false;
+      const mark = (ok) => {
+        if (done) return;
+        done = true;
+        status.innerHTML = ok
+          ? `<span class="pill ok">Found</span>`
+          : `<span class="pill warn">Missing</span>`;
+      };
+      probe.addEventListener("canplaythrough", () => mark(true), { once: true });
+      probe.addEventListener("loadedmetadata", () => mark(true), { once: true });
+      probe.addEventListener("error", () => mark(false), { once: true });
+      probe.load();
+      setTimeout(() => mark(false), 3500);
+    }
+
+    DATA.forEach(row);
+    stopAllBtn.onclick = stopAll;
+
+    search.addEventListener("input", () => {
+      const q = search.value.trim().toLowerCase();
+      [...tbody.querySelectorAll("tr")].forEach(tr => {
+        tr.style.display = tr.dataset.search.includes(q) ? "" : "none";
+      });
+    });
+  </script>
+</body>
+</html>

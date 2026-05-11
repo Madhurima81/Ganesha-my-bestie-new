@@ -259,7 +259,7 @@ const SanskritVoiceRecorder = ({
                 disabled={locked}
                 onClick={startRecording}
               >
-                Start Recording
+                Your Turn
               </button>
             )}
 
@@ -274,9 +274,6 @@ const SanskritVoiceRecorder = ({
                 >
                   <span className="svr-record-icon"></span>
                 </button>
-                <div style={{ marginTop: '12px', fontSize: '15px', fontWeight: '600', color: '#4DA89D', opacity: 0.85 }}>
-                  Tap to stop
-                </div>
               </div>
             )}
           </>

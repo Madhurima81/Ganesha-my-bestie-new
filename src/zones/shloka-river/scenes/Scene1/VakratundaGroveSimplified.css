@@ -109,10 +109,10 @@
   cursor: pointer;
   filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
   transition: transform 0.3s ease;
-  transform: translate(-50%, -100%);
+  transform: translate(-50%, -50%);
 }
 
-.mahakaya-central-synthesis:hover { transform: translate(-50%, -100%) scale(1.1) !important; }
+.mahakaya-central-synthesis:hover { transform: translate(-50%, -50%) scale(1.1) !important; }
 
 /* ==========================================================================
    3. ANIMATIONS (PULSE & GLOW) - FIXED
@@ -147,9 +147,9 @@
 }
 
 @keyframes gentle-pulse-mahakaya {
-  0% { transform: translate(-50%, -100%) scale(1); }
-  50% { transform: translate(-50%, -100%) scale(1.05); }
-  100% { transform: translate(-50%, -100%) scale(1); }
+  0% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.05); }
+  100% { transform: translate(-50%, -50%) scale(1); }
 }
 
 @keyframes gentle-pulse {
@@ -192,15 +192,15 @@
 @keyframes hint-pulse-glow-mahakaya {
   0% {
     filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
-    transform: translate(-50%, -100%) scale(1);
+    transform: translate(-50%, -50%) scale(1);
   }
   50% {
     filter: drop-shadow(0 0 18px rgba(255, 215, 0, 0.85));
-    transform: translate(-50%, -100%) scale(1.1);
+    transform: translate(-50%, -50%) scale(1.1);
   }
   100% {
     filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
-    transform: translate(-50%, -100%) scale(1);
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 
@@ -217,6 +217,11 @@
     filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
     transform: scale(1);
   }
+}
+
+@keyframes lotusBloomFade {
+  0%   { opacity: 0; transform: scale(0.92); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
 /* ==========================================================================

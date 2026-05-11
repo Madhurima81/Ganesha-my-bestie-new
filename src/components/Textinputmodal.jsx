@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Textinputmodal.css';
 
-const TextInputModal = ({ 
+const TextInputModal = ({
   prompt = "What's your answer?",
   onSave,
   onCancel,
@@ -59,7 +59,7 @@ const TextInputModal = ({
             onClick={handleSave}
             disabled={!textInput.trim()}
           >
-            Continue
+            Save
           </button>
         </div>
 
