@@ -264,9 +264,20 @@ const SanskritVoiceRecorder = ({
             )}
 
             {isRecording && (
-              <button className="svr-btn svr-btn-stop" onClick={stopRecording}>
-                Stop Recording
-              </button>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <button
+                  className={`svr-btn-stop ${isRecording ? 'recording' : ''}`}
+                  onClick={stopRecording}
+                  type="button"
+                  title="Stop recording"
+                  aria-label="Stop recording"
+                >
+                  <span className="svr-record-icon"></span>
+                </button>
+                <div style={{ marginTop: '12px', fontSize: '15px', fontWeight: '600', color: '#4DA89D', opacity: 0.85 }}>
+                  Tap to stop
+                </div>
+              </div>
             )}
           </>
         )}
