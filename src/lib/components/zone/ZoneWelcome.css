@@ -478,12 +478,25 @@
     0 18px 40px rgba(0, 0, 0, 0.12),
     0 6px 18px rgba(0, 0, 0, 0.08),
     inset 0 0 0 1px rgba(255, 255, 255, 0.8);
-  transition: all 0.25s ease;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease,
+    filter 0.1s ease;
   animation: floatSoft 6s ease-in-out infinite;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .zone-card:hover {
   transform: translate(-50%, calc(-50% - 6px));
+}
+
+/* Premium card press: tiny compression + reduced depth */
+.zone-scene-card:active .zone-card {
+  transform: translate(-50%, calc(-50% + 2px)) scale(0.985);
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.10),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.75);
+  filter: brightness(0.98);
 }
 
 .zone-card.locked {
@@ -655,7 +668,10 @@
   font-size: clamp(12px, 1.3vw, 16px);
   font-weight: 800;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease,
+    filter 0.08s ease;
   color: white;
   display: flex;
   align-items: center;
@@ -663,16 +679,19 @@
   gap: 6px;
   white-space: nowrap;
   position: relative;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .action-button-integrated:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.15);
+  filter: brightness(1.02);
 }
 
 .action-button-integrated:active {
-  transform: translateY(2px);
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
+  transform: translateY(3px) scale(0.985);
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.18),
+    0 3px 6px rgba(0, 0, 0, 0.10);
+  filter: brightness(0.98);
 }
 
 /* Zone colored button */
@@ -697,7 +716,11 @@
     0 10px 18px color-mix(in srgb, var(--zone-color) 30%, transparent),
     inset 0 2px 6px rgba(255, 255, 255, 0.5);
 
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease,
+    filter 0.08s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Continue / Replay — same zone-btn but tighter space, keep slightly smaller */
@@ -707,15 +730,16 @@
 }
 
 .zone-btn:hover {
-  transform: translateY(-4px);
+  filter: brightness(1.02);
 }
 
 .zone-btn:active {
-  transform: translateY(2px);
+  transform: translateY(3px) scale(0.985);
   box-shadow:
-    0 3px 0 color-mix(in srgb, var(--zone-color) 85%, black),
-    0 6px 12px color-mix(in srgb, var(--zone-color) 30%, transparent),
+    0 1px 0 color-mix(in srgb, var(--zone-color) 85%, black),
+    0 3px 6px color-mix(in srgb, var(--zone-color) 28%, transparent),
     inset 0 2px 6px rgba(255,255,255,0.4);
+  filter: brightness(0.98);
 }
 
 .zone-card.locked .zone-btn,
@@ -748,12 +772,16 @@
   font-size: 15px;
   font-weight: 800;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease,
+    filter 0.08s ease;
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 14px 16px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .action-button-split.continue {
@@ -768,11 +796,24 @@
 }
 
 .action-button-split:hover {
-  transform: translateY(-4px);
+  filter: brightness(1.02);
 }
 
 .action-button-split:active {
-  transform: translateY(2px);
+  transform: translateY(3px) scale(0.985);
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.18),
+    0 3px 6px rgba(0, 0, 0, 0.10);
+  filter: brightness(0.98);
+}
+
+/* iPad/tablet refinement: slightly lighter press depth */
+@media (min-width: 768px) and (max-width: 1366px) {
+  .action-button-integrated:active,
+  .zone-btn:active,
+  .action-button-split:active {
+    transform: translateY(2px) scale(0.985);
+  }
 }
 
 /* ========================================== */

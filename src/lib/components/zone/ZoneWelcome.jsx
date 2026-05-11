@@ -1187,9 +1187,9 @@ Continue
     const allScenesCompleted = completedCount >= totalScenes && totalScenes > 0;
 
     const statIcon =
-      zoneData?.id === 'symbol-mountain' ? '/images/icons/zone_stat_symbol.svg' :
-      zoneData?.id === 'shloka-river'    ? '/images/icons/zone_stat_chants.svg' :
-      zoneData?.id === 'cave-of-secrets' ? '/images/icons/zone_stat_meaning.svg' : null;
+      zoneData?.id === 'symbol-mountain' ? '/images/icons/symbols-icon.png' :
+      zoneData?.id === 'shloka-river'    ? '/images/icons/chant-icon.png' :
+      zoneData?.id === 'cave-of-secrets' ? '/images/icons/meanings-icon.png' : null;
 
     const statLabel =
       zoneData?.id === 'symbol-mountain' ? 'Symbols' :
@@ -1231,5 +1231,6 @@ Continue
 
 
 export default ZoneWelcome;
+
 
 

@@ -195,7 +195,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
     setShowProfileSelector(true);
   };
 
-  // Returns { zone, scene } for the most recently played location.
+  // Returns { zone, scene, destination? } for the most recently played location.
   // scene is null if that session was completed → caller goes to zone-welcome.
   // scene is set if session was mid-game → caller resumes that scene.
   const getLastPlayedLocation = (profileId) => {
@@ -226,8 +226,21 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
             latestTimestamp = ts;
             latestZone = zone;
             latestScene = scene;
-            // Treat as completed if any completion signal is present
-            latestCompleted = !!(
+            // Special-case: Symbol Mountain final-scene fireworks should RESUME,
+            // not be treated as completed.
+            const finalSceneFireworksActive =
+              zone === 'symbol-mountain' &&
+              scene === 'final-scene' &&
+              (
+                data.currentPopup === 'final_fireworks' ||
+                data.showSparkle === 'final-fireworks' ||
+                data.celebrationActive === true ||
+                data.isOrbsRunning === true
+              );
+
+            // Treat as completed if completion signals are present,
+            // except while final-scene fireworks are actively running.
+            latestCompleted = !finalSceneFireworksActive && !!(
               data.completed === true ||
               data.phase === 'complete' ||
               data.phase === 'all_complete' ||
@@ -243,6 +256,10 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
     }
 
     if (latestZone) {
+      // Zone-complete in Symbol Mountain final-scene should land on MAP from Continue Journey.
+      if (latestZone === 'symbol-mountain' && latestScene === 'final-scene' && latestCompleted) {
+        return { zone: latestZone, scene: null, destination: 'map' };
+      }
       return { zone: latestZone, scene: latestCompleted ? null : latestScene };
     }
 
@@ -261,12 +278,31 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
     return null;
   };
 
+  // TEMP QA helper: shows where Continue Journey will navigate.
+  const getContinueJourneyDebugTarget = () => {
+    try {
+      const profileId = localStorage.getItem('activeProfileId');
+      const location = getLastPlayedLocation(profileId);
+      if (!location) return 'MAP (fallback: no last location)';
+      if (location.destination === 'map') return 'MAP (final-scene completion)';
+      if (location.scene) return `${location.zone} / ${location.scene} (resume scene)`;
+      return `${location.zone} (zone welcome)`;
+    } catch {
+      return 'MAP (debug error fallback)';
+    }
+  };
+
   const handleContinue = () => {
     playUiTap(0.22);
     const profileId = localStorage.getItem('activeProfileId');
     const location = getLastPlayedLocation(profileId);
 
     if (location) {
+      // Explicit destination override (used for zone-complete final-scene flow).
+      if (location.destination === 'map') {
+        onNewGame();
+        return;
+      }
       // scene set   → mid-game → resume that scene
       // scene null  → completed → go to zone welcome
       onContinue(location.zone, location.scene);
@@ -512,46 +548,59 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
             <div className="compact-stats-container">
               
               <div className="stats-list-vertical">
+                {(() => {
+                  const symbolsComplete = isZoneComplete(culturalProgress.symbols);
+                  const meaningsComplete = isZoneComplete(culturalProgress.meanings);
+                  const chantsComplete = isZoneComplete(culturalProgress.chants);
+
+                  return (
+                    <>
                 <div 
-                  className={`stat-clean-row ${isZoneComplete(culturalProgress.symbols) ? 'completed' : ''}`}
+                  className={`stat-clean-row ${symbolsComplete ? 'completed' : 'incomplete'}`}
                   onClick={() => handleProgressBoxClick('symbols')}
                 >
-                  <div className="stat-icon-wrap">
-                    <GameIcon name="zone_stat_symbols" size={32} className="stat-icon-clean" />
-                    {isZoneComplete(culturalProgress.symbols) && (
-                      <span className="stat-complete-check" aria-hidden="true">✓</span>
-                    )}
+                  <div className={`symbol-badge-wrap ${symbolsComplete ? 'is-complete' : 'is-incomplete'}`}>
+                    {symbolsComplete && <div className="symbol-badge-glow" aria-hidden="true" />}
+                    {symbolsComplete && <span className="symbol-badge-sparkle sparkle-a" aria-hidden="true" />}
+                    {symbolsComplete && <span className="symbol-badge-sparkle sparkle-b" aria-hidden="true" />}
+                    {symbolsComplete && <span className="symbol-badge-sparkle sparkle-c" aria-hidden="true" />}
+                    <img src="/images/icons/symbols-icon.png" alt="Symbols" className="symbol-badge-icon" />
                   </div>
-                  <span className={`stat-text-clean ${isZoneComplete(culturalProgress.symbols) ? 'all-symbols-discovered' : ''}`}>
-                    {isZoneComplete(culturalProgress.symbols) ? 'All discovered' : `${culturalProgress.symbols} Symbols`}
+                  <span className="symbol-badge-label">
+                    Symbols
                   </span>
                 </div>
                 
                 <div 
-                  className={`stat-clean-row ${isZoneComplete(culturalProgress.meanings) ? 'completed' : ''}`}
+                  className={`stat-clean-row ${meaningsComplete ? 'completed' : 'incomplete'}`}
                   onClick={() => handleProgressBoxClick('meanings')}
                 >
-                  <div className="stat-icon-wrap">
-                    <GameIcon name="zone_stat_meanings" size={32} className="stat-icon-clean" />
-                    {isZoneComplete(culturalProgress.meanings) && (
-                      <span className="stat-complete-check" aria-hidden="true">✓</span>
-                    )}
+                  <div className={`stat-icon-wrap stat-badge-wrap ${meaningsComplete ? 'is-complete' : 'is-incomplete'}`}>
+                    {meaningsComplete && <div className="symbol-badge-glow" aria-hidden="true" />}
+                    {meaningsComplete && <span className="symbol-badge-sparkle sparkle-a" aria-hidden="true" />}
+                    {meaningsComplete && <span className="symbol-badge-sparkle sparkle-b" aria-hidden="true" />}
+                    {meaningsComplete && <span className="symbol-badge-sparkle sparkle-c" aria-hidden="true" />}
+                    <GameIcon name="zone_stat_meanings" size={70} className="stat-icon-clean" />
                   </div>
-                  <span className="stat-text-clean">{culturalProgress.meanings} Meanings</span>
+                  <span className="symbol-badge-label">Meanings</span>
                 </div>
                 
                 <div 
-                  className={`stat-clean-row ${isZoneComplete(culturalProgress.chants) ? 'completed' : ''}`}
+                  className={`stat-clean-row ${chantsComplete ? 'completed' : 'incomplete'}`}
                   onClick={() => handleProgressBoxClick('chants')}
                 >
-                  <div className="stat-icon-wrap">
-                    <GameIcon name="zone_stat_chants" size={32} className="stat-icon-clean" />
-                    {isZoneComplete(culturalProgress.chants) && (
-                      <span className="stat-complete-check" aria-hidden="true">✓</span>
-                    )}
+                  <div className={`stat-icon-wrap stat-badge-wrap ${chantsComplete ? 'is-complete' : 'is-incomplete'}`}>
+                    {chantsComplete && <div className="symbol-badge-glow" aria-hidden="true" />}
+                    {chantsComplete && <span className="symbol-badge-sparkle sparkle-a" aria-hidden="true" />}
+                    {chantsComplete && <span className="symbol-badge-sparkle sparkle-b" aria-hidden="true" />}
+                    {chantsComplete && <span className="symbol-badge-sparkle sparkle-c" aria-hidden="true" />}
+                    <GameIcon name="zone_stat_chants" size={70} className="stat-icon-clean" />
                   </div>
-                  <span className="stat-text-clean">{culturalProgress.chants} Chants</span>
+                  <span className="symbol-badge-label">Chants</span>
                 </div>
+                    </>
+                  );
+                })()}
               </div>
             </div>
           </div>
@@ -559,6 +608,11 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
 
         {/* ACTION BUTTONS */}
         <div className="welcome-actions">
+          {hasProgress && (
+            <div style={{ marginBottom: 8, fontSize: 12, color: '#7A68C3', fontWeight: 700 }}>
+              QA Debug: Continue Journey → {getContinueJourneyDebugTarget()}
+            </div>
+          )}
           {hasProgress ? (
             <>
               <PrimaryBtn

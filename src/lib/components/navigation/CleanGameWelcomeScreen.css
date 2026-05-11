@@ -48,7 +48,7 @@
   background: #FAF6EE;
   border-radius: 32px;
 
-box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
+box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 
   max-width: clamp(420px, 44vw, 620px);
   width: 92%;
@@ -59,7 +59,7 @@ box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(14px, 1.6vw, 24px);
+  gap: clamp(10px, 1vw, 18px);
 
   animation: groundedFade 0.7s ease-out;
 }
@@ -93,7 +93,7 @@ box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 26px;
+  gap: 16px;
 }
 
 .profile-avatar-container {
@@ -135,14 +135,18 @@ box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
   font-family: 'Nunito', sans-serif;
   font-weight: 700;
   font-size: clamp(13px, 1.2vw, 18px);
-  color: #7B5CE6;
+  color: rgba(123, 92, 230, 0.82);
   background: transparent;
-  border: 1.5px solid #CFC4F5;
+  border: none;
   border-radius: 50px;
   padding: clamp(6px, 0.6vw, 10px) clamp(14px, 1.4vw, 22px);
   cursor: pointer;
-  transition: background 0.2s ease, opacity 0.2s ease;
+  transition: opacity 0.2s ease;
   letter-spacing: 0.2px;
+}
+
+.change-explorer-btn:active {
+  opacity: 0.7;
 }
 
 /* ========================================== */
@@ -164,7 +168,7 @@ box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   cursor: default; /* no clickable energy */
   transition: opacity 0.3s ease;
 }
@@ -176,8 +180,8 @@ box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
 
 .stat-icon-clean {
   font-size: clamp(24px, 2.6vw, 38px);
-  width: clamp(32px, 3vw, 46px);
-  height: clamp(32px, 3vw, 46px);
+  width: 70px;
+  height: 70px;
   opacity: 0.85;
 }
 
@@ -186,9 +190,9 @@ box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: clamp(42px, 4vw, 60px);
-  height: clamp(42px, 4vw, 60px);
-  margin-right: 8px;
+  width: 82px;
+  height: 82px;
+  margin-right: 0;
 }
 
 .stat-text-clean {
@@ -223,6 +227,155 @@ box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
   font-size: clamp(12px, 1.35vw, 18px);
 }
 
+/* SYMBOL BADGE - PROFILE / REWARD STYLE */
+.symbol-badge-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 82px;
+  height: 82px;
+  gap: 0;
+}
+
+.stat-badge-wrap {
+  position: relative;
+}
+
+/* GLOW */
+.symbol-badge-glow {
+  position: absolute;
+  width: 96px;
+  height: 96px;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 218, 120, 0.42) 0%,
+    rgba(255, 186, 210, 0.24) 45%,
+    rgba(255, 255, 255, 0) 72%
+  );
+  filter: blur(10px);
+  animation: symbolGlowPulse 2.8s ease-in-out infinite;
+  z-index: 0;
+}
+
+/* ICON */
+.symbol-badge-icon {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  position: relative;
+  z-index: 2;
+  animation: symbolFloat 3.2s ease-in-out infinite;
+  filter: drop-shadow(0 4px 8px rgba(255, 184, 184, 0.18));
+}
+
+.symbol-badge-wrap.is-incomplete .symbol-badge-icon,
+.stat-badge-wrap.is-incomplete .stat-icon-clean {
+  opacity: 0.45;
+  filter: grayscale(0.12) drop-shadow(0 2px 4px rgba(90, 70, 150, 0.12));
+  animation: none;
+}
+
+.symbol-badge-wrap.is-complete .symbol-badge-icon,
+.stat-badge-wrap.is-complete .stat-icon-clean {
+  opacity: 1;
+}
+
+/* LABEL */
+.symbol-badge-label {
+  position: relative;
+  z-index: 2;
+  font-size: 0.88rem;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #7a5bc1;
+  text-align: center;
+  display: block;
+  min-height: 1.2em;
+  width: 100%;
+}
+
+.stat-clean-row.incomplete .symbol-badge-label {
+  opacity: 0.72;
+}
+
+/* OPTIONAL MINI SPARKLES */
+.symbol-badge-sparkle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff2b3;
+  opacity: 0.9;
+  filter: blur(0.5px);
+  animation: sparkleTwinkle 2.2s ease-in-out infinite;
+}
+
+.sparkle-a {
+  top: 6px;
+  left: 10px;
+}
+
+.sparkle-b {
+  top: 12px;
+  right: 8px;
+}
+
+.sparkle-c {
+  bottom: 10px;
+  left: 12px;
+}
+
+/* ANIMATIONS */
+@keyframes symbolGlowPulse {
+  0% {
+    transform: scale(0.94);
+    opacity: 0.65;
+  }
+
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(0.94);
+    opacity: 0.65;
+  }
+}
+
+@keyframes symbolFloat {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-3px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes sparkleTwinkle {
+  0% {
+    opacity: 0.2;
+    transform: scale(0.7);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0.2;
+    transform: scale(0.7);
+  }
+}
+
 /* ========================================== */
 /* ACTION BUTTONS – CALM & EQUAL             */
 /* ========================================== */
@@ -254,11 +407,11 @@ box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
 
 .primary-btn-unified.continue-journey-btn {
   width: 100%;
-  padding: clamp(11px, 1.2vw, 16px) clamp(20px, 2vw, 28px);
-  --btn-color-top: #8B6FD8;
-  --btn-color-base: #6B4FB8;
-  --btn-color-shadow: #5b3fa5;
-  --btn-color-glow: rgba(107, 79, 184, 0.25);
+  padding: clamp(8px, 1.2vw, 12px) clamp(20px, 2vw, 28px);
+  --btn-color-top: #8C78D8;
+  --btn-color-base: #735BC4;
+  --btn-color-shadow: #5F47A8;
+  --btn-color-glow: rgba(115, 91, 196, 0.25);
   color: #FFFFFF;
   font-family: 'Baloo 2', cursive;
   font-size: clamp(14px, 1.4vw, 18px);
@@ -266,41 +419,46 @@ box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
   border: none;
   border-radius: 999px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.3s ease,
+    filter 0.3s ease;
   animation: none;
+  box-shadow:
+    0 4px 0 rgba(0,0,0,0.12),
+    0 8px 18px rgba(120, 90, 60, 0.18);
+  background: var(--btn-color-base);
+  animation: profileCtaGlow 3.5s ease-in-out infinite;
 }
 
 .primary-btn-unified.continue-journey-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  --btn-color-glow: rgba(107, 79, 184, 0.35);
+  --btn-color-glow: rgba(115, 91, 196, 0.35);
 }
 
 .primary-btn-unified.continue-journey-btn:active:not(:disabled) {
-  transform: translateY(0);
-  --btn-color-glow: rgba(107, 79, 184, 0.3);
+  transform: scale(0.97);
+  filter: brightness(0.98);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.10), inset 0 1px 2px rgba(255,255,255,0.10);
+  --btn-color-glow: rgba(115, 91, 196, 0.3);
+}
+
+@keyframes profileCtaGlow {
+  0%, 100% {
+    box-shadow:
+      0 4px 0 rgba(0,0,0,0.12),
+      0 8px 18px rgba(120, 90, 60, 0.18);
+  }
+  50% {
+    box-shadow:
+      0 4px 0 rgba(0,0,0,0.12),
+      0 10px 22px rgba(120, 90, 60, 0.24);
+  }
 }
 
 /* ========================================== */
 /* SECONDARY – EXPLORE (quiet stability)     */
 /* ========================================== */
-
-.secondary-btn {
-  background: transparent;
-  color: #6B52B5;
-  border: 2px solid #CFC4F5;
-  border-radius: 80px;
-  box-shadow: none;
-  transition: background 0.25s ease, opacity 0.25s ease;
-}
-
-.secondary-btn:hover {
-  background: #F2ECFF;
-}
-
-.secondary-btn:active,
-.primary-btn:active {
-  opacity: 0.85;
-}
+/* See below for unified secondary-btn styling */
 
 /* ========================================== */
 /* REMOVE DASHBOARD REMNANTS                 */
@@ -333,7 +491,7 @@ box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
 
 /* PRIMARY — now handled by PrimaryBtn shared component */
 
-/* SECONDARY — white with purple outline */
+/* SECONDARY — glassmorphic with soft border */
 .secondary-btn {
   font-family: 'Baloo 2', system-ui, sans-serif;
   font-weight: 700;
@@ -343,24 +501,28 @@ box-shadow: 0 6px 16px rgba(60, 40, 80, 0.06);
   border-radius: 80px;
   font-size: clamp(18px, 2vw, 32px);
   cursor: pointer;
-  transition: transform 0.08s ease, background 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.08s ease;
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #FFFFFF;
-  color: #7B5CE6;
-  border: 3px solid #7B5CE6;
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: blur(10px);
+  color: #735BC4;
+  border: 2px solid rgba(123, 92, 230, 0.24);
   box-shadow: none;
 }
 
 .secondary-btn:hover {
-  background: #F3EEFF;
-  transform: translateY(-2px);
+  background: rgba(255,255,255,0.82);
+  border-color: rgba(123, 92, 230, 0.30);
 }
 
 .secondary-btn:active {
-transform: translateY(2px);}
+  transform: translateY(1px);
+  background: rgba(255,255,255,0.82);
+  border-color: rgba(123, 92, 230, 0.30);
+}
 
 /* Back link button styling */
 .back-link-btn {
