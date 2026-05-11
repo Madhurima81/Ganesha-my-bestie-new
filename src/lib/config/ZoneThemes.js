@@ -34,6 +34,8 @@ export const ZONE_THEMES = {
     buttonHoverBg: '#FFFAED',
     buttonHoverBorder: '#F4C430',
     buttonActiveBg: 'linear-gradient(135deg, #F4C430, #E5B026)',
+    buttonModalOpeningBg: 'linear-gradient(180deg, #c89b5d 0%, #a9783f 100%)',
+    buttonModalClosingBg: 'linear-gradient(180deg, #d2ae77 0%, #b88a56 100%)',
 
     // Divider
     dividerColor: 'rgba(107, 84, 22, 0.2)',
@@ -86,6 +88,8 @@ export const ZONE_THEMES = {
     buttonHoverBg: '#FFF5EC',
     buttonHoverBorder: '#C85A2E',
     buttonActiveBg: 'linear-gradient(135deg, #C85A2E, #B44C20)',
+    buttonModalOpeningBg: 'linear-gradient(180deg, #8d7ae6 0%, #6f5fd1 100%)',
+    buttonModalClosingBg: 'linear-gradient(180deg, #9c8be9 0%, #8375d9 100%)',
 
     dividerColor: 'rgba(107, 47, 26, 0.2)',
     dividerStyle: 'solid',       // Carved line
@@ -134,6 +138,8 @@ export const ZONE_THEMES = {
     buttonHoverBg: '#FFF8ED',
     buttonHoverBorder: '#E67E22',
     buttonActiveBg: 'linear-gradient(135deg, #E67E22, #D97016)',
+    buttonModalOpeningBg: 'linear-gradient(180deg, #f2b85d 0%, #e08b4f 100%)',
+    buttonModalClosingBg: 'linear-gradient(180deg, #f4c57b 0%, #e7a06e 100%)',
 
     dividerColor: 'rgba(139, 69, 19, 0.2)',
     dividerStyle: 'solid',       // Garland dots
@@ -182,6 +188,8 @@ export const ZONE_THEMES = {
     buttonHoverBg: '#F0F8F7',
     buttonHoverBorder: '#4A9B87',
     buttonActiveBg: 'linear-gradient(135deg, #4A9B87, #3A8170)',
+    buttonModalOpeningBg: 'linear-gradient(180deg, #63c7bb 0%, #4da89d 100%)',
+    buttonModalClosingBg: 'linear-gradient(180deg, #7bcfc5 0%, #65b8ae 100%)',
 
     dividerColor: 'rgba(27, 77, 62, 0.2)',
     dividerStyle: 'solid',       // Wave/ripple dots
@@ -230,6 +238,8 @@ export const ZONE_THEMES = {
     buttonHoverBg: '#FFF9F0',
     buttonHoverBorder: '#D89566',
     buttonActiveBg: 'linear-gradient(135deg, #D89566, #C98556)',
+    buttonModalOpeningBg: 'linear-gradient(180deg, #d99a65 0%, #c9824c 100%)',
+    buttonModalClosingBg: 'linear-gradient(180deg, #e3ad82 0%, #d79a6d 100%)',
 
     dividerColor: 'rgba(125, 69, 32, 0.2)',
     dividerStyle: 'solid',

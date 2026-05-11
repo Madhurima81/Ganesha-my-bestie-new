@@ -557,6 +557,12 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   }, []);
 
   useEffect(() => {
+    setMushikaPop(null);
+    setShakingZoneId(null);
+    if (mushikaTimerRef.current) clearTimeout(mushikaTimerRef.current);
+  }, []);
+
+  useEffect(() => {
     loadBasicProgress();
   }, []);
 
@@ -984,34 +990,22 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     }
 
     if (state === 'unlocking') return;
-    if (mushikaPop) return; // already mid-animation — block double-tap
 
-    // First-ever Symbol Mountain tap: skip Mushika pop, skip zone welcome, go straight to modak
+    // First-ever Symbol Mountain tap: go straight to modak
     const isFirstSymbolTap =
       zone.id === ZONE_IDS.SYMBOL &&
       isFirstTimeLoad &&
       !hasSeenMushikaPop(zone.id);
 
     if (isFirstSymbolTap) {
-      markMushikaPopSeen(zone.id); // mark so future taps follow normal flow
+      markMushikaPopSeen(zone.id);
       navigateToZone(zone, state);
       return;
     }
 
-    // Show only first time per zone (scoped by active profile).
-    if (hasSeenMushikaPop(zone.id)) {
-      navigateToZone(zone, state);
-      return;
-    }
-
+    // All unlocked zones: navigate immediately, no Mushika pop
     markMushikaPopSeen(zone.id);
-
-    // Show Mushika pop, then navigate after 1.4s
-    setMushikaPop({ zone, state });
-    mushikaTimerRef.current = setTimeout(() => {
-      setMushikaPop(null);
-      navigateToZone(zone, state);
-    }, 1400);
+    navigateToZone(zone, state);
   };
 
   // const handleStartZone = (zone) => { ... }; // removed — no preview modal

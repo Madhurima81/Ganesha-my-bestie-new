@@ -25,8 +25,9 @@ export function applyCompletionScreenTheme(zoneId) {
   // Badge glow
   root.style.setProperty("--cs-badge-glow", theme.glowColor);
 
-  // Primary button
-  root.style.setProperty("--cs-primary-bg", theme.buttonActiveBg);
+  // Primary button (closing modal uses zone-specific gradient)
+  const primaryBgColor = theme.buttonModalClosingBg || theme.buttonActiveBg;
+  root.style.setProperty("--cs-primary-bg", primaryBgColor, "important");
   root.style.setProperty("--cs-primary-text", "#ffffff");
 
   // Secondary buttons
