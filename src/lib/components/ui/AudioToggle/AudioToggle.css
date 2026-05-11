@@ -54,7 +54,7 @@
 
 /* ---- Positions ---- */
 .audio-toggle--bottom-right {
-  bottom: clamp(12px, 1.5vw, 24px);
+  bottom: clamp(28px, 3vw, 40px);
   right:  clamp(12px, 1.5vw, 24px);
 }
 .audio-toggle--bottom-left {
@@ -81,18 +81,18 @@
 /* iPad sizing: utility control slightly smaller than nav buttons */
 @media (min-width: 768px) and (max-width: 1366px) {
   .audio-toggle {
-    width: 34px;
-    height: 34px;
-    opacity: 0.85;
+    width: 36px;
+    height: 36px;
+    opacity: 0.9;
   }
 
   .audio-toggle__icon {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
   }
 
   .audio-toggle--bottom-right {
     right: 10px;
-    bottom: 10px;
+    bottom: 26px;
   }
 }

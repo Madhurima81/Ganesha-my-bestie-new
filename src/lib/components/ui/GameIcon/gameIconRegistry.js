@@ -160,23 +160,24 @@ const registry = {
   /** Stat card — Sacred Symbols */
   zone_stat_symbols: {
     emoji: '🕉️',
-    src: '/images/icons/zone_stat_symbol.svg',
+    src: '/images/icons/symbols-icon.png',
     alt: 'Sacred Symbols',
   },
 
   /** Stat card — Meanings / Stories */
   zone_stat_meanings: {
     emoji: '📜',
-    src: '/images/icons/zone_stat_meaning.svg',
+    src: '/images/icons/meanings-icon.png',
     alt: 'Meanings',
   },
 
   /** Stat card — Chants */
   zone_stat_chants: {
     emoji: '🎵',
-    src: '/images/icons/zone_stat_chants.svg',
+    src: '/images/icons/chant-icon.png',
     alt: 'Chants',
   },
 };
 
 export default registry;
+

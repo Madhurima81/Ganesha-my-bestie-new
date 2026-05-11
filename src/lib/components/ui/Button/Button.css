@@ -89,6 +89,38 @@
     0 0 10px rgba(79, 195, 247, 0.3);
 }
 
+/* ==========================================
+   ZONE-SCOPED IN-SCENE BUTTON COLORS
+   (Only for scene buttons, not opening/closing modals)
+   ========================================== */
+[data-zone="about-me-hut"] .unified-button--primary {
+  background: linear-gradient(180deg, #d99a65 0%, #c9824c 100%);
+  box-shadow:
+    0 4px 0 rgba(0,0,0,0.12),
+    0 8px 18px rgba(0,0,0,0.12);
+}
+
+[data-zone="about-me-hut"] .unified-button--secondary {
+  background: #f8f2ea;
+  border: 2px solid #e2c5a8;
+  color: #8a5b35;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+}
+
+[data-zone="shloka-river"] .unified-button--primary {
+  background: linear-gradient(180deg, #63c7bb 0%, #4da89d 100%);
+  box-shadow:
+    0 4px 0 rgba(0,0,0,0.12),
+    0 8px 18px rgba(0,0,0,0.12);
+}
+
+[data-zone="shloka-river"] .unified-button--secondary {
+  background: #eef8f6;
+  border: 2px solid #a8d8d0;
+  color: #3f7f77;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+}
+
 /* Info - Joy Gold (success/rewards) */
 .unified-button--info {
   background: var(--play-joy-gold);

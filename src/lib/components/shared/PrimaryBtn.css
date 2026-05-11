@@ -1,6 +1,6 @@
 /* ================================================ */
 /* PrimaryBtn — Unified button for Ganesha's World  */
-/* Purple pill, 3D press, shimmer, inner glow       */
+/* Purple pill, 3D press, clean matte finish         */
 /* ================================================ */
 
 .primary-btn-unified {
@@ -23,11 +23,10 @@
   /* Pill shape */
   border-radius: 80px;
 
-  /* 3D shadow + inner highlight */
+  /* 3D shadow (no glossy inner shine) */
   box-shadow:
     0 4px 0 var(--btn-color-shadow, #5a3fa0),
-    0 8px 18px var(--btn-color-glow, rgba(120, 80, 200, 0.22)),
-    inset 0 2px 4px rgba(255, 255, 255, 0.3);
+    0 8px 18px var(--btn-color-glow, rgba(120, 80, 200, 0.22));
 
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 
@@ -42,43 +41,18 @@
 
 .primary-btn-full { width: 100%; padding-left: 0; padding-right: 0; }
 
-/* Shimmer sweep */
-.primary-btn-unified::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(
-    120deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.5) 50%,
-    transparent 100%
-  );
-  transform: skewX(-20deg);
-  animation: primaryBtnShimmer 4s infinite;
-  pointer-events: none;
-}
-
-@keyframes primaryBtnShimmer {
-  0%   { left: -100%; }
-  60%  { left: 150%;  }
-  100% { left: 150%;  }
-}
+/* Gloss/shimmer removed — cleaner soft magical look */
 
 @keyframes primaryBtnPulse {
   0%, 100% {
     box-shadow:
       0 4px 0 var(--btn-color-shadow, #5a3fa0),
-      0 8px 18px var(--btn-color-glow, rgba(120, 80, 200, 0.22)),
-      inset 0 2px 4px rgba(255, 255, 255, 0.3);
+      0 8px 18px var(--btn-color-glow, rgba(120, 80, 200, 0.22));
   }
   50% {
     box-shadow:
       0 4px 0 var(--btn-color-shadow, #5a3fa0),
-      0 12px 24px var(--btn-color-glow, rgba(120, 80, 200, 0.35)),
-      inset 0 2px 4px rgba(255, 255, 255, 0.3);
+      0 12px 24px var(--btn-color-glow, rgba(120, 80, 200, 0.35));
   }
 }
 
@@ -87,8 +61,7 @@
   animation: none;
   box-shadow:
     0 6px 0 var(--btn-color-shadow, #5a3fa0),
-    0 14px 26px var(--btn-color-glow, rgba(120, 80, 200, 0.32)),
-    inset 0 2px 4px rgba(255, 255, 255, 0.35);
+    0 14px 26px var(--btn-color-glow, rgba(120, 80, 200, 0.32));
 }
 
 .primary-btn-unified:active:not(:disabled) {
@@ -96,8 +69,7 @@
   animation: none;
   box-shadow:
     0 1px 0 var(--btn-color-shadow, #5a3fa0),
-    0 4px 10px var(--btn-color-glow, rgba(120, 80, 200, 0.2)),
-    inset 0 4px 8px rgba(0, 0, 0, 0.15);
+    0 4px 10px var(--btn-color-glow, rgba(120, 80, 200, 0.2));
 }
 
 .primary-btn-unified:disabled {
