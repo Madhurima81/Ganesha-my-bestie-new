@@ -1,8 +1,8 @@
-﻿/* ═══════════════════════════════════════════════
-   MY INDIAN STORY GAME — About Me Hut, Game 4
+/* -----------------------------------------------
+   MY INDIAN STORY GAME � About Me Hut, Game 4
    About Me Hut palette: warm brown + coral
-   Fonts: Baloo 2 (headings) · Nunito (body)
-═══════════════════════════════════════════════ */
+   Fonts: Baloo 2 (headings) � Nunito (body)
+----------------------------------------------- */
 
 :root {
   --hut-brown: #795548;
@@ -14,7 +14,7 @@
   --hut-green: #2E7D32;
 }
 
-/* ── WRAPPER ── */
+/* -- WRAPPER -- */
 .mis-wrapper {
   min-height: 100vh;
   width: 100%;
@@ -24,7 +24,7 @@
   overflow-x: hidden;
 }
 
-/* Background image — fixed behind all content */
+/* Background image � fixed behind all content */
 .mis-background {
   position: fixed;
   top: 0;
@@ -36,7 +36,7 @@
   z-index: -1;
 }
 
-/* ── MUTE / REPLAY BUTTON ── */
+/* -- MUTE / REPLAY BUTTON -- */
 .mis-mute-btn {
   position: absolute;
   top: 16px;
@@ -57,14 +57,14 @@
 }
 .mis-mute-btn:hover { background: #fff; transform: scale(1.1); }
 
-/* ── TAPPABLE GANESHA FACE ── */
+/* -- TAPPABLE GANESHA FACE -- */
 .mis-g-face-tap {
   cursor: pointer;
   transition: transform 0.15s;
 }
 .mis-g-face-tap:active { transform: scale(0.9); }
 .mis-g-face-tap::after {
-  content: '👆';
+  content: '??';
   position: absolute;
   bottom: -6px;
   right: -6px;
@@ -72,10 +72,10 @@
   opacity: 0;
   transition: opacity 0.2s;
 }
-/* Show hint on first render only — CSS approach */
-/* ── BACK BUTTON — handled by BackToMapButton component ── */
+/* Show hint on first render only � CSS approach */
+/* -- BACK BUTTON � handled by BackToMapButton component -- */
 
-/* ── PROGRESS DOTS ── */
+/* -- PROGRESS DOTS -- */
 .mis-progress {
   display: flex;
   justify-content: center;
@@ -98,7 +98,7 @@
 }
 .mis-dot.done { background: rgba(255,153,51,0.5); }
 
-/* ── STEP CONTAINER ── */
+/* -- STEP CONTAINER -- */
 .mis-step {
   max-width: 520px;
   margin: 0 auto;
@@ -113,7 +113,7 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── GANESHA SPEECH ── */
+/* -- GANESHA SPEECH -- */
 .mis-ganesha-speak {
   display: flex;
   gap: 12px;
@@ -166,7 +166,7 @@
   font-weight: 700;
 }
 
-/* ── TAP TO DISCOVER SPOTS ── */
+/* -- TAP TO DISCOVER SPOTS -- */
 .mis-spot {
   position: absolute;
   min-width: 72px;
@@ -181,7 +181,7 @@
 }
 .mis-spot:active { transform: scale(0.9); }
 
-/* Hidden state — glowing ? button */
+/* Hidden state � glowing ? button */
 .mis-spot.hidden .mis-spot-question {
   width: 72px;
   height: 72px;
@@ -241,7 +241,7 @@
   margin-top: 2px;
 }
 
-/* Fact bubble — appears when spot tapped */
+/* Fact bubble � appears when spot tapped */
 .mis-spot-fact-bubble {
   background: #fff;
   border: 2px solid var(--hut-gold);
@@ -296,14 +296,14 @@
   box-shadow: 0 0 6px rgba(255,153,51,0.5);
 }
 
-/* ── KAILASH REACTION ── */
+/* -- KAILASH REACTION -- */
 .mis-reaction-bubble.kailash-reaction {
   background: linear-gradient(135deg, #E8EAF6, #EDE7F6);
   border-color: #7986CB;
 }
 .mis-reaction-bubble.kailash-reaction span { font-size: 28px; }
 
-/* ── MAP AREA ── */
+/* -- MAP AREA -- */
 .mis-map-container {
   display: flex;
   justify-content: center;
@@ -320,7 +320,7 @@
   inset: 0;
 }
 
-/* ── REGIONS GRID ── */
+/* -- REGIONS GRID -- */
 .mis-regions-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -375,7 +375,7 @@
 .mis-reaction-bubble span { font-size: 24px; flex-shrink: 0; }
 .mis-reaction-bubble p { font-size: 13px; color: #5D2E0F; line-height: 1.5; margin: 0; }
 
-/* ── LANGUAGE GRID ── */
+/* -- LANGUAGE GRID -- */
 .mis-lang-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -414,7 +414,7 @@
   text-align: center;
 }
 
-/* ── GUESS GRID (Step 4a) ── */
+/* -- GUESS GRID (Step 4a) -- */
 .mis-guess-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -463,7 +463,7 @@
   line-height: 1.2;
 }
 
-/* ── CORRECT GUESS CELEBRATION ── */
+/* -- CORRECT GUESS CELEBRATION -- */
 .mis-guess-correct { align-items: center; text-align: center; padding-top: 20px; }
 .mis-correct-burst {
   font-size: 64px;
@@ -487,7 +487,7 @@
   animation: shimmer 1.5s ease-in-out infinite;
 }
 
-/* ── SEMICIRCLE WHEEL (Step 4b) ── */
+/* -- SEMICIRCLE WHEEL (Step 4b) -- */
 .mis-wheel-container {
   width: 100%;
   display: flex;
@@ -510,7 +510,7 @@
   overflow: visible;
 }
 
-/* Season colour bands on arc — subtle backgrounds */
+/* Season colour bands on arc � subtle backgrounds */
 .mis-wheel-arc::before {
   content: '';
   position: absolute;
@@ -663,7 +663,7 @@
   font-family: 'Nunito', sans-serif;
 }
 
-/* ── ORIGIN CARD ── */
+/* -- ORIGIN CARD -- */
 .mis-step-card { align-items: center; }
 
 .mis-origin-card {
@@ -788,7 +788,7 @@
   margin-top: 6px;
 }
 
-/* ── NEXT / CTA BUTTONS ── */
+/* -- NEXT / CTA BUTTONS -- */
 .mis-next-btn {
   background: linear-gradient(135deg, var(--hut-saffron), var(--hut-orange));
   color: #fff;
@@ -830,7 +830,7 @@
   font-weight: 700;
   border-radius: 50px;
   cursor: pointer;
-  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   white-space: nowrap;
   min-width: 260px;
@@ -840,7 +840,7 @@
 
 .mis-continue-btn-uniform:hover:not(:disabled) {
   transform: var(--mis-continue-hover-transform, translateY(-3px));
-  box-shadow: 0 12px 30px rgba(76, 175, 80, 0.5);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.14);
 }
 
 .mis-continue-btn-uniform:active:not(:disabled) {
@@ -859,16 +859,16 @@
 @keyframes misContinuePulse {
   0%,
   100% {
-    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
   }
   50% {
-    box-shadow: 0 8px 35px rgba(76, 175, 80, 0.6);
+    box-shadow: 0 8px 35px rgba(0,0,0,0.16);
   }
 }
 
 /* Unused: Scene 22 uses aboutme-comparison--family-size in AboutMeComparisonCard.css */
 
-/* ── CORRECT CARD WITH GLOW PULSE ── */
+/* -- CORRECT CARD WITH GLOW PULSE -- */
 .card {
   position: relative;
   border-radius: 16px;
@@ -1016,7 +1016,7 @@
   }
 }
 
-/* ── WRONG CARD GENTLE SHAKE ── */
+/* -- WRONG CARD GENTLE SHAKE -- */
 .card.wrong {
   will-change: transform;
   animation: shake 0.52s cubic-bezier(0.36, 0.07, 0.19, 0.97);
@@ -1034,7 +1034,7 @@
   100% { transform: translateX(0) scale(1); }
 }
 
-/* ── RESPONSIVE ── */
+/* -- RESPONSIVE -- */
 @media (max-width: 400px) {
   .mis-regions-grid { grid-template-columns: 1fr; }
   .mis-lang-grid { grid-template-columns: 1fr 1fr; }
@@ -1053,3 +1053,4 @@
   .mis-bubble { font-size: 15px; }
   .mis-mute-btn { width: 70px; height: 70px; font-size: 28px; }
 }
+

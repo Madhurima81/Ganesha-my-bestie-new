@@ -1405,82 +1405,6 @@ const handleComplete = () => {
       <HomeButton onNavigate={onNavigate} />
       <ZoneBadgeButton zoneId="about-me-hut" onBack={() => onNavigate?.('zone-welcome')} />
       <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
-
-      {/* DEBUG: Test Controls Panel */}
-      <div style={{
-        position: 'fixed',
-        top: '16px',
-        right: '16px',
-        zIndex: 1000,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '8px',
-        background: 'rgba(0, 0, 0, 0.85)',
-        padding: '12px',
-        borderRadius: '8px',
-        maxWidth: '220px',
-      }}>
-        {/* Reset Button */}
-        <button
-          onClick={() => {
-            clearProgress();
-            sceneActions.updateState({ phase: STEPS.OPENING });
-            setSelectedRegion(null);
-            setSelectedLanguages([]);
-            setSelectedFestivals([]);
-            setDiscoveredLocations([]);
-            setMglassPosition({ top: '30%', left: '20%' });
-            setShowCelebration(false);
-          }}
-          style={{
-            padding: '6px 10px',
-            background: 'rgba(255, 0, 0, 0.8)',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            fontSize: '11px',
-            fontWeight: 700,
-            cursor: 'pointer',
-            fontFamily: "'Nunito', sans-serif",
-          }}
-        >
-          🔄 Reset All
-        </button>
-
-        {/* Phase Jump Buttons */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '4px' }}>
-          {[
-            { label: 'Opening', value: STEPS.OPENING },
-            { label: 'Phase1', value: STEPS.GANESHA_HOME },
-            { label: 'Phase2', value: STEPS.CHILD_HOME },
-            { label: 'Phase3', value: STEPS.LANGUAGE_GANESHA },
-            { label: 'Phase4', value: STEPS.LANGUAGE_CHILD },
-            { label: 'Phase5', value: STEPS.FESTIVALS_GANESHA },
-            { label: 'Phase6', value: STEPS.FESTIVALS_CHILD },
-            { label: 'Phase7', value: STEPS.ORIGIN_CARD },
-            { label: 'Complete', value: STEPS.COMPLETE },
-          ].map((phaseOption) => (
-            <button
-              key={phaseOption.value}
-              onClick={() => sceneActions.updateState({ phase: phaseOption.value })}
-              style={{
-                padding: '4px 8px',
-                background: phase === phaseOption.value ? '#4CAF50' : '#666',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '4px',
-                fontSize: '10px',
-                fontWeight: 600,
-                cursor: 'pointer',
-                fontFamily: "'Nunito', sans-serif",
-              }}
-            >
-              {phaseOption.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Sparkles */}
       {sparkleState.type && (
         <div
@@ -1694,9 +1618,9 @@ const handleComplete = () => {
           {/* India Map Container */}
           <div style={{
             position: 'relative',
-            width: '900px',
-            height: '980px',
-            margin: '120px auto 0',
+            width: '536px',
+            height: '583px',
+            margin: '90px auto 0',
             maxWidth: '90vw',
             overflow: 'visible',
           }}>
@@ -1815,8 +1739,8 @@ const handleComplete = () => {
                     top: loc ? `${loc.y}%` : '50%',
                     left: loc ? `${loc.x}%` : '50%',
                     transform: 'translate(-50%, -50%)',
-                    width: '120px',
-                    height: '120px',
+                    width: '71px',
+                    height: '71px',
                     zIndex: 5,
                     animation: 'popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
                     filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.3))',
@@ -1940,8 +1864,8 @@ const handleComplete = () => {
               onPositionChange={(newPos) => handleMglassMove(newPos)}
               bounds={{ top: 0, left: 0, right: 100, bottom: 100 }}
               style={{
-                width: '160px',
-                height: '160px',
+                width: '95px',
+                height: '95px',
                 zIndex: 20,
                 cursor: 'grab',
                 animation: ganeshaHomeIdleLevel >= 1 ? 'idleWobble 0.5s ease-in-out infinite' : 'none',
@@ -1971,9 +1895,9 @@ const handleComplete = () => {
           {/* India Map Container with Region Badges */}
           <div style={{
             position: 'relative',
-            width: '900px',
-            height: '980px',
-            margin: '120px auto 0',
+            width: '536px',
+            height: '583px',
+            margin: '90px auto 0',
             maxWidth: '90vw',
             overflow: 'visible',
           }}>
@@ -2001,8 +1925,8 @@ const handleComplete = () => {
                   top: region.mapTop,
                   left: region.mapLeft,
                   transform: selectedRegion?.id === region.id ? 'translate(-50%, -50%) scale(1.08)' : 'translate(-50%, -50%)',
-                  width: '120px',
-                  padding: '12px 16px',
+                  width: '71px',
+                  padding: '7px 10px',
                   background: selectedRegion?.id === region.id ? '#FFE7A3' : '#F8F1E2',
                   border: selectedRegion?.id === region.id ? '3px solid #F4B942' : '2px solid #ccc',
                   borderRadius: '16px',
@@ -2015,10 +1939,10 @@ const handleComplete = () => {
                   transition: 'all 0.2s ease',
                 }}
               >
-                <img src={region.icon} alt={region.label} style={{ width: '46px', height: '46px', objectFit: 'contain', margin: '0 auto 8px', display: 'block' }} />
+                <img src={region.icon} alt={region.label} style={{ width: '27px', height: '27px', objectFit: 'contain', margin: '0 auto 4px', display: 'block' }} />
                 <div style={{
                   fontFamily: "'Baloo 2', cursive",
-                  fontSize: '13px',
+                  fontSize: '8px',
                   fontWeight: 700,
                   color: '#5D2E0F',
                   lineHeight: '1.2',
@@ -2035,8 +1959,8 @@ const handleComplete = () => {
                   position: 'absolute',
                   top: selectedRegion.mapTop,
                   left: selectedRegion.mapLeft,
-                  width: '90px',
-                  height: '90px',
+                  width: '54px',
+                  height: '54px',
                   borderRadius: '50%',
                   background: 'radial-gradient(circle, rgba(108,195,255,0.62) 0%, rgba(108,195,255,0.18) 60%, rgba(108,195,255,0) 100%)',
                   transform: 'translate(-50%, -50%)',
@@ -2054,12 +1978,15 @@ const handleComplete = () => {
                   top: selectedRegion.mapTop,
                   left: selectedRegion.mapLeft,
                   transform: 'translate(-50%, -120%)',
-                  fontSize: '48px',
                   zIndex: 10,
                   animation: 'housePop 0.45s ease-out',
                 }}
               >
-                🏠
+                <img
+                  src={storyHouseIcon}
+                  alt="Home"
+                  style={{ width: '30px', height: '30px', objectFit: 'contain', display: 'block' }}
+                />
               </div>
             )}
 
@@ -2074,8 +2001,8 @@ const handleComplete = () => {
                 top: outsideIndiaRegion?.mapTop || '82%',
                 left: outsideIndiaRegion?.mapLeft || '36%',
                 transform: selectedRegion?.id === 'other' ? 'translate(-50%, -50%) scale(1.08)' : 'translate(-50%, -50%)',
-                width: '120px',
-                padding: '12px 10px',
+                width: '71px',
+                padding: '7px 6px',
                 background: selectedRegion?.id === 'other' ? '#FFE7A3' : '#F8F1E2',
                 border: selectedRegion?.id === 'other' ? '3px solid #F4B942' : '2px solid #ccc',
                 borderRadius: '16px',
@@ -2084,7 +2011,7 @@ const handleComplete = () => {
                   : '0 4px 12px rgba(0,0,0,0.15)',
                 cursor: 'pointer',
                 fontFamily: "'Baloo 2', cursive",
-                fontSize: '12px',
+                fontSize: '7px',
                 fontWeight: 700,
                 color: '#5D2E0F',
                 zIndex: 5,
@@ -2092,7 +2019,7 @@ const handleComplete = () => {
                 textAlign: 'center',
               }}
             >
-              <img src={otherLangIcon} alt="Elsewhere" style={{ width: '30px', height: '30px', objectFit: 'contain', margin: '0 auto 6px', display: 'block' }} />
+              <img src={otherLangIcon} alt="Elsewhere" style={{ width: '18px', height: '18px', objectFit: 'contain', margin: '0 auto 4px', display: 'block' }} />
               Outside India
             </button>
               );
@@ -2127,9 +2054,13 @@ const handleComplete = () => {
               disabled={!isChildHomeContinueEnabled}
               style={{
                 position: 'absolute',
-                bottom: '-80px',
+                bottom: '-34px',
                 left: '50%',
                 marginTop: 0,
+                padding: '12px 32px',
+                fontSize: '1.1rem',
+                minWidth: '170px',
+                minHeight: '62px',
                 ['--mis-continue-transform']: 'translateX(-50%)',
                 ['--mis-continue-hover-transform']: 'translateX(-50%) translateY(-3px)',
                 ['--mis-continue-active-transform']: 'translateX(-50%) translateY(-1px)',
@@ -2151,9 +2082,9 @@ const handleComplete = () => {
       )}
       {/* Language Ganesha Phase — 4 Language Guess Game */}
       {phase === STEPS.LANGUAGE_GANESHA && (
-        <div style={{ paddingTop: '60px', paddingBottom: '80px', minHeight: '100vh' }}>
+        <div style={{ paddingTop: '20px', paddingBottom: '56px', minHeight: '100vh' }}>
           {/* Play Button Section */}
-          <div style={{ textAlign: 'center', marginTop: '220px', marginBottom: '28px' }}>
+          <div style={{ textAlign: 'center', marginTop: 'clamp(20px, 4vh, 90px)', marginBottom: '8px' }}>
             <button
               onClick={() => {
                 playUiTap();
@@ -2191,8 +2122,8 @@ const handleComplete = () => {
               }}
               disabled={langGuessPhase === 'correct'}
               style={{
-                width: '400px',
-                height: '400px',
+                width: 'clamp(180px, 22vw, 320px)',
+                height: 'clamp(180px, 22vw, 320px)',
                 borderRadius: '50%',
                 backgroundColor: 'transparent',
                 border: 'none',
@@ -2208,20 +2139,20 @@ const handleComplete = () => {
                 opacity: langGuessPhase === 'correct' ? 0.5 : 1,
               }}
             >
-              <img src={playLangIcon} alt="Play" style={{ width: '200px', height: '200px', objectFit: 'contain' }} />
+              <img src={playLangIcon} alt="Play" style={{ width: '50%', height: '50%', objectFit: 'contain' }} />
             </button>
           </div>
 
           {/* Language Cards Grid — 2x2 (Hidden until mantra finishes) */}
           {showLanguageCards && (
           <div style={{
-            maxWidth: '900px',
-            margin: '0 auto',
+            maxWidth: 'min(720px, 78vw)',
+            margin: 'clamp(-12px, -1.5vh, -24px) auto 0',
             display: 'grid',
             gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: '72px',
-            padding: '0 24px',
-            marginBottom: '80px',
+            gap: 'clamp(16px, 3vw, 48px)',
+            padding: '0 clamp(12px, 2vw, 24px)',
+            marginBottom: 'clamp(16px, 3vh, 40px)',
             animation: 'fadeIn 0.6s ease-out',
           }}>
             {[
@@ -2249,8 +2180,8 @@ const handleComplete = () => {
                 disabled={wrongLangGuesses.has(lang.id) || langGuessPhase === 'correct'}
                 style={{
                   width: '100%',
-                  minHeight: '280px',
-                  padding: '28px',
+                  minHeight: 'clamp(160px, 22vh, 280px)',
+                  padding: 'clamp(14px, 2vw, 28px)',
                   border: 'none',
                   backgroundColor: '#F8F1E2',
                   cursor: (wrongLangGuesses.has(lang.id) || langGuessPhase === 'correct') ? 'not-allowed' : 'pointer',
@@ -2258,16 +2189,16 @@ const handleComplete = () => {
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '16px',
+                  gap: 'clamp(8px, 1.2vh, 16px)',
                   boxShadow: isSelected ? undefined : '0 6px 16px rgba(0, 0, 0, 0.16)',
                   transform: isSelected ? undefined : 'scale(1)',
                   position: 'relative',
                 }}
               >
-                <img src={lang.icon} alt={lang.label} style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
+                <img src={lang.icon} alt={lang.label} style={{ width: 'clamp(48px, 7vh, 80px)', height: 'clamp(48px, 7vh, 80px)', objectFit: 'contain' }} />
                 <div style={{
                   fontFamily: "'Baloo 2', cursive",
-                  fontSize: '28px',
+                  fontSize: 'clamp(18px, 2.4vh, 28px)',
                   fontWeight: 700,
                   color: '#654321',
                 }}>
@@ -2275,7 +2206,7 @@ const handleComplete = () => {
                 </div>
                 <div style={{
                   fontFamily: "'Nunito', sans-serif",
-                  fontSize: '20px',
+                  fontSize: 'clamp(14px, 1.8vh, 20px)',
                   color: '#8B6914',
                 }}>
                   {lang.script}
@@ -2327,10 +2258,10 @@ const handleComplete = () => {
             <StoryProgressHeader discoveries={selectedLanguages.map(lang => ({ ...lang, image: lang.icon, name: lang.label }))} isChildMode={false} />
           )}
 
-          <div style={{ maxWidth: '1100px', margin: '140px auto 0', padding: '0 24px' }}>
+          <div style={{ maxWidth: '980px', margin: '52px auto 0', padding: '0 20px' }}>
             {/* Most Spoken At Home */}
-            <div style={{ marginBottom: '80px' }}>
-              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '28px', fontWeight: 700, color: '#8B6914', textAlign: 'center', marginBottom: '40px' }}>
+            <div style={{ marginBottom: '36px' }}>
+              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '24px', fontWeight: 700, color: '#8B6914', textAlign: 'center', marginBottom: '20px' }}>
                 Most Spoken At Home
               </h3>
               {showLangSelectionHelper && (
@@ -2351,7 +2282,7 @@ const handleComplete = () => {
                   Pick 3. Tap another to change.
                 </div>
               )}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '32px', marginBottom: '40px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '22px' }}>
                 {[
                   LANGUAGE_MAP['hindi'],
                   LANGUAGE_MAP['english'],
@@ -2364,8 +2295,10 @@ const handleComplete = () => {
                     disabled={false}
                     style={{
                       width: '100%',
-                      minHeight: '160px',
-                      padding: '20px',
+                      maxWidth: '190px',
+                      justifySelf: 'center',
+                      minHeight: '112px',
+                      padding: '14px',
                       borderRadius: '20px',
                       border: selectedLanguages.find(l => l.id === lang.id) ? `4px solid #FFD76A` : '2px solid #E0E0E0',
                       backgroundColor: selectedLanguages.find(l => l.id === lang.id) ? '#FFFBE9' : '#F8F1E2',
@@ -2374,7 +2307,7 @@ const handleComplete = () => {
                       flexDirection: 'column',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '12px',
+                      gap: '8px',
                       transition: swappingOutLangId === lang.id ? 'none' : 'all 0.2s',
                       boxShadow: selectedLanguages.find(l => l.id === lang.id) ? '0 6px 16px rgba(255, 215, 106, 0.3)' : '0 2px 6px rgba(0, 0, 0, 0.08)',
                       transform: selectedLanguages.find(l => l.id === lang.id) ? 'scale(1.05)' : 'scale(1)',
@@ -2384,11 +2317,11 @@ const handleComplete = () => {
                     }}
                   >
                     {selectedLanguages.find(l => l.id === lang.id) && <div style={{ fontSize: '18px', position: 'absolute', top: '8px', right: '12px', fontWeight: 'bold' }}>✓</div>}
-                    <img src={lang.icon} alt={lang.label} style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
-                    <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '16px', fontWeight: 700, color: '#654321' }}>
+                    <img src={lang.icon} alt={lang.label} style={{ width: '34px', height: '34px', objectFit: 'contain' }} />
+                    <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '13px', fontWeight: 700, color: '#654321' }}>
                       {lang.label}
                     </div>
-                    <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: '12px', color: '#8B6914' }}>
+                    <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: '10px', color: '#8B6914' }}>
                       {lang.script}
                     </div>
                   </button>
@@ -2398,10 +2331,10 @@ const handleComplete = () => {
 
             {/* More Languages */}
             <div>
-              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '28px', fontWeight: 700, color: '#8B6914', textAlign: 'center', marginBottom: '40px' }}>
+              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '24px', fontWeight: 700, color: '#8B6914', textAlign: 'center', marginBottom: '10px' }}>
                 More Languages
               </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '32px', marginBottom: '60px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '12px' }}>
                 {[
                   LANGUAGE_MAP['gujarati'],
                   LANGUAGE_MAP['bengali'],
@@ -2418,8 +2351,10 @@ const handleComplete = () => {
                     disabled={false}
                     style={{
                       width: '100%',
-                      minHeight: '160px',
-                      padding: '20px',
+                      maxWidth: '190px',
+                      justifySelf: 'center',
+                      minHeight: '112px',
+                      padding: '14px',
                       borderRadius: '20px',
                       border: selectedLanguages.find(l => l.id === lang.id) ? `4px solid #FFD76A` : '2px solid #E0E0E0',
                       backgroundColor: selectedLanguages.find(l => l.id === lang.id) ? '#FFFBE9' : '#F8F1E2',
@@ -2428,7 +2363,7 @@ const handleComplete = () => {
                       flexDirection: 'column',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '12px',
+                      gap: '8px',
                       transition: swappingOutLangId === lang.id ? 'none' : 'all 0.2s',
                       boxShadow: selectedLanguages.find(l => l.id === lang.id) ? '0 6px 16px rgba(255, 215, 106, 0.3)' : '0 2px 6px rgba(0, 0, 0, 0.08)',
                       transform: selectedLanguages.find(l => l.id === lang.id) ? 'scale(1.05)' : 'scale(1)',
@@ -2438,11 +2373,11 @@ const handleComplete = () => {
                     }}
                   >
                     {selectedLanguages.find(l => l.id === lang.id) && <div style={{ fontSize: '18px', position: 'absolute', top: '8px', right: '12px', fontWeight: 'bold' }}>✓</div>}
-                    <img src={lang.icon} alt={lang.label} style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
-                    <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '16px', fontWeight: 700, color: '#654321' }}>
+                    <img src={lang.icon} alt={lang.label} style={{ width: '34px', height: '34px', objectFit: 'contain' }} />
+                    <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '13px', fontWeight: 700, color: '#654321' }}>
                       {lang.label}
                     </div>
-                    <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: '12px', color: '#8B6914' }}>
+                    <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: '10px', color: '#8B6914' }}>
                       {lang.script}
                     </div>
                   </button>
@@ -2452,7 +2387,7 @@ const handleComplete = () => {
 
             {/* Selection Counter */}
             {selectedLanguages.length > 0 && (
-              <div style={{ textAlign: 'center', marginBottom: '40px', fontFamily: "'Nunito', sans-serif", fontSize: '14px', color: '#8B6914', fontWeight: 600 }}>
+              <div style={{ textAlign: 'center', marginBottom: '10px', fontFamily: "'Nunito', sans-serif", fontSize: '14px', color: '#8B6914', fontWeight: 600 }}>
                 Pick up to 3 languages. {selectedLanguages.length} of 3 selected
               </div>
             )}
@@ -2484,7 +2419,11 @@ const handleComplete = () => {
                 }}
                 style={{
                   display: 'block',
-                  margin: '60px auto 0',
+                  margin: '10px auto 0',
+                  padding: '12px 32px',
+                  fontSize: '1.1rem',
+                  minWidth: '170px',
+                  minHeight: '62px',
                 }}
               >
                 Continue
@@ -2506,7 +2445,7 @@ const handleComplete = () => {
         }}>
           {/* Festival Cards Container — Flexbox for proper centering */}
           <div style={{
-            marginTop: '360px',
+            marginTop: '160px',
             marginBottom: '80px',
           }}>
             {/* TOP ROW: 2 cards centered */}
@@ -2528,8 +2467,8 @@ const handleComplete = () => {
                 }}
                 disabled={guessPhase === 'correct'}
                 style={{
-                  width: 'clamp(128px, 28vw, 220px)',
-                  height: 'clamp(128px, 28vw, 220px)',
+                  width: 'clamp(115px, 25vw, 198px)',
+                  height: 'clamp(115px, 25vw, 198px)',
                   padding: '20px',
                   border: 'none',
                   backgroundColor: '#F8F1E2',
@@ -2556,8 +2495,8 @@ const handleComplete = () => {
                 }}
                 disabled={guessPhase === 'correct'}
                 style={{
-                  width: 'clamp(128px, 28vw, 220px)',
-                  height: 'clamp(128px, 28vw, 220px)',
+                  width: 'clamp(115px, 25vw, 198px)',
+                  height: 'clamp(115px, 25vw, 198px)',
                   padding: '20px',
                   border: 'none',
                   backgroundColor: '#F8F1E2',
@@ -2593,8 +2532,8 @@ const handleComplete = () => {
                 }}
                 disabled={guessPhase === 'correct'}
                 style={{
-                  width: 'clamp(128px, 28vw, 220px)',
-                  height: 'clamp(128px, 28vw, 220px)',
+                  width: 'clamp(115px, 25vw, 198px)',
+                  height: 'clamp(115px, 25vw, 198px)',
                   padding: '20px',
                   border: 'none',
                   backgroundColor: '#F8F1E2',
@@ -2621,8 +2560,8 @@ const handleComplete = () => {
                 }}
                 disabled={guessPhase === 'correct'}
                 style={{
-                  width: 'clamp(128px, 28vw, 220px)',
-                  height: 'clamp(128px, 28vw, 220px)',
+                  width: 'clamp(115px, 25vw, 198px)',
+                  height: 'clamp(115px, 25vw, 198px)',
                   padding: '20px',
                   border: 'none',
                   backgroundColor: '#F8F1E2',
@@ -2651,8 +2590,8 @@ const handleComplete = () => {
                 }}
                 disabled={guessPhase === 'correct'}
                 style={{
-                  width: 'clamp(128px, 28vw, 220px)',
-                  height: 'clamp(128px, 28vw, 220px)',
+                  width: 'clamp(115px, 25vw, 198px)',
+                  height: 'clamp(115px, 25vw, 198px)',
                   padding: '20px',
                   border: 'none',
                   backgroundColor: '#F8F1E2',
@@ -2714,16 +2653,16 @@ const handleComplete = () => {
             <StoryProgressHeader discoveries={selectedFestivals.map(fest => ({ ...fest, image: fest.icon, name: fest.label }))} isChildMode={false} />
           )}
 
-          <div style={{ maxWidth: '1200px', margin: '140px auto 0', padding: '0 24px' }}>
+          <div style={{ maxWidth: '980px', margin: '52px auto 0', padding: '0 20px' }}>
             {/* COMMON FESTIVALS (Top Row - 4 cards) */}
-            <div style={{ marginBottom: '80px' }}>
+            <div style={{ marginBottom: '36px' }}>
               <h3 style={{
                 fontFamily: "'Baloo 2', cursive",
-                fontSize: '28px',
+                fontSize: '24px',
                 fontWeight: 700,
                 color: '#8B6914',
                 textAlign: 'center',
-                marginBottom: '40px',
+                marginBottom: '20px',
               }}>
                 Common Festivals
               </h3>
@@ -2748,8 +2687,8 @@ const handleComplete = () => {
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: '32px',
-                marginBottom: '40px',
+                gap: '16px',
+                marginBottom: '22px',
               }}>
                 {COMMON_FESTIVALS.filter(Boolean).map((fest) => (
                   <button
@@ -2758,8 +2697,10 @@ const handleComplete = () => {
                     disabled={false}
                     style={{
                       width: '100%',
-                      minHeight: '200px',
-                      padding: '20px',
+                      maxWidth: '190px',
+                      justifySelf: 'center',
+                      minHeight: '130px',
+                      padding: '16px',
                       borderRadius: '20px',
                       border: selectedFestivals.find(f => f.id === fest.id) ? '2px solid #FFC857' : '2px solid #E0E0E0',
                       backgroundColor: selectedFestivals.find(f => f.id === fest.id) ? '#FFF4D8' : '#F8F1E2',
@@ -2770,7 +2711,7 @@ const handleComplete = () => {
                       justifyContent: 'center',
                       outline: 'none',
                       WebkitTapHighlightColor: 'transparent',
-                      gap: '12px',
+                      gap: '10px',
                       transition: swappingOutFestId === fest.id ? 'none' : 'all 0.3s',
                       boxShadow: selectedFestivals.find(f => f.id === fest.id)
                         ? '0 6px 16px rgba(255, 200, 87, 0.4)'
@@ -2781,10 +2722,10 @@ const handleComplete = () => {
                       animation: swappingOutFestId === fest.id ? 'swapOut 0.3s ease-out forwards' : 'none',
                     }}
                   >
-                    <img src={fest.icon} alt={fest.label} style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
+                    <img src={fest.icon} alt={fest.label} style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
                     <div style={{
                       fontFamily: "'Baloo 2', cursive",
-                      fontSize: '18px',
+                      fontSize: '13px',
                       fontWeight: 700,
                       color: '#654321',
                     }}>
@@ -2799,19 +2740,19 @@ const handleComplete = () => {
             <div>
               <h3 style={{
                 fontFamily: "'Baloo 2', cursive",
-                fontSize: '28px',
+                fontSize: '24px',
                 fontWeight: 700,
                 color: '#8B6914',
                 textAlign: 'center',
-                marginBottom: '40px',
+                marginBottom: '10px',
               }}>
                 Other Festivals
               </h3>
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: '32px',
-                marginBottom: '60px',
+                gap: '12px',
+                marginBottom: '12px',
               }}>
                 {OTHER_FESTIVALS.filter(Boolean).map((fest) => (
                   <button
@@ -2820,8 +2761,10 @@ const handleComplete = () => {
                     disabled={false}
                     style={{
                       width: '100%',
-                      minHeight: '200px',
-                      padding: '20px',
+                      maxWidth: '190px',
+                      justifySelf: 'center',
+                      minHeight: '130px',
+                      padding: '16px',
                       borderRadius: '20px',
                       border: selectedFestivals.find(f => f.id === fest.id) ? '2px solid #FFC857' : '2px solid #E0E0E0',
                       backgroundColor: selectedFestivals.find(f => f.id === fest.id) ? '#FFF4D8' : '#F8F1E2',
@@ -2832,7 +2775,7 @@ const handleComplete = () => {
                       justifyContent: 'center',
                       outline: 'none',
                       WebkitTapHighlightColor: 'transparent',
-                      gap: '12px',
+                      gap: '10px',
                       transition: swappingOutFestId === fest.id ? 'none' : 'all 0.3s',
                       boxShadow: selectedFestivals.find(f => f.id === fest.id)
                         ? '0 6px 16px rgba(255, 200, 87, 0.4)'
@@ -2843,10 +2786,10 @@ const handleComplete = () => {
                       animation: swappingOutFestId === fest.id ? 'swapOut 0.3s ease-out forwards' : 'none',
                     }}
                   >
-                    <img src={fest.icon} alt={fest.label} style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
+                    <img src={fest.icon} alt={fest.label} style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
                     <div style={{
                       fontFamily: "'Baloo 2', cursive",
-                      fontSize: '18px',
+                      fontSize: '13px',
                       fontWeight: 700,
                       color: '#654321',
                     }}>
@@ -2861,7 +2804,7 @@ const handleComplete = () => {
             {selectedFestivals.length > 0 && (
               <div style={{
                 textAlign: 'center',
-                marginBottom: '40px',
+                marginBottom: '10px',
                 fontFamily: "'Nunito', sans-serif",
                 fontSize: '14px',
                 color: '#8B6914',
@@ -2898,7 +2841,11 @@ const handleComplete = () => {
                 }}
                 style={{
                   display: 'block',
-                  margin: '60px auto 0',
+                  margin: '10px auto 0',
+                  padding: '12px 32px',
+                  fontSize: '1.1rem',
+                  minWidth: '170px',
+                  minHeight: '62px',
                 }}
               >
                 See Our Story 🌟
@@ -2911,7 +2858,7 @@ const handleComplete = () => {
       {/* Origin Card Phase */}
       {phase === STEPS.ORIGIN_CARD && phase !== STEPS.COMPLETE && (
         <AboutMeComparisonCard
-          className="aboutme-comparison--family-size"
+          className="aboutme-comparison--story-connect"
           title="Our Stories Connect!"
           subtitle={null}
           onContinue={() => {
@@ -2998,11 +2945,11 @@ const handleComplete = () => {
                 label: 'Festivals',
                 wide: true,
                 custom: (
-                  <div style={{ display: 'flex', gap: '48px', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', gap: '20px', flexWrap: 'nowrap', justifyContent: 'center', alignItems: 'center' }}>
                     {selectedFestivals.map(fest => (
                       <div key={fest.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-                        <img src={fest?.icon} alt={fest?.label} style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
-                        <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '16px', fontWeight: 700, color: '#3e2723', textAlign: 'center' }}>{fest?.label}</div>
+                        <img src={fest?.icon} alt={fest?.label} style={{ width: '56px', height: '56px', objectFit: 'contain' }} />
+                        <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '14px', fontWeight: 700, color: '#3e2723', textAlign: 'center', whiteSpace: 'nowrap' }}>{fest?.label}</div>
                       </div>
                     ))}
                   </div>
@@ -3016,3 +2963,4 @@ const handleComplete = () => {
     </div>
   );
 }
+
