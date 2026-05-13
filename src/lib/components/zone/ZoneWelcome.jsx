@@ -1000,21 +1000,6 @@ const getPermanentCompletedCount = () => {
 
       {/* Zone Welcome Whisper removed per request */}
 
-      {isZoneComplete && (
-        <div className="zone-complete-cta" role="status">
-          <span className="zone-complete-cta-text">
-            You did it! Tap a card to play again, or
-          </span>
-          <button
-            type="button"
-            className="zone-complete-cta-home-btn"
-            onClick={() => onNavigate?.('home')}
-          >
-            back to map
-          </button>
-        </div>
-      )}
-
       {/* Scene Icons Grid */}
       <div className="zone-scenes-container cards-wrapper" data-zone={zoneData.id}>
         {zoneWelcomeGaneshaState && (
@@ -1043,7 +1028,7 @@ const getPermanentCompletedCount = () => {
             return (
               <div
                 key={scene.id}
-                className={`zone-scene-card scene-card zone-card zone-${index + 1} ${status.status} ${
+                className={`zone-scene-card scene-card zone-card zone-${scene.order} ${status.status} ${
                   highlightedScene === scene.id ? 'highlighted' : ''
                 } ${status.status === 'locked' ? 'locked-scene' : 'unlocked-scene'} ${
                   isNextScene ? 'next-scene' : ''
@@ -1160,7 +1145,7 @@ Continue
                       >
                         {status.status === 'available' && 'Start'}
                         {status.status === 'completed' && '↻ Play Again'}
-                        {status.status === 'locked' && 'Coming Soon'}
+                        {status.status === 'locked' && 'Locked'}
                       </button>
                     )}
                   </div>

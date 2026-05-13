@@ -608,11 +608,6 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
 
         {/* ACTION BUTTONS */}
         <div className="welcome-actions">
-          {hasProgress && (
-            <div style={{ marginBottom: 8, fontSize: 12, color: '#7A68C3', fontWeight: 700 }}>
-              QA Debug: Continue Journey → {getContinueJourneyDebugTarget()}
-            </div>
-          )}
           {hasProgress ? (
             <>
               <PrimaryBtn
