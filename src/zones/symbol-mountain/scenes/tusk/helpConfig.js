@@ -9,7 +9,7 @@ import musicalBells from './assets/images/musical-bells-colored.png';
 import musicalCymbals from './assets/images/musical-cymbals-colored.png';
 import ganeshaEyes from '../../shared/images/icons/symbol-eyes-new.png';
 import ganeshaEars from '../../shared/images/icons/symbol-ears-new.png';
-import ganeshaTusk from '../../shared/images/icons/symbol-tusk-new.png';
+import ganeshaTusk from '../../shared/images/icons/broken-tusk-symbol.png';
 
 // Phase constants (matching your scene)
 const PHASES = {

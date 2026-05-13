@@ -392,7 +392,7 @@ const NewModakSceneMVPContent = ({
     enableMusic: true,
     musicVolume: 0.1,
     voiceVolume: 1,
-    sfxVolume: 0.35,
+    sfxVolume: 0.7,
     idleTimeout: 20,
     resumeDelay: RESUME_DELAY_MS,  // waits for countdown before replaying VO / music
     onReturnHint,                  // called when child returns with no VO queued

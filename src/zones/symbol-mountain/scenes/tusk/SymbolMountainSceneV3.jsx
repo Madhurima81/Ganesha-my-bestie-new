@@ -65,7 +65,7 @@ import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal
 import mountainBackground from '../tusk/assets/images/symbolmtn_background.webp';
 import ganeshaEyes from '../../shared/images/icons/symbol-eyes-new.png';
 import ganeshaEars from '../../shared/images/icons/symbol-ears-new.png';
-import ganeshaTusk from '../../shared/images/icons/symbol-tusk-new.png';
+import ganeshaTusk from '../../shared/images/icons/broken-tusk-symbol.png';
 
 // Character/Coach images
 import eyesCoach from '../tusk/assets/images/mooshika-coach.webp';
@@ -82,7 +82,7 @@ import symbolLotusColored from '../../shared/images/icons/symbol-lotus-new.png';
 import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new.png';
 import symbolEyesColored from '../../shared/images/icons/symbol-eyes-new.png';
 import symbolEarColored from '../../shared/images/icons/symbol-ears-new.png';
-import symbolTuskColored from '../../shared/images/icons/symbol-tusk-new.png';
+import symbolTuskColored from '../../shared/images/icons/broken-tusk-symbol.png';
 
 // Musical instrument images
 import musicalTabla from '../tusk/assets/images/tabla-new.png';
@@ -382,7 +382,7 @@ const SymbolMountainSceneContent = ({
 
   // ── Voice guidance (music + SFX enabled) ─────────────────────────────────
   const { startMusic, stopMusic, playTap, playCorrect, playPowerUnlock } = useVoiceGuidance(
-    zoneId, sceneId, { enableMusic: true, musicVolume: 0.1, voiceVolume: 1, sfxVolume: 0.35, idleTimeout: 20 }
+    zoneId, sceneId, { enableMusic: true, musicVolume: 0.1, voiceVolume: 1, sfxVolume: 0.7, idleTimeout: 20 }
   );
   useEffect(() => {
     if (sceneState?.welcomeShown) startMusic();
@@ -1592,3 +1592,4 @@ const SymbolMountainSceneContent = ({
 };
 
 export default SymbolMountainSceneV3;
+

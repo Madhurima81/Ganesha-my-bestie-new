@@ -44,7 +44,7 @@ import SceneCompletionCelebration from '../../../../lib/components/celebration/S
 import mountainBackground from '../tusk/assets/images/rock-background.png';
 import ganeshaEyes from '../../shared/images/icons/symbol-eyes-new.png';
 import ganeshaEars from '../../shared/images/icons/symbol-ears-new.png';
-import ganeshaTusk from '../../shared/images/icons/symbol-tusk-new.png';
+import ganeshaTusk from '../../shared/images/icons/broken-tusk-symbol.png';
 
 // Popup images
 import popupEyes from '../tusk/assets/images/popup-eyes-info.png';
@@ -62,7 +62,7 @@ import symbolLotusColored from '../../shared/images/icons/symbol-lotus-new.png';
 import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new.png';
 import symbolEyesColored from '../../shared/images/icons/symbol-eyes-new.png';
 import symbolEarColored from '../../shared/images/icons/symbol-ears-new.png';
-import symbolTuskColored from '../../shared/images/icons/symbol-tusk-new.png';
+import symbolTuskColored from '../../shared/images/icons/broken-tusk-symbol.png';
 
 // Import your actual musical instrument images
 import musicalTabla from '../tusk/assets/images/musical-tabla-colored.png';
@@ -3140,3 +3140,4 @@ onComplete={() => {
 `}</style>
 
 export default SymbolMountainSceneV2;
+

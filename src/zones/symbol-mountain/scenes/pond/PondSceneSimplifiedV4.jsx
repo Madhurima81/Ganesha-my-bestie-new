@@ -361,7 +361,7 @@ const PondSceneContent = ({
     zoneId, sceneId, {
       enableMusic: true,
       musicVolume: 0.06,
-      sfxVolume: 0.2,
+      sfxVolume: 0.7,
       idleTimeout: 20,
       resumeDelay: RESUME_DELAY_MS,
     }
