@@ -34,13 +34,13 @@ import ear from './assets/images/ear.png';
 import tusk from './assets/images/tusk.png';
 import popupEye from './assets/images/popup-eye-info.png';
 import popupEar from './assets/images/popup-ears-info.png';
-import popupTusk from './assets/images/popup-tusk-info.png';
+import popupTusk from '../../shared/images/icons/broken-tusk-symbol.png';
 import coachImage from "./assets/images/ganesha-coach.png";
 
 // Symbol images for completion
 import symbolEyeColored from '../../shared/images/icons/symbol-eyes-new.png';
 import symbolEarColored from '../../shared/images/icons/symbol-ears-new.png';
-import symbolTuskColored from '../../shared/images/icons/symbol-tusk-new.png';
+import symbolTuskColored from '../../shared/images/icons/broken-tusk-symbol.png';
 
 // 🎯 SIMPLIFIED PHASES - Just 3 discoveries
 const PHASES = {
