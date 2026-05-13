@@ -14,7 +14,7 @@
 .aboutme-comparison-title {
   margin: 0 0 4px;
   color: #5d4037;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: clamp(1.4rem, 2.6vw, 2.4rem);
   font-weight: 700;
   text-align: center;
@@ -66,7 +66,7 @@
 .aboutme-comparison-column-title {
   margin: 0;
   color: #3e2723;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: clamp(1.2rem, 1.7vw, 1.7rem);
   font-weight: 700;
   text-align: center;
@@ -126,7 +126,7 @@
 
 .aboutme-comparison-item-text {
   color: #3e2723;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 0.85rem;
   font-weight: 700;
   line-height: 1.2;
@@ -157,7 +157,7 @@
   padding: 12px 38px;
   background: linear-gradient(180deg, #d99a65 0%, #c9824c 100%);
   color: #fff;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 18px;
   font-weight: 700;
   line-height: 1;
@@ -223,7 +223,7 @@
   margin-bottom: 18px;
   border-radius: 28px;
   padding: 14px 38px;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.4rem;
   box-shadow:
     0 4px 0 rgba(0,0,0,0.12),

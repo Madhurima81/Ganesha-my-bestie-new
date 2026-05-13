@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Textinputmodal.css';
+import useKeyboardAwareModal from '../../../lib/hooks/useKeyboardAwareModal';
 
 const TextInputModal = ({ 
   prompt = "What's your answer?",
@@ -10,6 +11,7 @@ const TextInputModal = ({
   onAutoSave
 }) => {
   const [textInput, setTextInput] = useState(initialValue || '');
+  const { modalStyle } = useKeyboardAwareModal();
 
   const handleSave = () => {
     if (textInput.trim()) {
@@ -34,7 +36,7 @@ const TextInputModal = ({
 
   return (
     <div className="text-input-overlay">
-      <div className="text-input-modal">
+      <div className="text-input-modal" style={modalStyle}>
         <h2 className="text-input-prompt">{prompt}</h2>
 
         <div className="text-input-wrapper">
