@@ -13,7 +13,7 @@ import symbolLotusColored from '../../symbol-mountain/shared/images/icons/symbol
 import symbolTrunkColored from '../../symbol-mountain/shared/images/icons/symbol-trunk-new.png';
 import symbolEyesColored from '../../symbol-mountain/shared/images/icons/symbol-eyes-new.png';
 import symbolEarsColored from '../../symbol-mountain/shared/images/icons/symbol-ears-new.png';
-import symbolTuskColored from '../../symbol-mountain/shared/images/icons/symbol-tusk-new.png';
+import symbolTuskColored from '../../symbol-mountain/shared/images/icons/broken-tusk-symbol.png';
 import banyanFullMahakaya from '../../shloka-river/scenes/Scene1/assets/images/banyan-full-from-download.png';
 
 // About Me Icons
@@ -499,4 +499,5 @@ const OpeningModal = ({
 };
 
 export default OpeningModal;
+
 
