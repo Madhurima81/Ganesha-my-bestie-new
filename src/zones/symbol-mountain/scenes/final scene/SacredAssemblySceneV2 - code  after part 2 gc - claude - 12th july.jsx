@@ -43,7 +43,7 @@ import symbolLotusColored from '../../shared/images/icons/symbol-lotus-new.png';
 import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new.png';
 import symbolEyesColored from '../../shared/images/icons/symbol-eyes-new.png';
 import symbolEarsColored from '../../shared/images/icons/symbol-ears-new.png';
-import symbolTuskColored from '../../shared/images/icons/symbol-tusk-new.png';*/
+import symbolTuskColored from '../../shared/images/icons/broken-tusk-symbol.png';*/
 
 // Images - Symbol Icons (your existing shared symbols)
 import symbolMooshikaColored from './assets/images/symbol-mooshika-new.png';
@@ -53,7 +53,7 @@ import symbolLotusColored from './assets/images/symbol-lotus-new.png';
 import symbolTrunkColored from './assets/images/symbol-trunk-new.png';
 import symbolEyesColored from './assets/images/symbol-eyes-new.png';
 import symbolEarsColored from './assets/images/symbol-ears-new.png';
-import symbolTuskColored from './assets/images/symbol-tusk-new.png';
+import symbolTuskColored from './assets/images/broken-tusk-symbol.png';
 
 // Coach image (reuse from pond)
 import mooshikaCoach from "../pond/assets/images/mooshika-coach.png";
@@ -1540,3 +1540,4 @@ const showFinalCelebration = () => {
 };
 
 export default SacredAssemblyScene;
+

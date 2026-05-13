@@ -1,4 +1,4 @@
-﻿// zones/symbol-mountain/scenes/final-scene/SacredAssemblyScene.jsx - V8 DIVINE VERSION
+// zones/symbol-mountain/scenes/final-scene/SacredAssemblyScene.jsx - V8 DIVINE VERSION
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import './SacredAssemblyScene.css';
 import { GANESHA_ZONES } from '../../../ganeshaZones';
@@ -58,7 +58,7 @@ import symbolLotusColored from '../../shared/images/icons/symbol-lotus-new.png';
 import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new.png';
 import symbolEyesColored from '../../shared/images/icons/symbol-eyes-new.png';
 import symbolEarsColored from '../../shared/images/icons/symbol-ears-new.png';
-import symbolTuskColored from '../../shared/images/icons/symbol-tusk-new.png';
+import symbolTuskColored from '../../shared/images/icons/broken-tusk-symbol.png';
 
 // Body Part Overlays - ADD THESE
 import ganeshaFaded from './assets/images/ganesha-faded.png';
@@ -100,21 +100,21 @@ const createIconDataURL = (emoji, color) => {
 };
 
 // Icon placeholders (you can replace these with actual icon imports later)
-const iconTarget = '🎯';
-const iconHeadphones = '🎧';
-const iconRoadblock = '🚧';
-const iconHammer = '🔨';
-const iconHoney = '🍯';
-const iconLightbulb = '💡';
-const iconUniverse = '🌌';
-const iconPath = '🛤️';
+const iconTarget = '??';
+const iconHeadphones = '??';
+const iconRoadblock = '??';
+const iconHammer = '??';
+const iconHoney = '??';
+const iconLightbulb = '??';
+const iconUniverse = '??';
+const iconPath = '???';
 
 // Sacred Assembly Game Configuration
 const SACRED_SYMBOLS = [
   {
     id: 'eyes',
     name: 'Eyes',
-    emoji: '👁️',
+    emoji: '???',
     image: symbolEyesColored,
     associationIcon: iconTarget,
     associationText: "I see clearly.",
@@ -127,7 +127,7 @@ const SACRED_SYMBOLS = [
   {
     id: 'ears',
     name: 'Ears',
-    emoji: '👂',
+    emoji: '??',
     image: symbolEarsColored,
     associationIcon: iconHeadphones,
     associationText: "I listen with care.",
@@ -140,7 +140,7 @@ const SACRED_SYMBOLS = [
   {
     id: 'trunk',
     name: 'Trunk',
-    emoji: '🐘',
+    emoji: '??',
     image: symbolTrunkColored,
     associationIcon: iconRoadblock,
     associationText: "I find my way.",
@@ -153,7 +153,7 @@ const SACRED_SYMBOLS = [
   {
     id: 'tusk',
     name: 'Tusk',
-    emoji: '🦷',
+    emoji: '??',
     image: symbolTuskColored,
     associationIcon: iconHammer,
     associationText: "I finish what I start.",
@@ -166,7 +166,7 @@ const SACRED_SYMBOLS = [
   {
     id: 'modak',
     name: 'Modak',
-    emoji: '🍯',
+    emoji: '??',
     image: symbolModakColored,
     associationIcon: iconHoney,
     associationText: "I am full of joy.",
@@ -179,7 +179,7 @@ const SACRED_SYMBOLS = [
   {
     id: 'lotus',
     name: 'Lotus',
-    emoji: '🪷',
+    emoji: '??',
     image: symbolLotusColored,
     associationIcon: iconLightbulb,
     associationText: "I stay calm.",
@@ -192,7 +192,7 @@ const SACRED_SYMBOLS = [
   {
     id: 'belly',
     name: 'Belly',
-    emoji: '🫄',
+    emoji: '??',
     image: symbolBellyColored,
     associationIcon: iconUniverse,
     associationText: "I feel good inside.",
@@ -205,7 +205,7 @@ const SACRED_SYMBOLS = [
   {
     id: 'mooshika',
     name: 'Mooshika',
-    emoji: '🐭',
+    emoji: '??',
     image: symbolMooshikaColored,
     associationIcon: iconPath,
     associationText: "I can focus.",
@@ -219,7 +219,7 @@ const SACRED_SYMBOLS = [
 
 
 // DEBUG: Verify SACRED_SYMBOLS is correct
-console.log('🔍 SACRED_SYMBOLS check:', {
+console.log('?? SACRED_SYMBOLS check:', {
   count: SACRED_SYMBOLS.length,
   ids: SACRED_SYMBOLS.map(s => s.id),
   hasDuplicates: SACRED_SYMBOLS.map(s => s.id).length !== new Set(SACRED_SYMBOLS.map(s => s.id)).size
@@ -252,11 +252,11 @@ const SACRED_COLOR_PALETTE = {
 const RESUME_DELAY_MS = 3000;
 const NEXT_CARD_BREATHING_DELAY_MS = 2400;     // was 3000
 const VO_CHECK_INTERVAL_MS = 200;
-const VO_WAIT_MAX_MS = 4000;                   // was 3200 — allow longer VO
+const VO_WAIT_MAX_MS = 4000;                   // was 3200 � allow longer VO
 const POST_VO_GRACE_MS = 600;                  // was 800
-const PLACEMENT_SETTLE_MS = 1200;              // NEW — "look at what you did" beat
+const PLACEMENT_SETTLE_MS = 1200;              // NEW � "look at what you did" beat
 
-// Body part drop zone configurations — import from shared config
+// Body part drop zone configurations � import from shared config
 const BODY_PART_ZONES = GANESHA_ZONES;
 
 // Keep glow/sparkle anchors in sync with real drop zones so highlights never drift.
@@ -274,7 +274,7 @@ const getZoneCenter = (zone) => {
   const halfW = Math.round(widthPx / 2);
   const halfH = Math.round(heightPx / 2);
 
-  // Detect centering transforms — when present, the anchor IS the center.
+  // Detect centering transforms � when present, the anchor IS the center.
   const transformStr = position.transform || '';
   const isCenteredX = /translateX\(-50%\)|translate\(-50%/.test(transformStr);
   const isCenteredY = /translateY\(-50%\)|translate\([^,]+,\s*-50%/.test(transformStr);
@@ -449,9 +449,9 @@ const SacredAssemblyContent = ({
     playSparkle,
     setGlobalVolume
   } = useGameSounds();
-  // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
+  // -- T08/T09: visibility + idle timer infrastructure --------------------------
   const { startIdleTimer, stopIdleTimer, setCurrentPhase, startMusic, stopMusic, setVoiceVolume, playVoice, playTap, playCorrect, playWrong, playPowerUnlock, playCelebration } = useVoiceGuidance(
-    zoneId, sceneId, { enableMusic: true, musicVolume: 0.06, sfxVolume: 0.16, idleTimeout: 20 }
+    zoneId, sceneId, { enableMusic: true, musicVolume: 0.06, sfxVolume: 0.7, idleTimeout: 20 }
   );
   const playUiTap = playTap;
   const playWrongTap = playWrong;
@@ -653,7 +653,7 @@ const SacredAssemblyContent = ({
   };
   const [zoneStates, setZoneStates] = useState(() => initZoneStates(sceneState?.placedSymbols));
 
-  // CARD PHASE TIMELINE — drives the card animation state machine
+  // CARD PHASE TIMELINE � drives the card animation state machine
   useEffect(() => {
     if (!sceneState?.currentAssociationSymbol) return;
     const currentRound = sceneState?.currentRound || 0;
@@ -666,14 +666,14 @@ const SacredAssemblyContent = ({
     }
 
     if (cardPhase === 'flipped') {
-      // No VO here — card is mid-flip, child can't read it yet
+      // No VO here � card is mid-flip, child can't read it yet
       playSparkle();
       const t = setTimeout(() => setCardPhase('side'), 1100);
       return () => clearTimeout(t);
     }
 
     if (cardPhase === 'side') {
-      // No VO here — card is still sliding. VO fires in 'play' once card has landed.
+      // No VO here � card is still sliding. VO fires in 'play' once card has landed.
       playUiTap();
       setCardPhase('play');
     }
@@ -687,7 +687,7 @@ const SacredAssemblyContent = ({
     const correctZone = currentSymbol.correctZone;
     const cardVoKey = CARD_VO_MAP[currentSymbol.id];
 
-    // Card VO — 2.5s after card lands, giving child time to look first
+    // Card VO � 2.5s after card lands, giving child time to look first
     // Guard prevents double-play if effect re-runs while still in 'play'
     const roundIndex = sceneState?.currentRound ?? -1;
     const ENTRY_VO_DELAY_MS = 2500;
@@ -840,7 +840,7 @@ const SacredAssemblyContent = ({
     }
   }, [sceneState?.welcomeShown, sceneState?.placedSymbols]);
 
-  // Opening modal VO — plays when modal APPEARS, not when button is tapped
+  // Opening modal VO � plays when modal APPEARS, not when button is tapped
   useEffect(() => {
     if (sceneState?.welcomeShown) return;           // modal not showing
     if (openingModalVoPlayedRef.current) return;    // already played this session
@@ -906,11 +906,11 @@ const SacredAssemblyContent = ({
       sceneState?.welcomeShown &&
       (!sceneState?.symbolQueue || sceneState.symbolQueue.length === 0)) {
 
-      console.log('🎮 Initializing symbol queue...'); // DEBUG
+      console.log('?? Initializing symbol queue...'); // DEBUG
 
       // Create array of all symbol IDs (should be exactly 8)
       const allSymbolIds = SACRED_SYMBOLS.map(s => s.id);
-      console.log('📋 All symbol IDs:', allSymbolIds, 'Count:', allSymbolIds.length); // DEBUG
+      console.log('?? All symbol IDs:', allSymbolIds, 'Count:', allSymbolIds.length); // DEBUG
 
       // Fisher-Yates shuffle for better randomization
       const shuffledSymbols = [...allSymbolIds];
@@ -919,13 +919,13 @@ const SacredAssemblyContent = ({
         [shuffledSymbols[i], shuffledSymbols[j]] = [shuffledSymbols[j], shuffledSymbols[i]];
       }
 
-      console.log('🎲 Symbol queue created:', shuffledSymbols); // DEBUG
-      console.log('✅ Queue length:', shuffledSymbols.length, 'Should be 8'); // DEBUG
+      console.log('?? Symbol queue created:', shuffledSymbols); // DEBUG
+      console.log('? Queue length:', shuffledSymbols.length, 'Should be 8'); // DEBUG
 
       // Verify no duplicates
       const uniqueSymbols = [...new Set(shuffledSymbols)];
       if (uniqueSymbols.length !== 8) {
-        console.error('❌ DUPLICATE SYMBOLS IN QUEUE!', shuffledSymbols); // DEBUG
+        console.error('? DUPLICATE SYMBOLS IN QUEUE!', shuffledSymbols); // DEBUG
       }
 
       sceneActions.updateState({
@@ -949,7 +949,7 @@ const SacredAssemblyContent = ({
       !sceneState.showingAssociationCard) {
 
       if (!onboardingPlayedRef.current) {
-        // Round 0, first time — play onboarding VO, then start first card after it ends
+        // Round 0, first time � play onboarding VO, then start first card after it ends
         safeSetTimeout(() => {
           onboardingPlayedRef.current = true;
           sceneActions.updateState({ onboardingPlayed: true }); // persist so back+return skips onboarding
@@ -958,7 +958,7 @@ const SacredAssemblyContent = ({
           }, { replayOnReturn: false });
         }, 600);
       } else {
-        // Resume path — onboarding already played, start card directly
+        // Resume path � onboarding already played, start card directly
         safeSetTimeout(() => startNextRound(0), 500);
       }
     }
@@ -975,7 +975,7 @@ const SacredAssemblyContent = ({
 
   // DEBUG: Monitor association card state
   useEffect(() => {
-    console.log('🔍 Association Card State Changed:', {
+    console.log('?? Association Card State Changed:', {
       showingAssociationCard: sceneState?.showingAssociationCard,
       currentAssociationSymbol: sceneState?.currentAssociationSymbol,
       glowingZones: sceneState?.glowingZones,
@@ -1024,7 +1024,7 @@ const SacredAssemblyContent = ({
     });
   };
 
-  // Zone click — discovery system, no pre-highlights
+  // Zone click � discovery system, no pre-highlights
   const handleZoneClick = (zoneId) => {
     if (!sceneState || !sceneActions) return;
     if (cardPhase !== 'play') return;
@@ -1048,7 +1048,7 @@ const SacredAssemblyContent = ({
 
     if (isCorrect) {
       playUiTap();
-      // correct → pop animation → then permanently placed
+      // correct ? pop animation ? then permanently placed
       setZoneStates(prev => ({ ...prev, [zoneId]: 'correct' }));
       setTimeout(() => {
         setZoneStates(prev => ({ ...prev, [zoneId]: 'placed' }));
@@ -1058,7 +1058,7 @@ const SacredAssemblyContent = ({
       playWrongTap();
       setGaneshaReaction('wrong');
       setTimeout(() => setGaneshaReaction(''), 300);
-      // wrong → wiggle → snap back to idle
+      // wrong ? wiggle ? snap back to idle
       setZoneStates(prev => ({ ...prev, [zoneId]: 'wrong' }));
       setTimeout(() => {
         setZoneStates(prev => (prev[zoneId] === 'wrong' ? { ...prev, [zoneId]: 'idle' } : prev));
@@ -1092,7 +1092,7 @@ const SacredAssemblyContent = ({
     // Fallback
     if (!tLeft) tLeft = '50%'; 
   
-    console.log(`✈️ Flying to: Top ${tTop}, Left ${tLeft}`); // Debug log
+    console.log(`?? Flying to: Top ${tTop}, Left ${tLeft}`); // Debug log
   
     setFlyingSymbol({
       image: symbol.image,
@@ -1163,12 +1163,12 @@ const SacredAssemblyContent = ({
     setTimeout(() => playTwinkle(), 450);
     setShowSparkle(`celebration-${symbol.id}`);
 
-    // Phase 1: sparkle burst (0–1.2s)
+    // Phase 1: sparkle burst (0�1.2s)
     safeSetTimeout(() => {
       setShowSparkle(null);
     }, 1200);
 
-    // Phase 2: gentle settle glow on the placed body part (1.2s–2.4s)
+    // Phase 2: gentle settle glow on the placed body part (1.2s�2.4s)
     // Keep celebrationZoneId active longer so child's eyes land on Ganesha
     safeSetTimeout(() => {
       setCelebrationZoneId(null);
@@ -1202,7 +1202,7 @@ const SacredAssemblyContent = ({
       safeSetTimeout(() => triggerFinalCelebration(), 1500);
     } else {
       const nextRound = (sceneState.currentRound || 0) + 1;
-      // Halfway breathing beat — once, after 4th symbol
+      // Halfway breathing beat � once, after 4th symbol
       const isHalfwayMoment = count === 4;
       const extraHalfwayPause = isHalfwayMoment ? 1000 : 0;   // was 1500
       safeSetTimeout(() => {
@@ -1210,11 +1210,11 @@ const SacredAssemblyContent = ({
         setCardPhase('hidden');
 
         const waitForVoiceThenStart = (waitedMs = 0) => {
-          // VO finished OR max wait hit → add grace pause, THEN next card
+          // VO finished OR max wait hit ? add grace pause, THEN next card
           if (!isGaneshaSpeaking || waitedMs >= VO_WAIT_MAX_MS) {
             safeSetTimeout(() => {
               startNextRound(nextRound);
-            }, POST_VO_GRACE_MS);  // 800ms of silence — the breathing space
+            }, POST_VO_GRACE_MS);  // 800ms of silence � the breathing space
             return;
           }
           safeSetTimeout(() => {
@@ -1282,7 +1282,7 @@ const SacredAssemblyContent = ({
   // FINAL CELEBRATION: Modal is now shown directly inside RotatingOrbsEffect onComplete
   // (matches backup pattern). No race-prone useEffect needed.
 
-  // RESUME — runs once on mount, handles returning mid-game
+  // RESUME � runs once on mount, handles returning mid-game
   useEffect(() => {
     if (resumeHandledRef.current) return;
     resumeHandledRef.current = true;
@@ -1297,7 +1297,7 @@ const SacredAssemblyContent = ({
       showSparkle === 'final-fireworks' ||
       isOrbsRunning;
 
-    // Already finished — restore completion screen
+    // Already finished � restore completion screen
     if (placed === 8 || sceneState.phase === 'complete') {
       // Do not show completion modal while final celebration is still active.
       if (celebrationInProgress) return;
@@ -1305,7 +1305,7 @@ const SacredAssemblyContent = ({
       return;
     }
 
-    // Was mid-round when they left — clear the stale card state first
+    // Was mid-round when they left � clear the stale card state first
     if (sceneState.currentAssociationSymbol) {
       sceneActions.updateState({
         currentAssociationSymbol: null,
@@ -1325,7 +1325,7 @@ const SacredAssemblyContent = ({
 
   }, []); // run once on mount; avoids repeated card/audio re-triggers
 
-  // Hide progress bar 1s after all 8 symbols placed — keeps fireworks clean
+  // Hide progress bar 1s after all 8 symbols placed � keeps fireworks clean
   useEffect(() => {
     const placedCount = Object.keys(sceneState?.placedSymbols || {}).length;
     if (placedCount >= 8 && !hideProgressBar) {
@@ -1565,7 +1565,7 @@ const SacredAssemblyContent = ({
             </div>
           )}
 
-          {/* CREAM SYMBOL CARD — slides right before zones appear */}
+          {/* CREAM SYMBOL CARD � slides right before zones appear */}
           {sceneState?.currentAssociationSymbol && cardPhase !== 'hidden' && (() => {
             const sym = SACRED_SYMBOLS.find(s => s.id === sceneState.currentAssociationSymbol);
             const isFlippedCard = ['flipped', 'side', 'play', 'feedback'].includes(cardPhase);
@@ -1606,12 +1606,12 @@ const SacredAssemblyContent = ({
             className="sacred-background"
             style={{ backgroundImage: `url(${sacredBackground})` }}
           >
-            {/* Ganesha — ganesha-sit.svg with click zones */}
+            {/* Ganesha � ganesha-sit.svg with click zones */}
             {!showSceneCompletion && (
             <div
               className={`ganesha-assembly-container ${ganeshaReaction}`}
             >
-              {/* Ganesha inline SVG — zones glow via CSS, opacity grows as symbols placed */}
+              {/* Ganesha inline SVG � zones glow via CSS, opacity grows as symbols placed */}
               <GaneshaIllustration
                 zoneStates={zoneStates}
                 onZoneClick={handleZoneClick}
@@ -1619,7 +1619,7 @@ const SacredAssemblyContent = ({
                 baseOpacity={getGaneshaOpacity()}
               />
 
-              {/* Hint glow only — uses SAME position as hitbox, perfect alignment */}
+              {/* Hint glow only � uses SAME position as hitbox, perfect alignment */}
               {Object.entries(zoneStates).map(([zoneId, state]) => {
                 if (state !== 'hint' && state !== 'hint-strong' && state !== 'hint-final') return null;
                 const zone = BODY_PART_ZONES.find(z => z.id === zoneId);
@@ -1915,7 +1915,7 @@ const SacredAssemblyContent = ({
                 }, 100);
               }
             }}>
-              🔄 Start Fresh
+              ?? Start Fresh
             </div>)}
 
             {isDevBuild && (
@@ -2027,3 +2027,4 @@ const SacredAssemblyContent = ({
 };
 
 export default SacredAssemblyScene;
+

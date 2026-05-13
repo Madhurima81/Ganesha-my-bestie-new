@@ -41,7 +41,7 @@ import symbolLotusColored from './assets/images/symbol-lotus-new.png';
 import symbolTrunkColored from './assets/images/symbol-trunk-new.png';
 import symbolEyesColored from './assets/images/symbol-eyes-new.png';
 import symbolEarsColored from './assets/images/symbol-ears-new.png';
-import symbolTuskColored from './assets/images/symbol-tusk-new.png';
+import symbolTuskColored from './assets/images/broken-tusk-symbol.png';
 
 // Coach image (for hints only)
 import mooshikaCoach from "../pond/assets/images/mooshika-coach.png";
@@ -1307,3 +1307,4 @@ useEffect(() => {
 };
 
 export default SacredAssemblyScene;
+
