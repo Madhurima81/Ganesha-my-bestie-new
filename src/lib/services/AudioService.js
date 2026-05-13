@@ -23,16 +23,17 @@ import {
 } from '../audio/SoundManager';
 
 // ── Sound definitions ────────────────────────────────────────────────────────
-// src: try MP3 first — if file missing, Howl fails silently and we use synth fallback
+// src: shared SFX bank in /public/audio/sfx
+// If a file is missing, Howl fails and we fall back to synthesized SFX.
 
 const SFX = {
-  uiTap:              { src: ['/audio/fx/fx_ui_tap.mp3'],              volume: 0.32, fallback: synthUiTap },
-  wrongTap:           { src: ['/audio/fx/fx_wrong_tap.mp3'],           volume: 0.40, fallback: synthWrongTap },
-  magicSparkle:       { src: ['/audio/fx/fx_magic_sparkle.mp3'],       volume: 0.50, fallback: synthSparkle },
-  magicBloom:         { src: ['/audio/fx/fx_magic_bloom.mp3'],         volume: 0.50, fallback: synthBloom },
-  divineGlow:         { src: ['/audio/fx/fx_divine_glow.mp3'],         volume: 0.45, fallback: synthGlow },
-  celebrationTwinkle: { src: ['/audio/fx/fx_celebration_twinkle.mp3'], volume: 0.55, fallback: synthTwinkle },
-  cardRevealChime:    { src: ['/audio/fx/fx_card_reveal_chime.mp3'],   volume: 0.50, fallback: synthChime },
+  uiTap:              { src: ['/audio/sfx/sfx-tap.mp3'],          volume: 0.32, fallback: synthUiTap },
+  wrongTap:           { src: ['/audio/sfx/sfx-oops.wav'],         volume: 0.40, fallback: synthWrongTap },
+  magicSparkle:       { src: ['/audio/sfx/sfx-pop.wav'],          volume: 0.50, fallback: synthSparkle },
+  magicBloom:         { src: ['/audio/sfx/sfx-success.wav'],      volume: 0.50, fallback: synthBloom },
+  divineGlow:         { src: ['/audio/sfx/sfx-power-unlock.wav'], volume: 0.45, fallback: synthGlow },
+  celebrationTwinkle: { src: ['/audio/sfx/sfx-celebration.wav'],  volume: 0.55, fallback: synthTwinkle },
+  cardRevealChime:    { src: ['/audio/sfx/sfx-chime.wav'],        volume: 0.50, fallback: synthChime },
 };
 
 // ── Howl instances (lazy-created per sound) ──────────────────────────────────

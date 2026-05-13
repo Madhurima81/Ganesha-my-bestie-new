@@ -10,6 +10,32 @@ import {
   getWordPath
 } from '../config/content/voiceGuidance';
 
+// ========================================
+// MIX PROFILE (child-safe defaults)
+// ========================================
+// These are base levels; final level = base * sfxVolume * duckFactor(when VO active)
+const SFX_BASE_VOLUME = {
+  tap: 0.32,            // 28–36%
+  softWrong: 0.28,      // 24–32%
+  discovery: 0.37,      // 32–42%
+  revealBloom: 0.41,    // 36–46%
+  place: 0.33,          // 28–38%
+  transition: 0.29,     // 24–34%
+  emotionalGlow: 0.47,  // 42–52%
+  celebration: 0.43,    // 38–48%
+  idleHint: 0.22,       // 18–26%
+
+  // Legacy compatibility
+  error: 0.28,
+  success: 0.37,
+  powerUnlock: 0.47,
+  whoosh: 0.29,
+  pop: 0.33,
+  chime: 0.41
+};
+
+const VO_DUCK_FACTOR = 0.7; // ~30% reduction while VO is active
+
 /**
  * useVoiceGuidance - Hook for playing voice guidance, SFX, and background music
  *
@@ -54,12 +80,27 @@ const useVoiceGuidance = (zoneId, sceneId, {
   // Refs for idle timer to access current values
   const isPlayingRef = useRef(isPlaying);
   const currentPhaseRef = useRef(currentPhase);
+  const voDuckActiveRef = useRef(false);
 
   // Deferred setIsPlaying to avoid "Cannot update component while rendering another" warning
   const setIsPlaying = (value) => {
     isPlayingRef.current = value; // Update ref immediately for synchronous checks
     queueMicrotask(() => setIsPlayingState(value)); // Defer state update
   };
+
+  const applyVoDuck = useCallback(() => {
+    voDuckActiveRef.current = true;
+    if (musicRef.current) {
+      musicRef.current.volume = Math.min(1, Math.max(0, musicVolume * VO_DUCK_FACTOR));
+    }
+  }, [musicVolume]);
+
+  const clearVoDuck = useCallback(() => {
+    voDuckActiveRef.current = false;
+    if (musicRef.current) {
+      musicRef.current.volume = Math.min(1, Math.max(0, musicVolume));
+    }
+  }, [musicVolume]);
 
   useEffect(() => {
     currentPhaseRef.current = currentPhase;
@@ -109,6 +150,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
 
     const audio = new Audio(path);
     audio.volume = voiceVolumeRef.current;
+    applyVoDuck();
 
     // Belt-and-suspenders: directly pause this audio element on tab hide,
     // independent of voiceRef tracking — handles any ref-timing edge cases.
@@ -132,6 +174,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
       activeVoiceCallbackRef.current = null;
       activeVoiceReplayRef.current = true;
       setIsPlaying(false);
+      clearVoDuck();
     };
 
     audio.onended = () => { cleanupAndClear(); fireCallback(); };
@@ -175,8 +218,9 @@ const useVoiceGuidance = (zoneId, sceneId, {
       activeVoiceCallbackRef.current = null;
       activeVoiceReplayRef.current = true;
       setIsPlaying(false);
+      clearVoDuck();
     }
-  }, []);
+  }, [clearVoDuck]);
 
   // Set voice volume live — updates currently playing audio AND all future audio
   const setVoiceVolume = useCallback((vol) => {
@@ -200,9 +244,26 @@ const useVoiceGuidance = (zoneId, sceneId, {
 
     // Allow multiple SFX to overlap
     const audio = new Audio(path);
-    audio.volume = sfxVolume;
+    const base = SFX_BASE_VOLUME[key] ?? 0.35;
+    const duck = voDuckActiveRef.current ? VO_DUCK_FACTOR : 1;
+    audio.volume = Math.min(1, Math.max(0, base * sfxVolume * duck));
 
     audio.onerror = (e) => {
+      // Fallback to legacy /audio/sfx folder if mapped pack file is missing.
+      const fallbackPath = path.replace('/audio/sfx-role-mapping-2/', '/audio/sfx/');
+      if (fallbackPath !== path) {
+        const fallbackAudio = new Audio(fallbackPath);
+        const baseFallback = SFX_BASE_VOLUME[key] ?? 0.35;
+        const duckFallback = voDuckActiveRef.current ? VO_DUCK_FACTOR : 1;
+        fallbackAudio.volume = Math.min(1, Math.max(0, baseFallback * sfxVolume * duckFallback));
+        fallbackAudio.onerror = (err) => {
+          console.error(`Error playing SFX ${key} (mapped + fallback failed):`, err);
+        };
+        fallbackAudio.play().catch(err => {
+          console.error('SFX fallback play failed:', err);
+        });
+        return;
+      }
       console.error(`Error playing SFX ${key}:`, e);
     };
 
@@ -225,12 +286,19 @@ const useVoiceGuidance = (zoneId, sceneId, {
     if (!path) return;
 
     if (musicRef.current) {
+      musicRef.current.volume = Math.min(
+        1,
+        Math.max(0, musicVolume * (voDuckActiveRef.current ? VO_DUCK_FACTOR : 1))
+      );
       musicRef.current.play();
       return;
     }
 
     const audio = new Audio(path);
-    audio.volume = musicVolume;
+    audio.volume = Math.min(
+      1,
+      Math.max(0, musicVolume * (voDuckActiveRef.current ? VO_DUCK_FACTOR : 1))
+    );
     audio.loop = true;
 
     musicRef.current = audio;
@@ -247,7 +315,8 @@ const useVoiceGuidance = (zoneId, sceneId, {
 
   const setMusicVolume = useCallback((volume) => {
     if (musicRef.current) {
-      musicRef.current.volume = Math.min(1, Math.max(0, volume));
+      const duck = voDuckActiveRef.current ? VO_DUCK_FACTOR : 1;
+      musicRef.current.volume = Math.min(1, Math.max(0, volume * duck));
     }
   }, []);
 
@@ -486,8 +555,9 @@ const useVoiceGuidance = (zoneId, sceneId, {
     activeVoiceCallbackRef.current = null;
     activeVoiceReplayRef.current = true;
     setIsPlaying(false);
+    clearVoDuck();
     stopIdleTimer();
-  }, [stopIdleTimer]);
+  }, [stopIdleTimer, clearVoDuck]);
 
   const handleShow = useCallback(() => {
     isHiddenRef.current = false;

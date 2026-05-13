@@ -475,10 +475,20 @@ export const VOICE_SCRIPTS = {
   // SHARED SFX (in public/audio/sfx/)
   // ========================================
   shared: {
-    success: { file: 'sfx-success.wav' },
+    // New unified role taxonomy (preferred)
     tap: { file: 'sfx-tap.mp3' },
-    powerUnlock: { file: 'sfx-power-unlock.wav' },
+    softWrong: { file: 'sfx-soft-wrong.wav' },
+    discovery: { file: 'sfx-discovery.wav' },
+    revealBloom: { file: 'sfx-reveal-bloom.wav' },
+    place: { file: 'sfx-place.wav' },
+    transition: { file: 'sfx-transition.wav' },
+    emotionalGlow: { file: 'sfx-emotional-glow.wav' },
     celebration: { file: 'sfx-celebration.wav' },
+    idleHint: { file: 'sfx-idle-hint.wav' },
+
+    // Legacy keys (kept for backward compatibility during migration)
+    success: { file: 'sfx-success.wav' },
+    powerUnlock: { file: 'sfx-power-unlock.wav' },
     error: { file: 'sfx-oops.wav' },
     whoosh: { file: 'sfx-whoosh.wav' },
     pop: { file: 'sfx-pop.wav' },
@@ -550,7 +560,8 @@ export const getWordPath = (word) => {
 // Get SFX path (in sfx/ folder)
 export const getSfxPath = (key) => {
   const sfx = VOICE_SCRIPTS.shared?.[key];
-  return sfx ? `/audio/sfx/${sfx.file}` : null;
+  // Use curated mapped pack first; keep legacy folder as fallback in caller if needed.
+  return sfx ? `/audio/sfx-role-mapping-2/${sfx.file}` : null;
 };
 
 // Get music path (in music/ folder)
