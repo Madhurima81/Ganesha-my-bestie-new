@@ -13,7 +13,7 @@ import symbolLotusColored from '../images/icons/symbol-lotus-new.png';
 import symbolModakColored from '../images/icons/symbol-modak-new.png';
 import symbolMooshikaColored from '../images/icons/symbol-mooshika-new.png';
 import symbolTrunkColored from '../images/icons/symbol-trunk-new.png';
-import symbolTuskColored from '../images/icons/symbol-tusk-new.png';
+import symbolTuskColored from '../images/icons/broken-tusk-symbol.png';
 
 // Symbol Information
 /*const symbolInfo = {
@@ -230,3 +230,4 @@ const SymbolSidebar = ({
 };
 
 export default SymbolSidebar;
+

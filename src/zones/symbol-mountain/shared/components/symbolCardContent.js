@@ -91,7 +91,7 @@ export const symbolCardContent = {
 
   tusk: {
     label: 'Tusk',
-    icon: '/images/icons/symbol-tusk-new.png',
+    icon: '/images/icons/broken-tusk-symbol.png',
     ganeshaLines: [
       'You see I have only one tusk?',
       "I didn't stop when things got hard. I finished what I started.",
@@ -101,3 +101,4 @@ export const symbolCardContent = {
     gift: 'You can finish what you begin.',
   },
 };
+
