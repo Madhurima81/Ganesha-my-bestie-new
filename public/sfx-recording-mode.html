@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SFX Recording Mode</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Segoe UI, system-ui, sans-serif;
+      background: #0f1020;
+      color: #f6f7ff;
+    }
+    .wrap {
+      max-width: 900px;
+      margin: 28px auto;
+      padding: 0 16px;
+    }
+    .card {
+      background: #17192f;
+      border: 1px solid #2a2d4f;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    h1 { margin: 0 0 8px; }
+    .muted { color: #aeb4e5; margin: 0; }
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 12px;
+    }
+    .btn {
+      border: 1px solid #3a3f70;
+      background: #242a54;
+      color: #fff;
+      border-radius: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .btn.primary { background: #6e57ff; border-color: #6e57ff; }
+    .btn.stop { background: #d43d63; border-color: #d43d63; }
+    .stage {
+      min-height: 220px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      border-radius: 12px;
+      background: radial-gradient(circle at 50% 35%, #2e3572 0%, #1a1d3b 60%, #12142a 100%);
+      border: 1px solid #30376d;
+      padding: 20px;
+    }
+    .name {
+      font-size: clamp(20px, 4vw, 34px);
+      font-weight: 800;
+      line-height: 1.2;
+      word-break: break-word;
+    }
+    .sub {
+      margin-top: 8px;
+      color: #b9c0f4;
+      font-size: 14px;
+    }
+    .small {
+      color: #9ba3db;
+      font-size: 13px;
+    }
+    input[type="number"] {
+      width: 80px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #434a86;
+      background: #1f2450;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>SFX Recording Mode</h1>
+      <p class="muted">Pick folder, press Start, then begin your screen recording. This page plays files one by one with gaps.</p>
+      <div class="row">
+        <input id="folderPicker" type="file" webkitdirectory directory multiple accept=".mp3,.wav,.ogg,.m4a,.aac" />
+        <label class="small">Gap (sec) <input id="gapSec" type="number" min="0" step="0.5" value="2" /></label>
+        <label class="small"><input id="speakNames" type="checkbox" checked /> Speak filename</label>
+      </div>
+      <div class="row">
+        <button id="startBtn" class="btn primary">Start Playlist</button>
+        <button id="stopBtn" class="btn stop">Stop</button>
+        <button id="downloadPlaylistBtn" class="btn">Download Playlist</button>
+        <button id="recordVideoBtn" class="btn primary">Record & Download Video</button>
+      </div>
+      <p id="count" class="small">No files loaded.</p>
+    </div>
+
+    <div class="card stage">
+      <div>
+        <div id="currentName" class="name">Ready</div>
+        <div id="currentMeta" class="sub">Load files to begin</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const picker = document.getElementById('folderPicker');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const nameEl = document.getElementById('currentName');
+    const metaEl = document.getElementById('currentMeta');
+    const countEl = document.getElementById('count');
+    const gapInput = document.getElementById('gapSec');
+    const speakNames = document.getElementById('speakNames');
+    const downloadPlaylistBtn = document.getElementById('downloadPlaylistBtn');
+    const recordVideoBtn = document.getElementById('recordVideoBtn');
+
+    let files = [];
+    let stopRequested = false;
+    let activeAudio = null;
+    let isRenderingVideo = false;
+
+    function sleep(ms) {
+      return new Promise(r => setTimeout(r, ms));
+    }
+
+    function cleanName(fileName) {
+      return fileName
+        .replace(/\.[a-z0-9]+$/i, '')
+        .replace(/[_-]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function speak(text) {
+      if (!window.speechSynthesis || !speakNames.checked) return Promise.resolve();
+      return new Promise(resolve => {
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'en-IN';
+        u.rate = 0.95;
+        u.pitch = 1.0;
+        u.volume = 1;
+        const voices = window.speechSynthesis.getVoices();
+        if (voices && voices.length) {
+          const preferred = voices.find(v => /en-IN/i.test(v.lang)) || voices.find(v => /^en/i.test(v.lang));
+          if (preferred) u.voice = preferred;
+        }
+        u.onend = () => resolve();
+        u.onerror = () => resolve();
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.resume();
+        window.speechSynthesis.speak(u);
+        // Failsafe so flow doesn't hang if onend never fires on some browsers.
+        setTimeout(() => resolve(), 2200);
+      });
+    }
+
+    function stopAll() {
+      stopRequested = true;
+      if (activeAudio) {
+        activeAudio.pause();
+        activeAudio.currentTime = 0;
+        activeAudio = null;
+      }
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      nameEl.textContent = 'Stopped';
+      metaEl.textContent = 'Playlist stopped';
+    }
+
+    function drawFrame(ctx, w, h, title, sub) {
+      const g = ctx.createLinearGradient(0, 0, w, h);
+      g.addColorStop(0, '#1a1d3b');
+      g.addColorStop(1, '#10122a');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.fillStyle = '#6e57ff';
+      ctx.fillRect(0, 0, w, 82);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '700 34px Segoe UI, sans-serif';
+      ctx.fillText('SFX Audition', 36, 54);
+
+      ctx.fillStyle = '#e7e9ff';
+      ctx.font = '700 48px Segoe UI, sans-serif';
+      wrapText(ctx, title, 60, 220, w - 120, 60);
+
+      ctx.fillStyle = '#b7bdf0';
+      ctx.font = '500 26px Segoe UI, sans-serif';
+      wrapText(ctx, sub, 60, 360, w - 120, 36);
+    }
+
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = (text || '').split(' ');
+      let line = '';
+      let yy = y;
+      for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' ';
+        const testWidth = ctx.measureText(testLine).width;
+        if (testWidth > maxWidth && n > 0) {
+          ctx.fillText(line.trim(), x, yy);
+          line = words[n] + ' ';
+          yy += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+      if (line.trim()) ctx.fillText(line.trim(), x, yy);
+    }
+
+    picker.addEventListener('change', () => {
+      files = Array.from(picker.files || [])
+        .filter(f => /\.(mp3|wav|ogg|m4a|aac)$/i.test(f.name))
+        .sort((a, b) => a.name.localeCompare(b.name));
+      countEl.textContent = `${files.length} audio files loaded.`;
+      nameEl.textContent = 'Ready';
+      metaEl.textContent = 'Press Start Playlist';
+    });
+
+    stopBtn.addEventListener('click', stopAll);
+
+    downloadPlaylistBtn.addEventListener('click', () => {
+      if (!files.length) {
+        alert('Load files first.');
+        return;
+      }
+      const lines = [
+        'SFX Playlist Export',
+        `Generated: ${new Date().toLocaleString()}`,
+        '',
+        'Index,Filename,RelativePath,SizeBytes'
+      ];
+      files.forEach((f, idx) => {
+        const rel = (f.webkitRelativePath || f.name).replace(/"/g, '""');
+        const name = f.name.replace(/"/g, '""');
+        lines.push(`${idx + 1},"${name}","${rel}",${f.size}`);
+      });
+      const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'sfx-playlist.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    startBtn.addEventListener('click', async () => {
+      if (isRenderingVideo) return;
+      if (!files.length) {
+        alert('Load files first.');
+        return;
+      }
+
+      stopRequested = false;
+      const gapMs = Math.max(0, Number(gapInput.value || 2) * 1000);
+
+      for (let i = 0; i < files.length; i++) {
+        if (stopRequested) break;
+        const f = files[i];
+        const label = cleanName(f.name);
+        const spoken = label;
+
+        nameEl.textContent = label;
+        metaEl.textContent = `${i + 1} / ${files.length}  •  ${f.name}`;
+
+        await speak(spoken);
+        if (stopRequested) break;
+
+        const url = URL.createObjectURL(f);
+        await new Promise(resolve => {
+          const a = new Audio(url);
+          activeAudio = a;
+          a.onended = () => { URL.revokeObjectURL(url); resolve(); };
+          a.onerror = () => { URL.revokeObjectURL(url); resolve(); };
+          a.play().catch(() => resolve());
+        });
+        activeAudio = null;
+
+        if (stopRequested) break;
+        await sleep(gapMs);
+      }
+
+      if (!stopRequested) {
+        nameEl.textContent = 'Done';
+        metaEl.textContent = `Played ${files.length} files`;
+      }
+    });
+
+    recordVideoBtn.addEventListener('click', async () => {
+      if (isRenderingVideo) return;
+      if (!files.length) {
+        alert('Load files first.');
+        return;
+      }
+
+      isRenderingVideo = true;
+      recordVideoBtn.disabled = true;
+      stopRequested = false;
+
+      const gapSec = Math.max(0, Number(gapInput.value || 2));
+      const fps = 30;
+      const width = 1280;
+      const height = 720;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      drawFrame(ctx, width, height, 'Preparing...', 'Please wait');
+
+      const canvasStream = canvas.captureStream(fps);
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const mediaDest = audioCtx.createMediaStreamDestination();
+      const combined = new MediaStream([
+        ...canvasStream.getVideoTracks(),
+        ...mediaDest.stream.getAudioTracks()
+      ]);
+
+      let mimeType = 'video/webm;codecs=vp9,opus';
+      if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm;codecs=vp8,opus';
+      if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm';
+
+      const chunks = [];
+      const recorder = new MediaRecorder(combined, { mimeType });
+      recorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+      recorder.start(200);
+
+      for (let i = 0; i < files.length; i++) {
+        if (stopRequested) break;
+        const f = files[i];
+        const label = cleanName(f.name);
+        const spoken = label;
+
+        nameEl.textContent = label;
+        metaEl.textContent = `${i + 1} / ${files.length}  •  ${f.name}`;
+        drawFrame(ctx, width, height, label, `${i + 1}/${files.length} • ${f.name}`);
+
+        await speak(spoken);
+        if (stopRequested) break;
+
+        const ab = await f.arrayBuffer();
+        const audioBuf = await audioCtx.decodeAudioData(ab.slice(0));
+
+        await new Promise(resolve => {
+          const src = audioCtx.createBufferSource();
+          const gain = audioCtx.createGain();
+          gain.gain.value = 1.0;
+          src.buffer = audioBuf;
+          src.connect(gain);
+          gain.connect(mediaDest);
+          gain.connect(audioCtx.destination);
+          src.onended = resolve;
+          src.start();
+        });
+
+        if (stopRequested) break;
+        await sleep(gapSec * 1000);
+      }
+
+      drawFrame(ctx, width, height, 'Done', `Played ${files.length} files`);
+      await sleep(300);
+      recorder.stop();
+
+      await new Promise(resolve => { recorder.onstop = resolve; });
+      audioCtx.close();
+
+      const blob = new Blob(chunks, { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'sfx-audition-video.webm';
+      a.click();
+      URL.revokeObjectURL(url);
+
+      isRenderingVideo = false;
+      recordVideoBtn.disabled = false;
+    });
+  </script>
+</body>
+</html>

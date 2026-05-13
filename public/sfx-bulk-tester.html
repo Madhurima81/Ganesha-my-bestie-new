@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SFX Bulk Tester</title>
+  <style>
+    :root {
+      --bg: #f7f7fb;
+      --panel: #ffffff;
+      --ink: #22223b;
+      --muted: #6b6b8a;
+      --line: #e4e4f2;
+      --accent: #6b50d8;
+      --ok: #178f57;
+    }
+    body {
+      margin: 0;
+      font-family: Segoe UI, system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    .wrap {
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 0 16px;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    h1 {
+      font-size: 24px;
+      margin: 0 0 8px;
+    }
+    .muted {
+      color: var(--muted);
+      margin: 0;
+    }
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 10px;
+      padding: 9px 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn.primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: transparent;
+    }
+    .btn.good {
+      background: var(--ok);
+      color: #fff;
+      border-color: transparent;
+    }
+    input[type="search"] {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      min-width: 280px;
+      font-size: 14px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 8px;
+      vertical-align: top;
+    }
+    th {
+      text-align: left;
+      color: var(--muted);
+      font-weight: 700;
+      position: sticky;
+      top: 0;
+      background: var(--panel);
+      z-index: 1;
+    }
+    .name {
+      font-weight: 600;
+      word-break: break-word;
+    }
+    .path {
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      word-break: break-word;
+    }
+    .chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .chip {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 10px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .chip.active {
+      border-color: transparent;
+      color: #fff;
+      background: var(--accent);
+    }
+    .role-box {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 8px;
+      font-size: 13px;
+    }
+    .role-item {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px;
+      background: #fff;
+    }
+    .role-item strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+    .role-notes {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+    .small {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .hide { display: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="panel">
+      <h1>SFX Bulk Tester</h1>
+      <p class="muted">Two-step workflow: shortlist from all sounds first, then assign/rank multiple candidates per role.</p>
+      <div class="toolbar">
+        <input id="folderPicker" type="file" webkitdirectory directory multiple accept=".mp3,.wav,.ogg,.m4a,.aac" />
+        <input id="search" type="search" placeholder="Search by filename..." />
+        <label class="small"><input id="shortlistOnly" type="checkbox" /> Show shortlisted only</label>
+        <button id="clearRoles" class="btn">Clear Role Picks</button>
+        <button id="clearShortlist" class="btn">Clear Shortlist</button>
+        <button id="exportMap" class="btn good">Export Mapping JSON</button>
+      </div>
+      <div class="role-box" id="roleSummary"></div>
+    </div>
+
+    <div class="panel">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 110px;">Play</th>
+            <th>File</th>
+            <th style="width: 130px;">Size</th>
+            <th style="width: 120px;">Shortlist</th>
+            <th style="width: 360px;">Assign Role</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const roles = [
+      {
+        key: "tap",
+        out: "sfx-tap.mp3",
+        use: "button taps, object taps, drag start, simple interactions",
+        feel: "soft clay / wood / tactile"
+      },
+      {
+        key: "softWrong",
+        out: "sfx-soft-wrong.wav",
+        use: "wrong mound, harmless wrong answer, blocked interaction, try again",
+        feel: "earthy puff / soft wobble / playful"
+      },
+      {
+        key: "discovery",
+        out: "sfx-discovery.wav",
+        use: "Mooshika reveal, correct discoveries, finding symbols, meaningful interactions",
+        feel: "warm uplift / handpan / soft bowl"
+      },
+      {
+        key: "revealBloom",
+        out: "sfx-reveal-bloom.wav",
+        use: "symbol card bloom, affirmation reveal, popup reveal, pause and absorb",
+        feel: "bowl bloom / warm resonance / sacred calm"
+      },
+      {
+        key: "place",
+        out: "sfx-place.wav",
+        use: "modak into basket, object snap, puzzle placement, drag-drop complete",
+        feel: "cushioned wood / clay / grounded"
+      },
+      {
+        key: "transition",
+        out: "sfx-transition.wav",
+        use: "scene transitions, floating UI, camera movement, entering new phase",
+        feel: "airy breath / bansuri movement / soft sweep"
+      },
+      {
+        key: "emotionalGlow",
+        out: "sfx-emotional-glow.wav",
+        use: "belly glow, inner-light affirmations, family love moments, heartfelt pauses",
+        feel: "deep bowl / tanpura / healing resonance"
+      },
+      {
+        key: "celebration",
+        out: "sfx-celebration.wav",
+        use: "scene complete, reward reveal, end success",
+        feel: "joyful spiritual warmth, not arcade victory"
+      },
+      {
+        key: "idleHint",
+        out: "sfx-idle-hint.wav",
+        use: "glow pulse hints, guidance moments, attention direction, idle help",
+        feel: "airy bamboo / soft shimmer / gentle guidance"
+      }
+    ];
+
+    const filesState = [];
+    const shortlisted = new Set();
+    const roleCandidates = {};
+    const rowsEl = document.getElementById("rows");
+    const roleSummaryEl = document.getElementById("roleSummary");
+    const pickerEl = document.getElementById("folderPicker");
+    const searchEl = document.getElementById("search");
+
+    function formatBytes(bytes) {
+      if (bytes < 1024) return bytes + " B";
+      const units = ["KB", "MB", "GB"];
+      let i = -1;
+      let n = bytes;
+      do {
+        n /= 1024;
+        i++;
+      } while (n >= 1024 && i < units.length - 1);
+      return n.toFixed(1) + " " + units[i];
+    }
+
+    function getRoleSummaryHtml() {
+      return roles.map(r => {
+        const ranked = roleCandidates[r.key] || [];
+        const top = ranked.slice(0, 3);
+        return `
+          <div class="role-item">
+            <strong>${r.key}</strong>
+            <div class="small">Output: ${r.out}</div>
+            <div>${top.length ? top.map((id, i) => {
+              const f = filesState.find(x => x.id === id);
+              return f ? `#${i + 1} ${f.name}` : '';
+            }).join('<br/>') : "<span class='small'>No ranked candidates</span>"}</div>
+            <div class="role-notes"><strong>USE:</strong> ${r.use || '-'}<br/><strong>FEEL:</strong> ${r.feel || '-'}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function updateRoleSummary() {
+      roleSummaryEl.innerHTML = getRoleSummaryHtml();
+    }
+
+    function toggleShortlist(fileId) {
+      if (shortlisted.has(fileId)) shortlisted.delete(fileId);
+      else shortlisted.add(fileId);
+      renderRows(searchEl.value.trim().toLowerCase());
+    }
+
+    function toggleRoleCandidate(roleKey, fileObj) {
+      if (!roleCandidates[roleKey]) roleCandidates[roleKey] = [];
+      const arr = roleCandidates[roleKey];
+      const i = arr.indexOf(fileObj.id);
+      if (i >= 0) arr.splice(i, 1);
+      else arr.push(fileObj.id);
+      renderRows(searchEl.value.trim().toLowerCase());
+      updateRoleSummary();
+    }
+
+    function roleChipsHtml(fileObj) {
+      return `<div class="chips">${roles.map(r => {
+        const arr = roleCandidates[r.key] || [];
+        const rank = arr.indexOf(fileObj.id);
+        const active = rank >= 0;
+        const label = active ? `${r.key} #${rank + 1}` : r.key;
+        return `<button class="chip ${active ? "active" : ""}" data-role="${r.key}" data-id="${fileObj.id}">${label}</button>`;
+      }).join("")}</div>`;
+    }
+
+    let currentAudio = null;
+    let currentBtn = null;
+
+    function stopCurrentAudio() {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+      }
+      if (currentBtn) {
+        currentBtn.textContent = "Play";
+        currentBtn.classList.remove("good");
+        currentBtn = null;
+      }
+    }
+
+    function handlePlayButtonClick(btn, fileId) {
+      const fileObj = filesState.find(f => f.id === fileId);
+      if (!fileObj) return;
+
+      // Toggle off if same row is currently playing
+      if (currentBtn === btn && currentAudio) {
+        stopCurrentAudio();
+        return;
+      }
+
+      stopCurrentAudio();
+
+      const audio = new Audio(fileObj.url);
+      currentAudio = audio;
+      currentBtn = btn;
+      btn.textContent = "Stop";
+      btn.classList.add("good");
+
+      audio.onended = () => stopCurrentAudio();
+      audio.onerror = () => {
+        alert("Could not play this file. It may be invalid or unsupported.");
+        stopCurrentAudio();
+      };
+
+      audio.play().catch(() => {
+        alert("Playback blocked. Click Play again once to allow audio.");
+        stopCurrentAudio();
+      });
+    }
+
+    function rowHtml(fileObj) {
+      return `
+        <tr data-id="${fileObj.id}">
+          <td>
+            <button class="btn play-btn" data-play-id="${fileObj.id}">Play</button>
+          </td>
+          <td>
+            <div class="name">${fileObj.name}</div>
+            <div class="path">${fileObj.path}</div>
+          </td>
+          <td>${formatBytes(fileObj.size)}</td>
+          <td><button class="btn ${shortlisted.has(fileObj.id) ? "good" : ""} shortlist-btn" data-short-id="${fileObj.id}">${shortlisted.has(fileObj.id) ? "Shortlisted" : "Add"}</button></td>
+          <td>${roleChipsHtml(fileObj)}</td>
+        </tr>
+      `;
+    }
+
+    function renderRows(filter = "") {
+      const shortlistOnly = document.getElementById("shortlistOnly").checked;
+      const list = filesState.filter(f =>
+        (!filter || f.name.toLowerCase().includes(filter) || f.path.toLowerCase().includes(filter)) &&
+        (!shortlistOnly || shortlisted.has(f.id))
+      );
+      rowsEl.innerHTML = list.map(rowHtml).join("");
+
+      rowsEl.querySelectorAll(".chip").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const roleKey = btn.getAttribute("data-role");
+          const id = btn.getAttribute("data-id");
+          const fileObj = filesState.find(f => f.id === id);
+          if (fileObj) toggleRoleCandidate(roleKey, fileObj);
+        });
+      });
+      rowsEl.querySelectorAll(".shortlist-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-short-id");
+          toggleShortlist(id);
+        });
+      });
+
+      rowsEl.querySelectorAll(".play-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-play-id");
+          handlePlayButtonClick(btn, id);
+        });
+      });
+    }
+
+    function clearAllUrls() {
+      filesState.forEach(f => URL.revokeObjectURL(f.url));
+      filesState.length = 0;
+    }
+
+    pickerEl.addEventListener("change", () => {
+      stopCurrentAudio();
+      clearAllUrls();
+      shortlisted.clear();
+      roles.forEach(r => { roleCandidates[r.key] = []; });
+      const incoming = Array.from(pickerEl.files || []);
+      let idCounter = 0;
+      incoming.forEach(file => {
+        if (!/\.(mp3|wav|ogg|m4a|aac)$/i.test(file.name)) return;
+        filesState.push({
+          id: "f_" + (++idCounter),
+          name: file.name,
+          path: file.webkitRelativePath || file.name,
+          size: file.size,
+          file,
+          url: URL.createObjectURL(file)
+        });
+      });
+      filesState.sort((a, b) => a.name.localeCompare(b.name));
+      renderRows(searchEl.value.trim().toLowerCase());
+      updateRoleSummary();
+    });
+
+    searchEl.addEventListener("input", () => {
+      renderRows(searchEl.value.trim().toLowerCase());
+    });
+    document.getElementById("shortlistOnly").addEventListener("change", () => {
+      renderRows(searchEl.value.trim().toLowerCase());
+    });
+
+    document.getElementById("clearRoles").addEventListener("click", () => {
+      roles.forEach(r => { roleCandidates[r.key] = []; });
+      renderRows(searchEl.value.trim().toLowerCase());
+      updateRoleSummary();
+    });
+    document.getElementById("clearShortlist").addEventListener("click", () => {
+      shortlisted.clear();
+      renderRows(searchEl.value.trim().toLowerCase());
+    });
+
+    document.getElementById("exportMap").addEventListener("click", () => {
+      const result = {};
+      roles.forEach(r => {
+        const rankedIds = roleCandidates[r.key] || [];
+        const rankedFiles = rankedIds
+          .map(id => filesState.find(f => f.id === id))
+          .filter(Boolean)
+          .map((f, idx) => ({
+            rank: idx + 1,
+            chosenFile: f.name,
+            chosenPath: f.path
+          }));
+        result[r.key] = {
+          targetOutputName: r.out,
+          rankedCandidates: rankedFiles,
+          winner: rankedFiles[0] || null
+        };
+      });
+
+      const blob = new Blob([JSON.stringify(result, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "sfx-role-mapping.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    updateRoleSummary();
+  </script>
+</body>
+</html>
