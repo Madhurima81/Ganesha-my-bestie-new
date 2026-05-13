@@ -1425,6 +1425,12 @@ if (window.sarvakaryeshuSarvadaGame?.startSarvadaPhase) {
               theme="sanskrit"
               allowSkip={true}
               maxRecordingTime={10}
+              stopAudio={() => {
+                document.querySelectorAll('audio').forEach((audio) => {
+                  audio.pause();
+                  audio.currentTime = 0;
+                });
+              }}
               onComplete={handleRecordingComplete}
               onSkip={handleRecordingSkip}
             />

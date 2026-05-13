@@ -139,6 +139,12 @@ const AppSidebar = ({
             savedRecordings={savedRecordings}
             onSaveRecording={onSaveRecording}
             allowSkip={false}
+            stopAudio={() => {
+              document.querySelectorAll('audio').forEach((audio) => {
+                audio.pause();
+                audio.currentTime = 0;
+              });
+            }}
             title="Practice Chanting"
             prompt={`Try saying ${selectedApp.toUpperCase()}`}
             onComplete={closePopup}
@@ -185,6 +191,12 @@ const AppSidebar = ({
           savedRecordings={savedRecordings}
           onSaveRecording={onSaveRecording}
           allowSkip={false}
+          stopAudio={() => {
+            document.querySelectorAll('audio').forEach((audio) => {
+              audio.pause();
+              audio.currentTime = 0;
+            });
+          }}
           title="Practice Chanting"
           prompt={`Try saying ${selectedApp.toUpperCase()}`}
           onComplete={closePopup}
