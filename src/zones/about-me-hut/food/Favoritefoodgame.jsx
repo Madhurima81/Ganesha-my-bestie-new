@@ -1452,7 +1452,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     playUiTap();
     setSelectedKidActivityId(activityId);
     const selected = kidActivities.find(a => a.id === activityId);
-    const discoveryImage = selected?.id === 'drawing' ? pencilImg : selected?.image;
+    const discoveryImage = selected?.image;
     speakOptionName(selected?.name);
     sceneActions.updateState({
       childActivityChoice: activityId,

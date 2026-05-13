@@ -328,3 +328,64 @@
     padding: 12px 32px;
   }
 }
+
+@media (orientation: landscape) and (max-height: 900px) {
+
+  .aboutme-comparison-overlay {
+    overflow-y: auto;
+    padding: clamp(10px, 1.8vh, 18px) 20px clamp(12px, 2vh, 20px);
+  }
+
+  /* Kill the transforms that push content off-screen */
+  .aboutme-comparison-grid,
+  .aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-grid {
+    transform: none;
+    gap: clamp(12px, 1.8vw, 18px);
+    margin-bottom: clamp(8px, 1.5vh, 14px);
+  }
+
+  /* Shrink columns + items so everything fits */
+  .aboutme-comparison-column,
+  .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-column {
+    min-width: 320px;
+    padding: clamp(12px, 1.8vh, 18px) 16px;
+    gap: 6px;
+  }
+  .aboutme-comparison-column-header { min-height: clamp(40px, 6vh, 56px); }
+  .aboutme-comparison-column-title  { font-size: clamp(1rem, 1.6vh, 1.4rem); }
+
+  .aboutme-comparison-items-grid { gap: clamp(6px, 1vh, 10px); }
+  .aboutme-comparison-item,
+  .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-item,
+  .aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item {
+    min-height: clamp(72px, 11vh, 100px);
+    padding: 6px;
+  }
+  .aboutme-comparison-item-media,
+  .aboutme-comparison-item-img,
+  .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-item-media,
+  .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-item-img,
+  .aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item-media,
+  .aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item-img {
+    width: clamp(36px, 5.5vh, 52px);
+    height: clamp(36px, 5.5vh, 52px);
+  }
+  .aboutme-comparison-item-text { font-size: clamp(0.75rem, 1.3vh, 0.9rem); }
+
+  /* Title + subtitle tighter */
+  .aboutme-comparison-title    { font-size: clamp(1.3rem, 2.6vh, 1.9rem); margin-bottom: 2px; }
+  .aboutme-comparison-subtitle { font-size: clamp(0.8rem, 1.4vh, 1rem);   margin-bottom: 4px; }
+
+  /* Continue — pin to bottom, always visible */
+  .aboutme-comparison-continue-btn,
+  .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-continue-btn {
+    position: sticky;
+    bottom: 6px;
+    margin-top: clamp(6px, 1.2vh, 12px);
+    margin-bottom: 4px;
+    padding: clamp(10px, 1.5vh, 14px) clamp(30px, 5vw, 42px);
+    font-size: clamp(0.95rem, 1.8vh, 1.2rem);
+    flex-shrink: 0;
+    align-self: center;
+  }
+}

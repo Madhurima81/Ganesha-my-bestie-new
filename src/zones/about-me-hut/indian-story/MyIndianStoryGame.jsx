@@ -2022,7 +2022,7 @@ const handleComplete = () => {
               disabled={!isChildHomeContinueEnabled}
               style={{
                 position: 'absolute',
-                bottom: '-34px',
+                bottom: '8px',
                 left: '50%',
                 marginTop: 0,
                 padding: '12px 32px',

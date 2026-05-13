@@ -5126,4 +5126,76 @@
   height: clamp(40px, 5.5vw, 62px) !important;
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   iPad landscape — guarantee Continue button always sits inside viewport
+   Covers ALL iPad sizes (Gen 6 through Pro 11) in landscape, ≤900px height
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (orientation: landscape) and (max-height: 900px) {
+
+  /* 1. Comparison phase — allow scrolling and keep Continue in safe zone */
+  .side-by-side-screen {
+    overflow-y: auto;
+    justify-content: flex-start;
+    padding: clamp(10px, 1.8vh, 20px) 20px clamp(14px, 2.5vh, 24px);
+  }
+  .side-by-side-screen .reveal-title {
+    font-size: clamp(2rem, 4.2vh, 3rem);
+    margin-bottom: clamp(4px, 1vh, 10px);
+  }
+  .side-by-side-screen .reveal-subtitle {
+    font-size: clamp(1rem, 2vh, 1.4rem);
+    margin: 0 0 clamp(10px, 2vh, 18px) 0;
+  }
+  .two-trees-container {
+    gap: clamp(18px, 2.5vw, 32px);
+    margin-bottom: clamp(10px, 1.8vh, 16px);
+  }
+  .tree-column {
+    padding: clamp(16px, 2.2vh, 26px);
+    min-width: 400px;
+    gap: 8px;
+  }
+  .tree-heading {
+    font-size: clamp(1.4rem, 2.8vh, 2rem);
+    margin: 2px 0;
+  }
+  .side-by-side-screen .continue-btn-simple {
+    margin: clamp(8px, 1.8vh, 16px) auto 0;
+    padding: clamp(10px, 1.6vh, 14px) clamp(32px, 5.5vw, 44px);
+    font-size: clamp(1.2rem, 2.4vh, 1.6rem);
+    flex-shrink: 0;
+    position: sticky;
+    bottom: max(8px, env(safe-area-inset-bottom));
+  }
+
+  /* 2. All-placed phase — keep absolute Continue button in safe zone */
+  .family-tree-game .tree-done-btn {
+    bottom: max(clamp(12px, 2vh, 28px), env(safe-area-inset-bottom)) !important;
+    font-size: clamp(1rem, 2vh, 1.4rem) !important;
+    padding: clamp(10px, 1.6vh, 14px) clamp(28px, 5vw, 40px) !important;
+    z-index: 1500;
+  }
+
+  /* Keep Home + Sound icon graphics readable on iPad landscape for this scene only */
+  .family-tree-game .home-button {
+    width: 48px !important;
+    height: 48px !important;
+    opacity: 0.98;
+  }
+  .family-tree-game .home-button__icon {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .family-tree-game .audio-toggle {
+    width: 48px !important;
+    height: 48px !important;
+    opacity: 0.98;
+  }
+  .family-tree-game .audio-toggle__icon {
+    width: 32px !important;
+    height: 32px !important;
+  }
+}
+
 
