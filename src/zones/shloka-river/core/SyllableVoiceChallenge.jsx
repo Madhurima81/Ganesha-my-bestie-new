@@ -77,8 +77,14 @@ const SyllableVoiceChallenge = ({
       }
       streamRef.current = stream;
 
-      const recorder = new MediaRecorder(stream);
+      const mimeType = MediaRecorder.isTypeSupported('audio/mp4')
+        ? 'audio/mp4'
+        : MediaRecorder.isTypeSupported('audio/webm')
+          ? 'audio/webm'
+          : '';
+      const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
       mediaRecorderRef.current = recorder;
+      recorder.mimeType_actual = mimeType;
       const chunks = [];
 
       recorder.ondataavailable = (e) => {
@@ -88,7 +94,7 @@ const SyllableVoiceChallenge = ({
       recorder.onstop = () => {
         cleanupStream();
         if (!mountedRef.current) return;
-        const blob = new Blob(chunks, { type: 'audio/webm' });
+        const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
         const url = URL.createObjectURL(blob);
         setRecordedUrl(url);
         setPhase('done-recording');
@@ -199,10 +205,12 @@ const SyllableVoiceChallenge = ({
       playbackAudioRef.current = null;
     };
     audio.onerror = () => {
+      console.warn('[SVC] Playback failed on this device:', audio.error?.message);
       if (mountedRef.current) setPhase('done-recording');
       playbackAudioRef.current = null;
     };
-    audio.play().catch(() => {
+    audio.play().catch((err) => {
+      console.warn('[SVC] Playback play() rejected:', err?.message);
       if (mountedRef.current) setPhase('done-recording');
     });
     setPhase('playing-back');

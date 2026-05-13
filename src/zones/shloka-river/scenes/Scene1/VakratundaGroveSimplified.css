@@ -220,7 +220,7 @@
 }
 
 @keyframes lotusBloomFade {
-  0%   { opacity: 0; transform: scale(0.92); }
+  0%   { opacity: 0.6; transform: scale(0.94); }
   100% { opacity: 1; transform: scale(1); }
 }
 

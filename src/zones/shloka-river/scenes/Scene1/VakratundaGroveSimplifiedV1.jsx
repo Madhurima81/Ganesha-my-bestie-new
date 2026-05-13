@@ -864,6 +864,12 @@ onClick={() => {
   word={practiceWord || ''}
   savedRecordings={savedRecordings}
   onSaveRecording={handleSaveRecording}
+  stopAudio={() => {
+    document.querySelectorAll('audio').forEach((audio) => {
+      audio.pause();
+      audio.currentTime = 0;
+    });
+  }}
   onComplete={() => {
     setShowRecorder(false);
     setPracticeWord(null);

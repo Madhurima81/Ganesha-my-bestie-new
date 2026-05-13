@@ -58,6 +58,9 @@ const AutoPlayModeV2 = ({
   const [centralElementGlowing, setCentralElementGlowing] = useState(false);
   const [centralBloomProgress, setCentralBloomProgress] = useState(0);
   const [showLotusSparkles, setShowLotusSparkles] = useState(false);
+  const [banyanBaseSrc, setBanyanBaseSrc] = useState(null);
+  const [banyanOverlaySrc, setBanyanOverlaySrc] = useState(null);
+  const [banyanOverlayVisible, setBanyanOverlayVisible] = useState(false);
   
   // Refs
   const timeoutsRef = useRef([]);
@@ -65,6 +68,7 @@ const AutoPlayModeV2 = ({
   const isComponentMountedRef = useRef(true);
   const hasInitializedRef = useRef(false);
   const flowInProgressRef = useRef(false);
+  const banyanSwapTimeoutRef = useRef(null);
   
   // Track audio for pausing
   const currentAudioRef = useRef(null);
@@ -421,6 +425,61 @@ const AutoPlayModeV2 = ({
 
   const maxRound = gameConfig ? Object.keys(gameConfig.syllables).length : 3;
   const effectiveStartRound = Math.min(Math.max(startRound || 1, 1), maxRound);
+  const isMahakayaStartRoundCustomGlobal =
+    gameConfig?.id === 'mahakaya' && currentRound === effectiveStartRound && effectiveStartRound > 1;
+  const banyanStageKey = playerInput.includes('lotus')
+    ? 'banyan-full'
+    : playerInput.length >= 2
+      ? 'banyan-half'
+      : playerInput.length >= 1
+        ? 'banyan-sapling'
+        : 'banyan-sprout';
+
+  const getBanyanStageSrc = () => {
+    if (!isMahakayaStartRoundCustomGlobal || !gameConfig?.elements?.centralSynthesis) return null;
+    let initialKey = gameConfig.elements.centralSynthesis.assetGetterInitial;
+    let rewardKey = gameConfig.elements.centralSynthesis.assetGetterReward;
+    if (gameConfig.elements.centralSynthesis.assetGettersByRound && gameConfig.elements.centralSynthesis.assetGettersByRound[currentRound]) {
+      initialKey = gameConfig.elements.centralSynthesis.assetGettersByRound[currentRound].initial;
+      rewardKey = gameConfig.elements.centralSynthesis.assetGettersByRound[currentRound].reward;
+    }
+    const getInitialImage = assetGetters[initialKey];
+    const getRewardImage = assetGetters[rewardKey];
+    const initialFallback = getInitialImage ? getInitialImage(0) : null;
+    const rewardFallback = getRewardImage ? getRewardImage(0) : null;
+    const banyanSproutImage = assetGetters.getBanyanSproutImage ? assetGetters.getBanyanSproutImage(0) : initialFallback;
+    const banyanSaplingImage = assetGetters.getBanyanSaplingImage ? assetGetters.getBanyanSaplingImage(0) : initialFallback;
+    const banyanHalfImage = assetGetters.getBanyanHalfImage ? assetGetters.getBanyanHalfImage(0) : rewardFallback;
+    const banyanFullImage = assetGetters.getBanyanFullImage ? assetGetters.getBanyanFullImage(0) : rewardFallback;
+
+    if (banyanStageKey === 'banyan-full') return banyanFullImage;
+    if (banyanStageKey === 'banyan-half') return banyanHalfImage;
+    if (banyanStageKey === 'banyan-sapling') return banyanSaplingImage;
+    return banyanSproutImage;
+  };
+
+  const banyanStageSrc = getBanyanStageSrc();
+
+  useEffect(() => {
+    if (!isMahakayaStartRoundCustomGlobal || !banyanStageSrc) {
+      setBanyanBaseSrc(null);
+      setBanyanOverlaySrc(null);
+      setBanyanOverlayVisible(false);
+      return;
+    }
+    if (!banyanBaseSrc) {
+      setBanyanBaseSrc(banyanStageSrc);
+      return;
+    }
+    if (banyanStageSrc !== banyanBaseSrc && banyanStageSrc !== banyanOverlaySrc) {
+      setBanyanOverlaySrc(banyanStageSrc);
+      setBanyanOverlayVisible(false);
+    }
+  }, [isMahakayaStartRoundCustomGlobal, banyanStageSrc, banyanBaseSrc, banyanOverlaySrc]);
+
+  useEffect(() => () => {
+    if (banyanSwapTimeoutRef.current) clearTimeout(banyanSwapTimeoutRef.current);
+  }, []);
   
   const getSequenceForRound = (round) => gameConfig.syllables[round] || [];
 
@@ -1113,18 +1172,6 @@ const AutoPlayModeV2 = ({
     const bloomImage = isVakratundaStartRoundCustom
       ? (assetGetters.getLotusFullBloomImage ? assetGetters.getLotusFullBloomImage(0) : getRewardImage(0))
       : getRewardImage(0);
-    const banyanSproutImage = isMahakayaStartRoundCustom
-      ? (assetGetters.getBanyanSproutImage ? assetGetters.getBanyanSproutImage(0) : getInitialImage(0))
-      : budImage;
-    const banyanSaplingImage = isMahakayaStartRoundCustom
-      ? (assetGetters.getBanyanSaplingImage ? assetGetters.getBanyanSaplingImage(0) : getInitialImage(0))
-      : budImage;
-    const banyanHalfImage = isMahakayaStartRoundCustom
-      ? (assetGetters.getBanyanHalfImage ? assetGetters.getBanyanHalfImage(0) : getRewardImage(0))
-      : bloomImage;
-    const banyanFullImage = isMahakayaStartRoundCustom
-      ? (assetGetters.getBanyanFullImage ? assetGetters.getBanyanFullImage(0) : getRewardImage(0))
-      : bloomImage;
     let className = `${gamePrefix}-central-synthesis`;
     if (centralElementGlowing) {
       className += ' pulse';
@@ -1134,28 +1181,39 @@ const AutoPlayModeV2 = ({
       <div className={className} onClick={centralElementGlowing ? handleCentralElementClick : undefined} style={{ position: 'absolute', left: position.left, top: position.top, transform: 'translate(-50%, -50%)', zIndex: 20, cursor: centralElementGlowing ? 'pointer' : 'default', transition: 'all 0.5s ease', pointerEvents: centralElementGlowing ? 'auto' : 'none', ...(position.size && { width: position.size, height: position.size, minWidth: position.size, minHeight: position.size }) }}>
         {isMahakayaStartRoundCustom ? (
           <div style={{ position: 'absolute', width: '100%', height: '100%' }}>
-            <img
-              key={
-                playerInput.includes('lotus')
-                  ? 'banyan-full'
-                  : playerInput.length >= 2
-                    ? 'banyan-half'
-                    : playerInput.length >= 1
-                      ? 'banyan-sprout'
-                      : 'banyan-sapling'
-              }
-              src={
-                playerInput.includes('lotus')
-                  ? banyanFullImage
-                  : playerInput.length >= 2
-                    ? banyanHalfImage
-                    : playerInput.length >= 1
-                      ? banyanSproutImage
-                      : banyanSaplingImage
-              }
-              style={{ width: '100%', height: '100%', objectFit: 'contain', animation: 'lotusBloomFade 700ms ease-out' }}
-              alt="banyan stage"
-            />
+            {(banyanBaseSrc || banyanStageSrc) && (
+              <img
+                src={banyanBaseSrc || banyanStageSrc}
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                alt="banyan stage"
+              />
+            )}
+            {banyanOverlaySrc && (
+              <img
+                key={banyanStageKey}
+                src={banyanOverlaySrc}
+                onLoad={() => {
+                  setBanyanOverlayVisible(true);
+                  if (banyanSwapTimeoutRef.current) clearTimeout(banyanSwapTimeoutRef.current);
+                  banyanSwapTimeoutRef.current = setTimeout(() => {
+                    setBanyanBaseSrc(banyanOverlaySrc);
+                    setBanyanOverlaySrc(null);
+                    setBanyanOverlayVisible(false);
+                  }, 260);
+                }}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  opacity: banyanOverlayVisible ? 1 : 0,
+                  transition: 'opacity 260ms ease-out',
+                  animation: 'lotusBloomFade 700ms ease-out'
+                }}
+                alt="banyan stage"
+              />
+            )}
           </div>
         ) : isMahakaya ? (
           <>
