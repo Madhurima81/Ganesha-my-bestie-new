@@ -188,7 +188,7 @@
   border-radius: 50%;
   background: linear-gradient(135deg, var(--hut-saffron), var(--hut-orange));
   color: #fff;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 18px;
   font-weight: 800;
   display: flex;
@@ -254,7 +254,7 @@
 }
 .mis-spot-fact-emoji { font-size: 26px; flex-shrink: 0; }
 .mis-spot-fact-bubble strong {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 13px;
   color: var(--hut-brown);
   display: block;
@@ -347,7 +347,7 @@
 }
 .mis-region-emoji { font-size: 22px; }
 .mis-region-label {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 13px;
   font-weight: 700;
   color: #5D2E0F;
@@ -455,7 +455,7 @@
 }
 .mis-guess-emoji { font-size: 36px; }
 .mis-guess-label {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 13px;
   font-weight: 700;
   color: #5D2E0F;
@@ -475,7 +475,7 @@
   to   { transform: scale(1); opacity: 1; }
 }
 .mis-chaturthi-reveal {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 20px;
   font-weight: 800;
   color: var(--hut-brown);
@@ -558,7 +558,7 @@
   position: absolute;
   font-size: 10px;
   font-weight: 700;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: rgba(93,46,15,0.5);
   pointer-events: none;
 }
@@ -690,7 +690,7 @@
   margin-bottom: 16px;
 }
 .mis-card-header h3 {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 18px;
   font-weight: 800;
   color: var(--hut-brown);
@@ -711,7 +711,7 @@
   text-align: center;
 }
 .mis-card-section-title {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 11px;
   font-weight: 700;
   color: var(--hut-saffron);
@@ -781,7 +781,7 @@
 
 .mis-card-footer {
   text-align: center;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 14px;
   font-weight: 700;
   color: var(--hut-saffron);
@@ -792,7 +792,7 @@
 .mis-next-btn {
   background: linear-gradient(135deg, var(--hut-saffron), var(--hut-orange));
   color: #fff;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 16px;
   font-weight: 700;
   padding: 14px 20px;
@@ -825,7 +825,7 @@
   color: #fff;
   border: none;
   padding: 20px 54px;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 28px;
   font-weight: 700;
   border-radius: 50px;
@@ -1054,3 +1054,108 @@
   .mis-mute-btn { width: 70px; height: 70px; font-size: 28px; }
 }
 
+
+/* ========================================
+   INDIA MAP - Region Pins (child-friendly)
+   ======================================== */
+.mis-region-pin {
+  width: clamp(64px, 9vw, 96px);
+  padding: 8px 6px 6px;
+  background: #F8F1E2;
+  border: 2px solid #D8B08C;
+  border-radius: 18px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  text-align: center;
+  z-index: 5;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mis-region-pin.is-selected {
+  background: #FFE7A3;
+  border: 3px solid #F4B942;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 0 0 5px rgba(108, 195, 255, 0.5);
+}
+
+.mis-region-pin-icon {
+  width: clamp(36px, 4.5vw, 48px);
+  height: clamp(36px, 4.5vw, 48px);
+  object-fit: contain;
+  margin: 0 auto 4px;
+  display: block;
+}
+
+.mis-region-pin-label {
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: clamp(0.78rem, 1.3vw, 0.95rem);
+  font-weight: 700;
+  color: #5D2E0F;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.mis-region-glow {
+  position: absolute;
+  width: clamp(70px, 8vw, 90px);
+  height: clamp(70px, 8vw, 90px);
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(108, 195, 255, 0.62) 0%,
+    rgba(108, 195, 255, 0.18) 60%,
+    rgba(108, 195, 255, 0) 100%);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 3;
+  animation: regionPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes regionPulse {
+  0%, 100% { opacity: 0.85; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+}
+
+/* ========================================
+   OUTSIDE INDIA - separate card below map
+   ======================================== */
+.mis-outside-india-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px;
+  min-height: 64px;
+  background: #F8F1E2;
+  border: 2px solid #D8B08C;
+  border-radius: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  font-weight: 700;
+  color: #5D2E0F;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mis-outside-india-card.is-selected {
+  background: #FFE7A3;
+  border-color: #F4B942;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 0 0 5px rgba(108, 195, 255, 0.5);
+  transform: scale(1.04);
+}
+
+.mis-outside-india-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.mis-outside-india-label {
+  line-height: 1.1;
+}
+
+@media (max-width: 900px) {
+  .mis-region-pin-label {
+    font-size: clamp(0.7rem, 1.5vw, 0.85rem);
+  }
+}

@@ -324,7 +324,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   // Audio & voices
   const { isAudioOn, toggleAudio } = useAudioPreference();
   const { speak, stop } = useGaneshaVoice();
-  const { playUiTap, playSparkle, playChime } = useGameSounds();
+  const { playUiTap, playSparkle, playChime, playGlow } = useGameSounds();
   const onReturnHint = useCallback(() => {
     setReturnHintNonce(n => n + 1);
   }, []);
@@ -401,6 +401,14 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     phaseEnteredAtRef.current = Date.now();
     entryVoPlayedForPhaseRef.current = null;
   }, [phase]);
+
+  const prevStepRef = useRef(phase);
+  useEffect(() => {
+    if (phase === STEPS.ORIGIN_CARD && prevStepRef.current !== STEPS.ORIGIN_CARD) {
+      playGlow();
+    }
+    prevStepRef.current = phase;
+  }, [phase, playGlow]);
 
   // Gesture & Sparkle triggers
   const triggerMiniGesture = useCallback((options = 1500) => {
@@ -1889,19 +1897,36 @@ const handleComplete = () => {
 
       {/* Child Home Phase */}
       {phase === STEPS.CHILD_HOME && (
-        <div style={{ paddingTop: '40px', paddingBottom: '40px' }}>
-          {/* Story header removed - only one region selection, header not needed */}
+        <div style={{ paddingTop: '20px', paddingBottom: '40px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '12px', padding: '0 16px' }}>
+            <h2 style={{
+              fontFamily: "'Baloo 2', cursive",
+              fontSize: 'clamp(1.4rem, 3vw, 2rem)',
+              color: '#5D2E0F',
+              margin: '0 0 6px 0',
+            }}>
+              Where is your family from?
+            </h2>
+            <p style={{
+              fontFamily: "'Nunito', sans-serif",
+              fontSize: 'clamp(0.9rem, 1.6vw, 1.1rem)',
+              color: '#8B5E3C',
+              margin: 0,
+            }}>
+              Tap a region on the map to explore
+            </p>
+          </div>
 
-          {/* India Map Container with Region Badges */}
-          <div style={{
+          <div
+            className="mis-india-map-wrap"
+            style={{
             position: 'relative',
-            width: '536px',
-            height: '583px',
-            margin: '90px auto 0',
-            maxWidth: '90vw',
+            width: 'min(92vw, 720px)',
+            aspectRatio: '536 / 583',
+            margin: '12px auto 0',
             overflow: 'visible',
-          }}>
-            {/* Map */}
+          }}
+          >
             <img
               src={indiaMapImage}
               alt="India Map"
@@ -1910,74 +1935,52 @@ const handleComplete = () => {
                 inset: 0,
                 width: '100%',
                 height: '100%',
-                objectFit: 'cover',
+                objectFit: 'contain',
                 display: 'block',
               }}
             />
 
-            {/* Region Badges on Map */}
-            {INDIA_REGIONS.filter(r => r.id !== 'kailash' && r.id !== 'other').map((region) => (
-              <button
-                key={region.id}
-                onClick={(event) => handleRegionSelect(region, event)}
-                style={{
-                  position: 'absolute',
-                  top: region.mapTop,
-                  left: region.mapLeft,
-                  transform: selectedRegion?.id === region.id ? 'translate(-50%, -50%) scale(1.08)' : 'translate(-50%, -50%)',
-                  width: '71px',
-                  padding: '7px 10px',
-                  background: selectedRegion?.id === region.id ? '#FFE7A3' : '#F8F1E2',
-                  border: selectedRegion?.id === region.id ? '3px solid #F4B942' : '2px solid #ccc',
-                  borderRadius: '16px',
-                  boxShadow: selectedRegion?.id === region.id
-                    ? '0 10px 20px rgba(0,0,0,0.2), 0 0 0 5px rgba(108,195,255,0.5)'
-                    : '0 4px 12px rgba(0,0,0,0.15)',
-                  cursor: 'pointer',
-                  textAlign: 'center',
-                  zIndex: 5,
-                  transition: 'all 0.2s ease',
-                }}
-              >
-                <img src={region.icon} alt={region.label} style={{ width: '27px', height: '27px', objectFit: 'contain', margin: '0 auto 4px', display: 'block' }} />
-                <div style={{
-                  fontFamily: "'Baloo 2', cursive",
-                  fontSize: '8px',
-                  fontWeight: 700,
-                  color: '#5D2E0F',
-                  lineHeight: '1.2',
-                }}>
-                  {region.label}
-                </div>
-              </button>
-            ))}
+            {INDIA_REGIONS.filter(r => r.id !== 'kailash' && r.id !== 'other').map((region) => {
+              const isSelected = selectedRegion?.id === region.id;
+              const shortLabel = region.label.replace(' India', '');
+              return (
+                <button
+                  key={region.id}
+                  className={`mis-region-pin ${isSelected ? 'is-selected' : ''}`}
+                  onClick={(event) => handleRegionSelect(region, event)}
+                  style={{
+                    position: 'absolute',
+                    top: region.mapTop,
+                    left: region.mapLeft,
+                    transform: isSelected
+                      ? 'translate(-50%, -50%) scale(1.08)'
+                      : 'translate(-50%, -50%)',
+                  }}
+                  aria-label={region.label}
+                >
+                  <img src={region.icon} alt="" className="mis-region-pin-icon" />
+                  <div className="mis-region-pin-label">{shortLabel}</div>
+                </button>
+              );
+            })}
 
-            {/* Selected region highlight on map */}
             {selectedRegion && selectedRegion.id !== 'other' && (
               <div
+                className="mis-region-glow"
                 style={{
-                  position: 'absolute',
                   top: selectedRegion.mapTop,
                   left: selectedRegion.mapLeft,
-                  width: '54px',
-                  height: '54px',
-                  borderRadius: '50%',
-                  background: 'radial-gradient(circle, rgba(108,195,255,0.62) 0%, rgba(108,195,255,0.18) 60%, rgba(108,195,255,0) 100%)',
-                  transform: 'translate(-50%, -50%)',
-                  pointerEvents: 'none',
-                  zIndex: 3,
                 }}
               />
             )}
 
-            {/* House Icon on Selected Region */}
             {selectedRegion && (
               <div
                 style={{
                   position: 'absolute',
                   top: selectedRegion.mapTop,
                   left: selectedRegion.mapLeft,
-                  transform: 'translate(-50%, -120%)',
+                  transform: 'translate(-50%, -130%)',
                   zIndex: 10,
                   animation: 'housePop 0.45s ease-out',
                 }}
@@ -1985,45 +1988,10 @@ const handleComplete = () => {
                 <img
                   src={storyHouseIcon}
                   alt="Home"
-                  style={{ width: '30px', height: '30px', objectFit: 'contain', display: 'block' }}
+                  style={{ width: 'clamp(34px, 5vw, 44px)', height: 'auto', display: 'block' }}
                 />
               </div>
             )}
-
-            {/* Outside India - Uses INDIA_REGIONS coordinates */}
-            {(() => {
-              const outsideIndiaRegion = INDIA_REGIONS.find(r => r.id === 'other');
-              return (
-            <button
-              onClick={(event) => handleRegionSelect(outsideIndiaRegion, event)}
-              style={{
-                position: 'absolute',
-                top: outsideIndiaRegion?.mapTop || '82%',
-                left: outsideIndiaRegion?.mapLeft || '36%',
-                transform: selectedRegion?.id === 'other' ? 'translate(-50%, -50%) scale(1.08)' : 'translate(-50%, -50%)',
-                width: '71px',
-                padding: '7px 6px',
-                background: selectedRegion?.id === 'other' ? '#FFE7A3' : '#F8F1E2',
-                border: selectedRegion?.id === 'other' ? '3px solid #F4B942' : '2px solid #ccc',
-                borderRadius: '16px',
-                boxShadow: selectedRegion?.id === 'other'
-                  ? '0 10px 20px rgba(0,0,0,0.2), 0 0 0 5px rgba(108,195,255,0.5)'
-                  : '0 4px 12px rgba(0,0,0,0.15)',
-                cursor: 'pointer',
-                fontFamily: "'Baloo 2', cursive",
-                fontSize: '7px',
-                fontWeight: 700,
-                color: '#5D2E0F',
-                zIndex: 5,
-                transition: 'all 0.2s ease',
-                textAlign: 'center',
-              }}
-            >
-              <img src={otherLangIcon} alt="Elsewhere" style={{ width: '18px', height: '18px', objectFit: 'contain', margin: '0 auto 4px', display: 'block' }} />
-              Outside India
-            </button>
-              );
-            })()}
 
             {/* Continue Button — Positioned Below Map */}
             <button
@@ -2077,6 +2045,31 @@ const handleComplete = () => {
                 100% { transform: translate(-50%, -120%) scale(1); }
               }
             `}</style>
+          </div>
+
+          <div style={{ textAlign: 'center', margin: '20px auto 0', padding: '0 16px' }}>
+            <p style={{
+              fontFamily: "'Nunito', sans-serif",
+              fontSize: 'clamp(0.85rem, 1.4vw, 1rem)',
+              color: '#8B5E3C',
+              margin: '0 0 10px 0',
+              fontStyle: 'italic',
+            }}>
+              Not from India? That's okay too!
+            </p>
+            {(() => {
+              const outsideIndiaRegion = INDIA_REGIONS.find(r => r.id === 'other');
+              const isSelected = selectedRegion?.id === 'other';
+              return (
+                <button
+                  className={`mis-outside-india-card ${isSelected ? 'is-selected' : ''}`}
+                  onClick={(event) => handleRegionSelect(outsideIndiaRegion, event)}
+                >
+                  <img src={otherLangIcon} alt="" className="mis-outside-india-icon" />
+                  <span className="mis-outside-india-label">Where I live now</span>
+                </button>
+              );
+            })()}
           </div>
         </div>
       )}
