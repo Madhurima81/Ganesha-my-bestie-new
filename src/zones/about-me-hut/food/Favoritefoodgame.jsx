@@ -273,7 +273,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       onReturnHint                     // â† Called when child returns
     }
   );
-  const { playUiTap, playSparkle, playChime, setGlobalVolume } = useGameSounds();
+  const { playUiTap, playWrongTap, playSparkle, playChime, playGlow, setGlobalVolume } = useGameSounds();
   const { speak, stop: stopSpokenVoice } = useGaneshaVoice();
   useEffect(() => { startIdleTimer(); return () => stopIdleTimer(); }, [startIdleTimer, stopIdleTimer]);
   useEffect(() => { setCurrentPhase(sceneState?.gamePhase ?? null); }, [sceneState?.gamePhase, setCurrentPhase]);
@@ -281,7 +281,9 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     if (isAudioOn && sceneState.gamePhase !== 'intro' && !sceneState.showingCompletionScreen) startMusic();
     else stopMusic();
   }, [isAudioOn, sceneState.gamePhase, sceneState.showingCompletionScreen, startMusic, stopMusic]);
-  useEffect(() => { setGlobalVolume(isAudioOn ? 1 : 0); }, [isAudioOn, setGlobalVolume]);
+  // Keep SFX + ambience audible even when voice toggle is off.
+  // Audio toggle should only mute voiceover.
+  useEffect(() => { setGlobalVolume(1); }, [setGlobalVolume]);
 
   // Modak V7 pattern: volume 0 keeps MP3 VO playing silently so it resumes mid-sentence on unmute
   useEffect(() => { setVoiceVolume(isAudioOn ? 1 : 0); }, [isAudioOn, setVoiceVolume]);
@@ -912,6 +914,14 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }
   }, [sceneState.gamePhase, isAudioOn, playVoice, setVoiceVolume]);
 
+  const prevPhaseRef = useRef(sceneState.gamePhase);
+  useEffect(() => {
+    if (sceneState.gamePhase === 'comparison-card' && prevPhaseRef.current !== 'comparison-card') {
+      playGlow();
+    }
+    prevPhaseRef.current = sceneState.gamePhase;
+  }, [sceneState.gamePhase, playGlow]);
+
   useEffect(() => {
     if (!resumeHintCycleKey || !isAudioOn || sceneState.showingCompletionScreen) return;
     if (lastChildCompletionResumeKeyRef.current === resumeHintCycleKey) return;
@@ -966,7 +976,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     safeSetTimeout(() => {
       playSparkle();
-      playChime();
       if (nextPhase === 'friend-celebration') {
         sceneActions.updateState({ gamePhase: nextPhase });
       } else {
@@ -1238,7 +1247,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       triggerSparkleFx('all', 1700);
       sceneActions.updateState({ correctChoiceId: foodId });
       safeSetTimeout(() => {
-        playChime();
         triggerDiscoveryFly({ image: modakImg, name: 'Modak' }, { isModak: true, durationMs: GANESHA_FOOD_CORRECT_ADVANCE_DELAY_MS });
         sceneActions.updateState({
           selectedFood: foodId,
@@ -1252,6 +1260,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         }, DISCOVERY_CENTER_REACH_MS);
       }, 1000);
     } else {
+      playWrongTap();
       speakOptionName(food?.name);
       setShowShake(foodId);
       sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, foodId] });
@@ -1269,7 +1278,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       playSparkle();
       triggerMiniGesture('color', 1500);
       triggerSparkleFx('all', 1700);
-      playChime();
       triggerDiscoveryFly({ image: yellowImg, name: 'Yellow' }, { durationMs: GANESHA_CORRECT_ADVANCE_DELAY_MS });
       sceneActions.updateState({
         correctChoiceId: colorId,
@@ -1281,6 +1289,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         });
       }, DISCOVERY_CENTER_REACH_MS);
     } else {
+      playWrongTap();
       speakOptionName(color?.name);
       setShowShake(colorId);
       sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, colorId] });
@@ -1298,7 +1307,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       playSparkle();
       triggerMiniGesture('activity', 1500);
       triggerSparkleFx('all', 1700);
-      playChime();
       triggerDiscoveryFly({ image: activity.image, name: activity.name }, { durationMs: GANESHA_CORRECT_ADVANCE_DELAY_MS });
       sceneActions.updateState({
         correctChoiceId: activityId,
@@ -1310,6 +1318,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         });
       }, DISCOVERY_CENTER_REACH_MS);
     } else {
+      playWrongTap();
       speakOptionName(activity?.name);
       setShowShake(activityId);
       sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, activityId] });
@@ -1327,7 +1336,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       playSparkle();
       triggerMiniGesture('friend', 1500);
       triggerSparkleFx('all', 1700);
-      playChime();
       triggerDiscoveryFly({ image: mouseImg, name: 'Mooshika' }, { durationMs: GANESHA_FRIEND_CORRECT_ADVANCE_DELAY_MS });
       sceneActions.updateState({
         correctChoiceId: friendId,
@@ -1340,6 +1348,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         });
       }, DISCOVERY_CENTER_REACH_MS);
     } else {
+      playWrongTap();
       speakOptionName(friend?.name);
       setShowShake(friendId);
       sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, friendId] });
@@ -1372,7 +1381,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     safeSetTimeout(() => {
       playSparkle();
-      playChime();
       advanceToChildPhase('child-color-choice');
       setSelectedKidFoodId(null);
     }, CHILD_SELECTION_ADVANCE_DELAY_MS);
@@ -1399,7 +1407,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     safeSetTimeout(() => {
       playSparkle();
-      playChime();
       advanceToChildPhase('child-color-choice');
     }, CHILD_SELECTION_ADVANCE_DELAY_MS);
   };
@@ -1434,7 +1441,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     safeSetTimeout(() => {
       playSparkle();
-      playChime();
       advanceToChildPhase('child-activity-choice');
       setSelectedKidColorId(null);
     }, CHILD_SELECTION_ADVANCE_DELAY_MS);
@@ -1462,7 +1468,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     safeSetTimeout(() => {
       playSparkle();
-      playChime();
       advanceToChildPhase('child-friend-intro');
       setSelectedKidActivityId(null);
     }, CHILD_SELECTION_ADVANCE_DELAY_MS);
@@ -1489,7 +1494,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     safeSetTimeout(() => {
       playSparkle();
-      playChime();
       advanceToChildPhase('child-friend-intro');
     }, CHILD_SELECTION_ADVANCE_DELAY_MS);
   };
@@ -2111,7 +2115,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
             safeSetTimeout(() => {
               playSparkle();
-              playChime();
               advanceToChildPhase('child-color-choice');
             }, CHILD_SELECTION_ADVANCE_DELAY_MS);
           }}
@@ -2152,7 +2155,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
             safeSetTimeout(() => {
               playSparkle();
-              playChime();
               advanceToChildPhase('child-friend-intro');
             }, CHILD_SELECTION_ADVANCE_DELAY_MS);
           }}
