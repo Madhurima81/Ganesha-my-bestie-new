@@ -190,7 +190,9 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
     if (isAudioOn && sceneState.gamePhase !== 'intro' && !sceneState.showingCompletionScreen) startMusic();
     else stopMusic();
   }, [isAudioOn, sceneState.gamePhase, sceneState.showingCompletionScreen, startMusic, stopMusic]);
-  useEffect(() => { setGlobalVolume(isAudioOn ? 1 : 0); }, [isAudioOn, setGlobalVolume]);
+  // Keep SFX + ambience audible even when voice toggle is off.
+  // Audio toggle should only mute voiceover.
+  useEffect(() => { setGlobalVolume(1); }, [setGlobalVolume]);
 
   // Stop all voice when audio is toggled off
   useEffect(() => {

@@ -217,7 +217,7 @@
 
   border-radius: 50px;
   padding: 12px 40px;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 28px;
   font-weight: 800;
   text-align: center;
@@ -879,7 +879,7 @@
   
   padding: 12px 40px;
   border-radius: 50px;      /* Pill shape consistent with game UI */
-  font-family: 'Baloo 2', cursive; /* Signature festive font */
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; /* Signature festive font */
   font-size: 1.8rem;
   font-weight: 800;
   
@@ -944,7 +944,7 @@
 /* 🎨 CARD NAME TYPOGRAPHY */
 .birthday-choice-name {
   text-align: center;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.5rem; /* Larger for readability */
   font-weight: 800;
   color: #4E342E; /* Deep Brown for premium feel */
@@ -1160,7 +1160,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 28px; /* BIGGER font from 24px */
   font-weight: 700;
   background: white;
@@ -1232,7 +1232,7 @@ color: #7A4A00;
   border: 3px solid #FF8C00;
   border-radius: 25px;
   padding: 10px 20px;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 18px;
   font-weight: 700;
   cursor: pointer;
@@ -1314,7 +1314,7 @@ color: #7A4A00;
 }
 
 .hint-title {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 24px;
   color: #8B4513;
   margin-bottom: 15px;
@@ -1336,7 +1336,7 @@ color: #7A4A00;
   color: white;
   border: 3px solid #FF8C00;
   border-radius: 10px;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 28px;
   font-weight: 700;
   display: flex;
@@ -1467,7 +1467,7 @@ color: #7A4A00;
 
 /* Title Style */
 .bday-quest-title {
-  font-family: 'Baloo 2', cursive; /* Ensure font matches your theme */
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; /* Ensure font matches your theme */
   font-size: 32px;
   font-weight: 800;
   color: #5A2E0C;
@@ -1492,7 +1492,7 @@ color: #7A4A00;
   border: none;
   border-radius: 999px; /* Pill shape */
   padding: 16px 45px;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 22px;
   font-weight: 700;
   cursor: pointer;
@@ -1676,7 +1676,7 @@ color: #7A4A00;
 
 /* 2. Mystery Clue Text (On Card Face) */
 .birthday-choice-clue {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.4rem;
   font-weight: 800;
   color: #5D4037; /* Earthy Dark Brown */
@@ -1688,7 +1688,7 @@ color: #7A4A00;
 /* 3. Info Panel Reveal Styles */
 .birthday-info-month {
   /* This is now the TITLE REVEAL inside the panel */
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.6rem !important;
   font-weight: 800;
   color: #D84315 !important; /* Burnt Orange */
@@ -1779,7 +1779,7 @@ color: #7A4A00;
 .birthday-info-month {
   background: linear-gradient(135deg, #FFB347, #FFA000);
   color: #5A2E00;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 14px;
   font-weight: 700;
   padding: 8px 6px;
@@ -1808,7 +1808,7 @@ color: #7A4A00;
   border: none;
   border-radius: 12px;
   padding: 10px 8px;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
@@ -1878,7 +1878,7 @@ color: #7A4A00;
 
 /* 3. NEW TEXT STYLES */
 .bubble-main-text {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.8rem;
   font-weight: 800;
 }
@@ -1946,7 +1946,7 @@ color: #7A4A00;
 
 /* Text Styles */
 .child-intro-title {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 28px;
   font-weight: 800;
   color: #5A2E0C;
@@ -1969,7 +1969,7 @@ color: #7A4A00;
   border: none;
   border-radius: 999px;
   padding: 15px 40px;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 20px;
   font-weight: 700;
   cursor: pointer;
@@ -2033,7 +2033,7 @@ color: #7A4A00;
 
 /* Text Styles */
 .child-bday-intro-title {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 26px;
   font-weight: 800;
   color: #5A2E0C;
@@ -2056,7 +2056,7 @@ color: #7A4A00;
   border: none;
   border-radius: 999px;
   padding: 15px 40px;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 20px;
   font-weight: 700;
   cursor: pointer;
@@ -2157,7 +2157,7 @@ color: #7A4A00;
     
     border-radius: 25px;
     padding: 12px 25px;
-    font-family: 'Baloo 2', cursive;
+    font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 20px;
     font-weight: 700;
     text-align: center;
@@ -2203,7 +2203,7 @@ color: #7A4A00;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 28px;
   font-weight: 700;
   color: white;
@@ -2224,7 +2224,7 @@ color: #7A4A00;
 .child-confirm-btn {
   padding: 12px 25px;
   border-radius: 12px;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
@@ -2285,7 +2285,7 @@ color: #7A4A00;
   background: white;
   border: 3px solid #8B4513;
   border-radius: 10px;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 24px;
   font-weight: 700;
   color: #8B4513;
@@ -2325,7 +2325,7 @@ color: #7A4A00;
 }
 
 .child-name-text {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 72px;
   font-weight: 900;
   color: #FF8C00;
@@ -2418,7 +2418,7 @@ color: #7A4A00;
 
 /* 4. THE TEXT (Clean Typography) */
 .month-festival-name {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.1rem !important; /* Readable size */
   font-weight: 800;
   color: #3e2723;
@@ -2482,7 +2482,7 @@ color: #7A4A00;
   background: white;
   border: 3px solid #8B4513;
   border-radius: 12px;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 24px;
   font-weight: 700;
   color: #8B4513;
@@ -2507,7 +2507,7 @@ color: #7A4A00;
   border: none;
   border-radius: 10px;
   padding: 10px 20px;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
@@ -2535,7 +2535,7 @@ color: #7A4A00;
 }
 
 .child-birthday-text {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 64px;
   font-weight: 900;
   color: #FF1493;
@@ -2602,7 +2602,7 @@ color: #7A4A00;
 
 /* 🏷️ Title - BIGGER */
 .besties-title {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 52px; /* Increased from 34px */
   font-weight: 900;
   color: #ff8c00;
@@ -2666,7 +2666,7 @@ color: #7A4A00;
 
 /* Name */
 .besties-card-name {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 32px; /* Increased from 22px */
   font-weight: 900;
   color: #8b4513;
@@ -2693,7 +2693,7 @@ color: #7A4A00;
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-weight: 900;
   color: #ff5a7a;
   z-index: 10;
@@ -2723,7 +2723,7 @@ color: #7A4A00;
 .besties-badge {
   background: linear-gradient(135deg, #ffd44d, #ffb300);
   color: #5a3300;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 24px; /* Bigger font */
   font-weight: 800;
   padding: 16px 40px;
@@ -2739,7 +2739,7 @@ color: #7A4A00;
 .besties-end-btn {
   background: linear-gradient(135deg, #FF6B6B, #FF4444);
   color: white;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 22px; /* Bigger font */
   font-weight: 700;
   padding: 14px 45px;
@@ -2778,7 +2778,7 @@ color: #7A4A00;
 .end-game-btn {
   background: linear-gradient(135deg, #FFD700, #FFA500);
   color: white;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 22px;
   font-weight: 700;
   padding: 18px 45px;
@@ -2795,7 +2795,7 @@ color: #7A4A00;
 }
 
 .bestie-btn {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 20px;
   font-weight: 700;
   padding: 15px 35px;
