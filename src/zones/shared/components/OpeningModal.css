@@ -21,7 +21,13 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--modal-overlay-bg);
+  background-color: #f2ede3;
+  background-image:
+    linear-gradient(var(--modal-overlay-bg), var(--modal-overlay-bg)),
+    var(--modal-scene-bg, none);
+  background-size: auto, cover;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
   z-index: 2000;
   display: flex;
   align-items: center;
@@ -269,6 +275,11 @@
   box-shadow:
     0 2px 6px rgba(0,0,0,0.10);
   filter: brightness(0.98);
+}
+
+.game-modal-card .game-modal-button:active {
+  background: var(--modal-btn-bg) !important;
+  color: var(--modal-btn-text) !important;
 }
 
 /* --- Animations --- */

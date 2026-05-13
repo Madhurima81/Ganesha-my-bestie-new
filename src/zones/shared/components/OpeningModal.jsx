@@ -37,6 +37,16 @@ import wishIconFlower from '../../about-me-hut/enjoy/assets/images/wish-icon-flo
 import wishHeartIcon from '../../about-me-hut/enjoy/assets/images/heart-icon.png';
 import wishStarIcon from '../../about-me-hut/enjoy/assets/images/shootingstar-icon.png';
 import wishWorldIcon from '../../about-me-hut/enjoy/assets/images/world-icon.png';
+import symbolMountainBgWebp from '../../symbol-mountain/scenes/tusk/assets/images/symbolmtn_background.webp';
+import symbolMountainBgJpg from '../../symbol-mountain/scenes/tusk/assets/images/symbolmtn_background.jpg';
+import aboutFamilyBgWebp from '../../about-me-hut/family-tree/assets/images/family_background.webp';
+import aboutFamilyBgJpg from '../../about-me-hut/family-tree/assets/images/family_background.jpg';
+import aboutFoodBgWebp from '../../about-me-hut/food/assets/images/fav_background.webp';
+import aboutFoodBgJpg from '../../about-me-hut/food/assets/images/fav_background.jpg';
+import aboutNameBgWebp from '../../about-me-hut/name/assets/images/name_background.webp';
+import aboutNameBgJpg from '../../about-me-hut/name/assets/images/name_background.jpg';
+import aboutDreamBgWebp from '../../about-me-hut/enjoy/assets/images/dream_background.webp';
+import aboutDreamBgJpg from '../../about-me-hut/enjoy/assets/images/dream_background.jpg';
 
 // Shared / Fallback
 import birthdayIcon from '../../festival-square/Game1-piano/assets/images/name-birthday-icon.png';
@@ -214,6 +224,16 @@ const ICON_MAP = {
     'mandap-decorate-icon': '✨',
 };
 
+const OPENING_BG_MAP = {
+    'symbol-mountain': [symbolMountainBgWebp, symbolMountainBgJpg],
+    'about-me-hut:family-tree': [aboutFamilyBgWebp, aboutFamilyBgJpg],
+    'about-me-hut:favorite-food': [aboutFoodBgWebp, aboutFoodBgJpg],
+    'about-me-hut:name-birthday': [aboutNameBgWebp, aboutNameBgJpg],
+    'about-me-hut:indian-story': [aboutNameBgWebp, aboutNameBgJpg],
+    'about-me-hut:dreams-wishes': [aboutDreamBgWebp, aboutDreamBgJpg],
+    'about-me-hut': [aboutNameBgWebp, aboutNameBgJpg],
+};
+
 const OpeningModal = ({
     zoneId,
     sceneId,
@@ -230,6 +250,7 @@ const OpeningModal = ({
 }) => {
     const [internalOpen, setInternalOpen] = useState(true);
     const [showIdleCtaHint, setShowIdleCtaHint] = useState(false);
+    const [overlayBgImage, setOverlayBgImage] = useState('');
     const voMonitorTimerRef = useRef(null);
     const hintTriggeredRef = useRef(false);
     const sawOpeningVoRef = useRef(false);
@@ -256,6 +277,41 @@ const OpeningModal = ({
             voMonitorTimerRef.current = null;
         }
     };
+
+    useEffect(() => {
+        if (!visible) return undefined;
+
+        const sceneKey = zoneId && sceneId ? `${zoneId}:${sceneId}` : null;
+        const candidates = (sceneKey && OPENING_BG_MAP[sceneKey]) || (zoneId && OPENING_BG_MAP[zoneId]) || [];
+        if (!candidates.length) {
+            setOverlayBgImage('');
+            return undefined;
+        }
+
+        let cancelled = false;
+        let idx = 0;
+
+        const tryLoad = () => {
+            if (cancelled || idx >= candidates.length) return;
+            const img = new Image();
+            const src = candidates[idx];
+            img.onload = () => {
+                if (!cancelled) setOverlayBgImage(src);
+            };
+            img.onerror = () => {
+                idx += 1;
+                tryLoad();
+            };
+            img.src = src;
+        };
+
+        setOverlayBgImage('');
+        tryLoad();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [visible, zoneId, sceneId]);
 
     // Tab visibility: reset hint timer on tab switch (matching idle hint behavior in scenes)
     useAppVisibility(
@@ -370,7 +426,8 @@ const OpeningModal = ({
             '--modal-btn-shadow': theme.glowColor,
             '--modal-btn-border': theme.buttonBorder || 'transparent',
             '--modal-btn-bg-hover': theme.buttonModalOpeningBg || theme.buttonHoverBg || theme.buttonActiveBg,
-            '--modal-btn-text': '#FFFFFF'
+            '--modal-btn-text': '#FFFFFF',
+            '--modal-scene-bg': overlayBgImage ? `url(${overlayBgImage})` : 'none'
         }}>
             <div className="game-modal-content">
                 <div className="game-modal-character">
