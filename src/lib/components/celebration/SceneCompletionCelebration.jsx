@@ -61,23 +61,6 @@ const SceneCompletionCelebration = ({
     },
   };
 
-  const playChime = () => {
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.frequency.value = 880;
-      osc.type = 'sine';
-      gain.gain.setValueAtTime(0, ctx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 0.05);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.8);
-      osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + 1.8);
-    } catch (e) { /* audio not available */ }
-  };
-
   useEffect(() => {
     if (!show) return;
     applyCompletionScreenTheme(resolvedZoneId);
@@ -92,8 +75,6 @@ const SceneCompletionCelebration = ({
   useEffect(() => {
     if (show) {
       setIsExiting(false);
-      const t = setTimeout(() => playChime(), 1000);
-      return () => clearTimeout(t);
     }
   }, [show]);
 
@@ -405,6 +386,12 @@ const handleAction = (callback, skipComplete = false) => {
           appColor={appData[selectedApp].color || '#FF6B35'}
           savedRecordings={savedRecordings}
           allowSkip={true}
+          stopAudio={() => {
+            document.querySelectorAll('audio').forEach((audio) => {
+              audio.pause();
+              audio.currentTime = 0;
+            });
+          }}
           title="Practice Chanting"
           prompt={`Try saying ${selectedApp.toUpperCase()}`}
           onComplete={() => setSelectedApp(null)}

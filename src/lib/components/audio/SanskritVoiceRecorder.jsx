@@ -10,6 +10,7 @@ const SanskritVoiceRecorder = ({
   chantResult = null,
   onComplete,
   onSkip,
+  stopAudio,
   appIcon = null,
   show = true,
   title = 'Practice Chanting',
@@ -19,7 +20,6 @@ const SanskritVoiceRecorder = ({
   const [isRecording, setIsRecording] = useState(false);
   const [recordedAudio, setRecordedAudio] = useState(null);
   const [recordingTime, setRecordingTime] = useState(0);
-  const [permission, setPermission] = useState(false);
   const [hasRecorded, setHasRecorded] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasHeardWord, setHasHeardWord] = useState(false);
@@ -44,6 +44,11 @@ const SanskritVoiceRecorder = ({
       unlock();
     };
   }, []);
+
+  // Pause game VO whenever recorder opens
+  useEffect(() => {
+    if (show) stopAudio?.();
+  }, [show, stopAudio]);
 
   const getSyllablesForWord = (w) => {
     if (syllables && syllables.length > 0) {
@@ -95,16 +100,20 @@ const SanskritVoiceRecorder = ({
     if (started) setHasHeardWord(true);
   };
 
-  const getPermission = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    streamRef.current = stream;
-    setPermission(true);
-    return stream;
-  };
-
   const startRecording = async () => {
     safeClick(async () => {
-      const stream = streamRef.current || await getPermission();
+      stopAudio?.();
+
+      let stream = streamRef.current;
+      if (!stream) {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          streamRef.current = stream;
+        } catch (err) {
+          console.warn('[SVR] Mic permission denied:', err?.name);
+          return;
+        }
+      }
       if (!stream) return;
 
       setRecordingTime(0);
@@ -118,13 +127,20 @@ const SanskritVoiceRecorder = ({
         });
       }, 1000);
 
-      const rec = new MediaRecorder(stream);
+      const mimeType = MediaRecorder.isTypeSupported('audio/mp4')
+        ? 'audio/mp4'
+        : MediaRecorder.isTypeSupported('audio/webm')
+          ? 'audio/webm'
+          : '';
+      const rec = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
       mediaRecorderRef.current = rec;
       const chunks = [];
 
-      rec.ondataavailable = e => chunks.push(e.data);
+      rec.ondataavailable = e => {
+        if (e.data && e.data.size > 0) chunks.push(e.data);
+      };
       rec.onstop = () => {
-        const blob = new Blob(chunks);
+        const blob = new Blob(chunks, { type: rec.mimeType || 'audio/webm' });
         const url = URL.createObjectURL(blob);
         setRecordedAudio(url);
         setHasRecorded(true);
@@ -247,13 +263,7 @@ const SanskritVoiceRecorder = ({
               </button>
             </div>
 
-            {!permission && hasHeardWord && (
-              <button className="svr-btn svr-btn-start" onClick={getPermission}>
-                Enable Microphone
-              </button>
-            )}
-
-            {permission && !isRecording && (
+            {hasHeardWord && !isRecording && (
               <button
                 className="svr-btn svr-btn-start"
                 disabled={locked}
