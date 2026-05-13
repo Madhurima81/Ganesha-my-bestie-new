@@ -274,7 +274,27 @@ useEffect(() => {
     }
 
     setShowDareChip(false);
+
+    // Don't show Daily Dare on the user's very first map visit —
+    // let map intro VO + tutorial breathe.
+    const profileId = localStorage.getItem('gmb_current_profile') || 'default';
+    const firstMapVisitKey = `gmb_map_first_visit_done_${profileId}`;
+    const isFirstMapVisit = !localStorage.getItem(firstMapVisitKey);
+    if (isFirstMapVisit) {
+      localStorage.setItem(firstMapVisitKey, '1');
+      return;
+    }
+
     dareOpenTimerRef.current = setTimeout(() => {
+      // Wait if any other VO is playing (zone unlock, intro, completion)
+      if (window.speechSynthesis?.speaking || window.speechSynthesis?.pending) {
+        dareOpenTimerRef.current = setTimeout(() => {
+          setShowDarePopup(true);
+          sessionStorage.setItem('gmb_daily_dare_opened', today);
+          localStorage.setItem('gmb_daily_dare_opened', today);
+        }, 2500);
+        return;
+      }
       setShowDarePopup(true);
       sessionStorage.setItem('gmb_daily_dare_opened', today);
       localStorage.setItem('gmb_daily_dare_opened', today);

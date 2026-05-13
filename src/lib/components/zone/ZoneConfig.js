@@ -37,7 +37,7 @@ export const ZONE_CONFIGS = {
         id: 'symbol',
         name: "Ganesha's Symbols",
         emoji: '😀',
-        iconImage: '/images/zones/symbol-mountain/tusk-icon.png',
+        iconImage: '/images/symbols-symbolmountain/broken-tusk-symbol.png',
         description: 'Master the musical tusk assembly',
         unlocked: false,
         order: 3,

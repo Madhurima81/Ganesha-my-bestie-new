@@ -175,7 +175,7 @@ const SYMBOL_DATA = {
     id: 'tusk', name: 'Tusk', emoji: '💪',
     power: 'I finish what I start', growthWord: 'Determination',
     technique: 'One Step Forward',
-    image: '/images/symbols-symbolmountain/symbol-tusk-new.png',
+    image: '/images/symbols-symbolmountain/broken-tusk-symbol.png',
     color: '#6D28D9', accentBg: '#D8C8F7',
     gentlePhrase: 'You finish what you start, even when it is hard.',
     momentIcons: ['💬', '🔢', '🤝'],
@@ -1292,3 +1292,4 @@ function SettingRow({ label, sublabel, value, action, actionLabel, danger }) {
     </div>
   )
 }
+
