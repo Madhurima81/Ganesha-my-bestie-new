@@ -16,7 +16,7 @@
   border: 3px solid #2196F3;
   padding: 10px 20px;
   border-radius: 25px;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.1rem;
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -38,7 +38,7 @@
    ======================================== */
 
 .section-title {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 2.5rem;
   color: #1565C0;
   text-align: center;
@@ -71,7 +71,7 @@
 
 .example-divider {
   text-align: center;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.5rem;
   color: #757575;
   margin: 20px 0;
@@ -93,7 +93,7 @@
 }
 
 .learn-message {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.5rem;
   color: #2E7D32;
   margin: 0 0 25px 0;
@@ -105,7 +105,7 @@
   border: none;
   padding: 15px 40px;
   border-radius: 40px;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.3rem;
   cursor: pointer;
   box-shadow: 0 6px 20px rgba(0,0,0,0.12);
@@ -129,7 +129,7 @@
 }
 
 .scene-title {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.8rem;
   color: #1565C0;
   text-align: center;
@@ -285,7 +285,7 @@
   padding: 12px 30px;
   border: none;
   border-radius: 30px;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.2rem;
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
@@ -343,7 +343,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.3rem;
   font-weight: bold;
   color: #999;
@@ -370,7 +370,7 @@
 
 .form-field label {
   display: block;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.3rem;
   color: #424242;
   margin-bottom: 15px;
@@ -426,7 +426,7 @@
   border: none;
   padding: 18px;
   border-radius: 40px;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.4rem;
   cursor: pointer;
   box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
@@ -489,7 +489,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.5rem;
   font-weight: bold;
   flex-shrink: 0;
@@ -500,7 +500,7 @@
 }
 
 .obstacle-title {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.5rem;
   color: #1565C0;
   margin: 0 0 15px 0;
@@ -529,7 +529,7 @@
 
 .state-label {
   display: block;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1rem;
   font-weight: bold;
   margin-bottom: 5px;
@@ -577,7 +577,7 @@
   border: none;
   padding: 18px 50px;
   border-radius: 50px;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.5rem;
   cursor: pointer;
   box-shadow: 0 6px 20px rgba(0,0,0,0.3);

@@ -304,7 +304,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       onReturnHint                     // ← Called when child returns
     }
   );
-  const { playUiTap, playSparkle, playChime, setGlobalVolume } = useGameSounds();
+  const { playUiTap, playSparkle, playChime, playGlow, setGlobalVolume } = useGameSounds();
   const { speak, stop: stopSpokenVoice, isSpeaking } = useGaneshaVoice();
   const isSpeakingRef = useRef(false);
   const isAudioOnRef = useRef(isAudioOn);
@@ -320,7 +320,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     if (isAudioOn && sceneState.gamePhase !== 'intro' && !sceneState.showingCompletionScreen) startMusic();
     else stopMusic();
   }, [isAudioOn, sceneState.gamePhase, sceneState.showingCompletionScreen, startMusic, stopMusic]);
-  useEffect(() => { setGlobalVolume(isAudioOn ? 1 : 0); }, [isAudioOn, setGlobalVolume]);
+  // Keep SFX + ambience audible even when voice toggle is off.
+  // Audio toggle should only mute voiceover.
+  useEffect(() => { setGlobalVolume(1); }, [setGlobalVolume]);
 
   // Stop all voice when audio is toggled off
   useEffect(() => {
@@ -847,6 +849,14 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       speakLine(VOICE_LINES.ending, { moment: 'closing' });
     }
   }, [sceneState.gamePhase, sceneState.dreamRevealed, isAudioOn, playVoice]);
+
+  const prevPhaseRef = useRef(sceneState.gamePhase);
+  useEffect(() => {
+    if (sceneState.gamePhase === 'comparison-card' && prevPhaseRef.current !== 'comparison-card') {
+      playGlow();
+    }
+    prevPhaseRef.current = sceneState.gamePhase;
+  }, [sceneState.gamePhase, playGlow]);
 
   // Completion screen VO (single guided line)
   useEffect(() => {

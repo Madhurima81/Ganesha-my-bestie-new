@@ -44,7 +44,7 @@
 
 /* 2. Title (Warm Golden Brown) */
 .dream-title {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 3rem;
   font-weight: 800;
   color: #7A4A1D; /* Specified Golden Brown */
@@ -106,7 +106,7 @@
   padding: 16px 45px;
   border-radius: 50px;
   
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.5rem;
   font-weight: 800;
   cursor: pointer;
@@ -144,7 +144,7 @@
   color: white;
   border: 2px solid #654321;
   border-radius: 12px;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
@@ -194,7 +194,7 @@
 }
 
 .intro-text {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 24px;
   font-weight: 600;
   color: white;
@@ -209,7 +209,7 @@
   color: white;
   border: none;
   border-radius: 15px;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 20px;
   font-weight: bold;
   cursor: pointer;
@@ -257,7 +257,7 @@
   border: 3px solid #FF8C00;
   border-radius: 20px;
   padding: 15px 25px;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 20px;
   font-weight: 600;
   color: #654321;
@@ -276,7 +276,7 @@
   border: 3px solid #FF8C00;
   border-radius: 20px;
   padding: 20px 35px;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 22px;
   font-weight: 600;
   color: #654321;
@@ -1237,7 +1237,7 @@
 }
 
 .success-message-large {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 36px;
   font-weight: 700;
   color: #FFD700;
@@ -1458,7 +1458,7 @@
   color: white;
   border: none;
   border-radius: 25px;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 22px;
   font-weight: bold;
   cursor: pointer;
@@ -1492,7 +1492,7 @@
   width: 90%;
   max-width: 650px;
   
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 20px;
   font-weight: 600;
   color: #5D4037;
@@ -1611,7 +1611,7 @@
 }
 
 .comparison-title {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 52px;
   font-weight: 900;
   color: #FF8C00;
@@ -1674,7 +1674,7 @@
 }
 
 .column-name {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 28px;
   font-weight: 900;
   color: #8B4513;
@@ -1706,7 +1706,7 @@
 }
 
 .wish-text {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 20px;
   font-weight: 700;
   color: #8B4513;
@@ -1766,7 +1766,7 @@
 }
 
 .divider-text {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 24px;
   font-weight: 900;
   color: #FF1493;
@@ -1805,7 +1805,7 @@
   display: inline-block;
   background: linear-gradient(135deg, #FFD700, #FFA500);
   color: white;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 28px;
   font-weight: 900;
   padding: 20px 45px;
@@ -1821,7 +1821,7 @@
   color: white;
   border: none;
   border-radius: 25px;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 22px;
   font-weight: 700;
   cursor: pointer;
@@ -1885,7 +1885,7 @@
 }
 
 .final-title {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 48px;
   font-weight: 900;
   color: #FFD700;
