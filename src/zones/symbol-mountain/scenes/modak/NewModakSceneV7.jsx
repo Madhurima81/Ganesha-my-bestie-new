@@ -36,7 +36,6 @@ import ResumeCountdown from '../../../../lib/components/feedback/ResumeCountdown
 const RESUME_DELAY_MS = 3000;
 
 // Synthesized Sound Effects
-import { useGameSounds } from '../../../../lib/hooks/useGameSounds';
 
 
 
@@ -388,9 +387,7 @@ const NewModakSceneMVPContent = ({
     setCurrentPhase,
     recordInteraction,
     playTap,
-    playCorrect,
-    playPowerUnlock,
-    playCelebration
+    playSfx
   } = useVoiceGuidance(zoneId, sceneId, {
     enableMusic: true,
     musicVolume: 0.1,
@@ -423,12 +420,14 @@ const NewModakSceneMVPContent = ({
   // so the visual matches the 3000ms audio/timer resume delay above.
   const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
 
-  const { playSparkle, playWrongTap } = useGameSounds();
   const playUiTap = playTap;
-  const playBloom = playCorrect;
-  const playChime = playCorrect;
-  const playGlow = playPowerUnlock;
-  const playTwinkle = playCelebration;
+  const playSoftWrong = useCallback(() => playSfx('softWrong'), [playSfx]);
+  const playDiscovery = useCallback(() => playSfx('discovery'), [playSfx]);
+  const playRevealBloom = useCallback(() => playSfx('revealBloom'), [playSfx]);
+  const playPlace = useCallback(() => playSfx('place'), [playSfx]);
+  const playTransition = useCallback(() => playSfx('transition'), [playSfx]);
+  const playEmotionalGlow = useCallback(() => playSfx('emotionalGlow'), [playSfx]);
+  const playCelebrationSfx = useCallback(() => playSfx('celebration'), [playSfx]);
 
   const { isAudioOn, toggleAudio } = useAudioPreference();
   const { speak, stop: stopSpokenVoice } = useGaneshaVoice();
@@ -544,7 +543,9 @@ const NewModakSceneMVPContent = ({
   const hasShownDragHintRef = useRef(false);
   const [showIdleGestureHint, setShowIdleGestureHint] = useState(false);
   const [wrongMoundIndex, setWrongMoundIndex] = useState(null);
+  const [wrongMoundPuff, setWrongMoundPuff] = useState(null);
   const wrongMoundShakeTimerRef = useRef(null);
+  const wrongMoundPuffTimerRef = useRef(null);
   const idleHintsEnabled = true;
   const miniGestureTimerRef = useRef(null);
   const [miniGesture, setMiniGesture] = useState({
@@ -594,6 +595,10 @@ const NewModakSceneMVPContent = ({
       if (wrongMoundShakeTimerRef.current) {
         clearTimeout(wrongMoundShakeTimerRef.current);
         wrongMoundShakeTimerRef.current = null;
+      }
+      if (wrongMoundPuffTimerRef.current) {
+        clearTimeout(wrongMoundPuffTimerRef.current);
+        wrongMoundPuffTimerRef.current = null;
       }
     };
   }, []);
@@ -966,7 +971,7 @@ const NewModakSceneMVPContent = ({
     // Short delay so Mooshika has time to render in her saved position first.
     if (sceneState.phase === PHASES.MOOSHIKA_FOUND) {
       setTimeout(() => {
-        playChime();
+        playRevealBloom();
         setRevealConfig({
           symbolId: 'mooshika',
           symbolImage: symbolMooshikaColored,
@@ -1013,7 +1018,7 @@ const NewModakSceneMVPContent = ({
     // Old system used showDiscoveryFlip2 — now trigger setRevealConfig directly.
     if (sceneState.phase === PHASES.ALL_COLLECTED && !sceneState.rockVisible) {
       setTimeout(() => {
-        playChime();
+        playRevealBloom();
         setRevealConfig({
           symbolId: 'modak',
           symbolImage: symbolModakColored,
@@ -1063,7 +1068,7 @@ const NewModakSceneMVPContent = ({
     if (sceneState.phase === PHASES.ROCK_TRANSFORMED && !sceneState.completed) {
       hasShownDragHintRef.current = true; // Don't re-show drag hint on reload
       setTimeout(() => {
-        playChime();
+        playRevealBloom();
         setRevealConfig({
           symbolId: 'belly',
           symbolImage: symbolBellyColored,
@@ -1083,7 +1088,7 @@ const NewModakSceneMVPContent = ({
         phase: PHASES.ROCK_TRANSFORMED
       });
       setTimeout(() => {
-        playChime();
+        playRevealBloom();
         setRevealConfig({
           symbolId: 'belly',
           symbolImage: symbolBellyColored,
@@ -1107,7 +1112,7 @@ const NewModakSceneMVPContent = ({
       // Small delay before starting welcome VO
       const timer = setTimeout(() => {
         // Button shows immediately from start
-        playChime();
+        playTransition();
         setAppState('ready');
         playVoice('welcome');
       }, 800);
@@ -1281,7 +1286,7 @@ const NewModakSceneMVPContent = ({
       setDiscoveryButtonVisible(false);
       const timer = setTimeout(() => {
         playVoice('focusPower', () => {
-          playChime();
+          playRevealBloom();
           setDiscoveryButtonVisible(true);
         });
       }, 500);
@@ -1296,7 +1301,7 @@ const NewModakSceneMVPContent = ({
 
       const timer = setTimeout(() => {
         playVoice('sharingPower', () => {
-          playChime();
+          playRevealBloom();
           setDiscoveryButtonVisible(true);
         });
       }, 500);
@@ -1314,7 +1319,7 @@ const NewModakSceneMVPContent = ({
 
       const timer = setTimeout(() => {
         playVoice('gratitudePower', () => {
-          playChime();
+          playRevealBloom();
           setDiscoveryButtonVisible(true);
         });
       }, 500);
@@ -1343,21 +1348,23 @@ const NewModakSceneMVPContent = ({
     if (sceneCompleteVOFinished) {
       console.log('✅ Scene complete VO finished → showing modal in 1s');
       const timer = setTimeout(() => {
+        playTransition();
         setShowSceneCompletion(true);
         setShowSparkle(null); // stop fireworks when modal appears
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [sceneCompleteVOFinished]);
+  }, [sceneCompleteVOFinished, playTransition]);
 
   // Keep completion UI sticky across tab switch/remount:
   // if scene state says completion screen is active, ensure local modal flag stays on.
   useEffect(() => {
     if (sceneState?.showingCompletionScreen && !showSceneCompletion) {
+      playTransition();
       setShowSceneCompletion(true);
       setShowSparkle(null);
     }
-  }, [sceneState?.showingCompletionScreen, showSceneCompletion]);
+  }, [sceneState?.showingCompletionScreen, showSceneCompletion, playTransition]);
 
 
   // -- SymbolAutoReveal helpers ----------------------------------------------
@@ -1393,8 +1400,7 @@ const NewModakSceneMVPContent = ({
   const triggerFireworks = () => {
     setSceneCompleteVOFinished(false);
     setFireworksFinished(false);
-    playGlow();
-    setTimeout(() => playTwinkle(), 600);
+    playCelebrationSfx();
     playVoice('sceneComplete', () => {
       console.log('✅ Scene complete VO finished');
       setSceneCompleteVOFinished(true);
@@ -1482,9 +1488,8 @@ const NewModakSceneMVPContent = ({
     }
   };
 
-  const handleMoundClick = (moundIndex) => {
+  const handleMoundClick = (moundIndex, event) => {
     recordInteraction();
-    playUiTap();
     setWrongMoundIndex(null);
     setShowIdleGestureHint(false);
     // Re-arm idle ladder from this interaction point.
@@ -1496,6 +1501,7 @@ const NewModakSceneMVPContent = ({
     const moundStates = [...(sceneState.moundStates || [0, 0, 0, 0, 0])];
 
     if (moundIndex === sceneState.correctMound) {
+      playUiTap();
       moundStates[moundIndex - 1] = 1;
       // 1. STOP THE SEARCH VOICE IMMEDIATELY
       stopVoice(); // Cut any playing VO so it doesn't overlap with success sound
@@ -1503,7 +1509,7 @@ const NewModakSceneMVPContent = ({
       stopMusic(); // Optional: Dip music volume if you have that capability, or stop it
 
       // 2. PLAY SUCCESS VOICE (The "Yay" moment)
-      playSparkle();
+      playDiscovery();
       triggerMiniGesture('mound', 1500);
       playVoice('mooshikaFound');
       setShowSparkle('mooshika-found');
@@ -1541,7 +1547,7 @@ const NewModakSceneMVPContent = ({
 
       // 3. Show SymbolAutoReveal for mooshika at 4800ms
       safeSetTimeout(() => {
-        playChime();
+        playRevealBloom();
         setRevealConfig({
           symbolId: 'mooshika',
           symbolImage: symbolMooshikaColored,
@@ -1559,10 +1565,32 @@ const NewModakSceneMVPContent = ({
       // }, 4800);
 
     } else {
-      // Wrong mound - Scene 22 style: wrong SFX + shake only (no fade/lock)
+      // Wrong mound - Scene 22 style: shake only (no wrong SFX, no fade/lock)
       stopVoice();
-      playWrongTap();
-      setShowSparkle(`mound-${moundIndex}`);
+      if (wrongMoundPuffTimerRef.current) {
+        clearTimeout(wrongMoundPuffTimerRef.current);
+        wrongMoundPuffTimerRef.current = null;
+      }
+      if (event?.currentTarget && typeof event.clientX === 'number' && typeof event.clientY === 'number') {
+        const rect = event.currentTarget.getBoundingClientRect();
+        setWrongMoundPuff({
+          moundIndex,
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top,
+          key: Date.now()
+        });
+      } else {
+        setWrongMoundPuff({
+          moundIndex,
+          x: 35,
+          y: 25,
+          key: Date.now()
+        });
+      }
+      wrongMoundPuffTimerRef.current = setTimeout(() => {
+        setWrongMoundPuff(null);
+        wrongMoundPuffTimerRef.current = null;
+      }, 720);
       if (wrongMoundShakeTimerRef.current) {
         clearTimeout(wrongMoundShakeTimerRef.current);
         wrongMoundShakeTimerRef.current = null;
@@ -1595,7 +1623,7 @@ const NewModakSceneMVPContent = ({
     const collectedModaks = [...(sceneState.collectedModaks || [])];
     collectedModaks.push(modakIndex);
 
-    playSparkle();
+    playPlace();
     setShowSparkle(`modak-${modakIndex}`);
     setTimeout(() => setShowSparkle(null), 1000);
 
@@ -1610,7 +1638,7 @@ const NewModakSceneMVPContent = ({
       // Stop idle timer during transition
       if (idleHintsEnabled) stopIdleTimer();
 
-      playTwinkle();
+      playDiscovery();
       // Show celebration sparkles immediately
       setShowSparkle('modaks-complete');
 
@@ -1622,7 +1650,7 @@ const NewModakSceneMVPContent = ({
       });
 
       setTimeout(() => {
-        playBloom();
+        playDiscovery();
         sceneActions.updateState({
           basketFull: true,
           phase: PHASES.ALL_COLLECTED
@@ -1636,7 +1664,7 @@ const NewModakSceneMVPContent = ({
 
       // Show SymbolAutoReveal for modak at 4300ms
       safeSetTimeout(() => {
-        playChime();
+        playRevealBloom();
         setRevealConfig({
           symbolId: 'modak',
           symbolImage: symbolModakColored,
@@ -1682,7 +1710,7 @@ const NewModakSceneMVPContent = ({
     const newBellySize = newFeedCount * 33.33;
 
     setShowSparkle('rock-feeding');
-    playSparkle();
+    playEmotionalGlow();
     if (newFeedCount >= 3) {
       triggerMiniGesture('rock', 2000);
     } else {
@@ -1703,7 +1731,7 @@ const NewModakSceneMVPContent = ({
       const bellySidebarTarget = getSidebarTarget('belly');
 
       setTimeout(() => {
-        playBloom();
+        playEmotionalGlow();
         setShowSparkle('belly-transform');
 
         sceneActions.updateState({
@@ -1714,7 +1742,7 @@ const NewModakSceneMVPContent = ({
         // Keep reveal pacing consistent with other symbol cards:
         // short transform beat, then card appears quickly.
         safeSetTimeout(() => {
-          playChime();
+          playRevealBloom();
           setShowSparkle(null);
           setRevealConfig({
             symbolId: 'belly',
@@ -1854,7 +1882,7 @@ const NewModakSceneMVPContent = ({
 
                   <ClickableElement
                     id={`mound-${index}`}
-                    onClick={() => handleMoundClick(index)}
+                    onClick={(event) => handleMoundClick(index, event)}
                     completed={(sceneState.moundStates || [])[index - 1] === 1}
                     zone="mound-zone"
                   >
@@ -1868,6 +1896,17 @@ const NewModakSceneMVPContent = ({
                       }}
                     />
                   </ClickableElement>
+                  {wrongMoundPuff?.moundIndex === index && (
+                    <div
+                      className="mound-dirt-puff"
+                      style={{ left: `${wrongMoundPuff.x}px`, top: `${wrongMoundPuff.y}px` }}
+                      key={wrongMoundPuff.key}
+                    >
+                      <div className="mound-dirt-particle" />
+                      <div className="mound-dirt-particle" />
+                      <div className="mound-dirt-particle" />
+                    </div>
+                  )}
                   {showSparkle === `mound-${index}` && (
                     <SparkleAnimation
                       type="firefly"

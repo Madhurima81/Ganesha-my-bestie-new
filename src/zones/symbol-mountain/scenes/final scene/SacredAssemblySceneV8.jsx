@@ -966,6 +966,7 @@ const SacredAssemblyContent = ({
     sceneState?.symbolQueue,
     sceneState?.currentRound,
     sceneState?.currentAssociationSymbol,
+    sceneState?.showingAssociationCard,
     sceneState?.placedSymbols // <--- ADD THIS to the dependency array
   ]);
 

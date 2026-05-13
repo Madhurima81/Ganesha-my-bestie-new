@@ -221,9 +221,12 @@
   cursor: pointer;
   transition: transform 0.2s ease;
   z-index: 4;
+  overflow: visible;
 }
 
 .modak-game-mud-mound img {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -259,7 +262,8 @@
 }
 
 .modak-game-mud-mound.wrong-shake {
-  animation: modak-moundWrongShake 0.4s ease-in-out !important;
+  animation: modak-moundWrongShake 0.42s ease-out !important;
+  transform-origin: center bottom;
   opacity: 1 !important;
 }
 
@@ -270,12 +274,167 @@
 }
 
 @keyframes modak-moundWrongShake {
-  0% { transform: translateX(0); }
-  20% { transform: translateX(-2px); }
-  40% { transform: translateX(2px); }
-  60% { transform: translateX(-1.5px); }
-  80% { transform: translateX(1.5px); }
-  100% { transform: translateX(0); }
+  0% {
+    transform: translateX(0) rotate(0deg);
+  }
+
+  18% {
+    transform: translateX(-2px) rotate(-1deg);
+  }
+
+  36% {
+    transform: translateX(2px) rotate(1deg);
+  }
+
+  54% {
+    transform: translateX(-1px) rotate(-0.5deg);
+  }
+
+  72% {
+    transform: translateX(1px) rotate(0.5deg);
+  }
+
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+}
+
+/* =========================================
+   SOFT DIRT PUFF
+   Gentle earthy poof for wrong mound taps
+   ========================================= */
+
+.mound-dirt-puff {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  pointer-events: none;
+  z-index: 20;
+  transform: translate(-50%, -50%);
+  animation: dirtPuffFloat 700ms ease-out forwards;
+}
+
+/* Main soft cloud */
+.mound-dirt-puff::before,
+.mound-dirt-puff::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(140, 110, 80, 0.34) 0%,
+    rgba(140, 110, 80, 0.2) 45%,
+    rgba(140, 110, 80, 0.06) 75%,
+    transparent 100%
+  );
+  filter: blur(2px);
+}
+
+/* Bigger puff */
+.mound-dirt-puff::before {
+  width: 56px;
+  height: 56px;
+  left: 8px;
+  top: 10px;
+  animation: dirtCloudExpand 700ms ease-out forwards;
+}
+
+/* Smaller side puff */
+.mound-dirt-puff::after {
+  width: 34px;
+  height: 34px;
+  left: 38px;
+  top: 22px;
+  animation: dirtCloudSmall 700ms ease-out forwards;
+}
+
+/* Tiny floating particles */
+.mound-dirt-particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(120, 92, 62, 0.18);
+  filter: blur(1px);
+  animation: dirtParticleFloat 700ms ease-out forwards;
+}
+
+.mound-dirt-particle:nth-child(1) {
+  left: 20px;
+  top: 34px;
+  animation-delay: 0ms;
+}
+
+.mound-dirt-particle:nth-child(2) {
+  left: 44px;
+  top: 30px;
+  animation-delay: 40ms;
+}
+
+.mound-dirt-particle:nth-child(3) {
+  left: 30px;
+  top: 18px;
+  animation-delay: 80ms;
+}
+
+/* =========================================
+   ANIMATIONS
+   ========================================= */
+
+@keyframes dirtPuffFloat {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.7);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -62%) scale(1.15);
+  }
+}
+
+@keyframes dirtCloudExpand {
+  0% {
+    opacity: 0.18;
+    transform: scale(0.6);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.3);
+  }
+}
+
+@keyframes dirtCloudSmall {
+  0% {
+    opacity: 0.16;
+    transform: scale(0.5);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.2) translate(6px, -4px);
+  }
+}
+
+@keyframes dirtParticleFloat {
+  0% {
+    opacity: 0;
+    transform: translateY(0px) scale(0.6);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-16px) scale(1.1);
+  }
 }
 
 /* Slot anchor for randomized modak placement (center-based coordinates). */
