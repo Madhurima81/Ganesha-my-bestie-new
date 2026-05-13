@@ -215,6 +215,7 @@ transition: transform 0.58s cubic-bezier(0.4, 0, 0.2, 1);}
   width: 170px;
   height: auto;
   opacity: 0;
+  visibility: hidden;
   transition: opacity 0.12s ease;
   pointer-events: none;
 }
@@ -223,6 +224,7 @@ transition: transform 0.58s cubic-bezier(0.4, 0, 0.2, 1);}
 
 .sar-fly-icon.sar-fly-icon--show {
   opacity: 1;
+  visibility: visible;
 }
 
 /* Text group — fades out on tap */

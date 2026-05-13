@@ -63,6 +63,8 @@
   box-shadow:
     0 2px 8px var(--play-shadow-base),
     0 0 10px var(--play-hover-glow);
+  background: var(--play-action-green);
+  color: var(--play-text-main);
 }
 
 /* Secondary - Magic Blue (informational) */
@@ -87,6 +89,8 @@
   box-shadow:
     0 2px 8px var(--play-shadow-base),
     0 0 10px rgba(79, 195, 247, 0.3);
+  background: var(--play-magic-blue);
+  color: var(--play-text-main);
 }
 
 /* ==========================================
@@ -143,6 +147,28 @@
   box-shadow:
     0 2px 8px var(--play-shadow-base),
     0 0 10px var(--play-active-glow);
+  background: var(--play-joy-gold);
+  color: var(--play-text-main);
+}
+
+[data-zone="about-me-hut"] .unified-button--primary:active:not(:disabled) {
+  background: linear-gradient(180deg, #d99a65 0%, #c9824c 100%);
+  color: var(--play-text-main);
+}
+
+[data-zone="about-me-hut"] .unified-button--secondary:active:not(:disabled) {
+  background: #f8f2ea;
+  color: #8a5b35;
+}
+
+[data-zone="shloka-river"] .unified-button--primary:active:not(:disabled) {
+  background: linear-gradient(180deg, #63c7bb 0%, #4da89d 100%);
+  color: var(--play-text-main);
+}
+
+[data-zone="shloka-river"] .unified-button--secondary:active:not(:disabled) {
+  background: #eef8f6;
+  color: #3f7f77;
 }
 
 /* ==========================================

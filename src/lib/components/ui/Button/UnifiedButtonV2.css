@@ -61,6 +61,8 @@
   box-shadow:
     0 2px 0 #388E3C,
     0 4px 10px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(to bottom, #66BB6A, #4CAF50);
+  color: #FFFFFF;
 }
 
 /* 🔵 Blue - Alternative Choice (Manual Mode, Explore) */
@@ -80,6 +82,8 @@
   box-shadow:
     0 2px 0 #1976D2,
     0 4px 10px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(to bottom, #42A5F5, #2196F3);
+  color: #FFFFFF;
 }
 
 /* About Me Hut — in-scene button palette */
@@ -135,6 +139,8 @@
   box-shadow:
     0 4px 0 #E67E22,
     0 6px 12px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(to bottom, #FFB347, #FF8C00);
+  color: #FFFFFF;
 }
 
 /* 🔴 Red - Exit/Danger (Exit to Menu, Cancel) */
@@ -154,6 +160,28 @@
   box-shadow:
     0 2px 0 #C62828,
     0 4px 10px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(to bottom, #EF5350, #E53935);
+  color: #FFFFFF;
+}
+
+[data-zone="about-me-hut"] .btn-primary:active {
+  background: linear-gradient(180deg, #d99a65 0%, #c9824c 100%);
+  color: #FFFFFF;
+}
+
+[data-zone="about-me-hut"] .btn-secondary:active {
+  background: #f8f2ea;
+  color: #8a5b35;
+}
+
+[data-zone="shloka-river"] .btn-primary:active {
+  background: linear-gradient(180deg, #63c7bb 0%, #4da89d 100%);
+  color: #FFFFFF;
+}
+
+[data-zone="shloka-river"] .btn-secondary:active {
+  background: #eef8f6;
+  color: #3f7f77;
 }
 
 /* ==================== HEARTBEAT ANIMATION ==================== */

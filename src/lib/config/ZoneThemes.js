@@ -57,7 +57,7 @@ export const ZONE_THEMES = {
     btnShadow: '#B8920A',
 
     // Font
-    fontFamily: '"Baloo", cursive',
+    fontFamily: '"Baloo 2", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     fontFamilyBody: '"Nunito", sans-serif'
   },
 
@@ -107,7 +107,7 @@ export const ZONE_THEMES = {
     btnTop: '#E07045',
     btnShadow: '#8B2E0A',
 
-    fontFamily: '"Baloo", cursive',
+    fontFamily: '"Baloo 2", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     fontFamilyBody: '"Nunito", sans-serif'
   },
 
@@ -157,7 +157,7 @@ export const ZONE_THEMES = {
     btnTop: '#F4962A',
     btnShadow: '#A84E00',
 
-    fontFamily: '"Baloo", cursive',
+    fontFamily: '"Baloo 2", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     fontFamilyBody: '"Nunito", sans-serif'
   },
 
@@ -207,7 +207,7 @@ export const ZONE_THEMES = {
     btnTop: '#5FBEA8',
     btnShadow: '#1A6B5A',
 
-    fontFamily: '"Baloo", cursive',
+    fontFamily: '"Baloo 2", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     fontFamilyBody: '"Nunito", sans-serif'
   },
 
@@ -257,7 +257,7 @@ export const ZONE_THEMES = {
     btnTop: '#E8AA7A',
     btnShadow: '#9A5A20',
 
-    fontFamily: '"Baloo", cursive',
+    fontFamily: '"Baloo 2", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     fontFamilyBody: '"Nunito", sans-serif'
   }
 };
