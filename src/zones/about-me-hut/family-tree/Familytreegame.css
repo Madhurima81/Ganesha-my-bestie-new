@@ -66,7 +66,7 @@
   color: white;
   padding: 12px 30px;
   border-radius: 25px;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.1rem;
   font-weight: 600;
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
@@ -135,7 +135,7 @@
   color: var(--modal-text-secondary) !important;
 
   /* Optional: Adjust font size/weight if needed */
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   /* Match the title font for cuteness */
   font-weight: 900;
   font-size: 1.5rem;
@@ -187,7 +187,7 @@
   border-radius: 18px;
   border: 2px solid #F2C56B;
 
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.35rem;
   font-weight: 700;
   color: #6A3F1E;
@@ -287,7 +287,7 @@
   border: none;
   border-radius: 50px;
 
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 2.5rem;
   font-weight: 700;
   line-height: 1.05;
@@ -374,7 +374,7 @@
   padding: 12px 26px;
   border-radius: 18px;
 
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.35rem;
   font-weight: 700;
   color: #6A3F1E;
@@ -605,7 +605,7 @@
 }
 
 .intro-title {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 2.5rem;
   color: #2d3436;
   margin: 0 0 20px 0;
@@ -624,7 +624,7 @@
   color: white;
   border: none;
   padding: 15px 50px;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.3rem;
   font-weight: 600;
   border-radius: 50px;
@@ -766,7 +766,7 @@
   border: none;
   padding: 4px 14px;
   border-radius: 20px;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1rem;
   font-weight: 800;
   letter-spacing: 0.3px;
@@ -1007,6 +1007,8 @@
   left: 0;
   width: 100%;
   height: 100%;
+  height: 100dvh;
+  padding-bottom: env(keyboard-inset-height, 0px);
   background: rgba(0, 0, 0, 0.18);
   display: flex;
   align-items: center;
@@ -1088,7 +1090,7 @@
 }
 
 .choice-title {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 22px;
   font-weight: 700;
   color: #5A3A20;
@@ -1456,14 +1458,14 @@
 }
 
 .modal-title {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 3rem;
   margin-bottom: 6px;
   color: #5D2E0F;
 }
 
 .modal-name {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 2.1rem;
   margin-bottom: 16px;
   color: #6B574A;
@@ -1554,7 +1556,7 @@
 }
 
 .transition-title {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 2.5rem;
   color: #2d3436;
   margin: 0 0 20px 0;
@@ -1576,7 +1578,7 @@
   color: white;
   border: none;
   padding: 15px 50px;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.3rem;
   font-weight: 600;
   border-radius: 50px;
@@ -1807,7 +1809,7 @@
   padding: 6px 14px;
   border-radius: 16px;
 
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 0.95rem;
   font-weight: 600;
   color: #5D4037;
@@ -1889,27 +1891,48 @@
 /* Delete button (appears only when selected) */
 .delete-member-btn {
   position: absolute;
-  top: -8px;
-  right: -8px;
-  width: 72px;
-  height: 72px;
-  min-width: 72px;
-  min-height: 72px;
+  top: -6px;
+  right: -6px;
+  width: 60px;
+  height: 60px;
+  min-width: 60px;
+  min-height: 60px;
   border-radius: 50%;
-  background: #FF6B6B;
-  /* soft coral red */
+  background: transparent;
+  border: none;
+  box-shadow: none;
   color: white;
-  border: 2px solid white;
-  font-size: 1.1rem;
+  font-size: 14px;
+  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
   line-height: 1;
   opacity: 0;
   transform: scale(0.7);
-  transition: all 0.2s ease;
+  transition: transform 0.18s ease, background 0.2s ease, box-shadow 0.2s ease;
+  padding: 0;
+}
+
+.delete-member-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #F58C8C;
+  border: 2px solid #FFF4F4;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  transform: translate(-50%, -50%);
+  z-index: 0;
+}
+
+.delete-member-btn > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* Show delete ONLY when selected */
@@ -1919,8 +1942,16 @@
 }
 
 .delete-member-btn:hover {
-  background: #FF8787;
-  transform: scale(1.15);
+  background: transparent;
+}
+
+.delete-member-btn:hover::before {
+  background: #EE7D7D;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.14);
+}
+
+.delete-member-btn:active {
+  transform: scale(0.92);
 }
 
 
@@ -1993,7 +2024,7 @@
 }
 
 .member-card-label {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 0.9rem;
   font-weight: 600;
   color: #2d3436;
@@ -2004,7 +2035,7 @@
   color: white;
   border: none;
   padding: 12px 40px;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.1rem;
   font-weight: 600;
   border-radius: 25px;
@@ -2090,7 +2121,7 @@
 /* 5. Fix the Text Label (Make it readable on the floor) */
 /* CHANGED: Use class name instead of > div:last-child */
 .bottom-member-tray .member-card .member-card-label {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.5rem;
   /* Removed !important */
   color: #5D4037;
@@ -2258,7 +2289,6 @@
   max-width: 650px; /* Increased from 500px */
   width: 90%;
   box-shadow: 0 20px 40px rgba(60, 40, 20, 0.18);
-  transform: scale(1.3);
   position: relative;
   text-align: center;
 }
@@ -2287,7 +2317,7 @@
 
 /* Question Text */
 .modal-question {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 2rem;
   color: #6B3E26;
   /* Warm tree-bark brown */
@@ -2380,7 +2410,7 @@
   border: none;
   padding: 16px 50px;
   min-height: 72px;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.3rem;
   font-weight: 700;
   border-radius: 50px;
@@ -2426,7 +2456,7 @@
 
 /* Titles */
 .reveal-title {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 4.3rem;
   font-weight: 700;
   color: #5D4037;
@@ -2501,7 +2531,7 @@
 }
 
 .tree-heading {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 2.8rem;
   color: #3E2723;
   text-align: center;
@@ -2695,7 +2725,7 @@
 
 /* Labels for Ganesha's family in comparison */
 .ganesha-comparison-label {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.15rem !important;
   color: #5D4037;
   font-weight: 700;
@@ -2933,7 +2963,7 @@
 .make-another-btn,
 .family-tree-end-game-btn {
   padding: 24px 72px;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 2.15rem;
   font-weight: 700;
   border-radius: 32px;
@@ -2959,7 +2989,7 @@
   border: none;
   border-radius: 50px;
   padding: 18px 45px;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 2.5rem;
   font-weight: 700;
   box-shadow:
@@ -3111,7 +3141,7 @@
 }
 
 .celebration-title {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 3.5rem;
   margin: 0 0 20px 0;
   text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
@@ -3632,7 +3662,7 @@
   /* Pure white */
   padding: 12px 25px;
   border-radius: 25px;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.4rem;
   font-weight: 900;
   /* Bolder */
@@ -4003,7 +4033,7 @@
 }
 
 .flip-card-title {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: clamp(1rem, 2vw, 1.3rem) !important;
   color: #8B4513;
   margin: 0 0 10px 0 !important;
@@ -4124,7 +4154,7 @@
   border: none;
   padding: 18px 45px;
 
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 2.5rem;
   font-weight: 700;
   border-radius: 50px;
@@ -4259,7 +4289,7 @@
   /* Tall and chunky */
 
   /* 3. BIG TEXT */
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 2.2rem;
   /* Very large text */
   font-weight: 800;
@@ -4364,7 +4394,7 @@
 }
 
 .transition-title {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: clamp(2.8rem, 4.8vw, 4rem);
   color: #8B4513;
   margin: 0 0 20px 0;
@@ -4386,7 +4416,7 @@
   color: white;
   border: none;
   padding: 20px 54px;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: clamp(1.8rem, 3.2vw, 2.3rem);
   font-weight: 700;
   border-radius: 50px;
@@ -4935,7 +4965,6 @@
 }
 
 .name-input-modal {
-  transform: scale(1) !important;
   max-width: clamp(280px, 55vw, 460px) !important;
   padding: clamp(20px, 3vw, 36px) !important;
 }

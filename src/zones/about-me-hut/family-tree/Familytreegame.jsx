@@ -21,6 +21,7 @@ import useResumeCountdown from '../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../lib/components/feedback/ResumeCountdown';
 import usePauseAwareTimeout from '../../../lib/hooks/usePauseAwareTimeout';
 import GameStateManager from '../../../lib/services/GameStateManager';
+import useKeyboardAwareModal from '../../../lib/hooks/useKeyboardAwareModal';
 
 // Content Configs
 import { getOpeningModal, getCompletionModal } from '../../../lib/config/content';
@@ -200,6 +201,7 @@ const FamilyTreeGameContent = ({
  onNavigate,
  onBack
 }) => {
+ const { modalStyle: kbStyle } = useKeyboardAwareModal();
 
  if (!sceneState ||!sceneActions) return <div>Loading...</div>;
 
@@ -1724,12 +1726,13 @@ const FamilyTreeGameContent = ({
  {isSelected && (
  <button
  className="delete-member-btn"
+ aria-label={`Delete ${member.callName}`}
  onClick={(e) => {
  e.stopPropagation();
  handleDeleteMember(actualIdx);
  }}
  >
-
+ ×
  </button>
  )}
  </div>
@@ -1805,7 +1808,7 @@ const FamilyTreeGameContent = ({
  {/* Name Input Modal */}
  {sceneState.showNameModal && sceneState.currentFamilyType && (
  <div className="modal-overlay">
- <div className="name-input-modal">
+ <div className="name-input-modal" style={kbStyle}>
  <button className="modal-close-btn" onClick={() => {
  // Dismiss resume popup on any action
  if (showResumePopup) {
@@ -2020,10 +2023,12 @@ justifyContent: 'center',
  childFamily: sceneState.childFamily || []
  }}
  onContinue={() => {
+ if (playTap) playTap();
  if (onNavigate) onNavigate('favorite-food');
  else if (onComplete) onComplete();
  }}
  onReplay={() => {
+ if (playTap) playTap();
  audioEnabledRef.current = false;
  setAudioEnabled(false);
  setVoiceVolume(0);
@@ -2036,10 +2041,12 @@ justifyContent: 'center',
  });
  }}
  onExploreZones={() => {
+ if (playTap) playTap();
  if (onNavigate) onNavigate('zone-welcome');
  else if (onBack) onBack();
  }}
  onHome={() => {
+ if (playTap) playTap();
  if (onNavigate) onNavigate('home');
  }}
  />

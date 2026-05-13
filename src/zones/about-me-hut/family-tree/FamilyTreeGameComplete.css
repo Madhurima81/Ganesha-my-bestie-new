@@ -33,7 +33,7 @@
   color: white;
   padding: 12px 30px;
   border-radius: 25px;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.1rem;
   font-weight: 600;
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
@@ -163,7 +163,7 @@
 }
 
 .intro-title {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 2.5rem;
   color: #2d3436;
   margin: 0 0 20px 0;
@@ -182,7 +182,7 @@
   color: white;
   border: none;
   padding: 15px 50px;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.3rem;
   font-weight: 600;
   border-radius: 50px;
@@ -285,7 +285,7 @@
 }
 
 .member-name {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1rem;
   font-weight: 600;
   color: #2d3436;
@@ -386,7 +386,7 @@
 }
 
 .tray-instruction {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.2rem;
   color: white;
   text-align: center;
@@ -440,7 +440,7 @@
 }
 
 .member-card-name {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1rem;
   font-weight: 600;
   color: #2d3436;
@@ -484,7 +484,7 @@
 }
 
 .transition-title {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 2.5rem;
   color: #2d3436;
   margin: 0 0 20px 0;
@@ -503,7 +503,7 @@
   color: white;
   border: none;
   padding: 15px 50px;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.3rem;
   font-weight: 600;
   border-radius: 50px;
@@ -545,7 +545,7 @@
 }
 
 .preview-title {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.2rem;
   color: #2d3436;
   margin: 0 0 15px 0;
@@ -588,7 +588,7 @@
 }
 
 .selection-title {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 2rem;
   color: #2d3436;
   text-align: center;
@@ -627,7 +627,7 @@
 }
 
 .type-label {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.1rem;
   color: #2d3436;
   font-weight: 600;
@@ -638,7 +638,7 @@
   color: white;
   border: none;
   padding: 15px 50px;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.2rem;
   font-weight: 600;
   border-radius: 50px;
@@ -676,7 +676,7 @@
 }
 
 .form-title {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.8rem;
   color: #2d3436;
   margin: 0;
@@ -807,7 +807,7 @@
   color: #636e72;
   border: none;
   padding: 15px 40px;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.2rem;
   font-weight: 600;
   border-radius: 50px;
@@ -825,7 +825,7 @@
   color: white;
   border: none;
   padding: 15px 40px;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.2rem;
   font-weight: 600;
   border-radius: 50px;
@@ -862,7 +862,7 @@
 }
 
 .reveal-title {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 3rem;
   color: white;
   text-align: center;
@@ -922,7 +922,7 @@
 }
 
 .tree-heading {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.8rem;
   color: #2d3436;
   text-align: center;
@@ -1016,7 +1016,7 @@
 }
 
 .child-member-name {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.2rem;
   color: #2d3436;
   margin: 0 0 5px 0;
@@ -1072,7 +1072,7 @@
   color: white;
   border: none;
   padding: 18px 60px;
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 1.5rem;
   font-weight: 600;
   border-radius: 50px;
@@ -1115,7 +1115,7 @@
 }
 
 .celebration-title {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 3rem;
   margin: 0 0 30px 0;
   text-shadow: 0 4px 10px rgba(0,0,0,0.3);
@@ -1320,7 +1320,7 @@
 }
 
 .box-text-small {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 12px;
   font-weight: 700;
   color: #8B4513;
@@ -1355,7 +1355,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 20px;
   font-weight: 900;
   color: white;
