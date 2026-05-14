@@ -2227,15 +2227,15 @@ const handleComplete = () => {
 
       {/* Language Child Phase — 12 Language Selection */}
       {phase === STEPS.LANGUAGE_CHILD && (
-        <div style={{ paddingTop: '60px', paddingBottom: '80px', minHeight: '100vh' }}>
+        <div style={{ paddingTop: '20px', paddingBottom: '40px', minHeight: '100vh' }}>
           {selectedLanguages.length > 0 && (
             <StoryProgressHeader discoveries={selectedLanguages.map(lang => ({ ...lang, image: lang.icon, name: lang.label }))} isChildMode={false} />
           )}
 
-          <div style={{ maxWidth: '980px', margin: '52px auto 0', padding: '0 20px' }}>
+          <div style={{ maxWidth: '900px', margin: '20px auto 0', padding: '0 20px' }}>
             {/* Most Spoken At Home */}
-            <div style={{ marginBottom: '36px' }}>
-              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '24px', fontWeight: 700, color: '#8B6914', textAlign: 'center', marginBottom: '20px' }}>
+            <div style={{ marginBottom: '20px' }}>
+              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '18px', fontWeight: 700, color: '#8B6914', textAlign: 'center', marginBottom: '12px' }}>
                 Most Spoken At Home
               </h3>
               {showLangSelectionHelper && (
@@ -2269,10 +2269,10 @@ const handleComplete = () => {
                     disabled={false}
                     style={{
                       width: '100%',
-                      maxWidth: '190px',
+                      maxWidth: '150px',
                       justifySelf: 'center',
-                      minHeight: '112px',
-                      padding: '14px',
+                      minHeight: '88px',
+                      padding: '10px',
                       borderRadius: '20px',
                       border: selectedLanguages.find(l => l.id === lang.id) ? `4px solid #FFD76A` : '2px solid #E0E0E0',
                       backgroundColor: selectedLanguages.find(l => l.id === lang.id) ? '#FFFBE9' : '#F8F1E2',
@@ -2305,7 +2305,7 @@ const handleComplete = () => {
 
             {/* More Languages */}
             <div>
-              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '24px', fontWeight: 700, color: '#8B6914', textAlign: 'center', marginBottom: '10px' }}>
+              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '18px', fontWeight: 700, color: '#8B6914', textAlign: 'center', marginBottom: '12px' }}>
                 More Languages
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '12px' }}>
@@ -2325,10 +2325,10 @@ const handleComplete = () => {
                     disabled={false}
                     style={{
                       width: '100%',
-                      maxWidth: '190px',
+                      maxWidth: '150px',
                       justifySelf: 'center',
-                      minHeight: '112px',
-                      padding: '14px',
+                      minHeight: '88px',
+                      padding: '10px',
                       borderRadius: '20px',
                       border: selectedLanguages.find(l => l.id === lang.id) ? `4px solid #FFD76A` : '2px solid #E0E0E0',
                       backgroundColor: selectedLanguages.find(l => l.id === lang.id) ? '#FFFBE9' : '#F8F1E2',
@@ -2620,23 +2620,23 @@ const handleComplete = () => {
       {phase === STEPS.FESTIVALS_CHILD && (
         <div style={{
           minHeight: '100vh',
-          paddingTop: '60px',
-          paddingBottom: '80px',
+          paddingTop: '20px',
+          paddingBottom: '40px',
         }}>
           {selectedFestivals.length > 0 && (
             <StoryProgressHeader discoveries={selectedFestivals.map(fest => ({ ...fest, image: fest.icon, name: fest.label }))} isChildMode={false} />
           )}
 
-          <div style={{ maxWidth: '980px', margin: '52px auto 0', padding: '0 20px' }}>
+          <div style={{ maxWidth: '900px', margin: '20px auto 0', padding: '0 20px' }}>
             {/* COMMON FESTIVALS (Top Row - 4 cards) */}
-            <div style={{ marginBottom: '36px' }}>
+            <div style={{ marginBottom: '20px' }}>
               <h3 style={{
                 fontFamily: "'Baloo 2', cursive",
-                fontSize: '24px',
+                fontSize: '18px',
                 fontWeight: 700,
                 color: '#8B6914',
                 textAlign: 'center',
-                marginBottom: '20px',
+                marginBottom: '12px',
               }}>
                 Common Festivals
               </h3>
@@ -2671,10 +2671,10 @@ const handleComplete = () => {
                     disabled={false}
                     style={{
                       width: '100%',
-                      maxWidth: '190px',
+                      maxWidth: '150px',
                       justifySelf: 'center',
-                      minHeight: '130px',
-                      padding: '16px',
+                      minHeight: '92px',
+                      padding: '10px',
                       borderRadius: '20px',
                       border: selectedFestivals.find(f => f.id === fest.id) ? '2px solid #FFC857' : '2px solid #E0E0E0',
                       backgroundColor: selectedFestivals.find(f => f.id === fest.id) ? '#FFF4D8' : '#F8F1E2',
@@ -2696,7 +2696,7 @@ const handleComplete = () => {
                       animation: swappingOutFestId === fest.id ? 'swapOut 0.3s ease-out forwards' : 'none',
                     }}
                   >
-                    <img src={fest.icon} alt={fest.label} style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
+                    <img src={fest.icon} alt={fest.label} style={{ width: '30px', height: '30px', objectFit: 'contain' }} />
                     <div style={{
                       fontFamily: "'Baloo 2', cursive",
                       fontSize: '13px',
@@ -2714,11 +2714,11 @@ const handleComplete = () => {
             <div>
               <h3 style={{
                 fontFamily: "'Baloo 2', cursive",
-                fontSize: '24px',
+                fontSize: '18px',
                 fontWeight: 700,
                 color: '#8B6914',
                 textAlign: 'center',
-                marginBottom: '10px',
+                marginBottom: '12px',
               }}>
                 Other Festivals
               </h3>
@@ -2735,10 +2735,10 @@ const handleComplete = () => {
                     disabled={false}
                     style={{
                       width: '100%',
-                      maxWidth: '190px',
+                      maxWidth: '150px',
                       justifySelf: 'center',
-                      minHeight: '130px',
-                      padding: '16px',
+                      minHeight: '92px',
+                      padding: '10px',
                       borderRadius: '20px',
                       border: selectedFestivals.find(f => f.id === fest.id) ? '2px solid #FFC857' : '2px solid #E0E0E0',
                       backgroundColor: selectedFestivals.find(f => f.id === fest.id) ? '#FFF4D8' : '#F8F1E2',
@@ -2760,7 +2760,7 @@ const handleComplete = () => {
                       animation: swappingOutFestId === fest.id ? 'swapOut 0.3s ease-out forwards' : 'none',
                     }}
                   >
-                    <img src={fest.icon} alt={fest.label} style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
+                    <img src={fest.icon} alt={fest.label} style={{ width: '30px', height: '30px', objectFit: 'contain' }} />
                     <div style={{
                       fontFamily: "'Baloo 2', cursive",
                       fontSize: '13px',

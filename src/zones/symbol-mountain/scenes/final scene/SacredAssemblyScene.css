@@ -1148,6 +1148,8 @@
   pointer-events: none;
   perspective: 1200px;
   -webkit-perspective: 1200px;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
 }
 
 .symbol-card-container.visible {
@@ -1170,6 +1172,8 @@
   -webkit-transform-style: preserve-3d;
   transition: transform 1.0s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
+  -webkit-transform: translateZ(0);
+  isolation: isolate;
 }
 
 .symbol-card-face {

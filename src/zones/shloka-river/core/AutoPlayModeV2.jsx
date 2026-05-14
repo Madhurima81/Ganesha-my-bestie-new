@@ -1209,7 +1209,7 @@ const AutoPlayModeV2 = ({
                   objectFit: 'contain',
                   opacity: banyanOverlayVisible ? 1 : 0,
                   transition: 'opacity 260ms ease-out',
-                  animation: 'lotusBloomFade 700ms ease-out'
+                  animation: 'lotusBloomFade 700ms ease-out both'
                 }}
                 alt="banyan stage"
               />
@@ -1246,7 +1246,7 @@ const AutoPlayModeV2 = ({
                         ? (assetGetters.getLotusbitBloomImage ? assetGetters.getLotusbitBloomImage(0) : bloomImage)
                         : budImage
                 }
-                style={{ width: '100%', height: '100%', objectFit: 'contain', animation: 'lotusBloomFade 700ms ease-out' }}
+                style={{ width: '100%', height: '100%', objectFit: 'contain', animation: 'lotusBloomFade 700ms ease-out both' }}
                 alt="lotus stage"
               />
             </div>

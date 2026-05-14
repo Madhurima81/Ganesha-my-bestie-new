@@ -239,8 +239,8 @@
   transform-origin: center;
 }
 
-.modak-game-mud-mound:hover { transform: scale(1.05); }
-.modak-game-mud-mound:active { transform: scale(0.95); }
+.modak-game-mud-mound:not(.modak-game-mound-4):hover { transform: scale(1.05); }
+.modak-game-mud-mound:not(.modak-game-mound-4):active { transform: scale(0.95); }
 
 /* Keep center/front mound anchored when it uses translateX(-50%) in responsive layouts */
 .modak-game-mound-4.modak-game-mud-mound:hover {

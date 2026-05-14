@@ -4884,7 +4884,7 @@
 .tree-done-btn {
   font-size: clamp(1rem, 2vw, 1.4rem) !important;
   padding: clamp(10px, 1.5vh, 16px) clamp(24px, 4vw, 40px) !important;
-  bottom: clamp(16px, 3vh, 40px) !important;
+  bottom: clamp(28px, 4vh, 64px) !important;
 }
 
 .transition-card-simple {
@@ -5170,7 +5170,7 @@
 
   /* 2. All-placed phase — keep absolute Continue button in safe zone */
   .family-tree-game .tree-done-btn {
-    bottom: max(clamp(12px, 2vh, 28px), env(safe-area-inset-bottom)) !important;
+    bottom: max(clamp(24px, 3vh, 40px), env(safe-area-inset-bottom)) !important;
     font-size: clamp(1rem, 2vh, 1.4rem) !important;
     padding: clamp(10px, 1.6vh, 14px) clamp(28px, 5vw, 40px) !important;
     z-index: 1500;

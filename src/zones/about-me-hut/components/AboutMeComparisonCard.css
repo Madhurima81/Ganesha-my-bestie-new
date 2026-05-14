@@ -9,8 +9,6 @@
   align-items: center;
   background: radial-gradient(ellipse at center, rgba(255, 244, 224, 0.9), rgba(255, 220, 180, 0.7));
   backdrop-filter: blur(5px);
-  transform: scale(0.8);
-  transform-origin: top center;
 }
 
 .aboutme-comparison-title {
@@ -237,6 +235,29 @@
   box-shadow:
     0 4px 0 rgba(0,0,0,0.12),
     0 8px 18px rgba(0,0,0,0.12);
+}
+
+@media (orientation: portrait) and (max-width: 1024px) {
+  .aboutme-comparison-overlay {
+    padding: 14px 16px 10px;
+  }
+  .aboutme-comparison-grid {
+    transform: none;
+    margin-bottom: 8px;
+  }
+  .aboutme-comparison-column {
+    padding: 10px 14px;
+    min-width: 280px;
+  }
+  .aboutme-comparison-item {
+    min-height: 80px;
+  }
+  .aboutme-comparison-continue-btn {
+    margin-top: 6px;
+    margin-bottom: 10px;
+    padding: 10px 30px;
+    font-size: 16px;
+  }
 }
 
 /* Indian Story final compare: slightly lower cards + slightly taller cards/boxes */
