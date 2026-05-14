@@ -63,3 +63,4 @@ src/**/*_backup*.tsx
 
 # Generated local quarantine reports
 docs/reports/image-quarantine-report-*.csv
+.claude/worktrees/
