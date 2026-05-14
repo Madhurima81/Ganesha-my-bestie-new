@@ -252,11 +252,11 @@ const SACRED_COLOR_PALETTE = {
 const RESUME_DELAY_MS = 3000;
 const NEXT_CARD_BREATHING_DELAY_MS = 2400;     // was 3000
 const VO_CHECK_INTERVAL_MS = 200;
-const VO_WAIT_MAX_MS = 4000;                   // was 3200 — allow longer VO
+const VO_WAIT_MAX_MS = 4000;                   // was 3200 ï¿½ allow longer VO
 const POST_VO_GRACE_MS = 600;                  // was 800
-const PLACEMENT_SETTLE_MS = 1200;              // NEW — "look at what you did" beat
+const PLACEMENT_SETTLE_MS = 1200;              // NEW ï¿½ "look at what you did" beat
 
-// Body part drop zone configurations — import from shared config
+// Body part drop zone configurations ï¿½ import from shared config
 const BODY_PART_ZONES = GANESHA_ZONES;
 
 // Keep glow/sparkle anchors in sync with real drop zones so highlights never drift.
@@ -274,7 +274,7 @@ const getZoneCenter = (zone) => {
   const halfW = Math.round(widthPx / 2);
   const halfH = Math.round(heightPx / 2);
 
-  // Detect centering transforms — when present, the anchor IS the center.
+  // Detect centering transforms ï¿½ when present, the anchor IS the center.
   const transformStr = position.transform || '';
   const isCenteredX = /translateX\(-50%\)|translate\(-50%/.test(transformStr);
   const isCenteredY = /translateY\(-50%\)|translate\([^,]+,\s*-50%/.test(transformStr);
@@ -653,7 +653,7 @@ const SacredAssemblyContent = ({
   };
   const [zoneStates, setZoneStates] = useState(() => initZoneStates(sceneState?.placedSymbols));
 
-  // CARD PHASE TIMELINE — drives the card animation state machine
+  // CARD PHASE TIMELINE ï¿½ drives the card animation state machine
   useEffect(() => {
     if (!sceneState?.currentAssociationSymbol) return;
     const currentRound = sceneState?.currentRound || 0;
@@ -666,16 +666,17 @@ const SacredAssemblyContent = ({
     }
 
     if (cardPhase === 'flipped') {
-      // No VO here — card is mid-flip, child can't read it yet
+      // No VO here ï¿½ card is mid-flip, child can't read it yet
       playSparkle();
       const t = setTimeout(() => setCardPhase('side'), 1100);
       return () => clearTimeout(t);
     }
 
     if (cardPhase === 'side') {
-      // No VO here — card is still sliding. VO fires in 'play' once card has landed.
+      // No VO here ï¿½ card is still sliding. VO fires in 'play' once card has landed.
       playUiTap();
-      setCardPhase('play');
+      const t = setTimeout(() => setCardPhase('play'), 600);
+      return () => clearTimeout(t);
     }
   }, [CARD_VO_MAP, cardPhase, playChime, playSceneVoice, playSparkle, playUiTap, sceneState?.currentAssociationSymbol, sceneState?.currentRound]);
 
@@ -687,7 +688,7 @@ const SacredAssemblyContent = ({
     const correctZone = currentSymbol.correctZone;
     const cardVoKey = CARD_VO_MAP[currentSymbol.id];
 
-    // Card VO — 2.5s after card lands, giving child time to look first
+    // Card VO ï¿½ 2.5s after card lands, giving child time to look first
     // Guard prevents double-play if effect re-runs while still in 'play'
     const roundIndex = sceneState?.currentRound ?? -1;
     const ENTRY_VO_DELAY_MS = 2500;
@@ -840,7 +841,7 @@ const SacredAssemblyContent = ({
     }
   }, [sceneState?.welcomeShown, sceneState?.placedSymbols]);
 
-  // Opening modal VO — plays when modal APPEARS, not when button is tapped
+  // Opening modal VO ï¿½ plays when modal APPEARS, not when button is tapped
   useEffect(() => {
     if (sceneState?.welcomeShown) return;           // modal not showing
     if (openingModalVoPlayedRef.current) return;    // already played this session
@@ -949,7 +950,7 @@ const SacredAssemblyContent = ({
       !sceneState.showingAssociationCard) {
 
       if (!onboardingPlayedRef.current) {
-        // Round 0, first time — play onboarding VO, then start first card after it ends
+        // Round 0, first time ï¿½ play onboarding VO, then start first card after it ends
         safeSetTimeout(() => {
           onboardingPlayedRef.current = true;
           sceneActions.updateState({ onboardingPlayed: true }); // persist so back+return skips onboarding
@@ -958,7 +959,7 @@ const SacredAssemblyContent = ({
           }, { replayOnReturn: false });
         }, 600);
       } else {
-        // Resume path — onboarding already played, start card directly
+        // Resume path ï¿½ onboarding already played, start card directly
         safeSetTimeout(() => startNextRound(0), 500);
       }
     }
@@ -1024,7 +1025,7 @@ const SacredAssemblyContent = ({
     });
   };
 
-  // Zone click — discovery system, no pre-highlights
+  // Zone click ï¿½ discovery system, no pre-highlights
   const handleZoneClick = (zoneId) => {
     if (!sceneState || !sceneActions) return;
     if (cardPhase !== 'play') return;
@@ -1163,12 +1164,12 @@ const SacredAssemblyContent = ({
     setTimeout(() => playTwinkle(), 450);
     setShowSparkle(`celebration-${symbol.id}`);
 
-    // Phase 1: sparkle burst (0–1.2s)
+    // Phase 1: sparkle burst (0ï¿½1.2s)
     safeSetTimeout(() => {
       setShowSparkle(null);
     }, 1200);
 
-    // Phase 2: gentle settle glow on the placed body part (1.2s–2.4s)
+    // Phase 2: gentle settle glow on the placed body part (1.2sï¿½2.4s)
     // Keep celebrationZoneId active longer so child's eyes land on Ganesha
     safeSetTimeout(() => {
       setCelebrationZoneId(null);
@@ -1202,7 +1203,7 @@ const SacredAssemblyContent = ({
       safeSetTimeout(() => triggerFinalCelebration(), 1500);
     } else {
       const nextRound = (sceneState.currentRound || 0) + 1;
-      // Halfway breathing beat — once, after 4th symbol
+      // Halfway breathing beat ï¿½ once, after 4th symbol
       const isHalfwayMoment = count === 4;
       const extraHalfwayPause = isHalfwayMoment ? 1000 : 0;   // was 1500
       safeSetTimeout(() => {
@@ -1214,7 +1215,7 @@ const SacredAssemblyContent = ({
           if (!isGaneshaSpeaking || waitedMs >= VO_WAIT_MAX_MS) {
             safeSetTimeout(() => {
               startNextRound(nextRound);
-            }, POST_VO_GRACE_MS);  // 800ms of silence — the breathing space
+            }, POST_VO_GRACE_MS);  // 800ms of silence ï¿½ the breathing space
             return;
           }
           safeSetTimeout(() => {
@@ -1282,7 +1283,7 @@ const SacredAssemblyContent = ({
   // FINAL CELEBRATION: Modal is now shown directly inside RotatingOrbsEffect onComplete
   // (matches backup pattern). No race-prone useEffect needed.
 
-  // RESUME — runs once on mount, handles returning mid-game
+  // RESUME ï¿½ runs once on mount, handles returning mid-game
   useEffect(() => {
     if (resumeHandledRef.current) return;
     resumeHandledRef.current = true;
@@ -1297,7 +1298,7 @@ const SacredAssemblyContent = ({
       showSparkle === 'final-fireworks' ||
       isOrbsRunning;
 
-    // Already finished — restore completion screen
+    // Already finished ï¿½ restore completion screen
     if (placed === 8 || sceneState.phase === 'complete') {
       // Do not show completion modal while final celebration is still active.
       if (celebrationInProgress) return;
@@ -1305,7 +1306,7 @@ const SacredAssemblyContent = ({
       return;
     }
 
-    // Was mid-round when they left — clear the stale card state first
+    // Was mid-round when they left ï¿½ clear the stale card state first
     if (sceneState.currentAssociationSymbol) {
       sceneActions.updateState({
         currentAssociationSymbol: null,
@@ -1325,7 +1326,7 @@ const SacredAssemblyContent = ({
 
   }, []); // run once on mount; avoids repeated card/audio re-triggers
 
-  // Hide progress bar 1s after all 8 symbols placed — keeps fireworks clean
+  // Hide progress bar 1s after all 8 symbols placed ï¿½ keeps fireworks clean
   useEffect(() => {
     const placedCount = Object.keys(sceneState?.placedSymbols || {}).length;
     if (placedCount >= 8 && !hideProgressBar) {
@@ -1565,7 +1566,7 @@ const SacredAssemblyContent = ({
             </div>
           )}
 
-          {/* CREAM SYMBOL CARD — slides right before zones appear */}
+          {/* CREAM SYMBOL CARD ï¿½ slides right before zones appear */}
           {sceneState?.currentAssociationSymbol && cardPhase !== 'hidden' && (() => {
             const sym = SACRED_SYMBOLS.find(s => s.id === sceneState.currentAssociationSymbol);
             const isFlippedCard = ['flipped', 'side', 'play', 'feedback'].includes(cardPhase);
@@ -1606,12 +1607,12 @@ const SacredAssemblyContent = ({
             className="sacred-background"
             style={{ backgroundImage: `url(${sacredBackground})` }}
           >
-            {/* Ganesha — ganesha-sit.svg with click zones */}
+            {/* Ganesha ï¿½ ganesha-sit.svg with click zones */}
             {!showSceneCompletion && (
             <div
               className={`ganesha-assembly-container ${ganeshaReaction}`}
             >
-              {/* Ganesha inline SVG — zones glow via CSS, opacity grows as symbols placed */}
+              {/* Ganesha inline SVG ï¿½ zones glow via CSS, opacity grows as symbols placed */}
               <GaneshaIllustration
                 zoneStates={zoneStates}
                 onZoneClick={handleZoneClick}
@@ -1619,7 +1620,7 @@ const SacredAssemblyContent = ({
                 baseOpacity={getGaneshaOpacity()}
               />
 
-              {/* Hint glow only — uses SAME position as hitbox, perfect alignment */}
+              {/* Hint glow only ï¿½ uses SAME position as hitbox, perfect alignment */}
               {Object.entries(zoneStates).map(([zoneId, state]) => {
                 if (state !== 'hint' && state !== 'hint-strong' && state !== 'hint-final') return null;
                 const zone = BODY_PART_ZONES.find(z => z.id === zoneId);

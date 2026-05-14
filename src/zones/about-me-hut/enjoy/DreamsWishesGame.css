@@ -1820,7 +1820,7 @@ font-weight: 700;
   flex-direction: column;
   align-items: center;
   overflow-y: hidden;
-  padding: clamp(18px, 3vh, 32px) clamp(14px, 2vw, 20px);
+  padding: clamp(12px, 2vh, 20px) clamp(14px, 2vw, 20px) clamp(8px, 1.5vh, 14px);
 }
 
 /* 2. Title Section */
@@ -1852,8 +1852,8 @@ font-weight: 700;
   justify-content: center;
   align-items: stretch; /* Keep both cards equal height */
   gap: clamp(16px, 2vw, 28px);
-  margin-top: clamp(14px, 2vh, 28px);
-  margin-bottom: clamp(14px, 2vh, 26px);
+  margin-top: clamp(6px, 1vh, 14px);
+  margin-bottom: clamp(6px, 1vh, 14px);
   width: 100%;
   max-width: 1040px;
 }
@@ -1863,7 +1863,7 @@ font-weight: 700;
   flex: 1;
   background: #FFF6E8;
   border-radius: 24px;
-  padding: clamp(24px, 3vh, 36px);
+  padding: clamp(14px, 2vh, 22px);
   min-width: 320px;
 
   /* Soft drop shadow */
@@ -1872,7 +1872,7 @@ font-weight: 700;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 8px;
 }
 
 .column-header-image {

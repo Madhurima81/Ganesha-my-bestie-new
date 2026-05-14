@@ -1897,33 +1897,14 @@ const handleComplete = () => {
 
       {/* Child Home Phase */}
       {phase === STEPS.CHILD_HOME && (
-        <div style={{ paddingTop: '20px', paddingBottom: '40px' }}>
-          <div style={{ textAlign: 'center', marginBottom: '12px', padding: '0 16px' }}>
-            <h2 style={{
-              fontFamily: "'Baloo 2', cursive",
-              fontSize: 'clamp(1.4rem, 3vw, 2rem)',
-              color: '#5D2E0F',
-              margin: '0 0 6px 0',
-            }}>
-              Where is your family from?
-            </h2>
-            <p style={{
-              fontFamily: "'Nunito', sans-serif",
-              fontSize: 'clamp(0.9rem, 1.6vw, 1.1rem)',
-              color: '#8B5E3C',
-              margin: 0,
-            }}>
-              Tap a region on the map to explore
-            </p>
-          </div>
-
+        <div style={{ paddingTop: '8px', paddingBottom: '24px' }}>
           <div
             className="mis-india-map-wrap"
             style={{
             position: 'relative',
-            width: 'min(92vw, 720px)',
+            width: 'min(68vw, 520px)',
             aspectRatio: '536 / 583',
-            margin: '12px auto 0',
+            margin: '0 auto',
             overflow: 'visible',
           }}
           >

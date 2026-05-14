@@ -1093,8 +1093,7 @@ const getPermanentCompletedCount = () => {
                     {/* Moon overlay for MVP locked scenes */}
                     {status.status === 'locked' && (
                       <div className="scene-lock-overlay">
-                        <span className="scene-lock-icon">🌙</span>
-                        <span className="scene-lock-stars">✨</span>
+                                                <span className="scene-lock-stars">✨</span>
                       </div>
                     )}
                   </div>
