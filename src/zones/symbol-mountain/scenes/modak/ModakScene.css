@@ -254,7 +254,7 @@
 .modak-game-mound-1 { top: 45%; left: 25%; }
 .modak-game-mound-2 { top: 55%; left: 75%; }
 .modak-game-mound-3 { top: 60%; left: 30%; }
-.modak-game-mound-4 { top: 60%; left: 50%; }
+.modak-game-mound-4 { top: 60%; left: 50%; transform: translateX(-50%); }
 .modak-game-mound-5 { top: 60%; left: 60%; }
 
 .modak-game-mud-mound.fade-out {

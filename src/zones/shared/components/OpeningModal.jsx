@@ -225,6 +225,10 @@ const ICON_MAP = {
 };
 
 const OPENING_BG_MAP = {
+    'symbol-mountain:modak': [symbolMountainBgWebp, symbolMountainBgJpg],
+    'symbol-mountain:pond': [symbolMountainBgWebp, symbolMountainBgJpg],
+    'symbol-mountain:symbol': [symbolMountainBgWebp, symbolMountainBgJpg],
+    'symbol-mountain:final-scene': [symbolMountainBgWebp, symbolMountainBgJpg],
     'symbol-mountain': [symbolMountainBgWebp, symbolMountainBgJpg],
     'about-me-hut:family-tree': [aboutFamilyBgWebp, aboutFamilyBgJpg],
     'about-me-hut:favorite-food': [aboutFoodBgWebp, aboutFoodBgJpg],

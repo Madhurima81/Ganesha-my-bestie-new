@@ -27,7 +27,7 @@ export function applyCompletionScreenTheme(zoneId) {
 
   // Primary button: use deeper opening gradient for stronger white-text contrast.
   const primaryBgColor =
-    theme.buttonModalOpeningBg || theme.buttonModalClosingBg || theme.buttonActiveBg;
+    theme.buttonModalOpeningBg || theme.buttonActiveBg;
   root.style.setProperty("--cs-primary-bg", primaryBgColor, "important");
   root.style.setProperty("--cs-primary-text", "#ffffff");
 
