@@ -202,7 +202,7 @@
 .choices-container {
   position: absolute; bottom: 15%; left: 50%;
   transform: translateX(-50%);
-  display: flex; gap: 40px;
+  display: flex; gap: 36px;
   align-items: flex-end; justify-content: center;
   z-index: 10; width: 100%;
 }
@@ -662,7 +662,7 @@
   /* Fixed width to ensure 4 fit per row */
   width: 180px !important; 
   height: auto;
-  margin: 0 10px; /* Spacing between items */
+  margin: 0 9px; /* Spacing between items */
   
   display: flex;
   flex-direction: column;
@@ -679,16 +679,16 @@
 /* --- THE OVAL POSITIONING LOGIC --- */
 
 /* ROW 1 (Back Row): Curves Up */
-.kid-choice-card:nth-child(1) { top: 30px; } /* Outer Left (Lower) */
+.kid-choice-card:nth-child(1) { top: 27px; } /* Outer Left (Lower) */
 .kid-choice-card:nth-child(2) { top: 0px; }  /* Inner Left (Higher) */
 .kid-choice-card:nth-child(3) { top: 0px; }  /* Inner Right (Higher) */
-.kid-choice-card:nth-child(4) { top: 30px; } /* Outer Right (Lower) */
+.kid-choice-card:nth-child(4) { top: 27px; } /* Outer Right (Lower) */
 
 /* ROW 2 (Front Row): Curves Down */
-.kid-choice-card:nth-child(5) { top: 20px; } /* Outer Left */
-.kid-choice-card:nth-child(6) { top: 50px; } /* Inner Left (Lowest) */
-.kid-choice-card:nth-child(7) { top: 50px; } /* Inner Right (Lowest) */
-.kid-choice-card:nth-child(8) { top: 20px; } /* Outer Right */
+.kid-choice-card:nth-child(5) { top: 18px; } /* Outer Left */
+.kid-choice-card:nth-child(6) { top: 45px; } /* Inner Left (Lowest) */
+.kid-choice-card:nth-child(7) { top: 45px; } /* Inner Right (Lowest) */
+.kid-choice-card:nth-child(8) { top: 18px; } /* Outer Right */
 
 
 /* Hover Animation */
@@ -792,13 +792,13 @@
 }
 
 /* Food positions (3-3-1 pyramid) */
-.child-food-scene .kid-choice-card.food-pizza { left: 90px; top: 40px; }
-.child-food-scene .kid-choice-card.food-burger { left: 385px; top: 18px; }
-.child-food-scene .kid-choice-card.food-ice-cream { left: 680px; top: 40px; }
-.child-food-scene .kid-choice-card.food-dosa { left: 90px; top: 215px; }
-.child-food-scene .kid-choice-card.food-noodles { left: 385px; top: 195px; }
-.child-food-scene .kid-choice-card.food-fruit { left: 680px; top: 215px; }
-.child-food-scene .kid-choice-card.food-rice { left: 385px; top: 360px; }
+.child-food-scene .kid-choice-card.food-pizza { left: 120px; top: 57px; }
+.child-food-scene .kid-choice-card.food-burger { left: 385px; top: 38px; }
+.child-food-scene .kid-choice-card.food-ice-cream { left: 650px; top: 57px; }
+.child-food-scene .kid-choice-card.food-dosa { left: 120px; top: 198px; }
+.child-food-scene .kid-choice-card.food-noodles { left: 385px; top: 178px; }
+.child-food-scene .kid-choice-card.food-fruit { left: 650px; top: 198px; }
+.child-food-scene .kid-choice-card.food-rice { left: 385px; top: 327px; }
 
 /* Tap feedback for child food */
 .child-food-scene .kid-choice-card.selected {
@@ -1011,14 +1011,14 @@
 }
 
 /* Individual activity positions */
-.child-activity-scene .kid-choice-card.activity-reading { left: 110px; top: 48px; }
-.child-activity-scene .kid-choice-card.activity-drawing { left: 300px; top: 48px; }
-.child-activity-scene .kid-choice-card.activity-dancing { left: 490px; top: 48px; }
-.child-activity-scene .kid-choice-card.activity-sports { left: 680px; top: 48px; }
-.child-activity-scene .kid-choice-card.activity-cooking { left: 110px; top: 255px; }
-.child-activity-scene .kid-choice-card.activity-nature { left: 300px; top: 255px; }
-.child-activity-scene .kid-choice-card.activity-stem { left: 490px; top: 255px; }
-.child-activity-scene .kid-choice-card.activity-games { left: 680px; top: 255px; }
+.child-activity-scene .kid-choice-card.activity-reading { left: 138px; top: 58px; }
+.child-activity-scene .kid-choice-card.activity-drawing { left: 309px; top: 58px; }
+.child-activity-scene .kid-choice-card.activity-dancing { left: 480px; top: 58px; }
+.child-activity-scene .kid-choice-card.activity-sports { left: 651px; top: 58px; }
+.child-activity-scene .kid-choice-card.activity-cooking { left: 138px; top: 244px; }
+.child-activity-scene .kid-choice-card.activity-nature { left: 309px; top: 244px; }
+.child-activity-scene .kid-choice-card.activity-stem { left: 480px; top: 244px; }
+.child-activity-scene .kid-choice-card.activity-games { left: 651px; top: 244px; }
 
 /* ========================================= */
 /* 6. INPUTS & KEYBOARD (Friend Name)        */
@@ -2044,12 +2044,12 @@
   /* IMG 1-3: cluster the items closer, smaller cards */
   .favorite-food-game .kid-choices-grid {
     bottom: clamp(18%, 22vh, 28%);
-    max-width: min(680px, 72vw);
-    gap: clamp(4px, 1vw, 10px);
+    max-width: min(612px, 70vw);
+    gap: clamp(4px, 0.9vw, 9px);
   }
   .favorite-food-game .kid-choice-card {
     width: clamp(105px, 13vw, 140px) !important;
-    margin: 0 clamp(2px, 0.5vw, 6px);
+    margin: 0 clamp(2px, 0.45vw, 5px);
   }
   .favorite-food-game .choice-image-container {
     width: clamp(85px, 11vw, 120px);
@@ -2062,16 +2062,16 @@
 
   /* Soften the oval offsets so cards stay close on shorter heights */
   .favorite-food-game .kid-choice-card:nth-child(1),
-  .favorite-food-game .kid-choice-card:nth-child(4) { top: clamp(10px, 1.5vh, 20px); }
+  .favorite-food-game .kid-choice-card:nth-child(4) { top: clamp(4px, 0.8vh, 10px); }
   .favorite-food-game .kid-choice-card:nth-child(5),
-  .favorite-food-game .kid-choice-card:nth-child(8) { top: clamp(10px, 1.5vh, 18px); }
+  .favorite-food-game .kid-choice-card:nth-child(8) { top: clamp(4px, 0.8vh, 10px); }
   .favorite-food-game .kid-choice-card:nth-child(6),
-  .favorite-food-game .kid-choice-card:nth-child(7) { top: clamp(25px, 4vh, 40px); }
+  .favorite-food-game .kid-choice-card:nth-child(7) { top: clamp(12px, 2vh, 20px); }
 
-  /* Ganesha food phase: lift all three options so labels (e.g., Barfi) stay visible */
-  .favorite-food-game .food-scene .choice-card:nth-child(1) { top: -36px; }
-  .favorite-food-game .food-scene .choice-card:nth-child(2) { top: 64px; }
-  .favorite-food-game .food-scene .choice-card:nth-child(3) { top: -54px; }
-  .favorite-food-game .food-scene .choice-name { margin-top: 2px; }
+  /* Keep food options close to the baseline arc on short landscape screens */
+  .favorite-food-game .food-scene .choice-card:nth-child(1) { top: -12px; }
+  .favorite-food-game .food-scene .choice-card:nth-child(2) { top: 36px; }
+  .favorite-food-game .food-scene .choice-card:nth-child(3) { top: -18px; }
+  .favorite-food-game .food-scene .choice-name { margin-top: 4px; }
 }
 
