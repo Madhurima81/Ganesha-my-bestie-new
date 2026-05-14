@@ -236,6 +236,9 @@
     box-shadow 0.3s ease,
     filter 0.3s ease;
   will-change: background, transform;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
   box-shadow:
     0 4px 0 rgba(0,0,0,0.12),
     0 8px 18px rgba(0,0,0,0.12);
@@ -277,6 +280,8 @@
   box-shadow:
     0 2px 6px rgba(0,0,0,0.10);
   filter: brightness(0.98);
+  background: var(--modal-btn-bg) !important;
+  color: var(--modal-btn-text) !important;
 }
 
 .game-modal-card .game-modal-button:active {

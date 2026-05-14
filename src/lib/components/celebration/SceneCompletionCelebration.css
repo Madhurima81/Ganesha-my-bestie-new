@@ -540,6 +540,10 @@ transition:
   transform 0.2s ease,
   box-shadow 0.3s ease,
   filter 0.3s ease;
+  will-change: background, transform;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
   display: flex;
   align-items: center;
   justify-content: center;

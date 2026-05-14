@@ -1159,7 +1159,7 @@
   left: 13%;
   right: auto;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(0, -50%);
 }
 
 .symbol-card {
