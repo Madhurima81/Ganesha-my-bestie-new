@@ -1,0 +1,102 @@
+/* ============================================================
+   VOReplayButton — child-friendly speaker replay button
+   PBS/Disney pattern: persistent, tappable, animates on play
+   ============================================================ */
+
+.vo-replay-btn {
+  position: absolute;
+  z-index: 80;
+  width: clamp(52px, 5.5vw, 68px);
+  height: clamp(52px, 5.5vw, 68px);
+  border-radius: 50%;
+  border: 2px solid rgba(160, 120, 220, 0.4);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  box-shadow: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  outline: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.16s ease-out, box-shadow 0.16s ease-out, filter 0.16s ease-out;
+}
+
+/* Position variants */
+.vo-replay-btn--top-right {
+  top: clamp(12px, 2vw, 20px);
+  right: clamp(12px, 2vw, 20px);
+}
+
+.vo-replay-btn--top-left {
+  top: clamp(12px, 2vw, 20px);
+  left: clamp(12px, 2vw, 20px);
+}
+
+/* Tap feedback */
+.vo-replay-btn:active {
+  transform: scale(0.95);
+  box-shadow: none;
+}
+
+/* Hover (desktop) */
+@media (hover: hover) {
+  .vo-replay-btn:hover {
+    transform: scale(1.06);
+    box-shadow: none;
+  }
+}
+
+/* Icon */
+.vo-replay-icon {
+  width: clamp(36px, 3.8vw, 48px);
+  height: clamp(36px, 3.8vw, 48px);
+  display: block;
+  pointer-events: none;
+}
+
+/* Playing state — gentle pulse */
+.vo-replay-btn--playing {
+  animation: vo-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes vo-pulse {
+  0%, 100% { transform: scale(1); box-shadow: none; }
+  50%      { transform: scale(1.06); box-shadow: none; }
+}
+
+/* Sound waves radiating out when playing */
+.vo-wave {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid rgba(160, 120, 220, 0.45);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.vo-wave--1 { animation: vo-wave-spread 1.4s ease-out infinite; }
+.vo-wave--2 { animation: vo-wave-spread 1.4s ease-out 0.5s infinite; }
+
+@keyframes vo-wave-spread {
+  0%   { opacity: 0.7; transform: scale(1);   border-width: 3px; }
+  100% { opacity: 0;   transform: scale(1.6); border-width: 1px; }
+}
+
+/* ============================================================
+   Responsive — iPad portrait & smaller
+   ============================================================ */
+@media (min-width: 768px) and (max-width: 1366px) {
+  .vo-replay-btn {
+    width: 36px;
+    height: 36px;
+    opacity: 0.9;
+  }
+
+  .vo-replay-icon {
+    width: 24px;
+    height: 24px;
+  }
+}

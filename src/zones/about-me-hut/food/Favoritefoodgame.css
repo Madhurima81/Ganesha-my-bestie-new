@@ -792,13 +792,13 @@
 }
 
 /* Food positions (3-3-1 pyramid) */
-.child-food-scene .kid-choice-card.food-pizza { left: 120px; top: 57px; }
-.child-food-scene .kid-choice-card.food-burger { left: 385px; top: 38px; }
-.child-food-scene .kid-choice-card.food-ice-cream { left: 650px; top: 57px; }
-.child-food-scene .kid-choice-card.food-dosa { left: 120px; top: 198px; }
-.child-food-scene .kid-choice-card.food-noodles { left: 385px; top: 178px; }
-.child-food-scene .kid-choice-card.food-fruit { left: 650px; top: 198px; }
-.child-food-scene .kid-choice-card.food-rice { left: 385px; top: 327px; }
+.child-food-scene .kid-choice-card.food-pizza { left: 90px; top: 40px; }
+.child-food-scene .kid-choice-card.food-burger { left: 385px; top: 18px; }
+.child-food-scene .kid-choice-card.food-ice-cream { left: 680px; top: 40px; }
+.child-food-scene .kid-choice-card.food-dosa { left: 90px; top: 215px; }
+.child-food-scene .kid-choice-card.food-noodles { left: 385px; top: 195px; }
+.child-food-scene .kid-choice-card.food-fruit { left: 680px; top: 215px; }
+.child-food-scene .kid-choice-card.food-rice { left: 385px; top: 360px; }
 
 /* Tap feedback for child food */
 .child-food-scene .kid-choice-card.selected {
@@ -1011,14 +1011,14 @@
 }
 
 /* Individual activity positions */
-.child-activity-scene .kid-choice-card.activity-reading { left: 138px; top: 58px; }
-.child-activity-scene .kid-choice-card.activity-drawing { left: 309px; top: 58px; }
-.child-activity-scene .kid-choice-card.activity-dancing { left: 480px; top: 58px; }
-.child-activity-scene .kid-choice-card.activity-sports { left: 651px; top: 58px; }
-.child-activity-scene .kid-choice-card.activity-cooking { left: 138px; top: 244px; }
-.child-activity-scene .kid-choice-card.activity-nature { left: 309px; top: 244px; }
-.child-activity-scene .kid-choice-card.activity-stem { left: 480px; top: 244px; }
-.child-activity-scene .kid-choice-card.activity-games { left: 651px; top: 244px; }
+.child-activity-scene .kid-choice-card.activity-reading { left: 110px; top: 48px; }
+.child-activity-scene .kid-choice-card.activity-drawing { left: 300px; top: 48px; }
+.child-activity-scene .kid-choice-card.activity-dancing { left: 490px; top: 48px; }
+.child-activity-scene .kid-choice-card.activity-sports { left: 680px; top: 48px; }
+.child-activity-scene .kid-choice-card.activity-cooking { left: 110px; top: 255px; }
+.child-activity-scene .kid-choice-card.activity-nature { left: 300px; top: 255px; }
+.child-activity-scene .kid-choice-card.activity-stem { left: 490px; top: 255px; }
+.child-activity-scene .kid-choice-card.activity-games { left: 680px; top: 255px; }
 
 /* ========================================= */
 /* 6. INPUTS & KEYBOARD (Friend Name)        */
@@ -2073,5 +2073,48 @@
   .favorite-food-game .food-scene .choice-card:nth-child(2) { top: 36px; }
   .favorite-food-game .food-scene .choice-card:nth-child(3) { top: -18px; }
   .favorite-food-game .food-scene .choice-name { margin-top: 4px; }
+}
+
+/* ============================================================
+   CHILD FOOD SCENE — responsive grid (prevents overlap)
+   ============================================================ */
+.favorite-food-game .child-food-scene {
+  position: absolute !important;
+  bottom: 18% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: min(92vw, 760px) !important;
+  height: auto !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: clamp(10px, 1.6vw, 22px) !important;
+  justify-items: center !important;
+  align-items: end !important;
+}
+
+.favorite-food-game .child-food-scene .kid-choice-card {
+  position: relative !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: clamp(80px, 11vw, 130px) !important;
+  margin: 0 !important;
+}
+
+.favorite-food-game .child-food-scene .kid-choice-card img {
+  width: clamp(70px, 9vw, 110px) !important;
+  height: clamp(70px, 9vw, 110px) !important;
+}
+
+/* Wipe old absolute-position pyramid rules */
+.favorite-food-game .child-food-scene .kid-choice-card.food-pizza,
+.favorite-food-game .child-food-scene .kid-choice-card.food-burger,
+.favorite-food-game .child-food-scene .kid-choice-card.food-ice-cream,
+.favorite-food-game .child-food-scene .kid-choice-card.food-dosa,
+.favorite-food-game .child-food-scene .kid-choice-card.food-noodles,
+.favorite-food-game .child-food-scene .kid-choice-card.food-fruit,
+.favorite-food-game .child-food-scene .kid-choice-card.food-rice {
+  position: relative !important;
+  top: 0 !important;
+  left: 0 !important;
 }
 

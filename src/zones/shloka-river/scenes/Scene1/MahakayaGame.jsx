@@ -52,8 +52,8 @@ const assetGetters = {
     getElephantYaImage: () => elephantImage,
 
     // Rewards - banyan tree growth progression
-    getBanyanSproutImage:  () => banyanSprout,
-    getBanyanSaplingImage: () => banyanSapling,
+    getBanyanSproutImage:  () => banyanSapling,
+    getBanyanSaplingImage: () => banyanSprout,
     getBanyanHalfImage:    () => banyanHalf,
     getBanyanFullImage:    () => banyanFull,
   };

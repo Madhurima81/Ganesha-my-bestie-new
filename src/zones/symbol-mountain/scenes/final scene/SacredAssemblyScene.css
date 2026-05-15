@@ -1182,7 +1182,6 @@
   border-radius: 26px;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  -webkit-transform: translateZ(0);
   background: linear-gradient(180deg, #fff8ea 0%, #f7ecd4 100%);
   border: 3px solid rgba(255, 255, 255, 0.92);
   box-shadow:
@@ -1197,12 +1196,14 @@
 }
 
 .symbol-card-front {
-  transform: rotateY(0deg) translateZ(1px);
+  transform: rotateY(0deg);
+  -webkit-transform: rotateY(0deg);
   gap: 12px;
 }
 
 .symbol-card-back {
-  transform: rotateY(180deg) translateZ(1px);
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
   gap: 12px;
 }
 
@@ -1228,7 +1229,8 @@
 }
 
 .symbol-card.flip {
-  transform: rotateY(180deg) translateZ(0);
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
 }
 
 /* Guide arrow */
@@ -2078,7 +2080,7 @@
 }
 
 /* iPad landscape - short height (Air, Gen 6, Pro 11) */
-@media (min-width: 1024px) and (max-width: 1366px) and (max-height: 900px) and (orientation: landscape) {
+@media (min-width: 1024px) and (max-width: 1366px) and (orientation: landscape) {
   /* Ganesha illustration - was 920x1020, way too tall */
   .ganesha-assembly-container {
     width: 560px;

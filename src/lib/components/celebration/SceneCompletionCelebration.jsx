@@ -294,7 +294,7 @@ const handleAction = (callback, skipComplete = false) => {
                 {/* Primary CTA */}
                 {!primaryAction && (
                   <button
-                    className={`celebration-btn celebration-btn-orange ${!isFinalScene ? 'celebration-btn-guided-pulse' : ''}`.trim()}
+                    className={`celebration-btn celebration-btn-orange ${!isFinalScene ? 'celebration-btn-guided-pulse' : ''} ${isFinalScene ? 'celebration-btn-home' : ''}`.trim()}
                     onClick={() => {
                       if (isFinalScene) {
                         handleContinueWithAnimation(() => handleAction(onHome || onContinue || handleExplore));
@@ -337,7 +337,7 @@ const handleAction = (callback, skipComplete = false) => {
                       Play Again
                     </button>
                     <button
-                      className="celebration-btn celebration-btn-teal"
+                      className={`celebration-btn celebration-btn-teal ${isFinalScene ? 'celebration-btn-home' : ''}`.trim()}
                       onClick={() => handleAction(isFinalScene ? (onHome || onContinue || handleExplore) : onContinue)}
                     >
                       {isFinalScene ? 'Home' : 'Next Adventure'}

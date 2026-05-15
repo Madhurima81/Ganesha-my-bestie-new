@@ -232,9 +232,9 @@
   cursor: pointer;
   transition:
     background 0.2s ease,
-    transform 0.2s ease,
-    box-shadow 0.3s ease,
-    filter 0.3s ease;
+    transform 0.08s ease,
+    box-shadow 0.08s ease,
+    filter 0.08s ease;
   will-change: background, transform;
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
@@ -247,6 +247,8 @@
   white-space: nowrap;
   margin-top: 16px;
   -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
   animation: gentleGlow 3.5s ease-in-out infinite;
 }
 
@@ -276,9 +278,10 @@
 }
 
 .game-modal-button:active {
-  transform: scale(0.97);
+  transform: translateY(3px) scale(0.985);
   box-shadow:
-    0 2px 6px rgba(0,0,0,0.10);
+    0 1px 0 rgba(0,0,0,0.18),
+    0 3px 6px rgba(0,0,0,0.10);
   filter: brightness(0.98);
   background: var(--modal-btn-bg) !important;
   color: var(--modal-btn-text) !important;
@@ -287,6 +290,11 @@
 .game-modal-card .game-modal-button:active {
   background: var(--modal-btn-bg) !important;
   color: var(--modal-btn-text) !important;
+  transform: translateY(3px) scale(0.985);
+  box-shadow:
+    0 1px 0 rgba(0,0,0,0.18),
+    0 3px 6px rgba(0,0,0,0.10) !important;
+  filter: brightness(0.98);
 }
 
 /* --- Animations --- */
@@ -611,5 +619,9 @@
   .game-modal-card .game-modal-button {
     min-height: 40px !important;
     padding: 8px 34px !important;
+  }
+
+  .game-modal-card .game-modal-button:active {
+    transform: translateY(2px) scale(0.985);
   }
 }

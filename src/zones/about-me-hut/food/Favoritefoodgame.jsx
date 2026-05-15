@@ -565,6 +565,17 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     { id: 'games', name: 'Games', image: kidActGameImg, emoji: 'games' }
   ];
 
+  const CHILD_ACTIVITY_POSITIONS = {
+    reading: { left: 110, top: 48 },
+    drawing: { left: 300, top: 48 },
+    dancing: { left: 490, top: 48 },
+    sports: { left: 680, top: 48 },
+    cooking: { left: 110, top: 255 },
+    nature: { left: 300, top: 255 },
+    stem: { left: 490, top: 255 },
+    games: { left: 680, top: 255 }
+  };
+
   const kidColors = [
     { id: 'red', name: 'Red', image: redImg, emoji: 'â¤ï¸' },
     { id: 'orange', name: 'Orange', image: orangeImg, emoji: 'ðŸ§¡' },
@@ -1915,7 +1926,12 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 key={activity.id}
                 className={`kid-choice-card activity-${activity.id} bounce-gentle`}
                 onClick={() => handleKidActivityClick(activity.id)}
-                style={{ animationDelay: `${index * 0.1}s` }}
+                style={{
+                  animationDelay: `${index * 0.1}s`,
+                  position: 'absolute',
+                  left: `${CHILD_ACTIVITY_POSITIONS[activity.id]?.left ?? 0}px`,
+                  top: `${CHILD_ACTIVITY_POSITIONS[activity.id]?.top ?? 0}px`
+                }}
                 disabled={Boolean(sceneState.childActivityChoice || sceneState.childActivityDrawing || sceneState.childActivityText)}
               >
                 <img src={activity.image} alt={activity.name} className="choice-image" style={{ width: '50px', height: '50px' }} />

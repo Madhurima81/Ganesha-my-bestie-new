@@ -31,6 +31,7 @@ import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
 import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
 import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../../lib/components/feedback/ResumeCountdown';
+import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 
 // Shared countdown duration — must match across useVoiceGuidance + usePauseAwareTimeout
 const RESUME_DELAY_MS = 3000;
@@ -431,10 +432,21 @@ const NewModakSceneMVPContent = ({
 
   const { isAudioOn, toggleAudio } = useAudioPreference();
   const { speak, stop: stopSpokenVoice } = useGaneshaVoice();
+  const lastVoRef = useRef(null);
   const wasAudioOnRef = useRef(isAudioOn);
   // -- SymbolAutoReveal state ----------------------------------------------
   // null = not showing; object = reveal active
   const [revealConfig, setRevealConfig] = useState(null);
+
+  const replaySpeak = useCallback((line, options = {}) => {
+    if (!line) return;
+    lastVoRef.current = line;
+    if (!isAudioOn) {
+      options.onEnd?.();
+      return;
+    }
+    speak(line, options);
+  }, [isAudioOn, speak]);
 
   const stopVoice = useCallback(() => {
     stopRecordedVoice();
@@ -452,18 +464,13 @@ const NewModakSceneMVPContent = ({
       return;
     }
 
-    if (!isAudioOn) {
-      onEnded?.();
-      return;
-    }
-
-    speak(text, {
+    replaySpeak(text, {
       age: 7,
       moment: MODAK_WEB_SPEECH_MOMENT[key] || 'default',
       onEnd: onEnded || null,
       onError: () => onEnded?.(),
     });
-  }, [isAudioOn, speak, stopRecordedVoice]);
+  }, [replaySpeak, stopRecordedVoice]);
 
   useEffect(() => {
     const wasAudioOn = wasAudioOnRef.current;
@@ -1832,6 +1839,11 @@ const NewModakSceneMVPContent = ({
       <HomeButton onNavigate={(dest) => { stopVoice(); onNavigate?.(dest); }} />
       <ZoneBadgeButton zoneId="symbol-mountain" onBack={() => { stopVoice(); onNavigate?.('zone-welcome'); }} />
       <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
+      <VOReplayButton
+        getLine={() => lastVoRef.current}
+        speak={replaySpeak}
+        disabled={!lastVoRef.current}
+      />
       {/* Flying Symbol Clone (useSymbolCollection) ï¿½ superseded by SymbolAutoReveal */}
       {/* {flyingSymbol && <img className="flying-symbol" src={flyingSymbol.src} alt="" style={flightStyle} />} */}
 
