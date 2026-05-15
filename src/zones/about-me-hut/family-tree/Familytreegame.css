@@ -448,6 +448,56 @@
   transform: scale(0.9);
 }
 
+/* ════════════════════════════════════════════════════════════════════
+   FAMILY TREE — iPad bug fixes (May 2026)
+   Paste at the BOTTOM of Familytreegame.css (replaces conflicting rules)
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ─── BUG 3 FIX ─────────────────────────────────────────────────────
+   sideBySide screen "Continue" button:
+   - Was hidden behind viewport on iPad Pro
+   - Needed double-tap (1st tap = hover state lifted it up, 2nd = click)
+   Root cause: transform: translateY(52px) being cancelled by :hover
+   ─────────────────────────────────────────────────────────────────── */
+.family-tree-end-game-btn {
+  font-size: clamp(0.9rem, 1.5vw, 1.1rem) !important;
+  padding: 10px 28px !important;
+  /* transform: translateY(52px) REMOVED — was causing double-tap bug */
+}
+
+.action-buttons {
+  margin-top: clamp(8px, 1.5vh, 16px) !important;
+  margin-bottom: clamp(16px, 2.5vh, 28px) !important;
+}
+
+
+/* ─── BUGS 1 & 2 FIX ────────────────────────────────────────────────
+   iPad landscape — lift everything up so:
+   • Continue button sits well above the bottom edge (img 1)
+   • Tree + placement cards don't touch the base on iPad Pro (img 2)
+   • Progress bar hugs the top, near tree (img 2)
+   ─────────────────────────────────────────────────────────────────── */
+@media (orientation: landscape) and (max-height: 900px) {
+
+  /* BUG 2 — lift tree + trays + progress bar */
+  .family-tree-game {
+    --scene-tree-top: 46% !important;            /* was 51% */
+    --scene-choice-row-y-offset: -240px !important; /* lift trays up */
+  }
+
+  .family-tree-game .game-header-hud {
+    top: 12px !important;                        /* was 34px — closer to top */
+  }
+
+  /* BUG 1 — push intro tree Continue button up off the bottom edge */
+  .family-tree-game .tree-done-btn {
+    bottom: max(clamp(70px, 9vh, 110px), env(safe-area-inset-bottom)) !important;
+    font-size: clamp(1rem, 2vh, 1.4rem) !important;
+    padding: clamp(10px, 1.6vh, 14px) clamp(28px, 5vw, 40px) !important;
+    z-index: 1500;
+  }
+}
+
 .heart-icon.filled {
   opacity: 1;
   transform: scale(1.05);
@@ -5199,3 +5249,53 @@
 }
 
 
+
+/* --------------------------------------------------------------------
+   FAMILY TREE � iPad bug fixes (May 2026)
+   Paste at the BOTTOM of Familytreegame.css (replaces conflicting rules)
+   -------------------------------------------------------------------- */
+
+/* --- BUG 3 FIX -----------------------------------------------------
+   sideBySide screen "Continue" button:
+   - Was hidden behind viewport on iPad Pro
+   - Needed double-tap (1st tap = hover state lifted it up, 2nd = click)
+   Root cause: transform: translateY(52px) being cancelled by :hover
+   ------------------------------------------------------------------- */
+.family-tree-end-game-btn {
+  font-size: clamp(0.9rem, 1.5vw, 1.1rem) !important;
+  padding: 10px 28px !important;
+  /* transform: translateY(52px) REMOVED � was causing double-tap bug */
+}
+
+.action-buttons {
+  margin-top: clamp(8px, 1.5vh, 16px) !important;
+  margin-bottom: clamp(16px, 2.5vh, 28px) !important;
+}
+
+
+/* --- BUGS 1 & 2 FIX ------------------------------------------------
+   iPad landscape � lift everything up so:
+   � Continue button sits well above the bottom edge (img 1)
+   � Tree + placement cards don't touch the base on iPad Pro (img 2)
+   � Progress bar hugs the top, near tree (img 2)
+   ------------------------------------------------------------------- */
+@media (orientation: landscape) and (max-height: 900px) {
+
+  /* BUG 2 � lift tree + trays + progress bar */
+  .family-tree-game {
+    --scene-tree-top: 46% !important;            /* was 51% */
+    --scene-choice-row-y-offset: -240px !important; /* lift trays up */
+  }
+
+  .family-tree-game .game-header-hud {
+    top: 12px !important;                        /* was 34px � closer to top */
+  }
+
+  /* BUG 1 � push intro tree Continue button up off the bottom edge */
+  .family-tree-game .tree-done-btn {
+    bottom: max(clamp(70px, 9vh, 110px), env(safe-area-inset-bottom)) !important;
+    font-size: clamp(1rem, 2vh, 1.4rem) !important;
+    padding: clamp(10px, 1.6vh, 14px) clamp(28px, 5vw, 40px) !important;
+    z-index: 1500;
+  }
+}

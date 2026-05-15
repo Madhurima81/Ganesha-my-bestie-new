@@ -1284,3 +1284,47 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 
 
 /* No internal scrollbar — welcome screen content is designed to fit within max-height: 92vh */
+
+/* ════════════════════════════════════════════════════════════════════
+   CLEAN GAME WELCOME SCREEN — iPad bug fixes (May 2026)
+   Paste at the BOTTOM of CleanGameWelcomeScreen.css
+   Fixes:
+   1. Modal too wide on iPad Gen 6 + iPad Pro (landscape)
+   2. "Explore Map" button too tall on iPad Pro
+   Root cause: rule at line 1097 (@media min-width: 900px) cascades
+   over the specific iPad landscape rules and widens the modal.
+   Plus base .secondary-btn min-height: clamp(52px, 5.5vw, 80px)
+   was never overridden inside iPad media queries.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ─── FIX 1 — Modal width on iPad landscape (Gen 6 + Pro 11 + Pro 12.9)
+   Override the >900px generic rule. Use clamp tuned for tablet range. */
+@media (min-width: 900px) and (max-width: 1400px) and (orientation: landscape) {
+  .clean-welcome-content {
+    max-width: clamp(420px, 38vw, 480px) !important;
+    width: auto !important;
+    padding: clamp(20px, 2.2vh, 32px) clamp(24px, 2.6vw, 36px) !important;
+    max-height: 88vh !important;
+  }
+}
+
+/* ─── FIX 2 — Button heights on iPad landscape
+   Tame .secondary-btn min-height and align primary + secondary sizing. */
+@media (min-width: 900px) and (max-width: 1400px) and (orientation: landscape) {
+
+  .secondary-btn {
+    min-height: clamp(44px, 5vh, 56px) !important;
+    padding: clamp(10px, 1.4vh, 14px) clamp(24px, 3vw, 40px) !important;
+    font-size: clamp(16px, 2vh, 20px) !important;
+  }
+
+  .primary-btn-unified.continue-journey-btn {
+    min-height: clamp(44px, 5vh, 56px) !important;
+    padding: clamp(10px, 1.4vh, 14px) clamp(24px, 3vw, 40px) !important;
+    font-size: clamp(16px, 2vh, 20px) !important;
+  }
+
+  .welcome-actions {
+    gap: clamp(8px, 1.2vh, 14px) !important;
+  }
+}

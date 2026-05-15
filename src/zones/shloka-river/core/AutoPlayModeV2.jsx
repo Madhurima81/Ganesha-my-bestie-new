@@ -93,6 +93,7 @@ const AutoPlayModeV2 = ({
   const pendingResumeRef = useRef(false);
   const lastResumeTimeRef = useRef(0);
   const pauseButtonCooldownUntilRef = useRef(0);
+  const mountTimeRef = useRef(Date.now());
 
   const clearAllTimers = () => {
     timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
@@ -122,6 +123,7 @@ const AutoPlayModeV2 = ({
 
   useEffect(() => {
     isComponentMountedRef.current = true;
+    mountTimeRef.current = Date.now();
     return () => {
       isComponentMountedRef.current = false;
       clearAllTimers();
@@ -644,6 +646,11 @@ const AutoPlayModeV2 = ({
 
   const handleElephantClick = (syllableIndex) => {
     safeClick(() => {
+      // Guard against stale queued touches on slow iOS/iPad scene transitions.
+      if (Date.now() - mountTimeRef.current < 1500) {
+        console.warn('[AutoPlay] Ignored early tap — scene still mounting');
+        return;
+      }
       if (!canPlayerClick) { triggerWaitBanner('Listen first! 👂'); return; }
 
       const clickedSyllable = currentSequence[syllableIndex];
@@ -853,6 +860,11 @@ const AutoPlayModeV2 = ({
 
   const handleCentralElementClick = () => {
     safeClick(() => {
+      // Guard against stale queued touches on slow iOS/iPad scene transitions.
+      if (Date.now() - mountTimeRef.current < 1500) {
+        console.warn('[AutoPlay] Ignored early tap — scene still mounting');
+        return;
+      }
       if (!centralElementGlowing || !canPlayerClick) return;
       if (voiceGuidanceRef.current?.stopVoice) voiceGuidanceRef.current.stopVoice();
 

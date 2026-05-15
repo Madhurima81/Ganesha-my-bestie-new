@@ -57,6 +57,8 @@
 /* --- Vakratunda Elements --- */
 .vakratunda-clicker-element {
   position: absolute !important;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   /* clamp(min, preferred, max): scales smoothly from 140px on phones to 320px on desktop */
   width: clamp(140px, 28vw, 320px);
   height: clamp(140px, 28vw, 320px);
@@ -73,6 +75,8 @@
 
 .vakratunda-central-synthesis {
   position: absolute !important;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   /* clamp(min, preferred, max): scales smoothly from 120px on phones to 310px on desktop */
   width: clamp(120px, 26vw, 310px);
   height: clamp(120px, 26vw, 310px);
@@ -90,6 +94,8 @@
 /* --- Mahakaya Elements --- */
 .mahakaya-clicker-element {
   position: absolute !important;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   width: 160px !important;
   height: 160px !important;
   z-index: 10;
@@ -103,6 +109,8 @@
 
 .mahakaya-central-synthesis {
   position: absolute !important;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   width: 160px !important;
   height: 160px !important;
   z-index: 10;
