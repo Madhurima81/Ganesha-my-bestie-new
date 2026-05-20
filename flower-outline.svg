@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-180 -180 360 360" width="720" height="720" aria-label="Floral mandala outline">
+  <defs>
+    <!-- Single petal shape reused with rotation -->
+    <path id="petal" d="M0,-140 C35,-100 35,-45 0,0 C-35,-45 -35,-100 0,-140 Z" />
+    <path id="petal-mid" d="M0,-108 C27,-78 27,-35 0,0 C-27,-35 -27,-78 0,-108 Z" />
+    <path id="petal-inner" d="M0,-78 C20,-57 20,-25 0,0 C-20,-25 -20,-57 0,-78 Z" />
+    <path id="petal-core" d="M0,-52 C14,-38 14,-16 0,0 C-14,-16 -14,-38 0,-52 Z" />
+  </defs>
+
+  <g fill="none" stroke="#111" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Outer 8 petals -->
+    <use href="#petal" transform="rotate(0)" />
+    <use href="#petal" transform="rotate(45)" />
+    <use href="#petal" transform="rotate(90)" />
+    <use href="#petal" transform="rotate(135)" />
+    <use href="#petal" transform="rotate(180)" />
+    <use href="#petal" transform="rotate(225)" />
+    <use href="#petal" transform="rotate(270)" />
+    <use href="#petal" transform="rotate(315)" />
+
+    <!-- Mid layer -->
+    <use href="#petal-mid" transform="rotate(22.5)" />
+    <use href="#petal-mid" transform="rotate(67.5)" />
+    <use href="#petal-mid" transform="rotate(112.5)" />
+    <use href="#petal-mid" transform="rotate(157.5)" />
+    <use href="#petal-mid" transform="rotate(202.5)" />
+    <use href="#petal-mid" transform="rotate(247.5)" />
+    <use href="#petal-mid" transform="rotate(292.5)" />
+    <use href="#petal-mid" transform="rotate(337.5)" />
+
+    <!-- Inner layer -->
+    <use href="#petal-inner" transform="rotate(0)" />
+    <use href="#petal-inner" transform="rotate(45)" />
+    <use href="#petal-inner" transform="rotate(90)" />
+    <use href="#petal-inner" transform="rotate(135)" />
+    <use href="#petal-inner" transform="rotate(180)" />
+    <use href="#petal-inner" transform="rotate(225)" />
+    <use href="#petal-inner" transform="rotate(270)" />
+    <use href="#petal-inner" transform="rotate(315)" />
+
+    <!-- Core layer -->
+    <use href="#petal-core" transform="rotate(22.5)" />
+    <use href="#petal-core" transform="rotate(67.5)" />
+    <use href="#petal-core" transform="rotate(112.5)" />
+    <use href="#petal-core" transform="rotate(157.5)" />
+    <use href="#petal-core" transform="rotate(202.5)" />
+    <use href="#petal-core" transform="rotate(247.5)" />
+    <use href="#petal-core" transform="rotate(292.5)" />
+    <use href="#petal-core" transform="rotate(337.5)" />
+
+    <!-- Center -->
+    <circle cx="0" cy="0" r="18" />
+  </g>
+</svg>
