@@ -87,7 +87,7 @@ const symbolInfo = {
 };
 
 // Display order
-const symbolOrder = ['modak', 'mooshika', 'belly', 'lotus', 'trunk', 'eyes', 'ear', 'tusk'];
+const symbolOrder = ['mooshika', 'modak', 'belly', 'lotus', 'trunk', 'eyes', 'ear', 'tusk'];
 
 // SVG icons have internal transparent padding — use larger background-size
 const svgSymbols = ['mooshika', 'modak', 'belly'];
