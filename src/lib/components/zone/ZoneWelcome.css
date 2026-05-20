@@ -986,6 +986,26 @@ button[style*="position: fixed"][style*="background: purple"] {
     0 6px 18px rgba(0,0,0,0.08);
 }
 
+.zone-scene-card.completed.zone-card {
+  background: linear-gradient(
+    145deg,
+    #f7f1df 0%,
+    #efe2bf 55%,
+    #e3c98e 100%
+  ) !important;
+
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.10),
+    0 4px 10px rgba(0, 0, 0, 0.06),
+    0 0 20px rgba(255, 223, 120, 0.25),
+    inset 0 1px 0 rgba(255,255,255,0.65);
+
+  border: 2px solid rgba(240, 198, 94, 0.35);
+
+  opacity: 1 !important;
+  filter: brightness(1.02) saturate(1.02);
+}
+
 .scene-complete-badge {
   position: absolute;
   top: 12px;

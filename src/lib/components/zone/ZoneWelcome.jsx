@@ -802,7 +802,7 @@ const getPermanentCompletedCount = () => {
     return null;
   };
 
- const handleSceneClick = (scene, action = 'default') => {
+const handleSceneClick = (scene, action = 'default') => {
 
   const status = getSceneStatus(scene);
   
@@ -861,6 +861,16 @@ const getPermanentCompletedCount = () => {
           onSceneSelect(scene.id, { mode: 'start' });
         }
       }
+  }
+};
+
+const handleReplayIntroStory = () => {
+  const profileId = localStorage.getItem('activeProfileId');
+  if (profileId) {
+    localStorage.removeItem(`ganeshaStoryShown_${profileId}`);
+  }
+  if (onSceneSelect) {
+    onSceneSelect('__replay_intro_story__', { mode: 'start' });
   }
 };
 
@@ -1153,6 +1163,45 @@ Continue
               </div>
             );
           })}
+
+          {zoneData.id === 'about-me-hut' && (
+            <div
+              key="about-me-replay-story"
+              className="zone-scene-card scene-card zone-card zone-5 available unlocked-scene"
+              style={{
+                cursor: 'pointer',
+                '--zone-color': getCardAccentColor()
+              }}
+              onClick={handleReplayIntroStory}
+            >
+              <div className="scene-order-indicator">★</div>
+              <div className="zone-inner">
+                <div className="scene-icon-area">
+                  <div className="icon-circle">
+                    <img
+                      src="/intro-story/story1-img4.png"
+                      alt="Meet Ganesha Again"
+                      className="scene-icon-img"
+                    />
+                  </div>
+                </div>
+                <div className="scene-name-area">
+                  <div className="scene-name">Meet Ganesha Again</div>
+                </div>
+                <div className="scene-action-integrated">
+                  <button
+                    className="action-button-integrated zone-btn available"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleReplayIntroStory();
+                    }}
+                  >
+                    Replay Story
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
