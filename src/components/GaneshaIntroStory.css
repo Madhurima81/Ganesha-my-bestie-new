@@ -1,0 +1,445 @@
+.gis-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.2), transparent 38%),
+    radial-gradient(circle at 80% 30%, rgba(255, 240, 200, 0.16), transparent 36%),
+    linear-gradient(160deg, #7e68be 0%, #bda9e6 52%, #8e79cb 100%);
+  overflow: hidden;
+}
+
+.gis-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(48, 42, 74, 0.6);
+  backdrop-filter: blur(3px) saturate(0.82);
+}
+
+.gis-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 55%, rgba(255, 255, 255, 0.1) 0%, rgba(23, 16, 36, 0.38) 78%);
+  pointer-events: none;
+}
+
+.gis-overlay .storySparkle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.65);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.55);
+  animation: sparkleFloat 7s linear infinite;
+}
+
+.gis-stage {
+  position: relative;
+  z-index: 2;
+  width: min(95vw, 1220px);
+  height: min(94vh, 760px);
+  border-radius: 28px;
+  overflow: hidden;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.gis-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  animation: float 4.5s ease-in-out infinite;
+}
+
+.storyScene {
+  transition: all 450ms ease;
+  transform: translateY(8px);
+  opacity: 0;
+}
+
+.storyScene.active {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.gis-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 24px;
+  padding: 0 22px;
+  text-align: center;
+}
+
+.gis-title {
+  margin: 0 0 6px;
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(28px, 3.3vw, 44px);
+  line-height: 1.05;
+  color: #fff6df;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+}
+
+.gis-text {
+  margin: 0;
+  font-size: clamp(15px, 1.55vw, 22px);
+  font-weight: 600;
+  color: rgba(255, 245, 226, 0.95);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.38);
+}
+
+.gis-dots {
+  margin: 14px 0 10px;
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+}
+
+.gis-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.gis-dot.active {
+  background: rgba(255, 216, 131, 0.78);
+}
+
+/* TITLE */
+.storyTitle {
+  font-family: "Baloo 2", sans-serif;
+  font-size: clamp(38px, 4.5vw, 70px);
+  font-weight: 800;
+  line-height: 1;
+  color: #6d4cc9;
+  text-align: center;
+  letter-spacing: -1px;
+  text-shadow: 0 3px 0 rgba(255, 255, 255, 0.35);
+  margin-top: 28px;
+  margin-bottom: 0;
+}
+
+/* SUBTITLE */
+.storySubtitle {
+  margin-top: 14px;
+  margin-bottom: 0;
+  font-family: "Baloo 2", sans-serif;
+  font-size: clamp(16px, 1.8vw, 27px);
+  font-weight: 500;
+  color: #8978b5;
+  text-align: center;
+  opacity: 0.82;
+}
+
+/* TAP TO BEGIN */
+.storyTap {
+  position: absolute;
+  bottom: 42px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: "Baloo 2", sans-serif;
+  font-size: clamp(18px, 1.6vw, 26px);
+  font-weight: 700;
+  color: #fff;
+  background: rgba(132, 92, 255, 0.88);
+  padding: 12px 28px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #6e49d8, 0 8px 20px rgba(111, 74, 216, 0.16);
+  animation: tapPulse 2.4s ease-in-out infinite;
+}
+
+.gis-next {
+  position: absolute;
+  left: 50%;
+  bottom: 36px;
+  transform: translateX(-50%);
+  border: none;
+  border-radius: 999px;
+  min-width: 190px;
+  padding: 12px 22px;
+  color: #fff;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #c98a4a, #ae6f36);
+}
+
+/* STORY NEXT ARROW */
+.storyNextArrow {
+  position: absolute;
+  right: 28px;
+  bottom: 26px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+  transition: transform 180ms ease, background 180ms ease;
+  animation: arrowFloat 2s ease-in-out infinite;
+}
+
+/* HOVER */
+.storyNextArrow:hover {
+  transform: scale(1.06);
+  background: #f6efff;
+}
+
+/* CHEVRON */
+.storyNextArrow::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  border-top: 4px solid #8f63ff;
+  border-right: 4px solid #8f63ff;
+  transform: rotate(45deg) translateX(-2px);
+  border-radius: 2px;
+}
+
+/* FLOAT */
+@keyframes arrowFloat {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(6px); }
+}
+
+.storyTapPuff {
+  position: absolute;
+  right: 56px;
+  bottom: 56px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 249, 206, 0.85);
+  box-shadow: 0 0 12px rgba(255, 244, 178, 0.7);
+  pointer-events: none;
+  animation: puffOut 420ms ease-out forwards;
+}
+
+/* SKIP */
+.storySkip {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  z-index: 3;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #6d4cc9;
+  border: none;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(6px);
+  padding: 10px 18px;
+  border-radius: 999px;
+}
+
+/* PULSE */
+@keyframes tapPulse {
+  0% {
+    transform: translateX(-50%) scale(1);
+    box-shadow: 0 4px 0 #6e49d8, 0 8px 20px rgba(111, 74, 216, 0.14);
+  }
+
+  50% {
+    transform: translateX(-50%) scale(1.02);
+    box-shadow: 0 5px 0 #6e49d8, 0 10px 24px rgba(111, 74, 216, 0.18);
+  }
+
+  100% {
+    transform: translateX(-50%) scale(1);
+    box-shadow: 0 4px 0 #6e49d8, 0 8px 20px rgba(111, 74, 216, 0.14);
+  }
+}
+
+@media (max-width: 700px) {
+  .gis-stage {
+    width: 96vw;
+    height: 92vh;
+    border-radius: 22px;
+  }
+
+  .gis-bottom {
+    top: 20px;
+    padding: 0 16px;
+  }
+
+  .storyTap {
+    bottom: 28px;
+    padding: 10px 22px;
+  }
+
+  .gis-next {
+    bottom: 26px;
+    min-width: 160px;
+    padding: 10px 18px;
+  }
+
+  .storyNextArrow {
+    right: 16px;
+    bottom: 18px;
+    width: 54px;
+    height: 54px;
+  }
+
+  .storySkip {
+    top: 14px;
+    right: 14px;
+    font-size: 14px;
+    padding: 8px 14px;
+  }
+}
+
+/* END SCREEN */
+.storyEnd {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: none;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* MAP BG */
+.endMapBg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(6px) brightness(0.92);
+  transform: scale(1.04);
+}
+
+/* GANESHA */
+.endGanesha {
+  width: min(38vw, 420px);
+  position: relative;
+  z-index: 2;
+  animation: floaty 3s ease-in-out infinite, fadeUp 700ms ease;
+}
+
+/* TITLE */
+.endTitle {
+  position: relative;
+  z-index: 2;
+  margin-top: 18px;
+  font-family: "Baloo 2", sans-serif;
+  font-size: clamp(38px, 4vw, 68px);
+  font-weight: 800;
+  color: #ffffff;
+  text-align: center;
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
+  animation: fadeUp 700ms ease;
+}
+
+/* SUBTEXT */
+.endSubtitle {
+  position: relative;
+  z-index: 2;
+  margin-top: 10px;
+  font-family: "Baloo 2", sans-serif;
+  font-size: clamp(18px, 1.8vw, 28px);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+  animation: fadeUp 900ms ease;
+}
+
+/* START GLOW */
+.startPulse {
+  position: absolute;
+  bottom: 90px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  animation: pulseGlow 2s ease infinite;
+}
+
+@keyframes floaty {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+}
+
+/* FADE */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* PULSE */
+@keyframes pulseGlow {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+
+  70% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes sparkleFloat {
+  0% {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.75;
+  }
+  80% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-14px);
+    opacity: 0;
+  }
+}
+
+@keyframes puffOut {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.95;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-2px); }
+  100% { transform: translateY(0px); }
+}
