@@ -27,10 +27,21 @@ const Wish2PlateDropGame = ({
   mouseImg,
   peacockImg,
 }) => {
+  const activeFoodPool = sceneState.wish2FoodPool || WISH2_FOOD_KEYS;
+  const firstAvailableFoodKey = activeFoodPool[0];
+  const pointerStart = WISH2_FOOD_POSITIONS[firstAvailableFoodKey] || { left: '18%', top: '62%' };
+  const pointerTarget = WISH2_PLATE_POSITIONS[firstUnfilledBowlIndex] || { left: '50%', top: '62%' };
+  const showWish2DragPointer =
+    wish2IdleLevel >= 3 &&
+    (sceneState.wish2Taps || 0) < 3 &&
+    activeFoodPool.length > 0 &&
+    firstUnfilledBowlIndex !== null &&
+    firstUnfilledBowlIndex !== undefined;
+
   return (
     <div className="wish-screen">
 
-      {/* ── PROGRESS HEADER ── */}
+      {/* Progress header */}
       <div className="game-header-hud">
         <div className="wish-progress-header">
           <div className="wish-progress-title">Wish 2: Fill The Bowls</div>
@@ -45,10 +56,25 @@ const Wish2PlateDropGame = ({
         </div>
       </div>
 
-      {/* ── STAGE — full screen, all elements absolute inside ── */}
+      {/* Stage */}
       <div style={{ position: 'absolute', inset: 0 }}>
+        {showWish2DragPointer && (
+          <div className="wish2-drag-pointer-overlay" aria-hidden="true">
+            <img
+              className="wish2-drag-pointer-hand"
+              src="/images/ganesha-point.png"
+              alt=""
+              style={{
+                '--wish2-pointer-start-left': pointerStart.left,
+                '--wish2-pointer-start-top': pointerStart.top,
+                '--wish2-pointer-end-left': pointerTarget.left,
+                '--wish2-pointer-end-top': pointerTarget.top,
+              }}
+            />
+          </div>
+        )}
 
-        {/* ── FOOD ITEMS ── */}
+        {/* Food items */}
         {WISH2_FOOD_KEYS.map((foodKey) => {
           const isAvailable = (sceneState.wish2FoodPool || WISH2_FOOD_KEYS).includes(foodKey);
           const pos = WISH2_FOOD_POSITIONS[foodKey];
@@ -101,7 +127,7 @@ const Wish2PlateDropGame = ({
           );
         })}
 
-        {/* ── PLATES — CSS circles, drop zone = the circle ── */}
+        {/* Plates */}
         {sceneState.bowlStates.map((isFilled, index) => (
           <KidsDropZone
             key={index}
@@ -128,7 +154,6 @@ const Wish2PlateDropGame = ({
             }}
             onClick={() => handleWish2PlateClick(index)}
           >
-            {/* plate image — pure decoration, sits inside the circle */}
             <img
               src={plateImg}
               alt=""
@@ -145,7 +170,6 @@ const Wish2PlateDropGame = ({
               }}
             />
 
-            {/* food on plate after drop */}
             {isFilled && (sceneState.wish2PlateFoods || [])[index] && (
               <img
                 src={WISH2_FOOD_ASSETS[(sceneState.wish2PlateFoods || [])[index]]}
@@ -164,7 +188,6 @@ const Wish2PlateDropGame = ({
               />
             )}
 
-            {/* per-plate sparkle */}
             {wish2Sparkle.type === 'single' && wish2Sparkle.targetIndex === index && (
               <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 3 }}>
                 <SparkleAnimation
@@ -205,7 +228,6 @@ const Wish2PlateDropGame = ({
           />
         ))}
 
-        {/* all-plates completion sparkle */}
         {wish2Sparkle.type === 'all' && (
           <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 30 }}>
             <SparkleAnimation

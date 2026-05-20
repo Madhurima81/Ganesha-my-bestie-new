@@ -2678,6 +2678,58 @@ font-weight: 700;
   50%      { box-shadow: 0 10px 26px rgba(255, 107, 107, 0.55), 0 0 44px rgba(255, 214, 102, 0.6); }
 }
 
+/* Wish 2 drag pointer hint (food -> plate) */
+.wish2-drag-pointer-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 40;
+}
+
+.wish2-drag-pointer-hand {
+  position: absolute;
+  width: clamp(68px, 7.4vw, 108px);
+  height: auto;
+  left: var(--wish2-pointer-start-left, 18%);
+  top: var(--wish2-pointer-start-top, 62%);
+  transform-origin: center bottom;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.28));
+  animation: wish2DragPointerMove 3.3s ease-in-out infinite;
+}
+
+@keyframes wish2DragPointerMove {
+  0% {
+    opacity: 0;
+    left: var(--wish2-pointer-start-left, 18%);
+    top: var(--wish2-pointer-start-top, 62%);
+    transform: translate(-50%, -50%) rotate(10deg) scale(1);
+  }
+  14% {
+    opacity: 1;
+    left: var(--wish2-pointer-start-left, 18%);
+    top: var(--wish2-pointer-start-top, 62%);
+    transform: translate(-50%, -50%) rotate(10deg) scale(1.12);
+  }
+  72% {
+    opacity: 0.95;
+    left: var(--wish2-pointer-end-left, 50%);
+    top: var(--wish2-pointer-end-top, 62%);
+    transform: translate(-50%, -50%) rotate(14deg) scale(0.92);
+  }
+  88% {
+    opacity: 0.55;
+    left: var(--wish2-pointer-end-left, 50%);
+    top: var(--wish2-pointer-end-top, 62%);
+    transform: translate(-50%, -50%) rotate(14deg) scale(0.86);
+  }
+  100% {
+    opacity: 0;
+    left: var(--wish2-pointer-end-left, 50%);
+    top: var(--wish2-pointer-end-top, 62%);
+    transform: translate(-50%, -50%) rotate(14deg) scale(0.8);
+  }
+}
+
 
 
 
