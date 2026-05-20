@@ -1439,6 +1439,7 @@ const PondSceneContent = ({
     return <div className="loading">Loading scene state...</div>;
   }
   const isCompletionView = showSceneCompletion || sceneState.showingCompletionScreen;
+  const isFinalFireworksView = showSparkle === 'final-fireworks';
 
   // 1. WRAP IN GAMELAYOUT
   return (
@@ -1465,7 +1466,7 @@ const PondSceneContent = ({
               onPointerLeave={dragActive ? handleDropPointerUp : undefined}
               onContextMenu={(e) => e.preventDefault()}
             >
-              {!isCompletionView && (
+              {!isCompletionView && !isFinalFireworksView && (
                 <>
               {POND_OVERLAY_MID ? (
                 <div className="pond-bg-overlay pond-bg-overlay--mid" style={{ backgroundImage: `url(${POND_OVERLAY_MID})` }} aria-hidden="true" />
@@ -1660,11 +1661,11 @@ const PondSceneContent = ({
                           left: `${p.x}%`,
                           top: `${p.y}%`,
                           background: reached
-                            ? 'radial-gradient(circle, #FFD86B 0%, #FFB347 100%)'
-                            : 'radial-gradient(circle, rgba(255,216,107,0.55) 0%, rgba(255,179,71,0.35) 100%)',
+                            ? 'radial-gradient(circle, #AEE8FF 0%, #5BB3E8 100%)'
+                            : 'radial-gradient(circle, rgba(174,232,255,0.55) 0%, rgba(91,179,232,0.35) 100%)',
                           boxShadow: reached
-                            ? '0 0 16px rgba(255, 216, 107, 0.85)'
-                            : '0 0 8px rgba(255, 216, 107, 0.45)',
+                            ? '0 0 16px rgba(91, 179, 232, 0.85)'
+                            : '0 0 8px rgba(91, 179, 232, 0.45)',
                           animation: reached
                             ? 'none'
                             : isNext
@@ -1793,17 +1794,17 @@ const PondSceneContent = ({
             </div>
 
             {/* Resume Popup */}
-              {!isCompletionView && showResumePopup && (
+              {!isCompletionView && !isFinalFireworksView && showResumePopup && (
               <div className="pond-resume-popup">
                 {resumeMessage}
               </div>
             )}
 
             {/* New Overlay Block for SymbolPowerMission */}
-            {!isCompletionView && showPowerMission && <div className="pond-power-overlay-block" />}
+            {!isCompletionView && !isFinalFireworksView && showPowerMission && <div className="pond-power-overlay-block" />}
 
             {/* Symbol Power Mission */}
-            {!isCompletionView && (
+            {!isCompletionView && !isFinalFireworksView && (
               <SymbolPowerMission
                 show={showPowerMission}
                 symbolKey={currentMissionSymbol}
@@ -1881,7 +1882,7 @@ const PondSceneContent = ({
             )}
 
             {/* SYMBOL AUTO REVEAL */}
-            {!isCompletionView && revealConfig && (
+            {!isCompletionView && !isFinalFireworksView && revealConfig && (
               <SymbolAutoReveal
                 key={revealConfig.symbolId}
                 symbolId={revealConfig.symbolId}
@@ -1959,14 +1960,14 @@ const PondSceneContent = ({
 
             {/* BackToMapButton disabled per request */}
 
-            {!isCompletionView && (
+            {!isCompletionView && !isFinalFireworksView && (
               <CulturalCelebrationModal
                 show={showCulturalCelebration}
                 onClose={() => setShowCulturalCelebration(false)}
               />
             )}
 
-            {!isCompletionView && sceneState.welcomeShown && !isFinalCelebrationActive && (
+            {!isCompletionView && !isFinalFireworksView && sceneState.welcomeShown && !isFinalCelebrationActive && (
               <SymbolSidebar
                 discoveredSymbols={{
                   mooshika: true,

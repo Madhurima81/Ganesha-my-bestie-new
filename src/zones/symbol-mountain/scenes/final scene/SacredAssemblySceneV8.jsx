@@ -2009,7 +2009,7 @@ const SacredAssemblyContent = ({
             }}
             onHome={() => {
               setShowSceneCompletion(false);
-              onNavigate?.('zone-welcome');
+              onNavigate?.('home');
             }}
             onReplay={() => {
               hardResetSceneState();

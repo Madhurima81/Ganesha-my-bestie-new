@@ -254,7 +254,7 @@
 .modak-game-mound-1 { top: 45%; left: 25%; }
 .modak-game-mound-2 { top: 55%; left: 75%; }
 .modak-game-mound-3 { top: 60%; left: 30%; }
-.modak-game-mound-4 { top: 60%; left: 50%; transform: translateX(-50%); }
+.modak-game-mound-4 { top: 60%; left: 50%; }
 .modak-game-mound-5 { top: 60%; left: 60%; }
 
 .modak-game-mud-mound.fade-out {
@@ -1500,33 +1500,34 @@ div[class*="discovery"] img {
   position: absolute;
   /* Start over the basket modak area */
   left: 18%;
-  top: 55%;
-  font-size: clamp(36px, 5vw, 54px);
-  line-height: 1;
+  top: 59%;
+  width: clamp(64px, 8vw, 108px);
+  height: auto;
+  display: block;
   filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
-  animation: modak-drag-hint-move 3.5s ease-in-out forwards;
+  animation: modak-drag-hint-move 3.5s ease-in-out infinite;
   will-change: transform, opacity;
   transform-origin: center bottom;
 }
 
-/* Moves from basket (~18%,55%) toward Ganesha feed target (~58%,46%) */
+/* Moves from basket toward Ganesha belly (feed target) */
 @keyframes modak-drag-hint-move {
-  0%   { opacity: 0;   left: 18%; top: 55%; transform: scale(1); }
-  14%  { opacity: 1;   left: 18%; top: 55%; transform: scale(1.15); }
-  72%  { opacity: 0.9; left: 56%; top: 46%; transform: scale(0.9); }
-  88%  { opacity: 0.4; left: 58%; top: 45%; transform: scale(0.85); }
-  100% { opacity: 0;   left: 59%; top: 44%; transform: scale(0.8); }
+  0%   { opacity: 0;   left: 18%; top: 59%; transform: rotate(10deg) scale(1); }
+  14%  { opacity: 1;   left: 18%; top: 59%; transform: rotate(10deg) scale(1.15); }
+  72%  { opacity: 0.95; left: 62%; top: 52%; transform: rotate(14deg) scale(0.9); }
+  88%  { opacity: 0.55; left: 64%; top: 54%; transform: rotate(14deg) scale(0.85); }
+  100% { opacity: 0;   left: 65%; top: 55%; transform: rotate(14deg) scale(0.8); }
 }
 
 /* Mobile: basket and rock are closer together */
 @media (max-width: 600px) {
-  .modak-drag-hint-hand { left: 16%; top: 57%; }
+  .modak-drag-hint-hand { left: 16%; top: 61%; }
   @keyframes modak-drag-hint-move {
-    0%   { opacity: 0;   left: 16%; top: 57%; transform: scale(1); }
-    14%  { opacity: 1;   left: 16%; top: 57%; transform: scale(1.15); }
-    72%  { opacity: 0.9; left: 54%; top: 48%; transform: scale(0.9); }
-    88%  { opacity: 0.4; left: 56%; top: 47%; transform: scale(0.85); }
-    100% { opacity: 0;   left: 57%; top: 46%; transform: scale(0.8); }
+    0%   { opacity: 0;   left: 16%; top: 61%; transform: rotate(10deg) scale(1); }
+    14%  { opacity: 1;   left: 16%; top: 61%; transform: rotate(10deg) scale(1.15); }
+    72%  { opacity: 0.95; left: 58%; top: 53%; transform: rotate(14deg) scale(0.9); }
+    88%  { opacity: 0.55; left: 60%; top: 55%; transform: rotate(14deg) scale(0.85); }
+    100% { opacity: 0;   left: 61%; top: 56%; transform: rotate(14deg) scale(0.8); }
   }
 }
 
@@ -1704,9 +1705,9 @@ div[class*="discovery"] img {
     top: 60%;
     left: 6%;
     --basket-modak-size: 70px;
-    /* Phase 2 fix (iPad landscape): keep collected modaks inside plate bowl */
-    --basket-modak-top: calc(32% - 2px) !important;
-    --basket-modak-top-mid: 26% !important;
+    /* Keep collected modaks seated inside bowl for desktop+iPad landscape */
+    --basket-modak-top: 34% !important;
+    --basket-modak-top-mid: 28% !important;
     --basket-modak-left-1: 22%;
     --basket-modak-left-2: 36%;
     --basket-modak-left-3: calc(48% - 2px);
