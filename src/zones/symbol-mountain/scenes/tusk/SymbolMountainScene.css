@@ -1828,3 +1828,30 @@
   0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
   50% { transform: translateY(-8px) scale(1.05); opacity: 0.9; }
 }
+
+/* Tusk drag pointer hint (idle level 3) */
+.symbol-tusk-drag-pointer-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+}
+
+.symbol-tusk-drag-pointer-hand {
+  position: absolute;
+  width: clamp(72px, 8vw, 116px);
+  height: auto;
+  left: 50%;
+  top: 13%;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.28));
+  transform-origin: center bottom;
+  animation: symbolTuskDragHintMove 3.4s ease-in-out infinite;
+}
+
+@keyframes symbolTuskDragHintMove {
+  0%   { opacity: 0;   left: 50%; top: 13%; transform: translateX(-50%) rotate(10deg) scale(1); }
+  14%  { opacity: 1;   left: 50%; top: 13%; transform: translateX(-50%) rotate(10deg) scale(1.12); }
+  72%  { opacity: 0.95; left: 50%; top: 37%; transform: translateX(-50%) rotate(14deg) scale(0.92); }
+  88%  { opacity: 0.55; left: 50%; top: 42%; transform: translateX(-50%) rotate(14deg) scale(0.86); }
+  100% { opacity: 0;   left: 50%; top: 45%; transform: translateX(-50%) rotate(14deg) scale(0.8); }
+}

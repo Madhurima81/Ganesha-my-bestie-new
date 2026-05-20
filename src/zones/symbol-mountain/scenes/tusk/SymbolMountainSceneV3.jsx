@@ -45,7 +45,7 @@ import { useGaneshaVoice } from '../../../../lib/hooks/useGaneshaVoice';
 import { getSceneResetConfig } from '../../../../lib/config/SceneResetConfigs';
 
 // Import game components
-import EyesTelescopeGame from './EyesTelescopeGame';
+import EyesPopUpGame from './EyesPopUpGame';
 import EarsRhythmGame from './EarsRhythmGame';
 
 // UI Components
@@ -1050,6 +1050,7 @@ const SymbolMountainSceneContent = ({
   }, [sceneState?.showingCompletionScreen, showSceneCompletion]);
 
   const isCompletionView = showSceneCompletion || sceneState?.showingCompletionScreen;
+  const isFinalFireworksView = showSparkle === 'final-fireworks';
   // GameLayout replaced with plain div — pause menu removed
   return (
     <div style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden' }}>
@@ -1060,7 +1061,7 @@ const SymbolMountainSceneContent = ({
             <ZoneBadgeButton zoneId="symbol-mountain" onBack={() => onNavigate?.('zone-welcome')} />
             <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
             <div className="mountain-background" style={{ backgroundImage: `url(${mountainBackground})` }}>
-              {!isCompletionView && (
+              {!isCompletionView && !isFinalFireworksView && (
                 <>
               {!sceneState?.welcomeShown && (
                 <OpeningModal
@@ -1127,33 +1128,25 @@ const SymbolMountainSceneContent = ({
 
               {/* EYES GAME */}
               {sceneState.showEyesTelescopeGame && !sceneState.discoveredSymbols?.eyes && (
-                <EyesTelescopeGame
+                <EyesPopUpGame
                   isActive={sceneState.showEyesTelescopeGame}
-                  instrumentPositions={instrumentPositions}
-                  instrumentSizes={instrumentSizesByType}
-                  discoveryRadius={15}
-                  profileName={profileName}
-                  initialDiscoveredInstruments={sceneState.discoveredInstruments || {}}
-                  initialFoundInstruments={sceneState.foundInstruments || []}
-                  isReload={isReload && sceneState.showEyesTelescopeGame}
-                  onInstrumentFound={(instrumentType, allFound, discovered) => {
+                  onInstrumentFound={(_, allFound, discovered) => {
                     resetHintCadence();
                     playSparkle();
                     triggerMiniGesture('eyes', 1100, MINI_THUMBS_UP_ICON);
                     sceneActions.updateState({ foundInstruments: allFound, discoveredInstruments: discovered, instrumentsFound: allFound.length });
                   }}
-                  onAllInstrumentsFound={(allFound, discovered) => {
+                  onGameComplete={({ discoveredAnimals, totalDiscovered }) => {
                     sceneActions.updateState({
-                      foundInstruments: allFound,
-                      discoveredInstruments: discovered,
-                      instrumentsFound: 4,
+                      foundInstruments: discoveredAnimals,
+                      discoveredInstruments: discoveredAnimals.reduce((acc, animal) => ({ ...acc, [animal]: true }), {}),
+                      instrumentsFound: totalDiscovered,
                       eyesGameComplete: true,
                       showEyesTelescopeGame: false,
                       phase: PHASES.EYES_COMPLETE
                     });
                     setTimeout(() => handleEyesGameComplete(), 1000);
                   }}
-                  onClose={() => sceneActions.updateState({ showEyesTelescopeGame: false })}
                 />
               )}
 
@@ -1321,6 +1314,16 @@ const SymbolMountainSceneContent = ({
                 </div>
               )}
 
+              {showIdleGestureHint && sceneState.phase === PHASES.TUSK_GAME && shouldShowTuskAssemblyTask && !sceneState.ganeshaComplete && (
+                <div className="symbol-tusk-drag-pointer-overlay" aria-hidden="true">
+                  <img
+                    className="symbol-tusk-drag-pointer-hand"
+                    src="/images/ganesha-point.png"
+                    alt=""
+                  />
+                </div>
+              )}
+
               {/* TUSK ASSEMBLY AREA */}
               {shouldShowTuskAssemblyTask && (
                 <KidsDropZone
@@ -1441,7 +1444,7 @@ const SymbolMountainSceneContent = ({
             <ResumeCountdown value={countdownValue} />
 
             {/* SIDEBAR */}
-            {!isCompletionView && sceneState.welcomeShown && (
+            {!isCompletionView && !isFinalFireworksView && sceneState.welcomeShown && (
               <SymbolSidebar
                 discoveredSymbols={{
                   mooshika: true, modak: true, belly: true, lotus: true, trunk: true,
@@ -1481,7 +1484,7 @@ const SymbolMountainSceneContent = ({
 
             {/* ── SYMBOL AUTO-REVEAL (replaces SimpleDiscoveryOverlay) ───────────────
                 Flip card: symbol image → affirmation → user taps → flies to sidebar */}
-            {!isCompletionView && revealConfig && (
+            {!isCompletionView && !isFinalFireworksView && revealConfig && (
               <SymbolAutoReveal
                 key={revealConfig.symbolId}
                 symbolId={revealConfig.symbolId}

@@ -901,21 +901,6 @@ style={{
                 </div>
               )}
               
-              {/* Instrument name label */}
-              <div style={{ 
-                position: 'absolute', 
-                bottom: '-25px', 
-                left: '50%', 
-                transform: 'translateX(-50%)', 
-                fontSize: '10px', 
-                color: '#333',
-                whiteSpace: 'nowrap',
-                background: 'rgba(255, 255, 255, 0.9)',
-                padding: '2px 6px',
-                borderRadius: '8px'
-              }}>
-                {instrument.name}
-              </div>
             </button>   
                
           );

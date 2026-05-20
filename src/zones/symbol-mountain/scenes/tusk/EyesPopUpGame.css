@@ -1,0 +1,93 @@
+.eyes-popup-game {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  pointer-events: auto;
+}
+
+.eyes-popup-animal {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: clamp(64px, 9vw, 124px);
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  opacity: var(--animal-opacity, 0.15);
+  transition: opacity 260ms ease, transform 260ms ease, filter 260ms ease;
+  padding: 0;
+}
+
+.eyes-popup-animal img {
+  width: 100%;
+  height: auto;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}
+
+.eyes-popup-animal.is-popping {
+  transform: translate(-50%, -50%) scale(1.06);
+}
+
+.eyes-popup-animal.is-hinted {
+  filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.9)) drop-shadow(0 0 14px rgba(255, 166, 0, 0.6));
+}
+
+.eyes-popup-animal.is-found {
+  opacity: 1;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+}
+
+.eyes-popup-sparkle,
+.eyes-popup-shimmer {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.eyes-popup-shimmer {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 229, 140, 0.55) 35%, rgba(255, 194, 89, 0) 72%);
+  animation: eyesPopupShimmer 500ms ease-out forwards;
+}
+
+@keyframes eyesPopupShimmer {
+  from {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.8);
+  }
+}
+
+.eyes-popup-progress {
+  position: absolute;
+  bottom: clamp(14px, 2.2vw, 30px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 35;
+}
+
+.eyes-popup-slot {
+  min-width: 72px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: rgba(0, 0, 0, 0.35);
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.eyes-popup-slot.is-filled {
+  border-color: rgba(255, 214, 92, 0.85);
+  background: rgba(255, 200, 80, 0.25);
+  color: #fff9df;
+}
