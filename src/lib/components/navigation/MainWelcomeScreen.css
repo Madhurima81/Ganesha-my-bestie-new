@@ -313,6 +313,18 @@
   margin-bottom: 5%;
 }
 
+.welcome-story {
+  margin: 10px auto 0;
+  max-width: min(86vw, 760px);
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(14px, 1.7vw, 18px);
+  line-height: 1.4;
+  font-weight: 700;
+  color: rgba(74, 50, 126, 0.9);
+  text-align: center;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
 .adventure-button-container.visible {
   opacity: 1;
   transform: translateY(0);
@@ -376,6 +388,7 @@
 @media (orientation: landscape) and (max-height: 600px) {
   .welcome-title { font-size: 28px !important; }
   .welcome-subtitle { font-size: 14px; margin-top: 4px; }
+  .welcome-story { font-size: 12px; max-width: min(86vw, 620px); }
   .welcome-title-container { top: 3%; }
 
   .welcome-ganesha-image-container { bottom: -5%; }

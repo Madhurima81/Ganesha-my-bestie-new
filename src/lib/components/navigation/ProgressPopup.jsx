@@ -58,7 +58,7 @@ const normalizeSymbolId = (item) => {
   return raw;
 };
 
-const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type }) => {
+const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, directItemId = null }) => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -73,6 +73,7 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type }) 
   const openVoPlayedRef = useRef(false);
   const voTimersRef = useRef([]);
   const speechEnabledRef = useRef(true);
+  const directOpenedRef = useRef(false);
 
   const clearVoTimers = () => {
     voTimersRef.current.forEach((id) => clearTimeout(id));
@@ -140,11 +141,12 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type }) 
       setSelectedItem(null);
       setDetailOpen(false);
       openVoPlayedRef.current = false;
+      directOpenedRef.current = false;
       speechEnabledRef.current = true;
       return;
     }
 
-    if (type === 'symbols' && !openVoPlayedRef.current) {
+    if (type === 'symbols' && !directItemId && !openVoPlayedRef.current) {
       openVoPlayedRef.current = true;
       speechEnabledRef.current = true;
       const t = setTimeout(() => speakLine(GRID_OPEN_VO, () => setIsSpeaking(false)), 250);
@@ -155,9 +157,7 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type }) 
       stopVoice();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, type]);
-
-  if (!isOpen) return null;
+  }, [isOpen, type, directItemId]);
 
   const checkIsCompleted = (item) => {
     if (!completedItems || completedItems.length === 0) return false;
@@ -222,7 +222,20 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type }) 
     voTimersRef.current.push(openTimer);
   };
 
+  useEffect(() => {
+    if (!isOpen || !directItemId || type !== 'symbols' || selectedItem || directOpenedRef.current) return;
+    const directItem = (items || []).find((item) => normalizeSymbolId(item) === normalizeSymbolId({ id: directItemId }));
+    if (!directItem) return;
+    directOpenedRef.current = true;
+    openDetail(directItem);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, directItemId, type, items, selectedItem]);
+
   const closeDetail = () => {
+    if (directItemId) {
+      onClose?.();
+      return;
+    }
     stopVoice();
     setDetailOpen(false);
     setSelectedItem(null);
@@ -247,9 +260,11 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type }) 
     audio.play().catch((e) => console.log('Audio play error:', e));
   };
 
+  if (!isOpen) return null;
+
   return (
     <div className={`pp-overlay modal-backdrop ${isOpen ? 'open' : ''}`} onClick={onClose}>
-      <div className={`pp-card ${selectedItem ? 'pp-card-blurred' : ''}`} onClick={(e) => e.stopPropagation()}>
+      <div className={`pp-card ${selectedItem ? 'pp-card-blurred' : ''} ${directItemId ? 'pp-card-hidden-for-direct' : ''}`} onClick={(e) => e.stopPropagation()}>
         <div className="pp-header">
           <h2 className="pp-title">{displayTitle}</h2>
         </div>

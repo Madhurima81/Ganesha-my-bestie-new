@@ -5,7 +5,7 @@ import GaneshaCharacter from '../character/GaneshaCharacter';
 import { playUiTap } from '../../services/AudioService';
 import './MainWelcomeScreen.css';
 
-const MAIN_WELCOME_VO_LINE = "Hi bestie... I'm Ganesha. Come play with me.";
+const MAIN_WELCOME_VO_LINE = "Hi bestie... I'm Ganesha. I am known as the remover of obstacles, and I help children be wise, kind, and brave. Come play with me.";
 
 const MainWelcomeScreen = ({ onStartAdventure }) => {
   const [showButton, setShowButton] = useState(false);
@@ -210,6 +210,10 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
         <div className="welcome-title-wrapper">
           <h1 className="welcome-title">Ganesha My Bestie</h1>
           <p className="welcome-subtitle">Come play with me.</p>
+          <p className="welcome-story">
+            Ganesha is a loving friend known as the remover of obstacles. He teaches us to use our
+            big ears to listen, our calm mind to think, and our kind heart to help others.
+          </p>
         </div>
       </div>
       

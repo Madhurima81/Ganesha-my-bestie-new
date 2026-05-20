@@ -8,7 +8,7 @@ import './CleanGameWelcomeScreen.css';
 import SimpleSceneManager from '../../services/SimpleSceneManager';
 import CulturalProgressExtractor from '../../services/CulturalProgressExtractor';
 import ProgressPopup from './ProgressPopup';
-import GameIcon from '../ui/GameIcon';
+import InnerMandala from '../celebration/InnerMandala';
 import { symbolCardContent } from '../../../zones/symbol-mountain/shared/components/symbolCardContent';
 import { playUiTap } from '../../services/AudioService';
 
@@ -333,7 +333,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
   // =========================================================
   // POPUP DATA HANDLER (Updated with Images & Descriptions)
   // =========================================================
-  const handleProgressBoxClick = (type) => {
+  const handleProgressBoxClick = (type, options = {}) => {
     playUiTap(0.2);
     const culturalProgress = CulturalProgressExtractor.getCulturalProgressData();
     
@@ -348,12 +348,15 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
       const items = allSymbols.map(s => ({
         id: s.id, name: s.displayName, image: s.image, description: s.description, audio: s.audio
       }));
+
+      const directSymbolId = options?.directSymbolId;
       
       setPopupData({
         title: 'Sacred Symbols',
         items: items,
-        completedItems: (culturalProgress.discoveredSymbols || []).map(s => s.name), 
-        type: 'symbols'
+        completedItems: completedSymbolKeys,
+        type: 'symbols',
+        directItemId: directSymbolId || null
       });
     }
     else if (type === 'meanings') {
@@ -446,10 +449,8 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
     setShowPopup(true);
   };
 
-  const isZoneComplete = (count) => count >= 8;
-  
   const getCulturalProgress = () => {
-    if (!currentProfile) return { symbols: 0, meanings: 0, chants: 0, level: 1, levelName: "Wisdom Seeker", percentage: 0 };
+    if (!currentProfile) return { symbols: 0, meanings: 0, chants: 0, level: 1, levelName: "Wisdom Seeker", percentage: 0, discoveredSymbols: [] };
     
     try {
       const culturalData = CulturalProgressExtractor.getCulturalProgressData();
@@ -457,16 +458,187 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
         symbols: culturalData.symbolsCount || 0,
         meanings: culturalData.meaningsCount || 0,
         chants: culturalData.chantsCount || 0,
+        discoveredSymbols: culturalData.discoveredSymbols || [],
         level: culturalData.level || 1,
         levelName: culturalData.levelName || "Wisdom Seeker",
         percentage: Math.min(100, Math.max(0, (culturalData.totalLearnings || 0) * 8))
       };
     } catch (error) {
-      return { symbols: 0, meanings: 0, chants: 0, level: 1, levelName: "Wisdom Seeker", percentage: 0 };
+      return { symbols: 0, meanings: 0, chants: 0, level: 1, levelName: "Wisdom Seeker", percentage: 0, discoveredSymbols: [] };
     }
   };
   
   const culturalProgress = getCulturalProgress();
+
+  const normalizeSymbolKey = (value) => {
+    const raw = (value || '').toString().toLowerCase().trim();
+    if (raw.includes('mooshika')) return 'mooshika';
+    if (raw.includes('modak')) return 'modak';
+    if (raw.includes('belly')) return 'belly';
+    if (raw.includes('lotus')) return 'lotus';
+    if (raw.includes('trunk')) return 'trunk';
+    if (raw.includes('ear')) return 'ear';
+    if (raw.includes('eye')) return 'eye';
+    if (raw.includes('tusk')) return 'tusk';
+    return null;
+  };
+
+  const collectCompletedSymbolKeys = () => {
+    const keys = new Set();
+
+    (culturalProgress.discoveredSymbols || []).forEach((entry) => {
+      const normalized = normalizeSymbolKey(entry?.id || entry?.name || entry?.displayName || entry);
+      if (normalized) keys.add(normalized);
+    });
+
+    try {
+      const gameProgress = GameStateManager.getGameProgress();
+      const symbolScenes = gameProgress?.zones?.['symbol-mountain']?.scenes || {};
+      Object.values(symbolScenes).forEach((scene) => {
+        const sceneSymbols = scene?.symbols || {};
+        Object.entries(sceneSymbols).forEach(([symbolKey, discovered]) => {
+          if (!discovered) return;
+          const normalized = normalizeSymbolKey(symbolKey);
+          if (normalized) keys.add(normalized);
+        });
+      });
+    } catch (error) {
+      // no-op
+    }
+
+    try {
+      const activeProfileId = localStorage.getItem('activeProfileId');
+      if (activeProfileId) {
+        Object.keys(localStorage).forEach((storageKey) => {
+          if (!storageKey.includes(`temp_session_${activeProfileId}_symbol-mountain_`)) return;
+          try {
+            const state = JSON.parse(localStorage.getItem(storageKey) || '{}');
+            const fromSymbols = state?.symbols || {};
+            Object.entries(fromSymbols).forEach(([symbolKey, discovered]) => {
+              if (!discovered) return;
+              const normalized = normalizeSymbolKey(symbolKey);
+              if (normalized) keys.add(normalized);
+            });
+            const fromDiscovered = state?.discoveredSymbols || {};
+            Object.entries(fromDiscovered).forEach(([symbolKey, discovered]) => {
+              if (!discovered) return;
+              const normalized = normalizeSymbolKey(symbolKey);
+              if (normalized) keys.add(normalized);
+            });
+          } catch (e) {
+            // ignore malformed session state
+          }
+        });
+      }
+    } catch (error) {
+      // no-op
+    }
+
+    return Array.from(keys);
+  };
+
+  const completedSymbolKeys = collectCompletedSymbolKeys();
+  const getAnimalId = (avatarData) => {
+    if (typeof avatarData === 'string' && ['monkey', 'peacock', 'squirrel', 'tiger'].includes(avatarData)) return avatarData;
+    const emojiToAnimal = { '🐵': 'monkey', '🦚': 'peacock', '🐿️': 'squirrel', '🐯': 'tiger' };
+    return emojiToAnimal[avatarData] || 'monkey';
+  };
+  const animalId = getAnimalId(currentProfile?.avatar);
+
+  const buildPetalStates = (count, activeValue = 'awakened') => {
+    const states = {};
+    for (let i = 1; i <= 8; i += 1) {
+      states[i] = i <= Math.max(0, Math.min(8, count)) ? activeValue : 'dormant';
+    }
+    return states;
+  };
+
+  const getOuterPetalStatesFromSymbols = (symbols, fallbackCount = 0) => {
+    const states = { 1: 'dormant', 2: 'dormant', 3: 'dormant', 4: 'dormant', 5: 'dormant', 6: 'dormant', 7: 'dormant', 8: 'dormant' };
+    const idByName = {
+      mooshika: 1,
+      modak: 2,
+      belly: 3,
+      lotus: 4,
+      trunk: 5,
+      ear: 6,
+      ears: 6,
+      eye: 7,
+      eyes: 7,
+      tusk: 8,
+    };
+    const resolvePetalId = (text) => {
+      const t = (text || '').toLowerCase();
+      if (t.includes('mooshika')) return 1;
+      if (t.includes('modak')) return 2;
+      if (t.includes('belly')) return 3;
+      if (t.includes('lotus')) return 4;
+      if (t.includes('trunk')) return 5;
+      if (t.includes('ear')) return 6;
+      if (t.includes('eye')) return 7;
+      if (t.includes('tusk')) return 8;
+      return null;
+    };
+    (symbols || []).forEach((entry) => {
+      const raw = (entry?.id || entry?.name || entry?.displayName || entry || '').toString().toLowerCase().trim();
+      const pid = idByName[raw] || resolvePetalId(raw);
+      if (pid) states[pid] = 'awakened';
+    });
+    if (Object.values(states).every((v) => v === 'dormant')) {
+      const safeCount = Math.max(1, Math.min(8, fallbackCount || 1));
+      for (let i = 1; i <= safeCount; i += 1) states[i] = 'awakened';
+    }
+    return states;
+  };
+
+  const getOuterPetalStatesFromKeys = (symbolKeys) => {
+    const states = { 1: 'dormant', 2: 'dormant', 3: 'dormant', 4: 'dormant', 5: 'dormant', 6: 'dormant', 7: 'dormant', 8: 'dormant' };
+    const map = { mooshika: 1, modak: 2, belly: 3, lotus: 4, trunk: 5, ear: 6, eye: 7, tusk: 8 };
+    (symbolKeys || []).forEach((key) => {
+      const id = map[key];
+      if (id) states[id] = 'awakened';
+    });
+    if (Object.values(states).every((v) => v === 'dormant')) {
+      const safeCount = Math.max(1, Math.min(8, culturalProgress.symbols || 1));
+      for (let i = 1; i <= safeCount; i += 1) states[i] = 'awakened';
+    }
+    return states;
+  };
+
+  const petalToSymbol = {
+    1: 'mooshika',
+    2: 'modak',
+    3: 'belly',
+    4: 'lotus',
+    5: 'trunk',
+    6: 'ear',
+    7: 'eye',
+    8: 'tusk',
+  };
+
+  const handleMandalaPetalTap = (ring, petalId) => {
+    if (ring === 'outer') {
+      const symbolId = petalToSymbol[petalId];
+      if (symbolId && completedSymbolKeys.includes(symbolId)) {
+        handleProgressBoxClick('symbols', { directSymbolId: symbolId });
+      } else {
+        handleProgressBoxClick('symbols');
+      }
+    }
+    else if (ring === 'middle') handleProgressBoxClick('meanings');
+    else handleProgressBoxClick('chants');
+  };
+
+  const symbolIconsByPetal = {
+    1: symbolCardContent.mooshika?.icon || symbolCardContent.mooshika?.image,
+    2: symbolCardContent.modak?.icon || symbolCardContent.modak?.image,
+    3: symbolCardContent.belly?.icon || symbolCardContent.belly?.image,
+    4: symbolCardContent.lotus?.icon || symbolCardContent.lotus?.image,
+    5: symbolCardContent.trunk?.icon || symbolCardContent.trunk?.image,
+    6: symbolCardContent.ear?.icon || symbolCardContent.ear?.image,
+    7: symbolCardContent.eye?.icon || symbolCardContent.eye?.image,
+    8: symbolCardContent.tusk?.icon || symbolCardContent.tusk?.image,
+  };
   
   // Show profile selector
   if (showProfileSelector) {
@@ -492,7 +664,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
   
   return (
     <div className="clean-welcome-overlay page-transition">
-      <div className="clean-welcome-content">
+      <div className="clean-welcome-content clean-welcome-card">
         {(() => {
           const welcomeMsg = getWelcomeMessage();
           return (
@@ -505,109 +677,32 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
           );
         })()}        
        
-        {/* PROFILE SECTION */}
-        <div className="enhanced-profile-section">
-          <div className="profile-header">
-            <div className="profile-avatar-container">
-              {(() => {
-                const getAnimalId = (avatarData) => {
-                  if (typeof avatarData === 'string' && ['monkey', 'peacock', 'squirrel', 'tiger'].includes(avatarData)) return avatarData;
-                  const emojiToAnimal = { '🐵': 'monkey', '🦚': 'peacock', '🐿️': 'squirrel', '🐯': 'tiger' };
-                  return emojiToAnimal[avatarData] || 'monkey';
-                };
-                const animalId = getAnimalId(currentProfile.avatar);
-                return (
-                  <img 
-                    className={`profile-avatar-large ${animalId === 'squirrel' ? 'squirrel-avatar' : ''}`}
-                    src={`/images/new-explorer-${animalId}.png`}
-                    alt={currentProfile.name}
-                    onError={(e) => { e.target.style.display = 'none'; }}
-                  />
-                );
-              })()}
-            </div>
-            
-            <div className="profile-info">
-              <h2 className="profile-name-large">{currentProfile.name}</h2>
+        <div className="profile-mandala-wrapper">
+          <div className="profile-mandala">
+            <InnerMandala
+              childName={currentProfile.name}
+              showAsOverlay={false}
+              allowTapToSkip={false}
+              message=""
+              petalStates={getOuterPetalStatesFromKeys(completedSymbolKeys)}
+              middlePetalStates={buildPetalStates(culturalProgress.meanings, 'activated')}
+              innerPetalStates={buildPetalStates(culturalProgress.chants, 'activated')}
+              symbolIcons={symbolIconsByPetal}
+              onPetalClick={handleMandalaPetalTap}
+            />
+            <div className="mandala-avatar-center" aria-hidden="true">
+              <img
+                className={animalId === 'squirrel' ? 'squirrel-avatar' : ''}
+                src={`/images/new-explorer-${animalId}.png`}
+                alt=""
+                onError={(e) => { e.target.style.display = 'none'; }}
+              />
             </div>
           </div>
-          
-          {/* ✅ NO STAR BANNER HERE - CLEAN LAYOUT */}
-
-          {/* Switch Explorer Button */}
-          {hasProgress && (
-            <button className="change-explorer-btn" onClick={handleBackToProfiles}>
-              Switch Explorer
-            </button>
-          )}
         </div>
-        
-        {/* PROGRESS CARDS (Only for returning users) */}
-        {hasProgress && (
-          <div className="overall-progress">
-            <div className="compact-stats-container">
-              
-              <div className="stats-list-vertical">
-                {(() => {
-                  const symbolsComplete = isZoneComplete(culturalProgress.symbols);
-                  const meaningsComplete = isZoneComplete(culturalProgress.meanings);
-                  const chantsComplete = isZoneComplete(culturalProgress.chants);
-
-                  return (
-                    <>
-                <div 
-                  className={`stat-clean-row ${symbolsComplete ? 'completed' : 'incomplete'}`}
-                  onClick={() => handleProgressBoxClick('symbols')}
-                >
-                  <div className={`symbol-badge-wrap ${symbolsComplete ? 'is-complete' : 'is-incomplete'}`}>
-                    {symbolsComplete && <div className="symbol-badge-glow" aria-hidden="true" />}
-                    {symbolsComplete && <span className="symbol-badge-sparkle sparkle-a" aria-hidden="true" />}
-                    {symbolsComplete && <span className="symbol-badge-sparkle sparkle-b" aria-hidden="true" />}
-                    {symbolsComplete && <span className="symbol-badge-sparkle sparkle-c" aria-hidden="true" />}
-                    <img src="/images/icons/symbols-icon.png" alt="Symbols" className="symbol-badge-icon" />
-                  </div>
-                  <span className="symbol-badge-label">
-                    Symbols
-                  </span>
-                </div>
-                
-                <div 
-                  className={`stat-clean-row ${meaningsComplete ? 'completed' : 'incomplete'}`}
-                  onClick={() => handleProgressBoxClick('meanings')}
-                >
-                  <div className={`stat-icon-wrap stat-badge-wrap ${meaningsComplete ? 'is-complete' : 'is-incomplete'}`}>
-                    {meaningsComplete && <div className="symbol-badge-glow" aria-hidden="true" />}
-                    {meaningsComplete && <span className="symbol-badge-sparkle sparkle-a" aria-hidden="true" />}
-                    {meaningsComplete && <span className="symbol-badge-sparkle sparkle-b" aria-hidden="true" />}
-                    {meaningsComplete && <span className="symbol-badge-sparkle sparkle-c" aria-hidden="true" />}
-                    <GameIcon name="zone_stat_meanings" size={70} className="stat-icon-clean" />
-                  </div>
-                  <span className="symbol-badge-label">Meanings</span>
-                </div>
-                
-                <div 
-                  className={`stat-clean-row ${chantsComplete ? 'completed' : 'incomplete'}`}
-                  onClick={() => handleProgressBoxClick('chants')}
-                >
-                  <div className={`stat-icon-wrap stat-badge-wrap ${chantsComplete ? 'is-complete' : 'is-incomplete'}`}>
-                    {chantsComplete && <div className="symbol-badge-glow" aria-hidden="true" />}
-                    {chantsComplete && <span className="symbol-badge-sparkle sparkle-a" aria-hidden="true" />}
-                    {chantsComplete && <span className="symbol-badge-sparkle sparkle-b" aria-hidden="true" />}
-                    {chantsComplete && <span className="symbol-badge-sparkle sparkle-c" aria-hidden="true" />}
-                    <GameIcon name="zone_stat_chants" size={70} className="stat-icon-clean" />
-                  </div>
-                  <span className="symbol-badge-label">Chants</span>
-                </div>
-                    </>
-                  );
-                })()}
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* ACTION BUTTONS */}
-        <div className="welcome-actions">
+        <div className="welcome-actions welcome-buttons-row">
           {hasProgress ? (
             <>
               <PrimaryBtn
@@ -615,9 +710,9 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
                 onClick={handleContinue}
                 size="md"
                 fullWidth
-                className="continue-journey-btn"
+                className="continue-journey-btn welcome-action-btn"
               />
-              <button className="secondary-btn" onClick={handleNewGame}>
+              <button className="secondary-btn explore-map-btn welcome-action-btn" onClick={handleNewGame}>
                 Explore Map
               </button>
             </>
@@ -628,14 +723,15 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
                 onClick={handleStartAdventure}
                 size="md"
                 fullWidth
+                className="continue-journey-btn welcome-action-btn"
               />
-              <button className="secondary-btn" onClick={handleBackToProfiles}>
-                Switch Explorer
-              </button>
             </>
           )}
 
         </div>
+        <button className="bottom-switch-explorer" onClick={handleBackToProfiles}>
+          Not {currentProfile.name}? Switch Explorer
+        </button>
       </div>
       
       {showNewGameConfirm && (
@@ -658,6 +754,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
         items={popupData?.items || []}
         completedItems={popupData?.completedItems || []}
         type={popupData?.type}
+        directItemId={popupData?.directItemId}
       />
       <audio
         ref={ambientRef}

@@ -1,4 +1,4 @@
-﻿/* CleanGameWelcomeScreen.css - CLEAN MODAL DESIGN */
+/* CleanGameWelcomeScreen.css - CLEAN MODAL DESIGN */
 
 /* Font imports - Already in index.html but declaring for reference */
 /* Baloo 2 for headings, Nunito for body text */
@@ -23,6 +23,7 @@
   z-index: 1000;
   padding: 20px;
   box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 /* Semi-transparent overlay */
@@ -39,7 +40,7 @@
 }
 
 /* ========================================== */
-/* 2. MAIN WELCOME CONTAINER – GROUNDED      */
+/* 2. MAIN WELCOME CONTAINER � GROUNDED      */
 /* ========================================== */
 
 .clean-welcome-content {
@@ -47,6 +48,7 @@
   z-index: 2;
   background: #FAF6EE;
   border-radius: 32px;
+  box-sizing: border-box;
 
 box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 
@@ -59,7 +61,7 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(10px, 1vw, 18px);
+  gap: 12px;
 
   animation: groundedFade 0.7s ease-out;
 }
@@ -70,7 +72,7 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 }
 
 /* ========================================== */
-/* TITLE – CALMER PURPLE                     */
+/* TITLE � CALMER PURPLE                     */
 /* ========================================== */
 
 .clean-welcome-content .screen-header-title {
@@ -82,7 +84,7 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 }
 
 /* ========================================== */
-/* PROFILE SECTION – PRESENCE FOCUS          */
+/* PROFILE SECTION � PRESENCE FOCUS          */
 /* ========================================== */
 
 .enhanced-profile-section {
@@ -93,14 +95,15 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
+  min-width: 100px;
 }
 
 .profile-avatar-container {
-  width: clamp(88px, 9vw, 130px);
-  height: clamp(88px, 9vw, 130px);
+  width: 82px;
+  height: 82px;
   border-radius: 50%;
-  background: radial-gradient(circle, #FFFFFF 0%, #EFE8FF 100%);
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(245,240,255,0.95));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -109,8 +112,8 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 }
 
 .profile-avatar-large {
-  width: clamp(72px, 7.5vw, 110px);
-  height: clamp(72px, 7.5vw, 110px);
+  width: 64px;
+  height: 64px;
   object-fit: contain;
   animation: gentleFloat 8s ease-in-out infinite;
 }
@@ -134,23 +137,26 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 .change-explorer-btn {
   font-family: 'Nunito', sans-serif;
   font-weight: 700;
-  font-size: clamp(13px, 1.2vw, 18px);
+  font-size: 11px;
   color: rgba(123, 92, 230, 0.82);
   background: transparent;
   border: none;
   border-radius: 50px;
-  padding: clamp(6px, 0.6vw, 10px) clamp(14px, 1.4vw, 22px);
+  padding: 2px 10px;
   cursor: pointer;
   transition: opacity 0.2s ease;
   letter-spacing: 0.2px;
+  opacity: 0.72;
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
-.change-explorer-btn:active {
-  opacity: 0.7;
+.change-explorer-btn:hover {
+  opacity: 1;
+  transform: translateY(-1px);
 }
 
 /* ========================================== */
-/* STATS – QUIET MARKERS                     */
+/* STATS � QUIET MARKERS                     */
 /* ========================================== */
 
 .stats-list-vertical {
@@ -377,7 +383,7 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 }
 
 /* ========================================== */
-/* ACTION BUTTONS – CALM & EQUAL             */
+/* ACTION BUTTONS � CALM & EQUAL             */
 /* ========================================== */
 
 .welcome-actions {
@@ -389,7 +395,7 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 
 /* BOTH BUTTONS SAME ENERGY */
 /* ========================================== */
-/* PRIMARY – CONTINUE (soft emphasis)        */
+/* PRIMARY � CONTINUE (soft emphasis)        */
 /* ========================================== */
 
 .primary-btn {
@@ -431,6 +437,74 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
   animation: profileCtaGlow 3.5s ease-in-out infinite;
 }
 
+.profile-mandala {
+  width: 280px;
+  height: 280px;
+  margin-top: 24px;
+  margin-bottom: -18px;
+  opacity: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-mandala-hint {
+  margin-top: -6px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(124, 94, 185, 0.62);
+  letter-spacing: 0.2px;
+  text-align: center;
+}
+
+.profile-top-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  width: 100%;
+  margin-top: 6px;
+  margin-bottom: 8px;
+}
+
+.profile-mandala-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.welcome-action-btn {
+  width: 84%;
+  border-radius: 999px;
+  font-weight: 700;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.continue-journey-btn.welcome-action-btn {
+  background: linear-gradient(180deg, #7e61d8, #6f55cb);
+  color: white;
+  box-shadow: 0 8px 18px rgba(111,85,203,0.22);
+}
+
+.continue-journey-btn.welcome-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(111,85,203,0.28);
+}
+
+.secondary-btn.explore-map-btn {
+  opacity: 0.88;
+  border: 2px solid rgba(138,104,214,0.28);
+  background: rgba(255,255,255,0.58);
+  color: #7758d2;
+}
+
+.secondary-btn.explore-map-btn:hover {
+  background: rgba(255,255,255,0.76);
+}
+
 .primary-btn-unified.continue-journey-btn:hover:not(:disabled) {
   --btn-color-glow: rgba(115, 91, 196, 0.35);
 }
@@ -458,7 +532,7 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 }
 
 /* ========================================== */
-/* SECONDARY – EXPLORE (quiet stability)     */
+/* SECONDARY � EXPLORE (quiet stability)     */
 /* ========================================== */
 /* See below for unified secondary-btn styling */
 
@@ -491,9 +565,9 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
   width: 100%;
 }
 
-/* PRIMARY — now handled by PrimaryBtn shared component */
+/* PRIMARY � now handled by PrimaryBtn shared component */
 
-/* SECONDARY — glassmorphic with soft border */
+/* SECONDARY � glassmorphic with soft border */
 .secondary-btn {
   font-family: 'Baloo 2', system-ui, sans-serif;
   font-weight: 700;
@@ -1093,14 +1167,14 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
   }
 }
 
-/* Tablets / Large iPads (>900px) — clamp handles scaling automatically */
+/* Tablets / Large iPads (>900px) � clamp handles scaling automatically */
 @media (min-width: 900px) {
   .clean-welcome-content {
     max-width: clamp(560px, 48vw, 860px);
   }
 }
 
-/* iPad Kids (2058 x 1536) — clamp handles most of it; just ensure modal isn't too narrow */
+/* iPad Kids (2058 x 1536) � clamp handles most of it; just ensure modal isn't too narrow */
 @media (min-width: 1400px) and (min-height: 1000px) {
   .clean-welcome-content {
     max-width: min(860px, 55vw);
@@ -1283,10 +1357,10 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 /* ========================================== */
 
 
-/* No internal scrollbar — welcome screen content is designed to fit within max-height: 92vh */
+/* No internal scrollbar � welcome screen content is designed to fit within max-height: 92vh */
 
-/* ════════════════════════════════════════════════════════════════════
-   CLEAN GAME WELCOME SCREEN — iPad bug fixes (May 2026)
+/* --------------------------------------------------------------------
+   CLEAN GAME WELCOME SCREEN � iPad bug fixes (May 2026)
    Paste at the BOTTOM of CleanGameWelcomeScreen.css
    Fixes:
    1. Modal too wide on iPad Gen 6 + iPad Pro (landscape)
@@ -1295,20 +1369,21 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
    over the specific iPad landscape rules and widens the modal.
    Plus base .secondary-btn min-height: clamp(52px, 5.5vw, 80px)
    was never overridden inside iPad media queries.
-   ════════════════════════════════════════════════════════════════════ */
+   -------------------------------------------------------------------- */
 
-/* ─── FIX 1 — Modal width on iPad landscape (Gen 6 + Pro 11 + Pro 12.9)
+/* --- FIX 1 � Modal width on iPad landscape (Gen 6 + Pro 11 + Pro 12.9)
    Override the >900px generic rule. Use clamp tuned for tablet range. */
 @media (min-width: 900px) and (max-width: 1400px) and (orientation: landscape) {
   .clean-welcome-content {
-    max-width: clamp(420px, 38vw, 480px) !important;
-    width: auto !important;
+    max-width: min(90vw, clamp(520px, 48vw, 620px)) !important;
+    width: 92% !important;
     padding: clamp(20px, 2.2vh, 32px) clamp(24px, 2.6vw, 36px) !important;
     max-height: 88vh !important;
+    overflow-x: hidden !important;
   }
 }
 
-/* ─── FIX 2 — Button heights on iPad landscape
+/* --- FIX 2 � Button heights on iPad landscape
    Tame .secondary-btn min-height and align primary + secondary sizing. */
 @media (min-width: 900px) and (max-width: 1400px) and (orientation: landscape) {
 
@@ -1327,4 +1402,234 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
   .welcome-actions {
     gap: clamp(8px, 1.2vh, 14px) !important;
   }
+}
+
+/* --- MANDALA LAYOUT TUNE � iPad / tablet landscape */
+@media (min-width: 900px) and (max-width: 1400px) and (orientation: landscape) {
+  .profile-top-section {
+    gap: clamp(18px, 2.2vw, 30px) !important;
+    margin-top: 4px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .profile-mandala {
+    width: clamp(380px, 38vw, 500px) !important;
+    height: clamp(380px, 38vw, 500px) !important;
+    margin-top: -10px !important;
+    margin-bottom: -18px !important;
+  }
+}
+
+/* --- MANDALA LAYOUT TUNE � iPad / tablet portrait */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+  .profile-top-section {
+    gap: clamp(14px, 2vw, 24px) !important;
+    margin-top: 2px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .profile-mandala {
+    width: clamp(320px, 44vw, 420px) !important;
+    height: clamp(320px, 44vw, 420px) !important;
+    margin-top: -8px !important;
+    margin-bottom: -14px !important;
+  }
+}
+
+/* ===== Mandala refinement override (clean) ===== */
+.clean-welcome-card { max-width: 520px !important; }
+.clean-welcome-content {
+  gap: 6px !important;
+  padding-top: 14px !important;
+  padding-bottom: 12px !important;
+}
+.profile-top-section,
+.enhanced-profile-section { display: none !important; }
+
+.profile-mandala-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.profile-mandala {
+  position: relative;
+  width: 430px;
+  height: 430px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-8px);
+  margin-bottom: 42px;
+  animation: mandalaBreath 8s ease-in-out infinite;
+}
+
+.profile-mandala svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 10px 30px rgba(255,220,140,0.08));
+  animation: mandalaRotate 80s linear infinite;
+  transform-origin: center;
+}
+
+.outer-petal {
+  opacity: 0.26;
+  transition: opacity 0.5s ease, transform 0.5s ease, filter 0.5s ease;
+  transform-origin: center;
+  fill: rgba(255, 255, 255, 0.14);
+  filter: grayscale(0.35) brightness(0.9);
+}
+
+.outer-petal.discovered {
+  opacity: 0.92;
+  fill: var(--outer-fill, rgba(188, 110, 238, 0.52));
+  fill-opacity: 0.72;
+  filter: brightness(1.08)
+          drop-shadow(0 0 6px rgba(255,255,255,0.22))
+          drop-shadow(0 0 12px rgba(255,210,120,0.32));
+  animation: petalGlow 5s ease-in-out infinite;
+}
+
+.mandala-petal.outer-petal.discovered:hover {
+  transform: scale(1.06);
+  filter: brightness(1.12) drop-shadow(0 0 16px rgba(255,210,120,0.45));
+}
+
+.middle-petal {
+  opacity: 0.36;
+  transition: opacity 0.5s ease, filter 0.5s ease;
+  fill: rgba(222, 212, 246, 0.34) !important;
+  stroke: rgba(194, 168, 232, 0.5) !important;
+  stroke-width: 0.04 !important;
+}
+
+.middle-petal.active {
+  opacity: 0.86;
+  fill: rgba(255, 222, 130, 0.46) !important;
+  stroke: #ffd96e !important;
+  stroke-width: 0.05 !important;
+  filter: brightness(1.04) drop-shadow(0 0 8px rgba(255,225,140,0.2));
+}
+
+.inner-petal {
+  opacity: 0.74;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  fill: rgba(255, 198, 168, 0.48) !important;
+  stroke: rgba(245, 156, 134, 0.7) !important;
+  stroke-width: 0.04 !important;
+}
+
+.mandala-avatar-center {
+  position: absolute;
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, rgba(255,255,255,0.96), rgba(255,246,220,0.92));
+  box-shadow: 0 0 18px rgba(255, 223, 124, 0.42),
+              0 0 36px rgba(255, 223, 124, 0.18);
+  z-index: 5;
+  animation: avatarPulse 5s ease-in-out infinite;
+}
+
+.mandala-avatar-center img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+}
+
+.mandala-petal {
+  cursor: pointer;
+  pointer-events: all;
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+.mandala-petal:hover {
+  transform: scale(1.04);
+  filter: brightness(1.08);
+}
+
+.mandala-helper-text {
+  margin-top: -8px;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(124,94,185,0.55);
+}
+
+.welcome-buttons-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: 100%;
+  margin-top: -12px;
+}
+
+.welcome-action-btn {
+  border-radius: 999px;
+  font-weight: 700;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.continue-journey-btn.welcome-action-btn {
+  flex: 1.25;
+  background: linear-gradient(180deg, #7e61d8, #6d52c9);
+  color: white;
+  box-shadow: 0 8px 18px rgba(111,85,203,0.22);
+}
+
+.secondary-btn.explore-map-btn.welcome-action-btn {
+  flex: 1;
+  opacity: 0.88;
+  margin-top: -2px;
+  border: 2px solid rgba(138,104,214,0.22);
+  background: rgba(255,255,255,0.68);
+  color: #7758d2;
+}
+
+.bottom-switch-explorer {
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(126,98,193,0.72);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+@keyframes mandalaBreath {
+  0%,100% { transform: translateY(-8px) scale(1); }
+  50% { transform: translateY(-8px) scale(1.015); }
+}
+
+@keyframes avatarPulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+@keyframes petalGlow {
+  0%,100% {
+    transform: scale(1);
+    filter: brightness(1) drop-shadow(0 0 10px rgba(255,210,120,0.24));
+  }
+  50% {
+    transform: scale(1.03);
+    filter: brightness(1.08) drop-shadow(0 0 18px rgba(255,210,120,0.42));
+  }
+}
+
+@keyframes mandalaRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+/* Ensure discovered petals read clearly in profile mandala */
+.outer-petal.discovered {
+  opacity: 0.98;
 }

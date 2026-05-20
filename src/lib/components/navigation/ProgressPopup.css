@@ -58,6 +58,11 @@
   overflow: hidden;
 }
 
+.pp-card-hidden-for-direct {
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* Header */
 .pp-header { display: flex; justify-content: center; margin-bottom: 18px; width: 100%; }
 .pp-title { font-family: var(--pp-font-title); font-size: clamp(28px, 3.2vw, 46px); color: #4A3A2F; margin: 0; text-align: center; line-height: 1; font-weight: 800; }
