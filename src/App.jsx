@@ -9,6 +9,7 @@ import TimeWithGaneshaHub from './lib/components/twg/TimeWithGaneshaHub';
 import GaneshaEngineTest  from './lib/components/twg/GaneshaEngineTest';
 import TapGate from './components/welcome/TapGate';
 import MainWelcomeScreen from './lib/components/navigation/MainWelcomeScreen';
+import GaneshaIntroStory from './components/GaneshaIntroStory';
 
 const CleanGameWelcomeScreen = lazy(() => import('./lib/components/navigation/CleanGameWelcomeScreen'));
 const CleanProfileSelector   = lazy(() => import('./lib/components/navigation/CleanProfileSelector'));
@@ -85,6 +86,19 @@ const previousViewRef = useRef('loading');
 const [audioUnlocked, setAudioUnlocked] = useState(false);
 const dareOpenTimerRef = useRef(null);
 const [kindnessCheckEntry, setKindnessCheckEntry] = useState(null);
+const [showIntroStory, setShowIntroStory] = useState(false);
+const [introStoryReturnView, setIntroStoryReturnView] = useState('map');
+
+useEffect(() => {
+  if (currentView !== 'map' || showIntroStory) return;
+  const profileId = localStorage.getItem('activeProfileId');
+  if (!profileId) return;
+  const alreadyShown = localStorage.getItem(`ganeshaStoryShown_${profileId}`);
+  if (!alreadyShown) {
+    setIntroStoryReturnView('map');
+    setShowIntroStory(true);
+  }
+}, [currentView, showIntroStory]);
   
   console.log('🌟 Clean App rendering - current view:', currentView);
   console.log('🎯 Current zone:', currentZone, 'Current scene:', currentScene);
@@ -527,6 +541,11 @@ const handleContinue = (targetZone, targetScene) => {
     restoreDefaultStyles();
 
     if (!targetZone) {
+      const activeProfileId = localStorage.getItem('activeProfileId');
+      const shouldShowStory =
+        !!activeProfileId && !localStorage.getItem(`ganeshaStoryShown_${activeProfileId}`);
+      setIntroStoryReturnView('map');
+      setShowIntroStory(shouldShowStory);
       setCurrentView('map');
       return;
     }
@@ -557,6 +576,11 @@ const handleContinue = (targetZone, targetScene) => {
     console.log('🚀 Choose scene clicked - clean handoff');
     //restoreDefaultStyles(); // Clean styles before navigation
     
+    const activeProfileId = localStorage.getItem('activeProfileId');
+    const shouldShowStory =
+      !!activeProfileId && !localStorage.getItem(`ganeshaStoryShown_${activeProfileId}`);
+    setIntroStoryReturnView('map');
+    setShowIntroStory(shouldShowStory);
     setCurrentZone(null);
     setCurrentScene(null);
     setCurrentView('map');
@@ -615,6 +639,16 @@ const handleContinue = (targetZone, targetScene) => {
 const handleSceneSelect = (sceneId, options = {}) => {
   console.log('🎯 Scene selected:', sceneId, 'Options:', options);
   
+  if (sceneId === '__replay_intro_story__') {
+    const replayProfileId = localStorage.getItem('activeProfileId');
+    if (replayProfileId) {
+      localStorage.removeItem(`ganeshaStoryShown_${replayProfileId}`);
+    }
+    setIntroStoryReturnView('zone-welcome');
+    setShowIntroStory(true);
+    return;
+  }
+
   const mode = options.mode || 'default';
   const profileId = localStorage.getItem('activeProfileId');
   
@@ -1036,6 +1070,8 @@ chants: result?.chants || result?.chantedVerses || {},
             profiles={{}}
             onProfileSelect={(profileId) => {
               GameStateManager.setActiveProfile(profileId);
+              setIntroStoryReturnView('map');
+              setShowIntroStory(!localStorage.getItem(`ganeshaStoryShown_${profileId}`));
               setCurrentView('map');  // first-timers go directly to map after creating profile
             }}
           />
@@ -1053,7 +1089,20 @@ chants: result?.chants || result?.chantedVerses || {},
         </div>
       )}
 
-      {currentView === 'map' && (
+      {showIntroStory && (
+        <div className="view-transition">
+          <GaneshaIntroStory
+            profileId={localStorage.getItem('activeProfileId')}
+            childName={currentProfile?.name || GameStateManager.getCurrentProfile?.()?.name}
+            onComplete={() => {
+              setShowIntroStory(false);
+              setCurrentView(introStoryReturnView === 'zone-welcome' ? 'zone-welcome' : 'map');
+            }}
+          />
+        </div>
+      )}
+
+      {currentView === 'map' && !showIntroStory && (
         <div className="view-transition" style={{ position: 'relative' }}>
           <CleanMapZone
             onZoneSelect={handleZoneSelect}
@@ -1085,6 +1134,31 @@ chants: result?.chants || result?.chantedVerses || {},
             aria-label="Test Daily Dare"
           >
             Test Daily Dare
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setIntroStoryReturnView('map');
+              setShowIntroStory(true);
+            }}
+            style={{
+              position: 'absolute',
+              left: '16px',
+              top: '60px',
+              zIndex: 1200,
+              border: 'none',
+              borderRadius: '999px',
+              padding: '10px 14px',
+              background: 'rgba(255,255,255,0.94)',
+              boxShadow: '0 8px 24px rgba(40,20,80,0.2)',
+              color: '#5e49a8',
+              fontWeight: 700,
+              fontSize: '12px',
+              cursor: 'pointer'
+            }}
+            aria-label="Test intro story"
+          >
+            Test Intro Story
           </button>
           {showDareChip && !showDarePopup && (
             <button

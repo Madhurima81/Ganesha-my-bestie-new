@@ -270,6 +270,10 @@ const handleAction = (callback, skipComplete = false) => {
                 </div>
               )}
             </div>
+            {((containerType === 'backpack' && symbolsInContainer.length > 0) ||
+              (containerType === 'apps' && discoveredSymbols.length > 0)) && (
+              <p className="discovered-growth-bridge">These powers are growing inside you.</p>
+            )}
 
             {/* Action Buttons */}
             <div className="celebration-actions-section">

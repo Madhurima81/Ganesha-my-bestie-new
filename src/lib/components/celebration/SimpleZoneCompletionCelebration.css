@@ -11,6 +11,13 @@
   justify-content: center;
 }
 
+/* Remove browser click/focus ring flash on completion modal buttons */
+.simple-zone-completion button:focus,
+.simple-zone-completion button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 .simple-backdrop {
   position: absolute;
   top: 0;
