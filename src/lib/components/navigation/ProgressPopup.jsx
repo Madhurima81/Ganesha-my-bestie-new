@@ -233,6 +233,7 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
 
   const closeDetail = () => {
     if (directItemId) {
+      stopVoice();
       onClose?.();
       return;
     }
@@ -260,11 +261,16 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
     audio.play().catch((e) => console.log('Audio play error:', e));
   };
 
+  const handleCloseAll = () => {
+    stopVoice();
+    onClose?.();
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div className={`pp-overlay modal-backdrop ${isOpen ? 'open' : ''}`} onClick={onClose}>
-      <div className={`pp-card ${selectedItem ? 'pp-card-blurred' : ''} ${directItemId ? 'pp-card-hidden-for-direct' : ''}`} onClick={(e) => e.stopPropagation()}>
+    <div className={`pp-overlay modal-backdrop ${isOpen ? 'open' : ''}`} onClick={handleCloseAll}>
+      <div className={`pp-card ${selectedItem ? 'pp-card-blurred' : ''}`} onClick={(e) => e.stopPropagation()}>
         <div className="pp-header">
           <h2 className="pp-title">{displayTitle}</h2>
         </div>
@@ -311,7 +317,7 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
           })}
         </div>
 
-        <button className="pp-action-btn" onClick={onClose}>Continue</button>
+        <button className="pp-action-btn" onClick={handleCloseAll}>Continue</button>
       </div>
 
       {selectedItem && (
