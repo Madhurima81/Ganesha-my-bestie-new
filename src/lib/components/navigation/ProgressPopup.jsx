@@ -93,9 +93,9 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
   };
 
   const speakLine = (text, onEnd) => {
-    if (!text) return;
+    if (!text || !speechEnabledRef.current) return;
     if (!window?.speechSynthesis) {
-      onEnd?.();
+      if (speechEnabledRef.current) onEnd?.();
       return;
     }
 
@@ -104,8 +104,12 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
     utterance.pitch = 1.0;
     utterance.volume = 1.0;
 
-    utterance.onend = () => onEnd?.();
-    utterance.onerror = () => onEnd?.();
+    utterance.onend = () => {
+      if (speechEnabledRef.current) onEnd?.();
+    };
+    utterance.onerror = () => {
+      if (speechEnabledRef.current) onEnd?.();
+    };
 
     setIsSpeaking(true);
     window.speechSynthesis.cancel();
@@ -121,6 +125,7 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
     setIsBreathingCueActive(false);
 
     const starter = setTimeout(() => {
+      if (!speechEnabledRef.current) return;
       const isBreathLine =
         (symbolId === 'lotus' || symbolId === 'belly') &&
         /breath|rise and fall/i.test(actionLine);
@@ -202,6 +207,7 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
         // 2) Action VO starts only after tap VO completes + modal settle
         if (quickVo) {
           speakLine(quickVo, () => {
+            if (!speechEnabledRef.current) return;
             setIsSpeaking(false);
             const elapsed = Date.now() - tapStartMs;
             const waitMs = Math.max(150, 900 - elapsed);
@@ -267,6 +273,58 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
   };
 
   if (!isOpen) return null;
+
+  // DIRECT MODE — opened from mandala tap. Skip grid entirely, render only detail popup.
+  if (directItemId) {
+    if (!selectedItem) return null;
+    return (
+      <div className="pp-detail-overlay pp-detail-overlay-light" onClick={closeDetail}>
+        <div className="pp-detail-card pp-detail-card-instant" onClick={handleDetailCardTap}>
+          <button className="pp-detail-close" onClick={(e) => { e.stopPropagation(); closeDetail(); }} aria-label="Close">×</button>
+          <div className="symbol-content open">
+            <div className={`pp-detail-image-wrapper ${isBreathingCueActive ? 'breathe' : ''}`}>
+              <img src={selectedItem.image} alt={getDisplayName(selectedItem.name)} className="pp-detail-image" />
+            </div>
+
+            <h2 className="pp-detail-title">{getDisplayName(selectedItem.name)}</h2>
+
+            {type === 'symbols' && selectedItem.affirmation ? (
+              <p className="pp-detail-affirmation">"{selectedItem.affirmation}"</p>
+            ) : null}
+
+            {type === 'symbols' && selectedItem.ganeshaLines?.length ? (
+              <div className="pp-detail-ganesha-lines">
+                {selectedItem.ganeshaLines.map((line, idx) => (
+                  <p key={`${selectedItem.id}-line-${idx}`} className="pp-detail-ganesha-line">{line}</p>
+                ))}
+              </div>
+            ) : null}
+
+            {type === 'symbols' && selectedItem.invitation ? (
+              <div className="pp-detail-invitation">{selectedItem.invitation}</div>
+            ) : null}
+
+            <p className="pp-detail-desc">
+              {type === 'symbols'
+                ? (selectedItem.gift || selectedItem.description || 'You have discovered this sacred item! Keep exploring to learn more.')
+                : (selectedItem.description || 'You have discovered this sacred item! Keep exploring to learn more.')}
+            </p>
+          </div>
+
+          <div className="pp-detail-actions">
+            {selectedItem.audio && (
+              <button className="pp-btn-audio" onClick={() => playAudio(selectedItem.audio)}>
+                <span>??</span> Play Sound
+              </button>
+            )}
+            <button className="pp-action-btn pp-action-btn-detail" onClick={(e) => { e.stopPropagation(); closeDetail(); }}>
+              Continue
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`pp-overlay modal-backdrop ${isOpen ? 'open' : ''}`} onClick={handleCloseAll}>

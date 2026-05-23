@@ -1463,66 +1463,23 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: translateY(-8px);
   margin-bottom: 42px;
-  animation: mandalaBreath 8s ease-in-out infinite;
 }
 
 .profile-mandala svg {
   width: 100%;
   height: 100%;
   overflow: visible;
-  filter: drop-shadow(0 10px 30px rgba(255,220,140,0.08));
-  animation: mandalaRotate 80s linear infinite;
-  transform-origin: center;
 }
 
-.outer-petal {
-  opacity: 0.26;
-  transition: opacity 0.5s ease, transform 0.5s ease, filter 0.5s ease;
-  transform-origin: center;
-  fill: rgba(255, 255, 255, 0.14);
-  filter: grayscale(0.35) brightness(0.9);
+.profile-mandala,
+.profile-mandala-wrapper,
+.profile-mandala * {
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
 }
 
-.outer-petal.discovered {
-  opacity: 0.92;
-  fill: var(--outer-fill, rgba(188, 110, 238, 0.52));
-  fill-opacity: 0.72;
-  filter: brightness(1.08)
-          drop-shadow(0 0 6px rgba(255,255,255,0.22))
-          drop-shadow(0 0 12px rgba(255,210,120,0.32));
-  animation: petalGlow 5s ease-in-out infinite;
-}
-
-.mandala-petal.outer-petal.discovered:hover {
-  transform: scale(1.06);
-  filter: brightness(1.12) drop-shadow(0 0 16px rgba(255,210,120,0.45));
-}
-
-.middle-petal {
-  opacity: 0.36;
-  transition: opacity 0.5s ease, filter 0.5s ease;
-  fill: rgba(222, 212, 246, 0.34) !important;
-  stroke: rgba(194, 168, 232, 0.5) !important;
-  stroke-width: 0.04 !important;
-}
-
-.middle-petal.active {
-  opacity: 0.86;
-  fill: rgba(255, 222, 130, 0.46) !important;
-  stroke: #ffd96e !important;
-  stroke-width: 0.05 !important;
-  filter: brightness(1.04) drop-shadow(0 0 8px rgba(255,225,140,0.2));
-}
-
-.inner-petal {
-  opacity: 0.74;
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  fill: rgba(255, 198, 168, 0.48) !important;
-  stroke: rgba(245, 156, 134, 0.7) !important;
-  stroke-width: 0.04 !important;
-}
+/* Petal styling is owned by InnerMandala.css */
 
 .mandala-avatar-center {
   position: absolute;
@@ -1552,7 +1509,6 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 }
 
 .mandala-petal:hover {
-  transform: scale(1.04);
   filter: brightness(1.08);
 }
 

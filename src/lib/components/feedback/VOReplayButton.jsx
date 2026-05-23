@@ -24,6 +24,7 @@ import './VOReplayButton.css';
 export default function VOReplayButton({
   getLine,
   speak,
+  onReplay,
   position = 'top-right',
   disabled = false,
 }) {
@@ -31,11 +32,17 @@ export default function VOReplayButton({
 
   const handleTap = () => {
     if (playing || disabled) return;
-    const line = typeof getLine === 'function' ? getLine() : null;
-    if (!line) return;
-
     setPlaying(true);
-    speak(line, { age: 6, style: 'child', moment: 'encouragement' });
+    if (typeof onReplay === 'function') {
+      onReplay();
+    } else {
+      const line = typeof getLine === 'function' ? getLine() : null;
+      if (!line || typeof speak !== 'function') {
+        setPlaying(false);
+        return;
+      }
+      speak(line, { age: 6, style: 'child', moment: 'encouragement' });
+    }
     // Visual cue lasts ~2.5s; matches typical short VO length
     setTimeout(() => setPlaying(false), 2500);
   };

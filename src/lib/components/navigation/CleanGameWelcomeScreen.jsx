@@ -639,6 +639,17 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
     7: symbolCardContent.eye?.icon || symbolCardContent.eye?.image,
     8: symbolCardContent.tusk?.icon || symbolCardContent.tusk?.image,
   };
+
+  const symbolIconsTinted = {
+    1: '/images/icons/symbol-mooshika-tint.png',
+    2: '/images/icons/symbol-modak-tint.png',
+    3: '/images/icons/symbol-belly-tint.png',
+    4: '/images/icons/symbol-lotus-tint.png',
+    5: '/images/icons/symbol-trunk-tint.png',
+    6: '/images/icons/symbol-ear-tint.png',
+    7: '/images/icons/symbol-eye-tint.png',
+    8: '/images/icons/symbol-tusk-tint.png',
+  };
   
   // Show profile selector
   if (showProfileSelector) {
@@ -687,17 +698,17 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
               petalStates={getOuterPetalStatesFromKeys(completedSymbolKeys)}
               middlePetalStates={buildPetalStates(culturalProgress.meanings, 'activated')}
               innerPetalStates={buildPetalStates(culturalProgress.chants, 'activated')}
-              symbolIcons={symbolIconsByPetal}
+              symbolIcons={symbolIconsTinted}
               onPetalClick={handleMandalaPetalTap}
+              avatar={
+                <img
+                  className={animalId === 'squirrel' ? 'squirrel-avatar' : ''}
+                  src={`/images/new-explorer-${animalId}.png`}
+                  alt=""
+                  onError={(e) => { e.target.style.display = 'none'; }}
+                />
+              }
             />
-            <div className="mandala-avatar-center" aria-hidden="true">
-              <img
-                className={animalId === 'squirrel' ? 'squirrel-avatar' : ''}
-                src={`/images/new-explorer-${animalId}.png`}
-                alt=""
-                onError={(e) => { e.target.style.display = 'none'; }}
-              />
-            </div>
           </div>
         </div>
 
