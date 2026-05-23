@@ -24,165 +24,201 @@
   width: 100%;
 }
 
-/* =========================================
-   MAIN MANDALA WRAPPER
-========================================= */
-.inner-mandala {
+/* =========================================================
+   MANDALA BASE
+========================================================= */
+.inner-mandala,
+.ganesha-mandala {
+  width: 460px;
+  height: 460px;
   position: relative;
-  width: min(420px, 78vmin);
-  height: min(420px, 78vmin);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: mandalaBreath 9s ease-in-out infinite;
-  cursor: pointer;
+  margin: 0 auto;
+  animation: mandalaFloat 5s ease-in-out infinite;
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
-/* =========================================
-   SVG BASE
-========================================= */
 .inner-mandala svg {
   width: 100%;
   height: 100%;
+  display: block;
   overflow: visible;
-  filter: drop-shadow(0 10px 30px rgba(255, 220, 140, 0.08));
+  shape-rendering: geometricPrecision;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
-/* =========================================
-   OUTER PETALS
-========================================= */
+.mandala-petal-group,
+.outer-petal,
+.middle-petal,
+.inner-petal {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  outline: none !important;
+}
+
+.mandala-petal-group:focus,
+.outer-petal:focus,
+.outer-petal:active {
+  outline: none !important;
+  background: transparent !important;
+}
+
+/* =========================================================
+   OUTER PETALS — outline by default, pastel fill when awakened
+========================================================= */
 .outer-petal {
-  transition: opacity 0.6s ease, filter 0.6s ease, transform 0.6s ease;
-  transform-origin: center;
-  opacity: 0.18;
-  fill: var(--outer-fill, rgba(214, 188, 244, 0.28));
-  fill-opacity: 0.12;
-  stroke: var(--outer-stroke, #c9b6f0);
-  stroke-opacity: 0.35;
-  stroke-width: 0.02645833;
-  filter: grayscale(0.3) brightness(0.9);
+  fill: none;
+  stroke: #8F88E8;
+  stroke-width: 0.045;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.75;
+  transition: fill 0.45s ease, opacity 0.35s ease, filter 0.35s ease;
+  cursor: pointer;
 }
 
-.outer-petal.awakened {
-  opacity: 0.92;
-  stroke: #f3c86c;
-  filter: drop-shadow(0 0 12px rgba(255, 210, 120, 0.25)) brightness(1.04);
-  animation: petalBreath 6s ease-in-out infinite;
-}
-
-.outer-petal.discovered {
-  opacity: 0.88;
-  stroke: var(--outer-stroke, #c06cf0);
-  filter: drop-shadow(0 0 12px rgba(255, 210, 120, 0.42)) brightness(1.08);
-}
-
-.mandala-petal.locked {
-  opacity: 0.12;
-  filter: grayscale(0.3);
-}
-
-.mandala-petal.discovered:hover {
-  transform: scale(1.05);
+.outer-petal.awakened,
+.outer-petal.discovered,
+.outer-petal.active {
   opacity: 1;
-  filter: brightness(1.08);
+  filter: drop-shadow(0 0 10px rgba(255, 220, 120, 0.22));
 }
 
-.petal-orb {
-  fill: url(#petal-orb-gradient);
-  pointer-events: none;
-  filter: drop-shadow(0 0 10px rgba(255, 220, 120, 0.7))
-          drop-shadow(0 0 22px rgba(255, 220, 120, 0.45));
-  animation: orbPulse 2.6s ease-in-out infinite;
+.outer-petal-1.awakened, .outer-petal-1.discovered, .outer-petal-1.active { fill: #E6DDFF; }   /* Lavender — Mooshika */
+.outer-petal-2.awakened, .outer-petal-2.discovered, .outer-petal-2.active { fill: #FFF0C9; }   /* Butter Gold — Modak */
+.outer-petal-3.awakened, .outer-petal-3.discovered, .outer-petal-3.active { fill: #DDF6E8; }   /* Mint — Belly */
+.outer-petal-4.awakened, .outer-petal-4.discovered, .outer-petal-4.active { fill: #FFE1EC; }   /* Soft Pink — Lotus */
+.outer-petal-5.awakened, .outer-petal-5.discovered, .outer-petal-5.active { fill: #DDEFFF; }   /* Sky Blue — Trunk */
+.outer-petal-6.awakened, .outer-petal-6.discovered, .outer-petal-6.active { fill: #FFE6D6; }   /* Peach — Ear */
+.outer-petal-7.awakened, .outer-petal-7.discovered, .outer-petal-7.active { fill: #DCE7FF; }   /* Powder Blue — Eye */
+.outer-petal-8.awakened, .outer-petal-8.discovered, .outer-petal-8.active { fill: #E8F4D8; }   /* Sage — Tusk */
+
+.outer-petal.locked {
+  opacity: 0.45;
 }
 
-.outer-petal.highlighted {
-  animation: petalAwakenPulse 3.8s cubic-bezier(.22,.61,.36,1) 1;
+/* =========================================================
+   OUTER RING CIRCLES
+========================================================= */
+.outer-ring {
+  fill: #F5F1FF;
+  stroke: #7F78E6;
+  stroke-width: 0.045;
 }
 
-/* =========================================
-   MIDDLE PETALS
-========================================= */
+.outer-ring-inner {
+  fill: #ECE4FF;
+  stroke: #AFA7FF;
+  stroke-width: 0.04;
+}
+
+/* =========================================================
+   MIDDLE PETALS — outline default, gold when activated
+========================================================= */
 .middle-petal {
-  opacity: 0.48;
-  transition: opacity 0.8s ease, filter 0.8s ease;
   fill: none;
-  stroke: #b9cde8;
-  stroke-width: 0.02645833;
-  filter: grayscale(0.25) brightness(0.94);
+  stroke: #9B94F2;
+  stroke-width: 0.03;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.92;
+  transition: fill 0.45s ease;
 }
 
-.middle-petal.activated {
-  opacity: 0.88;
-  stroke: #ffd95f;
-  filter: drop-shadow(0 0 10px rgba(255, 230, 180, 0.32)) brightness(1.12);
-  animation: innerGlow 5s ease-in-out infinite;
-}
-
+.middle-petal.activated,
 .middle-petal.active {
+  fill: #F7E38B;
+}
+
+.middle-petal-2.activated, .middle-petal-4.activated,
+.middle-petal-6.activated, .middle-petal-8.activated,
+.middle-petal-2.active, .middle-petal-4.active,
+.middle-petal-6.active, .middle-petal-8.active {
+  fill: #FFF4C7;
+}
+
+/* =========================================================
+   INNER RING CIRCLES
+========================================================= */
+.inner-ring-thin {
+  fill: #F6EDFF;
+  stroke: #B8B1FF;
+  stroke-width: 0.03;
+}
+
+.inner-ring {
+  fill: #FFF8EA;
+  stroke: #8D84F0;
+  stroke-width: 0.03;
+}
+
+/* =========================================================
+   INNER (DAISY) PETALS — soft pink lotus, alternating
+========================================================= */
+.inner-petal {
+  fill: #FFA8BC;
+  stroke: #7C74E8;
+  stroke-width: 0.022;
+  stroke-linecap: round;
+  stroke-linejoin: round;
   opacity: 1;
-  filter: brightness(1.1) drop-shadow(0 0 10px rgba(255,225,140,0.32));
+  transition: fill 0.45s ease;
 }
 
-/* =========================================
-   CENTER FLOWER
-========================================= */
-.center-flower {
-  opacity: 0.3;
-  transition: opacity 1s ease, transform 1s ease;
-  transform-origin: center;
+.inner-petal-2,
+.inner-petal-4,
+.inner-petal-6,
+.inner-petal-8 {
+  fill: #FFD3DD;
 }
 
-.center-flower.active {
-  opacity: 1;
-  animation: centerPulse 5.5s ease-in-out infinite;
+/* =========================================================
+   CENTER AVATAR DISC + IMAGE SLOT
+========================================================= */
+.avatar-circle {
+  fill: #FFE9B3;
+  stroke: #E4C96A;
+  stroke-width: 0.035;
+  filter: drop-shadow(0 0 18px rgba(255, 225, 130, 0.35));
 }
 
-.center-core-svg {
-  fill: none;
-  stroke: rgba(255, 210, 120, 0.6);
-  stroke-width: 0.02645833;
-}
-
-/* =========================================
-   CENTER LIGHT
-========================================= */
-.center-light {
+.mandala-avatar-slot {
   position: absolute;
-  width: 64px;
-  height: 64px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 18%;
+  height: 18%;
   border-radius: 50%;
-  background: radial-gradient(circle, #fff6d8 0%, #ffe39a 42%, rgba(255, 215, 120, 0.45) 72%, transparent 100%);
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 18px rgba(255,220,140,0.32), 0 0 40px rgba(255,220,140,0.12);
-  animation: centerGlow 6s ease-in-out infinite;
+  pointer-events: none;
 }
 
-.mandala-petal {
-  cursor: pointer;
-  pointer-events: all;
-  transition: transform 0.25s ease, filter 0.25s ease;
+.mandala-avatar-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
-.mandala-petal:hover {
-  transform: scale(1.04);
-  filter: brightness(1.08);
+/* =========================================================
+   SYMBOL ICONS — pre-tinted PNGs, just fade in on awakening
+========================================================= */
+.petal-symbol {
+  opacity: 1;
 }
 
-.mandala-name {
-  font-family: 'Baloo 2', cursive;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #7c5124;
-  opacity: 0;
-  animation: centerFade 2s ease forwards;
-  animation-delay: 1.8s;
-}
-
+/* =========================================================
+   SUBTITLE
+========================================================= */
 .mandala-subtitle {
   position: absolute;
-  bottom: 72px;
+  bottom: 12px;
   left: 50%;
   transform: translateX(-50%);
   width: 85%;
@@ -195,86 +231,12 @@
   animation-delay: 2.1s;
 }
 
-/* =========================================
-   FLOATING PARTICLES
-========================================= */
-.mandala-particles {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.mandala-particles::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 240, 0.8) 1px, transparent 1px);
-  background-size: 120px 120px;
-  opacity: 0.22;
-  animation: particlesFloat 18s linear infinite;
-}
-
-/* =========================================
-   ANIMATIONS
-========================================= */
-@keyframes mandalaBreath {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); }
-}
-
-@keyframes petalBreath {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.03); }
-}
-
-@keyframes petalAwakenPulse {
-  0% { transform: scale(0.85); opacity: 0; }
-  40% { transform: scale(1.025); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-@keyframes innerGlow {
-  0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 220, 160, 0.12)) brightness(1); }
-  50% { filter: drop-shadow(0 0 18px rgba(255, 220, 160, 0.3)) brightness(1.08); }
-}
-
-@keyframes centerGlow {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 0 20px rgba(255, 220, 140, 0.25), 0 0 60px rgba(255, 220, 140, 0.08);
-  }
-  50% {
-    transform: scale(1.06);
-    box-shadow: 0 0 32px rgba(255, 220, 140, 0.42), 0 0 90px rgba(255, 220, 140, 0.18);
-  }
-}
-
-@keyframes centerPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.04); }
-}
-
-@keyframes particlesFloat {
-  from { transform: translateY(0px); }
-  to { transform: translateY(-90px); }
-}
-
 @keyframes centerFade {
   to { opacity: 1; }
 }
 
-@keyframes orbPulse {
-  0% {
-    transform: scale(1);
-    opacity: 0.9;
-  }
-  50% {
-    transform: scale(1.18);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 0.9;
-  }
+@keyframes mandalaFloat {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+  100% { transform: translateY(0px); }
 }
