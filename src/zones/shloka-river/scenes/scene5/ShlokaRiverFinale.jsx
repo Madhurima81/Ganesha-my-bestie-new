@@ -6,6 +6,7 @@ import GamePauseMenu from '../../core/GamePauseMenu-river';
 import HomeButton from '../../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
+import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
 import { getCompletionModal } from '../../../../lib/config/content';
@@ -470,6 +471,10 @@ const ShlokaRiverFinale = ({ onComplete, onBack, onNavigate }) => {
   };
 
   const currentWord = shlokaWords[currentWordIndex] || shlokaWords[0];
+  const replayCurrentVoice = () => {
+    if (!isAudioOn || !currentWord?.wordAudio) return;
+    playAudio(currentWord.wordAudio);
+  };
 
   return (
     <div className="river-finale-container">
@@ -479,6 +484,7 @@ const ShlokaRiverFinale = ({ onComplete, onBack, onNavigate }) => {
         onBack={() => { if (onNavigate) onNavigate('zone-welcome'); else onBack?.(); }}
       />
       <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
+      <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn || !currentWord?.wordAudio} />
       {/* Background */}
       <div
         className="river-bg"

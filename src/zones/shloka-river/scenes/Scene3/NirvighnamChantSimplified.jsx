@@ -19,6 +19,7 @@ import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
 import HomeButton from '../../../../lib/components/ui/HomeButton';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle';
+import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 import mooshikaCoach from "./assets/images/mooshika-coach.png";
 
 // UI Components
@@ -433,6 +434,16 @@ const playSyllable = (syllable) => {
 
 const playWord = (word) => {
   playAudio(`/audio/words/${word}.mp3`);
+};
+const replayCurrentVoice = () => {
+  if (!isAudioOn) return;
+  if (sceneState.phase === PHASES.KURUMEDEVA_GAME_ACTIVE || sceneState.phase === PHASES.KURUMEDEVA_LEARNING || modeForPhase === 'kurumedeva' || modeForPhase === 'kurume') {
+    playWord('kurumedeva');
+    return;
+  }
+  if (sceneState.phase === PHASES.NIRVIGHNAM_GAME_ACTIVE || sceneState.phase === PHASES.NIRVIGHNAM_LEARNING || sceneState.phase === PHASES.COMPLETE || modeForPhase === 'nirvighnam') {
+    playWord('nirvighnam');
+  }
 };
 
   const handleAudioToggle = () => {
@@ -1078,6 +1089,7 @@ sceneActions.updateState({
           <HomeButton onNavigate={onNavigate} />
           <ZoneBadgeButton zoneId="shloka-river" onBack={() => onNavigate?.('zone-welcome')} />
           <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
+          <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
 
 <div

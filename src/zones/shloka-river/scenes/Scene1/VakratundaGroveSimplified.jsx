@@ -29,6 +29,7 @@ import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal
 import HomeButton from '../../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
+import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
 import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
@@ -348,6 +349,24 @@ const VakratundaGroveContent = ({
     }
     if (onEnded) onEnded();
   }, [speakWebSpeech]);
+  const replayCurrentVoice = useCallback(() => {
+    if (!isAudioOn) return;
+    if (!sceneState.welcomeShown || sceneState.phase === PHASES.INITIAL) {
+      playGuidanceVoice('welcome');
+      return;
+    }
+    if (sceneState.phase === PHASES.VAKRATUNDA_GAME) {
+      playGuidanceVoice('instructionTapTheElephant');
+      return;
+    }
+    if (sceneState.phase === PHASES.MAHAKAYA_GAME) {
+      playGuidanceVoice('mahakayaGameStart');
+      return;
+    }
+    if (showSceneCompletion) {
+      playGuidanceVoice('sceneComplete');
+    }
+  }, [isAudioOn, playGuidanceVoice, sceneState.phase, sceneState.welcomeShown, showSceneCompletion]);
 
   const stopAllVoice = useCallback(() => {
     stopVoice();
