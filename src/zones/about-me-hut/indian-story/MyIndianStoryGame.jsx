@@ -13,6 +13,7 @@ import ResumeCountdown from '../../../lib/components/feedback/ResumeCountdown';
 import HomeButton from '../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../lib/components/ui/AudioToggle/AudioToggle';
 import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
+import VOReplayButton from '../../../lib/components/feedback/VOReplayButton';
 import useAudioPreference from '../../../lib/hooks/useAudioPreference';
 import StoryProgressHeader from '../components/StoryProgressHeader';
 import bgImage from './assets/images/name_background.webp';
@@ -581,6 +582,25 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
         return null;
     }
   }, [childName, hasPressedLanguagePlay, VOICE.language_guess, VOICE.language_play_hint]);
+  const replayCurrentVoice = useCallback(() => {
+    if (!isAudioOn) return;
+    if (phase === STEPS.OPENING) {
+      setVoiceVolume(OPENING_VO_VOLUME);
+      playVoice('opening');
+      return;
+    }
+    if (phase === STEPS.LANGUAGE_GANESHA && hasPressedLanguagePlay && !showLanguageCards) {
+      speakIfUnmuted(VOICE.language_audio, { age: childAge, moment: 'default' });
+      return;
+    }
+    if (phase === STEPS.COMPLETE) {
+      speakIfUnmuted(VOICE.completion_screen, { age: childAge, moment: 'celebration' });
+      return;
+    }
+    const line = getPhaseReminderLine(phase);
+    if (!line) return;
+    speakIfUnmuted(line, { age: childAge, moment: 'encouragement' });
+  }, [VOICE.completion_screen, VOICE.language_audio, childAge, getPhaseReminderLine, hasPressedLanguagePlay, isAudioOn, phase, playVoice, setVoiceVolume, showLanguageCards, speakIfUnmuted]);
 
   useEffect(() => {
     if (!returnHintNonce) return;
@@ -1413,6 +1433,7 @@ const handleComplete = () => {
       <HomeButton onNavigate={onNavigate} />
       <ZoneBadgeButton zoneId="about-me-hut" onBack={() => onNavigate?.('zone-welcome')} />
       <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
+      <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
       {/* Sparkles */}
       {sparkleState.type && (
         <div

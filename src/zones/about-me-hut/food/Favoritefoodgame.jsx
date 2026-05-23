@@ -1589,6 +1589,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         onNavigate?.('zone-welcome');
       }} />
       <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
+      <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
 
       {discoveryFly && !['food-correct', 'color-correct', 'activity-correct', 'friend-correct'].includes(sceneState.gamePhase) && (
         <div
