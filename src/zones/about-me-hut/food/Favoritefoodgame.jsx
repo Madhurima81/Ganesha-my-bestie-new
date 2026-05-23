@@ -78,6 +78,7 @@ import friendsImg from './assets/images/friends.png';
 import HomeButton from '../../../lib/components/ui/HomeButton';
 import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
 import AudioToggle from '../../../lib/components/ui/AudioToggle';
+import VOReplayButton from '../../../lib/components/feedback/VOReplayButton';
 import useAudioPreference from '../../../lib/hooks/useAudioPreference';
 import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
 import { useGaneshaVoice } from '../../../lib/hooks/useGaneshaVoice';
@@ -482,6 +483,63 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     const { onEnd, moment = 'encouragement' } = options;
     speak(text, { age: 7, style: 'child', moment, onEnd });
   }, [isAudioOn, speak]);
+  const replayCurrentVoice = useCallback(() => {
+    if (sceneState.showingCompletionScreen) {
+      speakLine(VOICE_LINES.completionCelebration, { moment: 'celebration' });
+      return;
+    }
+
+    switch (sceneState.gamePhase) {
+      case 'intro':
+        setVoiceVolume(OPENING_VO_VOLUME);
+        playVoice('opening');
+        return;
+      case 'food-choice':
+        speakLine(VOICE_LINES.foodQuestion, { moment: 'thinking' });
+        return;
+      case 'color-choice':
+        speakLine(VOICE_LINES.colorQuestion, { moment: 'thinking' });
+        return;
+      case 'activity-choice':
+        speakLine(VOICE_LINES.activityQuestion, { moment: 'thinking' });
+        return;
+      case 'friend-choice':
+        speakLine(VOICE_LINES.friendQuestion, { moment: 'thinking' });
+        return;
+      case 'food-correct':
+        speakLine(VOICE_LINES.foodCorrect, { moment: 'celebration' });
+        return;
+      case 'color-correct':
+        speakLine(VOICE_LINES.colorCorrect, { moment: 'celebration' });
+        return;
+      case 'activity-correct':
+        speakLine(VOICE_LINES.activityCorrect, { moment: 'celebration' });
+        return;
+      case 'friend-correct':
+        speakLine(VOICE_LINES.friendCorrect, { moment: 'celebration' });
+        return;
+      case 'child-intro':
+        speakLine(VOICE_LINES.childIntro, { moment: 'encouragement' });
+        return;
+      case 'child-food-choice':
+        speakLine(VOICE_LINES.childFoodQuestion, { moment: 'thinking' });
+        return;
+      case 'child-color-choice':
+        speakLine(VOICE_LINES.childColorQuestion, { moment: 'thinking' });
+        return;
+      case 'child-activity-choice':
+        speakLine(VOICE_LINES.childActivityQuestion, { moment: 'thinking' });
+        return;
+      case 'child-friend-input':
+        speakLine(VOICE_LINES.childFriendQuestion, { moment: 'thinking' });
+        return;
+      case 'comparison-card':
+        speakLine(VOICE_LINES.friendCelebration, { moment: 'celebration' });
+        return;
+      default:
+        break;
+    }
+  }, [VOICE_LINES, playVoice, sceneState.gamePhase, sceneState.showingCompletionScreen, setVoiceVolume, speakLine]);
   const interruptCurrentVoice = useCallback(() => {
     stopVoice();
     stopSpokenVoice();

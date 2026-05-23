@@ -17,6 +17,7 @@ import OpeningModal from '../../shared/components/OpeningModal';
 import HomeButton from '../../../lib/components/ui/HomeButton';
 import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
 import AudioToggle from '../../../lib/components/ui/AudioToggle';
+import VOReplayButton from '../../../lib/components/feedback/VOReplayButton';
 import useAudioPreference from '../../../lib/hooks/useAudioPreference';
 import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
 import { useGaneshaVoice } from '../../../lib/hooks/useGaneshaVoice';
@@ -560,6 +561,20 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
         return null;
     }
   }, [VOICE_LINES, sceneState.dreamRevealed]);
+  const replayCurrentVoice = useCallback(() => {
+    if (sceneState.showingCompletionScreen) {
+      speakLine(VOICE_LINES.completionCelebration, { moment: 'celebration' });
+      return;
+    }
+    if (sceneState.gamePhase === 'intro') {
+      setVoiceVolume(isAudioOn ? OPENING_VO_VOLUME : 0);
+      playVoice('opening');
+      return;
+    }
+    const line = getResumeVoiceLine(sceneState.gamePhase) || getPhaseReminderLine(sceneState.gamePhase);
+    if (!line) return;
+    speakLine(line, { moment: sceneState.gamePhase === 'ending' ? 'closing' : 'encouragement' });
+  }, [VOICE_LINES.completionCelebration, getPhaseReminderLine, getResumeVoiceLine, isAudioOn, playVoice, sceneState.gamePhase, sceneState.showingCompletionScreen, setVoiceVolume]);
 
   const triggerMiniGesture = useCallback((target = 'center', durationMs = 1500) => {
     if (miniGestureTimerRef.current) {
@@ -1582,6 +1597,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       <HomeButton onNavigate={onNavigate} />
       <ZoneBadgeButton zoneId="about-me-hut" onBack={() => onNavigate?.('zone-welcome')} />
       <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
+      <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
 
       {/* Story Progress Header */}
       {!sceneState.gamePhase.startsWith('dream') &&

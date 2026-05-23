@@ -16,6 +16,7 @@ import { useGaneshaVoice } from '../../../lib/hooks/useGaneshaVoice';
 import HomeButton from '../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../lib/components/ui/AudioToggle/AudioToggle';
 import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
+import VOReplayButton from '../../../lib/components/feedback/VOReplayButton';
 import useAudioPreference from '../../../lib/hooks/useAudioPreference';
 import useResumeCountdown from '../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../lib/components/feedback/ResumeCountdown';
@@ -276,6 +277,39 @@ const FamilyTreeGameContent = ({
 
  // Web Speech API for idle hint VO (arbitrary text)
  const { speak: speakHint, stop: stopSpokenVoice } = useGaneshaVoice();
+ const replayCurrentVoice = useCallback(() => {
+ if (!isAudioOn) return;
+ if (sceneState.showingCompletionScreen) {
+ speakHint(FINAL_VO.completion, { age: 7, style: 'child', moment: 'celebration' });
+ return;
+ }
+ if (sceneState.gamePhase === 'intro') {
+ const welcomeScript = getVoiceScript('about-me-hut', 'family-tree', 'welcome');
+ if (welcomeScript?.text) speakHint(welcomeScript.text, { age: 7, style: 'child', moment: 'encouragement' });
+ else playVoice('welcome');
+ return;
+ }
+ if (sceneState.gamePhase === 'ganeshaTree') {
+ if (sceneState.flippedMember) {
+ speakHint('Tap anywhere to close.', { age: 7, style: 'child', moment: 'encouragement' });
+ } else {
+ playVoice('tapCircle');
+ }
+ return;
+ }
+ if (sceneState.gamePhase === 'transition') {
+ const transitionScript = getVoiceScript('about-me-hut', 'family-tree', 'transition');
+ speakHint(transitionScript?.text || 'Show me your family!', { age: 7, style: 'child', moment: 'encouragement' });
+ return;
+ }
+ if (sceneState.gamePhase === 'childInput') {
+ playVoice('childStart');
+ return;
+ }
+ if (sceneState.gamePhase === 'sideBySide') {
+ speakHint(FINAL_VO.comparison, { age: 7, style: 'child', moment: 'celebration' });
+ }
+ }, [isAudioOn, playVoice, sceneState.flippedMember, sceneState.gamePhase, sceneState.showingCompletionScreen, speakHint]);
 
  // Audio toggle no syllable/word game audio here, stopVoice() is safe on toggle-off
  const handleAudioToggle = () => {
@@ -1422,6 +1456,7 @@ const FamilyTreeGameContent = ({
  <HomeButton onNavigate={onNavigate} />
  <ZoneBadgeButton zoneId="about-me-hut" onBack={() => { onNavigate?.('zone-welcome') || onBack?.(); }} />
  <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
+ <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
 
  {showVoiceOffPill && (
  <div className="voice-off-pill">
