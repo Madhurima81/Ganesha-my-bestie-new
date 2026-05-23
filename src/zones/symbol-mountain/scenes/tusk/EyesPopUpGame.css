@@ -1,93 +1,269 @@
+/* zones/symbol-mountain/scenes/symbol/EyesPopUpGame.css */
+/* 🎯 Eyes Pop-Up Game — clamp() responsive sizing, no media queries */
+
 .eyes-popup-game {
   position: absolute;
   inset: 0;
-  z-index: 30;
-  pointer-events: auto;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
 }
+
+.eyes-popup-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.eyes-popup-layer-back { z-index: 1; }
+.eyes-popup-layer-back-rocks { z-index: 2; }
+.eyes-popup-layer-middle { z-index: 6; }
+.eyes-popup-layer-front { z-index: 9; }
+
+.eyes-popup-zone-hint {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.25) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 4;
+  animation: eyes-zone-pulse 2s ease-in-out infinite;
+}
+
+.eyes-popup-debug-panel {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 120;
+  display: flex;
+  gap: 6px;
+  background: rgba(20, 20, 20, 0.5);
+  padding: 6px;
+  border-radius: 8px;
+}
+
+.eyes-popup-debug-panel button {
+  border: 0;
+  background: #ffffff;
+  color: #222;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.eyes-popup-debug-dot {
+  z-index: 130 !important;
+  cursor: grab;
+  touch-action: none;
+}
+
+.eyes-popup-debug-dot:active {
+  cursor: grabbing;
+}
+
+
+/* ─── Hidden Animals ─── */
 
 .eyes-popup-animal {
   position: absolute;
-  transform: translate(-50%, -50%);
-  width: clamp(64px, 9vw, 124px);
-  border: 0;
-  background: transparent;
+  width: clamp(60px, 9vw, 110px);
+  height: clamp(60px, 9vw, 110px);
+  transform: translate(-50%, -50%) scale(var(--animal-scale, 1));
+  transition: opacity 1100ms ease-in-out, transform 700ms ease-out, filter 700ms ease-out;
+  pointer-events: auto;
   cursor: pointer;
-  opacity: var(--animal-opacity, 0.15);
-  transition: opacity 260ms ease, transform 260ms ease, filter 260ms ease;
-  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  z-index: 8;
+}
+
+.eyes-popup-animal.depth-behind-middle {
+  z-index: 5;
+}
+
+.eyes-popup-animal.depth-behind-front {
+  z-index: 7;
+}
+
+.eyes-popup-animal.depth-between-middle-front {
+  z-index: 8;
+}
+
+.eyes-popup-animal.depth-front-show {
+  z-index: 12;
 }
 
 .eyes-popup-animal img {
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
   display: block;
-  user-select: none;
+}
+
+.eyes-popup-animal.popped {
+  animation: eyes-popup-emerge 900ms ease-out;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.4));
+}
+
+.eyes-popup-animal.discovered {
+  animation: eyes-popup-discover 600ms ease-out;
   pointer-events: none;
 }
 
-.eyes-popup-animal.is-popping {
-  transform: translate(-50%, -50%) scale(1.06);
+.eyes-popup-animal.hinting {
+  animation: eyes-popup-hint 1.4s ease-in-out infinite;
 }
 
-.eyes-popup-animal.is-hinted {
-  filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.9)) drop-shadow(0 0 14px rgba(255, 166, 0, 0.6));
+@keyframes eyes-popup-emerge {
+  0%   { transform: translate(-50%, -50%) scale(calc(var(--animal-scale, 1) * 0.95)); }
+  60%  { transform: translate(-50%, -50%) scale(calc(var(--animal-scale, 1) * 1.04)); }
+  100% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)); }
 }
 
-.eyes-popup-animal.is-found {
-  opacity: 1;
-  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+@keyframes eyes-popup-discover {
+  0%   { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)); }
+  40%  { transform: translate(-50%, -50%) scale(calc(var(--animal-scale, 1) * 1.25)); filter: drop-shadow(0 0 12px #FFD700); }
+  100% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)); filter: drop-shadow(0 0 0 transparent); }
 }
 
-.eyes-popup-sparkle,
+@keyframes eyes-popup-hint {
+  0%, 100% { filter: drop-shadow(0 0 4px #FFD700); }
+  50%      { filter: drop-shadow(0 0 14px #FFD700); }
+}
+
+@keyframes eyes-zone-pulse {
+  0%, 100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+/* ─── Sparkle after discovery ─── */
+
+.eyes-popup-sparkle {
+  position: absolute;
+  inset: -10%;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255, 215, 0, 0.8) 0%, transparent 8%),
+    radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.7) 0%, transparent 6%),
+    radial-gradient(circle at 70% 80%, rgba(255, 215, 0, 0.8) 0%, transparent 7%),
+    radial-gradient(circle at 30% 70%, rgba(255, 215, 0, 0.7) 0%, transparent 6%);
+  pointer-events: none;
+  animation: eyes-popup-sparkle-anim 1.2s ease-out forwards;
+}
+
+@keyframes eyes-popup-sparkle-anim {
+  0%   { opacity: 0; transform: scale(0.6); }
+  40%  { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(1.3); }
+}
+
+/* ─── Wrong-tap shimmer ─── */
+
 .eyes-popup-shimmer {
   position: absolute;
+  width: clamp(40px, 5vw, 60px);
+  height: clamp(40px, 5vw, 60px);
   transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.6) 0%, transparent 70%);
+  border-radius: 50%;
   pointer-events: none;
+  animation: eyes-popup-shimmer-anim 600ms ease-out forwards;
 }
 
-.eyes-popup-shimmer {
-  width: 36px;
-  height: 36px;
-  border-radius: 999px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 229, 140, 0.55) 35%, rgba(255, 194, 89, 0) 72%);
-  animation: eyesPopupShimmer 500ms ease-out forwards;
+@keyframes eyes-popup-shimmer-anim {
+  0%   { opacity: 0.9; transform: translate(-50%, -50%) scale(0.4); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.4); }
 }
 
-@keyframes eyesPopupShimmer {
-  from {
-    opacity: 0.9;
-    transform: translate(-50%, -50%) scale(0.5);
-  }
-  to {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(1.8);
-  }
-}
+/* ─── Bottom Tray (4 discovery slots) ─── */
 
-.eyes-popup-progress {
+.eyes-popup-tray {
   position: absolute;
-  bottom: clamp(14px, 2.2vw, 30px);
+  bottom: clamp(12px, 2.5vh, 24px);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 8px;
-  z-index: 35;
+  gap: clamp(8px, 1.5vw, 16px);
+  padding: clamp(8px, 1.5vh, 14px) clamp(14px, 2vw, 22px);
+  background: rgba(255, 248, 231, 0.85);
+  border: clamp(2px, 0.3vw, 3px) solid #FFD700;
+  border-radius: clamp(20px, 3vw, 32px);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 10;
+  pointer-events: none;
 }
 
 .eyes-popup-slot {
-  min-width: 72px;
-  padding: 7px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  background: rgba(0, 0, 0, 0.35);
-  color: rgba(255, 255, 255, 0.88);
-  font-size: 12px;
-  font-weight: 700;
-  text-align: center;
+  width: clamp(40px, 6vw, 64px);
+  height: clamp(40px, 6vw, 64px);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  border: clamp(2px, 0.3vw, 3px) solid #6A1B9A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 400ms ease-out;
+  overflow: hidden;
 }
 
-.eyes-popup-slot.is-filled {
-  border-color: rgba(255, 214, 92, 0.85);
-  background: rgba(255, 200, 80, 0.25);
-  color: #fff9df;
+.eyes-popup-slot.filled {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA726 100%);
+  border-color: #FF5722;
+  animation: eyes-popup-slot-fill 600ms ease-out;
+}
+
+.eyes-popup-slot img {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+}
+
+.eyes-popup-slot-q {
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(20px, 3vw, 32px);
+  font-weight: 700;
+  color: #6A1B9A;
+  opacity: 0.5;
+}
+
+@keyframes eyes-popup-slot-fill {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+/* ─── Counter ─── */
+
+.eyes-popup-counter {
+  position: absolute;
+  top: clamp(12px, 2vh, 22px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: clamp(6px, 1vh, 10px) clamp(14px, 2vw, 22px);
+  background: rgba(106, 27, 154, 0.85);
+  color: white;
+  border-radius: clamp(16px, 2.5vw, 24px);
+  font-family: 'Baloo 2', cursive;
+  font-weight: 500;
+  font-size: clamp(13px, 1.8vw, 18px);
+  letter-spacing: 0.5px;
+  z-index: 10;
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.eyes-popup-counter span {
+  color: #FFD700;
+  font-weight: 700;
+  margin: 0 2px;
 }
