@@ -41,6 +41,7 @@ import AudioToggle from '../../../../lib/components/ui/AudioToggle';
 import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
 import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../../lib/components/feedback/ResumeCountdown';
+import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 
 // UI Components
 import CulturalCelebrationModal from '../../../../lib/components/progress/CulturalCelebrationModal';
@@ -414,6 +415,10 @@ const PondSceneContent = ({
       moment: key === 'complete' ? 'celebration' : 'encouragement'
     });
   }, [isAudioOn, speak]);
+  const replayCurrentVoice = useCallback(() => {
+    const replayKey = getPromptKeyForPhase();
+    if (replayKey) speakPondPrompt(replayKey);
+  }, [getPromptKeyForPhase, speakPondPrompt]);
 
   const getPromptKeyForPhase = useCallback(() => {
     if (!sceneState?.welcomeShown) return 'opening';
@@ -1999,6 +2004,10 @@ const PondSceneContent = ({
 
       <ZoneBadgeButton zoneId="symbol-mountain" onBack={() => onNavigate?.('zone-welcome')} />
       <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
+      <VOReplayButton
+        onReplay={replayCurrentVoice}
+        disabled={!isAudioOn || !getPromptKeyForPhase()}
+      />
       {/* 3-2-1 resume countdown — renders on top of everything when child returns to tab */}
       <ResumeCountdown value={countdownValue} />
     </GameLayout>

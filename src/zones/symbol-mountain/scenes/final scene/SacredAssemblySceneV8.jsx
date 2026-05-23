@@ -15,6 +15,7 @@ import SceneCompletionCelebration from '../../../../lib/components/celebration/S
 import HomeButton from '../../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
+import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 import RotatingOrbsEffect from '../../../../lib/components/feedback/RotatingOrbsEffect';
 import ZoneCompletionFireworks from '../../../../lib/components/feedback/ZoneCompletionFireworks';
 // import SimpleGameCoach, { SimpleGameCoachConfigs } from '../../../../lib/components/coach/SimpleGameCoach'; // COMMENTED OUT
@@ -1520,6 +1521,10 @@ const SacredAssemblyContent = ({
           <HomeButton onNavigate={onNavigate} />
           <ZoneBadgeButton zoneId="symbol-mountain" onBack={() => onNavigate?.('zone-welcome')} />
           <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
+          <VOReplayButton
+            onReplay={replayVoiceForCurrentPhase}
+            disabled={!isAudioOn}
+          />
 
           <OpeningModal
             zoneId={zoneId}
