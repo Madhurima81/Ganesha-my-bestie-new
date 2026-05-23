@@ -62,11 +62,6 @@ import mountainBackground from '../tusk/assets/images/rock-background.webp';
 import ganeshaCharacter from './assets/images/ganesha-character.webp';
 
 // Symbol Icons
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.png';
-import symbolModakColored from '../../shared/images/icons/symbol-modak-new.png';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.png';
-import symbolLotusColored from '../../shared/images/icons/symbol-lotus-new.png';
-import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new.png';
 import symbolEyesColored from '../../shared/images/icons/symbol-eyes-new.png';
 import symbolEarColored from '../../shared/images/icons/symbol-ears-new.png';
 import symbolTuskColored from '../../shared/images/icons/broken-tusk-symbol.png';
@@ -111,7 +106,7 @@ class ErrorBoundary extends React.Component {
     super(props);
     this.state = { hasError: false };
   }
-  static getDerivedStateFromError(error) { return { hasError: true }; }
+  static getDerivedStateFromError() { return { hasError: true }; }
   componentDidCatch(error, errorInfo) { console.error("Error:", error, errorInfo); }
   render() {
     if (this.state.hasError) return <button onClick={() => window.location.reload()}>Reload Scene</button>;
@@ -255,7 +250,7 @@ const SymbolMountainSceneContent = ({
   const wasAudioOnRef = useRef(isAudioOn);
 
   // ── Voice guidance (music + SFX enabled) ─────────────────────────────────
-  const { startMusic, stopMusic, playTap, playCorrect, playPowerUnlock } = useVoiceGuidance(
+  const { startMusic, stopMusic, playCorrect, playPowerUnlock } = useVoiceGuidance(
     zoneId, sceneId, { enableMusic: true, musicVolume: 0.1, voiceVolume: 1, sfxVolume: 0.7, idleTimeout: 20 }
   );
   useEffect(() => {
@@ -337,6 +332,7 @@ const SymbolMountainSceneContent = ({
     sceneState?.discoveredSymbols?.eyes,
     sceneState?.earsVisible,
     sceneState?.ganeshaComplete,
+    isTuskGameVisible,
     sceneState?.phase,
     sceneState?.showEarsRhythmGame,
     sceneState?.showEyesTelescopeGame,
@@ -487,6 +483,7 @@ const SymbolMountainSceneContent = ({
     sceneState?.earsVisible,
     sceneState?.showTuskAssemblyGame,
     sceneState?.ganeshaComplete,
+    isTuskGameVisible,
     sceneState?.discoveredSymbols?.eyes,
     sceneState?.discoveredSymbols?.ears,
     
@@ -577,22 +574,9 @@ const SymbolMountainSceneContent = ({
       return;
     }
 
-    let message = "";
-    if (sceneState.phase === PHASES.EYES_GAME) {
-      message = "Look closely and find what is hidden!";
-    } else if (sceneState.phase === PHASES.EARS_GAME) {
-      message = "Listen carefully and match the sounds!";
-    } else if (sceneState.phase === PHASES.TUSK_GAME) {
-      message = "Clear the path to reveal the tusk!";
-    } else if (sceneState.phase === PHASES.ALL_COMPLETE) {
+    if (sceneState.phase === PHASES.ALL_COMPLETE) {
       setShowSceneCompletion(true);
       return;
-    }
-
-    if (message) {
-      setResumeMessage(message);
-      setShowResumePopup(true);
-      resumePopupTimeoutRef.current = setTimeout(() => setShowResumePopup(false), 5000);
     }
 
   }, [isReload, sceneState.phase, sceneState.welcomeShown, sceneState.showEyesTelescopeGame, sceneState.showEarsRhythmGame, sceneState.showTuskAssemblyGame]);
