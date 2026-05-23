@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eyes Spot Picker</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      color: #222;
+    }
+    .wrap {
+      max-width: 1200px;
+      margin: 16px auto;
+      padding: 0 12px;
+    }
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    button, select {
+      padding: 8px 10px;
+      border: 1px solid #bbb;
+      border-radius: 8px;
+      background: #fff;
+      cursor: pointer;
+    }
+    .stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #ddd center/cover no-repeat;
+      border: 1px solid #bbb;
+      border-radius: 10px;
+      overflow: hidden;
+      user-select: none;
+    }
+    .bg-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+    .layer-back { z-index: 1; }
+    .layer-mid { z-index: 30; }
+    .layer-front { z-index: 70; }
+    .marker {
+      position: absolute;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 0, 0, 0.7);
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+      z-index: 90;
+    }
+    .animal {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      opacity: 0.9;
+      z-index: 95;
+    }
+    .status {
+      margin: 8px 0;
+      font-size: 13px;
+      color: #444;
+    }
+    .legend {
+      margin-top: 10px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    textarea {
+      width: 100%;
+      height: 180px;
+      margin-top: 10px;
+      border: 1px solid #bbb;
+      border-radius: 8px;
+      padding: 10px;
+      font-family: Consolas, monospace;
+      font-size: 13px;
+      resize: vertical;
+      box-sizing: border-box;
+      background: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <button id="addSpot">Add Spot</button>
+      <button id="undoSpot">Undo Spot</button>
+      <button id="clearSpots">Clear Spots</button>
+      <select id="animalPicker">
+        <option value="peacock">Peacock</option>
+        <option value="monkey">Monkey</option>
+        <option value="elephant">Elephant</option>
+        <option value="cow">Cow</option>
+      </select>
+      <button id="placeAnimal">Place Animal</button>
+      <button id="clearAnimals">Clear Animals</button>
+      <button id="exportJson">Export HIDE_SPOTS JSON</button>
+      <button id="copyJson">Copy JSON</button>
+    </div>
+
+    <div id="stage" class="stage" title="Click to place spots or animals">
+      <img class="bg-layer layer-back" src="./symbolmtn_bg-back.png" alt="" />
+      <img class="bg-layer layer-back" src="./symbolmtn_back-rocks.png" alt="" />
+      <img class="bg-layer layer-mid" src="./symbolmtn_middle-rocks.png" alt="" />
+      <img class="bg-layer layer-front" src="./symbolmtn_front-rocks.png" alt="" />
+    </div>
+    <div id="status" class="status">Mode: none | Spots: 0 | Animals: 0</div>
+
+    <div class="legend">
+      1. Click <b>Add Spot</b>, then click on scene to create numbered spots.<br />
+      2. Click <b>Place Animal</b>, pick animal, then click scene to preview positions.<br />
+      3. Export and paste into `HIDE_SPOTS` in `EyesPopUpGame.jsx`.
+    </div>
+
+    <textarea id="output" placeholder="Exported JSON appears here..."></textarea>
+  </div>
+
+  <script>
+    const stage = document.getElementById('stage');
+    const output = document.getElementById('output');
+    const statusEl = document.getElementById('status');
+    const animalPicker = document.getElementById('animalPicker');
+
+    const animals = {
+      peacock: { src: './peacock-new.png', w: 120 },
+      monkey: { src: './monkey-new.png', w: 95 },
+      elephant: { src: './elephant-new1.png', w: 120 },
+      cow: { src: './cow-new.png', w: 110 }
+    };
+
+    let mode = null; // 'spot' | 'animal'
+    const spots = [];
+    const placedAnimals = [];
+
+    function toPercent(clientX, clientY) {
+      const r = stage.getBoundingClientRect();
+      const x = ((clientX - r.left) / r.width) * 100;
+      const y = ((clientY - r.top) / r.height) * 100;
+      return { x: Number(x.toFixed(2)), y: Number(y.toFixed(2)) };
+    }
+
+    function updateStatus() {
+      statusEl.textContent = `Mode: ${mode || 'none'} | Spots: ${spots.length} | Animals: ${placedAnimals.length}`;
+    }
+
+    function render() {
+      stage.querySelectorAll('.marker,.animal').forEach((el) => el.remove());
+
+      spots.forEach((s, i) => {
+        const dot = document.createElement('div');
+        dot.className = 'marker';
+        dot.style.left = s.x + '%';
+        dot.style.top = s.y + '%';
+        dot.textContent = i + 1;
+        stage.appendChild(dot);
+      });
+
+      placedAnimals.forEach((a) => {
+        const img = document.createElement('img');
+        img.className = 'animal';
+        img.src = animals[a.type].src;
+        img.style.left = a.x + '%';
+        img.style.top = a.y + '%';
+        img.style.width = animals[a.type].w + 'px';
+        img.alt = a.type;
+        stage.appendChild(img);
+      });
+      updateStatus();
+    }
+
+    stage.addEventListener('click', (e) => {
+      if (!mode) return;
+      const p = toPercent(e.clientX, e.clientY);
+
+      if (mode === 'spot') {
+        spots.push({ id: `spot${spots.length + 1}`, x: p.x, y: p.y, allowed: ['peacock', 'monkey', 'elephant', 'cow'] });
+      } else if (mode === 'animal') {
+        placedAnimals.push({ type: animalPicker.value, x: p.x, y: p.y });
+      }
+      render();
+    });
+
+    document.getElementById('addSpot').onclick = () => { mode = 'spot'; updateStatus(); };
+    document.getElementById('placeAnimal').onclick = () => { mode = 'animal'; updateStatus(); };
+    document.getElementById('undoSpot').onclick = () => { spots.pop(); render(); };
+    document.getElementById('clearSpots').onclick = () => { spots.length = 0; render(); };
+    document.getElementById('clearAnimals').onclick = () => { placedAnimals.length = 0; render(); };
+
+    document.getElementById('exportJson').onclick = () => {
+      output.value = JSON.stringify(spots, null, 2);
+    };
+
+    document.getElementById('copyJson').onclick = async () => {
+      if (!output.value.trim()) return;
+      try {
+        await navigator.clipboard.writeText(output.value);
+      } catch (_) {}
+    };
+
+    render();
+  </script>
+</body>
+</html>
