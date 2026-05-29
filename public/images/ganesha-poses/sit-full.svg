@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="512"
+     height="512"
+     viewBox="0 0 135.46666 135.46667"
+     role="img"
+     aria-label="Interactive Ganesha illustration">
+  <defs>
+    <style>
+      .interactive-zone {
+        fill: rgba(255, 255, 255, 0.001);
+        stroke: none;
+        pointer-events: all;
+      }
+    </style>
+  </defs>
+
+  <!-- Stable visual source -->
+  <image href="/images/ganesha-sit.svg"
+         x="0"
+         y="0"
+         width="135.46666"
+         height="135.46667"
+         preserveAspectRatio="xMidYMid meet" />
+
+  <!-- Clean interactive hotspots (no transforms, verified IDs) -->
+  <ellipse id="ganesha-eyes" class="interactive-zone"
+           cx="68.0" cy="44.0" rx="13.5" ry="6.0" />
+
+  <ellipse id="ganesha-ears" class="interactive-zone"
+           cx="83.8" cy="37.8" rx="12.0" ry="10.5" />
+
+  <ellipse id="ganesha-trunk" class="interactive-zone"
+           cx="68.0" cy="54.5" rx="7.4" ry="13.5" />
+
+  <ellipse id="ganesha-tusk" class="interactive-zone"
+           cx="58.8" cy="53.2" rx="5.8" ry="8.0" />
+
+  <ellipse id="ganesha-modaks" class="interactive-zone"
+           cx="82.2" cy="54.8" rx="8.6" ry="8.6" />
+
+  <ellipse id="ganesha-lotus-pink" class="interactive-zone"
+           cx="99.3" cy="49.8" rx="8.3" ry="10.0" />
+
+  <ellipse id="ganesha-belly" class="interactive-zone"
+           cx="68.0" cy="65.5" rx="19.0" ry="12.5" />
+
+  <ellipse id="ganesha-mooshika" class="interactive-zone"
+           cx="116.0" cy="66.0" rx="6.5" ry="4.6" />
+</svg>
