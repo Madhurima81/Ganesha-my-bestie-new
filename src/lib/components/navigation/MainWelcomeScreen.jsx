@@ -188,38 +188,35 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
   return (
     <div ref={containerRef} className="main-welcome-container">
       {/* TWINKLING STARS */}
-      <div className="twinkle-stars" aria-hidden="true">
+      {/* <div className="twinkle-stars" aria-hidden="true">
         <span/><span/><span/><span/><span/><span/>
         <span/><span/><span/><span/><span/><span/>
-      </div>
+      </div> */}
 
       {/* FLOATING GOLDEN LIGHT PARTICLES */}
-      <div className="floating-lights" aria-hidden="true">
+      {/* <div className="floating-lights" aria-hidden="true">
         <span/><span/><span/><span/><span/>
-      </div>
+      </div> */}
 
       {/* ATMOSPHERIC OVERLAY — center lift + edge depth */}
-      <div className="welcome-bg-overlay" aria-hidden="true" />
+      {/* <div className="welcome-bg-overlay" aria-hidden="true" /> */}
 
       {/* CINEMATIC VIGNETTE */}
-      <div className="welcome-vignette" aria-hidden="true" />
+      {/* <div className="welcome-vignette" aria-hidden="true" /> */}
 
       {/* TITLE TEXT */}
       <div className={`welcome-title-container ${showButton ? 'visible' : ''}`}>
         <div className="welcome-title-wrapper">
           <h1 className="welcome-title">Ganesha My Bestie</h1>
-          <svg className="lotus-divider" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 4c1.2 2 1.2 4 0 6-1.2-2-1.2-4 0-6zm-5 3c1.8 1 2.8 2.8 3 5-2.2-.2-4-1.2-5-3 .5-.8 1.2-1.5 2-2zm10 0c.8.5 1.5 1.2 2 2-1 1.8-2.8 2.8-5 3 .2-2.2 1.2-4 3-5zM3 12c2-.5 4 0 5.5 1.3C6.8 14.8 4.8 15.2 3 14.5c-.1-.8-.1-1.6 0-2.5zm18 0c.1.9.1 1.7 0 2.5-1.8.7-3.8.3-5.5-1.2C17 12 19 11.5 21 12zm-9 2c1.6 0 3 1 3.5 2.5-1.1 1-2.4 1.5-3.5 1.5s-2.4-.5-3.5-1.5C9 15 10.4 14 12 14z" fill="#c77dd6"/>
-          </svg>
         </div>
       </div>
       
       {/* GANESHA VIDEO */}
       <div className={`welcome-ganesha-image-container ${showButton ? 'visible' : ''}`}>
         <div className="ganesha-wrap">
+          {/* poster prop intentionally disabled: poster="/images/ganesha-hi-stand.png" */}
           <video
             className="welcome-ganesha-video"
-            poster="/images/ganesha-hi-stand.png"
             autoPlay
             loop
             muted
