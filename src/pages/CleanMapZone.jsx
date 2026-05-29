@@ -2,13 +2,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './CleanMapZone.css';
 import GameStateManager from '../lib/services/GameStateManager';
-import GaneshaPresence from '../lib/components/character/GaneshaPresence';
+import { GANESHA_POSE_ASSETS } from '../lib/config/ganeshaUsageSystem';
 // import ZonePreviewModal from './components/ZonePreviewModal'; // commented out — no preview modal
 
 const ZONES_DATA = [
   {
     id: 'symbol-mountain',
-    name: 'Symbol\nMountain',
+    name: 'Modak\nMountain',
     sequence: 1,
     unlockRequires: null,
     unlockNote: null, // always unlocked first
@@ -21,7 +21,7 @@ const ZONES_DATA = [
   },
   {
     id: 'cave-of-secrets',
-    name: 'Cave of Secrets',
+    name: 'Wonder Caves',
     sequence: 1,
     unlockRequires: 'shloka-river',
     unlockNote: 'Complete Shloka River',
@@ -50,7 +50,7 @@ const ZONES_DATA = [
   },
   {
     id: 'festival-square',
-    name: 'Festival\nSquare',
+    name: 'Lotus\nSquare',
     sequence: 1,
     unlockRequires: 'cave-of-secrets',
     unlockNote: 'Complete Cave of Secrets',
@@ -63,8 +63,17 @@ const ZONES_DATA = [
     ]
   },
   {
+    id: 'story-treehouse',
+    name: 'Tusk\nTreehouse',
+    sequence: 1,
+    unlockRequires: 'festival-square',
+    unlockNote: 'Coming soon',
+    comingSoon: true,
+    scenes: []
+  },
+  {
     id: 'about-me-hut',
-    name: 'About Me Hut',
+    name: "Mooshika's Hut",
     sequence: 1,
     unlockRequires: 'symbol-mountain',
     unlockNote: 'Complete 2 Symbol Mountain scenes',
@@ -82,6 +91,7 @@ const ZONE_IDS = {
   RIVER: 'shloka-river',
   HUT: 'about-me-hut',
   FESTIVAL: 'festival-square',
+  TREEHOUSE: 'story-treehouse',
   CAVE: 'cave-of-secrets',
 };
 
@@ -126,6 +136,7 @@ const isZoneUnlocked = (zoneId, allProgress) => {
   if (zoneId === ZONE_IDS.HUT) return getCompletedScenes(allProgress, ZONE_IDS.SYMBOL) >= 2;
   if (zoneId === ZONE_IDS.CAVE) return isZoneComplete(allProgress, ZONE_IDS.RIVER);
   if (zoneId === ZONE_IDS.FESTIVAL) return isZoneComplete(allProgress, ZONE_IDS.CAVE);
+  if (zoneId === ZONE_IDS.TREEHOUSE) return false;
   return true;
 };
 
@@ -237,10 +248,11 @@ const playZoneClickSfx = (zoneState = 'active', muted = false) => {
 // Values are CSS fixed-position coordinates (% of viewport).
 const ZONE_MUSHIKA_POS = {
   'symbol-mountain': { left: '21%',  top:    '36%'  },
-  'cave-of-secrets': { left: '40%',  top:    '42%'  },
+  'cave-of-secrets': { right: '10%', bottom: '18%'  },
   'shloka-river':    { right: '19%', top:    '38%'  },
   'festival-square': { right: '17%', bottom: '30%'  },
   'about-me-hut':    { left: '14%',  bottom: '32%'  },
+  'story-treehouse': { left: '40%',  bottom: '40%'  },
 };
 
 // Zone layout config: tap area + label position classes
@@ -270,6 +282,11 @@ const ZONE_LAYOUT = {
     zoneClass:    'zone about-hut',
     labelClass:   'label hut-label',
   },
+  'story-treehouse': {
+    wrapperClass: 'zone-wrapper treehouse-wrapper',
+    zoneClass:    'zone tusk-treehouse',
+    labelClass:   'label treehouse-label',
+  },
 };
 
 const MAP_ZONE_ORDER = [
@@ -278,6 +295,7 @@ const MAP_ZONE_ORDER = [
   'cave-of-secrets',
   'festival-square',
   'about-me-hut',
+  'story-treehouse',
 ];
 
 const MAP_GANESHA_ZONE_POS = {
@@ -286,6 +304,7 @@ const MAP_GANESHA_ZONE_POS = {
   'shloka-river': { left: '66%', top: '44%' },
   'festival-square': { left: '69%', top: '67%' },
   'about-me-hut': { left: '28%', top: '70%' },
+  'story-treehouse': { left: '43%', top: '58%' },
 };
 
 const MAP_GANESHA_ALL_DONE_POS = {
@@ -393,6 +412,12 @@ const getMapGaneshaState = (allProgress, unlockingZones) => {
       transform: 'translate(-50%, -50%)',
     },
   };
+};
+
+const getMainMapGaneshaAsset = (pose, isWalking) => {
+  if (isWalking) return GANESHA_POSE_ASSETS.standPoint;
+  if (pose === 'celebration') return GANESHA_POSE_ASSETS.celebrate;
+  return GANESHA_POSE_ASSETS.standPoint;
 };
 
 const getMushikaSeenKey = (zoneId) => {
@@ -1036,10 +1061,16 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
 
       {/* Background image */}
       <img
-        src="/images/map-background.svg"
+        src="/images/map/map-bg1.png"
         alt="Map"
         className="map-bg-img"
       />
+      <img src="/images/map/symbolmtn1.png" alt="" className="map-zone-art map-zone-art-symbol" aria-hidden="true" />
+      <img src="/images/map/river1.png" alt="" className="map-zone-art map-zone-art-river" aria-hidden="true" />
+      <img src="/images/map/cave1.png" alt="" className="map-zone-art map-zone-art-cave" aria-hidden="true" />
+      <img src="/images/map/abtmehut1.png" alt="" className="map-zone-art map-zone-art-hut" aria-hidden="true" />
+      <img src="/images/map/festivalsq1.png" alt="" className="map-zone-art map-zone-art-festival" aria-hidden="true" />
+      <img src="/images/map/treehouse1.png" alt="" className="map-zone-art map-zone-art-treehouse" aria-hidden="true" />
 
       {/* Drifting clouds — CSS shapes, no image needed */}
 
@@ -1144,10 +1175,14 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
           aria-hidden="true"
         >
           <div className="map-ganesha-guide__float">
-            <GaneshaPresence
-              pose={isGaneshaWalking ? 'walking' : mapGaneshaState.pose}
-              size={mapGaneshaState.size}
-              breathing={mapGaneshaState.pose === 'celebration' ? 'slow' : 'gentle'}
+            <img
+              src={getMainMapGaneshaAsset(mapGaneshaState.pose, isGaneshaWalking)}
+              alt=""
+              style={{
+                width: mapGaneshaState.size,
+                height: mapGaneshaState.size,
+                objectFit: 'contain',
+              }}
             />
           </div>
         </div>
@@ -1161,7 +1196,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
             <span className="map-profile-avatar">
               {animalId ? (
                 <img
-                  src={`/images/new-explorer-${animalId}.png`}
+                  src={`/images/new-explorer-${animalId}.webp`}
                   alt={activeProfile.name}
                   className="map-profile-avatar-img"
                   onError={(e) => { e.target.style.display = 'none'; }}

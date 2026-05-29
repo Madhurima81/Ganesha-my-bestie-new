@@ -20,7 +20,7 @@
   width: 200%;
   height: 200%;
   transform: translate(-50%, -50%);
-  object-fit: cover;
+  object-fit: contain;
   z-index: 1;
   pointer-events: none;
   /* 200% scale + centered = only the original zone area (centre of canvas) shows;
@@ -287,9 +287,9 @@
   position: absolute;
   font-family: 'Baloo 2', 'Nunito', sans-serif;
   font-weight: 800;
-  letter-spacing: 1.5px;
-  color: #5c3ea6;
-  text-shadow: 0 2px 8px rgba(255, 255, 255, 0.7);
+  letter-spacing: 1px;
+  color: #6b56b3;
+  text-shadow: 0 1px 4px rgba(255, 255, 255, 0.45);
   line-height: 1.2;
   text-align: center;
   pointer-events: auto;
@@ -393,8 +393,10 @@
 }
 
 .cave-label {
-  top: 29%;
-  left: 36%;
+  top: auto;
+  left: auto;
+  bottom: 16%;
+  right: 6%;
   font-size: clamp(22px, 2.6vw, 50px);
 }
 
@@ -405,15 +407,23 @@
 }
 
 .festival-label {
-  bottom: 22%;
-  right: 14%;
+  bottom: 14%;
+  left: 8%;
+  right: auto;
   font-size: clamp(24px, 2.8vw, 52px);
 }
 
 .hut-label {
-  bottom: 28%;
-  left: 8%;
+  bottom: 38%;
+  left: auto;
+  right: 4%;
   font-size: clamp(22px, 2.6vw, 50px);
+}
+
+.treehouse-label {
+  bottom: 41%;
+  left: 37%;
+  font-size: clamp(20px, 2.3vw, 44px);
 }
 
 /* =====================================================================
@@ -464,6 +474,71 @@
   left: 3%;
   width: 30%;
   height: 34%;
+}
+
+.tusk-treehouse {
+  bottom: 30%;
+  left: 34%;
+  width: 24%;
+  height: 24%;
+}
+
+/* =========================
+   ZONE ART LAYERS — PNGs sitting on bg
+   Positioned to match each tap zone above.
+   Tap areas remain on top (invisible) and handle clicks.
+========================= */
+.map-zone-art {
+  position: absolute;
+  pointer-events: none;
+  object-fit: contain;
+  z-index: 3;
+}
+
+.map-zone-art-symbol {
+  top: 15%;
+  left: 8%;
+  width: 32%;
+  height: 34%;
+}
+
+.map-zone-art-river {
+  left: 50%;
+  top: 50%;
+  width: 200%;
+  height: 200%;
+  transform: translate(-50%, -50%);
+}
+
+.map-zone-art-cave {
+  top: auto;
+  left: auto;
+  bottom: 8%;
+  right: 6%;
+  width: 28%;
+  height: 26%;
+}
+
+.map-zone-art-hut {
+  bottom: 32%;
+  left: auto;
+  right: 1% !important;
+  width: 32%;
+  height: 36%;
+}
+
+.map-zone-art-festival {
+  bottom: 6%;
+  left: 1%;
+  width: 30%;
+  height: 30%;
+}
+
+.map-zone-art-treehouse {
+  bottom: 32%;
+  left: 32%;
+  width: 22%;
+  height: 26%;
 }
 
 /* =========================
@@ -747,6 +822,7 @@
   .river-label           { top: 10%; right: 12%; font-size: 20px; }
   .festival-label        { bottom: 20%; right: 12%; font-size: 18px; }
   .hut-label             { bottom: 26%; left: 7%; font-size: 18px; }
+  .treehouse-label       { bottom: 38%; left: 36%; font-size: 18px; }
   .fun-zone-gate         { width: 200px; }
 }
 
@@ -757,6 +833,7 @@
   .river-label           { top: 10%; right: 8%; font-size: 13px; }
   .festival-label        { bottom: 18%; right: 8%; font-size: 12px; }
   .hut-label             { bottom: 24%; left: 4%; font-size: 12px; }
+  .treehouse-label       { bottom: 36%; left: 34%; font-size: 12px; }
   .fun-zone-gate         { width: 130px; bottom: 10%; right: 5%; }
   .map-back-button       { font-size: 14px; padding: 8px 16px; top: 12px; left: 12px; }
 
@@ -881,6 +958,7 @@
   .river-label           { font-size: 12px; }
   .festival-label        { font-size: 11px; }
   .hut-label             { font-size: 11px; }
+  .treehouse-label       { font-size: 11px; }
   .fun-zone-gate         { width: 110px; }
   .map-back-button       { font-size: 12px; padding: 6px 14px; }
 }
