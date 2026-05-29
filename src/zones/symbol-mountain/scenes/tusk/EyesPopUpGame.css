@@ -29,10 +29,10 @@
   position: absolute;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 215, 0, 0.25) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.18) 0%, transparent 72%);
   pointer-events: none;
   z-index: 4;
-  animation: eyes-zone-pulse 2s ease-in-out infinite;
+  animation: eyes-zone-pulse 2.6s ease-in-out infinite;
 }
 
 .eyes-popup-debug-panel {
@@ -77,12 +77,18 @@
   height: clamp(60px, 9vw, 110px);
   transform: translate(-50%, -50%) scale(var(--animal-scale, 1));
   transition: opacity 1100ms ease-in-out, transform 700ms ease-out, filter 700ms ease-out;
+  animation: eyes-popup-breath 3s ease-in-out infinite;
   pointer-events: auto;
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
   z-index: 8;
+}
+
+@keyframes eyes-popup-breath {
+  0%, 100% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)); }
+  50% { transform: translate(-50%, -50%) scale(calc(var(--animal-scale, 1) * 1.02)); }
 }
 
 .eyes-popup-animal.depth-behind-middle {
@@ -120,7 +126,7 @@
 }
 
 .eyes-popup-animal.hinting {
-  animation: eyes-popup-hint 1.4s ease-in-out infinite;
+  animation: eyes-popup-hint 2.1s ease-in-out infinite;
 }
 
 @keyframes eyes-popup-emerge {
@@ -136,13 +142,13 @@
 }
 
 @keyframes eyes-popup-hint {
-  0%, 100% { filter: drop-shadow(0 0 4px #FFD700); }
-  50%      { filter: drop-shadow(0 0 14px #FFD700); }
+  0%, 100% { filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.45)); }
+  50%      { filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.7)); }
 }
 
 @keyframes eyes-zone-pulse {
-  0%, 100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
-  50% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.1); }
+  0%, 100% { opacity: 0.28; transform: translate(-50%, -50%); }
+  50% { opacity: 0.62; transform: translate(-50%, -50%); }
 }
 
 /* ─── Sparkle after discovery ─── */

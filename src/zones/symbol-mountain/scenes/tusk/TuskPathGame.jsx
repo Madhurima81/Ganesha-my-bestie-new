@@ -1,9 +1,11 @@
 // zones/symbol-mountain/scenes/symbol/TuskPathGame.jsx
-// 🎯 Tusk Path Game — 4 animals clear 4 obstacles to reveal the sacred tusk
-// Lesson: "Even when the path was blocked, you did not quit."
+// 🎯 Tusk Path Game V4 — ONE boulder, 4 layers peeled in sequence
+// Order: peacock removes leaves → monkey removes moss → cow removes mud → elephant removes rock
+// Wrong animal = wobble. Lesson: don't quit, work together.
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './TuskPathGame.css';
+import { ANIMAL_SIZES } from './animalConfig';
 
 // Animals
 import peacockImg from '../tusk/assets/images/peacock-new.png';
@@ -11,86 +13,53 @@ import monkeyImg from '../tusk/assets/images/monkey-new.png';
 import elephantImg from '../tusk/assets/images/elephant-new1.png';
 import cowImg from '../tusk/assets/images/cow-new.png';
 
-// Obstacles
-import boulderImg from '../tusk/assets/images/obstacle-boulder.png';
-import boulderCrackedImg from '../tusk/assets/images/obstacle-boulder-cracked.png';
-import thornBushImg from '../tusk/assets/images/obstacle-thorn-bush.png';
-import leavesImg from '../tusk/assets/images/obstacle-leaves.png';
-import mudImg from '../tusk/assets/images/obstacle-mud.png';
-import steppingStonesImg from '../tusk/assets/images/obstacle-stepping-stones.png';
+// Obstacle layered states (single boulder, 5 visual states)
+import obstacleFull from '../tusk/assets/images/tusk-obstacle-full.png';
+import obstacleNoLeaves from '../tusk/assets/images/tusk-obstacle-no-leaves.png';
+import obstacleNoMoss from '../tusk/assets/images/tusk-obstacle-no-moss.png';
+import obstacleNoMud from '../tusk/assets/images/obstacle-boulder.png';
+import obstacleCleared from '../tusk/assets/images/obstacle-boulder-broken.png';
 
 // Final reveal
 import tuskImg from '../../shared/images/icons/broken-tusk-symbol.png';
 
-// VO paths
 const VO_PATHS = {
-  intro: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-tusk-intro.webm',
-  elephantHint: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-tusk-elephant.webm',
-  monkeyHint: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-tusk-monkey.webm',
-  peacockHint: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-tusk-peacock.webm',
-  cowHint: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-tusk-cow.webm',
-  finale: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-tusk-finale.webm'
+  intro: '/audio/vo-tusk-intro.webm',
+  elephantHint: '/audio/vo-tusk-elephant.webm',
+  monkeyHint: '/audio/vo-tusk-monkey.webm',
+  peacockHint: '/audio/vo-tusk-peacock.webm',
+  cowHint: '/audio/vo-tusk-cow.webm',
+  finale: '/audio/vo-tusk-finale.webm'
 };
 
 // ─────────────────────────────────────────────
-// CONFIG — 4 steps in order
+// CONFIG
 // ─────────────────────────────────────────────
 
-const STEPS = [
-  {
-    id: 'elephant',
-    animal: { img: elephantImg, name: 'Elephant', x: 12, y: 65 },
-    obstacle: {
-      x: 24, y: 65,
-      img: boulderImg,
-      imgProgress: boulderCrackedImg
-    },
-    tapsRequired: 2,
-    hintVo: VO_PATHS.elephantHint,
-    feedback: 'shake'
-  },
-  {
-    id: 'monkey',
-    animal: { img: monkeyImg, name: 'Monkey', x: 30, y: 67 },
-    obstacle: {
-      x: 42, y: 67,
-      img: thornBushImg
-    },
-    tapsRequired: 2,
-    hintVo: VO_PATHS.monkeyHint,
-    feedback: 'pluck'
-  },
-  {
-    id: 'peacock',
-    animal: { img: peacockImg, name: 'Peacock', x: 48, y: 63 },
-    obstacle: {
-      x: 60, y: 67,
-      img: leavesImg
-    },
-    tapsRequired: 1,
-    hintVo: VO_PATHS.peacockHint,
-    feedback: 'sweep'
-  },
-  {
-    id: 'cow',
-    animal: { img: cowImg, name: 'Cow', x: 66, y: 65 },
-    obstacle: {
-      x: 78, y: 67,
-      img: mudImg,
-      imgProgress: steppingStonesImg
-    },
-    tapsRequired: 1,
-    hintVo: VO_PATHS.cowHint,
-    feedback: 'walk'
-  }
+// Animal herd — positioned in front of the boulder
+const ANIMALS = [
+  { id: 'elephant', name: 'Elephant', img: elephantImg, x: 35, y: 76 },
+  { id: 'monkey',   name: 'Monkey',   img: monkeyImg,   x: 44, y: 78 },
+  { id: 'peacock',  name: 'Peacock',  img: peacockImg,  x: 56, y: 78 },
+  { id: 'cow',      name: 'Cow',      img: cowImg,      x: 65, y: 73 }
 ];
 
-const IDLE_HINT_MS = 6000;
-const IDLE_HINT_VO_MS = 12000;
+// Single boulder position
+const OBSTACLE_POSITION = { x: 50, y: 68 };
 
-// ─────────────────────────────────────────────
-// HELPERS
-// ─────────────────────────────────────────────
+// 4 layers — peeled in this order. Each step has its BEFORE image (current state)
+// and an animal that removes that layer.
+const LAYERS = [
+  { id: 'leaves', correctAnimal: 'peacock',  img: obstacleFull,     hintVo: VO_PATHS.peacockHint,  feedback: 'sweep' },
+  { id: 'moss',   correctAnimal: 'monkey',   img: obstacleNoLeaves, hintVo: VO_PATHS.monkeyHint,   feedback: 'pluck' },
+  { id: 'mud',    correctAnimal: 'cow',      img: obstacleNoMoss,   hintVo: VO_PATHS.cowHint,      feedback: 'walk'  },
+  { id: 'rock',   correctAnimal: 'elephant', img: obstacleNoMud,    hintVo: VO_PATHS.elephantHint, feedback: 'shake' }
+];
+
+// Image shown after ALL layers cleared (boulder gone)
+const FINAL_IMAGE = obstacleCleared;
+
+const IDLE_HINT_MS = 6000;
 
 const playAudio = (src, volume = 0.9) => {
   if (!src) return null;
@@ -99,9 +68,7 @@ const playAudio = (src, volume = 0.9) => {
     audio.volume = volume;
     audio.play().catch(() => {});
     return audio;
-  } catch (e) {
-    return null;
-  }
+  } catch (e) { return null; }
 };
 
 // ─────────────────────────────────────────────
@@ -110,171 +77,164 @@ const playAudio = (src, volume = 0.9) => {
 
 const TuskPathGame = ({
   isActive = true,
+  showObstacleOnly = false,
   onGameComplete,
   hideElements = false,
   className = ''
 }) => {
-  const [currentStep, setCurrentStep] = useState(0);   // 0..3
-  const [stepTaps, setStepTaps] = useState(0);          // taps within current step
-  const [cleared, setCleared] = useState(new Set());    // step ids done
-  const [feedbackKey, setFeedbackKey] = useState(0);    // bump to re-trigger CSS anim
+  const [currentLayerIdx, setCurrentLayerIdx] = useState(0); // 0..3, then 4 = all cleared
+  const [peeling, setPeeling] = useState(false);
+  const [wrongAnimal, setWrongAnimal] = useState(null);
+  const [leaningAnimal, setLeaningAnimal] = useState(null);
+  const [feedbackKey, setFeedbackKey] = useState(0);
   const [showIdleHint, setShowIdleHint] = useState(false);
-  const [idleHintStage, setIdleHintStage] = useState(0); // 0 none, 1 glow, 2 vo
   const [introShown, setIntroShown] = useState(false);
   const [showFinale, setShowFinale] = useState(false);
 
   const lastTapRef = useRef(Date.now());
   const idleTimerRef = useRef(null);
 
-  const step = STEPS[currentStep];
+  const currentLayer = LAYERS[currentLayerIdx];
+  const allCleared = currentLayerIdx >= LAYERS.length;
 
-  // Intro VO
   useEffect(() => {
     if (!isActive || introShown) return;
     setIntroShown(true);
     playAudio(VO_PATHS.intro);
   }, [isActive, introShown]);
 
-  // Idle hint: glow current obstacle after 6s
   useEffect(() => {
-    if (!isActive || showFinale) return;
-
+    if (!isActive || showFinale || peeling || allCleared) return;
     const check = () => {
-      const idleMs = Date.now() - lastTapRef.current;
-      if (idleMs >= IDLE_HINT_VO_MS && idleHintStage < 2) {
+      if (Date.now() - lastTapRef.current >= IDLE_HINT_MS) {
         setShowIdleHint(true);
-        setIdleHintStage(2);
-        if (step?.hintVo) playAudio(step.hintVo);
-      } else if (idleMs >= IDLE_HINT_MS && idleHintStage < 1) {
-        setShowIdleHint(true);
-        setIdleHintStage(1);
+        if (currentLayer?.hintVo) {
+          playAudio(currentLayer.hintVo);
+          lastTapRef.current = Date.now();
+        }
       }
     };
     idleTimerRef.current = setInterval(check, 1000);
     return () => clearInterval(idleTimerRef.current);
-  }, [isActive, currentStep, showFinale, idleHintStage, step]);
+  }, [isActive, currentLayerIdx, peeling, showFinale, currentLayer, allCleared]);
 
-  // Win condition
   useEffect(() => {
-    if (cleared.size === 4 && !showFinale) {
-      setShowFinale(true);
-      playAudio(VO_PATHS.finale);
+    if (!allCleared) return;
+    setShowFinale(true);
+    playAudio(VO_PATHS.finale);
+    const t = setTimeout(() => {
+      if (onGameComplete) {
+        onGameComplete({ layersCleared: LAYERS.length, totalCleared: 4 });
+      }
+    }, 3800);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allCleared]);
 
-      const t = setTimeout(() => {
-        if (onGameComplete) {
-          onGameComplete({
-            stepsCleared: Array.from(cleared),
-            totalCleared: 4
-          });
-        }
-      }, 3500);
-      return () => clearTimeout(t);
-    }
-  }, [cleared, showFinale, onGameComplete]);
-
-  const handleObstacleTap = useCallback((e) => {
+  const handleAnimalTap = useCallback((animalId, e) => {
     e?.stopPropagation();
-    if (!step || cleared.has(step.id) || showFinale) return;
+    if (!isActive) return;
+    if (!currentLayer || peeling || showFinale || allCleared) return;
 
     lastTapRef.current = Date.now();
     setShowIdleHint(false);
-    setIdleHintStage(0);
-    setFeedbackKey(k => k + 1);
 
-    const newTaps = stepTaps + 1;
-
-    if (newTaps >= step.tapsRequired) {
-      // Step complete
-      setStepTaps(0);
-      setCleared(prev => new Set([...prev, step.id]));
-
-      setTimeout(() => {
-        setCurrentStep(s => s + 1);
-      }, 900);
-    } else {
-      setStepTaps(newTaps);
+    if (animalId !== currentLayer.correctAnimal) {
+      setWrongAnimal(animalId);
+      setTimeout(() => setWrongAnimal(null), 700);
+      return;
     }
-  }, [step, stepTaps, cleared, showFinale]);
 
-  if (hideElements || !isActive) return null;
+    // Correct animal tapped — peel this layer
+    setFeedbackKey(k => k + 1);
+    setLeaningAnimal(animalId);
+    setTimeout(() => setLeaningAnimal(null), 500);
+
+    setPeeling(true);
+    setTimeout(() => {
+      setPeeling(false);
+      setCurrentLayerIdx(i => i + 1);
+    }, 900);
+  }, [currentLayer, peeling, showFinale, allCleared, isActive]);
+
+  if (hideElements || (!isActive && !showObstacleOnly)) return null;
+  const staticPreview = !isActive && showObstacleOnly;
+
+  // Which image to display on the boulder
+  // - During peel: show NEXT image (the reveal)
+  // - Normal: show current layer's image
+  // - All cleared: show final cleared image
+  let displayImg;
+  if (allCleared) {
+    displayImg = FINAL_IMAGE;
+  } else if (peeling) {
+    // Show the next layer's "before" image, which IS this layer's "after"
+    const nextIdx = currentLayerIdx + 1;
+    displayImg = nextIdx < LAYERS.length ? LAYERS[nextIdx].img : FINAL_IMAGE;
+  } else {
+    displayImg = currentLayer.img;
+  }
 
   return (
     <div className={`tusk-path-game ${className}`}>
 
-      {/* Render all 4 steps (animals + obstacles) — but only current is interactive */}
-      {STEPS.map((s, idx) => {
-        const isCleared = cleared.has(s.id);
-        const isCurrent = idx === currentStep && !showFinale;
-        const isFuture = idx > currentStep;
+      {/* Single boulder — image changes as layers peel */}
+      <div
+        key={`boulder-${feedbackKey}`}
+        className={`tusk-path-obstacle boulder active
+          ${peeling ? 'peeling' : ''}
+          ${peeling && currentLayerIdx === LAYERS.length - 1 ? 'final-reveal' : ''}
+          ${showIdleHint && !peeling ? 'hint' : ''}
+          ${!peeling && currentLayer ? `feedback-${currentLayer.feedback}` : ''}
+          ${allCleared ? 'cleared' : ''}`}
+        style={{ left: `${OBSTACLE_POSITION.x}%`, top: `${OBSTACLE_POSITION.y}%` }}
+      >
+        <img src={displayImg} alt="" draggable={false} />
+      </div>
 
-        // Determine obstacle image (progressive state for elephant/cow)
-        let obstacleImg = s.obstacle.img;
-        if (isCleared && s.obstacle.imgProgress) {
-          obstacleImg = s.obstacle.imgProgress;
-        } else if (isCurrent && s.id === 'elephant' && stepTaps === 1) {
-          obstacleImg = s.obstacle.imgProgress; // cracked after first tap
-        }
+      {/* Animal Herd — fixed position, no shifting (they stay in front of boulder) */}
+      {ANIMALS.map(animal => {
+        const isWrong = wrongAnimal === animal.id;
+        const isCorrect = currentLayer?.correctAnimal === animal.id;
+        const isHinted = showIdleHint && isCorrect && !peeling && !showFinale && !allCleared;
+        const isLeaning = leaningAnimal === animal.id;
 
         return (
-          <React.Fragment key={s.id}>
-            {/* Animal */}
-            <div
-              className={`tusk-path-animal ${isCurrent ? 'active' : ''} ${isCleared ? 'cleared' : ''}`}
-              style={{ left: `${s.animal.x}%`, top: `${s.animal.y}%` }}
-            >
-              <img src={s.animal.img} alt={s.animal.name} draggable={false} />
-            </div>
-
-            {/* Obstacle */}
-            {!isCleared || s.obstacle.imgProgress ? (
-              <div
-                key={`obstacle-${s.id}-${feedbackKey}`}
-                className={`tusk-path-obstacle ${s.id} ${isCurrent ? 'active' : ''} ${isCleared ? 'cleared' : ''} ${isCurrent && showIdleHint ? 'hint' : ''} ${isCurrent && stepTaps > 0 ? `feedback-${s.feedback}` : ''}`}
-                style={{ left: `${s.obstacle.x}%`, top: `${s.obstacle.y}%` }}
-                onClick={isCurrent ? handleObstacleTap : undefined}
-              >
-                <img src={obstacleImg} alt="" draggable={false} />
-              </div>
-            ) : null}
-          </React.Fragment>
+          <div
+            key={animal.id}
+            className={`tusk-path-animal ${staticPreview ? 'static-preview' : ''} ${isWrong ? 'wrong' : ''} ${isHinted ? 'hinted' : ''} ${isLeaning ? 'leaning' : ''} ${showFinale ? 'celebrate' : ''}`}
+            style={{
+              left: `${animal.x}%`,
+              top: `${animal.y}%`,
+              '--animal-scale': ANIMAL_SIZES[animal.id] || 1
+            }}
+            onClick={staticPreview ? undefined : (e) => handleAnimalTap(animal.id, e)}
+          >
+            <img src={animal.img} alt={animal.name} draggable={false} />
+          </div>
         );
       })}
 
-      {/* Progress dots */}
-      <div className="tusk-path-progress">
-        {STEPS.map((s, idx) => (
+      {/* Progress dots — 4 layers */}
+      {!staticPreview && <div className="tusk-path-progress">
+        {LAYERS.map((layer, idx) => (
           <div
-            key={s.id}
-            className={`tusk-path-dot ${cleared.has(s.id) ? 'done' : ''} ${idx === currentStep && !showFinale ? 'current' : ''}`}
+            key={layer.id}
+            className={`tusk-path-dot ${idx < currentLayerIdx ? 'done' : ''} ${idx === currentLayerIdx && !showFinale ? 'current' : ''}`}
           />
         ))}
-      </div>
+      </div>}
 
       {/* Counter */}
-      <div className="tusk-path-counter">
-        Path: <span>{cleared.size}</span> / 4
-      </div>
+      {!staticPreview && <div className="tusk-path-counter">
+        Path: <span>{Math.min(currentLayerIdx, 4)}</span> / 4
+      </div>}
 
-      {/* Tap counter (within current step, only if >1 tap needed) */}
-      {step && step.tapsRequired > 1 && stepTaps > 0 && stepTaps < step.tapsRequired && !showFinale && (
-        <div className="tusk-path-tap-hint">
-          Keep going! ({stepTaps}/{step.tapsRequired})
-        </div>
-      )}
-
-      {/* Finale: glowing tusk reveal */}
-      {showFinale && (
+      {/* Finale */}
+      {!staticPreview && showFinale && (
         <div className="tusk-path-finale">
           <div className="tusk-path-finale-glow" />
-          <img
-            src={tuskImg}
-            alt="Sacred Tusk"
-            className="tusk-path-finale-tusk"
-            draggable={false}
-          />
-          <div className="tusk-path-finale-text">
-            You did not quit.
-          </div>
+          <img src={tuskImg} alt="Sacred Tusk" className="tusk-path-finale-tusk" draggable={false} />
         </div>
       )}
     </div>

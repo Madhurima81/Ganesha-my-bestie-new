@@ -13,12 +13,13 @@
   position: absolute;
   width: clamp(80px, 11vw, 130px);
   height: clamp(80px, 11vw, 130px);
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(var(--animal-scale, 1));
   cursor: default;
   user-select: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
   transition: transform 250ms ease-out, filter 250ms ease-out;
+  animation: ears-sound-breath 2.4s ease-in-out infinite;
 }
 
 .ears-sound-animal img {
@@ -31,15 +32,14 @@
 
 .ears-sound-animal.tappable {
   cursor: pointer;
-  animation: ears-sound-breath 2.4s ease-in-out infinite;
 }
 
 .ears-sound-animal.tappable:hover {
-  transform: translate(-50%, -50%) scale(1.05);
+  transform: translate(-50%, -50%) scale(var(--animal-scale, 1));
 }
 
 .ears-sound-animal.wrong {
-  animation: ears-sound-wobble 700ms ease-in-out;
+  animation: ears-sound-wobble 950ms ease-in-out;
 }
 
 .ears-sound-animal.matched {
@@ -49,32 +49,31 @@
 }
 
 .ears-sound-animal.idle-hint {
-  animation: ears-sound-idle-hint 0.95s ease-in-out infinite;
-  filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.95));
+  animation: ears-sound-idle-hint 1.7s ease-in-out infinite;
 }
 
 @keyframes ears-sound-breath {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); }
-  50% { transform: translate(-50%, -50%) scale(1.02); }
+  0%, 100% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)); }
+  50% { transform: translate(-50%, -50%) scale(calc(var(--animal-scale, 1) * 1.02)); }
 }
 
 @keyframes ears-sound-wobble {
-  0%, 100% { transform: translate(-50%, -50%) rotate(0); }
-  20% { transform: translate(-50%, -50%) translateX(-6px) rotate(-4deg); }
-  40% { transform: translate(-50%, -50%) translateX(6px) rotate(4deg); }
-  60% { transform: translate(-50%, -50%) translateX(-4px) rotate(-3deg); }
-  80% { transform: translate(-50%, -50%) translateX(4px) rotate(3deg); }
+  0%, 100% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) rotate(0); }
+  20% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) translateX(-3px) rotate(-1.8deg); }
+  40% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) translateX(3px) rotate(1.8deg); }
+  60% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) translateX(-2px) rotate(-1.2deg); }
+  80% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) translateX(2px) rotate(1.2deg); }
 }
 
 @keyframes ears-sound-bounce {
-  0% { transform: translate(-50%, -50%) scale(1); }
-  40% { transform: translate(-50%, -50%) scale(1.25); }
-  100% { transform: translate(-50%, -50%) scale(1); }
+  0% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)); }
+  40% { transform: translate(-50%, -50%) scale(calc(var(--animal-scale, 1) * 1.25)); }
+  100% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)); }
 }
 
 @keyframes ears-sound-idle-hint {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); }
-  50% { transform: translate(-50%, -50%) scale(1.14); }
+  0%, 100% { filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.38)); }
+  50% { filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.62)); }
 }
 
 .ears-sound-checkmark {
@@ -131,10 +130,10 @@
 }
 
 .ears-sound-replay:hover {
-  transform: translateX(-50%) scale(1.05);
+  transform: translateX(-50%);
   box-shadow: 0 4px 14px rgba(255, 87, 34, 0.5);
 }
 
 .ears-sound-replay:active {
-  transform: translateX(-50%) scale(0.96);
+  transform: translateX(-50%);
 }

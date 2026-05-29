@@ -1829,6 +1829,23 @@
   50% { transform: translateY(-8px) scale(1.05); opacity: 0.9; }
 }
 
+
+.symbol-test-tusk-btn {
+  position: absolute;
+  top: 64px;
+  left: 12px;
+  z-index: 20;
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #2b1d3a;
+  background: #ffd54f;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
 /* Tusk drag pointer hint (idle level 3) */
 .symbol-tusk-drag-pointer-overlay {
   position: absolute;

@@ -1,5 +1,5 @@
-/* zones/symbol-mountain/scenes/symbol/TuskPathGame.css */
-/* 🎯 Tusk Path Game V2 — herd + single obstacle */
+﻿/* zones/symbol-mountain/scenes/symbol/TuskPathGame.css */
+/* ðŸŽ¯ Tusk Path Game V2 â€” herd + single obstacle */
 
 .tusk-path-game {
   position: absolute;
@@ -10,19 +10,27 @@
   font-family: 'Nunito', sans-serif;
 }
 
-/* ─── Animal Herd ─── */
+/* â”€â”€â”€ Animal Herd â”€â”€â”€ */
+
+/* â”€â”€â”€ Animal Herd â”€â”€â”€ */
 
 .tusk-path-animal {
   position: absolute;
+  z-index: 5;
   width: clamp(70px, 9vw, 110px);
   height: clamp(70px, 9vw, 110px);
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(var(--animal-scale, 1));
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
-  transition: transform 300ms ease-out, filter 400ms ease-out;
+  /* `left` transition = herd slide between obstacles */
+  transition: left 800ms ease-out, transform 300ms ease-out, filter 400ms ease-out;
   animation: tusk-animal-breath 3s ease-in-out infinite;
+}
+
+.tusk-path-animal.static-preview {
+  cursor: default;
 }
 
 .tusk-path-animal img {
@@ -34,7 +42,7 @@
 }
 
 .tusk-path-animal:hover {
-  transform: translate(-50%, -50%) scale(1.06);
+  transform: translate(-50%, -50%) scale(calc(var(--animal-scale, 1) * 1.06));
 }
 
 .tusk-path-animal.wrong {
@@ -43,7 +51,6 @@
 
 .tusk-path-animal.hinted {
   filter: drop-shadow(0 0 14px #FFD700);
-  animation: tusk-animal-bob 1.2s ease-in-out infinite;
 }
 
 .tusk-path-animal.celebrate {
@@ -51,39 +58,63 @@
 }
 
 @keyframes tusk-animal-breath {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); }
-  50%      { transform: translate(-50%, -50%) scale(1.03); }
+  0%, 100% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)); }
+  50%      { transform: translate(-50%, -50%) scale(calc(var(--animal-scale, 1) * 1.03)); }
 }
 
 @keyframes tusk-animal-wobble {
-  0%, 100% { transform: translate(-50%, -50%) rotate(0); }
-  20%      { transform: translate(-50%, -50%) translateX(-6px) rotate(-4deg); }
-  40%      { transform: translate(-50%, -50%) translateX(6px) rotate(4deg); }
-  60%      { transform: translate(-50%, -50%) translateX(-4px) rotate(-3deg); }
-  80%      { transform: translate(-50%, -50%) translateX(4px) rotate(3deg); }
+  0%, 100% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) rotate(0); }
+  20%      { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) translateX(-6px) rotate(-4deg); }
+  40%      { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) translateX(6px) rotate(4deg); }
+  60%      { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) translateX(-4px) rotate(-3deg); }
+  80%      { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) translateX(4px) rotate(3deg); }
 }
 
 @keyframes tusk-animal-bob {
-  0%, 100% { transform: translate(-50%, -50%) translateY(0); }
-  50%      { transform: translate(-50%, -50%) translateY(-6px); }
+  0%, 100% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) translateY(0); }
+  50%      { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) translateY(-6px); }
 }
 
 @keyframes tusk-animal-celebrate {
-  0%, 100% { transform: translate(-50%, -50%) translateY(0) rotate(0); }
-  25%      { transform: translate(-50%, -50%) translateY(-8px) rotate(-3deg); }
-  75%      { transform: translate(-50%, -50%) translateY(-8px) rotate(3deg); }
+  0%, 100% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) translateY(0) rotate(0); }
+  25%      { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) translateY(-8px) rotate(-3deg); }
+  75%      { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) translateY(-8px) rotate(3deg); }
 }
 
-/* ─── Obstacle ─── */
+/* Lean forward when correctly tapped */
+.tusk-path-animal.leaning {
+  animation: tusk-animal-lean 500ms ease-out;
+}
+
+@keyframes tusk-animal-lean {
+  0%   { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)); }
+  40%  { transform: translate(calc(-50% + 18px), -50%) scale(calc(var(--animal-scale, 1) * 1.08)); }
+  100% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)); }
+}
+
+/* â”€â”€â”€ Obstacles â”€â”€â”€ */
 
 .tusk-path-obstacle {
   position: absolute;
-  width: clamp(100px, 14vw, 160px);
-  height: clamp(100px, 14vw, 160px);
+  z-index: 2;
   transform: translate(-50%, -50%);
   pointer-events: none;
   user-select: none;
-  transition: opacity 600ms ease-out, transform 600ms ease-out;
+  transition: opacity 600ms ease-out, transform 600ms ease-out, filter 600ms ease-out;
+}
+
+/* Active blocking obstacle = full size */
+.tusk-path-obstacle.active {
+  width: clamp(160px, 22vw, 260px);
+  height: clamp(160px, 22vw, 260px);
+}
+
+/* Cleared evidence = smaller, slightly dimmed, sits in path */
+.tusk-path-obstacle.cleared-evidence {
+  width: clamp(80px, 12vw, 140px);
+  height: clamp(80px, 12vw, 140px);
+  opacity: 0.75;
+  filter: saturate(0.85);
 }
 
 .tusk-path-obstacle img {
@@ -93,8 +124,20 @@
   display: block;
 }
 
+/* Crumble animation when active obstacle clears (image swap + scale down) */
+.tusk-path-obstacle.active.crumbling {
+  animation: tusk-obstacle-crumble 900ms ease-out forwards;
+}
+
+@keyframes tusk-obstacle-crumble {
+  0%   { transform: translate(-50%, -50%) scale(1); }
+  30%  { transform: translate(-50%, -50%) scale(0.9) rotate(-2deg); }
+  60%  { transform: translate(-50%, -50%) scale(0.55) rotate(2deg); }
+  100% { transform: translate(-50%, -50%) scale(0.6); }
+}
+
 /* Idle hint glow */
-.tusk-path-obstacle.hint {
+.tusk-path-obstacle.active.hint {
   animation: tusk-obstacle-hint 1.4s ease-in-out infinite;
 }
 
@@ -103,9 +146,20 @@
   50%      { filter: drop-shadow(0 0 16px #FFD700); }
 }
 
-/* ─── Per-step feedback animations (when correct animal tapped) ─── */
+/* Final reveal — sparkle glow when elephant peels the last rock layer */
+.tusk-path-obstacle.boulder.final-reveal {
+  animation: tusk-final-sparkle 900ms ease-out;
+}
 
-.tusk-path-obstacle.feedback-shake {
+@keyframes tusk-final-sparkle {
+  0%   { filter: drop-shadow(0 0 0 #FFD700); }
+  50%  { filter: drop-shadow(0 0 24px #FFD700) brightness(1.3); }
+  100% { filter: drop-shadow(0 0 0 #FFD700); }
+}
+
+/* â”€â”€â”€ Per-tap feedback animations â”€â”€â”€ */
+
+.tusk-path-obstacle.active.feedback-shake {
   animation: tusk-fb-shake 450ms ease-in-out;
 }
 @keyframes tusk-fb-shake {
@@ -114,70 +168,34 @@
   75%      { transform: translate(-50%, -50%) translateX(8px) rotate(3deg); }
 }
 
-.tusk-path-obstacle.feedback-pluck {
+.tusk-path-obstacle.active.feedback-pluck {
   animation: tusk-fb-pluck 450ms ease-out;
 }
 @keyframes tusk-fb-pluck {
   0%   { transform: translate(-50%, -50%) scale(1); }
-  50%  { transform: translate(-50%, -50%) scale(0.9) rotate(-4deg); }
+  50%  { transform: translate(-50%, -50%) scale(0.95) rotate(-2deg); }
   100% { transform: translate(-50%, -50%) scale(1); }
 }
 
-.tusk-path-obstacle.feedback-sweep {
+.tusk-path-obstacle.active.feedback-sweep {
   animation: tusk-fb-sweep 500ms ease-out;
 }
 @keyframes tusk-fb-sweep {
   0%   { transform: translate(-50%, -50%); }
-  50%  { transform: translate(-50%, -50%) translateX(20px) rotate(6deg); }
+  50%  { transform: translate(-50%, -50%) translateX(10px) rotate(3deg); }
   100% { transform: translate(-50%, -50%); }
 }
 
-.tusk-path-obstacle.feedback-walk {
+.tusk-path-obstacle.active.feedback-walk {
   animation: tusk-fb-walk 500ms ease-out;
 }
 @keyframes tusk-fb-walk {
   0%   { transform: translate(-50%, -50%); }
-  50%  { transform: translate(-50%, -50%) scale(1.05) translateY(-4px); }
+  50%  { transform: translate(-50%, -50%) scale(1.04) translateY(-3px); }
   100% { transform: translate(-50%, -50%); }
 }
 
-/* ─── Clear animations (when obstacle fully cleared) ─── */
-
-.tusk-path-obstacle.clearing.slide-off {
-  animation: tusk-clear-slide 1s ease-in forwards;
-}
-@keyframes tusk-clear-slide {
-  0%   { transform: translate(-50%, -50%) rotate(0); opacity: 1; }
-  100% { transform: translate(calc(-50% + 140px), calc(-50% + 30px)) rotate(45deg); opacity: 0; }
-}
-
-.tusk-path-obstacle.clearing.fade-shrink {
-  animation: tusk-clear-shrink 1s ease-out forwards;
-}
-@keyframes tusk-clear-shrink {
-  0%   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-  100% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
-}
-
-.tusk-path-obstacle.clearing.blow-away {
-  animation: tusk-clear-blow 1s ease-out forwards;
-}
-@keyframes tusk-clear-blow {
-  0%   { transform: translate(-50%, -50%) rotate(0); opacity: 1; }
-  50%  { transform: translate(calc(-50% + 60px), calc(-50% - 20px)) rotate(15deg); opacity: 0.6; }
-  100% { transform: translate(calc(-50% + 180px), calc(-50% - 80px)) rotate(35deg); opacity: 0; }
-}
-
-.tusk-path-obstacle.clearing.reveal-stones {
-  animation: tusk-clear-stones 1s ease-out forwards;
-}
-@keyframes tusk-clear-stones {
-  0%   { transform: translate(-50%, -50%) scale(1); filter: drop-shadow(0 0 0 transparent); }
-  50%  { transform: translate(-50%, -50%) scale(1.05); filter: drop-shadow(0 0 14px rgba(186, 104, 255, 0.8)); }
-  100% { transform: translate(-50%, -50%) scale(1); filter: drop-shadow(0 0 8px rgba(186, 104, 255, 0.6)); }
-}
-
-/* ─── Progress dots ─── */
+/* â”€â”€â”€ Progress dots â”€â”€â”€ */
 
 .tusk-path-progress {
   position: absolute;
@@ -212,7 +230,7 @@
   50%      { transform: scale(1.2); }
 }
 
-/* ─── Counter ─── */
+/* â”€â”€â”€ Counter â”€â”€â”€ */
 
 .tusk-path-counter {
   position: absolute;
@@ -239,7 +257,34 @@
   margin: 0 2px;
 }
 
-/* ─── Mid-step tap hint ─── */
+/* â”€â”€â”€ Tap progress bar (multi-tap obstacles) â”€â”€â”€ */
+
+.tusk-path-progress-bar {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: clamp(80px, 12vw, 140px);
+  height: clamp(4px, 0.5vh, 6px);
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
+  overflow: hidden;
+  z-index: 6;
+  pointer-events: none;
+  transition: opacity 400ms ease-out;
+}
+
+.tusk-path-progress-bar.completing {
+  opacity: 0;
+}
+
+.tusk-path-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #FFD700 0%, #FFA726 100%);
+  border-radius: 999px;
+  box-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
+  transition: width 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* â”€â”€â”€ Mid-step tap hint â”€â”€â”€ */
 
 .tusk-path-tap-hint {
   position: absolute;
@@ -264,7 +309,7 @@
   50%      { transform: translateX(-50%) translateY(-3px); }
 }
 
-/* ─── Finale ─── */
+/* â”€â”€â”€ Finale â”€â”€â”€ */
 
 .tusk-path-finale {
   position: absolute;
@@ -333,3 +378,4 @@
   0%   { opacity: 0; transform: translateY(10px); }
   100% { opacity: 1; transform: translateY(0); }
 }
+

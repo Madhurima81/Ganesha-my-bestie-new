@@ -1,5 +1,5 @@
-// zones/symbol-mountain/scenes/symbol/EyesPopUpGame.jsx
-// 🎯 Eyes Pop-Up Game — discover 4 animals as they fade in/out from hidden spots
+﻿// zones/symbol-mountain/scenes/symbol/EyesPopUpGame.jsx
+// ðŸŽ¯ Eyes Pop-Up Game â€” discover 4 animals as they fade in/out from hidden spots
 // Replaces EyesTelescopeGame (magnifier mechanic)
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
@@ -14,8 +14,9 @@ import bgBackImg from './assets/images/symbolmtn_bg-back.png';
 import backRocksImg from './assets/images/symbolmtn_back-rocks.png';
 import middleRocksImg from './assets/images/symbolmtn_middle-rocks.png';
 import frontRocksImg from './assets/images/symbolmtn_front-rocks.png';
+import { ANIMAL_SIZES } from './animalConfig';
 
-// VO (add files as you get them — game will silently skip missing audio)
+// VO (add files as you get them â€” game will silently skip missing audio)
 const VO_PATHS = {
   peacock: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-peacock.webm',
   monkey: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-monkey.webm',
@@ -23,10 +24,17 @@ const VO_PATHS = {
   cow: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-cow.webm',
   intro: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-eyes-intro.webm'
 };
+const VO_TEXTS = {
+  intro: 'Look closely. Tap the animals when you see them.',
+  peacock: 'Peacock',
+  monkey: 'Monkey',
+  elephant: 'Elephant',
+  cow: 'Cow'
+};
 
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // CONFIG
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const ANIMALS = [
   { id: 'peacock', name: 'Peacock', img: peacockImg, vo: VO_PATHS.peacock },
@@ -41,7 +49,7 @@ const ANIMALS = [
 //   high spots (y < 60%) = flying / bird (peacock OK anywhere)
 //   peacock works in any spot
 const HIDE_SPOTS = [
-  // LEFT mountain — behind front rock
+  // LEFT mountain â€” behind front rock
   { id: 'spot1', x: 14, y: 50, zone: 'left-mountain', depth: 'behind-middle', revealOffsetX: 8, revealOffsetY: 5, allowed: ['peacock', 'monkey'] },
   { id: 'spot2', x: 8,  y: 72, zone: 'left-mountain', depth: 'behind-front', revealOffsetX: 10, revealOffsetY: 0, allowed: ['peacock', 'monkey', 'elephant', 'cow'] },
 
@@ -53,36 +61,29 @@ const HIDE_SPOTS = [
   { id: 'spot5', x: 65, y: 70, zone: 'right-bushes', depth: 'between-middle-front', revealOffsetX: -4, revealOffsetY: 4, allowed: ['peacock', 'monkey', 'cow'] },
   { id: 'spot6', x: 70, y: 78, zone: 'right-bushes', depth: 'between-middle-front', revealOffsetX: -5, revealOffsetY: 2, allowed: ['peacock', 'monkey', 'elephant', 'cow'] },
 
-  // RIGHT mountain — behind front rock
+  // RIGHT mountain â€” behind front rock
   { id: 'spot7', x: 90, y: 72, zone: 'right-mountain', depth: 'behind-front', revealOffsetX: -10, revealOffsetY: 0, allowed: ['peacock', 'monkey', 'elephant', 'cow'] },
   { id: 'spot8', x: 84, y: 50, zone: 'right-mountain', depth: 'behind-front', revealOffsetX: -8, revealOffsetY: 5, allowed: ['peacock', 'monkey'] }
-\];
+];
 const ZONES = {
   'left-mountain': { x: 12, y: 60, w: 18, h: 30 },
   'left-bushes': { x: 32, y: 75, w: 15, h: 20 },
   'right-bushes': { x: 68, y: 75, w: 15, h: 20 },
   'right-mountain': { x: 88, y: 60, w: 18, h: 30 }
 };
-const FADE_IN_OPACITY = 0.1;     // hidden-state opacity — silhouette stays visible
-const POP_OPACITY = 0.5;          // pre-click pop opacity (not fully visible)
+const FADE_IN_OPACITY = 0.35;    // hidden-state opacity â€” visible silhouette, partial hiding behind rocks does the rest
+const POP_OPACITY = 1.0;          // pre-click pop opacity
 const SHOW_OPACITY = 1.0;         // after discovery
-const POP_VISIBLE_MS = 2600;       // calmer window — noticing, not panic
+const POP_VISIBLE_MS = 2600;       // calmer window â€” noticing, not panic
 const POP_HIDDEN_MS = 900;         // gentle cooldown
 const IDLE_HINT_MS = 8000;         // glow an undiscovered animal after 8s
 const IDLE_ZONE_HINT_MS = 16000;   // glow hint zone after longer idle
 const IDLE_FULL_REVEAL_MS = 24000; // full reveal after long idle
 const SHOW_SPOT_DEBUG = false;     // set true only when tuning spot coordinates
 const SPOT_STORAGE_KEY = 'symbol_mountain_eyes_hide_spots_v1';
-const ANIMAL_SCALE = {
-  peacock: 1.0,
-  monkey: 0.9,
-  elephant: 1.2,
-  cow: 1.05
-};
-
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // HELPERS
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const shuffle = (arr) => {
   const copy = [...arr];
@@ -111,6 +112,8 @@ const getEffectiveSpots = (spotsSource) => {
     const baseAllowed = spot.allowed || [];
     const nextAllowed = baseAllowed.filter((id) => {
       if (id === 'cow' || id === 'elephant') return bottom4Ids.includes(spot.id);
+      // Keep monkey out of overly hidden mountain-edge spots.
+      if (id === 'monkey') return ['spot2', 'spot4', 'spot6', 'spot7'].includes(spot.id);
       return true;
     });
     return { ...spot, depth: normalizedDepth, allowed: nextAllowed };
@@ -133,18 +136,33 @@ const assignAnimalsToSpots = (spotsSource) => {
   return assignments;
 };
 
-const playAudio = (src) => {
-  if (!src) return;
+const speakFallback = (text) => {
+  if (!text || typeof window === 'undefined' || !window.speechSynthesis) return;
+  try {
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = 0.95;
+    u.pitch = 1;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  } catch {}
+};
+
+const playAudio = (src, fallbackText = '') => {
+  if (!src) {
+    speakFallback(fallbackText);
+    return;
+  }
   try {
     const audio = new Audio(src);
     audio.volume = 0.9;
-    audio.play().catch(() => {}); // silently skip if file missing
+    audio.onerror = () => speakFallback(fallbackText);
+    audio.play().catch(() => speakFallback(fallbackText));
   } catch (e) {}
 };
 
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // COMPONENT
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const EyesPopUpGame = ({
   isActive = true,
@@ -179,7 +197,7 @@ const EyesPopUpGame = ({
   useEffect(() => {
     if (!isActive || introShown) return;
     setIntroShown(true);
-    playAudio(VO_PATHS.intro);
+    playAudio(VO_PATHS.intro, VO_TEXTS.intro);
   }, [isActive, introShown]);
 
   // Pop cycle: pick an undiscovered animal, show it, hide it, repeat
@@ -276,7 +294,8 @@ const EyesPopUpGame = ({
   const handleAnimalTap = useCallback((animalId, e) => {
     e?.stopPropagation();
     if (discovered.has(animalId)) return;
-    if (animalId !== visibleAnimal && showFullReveal !== animalId) return; // allow full-reveal tap
+    // ðŸŽ¯ NEW FLOW: any animal is tappable anytime â€” no gating on visibility
+    // Pop cycle remains as a gentle "peekaboo" hint, not a gate
 
     lastTapTimeRef.current = Date.now();
     setShowIdleHint(null);
@@ -285,10 +304,9 @@ const EyesPopUpGame = ({
 
     // play that animal's name VO
     const found = assignments.find(a => a.animal.id === animalId);
-    if (found) playAudio(found.animal.vo);
+    if (found) playAudio(found.animal.vo, VO_TEXTS[found.animal.id]);
 
     setDiscovered(prev => new Set([...prev, animalId]));
-    setVisibleAnimal(null);
   }, [discovered, visibleAnimal, assignments, showFullReveal]);
 
   const handleSceneTap = useCallback((e) => {
@@ -457,12 +475,12 @@ const EyesPopUpGame = ({
         return (
           <div
             key={animal.id}
-            className={`eyes-popup-animal depth-${spot.depth || 'between-middle-front'} ${isDiscovered ? 'discovered' : ''} ${isVisible ? 'popped' : ''} ${isHinting ? 'hinting' : ''}`}
+            className={`eyes-popup-animal depth-${isDiscovered ? 'front-show' : (spot.depth || 'between-middle-front')} ${isDiscovered ? 'discovered' : ''} ${isVisible ? 'popped' : ''} ${isHinting ? 'hinting' : ''}`}
             style={{
               left: `${finalX}%`,
               top: `${finalY}%`,
               opacity,
-              '--animal-scale': ANIMAL_SCALE[animal.id] || 1
+              '--animal-scale': ANIMAL_SIZES[animal.id] || 1
             }}
             onClick={(e) => handleAnimalTap(animal.id, e)}
           >
@@ -484,7 +502,6 @@ const EyesPopUpGame = ({
 };
 
 export default EyesPopUpGame;
-
 
 
 
