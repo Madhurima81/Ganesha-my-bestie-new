@@ -9,7 +9,7 @@ import GameStateManager from '../../services/GameStateManager';
 import CulturalProgressExtractor from '../../services/CulturalProgressExtractor';
 import HomeButton from '../ui/HomeButton';
 import ProfileChip from '../navigation/ProfileChip';
-import GaneshaPresence from '../character/GaneshaPresence';
+import { GANESHA_POSE_ASSETS } from '../../config/ganeshaUsageSystem';
 
 
 //import ProgressManager from '../../services/ProgressManager';
@@ -34,6 +34,8 @@ const ZoneWelcome = ({
   onSceneSelect,      // Function to navigate to specific scene
   onNavigate          // General navigation function
 }) => {
+  const getZoneMapGaneshaAsset = (pose) =>
+    pose === 'celebration' ? GANESHA_POSE_ASSETS.celebrate : GANESHA_POSE_ASSETS.standPoint;
   const [sceneProgress, setSceneProgress] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [culturalData, setCulturalData] = useState(null); // ← ADD THIS LINE
@@ -42,6 +44,7 @@ const ZoneWelcome = ({
   // Tracks which scene whispers the child has heard — drives re-render to hide Ganesha
   const [heardWhispers, setHeardWhispers] = useState({});
   const [confetti, setConfetti] = useState([]);
+  const [activeCardPopSceneId, setActiveCardPopSceneId] = useState(null);
 
   console.log('🏔️ ZoneWelcome rendered for zone:', zoneData?.name);
 
@@ -700,23 +703,35 @@ const getPermanentCompletedCount = () => {
     const allDone = completedCount === zoneData.scenes.length;
 
     if (allDone) {
-      return { pose: 'celebration', slot: 'top', size: 122 };
+      const lastScene = zoneData.scenes.reduce((latest, scene) => {
+        if (!latest || (scene.order || 0) > (latest.order || 0)) return scene;
+        return latest;
+      }, null);
+      return { pose: 'celebration', activeSceneId: lastScene?.id, size: 66 };
     }
 
-    const nextPendingIndex = sceneStatuses.findIndex(
-      (entry) => entry.status !== 'completed'
+    const nextActive = sceneStatuses.find(
+      (entry) => entry.status === 'available' || entry.status === 'in-progress'
     );
-    const slot = nextPendingIndex >= 0 ? `scene-${nextPendingIndex + 1}` : 'scene-1';
-
-    if (completedCount === 0) {
-      return { pose: 'pointing', slot, size: 108 };
+    
+    // Only show Ganesha if whisper hasn't been heard yet for this scene.
+    if (!nextActive?.scene?.id || hasHeardWhisper(nextActive.scene.id)) {
+      return null;
     }
 
-    if (completedCount === 1) {
-      return { pose: 'thumbs_up', slot, size: 112 };
-    }
+    return {
+      pose: 'pointing',
+      activeSceneId: nextActive.scene.id,
+      size: 56
+    };
+  };
 
-    return { pose: 'okay', slot, size: 106 };
+  const triggerActiveCardGaneshaPop = (sceneId) => {
+    if (!sceneId || zoneWelcomeGaneshaState?.activeSceneId !== sceneId) return;
+    setActiveCardPopSceneId(sceneId);
+    window.setTimeout(() => {
+      setActiveCardPopSceneId((prev) => (prev === sceneId ? null : prev));
+    }, 800);
   };
 
   // ✅ MVP: Only scene 1 is playable in each zone — scenes 2+ are "Coming Soon"
@@ -812,6 +827,10 @@ const handleSceneClick = (scene, action = 'default') => {
   }
   
   console.log('🎯 DISNEY: Scene clicked:', scene.id, 'Action:', action);
+
+  if (zoneWelcomeGaneshaState?.activeSceneId === scene.id) {
+    markWhisperHeard(scene.id);
+  }
   
   // Handle specific actions from buttons
   switch (action) {
@@ -1012,18 +1031,6 @@ const handleReplayIntroStory = () => {
 
       {/* Scene Icons Grid */}
       <div className="zone-scenes-container cards-wrapper" data-zone={zoneData.id}>
-        {zoneWelcomeGaneshaState && (
-          <div
-            className={`zone-ganesha-presence zone-ganesha-presence--${zoneWelcomeGaneshaState.slot}`}
-            aria-hidden="true"
-          >
-            <GaneshaPresence
-              pose={zoneWelcomeGaneshaState.pose}
-              size={zoneWelcomeGaneshaState.size}
-              breathing={zoneWelcomeGaneshaState.pose === 'celebration' ? 'slow' : 'gentle'}
-            />
-          </div>
-        )}
         <div className="scenes-horizontal-container">
           {zoneData.scenes.map((scene, index) => {
             const status = getSceneStatus(scene);
@@ -1048,8 +1055,38 @@ const handleReplayIntroStory = () => {
                   '--zone-color': getCardAccentColor()
                 }}
                 onClick={() => handleSceneClick(scene)}
+                onMouseEnter={() => triggerActiveCardGaneshaPop(scene.id)}
+                onTouchStart={() => triggerActiveCardGaneshaPop(scene.id)}
               >
-              
+                {zoneWelcomeGaneshaState?.activeSceneId === scene.id && (
+                  <>
+                    <div className="zone-card-ganesha-badge" aria-hidden="true">
+                      <img
+                        src={getZoneMapGaneshaAsset(zoneWelcomeGaneshaState.pose)}
+                        alt=""
+                        style={{
+                          width: zoneWelcomeGaneshaState.size,
+                          height: zoneWelcomeGaneshaState.size,
+                          objectFit: 'contain',
+                        }}
+                      />
+                    </div>
+                    <div
+                      className={`zone-card-ganesha-pop ${activeCardPopSceneId === scene.id ? 'show' : ''}`}
+                      aria-hidden="true"
+                    >
+                      <img
+                        src={getZoneMapGaneshaAsset(zoneWelcomeGaneshaState.pose)}
+                        alt=""
+                        style={{
+                          width: zoneWelcomeGaneshaState.pose === 'celebration' ? 74 : 62,
+                          height: zoneWelcomeGaneshaState.pose === 'celebration' ? 74 : 62,
+                          objectFit: 'contain',
+                        }}
+                      />
+                    </div>
+                  </>
+                )}
 
                 {/* Order indicator */}
                 <div className="scene-order-indicator">
@@ -1127,6 +1164,7 @@ const handleReplayIntroStory = () => {
                           className="action-button-split zone-btn continue btn-continue"
                           onClick={(e) => {
                             e.stopPropagation();
+                            triggerActiveCardGaneshaPop(scene.id);
                             handleSceneClick(scene, 'continue');
                           }}
                         >
@@ -1137,6 +1175,7 @@ Continue
                           aria-label="Replay"
                           onClick={(e) => {
                             e.stopPropagation();
+                            triggerActiveCardGaneshaPop(scene.id);
                             handleSceneClick(scene, 'replay');
                           }}
                         >
@@ -1149,6 +1188,7 @@ Continue
                         onClick={(e) => {
                           e.stopPropagation();
                               console.log('Button clicked!', scene.id); // ✨ DEBUG LOG
+                          triggerActiveCardGaneshaPop(scene.id);
                           handleSceneClick(scene);
                         }}
                       >

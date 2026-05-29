@@ -32,22 +32,22 @@
 .bg-layer {
   position: absolute;
   inset: 0;
-  background-image: url('/images/map-background.svg');
-  background-repeat: no-repeat;
-  background-size: 200%;         /* 200% = full 2× canvas at 1:1 — same as main map */
-  background-position: 50% 50%;
+    background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
   z-index: 0;
-  transition: background-position 800ms ease, background-size 800ms ease;
+  transition: opacity 800ms ease;
 }
 
 /* ── Zone camera positions — 250% zooms in ~25% from main map view ──
    Positions reference where each zone sits on the 4116×3072 canvas.
    Fine-tune % values visually per zone. */
-.symbol-mountain .bg-layer { background-size: 250%; background-position: 35% 53%; }
-.cave-of-secrets .bg-layer { background-size: 300%; background-position: 30% 50%; }
-.shloka-river    .bg-layer { background-size: 300%; background-position: 50% 45%; }
-.festival-square .bg-layer { background-size: 400%; background-position: 75% 70%; }
-.about-me-hut    .bg-layer { background-size: 600%; background-position: 38% 62%; }
+.symbol-mountain .bg-layer { background-image: url('/images/modakmtn-bg.png'); }
+.cave-of-secrets .bg-layer { background-image: url('/images/cave-bg.png'); }
+.shloka-river    .bg-layer { background-image: url('/images/shlokariver-bg.png'); }
+.festival-square .bg-layer { background-image: url('/images/lotussquare-bg.png'); }
+.about-me-hut    .bg-layer { background-image: url('/images/hut-bg.png'); }
+.story-treehouse .bg-layer { background-image: url('/images/treehouse-bg.png'); }
 
 /* ── Subtle top tint — keeps zone title readable ── */
 .bg-layer::after {
@@ -61,6 +61,14 @@
     rgba(155, 123, 232, 0.04) 25%,
     transparent 50%
   );
+}
+
+.bg-layer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(2px);
 }
 
 /* Zone-specific tint overrides (5–8% opacity only) */
@@ -467,23 +475,20 @@
 
 /* New base card system */
 .zone-card {
-  border-radius: 18px;
+  border-radius: 0;
   padding: 6px;
-  background: linear-gradient(
-    145deg,
-    #fffcf4,
-    #faf0d8
-  );
-  box-shadow:
-    0 18px 40px rgba(0, 0, 0, 0.12),
-    0 6px 18px rgba(0, 0, 0, 0.08),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.8);
-  transition:
-    transform 0.1s ease,
-    box-shadow 0.1s ease,
-    filter 0.1s ease;
+  background: linear-gradient(145deg, #fffcf4, #faf0d8);
+  filter: drop-shadow(0 8px 14px rgba(60, 40, 20, 0.18));
+  transition: transform 0.1s ease, filter 0.1s ease;
   animation: floatSoft 6s ease-in-out infinite;
-  -webkit-tap-highlight-color: transparent;
+  -webkit-mask:
+    radial-gradient(circle 10px at top left, #0000 98%, #000 100%),
+    radial-gradient(circle 10px at top right, #0000 98%, #000 100%),
+    radial-gradient(circle 10px at bottom left, #0000 98%, #000 100%),
+    radial-gradient(circle 10px at bottom right, #0000 98%, #000 100%);
+  -webkit-mask-size: 51% 51%;
+  -webkit-mask-position: top left, top right, bottom left, bottom right;
+  -webkit-mask-repeat: no-repeat;
 }
 
 .zone-card:hover {
@@ -647,6 +652,15 @@
 .zone-scene-card.locked .scene-name {
   color: #c8b4ff;
   text-shadow: 0 0 8px rgba(200, 180, 255, 0.5);
+}
+
+.zone-scene-card.locked .scene-lock-stars {
+  display: none;
+}
+
+.zone-scene-card.locked .scene-lock-icon {
+  animation: none;
+  filter: none;
 }
 
 /* Action Buttons - Bottom */
@@ -1256,96 +1270,40 @@ button[style*="position: fixed"][style*="background: purple"] {
 /* =========================
    ZONE WELCOME GANESHA PRESENCE
 ========================= */
-.zone-ganesha-presence {
+.zone-card-ganesha-badge {
   position: absolute;
-  z-index: 4;
+  right: 8px;
+  top: -8px;
+  z-index: 7;
   pointer-events: none;
-  transform: translate(-50%, -50%);
-  animation: zoneGaneshaEntrance 0.6s cubic-bezier(0.22, 1, 0.36, 1) both,
-             zoneGaneshaFloat 3.5s ease-in-out 0.6s infinite;
-  filter: drop-shadow(0 4px 16px rgba(255, 200, 80, 0.4));
+  filter: drop-shadow(0 3px 10px rgba(255, 196, 88, 0.35));
+  animation: zoneCardGaneshaBadgeIn 240ms ease-out both;
 }
 
-.zone-ganesha-presence--top {
-  left: 18%;
-  top: 22%;
+.zone-card-ganesha-pop {
+  position: absolute;
+  right: -18px;
+  top: 34%;
+  z-index: 8;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px) scale(0.92);
 }
 
-.zone-ganesha-presence--scene-1 {
-  left: 40%;
-  top: 82%;
+.zone-card-ganesha-pop.show {
+  animation: zoneCardGaneshaPop 800ms ease-out both;
 }
 
-.zone-ganesha-presence--scene-2 {
-  left: 20%;
-  top: 56%;
+@keyframes zoneCardGaneshaBadgeIn {
+  from { opacity: 0; transform: translateY(6px) scale(0.9); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.zone-ganesha-presence--scene-3 {
-  left: 60%;
-  top: 56%;
-}
-
-.zone-ganesha-presence--scene-4 {
-  left: 34%;
-  top: 30%;
-}
-
-.zone-ganesha-presence--scene-5 {
-  left: 56%;
-  top: 35%;
-}
-
-.cave-of-secrets .zone-ganesha-presence--scene-1,
-.shloka-river .zone-ganesha-presence--scene-1 {
-  left: 12%;
-  top: 79%;
-}
-
-.cave-of-secrets .zone-ganesha-presence--scene-2,
-.shloka-river .zone-ganesha-presence--scene-2 {
-  left: 40%;
-  top: 79%;
-}
-
-.cave-of-secrets .zone-ganesha-presence--scene-3,
-.shloka-river .zone-ganesha-presence--scene-3 {
-  left: 68%;
-  top: 79%;
-}
-
-.cave-of-secrets .zone-ganesha-presence--scene-4,
-.shloka-river .zone-ganesha-presence--scene-4 {
-  left: 24%;
-  top: 35%;
-}
-
-.cave-of-secrets .zone-ganesha-presence--scene-5,
-.shloka-river .zone-ganesha-presence--scene-5 {
-  left: 56%;
-  top: 35%;
-}
-
-@keyframes zoneGaneshaEntrance {
-  from { opacity: 0; transform: scale(0.6) translateY(16px); }
-  to   { opacity: 1; transform: scale(1)   translateY(0px);  }
-}
-
-@keyframes zoneGaneshaFloat {
-  0%   { transform: translateY(0px);  }
-  50%  { transform: translateY(-6px); }
-  100% { transform: translateY(0px);  }
-}
-
-/* Celebration bob when zone is complete */
-.zone-ganesha-presence--top:has(+ .zone-mastered-badge),
-.zone-welcome-container.zone-complete .zone-ganesha-presence--top {
-  animation: ganeshaCelebrationBob 1.6s ease-in-out infinite;
-}
-
-@keyframes ganeshaCelebrationBob {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-6px); }
+@keyframes zoneCardGaneshaPop {
+  0%   { opacity: 0; transform: translateY(6px) scale(0.92); }
+  20%  { opacity: 1; transform: translateY(0) scale(1); }
+  70%  { opacity: 1; transform: translateY(-2px) scale(1); }
+  100% { opacity: 0; transform: translateY(-6px) scale(0.96); }
 }
 
 /* Mobile adjustments */
@@ -1361,6 +1319,11 @@ button[style*="position: fixed"][style*="background: purple"] {
 
   .zone-ganesha-presence {
     display: none; /* hide on small phones to avoid crowding the title */
+  }
+
+  .zone-card-ganesha-pop {
+    right: -12px;
+    top: 38%;
   }
 }
 
@@ -1568,4 +1531,5 @@ button[style*="position: fixed"][style*="background: purple"] {
   0%, 100% { opacity: 0.6; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.2); }
 }
+
 

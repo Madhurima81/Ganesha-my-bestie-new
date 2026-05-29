@@ -30,6 +30,7 @@ export default function SymbolAutoReveal({
   sidebarTargetRect,
   enableVoicePrompts = false,
   enableTapHintPrompt = true,
+  stopVoiceOnTap = true,
   sayWithMeDelayMs = 450,
   onComplete,
 }) {
@@ -135,7 +136,9 @@ export default function SymbolAutoReveal({
     if (phase !== "ready") return;
     timers.current.forEach(clearTimeout);
     timers.current = [];
-    stopSpokenVoice();           // cut VO immediately on tap so it doesn't trail
+    if (stopVoiceOnTap) {
+      stopSpokenVoice();
+    }
     setPhase("fly");
     after(() => onComplete?.(), 1150);
   };
