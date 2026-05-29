@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Story Builder - Test</title>
+  <style>
+    body{font-family:Arial,sans-serif;background:#eef2ff;margin:0;padding:20px}
+    .card{max-width:920px;margin:0 auto;background:#fff;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.08);padding:18px}
+    h2{text-align:center;margin-top:0;color:#4338ca}
+    .q{background:#f3f4f6;border-radius:12px;padding:14px;margin-bottom:14px}
+    .options{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+    .opt{background:#fff;border:1px solid #d4d4d8;border-radius:10px;padding:12px;text-align:center;cursor:pointer}
+    .opt:hover{border-color:#6366f1}
+    .pill{display:inline-block;background:#eef2ff;padding:4px 10px;border-radius:999px;font-size:12px}
+    .story{background:#fffbeb;border:1px dashed #f59e0b;border-radius:12px;padding:14px;line-height:1.6;white-space:pre-wrap}
+    .row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+    .chip{background:#f5f3ff;border-radius:999px;padding:6px 10px;font-size:13px}
+    button{border:none;border-radius:999px;padding:10px 16px;color:#fff;cursor:pointer}
+    .restart{background:#f59e0b}
+  </style>
+</head>
+<body>
+<div class="card" id="app"></div>
+<script>
+const questions=[
+["Who is our main character?","character",["You (a kid)","A student","A little artist","A young athlete","A junior chef"]],
+["How are they feeling?","feeling",["nervous","scared","worried","confused","frustrated"]],
+["Where are they?","place",["school","home","playground","sports field","birthday party"]],
+["What obstacle are they facing?","obstacle",["a difficult test","learning something new","making new friends","performing in front of people","a complicated puzzle"]],
+["What do they want to achieve?","goal",["do your best","feel confident","solve the problem","have fun","learn something new"]],
+["What type of help do they need from Ganesha?","helpType",["courage","wisdom","patience","creativity","calmness"]]
+];
+let idx=0; const picks={};
+function buildStory(){
+  return `Once upon a time, ${picks.character} was at the ${picks.place} feeling very ${picks.feeling}. They were facing ${picks.obstacle} and wanted to ${picks.goal}.\n\nThey remembered Ganesha's shloka and chanted with faith. As they chanted, Ganesha's ${picks.helpType} filled them up.\n\nThe obstacle felt manageable, and they moved ahead with strength and clarity.`;
+}
+function render(){
+  const app=document.getElementById('app');
+  if(idx<questions.length){
+    const [q,key,opts]=questions[idx];
+    app.innerHTML=`<h2>Create Your Ganesha Story</h2><div class='q'><div class='pill'>Question ${idx+1} of ${questions.length}</div><h3>${q}</h3><div class='options'>${opts.map(o=>`<div class='opt' data-v='${o}'>${o}</div>`).join('')}</div></div>`;
+    app.querySelectorAll('.opt').forEach(el=>el.onclick=()=>{picks[key]=el.dataset.v; idx++; render();});
+  } else {
+    const chips=Object.entries(picks).map(([k,v])=>`<span class='chip'>${k}: ${v}</span>`).join('');
+    app.innerHTML=`<h2>Your Story is Ready</h2><div class='row'>${chips}</div><div class='story'>${buildStory()}</div><div style='margin-top:14px'><button class='restart' onclick='restart()'>Create New Story</button></div>`;
+  }
+}
+function restart(){ idx=0; Object.keys(picks).forEach(k=>delete picks[k]); render(); }
+render();
+</script>
+</body>
+</html>

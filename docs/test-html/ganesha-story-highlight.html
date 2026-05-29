@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ganesha Story Highlight - Test</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f2f4f8; margin:0; padding:20px; }
+    .card { max-width:900px; margin:0 auto; background:#fff; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,.08); overflow:hidden; }
+    .header { padding:16px 20px; background:#4f46e5; color:#fff; }
+    .content { padding:16px; }
+    .story { padding:14px; border-radius:10px; line-height:1.5; background:#fff; border:1px solid #ddd; }
+    .hint { margin-top:10px; background:#fff3cd; padding:10px; border-radius:8px; font-weight:700; }
+    .partInfo { margin-top:10px; background:#d1fae5; padding:10px; border-radius:8px; }
+    .board { position:relative; height:320px; margin-top:14px; background:#fafafa; border:1px dashed #bbb; border-radius:10px; }
+    .part { position:absolute; transform:translate(-50%,-50%); border-radius:8px; border:1px dashed #999; display:flex; align-items:center; justify-content:center; font-size:12px; }
+    .part.active { background:rgba(255,152,0,.35); border:2px solid #ff9800; cursor:pointer; animation:pulse 1.2s infinite; }
+    .dots { display:flex; gap:6px; margin-bottom:12px; }
+    .dot { width:10px; height:10px; border-radius:50%; background:#d4d4d8; }
+    .dot.on { background:#ff9800; }
+    .actions { display:flex; justify-content:space-between; margin-top:14px; }
+    button { padding:10px 16px; border:none; border-radius:999px; color:#fff; cursor:pointer; }
+    .prev { background:#7c3aed; }
+    .next { background:#16a34a; }
+    .disabled { opacity:.45; cursor:not-allowed; }
+    .overlay { position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; }
+    .modal { background:#fff; padding:20px; border-radius:12px; max-width:420px; text-align:center; }
+    @keyframes pulse { 0%,100%{ box-shadow:0 0 0 0 rgba(255,152,0,.5);} 50%{ box-shadow:0 0 0 8px rgba(255,152,0,0);} }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="header"><h2 style="margin:0">Ganesha Story Highlight (Test)</h2></div>
+  <div class="content" id="app"></div>
+</div>
+<div class="overlay" id="done"><div class="modal"><h3>Story Complete</h3><p>You finished all pages.</p><button onclick="resetStory()" style="background:#f59e0b">Read Again</button></div></div>
+<script>
+const storyPages=[
+{text:"Once upon a time... special God named Ganesha.",highlightPart:"head",requireInteraction:true,bg:"#FFF9C4"},
+{text:"He had the head of an elephant.",highlightPart:"head",requireInteraction:false,bg:"#E1F5FE"},
+{text:"Can you find Ganesha's ears?",highlightPart:"ears",requireInteraction:true,bg:"#F9FBE7"},
+{text:"His big ears help him listen.",highlightPart:"ears",requireInteraction:false,bg:"#E8F5E9"},
+{text:"Can you find the trunk?",highlightPart:"trunk",requireInteraction:true,bg:"#FFF3E0"},
+{text:"Trunk means adaptability.",highlightPart:"trunk",requireInteraction:false,bg:"#FFEBEE"},
+{text:"Can you find the belly?",highlightPart:"belly",requireInteraction:true,bg:"#E8EAF6"},
+{text:"Belly means digesting experiences.",highlightPart:"belly",requireInteraction:false,bg:"#F3E5F5"},
+{text:"Can you find the mouse?",highlightPart:"mouse",requireInteraction:true,bg:"#E0F7FA"},
+{text:"Mouse means everyone matters.",highlightPart:"mouse",requireInteraction:false,bg:"#FFF8E1"},
+{text:"Can you find the axe?",highlightPart:"axe",requireInteraction:true,bg:"#EFEBE9"},
+{text:"Axe removes obstacles.",highlightPart:"axe",requireInteraction:false,bg:"#F1F8E9"},
+{text:"Can you find the modak?",highlightPart:"modak",requireInteraction:true,bg:"#FFECB3"},
+{text:"Modak means sweet rewards.",highlightPart:"modak",requireInteraction:false,bg:"#FFCDD2"},
+{text:"Now you know all parts of Ganesha!",highlightPart:null,requireInteraction:false,bg:"#DCEDC8"}
+];
+const parts={head:["50%","15%","40%","30%"],ears:["80%","20%","25%","20%"],trunk:["60%","35%","30%","20%"],belly:["50%","60%","40%","25%"],mouse:["30%","85%","20%","15%"],axe:["20%","40%","20%","20%"],modak:["80%","50%","15%","15%"]};
+let currentPage=0, partInfo="", waiting=true;
+function render(){
+  const p=storyPages[currentPage]; waiting=p.requireInteraction && !partInfo;
+  const dots=storyPages.map((_,i)=>`<div class="dot ${i<=currentPage?'on':''}"></div>`).join('');
+  const boardParts=Object.entries(parts).map(([k,v])=>`<div class="part ${(p.highlightPart===k && waiting)?'active':''}" data-part="${k}" style="left:${v[0]};top:${v[1]};width:${v[2]};height:${v[3]};">${k}</div>`).join('');
+  document.getElementById('app').innerHTML=`
+    <div class="dots">${dots}</div>
+    <div class="story" style="background:${p.bg}">${p.text}
+      ${waiting?`<div class='hint'>Click on ${p.highlightPart} to continue</div>`:''}
+      ${partInfo?`<div class='partInfo'>${partInfo}</div>`:''}
+    </div>
+    <div class="board">${boardParts}</div>
+    <div class="actions">
+      <button class="prev ${currentPage===0?'disabled':''}" ${currentPage===0?'disabled':''} onclick="prevPage()">Previous</button>
+      <button class="next ${(currentPage===storyPages.length-1||waiting)?'disabled':''}" ${(currentPage===storyPages.length-1||waiting)?'disabled':''} onclick="nextPage()">Next</button>
+    </div>`;
+  document.querySelectorAll('.part').forEach(el=>el.onclick=()=>clickPart(el.dataset.part));
+  if(currentPage===storyPages.length-1) document.getElementById('done').style.display='flex'; else document.getElementById('done').style.display='none';
+}
+function clickPart(k){const p=storyPages[currentPage]; if(p.requireInteraction && p.highlightPart===k){partInfo=`Great! You found ${k}.`; render();}}
+function nextPage(){ if(currentPage<storyPages.length-1){currentPage++; partInfo=''; render();}}
+function prevPage(){ if(currentPage>0){currentPage--; partInfo=''; render();}}
+function resetStory(){ currentPage=0; partInfo=''; document.getElementById('done').style.display='none'; render(); }
+render();
+</script>
+</body>
+</html>
