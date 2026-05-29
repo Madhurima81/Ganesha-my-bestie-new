@@ -98,6 +98,12 @@ const RotatingOrbsEffect = ({
           </div>
         </div>
       )}
+      {playerName && (
+        <div className="orb-player-name">
+          <div className="name-text">{playerName}</div>
+          <div className="name-subtitle">All eight live in you now</div>
+        </div>
+      )}
 
       {showCentralGanesha && (
         <div
