@@ -11,7 +11,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: url('/images/welcome-background.svg') no-repeat center center;
+  background: url('/images/welcome-opening-bg.webp') no-repeat center center;
   background-size: cover;
   display: flex;
   flex-direction: column;
@@ -99,11 +99,6 @@
   50%       { transform: translateY(-10px) scale(1.03); }
 }
 
-/* Hide mooshika on loading */
-.loading-mooshika-container {
-  display: none;
-}
-
 /* ===================================== */
 /* ATMOSPHERIC OVERLAY LAYERS            */
 /* ===================================== */
@@ -134,181 +129,76 @@
 }
 
 /* ===================================== */
-/* LOADING TEXT                          */
+/* MUSHIKA + MODAK LOADER                */
 /* ===================================== */
-.loading-text-container {
-  text-align: center;
-  z-index: 2;
-  margin-top: 0;
+.loader-track {
+  position: absolute;
+  bottom: 42px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: flex-end;
+  gap: 34px;
+  z-index: 5;
 }
 
-/* Halo behind the title text */
-.title-wrapper {
+.loader-modak {
   position: relative;
-  display: inline-block;
+  width: 72px;
+  height: auto;
+  transition: transform 0.35s ease, filter 0.35s ease, opacity 0.35s ease;
+  opacity: 0.55;
+  transform: scale(0.92);
 }
 
-.title-wrapper::before {
+.loader-modak.active {
+  opacity: 1;
+  transform: scale(1);
+  filter:
+    drop-shadow(0 0 10px rgba(255, 210, 90, 0.9))
+    drop-shadow(0 0 24px rgba(255, 196, 0, 0.55));
+}
+
+.loader-modak.active::after {
   content: "";
   position: absolute;
-  width: 120%;
-  height: 180%;
-  left: -10%;
-  top: -40%;
-  background: radial-gradient(
-    circle,
-    rgba(200, 170, 255, 0.35) 0%,
-    rgba(200, 170, 255, 0.15) 40%,
-    transparent 70%
-  );
-  filter: blur(40px);
-  z-index: -1;
-  pointer-events: none;
-}
-
-.loading-title {
-  font-family: 'Baloo 2', system-ui, sans-serif;
-  font-weight: 700;
-  font-size: clamp(22px, 2.5vw, 30px) !important;
-  color: #6b5bb3;
-  letter-spacing: 0.5px;
-  margin-bottom: 6px;
-  line-height: 1.2;
-  position: relative;
-
-  /* Layered purple glow — whispering, not shouting */
-  text-shadow:
-    0 0 6px  rgba(140, 100, 255, 0.35),
-    0 0 18px rgba(140, 100, 255, 0.25),
-    0 0 30px rgba(200, 170, 255, 0.15);
-
-  animation: softPulse 5s ease-in-out infinite;
-}
-
-/* Ultra-subtle gold highlight edge */
-.loading-title::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.2),
-    rgba(255, 255, 255, 0)
-  );
-  mix-blend-mode: soft-light;
-  pointer-events: none;
-}
-
-@keyframes softPulse {
-  0%, 100% {
-    text-shadow:
-      0 0 6px  rgba(140, 100, 255, 0.3),
-      0 0 18px rgba(140, 100, 255, 0.2),
-      0 0 30px rgba(200, 170, 255, 0.1);
-  }
-  50% {
-    text-shadow:
-      0 0 10px rgba(140, 100, 255, 0.4),
-      0 0 22px rgba(140, 100, 255, 0.3),
-      0 0 40px rgba(200, 170, 255, 0.2);
-  }
-}
-
-.loading-subtitle {
-  font-family: 'Nunito', sans-serif;
-  font-weight: 500;
-  font-size: clamp(14px, 1.4vw, 20px);
-  color: #6b5bb3;
-  opacity: 0.8;
-  margin-bottom: 18px;
-  letter-spacing: 0.5px;
-}
-
-/* Animated dots */
-.loading-dots span {
-  animation: dotBounce 1.4s ease-in-out infinite;
-  display: inline-block;
-  color: #b49ef0;
-}
-.loading-dots span:nth-child(1) { animation-delay: 0s;   }
-.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
-.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes dotBounce {
-  0%, 60%, 100% { transform: translateY(0);    }
-  30%            { transform: translateY(-6px); }
-}
-
-/* ===================================== */
-/* MAGICAL PARTICLES                     */
-/* ===================================== */
-.loading-particles {
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.loading-particle {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  background: radial-gradient(circle, #fff 0%, #ffe680 70%, transparent 100%);
+  inset: -10px;
   border-radius: 50%;
-  animation: particleRise 6s linear infinite;
-  box-shadow: 0 0 8px rgba(255, 230, 120, 0.7);
-  opacity: 0.7;
+  background: radial-gradient(circle,
+    rgba(255, 223, 120, 0.55) 0%,
+    rgba(255, 223, 120, 0) 72%);
+  animation: modakPulse 1.4s ease-in-out infinite;
+  z-index: -1;
 }
 
-@keyframes particleRise {
-  0%   { opacity: 0;   transform: translateY(100vh) scale(0); }
-  20%  { opacity: 0.8; }
-  80%  { opacity: 0.7; }
-  100% { opacity: 0;   transform: translateY(0) scale(0);     }
+@keyframes modakPulse {
+  0%   { transform: scale(0.9); opacity: 0.45; }
+  50%  { transform: scale(1.08); opacity: 0.9; }
+  100% { transform: scale(0.9); opacity: 0.45; }
 }
 
-/* ===================================== */
-/* PREMIUM PROGRESS BAR                  */
-/* ===================================== */
-.loading-progress-container {
-  position: relative;
-  width: 60%;
-  height: 8px;
-  border-radius: 999px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.06);
-  margin: 0 auto;
-  margin-top: 20px;
-  z-index: 2;
+.loader-mushika {
+  position: absolute;
+  width: 88px;
+  height: auto;
+  bottom: 58px;
+  left: 0;
+  z-index: 8;
+  transition: left 0.65s cubic-bezier(0.22, 1, 0.36, 1), transform 0.3s ease;
 }
 
-.loading-progress-bar {
-  height: 100%;
-  border-radius: 999px;
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(90deg, #a78bfa, #7c5de8);
-  transition: width 0.4s ease;
+.loader-mushika.pre-hop { transform: scaleX(1.04) scaleY(0.94); }
+
+.loader-mushika.hopping { animation: mushikaHop 0.65s ease; }
+
+@keyframes mushikaHop {
+  0%   { transform: translateY(0) rotate(0deg); }
+  25%  { transform: translateY(-18px) rotate(-4deg); }
+  55%  { transform: translateY(-38px) rotate(2deg); }
+  100% { transform: translateY(0) rotate(0deg); }
 }
 
-@keyframes shimmer {
-  0%   { left: -40%; }
-  100% { left: 120%; }
-}
-
-/* Bar sparkles */
-.bar-sparkles {
-  display: none;
-}
-
-.sparkle {
-  display: none;
-}
-
-/* Hide old percentage text */
-.progress-percentage {
-  display: none;
-}
+.loader-mushika.land { transform: scaleX(1.06) scaleY(0.92); }
 
 /* ========================================== */
 /* 2. SCENE LOADER (Lotus Spinner)            */
@@ -489,13 +379,15 @@
 /* Mobile Portrait */
 @media (max-width: 600px) {
   .loading-ganesha-container { width: clamp(190px, 30vw, 520px); height: clamp(190px, 30vw, 520px); }
-  .loading-title { font-size: 32px; }
-  .loading-subtitle { font-size: 18px; }
-  .loading-progress-container { width: 280px; }
+  .loader-track { gap: 24px; bottom: 28px; }
+  .loader-modak { width: 62px; }
+  .loader-mushika { width: 78px; bottom: 46px; }
 }
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
+  .loader-mushika { animation: none !important; transition: none !important; }
+  .loader-modak { opacity: 1; transform: scale(1); }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;

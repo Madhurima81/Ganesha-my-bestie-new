@@ -3,13 +3,13 @@
 import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import './App.css';
 import './Enhanced.css'
-import GaneshaCharacter from './lib/components/character/GaneshaCharacter';
 import DailyDarePopup from './lib/components/twg/DailyDarePopup';
 import TimeWithGaneshaHub from './lib/components/twg/TimeWithGaneshaHub';
 import GaneshaEngineTest  from './lib/components/twg/GaneshaEngineTest';
 import TapGate from './components/welcome/TapGate';
 import MainWelcomeScreen from './lib/components/navigation/MainWelcomeScreen';
 import GaneshaIntroStory from './components/GaneshaIntroStory';
+import { GANESHA_USAGE_SYSTEM } from './lib/config/ganeshaUsageSystem';
 
 const CleanGameWelcomeScreen = lazy(() => import('./lib/components/navigation/CleanGameWelcomeScreen'));
 const CleanProfileSelector   = lazy(() => import('./lib/components/navigation/CleanProfileSelector'));
@@ -66,6 +66,80 @@ const SCENE_MAPPING = {
 
 
 const GameStateManagerClass = GameStateManager.constructor;
+
+function MushikaLoader({ progress, ready, onDone }) {
+  const TOTAL = 3;
+  const [landed, setLanded] = useState(0);
+  const [pos, setPos] = useState(0);
+  const [hopState, setHopState] = useState('');
+  const hopping = useRef(false);
+  const startRef = useRef(Date.now());
+
+  const fromProgress = Math.floor((progress / 100) * TOTAL);
+  const fromTimer = Math.floor((Date.now() - startRef.current) / 850);
+  const target = Math.min(TOTAL, Math.max(fromProgress, fromTimer));
+
+  useEffect(() => {
+    if (hopping.current) return;
+    if (pos >= target) {
+      if (landed >= TOTAL) {
+        const t = setTimeout(onDone, 450);
+        return () => clearTimeout(t);
+      }
+      return;
+    }
+
+    hopping.current = true;
+    setHopState('pre-hop');
+    const t1 = setTimeout(() => setHopState('hopping'), 140);
+    const t2 = setTimeout(() => {
+      setPos((p) => p + 1);
+      setLanded((l) => Math.min(TOTAL, l + 1));
+      setHopState('land');
+    }, 790);
+    const t3 = setTimeout(() => {
+      setHopState('');
+      hopping.current = false;
+    }, 970);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, [pos, target, ready, landed, onDone]);
+
+  const [, force] = useState(0);
+  useEffect(() => {
+    if (pos >= TOTAL) return;
+    const id = setInterval(() => force((n) => n + 1), 300);
+    return () => clearInterval(id);
+  }, [pos]);
+
+  const stoneGap = 106;
+  const trackW = stoneGap * (TOTAL - 1);
+  const mushikaLeft = `calc(50% - ${trackW / 2}px + ${pos * stoneGap}px - 44px)`;
+
+  return (
+    <>
+      <div className="loader-track">
+        {[...Array(TOTAL)].map((_, i) => (
+          <img
+            key={i}
+            src="/images/modak.png"
+            alt=""
+            className={`loader-modak ${i < landed ? 'active' : ''}`}
+          />
+        ))}
+      </div>
+      <img
+        src="/images/mooshika-flying.png"
+        alt=""
+        className={`loader-mushika ${hopState}`}
+        style={{ left: mushikaLeft }}
+      />
+    </>
+  );
+}
 
 function App() {
   // DEV: ?engine-test in URL → show engine test harness only
@@ -401,9 +475,9 @@ const initializeApp = async () => {
     // Step 2.5: Preload critical images (50%)
     const criticalImages = [
       '/images/welcome-background.svg',
-      '/images/welcome-board.png',
-      '/images/welcome-ganesha.png',
-      '/images/welcome-mooshika.png'
+      '/images/welcome-board.webp',
+      '/images/welcome-ganesha.webp',
+      '/images/welcome-mooshika.webp'
     ];
 
     const imagePromises = criticalImages.map(src => {
@@ -471,6 +545,7 @@ const initializeApp = async () => {
     setLoadingStep('Yay… let\'s play!');
     await new Promise(resolve => setTimeout(resolve, 500));
     
+    console.log('⏱️ Load time:', performance.now().toFixed(0), 'ms');
     console.log('✅ App initialization complete');
     setIsInitialized(true);
 
@@ -966,56 +1041,22 @@ chants: result?.chants || result?.chantedVerses || {},
     {/* Layer 2 — Cinematic vignette */}
     <div className="bg-vignette" />
 
-    {/* Ganesha Character */}
+    {/* Ganesha Character (anchors the screen, stays floating) */}
     <div className="loading-ganesha-container">
       <div className="loading-ganesha-glow"></div>
-      <GaneshaCharacter
-        expression="happy"
-        size="100%"
+      <img
+        src={GANESHA_USAGE_SYSTEM.loading.asset}
+        alt="Ganesha"
         className="loading-ganesha"
       />
     </div>
 
-    {/* Loading Text */}
-    <div className="loading-text-container">
-      <div className="title-wrapper">
-        <div className="loading-title">
-          Ganesha My Bestie
-        </div>
-      </div>
-      <div className="loading-subtitle">
-        {loadingStep || 'Almost ready...'}
-      </div>
-    </div>
-
-    {/* Premium Progress Bar — no percentage text */}
-    <div className="loading-progress-container">
-      <div
-        className="loading-progress-bar"
-        style={{ width: `${loadingProgress}%` }}
-      />
-    </div>
-
-    {/* 3 subtle sparkles near the bar */}
-    <div className="bar-sparkles">
-      <div className="sparkle" style={{ left: '30%', animationDelay: '0s' }} />
-      <div className="sparkle" style={{ left: '50%', animationDelay: '1s' }} />
-      <div className="sparkle" style={{ left: '70%', animationDelay: '2s' }} />
-    </div>
-
-    {/* Magical Particles */}
-    <div className="loading-particles">
-      {[...Array(8)].map((_, i) => (
-        <div
-          key={i}
-          className="loading-particle"
-          style={{
-            animationDelay: `${i * 0.5}s`,
-            left: `${10 + (i * 10)}%`,
-          }}
-        />
-      ))}
-    </div>
+    {/* Mushika hops across 3 modaks that light up on real load progress */}
+    <MushikaLoader
+      progress={loadingProgress}
+      ready={isInitialized}
+      onDone={() => {}}
+    />
   </div>
 )}
       {currentView === 'error' && (
