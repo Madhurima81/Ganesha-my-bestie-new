@@ -22,10 +22,11 @@ import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimat
 import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
 import CalmGoldenFireworks from '../../../../lib/components/feedback/CalmGoldenFireworks';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
+import InnerMandala from '../../../../lib/components/celebration/InnerMandala';
 import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
-import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOverlay'; // ← superseded by SymbolAutoReveal
+import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOverlay'; // ? superseded by SymbolAutoReveal
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
-// import { PauseButton, PauseMenu } from '../../../../lib/components/ui/PauseMenu'; // ← removed: replaced by home icon
+// import { PauseButton, PauseMenu } from '../../../../lib/components/ui/PauseMenu'; // ? removed: replaced by home icon
 import HomeButton from '../../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
@@ -55,18 +56,18 @@ import ganeshaHeadphones from './assets/images/ganesha_with_headphones.webp';
 // Images
 import riverBackground from './assets/images/vakratundachant-bg-new2.svg';
 import mooshikaCoach from "./assets/images/mooshika-coach.webp";
-import symbolVakratunda from '../../../symbol-mountain/shared/images/icons/symbol-trunk-new.png';
-import symbolMahakaya from './assets/images/banyan-full-from-download.png';
+import symbolVakratunda from '../../../symbol-mountain/shared/images/icons/symbol-trunk-new.webp';
+import symbolMahakaya from './assets/images/banyan-full-from-download.webp';
 
 // Elephant images for memory game
-import elephantBabyVa from './assets/images/vakratunda/elephant-baby-va.png';
-import elephantMa from './assets/images/mahakaya/elephant-ma.png';
+import elephantBabyVa from './assets/images/vakratunda/elephant-baby-va.webp';
+import elephantMa from './assets/images/mahakaya/elephant-ma.webp';
 
 // Singers & Rewards
-import budVa from './assets/images/vakratunda/va-bud.png';
-import lotusVa from './assets/images/vakratunda/va-lotus.png';
-import seedImage from './assets/images/mahakaya/seed.png';
-import flowerMa from './assets/images/mahakaya/ma-flower.png';
+import budVa from './assets/images/vakratunda/va-bud.webp';
+import lotusVa from './assets/images/vakratunda/va-lotus.webp';
+import seedImage from './assets/images/mahakaya/seed.webp';
+import flowerMa from './assets/images/mahakaya/ma-flower.webp';
 
 // ========================================
 // 1. LOCAL UI COMPONENTS
@@ -213,6 +214,7 @@ const VakratundaGroveContent = ({
 
   const [showSparkle, setShowSparkle] = useState(null);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
+  const [showMandala, setShowMandala] = useState(false);
   const [showCenteredWord, setShowCenteredWord] = useState(null);
 
   // Controls the Power Unlock Overlay (superseded by SymbolAutoReveal)
@@ -220,7 +222,7 @@ const VakratundaGroveContent = ({
   const [showPowerButton, setShowPowerButton] = useState(false);
   const [showPracticeAgainButton, setShowPracticeAgainButton] = useState(false);
 
-  // ── SymbolAutoReveal state ──────────────────────────────────────────────
+  // -- SymbolAutoReveal state ----------------------------------------------
   // null = not showing; object = reveal active
   const [revealConfig, setRevealConfig] = useState(null);
 
@@ -245,6 +247,7 @@ const VakratundaGroveContent = ({
   const profileName = activeProfile?.name || 'explorer';
   const isFinalCelebrationActive =
     showSparkle === 'final-fireworks' ||
+    showMandala ||
     showSceneCompletion ||
     showAppDiscovery ||
     sceneState.phase === PHASES.COMPLETE;
@@ -374,7 +377,7 @@ const VakratundaGroveContent = ({
   }, [stopVoice, stopWebSpeech]);
 
 
-  // ── ESC key pause handler — REMOVED (replaced by home icon) ──
+  // -- ESC key pause handler — REMOVED (replaced by home icon) --
   // useEffect(() => {
   //   const handleKeyDown = (e) => {
   //     if (e.key === 'Escape' && sceneState.welcomeShown && !isCelebrationOrOverlayActive && !showSceneCompletion) {
@@ -401,7 +404,7 @@ const VakratundaGroveContent = ({
   //   return () => window.removeEventListener('keydown', handleKeyDown);
   // }, [showPauseMenu, sceneState.welcomeShown, isCelebrationOrOverlayActive, showSceneCompletion, sceneState.phase, showPowerOverlay, showCenteredWord, revealConfig]);
 
-  // ── Auto-pause on blur — REMOVED (replaced by home icon) ──
+  // -- Auto-pause on blur — REMOVED (replaced by home icon) --
   // useEffect(() => {
   //   const handleVisibilityChange = () => {
   //     const shouldNotPause = showPowerOverlay || !!revealConfig || showCenteredWord || isFinalCelebrationActive || showSceneCompletion || showPauseMenu;
@@ -444,7 +447,7 @@ const VakratundaGroveContent = ({
     };
   }, [stopWebSpeech]);
 
-  // ── SymbolAutoReveal helpers ──────────────────────────────────────────────
+  // -- SymbolAutoReveal helpers ----------------------------------------------
 
   // Play setup + affirmation VO when the flip card appears (SymbolAutoReveal)
   useEffect(() => {
@@ -522,7 +525,7 @@ const VakratundaGroveContent = ({
     }
   };
 
-  // ── Home button: stop everything → go to main map ──────────────────────
+  // -- Home button: stop everything ? go to main map ----------------------
   const handleHomeToMainMap = () => {
     stopAllVoice();
     stopIdleTimer();
@@ -614,7 +617,7 @@ const VakratundaGroveContent = ({
   const handlePhaseComplete = (word) => {
     console.log(`${word} learned!`);
 
-    // Sanskrit moment — full word learned → blessing gesture
+    // Sanskrit moment — full word learned ? blessing gesture
     triggerMiniGesture('blessing', 'center', 2500);
 
     // Stop idle timer — game is done, no more hints
@@ -638,7 +641,7 @@ const VakratundaGroveContent = ({
     setShowSparkle(`${word}-celebration`);
     playWord(word);
 
-    // ── Transition: VO completes → SymbolAutoReveal ───────────────────────────
+    // -- Transition: VO completes ? SymbolAutoReveal ---------------------------
     const triggerReveal = () => {
       setShowSparkle(null);
 
@@ -680,7 +683,7 @@ const VakratundaGroveContent = ({
       }, 1500);
     }
 
-    // ── Old goToPowerOverlay (superseded by SymbolAutoReveal) ──
+    // -- Old goToPowerOverlay (superseded by SymbolAutoReveal) --
     // const goToPowerOverlay = () => {
     //   setShowCenteredWord(null);
     //   setShowSparkle(`${word}-to-sidebar`);
@@ -700,20 +703,20 @@ const VakratundaGroveContent = ({
     // };
   };
 
-  // ✅ FIXED: Direct transitions, no "Save Animal" mission
+  // ? FIXED: Direct transitions, no "Save Animal" mission
   const handlePowerUnlockComplete = () => {
     setShowPowerOverlay(false);
     stopVoice(); // Stop any playing VO
 
     if (currentWord === 'vakratunda') {
-      console.log('🔄 Moving to Mahakaya Phase');
+      console.log('?? Moving to Mahakaya Phase');
       // Go straight to Mahakaya Game
       sceneActions.updateState({
         phase: PHASES.MAHAKAYA_GAME,
         mahakayaGameState: null // Ensure Mahakaya always starts from first syllable
       });
     } else {
-      console.log('📱 Showing App Discovery screen');
+      console.log('?? Showing App Discovery screen');
       // Show App Discovery screen before final celebration
       setShowAppDiscovery(true);
     }
@@ -721,7 +724,7 @@ const VakratundaGroveContent = ({
 
   const handleAppDiscoveryCelebrate = () => {
     setShowAppDiscovery(false);
-    console.log('🎉 Triggering Final Celebration from App Discovery');
+    console.log('?? Triggering Final Celebration from App Discovery');
 
     // Play scene complete VO
     if (isAudioOn) {
@@ -745,12 +748,12 @@ const VakratundaGroveContent = ({
     safeSetTimeout(() => setShowTapSparkles(false), 850);
   }, [triggerMiniGesture, safeSetTimeout]);
 
-  // 🔄 Play Again - Replay the current word's game
+  // ?? Play Again - Replay the current word's game
   const handlePlayAgain = () => {
     setShowPowerOverlay(false);
 
     if (currentWord === 'vakratunda') {
-      console.log('🔄 Replaying Vakratunda Game');
+      console.log('?? Replaying Vakratunda Game');
       // Reset vakratunda game state and go back to game phase
       sceneActions.updateState({
         phase: PHASES.VAKRATUNDA_GAME,
@@ -758,7 +761,7 @@ const VakratundaGroveContent = ({
         learnedWords: { ...sceneState.learnedWords, vakratunda: false }
       });
     } else if (currentWord === 'mahakaya') {
-      console.log('🔄 Replaying Mahakaya Game');
+      console.log('?? Replaying Mahakaya Game');
       // Reset mahakaya game state and go back to game phase
       sceneActions.updateState({
         phase: PHASES.MAHAKAYA_GAME,
@@ -788,6 +791,7 @@ const VakratundaGroveContent = ({
           <HomeButton onNavigate={onNavigate} />
           <ZoneBadgeButton zoneId="shloka-river" onBack={() => onNavigate?.('zone-welcome')} />
           <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
+          <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
           <div className="river-background" style={{ backgroundImage: `url(${riverBackground})` }}>
             {!showSceneCompletion && (
@@ -795,7 +799,7 @@ const VakratundaGroveContent = ({
 
             {/* HOME BUTTON — inline green button removed; HomeButton component handles this */}
 
-            {/* ── PauseButton — REMOVED (replaced by home icon) ──
+            {/* -- PauseButton — REMOVED (replaced by home icon) --
             <PauseButton
               visible={sceneState.welcomeShown && !showSceneCompletion && !isFinalCelebrationActive}
               onClick={() => {
@@ -805,7 +809,7 @@ const VakratundaGroveContent = ({
                 setShowPauseMenu(true);
               }}
             />
-            ── End PauseButton ── */}
+            -- End PauseButton -- */}
 
             {/* DEV TEST BUTTONS - Skip to word overlay */}
             {sceneState.welcomeShown && !showPowerOverlay && !showCenteredWord && (
@@ -821,7 +825,7 @@ const VakratundaGroveContent = ({
                     borderRadius: '6px', cursor: 'pointer', opacity: 0.85
                   }}
                 >
-                  ⚡ Test Vakratunda Reveal
+                  ? Test Vakratunda Reveal
                 </button>
                 <button
                   onClick={() => handlePhaseComplete('mahakaya')}
@@ -831,12 +835,12 @@ const VakratundaGroveContent = ({
                     borderRadius: '6px', cursor: 'pointer', opacity: 0.85
                   }}
                 >
-                  ⚡ Test Mahakaya Reveal
+                  ? Test Mahakaya Reveal
                 </button>
               </div>
             )}
 
-            {/* ── Pause blur overlay — REMOVED (replaced by home icon) ──
+            {/* -- Pause blur overlay — REMOVED (replaced by home icon) --
             {showPauseMenu && !isFinalCelebrationActive && (
               <div style={{
                 position: 'fixed', inset: 0,
@@ -846,9 +850,9 @@ const VakratundaGroveContent = ({
                 transition: 'opacity 0.2s ease-out', opacity: 1
               }} />
             )}
-            ── End blur overlay ── */}
+            -- End blur overlay -- */}
 
-            {/* ── PauseMenu — REMOVED (replaced by home icon) ──
+            {/* -- PauseMenu — REMOVED (replaced by home icon) --
             <PauseMenu
               show={showPauseMenu && !isFinalCelebrationActive}
               onResume={() => { setShowPauseMenu(false); startIdleTimer(); }}
@@ -857,7 +861,7 @@ const VakratundaGroveContent = ({
               onSoundToggle={() => { if (isAudioOn) stopVoice(); setIsAudioOn(!isAudioOn); }}
               zoneName="Shloka River"
             />
-            ── End PauseMenu ── */}
+            -- End PauseMenu -- */}
 
             {/* 3. OPENING MODAL (Using Zone Theme Colors) */}
             <OpeningModal
@@ -939,8 +943,8 @@ const VakratundaGroveContent = ({
               </div>
             )}
 
-            {/* ── SYMBOL AUTO-REVEAL (replaces PowerUnlockOverlay) ───────────────
-                 Flip card: symbol image → affirmation → user taps → flies to sidebar */}
+            {/* -- SYMBOL AUTO-REVEAL (replaces PowerUnlockOverlay) ---------------
+                 Flip card: symbol image ? affirmation ? user taps ? flies to sidebar */}
             {revealConfig && (
               <SymbolAutoReveal
                 key={revealConfig.symbolId}
@@ -955,7 +959,7 @@ const VakratundaGroveContent = ({
               />
             )}
 
-            {/* ── PowerUnlockOverlay — COMMENTED OUT (superseded by SymbolAutoReveal) ──
+            {/* -- PowerUnlockOverlay — COMMENTED OUT (superseded by SymbolAutoReveal) --
             {showPowerOverlay && currentWord && (
               <PowerUnlockOverlay
                 zoneId={zoneId}
@@ -981,7 +985,7 @@ const VakratundaGroveContent = ({
                 onComplete={handlePowerUnlockComplete}
               />
             )}
-            ── End PowerUnlockOverlay ── */}
+            -- End PowerUnlockOverlay -- */}
 
             {/* 5-SECOND WORD CELEBRATION — REMOVED: goes directly to SymbolAutoReveal */}
             {/* {showCenteredWord && (
@@ -1027,13 +1031,13 @@ const VakratundaGroveContent = ({
                   savedRecordings={savedRecordings}
                   isReload={isReload}
                   onPopupOpen={() => {
-                    console.log("🎤 Recorder Opening - Pausing Game");
+                    console.log("?? Recorder Opening - Pausing Game");
                     stopAllVoice();
                     stopIdleTimer();
                     setIsRecorderOpen(true);
                   }}
                   onPopupClose={() => {
-                    console.log("🎤 Recorder Closing - Resuming Game");
+                    console.log("?? Recorder Closing - Resuming Game");
                     setIsRecorderOpen(false);
                     // Only restart idle timer if we're in an active game phase (not celebration/overlay/complete)
                     const activeGamePhases = [PHASES.VAKRATUNDA_GAME, PHASES.MAHAKAYA_GAME];
@@ -1044,7 +1048,7 @@ const VakratundaGroveContent = ({
                 />
               )}
 
-            {/* ── GANESHA MICRO-REWARD GESTURE CUE ────────────────────────────────
+            {/* -- GANESHA MICRO-REWARD GESTURE CUE --------------------------------
                  blessing/center = Sanskrit word complete (phase win)
                  thumbsup/item   = single correct tap (micro win, fired by sub-games)
                  Sits above game content, below celebration overlays (z-index 200/999) */}
@@ -1090,16 +1094,36 @@ const VakratundaGroveContent = ({
                         console.error('Error saving game state:', error);
                       }
                     }
-                    setShowSceneCompletion(true);
+                    setShowMandala(true);
                   }}
                 />
               </>
             )}
+            {showMandala && (
+              <InnerMandala
+                childName={profileName}
+                petalStates={{}}
+                middlePetalStates={{
+                  1: 'activated',
+                  2: 'activated'
+                }}
+                middleSymbolIcons={{
+                  1: symbolVakratunda,
+                  2: symbolMahakaya
+                }}
+                innerPetalStates={{}}
+                highlightPetals={[2]}
+                message="These meanings are growing inside you"
+                onClose={() => {
+                  setShowMandala(false);
+                  setShowSceneCompletion(true);
+                }}
+              />
+            )}
             </>
             )}
-
             <SceneCompletionCelebration
-              show={showSceneCompletion}
+              show={showSceneCompletion && !showMandala}
               zoneId={zoneId}
               sceneName="Vakratunda Grove"
               completionTitle={completionModalContent?.title}
@@ -1143,6 +1167,7 @@ const VakratundaGroveContent = ({
                 stopAllVoice();    // stop it outright (safe — scene is resetting)
                 // Reset all local UI state
                 setShowSceneCompletion(false);
+                setShowMandala(false);
                 setRevealConfig(null);
                 setShowSparkle(null);
                 setShowPowerOverlay(false);
@@ -1170,3 +1195,4 @@ const VakratundaGroveContent = ({
 };
 
 export default VakratundaGroveSimplified;
+
