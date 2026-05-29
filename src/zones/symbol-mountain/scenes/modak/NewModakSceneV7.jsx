@@ -72,18 +72,18 @@ import { useGaneshaVoice } from '../../../../lib/hooks/useGaneshaVoice';
 import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOverlay';
 
 // Images
-//import forestBackground from './assets/images/forest-background.png';
+//import forestBackground from './assets/images/forest-background.webp';
 import forestBackground from './assets/images/modak-game-bg.webp';
-import foregroundOverlay from './assets/images/modak-game-overlay.png';
-import modak1 from './assets/images/modak-new.png';
-import modak2 from './assets/images/modak-new.png';
-import modak3 from './assets/images/modak-new.png';
-import basket from './assets/images/modak-plate.png';
-import mooshika from './assets/images/mooshika-new.png';
+import foregroundOverlay from './assets/images/modak-game-overlay.webp';
+import modak1 from './assets/images/modak-new.webp';
+import modak2 from './assets/images/modak-new.webp';
+import modak3 from './assets/images/modak-new.webp';
+import basket from './assets/images/modak-plate.webp';
+import mooshika from './assets/images/mooshika-new.webp';
 import mudMound from './assets/images/mound.svg';
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.png';
-import symbolModakColored from '../../shared/images/icons/symbol-modak-new.png';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.png';
+import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.webp';
+import symbolModakColored from '../../shared/images/icons/symbol-modak-new.webp';
+import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.webp';
 import mooshikaBefore from './assets/images/mooshika-before.webp';
 import mooshikaAfter from './assets/images/mooshika-after.webp';
 import modakBefore from './assets/images/modak-before.webp';
@@ -157,7 +157,7 @@ const MODAK_POSITION_SLOTS = [
 ];
 const SHOW_MODAK_SLOT_DEBUG = false;
 const SHOW_ALL_MODAK_SLOTS_PREVIEW = false;
-const GANESHA_SIT_FEED_IMAGE = '/images/ganesha-sit.svg';
+const GANESHA_SIT_FEED_IMAGE = '/images/ganesha-poses/sit-modak.webp';
 
 const pickRandomModakSlots = () => {
   const indices = MODAK_POSITION_SLOTS.map((_, i) => i);
@@ -2216,7 +2216,7 @@ const NewModakSceneMVPContent = ({
               {/* DRAG TUTORIAL HINT � ghost hand, shown once on first rock reveal */}
               {showDragHint && (
                 <div className="modak-drag-hint-overlay" aria-hidden="true">
-                  <img className="modak-drag-hint-hand" src="/images/ganesha-point.png" alt="" />
+                  <img className="modak-drag-hint-hand" src="/images/ganesha-point.webp" alt="" />
                 </div>
               )}
 
@@ -2225,7 +2225,7 @@ const NewModakSceneMVPContent = ({
                 sceneState.rockVisible ? (
                   // ROCK_VISIBLE: drag gesture (basket ? rock)
                   <div className="modak-drag-hint-overlay" aria-hidden="true">
-                    <img className="modak-drag-hint-hand" src="/images/ganesha-point.png" alt="" />
+                    <img className="modak-drag-hint-hand" src="/images/ganesha-point.webp" alt="" />
                   </div>
                 ) : sceneState.modaksUnlocked ? (
                   // MODAKS_UNLOCKED: no pointer emoji in freeze copy

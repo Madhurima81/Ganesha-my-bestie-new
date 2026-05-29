@@ -51,6 +51,7 @@ import FireworksCompletion from '../../../../lib/components/feedback/FireworksCo
 import CalmGoldenFireworks from '../../../../lib/components/feedback/CalmGoldenFireworks';
 import SymbolSidebar from '../../shared/components/SymbolSidebar';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
+import InnerMandala from '../../../../lib/components/celebration/InnerMandala';
 import HomeButton from '../../../../lib/components/ui/HomeButton';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import SymbolPowerMission from '../../shared/components/SymbolPowerMission';
@@ -59,19 +60,19 @@ import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal
 
 // Images
 import pondGameBg from './assets/images/pond-game-bg.webp';
-import pondGameTreeOverlay from './assets/images/pond-game-tree.png';
-import lotusClosed from './assets/images/lotus-closed-new.png';
-import lotusBloomed from './assets/images/lotus-bloomed-new.png';
-import goldenLotusClosed from './assets/images/goldenlotus-bud-new.png';
-import goldenLotusBloomed from './assets/images/goldenlotus-bloom-new.png';
-import pondFishImage from './assets/images/fish-new.png';
-import elephantFull from './assets/images/elephant-new.png';
-import mooshikaCoach from "./assets/images/mooshika-coach.png";
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.png';
-import symbolModakColored from '../../shared/images/icons/symbol-modak-new.png';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.png';
-import symbolLotusColored from '../../shared/images/icons/symbol-lotus-new.png';
-import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new.png';
+import pondGameTreeOverlay from './assets/images/pond-game-tree.webp';
+import lotusClosed from './assets/images/lotus-closed-new.webp';
+import lotusBloomed from './assets/images/lotus-bloomed-new.webp';
+import goldenLotusClosed from './assets/images/goldenlotus-bud-new.webp';
+import goldenLotusBloomed from './assets/images/goldenlotus-bloom-new.webp';
+import pondFishImage from './assets/images/fish-new.webp';
+import elephantFull from './assets/images/elephant-new.webp';
+import mooshikaCoach from "./assets/images/mooshika-coach.webp";
+import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.webp';
+import symbolModakColored from '../../shared/images/icons/symbol-modak-new.webp';
+import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.webp';
+import symbolLotusColored from '../../shared/images/icons/symbol-lotus-new.webp';
+import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new.webp';
 
 // Mission images
 import lotusBefore from './assets/images/lotus-before.webp';
@@ -302,6 +303,7 @@ const PondSceneContent = ({
 
   const [showSparkle, setShowSparkle] = useState(null);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
+  const [showMandala, setShowMandala] = useState(false);
   const [showCulturalCelebration, setShowCulturalCelebration] = useState(false);
   const [showCenteredSymbol, setShowCenteredSymbol] = useState(null);
   const [showPowerModal, setShowPowerModal] = useState(false);
@@ -415,11 +417,6 @@ const PondSceneContent = ({
       moment: key === 'complete' ? 'celebration' : 'encouragement'
     });
   }, [isAudioOn, speak]);
-  const replayCurrentVoice = useCallback(() => {
-    const replayKey = getPromptKeyForPhase();
-    if (replayKey) speakPondPrompt(replayKey);
-  }, [getPromptKeyForPhase, speakPondPrompt]);
-
   const getPromptKeyForPhase = useCallback(() => {
     if (!sceneState?.welcomeShown) return 'opening';
     if (sceneState?.phase === PHASES.COMPLETE) return 'complete';
@@ -435,6 +432,10 @@ const PondSceneContent = ({
     sceneState?.phase,
     sceneState?.welcomeShown
   ]);
+  const replayCurrentVoice = useCallback(() => {
+    const replayKey = getPromptKeyForPhase();
+    if (replayKey) speakPondPrompt(replayKey);
+  }, [getPromptKeyForPhase, speakPondPrompt]);
 
   const onPauseHide = useCallback(() => {
     stopSpokenVoice();
@@ -1402,7 +1403,7 @@ const PondSceneContent = ({
     );
   };
 
-  const isFinalCelebrationActive = showSparkle === 'final-fireworks' || showSceneCompletion;
+  const isFinalCelebrationActive = showSparkle === 'final-fireworks' || showMandala || showSceneCompletion;
 
   // Fireworks completion handler (matches Modak-style fireworks swap)
   useEffect(() => {
@@ -1426,7 +1427,7 @@ const PondSceneContent = ({
         SimpleSceneManager.clearCurrentScene();
       }
 
-      setShowSceneCompletion(true);
+      setShowMandala(true);
     }, 4000);
 
     return () => clearTimeout(timer);
@@ -1443,7 +1444,7 @@ const PondSceneContent = ({
   if (!sceneState) {
     return <div className="loading">Loading scene state...</div>;
   }
-  const isCompletionView = showSceneCompletion || sceneState.showingCompletionScreen;
+  const isCompletionView = showSceneCompletion || sceneState.showingCompletionScreen || showMandala;
   const isFinalFireworksView = showSparkle === 'final-fireworks';
 
   // 1. WRAP IN GAMELAYOUT
@@ -1839,6 +1840,32 @@ const PondSceneContent = ({
               />
             )}
 
+            {showMandala && (
+              <InnerMandala
+                childName="Friend"
+                petalStates={{
+                  1: 'awakened',
+                  2: 'awakened',
+                  3: 'awakened',
+                  4: 'awakened',
+                  5: 'awakened'
+                }}
+                symbolIcons={{
+                  1: symbolMooshikaColored,
+                  2: symbolModakColored,
+                  3: symbolBellyColored,
+                  4: symbolLotusColored,
+                  5: symbolTrunkColored
+                }}
+                highlightPetals={[5]}
+                message="That power is growing inside you"
+                onClose={() => {
+                  setShowMandala(false);
+                  setShowSceneCompletion(true);
+                }}
+              />
+            )}
+
             {/* DISCOVERY 1: GOLDEN LOTUS — disabled; SymbolAutoReveal handles this now */}
             {false && showDiscoveryFlip1 && (
               <SimpleDiscoveryOverlay
@@ -1901,7 +1928,7 @@ const PondSceneContent = ({
             )}
 
             {/* Scene Completion */}
-            {isCompletionView && (
+            {isCompletionView && !showMandala && (
               <SceneCompletionCelebration
                 show={isCompletionView}
                 zoneId={zoneId}

@@ -47,36 +47,36 @@ import ResumeCountdown from '../../../../lib/components/feedback/ResumeCountdown
 import sacredBackground from './assets/images/final_symbol_background.webp';
 
 // Images - Ganesha Forms
-import ganeshaStone from './assets/images/ganesha-stone.png';
+import ganeshaStone from './assets/images/ganesha-stone.webp';
 import ganeshaDivine from './assets/images/ganesha-divine.webp';
 import purpleHeart from './assets/images/purple-heart.svg';
 
 // Images - Symbol Icons
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.png';
-import symbolModakColored from '../../shared/images/icons/symbol-modak-new.png';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.png';
-import symbolLotusColored from '../../shared/images/icons/symbol-lotus-new.png';
-import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new.png';
-import symbolEyesColored from '../../shared/images/icons/symbol-eyes-new.png';
-import symbolEarsColored from '../../shared/images/icons/symbol-ears-new.png';
-import symbolTuskColored from '../../shared/images/icons/broken-tusk-symbol.png';
+import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.webp';
+import symbolModakColored from '../../shared/images/icons/symbol-modak-new.webp';
+import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.webp';
+import symbolLotusColored from '../../shared/images/icons/symbol-lotus-new.webp';
+import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new.webp';
+import symbolEyesColored from '../../shared/images/icons/symbol-eyes-new.webp';
+import symbolEarsColored from '../../shared/images/icons/symbol-ears-new.webp';
+import symbolTuskColored from '../../shared/images/icons/broken-tusk-symbol.webp';
 
 // Body Part Overlays - ADD THESE
-import ganeshaFaded from './assets/images/ganesha-faded.png';
-import ganeshaEyes from './assets/images/ganesha-eyes-colored.png';
-import ganeshaEars from './assets/images/ganesha-ears-colored.png';
-import ganeshaTrunk from './assets/images/ganesha-trunk-colored.png';
-import ganeshaTusk from './assets/images/ganesha-tusk-colored.png';
-import ganeshaLeftHand from './assets/images/ganesha-left-hand-colored.png';
-import ganeshaRightHand from './assets/images/ganesha-right-hand-colored.png';
-import ganeshaBelly from './assets/images/ganesha-belly-colored.png';
-import ganeshaBase from './assets/images/ganesha-mouse-colored.png';
+import ganeshaFaded from './assets/images/ganesha-faded.webp';
+import ganeshaEyes from './assets/images/ganesha-eyes-colored.webp';
+import ganeshaEars from './assets/images/ganesha-ears-colored.webp';
+import ganeshaTrunk from './assets/images/ganesha-trunk-colored.webp';
+import ganeshaTusk from './assets/images/ganesha-tusk-colored.webp';
+import ganeshaLeftHand from './assets/images/ganesha-left-hand-colored.webp';
+import ganeshaRightHand from './assets/images/ganesha-right-hand-colored.webp';
+import ganeshaBelly from './assets/images/ganesha-belly-colored.webp';
+import ganeshaBase from './assets/images/ganesha-mouse-colored.webp';
 
 // Association Icons (create placeholder icons for now, or use emojis)
 // We'll use simple colored circles as placeholders - you can replace with actual icons later
 
 // Coach image (for hints only)
-// import mooshikaCoach from "../pond/assets/images/mooshika-coach.png";
+// import mooshikaCoach from "../pond/assets/images/mooshika-coach.webp";
 
 // Temporary Icon Placeholders (replace with actual images later)
 const createIconDataURL = (emoji, color) => {
@@ -109,6 +109,7 @@ const iconHoney = '??';
 const iconLightbulb = '??';
 const iconUniverse = '??';
 const iconPath = '???';
+const BELLY_CARD_IMAGE_FALLBACK = '/images/icons/symbol-belly-new.webp';
 
 // Sacred Assembly Game Configuration
 const SACRED_SYMBOLS = [
@@ -1585,7 +1586,16 @@ const SacredAssemblyContent = ({
               >
                 <div className={`symbol-card ${isFlippedCard ? 'flip' : ''}`}>
                   <div className="symbol-card-face symbol-card-front">
-                    <img src={sym?.image} alt={sym?.name} className="symbol-card-image" />
+                    <img
+                      src={sym?.id === 'belly' ? (sym?.image || BELLY_CARD_IMAGE_FALLBACK) : sym?.image}
+                      alt={sym?.name}
+                      className="symbol-card-image"
+                      onError={(e) => {
+                        if (sym?.id === 'belly' && e.currentTarget.src !== `${window.location.origin}${BELLY_CARD_IMAGE_FALLBACK}`) {
+                          e.currentTarget.src = BELLY_CARD_IMAGE_FALLBACK;
+                        }
+                      }}
+                    />
                   </div>
                   <div className="symbol-card-face symbol-card-back">
                     <div className="symbol-title">{sym?.name}</div>
@@ -1758,8 +1768,8 @@ const SacredAssemblyContent = ({
                 />
                 <RotatingOrbsEffect
                   show={true}
-                  duration={3800}
-                  rotationDuration={3800}
+                  duration={7000}
+                  rotationDuration={7000}
                   symbolImages={{
                     mooshika: symbolMooshikaColored,
                     modak: symbolModakColored,
@@ -1771,11 +1781,8 @@ const SacredAssemblyContent = ({
                     tusk: symbolTuskColored
                   }}
                   ganeshaImage={ganeshaDivine}
-                  playerName={profileName}
-                  orbitCenter={{ top: '55%', left: '60%' }}
-                  orbSize={390}
-                  orbRadius={145}
-                  showCentralGanesha={false}
+                  playerName={activeProfile.name}
+                  showCentralGanesha={true}
                   showBuiltInFireworks={false}
                   onComplete={() => {
                     setShowSparkle(null);
