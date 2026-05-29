@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import './OpeningModal.css';
 import { getOpeningModal } from '../../../lib/config/content';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
-import GaneshaPresence from '../../../lib/components/character/GaneshaPresence';
+import { GANESHA_POSE_ASSETS } from '../../../lib/config/ganeshaUsageSystem';
 import useAppVisibility from '../../../lib/hooks/useAppVisibility';
 
 // Icon Mapping for Unified Style
@@ -422,6 +422,10 @@ const OpeningModal = ({
     if (!hasContent) return null;
     if (!visible) return null;
 
+    const openingGaneshaAsset = zoneId === 'about-me-hut'
+        ? GANESHA_POSE_ASSETS.sitHi
+        : GANESHA_POSE_ASSETS.standPoint;
+
     return (
         <div className="game-modal-overlay" style={{
             '--modal-card-bg': theme.parentBg,
@@ -435,13 +439,10 @@ const OpeningModal = ({
         }}>
             <div className="game-modal-content">
                 <div className="game-modal-character">
-                    <GaneshaPresence
+                    <img
                         className="game-modal-ganesha"
-                        pose="blessing"
-                        size={520}
-                        breathing="gentle"
-                        blink
-                        aria-label="Ganesha"
+                        src={openingGaneshaAsset}
+                        alt="Ganesha"
                         style={{
                             width: 'min(520px, 100%)',
                             height: 'auto',
