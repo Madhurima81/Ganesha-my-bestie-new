@@ -1,11 +1,10 @@
 // MainWelcomeScreen.jsx - PRODUCTION READY VERSION
 import React, { useState, useEffect, useRef } from 'react';
 import PrimaryBtn from '../shared/PrimaryBtn';
-import GaneshaCharacter from '../character/GaneshaCharacter';
 import { playUiTap } from '../../services/AudioService';
 import './MainWelcomeScreen.css';
 
-const MAIN_WELCOME_VO_LINE = "Hi bestie... I'm Ganesha. I am known as the remover of obstacles, and I help children be wise, kind, and brave. Come play with me.";
+const MAIN_WELCOME_VO_LINE = "";
 
 const MainWelcomeScreen = ({ onStartAdventure }) => {
   const [showButton, setShowButton] = useState(false);
@@ -48,7 +47,7 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
       localStorage.setItem('ganesha_audio_enabled', 'true');
       isAudioOn = true;
     }
-    if (!isAudioOn || !window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') {
+    if (!MAIN_WELCOME_VO_LINE || !isAudioOn || !window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') {
       return () => {
         voiceTimersRef.current.forEach(clearTimeout);
         window.speechSynthesis?.cancel();
@@ -209,23 +208,26 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
       <div className={`welcome-title-container ${showButton ? 'visible' : ''}`}>
         <div className="welcome-title-wrapper">
           <h1 className="welcome-title">Ganesha My Bestie</h1>
-          <p className="welcome-subtitle">Come play with me.</p>
-          <p className="welcome-story">
-            Ganesha is a loving friend known as the remover of obstacles. He teaches us to use our
-            big ears to listen, our calm mind to think, and our kind heart to help others.
-          </p>
+          <svg className="lotus-divider" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 4c1.2 2 1.2 4 0 6-1.2-2-1.2-4 0-6zm-5 3c1.8 1 2.8 2.8 3 5-2.2-.2-4-1.2-5-3 .5-.8 1.2-1.5 2-2zm10 0c.8.5 1.5 1.2 2 2-1 1.8-2.8 2.8-5 3 .2-2.2 1.2-4 3-5zM3 12c2-.5 4 0 5.5 1.3C6.8 14.8 4.8 15.2 3 14.5c-.1-.8-.1-1.6 0-2.5zm18 0c.1.9.1 1.7 0 2.5-1.8.7-3.8.3-5.5-1.2C17 12 19 11.5 21 12zm-9 2c1.6 0 3 1 3.5 2.5-1.1 1-2.4 1.5-3.5 1.5s-2.4-.5-3.5-1.5C9 15 10.4 14 12 14z" fill="#c77dd6"/>
+          </svg>
         </div>
       </div>
       
-      {/* GANESHA */}
+      {/* GANESHA VIDEO */}
       <div className={`welcome-ganesha-image-container ${showButton ? 'visible' : ''}`}>
         <div className="ganesha-wrap">
-          <GaneshaCharacter
-            expression="happy"
-            pose="blessing"
-            size="100%"
-            className="welcome-ganesha-image"
-          />
+          <video
+            className="welcome-ganesha-video"
+            poster="/images/ganesha-hi-stand.png"
+            autoPlay
+            loop
+            muted
+            playsInline
+          >
+            <source src="/videos/ganeshawelcome-new.webm" type="video/webm" />
+            <source src="/videos/ganeshawelcome-new.mp4" type="video/mp4" />
+          </video>
         </div>
       </div>
       
@@ -236,7 +238,7 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
       <div className="welcome-content-overlay">
         <div className={`adventure-button-container ${showButton ? 'visible' : ''}`}>
           <PrimaryBtn
-            label={isStarting ? 'Starting...' : 'Start'}
+            label={isStarting ? 'Starting...' : 'Begin'}
             onClick={handleStartAdventure}
             disabled={isStarting}
             size="lg"

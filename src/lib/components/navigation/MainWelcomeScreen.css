@@ -8,7 +8,7 @@
   top: 0; left: 0;
   width: 100vw; height: 100vh;
   overflow: hidden;
-  background: url('/images/welcome-background.svg') no-repeat center center;
+  background: url('/images/welcome-opening-bg.webp') no-repeat center center;
   background-size: cover;
   animation: welcomeFadeIn 1s ease-out;
 }
@@ -182,6 +182,16 @@
     floatTitle       4s ease-in-out infinite;
 }
 
+.lotus-divider {
+  display: block;
+  width: clamp(20px, 3vw, 32px);
+  height: auto;
+  margin: 4px auto 6px;
+  opacity: 0.85;
+  filter: drop-shadow(0 0 6px rgba(199, 125, 214, 0.4));
+  animation: floatTitle 4s ease-in-out infinite;
+}
+
 /* Ultra-subtle gold highlight edge */
 .welcome-title::after {
   content: none;
@@ -217,27 +227,22 @@
 /* ===================================== */
 .welcome-ganesha-image-container {
   position: absolute;
-  top: 50%;
-  left: 54%;
-  transform: translate(-50%, -50%);
-  margin-top: -10px;
-  z-index: 15;
+  inset: 0;
+  z-index: 6;
   opacity: 0;
-  transition: opacity 1s ease-out;
+  transition: opacity 0.8s ease-out;
 }
 
 .welcome-ganesha-image-container.visible {
   opacity: 1;
-  transform: translate(-50%, -50%);
+  transform: none;
 }
 
 .ganesha-wrap {
-  position: relative;
-  width: clamp(190px, 30vw, 520px);
-  height: clamp(190px, 30vw, 520px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .ganesha-wrap::before {
@@ -268,6 +273,16 @@
   object-fit: contain;
   display: block;
   animation: ganeshaBreathing 3s ease-in-out infinite;
+}
+
+.welcome-ganesha-video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  display: block;
+  animation: none;
+  transform: scale(1);
+  transform-origin: center center;
 }
 
 .welcome-subtitle {
@@ -390,9 +405,6 @@
   .welcome-subtitle { font-size: 14px; margin-top: 4px; }
   .welcome-story { font-size: 12px; max-width: min(86vw, 620px); }
   .welcome-title-container { top: 3%; }
-
-  .welcome-ganesha-image-container { bottom: -5%; }
-  .welcome-ganesha-image { width: 140px; }
 
   .adventure-button-container .primary-btn-unified { font-size: 18px; padding: 10px 44px; }
   .adventure-button-container { margin-bottom: 20px; }

@@ -1,14 +1,16 @@
-﻿// CleanProfileSelector.jsx - FIXED: Delete Modal Bug
+// CleanProfileSelector.jsx - With scroll skin + Mooshika ride transition
 import React, { useState, useEffect, useRef } from 'react';
 import GameStateManager from '../../services/GameStateManager';
 import PrimaryBtn from '../shared/PrimaryBtn';
 import ScreenHeader from '../shared/ScreenHeader';
+import { GANESHA_USAGE_SYSTEM } from '../../config/ganeshaUsageSystem';
+import MooshikaRideTransition from './MooshikaRideTransition';
 import './CleanProfileSelector.css';
 
 const CleanProfileSelector = ({
   onProfileSelect,
   profiles: initialProfiles,
-  forceCreate = false // true for first-time users - skips grid, opens create modal immediately
+  forceCreate = false
 }) => {
   const [profiles, setProfiles] = useState(initialProfiles || {});
   const [showCreateProfile, setShowCreateProfile] = useState(forceCreate);
@@ -16,11 +18,16 @@ const CleanProfileSelector = ({
   const [selectedAvatar, setSelectedAvatar] = useState('monkey');
   const [avatarTapPulseId, setAvatarTapPulseId] = useState(null);
   const [selectedAge, setSelectedAge] = useState(7);
-  const [currentStep, setCurrentStep] = useState(1); // 1=name, 2=age, 3=friend
+  const [currentStep, setCurrentStep] = useState(1);
   const [isCreatingProfile, setIsCreatingProfile] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
   const [showInfo, setShowInfo] = useState(false);
-  const [manageModeId, setManageModeId] = useState(null); // stores the profile id being managed
+  const [manageModeId, setManageModeId] = useState(null);
+
+  // NEW: transition state
+  const [transitionStage, setTransitionStage] = useState(null); // null | 'ride'
+  const [pendingProfile, setPendingProfile] = useState(null);
+
   const longPressTimer = React.useRef(null);
   const voiceTimersRef = useRef([]);
   const hasPlayedFriendChoiceVoRef = useRef(false);
@@ -106,7 +113,6 @@ const CleanProfileSelector = ({
     const pulseTimer = setTimeout(() => setAvatarTapPulseId(null), 140);
     voiceTimersRef.current.push(pulseTimer);
 
-    // Tiny "pop" using Web Audio so selection feels tactile even without asset files.
     try {
       const Ctx = window.AudioContext || window.webkitAudioContext;
       if (Ctx) {
@@ -125,7 +131,7 @@ const CleanProfileSelector = ({
         osc.stop(ctx.currentTime + 0.08);
       }
     } catch (e) {
-      // Non-blocking: skip if audio context is unavailable.
+      // non-blocking
     }
 
     if (hasPlayedFriendChoiceVoRef.current) return;
@@ -152,6 +158,13 @@ const CleanProfileSelector = ({
     }
   };
 
+  const getAnimalId = (avatar) => {
+    if (!avatar) return 'monkey';
+    if (typeof avatar === 'string') return avatar;
+    return avatar.id || 'monkey';
+  };
+
+  // UPDATED: instead of calling onProfileSelect immediately, trigger Mooshika ride
   const handleCreateProfile = () => {
     if (!newProfileName.trim() || isCreatingProfile) return;
     setIsCreatingProfile(true);
@@ -166,26 +179,17 @@ const CleanProfileSelector = ({
       );
 
       if (newProfile && newProfile.id) {
-        const createdName = newProfile.name;
-        const audioEnabled = localStorage.getItem('ganesha_audio_enabled');
-        const isAudioOn = audioEnabled === null ? true : audioEnabled === 'true';
-        const canSpeak = isAudioOn && window.speechSynthesis && typeof window.SpeechSynthesisUtterance !== 'undefined';
+        // Cancel any in-flight VO so it doesn't bleed into the ride
+        window.speechSynthesis?.cancel();
 
         setNewProfileName('');
         setSelectedAvatar('monkey');
-        setSelectedAge(null);
-        if (canSpeak) {
-          window.speechSynthesis.cancel();
-          const u = new window.SpeechSynthesisUtterance(`Yay, ${createdName}! Let's go!`);
-          u.rate = 1.03;
-          u.pitch = 1.02;
-          u.volume = 0.92;
-          window.speechSynthesis.speak(u);
-          const timerId = setTimeout(() => onProfileSelect(newProfile.id), 950);
-          voiceTimersRef.current.push(timerId);
-        } else {
-          onProfileSelect(newProfile.id);
-        }
+        setSelectedAge(7);
+
+        // Hand off to Mooshika ride
+        setPendingProfile(newProfile);
+        setShowCreateProfile(false);
+        setTransitionStage('ride');
       } else {
         setIsCreatingProfile(false);
       }
@@ -196,137 +200,133 @@ const CleanProfileSelector = ({
   };
 
   const confirmDelete = (profileId) => {
-    GameStateManager.deleteProfile(profileId);
-    loadProfiles();
-    setShowDeleteConfirm(null);
-    setManageModeId(null);
+    try {
+      GameStateManager.deleteProfile(profileId);
+      const updated = { ...profiles };
+      delete updated[profileId];
+      setProfiles(updated);
+      setShowDeleteConfirm(null);
+      setManageModeId(null);
+    } catch (error) {
+      console.error('Error deleting profile:', error);
+    }
   };
 
-  const getAnimalId = (avatarData) => {
-    if (['monkey', 'peacock', 'squirrel', 'tiger'].includes(avatarData)) return avatarData;
-    const map = { 'ðŸµ': 'monkey', 'ðŸ¦š': 'peacock', 'ðŸ¿ï¸': 'squirrel', 'ðŸ¯': 'tiger' };
-    return map[avatarData] || 'monkey';
-  };
+  // RIDE TRANSITION — render first if active
+  if (transitionStage === 'ride' && pendingProfile) {
+    return (
+      <MooshikaRideTransition
+        avatarId={getAnimalId(pendingProfile.avatar)}
+        profileName={pendingProfile.name}
+        onComplete={() => {
+          const id = pendingProfile.id;
+          setTransitionStage(null);
+          setPendingProfile(null);
+          setIsCreatingProfile(false);
+          onProfileSelect(id);
+        }}
+      />
+    );
+  }
 
-  const profileArray = Object.values(profiles || {});
+  const profileArray = Object.values(profiles);
   const emptySlots = Math.max(0, 4 - profileArray.length);
 
   return (
-    <div className="clean-profile-overlay page-transition">
-      <div className="clean-forest-background">
-        <div className="profile-dust" aria-hidden="true">
-          <span />
-          <span />
-          <span />
-        </div>
-        <div className="profile-bg-overlay" aria-hidden="true" />
-        <div className="profile-vignette" aria-hidden="true" />
-      </div>
-
+    <div className="clean-profile-selector">
       <div className="clean-profile-container">
         {showCreateProfile && (
-          <div className="overlay">
-            <div className="explorer-modal">
-              <div className="ganesha-onboarding-portrait">
-                <img src="/images/ganesha-sit.svg" alt="Ganesha" />
-              </div>
+          <div className="clean-modal-overlay scroll-overlay">
+            {/* SCROLL SKIN — bg image lives behind, scroll PNG frames the card */}
+            <div className="scroll-card">
+              <div className="scroll-card-inner">
+                <div className="create-step-content">
+                  {currentStep === 1 && (
+                    <>
+                      <h2 className="create-step-heading">What shall I call you, little explorer?</h2>
+                      <input
+                        type="text"
+                        value={newProfileName}
+                        onChange={(e) => setNewProfileName(e.target.value)}
+                        placeholder="Type your name"
+                        maxLength={12}
+                        className="name-input"
+                        autoFocus
+                      />
+                    </>
+                  )}
 
-              <div className="step-dots">
-                <span className={currentStep >= 1 ? 'active' : ''} />
-                <span className={currentStep >= 2 ? 'active' : ''} />
-                <span className={currentStep >= 3 ? 'active' : ''} />
-              </div>
-
-              <div className={`create-step-content step-${currentStep}`}>
-                {currentStep === 1 && (
-                  <>
-                    <h2 className="create-step-heading">What should I call you?</h2>
-                    <p className="create-step-subheading">Tell me your name</p>
-                    <input
-                      type="text"
-                      placeholder="Enter your name"
-                      value={newProfileName}
-                      onChange={(e) => setNewProfileName(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && newProfileName.trim().length >= 2) setCurrentStep(2);
-                      }}
-                      maxLength={12}
-                      className="name-input"
-                      autoFocus
-                    />
-                  </>
-                )}
-
-                {currentStep === 2 && (
-                  <>
-                    <p className="create-step-echo">{newProfileName.trim()}</p>
-                    <h2 className="create-step-heading">How old are you?</h2>
-                    <div className="age-stepper">
-                      <button
-                        className="age-stepper-btn"
-                        onClick={() => setSelectedAge(Math.max(5, (selectedAge || 7) - 1))}
-                        type="button"
-                        aria-label="Decrease age"
-                      >
-                        -
-                      </button>
-                      <div className="age-stepper-value" key={selectedAge}>
-                        {selectedAge || 7}
-                      </div>
-                      <button
-                        className="age-stepper-btn"
-                        onClick={() => setSelectedAge(Math.min(12, (selectedAge || 7) + 1))}
-                        type="button"
-                        aria-label="Increase age"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </>
-                )}
-
-                {currentStep === 3 && (
-                  <>
-                    <h2 className="create-step-heading">Pick your friend</h2>
-                    <p className="create-step-subheading">Who will join your adventure?</p>
-                    <div className="friend-grid">
-                      {animalAvatars.map((animal) => (
-                        <div
-                          key={animal.id}
-                          className={`friend-card ${selectedAvatar === animal.id ? 'active' : ''} ${avatarTapPulseId === animal.id ? 'pop' : ''}`}
-                          onClick={() => handleAvatarSelect(animal.id)}
-                          aria-label={animal.name}
-                          role="button"
+                  {currentStep === 2 && (
+                    <>
+                      <p className="create-step-echo">{newProfileName.trim()}</p>
+                      <h2 className="create-step-heading">How old are you?</h2>
+                      <div className="age-stepper">
+                        <button
+                          className="age-stepper-btn"
+                          onClick={() => setSelectedAge(Math.max(5, (selectedAge || 7) - 1))}
+                          type="button"
+                          aria-label="Decrease age"
                         >
-                          <img src={`/images/new-explorer-${animal.id}.png`} alt={animal.name} />
+                          -
+                        </button>
+                        <div className="age-stepper-value" key={selectedAge}>
+                          {selectedAge || 7}
                         </div>
-                      ))}
-                    </div>
-                  </>
-                )}
+                        <button
+                          className="age-stepper-btn"
+                          onClick={() => setSelectedAge(Math.min(12, (selectedAge || 7) + 1))}
+                          type="button"
+                          aria-label="Increase age"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </>
+                  )}
+
+                  {currentStep === 3 && (
+                    <>
+                      <h2 className="create-step-heading">Pick your friend</h2>
+                      <p className="create-step-subheading">Who will join your adventure?</p>
+                      <div className="friend-grid">
+                        {animalAvatars.map((animal) => (
+                          <div
+                            key={animal.id}
+                            className={`friend-card ${selectedAvatar === animal.id ? 'active' : ''} ${avatarTapPulseId === animal.id ? 'pop' : ''}`}
+                            onClick={() => handleAvatarSelect(animal.id)}
+                            aria-label={animal.name}
+                            role="button"
+                          >
+                            <img src={`/images/new-explorer-${animal.id}.webp`} alt={animal.name} />
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                <PrimaryBtn
+                  label={currentStep < 3 ? 'Next' : 'Fly to Ganesha World!'}
+                  onClick={() => {
+                    if (currentStep === 1) setCurrentStep(2);
+                    else if (currentStep === 2) setCurrentStep(3);
+                    else handleCreateProfile();
+                  }}
+                  disabled={(currentStep === 1 && newProfileName.trim().length < 2) || isCreatingProfile}
+                  size="md"
+                  fullWidth
+                />
+
+                <button
+                  onClick={() => {
+                    if (currentStep === 1) setShowCreateProfile(false);
+                    else setCurrentStep(currentStep - 1);
+                  }}
+                  className="back-btn"
+                >
+                  {currentStep === 1 ? 'Cancel' : 'Back'}
+                </button>
               </div>
-
-              <PrimaryBtn
-                label={currentStep < 3 ? 'Next' : 'Start Adventure!'}
-                onClick={() => {
-                  if (currentStep === 1) setCurrentStep(2);
-                  else if (currentStep === 2) setCurrentStep(3);
-                  else handleCreateProfile();
-                }}
-                disabled={(currentStep === 1 && newProfileName.trim().length < 2) || isCreatingProfile}
-                size="md"
-                fullWidth
-              />
-
-              <button
-                onClick={() => {
-                  if (currentStep === 1) setShowCreateProfile(false);
-                  else setCurrentStep(currentStep - 1);
-                }}
-                className="back-btn"
-              >
-                {currentStep === 1 ? 'Cancel' : 'Back'}
-              </button>
             </div>
           </div>
         )}
@@ -362,7 +362,7 @@ const CleanProfileSelector = ({
                     onTouchEnd={() => clearTimeout(longPressTimer.current)}
                   >
                     <div className="clean-animal-avatar-container">
-                      <img src={`/images/new-explorer-${animalId}.png`} alt="Profile" className="clean-animal-avatar-image" />
+                      <img src={`/images/new-explorer-${animalId}.webp`} alt="Profile" className="clean-animal-avatar-image" />
                       {isManaging && (
                         <button
                           className="clean-delete-trigger"

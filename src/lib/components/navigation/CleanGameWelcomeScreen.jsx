@@ -703,7 +703,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
               avatar={
                 <img
                   className={animalId === 'squirrel' ? 'squirrel-avatar' : ''}
-                  src={`/images/new-explorer-${animalId}.png`}
+                  src={`/images/new-explorer-${animalId}.webp`}
                   alt=""
                   onError={(e) => { e.target.style.display = 'none'; }}
                 />
