@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './GaneshaIntroStory.css';
+import { GANESHA_USAGE_SYSTEM } from '../lib/config/ganeshaUsageSystem';
 
 const GaneshaIntroStory = ({ profileId, childName, onComplete }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -12,32 +13,32 @@ const GaneshaIntroStory = ({ profileId, childName, onComplete }) => {
   const slides = useMemo(
     () => [
       {
-        image: '/intro-story/story1-open-pg.png',
+        image: '/intro-story/story1-open-pg.webp',
         title: 'Meet Ganesha',
         text: 'A magical story begins...',
         minimal: true,
         vo: "Are you ready? Let's meet Ganesha!"
       },
       {
-        image: '/intro-story/story1-img1.png',
+        image: '/intro-story/story1-img1.webp',
         title: `Hi ${childName || 'friend'}!`,
         text: 'Come, let us begin a magical journey together.',
         vo: 'My mom Parvati made me with love and brought me to life!'
       },
       {
-        image: '/intro-story/story1-img2.png',
+        image: '/intro-story/story1-img2.webp',
         title: 'Meet Ganesha',
         text: 'I am your bestie, here to guide you with joy and courage.',
         vo: 'Mom said, Guard the door! But uh-oh, the visitor was Dad Shiva!'
       },
       {
-        image: '/intro-story/story1-img3.png',
+        image: '/intro-story/story1-img3.webp',
         title: 'Play and Learn',
         text: 'We will explore stories, symbols, and fun adventures.',
         vo: 'Mom felt very sad, so Dad gave me a magical elephant head!'
       },
       {
-        image: '/intro-story/story1-img4.png',
+        image: '/intro-story/story1-img4.webp',
         title: 'Ready?',
         text: 'Let us start and shine together.',
         vo: 'Now we were together again, as one happy family!'
@@ -46,8 +47,8 @@ const GaneshaIntroStory = ({ profileId, childName, onComplete }) => {
         title: "Let's explore my world!",
         text: 'Tap to start your adventure',
         endScreen: true,
-        endMapImage: '/intro-story/map-new-2.png',
-        endGaneshaImage: '/intro-story/new-ganesha-stand-point.png',
+        endMapImage: '/intro-story/map-new-2.webp',
+        endGaneshaImage: GANESHA_USAGE_SYSTEM.startJourney.asset,
         vo: "And now, let's explore my world together!"
       }
     ],

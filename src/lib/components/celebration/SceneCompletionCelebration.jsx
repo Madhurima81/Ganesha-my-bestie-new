@@ -5,7 +5,7 @@ import GameStateManager from "../../services/GameStateManager";
 import SanskritVoiceRecorder from '../audio/SanskritVoiceRecorder';
 import { applyCompletionScreenTheme } from "../../theme/CompletionScreenThemeAdapter";
 import { applyRecorderTheme } from "../../theme/RecorderThemeAdapter";
-import GaneshaPresence from '../character/GaneshaPresence';
+import { GANESHA_POSE_ASSETS } from '../../config/ganeshaUsageSystem';
 
 const SceneCompletionCelebration = ({
   show = false,
@@ -150,12 +150,10 @@ const handleAction = (callback, skipComplete = false) => {
       {/* Main Container added to match OpeningModal layout */}
       <div className="celebration-content">
         <div className="completion-ganesha-left" aria-hidden="true">
-          <GaneshaPresence
+          <img
             className="completion-ganesha"
-            pose="blessing"
-            size={470}
-            breathing="gentle"
-            blink
+            src={GANESHA_POSE_ASSETS.sitModak}
+            alt="Ganesha"
             style={{
               width: 'min(470px, 100%)',
               height: 'auto',

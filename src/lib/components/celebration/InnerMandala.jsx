@@ -58,7 +58,19 @@ const SYMBOL_POSITIONS = {
   8: { cx: 3.58, cy: 3.58 },   // upper-left — Tusk
 };
 
+const MIDDLE_SYMBOL_POSITIONS = {
+  1: { cx: 7.40, cy: 3.80 },
+  2: { cx: 9.95, cy: 4.85 },
+  3: { cx: 11.00, cy: 7.40 },
+  4: { cx: 9.95, cy: 9.95 },
+  5: { cx: 7.40, cy: 11.00 },
+  6: { cx: 4.85, cy: 9.95 },
+  7: { cx: 3.80, cy: 7.40 },
+  8: { cx: 4.85, cy: 4.85 },
+};
+
 const SYMBOL_SIZE = 1.6; // SVG units
+const MIDDLE_SYMBOL_SIZE = 1.35; // SVG units
 
 const isActive = (state) => ['awakened', 'energized', 'bloomed', 'activated', 'glowing'].includes(state);
 
@@ -75,6 +87,7 @@ export default function InnerMandala({
   allowTapToSkip = true,
   onPetalClick,
   symbolIcons = {},
+  middleSymbolIcons = {},
   avatar = null,
 }) {
   const [mounted, setMounted] = useState(false);
@@ -170,6 +183,26 @@ export default function InnerMandala({
               />
             ))}
           </g>
+
+          {MIDDLE_PETALS.map((petal) => {
+            const active = isActive(middlePetalStates[petal.id]);
+            const iconUrl = middleSymbolIcons[petal.id];
+            if (!active || !iconUrl) return null;
+            const pos = MIDDLE_SYMBOL_POSITIONS[petal.id];
+            return (
+              <image
+                key={`middle-symbol-${petal.id}`}
+                href={iconUrl}
+                x={pos.cx - MIDDLE_SYMBOL_SIZE / 2}
+                y={pos.cy - MIDDLE_SYMBOL_SIZE / 2}
+                width={MIDDLE_SYMBOL_SIZE}
+                height={MIDDLE_SYMBOL_SIZE}
+                className={`middle-petal-symbol middle-petal-symbol-${petal.id}`}
+                preserveAspectRatio="xMidYMid meet"
+                style={{ pointerEvents: 'none' }}
+              />
+            );
+          })}
 
           {/* INNER RING CIRCLES — small lavender disc behind daisy */}
           <ellipse className="inner-ring-thin" cx="7.3017011" cy="7.2286258" rx="2.0423188" ry="2.0108352" />
