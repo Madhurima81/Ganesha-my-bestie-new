@@ -39,29 +39,29 @@ import babyGaneshaSit from '/images/ganesha-final-new.svg';
 import dreamsBg from './assets/images/dream_background.webp';
 
 // Wish Icons
-import wishIconEarth from './assets/images/wish-icon-earth.png';
-import wishIconFlower from './assets/images/wish-icon-flower.png';
-import wishIconShare from './assets/images/wish-icon-share.png';
-import wishHeartIcon from './assets/images/heart-icon.png';
-import wishStarIcon from './assets/images/shootingstar-icon.png';
-import wishWorldIcon from './assets/images/world-icon.png';
+import wishIconEarth from './assets/images/wish-icon-earth.webp';
+import wishIconFlower from './assets/images/wish-icon-flower.webp';
+import wishIconShare from './assets/images/wish-icon-share.webp';
+import wishHeartIcon from './assets/images/heart-icon.webp';
+import wishStarIcon from './assets/images/shootingstar-icon.webp';
+import wishWorldIcon from './assets/images/world-icon.webp';
 
 // Wish Images
-import wishEarthSad from './assets/images/wish-images/wish-earth-sad.png';
-import wishEarthHappy from './assets/images/wish-images/wish-earth-happy.png';
-import wishBowlEmpty from './assets/images/wish-images/wish-bowl-empty.png';
-import wishBowlFull from './assets/images/wish-images/wish-bowl-full.png';
+import wishEarthSad from './assets/images/wish-images/wish-earth-sad.webp';
+import wishEarthHappy from './assets/images/wish-images/wish-earth-happy.webp';
+import wishBowlEmpty from './assets/images/wish-images/wish-bowl-empty.webp';
+import wishBowlFull from './assets/images/wish-images/wish-bowl-full.webp';
 import plateImg from './assets/images/wish-images/plate.webp';
-import cowImg from './assets/images/wish-images/fav-cow.png';
-import mouseImg from './assets/images/wish-images/fav-mouse.png';
-import peacockImg from './assets/images/wish-images/fav-peacock.png';
-import appleImg from './assets/images/wish-images/apple.png';
-import bananaImg from './assets/images/wish-images/banana.png';
-import breadImg from './assets/images/wish-images/bread.png';
-import brocolliImg from './assets/images/wish-images/brocolli.png';
-import carrotImg from './assets/images/wish-images/carrot.png';
-import milkImg from './assets/images/wish-images/milk.png';
-import riceImg from './assets/images/wish-images/rice.png';
+import cowImg from './assets/images/wish-images/fav-cow.webp';
+import mouseImg from './assets/images/wish-images/fav-mouse.webp';
+import peacockImg from './assets/images/wish-images/fav-peacock.webp';
+import appleImg from './assets/images/wish-images/apple.webp';
+import bananaImg from './assets/images/wish-images/banana.webp';
+import breadImg from './assets/images/wish-images/bread.webp';
+import brocolliImg from './assets/images/wish-images/brocolli.webp';
+import carrotImg from './assets/images/wish-images/carrot.webp';
+import milkImg from './assets/images/wish-images/milk.webp';
+import riceImg from './assets/images/wish-images/rice.webp';
 import wishForest1 from './assets/images/wish-images/wish-forest-1.webp';
 import wishForest2 from './assets/images/wish-images/wish-forest-2.webp';
 import wishForest3 from './assets/images/wish-images/wish-forest-3.webp';
@@ -72,18 +72,18 @@ import bushImg from './assets/images/wish-images/bush.webp';
 import treeImg from './assets/images/wish-images/tree.webp';
 import butterflyImg from './assets/images/wish-images/butterfly.webp';
 import birdImg from './assets/images/wish-images/bird.webp';
-import helpingImg from './assets/images/wish-images/helping.png';
-import sharingImg from './assets/images/wish-images/sharing.png';
-import huggingImg from './assets/images/wish-images/hugging.png';
-import giftingImg from './assets/images/wish-images/gifting.png';
-import angryImg from './assets/images/wish-images/angry.png';
-import fightImg from './assets/images/wish-images/fight.png';
-import hitImg from './assets/images/wish-images/hit.png';
-import teasingImg from './assets/images/wish-images/teasing.png';
+import helpingImg from './assets/images/wish-images/helping.webp';
+import sharingImg from './assets/images/wish-images/sharing.webp';
+import huggingImg from './assets/images/wish-images/hugging.webp';
+import giftingImg from './assets/images/wish-images/gifting.webp';
+import angryImg from './assets/images/wish-images/angry.webp';
+import fightImg from './assets/images/wish-images/fight.webp';
+import hitImg from './assets/images/wish-images/hit.webp';
+import teasingImg from './assets/images/wish-images/teasing.webp';
 import cloudImg from './assets/images/cloud.webp';
-import kindnessHeaderIcon from './assets/images/story-header/kindness-icon.png';
-import sharingHeaderIcon from './assets/images/story-header/sharing-icon.png';
-import natureHeaderIcon from './assets/images/story-header/nature-icon.png';
+import kindnessHeaderIcon from './assets/images/story-header/kindness-icon.webp';
+import sharingHeaderIcon from './assets/images/story-header/sharing-icon.webp';
+import natureHeaderIcon from './assets/images/story-header/nature-icon.webp';
 
 // Error Boundary
 class ErrorBoundary extends React.Component {
@@ -236,7 +236,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const PROFILE_EMOJI_TO_ANIMAL = { '🐵': 'monkey', '🦚': 'peacock', '🐿️': 'squirrel', '🐯': 'tiger' };
   const rawAvatar = activeProfile?.avatar;
   const profileAnimalId = PROFILE_ANIMAL_IDS.includes(rawAvatar) ? rawAvatar : (PROFILE_EMOJI_TO_ANIMAL[rawAvatar] || null);
-  const profileAvatarImage = profileAnimalId ? `/images/new-explorer-${profileAnimalId}.png` : null;
+  const profileAvatarImage = profileAnimalId ? `/images/new-explorer-${profileAnimalId}.webp` : null;
   const profileAvatar = (typeof rawAvatar === 'string' && rawAvatar.trim().length <= 2)
     ? rawAvatar
     : profileDisplayName.charAt(0).toUpperCase();

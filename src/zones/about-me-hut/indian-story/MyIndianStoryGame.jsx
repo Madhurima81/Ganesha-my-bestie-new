@@ -20,57 +20,57 @@ import bgImage from './assets/images/name_background.webp';
 import babyGaneshaImg from '/images/ganesha-final-new.svg';
 import OpeningModal from '../../shared/components/OpeningModal';
 import SceneManager from '../../../lib/components/scenes/SceneManager';
-import storyHouseIcon from './assets/images/house-icon.png';
-import storyLanguageIcon from './assets/images/language-icon.png';
-import storyFestivalIcon from './assets/images/festival-icon.png';
+import storyHouseIcon from './assets/images/house-icon.webp';
+import storyLanguageIcon from './assets/images/language-icon.webp';
+import storyFestivalIcon from './assets/images/festival-icon.webp';
 
 // ─── PHASE 1: NEW IMPORTS ─────────────────────────────────────────
 import FreeDraggableItem from '../../../lib/components/interactive/FreeDraggableItem';
 import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation';
 import indiaMapImage from './assets/images/ganeshaplace/india-map.webp';
-import mglass from './assets/images/ganeshaplace/mglass.png';
-import mumbaiIcon from './assets/images/ganeshaplace/mumbai.png';
-import varansiIcon from './assets/images/ganeshaplace/Varanasi.png';
-import tamilNaduIcon from './assets/images/ganeshaplace/TamilNadu.png';
+import mglass from './assets/images/ganeshaplace/mglass.webp';
+import mumbaiIcon from './assets/images/ganeshaplace/mumbai.webp';
+import varansiIcon from './assets/images/ganeshaplace/Varanasi.webp';
+import tamilNaduIcon from './assets/images/ganeshaplace/TamilNadu.webp';
 
 // ─── PHASE 2: REGION ICONS ────────────────────────────────────────
-import northIcon from './assets/images/ganeshaplace/north.png';
-import northEastIcon from './assets/images/ganeshaplace/north-east.png';
-import westIcon from './assets/images/ganeshaplace/west.png';
-import centralIcon from './assets/images/ganeshaplace/central.png';
-import eastIcon from './assets/images/ganeshaplace/east.png';
-import southIcon from './assets/images/ganeshaplace/south.png';
-import desertIcon from './assets/images/ganeshaplace/dessert.png';
+import northIcon from './assets/images/ganeshaplace/north.webp';
+import northEastIcon from './assets/images/ganeshaplace/north-east.webp';
+import westIcon from './assets/images/ganeshaplace/west.webp';
+import centralIcon from './assets/images/ganeshaplace/central.webp';
+import eastIcon from './assets/images/ganeshaplace/east.webp';
+import southIcon from './assets/images/ganeshaplace/south.webp';
+import desertIcon from './assets/images/ganeshaplace/dessert.webp';
 
 // ─── PHASE 3: LANGUAGE ICONS & PLAY BUTTON ────────────────────────
-import hindiLangIcon from './assets/images/languages/hindi.png';
-import tamilLangIcon from './assets/images/languages/Tamil.png';
-import sanskritLangIcon from './assets/images/languages/Sanskrit.png';
-import teluguLangIcon from './assets/images/languages/Telugu.png';
-import marathiLangIcon from './assets/images/languages/Marathi.png';
-import gujaratiLangIcon from './assets/images/languages/Gujarati.png';
-import bengaliLangIcon from './assets/images/languages/Bengali.png';
-import kannadaLangIcon from './assets/images/languages/Kannada.png';
-import malayalamLangIcon from './assets/images/languages/malyalam.png';
-import punjabiLangIcon from './assets/images/languages/Punjabi.png';
-import englishLangIcon from './assets/images/languages/English.png';
-import otherLangIcon from './assets/images/languages/otherlanguage.png';
-import playLangIcon from './assets/images/languages/play-language.png';
+import hindiLangIcon from './assets/images/languages/hindi.webp';
+import tamilLangIcon from './assets/images/languages/Tamil.webp';
+import sanskritLangIcon from './assets/images/languages/Sanskrit.webp';
+import teluguLangIcon from './assets/images/languages/Telugu.webp';
+import marathiLangIcon from './assets/images/languages/Marathi.webp';
+import gujaratiLangIcon from './assets/images/languages/Gujarati.webp';
+import bengaliLangIcon from './assets/images/languages/Bengali.webp';
+import kannadaLangIcon from './assets/images/languages/Kannada.webp';
+import malayalamLangIcon from './assets/images/languages/malyalam.webp';
+import punjabiLangIcon from './assets/images/languages/Punjabi.webp';
+import englishLangIcon from './assets/images/languages/English.webp';
+import otherLangIcon from './assets/images/languages/otherlanguage.webp';
+import playLangIcon from './assets/images/languages/play-language.webp';
 
 // ─── PHASE 4: FESTIVAL ICONS ──────────────────────────────────────
-import pongalIcon from './assets/images/festivals/pongal.png';
-import holiIcon from './assets/images/festivals/holi.png';
-import janmashtamiIcon from './assets/images/festivals/janmashtami.png';
-import chaturthiIcon from './assets/images/festivals/chaturthi.png';
-import navratriIcon from './assets/images/festivals/sakranti.png';
-import diwaliIcon from './assets/images/festivals/diwali.png';
-import onamIcon from './assets/images/festivals/onam.png';
-import eidIcon from './assets/images/festivals/eid.png';
-import christmasIcon from './assets/images/festivals/xmas.png';
-import durga_pujaIcon from './assets/images/festivals/durgapuja.png';
-import dussehra_Icon from './assets/images/festivals/dussehra.png';
-import rakhi_Icon from './assets/images/festivals/rakhi.png';
-import modakImage from './assets/images/festivals/modak.png';
+import pongalIcon from './assets/images/festivals/pongal.webp';
+import holiIcon from './assets/images/festivals/holi.webp';
+import janmashtamiIcon from './assets/images/festivals/janmashtami.webp';
+import chaturthiIcon from './assets/images/festivals/chaturthi.webp';
+import navratriIcon from './assets/images/festivals/sakranti.webp';
+import diwaliIcon from './assets/images/festivals/diwali.webp';
+import onamIcon from './assets/images/festivals/onam.webp';
+import eidIcon from './assets/images/festivals/eid.webp';
+import christmasIcon from './assets/images/festivals/xmas.webp';
+import durga_pujaIcon from './assets/images/festivals/durgapuja.webp';
+import dussehra_Icon from './assets/images/festivals/dussehra.webp';
+import rakhi_Icon from './assets/images/festivals/rakhi.webp';
+import modakImage from './assets/images/festivals/modak.webp';
 
 // ─── STEP CONSTANTS ───────────────────────────────────────────────
 const STEPS = {
@@ -517,7 +517,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const PROFILE_ANIMAL_IDS = ['monkey', 'peacock', 'squirrel', 'tiger'];
   const PROFILE_EMOJI_TO_ANIMAL = { '🐵': 'monkey', '🦚': 'peacock', '🐿️': 'squirrel', '🐯': 'tiger' };
   const profileAnimalId = PROFILE_ANIMAL_IDS.includes(rawProfileAvatar) ? rawProfileAvatar : (PROFILE_EMOJI_TO_ANIMAL[rawProfileAvatar] || null);
-  const profileAvatarImage = profileAnimalId ? `/images/new-explorer-${profileAnimalId}.png` : null;
+  const profileAvatarImage = profileAnimalId ? `/images/new-explorer-${profileAnimalId}.webp` : null;
   const profileAvatar = (typeof rawProfileAvatar === 'string' && rawProfileAvatar.trim().length <= 2)
     ? rawProfileAvatar
     : profileDisplayName.charAt(0).toUpperCase();

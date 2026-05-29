@@ -25,56 +25,56 @@ import babyGaneshaImg from '/images/ganesha-final-new.svg';
 import babyGaneshaSit from '/images/ganesha-final-new.svg';
 
 // Food images
-import modakImg from './assets/images/food/fav-modak.png';
-import ladooImg from './assets/images/food/fav-ladoo.png';
-import barfiImg from './assets/images/food/fav-barfi.png';
+import modakImg from './assets/images/food/fav-modak.webp';
+import ladooImg from './assets/images/food/fav-ladoo.webp';
+import barfiImg from './assets/images/food/fav-barfi.webp';
 
 // Animal images
-import mouseImg from './assets/images/animal/fav-mouse.png';
-import cowImg from './assets/images/animal/fav-cow.png';
-import peacockImg from './assets/images/animal/fav-peacock.png';
+import mouseImg from './assets/images/animal/fav-mouse.webp';
+import cowImg from './assets/images/animal/fav-cow.webp';
+import peacockImg from './assets/images/animal/fav-peacock.webp';
 
 // Icons
-import favIconFood from './assets/images/food-icon.png';
-import favIconColor from './assets/images/color-icon.png';
-import favIconActivity from './assets/images/sports-icon.png';
+import favIconFood from './assets/images/food-icon.webp';
+import favIconColor from './assets/images/color-icon.webp';
+import favIconActivity from './assets/images/sports-icon.webp';
 import pencilImg from './assets/images/icons/pencil.svg';
 
 // Colors
-import redImg from './assets/images/color/fav-red.png';
-import orangeImg from './assets/images/color/fav-orange.png';
-import yellowImg from './assets/images/color/fav-yellow.png';
-import greenImg from './assets/images/color/fav-green.png';
-import blueImg from './assets/images/color/fav-blue.png';
-import purpleImg from './assets/images/color/fav-purple.png';
-import pinkImg from './assets/images/color/fav-pink.png';
-import brownImg from './assets/images/color/fav-brown.png';
+import redImg from './assets/images/color/fav-red.webp';
+import orangeImg from './assets/images/color/fav-orange.webp';
+import yellowImg from './assets/images/color/fav-yellow.webp';
+import greenImg from './assets/images/color/fav-green.webp';
+import blueImg from './assets/images/color/fav-blue.webp';
+import purpleImg from './assets/images/color/fav-purple.webp';
+import pinkImg from './assets/images/color/fav-pink.webp';
+import brownImg from './assets/images/color/fav-brown.webp';
 
 // Activities
-import actEatingImg from './assets/images/food/fav-sweets.png';
-import actDancingImg from './assets/images/activity/fav-music.png';
-import actReadingImg from './assets/images/activity/fav-reading.png';
-import actPlayingImg from './assets/images/activity/fav-playing.png';
-import actTvImg from './assets/images/activity/fav-tv.png';
-import actDrawImg from './assets/images/activity/fav-drawing.png';
-import kidActSportsImg from './assets/images/activity/sports.png';
-import kidActReadImg from './assets/images/activity/read.png';
-import kidActArtImg from './assets/images/activity/art.png';
-import kidActSingImg from './assets/images/activity/sing.png';
-import kidActCookImg from './assets/images/activity/cook.png';
-import kidActNatureImg from './assets/images/activity/nature.png';
-import kidActStemImg from './assets/images/activity/stem.png';
-import kidActGameImg from './assets/images/activity/game.png';
+import actEatingImg from './assets/images/food/fav-sweets.webp';
+import actDancingImg from './assets/images/activity/fav-music.webp';
+import actReadingImg from './assets/images/activity/fav-reading.webp';
+import actPlayingImg from './assets/images/activity/fav-playing.webp';
+import actTvImg from './assets/images/activity/fav-tv.webp';
+import actDrawImg from './assets/images/activity/fav-drawing.webp';
+import kidActSportsImg from './assets/images/activity/sports.webp';
+import kidActReadImg from './assets/images/activity/read.webp';
+import kidActArtImg from './assets/images/activity/art.webp';
+import kidActSingImg from './assets/images/activity/sing.webp';
+import kidActCookImg from './assets/images/activity/cook.webp';
+import kidActNatureImg from './assets/images/activity/nature.webp';
+import kidActStemImg from './assets/images/activity/stem.webp';
+import kidActGameImg from './assets/images/activity/game.webp';
 
 // Kid Food Images
-import pizzaImg from './assets/images/food/fav-pizza.png';
-import burgerImg from './assets/images/food/fav-burger.png';
-import icecreamImg from './assets/images/food/fav-icecream.png';
-import noodlesImg from './assets/images/food/fav-noodles.png';
-import fruitImg from './assets/images/food/fav-fruit.png';
-import dosaImg from './assets/images/food/fav-dosa.png';
-import riceImg from './assets/images/food/fav-rice.png';
-import friendsImg from './assets/images/friends.png';
+import pizzaImg from './assets/images/food/fav-pizza.webp';
+import burgerImg from './assets/images/food/fav-burger.webp';
+import icecreamImg from './assets/images/food/fav-icecream.webp';
+import noodlesImg from './assets/images/food/fav-noodles.webp';
+import fruitImg from './assets/images/food/fav-fruit.webp';
+import dosaImg from './assets/images/food/fav-dosa.webp';
+import riceImg from './assets/images/food/fav-rice.webp';
+import friendsImg from './assets/images/friends.webp';
 import HomeButton from '../../../lib/components/ui/HomeButton';
 import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
 import AudioToggle from '../../../lib/components/ui/AudioToggle';
@@ -238,7 +238,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const PROFILE_ANIMAL_IDS = ['monkey', 'peacock', 'squirrel', 'tiger'];
   const PROFILE_EMOJI_TO_ANIMAL = { '🐵': 'monkey', '🦚': 'peacock', '🐿️': 'squirrel', '🐯': 'tiger' };
   const profileAnimalId = PROFILE_ANIMAL_IDS.includes(rawProfileAvatar) ? rawProfileAvatar : (PROFILE_EMOJI_TO_ANIMAL[rawProfileAvatar] || null);
-  const profileAvatarImage = profileAnimalId ? `/images/new-explorer-${profileAnimalId}.png` : null;
+  const profileAvatarImage = profileAnimalId ? `/images/new-explorer-${profileAnimalId}.webp` : null;
   const profileAvatar = (typeof rawProfileAvatar === 'string' && rawProfileAvatar.trim().length <= 2)
     ? rawProfileAvatar
     : profileDisplayName.charAt(0).toUpperCase();

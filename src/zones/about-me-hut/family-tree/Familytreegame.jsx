@@ -34,7 +34,7 @@ import OpeningModal from '../../shared/components/OpeningModal';
 
 // --- IMPORT ASSETS (Ganesha's Family & Distractors) ---
 import familyTreeBg from './assets/images/family_background.webp';
-import familyTree from './assets/images/family_tree.png';
+import familyTree from './assets/images/family_tree.webp';
 
 // Correct Answers
 import babyGaneshaImg from '/images/ganesha-final-new.svg';
@@ -53,18 +53,18 @@ import mouseImg from './assets/images/ganesha/family-mouse.webp';
 import nandiImg from './assets/images/ganesha/family-nandi.webp';
 
 // --- IMPORT ASSETS (Child's Family) ---
-import childDadImg from './assets/images/child/family-dad.png';
-import childMomImg from './assets/images/child/family-mom.png';
-import childGrandpaImg from './assets/images/child/family-grandpa.png';
-import childGrandmaImg from './assets/images/child/family-grandma.png';
-import childBrotherImg from './assets/images/child/family-brother.png';
-import childSisterImg from './assets/images/child/family-sister.png';
-import childMyselfImg from './assets/images/child/family-myself.png';
-import childPetImg from './assets/images/child/family-pet.png';
-import familyIconImg from './assets/images/family-icon.png';
-import heartIconImg from './assets/images/heart-icon.png';
+import childDadImg from './assets/images/child/family-dad.webp';
+import childMomImg from './assets/images/child/family-mom.webp';
+import childGrandpaImg from './assets/images/child/family-grandpa.webp';
+import childGrandmaImg from './assets/images/child/family-grandma.webp';
+import childBrotherImg from './assets/images/child/family-brother.webp';
+import childSisterImg from './assets/images/child/family-sister.webp';
+import childMyselfImg from './assets/images/child/family-myself.webp';
+import childPetImg from './assets/images/child/family-pet.webp';
+import familyIconImg from './assets/images/family-icon.webp';
+import heartIconImg from './assets/images/heart-icon.webp';
 import purpleHeartIconImg from './assets/images/purple-heart.svg';
-import homeIconImg from './assets/images/house-icon.png';
+import homeIconImg from './assets/images/house-icon.webp';
 
 // ========================================
 // VO-GATED BUTTON COMPONENT
@@ -217,7 +217,7 @@ const FamilyTreeGameContent = ({
  // Legacy emoji-to-animal map removed; profile avatars are now stored as animal IDs directly.
  const PROFILE_EMOJI_TO_ANIMAL = {};
  const profileAnimalId = PROFILE_ANIMAL_IDS.includes(rawProfileAvatar)? rawProfileAvatar: (PROFILE_EMOJI_TO_ANIMAL[rawProfileAvatar] || null);
- const profileAvatarImage = profileAnimalId? `/images/new-explorer-${profileAnimalId}.png`: null;
+ const profileAvatarImage = profileAnimalId? `/images/new-explorer-${profileAnimalId}.webp`: null;
  const profileAvatar = (typeof rawProfileAvatar === 'string' && rawProfileAvatar.trim().length <= 2)
 ? rawProfileAvatar
 : profileDisplayName.charAt(0).toUpperCase();
