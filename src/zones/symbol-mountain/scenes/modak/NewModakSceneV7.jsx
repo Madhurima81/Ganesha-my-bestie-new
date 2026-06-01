@@ -73,8 +73,8 @@ import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOv
 
 // Images
 //import forestBackground from './assets/images/forest-background.webp';
-import forestBackground from './assets/images/modak-game-bg.webp';
-import foregroundOverlay from './assets/images/modak-game-overlay.webp';
+import forestBackground from './assets/images/latestmodakbg.png';
+import foregroundOverlay from './assets/images/modaktree.png';
 import modak1 from './assets/images/modak-new.webp';
 import modak2 from './assets/images/modak-new.webp';
 import modak3 from './assets/images/modak-new.webp';
@@ -146,17 +146,36 @@ const PHASES = {
 };
 const MINI_THUMBS_UP_ICON = '/images/hand-thumbsup.svg';
 const MODAK_POSITION_SLOTS = [
-  { top: '43.3%', left: '8.2%' },
-  { top: '36%', left: '26.6%' },
-  { top: '48.7%', left: '84.5%' },
-  { top: '40%', left: '68.1%' },
-  { top: '35%', left: '66.8%' },
-  { top: '40.9%', left: '15.8%' },
-  { top: '35%', left: '38.3%' },
-  { top: '38.5%', left: '3.2%' }
+  { top: '36.7%', left: '32.6%' },
+  { top: '35.6%', left: '66.2%' },
+  { top: '38.9%', left: '58.8%' },
+  { top: '45%', left: '16.5%' },
+  { top: '44.4%', left: '11.3%' },
+  { top: '38.5%', left: '72.9%' },
+  { top: '43.7%', left: '83.3%' },
+  { top: '41.2%', left: '40.4%' }
 ];
-const SHOW_MODAK_SLOT_DEBUG = false;
-const SHOW_ALL_MODAK_SLOTS_PREVIEW = false;
+const MODAK_SLOT_POSITIONS_KEY = 'debugModakSlotPositions';
+const MODAK_DEBUG_UI_ENABLED = false;
+const getModakDebugFlags = () => {
+  if (typeof window === 'undefined') {
+    return { showSlotCenters: false, showAllSlotsPreview: false };
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const showSlotCenters =
+    params.has('debugModakSlotCenters') ||
+    window.localStorage.getItem('debugModakSlotCenters') === '1';
+  const showAllSlotsPreview =
+    params.has('debugModakSlots') ||
+    window.localStorage.getItem('debugModakSlots') === '1';
+
+  return { showSlotCenters, showAllSlotsPreview };
+};
+
+const MODAK_DEBUG_FLAGS = getModakDebugFlags();
+const SHOW_MODAK_SLOT_DEBUG = MODAK_DEBUG_FLAGS.showSlotCenters;
+const SHOW_ALL_MODAK_SLOTS_PREVIEW = MODAK_DEBUG_FLAGS.showAllSlotsPreview;
 const GANESHA_SIT_FEED_IMAGE = '/images/ganesha-poses/sit-modak.webp';
 
 const pickRandomModakSlots = () => {
@@ -166,6 +185,20 @@ const pickRandomModakSlots = () => {
     [indices[i], indices[j]] = [indices[j], indices[i]];
   }
   return indices.slice(0, 3);
+};
+
+const parseSavedModakSlots = () => {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.localStorage.getItem(MODAK_SLOT_POSITIONS_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed) || parsed.length !== MODAK_POSITION_SLOTS.length) return null;
+    const valid = parsed.every((p) => p && typeof p.top === 'string' && typeof p.left === 'string');
+    return valid ? parsed : null;
+  } catch {
+    return null;
+  }
 };
 
 const getFeedingGaneshaScale = (feedCount, transformed) => {
@@ -536,6 +569,11 @@ const NewModakSceneMVPContent = ({
   const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false);
   const [showDiscoveryFlip3, setShowDiscoveryFlip3] = useState(false);
   const [showSymbolDiscovery, setShowSymbolDiscovery] = useState(false);
+  const [debugSlotsPreview, setDebugSlotsPreview] = useState(SHOW_ALL_MODAK_SLOTS_PREVIEW);
+  const [debugSlotCenters, setDebugSlotCenters] = useState(SHOW_MODAK_SLOT_DEBUG);
+  const [slotPositions, setSlotPositions] = useState(() => parseSavedModakSlots() || MODAK_POSITION_SLOTS);
+  const [draggingSlotIndex, setDraggingSlotIndex] = useState(null);
+  const backgroundRef = useRef(null);
 
   // -- useSymbolCollection (superseded by SymbolAutoReveal) ----------------
   // const [currentOverlaySymbol, setCurrentOverlaySymbol] = useState(null);
@@ -1830,6 +1868,62 @@ const NewModakSceneMVPContent = ({
   const isCompletionView = showSceneCompletion || sceneState.showingCompletionScreen;
   const isFinalFireworksView = showSparkle === 'final-fireworks';
   const isFinalTransitionView = isFinalFireworksView || showMandala;
+  const toggleModakDebugSlots = useCallback(() => {
+    const next = !debugSlotsPreview;
+    setDebugSlotsPreview(next);
+    setDebugSlotCenters(next);
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('debugModakSlots', next ? '1' : '0');
+      window.localStorage.setItem('debugModakSlotCenters', next ? '1' : '0');
+    }
+  }, [debugSlotsPreview]);
+
+  const persistSlotPositions = useCallback((positions) => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(MODAK_SLOT_POSITIONS_KEY, JSON.stringify(positions));
+    }
+  }, []);
+
+  const resetSlotPositions = useCallback(() => {
+    setSlotPositions(MODAK_POSITION_SLOTS);
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem(MODAK_SLOT_POSITIONS_KEY);
+    }
+  }, []);
+
+  const updateSlotFromPointer = useCallback((slotIndex, clientX, clientY) => {
+    const el = backgroundRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    const x = ((clientX - rect.left) / rect.width) * 100;
+    const y = ((clientY - rect.top) / rect.height) * 100;
+    const clampedX = Math.max(0, Math.min(100, x));
+    const clampedY = Math.max(0, Math.min(100, y));
+    setSlotPositions((prev) => {
+      const next = [...prev];
+      next[slotIndex] = {
+        top: `${Math.round(clampedY * 10) / 10}%`,
+        left: `${Math.round(clampedX * 10) / 10}%`
+      };
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!debugSlotsPreview || draggingSlotIndex === null) return undefined;
+    const handleMove = (e) => updateSlotFromPointer(draggingSlotIndex, e.clientX, e.clientY);
+    const handleUp = () => {
+      setDraggingSlotIndex(null);
+      persistSlotPositions(slotPositions);
+    };
+    window.addEventListener('pointermove', handleMove);
+    window.addEventListener('pointerup', handleUp);
+    return () => {
+      window.removeEventListener('pointermove', handleMove);
+      window.removeEventListener('pointerup', handleUp);
+    };
+  }, [debugSlotsPreview, draggingSlotIndex, updateSlotFromPointer, persistSlotPositions, slotPositions]);
 
   // ========================================
   // MVP RENDER - No GameLayout, No Header
@@ -1846,6 +1940,72 @@ const NewModakSceneMVPContent = ({
           disabled={!lastVoRef.current}
         />
       )}
+      {!isFinalTransitionView && MODAK_DEBUG_UI_ENABLED && (
+        <button
+          type="button"
+          onClick={toggleModakDebugSlots}
+          style={{
+            position: 'fixed',
+            top: '12px',
+            right: '74px',
+            zIndex: 1200,
+            border: '1px solid #0f766e',
+            background: debugSlotsPreview ? '#0f766e' : '#ffffff',
+            color: debugSlotsPreview ? '#ffffff' : '#0f766e',
+            borderRadius: '999px',
+            padding: '8px 12px',
+            fontWeight: 700,
+            fontSize: '12px',
+            cursor: 'pointer'
+          }}
+        >
+          {debugSlotsPreview ? 'Debug Slots On' : 'Debug Slots'}
+        </button>
+      )}
+      {!isFinalTransitionView && MODAK_DEBUG_UI_ENABLED && debugSlotsPreview && (
+        <button
+          type="button"
+          onClick={() => persistSlotPositions(slotPositions)}
+          style={{
+            position: 'fixed',
+            top: '46px',
+            right: '74px',
+            zIndex: 1200,
+            border: '1px solid #2563eb',
+            background: '#2563eb',
+            color: '#ffffff',
+            borderRadius: '999px',
+            padding: '8px 12px',
+            fontWeight: 700,
+            fontSize: '12px',
+            cursor: 'pointer'
+          }}
+        >
+          Save Slots
+        </button>
+      )}
+      {!isFinalTransitionView && MODAK_DEBUG_UI_ENABLED && debugSlotsPreview && (
+        <button
+          type="button"
+          onClick={resetSlotPositions}
+          style={{
+            position: 'fixed',
+            top: '80px',
+            right: '74px',
+            zIndex: 1200,
+            border: '1px solid #b91c1c',
+            background: '#ffffff',
+            color: '#b91c1c',
+            borderRadius: '999px',
+            padding: '8px 12px',
+            fontWeight: 700,
+            fontSize: '12px',
+            cursor: 'pointer'
+          }}
+        >
+          Reset Slots
+        </button>
+      )}
       {/* Flying Symbol Clone (useSymbolCollection) � superseded by SymbolAutoReveal */}
       {/* {flyingSymbol && <img className="flying-symbol" src={flyingSymbol.src} alt="" style={flightStyle} />} */}
 
@@ -1855,7 +2015,7 @@ const NewModakSceneMVPContent = ({
             {showPersistentEndOverlay && !revealConfig && (
               <div className="modak-game-end-overlay" />
             )}
-            <div className="modak-game-background" style={{ backgroundImage: `url(${forestBackground})` }}>
+            <div ref={backgroundRef} className="modak-game-background" style={{ backgroundImage: `url(${forestBackground})` }}>
               {!isCompletionView && !isFinalTransitionView && (
                 <>
 
@@ -1992,7 +2152,7 @@ const NewModakSceneMVPContent = ({
                 <>
                   {[0, 1, 2].map((slotRenderIndex) => {
                     const slotIndex = sceneState.modakSlotIndices?.[slotRenderIndex] ?? slotRenderIndex;
-                    const slot = MODAK_POSITION_SLOTS[slotIndex] || MODAK_POSITION_SLOTS[slotRenderIndex];
+                    const slot = slotPositions[slotIndex] || slotPositions[slotRenderIndex];
                     return (
                       <div
                         key={`modak-appear-sparkle-${slotRenderIndex}`}
@@ -2006,8 +2166,8 @@ const NewModakSceneMVPContent = ({
               )}
 
               {/* TEMP DEBUG: visualize selected slot centers for this run */}
-              {SHOW_MODAK_SLOT_DEBUG && (sceneState.modakSlotIndices || []).map((slotIndex, idx) => {
-                const slot = MODAK_POSITION_SLOTS[slotIndex];
+              {MODAK_DEBUG_UI_ENABLED && debugSlotCenters && (sceneState.modakSlotIndices || []).map((slotIndex, idx) => {
+                const slot = slotPositions[slotIndex];
                 if (!slot) return null;
                 return (
                   <div
@@ -2022,11 +2182,17 @@ const NewModakSceneMVPContent = ({
               })}
 
               {/* TEMP CHECK MODE: show modak visual at all slots for final position tuning */}
-              {SHOW_ALL_MODAK_SLOTS_PREVIEW && MODAK_POSITION_SLOTS.map((slot, idx) => (
+              {MODAK_DEBUG_UI_ENABLED && debugSlotsPreview && slotPositions.map((slot, idx) => (
                 <div
                   key={`modak-slot-preview-${idx}`}
                   className="modak-slot-anchor modak-slot-preview"
-                  style={{ top: slot.top, left: slot.left }}
+                  style={{ top: slot.top, left: slot.left, pointerEvents: 'auto', cursor: 'grab' }}
+                  onPointerDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setDraggingSlotIndex(idx);
+                    updateSlotFromPointer(idx, e.clientX, e.clientY);
+                  }}
                   aria-hidden="true"
                 >
                   <div className="modak-game-modak modak-game-modak-field modak-slot-preview-card">
@@ -2054,7 +2220,7 @@ const NewModakSceneMVPContent = ({
               {sceneState.modaksUnlocked && [0, 1, 2].map((index) => {
                 if (sceneState.modakStates[index] === 1) return null;
                 const slotIndex = sceneState.modakSlotIndices?.[index] ?? index;
-                const slot = MODAK_POSITION_SLOTS[slotIndex] || MODAK_POSITION_SLOTS[index];
+                const slot = slotPositions[slotIndex] || slotPositions[index];
                 const isModakHintPhase =
                   sceneState.phase === PHASES.MODAKS_UNLOCKED ||
                   sceneState.phase === PHASES.SOME_COLLECTED;
@@ -2111,12 +2277,12 @@ const NewModakSceneMVPContent = ({
               {/* BASKET */}
               {sceneState.basketVisible && (
                 <div className="modak-game-basket-container">
+                  <img
+                    src={basket}
+                    alt="Plate"
+                    className="modak-game-plate-bg"
+                  />
                   <div className="modak-game-basket-main">
-                    <img
-                      src={basket}
-                      alt="Collection Basket"
-                      style={{ width: '100%', height: '100%' }}
-                    />
                     {sceneState.collectedModaks?.map((modakIndex, displayIndex) => {
                       const canDrag = sceneState.rockVisible && sceneState.rockFeedCount < 3;
                       const isRockHintPhase =
