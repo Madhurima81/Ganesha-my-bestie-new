@@ -272,22 +272,14 @@ useEffect(() => {
 
     return (
 <Suspense fallback={
-  <div className="elegant-scene-loader">
-    <div className="lotus-spinner">
-      <div className="petal petal-1"></div>
-      <div className="petal petal-2"></div>
-      <div className="petal petal-3"></div>
-      <div className="petal petal-4"></div>
-      <div className="center-dot"></div>
-    </div>
-    <div className="loading-text">
-      <span className="loading-word">Loading {sceneId}</span>
-      <span className="loading-dots">
-        <span>.</span><span>.</span><span>.</span>
-      </span>
-    </div>
-    <div className="progress-ring">
-      <div className="progress-fill"></div>
+  <div className="enhanced-loading-screen">
+    <div className="loading-ganesha-container">
+      <div className="loading-ganesha-glow"></div>
+      <img
+        src={GANESHA_USAGE_SYSTEM.loading.asset}
+        className="loading-ganesha"
+        alt="Ganesha"
+      />
     </div>
   </div>
 }>
@@ -319,17 +311,15 @@ useEffect(() => {
     };
   }, []);
 
-// Smart preloading for better performance
+// Smart preloading — actually fetches the next scene's chunk
 useEffect(() => {
   if (currentZone && currentScene) {
-    // Preload next scene in sequence
     const nextScene = getNextScene(currentZone, currentScene);
-    if (nextScene) {
-      // Preload next scene component
-      const nextSceneComponent = loadSceneComponent(currentZone, nextScene);
-      if (nextSceneComponent) {
-        console.log(`🔄 Preloading next scene: ${nextScene}`);
-      }
+    const loader = SCENE_MAPPING[currentZone]?.[nextScene];
+    if (loader) {
+      loader()
+        .then(() => console.log(`✅ Preloaded next scene: ${nextScene}`))
+        .catch(err => console.warn(`⚠️ Preload failed: ${nextScene}`, err));
     }
   }
 }, [currentZone, currentScene]);
