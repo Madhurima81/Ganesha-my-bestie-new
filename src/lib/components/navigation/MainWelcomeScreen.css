@@ -8,7 +8,7 @@
   top: 0; left: 0;
   width: 100vw; height: 100vh;
   overflow: hidden;
-  /* background: url('/images/welcome-opening-bg.webp') no-repeat center center; */
+  background: url('/images/welcome-opening-bg.webp') no-repeat center center;
   background-size: cover;
   animation: welcomeFadeIn 1s ease-out;
 }
@@ -165,7 +165,7 @@
   font-family: 'Baloo 2', system-ui, sans-serif;
   font-size: 46px !important;
   font-weight: 600;
-  color: #5c3ea6;
+  color: var(--color-title-purple, #7B6D9E);
   letter-spacing: 0.5px;
   margin: 0 0 10px 0;
   text-align: center;
@@ -409,3 +409,4 @@
   .adventure-button-container .primary-btn-unified { font-size: 18px; padding: 10px 44px; }
   .adventure-button-container { margin-bottom: 20px; }
 }
+

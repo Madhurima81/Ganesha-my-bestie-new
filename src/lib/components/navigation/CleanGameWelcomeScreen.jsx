@@ -167,7 +167,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
         title: `Welcome Back, ${currentProfile.name}!`,
         subtitle: "Ready to continue your magical journey?",
         progressTitle: "Your Journey So Far",
-        buttonText: { main: "Continue Journey", sub: "Resume from where you left off" }
+        buttonText: { main: "Continue Adventure", sub: "Resume from where you left off" }
       };
     }
   };
@@ -676,6 +676,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
   return (
     <div className="clean-welcome-overlay page-transition">
       <div className="clean-welcome-content clean-welcome-card">
+        <span className="welcome-card-lotus" aria-hidden="true" />
         {(() => {
           const welcomeMsg = getWelcomeMessage();
           return (
@@ -713,7 +714,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
         </div>
 
         {/* ACTION BUTTONS */}
-        <div className="welcome-actions welcome-buttons-row">
+        <div className="welcome-actions welcome-buttons-row profile-actions">
           {hasProgress ? (
             <>
               <PrimaryBtn
@@ -724,7 +725,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
                 className="continue-journey-btn welcome-action-btn"
               />
               <button className="secondary-btn explore-map-btn welcome-action-btn" onClick={handleNewGame}>
-                Explore Map
+                Home
               </button>
             </>
           ) : (
@@ -740,7 +741,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
           )}
 
         </div>
-        <button className="bottom-switch-explorer" onClick={handleBackToProfiles}>
+        <button className="bottom-switch-explorer switch-explorer-link" onClick={handleBackToProfiles}>
           Not {currentProfile.name}? Switch Explorer
         </button>
       </div>

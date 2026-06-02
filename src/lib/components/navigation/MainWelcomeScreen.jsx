@@ -214,9 +214,9 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
       {/* GANESHA VIDEO */}
       <div className={`welcome-ganesha-image-container ${showButton ? 'visible' : ''}`}>
         <div className="ganesha-wrap">
-          {/* poster prop intentionally disabled: poster="/images/ganesha-hi-stand.png" */}
           <video
             className="welcome-ganesha-video"
+            poster="/images/ganesha-hi-stand.png"
             autoPlay
             loop
             muted

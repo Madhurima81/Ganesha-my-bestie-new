@@ -13,7 +13,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('/images/profile-background.png');
+  background-image: url('/images/profile-bg.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -23,7 +23,7 @@
   z-index: 1000;
   padding: 20px;
   box-sizing: border-box;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 /* Semi-transparent overlay */
@@ -46,24 +46,29 @@
 .clean-welcome-content {
   position: relative;
   z-index: 2;
-  background: #FAF6EE;
-  border-radius: 32px;
+  background: url('../../../assets/cards/welcomeback.svg') no-repeat center / 100% 100%;
   box-sizing: border-box;
-
-box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 
   max-width: clamp(420px, 44vw, 620px);
   width: 92%;
-  max-height: min(82vh, 640px);
-  overflow-y: hidden;
-  padding: clamp(24px, 2.6vw, 44px) clamp(24px, 3vw, 52px);
+  aspect-ratio: 210 / 189;
+  padding: clamp(56px, 7%, 80px) clamp(40px, 6%, 64px) clamp(40px, 6%, 56px);
 
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 
   animation: groundedFade 0.7s ease-out;
+}
+
+/* Lotus icon at top of welcome card */
+.clean-welcome-content .welcome-card-lotus {
+  display: block;
+  width: clamp(28px, 3vw, 40px);
+  height: clamp(28px, 3vw, 40px);
+  margin-bottom: 4px;
+  background: url('../../../assets/cards/lotus-iconnew.svg') no-repeat center / contain;
 }
 
 @keyframes groundedFade {
@@ -77,7 +82,7 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 
 .clean-welcome-content .screen-header-title {
    font-size: clamp(28px, 3.5vw, 54px);
-  color: #6752B8;
+  color: var(--color-title-purple, #7B6D9E);
   text-shadow: none;
   animation: none;
 
@@ -414,10 +419,10 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 .primary-btn-unified.continue-journey-btn {
   width: 100%;
   padding: clamp(8px, 1.2vw, 12px) clamp(20px, 2vw, 28px);
-  --btn-color-top: #8C78D8;
-  --btn-color-base: #735BC4;
-  --btn-color-shadow: #5F47A8;
-  --btn-color-glow: rgba(115, 91, 196, 0.25);
+  --btn-color-top: var(--color-button-purple-top, #C3A8F3);
+  --btn-color-base: var(--color-button-purple-base, #B99AEC);
+  --btn-color-shadow: var(--color-button-purple-shadow, #9B7DD8);
+  --btn-color-glow: var(--color-button-purple-glow, rgba(180, 158, 232, 0.20));
   color: #FFFFFF;
   font-family: 'Baloo 2', cursive;
   font-size: clamp(14px, 1.4vw, 18px);
@@ -431,8 +436,8 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
     filter 0.3s ease;
   animation: none;
   box-shadow:
-    0 4px 0 rgba(0,0,0,0.12),
-    0 8px 18px rgba(120, 90, 60, 0.18);
+    0 4px 0 var(--color-button-purple-shadow, #9B7DD8),
+    0 8px 18px var(--color-button-purple-glow, rgba(180, 158, 232, 0.20));
   background: var(--btn-color-base);
   animation: profileCtaGlow 3.5s ease-in-out infinite;
 }
@@ -484,9 +489,13 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 }
 
 .continue-journey-btn.welcome-action-btn {
-  background: linear-gradient(180deg, #7e61d8, #6f55cb);
+  background: linear-gradient(
+    180deg,
+    var(--color-button-purple-top, #C3A8F3),
+    var(--color-button-purple-base, #B99AEC)
+  );
   color: white;
-  box-shadow: 0 8px 18px rgba(111,85,203,0.22);
+  box-shadow: 0 8px 18px var(--color-button-purple-glow, rgba(180, 158, 232, 0.20));
 }
 
 .continue-journey-btn.welcome-action-btn:hover {
@@ -506,14 +515,16 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 }
 
 .primary-btn-unified.continue-journey-btn:hover:not(:disabled) {
-  --btn-color-glow: rgba(115, 91, 196, 0.35);
+  --btn-color-glow: var(--color-button-purple-glow, rgba(180, 158, 232, 0.20));
 }
 
 .primary-btn-unified.continue-journey-btn:active:not(:disabled) {
   transform: scale(0.97);
   filter: brightness(0.98);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.10), inset 0 1px 2px rgba(255,255,255,0.10);
-  --btn-color-glow: rgba(115, 91, 196, 0.3);
+  box-shadow:
+    0 2px 6px var(--color-button-purple-glow, rgba(180, 158, 232, 0.20)),
+    inset 0 1px 2px rgba(255,255,255,0.10);
+  --btn-color-glow: var(--color-button-purple-glow, rgba(180, 158, 232, 0.20));
   background: var(--btn-color-base);
   color: #FFFFFF;
 }
@@ -521,13 +532,13 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 @keyframes profileCtaGlow {
   0%, 100% {
     box-shadow:
-      0 4px 0 rgba(0,0,0,0.12),
-      0 8px 18px rgba(120, 90, 60, 0.18);
+      0 4px 0 var(--color-button-purple-shadow, #9B7DD8),
+      0 8px 18px var(--color-button-purple-glow, rgba(180, 158, 232, 0.20));
   }
   50% {
     box-shadow:
-      0 4px 0 rgba(0,0,0,0.12),
-      0 10px 22px rgba(120, 90, 60, 0.24);
+      0 4px 0 var(--color-button-purple-shadow, #9B7DD8),
+      0 10px 22px var(--color-button-purple-glow, rgba(180, 158, 232, 0.20));
   }
 }
 
@@ -730,7 +741,7 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 @media (max-width: 450px) and (min-height: 850px) {
   .clean-welcome-content {
     max-width: 85%;
-    padding: 20px 18px;
+    padding: clamp(54px, 9%, 80px) clamp(32px, 6%, 56px) clamp(36px, 6%, 56px);
     gap: 15px;
   }
 
@@ -793,7 +804,7 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 /* Mobile Portrait (Phones < 600px) */
 @media (max-width: 600px) {
   .clean-welcome-content {
-    padding: 25px 20px;
+    padding: clamp(54px, 9%, 80px) clamp(32px, 6%, 56px) clamp(36px, 6%, 56px);
     gap: 20px;
     max-width: 95%;
   }
@@ -848,7 +859,7 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 /* Extra Small Phones (< 450px) */
 @media (max-width: 450px) {
   .clean-welcome-content {
-    padding: 20px 15px;
+    padding: clamp(54px, 9%, 80px) clamp(32px, 6%, 56px) clamp(36px, 6%, 56px);
     gap: 18px;
   }
 
@@ -900,7 +911,7 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 @media (min-width: 768px) and (max-width: 850px) and (min-height: 1000px) and (orientation: portrait) {
   .clean-welcome-content {
     max-width: 420px;
-    padding: 28px 25px;
+    padding: clamp(54px, 9%, 80px) clamp(32px, 6%, 56px) clamp(36px, 6%, 56px);
     gap: 22px;
   }
 
@@ -964,7 +975,7 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 @media (min-width: 800px) and (max-width: 900px) and (min-height: 1100px) and (orientation: portrait) {
   .clean-welcome-content {
     max-width: 440px;
-    padding: 30px 28px;
+    padding: clamp(54px, 9%, 80px) clamp(32px, 6%, 56px) clamp(36px, 6%, 56px);
     gap: 24px;
   }
 
@@ -1039,7 +1050,7 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 @media (min-width: 1000px) and (max-width: 1100px) and (max-height: 800px) and (orientation: landscape) {
   .clean-welcome-content {
     max-width: 400px;
-    padding: 20px;
+    padding: clamp(54px, 9%, 80px) clamp(32px, 6%, 56px) clamp(36px, 6%, 56px);
     gap: 1px;
     max-height: 90vh;
   }
@@ -1105,7 +1116,7 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 @media (min-width: 1100px) and (max-width: 1250px) and (max-height: 900px) and (orientation: landscape) {
   .clean-welcome-content {
     max-width: 420px;
-    padding: 22px;
+    padding: clamp(54px, 9%, 80px) clamp(32px, 6%, 56px) clamp(36px, 6%, 56px);
     gap: 10px;
     max-height: 90vh;
   }
@@ -1186,7 +1197,7 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
   .clean-welcome-content {
     max-height: 90vh;
     max-width: 650px;
-    padding: 15px 20px;
+    padding: clamp(54px, 9%, 80px) clamp(32px, 6%, 56px) clamp(36px, 6%, 56px);
     gap: 12px;
     flex-direction: row;
     flex-wrap: wrap;
@@ -1295,7 +1306,7 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
   .clean-welcome-content {
     max-height: 88vh;
     max-width: 700px;
-    padding: 12px 18px;
+    padding: clamp(54px, 9%, 80px) clamp(32px, 6%, 56px) clamp(36px, 6%, 56px);
     gap: 10px;
   }
 
@@ -1377,7 +1388,7 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
   .clean-welcome-content {
     max-width: min(90vw, clamp(520px, 48vw, 620px)) !important;
     width: 92% !important;
-    padding: clamp(20px, 2.2vh, 32px) clamp(24px, 2.6vw, 36px) !important;
+    padding: clamp(54px, 9%, 80px) clamp(32px, 6%, 56px) clamp(36px, 6%, 56px);
     max-height: 88vh !important;
     overflow-x: hidden !important;
   }
@@ -1437,11 +1448,14 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 }
 
 /* ===== Mandala refinement override (clean) ===== */
-.clean-welcome-card { max-width: 520px !important; }
+.clean-welcome-card {
+  width: min(94vw, 760px) !important;
+  max-width: min(94vw, 760px) !important;
+}
 .clean-welcome-content {
   gap: 6px !important;
-  padding-top: 14px !important;
-  padding-bottom: 12px !important;
+  padding-top: 22px !important;
+  padding-bottom: 20px !important;
 }
 .profile-top-section,
 .enhanced-profile-section { display: none !important; }
@@ -1536,9 +1550,13 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 
 .continue-journey-btn.welcome-action-btn {
   flex: 1.25;
-  background: linear-gradient(180deg, #7e61d8, #6d52c9);
+  background: linear-gradient(
+    180deg,
+    var(--color-button-purple-top, #C3A8F3),
+    var(--color-button-purple-base, #B99AEC)
+  );
   color: white;
-  box-shadow: 0 8px 18px rgba(111,85,203,0.22);
+  box-shadow: 0 8px 18px var(--color-button-purple-glow, rgba(180, 158, 232, 0.20));
 }
 
 .secondary-btn.explore-map-btn.welcome-action-btn {
@@ -1559,6 +1577,7 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
   border: none;
   cursor: pointer;
 }
+
 
 @keyframes mandalaBreath {
   0%,100% { transform: translateY(-8px) scale(1); }
@@ -1589,3 +1608,52 @@ box-shadow: 0 12px 40px rgba(50, 30, 80, 0.12);
 .outer-petal.discovered {
   opacity: 0.98;
 }
+
+/* ===== Requested sizing/layout overrides ===== */
+.profile-mandala {
+  width: 300px !important;
+  height: 300px !important;
+  margin: 6px auto 10px !important;
+}
+
+.profile-mandala img {
+  width: 300px;
+  height: 300px;
+}
+
+.profile-mandala .inner-mandala,
+.profile-mandala .ganesha-mandala {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+}
+
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin-top: 6px;
+}
+
+.profile-actions .primary-btn-unified {
+  width: 320px !important;
+  min-width: 320px;
+  max-width: 320px;
+  height: 64px;
+  border-radius: 999px;
+}
+
+.profile-actions .secondary-btn {
+  width: 48%;
+  min-width: 240px;
+  max-width: 320px;
+  height: 56px;
+  border-radius: 999px;
+}
+
+.switch-explorer-link {
+  margin-top: 24px !important;
+  font-size: 15px !important;
+}
+

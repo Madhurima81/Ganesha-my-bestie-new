@@ -21,7 +21,7 @@
 
 .clean-forest-background {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background-image: url('/images/profile-background.png');
+  background-image: url('/images/profile-bg.png');
   background-size: cover; background-position: center; z-index: -1;
   overflow: hidden;
 }
@@ -135,7 +135,7 @@
 
 .clean-profile-title {
   font-family: var(--font-title);
-  color: #5c3ea6;
+  color: var(--color-title-purple, #7B6D9E);
   font-size: clamp(32px, 4vw, 72px);
   font-weight: 800;
   margin: 0;
@@ -167,7 +167,7 @@
 }
 
 .clean-info-btn {
-  background: linear-gradient(180deg, #b497f5 0%, #9a73d9 100%);
+  background: linear-gradient(180deg, #b497f5 0%, var(--color-button-purple-top, #C3A8F3) 100%);
   color: white;
   width: clamp(36px, 3.5vw, 64px);
   height: clamp(36px, 3.5vw, 64px);
@@ -491,7 +491,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   font-size: clamp(32px, 5vw, 90px);
   font-weight: 700;
   /* Matches the Start Adventure button gradient */
-  background: linear-gradient(180deg, #b497f5 0%, #9a73d9 100%);
+  background: linear-gradient(180deg, #b497f5 0%, var(--color-button-purple-top, #C3A8F3) 100%);
   color: white;
   box-shadow:
     0 5px 0 #6a4fb3,
@@ -513,7 +513,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   font-family: var(--font-body);
   font-size: clamp(16px, 2vw, 36px);
   font-weight: 700;
-  color: #5c3ea6;
+  color: var(--color-title-purple, #7B6D9E);
   margin-top: 0;
   letter-spacing: 0.2px;
 }
@@ -686,7 +686,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 .overlay {
   position: fixed;
   inset: 0;
-  background-image: url('/images/profile-background.png');
+  background-image: url('/images/profile-bg.png');
   background-size: cover;
   background-position: center;
   display: flex;
@@ -778,7 +778,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   font-size: clamp(24px, 2.8vw, 46px);
   font-weight: 800;
   color: #6b5bb3;
-  margin: 6px 0 10px;
+  margin: 6px 0 24px;
 }
 
 .create-step-subheading {
@@ -799,7 +799,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 
 .explorer-modal .screen-header-title {
   font-size: clamp(28px, 3.5vw, 54px);
-  color: #6752B8;
+  color: var(--color-title-purple, #7B6D9E);
   text-shadow: none;
   animation: none;
 }
@@ -823,7 +823,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   font-family: var(--font-title);
   font-size: clamp(15px, 1.6vw, 28px);
   font-weight: 700;
-  color: #5c3ea6;
+  color: var(--color-title-purple, #7B6D9E);
   margin: 0 0 clamp(10px, 1.2vw, 20px) 0;
   width: 100%;
   text-align: center;
@@ -861,7 +861,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   font-family: var(--font-title);
   font-size: clamp(16px, 1.8vw, 34px);
   font-weight: 700;
-  color: #5c3ea6;
+  color: var(--color-title-purple, #7B6D9E);
   margin: 0 0 clamp(16px, 1.8vw, 32px) 0;
   width: 100%;
 }
@@ -1071,18 +1071,34 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 
 /* Overlay variant that uses the temple/purple bg image */
 .clean-modal-overlay.scroll-overlay {
-  background-image: url('/images/onboarding-scroll-bg.png');
+  background-image: linear-gradient(rgba(255, 244, 214, 0.45), rgba(255, 244, 214, 0.45)), url('/images/profile-bg.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  backdrop-filter: none;
 }
 
-/* Scroll-shaped card — uses scroll-parchment.png as the frame */
+/* Lotus icon at top of create card */
+.scroll-card-inner .create-card-lotus {
+  position: absolute;
+  top: -62px;
+  left: 50%;
+  display: block;
+  width: clamp(72px, 8vw, 80px);
+  height: clamp(72px, 8vw, 80px);
+  margin: 0;
+  opacity: 0.65;
+  transform: translateX(-50%) scale(1.12);
+  background: url('../../../assets/cards/lotus-iconnew.svg') no-repeat center / contain;
+  filter: sepia(0.12) saturate(0.72) hue-rotate(10deg) brightness(1.03);
+}
+
+/* Organic SVG card — replaces scroll parchment */
 .scroll-card {
   position: relative;
-  width: clamp(320px, 78vw, 720px);
-  aspect-ratio: 14 / 9;
-  background-image: url('/images/scroll-parchment.png');
+  width: min(600px, 72vw);
+  aspect-ratio: 0.72;
+  background-image: url('../../../assets/cards/createprofile.svg');
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: center;
@@ -1092,32 +1108,51 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   animation: scroll-unroll 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+.scroll-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 26%;
+  pointer-events: none;
+}
+
 @keyframes scroll-unroll {
   0%   { transform: scaleX(0.1); opacity: 0; }
   60%  { transform: scaleX(1.02); opacity: 1; }
   100% { transform: scaleX(1); opacity: 1; }
 }
 
-/* Inner padding zone — keeps content off the scroll edges */
+/* Inner padding zone — keeps content off the organic edges */
 .scroll-card-inner {
-  width: 70%;
-  height: 78%;
+  position: relative;
+  width: 72%;
+  height: 68%;
+  padding-top: 90px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  gap: clamp(12px, 2vw, 20px);
-  padding: clamp(8px, 1.5vw, 16px);
+  justify-content: flex-start;
+}
+
+.create-step-content {
+  margin-top: 0;
+}
+
+.scroll-card-inner > * {
+  flex-shrink: 0;
 }
 
 /* Headings on the scroll — use Baloo, parchment-friendly purple */
 .scroll-card-inner .create-step-heading {
-  font-family: 'Baloo 2', cursive;
-  color: #6A1B9A;
+  font-family: var(--font-title);
+  color: #7B6D9E;
   text-align: center;
-  font-size: clamp(18px, 3vw, 28px);
-  margin: 0;
-  line-height: 1.2;
+  font-size: clamp(28px, 3.2vw, 48px);
+  font-weight: 800;
+  line-height: 1.15;
+  margin: 0 0 24px;
 }
 
 .scroll-card-inner .create-step-subheading {
@@ -1129,30 +1164,47 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 
 .scroll-card-inner .create-step-echo {
-  font-family: 'Baloo 2', cursive;
-  color: #FF9933;
-  font-size: clamp(16px, 2.2vw, 20px);
+  color: #B5A7C8;
+  font-size: 18px;
+  font-weight: 700;
   margin: 0;
 }
 
 /* Name input on parchment */
 .scroll-card-inner .name-input {
-  font-family: 'Nunito', sans-serif;
-  font-size: clamp(16px, 2.4vw, 22px);
+  font-family: var(--font-title);
+  font-size: 30px;
+  font-weight: 700;
   text-align: center;
-  padding: clamp(8px, 1.5vw, 14px) clamp(12px, 2vw, 20px);
-  border: 2px solid rgba(106, 27, 154, 0.3);
+  height: 88px;
+  padding: 0 clamp(20px, 2.4vw, 28px);
+  border: 3px solid #B49EE8;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.7);
-  color: #4a2370;
-  width: 80%;
-  max-width: 360px;
+  background: #fff;
+  box-shadow: none !important;
+  -webkit-appearance: none;
+  appearance: none;
+  color: #7B6D9E;
+  width: 100%;
+  max-width: 520px;
   outline: none;
 }
 
 .scroll-card-inner .name-input:focus {
-  border-color: #6A1B9A;
+  border-color: #B49EE8;
+  box-shadow: none !important;
+  outline: none;
   background: #fff;
+}
+
+.scroll-card-inner .name-input:focus-visible {
+  border-color: #B49EE8;
+  box-shadow: none !important;
+  outline: none;
+}
+
+.scroll-card-inner .name-input::placeholder {
+  color: #B5A7C8;
 }
 
 /* Age stepper */
@@ -1163,23 +1215,29 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 
 .scroll-card-inner .age-stepper-btn {
-  width: clamp(48px, 7vw, 64px);
-  height: clamp(48px, 7vw, 64px);
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
-  border: none;
-  background: #6A1B9A;
-  color: #fff;
-  font-size: clamp(24px, 3.5vw, 32px);
-  font-family: 'Baloo 2', cursive;
+  border: 2px solid #B49EE8;
+  background: #FFFFFF;
+  color: #8D7AB8;
+  font-size: 36px;
+  font-weight: 800;
+  font-family: var(--font-title);
   cursor: pointer;
-  box-shadow: 0 4px 8px rgba(106, 27, 154, 0.3);
+  box-shadow: 0 4px 10px rgba(180, 158, 232, 0.18);
+  transition: all 0.15s ease;
+}
+
+.scroll-card-inner .age-stepper-btn:active {
+  transform: scale(0.95);
 }
 
 .scroll-card-inner .age-stepper-value {
-  font-family: 'Baloo 2', cursive;
-  font-size: clamp(40px, 6vw, 60px);
-  color: #FF9933;
-  min-width: 60px;
+  color: #8D7AB8;
+  font-size: 64px;
+  font-weight: 800;
+  min-width: 80px;
   text-align: center;
   animation: age-pop 0.2s ease-out;
 }
@@ -1218,8 +1276,9 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 
 .scroll-card-inner .friend-card.active {
-  border-color: #FF9933;
-  background: #fff3a8;
+  border: 3px solid #B49EE8;
+  background: #F7F3FF;
+  box-shadow: 0 4px 12px rgba(180, 158, 232, 0.18);
   transform: scale(1.08);
 }
 
@@ -1235,6 +1294,9 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 
 /* Back / Cancel link under primary button */
 .scroll-card-inner .back-btn {
+  position: absolute;
+  top: 32px;
+  right: 32px;
   font-family: 'Nunito', sans-serif;
   background: none;
   border: none;
@@ -1259,3 +1321,35 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* Arrow button override — circular Next button on steps 1 & 2 */
+.scroll-card-inner .arrow-btn {
+  width: 140px !important;
+  height: 64px !important;
+  padding: 0 !important;
+  border-radius: 999px !important;
+  background: #B99AEC !important;
+  border: none !important;
+  box-shadow: 0 2px 6px rgba(111, 76, 255, 0.18) !important;
+  color: #FFFFFF !important;
+  font-size: 34px !important;
+  font-weight: 700;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  margin: clamp(8px, 1.5vw, 16px) auto 0;
+}
+
+.scroll-card-inner .primary-btn-unified.final-cta-btn {
+  width: 340px !important;
+  max-width: 100%;
+  height: 64px !important;
+  border-radius: 999px !important;
+  --btn-color-top: #C3A8F3;
+  --btn-color-base: #B99AEC;
+  --btn-color-shadow: #9B7DD8;
+  --btn-color-glow: rgba(180, 158, 232, 0.20);
+  color: #FFFFFF !important;
+}
+

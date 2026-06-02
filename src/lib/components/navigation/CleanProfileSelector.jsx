@@ -1,4 +1,4 @@
-// CleanProfileSelector.jsx - With scroll skin + Mooshika ride transition
+﻿// CleanProfileSelector.jsx - With scroll skin + Mooshika ride transition
 import React, { useState, useEffect, useRef } from 'react';
 import GameStateManager from '../../services/GameStateManager';
 import PrimaryBtn from '../shared/PrimaryBtn';
@@ -212,7 +212,7 @@ const CleanProfileSelector = ({
     }
   };
 
-  // RIDE TRANSITION — render first if active
+  // RIDE TRANSITION â€” render first if active
   if (transitionStage === 'ride' && pendingProfile) {
     return (
       <MooshikaRideTransition
@@ -237,17 +237,23 @@ const CleanProfileSelector = ({
       <div className="clean-profile-container">
         {showCreateProfile && (
           <div className="clean-modal-overlay scroll-overlay">
-            {/* SCROLL SKIN — bg image lives behind, scroll PNG frames the card */}
+            {/* SCROLL SKIN â€” bg image lives behind, scroll PNG frames the card */}
             <div className="scroll-card">
               <div className="scroll-card-inner">
+                <span className="create-card-lotus" aria-hidden="true" />
                 <div className="create-step-content">
                   {currentStep === 1 && (
                     <>
-                      <h2 className="create-step-heading">What shall I call you, little explorer?</h2>
+                      <h2 className="create-step-heading">What should I call you?</h2>
                       <input
                         type="text"
                         value={newProfileName}
                         onChange={(e) => setNewProfileName(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && newProfileName.trim().length >= 2) {
+                            setCurrentStep(2);
+                          }
+                        }}
                         placeholder="Type your name"
                         maxLength={12}
                         className="name-input"
@@ -258,8 +264,7 @@ const CleanProfileSelector = ({
 
                   {currentStep === 2 && (
                     <>
-                      <p className="create-step-echo">{newProfileName.trim()}</p>
-                      <h2 className="create-step-heading">How old are you?</h2>
+                      <h2 className="create-step-heading">How old are you, {newProfileName.trim()}?</h2>
                       <div className="age-stepper">
                         <button
                           className="age-stepper-btn"
@@ -306,7 +311,7 @@ const CleanProfileSelector = ({
                 </div>
 
                 <PrimaryBtn
-                  label={currentStep < 3 ? 'Next' : 'Fly to Ganesha World!'}
+                  label={currentStep < 3 ? 'â†’' : "Let's Explore"}
                   onClick={() => {
                     if (currentStep === 1) setCurrentStep(2);
                     else if (currentStep === 2) setCurrentStep(3);
@@ -314,18 +319,10 @@ const CleanProfileSelector = ({
                   }}
                   disabled={(currentStep === 1 && newProfileName.trim().length < 2) || isCreatingProfile}
                   size="md"
-                  fullWidth
+                  fullWidth={currentStep === 3}
+                  className={currentStep < 3 ? 'arrow-btn' : 'final-cta-btn'}
                 />
 
-                <button
-                  onClick={() => {
-                    if (currentStep === 1) setShowCreateProfile(false);
-                    else setCurrentStep(currentStep - 1);
-                  }}
-                  className="back-btn"
-                >
-                  {currentStep === 1 ? 'Cancel' : 'Back'}
-                </button>
               </div>
             </div>
           </div>
@@ -449,3 +446,4 @@ const CleanProfileSelector = ({
 };
 
 export default CleanProfileSelector;
+
