@@ -75,7 +75,7 @@
   align-items: center;
   justify-content: flex-end;
   z-index: 2;
-  margin-right: -60px;
+  margin-right: -84px;
 }
 
 .game-modal-character img,
@@ -95,21 +95,17 @@
     charBreathe 3s ease-in-out 1.3s infinite;
 }
 
-/* Card (Right Side) */
+/* Card (Right Side) — Organic SVG card background */
 .game-modal-card {
   position: relative;
   flex: 0 0 45%;
   max-width: 560px;
   min-height: auto;
   max-height: min(70vh, 560px);
-  background: #f7f3e8;
-  border: none;
-  outline: 1px solid rgba(120, 90, 160, 0.08);
-  box-shadow:
-    0 10px 24px rgba(40, 20, 80, 0.12),
-    0 0 40px rgba(255,255,255,0.18);
-  border-radius: 32px;
-  padding: clamp(20px, 3vh, 36px) clamp(24px, 3vw, 40px);
+  background: url('../../../assets/cards/openingmodal.svg') no-repeat center / 100% 100%;
+  filter: drop-shadow(0 10px 24px rgba(40, 20, 80, 0.12));
+  aspect-ratio: 210 / 189;
+  padding: clamp(48px, 7%, 72px) clamp(40px, 6%, 64px) clamp(40px, 6%, 56px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -119,17 +115,16 @@
   overflow-y: auto;
 }
 
-/* Speech pointer shown only when character exists */
-.game-modal-character + .game-modal-card::after {
-  content: '';
-  position: absolute;
-  width: 26px;
-  height: 26px;
-  background: #FFF9E6;
-  left: -13px;
-  top: 48%;
-  transform: rotate(45deg);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+/* Lotus icon at top of card */
+.game-modal-lotus-top {
+  display: block;
+  width: clamp(40px, 4.4vw, 54px);
+  height: clamp(40px, 4.4vw, 54px);
+  margin-bottom: 10px;
+  transform: translateY(-22px);
+  opacity: 0.56;
+  background: url('../../../assets/cards/lotus-iconnew.svg') no-repeat center / contain;
+  filter: sepia(0.12) saturate(0.7) hue-rotate(8deg) brightness(1.04);
 }
 
 .game-modal-title {
@@ -162,126 +157,63 @@
   position: relative;
 }
 
+/* Dashed connector line behind circles */
+.game-modal-icons::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 18%;
+  right: 18%;
+  height: 18px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 18' preserveAspectRatio='none'><path d='M0 9 Q10 1 20 9 T40 9 T60 9 T80 9' fill='none' stroke='%23E5B25B' stroke-opacity='0.5' stroke-width='2.0' stroke-linecap='round' stroke-dasharray='1.2 8'/></svg>");
+  background-size: 80px 18px;
+  background-repeat: repeat-x;
+  background-position: center;
+  transform: translateY(-50%);
+  opacity: 1;
+  z-index: 0;
+  pointer-events: none;
+}
+
 .game-modal-icon-item {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  z-index: 1;
 }
 
 .game-modal-icon-item:hover {
   transform: none;
 }
 
-.game-modal-icon-item img,
 .game-modal-icon-circle {
-  width: clamp(70px, 6vw, 100px);
-  height: clamp(70px, 6vw, 100px);
-
-  object-fit: contain;
-
-  opacity: 0.55;
-
-  filter:
-    grayscale(0.2)
-    brightness(1)
-    blur(0.1px);
-
-  transform: scale(0.92);
-
-  transition:
-    opacity 0.4s ease,
-    transform 0.4s ease,
-    filter 0.4s ease;
-
-  animation:
-    iconAppear 0.7s cubic-bezier(0.22, 1, 0.36, 1) 1.1s both,
-    hiddenFloat 5s ease-in-out infinite;
-  background: transparent;
-  border-radius: 0;
-  padding: 0;
-  border: none;
-}
-
-.game-modal-icon-item::after {
-  content: "";
-
-  position: absolute;
-
-  width: 96px;
-  height: 96px;
-
-  border-radius: 50%;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(255,255,255,0.34) 0%,
-      rgba(255,255,255,0.12) 45%,
-      transparent 75%
-    );
-
-  filter: blur(13px);
-
-  z-index: -1;
-
-  animation: hiddenGlow 4.5s ease-in-out infinite;
-}
-
-/* Hard override to beat legacy modal styles elsewhere */
-.game-modal-icons .game-modal-icon-circle,
-.game-modal-icons .game-modal-icon-item img {
-  width: clamp(70px, 6vw, 100px) !important;
-  height: clamp(70px, 6vw, 100px) !important;
-  background: transparent !important;
-  border: none !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-}
-
-/* 80ms entry stagger per icon, breathing offset to match */
-.game-modal-icon-item:nth-child(1) img,
-.game-modal-icon-item:nth-child(1) .game-modal-icon-circle {
-  animation-delay: 1.1s, 1.80s;
-}
-.game-modal-icon-item:nth-child(2) img,
-.game-modal-icon-item:nth-child(2) .game-modal-icon-circle {
-  animation-delay: 1.18s, 1.88s;
-}
-.game-modal-icon-item:nth-child(3) img,
-.game-modal-icon-item:nth-child(3) .game-modal-icon-circle {
-  animation-delay: 1.26s, 1.96s;
-}
-
-.game-modal-icon-item:nth-child(1) img {
-  opacity: 0.37;
-  transform: scale(0.87);
-}
-
-.game-modal-icon-item:nth-child(2) img {
-  opacity: 0.63;
-}
-
-.game-modal-icon-item:nth-child(3) img {
-  opacity: 0.48;
-}
-
-.game-modal-icon-circle {
+  width: 60px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(64px, 5vw, 90px);
-  background: transparent;
-  overflow: visible;
+  background: #FFFBF5;
+  border-radius: 50%;
+  border: 1.5px solid #F6F0E8 !important;
+  box-shadow:
+    0 4px 10px rgba(80, 50, 130, 0.12),
+    inset 0 0 0 1px rgba(230, 215, 255, 0.6);
+  overflow: hidden;
+  animation: iconAppear 0.7s cubic-bezier(0.22, 1, 0.36, 1) 1.1s both;
 }
 
-/* SVG icons have internal transparent padding — scale up to fill the circle */
-.game-modal-icon-circle img[src$=".svg"] {
-  transform: scale(1.35);
-  transform-origin: center;
+.game-modal-icon-circle img {
+  width: 86%;
+  height: 86%;
+  object-fit: contain;
 }
+
+/* 80ms entry stagger per icon */
+.game-modal-icon-item:nth-child(1) .game-modal-icon-circle { animation-delay: 1.10s; }
+.game-modal-icon-item:nth-child(2) .game-modal-icon-circle { animation-delay: 1.18s; }
+.game-modal-icon-item:nth-child(3) .game-modal-icon-circle { animation-delay: 1.26s; }
 
 
 .game-modal-icon-label {
@@ -336,9 +268,9 @@
   -webkit-transform: translateZ(0);
   backface-visibility: hidden;
   box-shadow:
-    0 4px 0 rgba(0,0,0,0.12),
-    0 8px 18px rgba(0,0,0,0.12);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    0 4px 0 rgba(163, 114, 46, 0.55),
+    0 8px 18px rgba(229, 178, 91, 0.28);
+  text-shadow: 0 1px 2px rgba(118, 76, 22, 0.2);
   text-transform: capitalize;
   white-space: nowrap;
   margin-top: 16px;
@@ -363,9 +295,9 @@
   color: var(--modal-btn-text) !important;
   border: none !important;
   box-shadow:
-    0 4px 0 rgba(0,0,0,0.12),
-    0 8px 18px rgba(0,0,0,0.12) !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    0 4px 0 rgba(163, 114, 46, 0.55),
+    0 8px 18px rgba(229, 178, 91, 0.28) !important;
+  text-shadow: 0 1px 2px rgba(118, 76, 22, 0.2);
 }
 
 .game-modal-card .game-modal-button:hover {
@@ -376,8 +308,8 @@
 .game-modal-button:active {
   transform: translateY(3px) scale(0.985);
   box-shadow:
-    0 1px 0 rgba(0,0,0,0.18),
-    0 3px 6px rgba(0,0,0,0.10);
+    0 1px 0 rgba(163, 114, 46, 0.65),
+    0 3px 6px rgba(229, 178, 91, 0.24);
   filter: brightness(0.98);
   background: var(--modal-btn-bg) !important;
   color: var(--modal-btn-text) !important;
@@ -388,8 +320,8 @@
   color: var(--modal-btn-text) !important;
   transform: translateY(3px) scale(0.985);
   box-shadow:
-    0 1px 0 rgba(0,0,0,0.18),
-    0 3px 6px rgba(0,0,0,0.10) !important;
+    0 1px 0 rgba(163, 114, 46, 0.65),
+    0 3px 6px rgba(229, 178, 91, 0.24) !important;
   filter: brightness(0.98);
 }
 
@@ -542,11 +474,10 @@
   }
 
   .game-modal-card {
-    padding: 50px 20px 30px;
+    padding: 60px 36px 44px;
     width: 100%;
     z-index: 1;
     flex: 0 0 auto;
-    border-radius: 25px;
   }
 
   .game-modal-title {
@@ -603,7 +534,7 @@
 
   .game-modal-card {
     flex: 1;
-    padding: 20px 30px;
+    padding: 44px 50px 36px;
     max-width: none;
     min-height: auto;
   }
@@ -655,8 +586,7 @@
     flex: 0 0 55%;
     max-width: 480px;
     max-height: 560px;
-    padding: 28px 28px;
-    border-radius: 28px;
+    padding: 56px 48px 44px;
   }
 
   .game-modal-character {
@@ -712,8 +642,7 @@
     flex: 0 0 52%;
     max-width: 560px;
     max-height: 88vh;
-    padding: 28px 36px;
-    border-radius: 28px;
+    padding: 56px 56px 44px;
     overflow-y: auto;
   }
 

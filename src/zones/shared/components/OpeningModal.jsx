@@ -452,6 +452,7 @@ const OpeningModal = ({
                     />
                 </div>
                 <div className="game-modal-card">
+                    <span className="game-modal-lotus-top" aria-hidden="true" />
                     <h1 className="game-modal-title">{content.title}</h1>
                     <p className="game-modal-subtitle">
                         {content.description}

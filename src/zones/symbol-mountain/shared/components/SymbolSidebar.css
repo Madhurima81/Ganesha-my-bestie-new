@@ -49,15 +49,11 @@
   left: 50%;
   transform: translateX(-50%);
 
-  width: 2px;
-  border-radius: 999px;
-
-  background:
-    repeating-linear-gradient(
-      to bottom,
-      rgba(213, 195, 150, 0.42) 0 5px,
-      transparent 5px 13px
-    );
+  width: 16px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 80' preserveAspectRatio='none'><path d='M8 0 Q2 10 8 20 T8 40 T8 60 T8 80' fill='none' stroke='rgba(213,195,150,0.55)' stroke-width='2' stroke-linecap='round' stroke-dasharray='1.2 8'/></svg>");
+  background-size: 16px 80px;
+  background-repeat: repeat-y;
+  background-position: center;
 
   z-index: 0;
   pointer-events: none;
