@@ -102,7 +102,9 @@
       "Bash(banana)",
       "Bash(bread\")",
       "Bash(curl -s http://localhost:5174)",
-      "Bash(xargs basename:*)"
+      "Bash(xargs basename:*)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
     ]
   }
 }
