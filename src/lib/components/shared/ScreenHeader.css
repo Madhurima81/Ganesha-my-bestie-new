@@ -39,7 +39,7 @@
 }
 
 .screen-header--purple .screen-header-title {
-  color: #5c3ea6;
+  color: var(--color-title-purple, #7B6D9E);
   text-shadow:
     0 0 6px  rgba(140, 100, 255, 0.35),
     0 0 18px rgba(140, 100, 255, 0.22),
@@ -48,7 +48,8 @@
 }
 
 .screen-header--purple .screen-header-subtitle {
-  color: #7e6bb8;
+  color: var(--color-title-purple, #7B6D9E);
+  opacity: 0.88;
 }
 
 @keyframes shPurplePulse {
@@ -161,3 +162,4 @@
 .screen-header--lg .screen-header-title    { font-size: clamp(60px, 7vw, 120px); }
 .screen-header--lg .screen-header-subtitle { font-size: clamp(20px, 2.2vw, 40px); }
 .screen-header--lg .screen-header-icon     { font-size: clamp(52px, 6.5vw, 100px); }
+
