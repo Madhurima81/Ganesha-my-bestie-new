@@ -141,6 +141,9 @@ const handleAction = (callback, skipComplete = false) => {
     }, 700);
   };
   const handleExplore = onExploreZones || onBackToMap;
+  const cleanedSubtitle = (completionSubtitle || `${sceneName} is glowing because of you!`)
+    .replace(/\s*Wonderful work, little friend\.?/i, '')
+    .trim();
 
   if (!show) return null;
 
@@ -148,7 +151,7 @@ const handleAction = (callback, skipComplete = false) => {
     <div className={`celebration-backdrop${isExiting ? ' exiting' : ''}`}>
 
       {/* Main Container added to match OpeningModal layout */}
-      <div className="celebration-content">
+      <div className="scene-completion-content">
         <div className="completion-ganesha-left" aria-hidden="true">
           <img
             className="completion-ganesha"
@@ -176,8 +179,9 @@ const handleAction = (callback, skipComplete = false) => {
 
           {/* Text Header */}
           <div className="celebration-header">
+            <span className="celebration-lotus-top" aria-hidden="true" />
             <div className="title-text">{completionTitle || '🌟 You Did It!'}</div>
-            <div className="subtitle-text">{completionSubtitle || `${sceneName} is glowing because of you!`}</div>
+            <div className="subtitle-text">{cleanedSubtitle}</div>
           </div>
 
           <div className="celebration-body">
@@ -316,20 +320,21 @@ const handleAction = (callback, skipComplete = false) => {
 
                 {/* Secondary / Tertiary actions */}
                 {!primaryAction ? (
-                  <>
+                  <div className="celebration-secondary-row">
                     <button
                       className="celebration-btn celebration-btn-teal"
                       onClick={() => handleAction(handleExplore)}
                     >
-                      Back
+                      Home
                     </button>
+                    <span className="celebration-secondary-sep" aria-hidden="true">•</span>
                     <button
                       className="celebration-btn-replay"
                       onClick={() => handleAction(onReplay, true)}
                     >
                       Play Again
                     </button>
-                  </>
+                  </div>
                 ) : (
                   <div className="celebration-actions-row">
                     <button

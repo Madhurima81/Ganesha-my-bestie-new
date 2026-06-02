@@ -29,8 +29,8 @@
 ========================================================= */
 .inner-mandala,
 .ganesha-mandala {
-  width: 460px;
-  height: 460px;
+  width: 520px;
+  height: 520px;
   position: relative;
   margin: 0 auto;
   animation: mandalaFloat 5s ease-in-out infinite;
@@ -38,6 +38,11 @@
   will-change: transform;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+}
+
+.inner-mandala::before,
+.inner-mandala::after {
+  content: none;
 }
 
 .inner-mandala svg {
@@ -70,48 +75,43 @@
    OUTER PETALS — outline by default, pastel fill when awakened
 ========================================================= */
 .outer-petal {
-  fill: none;
-  stroke: #8F88E8;
+  fill: #F4F1FF;
+  stroke: #9A8EF0;
   stroke-width: 0.045;
   stroke-linecap: round;
   stroke-linejoin: round;
-  opacity: 0.75;
+  opacity: 0.25;
   transition: fill 0.45s ease, opacity 0.35s ease, filter 0.35s ease;
   cursor: pointer;
 }
 
-.outer-petal.awakened,
-.outer-petal.discovered,
-.outer-petal.active {
+.outer-petal.completed {
+  fill: #FFE6B8;
   opacity: 1;
-  filter: drop-shadow(0 0 10px rgba(255, 220, 120, 0.22));
 }
 
-.outer-petal-1.awakened, .outer-petal-1.discovered, .outer-petal-1.active { fill: #E6DDFF; }   /* Lavender — Mooshika */
-.outer-petal-2.awakened, .outer-petal-2.discovered, .outer-petal-2.active { fill: #FFF0C9; }   /* Butter Gold — Modak */
-.outer-petal-3.awakened, .outer-petal-3.discovered, .outer-petal-3.active { fill: #DDF6E8; }   /* Mint — Belly */
-.outer-petal-4.awakened, .outer-petal-4.discovered, .outer-petal-4.active { fill: #FFE1EC; }   /* Soft Pink — Lotus */
-.outer-petal-5.awakened, .outer-petal-5.discovered, .outer-petal-5.active { fill: #DDEFFF; }   /* Sky Blue — Trunk */
-.outer-petal-6.awakened, .outer-petal-6.discovered, .outer-petal-6.active { fill: #FFE6D6; }   /* Peach — Ear */
-.outer-petal-7.awakened, .outer-petal-7.discovered, .outer-petal-7.active { fill: #DCE7FF; }   /* Powder Blue — Eye */
-.outer-petal-8.awakened, .outer-petal-8.discovered, .outer-petal-8.active { fill: #E8F4D8; }   /* Sage — Tusk */
+.outer-petal.current-zone {
+  fill: #F7D88A;
+  opacity: 1;
+}
 
 .outer-petal.locked {
-  opacity: 0.45;
+  fill: #F4F1FF;
+  opacity: 0.25;
 }
 
 /* =========================================================
    OUTER RING CIRCLES
 ========================================================= */
 .outer-ring {
-  fill: #F5F1FF;
-  stroke: #7F78E6;
+  fill: #F7F4FF;
+  stroke: #9A8EF0;
   stroke-width: 0.045;
 }
 
 .outer-ring-inner {
-  fill: #ECE4FF;
-  stroke: #AFA7FF;
+  fill: #F7F4FF;
+  stroke: #9A8EF0;
   stroke-width: 0.04;
 }
 
@@ -119,25 +119,25 @@
    MIDDLE PETALS — outline default, gold when activated
 ========================================================= */
 .middle-petal {
-  fill: none;
-  stroke: #9B94F2;
+  fill: #F8F5FF;
+  stroke: #9A8EF0;
   stroke-width: 0.03;
   stroke-linecap: round;
   stroke-linejoin: round;
-  opacity: 0.92;
-  transition: fill 0.45s ease;
+  opacity: 1;
+  transition: fill 0.45s ease, opacity 0.35s ease;
 }
 
 .middle-petal.activated,
 .middle-petal.active {
-  fill: #F7E38B;
+  fill: #FFE8C9;
 }
 
 .middle-petal-2.activated, .middle-petal-4.activated,
 .middle-petal-6.activated, .middle-petal-8.activated,
 .middle-petal-2.active, .middle-petal-4.active,
 .middle-petal-6.active, .middle-petal-8.active {
-  fill: #FFF4C7;
+  fill: #FFE8C9;
 }
 
 /* =========================================================
@@ -145,13 +145,13 @@
 ========================================================= */
 .inner-ring-thin {
   fill: #F6EDFF;
-  stroke: #B8B1FF;
+  stroke: #9A8EF0;
   stroke-width: 0.03;
 }
 
 .inner-ring {
-  fill: #FFF8EA;
-  stroke: #8D84F0;
+  fill: #F4DE9B;
+  stroke: #D9BC58;
   stroke-width: 0.03;
 }
 
@@ -160,12 +160,12 @@
 ========================================================= */
 .inner-petal {
   fill: #FFA8BC;
-  stroke: #7C74E8;
+  stroke: #9A8EF0;
   stroke-width: 0.022;
   stroke-linecap: round;
   stroke-linejoin: round;
-  opacity: 1;
-  transition: fill 0.45s ease;
+  opacity: 0.85;
+  transition: fill 0.45s ease, opacity 0.35s ease;
 }
 
 .inner-petal-2,
@@ -179,10 +179,10 @@
    CENTER AVATAR DISC + IMAGE SLOT
 ========================================================= */
 .avatar-circle {
-  fill: #FFE9B3;
-  stroke: #E4C96A;
+  fill: #F4DE9B;
+  stroke: #D9BC58;
   stroke-width: 0.035;
-  filter: drop-shadow(0 0 18px rgba(255, 225, 130, 0.35));
+  filter: none;
 }
 
 .mandala-avatar-slot {
@@ -241,6 +241,10 @@
 
 @keyframes mandalaFloat {
   0% { transform: translateY(0px); }
-  50% { transform: translateY(-4px); }
+  50% { transform: translateY(-1.5px); }
   100% { transform: translateY(0px); }
 }
+
+
+
+

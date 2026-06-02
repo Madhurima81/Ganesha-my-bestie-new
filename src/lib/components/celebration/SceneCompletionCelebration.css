@@ -23,11 +23,14 @@
 }
 
 /* Flex Container added to mimic OpeningModal layout */
-.celebration-content {
+.scene-completion-content {
   position: relative;
   width: 95%;
   max-width: 1700px;
   height: 80vh;
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,8 +39,8 @@
   transform: translateY(-30px);
 }
 
-/* Override any global .celebration-content styles from other scenes */
-.celebration-backdrop .celebration-content {
+/* Override any global .scene-completion-content styles from other scenes */
+.celebration-backdrop .scene-completion-content {
   width: 95% !important;
   max-width: 1700px !important;
   height: 80vh !important;
@@ -52,19 +55,18 @@
 
 .celebration-card {
   position: relative;
-  flex: 0 0 50%;
-  max-width: 560px;
-  min-height: auto;
-  max-height: min(70vh, 560px);
-  background: #f7f3e8;
+  flex: 0 0 52%;
+  max-width: 660px;
+  min-height: 660px;
+  max-height: none;
+  background: url('../../../assets/cards/openingmodal.svg') no-repeat center / 100% 100%;
   color: var(--cs-card-text, #5D2E0F);
-  border-radius: 32px;
-  padding: clamp(24px, 3vh, 40px) clamp(28px, 3vw, 44px);
+  border-radius: 0;
+  padding: clamp(56px, 7%, 80px) clamp(46px, 6%, 72px) clamp(52px, 6%, 68px);
   border: none;
-  outline: 1px solid rgba(120, 90, 160, 0.08);
+  outline: none;
   box-shadow:
-    0 12px 30px rgba(40, 20, 80, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    0 10px 24px rgba(40, 20, 80, 0.12);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -179,6 +181,18 @@
 .celebration-header {
   margin-bottom: 18px;
   width: 100%;
+  padding-top: 20px;
+}
+
+.celebration-lotus-top {
+  display: block;
+  width: clamp(40px, 4.4vw, 54px);
+  height: clamp(40px, 4.4vw, 54px);
+  margin: 0 auto 4px;
+  transform: translateY(-8px);
+  opacity: 0.56;
+  background: url('../../../assets/cards/lotus-iconnew.svg') no-repeat center / contain;
+  filter: sepia(0.12) saturate(0.7) hue-rotate(8deg) brightness(1.04);
 }
 
 .title-text {
@@ -195,7 +209,7 @@
   font-size: 17px;
   font-weight: 600;
   color:  #8B4513;
-  margin-bottom: 20px;
+  margin-bottom: 28px;
   opacity: 0.85;
 }
 
@@ -204,7 +218,7 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  gap: 25px;
+  gap: 0;
 }
 
 .celebration-image-section {
@@ -355,36 +369,27 @@
 .trophy-symbols-row {
   display: flex;
   justify-content: center;
-  align-items: flex-end;
-  gap: 48px;
-  margin: 18px 0 22px;
+  align-items: center;
+  gap: 28px;
+  margin: 0 0 24px;
   position: relative;
+  width: 100%;
 }
 
-.trophy-symbols-row::before,
-.game-complete-icons::before {
-  content: "";
-
+.trophy-symbols-row::before {
+  content: '';
   position: absolute;
-
-  width: 220px;
-  height: 120px;
-
-  left: 50%;
   top: 50%;
-
-  transform: translate(-50%, -50%);
-
-  background:
-    radial-gradient(
-      ellipse,
-      rgba(255, 215, 120, 0.22) 0%,
-      rgba(255, 215, 120, 0.08) 45%,
-      transparent 75%
-    );
-
-  filter: blur(18px);
-
+  left: 18%;
+  right: 18%;
+  height: 18px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 18' preserveAspectRatio='none'><path d='M0 9 Q10 1 20 9 T40 9 T60 9 T80 9' fill='none' stroke='%23E5B25B' stroke-opacity='0.5' stroke-width='2.0' stroke-linecap='round' stroke-dasharray='1.2 8'/></svg>");
+  background-size: 80px 18px;
+  background-repeat: repeat-x;
+  background-position: center;
+  transform: translateY(-50%);
+  opacity: 1;
+  z-index: 0;
   pointer-events: none;
 }
 
@@ -394,6 +399,7 @@
   align-items: center;
   animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
   position: relative;
+  z-index: 1;
 }
 
 .trophy-symbol::before {
@@ -406,18 +412,21 @@
 
 .trophy-symbol-glow {
   position: relative;
-  width: 120px;
-  height: 120px;
-  border-radius: 0;
-  background: transparent;
-  border: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #FFFBF5;
+  border: 1.5px solid #F6F0E8;
+  box-shadow:
+    0 4px 10px rgba(80, 50, 130, 0.12),
+    inset 0 0 0 1px rgba(230, 215, 255, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
+  padding: 4px;
   margin-bottom: 12px;
   transition: transform 0.2s ease;
-  animation: rewardGlowBreath 3.2s ease-in-out infinite;
+  overflow: hidden;
 }
 
 .trophy-symbol-tappable:hover .trophy-symbol-glow {
@@ -425,8 +434,8 @@
 }
 
 .trophy-symbol-img {
-  width: 120px;
-  height: 120px;
+  width: 86%;
+  height: 86%;
   object-fit: contain;
   filter:
     drop-shadow(0 0 10px rgba(255, 210, 100, 0.45))
@@ -519,6 +528,7 @@
   color: #8A6B57;
   opacity: 0.76;
   text-align: center;
+  margin: 0 0 24px;
 }
 
 @keyframes trophy-pulse {
@@ -580,12 +590,12 @@
 /* --- BUTTON SECTION (UNIQUE CLASS NAMES) --- */
 .celebration-actions-section {
   width: 100%;
-  max-width: 480px; 
+  max-width: 360px; 
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 8px;
   align-items: center;
-  margin-top: 6px;
+  margin-top: 0;
 }
 
 /* Renamed from secondary-actions-row */
@@ -672,6 +682,8 @@ transition:
   background-color: #c8945f;
   background: var(--cs-primary-bg, linear-gradient(180deg, #d2ae77 0%, #b88a56 100%)) !important;
   color: var(--cs-primary-text, #fff) !important;
+  font-size: 20px;
+  padding: 14px 30px;
   box-shadow:
     0 4px 0 rgba(0,0,0,0.12),
     0 8px 18px var(--cs-accent-glow, rgba(0,0,0,0.18));
@@ -702,18 +714,18 @@ transition:
 .celebration-btn-teal {
   background: transparent;
 
-  color: #8A6B57;
+  color: #8B6A4A;
 
   border: none;
   box-shadow: none;
 
-  font-size: 14px;
-  font-weight: 600;
-  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'Baloo 2', cursive;
 
   padding: 0;
 
-  opacity: 0.62;
+  opacity: 0.82;
 
   cursor: pointer;
 
@@ -722,6 +734,28 @@ transition:
     transform 0.15s ease;
 
   -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+  width: auto;
+  max-width: none;
+  min-width: 0;
+  flex: 0 0 auto;
+}
+
+.celebration-secondary-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 16px;
+  width: 100%;
+}
+
+.celebration-secondary-sep {
+  color: #8B6A4A;
+  opacity: 0.78;
+  font-size: 14px;
+  line-height: 1;
 }
 
 .celebration-btn-teal:hover {
@@ -737,18 +771,22 @@ transition:
 .celebration-btn-replay {
   background: transparent;
   border: none;
-  font-family: 'Nunito', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: #8A6B57;
-  opacity: 0.5;
+  font-family: 'Baloo 2', cursive;
+  font-size: 15px;
+  font-weight: 700;
+  color: #8B6A4A;
+  opacity: 0.8;
   cursor: pointer;
   padding: 0;
-  margin-top: 6px;
+  margin-top: 0;
   text-decoration: none;
   transition: opacity 0.15s ease, transform 0.15s ease;
   -webkit-tap-highlight-color: transparent;
   width: auto;
+  max-width: none;
+  min-width: 0;
+  white-space: nowrap;
+  flex: 0 0 auto;
 }
 
 .celebration-btn-replay:hover {
@@ -824,7 +862,7 @@ transition:
   display: flex;
   align-items: center;
   gap: 18px;
-  margin-top: 2px;
+  margin-top: 0;
 }
 
 /* Ghost text buttons — no background, soft brown text */
@@ -956,7 +994,7 @@ transition:
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 28px;
 }
 
 /* Primary action button - BIG and ORANGE */
@@ -1038,7 +1076,7 @@ transition:
 /* Optional hook aliases for completion-theme naming */
 .completion-card { background: var(--cs-card-bg, #FFF9E6); border: 2px solid var(--cs-card-border, #E6B325); color: var(--cs-card-text, #5D2E0F); }
 .completion-title { font-family: var(--cs-font-title, 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif); color: var(--cs-title-color, #5D2E0F); margin-bottom: 8px; }
-.completion-subtitle { margin-bottom: 20px; }
+.completion-subtitle { margin-bottom: 28px; }
 .completion-icons { margin: 24px 0 28px; }
 .completion-buttons { margin-top: 10px; }
 .completion-badge { box-shadow: 0 0 0 6px rgba(255,255,255,0.9), 0 0 14px var(--cs-badge-glow, rgba(255,215,0,0.4)); }
@@ -1142,8 +1180,8 @@ transition:
 
 /* iPad landscape - short height */
 @media (min-width: 1024px) and (max-width: 1366px) and (max-height: 900px) and (orientation: landscape) {
-  .celebration-content,
-  .celebration-backdrop .celebration-content {
+  .scene-completion-content,
+  .celebration-backdrop .scene-completion-content {
     max-width: 1080px !important;
     height: 92vh !important;
     padding: 0 32px !important;
@@ -1152,11 +1190,12 @@ transition:
   }
 
   .celebration-card {
-    flex: 0 0 50%;
-    max-width: 480px;
-    max-height: 540px;
-    padding: 22px 30px;
-    border-radius: 26px;
+    flex: 0 0 54%;
+    max-width: 620px;
+    min-height: 620px;
+    max-height: none;
+    padding: clamp(46px, 6%, 64px) clamp(34px, 5%, 52px) clamp(38px, 5%, 50px);
+    border-radius: 0;
     overflow: hidden;
   }
 
@@ -1167,11 +1206,15 @@ transition:
   }
 
   .trophy-symbol-glow,
-  .trophy-symbol-img,
   .celebration-card .game-modal-icon-item img,
   .celebration-card .game-modal-icon-circle {
     width: 78px !important;
     height: 78px !important;
+  }
+
+  .trophy-symbol-img {
+    width: 86% !important;
+    height: 86% !important;
   }
 
   .celebration-card .game-modal-button {
@@ -1193,8 +1236,8 @@ transition:
   }
 
   .celebration-card + .game-modal-character img,
-  .celebration-content .game-modal-character img,
-  .celebration-content .game-modal-ganesha {
+  .scene-completion-content .game-modal-character img,
+  .scene-completion-content .game-modal-ganesha {
     max-width: 300px !important;
   }
 
@@ -1205,7 +1248,7 @@ transition:
 
   .celebration-btn-replay {
     margin-top: 0;
-    font-size: 12px;
+    font-size: 15px;
   }
 
   .celebration-card .celebration-btn:active:not(.celebration-btn-home) {
@@ -1224,3 +1267,8 @@ transition:
     margin: 4px 0 8px !important;
   }
 }
+
+
+
+
+
