@@ -1072,7 +1072,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         aria-hidden="true"
       />
       <img
-        src="/images/map/river5.png"
+        src="/images/map/river6.png"
         alt=""
         className="map-zone-art map-zone-art-river"
         aria-hidden="true"
