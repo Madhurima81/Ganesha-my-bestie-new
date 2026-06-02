@@ -16,7 +16,7 @@
   font-family: 'Baloo 2', cursive;
   font-size: clamp(17px, 1.9vw, 24px);
   font-weight: 700;
-  color: #6752B8;
+  color: var(--color-title-purple, #7B6D9E);
   margin-bottom: 16px;
   text-align: center;
 }
@@ -89,3 +89,5 @@
     min-height: 76px;
   }
 }
+
+

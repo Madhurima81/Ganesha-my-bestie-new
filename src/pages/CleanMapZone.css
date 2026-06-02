@@ -288,6 +288,7 @@
   font-family: 'Baloo 2', 'Nunito', sans-serif;
   font-weight: 800;
   letter-spacing: 1px;
+  white-space: nowrap;
   color: #6b56b3;
   text-shadow: 0 1px 4px rgba(255, 255, 255, 0.45);
   line-height: 1.2;
@@ -322,7 +323,7 @@
 .label.label-state-active,
 .label.label-state-in-progress,
 .label.label-state-completed {
-  color: #5c3ea6;
+  color: var(--color-title-purple, #7B6D9E);
   opacity: 1;
 }
 
@@ -387,43 +388,46 @@
    ===================================================================== */
 
 .shloka-mountain-label {
-  top: 14%;
-  left: 17%;
-  font-size: clamp(28px, 3.2vw, 60px);
+  top: 13%;
+  left: 18%;
+  font-size: clamp(24px, 2.8vw, 52px);
 }
 
 .cave-label {
-  top: auto;
-  left: auto;
-  bottom: 16%;
-  right: 6%;
-  font-size: clamp(22px, 2.6vw, 50px);
+  top: 46%;
+  left: 76%;
+  right: auto;
+  bottom: auto;
+  font-size: clamp(24px, 2.8vw, 52px);
 }
 
 .river-label {
-  top: 12%;
-  right: 14%;
-  font-size: clamp(26px, 2.9vw, 54px);
+  top: 14%;
+  right: 16%;
+  font-size: clamp(24px, 2.8vw, 52px);
 }
 
 .festival-label {
-  bottom: 14%;
-  left: 8%;
+  top: 76%;
+  left: 12%;
   right: auto;
+  bottom: auto;
   font-size: clamp(24px, 2.8vw, 52px);
 }
 
 .hut-label {
-  bottom: 38%;
-  left: auto;
-  right: 4%;
-  font-size: clamp(22px, 2.6vw, 50px);
+  top: 54%;
+  left: 9%;
+  right: auto;
+  bottom: auto;
+  font-size: clamp(24px, 2.8vw, 52px);
 }
 
 .treehouse-label {
-  bottom: 41%;
-  left: 37%;
-  font-size: clamp(20px, 2.3vw, 44px);
+  top: 63%;
+  left: 70%;
+  bottom: auto;
+  font-size: clamp(24px, 2.8vw, 52px);
 }
 
 /* =====================================================================
@@ -496,49 +500,53 @@
 }
 
 .map-zone-art-symbol {
-  top: 15%;
-  left: 8%;
-  width: 32%;
-  height: 34%;
+  top: 20%;
+  left: 7%;
+  width: 35%;
+  height: 37%;
 }
 
 .map-zone-art-river {
   left: 50%;
-  top: 50%;
-  width: 200%;
-  height: 200%;
+  top: 60%;
+  width: 100%;
+  height: 100%;
   transform: translate(-50%, -50%);
 }
 
 .map-zone-art-cave {
-  top: auto;
-  left: auto;
-  bottom: 8%;
-  right: 6%;
+  top: 41%;
+  left: 73%;
+  bottom: auto;
+  right: auto;
   width: 28%;
   height: 26%;
 }
 
 .map-zone-art-hut {
-  bottom: 32%;
-  left: auto;
-  right: 1% !important;
+  top: 45%;
+  left: 23%;
+  bottom: auto;
+  right: auto !important;
   width: 32%;
   height: 36%;
 }
 
 .map-zone-art-festival {
-  bottom: 6%;
-  left: 1%;
+  top: 73%;
+  left: 4%;
+  bottom: auto;
   width: 30%;
   height: 30%;
 }
 
 .map-zone-art-treehouse {
-  bottom: 32%;
-  left: 32%;
+  top: 68%;
+  left: 72%;
+  bottom: auto;
   width: 22%;
   height: 26%;
+  transform: scaleX(-1);
 }
 
 /* =========================
@@ -710,7 +718,7 @@
 .profile-pill-name {
   font-size: 13px;
   font-weight: 800;
-  color: #5c3ea6;
+  color: var(--color-title-purple, #7B6D9E);
   letter-spacing: 0.2px;
 }
 
@@ -795,7 +803,7 @@
   font-family: 'Nunito', sans-serif;
   font-size: clamp(16px, 1.4vw, 24px);
   font-weight: 700;
-  color: #5c3ea6;
+  color: var(--color-title-purple, #7B6D9E);
   cursor: pointer;
   transition: background 0.2s, transform 0.15s;
 }
@@ -818,22 +826,22 @@
 /* Tablet Portrait */
 @media (min-width: 768px) and (max-width: 1365px) and (orientation: portrait) {
   .shloka-mountain-label { top: 16%; left: 14%; font-size: 22px; }
-  .cave-label            { top: 32%; left: 30%; font-size: 18px; }
+  .cave-label            { top: 46%; left: 76%; right: auto; bottom: auto; font-size: 18px; }
   .river-label           { top: 10%; right: 12%; font-size: 20px; }
   .festival-label        { bottom: 20%; right: 12%; font-size: 18px; }
-  .hut-label             { bottom: 26%; left: 7%; font-size: 18px; }
-  .treehouse-label       { bottom: 38%; left: 36%; font-size: 18px; }
+  .hut-label             { top: 54%; left: 9%; right: auto; bottom: auto; font-size: 18px; }
+  .treehouse-label       { top: 63%; left: 70%; bottom: auto; font-size: 18px; }
   .fun-zone-gate         { width: 200px; }
 }
 
 /* Mobile Portrait */
 @media (max-width: 600px) {
   .shloka-mountain-label { top: 14%; left: 10%; font-size: 14px; letter-spacing: 0.5px; }
-  .cave-label            { top: 28%; left: 28%; font-size: 12px; }
+  .cave-label            { top: 46%; left: 76%; right: auto; bottom: auto; font-size: 12px; }
   .river-label           { top: 10%; right: 8%; font-size: 13px; }
   .festival-label        { bottom: 18%; right: 8%; font-size: 12px; }
-  .hut-label             { bottom: 24%; left: 4%; font-size: 12px; }
-  .treehouse-label       { bottom: 36%; left: 34%; font-size: 12px; }
+  .hut-label             { top: 54%; left: 9%; right: auto; bottom: auto; font-size: 12px; }
+  .treehouse-label       { top: 63%; left: 70%; bottom: auto; font-size: 12px; }
   .fun-zone-gate         { width: 130px; bottom: 10%; right: 5%; }
   .map-back-button       { font-size: 14px; padding: 8px 16px; top: 12px; left: 12px; }
 
@@ -1055,7 +1063,7 @@
   font-family: 'Baloo 2', 'Nunito', sans-serif;
   font-size: clamp(13px, 1.4vw, 22px);
   font-weight: 800;
-  color: #5c3ea6;
+  color: var(--color-title-purple, #7B6D9E);
   box-shadow: 0 4px 16px rgba(120, 80, 200, 0.22);
   margin-bottom: 6px;
   position: relative;
@@ -1095,7 +1103,7 @@
   left: 50%;
   transform: translateX(-50%) scale(0.9);
   z-index: 200;
-  background: linear-gradient(180deg, #9a73d9 0%, #7f5ac7 100%);
+  background: linear-gradient(180deg, var(--color-button-purple-top, #C3A8F3) 0%, var(--color-button-purple-base, #B99AEC) 100%);
   border: none;
   border-radius: 80px;
   padding: 16px 31px;
@@ -1263,3 +1271,5 @@
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.015); }
 }
+
+

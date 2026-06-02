@@ -70,7 +70,7 @@
   border: none;
   font-size: 14px;
   opacity: 0.45;
-  color: #9a73d9;
+  color: var(--color-button-purple-top, #C3A8F3);
   cursor: pointer;
   z-index: 3;
   pointer-events: auto;
@@ -259,3 +259,4 @@
   30%  { transform: translateY(-4px) scale(1); opacity: 0.95; }
   100% { transform: translateY(-14px) scale(1.04); opacity: 0; }
 }
+

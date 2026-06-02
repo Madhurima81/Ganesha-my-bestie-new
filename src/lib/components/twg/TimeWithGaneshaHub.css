@@ -247,7 +247,7 @@
   min-height: 60px;
 }
 .twg-closing__map-btn {
-  background: linear-gradient(180deg, #9a73d9, #7f5ac7);
+  background: linear-gradient(180deg, var(--color-button-purple-top, #C3A8F3), var(--color-button-purple-base, #B99AEC));
   border: none;
   border-radius: 80px;
   padding: 14px 40px;
@@ -287,7 +287,7 @@
   font-family: 'Baloo 2', cursive;
   font-size: 28px;
   font-weight: 800;
-  color: #6752B8;
+  color: var(--color-title-purple, #7B6D9E);
   margin: 0;
 }
 .twg-coming-soon__body {
@@ -297,7 +297,7 @@
   margin: 0;
 }
 .twg-coming-soon__close {
-  background: linear-gradient(180deg, #9a73d9, #7f5ac7);
+  background: linear-gradient(180deg, var(--color-button-purple-top, #C3A8F3), var(--color-button-purple-base, #B99AEC));
   border: none;
   border-radius: 80px;
   padding: 14px 40px;
@@ -317,3 +317,5 @@
   .twg-badge  { min-width: 60px; min-height: 60px; }
   .twg-mic    { min-width: 64px; min-height: 64px; }
 }
+
+

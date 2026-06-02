@@ -109,7 +109,7 @@
   font-family: 'Baloo 2', cursive;
   font-size: clamp(18px, 2vw, 26px);
   font-weight: 800;
-  color: #6752B8;
+  color: var(--color-title-purple, #7B6D9E);
   line-height: 1;
 }
 .ttg-header-status {
@@ -152,7 +152,7 @@
   padding: 0 4px;
 }
 .ttg-bubble--user .ttg-bubble__label      { color: #2E7D32; }
-.ttg-bubble--assistant .ttg-bubble__label { color: #6752B8; }
+.ttg-bubble--assistant .ttg-bubble__label { color: var(--color-title-purple, #7B6D9E); }
 
 .ttg-bubble__text {
   font-family: 'Nunito', sans-serif;
@@ -202,7 +202,7 @@
   font-family: 'Baloo 2', cursive;
   font-size: clamp(15px, 1.6vw, 20px);
   font-weight: 700;
-  color: #6752B8;
+  color: var(--color-title-purple, #7B6D9E);
   text-align: center;
   margin: 0 0 10px;
 }
@@ -289,12 +289,12 @@
 }
 
 .ttg-mic-btn--idle {
-  background: linear-gradient(135deg, #9a73d9, #7f5ac7);
+  background: linear-gradient(135deg, var(--color-button-purple-top, #C3A8F3), var(--color-button-purple-base, #B99AEC));
   box-shadow: 0 6px 20px rgba(103, 82, 184, 0.40);
   animation: micBreath 3.5s infinite;
 }
 .ttg-mic-btn--idle:active { transform: scale(0.95); }
-.ttg-mic-btn--listening   { background: linear-gradient(135deg, #c084fc, #9a73d9); box-shadow: 0 6px 20px rgba(154, 115, 217, 0.45); }
+.ttg-mic-btn--listening   { background: linear-gradient(135deg, #c084fc, var(--color-button-purple-top, #C3A8F3)); box-shadow: 0 6px 20px rgba(154, 115, 217, 0.45); }
 .ttg-mic-btn--thinking,
 .ttg-mic-btn--speaking    { background: #8B7AB0; opacity: 0.7; cursor: not-allowed; }
 .ttg-mic-btn:disabled     { cursor: not-allowed; }
@@ -356,13 +356,13 @@
 
 .ttg-done-btn {
   background: white;
-  border: 2px solid #9a73d9;
+  border: 2px solid var(--color-button-purple-top, #C3A8F3);
   border-radius: 80px;
   padding: 8px 32px;
   font-family: 'Baloo 2', cursive;
   font-weight: 700;
   font-size: clamp(14px, 1.4vw, 18px);
-  color: #6752B8;
+  color: var(--color-title-purple, #7B6D9E);
   cursor: pointer;
   min-height: 52px;
   min-width: 120px;
@@ -400,11 +400,11 @@
   min-height: 46px;
   transition: border-color 0.18s;
 }
-.ttg-text-input:focus        { border-color: #9a73d9; }
+.ttg-text-input:focus        { border-color: var(--color-button-purple-top, #C3A8F3); }
 .ttg-text-input::placeholder { color: #B8A8D8; }
 
 .ttg-send-btn {
-  background: linear-gradient(135deg, #9a73d9, #7f5ac7);
+  background: linear-gradient(135deg, var(--color-button-purple-top, #C3A8F3), var(--color-button-purple-base, #B99AEC));
   border: none;
   border-radius: 80px;
   padding: 0 20px;
@@ -420,3 +420,5 @@
 }
 .ttg-send-btn:hover    { transform: translateY(-1px); }
 .ttg-send-btn:disabled { background: #C4B5F4; box-shadow: none; cursor: not-allowed; transform: none; }
+
+

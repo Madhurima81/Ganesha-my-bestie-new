@@ -64,7 +64,7 @@
   font-family: 'Baloo 2', cursive;
   font-weight: 700;
   font-size: clamp(13px, 1.4vw, 18px);
-  color: #6752B8;
+  color: var(--color-title-purple, #7B6D9E);
 }
 
 /* Dare text — the main message */
@@ -100,3 +100,5 @@
   transition: background 0.15s;
 }
 .dare-view-secondary:hover { background: #F0EBF8; }
+
+

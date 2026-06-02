@@ -1061,16 +1061,46 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
 
       {/* Background image */}
       <img
-        src="/images/map/map-bg1.png"
+        src="/images/map/newmapbg.png"
         alt="Map"
         className="map-bg-img"
       />
-      <img src="/images/map/symbolmtn1.png" alt="" className="map-zone-art map-zone-art-symbol" aria-hidden="true" />
-      <img src="/images/map/river1.png" alt="" className="map-zone-art map-zone-art-river" aria-hidden="true" />
-      <img src="/images/map/cave1.png" alt="" className="map-zone-art map-zone-art-cave" aria-hidden="true" />
-      <img src="/images/map/abtmehut1.png" alt="" className="map-zone-art map-zone-art-hut" aria-hidden="true" />
-      <img src="/images/map/festivalsq1.png" alt="" className="map-zone-art map-zone-art-festival" aria-hidden="true" />
-      <img src="/images/map/treehouse1.png" alt="" className="map-zone-art map-zone-art-treehouse" aria-hidden="true" />
+      <img
+        src="/images/map/modakmtn.png"
+        alt=""
+        className="map-zone-art map-zone-art-symbol"
+        aria-hidden="true"
+      />
+      <img
+        src="/images/map/river5.png"
+        alt=""
+        className="map-zone-art map-zone-art-river"
+        aria-hidden="true"
+      />
+      <img
+        src="/images/map/cavelight.png"
+        alt=""
+        className="map-zone-art map-zone-art-cave"
+        aria-hidden="true"
+      />
+      <img
+        src="/images/map/abtmehut2.png"
+        alt=""
+        className="map-zone-art map-zone-art-hut"
+        aria-hidden="true"
+      />
+      <img
+        src="/images/map/festivalsq1.png"
+        alt=""
+        className="map-zone-art map-zone-art-festival"
+        aria-hidden="true"
+      />
+      <img
+        src="/images/map/treehouse1.png"
+        alt=""
+        className="map-zone-art map-zone-art-treehouse"
+        aria-hidden="true"
+      />
 
       {/* Drifting clouds — CSS shapes, no image needed */}
 
@@ -1135,9 +1165,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
               {state === 'completed' && (
                 <span className="zone-check-badge zone-check-badge--label" aria-hidden="true">✓</span>
               )}
-              {zone.name.split('\n').map((line, i) => (
-                <span key={i}>{line}{i < zone.name.split('\n').length - 1 && <br/>}</span>
-              ))}
+              {zone.name.replace(/\n/g, ' ')}
               {isFirstTimeSymbol && (
                 <div className="first-time-hint">Tap to start</div>
               )}
@@ -1165,7 +1193,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
 
 
       {/* Map Ganesha presence */}
-      {mapGaneshaState && (
+      {false && mapGaneshaState && (
         <div
           className={`map-ganesha-guide map-ganesha-wrapper ${isGaneshaWalking ? 'is-walking' : ''}`}
           style={(() => {
@@ -1260,13 +1288,15 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       */}
 
       {/* TWG floating button — bottom-centre, above zone labels */}
-      <button
-        className="map-twg-btn time-ganesha-btn"
-        onClick={() => (onTWGOpen ? onTWGOpen() : onZoneSelect?.('twg'))}
-        aria-label="Time with Ganesha"
-      >
-        Time with Ganesha
-      </button>
+      {false && (
+        <button
+          className="map-twg-btn time-ganesha-btn"
+          onClick={() => (onTWGOpen ? onTWGOpen() : onZoneSelect?.('twg'))}
+          aria-label="Time with Ganesha"
+        >
+          Time with Ganesha
+        </button>
+      )}
 
     </div>
   );
