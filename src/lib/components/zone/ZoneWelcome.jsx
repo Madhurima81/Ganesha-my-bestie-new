@@ -3,12 +3,14 @@
 
 import React, { useState, useEffect } from 'react';
 import './ZoneWelcome.css';
-import { getZoneTheme } from '../../config/ZoneThemes';
+import '../../styles/zone-themes.css';
+import { getZoneTheme, getProfilePillBtnStyle } from '../../config/ZoneThemes';
 import ScreenHeader from '../shared/ScreenHeader';
 import GameStateManager from '../../services/GameStateManager';
 import CulturalProgressExtractor from '../../services/CulturalProgressExtractor';
 import HomeButton from '../ui/HomeButton';
 import ProfileChip from '../navigation/ProfileChip';
+import ProfilePillBtn from '../shared/ProfilePillBtn';
 import { GANESHA_POSE_ASSETS } from '../../config/ganeshaUsageSystem';
 
 
@@ -24,6 +26,86 @@ const ZONE_CONTENT_TYPES = {
   'about-me-hut': [],
   'cave-of-secrets': ['meanings'], // ✅ FIXED: Cave teaches Sanskrit word meanings
   'obstacle-forest': ['symbols']
+};
+
+const ZONE_LIFE_CONFIG = {
+  'symbol-mountain': {
+    creature: {
+      kind: 'butterfly',
+      src: '/images/map/butterflyyellow.png',
+      alt: 'Yellow butterfly',
+      className: 'zone-card-creature--butterfly zone-card-creature--yellow',
+    },
+    cloud: { left: '64%', top: '14%', scale: 1.08, duration: '36s' },
+    ambient: [
+      { kind: 'petal', className: 'zone-ambient-item--petal', left: '14%', top: '22%', size: '11px', duration: '28s', delay: '0s' },
+      { kind: 'petal', className: 'zone-ambient-item--petal', left: '78%', top: '34%', size: '9px', duration: '31s', delay: '7s' },
+    ],
+  },
+  'shloka-river': {
+    creature: {
+      kind: 'butterfly',
+      src: '/images/map/butterflyblue.png',
+      alt: 'Blue butterfly',
+      className: 'zone-card-creature--butterfly zone-card-creature--blue',
+    },
+    cloud: { left: '20%', top: '12%', scale: 1.02, duration: '34s' },
+    ambient: [
+      { kind: 'drop', className: 'zone-ambient-item--drop', left: '18%', top: '24%', size: '11px', duration: '26s', delay: '0s' },
+      { kind: 'drop', className: 'zone-ambient-item--drop', left: '76%', top: '18%', size: '9px', duration: '29s', delay: '8s' },
+    ],
+  },
+  'cave-of-secrets': {
+    creature: {
+      kind: 'firefly',
+      alt: 'Firefly',
+      className: 'zone-card-creature--firefly',
+    },
+    cloud: { left: '68%', top: '13%', scale: 0.98, duration: '38s' },
+    ambient: [
+      { kind: 'firefly', className: 'zone-ambient-item--firefly', left: '20%', top: '18%', size: '8px', duration: '24s', delay: '0s' },
+      { kind: 'firefly', className: 'zone-ambient-item--firefly', left: '74%', top: '30%', size: '7px', duration: '27s', delay: '6s' },
+    ],
+  },
+  'about-me-hut': {
+    creature: {
+      kind: 'bird',
+      src: '/images/critters/bird-flying-orange.svg',
+      alt: 'Orange bird',
+      className: 'zone-card-creature--bird zone-card-creature--orange',
+    },
+    cloud: { left: '18%', top: '13%', scale: 1.04, duration: '35s' },
+    ambient: [
+      { kind: 'leaf', className: 'zone-ambient-item--leaf', left: '16%', top: '26%', size: '12px', duration: '30s', delay: '0s' },
+      { kind: 'leaf', className: 'zone-ambient-item--leaf', left: '76%', top: '18%', size: '10px', duration: '33s', delay: '9s' },
+    ],
+  },
+  'festival-square': {
+    creature: {
+      kind: 'butterfly',
+      src: '/images/critters/butterfly-pink.svg',
+      alt: 'Pink butterfly',
+      className: 'zone-card-creature--butterfly zone-card-creature--pink',
+    },
+    cloud: { left: '70%', top: '14%', scale: 1.06, duration: '37s' },
+    ambient: [
+      { kind: 'petal', className: 'zone-ambient-item--petal', left: '18%', top: '18%', size: '10px', duration: '29s', delay: '0s' },
+      { kind: 'petal', className: 'zone-ambient-item--petal', left: '76%', top: '26%', size: '9px', duration: '32s', delay: '8s' },
+    ],
+  },
+  'story-treehouse': {
+    creature: {
+      kind: 'bird',
+      src: '/images/map/birdnew.png',
+      alt: 'Yellow bird',
+      className: 'zone-card-creature--bird zone-card-creature--yellow',
+    },
+    cloud: { left: '22%', top: '12%', scale: 1.03, duration: '35s' },
+    ambient: [
+      { kind: 'leaf', className: 'zone-ambient-item--leaf', left: '18%', top: '20%', size: '12px', duration: '31s', delay: '0s' },
+      { kind: 'leaf', className: 'zone-ambient-item--leaf', left: '72%', top: '29%', size: '10px', duration: '34s', delay: '7s' },
+    ],
+  },
 };
 
 // ✅ ENHANCED: More specific color mapping
@@ -713,16 +795,17 @@ const getPermanentCompletedCount = () => {
     const nextActive = sceneStatuses.find(
       (entry) => entry.status === 'available' || entry.status === 'in-progress'
     );
-    
-    // Only show Ganesha if whisper hasn't been heard yet for this scene.
-    if (!nextActive?.scene?.id || hasHeardWhisper(nextActive.scene.id)) {
+
+    // Ganesha badge is a persistent visual guide — always points at the next scene.
+    // (The whisper audio system handles its own timing separately.)
+    if (!nextActive?.scene?.id) {
       return null;
     }
 
     return {
       pose: 'pointing',
       activeSceneId: nextActive.scene.id,
-      size: 56
+      size: 88
     };
   };
 
@@ -941,10 +1024,12 @@ const handleReplayIntroStory = () => {
   }
 
   const zoneWelcomeGaneshaState = getZoneWelcomeGaneshaState();
+  const zoneLifeConfig = ZONE_LIFE_CONFIG[zoneData.id] || null;
   const zoneCompletedCount = (zoneData?.scenes || []).filter(
     (scene) => getSceneStatus(scene).status === 'completed'
   ).length;
   const isZoneComplete = zoneCompletedCount >= (zoneData?.scenes?.length || 0) && (zoneData?.scenes?.length || 0) > 0;
+  const recommendedScene = zoneData?.scenes?.find((scene) => getSceneStatus(scene).status === 'available') || null;
 
   return (
     <div
@@ -1031,18 +1116,50 @@ const handleReplayIntroStory = () => {
 
       {/* Scene Icons Grid */}
       <div className="zone-scenes-container cards-wrapper" data-zone={zoneData.id}>
+        {zoneLifeConfig && (
+          <div className="zone-ambient-layer" aria-hidden="true">
+            {zoneLifeConfig.cloud && (
+              <div
+                className="zone-cloud"
+                style={{
+                  left: zoneLifeConfig.cloud.left,
+                  top: zoneLifeConfig.cloud.top,
+                  '--cloud-scale': zoneLifeConfig.cloud.scale || 1,
+                  animationDuration: zoneLifeConfig.cloud.duration,
+                }}
+              />
+            )}
+            {zoneLifeConfig.ambient.map((item, index) => (
+              <div
+                key={`${zoneData.id}-ambient-${index}`}
+                className={`zone-ambient-item ${item.className}`}
+                style={{
+                  left: item.left,
+                  top: item.top,
+                  width: item.size,
+                  height: item.size,
+                  animationDuration: item.duration,
+                  animationDelay: item.delay,
+                }}
+              />
+            ))}
+          </div>
+        )}
         <div className="scenes-horizontal-container">
           {zoneData.scenes.map((scene, index) => {
             const status = getSceneStatus(scene);
-            
-            // Determine if this is the next recommended scene
-            const nextScene = zoneData.scenes.find(s => {
-              const st = getSceneStatus(s);
-              return st.status === 'available' || st.status === 'in-progress';
-            });
-            const isNextScene = nextScene && nextScene.id === scene.id;
+            const isNextScene = recommendedScene && recommendedScene.id === scene.id;
+            const creature = zoneLifeConfig?.creature;
+            // Ganesha: any available (unlocked, never played) card — zones unlock sequentially so only one exists at a time
+            const showGaneshaGuide = status.status === 'available';
+            // Butterfly: completed + in-progress cards (played at least once)
+            const showButterfly =
+              zoneLifeConfig &&
+              creature &&
+              (status.status === 'completed' || status.status === 'in-progress' || sceneProgress[scene.id]?.completed === true);
             
             return (
+              <>
               <div
                 key={scene.id}
                 className={`zone-scene-card scene-card zone-card zone-${scene.order} ${status.status} ${
@@ -1058,34 +1175,19 @@ const handleReplayIntroStory = () => {
                 onMouseEnter={() => triggerActiveCardGaneshaPop(scene.id)}
                 onTouchStart={() => triggerActiveCardGaneshaPop(scene.id)}
               >
-                {zoneWelcomeGaneshaState?.activeSceneId === scene.id && (
-                  <>
-                    <div className="zone-card-ganesha-badge" aria-hidden="true">
-                      <img
-                        src={getZoneMapGaneshaAsset(zoneWelcomeGaneshaState.pose)}
-                        alt=""
-                        style={{
-                          width: zoneWelcomeGaneshaState.size,
-                          height: zoneWelcomeGaneshaState.size,
-                          objectFit: 'contain',
-                        }}
-                      />
-                    </div>
-                    <div
-                      className={`zone-card-ganesha-pop ${activeCardPopSceneId === scene.id ? 'show' : ''}`}
-                      aria-hidden="true"
-                    >
-                      <img
-                        src={getZoneMapGaneshaAsset(zoneWelcomeGaneshaState.pose)}
-                        alt=""
-                        style={{
-                          width: zoneWelcomeGaneshaState.pose === 'celebration' ? 74 : 62,
-                          height: zoneWelcomeGaneshaState.pose === 'celebration' ? 74 : 62,
-                          objectFit: 'contain',
-                        }}
-                      />
-                    </div>
-                  </>
+                {showButterfly && creature && (
+                  <div
+                    className={`zone-card-creature ${creature.className || ''} ${
+                      isNextScene ? 'zone-card-creature--recommended' : ''
+                    } ${status.status === 'in-progress' ? 'zone-card-creature--in-progress' : ''}`}
+                    aria-hidden="true"
+                  >
+                    {creature.kind === 'firefly' ? (
+                      <span className="zone-card-firefly" />
+                    ) : (
+                      <img src={creature.src} alt="" className="zone-card-creature-image" />
+                    )}
+                  </div>
                 )}
 
                 {/* Order indicator */}
@@ -1139,8 +1241,8 @@ const handleReplayIntroStory = () => {
                     
                     {/* Moon overlay for MVP locked scenes */}
                     {status.status === 'locked' && (
-                      <div className="scene-lock-overlay">
-                                                <span className="scene-lock-stars">✨</span>
+                      <div className="scene-lock-overlay" aria-hidden="true">
+                        <img src="/images/map/lock.png" alt="" className="scene-lock-icon" />
                       </div>
                     )}
                   </div>
@@ -1160,47 +1262,69 @@ const handleReplayIntroStory = () => {
                   <div className="scene-action-integrated">
                     {status.status === 'in-progress' ? (
                       <div className="action-split-container">
-                        <button 
-                          className="action-button-split zone-btn continue btn-continue"
+                        <ProfilePillBtn
+                          className="zone-welcome-cta zone-welcome-continue-btn btn-continue"
                           onClick={(e) => {
                             e.stopPropagation();
                             triggerActiveCardGaneshaPop(scene.id);
                             handleSceneClick(scene, 'continue');
                           }}
-                        >
-Continue                            
-                        </button>
-                        <button 
-                          className="action-button-split zone-btn replay btn-replay replay-btn"
-                          aria-label="Replay"
+                          label="Continue"
+                          size="sm"
+                          fullWidth={true}
+                          style={getProfilePillBtnStyle(zoneData.id)}
+                        />
+                        <ProfilePillBtn
+                          className="zone-welcome-cta zone-welcome-replay-btn"
                           onClick={(e) => {
                             e.stopPropagation();
                             triggerActiveCardGaneshaPop(scene.id);
                             handleSceneClick(scene, 'replay');
                           }}
-                        >
-                          <span className="replay-icon" aria-hidden="true">↻</span>
-                        </button>
+                          label="↻"
+                          ariaLabel="Replay"
+                          size="sm"
+                          fullWidth={false}
+                          style={getProfilePillBtnStyle(zoneData.id, {
+                            top: '#5FBEA8',
+                            base: '#4A9B87',
+                            shadow: '#1A6B5A',
+                            glow: 'rgba(74, 155, 135, 0.28)'
+                          })}
+                        />
                       </div>
                     ) : (
-                      <button 
-                        className={`action-button-integrated zone-btn ${status.status} ${status.status === 'completed' ? 'btn-replay' : ''}`}
+                      <ProfilePillBtn
+                        className={`zone-welcome-cta ${status.status}`.trim()}
                         onClick={(e) => {
                           e.stopPropagation();
                               console.log('Button clicked!', scene.id); // ✨ DEBUG LOG
                           triggerActiveCardGaneshaPop(scene.id);
                           handleSceneClick(scene);
                         }}
-                      >
-                        {status.status === 'available' && 'Start'}
-                        {status.status === 'completed' && '↻ Play Again'}
-                        {status.status === 'locked' && 'Locked'}
-                      </button>
+                        label={status.status === 'available' ? 'Start' : status.status === 'completed' ? '↻ Play Again' : 'Locked'}
+                        size="sm"
+                        fullWidth={true}
+                        style={getProfilePillBtnStyle(zoneData.id)}
+                      />
                     )}
                   </div>
+                  {showGaneshaGuide && (
+                    <div
+                      className={`zone-card-ganesha-guide zone-card-ganesha-guide--pointing`}
+                      aria-hidden="true"
+                    >
+                      <img
+                        src={getZoneMapGaneshaAsset('pointing')}
+                        alt=""
+                        className="zone-card-ganesha-guide-image"
+                      />
+                    </div>
+                  )}
                 </div>
-
               </div>
+
+              </>
             );
           })}
 
@@ -1229,15 +1353,17 @@ Continue
                   <div className="scene-name">Meet Ganesha Again</div>
                 </div>
                 <div className="scene-action-integrated">
-                  <button
-                    className="action-button-integrated zone-btn available"
+                  <ProfilePillBtn
+                    className="zone-welcome-cta available"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleReplayIntroStory();
                     }}
-                  >
-                    Replay Story
-                  </button>
+                    label="Replay Story"
+                    size="sm"
+                    fullWidth={true}
+                    style={getProfilePillBtnStyle(zoneData.id)}
+                  />
                 </div>
               </div>
             </div>
@@ -1294,6 +1420,3 @@ Continue
 
 
 export default ZoneWelcome;
-
-
-

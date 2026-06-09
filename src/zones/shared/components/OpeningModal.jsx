@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './OpeningModal.css';
 import { getOpeningModal } from '../../../lib/config/content';
-import { getZoneTheme } from '../../../lib/config/ZoneThemes';
+import { getZoneTheme, getProfilePillBtnStyle } from '../../../lib/config/ZoneThemes';
 import { GANESHA_POSE_ASSETS } from '../../../lib/config/ganeshaUsageSystem';
 import useAppVisibility from '../../../lib/hooks/useAppVisibility';
+import ProfilePillBtn from '../../../lib/components/shared/ProfilePillBtn';
 
 // Icon Mapping for Unified Style
 import symbolMooshikaColored from '../../symbol-mountain/shared/images/icons/symbol-mooshika-new.png';
@@ -14,7 +15,8 @@ import symbolTrunkColored from '../../symbol-mountain/shared/images/icons/symbol
 import symbolEyesColored from '../../symbol-mountain/shared/images/icons/symbol-eyes-new.png';
 import symbolEarsColored from '../../symbol-mountain/shared/images/icons/symbol-ears-new.png';
 import symbolTuskColored from '../../symbol-mountain/shared/images/icons/broken-tusk-symbol.png';
-import banyanFullMahakaya from '../../shloka-river/scenes/Scene1/assets/images/banyan-full-from-download.png';
+import banyanFullMahakaya from '../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
+import shlokaRiverOpeningBg from '../../shloka-river/scenes/Scene1/assets/images/rivergamebg.png';
 
 // About Me Icons
 import shivaImg from '../../about-me-hut/family-tree/assets/images/ganesha/family-shiva.png';
@@ -230,6 +232,12 @@ const OPENING_BG_MAP = {
     'symbol-mountain:symbol': [symbolMountainBgWebp, symbolMountainBgJpg],
     'symbol-mountain:final-scene': [symbolMountainBgWebp, symbolMountainBgJpg],
     'symbol-mountain': [symbolMountainBgWebp, symbolMountainBgJpg],
+    'shloka-river:vakratunda-grove': [shlokaRiverOpeningBg],
+    'shloka-river:suryakoti-bank': [shlokaRiverOpeningBg],
+    'shloka-river:nirvighnam-chant': [shlokaRiverOpeningBg],
+    'shloka-river:sarvakaryeshu-chant': [shlokaRiverOpeningBg],
+    'shloka-river:shloka-river-finale': [shlokaRiverOpeningBg],
+    'shloka-river': [shlokaRiverOpeningBg],
     'about-me-hut:family-tree': [aboutFamilyBgWebp, aboutFamilyBgJpg],
     'about-me-hut:favorite-food': [aboutFoodBgWebp, aboutFoodBgJpg],
     'about-me-hut:name-birthday': [aboutNameBgWebp, aboutNameBgJpg],
@@ -484,8 +492,8 @@ const OpeningModal = ({
                     </div>
 
                     {showButton && (
-                        <button
-                            className={`game-modal-button reveal ${showIdleCtaHint ? 'cta-idle-prompt' : ''}`}
+                        <ProfilePillBtn
+                            label={content.buttonText || "Let's Explore"}
                             onClick={() => {
                                 hintTriggeredRef.current = true;
                                 clearCtaHintTimers();
@@ -494,9 +502,11 @@ const OpeningModal = ({
                                 if (typeof isOpen !== 'boolean') setInternalOpen(false);
                                 if (onStart) onStart();
                             }}
-                        >
-                            {content.buttonText || "Let's Explore"}
-                        </button>
+                            size="lg"
+                            fullWidth={false}
+                            className={`reveal opening-modal-cta ${showIdleCtaHint ? 'cta-idle-prompt' : ''}`}
+                            style={getProfilePillBtnStyle(zoneId)}
+                        />
                     )}
                 </div>
             </div>

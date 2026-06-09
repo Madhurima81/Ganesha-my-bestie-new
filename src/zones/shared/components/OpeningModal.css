@@ -247,6 +247,33 @@
 }
 
 /* --- Button --- */
+.profile-cta-btn-unified.cta-idle-prompt {
+  animation: ctaIdlePulse 1.6s ease-in-out infinite;
+}
+
+.profile-cta-btn-unified.cta-idle-prompt:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+.profile-cta-btn-unified.opening-modal-cta {
+  min-height: 52px;
+  padding: 14px 30px;
+  margin-top: 14px;
+}
+
+.profile-cta-btn-unified.opening-modal-cta .profile-cta-btn-text {
+  transform: translateY(-1px);
+}
+
+@keyframes ctaIdlePulse {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1px);
+  }
+}
+
 .game-modal-button {
   font-family: 'Baloo 2', system-ui, sans-serif;
   background: var(--modal-btn-bg);
