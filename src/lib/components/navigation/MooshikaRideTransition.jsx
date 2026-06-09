@@ -1,9 +1,10 @@
 // MooshikaRideTransition.jsx — Chosen avatar rides Mooshika across the sky pan bg
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './MooshikaRideTransition.css';
 
 const MooshikaRideTransition = ({ avatarId = 'monkey', profileName, onComplete }) => {
   const completedRef = useRef(false);
+  const [isLanding, setIsLanding] = useState(false);
 
   useEffect(() => {
     const audioEnabled = localStorage.getItem('ganesha_audio_enabled');
@@ -45,6 +46,10 @@ const MooshikaRideTransition = ({ avatarId = 'monkey', profileName, onComplete }
       }
     }, 500);
 
+    const landingTimer = setTimeout(() => {
+      setIsLanding(true);
+    }, 3000);
+
     const doneTimer = setTimeout(() => {
       if (!completedRef.current) {
         completedRef.current = true;
@@ -54,18 +59,19 @@ const MooshikaRideTransition = ({ avatarId = 'monkey', profileName, onComplete }
 
     return () => {
       clearTimeout(voTimer);
+      clearTimeout(landingTimer);
       clearTimeout(doneTimer);
       window.speechSynthesis?.cancel();
     };
   }, [profileName, onComplete]);
 
   return (
-    <div className="mooshika-ride-scene">
+    <div className={`mooshika-ride-scene ${isLanding ? 'exiting' : ''}`}>
       {/* Sky pan bg — slides right-to-left to create forward-flight illusion */}
       <div className="sky-pan" />
 
       {/* Mooshika + avatar — stays roughly centered, gentle bob, dips at end */}
-      <div className="mooshika-flyer">
+      <div className={`mooshika-flyer ${isLanding ? 'landing' : ''}`}>
         <img
           src="/images/mooshika-flying.png"
           alt="Mooshika"

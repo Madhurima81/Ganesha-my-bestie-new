@@ -345,8 +345,8 @@
   transform: translateY(0);
 }
 
-/* PrimaryBtn lg size override for welcome screen */
-.adventure-button-container .primary-btn-unified {
+/* ProfilePillBtn size override for welcome screen */
+.adventure-button-container .profile-cta-btn-unified {
   font-size: clamp(18px, 2vw, 24px);
   padding: 12px 48px;
 }
@@ -386,11 +386,11 @@
     transform: none !important;
   }
 
-  .adventure-button-container .primary-btn-unified:hover:not(:disabled) {
+  .adventure-button-container .profile-cta-btn-unified:hover:not(:disabled) {
     transform: none;
   }
 
-  .adventure-button-container .primary-btn-unified:active:not(:disabled) {
+  .adventure-button-container .profile-cta-btn-unified:active:not(:disabled) {
     transform: none;
   }
 }
@@ -406,7 +406,7 @@
   .welcome-story { font-size: 12px; max-width: min(86vw, 620px); }
   .welcome-title-container { top: 3%; }
 
-  .adventure-button-container .primary-btn-unified { font-size: 18px; padding: 10px 44px; }
+  .adventure-button-container .profile-cta-btn-unified { font-size: 18px; padding: 10px 44px; }
   .adventure-button-container { margin-bottom: 20px; }
 }
 

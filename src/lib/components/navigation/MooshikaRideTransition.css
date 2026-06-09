@@ -6,7 +6,12 @@
   z-index: 9999;
   overflow: hidden;
   font-family: 'Nunito', sans-serif;
-  background: #b8d4f5;
+  background: #c9b8ec;
+  transition: opacity 0.45s ease-in;
+}
+
+.mooshika-ride-scene.exiting {
+  opacity: 0;
 }
 
 /* The wide sky bg (4096 x 1536) slides leftward across the viewport.
@@ -17,7 +22,7 @@
   left: 0;
   width: 200%;
   height: 100%;
-  background-image: url('/images/sky-pan-bg.png');
+  background-image: url('/images/pan-bg.png');
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: left center;
@@ -48,7 +53,26 @@
   30%  { top: 38%; transform: translate(-50%, -50%) rotate(2deg); }
   50%  { top: 42%; transform: translate(-50%, -50%) rotate(-1deg); }
   75%  { top: 45%; transform: translate(-50%, -50%) rotate(4deg); }
-  100% { top: 75%; transform: translate(-50%, -50%) rotate(15deg); opacity: 0.85; }
+  100% { top: 82%; transform: translate(-50%, -50%) scale(.85) rotate(8deg); opacity: 1; }
+}
+
+@keyframes landingBounce {
+  0% {
+    transform: translate(-50%, -50%) scale(.85);
+  }
+
+  40% {
+    transform: translate(-50%, -52%) scale(.87);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(.85);
+  }
+}
+
+.mooshika-flyer.landing {
+  animation:
+    landingBounce 0.4s ease-out forwards;
 }
 
 .mooshika-img {

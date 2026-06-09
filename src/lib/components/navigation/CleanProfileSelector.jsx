@@ -311,7 +311,7 @@ const CleanProfileSelector = ({
                 </div>
 
                 <PrimaryBtn
-                  label={currentStep < 3 ? 'â†’' : "Let's Explore"}
+                  label={currentStep < 3 ? '→' : "Let's Explore"}
                   onClick={() => {
                     if (currentStep === 1) setCurrentStep(2);
                     else if (currentStep === 2) setCurrentStep(3);

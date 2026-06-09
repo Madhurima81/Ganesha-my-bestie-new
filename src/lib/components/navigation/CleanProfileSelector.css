@@ -1081,7 +1081,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 /* Lotus icon at top of create card */
 .scroll-card-inner .create-card-lotus {
   position: absolute;
-  top: -62px;
+  top: 28px;
   left: 50%;
   display: block;
   width: clamp(72px, 8vw, 80px);
@@ -1129,7 +1129,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   position: relative;
   width: 72%;
   height: 68%;
-  padding-top: 90px;
+  padding-top: 146px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1149,10 +1149,10 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   font-family: var(--font-title);
   color: #7B6D9E;
   text-align: center;
-  font-size: clamp(28px, 3.2vw, 48px);
+  font-size: clamp(24px, 2.8vw, 40px);
   font-weight: 800;
   line-height: 1.15;
-  margin: 0 0 24px;
+  margin: 0 0 32px;
 }
 
 .scroll-card-inner .create-step-subheading {
@@ -1173,7 +1173,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 /* Name input on parchment */
 .scroll-card-inner .name-input {
   font-family: var(--font-title);
-  font-size: 30px;
+  font-size: clamp(22px, 2.3vw, 28px);
   font-weight: 700;
   text-align: center;
   height: 88px;
@@ -1188,6 +1188,10 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   width: 100%;
   max-width: 520px;
   outline: none;
+}
+
+.scroll-card-inner .arrow-btn {
+  margin-top: 28px;
 }
 
 .scroll-card-inner .name-input:focus {
@@ -1205,6 +1209,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 
 .scroll-card-inner .name-input::placeholder {
   color: #B5A7C8;
+  font-size: clamp(22px, 2.3vw, 28px);
 }
 
 /* Age stepper */
@@ -1316,9 +1321,17 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   .scroll-card-inner {
     width: 78%;
     height: 70%;
+    padding-top: 132px;
   }
   .scroll-card-inner .friend-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1200px) and (min-height: 700px) {
+  .scroll-card-inner .friend-card img {
+    width: clamp(66%, 72%, 78%);
+    height: clamp(66%, 72%, 78%);
   }
 }
 
@@ -1328,9 +1341,10 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   height: 64px !important;
   padding: 0 !important;
   border-radius: 999px !important;
-  background: #B99AEC !important;
-  border: none !important;
-  box-shadow: 0 2px 6px rgba(111, 76, 255, 0.18) !important;
+  --btn-color-top: #C3A8F3;
+  --btn-color-base: #B99AEC;
+  --btn-color-shadow: #9B7DD8;
+  --btn-color-glow: rgba(180, 158, 232, 0.20);
   color: #FFFFFF !important;
   font-size: 34px !important;
   font-weight: 700;
