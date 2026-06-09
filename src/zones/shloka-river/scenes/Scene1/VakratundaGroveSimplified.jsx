@@ -47,17 +47,18 @@ import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 import { getOpeningModal, getCompletionModal, getDiscoveryContent } from '../../../../lib/config/content';
 
 // Game Components
-import VakratundaGame from './VakratundaGame';
-import MahakayaGame from './MahakayaGame';
+import VakratundaRescueGame from './VakratundaRescueGame';
+import MahakayaRescueGame from './MahakayaRescueGame';
 
 // Character images
 import ganeshaHeadphones from './assets/images/ganesha_with_headphones.webp';
 
 // Images
-import riverBackground from './assets/images/vakratundachant-bg-new2.svg';
+import riverBackground from './assets/images/rivergamebg.png';
 import mooshikaCoach from "./assets/images/mooshika-coach.webp";
+import banyanTree from './assets/images/banyan-full-from-download.webp';
 import symbolVakratunda from '../../../symbol-mountain/shared/images/icons/symbol-trunk-new.webp';
-import symbolMahakaya from './assets/images/banyan-full-from-download.webp';
+import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
 
 // Elephant images for memory game
 import elephantBabyVa from './assets/images/vakratunda/elephant-baby-va.webp';
@@ -327,12 +328,11 @@ const VakratundaGroveContent = ({
 
   const playGuidanceVoice = useCallback((key, onEnded) => {
     const webSpeechMap = {
-      welcome: "Let's wake up the flowers together.",
-      mahakayaGameStart: "Now Mahakaya… let's chant together.",
+      welcome: "Let's help our friends by the river.",
       instructionListen: 'Listen carefully.',
-      instructionTapAndRepeat: 'Tap the little elephant… chant with him.',
-      instructionTapTheElephant: 'Tap the little elephant… chant with him.',
-      hintTapElephant: 'Tap the little elephant… chant with him.',
+      instructionTapAndRepeat: 'Tap the logs and see what happens.',
+      instructionTapTheElephant: 'Tap the logs and see what happens.',
+      hintTapElephant: 'Tap the logs and see what happens.',
       hintLookForGlow: 'Look for the glowing elephant.',
       vakratundaSetup: 'You chanted… and the lotus opened.',
       vakratundaClaim: 'I find a new way.',
@@ -345,6 +345,22 @@ const VakratundaGroveContent = ({
       instructionTapLilyWord: 'Tap the lily.',
       instructionTapLily: 'Tap the lily.',
       instructionTapLilyUnlock: 'Tap the lily.',
+      scene10_intro_friends: "Let's help our friends by the river.",
+      scene10_vak_frog_cross: 'The frog wants to cross.',
+      scene10_vak_tap_logs: 'Tap the logs and see what happens.',
+      scene10_vak_blocked: 'Oh no... that way is blocked.',
+      scene10_vak_make_path: "Let's make another path.",
+      scene10_vak_drag_leaves: 'Drag the leaves onto the water.',
+      scene10_vak_crossed: 'The frog made it across.',
+      scene10_vak_meaning: 'Vakratunda helps us find another way.',
+      scene10_maha_intro: "Now let's help the little elephant.",
+      scene10_maha_blocking: 'A heavy log is blocking the river.',
+      scene10_maha_drag_rope: 'Drag the rope to the log.',
+      scene10_maha_pull_down: 'Now pull down.',
+      scene10_maha_log_moving: 'The log is moving.',
+      scene10_maha_success: 'You did it. The river can flow again.',
+      scene10_maha_meaning: 'Mahakaya means great strength.',
+      scene10_maha_strength: 'You have strength inside you too.',
     };
     if (webSpeechMap[key]) {
       speakWebSpeech(webSpeechMap[key], onEnded);
@@ -359,11 +375,11 @@ const VakratundaGroveContent = ({
       return;
     }
     if (sceneState.phase === PHASES.VAKRATUNDA_GAME) {
-      playGuidanceVoice('instructionTapTheElephant');
+      playGuidanceVoice('scene10_vak_tap_logs');
       return;
     }
     if (sceneState.phase === PHASES.MAHAKAYA_GAME) {
-      playGuidanceVoice('mahakayaGameStart');
+      playGuidanceVoice('scene10_maha_drag_rope');
       return;
     }
     if (showSceneCompletion) {
@@ -624,11 +640,6 @@ const VakratundaGroveContent = ({
     stopIdleTimer();
     setCurrentPhase(null);
 
-    // Play celebration VO
-    if (isAudioOn) {
-      playGuidanceVoice('chantWordReveal');
-    }
-
     // Update State
     const chantKey = word === 'vakratunda' ? 'vakratunda-chant' : 'mahakaya-chant';
     sceneActions.updateState({
@@ -639,7 +650,6 @@ const VakratundaGroveContent = ({
 
     // Visuals — word celebration removed, game stays visible while VO plays
     setShowSparkle(`${word}-celebration`);
-    playWord(word);
 
     // -- Transition: VO completes ? SymbolAutoReveal ---------------------------
     const triggerReveal = () => {
@@ -797,6 +807,10 @@ const VakratundaGroveContent = ({
             {!showSceneCompletion && (
             <>
 
+            <div className="vakratunda-scene-banyan">
+              <img src={banyanTree} alt="" />
+            </div>
+
             {/* HOME BUTTON — inline green button removed; HomeButton component handles this */}
 
             {/* -- PauseButton — REMOVED (replaced by home icon) --
@@ -880,47 +894,43 @@ const VakratundaGroveContent = ({
               showButton={openingButtonVisible}
             />
 
-            {/* VAKRATUNDA MEMORY GAME */}
-            <VakratundaGame
+            {/* VAKRATUNDA RESCUE GAME — BendReeds → word build → chant */}
+            <VakratundaRescueGame
               isActive={sceneState.phase === PHASES.VAKRATUNDA_GAME}
               hideElements={showCenteredWord || showPowerOverlay || !!revealConfig}
-              onMicroWin={handleElephantMicroWin}
+              onMicroWin={() => {}}
               onPhaseComplete={() => handlePhaseComplete('vakratunda')}
-              onGameComplete={() => { }}
+              onGameComplete={() => {}}
               profileName={profileName}
-              getBudImage={() => budVa}
-              getLotusImage={() => lotusVa}
-              getBabyElephantImage={() => elephantBabyVa}
-              selectedMode="auto"
-              skipModeSelection={true}
-              isReload={isReload}
-              savedGameState={sceneState.vakratundaGameState}
-              onSaveGameState={(state) => handleSaveComponentState('vakratundaGame', state)}
-              voiceGuidance={{ playVoice: playGuidanceVoice, playSfx, stopVoice: stopAllVoice, characterImage: mooshikaCoach }}
+              voiceGuidance={{
+                playVoice: playGuidanceVoice,
+                playSfx,
+                playWord: playWordAudio,
+                playSyllable: (syllable, onEnded) => playSyllable('vakratunda', syllable, onEnded),
+                stopVoice: stopAllVoice,
+                characterImage: mooshikaCoach
+              }}
               isPaused={isRecorderOpen}
-              startRound={3}
             />
 
-            {/* MAHAKAYA MEMORY GAME */}
-            <MahakayaGame
+            {/* MAHAKAYA RESCUE GAME — PushLog → word build → chant */}
+            <MahakayaRescueGame
               isActive={sceneState.phase === PHASES.MAHAKAYA_GAME}
               hideElements={showCenteredWord || showPowerOverlay || !!revealConfig}
               powerGained={sceneState.learnedWords?.vakratunda}
-              onMicroWin={handleElephantMicroWin}
+              onMicroWin={() => {}}
               onPhaseComplete={() => handlePhaseComplete('mahakaya')}
-              onGameComplete={() => { }}
+              onGameComplete={() => {}}
               profileName={profileName}
-              getSeedImage={() => seedImage}
-              getFlowerImage={() => flowerMa}
-              getAdultElephantImage={() => elephantMa}
-              selectedMode="auto"
-              skipModeSelection={true}
-              isReload={isReload}
-              savedGameState={sceneState.mahakayaGameState}
-              onSaveGameState={(state) => handleSaveComponentState('mahakayaGame', state)}
-              voiceGuidance={{ playVoice: playGuidanceVoice, playSfx, stopVoice: stopAllVoice, characterImage: mooshikaCoach }}
+              voiceGuidance={{
+                playVoice: playGuidanceVoice,
+                playSfx,
+                playWord: playWordAudio,
+                playSyllable: (syllable, onEnded) => playSyllable('mahakaya', syllable, onEnded),
+                stopVoice: stopAllVoice,
+                characterImage: mooshikaCoach
+              }}
               isPaused={isRecorderOpen}
-              startRound={3}
             />
 
             {/* PERSISTENT BOY CHARACTER (Commented out per user request) */}
@@ -1195,4 +1205,3 @@ const VakratundaGroveContent = ({
 };
 
 export default VakratundaGroveSimplified;
-

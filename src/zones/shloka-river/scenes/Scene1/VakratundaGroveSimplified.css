@@ -21,17 +21,20 @@
   padding: 0 !important;
   overflow: hidden !important;
   position: relative;
+  background: #f1e7fc;
 }
 
 .river-background {
-  width: 100% !important;
-  height: 100vh !important;
-  min-height: 100dvh !important;
+  width: min(100vw, calc(100vh * 4 / 3)) !important;
+  aspect-ratio: 4 / 3;
+  max-height: 100vh !important;
   background-size: cover !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
   margin: 0 !important;
   padding: 0 !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -44,6 +47,23 @@
   inset: 0;
   z-index: 130;
   pointer-events: none;
+}
+
+.vakratunda-scene-banyan {
+  position: absolute;
+  left: 32%;
+  top: 20%;
+  width: 20%;
+  transform: translate(-50%, -50%);
+  z-index: 6;
+  pointer-events: none;
+}
+
+.vakratunda-scene-banyan img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
 }
 
 /* Aspect Ratio Fixes */

@@ -3,10 +3,11 @@ import './AppSidebar.css';
 import SanskritVoiceRecorder from '../../../lib/components/audio/SanskritVoiceRecorder.jsx';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 import { applyRecorderTheme } from '../../../lib/theme/RecorderThemeAdapter';
+import ChantCardModal from './components/ChantCardModal';
 
 // Mantra icons — same images as Meaning Cave (colored only, no gray set)
 import vakratundaIcon    from '../../symbol-mountain/shared/images/icons/symbol-trunk-new.png';
-import mahakayaIcon      from '../scenes/Scene1/assets/images/banyan-full-from-download.png';
+import mahakayaIcon      from '../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
 import suryakotiIcon     from '../../meaning cave/assets/images/symbols/suryakoti-symbol.png';
 import samaprabhaIcon    from '../../meaning cave/assets/images/symbols/samaprabha-symbol.png';
 import nirvighnamIcon    from '../../meaning cave/assets/images/symbols/nirvighnam-symbol.png';
@@ -39,6 +40,7 @@ const AppSidebar = ({
   highlightApps = [],
   onCelebrate
 }) => {
+  const [showCard, setShowCard] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedApp, setSelectedApp] = useState(null);
   const [animatingApp, setAnimatingApp] = useState(null);
@@ -48,6 +50,13 @@ const AppSidebar = ({
   const zoneThemeVars = {
     '--zone-accent-color': theme.accentColor,
     '--zone-glow-color': theme.glowColor
+  };
+  const chantThemeVars = {
+    '--chant-accent': theme.accentColor,
+    '--chant-glow': theme.glowColor,
+    '--chant-cta-top': theme.btnTop || theme.accentColor,
+    '--chant-cta-base': theme.btnBase || theme.accentColor,
+    '--chant-cta-shadow': theme.btnShadow || theme.glowColor
   };
 
   const appOrder = ['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha', 'kurumedeva', 'nirvighnam', 'sarvakaryeshu', 'sarvada'];
@@ -67,7 +76,7 @@ const AppSidebar = ({
       applyRecorderTheme(zoneId);
       setTappedApps(prev => ({ ...prev, [appId]: true }));
       setSelectedApp(appId);
-      setShowPopup(true);
+      setShowCard(true);
       onPopupOpen?.();
       if (onAppClick) onAppClick(appId);
     }
@@ -75,6 +84,7 @@ const AppSidebar = ({
 
   const closePopup = () => {
     setShowPopup(false);
+    setShowCard(false);
     setSelectedApp(null);
     onPopupClose?.();
   };
@@ -129,6 +139,22 @@ const AppSidebar = ({
           </div>
         </div>
 
+        {showCard && selectedApp && (
+          <ChantCardModal
+            wordId={selectedApp}
+            themeStyles={chantThemeVars}
+            onPracticeChant={() => {
+              setShowCard(false);
+              setShowPopup(true);
+            }}
+            onClose={() => {
+              setShowCard(false);
+              setSelectedApp(null);
+              onPopupClose?.();
+            }}
+          />
+        )}
+
         {showPopup && selectedApp && (
           <SanskritVoiceRecorder
             word={selectedApp}
@@ -180,6 +206,22 @@ const AppSidebar = ({
           );
         })}
       </div>
+
+      {showCard && selectedApp && (
+        <ChantCardModal
+          wordId={selectedApp}
+          themeStyles={chantThemeVars}
+          onPracticeChant={() => {
+            setShowCard(false);
+            setShowPopup(true);
+          }}
+          onClose={() => {
+            setShowCard(false);
+            setSelectedApp(null);
+            onPopupClose?.();
+          }}
+        />
+      )}
 
       {showPopup && selectedApp && (
         <SanskritVoiceRecorder
