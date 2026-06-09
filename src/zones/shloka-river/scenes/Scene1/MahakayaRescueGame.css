@@ -1,0 +1,140 @@
+/* MahakayaRescueGame.css - layer model. Parent provides the fixed-ratio stage. */
+
+.maha-game {
+  position: absolute;
+  inset: 0;
+}
+
+.maha-game.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.maha-layer {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.maha-layer img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  -webkit-user-drag: none;
+}
+
+.maha-calf {
+  transition: left 0.5s ease, top 0.5s ease;
+}
+
+.maha-log {
+  cursor: pointer;
+  touch-action: none;
+}
+
+.maha-strain {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: clamp(18px, 2.4vw, 24px);
+}
+
+.maha-hint,
+.maha-doneline {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.maha-hint {
+  top: 11%;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(13px, 1.9vw, 17px);
+}
+
+.maha-doneline {
+  top: 40%;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: clamp(18px, 3vw, 28px);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.maha-meter {
+  position: absolute;
+  top: 16%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 42%;
+  max-width: 280px;
+  height: 11px;
+  z-index: 30;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.maha-meter > div {
+  height: 100%;
+  background: #ef9f27;
+  border-radius: 8px;
+  transition: width 0.12s;
+}
+
+.maha-sink-note {
+  position: absolute;
+  bottom: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  color: #fff;
+  font-size: clamp(11px, 1.4vw, 13px);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .maha-calf,
+  .maha-meter > div {
+    transition: none;
+  }
+}
+
+/* rope-pulley additions */
+
+.maha-knob {
+  cursor: grab;
+  touch-action: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.maha-pull {
+  cursor: grab;
+  touch-action: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.maha-grip-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.32));
+}
+
+.maha-knob.grabbing,
+.maha-pull.grabbing {
+  cursor: grabbing;
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.maha-knob.grabbing .maha-grip-svg,
+.maha-pull.grabbing .maha-grip-svg {
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45));
+}
