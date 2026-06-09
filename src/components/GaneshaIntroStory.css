@@ -6,26 +6,23 @@
   align-items: center;
   justify-content: center;
   background:
-    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.2), transparent 38%),
-    radial-gradient(circle at 80% 30%, rgba(255, 240, 200, 0.16), transparent 36%),
-    linear-gradient(160deg, #7e68be 0%, #bda9e6 52%, #8e79cb 100%);
+    linear-gradient(160deg, #c9b8ec 0%, #ddd0f2 52%, #d3c4ef 100%);
   overflow: hidden;
+  animation: gisFadeIn 0.5s ease-out;
 }
 
 .gis-overlay::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(48, 42, 74, 0.6);
-  backdrop-filter: blur(3px) saturate(0.82);
+  display: none;
 }
 
 .gis-overlay::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 55%, rgba(255, 255, 255, 0.1) 0%, rgba(23, 16, 36, 0.38) 78%);
-  pointer-events: none;
+  display: none;
 }
 
 .gis-overlay .storySparkle {
@@ -41,9 +38,9 @@
 .gis-stage {
   position: relative;
   z-index: 2;
-  width: min(95vw, 1220px);
-  height: min(94vh, 760px);
-  border-radius: 28px;
+  width: min(100vw, 1400px);
+  height: 100vh;
+  border-radius: 0;
   overflow: hidden;
   display: flex;
   align-items: stretch;
@@ -267,9 +264,9 @@
 
 @media (max-width: 700px) {
   .gis-stage {
-    width: 96vw;
-    height: 92vh;
-    border-radius: 22px;
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
   }
 
   .gis-bottom {
@@ -300,6 +297,16 @@
     right: 14px;
     font-size: 14px;
     padding: 8px 14px;
+  }
+}
+
+@keyframes gisFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }
 
