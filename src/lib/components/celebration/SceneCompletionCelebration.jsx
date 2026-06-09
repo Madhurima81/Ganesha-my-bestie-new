@@ -6,6 +6,8 @@ import SanskritVoiceRecorder from '../audio/SanskritVoiceRecorder';
 import { applyCompletionScreenTheme } from "../../theme/CompletionScreenThemeAdapter";
 import { applyRecorderTheme } from "../../theme/RecorderThemeAdapter";
 import { GANESHA_POSE_ASSETS } from '../../config/ganeshaUsageSystem';
+import ProfilePillBtn from '../shared/ProfilePillBtn';
+import { getProfilePillBtnStyle } from '../../config/ZoneThemes';
 
 const SceneCompletionCelebration = ({
   show = false,
@@ -284,13 +286,13 @@ const handleAction = (callback, skipComplete = false) => {
                 {/* PRIMARY ACTION (if provided) */}
                 {primaryAction && (
                   <div className="primary-action-container">
-                    <button
-                      className="celebration-btn celebration-btn-primary"
+                    <ProfilePillBtn
                       onClick={() => handleAction(primaryAction.onClick)}
-                    >
-                      {primaryAction.icon && <span className="btn-icon">{primaryAction.icon}</span>}
-                      {primaryAction.text}
-                    </button>
+                      label={primaryAction.icon ? `${primaryAction.icon} ${primaryAction.text}` : primaryAction.text}
+                      size="md"
+                      fullWidth={true}
+                      style={getProfilePillBtnStyle(resolvedZoneId)}
+                    />
                     {primaryAction.subtext && (
                       <p className="primary-action-subtext">{primaryAction.subtext}</p>
                     )}
@@ -299,8 +301,7 @@ const handleAction = (callback, skipComplete = false) => {
 
                 {/* Primary CTA */}
                 {!primaryAction && (
-                  <button
-                    className={`celebration-btn celebration-btn-orange ${!isFinalScene ? 'celebration-btn-guided-pulse' : ''} ${isFinalScene ? 'celebration-btn-home' : ''}`.trim()}
+                  <ProfilePillBtn
                     onClick={() => {
                       if (isFinalScene) {
                         handleContinueWithAnimation(() => handleAction(onHome || onContinue || handleExplore));
@@ -313,48 +314,70 @@ const handleAction = (callback, skipComplete = false) => {
                       }
                       handleContinueWithAnimation(() => handleAction(onContinue));
                     }}
-                  >
-                    {isFinalScene ? 'Home' : 'Next Adventure'}
-                  </button>
+                    label={isFinalScene ? 'Home' : 'Next Adventure'}
+                    size="md"
+                    fullWidth={true}
+                    style={getProfilePillBtnStyle(resolvedZoneId)}
+                  />
                 )}
 
                 {/* Secondary / Tertiary actions */}
                 {!primaryAction ? (
                   <div className="celebration-secondary-row">
                     <button
-                      className="celebration-btn celebration-btn-teal"
+                      type="button"
                       onClick={() => handleAction(handleExplore)}
+                      className="celebration-btn-teal"
                     >
                       Home
                     </button>
                     <span className="celebration-secondary-sep" aria-hidden="true">•</span>
                     <button
-                      className="celebration-btn-replay"
+                      type="button"
                       onClick={() => handleAction(onReplay, true)}
+                      className="celebration-btn-replay"
                     >
                       Play Again
                     </button>
                   </div>
                 ) : (
                   <div className="celebration-actions-row">
-                    <button
-                      className="celebration-btn celebration-btn-teal celebration-btn-ghost"
+                    <ProfilePillBtn
                       onClick={() => handleAction(onReplay, true)}
-                    >
-                      Play Again
-                    </button>
-                    <button
-                      className={`celebration-btn celebration-btn-teal ${isFinalScene ? 'celebration-btn-home' : ''}`.trim()}
+                      label="Play Again"
+                      size="sm"
+                      fullWidth={false}
+                      style={getProfilePillBtnStyle(resolvedZoneId, {
+                        top: '#E8E1D7',
+                        base: '#D6CDC0',
+                        shadow: '#AA9F90',
+                        glow: 'rgba(170, 159, 144, 0.16)'
+                      })}
+                    />
+                    <ProfilePillBtn
                       onClick={() => handleAction(isFinalScene ? (onHome || onContinue || handleExplore) : onContinue)}
-                    >
-                      {isFinalScene ? 'Home' : 'Next Adventure'}
-                    </button>
-                    <button
-                      className="celebration-btn celebration-btn-teal"
+                      label={isFinalScene ? 'Home' : 'Next Adventure'}
+                      size="sm"
+                      fullWidth={false}
+                      style={getProfilePillBtnStyle(resolvedZoneId, {
+                        top: '#CFE9E6',
+                        base: '#A7D4CE',
+                        shadow: '#6EA69E',
+                        glow: 'rgba(110, 166, 158, 0.18)'
+                      })}
+                    />
+                    <ProfilePillBtn
                       onClick={() => handleAction(handleExplore)}
-                    >
-                      Back to Zone
-                    </button>
+                      label="Back to Zone"
+                      size="sm"
+                      fullWidth={false}
+                      style={getProfilePillBtnStyle(resolvedZoneId, {
+                        top: '#E8E1D7',
+                        base: '#D6CDC0',
+                        shadow: '#AA9F90',
+                        glow: 'rgba(170, 159, 144, 0.16)'
+                      })}
+                    />
                   </div>
                 )}
               </>
