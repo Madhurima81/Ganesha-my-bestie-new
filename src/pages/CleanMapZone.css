@@ -205,19 +205,19 @@
    Dimmed, desaturated, no pointer events
 ──────────────────────────────────────────────── */
 .zone.zone-state-locked {
-  opacity: 0.7;
-  filter: grayscale(20%);
+  opacity: 0.6;
+  filter: none;
   pointer-events: auto;
   cursor: pointer;
 }
 
-/* Locked non-primary zones should visually recede */
+/* Locked non-primary zones recede in opacity only — no desaturation */
 .cave-secrets.zone.zone-state-locked,
 .festival-square.zone.zone-state-locked,
 .cave-secrets.zone.zone-state-coming-soon,
 .festival-square.zone.zone-state-coming-soon {
   opacity: 0.45;
-  filter: grayscale(20%);
+  filter: none;
 }
 
 /* ── UNLOCKING STATE ──────────────────────────────
@@ -388,7 +388,7 @@
    ===================================================================== */
 
 .shloka-mountain-label {
-  top: 13%;
+  top: 15%;
   left: 18%;
   font-size: clamp(24px, 2.8vw, 52px);
 }
@@ -402,7 +402,7 @@
 }
 
 .river-label {
-  top: 14%;
+  top: 16%;
   right: 16%;
   font-size: clamp(24px, 2.8vw, 52px);
 }
@@ -424,8 +424,8 @@
 }
 
 .treehouse-label {
-  top: 63%;
-  left: 70%;
+  top: 72%;
+  left: 65%;
   bottom: auto;
   font-size: clamp(24px, 2.8vw, 52px);
 }
@@ -496,7 +496,7 @@
   position: absolute;
   pointer-events: none;
   object-fit: contain;
-  z-index: 3;
+  z-index: 9;
 }
 
 .map-zone-art-symbol {
@@ -507,11 +507,29 @@
 }
 
 .map-zone-art-river {
-  left: 50%;
-  top: 60%;
-  width: 100%;
-  height: 100%;
+  left: 46%;
+  top: 53%;
+  width: 120%;
+  height: 120%;
   transform: translate(-50%, -50%);
+}
+
+.map-zone-art-bridge {
+  width: 18%;
+  height: 18%;
+  transform: translate(-50%, -50%);
+}
+
+.map-zone-art-bridge-1 {
+  left: 60%;
+  top: 52%;
+  transform: translate(-50%, -50%) rotate(10deg);
+}
+
+.map-zone-art-bridge-2 {
+  left: 54%;
+  top: 82%;
+  transform: translate(-50%, -50%) rotate(-16deg);
 }
 
 .map-zone-art-cave {
@@ -521,6 +539,7 @@
   right: auto;
   width: 28%;
   height: 26%;
+  opacity: 0.5;
 }
 
 .map-zone-art-hut {
@@ -538,15 +557,17 @@
   bottom: auto;
   width: 30%;
   height: 30%;
+  opacity: 0.5;
 }
 
 .map-zone-art-treehouse {
-  top: 68%;
-  left: 72%;
+  top: 70%;
+  left: 65%;
   bottom: auto;
   width: 22%;
   height: 26%;
   transform: scaleX(-1);
+  opacity: 0.5;
 }
 
 /* =========================
@@ -825,23 +846,23 @@
 
 /* Tablet Portrait */
 @media (min-width: 768px) and (max-width: 1365px) and (orientation: portrait) {
-  .shloka-mountain-label { top: 16%; left: 14%; font-size: 22px; }
+  .shloka-mountain-label { top: 18%; left: 14%; font-size: 22px; }
   .cave-label            { top: 46%; left: 76%; right: auto; bottom: auto; font-size: 18px; }
-  .river-label           { top: 10%; right: 12%; font-size: 20px; }
+  .river-label           { top: 12%; right: 12%; font-size: 20px; }
   .festival-label        { bottom: 20%; right: 12%; font-size: 18px; }
   .hut-label             { top: 54%; left: 9%; right: auto; bottom: auto; font-size: 18px; }
-  .treehouse-label       { top: 63%; left: 70%; bottom: auto; font-size: 18px; }
+  .treehouse-label       { top: 66%; left: 65%; bottom: auto; font-size: 18px; }
   .fun-zone-gate         { width: 200px; }
 }
 
 /* Mobile Portrait */
 @media (max-width: 600px) {
-  .shloka-mountain-label { top: 14%; left: 10%; font-size: 14px; letter-spacing: 0.5px; }
+  .shloka-mountain-label { top: 16%; left: 10%; font-size: 14px; letter-spacing: 0.5px; }
   .cave-label            { top: 46%; left: 76%; right: auto; bottom: auto; font-size: 12px; }
-  .river-label           { top: 10%; right: 8%; font-size: 13px; }
+  .river-label           { top: 12%; right: 8%; font-size: 13px; }
   .festival-label        { bottom: 18%; right: 8%; font-size: 12px; }
   .hut-label             { top: 54%; left: 9%; right: auto; bottom: auto; font-size: 12px; }
-  .treehouse-label       { top: 63%; left: 70%; bottom: auto; font-size: 12px; }
+  .treehouse-label       { top: 66%; left: 65%; bottom: auto; font-size: 12px; }
   .fun-zone-gate         { width: 130px; bottom: 10%; right: 5%; }
   .map-back-button       { font-size: 14px; padding: 8px 16px; top: 12px; left: 12px; }
 
@@ -1151,8 +1172,8 @@
    Tappable so child gets a friendly Mushika + Ganesha VO response.
 ──────────────────────────────────────────────── */
 .zone.zone-state-coming-soon {
-  opacity: 0.85;
-  filter: saturate(0.75);
+  opacity: 1;
+  filter: none;
   pointer-events: auto;
   cursor: pointer;
   transition: opacity 0.3s ease, filter 0.3s ease;
@@ -1273,3 +1294,197 @@
 }
 
 
+
+/* =========================
+   ZONE GLOW � saffron radial glow sits behind the zone PNG
+========================= */
+.zone-glow {
+  position: absolute;
+  inset: -18px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 153, 51, 0.38) 0%,
+    rgba(255, 200, 80, 0.18) 45%,
+    transparent 72%
+  );
+  pointer-events: none;
+  z-index: 0;
+  animation: zoneGlowPulse 2.6s ease-in-out infinite;
+}
+
+@keyframes zoneGlowPulse {
+  0%, 100% { opacity: 0.7; transform: scale(1);    }
+  50%       { opacity: 1;   transform: scale(1.08); }
+}
+
+/* Active (not first-time) gets a softer, slower glow */
+.zone-state-active .zone-glow {
+  animation-duration: 3.4s;
+  opacity: 0.55;
+}
+
+/* In-progress gets full saffron pulse */
+.zone-state-in-progress .zone-glow {
+  animation-duration: 2.2s;
+  background: radial-gradient(
+    circle,
+    rgba(255, 165, 0, 0.48) 0%,
+    rgba(255, 200, 80, 0.22) 45%,
+    transparent 70%
+  );
+}
+
+/* =========================
+   BUILDING SIGN — coming-soon zones
+========================= */
+.zone-building-sign {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  width: 160px;
+  pointer-events: none;
+  z-index: 12;
+  animation: buildingBob 3s ease-in-out infinite;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.18));
+}
+
+@keyframes buildingBob {
+  0%, 100% { transform: translate(-50%, -100%) translateY(0);    }
+  50%       { transform: translate(-50%, -100%) translateY(-6px); }
+}
+
+/* coming-soon zones: full color, no dimming */
+.zone.zone-state-coming-soon {
+  opacity: 1;
+  filter: none;
+}
+
+.zone.zone-state-coming-soon:hover,
+.zone.zone-state-coming-soon:active {
+  opacity: 1;
+  filter: none;
+}
+
+/* Coming-soon zone title � faded */
+.label-coming-soon {
+  opacity: .55;
+  color: #8f86b8;
+}
+
+/* =========================
+   ZONE LOCK ICON
+========================= */
+.zone-lock {
+  position: absolute;
+  width: 52px;
+  height: 52px;
+  transform: translate(-50%, -50%);
+  top: -8px;
+  right: -8px;
+  pointer-events: none;
+  z-index: 9;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  animation: lockWiggle 4s ease-in-out infinite;
+}
+
+@keyframes lockWiggle {
+  0%,90%,100% { transform: rotate(0deg);  }
+  93%          { transform: rotate(-8deg); }
+  96%          { transform: rotate(8deg);  }
+}
+
+/* Lock scales out when zone unlocks */
+.zone-lock--out {
+  animation: lockOut 0.3s ease-in forwards;
+}
+
+@keyframes lockOut {
+  to { transform: scale(0); opacity: 0; }
+}
+
+/* Unlock flash � brief open-lock during transition */
+.zone-unlock-flash {
+  position: absolute;
+  width: 52px;
+  height: 52px;
+  transform: translate(-50%, -50%);
+  right: -8px;
+  pointer-events: none;
+  z-index: 9;
+  animation: unlockFlash 1.0s ease-out forwards;
+}
+
+@keyframes unlockFlash {
+  0%   { transform: scale(0.4); opacity: 0; }
+  30%  { transform: scale(1.2); opacity: 1; }
+  70%  { transform: scale(1.0); opacity: 1; }
+  100% { transform: scale(1.0); opacity: 0; }
+}
+
+/* =========================
+   ZONE CREATURES � butterfly / bird
+========================= */
+.zone-creature {
+  position: absolute;
+  pointer-events: none;
+  z-index: 9;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12));
+}
+
+/* Butterfly float path */
+.zone-butterfly {
+  width: 44px;
+  height: 44px;
+  animation: butterflyFloat 6s ease-in-out infinite;
+}
+
+@keyframes butterflyFloat {
+  0%   { transform: translate(0,0)      rotate(0deg);  }
+  25%  { transform: translate(6px,-8px) rotate(-5deg); }
+  50%  { transform: translate(12px,0)   rotate(0deg);  }
+  75%  { transform: translate(6px,8px)  rotate(5deg);  }
+  100% { transform: translate(0,0)      rotate(0deg);  }
+}
+
+/* Bird hop */
+.zone-bird {
+  width: 44px;
+  height: 44px;
+  animation: birdHop 8s ease-in-out infinite;
+}
+
+@keyframes birdHop {
+  0%,85%,100% { transform: translateY(0);    }
+  90%          { transform: translateY(-5px); }
+  95%          { transform: translateY(0);    }
+}
+
+/* Per-zone positions — near each zone's title/image */
+.modak-butterfly  { top: 28%; left: 32%; }   /* above Modak Mountain art */
+.shloka-butterfly { top: 18%; left: 74%; }   /* near Shloka River label  */
+.mooshika-bird    { top: 55%; left: 26%; }   /* on Mooshika's Hut fence  */
+
+/* Creature appear animation (on unlock) */
+.zone-creature--appear {
+  animation: creatureAppear 0.5s 0.3s ease-out both, butterflyFloat 6s 0.8s ease-in-out infinite;
+}
+
+.zone-bird.zone-creature--appear {
+  animation: creatureAppear 0.5s 0.3s ease-out both, birdHop 8s 0.8s ease-in-out infinite;
+}
+
+@keyframes creatureAppear {
+  from { transform: scale(0.4); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* Unlocked zone � open lock sits at same position as lock */
+.zone-unlock-idle {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+}

@@ -1,8 +1,8 @@
 // ZonePreviewModal.jsx — Sacred Portal design, scoped classes, closing animation
 import React, { useState } from 'react';
 import './ZonePreviewModal.css';
-import PrimaryBtn from '../../lib/components/shared/PrimaryBtn';
-import { getZoneTheme } from '../../lib/config/ZoneThemes';
+import ProfilePillBtn from '../../lib/components/shared/ProfilePillBtn';
+import { getProfilePillBtnStyle } from '../../lib/config/ZoneThemes';
 import GaneshaCharacter from '../../lib/components/character/GaneshaCharacter';
 
 const zoneContent = {
@@ -149,20 +149,13 @@ const ZonePreviewModal = ({ zone, onClose, onStartZone }) => {
 
         {/* Buttons */}
         <div className="portal-actions">
-          <PrimaryBtn
+          <ProfilePillBtn
             label={content.primaryAction}
             onClick={handlePlay}
             size="md"
             fullWidth={false}
-            style={(() => {
-              const theme = getZoneTheme(zone.id);
-              return {
-                '--btn-color-top': theme.btnTop,
-                '--btn-color-base': theme.accentColor,
-                '--btn-color-shadow': theme.btnShadow,
-                '--btn-color-glow': theme.glowColor
-              };
-            })()}
+            className="portal-primary-pill-btn"
+            style={getProfilePillBtnStyle(zone.id)}
           />
         </div>
       </div>

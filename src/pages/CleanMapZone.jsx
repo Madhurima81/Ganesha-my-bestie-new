@@ -4,6 +4,7 @@ import './CleanMapZone.css';
 import GameStateManager from '../lib/services/GameStateManager';
 import { GANESHA_POSE_ASSETS } from '../lib/config/ganeshaUsageSystem';
 // import ZonePreviewModal from './components/ZonePreviewModal'; // commented out — no preview modal
+import MapEditorFull from './MapEditorFull';
 
 const ZONES_DATA = [
   {
@@ -289,6 +290,75 @@ const ZONE_LAYOUT = {
   },
 };
 
+// Creature assigned to each active zone (butterfly / bird).
+// coming-soon zones get no creature — they have the building sign instead.
+const ZONE_CREATURES = {
+  'symbol-mountain': { src: '/images/map/butterflyyellow.png', cls: 'zone-butterfly modak-butterfly'   },
+  'shloka-river':    { src: '/images/map/butterflyblue.png',   cls: 'zone-butterfly shloka-butterfly'  },
+  'about-me-hut':    { src: '/images/map/birdnew.png',         cls: 'zone-bird     mooshika-bird'      },
+};
+
+// Lock position per lockable zone — placed on the map directly over the zone label
+const ZONE_LOCK_POS = {
+  'shloka-river': { left: '68%', top: '46%' },
+  'about-me-hut': { left: '40%', top: '62%' },
+};
+
+// Permanent decorative props placed via the Map Prop Editor.
+// To adjust: open the editor (🌿 Edit Props button), tweak, Copy JSON, paste here.
+const MAP_PROPS = [
+  { id: "tree1-1",    type: "tree1",   src: "/images/map/tree1.png",   left: 36.7, top: 36.9, w: 5,  flip: false },
+  { id: "tree1-2",    type: "tree1",   src: "/images/map/tree1.png",   left: 39.2, top: 38.6, w: 5,  flip: false },
+  { id: "tree2-4",    type: "tree2",   src: "/images/map/tree2.png",   left: 42.1, top: 37.2, w: 5,  flip: false },
+  { id: "tree1-5",    type: "tree1",   src: "/images/map/tree1.png",   left: 6.9,  top: 37.7, w: 5,  flip: false },
+  { id: "tree2-6",    type: "tree2",   src: "/images/map/tree2.png",   left: 68.6, top: 56.7, w: 5,  flip: false },
+  { id: "tree1-8",    type: "tree1",   src: "/images/map/tree1.png",   left: 28,   top: 83.4, w: 5,  flip: false },
+  { id: "tree1-9",    type: "tree1",   src: "/images/map/tree1.png",   left: 82.5, top: 79.5, w: 5,  flip: false },
+  { id: "tree1-12",   type: "tree1",   src: "/images/map/tree1.png",   left: 65.8, top: 56,   w: 5,  flip: false },
+  { id: "tree1-13",   type: "tree1",   src: "/images/map/tree1.png",   left: 86.8, top: 35.4, w: 5,  flip: false },
+  { id: "bush1-10",   type: "bush1",   src: "/images/map/bush1.png",   left: 13.3, top: 45,   w: 5,  flip: false },
+  { id: "bush1-14",   type: "bush1",   src: "/images/map/bush1.png",   left: 15.6, top: 45.9, w: 5,  flip: false },
+  { id: "bush1-15",   type: "bush1",   src: "/images/map/bush1.png",   left: 30.8, top: 44.6, w: 5,  flip: false },
+  { id: "bush1-16",   type: "bush1",   src: "/images/map/bush1.png",   left: 36.9, top: 68.2, w: 6,  flip: false },
+  { id: "bush1-17",   type: "bush1",   src: "/images/map/bush1.png",   left: 69.3, top: 88,   w: 5,  flip: false },
+  { id: "bush2-18",   type: "bush2",   src: "/images/map/bush2.png",   left: 71.7, top: 88.9, w: 6,  flip: false },
+  { id: "bush1-19",   type: "bush1",   src: "/images/map/bush1.png",   left: 78.9, top: 55.1, w: 5,  flip: false },
+  { id: "bush1-20",   type: "bush1",   src: "/images/map/bush1.png",   left: 88.8, top: 56.8, w: 5,  flip: false },
+  { id: "bush1-21",   type: "bush1",   src: "/images/map/bush1.png",   left: 61,   top: 37.1, w: 5,  flip: false },
+  { id: "bush1-22",   type: "bush1",   src: "/images/map/bush1.png",   left: 76.5, top: 37.7, w: 5,  flip: false },
+  { id: "bush2-23",   type: "bush2",   src: "/images/map/bush2.png",   left: 33.9, top: 68.6, w: 6,  flip: false },
+  { id: "flower1-24", type: "flower1", src: "/images/map/flower1.png", left: 17.4, top: 48.1, w: 3,  flip: false },
+  { id: "flower1-25", type: "flower1", src: "/images/map/flower1.png", left: 28.5, top: 47,   w: 3,  flip: false },
+  { id: "flower2-26", type: "flower2", src: "/images/map/flower2.png", left: 56.7, top: 62.9, w: 4,  flip: false },
+  { id: "flower2-27", type: "flower2", src: "/images/map/flower2.png", left: 25.2, top: 64.8, w: 4,  flip: false },
+  { id: "flower1-28", type: "flower1", src: "/images/map/flower1.png", left: 25.6, top: 91.2, w: 4,  flip: false },
+  { id: "flower1-29", type: "flower1", src: "/images/map/flower1.png", left: 58.6, top: 38.6, w: 4,  flip: false },
+  { id: "flower2-30", type: "flower2", src: "/images/map/flower2.png", left: 94.3, top: 58,   w: 3,  flip: false },
+  { id: "flower2-31", type: "flower2", src: "/images/map/flower2.png", left: 77.8, top: 51.4, w: 3,  flip: false },
+  { id: "flower1-32", type: "flower1", src: "/images/map/flower1.png", left: 30.4, top: 55.8, w: 3,  flip: true  },
+  { id: "flower2-33", type: "flower2", src: "/images/map/flower2.png", left: 6.8,  top: 78.4, w: 4,  flip: true  },
+  { id: "flower1-34", type: "flower1", src: "/images/map/flower1.png", left: 81.8, top: 87.1, w: 3,  flip: false },
+  { id: "flower1-35", type: "flower1", src: "/images/map/flower1.png", left: 69.4, top: 88.9, w: 3,  flip: false },
+  { id: "flower1-36", type: "flower1", src: "/images/map/flower1.png", left: 45.1, top: 85.3, w: 4,  flip: false },
+  { id: "grass-37",   type: "grass",   src: "/images/map/grass.png",   left: 55.8, top: 43,   w: 3,  flip: false },
+  { id: "grass-38",   type: "grass",   src: "/images/map/grass.png",   left: 49.7, top: 51.4, w: 3,  flip: false },
+  { id: "grass-39",   type: "grass",   src: "/images/map/grass.png",   left: 47.7, top: 52.3, w: 3,  flip: true  },
+  { id: "grass-40",   type: "grass",   src: "/images/map/grass.png",   left: 56.1, top: 86,   w: 4,  flip: false },
+  { id: "grass-41",   type: "grass",   src: "/images/map/grass.png",   left: 58.9, top: 87.8, w: 3,  flip: false },
+  { id: "grass-42",   type: "grass",   src: "/images/map/grass.png",   left: 20.3, top: 46.4, w: 3,  flip: false },
+  { id: "grass-43",   type: "grass",   src: "/images/map/grass.png",   left: 21.6, top: 46.6, w: 3,  flip: false },
+  { id: "grass-44",   type: "grass",   src: "/images/map/grass.png",   left: 2.5,  top: 43.5, w: 3,  flip: false },
+  { id: "grass-45",   type: "grass",   src: "/images/map/grass.png",   left: 47.5, top: 81.1, w: 3,  flip: false },
+  { id: "grass-46",   type: "grass",   src: "/images/map/grass.png",   left: 93.8, top: 39.2, w: 3,  flip: false },
+  { id: "grass-47",   type: "grass",   src: "/images/map/grass.png",   left: 49,   top: 54.5, w: 3,  flip: true  },
+  { id: "grass-48",   type: "grass",   src: "/images/map/grass.png",   left: 92.6, top: 40.8, w: 3,  flip: false },
+  { id: "grass-49",   type: "grass",   src: "/images/map/grass.png",   left: 3.5,  top: 76.3, w: 4,  flip: false },
+  { id: "grass-50",   type: "grass",   src: "/images/map/grass.png",   left: 28.2, top: 66.7, w: 3,  flip: false },
+  { id: "grass-51",   type: "grass",   src: "/images/map/grass.png",   left: 93,   top: 78.8, w: 3,  flip: false },
+  { id: "grass-52",   type: "grass",   src: "/images/map/grass.png",   left: 89.5, top: 89.9, w: 3,  flip: false },
+  { id: "grass-53",   type: "grass",   src: "/images/map/grass.png",   left: 72.3, top: 43,   w: 3,  flip: true  },
+];
+
 const MAP_ZONE_ORDER = [
   'symbol-mountain',
   'shloka-river',
@@ -509,6 +579,7 @@ const ZONE_SCENES = {
 const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen, onParentCorner }) => {
   const [zoneProgress, setZoneProgress] = useState({});
   const [isFirstTimeLoad, setIsFirstTimeLoad] = useState(false);
+  const [mapDebugMode, setMapDebugMode] = useState(false);
   // const [selectedZone, setSelectedZone] = useState(null);  // removed — no preview modal
   // const [showZoneModal, setShowZoneModal] = useState(false); // removed — no preview modal
   const [activeProfile, setActiveProfile] = useState(null);
@@ -533,6 +604,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   const prevGaneshaPosRef = useRef(null);
   const walkTimerRef = useRef(null);
   const parentHoldTimerRef = useRef(null);
+
 
   const speakMapVoEvents = (events = []) => {
     if (!Array.isArray(events) || events.length === 0) {
@@ -1069,7 +1141,17 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         src="/images/map/modakmtn.png"
         alt=""
         className="map-zone-art map-zone-art-symbol"
-        aria-hidden="true"
+        onClick={() => handleZoneClick(ZONES_DATA.find((zone) => zone.id === 'symbol-mountain'), getZoneState('symbol-mountain', zoneProgress))}
+        role="button"
+        tabIndex={0}
+        aria-label="Open Modak Mountain"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleZoneClick(ZONES_DATA.find((zone) => zone.id === 'symbol-mountain'), getZoneState('symbol-mountain', zoneProgress));
+          }
+        }}
+        style={{ cursor: 'pointer', pointerEvents: 'auto' }}
       />
       <img
         src="/images/map/river6.png"
@@ -1078,33 +1160,104 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         aria-hidden="true"
       />
       <img
+        src="/images/map/bridge-new.png"
+        alt=""
+        className="map-zone-art map-zone-art-bridge map-zone-art-bridge-1"
+        aria-hidden="true"
+      />
+      <img
+        src="/images/map/bridge-new.png"
+        alt=""
+        className="map-zone-art map-zone-art-bridge map-zone-art-bridge-2"
+        aria-hidden="true"
+      />
+      <img
         src="/images/map/cavelight.png"
         alt=""
         className="map-zone-art map-zone-art-cave"
-        aria-hidden="true"
+        onClick={() => handleZoneClick(ZONES_DATA.find((zone) => zone.id === 'cave-of-secrets'), getZoneState('cave-of-secrets', zoneProgress))}
+        role="button"
+        tabIndex={0}
+        aria-label="Open Wonder Caves"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleZoneClick(ZONES_DATA.find((zone) => zone.id === 'cave-of-secrets'), getZoneState('cave-of-secrets', zoneProgress));
+          }
+        }}
+        style={{ cursor: 'pointer', pointerEvents: 'auto' }}
       />
       <img
         src="/images/map/abtmehut2.png"
         alt=""
         className="map-zone-art map-zone-art-hut"
-        aria-hidden="true"
+        onClick={() => handleZoneClick(ZONES_DATA.find((zone) => zone.id === 'about-me-hut'), getZoneState('about-me-hut', zoneProgress))}
+        role="button"
+        tabIndex={0}
+        aria-label="Open Mooshika's Hut"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleZoneClick(ZONES_DATA.find((zone) => zone.id === 'about-me-hut'), getZoneState('about-me-hut', zoneProgress));
+          }
+        }}
+        style={{ cursor: 'pointer', pointerEvents: 'auto' }}
       />
       <img
         src="/images/map/festivalsq1.png"
         alt=""
         className="map-zone-art map-zone-art-festival"
-        aria-hidden="true"
+        onClick={() => handleZoneClick(ZONES_DATA.find((zone) => zone.id === 'festival-square'), getZoneState('festival-square', zoneProgress))}
+        role="button"
+        tabIndex={0}
+        aria-label="Open Lotus Square"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleZoneClick(ZONES_DATA.find((zone) => zone.id === 'festival-square'), getZoneState('festival-square', zoneProgress));
+          }
+        }}
+        style={{ cursor: 'pointer', pointerEvents: 'auto' }}
       />
       <img
         src="/images/map/treehouse1.png"
         alt=""
         className="map-zone-art map-zone-art-treehouse"
-        aria-hidden="true"
+        onClick={() => handleZoneClick(ZONES_DATA.find((zone) => zone.id === 'story-treehouse'), getZoneState('story-treehouse', zoneProgress))}
+        role="button"
+        tabIndex={0}
+        aria-label="Open Tusk Treehouse"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleZoneClick(ZONES_DATA.find((zone) => zone.id === 'story-treehouse'), getZoneState('story-treehouse', zoneProgress));
+          }
+        }}
+        style={{ cursor: 'pointer', pointerEvents: 'auto' }}
       />
 
       {/* Drifting clouds — CSS shapes, no image needed */}
 
       {/* River shimmer — light-on-water effect over Shloka River */}
+
+      {/* Decorative props — trees, bushes, flowers, grass */}
+      {MAP_PROPS.map(p => (
+        <img
+          key={p.id}
+          src={p.src}
+          alt=""
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            left: `${p.left}%`,
+            top: `${p.top}%`,
+            width: `${p.w}%`,
+            transform: p.flip ? 'scaleX(-1)' : 'none',
+            pointerEvents: 'none',
+            zIndex: 4,
+          }}
+        />
+      ))}
 
       {/* Mountain mist — soft fog at base of Symbol Mountain */}
       <div className="map-mountain-mist" aria-hidden="true">
@@ -1150,7 +1303,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
 
             {/* Label */}
             <div
-              className={`${layout.labelClass} label-state-${labelState} ${isSymbolMountainZone ? 'zone-title' : ''} ${pulsingLabelZoneId === zone.id ? 'label-tap-pulse' : ''}`.trim()}
+              className={`${layout.labelClass} label-state-${labelState} ${isSymbolMountainZone ? 'zone-title' : ''} ${pulsingLabelZoneId === zone.id ? 'label-tap-pulse' : ''} ${state === 'coming-soon' ? 'label-coming-soon' : ''}`.trim()}
               onClick={() => handleZoneClick(zone, state)}
               role="button"
               tabIndex={0}
@@ -1169,11 +1322,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
               {isFirstTimeSymbol && (
                 <div className="first-time-hint">Tap to start</div>
               )}
-              {state === 'coming-soon' && (
-                <div className="coming-soon-pill">
-                  {zone.id === 'cave-of-secrets' || zone.id === 'festival-square' ? 'Opening Soon' : 'Coming Soon'}
-                </div>
-              )}
+
               {state === 'locked' && zone.unlockNote && (
                 <div className="unlock-note">{zone.unlockNote}</div>
               )}
@@ -1192,8 +1341,75 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       })}
 
 
+      {/* Building signs — one per coming-soon zone, positioned over each zone image */}
+      {[
+        { id: 'cave-of-secrets',  style: { left: '87%', top: '70%'  } },
+        { id: 'festival-square',  style: { left: '19%', top: '102%' } },
+        { id: 'story-treehouse',  style: { left: '76%', top: '98%'  } },
+      ].map(({ id, style }) => {
+        const zoneDef = ZONES_DATA.find(z => z.id === id);
+        if (!zoneDef?.comingSoon) return null;
+        return (
+          <img
+            key={`building-${id}`}
+            src="/images/map/building.png"
+            alt=""
+            aria-hidden="true"
+            className="zone-building-sign"
+            style={style}
+          />
+        );
+      })}
+
+      {/* Zone locks / unlocks — standalone, positioned over each zone */}
+      {Object.entries(ZONE_LOCK_POS).map(([zoneId, pos]) => {
+        const zState = getZoneState(zoneId, zoneProgress);
+        const isUnlocking = !!unlockingZones[zoneId];
+        const isUnlocked = zState === 'active' || zState === 'in-progress' || zState === 'completed';
+        return (
+          <React.Fragment key={`lock-${zoneId}`}>
+            {/* Locked → wiggling lock */}
+            {zState === 'locked' && !isUnlocking && (
+              <img src="/images/map/lock.png" alt="" aria-hidden="true"
+                className="zone-lock" style={pos} />
+            )}
+            {/* Unlocking transition → lock flies out, unlock flashes in */}
+            {isUnlocking && (
+              <>
+                <img src="/images/map/lock.png" alt="" aria-hidden="true"
+                  className="zone-lock zone-lock--out" style={pos} />
+                <img src="/images/map/unlock.png" alt="" aria-hidden="true"
+                  className="zone-unlock-flash" style={pos} />
+              </>
+            )}
+            {/* Unlocked → open lock sits there */}
+            {isUnlocked && !isUnlocking && (
+              <img src="/images/map/unlock.png" alt="" aria-hidden="true"
+                className="zone-unlock-idle" style={pos} />
+            )}
+          </React.Fragment>
+        );
+      })}
+
+      {/* Zone creatures — butterfly / bird for active zones */}
+      {Object.entries(ZONE_CREATURES).map(([zoneId, creature]) => {
+        const zState = getZoneState(zoneId, zoneProgress);
+        const isUnlocking = !!unlockingZones[zoneId];
+        const show = zState === 'active' || zState === 'in-progress' || zState === 'completed' || isUnlocking;
+        if (!show) return null;
+        return (
+          <img
+            key={`creature-${zoneId}`}
+            src={creature.src}
+            alt=""
+            aria-hidden="true"
+            className={`zone-creature ${creature.cls} ${isUnlocking ? 'zone-creature--appear' : ''}`}
+          />
+        );
+      })}
+
       {/* Map Ganesha presence */}
-      {false && mapGaneshaState && (
+      {mapGaneshaState && (
         <div
           className={`map-ganesha-guide map-ganesha-wrapper ${isGaneshaWalking ? 'is-walking' : ''}`}
           style={(() => {
@@ -1297,6 +1513,23 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
           Time with Ganesha
         </button>
       )}
+
+      {/* Debug prop-editor toggle — bottom-left corner */}
+      <button
+        onClick={() => setMapDebugMode(v => !v)}
+        style={{
+          position: 'absolute', bottom: 10, left: 10, zIndex: 10000,
+          padding: '4px 10px', borderRadius: 20, border: '1px solid rgba(255,255,255,0.4)',
+          background: mapDebugMode ? '#ff3b9a' : 'rgba(0,0,0,0.45)',
+          color: '#fff', fontSize: 11, fontFamily: 'Nunito, sans-serif',
+          cursor: 'pointer', opacity: 0.7,
+        }}
+        title="Toggle prop editor"
+      >
+        {mapDebugMode ? '✕ Editor' : '🌿 Edit Props'}
+      </button>
+
+      {mapDebugMode && <MapEditorFull onClose={() => setMapDebugMode(false)} />}
 
     </div>
   );

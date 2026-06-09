@@ -69,12 +69,12 @@ const zonePositions = {
 const defaultZones = [
   { 
     id: 'symbol-mountain', 
-    name: 'Symbol Mountain', 
+    name: 'Modak Mountain',
     icon: '🏔️', 
     unlocked: true, 
     stars: 0, 
     totalStars: 6,  // 3 stars per scene × 2 scenes
-    description: 'Learn about Ganesha\'s sacred symbols in this mystical mountain.',
+    description: 'Learn about Ganesha\'s sacred symbols in this magical modak mountain.',
     requiredStars: 0,
     scenes: [
       {
