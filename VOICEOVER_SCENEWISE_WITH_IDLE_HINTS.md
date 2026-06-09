@@ -139,12 +139,31 @@ Format per scene:
 
 ### Scene 10 - Vakratunda Grove
 - Main VO:
-  - `Bloom the flowers. Listen and repeat.`
-  - `Tap in order: Va -> Kra -> Tun -> Da.`
-  - `Tap in order: Ma -> Ha -> Ka -> Ya.`
+  - `Let's help our friends by the river.`
+  - `The frog wants to cross.`
+  - `Tap the logs and see what happens.`
+  - `Oh no... that way is blocked.`
+  - `Let's make another path.`
+  - `Drag the leaves onto the water.`
+  - `The frog made it across.`
+  - `Vakratunda.`
+  - `Vakratunda helps us find another way.`
+  - `Now let's help the little elephant.`
+  - `A heavy log is blocking the river.`
+  - `Drag the rope to the log.`
+  - `Now pull down.`
+  - `The log is moving.`
+  - `You did it. The river can flow again.`
+  - `Mahakaya.`
+  - `Mahakaya means great strength.`
+  - `You have strength inside you too.`
 - Idle Hint VO (Separate):
-  - `Watch the sequence, then repeat it.`
-  - `Tap the speaker button to hear it again.`
+  - `Tap the logs to try crossing.`
+  - `Drag a leaf onto the glowing water spot.`
+  - `Keep building the path.`
+  - `Drag the rope to the log.`
+  - `Pull the rope down to lift it.`
+  - `Keep pulling... you're almost there.`
 
 ### Scene 11 - Suryakoti Bank
 - Main VO:

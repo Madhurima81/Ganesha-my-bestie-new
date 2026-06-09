@@ -6,7 +6,6 @@ import './Enhanced.css'
 import DailyDarePopup from './lib/components/twg/DailyDarePopup';
 import TimeWithGaneshaHub from './lib/components/twg/TimeWithGaneshaHub';
 import GaneshaEngineTest  from './lib/components/twg/GaneshaEngineTest';
-import TapGate from './components/welcome/TapGate';
 import MainWelcomeScreen from './lib/components/navigation/MainWelcomeScreen';
 import GaneshaIntroStory from './components/GaneshaIntroStory';
 import { GANESHA_USAGE_SYSTEM } from './lib/config/ganeshaUsageSystem';
@@ -24,6 +23,39 @@ import SimpleSceneManager from './lib/services/SimpleSceneManager';
 import { getPendingKindnessCheck, resolveKindnessCheck } from './lib/services/KindnessJournal';
 // initializeSounds replaced by initAudioService() in main.jsx (AudioService/Howler)
 import { Analytics } from './lib/services/analytics';
+import { preloadImages, avatarImagePaths } from './lib/utils/preloadImages';
+
+const AVATAR_IDS = ['monkey', 'peacock', 'squirrel', 'tiger'];
+
+const ZONE_FIRST_SCENE_IMAGES = {
+  'symbol-mountain': [
+    '/images/symbol-mountain-bg.png',
+    '/images/modakmtn-bg.png',
+    '/images/zones/symbol-mountain/modak-icon.png',
+    '/images/ganesha-poses/sit-modak.webp',
+    '/images/ganesha-point.webp',
+  ],
+  // 'cave-of-secrets': [
+  //   '/images/cave-of-secrets-background.png',
+  //   '/images/cave-bg.png',
+  //   '/images/zones/cave-of-secrets/vakratunda-icon.png',
+  // ],
+  'shloka-river': [
+    '/images/shlokariver-bg.png',
+    '/images/zones/shloka-river/vakratunda-grove-icon.png',
+  ],
+  // 'festival-square': [
+  //   '/images/festivalsquare-bg.png',
+  //   '/images/lotussquare-bg.png',
+  //   '/images/zones/festival-square/piano-icon.png',
+  // ],
+  'about-me-hut': [
+    '/images/about-me-hut-bg.png',
+    '/images/hut-bg.png',
+    '/images/zones/about-me-hut/family-tree-icon.png',
+    '/images/ganesha-final-new.svg',
+  ],
+};
 
 const SCENE_MAPPING = {
   'symbol-mountain': {
@@ -157,7 +189,6 @@ const [loadingStep, setLoadingStep] = useState(''); // ADD THIS LINE
 const [showDarePopup, setShowDarePopup] = useState(false);
 const [showDareChip, setShowDareChip] = useState(false);
 const previousViewRef = useRef('loading');
-const [audioUnlocked, setAudioUnlocked] = useState(false);
 const dareOpenTimerRef = useRef(null);
 const [kindnessCheckEntry, setKindnessCheckEntry] = useState(null);
 const [showIntroStory, setShowIntroStory] = useState(false);
@@ -332,6 +363,29 @@ useEffect(() => {
     previousViewRef.current = currentView;
   }, [currentView]);
 
+  // Lot 2 — warm ride + intro story images while child is on welcome/profile screen
+  useEffect(() => {
+    if (currentView === 'profile-welcome') {
+      preloadImages([
+        '/images/pan-bg.png',
+        '/images/mooshika-flying.png',
+        '/intro-story/story1-open-pg.webp',
+        '/intro-story/story1-img1.webp',
+        '/intro-story/story1-img2.webp',
+        '/intro-story/story1-img3.webp',
+        '/intro-story/story1-img4.webp',
+        '/intro-story/map-new-2.webp',
+        '/images/ganesha-poses/stand-namaste.png',
+        '/images/map/butterflyyellow.png',
+        '/images/map/butterflyblue.png',
+        '/images/map/birdnew.png',
+        '/images/map/lock.png',
+        '/images/critters/bird-flying-orange.svg',
+        '/images/critters/butterfly-pink.svg',
+      ]);
+    }
+  }, [currentView]);
+
   useEffect(() => {
     if (dareOpenTimerRef.current) {
       clearTimeout(dareOpenTimerRef.current);
@@ -486,6 +540,13 @@ const initializeApp = async () => {
     });
 
     await Promise.all(imagePromises);
+
+    // Lot 1 — warm next screens (profile bg + all avatars) while loader is still showing
+    preloadImages([
+      '/images/profile-bg.png',
+      ...avatarImagePaths(AVATAR_IDS),
+    ]);
+
     setLoadingProgress(50);
     setLoadingStep('Adding beautiful pictures…');
     await new Promise(resolve => setTimeout(resolve, 300));
@@ -693,10 +754,12 @@ const handleContinue = (targetZone, targetScene) => {
   if (sceneId) {
     setCurrentScene(sceneId);
     setCurrentView('scene');
-    
+
     // ✅ SIMPLE: Save scene location
     SimpleSceneManager.setCurrentScene(zoneId, sceneId);
   } else {
+    // Lot 3 — warm this zone's welcome bg + first scene assets
+    preloadImages(ZONE_FIRST_SCENE_IMAGES[zoneId] || []);
     setCurrentView('zone-welcome');
   }
 };
@@ -1059,17 +1122,9 @@ chants: result?.chants || result?.chantedVerses || {},
       
       {currentView === 'main-welcome' && (
         <div className="view-transition">
-          {!audioUnlocked ? (
-            <TapGate
-              onUnlock={() => {
-                setAudioUnlocked(true);
-              }}
-            />
-          ) : (
-            <MainWelcomeScreen
-              onStartAdventure={handleStartAdventure}
-            />
-          )}
+          <MainWelcomeScreen
+            onStartAdventure={handleStartAdventure}
+          />
         </div>
       )}
       
