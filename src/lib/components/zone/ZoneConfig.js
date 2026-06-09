@@ -4,10 +4,10 @@
 export const ZONE_CONFIGS = {
   'symbol-mountain': {
     id: 'symbol-mountain',
-    name: 'Symbol Mountain',
+    name: 'Modak Mountain',
     icon: '🏔️',
     background: '/images/symbol-mountain-bg.png',
-    description: 'Learn about Ganesha\'s sacred symbols in this mystical mountain.',
+    description: 'Learn about Ganesha\'s sacred symbols in this magical modak mountain.',
     unlocked: true,
     totalStars: 12,
     requiredStars: 0,
@@ -58,7 +58,7 @@ export const ZONE_CONFIGS = {
 
   'cave-of-secrets': {
     id: 'cave-of-secrets',
-    name: 'Cave of Secrets',
+    name: 'Wonder Caves',
     icon: '🕳️',
     background: '/images/cave-of-secrets-background.png',
     description: 'Discover the complete Vakratunda Mahakaya mantra through mystical cave adventures.',
@@ -125,7 +125,7 @@ export const ZONE_CONFIGS = {
     name: 'Shloka River',
     icon: '🌊',
     emoji: '🌊', 
-    background: 'images/shloka-river-bg.png',
+    background: '/images/shloka-river-bg.png',
     description: 'Learn sacred Sanskrit shlokas by the flowing river of wisdom',
     theme: 'water-wisdom',
     difficulty: 'intermediate',
@@ -176,7 +176,7 @@ export const ZONE_CONFIGS = {
 
   'festival-square': {
     id: 'festival-square',
-    name: 'Festival Square',
+    name: 'Lotus Square',
     icon: '🎉',
     background: '/images/festivalsquare-bg.png',
     description: 'Celebrate with music, art, cooking, and decoration games!',
@@ -230,7 +230,7 @@ export const ZONE_CONFIGS = {
 
   'about-me-hut': {
     id: 'about-me-hut',
-    name: 'About Me Hut',
+    name: "Mooshika's Hut",
     icon: '🏡',
     emoji: '🏡',
     background: '/images/about-me-hut-bg.png',

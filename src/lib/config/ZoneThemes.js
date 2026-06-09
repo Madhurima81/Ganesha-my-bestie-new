@@ -54,7 +54,9 @@ export const ZONE_THEMES = {
 
     // Button shades (for PrimaryBtn CSS vars)
     btnTop: '#FFDA5A',
+    btnBase: '#F4C430',
     btnShadow: '#B8920A',
+    btnGlow: 'rgba(244, 196, 48, 0.28)',
 
     // Font
     fontFamily: '"Baloo 2", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
@@ -105,7 +107,9 @@ export const ZONE_THEMES = {
 
     // Button shades (for PrimaryBtn CSS vars)
     btnTop: '#E07045',
+    btnBase: '#C85A2E',
     btnShadow: '#8B2E0A',
+    btnGlow: 'rgba(200, 90, 46, 0.28)',
 
     fontFamily: '"Baloo 2", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     fontFamilyBody: '"Nunito", sans-serif'
@@ -155,7 +159,9 @@ export const ZONE_THEMES = {
 
     // Button shades (for PrimaryBtn CSS vars)
     btnTop: '#F4962A',
+    btnBase: '#E67E22',
     btnShadow: '#A84E00',
+    btnGlow: 'rgba(230, 126, 34, 0.28)',
 
     fontFamily: '"Baloo 2", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     fontFamilyBody: '"Nunito", sans-serif'
@@ -205,7 +211,9 @@ export const ZONE_THEMES = {
 
     // Button shades (for PrimaryBtn CSS vars)
     btnTop: '#5FBEA8',
+    btnBase: '#4A9B87',
     btnShadow: '#1A6B5A',
+    btnGlow: 'rgba(74, 155, 135, 0.28)',
 
     fontFamily: '"Baloo 2", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     fontFamilyBody: '"Nunito", sans-serif'
@@ -255,7 +263,9 @@ export const ZONE_THEMES = {
 
     // Button shades (for PrimaryBtn CSS vars)
     btnTop: '#E8AA7A',
+    btnBase: '#D89566',
     btnShadow: '#9A5A20',
+    btnGlow: 'rgba(216, 149, 102, 0.28)',
 
     fontFamily: '"Baloo 2", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     fontFamilyBody: '"Nunito", sans-serif'
@@ -265,6 +275,18 @@ export const ZONE_THEMES = {
 // Helper function to get theme for current zone
 export const getZoneTheme = (zoneId) => {
   return ZONE_THEMES[zoneId] || ZONE_THEMES['symbol-mountain']; // Default fallback
+};
+
+// Helper to map a zone theme to ProfilePillBtn CSS variables
+export const getProfilePillBtnStyle = (zoneId, overrides = {}) => {
+  const theme = getZoneTheme(zoneId);
+
+  return {
+    '--profile-btn-top': overrides.top || theme.btnTop,
+    '--profile-btn-base': overrides.base || theme.btnBase || theme.accentColor,
+    '--profile-btn-shadow': overrides.shadow || theme.btnShadow,
+    '--profile-btn-glow': overrides.glow || theme.btnGlow || theme.glowColor,
+  };
 };
 
 // Helper to apply theme as CSS variables
