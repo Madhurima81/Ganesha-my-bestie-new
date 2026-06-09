@@ -1,0 +1,293 @@
+.chant-card-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(46, 30, 14, 0.45);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  animation: chant-backdrop-in 200ms ease-out;
+}
+
+.chant-card-modal-backdrop.exiting {
+  animation: chant-backdrop-out 200ms ease-in forwards;
+}
+
+.chant-card-modal {
+  position: relative;
+  width: clamp(440px, 45vw, 760px);
+  max-width: 92vw;
+  padding: clamp(32px, 3vw, 48px) clamp(28px, 2.5vw, 40px) clamp(24px, 2vw, 32px);
+  border-radius: clamp(28px, 2.5vw, 40px);
+  background: #FFF8E7;
+  border: 4px solid var(--chant-accent, #4A9B87);
+  box-shadow:
+    0 24px 64px rgba(70, 40, 10, 0.22),
+    0 4px 16px rgba(70, 40, 10, 0.1),
+    0 0 0 4px color-mix(in srgb, var(--chant-accent, #4A9B87) 18%, transparent);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: chant-card-in 280ms cubic-bezier(0.2, 0.8, 0.3, 1);
+  transform-origin: center center;
+}
+
+.chant-card-modal.exiting {
+  animation: chant-card-out 200ms ease-in forwards;
+}
+
+.chant-card__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--chant-accent, #4A9B87);
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(70, 40, 10, 0.12);
+  border: 2px solid color-mix(in srgb, var(--chant-accent, #4A9B87) 28%, white);
+}
+
+.chant-card__icon-wrap {
+  width: clamp(90px, 7vw, 130px);
+  margin-bottom: clamp(18px, 1.6vw, 26px);
+}
+
+.chant-card__icon {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 14px var(--chant-glow, rgba(74, 155, 135, 0.3)));
+}
+
+.chant-card__title-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: clamp(24px, 2.2vw, 36px);
+}
+
+.chant-card__label {
+  display: none;
+}
+
+.chant-card__line {
+  font-family: 'Baloo 2', cursive;
+  margin: 0;
+  color: #3D2817;
+  line-height: 1.3;
+}
+
+.chant-card__line.is-hook {
+  font-size: clamp(24px, 2.2vw, 34px);
+  font-weight: 700;
+  margin-bottom: clamp(10px, 0.8vw, 14px);
+}
+
+.chant-card__line.is-teaching {
+  font-size: clamp(17px, 1.5vw, 22px);
+  font-weight: 500;
+  color: #5C4633;
+  max-width: 92%;
+  line-height: 1.4;
+}
+
+.chant-card__invitation {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(12px, 1vw, 16px);
+  width: 100%;
+  padding: clamp(20px, 1.8vw, 28px);
+  margin-top: clamp(8px, 0.6vw, 12px);
+  border-radius: clamp(16px, 1.4vw, 22px);
+  background: rgba(255, 153, 51, 0.06);
+  border-left: 4px solid var(--chant-accent, #4A9B87);
+  text-align: left;
+}
+
+.chant-card__pointer {
+  font-size: clamp(24px, 2vw, 32px);
+  line-height: 1.4;
+  flex-shrink: 0;
+  color: var(--chant-accent, #4A9B87);
+}
+
+.chant-card__invitation-body {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+}
+
+.chant-card__invitation-body p {
+  margin: 0;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(16px, 1.4vw, 20px);
+  font-weight: 400;
+  line-height: 1.55;
+  color: #3D2817;
+}
+
+.chant-card__gift {
+  margin: clamp(22px, 1.8vw, 30px) 0 0;
+  padding: 0 8px;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(14px, 1.2vw, 18px);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #8B6F47;
+  max-width: 92%;
+}
+
+.chant-card__cta {
+  margin-top: clamp(22px, 1.8vw, 28px);
+  border: none;
+  border-radius: 999px;
+  padding: 16px 28px;
+  background: linear-gradient(135deg, var(--chant-cta-top, #63c7bb) 0%, var(--chant-cta-base, #4A9B87) 100%);
+  color: #fff;
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(18px, 1.4vw, 22px);
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--chant-cta-shadow, rgba(74, 155, 135, 0.3)) 72%, transparent);
+}
+
+.chant-card__cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--chant-cta-shadow, rgba(74, 155, 135, 0.3)) 82%, transparent);
+}
+
+.chant-card__footer {
+  margin: clamp(24px, 2vw, 32px) 0 0;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(14px, 1.1vw, 17px);
+  font-weight: 400;
+  color: rgba(61, 40, 23, 0.5);
+  letter-spacing: 0.3px;
+}
+
+@keyframes chant-backdrop-in {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0);
+    -webkit-backdrop-filter: blur(0);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+  }
+}
+
+@keyframes chant-backdrop-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes chant-card-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes chant-card-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@media (max-width: 1024px) {
+  .chant-card-modal {
+    width: clamp(520px, 75vw, 760px);
+    padding: 40px 36px 32px;
+  }
+
+  .chant-card__icon-wrap {
+    width: 130px;
+  }
+
+  .chant-card__line.is-hook {
+    font-size: 30px;
+  }
+
+  .chant-card__line.is-teaching {
+    font-size: 22px;
+  }
+
+  .chant-card__invitation-body p {
+    font-size: 20px;
+  }
+
+  .chant-card__gift {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 640px) {
+  .chant-card-modal {
+    width: 100%;
+    max-width: 100%;
+    padding: 28px 22px 22px;
+    border-radius: 22px;
+  }
+
+  .chant-card__icon-wrap {
+    width: 96px;
+  }
+
+  .chant-card__line.is-hook {
+    font-size: 24px;
+  }
+
+  .chant-card__line.is-teaching {
+    font-size: 17px;
+  }
+
+  .chant-card__invitation {
+    padding: 16px 14px;
+  }
+
+  .chant-card__invitation-body {
+    gap: 10px;
+  }
+
+  .chant-card__invitation-body p {
+    font-size: 16px;
+  }
+
+  .chant-card__gift {
+    font-size: 15px;
+  }
+
+  .chant-card__footer {
+    font-size: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chant-card-modal,
+  .chant-card-modal-backdrop {
+    animation: none !important;
+  }
+}

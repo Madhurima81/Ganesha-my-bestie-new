@@ -1,0 +1,17 @@
+/* src/zones/shloka-river/shared/SyllableHighlight.css */
+
+.syl-row {
+  display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; padding-top: 8px;
+}
+.syl {
+  font-family: 'Baloo 2', system-ui, sans-serif; font-weight: 600;
+  font-size: clamp(20px, 5vw, 34px); padding: 6px 16px; border-radius: 14px;
+  background: #D8D3E7; color: #8B88A0;
+  transition: all .4s ease;
+}
+.syl.lit {
+  background: linear-gradient(180deg, #F7C45B 0%, #F0A73A 100%); color: #333;
+  transform: scale(1.08);
+  box-shadow: 0 0 18px rgba(240, 167, 58, .5);
+}
+@media (prefers-reduced-motion: reduce) { .syl { transition: none; } }
