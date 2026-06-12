@@ -1,4 +1,4 @@
-/* VakratundaRescueGame.css - build-path version with stacked leaves */
+/* VakratundaRescueGame.css - multi-material build-path flow */
 
 .vak-game {
   position: absolute;
@@ -24,26 +24,78 @@
   user-select: none;
 }
 
-.vak-leaf {
+.vak-pile,
+.vak-piece,
+.vak-placed-piece {
+  transition: opacity 0.15s ease, transform 0.18s ease;
+}
+
+.vak-pile.is-clickable {
+  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.18));
+}
+
+.vak-pile.is-clickable:active {
+  transform: translate(-50%, -50%) scale(0.98);
+}
+
+.vak-piece {
   touch-action: none;
   transition: opacity 0.15s ease;
 }
 
-.vak-leaf.is-active {
+.vak-piece.is-active {
   cursor: grab;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.24));
 }
 
-.vak-leaf.is-active:active {
+.vak-piece.is-active:active {
   cursor: grabbing;
 }
 
-.vak-leaf.is-waiting {
+.vak-piece.is-waiting {
   filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.16));
 }
 
 .vak-drag-ghost {
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.28));
+}
+
+.vak-demo-path {
+  position: absolute;
+  inset: 0;
+  z-index: 18;
+  pointer-events: none;
+}
+
+.vak-demo-path path {
+  fill: none;
+  stroke: rgba(255, 191, 73, 0.56);
+  stroke-width: 0.72;
+  stroke-linecap: round;
+  stroke-dasharray: 1.4 2.8;
+  animation: vakCueDash 1.25s linear infinite;
+}
+
+.vak-demo-piece {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 19;
+  width: 14%;
+  pointer-events: none;
+  opacity: 0.72;
+  animation: vakCuePieceMove 2s ease-in-out infinite;
+}
+
+.vak-demo-arrow {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 19;
+  color: rgba(239, 159, 39, 0.72);
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(18px, 2.5vw, 28px);
+  text-shadow: 0 1px 5px rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+  animation: vakCueArrowBounce 1s ease-in-out infinite;
 }
 
 .vak-slot {
@@ -78,6 +130,15 @@
   transition: left 0.65s cubic-bezier(0.4, 0, 0.2, 1), top 0.65s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.vak-frog.is-breathing,
+.vak-family.is-breathing {
+  animation: vakBreathe 2.4s ease-in-out infinite;
+}
+
+.vak-family.is-bouncing {
+  animation: vakFamilyBounce 0.6s ease-in-out;
+}
+
 .vak-frog.is-hopping {
   animation: vakHop 0.65s ease-in-out;
 }
@@ -94,53 +155,61 @@
   }
 }
 
-.vak-hint,
-.vak-doneline {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 30;
-  color: #fff;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
-  white-space: nowrap;
-  text-align: center;
+@keyframes vakCueDash {
+  to {
+    stroke-dashoffset: -4.4;
+  }
 }
 
-.vak-hint {
-  top: 11%;
-  font-family: 'Nunito', sans-serif;
-  font-size: clamp(13px, 1.9vw, 17px);
+@keyframes vakCuePieceMove {
+  0% {
+    transform: translate(-50%, -50%) translate(0, 0) scale(0.95);
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.92;
+  }
+  70% {
+    transform: translate(-50%, -50%) translate(var(--vak-cue-dx), var(--vak-cue-dy)) scale(1);
+    opacity: 0.92;
+  }
+  100% {
+    transform: translate(-50%, -50%) translate(var(--vak-cue-dx), var(--vak-cue-dy)) scale(1);
+    opacity: 0;
+  }
 }
 
-.vak-doneline {
-  top: 40%;
-  font-family: 'Baloo 2', cursive;
-  font-weight: 700;
-  font-size: clamp(18px, 3vw, 28px);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+@keyframes vakBreathe {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.03);
+  }
 }
 
-.vak-bubble {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  z-index: 20;
-  border-radius: 11px;
-  padding: 5px 10px;
-  font-size: clamp(11px, 1.4vw, 14px);
-  font-weight: 700;
-  text-align: center;
-  max-width: 30%;
+@keyframes vakFamilyBounce {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+  35% {
+    transform: translate(-50%, -50%) translateY(-5%);
+  }
+  70% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
 }
 
-.vak-bubble-fail {
-  background: #fff8e7;
-  color: #d85a30;
-}
-
-.vak-bubble-hint {
-  background: #ef9f27;
-  color: #042c53;
-  font-weight: 600;
+@keyframes vakCueArrowBounce {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(8px);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -148,11 +217,20 @@
     transition: none;
   }
 
+  .vak-frog.is-breathing,
+  .vak-family.is-breathing,
+  .vak-family.is-bouncing,
   .vak-frog.is-hopping {
     animation: none;
   }
 
   .vak-slot.is-next .vak-slot-ring {
+    animation: none;
+  }
+
+  .vak-demo-path path,
+  .vak-demo-piece,
+  .vak-demo-arrow {
     animation: none;
   }
 }

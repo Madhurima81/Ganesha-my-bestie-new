@@ -26,11 +26,12 @@ const AUDIO = {
 // Positions from editor (% of stage)
 const POS = {
   ropeAnchor: { l: 31, t: 22 },
-  logRest: { l: 38, t: 52, w: 18 },
-  logGround: { l: 54, t: 34, w: 18 },
+  logRest: { l: 34, t: 54, w: 18 },
+  logGround: { l: 52.9, t: 17.9, w: 18 },
+  cueTarget: { l: 38, t: 52, w: 10 },
   logLiftY: 34,
-  calfPinned: { l: 36, t: 60, w: 17 },
-  calfFree: { l: 36, t: 60, w: 17 },
+  calfPinned: { l: 31.2, t: 63.9, w: 17 },
+  calfFree: { l: 32.5, t: 66, w: 17 },
   ropeKnob: { l: 45, t: 38, w: 6.6 },
   pullBottom: 78,
 };
@@ -79,7 +80,7 @@ export default function MahakayaRescueGame({
   voiceGuidance = {},
   isPaused = false,
 }) {
-  const { playVoice: playSceneLine, playSfx, playWord, playSyllable } = voiceGuidance;
+  const { playVoice: playSceneLine, playSfx, playWord, playSyllable, stopVoice } = voiceGuidance;
 
   const [phase, setPhase] = useState('intro');
   const [ropeStage, setRopeStage] = useState('detached');
@@ -214,14 +215,9 @@ export default function MahakayaRescueGame({
 
       const sl = Math.min(TOTAL, Math.floor(np * TOTAL + 1e-6));
       if (sl > lockedRef.current) {
-        const wasLocked = lockedRef.current;
         lockedRef.current = sl;
         setLocked(sl);
-        playSfx?.('chime');
         onMicroWin?.();
-        if (wasLocked === 0 && sl === 1) {
-          after(500, () => playSceneLine?.('scene10_maha_log_moving'));
-        }
       }
       if (np >= 1) {
         draggingRef.current = null;
@@ -245,7 +241,7 @@ export default function MahakayaRescueGame({
       const rect = stageRef.current?.getBoundingClientRect();
       const lPct = rect ? ((e.clientX - rect.left) / rect.width) * 100 : knobPos.l;
       const tPct = rect ? ((e.clientY - rect.top) / rect.height) * 100 : knobPos.t;
-      const dist = Math.hypot(lPct - POS.logRest.l, tPct - POS.logRest.t);
+      const dist = Math.hypot(lPct - POS.cueTarget.l, tPct - POS.cueTarget.t);
       if (dist < ATTACH_DIST) {
         ropeStageRef.current = 'attached';
         setRopeStage('attached');
@@ -328,7 +324,10 @@ export default function MahakayaRescueGame({
           syllables={SYLLABLES}
           litCount={locked}
           audioSyllables={AUDIO.syllables}
-          onSyllableLit={playSyllable}
+          onSyllableLit={(syllable) => {
+            stopVoice?.();
+            playSyllable?.(syllable);
+          }}
         />
       )}
       {freed && <p className="maha-doneline">We lifted it together!</p>}
@@ -352,6 +351,26 @@ export default function MahakayaRescueGame({
 
       {ropeStage === 'detached' && phase === 'play' && (
         <>
+          <svg
+            className="maha-cue-line"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <path d={`M ${POS.ropeKnob.l - (POS.ropeKnob.w * 0.34)} ${POS.ropeKnob.t + 0.2} Q ${POS.ropeKnob.l - 1.4} ${POS.ropeKnob.t + 5.5} ${POS.logRest.l} ${POS.logRest.t}`} />
+          </svg>
+          <div
+            className="maha-cue-target"
+            style={{ left: `${POS.cueTarget.l}%`, top: `${POS.cueTarget.t}%`, width: `${POS.cueTarget.w}%` }}
+            aria-hidden="true"
+          />
+          <div
+            className="maha-cue-arrow"
+            style={{ left: `${POS.cueTarget.l}%`, top: `${POS.cueTarget.t - 8}%` }}
+            aria-hidden="true"
+          >
+            {'\u2193'}
+          </div>
           <RopeLine
             x1={POS.ropeAnchor.l}
             y1={POS.ropeAnchor.t}
@@ -375,6 +394,15 @@ export default function MahakayaRescueGame({
 
       {ropeStage === 'attached' && phase === 'play' && (
         <>
+          {locked === 0 && (
+            <div
+              className="maha-cue-arrow maha-cue-arrow-down"
+              style={{ left: `${POS.ropeAnchor.l}%`, top: `${pullT - 12}%` }}
+              aria-hidden="true"
+            >
+              {'\u2193'}
+            </div>
+          )}
           <RopeLine
             x1={POS.ropeAnchor.l}
             y1={POS.ropeAnchor.t}
@@ -413,3 +441,4 @@ export default function MahakayaRescueGame({
     </div>
   );
 }
+
