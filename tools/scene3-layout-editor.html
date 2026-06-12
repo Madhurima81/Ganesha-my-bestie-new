@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Scene 3 Layout Editor</title>
+  <style>
+    :root {
+      --panel: #f6efe6;
+      --ink: #2f2a26;
+      --line: #d9c7b3;
+      --accent: #3b8f8c;
+      --accent-2: #e1a34f;
+      --paper: #fffaf3;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 390px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      border-right: 1px solid var(--line);
+      background: var(--panel);
+      padding: 16px;
+      overflow: auto;
+    }
+
+    .preview-wrap {
+      padding: 16px;
+      overflow: auto;
+    }
+
+    h1, h2, h3, p {
+      margin: 0 0 12px;
+    }
+
+    h1 { font-size: 22px; }
+    h2 { font-size: 15px; margin-top: 16px; }
+    h3 { font-size: 14px; margin-top: 14px; }
+    p, button, label, textarea, input, output { font-size: 14px; }
+
+    .tabs,
+    .subtabs,
+    .row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tabs,
+    .subtabs {
+      margin-bottom: 14px;
+    }
+
+    .tab,
+    .subtab,
+    button {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: inherit;
+      border-radius: 12px;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    .tab.active,
+    .subtab.active,
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .group {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+
+    .control {
+      display: grid;
+      grid-template-columns: 86px 1fr 60px;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .control:last-child {
+      margin-bottom: 0;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .preview {
+      position: relative;
+      width: min(100%, 1320px);
+      aspect-ratio: 4 / 3;
+      margin: 0 auto;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      box-shadow: 0 20px 46px rgba(0, 0, 0, 0.14);
+    }
+
+    .guides {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.18) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.18) 1px, transparent 1px);
+      background-size: 10% 10%;
+      opacity: 0;
+    }
+
+    .guides.show {
+      opacity: 1;
+    }
+
+    .asset,
+    .point {
+      position: absolute;
+      user-select: none;
+      touch-action: none;
+    }
+
+    .asset {
+      transform: translate(-50%, -50%);
+      cursor: grab;
+    }
+
+    .asset.dragging,
+    .point.dragging {
+      cursor: grabbing;
+    }
+
+    .asset img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+
+    .emoji {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100%;
+      font-size: clamp(34px, 6vw, 64px);
+      pointer-events: none;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.2));
+    }
+
+    .label {
+      position: absolute;
+      left: 50%;
+      top: calc(100% + 6px);
+      transform: translateX(-50%);
+      background: rgba(32, 28, 24, 0.66);
+      color: #fff;
+      border-radius: 999px;
+      padding: 4px 8px;
+      white-space: nowrap;
+      font-size: 12px;
+      pointer-events: none;
+    }
+
+    .point {
+      width: 18px;
+      height: 18px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: var(--accent-2);
+      border: 2px solid #fff;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      cursor: grab;
+      z-index: 20;
+    }
+
+    .point::after {
+      content: attr(data-label);
+      position: absolute;
+      left: 50%;
+      top: -22px;
+      transform: translateX(-50%);
+      font-size: 11px;
+      color: #fff;
+      background: rgba(32, 28, 24, 0.7);
+      border-radius: 999px;
+      padding: 2px 6px;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .path-line {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      resize: vertical;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      background: #fffdfa;
+    }
+
+    .element-list {
+      display: grid;
+      gap: 6px;
+    }
+
+    .element-item {
+      text-align: left;
+    }
+
+    .hint {
+      color: #665c55;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 980px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <h1>Scene 3 Layout Editor</h1>
+      <p class="hint">Drag elements directly on the preview. Use the controls to fine-tune position, size, flip, and the turtle/beaver path points. Export gives you a ready-to-paste config block.</p>
+
+      <div class="tabs">
+        <button class="tab active" data-scene="nirvighnam">Nirvighnam</button>
+        <button class="tab" data-scene="kurumedeva">Kurumedeva</button>
+      </div>
+
+      <div class="group">
+        <label class="check"><input id="show-guides" type="checkbox" /> Show 10% guides</label>
+      </div>
+
+      <div class="group">
+        <h2>Elements</h2>
+        <div id="element-list" class="element-list"></div>
+      </div>
+
+      <div class="group">
+        <h2>Selected Item</h2>
+        <div class="control"><label for="control-left">left</label><input id="control-left" type="range" min="0" max="100" step="0.5" /><output id="out-left"></output></div>
+        <div class="control"><label for="control-top">top</label><input id="control-top" type="range" min="0" max="100" step="0.5" /><output id="out-top"></output></div>
+        <div class="control"><label for="control-width">width</label><input id="control-width" type="range" min="2" max="24" step="0.5" /><output id="out-width"></output></div>
+        <label class="check"><input id="control-flip" type="checkbox" /> Flip horizontally</label>
+      </div>
+
+      <div class="group">
+        <h2>Path Points</h2>
+        <p class="hint">Drag the numbered dots in the preview to change turtle swim or beaver walk.</p>
+      </div>
+
+      <div class="group">
+        <h2>Export</h2>
+        <textarea id="export-box" spellcheck="false"></textarea>
+        <div class="row" style="margin-top: 10px;">
+          <button id="refresh-export" class="primary">Refresh Export</button>
+          <button id="copy-export">Copy Export</button>
+          <button id="reset-scene">Reset Current Scene</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="preview-wrap">
+      <div id="preview" class="preview">
+        <div id="guides" class="guides"></div>
+        <svg id="path-layer" class="path-line" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const state = {
+      currentScene: 'nirvighnam',
+      selectedKey: null,
+      scenes: {
+        nirvighnam: {
+          background: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/bg.png',
+          elements: {
+            turtle: {
+              label: 'Turtle',
+              type: 'image',
+              src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/nir-turtle-happy.png',
+              l: 12,
+              t: 58,
+              w: 9,
+              flip: false,
+            },
+            nest: {
+              label: 'Nest',
+              type: 'image',
+              src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/nest.png',
+              l: 84,
+              t: 56,
+              w: 12,
+              flip: false,
+            },
+            stone: {
+              label: 'Stone',
+              type: 'image',
+              src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/stone.png',
+              l: 34,
+              t: 54,
+              w: 10,
+              flip: false,
+            },
+            branch: {
+              label: 'Branch',
+              type: 'image',
+              src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/branch.png',
+              l: 52,
+              t: 50,
+              w: 9,
+              flip: false,
+            },
+            reed: {
+              label: 'Reed',
+              type: 'image',
+              src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/reed.png',
+              l: 70,
+              t: 52,
+              w: 11,
+              flip: false,
+            },
+          },
+          pathName: 'swimPath',
+          path: [
+            { l: 30, t: 50 },
+            { l: 50, t: 52 },
+            { l: 68, t: 50 },
+            { l: 82, t: 56 },
+          ],
+          line: { x1: 16, y1: 60, x2: 84, y2: 58 },
+        },
+        kurumedeva: {
+          background: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/bg.png',
+          elements: {
+            bridge: {
+              label: 'Bridge',
+              type: 'image',
+              src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Kurumedeva/step4.png',
+              l: 50,
+              t: 56,
+              w: 52,
+              flip: false,
+            },
+            beaver: {
+              label: 'Beaver',
+              type: 'image',
+              src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Kurumedeva/beaver-happy.png',
+              l: 18,
+              t: 68,
+              w: 8,
+              flip: false,
+            },
+            turtle: {
+              label: 'Turtle',
+              type: 'image',
+              src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Kurumedeva/turtle.png',
+              l: 72,
+              t: 62,
+              w: 10,
+              flip: false,
+            },
+            bird: {
+              label: 'Bird',
+              type: 'image',
+              src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Kurumedeva/bird.png',
+              l: 78,
+              t: 55,
+              w: 10,
+              flip: false,
+            },
+            squirrel: {
+              label: 'Squirrel',
+              type: 'image',
+              src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Kurumedeva/squirrel.png',
+              l: 74,
+              t: 65,
+              w: 10,
+              flip: false,
+            },
+            bunny: {
+              label: 'Bunny',
+              type: 'image',
+              src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Kurumedeva/bunny.png',
+              l: 80,
+              t: 60,
+              w: 10,
+              flip: false,
+            },
+          },
+          pathName: 'beaverPath',
+          path: [
+            { l: 18, t: 68 },
+            { l: 32, t: 65 },
+            { l: 48, t: 63 },
+            { l: 62, t: 64 },
+            { l: 76, t: 66 },
+          ],
+        },
+      },
+    };
+
+    const preview = document.getElementById('preview');
+    const guides = document.getElementById('guides');
+    const pathLayer = document.getElementById('path-layer');
+    const elementList = document.getElementById('element-list');
+    const exportBox = document.getElementById('export-box');
+    const leftInput = document.getElementById('control-left');
+    const topInput = document.getElementById('control-top');
+    const widthInput = document.getElementById('control-width');
+    const flipInput = document.getElementById('control-flip');
+    const outLeft = document.getElementById('out-left');
+    const outTop = document.getElementById('out-top');
+    const outWidth = document.getElementById('out-width');
+
+    function currentSceneData() {
+      return state.scenes[state.currentScene];
+    }
+
+    function currentElements() {
+      return currentSceneData().elements;
+    }
+
+    function formatPercent(value) {
+      return `${Number(value).toFixed(1)}%`;
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function setSelected(key) {
+      state.selectedKey = key;
+      renderControls();
+      renderElementButtons();
+    }
+
+    function renderElementButtons() {
+      elementList.innerHTML = '';
+      Object.entries(currentElements()).forEach(([key, element]) => {
+        const button = document.createElement('button');
+        button.className = `element-item${state.selectedKey === key ? ' primary' : ''}`;
+        button.textContent = element.label;
+        button.addEventListener('click', () => setSelected(key));
+        elementList.appendChild(button);
+      });
+    }
+
+    function renderControls() {
+      const element = currentElements()[state.selectedKey];
+      if (!element) return;
+      leftInput.value = element.l;
+      topInput.value = element.t;
+      widthInput.value = element.w;
+      flipInput.checked = !!element.flip;
+      outLeft.textContent = formatPercent(element.l);
+      outTop.textContent = formatPercent(element.t);
+      outWidth.textContent = formatPercent(element.w);
+    }
+
+    function makeDraggable(node, onMove) {
+      let dragState = null;
+
+      const onPointerMove = (event) => {
+        if (!dragState) return;
+        const rect = preview.getBoundingClientRect();
+        const l = clamp(((event.clientX - rect.left) / rect.width) * 100, 0, 100);
+        const t = clamp(((event.clientY - rect.top) / rect.height) * 100, 0, 100);
+        onMove(l, t);
+      };
+
+      const endDrag = () => {
+        dragState = null;
+        node.classList.remove('dragging');
+        window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('pointerup', endDrag);
+        window.removeEventListener('pointercancel', endDrag);
+      };
+
+      node.addEventListener('pointerdown', (event) => {
+        event.preventDefault();
+        dragState = true;
+        node.classList.add('dragging');
+        window.addEventListener('pointermove', onPointerMove);
+        window.addEventListener('pointerup', endDrag);
+        window.addEventListener('pointercancel', endDrag);
+      });
+    }
+
+    function renderPath() {
+      pathLayer.innerHTML = '';
+      const scene = currentSceneData();
+
+      if (state.currentScene === 'nirvighnam' && scene.line) {
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', scene.line.x1);
+        line.setAttribute('y1', scene.line.y1);
+        line.setAttribute('x2', scene.line.x2);
+        line.setAttribute('y2', scene.line.y2);
+        line.setAttribute('stroke', 'rgba(255,255,255,0.28)');
+        line.setAttribute('stroke-width', '0.6');
+        line.setAttribute('stroke-dasharray', '1.5 2');
+        pathLayer.appendChild(line);
+      }
+
+      scene.path.forEach((point, index) => {
+        const pointNode = document.createElement('div');
+        pointNode.className = 'point';
+        pointNode.dataset.label = `${scene.pathName} ${index + 1}`;
+        pointNode.style.left = `${point.l}%`;
+        pointNode.style.top = `${point.t}%`;
+        makeDraggable(pointNode, (l, t) => {
+          point.l = l;
+          point.t = t;
+          renderPreview();
+        });
+        preview.appendChild(pointNode);
+      });
+    }
+
+    function renderPreview() {
+      preview.querySelectorAll('.asset, .point').forEach((node) => node.remove());
+      preview.style.backgroundImage = `url("${currentSceneData().background}")`;
+      guides.classList.toggle('show', document.getElementById('show-guides').checked);
+
+      Object.entries(currentElements()).forEach(([key, element]) => {
+        const asset = document.createElement('div');
+        asset.className = 'asset';
+        asset.style.left = `${element.l}%`;
+        asset.style.top = `${element.t}%`;
+        asset.style.width = `${element.w}%`;
+        asset.style.transform = `translate(-50%, -50%) scaleX(${element.flip ? -1 : 1})`;
+        asset.style.zIndex = key === 'bridge' ? 6 : key === 'beaver' ? 15 : 20;
+
+        if (element.type === 'image') {
+          const img = document.createElement('img');
+          img.src = element.src;
+          img.alt = element.label;
+          asset.appendChild(img);
+        } else {
+          const emoji = document.createElement('div');
+          emoji.className = 'emoji';
+          emoji.textContent = element.emoji;
+          asset.appendChild(emoji);
+        }
+
+        const label = document.createElement('div');
+        label.className = 'label';
+        label.textContent = element.label;
+        asset.appendChild(label);
+
+        makeDraggable(asset, (l, t) => {
+          element.l = l;
+          element.t = t;
+          if (state.selectedKey === key) renderControls();
+          renderPreview();
+        });
+
+        asset.addEventListener('click', () => setSelected(key));
+        preview.appendChild(asset);
+      });
+
+      renderPath();
+      refreshExport();
+    }
+
+    function refreshExport() {
+      const nir = state.scenes.nirvighnam;
+      const kuru = state.scenes.kurumedeva;
+
+      const text = `export const NIRVIGHNAM_LAYOUT = {
+  turtleStart: { l: ${nir.elements.turtle.l.toFixed(1)}, t: ${nir.elements.turtle.t.toFixed(1)} },
+  turtleWidth: ${nir.elements.turtle.w.toFixed(1)},
+  turtleFlip: ${!!nir.elements.turtle.flip},
+  nest: { l: ${nir.elements.nest.l.toFixed(1)}, t: ${nir.elements.nest.t.toFixed(1)}, w: ${nir.elements.nest.w.toFixed(1)}, flip: ${!!nir.elements.nest.flip} },
+  obstacles: [
+    { id: 'stone', l: ${nir.elements.stone.l.toFixed(1)}, t: ${nir.elements.stone.t.toFixed(1)}, w: ${nir.elements.stone.w.toFixed(1)}, label: 'stone', flip: ${!!nir.elements.stone.flip} },
+    { id: 'branch', l: ${nir.elements.branch.l.toFixed(1)}, t: ${nir.elements.branch.t.toFixed(1)}, w: ${nir.elements.branch.w.toFixed(1)}, label: 'branch', flip: ${!!nir.elements.branch.flip} },
+    { id: 'reed', l: ${nir.elements.reed.l.toFixed(1)}, t: ${nir.elements.reed.t.toFixed(1)}, w: ${nir.elements.reed.w.toFixed(1)}, label: 'reeds', flip: ${!!nir.elements.reed.flip} },
+  ],
+  swimPath: [
+${nir.path.map((point) => `    { l: ${point.l.toFixed(1)}, t: ${point.t.toFixed(1)} },`).join('\n')}
+  ],
+  pathLine: {
+    x1: ${nir.line.x1},
+    y1: ${nir.line.y1},
+    x2: ${nir.line.x2},
+    y2: ${nir.line.y2},
+  },
+};
+
+export const KURUMEDEVA_LAYOUT = {
+  bridge: { l: ${kuru.elements.bridge.l.toFixed(1)}, t: ${kuru.elements.bridge.t.toFixed(1)}, w: ${kuru.elements.bridge.w.toFixed(1)}, flip: ${!!kuru.elements.bridge.flip} },
+  beaver: { w: ${kuru.elements.beaver.w.toFixed(1)}, flip: ${!!kuru.elements.beaver.flip} },
+  friends: [
+    { id: 'turtle', label: 'Turtle', brings: 'logs', l: ${kuru.elements.turtle.l.toFixed(1)}, t: ${kuru.elements.turtle.t.toFixed(1)}, w: ${kuru.elements.turtle.w.toFixed(1)}, flip: ${!!kuru.elements.turtle.flip} },
+    { id: 'bird', label: 'Bird', brings: 'vines', l: ${kuru.elements.bird.l.toFixed(1)}, t: ${kuru.elements.bird.t.toFixed(1)}, w: ${kuru.elements.bird.w.toFixed(1)}, flip: ${!!kuru.elements.bird.flip} },
+    { id: 'squirrel', label: 'Squirrel', brings: 'pegs', l: ${kuru.elements.squirrel.l.toFixed(1)}, t: ${kuru.elements.squirrel.t.toFixed(1)}, w: ${kuru.elements.squirrel.w.toFixed(1)}, flip: ${!!kuru.elements.squirrel.flip} },
+    { id: 'bunny', label: 'Bunny', brings: 'planks', l: ${kuru.elements.bunny.l.toFixed(1)}, t: ${kuru.elements.bunny.t.toFixed(1)}, w: ${kuru.elements.bunny.w.toFixed(1)}, flip: ${!!kuru.elements.bunny.flip} },
+  ],
+  beaverPath: [
+${kuru.path.map((point) => `    { l: ${point.l.toFixed(1)}, t: ${point.t.toFixed(1)} },`).join('\n')}
+  ],
+};`;
+
+      exportBox.value = text;
+    }
+
+    function bindControls() {
+      leftInput.addEventListener('input', () => {
+        const element = currentElements()[state.selectedKey];
+        if (!element) return;
+        element.l = Number(leftInput.value);
+        outLeft.textContent = formatPercent(element.l);
+        renderPreview();
+      });
+
+      topInput.addEventListener('input', () => {
+        const element = currentElements()[state.selectedKey];
+        if (!element) return;
+        element.t = Number(topInput.value);
+        outTop.textContent = formatPercent(element.t);
+        renderPreview();
+      });
+
+      widthInput.addEventListener('input', () => {
+        const element = currentElements()[state.selectedKey];
+        if (!element) return;
+        element.w = Number(widthInput.value);
+        outWidth.textContent = formatPercent(element.w);
+        renderPreview();
+      });
+
+      flipInput.addEventListener('change', () => {
+        const element = currentElements()[state.selectedKey];
+        if (!element) return;
+        element.flip = flipInput.checked;
+        renderPreview();
+      });
+
+      document.querySelectorAll('.tab').forEach((button) => {
+        button.addEventListener('click', () => {
+          document.querySelectorAll('.tab').forEach((node) => node.classList.remove('active'));
+          button.classList.add('active');
+          state.currentScene = button.dataset.scene;
+          state.selectedKey = Object.keys(currentElements())[0];
+          renderElementButtons();
+          renderControls();
+          renderPreview();
+        });
+      });
+
+      document.getElementById('show-guides').addEventListener('change', renderPreview);
+      document.getElementById('refresh-export').addEventListener('click', refreshExport);
+      document.getElementById('copy-export').addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(exportBox.value);
+        } catch (error) {
+          console.warn('Clipboard unavailable', error);
+        }
+      });
+
+      document.getElementById('reset-scene').addEventListener('click', () => {
+        if (state.currentScene === 'nirvighnam') {
+          state.scenes.nirvighnam = JSON.parse(JSON.stringify({
+            background: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/bg.png',
+            elements: {
+              turtle: { label: 'Turtle', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/nir-turtle-happy.png', l: 12, t: 58, w: 9, flip: false },
+              nest: { label: 'Nest', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/nest.png', l: 84, t: 56, w: 12, flip: false },
+              stone: { label: 'Stone', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/stone.png', l: 34, t: 54, w: 10, flip: false },
+              branch: { label: 'Branch', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/branch.png', l: 52, t: 50, w: 9, flip: false },
+              reed: { label: 'Reed', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/reed.png', l: 70, t: 52, w: 11, flip: false },
+            },
+            pathName: 'swimPath',
+            path: [{ l: 30, t: 50 }, { l: 50, t: 52 }, { l: 68, t: 50 }, { l: 82, t: 56 }],
+            line: { x1: 16, y1: 60, x2: 84, y2: 58 },
+          }));
+        } else {
+          state.scenes.kurumedeva = JSON.parse(JSON.stringify({
+            background: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/bg.png',
+            elements: {
+              bridge: { label: 'Bridge', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Kurumedeva/step4.png', l: 50, t: 56, w: 52, flip: false },
+              beaver: { label: 'Beaver', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Kurumedeva/beaver-happy.png', l: 18, t: 68, w: 8, flip: false },
+              turtle: { label: 'Turtle', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Kurumedeva/turtle.png', l: 72, t: 62, w: 10, flip: false },
+              bird: { label: 'Bird', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Kurumedeva/bird.png', l: 78, t: 55, w: 10, flip: false },
+              squirrel: { label: 'Squirrel', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Kurumedeva/squirrel.png', l: 74, t: 65, w: 10, flip: false },
+              bunny: { label: 'Bunny', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Kurumedeva/bunny.png', l: 80, t: 60, w: 10, flip: false },
+            },
+            pathName: 'beaverPath',
+            path: [{ l: 18, t: 68 }, { l: 32, t: 65 }, { l: 48, t: 63 }, { l: 62, t: 64 }, { l: 76, t: 66 }],
+          }));
+        }
+        state.selectedKey = Object.keys(currentElements())[0];
+        renderElementButtons();
+        renderControls();
+        renderPreview();
+      });
+    }
+
+    bindControls();
+    state.selectedKey = 'turtle';
+    renderElementButtons();
+    renderControls();
+    renderPreview();
+  </script>
+</body>
+</html>
+
+
+
+

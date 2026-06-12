@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mahakaya Layout Editor</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #efe9df;
+      color: #2d2350;
+    }
+    .app {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      min-height: 100vh;
+    }
+    .panel {
+      padding: 16px;
+      border-right: 1px solid #ddd2c5;
+      background: #fffaf3;
+      overflow: auto;
+    }
+    .panel h1 {
+      margin: 0 0 12px;
+      font-size: 20px;
+    }
+    .panel h2 {
+      margin: 18px 0 8px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .group {
+      padding: 10px;
+      border: 1px solid #eadfcf;
+      border-radius: 12px;
+      background: #fff;
+      margin-bottom: 10px;
+    }
+    .field {
+      display: grid;
+      grid-template-columns: 44px 1fr 54px;
+      align-items: center;
+      gap: 8px;
+      margin: 6px 0;
+      font-size: 12px;
+    }
+    .field input[type="range"] { width: 100%; }
+    .field output {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    .btns {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    button {
+      border: 0;
+      border-radius: 10px;
+      background: #6a78d1;
+      color: #fff;
+      padding: 10px 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button.secondary {
+      background: #e9e0f8;
+      color: #534276;
+    }
+    textarea {
+      width: 100%;
+      min-height: 180px;
+      margin-top: 12px;
+      border-radius: 10px;
+      border: 1px solid #d8cfe7;
+      padding: 10px;
+      font-family: Consolas, monospace;
+      font-size: 12px;
+    }
+    .stage-wrap {
+      padding: 16px;
+      overflow: auto;
+    }
+    .stage {
+      position: relative;
+      width: min(1180px, calc(100vw - 360px));
+      aspect-ratio: 1180 / 820;
+      margin: 0 auto;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 18px 48px rgba(63, 42, 96, 0.18);
+      background: #d9cef2 center/cover no-repeat;
+    }
+    .el {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      user-select: none;
+      -webkit-user-drag: none;
+      cursor: grab;
+    }
+    .el img,
+    .el svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: contain;
+      pointer-events: none;
+    }
+    .el.is-dragging,
+    .tracker.is-dragging,
+    .target.is-dragging {
+      cursor: grabbing;
+      filter: drop-shadow(0 0 0 2px rgba(106, 120, 209, 0.35));
+    }
+    .tracker {
+      position: absolute;
+      display: flex;
+      gap: 5px;
+      padding: 4px 6px;
+      border-radius: 12px;
+      background: rgba(248, 244, 255, 0.5);
+      box-shadow: 0 6px 16px rgba(70, 54, 110, 0.08);
+      backdrop-filter: blur(6px);
+      cursor: grab;
+    }
+    .tracker .pill {
+      font-weight: 700;
+      font-size: 14px;
+      padding: 4px 10px;
+      border-radius: 10px;
+      background: #d8d3e7;
+      color: #8b88a0;
+    }
+    .tracker .pill.lit {
+      background: linear-gradient(180deg, #f7c45b 0%, #f0a73a 100%);
+      color: #333;
+    }
+    .rope-svg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 14;
+    }
+    .rope-svg path.main {
+      fill: none;
+      stroke: #d19159;
+      stroke-width: 0.95;
+      stroke-linecap: round;
+    }
+    .rope-svg path.highlight {
+      fill: none;
+      stroke: #efc392;
+      stroke-width: 0.48;
+      stroke-linecap: round;
+      stroke-dasharray: 0.01 2.2;
+      opacity: 0.82;
+    }
+    .target {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      aspect-ratio: 1;
+      border: 3px dashed rgba(255, 213, 141, 0.95);
+      border-radius: 999px;
+      box-shadow: 0 0 0 6px rgba(255, 245, 214, 0.18);
+      cursor: grab;
+    }
+    .legend {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #6a5b84;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="panel">
+      <h1>Mahakaya Layout Editor</h1>
+      <div class="legend">Drag directly on the stage or use sliders, then copy the JSON.</div>
+
+      <h2>Tracker</h2>
+      <div class="group" id="tracker-controls"></div>
+
+      <h2>Objects</h2>
+      <div class="group" id="object-controls"></div>
+
+      <div class="btns">
+        <button id="resetBtn" type="button">Reset</button>
+        <button id="copyBtn" type="button" class="secondary">Copy JSON</button>
+      </div>
+
+      <textarea id="jsonOut" spellcheck="false"></textarea>
+    </aside>
+
+    <main class="stage-wrap">
+      <div class="stage" id="stage">
+        <svg class="rope-svg" id="ropeSvg" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path class="main" id="ropeMain"></path>
+          <path class="highlight" id="ropeHighlight"></path>
+          <path class="main" id="pullMain"></path>
+          <path class="highlight" id="pullHighlight"></path>
+        </svg>
+
+        <div class="tracker" id="tracker">
+          <span class="pill lit">ma</span>
+          <span class="pill">ha</span>
+          <span class="pill">ka</span>
+          <span class="pill">ya</span>
+        </div>
+
+        <div class="target" id="target"></div>
+
+        <div class="el" id="calfPinned">
+          <img src="../src/zones/shloka-river/scenes/Scene1/assets/images/mahakaya/calf-pinned.webp" alt="">
+        </div>
+        <div class="el" id="calfFree">
+          <img src="../src/zones/shloka-river/scenes/Scene1/assets/images/mahakaya/calf-free.webp" alt="">
+        </div>
+        <div class="el" id="logRest">
+          <img src="../src/zones/shloka-river/scenes/Scene1/assets/images/mahakaya/log-heavy.webp" alt="">
+        </div>
+        <div class="el" id="logGround">
+          <img src="../src/zones/shloka-river/scenes/Scene1/assets/images/mahakaya/log-heavy.webp" alt="">
+        </div>
+        <div class="el" id="ropeKnob"></div>
+        <div class="el" id="pullHandle"></div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const gripSvg = `
+      <svg viewBox="0 0 120 44" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="mahaGripWoodEditor" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#d49a66" />
+            <stop offset="22%" stop-color="#ebbc8b" />
+            <stop offset="48%" stop-color="#d49a66" />
+            <stop offset="74%" stop-color="#ebbc8b" />
+            <stop offset="100%" stop-color="#bc7f4f" />
+          </linearGradient>
+          <linearGradient id="mahaGripCapEditor" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#cf9560" />
+            <stop offset="100%" stop-color="#a96f45" />
+          </linearGradient>
+        </defs>
+        <rect x="18" y="12" width="84" height="20" rx="10" fill="url(#mahaGripWoodEditor)" />
+        <rect x="8" y="6" width="16" height="32" rx="8" fill="url(#mahaGripCapEditor)" />
+        <rect x="96" y="6" width="16" height="32" rx="8" fill="url(#mahaGripCapEditor)" />
+        <path d="M26 16 H94" stroke="rgba(255,255,255,0.22)" stroke-width="2.5" stroke-linecap="round" />
+        <path d="M26 28 H94" stroke="rgba(120,72,34,0.18)" stroke-width="2.5" stroke-linecap="round" />
+      </svg>`;
+
+    const defaults = {
+      background: '../src/zones/shloka-river/scenes/Scene1/assets/images/riverbg-new.png',
+      tracker: { left: 16, top: 66, scale: 1 },
+      objects: {
+        ropeAnchor: { left: 31, top: 22 },
+        ropeKnob: { left: 45, top: 38, width: 6.6 },
+        pullHandle: { left: 31, top: 32, width: 6 },
+        logRest: { left: 38, top: 52, width: 18 },
+        logGround: { left: 54, top: 34, width: 18 },
+        calfPinned: { left: 36, top: 60, width: 17, opacity: 1 },
+        calfFree: { left: 36, top: 60, width: 17, opacity: 0.35 },
+        target: { left: 38, top: 52, width: 10 },
+        pullBottom: { top: 78 },
+        logLiftY: { top: 34 }
+      }
+    };
+
+    const state = JSON.parse(JSON.stringify(defaults));
+    const stage = document.getElementById('stage');
+    const tracker = document.getElementById('tracker');
+    const jsonOut = document.getElementById('jsonOut');
+    const objectIds = ['ropeAnchor', 'ropeKnob', 'pullHandle', 'logRest', 'logGround', 'calfPinned', 'calfFree', 'target', 'pullBottom', 'logLiftY'];
+    let dragState = null;
+
+    document.getElementById('ropeKnob').innerHTML = gripSvg;
+    document.getElementById('pullHandle').innerHTML = gripSvg;
+
+    function addField(container, label, min, max, step, value, onInput) {
+      const row = document.createElement('label');
+      row.className = 'field';
+      row.innerHTML = `<span>${label}</span><input type="range" min="${min}" max="${max}" step="${step}" value="${value}"><output>${value}</output>`;
+      const input = row.querySelector('input');
+      const output = row.querySelector('output');
+      input.addEventListener('input', () => {
+        output.value = input.value;
+        onInput(Number(input.value));
+        render();
+      });
+      container.appendChild(row);
+    }
+
+    function buildControls() {
+      const trackerControls = document.getElementById('tracker-controls');
+      const objectControls = document.getElementById('object-controls');
+
+      addField(trackerControls, 'L', 0, 250, 0.5, state.tracker.left, (v) => state.tracker.left = v);
+      addField(trackerControls, 'T', 0, 250, 0.5, state.tracker.top, (v) => state.tracker.top = v);
+      addField(trackerControls, 'S', 0.6, 1.8, 0.02, state.tracker.scale, (v) => state.tracker.scale = v);
+
+      objectIds.forEach((id) => {
+        const cfg = state.objects[id];
+        const title = document.createElement('div');
+        title.style.margin = '10px 0 4px';
+        title.style.fontWeight = '700';
+        title.textContent = id;
+        objectControls.appendChild(title);
+        if ('left' in cfg) addField(objectControls, 'L', 0, 100, 0.5, cfg.left, (v) => cfg.left = v);
+        if ('top' in cfg) addField(objectControls, 'T', 0, 100, 0.5, cfg.top, (v) => cfg.top = v);
+        if ('width' in cfg) addField(objectControls, 'W', 1, 30, 0.5, cfg.width, (v) => cfg.width = v);
+        if ('opacity' in cfg) addField(objectControls, 'O', 0.05, 1, 0.05, cfg.opacity, (v) => cfg.opacity = v);
+      });
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function pathFor(x1, y1, x2, y2, sag = 0) {
+      const midX = (x1 + x2) / 2;
+      const midY = (y1 + y2) / 2;
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const distance = Math.hypot(dx, dy);
+      const sagY = sag || Math.min(14, Math.max(4, distance * 0.12));
+      const controlX = midX + dx * 0.04;
+      const controlY = midY + sagY;
+      return `M ${x1} ${y1} Q ${controlX} ${controlY} ${x2} ${y2}`;
+    }
+
+    function bindDragTargets() {
+      tracker.dataset.dragType = 'tracker';
+      tracker.onpointerdown = startDrag;
+
+      ['calfPinned', 'calfFree', 'logRest', 'logGround', 'ropeKnob', 'pullHandle'].forEach((id) => {
+        const el = document.getElementById(id);
+        el.dataset.dragType = 'object';
+        el.dataset.dragKey = id;
+        el.onpointerdown = startDrag;
+      });
+
+      const target = document.getElementById('target');
+      target.dataset.dragType = 'object';
+      target.dataset.dragKey = 'target';
+      target.onpointerdown = startDrag;
+    }
+
+    function setDraggingClass(target, active) {
+      if (!target) return;
+      target.classList.toggle('is-dragging', active);
+    }
+
+    function startDrag(event) {
+      event.preventDefault();
+      const target = event.currentTarget;
+      dragState = {
+        type: target.dataset.dragType,
+        key: target.dataset.dragKey || 'tracker',
+        target
+      };
+      setDraggingClass(target, true);
+    }
+
+    function handleDragMove(event) {
+      if (!dragState) return;
+      const rect = stage.getBoundingClientRect();
+      const xPct = clamp(((event.clientX - rect.left) / rect.width) * 100, 0, 100);
+      const yPct = clamp(((event.clientY - rect.top) / rect.height) * 100, 0, 100);
+      const xPx = clamp(event.clientX - rect.left, 0, rect.width);
+      const yPx = clamp(event.clientY - rect.top, 0, rect.height);
+
+      if (dragState.type === 'tracker') {
+        state.tracker.left = Math.round(xPx * 10) / 10;
+        state.tracker.top = Math.round(yPx * 10) / 10;
+      } else {
+        const cfg = state.objects[dragState.key];
+        if ('left' in cfg) cfg.left = Math.round(xPct * 10) / 10;
+        if ('top' in cfg) cfg.top = Math.round(yPct * 10) / 10;
+      }
+
+      render();
+      updateControlValues();
+    }
+
+    function stopDrag() {
+      if (!dragState) return;
+      setDraggingClass(dragState.target, false);
+      dragState = null;
+    }
+
+    function updateControlValues() {
+      const trackerControls = document.querySelectorAll('#tracker-controls .field input');
+      if (trackerControls[0]) trackerControls[0].value = state.tracker.left;
+      if (trackerControls[1]) trackerControls[1].value = state.tracker.top;
+      if (trackerControls[2]) trackerControls[2].value = state.tracker.scale;
+
+      const fields = document.querySelectorAll('#object-controls .field input');
+      let pointer = 0;
+      objectIds.forEach((id) => {
+        const cfg = state.objects[id];
+        if ('left' in cfg) { if (fields[pointer]) fields[pointer].value = cfg.left; pointer += 1; }
+        if ('top' in cfg) { if (fields[pointer]) fields[pointer].value = cfg.top; pointer += 1; }
+        if ('width' in cfg) { if (fields[pointer]) fields[pointer].value = cfg.width; pointer += 1; }
+        if ('opacity' in cfg) { if (fields[pointer]) fields[pointer].value = cfg.opacity; pointer += 1; }
+      });
+
+      document.querySelectorAll('.field').forEach((row) => {
+        const input = row.querySelector('input');
+        const output = row.querySelector('output');
+        if (input && output) output.value = input.value;
+      });
+    }
+
+    function renderObject(id) {
+      const el = document.getElementById(id);
+      const cfg = state.objects[id];
+      el.style.left = `${cfg.left}%`;
+      el.style.top = `${cfg.top}%`;
+      if ('width' in cfg) el.style.width = `${cfg.width}%`;
+      el.style.opacity = cfg.opacity ?? 1;
+    }
+
+    function render() {
+      stage.style.backgroundImage = `url(${defaults.background})`;
+
+      tracker.style.left = `${state.tracker.left}px`;
+      tracker.style.top = `${state.tracker.top}px`;
+      tracker.style.transform = `scale(${state.tracker.scale})`;
+      tracker.style.transformOrigin = 'top left';
+
+      ['calfPinned', 'calfFree', 'logRest', 'logGround', 'ropeKnob', 'pullHandle'].forEach(renderObject);
+
+      const target = document.getElementById('target');
+      target.style.left = `${state.objects.target.left}%`;
+      target.style.top = `${state.objects.target.top}%`;
+      target.style.width = `${state.objects.target.width}%`;
+
+      const anchor = state.objects.ropeAnchor;
+      const knob = state.objects.ropeKnob;
+      const logRest = state.objects.logRest;
+      const pullHandle = state.objects.pullHandle;
+      const pullBottom = state.objects.pullBottom.top;
+
+      const ropePath = pathFor(anchor.left, anchor.top, knob.left, knob.top);
+      const pullPath = pathFor(anchor.left, anchor.top, anchor.left, pullBottom);
+      const attachPath = pathFor(anchor.left, anchor.top, logRest.left, logRest.top);
+
+      document.getElementById('ropeMain').setAttribute('d', ropePath);
+      document.getElementById('ropeHighlight').setAttribute('d', ropePath);
+      document.getElementById('pullMain').setAttribute('d', pullPath);
+      document.getElementById('pullHighlight').setAttribute('d', pullPath);
+
+      document.getElementById('pullHandle').style.left = `${pullHandle.left}%`;
+      document.getElementById('pullHandle').style.top = `${pullHandle.top}%`;
+
+      jsonOut.value = JSON.stringify({
+        background: defaults.background,
+        tracker: state.tracker,
+        objects: state.objects,
+        ropeToLogPreview: attachPath
+      }, null, 2);
+
+      bindDragTargets();
+    }
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      Object.assign(state, JSON.parse(JSON.stringify(defaults)));
+      location.reload();
+    });
+
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      await navigator.clipboard.writeText(jsonOut.value);
+    });
+
+    window.addEventListener('pointermove', handleDragMove);
+    window.addEventListener('pointerup', stopDrag);
+    window.addEventListener('pointercancel', stopDrag);
+
+    buildControls();
+    render();
+  </script>
+</body>
+</html>

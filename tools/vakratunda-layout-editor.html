@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vakratunda Layout Editor</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #efe9df;
+      color: #2d2350;
+    }
+    .app {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      min-height: 100vh;
+    }
+    .panel {
+      padding: 16px;
+      border-right: 1px solid #ddd2c5;
+      background: #fffaf3;
+      overflow: auto;
+    }
+    .panel h1 {
+      margin: 0 0 12px;
+      font-size: 20px;
+    }
+    .panel h2 {
+      margin: 18px 0 8px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .group {
+      padding: 10px;
+      border: 1px solid #eadfcf;
+      border-radius: 12px;
+      background: #fff;
+      margin-bottom: 10px;
+    }
+    .field {
+      display: grid;
+      grid-template-columns: 44px 1fr 54px;
+      align-items: center;
+      gap: 8px;
+      margin: 6px 0;
+      font-size: 12px;
+    }
+    .field input[type="range"] {
+      width: 100%;
+    }
+    .field output {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    .btns {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    button {
+      border: 0;
+      border-radius: 10px;
+      background: #6a78d1;
+      color: #fff;
+      padding: 10px 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button.secondary {
+      background: #e9e0f8;
+      color: #534276;
+    }
+    textarea {
+      width: 100%;
+      min-height: 180px;
+      margin-top: 12px;
+      border-radius: 10px;
+      border: 1px solid #d8cfe7;
+      padding: 10px;
+      font-family: Consolas, monospace;
+      font-size: 12px;
+    }
+    .stage-wrap {
+      padding: 16px;
+      overflow: auto;
+    }
+    .stage {
+      position: relative;
+      width: min(1180px, calc(100vw - 360px));
+      aspect-ratio: 1180 / 820;
+      margin: 0 auto;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 18px 48px rgba(63, 42, 96, 0.18);
+      background: #d9cef2 center/cover no-repeat;
+    }
+    .el {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      user-select: none;
+      -webkit-user-drag: none;
+      cursor: grab;
+    }
+    .el.is-dragging,
+    .label.is-dragging,
+    .slot.is-dragging,
+    .tracker.is-dragging {
+      cursor: grabbing;
+      filter: drop-shadow(0 0 0 2px rgba(106, 120, 209, 0.35));
+    }
+    .el img {
+      width: 100%;
+      display: block;
+      object-fit: contain;
+      pointer-events: none;
+    }
+    .tracker {
+      position: absolute;
+      display: flex;
+      gap: 5px;
+      padding: 4px 6px;
+      border-radius: 12px;
+      background: rgba(248, 244, 255, 0.5);
+      box-shadow: 0 6px 16px rgba(70, 54, 110, 0.08);
+      backdrop-filter: blur(6px);
+      cursor: grab;
+    }
+    .tracker .pill {
+      font-weight: 700;
+      font-size: 14px;
+      padding: 4px 10px;
+      border-radius: 10px;
+      background: #d8d3e7;
+      color: #8b88a0;
+    }
+    .tracker .pill.lit {
+      background: linear-gradient(180deg, #f7c45b 0%, #f0a73a 100%);
+      color: #333;
+    }
+    .slot {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      border: 3px dashed rgba(255,255,255,0.72);
+      border-radius: 999px;
+      cursor: grab;
+    }
+    .slot.is-next {
+      border-color: #ef9f27;
+    }
+    .ghost {
+      opacity: 0.35;
+    }
+    .label {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      font-size: 11px;
+      font-weight: 700;
+      color: #4f3d78;
+      background: rgba(255,255,255,0.8);
+      padding: 3px 6px;
+      border-radius: 8px;
+      white-space: nowrap;
+      cursor: grab;
+    }
+    .legend {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #6a5b84;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="panel">
+      <h1>Vakratunda Layout Editor</h1>
+      <div class="legend">Adjust positions and sizes, then copy the JSON at the bottom.</div>
+
+      <h2>Tracker</h2>
+      <div class="group" id="tracker-controls"></div>
+
+      <h2>Objects</h2>
+      <div class="group" id="object-controls"></div>
+
+      <h2>Slots</h2>
+      <div class="group" id="slot-controls"></div>
+
+      <div class="btns">
+        <button id="resetBtn" type="button">Reset</button>
+        <button id="copyBtn" type="button" class="secondary">Copy JSON</button>
+      </div>
+
+      <textarea id="jsonOut" spellcheck="false"></textarea>
+    </aside>
+
+    <main class="stage-wrap">
+      <div class="stage" id="stage">
+        <div class="tracker" id="tracker">
+          <span class="pill lit">va</span>
+          <span class="pill">kra</span>
+          <span class="pill">tun</span>
+          <span class="pill">da</span>
+        </div>
+
+        <div class="el" id="frog">
+          <img src="../src/zones/shloka-river/scenes/Scene1/assets/images/vakratunda/frog-swim.webp" alt="">
+        </div>
+        <div class="el" id="family">
+          <img src="../src/zones/shloka-river/scenes/Scene1/assets/images/vakratunda/frog-family-from-download.png" alt="">
+        </div>
+        <div class="el" id="leaves">
+          <img src="../src/zones/shloka-river/scenes/Scene1/assets/images/vakratunda/lilypad.webp" alt="">
+        </div>
+        <div class="el" id="stone">
+          <img src="../src/zones/shloka-river/scenes/Scene1/assets/images/vakratunda/stone-new.png" alt="">
+        </div>
+        <div class="el" id="log">
+          <img src="../src/zones/shloka-river/scenes/Scene1/assets/images/mahakaya/log-heavy.webp" alt="">
+        </div>
+        <div class="label" id="leavesLabel">Leaves</div>
+        <div class="label" id="stoneLabel">Stone</div>
+        <div class="label" id="logLabel">Log</div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const defaults = {
+      background: '../src/zones/shloka-river/scenes/Scene1/assets/images/riverbg-new.png',
+      tracker: { left: 16, top: 66, scale: 1 },
+      objects: {
+        frog: { left: 14, top: 65, width: 7 },
+        family: { left: 86, top: 60, width: 14 },
+        leaves: { left: 16, top: 80, width: 13, opacity: 1 },
+        stone: { left: 36, top: 82, width: 12, opacity: 0.35 },
+        log: { left: 56, top: 80, width: 14, opacity: 0.35 }
+      },
+      labels: {
+        leavesLabel: { left: 8, top: 88 },
+        stoneLabel: { left: 23, top: 89.5 },
+        logLabel: { left: 42, top: 89.5 }
+      },
+      slots: [
+        { left: 35, top: 57, width: 7.8, height: 9.8, next: true },
+        { left: 49, top: 52, width: 7.8, height: 9.8, next: false },
+        { left: 63, top: 54, width: 7.8, height: 9.8, next: false },
+        { left: 76, top: 60, width: 7.8, height: 9.8, next: false }
+      ]
+    };
+
+    const state = JSON.parse(JSON.stringify(defaults));
+    const stage = document.getElementById('stage');
+    const tracker = document.getElementById('tracker');
+    const jsonOut = document.getElementById('jsonOut');
+    let dragState = null;
+
+    const objects = ['frog', 'family', 'leaves', 'stone', 'log'];
+    const labelIds = ['leavesLabel', 'stoneLabel', 'logLabel'];
+
+    function addField(container, label, min, max, step, value, onInput) {
+      const row = document.createElement('label');
+      row.className = 'field';
+      row.innerHTML = `<span>${label}</span><input type="range" min="${min}" max="${max}" step="${step}" value="${value}"><output>${value}</output>`;
+      const input = row.querySelector('input');
+      const output = row.querySelector('output');
+      input.addEventListener('input', () => {
+        output.value = input.value;
+        onInput(Number(input.value));
+        render();
+      });
+      container.appendChild(row);
+    }
+
+    function buildControls() {
+      const trackerControls = document.getElementById('tracker-controls');
+      const objectControls = document.getElementById('object-controls');
+      const slotControls = document.getElementById('slot-controls');
+
+      addField(trackerControls, 'L', 0, 50, 0.5, state.tracker.left, (v) => state.tracker.left = v);
+      addField(trackerControls, 'T', 0, 30, 0.5, state.tracker.top, (v) => state.tracker.top = v);
+      addField(trackerControls, 'S', 0.6, 1.8, 0.02, state.tracker.scale, (v) => state.tracker.scale = v);
+
+      objects.forEach((id) => {
+        const title = document.createElement('div');
+        title.style.margin = '10px 0 4px';
+        title.style.fontWeight = '700';
+        title.textContent = id;
+        objectControls.appendChild(title);
+        addField(objectControls, 'L', 0, 100, 0.5, state.objects[id].left, (v) => state.objects[id].left = v);
+        addField(objectControls, 'T', 0, 100, 0.5, state.objects[id].top, (v) => state.objects[id].top = v);
+        addField(objectControls, 'W', 1, 30, 0.5, state.objects[id].width, (v) => state.objects[id].width = v);
+        if ('opacity' in state.objects[id]) {
+          addField(objectControls, 'O', 0.05, 1, 0.05, state.objects[id].opacity, (v) => state.objects[id].opacity = v);
+        }
+      });
+
+      labelIds.forEach((id) => {
+        const title = document.createElement('div');
+        title.style.margin = '10px 0 4px';
+        title.style.fontWeight = '700';
+        title.textContent = id;
+        objectControls.appendChild(title);
+        addField(objectControls, 'L', 0, 100, 0.5, state.labels[id].left, (v) => state.labels[id].left = v);
+        addField(objectControls, 'T', 0, 100, 0.5, state.labels[id].top, (v) => state.labels[id].top = v);
+      });
+
+      state.slots.forEach((slot, index) => {
+        const wrap = document.createElement('div');
+        wrap.style.marginBottom = '8px';
+        wrap.innerHTML = `<div style="margin:10px 0 4px;font-weight:700;">slot ${index + 1}</div>`;
+        slotControls.appendChild(wrap);
+        addField(slotControls, 'L', 0, 100, 0.5, slot.left, (v) => slot.left = v);
+        addField(slotControls, 'T', 0, 100, 0.5, slot.top, (v) => slot.top = v);
+        addField(slotControls, 'W', 1, 20, 0.2, slot.width, (v) => slot.width = v);
+        addField(slotControls, 'H', 1, 20, 0.2, slot.height, (v) => slot.height = v);
+      });
+    }
+
+    function renderSlots() {
+      stage.querySelectorAll('.slot').forEach((el) => el.remove());
+      state.slots.forEach((slot, index) => {
+        const el = document.createElement('div');
+        el.className = `slot${slot.next ? ' is-next' : ''}`;
+        el.style.left = `${slot.left}%`;
+        el.style.top = `${slot.top}%`;
+        el.style.width = `${slot.width}%`;
+        el.style.height = `${slot.height}%`;
+        el.title = `slot ${index + 1}`;
+        el.dataset.dragType = 'slot';
+        el.dataset.dragKey = String(index);
+        stage.appendChild(el);
+      });
+    }
+
+    function bindDragTargets() {
+      tracker.dataset.dragType = 'tracker';
+      tracker.dataset.dragKey = 'tracker';
+
+      tracker.onpointerdown = startDrag;
+
+      objects.forEach((id) => {
+        const el = document.getElementById(id);
+        el.dataset.dragType = 'object';
+        el.dataset.dragKey = id;
+        el.onpointerdown = startDrag;
+      });
+
+      labelIds.forEach((id) => {
+        const el = document.getElementById(id);
+        el.dataset.dragType = 'label';
+        el.dataset.dragKey = id;
+        el.onpointerdown = startDrag;
+      });
+
+      stage.querySelectorAll('.slot').forEach((el) => {
+        el.onpointerdown = startDrag;
+      });
+    }
+
+    function setDraggingClass(target, active) {
+      if (!target) return;
+      target.classList.toggle('is-dragging', active);
+    }
+
+    function startDrag(event) {
+      event.preventDefault();
+      const target = event.currentTarget;
+      dragState = {
+        type: target.dataset.dragType,
+        key: target.dataset.dragKey,
+        target
+      };
+      setDraggingClass(target, true);
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function syncOutputs() {
+      const outputs = document.querySelectorAll('.field');
+      outputs.forEach((row) => {
+        const input = row.querySelector('input');
+        const output = row.querySelector('output');
+        if (input && output) output.value = input.value;
+      });
+    }
+
+    function updateControlValues() {
+      const trackerControls = document.querySelectorAll('#tracker-controls .field input');
+      if (trackerControls[0]) trackerControls[0].value = state.tracker.left;
+      if (trackerControls[1]) trackerControls[1].value = state.tracker.top;
+      if (trackerControls[2]) trackerControls[2].value = state.tracker.scale;
+
+      const objectFields = document.querySelectorAll('#object-controls .field input');
+      let pointer = 0;
+      objects.forEach((id) => {
+        const cfg = state.objects[id];
+        if (objectFields[pointer]) objectFields[pointer].value = cfg.left;
+        pointer += 1;
+        if (objectFields[pointer]) objectFields[pointer].value = cfg.top;
+        pointer += 1;
+        if (objectFields[pointer]) objectFields[pointer].value = cfg.width;
+        pointer += 1;
+        if ('opacity' in cfg) {
+          if (objectFields[pointer]) objectFields[pointer].value = cfg.opacity;
+          pointer += 1;
+        }
+      });
+      labelIds.forEach((id) => {
+        const cfg = state.labels[id];
+        if (objectFields[pointer]) objectFields[pointer].value = cfg.left;
+        pointer += 1;
+        if (objectFields[pointer]) objectFields[pointer].value = cfg.top;
+        pointer += 1;
+      });
+
+      const slotFields = document.querySelectorAll('#slot-controls .field input');
+      let slotPointer = 0;
+      state.slots.forEach((slot) => {
+        if (slotFields[slotPointer]) slotFields[slotPointer].value = slot.left;
+        slotPointer += 1;
+        if (slotFields[slotPointer]) slotFields[slotPointer].value = slot.top;
+        slotPointer += 1;
+        if (slotFields[slotPointer]) slotFields[slotPointer].value = slot.width;
+        slotPointer += 1;
+        if (slotFields[slotPointer]) slotFields[slotPointer].value = slot.height;
+        slotPointer += 1;
+      });
+
+      syncOutputs();
+    }
+
+    function handleDragMove(event) {
+      if (!dragState) return;
+      const rect = stage.getBoundingClientRect();
+      const xPct = clamp(((event.clientX - rect.left) / rect.width) * 100, 0, 100);
+      const yPct = clamp(((event.clientY - rect.top) / rect.height) * 100, 0, 100);
+      const xPx = clamp(event.clientX - rect.left, 0, rect.width);
+      const yPx = clamp(event.clientY - rect.top, 0, rect.height);
+
+      if (dragState.type === 'tracker') {
+        state.tracker.left = Math.round(xPx * 10) / 10;
+        state.tracker.top = Math.round(yPx * 10) / 10;
+      } else if (dragState.type === 'object') {
+        const cfg = state.objects[dragState.key];
+        cfg.left = Math.round(xPct * 10) / 10;
+        cfg.top = Math.round(yPct * 10) / 10;
+      } else if (dragState.type === 'label') {
+        const cfg = state.labels[dragState.key];
+        cfg.left = Math.round(xPct * 10) / 10;
+        cfg.top = Math.round(yPct * 10) / 10;
+      } else if (dragState.type === 'slot') {
+        const cfg = state.slots[Number(dragState.key)];
+        cfg.left = Math.round(xPct * 10) / 10;
+        cfg.top = Math.round(yPct * 10) / 10;
+      }
+
+      render();
+      updateControlValues();
+    }
+
+    function stopDrag() {
+      if (!dragState) return;
+      setDraggingClass(dragState.target, false);
+      dragState = null;
+    }
+
+    function render() {
+      stage.style.backgroundImage = `url(${defaults.background})`;
+
+      tracker.style.left = `${state.tracker.left}px`;
+      tracker.style.top = `${state.tracker.top}px`;
+      tracker.style.transform = `scale(${state.tracker.scale})`;
+      tracker.style.transformOrigin = 'top left';
+
+      objects.forEach((id) => {
+        const el = document.getElementById(id);
+        const cfg = state.objects[id];
+        el.style.left = `${cfg.left}%`;
+        el.style.top = `${cfg.top}%`;
+        el.style.width = `${cfg.width}%`;
+        el.style.opacity = cfg.opacity ?? 1;
+      });
+
+      labelIds.forEach((id) => {
+        const el = document.getElementById(id);
+        const cfg = state.labels[id];
+        el.style.left = `${cfg.left}%`;
+        el.style.top = `${cfg.top}%`;
+      });
+
+      renderSlots();
+      bindDragTargets();
+      jsonOut.value = JSON.stringify(state, null, 2);
+    }
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      Object.assign(state, JSON.parse(JSON.stringify(defaults)));
+      location.reload();
+    });
+
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      await navigator.clipboard.writeText(jsonOut.value);
+    });
+
+    window.addEventListener('pointermove', handleDragMove);
+    window.addEventListener('pointerup', stopDrag);
+    window.addEventListener('pointercancel', stopDrag);
+
+    buildControls();
+    render();
+  </script>
+</body>
+</html>
