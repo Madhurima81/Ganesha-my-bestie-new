@@ -113,8 +113,8 @@ export const OPENING_MODALS = {
     },
 
     'nirvighnam-chant': {
-      title: "Clear the Path",
-      description: "Chant with steady rhythm and feel the way appear.",
+      title: "Clear the way. Call for help.",
+      description: "Two powers live by this river.",
       icons: ['nirvighnam', 'kurumedeva'],
       buttonText: "Let's Explore",
       character: 'ganesha-headphones'

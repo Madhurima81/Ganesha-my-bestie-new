@@ -812,6 +812,42 @@ export const SCENE_RESET_CONFIGS = {
   }
 },
 
+'nirvighnam-chant': {
+  initialPhase: 'initial',
+  initialFocus: 'welcome',
+  keepSymbols: {},
+  specificResets: {
+    phase: 'initial',
+    learnedWords: {
+      nirvighnam: false,
+      kurumedeva: false
+    },
+    chantedVerses: {},
+    learnedSyllables: {
+      nir: false,
+      vigh: false,
+      nam: false,
+      kuru: false,
+      me: false,
+      de: false,
+      va: false
+    },
+    unlockedApps: {},
+    welcomeShown: false,
+    currentPopup: null,
+    showingCompletionScreen: false,
+    stars: 0,
+    completed: false,
+    progress: {
+      percentage: 0,
+      starsEarned: 0,
+      completed: false
+    },
+    nirvighnamGameState: null,
+    kurumedevaGameState: null
+  }
+},
+
 'suryakoti-bank': {
   initialPhase: 'initial',
   initialFocus: 'welcome',

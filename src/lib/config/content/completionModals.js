@@ -53,8 +53,8 @@ export const COMPLETION_MODALS = {
     subtitle: 'Your words brought the light forward.'
   },
   'nirvighnam-chant': {
-    title: 'The Path Is Clear!',
-    subtitle: 'Your chant made the way appear.'
+    title: 'Two new powers unlocked!',
+    subtitle: 'Nirvighnam and Kurumedeva are yours.'
   },
   'sarvakaryeshu-chant': {
     title: 'Kindness Is Flowing!',

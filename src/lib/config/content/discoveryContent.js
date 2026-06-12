@@ -152,13 +152,13 @@ export const DISCOVERY_CONTENT = {
     'nirvighnam-chant': {
       nirvighnam: {
         title: "Nirvighnam",
-        affirmation: "I move forward.",
+        affirmation: "I clear the way and move forward.",
         icon: 'nirvighnam-complete'
       },
 
       kurumedeva: {
         title: "Kurumedeva",
-        affirmation: "I do my best.",
+        affirmation: "I ask for help and friends show up.",
         icon: 'kurumedeva-complete'
       }
     },

@@ -485,6 +485,8 @@ export const VOICE_SCRIPTS = {
     emotionalGlow: { file: 'sfx-emotional-glow.wav' },
     celebration: { file: 'sfx-celebration.wav' },
     idleHint: { file: 'sfx-idle-hint.wav' },
+    frogHop: { file: 'sfx-frog-hop.mp3' },
+    frogReunion: { file: 'sfx-frog-reunion.mp3' },
 
     // Legacy keys (kept for backward compatibility during migration)
     success: { file: 'sfx-success.wav' },
