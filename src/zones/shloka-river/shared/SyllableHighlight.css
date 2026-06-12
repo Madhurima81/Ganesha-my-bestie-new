@@ -1,17 +1,43 @@
 /* src/zones/shloka-river/shared/SyllableHighlight.css */
 
 .syl-row {
-  display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; padding-top: 8px;
+  position: absolute;
+  left: 16px;
+  top: 66px;
+  z-index: 32;
+  display: flex;
+  justify-content: flex-start;
+  gap: 5px;
+  flex-wrap: nowrap;
+  width: auto;
+  max-width: calc(100% - 32px);
+  padding: 4px 6px;
+  border-radius: 12px;
+  background: rgba(248, 244, 255, 0.5);
+  box-shadow: 0 6px 16px rgba(70, 54, 110, 0.08);
+  backdrop-filter: blur(6px);
 }
 .syl {
   font-family: 'Baloo 2', system-ui, sans-serif; font-weight: 600;
-  font-size: clamp(20px, 5vw, 34px); padding: 6px 16px; border-radius: 14px;
+  font-size: clamp(14px, 2vw, 22px); padding: 4px 10px; border-radius: 10px;
   background: #D8D3E7; color: #8B88A0;
   transition: all .4s ease;
 }
 .syl.lit {
   background: linear-gradient(180deg, #F7C45B 0%, #F0A73A 100%); color: #333;
-  transform: scale(1.08);
-  box-shadow: 0 0 18px rgba(240, 167, 58, .5);
+  transform: scale(1.04);
+  box-shadow: 0 0 10px rgba(240, 167, 58, .35);
+}
+@media (max-width: 820px) {
+  .syl-row {
+    left: 12px;
+    top: 60px;
+    gap: 4px;
+    padding: 4px 5px;
+    border-radius: 10px;
+  }
+  .syl {
+    padding: 4px 9px;
+  }
 }
 @media (prefers-reduced-motion: reduce) { .syl { transition: none; } }
