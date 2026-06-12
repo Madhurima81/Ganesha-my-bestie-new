@@ -54,7 +54,7 @@ import MahakayaRescueGame from './MahakayaRescueGame';
 import ganeshaHeadphones from './assets/images/ganesha_with_headphones.webp';
 
 // Images
-import riverBackground from './assets/images/rivergamebg.png';
+import riverBackground from './assets/images/riverbg-new.png';
 import mooshikaCoach from "./assets/images/mooshika-coach.webp";
 import banyanTree from './assets/images/banyan-full-from-download.webp';
 import symbolVakratunda from '../../../symbol-mountain/shared/images/icons/symbol-trunk-new.webp';
@@ -351,6 +351,7 @@ const VakratundaGroveContent = ({
       scene10_vak_blocked: 'Oh no... that way is blocked.',
       scene10_vak_make_path: "Let's make another path.",
       scene10_vak_drag_leaves: 'Drag the leaves onto the water.',
+      scene10_vak_drag_pieces: 'Drag them onto the water.',
       scene10_vak_crossed: 'The frog made it across.',
       scene10_vak_meaning: 'Vakratunda helps us find another way.',
       scene10_maha_intro: "Now let's help the little elephant.",
@@ -375,7 +376,7 @@ const VakratundaGroveContent = ({
       return;
     }
     if (sceneState.phase === PHASES.VAKRATUNDA_GAME) {
-      playGuidanceVoice('scene10_vak_tap_logs');
+      playGuidanceVoice('scene10_vak_drag_pieces');
       return;
     }
     if (sceneState.phase === PHASES.MAHAKAYA_GAME) {
@@ -906,7 +907,10 @@ const VakratundaGroveContent = ({
                 playVoice: playGuidanceVoice,
                 playSfx,
                 playWord: playWordAudio,
-                playSyllable: (syllable, onEnded) => playSyllable('vakratunda', syllable, onEnded),
+                playSyllable: (syllable, onEnded) => {
+                  stopAllVoice();
+                  playSyllable('vakratunda', syllable, onEnded);
+                },
                 stopVoice: stopAllVoice,
                 characterImage: mooshikaCoach
               }}
@@ -926,7 +930,10 @@ const VakratundaGroveContent = ({
                 playVoice: playGuidanceVoice,
                 playSfx,
                 playWord: playWordAudio,
-                playSyllable: (syllable, onEnded) => playSyllable('mahakaya', syllable, onEnded),
+                playSyllable: (syllable, onEnded) => {
+                  stopAllVoice();
+                  playSyllable('mahakaya', syllable, onEnded);
+                },
                 stopVoice: stopAllVoice,
                 characterImage: mooshikaCoach
               }}
