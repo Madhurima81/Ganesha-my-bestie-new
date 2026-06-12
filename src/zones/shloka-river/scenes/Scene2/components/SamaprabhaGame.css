@@ -1,0 +1,272 @@
+.sama-game {
+  position: absolute;
+  inset: 0;
+}
+
+.sama-game.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sama-stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  isolation: isolate;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.sama-skywash {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255,223,138,0.22), transparent 14%),
+    linear-gradient(180deg, rgba(3,8,19,0.10), rgba(3,8,19,0.32));
+}
+
+.sama-stage-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255,231,131,0.52), rgba(255,213,87,0.16) 22%, transparent 42%),
+    linear-gradient(180deg, rgba(255,225,122,0.04), rgba(255,225,122,0.12));
+  transition: opacity 0.3s ease;
+}
+
+.sama-stage-glow.is-done {
+  animation: samaGlowPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes samaGlowPulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+
+.sama-rays-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.sama-burst-ring {
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.sama-burst-ring-1 { animation: samaBurstRing 1.2s ease-out forwards; }
+.sama-burst-ring-2 { animation: samaBurstRing 1.4s ease-out 0.15s forwards; }
+
+@keyframes samaBurstRing {
+  0% { r: 8; opacity: 0.7; }
+  100% { r: 28; opacity: 0; }
+}
+
+.sama-beam {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.sama-beam svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.sama-snap-dots {
+  position: absolute;
+  top: 19%;
+  left: 0;
+  width: 100%;
+  height: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.sama-snap-dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  border: 1.5px solid rgba(255,255,255,0.35);
+  transform: translate(-50%, -50%);
+  transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.sama-snap-dot.is-lit {
+  background: rgba(255,220,80,0.65);
+  border-color: rgba(255,220,80,0.8);
+  box-shadow: 0 0 8px rgba(255,211,90,0.5);
+}
+
+.sama-snap-dot.is-current {
+  transform: translate(-50%, -50%) scale(1.5);
+  background: rgba(255,230,100,0.9);
+  box-shadow: 0 0 14px rgba(255,211,90,0.7);
+}
+
+.sama-bird {
+  position: absolute;
+  width: min(15vw, 155px);
+  aspect-ratio: 1 / 1;
+  z-index: 5;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  overflow: visible;
+  transition: filter 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+}
+
+.sama-bird.left { left: 22%; top: 60%; }
+.sama-bird.right { left: 78%; top: 59%; }
+
+.sama-bird-img {
+  width: 100%;
+  display: block;
+  position: absolute;
+  inset: 0;
+  user-select: none;
+  -webkit-user-drag: none;
+  mix-blend-mode: screen;
+  transition: opacity 0.28s ease;
+}
+
+.sama-bird-halo {
+  position: absolute;
+  inset: 15% 10% 10%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,223,138,0.55), rgba(255,223,138,0.12) 48%, transparent 70%);
+  filter: blur(7px);
+  z-index: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sama-bird--done .sama-bird-fly {
+  animation: samaBirdFlap 0.55s ease-in-out 3, samaBirdSettle 0.6s ease-out 1.65s forwards;
+}
+
+.sama-bird--warm,
+.sama-bird--done {
+  animation: samaBirdBob 2.2s ease-in-out infinite;
+}
+
+@keyframes samaBirdFlap {
+  0% { opacity: 0; transform: scale(0.95); }
+  30% { opacity: 1; transform: scale(1.08); }
+  70% { opacity: 1; transform: scale(1.04); }
+  100% { opacity: 0.7; transform: scale(1); }
+}
+
+@keyframes samaBirdSettle {
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes samaBirdBob {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+  50% { transform: translate(-50%, -50%) translateY(-4%); }
+}
+
+.sama-handle {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: clamp(48px, 5.5vw, 68px);
+  height: clamp(48px, 5.5vw, 68px);
+  z-index: 10;
+  pointer-events: none;
+  transition: left 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.sama-handle-core {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  transition: box-shadow 0.25s ease, transform 0.15s ease;
+}
+
+.sama-handle.is-dragging .sama-handle-core {
+  transform: scale(1.08);
+}
+
+.sama-handle.is-balanced .sama-handle-core {
+  box-shadow: none;
+  animation: samaHandlePulse 1.6s ease-in-out infinite;
+}
+
+@keyframes samaHandlePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+.sama-handle-sun-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 0 10px rgba(255,233,150,0.45));
+}
+
+.sama-handle-hit {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 16%;
+  transform: translateX(-50%);
+  z-index: 9;
+  cursor: grab;
+  touch-action: none;
+}
+
+.sama-handle-hit.is-disabled { pointer-events: none; }
+
+.sama-doneline {
+  position: absolute;
+  top: 38%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px) scale(0.96);
+  z-index: 12;
+  text-align: center;
+  color: #fffdf1;
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(20px, 3vw, 32px);
+  font-weight: 700;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.48);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.sama-doneline.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sama-bird,
+  .sama-bird-img,
+  .sama-bird-halo,
+  .sama-handle-core,
+  .sama-doneline,
+  .sama-stage-glow,
+  .sama-rays-svg,
+  .sama-snap-dot {
+    transition: none;
+    animation: none !important;
+  }
+}
