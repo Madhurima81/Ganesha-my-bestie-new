@@ -3,44 +3,89 @@ import SyllableHighlight from '../../shared/SyllableHighlight';
 import './KurumedevaGame.css';
 
 import bgImg from './assets/images/Nirvighnam/bg.png';
-import turtleImg from './assets/images/Kurumedeva/turtle.png';
-import birdImg from './assets/images/Kurumedeva/bird.png';
-import squirrelImg from './assets/images/Kurumedeva/squirrel.png';
-import bunnyImg from './assets/images/Kurumedeva/bunny.png';
-import beaverHappyImg from './assets/images/Kurumedeva/beaver-happy.png';
-import beaverSadImg from './assets/images/Kurumedeva/beaver-sad.png';
+
+import turtleCarryImg from './assets/images/Kurumedeva/turtle.png';
+import birdCarryImg from './assets/images/Kurumedeva/bird.png';
+import squirrelCarryImg from './assets/images/Kurumedeva/squirrel.png';
+import bunnyCarryImg from './assets/images/Kurumedeva/bunny.png';
+
+import turtleEmptyImg from './assets/images/Kurumedeva/turtle-empty.png';
+import birdEmptyImg from './assets/images/Kurumedeva/bird-empty.png';
+import squirrelEmptyImg from './assets/images/Kurumedeva/squirrel-empty.png';
+import bunnyEmptyImg from './assets/images/Kurumedeva/bunny-empty.png';
+
+import logObj from './assets/images/Kurumedeva/log-turtle.png';
+import vineObj from './assets/images/Kurumedeva/vine.png';
+import pegObj from './assets/images/Kurumedeva/peg-squirrel.png';
+import plankObj from './assets/images/Kurumedeva/plank-bunny.png';
+
 import step1Img from './assets/images/Kurumedeva/step1.png';
 import step2Img from './assets/images/Kurumedeva/step2.png';
 import step3Img from './assets/images/Kurumedeva/step3.png';
 import step4Img from './assets/images/Kurumedeva/step4.png';
+import beaverHappyImg from './assets/images/Kurumedeva/beaver-happy.png';
+import beaverSadImg from './assets/images/Kurumedeva/beaver-sad.png';
+
 import { KURUMEDEVA_LAYOUT } from './scene3LayoutConfig';
 
 const SYLLABLES = ['Ku', 'ru', 'me', 'de', 'va'];
+const BRIDGE_TARGET = {
+  l: KURUMEDEVA_LAYOUT.bridge.l,
+  t: KURUMEDEVA_LAYOUT.bridge.t,
+};
 
 const FRIENDS = [
   {
     ...KURUMEDEVA_LAYOUT.friends[0],
-    img: turtleImg,
+    label: 'Turtle',
+    brings: 'log',
+    carryImg: turtleCarryImg,
+    emptyImg: turtleEmptyImg,
+    objectImg: logObj,
     bridgeImg: step1Img,
-    pos: { l: KURUMEDEVA_LAYOUT.friends[0].l, t: KURUMEDEVA_LAYOUT.friends[0].t },
+    objectAnim: 'kuru-obj-roll',
+    objectW: 8,
+    objectOffset: { l: 6.5, t: 1.8 },
+    doneSpot: { l: 76, t: 70 },
   },
   {
     ...KURUMEDEVA_LAYOUT.friends[1],
-    img: birdImg,
+    label: 'Bird',
+    brings: 'vine',
+    carryImg: birdCarryImg,
+    emptyImg: birdEmptyImg,
+    objectImg: vineObj,
     bridgeImg: step2Img,
-    pos: { l: KURUMEDEVA_LAYOUT.friends[1].l, t: KURUMEDEVA_LAYOUT.friends[1].t },
+    objectAnim: 'kuru-obj-swoop',
+    objectW: 5,
+    objectOffset: { l: 4.4, t: -4.4 },
+    doneSpot: { l: 82, t: 59 },
   },
   {
     ...KURUMEDEVA_LAYOUT.friends[2],
-    img: squirrelImg,
+    label: 'Squirrel',
+    brings: 'pegs',
+    carryImg: squirrelCarryImg,
+    emptyImg: squirrelEmptyImg,
+    objectImg: pegObj,
     bridgeImg: step3Img,
-    pos: { l: KURUMEDEVA_LAYOUT.friends[2].l, t: KURUMEDEVA_LAYOUT.friends[2].t },
+    objectAnim: 'kuru-obj-tumble',
+    objectW: 6,
+    objectOffset: { l: 5.5, t: 1.4 },
+    doneSpot: { l: 82, t: 79 },
   },
   {
     ...KURUMEDEVA_LAYOUT.friends[3],
-    img: bunnyImg,
+    label: 'Bunny',
+    brings: 'planks',
+    carryImg: bunnyCarryImg,
+    emptyImg: bunnyEmptyImg,
+    objectImg: plankObj,
     bridgeImg: step4Img,
-    pos: { l: KURUMEDEVA_LAYOUT.friends[3].l, t: KURUMEDEVA_LAYOUT.friends[3].t },
+    objectAnim: 'kuru-obj-flip',
+    objectW: 7,
+    objectOffset: { l: 4.8, t: 1.3 },
+    doneSpot: { l: 87, t: 63 },
   },
 ];
 
@@ -58,18 +103,29 @@ export default function KurumedevaGame({
   const [bridgeStep, setBridgeStep] = useState(0);
   const [phase, setPhase] = useState('play');
   const [beaverPos, setBeaverPos] = useState(BEAVER_PATH[0]);
-  const [beaverStep, setBeaverStep] = useState(0);
-  const [tappedId, setTappedId] = useState(null);
   const [litCount, setLitCount] = useState(0);
+  const [tappedId, setTappedId] = useState(null);
+  const [friendImgStates, setFriendImgStates] = useState(() => FRIENDS.map(() => 'carry'));
+  const [objectPhases, setObjectPhases] = useState(() => FRIENDS.map(() => 'idle'));
+  const [friendPositions, setFriendPositions] = useState(() => FRIENDS.map((friend) => ({ l: friend.l, t: friend.t })));
 
   const timersRef = useRef([]);
   const doneCalledRef = useRef(false);
   const phaseRef = useRef('play');
+  const onPhaseCompleteRef = useRef(onPhaseComplete);
+  const onGameCompleteRef = useRef(onGameComplete);
+
+  useEffect(() => {
+    onPhaseCompleteRef.current = onPhaseComplete;
+    onGameCompleteRef.current = onGameComplete;
+  }, [onPhaseComplete, onGameComplete]);
+
   phaseRef.current = phase;
 
   const safeAfter = useCallback((ms, fn) => {
     const id = window.setTimeout(fn, ms);
     timersRef.current.push(id);
+    return id;
   }, []);
 
   const clearTimers = useCallback(() => {
@@ -84,9 +140,11 @@ export default function KurumedevaGame({
       setBridgeStep(0);
       setPhase('play');
       setBeaverPos(BEAVER_PATH[0]);
-      setBeaverStep(0);
-      setTappedId(null);
       setLitCount(0);
+      setTappedId(null);
+      setFriendImgStates(FRIENDS.map(() => 'carry'));
+      setObjectPhases(FRIENDS.map(() => 'idle'));
+      setFriendPositions(FRIENDS.map((friend) => ({ l: friend.l, t: friend.t })));
       doneCalledRef.current = false;
       phaseRef.current = 'play';
     }
@@ -94,55 +152,88 @@ export default function KurumedevaGame({
 
   useEffect(() => () => clearTimers(), [clearTimers]);
 
+  const moveFriendToDoneSpot = useCallback((friendIndex) => {
+    setFriendPositions((prev) => {
+      const next = [...prev];
+      next[friendIndex] = { ...FRIENDS[friendIndex].doneSpot };
+      return next;
+    });
+  }, []);
+
   const handleFriendTap = useCallback((friendIndex) => {
     if (isPaused || phaseRef.current !== 'play') return;
     if (friendIndex !== friendStep) return;
+    if (friendImgStates[friendIndex] !== 'carry') return;
 
     const friend = FRIENDS[friendIndex];
 
     setTappedId(friend.id);
-    safeAfter(400, () => setTappedId(null));
+    safeAfter(350, () => setTappedId(null));
 
-    safeAfter(300, () => {
+    safeAfter(180, () => {
+      setObjectPhases((prev) => {
+        const next = [...prev];
+        next[friendIndex] = 'flying';
+        return next;
+      });
+      setFriendImgStates((prev) => {
+        const next = [...prev];
+        next[friendIndex] = 'empty';
+        return next;
+      });
+    });
+
+    safeAfter(820, () => {
+      setObjectPhases((prev) => {
+        const next = [...prev];
+        next[friendIndex] = 'gone';
+        return next;
+      });
       setBridgeStep(friendIndex + 1);
-      onMicroWin?.();
+      window.setTimeout(() => onMicroWin?.(), 0);
       setLitCount(friendIndex + 1);
+    });
 
+    safeAfter(1220, () => {
+      moveFriendToDoneSpot(friendIndex);
+    });
+
+    safeAfter(1550, () => {
       const nextStep = friendIndex + 1;
       setFriendStep(nextStep);
 
-      if (nextStep === FRIENDS.length) {
-        safeAfter(600, () => {
+      if (nextStep >= FRIENDS.length) {
+        safeAfter(420, () => {
           setPhase('crossing');
           phaseRef.current = 'crossing';
           setLitCount(5);
         });
       }
     });
-  }, [friendStep, isPaused, onMicroWin, safeAfter]);
+  }, [friendStep, friendImgStates, isPaused, moveFriendToDoneSpot, onMicroWin, safeAfter]);
 
   useEffect(() => {
     if (phase !== 'crossing' || doneCalledRef.current) return;
+    doneCalledRef.current = true;
 
     BEAVER_PATH.forEach((pos, index) => {
       safeAfter(index * 520, () => {
         setBeaverPos(pos);
-        setBeaverStep(index);
-
         if (index === BEAVER_PATH.length - 1) {
-          safeAfter(600, () => {
-            if (doneCalledRef.current) return;
-            doneCalledRef.current = true;
-            setPhase('done');
-            safeAfter(800, () => {
-              onGameComplete?.();
-              onPhaseComplete?.();
-            });
-          });
+          safeAfter(600, () => setPhase('done'));
         }
       });
     });
-  }, [phase, safeAfter, onGameComplete, onPhaseComplete]);
+  }, [phase, safeAfter]);
+
+  useEffect(() => {
+    if (phase !== 'done') return;
+    const t = window.setTimeout(() => {
+      onGameCompleteRef.current?.();
+      onPhaseCompleteRef.current?.();
+    }, 800);
+    return () => window.clearTimeout(t);
+  }, [phase]);
 
   if (!isActive) return null;
 
@@ -162,7 +253,7 @@ export default function KurumedevaGame({
 
         {phase === 'play' && currentFriend && (
           <p className="kuru-hint">
-            Tap {currentFriend.label} - they&apos;re bringing {currentFriend.brings}!
+            Tap {currentFriend.label} to send the {currentFriend.brings}!
           </p>
         )}
 
@@ -178,7 +269,7 @@ export default function KurumedevaGame({
               left: `${KURUMEDEVA_LAYOUT.bridge.l}%`,
               top: `${KURUMEDEVA_LAYOUT.bridge.t}%`,
               width: `${KURUMEDEVA_LAYOUT.bridge.w}%`,
-              scale: KURUMEDEVA_LAYOUT.bridge.flip ? '-1 1' : '1 1',
+              transform: `translate(-50%, -50%) rotate(${KURUMEDEVA_LAYOUT.bridge.r || 0}deg) scaleX(${KURUMEDEVA_LAYOUT.bridge.flip ? -1 : 1})`,
             }}
           >
             <img src={bridgeImg} alt="bridge" draggable={false} />
@@ -198,30 +289,62 @@ export default function KurumedevaGame({
         </div>
 
         {FRIENDS.map((friend, index) => {
+          const objPhase = objectPhases[index];
+          if (objPhase === 'gone') return null;
+
+          const isFlying = objPhase === 'flying';
+          const startL = friend.l + friend.objectOffset.l;
+          const startT = friend.t + friend.objectOffset.t;
+
+          return (
+            <div
+              key={`obj-${friend.id}`}
+              className={`kuru-object ${isFlying ? `kuru-object--flying ${friend.objectAnim}` : 'kuru-object--idle'}`}
+              style={{
+                left: isFlying ? `${BRIDGE_TARGET.l}%` : `${startL}%`,
+                top: isFlying ? `${BRIDGE_TARGET.t}%` : `${startT}%`,
+                width: `${friend.objectW}%`,
+              }}
+            >
+              <img src={friend.objectImg} alt={friend.brings} draggable={false} />
+            </div>
+          );
+        })}
+
+        {FRIENDS.map((friend, index) => {
+          const imgState = friendImgStates[index];
+          const pos = friendPositions[index];
           const isCurrent = index === friendStep && phase === 'play';
           const isTapped = tappedId === friend.id;
-          const isDone = index < friendStep;
+          const isWaiting = index > friendStep;
+          const isHelped = imgState === 'empty' && index <= friendStep;
+          const isCrossing = phase === 'crossing' || phase === 'done';
 
           return (
             <div
               key={friend.id}
               className={`
                 kuru-friend
-                ${isCurrent ? 'is-active' : ''}
+                ${isCurrent && imgState === 'carry' ? 'is-active' : ''}
                 ${isTapped ? 'is-tapped' : ''}
-                ${isDone ? 'is-done' : ''}
-                ${index > friendStep ? 'is-waiting' : ''}
+                ${isWaiting ? 'kuru-friend--waiting' : ''}
+                ${isHelped ? 'kuru-friend--helped' : ''}
+                ${isCrossing ? 'kuru-friend--crossing' : ''}
               `}
               style={{
-                left: `${friend.pos.l}%`,
-                top: `${friend.pos.t}%`,
+                left: `${pos.l}%`,
+                top: `${pos.t}%`,
                 width: `${friend.w}%`,
                 scale: friend.flip ? '-1 1' : '1 1',
               }}
               onPointerDown={() => handleFriendTap(index)}
             >
-              <img src={friend.img} alt={friend.label} draggable={false} />
-              {isCurrent && <div className="kuru-tap-ring" aria-hidden="true" />}
+              <img
+                src={imgState === 'carry' ? friend.carryImg : friend.emptyImg}
+                alt={friend.label}
+                draggable={false}
+              />
+              {isCurrent && imgState === 'carry' && <div className="kuru-tap-ring" aria-hidden="true" />}
             </div>
           );
         })}

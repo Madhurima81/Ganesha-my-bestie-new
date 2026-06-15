@@ -75,6 +75,12 @@ export default function NirvighnamGame({
   }, [isActive]);
 
   useEffect(() => {
+    if (phase === 'play' && cleared.length === 0 && !dragging) {
+      setTurtlePos(TURTLE_START);
+    }
+  }, [phase, cleared.length, dragging]);
+
+  useEffect(() => {
     const previousCount = previousClearedCountRef.current;
     const currentCount = cleared.length;
 

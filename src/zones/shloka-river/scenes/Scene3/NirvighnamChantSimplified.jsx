@@ -131,7 +131,12 @@ const NirvighnamChantSimplified = ({
         learnedWords:    { nirvighnam: false, kurumedeva: false },
         chantedVerses:   {},
         learnedSyllables:{},
-        unlockedApps:    {},
+        unlockedApps:    {
+          vakratunda: true,
+          mahakaya: true,
+          suryakoti: true,
+          samaprabha: true,
+        },
         welcomeShown:    false,
         currentPopup:    null,
         showingCompletionScreen: false,
