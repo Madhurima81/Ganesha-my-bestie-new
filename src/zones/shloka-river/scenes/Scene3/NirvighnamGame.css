@@ -1,0 +1,178 @@
+/* NirvighnamGame.css — Clear the path for the turtle */
+
+.nirv-game {
+  position: absolute;
+  inset: 0;
+}
+
+.nirv-game.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nirv-stage {
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: hidden;
+}
+
+/* ── Hint & done text ──────────────────────────────────────────────────── */
+.nirv-hint {
+  position: absolute;
+  top: 11%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(13px, 1.9vw, 17px);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+  text-align: center;
+  max-width: 80%;
+  margin: 0;
+  pointer-events: none;
+  animation: nirv-fadeIn 0.6s ease;
+}
+
+.nirv-doneline {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 41;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  color: #fff;
+  font-size: clamp(18px, 3vw, 28px);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  margin: 0;
+  animation: nirv-popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── Layers (shared positioning) ───────────────────────────────────────── */
+.nirv-layer {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.nirv-layer img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+/* ── Turtle ─────────────────────────────────────────────────────────────── */
+.nirv-turtle {
+  transition:
+    left 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+    top 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nirv-breathe img {
+  animation: nirv-breathe 2.9s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+.nirv-turtle.is-swimming img {
+  animation: nirv-swim 0.6s ease-in-out infinite;
+}
+
+.nirv-turtle.at-nest {
+  z-index: 18;
+}
+
+.nirv-turtle.at-nest img {
+  filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.16));
+}
+
+/* ── Nest ───────────────────────────────────────────────────────────────── */
+.nirv-nest img {
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.15));
+}
+
+/* ── Obstacles ──────────────────────────────────────────────────────────── */
+.nirv-obstacle {
+  cursor: grab;
+  touch-action: none;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.nirv-obstacle.is-tappable {
+  animation: nirv-obstPulse 2s ease-in-out infinite;
+}
+
+.nirv-obstacle.is-dragging {
+  cursor: grabbing;
+  transition: none; /* follow finger exactly */
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.3));
+}
+
+.nirv-obstacle.is-cleared {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.5) translateY(-40%);
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.nirv-obstacle img {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.18));
+}
+
+/* ── Path line ──────────────────────────────────────────────────────────── */
+.nirv-path-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ── Keyframes ──────────────────────────────────────────────────────────── */
+@keyframes nirv-breathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-1.5%) scale(1.04); }
+}
+
+@keyframes nirv-swim {
+  0%   { transform: rotate(0deg) translateY(0); }
+  25%  { transform: rotate(-4deg) translateY(-3%); }
+  50%  { transform: rotate(0deg) translateY(0); }
+  75%  { transform: rotate(4deg) translateY(-2%); }
+  100% { transform: rotate(0deg) translateY(0); }
+}
+
+@keyframes nirv-obstPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50%      { transform: translate(-50%, -50%) scale(1.06); }
+}
+
+@keyframes nirv-fadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes nirv-popIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .nirv-breathe img,
+  .nirv-obstacle.is-tappable,
+  .nirv-turtle.is-swimming img {
+    animation: none;
+  }
+
+  .nirv-turtle,
+  .nirv-obstacle.is-cleared {
+    transition: none;
+  }
+}

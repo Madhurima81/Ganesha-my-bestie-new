@@ -1,0 +1,292 @@
+.kuru-game {
+  position: absolute;
+  inset: 0;
+}
+
+.kuru-game.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.kuru-stage {
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: hidden;
+}
+
+.kuru-hint {
+  position: absolute;
+  top: 11%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(13px, 1.9vw, 17px);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  margin: 0;
+  pointer-events: none;
+  animation: kuruFadeIn 0.4s ease;
+  white-space: nowrap;
+}
+
+.kuru-doneline {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  z-index: 41;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  color: #fff;
+  font-size: clamp(18px, 3vw, 28px);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  margin: 0;
+  text-align: center;
+  animation: kuruPopIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.kuru-bridge {
+  position: absolute;
+  left: 50%;
+  top: 56%;
+  width: 52%;
+  transform: translate(-50%, -50%);
+  z-index: 6;
+  animation: kuruBridgePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.kuru-bridge img {
+  width: 100%;
+  display: block;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.22));
+}
+
+.kuru-bridge.is-complete img {
+  filter:
+    drop-shadow(0 6px 14px rgba(0, 0, 0, 0.22))
+    drop-shadow(0 0 20px rgba(255, 220, 80, 0.4));
+}
+
+.kuru-beaver {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 15;
+  transition:
+    left 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+    top 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.18));
+}
+
+.kuru-beaver img {
+  width: 100%;
+  display: block;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+.kuru-beaver.is-walking {
+  animation: kuruBeaverWalk 0.48s ease-in-out infinite;
+}
+
+.kuru-object {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 30;
+  pointer-events: none;
+}
+
+.kuru-object img {
+  width: 100%;
+  display: block;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.2));
+}
+
+.kuru-object--idle {
+  opacity: 0.95;
+}
+
+.kuru-object--idle img {
+  animation: kuruObjIdle 2.5s ease-in-out infinite;
+}
+
+.kuru-object--flying {
+  opacity: 1;
+  z-index: 35;
+  transition:
+    left 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    top 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.kuru-obj-roll img {
+  animation: kuruObjRoll 0.6s ease-in-out;
+}
+
+.kuru-obj-swoop img {
+  animation: kuruObjSwoop 0.6s ease-in-out;
+}
+
+.kuru-obj-tumble img {
+  animation: kuruObjTumble 0.6s ease-in-out;
+}
+
+.kuru-obj-flip img {
+  animation: kuruObjFlip 0.6s ease-in-out;
+}
+
+.kuru-friend {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: clamp(60px, 10vw, 110px);
+  z-index: 20;
+  touch-action: manipulation;
+  transition:
+    left 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    top 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.kuru-friend img {
+  width: 100%;
+  display: block;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.18));
+}
+
+.kuru-friend--waiting {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.kuru-friend--waiting img {
+  animation: kuruIdleBreathe 3s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+.kuru-friend.is-active {
+  cursor: pointer;
+  z-index: 25;
+  animation: kuruFriendPulse 1.4s ease-in-out infinite;
+}
+
+.kuru-friend.is-tapped {
+  animation: kuruFriendTap 0.35s ease-out !important;
+}
+
+.kuru-friend--helped {
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.kuru-friend--helped img {
+  animation: kuruHappyBounce 2s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+.kuru-friend--crossing {
+  pointer-events: none;
+}
+
+.kuru-friend--crossing img {
+  animation: kuruIdleBreathe 2s ease-in-out infinite;
+}
+
+.kuru-tap-ring {
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 220, 80, 0.75);
+  animation: kuruTapRing 1.4s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes kuruObjIdle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4%); }
+}
+
+@keyframes kuruObjRoll {
+  0% { transform: rotate(0deg) scale(1); opacity: 1; }
+  30% { transform: rotate(-120deg) scale(1.1); }
+  60% { transform: rotate(-280deg) scale(1.05); }
+  100% { transform: rotate(-360deg) scale(0.9); opacity: 0.6; }
+}
+
+@keyframes kuruObjSwoop {
+  0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+  30% { transform: translateY(30%) rotate(15deg) scale(1.1); }
+  70% { transform: translateY(-15%) rotate(-10deg) scale(1.05); }
+  100% { transform: translateY(0) rotate(0deg) scale(0.85); opacity: 0.6; }
+}
+
+@keyframes kuruObjTumble {
+  0% { transform: rotate(0deg) translateY(0) scale(1); opacity: 1; }
+  20% { transform: rotate(40deg) translateY(-20%) scale(1.1); }
+  50% { transform: rotate(-30deg) translateY(10%) scale(1.05); }
+  75% { transform: rotate(20deg) translateY(-8%) scale(0.95); }
+  100% { transform: rotate(0deg) translateY(0) scale(0.85); opacity: 0.6; }
+}
+
+@keyframes kuruObjFlip {
+  0% { transform: perspective(300px) rotateX(0deg) scale(1); opacity: 1; }
+  40% { transform: perspective(300px) rotateX(180deg) scale(1.1); }
+  70% { transform: perspective(300px) rotateX(300deg) scale(1); }
+  100% { transform: perspective(300px) rotateX(360deg) scale(0.85); opacity: 0.6; }
+}
+
+@keyframes kuruIdleBreathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-1.5%) scale(1.03); }
+}
+
+@keyframes kuruHappyBounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  30% { transform: translateY(-6%) scale(1.06); }
+  50% { transform: translateY(-2%) scale(1.02); }
+}
+
+@keyframes kuruFriendPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -54%) scale(1.08); }
+}
+
+@keyframes kuruFriendTap {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  40% { transform: translate(-50%, -60%) scale(1.18); filter: brightness(1.3) drop-shadow(0 0 16px rgba(255, 220, 80, 0.8)); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes kuruTapRing {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+@keyframes kuruBridgePop {
+  0% { opacity: 0.4; transform: translate(-50%, -44%) scale(0.96); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes kuruBeaverWalk {
+  0%, 100% { transform: translate(-50%, -50%) rotate(-2deg); }
+  50% { transform: translate(-50%, -56%) rotate(2deg); }
+}
+
+@keyframes kuruFadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes kuruPopIn {
+  from { opacity: 0; transform: translate(-50%, 10px) scale(0.85); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
