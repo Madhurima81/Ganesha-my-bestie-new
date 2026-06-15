@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Scene 4 Flow Preview</title>
+  <style>
+    :root {
+      --panel: rgba(255, 252, 245, 0.94);
+      --ink: #4b3728;
+      --accent: #8c62d6;
+      --accent-2: #ffb347;
+      --shadow: 0 18px 40px rgba(63, 45, 22, 0.18);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: linear-gradient(180deg, #efe6d7 0%, #f8f1e6 100%);
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+    }
+
+    .controls {
+      padding: 18px;
+      background: rgba(255,255,255,0.72);
+      border-right: 1px solid rgba(120, 86, 45, 0.12);
+      backdrop-filter: blur(12px);
+      overflow: auto;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: 24px; margin-bottom: 8px; }
+    .sub { font-size: 14px; color: #78614d; margin-bottom: 18px; line-height: 1.45; }
+
+    .group {
+      margin-bottom: 18px;
+      padding: 14px;
+      background: rgba(255,255,255,0.8);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(81, 58, 34, 0.08);
+    }
+
+    .group h2 {
+      font-size: 15px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #7b5f46;
+    }
+
+    .buttons {
+      display: grid;
+      gap: 8px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #f3e6cb;
+      color: #4b3728;
+      cursor: pointer;
+      font-weight: 700;
+      text-align: left;
+    }
+
+    button.active {
+      background: linear-gradient(135deg, #9b74e0 0%, #f4c067 100%);
+      color: white;
+    }
+
+    .stage-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      min-width: 0;
+    }
+
+    .stage {
+      position: relative;
+      width: min(100%, 1100px);
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      background-image: url("../src/zones/shloka-river/scenes/scene4/assets/images/Kurumedeva/bg.png");
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    .syl-bar {
+      position: absolute;
+      top: 18px;
+      left: 22px;
+      display: flex;
+      gap: 8px;
+      z-index: 5;
+    }
+
+    .syl {
+      min-width: 58px;
+      padding: 9px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.72);
+      color: #746482;
+      font-weight: 800;
+      text-align: center;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+    }
+
+    .syl.lit {
+      background: #ffb347;
+      color: white;
+    }
+
+    .card {
+      position: absolute;
+      left: 50%;
+      top: 52%;
+      transform: translate(-50%, -50%);
+      width: min(88%, 720px);
+      background: var(--panel);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      display: none;
+      z-index: 4;
+    }
+
+    .card.active { display: block; }
+    .scene-img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 16px;
+      display: block;
+      background: rgba(255,255,255,0.8);
+    }
+
+    .headline {
+      margin-top: 12px;
+      font-size: 24px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .prompt {
+      margin-top: 6px;
+      text-align: center;
+      color: #7d644f;
+      font-size: 16px;
+    }
+
+    .power-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .power {
+      background: rgba(255,255,255,0.78);
+      border-radius: 16px;
+      padding: 10px 8px;
+      text-align: center;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+      border: 2px solid transparent;
+    }
+
+    .power.correct {
+      border-color: #64b96a;
+      background: rgba(228, 255, 229, 0.94);
+    }
+
+    .power img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto 6px;
+    }
+
+    .feedback {
+      margin-top: 14px;
+      text-align: center;
+      font-weight: 700;
+      color: #3c8d42;
+    }
+
+    .chunk {
+      margin: 14px auto 0;
+      width: fit-content;
+      background: #8c62d6;
+      color: white;
+      font-weight: 800;
+      border-radius: 999px;
+      padding: 6px 14px;
+      letter-spacing: 0.08em;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: none;
+      z-index: 3;
+    }
+
+    .overlay.active { display: block; }
+
+    .boat {
+      position: absolute;
+      bottom: 8%;
+      left: 50%;
+      width: min(30%, 280px);
+      transform: translateX(-50%);
+      z-index: 2;
+    }
+
+    .bubble {
+      position: absolute;
+      top: 18%;
+      left: 50%;
+      width: min(18%, 170px);
+      transform: translateX(-50%);
+      z-index: 3;
+    }
+
+    .time-label {
+      position: absolute;
+      top: 11%;
+      left: 50%;
+      transform: translateX(-50%);
+      color: white;
+      font-size: 28px;
+      font-weight: 800;
+      text-shadow: 0 3px 12px rgba(0,0,0,0.3);
+    }
+
+    .memory {
+      position: absolute;
+      top: 17%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(72%, 420px);
+      background: rgba(255,252,245,0.96);
+      border-radius: 20px;
+      padding: 10px;
+      box-shadow: var(--shadow);
+      z-index: 4;
+    }
+
+    .memory img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 14px;
+      display: block;
+    }
+
+    .sarvada-word {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: white;
+      z-index: 4;
+    }
+
+    .sarvada-word .big {
+      font-size: 64px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-shadow: 0 4px 16px rgba(0,0,0,0.35);
+    }
+
+    .sarvada-word .small {
+      font-size: 22px;
+      margin-top: 8px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    }
+
+    .legend {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #826b56;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 980px) {
+      .app { grid-template-columns: 1fr; }
+      .controls { border-right: 0; border-bottom: 1px solid rgba(120, 86, 45, 0.12); }
+      .stage-wrap { padding: 14px; }
+      .power-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="controls">
+      <h1>Scene 4 Flow</h1>
+      <p class="sub">Standalone preview for `Sarvakaryeshu` and `Sarvada`. Use this to inspect the visual flow without the app state machine.</p>
+
+      <div class="group">
+        <h2>Sarvakaryeshu</h2>
+        <div class="buttons">
+          <button class="step-btn active" data-target="sarva-1">1. Puzzle card</button>
+          <button class="step-btn" data-target="sarva-2">2. Sports card</button>
+          <button class="step-btn" data-target="sarva-3">3. Bike sharing card</button>
+          <button class="step-btn" data-target="sarva-4">4. Grandma help card</button>
+        </div>
+      </div>
+
+      <div class="group">
+        <h2>Sarvada</h2>
+        <div class="buttons">
+          <button class="step-btn" data-target="sarvada-1">5. Morning bubble</button>
+          <button class="step-btn" data-target="sarvada-2">6. Afternoon memory</button>
+          <button class="step-btn" data-target="sarvada-3">7. Night memory</button>
+          <button class="step-btn" data-target="sarvada-4">8. Final SARVADA reveal</button>
+        </div>
+      </div>
+
+      <div class="group">
+        <h2>Notes</h2>
+        <div class="legend">
+          This preview uses the real scene assets from `src/zones/shloka-river/scenes/scene4/assets/images`.<br />
+          The goal is to let you review layout, card order, images, and the reveal rhythm quickly.
+        </div>
+      </div>
+    </aside>
+
+    <main class="stage-wrap">
+      <div class="stage">
+        <div class="syl-bar" id="sylBar"></div>
+
+        <section class="card active" data-step="sarva-1">
+          <img class="scene-img" src="../src/zones/shloka-river/scenes/scene4/assets/images/sarvakaryeshu/puzzle-before.png" alt="Puzzle before" />
+          <div class="headline">The puzzle piece won't fit!</div>
+          <div class="prompt">Which power helps?</div>
+          <div class="power-grid">
+            <div class="power correct"><img src="../src/zones/symbol-mountain/shared/images/icons/symbol-trunk-new.png" alt=""><div>Vakratunda</div></div>
+            <div class="power"><img src="../src/zones/meaning cave/assets/images/symbols/mahakaya-symbol.png" alt=""><div>Mahakaya</div></div>
+            <div class="power"><img src="../src/zones/meaning cave/assets/images/symbols/samaprabha-symbol.png" alt=""><div>Samaprabha</div></div>
+            <div class="power"><img src="../src/zones/meaning cave/assets/images/symbols/kurumedeva-symbol.png" alt=""><div>Kurumedeva</div></div>
+          </div>
+          <div class="feedback">You tried another way and it fit!</div>
+          <div class="chunk">SAR</div>
+        </section>
+
+        <section class="card" data-step="sarva-2">
+          <img class="scene-img" src="../src/zones/shloka-river/scenes/scene4/assets/images/sarvakaryeshu/after-sports.png" alt="Sports after" />
+          <div class="headline">I want to give up...</div>
+          <div class="prompt">Which power helps?</div>
+          <div class="power-grid">
+            <div class="power"><img src="../src/zones/symbol-mountain/shared/images/icons/symbol-trunk-new.png" alt=""><div>Vakratunda</div></div>
+            <div class="power correct"><img src="../src/zones/meaning cave/assets/images/symbols/mahakaya-symbol.png" alt=""><div>Mahakaya</div></div>
+            <div class="power"><img src="../src/zones/meaning cave/assets/images/symbols/nirvighnam-symbol.png" alt=""><div>Nirvighnam</div></div>
+            <div class="power"><img src="../src/zones/meaning cave/assets/images/symbols/kurumedeva-symbol.png" alt=""><div>Kurumedeva</div></div>
+          </div>
+          <div class="feedback">You stayed strong and kept trying!</div>
+          <div class="chunk">VA</div>
+        </section>
+
+        <section class="card" data-step="sarva-3">
+          <img class="scene-img" src="../src/zones/shloka-river/scenes/scene4/assets/images/sarvakaryeshu/before-ride.png" alt="Bike sharing" />
+          <div class="headline">Both want the bike at the same time.</div>
+          <div class="prompt">Which power helps?</div>
+          <div class="power-grid">
+            <div class="power"><img src="../src/zones/meaning cave/assets/images/symbols/mahakaya-symbol.png" alt=""><div>Mahakaya</div></div>
+            <div class="power correct"><img src="../src/zones/meaning cave/assets/images/symbols/samaprabha-symbol.png" alt=""><div>Samaprabha</div></div>
+            <div class="power"><img src="../src/zones/meaning cave/assets/images/symbols/suryakoti-symbol.png" alt=""><div>Suryakoti</div></div>
+            <div class="power"><img src="../src/zones/meaning cave/assets/images/symbols/kurumedeva-symbol.png" alt=""><div>Kurumedeva</div></div>
+          </div>
+          <div class="feedback">You shared and both were happy!</div>
+          <div class="chunk">KAR</div>
+        </section>
+
+        <section class="card" data-step="sarva-4">
+          <img class="scene-img" src="../src/zones/shloka-river/scenes/scene4/assets/images/sarvakaryeshu/after-grandma.png" alt="Grandma helped" />
+          <div class="headline">Grandma needs help with the bags.</div>
+          <div class="prompt">Which power helps?</div>
+          <div class="power-grid">
+            <div class="power"><img src="../src/zones/symbol-mountain/shared/images/icons/symbol-trunk-new.png" alt=""><div>Vakratunda</div></div>
+            <div class="power"><img src="../src/zones/meaning cave/assets/images/symbols/mahakaya-symbol.png" alt=""><div>Mahakaya</div></div>
+            <div class="power"><img src="../src/zones/meaning cave/assets/images/symbols/samaprabha-symbol.png" alt=""><div>Samaprabha</div></div>
+            <div class="power correct"><img src="../src/zones/meaning cave/assets/images/symbols/kurumedeva-symbol.png" alt=""><div>Kurumedeva</div></div>
+          </div>
+          <div class="feedback">You helped and Grandma smiled!</div>
+          <div class="chunk">YESHU</div>
+        </section>
+
+        <section class="overlay" data-step="sarvada-1" style="background-image:url('../src/zones/shloka-river/scenes/scene4/assets/images/sarvada/morning.png'); background-size:cover; background-position:center;">
+          <div class="time-label">Morning</div>
+          <img class="bubble" src="../src/zones/shloka-river/scenes/scene4/assets/images/sarvada/puzzle-bubble.png" alt="Morning bubble" />
+          <img class="boat" src="../src/zones/shloka-river/scenes/scene4/assets/images/sarvada/boat.png" alt="Boat" />
+        </section>
+
+        <section class="overlay" data-step="sarvada-2" style="background-image:url('../src/zones/shloka-river/scenes/scene4/assets/images/sarvada/afternoon.png'); background-size:cover; background-position:center;">
+          <div class="time-label">Afternoon</div>
+          <div class="memory">
+            <img src="../src/zones/shloka-river/scenes/scene4/assets/images/sarvakaryeshu/after-sports.png" alt="Afternoon memory" />
+          </div>
+          <img class="boat" src="../src/zones/shloka-river/scenes/scene4/assets/images/sarvada/boat.png" alt="Boat" />
+        </section>
+
+        <section class="overlay" data-step="sarvada-3" style="background-image:url('../src/zones/shloka-river/scenes/scene4/assets/images/sarvada/night.png'); background-size:cover; background-position:center;">
+          <div class="time-label">Night</div>
+          <div class="memory">
+            <img src="../src/zones/shloka-river/scenes/scene4/assets/images/sarvakaryeshu/after-grandma.png" alt="Night memory" />
+          </div>
+          <img class="boat" src="../src/zones/shloka-river/scenes/scene4/assets/images/sarvada/boat.png" alt="Boat" />
+        </section>
+
+        <section class="overlay" data-step="sarvada-4" style="background-image:url('../src/zones/shloka-river/scenes/scene4/assets/images/sarvada/night.png'); background-size:cover; background-position:center;">
+          <div class="sarvada-word">
+            <div>
+              <div class="big">SARVADA</div>
+              <div class="small">Always</div>
+            </div>
+          </div>
+          <img class="boat" src="../src/zones/shloka-river/scenes/scene4/assets/images/sarvada/boat.png" alt="Boat" />
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const steps = {
+      "sarva-1": { syllables: ["Sar", "va", "kar", "ye", "shu"], lit: 1, type: "card" },
+      "sarva-2": { syllables: ["Sar", "va", "kar", "ye", "shu"], lit: 2, type: "card" },
+      "sarva-3": { syllables: ["Sar", "va", "kar", "ye", "shu"], lit: 3, type: "card" },
+      "sarva-4": { syllables: ["Sar", "va", "kar", "ye", "shu"], lit: 5, type: "card" },
+      "sarvada-1": { syllables: ["Sar", "va", "da"], lit: 1, type: "overlay" },
+      "sarvada-2": { syllables: ["Sar", "va", "da"], lit: 2, type: "overlay" },
+      "sarvada-3": { syllables: ["Sar", "va", "da"], lit: 3, type: "overlay" },
+      "sarvada-4": { syllables: ["Sar", "va", "da"], lit: 3, type: "overlay" }
+    };
+
+    const buttons = [...document.querySelectorAll(".step-btn")];
+    const cards = [...document.querySelectorAll(".card")];
+    const overlays = [...document.querySelectorAll(".overlay")];
+    const sylBar = document.getElementById("sylBar");
+
+    function renderSyllables(stepId) {
+      const config = steps[stepId];
+      sylBar.innerHTML = "";
+      config.syllables.forEach((label, index) => {
+        const node = document.createElement("div");
+        node.className = "syl" + (index < config.lit ? " lit" : "");
+        node.textContent = label;
+        sylBar.appendChild(node);
+      });
+    }
+
+    function activate(stepId) {
+      buttons.forEach((btn) => btn.classList.toggle("active", btn.dataset.target === stepId));
+      cards.forEach((card) => card.classList.toggle("active", card.dataset.step === stepId));
+      overlays.forEach((overlay) => overlay.classList.toggle("active", overlay.dataset.step === stepId));
+      renderSyllables(stepId);
+    }
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => activate(button.dataset.target));
+    });
+
+    activate("sarva-1");
+  </script>
+</body>
+</html>

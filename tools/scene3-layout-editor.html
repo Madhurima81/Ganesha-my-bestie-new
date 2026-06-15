@@ -162,8 +162,7 @@
     .asset img {
       display: block;
       width: 100%;
-      height: 100%;
-      object-fit: contain;
+      height: auto;
       pointer-events: none;
     }
 
@@ -285,7 +284,8 @@
         <h2>Selected Item</h2>
         <div class="control"><label for="control-left">left</label><input id="control-left" type="range" min="0" max="100" step="0.5" /><output id="out-left"></output></div>
         <div class="control"><label for="control-top">top</label><input id="control-top" type="range" min="0" max="100" step="0.5" /><output id="out-top"></output></div>
-        <div class="control"><label for="control-width">width</label><input id="control-width" type="range" min="2" max="24" step="0.5" /><output id="out-width"></output></div>
+        <div class="control"><label for="control-width">width</label><input id="control-width" type="range" min="2" max="80" step="0.5" /><output id="out-width"></output></div>
+        <div class="control"><label for="control-rotate">rotate</label><input id="control-rotate" type="range" min="-180" max="180" step="1" /><output id="out-rotate"></output></div>
         <label class="check"><input id="control-flip" type="checkbox" /> Flip horizontally</label>
       </div>
 
@@ -325,17 +325,17 @@
               label: 'Turtle',
               type: 'image',
               src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/nir-turtle-happy.png',
-              l: 12,
-              t: 58,
+              l: 30.7,
+              t: 71.5,
               w: 9,
-              flip: false,
+              flip: true,
             },
             nest: {
               label: 'Nest',
               type: 'image',
               src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/nest.png',
-              l: 84,
-              t: 56,
+              l: 86.1,
+              t: 66.9,
               w: 12,
               flip: false,
             },
@@ -343,8 +343,8 @@
               label: 'Stone',
               type: 'image',
               src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/stone.png',
-              l: 34,
-              t: 54,
+              l: 39.4,
+              t: 75.1,
               w: 10,
               flip: false,
             },
@@ -352,8 +352,8 @@
               label: 'Branch',
               type: 'image',
               src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/branch.png',
-              l: 52,
-              t: 50,
+              l: 53.8,
+              t: 72.5,
               w: 9,
               flip: false,
             },
@@ -361,18 +361,18 @@
               label: 'Reed',
               type: 'image',
               src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/reed.png',
-              l: 70,
-              t: 52,
+              l: 64.3,
+              t: 67.8,
               w: 11,
               flip: false,
             },
           },
           pathName: 'swimPath',
           path: [
-            { l: 30, t: 50 },
-            { l: 50, t: 52 },
-            { l: 68, t: 50 },
-            { l: 82, t: 56 },
+            { l: 41.7, t: 78.3 },
+            { l: 53.2, t: 78.1 },
+            { l: 65.1, t: 77.5 },
+            { l: 77.8, t: 68.8 },
           ],
           line: { x1: 16, y1: 60, x2: 84, y2: 58 },
         },
@@ -386,6 +386,7 @@
               l: 50,
               t: 56,
               w: 52,
+              r: 0,
               flip: false,
             },
             beaver: {
@@ -454,10 +455,12 @@
     const leftInput = document.getElementById('control-left');
     const topInput = document.getElementById('control-top');
     const widthInput = document.getElementById('control-width');
+    const rotateInput = document.getElementById('control-rotate');
     const flipInput = document.getElementById('control-flip');
     const outLeft = document.getElementById('out-left');
     const outTop = document.getElementById('out-top');
     const outWidth = document.getElementById('out-width');
+    const outRotate = document.getElementById('out-rotate');
 
     function currentSceneData() {
       return state.scenes[state.currentScene];
@@ -498,10 +501,12 @@
       leftInput.value = element.l;
       topInput.value = element.t;
       widthInput.value = element.w;
+      rotateInput.value = element.r ?? 0;
       flipInput.checked = !!element.flip;
       outLeft.textContent = formatPercent(element.l);
       outTop.textContent = formatPercent(element.t);
       outWidth.textContent = formatPercent(element.w);
+      outRotate.textContent = `${Math.round(element.r ?? 0)}deg`;
     }
 
     function makeDraggable(node, onMove) {
@@ -575,7 +580,7 @@
         asset.style.left = `${element.l}%`;
         asset.style.top = `${element.t}%`;
         asset.style.width = `${element.w}%`;
-        asset.style.transform = `translate(-50%, -50%) scaleX(${element.flip ? -1 : 1})`;
+        asset.style.transform = `translate(-50%, -50%) rotate(${element.r ?? 0}deg) scaleX(${element.flip ? -1 : 1})`;
         asset.style.zIndex = key === 'bridge' ? 6 : key === 'beaver' ? 15 : 20;
 
         if (element.type === 'image') {
@@ -636,7 +641,7 @@ ${nir.path.map((point) => `    { l: ${point.l.toFixed(1)}, t: ${point.t.toFixed(
 };
 
 export const KURUMEDEVA_LAYOUT = {
-  bridge: { l: ${kuru.elements.bridge.l.toFixed(1)}, t: ${kuru.elements.bridge.t.toFixed(1)}, w: ${kuru.elements.bridge.w.toFixed(1)}, flip: ${!!kuru.elements.bridge.flip} },
+  bridge: { l: ${kuru.elements.bridge.l.toFixed(1)}, t: ${kuru.elements.bridge.t.toFixed(1)}, w: ${kuru.elements.bridge.w.toFixed(1)}, r: ${(kuru.elements.bridge.r ?? 0).toFixed(1)}, flip: ${!!kuru.elements.bridge.flip} },
   beaver: { w: ${kuru.elements.beaver.w.toFixed(1)}, flip: ${!!kuru.elements.beaver.flip} },
   friends: [
     { id: 'turtle', label: 'Turtle', brings: 'logs', l: ${kuru.elements.turtle.l.toFixed(1)}, t: ${kuru.elements.turtle.t.toFixed(1)}, w: ${kuru.elements.turtle.w.toFixed(1)}, flip: ${!!kuru.elements.turtle.flip} },
@@ -677,6 +682,14 @@ ${kuru.path.map((point) => `    { l: ${point.l.toFixed(1)}, t: ${point.t.toFixed
         renderPreview();
       });
 
+      rotateInput.addEventListener('input', () => {
+        const element = currentElements()[state.selectedKey];
+        if (!element) return;
+        element.r = Number(rotateInput.value);
+        outRotate.textContent = `${Math.round(element.r)}deg`;
+        renderPreview();
+      });
+
       flipInput.addEventListener('change', () => {
         const element = currentElements()[state.selectedKey];
         if (!element) return;
@@ -711,21 +724,21 @@ ${kuru.path.map((point) => `    { l: ${point.l.toFixed(1)}, t: ${point.t.toFixed
           state.scenes.nirvighnam = JSON.parse(JSON.stringify({
             background: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/bg.png',
             elements: {
-              turtle: { label: 'Turtle', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/nir-turtle-happy.png', l: 12, t: 58, w: 9, flip: false },
-              nest: { label: 'Nest', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/nest.png', l: 84, t: 56, w: 12, flip: false },
-              stone: { label: 'Stone', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/stone.png', l: 34, t: 54, w: 10, flip: false },
-              branch: { label: 'Branch', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/branch.png', l: 52, t: 50, w: 9, flip: false },
-              reed: { label: 'Reed', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/reed.png', l: 70, t: 52, w: 11, flip: false },
+              turtle: { label: 'Turtle', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/nir-turtle-happy.png', l: 30.7, t: 71.5, w: 9, flip: true },
+              nest: { label: 'Nest', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/nest.png', l: 86.1, t: 66.9, w: 12, flip: false },
+              stone: { label: 'Stone', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/stone.png', l: 39.4, t: 75.1, w: 10, flip: false },
+              branch: { label: 'Branch', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/branch.png', l: 53.8, t: 72.5, w: 9, flip: false },
+              reed: { label: 'Reed', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/reed.png', l: 64.3, t: 67.8, w: 11, flip: false },
             },
             pathName: 'swimPath',
-            path: [{ l: 30, t: 50 }, { l: 50, t: 52 }, { l: 68, t: 50 }, { l: 82, t: 56 }],
+            path: [{ l: 41.7, t: 78.3 }, { l: 53.2, t: 78.1 }, { l: 65.1, t: 77.5 }, { l: 77.8, t: 68.8 }],
             line: { x1: 16, y1: 60, x2: 84, y2: 58 },
           }));
         } else {
           state.scenes.kurumedeva = JSON.parse(JSON.stringify({
             background: '../src/zones/shloka-river/scenes/Scene3/assets/images/Nirvighnam/bg.png',
             elements: {
-              bridge: { label: 'Bridge', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Kurumedeva/step4.png', l: 50, t: 56, w: 52, flip: false },
+              bridge: { label: 'Bridge', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Kurumedeva/step4.png', l: 50, t: 56, w: 52, r: 0, flip: false },
               beaver: { label: 'Beaver', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Kurumedeva/beaver-happy.png', l: 18, t: 68, w: 8, flip: false },
               turtle: { label: 'Turtle', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Kurumedeva/turtle.png', l: 72, t: 62, w: 10, flip: false },
               bird: { label: 'Bird', type: 'image', src: '../src/zones/shloka-river/scenes/Scene3/assets/images/Kurumedeva/bird.png', l: 78, t: 55, w: 10, flip: false },
