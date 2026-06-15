@@ -1,862 +1,766 @@
-﻿// zones/shloka-river/scenes/scene5/ShlokaRiverFinale.jsx
-// SIMPLIFIED FEEDBACK SYSTEM
-import React, { useState, useRef } from 'react';
-import './RiverFinaleEnhanced.css';
-import GamePauseMenu from '../../core/GamePauseMenu-river';
-import HomeButton from '../../../../lib/components/ui/HomeButton';
-import AudioToggle from '../../../../lib/components/ui/AudioToggle';
-import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
-import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
-import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import './ShlokaRiverFinale.css';
+
+import SceneManager from '../../../../lib/components/scenes/SceneManager';
+import MessageManager from '../../../../lib/components/scenes/MessageManager';
+import InteractionManager from '../../../../lib/components/scenes/InteractionManager';
+import GameStateManager from '../../../../lib/services/GameStateManager';
+import ProgressManager from '../../../../lib/services/ProgressManager';
+import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
+import useSceneReset from '../../../../lib/hooks/useSceneReset';
+import { getSceneResetConfig } from '../../../../lib/config/SceneResetConfigs';
+
 import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
-import { getCompletionModal } from '../../../../lib/config/content';
+import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
+import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
+
+import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
-import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
-import { getOpeningModal } from '../../../../lib/config/content';
+import InnerMandala from '../../../../lib/components/celebration/InnerMandala';
+import CalmGoldenFireworks from '../../../../lib/components/feedback/CalmGoldenFireworks';
+import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
 import OpeningModal from '../../../shared/components/OpeningModal';
-import ganeshaHeadphones from '../assets/images/ganesha_with_headphones.png';
 
+import { getCompletionModal } from '../../../../lib/config/content';
 
-// Import background image
-import bgImage from './assets/images/bg.png';
+import riverBg from './assets/images/river-finale-bg.png';
+import boatSailImage from './assets/images/boat-sail.svg';
 
-const ShlokaRiverFinale = ({ onComplete, onBack, onNavigate }) => {
-  // Game state
-  const [gamePhase, setGamePhase] = useState('intro');
-  const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [selectedSlot, setSelectedSlot] = useState(null);
-  const [slots, setSlots] = useState([null, null, null, null]);
-  const [usedSyllables, setUsedSyllables] = useState([]);
-  const [completedWords, setCompletedWords] = useState([]);
-  const [scrambledSyllables, setScrambledSyllables] = useState([]);
-  const [showCelebration, setShowCelebration] = useState(false);
-  const [hint, setHint] = useState("Tap a lily pad to start!");
+import symbolVakratunda from '../../../symbol-mountain/shared/images/icons/symbol-trunk-new.webp';
+import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
+import symbolSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.png';
+import symbolSamaprabha from '../../../meaning cave/assets/images/symbols/samaprabha-symbol.png';
+import symbolNirvighnam from '../../../meaning cave/assets/images/symbols/nirvighnam-symbol.png';
+import symbolKurumedeva from '../../../meaning cave/assets/images/symbols/kurumedeva-symbol.png';
+import symbolSarvakaryeshu from '../../../meaning cave/assets/images/symbols/sarvakaryeshu-symbol.png';
+import symbolSarvada from '../../../meaning cave/assets/images/symbols/sarvada-symbol.png';
 
-  // Simple feedback system
-  const [slotFeedback, setSlotFeedback] = useState([]); // 'correct', 'wrong', or null
-  const [showHearWordButton, setShowHearWordButton] = useState(false);
-  const [showHearWordModal, setShowHearWordModal] = useState(false);
-  const [highlightedModalSlot, setHighlightedModalSlot] = useState(null);
+const SHLOKA_WORDS = [
+  { id: 'vakratunda', label: 'Vakratunda', icon: symbolVakratunda, color: '#FF5722' },
+  { id: 'mahakaya', label: 'Mahakaya', icon: symbolMahakaya, color: '#1565C0' },
+  { id: 'suryakoti', label: 'Suryakoti', icon: symbolSuryakoti, color: '#FF9800' },
+  { id: 'samaprabha', label: 'Samaprabha', icon: symbolSamaprabha, color: '#E91E63' },
+  { id: 'nirvighnam', label: 'Nirvighnam', icon: symbolNirvighnam, color: '#009688' },
+  { id: 'kurumedeva', label: 'Kurumedeva', icon: symbolKurumedeva, color: '#7B1FA2' },
+  { id: 'sarvakaryeshu', label: 'Sarvakaryeshu', icon: symbolSarvakaryeshu, color: '#3F51B5' },
+  { id: 'sarvada', label: 'Sarvada', icon: symbolSarvada, color: '#689F38' },
+];
 
-  // Level 2 state
-  const [selectedShlokaSlot, setSelectedShlokaSlot] = useState(null);
-  const [shlokaSlots, setShlokaSlots] = useState(Array(8).fill(null));
-  const [usedWords, setUsedWords] = useState([]);
-
-  // Add after existing state, before shlokaWords array:
-  const [gameMode, setGameMode] = useState(null); // 'full-journey', 'practice', 'quick-play'
-  const [selectedWordForPractice, setSelectedWordForPractice] = useState(null);
-  const [selectedLevelMode, setSelectedLevelMode] = useState(null); // 'level1', 'level2', 'both'
-  const [showPauseMenu, setShowPauseMenu] = useState(false);
-  const { isAudioOn, toggleAudio } = useAudioPreference();
-  // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
-  const { startIdleTimer, stopIdleTimer, setCurrentPhase } = useVoiceGuidance(
-    'shloka-river', 'shloka-river-finale', { enableMusic: false, idleTimeout: 20 }
+function BoatSvg({ className = '', style = {} }) {
+  return (
+    <svg
+      className={`boat-svg ${className}`}
+      style={style}
+      viewBox="0 0 79.375 79.375"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fill="currentColor"
+        d="m 33.186,6.159 c 0,0 2.371,-0.666 3.476,-0.302 1.085,0.357 1.464,1.98 2.569,2.267 1.148,0.298 3.476,-0.756 3.476,-0.756 0,0 -2.594,2.944 -4.383,3.174 -0.965,0.124 -1.748,-1.013 -2.72,-1.058 -1.466,-0.068 -4.232,1.209 -4.232,1.209 z"
+      />
+      <rect
+        fill="#f9bd66"
+        width="2.325"
+        height="9.588"
+        x="33.069"
+        y="-8.929"
+        ry="1.498"
+        transform="matrix(0.93,0.367,-0.262,0.965,0,0)"
+      />
+      <path
+        fill="currentColor"
+        d="M 19.735,46.965 30.768,10.693 c 0,0 18.198,7.422 23.728,14.962 4.682,6.385 6.045,22.972 6.045,22.972 l -0.302,-0.302 -24.785,3.023 z"
+      />
+      <path
+        fill="#d28035"
+        d="m 4.924,44.093 c 0,0 0.448,11.166 2.872,16.02 1.752,3.508 4.517,6.832 8.01,8.614 6.646,3.391 14.756,2.679 22.216,2.72 7.755,0.043 16.233,0.991 23.123,-2.569 3.836,-1.982 6.877,-5.72 8.614,-9.672 2.017,-4.589 1.511,-14.962 1.511,-14.962 0,0 -21.962,4.555 -33.098,4.534 C 26.981,48.756 4.924,44.093 4.924,44.093 Z"
+      />
+      <path
+        fill="#692f15"
+        d="m 5.076,47.685 c 0,0 0.085,2.166 0.386,5.004 1.495,0.282 21.751,4.067 32.19,4.064 11.195,-0.002 33.323,-4.232 33.323,-4.232 0,0 -0.275,5.619 -1.379,9.241 1.736,-4.979 1.827,-14.078 1.827,-14.078 0,0 -22.209,4.7 -33.472,4.686 C 26.883,52.357 5.076,47.685 5.076,47.685 Z"
+      />
+      <path
+        fill="#83431e"
+        d="m 5.227,49.08 c 0,0 -0.121,8.148 1.662,11.637 1.848,3.617 5.129,6.655 8.766,8.463 6.711,3.338 14.721,3.43 22.216,3.476 7.787,0.048 16.133,0.107 23.123,-3.325 4.157,-2.041 8.05,-5.46 9.975,-9.672 1.489,-3.258 0.605,-10.73 0.605,-10.73 0,0 -22.38,4.228 -33.702,4.232 -10.966,0.002 -32.644,-4.081 -32.644,-4.081 z"
+      />
+    </svg>
   );
-  useEffect(() => { startIdleTimer(); return () => stopIdleTimer(); }, [startIdleTimer, stopIdleTimer]);
-  useEffect(() => { setCurrentPhase(gamePhase); }, [gamePhase, setCurrentPhase]);
-  const completionModalContent = getCompletionModal('shloka-river', 'shloka-river-finale');
-  const showSceneCompletion = gamePhase === 'scene-complete';
+}
 
-  const audioRef = useRef(null);
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
-  // 8 Sanskrit words
-  const shlokaWords = [
-    {
-      id: 1,
-      word: "Vakratunda",
-      syllables: ["VA", "KRA", "TUN", "DA"],
-      syllableAudio: [
-        "/audio/syllables/vakratunda-va.mp3",
-        "/audio/syllables/vakratunda-kra.mp3",
-        "/audio/syllables/vakratunda-tun.mp3",
-        "/audio/syllables/vakratunda-da.mp3"
-      ],
-      wordAudio: "/audio/words/vakratunda.mp3",
-      meaning: "Curved Trunk",
-      position: 0
-    },
-    {
-      id: 2,
-      word: "Mahakaya",
-      syllables: ["MA", "HA", "KA", "YA"],
-      syllableAudio: [
-        "/audio/syllables/mahakaya-ma.mp3",
-        "/audio/syllables/mahakaya-ha.mp3",
-        "/audio/syllables/mahakaya-ka.mp3",
-        "/audio/syllables/mahakaya-ya.mp3"
-      ],
-      wordAudio: "/audio/words/mahakaya.mp3",
-      meaning: "Big Body",
-      position: 1
-    },
-    {
-      id: 3,
-      word: "Suryakoti",
-      syllables: ["SUR", "YA", "KO", "TI"],
-      syllableAudio: [
-        "/audio/syllables/suryakoti-sur.mp3",
-        "/audio/syllables/suryakoti-ya.mp3",
-        "/audio/syllables/suryakoti-ko.mp3",
-        "/audio/syllables/suryakoti-ti.mp3"
-      ],
-      wordAudio: "/audio/words/suryakoti.mp3",
-      meaning: "Million Suns",
-      position: 2
-    },
-    {
-      id: 4,
-      word: "Samaprabha",
-      syllables: ["SA", "MA", "PRA", "BHA"],
-      syllableAudio: [
-        "/audio/syllables/samaprabha-sa.mp3",
-        "/audio/syllables/samaprabha-ma.mp3",
-        "/audio/syllables/samaprabha-pra.mp3",
-        "/audio/syllables/samaprabha-bha.mp3"
-      ],
-      wordAudio: "/audio/words/samaprabha.mp3",
-      meaning: "Equal Radiance",
-      position: 3
-    },
-    {
-      id: 5,
-      word: "Nirvighnam",
-      syllables: ["NIR", "VIGH", "NAM"],
-      syllableAudio: [
-        "/audio/syllables/nirvighnam-nir.mp3",
-        "/audio/syllables/nirvighnam-vigh.mp3",
-        "/audio/syllables/nirvighnam-nam.mp3"
-      ],
-      wordAudio: "/audio/words/nirvighnam.mp3",
-      meaning: "Without Obstacles",
-      position: 4
-    },
-    {
-      id: 6,
-      word: "Kurumedeva",
-      syllables: ["KU", "RU", "ME", "DE", "VA"],
-      syllableAudio: [
-        "/audio/syllables/kurume-ku.mp3",
-        "/audio/syllables/kurume-ru.mp3",
-        "/audio/syllables/kurume-me.mp3",
-        "/audio/syllables/deva-de.mp3",
-        "/audio/syllables/deva-va.mp3"
-      ],
-      wordAudio: "/audio/words/kurumedeva.mp3",
-      meaning: "Please Do For Me, O Lord",
-      position: 5
-    },
-    {
-      id: 7,
-      word: "Sarvakaryeshu",
-      syllables: ["SAR", "VA", "KAR", "YE", "SHU"],
-      syllableAudio: [
-        "/audio/syllables/sarvakaryeshu-sar.mp3",
-        "/audio/syllables/sarvakaryeshu-va.mp3",
-        "/audio/syllables/sarvakaryeshu-kar.mp3",
-        "/audio/syllables/sarvakaryeshu-rye.mp3",
-        "/audio/syllables/sarvakaryeshu-shu.mp3"
-      ],
-      wordAudio: "/audio/words/sarvakaryeshu.mp3",
-      meaning: "In All Tasks",
-      position: 6
-    },
-    {
-      id: 8,
-      word: "Sarvada",
-      syllables: ["SAR", "VA", "DA"],
-      syllableAudio: [
-        "/audio/syllables/sarvada-sar.mp3",
-        "/audio/syllables/sarvada-va.mp3",
-        "/audio/syllables/sarvada-da.mp3"
-      ],
-      wordAudio: "/audio/words/sarvada.mp3",
-      meaning: "Always",
-      position: 7
+const PHASES = {
+  INITIAL: 'initial',
+  ARRANGE: 'arrange',
+  SUCCESS: 'success',
+  RECAP: 'recap',
+  FINALE: 'finale',
+  COMPLETE: 'complete',
+};
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="srf-error">
+          <h2>Something went wrong.</h2>
+          <button onClick={() => window.location.reload()}>Reload</button>
+        </div>
+      );
     }
-  ];
+    return this.props.children;
+  }
+}
 
-  // Scramble syllables
-  const scrambleSyllables = (syllables) => {
-    const array = [...syllables];
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
+const ShlokaRiverFinale = ({
+  onComplete,
+  onNavigate,
+  zoneId = 'shloka-river',
+  sceneId = 'shloka-river-finale',
+}) => {
+  return (
+    <ErrorBoundary>
+      <SceneManager
+        zoneId={zoneId}
+        sceneId={sceneId}
+        initialState={{
+          phase: PHASES.INITIAL,
+          slots: Array(8).fill(null),
+          correctCount: 0,
+          completed: false,
+          stars: 0,
+          welcomeShown: false,
+          currentPopup: null,
+          showingCompletionScreen: false,
+        }}
+      >
+        {({ sceneState, sceneActions, isReload }) => (
+          <ShlokaRiverFinaleContent
+            sceneState={sceneState}
+            sceneActions={sceneActions}
+            isReload={isReload}
+            onComplete={onComplete}
+            onNavigate={onNavigate}
+            zoneId={zoneId}
+            sceneId={sceneId}
+          />
+        )}
+      </SceneManager>
+    </ErrorBoundary>
+  );
+};
+
+const ShlokaRiverFinaleContent = ({
+  sceneState,
+  sceneActions,
+  onComplete,
+  onNavigate,
+  zoneId,
+  sceneId,
+}) => {
+  const { resetScene } = useSceneReset(sceneActions, zoneId, sceneId, getSceneResetConfig(sceneId));
+  const activeProfile = GameStateManager.getActiveProfile();
+  const profileName = activeProfile?.name || 'explorer';
+  const completionModalContent = getCompletionModal(zoneId, sceneId);
+
+  const { isAudioOn, toggleAudio } = useAudioPreference();
+  const {
+    stopVoice,
+    playSfx,
+    playWord: playWordAudio,
+    setCurrentPhase,
+    startIdleTimer,
+    stopIdleTimer,
+  } = useVoiceGuidance(zoneId, sceneId, { enableMusic: false, idleTimeout: 999999 });
+
+  const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({});
+
+  const [scrambledWords, setScrambledWords] = useState(() => shuffle(SHLOKA_WORDS));
+  const [slots, setSlots] = useState(Array(8).fill(null));
+  const [wrongSlots, setWrongSlots] = useState(new Set());
+  const [correctSlots, setCorrectSlots] = useState(new Set());
+  const [draggingWord, setDraggingWord] = useState(null);
+  const [dragPos, setDragPos] = useState(null);
+  const [openingButtonVisible, setOpeningButtonVisible] = useState(false);
+  const [recapIndex, setRecapIndex] = useState(-1);
+  const [showFireworks, setShowFireworks] = useState(false);
+  const [showMandala, setShowMandala] = useState(false);
+  const [showSceneCompletion, setShowSceneCompletion] = useState(false);
+  const [activeSlotIndex, setActiveSlotIndex] = useState(0);
+  const [hintLevel, setHintLevel] = useState(0);
+  const [rippleSlot, setRippleSlot] = useState(null);
+
+  const stageRef = useRef(null);
+  const speechSynthRef = useRef(typeof window !== 'undefined' ? window.speechSynthesis : null);
+  const hintTimersRef = useRef([]);
+  const usedWords = new Set(slots.filter(Boolean));
+  const correctCount = correctSlots.size;
+  const phase = sceneState.phase || PHASES.INITIAL;
+  const trayWords = scrambledWords.length ? scrambledWords : SHLOKA_WORDS;
+  const currentTargetWord = SHLOKA_WORDS[activeSlotIndex] || null;
+
+  useEffect(() => {
+    startIdleTimer?.();
+    return () => {
+      stopIdleTimer?.();
+      clearAllTimeouts();
+      speechSynthRef.current?.cancel();
+      hintTimersRef.current.forEach((id) => window.clearTimeout(id));
+      hintTimersRef.current = [];
+    };
+  }, [startIdleTimer, stopIdleTimer, clearAllTimeouts]);
+
+  useEffect(() => {
+    setCurrentPhase?.(phase);
+  }, [phase, setCurrentPhase]);
+
+  const speakWebSpeech = useCallback((text, onEnded) => {
+    if (!isAudioOn || !text) {
+      onEnded?.();
+      return;
     }
-    return array;
-  };
+    const synth = speechSynthRef.current;
+    if (!synth) {
+      onEnded?.();
+      return;
+    }
+    try {
+      synth.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-IN';
+      utterance.rate = 0.95;
+      utterance.pitch = 1;
+      utterance.volume = 0.95;
+      utterance.onend = () => onEnded?.();
+      utterance.onerror = () => onEnded?.();
+      synth.speak(utterance);
+    } catch {
+      onEnded?.();
+    }
+  }, [isAudioOn]);
 
-  // Start game
-  // REPLACE the existing handleStartGame with:
+  const stopAllVoice = useCallback(() => {
+    stopVoice?.();
+    speechSynthRef.current?.cancel();
+  }, [stopVoice]);
+
+  useEffect(() => {
+    if (phase === PHASES.INITIAL) {
+      setOpeningButtonVisible(true);
+      setScrambledWords(shuffle(SHLOKA_WORDS));
+      setSlots(Array(8).fill(null));
+      setWrongSlots(new Set());
+      setCorrectSlots(new Set());
+      setRecapIndex(-1);
+      setActiveSlotIndex(0);
+      setHintLevel(0);
+      setRippleSlot(null);
+    }
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase === PHASES.ARRANGE && scrambledWords.length === 0) {
+      setScrambledWords(shuffle(SHLOKA_WORDS));
+    }
+  }, [phase, scrambledWords.length]);
+
   const handleStartGame = () => {
-    setGamePhase('mode-select'); // Go to mode selection instead of directly to level1
+    sceneActions.updateState({ phase: PHASES.ARRANGE, welcomeShown: true });
+    speakWebSpeech('Place the boats in the right order to build the shloka.');
   };
 
-  // ADD these new functions after handleStartGame:
+  const clearHintTimers = useCallback(() => {
+    hintTimersRef.current.forEach((id) => window.clearTimeout(id));
+    hintTimersRef.current = [];
+  }, []);
 
-  const handleModeSelect = (mode) => {
-    setGameMode(mode);
-    if (mode === 'full-journey') {
-      setSelectedLevelMode('both');
-      setGamePhase('level1');
-      loadWord(0);
-    } else if (mode === 'practice') {
-      setGamePhase('word-select');
-    } else if (mode === 'quick-play') {
-      const randomIndex = Math.floor(Math.random() * 8);
-      setSelectedWordForPractice(randomIndex);
-      setSelectedLevelMode('both');
-      setGamePhase('level1');
-      loadWord(randomIndex);
+  const scheduleHints = useCallback((slotIndex) => {
+    clearHintTimers();
+    if (phase !== PHASES.ARRANGE || slotIndex >= SHLOKA_WORDS.length) return;
+
+    const hint1 = window.setTimeout(() => {
+      setHintLevel(1);
+    }, 10000);
+
+    const hint2 = window.setTimeout(() => {
+      setHintLevel(2);
+      speakWebSpeech('Which word comes next?');
+    }, 20000);
+
+    const hint3 = window.setTimeout(() => {
+      const wordLabel = SHLOKA_WORDS[slotIndex]?.label || 'This word';
+      setHintLevel(3);
+      speakWebSpeech(`${wordLabel} comes next.`);
+    }, 35000);
+
+    hintTimersRef.current = [hint1, hint2, hint3];
+  }, [clearHintTimers, phase, speakWebSpeech]);
+
+  const markInteraction = useCallback(() => {
+    setHintLevel(0);
+    if (phase === PHASES.ARRANGE && activeSlotIndex < SHLOKA_WORDS.length) {
+      scheduleHints(activeSlotIndex);
     }
-  };
+  }, [activeSlotIndex, phase, scheduleHints]);
 
-  const handleWordSelect = (wordIndex) => {
-    setSelectedWordForPractice(wordIndex);
-    setGamePhase('level-select');
-  };
-
-  const handleLevelSelect = (level) => {
-    setSelectedLevelMode(level);
-    const wordIdx = selectedWordForPractice !== null ? selectedWordForPractice : 0;
-
-    if (level === 'level1' || level === 'both') {
-      setGamePhase('level1');
-      loadWord(wordIdx);
-    } else if (level === 'level2') {
-      setCompletedWords(shlokaWords); // Pre-fill all words
-      setGamePhase('level2');
-      setHint("Arrange the words in the correct order!");
-    }
-  };
-
-  // Pause Menu Handlers
-  const handlePauseClick = () => setShowPauseMenu(true);
-  const handleResume = () => setShowPauseMenu(false);
-  const handleRestartGame = () => {
-    setShowPauseMenu(false);
-    if (gamePhase === 'level1') loadWord(currentWordIndex);
-    else if (gamePhase === 'level2') {
-      setShlokaSlots(Array(8).fill(null));
-      setUsedWords([]);
-      setShlokaFeedback([]);
-      setShowHearShlokaButton(false);
-    }
-  };
-  const handleChangeWord = () => { setShowPauseMenu(false); setGamePhase('word-select'); };
-  const handleChangeLevel = () => { setShowPauseMenu(false); setGamePhase('level-select'); };
-  const handleEndGame = () => { setShowPauseMenu(false); setGamePhase('scene-complete'); };
-
-  // Load word
-  const loadWord = (wordIndex) => {
-    console.log("Loading word:", wordIndex);
-    const word = shlokaWords[wordIndex];
-    setCurrentWordIndex(wordIndex);
-    setScrambledSyllables(scrambleSyllables(word.syllables));
-    setSlots(Array(word.syllables.length).fill(null));
-    setUsedSyllables([]);
-    setSelectedSlot(null);
-    setSlotFeedback([]);
-    setShowHearWordButton(false);
-    setHint(`Build word ${wordIndex + 1} of 8: Tap a lily pad!`);
-  };
-
-  // Play audio
-  const playAudio = (audioPath) => {
-    if (audioRef.current && audioPath) {
-      audioRef.current.src = audioPath;
-      audioRef.current.play().catch(e => console.log("Audio play prevented:", e));
-    }
-  };
-
-  // Handle slot click
-  const handleSlotClick = (index) => {
-    console.log("Slot clicked:", index);
-    if (slots[index]) {
-      // Slot filled - allow removal
-      const syllableToRemove = slots[index];
-      const newSlots = [...slots];
-      newSlots[index] = null;
-      setSlots(newSlots);
-      setUsedSyllables(usedSyllables.filter(s => s !== syllableToRemove));
-      setSlotFeedback([]); // Clear feedback when editing
-      setShowHearWordButton(false); // Hide button when editing
-      setHint("Syllable removed. Try again!");
-    } else {
-      // Empty slot - select it
-      setSelectedSlot(index);
-      setHint(`Slot ${index + 1} selected. Now tap a stone!`);
-    }
-  };
-
-  // Handle syllable click
-  const handleSyllableClick = (syllable, syllableIndex) => {
-    console.log("Syllable clicked:", syllable);
-
-    if (usedSyllables.includes(syllable)) {
-      setHint("You already used that syllable!");
+  useEffect(() => {
+    if (phase !== PHASES.ARRANGE) {
+      clearHintTimers();
+      setHintLevel(0);
       return;
     }
+    scheduleHints(activeSlotIndex);
+    return clearHintTimers;
+  }, [activeSlotIndex, clearHintTimers, phase, scheduleHints]);
 
-    if (selectedSlot === null) {
-      setHint("First, tap an empty lily pad! 🪷");
-      return;
-    }
-
-    // Play syllable audio
-    const currentWord = shlokaWords[currentWordIndex];
-    const audioPath = currentWord.syllableAudio[syllableIndex];
-    playAudio(audioPath);
-
-    // Place syllable in slot
-    const newSlots = [...slots];
-    newSlots[selectedSlot] = syllable;
-    setSlots(newSlots);
-    setUsedSyllables([...usedSyllables, syllable]);
-    setSelectedSlot(null);
-    setHint("Great! Keep building the word!");
-
-    // Check if word is complete
-    const allFilled = newSlots.every(slot => slot !== null);
-    if (allFilled) {
-      checkWord(newSlots);
-    }
-  };
-
-  // SIMPLIFIED: Check word and show tick/cross feedback
-  const checkWord = (currentSlots) => {
-    const currentWord = shlokaWords[currentWordIndex];
-
-    // Generate feedback for each slot
-    const feedback = currentSlots.map((slot, idx) =>
-      slot === currentWord.syllables[idx] ? 'correct' : 'wrong'
-    );
-
-    setSlotFeedback(feedback);
-
-    const allCorrect = feedback.every(f => f === 'correct');
-
-    // FIND the checkWord function and UPDATE the section after "ALL CORRECT!":
-
-    if (allCorrect) {
-      setHint(`Perfect! You built "${currentWord.word}"! 🎉`);
-      setShowHearWordButton(false);
-
-      setTimeout(() => {
-        setShowCelebration(true);
-        playAudio(currentWord.wordAudio);
-      }, 500);
-
-      setTimeout(() => {
-        setShowCelebration(false);
-        const newCompletedWords = [...completedWords, currentWord];
-        setCompletedWords(newCompletedWords);
-
-        // CHECK GAME MODE FOR PROGRESSION
-        if (gameMode === 'full-journey') {
-          // Full journey - advance through all words
-          if (currentWordIndex < 7) {
-            loadWord(currentWordIndex + 1);
-          } else {
-            setGamePhase('level1-complete');
-            setTimeout(() => {
-              setGamePhase('level2');
-              setHint("Arrange the words in the correct order!");
-            }, 3000);
-          }
-        } else if (gameMode === 'practice' && selectedLevelMode === 'both') {
-          // Practice mode with both levels - go to level 2 with just this word
-          setGamePhase('level2');
-          setHint("Now arrange the shloka!");
-        } else {
-          // Single level practice or quick play - end game
-          setGamePhase('scene-complete');
-        }
-      }, 3500);
-
-    } else {
-      // SOME WRONG - Show "Hear Word" button
-      setShowHearWordButton(true);
-      setHint("Not quite right! Tap wrong syllables to fix them, or press 'Hear Word' for help!");
-    }
-  };
-
-  // MODAL: Play word with highlights in popup showing correct arrangement
-  const handleHearWord = async () => {
-    const currentWord = shlokaWords[currentWordIndex];
-
-    // Show modal with correct syllables
-    setShowHearWordModal(true);
-
-    // Wait a moment for modal to appear
-    await new Promise(resolve => setTimeout(resolve, 300));
-
-    // Play syllables one by one with highlights
-    for (let i = 0; i < currentWord.syllables.length; i++) {
-      // Highlight current syllable in modal
-      setHighlightedModalSlot(i);
-
-      // Play syllable audio
-      playAudio(currentWord.syllableAudio[i]);
-
-      // Wait for syllable duration
-      await new Promise(resolve => setTimeout(resolve, 1200));
-    }
-
-    // Clear highlight and keep modal open for a moment
-    setHighlightedModalSlot(null);
-
-    // Wait then close modal
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setShowHearWordModal(false);
-
-    setHint("Now tap the red ✗ syllables to remove them and try again!");
-  };
-
-  // Level 2: Handle boat slot click
-  const handleShlokaSlotClick = (index) => {
-    if (shlokaSlots[index]) {
-      const wordToRemove = shlokaSlots[index];
-      const newSlots = [...shlokaSlots];
-      newSlots[index] = null;
-      setShlokaSlots(newSlots);
-      setUsedWords(usedWords.filter(w => w.id !== wordToRemove.id));
-      setHint("Word removed. Try again!");
-    } else {
-      setSelectedShlokaSlot(index);
-      setHint(`Boat ${index + 1} selected. Now tap a word scroll!`);
-    }
-  };
-
-  // Level 2: Handle word click
-  const handleWordClick = (word) => {
-    if (usedWords.find(w => w.id === word.id)) {
-      setHint("You already used that word!");
-      return;
-    }
-
-    if (selectedShlokaSlot === null) {
-      setHint("First, tap an empty boat! ⛵");
-      return;
-    }
-
-    // Play word audio
-    playAudio(word.wordAudio);
-
-    const newSlots = [...shlokaSlots];
-    newSlots[selectedShlokaSlot] = word;
-    setShlokaSlots(newSlots);
-    setUsedWords([...usedWords, word]);
-    setSelectedShlokaSlot(null);
-    setHint("Excellent! Keep arranging the shloka!");
-
-    const allFilled = newSlots.every(slot => slot !== null);
-    if (allFilled) {
-      checkShloka(newSlots);
-    }
-  };
-
-  // Check shloka
-  const checkShloka = (currentSlots) => {
-    const isCorrect = currentSlots.every((slot, idx) => slot && slot.position === idx);
+  const placeWord = useCallback((wordData, slotIdx) => {
+    const isCorrect = SHLOKA_WORDS[slotIdx].id === wordData.id;
 
     if (isCorrect) {
-      setGamePhase('shloka-complete');
-      setTimeout(() => {
-        setGamePhase('scene-complete');
-      }, 3000);
+      const newSlots = [...slots];
+      newSlots[slotIdx] = wordData.id;
+      setSlots(newSlots);
+      setCorrectSlots((prev) => {
+        const next = new Set(prev);
+        next.add(slotIdx);
+        const nextCount = next.size;
+        setRippleSlot(slotIdx);
+        safeSetTimeout(() => setRippleSlot(null), 650);
+        if (nextCount === 8) {
+          safeSetTimeout(() => {
+            sceneActions.updateState({ phase: PHASES.SUCCESS });
+            speakWebSpeech('You completed the Shloka River!');
+          }, 2000);
+        } else {
+          safeSetTimeout(() => {
+            setActiveSlotIndex(slotIdx + 1);
+            setHintLevel(0);
+          }, 420);
+        }
+        return next;
+      });
+      setWrongSlots((prev) => {
+        const next = new Set(prev);
+        next.delete(slotIdx);
+        return next;
+      });
+      playSfx?.('chime');
+      markInteraction();
     } else {
-      setHint("Not quite right! Try arranging the words differently.");
+      setWrongSlots((prev) => new Set(prev).add(slotIdx));
+      playSfx?.('wrong');
+      markInteraction();
+      safeSetTimeout(() => {
+        setWrongSlots((prev) => {
+          const next = new Set(prev);
+          next.delete(slotIdx);
+          return next;
+        });
+      }, 600);
     }
+  }, [markInteraction, playSfx, safeSetTimeout, sceneActions, slots, speakWebSpeech]);
+
+  const handleTrayPointerDown = (e, wordData) => {
+    if (phase !== PHASES.ARRANGE || usedWords.has(wordData.id)) return;
+    e.preventDefault();
+    markInteraction();
+    setDraggingWord(wordData);
+    const rect = stageRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setDragPos({
+      x: ((e.clientX - rect.left) / rect.width) * 100,
+      y: ((e.clientY - rect.top) / rect.height) * 100,
+    });
   };
 
-  const currentWord = shlokaWords[currentWordIndex] || shlokaWords[0];
-  const replayCurrentVoice = () => {
-    if (!isAudioOn || !currentWord?.wordAudio) return;
-    playAudio(currentWord.wordAudio);
+  const handlePointerMove = (e) => {
+    if (!draggingWord) return;
+    const rect = stageRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setDragPos({
+      x: ((e.clientX - rect.left) / rect.width) * 100,
+      y: ((e.clientY - rect.top) / rect.height) * 100,
+    });
+  };
+
+  const handlePointerUp = (e) => {
+    if (!draggingWord) return;
+    const rect = stageRef.current?.getBoundingClientRect();
+    if (!rect) {
+      setDraggingWord(null);
+      setDragPos(null);
+      return;
+    }
+
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    const activeSlotEl = stageRef.current.querySelector(`.srf-slot[data-index="${activeSlotIndex}"]`);
+    if (activeSlotEl && !slots[activeSlotIndex]) {
+      const slotRect = activeSlotEl.getBoundingClientRect();
+      const sx = ((slotRect.left + slotRect.width / 2 - rect.left) / rect.width) * 100;
+      const sy = ((slotRect.top + slotRect.height / 2 - rect.top) / rect.height) * 100;
+      const dist = Math.hypot(x - sx, y - sy);
+      if (dist < 16) {
+        placeWord(draggingWord, activeSlotIndex);
+      }
+    }
+
+    setDraggingWord(null);
+    setDragPos(null);
+  };
+
+  const handleSlotTap = (idx) => {
+    if (phase !== PHASES.ARRANGE || idx !== activeSlotIndex) return;
+    markInteraction();
+  };
+
+  const handleWordChipTap = (wordData) => {
+    if (phase !== PHASES.ARRANGE) return;
+    if (usedWords.has(wordData.id)) return;
+    markInteraction();
+    placeWord(wordData, activeSlotIndex);
+  };
+
+  useEffect(() => {
+    if (phase !== PHASES.SUCCESS) return;
+    safeSetTimeout(() => {
+      sceneActions.updateState({ phase: PHASES.RECAP });
+      setRecapIndex(0);
+    }, 2500);
+  }, [phase, safeSetTimeout, sceneActions]);
+
+  useEffect(() => {
+    if (phase !== PHASES.RECAP || recapIndex < 0) return;
+    if (recapIndex >= 8) {
+      safeSetTimeout(() => {
+        sceneActions.updateState({ phase: PHASES.FINALE });
+      }, 1200);
+      return;
+    }
+    const word = SHLOKA_WORDS[recapIndex];
+    if (isAudioOn) {
+      playWordAudio?.(word.id);
+    }
+    safeSetTimeout(() => setRecapIndex((prev) => prev + 1), 1000);
+  }, [phase, recapIndex, isAudioOn, playWordAudio, safeSetTimeout, sceneActions]);
+
+  useEffect(() => {
+    if (phase === PHASES.FINALE) {
+      setShowFireworks(true);
+    }
+  }, [phase]);
+
+  const handleFireworksComplete = () => {
+    setShowFireworks(false);
+
+    const profileId = activeProfile?.id;
+    if (profileId) {
+      GameStateManager.saveGameState(zoneId, sceneId, {
+        completed: true,
+        stars: 8,
+        timestamp: Date.now(),
+      });
+      ProgressManager.updateSceneCompletion(profileId, zoneId, sceneId, {
+        completed: true,
+        stars: 8,
+      });
+    }
+
+    sceneActions.updateState({
+      phase: PHASES.COMPLETE,
+      completed: true,
+      stars: 8,
+      showingCompletionScreen: true,
+    });
+
+    setShowMandala(true);
   };
 
   return (
-    <div className="river-finale-container">
-      <HomeButton onNavigate={(dest) => { if (onNavigate) onNavigate(dest); else onBack?.(); }} />
-      <ZoneBadgeButton
-        zoneId="shloka-river"
-        onBack={() => { if (onNavigate) onNavigate('zone-welcome'); else onBack?.(); }}
-      />
-      <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
-      <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn || !currentWord?.wordAudio} />
-      {/* Background */}
-      <div
-        className="river-bg"
-        style={{ backgroundImage: `url(${bgImage})` }}
-      />
-
-      <audio ref={audioRef} />
-
-      {!showSceneCompletion && (
-      <>
-
-      {/* INTRO SCREEN */}
-      {gamePhase === 'intro' && (
-        <OpeningModal
-          zoneId="shloka-river"
-          sceneId="shloka-river-finale"
-          onStart={handleStartGame}
-          characterImg={ganeshaHeadphones}
-          showButton={true}
-        />
-      )}
-
-      {/* MODE SELECTION SCREEN */}
-      {gamePhase === 'mode-select' && (
-        <div className="game-screen selection-screen">
-          <div className="selection-modal">
-            <h2 className="selection-title">🌊 Choose Your Journey 🌊</h2>
-
-            <div className="selection-options">
-              <button className="selection-btn journey" onClick={() => handleModeSelect('full-journey')}>
-                <span className="selection-icon">🎯</span>
-                <div className="selection-content">
-                  <h3>Full Journey</h3>
-                  <p>Master all 8 sacred words!</p>
-                </div>
-              </button>
-
-              <button className="selection-btn practice" onClick={() => handleModeSelect('practice')}>
-                <span className="selection-icon">📚</span>
-                <div className="selection-content">
-                  <h3>Practice Mode</h3>
-                  <p>Choose specific word & level</p>
-                </div>
-              </button>
-
-              <button className="selection-btn quick" onClick={() => handleModeSelect('quick-play')}>
-                <span className="selection-icon">🎲</span>
-                <div className="selection-content">
-                  <h3>Quick Play</h3>
-                  <p>Random word practice</p>
-                </div>
-              </button>
-            </div>
-
-            <button className="selection-back-btn" onClick={onBack}>← Back to Map</button>
-          </div>
-        </div>
-      )}
-
-      {/* WORD SELECTION SCREEN */}
-      {gamePhase === 'word-select' && (
-        <div className="game-screen selection-screen">
-          <div className="selection-modal wide">
-            <h2 className="selection-title">Choose a Word to Practice</h2>
-
-            <div className="word-selection-grid">
-              {shlokaWords.map((word, index) => (
-                <button
-                  key={word.id}
-                  className="word-select-btn"
-                  onClick={() => handleWordSelect(index)}
-                >
-                  <span className="word-select-number">{index + 1}</span>
-                  <span className="word-select-name">{word.word}</span>
-                  <span className="word-select-meaning">{word.meaning}</span>
-                </button>
-              ))}
-            </div>
-
-            <button className="selection-back-btn" onClick={() => setGamePhase('mode-select')}>
-              ← Back
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* LEVEL SELECTION SCREEN */}
-      {gamePhase === 'level-select' && (
-        <div className="game-screen selection-screen">
-          <div className="selection-modal">
-            <h2 className="selection-title">What do you want to practice?</h2>
-            <p className="selection-subtitle">
-              Word: {shlokaWords[selectedWordForPractice]?.word} ({shlokaWords[selectedWordForPractice]?.meaning})
-            </p>
-
-            <div className="selection-options">
-              <button className="selection-btn level1" onClick={() => handleLevelSelect('level1')}>
-                <span className="selection-icon">🪷</span>
-                <div className="selection-content">
-                  <h3>Build Word</h3>
-                  <p>Level 1: Syllable practice</p>
-                </div>
-              </button>
-
-              <button className="selection-btn level2" onClick={() => handleLevelSelect('level2')}>
-                <span className="selection-icon">⛵</span>
-                <div className="selection-content">
-                  <h3>Arrange Shloka</h3>
-                  <p>Level 2: Word order</p>
-                </div>
-              </button>
-
-              <button className="selection-btn both" onClick={() => handleLevelSelect('both')}>
-                <span className="selection-icon">🌊</span>
-                <div className="selection-content">
-                  <h3>Both Levels</h3>
-                  <p>Complete practice</p>
-                </div>
-              </button>
-            </div>
-
-            <button className="selection-back-btn" onClick={() => setGamePhase('word-select')}>
-              ← Back
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* LEVEL 1 SCREEN */}
-      {gamePhase === 'level1' && (
-        <div className="game-screen level1-game">
-          <button className="game-back-btn" onClick={onBack}>← Back</button>
-          {/* Add this button right after the "Back" button in both level1-game and level2-game: */}
-          <button className="game-pause-btn" onClick={handlePauseClick}>⏸️</button>
-
-          <div className="game-header">
-            <h2 className="game-title">🪷 Build the Sacred Words 🪷</h2>
-            <div className="game-progress">Word {currentWordIndex + 1} of 8</div>
-          </div>
-
-          <div className="game-hint">{hint}</div>
-
-          {/* HEAR WORD BUTTON - Only shows when there are mistakes */}
-          {showHearWordButton && (
-            <button className="hear-word-btn" onClick={handleHearWord}>
-              🔊 Hear Word
-            </button>
+    <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
+      <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
+        <div
+          ref={stageRef}
+          className="srf-container"
+          style={{ backgroundImage: `url(${riverBg})` }}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerLeave={handlePointerUp}
+        >
+          {phase === PHASES.INITIAL && (
+            <OpeningModal
+              zoneId={zoneId}
+              sceneId={sceneId}
+              onStart={handleStartGame}
+              buttonVisible={openingButtonVisible}
+            />
           )}
 
-
-          {/* Lily Pads with Simple Tick/Cross Feedback */}
-          <div className="lily-pads-area">
-            {slots.map((syllable, index) => (
-              <div
-                key={`slot-${index}`}
-                className={`lily-pad ${syllable ? 'filled' : 'empty'} ${selectedSlot === index ? 'selected' : ''}`}
-                onClick={() => handleSlotClick(index)}
-              >
-                <span className="lily-number">{index + 1}</span>
-                {syllable ? (
-                  <div className="syllable-stone">
-                    <span>{syllable}</span>
-                    {/* SIMPLE FEEDBACK ICONS - Only tick or cross */}
-                    {slotFeedback[index] === 'correct' && (
-                      <span className="feedback-icon correct">✓</span>
-                    )}
-                    {slotFeedback[index] === 'wrong' && (
-                      <span className="feedback-icon wrong">✗</span>
-                    )}
-                  </div>
-                ) : (
-                  <span className="lily-placeholder">?</span>
-                )}
+          {phase === PHASES.ARRANGE && (
+            <div className="srf-arrange">
+              <div className="srf-title-banner">
+                <h1 className="srf-title">Build the Shloka River!</h1>
+                <p className="srf-subtitle">Drag the word boats to place them in order</p>
               </div>
-            ))}
-          </div>
 
-          {/* HEAR WORD MODAL - Shows correct syllables */}
-          {showHearWordModal && (
-            <div className="hear-word-modal-overlay">
-              <div className="hear-word-modal">
-                <div className="modal-title-section">
-                  <h3>Listen and Learn! 🎧</h3>
-                  <p>This is the correct word:</p>
-                </div>
-                <div className="modal-syllables">
-                  {currentWord.syllables.map((syllable, index) => (
-                    <div
-                      key={`modal-syllable-${index}`}
-                      className={`modal-syllable ${highlightedModalSlot === index ? 'highlighted' : ''}`}
-                    >
-                      <span className="modal-slot-number">{index + 1}</span>
-                      <span className="modal-syllable-text">{syllable}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="modal-word-meaning">
-                  <strong>{currentWord.word}</strong>
-                  <span>{currentWord.meaning}</span>
+              <div className="srf-progress-badge">{Math.min(correctCount + 1, 8)} / 8</div>
+
+              <div className="srf-river-area">
+                <div className="srf-slot-grid">
+                  {Array(8).fill(null).map((_, idx) => {
+                    const placedWordId = slots[idx];
+                    const wordData = placedWordId
+                      ? SHLOKA_WORDS.find((w) => w.id === placedWordId)
+                      : null;
+                    const isCorrect = correctSlots.has(idx);
+                    const isWrong = wrongSlots.has(idx);
+                    const isActive = idx === activeSlotIndex && !placedWordId;
+                    const isLocked = idx > activeSlotIndex && !placedWordId;
+
+                    return (
+                      <div
+                        key={idx}
+                        className={`srf-slot ${isCorrect ? 'is-correct' : ''} ${isWrong ? 'is-wrong' : ''} ${isActive ? 'is-active' : ''} ${isLocked ? 'is-locked' : ''} ${placedWordId ? 'is-filled' : ''} ${rippleSlot === idx ? 'is-ripple' : ''} ${hintLevel >= 1 && isActive ? 'is-hint-slot' : ''}`}
+                        data-index={idx}
+                        onClick={() => handleSlotTap(idx)}
+                      >
+                        <span className="srf-slot-number">{idx + 1}</span>
+                        {placedWordId && wordData ? (
+                          <div className="srf-placed-boat" style={{ color: wordData.color }}>
+                            <BoatSvg />
+                            <img src={wordData.icon} alt="" className="srf-boat-icon" />
+                            <span className="srf-boat-label">{wordData.label}</span>
+                            {isCorrect && <span className="srf-slot-check">✓</span>}
+                          </div>
+                        ) : (
+                          <div className="srf-ghost-boat">
+                            <BoatSvg style={{ opacity: 0.15 }} />
+                            <span className="srf-slot-q">?</span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-            </div>
-          )}
 
-          {/* River Stones */}
-          <div className="river-stones-area">
-            <p className="stones-label">🌊 Tap stones to place them 🌊</p>
-            <div className="river-stones">
-              {scrambledSyllables.map((syllable, index) => {
-                const originalIndex = currentWord.syllables.indexOf(syllable);
-                return (
-                  <button
-                    key={`stone-${index}`}
-                    className={`river-stone ${usedSyllables.includes(syllable) ? 'used' : 'available'}`}
-                    onClick={() => handleSyllableClick(syllable, originalIndex)}
-                    disabled={usedSyllables.includes(syllable)}
-                  >
-                    {syllable}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Celebration */}
-          {showCelebration && (
-            <div className="celebration-popup">
-              <div className="celebration-content">
-                <h3>{currentWord.word}! ✨</h3>
-                <p>{currentWord.meaning}</p>
+              <div className="srf-tray">
+                <p className="srf-tray-label">Drag the word boats</p>
+                <div className="srf-tray-boats">
+                  {trayWords.filter((w) => !usedWords.has(w.id)).map((w) => {
+                    const isHintBoat = currentTargetWord?.id === w.id && hintLevel >= 2;
+                    return (
+                      <div
+                        key={w.id}
+                        className={`srf-tray-boat ${isHintBoat ? (hintLevel >= 3 ? 'is-hint-wiggle' : 'is-hint-pulse') : ''}`}
+                        style={{ color: w.color }}
+                        onPointerDown={(e) => handleTrayPointerDown(e, w)}
+                        onClick={() => handleWordChipTap(w)}
+                      >
+                        <BoatSvg />
+                        <img src={w.icon} alt="" className="srf-boat-icon" />
+                        <span className="srf-boat-label">{w.label}</span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-      )}
 
-      {/* LEVEL 1 COMPLETE */}
-      {gamePhase === 'level1-complete' && (
-        <div className="game-screen complete-screen">
-          <div className="complete-ganesha">🐘</div>
-          <h2 className="complete-title">All 8 Words Built! 🎉</h2>
-          <p className="complete-message">
-            Now arrange them in the correct order to complete the sacred shloka!
-          </p>
-        </div>
-      )}
-
-      {/* LEVEL 2 SCREEN */}
-      {(gamePhase === 'level2' || gamePhase === 'shloka-complete') && (
-        <div className="game-screen level2-game">
-          <button className="game-back-btn" onClick={onBack}>← Back</button>
-          {/* Add this button right after the "Back" button in both level1-game and level2-game: */}
-          <button className="game-pause-btn" onClick={handlePauseClick}>⏸️</button>
-
-          <div className="game-header">
-            <h2 className="game-title">⛵ Arrange the Complete Shloka ⛵</h2>
-            <div className="game-progress">Words Placed: {usedWords.length} / 8</div>
-          </div>
-
-          {gamePhase === 'level2' && (
-            <div className="game-hint">{hint}</div>
-          )}
-
-          {/* Word Boats */}
-          <div className="boats-area">
-            <div className="boats-line">
-              {[0, 1, 2, 3].map(index => (
+              {draggingWord && dragPos && (
                 <div
-                  key={`boat-${index}`}
-                  className={`word-boat ${shlokaSlots[index] ? 'filled' : 'empty'} ${selectedShlokaSlot === index ? 'selected' : ''}`}
-                  onClick={() => gamePhase === 'level2' && handleShlokaSlotClick(index)}
+                  className="srf-drag-ghost"
+                  style={{
+                    left: `${dragPos.x}%`,
+                    top: `${dragPos.y}%`,
+                    color: draggingWord.color,
+                  }}
                 >
-                  <span className="boat-number">{index + 1}</span>
-                  {shlokaSlots[index] ? (
-                    <span className="boat-word">{shlokaSlots[index].word}</span>
-                  ) : (
-                    <span className="boat-placeholder">?</span>
-                  )}
+                  <BoatSvg />
+                  <img src={draggingWord.icon} alt="" className="srf-boat-icon" />
+                  <span className="srf-boat-label">{draggingWord.label}</span>
                 </div>
-              ))}
+              )}
             </div>
-            <div className="boats-line">
-              {[4, 5, 6, 7].map(index => (
-                <div
-                  key={`boat-${index}`}
-                  className={`word-boat ${shlokaSlots[index] ? 'filled' : 'empty'} ${selectedShlokaSlot === index ? 'selected' : ''}`}
-                  onClick={() => gamePhase === 'level2' && handleShlokaSlotClick(index)}
-                >
-                  <span className="boat-number">{index + 1}</span>
-                  {shlokaSlots[index] ? (
-                    <span className="boat-word">{shlokaSlots[index].word}</span>
-                  ) : (
-                    <span className="boat-placeholder">?</span>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+          )}
 
-          {/* Word Cards */}
-          {gamePhase === 'level2' && (
-            <div className="word-cards-area">
-              <p className="cards-label">📜 Your completed words (tap to place) 📜</p>
-              <div className="word-cards">
-                {completedWords.map(word => (
-                  <button
-                    key={`card-${word.id}`}
-                    className={`word-card ${usedWords.find(w => w.id === word.id) ? 'used' : 'available'}`}
-                    onClick={() => handleWordClick(word)}
-                    disabled={usedWords.find(w => w.id === word.id)}
-                  >
-                    {word.word}
-                  </button>
+          {phase === PHASES.SUCCESS && (
+            <div className="srf-success-overlay">
+              <div className="srf-success-glow" />
+              <h2 className="srf-success-text">You completed the Shloka River! ✨</h2>
+            </div>
+          )}
+
+          {phase === PHASES.RECAP && (
+            <div className="srf-recap">
+              <div className="srf-recap-boat">
+                <img src={boatSailImage} alt="Boat sailing" />
+              </div>
+
+              {recapIndex >= 0 && recapIndex < 8 && (
+                <div className="srf-recap-word" key={recapIndex}>
+                  <img src={SHLOKA_WORDS[recapIndex].icon} alt="" className="srf-recap-icon" />
+                  <span className="srf-recap-label" style={{ color: SHLOKA_WORDS[recapIndex].color }}>
+                    {SHLOKA_WORDS[recapIndex].label}
+                  </span>
+                </div>
+              )}
+
+              <div className="srf-recap-dots">
+                {SHLOKA_WORDS.map((w, i) => (
+                  <div
+                    key={w.id}
+                    className={`srf-recap-dot ${i < recapIndex ? 'is-done' : ''} ${i === recapIndex ? 'is-current' : ''}`}
+                    style={{ '--dot-color': w.color }}
+                  />
                 ))}
               </div>
             </div>
           )}
 
-          {/* Shloka Complete */}
-          {gamePhase === 'shloka-complete' && (
-            <div className="shloka-popup">
-              <h2>The Sacred Shloka! 🙏</h2>
-              <p>Listen as Ganesha recites it...</p>
+          {phase === PHASES.FINALE && (
+            <div className="srf-finale">
+              <div className="srf-shloka-card">
+                <p className="srf-shloka-line srf-line-1">
+                  <span>Vakratunda</span> <span>Mahakaya</span>
+                </p>
+                <p className="srf-shloka-line srf-line-2">
+                  <span>Suryakoti</span> <span>Samaprabha</span>
+                </p>
+                <div className="srf-shloka-divider">🪷</div>
+                <p className="srf-shloka-line srf-line-3">
+                  <span>Nirvighnam</span> <span>Kurumedeva</span>
+                </p>
+                <p className="srf-shloka-line srf-line-4">
+                  <span>Sarvakaryeshu</span> <span>Sarvada</span>
+                </p>
+              </div>
+
+              <div className="srf-badge">
+                <span className="srf-badge-label">Shloka River</span>
+                <span className="srf-badge-title">MASTER!</span>
+              </div>
             </div>
           )}
+
+          {showFireworks && (
+            <>
+              <FireworksCompletion show={true} showCard={false} />
+              <CalmGoldenFireworks
+                show={true}
+                particles={14}
+                duration={4000}
+                onComplete={handleFireworksComplete}
+              />
+            </>
+          )}
+
+          {showMandala && (
+            <InnerMandala
+              childName={profileName}
+              petalStates={{}}
+              middlePetalStates={{
+                1: 'activated',
+                2: 'activated',
+                3: 'activated',
+                4: 'activated',
+                5: 'activated',
+                6: 'activated',
+                7: 'activated',
+                8: 'activated',
+              }}
+              middleSymbolIcons={{
+                1: symbolVakratunda,
+                2: symbolMahakaya,
+                3: symbolSuryakoti,
+                4: symbolSamaprabha,
+                5: symbolNirvighnam,
+                6: symbolKurumedeva,
+                7: symbolSarvakaryeshu,
+                8: symbolSarvada,
+              }}
+              innerPetalStates={{}}
+              message="The complete shloka lives inside you now"
+              onClose={() => {
+                setShowMandala(false);
+                setShowSceneCompletion(true);
+              }}
+            />
+          )}
+
+          <SceneCompletionCelebration
+            show={showSceneCompletion && !showMandala}
+            zoneId={zoneId}
+            sceneName="Shloka River"
+            completionTitle={completionModalContent?.title}
+            completionSubtitle={completionModalContent?.subtitle}
+            sceneNumber={5}
+            totalScenes={5}
+            starsEarned={8}
+            totalStars={8}
+            discoveredSymbols={SHLOKA_WORDS.map((w) => w.id)}
+            containerType="backpack"
+            symbolImages={Object.fromEntries(SHLOKA_WORDS.map((w) => [w.id, w.icon]))}
+            sceneId={sceneId}
+            completionData={{ stars: 8, completed: true }}
+            onComplete={() => {
+              onNavigate?.('zone-welcome');
+              onComplete?.();
+            }}
+            childName={profileName}
+            isFinalScene={true}
+            onExploreZones={() => onNavigate?.('zones')}
+            onHome={() => onNavigate?.('home')}
+            onReplay={() => {
+              setShowSceneCompletion(false);
+              setShowMandala(false);
+              setShowFireworks(false);
+              stopAllVoice();
+              resetScene();
+            }}
+            onContinue={() => onNavigate?.('scene-complete-continue')}
+          />
+
+          <TocaBocaNav
+            onHome={() => safeSetTimeout(() => {
+              stopAllVoice();
+              SimpleSceneManager.clearCurrentScene();
+              onNavigate?.('home');
+            }, 100)}
+            onZonesClick={() => safeSetTimeout(() => {
+              stopAllVoice();
+              SimpleSceneManager.clearCurrentScene();
+              onNavigate?.('zones');
+            }, 100)}
+            onStartFresh={() => {
+              setShowSceneCompletion(false);
+              setShowMandala(false);
+              setShowFireworks(false);
+              stopAllVoice();
+              resetScene();
+            }}
+            currentProgress={{ stars: correctCount, completed: sceneState.completed ? 1 : 0, total: 1 }}
+            isAudioOn={isAudioOn}
+            onAudioToggle={toggleAudio}
+          />
         </div>
-      )}
-      </>
-      )}
-
-      {/* SCENE COMPLETE */}
-      <SceneCompletionCelebration
-        show={showSceneCompletion}
-        zoneId="shloka-river"
-        sceneName="Shloka River Finale"
-        completionTitle={completionModalContent?.title}
-        completionSubtitle={completionModalContent?.subtitle}
-        sceneNumber={5}
-        totalScenes={5}
-        starsEarned={5}
-        totalStars={5}
-        discoveredSymbols={[]}
-        sceneId="shloka-river-finale"
-        completionData={{ stars: 5, completed: true }}
-        onComplete={() => {
-          onNavigate?.('zone-welcome');
-          onComplete?.();
-        }}
-        onReplay={() => {
-          setGamePhase('intro');
-          setCurrentWordIndex(0);
-          setCompletedWords([]);
-          setShlokaSlots(Array(8).fill(null));
-          setUsedWords([]);
-        }}
-        onContinue={() => {
-          onNavigate?.('zone-welcome');
-        }}
-      />
-
-      {/* Add at the end, just before the final closing </div> of river-finale-container: */}
-      <GamePauseMenu
-        show={showPauseMenu}
-        gameName="Shloka River"
-        onResume={handleResume}
-        onRestart={handleRestartGame}
-        onBackToModes={() => { setShowPauseMenu(false); setGamePhase('mode-select'); }}
-        onChangeWord={gameMode === 'practice' ? handleChangeWord : null}
-        onChangeLevel={gameMode === 'practice' ? handleChangeLevel : null}
-        onComplete={handleEndGame}
-      />
-    </div>
+      </MessageManager>
+    </InteractionManager>
   );
 };
 
