@@ -59,7 +59,7 @@ const AppSidebar = ({
     '--chant-cta-shadow': theme.btnShadow || theme.glowColor
   };
 
-  const appOrder = ['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha', 'kurumedeva', 'nirvighnam', 'sarvakaryeshu', 'sarvada'];
+  const appOrder = ['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha', 'nirvighnam', 'kurumedeva', 'sarvakaryeshu', 'sarvada'];
 
   const displayApps = centerMode
     ? appOrder.filter(id => unlockedApps[id])
