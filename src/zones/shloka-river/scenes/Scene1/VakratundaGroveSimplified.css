@@ -25,16 +25,13 @@
 }
 
 .river-background {
-  width: min(100vw, calc(100vh * 4 / 3)) !important;
-  aspect-ratio: 4 / 3;
-  max-height: 100vh !important;
+  width: 100vw !important;
+  height: 100vh !important;
   background-size: cover !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
   margin: 0 !important;
   padding: 0 !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
   position: relative;
   display: flex;
   flex-direction: column;
