@@ -97,43 +97,42 @@ export const OPENING_MODALS = {
   // ========================================
   'shloka-river': {
     'vakratunda-grove': {
-      title: "Bloom the Flowers",
-      description: "Listen and repeat. Watch them bloom.",
+      title: "Your Journey Begins!",
+      description: "The river has two surprises waiting for you.",
       icons: ['vakratunda', 'mahakaya'],
       buttonText: "Let's Explore",
       character: 'ganesha-headphones'
     },
 
     'suryakoti-bank': {
-      title: "Sun and Smiles",
-      description: "Call the light forward and see the world brighten around you.",
+      title: "Bring Back the Light!",
+      description: "The river feels a little dark today.",
       icons: ['suryakoti', 'samaprabha'],
       buttonText: "Let's Explore",
       character: 'ganesha-headphones'
     },
 
     'nirvighnam-chant': {
-      title: "Clear the way. Call for help.",
-      description: "Two powers live by this river.",
+      title: "The River Needs You!",
+      description: "Some things are standing in the way.",
       icons: ['nirvighnam', 'kurumedeva'],
       buttonText: "Let's Explore",
       character: 'ganesha-headphones'
     },
 
     'sarvakaryeshu-chant': {
-      title: "Care and Share",
-      description: "Say the words with heart and watch kindness spread.",
+      title: "Your Powers in Action!",
+      description: "See where your powers belong — and remember them always.",
       icons: ['sarvakaryeshu', 'sarvada'],
-      iconLabels: ['Day', 'Night'],
+      iconLabels: ['Sarvakaryeshu', 'Sarvada'],
       buttonText: "Let's Explore",
       character: 'ganesha-headphones'
     },
 
     'shloka-river-finale': {
-      title: "Chant and Celebrate",
-      description: "All the words flow together. Let your voice lead the river.",
-      icons: ['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha', 'nirvighnam', 'kurumedeva', 'sarvakaryeshu', 'sarvada'],
-      iconLabels: ['VA', 'MA', 'SU', 'SA', 'NI', 'KU', 'SAR', 'SAR'],
+      title: "Build the Shloka River!",
+      description: "Can you place all eight word boats in order?",
+      icons: ['vakratunda', 'nirvighnam', 'sarvada'],
       buttonText: "Let's Explore",
       character: 'ganesha-headphones'
     }

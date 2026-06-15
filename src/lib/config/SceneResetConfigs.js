@@ -848,6 +848,69 @@ export const SCENE_RESET_CONFIGS = {
   }
 },
 
+'sarvakaryeshu-chant': {
+  initialPhase: 'initial',
+  initialFocus: 'welcome',
+  keepSymbols: {},
+  specificResets: {
+    phase: 'initial',
+    learnedWords: {
+      sarvakaryeshu: false,
+      sarvada: false
+    },
+    chantedVerses: {},
+    learnedSyllables: {
+      sar: false,
+      va: false,
+      kar: false,
+      ye: false,
+      shu: false,
+      da: false
+    },
+    unlockedApps: {
+      vakratunda: true,
+      mahakaya: true,
+      suryakoti: true,
+      samaprabha: true,
+      nirvighnam: true,
+      kurumedeva: true
+    },
+    welcomeShown: false,
+    currentPopup: null,
+    showingCompletionScreen: false,
+    stars: 0,
+    completed: false,
+    progress: {
+      percentage: 0,
+      starsEarned: 0,
+      completed: false
+    },
+    sarvakaryeshuGameState: null,
+    sarvadaGameState: null
+  }
+},
+
+'shloka-river-finale': {
+  initialPhase: 'initial',
+  initialFocus: 'welcome',
+  keepSymbols: {},
+  specificResets: {
+    phase: 'initial',
+    slots: Array(8).fill(null),
+    correctCount: 0,
+    completed: false,
+    stars: 0,
+    welcomeShown: false,
+    currentPopup: null,
+    showingCompletionScreen: false,
+    progress: {
+      percentage: 0,
+      starsEarned: 0,
+      completed: false
+    }
+  }
+},
+
 'suryakoti-bank': {
   initialPhase: 'initial',
   initialFocus: 'welcome',

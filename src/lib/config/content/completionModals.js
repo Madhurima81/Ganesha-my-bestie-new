@@ -45,24 +45,24 @@ export const COMPLETION_MODALS = {
 
 'shloka-river': {
   'vakratunda-grove': {
-    title: 'The Grove Has Bloomed',
-    subtitle: 'Your voice made them bloom.'
+    title: 'First Powers Unlocked!',
+    subtitle: 'Vakratunda and Mahakaya are yours.'
   },
   'suryakoti-bank': {
-    title: 'The Sun Is Shining Bright!',
-    subtitle: 'Your words brought the light forward.'
+    title: 'The River Is Glowing!',
+    subtitle: 'You helped the light shine everywhere.'
   },
   'nirvighnam-chant': {
-    title: 'Two new powers unlocked!',
-    subtitle: 'Nirvighnam and Kurumedeva are yours.'
+    title: 'The Way Is Clear!',
+    subtitle: 'You helped everyone move forward.'
   },
   'sarvakaryeshu-chant': {
-    title: 'Kindness Is Flowing!',
-    subtitle: 'Your words spread gently outward.'
+    title: 'All Eight Powers Are Yours!',
+    subtitle: 'These powers stay with you wherever you go.'
   },
   'shloka-river-finale': {
-    title: 'The Shloka Flows as One!',
-    subtitle: 'Every word now moves together.'
+    title: 'The Shloka River Is Complete!',
+    subtitle: 'The whole shloka now flows inside you.'
   }
 },
 

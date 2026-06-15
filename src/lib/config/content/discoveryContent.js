@@ -166,13 +166,13 @@ export const DISCOVERY_CONTENT = {
     'sarvakaryeshu-chant': {
       sarvakaryeshu: {
         title: "Sarvakaryeshu",
-        affirmation: "I work with care.",
+        affirmation: "I use my powers in every task.",
         icon: 'sarvakaryeshu-complete'
       },
 
       sarvada: {
         title: "Sarvada",
-        affirmation: "I keep trying.",
+        affirmation: "These powers stay with me, always.",
         icon: 'sarvada-complete'
       }
     }
