@@ -15,61 +15,35 @@ import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
 
 import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
-import HomeButton from '../../../../lib/components/ui/HomeButton/HomeButton';
-import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
-import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
-import ZoneCompletionFireworks from '../../../../lib/components/feedback/ZoneCompletionFireworks';
-import RotatingOrbsEffect from '../../../../lib/components/feedback/RotatingOrbsEffect';
-import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
+import InnerMandala from '../../../../lib/components/celebration/InnerMandala';
+import CalmGoldenFireworks from '../../../../lib/components/feedback/CalmGoldenFireworks';
+import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
 import OpeningModal from '../../../shared/components/OpeningModal';
 
 import { getCompletionModal } from '../../../../lib/config/content';
 
 import riverBg from './assets/images/river-finale-bg.png';
-import boatSailImage from './assets/images/boat-sail.png';
-import vakratundaRecapBoat from './assets/images/recap-boats/vakratunda.png';
-import mahakayaRecapBoat from './assets/images/recap-boats/mahakaya.png';
-import suryakotiRecapBoat from './assets/images/recap-boats/suryakoti.png';
-import samaprabhaRecapBoat from './assets/images/recap-boats/samaprabha.png';
-import nirvighnamRecapBoat from './assets/images/recap-boats/nirvighnam.png';
-import kurumedevaRecapBoat from './assets/images/recap-boats/kurumedeva.png';
-import sarvakaryeshuRecapBoat from './assets/images/recap-boats/sarvakaryeshu.png';
-import sarvadaRecapBoat from './assets/images/recap-boats/sarvada.png';
-import revealVakratunda from '../../../symbol-mountain/shared/images/icons/symbol-trunk-new.png';
-import revealMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
-import revealSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.png';
-import revealSamaprabha from '../../../meaning cave/assets/images/symbols/samaprabha-symbol.png';
-import revealNirvighnam from '../../../meaning cave/assets/images/symbols/nirvighnam-symbol.png';
-import revealKurumedeva from '../../../meaning cave/assets/images/symbols/kurumedeva-symbol.png';
-import revealSarvakaryeshu from '../../../meaning cave/assets/images/symbols/sarvakaryeshu-symbol.png';
-import revealSarvada from '../../../meaning cave/assets/images/symbols/sarvada-symbol.png';
 
-const ORB_APP_IMAGES = {
-  vakratunda: revealVakratunda,
-  mahakaya: revealMahakaya,
-  suryakoti: revealSuryakoti,
-  samaprabha: revealSamaprabha,
-  nirvighnam: revealNirvighnam,
-  kurumedeva: revealKurumedeva,
-  sarvakaryeshu: revealSarvakaryeshu,
-  sarvada: revealSarvada,
-};
-
-const OPENING_SCENE_GANESHA = '/images/new-ganesha-sit-modak.png';
+import symbolVakratunda from '../../../symbol-mountain/shared/images/icons/symbol-trunk-new.webp';
+import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
+import symbolSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.png';
+import symbolSamaprabha from '../../../meaning cave/assets/images/symbols/samaprabha-symbol.png';
+import symbolNirvighnam from '../../../meaning cave/assets/images/symbols/nirvighnam-symbol.png';
+import symbolKurumedeva from '../../../meaning cave/assets/images/symbols/kurumedeva-symbol.png';
+import symbolSarvakaryeshu from '../../../meaning cave/assets/images/symbols/sarvakaryeshu-symbol.png';
+import symbolSarvada from '../../../meaning cave/assets/images/symbols/sarvada-symbol.png';
 
 const SHLOKA_WORDS = [
-  { id: 'vakratunda', label: 'Vakratunda', icon: ORB_APP_IMAGES.vakratunda, color: '#FF5722', recapBoatImage: vakratundaRecapBoat },
-  { id: 'mahakaya', label: 'Mahakaya', icon: ORB_APP_IMAGES.mahakaya, color: '#1565C0', recapBoatImage: mahakayaRecapBoat },
-  { id: 'suryakoti', label: 'Suryakoti', icon: ORB_APP_IMAGES.suryakoti, color: '#FF9800', recapBoatImage: suryakotiRecapBoat },
-  { id: 'samaprabha', label: 'Samaprabha', icon: ORB_APP_IMAGES.samaprabha, color: '#E91E63', recapBoatImage: samaprabhaRecapBoat },
-  { id: 'nirvighnam', label: 'Nirvighnam', icon: ORB_APP_IMAGES.nirvighnam, color: '#009688', recapBoatImage: nirvighnamRecapBoat },
-  { id: 'kurumedeva', label: 'Kurumedeva', icon: ORB_APP_IMAGES.kurumedeva, color: '#7B1FA2', recapBoatImage: kurumedevaRecapBoat },
-  { id: 'sarvakaryeshu', label: 'Sarvakaryeshu', icon: ORB_APP_IMAGES.sarvakaryeshu, color: '#3F51B5', recapBoatImage: sarvakaryeshuRecapBoat },
-  { id: 'sarvada', label: 'Sarvada', icon: ORB_APP_IMAGES.sarvada, color: '#689F38', recapBoatImage: sarvadaRecapBoat },
+  { id: 'vakratunda', label: 'Vakratunda', icon: symbolVakratunda, color: '#FF5722' },
+  { id: 'mahakaya', label: 'Mahakaya', icon: symbolMahakaya, color: '#1565C0' },
+  { id: 'suryakoti', label: 'Suryakoti', icon: symbolSuryakoti, color: '#FF9800' },
+  { id: 'samaprabha', label: 'Samaprabha', icon: symbolSamaprabha, color: '#E91E63' },
+  { id: 'nirvighnam', label: 'Nirvighnam', icon: symbolNirvighnam, color: '#009688' },
+  { id: 'kurumedeva', label: 'Kurumedeva', icon: symbolKurumedeva, color: '#7B1FA2' },
+  { id: 'sarvakaryeshu', label: 'Sarvakaryeshu', icon: symbolSarvakaryeshu, color: '#3F51B5' },
+  { id: 'sarvada', label: 'Sarvada', icon: symbolSarvada, color: '#689F38' },
 ];
-
-const FULL_SHLOKA_WORD_AUDIO = SHLOKA_WORDS.map((word) => `/audio/words/${word.id}.mp3`);
 
 function BoatSvg({ className = '', style = {} }) {
   return (
@@ -200,7 +174,7 @@ const ShlokaRiverFinaleContent = ({
   const completionModalContent = getCompletionModal(zoneId, sceneId);
 
   const { isAudioOn, toggleAudio } = useAudioPreference();
-  const { stopVoice, playVoice, playSfx, playWord: playWordAudio, setCurrentPhase, setVoiceVolume } = useVoiceGuidance(
+  const { stopVoice, playSfx, playWord: playWordAudio, setCurrentPhase } = useVoiceGuidance(
     zoneId,
     sceneId,
     { enableMusic: false, idleTimeout: 999999 }
@@ -219,13 +193,15 @@ const ShlokaRiverFinaleContent = ({
   const [rippleSlot, setRippleSlot] = useState(null);
   const [recapIndex, setRecapIndex] = useState(-1);
   const [allComplete, setAllComplete] = useState(false);
+  const [heroBoatIndex, setHeroBoatIndex] = useState(null);
+  const [startDissolve, setStartDissolve] = useState(false);
   const [startSailing, setStartSailing] = useState(false);
-  const [showOrbsCelebration, setShowOrbsCelebration] = useState(false);
+  const [showFireworks, setShowFireworks] = useState(false);
+  const [showMandala, setShowMandala] = useState(false);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
 
   const stageRef = useRef(null);
-  const fullShlokaAudioRef = useRef(null);
-  const fullShlokaPlaybackTokenRef = useRef(0);
+  const speechSynthRef = useRef(typeof window !== 'undefined' ? window.speechSynthesis : null);
   const hintTimersRef = useRef([]);
 
   const phase = sceneState.phase || PHASES.INITIAL;
@@ -233,6 +209,7 @@ const ShlokaRiverFinaleContent = ({
   const correctCount = correctSlots.size;
   const currentTargetWord = SHLOKA_WORDS[activeSlotIndex] || null;
   const trayWords = scrambledWords.length ? scrambledWords : SHLOKA_WORDS;
+  const heroBoatWord = SHLOKA_WORDS[0];
 
   const clearHintTimers = useCallback(() => {
     hintTimersRef.current.forEach((id) => window.clearTimeout(id));
@@ -244,53 +221,29 @@ const ShlokaRiverFinaleContent = ({
     return () => {
       clearAllTimeouts();
       clearHintTimers();
-      fullShlokaPlaybackTokenRef.current += 1;
-      fullShlokaAudioRef.current?.pause();
-      fullShlokaAudioRef.current = null;
+      speechSynthRef.current?.cancel();
     };
   }, [phase, setCurrentPhase, clearAllTimeouts, clearHintTimers]);
 
-  const stopAllVoice = useCallback(() => {
-    fullShlokaPlaybackTokenRef.current += 1;
-    stopVoice?.();
-    fullShlokaAudioRef.current?.pause();
-    fullShlokaAudioRef.current = null;
-  }, [stopVoice]);
-
-  const handleAudioToggle = useCallback(() => {
-    const nextOn = !isAudioOn;
-    setVoiceVolume(nextOn ? 1 : 0);
-    if (!nextOn) {
-      stopAllVoice();
-    }
-    toggleAudio();
-  }, [isAudioOn, setVoiceVolume, stopAllVoice, toggleAudio]);
-
-  const playFullShloka = useCallback(() => {
-    if (!isAudioOn) return;
-
-    fullShlokaPlaybackTokenRef.current += 1;
-    const playbackToken = fullShlokaPlaybackTokenRef.current;
-    fullShlokaAudioRef.current?.pause();
-    fullShlokaAudioRef.current = null;
-
-    const playWordAtIndex = (index) => {
-      if (fullShlokaPlaybackTokenRef.current !== playbackToken) return;
-      if (index >= FULL_SHLOKA_WORD_AUDIO.length) {
-        fullShlokaAudioRef.current = null;
-        return;
-      }
-
-      const audio = new Audio(FULL_SHLOKA_WORD_AUDIO[index]);
-      audio.volume = 0.95;
-      audio.onended = () => playWordAtIndex(index + 1);
-      audio.onerror = () => playWordAtIndex(index + 1);
-      fullShlokaAudioRef.current = audio;
-      audio.play().catch(() => playWordAtIndex(index + 1));
-    };
-
-    playWordAtIndex(0);
+  const speakWebSpeech = useCallback((text) => {
+    if (!isAudioOn || !text) return;
+    const synth = speechSynthRef.current;
+    if (!synth) return;
+    try {
+      synth.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-IN';
+      utterance.rate = 0.95;
+      utterance.pitch = 1;
+      utterance.volume = 0.95;
+      synth.speak(utterance);
+    } catch {}
   }, [isAudioOn]);
+
+  const stopAllVoice = useCallback(() => {
+    stopVoice?.();
+    speechSynthRef.current?.cancel();
+  }, [stopVoice]);
 
   useEffect(() => {
     if (phase !== PHASES.INITIAL) return;
@@ -304,29 +257,27 @@ const ShlokaRiverFinaleContent = ({
     setRippleSlot(null);
     setRecapIndex(-1);
     setAllComplete(false);
+    setHeroBoatIndex(null);
+    setStartDissolve(false);
     setStartSailing(false);
-    playVoice?.('openingModalPrompt', undefined, { replayOnReturn: false });
-  }, [phase, playVoice]);
+  }, [phase]);
 
   const scheduleHints = useCallback((slotIndex) => {
     clearHintTimers();
     if (phase !== PHASES.ARRANGE || slotIndex >= SHLOKA_WORDS.length) return;
 
     hintTimersRef.current = [
-      window.setTimeout(() => {
-        setHintLevel(1);
-        playVoice?.('hintBoatL1', undefined, { replayOnReturn: false });
-      }, 10000),
+      window.setTimeout(() => setHintLevel(1), 10000),
       window.setTimeout(() => {
         setHintLevel(2);
-        playVoice?.('hintBoatL2', undefined, { replayOnReturn: false });
+        speakWebSpeech('Which word comes next?');
       }, 20000),
       window.setTimeout(() => {
         setHintLevel(3);
-        playVoice?.('hintBoatL3', undefined, { replayOnReturn: false });
+        speakWebSpeech(`${SHLOKA_WORDS[slotIndex].label} comes next.`);
       }, 35000),
     ];
-  }, [clearHintTimers, phase, playVoice]);
+  }, [clearHintTimers, phase, speakWebSpeech]);
 
   const markInteraction = useCallback(() => {
     setHintLevel(0);
@@ -346,38 +297,14 @@ const ShlokaRiverFinaleContent = ({
 
   const handleStartGame = () => {
     sceneActions.updateState({ phase: PHASES.ARRANGE, welcomeShown: true });
-    playVoice?.('arrangeStart', undefined, { replayOnReturn: false });
+    speakWebSpeech('Place the boats in the right order to build the shloka.');
   };
-
-  const handleTestScene2 = useCallback(() => {
-    clearHintTimers();
-    stopAllVoice();
-    setDraggingWord(null);
-    setDragPos(null);
-    setWrongSlots(new Set());
-    setRippleSlot(null);
-    setAllComplete(false);
-    setStartSailing(true);
-    setRecapIndex(0);
-    sceneActions.updateState({
-      phase: PHASES.RECAP,
-      welcomeShown: true,
-    });
-  }, [clearHintTimers, sceneActions, stopAllVoice]);
 
   const triggerSuccessFlow = useCallback(() => {
     setAllComplete(true);
     sceneActions.updateState({ phase: PHASES.SUCCESS });
-    playVoice?.('sceneComplete', () => {
-      safeSetTimeout(() => {
-        playVoice?.('recapStart', () => {
-          setStartSailing(true);
-          sceneActions.updateState({ phase: PHASES.RECAP });
-          setRecapIndex(0);
-        }, { replayOnReturn: false });
-      }, 250);
-    }, { replayOnReturn: false });
-  }, [playVoice, safeSetTimeout, sceneActions]);
+    speakWebSpeech('You completed the Shloka River!');
+  }, [sceneActions, speakWebSpeech]);
 
   const placeWord = useCallback((wordData, slotIdx) => {
     const isCorrect = SHLOKA_WORDS[slotIdx].id === wordData.id;
@@ -408,7 +335,7 @@ const ShlokaRiverFinaleContent = ({
       return next;
     });
     setRippleSlot(slotIdx);
-    playWordAudio?.(wordData.id);
+    playSfx?.('chime');
     safeSetTimeout(() => setRippleSlot(null), 650);
 
     if (slotIdx === SHLOKA_WORDS.length - 1) {
@@ -420,7 +347,7 @@ const ShlokaRiverFinaleContent = ({
       setActiveSlotIndex(slotIdx + 1);
       setHintLevel(0);
     }, 420);
-  }, [markInteraction, playWordAudio, safeSetTimeout, triggerSuccessFlow]);
+  }, [markInteraction, playSfx, safeSetTimeout, triggerSuccessFlow]);
 
   const handleTrayPointerDown = (e, wordData) => {
     if (phase !== PHASES.ARRANGE || usedWords.has(wordData.id)) return;
@@ -476,6 +403,17 @@ const ShlokaRiverFinaleContent = ({
   };
 
   useEffect(() => {
+    if (phase !== PHASES.SUCCESS) return;
+    safeSetTimeout(() => setHeroBoatIndex(0), 1000);
+    safeSetTimeout(() => setStartDissolve(true), 2000);
+    safeSetTimeout(() => {
+      setStartSailing(true);
+      sceneActions.updateState({ phase: PHASES.RECAP });
+      setRecapIndex(0);
+    }, 3000);
+  }, [phase, safeSetTimeout, sceneActions]);
+
+  useEffect(() => {
     if (phase !== PHASES.RECAP || recapIndex < 0) return;
     if (recapIndex >= SHLOKA_WORDS.length) {
       safeSetTimeout(() => {
@@ -483,50 +421,40 @@ const ShlokaRiverFinaleContent = ({
       }, 1200);
       return;
     }
-    if (isAudioOn && recapIndex === 0) {
-      playFullShloka();
+    if (isAudioOn) {
+      playWordAudio?.(SHLOKA_WORDS[recapIndex].id);
     }
-    safeSetTimeout(() => setRecapIndex((prev) => prev + 1), 2000);
-  }, [phase, recapIndex, isAudioOn, playFullShloka, safeSetTimeout, sceneActions]);
+    safeSetTimeout(() => setRecapIndex((prev) => prev + 1), 1000);
+  }, [phase, recapIndex, isAudioOn, playWordAudio, safeSetTimeout, sceneActions]);
 
   useEffect(() => {
     if (phase === PHASES.FINALE) {
-      setShowOrbsCelebration(true);
+      setShowFireworks(true);
     }
   }, [phase]);
 
-  const handleOrbsComplete = useCallback(() => {
-    setShowOrbsCelebration(false);
-    playVoice?.('finalCelebration', undefined, { replayOnReturn: false });
-
-    const profileId = activeProfile?.id || localStorage.getItem('activeProfileId');
+  const handleFireworksComplete = () => {
+    setShowFireworks(false);
+    const profileId = activeProfile?.id;
     if (profileId) {
-      const tempKey = `temp_session_${profileId}_${zoneId}_${sceneId}`;
-
       GameStateManager.saveGameState(zoneId, sceneId, {
         completed: true,
         stars: 8,
-        phase: PHASES.COMPLETE,
         timestamp: Date.now(),
       });
       ProgressManager.updateSceneCompletion(profileId, zoneId, sceneId, {
         completed: true,
         stars: 8,
       });
-
-      localStorage.removeItem(tempKey);
-      SimpleSceneManager.clearCurrentScene();
     }
-
     sceneActions.updateState({
       phase: PHASES.COMPLETE,
       completed: true,
       stars: 8,
       showingCompletionScreen: true,
     });
-
-    setShowSceneCompletion(true);
-  }, [activeProfile?.id, playVoice, sceneActions, sceneId, zoneId]);
+    setShowMandala(true);
+  };
 
   return (
     <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
@@ -539,16 +467,6 @@ const ShlokaRiverFinaleContent = ({
           onPointerUp={handlePointerUp}
           onPointerLeave={handlePointerUp}
         >
-          <HomeButton onNavigate={onNavigate} />
-          <ZoneBadgeButton zoneId="shloka-river" onBack={() => onNavigate?.('zone-welcome')} />
-          <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
-
-          {phase !== PHASES.COMPLETE && (
-            <button className="srf-test-scene2-btn" onClick={handleTestScene2}>
-              Test Scene 2
-            </button>
-          )}
-
           {phase === PHASES.INITIAL && (
             <OpeningModal
               zoneId={zoneId}
@@ -561,11 +479,11 @@ const ShlokaRiverFinaleContent = ({
           {(phase === PHASES.ARRANGE || phase === PHASES.SUCCESS) && (
             <div className="srf-arrange">
               <div className="srf-title-banner">
-                <h1 className="srf-title">Complete the Shloka!</h1>
-                <p className="srf-subtitle">Tap the first word boat.</p>
+                <h1 className="srf-title">Build the Shloka River!</h1>
+                <p className="srf-subtitle">Drag the word boats to place them in order</p>
               </div>
 
-              <div className="srf-progress-badge">{correctCount} / 8</div>
+              <div className="srf-progress-badge">{Math.min(correctCount + 1, 8)} / 8</div>
 
               <div className="srf-river-area">
                 <div className="srf-slot-grid">
@@ -578,6 +496,10 @@ const ShlokaRiverFinaleContent = ({
                     const isWrong = wrongSlots.has(idx);
                     const isActive = phase === PHASES.ARRANGE && idx === activeSlotIndex && !placedWordId;
                     const isLocked = idx > activeSlotIndex && !placedWordId;
+                    const isHeroBoat = heroBoatIndex === idx;
+                    const isDissolveBoat =
+                      startDissolve && heroBoatIndex !== null && heroBoatIndex !== idx && !!placedWordId;
+
                     return (
                       <div
                         key={idx}
@@ -587,7 +509,7 @@ const ShlokaRiverFinaleContent = ({
                         <span className="srf-slot-number">{idx + 1}</span>
                         {placedWordId && wordData ? (
                           <div
-                            className={`srf-placed-boat ${allComplete ? 'is-all-complete' : ''}`}
+                            className={`srf-placed-boat ${allComplete ? 'is-all-complete' : ''} ${isHeroBoat ? 'is-hero-boat' : ''} ${isDissolveBoat ? 'is-dissolve' : ''}`}
                             style={{ color: wordData.color }}
                           >
                             <BoatSvg />
@@ -608,7 +530,7 @@ const ShlokaRiverFinaleContent = ({
 
               {phase === PHASES.ARRANGE && (
                 <div className="srf-tray">
-                  <p className="srf-tray-label">Tap the next word boat</p>
+                  <p className="srf-tray-label">Drag the word boats</p>
                   <div className="srf-tray-boats">
                     {trayWords.filter((w) => !usedWords.has(w.id)).map((w) => {
                       const isHintBoat = currentTargetWord?.id === w.id && hintLevel >= 2;
@@ -655,35 +577,21 @@ const ShlokaRiverFinaleContent = ({
           )}
 
           {phase === PHASES.RECAP && (
-            <div className="srf-recap srf-slow-zoom">
+            <div className="srf-recap">
+              <div className={`srf-recap-boat ${startSailing ? 'is-sailing' : ''}`} style={{ color: heroBoatWord.color }}>
+                <BoatSvg />
+                <img src={heroBoatWord.icon} alt="" className="srf-boat-icon" />
+                <span className="srf-boat-label">{heroBoatWord.label}</span>
+              </div>
+
               {recapIndex >= 0 && recapIndex < SHLOKA_WORDS.length && (
-                <div
-                  key={`recap-boat-${recapIndex}`}
-                  className={`srf-recap-boat ${startSailing ? 'is-sailing' : ''}`}
-                  style={{ color: SHLOKA_WORDS[recapIndex].color }}
-                >
-                  {SHLOKA_WORDS[recapIndex].recapBoatImage ? (
-                    <>
-                      <img
-                        src={SHLOKA_WORDS[recapIndex].recapBoatImage}
-                        alt={SHLOKA_WORDS[recapIndex].label}
-                        className="srf-recap-custom-boat"
-                      />
-                      <span className="srf-boat-label srf-recap-custom-label">{SHLOKA_WORDS[recapIndex].label}</span>
-                    </>
-                  ) : (
-                    <>
-                      <BoatSvg />
-                      <img src={SHLOKA_WORDS[recapIndex].icon} alt="" className="srf-boat-icon" />
-                      <span className="srf-boat-label">{SHLOKA_WORDS[recapIndex].label}</span>
-                    </>
-                  )}
+                <div className="srf-recap-word" key={recapIndex}>
+                  <img src={SHLOKA_WORDS[recapIndex].icon} alt="" className="srf-recap-icon" />
+                  <span className="srf-recap-label" style={{ color: SHLOKA_WORDS[recapIndex].color }}>
+                    {SHLOKA_WORDS[recapIndex].label}
+                  </span>
                 </div>
               )}
-
-              <div className="srf-spectator-boat">
-                <img src={boatSailImage} alt="Kids and Mooshika watching" />
-              </div>
 
               <div className="srf-recap-dots">
                 {SHLOKA_WORDS.map((w, i) => (
@@ -697,42 +605,67 @@ const ShlokaRiverFinaleContent = ({
             </div>
           )}
 
-          {showOrbsCelebration && (
+          {phase === PHASES.FINALE && (
+            <div className="srf-finale">
+              <div className="srf-shloka-card">
+                <p className="srf-shloka-line srf-line-1"><span>Vakratunda</span> <span>Mahakaya</span></p>
+                <p className="srf-shloka-line srf-line-2"><span>Suryakoti</span> <span>Samaprabha</span></p>
+                <div className="srf-shloka-divider">🪷</div>
+                <p className="srf-shloka-line srf-line-3"><span>Nirvighnam</span> <span>Kurumedeva</span></p>
+                <p className="srf-shloka-line srf-line-4"><span>Sarvakaryeshu</span> <span>Sarvada</span></p>
+              </div>
+
+              <div className="srf-badge">
+                <span className="srf-badge-label">Shloka River</span>
+                <span className="srf-badge-title">MASTER!</span>
+              </div>
+            </div>
+          )}
+
+          {showFireworks && (
             <>
-              <ZoneCompletionFireworks
-                show={true}
-                burstsPerWave={5}
-                particles={24}
-                radius={140}
-                duration={2600}
-              />
-              <RotatingOrbsEffect
-                show={true}
-                duration={7000}
-                rotationDuration={7000}
-                symbolImages={ORB_APP_IMAGES}
-                ganeshaImage={OPENING_SCENE_GANESHA}
-                playerName={profileName}
-                showCentralGanesha={true}
-                showBuiltInFireworks={false}
-                onComplete={handleOrbsComplete}
-              />
+              <FireworksCompletion show={true} showCard={false} />
+              <CalmGoldenFireworks show={true} particles={14} duration={4000} onComplete={handleFireworksComplete} />
             </>
           )}
 
+          {showMandala && (
+            <InnerMandala
+              childName={profileName}
+              petalStates={{}}
+              middlePetalStates={{ 1: 'activated', 2: 'activated', 3: 'activated', 4: 'activated', 5: 'activated', 6: 'activated', 7: 'activated', 8: 'activated' }}
+              middleSymbolIcons={{
+                1: symbolVakratunda,
+                2: symbolMahakaya,
+                3: symbolSuryakoti,
+                4: symbolSamaprabha,
+                5: symbolNirvighnam,
+                6: symbolKurumedeva,
+                7: symbolSarvakaryeshu,
+                8: symbolSarvada,
+              }}
+              innerPetalStates={{}}
+              message="The complete shloka lives inside you now"
+              onClose={() => {
+                setShowMandala(false);
+                setShowSceneCompletion(true);
+              }}
+            />
+          )}
+
           <SceneCompletionCelebration
-            show={showSceneCompletion}
+            show={showSceneCompletion && !showMandala}
             zoneId={zoneId}
             sceneName="Shloka River"
-            completionTitle="The Shloka River Is Complete!"
-            completionSubtitle="Vakratunda Mahakaya Suryakoti Samaprabha · Nirvighnam Kurumedeva Sarvakaryeshu Sarvada"
+            completionTitle={completionModalContent?.title}
+            completionSubtitle={completionModalContent?.subtitle}
             sceneNumber={5}
             totalScenes={5}
             starsEarned={8}
             totalStars={8}
-            discoveredSymbols={[]}
+            discoveredSymbols={SHLOKA_WORDS.map((w) => w.id)}
             containerType="backpack"
-            symbolImages={{}}
+            symbolImages={Object.fromEntries(SHLOKA_WORDS.map((w) => [w.id, w.icon]))}
             sceneId={sceneId}
             completionData={{ stars: 8, completed: true }}
             onComplete={() => {
@@ -745,19 +678,12 @@ const ShlokaRiverFinaleContent = ({
             onHome={() => onNavigate?.('home')}
             onReplay={() => {
               setShowSceneCompletion(false);
-              setShowOrbsCelebration(false);
+              setShowMandala(false);
+              setShowFireworks(false);
               stopAllVoice();
               resetScene();
             }}
             onContinue={() => onNavigate?.('scene-complete-continue')}
-          />
-
-          <GestureDemo
-            type="tap"
-            from={{ x: 15, y: 82 }}
-            to={{ x: 15, y: 82 }}
-            active={phase === PHASES.ARRANGE && correctCount === 0 && !draggingWord}
-            idleDelay={3000}
           />
 
           <TocaBocaNav
@@ -773,13 +699,14 @@ const ShlokaRiverFinaleContent = ({
             }, 100)}
             onStartFresh={() => {
               setShowSceneCompletion(false);
-              setShowOrbsCelebration(false);
+              setShowMandala(false);
+              setShowFireworks(false);
               stopAllVoice();
               resetScene();
             }}
             currentProgress={{ stars: correctCount, completed: sceneState.completed ? 1 : 0, total: 1 }}
             isAudioOn={isAudioOn}
-            onAudioToggle={handleAudioToggle}
+            onAudioToggle={toggleAudio}
           />
         </div>
       </MessageManager>

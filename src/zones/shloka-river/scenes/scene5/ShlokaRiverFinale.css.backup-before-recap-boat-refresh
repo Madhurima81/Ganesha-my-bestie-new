@@ -22,27 +22,6 @@
   gap: 16px;
 }
 
-.srf-test-scene2-btn {
-  position: absolute;
-  top: 18px;
-  right: 110px;
-  z-index: 120;
-  border: 0;
-  border-radius: 999px;
-  padding: 10px 16px;
-  background: rgba(255, 248, 214, 0.96);
-  box-shadow: 0 8px 22px rgba(109, 77, 27, 0.18);
-  color: #7a4d20;
-  font-family: 'Nunito', sans-serif;
-  font-size: clamp(12px, 1.8vw, 14px);
-  font-weight: 800;
-  cursor: pointer;
-}
-
-.srf-test-scene2-btn:hover {
-  transform: translateY(-1px);
-}
-
 .srf-arrange {
   position: absolute;
   inset: 0;
@@ -272,6 +251,15 @@
   animation: srf-glowPulse 1.5s ease-in-out infinite, srf-floatUp 1s ease forwards;
 }
 
+.srf-placed-boat.is-hero-boat {
+  z-index: 10;
+  animation: srf-heroFocus 1s ease forwards;
+}
+
+.srf-placed-boat.is-dissolve {
+  animation: srf-dissolveBoat 1s ease forwards;
+}
+
 .srf-boat-icon {
   position: absolute;
   top: 20%;
@@ -365,6 +353,28 @@
 
   to {
     transform: translateY(-12px);
+  }
+}
+
+@keyframes srf-heroFocus {
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes srf-dissolveBoat {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.8);
   }
 }
 
@@ -578,14 +588,12 @@
 
 .srf-recap-boat {
   position: absolute;
-  bottom: 22%;
+  bottom: 12%;
   width: clamp(120px, 25vw, 220px);
-  left: -15%;
+  left: 35%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  z-index: 12;
-  pointer-events: none;
 }
 
 .srf-recap-boat .boat-svg {
@@ -601,17 +609,8 @@
   margin-top: -2px;
 }
 
-.srf-recap-custom-boat {
-  width: 100%;
-  display: block;
-}
-
-.srf-recap-custom-label {
-  margin-top: 4px;
-}
-
 .srf-recap-boat.is-sailing {
-  animation: srf-riverJourney 3s ease-in-out forwards;
+  animation: srf-sail 8s linear forwards;
 }
 
 .srf-recap-boat img,
@@ -619,49 +618,13 @@
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
 }
 
-@keyframes srf-riverJourney {
-  0% {
-    left: -15%;
-    bottom: 22%;
-    transform: scale(1) translateY(0);
-    opacity: 0;
-  }
-
-  10% {
-    opacity: 1;
-  }
-
-  30% {
-    left: 20%;
-    bottom: 26%;
-    transform: scale(0.92) translateY(-6px);
-  }
-
-  50% {
+@keyframes srf-sail {
+  from {
     left: 35%;
-    bottom: 32%;
-    transform: scale(0.82) translateY(4px);
   }
 
-  70% {
-    left: 42%;
-    bottom: 38%;
-    transform: scale(0.7) translateY(-5px);
-    opacity: 1;
-  }
-
-  85% {
-    left: 46%;
-    bottom: 44%;
-    transform: scale(0.55) translateY(3px);
-    opacity: 0.6;
-  }
-
-  100% {
-    left: 50%;
-    bottom: 50%;
-    transform: scale(0.38) translateY(0);
-    opacity: 0;
+  to {
+    left: 70%;
   }
 }
 
@@ -721,35 +684,6 @@
   background: #fff;
   transform: scale(1.4);
   box-shadow: 0 0 12px #fff;
-}
-
-.srf-spectator-boat {
-  position: absolute;
-  bottom: 4%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: clamp(160px, 30vw, 280px);
-  z-index: 5;
-  pointer-events: none;
-}
-
-.srf-spectator-boat img {
-  width: 100%;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
-}
-
-.srf-slow-zoom {
-  animation: srf-slowZoom 18s linear forwards;
-}
-
-@keyframes srf-slowZoom {
-  from {
-    transform: scale(1);
-  }
-
-  to {
-    transform: scale(1.08);
-  }
 }
 
 .srf-finale {
