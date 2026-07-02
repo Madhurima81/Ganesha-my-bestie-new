@@ -39,6 +39,8 @@ import SamaprabhaGame from './components/SamaprabhaGame';
 import ganeshaHeadphones from './assets/images/ganesha_with_headphones.png';
 import riverBackground from './assets/images/saurakoti-bg.png';
 import mooshikaCoach from './assets/images/mooshika-coach.png';
+import symbolVakratunda from '../../../meaning cave/assets/images/symbols/vakratunda-symbol.png';
+import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
 import symbolSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.png';
 import symbolSamaprabha from '../../../meaning cave/assets/images/symbols/samaprabha-symbol.png';
 
@@ -154,6 +156,10 @@ const SuryakotiBankContent = ({
   const speechSynthRef = useRef(typeof window !== 'undefined' ? window.speechSynthesis : null);
   const audioEnabledRef = useRef(false);
   const openingVoPlayedRef = useRef(false);
+  const suryaIntroPlayedRef = useRef(false);
+  const samaIntroPlayedRef = useRef(false);
+  const suryaInteractionStartedRef = useRef(false);
+  const samaInteractionStartedRef = useRef(false);
 
   const { resetScene } = useSceneReset(sceneActions, zoneId, sceneId, getSceneResetConfig(sceneId));
   const completionModalContent = getCompletionModal(zoneId, sceneId);
@@ -246,19 +252,23 @@ const SuryakotiBankContent = ({
 
   const playGuidanceVoice = useCallback((key, onEnded) => {
     const webSpeechMap = {
-      welcome: "Let's discover two more powers by the river.",
-      scene11_intro: "Let's discover two more powers by the river.",
-      scene11_surya_hint: 'Rub the dark away so the bunny can see its home.',
-      scene11_surya_done: 'The bunny found its way home!',
-      scene11_surya_meaning: 'Suryakoti means the brightness of ten million suns.',
-      scene11_sama_hint: 'Share the light so both birds glow the same.',
-      scene11_sama_done: 'Both shine equally now.',
+      welcome: "The river is dark today. Let's bring back the light!",
+      scene11_intro: "The river is dark today. Let's bring back the light!",
+      scene11_surya_intro: 'The little bunny wants to find its way home!',
+      scene11_surya_rub: 'Rub the darkness away.',
+      scene11_surya_hint: 'Rub the darkness away.',
+      scene11_surya_success: 'You brought back the light! The bunny found its way home!',
+      scene11_surya_done: 'You brought back the light! The bunny found its way home!',
+      scene11_surya_meaning: 'Suryakoti means bright as ten million suns.',
+      scene11_sama_hint: 'Tap the glowing circle to move the sun.',
+      scene11_sama_done: 'You shared the light! Now both birds are warm!',
       scene11_sama_meaning: 'Samaprabha means equal brightness.',
-      suryakotiSetup: 'You cleared the darkness, and the sun came through.',
-      suryakotiClaim: 'Your light shows the way.',
-      samaprabhaSetup: 'You shared the light, and both sides glow.',
-      samaprabhaClaim: 'When you share, everyone shines.',
-      sceneComplete: 'You found the sun. You shared its light. Both powers are yours now.',
+      suryakotiSetup: 'The bunny found its way because of your light.',
+      suryakotiClaim: 'Suryakoti lights the way.',
+      samaprabhaSetup: 'Now let’s help the birds. One side has too much light. The other side needs some too.',
+      samaprabhaClaim: 'Samaprabha helps us share fairly.',
+      samaprabhaSetup: "One bird has too much light. Let's share it!",
+      sceneComplete: 'You found the bunny. You shared the light. Both powers are yours now.',
     };
     if (webSpeechMap[key]) {
       speakWebSpeech(webSpeechMap[key], onEnded);
@@ -309,27 +319,6 @@ const SuryakotiBankContent = ({
 
   useEffect(() => () => clearAllTimeouts(), [clearAllTimeouts]);
   useEffect(() => () => stopWebSpeech(), [stopWebSpeech]);
-
-  useEffect(() => {
-    if (!revealConfig || !isAudioOn) return undefined;
-    const voMapSetup = {
-      suryakoti: 'suryakotiSetup',
-      samaprabha: 'samaprabhaSetup',
-    };
-    const voMapClaim = {
-      suryakoti: 'suryakotiClaim',
-      samaprabha: 'samaprabhaClaim',
-    };
-    const setupKey = voMapSetup[revealConfig.symbolId];
-    const claimKey = voMapClaim[revealConfig.symbolId];
-    if (!setupKey || !claimKey) return undefined;
-    const id = window.setTimeout(() => {
-      playGuidanceVoice(setupKey, () => {
-        playGuidanceVoice(claimKey);
-      });
-    }, 400);
-    return () => window.clearTimeout(id);
-  }, [revealConfig, isAudioOn, playGuidanceVoice]);
 
   const getSidebarTarget = useCallback((symbolId) => {
     const el = document.getElementById(`sidebar-${symbolId}`);
@@ -397,8 +386,7 @@ const SuryakotiBankContent = ({
   useEffect(() => {
     if (sceneState?.phase === PHASES.INITIAL && !sceneState?.welcomeShown) {
       setOpeningButtonVisible(true);
-      if (!audioEnabledRef.current || openingVoPlayedRef.current) return undefined;
-      openingVoPlayedRef.current = true;
+      if (!audioEnabledRef.current) return undefined;
       const timer = window.setTimeout(() => {
         playGuidanceVoice('welcome', () => {
           playSfx('chime');
@@ -409,21 +397,63 @@ const SuryakotiBankContent = ({
 
     openingVoPlayedRef.current = false;
     return undefined;
-  }, [sceneState?.phase, sceneState?.welcomeShown, playGuidanceVoice, playSfx]);
+  }, [playGuidanceVoice, playSfx, sceneState?.phase, sceneState?.welcomeShown]);
 
   useEffect(() => {
     if (sceneState?.phase === PHASES.SURYAKOTI_GAME && sceneState?.welcomeShown) {
       setCurrentPhase('suryakotiGame');
+      suryaInteractionStartedRef.current = false;
+      if (isAudioOn && !suryaIntroPlayedRef.current) {
+        suryaIntroPlayedRef.current = true;
+        const id = window.setTimeout(() => {
+          if (suryaInteractionStartedRef.current) return;
+          playGuidanceVoice('scene11_surya_intro', () => {
+            if (suryaInteractionStartedRef.current) return;
+            playGuidanceVoice('scene11_surya_rub', () => {
+              if (suryaInteractionStartedRef.current) return;
+              window.setTimeout(() => {
+                startIdleTimer();
+              }, 3500);
+            });
+          });
+        }, 2500);
+        return () => window.clearTimeout(id);
+      }
       startIdleTimer();
+      return undefined;
     }
-  }, [sceneState?.phase, sceneState?.welcomeShown, setCurrentPhase, startIdleTimer]);
+
+    suryaIntroPlayedRef.current = false;
+    suryaInteractionStartedRef.current = false;
+    return undefined;
+  }, [isAudioOn, playGuidanceVoice, sceneState?.phase, sceneState?.welcomeShown, setCurrentPhase, startIdleTimer]);
 
   useEffect(() => {
     if (sceneState?.phase === PHASES.SAMAPRABHA_GAME) {
       setCurrentPhase('samaprabhaGame');
+      samaInteractionStartedRef.current = false;
+      if (isAudioOn && !samaIntroPlayedRef.current) {
+        samaIntroPlayedRef.current = true;
+        if (samaInteractionStartedRef.current) return undefined;
+        playGuidanceVoice('samaprabhaSetup', () => {
+          if (samaInteractionStartedRef.current) return;
+          playGuidanceVoice('scene11_sama_hint', () => {
+            if (samaInteractionStartedRef.current) return;
+            window.setTimeout(() => {
+              startIdleTimer();
+            }, 3500);
+          });
+        });
+        return undefined;
+      }
       startIdleTimer();
+      return undefined;
     }
-  }, [sceneState?.phase, setCurrentPhase, startIdleTimer]);
+
+    samaIntroPlayedRef.current = false;
+    samaInteractionStartedRef.current = false;
+    return undefined;
+  }, [isAudioOn, playGuidanceVoice, sceneState?.phase, setCurrentPhase, startIdleTimer]);
 
   useEffect(() => {
     if (isReload) {
@@ -467,12 +497,16 @@ const SuryakotiBankContent = ({
       };
 
       if (isAudioOn) {
-        const meaningKey = word === 'suryakoti' ? 'scene11_surya_meaning' : 'scene11_sama_meaning';
-        window.setTimeout(() => {
-          playGuidanceVoice(meaningKey, () => {
+        if (word === 'suryakoti') {
+          window.setTimeout(() => {
             triggerReveal();
-          });
-        }, 2000);
+          }, 400);
+          return;
+        }
+
+        window.setTimeout(() => {
+          triggerReveal();
+        }, 400);
         return;
       }
 
@@ -530,6 +564,15 @@ const SuryakotiBankContent = ({
                   onMicroWin={handleMicroWin}
                   onPhaseComplete={() => handlePhaseComplete('suryakoti')}
                   onGameComplete={() => {}}
+                  onFirstInteraction={() => {
+                    suryaInteractionStartedRef.current = true;
+                    stopAllVoice();
+                  }}
+                  voiceGuidance={{
+                    playVoice: playGuidanceVoice,
+                    playWord: playWordAudio,
+                    stopVoice: stopAllVoice,
+                  }}
                   isPaused={isRecorderOpen}
                 />
 
@@ -539,6 +582,15 @@ const SuryakotiBankContent = ({
                   onMicroWin={handleMicroWin}
                   onPhaseComplete={() => handlePhaseComplete('samaprabha')}
                   onGameComplete={() => {}}
+                  onFirstInteraction={() => {
+                    samaInteractionStartedRef.current = true;
+                    stopAllVoice();
+                  }}
+                  voiceGuidance={{
+                    playVoice: playGuidanceVoice,
+                    playWord: playWordAudio,
+                    stopVoice: stopAllVoice,
+                  }}
                   isPaused={isRecorderOpen}
                   isReload={isReload}
                   savedGameState={sceneState.samaprabhaGameState}
@@ -565,6 +617,18 @@ const SuryakotiBankContent = ({
                     symbolImage={revealConfig.symbolImage}
                     symbolName={revealConfig.symbolName}
                     affirmation={revealConfig.affirmation}
+                    revealVoice={{
+                      isEnabled: isAudioOn,
+                      wordId: revealConfig.symbolId,
+                      meaningKey: revealConfig.symbolId === 'suryakoti'
+                        ? 'scene11_surya_meaning'
+                        : revealConfig.symbolId === 'samaprabha'
+                          ? 'scene11_sama_meaning'
+                          : null,
+                      playWord: playWordAudio,
+                      playLine: playGuidanceVoice,
+                      stopVoice: stopAllVoice,
+                    }}
                     sidebarTargetRect={revealConfig.sidebarTarget}
                     zoneId={zoneId}
                     sceneId={sceneId}
@@ -645,12 +709,12 @@ const SuryakotiBankContent = ({
                     childName={profileName}
                     petalStates={{}}
                     middlePetalStates={{
-                      3: 'activated',
-                      4: 'activated',
+                      1: 'activated', 2: 'activated',
+                      3: 'activated', 4: 'activated',
                     }}
                     middleSymbolIcons={{
-                      3: symbolSuryakoti,
-                      4: symbolSamaprabha,
+                      1: symbolVakratunda, 2: symbolMahakaya,
+                      3: symbolSuryakoti,  4: symbolSamaprabha,
                     }}
                     innerPetalStates={{}}
                     highlightPetals={[3]}

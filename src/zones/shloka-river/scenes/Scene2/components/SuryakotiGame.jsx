@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import SyllableHighlight from '../../../shared/SyllableHighlight';
+import useRepeatedHintCycle from '../../../../../lib/hooks/useRepeatedHintCycle';
+import GestureDemo from '../../../../../lib/components/feedback/GestureDemo';
 import './SuryakotiGame.css';
 
 import sharedSceneBg from '../assets/images/saurakoti-bg.png';
@@ -33,8 +35,11 @@ export default function SuryakotiGame({
   onMicroWin = () => {},
   onPhaseComplete = () => {},
   onGameComplete = () => {},
+  onFirstInteraction = () => {},
+  voiceGuidance = {},
   isPaused = false,
 }) {
+  const { playVoice: playSceneLine, playWord, stopVoice } = voiceGuidance;
   const [phase, setPhase] = useState('play');
   const [litCount, setLitCount] = useState(0);
   const [bunnyPos, setBunnyPos] = useState(POS.bunny);
@@ -48,6 +53,10 @@ export default function SuryakotiGame({
   const phaseRef = useRef('play');
   const completedRef = useRef(false);
   const doneAnnouncedRef = useRef(false);
+  const firstInteractionSentRef = useRef(false);
+  const successVoDoneRef = useRef(false);
+  const hopDoneRef = useRef(false);
+  const completionScheduledRef = useRef(false);
   const onGameCompleteRef = useRef(onGameComplete);
   const onPhaseCompleteRef = useRef(onPhaseComplete);
 
@@ -59,6 +68,19 @@ export default function SuryakotiGame({
     onGameCompleteRef.current = onGameComplete;
     onPhaseCompleteRef.current = onPhaseComplete;
   }, [onGameComplete, onPhaseComplete]);
+
+  const {
+    hintLevel,
+    markInteraction,
+  } = useRepeatedHintCycle({
+    enabled: isActive,
+    stageKey: phase === 'play' ? 'play' : phase,
+    initialDelay: 8000,
+    pulseCountBeforeEscalation: 3,
+    pulseInterval: 1800,
+    level2Delay: 15500,
+    level3Delay: 22500,
+  });
 
   const initCanvas = useCallback(() => {
     const cv = canvasRef.current;
@@ -99,6 +121,42 @@ export default function SuryakotiGame({
     const szy = cv.height * SUN_CY;
     const szr = cv.width * SUN_R;
 
+    // Draw glowing ring to show scratch target
+    ctx.globalCompositeOperation = 'source-over';
+
+    // Outer soft glow
+    ctx.beginPath();
+    ctx.arc(szx, szy, szr + 6, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255, 220, 100, 0.12)';
+    ctx.lineWidth = 12;
+    ctx.stroke();
+
+    // Main ring
+    ctx.beginPath();
+    ctx.arc(szx, szy, szr, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255, 220, 100, 0.35)';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Inner shimmer
+    ctx.beginPath();
+    ctx.arc(szx, szy, szr - 4, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255, 220, 100, 0.15)';
+    ctx.lineWidth = 6;
+    ctx.stroke();
+
+    // Slightly lighten inside to distinguish from background
+    const innerGlow = ctx.createRadialGradient(szx, szy, 0, szx, szy, szr);
+    innerGlow.addColorStop(0, 'rgba(255, 220, 100, 0.08)');
+    innerGlow.addColorStop(0.7, 'rgba(255, 220, 100, 0.04)');
+    innerGlow.addColorStop(1, 'rgba(255, 220, 100, 0)');
+    ctx.fillStyle = innerGlow;
+    ctx.beginPath();
+    ctx.arc(szx, szy, szr, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.globalCompositeOperation = 'destination-out';
+
     let total = 0;
     const grid = [];
     for (let gy = 0; gy < GRID; gy += 1) {
@@ -116,6 +174,10 @@ export default function SuryakotiGame({
     doneRef.current = 0;
     completedRef.current = false;
     doneAnnouncedRef.current = false;
+    firstInteractionSentRef.current = false;
+    successVoDoneRef.current = false;
+    hopDoneRef.current = false;
+    completionScheduledRef.current = false;
     setCanvasReady(true);
     setBunnyPos(POS.bunny);
     setBunnyHopping(false);
@@ -209,10 +271,15 @@ export default function SuryakotiGame({
 
   const onPointerDown = useCallback((e) => {
     if (isPaused) return;
+    if (!firstInteractionSentRef.current) {
+      firstInteractionSentRef.current = true;
+      onFirstInteraction?.();
+    }
+    markInteraction();
     drawingRef.current = true;
     const [x, y] = getPos(e);
     mark(x, y);
-  }, [getPos, isPaused, mark]);
+  }, [getPos, isPaused, mark, markInteraction, onFirstInteraction]);
 
   const onPointerMove = useCallback((e) => {
     if (!drawingRef.current || isPaused) return;
@@ -225,10 +292,29 @@ export default function SuryakotiGame({
     drawingRef.current = false;
   }, []);
 
+  const completeAfterSuccess = useCallback(() => {
+    if (!successVoDoneRef.current || !hopDoneRef.current || completionScheduledRef.current) return;
+    completionScheduledRef.current = true;
+    window.setTimeout(() => {
+      onGameCompleteRef.current?.();
+      onPhaseCompleteRef.current?.();
+    }, 500);
+  }, []);
+
   useEffect(() => {
     if (phase !== 'hop' || doneAnnouncedRef.current) return undefined;
     doneAnnouncedRef.current = true;
     const timers = [];
+
+    if (playSceneLine) {
+      stopVoice?.();
+      playSceneLine('scene11_surya_success', () => {
+        successVoDoneRef.current = true;
+        completeAfterSuccess();
+      });
+    } else {
+      successVoDoneRef.current = true;
+    }
 
     HOP_PATH.forEach((waypoint, index) => {
       const hopTimer = window.setTimeout(() => {
@@ -237,7 +323,9 @@ export default function SuryakotiGame({
         const settleTimer = window.setTimeout(() => {
           setBunnyHopping(false);
           if (index === HOP_PATH.length - 1) {
+            hopDoneRef.current = true;
             setPhase('done');
+            completeAfterSuccess();
           }
         }, 350);
         timers.push(settleTimer);
@@ -248,16 +336,7 @@ export default function SuryakotiGame({
     return () => {
       timers.forEach((timerId) => window.clearTimeout(timerId));
     };
-  }, [phase]);
-
-  useEffect(() => {
-    if (phase !== 'done') return undefined;
-    const timerId = window.setTimeout(() => {
-      onGameCompleteRef.current?.();
-      onPhaseCompleteRef.current?.();
-    }, 1000);
-    return () => window.clearTimeout(timerId);
-  }, [phase]);
+  }, [completeAfterSuccess, phase, playSceneLine, stopVoice]);
 
   if (!isActive) return null;
 
@@ -279,13 +358,16 @@ export default function SuryakotiGame({
 
         {phase === 'play' && (
           <p className="surya-hint">
-            Rub the dark away so the bunny can see its home
+            {hintLevel === 0 && 'Swipe the dark patch.'}
+            {hintLevel === 1 && 'Swipe the dark patch.'}
+            {hintLevel === 2 && 'Keep swiping to find the bunny.'}
+            {hintLevel >= 3 && 'Swipe all the way across.'}
           </p>
         )}
 
         {phase === 'done' && (
           <p className="surya-doneline">
-            The bunny found its way home!
+            You did it! The bunny found its way home!
           </p>
         )}
 
@@ -327,6 +409,10 @@ export default function SuryakotiGame({
         </div>
 
         <div className={`surya-dark-wrap ${canvasReady ? 'is-ready' : ''}`} style={{ pointerEvents: phase === 'play' && !isPaused ? 'auto' : 'none' }}>
+          {/* Pulsing ring cue over scratch area — hides once scratching starts */}
+          {phase === 'play' && canvasReady && litCount === 0 && (
+            <div className="surya-scratch-ring" />
+          )}
           <canvas
             ref={canvasRef}
             className="surya-dark-canvas"
@@ -336,6 +422,14 @@ export default function SuryakotiGame({
             onPointerCancel={onPointerUp}
           />
         </div>
+
+        <GestureDemo
+          type="scratch"
+          from={{ x: 58, y: 14 }}
+          to={{ x: 74, y: 24 }}
+          active={phase === 'play' && litCount === 0}
+          idleDelay={3000}
+        />
 
       </div>
     </div>

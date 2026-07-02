@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import SyllableHighlight from '../../../shared/SyllableHighlight';
+import GestureDemo from '../../../../../lib/components/feedback/GestureDemo';
+// import useRepeatedHintCycle from '../../../../../lib/hooks/useRepeatedHintCycle';
 import './SamaprabhaGame.css';
 
 import sharedSceneBg from '../assets/images/saurakoti-bg.png';
@@ -126,10 +128,10 @@ function Bird({ side, brightness, birdState }) {
   );
 }
 
-function SunHandle({ balance, isDragging, isBalanced }) {
+function SunHandle({ balance, isDragging, isBalanced, className = '' }) {
   return (
     <div
-      className={`sama-handle${isDragging ? ' is-dragging' : ''}${isBalanced ? ' is-balanced' : ''}`}
+      className={`sama-handle${isDragging ? ' is-dragging' : ''}${isBalanced ? ' is-balanced' : ''}${className ? ` ${className}` : ''}`}
       style={{ left: `${sunLeftPct(balance)}%`, top: `${SUN_TOP_PCT}%` }}
       aria-hidden="true"
     >
@@ -140,16 +142,22 @@ function SunHandle({ balance, isDragging, isBalanced }) {
   );
 }
 
-function SnapDots({ currentStop }) {
+function SnapDots({ currentStop, onTap, enabled }) {
   return (
     <div className="sama-snap-dots" aria-hidden="true">
-      {STOPS.map((s, i) => (
-        <div
-          key={i}
-          className={`sama-snap-dot${i <= currentStop ? ' is-lit' : ''}${i === currentStop ? ' is-current' : ''}`}
-          style={{ left: `${sunLeftPct(s.balance)}%` }}
-        />
-      ))}
+      {STOPS.map((s, i) => {
+        const isNext = enabled && i === currentStop + 1;
+        const isLit = i <= currentStop;
+        const isCurrent = i === currentStop;
+        return (
+          <div
+            key={i}
+            className={`sama-snap-dot${isLit ? ' is-lit' : ''}${isCurrent ? ' is-current' : ''}${isNext ? ' is-next' : ''}`}
+            style={{ left: `${sunLeftPct(s.balance)}%` }}
+            onClick={isNext ? () => onTap(i) : undefined}
+          />
+        );
+      })}
     </div>
   );
 }
@@ -160,28 +168,42 @@ export default function SamaprabhaGame({
   onMicroWin = () => {},
   onPhaseComplete = () => {},
   onGameComplete = () => {},
+  onFirstInteraction = () => {},
+  voiceGuidance = {},
   isPaused = false,
   isReload = false,
   savedGameState = null,
   onSaveGameState = () => {},
 }) {
+  const { playVoice: playSceneLine, stopVoice } = voiceGuidance;
   const containerRef = useRef(null);
-  const dragRef = useRef(false);
-  const dragStartXRef = useRef(null);
   const hydrateRef = useRef(false);
   const timersRef = useRef([]);
   const doneCalledRef = useRef(false);
   const isPausedRef = useRef(isPaused);
   const currentStopRef = useRef(0);
-  const lastAdvanceAtRef = useRef(0);
+  const firstInteractionSentRef = useRef(false);
   isPausedRef.current = isPaused;
 
   const [currentStop, setCurrentStop] = useState(0);
   const [phase, setPhase] = useState('play');
-  const [isDragging, setIsDragging] = useState(false);
   const [birdState, setBirdState] = useState('cold');
   const onGameCompleteRef = useRef(onGameComplete);
   const onPhaseCompleteRef = useRef(onPhaseComplete);
+
+  // Idle hint cycle is temporarily disabled so we can test normal play first.
+  // const {
+  //   hintLevel,
+  //   markInteraction,
+  // } = useRepeatedHintCycle({
+  //   enabled: isActive,
+  //   stageKey: phase === 'play' ? `stop-${currentStopRef.current}` : phase,
+  //   initialDelay: 8000,
+  //   pulseCountBeforeEscalation: 3,
+  //   pulseInterval: 1800,
+  //   level2Delay: 15000,
+  //   level3Delay: 22000,
+  // });
 
   useEffect(() => {
     currentStopRef.current = currentStop;
@@ -207,88 +229,49 @@ export default function SamaprabhaGame({
     timersRef.current.push(id);
   }, []);
 
-  const DRAG_STEP = 56;
-  const ADVANCE_COOLDOWN_MS = 380;
-
-  const advanceStop = useCallback((direction) => {
+  const advanceToStop = useCallback((targetStop) => {
+    if (phase !== 'play' || isPausedRef.current || doneCalledRef.current) return;
     const prev = currentStopRef.current;
-    const next = clamp(prev + (-direction), 0, STOPS.length - 1);
-    if (next === prev) return;
+    if (targetStop <= prev || targetStop >= STOPS.length) return;
+    if (!firstInteractionSentRef.current) {
+      firstInteractionSentRef.current = true;
+      onFirstInteraction?.();
+    }
 
-    currentStopRef.current = next;
-    setCurrentStop(next);
+    currentStopRef.current = targetStop;
+    setCurrentStop(targetStop);
 
-    const newLit = STOPS[next].litCount;
+    const newLit = STOPS[targetStop].litCount;
     const prevLit = STOPS[prev].litCount;
     if (newLit > prevLit) {
       window.setTimeout(() => onMicroWin?.(), 0);
     }
 
-    setBirdState(next >= 2 ? 'warm' : 'cold');
+    setBirdState(targetStop >= 2 ? 'warm' : 'cold');
 
-    if (next === STOPS.length - 1 && !doneCalledRef.current) {
+    if (targetStop === STOPS.length - 1 && !doneCalledRef.current) {
       doneCalledRef.current = true;
       safeAfter(300, () => {
         setPhase('done');
         setBirdState('done');
-        onSaveGameState?.({ phase: 'done', stop: next, completed: true });
+        onSaveGameState?.({ phase: 'done', stop: targetStop, completed: true });
       });
       return;
     }
 
-    onSaveGameState?.({ phase: 'play', stop: next });
-  }, [onGameComplete, onMicroWin, onPhaseComplete, onSaveGameState, safeAfter]);
+    onSaveGameState?.({ phase: 'play', stop: targetStop });
+  }, [onFirstInteraction, onMicroWin, onSaveGameState, phase, safeAfter]);
 
-  const handlePointerDown = useCallback((e) => {
-    if (phase !== 'play' || isPausedRef.current || doneCalledRef.current) return;
-    e.preventDefault();
-    dragRef.current = true;
-    dragStartXRef.current = e.clientX;
-    setIsDragging(true);
-  }, [phase]);
+  // Tap-based — no drag handlers needed
 
-  useEffect(() => {
-    if (!isActive) return undefined;
-
-    const handleMove = (e) => {
-      if (!dragRef.current || isPausedRef.current) return;
-      const now = Date.now();
-      if (now - lastAdvanceAtRef.current < ADVANCE_COOLDOWN_MS) return;
-      const dx = e.clientX - dragStartXRef.current;
-      if (Math.abs(dx) >= DRAG_STEP) {
-        advanceStop(dx < 0 ? -1 : 1);
-        lastAdvanceAtRef.current = now;
-        dragStartXRef.current = e.clientX;
-      }
-    };
-
-    const handleUp = () => {
-      dragRef.current = false;
-      dragStartXRef.current = null;
-      lastAdvanceAtRef.current = 0;
-      setIsDragging(false);
-    };
-
-    window.addEventListener('pointermove', handleMove);
-    window.addEventListener('pointerup', handleUp);
-    window.addEventListener('pointercancel', handleUp);
-    return () => {
-      window.removeEventListener('pointermove', handleMove);
-      window.removeEventListener('pointerup', handleUp);
-      window.removeEventListener('pointercancel', handleUp);
-    };
-  }, [isActive, advanceStop]);
+  // No drag event listeners needed — using tap on dots
 
   useEffect(() => {
     if (!isActive) {
       clearTimers();
-      dragRef.current = false;
-      setIsDragging(false);
       hydrateRef.current = false;
       doneCalledRef.current = false;
-      setCurrentStop(0);
-      setPhase('play');
-      setBirdState('cold');
+      firstInteractionSentRef.current = false;
       return;
     }
     if (hydrateRef.current && !isReload) return;
@@ -303,18 +286,32 @@ export default function SamaprabhaGame({
     setPhase(savedComplete ? 'done' : 'play');
     setBirdState(savedComplete ? 'done' : nextStop >= 2 ? 'warm' : 'cold');
     doneCalledRef.current = savedComplete;
+    firstInteractionSentRef.current = false;
   }, [isActive, isReload, savedGameState, clearTimers]);
 
   useEffect(() => () => clearTimers(), [clearTimers]);
 
   useEffect(() => {
     if (phase !== 'done') return undefined;
-    const timerId = window.setTimeout(() => {
+    const finish = () => {
       onGameCompleteRef.current?.();
       onPhaseCompleteRef.current?.();
-    }, 1200);
-    return () => window.clearTimeout(timerId);
-  }, [phase]);
+    };
+
+    if (!playSceneLine) {
+      const timerId = window.setTimeout(finish, 1200);
+      return () => window.clearTimeout(timerId);
+    }
+
+    const timerId = window.setTimeout(() => {
+      playSceneLine('scene11_sama_done', finish);
+    }, 150);
+
+    return () => {
+      window.clearTimeout(timerId);
+      stopVoice?.();
+    };
+  }, [phase, playSceneLine, stopVoice]);
 
   if (!isActive) return null;
 
@@ -342,7 +339,7 @@ export default function SamaprabhaGame({
         />
 
         {phase === 'done' && (
-          <p className="sama-doneline is-visible">Both shine equally now.</p>
+          <p className="sama-doneline is-visible">Both shine equally now!</p>
         )}
 
         <div className="sama-beam" aria-hidden="true">
@@ -367,18 +364,18 @@ export default function SamaprabhaGame({
           </svg>
         </div>
 
-        <SnapDots currentStop={currentStop} />
+        <SnapDots currentStop={currentStop} onTap={advanceToStop} enabled={phase === 'play'} />
 
         <Bird side="left" brightness={leftBrightness} birdState={birdState} />
         <Bird side="right" brightness={rightBrightness} birdState={birdState} />
 
-        <SunHandle balance={balance} isDragging={isDragging} isBalanced={phase === 'done'} />
+        <SunHandle balance={balance} isDragging={false} isBalanced={phase === 'done'} />
 
-        <div
-          className={`sama-handle-hit${phase !== 'play' || isPaused ? ' is-disabled' : ''}`}
-          style={{ left: `${sunLeftPct(balance)}%` }}
-          onPointerDown={handlePointerDown}
-          aria-hidden="true"
+        <GestureDemo
+          type="tap"
+          from={{ x: sunLeftPct(STOPS[1].balance), y: SUN_TOP_PCT }}
+          active={phase === 'play' && currentStop === 0}
+          idleDelay={3000}
         />
       </div>
     </div>

@@ -158,6 +158,17 @@
   opacity: 1;
 }
 
+.surya-dark-wrap.pulse,
+.surya-dark-canvas.pulse {
+  animation: suryaHintPulse 1.15s ease-in-out infinite;
+}
+
+.surya-dark-wrap.hint-glow,
+.surya-dark-canvas.hint-glow {
+  animation: suryaHintGlow 1.45s ease-in-out infinite;
+  filter: drop-shadow(0 0 16px rgba(255, 211, 107, 0.8));
+}
+
 .surya-dark-canvas {
   position: absolute;
   inset: 0;
@@ -202,5 +213,56 @@
   to {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes suryaHintPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+@keyframes suryaHintGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(255, 211, 107, 0.45));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 18px rgba(255, 211, 107, 0.85));
+    transform: scale(1.08);
+  }
+}
+
+/* ── Scratch target ring ── */
+.surya-scratch-ring {
+  position: absolute;
+  left: 65%;
+  top: 18%;
+  width: 34%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 2px solid rgba(255, 220, 100, 0.3);
+  box-shadow:
+    0 0 16px rgba(255, 220, 100, 0.2),
+    inset 0 0 12px rgba(255, 220, 100, 0.06);
+  pointer-events: none;
+  z-index: 21;
+  animation: suryaRingPulse 2s ease-in-out infinite;
+}
+
+@keyframes suryaRingPulse {
+  0%, 100% {
+    border-color: rgba(255, 220, 100, 0.2);
+    box-shadow:
+      0 0 12px rgba(255, 220, 100, 0.15),
+      inset 0 0 8px rgba(255, 220, 100, 0.04);
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    border-color: rgba(255, 220, 100, 0.45);
+    box-shadow:
+      0 0 24px rgba(255, 220, 100, 0.35),
+      inset 0 0 16px rgba(255, 220, 100, 0.1);
+    transform: translate(-50%, -50%) scale(1.03);
   }
 }
