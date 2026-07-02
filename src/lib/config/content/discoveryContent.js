@@ -124,13 +124,13 @@ export const DISCOVERY_CONTENT = {
     'vakratunda-grove': {
       vakratunda: {
         title: "Vakratunda",
-        affirmation: "I find a new way",
+        affirmation: "I find a new way.",
         icon: 'vakratunda-complete'
       },
 
       mahakaya: {
         title: "Mahakaya",
-        affirmation: "I am strong inside",
+        affirmation: "I am strong inside.",
         icon: 'mahakaya-complete'
       }
     },
@@ -138,13 +138,13 @@ export const DISCOVERY_CONTENT = {
     'suryakoti-bank': {
       suryakoti: {
         title: "Suryakoti",
-        affirmation: "I shine.",
+        affirmation: "I shine brightly.",
         icon: 'suryakoti-complete'
       },
 
       samaprabha: {
         title: "Samaprabha",
-        affirmation: "My light is steady.",
+        affirmation: "I share my light.",
         icon: 'samaprabha-complete'
       }
     },
@@ -152,20 +152,20 @@ export const DISCOVERY_CONTENT = {
     'nirvighnam-chant': {
       nirvighnam: {
         title: "Nirvighnam",
-        affirmation: "I clear the way and move forward.",
+        affirmation: "I clear the way.",
         icon: 'nirvighnam-complete'
       },
 
       kurumedeva: {
-        title: "Kurumedeva",
-        affirmation: "I ask for help and friends show up.",
+        title: "Kuru Me Deva",
+        affirmation: "I ask for help.",
         icon: 'kurumedeva-complete'
       }
     },
 
     'sarvakaryeshu-chant': {
       sarvakaryeshu: {
-        title: "Sarvakaryeshu",
+        title: "Sarva Karyeshu",
         affirmation: "I use my powers in every task.",
         icon: 'sarvakaryeshu-complete'
       },

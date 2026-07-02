@@ -60,6 +60,26 @@ export const VOICE_SCRIPTS = {
         file: '/audio/voicenew/vakratundachant/vakratunda-mahakaya-I am strong.wav'
       },
 
+      // Mahakaya Rescue Game — scene 10 VO lines
+      scene10_maha_intro: {
+        text: "Now let's help the little calf."
+      },
+      scene10_maha_blocking: {
+        text: "A heavy log is trapping him!"
+      },
+      scene10_maha_drag_rope: {
+        text: "Drag the rope to the log."
+      },
+      scene10_maha_pull_down: {
+        text: "Now pull down!"
+      },
+      scene10_maha_success: {
+        text: "You did it! The calf is free!"
+      },
+      scene10_maha_meaning: {
+        text: "It means great strength."
+      },
+
       // ── Shared instructions — uncomment to activate when VO is ready ───────
       // instructionListen:         { text: "Listen carefully!",                      file: 'instruction_watch_and_listen.mp3' },
       // instructionTapAndRepeat:   { text: "Tap and repeat!",                        file: 'instruction_tap_and_repeat.mp3' },
@@ -89,6 +109,116 @@ export const VOICE_SCRIPTS = {
       sceneComplete: {
         text: "Scene complete!",
         file: '/audio/voicenew/vakratundachant/vakratunda-scene completion.wav'
+      }
+    },
+    'suryakoti-bank': {
+      welcome: {
+        text: "The river is dark today. Let's bring back the light!"
+      },
+      scene11SuryaHint: {
+        text: "Swipe the dark patch."
+      },
+      scene11SamaHint: {
+        text: "Drag the light across. Share the light evenly. Keep balancing."
+      },
+      scene11SuryaDone: {
+        text: "You did it! The bunny found its way home!"
+      },
+      scene11SamaDone: {
+        text: "Both sides are glowing now. You did it."
+      },
+      scene11SuryaMeaning: {
+        text: "It means bright as ten million suns."
+      },
+      scene11SamaMeaning: {
+        text: "It helps us share fairly."
+      },
+      suryakotiSetup: {
+        text: "The bunny found its way because of your light."
+      },
+      suryakotiClaim: {
+        text: "Suryakoti lights the way."
+      },
+      sceneComplete: {
+        text: "You found the bunny. You shared the light. Both powers are yours now."
+      }
+    },
+    'nirvighnam-chant': {
+      welcome: {
+        text: "Let's help our river friend. The turtle wants to go home."
+      },
+      scene12NirvHint: {
+        text: "Something is blocking the way. Drag the obstacle away. Great job. Clear the next one."
+      },
+      scene12KuruHint: {
+        text: "Now another friend needs help. The beaver needs a bridge. Tap the glowing friend. Look. They are helping. Tap the next friend."
+      },
+      scene12NirvDone: {
+        text: "The path is opening up. You did it. The turtle made it home."
+      },
+      scene12KuruDone: {
+        text: "The bridge is getting bigger. One more helper. The bridge is ready. The beaver made it across."
+      },
+      scene12NirvMeaning: {
+        text: "It helps clear obstacles."
+      },
+      scene12KuruMeaning: {
+        text: "It means helping together."
+      },
+      sceneComplete: {
+        text: "The turtle made it home. The beaver made it across. Both powers are yours now."
+      }
+    },
+    'sarvakaryeshu-chant': {
+      welcome: {
+        text: "Let's see who needs help. Look carefully."
+      },
+      scene13SarvaHint: {
+        text: "Which power would help here? Tap a power. Nice choice. The problem is solved. Let's help another friend."
+      },
+      scene13SarvaDone: {
+        text: "Choose a power again. You got it. That helped too. One more challenge. Great thinking."
+      },
+      scene13SarvadaHint: {
+        text: "Our journey is not over yet. Let's keep floating down the river. Tap the bubble."
+      },
+      scene13SarvadaDone: {
+        text: "Morning. Ganesha is there too. Tap the next bubble. Afternoon. Ganesha is there too. Tap the last bubble. Night. Ganesha is there too."
+      },
+      scene13SarvaMeaning: {
+        text: "All the problems are solved. Sarvakaryeshu. Ganesha helps in all things."
+      },
+      scene13SarvadaMeaning: {
+        text: "Sarvada. Ganesha guides us always."
+      },
+      sceneComplete: {
+        text: "All the problems are solved. Ganesha helps in all things. Ganesha guides us always."
+      }
+    },
+    'shloka-river-finale': {
+      openingModalPrompt: {
+        text: "You've learned all eight Ganesha powers. Now let's put the shloka together!"
+      },
+      arrangeStart: {
+        text: "Tap the first word boat."
+      },
+      sceneComplete: {
+        text: "Wonderful! You completed the Ganesha Shloka!"
+      },
+      recapStart: {
+        text: "Look! Your shloka is sailing across the river!"
+      },
+      finalCelebration: {
+        text: "You remembered the whole Ganesha Shloka! All eight Ganesha powers are now with you."
+      },
+      hintBoatL1: {
+        text: "Tap the next word boat."
+      },
+      hintBoatL2: {
+        text: "Find the next word."
+      },
+      hintBoatL3: {
+        text: "Tap the glowing word boat."
       }
     }
   },
@@ -524,6 +654,7 @@ export const getVoiceScript = (zoneId, sceneId, key) => {
 export const getAudioPath = (zoneId, sceneId, key) => {
   const script = getVoiceScript(zoneId, sceneId, key);
   if (!script) return null;
+  if (!script.file) return null;
 
   // Absolute paths should work across all zones/scenes.
   if (script.file?.startsWith('/')) return script.file;
@@ -554,9 +685,9 @@ export const getSyllablePath = (word, syllable) => {
 };
 
 // Get full word audio path
-// Full words are in: /audio/voiceover/words/{word}.mp3
+// Full words are in: /audio/words/{word}.mp3
 export const getWordPath = (word) => {
-  return `/audio/voiceover/words/${word}.mp3`;
+  return `/audio/words/${word}.mp3`;
 };
 
 // Get SFX path (in sfx/ folder)
@@ -577,9 +708,16 @@ export const getPhaseHint = (phase) => {
   const hintMap = {
     // Symbol Mountain hints
     'findMooshika': 'hintMound',
-    'collectModaks': 'tapModak',        // Use tapModak hint for collect phase
-    'shareWithGanesha': 'feedHint',     // Use feedHint for feed phase
+    'collectModaks': 'tapModak',
+    'shareWithGanesha': 'feedHint',
     // Shloka River hints
+    'suryakotiGame': 'scene11SuryaHint',
+    'samaprabhaGame': 'scene11SamaHint',
+    'nirvighnamGame': 'scene12NirvHint',
+    'kurumedevaGame': 'scene12KuruHint',
+    'sarvakaryeshuGame': 'scene13SarvaHint',
+    'sarvadaGame': 'scene13SarvadaHint',
+    'shlokaRiverFinale': 'hintBoat',
     'vakratundaGame': 'hintTapTheShiny',
     'mahakayaGame': 'hintTapTheShiny',
     'listenPhase': 'instructionListen',

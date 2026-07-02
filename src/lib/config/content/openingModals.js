@@ -1,5 +1,5 @@
-// Opening Modal Content for All 22 Scenes
-// Organized by zone → scene
+﻿// Opening Modal Content for All 22 Scenes
+// Organized by zone â†’ scene
 
 export const OPENING_MODALS = {
 
@@ -11,7 +11,7 @@ export const OPENING_MODALS = {
       title: "Share the Modaks",
       description: "Mooshika is hiding nearby. Find him and share the sweet modaks.",
       icons: ['mooshika', 'modak', 'belly'],
-      buttonText: "Let's Explore",
+      buttonText: "Let's Listen",
       character: 'ganesha-happy'
     },
 
@@ -35,7 +35,7 @@ export const OPENING_MODALS = {
 
     'final-scene': {
       title: "All Symbols Together",
-      description: "Every symbol is ready. Let’s bring them together.",
+      description: "Every symbol is ready. Let's bring them together.",
       icons: ['eyes', 'trunk', 'lotus'],
       buttonText: "Let's Begin",
       character: 'ganesha-cave'
@@ -122,7 +122,7 @@ export const OPENING_MODALS = {
 
     'sarvakaryeshu-chant': {
       title: "Your Powers in Action!",
-      description: "See where your powers belong — and remember them always.",
+      description: "See where your powers belong - and remember them always.",
       icons: ['sarvakaryeshu', 'sarvada'],
       iconLabels: ['Sarvakaryeshu', 'Sarvada'],
       buttonText: "Let's Explore",
@@ -130,8 +130,8 @@ export const OPENING_MODALS = {
     },
 
     'shloka-river-finale': {
-      title: "Build the Shloka River!",
-      description: "Can you place all eight word boats in order?",
+      title: "Complete the Shloka!",
+      description: "Can you put all eight shloka words in the correct order?",
       icons: ['vakratunda', 'nirvighnam', 'sarvada'],
       buttonText: "Let's Explore",
       character: 'ganesha-headphones'
@@ -211,10 +211,10 @@ export const OPENING_MODALS = {
 
     'dreams-wishes': {
       title: "Dream Together",
-      description: "Let’s help and dream together!",
+      description: "Letâ€™s help and dream together!",
       icons: ['wish-heart', 'wish-star', 'wish-world'],
       iconLabels: ['Heart', 'Star', 'World'],
-      buttonText: "Let’s Start",
+      buttonText: "Letâ€™s Start",
       character: 'baby-ganesha-sit'
     }
   }
@@ -229,3 +229,4 @@ export const getOpeningModal = (zoneId, sceneId) => {
 export const hasOpeningModal = (zoneId, sceneId) => {
   return !!OPENING_MODALS[zoneId]?.[sceneId];
 };
+
