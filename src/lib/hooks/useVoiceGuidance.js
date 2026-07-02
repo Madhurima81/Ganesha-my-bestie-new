@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import useAppVisibility from './useAppVisibility';
 import {
+  getVoiceScript,
   getAudioPath,
   getSfxPath,
   getMusicPath,
@@ -129,8 +130,57 @@ const useVoiceGuidance = (zoneId, sceneId, {
       return;
     }
 
+    const script = getVoiceScript(zoneId, sceneId, key);
     const path = getAudioPath(zoneId, sceneId, key);
     if (!path) {
+      if (script?.text && typeof window !== 'undefined' && window.speechSynthesis && typeof SpeechSynthesisUtterance !== 'undefined') {
+        audioVisibilityCleanupRef.current?.();
+        audioVisibilityCleanupRef.current = null;
+
+        if (voiceRef.current) {
+          voiceRef.current.onended = null;
+          voiceRef.current.onerror = null;
+          voiceRef.current.pause();
+          voiceRef.current = null;
+        }
+
+        const utterance = new SpeechSynthesisUtterance(script.text);
+        utterance.lang = 'en-IN';
+        utterance.rate = 0.95;
+        utterance.pitch = 1;
+        utterance.volume = voiceVolumeRef.current;
+
+        let callbackFired = false;
+        const fireCallback = () => {
+          if (callbackFired) return;
+          callbackFired = true;
+          if (onEnded) onEnded();
+        };
+
+        const cleanupAndClear = () => {
+          voiceRef.current = null;
+          activeVoiceKeyRef.current = null;
+          activeVoiceCallbackRef.current = null;
+          activeVoiceReplayRef.current = true;
+          setIsPlaying(false);
+          clearVoDuck();
+        };
+
+        utterance.onend = () => { cleanupAndClear(); fireCallback(); };
+        utterance.onerror = () => { cleanupAndClear(); fireCallback(); };
+
+        voiceRef.current = null;
+        activeVoiceKeyRef.current = key;
+        activeVoiceCallbackRef.current = onEnded ?? null;
+        activeVoiceReplayRef.current = replayOnReturn;
+        setIsPlaying(true);
+
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+        lastInteractionRef.current = Date.now();
+        return;
+      }
+
       if (onEnded) onEnded();
       return;
     }
@@ -268,7 +318,9 @@ const useVoiceGuidance = (zoneId, sceneId, {
     };
 
     audio.play().catch(err => {
-      console.error('SFX play failed:', err);
+      if (!path.includes('/audio/sfx-role-mapping-2/')) {
+        console.error('SFX play failed:', err);
+      }
     });
 
     // Reset idle timer on interaction
