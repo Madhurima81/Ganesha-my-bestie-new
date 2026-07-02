@@ -1285,12 +1285,7 @@ const handleReplayIntroStory = () => {
                           ariaLabel="Replay"
                           size="sm"
                           fullWidth={false}
-                          style={getProfilePillBtnStyle(zoneData.id, {
-                            top: '#5FBEA8',
-                            base: '#4A9B87',
-                            shadow: '#1A6B5A',
-                            glow: 'rgba(74, 155, 135, 0.28)'
-                          })}
+                          style={getProfilePillBtnStyle(zoneData.id)}
                         />
                       </div>
                     ) : (

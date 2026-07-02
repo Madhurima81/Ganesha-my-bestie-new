@@ -133,43 +133,43 @@ export const ZONE_CONFIGS = {
     scenes: [
       {
         id: 'vakratunda-grove',
-        name: 'Bloom and Grow',
+        name: 'Your Journey Begins!',
         emoji: '🌳',
         iconImage: '/images/zones/shloka-river/vakratunda-grove-icon.png',
         order: 1,
-        description: 'Learn the opening verse in the sacred grove'
+        description: 'The river has two surprises waiting for you.'
       },
       {
         id: 'suryakoti-bank', 
-        name: 'Sun and Smiles',
+        name: 'Bring Back the Light!',
         emoji: '☀️',
         iconImage: '/images/zones/shloka-river/suryakoti-bank-icon.png',
         order: 2,
-        description: 'Discover the radiance verse by the river bank'
+        description: 'The river feels a little dark today.'
       },
       {
         id: 'nirvighnam-chant',
-        name: 'Clear the Path',
+        name: 'The River Needs You!',
         emoji: '🎵',
         iconImage: '/images/zones/shloka-river/nirvighnam-chant-icon.png',
         order: 3,
-        description: 'Master the obstacle-removing chant'
+        description: 'Some things are standing in the way.'
       },
       {
         id: 'sarvakaryeshu-chant',
-        name: 'Care and Share',
+        name: 'River Memories!',
         emoji: '🕉️',
         iconImage: '/images/zones/shloka-river/sarvakaryeshu-chant-icon.png',
         order: 4,
-        description: 'Learn the all-accomplishing verse'
+        description: 'Three special bubbles are floating by.'
       },
       {
         id: 'shloka-river-finale',
-        name: 'Chant and Celebrate',
+        name: 'Complete the Shloka!',
         emoji: '🎊',
         iconImage: '/images/zones/shloka-river/finale-icon.png',
         order: 5, 
-        description: 'Complete the full shloka by the sacred waters'
+        description: 'Can you put all eight shloka words in the correct order?'
       }
     ]
   },
