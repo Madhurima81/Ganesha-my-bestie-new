@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Symbol Mountain Shared Layout Editor</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", system-ui, sans-serif;
+    background: #161626;
+    color: #fff;
+    overflow: hidden;
+  }
+  .app {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    width: 100vw;
+    height: 100vh;
+  }
+  .sidebar {
+    background: #16213e;
+    border-right: 2px solid #ffd54f;
+    padding: 14px;
+    overflow-y: auto;
+  }
+  .scene {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background: #c8b6e2;
+  }
+  .scene-inner {
+    position: absolute;
+    inset: 0;
+    transform-origin: center 40%;
+    transition: transform 0.35s ease;
+  }
+  .scene-inner.tusk-zoom {
+    transform: scale(1.4) translateY(-15%);
+  }
+  .scene img.layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+  .layer-bg { z-index: 1; }
+  .layer-back { z-index: 2; }
+  .layer-mid { z-index: 3; }
+  .layer-front { z-index: 9; }
+  .entity {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+  }
+  .entity:active { cursor: grabbing; }
+  .entity.selected {
+    outline: 3px dashed #ffd54f;
+    outline-offset: 4px;
+    border-radius: 12px;
+  }
+  .entity img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    pointer-events: none;
+  }
+  .entity.animal {
+    filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.22));
+  }
+  .entity.obstacle {
+    width: 280px;
+    height: 180px;
+    filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.18));
+  }
+  .depth-behind-back { z-index: 2; }
+  .depth-behind-middle { z-index: 4; }
+  .depth-between-middle-front { z-index: 6; }
+  .depth-in-front { z-index: 12; }
+  .label {
+    position: absolute;
+    left: 50%;
+    top: -22px;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.75);
+    color: #ffd54f;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .card {
+    width: 100%;
+    padding: 12px;
+    border-radius: 14px;
+    background: #1a1a3e;
+    border: 2px solid #333;
+  }
+  .card.active {
+    border-color: #ffd54f;
+  }
+  .card h3 {
+    font-size: 14px;
+    color: #ffd54f;
+    margin-bottom: 8px;
+    text-transform: capitalize;
+  }
+  .card p {
+    font-size: 11px;
+    color: #9fdcff;
+    line-height: 1.4;
+  }
+  .row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .coords {
+    margin-top: 8px;
+    font-size: 11px;
+    color: #9fdcff;
+    font-family: ui-monospace, Consolas, monospace;
+  }
+  button {
+    border: none;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  button.primary {
+    background: #ffd54f;
+    color: #201600;
+  }
+  button.secondary {
+    background: #ece6f7;
+    color: #2f2143;
+  }
+  .toast {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2ecc71;
+    color: #000;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 10px;
+    z-index: 1000;
+    animation: fadeOut 2s ease forwards;
+  }
+  @keyframes fadeOut {
+    0%, 70% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @media (max-width: 980px) {
+    .app {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
+    }
+    .sidebar {
+      border-right: 0;
+      border-bottom: 2px solid #ffd54f;
+      max-height: 38vh;
+    }
+    .scene {
+      height: 62vh;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="controls" id="controls"></div>
+  </aside>
+  <div class="scene" id="scene">
+    <div class="scene-inner" id="sceneInner">
+      <img class="layer layer-bg" src="./assets/images/trail-bg.png" alt="">
+      <img class="layer layer-back" src="./assets/images/trail-back.png" alt="">
+      <img class="layer layer-mid" src="./assets/images/trail-mid.png" alt="">
+      <img class="layer layer-front" src="./assets/images/trail-front.png" alt="">
+    </div>
+  </div>
+</div>
+<script>
+const STORAGE_KEY = 'symbol_mountain_shared_layout_editor_v2';
+const ANIMAL_IMAGES = {
+  peacock: './assets/images/peacock-new.png',
+  monkey: './assets/images/monkey-new.png',
+  elephant: './assets/images/elephant-new1.png',
+  cow: './assets/images/cow-new.png'
+};
+const ANIMAL_SCALES = {
+  peacock: 2.0,
+  monkey: 1.7,
+  elephant: 2.8,
+  cow: 2.4
+};
+const DEPTH_OPTIONS = ['behind-back', 'behind-middle', 'between-middle-front', 'in-front'];
+const DEFAULT_STATE = {
+  animals: {
+    peacock: { x: 74, y: 67, depth: 'in-front' },
+    monkey: { x: 28, y: 56, depth: 'in-front' },
+    elephant: { x: 54, y: 52, depth: 'in-front' },
+    cow: { x: 45, y: 78, depth: 'in-front' }
+  },
+  obstacle: { x: 50, y: 52, depth: 'between-middle-front' }
+};
+let state = loadState();
+let selectedTarget = 'peacock';
+let draggingTarget = null;
+let dragOffset = { x: 0, y: 0 };
+let showAnimals = true;
+let tuskZoomView = false;
+const scene = document.getElementById('scene');
+const sceneInner = document.getElementById('sceneInner');
+const controls = document.getElementById('controls');
+function loadState() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    return {
+      animals: { ...DEFAULT_STATE.animals, ...(raw.animals || {}) },
+      obstacle: { ...DEFAULT_STATE.obstacle, ...(raw.obstacle || {}) }
+    };
+  } catch {
+    return structuredClone(DEFAULT_STATE);
+  }
+}
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+function getSelectedDepth() {
+  if (selectedTarget === 'obstacle') return state.obstacle.depth || 'between-middle-front';
+  return state.animals[selectedTarget]?.depth || 'in-front';
+}
+function setSelectedDepth(depth) {
+  if (selectedTarget === 'obstacle') {
+    state.obstacle.depth = depth;
+  } else if (state.animals[selectedTarget]) {
+    state.animals[selectedTarget].depth = depth;
+  }
+  saveState();
+  renderAll();
+}
+function showToast(message) {
+  const node = document.createElement('div');
+  node.className = 'toast';
+  node.textContent = message;
+  document.body.appendChild(node);
+  setTimeout(() => node.remove(), 2000);
+}
+function startDrag(event, targetId, kind) {
+  event.preventDefault();
+  selectedTarget = targetId;
+  draggingTarget = { id: targetId, kind };
+  const rect = scene.getBoundingClientRect();
+  const target = kind === 'animal' ? state.animals[targetId] : state.obstacle;
+  dragOffset.x = event.clientX - (target.x / 100 * rect.width);
+  dragOffset.y = event.clientY - (target.y / 100 * rect.height);
+  renderAll();
+  document.addEventListener('pointermove', onDrag);
+  document.addEventListener('pointerup', stopDrag);
+}
+function onDrag(event) {
+  if (!draggingTarget) return;
+  const rect = scene.getBoundingClientRect();
+  let x = ((event.clientX - dragOffset.x) / rect.width) * 100;
+  let y = ((event.clientY - dragOffset.y) / rect.height) * 100;
+  x = Math.max(0, Math.min(100, x));
+  y = Math.max(0, Math.min(100, y));
+  if (draggingTarget.kind === 'animal') {
+    state.animals[draggingTarget.id] = { x: Number(x.toFixed(2)), y: Number(y.toFixed(2)) };
+  } else {
+    state.obstacle = { x: Number(x.toFixed(2)), y: Number(y.toFixed(2)) };
+  }
+  saveState();
+  renderAll();
+}
+function stopDrag() {
+  draggingTarget = null;
+  document.removeEventListener('pointermove', onDrag);
+  document.removeEventListener('pointerup', stopDrag);
+}
+function renderSceneEntities() {
+  sceneInner.classList.toggle('tusk-zoom', tuskZoomView);
+  sceneInner.querySelectorAll('.entity').forEach((node) => node.remove());
+  const obstacle = document.createElement('div');
+  obstacle.className = `entity obstacle depth-${state.obstacle.depth || 'between-middle-front'} ${selectedTarget === 'obstacle' ? 'selected' : ''}`;
+  obstacle.style.left = `${state.obstacle.x}%`;
+  obstacle.style.top = `${state.obstacle.y}%`;
+  obstacle.innerHTML = `
+    <div class="label">Obstacle (${Math.round(state.obstacle.x)}, ${Math.round(state.obstacle.y)})</div>
+    <img src="./assets/images/trail-blockage-full.png" alt="Obstacle">
+  `;
+  obstacle.addEventListener('pointerdown', (event) => startDrag(event, 'obstacle', 'obstacle'));
+  obstacle.addEventListener('click', () => { selectedTarget = 'obstacle'; renderAll(); });
+  sceneInner.appendChild(obstacle);
+  if (!showAnimals) return;
+  Object.entries(state.animals).forEach(([id, pos]) => {
+    const node = document.createElement('div');
+    const size = 90 * (ANIMAL_SCALES[id] || 1);
+    node.className = `entity animal depth-${pos.depth || 'in-front'} ${selectedTarget === id ? 'selected' : ''}`;
+    node.style.left = `${pos.x}%`;
+    node.style.top = `${pos.y}%`;
+    node.style.width = `${size}px`;
+    node.style.height = `${size}px`;
+    node.innerHTML = `
+      <div class="label">${id} (${Math.round(pos.x)}, ${Math.round(pos.y)})</div>
+      <img src="${ANIMAL_IMAGES[id]}" alt="${id}">
+    `;
+    node.addEventListener('pointerdown', (event) => startDrag(event, id, 'animal'));
+    node.addEventListener('click', () => { selectedTarget = id; renderAll(); });
+    sceneInner.appendChild(node);
+  });
+}
+function renderControls() {
+  controls.innerHTML = '';
+  const intro = document.createElement('div');
+  intro.className = 'card';
+  intro.innerHTML = `
+    <h3>Shared Layout</h3>
+    <p>Drag items in the scene. Select an animal or obstacle here, then change its depth.</p>
+    <div class="coords">Selected depth: ${getSelectedDepth()}</div>
+    <div class="stack">
+      <button class="secondary" id="toggleZoom">${tuskZoomView ? 'Normal View' : 'Tusk Zoom View'}</button>
+      <button class="secondary" id="toggleAnimals">${showAnimals ? 'Hide Animals' : 'Show Animals'}</button>
+    </div>
+    <div class="row" id="depthButtons"></div>
+  `;
+  controls.appendChild(intro);
+  const depthButtons = document.getElementById('depthButtons');
+  DEPTH_OPTIONS.forEach((depth) => {
+    const button = document.createElement('button');
+    button.className = getSelectedDepth() === depth ? 'primary' : 'secondary';
+    button.textContent = depth.replaceAll('-', ' ');
+    button.onclick = () => setSelectedDepth(depth);
+    depthButtons.appendChild(button);
+  });
+  const targetsCard = document.createElement('div');
+  targetsCard.className = 'card';
+  targetsCard.innerHTML = '<h3>Targets</h3><div class="stack" id="targetButtons"></div>';
+  controls.appendChild(targetsCard);
+  const targetButtons = targetsCard.querySelector('#targetButtons');
+  if (showAnimals) {
+    Object.entries(state.animals).forEach(([id, pos]) => {
+      const button = document.createElement('button');
+      button.className = selectedTarget === id ? 'primary' : 'secondary';
+      button.textContent = `${id} (${Math.round(pos.x)}, ${Math.round(pos.y)})`;
+      button.onclick = () => {
+        selectedTarget = id;
+        renderAll();
+      };
+      targetButtons.appendChild(button);
+    });
+  }
+  const obstacleCard = document.createElement('div');
+  obstacleCard.className = 'card';
+  obstacleCard.innerHTML = `
+    <h3>Tusk Obstacle</h3>
+    <p>Use this when you only want to place the blockage.</p>
+    <div class="coords">x: ${Math.round(state.obstacle.x)} y: ${Math.round(state.obstacle.y)} depth: ${state.obstacle.depth || 'between-middle-front'}</div>
+    <div class="row">
+      <button class="${selectedTarget === 'obstacle' ? 'primary' : 'secondary'}" data-select="obstacle">Select Obstacle</button>
+    </div>
+  `;
+  controls.appendChild(obstacleCard);
+  const actionsCard = document.createElement('div');
+  actionsCard.className = 'card';
+  actionsCard.innerHTML = `
+    <h3>Copy</h3>
+    <div class="stack">
+      <button class="primary" id="copyAnimals">Copy Animal Config</button>
+      <button class="primary" id="copyObstacle">Copy Obstacle Config</button>
+      <button class="secondary" id="copyBoth">Copy Both</button>
+    </div>
+    <div class="row">
+      <button class="secondary" id="resetAnimals">Reset Animals</button>
+      <button class="secondary" id="resetObstacle">Reset Obstacle</button>
+      <button class="secondary" id="resetAll">Reset All</button>
+    </div>
+  `;
+  controls.appendChild(actionsCard);
+  controls.querySelectorAll('[data-select]').forEach((button) => {
+    button.addEventListener('click', () => {
+      selectedTarget = button.dataset.select;
+      renderAll();
+    });
+  });
+  document.getElementById('toggleZoom').onclick = () => {
+    tuskZoomView = !tuskZoomView;
+    renderAll();
+  };
+  document.getElementById('toggleAnimals').onclick = () => {
+    showAnimals = !showAnimals;
+    if (!showAnimals) selectedTarget = 'obstacle';
+    renderAll();
+  };
+  document.getElementById('copyAnimals').onclick = async () => {
+    const output = [
+      'export const ANIMAL_POSITIONS = {',
+      ...Object.entries(state.animals).map(([id, pos]) => `  ${id}: { x: ${Math.round(pos.x)}, y: ${Math.round(pos.y)} },`),
+      '};',
+      '',
+      'export const ANIMAL_POSITIONS_ARRAY = Object.entries(ANIMAL_POSITIONS).map(([id, pos]) => ({',
+      '  id,',
+      '  ...pos',
+      '}));'
+    ].join('\n');
+    await navigator.clipboard.writeText(output).catch(() => {});
+    showToast('Animal config copied');
+  };
+  document.getElementById('copyObstacle').onclick = async () => {
+    const output = [
+      'export const TUSK_OBSTACLE_POSITION = {',
+      `  x: ${Math.round(state.obstacle.x)},`,
+      `  y: ${Math.round(state.obstacle.y)},`,
+      `  depth: '${state.obstacle.depth || 'between-middle-front'}'`,
+      '};'
+    ].join('\n');
+    await navigator.clipboard.writeText(output).catch(() => {});
+    showToast('Obstacle config copied');
+  };
+  document.getElementById('copyBoth').onclick = async () => {
+    const output = [
+      "import { ANIMAL_POSITIONS } from './animalPositions';",
+      '',
+      'export const TUSK_ANIMAL_POSITIONS = {',
+      '  ...ANIMAL_POSITIONS',
+      '};',
+      '',
+      'export const TUSK_OBSTACLE_POSITION = {',
+      `  x: ${Math.round(state.obstacle.x)},`,
+      `  y: ${Math.round(state.obstacle.y)},`,
+      `  depth: '${state.obstacle.depth || 'between-middle-front'}'`,
+      '};'
+    ].join('\n');
+    await navigator.clipboard.writeText(output).catch(() => {});
+    showToast('Shared config copied');
+  };
+  document.getElementById('resetAnimals').onclick = () => {
+    state.animals = structuredClone(DEFAULT_STATE.animals);
+    saveState();
+    renderAll();
+  };
+  document.getElementById('resetObstacle').onclick = () => {
+    state.obstacle = structuredClone(DEFAULT_STATE.obstacle);
+    saveState();
+    renderAll();
+  };
+  document.getElementById('resetAll').onclick = () => {
+    state = structuredClone(DEFAULT_STATE);
+    selectedTarget = 'peacock';
+    saveState();
+    renderAll();
+  };
+}
+function renderAll() {
+  renderSceneEntities();
+  renderControls();
+}
+renderAll();
+</script>
+</body>
+</html>

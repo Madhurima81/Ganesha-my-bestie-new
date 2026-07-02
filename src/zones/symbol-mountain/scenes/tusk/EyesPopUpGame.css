@@ -35,37 +35,284 @@
   animation: eyes-zone-pulse 2.6s ease-in-out infinite;
 }
 
-.eyes-popup-debug-panel {
+/* Simplified Edit Bar */
+
+.eyes-edit-bar {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 120;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 160;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 6px;
-  background: rgba(20, 20, 20, 0.5);
-  padding: 6px;
-  border-radius: 8px;
+  padding: 6px 10px;
+  background: rgba(20, 20, 20, 0.7);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 12px;
+  border: 2px solid rgba(255, 215, 0, 0.3);
 }
 
-.eyes-popup-debug-panel button {
+.eyes-edit-toggle {
   border: 0;
-  background: #ffffff;
+  background: #fff;
   color: #222;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+}
+
+.eyes-edit-toggle.on {
+  background: #ffd54f;
+  color: #2b2000;
+}
+
+.eyes-edit-animal-btn {
+  border: 0;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
   font-size: 12px;
   font-weight: 700;
-  padding: 6px 8px;
-  border-radius: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
   cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  transition: background 0.15s;
+}
+
+.eyes-edit-animal-btn.active {
+  background: #ffd54f;
+  color: #2b2000;
+}
+
+.eyes-edit-option-btn {
+  border: 0;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  min-width: 34px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+}
+
+.eyes-edit-option-btn.active {
+  background: #f59e0b;
+  color: #2b2000;
+}
+
+.eyes-edit-save-btn {
+  border: 0;
+  background: #2ecc71;
+  color: #000;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+}
+
+.eyes-edit-export-btn {
+  border: 0;
+  background: #7dd3fc;
+  color: #082f49;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+}
+
+.eyes-export-panel {
+  position: absolute;
+  top: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(92vw, 760px);
+  max-height: 45vh;
+  overflow: auto;
+  z-index: 165;
+  padding: 12px;
+  background: rgba(10, 14, 28, 0.92);
+  border: 2px solid rgba(125, 211, 252, 0.55);
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+}
+
+.eyes-export-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  color: #e0f2fe;
+  font-size: 13px;
+}
+
+.eyes-export-copy-btn {
+  border: 0;
+  background: #f8fafc;
+  color: #0f172a;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+}
+
+.eyes-export-panel pre {
+  margin: 0;
+  color: #dbeafe;
+  font-size: 11px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.eyes-popup-debug-spot {
+  position: absolute;
+  z-index: 130;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
 }
 
 .eyes-popup-debug-dot {
-  z-index: 130 !important;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 0, 0, 0.5);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
   cursor: grab;
   touch-action: none;
 }
 
 .eyes-popup-debug-dot:active {
   cursor: grabbing;
+}
+
+.eyes-popup-debug-dot.is-selected {
+  background: rgba(255, 128, 0, 0.85);
+  box-shadow: 0 0 0 3px rgba(255, 214, 102, 0.55);
+}
+
+.eyes-popup-debug-depth {
+  border: 0;
+  background: rgba(20, 20, 20, 0.78);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.1;
+  padding: 4px 7px;
+  border-radius: 999px;
+  white-space: nowrap;
+  text-transform: capitalize;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.24);
+}
+
+.eyes-popup-debug-depth.is-selected {
+  background: rgba(255, 214, 102, 0.95);
+  color: #2b2000;
+}
+
+.eyes-popup-debug-animal {
+  position: absolute;
+  width: clamp(56px, 8vw, 96px);
+  transform: translate(-50%, -50%) scale(var(--animal-scale, 1));
+  transform-origin: center center;
+  z-index: 131;
+  cursor: grab;
+  touch-action: none;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.6));
+}
+
+.eyes-popup-debug-animal:active {
+  cursor: grabbing;
+}
+
+.eyes-popup-debug-animal.is-selected img {
+  opacity: 0.9;
+  filter: drop-shadow(0 0 18px rgba(255, 214, 102, 0.95));
+}
+
+.eyes-popup-debug-animal img {
+  width: 100%;
+  height: auto;
+  display: block;
+  pointer-events: none;
+  opacity: 0.72;
+}
+
+.eyes-popup-debug-animal span {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 4px);
+  transform: translateX(-50%) scale(calc(1 / var(--animal-scale, 1)));
+  transform-origin: top center;
+  background: rgba(20, 20, 20, 0.72);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 6px;
+  border-radius: 999px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.eyes-popup-assignment-dot {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  background: var(--assignment-color, #fff);
+  border: 3px solid rgba(15, 23, 42, 0.85);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2), 0 8px 18px rgba(0, 0, 0, 0.28);
+  cursor: grab;
+  touch-action: none;
+  z-index: 136;
+}
+
+.eyes-popup-assignment-dot:active {
+  cursor: grabbing;
+}
+
+.eyes-popup-assignment-dot span {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.9);
+  color: #f8fafc;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.eyes-popup-assignment-dot:hover span {
+  opacity: 1;
 }
 
 

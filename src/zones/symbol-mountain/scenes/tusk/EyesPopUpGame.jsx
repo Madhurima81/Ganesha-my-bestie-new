@@ -10,11 +10,12 @@ import peacockImg from './assets/images/peacock-new.png';
 import monkeyImg from './assets/images/monkey-new.png';
 import elephantImg from './assets/images/elephant-new1.png';
 import cowImg from './assets/images/cow-new.png';
-import bgBackImg from './assets/images/symbolmtn_bg-back.png';
-import backRocksImg from './assets/images/symbolmtn_back-rocks.png';
-import middleRocksImg from './assets/images/symbolmtn_middle-rocks.png';
-import frontRocksImg from './assets/images/symbolmtn_front-rocks.png';
+import bgBackImg from './assets/images/trail-bg.png';
+import backRocksImg from './assets/images/trail-back.png';
+import middleRocksImg from './assets/images/trail-mid.png';
+import frontRocksImg from './assets/images/trail-front.png';
 import { ANIMAL_SIZES } from './animalConfig';
+import { ANIMAL_POSITIONS } from './animalPositions';
 
 // VO (add files as you get them â€” game will silently skip missing audio)
 const VO_PATHS = {
@@ -43,33 +44,32 @@ const ANIMALS = [
   { id: 'cow', name: 'Cow', img: cowImg, vo: VO_PATHS.cow }
 ];
 
-// 8 hide-spots on the scene (x%, y% from top-left of game container)
-// y-position determines which animals can hide here:
-//   low spots (y > 55%) = ground animals (cow, monkey, elephant)
-//   high spots (y < 60%) = flying / bird (peacock OK anywhere)
-//   peacock works in any spot
-const HIDE_SPOTS = [
-  // LEFT mountain â€” behind front rock
-  { id: 'spot1', x: 14, y: 50, zone: 'left-mountain', depth: 'behind-middle', revealOffsetX: 8, revealOffsetY: 5, allowed: ['peacock', 'monkey'] },
-  { id: 'spot2', x: 8,  y: 72, zone: 'left-mountain', depth: 'behind-front', revealOffsetX: 10, revealOffsetY: 0, allowed: ['peacock', 'monkey', 'elephant', 'cow'] },
-
-  // LEFT bush cluster (middle-left)
-  { id: 'spot3', x: 30, y: 70, zone: 'left-bushes', depth: 'between-middle-front', revealOffsetX: 4, revealOffsetY: 4, allowed: ['peacock', 'monkey', 'cow'] },
-  { id: 'spot4', x: 35, y: 78, zone: 'left-bushes', depth: 'between-middle-front', revealOffsetX: 5, revealOffsetY: 2, allowed: ['peacock', 'monkey', 'elephant', 'cow'] },
-
-  // RIGHT bush cluster (middle-right)
-  { id: 'spot5', x: 65, y: 70, zone: 'right-bushes', depth: 'between-middle-front', revealOffsetX: -4, revealOffsetY: 4, allowed: ['peacock', 'monkey', 'cow'] },
-  { id: 'spot6', x: 70, y: 78, zone: 'right-bushes', depth: 'between-middle-front', revealOffsetX: -5, revealOffsetY: 2, allowed: ['peacock', 'monkey', 'elephant', 'cow'] },
-
-  // RIGHT mountain â€” behind front rock
-  { id: 'spot7', x: 90, y: 72, zone: 'right-mountain', depth: 'behind-front', revealOffsetX: -10, revealOffsetY: 0, allowed: ['peacock', 'monkey', 'elephant', 'cow'] },
-  { id: 'spot8', x: 84, y: 50, zone: 'right-mountain', depth: 'behind-front', revealOffsetX: -8, revealOffsetY: 5, allowed: ['peacock', 'monkey'] }
-];
+// Each animal gets its own small pool of hide options.
+// This keeps placements natural and lets us randomize one option per animal at runtime.
+const ANIMAL_HIDE_OPTIONS = {
+  peacock: [
+    { id: 'peacock-1', x: 28.39, y: 42.28, zone: 'left-bushes', depth: 'behind-middle', revealOffsetX: 0, revealOffsetY: 0, scale: 2 },
+    { id: 'peacock-2', x: 73.96, y: 66.8, zone: 'right-rocks', depth: 'between-middle-front', revealOffsetX: 0, revealOffsetY: 0, scale: 2 }
+  ],
+  monkey: [
+    { id: 'monkey-1', x: 27.54, y: 48.37, zone: 'left-bushes', depth: 'behind-middle', revealOffsetX: 0, revealOffsetY: 0, scale: 1.7 },
+    { id: 'monkey-2', x: 77.07, y: 32.79, zone: 'mid-trail', depth: 'behind-middle', revealOffsetX: 0, revealOffsetY: 0, scale: 1.7 }
+  ],
+  elephant: [
+    { id: 'elephant-1', x: 21.89, y: 55.42, zone: 'left-rocks', depth: 'behind-middle', revealOffsetX: 0, revealOffsetY: 0, scale: 2.8 },
+    { id: 'elephant-2', x: 68.79, y: 64.5, zone: 'mid-trail', depth: 'between-middle-front', revealOffsetX: 0, revealOffsetY: 0, scale: 2.8 }
+  ],
+  cow: [
+    { id: 'cow-1', x: 23.96, y: 72.09, zone: 'left-rocks', depth: 'between-middle-front', revealOffsetX: 0, revealOffsetY: 0, scale: 2.4 },
+    { id: 'cow-2', x: 88.65, y: 54.34, zone: 'right-rocks', depth: 'between-middle-front', revealOffsetX: 0, revealOffsetY: 0, scale: 2.4 }
+  ]
+};
 const ZONES = {
-  'left-mountain': { x: 12, y: 60, w: 18, h: 30 },
-  'left-bushes': { x: 32, y: 75, w: 15, h: 20 },
-  'right-bushes': { x: 68, y: 75, w: 15, h: 20 },
-  'right-mountain': { x: 88, y: 60, w: 18, h: 30 }
+  'left-rocks': { x: 13, y: 70, w: 18, h: 26 },
+  'left-bushes': { x: 28, y: 69, w: 22, h: 22 },
+  'mid-trail': { x: 51, y: 58, w: 24, h: 18 },
+  'right-rocks': { x: 72, y: 64, w: 18, h: 22 },
+  'right-bushes': { x: 87, y: 68, w: 18, h: 26 }
 };
 const FADE_IN_OPACITY = 0.35;    // hidden-state opacity â€” visible silhouette, partial hiding behind rocks does the rest
 const POP_OPACITY = 1.0;          // pre-click pop opacity
@@ -79,8 +79,17 @@ const POP_HIDDEN_MS = 900;         // gentle cooldown
 const IDLE_HINT_MS = 8000;         // glow an undiscovered animal after 8s
 const IDLE_ZONE_HINT_MS = 16000;   // glow hint zone after longer idle
 const IDLE_FULL_REVEAL_MS = 24000; // full reveal after long idle
-const SHOW_SPOT_DEBUG = false;     // set true only when tuning spot coordinates
-const SPOT_STORAGE_KEY = 'symbol_mountain_eyes_hide_spots_v1';
+const SHOW_SPOT_DEBUG = true;
+const SPOT_STORAGE_KEY = 'symbol_mountain_eyes_hide_options_v5';
+const ANIMAL_POSITION_STORAGE_KEY = 'symbol_mountain_eyes_animal_positions_v2';
+const DEBUG_MODE_STORAGE_KEY = 'symbol_mountain_eyes_debug_mode_v2';
+const DEBUG_DEPTHS = ['behind-middle', 'behind-front', 'between-middle-front'];
+const DEBUG_ASSIGNMENT_COLORS = {
+  peacock: '#22d3ee',
+  monkey: '#fb923c',
+  elephant: '#9ca3af',
+  cow: '#f8fafc'
+};
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // HELPERS
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -94,46 +103,121 @@ const shuffle = (arr) => {
   return copy;
 };
 
-// Randomly assign 4 animals to 4 of 8 spots (respecting allowed list)
-const getEffectiveSpots = (spotsSource) => {
-  // Force cow + elephant to ground spots: bottom 4 by y-value (largest y).
-  const bottom4Ids = [...spotsSource]
-    .sort((a, b) => b.y - a.y)
-    .slice(0, 4)
-    .map((s) => s.id);
-
-  return spotsSource.map((spot) => {
-    // Depth override for gameplay:
-    // - spot2 and spot4 should sit between middle and front
-    // - all other spots stay between back and middle
-    const normalizedDepth = (spot.id === 'spot2' || spot.id === 'spot4')
-      ? 'between-middle-front'
-      : 'behind-middle';
-    const baseAllowed = spot.allowed || [];
-    const nextAllowed = baseAllowed.filter((id) => {
-      if (id === 'cow' || id === 'elephant') return bottom4Ids.includes(spot.id);
-      // Keep monkey out of overly hidden mountain-edge spots.
-      if (id === 'monkey') return ['spot2', 'spot4', 'spot6', 'spot7'].includes(spot.id);
-      return true;
-    });
-    return { ...spot, depth: normalizedDepth, allowed: nextAllowed };
-  });
+const getZoneBucket = (spot) => {
+  if (!spot) return 'unknown';
+  if (spot.x < 35) return spot.y >= 58 ? 'left-front' : 'left-back';
+  if (spot.x <= 68) return spot.y >= 58 ? 'middle-front' : 'middle-back';
+  return spot.y >= 58 ? 'right-front' : 'right-back';
 };
 
-const assignAnimalsToSpots = (spotsSource) => {
-  const animals = shuffle(ANIMALS);
-  const spots = shuffle(getEffectiveSpots(spotsSource));
-  const assignments = [];
-  const usedSpots = new Set();
+const distanceBetweenSpots = (a, b) => {
+  if (!a || !b) return Infinity;
+  return Math.hypot((a.x ?? 0) - (b.x ?? 0), (a.y ?? 0) - (b.y ?? 0));
+};
 
-  for (const animal of animals) {
-    const spot = spots.find(s => !usedSpots.has(s.id) && s.allowed.includes(animal.id));
-    if (spot) {
-      assignments.push({ animal, spot });
-      usedSpots.add(spot.id);
+const getSpotScale = (animalId, spot) => {
+  return spot?.scale ?? ANIMAL_SIZES[animalId] ?? 1;
+};
+
+const getRequiredSeparation = (animalA, spotA, animalB, spotB) => {
+  const scaleA = getSpotScale(animalA.id, spotA);
+  const scaleB = getSpotScale(animalB.id, spotB);
+  const avgScale = (scaleA + scaleB) / 2;
+  const sameBucketBonus = getZoneBucket(spotA) === getZoneBucket(spotB) ? 6 : 0;
+  return 8 + (avgScale * 4) + sameBucketBonus;
+};
+
+const scoreAssignmentSet = (assignmentSet) => {
+  let penalty = 0;
+
+  for (let i = 0; i < assignmentSet.length; i += 1) {
+    for (let j = i + 1; j < assignmentSet.length; j += 1) {
+      const first = assignmentSet[i];
+      const second = assignmentSet[j];
+      const distance = distanceBetweenSpots(first.spot, second.spot);
+      const required = getRequiredSeparation(first.animal, first.spot, second.animal, second.spot);
+
+      if (distance < required) {
+        penalty += (required - distance) * 10;
+      }
+
+      if (getZoneBucket(first.spot) === getZoneBucket(second.spot)) {
+        penalty += 3;
+      }
     }
   }
-  return assignments;
+
+  return penalty;
+};
+
+const cloneHideOptions = (hideOptionsByAnimal) => Object.fromEntries(
+  Object.entries(hideOptionsByAnimal || {}).map(([animalId, options]) => {
+    const defaultOptions = ANIMAL_HIDE_OPTIONS[animalId] || [];
+    const safeOptions = Array.isArray(options) ? options : defaultOptions;
+
+    return [
+      animalId,
+      safeOptions.map((option, index) => {
+        const fallback = defaultOptions[index] || defaultOptions[0] || {};
+        const source = option && typeof option === 'object' ? option : fallback;
+
+        return {
+          ...source,
+          id: source.id || `${animalId}-${index + 1}`,
+          zone: source.zone || fallback.zone || 'mid-trail',
+          depth: source.depth || fallback.depth || 'behind-middle',
+          revealOffsetX: source.revealOffsetX ?? fallback.revealOffsetX ?? 0,
+          revealOffsetY: source.revealOffsetY ?? fallback.revealOffsetY ?? 0,
+          scale: source.scale ?? fallback.scale ?? ANIMAL_SIZES[animalId] ?? 1
+        };
+      }).filter(Boolean)
+    ];
+  })
+);
+
+const assignAnimalsToSpots = (hideOptionsByAnimal) => {
+  const poolsByAnimal = ANIMALS.map((animal) => ({
+    animal,
+    pool: shuffle((hideOptionsByAnimal?.[animal.id]?.length ? hideOptionsByAnimal[animal.id] : ANIMAL_HIDE_OPTIONS[animal.id]) || [])
+  }));
+
+  let bestAssignments = null;
+  let bestPenalty = Number.POSITIVE_INFINITY;
+
+  const search = (index, chosen) => {
+    if (index >= poolsByAnimal.length) {
+      const penalty = scoreAssignmentSet(chosen);
+      if (penalty < bestPenalty) {
+        bestPenalty = penalty;
+        bestAssignments = chosen;
+      }
+      return;
+    }
+
+    const { animal, pool } = poolsByAnimal[index];
+    for (const spot of pool) {
+      const nextChosen = [...chosen, { animal, spot }];
+      const partialPenalty = scoreAssignmentSet(nextChosen);
+      if (partialPenalty > bestPenalty) continue;
+      search(index + 1, nextChosen);
+      if (bestPenalty === 0) return;
+    }
+  };
+
+  search(0, []);
+
+  return (bestAssignments || []).filter(Boolean);
+};
+
+const syncAssignmentsWithOptions = (currentAssignments, hideOptionsByAnimal) => {
+  return ANIMALS.map((animal) => {
+    const options = hideOptionsByAnimal?.[animal.id] || [];
+    const pool = options.length ? options : ANIMAL_HIDE_OPTIONS[animal.id] || [];
+    const existing = (currentAssignments || []).find((item) => item?.animal?.id === animal.id);
+    const matchedSpot = pool.find((option) => option?.id === existing?.spot?.id);
+    const nextSpot = matchedSpot || existing?.spot || pool[0] || null;
+    return nextSpot ? { animal, spot: nextSpot } : null;
+  }).filter(Boolean);
 };
 
 const speakFallback = (text) => {
@@ -170,17 +254,39 @@ const EyesPopUpGame = ({
   hideElements = false,
   className = ''
 }) => {
-  const [editableSpots, setEditableSpots] = useState(() => {
+  const [debugMode, setDebugMode] = useState(() => {
     try {
-      const raw = localStorage.getItem(SPOT_STORAGE_KEY);
-      if (!raw) return HIDE_SPOTS;
-      const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) && parsed.length ? parsed : HIDE_SPOTS;
+      return localStorage.getItem(DEBUG_MODE_STORAGE_KEY) === 'true';
     } catch {
-      return HIDE_SPOTS;
+      return false;
     }
   });
-  const [assignments, setAssignments] = useState(() => assignAnimalsToSpots(HIDE_SPOTS));
+  const [editableHideOptions, setEditableHideOptions] = useState(() => {
+    try {
+      const raw = localStorage.getItem(SPOT_STORAGE_KEY);
+      if (!raw) return cloneHideOptions(ANIMAL_HIDE_OPTIONS);
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object'
+        ? cloneHideOptions({ ...ANIMAL_HIDE_OPTIONS, ...parsed })
+        : cloneHideOptions(ANIMAL_HIDE_OPTIONS);
+    } catch {
+      return cloneHideOptions(ANIMAL_HIDE_OPTIONS);
+    }
+  });
+  const [editableAnimalPositions, setEditableAnimalPositions] = useState(() => {
+    try {
+      const raw = localStorage.getItem(ANIMAL_POSITION_STORAGE_KEY);
+      if (!raw) return ANIMAL_POSITIONS;
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' ? { ...ANIMAL_POSITIONS, ...parsed } : ANIMAL_POSITIONS;
+    } catch {
+      return ANIMAL_POSITIONS;
+    }
+  });
+  const [selectedOptionIndex, setSelectedOptionIndex] = useState(0);
+  const [selectedAnimalId, setSelectedAnimalId] = useState(() => ANIMALS[0]?.id || null);
+  const [showExportPanel, setShowExportPanel] = useState(false);
+  const [assignments, setAssignments] = useState(() => assignAnimalsToSpots(ANIMAL_HIDE_OPTIONS));
   const [discovered, setDiscovered] = useState(new Set());
   const [visibleAnimal, setVisibleAnimal] = useState(null); // id of animal currently popping up
   const [showIdleHint, setShowIdleHint] = useState(null);   // id to glow
@@ -191,7 +297,13 @@ const EyesPopUpGame = ({
   const cycleTimerRef = useRef(null);
   const idleTimerRef = useRef(null);
   const lastTapTimeRef = useRef(Date.now());
-  const dragSpotIdRef = useRef(null);
+  const dragTargetRef = useRef(null);
+  const activeHideOptions = editableHideOptions[selectedAnimalId] || [];
+  const selectedHideOption = activeHideOptions[selectedOptionIndex] || null;
+  const exportPayload = JSON.stringify({
+    hideOptions: editableHideOptions,
+    animalPositions: editableAnimalPositions
+  }, null, 2);
 
   // Intro VO once on mount
   useEffect(() => {
@@ -272,11 +384,12 @@ const EyesPopUpGame = ({
     if (discovered.size === 4 && onGameComplete) {
       const completionTimer = setTimeout(() => {
         const assignedSpots = assignments.reduce((acc, item) => {
-          const revealOffsetX = item.spot.revealOffsetX || 0;
-          const revealOffsetY = item.spot.revealOffsetY || 0;
+          const fallbackX = item.spot.x + (item.spot.revealOffsetX || 0);
+          const fallbackY = item.spot.y + (item.spot.revealOffsetY || 0);
+          const tunedPos = editableAnimalPositions[item.animal.id];
           acc[item.animal.id] = {
-            x: item.spot.x + revealOffsetX,
-            y: item.spot.y + revealOffsetY,
+            x: tunedPos?.x ?? fallbackX,
+            y: tunedPos?.y ?? fallbackY,
             depth: item.spot.depth || 'between-middle-front'
           };
           return acc;
@@ -289,7 +402,7 @@ const EyesPopUpGame = ({
       }, 1200);
       return () => clearTimeout(completionTimer);
     }
-  }, [discovered, onGameComplete, assignments]);
+  }, [discovered, onGameComplete, assignments, editableAnimalPositions]);
 
   const handleAnimalTap = useCallback((animalId, e) => {
     e?.stopPropagation();
@@ -331,22 +444,53 @@ const EyesPopUpGame = ({
   useEffect(() => {
     if (!SHOW_SPOT_DEBUG) return;
     try {
-      localStorage.setItem(SPOT_STORAGE_KEY, JSON.stringify(editableSpots));
+      localStorage.setItem(DEBUG_MODE_STORAGE_KEY, String(debugMode));
+      localStorage.setItem(SPOT_STORAGE_KEY, JSON.stringify(editableHideOptions));
+      localStorage.setItem(ANIMAL_POSITION_STORAGE_KEY, JSON.stringify(editableAnimalPositions));
     } catch {
       // no-op
     }
-  }, [editableSpots]);
+  }, [debugMode, editableHideOptions, editableAnimalPositions]);
 
   useEffect(() => {
     if (!isActive) return;
-    setAssignments(assignAnimalsToSpots(editableSpots));
+
+    if (debugMode) {
+      setAssignments((prev) => syncAssignmentsWithOptions(prev, editableHideOptions));
+      return;
+    }
+
+    setAssignments(assignAnimalsToSpots(editableHideOptions));
     setDiscovered(new Set());
     setVisibleAnimal(null);
     setShowIdleHint(null);
     setShowZoneHint(null);
     setShowFullReveal(null);
     lastTapTimeRef.current = Date.now();
-  }, [isActive, editableSpots]);
+  }, [isActive, editableHideOptions, debugMode]);
+
+  useEffect(() => {
+    const optionCount = activeHideOptions.length;
+    if (optionCount === 0) {
+      setSelectedOptionIndex(0);
+      return;
+    }
+    if (selectedOptionIndex >= optionCount) {
+      setSelectedOptionIndex(optionCount - 1);
+    }
+  }, [activeHideOptions, selectedOptionIndex]);
+
+  useEffect(() => {
+    if (!debugMode || !selectedAnimalId || !selectedHideOption) return;
+
+    setAssignments((prev) => prev.map((item) => {
+      if (item?.animal?.id !== selectedAnimalId) return item;
+      return {
+        ...item,
+        spot: selectedHideOption
+      };
+    }));
+  }, [debugMode, selectedAnimalId, selectedHideOption]);
 
   if (hideElements || !isActive) return null;
 
@@ -355,24 +499,62 @@ const EyesPopUpGame = ({
       className={`eyes-popup-game ${className}`}
       onClick={handleSceneTap}
       onPointerMove={(e) => {
-        if (!dragSpotIdRef.current) return;
+        const dragTarget = dragTargetRef.current;
+        if (!dragTarget) return;
         e.stopPropagation();
         const rect = e.currentTarget.getBoundingClientRect();
         const x = Math.min(99.5, Math.max(0.5, ((e.clientX - rect.left) / rect.width) * 100));
         const y = Math.min(99.5, Math.max(0.5, ((e.clientY - rect.top) / rect.height) * 100));
-        setEditableSpots((prev) =>
-          prev.map((spot) =>
-            spot.id === dragSpotIdRef.current
-              ? { ...spot, x: Number(x.toFixed(2)), y: Number(y.toFixed(2)) }
-              : spot
-          )
-        );
+        if (dragTarget.type === 'spot' && dragTarget.animalId) {
+          setEditableHideOptions((prev) => ({
+            ...prev,
+            [dragTarget.animalId]: (prev[dragTarget.animalId] || []).map((spot, index) =>
+              index === dragTarget.optionIndex
+                ? { ...spot, x: Number(x.toFixed(2)), y: Number(y.toFixed(2)) }
+                : spot
+            )
+          }));
+        } else if (dragTarget.type === 'assigned-spot' && dragTarget.animalId && dragTarget.spotId) {
+          const nextX = Number(x.toFixed(2));
+          const nextY = Number(y.toFixed(2));
+
+          setAssignments((prev) => prev.map((item) => {
+            if (item?.animal?.id !== dragTarget.animalId || item?.spot?.id !== dragTarget.spotId) {
+              return item;
+            }
+            return {
+              ...item,
+              spot: {
+                ...item.spot,
+                x: nextX,
+                y: nextY
+              }
+            };
+          }));
+
+          setEditableHideOptions((prev) => ({
+            ...prev,
+            [dragTarget.animalId]: (prev[dragTarget.animalId] || []).map((spot) =>
+              spot?.id === dragTarget.spotId
+                ? { ...spot, x: nextX, y: nextY }
+                : spot
+            )
+          }));
+        } else if (dragTarget.type === 'animal' && dragTarget.id) {
+          setEditableAnimalPositions((prev) => ({
+            ...prev,
+            [dragTarget.id]: {
+              x: Number(x.toFixed(2)),
+              y: Number(y.toFixed(2))
+            }
+          }));
+        }
       }}
       onPointerUp={() => {
-        dragSpotIdRef.current = null;
+        dragTargetRef.current = null;
       }}
       onPointerLeave={() => {
-        dragSpotIdRef.current = null;
+        dragTargetRef.current = null;
       }}
     >
       <img className="eyes-popup-layer eyes-popup-layer-back" src={bgBackImg} alt="" />
@@ -391,70 +573,204 @@ const EyesPopUpGame = ({
       )}
 
       {SHOW_SPOT_DEBUG && (
-        <div className="eyes-popup-debug-panel" onClick={(e) => e.stopPropagation()}>
+        <div className="eyes-edit-bar" onClick={(e) => e.stopPropagation()}>
           <button
             type="button"
-            onClick={() => {
-              const json = JSON.stringify(editableSpots, null, 2);
-              navigator.clipboard?.writeText(json).catch(() => {});
-            }}
+            className={`eyes-edit-toggle ${debugMode ? 'on' : ''}`}
+            onClick={() => setDebugMode((prev) => !prev)}
           >
-            Copy JSON
+            {debugMode ? 'Editing' : 'Play'}
           </button>
-          <button type="button" onClick={() => setEditableSpots(HIDE_SPOTS)}>
-            Reset Defaults
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              try {
-                localStorage.setItem(SPOT_STORAGE_KEY, JSON.stringify(editableSpots));
-              } catch {
-                // no-op
-              }
-            }}
-          >
-            Save
-          </button>
+          {debugMode && (
+            <>
+              {ANIMALS.map((animal) => (
+                <button
+                  key={animal.id}
+                  type="button"
+                  className={`eyes-edit-animal-btn ${selectedAnimalId === animal.id ? 'active' : ''}`}
+                  onClick={() => {
+                    setSelectedAnimalId(animal.id);
+                    setSelectedOptionIndex(0);
+                  }}
+                >
+                  {animal.name}
+                </button>
+              ))}
+              {activeHideOptions.map((spot, index) => (
+                <button
+                  key={`eyes-option-${spot.id}`}
+                  type="button"
+                  className={`eyes-edit-option-btn ${selectedOptionIndex === index ? 'active' : ''}`}
+                  onClick={() => setSelectedOptionIndex(index)}
+                >
+                  {index + 1}
+                </button>
+              ))}
+              <button
+                type="button"
+                className="eyes-edit-export-btn"
+                onClick={() => setShowExportPanel((prev) => !prev)}
+              >
+                {showExportPanel ? 'Hide Data' : 'Export'}
+              </button>
+              <button
+                type="button"
+                className="eyes-edit-save-btn"
+                onClick={() => {
+                  try {
+                    localStorage.setItem(DEBUG_MODE_STORAGE_KEY, String(debugMode));
+                    localStorage.setItem(SPOT_STORAGE_KEY, JSON.stringify(editableHideOptions));
+                    localStorage.setItem(ANIMAL_POSITION_STORAGE_KEY, JSON.stringify(editableAnimalPositions));
+                  } catch {
+                    // no-op
+                  }
+                }}
+              >
+                Save
+              </button>
+            </>
+          )}
         </div>
       )}
 
-      {SHOW_SPOT_DEBUG && editableSpots.map((s, i) => (
+      {SHOW_SPOT_DEBUG && debugMode && showExportPanel && (
+        <div className="eyes-export-panel" onClick={(e) => e.stopPropagation()}>
+          <div className="eyes-export-header">
+            <strong>Saved Eyes Data</strong>
+            <button
+              type="button"
+              className="eyes-export-copy-btn"
+              onClick={() => {
+                navigator.clipboard?.writeText(exportPayload).catch(() => {});
+              }}
+            >
+              Copy
+            </button>
+          </div>
+          <pre>{exportPayload}</pre>
+        </div>
+      )}
+
+      {SHOW_SPOT_DEBUG && debugMode && activeHideOptions.map((spot, index) => (
         <div
-          key={s.id}
-          className="eyes-popup-debug-dot"
+          key={spot.id}
+          className="eyes-popup-debug-spot"
           style={{
             position: 'absolute',
-            left: `${s.x}%`,
-            top: `${s.y}%`,
-            transform: 'translate(-50%, -50%)',
-            width: 40,
-            height: 40,
-            borderRadius: '50%',
-            background: 'rgba(255,0,0,0.5)',
-            color: 'white',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 99,
-            fontWeight: 700
+            left: `${spot.x}%`,
+            top: `${spot.y}%`,
+            transform: 'translate(-50%, -50%)'
           }}
+        >
+          <div
+            className={`eyes-popup-debug-dot ${selectedOptionIndex === index ? 'is-selected' : ''}`}
+            onPointerDown={(e) => {
+              e.stopPropagation();
+              setSelectedOptionIndex(index);
+              dragTargetRef.current = {
+                type: 'spot',
+                animalId: selectedAnimalId,
+                optionIndex: index
+              };
+              if (typeof e.currentTarget.setPointerCapture === 'function') {
+                e.currentTarget.setPointerCapture(e.pointerId);
+              }
+            }}
+            onPointerUp={(e) => {
+              e.stopPropagation();
+              dragTargetRef.current = null;
+            }}
+            onPointerCancel={() => {
+              dragTargetRef.current = null;
+            }}
+          >
+            {index + 1}
+          </div>
+          <button
+            type="button"
+            className={`eyes-popup-debug-depth ${selectedOptionIndex === index ? 'is-selected' : ''}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              setEditableHideOptions((prev) => ({
+                ...prev,
+                [selectedAnimalId]: (prev[selectedAnimalId] || []).map((spotItem, optionIndex) => {
+                  if (optionIndex !== index) return spotItem;
+                  const currentIndex = DEBUG_DEPTHS.indexOf(spotItem.depth || 'behind-middle');
+                  const nextDepth = DEBUG_DEPTHS[(currentIndex + 1) % DEBUG_DEPTHS.length];
+                  return { ...spotItem, depth: nextDepth };
+                })
+              }));
+            }}
+          >
+            {(spot.depth || 'behind-middle').replaceAll('-', ' ')}
+          </button>
+        </div>
+      ))}
+
+      {SHOW_SPOT_DEBUG && debugMode && (() => {
+        const animal = ANIMALS.find((item) => item.id === selectedAnimalId);
+        if (!animal) return null;
+        const pos = editableAnimalPositions[animal.id] || ANIMAL_POSITIONS[animal.id];
+        const scale = ANIMAL_SIZES[animal.id] || 1;
+        return (
+          <div
+            className="eyes-popup-debug-animal is-selected"
+            style={{
+              left: `${pos.x}%`,
+              top: `${pos.y}%`,
+              '--animal-scale': scale
+            }}
+            onPointerDown={(e) => {
+              e.stopPropagation();
+              dragTargetRef.current = { type: 'animal', id: animal.id };
+              if (typeof e.currentTarget.setPointerCapture === 'function') {
+                e.currentTarget.setPointerCapture(e.pointerId);
+              }
+            }}
+            onPointerUp={(e) => {
+              e.stopPropagation();
+              dragTargetRef.current = null;
+            }}
+            onPointerCancel={() => {
+              dragTargetRef.current = null;
+            }}
+          >
+            <img src={animal.img} alt={animal.name} draggable={false} />
+            <span>{animal.name} ({Math.round(pos.x)}, {Math.round(pos.y)})</span>
+          </div>
+        );
+      })()}
+
+      {SHOW_SPOT_DEBUG && debugMode && assignments.map(({ animal, spot }) => (
+        <div
+          key={`assigned-spot-${animal.id}`}
+          className="eyes-popup-assignment-dot"
+          style={{
+            left: `${spot.x}%`,
+            top: `${spot.y}%`,
+            '--assignment-color': DEBUG_ASSIGNMENT_COLORS[animal.id] || '#ffffff'
+          }}
+          title={`${animal.name} (${Math.round(spot.x)}, ${Math.round(spot.y)})`}
           onPointerDown={(e) => {
             e.stopPropagation();
-            dragSpotIdRef.current = s.id;
+            dragTargetRef.current = {
+              type: 'assigned-spot',
+              animalId: animal.id,
+              spotId: spot.id
+            };
             if (typeof e.currentTarget.setPointerCapture === 'function') {
               e.currentTarget.setPointerCapture(e.pointerId);
             }
           }}
           onPointerUp={(e) => {
             e.stopPropagation();
-            dragSpotIdRef.current = null;
+            dragTargetRef.current = null;
           }}
           onPointerCancel={() => {
-            dragSpotIdRef.current = null;
+            dragTargetRef.current = null;
           }}
         >
-          {i + 1}
+          <span>{animal.name} ({Math.round(spot.x)}, {Math.round(spot.y)})</span>
         </div>
       ))}
 
@@ -463,8 +779,10 @@ const EyesPopUpGame = ({
         const isDiscovered = discovered.has(animal.id);
         const isVisible = visibleAnimal === animal.id;
         const isHinting = showIdleHint === animal.id;
-        const finalX = isDiscovered ? (spot.x + (spot.revealOffsetX || 0)) : spot.x;
-        const finalY = isDiscovered ? (spot.y + (spot.revealOffsetY || 0)) : spot.y;
+        const tunedPos = editableAnimalPositions[animal.id];
+        const finalX = isDiscovered ? (tunedPos?.x ?? (spot.x + (spot.revealOffsetX || 0))) : spot.x;
+        const finalY = isDiscovered ? (tunedPos?.y ?? (spot.y + (spot.revealOffsetY || 0))) : spot.y;
+        const scale = spot.scale || ANIMAL_SIZES[animal.id] || 1;
 
         const opacity = (isDiscovered || showFullReveal === animal.id || showIdleHint === animal.id)
           ? SHOW_OPACITY
@@ -480,7 +798,7 @@ const EyesPopUpGame = ({
               left: `${finalX}%`,
               top: `${finalY}%`,
               opacity,
-              '--animal-scale': ANIMAL_SIZES[animal.id] || 1
+              '--animal-scale': scale
             }}
             onClick={(e) => handleAnimalTap(animal.id, e)}
           >

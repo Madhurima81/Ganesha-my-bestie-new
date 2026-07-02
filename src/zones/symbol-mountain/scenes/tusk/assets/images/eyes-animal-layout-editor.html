@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eyes Animal Layout Editor</title>
+  <style>
+    :root {
+      --panel: rgba(38, 28, 56, 0.88);
+      --panel-border: rgba(255, 255, 255, 0.14);
+      --text: #fff8e7;
+      --muted: #d9cfe9;
+      --accent: #ffd54f;
+      --accent-ink: #332200;
+      --chip: rgba(255, 255, 255, 0.96);
+      --chip-ink: #251b35;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: linear-gradient(180deg, #efe6ff 0%, #f7f1e8 100%);
+      color: #241d31;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.78);
+      border-right: 1px solid rgba(67, 45, 95, 0.12);
+      overflow: auto;
+    }
+
+    .preview-wrap {
+      padding: 18px;
+      overflow: auto;
+    }
+
+    h1, h2, p {
+      margin: 0 0 12px;
+    }
+
+    h1 {
+      font-size: 22px;
+      color: #312145;
+    }
+
+    h2 {
+      margin-top: 18px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #5f4d79;
+    }
+
+    p, button, label, textarea {
+      font-size: 14px;
+    }
+
+    .hint {
+      color: #625871;
+      line-height: 1.4;
+    }
+
+    .group {
+      margin-bottom: 14px;
+      padding: 12px;
+      border-radius: 14px;
+      background: #ffffff;
+      border: 1px solid rgba(67, 45, 95, 0.1);
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .row:last-child {
+      margin-bottom: 0;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 8px 10px;
+      background: var(--chip);
+      color: var(--chip-ink);
+      cursor: pointer;
+      font-weight: 700;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    button.active {
+      background: var(--accent);
+      color: var(--accent-ink);
+    }
+
+    button.secondary {
+      background: #ece6f7;
+      color: #34254a;
+    }
+
+    .preview {
+      position: relative;
+      width: min(100%, 1180px);
+      aspect-ratio: 4 / 3;
+      margin: 0 auto;
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 24px 50px rgba(33, 18, 55, 0.18);
+      border: 1px solid rgba(67, 45, 95, 0.12);
+      background: #d8c5ff;
+    }
+
+    .layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    .layer-back { z-index: 1; }
+    .layer-back-rocks { z-index: 2; }
+    .layer-middle { z-index: 6; }
+    .layer-front { z-index: 9; }
+
+    .stage-item {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      user-select: none;
+      touch-action: none;
+    }
+
+    .hide-animal {
+      width: clamp(66px, 9vw, 110px);
+      pointer-events: none;
+      filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.18));
+    }
+
+    .hide-animal img,
+    .final-animal img {
+      width: 100%;
+      display: block;
+      pointer-events: none;
+    }
+
+    .hide-animal.depth-behind-middle { z-index: 5; }
+    .hide-animal.depth-behind-front { z-index: 7; }
+    .hide-animal.depth-between-middle-front { z-index: 8; }
+
+    .hide-marker {
+      z-index: 40;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: grab;
+    }
+
+    .hide-marker.dragging,
+    .final-animal.dragging {
+      cursor: grabbing;
+    }
+
+    .hide-dot {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 103, 31, 0.92);
+      color: white;
+      font-weight: 800;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16);
+    }
+
+    .depth-chip {
+      background: rgba(27, 20, 38, 0.84);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .final-animal {
+      width: clamp(76px, 10vw, 130px);
+      z-index: 50;
+      cursor: grab;
+      filter: drop-shadow(0 0 16px rgba(255, 213, 79, 0.7));
+    }
+
+    .final-animal .label {
+      position: absolute;
+      left: 50%;
+      top: calc(100% + 4px);
+      transform: translateX(-50%);
+      background: rgba(27, 20, 38, 0.84);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 160px;
+      border: 1px solid rgba(67, 45, 95, 0.16);
+      border-radius: 12px;
+      padding: 10px;
+      resize: vertical;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      background: #fcfbff;
+    }
+
+    @media (max-width: 980px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        border-right: 0;
+        border-bottom: 1px solid rgba(67, 45, 95, 0.12);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <h1>Eyes Layout Editor</h1>
+      <p class="hint">
+        Edit one animal at a time. Choose an animal, then choose one of 4 simple spots. Drag the orange marker for the hidden spot, and drag the glowing animal for the final revealed position.
+      </p>
+
+      <div class="group">
+        <h2>Animal</h2>
+        <div id="animalButtons" class="row"></div>
+      </div>
+
+      <div class="group">
+        <h2>Spot</h2>
+        <div id="optionButtons" class="row"></div>
+        <div class="row">
+          <button id="toggleHidePreview" type="button">Hidden Animal Off</button>
+          <button id="toggleFinalPreview" type="button">Final Preview On</button>
+        </div>
+      </div>
+
+      <div class="group">
+        <h2>Actions</h2>
+        <div class="row">
+          <button id="copyHideJson" type="button">Copy Hide JSON</button>
+          <button id="copyFinalJson" type="button">Copy Final Positions</button>
+        </div>
+        <div class="row">
+          <button id="resetAnimalOptions" class="secondary" type="button">Reset Animal Options</button>
+          <button id="resetAnimalFinal" class="secondary" type="button">Reset Animal Final</button>
+          <button id="resetAll" class="secondary" type="button">Reset All</button>
+        </div>
+      </div>
+
+      <div class="group">
+        <h2>Hide JSON</h2>
+        <textarea id="hideOutput"></textarea>
+      </div>
+
+      <div class="group">
+        <h2>Final JSON</h2>
+        <textarea id="finalOutput"></textarea>
+      </div>
+    </aside>
+
+    <main class="preview-wrap">
+      <div id="stage" class="preview">
+        <img class="layer layer-back" src="./trail-bg.png" alt="" />
+        <img class="layer layer-back-rocks" src="./trail-back.png" alt="" />
+        <img class="layer layer-middle" src="./trail-mid.png" alt="" />
+        <img class="layer layer-front" src="./trail-front.png" alt="" />
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const DEFAULT_HIDE_OPTIONS = {
+      peacock: [
+        { id: 'peacock-1', x: 18, y: 68, zone: 'left-bushes', depth: 'behind-front', revealOffsetX: 7, revealOffsetY: 2 },
+        { id: 'peacock-2', x: 27, y: 73, zone: 'left-front-bush', depth: 'behind-front', revealOffsetX: 6, revealOffsetY: 2 },
+        { id: 'peacock-3', x: 50, y: 58, zone: 'middle-bend', depth: 'behind-middle', revealOffsetX: 4, revealOffsetY: 4 },
+        { id: 'peacock-4', x: 84, y: 73, zone: 'right-front-bush', depth: 'behind-front', revealOffsetX: -6, revealOffsetY: 2 }
+      ],
+      monkey: [
+        { id: 'monkey-1', x: 21, y: 64, zone: 'left-bushes', depth: 'behind-front', revealOffsetX: 6, revealOffsetY: 2 },
+        { id: 'monkey-2', x: 33, y: 73, zone: 'left-lower-bush', depth: 'behind-front', revealOffsetX: 5, revealOffsetY: 2 },
+        { id: 'monkey-3', x: 46, y: 61, zone: 'middle-trail', depth: 'behind-middle', revealOffsetX: 4, revealOffsetY: 4 },
+        { id: 'monkey-4', x: 73, y: 67, zone: 'right-rock-bush', depth: 'behind-front', revealOffsetX: -5, revealOffsetY: 2 }
+      ],
+      elephant: [
+        { id: 'elephant-1', x: 25, y: 74, zone: 'left-front-bush', depth: 'behind-front', revealOffsetX: 5, revealOffsetY: 1 },
+        { id: 'elephant-2', x: 42, y: 68, zone: 'mid-left-trail', depth: 'between-middle-front', revealOffsetX: 4, revealOffsetY: 3 },
+        { id: 'elephant-3', x: 60, y: 69, zone: 'mid-right-trail', depth: 'between-middle-front', revealOffsetX: -2, revealOffsetY: 2 },
+        { id: 'elephant-4', x: 80, y: 74, zone: 'right-front-bush', depth: 'behind-front', revealOffsetX: -6, revealOffsetY: 1 }
+      ],
+      cow: [
+        { id: 'cow-1', x: 19, y: 73, zone: 'left-front-bush', depth: 'behind-front', revealOffsetX: 6, revealOffsetY: 1 },
+        { id: 'cow-2', x: 37, y: 72, zone: 'left-trail-edge', depth: 'between-middle-front', revealOffsetX: 4, revealOffsetY: 2 },
+        { id: 'cow-3', x: 61, y: 72, zone: 'right-trail-edge', depth: 'between-middle-front', revealOffsetX: -4, revealOffsetY: 2 },
+        { id: 'cow-4', x: 85, y: 73, zone: 'right-front-bush', depth: 'behind-front', revealOffsetX: -6, revealOffsetY: 1 }
+      ]
+    };
+
+    const DEFAULT_FINAL_POSITIONS = {
+      peacock: { x: 29, y: 70 },
+      monkey: { x: 43, y: 68 },
+      elephant: { x: 59, y: 69 },
+      cow: { x: 74, y: 71 }
+    };
+
+    const ANIMALS = {
+      peacock: { label: 'Peacock', src: './peacock-new.png', scale: 1.9 },
+      monkey: { label: 'Monkey', src: './monkey-new.png', scale: 1.6 },
+      elephant: { label: 'Elephant', src: './elephant-new1.png', scale: 2.5 },
+      cow: { label: 'Cow', src: './cow-new.png', scale: 2.1 }
+    };
+    const HIDE_KEY = 'symbol_mountain_eyes_hide_options_v3';
+    const FINAL_KEY = 'symbol_mountain_eyes_animal_positions_v1';
+
+    const stage = document.getElementById('stage');
+    const animalButtons = document.getElementById('animalButtons');
+    const optionButtons = document.getElementById('optionButtons');
+    const hideOutput = document.getElementById('hideOutput');
+    const finalOutput = document.getElementById('finalOutput');
+    const toggleHidePreviewBtn = document.getElementById('toggleHidePreview');
+    const toggleFinalPreviewBtn = document.getElementById('toggleFinalPreview');
+
+    const clone = (value) => JSON.parse(JSON.stringify(value));
+
+    let hideOptions = loadJson(HIDE_KEY, DEFAULT_HIDE_OPTIONS);
+    let finalPositions = loadJson(FINAL_KEY, DEFAULT_FINAL_POSITIONS);
+    let selectedAnimal = 'peacock';
+    let selectedOption = 0;
+    let showHidePreview = false;
+    let showFinalPreview = true;
+    let dragState = null;
+
+    function loadJson(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return clone(fallback);
+        const parsed = JSON.parse(raw);
+        return parsed && typeof parsed === 'object' ? { ...clone(fallback), ...parsed } : clone(fallback);
+      } catch {
+        return clone(fallback);
+      }
+    }
+
+    function saveAll() {
+      localStorage.setItem(HIDE_KEY, JSON.stringify(hideOptions));
+      localStorage.setItem(FINAL_KEY, JSON.stringify(finalPositions));
+      renderOutputs();
+    }
+
+    function currentOptions() {
+      return hideOptions[selectedAnimal] || [];
+    }
+
+    function currentOption() {
+      return currentOptions()[selectedOption];
+    }
+
+    function renderOutputs() {
+      hideOutput.value = JSON.stringify(hideOptions, null, 2);
+      finalOutput.value = [
+        'export const ANIMAL_POSITIONS = {',
+        ...Object.entries(finalPositions).map(([id, pos]) => `  ${id}: { x: ${pos.x}, y: ${pos.y} },`),
+        '};'
+      ].join('\n');
+    }
+
+    function renderButtons() {
+      animalButtons.innerHTML = '';
+      Object.keys(ANIMALS).forEach((animalId) => {
+        const button = document.createElement('button');
+        button.textContent = ANIMALS[animalId].label;
+        button.className = animalId === selectedAnimal ? 'active' : '';
+        button.onclick = () => {
+          selectedAnimal = animalId;
+          selectedOption = 0;
+          render();
+        };
+        animalButtons.appendChild(button);
+      });
+
+      optionButtons.innerHTML = '';
+      currentOptions().forEach((option, index) => {
+        const button = document.createElement('button');
+        button.textContent = index + 1;
+        button.className = index === selectedOption ? 'active' : '';
+        button.onclick = () => {
+          selectedOption = index;
+          render();
+        };
+        optionButtons.appendChild(button);
+      });
+
+      toggleHidePreviewBtn.textContent = showHidePreview ? 'Hidden Animal On' : 'Hidden Animal Off';
+      toggleHidePreviewBtn.className = showHidePreview ? 'active' : '';
+      toggleFinalPreviewBtn.textContent = showFinalPreview ? 'Final Preview On' : 'Final Preview Off';
+      toggleFinalPreviewBtn.className = showFinalPreview ? 'active' : '';
+    }
+
+    function createHideAnimal(option) {
+      if (!showHidePreview) return null;
+      const animal = ANIMALS[selectedAnimal];
+      const node = document.createElement('div');
+      node.className = `stage-item hide-animal depth-${option.depth}`;
+      node.style.left = option.x + '%';
+      node.style.top = option.y + '%';
+      node.style.setProperty('--scale', animal.scale);
+      node.style.transform = `translate(-50%, -50%) scale(${animal.scale})`;
+      node.innerHTML = `<img src="${animal.src}" alt="${animal.label}" />`;
+      return node;
+    }
+
+    function createHideMarker(option) {
+      const node = document.createElement('div');
+      node.className = 'stage-item hide-marker';
+      node.style.left = option.x + '%';
+      node.style.top = option.y + '%';
+      node.innerHTML = `
+        <div class="hide-dot">${selectedOption + 1}</div>
+        <div class="depth-chip">${option.zone}</div>
+      `;
+      node.onpointerdown = (event) => {
+        event.stopPropagation();
+        dragState = { kind: 'hide' };
+        node.classList.add('dragging');
+        if (typeof node.setPointerCapture === 'function') node.setPointerCapture(event.pointerId);
+      };
+      node.onpointerup = () => {
+        dragState = null;
+        node.classList.remove('dragging');
+      };
+      node.onpointercancel = () => {
+        dragState = null;
+        node.classList.remove('dragging');
+      };
+      return node;
+    }
+
+    function createFinalAnimal() {
+      if (!showFinalPreview) return null;
+      const animal = ANIMALS[selectedAnimal];
+      const position = finalPositions[selectedAnimal];
+      const node = document.createElement('div');
+      node.className = 'stage-item final-animal';
+      node.style.left = position.x + '%';
+      node.style.top = position.y + '%';
+      node.style.transform = `translate(-50%, -50%) scale(${animal.scale})`;
+      node.innerHTML = `<img src="${animal.src}" alt="${animal.label}" /><div class="label">${animal.label}</div>`;
+      node.onpointerdown = (event) => {
+        event.stopPropagation();
+        dragState = { kind: 'final' };
+        node.classList.add('dragging');
+        if (typeof node.setPointerCapture === 'function') node.setPointerCapture(event.pointerId);
+      };
+      node.onpointerup = () => {
+        dragState = null;
+        node.classList.remove('dragging');
+      };
+      node.onpointercancel = () => {
+        dragState = null;
+        node.classList.remove('dragging');
+      };
+      return node;
+    }
+
+    function render() {
+      stage.querySelectorAll('.stage-item').forEach((node) => node.remove());
+      renderButtons();
+      renderOutputs();
+
+      const option = currentOption();
+      if (!option) return;
+
+      const hideAnimal = createHideAnimal(option);
+      const hideMarker = createHideMarker(option);
+      const finalAnimal = createFinalAnimal();
+
+      if (hideAnimal) stage.appendChild(hideAnimal);
+      stage.appendChild(hideMarker);
+      if (finalAnimal) stage.appendChild(finalAnimal);
+    }
+
+    stage.onpointermove = (event) => {
+      if (!dragState) return;
+      const rect = stage.getBoundingClientRect();
+      const x = Math.min(99.5, Math.max(0.5, ((event.clientX - rect.left) / rect.width) * 100));
+      const y = Math.min(99.5, Math.max(0.5, ((event.clientY - rect.top) / rect.height) * 100));
+
+      if (dragState.kind === 'hide') {
+        hideOptions[selectedAnimal][selectedOption].x = Number(x.toFixed(2));
+        hideOptions[selectedAnimal][selectedOption].y = Number(y.toFixed(2));
+      } else if (dragState.kind === 'final') {
+        finalPositions[selectedAnimal] = {
+          x: Number(x.toFixed(2)),
+          y: Number(y.toFixed(2))
+        };
+      }
+
+      saveAll();
+      render();
+    };
+
+    stage.onpointerup = () => {
+      dragState = null;
+      stage.querySelectorAll('.dragging').forEach((node) => node.classList.remove('dragging'));
+    };
+
+    stage.onpointerleave = () => {
+      dragState = null;
+      stage.querySelectorAll('.dragging').forEach((node) => node.classList.remove('dragging'));
+    };
+
+    toggleHidePreviewBtn.onclick = () => {
+      showHidePreview = !showHidePreview;
+      render();
+    };
+
+    toggleFinalPreviewBtn.onclick = () => {
+      showFinalPreview = !showFinalPreview;
+      render();
+    };
+
+    document.getElementById('copyHideJson').onclick = async () => {
+      await navigator.clipboard.writeText(JSON.stringify(hideOptions, null, 2)).catch(() => {});
+    };
+
+    document.getElementById('copyFinalJson').onclick = async () => {
+      await navigator.clipboard.writeText(finalOutput.value).catch(() => {});
+    };
+
+    document.getElementById('resetAnimalOptions').onclick = () => {
+      hideOptions[selectedAnimal] = clone(DEFAULT_HIDE_OPTIONS[selectedAnimal]);
+      selectedOption = 0;
+      saveAll();
+      render();
+    };
+
+    document.getElementById('resetAnimalFinal').onclick = () => {
+      finalPositions[selectedAnimal] = clone(DEFAULT_FINAL_POSITIONS[selectedAnimal]);
+      saveAll();
+      render();
+    };
+
+    document.getElementById('resetAll').onclick = () => {
+      hideOptions = clone(DEFAULT_HIDE_OPTIONS);
+      finalPositions = clone(DEFAULT_FINAL_POSITIONS);
+      selectedAnimal = 'peacock';
+      selectedOption = 0;
+      saveAll();
+      render();
+    };
+
+    render();
+  </script>
+</body>
+</html>

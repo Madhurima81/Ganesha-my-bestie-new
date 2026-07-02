@@ -11,6 +11,10 @@ import monkeyImg from './assets/images/monkey-new.png';
 import elephantImg from './assets/images/elephant-new1.png';
 import cowImg from './assets/images/cow-new.png';
 import replayIcon from './assets/images/replay.png';
+import bgBackImg from './assets/images/trail-bg.png';
+import backRocksImg from './assets/images/trail-back.png';
+import middleRocksImg from './assets/images/trail-mid.png';
+import frontRocksImg from './assets/images/trail-front.png';
 import { ANIMAL_SIZES } from './animalConfig';
 import { ANIMAL_POSITIONS_ARRAY } from './animalPositions';
 
@@ -68,6 +72,7 @@ const IDLE_HINT_VO_BY_ANIMAL = {
   elephant: VO_PATHS.hintElephant,
   cow: VO_PATHS.hintCow
 };
+const POSITION_STORAGE_KEY = 'symbol_mountain_eyes_animal_positions_v2';
 
 // ─────────────────────────────────────────────
 // HELPERS
@@ -110,6 +115,12 @@ const playAudio = (src, volume = 0.9, fallbackText = '') => {
   }
 };
 
+const arrayToPositionMap = (positions) => Object.fromEntries(
+  (positions || []).map((pos) => [pos.id, { x: pos.x, y: pos.y, ...(pos.depth ? { depth: pos.depth } : {}) }])
+);
+
+const defaultPositionMap = arrayToPositionMap(ANIMAL_POSITIONS_ARRAY);
+
 // ─────────────────────────────────────────────
 // COMPONENT
 // ─────────────────────────────────────────────
@@ -118,9 +129,12 @@ const EarsSoundMatchGame = ({
   isActive = true,
   onGameComplete,
   animalPositions = null,
+  onAnimalPositionsChange,
   hideElements = false,
   className = ''
 }) => {
+  const [debugMode, setDebugMode] = useState(false);
+  const [selectedAnimalId, setSelectedAnimalId] = useState(() => ANIMALS[0]?.id || null);
   // Randomized order of which animal to play each round (1 of each, 4 rounds)
   const [roundOrder, setRoundOrder] = useState(() => shuffle(ANIMALS.map(a => a.id)));
   const [currentRound, setCurrentRound] = useState(0); // 0..3
@@ -135,9 +149,38 @@ const EarsSoundMatchGame = ({
   const currentSoundRef = useRef(null);
   const idleHintTimerRef = useRef(null);
   const lastInteractionAtRef = useRef(Date.now());
+  const dragTargetRef = useRef(null);
+  const [editableAnimalPositions, setEditableAnimalPositions] = useState(() => {
+    try {
+      const raw = localStorage.getItem(POSITION_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+          return { ...defaultPositionMap, ...parsed };
+        }
+      }
+    } catch {}
+
+    if (Array.isArray(animalPositions)) {
+      return { ...defaultPositionMap, ...arrayToPositionMap(animalPositions) };
+    }
+
+    if (animalPositions && typeof animalPositions === 'object') {
+      return { ...defaultPositionMap, ...animalPositions };
+    }
+
+    return defaultPositionMap;
+  });
 
   const currentTargetId = roundOrder[currentRound];
   const currentTarget = ANIMALS.find(a => a.id === currentTargetId);
+
+  const savePositions = useCallback((positions) => {
+    try {
+      localStorage.setItem(POSITION_STORAGE_KEY, JSON.stringify(positions));
+    } catch {}
+    onAnimalPositionsChange?.(positions);
+  }, [onAnimalPositionsChange]);
 
   const playIdleHintVo = useCallback((animalId) => {
     const src = IDLE_HINT_VO_BY_ANIMAL[animalId];
@@ -257,6 +300,19 @@ const EarsSoundMatchGame = ({
     stopClueSpeech();
   }, [stopClueSpeech]);
 
+  useEffect(() => {
+    if (debugMode) return;
+
+    if (Array.isArray(animalPositions)) {
+      setEditableAnimalPositions((prev) => ({ ...prev, ...arrayToPositionMap(animalPositions) }));
+      return;
+    }
+
+    if (animalPositions && typeof animalPositions === 'object') {
+      setEditableAnimalPositions((prev) => ({ ...prev, ...animalPositions }));
+    }
+  }, [animalPositions, debugMode]);
+
   const handleReplay = useCallback(() => {
     if (!currentTarget || !waitingForTap) return;
     lastInteractionAtRef.current = Date.now();
@@ -295,14 +351,88 @@ const EarsSoundMatchGame = ({
     }
   }, [waitingForTap, matched, currentTargetId, currentTarget, stopClueSpeech]);
 
-  const activeAnimalPositions = Array.isArray(animalPositions)
-    ? animalPositions
-    : ANIMAL_POSITIONS_ARRAY;
+  const activeAnimalPositions = ANIMALS.map((animal) => ({
+    id: animal.id,
+    ...(editableAnimalPositions[animal.id] || defaultPositionMap[animal.id] || {})
+  }));
 
   if (hideElements || !isActive) return null;
 
   return (
-    <div className={`ears-sound-game ${className}`}>
+    <div
+      className={`ears-sound-game ${className}`}
+      onPointerMove={(e) => {
+        const dragTarget = dragTargetRef.current;
+        if (!dragTarget?.id) return;
+        e.stopPropagation();
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = Math.min(99.5, Math.max(0.5, ((e.clientX - rect.left) / rect.width) * 100));
+        const y = Math.min(99.5, Math.max(0.5, ((e.clientY - rect.top) / rect.height) * 100));
+        setEditableAnimalPositions((prev) => ({
+          ...prev,
+          [dragTarget.id]: {
+            ...(prev[dragTarget.id] || {}),
+            x: Number(x.toFixed(2)),
+            y: Number(y.toFixed(2))
+          }
+        }));
+      }}
+      onPointerUp={() => {
+        dragTargetRef.current = null;
+      }}
+      onPointerLeave={() => {
+        dragTargetRef.current = null;
+      }}
+    >
+      <div className="ears-edit-bar" onClick={(e) => e.stopPropagation()}>
+        <button
+          type="button"
+          className={`ears-edit-toggle ${debugMode ? 'on' : ''}`}
+          onClick={() => setDebugMode((prev) => !prev)}
+        >
+          {debugMode ? 'Editing' : 'Play'}
+        </button>
+        {debugMode && (
+          <>
+            {ANIMALS.map((animal) => (
+              <button
+                key={animal.id}
+                type="button"
+                className={`ears-edit-animal-btn ${selectedAnimalId === animal.id ? 'active' : ''}`}
+                onClick={() => setSelectedAnimalId(animal.id)}
+              >
+                {animal.name}
+              </button>
+            ))}
+            <button
+              type="button"
+              className="ears-edit-copy-btn"
+              onClick={() => {
+                const lines = [
+                  'export const ANIMAL_POSITIONS = {',
+                  ...Object.entries(editableAnimalPositions).map(([id, pos]) => `  ${id}: { x: ${pos.x}, y: ${pos.y} },`),
+                  '};'
+                ];
+                navigator.clipboard?.writeText(lines.join('\n')).catch(() => {});
+              }}
+            >
+              Copy
+            </button>
+            <button
+              type="button"
+              className="ears-edit-save-btn"
+              onClick={() => savePositions(editableAnimalPositions)}
+            >
+              Save
+            </button>
+          </>
+        )}
+      </div>
+
+      <img className="ears-sound-layer ears-sound-layer-back" src={bgBackImg} alt="" />
+      <img className="ears-sound-layer ears-sound-layer-back-rocks" src={backRocksImg} alt="" />
+      <img className="ears-sound-layer ears-sound-layer-middle" src={middleRocksImg} alt="" />
+
       {/* Animals (all visible, fixed positions) */}
       {activeAnimalPositions.map(pos => {
         const animal = ANIMALS.find(a => a.id === pos.id);
@@ -313,11 +443,33 @@ const EarsSoundMatchGame = ({
         return (
           <div
             key={animal.id}
-            className={`ears-sound-animal ${isMatched ? 'matched' : ''} ${isWrong ? 'wrong' : ''} ${waitingForTap && !isMatched ? 'tappable' : ''} ${isHinted ? 'idle-hint' : ''}`}
+            className={`ears-sound-animal ${isMatched ? 'matched' : ''} ${isWrong ? 'wrong' : ''} ${waitingForTap && !isMatched ? 'tappable' : ''} ${isHinted ? 'idle-hint' : ''} ${debugMode && selectedAnimalId === animal.id ? 'debug-selected' : ''} ${debugMode ? 'debug-draggable' : ''}`}
             style={{ left: `${pos.x}%`, top: `${pos.y}%`, '--animal-scale': ANIMAL_SIZES[animal.id] || 1 }}
             onClick={(e) => handleAnimalTap(animal.id, e)}
+            onPointerDown={(e) => {
+              if (!debugMode) return;
+              e.stopPropagation();
+              setSelectedAnimalId(animal.id);
+              dragTargetRef.current = { id: animal.id };
+              if (typeof e.currentTarget.setPointerCapture === 'function') {
+                e.currentTarget.setPointerCapture(e.pointerId);
+              }
+            }}
+            onPointerUp={(e) => {
+              if (!debugMode) return;
+              e.stopPropagation();
+              dragTargetRef.current = null;
+            }}
+            onPointerCancel={() => {
+              dragTargetRef.current = null;
+            }}
           >
             <img src={animal.img} alt={animal.name} draggable={false} />
+            {debugMode && (
+              <span className="ears-debug-label">
+                {animal.name} ({Math.round(pos.x)}, {Math.round(pos.y)})
+              </span>
+            )}
           </div>
         );
       })}
@@ -333,6 +485,8 @@ const EarsSoundMatchGame = ({
           <span>Hear again</span>
         </button>
       )}
+
+      <img className="ears-sound-layer ears-sound-layer-front" src={frontRocksImg} alt="" />
     </div>
   );
 };

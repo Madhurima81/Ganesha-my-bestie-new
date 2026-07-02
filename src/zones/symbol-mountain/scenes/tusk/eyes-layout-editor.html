@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eyes Game - Animal Position Editor</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Nunito', sans-serif; background: #1a1a2e; color: #fff; overflow: hidden; }
+
+  .scene {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: #c8b6e2;
+  }
+
+  .layer-bg { z-index: 1; }
+  .layer-back { z-index: 3; }
+  .layer-mid { z-index: 5; }
+  .layer-front { z-index: 7; }
+
+  .depth-behind-back { z-index: 2; }
+  .depth-behind-middle { z-index: 4; }
+  .depth-between-middle-front { z-index: 6; }
+  .depth-in-front { z-index: 8; }
+
+  .animal-wrapper {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    cursor: grab;
+    touch-action: none;
+  }
+
+  .animal-wrapper:active { cursor: grabbing; }
+
+  .animal-wrapper .animal-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.4s ease;
+  }
+
+  .animal-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .animal-wrapper.peek-mode { overflow: hidden; }
+  .animal-wrapper.full-mode { overflow: visible; }
+
+  .animal-label {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: #ffd700;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 8px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  .animal-wrapper.selected {
+    outline: 3px dashed #ffd700;
+    outline-offset: 4px;
+  }
+
+  .controls {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    height: auto;
+    max-height: 30vh;
+    background: rgba(22, 33, 62, 0.88);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 16px;
+    overflow: auto;
+    align-items: flex-start;
+    border: 2px solid rgba(255, 215, 0, 0.65);
+    border-radius: 16px;
+    z-index: 50;
+  }
+
+  .animal-card {
+    flex: 0 0 auto;
+    background: #1a1a3e;
+    border: 2px solid #333;
+    border-radius: 12px;
+    padding: 10px;
+    min-width: 170px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .animal-card.active { border-color: #ffd700; }
+
+  .animal-card h3 {
+    font-size: 14px;
+    color: #ffd700;
+    margin-bottom: 6px;
+    text-transform: capitalize;
+  }
+
+  .animal-card label {
+    display: block;
+    font-size: 11px;
+    color: #aaa;
+    margin-bottom: 3px;
+  }
+
+  .animal-card select,
+  .animal-card input {
+    width: 100%;
+    padding: 3px 6px;
+    font-size: 12px;
+    background: #0f0f2e;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 6px;
+    margin-bottom: 4px;
+  }
+
+  .animal-card .coords {
+    font-size: 11px;
+    color: #8be9fd;
+    font-family: monospace;
+  }
+
+  .toolbar-card {
+    flex: 0 0 auto;
+    background: #1a1a3e;
+    border: 2px solid #333;
+    border-radius: 12px;
+    padding: 10px;
+    min-width: 220px;
+  }
+
+  .toolbar-card h3 {
+    font-size: 14px;
+    color: #ffd700;
+    margin-bottom: 8px;
+  }
+
+  .toolbar-card label {
+    display: block;
+    font-size: 11px;
+    color: #aaa;
+    margin-bottom: 3px;
+  }
+
+  .toolbar-card select {
+    width: 100%;
+    padding: 6px 8px;
+    font-size: 12px;
+    background: #0f0f2e;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 6px;
+    margin-bottom: 8px;
+  }
+
+  .toolbar-card .hint {
+    font-size: 11px;
+    color: #8be9fd;
+    line-height: 1.4;
+  }
+
+  .action-card {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+    min-width: 140px;
+  }
+
+  .btn {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+
+  .btn:active { transform: scale(0.95); }
+  .btn-gold { background: #ffd700; color: #000; }
+  .btn-purple { background: #6a1b9a; color: #fff; }
+  .btn-green { background: #2ecc71; color: #000; }
+
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2ecc71;
+    color: #000;
+    padding: 8px 20px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 14px;
+    z-index: 999;
+    animation: fadeOut 2s ease forwards;
+  }
+
+  @keyframes fadeOut {
+    0%, 70% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="scene" id="scene"></div>
+<div class="controls" id="controls"></div>
+
+<script>
+const LAYER_PATHS = {
+  bg: './assets/images/trail-bg.png',
+  back: './assets/images/trail-back.png',
+  mid: './assets/images/trail-mid.png',
+  front: './assets/images/trail-front.png'
+};
+
+const ANIMAL_IMAGES = {
+  peacock: './assets/images/peacock-new.png',
+  monkey: './assets/images/monkey-new.png',
+  elephant: './assets/images/elephant-new1.png',
+  cow: './assets/images/cow-new.png'
+};
+
+const OPTION_COUNT = 4;
+const ZONES = {
+  'left-rocks': { x: 13, y: 70, w: 18, h: 26 },
+  'left-bushes': { x: 28, y: 69, w: 22, h: 22 },
+  'mid-trail': { x: 51, y: 58, w: 24, h: 18 },
+  'right-rocks': { x: 72, y: 64, w: 18, h: 22 },
+  'right-bushes': { x: 87, y: 68, w: 18, h: 26 }
+};
+const SPOT_DEFAULTS = {
+  peacock: [
+    { x: 18, y: 45, zone: 'left-rocks', depth: 'behind-middle', peekDir: 'left', size: 2.0 },
+    { x: 28, y: 65, zone: 'left-bushes', depth: 'between-middle-front', peekDir: 'bottom', size: 2.0 },
+    { x: 51, y: 55, zone: 'mid-trail', depth: 'behind-middle', peekDir: 'right', size: 2.0 },
+    { x: 82, y: 69, zone: 'right-bushes', depth: 'between-middle-front', peekDir: 'left', size: 2.0 }
+  ],
+  monkey: [
+    { x: 20, y: 58, zone: 'left-rocks', depth: 'behind-middle', peekDir: 'left', size: 1.7 },
+    { x: 34, y: 68, zone: 'left-bushes', depth: 'between-middle-front', peekDir: 'bottom', size: 1.7 },
+    { x: 47, y: 58, zone: 'mid-trail', depth: 'behind-middle', peekDir: 'right', size: 1.7 },
+    { x: 74, y: 66, zone: 'right-rocks', depth: 'between-middle-front', peekDir: 'left', size: 1.7 }
+  ],
+  elephant: [
+    { x: 24, y: 70, zone: 'left-bushes', depth: 'between-middle-front', peekDir: 'left', size: 2.8 },
+    { x: 40, y: 66, zone: 'left-bushes', depth: 'behind-middle', peekDir: 'bottom', size: 2.8 },
+    { x: 59, y: 68, zone: 'mid-trail', depth: 'between-middle-front', peekDir: 'right', size: 2.8 },
+    { x: 80, y: 72, zone: 'right-bushes', depth: 'between-middle-front', peekDir: 'left', size: 2.8 }
+  ],
+  cow: [
+    { x: 18, y: 72, zone: 'left-rocks', depth: 'between-middle-front', peekDir: 'left', size: 2.4 },
+    { x: 36, y: 70, zone: 'left-bushes', depth: 'between-middle-front', peekDir: 'bottom', size: 2.4 },
+    { x: 61, y: 71, zone: 'right-rocks', depth: 'between-middle-front', peekDir: 'right', size: 2.4 },
+    { x: 84, y: 73, zone: 'right-bushes', depth: 'between-middle-front', peekDir: 'left', size: 2.4 }
+  ]
+};
+
+const DEPTHS = ['behind-back', 'behind-middle', 'between-middle-front', 'in-front'];
+const PEEK_DIRS = ['left', 'right', 'bottom', 'top'];
+const BASE_SIZE = 90;
+const STORAGE_KEY = 'symbol_mountain_eyes_layout_editor_v2';
+const GAME_STORAGE_KEY = 'symbol_mountain_eyes_hide_options_v3';
+
+function nearestZone(x, y) {
+  let best = null;
+  let bestDist = Infinity;
+  Object.entries(ZONES).forEach(([id, z]) => {
+    const cx = z.x + z.w / 2;
+    const cy = z.y + z.h / 2;
+    const d = (x - cx) ** 2 + (y - cy) ** 2;
+    if (d < bestDist) {
+      bestDist = d;
+      best = id;
+    }
+  });
+  return best;
+}
+
+let spotsByAnimal = loadSpots();
+let selectedAnimal = 'peacock';
+let selectedOption = 0;
+let peekMode = true;
+let dragging = false;
+let dragOffset = { x: 0, y: 0 };
+
+const scene = document.getElementById('scene');
+
+function loadSpots() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    const merged = {};
+    Object.keys(SPOT_DEFAULTS).forEach((id) => {
+      const savedOptions = Array.isArray(saved[id]) ? saved[id] : [];
+      merged[id] = SPOT_DEFAULTS[id].map((spot, index) => {
+        const base = { ...spot, zone: spot.zone || nearestZone(spot.x, spot.y) };
+        return { ...base, ...(savedOptions[index] || {}) };
+      });
+    });
+    return merged;
+  } catch {
+    return structuredClone(SPOT_DEFAULTS);
+  }
+}
+
+function saveSpots() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(spotsByAnimal));
+  writeGameFormat();
+}
+
+function saveToGame(message = 'Saved to game') {
+  saveSpots();
+  showToast(message);
+}
+
+function writeGameFormat() {
+  const gameShape = {};
+  Object.entries(spotsByAnimal).forEach(([animalId, spots]) => {
+    gameShape[animalId] = spots.map((spot, index) => ({
+      id: `${animalId}-${index + 1}`,
+      x: Math.round(spot.x),
+      y: Math.round(spot.y),
+      zone: spot.zone || nearestZone(spot.x, spot.y),
+      depth: spot.depth,
+      revealOffsetX: 0,
+      revealOffsetY: 0,
+      scale: spot.size
+    }));
+  });
+  localStorage.setItem(GAME_STORAGE_KEY, JSON.stringify(gameShape));
+}
+
+function currentSpot() {
+  return spotsByAnimal[selectedAnimal][selectedOption];
+}
+
+function renderLayers() {
+  scene.querySelectorAll('.layer-div').forEach((el) => el.remove());
+
+  const layerOrder = [
+    { key: 'bg', cls: 'layer-bg' },
+    { key: 'back', cls: 'layer-back' },
+    { key: 'mid', cls: 'layer-mid' },
+    { key: 'front', cls: 'layer-front' }
+  ];
+
+  layerOrder.forEach(({ key, cls }) => {
+    const div = document.createElement('div');
+    div.className = `layer-div ${cls}`;
+    div.style.cssText = `
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url(${LAYER_PATHS[key]});
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      pointer-events: none;
+    `;
+    scene.appendChild(div);
+  });
+}
+
+function renderAnimals() {
+  scene.querySelectorAll('.animal-wrapper').forEach((el) => el.remove());
+
+  const animal = currentSpot();
+  const id = selectedAnimal;
+  const wrapper = document.createElement('div');
+  const px = BASE_SIZE * animal.size;
+
+  wrapper.className = `animal-wrapper depth-${animal.depth} ${peekMode ? 'peek-mode' : 'full-mode'} selected`;
+  wrapper.style.left = `${animal.x}%`;
+  wrapper.style.top = `${animal.y}%`;
+  wrapper.style.width = `${px}px`;
+  wrapper.style.height = `${px}px`;
+  wrapper.dataset.animal = id;
+
+  const inner = document.createElement('div');
+  inner.className = 'animal-inner';
+  if (peekMode) inner.style.transform = getPartialPeek(animal.peekDir);
+
+  const img = document.createElement('img');
+  img.src = ANIMAL_IMAGES[id];
+  img.alt = id;
+  img.draggable = false;
+
+  const label = document.createElement('div');
+  label.className = 'animal-label';
+  label.textContent = `${id} option ${selectedOption + 1} (${Math.round(animal.x)}, ${Math.round(animal.y)})`;
+
+  inner.appendChild(img);
+  wrapper.appendChild(inner);
+  wrapper.appendChild(label);
+  scene.appendChild(wrapper);
+
+  wrapper.addEventListener('pointerdown', (e) => startDrag(e));
+  wrapper.addEventListener('click', () => {
+    renderAll();
+  });
+}
+
+function getPartialPeek(direction) {
+  switch (direction) {
+    case 'left': return 'translate(-55%, 0)';
+    case 'right': return 'translate(55%, 0)';
+    case 'bottom': return 'translate(0, 55%)';
+    case 'top': return 'translate(0, -55%)';
+    default: return 'translate(0, 0)';
+  }
+}
+
+function startDrag(event) {
+  event.preventDefault();
+  dragging = true;
+  const rect = scene.getBoundingClientRect();
+  const animal = currentSpot();
+  dragOffset.x = event.clientX - (animal.x / 100 * rect.width);
+  dragOffset.y = event.clientY - (animal.y / 100 * rect.height);
+  document.addEventListener('pointermove', onDrag);
+  document.addEventListener('pointerup', stopDrag);
+}
+
+function onDrag(event) {
+  if (!dragging) return;
+  const rect = scene.getBoundingClientRect();
+  let x = ((event.clientX - dragOffset.x) / rect.width) * 100;
+  let y = ((event.clientY - dragOffset.y) / rect.height) * 100;
+  x = Math.max(0, Math.min(100, x));
+  y = Math.max(0, Math.min(100, y));
+  const animal = currentSpot();
+  animal.x = x;
+  animal.y = y;
+  animal.zone = nearestZone(x, y);
+  saveSpots();
+  renderAll();
+}
+
+function stopDrag() {
+  dragging = false;
+  document.removeEventListener('pointermove', onDrag);
+  document.removeEventListener('pointerup', stopDrag);
+}
+
+function renderControls() {
+  const controls = document.getElementById('controls');
+  controls.innerHTML = '';
+
+  const toolbarCard = document.createElement('div');
+  toolbarCard.className = 'toolbar-card';
+  toolbarCard.innerHTML = `
+    <h3>Pick Animal And Option</h3>
+    <label>Animal</label>
+    <select id="animalSelect">
+      ${Object.keys(SPOT_DEFAULTS).map((id) => `<option value="${id}" ${id === selectedAnimal ? 'selected' : ''}>${id}</option>`).join('')}
+    </select>
+    <label>Option</label>
+    <select id="optionSelect">
+      ${Array.from({ length: OPTION_COUNT }, (_, index) => `<option value="${index}" ${index === selectedOption ? 'selected' : ''}>Option ${index + 1}</option>`).join('')}
+    </select>
+    <div class="hint">You are editing one saved spot at a time. Drag the animal, then move to the next option.</div>
+  `;
+  controls.appendChild(toolbarCard);
+
+  const animal = currentSpot();
+  const card = document.createElement('div');
+  card.className = 'animal-card active';
+  card.innerHTML = `
+    <h3>${selectedAnimal} - Option ${selectedOption + 1}</h3>
+    <label>Depth</label>
+    <select data-field="depth">
+      ${DEPTHS.map((depth) => `<option value="${depth}" ${animal.depth === depth ? 'selected' : ''}>${depth}</option>`).join('')}
+    </select>
+    <label>Peek From</label>
+    <select data-field="peekDir">
+      ${PEEK_DIRS.map((dir) => `<option value="${dir}" ${animal.peekDir === dir ? 'selected' : ''}>${dir}</option>`).join('')}
+    </select>
+    <label>Zone</label>
+    <select data-field="zone">
+      ${Object.keys(ZONES).map((z) => `<option value="${z}" ${animal.zone === z ? 'selected' : ''}>${z}</option>`).join('')}
+    </select>
+    <label>Size (scale)</label>
+    <input type="range" min="0.5" max="5" step="0.1" value="${animal.size}" data-field="size">
+    <div class="coords">x: ${Math.round(animal.x)} y: ${Math.round(animal.y)} z: ${animal.zone} s: ${animal.size}</div>
+  `;
+  controls.appendChild(card);
+
+  const actionCard = document.createElement('div');
+  actionCard.className = 'action-card';
+  actionCard.innerHTML = `
+    <button class="btn btn-gold" id="btnTogglePeek">${peekMode ? 'Peek ON' : 'Peek OFF'}</button>
+    <button class="btn btn-green" id="btnSave">Save to Game</button>
+    <button class="btn btn-green" id="btnCopy">Copy JSON</button>
+    <button class="btn btn-purple" id="btnReset">Reset</button>
+  `;
+  controls.appendChild(actionCard);
+
+  document.getElementById('animalSelect').onchange = (event) => {
+    selectedAnimal = event.target.value;
+    selectedOption = 0;
+    renderAll();
+  };
+
+  document.getElementById('optionSelect').onchange = (event) => {
+    selectedOption = Number(event.target.value);
+    renderAll();
+  };
+
+  card.querySelectorAll('select, input').forEach((el) => {
+    el.addEventListener('change', (event) => {
+      const field = event.target.dataset.field;
+      const value = field === 'size' ? parseFloat(event.target.value) : event.target.value;
+      currentSpot()[field] = value;
+      saveSpots();
+      renderAll();
+    });
+
+    el.addEventListener('input', (event) => {
+      if (event.target.type !== 'range') return;
+      currentSpot().size = parseFloat(event.target.value);
+      saveSpots();
+      renderAll();
+    });
+  });
+
+  document.getElementById('btnTogglePeek').onclick = () => {
+    peekMode = !peekMode;
+    renderAll();
+  };
+
+  document.getElementById('btnSave').onclick = () => {
+    saveToGame();
+  };
+
+  document.getElementById('btnCopy').onclick = copyJSON;
+  document.getElementById('btnReset').onclick = () => {
+    spotsByAnimal = Object.fromEntries(
+      Object.entries(SPOT_DEFAULTS).map(([animalId, spots]) => [
+        animalId,
+        spots.map((spot) => ({
+          ...spot,
+          zone: spot.zone || nearestZone(spot.x, spot.y)
+        }))
+      ])
+    );
+    saveToGame('Reset and saved');
+    renderAll();
+  };
+}
+
+function copyJSON() {
+  writeGameFormat();
+  const outputObject = {};
+  Object.entries(spotsByAnimal).forEach(([animalId, spots]) => {
+    outputObject[animalId] = spots.map((spot, index) => ({
+      id: `${animalId}-${index + 1}`,
+      x: Math.round(spot.x),
+      y: Math.round(spot.y),
+      zone: spot.zone || nearestZone(spot.x, spot.y),
+      peekDir: spot.peekDir,
+      depth: spot.depth,
+      revealOffsetX: 0,
+      revealOffsetY: 0,
+      animal: animalId,
+      scale: spot.size
+    }));
+  });
+
+  const output = `// Generated by layout editor\nconst HIDE_SPOTS = ${JSON.stringify(outputObject, null, 2)};`;
+  navigator.clipboard.writeText(output).then(() => {
+    showToast('Copied and synced to game');
+  }).catch(() => {
+    console.log(output);
+    showToast('Synced to game, JSON logged to console');
+  });
+}
+
+function showToast(message) {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2000);
+}
+
+function renderAll() {
+  writeGameFormat();
+  renderLayers();
+  renderAnimals();
+  renderControls();
+}
+
+renderAll();
+</script>
+</body>
+</html>

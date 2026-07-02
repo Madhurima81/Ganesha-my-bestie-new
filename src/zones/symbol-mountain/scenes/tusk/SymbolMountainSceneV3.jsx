@@ -60,8 +60,9 @@ import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
 
 // Images
-import mountainBackground from '../tusk/assets/images/rock-background.webp';
+import mountainBackground from '../tusk/assets/images/trail-bg.png';
 import ganeshaCharacter from './assets/images/ganesha-character.webp';
+import ganeshaCompleteImg from '../tusk/assets/images/ganesha-complete.png';
 
 // Symbol Icons
 import symbolEyesColored from '../../shared/images/icons/symbol-eyes-new.webp';
@@ -158,6 +159,7 @@ const SymbolMountainSceneV3 = ({
 
           showTuskAssemblyGame: false,
           tuskGameActive: false,
+          tuskObstaclePosition: null,
           ganeshaComplete: false,
           showGaneshaOutline: false,
 
@@ -212,6 +214,11 @@ const SymbolMountainSceneContent = ({
   const [showCulturalCelebration, setShowCulturalCelebration] = useState(false);
   const [isSymbolPopupOpen, setIsSymbolPopupOpen] = useState(false);
   const [tuskTestRunKey, setTuskTestRunKey] = useState(0);
+  const [tuskZoomActive, setTuskZoomActive] = useState(false);
+  const [tuskFadeOut, setTuskFadeOut] = useState(false);
+  const [tuskTransforming, setTuskTransforming] = useState(false);
+  const [showGoldenAura, setShowGoldenAura] = useState(false);
+  const [ganeshaRevealing, setGaneshaRevealing] = useState(false);
 
   // SymbolAutoReveal state
   const [revealConfig, setRevealConfig] = useState(null);
@@ -623,6 +630,8 @@ const SymbolMountainSceneContent = ({
       !sceneState.ganeshaComplete
     ) {
       const t = setTimeout(() => {
+        setTuskZoomActive(true);
+        setTuskFadeOut(false);
         sceneActions.updateState({ showTuskAssemblyGame: true, tuskGameActive: true });
       }, 1200);
       return () => clearTimeout(t);
@@ -685,6 +694,9 @@ const SymbolMountainSceneContent = ({
 
   const handleTuskGameComplete = () => {
     playChime();
+    setTuskZoomActive(false);
+    setTuskFadeOut(false);
+    setTuskTransforming(true);
     sceneActions.updateState({
       ganeshaComplete: true,
       showTuskAssemblyGame: false,
@@ -693,9 +705,38 @@ const SymbolMountainSceneContent = ({
     });
     triggerMiniGesture('center', 2200, MINI_VICTORY_ICON);
     safeSetTimeout(() => {
+      setShowGoldenAura(true);
+    }, 450);
+    safeSetTimeout(() => {
+      setGaneshaRevealing(true);
+    }, 950);
+    safeSetTimeout(() => {
+      setShowGoldenAura(false);
+      setTuskTransforming(false);
+    }, 2500);
+    safeSetTimeout(() => {
+      setGaneshaRevealing(false);
+    }, 3000);
+    safeSetTimeout(() => {
       setRevealConfig({ symbolId: 'tusk', symbolImage: symbolTuskColored, symbolName: 'Tusk', affirmation: 'I finish what I start.', sidebarTarget: getSidebarTarget('tusk'), sayWithMeDelayMs: 3200 });
-    }, 1000);
+    }, 3200);
   };
+
+  const startTuskZoomTransition = useCallback((statePatch = {}) => {
+    setTuskFadeOut(true);
+    safeSetTimeout(() => {
+      setTuskZoomActive(true);
+      sceneActions.updateState({
+        ...statePatch,
+        showTuskAssemblyGame: true,
+        tuskGameActive: true,
+        phase: PHASES.TUSK_GAME
+      });
+      safeSetTimeout(() => {
+        setTuskFadeOut(false);
+      }, 100);
+    }, 500);
+  }, [safeSetTimeout, sceneActions]);
 
   // shouldEnableHints / getHintConfigs removed â€” replaced by inline hint cadence (see useEffect above)
 
@@ -729,13 +770,10 @@ const SymbolMountainSceneContent = ({
     } else if (symbolId === 'ear' || symbolId === 'ears') {
       safeSetTimeout(() => {
         playGlow();
-        sceneActions.updateState({
+        startTuskZoomTransition({
           discoveredSymbols: { ...sceneState.discoveredSymbols, ears: true, ear: true },
           showEarsRhythmGame: false,
-          showTuskAssemblyGame: true,
-          tuskGameActive: true,
           showGaneshaOutline: true,
-          phase: PHASES.TUSK_GAME,
           activeGame: 'tusk',
           currentFocus: 'tusk'
         });
@@ -784,15 +822,12 @@ const SymbolMountainSceneContent = ({
               onClick={() => {
                 setRevealConfig(null);
                 setTuskTestRunKey((k) => k + 1);
-                sceneActions.updateState({
+                startTuskZoomTransition({
                   welcomeShown: true,
-                  phase: PHASES.TUSK_GAME,
                   activeGame: 'tusk',
                   currentFocus: 'tusk',
                   showEyesTelescopeGame: false,
                   showEarsRhythmGame: false,
-                  showTuskAssemblyGame: true,
-                  tuskGameActive: true,
                   earsVisible: true,
                   discoveredSymbols: {
                     ...(sceneState.discoveredSymbols || {}),
@@ -805,13 +840,7 @@ const SymbolMountainSceneContent = ({
             >
               Test Tusk
             </button>
-            <div className="mountain-background" style={{ backgroundImage: `url(${mountainBackground})` }}>
-              {!isCompletionView && !isFinalFireworksView && sceneState.phase !== PHASES.TUSK_GAME && (
-                <TuskPathGame
-                  isActive={false}
-                  showObstacleOnly={true}
-                />
-              )}
+            <div className={`mountain-background ${tuskZoomActive ? 'tusk-zoom' : ''} ${tuskFadeOut ? 'tusk-fade-out' : ''}`} style={{ backgroundImage: `url(${mountainBackground})` }}>
               {!isCompletionView && !isFinalFireworksView && (
                 <>
               {!sceneState?.welcomeShown && (
@@ -849,6 +878,14 @@ const SymbolMountainSceneContent = ({
                 <EarsSoundMatchGame
                   isActive={sceneState.showEarsRhythmGame}
                   animalPositions={sceneState.animalSpots}
+                  onAnimalPositionsChange={(positions) => {
+                    sceneActions.updateState({
+                      animalSpots: {
+                        ...(sceneState.animalSpots || {}),
+                        ...(positions || {})
+                      }
+                    });
+                  }}
                   onGameComplete={() => {
                     // Keep matched animals visible briefly before transitioning to reveal.
                     setTimeout(() => {
@@ -883,8 +920,75 @@ const SymbolMountainSceneContent = ({
                 <TuskPathGame
                   key={`tusk-${tuskTestRunKey}`}
                   isActive={sceneState.showTuskAssemblyGame}
+                  animalPositions={sceneState.animalSpots}
+                  obstaclePosition={sceneState.tuskObstaclePosition}
+                  onAnimalPositionsChange={(positions) => {
+                    sceneActions.updateState({
+                      animalSpots: {
+                        ...(sceneState.animalSpots || {}),
+                        ...(positions || {})
+                      }
+                    });
+                  }}
+                  onObstaclePositionChange={(position) => {
+                    sceneActions.updateState({
+                      tuskObstaclePosition: position || sceneState.tuskObstaclePosition || null
+                    });
+                  }}
                   onGameComplete={handleTuskGameComplete}
                 />
+              )}
+
+              {sceneState.ganeshaComplete && !sceneState.discoveredSymbols?.tusk && (
+                <>
+                  <img
+                    src={symbolTuskColored}
+                    alt=""
+                    className={tuskTransforming ? 'tusk-final-transform' : ''}
+                    style={{
+                      position: 'absolute',
+                      left: '50%',
+                      top: '53%',
+                      transform: 'translate(-50%, -50%)',
+                      width: '120px',
+                      zIndex: 14,
+                      pointerEvents: 'none',
+                      opacity: tuskTransforming ? 1 : 0
+                    }}
+                  />
+                  {showGoldenAura && (
+                    <div
+                      className="golden-burst"
+                      style={{
+                        left: '50%',
+                        top: '50%',
+                        zIndex: 13
+                      }}
+                    />
+                  )}
+                  <img
+                    src={ganeshaCompleteImg}
+                    alt="Ganesha"
+                    className={`${ganeshaRevealing ? 'ganesha-reveal' : ''} ${sceneState.ganeshaComplete && !ganeshaRevealing ? 'ganesha-glow' : ''}`}
+                    onAnimationEnd={() => {
+                      if (ganeshaRevealing) setGaneshaRevealing(false);
+                    }}
+                    style={{
+                      position: 'absolute',
+                      left: '50%',
+                      top: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      width: '52%',
+                      maxWidth: '520px',
+                      zIndex: 15,
+                      pointerEvents: 'none',
+                      opacity: ganeshaRevealing || (!tuskTransforming && sceneState.ganeshaComplete) ? 1 : 0
+                    }}
+                  />
+                  {sceneState.ganeshaComplete && !sceneState.discoveredSymbols?.tusk && !ganeshaRevealing && !tuskTransforming && (
+                    <div className="golden-dust" style={{ zIndex: 12 }} />
+                  )}
+                </>
               )}
 
               {(showSparkle === 'eyes-complete-final' || showSparkle === 'ears-complete-final') && (

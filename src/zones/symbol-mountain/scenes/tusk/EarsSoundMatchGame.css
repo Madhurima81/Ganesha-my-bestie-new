@@ -9,10 +9,80 @@
   font-family: 'Nunito', sans-serif;
 }
 
+.ears-sound-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.ears-sound-layer-back { z-index: 1; }
+.ears-sound-layer-back-rocks { z-index: 2; }
+.ears-sound-layer-middle { z-index: 3; }
+.ears-sound-layer-front { z-index: 9; }
+
+.ears-edit-bar {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 160;
+  display: flex;
+  gap: 6px;
+  padding: 6px 10px;
+  background: rgba(20, 20, 20, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 12px;
+  border: 2px solid rgba(255, 215, 0, 0.3);
+}
+
+.ears-edit-toggle,
+.ears-edit-animal-btn,
+.ears-edit-copy-btn,
+.ears-edit-save-btn {
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 10px;
+}
+
+.ears-edit-toggle {
+  background: #fff;
+  color: #222;
+}
+
+.ears-edit-toggle.on,
+.ears-edit-animal-btn.active {
+  background: #ffd54f;
+  color: #2b2000;
+}
+
+.ears-edit-animal-btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.ears-edit-copy-btn {
+  background: #7dd3fc;
+  color: #082f49;
+}
+
+.ears-edit-save-btn {
+  background: #2ecc71;
+  color: #000;
+}
+
 .ears-sound-animal {
   position: absolute;
   width: clamp(80px, 11vw, 130px);
   height: clamp(80px, 11vw, 130px);
+  z-index: 10;
   transform: translate(-50%, -50%) scale(var(--animal-scale, 1));
   cursor: default;
   user-select: none;
@@ -34,6 +104,19 @@
   cursor: pointer;
 }
 
+.ears-sound-animal.debug-draggable {
+  cursor: grab;
+  touch-action: none;
+}
+
+.ears-sound-animal.debug-draggable:active {
+  cursor: grabbing;
+}
+
+.ears-sound-animal.debug-selected {
+  filter: drop-shadow(0 0 18px rgba(255, 214, 102, 0.95));
+}
+
 .ears-sound-animal.tappable:hover {
   transform: translate(-50%, -50%) scale(var(--animal-scale, 1));
 }
@@ -50,6 +133,22 @@
 
 .ears-sound-animal.idle-hint {
   animation: ears-sound-idle-hint 1.7s ease-in-out infinite;
+}
+
+.ears-debug-label {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 4px);
+  transform: translateX(-50%) scale(calc(1 / var(--animal-scale, 1)));
+  transform-origin: top center;
+  background: rgba(20, 20, 20, 0.78);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 6px;
+  border-radius: 999px;
+  white-space: nowrap;
+  pointer-events: none;
 }
 
 @keyframes ears-sound-breath {

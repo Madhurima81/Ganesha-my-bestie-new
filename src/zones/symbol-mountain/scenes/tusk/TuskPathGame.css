@@ -10,13 +10,126 @@
   font-family: 'Nunito', sans-serif;
 }
 
+.tusk-edit-bar {
+  position: absolute;
+  top: 92px;
+  left: 16px;
+  transform: none;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  width: min(260px, calc(100vw - 32px));
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(41, 34, 62, 0.94);
+  border: 2px solid rgba(255, 210, 74, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 120;
+}
+
+.tusk-debug-panel-toggle {
+  position: absolute;
+  top: 92px;
+  left: 16px;
+  z-index: 121;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  background: rgba(41, 34, 62, 0.94);
+  color: #fff7d8;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  border: 2px solid rgba(255, 210, 74, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.tusk-edit-help {
+  color: #fff7d8;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.tusk-edit-toggle,
+.tusk-edit-item-btn,
+.tusk-edit-depth-btn,
+.tusk-edit-copy-btn,
+.tusk-edit-save-btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+.tusk-edit-toggle,
+.tusk-edit-item-btn,
+.tusk-edit-depth-btn {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff7d8;
+}
+
+.tusk-edit-toggle.active,
+.tusk-edit-item-btn.active,
+.tusk-edit-depth-btn.active {
+  background: #ffcb3d;
+  color: #3a2f54;
+}
+
+.tusk-edit-copy-btn {
+  background: #80d8ff;
+  color: #16324f;
+}
+
+.tusk-edit-save-btn {
+  background: #3ddc84;
+  color: #123b2a;
+}
+
+.tusk-edit-depths {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tusk-edit-section-label {
+  color: #ffda6a;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+
+.tusk-path-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.tusk-path-layer-back { z-index: 1; }
+
 /* â”€â”€â”€ Animal Herd â”€â”€â”€ */
 
 /* â”€â”€â”€ Animal Herd â”€â”€â”€ */
 
 .tusk-path-animal {
   position: absolute;
-  z-index: 5;
+  z-index: 10;
   width: clamp(70px, 9vw, 110px);
   height: clamp(70px, 9vw, 110px);
   transform: translate(-50%, -50%) scale(var(--animal-scale, 1));
@@ -31,6 +144,13 @@
 
 .tusk-path-animal.static-preview {
   cursor: default;
+}
+
+.tusk-path-animal.debug-draggable {
+  cursor: grab;
+  touch-action: none;
+  outline: 2px dashed rgba(255, 203, 61, 0.65);
+  outline-offset: 4px;
 }
 
 .tusk-path-animal img {
@@ -97,16 +217,17 @@
 .tusk-path-obstacle {
   position: absolute;
   z-index: 2;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
+  transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1));
+  pointer-events: auto;
   user-select: none;
+  touch-action: none;
   transition: opacity 600ms ease-out, transform 600ms ease-out, filter 600ms ease-out;
 }
 
 /* Active blocking obstacle = full size */
 .tusk-path-obstacle.active {
-  width: clamp(160px, 22vw, 260px);
-  height: clamp(160px, 22vw, 260px);
+  width: clamp(320px, 44vw, 520px);
+  height: clamp(320px, 44vw, 520px);
 }
 
 /* Cleared evidence = smaller, slightly dimmed, sits in path */
@@ -122,6 +243,33 @@
   height: 100%;
   object-fit: contain;
   display: block;
+  pointer-events: none;
+}
+
+.tusk-debug-label {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 10px);
+  transform: translateX(-50%);
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(31, 25, 46, 0.9);
+  color: #fff2b6;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.tusk-debug-label.selected {
+  background: #ffcb3d;
+  color: #352a4f;
+}
+
+.tusk-path-obstacle .tusk-debug-label {
+  top: auto;
+  bottom: calc(100% + 10px);
 }
 
 /* Crumble animation when active obstacle clears (image swap + scale down) */
@@ -130,10 +278,10 @@
 }
 
 @keyframes tusk-obstacle-crumble {
-  0%   { transform: translate(-50%, -50%) scale(1); }
-  30%  { transform: translate(-50%, -50%) scale(0.9) rotate(-2deg); }
-  60%  { transform: translate(-50%, -50%) scale(0.55) rotate(2deg); }
-  100% { transform: translate(-50%, -50%) scale(0.6); }
+  0%   { transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1)); }
+  30%  { transform: translate(-50%, -50%) scale(calc(var(--obstacle-scale, 1) * 0.9)) rotate(-2deg); }
+  60%  { transform: translate(-50%, -50%) scale(calc(var(--obstacle-scale, 1) * 0.55)) rotate(2deg); }
+  100% { transform: translate(-50%, -50%) scale(calc(var(--obstacle-scale, 1) * 0.6)); }
 }
 
 /* Idle hint glow */
@@ -163,36 +311,36 @@
   animation: tusk-fb-shake 450ms ease-in-out;
 }
 @keyframes tusk-fb-shake {
-  0%, 100% { transform: translate(-50%, -50%); }
-  25%      { transform: translate(-50%, -50%) translateX(-8px) rotate(-3deg); }
-  75%      { transform: translate(-50%, -50%) translateX(8px) rotate(3deg); }
+  0%, 100% { transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1)); }
+  25%      { transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1)) translateX(-8px) rotate(-3deg); }
+  75%      { transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1)) translateX(8px) rotate(3deg); }
 }
 
 .tusk-path-obstacle.active.feedback-pluck {
   animation: tusk-fb-pluck 450ms ease-out;
 }
 @keyframes tusk-fb-pluck {
-  0%   { transform: translate(-50%, -50%) scale(1); }
-  50%  { transform: translate(-50%, -50%) scale(0.95) rotate(-2deg); }
-  100% { transform: translate(-50%, -50%) scale(1); }
+  0%   { transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1)); }
+  50%  { transform: translate(-50%, -50%) scale(calc(var(--obstacle-scale, 1) * 0.95)) rotate(-2deg); }
+  100% { transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1)); }
 }
 
 .tusk-path-obstacle.active.feedback-sweep {
   animation: tusk-fb-sweep 500ms ease-out;
 }
 @keyframes tusk-fb-sweep {
-  0%   { transform: translate(-50%, -50%); }
-  50%  { transform: translate(-50%, -50%) translateX(10px) rotate(3deg); }
-  100% { transform: translate(-50%, -50%); }
+  0%   { transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1)); }
+  50%  { transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1)) translateX(10px) rotate(3deg); }
+  100% { transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1)); }
 }
 
 .tusk-path-obstacle.active.feedback-walk {
   animation: tusk-fb-walk 500ms ease-out;
 }
 @keyframes tusk-fb-walk {
-  0%   { transform: translate(-50%, -50%); }
-  50%  { transform: translate(-50%, -50%) scale(1.04) translateY(-3px); }
-  100% { transform: translate(-50%, -50%); }
+  0%   { transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1)); }
+  50%  { transform: translate(-50%, -50%) scale(calc(var(--obstacle-scale, 1) * 1.04)) translateY(-3px); }
+  100% { transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1)); }
 }
 
 /* â”€â”€â”€ Progress dots â”€â”€â”€ */
@@ -235,8 +383,8 @@
 .tusk-path-counter {
   position: absolute;
   top: clamp(12px, 2vh, 22px);
-  left: 50%;
-  transform: translateX(-50%);
+  left: clamp(16px, 2vw, 22px);
+  transform: none;
   padding: clamp(6px, 1vh, 10px) clamp(14px, 2vw, 22px);
   background: rgba(106, 27, 154, 0.85);
   color: white;
@@ -249,6 +397,7 @@
   pointer-events: none;
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
+  z-index: 121;
 }
 
 .tusk-path-counter span {
