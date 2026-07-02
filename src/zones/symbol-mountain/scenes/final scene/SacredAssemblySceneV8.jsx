@@ -349,6 +349,116 @@ const ACTIVE_BODY_PART_IMAGES = {
   base: ganeshaBase
 };
 
+function SymbolFlipCard({ name, associationText, image, flipped, imageFallback }) {
+  const [currentImage, setCurrentImage] = useState(image || imageFallback || '');
+
+  useEffect(() => {
+    setCurrentImage(image || imageFallback || '');
+  }, [image, imageFallback]);
+
+  const wrapperStyle = {
+    perspective: '1200px',
+    WebkitPerspective: '1200px',
+    width: '230px',
+    height: '245px',
+    transformStyle: 'preserve-3d',
+    WebkitTransformStyle: 'preserve-3d'
+  };
+
+  const cardStyle = {
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+    willChange: 'transform, opacity',
+    isolation: 'isolate'
+  };
+
+  const faceStyle = {
+    position: 'absolute',
+    inset: 0,
+    borderRadius: '26px',
+    backfaceVisibility: 'hidden',
+    WebkitBackfaceVisibility: 'hidden',
+    background: 'linear-gradient(180deg, #fff8ea 0%, #f7ecd4 100%)',
+    border: '3px solid rgba(255, 255, 255, 0.92)',
+    boxShadow: '0 18px 40px rgba(95, 63, 20, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.9)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '18px',
+    textAlign: 'center',
+    gap: '12px',
+    transformOrigin: 'center center',
+    transition: 'transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.45s ease',
+    willChange: 'transform, opacity'
+  };
+
+  const imageStyle = {
+    width: '130px',
+    height: 'auto',
+    objectFit: 'contain',
+    display: 'block',
+    filter: 'drop-shadow(0 8px 20px rgba(255, 190, 84, 0.35))'
+  };
+
+  const titleStyle = {
+    fontFamily: "'Baloo 2', cursive",
+    fontSize: '24px',
+    fontWeight: 700,
+    color: '#5A3B1E'
+  };
+
+  const textStyle = {
+    fontFamily: "'Nunito', sans-serif",
+    fontSize: '18px',
+    fontWeight: 700,
+    color: '#6B4F2A',
+    lineHeight: 1.5
+  };
+
+  return (
+    <div style={wrapperStyle}>
+      <div style={cardStyle}>
+        <div
+          style={{
+            ...faceStyle,
+            opacity: flipped ? 0 : 1,
+            transform: flipped ? 'rotateY(-90deg) scale(0.98)' : 'rotateY(0deg) scale(1)',
+            pointerEvents: flipped ? 'none' : 'auto'
+          }}
+        >
+          <div style={titleStyle}>{name}</div>
+          <div style={textStyle}>{associationText}</div>
+        </div>
+        <div
+          style={{
+            ...faceStyle,
+            opacity: flipped ? 1 : 0,
+            transform: flipped ? 'rotateY(0deg) scale(1)' : 'rotateY(90deg) scale(0.98)',
+            pointerEvents: flipped ? 'auto' : 'none'
+          }}
+        >
+          {currentImage ? (
+            <img
+              src={currentImage}
+              alt=""
+              style={imageStyle}
+              onError={() => {
+                if (imageFallback && currentImage !== imageFallback) {
+                  setCurrentImage(imageFallback);
+                  return;
+                }
+                setCurrentImage('');
+              }}
+            />
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const SacredAssemblyScene = ({
   onComplete,
   onNavigate,
@@ -440,6 +550,8 @@ const SacredAssemblyContent = ({
   const [isOrbsRunning, setIsOrbsRunning] = useState(false);
   const [celebrationZoneId, setCelebrationZoneId] = useState(null);
   const [hideProgressBar, setHideProgressBar] = useState(false);
+  const [showHintDebug, setShowHintDebug] = useState(false);
+  const [selectedHintDebugZone, setSelectedHintDebugZone] = useState(null);
   const completionModalContent = getCompletionModal(zoneId, sceneId);
   const { isAudioOn, toggleAudio } = useAudioPreference();
   const {
@@ -489,6 +601,18 @@ const SacredAssemblyContent = ({
     SACRED_SYMBOLS.find(s => s.id === sceneState.selectedSymbol) : null;
   const highlightedZone = sceneState?.highlightedZone ?
     BODY_PART_ZONES.find(z => z.id === sceneState.highlightedZone) : null;
+  const currentAssociationSymbol = useMemo(
+    () => SACRED_SYMBOLS.find((s) => s.id === sceneState?.currentAssociationSymbol),
+    [sceneState?.currentAssociationSymbol]
+  );
+  const zoneDebugLabels = useMemo(() => {
+    const labels = {};
+    BODY_PART_ZONES.forEach((zone) => {
+      const matchingSymbol = SACRED_SYMBOLS.find((symbol) => symbol.correctZone === zone.id);
+      labels[zone.id] = matchingSymbol?.name || zone.id;
+    });
+    return labels;
+  }, []);
 
   const [cardPhase, setCardPhase] = useState('hidden'); // 'hidden' | 'appear' | 'flipped' | 'side' | 'play' | 'feedback'
   const [flyingSymbol, setFlyingSymbol] = useState(null);
@@ -663,7 +787,7 @@ const SacredAssemblyContent = ({
 
     if (cardPhase === 'appear') {
       playChime();
-      const t = setTimeout(() => setCardPhase('flipped'), 1100);
+      const t = setTimeout(() => setCardPhase('flipped'), 2200);
       return () => clearTimeout(t);
     }
 
@@ -1574,34 +1698,32 @@ const SacredAssemblyContent = ({
 
           {/* CREAM SYMBOL CARD � slides right before zones appear */}
           {sceneState?.currentAssociationSymbol && cardPhase !== 'hidden' && (() => {
-            const sym = SACRED_SYMBOLS.find(s => s.id === sceneState.currentAssociationSymbol);
-            const isFlippedCard = ['flipped', 'side', 'play', 'feedback'].includes(cardPhase);
+            const isFlippedCard =
+              cardPhase === 'flipped' ||
+              cardPhase === 'side' ||
+              cardPhase === 'play' ||
+              cardPhase === 'feedback';
+            const isSideCard = cardPhase === 'side' || cardPhase === 'play' || cardPhase === 'feedback';
             return (
               <div
-                className={[
-                  'symbol-card-container',
-                  cardPhase !== 'hidden' ? 'visible' : '',
-                  (cardPhase === 'side' || cardPhase === 'play' || cardPhase === 'feedback') ? 'to-side' : ''
-                ].filter(Boolean).join(' ')}
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: isSideCard ? '13%' : '50%',
+                  transform: isSideCard ? 'translate(0, -50%)' : 'translate(-50%, -50%) scale(1)',
+                  zIndex: 150,
+                  opacity: cardPhase !== 'hidden' ? 1 : 0,
+                  transition: 'transform 1.1s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.55s ease, left 1.1s cubic-bezier(0.22, 1, 0.36, 1), top 0.9s ease',
+                  pointerEvents: 'none'
+                }}
               >
-                <div className={`symbol-card ${isFlippedCard ? 'flip' : ''}`}>
-                  <div className="symbol-card-face symbol-card-front">
-                    <img
-                      src={sym?.id === 'belly' ? (sym?.image || BELLY_CARD_IMAGE_FALLBACK) : sym?.image}
-                      alt={sym?.name}
-                      className="symbol-card-image"
-                      onError={(e) => {
-                        if (sym?.id === 'belly' && e.currentTarget.src !== `${window.location.origin}${BELLY_CARD_IMAGE_FALLBACK}`) {
-                          e.currentTarget.src = BELLY_CARD_IMAGE_FALLBACK;
-                        }
-                      }}
-                    />
-                  </div>
-                  <div className="symbol-card-face symbol-card-back">
-                    <div className="symbol-title">{sym?.name}</div>
-                    <div className="symbol-text">{sym?.associationText}</div>
-                  </div>
-                </div>
+                <SymbolFlipCard
+                  name={currentAssociationSymbol?.name}
+                  associationText={currentAssociationSymbol?.associationText}
+                  image={currentAssociationSymbol?.image}
+                  imageFallback={currentAssociationSymbol?.id === 'belly' ? BELLY_CARD_IMAGE_FALLBACK : null}
+                  flipped={isFlippedCard}
+                />
               </div>
             );
           })()}
@@ -1649,6 +1771,17 @@ const SacredAssemblyContent = ({
                   />
                 );
               })}
+
+              {showHintDebug && selectedHintDebugZone && BODY_PART_ZONES.filter((zone) => zone.id === selectedHintDebugZone).map((zone) => (
+                <div
+                  key={`hint-debug-${zone.id}`}
+                  className="zone-hint-overlay zone-hint-overlay-debug"
+                  data-hint-level="hint-final"
+                  style={zone.position}
+                >
+                  <div className="zone-hint-text">{zoneDebugLabels[zone.id]}</div>
+                </div>
+              ))}
 
               {showSparkle?.startsWith('celebration-') && celebrationZoneId && (
                 <div
@@ -1707,7 +1840,7 @@ const SacredAssemblyContent = ({
                       duration={3000}
                       fadeOut={false}
                       area="contained"
-                      key={`sparkle-${symbolId}-${Date.now()}`}
+                      key={`sparkle-${symbolId}`}
                     />
                   </div>
                 );
@@ -1782,7 +1915,7 @@ const SacredAssemblyContent = ({
                   }}
                   ganeshaImage={ganeshaDivine}
                   playerName={activeProfile.name}
-                  showCentralGanesha={true}
+                  showCentralGanesha={false}
                   showBuiltInFireworks={false}
                   onComplete={() => {
                     setShowSparkle(null);
@@ -1932,29 +2065,102 @@ const SacredAssemblyContent = ({
             </div>)}
 
             {isDevBuild && (
-              <button
-                type="button"
-                style={{
-                  position: 'fixed',
-                  top: '88px',
-                  right: '18px',
-                  zIndex: 9999,
-                  background: '#5B3FA5',
-                  color: '#fff',
-                  border: '2px solid rgba(255,255,255,0.9)',
-                  borderRadius: '999px',
-                  padding: '10px 14px',
-                  fontSize: '12px',
-                  fontWeight: 800,
-                  letterSpacing: '0.3px',
-                  cursor: 'pointer',
-                  boxShadow: '0 6px 14px rgba(20,10,40,0.3)'
-                }}
-                onClick={runDevPhase}
-                title="Cycle: Fireworks -> Completion Modal"
-              >
-                DEV Phase
-              </button>
+              <>
+                <button
+                  type="button"
+                  style={{
+                    position: 'fixed',
+                    top: '88px',
+                    right: '18px',
+                    zIndex: 9999,
+                    background: '#5B3FA5',
+                    color: '#fff',
+                    border: '2px solid rgba(255,255,255,0.9)',
+                    borderRadius: '999px',
+                    padding: '10px 14px',
+                    fontSize: '12px',
+                    fontWeight: 800,
+                    letterSpacing: '0.3px',
+                    cursor: 'pointer',
+                    boxShadow: '0 6px 14px rgba(20,10,40,0.3)'
+                  }}
+                  onClick={runDevPhase}
+                  title="Cycle: Fireworks -> Completion Modal"
+                >
+                  DEV Phase
+                </button>
+                <button
+                  type="button"
+                  style={{
+                    position: 'fixed',
+                    top: '140px',
+                    right: '18px',
+                    zIndex: 9999,
+                    background: showHintDebug ? '#8D68D8' : 'rgba(91, 63, 165, 0.88)',
+                    color: '#fff',
+                    border: '2px solid rgba(255,255,255,0.9)',
+                    borderRadius: '999px',
+                    padding: '10px 14px',
+                    fontSize: '12px',
+                    fontWeight: 800,
+                    letterSpacing: '0.3px',
+                    cursor: 'pointer',
+                    boxShadow: '0 6px 14px rgba(20,10,40,0.3)'
+                  }}
+                  onClick={() => {
+                    setShowHintDebug((prev) => {
+                      const next = !prev;
+                      if (!next) {
+                        setSelectedHintDebugZone(null);
+                      } else if (!selectedHintDebugZone) {
+                        setSelectedHintDebugZone(BODY_PART_ZONES[0]?.id || null);
+                      }
+                      return next;
+                    });
+                  }}
+                  title="Toggle hint debug panel"
+                >
+                  {showHintDebug ? 'Hide Hint Debug' : 'Show Hint Debug'}
+                </button>
+                {showHintDebug && (
+                  <div
+                    style={{
+                      position: 'fixed',
+                      top: '192px',
+                      right: '18px',
+                      zIndex: 9999,
+                      width: '150px',
+                      background: 'rgba(66, 34, 106, 0.94)',
+                      border: '2px solid rgba(255,255,255,0.88)',
+                      borderRadius: '18px',
+                      padding: '10px',
+                      boxShadow: '0 10px 24px rgba(20,10,40,0.3)',
+                      display: 'grid',
+                      gap: '8px'
+                    }}
+                  >
+                    {BODY_PART_ZONES.map((zone) => (
+                      <button
+                        key={`hint-debug-button-${zone.id}`}
+                        type="button"
+                        style={{
+                          border: 'none',
+                          borderRadius: '999px',
+                          padding: '8px 10px',
+                          background: selectedHintDebugZone === zone.id ? '#FF5C5C' : 'rgba(255,255,255,0.14)',
+                          color: '#fff',
+                          fontSize: '12px',
+                          fontWeight: 800,
+                          cursor: 'pointer'
+                        }}
+                        onClick={() => setSelectedHintDebugZone(zone.id)}
+                      >
+                        {zoneDebugLabels[zone.id]}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </>
             )}
           </div>
 

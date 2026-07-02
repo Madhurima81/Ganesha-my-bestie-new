@@ -448,31 +448,43 @@
   animation: sacredHintPulseFinal 1.4s ease-in-out 4;
 }
 
+.zone-hint-overlay-debug {
+  animation: none !important;
+  background: radial-gradient(circle, rgba(255, 92, 92, 0.28) 0%, rgba(255, 92, 92, 0.12) 45%, transparent 74%);
+  border: 3px solid rgba(255, 92, 92, 0.88);
+  box-shadow: 0 0 0 4px rgba(255, 92, 92, 0.16), 0 0 28px rgba(255, 92, 92, 0.26);
+}
+
+.zone-hint-overlay-debug .zone-hint-text {
+  background: rgba(170, 32, 32, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+}
+
 /* Start and END at transparent — glow is invisible at rest, pulses softly, returns to invisible */
 @keyframes sacredHintPulse {
   0%, 100% {
-    background: radial-gradient(circle, rgba(45, 212, 191, 0) 0%, transparent 65%);
+    background: radial-gradient(circle, rgba(186, 142, 240, 0) 0%, transparent 65%);
   }
   50% {
-    background: radial-gradient(circle, rgba(45, 212, 191, 0.40) 0%, rgba(45, 212, 191, 0.16) 40%, transparent 65%);
+    background: radial-gradient(circle, rgba(186, 142, 240, 0.40) 0%, rgba(186, 142, 240, 0.16) 40%, transparent 65%);
   }
 }
 
 @keyframes sacredHintPulseStrong {
   0%, 100% {
-    background: radial-gradient(circle, rgba(45, 212, 191, 0) 0%, transparent 68%);
+    background: radial-gradient(circle, rgba(186, 142, 240, 0) 0%, transparent 68%);
   }
   50% {
-    background: radial-gradient(circle, rgba(45, 212, 191, 0.50) 0%, rgba(45, 212, 191, 0.22) 40%, transparent 68%);
+    background: radial-gradient(circle, rgba(186, 142, 240, 0.50) 0%, rgba(186, 142, 240, 0.22) 40%, transparent 68%);
   }
 }
 
 @keyframes sacredHintPulseFinal {
   0%, 100% {
-    background: radial-gradient(circle, rgba(45, 212, 191, 0) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(186, 142, 240, 0) 0%, transparent 70%);
   }
   50% {
-    background: radial-gradient(circle, rgba(45, 212, 191, 0.58) 0%, rgba(45, 212, 191, 0.28) 40%, transparent 70%);
+    background: radial-gradient(circle, rgba(186, 142, 240, 0.58) 0%, rgba(186, 142, 240, 0.28) 40%, transparent 70%);
   }
 }
 
@@ -1168,7 +1180,7 @@
   position: relative;
   width: 230px;
   height: 245px;
-  transform: rotateY(0deg);
+  transform: rotateY(180deg);
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
   transition: transform 1.0s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1244,8 +1256,8 @@
 }
 
 .symbol-card.flip {
-  transform: rotateY(180deg);
-  -webkit-transform: rotateY(180deg);
+  transform: rotateY(0deg);
+  -webkit-transform: rotateY(0deg);
 }
 
 /* Guide arrow */
