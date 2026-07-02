@@ -38,8 +38,14 @@ import SarvadaGame from './SarvadaGame';
 
 import ganeshaHeadphones from './assets/images/ganesha_with_headphones.webp';
 import mooshikaCoach from './assets/images/mooshika-coach.webp';
-import riverBg from './assets/images/Kurumedeva/bg.png';
+import sarvadaBg from './assets/images/sarvada/night.png';
 
+import symbolVakratunda from '../../../meaning cave/assets/images/symbols/vakratunda-symbol.png';
+import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
+import symbolSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.png';
+import symbolSamaprabha from '../../../meaning cave/assets/images/symbols/samaprabha-symbol.png';
+import symbolNirvighnam from '../../../meaning cave/assets/images/symbols/nirvighnam-symbol.png';
+import symbolKurumedeva from '../../../meaning cave/assets/images/symbols/kurumedeva-symbol.png';
 import symbolSarvakaryeshu from '../../../meaning cave/assets/images/symbols/sarvakaryeshu-symbol.png';
 import symbolSarvada from '../../../meaning cave/assets/images/symbols/sarvada-symbol.png';
 
@@ -187,6 +193,7 @@ const SarvakaryeshuChantContent = ({
     stopVoice,
     setVoiceVolume,
     playSfx,
+    playWord: playWordAudio,
     setCurrentPhase,
     startIdleTimer,
     stopIdleTimer,
@@ -234,20 +241,21 @@ const SarvakaryeshuChantContent = ({
 
   const playGuidanceVoice = useCallback((key, onEnded) => {
     const map = {
-      welcome: "Let's discover two more powers.",
-      sarva_hint: 'Pick the power that helps in each situation.',
-      sarva_done: 'Ganesha helps in all things!',
-      sarva_meaning: 'Sarvakaryeshu means - in all tasks. Every situation has a power.',
-      sarvakaryeshuSetup: 'You matched the right power every time.',
-      sarvakaryeshuClaim: 'I use my powers in every task.',
-      sarvada_hint: 'Tap the memory bubble as it floats by.',
-      sarvada_done: 'Sarvada - always.',
-      sarvada_meaning: 'Sarvada means always. Morning, afternoon, night - these powers never leave.',
-      sarvadaSetup: 'You remembered the powers across the whole day.',
-      sarvadaClaim: 'These powers stay with me, always.',
-      sceneComplete: 'In every task. Always. These powers are yours.',
+      scene13_puzzle: "The puzzle piece won’t fit. Tap the best power.",
+      scene13_sports: "I want to give up. Tap the best power.",
+      scene13_bike: "We both want the bike. Tap the best power.",
+      scene13_grandma: "Grandma needs help with the bags. Tap the best power.",
+      welcome: "Now let us use Ganesha’s powers to help!",
+      scene13_success: "You chose the right power! You solved the problem!",
+      scene13_meaning: "Sarva Karyeshu means in everything we do.",
+      scene14_intro: "Morning, afternoon, and night. Ganesha is with us all day.",
+      scene14_morning: "Tap the morning memory bubble.",
+      scene14_afternoon: "Now tap the afternoon bubble.",
+      scene14_night: "Now tap the night bubble.",
+      scene14_success: "You remembered Ganesha all day long!",
+      scene14_meaning: "Sarvada means always.",
+      sceneComplete: "In every task. Always. These powers are yours.",
     };
-
     if (map[key]) {
       speakWebSpeech(map[key], onEnded);
       return;
@@ -262,11 +270,11 @@ const SarvakaryeshuChantContent = ({
       return;
     }
     if (sceneState.phase === PHASES.SARVAKARYESHU_GAME) {
-      playGuidanceVoice('sarva_hint');
+      playGuidanceVoice('scene13_puzzle');
       return;
     }
     if (sceneState.phase === PHASES.SARVADA_GAME) {
-      playGuidanceVoice('sarvada_hint');
+      playGuidanceVoice('scene14_morning');
       return;
     }
     if (showSceneCompletion) playGuidanceVoice('sceneComplete');
@@ -295,19 +303,6 @@ const SarvakaryeshuChantContent = ({
   useEffect(() => {
     if (!sceneState?.phase) sceneActions.updateState({ phase: PHASES.INITIAL });
   }, [sceneActions, sceneState?.phase]);
-
-  useEffect(() => {
-    if (!revealConfig || !isAudioOn) return;
-    const setupMap = { sarvakaryeshu: 'sarvakaryeshuSetup', sarvada: 'sarvadaSetup' };
-    const claimMap = { sarvakaryeshu: 'sarvakaryeshuClaim', sarvada: 'sarvadaClaim' };
-    const setup = setupMap[revealConfig.symbolId];
-    const claim = claimMap[revealConfig.symbolId];
-    if (!setup) return;
-    const id = setTimeout(() => {
-      playGuidanceVoice(setup, () => playGuidanceVoice(claim));
-    }, 400);
-    return () => clearTimeout(id);
-  }, [revealConfig, isAudioOn, playGuidanceVoice]);
 
   const getSidebarTarget = (symbolId) => {
     const element = document.getElementById(`sidebar-${symbolId}`);
@@ -381,13 +376,9 @@ const SarvakaryeshuChantContent = ({
     sceneActions.updateState({
       learnedWords: { ...sceneState.learnedWords, [word]: true },
       chantedVerses: { ...sceneState.chantedVerses, [`${word}-chant`]: true },
-      phase: word === 'sarvakaryeshu' ? PHASES.SARVAKARYESHU_COMPLETE : PHASES.SARVADA_COMPLETE,
     });
 
-    setShowSparkle(`${word}-celebration`);
-
     const triggerReveal = () => {
-      setShowSparkle(null);
       const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
       playChime();
       setRevealConfig({
@@ -397,18 +388,17 @@ const SarvakaryeshuChantContent = ({
         affirmation: discoveryData?.affirmation || powerConfig[word].affirmation,
         sidebarTarget: getSidebarTarget(word),
       });
-      sceneActions.updateState({
-        phase: word === 'sarvakaryeshu' ? PHASES.SARVAKARYESHU_POWER : PHASES.SARVADA_POWER,
-      });
     };
 
     if (isAudioOn) {
-      const meaningKey = word === 'sarvakaryeshu' ? 'sarva_meaning' : 'sarvada_meaning';
+      const successKey = word === 'sarvakaryeshu' ? 'scene13_success' : 'scene14_success';
       window.setTimeout(() => {
-        playGuidanceVoice(meaningKey, () => triggerReveal());
-      }, 2000);
+        playGuidanceVoice(successKey, () => {
+          window.setTimeout(() => triggerReveal(), 250);
+        });
+      }, 250);
     } else {
-      window.setTimeout(() => triggerReveal(), 1500);
+      window.setTimeout(() => triggerReveal(), 350);
     }
   }, [
     sceneState,
@@ -453,7 +443,7 @@ const SarvakaryeshuChantContent = ({
           <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
 
-          <div className="sarva-scene-background" style={{ backgroundImage: `url(${riverBg})` }}>
+          <div className="sarva-scene-background" style={{ backgroundImage: `url(${sarvadaBg})` }}>
             {!showSceneCompletion && (
               <>
                 <SarvakaryeshuGame
@@ -463,6 +453,7 @@ const SarvakaryeshuChantContent = ({
                   onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('sarvakaryeshu'), 0)}
                   onGameComplete={() => {}}
                   isPaused={isRecorderOpen}
+                  voiceGuidance={{ playVoice: playGuidanceVoice }}
                 />
 
                 <SarvadaGame
@@ -472,6 +463,7 @@ const SarvakaryeshuChantContent = ({
                   onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('sarvada'), 0)}
                   onGameComplete={() => {}}
                   isPaused={isRecorderOpen}
+                  voiceGuidance={{ playVoice: playGuidanceVoice }}
                 />
 
                 {showTapSparkles && (
@@ -487,6 +479,18 @@ const SarvakaryeshuChantContent = ({
                     symbolImage={revealConfig.symbolImage}
                     symbolName={revealConfig.symbolName}
                     affirmation={revealConfig.affirmation}
+                    revealVoice={{
+                      isEnabled: isAudioOn,
+                      wordId: revealConfig.symbolId,
+                      meaningKey: revealConfig.symbolId === 'sarvakaryeshu'
+                        ? 'scene13_meaning'
+                        : revealConfig.symbolId === 'sarvada'
+                          ? 'scene14_meaning'
+                          : null,
+                      playWord: playWordAudio,
+                      playLine: playGuidanceVoice,
+                      stopVoice: stopAllVoice,
+                    }}
                     sidebarTargetRect={revealConfig.sidebarTarget}
                     zoneId={zoneId}
                     sceneId={sceneId}
@@ -561,8 +565,8 @@ const SarvakaryeshuChantContent = ({
                   <InnerMandala
                     childName={profileName}
                     petalStates={{}}
-                    middlePetalStates={{ 7: 'activated', 8: 'activated' }}
-                    middleSymbolIcons={{ 7: symbolSarvakaryeshu, 8: symbolSarvada }}
+                    middlePetalStates={{ 1: 'activated', 2: 'activated', 3: 'activated', 4: 'activated', 5: 'activated', 6: 'activated', 7: 'activated', 8: 'activated' }}
+                    middleSymbolIcons={{ 1: symbolVakratunda, 2: symbolMahakaya, 3: symbolSuryakoti, 4: symbolSamaprabha, 5: symbolNirvighnam, 6: symbolKurumedeva, 7: symbolSarvakaryeshu, 8: symbolSarvada }}
                     innerPetalStates={{}}
                     highlightPetals={[7]}
                     message="These meanings are growing inside you"

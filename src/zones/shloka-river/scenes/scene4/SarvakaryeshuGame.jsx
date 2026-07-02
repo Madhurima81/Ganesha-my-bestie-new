@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
+import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
 import './SarvakaryeshuGame.css';
 
 import bgImg from './assets/images/sarvakaryeshu-bg.png';
@@ -28,8 +29,8 @@ const SITUATIONS = [
     id: 'puzzle',
     before: puzzleBeforeImg,
     after: puzzleAfterImg,
-    situation: "The puzzle piece won't fit!",
-    question: 'Choose the power you would use.',
+    situation: "The puzzle piece won't fit.",
+    voKey: 'scene13_puzzle',
     correct: 'vakratunda',
     feedback: 'You tried another way and it fit!',
     syllableChunk: 'SAR',
@@ -39,8 +40,8 @@ const SITUATIONS = [
     id: 'sports',
     before: sportsBeforeImg,
     after: sportsAfterImg,
-    situation: 'I want to give up...',
-    question: 'Choose the power you would use.',
+    situation: 'I want to give up.',
+    voKey: 'scene13_sports',
     correct: 'mahakaya',
     feedback: 'You stayed strong and kept trying!',
     syllableChunk: 'VA',
@@ -50,8 +51,8 @@ const SITUATIONS = [
     id: 'bike',
     before: bikeBeforeImg,
     after: bikeAfterImg,
-    situation: 'Both want the bike at the same time.',
-    question: 'Choose the power you would use.',
+    situation: 'We both want the bike.',
+    voKey: 'scene13_bike',
     correct: 'samaprabha',
     feedback: 'You shared and both were happy!',
     syllableChunk: 'KAR',
@@ -62,7 +63,7 @@ const SITUATIONS = [
     before: grandmaBeforeImg,
     after: grandmaAfterImg,
     situation: 'Grandma needs help with the bags.',
-    question: 'Choose the power you would use.',
+    voKey: 'scene13_grandma',
     correct: 'kurumedeva',
     feedback: 'You helped and Grandma smiled!',
     syllableChunk: 'YESHU',
@@ -86,7 +87,9 @@ export default function SarvakaryeshuGame({
   onPhaseComplete = () => {},
   onGameComplete = () => {},
   isPaused = false,
+  voiceGuidance = {},
 }) {
+  const { playVoice: playSceneLine } = voiceGuidance;
   const [cardIndex, setCardIndex] = useState(0);
   const [picked, setPicked] = useState(null);
   const [isCorrect, setIsCorrect] = useState(null);
@@ -105,6 +108,30 @@ export default function SarvakaryeshuGame({
   const optionRefs = useRef({});
   const imageWrapRef = useRef(null);
   phaseRef.current = phase;
+
+  const { hintLevel, pulseTick, markInteraction } = useRepeatedHintCycle({
+    enabled: isActive && !isPaused && phase === 'play',
+    stageKey: isActive ? `card-${cardIndex}` : null,
+    initialDelay: 8500,
+    pulseCountBeforeEscalation: 3,
+    pulseInterval: 1500,
+    level2Delay: 16000,
+    level3Delay: 23000,
+  });
+
+  useEffect(() => {
+    if (!isActive || phase !== 'play' || isCorrect) {
+      setGuidedPowerId(null);
+      return;
+    }
+
+    if (hintLevel === 0 && picked === null) {
+      setGuidedPowerId(null);
+      return;
+    }
+
+    setGuidedPowerId(SITUATIONS[cardIndex].correct);
+  }, [cardIndex, hintLevel, isActive, isCorrect, phase, picked, guidanceMessage]);
 
   const safeAfter = useCallback((ms, fn) => {
     const id = window.setTimeout(fn, ms);
@@ -133,8 +160,22 @@ export default function SarvakaryeshuGame({
       doneCalledRef.current = false;
       resolvingRef.current = false;
       phaseRef.current = 'play';
+      return;
     }
-  }, [isActive, clearTimers]);
+    return clearTimers;
+  }, [isActive, clearTimers, safeAfter, playSceneLine]);
+
+  useEffect(() => {
+    if (!isActive || phase !== 'play') return undefined;
+    const currentSituation = SITUATIONS[cardIndex];
+    if (!currentSituation?.voKey) return undefined;
+
+    const timer = window.setTimeout(() => {
+      playSceneLine?.(currentSituation.voKey);
+    }, 700);
+
+    return () => clearTimeout(timer);
+  }, [isActive, cardIndex, phase, playSceneLine]);
 
   useEffect(() => () => clearTimers(), [clearTimers]);
 
@@ -145,11 +186,11 @@ export default function SarvakaryeshuGame({
     const correct = powerId === situation.correct;
 
     setPicked(powerId);
+    markInteraction();
 
     if (!correct) {
       setIsCorrect(null);
       setGuidanceMessage('That power could help too...');
-      setGuidedPowerId(situation.correct);
       return;
     }
 
@@ -218,12 +259,11 @@ export default function SarvakaryeshuGame({
       setImageHit(false);
       resolvingRef.current = false;
     });
-  }, [cardIndex, isPaused, onGameComplete, onMicroWin, onPhaseComplete, safeAfter]);
+  }, [cardIndex, isPaused, markInteraction, onGameComplete, onMicroWin, onPhaseComplete, safeAfter]);
 
   if (!isActive) return null;
 
   const situation = SITUATIONS[cardIndex];
-
   return (
     <div className={`sarva-game${hideElements ? ' is-hidden' : ''}`}>
       <div className="sarva-stage" style={{ backgroundImage: `url(${bgImg})` }}>
@@ -254,20 +294,21 @@ export default function SarvakaryeshuGame({
             </div>
 
             <p className="sarva-situation">{situation.situation}</p>
-            <p className="sarva-question">{situation.question}</p>
-
             <div className="sarva-options">
               {situation.options.map((powerId) => {
                 const power = POWER_ICONS[powerId];
                 const isRight = picked === powerId && isCorrect;
                 const isSelected = picked === powerId;
+                const isWrong = picked === powerId && picked !== null && !isCorrect;
                 const isGuided = guidedPowerId === powerId;
+                const isHintPulse = isGuided && hintLevel === 1;
+                const isHintGlow = isGuided && (hintLevel >= 2 || (picked !== null && !isCorrect));
 
                 return (
                   <button
                     key={powerId}
                     ref={(node) => { optionRefs.current[powerId] = node; }}
-                    className={`sarva-option${isRight ? ' is-right' : ''}${isSelected ? ' is-selected' : ''}${isGuided ? ' is-guided' : ''}${isCorrect && picked && !isRight ? ' is-dimmed' : ''}`}
+                    className={`sarva-option${isRight ? ' is-right' : ''}${isWrong ? ' is-wrong' : ''}${isSelected ? ' is-selected' : ''}${isGuided ? ' is-guided' : ''}${isHintPulse ? ` pulse pulse-${pulseTick}` : ''}${isHintGlow ? ' hint-glow' : ''}${isCorrect && picked && !isRight ? ' is-dimmed' : ''}`}
                     style={{ '--power-color': power.color }}
                     onPointerDown={() => handlePick(powerId)}
                     aria-label={power.label}

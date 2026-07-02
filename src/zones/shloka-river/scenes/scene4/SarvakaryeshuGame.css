@@ -6,8 +6,13 @@
 }
 
 .sarva-game.is-hidden {
-  opacity: 0;
   pointer-events: none;
+}
+
+.sarva-game.is-hidden .sarva-card,
+.sarva-game.is-hidden .sarva-doneline,
+.sarva-game.is-hidden .flying-power {
+  opacity: 0;
 }
 
 .sarva-stage {
@@ -22,7 +27,7 @@
 .sarva-boat {
   position: absolute;
   left: 50%;
-  bottom: 4%;
+  bottom: 1.5%;
   transform: translateX(-50%);
   width: clamp(280px, 32vw, 420px);
   z-index: 25;
@@ -201,8 +206,17 @@
 }
 
 .sarva-option.is-guided .sarva-option-circle {
-  animation: guidedPulse 1s ease-in-out infinite;
   box-shadow: 0 0 0 4px rgba(255, 213, 79, 0.18), 0 0 16px rgba(255, 213, 79, 0.45);
+}
+
+.sarva-option.pulse-1 .sarva-option-circle,
+.sarva-option.pulse-2 .sarva-option-circle,
+.sarva-option.pulse-3 .sarva-option-circle {
+  animation: stageHintPulse 0.75s ease-in-out;
+}
+
+.sarva-option.hint-glow .sarva-option-circle {
+  animation: stageHintGlow 1.25s ease-in-out infinite;
 }
 
 .sarva-option-circle {
@@ -270,6 +284,21 @@
   color: #8b6f54;
 }
 
+.sarva-hint {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(12px, 1.7vw, 15px);
+  color: #7a5c44;
+  margin: 0;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  min-height: 1.4em;
+}
+
+.sarva-hint.is-visible {
+  opacity: 1;
+}
+
 .flying-power {
   position: fixed;
   z-index: 999;
@@ -283,6 +312,14 @@
   animation: flyPower 1800ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+.sarva-option.is-wrong .sarva-option-circle {
+  animation: wrongWobble 0.5s ease-in-out;
+}
+
+.sarva-option.is-wrong {
+  opacity: 0.55;
+}
+
 @keyframes sarvaCardIn {
   from { opacity: 0; transform: translate(-50%, -36%) scale(0.94); }
   to   { opacity: 1; transform: translate(-50%, -42%) scale(1); }
@@ -291,6 +328,14 @@
 @keyframes revealAfter {
   0%   { opacity: 0; transform: scale(0.97); }
   100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes wrongWobble {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-8deg); }
+  40% { transform: rotate(7deg); }
+  60% { transform: rotate(-5deg); }
+  80% { transform: rotate(3deg); }
 }
 
 @keyframes sarvaPopIn {
@@ -311,6 +356,30 @@
 @keyframes guidedPulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.08); }
+}
+
+@keyframes stageHintPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 4px rgba(255, 213, 79, 0.18), 0 0 16px rgba(255, 213, 79, 0.35);
+  }
+
+  50% {
+    transform: scale(1.14);
+    box-shadow: 0 0 0 6px rgba(255, 213, 79, 0.28), 0 0 24px rgba(255, 213, 79, 0.65);
+  }
+}
+
+@keyframes stageHintGlow {
+  0%, 100% {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 5px rgba(255, 213, 79, 0.28), 0 0 24px rgba(255, 213, 79, 0.7);
+  }
+
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 7px rgba(255, 213, 79, 0.35), 0 0 30px rgba(255, 213, 79, 0.85);
+  }
 }
 
 @keyframes flyPower {
