@@ -1,7 +1,7 @@
 .inner-mandala-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(35, 22, 50, 0.55);
+  background: radial-gradient(circle, rgba(35,22,50,0.5) 30%, rgba(10,5,20,0.85) 100%);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
@@ -35,7 +35,7 @@
   margin: 0 auto;
   animation: mandalaFloat 5s ease-in-out infinite;
   transform: translateZ(0);
-  will-change: transform;
+  will-change: transform, filter;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
@@ -240,9 +240,9 @@
 }
 
 @keyframes mandalaFloat {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-1.5px); }
-  100% { transform: translateY(0px); }
+  0%   { transform: translateY(0);      filter: drop-shadow(0 0 30px rgba(255,220,120,0.15)); }
+  50%  { transform: translateY(-1.5px); filter: drop-shadow(0 0 50px rgba(255,220,120,0.3));  }
+  100% { transform: translateY(0);      filter: drop-shadow(0 0 30px rgba(255,220,120,0.15)); }
 }
 
 

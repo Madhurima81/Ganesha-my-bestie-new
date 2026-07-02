@@ -139,7 +139,7 @@ export default function InnerMandala({
             ))}
           </g>
 
-                    {/* SYMBOL ICONS — show only on awakened outer petals */}
+                    {/* SYMBOL ICONS ï¿½ show only on awakened outer petals */}
           {/*
           {OUTER_PETALS.map((petal) => {
             const awakened = isActive(petalStates[petal.id]);
@@ -184,9 +184,8 @@ export default function InnerMandala({
           </g>
 
           {MIDDLE_PETALS.map((petal) => {
-            const active = isActive(middlePetalStates[petal.id]);
             const iconUrl = middleSymbolIcons[petal.id];
-            if (!active || !iconUrl) return null;
+            if (!iconUrl) return null;
             const pos = MIDDLE_SYMBOL_POSITIONS[petal.id];
             return (
               <image
