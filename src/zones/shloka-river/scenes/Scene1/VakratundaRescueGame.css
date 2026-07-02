@@ -98,6 +98,30 @@
   animation: vakCueArrowBounce 1s ease-in-out infinite;
 }
 
+.vak-game .vak-hint-pulse {
+  animation: vakHintPulse 1.15s ease-in-out infinite;
+}
+
+.vak-game .vak-hint-glow {
+  animation: vakHintGlow 1.45s ease-in-out infinite;
+}
+
+.vak-game .vak-demo-path.vak-hint-glow path {
+  stroke: rgba(245, 183, 86, 0.62);
+}
+
+.vak-game .vak-pile.vak-hint-glow img,
+.vak-game .vak-piece.vak-hint-glow img,
+.vak-game .vak-demo-piece.vak-hint-glow img,
+.vak-game .vak-placed-piece.vak-hint-glow img {
+  filter: brightness(1.04) drop-shadow(0 0 10px rgba(255, 198, 92, 0.55));
+}
+
+.vak-game .vak-demo-arrow.vak-hint-glow {
+  color: rgba(226, 156, 62, 0.9);
+  text-shadow: 0 0 12px rgba(255, 219, 147, 0.65);
+}
+
 .vak-slot {
   transform: translate(-50%, -50%);
   pointer-events: none;
@@ -209,6 +233,26 @@
   }
   50% {
     transform: translate(-50%, -50%) translateY(8px);
+  }
+}
+
+@keyframes vakHintPulse {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.04);
+  }
+}
+
+@keyframes vakHintGlow {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.06);
   }
 }
 

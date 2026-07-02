@@ -249,6 +249,31 @@
   100% { opacity: 1; transform: scale(1); }
 }
 
+.pulse {
+  animation: stageHintPulse 1.15s ease-in-out infinite !important;
+}
+
+.hint-glow {
+  animation: stageHintGlow 1.45s ease-in-out infinite !important;
+  filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.75)) !important;
+}
+
+@keyframes stageHintPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes stageHintGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 18px rgba(255, 215, 0, 0.85));
+    transform: scale(1.08);
+  }
+}
+
 /* ==========================================================================
    4. POSITIONS (Adjusted for No-Translate)
    ========================================================================== */

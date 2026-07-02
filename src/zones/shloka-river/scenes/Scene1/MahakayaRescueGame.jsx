@@ -10,6 +10,8 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
+import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
+import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import './MahakayaRescueGame.css';
 
 import calfPinned from './assets/images/mahakaya/calf-pinned.webp';
@@ -25,7 +27,7 @@ const AUDIO = {
 
 // Positions from editor (% of stage)
 const POS = {
-  ropeAnchor: { l: 31, t: 22 },
+  ropeAnchor: { l: 56, t: 12 },
   logRest: { l: 34, t: 54, w: 18 },
   logGround: { l: 52.9, t: 17.9, w: 18 },
   cueTarget: { l: 38, t: 52, w: 10 },
@@ -97,6 +99,19 @@ export default function MahakayaRescueGame({
   const timers = useRef([]);
   const slip = useRef(null);
   const stageRef = useRef(null);
+  const {
+    hintLevel,
+    pulseTick,
+    markInteraction,
+  } = useRepeatedHintCycle({
+    enabled: isActive,
+    stageKey: ropeStage === 'detached' ? 'detached' : 'attached',
+    initialDelay: ropeStage === 'detached' ? 8000 : 7000,
+    pulseCountBeforeEscalation: 3,
+    pulseInterval: 1800,
+    level2Delay: ropeStage === 'detached' ? 15000 : 14000,
+    level3Delay: ropeStage === 'detached' ? 22000 : 21000,
+  });
 
   const after = useCallback((ms, fn) => {
     if (isPaused) return;
@@ -133,9 +148,9 @@ export default function MahakayaRescueGame({
     if (!isActive) return;
     resetState();
     playSceneLine?.('scene10_maha_intro');
-    after(1500, () => playSceneLine?.('scene10_maha_blocking'));
-    after(2900, () => playSceneLine?.('scene10_maha_drag_rope'));
-    after(2600, () => {
+    after(2800, () => playSceneLine?.('scene10_maha_blocking'));
+    after(4600, () => playSceneLine?.('scene10_maha_drag_rope'));
+    after(4600, () => {
       setPhase('play');
       phaseRef.current = 'play';
     });
@@ -181,6 +196,7 @@ export default function MahakayaRescueGame({
     if (isPaused || phaseRef.current !== 'play' || ropeStageRef.current !== 'detached') return;
     e.preventDefault();
     e.stopPropagation();
+    markInteraction();
     draggingRef.current = 'knob';
     setDragging('knob');
   };
@@ -189,6 +205,7 @@ export default function MahakayaRescueGame({
     if (isPaused || phaseRef.current !== 'play' || ropeStageRef.current !== 'attached') return;
     e.preventDefault();
     e.stopPropagation();
+    markInteraction();
     if (slip.current) {
       clearInterval(slip.current);
       slip.current = null;
@@ -223,13 +240,10 @@ export default function MahakayaRescueGame({
         draggingRef.current = null;
         setDragging(null);
         after(400, () => { playSceneLine?.('scene10_maha_success'); });
-        after(1200, () => { playWord?.('mahakaya'); });
-        after(2200, () => {
-          playSceneLine?.('scene10_maha_meaning');
+        after(1200, () => {
           setPhase('free');
           phaseRef.current = 'free';
         });
-        after(3300, () => playSceneLine?.('scene10_maha_strength'));
         after(4700, () => onPhaseComplete());
       }
     }
@@ -330,7 +344,7 @@ export default function MahakayaRescueGame({
           }}
         />
       )}
-      {freed && <p className="maha-doneline">We lifted it together!</p>}
+      {freed && <p className="maha-doneline">The calf is free!</p>}
 
       <div className="maha-layer maha-calf" style={{ ...lyr(calfPos), zIndex: 8 }}>
         <img src={freed ? calfFree : calfPinned} alt="" />
@@ -351,8 +365,14 @@ export default function MahakayaRescueGame({
 
       {ropeStage === 'detached' && phase === 'play' && (
         <>
+          <p className={`maha-hint ${hintLevel >= 1 ? 'is-visible' : ''}`}>
+            {hintLevel === 1 && 'Try the glowing rope.'}
+            {hintLevel === 2 && 'Drag the rope to the log.'}
+            {hintLevel >= 3 && 'Drag the rope knob to the target.'}
+          </p>
+          {/* Inline drag cue replaced by GestureDemo
           <svg
-            className="maha-cue-line"
+            className={`maha-cue-line ${hintLevel >= 1 ? 'maha-hint-glow' : ''}`}
             viewBox="0 0 100 100"
             preserveAspectRatio="none"
             aria-hidden="true"
@@ -360,7 +380,8 @@ export default function MahakayaRescueGame({
             <path d={`M ${POS.ropeKnob.l - (POS.ropeKnob.w * 0.34)} ${POS.ropeKnob.t + 0.2} Q ${POS.ropeKnob.l - 1.4} ${POS.ropeKnob.t + 5.5} ${POS.logRest.l} ${POS.logRest.t}`} />
           </svg>
           <div
-            className="maha-cue-target"
+            className={`maha-cue-target ${hintLevel >= 1 ? 'maha-hint-pulse' : ''} ${hintLevel >= 2 ? 'maha-hint-glow' : ''}`}
+            key={`maha-cue-target-${pulseTick}`}
             style={{ left: `${POS.cueTarget.l}%`, top: `${POS.cueTarget.t}%`, width: `${POS.cueTarget.w}%` }}
             aria-hidden="true"
           />
@@ -371,6 +392,7 @@ export default function MahakayaRescueGame({
           >
             {'\u2193'}
           </div>
+          */}
           <RopeLine
             x1={POS.ropeAnchor.l}
             y1={POS.ropeAnchor.t}
@@ -378,7 +400,7 @@ export default function MahakayaRescueGame({
             y2={knobPos.t}
           />
           <div
-            className={`maha-layer maha-knob ${dragging === 'knob' ? 'grabbing' : ''}`}
+            className={`maha-layer maha-knob ${dragging === 'knob' ? 'grabbing' : ''} ${hintLevel >= 1 ? 'maha-hint-pulse' : ''} ${hintLevel >= 2 ? 'maha-hint-glow' : ''}`}
             style={{
               left: `${knobPos.l}%`,
               top: `${knobPos.t}%`,
@@ -394,15 +416,22 @@ export default function MahakayaRescueGame({
 
       {ropeStage === 'attached' && phase === 'play' && (
         <>
+          <p className={`maha-hint ${hintLevel >= 1 ? 'is-visible' : ''}`}>
+            {hintLevel === 1 && 'Pull the handle down.'}
+            {hintLevel === 2 && 'Keep pulling to lift the log.'}
+            {hintLevel >= 3 && 'Pull all the way down!'}
+          </p>
+          {/* Inline pull-down cue replaced by GestureDemo
           {locked === 0 && (
             <div
-              className="maha-cue-arrow maha-cue-arrow-down"
+              className={`maha-cue-arrow maha-cue-arrow-down ${hintLevel >= 1 ? 'maha-hint-pulse' : ''}`}
               style={{ left: `${POS.ropeAnchor.l}%`, top: `${pullT - 12}%` }}
               aria-hidden="true"
             >
               {'\u2193'}
             </div>
           )}
+          */}
           <RopeLine
             x1={POS.ropeAnchor.l}
             y1={POS.ropeAnchor.t}
@@ -416,7 +445,7 @@ export default function MahakayaRescueGame({
             y2={pullT}
           />
           <div
-            className={`maha-layer maha-pull ${dragging === 'pull' ? 'grabbing' : ''}`}
+            className={`maha-layer maha-pull ${dragging === 'pull' ? 'grabbing' : ''} ${hintLevel >= 1 ? 'maha-hint-pulse' : ''} ${hintLevel >= 2 ? 'maha-hint-glow' : ''}`}
             style={{
               left: `${POS.ropeAnchor.l}%`,
               top: `${pullT}%`,
@@ -438,6 +467,21 @@ export default function MahakayaRescueGame({
           y2={logPos.t}
         />
       )}
+
+      <GestureDemo
+        type="drag"
+        from={{ x: POS.ropeKnob.l, y: POS.ropeKnob.t }}
+        to={{ x: POS.cueTarget.l, y: POS.cueTarget.t }}
+        active={ropeStage === 'detached' && phase === 'play' && locked === 0}
+        idleDelay={3000}
+      />
+      <GestureDemo
+        type="pull-down"
+        from={{ x: POS.ropeAnchor.l, y: POS.ropeAnchor.t + 10 }}
+        to={{ x: POS.ropeAnchor.l, y: POS.pullBottom }}
+        active={ropeStage === 'attached' && phase === 'play' && locked === 0}
+        idleDelay={3000}
+      />
     </div>
   );
 }

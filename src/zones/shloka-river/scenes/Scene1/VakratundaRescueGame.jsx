@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
+import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
+import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import './VakratundaRescueGame.css';
 
 import frogSwim from './assets/images/vakratunda/frog-swim.webp';
@@ -56,10 +58,25 @@ export default function VakratundaRescueGame({
 
   const stageRef = useRef(null);
   const timers = useRef([]);
+  const vakHintVoiceRef = useRef({ stage: null, level: 0 });
+  const {
+    hintLevel,
+    markInteraction,
+  } = useRepeatedHintCycle({
+    enabled: isActive,
+    stageKey: !selectedMaterial ? 'choose' : 'build',
+    initialDelay: selectedMaterial ? 7000 : 8500,
+    pulseCountBeforeEscalation: 3,
+    pulseInterval: 1800,
+    level2Delay: selectedMaterial ? 15000 : 16000,
+    level3Delay: selectedMaterial ? 22000 : 23000,
+  });
 
   const placedCount = filled.filter(Boolean).length;
   const nextEmptyIndex = filled.findIndex((slotFilled) => !slotFilled);
   const activeMaterial = selectedMaterial ? MATERIALS[selectedMaterial] : null;
+  const hintStage = !selectedMaterial ? 'choose' : 'build';
+  const showBuildGesture = phase === 'build' && !!selectedMaterial && placedCount === 0 && !dragging;
 
   const clearTimers = useCallback(() => {
     timers.current.forEach(clearTimeout);
@@ -111,8 +128,6 @@ export default function VakratundaRescueGame({
       setFamilyBounce(true);
       playSfx?.('frogReunion');
       playSceneLine?.('scene10_vak_crossed');
-      after(900, () => playWord?.('vakratunda'));
-      after(2100, () => playSceneLine?.('scene10_vak_meaning'));
       after(600, () => setFamilyBounce(false));
     });
 
@@ -126,10 +141,9 @@ export default function VakratundaRescueGame({
     if (!isActive) return;
 
     resetState();
-    playSceneLine?.('scene10_intro_friends');
-    after(1500, () => playSceneLine?.('scene10_vak_frog_cross'));
-    after(2900, () => playSceneLine?.('scene10_vak_make_path'));
-    after(2600, () => setPhase('choose'));
+    after(700, () => playSceneLine?.('scene10_vak_intro'));
+    after(4200, () => playSceneLine?.('scene10_vak_choose'));
+    after(4200, () => setPhase('choose'));
 
     return clearTimers;
   }, [after, clearTimers, isActive, playSceneLine, resetState]);
@@ -193,6 +207,30 @@ export default function VakratundaRescueGame({
     };
   }, [dragging, filled, getPoint, isPaused, onMicroWin, playSyllable, selectedMaterial, startHopping, stopVoice]);
 
+  useEffect(() => {
+    vakHintVoiceRef.current = { stage: hintStage, level: 0 };
+  }, [hintStage, phase]);
+
+  useEffect(() => {
+    if (!isActive) return;
+    if (phase !== 'choose' && phase !== 'build') return;
+    if (hintLevel <= 0) return;
+
+    const last = vakHintVoiceRef.current;
+    if (last.stage === hintStage && last.level === hintLevel) return;
+
+    let voiceKey = null;
+    if (hintStage === 'build') {
+      if (hintLevel === 2) voiceKey = 'hintLookForGlow';
+      if (hintLevel >= 3) voiceKey = 'hintKeepBuildingPath';
+    }
+
+    vakHintVoiceRef.current = { stage: hintStage, level: hintLevel };
+    if (voiceKey) {
+      playSceneLine?.(voiceKey);
+    }
+  }, [hintLevel, hintStage, isActive, phase, playSceneLine]);
+
   if (!isActive) return null;
 
   const frogPos = hopIndex < 0
@@ -208,12 +246,6 @@ export default function VakratundaRescueGame({
   });
 
   const pieceWidth = activeMaterial?.pieceW ?? 10;
-  const cueStart = activeMaterial
-    ? {
-      l: activeMaterial.pile.l + 0.5,
-      t: activeMaterial.pile.t - 8,
-    }
-    : null;
   const ghostStyle = dragPoint
     ? { left: `${dragPoint.x}%`, top: `${dragPoint.y}%`, width: `${pieceWidth}%` }
     : null;
@@ -221,7 +253,6 @@ export default function VakratundaRescueGame({
   const renderPileStack = (materialKey, clickable) => {
     const material = MATERIALS[materialKey];
     const { l, t, w } = material.pile;
-    const opacity = !selectedMaterial || selectedMaterial === materialKey ? 1 : 0.18;
     const offsets = [{ dx: -1, dy: 2 }, { dx: 1, dy: 1 }, { dx: 0, dy: 0 }];
 
     return offsets.map((offset, index) => {
@@ -229,22 +260,22 @@ export default function VakratundaRescueGame({
       return (
         <div
           key={`${materialKey}-${index}`}
-          className={`vak-layer vak-pile ${clickable && isTop ? 'is-clickable' : ''}`}
+          className={`vak-layer vak-pile ${clickable && isTop ? 'is-clickable' : ''} ${phase === 'choose' && clickable && isTop && hintLevel >= 1 ? 'vak-hint-pulse' : ''} ${phase === 'choose' && clickable && isTop && hintLevel >= 2 ? 'vak-hint-glow' : ''}`}
           style={{
             left: `${l + offset.dx}%`,
             top: `${t + offset.dy}%`,
             width: `${w}%`,
             zIndex: 6 + index,
-            opacity,
             pointerEvents: clickable && isTop ? 'auto' : 'none',
             cursor: clickable && isTop ? 'pointer' : 'default'
           }}
           onClick={clickable && isTop ? () => {
             if (isPaused) return;
+            markInteraction();
             setSelectedMaterial(materialKey);
             setPhase('build');
             playSfx?.('tap');
-            playSceneLine?.('scene10_vak_drag_pieces');
+            playSceneLine?.('scene10_vak_drag');
           } : undefined}
         >
           <img src={material.asset} alt="" />
@@ -264,7 +295,7 @@ export default function VakratundaRescueGame({
       stack.push(
         <div
           key={`piece-${i}`}
-          className={`vak-layer vak-piece ${isTop ? 'is-active' : 'is-waiting'}`}
+          className={`vak-layer vak-piece ${isTop ? 'is-active' : 'is-waiting'} ${phase === 'build' && isTop && hintLevel >= 1 ? 'vak-hint-pulse' : ''} ${phase === 'build' && isTop && hintLevel >= 2 ? 'vak-hint-glow' : ''}`}
           style={{
             left: `${material.pile.l + reverseIndex * 1.5}%`,
             top: `${material.pile.t - reverseIndex * 2}%`,
@@ -278,6 +309,7 @@ export default function VakratundaRescueGame({
             event.stopPropagation();
             const point = getPoint(event.clientX, event.clientY);
             if (!point) return;
+            markInteraction();
             setDragging(true);
             setDragPoint(point);
           } : undefined}
@@ -318,14 +350,6 @@ export default function VakratundaRescueGame({
         </React.Fragment>
       ))}
 
-      {selectedMaterial && phase !== 'choose' && Object.keys(MATERIALS).map((materialKey) => (
-        <React.Fragment key={materialKey}>
-          {materialKey === selectedMaterial
-            ? null
-            : renderPileStack(materialKey, false)}
-        </React.Fragment>
-      ))}
-
       {phase === 'build' && POS.slots.map((slot, idx) => (
         filled[idx] ? null : (
           <div
@@ -350,10 +374,11 @@ export default function VakratundaRescueGame({
         ) : null
       ))}
 
+      {/* Inline drag demo replaced by GestureDemo
       {phase === 'build' && placedCount === 0 && !dragging && selectedMaterial && cueStart && (
         <>
           <svg
-            className="vak-demo-path"
+            className={`vak-demo-path ${hintLevel >= 2 ? 'vak-hint-glow' : ''}`}
             viewBox="0 0 100 100"
             preserveAspectRatio="none"
             aria-hidden="true"
@@ -363,7 +388,8 @@ export default function VakratundaRescueGame({
             />
           </svg>
           <div
-            className="vak-demo-piece"
+            className={`vak-demo-piece ${hintLevel >= 1 ? 'vak-hint-pulse' : ''} ${hintLevel >= 2 ? 'vak-hint-glow' : ''}`}
+            key={`vak-demo-piece-${pulseTick}`}
             style={{
               left: `${cueStart.l}%`,
               top: `${cueStart.t}%`,
@@ -375,7 +401,7 @@ export default function VakratundaRescueGame({
             <img src={activeMaterial.asset} alt="" />
           </div>
           <div
-            className="vak-demo-arrow"
+            className={`vak-demo-arrow ${hintLevel >= 1 ? 'vak-hint-pulse' : ''} ${hintLevel >= 3 ? 'vak-hint-glow' : ''}`}
             style={{ left: `${POS.slots[0].l}%`, top: `${POS.slots[0].t - 8}%` }}
             aria-hidden="true"
           >
@@ -383,8 +409,18 @@ export default function VakratundaRescueGame({
           </div>
         </>
       )}
+      */}
 
       {phase === 'build' && renderBuildStack()}
+
+      <GestureDemo
+        key={`vak-gesture-${selectedMaterial ?? 'none'}-${hintLevel}-${placedCount}`}
+        type="drag"
+        from={{ x: activeMaterial?.pile.l ?? 30, y: activeMaterial?.pile.t ?? 76 }}
+        to={{ x: POS.slots[0].l, y: POS.slots[0].t }}
+        active={showBuildGesture}
+        idleDelay={500}
+      />
 
       {dragging && ghostStyle && activeMaterial && (
         <div

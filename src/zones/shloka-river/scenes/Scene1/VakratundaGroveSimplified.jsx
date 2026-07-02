@@ -23,7 +23,6 @@ import FireworksCompletion from '../../../../lib/components/feedback/FireworksCo
 import CalmGoldenFireworks from '../../../../lib/components/feedback/CalmGoldenFireworks';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import InnerMandala from '../../../../lib/components/celebration/InnerMandala';
-import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
 import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOverlay'; // ? superseded by SymbolAutoReveal
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
 // import { PauseButton, PauseMenu } from '../../../../lib/components/ui/PauseMenu'; // ? removed: replaced by home icon
@@ -330,36 +329,39 @@ const VakratundaGroveContent = ({
     const webSpeechMap = {
       welcome: "Let's help our friends by the river.",
       instructionListen: 'Listen carefully.',
-      instructionTapAndRepeat: 'Tap the logs and see what happens.',
-      instructionTapTheElephant: 'Tap the logs and see what happens.',
-      hintTapElephant: 'Tap the logs and see what happens.',
-      hintLookForGlow: 'Look for the glowing elephant.',
-      vakratundaSetup: 'You chanted… and the lotus opened.',
+      instructionTapAndRepeat: 'Tap a leaf, stone, or log.',
+      instructionTapTheElephant: 'Tap a leaf, stone, or log.',
+      hintTapElephant: 'Tap a leaf, stone, or log.',
+      hintLookForGlow: 'Drag it to the glowing circle.',
+      hintKeepBuildingPath: 'Keep building the path!',
+      vakratundaSetup: 'The frog made it! He found his family!',
       vakratundaClaim: 'I find a new way.',
       mahakayaSetup: 'You chanted… and it grew tall and strong.',
       mahakayaClaim: 'You have that strength too.',
-      sceneComplete: 'You opened the lotus. You grew it strong. Both powers — yours now.',
+      sceneComplete: 'You found another way. You used your strength. Both powers are yours now.',
       instructionTapLotusWord: 'Tap the lotus.',
       instructionTapLotus: 'Tap the lotus.',
       instructionTapLotusUnlock: 'Tap the lotus.',
       instructionTapLilyWord: 'Tap the lily.',
       instructionTapLily: 'Tap the lily.',
       instructionTapLilyUnlock: 'Tap the lily.',
-      scene10_intro_friends: "Let's help our friends by the river.",
-      scene10_vak_frog_cross: 'The frog wants to cross.',
+      scene10_vak_intro: 'The little frog wants to meet his family!',
+      scene10_vak_frog_cross: 'The little frog wants to meet his family!',
       scene10_vak_tap_logs: 'Tap the logs and see what happens.',
       scene10_vak_blocked: 'Oh no... that way is blocked.',
-      scene10_vak_make_path: "Let's make another path.",
+      scene10_vak_choose: 'Tap a leaf, stone, or log.',
+      scene10_vak_make_path: "Let's build a path.",
       scene10_vak_drag_leaves: 'Drag the leaves onto the water.',
-      scene10_vak_drag_pieces: 'Drag them onto the water.',
-      scene10_vak_crossed: 'The frog made it across.',
-      scene10_vak_meaning: 'Vakratunda helps us find another way.',
-      scene10_maha_intro: "Now let's help the little elephant.",
-      scene10_maha_blocking: 'A heavy log is blocking the river.',
+      scene10_vak_drag: 'Now drag it to the glowing circles.',
+      scene10_vak_drag_pieces: 'Now drag it to the glowing circles.',
+      scene10_vak_crossed: 'You found another way! The frog made it home to his family!',
+      scene10_vak_meaning: 'Vakratunda means finding another way.',
+      scene10_maha_intro: "Now let's help the little calf.",
+      scene10_maha_blocking: 'A heavy log is trapping him!',
       scene10_maha_drag_rope: 'Drag the rope to the log.',
-      scene10_maha_pull_down: 'Now pull down.',
+      scene10_maha_pull_down: 'Now pull down!',
       scene10_maha_log_moving: 'The log is moving.',
-      scene10_maha_success: 'You did it. The river can flow again.',
+      scene10_maha_success: 'You used your strength! The calf is free!',
       scene10_maha_meaning: 'Mahakaya means great strength.',
       scene10_maha_strength: 'You have strength inside you too.',
     };
@@ -376,7 +378,7 @@ const VakratundaGroveContent = ({
       return;
     }
     if (sceneState.phase === PHASES.VAKRATUNDA_GAME) {
-      playGuidanceVoice('scene10_vak_drag_pieces');
+      playGuidanceVoice('scene10_vak_drag');
       return;
     }
     if (sceneState.phase === PHASES.MAHAKAYA_GAME) {
@@ -465,30 +467,6 @@ const VakratundaGroveContent = ({
   }, [stopWebSpeech]);
 
   // -- SymbolAutoReveal helpers ----------------------------------------------
-
-  // Play setup + affirmation VO when the flip card appears (SymbolAutoReveal)
-  useEffect(() => {
-    if (!revealConfig || !isAudioOn) return;
-    const voMapSetup = {
-      vakratunda: 'vakratundaSetup',
-      mahakaya: 'mahakayaSetup'
-    };
-    const voMapClaim = {
-      vakratunda: 'vakratundaClaim',
-      mahakaya: 'mahakayaClaim'
-    };
-    const setupKey = voMapSetup[revealConfig.symbolId];
-    const claimKey = voMapClaim[revealConfig.symbolId];
-    if (!setupKey || !claimKey) return;
-    // Delay 400ms so VO plays after card animation starts
-    const id = setTimeout(() => {
-      playGuidanceVoice(setupKey, () => {
-        // After setup VO finishes, play affirmation VO
-        playGuidanceVoice(claimKey);
-      });
-    }, 400);
-    return () => clearTimeout(id);
-  }, [revealConfig, isAudioOn, playGuidanceVoice]);
 
   // Compute delta from card center (viewport center) to sidebar icon center
   const getSidebarTarget = (symbolId) => {
@@ -674,19 +652,9 @@ const VakratundaGroveContent = ({
 
     // Word reveal VO -> then transition to SymbolAutoReveal
     if (isAudioOn) {
-      if (word === 'mahakaya') {
-        // mahakaya: after chantWordReveal, play word-reveal VO then reveal
-        safeSetTimeout(() => {
-          playGuidanceVoice('mahakaya-word-reveal', () => {
-            triggerReveal();
-          });
-        }, 2000);
-      } else {
-        // vakratunda: chantWordReveal is sufficient, just reveal after delay
-        safeSetTimeout(() => {
-          triggerReveal();
-        }, 2000);
-      }
+      safeSetTimeout(() => {
+        triggerReveal();
+      }, 2000);
     } else {
       // Audio off fallback — short delay then reveal
       safeSetTimeout(() => {
@@ -969,6 +937,18 @@ const VakratundaGroveContent = ({
                 symbolImage={revealConfig.symbolImage}
                 symbolName={revealConfig.symbolName}
                 affirmation={revealConfig.affirmation}
+                revealVoice={{
+                  isEnabled: isAudioOn,
+                  wordId: revealConfig.symbolId,
+                  meaningKey: revealConfig.symbolId === 'vakratunda'
+                    ? 'scene10_vak_meaning'
+                    : revealConfig.symbolId === 'mahakaya'
+                      ? 'scene10_maha_meaning'
+                      : null,
+                  playWord: playWordAudio,
+                  playLine: playGuidanceVoice,
+                  stopVoice: stopAllVoice,
+                }}
                 sidebarTargetRect={revealConfig.sidebarTarget}
                 zoneId={zoneId}
                 sceneId={sceneId}
@@ -1196,14 +1176,6 @@ const VakratundaGroveContent = ({
               }}
             />
 
-            <ProgressiveHintSystem
-              ref={useRef(null)}
-              sceneId={sceneId}
-              sceneState={sceneState}
-              hintConfigs={[]}
-              characterImage={mooshikaCoach}
-              enabled={false}
-            />
           </div>
         </div>
       </MessageManager>
