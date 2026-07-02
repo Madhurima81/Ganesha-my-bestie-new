@@ -113,11 +113,18 @@
   filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.3));
 }
 
-.nirv-obstacle.is-cleared {
+.nirv-obstacle.is-cleared-left {
   opacity: 0;
-  transform: translate(-50%, -50%) scale(0.5) translateY(-40%);
+  transform: translate(-50%, -50%) translateX(-120%);
   pointer-events: none;
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.4, 0, 1, 1);
+}
+
+.nirv-obstacle.is-cleared-right {
+  opacity: 0;
+  transform: translate(-50%, -50%) translateX(120%);
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.4, 0, 1, 1);
 }
 
 .nirv-obstacle img {
@@ -174,5 +181,30 @@
   .nirv-turtle,
   .nirv-obstacle.is-cleared {
     transition: none;
+  }
+}
+
+.pulse {
+  animation: stageHintPulse 1.15s ease-in-out infinite !important;
+}
+
+.hint-glow {
+  animation: stageHintGlow 1.45s ease-in-out infinite !important;
+  filter: drop-shadow(0 0 14px rgba(255, 220, 90, 0.8));
+}
+
+@keyframes stageHintPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.05); }
+}
+
+@keyframes stageHintGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(255, 220, 90, 0.45));
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 18px rgba(255, 220, 90, 0.85));
+    transform: translate(-50%, -50%) scale(1.08);
   }
 }

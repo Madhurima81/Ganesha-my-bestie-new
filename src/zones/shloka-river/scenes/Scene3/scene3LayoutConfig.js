@@ -34,10 +34,16 @@ export const KURUMEDEVA_LAYOUT = {
     w: 8,
     flip: true,
   },
+  beaverBaby: {
+    l: 18.6,
+    t: 64.8,
+    w: 8.5,
+    flip: false,
+  },
   friends: [
-    { id: 'turtle', label: 'Turtle', brings: 'logs', l: 12.1, t: 62, w: 10, flip: false },
+    { id: 'turtle', label: 'Turtle', brings: 'logs', l: 32, t: 62, w: 10, flip: false },
     { id: 'bird', label: 'Bird', brings: 'vines', l: 24.3, t: 54.7, w: 10, flip: false },
-    { id: 'squirrel', label: 'Squirrel', brings: 'pegs', l: 21.6, t: 66.9, w: 10, flip: false },
+    { id: 'squirrel', label: 'Squirrel', brings: 'pegs', l: 34, t: 63.8, w: 10, flip: false },
     { id: 'bunny', label: 'Bunny', brings: 'planks', l: 33.1, t: 57.3, w: 10, flip: false },
   ],
   beaverPath: [
@@ -46,5 +52,7 @@ export const KURUMEDEVA_LAYOUT = {
     { l: 49.1, t: 68.2 },
     { l: 41.9, t: 65.5 },
     { l: 34.3, t: 66.9 },
+    { l: 26.8, t: 65.4 },
+    { l: 20.2, t: 64.7 },
   ],
 };

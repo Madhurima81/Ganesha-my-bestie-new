@@ -47,6 +47,10 @@ import nirvighnamBg from './assets/images/Nirvighnam/bg.png';
 import mooshikaCoach from './assets/images/mooshika-coach.webp';
 
 // Symbol icons — TODO: replace with actual nirvighnam/kurumedeva symbols
+import symbolVakratunda from '../../../meaning cave/assets/images/symbols/vakratunda-symbol.png';
+import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
+import symbolSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.png';
+import symbolSamaprabha from '../../../meaning cave/assets/images/symbols/samaprabha-symbol.png';
 import symbolNirvighnam from '../../../meaning cave/assets/images/symbols/nirvighnam-symbol.png';
 import symbolKurumedeva from '../../../meaning cave/assets/images/symbols/kurumedeva-symbol.png';
 
@@ -210,6 +214,8 @@ const NirvighnamChantContent = ({
 
   const { playUiTap, playChime } = useGameSounds();
   const speechSynthRef = useRef(typeof window !== 'undefined' ? window.speechSynthesis : null);
+  const nirvIntroPlayedRef = useRef(false);
+  const kuruIntroPlayedRef = useRef(false);
 
   const stopWebSpeech = useCallback(() => {
     try { speechSynthRef.current?.cancel(); } catch {}
@@ -231,19 +237,35 @@ const NirvighnamChantContent = ({
 
   const playGuidanceVoice = useCallback((key, onEnded) => {
     const map = {
-      welcome:             "Let's clear the path and call for help by the river.",
-      nirv_hint:           'Drag the obstacles away so the turtle can reach her nest.',
-      nirv_done:           'The path is clear!',
-      nirv_meaning:        'Nirvighnam means obstacle-free — nothing blocks the way.',
+      welcome:             "Let's help our river friends.",
+      scene12_nir_intro:   'The little turtle wants to reach her nest!',
+      scene12_nir_drag:    'Drag the obstacles away.',
+      nirv_hint:           'Drag the obstacle away.',
+      nirv_done:           'You cleared the path! The turtle reached her nest!',
+      nirv_meaning:        'Nirvighnam means removing obstacles.',
       nirvighnamSetup:     'You cleared the path… and the turtle made it home.',
       nirvighnamClaim:     'I clear the way and move forward.',
-      kuru_hint:           'Tap each friend to help build the bridge.',
-      kuru_done:           'The bridge is ready! Everyone helped!',
-      kuru_meaning:        'Kurumedeva means — please do it, O Lord. You asked, and help came.',
+      scene12_kuru_intro:  'The beaver needs help to cross the river!',
+      scene12_kuru_tap:    'Tap each friend to help build the bridge.',
+      kuru_hint:           'Tap the glowing friend.',
+      kuru_done:           'You asked for help! The bridge is ready!',
+      kuru_meaning:        'Kuru Me Deva means please help us.',
       kurumedevaSetup:     'You called for help… and friends came.',
       kurumedevaClaim:     'Asking for help is a superpower.',
-      sceneComplete:       'You cleared the path. You called for help. Both powers — yours now.',
+      sceneComplete:       'The turtle reached her nest. The bridge is ready. Both powers are yours now.',
     };
+    map.welcome = "Let's help our river friends.";
+    map.scene12_nir_intro = 'The little turtle wants to reach her nest!';
+    map.scene12_nir_drag = 'Drag the obstacles away.';
+    map.nirv_hint = 'Drag the obstacle away.';
+    map.nirv_done = 'You cleared the path! The turtle reached her nest!';
+    map.nirv_meaning = 'Nirvighnam means removing obstacles.';
+    map.scene12_kuru_intro = 'The beaver needs help to cross the river!';
+    map.scene12_kuru_tap = 'Tap each friend to help build the bridge.';
+    map.kuru_hint = 'Tap the glowing friend.';
+    map.kuru_done = 'You asked for help! The bridge is ready!';
+    map.kuru_meaning = 'Kuru Me Deva means please help us.';
+    map.sceneComplete = 'The turtle reached her nest. The bridge is ready. Both powers are yours now.';
     if (map[key]) { speakWebSpeech(map[key], onEnded); return; }
     onEnded?.();
   }, [speakWebSpeech]);
@@ -253,8 +275,8 @@ const NirvighnamChantContent = ({
     if (!sceneState.welcomeShown || sceneState.phase === PHASES.INITIAL) {
       playGuidanceVoice('welcome'); return;
     }
-    if (sceneState.phase === PHASES.NIRVIGHNAM_GAME)  { playGuidanceVoice('nirv_hint');  return; }
-    if (sceneState.phase === PHASES.KURUMEDEVA_GAME)  { playGuidanceVoice('kuru_hint');  return; }
+    if (sceneState.phase === PHASES.NIRVIGHNAM_GAME)  { playGuidanceVoice('scene12_nir_drag');  return; }
+    if (sceneState.phase === PHASES.KURUMEDEVA_GAME)  { playGuidanceVoice('scene12_kuru_tap');  return; }
     if (showSceneCompletion) playGuidanceVoice('sceneComplete');
   }, [isAudioOn, playGuidanceVoice, sceneState.phase, sceneState.welcomeShown, showSceneCompletion]);
 
@@ -276,19 +298,6 @@ const NirvighnamChantContent = ({
   useEffect(() => () => stopWebSpeech(), [stopWebSpeech]);
 
   // ── SymbolAutoReveal VO ────────────────────────────────────────────────────
-  useEffect(() => {
-    if (!revealConfig || !isAudioOn) return;
-    const setupMap = { nirvighnam: 'nirvighnamSetup', kurumedeva: 'kurumedevaSetup' };
-    const claimMap = { nirvighnam: 'nirvighnamClaim', kurumedeva: 'kurumedevaClaim' };
-    const setup = setupMap[revealConfig.symbolId];
-    const claim = claimMap[revealConfig.symbolId];
-    if (!setup) return;
-    const id = setTimeout(() => {
-      playGuidanceVoice(setup, () => playGuidanceVoice(claim));
-    }, 400);
-    return () => clearTimeout(id);
-  }, [revealConfig, isAudioOn, playGuidanceVoice]);
-
   const getSidebarTarget = (symbolId) => {
     const el = document.getElementById(`sidebar-${symbolId}`);
     if (!el) return { x: 220, y: 0 };
@@ -348,15 +357,37 @@ const NirvighnamChantContent = ({
   // ── Idle timer per game phase ──────────────────────────────────────────────
   useEffect(() => {
     if (sceneState.phase === PHASES.NIRVIGHNAM_GAME && sceneState.welcomeShown) {
-      setCurrentPhase('nirvighnamGame'); startIdleTimer();
+      setCurrentPhase('nirvighnamGame');
+      if (isAudioOn && !nirvIntroPlayedRef.current) {
+        nirvIntroPlayedRef.current = true;
+        playGuidanceVoice('scene12_nir_intro', () => {
+          playGuidanceVoice('scene12_nir_drag', () => {
+            window.setTimeout(() => startIdleTimer(), 3500);
+          });
+        });
+        return;
+      }
+      startIdleTimer();
     }
-  }, [sceneState.phase, sceneState.welcomeShown, setCurrentPhase]);
+    nirvIntroPlayedRef.current = false;
+  }, [isAudioOn, playGuidanceVoice, sceneState.phase, sceneState.welcomeShown, setCurrentPhase, startIdleTimer]);
 
   useEffect(() => {
     if (sceneState.phase === PHASES.KURUMEDEVA_GAME) {
-      setCurrentPhase('kurumedevaGame'); startIdleTimer();
+      setCurrentPhase('kurumedevaGame');
+      if (isAudioOn && !kuruIntroPlayedRef.current) {
+        kuruIntroPlayedRef.current = true;
+        playGuidanceVoice('scene12_kuru_intro', () => {
+          playGuidanceVoice('scene12_kuru_tap', () => {
+            window.setTimeout(() => startIdleTimer(), 3500);
+          });
+        });
+        return;
+      }
+      startIdleTimer();
     }
-  }, [sceneState.phase, setCurrentPhase]);
+    kuruIntroPlayedRef.current = false;
+  }, [isAudioOn, playGuidanceVoice, sceneState.phase, setCurrentPhase, startIdleTimer]);
 
   // ── Reload: clear mini-game states ────────────────────────────────────────
   useEffect(() => {
@@ -397,11 +428,7 @@ const NirvighnamChantContent = ({
     };
 
     if (isAudioOn) {
-      const meaningKey = word === 'nirvighnam' ? 'nirv_meaning' : 'kuru_meaning';
-      window.setTimeout(() => {
-        playGuidanceVoice(meaningKey, () => triggerReveal());
-      }, 2000);
-      window.setTimeout(() => triggerReveal(), 7000);
+      window.setTimeout(() => triggerReveal(), 400);
     } else {
       window.setTimeout(() => triggerReveal(), 1500);
     }
@@ -453,6 +480,7 @@ const NirvighnamChantContent = ({
                 onMicroWin={handleMicroWin}
                 onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('nirvighnam'), 0)}
                 onGameComplete={() => {}}
+                voiceGuidance={{ playVoice: playGuidanceVoice, stopVoice: stopAllVoice }}
                 isPaused={isRecorderOpen}
               />
 
@@ -463,6 +491,7 @@ const NirvighnamChantContent = ({
                 onMicroWin={handleMicroWin}
                 onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('kurumedeva'), 0)}
                 onGameComplete={() => {}}
+                voiceGuidance={{ playVoice: playGuidanceVoice, stopVoice: stopAllVoice }}
                 isPaused={isRecorderOpen}
               />
 
@@ -480,6 +509,18 @@ const NirvighnamChantContent = ({
                   symbolImage={revealConfig.symbolImage}
                   symbolName={revealConfig.symbolName}
                   affirmation={revealConfig.affirmation}
+                  revealVoice={{
+                    isEnabled: isAudioOn,
+                    wordId: revealConfig.symbolId,
+                    meaningKey: revealConfig.symbolId === 'nirvighnam'
+                      ? 'nirv_meaning'
+                      : revealConfig.symbolId === 'kurumedeva'
+                        ? 'kuru_meaning'
+                        : null,
+                    playWord: playWordAudio,
+                    playLine: playGuidanceVoice,
+                    stopVoice: stopAllVoice,
+                  }}
                   sidebarTargetRect={revealConfig.sidebarTarget}
                   zoneId={zoneId}
                   sceneId={sceneId}
@@ -544,8 +585,8 @@ const NirvighnamChantContent = ({
                 <InnerMandala
                   childName={profileName}
                   petalStates={{}}
-                  middlePetalStates={{ 5: 'activated', 6: 'activated' }}
-                  middleSymbolIcons={{ 5: symbolNirvighnam, 6: symbolKurumedeva }}
+                  middlePetalStates={{ 1: 'activated', 2: 'activated', 3: 'activated', 4: 'activated', 5: 'activated', 6: 'activated' }}
+                  middleSymbolIcons={{ 1: symbolVakratunda, 2: symbolMahakaya, 3: symbolSuryakoti, 4: symbolSamaprabha, 5: symbolNirvighnam, 6: symbolKurumedeva }}
                   innerPetalStates={{}}
                   highlightPetals={[5]}
                   message="These meanings are growing inside you"
