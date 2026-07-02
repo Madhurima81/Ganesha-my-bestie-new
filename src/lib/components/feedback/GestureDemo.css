@@ -1,0 +1,37 @@
+/* GestureDemo.css */
+
+.gesture-demo-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.gesture-demo-hand {
+  position: absolute;
+  width: clamp(40px, 7vw, 64px);
+  pointer-events: none;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.3));
+  will-change: left, top, opacity, transform;
+}
+
+.gesture-demo-ripple {
+  position: absolute;
+  width: clamp(24px, 4vw, 36px);
+  height: clamp(24px, 4vw, 36px);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: left, top, opacity, transform;
+  margin-left: clamp(8px, 1.5vw, 14px);
+  margin-top: -clamp(4px, 0.8vw, 8px);
+}
+
+.gesture-demo-trail {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.6;
+}
