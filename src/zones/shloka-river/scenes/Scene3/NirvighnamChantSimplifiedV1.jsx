@@ -10,7 +10,7 @@ import GameStateManager from "../../../../lib/services/GameStateManager.js";
 import { useGameCoach } from '../../../../lib/components/coach/GameCoach.jsx';
 import ProgressManager from '../../../../lib/services/ProgressManager.jsx';
 import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager.jsx';
-import mooshikaCoach from "./assets/images/mooshika-coach.png";
+import mooshikaCoach from "./assets/images/mooshika-coach.webp";
 
 // UI Components
 import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav.jsx';

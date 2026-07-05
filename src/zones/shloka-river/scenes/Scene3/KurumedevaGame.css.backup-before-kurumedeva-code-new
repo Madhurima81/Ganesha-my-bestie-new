@@ -1,0 +1,194 @@
+/* KurumedevaGame.css — Tap friends to build the bridge */
+
+.kuru-game {
+  position: absolute;
+  inset: 0;
+}
+.kuru-game.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.kuru-stage {
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: hidden;
+}
+
+/* ── Hint & done text ──────────────────────────────────────────────────── */
+.kuru-hint {
+  position: absolute;
+  top: 11%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(13px, 1.9vw, 17px);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  text-align: center;
+  margin: 0;
+  pointer-events: none;
+  animation: kuruFadeIn 0.4s ease;
+  white-space: nowrap;
+}
+
+.kuru-doneline {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  z-index: 41;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  color: #fff;
+  font-size: clamp(18px, 3vw, 28px);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  margin: 0;
+  text-align: center;
+  animation: kuruPopIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* ── Bridge ─────────────────────────────────────────────────────────────── */
+.kuru-bridge {
+  position: absolute;
+  left: 50%;
+  top: 56%;
+  width: 52%;
+  transform: translate(-50%, -50%);
+  z-index: 6;
+  animation: kuruBridgePop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.kuru-bridge img {
+  width: 100%;
+  display: block;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.22));
+}
+
+.kuru-bridge.is-complete img {
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.22)) drop-shadow(0 0 20px rgba(255,220,80,0.4));
+}
+
+/* ── Beaver ─────────────────────────────────────────────────────────────── */
+.kuru-beaver {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: clamp(32px, 5vw, 52px);
+  z-index: 15;
+  transition: left 0.48s cubic-bezier(0.22,1,0.36,1), top 0.48s cubic-bezier(0.22,1,0.36,1);
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.18));
+}
+
+.kuru-beaver.is-walking {
+  animation: kuruBeaverWalk 0.48s ease-in-out infinite;
+}
+
+@keyframes kuruBeaverWalk {
+  0%, 100% { transform: translate(-50%, -50%) rotate(-2deg); }
+  50%       { transform: translate(-50%, -56%) rotate(2deg); }
+}
+
+/* ── Friends ─────────────────────────────────────────────────────────────── */
+.kuru-friend {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: clamp(60px, 10vw, 110px);
+  z-index: 20;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.kuru-friend img {
+  width: 100%;
+  display: block;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.18));
+}
+
+/* Waiting friends (not yet their turn) — hidden */
+.kuru-friend.is-waiting {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.6);
+}
+
+/* Active friend — pulses to invite tap */
+.kuru-friend.is-active {
+  animation: kuruFriendPulse 1.4s ease-in-out infinite;
+}
+
+/* Tap flash */
+.kuru-friend.is-tapped {
+  animation: kuruFriendTap 0.35s ease-out;
+}
+
+/* Done friends — slide off right */
+.kuru-friend.is-done {
+  opacity: 0;
+  transform: translate(60%, -50%) scale(0.7);
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* Tap ring — expanding circle */
+.kuru-tap-ring {
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,220,80,0.75);
+  animation: kuruTapRing 1.4s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes kuruFriendPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50%       { transform: translate(-50%, -54%) scale(1.08); }
+}
+
+@keyframes kuruFriendTap {
+  0%   { transform: translate(-50%, -50%) scale(1); }
+  40%  { transform: translate(-50%, -60%) scale(1.18); filter: brightness(1.3) drop-shadow(0 0 16px rgba(255,220,80,0.8)); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes kuruTapRing {
+  0%   { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+@keyframes kuruBridgePop {
+  0%   { opacity: 0.4; transform: translate(-50%, -44%) scale(0.96); }
+  100% { opacity: 1;   transform: translate(-50%, -50%) scale(1); }
+}
+
+/* ── Keyframes ──────────────────────────────────────────────────────────── */
+@keyframes kuruFadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes kuruPopIn {
+  from { opacity: 0; transform: translate(-50%, 10px) scale(0.85); }
+  to   { opacity: 1; transform: translate(-50%, 0)    scale(1); }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .kuru-friend.is-active,
+  .kuru-tap-ring,
+  .kuru-beaver.is-walking {
+    animation: none;
+  }
+  .kuru-beaver,
+  .kuru-friend {
+    transition: none;
+  }
+}

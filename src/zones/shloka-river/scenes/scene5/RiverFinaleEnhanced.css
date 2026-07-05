@@ -8,7 +8,7 @@
 .river-finale-container {
   position: relative;
   width: 100%;
-  min-height: 100vh;
+  min-height: var(--app-height, 100vh);
   font-family: 'Nunito', sans-serif;
   overflow-x: hidden;
 }
@@ -27,7 +27,7 @@
 .game-screen {
   position: relative;
   z-index: 10;
-  min-height: 100vh;
+  min-height: var(--app-height, 100vh);
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -1276,7 +1276,7 @@
 .selection-screen {
   position: relative;
   z-index: 10;
-  min-height: 100vh;
+  min-height: var(--app-height, 100vh);
   padding: 20px;
   display: flex;
   align-items: center;

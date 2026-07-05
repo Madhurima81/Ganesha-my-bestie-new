@@ -1,0 +1,295 @@
+/* KurumedevaGame.css — Tap friends to build the bridge */
+
+.kuru-game {
+  position: absolute;
+  inset: 0;
+}
+.kuru-game.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.kuru-stage {
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: hidden;
+}
+
+/* ── Hint & done text ──────────────────────────────────────────────────── */
+.kuru-hint {
+  position: absolute;
+  top: 11%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(13px, 1.9vw, 17px);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  text-align: center;
+  margin: 0;
+  pointer-events: none;
+  animation: kuruFadeIn 0.4s ease;
+  white-space: nowrap;
+}
+
+.kuru-doneline {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  z-index: 41;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  color: #fff;
+  font-size: clamp(18px, 3vw, 28px);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  margin: 0;
+  text-align: center;
+  animation: kuruPopIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* ── Bridge ─────────────────────────────────────────────────────────────── */
+.kuru-bridge {
+  position: absolute;
+  left: 50%;
+  top: 56%;
+  width: 52%;
+  transform: translate(-50%, -50%);
+  z-index: 6;
+  animation: kuruBridgePop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.kuru-bridge img {
+  width: 100%;
+  display: block;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.22));
+}
+
+.kuru-bridge.is-complete img {
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.22)) drop-shadow(0 0 20px rgba(255,220,80,0.4));
+}
+
+/* ── Beaver ─────────────────────────────────────────────────────────────── */
+.kuru-beaver {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: clamp(32px, 5vw, 52px);
+  z-index: 15;
+  transition: left 0.48s cubic-bezier(0.22,1,0.36,1), top 0.48s cubic-bezier(0.22,1,0.36,1);
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.18));
+}
+
+.kuru-beaver.is-walking {
+  animation: kuruBeaverWalk 0.48s ease-in-out infinite;
+}
+
+@keyframes kuruBeaverWalk {
+  0%, 100% { transform: translate(-50%, -50%) rotate(-2deg); }
+  50%       { transform: translate(-50%, -56%) rotate(2deg); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FRIENDS — state-based animation system
+   States: waiting → approaching → ready → celebrating → crossing → done
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.kuru-friend {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: clamp(60px, 10vw, 110px);
+  z-index: 20;
+  cursor: default;
+  touch-action: manipulation;
+  /* Smooth position transitions for all movement */
+  transition:
+    left 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    top 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+
+.kuru-friend img {
+  width: 100%;
+  display: block;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.18));
+}
+
+/* ── WAITING: visible on bank, small idle breathing ── */
+.kuru-friend--waiting {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.kuru-friend--waiting img {
+  animation: kuruIdleBreathe 3s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+/* ── APPROACHING: walking/hopping toward the gap ── */
+.kuru-friend--approaching {
+  opacity: 1;
+  pointer-events: none;
+  z-index: 22;
+}
+
+/* Per-animal walk styles during approach */
+.kuru-friend--approaching.kuru-waddle img {
+  animation: kuruWaddle 0.6s ease-in-out infinite;
+}
+.kuru-friend--approaching.kuru-flutter img {
+  animation: kuruFlutter 0.35s ease-in-out infinite;
+}
+.kuru-friend--approaching.kuru-scurry img {
+  animation: kuruScurry 0.3s ease-in-out infinite;
+}
+.kuru-friend--approaching.kuru-hop img {
+  animation: kuruHopWalk 0.5s ease-in-out infinite;
+}
+
+/* ── READY: at the gap, pulsing, tappable ── */
+.kuru-friend--ready {
+  opacity: 1;
+  cursor: pointer;
+  z-index: 25;
+  animation: kuruFriendPulse 1.4s ease-in-out infinite;
+}
+
+/* ── CELEBRATING: tap landed, joy wiggle ── */
+.kuru-friend--celebrating {
+  opacity: 1;
+  pointer-events: none;
+  z-index: 25;
+  animation: kuruCelebrate 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── CROSSING: moving to far bank ── */
+.kuru-friend--crossing {
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: 18;
+}
+
+.kuru-friend--crossing img {
+  animation: kuruIdleBreathe 2s ease-in-out infinite;
+}
+
+/* ── DONE: resting on far bank ── */
+.kuru-friend--done {
+  opacity: 0.75;
+  pointer-events: none;
+  z-index: 8;
+}
+
+.kuru-friend--done img {
+  animation: kuruIdleBreathe 3.5s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+/* ── Tap flash (overlaid on any state) ── */
+.kuru-friend.is-tapped {
+  animation: kuruFriendTap 0.35s ease-out !important;
+}
+
+/* ── Tap ring — expanding circle on ready state ── */
+.kuru-tap-ring {
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,220,80,0.75);
+  animation: kuruTapRing 1.4s ease-out infinite;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ANIMAL WALK KEYFRAMES
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Turtle waddle */
+@keyframes kuruWaddle {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25%      { transform: translateY(-3%) rotate(-4deg); }
+  75%      { transform: translateY(-2%) rotate(4deg); }
+}
+
+/* Bird flutter */
+@keyframes kuruFlutter {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  50%      { transform: translateY(-8%) scaleY(0.92); }
+}
+
+/* Squirrel scurry */
+@keyframes kuruScurry {
+  0%, 100% { transform: translateX(0) translateY(0); }
+  25%      { transform: translateX(2%) translateY(-4%); }
+  75%      { transform: translateX(-2%) translateY(-3%); }
+}
+
+/* Bunny hop */
+@keyframes kuruHopWalk {
+  0%, 100% { transform: translateY(0) scale(1); }
+  40%      { transform: translateY(-12%) scale(1.05); }
+  60%      { transform: translateY(-10%) scale(1.03); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SHARED KEYFRAMES
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Gentle idle breathing for waiting/done animals */
+@keyframes kuruIdleBreathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-1.5%) scale(1.03); }
+}
+
+/* Ready pulse — bob up and down invitingly */
+@keyframes kuruFriendPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50%      { transform: translate(-50%, -54%) scale(1.08); }
+}
+
+/* Celebrate — joyful bounce + squash-stretch */
+@keyframes kuruCelebrate {
+  0%   { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+  20%  { transform: translate(-50%, -65%) scale(1.15) rotate(-6deg); }
+  40%  { transform: translate(-50%, -50%) scale(0.95) rotate(4deg); }
+  60%  { transform: translate(-50%, -58%) scale(1.08) rotate(-3deg); }
+  80%  { transform: translate(-50%, -50%) scale(1.02) rotate(1deg); }
+  100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+}
+
+/* Tap flash */
+@keyframes kuruFriendTap {
+  0%   { transform: translate(-50%, -50%) scale(1); }
+  40%  { transform: translate(-50%, -60%) scale(1.18); filter: brightness(1.3) drop-shadow(0 0 16px rgba(255,220,80,0.8)); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes kuruTapRing {
+  0%   { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+@keyframes kuruBridgePop {
+  0%   { opacity: 0.4; transform: translate(-50%, -44%) scale(0.96); }
+  100% { opacity: 1;   transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes kuruFadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes kuruPopIn {
+  from { opacity: 0; transform: translate(-50%, 10px) scale(0.85); }
+  to   { opacity: 1; transform: translate(-50%, 0)    scale(1); }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────────────── */

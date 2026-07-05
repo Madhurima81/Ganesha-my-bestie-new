@@ -54,7 +54,7 @@
 /* Main container styles */
 .nirvighnam-chant-container {
   width: 100vw !important;
-  height: var(--app-height, 100vh) !important;
+  height: 100vh !important;
   margin: 0 !important;
   padding: 0 !important;
   overflow: hidden !important;
@@ -63,13 +63,603 @@
 
 .river-background {
   width: 100% !important;
-  height: var(--app-height, 100vh) !important;
+  height: 100vh !important;
   background-size: cover !important; 
   background-position: center !important;
   background-repeat: no-repeat !important;
   margin: 0 !important;
   padding: 0 !important;
   position: relative;
+}
+
+/* ===========================
+   RIVER THEME: SHLOKA RIVER INSTRUCTION MODAL
+   Palette: Aqua, Teal, Slate Blue, Coral
+   =========================== */
+
+:root {
+  --river-bg-overlay: rgba(0, 96, 100, 0.85); /* Deep Teal Transparency */
+  --river-card-bg: #F0F8FF; /* Alice Blue */
+  --river-card-border: #4DD0E1; /* Cyan */
+  --river-text-heading: #006064; /* Dark Teal */
+  --river-text-body: #455A64; /* Slate Blue */
+  --river-accent-coral: #FF7043; /* Coral Orange */
+  --river-accent-glow: #B2EBF2;
+}
+
+/* Main Overlay */
+.river-instructions-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--river-bg-overlay);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: river-fadeIn 0.5s ease-out;
+  backdrop-filter: blur(5px);
+}
+
+/* Background Sparkles */
+.river-sparkles {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 101;
+}
+
+.river-sparkle {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background: #E0F7FA;
+  border-radius: 50%;
+  box-shadow: 0 0 15px rgba(224, 247, 250, 0.8);
+  animation: river-bubbleFloat 3s ease-in-out infinite;
+}
+
+.river-sparkle:nth-child(1) { top: 70%; left: 20%; animation-duration: 4s; width: 20px; height: 20px; }
+.river-sparkle:nth-child(2) { top: 80%; left: 80%; animation-duration: 3.5s; }
+.river-sparkle:nth-child(3) { top: 40%; left: 10%; animation-duration: 5s; width: 10px; height: 10px; }
+.river-sparkle:nth-child(4) { top: 30%; left: 90%; animation-duration: 4.5s; }
+
+/* Layout Container */
+.river-instructions-content {
+  position: relative;
+  width: 95%;
+  max-width: 1200px;
+  height: auto;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  padding: 20px;
+  z-index: 102;
+}
+
+/* Character (Ganesha) - Left Side */
+.river-instructions-ganesha {
+  flex: 0 0 35%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  animation: river-slideInLeft 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.river-instructions-ganesha img {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  filter: drop-shadow(0 0 25px rgba(77, 208, 225, 0.6)); /* Aqua Glow */
+  animation: river-floatCharacter 4s ease-in-out infinite;
+}
+
+/* Content Card - Right Side */
+.river-instructions-card {
+  flex: 0 0 50%;
+  background: var(--river-card-bg);
+  border-radius: 40px;
+  padding: 40px 50px;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3), inset 0 0 40px rgba(255, 255, 255, 0.8);
+  border: 4px solid var(--river-card-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: river-slideInRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle water wave background inside card */
+.river-instructions-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 150px;
+  background: linear-gradient(to top, rgba(178, 235, 242, 0.3), transparent);
+  border-radius: 0 0 35px 35px;
+  pointer-events: none;
+}
+
+/* Typography */
+.river-instructions-title {
+  font-family: 'Comic Sans MS', 'Baloo 2', cursive; /* Matching font stack */
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--river-text-heading);
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 0px rgba(255,255,255,0.5);
+}
+
+.river-instructions-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #00838F; /* Slightly lighter teal */
+  margin-bottom: 25px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background: rgba(224, 247, 250, 0.8);
+  padding: 5px 20px;
+  border-radius: 20px;
+}
+
+.river-instructions-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: 19px;
+  line-height: 1.6;
+  color: var(--river-text-body);
+  margin-bottom: 30px;
+  max-width: 90%;
+}
+
+/* Icons Section */
+.river-instructions-icons {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 35px;
+  width: 100%;
+}
+
+.river-icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transition: transform 0.3s ease;
+}
+
+.river-icon-item:hover {
+  transform: translateY(-5px);
+}
+
+.river-icon-item img {
+  width: 85px;
+  height: 85px;
+  object-fit: contain;
+  filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
+}
+
+.river-icon-label {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--river-text-heading);
+}
+
+/* CTA Button */
+.river-instructions-button {
+  background: linear-gradient(135deg, #FF8A65 0%, #FF5722 100%); /* Warm Coral Gradient */
+  border: 3px solid #FFF;
+  color: white;
+  padding: 16px 60px;
+  font-size: 26px;
+  font-weight: 800;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(255, 87, 34, 0.4);
+  font-family: 'Baloo 2', cursive;
+  position: relative;
+  z-index: 10;
+}
+
+.river-instructions-button:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 25px rgba(255, 87, 34, 0.5);
+  background: linear-gradient(135deg, #FFAB91 0%, #F4511E 100%);
+}
+
+.river-instructions-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Animations */
+@keyframes river-fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes river-slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes river-slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+
+@keyframes river-floatCharacter {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes river-bubbleFloat {
+  0% { transform: translateY(100px) scale(0); opacity: 0; }
+  50% { opacity: 0.8; }
+  100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
+}
+
+/* Mobile Responsive */
+@media (max-width: 900px) {
+  .river-instructions-content {
+    flex-direction: column;
+    padding: 10px;
+  }
+  
+  .river-instructions-ganesha {
+    flex: 0 0 auto;
+    justify-content: center;
+    order: 1;
+  }
+  
+  .river-instructions-ganesha img {
+    max-width: 200px; /* Smaller character on mobile */
+  }
+  
+  .river-instructions-card {
+    flex: 0 0 auto;
+    width: 100%;
+    order: 2;
+    padding: 25px;
+  }
+
+  .river-instructions-title { font-size: 28px; }
+  .river-instructions-subtitle { font-size: 16px; margin-bottom: 15px; }
+  .river-instructions-text { font-size: 16px; margin-bottom: 20px; }
+  .river-icon-item img { width: 60px; height: 60px; }
+  .river-instructions-button { font-size: 20px; padding: 12px 40px; }
+}
+
+/* ==================== OPENING MISSION MODAL ==================== */
+.nirvighnam-mission-modal-overlay {
+  position: fixed !important;
+  top: 0 !important; left: 0 !important;
+  width: 100vw !important; height: 100vh !important;
+  background: rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(3px);
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  z-index: 9999 !important;
+  animation: fadeIn 0.3s ease-out;
+    pointer-events: none; /* ⭐ ADD THIS - overlay doesn't block clicks */
+
+}
+
+.nirvighnam-mission-modal {
+ background: rgba(255, 255, 240, 0.98); /* Light Ivory */
+  border-radius: 25px;
+  padding: 35px 45px;
+  max-width: 480px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: modalSlideUp 0.5s ease-out;
+  position: relative;
+  z-index: 10000 !important;
+
+    pointer-events: all; /* ⭐ ADD THIS - modal receives clicks */
+
+}
+
+.nirvighnam-mission-title {
+  font-size: 26px;
+  font-weight: bold;
+  color: var(--solar-orange); /* THEME */
+  margin-bottom: 18px;
+
+}
+
+.nirvighnam-mission-subtitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #E91E63;
+  margin-bottom: 15px;
+  letter-spacing: 0.5px;
+}
+
+.nirvighnam-mission-description {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+
+.nirvighnam-mission-start-btn {
+  background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+  color: white;
+  border: none;
+  padding: 14px 40px;
+  border-radius: 30px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.nirvighnam-mission-start-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(139, 69, 19, 0.5);
+}
+
+/* Character in modals */
+.nirvighnam-modal-character {
+  margin-bottom: 20px;
+}
+
+.nirvighnam-character-img {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 10px;
+  display: block;
+}
+
+.nirvighnam-character-speech-bubble {
+  background: #FFF9E6;
+  padding: 8px 16px;
+  border-radius: 15px;
+  border: 2px solid #FFD700;
+  font-size: 14px;
+  font-weight: 600;
+  color: #8B4513;
+  display: inline-block;
+}
+
+
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ==================== 5-SECOND WORD CELEBRATION ==================== */
+.nirvighnam-celebration-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(3px);
+  z-index: 9998 !important;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.nirvighnam-centered-word-celebration {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  text-align: center;
+  animation: celebrationAppear 0.5s ease-out;
+}
+
+.nirvighnam-celebration-app-icon {
+  width: 180px;
+  height: 180px;
+  margin-bottom: 25px;
+  filter: drop-shadow(0 0 40px currentColor);
+  animation: celebrationGlow 2s ease-in-out infinite alternate;
+}
+
+.nirvighnam-celebration-word-text {
+  font-size: 48px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+  letter-spacing: 3px;
+  animation: textPulse 1.5s ease-in-out infinite;
+}
+
+.nirvighnam-celebration-sparkles {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: 400px;
+  pointer-events: none;
+}
+
+/* ==================== POWER MODAL ==================== */
+.nirvighnam-power-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.nirvighnam-power-modal {
+  background: linear-gradient(135deg, #FFF9E6 0%, #FFE9B8 100%);
+  border-radius: 25px;
+  padding: 40px;
+  max-width: 600px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: modalSlideUp 0.5s ease-out;
+}
+
+.nirvighnam-power-affirmation-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin: 25px auto 30px auto;
+  padding: 20px;
+  background: linear-gradient(135deg, #FFF9E6 0%, #FFE9B8 100%);
+  border: 3px solid #FFD700;
+  border-radius: 20px;
+  max-width: 450px;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.nirvighnam-affirmation-icon {
+  width: 80px;
+  height: 80px;
+  filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5));
+}
+
+.nirvighnam-affirmation-content {
+  text-align: left;
+}
+
+.nirvighnam-affirmation-text {
+  font-size: 22px;
+  font-weight: bold;
+  color: #8B4513;
+  margin-bottom: 5px;
+  font-style: italic;
+}
+
+.nirvighnam-affirmation-description {
+  font-size: 14px;
+  color: #666;
+  font-weight: 600;
+}
+
+.nirvighnam-power-modal-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 35px;
+}
+
+.nirvighnam-power-modal-left {
+  flex: 1;
+  text-align: left;
+}
+
+.nirvighnam-power-modal-text {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.nirvighnam-power-modal-subtext {
+  font-size: 14px;
+  color: #888;
+  font-style: italic;
+}
+
+.nirvighnam-power-modal-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+
+.nirvighnam-power-modal-btn {
+  width: 100%;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 25px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.nirvighnam-save-btn {
+  background: linear-gradient(135deg, #FF6B9D, #FF8EB3);
+  color: white;
+}
+
+.nirvighnam-continue-btn {
+  background: linear-gradient(135deg, #4ECDC4, #44A08D);
+  color: white;
+}
+
+.nirvighnam-power-modal-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* ==================== ANIMATIONS ==================== */
+@keyframes celebrationAppear {
+  from {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes celebrationGlow {
+  from {
+    filter: drop-shadow(0 0 30px currentColor);
+    transform: scale(1);
+  }
+  to {
+    filter: drop-shadow(0 0 60px currentColor);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes textPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes modalSlideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 /* ADDED: Choice Buttons Base Styles - Complete Definition */
@@ -953,7 +1543,7 @@
   top: 0;
   left: 0;
   width: 100vw;
-  height: var(--app-height, 100vh);
+  height: 100vh;
   background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
@@ -1212,7 +1802,7 @@ button.adult-elephant {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: var(--app-height, 100vh);
+  height: 100vh;
   background-color: #f5f5f5;
   padding: 2rem;
   text-align: center;
@@ -1242,7 +1832,7 @@ button.adult-elephant {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: var(--app-height, 100vh);
+  height: 100vh;
   font-size: 24px;
   color: var(--sacred-gold);
   background: linear-gradient(135deg, #f5f5dc, #e6e6fa);
@@ -1364,4 +1954,76 @@ button.adult-elephant {
 .choice-btn:focus {
   outline: 3px solid var(--sacred-gold);
   outline-offset: 2px;
+}
+
+/* Nirvighnam Header */
+.nirvighnam-game-phase-header {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.3);
+  padding: 20px 40px;
+  border-radius: 15px;
+  border: 3px solid #8B4513;  /* Earth brown */
+  z-index: 50;
+  font-size: 32px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  text-align: center;
+  min-width: 500px;
+}
+
+/* Kurumedeva Header */
+.kurumedeva-game-phase-header {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.3);
+  padding: 20px 40px;
+  border-radius: 15px;
+  border: 3px solid #9370DB;  /* Purple */
+  z-index: 50;
+  font-size: 32px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  text-align: center;
+  min-width: 500px;
+}
+
+/* Media Queries for Nirvighnam & Kurumedeva */
+@media (max-width: 600px) {
+  .nirvighnam-game-phase-header,
+  .kurumedeva-game-phase-header {
+    top: 60px;
+    padding: 15px 25px;
+    font-size: 24px;
+    min-width: 320px;
+    border: 2px solid;
+  }
+}
+
+@media (min-width: 768px) and (min-height: 768px) {
+  .nirvighnam-game-phase-header,
+  .kurumedeva-game-phase-header {
+    top: 100px;
+    padding: 25px 50px;
+    font-size: 38px;
+    min-width: 600px;
+    border: 4px solid;
+  }
+}
+
+@media (min-width: 1024px) and (min-height: 1366px) {
+  .nirvighnam-game-phase-header,
+  .kurumedeva-game-phase-header {
+    top: 120px;
+    padding: 30px 60px;
+    font-size: 42px;
+    min-width: 700px;
+    border: 5px solid;
+  }
 }

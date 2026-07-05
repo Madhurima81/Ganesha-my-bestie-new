@@ -40,8 +40,8 @@ import SyllableVoiceChallenge from '../../core/SyllableVoiceChallenge';
 import WaterSprayArc from './components/WaterSprayArc';
 
 // Character images
-import ganeshaHeadphones from './assets/images/ganesha_with_headphones.png';
-import mooshikaCoach from "./assets/images/mooshika-coach.png";
+import ganeshaHeadphones from './assets/images/ganesha_with_headphones.webp';
+import mooshikaCoach from "./assets/images/mooshika-coach.webp";
 
 // Background — updated to new SVG
 import riverBackground from './assets/images/vakratundachant-bg-new2.svg';

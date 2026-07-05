@@ -54,7 +54,7 @@
 /* Main container styles */
 .sarvakaryeshu-chant-container {
   width: 100vw !important;
-  height: 100vh !important;
+  height: var(--app-height, 100vh) !important;
   margin: 0 !important;
   padding: 0 !important;
   overflow: hidden !important;
@@ -63,7 +63,7 @@
 
 .river-background {
   width: 100% !important;
-  height: 100vh !important;
+  height: var(--app-height, 100vh) !important;
   background-size: cover !important; 
   background-position: center !important;
   background-repeat: no-repeat !important;
@@ -815,7 +815,7 @@
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: var(--app-height, 100vh);
   background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
@@ -1035,7 +1035,7 @@ button.adult-elephant {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: var(--app-height, 100vh);
   font-size: 24px;
   background: linear-gradient(135deg, var(--enlightened-white), rgba(255, 215, 0, 0.1));
   color: var(--divine-gold);
@@ -1046,7 +1046,7 @@ button.adult-elephant {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: var(--app-height, 100vh);
   background: linear-gradient(135deg, #ffe6e6, #fff5f5);
   padding: 2rem;
   text-align: center;

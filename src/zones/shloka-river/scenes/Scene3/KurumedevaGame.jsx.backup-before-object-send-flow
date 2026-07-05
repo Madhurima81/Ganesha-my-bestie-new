@@ -1,0 +1,366 @@
+import { useState, useEffect, useRef, useCallback } from 'react';
+import SyllableHighlight from '../../shared/SyllableHighlight';
+import './KurumedevaGame.css';
+
+import bgImg from './assets/images/Nirvighnam/bg.png';
+import turtleImg from './assets/images/Kurumedeva/turtle.png';
+import birdImg from './assets/images/Kurumedeva/bird.png';
+import squirrelImg from './assets/images/Kurumedeva/squirrel.png';
+import bunnyImg from './assets/images/Kurumedeva/bunny.png';
+import beaverHappyImg from './assets/images/Kurumedeva/beaver-happy.png';
+import beaverSadImg from './assets/images/Kurumedeva/beaver-sad.png';
+import step1Img from './assets/images/Kurumedeva/step1.png';
+import step2Img from './assets/images/Kurumedeva/step2.png';
+import step3Img from './assets/images/Kurumedeva/step3.png';
+import step4Img from './assets/images/Kurumedeva/step4.png';
+import { KURUMEDEVA_LAYOUT } from './scene3LayoutConfig';
+
+const SYLLABLES = ['Ku', 'ru', 'me', 'de', 'va'];
+
+/* ── Each friend: waiting spot (bank), approach spot (near gap), and done spot (far bank) ── */
+const FRIENDS = [
+  {
+    ...KURUMEDEVA_LAYOUT.friends[0],
+    img: turtleImg,
+    bridgeImg: step1Img,
+    label: 'Turtle',
+    brings: 'a log',
+    waitSpot: { l: 8, t: 72 },
+    approachSpot: { l: KURUMEDEVA_LAYOUT.friends[0].l, t: KURUMEDEVA_LAYOUT.friends[0].t },
+    doneSpot: { l: 88, t: 72 },
+    entranceDelay: 0,
+    walkClass: 'kuru-waddle',
+  },
+  {
+    ...KURUMEDEVA_LAYOUT.friends[1],
+    img: birdImg,
+    bridgeImg: step2Img,
+    label: 'Bird',
+    brings: 'a vine',
+    waitSpot: { l: 14, t: 68 },
+    approachSpot: { l: KURUMEDEVA_LAYOUT.friends[1].l, t: KURUMEDEVA_LAYOUT.friends[1].t },
+    doneSpot: { l: 92, t: 66 },
+    entranceDelay: 80,
+    walkClass: 'kuru-flutter',
+  },
+  {
+    ...KURUMEDEVA_LAYOUT.friends[2],
+    img: squirrelImg,
+    bridgeImg: step3Img,
+    label: 'Squirrel',
+    brings: 'some sticks',
+    waitSpot: { l: 6, t: 76 },
+    approachSpot: { l: KURUMEDEVA_LAYOUT.friends[2].l, t: KURUMEDEVA_LAYOUT.friends[2].t },
+    doneSpot: { l: 90, t: 76 },
+    entranceDelay: 160,
+    walkClass: 'kuru-scurry',
+  },
+  {
+    ...KURUMEDEVA_LAYOUT.friends[3],
+    img: bunnyImg,
+    bridgeImg: step4Img,
+    label: 'Bunny',
+    brings: 'some planks',
+    waitSpot: { l: 12, t: 80 },
+    approachSpot: { l: KURUMEDEVA_LAYOUT.friends[3].l, t: KURUMEDEVA_LAYOUT.friends[3].t },
+    doneSpot: { l: 86, t: 80 },
+    entranceDelay: 240,
+    walkClass: 'kuru-hop',
+  },
+];
+
+const BEAVER_PATH = KURUMEDEVA_LAYOUT.beaverPath;
+
+export default function KurumedevaGame({
+  isActive = false,
+  hideElements = false,
+  onMicroWin = () => {},
+  onPhaseComplete = () => {},
+  onGameComplete = () => {},
+  isPaused = false,
+}) {
+  const [friendStep, setFriendStep] = useState(0);       // which friend is next (0–4)
+  const [bridgeStep, setBridgeStep] = useState(0);        // how many pieces placed (0–4)
+  const [phase, setPhase] = useState('play');              // play | approaching | placing | crossing | done
+  const [beaverPos, setBeaverPos] = useState(BEAVER_PATH[0]);
+  const [beaverStep, setBeaverStep] = useState(0);
+  const [tappedId, setTappedId] = useState(null);
+  const [litCount, setLitCount] = useState(0);
+
+  // Per-friend animation states: 'waiting' | 'approaching' | 'ready' | 'celebrating' | 'crossing' | 'done'
+  const [friendStates, setFriendStates] = useState(
+    () => FRIENDS.map((_, i) => (i === 0 ? 'approaching' : 'waiting'))
+  );
+  // Per-friend current positions (animated via CSS transitions)
+  const [friendPositions, setFriendPositions] = useState(
+    () => FRIENDS.map((f) => ({ ...f.waitSpot }))
+  );
+
+  const timersRef = useRef([]);
+  const doneCalledRef = useRef(false);
+  const phaseRef = useRef('play');
+  const onPhaseCompleteRef = useRef(onPhaseComplete);
+  const onGameCompleteRef = useRef(onGameComplete);
+
+  // Keep refs fresh
+  useEffect(() => {
+    onPhaseCompleteRef.current = onPhaseComplete;
+    onGameCompleteRef.current = onGameComplete;
+  }, [onPhaseComplete, onGameComplete]);
+
+  phaseRef.current = phase;
+
+  const safeAfter = useCallback((ms, fn) => {
+    const id = window.setTimeout(fn, ms);
+    timersRef.current.push(id);
+    return id;
+  }, []);
+
+  const clearTimers = useCallback(() => {
+    timersRef.current.forEach(clearTimeout);
+    timersRef.current = [];
+  }, []);
+
+  // Reset on deactivate
+  useEffect(() => {
+    if (!isActive) {
+      clearTimers();
+      setFriendStep(0);
+      setBridgeStep(0);
+      setPhase('play');
+      setBeaverPos(BEAVER_PATH[0]);
+      setBeaverStep(0);
+      setTappedId(null);
+      setLitCount(0);
+      setFriendStates(FRIENDS.map((_, i) => (i === 0 ? 'approaching' : 'waiting')));
+      setFriendPositions(FRIENDS.map((f) => ({ ...f.waitSpot })));
+      doneCalledRef.current = false;
+      phaseRef.current = 'play';
+    }
+  }, [isActive, clearTimers]);
+
+  useEffect(() => () => clearTimers(), [clearTimers]);
+
+  // When scene becomes active, animate first friend approaching
+  useEffect(() => {
+    if (!isActive) return;
+    safeAfter(500, () => {
+      setFriendPositions((prev) => {
+        const next = [...prev];
+        next[0] = { ...FRIENDS[0].approachSpot };
+        return next;
+      });
+      safeAfter(600, () => {
+        setFriendStates((prev) => {
+          const next = [...prev];
+          next[0] = 'ready';
+          return next;
+        });
+      });
+    });
+  }, [isActive, safeAfter]);
+
+  const handleFriendTap = useCallback((friendIndex) => {
+    if (isPaused || phaseRef.current !== 'play') return;
+    if (friendIndex !== friendStep) return;
+    // Only tap if friend is 'ready'
+    if (friendStates[friendIndex] !== 'ready') return;
+
+    const friend = FRIENDS[friendIndex];
+
+    // 1. Tap flash
+    setTappedId(friend.id);
+    safeAfter(400, () => setTappedId(null));
+
+    // 2. Celebrating state
+    setFriendStates((prev) => {
+      const next = [...prev];
+      next[friendIndex] = 'celebrating';
+      return next;
+    });
+
+    // 3. Place bridge piece
+    safeAfter(300, () => {
+      setBridgeStep(friendIndex + 1);
+      window.setTimeout(() => onMicroWin?.(), 0);
+      setLitCount(friendIndex + 1);
+    });
+
+    // 4. After celebration, animal crosses to far bank
+    safeAfter(900, () => {
+      setFriendStates((prev) => {
+        const next = [...prev];
+        next[friendIndex] = 'crossing';
+        return next;
+      });
+      setFriendPositions((prev) => {
+        const next = [...prev];
+        next[friendIndex] = { ...friend.doneSpot };
+        return next;
+      });
+    });
+
+    // 5. Mark done, advance to next friend
+    safeAfter(1500, () => {
+      setFriendStates((prev) => {
+        const next = [...prev];
+        next[friendIndex] = 'done';
+        return next;
+      });
+
+      const nextStep = friendIndex + 1;
+      setFriendStep(nextStep);
+
+      if (nextStep >= FRIENDS.length) {
+        // All friends done — start beaver crossing
+        safeAfter(400, () => {
+          setPhase('crossing');
+          phaseRef.current = 'crossing';
+          setLitCount(5);
+        });
+      } else {
+        // Next friend approaches
+        setFriendStates((prev) => {
+          const next = [...prev];
+          next[nextStep] = 'approaching';
+          return next;
+        });
+        setFriendPositions((prev) => {
+          const next = [...prev];
+          next[nextStep] = { ...FRIENDS[nextStep].approachSpot };
+          return next;
+        });
+        safeAfter(650, () => {
+          setFriendStates((prev) => {
+            const next = [...prev];
+            next[nextStep] = 'ready';
+            return next;
+          });
+        });
+      }
+    });
+  }, [friendStep, friendStates, isPaused, onMicroWin, safeAfter]);
+
+  // Beaver crossing — no callback deps to avoid cleanup issues
+  useEffect(() => {
+    if (phase !== 'crossing' || doneCalledRef.current) return;
+    doneCalledRef.current = true;
+
+    BEAVER_PATH.forEach((pos, index) => {
+      safeAfter(index * 520, () => {
+        setBeaverPos(pos);
+        setBeaverStep(index);
+
+        if (index === BEAVER_PATH.length - 1) {
+          safeAfter(600, () => {
+            setPhase('done');
+          });
+        }
+      });
+    });
+  }, [phase, safeAfter]);
+
+  // Separate done effect — safe from cleanup race
+  useEffect(() => {
+    if (phase !== 'done') return;
+    const t = window.setTimeout(() => {
+      onGameCompleteRef.current?.();
+      onPhaseCompleteRef.current?.();
+    }, 800);
+    return () => window.clearTimeout(t);
+  }, [phase]);
+
+  if (!isActive) return null;
+
+  const currentFriend = friendStep < FRIENDS.length ? FRIENDS[friendStep] : null;
+  const bridgeImg = bridgeStep > 0 ? FRIENDS[bridgeStep - 1].bridgeImg : null;
+  const beaverImg = phase === 'crossing' || phase === 'done' ? beaverHappyImg : beaverSadImg;
+
+  return (
+    <div className={`kuru-game${hideElements ? ' is-hidden' : ''}`}>
+      <div className="kuru-stage" style={{ backgroundImage: `url(${bgImg})` }}>
+        <SyllableHighlight
+          syllables={SYLLABLES}
+          litCount={litCount}
+          audioSyllables={SYLLABLES}
+          onSyllableLit={() => {}}
+        />
+
+        {phase === 'play' && currentFriend && friendStates[friendStep] === 'ready' && (
+          <p className="kuru-hint">
+            Tap {currentFriend.label} — they&apos;re bringing {currentFriend.brings}!
+          </p>
+        )}
+
+        {phase === 'play' && currentFriend && friendStates[friendStep] === 'approaching' && (
+          <p className="kuru-hint">
+            {currentFriend.label} is coming to help!
+          </p>
+        )}
+
+        {phase === 'done' && (
+          <p className="kuru-doneline">The bridge is ready! Everyone helped!</p>
+        )}
+
+        {/* Bridge */}
+        {bridgeImg && (
+          <div
+            className={`kuru-bridge${bridgeStep === 4 ? ' is-complete' : ''}`}
+            key={bridgeStep}
+            style={{
+              left: `${KURUMEDEVA_LAYOUT.bridge.l}%`,
+              top: `${KURUMEDEVA_LAYOUT.bridge.t}%`,
+              width: `${KURUMEDEVA_LAYOUT.bridge.w}%`,
+              transform: `translate(-50%, -50%) rotate(${KURUMEDEVA_LAYOUT.bridge.r || 0}deg) scaleX(${KURUMEDEVA_LAYOUT.bridge.flip ? -1 : 1})`,
+            }}
+          >
+            <img src={bridgeImg} alt="bridge" draggable={false} />
+          </div>
+        )}
+
+        {/* Beaver */}
+        <div
+          className={`kuru-beaver${phase === 'crossing' || phase === 'done' ? ' is-walking' : ''}`}
+          style={{
+            left: `${beaverPos.l}%`,
+            top: `${beaverPos.t}%`,
+            width: `${KURUMEDEVA_LAYOUT.beaver.w}%`,
+            scale: KURUMEDEVA_LAYOUT.beaver.flip ? '-1 1' : '1 1',
+          }}
+        >
+          <img src={beaverImg} alt="Beaver" draggable={false} />
+        </div>
+
+        {/* All friends — always rendered, animated via state */}
+        {FRIENDS.map((friend, index) => {
+          const state = friendStates[index];
+          const pos = friendPositions[index];
+          const isTapped = tappedId === friend.id;
+          const isReady = state === 'ready';
+
+          return (
+            <div
+              key={friend.id}
+              className={`
+                kuru-friend
+                kuru-friend--${state}
+                ${friend.walkClass}
+                ${isTapped ? 'is-tapped' : ''}
+              `}
+              style={{
+                left: `${pos.l}%`,
+                top: `${pos.t}%`,
+                width: `${friend.w}%`,
+                scale: friend.flip ? '-1 1' : '1 1',
+              }}
+              onPointerDown={() => handleFriendTap(index)}
+            >
+              <img src={friend.img} alt={friend.label} draggable={false} />
+              {isReady && <div className="kuru-tap-ring" aria-hidden="true" />}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

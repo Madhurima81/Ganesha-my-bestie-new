@@ -1,6 +1,6 @@
 .sarva-scene-container {
   width: 100vw !important;
-  height: 100vh !important;
+  height: var(--app-height, 100vh) !important;
   margin: 0 !important;
   padding: 0 !important;
   overflow: hidden !important;
@@ -10,7 +10,7 @@
 
 .sarva-scene-background {
   width: 100vw !important;
-  height: 100vh !important;
+  height: var(--app-height, 100vh) !important;
   background-size: cover !important;
   background-position: center !important;
   background-repeat: no-repeat !important;

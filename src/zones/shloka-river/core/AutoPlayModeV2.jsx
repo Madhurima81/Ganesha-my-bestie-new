@@ -1350,7 +1350,7 @@ const AutoPlayModeV2 = ({
         const tx = tgt ? parseFloat(tgt.left) : sx;
         const ty = tgt ? parseFloat(tgt.top) : sy - 20;
         const dx = tx - sx;   // delta in vw (container = 100vw)
-        const dy = ty - sy;   // delta in vh (container = 100vh)
+        const dy = ty - sy;   // delta in vh (container = var(--app-height, 100vh))
         const arcLift = -22;  // vh lift at arc peak
         const name = `wArc_${Math.round(sx)}_${Math.round(sy)}_${Math.round(spray.id)}`;
         return (

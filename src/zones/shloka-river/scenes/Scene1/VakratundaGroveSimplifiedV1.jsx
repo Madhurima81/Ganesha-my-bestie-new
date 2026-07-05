@@ -40,12 +40,12 @@ import useSafeClick from '../../core/hooks/useSafeClick';
 
 // Character images
 import boyNamaste from './assets/images/boy-namaste.png';
-import ganeshaHeadphones from './assets/images/ganesha_with_headphones.png';
+import ganeshaHeadphones from './assets/images/ganesha_with_headphones.webp';
 import smartwatchScreen from '../assets/images/smartwatch-screen.png';
 
 // Images
 import riverBackground from './assets/images/elephant-grove-bg.png';
-import mooshikaCoach from "./assets/images/mooshika-coach.png";
+import mooshikaCoach from "./assets/images/mooshika-coach.webp";
 import appVakratunda from '../assets/images/apps/app-Vakratunda.png';
 import appMahakaya from '../assets/images/apps/app-mahakaya.png';
 

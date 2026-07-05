@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './GaneshaBlessing.css';
 
-import ganeshaImage from '../assets/images/ganesha_with_headphones.png';
+import ganeshaImage from '../assets/images/ganesha_with_headphones.webp';
 
 
 

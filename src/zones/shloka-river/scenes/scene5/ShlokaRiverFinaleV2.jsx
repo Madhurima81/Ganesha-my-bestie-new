@@ -405,7 +405,7 @@ const ShlokaRiverFinaleContent = ({
             zIndex: 10,
             padding: '40px 20px',
             textAlign: 'center',
-            minHeight: '100vh',
+            minHeight: 'var(--app-height, 100vh)',
           }}
         >
           {/* Progress */}
