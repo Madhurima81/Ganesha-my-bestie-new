@@ -2781,7 +2781,7 @@ const SuryakotiSceneContent = ({
                 top: 0,
                 left: 0,
                 width: '100vw',
-                height: '100vh',
+                height: 'var(--app-height, 100vh)',
                 zIndex: 9998,
                 pointerEvents: 'none',
                 overflow: 'hidden'
@@ -2808,7 +2808,7 @@ const SuryakotiSceneContent = ({
             <style>{`
   @keyframes confettiFall {
     to {
-      transform: translateY(100vh) rotate(720deg);
+      transform: translateY(var(--app-height, 100vh)) rotate(720deg);
     }
   }
   

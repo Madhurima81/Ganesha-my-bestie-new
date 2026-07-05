@@ -2249,7 +2249,7 @@ if (currentMissionSymbol === 'nirvighnam') {
             <style>{`
               @keyframes confettiFall {
                 to {
-                  transform: translateY(100vh) rotate(720deg);
+                  transform: translateY(var(--app-height, 100vh)) rotate(720deg);
                 }
               }
               
