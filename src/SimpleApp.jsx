@@ -21,7 +21,7 @@ function SimpleApp() {
   };
 
   return (
-    <div style={{ width: '100vw', height: '100vh' }}>
+    <div style={{ width: '100vw', height: 'var(--app-height, 100vh)' }}>
       <div style={{
         position: 'fixed',
         top: 0,

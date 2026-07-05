@@ -1,7 +1,16 @@
 :root {
-  font-family: 'Arial', sans-serif;
+  font-family: 'Nunito', sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  /* App height — 100vh on old browsers, dvh (excludes iOS Safari toolbar)
+     where supported. All height:100vh usages reference this variable. */
+  --app-height: 100vh;
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --app-height: 100dvh;
+  }
 }
 
 /* ── SCREEN TRANSITION (global) ─────────────────────── */

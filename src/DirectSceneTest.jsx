@@ -168,7 +168,7 @@ const DirectSceneTest = () => {
   
   return (
     <GameCoachProvider>
-      <div style={{ position: 'relative', height: '100vh', overflow: 'hidden' }}>
+      <div style={{ position: 'relative', height: 'var(--app-height, 100vh)', overflow: 'hidden' }}>
         
         {/* Floating Test Controls */}
         <div style={{
@@ -321,7 +321,7 @@ const DirectSceneTest = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            height: '100vh',
+            height: 'var(--app-height, 100vh)',
             backgroundColor: '#f0f0f0',
             textAlign: 'center'
           }}>

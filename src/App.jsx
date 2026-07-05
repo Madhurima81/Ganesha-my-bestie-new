@@ -3,11 +3,15 @@
 import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import './App.css';
 import './Enhanced.css'
-import DailyDarePopup from './lib/components/twg/DailyDarePopup';
-import TimeWithGaneshaHub from './lib/components/twg/TimeWithGaneshaHub';
-import GaneshaEngineTest  from './lib/components/twg/GaneshaEngineTest';
-import MainWelcomeScreen from './lib/components/navigation/MainWelcomeScreen';
-import GaneshaIntroStory from './components/GaneshaIntroStory';
+import ErrorBoundary from './lib/components/error/ErrorBoundary';
+
+// Lazy-loaded views — keep the startup bundle small; only the loading screen
+// needs to be eager.
+const DailyDarePopup     = lazy(() => import('./lib/components/twg/DailyDarePopup'));
+const TimeWithGaneshaHub = lazy(() => import('./lib/components/twg/TimeWithGaneshaHub'));
+const GaneshaEngineTest  = lazy(() => import('./lib/components/twg/GaneshaEngineTest'));
+const MainWelcomeScreen  = lazy(() => import('./lib/components/navigation/MainWelcomeScreen'));
+const GaneshaIntroStory  = lazy(() => import('./components/GaneshaIntroStory'));
 import { GANESHA_USAGE_SYSTEM } from './lib/config/ganeshaUsageSystem';
 
 const CleanGameWelcomeScreen = lazy(() => import('./lib/components/navigation/CleanGameWelcomeScreen'));
@@ -29,29 +33,29 @@ const AVATAR_IDS = ['monkey', 'peacock', 'squirrel', 'tiger'];
 
 const ZONE_FIRST_SCENE_IMAGES = {
   'symbol-mountain': [
-    '/images/symbol-mountain-bg.png',
-    '/images/modakmtn-bg.png',
+    '/images/symbol-mountain-bg.webp',
+    '/images/modakmtn-bg.webp',
     '/images/zones/symbol-mountain/modak-icon.png',
     '/images/ganesha-poses/sit-modak.webp',
     '/images/ganesha-point.webp',
   ],
   // 'cave-of-secrets': [
-  //   '/images/cave-of-secrets-background.png',
-  //   '/images/cave-bg.png',
+  //   '/images/cave-of-secrets-background.webp',
+  //   '/images/cave-bg.webp',
   //   '/images/zones/cave-of-secrets/vakratunda-icon.png',
   // ],
   'shloka-river': [
-    '/images/shlokariver-bg.png',
+    '/images/shlokariver-bg.webp',
     '/images/zones/shloka-river/vakratunda-grove-icon.png',
   ],
   // 'festival-square': [
-  //   '/images/festivalsquare-bg.png',
-  //   '/images/lotussquare-bg.png',
+  //   '/images/festivalsquare-bg.webp',
+  //   '/images/lotussquare-bg.webp',
   //   '/images/zones/festival-square/piano-icon.png',
   // ],
   'about-me-hut': [
-    '/images/about-me-hut-bg.png',
-    '/images/hut-bg.png',
+    '/images/about-me-hut-bg.webp',
+    '/images/hut-bg.webp',
     '/images/zones/about-me-hut/family-tree-icon.png',
     '/images/ganesha-final-new.svg',
   ],
@@ -157,7 +161,7 @@ function MushikaLoader({ progress, ready, onDone }) {
         {[...Array(TOTAL)].map((_, i) => (
           <img
             key={i}
-            src="/images/modak.png"
+            src="/images/modak.webp"
             alt=""
             className={`loader-modak ${i < landed ? 'active' : ''}`}
           />
@@ -176,7 +180,7 @@ function MushikaLoader({ progress, ready, onDone }) {
 function App() {
   // DEV: ?engine-test in URL → show engine test harness only
   if (typeof window !== 'undefined' && window.location.search.includes('engine-test')) {
-    return <GaneshaEngineTest />;
+    return <Suspense fallback={null}><GaneshaEngineTest /></Suspense>;
   }
 
   const [currentView, setCurrentView] = useState('loading');
@@ -239,25 +243,28 @@ useEffect(() => {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      height: '100vh',
-      backgroundColor: '#f0f0f0',
+      height: 'var(--app-height, 100vh)',
+      backgroundColor: '#FFF8E7',
       textAlign: 'center',
-      padding: '20px'
+      padding: '20px',
+      fontFamily: "'Nunito', sans-serif"
     }}>
       <h2 style={{ fontSize: '48px', margin: '20px 0' }}>
         {sceneId === 'temple' ? '🛕' : sceneId === 'garden' ? '🌸' : '🎮'}
       </h2>
-      <h1 style={{ color: '#333', marginBottom: '10px' }}>
-        {sceneId.charAt(0).toUpperCase() + sceneId.slice(1)} Scene
+      <h1 style={{ fontFamily: "'Baloo 2', cursive", color: '#5e49a8', marginBottom: '10px' }}>
+        Ganesha is still building this one!
       </h1>
-      <p style={{ color: '#666', fontSize: '18px', marginBottom: '30px' }}>
-        This magical scene is coming soon!
+      <p style={{ color: '#6b5f8e', fontSize: '18px', marginBottom: '30px' }}>
+        Come back soon — something wonderful is on the way.
       </p>
       <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
         <button 
           onClick={() => onNavigate('zone-welcome')}
           style={{
             padding: '12px 24px',
+            minHeight: '60px',
+            fontFamily: "'Baloo 2', cursive",
             backgroundColor: '#4CAF50',
             color: 'white',
             border: 'none',
@@ -272,6 +279,8 @@ useEffect(() => {
           onClick={() => onNavigate('map')}
           style={{
             padding: '12px 24px',
+            minHeight: '60px',
+            fontFamily: "'Baloo 2', cursive",
             backgroundColor: '#2196F3',
             color: 'white',
             border: 'none',
@@ -367,7 +376,7 @@ useEffect(() => {
   useEffect(() => {
     if (currentView === 'profile-welcome') {
       preloadImages([
-        '/images/pan-bg.png',
+        '/images/pan-bg.webp',
         '/images/mooshika-flying.png',
         '/intro-story/story1-open-pg.webp',
         '/intro-story/story1-img1.webp',
@@ -543,7 +552,7 @@ const initializeApp = async () => {
 
     // Lot 1 — warm next screens (profile bg + all avatars) while loader is still showing
     preloadImages([
-      '/images/profile-bg.png',
+      '/images/profile-bg.webp',
       ...avatarImagePaths(AVATAR_IDS),
     ]);
 
@@ -1066,12 +1075,12 @@ chants: result?.chants || result?.chantedVerses || {},
   // Apply scene-specific styles only when rendering scenes
   const applySceneStyles = () => {
     document.body.className = '';
-    document.body.style.cssText = 'margin: 0; padding: 0; overflow: hidden; width: 100vw; height: 100vh;';
+    document.body.style.cssText = 'margin: 0; padding: 0; overflow: hidden; width: 100vw; height: var(--app-height, 100vh);';
     
     const root = document.getElementById('root');
     if (root) {
       root.className = '';
-      root.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; margin: 0; padding: 0;';
+      root.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: var(--app-height, 100vh); margin: 0; padding: 0;';
     }
   };
   
@@ -1140,7 +1149,7 @@ chants: result?.chants || result?.chantedVerses || {},
 
       {currentView === 'parent-dashboard' && (
         <div className="view-transition">
-          <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', backgroundColor: '#FAF6EE' }}>Loading...</div>}>
+          <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 'var(--app-height, 100vh)', backgroundColor: '#FAF6EE' }}>Loading...</div>}>
             <ParentDashboard
               onBack={() => setCurrentView('profile-welcome')}
             />
@@ -1199,6 +1208,7 @@ chants: result?.chants || result?.chantedVerses || {},
             currentZone={currentZone}
             highlightedScene={currentScene}
           />
+          {import.meta.env.DEV && (
           <button
             type="button"
             onClick={() => setShowDarePopup(true)}
@@ -1221,6 +1231,8 @@ chants: result?.chants || result?.chantedVerses || {},
           >
             Test Daily Dare
           </button>
+          )}
+          {import.meta.env.DEV && (
           <button
             type="button"
             onClick={() => {
@@ -1246,6 +1258,7 @@ chants: result?.chants || result?.chantedVerses || {},
           >
             Test Intro Story
           </button>
+          )}
           {showDareChip && !showDarePopup && (
             <button
               type="button"
@@ -1290,10 +1303,10 @@ chants: result?.chants || result?.chantedVerses || {},
                 textAlign: 'center'
               }}
             >
-              <div style={{ fontWeight: 800, color: '#5e49a8', fontSize: '19px', marginBottom: '6px' }}>
-                Did you do yesterday&apos;s kindness mission?
+              <div style={{ fontFamily: "'Baloo 2', cursive", fontWeight: 800, color: '#5e49a8', fontSize: '20px', marginBottom: '6px' }}>
+                Did you do your kindness mission? 🌟
               </div>
-              <div style={{ color: '#6b5f8e', fontSize: '14px', marginBottom: '12px' }}>
+              <div style={{ fontFamily: "'Nunito', sans-serif", color: '#6b5f8e', fontSize: '16px', marginBottom: '12px' }}>
                 {kindnessCheckEntry.kindnessTask || 'Kindness mission'}
               </div>
               <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
@@ -1303,14 +1316,17 @@ chants: result?.chants || result?.chantedVerses || {},
                   style={{
                     border: 'none',
                     borderRadius: '999px',
-                    padding: '10px 16px',
+                    padding: '12px 22px',
+                    minHeight: '52px',
+                    fontFamily: "'Baloo 2', cursive",
+                    fontSize: '17px',
                     fontWeight: 800,
                     color: '#fff',
                     background: 'linear-gradient(135deg,#40b36b,#2f9d57)',
                     cursor: 'pointer'
                   }}
                 >
-                  Yes, I did
+                  I did it! 🎉
                 </button>
                 <button
                   type="button"
@@ -1318,7 +1334,10 @@ chants: result?.chants || result?.chantedVerses || {},
                   style={{
                     border: 'none',
                     borderRadius: '999px',
-                    padding: '10px 16px',
+                    padding: '12px 22px',
+                    minHeight: '52px',
+                    fontFamily: "'Baloo 2', cursive",
+                    fontSize: '17px',
                     fontWeight: 800,
                     color: '#5e49a8',
                     background: '#efe9ff',
@@ -1389,15 +1408,22 @@ if (tempData.playAgainRequested) {
         applySceneStyles();
         
         return (
-          <SceneLoader
-            zoneId={currentZone}
-            sceneId={currentScene}
-            onNavigate={handleNavigate}
-            onComplete={handleSceneComplete}
-            onSceneSelect={handleSceneSelect}
-            childName={currentProfile?.name || 'friend'}
-            childAge={currentProfile?.age || 8}
-          />
+          <ErrorBoundary onReset={() => {
+            SimpleSceneManager.clearCurrentScene();
+            setCurrentZone(null);
+            setCurrentScene(null);
+            setCurrentView('map');
+          }}>
+            <SceneLoader
+              zoneId={currentZone}
+              sceneId={currentScene}
+              onNavigate={handleNavigate}
+              onComplete={handleSceneComplete}
+              onSceneSelect={handleSceneSelect}
+              childName={currentProfile?.name || 'friend'}
+              childAge={currentProfile?.age || 8}
+            />
+          </ErrorBoundary>
         );
       })()}
       
@@ -1412,6 +1438,7 @@ if (tempData.playAgainRequested) {
     </Suspense>
     {/* TWG: Daily Dare Popup — fires once per day; z-index 3000 covers all views */}
     {showDarePopup && currentView === 'map' && (
+      <Suspense fallback={null}>
       <DailyDarePopup onClose={() => {
         if (typeof window !== 'undefined' && window.speechSynthesis) {
           window.speechSynthesis.cancel();
@@ -1420,6 +1447,7 @@ if (tempData.playAgainRequested) {
         const today = new Date().toISOString().split('T')[0];
         setShowDareChip(localStorage.getItem('gmb_last_dare_date') === today);
       }} />
+      </Suspense>
     )}
     {/* </GameCoachProvider> */}
     </>

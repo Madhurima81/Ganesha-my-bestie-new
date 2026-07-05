@@ -132,40 +132,10 @@ export default defineConfig({
         manualChunks: {
           // Core app dependencies
           'vendor-react': ['react', 'react-dom'],
-          'vendor-motion': ['framer-motion'],
-          
-          // Zone-specific chunks for better code splitting
-          'zone-symbol-mountain': [
-            './src/zones/symbol-mountain/scenes/modak/NewModakSceneV5',
-            './src/zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV3',
-            './src/zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3',
-            './src/zones/symbol-mountain/scenes/final scene/SacredAssemblySceneV8'
-          ],
-          
-          'zone-cave-secrets': [
-            './src/zones/meaning cave/scenes/VakratundaMahakaya/CaveSceneFixedV1',
-            './src/zones/meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV2',
-            './src/zones/meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV3',
-            './src/zones/meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV5.jsx'
-          ],
-          
-          'zone-shloka-river': [
-            './src/zones/shloka-river/scenes/Scene2/SuryakotiBank',
-            './src/zones/shloka-river/scenes/Scene3/NirvighnamChant',
-            './src/zones/shloka-river/scenes/scene4/SarvakaryeshuChant',
-            './src/zones/shloka-river/scenes/scene5/ShlokaRiverFinale'
-          ],
-          
-          'zone-festival-square': [
-            './src/zones/festival-square/Game1-piano/FestivalPianoGame.jsx',
-            './src/zones/festival-square/Game2-Rangoli/FestivalRangoliGame.jsx',
-            './src/zones/festival-square/game3-cooking/ModakCookingGame.jsx',
-            './src/zones/festival-square/Game4-mandapdecor/MandapDecorationGame.jsx'
-          ],
-
-          'zone-about-me-hut': [
-            './src/zones/about-me-hut/indian-story/MyIndianStoryGame.jsx'
-          ]
+          'vendor-motion': ['framer-motion']
+          // Zone chunks removed — the dynamic import() map in App.jsx
+          // (SCENE_MAPPING) already gives per-scene code splitting; the old
+          // entries referenced stale scene versions pulled in via AppV2/V3.
         }
       }
     },

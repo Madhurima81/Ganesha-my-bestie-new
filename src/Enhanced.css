@@ -10,7 +10,7 @@
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: var(--app-height, 100vh);
   background: url('/images/welcome-opening-bg.webp') no-repeat center center;
   background-size: cover;
   display: flex;
@@ -209,7 +209,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: var(--app-height, 100vh);
   background: linear-gradient(135deg, #FFF8DC 0%, #FFEAA7 100%);
   position: relative;
   overflow: hidden;
@@ -334,7 +334,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: var(--app-height, 100vh);
   text-align: center;
   padding: 40px;
 }

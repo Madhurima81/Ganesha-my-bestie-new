@@ -1,11 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
-import AppV2 from './AppV2.jsx'
-import AppV3 from './AppV3.jsx'
-import GaneshaExpressionTest from './lib/components/character/GaneshaExpressionTest.jsx'
 
-//import AppV1 from './AppV1.jsx'
+// AppV1/V2/V3 removed — dead code whose static imports pulled old scene
+// versions (and NewModakSceneV7) into the main bundle.
+const GaneshaExpressionTest = React.lazy(() => import('./lib/components/character/GaneshaExpressionTest.jsx'))
 
 import './index.css'
 import { cloudSync } from './lib/services/CloudSync'
@@ -33,6 +32,8 @@ const isExpressionPreview = new URLSearchParams(window.location.search).get('pre
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    {isExpressionPreview ? <GaneshaExpressionTest /> : <App/>}
+    {isExpressionPreview
+      ? <React.Suspense fallback={null}><GaneshaExpressionTest /></React.Suspense>
+      : <App/>}
   </React.StrictMode>,
 )

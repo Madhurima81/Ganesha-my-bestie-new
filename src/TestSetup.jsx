@@ -159,7 +159,7 @@ const TestSetup = () => {
       top: 0,
       right: 0,
       width: '400px',
-      height: '100vh',
+      height: 'var(--app-height, 100vh)',
       backgroundColor: 'rgba(0, 0, 0, 0.9)',
       color: 'white',
       padding: '20px',
