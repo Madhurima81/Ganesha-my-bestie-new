@@ -8,7 +8,7 @@ const GameCoachContext = createContext();
 const ZONE_CHARACTERS = {
   'symbol-mountain': {
     //name: 'Mooshika',
-  baseImage: '/images/ganesha-character.png',  // ← NEW IMAGE
+  baseImage: '/images/ganesha-character.webp',  // ← NEW IMAGE
     emotions: {
       happy: '/images/mooshika-happy.png',
       excited: '/images/mooshika-excited.png',

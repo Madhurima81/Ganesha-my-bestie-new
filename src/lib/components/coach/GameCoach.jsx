@@ -13,7 +13,7 @@ export const GameCoachProvider = ({ children, defaultConfig }) => {
   const [manuallyClosedMessages, setManuallyClosedMessages] = useState(new Set()); // ← FIXED: Track manual closes
   const [coachConfig, setCoachConfig] = useState(defaultConfig || {
     name: 'Mooshika',
-    image: '/images/mooshika-coach.png',
+    image: '/images/mooshika-coach.webp',
     position: 'top-right'
   });
 

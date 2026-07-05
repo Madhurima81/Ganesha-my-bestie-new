@@ -86,7 +86,7 @@ background: radial-gradient(
     transform: scale(1) rotate(45deg);
   }
   100% {
-    transform: translateY(-100vh) scale(0.3) rotate(180deg);
+    transform: translateY(-var(--app-height, 100vh)) scale(0.3) rotate(180deg);
     opacity: 0;
   }
 }
