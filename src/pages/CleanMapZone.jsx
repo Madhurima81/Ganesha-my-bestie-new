@@ -679,7 +679,7 @@ const MAP_ZONE_ART_DEFAULTS = {
   river: {
     id: 'river',
     label: 'River',
-    src: '/images/map/river6.png',
+    src: '/images/map/river6.webp',
     left: 44.3,
     top: 51.8,
     w: 125,
@@ -1635,7 +1635,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         style={getZoneArtStyle('symbol', { cursor: 'pointer', pointerEvents: 'auto' })}
       />
       <img
-        src="/images/map/river6.png"
+        src="/images/map/river6.webp"
         alt=""
         className="map-zone-art map-zone-art-river"
         aria-hidden="true"

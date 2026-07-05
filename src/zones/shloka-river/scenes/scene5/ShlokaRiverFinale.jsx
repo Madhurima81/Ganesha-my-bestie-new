@@ -56,7 +56,7 @@ const ORB_APP_IMAGES = {
   sarvada: revealSarvada,
 };
 
-const OPENING_SCENE_GANESHA = '/images/new-ganesha-sit-modak.png';
+const OPENING_SCENE_GANESHA = '/images/new-ganesha-sit-modak.webp';
 
 const SHLOKA_WORDS = [
   { id: 'vakratunda', label: 'Vakratunda', icon: ORB_APP_IMAGES.vakratunda, color: '#FF5722', recapBoatImage: vakratundaRecapBoat },
