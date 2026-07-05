@@ -1638,7 +1638,7 @@ const handleComplete = () => {
 
       {/* Ganesha Home Phase */}
       {phase === STEPS.GANESHA_HOME && (
-        <div style={{ minHeight: '100vh', paddingTop: '40px', paddingBottom: '40px' }}>
+        <div style={{ minHeight: 'var(--app-height, 100vh)', paddingTop: '40px', paddingBottom: '40px' }}>
           <StoryProgressHeader
             discoveries={discoveredLocations.length > 0 ? discoveredLocations.map(idx => ({ ...PHASE1_LOCATIONS[idx], image: PHASE1_LOCATIONS[idx].icon })) : []}
             isChildMode={false}
@@ -2077,7 +2077,7 @@ const handleComplete = () => {
       )}
       {/* Language Ganesha Phase — 4 Language Guess Game */}
       {phase === STEPS.LANGUAGE_GANESHA && (
-        <div style={{ paddingTop: '20px', paddingBottom: '56px', minHeight: '100vh' }}>
+        <div style={{ paddingTop: '20px', paddingBottom: '56px', minHeight: 'var(--app-height, 100vh)' }}>
           {/* Play Button Section */}
           <div style={{ textAlign: 'center', marginTop: 'clamp(20px, 4vh, 90px)', marginBottom: '8px' }}>
             <button
@@ -2248,7 +2248,7 @@ const handleComplete = () => {
 
       {/* Language Child Phase — 12 Language Selection */}
       {phase === STEPS.LANGUAGE_CHILD && (
-        <div style={{ paddingTop: '20px', paddingBottom: '40px', minHeight: '100vh' }}>
+        <div style={{ paddingTop: '20px', paddingBottom: '40px', minHeight: 'var(--app-height, 100vh)' }}>
           {selectedLanguages.length > 0 && (
             <StoryProgressHeader discoveries={selectedLanguages.map(lang => ({ ...lang, image: lang.icon, name: lang.label }))} isChildMode={false} />
           )}
@@ -2431,7 +2431,7 @@ const handleComplete = () => {
       {/* Festivals Ganesha Phase — 5 Festival Guess Game (2x3 Layout) */}
       {phase === STEPS.FESTIVALS_GANESHA && (
         <div style={{
-          minHeight: '100vh',
+          minHeight: 'var(--app-height, 100vh)',
           paddingTop: '60px',
           paddingBottom: '80px',
           display: 'flex',
@@ -2640,7 +2640,7 @@ const handleComplete = () => {
       {/* Festivals Child Phase — Festival Selection (2-Section Layout) */}
       {phase === STEPS.FESTIVALS_CHILD && (
         <div style={{
-          minHeight: '100vh',
+          minHeight: 'var(--app-height, 100vh)',
           paddingTop: '20px',
           paddingBottom: '40px',
         }}>

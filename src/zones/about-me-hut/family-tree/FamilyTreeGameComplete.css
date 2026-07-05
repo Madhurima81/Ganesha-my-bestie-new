@@ -7,7 +7,7 @@
 .family-tree-game-complete {
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: var(--app-height, 100vh);
   overflow: hidden;
   font-family: 'Nunito', sans-serif;
 }
@@ -1168,7 +1168,7 @@
   }
   100% {
     opacity: 0;
-    transform: translateY(100vh) rotate(720deg);
+    transform: translateY(var(--app-height, 100vh)) rotate(720deg);
   }
 }
 

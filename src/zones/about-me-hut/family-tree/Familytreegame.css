@@ -7,7 +7,7 @@
 .family-tree-game {
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: var(--app-height, 100vh);
   overflow: hidden;
   font-family: 'Nunito', sans-serif;
   /* Scene 19 layout knobs: adjust these only */
@@ -693,7 +693,7 @@
 .tree-and-circles-wrapper {
   position: relative;
   width: 100%;
-  height: calc(100vh - 120px);
+  height: calc(var(--app-height, 100vh) - 120px);
   min-height: 620px;
   margin: 0 auto;
   padding-bottom: 0;

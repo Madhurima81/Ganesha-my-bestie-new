@@ -2,7 +2,7 @@
 
 .obstacle-remover-game-redesigned {
   font-family: 'Nunito', sans-serif;
-  min-height: 100vh;
+  min-height: var(--app-height, 100vh);
   background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
   padding: 20px;
   position: relative;
