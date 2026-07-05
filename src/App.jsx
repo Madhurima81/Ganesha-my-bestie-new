@@ -418,7 +418,7 @@ useEffect(() => {
 
     // Don't show Daily Dare on the user's very first map visit —
     // let map intro VO + tutorial breathe.
-    const profileId = localStorage.getItem('gmb_current_profile') || 'default';
+    const profileId = localStorage.getItem('activeProfileId') || 'default';
     const firstMapVisitKey = `gmb_map_first_visit_done_${profileId}`;
     const isFirstMapVisit = !localStorage.getItem(firstMapVisitKey);
     if (isFirstMapVisit) {
@@ -589,10 +589,10 @@ const initializeApp = async () => {
     // Step 5: Check for existing profiles in localStorage (90%)
     let hasExistingProfiles = false;
     try {
-      // Check localStorage for profiles instead of calling GameStateManager
-      const profileKeys = Object.keys(localStorage).filter(key => key.startsWith('profile_'));
-      hasExistingProfiles = profileKeys.length > 0;
-      console.log('👥 Found profile keys:', profileKeys.length);
+      // Read the actual profile store, not incidental key-name patterns
+      const stored = GameStateManager.getProfiles?.();
+      hasExistingProfiles = !!stored?.profiles && Object.keys(stored.profiles).length > 0;
+      console.log('👥 Found profiles:', stored?.profiles ? Object.keys(stored.profiles).length : 0);
     } catch (err) {
       console.warn('⚠️ Could not check profiles:', err);
     }
@@ -673,6 +673,8 @@ const initializeApp = async () => {
 
 const handleContinue = (targetZone, targetScene) => {
   try {
+    // iOS: speechSynthesis must be primed inside a user gesture or first VO is silent
+    try { window.speechSynthesis.speak(new SpeechSynthesisUtterance('')); } catch (e) {}
     restoreDefaultStyles();
 
     if (!targetZone) {
@@ -710,7 +712,8 @@ const handleContinue = (targetZone, targetScene) => {
   const handleNewGame = () => {
     console.log('🚀 Choose scene clicked - clean handoff');
     //restoreDefaultStyles(); // Clean styles before navigation
-    
+    try { window.speechSynthesis.speak(new SpeechSynthesisUtterance('')); } catch (e) {}
+
     const activeProfileId = localStorage.getItem('activeProfileId');
     const shouldShowStory =
       !!activeProfileId && !localStorage.getItem(`ganeshaStoryShown_${activeProfileId}`);

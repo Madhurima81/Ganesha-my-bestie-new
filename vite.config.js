@@ -41,7 +41,7 @@ function caseSensitivePlugin() {
 }
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [
     caseSensitivePlugin(),
     react(),
@@ -124,6 +124,11 @@ export default defineConfig({
     }
   },
   
+  // Strip console.* and debugger from production builds only — the app logs
+  // child names/progress everywhere, which shouldn't reach users' consoles.
+  // Dev keeps logs for debugging.
+  esbuild: command === 'build' ? { drop: ['console', 'debugger'] } : undefined,
+
   build: {
     // Optimize for PWA
     rollupOptions: {
@@ -162,4 +167,4 @@ minify: true
     include: ['react', 'react-dom', 'framer-motion'],
     exclude: []
   }
-})
+}))
