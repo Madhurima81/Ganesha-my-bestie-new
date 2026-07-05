@@ -294,7 +294,7 @@ const handleHome = () => {
             {/* Backpack on left - EXACT SAME AS SCENE */}
             <div className="backpack-container">
               <div className="backpack">
-                <img src="/images/symbol-backpack.png" alt="Adventure Backpack" className="backpack-image" />
+                <img src="/images/symbol-backpack.webp" alt="Adventure Backpack" className="backpack-image" />
                 <div className="backpack-symbols-overlay">
                   {/* Use SPECIFIC symbols for Phase 2 backpack */}
                   {[
@@ -330,7 +330,7 @@ const handleHome = () => {
             <div className="trekker-container">
               {/* Trekker Ganesha character - USE SPECIFIC IMAGE */}
               <div className="trekker-ganesha">
-           <img src="/images/ganesha-character.png" alt="Trekker Ganesha" />
+           <img src="/images/ganesha-character.webp" alt="Trekker Ganesha" />
               </div>
               
               {/* Speech bubble - ZONE SPECIFIC CONTENT */}

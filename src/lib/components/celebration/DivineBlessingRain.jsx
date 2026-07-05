@@ -151,7 +151,7 @@ const DivineBlessingRain = ({
           top: 0;
           left: 0;
           width: 100vw;
-          height: 100vh;
+          height: var(--app-height, 100vh);
           pointer-events: none;
           z-index: 9999;
           overflow: hidden;
@@ -248,7 +248,7 @@ const DivineBlessingRain = ({
             opacity: 0.8;
           }
           100% {
-            transform: translateY(100vh) rotateZ(360deg);
+            transform: translateY(var(--app-height, 100vh)) rotateZ(360deg);
             opacity: 0;
           }
         }

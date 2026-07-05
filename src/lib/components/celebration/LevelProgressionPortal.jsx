@@ -231,7 +231,7 @@ const LevelProgressionPortal = ({
           top: 0;
           left: 0;
           width: 100vw;
-          height: 100vh;
+          height: var(--app-height, 100vh);
           z-index: 10000;
           display: flex;
           flex-direction: column;

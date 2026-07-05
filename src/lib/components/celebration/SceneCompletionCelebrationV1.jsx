@@ -163,7 +163,7 @@ const SceneCompletionCelebration = ({
           }}
         >
           <div className="backpack">
-            <img src="/images/symbol-backpack.png" alt="Adventure Backpack" className="backpack-image"
+            <img src="/images/symbol-backpack.webp" alt="Adventure Backpack" className="backpack-image"
              style={{
                 width: '280px',
                 height: '260px',
@@ -215,7 +215,7 @@ const SceneCompletionCelebration = ({
         <div className="trekker-container">
           {/* Trekker Ganesha character */}
           <div className="trekker-ganesha">
-            <img src="/images/ganesha-character.png" alt="Trekker Ganesha" />
+            <img src="/images/ganesha-character.webp" alt="Trekker Ganesha" />
           </div>
           
           {/* Speech bubble - Different text for final scene */}
