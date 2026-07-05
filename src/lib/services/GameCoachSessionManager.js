@@ -1,3 +1,4 @@
+import { safeSetItem } from '../utils/safeStorage';
 // lib/services/GameCoachSessionManager.js
 // Smart GameCoach trigger system for Zone Welcome
 
@@ -39,7 +40,7 @@ class GameCoachSessionManager {
   saveSessionData(profileId, zoneId, sessionData) {
     try {
       const key = `${this.SESSION_STORAGE_KEY}_${profileId}_${zoneId}`;
-      localStorage.setItem(key, JSON.stringify({
+      safeSetItem(key, JSON.stringify({
         ...sessionData,
         lastUpdated: Date.now()
       }));

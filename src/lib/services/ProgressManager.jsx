@@ -1,3 +1,4 @@
+import { safeSetItem } from '../utils/safeStorage';
 // lib/services/ProgressManager.jsx
 // 🎯 Centralized Progress System for Ganesha Educational App
 // Ensures consistency across Personal Dashboard, Zone Welcome, and Scene Completion
@@ -314,7 +315,7 @@ progressData.completedScenes = totalCompletedScenesAllZones;
 
       
       // Save updated progress
-      localStorage.setItem(progressKey, JSON.stringify(progressData));
+      safeSetItem(progressKey, JSON.stringify(progressData));
       
       // 2. Update profile summary stats
       const gameProfiles = JSON.parse(localStorage.getItem('gameProfiles') || '{"profiles":{}}');
@@ -325,7 +326,7 @@ progressData.completedScenes = totalCompletedScenesAllZones;
         gameProfiles.profiles[profileId].completedScenes = profileStats.completedScenes;
         gameProfiles.profiles[profileId].lastPlayed = timestamp;
         
-        localStorage.setItem('gameProfiles', JSON.stringify(gameProfiles));
+        safeSetItem('gameProfiles', JSON.stringify(gameProfiles));
       }
       
       // 3. Update scene state (for reload/resume) AND for SceneManager compatibility
@@ -338,7 +339,7 @@ sceneState.progress = {
   starsEarned: completionData.stars || 0,
   completed: true
 };
-localStorage.setItem(sceneStateKey, JSON.stringify(sceneState));
+safeSetItem(sceneStateKey, JSON.stringify(sceneState));
 
 // ✅ CRITICAL FIX: Also save to the profile-specific progress structure that calculateZoneProgress expects
 const profileProgressKey = `${profileId}_gameProgress`;
@@ -379,7 +380,7 @@ profileProgress.zones[zoneId].scenes[sceneId] = {
 };
 
 // Save the updated profile progress
-localStorage.setItem(profileProgressKey, JSON.stringify(profileProgress));
+safeSetItem(profileProgressKey, JSON.stringify(profileProgress));
 console.log(`✅ DUAL SAVE: Scene completion saved to both ${sceneStateKey} AND ${profileProgressKey}`);
       
       console.log(`✅ Scene completion saved successfully`);
@@ -418,7 +419,7 @@ console.log(`✅ DUAL SAVE: Scene completion saved to both ${sceneStateKey} AND 
       if (gameProfiles.profiles[profileId]) {
         gameProfiles.profiles[profileId].totalStars = profileStats.totalStars;
         gameProfiles.profiles[profileId].completedScenes = profileStats.completedScenes;
-        localStorage.setItem('gameProfiles', JSON.stringify(gameProfiles));
+        safeSetItem('gameProfiles', JSON.stringify(gameProfiles));
       }
       
       console.log(`✅ Profile data synced successfully`);
@@ -479,7 +480,7 @@ console.log(`✅ DUAL SAVE: Scene completion saved to both ${sceneStateKey} AND 
     if (gameProfiles.profiles[profileId]) {
       gameProfiles.profiles[profileId].totalStars = 0;
       gameProfiles.profiles[profileId].completedScenes = 0;
-      localStorage.setItem('gameProfiles', JSON.stringify(gameProfiles));
+      safeSetItem('gameProfiles', JSON.stringify(gameProfiles));
     }
   }
 

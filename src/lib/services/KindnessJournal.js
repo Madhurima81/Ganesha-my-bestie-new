@@ -1,3 +1,4 @@
+import { safeSetItem } from '../utils/safeStorage';
 const JOURNAL_KEY = 'gmb_kindness_journal';
 
 const todayIso = () => new Date().toISOString().split('T')[0];
@@ -27,7 +28,7 @@ export const getKindnessJournal = () => {
 };
 
 export const saveKindnessJournal = (journal) => {
-  localStorage.setItem(JOURNAL_KEY, JSON.stringify(journal));
+  safeSetItem(JOURNAL_KEY, JSON.stringify(journal));
 };
 
 export const saveTodayKindnessEntry = ({ gratitude, kindnessTask, dareId, dareCategory }) => {

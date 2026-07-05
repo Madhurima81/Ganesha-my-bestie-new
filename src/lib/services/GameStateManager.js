@@ -1,5 +1,6 @@
 // GameStateManager.js - Updated with Zone Progress Accumulation Fix
 import { cloudSync } from './CloudSync';
+import { safeSetItem } from '../utils/safeStorage';
 
 class GameStateManager {
   constructor() {
@@ -60,10 +61,11 @@ scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
     if (!profiles || !profiles.profiles) {
       // First time setup
       const initialProfiles = {
+        schemaVersion: 1,
         profiles: {},
         lastUpdated: Date.now()
       };
-      localStorage.setItem('gameProfiles', JSON.stringify(initialProfiles));
+      safeSetItem('gameProfiles', JSON.stringify(initialProfiles));
     }
 
     // Get active profile from localStorage
@@ -80,14 +82,16 @@ scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
         console.error('Error parsing profiles:', e);
         // Return default structure on parse error
         return {
-          profiles: {},
+          schemaVersion: 1,
+        profiles: {},
           lastUpdated: Date.now()
         };
       }
     }
     // Return default structure instead of null
     return {
-      profiles: {},
+      schemaVersion: 1,
+        profiles: {},
       lastUpdated: Date.now()
     };
   }
@@ -103,6 +107,7 @@ scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
     // Ensure profiles has the correct structure
     if (!profiles || !profiles.profiles) {
       profiles = {
+        schemaVersion: 1,
         profiles: {},
         lastUpdated: Date.now()
       };
@@ -140,7 +145,7 @@ scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
     profiles.lastUpdated = Date.now();
     
     // Save
-    localStorage.setItem('gameProfiles', JSON.stringify(profiles));
+    safeSetItem('gameProfiles', JSON.stringify(profiles));
     console.log('🎯 Profile saved to localStorage');
     
     // Set as active profile
@@ -186,7 +191,7 @@ scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
       });
     });
     
-    localStorage.setItem(`${profileId}_gameProgress`, JSON.stringify(progress));
+    safeSetItem(`${profileId}_gameProgress`, JSON.stringify(progress));
   }
 
   // ✅ NEW: Disney/PBS Auto-Unlock System
@@ -220,7 +225,7 @@ scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
       progress.zones[zoneId].scenes[nextSceneId].unlocked = true;
       
       // Save updated progress
-      localStorage.setItem(`${this.activeProfileId}_gameProgress`, JSON.stringify(progress));
+      safeSetItem(`${this.activeProfileId}_gameProgress`, JSON.stringify(progress));
       
       console.log('✅ DISNEY: Next scene unlocked:', nextSceneId);
       return nextSceneId;
@@ -249,7 +254,7 @@ scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
             progress.zones[nextZoneId].scenes[firstSceneInNextZone].unlocked = true;
           }
           
-          localStorage.setItem(`${this.activeProfileId}_gameProgress`, JSON.stringify(progress));
+          safeSetItem(`${this.activeProfileId}_gameProgress`, JSON.stringify(progress));
           return nextZoneId;
         }
       }
@@ -294,13 +299,13 @@ scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
   // Set active profile - FIXED to handle missing profiles
   setActiveProfile(profileId) {
     this.activeProfileId = profileId;
-    localStorage.setItem('activeProfileId', profileId);
+    safeSetItem('activeProfileId', profileId);
     
     // Update last played time
     const profiles = this.getProfiles();
     if (profiles && profiles.profiles && profiles.profiles[profileId]) {
       profiles.profiles[profileId].lastPlayed = Date.now();
-      localStorage.setItem('gameProfiles', JSON.stringify(profiles));
+      safeSetItem('gameProfiles', JSON.stringify(profiles));
     }
   }
 
@@ -327,7 +332,7 @@ scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
     // Delete profile
     delete profiles.profiles[profileId];
     profiles.lastUpdated = Date.now();
-    localStorage.setItem('gameProfiles', JSON.stringify(profiles));
+    safeSetItem('gameProfiles', JSON.stringify(profiles));
     
     // Delete all game data for this profile
     const keysToDelete = [];
@@ -371,7 +376,7 @@ clearReplaySession(zoneId, sceneId) {
       profiles.profiles[this.activeProfileId].completedScenes = completedScenes;
       profiles.profiles[this.activeProfileId].lastPlayed = Date.now();
       
-      localStorage.setItem('gameProfiles', JSON.stringify(profiles));
+      safeSetItem('gameProfiles', JSON.stringify(profiles));
     }
   }
 
@@ -418,7 +423,7 @@ if (existingScene && existingScene.completed &&
   
   // ✅ 1. Save specific scene state with profile ID
   const sceneKey = `${this.activeProfileId}_${zoneId}_${sceneId}_state`;
-  localStorage.setItem(sceneKey, JSON.stringify({
+  safeSetItem(sceneKey, JSON.stringify({
     ...sceneState,
     lastSaved: Date.now()
   }));
@@ -539,7 +544,7 @@ gameProgress.zones[zoneId].scenes[sceneId] = {
   gameProgress.currentScene = sceneId;
   
   // ✅ 8. Save updated progress
-  localStorage.setItem(`${this.activeProfileId}_gameProgress`, JSON.stringify(gameProgress));
+  safeSetItem(`${this.activeProfileId}_gameProgress`, JSON.stringify(gameProgress));
   
   // ✅ 9. Update profile summary stats
   this.updateProfileStats(gameProgress.totalStars, gameProgress.completedScenes);
@@ -678,7 +683,7 @@ backupProgress() {
       version: '1.0'
     };
     
-    localStorage.setItem(`${this.activeProfileId}_backup`, JSON.stringify(backup));
+    safeSetItem(`${this.activeProfileId}_backup`, JSON.stringify(backup));
     console.log('💾 BACKUP: Progress backed up successfully');
     return true;
   } catch (error) {
@@ -703,7 +708,7 @@ restoreFromBackup() {
     }
     
     // Restore the backup
-    localStorage.setItem(`${this.activeProfileId}_gameProgress`, JSON.stringify(backup.data));
+    safeSetItem(`${this.activeProfileId}_gameProgress`, JSON.stringify(backup.data));
     
     console.log('🔄 RESTORE: Progress restored from backup:', {
       timestamp: new Date(backup.timestamp).toLocaleString(),
@@ -737,7 +742,7 @@ autoRecovery(validationResult) {
   console.log('🔧 AUTO-RECOVERY: Attempting to recalculate totals...');
   const progress = this.getGameProgress();
   this.recalculateTotals(progress);
-  localStorage.setItem(`${this.activeProfileId}_gameProgress`, JSON.stringify(progress));
+  safeSetItem(`${this.activeProfileId}_gameProgress`, JSON.stringify(progress));
   
   // Validate again
   const finalValidation = this.validateProgress();
@@ -775,7 +780,7 @@ logCompletion(zoneId, sceneId, stars, symbols = {}) {
       log.splice(0, log.length - 100);
     }
     
-    localStorage.setItem('completionLog', JSON.stringify(log));
+    safeSetItem('completionLog', JSON.stringify(log));
     
     console.log('📊 COMPLETION LOGGED:', {
       scene: `${zoneId}/${sceneId}`,
@@ -912,7 +917,7 @@ getCompletionHistory(profileId = null) {
 
       // Recalculate totals
       this.recalculateTotals(progress);
-      localStorage.setItem(`${this.activeProfileId}_gameProgress`, JSON.stringify(progress));
+      safeSetItem(`${this.activeProfileId}_gameProgress`, JSON.stringify(progress));
     }
   }
 

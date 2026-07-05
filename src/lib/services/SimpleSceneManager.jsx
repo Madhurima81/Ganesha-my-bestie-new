@@ -1,3 +1,4 @@
+import { safeSetItem } from '../utils/safeStorage';
 // lib/services/SimpleSceneManager.js
 // 🎯 DEAD SIMPLE: Remember last scene, resume ONLY if not completed
 class SimpleSceneManager {
@@ -20,8 +21,8 @@ class SimpleSceneManager {
       profileId: profileId
     };
     
-    localStorage.setItem('currentSceneLocation', JSON.stringify(location));
-    localStorage.setItem('lastSceneLocation', JSON.stringify(location)); // Backup
+    safeSetItem('currentSceneLocation', JSON.stringify(location));
+    safeSetItem('lastSceneLocation', JSON.stringify(location)); // Backup
     console.log('📍 SIMPLE: Saved current scene:', location);
   }
 
