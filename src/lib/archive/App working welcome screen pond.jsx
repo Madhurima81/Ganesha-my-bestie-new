@@ -248,12 +248,12 @@ position: 'top-right'
       {currentView === 'scene' && (() => {
         // Apply scene-specific styles
         document.body.className = '';
-        document.body.style.cssText = 'margin: 0; padding: 0; overflow: hidden; width: 100vw; height: 100vh;';
+        document.body.style.cssText = 'margin: 0; padding: 0; overflow: hidden; width: 100vw; height: var(--app-height, 100vh);';
         
         const root = document.getElementById('root');
         if (root) {
           root.className = '';
-          root.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; margin: 0; padding: 0;';
+          root.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: var(--app-height, 100vh); margin: 0; padding: 0;';
         }
         
         // For now, we only have PondScene
