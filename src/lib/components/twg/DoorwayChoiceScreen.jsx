@@ -24,37 +24,37 @@ const ZONE_CONFIG = {
   mountain: {
     heading: "Let's find your strength",
     sub:     'Pick one gentle way to begin',
-    bg:      '/images/twg-bg.png',
+    bg:      '/images/twg-bg.webp',
   },
   river: {
     heading: "Let's let it flow gently",
     sub:     'Choose something that feels right',
-    bg:      '/images/twg-bg.png',
+    bg:      '/images/twg-bg.webp',
   },
   cave: {
     heading: "Let's find our quiet place",
     sub:     'Pick one gentle step forward',
-    bg:      '/images/twg-bg.png',
+    bg:      '/images/twg-bg.webp',
   },
   hut: {
     heading: "Let's feel safe together",
     sub:     'Choose something warm to try',
-    bg:      '/images/twg-bg.png',
+    bg:      '/images/twg-bg.webp',
   },
   forest: {
     heading: "Let's breathe with the forest",
     sub:     'Pick something gentle',
-    bg:      '/images/twg-bg.png',
+    bg:      '/images/twg-bg.webp',
   },
   festival: {
     heading: "Let's find your spark again",
     sub:     'Choose something that lights you up',
-    bg:      '/images/twg-bg.png',
+    bg:      '/images/twg-bg.webp',
   },
   default: {
     heading: "Let's feel better together",
     sub:     'Pick something gentle',
-    bg:      '/images/twg-bg.png',
+    bg:      '/images/twg-bg.webp',
   },
 }
 

@@ -235,7 +235,7 @@ const CulturalCelebrationModal = ({
             {/* Mooshika Character */}
             <div className="adventure-character">
               <img 
-                src="/images/mooshika-coach.png" 
+                src="/images/mooshika-coach.webp" 
                 alt="Mooshika"
                 className={`mooshika-character ${selectedEmotion ? selectedEmotion.animation : 'celebrate'}`}
               />
@@ -252,7 +252,7 @@ const CulturalCelebrationModal = ({
             {/* Adventure Backpack */}
             <div className="adventure-backpack">
               <img 
-                src="/images/symbol-backpack.png" 
+                src="/images/symbol-backpack.webp" 
                 alt="Adventure Backpack"
                 className="backpack-image"
               />

@@ -15,13 +15,13 @@
 /* 1. BASE LAYOUT & HEADER                    */
 /* ========================================== */
 .clean-profile-overlay {
-  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  position: fixed; top: 0; left: 0; width: 100vw; height: var(--app-height, 100vh);
   display: flex; align-items: center; justify-content: center; z-index: 1000;
 }
 
 .clean-forest-background {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background-image: url('/images/profile-bg.png');
+  background-image: url('/images/profile-bg.webp');
   background-size: cover; background-position: center; z-index: -1;
   overflow: hidden;
 }
@@ -686,7 +686,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 .overlay {
   position: fixed;
   inset: 0;
-  background-image: url('/images/profile-bg.png');
+  background-image: url('/images/profile-bg.webp');
   background-size: cover;
   background-position: center;
   display: flex;
@@ -1071,7 +1071,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 
 /* Overlay variant that uses the temple/purple bg image */
 .clean-modal-overlay.scroll-overlay {
-  background-image: linear-gradient(rgba(255, 244, 214, 0.45), rgba(255, 244, 214, 0.45)), url('/images/profile-bg.png');
+  background-image: linear-gradient(rgba(255, 244, 214, 0.45), rgba(255, 244, 214, 0.45)), url('/images/profile-bg.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

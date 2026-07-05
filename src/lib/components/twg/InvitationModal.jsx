@@ -35,7 +35,7 @@ export default function InvitationModal({
       {/* Background image */}
       <div
         className="invite-bg"
-        style={{ backgroundImage: "url('/images/twg-bg.png')" }}
+        style={{ backgroundImage: "url('/images/twg-bg.webp')" }}
       />
 
       {/* Soft mystical overlay — tint shifts per emotion theme */}
@@ -53,7 +53,7 @@ export default function InvitationModal({
       {/* Ganesha character — bottom left, floating */}
       <img
         className="invite-ganesha"
-        src="/images/ganesha-character.png"
+        src="/images/ganesha-character.webp"
         alt="Ganesha inviting"
         draggable={false}
       />

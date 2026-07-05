@@ -363,7 +363,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
       const allMeanings = [
         { 
           id: 'vakratunda', displayName: "Vakratunda", subtitle: "Curved Trunk!", 
-          image: '/images/meanings-caveofsecrets/vakratunda-symbol.png',
+          image: '/images/meanings-caveofsecrets/vakratunda-symbol.webp',
           description: "A curvy trunk that lifts anything — tiny or huge! Powerful yet gentle — just like Ganesha. ✨",
           audio: '/audio/meanings/vakratunda.mp3'
         },

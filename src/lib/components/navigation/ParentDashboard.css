@@ -11,7 +11,7 @@
   inset: 0;
   font-family: 'Nunito', sans-serif;
   z-index: 50;
-  background-image: url('/images/profile-background.png');
+  background-image: url('/images/profile-background.webp');
   background-size: cover;
   background-position: top center;
   overflow: hidden;

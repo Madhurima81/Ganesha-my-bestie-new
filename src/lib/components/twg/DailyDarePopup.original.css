@@ -8,7 +8,7 @@
   position: fixed;
   inset: 0;
   z-index: 3000;
-  background-image: url('/images/profile-background.png');
+  background-image: url('/images/profile-background.webp');
   background-size: cover;
   background-position: center;
   display: flex;
