@@ -88,7 +88,7 @@ export default function PinScreen({ onSuccess }) {
 
   return (
     <div style={{
-      minHeight: '100vh',
+      minHeight: 'var(--app-height, 100vh)',
       background: C.cream,
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center',
