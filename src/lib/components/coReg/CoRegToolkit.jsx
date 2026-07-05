@@ -128,7 +128,7 @@ export default function CoRegToolkit({
   // ── Technique picker ──────────────────────────────────────────────
   return (
     <div style={{
-      minHeight: '100vh',
+      minHeight: 'var(--app-height, 100vh)',
       background: 'radial-gradient(ellipse at 50% 20%, #fff9e6, #ffe8b0)',
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center',

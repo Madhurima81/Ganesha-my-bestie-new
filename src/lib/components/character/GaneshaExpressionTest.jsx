@@ -18,7 +18,7 @@ export default function GaneshaExpressionTest() {
 
   return (
     <div style={{
-      minHeight: '100vh',
+      minHeight: 'var(--app-height, 100vh)',
       background: 'linear-gradient(135deg, #1a0533 0%, #2d1b69 50%, #1a3a2a 100%)',
       fontFamily: 'system-ui, sans-serif',
       padding: '40px 24px',

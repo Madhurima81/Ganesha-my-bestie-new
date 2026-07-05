@@ -68,7 +68,7 @@ export default function JumpExperience({
 
   return (
     <div style={{
-      minHeight: '100vh',
+      minHeight: 'var(--app-height, 100vh)',
       background: 'radial-gradient(ellipse, #fff8e1, #ffecb3)',
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center',

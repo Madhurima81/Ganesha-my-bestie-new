@@ -107,7 +107,7 @@ export default function BreathingExperience({
 
   return (
     <div style={{
-      minHeight: '100vh',
+      minHeight: 'var(--app-height, 100vh)',
       background: 'radial-gradient(ellipse at 50% 30%, #e8f5e9, #c8e6c9)',
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center',

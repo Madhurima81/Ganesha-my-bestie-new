@@ -59,7 +59,7 @@ export default function MindfulnessExperience({
 
   return (
     <div style={{
-      minHeight: '100vh',
+      minHeight: 'var(--app-height, 100vh)',
       background: isDiya
         ? 'radial-gradient(ellipse at 50% 40%, #1a0a00, #2c1a0e)'
         : 'radial-gradient(ellipse at 50% 30%, #e3f2fd, #bbdefb)',

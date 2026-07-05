@@ -38,7 +38,7 @@ export default function PrintableGenerator({
           body {
             margin: 0; padding: 40px;
             display: flex; align-items: center; justify-content: center;
-            min-height: 100vh; background: #FFF8E7;
+            min-height: var(--app-height, 100vh); background: #FFF8E7;
             font-family: Nunito, sans-serif;
           }
           .card {

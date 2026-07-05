@@ -127,7 +127,7 @@ export default function ScribbleExperience({
 
   return (
     <div style={{
-      minHeight: '100vh',
+      minHeight: 'var(--app-height, 100vh)',
       background: 'radial-gradient(ellipse at 50% 30%, #fff3e0, #ffe0b2)',
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center',

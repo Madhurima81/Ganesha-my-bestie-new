@@ -72,7 +72,7 @@ export default function AffirmationExperience({
 
   return (
     <div style={{
-      minHeight: '100vh',
+      minHeight: 'var(--app-height, 100vh)',
       background: 'radial-gradient(ellipse at 50% 30%, #fffde7, #fff9c4)',
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center',

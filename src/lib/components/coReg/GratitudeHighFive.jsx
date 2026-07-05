@@ -72,7 +72,7 @@ export default function GratitudeHighFive({
 
   return (
     <div style={{
-      minHeight: '100vh',
+      minHeight: 'var(--app-height, 100vh)',
       background: 'radial-gradient(ellipse at 50% 30%, #fce4ec, #f8bbd9)',
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center',
