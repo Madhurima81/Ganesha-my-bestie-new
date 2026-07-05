@@ -38,7 +38,7 @@ import goldenLotusClosed from './assets/images/golden-lotus-closed.png';
 import goldenLotusBloomed from './assets/images/golden-lotus-bloomed.png';
 import elephantFull from './assets/images/elephant-full.png';
 import waterElephant from './assets/images/water-elephant.png';
-import mooshikaCoach from "./assets/images/mooshika-coach.png";
+import mooshikaCoach from "./assets/images/mooshika-coach.webp";
 import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.png';
 import symbolModakColored from '../../shared/images/icons/symbol-modak-new.png';
 import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.png';
@@ -50,7 +50,7 @@ import lotusBefore from './assets/images/lotus-before.png';
 import lotusAfter from './assets/images/lotus-after.png';
 import trunkBefore from './assets/images/trunk-before.png';
 import trunkAfter from './assets/images/trunk-after.png';
-import ganeshaCharacter from './assets/images/ganesha-character.png'; // Added import
+import ganeshaCharacter from './assets/images/ganesha-character.webp'; // Added import
 
 const PHASES = {
   INITIAL: 'initial',

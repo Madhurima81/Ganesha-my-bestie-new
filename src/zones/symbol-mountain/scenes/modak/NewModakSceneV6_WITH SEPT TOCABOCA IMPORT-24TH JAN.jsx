@@ -69,7 +69,7 @@ import modakBefore from './assets/images/modak-before.png';
 import modakAfter from './assets/images/modak-after.png';
 import bellyBefore from './assets/images/belly-before.png';
 import bellyAfter from './assets/images/belly-after.png';
-import ganeshaCharacter from './assets/images/ganesha-character.png';
+import ganeshaCharacter from './assets/images/ganesha-character.webp';
 
 const PHASES = {
   MOOSHIKA_SEARCH: 'mooshika_search',
@@ -1862,7 +1862,7 @@ const completeSymbolLearning = (symbolKey, symbolData) => {
     
     // STAGE 2: Power Teaching (Button)
     powerTitle="Focus Power Unlocked!"
-    powerText="Your mind is like a little mouse… Sometimes it runs around! But guess what? You can call it back!"
+    powerText="Your mind is like a little mouseï¿½ Sometimes it runs around! But guess what? You can call it back!"
     missionText="Let's use this power to collect the modaks!"
     powerIcon={symbolMooshikaColored} // Brain/steering wheel symbol
     
@@ -1934,7 +1934,7 @@ onComplete={() => {
     
     // STAGE 2: Power Teaching
     powerTitle="Gratitude Power Complete!"
-    powerText="You helped Mooshika, collected with care, and shared with love. That's what gratitude means — saying thank you by doing good things!"
+    powerText="You helped Mooshika, collected with care, and shared with love. That's what gratitude means ï¿½ saying thank you by doing good things!"
     powerIcon={symbolBellyColored} // Could show all 3 symbols together
     
     buttonText="Celebrate!"

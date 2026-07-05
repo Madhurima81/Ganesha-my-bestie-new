@@ -9,7 +9,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    min-height: var(--app-height, 100vh);
     background-color: #f0f0f0;
     margin: 0;
     padding: 10px;
@@ -188,7 +188,7 @@
   }
   
   @keyframes fall {
-    to { transform: translateY(100vh) rotate(360deg); }
+    to { transform: translateY(var(--app-height, 100vh)) rotate(360deg); }
   }
   
   /* CSS-only Sidebar */

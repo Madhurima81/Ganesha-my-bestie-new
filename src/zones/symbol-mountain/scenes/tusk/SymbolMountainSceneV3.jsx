@@ -805,7 +805,7 @@ const SymbolMountainSceneContent = ({
   const isFinalFireworksView = showSparkle === 'final-fireworks';
   // GameLayout replaced with plain div â€” pause menu removed
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden' }}>
+    <div style={{ position: 'relative', width: '100%', height: 'var(--app-height, 100vh)', overflow: 'hidden' }}>
       <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
         <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
           <div className="symbol-mountain-scene-v2-container">

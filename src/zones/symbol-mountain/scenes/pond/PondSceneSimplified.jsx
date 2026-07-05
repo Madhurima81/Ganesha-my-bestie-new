@@ -38,7 +38,7 @@ import waterElephant from './assets/images/water-elephant.png';
 import popup1 from './assets/images/popup-1.png';
 import popupGolden from './assets/images/popup-golden.png';
 import popupTrunk from './assets/images/popup-trunk.png';
-import mooshikaCoach from "./assets/images/mooshika-coach.png";
+import mooshikaCoach from "./assets/images/mooshika-coach.webp";
 import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.png';
 import symbolModakColored from '../../shared/images/icons/symbol-modak-new.png';
 import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.png';
@@ -1838,7 +1838,7 @@ case 'final':
               top: 0,
               left: 0,
               width: '100vw',
-              height: '100vh',
+              height: 'var(--app-height, 100vh)',
               zIndex: 9998,
               pointerEvents: 'none',
               overflow: 'hidden'
@@ -1867,7 +1867,7 @@ case 'final':
           <style>{`
             @keyframes confettiFall {
               to {
-                transform: translateY(100vh) rotate(720deg);
+                transform: translateY(var(--app-height, 100vh)) rotate(720deg);
               }
             }
           `}</style>

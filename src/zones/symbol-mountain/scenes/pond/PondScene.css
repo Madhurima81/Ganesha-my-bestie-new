@@ -50,7 +50,7 @@
 /* Ensure no white space on pond scene */
 .pond-scene-container {
   width: 100vw !important;
-  height: 100vh !important;
+  height: var(--app-height, 100vh) !important;
   margin: 0 !important;
   padding: 0 !important;
   overflow: hidden !important;
@@ -59,7 +59,7 @@
 
 .pond-background {
   width: 100% !important;
-  height: 100vh !important;
+  height: var(--app-height, 100vh) !important;
   background-size: cover !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
@@ -1207,7 +1207,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: var(--app-height, 100vh);
   font-size: 24px;
   color: #1565C0;
   font-weight: bold;
@@ -1219,7 +1219,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: var(--app-height, 100vh);
   padding: 20px;
   text-align: center;
   background: #FFF5F5;
@@ -1294,7 +1294,7 @@
 /* For the real confetti in symbol celebration */
 @keyframes confettiFall {
   to {
-    transform: translateY(100vh) rotate(720deg);
+    transform: translateY(var(--app-height, 100vh)) rotate(720deg);
     opacity: 0;
   }
 }

@@ -62,7 +62,7 @@ import modakBefore from './assets/images/modak-before.png';
 import modakAfter from './assets/images/modak-after.png';
 import bellyBefore from './assets/images/belly-before.png';
 import bellyAfter from './assets/images/belly-after.png';
-import ganeshaCharacter from './assets/images/ganesha-character.png';
+import ganeshaCharacter from './assets/images/ganesha-character.webp';
 
 const PHASES = {
   MOOSHIKA_SEARCH: 'mooshika_search',

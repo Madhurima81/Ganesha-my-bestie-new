@@ -44,7 +44,7 @@ import symbolEarsColored from '../../shared/images/icons/symbol-ears-new.png';
 import symbolTuskColored from '../../shared/images/icons/broken-tusk-symbol.png';
 
 // Coach image (reuse from pond)
-import mooshikaCoach from "../pond/assets/images/mooshika-coach.png";
+import mooshikaCoach from "../pond/assets/images/mooshika-coach.webp";
 
 // Sacred Assembly Game Configuration
 const SACRED_SYMBOLS = [

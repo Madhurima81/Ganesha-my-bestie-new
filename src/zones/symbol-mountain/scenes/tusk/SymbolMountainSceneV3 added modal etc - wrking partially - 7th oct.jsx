@@ -50,7 +50,7 @@ import ganeshaTusk from '../../shared/images/icons/broken-tusk-symbol.png';
 import popupEyes from '../tusk/assets/images/popup-eyes-info.png';
 import popupEars from '../tusk/assets/images/popup-ears-info.png';
 import popupTusk from '../tusk/assets/images/popup-tusk-info.png';
-import eyesCoach from '../tusk/assets/images/mooshika-coach.png';
+import eyesCoach from '../tusk/assets/images/mooshika-coach.webp';
 import ganeshaOutline from '../tusk/assets/images/ganesha-outline.png';
 import ganeshaComplete from '../tusk/assets/images/ganesha-complete.png';
 
@@ -2998,7 +2998,7 @@ const handleEyesGameComplete = () => {
               top: 0, 
               left: 0, 
               width: '100vw', 
-              height: '100vh', 
+              height: 'var(--app-height, 100vh)', 
               zIndex: 9998, 
               pointerEvents: 'none',
               overflow: 'hidden'
