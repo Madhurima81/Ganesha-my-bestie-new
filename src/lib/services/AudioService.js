@@ -28,12 +28,12 @@ import {
 
 const SFX = {
   uiTap:              { src: ['/audio/sfx/sfx-tap.mp3'],          volume: 0.32, fallback: synthUiTap },
-  wrongTap:           { src: ['/audio/sfx/sfx-oops.wav'],         volume: 0.40, fallback: synthWrongTap },
-  magicSparkle:       { src: ['/audio/sfx/sfx-pop.wav'],          volume: 0.50, fallback: synthSparkle },
-  magicBloom:         { src: ['/audio/sfx/sfx-success.wav'],      volume: 0.50, fallback: synthBloom },
-  divineGlow:         { src: ['/audio/sfx/sfx-power-unlock.wav'], volume: 0.45, fallback: synthGlow },
+  wrongTap:           { src: ['/audio/sfx/sfx-oops.mp3'],         volume: 0.40, fallback: synthWrongTap },
+  magicSparkle:       { src: ['/audio/sfx/sfx-pop.mp3'],          volume: 0.50, fallback: synthSparkle },
+  magicBloom:         { src: ['/audio/sfx/sfx-success.mp3'],      volume: 0.50, fallback: synthBloom },
+  divineGlow:         { src: ['/audio/sfx/sfx-power-unlock.mp3'], volume: 0.45, fallback: synthGlow },
   celebrationTwinkle: { src: ['/audio/sfx/sfx-celebration.wav'],  volume: 0.55, fallback: synthTwinkle },
-  cardRevealChime:    { src: ['/audio/sfx/sfx-chime.wav'],        volume: 0.50, fallback: synthChime },
+  cardRevealChime:    { src: ['/audio/sfx/sfx-chime.mp3'],        volume: 0.50, fallback: synthChime },
 };
 
 // ── Howl instances (lazy-created per sound) ──────────────────────────────────
