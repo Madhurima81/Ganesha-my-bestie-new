@@ -8,7 +8,7 @@
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: var(--app-height, 100vh);
   overflow: hidden;
   margin: 0;
   padding: 0;
@@ -25,7 +25,7 @@
 
 .screen {
   position: relative;
-  height: 100vh;
+  height: var(--app-height, 100vh);
   overflow: hidden;
 }
 
@@ -42,12 +42,12 @@
 /* ── Zone camera positions — 250% zooms in ~25% from main map view ──
    Positions reference where each zone sits on the 4116×3072 canvas.
    Fine-tune % values visually per zone. */
-.symbol-mountain .bg-layer { background-image: url('/images/modakmtn-bg.png'); }
-.cave-of-secrets .bg-layer { background-image: url('/images/cave-bg.png'); }
-.shloka-river    .bg-layer { background-image: url('/images/shlokariver-bg.png'); }
-.festival-square .bg-layer { background-image: url('/images/lotussquare-bg.png'); }
-.about-me-hut    .bg-layer { background-image: url('/images/hut-bg.png'); }
-.story-treehouse .bg-layer { background-image: url('/images/treehouse-bg.png'); }
+.symbol-mountain .bg-layer { background-image: url('/images/modakmtn-bg.webp'); }
+.cave-of-secrets .bg-layer { background-image: url('/images/cave-bg.webp'); }
+.shloka-river    .bg-layer { background-image: url('/images/shlokariver-bg.webp'); }
+.festival-square .bg-layer { background-image: url('/images/lotussquare-bg.webp'); }
+.about-me-hut    .bg-layer { background-image: url('/images/hut-bg.webp'); }
+.story-treehouse .bg-layer { background-image: url('/images/treehouse-bg.webp'); }
 
 /* ── Subtle top tint — keeps zone title readable ── */
 .bg-layer::after {
@@ -190,7 +190,7 @@
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: var(--app-height, 100vh);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1550,7 +1550,7 @@ button[style*="position: fixed"][style*="background: purple"] {
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: var(--app-height, 100vh);
   pointer-events: none;
   z-index: 9999;
 }
@@ -1565,11 +1565,11 @@ button[style*="position: fixed"][style*="background: purple"] {
 
 @keyframes confettiFall {
   0% {
-    transform: translateY(-100vh) rotate(0deg);
+    transform: translateY(-var(--app-height, 100vh)) rotate(0deg);
     opacity: 1;
   }
   100% {
-    transform: translateY(100vh) rotate(720deg);
+    transform: translateY(var(--app-height, 100vh)) rotate(720deg);
     opacity: 0;
   }
 }

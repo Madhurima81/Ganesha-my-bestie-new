@@ -7,13 +7,13 @@ console.log('CleanMapZone file loaded');
 
 // Zone images mapping - using your actual images
 const zoneImages = {
-  'about-me-hut': '/images/about-me-hut.png',
-  'story-treehouse': '/images/story-treehouse.png',
-  'symbol-mountain': '/images/symbol-mountain.png',
-  'cave-of-secrets': '/images/cave-of-secrets.png',
-  'obstacle-forest': '/images/obstacle-forest.png',
-  'festival-square': '/images/festival-square.png',
-  'shloka-river': '/images/shloka-river.png'
+  'about-me-hut': '/images/about-me-hut.webp',
+  'story-treehouse': '/images/story-treehouse.webp',
+  'symbol-mountain': '/images/symbol-mountain.webp',
+  'cave-of-secrets': '/images/cave-of-secrets.webp',
+  'obstacle-forest': '/images/obstacle-forest.webp',
+  'festival-square': '/images/festival-square.webp',
+  'shloka-river': '/images/shloka-river.webp'
 };
 
 // Zone emojis as fallback
@@ -393,7 +393,7 @@ const checkSceneUnlocked = (sceneId) => {
       {/* Map Background */}
       <div className="clean-map-background">
         <img 
-          src="/images/map-background.png" 
+          src="/images/map-background.webp" 
           alt="Map Background"
           className="map-background-image"
           onError={(e) => {

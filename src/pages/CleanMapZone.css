@@ -9,7 +9,7 @@
   position: fixed;
   inset: 0;
   width: 100vw;
-  height: 100vh;
+  height: var(--app-height, 100vh);
   overflow: hidden;
 }
 
@@ -123,6 +123,12 @@
 
 .zone:hover {
   transform: translateY(-4px);
+}
+
+/* Touch feedback — hover never fires on iPad, so give a pressed state */
+.zone:active {
+  transform: scale(0.96);
+  transition: transform 0.1s ease;
 }
 
 /* ── ACTIVE STATE ─────────────────────────────────
@@ -383,7 +389,7 @@
    HOW TO RESIZE A LABEL:
      • Change `font-size` — bigger number = bigger text
 
-   TIP: All positions are relative to the full viewport (100vw / 100vh),
+   TIP: All positions are relative to the full viewport (100vw / var(--app-height, 100vh)),
    so 10% left on an iPad kids canvas (2058px wide) ≈ 206px from left.
    ===================================================================== */
 
@@ -408,15 +414,15 @@
 }
 
 .festival-label {
-  top: 76%;
-  left: 12%;
+  top: 45%;
+  left: 75%;
   right: auto;
   bottom: auto;
   font-size: clamp(24px, 2.8vw, 52px);
 }
 
 .hut-label {
-  top: 54%;
+  top: 59%;
   left: 9%;
   right: auto;
   bottom: auto;
@@ -693,6 +699,10 @@
   animation: profileChipPop 0.5s cubic-bezier(.22, 1, .36, 1) both;
 }
 
+.map-profile-chip:active {
+  transform: scale(0.96);
+}
+
 .map-profile-chip:hover {
   background: rgba(255, 255, 255, 0.98);
   transform: scale(1.01);
@@ -798,7 +808,8 @@
   line-height: 1;
 }
 
-.map-sound-toggle:hover {
+.map-sound-toggle:hover,
+.map-sound-toggle:active {
   transform: scale(0.95);
   opacity: 0.75;
 }
@@ -833,6 +844,10 @@
   transform: scale(1.04);
 }
 
+.map-back-button:active {
+  transform: scale(0.96);
+}
+
 /* =========================
    RESPONSIVE — iPAD KIDS target (landscape ~2058×1536)
    These override label font-sizes and zone tap area sizes
@@ -849,8 +864,8 @@
   .shloka-mountain-label { top: 18%; left: 14%; font-size: 22px; }
   .cave-label            { top: 46%; left: 76%; right: auto; bottom: auto; font-size: 18px; }
   .river-label           { top: 12%; right: 12%; font-size: 20px; }
-  .festival-label        { bottom: 20%; right: 12%; font-size: 18px; }
-  .hut-label             { top: 54%; left: 9%; right: auto; bottom: auto; font-size: 18px; }
+  .festival-label        { top: 45%; left: 75%; right: auto; bottom: auto; font-size: 18px; }
+  .hut-label             { top: 59%; left: 9%; right: auto; bottom: auto; font-size: 18px; }
   .treehouse-label       { top: 66%; left: 65%; bottom: auto; font-size: 18px; }
   .fun-zone-gate         { width: 200px; }
 }
@@ -860,8 +875,8 @@
   .shloka-mountain-label { top: 16%; left: 10%; font-size: 14px; letter-spacing: 0.5px; }
   .cave-label            { top: 46%; left: 76%; right: auto; bottom: auto; font-size: 12px; }
   .river-label           { top: 12%; right: 8%; font-size: 13px; }
-  .festival-label        { bottom: 18%; right: 8%; font-size: 12px; }
-  .hut-label             { top: 54%; left: 9%; right: auto; bottom: auto; font-size: 12px; }
+  .festival-label        { top: 45%; left: 75%; right: auto; bottom: auto; font-size: 12px; }
+  .hut-label             { top: 59%; left: 9%; right: auto; bottom: auto; font-size: 12px; }
   .treehouse-label       { top: 66%; left: 65%; bottom: auto; font-size: 12px; }
   .fun-zone-gate         { width: 130px; bottom: 10%; right: 5%; }
   .map-back-button       { font-size: 14px; padding: 8px 16px; top: 12px; left: 12px; }
@@ -1142,6 +1157,7 @@
 }
 
 .map-twg-btn:hover,
+.map-twg-btn:active,
 .map-twg-btn:focus-visible {
   transform: translateX(-50%) translateY(-2px) scale(0.9);
   box-shadow:

@@ -1338,7 +1338,7 @@ const handleReplayIntroStory = () => {
                 <div className="scene-icon-area">
                   <div className="icon-circle">
                     <img
-                      src="/intro-story/story1-img4.png"
+                      src="/intro-story/story1-img4.webp"
                       alt="Meet Ganesha Again"
                       className="scene-icon-img"
                     />

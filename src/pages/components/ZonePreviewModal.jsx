@@ -9,7 +9,7 @@ const zoneContent = {
   'symbol-mountain': {
     tagline: "Find What Makes Ganesha Special",
     primaryAction: "Find the First Symbol",
-    image: '/images/zone-art-symbol-mountain.png',
+    image: '/images/zone-art-symbol-mountain.webp',
     featuresBg: 'rgba(244, 196, 48, 0.15)',
     accentColor: '#F4C430',
     titleColor: '#6B4D00',
@@ -23,7 +23,7 @@ const zoneContent = {
   'cave-of-secrets': {
     tagline: "Be a Word Detective",
     primaryAction: "Solve the First Word",
-    image: '/images/zone-art-cave.png',
+    image: '/images/zone-art-cave.webp',
     featuresBg: 'rgba(200, 90, 46, 0.12)',
     accentColor: '#C85A2E',
     titleColor: '#7A2E0A',
@@ -37,7 +37,7 @@ const zoneContent = {
   'shloka-river': {
     tagline: "See What Your Voice Can Do",
     primaryAction: "Try the First Word",
-    image: '/images/zone-art-shloka-river.png',
+    image: '/images/zone-art-shloka-river.webp',
     featuresBg: 'rgba(74, 155, 135, 0.12)',
     accentColor: '#4A9B87',
     titleColor: '#1A5E50',
@@ -51,7 +51,7 @@ const zoneContent = {
   'festival-square': {
     tagline: "Celebrate Ganesh Chaturthi Your Way",
     primaryAction: "Start the Celebration",
-    image: '/images/zone-art-festival.png',
+    image: '/images/zone-art-festival.webp',
     featuresBg: 'rgba(230, 126, 34, 0.12)',
     accentColor: '#E67E22',
     titleColor: '#7A3A00',
@@ -65,7 +65,7 @@ const zoneContent = {
   'about-me-hut': {
     tagline: "Create Your Place in Ganesha's World",
     primaryAction: "Step Inside",
-    image: '/images/zone-art-hut.png',
+    image: '/images/zone-art-hut.webp',
     featuresBg: 'rgba(216, 149, 102, 0.15)',
     accentColor: '#D89566',
     titleColor: '#6B3A0A',

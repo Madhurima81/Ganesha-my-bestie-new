@@ -5,7 +5,7 @@
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: var(--app-height, 100vh);
   overflow: hidden;
   margin: 0;
   padding: 0;
@@ -195,7 +195,7 @@
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: var(--app-height, 100vh);
   background-color: rgba(0, 0, 0, 0.8);
   background-size: cover;
   background-position: center;
@@ -209,31 +209,31 @@
 
 /* Zone-specific backgrounds */
 .clean-zone-details-overlay.zone-symbol-mountain {
-  background-image: url('/images/symbol-mountain-bg.png');
+  background-image: url('/images/symbol-mountain-bg.webp');
 }
 
 .clean-zone-details-overlay.zone-cave-of-secrets {
-  background-image: url('/images/cave-of-secrets.png');
+  background-image: url('/images/cave-of-secrets.webp');
 }
 
 .clean-zone-details-overlay.zone-obstacle-forest {
-  background-image: url('/images/obstacle-forest.png');
+  background-image: url('/images/obstacle-forest.webp');
 }
 
 .clean-zone-details-overlay.zone-shloka-river {
-  background-image: url('/images/shloka-river.png');
+  background-image: url('/images/shloka-river.webp');
 }
 
 .clean-zone-details-overlay.zone-about-me-hut {
-  background-image: url('/images/about-me-hut.png');
+  background-image: url('/images/about-me-hut.webp');
 }
 
 .clean-zone-details-overlay.zone-story-treehouse {
-  background-image: url('/images/story-treehouse.png');
+  background-image: url('/images/story-treehouse.webp');
 }
 
 .clean-zone-details-overlay.zone-festival-square {
-  background-image: url('/images/festival-square.png');
+  background-image: url('/images/festival-square.webp');
 }
 
 /* Modal Containers */
@@ -262,7 +262,7 @@
   margin: 0 !important;
   max-width: 100vw !important;
   width: 100vw !important;
-  height: 100vh !important;
+  height: var(--app-height, 100vh) !important;
   overflow: hidden !important;
   position: relative !important;
   animation: none !important;

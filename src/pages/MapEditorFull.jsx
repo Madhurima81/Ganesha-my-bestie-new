@@ -27,23 +27,13 @@ const ADD_BTNS = [
   ['flower2', 'Flower 2'],
 ];
 
-const STORAGE_KEY = 'gmb_map_props';
-
 let nextId = 1;
 
-const loadSaved = () => {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    parsed.forEach((p) => {
-      const n = parseInt(p.id?.split('-').pop(), 10);
-      if (!Number.isNaN(n) && n >= nextId) nextId = n + 1;
-    });
-    return parsed;
-  } catch {
-    return [];
-  }
+const syncNextId = (items = []) => {
+  items.forEach((item) => {
+    const n = parseInt(item.id?.split('-').pop(), 10);
+    if (!Number.isNaN(n) && n >= nextId) nextId = n + 1;
+  });
 };
 
 const getTransforms = (item) => {
@@ -57,11 +47,15 @@ const getTransforms = (item) => {
 
 export default function MapEditorFull({
   onClose,
+  propItems = [],
+  onPropItemsChange = () => {},
+  overlayItems = {},
+  onOverlayItemsChange = () => {},
+  overlayDefaults = {},
   zoneArtItems = {},
   onZoneArtItemsChange = () => {},
   zoneArtDefaults = {},
 }) {
-  const [items, setItems] = useState(loadSaved);
   const [sel, setSel] = useState(null);
   const [copied, setCopied] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -72,10 +66,17 @@ export default function MapEditorFull({
   const itemDrag = useRef(null);
   const panelDrag = useRef(null);
 
+  const items = propItems;
+  const overlayList = Object.values(overlayItems);
   const zoneArtList = Object.values(zoneArtItems);
   const isZoneArtMode = mode === 'zone-art';
-  const currentItems = isZoneArtMode ? zoneArtList : items;
+  const isOverlayMode = mode === 'overlay';
+  const currentItems = isZoneArtMode ? zoneArtList : isOverlayMode ? overlayList : items;
   const selItem = currentItems.find((i) => i.id === sel);
+
+  useEffect(() => {
+    syncNextId(items);
+  }, [items]);
 
   const pct = useCallback((cx, cy) => {
     const r = canvasRef.current.getBoundingClientRect();
@@ -83,8 +84,15 @@ export default function MapEditorFull({
   }, []);
 
   const updatePropItem = useCallback((id, patch) => {
-    setItems((prev) => prev.map((item) => (item.id === id ? { ...item, ...patch } : item)));
-  }, []);
+    onPropItemsChange((prev) => prev.map((item) => (item.id === id ? { ...item, ...patch } : item)));
+  }, [onPropItemsChange]);
+
+  const updateOverlayItem = useCallback((id, patch) => {
+    onOverlayItemsChange((current) => ({
+      ...current,
+      [id]: { ...current[id], ...patch },
+    }));
+  }, [onOverlayItemsChange]);
 
   const updateZoneArtItem = useCallback((id, patch) => {
     onZoneArtItemsChange((current) => ({
@@ -98,8 +106,12 @@ export default function MapEditorFull({
       updateZoneArtItem(id, patch);
       return;
     }
+    if (isOverlayMode) {
+      updateOverlayItem(id, patch);
+      return;
+    }
     updatePropItem(id, patch);
-  }, [isZoneArtMode, updatePropItem, updateZoneArtItem]);
+  }, [isOverlayMode, isZoneArtMode, updateOverlayItem, updatePropItem, updateZoneArtItem]);
 
   const onItemDown = (e, item) => {
     e.preventDefault();
@@ -149,14 +161,6 @@ export default function MapEditorFull({
   };
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-    } catch {
-      // best effort only
-    }
-  }, [items]);
-
-  useEffect(() => {
     const onKey = (e) => {
       if (!sel) return;
 
@@ -168,6 +172,11 @@ export default function MapEditorFull({
 
         if (isZoneArtMode) {
           updateZoneArtItem(sel, {
+            w: Math.max(2, +(current.w + delta).toFixed(1)),
+            h: Math.max(2, +(current.h + delta).toFixed(1)),
+          });
+        } else if (isOverlayMode) {
+          updateOverlayItem(sel, {
             w: Math.max(2, +(current.w + delta).toFixed(1)),
             h: Math.max(2, +(current.h + delta).toFixed(1)),
           });
@@ -199,11 +208,11 @@ export default function MapEditorFull({
 
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [currentItems, isZoneArtMode, sel, updateCurrentItem, updatePropItem, updateZoneArtItem]);
+  }, [currentItems, isOverlayMode, isZoneArtMode, sel, updateCurrentItem, updateOverlayItem, updatePropItem, updateZoneArtItem]);
 
   const addItem = (type) => {
     const id = `${type}-${nextId++}`;
-    setItems((prev) => [
+    onPropItemsChange((prev) => [
       ...prev,
       { id, type, src: SRCS[type], left: 45, top: 48, w: DEFAULT_W[type], flip: false },
     ]);
@@ -220,6 +229,13 @@ export default function MapEditorFull({
       });
       return;
     }
+    if (isOverlayMode) {
+      updateOverlayItem(sel, {
+        w: Math.max(2, +(selItem.w + delta).toFixed(1)),
+        h: Math.max(2, +(selItem.h + delta).toFixed(1)),
+      });
+      return;
+    }
     updatePropItem(sel, {
       w: Math.max(2, +(selItem.w + delta).toFixed(1)),
     });
@@ -231,8 +247,8 @@ export default function MapEditorFull({
   };
 
   const remove = () => {
-    if (isZoneArtMode || !sel) return;
-    setItems((prev) => prev.filter((item) => item.id !== sel));
+    if (isZoneArtMode || isOverlayMode || !sel) return;
+    onPropItemsChange((prev) => prev.filter((item) => item.id !== sel));
     setSel(null);
   };
 
@@ -249,10 +265,16 @@ export default function MapEditorFull({
       return;
     }
 
+    if (isOverlayMode) {
+      if (!window.confirm('Reset draggable titles/signs to default?')) return;
+      onOverlayItemsChange(overlayDefaults);
+      setSel(null);
+      return;
+    }
+
     if (!window.confirm('Clear all placed props?')) return;
-    setItems([]);
+    onPropItemsChange([]);
     setSel(null);
-    localStorage.removeItem(STORAGE_KEY);
   };
 
   const copyJSON = () => {
@@ -260,9 +282,13 @@ export default function MapEditorFull({
       ? zoneArtList.map(({ id, label, src, left, top, w, h, centered, flip: artFlip, rotate, rotateY, opacity }) => ({
           id, label, src, left, top, w, h, centered, flip: artFlip, rotate, rotateY, opacity,
         }))
-      : items.map(({ id, type, src, left, top, w, flip: propFlip }) => ({
-          id, type, src, left, top, w, flip: propFlip,
-        }));
+      : isOverlayMode
+        ? overlayList.map(({ id, label, kind, text, src, left, top, w, h }) => ({
+            id, label, kind, text, src, left, top, w, h,
+          }))
+        : items.map(({ id, type, src, left, top, w, flip: propFlip }) => ({
+            id, type, src, left, top, w, flip: propFlip,
+          }));
 
     navigator.clipboard.writeText(JSON.stringify(out, null, 2));
     setCopied(true);
@@ -277,7 +303,7 @@ export default function MapEditorFull({
       onPointerUp={onItemUp}
       onClick={() => setSel(null)}
     >
-      {!isZoneArtMode && items.map((item) => (
+      {!isZoneArtMode && !isOverlayMode && items.map((item) => (
         <img
           key={item.id}
           src={item.src}
@@ -300,6 +326,56 @@ export default function MapEditorFull({
             userSelect: 'none',
           }}
         />
+      ))}
+
+      {isOverlayMode && overlayList.map((item) => (
+        <div
+          key={item.id}
+          onPointerDown={sel === item.id ? (e) => onItemDown(e, item) : undefined}
+          onClick={sel === item.id ? (e) => {
+            e.stopPropagation();
+            setSel(item.id);
+          } : undefined}
+          style={{
+            position: 'absolute',
+            left: `${item.left}%`,
+            top: `${item.top}%`,
+            width: `${item.w}%`,
+            minHeight: `${item.h}%`,
+            outline: sel === item.id ? '3px solid #ff3b9a' : '1px dashed rgba(120, 80, 200, 0.55)',
+            background: sel === item.id ? 'rgba(255, 59, 154, 0.12)' : 'rgba(91, 58, 156, 0.08)',
+            borderRadius: 12,
+            boxSizing: 'border-box',
+            cursor: sel === item.id ? 'grab' : 'default',
+            pointerEvents: sel === item.id ? 'auto' : 'none',
+            touchAction: sel === item.id ? 'none' : 'auto',
+            userSelect: 'none',
+            zIndex: sel === item.id ? 2 : 1,
+            padding: 8,
+            color: '#5b3a9c',
+            fontWeight: 700,
+            fontSize: 12,
+            textAlign: item.kind === 'label' ? 'center' : 'left',
+          }}
+        >
+          <div style={{
+            position: 'absolute',
+            top: -22,
+            left: 0,
+            background: sel === item.id ? '#ff3b9a' : '#5b3a9c',
+            color: '#fff',
+            borderRadius: 8,
+            padding: '2px 8px',
+            fontSize: 11,
+            fontWeight: 700,
+            whiteSpace: 'nowrap',
+          }}>
+            {item.label}
+          </div>
+          {item.kind === 'label'
+            ? item.text
+            : <img src={item.src} alt="" draggable={false} style={{ width: '100%', display: 'block' }} />}
+        </div>
       ))}
 
       {isZoneArtMode && zoneArtList.map((item) => (
@@ -391,9 +467,12 @@ export default function MapEditorFull({
             <button onClick={() => { setMode('zone-art'); setSel(null); }} style={{ ...addBtn, background: mode === 'zone-art' ? '#e3d7ff' : '#f4eefe' }}>
               Zone Art
             </button>
+            <button onClick={() => { setMode('overlay'); setSel(null); }} style={{ ...addBtn, background: mode === 'overlay' ? '#e3d7ff' : '#f4eefe', gridColumn: '1 / span 2' }}>
+              Titles / Signs
+            </button>
           </div>
 
-          {!isZoneArtMode && (
+          {!isZoneArtMode && !isOverlayMode && (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 5, marginBottom: 10 }}>
               {ADD_BTNS.map(([type, label]) => (
                 <button key={type} onClick={() => addItem(type)} style={addBtn}>
@@ -417,12 +496,26 @@ export default function MapEditorFull({
             </div>
           )}
 
+          {isOverlayMode && (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 5, marginBottom: 10 }}>
+              {overlayList.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setSel(item.id)}
+                  style={{ ...addBtn, background: sel === item.id ? '#e3d7ff' : '#f4eefe' }}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          )}
+
           <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '8px 0' }} />
 
           <div style={{ opacity: selItem ? 1 : 0.35, pointerEvents: selItem ? 'auto' : 'none' }}>
             <div style={{ fontSize: 11, color: '#999', marginBottom: 4 }}>
               {selItem
-                ? isZoneArtMode
+                ? isZoneArtMode || isOverlayMode
                   ? `${selItem.label} · W: ${selItem.w}% · H: ${selItem.h}%`
                   : `${selItem.type} · W: ${selItem.w}%`
                 : 'Nothing selected'}
@@ -432,7 +525,7 @@ export default function MapEditorFull({
               <input
                 type="range"
                 min={2}
-                max={isZoneArtMode ? 140 : 30}
+                max={isZoneArtMode || isOverlayMode ? 140 : 30}
                 step={0.5}
                 value={selItem.w}
                 onChange={(e) => {
@@ -440,6 +533,14 @@ export default function MapEditorFull({
                   if (isZoneArtMode) {
                     const delta = nextW - selItem.w;
                     updateZoneArtItem(sel, {
+                      w: nextW,
+                      h: Math.max(2, +(selItem.h + delta).toFixed(1)),
+                    });
+                    return;
+                  }
+                  if (isOverlayMode) {
+                    const delta = nextW - selItem.w;
+                    updateOverlayItem(sel, {
                       w: nextW,
                       h: Math.max(2, +(selItem.h + delta).toFixed(1)),
                     });
@@ -485,7 +586,7 @@ export default function MapEditorFull({
               </div>
             )}
 
-            {!isZoneArtMode && (
+            {!isZoneArtMode && !isOverlayMode && (
               <button onClick={remove} style={{ ...actBtn, width: '100%', color: '#c0392b', marginBottom: 2 }}>
                 Delete
               </button>
@@ -522,14 +623,16 @@ export default function MapEditorFull({
           <div style={{ display: 'flex', gap: 5, marginBottom: 0 }}>
             <button onClick={onClose} style={{ ...actBtn, flex: 2 }}>Close</button>
             <button onClick={clearAll} style={{ ...actBtn, flex: 1, color: '#c0392b', fontSize: 11 }}>
-              {isZoneArtMode ? 'Reset' : 'Clear all'}
+              {isZoneArtMode || isOverlayMode ? 'Reset' : 'Clear all'}
             </button>
           </div>
 
           <div style={{ fontSize: 10, color: '#bbb', marginTop: 8, lineHeight: 1.4 }}>
             {isZoneArtMode
               ? 'Drag zone art · arrows nudge · Shift=big · [ ] scale'
-              : 'Drag props · arrows nudge · Shift=big · [ ] scale'}
+              : isOverlayMode
+                ? 'Drag titles/signs · arrows nudge · Shift=big · [ ] scale'
+                : 'Drag props · arrows nudge · Shift=big · [ ] scale'}
           </div>
         </div>
       </div>

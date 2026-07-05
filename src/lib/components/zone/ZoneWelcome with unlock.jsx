@@ -105,7 +105,7 @@ const ZoneWelcome = ({ onNavigate, profileId }) => {
   return (
     <div className="zone-welcome-container" style={{
       padding: '20px',
-      minHeight: '100vh',
+      minHeight: 'var(--app-height, 100vh)',
       background: 'linear-gradient(135deg, #E6F3FF, #B3E0FF)',
       fontFamily: 'Comic Sans MS, cursive'
     }}>

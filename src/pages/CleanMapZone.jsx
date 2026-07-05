@@ -96,6 +96,9 @@ const ZONE_IDS = {
   CAVE: 'cave-of-secrets',
 };
 
+// Temporarily keep Wonder Caves out of the visible map without removing its data/config.
+const HIDDEN_MAP_ZONE_IDS = new Set([ZONE_IDS.CAVE]);
+
 const MAP_ZONE_UNLOCK_VO = {
   [ZONE_IDS.SYMBOL]: "Tap Symbol Mountain — that's where we start!",
   [ZONE_IDS.RIVER]: 'Look! The Shloka River is flowing!',
@@ -311,12 +314,8 @@ const MAP_PROPS = [
   { id: 'tree1-9', type: 'tree1', src: '/images/map/tree1.png', left: 89.8, top: 65.3, w: 6, flip: false },
   { id: 'flower1-25', type: 'flower1', src: '/images/map/flower1.png', left: 9.1, top: 45.2, w: 3, flip: false },
   { id: 'flower2-26', type: 'flower2', src: '/images/map/flower2.png', left: 50.4, top: 47.8, w: 3, flip: false },
-  { id: 'flower2-27', type: 'flower2', src: '/images/map/flower2.png', left: 28.7, top: 67.1, w: 4, flip: false },
-  { id: 'flower1-28', type: 'flower1', src: '/images/map/flower1.png', left: 25.6, top: 91.2, w: 4, flip: false },
-  { id: 'flower2-30', type: 'flower2', src: '/images/map/flower2.png', left: 94.3, top: 58, w: 3, flip: false },
-  { id: 'flower2-31', type: 'flower2', src: '/images/map/flower2.png', left: 79, top: 59.8, w: 3, flip: false },
+  { id: 'flower2-31', type: 'flower2', src: '/images/map/flower2.png', left: 72.8, top: 59.9, w: 3, flip: false },
   { id: 'flower1-32', type: 'flower1', src: '/images/map/flower1.png', left: 44.4, top: 69, w: 3, flip: true },
-  { id: 'flower2-33', type: 'flower2', src: '/images/map/flower2.png', left: 9, top: 92.5, w: 4, flip: true },
   { id: 'flower1-34', type: 'flower1', src: '/images/map/flower1.png', left: 81.8, top: 87.1, w: 3, flip: false },
   { id: 'flower1-35', type: 'flower1', src: '/images/map/flower1.png', left: 67.8, top: 90.4, w: 3, flip: false },
   { id: 'flower1-36', type: 'flower1', src: '/images/map/flower1.png', left: 45.1, top: 85.3, w: 4, flip: false },
@@ -338,7 +337,306 @@ const MAP_PROPS = [
   { id: 'bush1-62', type: 'bush1', src: '/images/map/bush1.png', left: 14.4, top: 45.6, w: 5, flip: false },
   { id: 'bush1-64', type: 'bush1', src: '/images/map/bush1.png', left: 25.3, top: 45.7, w: 5, flip: false },
   { id: 'bush2-65', type: 'bush2', src: '/images/map/bush2.png', left: 23.4, top: 46.8, w: 4, flip: false },
+  { id: 'flower1-66', type: 'flower1', src: '/images/map/flower1.png', left: 45, top: 48, w: 5, flip: false },
+  { id: 'flower2-67', type: 'flower2', src: '/images/map/flower2.png', left: 45, top: 48, w: 5, flip: false },
 ];
+
+const MAP_PROPS_STORAGE_KEY = 'gmb_map_props';
+const loadSavedProps = () => {
+  try {
+    const raw = localStorage.getItem(MAP_PROPS_STORAGE_KEY);
+    if (!raw) return MAP_PROPS;
+    return JSON.parse(raw);
+  } catch {
+    return MAP_PROPS;
+  }
+};
+
+const MAP_OVERLAY_STORAGE_KEY = 'gmb_map_overlays';
+const MAP_OVERLAY_DEFAULTS = {
+  symbolLabel: {
+    id: 'symbolLabel',
+    label: 'Modak Title',
+    kind: 'label',
+    text: 'Modak Mountain',
+    left: 18,
+    top: 15,
+    w: 24,
+    h: 5,
+  },
+  riverLabel: {
+    id: 'riverLabel',
+    label: 'River Title',
+    kind: 'label',
+    text: 'Shloka River',
+    left: 69,
+    top: 16,
+    w: 22,
+    h: 5,
+  },
+  festivalLabel: {
+    id: 'festivalLabel',
+    label: 'Lotus Title',
+    kind: 'label',
+    text: 'Lotus Square',
+    left: 75,
+    top: 45,
+    w: 18,
+    h: 5,
+  },
+  festivalBuilding: {
+    id: 'festivalBuilding',
+    label: 'Lotus Sign',
+    kind: 'sign',
+    src: '/images/map/building.png',
+    left: 82,
+    top: 67,
+    w: 12,
+    h: 10,
+  },
+  hutLabel: {
+    id: 'hutLabel',
+    label: 'Hut Title',
+    kind: 'label',
+    text: "Mooshika's Hut",
+    left: 9,
+    top: 59,
+    w: 22,
+    h: 5,
+  },
+  treehouseLabel: {
+    id: 'treehouseLabel',
+    label: 'Treehouse Title',
+    kind: 'label',
+    text: 'Tusk Treehouse',
+    left: 65,
+    top: 72,
+    w: 22,
+    h: 5,
+  },
+  treehouseBuilding: {
+    id: 'treehouseBuilding',
+    label: 'Treehouse Sign',
+    kind: 'sign',
+    src: '/images/map/building.png',
+    left: 76,
+    top: 98,
+    w: 12,
+    h: 10,
+  },
+  ganeshaSymbol: {
+    id: 'ganeshaSymbol',
+    label: 'Ganesha Modak',
+    kind: 'image',
+    src: GANESHA_POSE_ASSETS.standPoint,
+    left: 31,
+    top: 50,
+    w: 8,
+    h: 10,
+  },
+  ganeshaCave: {
+    id: 'ganeshaCave',
+    label: 'Ganesha Cave',
+    kind: 'image',
+    src: GANESHA_POSE_ASSETS.standPoint,
+    left: 48,
+    top: 42,
+    w: 8,
+    h: 10,
+  },
+  ganeshaRiver: {
+    id: 'ganeshaRiver',
+    label: 'Ganesha River',
+    kind: 'image',
+    src: GANESHA_POSE_ASSETS.standPoint,
+    left: 66,
+    top: 44,
+    w: 8,
+    h: 10,
+  },
+  ganeshaFestival: {
+    id: 'ganeshaFestival',
+    label: 'Ganesha Lotus',
+    kind: 'image',
+    src: GANESHA_POSE_ASSETS.standPoint,
+    left: 69,
+    top: 67,
+    w: 8,
+    h: 10,
+  },
+  ganeshaHut: {
+    id: 'ganeshaHut',
+    label: 'Ganesha Hut',
+    kind: 'image',
+    src: GANESHA_POSE_ASSETS.standPoint,
+    left: 28,
+    top: 70,
+    w: 8,
+    h: 10,
+  },
+  ganeshaTreehouse: {
+    id: 'ganeshaTreehouse',
+    label: 'Ganesha Treehouse',
+    kind: 'image',
+    src: GANESHA_POSE_ASSETS.standPoint,
+    left: 43,
+    top: 58,
+    w: 8,
+    h: 10,
+  },
+  ganeshaAllDone: {
+    id: 'ganeshaAllDone',
+    label: 'Ganesha Final',
+    kind: 'image',
+    src: GANESHA_POSE_ASSETS.celebrate,
+    left: 50,
+    top: 83,
+    w: 10,
+    h: 12,
+  },
+  mushikaSymbol: {
+    id: 'mushikaSymbol',
+    label: 'Mushika Modak',
+    kind: 'image',
+    src: '/images/welcome-mooshika1.webp',
+    left: 21,
+    top: 36,
+    w: 8,
+    h: 10,
+  },
+  mushikaCave: {
+    id: 'mushikaCave',
+    label: 'Mushika Cave',
+    kind: 'image',
+    src: '/images/welcome-mooshika1.webp',
+    left: 80,
+    top: 74,
+    w: 8,
+    h: 10,
+  },
+  mushikaRiver: {
+    id: 'mushikaRiver',
+    label: 'Mushika River',
+    kind: 'image',
+    src: '/images/welcome-mooshika1.webp',
+    left: 71,
+    top: 38,
+    w: 8,
+    h: 10,
+  },
+  mushikaFestival: {
+    id: 'mushikaFestival',
+    label: 'Mushika Lotus',
+    kind: 'image',
+    src: '/images/welcome-mooshika1.webp',
+    left: 73,
+    top: 70,
+    w: 8,
+    h: 10,
+  },
+  mushikaHut: {
+    id: 'mushikaHut',
+    label: 'Mushika Hut',
+    kind: 'image',
+    src: '/images/welcome-mooshika1.webp',
+    left: 14,
+    top: 68,
+    w: 8,
+    h: 10,
+  },
+  mushikaTreehouse: {
+    id: 'mushikaTreehouse',
+    label: 'Mushika Treehouse',
+    kind: 'image',
+    src: '/images/welcome-mooshika1.webp',
+    left: 40,
+    top: 60,
+    w: 8,
+    h: 10,
+  },
+  creatureSymbol: {
+    id: 'creatureSymbol',
+    label: 'Butterfly Modak',
+    kind: 'image',
+    src: '/images/map/butterflyyellow.png',
+    left: 32,
+    top: 28,
+    w: 4,
+    h: 5,
+  },
+  creatureRiver: {
+    id: 'creatureRiver',
+    label: 'Butterfly River',
+    kind: 'image',
+    src: '/images/map/butterflyblue.png',
+    left: 74,
+    top: 18,
+    w: 4,
+    h: 5,
+  },
+  creatureHut: {
+    id: 'creatureHut',
+    label: 'Bird Hut',
+    kind: 'image',
+    src: '/images/map/birdnew.png',
+    left: 26,
+    top: 55,
+    w: 4,
+    h: 5,
+  },
+};
+
+const ZONE_LABEL_OVERLAY_IDS = {
+  [ZONE_IDS.SYMBOL]: 'symbolLabel',
+  [ZONE_IDS.RIVER]: 'riverLabel',
+  [ZONE_IDS.FESTIVAL]: 'festivalLabel',
+  [ZONE_IDS.HUT]: 'hutLabel',
+  [ZONE_IDS.TREEHOUSE]: 'treehouseLabel',
+};
+
+const ZONE_SIGN_OVERLAY_IDS = {
+  [ZONE_IDS.FESTIVAL]: 'festivalBuilding',
+  [ZONE_IDS.TREEHOUSE]: 'treehouseBuilding',
+};
+
+const ZONE_GANESHA_OVERLAY_IDS = {
+  [ZONE_IDS.SYMBOL]: 'ganeshaSymbol',
+  [ZONE_IDS.CAVE]: 'ganeshaCave',
+  [ZONE_IDS.RIVER]: 'ganeshaRiver',
+  [ZONE_IDS.FESTIVAL]: 'ganeshaFestival',
+  [ZONE_IDS.HUT]: 'ganeshaHut',
+  [ZONE_IDS.TREEHOUSE]: 'ganeshaTreehouse',
+};
+
+const ZONE_MUSHIKA_OVERLAY_IDS = {
+  [ZONE_IDS.SYMBOL]: 'mushikaSymbol',
+  [ZONE_IDS.CAVE]: 'mushikaCave',
+  [ZONE_IDS.RIVER]: 'mushikaRiver',
+  [ZONE_IDS.FESTIVAL]: 'mushikaFestival',
+  [ZONE_IDS.HUT]: 'mushikaHut',
+  [ZONE_IDS.TREEHOUSE]: 'mushikaTreehouse',
+};
+
+const ZONE_CREATURE_OVERLAY_IDS = {
+  [ZONE_IDS.SYMBOL]: 'creatureSymbol',
+  [ZONE_IDS.RIVER]: 'creatureRiver',
+  [ZONE_IDS.HUT]: 'creatureHut',
+};
+
+const loadSavedOverlays = () => {
+  try {
+    const raw = localStorage.getItem(MAP_OVERLAY_STORAGE_KEY);
+    if (!raw) return MAP_OVERLAY_DEFAULTS;
+    const parsed = JSON.parse(raw);
+    const merged = {};
+    Object.entries(MAP_OVERLAY_DEFAULTS).forEach(([key, value]) => {
+      merged[key] = { ...value, ...(parsed[key] || {}) };
+    });
+    return merged;
+  } catch {
+    return MAP_OVERLAY_DEFAULTS;
+  }
+};
 
 const MAP_ZONE_ORDER = [
   'symbol-mountain',
@@ -409,14 +707,14 @@ const MAP_ZONE_ART_DEFAULTS = {
     id: 'bridge2',
     label: 'Bridge 2',
     src: '/images/map/bridge-new.png',
-    left: 50.6,
-    top: 83.6,
+    left: 52.5,
+    top: 76.5,
     w: 19,
     h: 19,
     centered: true,
     flip: false,
-    rotate: 0,
-    rotateY: 0,
+    rotate: -4,
+    rotateY: 180,
     opacity: 1
   },
   cave: {
@@ -436,8 +734,8 @@ const MAP_ZONE_ART_DEFAULTS = {
     id: 'hut',
     label: "Mooshika's Hut",
     src: '/images/map/abtmehut2.png',
-    left: 23.7,
-    top: 41.7,
+    left: 22.6,
+    top: 54.1,
     w: 27,
     h: 31,
     centered: false,
@@ -449,8 +747,8 @@ const MAP_ZONE_ART_DEFAULTS = {
     id: 'festival',
     label: 'Lotus Square',
     src: '/images/map/festivalsq1.png',
-    left: 4,
-    top: 73,
+    left: 70.7,
+    top: 44.1,
     w: 30,
     h: 30,
     centered: false,
@@ -524,14 +822,31 @@ const isZoneDone = (allProgress, zoneId) => {
   return !!zone && zone.totalScenes > 0 && zone.completedScenes >= zone.totalScenes;
 };
 
-const getMapGaneshaState = (allProgress, unlockingZones) => {
+const getMapGaneshaState = (allProgress, unlockingZones, overlayItems = {}) => {
+  const getGaneshaPosition = (zoneId) => {
+    const overlayId = ZONE_GANESHA_OVERLAY_IDS[zoneId];
+    const overlay = overlayId ? overlayItems[overlayId] : null;
+    if (overlay) {
+      return { left: `${overlay.left}%`, top: `${overlay.top}%` };
+    }
+    return MAP_GANESHA_ZONE_POS[zoneId];
+  };
+
+  const getFinalGaneshaPosition = () => {
+    const overlay = overlayItems.ganeshaAllDone;
+    if (overlay) {
+      return { left: `${overlay.left}%`, top: `${overlay.top}%` };
+    }
+    return MAP_GANESHA_ALL_DONE_POS;
+  };
+
   const zoneIds = MAP_ZONE_ORDER.filter((zoneId) => allProgress[zoneId]);
   if (zoneIds.length === 0) {
     return {
       pose: 'pointing',
       size: 88,
       position: {
-        ...MAP_GANESHA_ZONE_POS['symbol-mountain'],
+        ...getGaneshaPosition('symbol-mountain'),
         transform: 'translate(-50%, -50%)',
       },
     };
@@ -543,19 +858,19 @@ const getMapGaneshaState = (allProgress, unlockingZones) => {
       pose: 'celebration',
       size: 112,
       position: {
-        ...MAP_GANESHA_ALL_DONE_POS,
+        ...getFinalGaneshaPosition(),
         transform: 'translate(-50%, -50%)',
       },
     };
   }
 
   const unlockingZoneId = Object.keys(unlockingZones || {})[0];
-  if (unlockingZoneId && MAP_GANESHA_ZONE_POS[unlockingZoneId]) {
+  if (unlockingZoneId && getGaneshaPosition(unlockingZoneId)) {
     return {
       pose: 'thumbs_up',
       size: 92,
       position: {
-        ...MAP_GANESHA_ZONE_POS[unlockingZoneId],
+        ...getGaneshaPosition(unlockingZoneId),
         transform: 'translate(-50%, -50%)',
       },
     };
@@ -573,7 +888,7 @@ const getMapGaneshaState = (allProgress, unlockingZones) => {
       pose: 'pointing',
       size: 90,
       position: {
-        ...MAP_GANESHA_ZONE_POS[zoneId],
+        ...getGaneshaPosition(zoneId),
         transform: 'translate(-50%, -50%)',
       },
     };
@@ -584,7 +899,7 @@ const getMapGaneshaState = (allProgress, unlockingZones) => {
     pose: 'thumbs_up',
     size: 92,
     position: {
-      ...(MAP_GANESHA_ZONE_POS[recommendedZone] || MAP_GANESHA_ZONE_POS['symbol-mountain']),
+      ...(getGaneshaPosition(recommendedZone) || getGaneshaPosition('symbol-mountain')),
       transform: 'translate(-50%, -50%)',
     },
   };
@@ -686,6 +1001,8 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   const [zoneProgress, setZoneProgress] = useState({});
   const [isFirstTimeLoad, setIsFirstTimeLoad] = useState(false);
   const [mapDebugMode, setMapDebugMode] = useState(false);
+  const [propItems, setPropItems] = useState(loadSavedProps);
+  const [overlayItems, setOverlayItems] = useState(loadSavedOverlays);
   const [zoneArtItems, setZoneArtItems] = useState(loadSavedZoneArt);
   // const [selectedZone, setSelectedZone] = useState(null);  // removed — no preview modal
   // const [showZoneModal, setShowZoneModal] = useState(false); // removed — no preview modal
@@ -714,6 +1031,22 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
 
   useEffect(() => {
     try {
+      localStorage.setItem(MAP_PROPS_STORAGE_KEY, JSON.stringify(propItems));
+    } catch {
+      // best effort only
+    }
+  }, [propItems]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(MAP_OVERLAY_STORAGE_KEY, JSON.stringify(overlayItems));
+    } catch {
+      // best effort only
+    }
+  }, [overlayItems]);
+
+  useEffect(() => {
+    try {
       localStorage.setItem(MAP_ZONE_ART_STORAGE_KEY, JSON.stringify(zoneArtItems));
     } catch {
       // best effort only
@@ -738,6 +1071,19 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       opacity: art.opacity ?? 1,
       ...extra
     };
+  };
+
+  const getOverlayStyle = (id, extra = {}) => {
+    const item = overlayItems[id];
+    if (!item) return extra;
+    const style = {
+      left: `${item.left}%`,
+      top: `${item.top}%`,
+      ...extra,
+    };
+    if (item.w != null) style.width = `${item.w}%`;
+    if (item.h != null) style.height = `${item.h}%`;
+    return style;
   };
 
 
@@ -1132,7 +1478,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   };
 
   const dotsVisible = getDotsVisible();
-  const mapGaneshaState = getMapGaneshaState(zoneProgress, unlockingZones);
+  const mapGaneshaState = getMapGaneshaState(zoneProgress, unlockingZones, overlayItems);
 
   useEffect(() => {
     const newPos = JSON.stringify(mapGaneshaState.position);
@@ -1268,7 +1614,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
 
       {/* Background image */}
       <img
-        src="/images/map/newmapbg.png"
+        src="/images/map/newmapbg.webp"
         alt="Map"
         className="map-bg-img"
       />
@@ -1309,6 +1655,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         aria-hidden="true"
         style={getZoneArtStyle('bridge2')}
       />
+      {/* Wonder Caves is temporarily hidden from the map. Keep this block for quick restore later.
       <img
         src="/images/map/cavelight.png"
         alt=""
@@ -1325,6 +1672,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         }}
         style={getZoneArtStyle('cave', { cursor: 'pointer', pointerEvents: 'auto' })}
       />
+      */}
       <img
         src="/images/map/abtmehut2.png"
         alt=""
@@ -1379,7 +1727,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       {/* River shimmer — light-on-water effect over Shloka River */}
 
       {/* Decorative props — trees, bushes, flowers, grass */}
-      {MAP_PROPS.map(p => (
+      {propItems.map(p => (
         <img
           key={p.id}
           src={p.src}
@@ -1415,6 +1763,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
 
       {/* ── Zone Wrappers (tap area + label grouped by state) ── */}
       {ZONES_DATA.map(zone => {
+        if (HIDDEN_MAP_ZONE_IDS.has(zone.id)) return null;
         const layout = ZONE_LAYOUT[zone.id];
         if (!layout) return null;
         const baseState = getZoneState(zone.id, zoneProgress);
@@ -1452,6 +1801,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
                 }
               }}
               aria-label={`Open ${zone.name.replace('\n', ' ')}`}
+              style={ZONE_LABEL_OVERLAY_IDS[zone.id] ? getOverlayStyle(ZONE_LABEL_OVERLAY_IDS[zone.id]) : undefined}
             >
               {state === 'completed' && (
                 <span className="zone-check-badge zone-check-badge--label" aria-hidden="true">✓</span>
@@ -1465,7 +1815,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
                 <div className="unlock-note">{zone.unlockNote}</div>
               )}
               {/* Progress dots — only for unlocked zones */}
-              {dotsVisible[zone.id] && (
+              {dotsVisible[zone.id] && zone.id !== ZONE_IDS.FESTIVAL && (
                 <div className="zone-progress">
                   {(ZONE_SCENES[zone.id] || []).map((sceneId, i) => {
                     const completed = i < (zoneProgress[zone.id]?.completedScenes || 0);
@@ -1482,9 +1832,10 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       {/* Building signs — one per coming-soon zone, positioned over each zone image */}
       {[
         { id: 'cave-of-secrets',  style: { left: '87%', top: '70%'  } },
-        { id: 'festival-square',  style: { left: '19%', top: '102%' } },
-        { id: 'story-treehouse',  style: { left: '76%', top: '98%'  } },
+        { id: 'festival-square',  style: getOverlayStyle(ZONE_SIGN_OVERLAY_IDS[ZONE_IDS.FESTIVAL]) },
+        { id: 'story-treehouse',  style: getOverlayStyle(ZONE_SIGN_OVERLAY_IDS[ZONE_IDS.TREEHOUSE]) },
       ].map(({ id, style }) => {
+        if (HIDDEN_MAP_ZONE_IDS.has(id)) return null;
         const zoneDef = ZONES_DATA.find(z => z.id === id);
         if (!zoneDef?.comingSoon) return null;
         return (
@@ -1535,6 +1886,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         const isUnlocking = !!unlockingZones[zoneId];
         const show = zState === 'active' || zState === 'in-progress' || zState === 'completed' || isUnlocking;
         if (!show) return null;
+        const overlayStyle = getOverlayStyle(ZONE_CREATURE_OVERLAY_IDS[zoneId]);
         return (
           <img
             key={`creature-${zoneId}`}
@@ -1542,6 +1894,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
             alt=""
             aria-hidden="true"
             className={`zone-creature ${creature.cls} ${isUnlocking ? 'zone-creature--appear' : ''}`}
+            style={overlayStyle}
           />
         );
       })}
@@ -1615,17 +1968,17 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       {mushikaPop && (
         <div
           className="mushika-pop-overlay"
-          style={ZONE_MUSHIKA_POS[mushikaPop.zone.id]}
+          style={getOverlayStyle(ZONE_MUSHIKA_OVERLAY_IDS[mushikaPop.zone.id], ZONE_MUSHIKA_POS[mushikaPop.zone.id])}
           aria-hidden="true"
         >
           <div className="mushika-pop-bubble">
             {mushikaPop.zone.name.replace('\n', ' ')}
           </div>
           <img
-            src="/images/welcome-mooshika1.png"
+            src="/images/welcome-mooshika1.webp"
             alt=""
             className="mushika-pop-img"
-            onError={e => { e.target.src = '/images/mooshika.png'; }}
+            onError={e => { e.target.src = '/images/mooshika.webp'; }}
           />
         </div>
       )}
@@ -1670,6 +2023,11 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       {mapDebugMode && (
         <MapEditorFull
           onClose={() => setMapDebugMode(false)}
+          propItems={propItems}
+          onPropItemsChange={setPropItems}
+          overlayItems={overlayItems}
+          onOverlayItemsChange={setOverlayItems}
+          overlayDefaults={MAP_OVERLAY_DEFAULTS}
           zoneArtItems={zoneArtItems}
           onZoneArtItemsChange={setZoneArtItems}
           zoneArtDefaults={MAP_ZONE_ART_DEFAULTS}
