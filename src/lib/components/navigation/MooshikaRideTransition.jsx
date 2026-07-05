@@ -73,7 +73,7 @@ const MooshikaRideTransition = ({ avatarId = 'monkey', profileName, onComplete }
       {/* Mooshika + avatar — stays roughly centered, gentle bob, dips at end */}
       <div className={`mooshika-flyer ${isLanding ? 'landing' : ''}`}>
         <img
-          src="/images/mooshika-flying.png"
+          src="/images/mooshika-flying.webp"
           alt="Mooshika"
           className="mooshika-img"
         />

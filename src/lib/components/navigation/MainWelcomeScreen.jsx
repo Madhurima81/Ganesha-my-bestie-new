@@ -217,7 +217,7 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
         <div className="ganesha-wrap">
           <video
             className="welcome-ganesha-video"
-            poster="/images/ganesha-hi-stand.png"
+            poster="/images/ganesha-hi-stand.webp"
             autoPlay
             loop
             muted
