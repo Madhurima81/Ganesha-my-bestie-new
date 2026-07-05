@@ -214,6 +214,13 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   // Local UI state (non-persisted)
   const [activeElement, setActiveElement] = useState(null);
+  // Spam-tap guard: refs update synchronously, so rapid double-taps in the
+  // same frame are blocked even before React state commits.
+  const inputLockRef = useRef(false);
+  const lockInput = (ms) => {
+    inputLockRef.current = true;
+    setTimeout(() => { inputLockRef.current = false; }, ms);
+  };
   const [showSparkles, setShowSparkles] = useState(false);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
   const [showMouseCelebration, setShowMouseCelebration] = useState(false);
@@ -523,7 +530,9 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   // Handle interactions with celebration
   const handleCoconutClick = () => {
+    if (inputLockRef.current) return;
     if (!mixingState.coconutAdded) {
+      lockInput(400);
       const newMixingState = { ...mixingState, coconutAdded: true };
       setMixingState(newMixingState);
       setHelperState(prev => ({ ...prev, celebrating: true }));
@@ -541,7 +550,9 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleJaggeryClick = () => {
+    if (inputLockRef.current) return;
     if (mixingState.coconutAdded && !mixingState.jaggeryAdded) {
+      lockInput(400);
       const newMixingState = { ...mixingState, jaggeryAdded: true };
       setMixingState(newMixingState);
       setHelperState(prev => ({ ...prev, celebrating: true }));
@@ -558,8 +569,10 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleStirClick = () => {
+    if (inputLockRef.current) return;
     if (mixingState.coconutAdded && mixingState.jaggeryAdded && !mixingState.stirred) {
       const newStirCount = mixingState.stirCount + 1;
+      lockInput(newStirCount >= 3 ? 3500 : 350);
       const newMixingState = { ...mixingState, stirCount: newStirCount };
       setMixingState(newMixingState);
 
@@ -599,7 +612,9 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleFlourClick = () => {
+    if (inputLockRef.current) return;
     if (!doughState.flourAdded) {
+      lockInput(400);
       const newDoughState = { ...doughState, flourAdded: true };
       setDoughState(newDoughState);
       setHelperState(prev => ({ ...prev, celebrating: true }));
@@ -616,7 +631,9 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleWaterClick = () => {
+    if (inputLockRef.current) return;
     if (doughState.flourAdded && !doughState.waterAdded) {
+      lockInput(400);
       const newDoughState = { ...doughState, waterAdded: true };
       setDoughState(newDoughState);
       setHelperState(prev => ({ ...prev, celebrating: true }));
@@ -633,8 +650,10 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleDoughMixClick = () => {
+    if (inputLockRef.current) return;
     if (doughState.flourAdded && doughState.waterAdded && !doughState.mixed) {
       const newMixCount = doughState.mixCount + 1;
+      lockInput(newMixCount >= 3 ? 3500 : 350);
       const newDoughState = { ...doughState, mixCount: newMixCount };
       setDoughState(newDoughState);
 
@@ -674,7 +693,9 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleDoughPlaceClick = () => {
+    if (inputLockRef.current) return;
     if (!shapingState.doughPlaced) {
+      lockInput(400);
       const newShapingState = { ...shapingState, doughPlaced: true };
       setShapingState(newShapingState);
       setHelperState(prev => ({ ...prev, celebrating: true }));
@@ -691,7 +712,9 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleFlattenClick = () => {
+    if (inputLockRef.current) return;
     if (shapingState.doughPlaced && !shapingState.flattened) {
+      lockInput(400);
       const newShapingState = { ...shapingState, flattened: true };
       setShapingState(newShapingState);
       setHelperState(prev => ({ ...prev, celebrating: true }));
@@ -708,7 +731,9 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleShapeClick = () => {
+    if (inputLockRef.current) return;
     if (shapingState.flattened && !shapingState.shaped) {
+      lockInput(3500);
       const finalShapingState = { ...shapingState, shaped: true };
       setShapingState(finalShapingState);
       setHelperState(prev => ({ ...prev, celebrating: true }));
@@ -734,7 +759,9 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleFillingClick = () => {
+    if (inputLockRef.current) return;
     if (!fillingState.filled) {
+      lockInput(400);
       const newFillingState = { ...fillingState, filled: true };
       setFillingState(newFillingState);
       setHelperState(prev => ({ ...prev, celebrating: true }));
@@ -751,7 +778,9 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleSealClick = () => {
+    if (inputLockRef.current) return;
     if (fillingState.filled && !fillingState.sealed) {
+      lockInput(3500);
       const finalFillingState = { ...fillingState, sealed: true };
       setFillingState(finalFillingState);
       setHelperState(prev => ({ ...prev, celebrating: true }));
@@ -777,7 +806,9 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleSteamerPlaceClick = () => {
+    if (inputLockRef.current) return;
     if (!steamingState.inSteamer) {
+      lockInput(400);
       const newSteamingState = { ...steamingState, inSteamer: true };
       setSteamingState(newSteamingState);
       setHelperState(prev => ({ ...prev, celebrating: true }));
@@ -794,7 +825,9 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleLidClick = () => {
+    if (inputLockRef.current) return;
     if (steamingState.inSteamer && !steamingState.lidClosed) {
+      lockInput(1000);
       const newSteamingState = { ...steamingState, lidClosed: true, steamingStartedAt: Date.now() };
       setSteamingState(newSteamingState);
       setHelperState(prev => ({ ...prev, celebrating: true }));

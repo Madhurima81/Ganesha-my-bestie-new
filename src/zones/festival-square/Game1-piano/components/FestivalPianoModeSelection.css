@@ -6,7 +6,7 @@
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: var(--app-height, 100vh);
   background: linear-gradient(135deg, #ff9a56 0%, #ffcc70 100%);
   display: flex;
   flex-direction: column;

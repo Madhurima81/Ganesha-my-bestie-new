@@ -3,7 +3,7 @@
 /* Base container */
 .festival-piano-game {
   width: 100vw;
-  height: 100vh;
+  height: var(--app-height, 100vh);
   background: url('./assets/images/pianogame-bg.png') center/cover no-repeat;
   position: relative;
   overflow: hidden;
@@ -301,7 +301,7 @@
   align-items: center;
   justify-content: center;
   padding: 10px; /* CHANGED: Tighter screen padding */
-  height: 100vh;
+  height: var(--app-height, 100vh);
   box-sizing: border-box;
 }
 
