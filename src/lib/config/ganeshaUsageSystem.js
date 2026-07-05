@@ -1,12 +1,12 @@
 export const GANESHA_POSE_ASSETS = {
-  sitHi: '/images/ganesha-poses/sit-hi.png',
-  sitModak: '/images/ganesha-poses/sit-modak.png',
-  sitFull: '/images/ganesha-poses/sit-full.png',
-  standPoint: '/images/ganesha-poses/stand-point.png',
-  standNamaste: '/images/ganesha-poses/stand-namaste.png',
-  standWelcome: '/images/ganesha-poses/stand-welcome.png',
-  standCelebrate: '/images/ganesha-poses/stand-celebrate.png',
-  celebrate: '/images/ganesha-poses/celebrate.png'
+  sitHi: '/images/ganesha-poses/sit-hi.webp',
+  sitModak: '/images/ganesha-poses/sit-modak.webp',
+  sitFull: '/images/ganesha-poses/sit-full.webp',
+  standPoint: '/images/ganesha-poses/stand-point.webp',
+  standNamaste: '/images/ganesha-poses/stand-namaste.webp',
+  standWelcome: '/images/ganesha-poses/stand-welcome.webp',
+  standCelebrate: '/images/ganesha-poses/stand-celebrate.webp',
+  celebrate: '/images/ganesha-poses/celebrate.webp'
 };
 
 export const GANESHA_USAGE_SYSTEM = {

@@ -168,7 +168,7 @@ function MushikaLoader({ progress, ready, onDone }) {
         ))}
       </div>
       <img
-        src="/images/mooshika-flying.png"
+        src="/images/mooshika-flying.webp"
         alt=""
         className={`loader-mushika ${hopState}`}
         style={{ left: mushikaLeft }}
@@ -377,14 +377,14 @@ useEffect(() => {
     if (currentView === 'profile-welcome') {
       preloadImages([
         '/images/pan-bg.webp',
-        '/images/mooshika-flying.png',
+        '/images/mooshika-flying.webp',
         '/intro-story/story1-open-pg.webp',
         '/intro-story/story1-img1.webp',
         '/intro-story/story1-img2.webp',
         '/intro-story/story1-img3.webp',
         '/intro-story/story1-img4.webp',
         '/intro-story/map-new-2.webp',
-        '/images/ganesha-poses/stand-namaste.png',
+        '/images/ganesha-poses/stand-namaste.webp',
         '/images/map/butterflyyellow.png',
         '/images/map/butterflyblue.png',
         '/images/map/birdnew.png',

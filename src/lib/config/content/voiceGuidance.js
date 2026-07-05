@@ -11,53 +11,53 @@ export const VOICE_SCRIPTS = {
       // Scene entry
       welcome: {
         text: "Welcome!",
-        file: '/audio/voicenew/vakratundachant/vakratunda-opening.wav'
+        file: '/audio/voicenew/vakratundachant/vakratunda-opening.mp3'
       },
 
       // Vakratunda rounds (after each round completes)
       vakratundaRound1: {
         text: "Round 1 done!",
-        file: '/audio/voicenew/vakratundachant/vakratunda-round1.wav'
+        file: '/audio/voicenew/vakratundachant/vakratunda-round1.mp3'
       },
       vakratundaRound2: {
         text: "Round 2 done!",
-        file: '/audio/voicenew/vakratundachant/vakratunda-round2.wav'
+        file: '/audio/voicenew/vakratundachant/vakratunda-round2.mp3'
       },
       vakratundaRound3: {
         text: "Lotus blooming!",
-        file: '/audio/voicenew/vakratundachant/vakratunda-lotus blooming.wav'
+        file: '/audio/voicenew/vakratundachant/vakratunda-lotus blooming.mp3'
       },
 
       // Vakratunda power reveal
       vakratundaPower: {
         text: "I adapt!",
-        file: '/audio/voicenew/vakratundachant/vakratunda- I adapt.wav'
+        file: '/audio/voicenew/vakratundachant/vakratunda- I adapt.mp3'
       },
 
       // Mahakaya game start
       mahakayaGameStart: {
         text: "Mahakaya - start!",
-        file: '/audio/voicenew/vakratundachant/vakratunda-mahakaya - start.wav'
+        file: '/audio/voicenew/vakratundachant/vakratunda-mahakaya - start.mp3'
       },
 
       // Mahakaya rounds (after each round completes)
       mahakayaRound1: {
         text: "Mahakaya round 1 done!",
-        file: '/audio/voicenew/vakratundachant/vakratunda-mahakaya round1.wav'
+        file: '/audio/voicenew/vakratundachant/vakratunda-mahakaya round1.mp3'
       },
       mahakayaRound2: {
         text: "Mahakaya round 2 done!",
-        file: '/audio/voicenew/vakratundachant/vakratunda-mahakaya round2.wav'
+        file: '/audio/voicenew/vakratundachant/vakratunda-mahakaya round2.mp3'
       },
       mahakayaRound3: {
         text: "Amazing!",
-        file: '/audio/voicenew/vakratundachant/vakratunda-mahakaya amazing.wav'
+        file: '/audio/voicenew/vakratundachant/vakratunda-mahakaya amazing.mp3'
       },
 
       // Mahakaya power reveal
       mahakayaPower: {
         text: "I am strong!",
-        file: '/audio/voicenew/vakratundachant/vakratunda-mahakaya-I am strong.wav'
+        file: '/audio/voicenew/vakratundachant/vakratunda-mahakaya-I am strong.mp3'
       },
 
       // Mahakaya Rescue Game — scene 10 VO lines
@@ -102,13 +102,13 @@ export const VOICE_SCRIPTS = {
       // Mahakaya word reveal
       'mahakaya-word-reveal': {
         text: "Mahakaya — strong!",
-        file: '/audio/voicenew/vakratundachant/ganesha_mahakaya_strong.wav'
+        file: '/audio/voicenew/vakratundachant/ganesha_mahakaya_strong.mp3'
       },
 
       // Scene complete
       sceneComplete: {
         text: "Scene complete!",
-        file: '/audio/voicenew/vakratundachant/vakratunda-scene completion.wav'
+        file: '/audio/voicenew/vakratundachant/vakratunda-scene completion.mp3'
       }
     },
     'suryakoti-bank': {
@@ -421,7 +421,7 @@ export const VOICE_SCRIPTS = {
       },
       ganesha: {
         text: "Ganesha",
-        file: '/audio/voicenew/familytree/ganesha_name.wav'
+        file: '/audio/voicenew/familytree/ganesha_name.mp3'
       },
       vishnu: {
         text: "Vishnu",
@@ -429,15 +429,15 @@ export const VOICE_SCRIPTS = {
       },
       lakshmi: {
         text: "Lakshmi",
-        file: '/audio/voicenew/familytree/lakshmi.wav'
+        file: '/audio/voicenew/familytree/lakshmi.mp3'
       },
       hanuman: {
         text: "Hanuman",
-        file: '/audio/voicenew/familytree/hanuman.wav'
+        file: '/audio/voicenew/familytree/hanuman.mp3'
       },
       krishna: {
         text: "Krishna",
-        file: '/audio/voicenew/familytree/krishna.wav'
+        file: '/audio/voicenew/familytree/krishna.mp3'
       },
       mushak: {
         text: "Mooshak",
@@ -457,19 +457,19 @@ export const VOICE_SCRIPTS = {
       // ========================================
       correctFather: {
         text: "That's my father!",
-        file: '/audio/voicenew/familytree/ganesha_shiva_father.wav'
+        file: '/audio/voicenew/familytree/ganesha_shiva_father.mp3'
       },
       correctMother: {
         text: "That's my mother!",
-        file: '/audio/voicenew/familytree/ganesha_parvati_mother.wav'
+        file: '/audio/voicenew/familytree/ganesha_parvati_mother.mp3'
       },
       correctBrother: {
         text: "That's my brother!",
-        file: '/audio/voicenew/familytree/ganesha_kartikeya_brother.wav'
+        file: '/audio/voicenew/familytree/ganesha_kartikeya_brother.mp3'
       },
       correctMyself: {
         text: "That's me!",
-        file: '/audio/voicenew/familytree/ganesha_me.wav'
+        file: '/audio/voicenew/familytree/ganesha_me.mp3'
       },
 
       // ========================================
@@ -525,11 +525,11 @@ export const VOICE_SCRIPTS = {
       },
       hintTap: {
         text: "Tap a circle to meet my family!",
-        file: '/audio/family-tree/family-tree-hint-tap.wav'
+        file: '/audio/family-tree/family-tree-hint-tap.mp3'
       },
       allPlaced: {
         text: "Great! You met my loving family!",
-        file: '/audio/voicenew/familytree/ganesha_family_safe.wav'
+        file: '/audio/voicenew/familytree/ganesha_family_safe.mp3'
       },
 
       // ========================================
@@ -537,7 +537,7 @@ export const VOICE_SCRIPTS = {
       // ========================================
       transition: {
         text: "Show me your family!",
-        file: '/audio/voicenew/familytree/ganesha_build_tree.wav'
+        file: '/audio/voicenew/familytree/ganesha_build_tree.mp3'
       },
 
       // ========================================
@@ -569,7 +569,7 @@ export const VOICE_SCRIPTS = {
       },
       childProgressComplete: {
         text: "Look at your beautiful family tree… So many people care about you.",
-        file: '/audio/voicenew/familytree/ganesha_beautiful_tree.wav'
+        file: '/audio/voicenew/familytree/ganesha_beautiful_tree.mp3'
       },
 
       // ========================================
@@ -577,25 +577,25 @@ export const VOICE_SCRIPTS = {
       // ========================================
       sceneComplete: {
         text: "Look at our family trees. Connected by love.",
-        file: '/audio/voicenew/familytree/ganesha_connected_love.wav'
+        file: '/audio/voicenew/familytree/ganesha_connected_love.mp3'
       }
     },
     'favorite-food': {
       opening: {
         text: "Let's explore my favorite things and yours!",
-        file: '/audio/about-me-hut/favorite-food/opening.wav'
+        file: '/audio/about-me-hut/favorite-food/opening.mp3'
       }
     },
     'dreams-wishes': {
       opening: {
         text: "Let’s help and dream together!",
-        file: '/audio/about-me-hut/dreams-wishes/opening.wav'
+        file: '/audio/about-me-hut/dreams-wishes/opening.mp3'
       }
     },
     'my-indian-story': {
       opening: {
         text: "Tap to explore my India story and yours!",
-        file: '/audio/about-me-hut/my-indian-story/opening.wav'
+        file: '/audio/about-me-hut/my-indian-story/opening.mp3'
       }
     },
     
