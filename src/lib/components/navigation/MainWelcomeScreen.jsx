@@ -3,117 +3,23 @@ import React, { useState, useEffect, useRef } from 'react';
 import ProfilePillBtn from '../shared/ProfilePillBtn';
 import { getProfilePillBtnStyle } from '../../config/ZoneThemes';
 import { playUiTap } from '../../services/AudioService';
+import AudioToggle from '../ui/AudioToggle/AudioToggle';
+import useAudioPreference from '../../hooks/useAudioPreference';
 import './MainWelcomeScreen.css';
-
-const MAIN_WELCOME_VO_LINE = "";
 
 const MainWelcomeScreen = ({ onStartAdventure }) => {
   const [showButton, setShowButton] = useState(false);
-  const [showHintArrow, setShowHintArrow] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
-  const containerRef = useRef(null);
+  const { isAudioOn, toggleAudio } = useAudioPreference();
   const ambientRef = useRef(null);
   const fadeRef = useRef(null);
-  const voiceTimersRef = useRef([]);
-  const introSpokenRef = useRef(false);
-  const introAttemptRef = useRef(false);
-
-  // Track time on screen for analytics
-  useEffect(() => {
-    const startTime = Date.now();
-    return () => {
-      const timeOnScreen = Date.now() - startTime;
-      console.log(`📊 Welcome screen viewed for ${timeOnScreen}ms`);
-    };
-  }, []);
+  const startTimerRef = useRef(null);
 
   // Animate entrance
   useEffect(() => {
     const buttonTimer = setTimeout(() => setShowButton(true), 1500);
-    
-    // Add arrow hint after 10 seconds if still no click
-    const arrowTimer = setTimeout(() => setShowHintArrow(true), 10000);
-    
     return () => {
       clearTimeout(buttonTimer);
-      clearTimeout(arrowTimer);
-    };
-  }, []);
-
-  useEffect(() => {
-    const audioEnabled = localStorage.getItem('ganesha_audio_enabled');
-    let isAudioOn = audioEnabled === null ? true : audioEnabled === 'true';
-    // Welcome screen should recover from stale global mute flags left by replay flows.
-    if (!isAudioOn) {
-      localStorage.setItem('ganesha_audio_enabled', 'true');
-      isAudioOn = true;
-    }
-    if (!MAIN_WELCOME_VO_LINE || !isAudioOn || !window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') {
-      return () => {
-        voiceTimersRef.current.forEach(clearTimeout);
-        window.speechSynthesis?.cancel();
-      };
-    }
-
-    const pickVoice = () => {
-      const voices = window.speechSynthesis.getVoices() || [];
-      if (!voices.length) return null;
-      return (
-        voices.find((v) => /en(-|_)?(US|IN|GB)/i.test(v.lang || '')) ||
-        voices.find((v) => /en/i.test(v.lang || '')) ||
-        voices[0]
-      );
-    };
-
-    const speakIntro = () => {
-      if (introSpokenRef.current || introAttemptRef.current) return;
-      introAttemptRef.current = true;
-      const utterance = new window.SpeechSynthesisUtterance(MAIN_WELCOME_VO_LINE);
-      utterance.rate = 1.02;
-      utterance.pitch = 1;
-      utterance.volume = 0.9;
-      const voice = pickVoice();
-      if (voice) utterance.voice = voice;
-      utterance.onstart = () => {
-        introSpokenRef.current = true;
-      };
-      utterance.onerror = () => {
-        introAttemptRef.current = false;
-      };
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(utterance);
-    };
-
-    const scheduleIntro = () => {
-      const timerId = setTimeout(speakIntro, 500);
-      voiceTimersRef.current.push(timerId);
-    };
-
-    // Start VO after screen fade-in completes, then +500ms.
-    const containerEl = containerRef.current;
-    if (containerEl) {
-      containerEl.addEventListener('animationend', scheduleIntro, { once: true });
-      // Fallback in case animationend doesn't fire on some browsers.
-      const fallbackTimer = setTimeout(scheduleIntro, 1500);
-      voiceTimersRef.current.push(fallbackTimer);
-    } else {
-      scheduleIntro();
-    }
-
-    // Fallback: if speech is delayed/blocked, trigger on first interaction.
-    const onFirstInteraction = () => speakIntro();
-    document.addEventListener('pointerdown', onFirstInteraction, { once: true });
-    document.addEventListener('touchstart', onFirstInteraction, { once: true });
-    // Some iOS browsers load voices lazily.
-    window.speechSynthesis.addEventListener?.('voiceschanged', speakIntro, { once: true });
-
-    return () => {
-      voiceTimersRef.current.forEach(clearTimeout);
-      window.speechSynthesis?.cancel();
-      document.removeEventListener('pointerdown', onFirstInteraction);
-      document.removeEventListener('touchstart', onFirstInteraction);
-      window.speechSynthesis.removeEventListener?.('voiceschanged', speakIntro);
-      containerEl?.removeEventListener('animationend', scheduleIntro);
     };
   }, []);
 
@@ -122,16 +28,19 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
     const audio = ambientRef.current;
     if (!audio) return;
 
-    const audioEnabled = localStorage.getItem('ganesha_audio_enabled');
-    const isAudioOn = audioEnabled === null ? true : audioEnabled === 'true';
-    if (!isAudioOn) return;
-
     const TARGET_VOL = 0.22;
+    const canFadeVolume = !/iPhone/i.test(navigator.userAgent || '');
 
     const fadeIn = () => {
       clearInterval(fadeRef.current);
-      audio.volume = 0;
+      if (canFadeVolume) {
+        audio.volume = 0;
+      } else {
+        audio.volume = TARGET_VOL;
+      }
       audio.play().catch(() => {});
+      if (!canFadeVolume) return;
+
       fadeRef.current = setInterval(() => {
         const next = Math.min(audio.volume + 0.02, TARGET_VOL);
         audio.volume = next;
@@ -139,21 +48,25 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
       }, 80);
     };
 
-    fadeIn();
+    if (isAudioOn) {
+      fadeIn();
+    } else {
+      clearInterval(fadeRef.current);
+      audio.pause();
+      audio.currentTime = 0;
+    }
 
     const onFirstInteraction = () => {
       if (audio.paused) fadeIn();
-      document.removeEventListener('click', onFirstInteraction);
-      document.removeEventListener('touchstart', onFirstInteraction);
+      document.removeEventListener('pointerdown', onFirstInteraction);
     };
-    document.addEventListener('click', onFirstInteraction);
-    document.addEventListener('touchstart', onFirstInteraction);
+    document.addEventListener('pointerdown', onFirstInteraction);
 
     const onVisibility = () => {
       if (document.visibilityState === 'hidden') {
         clearInterval(fadeRef.current);
         audio.pause();
-      } else {
+      } else if (isAudioOn) {
         fadeIn();
       }
     };
@@ -162,57 +75,44 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
     return () => {
       clearInterval(fadeRef.current);
       audio.pause();
-      document.removeEventListener('click', onFirstInteraction);
-      document.removeEventListener('touchstart', onFirstInteraction);
+      document.removeEventListener('pointerdown', onFirstInteraction);
       document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, [isAudioOn]);
+
+  useEffect(() => {
+    return () => {
+      if (startTimerRef.current) {
+        clearTimeout(startTimerRef.current);
+        startTimerRef.current = null;
+      }
     };
   }, []);
 
   const handleStartAdventure = () => {
     // Prevent double-click spam
     if (isStarting) {
-      console.log('⚠️ Already starting adventure, ignoring click');
       return;
     }
-    
-    setIsStarting(true);
-    console.log('🎸 Starting new adventure from main welcome');
 
+    setIsStarting(true);
     playUiTap(0.24);
-    
+
     // Add slight delay for visual feedback
-    setTimeout(() => {
+    startTimerRef.current = setTimeout(() => {
       onStartAdventure();
+      startTimerRef.current = null;
     }, 300);
   };
 
   return (
-    <div ref={containerRef} className="main-welcome-container">
-      {/* TWINKLING STARS */}
-      {/* <div className="twinkle-stars" aria-hidden="true">
-        <span/><span/><span/><span/><span/><span/>
-        <span/><span/><span/><span/><span/><span/>
-      </div> */}
-
-      {/* FLOATING GOLDEN LIGHT PARTICLES */}
-      {/* <div className="floating-lights" aria-hidden="true">
-        <span/><span/><span/><span/><span/>
-      </div> */}
-
-      {/* ATMOSPHERIC OVERLAY — center lift + edge depth */}
-      {/* <div className="welcome-bg-overlay" aria-hidden="true" /> */}
-
-      {/* CINEMATIC VIGNETTE */}
-      {/* <div className="welcome-vignette" aria-hidden="true" /> */}
-
-      {/* TITLE TEXT */}
+    <div className="main-welcome-container">
       <div className={`welcome-title-container ${showButton ? 'visible' : ''}`}>
         <div className="welcome-title-wrapper">
           <h1 className="welcome-title">Ganesha My Bestie</h1>
         </div>
       </div>
-      
-      {/* GANESHA VIDEO */}
+
       <div className={`welcome-ganesha-image-container ${showButton ? 'visible' : ''}`}>
         <div className="ganesha-wrap">
           <video
@@ -228,11 +128,7 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
           </video>
         </div>
       </div>
-      
-      {/* HINT ARROW - Appears after 10 seconds */}
-      <div className={`hint-arrow ${showHintArrow ? 'visible' : ''}`} />
-      
-      {/* BUTTON AT BOTTOM */}
+
       <div className="welcome-content-overlay">
         <div className={`adventure-button-container ${showButton ? 'visible' : ''}`}>
           <ProfilePillBtn
@@ -246,11 +142,17 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
         </div>
       </div>
 
+      <AudioToggle
+        isAudioOn={isAudioOn}
+        onToggle={toggleAudio}
+        position="top-right"
+      />
+
       <audio
         ref={ambientRef}
         src="/audio/ambient/map%20ambient%20sound.wav"
         loop
-        preload="auto"
+        preload="metadata"
         style={{ display: 'none' }}
       />
     </div>

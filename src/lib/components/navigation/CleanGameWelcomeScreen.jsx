@@ -12,6 +12,14 @@ import InnerMandala from '../celebration/InnerMandala';
 import { symbolCardContent } from '../../../zones/symbol-mountain/shared/components/symbolCardContent';
 import { playUiTap } from '../../services/AudioService';
 
+const ZONE_SCENES = [
+  { zone: 'symbol-mountain', scenes: ['pond', 'modak', 'symbol', 'final-scene'] },
+  { zone: 'cave-of-secrets', scenes: ['vakratunda-mahakaya', 'suryakoti-samaprabha', 'nirvighnam-kurumedeva', 'sarvakaryeshu-sarvada', 'mantra-assembly'] },
+  { zone: 'shloka-river', scenes: ['vakratunda-grove', 'suryakoti-bank', 'nirvighnam-chant', 'sarvakaryeshu-chant', 'shloka-river-finale'] },
+  { zone: 'festival-square', scenes: ['game1', 'game2', 'game3', 'game4'] },
+  { zone: 'about-me-hut', scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story'] },
+];
+
 const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
   const [profiles, setProfiles] = useState({});
   const [currentProfile, setCurrentProfile] = useState(null);
@@ -32,6 +40,15 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
     const audio = ambientRef.current;
     if (!audio) return;
 
+    const audioEnabled = localStorage.getItem('ganesha_audio_enabled');
+    const isAudioOn = audioEnabled === null ? true : audioEnabled === 'true';
+    if (!isAudioOn) {
+      clearInterval(fadeRef.current);
+      audio.pause();
+      audio.currentTime = 0;
+      return;
+    }
+
     const TARGET_VOL = 0.16;
     const fadeIn = () => {
       clearInterval(fadeRef.current);
@@ -48,11 +65,9 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
 
     const onFirstInteraction = () => {
       if (audio.paused) fadeIn();
-      document.removeEventListener('click', onFirstInteraction);
-      document.removeEventListener('touchstart', onFirstInteraction);
+      document.removeEventListener('pointerdown', onFirstInteraction);
     };
-    document.addEventListener('click', onFirstInteraction);
-    document.addEventListener('touchstart', onFirstInteraction);
+    document.addEventListener('pointerdown', onFirstInteraction);
 
     const onVisibility = () => {
       if (document.visibilityState === 'hidden') {
@@ -67,8 +82,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
     return () => {
       clearInterval(fadeRef.current);
       audio.pause();
-      document.removeEventListener('click', onFirstInteraction);
-      document.removeEventListener('touchstart', onFirstInteraction);
+      document.removeEventListener('pointerdown', onFirstInteraction);
       document.removeEventListener('visibilitychange', onVisibility);
     };
   }, [currentProfile, showProfileSelector]);
@@ -98,26 +112,9 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
     
     try {
       // 1. Check Temp Sessions
-      const tempKeys = [
-        `temp_session_${profileId}_symbol-mountain_pond`,
-        `temp_session_${profileId}_symbol-mountain_modak`,
-        `temp_session_${profileId}_symbol-mountain_symbol`,
-        `temp_session_${profileId}_symbol-mountain_final-scene`,
-        `temp_session_${profileId}_cave-of-secrets_vakratunda-mahakaya`,
-        `temp_session_${profileId}_cave-of-secrets_suryakoti-samaprabha`,
-        `temp_session_${profileId}_cave-of-secrets_nirvighnam-kurumedeva`,
-        `temp_session_${profileId}_cave-of-secrets_sarvakaryeshu-sarvada`,
-        `temp_session_${profileId}_cave-of-secrets_mantra-assembly`,
-        `temp_session_${profileId}_shloka-river_vakratunda-grove`,
-        `temp_session_${profileId}_shloka-river_suryakoti-bank`,
-        `temp_session_${profileId}_shloka-river_nirvighnam-chant`,
-        `temp_session_${profileId}_shloka-river_sarvakaryeshu-chant`,
-        `temp_session_${profileId}_shloka-river_shloka-river-finale`,
-        `temp_session_${profileId}_festival-square_game1`,
-        `temp_session_${profileId}_festival-square_game2`,
-        `temp_session_${profileId}_festival-square_game3`,
-        `temp_session_${profileId}_festival-square_game4`
-      ];
+      const tempKeys = ZONE_SCENES.flatMap(({ zone, scenes }) =>
+        scenes.map((scene) => `temp_session_${profileId}_${zone}_${scene}`)
+      );
 
       if (tempKeys.some(key => localStorage.getItem(key))) {
         setHasProgress(true);
@@ -201,14 +198,6 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
   const getLastPlayedLocation = (profileId) => {
     if (!profileId) return null;
 
-    const ZONE_SCENES = [
-      { zone: 'symbol-mountain',  scenes: ['pond', 'modak', 'symbol', 'final-scene'] },
-      { zone: 'cave-of-secrets',  scenes: ['vakratunda-mahakaya', 'suryakoti-samaprabha', 'nirvighnam-kurumedeva', 'sarvakaryeshu-sarvada', 'mantra-assembly'] },
-      { zone: 'shloka-river',     scenes: ['vakratunda-grove', 'suryakoti-bank', 'nirvighnam-chant', 'sarvakaryeshu-chant', 'shloka-river-finale'] },
-      { zone: 'festival-square',  scenes: ['game1', 'game2', 'game3', 'game4'] },
-      { zone: 'about-me-hut',     scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story'] },
-    ];
-
     // 1. Scan temp sessions — most recently touched wins
     let latestZone = null;
     let latestScene = null;
@@ -276,20 +265,6 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
     } catch (e) {}
 
     return null;
-  };
-
-  // TEMP QA helper: shows where Continue Journey will navigate.
-  const getContinueJourneyDebugTarget = () => {
-    try {
-      const profileId = localStorage.getItem('activeProfileId');
-      const location = getLastPlayedLocation(profileId);
-      if (!location) return 'MAP (fallback: no last location)';
-      if (location.destination === 'map') return 'MAP (final-scene completion)';
-      if (location.scene) return `${location.zone} / ${location.scene} (resume scene)`;
-      return `${location.zone} (zone welcome)`;
-    } catch {
-      return 'MAP (debug error fallback)';
-    }
   };
 
   const handleContinue = () => {
@@ -450,7 +425,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
   };
 
   const getCulturalProgress = () => {
-    if (!currentProfile) return { symbols: 0, meanings: 0, chants: 0, level: 1, levelName: "Wisdom Seeker", percentage: 0, discoveredSymbols: [] };
+    if (!currentProfile) return { symbols: 0, meanings: 0, chants: 0, level: 1, levelName: "Wisdom Seeker", discoveredSymbols: [] };
     
     try {
       const culturalData = CulturalProgressExtractor.getCulturalProgressData();
@@ -460,11 +435,10 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
         chants: culturalData.chantsCount || 0,
         discoveredSymbols: culturalData.discoveredSymbols || [],
         level: culturalData.level || 1,
-        levelName: culturalData.levelName || "Wisdom Seeker",
-        percentage: Math.min(100, Math.max(0, (culturalData.totalLearnings || 0) * 8))
+        levelName: culturalData.levelName || "Wisdom Seeker"
       };
     } catch (error) {
-      return { symbols: 0, meanings: 0, chants: 0, level: 1, levelName: "Wisdom Seeker", percentage: 0, discoveredSymbols: [] };
+      return { symbols: 0, meanings: 0, chants: 0, level: 1, levelName: "Wisdom Seeker", discoveredSymbols: [] };
     }
   };
   
@@ -478,7 +452,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
     if (raw.includes('lotus')) return 'lotus';
     if (raw.includes('trunk')) return 'trunk';
     if (raw.includes('ear')) return 'ear';
-    if (raw.includes('eye')) return 'eye';
+    if (raw.includes('eye')) return 'eyes';
     if (raw.includes('tusk')) return 'tusk';
     return null;
   };
@@ -593,7 +567,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
 
   const getOuterPetalStatesFromKeys = (symbolKeys) => {
     const states = { 1: 'dormant', 2: 'dormant', 3: 'dormant', 4: 'dormant', 5: 'dormant', 6: 'dormant', 7: 'dormant', 8: 'dormant' };
-    const map = { mooshika: 1, modak: 2, belly: 3, lotus: 4, trunk: 5, ear: 6, eye: 7, tusk: 8 };
+    const map = { mooshika: 1, modak: 2, belly: 3, lotus: 4, trunk: 5, ear: 6, eyes: 7, tusk: 8 };
     (symbolKeys || []).forEach((key) => {
       const id = map[key];
       if (id) states[id] = 'awakened';
@@ -612,7 +586,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
     4: 'lotus',
     5: 'trunk',
     6: 'ear',
-    7: 'eye',
+    7: 'eyes',
     8: 'tusk',
   };
 
@@ -636,7 +610,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
     4: symbolCardContent.lotus?.icon || symbolCardContent.lotus?.image,
     5: symbolCardContent.trunk?.icon || symbolCardContent.trunk?.image,
     6: symbolCardContent.ear?.icon || symbolCardContent.ear?.image,
-    7: symbolCardContent.eye?.icon || symbolCardContent.eye?.image,
+    7: symbolCardContent.eyes?.icon || symbolCardContent.eyes?.image,
     8: symbolCardContent.tusk?.icon || symbolCardContent.tusk?.image,
   };
 
@@ -650,13 +624,14 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
     7: '/images/icons/symbol-eye-tint.png',
     8: '/images/icons/symbol-tusk-tint.png',
   };
+
+  const welcomeMsg = currentProfile ? getWelcomeMessage() : null;
   
   // Show profile selector
   if (showProfileSelector) {
     return (
       <CleanProfileSelector
         onProfileSelect={handleProfileCreated}
-        onClose={() => setShowProfileSelector(false)}
         profiles={profiles}
       />
     );
@@ -665,9 +640,15 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
   if (!currentProfile) {
     return (
       <div className="clean-welcome-overlay page-transition">
-        <div className="clean-welcome-content">
-          <h1>Loading Profile...</h1>
-          <button onClick={() => { playUiTap(0.22); setShowProfileSelector(true); }}>Select Profile</button>
+        <div className="clean-welcome-content clean-welcome-card loading-welcome-card">
+          <ScreenHeader title="Loading Profile..." glowColor="purple" />
+          <PrimaryBtn
+            label="Select Profile"
+            onClick={() => { playUiTap(0.22); setShowProfileSelector(true); }}
+            size="md"
+            fullWidth
+            className="continue-journey-btn welcome-action-btn"
+          />
         </div>
       </div>
     );
@@ -677,17 +658,10 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
     <div className="clean-welcome-overlay page-transition">
       <div className="clean-welcome-content clean-welcome-card">
         <span className="welcome-card-lotus" aria-hidden="true" />
-        {(() => {
-          const welcomeMsg = getWelcomeMessage();
-          return (
-            <>
-              <ScreenHeader
-                title={welcomeMsg.title}
-                glowColor="purple"
-              />
-            </>
-          );
-        })()}        
+        <ScreenHeader
+          title={welcomeMsg.title}
+          glowColor="purple"
+        />
        
         <div className="profile-mandala-wrapper">
           <div className="profile-mandala">
@@ -718,7 +692,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
           {hasProgress ? (
             <>
               <PrimaryBtn
-                label={getWelcomeMessage().buttonText.main}
+                label={welcomeMsg.buttonText.main}
                 onClick={handleContinue}
                 size="md"
                 fullWidth
@@ -772,7 +746,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
         ref={ambientRef}
         src="/audio/ambient/map%20ambient%20sound.wav"
         loop
-        preload="auto"
+        preload="metadata"
         style={{ display: 'none' }}
       />
     </div>
@@ -780,4 +754,3 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
 };
 
 export default CleanGameWelcomeScreen;
-

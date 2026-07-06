@@ -2,16 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import './ProgressPopup.css';
 import { symbolCardContent } from '../../../zones/symbol-mountain/shared/components/symbolCardContent';
 
-const SYMBOL_AFFIRMATIONS = {
-  modak: 'I am full of joy.',
-  mooshika: 'I can focus.',
-  belly: 'I feel safe inside.',
-  lotus: 'I stay calm.',
-  trunk: 'I find my way.',
-  eye: 'I see clearly.',
-  ear: 'I listen with care.',
-  tusk: 'I finish what I start.'
-};
+const AUDIO_PREF_KEY = 'ganesha_audio_enabled';
 
 const GRID_OPEN_VO = 'These are your Ganesha powers. Tap any one to remember.';
 
@@ -26,7 +17,6 @@ const GRID_TAP_VO = {
   tusk: 'Tusk... I finish what I start.',
 };
 
-// Action-only VO after popup opens
 const DETAIL_VO = {
   modak: 'Think of one small moment that made you smile today.',
   mooshika: 'Pick one tiny thing. Look at it for 3 seconds.',
@@ -38,19 +28,6 @@ const DETAIL_VO = {
   tusk: 'Pick one small thing you can finish today.',
 };
 
-const SYMBOL_SIDEBAR_META = Object.entries(symbolCardContent).reduce((acc, [id, data]) => {
-  acc[id] = {
-    name: data.label || data.title || id,
-    image: data.icon || data.image,
-    affirmation: data.affirmation || SYMBOL_AFFIRMATIONS[id] || '',
-    description: data.description || data.gift || '',
-    ganeshaLines: data.ganeshaLines || [],
-    invitation: data.invitation || '',
-    gift: data.gift || '',
-  };
-  return acc;
-}, {});
-
 const normalizeSymbolId = (item) => {
   const raw = (item?.id || item?.name || '').toString().toLowerCase().trim();
   if (raw === 'ears') return 'ear';
@@ -58,11 +35,128 @@ const normalizeSymbolId = (item) => {
   return raw;
 };
 
+const isGlobalAudioEnabled = () => {
+  try {
+    const saved = localStorage.getItem(AUDIO_PREF_KEY);
+    return saved === null ? true : saved === 'true';
+  } catch {
+    return true;
+  }
+};
+
+const getSymbolMeta = (symbolId) => {
+  const rawMeta = symbolCardContent[symbolId] || symbolCardContent[`${symbolId}s`];
+  if (!rawMeta) return null;
+
+  return {
+    name: rawMeta.label || rawMeta.title || symbolId,
+    image: rawMeta.icon || rawMeta.image,
+    affirmation: rawMeta.affirmation || '',
+    description: rawMeta.description || rawMeta.gift || '',
+    ganeshaLines: rawMeta.ganeshaLines || [],
+    invitation: rawMeta.invitation || '',
+    gift: rawMeta.gift || '',
+  };
+};
+
+const getDisplayName = (name) => {
+  if (!name) return '';
+  return String(name).trim();
+};
+
+const DetailCard = ({
+  item,
+  type,
+  isBreathingCueActive,
+  onCardTap,
+  onClose,
+  onPlayAudio,
+  audioError,
+  showCloseButton = false,
+  overlayClassName = '',
+  cardClassName = '',
+}) => (
+  <div className={overlayClassName} onClick={onClose}>
+    <div className={cardClassName} onClick={onCardTap}>
+      {showCloseButton ? (
+        <button
+          className="pp-detail-close"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+          aria-label="Close"
+        >
+          &times;
+        </button>
+      ) : null}
+
+      <div className={`symbol-content ${cardClassName.includes('open') || cardClassName.includes('instant') ? 'open' : ''}`}>
+        <div className={`pp-detail-image-wrapper ${isBreathingCueActive ? 'breathe' : ''}`}>
+          <img src={item.image} alt={getDisplayName(item.name)} className="pp-detail-image" />
+        </div>
+
+        <h2 className="pp-detail-title">{getDisplayName(item.name)}</h2>
+
+        {type === 'symbols' && item.affirmation ? (
+          <p className="pp-detail-affirmation">"{item.affirmation}"</p>
+        ) : null}
+
+        {type === 'symbols' && item.ganeshaLines?.length ? (
+          <div className="pp-detail-ganesha-lines">
+            {item.ganeshaLines.map((line, idx) => (
+              <p key={`${item.id}-line-${idx}`} className="pp-detail-ganesha-line">{line}</p>
+            ))}
+          </div>
+        ) : null}
+
+        {type === 'symbols' && item.invitation ? (
+          <div className="pp-detail-invitation">{item.invitation}</div>
+        ) : null}
+
+        <p className="pp-detail-desc">
+          {type === 'symbols'
+            ? (item.gift || item.description || 'You have discovered this sacred item! Keep exploring to learn more.')
+            : (item.description || 'You have discovered this sacred item! Keep exploring to learn more.')}
+        </p>
+      </div>
+
+      <div className="pp-detail-actions">
+        {item.audio ? (
+          <button
+            className="pp-btn-audio"
+            onClick={(e) => {
+              e.stopPropagation();
+              onPlayAudio(item.audio);
+            }}
+          >
+            <span aria-hidden="true">&#128266;</span> Play Sound
+          </button>
+        ) : null}
+        <button
+          className="pp-action-btn pp-action-btn-detail"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+        >
+          Continue
+        </button>
+      </div>
+
+      {audioError ? <p className="pp-audio-error">{audioError}</p> : null}
+    </div>
+  </div>
+);
+
 const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, directItemId = null }) => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isBreathingCueActive, setIsBreathingCueActive] = useState(false);
+  const [audioError, setAudioError] = useState('');
+  const [lockedHint, setLockedHint] = useState('');
+  const [lockedTileId, setLockedTileId] = useState('');
   const displayTitle =
     title === 'Sacred Symbols'
       ? 'Your Ganesha Powers'
@@ -87,13 +181,13 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
     setIsBreathingCueActive(false);
     try {
       window.speechSynthesis?.cancel();
-    } catch (e) {
+    } catch {
       // no-op
     }
   };
 
   const speakLine = (text, onEnd) => {
-    if (!text || !speechEnabledRef.current) return;
+    if (!text || !speechEnabledRef.current || !isGlobalAudioEnabled()) return;
     if (!window?.speechSynthesis) {
       if (speechEnabledRef.current) onEnd?.();
       return;
@@ -118,7 +212,7 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
 
   const playDetailVo = (symbolId) => {
     const actionLine = DETAIL_VO[symbolId];
-    if (!actionLine) return;
+    if (!actionLine || !isGlobalAudioEnabled()) return;
 
     speechEnabledRef.current = true;
     clearVoTimers();
@@ -145,13 +239,16 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
       stopVoice();
       setSelectedItem(null);
       setDetailOpen(false);
+      setAudioError('');
+      setLockedHint('');
+      setLockedTileId('');
       openVoPlayedRef.current = false;
       directOpenedRef.current = false;
       speechEnabledRef.current = true;
       return;
     }
 
-    if (type === 'symbols' && !directItemId && !openVoPlayedRef.current) {
+    if (type === 'symbols' && !directItemId && !openVoPlayedRef.current && isGlobalAudioEnabled()) {
       openVoPlayedRef.current = true;
       speechEnabledRef.current = true;
       const t = setTimeout(() => speakLine(GRID_OPEN_VO, () => setIsSpeaking(false)), 250);
@@ -178,10 +275,14 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
 
   const openDetail = (item) => {
     stopVoice();
+    speechEnabledRef.current = true;
+    setAudioError('');
+    setLockedHint('');
+    setLockedTileId('');
 
     if (type === 'symbols') {
       const symbolId = normalizeSymbolId(item);
-      const sidebarMeta = SYMBOL_SIDEBAR_META[symbolId];
+      const sidebarMeta = getSymbolMeta(symbolId);
       const quickVo = GRID_TAP_VO[symbolId];
       const tapStartMs = Date.now();
 
@@ -203,9 +304,7 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
         const openTimer = setTimeout(() => setDetailOpen(true), 0);
         voTimersRef.current.push(openTimer);
 
-        // 1) Tap VO during opening transition
-        // 2) Action VO starts only after tap VO completes + modal settle
-        if (quickVo) {
+        if (quickVo && isGlobalAudioEnabled()) {
           speakLine(quickVo, () => {
             if (!speechEnabledRef.current) return;
             setIsSpeaking(false);
@@ -214,7 +313,7 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
             const voTimer = setTimeout(() => playDetailVo(symbolId), waitMs);
             voTimersRef.current.push(voTimer);
           });
-        } else {
+        } else if (isGlobalAudioEnabled()) {
           const voTimer = setTimeout(() => playDetailVo(symbolId), 900);
           voTimersRef.current.push(voTimer);
         }
@@ -237,7 +336,18 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, directItemId, type, items, selectedItem]);
 
+  useEffect(() => {
+    if (!lockedHint) return undefined;
+    const timer = setTimeout(() => {
+      setLockedHint('');
+      setLockedTileId('');
+    }, 1800);
+
+    return () => clearTimeout(timer);
+  }, [lockedHint]);
+
   const closeDetail = () => {
+    setAudioError('');
     if (directItemId) {
       stopVoice();
       onClose?.();
@@ -251,78 +361,59 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
   const handleDetailCardTap = (e) => {
     e.stopPropagation();
     if (isSpeaking) {
-      // Skippable on tap
       stopVoice();
     }
   };
 
-  const getDisplayName = (name) => {
-    if (!name) return '';
-    return String(name).trim();
-  };
-
   const playAudio = (audioPath) => {
     if (!audioPath) return;
+    setAudioError('');
     const audio = new Audio(audioPath);
-    audio.play().catch((e) => console.log('Audio play error:', e));
+    audio.play().catch(() => {
+      setAudioError('That sound did not play this time. Try again.');
+    });
+  };
+
+  const handleTileClick = (item, isUnlocked) => {
+    if (isUnlocked) {
+      openDetail(item);
+      return;
+    }
+
+    const itemId = normalizeSymbolId(item);
+    setLockedTileId(itemId);
+    setLockedHint('Keep exploring to unlock this power.');
+  };
+
+  const handleTileKeyDown = (event, item, isUnlocked) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    handleTileClick(item, isUnlocked);
   };
 
   const handleCloseAll = () => {
     stopVoice();
+    setAudioError('');
     onClose?.();
   };
 
   if (!isOpen) return null;
 
-  // DIRECT MODE — opened from mandala tap. Skip grid entirely, render only detail popup.
   if (directItemId) {
     if (!selectedItem) return null;
     return (
-      <div className="pp-detail-overlay pp-detail-overlay-light" onClick={closeDetail}>
-        <div className="pp-detail-card pp-detail-card-instant" onClick={handleDetailCardTap}>
-          <button className="pp-detail-close" onClick={(e) => { e.stopPropagation(); closeDetail(); }} aria-label="Close">×</button>
-          <div className="symbol-content open">
-            <div className={`pp-detail-image-wrapper ${isBreathingCueActive ? 'breathe' : ''}`}>
-              <img src={selectedItem.image} alt={getDisplayName(selectedItem.name)} className="pp-detail-image" />
-            </div>
-
-            <h2 className="pp-detail-title">{getDisplayName(selectedItem.name)}</h2>
-
-            {type === 'symbols' && selectedItem.affirmation ? (
-              <p className="pp-detail-affirmation">"{selectedItem.affirmation}"</p>
-            ) : null}
-
-            {type === 'symbols' && selectedItem.ganeshaLines?.length ? (
-              <div className="pp-detail-ganesha-lines">
-                {selectedItem.ganeshaLines.map((line, idx) => (
-                  <p key={`${selectedItem.id}-line-${idx}`} className="pp-detail-ganesha-line">{line}</p>
-                ))}
-              </div>
-            ) : null}
-
-            {type === 'symbols' && selectedItem.invitation ? (
-              <div className="pp-detail-invitation">{selectedItem.invitation}</div>
-            ) : null}
-
-            <p className="pp-detail-desc">
-              {type === 'symbols'
-                ? (selectedItem.gift || selectedItem.description || 'You have discovered this sacred item! Keep exploring to learn more.')
-                : (selectedItem.description || 'You have discovered this sacred item! Keep exploring to learn more.')}
-            </p>
-          </div>
-
-          <div className="pp-detail-actions">
-            {selectedItem.audio && (
-              <button className="pp-btn-audio" onClick={() => playAudio(selectedItem.audio)}>
-                <span>??</span> Play Sound
-              </button>
-            )}
-            <button className="pp-action-btn pp-action-btn-detail" onClick={(e) => { e.stopPropagation(); closeDetail(); }}>
-              Continue
-            </button>
-          </div>
-        </div>
-      </div>
+      <DetailCard
+        item={selectedItem}
+        type={type}
+        isBreathingCueActive={isBreathingCueActive}
+        onCardTap={handleDetailCardTap}
+        onClose={closeDetail}
+        onPlayAudio={playAudio}
+        audioError={audioError}
+        showCloseButton
+        overlayClassName="pp-detail-overlay pp-detail-overlay-light"
+        cardClassName="pp-detail-card pp-detail-card-instant"
+      />
     );
   }
 
@@ -336,7 +427,7 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
         <div className="pp-grid">
           {items.map((symbol, index) => {
             const symbolId = normalizeSymbolId(symbol);
-            const sidebarMeta = type === 'symbols' ? SYMBOL_SIDEBAR_META[symbolId] : null;
+            const sidebarMeta = type === 'symbols' ? getSymbolMeta(symbolId) : null;
             const displayItem = sidebarMeta
               ? {
                   ...symbol,
@@ -347,16 +438,21 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
                   description: sidebarMeta.description,
                   ganeshaLines: sidebarMeta.ganeshaLines,
                   invitation: sidebarMeta.invitation,
-                  gift: sidebarMeta.gift
+                  gift: sidebarMeta.gift,
                 }
               : symbol;
             const isUnlocked = checkIsCompleted(displayItem);
+            const isLockedHintVisible = lockedTileId === symbolId;
 
             return (
               <div
                 key={index}
-                className={`pp-item-card symbol-tile ${isUnlocked ? 'unlocked' : 'locked'}`}
-                onClick={isUnlocked ? () => openDetail(displayItem) : undefined}
+                className={`pp-item-card symbol-tile ${isUnlocked ? 'unlocked' : 'locked'} ${isLockedHintVisible ? 'locked-nudge' : ''}`}
+                onClick={() => handleTileClick(displayItem, isUnlocked)}
+                onKeyDown={(event) => handleTileKeyDown(event, displayItem, isUnlocked)}
+                role="button"
+                tabIndex={0}
+                aria-disabled={!isUnlocked}
               >
                 <div className="pp-image-container">
                   <img
@@ -375,55 +471,25 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
           })}
         </div>
 
+        {lockedHint ? <p className="pp-locked-hint" aria-live="polite">{lockedHint}</p> : null}
+
         <button className="pp-action-btn" onClick={handleCloseAll}>Continue</button>
       </div>
 
-      {selectedItem && (
-        <div className={`pp-detail-overlay modal-backdrop ${detailOpen ? 'open' : ''}`} onClick={closeDetail}>
-          <div className={`pp-detail-card symbol-card-modal ${detailOpen ? 'open' : ''}`} onClick={handleDetailCardTap}>
-            <div className={`symbol-content ${detailOpen ? 'open' : ''}`}>
-              <div className={`pp-detail-image-wrapper ${isBreathingCueActive ? 'breathe' : ''}`}>
-                <img src={selectedItem.image} alt={getDisplayName(selectedItem.name)} className="pp-detail-image" />
-              </div>
-
-              <h2 className="pp-detail-title">{getDisplayName(selectedItem.name)}</h2>
-
-              {type === 'symbols' && selectedItem.affirmation ? (
-                <p className="pp-detail-affirmation">"{selectedItem.affirmation}"</p>
-              ) : null}
-
-              {type === 'symbols' && selectedItem.ganeshaLines?.length ? (
-                <div className="pp-detail-ganesha-lines">
-                  {selectedItem.ganeshaLines.map((line, idx) => (
-                    <p key={`${selectedItem.id}-line-${idx}`} className="pp-detail-ganesha-line">{line}</p>
-                  ))}
-                </div>
-              ) : null}
-
-              {type === 'symbols' && selectedItem.invitation ? (
-                <div className="pp-detail-invitation">{selectedItem.invitation}</div>
-              ) : null}
-
-              <p className="pp-detail-desc">
-                {type === 'symbols'
-                  ? (selectedItem.gift || selectedItem.description || 'You have discovered this sacred item! Keep exploring to learn more.')
-                  : (selectedItem.description || 'You have discovered this sacred item! Keep exploring to learn more.')}
-              </p>
-            </div>
-
-            <div className="pp-detail-actions">
-              {selectedItem.audio && (
-                <button className="pp-btn-audio" onClick={() => playAudio(selectedItem.audio)}>
-                  <span>??</span> Play Sound
-                </button>
-              )}
-              <button className="pp-action-btn pp-action-btn-detail" onClick={(e) => { e.stopPropagation(); closeDetail(); }}>
-                Continue
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {selectedItem ? (
+        <DetailCard
+          item={selectedItem}
+          type={type}
+          isBreathingCueActive={isBreathingCueActive}
+          onCardTap={handleDetailCardTap}
+          onClose={closeDetail}
+          onPlayAudio={playAudio}
+          audioError={audioError}
+          showCloseButton
+          overlayClassName={`pp-detail-overlay modal-backdrop ${detailOpen ? 'open' : ''}`}
+          cardClassName={`pp-detail-card symbol-card-modal ${detailOpen ? 'open' : ''}`}
+        />
+      ) : null}
     </div>
   );
 };

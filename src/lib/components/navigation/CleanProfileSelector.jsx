@@ -3,8 +3,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import GameStateManager from '../../services/GameStateManager';
 import PrimaryBtn from '../shared/PrimaryBtn';
 import ScreenHeader from '../shared/ScreenHeader';
-import { GANESHA_USAGE_SYSTEM } from '../../config/ganeshaUsageSystem';
 import MooshikaRideTransition from './MooshikaRideTransition';
+import AudioToggle from '../ui/AudioToggle/AudioToggle';
+import useAudioPreference from '../../hooks/useAudioPreference';
+import { playUiTap } from '../../services/AudioService';
 import './CleanProfileSelector.css';
 
 const CleanProfileSelector = ({
@@ -23,15 +25,18 @@ const CleanProfileSelector = ({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
   const [showInfo, setShowInfo] = useState(false);
   const [manageModeId, setManageModeId] = useState(null);
+  const [createError, setCreateError] = useState('');
 
   // NEW: transition state
   const [transitionStage, setTransitionStage] = useState(null); // null | 'ride'
   const [pendingProfile, setPendingProfile] = useState(null);
+  const { isAudioOn, toggleAudio } = useAudioPreference();
 
   const longPressTimer = React.useRef(null);
   const voiceTimersRef = useRef([]);
   const hasPlayedFriendChoiceVoRef = useRef(false);
   const playedStepVoRef = useRef({ 1: false, 2: false, 3: false });
+  const avatarAudioCtxRef = useRef(null);
 
   const animalAvatars = [
     { id: 'monkey', name: 'Monkey', labelColor: '#FF9800' },
@@ -41,19 +46,22 @@ const CleanProfileSelector = ({
   ];
 
   useEffect(() => {
-    if (!initialProfiles) loadProfiles();
+    if (initialProfiles) {
+      setProfiles(initialProfiles);
+      return;
+    }
+    loadProfiles();
   }, [initialProfiles]);
 
   useEffect(() => {
     if (showCreateProfile) {
       setCurrentStep(1);
+      setCreateError('');
       playedStepVoRef.current = { 1: false, 2: false, 3: false };
     }
   }, [showCreateProfile]);
 
   useEffect(() => {
-    const audioEnabled = localStorage.getItem('ganesha_audio_enabled');
-    const isAudioOn = audioEnabled === null ? true : audioEnabled === 'true';
     const canSpeak = isAudioOn && window.speechSynthesis && typeof window.SpeechSynthesisUtterance !== 'undefined';
 
     if (!showCreateProfile || !canSpeak || playedStepVoRef.current[currentStep]) {
@@ -92,11 +100,16 @@ const CleanProfileSelector = ({
       clearTimeout(entryTimerId);
       if (idleTimerId) clearTimeout(idleTimerId);
     };
-  }, [showCreateProfile, currentStep, newProfileName]);
+  }, [showCreateProfile, currentStep, newProfileName, isAudioOn]);
 
   useEffect(() => {
     return () => {
+      clearLongPressTimer();
       voiceTimersRef.current.forEach(clearTimeout);
+      if (avatarAudioCtxRef.current?.close) {
+        avatarAudioCtxRef.current.close().catch(() => {});
+        avatarAudioCtxRef.current = null;
+      }
       window.speechSynthesis?.cancel();
     };
   }, []);
@@ -107,8 +120,38 @@ const CleanProfileSelector = ({
     }
   }, [showCreateProfile]);
 
+  const clearLongPressTimer = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  };
+
+  const resetCreateFlow = () => {
+    setShowCreateProfile(false);
+    setCurrentStep(1);
+    setNewProfileName('');
+    setSelectedAvatar('monkey');
+    setSelectedAge(7);
+    setIsCreatingProfile(false);
+    setCreateError('');
+    hasPlayedFriendChoiceVoRef.current = false;
+    playedStepVoRef.current = { 1: false, 2: false, 3: false };
+    window.speechSynthesis?.cancel();
+  };
+
+  const goBackInCreateFlow = () => {
+    setCreateError('');
+    if (currentStep > 1) {
+      setCurrentStep((prev) => prev - 1);
+      return;
+    }
+    resetCreateFlow();
+  };
+
   const handleAvatarSelect = (avatarId) => {
     setSelectedAvatar(avatarId);
+    setCreateError('');
     setAvatarTapPulseId(avatarId);
     const pulseTimer = setTimeout(() => setAvatarTapPulseId(null), 140);
     voiceTimersRef.current.push(pulseTimer);
@@ -116,7 +159,11 @@ const CleanProfileSelector = ({
     try {
       const Ctx = window.AudioContext || window.webkitAudioContext;
       if (Ctx) {
-        const ctx = new Ctx();
+        const ctx = avatarAudioCtxRef.current || new Ctx();
+        avatarAudioCtxRef.current = ctx;
+        if (ctx.state === 'suspended') {
+          ctx.resume?.().catch(() => {});
+        }
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'triangle';
@@ -135,8 +182,6 @@ const CleanProfileSelector = ({
     }
 
     if (hasPlayedFriendChoiceVoRef.current) return;
-    const audioEnabled = localStorage.getItem('ganesha_audio_enabled');
-    const isAudioOn = audioEnabled === null ? true : audioEnabled === 'true';
     if (!isAudioOn || !window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return;
 
     hasPlayedFriendChoiceVoRef.current = true;
@@ -168,6 +213,7 @@ const CleanProfileSelector = ({
   const handleCreateProfile = () => {
     if (!newProfileName.trim() || isCreatingProfile) return;
     setIsCreatingProfile(true);
+    setCreateError('');
 
     try {
       const selectedAnimal = animalAvatars.find((animal) => animal.id === selectedAvatar);
@@ -191,10 +237,12 @@ const CleanProfileSelector = ({
         setShowCreateProfile(false);
         setTransitionStage('ride');
       } else {
+        setCreateError('That profile could not be created. Try deleting one first.');
         setIsCreatingProfile(false);
       }
     } catch (error) {
       console.error('Error creating profile:', error);
+      setCreateError('Something went wrong while creating your profile.');
       setIsCreatingProfile(false);
     }
   };
@@ -241,6 +289,9 @@ const CleanProfileSelector = ({
             <div className="scroll-card">
               <div className="scroll-card-inner">
                 <span className="create-card-lotus" aria-hidden="true" />
+                <button type="button" className="back-btn" onClick={goBackInCreateFlow}>
+                  {currentStep > 1 ? 'Back' : 'Cancel'}
+                </button>
                 <div className="create-step-content">
                   {currentStep === 1 && (
                     <>
@@ -310,9 +361,12 @@ const CleanProfileSelector = ({
                   )}
                 </div>
 
+                {createError ? <p className="create-error-text">{createError}</p> : null}
+
                 <PrimaryBtn
                   label={currentStep < 3 ? '→' : "Let's Explore"}
                   onClick={() => {
+                    setCreateError('');
                     if (currentStep === 1) setCurrentStep(2);
                     else if (currentStep === 2) setCurrentStep(3);
                     else handleCreateProfile();
@@ -337,6 +391,12 @@ const CleanProfileSelector = ({
               </button>
             </div>
 
+            <AudioToggle
+              isAudioOn={isAudioOn}
+              onToggle={toggleAudio}
+              position="top-right"
+            />
+
             <div className="clean-profiles-grid">
               {profileArray.map((profile) => {
                 const animalId = getAnimalId(profile.avatar);
@@ -346,17 +406,21 @@ const CleanProfileSelector = ({
                     key={profile.id}
                     className={`clean-profile-card ${isManaging ? 'manage' : ''}`}
                     onClick={() => {
-                      if (!isManaging) onProfileSelect(profile.id);
+                      if (!isManaging) {
+                        playUiTap(0.24);
+                        onProfileSelect(profile.id);
+                      }
                     }}
                     onMouseDown={() => {
                       longPressTimer.current = setTimeout(() => setManageModeId(profile.id), 900);
                     }}
-                    onMouseUp={() => clearTimeout(longPressTimer.current)}
-                    onMouseLeave={() => clearTimeout(longPressTimer.current)}
+                    onMouseUp={clearLongPressTimer}
+                    onMouseLeave={clearLongPressTimer}
                     onTouchStart={() => {
                       longPressTimer.current = setTimeout(() => setManageModeId(profile.id), 900);
                     }}
-                    onTouchEnd={() => clearTimeout(longPressTimer.current)}
+                    onTouchEnd={clearLongPressTimer}
+                    onTouchCancel={clearLongPressTimer}
                   >
                     <div className="clean-animal-avatar-container">
                       <img src={`/images/new-explorer-${animalId}.webp`} alt="Profile" className="clean-animal-avatar-image" />
@@ -382,7 +446,9 @@ const CleanProfileSelector = ({
                   key={`empty-${index}`}
                   className="clean-profile-card empty"
                   onClick={() => {
+                    playUiTap(0.24);
                     setManageModeId(null);
+                    setCreateError('');
                     setShowCreateProfile(true);
                   }}
                 >
@@ -434,7 +500,7 @@ const CleanProfileSelector = ({
                 <br />
                 <strong>3. Play:</strong> Tap your profile to continue.
                 <br />
-                <strong>4. Manage:</strong> You can have up to 4 profiles. Tap "x" to delete one.
+                <strong>4. Manage:</strong> Long-press a profile to show the delete button.
               </p>
               <PrimaryBtn label="Got it!" onClick={() => setShowInfo(false)} size="md" fullWidth />
             </div>

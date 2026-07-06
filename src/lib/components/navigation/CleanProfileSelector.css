@@ -1,7 +1,5 @@
 /* CleanProfileSelector.css */
 
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;700;800&display=swap');
-
 :root {
   --font-title: 'Baloo 2', cursive;
   --font-body: 'Nunito', sans-serif;
@@ -169,8 +167,8 @@
 .clean-info-btn {
   background: linear-gradient(180deg, #b497f5 0%, var(--color-button-purple-top, #C3A8F3) 100%);
   color: white;
-  width: clamp(36px, 3.5vw, 64px);
-  height: clamp(36px, 3.5vw, 64px);
+  width: clamp(60px, 4.2vw, 72px);
+  height: clamp(60px, 4.2vw, 72px);
   border-radius: 50%;
   border: none;
   font-size: clamp(20px, 2vw, 36px);
@@ -428,8 +426,8 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   position: absolute;
   top: -8px;
   right: -8px;
-  width: clamp(28px, 2.5vw, 46px);
-  height: clamp(28px, 2.5vw, 46px);
+  width: clamp(60px, 4vw, 72px);
+  height: clamp(60px, 4vw, 72px);
   border-radius: 50%;
   background: #f5eaff;
   color: #7c5db6;
@@ -574,7 +572,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 @media (max-height: 600px) and (orientation: landscape) {
   .clean-profile-header { margin-bottom: 8px; gap: 10px; }
   .clean-profile-title { font-size: 22px; }
-  .clean-info-btn { width: 30px; height: 30px; font-size: 16px; }
+  .clean-info-btn { width: 60px; height: 60px; font-size: 24px; }
 
   .clean-create-card {
     flex-direction: column; width: 80%; max-width: 400px;
@@ -610,7 +608,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   .clean-add-icon { width: 140px; height: 140px; font-size: 60px; }
   .clean-profile-name, .clean-add-text { font-size: 26px; }
   .clean-profile-title { font-size: 52px; }
-  .clean-info-btn { width: 48px; height: 48px; font-size: 28px; }
+  .clean-info-btn { width: 60px; height: 60px; font-size: 28px; }
 
   .clean-create-card { max-width: 700px; padding: 40px; }
   .modal-title { font-size: 38px; }
@@ -656,14 +654,14 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   }
 
   .clean-info-btn {
-    width: clamp(44px, 4vw, 72px);
-    height: clamp(44px, 4vw, 72px);
+    width: clamp(60px, 4vw, 72px);
+    height: clamp(60px, 4vw, 72px);
     font-size: clamp(24px, 2.5vw, 44px);
   }
 
   .clean-delete-trigger {
-    width: clamp(32px, 3vw, 54px);
-    height: clamp(32px, 3vw, 54px);
+    width: clamp(60px, 4vw, 72px);
+    height: clamp(60px, 4vw, 72px);
     font-size: clamp(18px, 1.8vw, 32px);
     top: -12px; right: -12px;
   }
@@ -1306,10 +1304,21 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   background: none;
   border: none;
   color: #6A1B9A;
-  font-size: clamp(13px, 1.6vw, 15px);
+  font-size: clamp(14px, 1.6vw, 16px);
   text-decoration: underline;
   cursor: pointer;
-  padding: 8px;
+  padding: 12px;
+  min-width: 60px;
+  min-height: 60px;
+}
+
+.create-error-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(14px, 1.4vw, 20px);
+  font-weight: 700;
+  color: #8b2f4b;
+  text-align: center;
+  margin: 14px 0 0;
 }
 
 /* Tablet portrait fallback — scroll gets taller */
@@ -1366,4 +1375,3 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   --btn-color-glow: rgba(180, 158, 232, 0.20);
   color: #FFFFFF !important;
 }
-
