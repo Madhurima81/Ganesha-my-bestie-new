@@ -204,8 +204,6 @@ const VakratundaGroveContent = ({
   zoneId,
   sceneId
 }) => {
-  if (!sceneState?.phase) sceneActions.updateState({ phase: PHASES.INITIAL });
-
   const { resetScene } = useSceneReset(sceneActions, zoneId, sceneId, getSceneResetConfig(sceneId));
 
   const completionModalContent = getCompletionModal(zoneId, sceneId);
@@ -455,6 +453,12 @@ const VakratundaGroveContent = ({
 
   // 3-2-1 countdown display — shown when child switches back to tab/app
   const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
+
+  useEffect(() => {
+    if (!sceneState?.phase) {
+      sceneActions.updateState({ phase: PHASES.INITIAL });
+    }
+  }, [sceneActions, sceneState?.phase]);
 
   useEffect(() => {
     return () => clearAllTimeouts();

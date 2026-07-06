@@ -60,44 +60,6 @@
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.28));
 }
 
-.vak-demo-path {
-  position: absolute;
-  inset: 0;
-  z-index: 18;
-  pointer-events: none;
-}
-
-.vak-demo-path path {
-  fill: none;
-  stroke: rgba(255, 191, 73, 0.56);
-  stroke-width: 0.72;
-  stroke-linecap: round;
-  stroke-dasharray: 1.4 2.8;
-  animation: vakCueDash 1.25s linear infinite;
-}
-
-.vak-demo-piece {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  z-index: 19;
-  width: 14%;
-  pointer-events: none;
-  opacity: 0.72;
-  animation: vakCuePieceMove 2s ease-in-out infinite;
-}
-
-.vak-demo-arrow {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  z-index: 19;
-  color: rgba(239, 159, 39, 0.72);
-  font-family: 'Baloo 2', cursive;
-  font-size: clamp(18px, 2.5vw, 28px);
-  text-shadow: 0 1px 5px rgba(255, 255, 255, 0.5);
-  pointer-events: none;
-  animation: vakCueArrowBounce 1s ease-in-out infinite;
-}
-
 .vak-game .vak-hint-pulse {
   animation: vakHintPulse 1.15s ease-in-out infinite;
 }
@@ -106,20 +68,10 @@
   animation: vakHintGlow 1.45s ease-in-out infinite;
 }
 
-.vak-game .vak-demo-path.vak-hint-glow path {
-  stroke: rgba(245, 183, 86, 0.62);
-}
-
 .vak-game .vak-pile.vak-hint-glow img,
 .vak-game .vak-piece.vak-hint-glow img,
-.vak-game .vak-demo-piece.vak-hint-glow img,
 .vak-game .vak-placed-piece.vak-hint-glow img {
   filter: brightness(1.04) drop-shadow(0 0 10px rgba(255, 198, 92, 0.55));
-}
-
-.vak-game .vak-demo-arrow.vak-hint-glow {
-  color: rgba(226, 156, 62, 0.9);
-  text-shadow: 0 0 12px rgba(255, 219, 147, 0.65);
 }
 
 .vak-slot {
@@ -179,30 +131,6 @@
   }
 }
 
-@keyframes vakCueDash {
-  to {
-    stroke-dashoffset: -4.4;
-  }
-}
-
-@keyframes vakCuePieceMove {
-  0% {
-    transform: translate(-50%, -50%) translate(0, 0) scale(0.95);
-    opacity: 0;
-  }
-  18% {
-    opacity: 0.92;
-  }
-  70% {
-    transform: translate(-50%, -50%) translate(var(--vak-cue-dx), var(--vak-cue-dy)) scale(1);
-    opacity: 0.92;
-  }
-  100% {
-    transform: translate(-50%, -50%) translate(var(--vak-cue-dx), var(--vak-cue-dy)) scale(1);
-    opacity: 0;
-  }
-}
-
 @keyframes vakBreathe {
   0%,
   100% {
@@ -223,16 +151,6 @@
   }
   70% {
     transform: translate(-50%, -50%) translateY(0);
-  }
-}
-
-@keyframes vakCueArrowBounce {
-  0%,
-  100% {
-    transform: translate(-50%, -50%) translateY(0);
-  }
-  50% {
-    transform: translate(-50%, -50%) translateY(8px);
   }
 }
 
@@ -272,9 +190,4 @@
     animation: none;
   }
 
-  .vak-demo-path path,
-  .vak-demo-piece,
-  .vak-demo-arrow {
-    animation: none;
-  }
 }

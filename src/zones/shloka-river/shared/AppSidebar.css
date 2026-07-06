@@ -1,6 +1,4 @@
 /* AppSidebar.css — Shloka River */
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;700;800&display=swap');
-
 /* ── Flight Animation — rendered by parent scene ─────────────────────────── */
 .flying-symbol {
   position: fixed;
@@ -89,9 +87,16 @@
   }
 }
 
-/* Glow indicator removed for Symbol Mountain parity */
 .glow-indicator {
-  display: none;
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow:
+    0 0 0 0 var(--zone-glow-color, rgba(255, 215, 0, 0.45)),
+    0 0 18px var(--zone-glow-color, rgba(255, 215, 0, 0.35));
+  animation: glow-pulse 1.8s ease-in-out infinite;
+  pointer-events: none;
 }
 
 @keyframes glow-pulse {
@@ -161,14 +166,14 @@
 @media (min-width: 1024px) and (max-width: 1366px) and (max-height: 900px) and (orientation: landscape) {
   .ganesha-sidebar {
     right: 12px;
-    width: 64px;
+    width: 76px;
     padding: 8px 6px;
     gap: 6px;
   }
 
   .ganesha-icon {
-    width: 44px !important;
-    height: 44px !important;
+    width: 60px !important;
+    height: 60px !important;
   }
 }
 
@@ -207,13 +212,16 @@
   top: 0;
   left: 0;
   width: 100vw;
-  height: var(--app-height, 100vh);
+  min-height: 100dvh;
+  height: 100dvh;
   background: rgba(0, 0, 0, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9000;
+  -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
+  padding: 16px;
 }
 
 .app-discovery-panel {
@@ -222,6 +230,8 @@
   padding: 56px 72px;
   max-width: 860px;
   width: 90%;
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
   text-align: center;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
   animation: discoveryPanelIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -344,4 +354,16 @@
 @keyframes zoneBadgeGlow {
   0%, 100% { opacity: 0.35; transform: scale(1); }
   50%       { opacity: 0.65; transform: scale(1.06); }
+}
+
+@media (max-height: 700px) {
+  .app-discovery-overlay {
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+
+  .app-discovery-panel {
+    margin: 16px 0;
+    padding: 40px 32px;
+  }
 }

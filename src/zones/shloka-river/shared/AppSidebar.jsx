@@ -46,6 +46,7 @@ const AppSidebar = ({
   const [animatingApp, setAnimatingApp] = useState(null);
   const [tappedApps, setTappedApps] = useState({});
   const prevUnlockedRef = useRef({});
+  const bloomTimeoutRef = useRef(null);
   const theme = getZoneTheme(zoneId);
   const zoneThemeVars = {
     '--zone-accent-color': theme.accentColor,
@@ -95,12 +96,25 @@ const AppSidebar = ({
     const newlyUnlocked = appOrder.find(app =>
       unlockedApps[app] && !prevUnlocked[app]
     );
-    if (newlyUnlocked && !animatingApp) {
+    if (newlyUnlocked) {
       setAnimatingApp(newlyUnlocked);
-      setTimeout(() => setAnimatingApp(null), 1000);
+      if (bloomTimeoutRef.current) clearTimeout(bloomTimeoutRef.current);
+      bloomTimeoutRef.current = setTimeout(() => {
+        setAnimatingApp(null);
+        bloomTimeoutRef.current = null;
+      }, 1000);
     }
     prevUnlockedRef.current = { ...unlockedApps };
-  }, [unlockedApps, animatingApp]);
+  }, [unlockedApps]);
+
+  useEffect(() => {
+    return () => {
+      if (bloomTimeoutRef.current) {
+        clearTimeout(bloomTimeoutRef.current);
+        bloomTimeoutRef.current = null;
+      }
+    };
+  }, []);
 
   // CENTER MODE (for future scenes)
   if (centerMode) {
@@ -164,7 +178,8 @@ const AppSidebar = ({
             appColor={appInfo[selectedApp].power.color}
             savedRecordings={savedRecordings}
             onSaveRecording={onSaveRecording}
-            allowSkip={false}
+            allowSkip={true}
+            onSkip={closePopup}
             stopAudio={() => {
               document.querySelectorAll('audio').forEach((audio) => {
                 audio.pause();
@@ -232,7 +247,8 @@ const AppSidebar = ({
           appColor={appInfo[selectedApp].power.color}
           savedRecordings={savedRecordings}
           onSaveRecording={onSaveRecording}
-          allowSkip={false}
+          allowSkip={true}
+          onSkip={closePopup}
           stopAudio={() => {
             document.querySelectorAll('audio').forEach((audio) => {
               audio.pause();

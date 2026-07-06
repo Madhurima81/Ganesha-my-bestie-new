@@ -82,7 +82,7 @@ export default function MahakayaRescueGame({
   voiceGuidance = {},
   isPaused = false,
 }) {
-  const { playVoice: playSceneLine, playSfx, playWord, playSyllable, stopVoice } = voiceGuidance;
+  const { playVoice: playSceneLine, playSfx, playSyllable, stopVoice } = voiceGuidance;
 
   const [phase, setPhase] = useState('intro');
   const [ropeStage, setRopeStage] = useState('detached');
@@ -96,12 +96,12 @@ export default function MahakayaRescueGame({
   const draggingRef = useRef(null);
   const ropeStageRef = useRef('detached');
   const phaseRef = useRef('intro');
+  const isPausedRef = useRef(isPaused);
   const timers = useRef([]);
   const slip = useRef(null);
   const stageRef = useRef(null);
   const {
     hintLevel,
-    pulseTick,
     markInteraction,
   } = useRepeatedHintCycle({
     enabled: isActive,
@@ -114,11 +114,14 @@ export default function MahakayaRescueGame({
   });
 
   const after = useCallback((ms, fn) => {
-    if (isPaused) return;
     const id = setTimeout(() => {
-      if (!isPaused) fn();
+      if (!isPausedRef.current) fn();
     }, ms);
     timers.current.push(id);
+  }, []);
+
+  useEffect(() => {
+    isPausedRef.current = isPaused;
   }, [isPaused]);
 
   const clearTimers = () => {
@@ -158,8 +161,10 @@ export default function MahakayaRescueGame({
       clearTimers();
       if (slip.current) clearInterval(slip.current);
     };
+    // `after` is intentionally stable and pause-aware via ref; recorder toggles
+    // should not restart the game.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isActive, after, playSceneLine]);
+  }, [isActive]);
 
   function startSink() {
     if (slip.current) return;
@@ -185,9 +190,11 @@ export default function MahakayaRescueGame({
     if (isPaused) {
       draggingRef.current = null;
       setDragging(null);
-      startSink();
+      if (slip.current) {
+        clearInterval(slip.current);
+        slip.current = null;
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPaused]);
 
   if (!isActive) return null;
@@ -196,6 +203,7 @@ export default function MahakayaRescueGame({
     if (isPaused || phaseRef.current !== 'play' || ropeStageRef.current !== 'detached') return;
     e.preventDefault();
     e.stopPropagation();
+    e.currentTarget.setPointerCapture?.(e.pointerId);
     markInteraction();
     draggingRef.current = 'knob';
     setDragging('knob');
@@ -205,6 +213,7 @@ export default function MahakayaRescueGame({
     if (isPaused || phaseRef.current !== 'play' || ropeStageRef.current !== 'attached') return;
     e.preventDefault();
     e.stopPropagation();
+    e.currentTarget.setPointerCapture?.(e.pointerId);
     markInteraction();
     if (slip.current) {
       clearInterval(slip.current);
@@ -244,7 +253,10 @@ export default function MahakayaRescueGame({
           setPhase('free');
           phaseRef.current = 'free';
         });
-        after(4700, () => onPhaseComplete());
+        after(4700, () => {
+          onGameComplete?.();
+          onPhaseComplete();
+        });
       }
     }
   };
@@ -331,7 +343,7 @@ export default function MahakayaRescueGame({
       className={`maha-game ${hideElements ? 'is-hidden' : ''}`}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
-      onPointerLeave={onPointerUp}
+      onPointerCancel={onPointerUp}
     >
       {phase !== 'intro' && (
         <SyllableHighlight

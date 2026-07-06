@@ -58,6 +58,7 @@ export default function VakratundaRescueGame({
 
   const stageRef = useRef(null);
   const timers = useRef([]);
+  const isPausedRef = useRef(isPaused);
   const vakHintVoiceRef = useRef({ stage: null, level: 0 });
   const {
     hintLevel,
@@ -83,13 +84,16 @@ export default function VakratundaRescueGame({
     timers.current = [];
   }, []);
 
+  useEffect(() => {
+    isPausedRef.current = isPaused;
+  }, [isPaused]);
+
   const after = useCallback((ms, fn) => {
-    if (isPaused) return;
     const id = setTimeout(() => {
-      if (!isPaused) fn();
+      if (!isPausedRef.current) fn();
     }, ms);
     timers.current.push(id);
-  }, [isPaused]);
+  }, []);
 
   const getPoint = useCallback((clientX, clientY) => {
     const stage = stageRef.current;
@@ -146,7 +150,10 @@ export default function VakratundaRescueGame({
     after(4200, () => setPhase('choose'));
 
     return clearTimers;
-  }, [after, clearTimers, isActive, playSceneLine, resetState]);
+    // `after` is intentionally stable and pause-aware via ref; re-running this
+    // effect on recorder open would wipe in-progress play.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isActive]);
 
   useEffect(() => {
     if (!dragging) return;
@@ -167,16 +174,11 @@ export default function VakratundaRescueGame({
       }
 
       let bestIndex = -1;
-      let bestDistance = 13;
-
-      POS.slots.forEach((slot, idx) => {
-        if (filled[idx]) return;
+      const slot = POS.slots[nextEmptyIndex];
+      if (slot) {
         const distance = Math.hypot(point.x - slot.l, point.y - slot.t);
-        if (distance < bestDistance) {
-          bestDistance = distance;
-          bestIndex = idx;
-        }
-      });
+        bestIndex = distance < 13 ? nextEmptyIndex : -1;
+      }
 
       if (bestIndex >= 0) {
         const nextFilled = filled.slice();
@@ -205,7 +207,7 @@ export default function VakratundaRescueGame({
       window.removeEventListener('pointerup', handleUp);
       window.removeEventListener('pointercancel', handleUp);
     };
-  }, [dragging, filled, getPoint, isPaused, onMicroWin, playSyllable, selectedMaterial, startHopping, stopVoice]);
+  }, [dragging, filled, getPoint, isPaused, nextEmptyIndex, onMicroWin, playSyllable, selectedMaterial, startHopping, stopVoice]);
 
   useEffect(() => {
     vakHintVoiceRef.current = { stage: hintStage, level: 0 };

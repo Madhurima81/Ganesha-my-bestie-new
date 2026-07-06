@@ -32,12 +32,6 @@
   touch-action: none;
 }
 
-.maha-strain {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  font-size: clamp(18px, 2.4vw, 24px);
-}
-
 .maha-hint,
 .maha-doneline {
   position: absolute;
@@ -69,44 +63,6 @@
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
-.maha-meter {
-  position: absolute;
-  top: 16%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 42%;
-  max-width: 280px;
-  height: 11px;
-  z-index: 30;
-  background: rgba(255, 255, 255, 0.35);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.maha-meter > div {
-  height: 100%;
-  background: #ef9f27;
-  border-radius: 8px;
-  transition: width 0.12s;
-}
-
-.maha-sink-note {
-  position: absolute;
-  bottom: 5%;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 30;
-  color: #fff;
-  font-size: clamp(11px, 1.4vw, 13px);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .maha-calf,
-  .maha-meter > div {
-    transition: none;
-  }
-}
 
 /* rope-pulley additions */
 
@@ -133,50 +89,6 @@
   filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.32));
 }
 
-.maha-cue-line {
-  position: absolute;
-  inset: 0;
-  z-index: 15;
-  pointer-events: none;
-}
-
-.maha-cue-line path {
-  fill: none;
-  stroke: rgba(229, 170, 110, 0.58);
-  stroke-width: 0.72;
-  stroke-linecap: round;
-  stroke-dasharray: 1.8 3.1;
-  animation: mahaCueDash 1.25s linear infinite;
-}
-
-.maha-cue-target {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  aspect-ratio: 1;
-  border: 2px dashed rgba(255, 213, 141, 0.64);
-  border-radius: 999px;
-  box-shadow: 0 0 0 4px rgba(255, 245, 214, 0.1);
-  z-index: 15;
-  pointer-events: none;
-  animation: mahaCuePulse 1s ease-in-out infinite;
-}
-
-.maha-cue-arrow {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  z-index: 17;
-  color: rgba(241, 192, 142, 0.72);
-  font-family: 'Baloo 2', cursive;
-  font-size: clamp(20px, 2.5vw, 30px);
-  text-shadow: 0 2px 6px rgba(103, 61, 24, 0.16), 0 0 6px rgba(255, 246, 225, 0.45);
-  pointer-events: none;
-  animation: mahaCueArrowBounce 1.05s ease-in-out infinite;
-}
-
-.maha-cue-arrow-down {
-  color: rgba(209, 145, 89, 0.75);
-}
-
 .maha-knob.grabbing,
 .maha-pull.grabbing {
   cursor: grabbing;
@@ -196,42 +108,9 @@
   animation: mahaHintGlow 1.45s ease-in-out infinite;
 }
 
-.maha-game .maha-cue-line.maha-hint-glow path {
-  stroke: rgba(227, 168, 104, 0.68);
-}
-
 .maha-game .maha-knob.maha-hint-glow .maha-grip-svg,
-.maha-game .maha-pull.maha-hint-glow .maha-grip-svg,
-.maha-game .maha-cue-target.maha-hint-glow {
+.maha-game .maha-pull.maha-hint-glow .maha-grip-svg {
   filter: brightness(1.04) drop-shadow(0 0 10px rgba(255, 188, 98, 0.55));
-}
-
-@keyframes mahaCueDash {
-  to {
-    stroke-dashoffset: -4.4;
-  }
-}
-
-@keyframes mahaCuePulse {
-  0%,
-  100% {
-    transform: translate(-50%, -50%) scale(0.94);
-    opacity: 0.7;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.05);
-    opacity: 1;
-  }
-}
-
-@keyframes mahaCueArrowBounce {
-  0%,
-  100% {
-    transform: translate(-50%, -50%) translateY(0);
-  }
-  50% {
-    transform: translate(-50%, -50%) translateY(8px);
-  }
 }
 
 @keyframes mahaHintFade {
@@ -254,9 +133,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .maha-cue-line path,
-  .maha-cue-target,
-  .maha-cue-arrow {
-    animation: none;
+  .maha-calf {
+    transition: none;
   }
 }
