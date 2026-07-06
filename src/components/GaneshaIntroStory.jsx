@@ -8,7 +8,9 @@ const GaneshaIntroStory = ({ profileId, childName, onComplete }) => {
   const [tapPuffKey, setTapPuffKey] = useState(0);
   const speechTimerRef = useRef(null);
   const tapPuffTimerRef = useRef(null);
+  const introAdvanceTimerRef = useRef(null);
   const hasSpeechGestureRef = useRef(false);
+  const spokenSlideRef = useRef(-1);
 
   const slides = useMemo(
     () => [
@@ -64,9 +66,6 @@ const GaneshaIntroStory = ({ profileId, childName, onComplete }) => {
 
   const unlockSpeechFromGesture = () => {
     try {
-      localStorage.setItem('ganesha_audio_enabled', 'true');
-    } catch {}
-    try {
       if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return;
       const unlockUtterance = new window.SpeechSynthesisUtterance('');
       unlockUtterance.volume = 0;
@@ -77,34 +76,41 @@ const GaneshaIntroStory = ({ profileId, childName, onComplete }) => {
     } catch {}
   };
 
-  useEffect(() => {
+  const speakSlide = (slideIndex) => {
     const audioEnabled = localStorage.getItem('ganesha_audio_enabled');
-    if (audioEnabled === 'false') return;
-    if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return;
-    if (!hasSpeechGestureRef.current) return;
+    if (audioEnabled === 'false') return false;
+    if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return false;
+    if (!hasSpeechGestureRef.current) return false;
+    if (spokenSlideRef.current === slideIndex) return false;
 
+    const slide = slides[slideIndex];
+    if (!slide) return false;
+
+    const text = slide.vo || `${slide.title}. ${slide.text}`;
+    const utterance = new window.SpeechSynthesisUtterance(text);
+    const voices = window.speechSynthesis.getVoices?.() || [];
+    const preferredVoice =
+      voices.find((v) => /female|zira|samantha|veena/i.test(v.name)) ||
+      voices.find((v) => /en-IN|en-GB|en-US/i.test(v.lang)) ||
+      null;
+    if (preferredVoice) utterance.voice = preferredVoice;
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+    spokenSlideRef.current = slideIndex;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.resume?.();
+    window.speechSynthesis.speak(utterance);
+    return true;
+  };
+
+  useEffect(() => {
     const slide = slides[currentSlide];
     if (!slide) return;
-
-    const speak = () => {
-      const text = slide.vo || `${slide.title}. ${slide.text}`;
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.resume?.();
-      const utterance = new window.SpeechSynthesisUtterance(text);
-      const voices = window.speechSynthesis.getVoices?.() || [];
-      const preferredVoice =
-        voices.find((v) => /female|zira|samantha|veena/i.test(v.name)) ||
-        voices.find((v) => /en-IN|en-GB|en-US/i.test(v.lang)) ||
-        null;
-      if (preferredVoice) utterance.voice = preferredVoice;
-      utterance.rate = 0.9;
-      utterance.pitch = 1;
-      utterance.volume = 1;
-      window.speechSynthesis.speak(utterance);
-    };
-
-    speechTimerRef.current = setTimeout(speak, 120);
-    window.speechSynthesis.addEventListener?.('voiceschanged', speak, { once: true });
+    spokenSlideRef.current = -1;
+    speechTimerRef.current = setTimeout(() => {
+      speakSlide(currentSlide);
+    }, 120);
 
     return () => {
       if (speechTimerRef.current) {
@@ -112,20 +118,42 @@ const GaneshaIntroStory = ({ profileId, childName, onComplete }) => {
         speechTimerRef.current = null;
       }
       window.speechSynthesis?.cancel?.();
-      window.speechSynthesis?.removeEventListener?.('voiceschanged', speak);
     };
   }, [currentSlide, slides]);
 
   useEffect(() => {
     return () => {
+      if (speechTimerRef.current) {
+        clearTimeout(speechTimerRef.current);
+      }
       if (tapPuffTimerRef.current) {
         clearTimeout(tapPuffTimerRef.current);
       }
+      if (introAdvanceTimerRef.current) {
+        clearTimeout(introAdvanceTimerRef.current);
+      }
+      window.speechSynthesis?.cancel?.();
     };
   }, []);
 
+  useEffect(() => {
+    const nextSlide = slides[currentSlide + 1];
+    if (!nextSlide?.image) return;
+    const img = new Image();
+    img.src = nextSlide.image;
+  }, [currentSlide, slides]);
+
   const handleNext = (showPuff = false) => {
     unlockSpeechFromGesture();
+    if (currentSlide === 0) {
+      speakSlide(0);
+      if (introAdvanceTimerRef.current) clearTimeout(introAdvanceTimerRef.current);
+      introAdvanceTimerRef.current = setTimeout(() => {
+        setCurrentSlide(1);
+        introAdvanceTimerRef.current = null;
+      }, 1100);
+      return;
+    }
     if (showPuff) {
       setTapPuffKey((prev) => prev + 1);
       setShowTapPuff(true);
@@ -166,7 +194,14 @@ const GaneshaIntroStory = ({ profileId, childName, onComplete }) => {
           </button>
         ) : (
           <>
-            <img key={currentSlide} src={slide.image} alt={slide.title} className="gis-image storyScene active" />
+            <button
+              type="button"
+              className="storyStageTap"
+              onClick={() => handleNext(!slide.minimal)}
+              aria-label={slide.minimal ? 'Tap to begin story' : 'Next slide'}
+            >
+              <img key={currentSlide} src={slide.image} alt={slide.title} className="gis-image storyScene active" />
+            </button>
 
             <div className="gis-bottom">
               {slide.minimal ? (

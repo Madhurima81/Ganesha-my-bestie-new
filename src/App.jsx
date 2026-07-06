@@ -74,6 +74,7 @@ const SCENE_MAPPING = {
     'nirvighnam-kurumedeva': () => import('./zones/meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV5'),
     'sarvakaryeshu-sarvada': () => import('./zones/meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV7.jsx'),
     'final-meaning-scene': () => import('./zones/meaning cave/scenes/final meaning scene/Cavescene5memoryfinale.jsx'),
+    'mantra-assembly': () => import('./zones/meaning cave/scenes/final meaning scene/Cavescene5memoryfinale.jsx'),
 
   },
   // ✅ ADD: Shloka River scenes
@@ -177,9 +178,163 @@ function MushikaLoader({ progress, ready, onDone }) {
   );
 }
 
+function normalizeSceneId(zoneId, sceneId) {
+  if (zoneId === 'cave-of-secrets' && sceneId === 'mantra-assembly') {
+    return 'final-meaning-scene';
+  }
+
+  return sceneId;
+}
+
+function readTempSceneData(profileId, zoneId, sceneId) {
+  if (!profileId || !zoneId || !sceneId) {
+    return {};
+  }
+
+  const tempKey = `temp_session_${profileId}_${zoneId}_${sceneId}`;
+
+  try {
+    return JSON.parse(localStorage.getItem(tempKey) || '{}');
+  } catch (error) {
+    console.warn('Failed to parse temp scene data:', { tempKey, error });
+    return {};
+  }
+}
+
+function loadStableSceneComponent(sceneCacheRef, zoneId, sceneId) {
+  const normalizedSceneId = normalizeSceneId(zoneId, sceneId);
+  const key = `${zoneId}/${normalizedSceneId}`;
+  if (sceneCacheRef.current[key]) return sceneCacheRef.current[key];
+
+  const zoneMapping = SCENE_MAPPING[zoneId];
+  if (!zoneMapping) {
+    console.error(`Zone "${zoneId}" not found in SCENE_MAPPING`);
+    return null;
+  }
+
+  const sceneLoader = zoneMapping[normalizedSceneId];
+  if (!sceneLoader) {
+    console.error(`Scene "${normalizedSceneId}" not found in zone "${zoneId}"`);
+    return null;
+  }
+
+  const Component = lazy(sceneLoader);
+  sceneCacheRef.current[key] = Component;
+  return Component;
+}
+
+function StablePlaceholderScene({ zoneId, sceneId, onNavigate }) {
+  return (
+    <div className="scene-placeholder" style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: 'var(--app-height, 100vh)',
+      backgroundColor: '#FFF8E7',
+      textAlign: 'center',
+      padding: '20px',
+      fontFamily: "'Nunito', sans-serif"
+    }}>
+      <h2 style={{ fontSize: '48px', margin: '20px 0' }}>
+        {sceneId === 'temple' ? '🛕' : sceneId === 'garden' ? '🌸' : '🎮'}
+      </h2>
+      <h1 style={{ fontFamily: "'Baloo 2', cursive", color: '#5e49a8', marginBottom: '10px' }}>
+        Ganesha is still building this one!
+      </h1>
+      <p style={{ color: '#6b5f8e', fontSize: '18px', marginBottom: '30px' }}>
+        Come back soon - something wonderful is on the way.
+      </p>
+      <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+        <button
+          onClick={() => onNavigate('zone-welcome')}
+          style={{
+            padding: '12px 24px',
+            minHeight: '60px',
+            fontFamily: "'Baloo 2', cursive",
+            backgroundColor: '#4CAF50',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontSize: '16px'
+          }}
+        >
+          ← Back to {zoneId.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+        </button>
+        <button
+          onClick={() => onNavigate('map')}
+          style={{
+            padding: '12px 24px',
+            minHeight: '60px',
+            fontFamily: "'Baloo 2', cursive",
+            backgroundColor: '#2196F3',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontSize: '16px'
+          }}
+        >
+          🗺️ Back to Map
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function StableSceneLoader({
+  zoneId,
+  sceneId,
+  onNavigate,
+  onComplete,
+  onSceneSelect,
+  childName,
+  childAge,
+  sceneCacheRef,
+}) {
+  const normalizedSceneId = normalizeSceneId(zoneId, sceneId);
+  const SceneComponent = loadStableSceneComponent(sceneCacheRef, zoneId, normalizedSceneId);
+
+  if (!SceneComponent) {
+    return (
+      <StablePlaceholderScene
+        zoneId={zoneId}
+        sceneId={normalizedSceneId}
+        onNavigate={onNavigate}
+      />
+    );
+  }
+
+  return (
+    <Suspense fallback={
+      <div className="enhanced-loading-screen">
+        <div className="loading-ganesha-container">
+          <div className="loading-ganesha-glow"></div>
+          <img
+            src={GANESHA_USAGE_SYSTEM.loading.asset}
+            className="loading-ganesha"
+            alt="Ganesha"
+          />
+        </div>
+      </div>
+    }>
+      <SceneComponent
+        onNavigate={onNavigate}
+        onComplete={onComplete}
+        onSceneSelect={onSceneSelect}
+        zoneId={zoneId}
+        sceneId={normalizedSceneId}
+        childName={childName}
+        childAge={childAge}
+      />
+    </Suspense>
+  );
+}
+
 function App() {
   // DEV: ?engine-test in URL → show engine test harness only
-  if (typeof window !== 'undefined' && window.location.search.includes('engine-test')) {
+  if (false && typeof window !== 'undefined' && window.location.search.includes('engine-test')) {
     return <Suspense fallback={null}><GaneshaEngineTest /></Suspense>;
   }
 
@@ -197,6 +352,7 @@ const dareOpenTimerRef = useRef(null);
 const [kindnessCheckEntry, setKindnessCheckEntry] = useState(null);
 const [showIntroStory, setShowIntroStory] = useState(false);
 const [introStoryReturnView, setIntroStoryReturnView] = useState('map');
+const showEngineTest = typeof window !== 'undefined' && window.location.search.includes('engine-test');
 
 useEffect(() => {
   if (currentView !== 'map' || showIntroStory) return;
@@ -696,8 +852,9 @@ const handleContinue = (targetZone, targetScene) => {
     }
 
     // Mid-game scene → resume directly
+    const normalizedSceneId = normalizeSceneId(targetZone, targetScene);
     setCurrentZone(targetZone);
-    setCurrentScene(targetScene);
+    setCurrentScene(normalizedSceneId);
     setCurrentView('scene');
 
   } catch (error) {
@@ -764,11 +921,12 @@ const handleContinue = (targetZone, targetScene) => {
   setCurrentZone(zoneId);
   
   if (sceneId) {
-    setCurrentScene(sceneId);
+    const normalizedSceneId = normalizeSceneId(zoneId, sceneId);
+    setCurrentScene(normalizedSceneId);
     setCurrentView('scene');
 
     // ✅ SIMPLE: Save scene location
-    SimpleSceneManager.setCurrentScene(zoneId, sceneId);
+    SimpleSceneManager.setCurrentScene(zoneId, normalizedSceneId);
   } else {
     // Lot 3 — warm this zone's welcome bg + first scene assets
     preloadImages(ZONE_FIRST_SCENE_IMAGES[zoneId] || []);
@@ -791,20 +949,21 @@ const handleSceneSelect = (sceneId, options = {}) => {
 
   const mode = options.mode || 'default';
   const profileId = localStorage.getItem('activeProfileId');
+  const normalizedSceneId = normalizeSceneId(currentZone, sceneId);
   
   // ✅ ALWAYS: Set scene and view (this keeps continue journey working)
-  setCurrentScene(sceneId);
+  setCurrentScene(normalizedSceneId);
   setCurrentView('scene');
   
   // ✅ ALWAYS: Save location for continue journey
-  SimpleSceneManager.setCurrentScene(currentZone, sceneId);
+  SimpleSceneManager.setCurrentScene(currentZone, normalizedSceneId);
   
   // ✅ ONLY FOR REPLAY/RESTART: Clear storage
   if (mode === 'restart' || mode === 'replay') {
     console.log('🔄 CLEARING: Storage for fresh start');
     
-    const sceneStateKey = `${profileId}_${currentZone}_${sceneId}_state`;
-    const tempKey = `temp_session_${profileId}_${currentZone}_${sceneId}`;
+    const sceneStateKey = `${profileId}_${currentZone}_${normalizedSceneId}_state`;
+    const tempKey = `temp_session_${profileId}_${currentZone}_${normalizedSceneId}`;
     
     localStorage.removeItem(sceneStateKey);
     localStorage.removeItem(tempKey);
@@ -839,12 +998,13 @@ const getNextScene = (zoneId, currentSceneId) => {
   };
 
   const scenes = sceneProgression[zoneId];
+  const normalizedCurrentSceneId = normalizeSceneId(zoneId, currentSceneId);
   if (!scenes) {
     console.log(`🎯 HELPER: No progression defined for zone: ${zoneId}`);
     return null;
   }
 
-  const currentIndex = scenes.indexOf(currentSceneId);
+  const currentIndex = scenes.indexOf(normalizedCurrentSceneId);
   if (currentIndex === -1) {
     console.log(`🎯 HELPER: Scene ${currentSceneId} not found in ${zoneId}`);
     return null;
@@ -872,11 +1032,12 @@ const getNextScene = (zoneId, currentSceneId) => {
 
     // Allow scenes to navigate directly by sceneId (e.g. "favorite-food", "dreams-wishes").
     // If destination matches a scene in the current zone, open it directly.
+    const normalizedDestination = normalizeSceneId(currentZone, destination);
     const zoneScenes = currentZone ? SCENE_MAPPING[currentZone] : null;
-    if (zoneScenes && zoneScenes[destination]) {
-      setCurrentScene(destination);
+    if (zoneScenes && zoneScenes[normalizedDestination]) {
+      setCurrentScene(normalizedDestination);
       setCurrentView('scene');
-      SimpleSceneManager.setCurrentScene(currentZone, destination);
+      SimpleSceneManager.setCurrentScene(currentZone, normalizedDestination);
       return;
     }
     
@@ -998,6 +1159,7 @@ case 'direct-to-map':
 
 // ✅ ADD THIS DEBUG VERSION to App.jsx handleSceneComplete function
 const handleSceneComplete = (sceneId, result) => {
+  const normalizedSceneId = normalizeSceneId(currentZone, sceneId);
   console.log('🎯 APP: Scene completed:', sceneId, result);
   
   // ✅ DEBUG: Check if symbols are being passed
@@ -1015,7 +1177,7 @@ const handleSceneComplete = (sceneId, result) => {
   
   try {
     const activeProfileId = localStorage.getItem('activeProfileId');
-    if (activeProfileId && currentZone && result?.stars) {
+    if (activeProfileId && currentZone && result?.stars != null) {
       
       console.log('🧪 APP: About to call ProgressManager.updateSceneCompletion with:');
 console.log('🧪 symbols:', result?.symbols || {});
@@ -1026,7 +1188,7 @@ console.log('🧪 WILL SAVE chants as:', result?.chants || result?.chantedVerses
       const updatedZoneProgress = ProgressManager.updateSceneCompletion(
         activeProfileId, 
         currentZone, 
-        sceneId, 
+        normalizedSceneId,
         {
           completed: true,
           stars: result?.stars || 0,
@@ -1043,7 +1205,7 @@ chants: result?.chants || result?.chantedVerses || {},
       console.log('✅ APP: Scene completion saved to ProgressManager');
       console.log('📊 APP: Updated zone progress:', updatedZoneProgress);
       
-      const unlockedScene = GameStateManager.unlockNextScene(currentZone, sceneId);
+      const unlockedScene = GameStateManager.unlockNextScene(currentZone, normalizedSceneId);
       if (unlockedScene) {
         console.log('🎉 APP: Next scene auto-unlocked:', unlockedScene);
       } else {
@@ -1053,7 +1215,7 @@ chants: result?.chants || result?.chantedVerses || {},
       console.error('❌ APP: Missing required data for scene completion', {
         activeProfileId,
         currentZone,
-        sceneId,
+        sceneId: normalizedSceneId,
         result
       });
     }
@@ -1086,6 +1248,36 @@ chants: result?.chants || result?.chantedVerses || {},
       root.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: var(--app-height, 100vh); margin: 0; padding: 0;';
     }
   };
+
+  useEffect(() => {
+    if (currentView !== 'scene' || !currentZone || !currentScene) {
+      return undefined;
+    }
+
+    const profileId = localStorage.getItem('activeProfileId');
+    const normalizedSceneId = normalizeSceneId(currentZone, currentScene);
+    const tempData = readTempSceneData(profileId, currentZone, normalizedSceneId);
+
+    if (tempData.playAgainRequested) {
+      const tempKey = `temp_session_${profileId}_${currentZone}_${normalizedSceneId}`;
+      const sceneStateKey = `${profileId}_${currentZone}_${normalizedSceneId}_state`;
+      localStorage.removeItem(tempKey);
+      localStorage.removeItem(sceneStateKey);
+    }
+
+    applySceneStyles();
+
+    return () => {
+      document.body.className = '';
+      document.body.style.cssText = '';
+
+      const root = document.getElementById('root');
+      if (root) {
+        root.className = '';
+        root.style.cssText = '';
+      }
+    };
+  }, [currentView, currentZone, currentScene]);
   
   // Get zone data for current zone
   const getCurrentZoneData = () => {
@@ -1098,6 +1290,10 @@ chants: result?.chants || result?.chantedVerses || {},
     <>
     {/* GameCoachProvider disabled — not used per CLAUDE.md */}
     <Suspense fallback={<div className="enhanced-loading-screen" />}>
+{showEngineTest ? (
+  <GaneshaEngineTest />
+) : (
+<>
 {currentView === 'loading' && !showDarePopup && (
   <div className="enhanced-loading-screen">
 
@@ -1371,7 +1567,7 @@ chants: result?.chants || result?.chantedVerses || {},
       )}
       
       {/* 🎯 DYNAMIC SCENE RENDERING: Replaces all hardcoded scene logic */}
-      {currentView === 'scene' && currentZone && currentScene && (() => {
+      {false && currentView === 'scene' && currentZone && currentScene && (() => {
         console.log('🎯 Rendering scene view');
         console.log('🎯 Zone:', currentZone, 'Scene:', currentScene); 
 
@@ -1429,6 +1625,25 @@ if (tempData.playAgainRequested) {
           </ErrorBoundary>
         );
       })()}
+      {currentView === 'scene' && currentZone && currentScene && (
+        <ErrorBoundary onReset={() => {
+          SimpleSceneManager.clearCurrentScene();
+          setCurrentZone(null);
+          setCurrentScene(null);
+          setCurrentView('map');
+        }}>
+          <StableSceneLoader
+            zoneId={currentZone}
+            sceneId={currentScene}
+            onNavigate={handleNavigate}
+            onComplete={handleSceneComplete}
+            onSceneSelect={handleSceneSelect}
+            childName={currentProfile?.name || 'friend'}
+            childAge={currentProfile?.age || 8}
+            sceneCacheRef={_sceneCache}
+          />
+        </ErrorBoundary>
+      )}
       
       {/* Fallback view */}
       {!['loading', 'error', 'main-welcome', 'profile-welcome', 'profile-create', 'profile-selector', 'map', 'zone-welcome', 'scene', 'parent-dashboard', 'twg'].includes(currentView) && (
@@ -1438,6 +1653,8 @@ if (tempData.playAgainRequested) {
           <button onClick={() => setCurrentView('map')}>Go to Map</button>
         </div>
       )}
+      </>
+)}
     </Suspense>
     {/* TWG: Daily Dare Popup — fires once per day; z-index 3000 covers all views */}
     {showDarePopup && currentView === 'map' && (

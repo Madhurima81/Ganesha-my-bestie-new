@@ -12,17 +12,11 @@
 }
 
 .gis-overlay::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  display: none;
+  content: none;
 }
 
 .gis-overlay::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  display: none;
+  content: none;
 }
 
 .gis-overlay .storySparkle {
@@ -45,6 +39,16 @@
   display: flex;
   align-items: stretch;
   justify-content: center;
+}
+
+.storyStageTap {
+  position: absolute;
+  inset: 0;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
 }
 
 .gis-image {
@@ -73,23 +77,6 @@
   top: 24px;
   padding: 0 22px;
   text-align: center;
-}
-
-.gis-title {
-  margin: 0 0 6px;
-  font-family: 'Baloo 2', cursive;
-  font-size: clamp(28px, 3.3vw, 44px);
-  line-height: 1.05;
-  color: #fff6df;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
-}
-
-.gis-text {
-  margin: 0;
-  font-size: clamp(15px, 1.55vw, 22px);
-  font-weight: 600;
-  color: rgba(255, 245, 226, 0.95);
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.38);
 }
 
 .gis-dots {
@@ -128,9 +115,9 @@
 .storySubtitle {
   margin-top: 14px;
   margin-bottom: 0;
-  font-family: "Baloo 2", sans-serif;
+  font-family: "Nunito", sans-serif;
   font-size: clamp(16px, 1.8vw, 27px);
-  font-weight: 500;
+  font-weight: 700;
   color: #8978b5;
   text-align: center;
   opacity: 0.82;
@@ -155,22 +142,6 @@
   animation: tapPulse 2.4s ease-in-out infinite;
 }
 
-.gis-next {
-  position: absolute;
-  left: 50%;
-  bottom: 36px;
-  transform: translateX(-50%);
-  border: none;
-  border-radius: 999px;
-  min-width: 190px;
-  padding: 12px 22px;
-  color: #fff;
-  font-weight: 800;
-  font-size: 15px;
-  cursor: pointer;
-  background: linear-gradient(135deg, #c98a4a, #ae6f36);
-}
-
 /* STORY NEXT ARROW */
 .storyNextArrow {
   position: absolute;
@@ -193,6 +164,11 @@
 /* HOVER */
 .storyNextArrow:hover {
   transform: scale(1.06);
+  background: #f6efff;
+}
+
+.storyNextArrow:active {
+  transform: scale(0.96);
   background: #f6efff;
 }
 
@@ -239,6 +215,7 @@
   border: none;
   cursor: pointer;
   background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
   padding: 10px 18px;
   border-radius: 999px;
@@ -279,17 +256,11 @@
     padding: 10px 22px;
   }
 
-  .gis-next {
-    bottom: 26px;
-    min-width: 160px;
-    padding: 10px 18px;
-  }
-
   .storyNextArrow {
     right: 16px;
     bottom: 18px;
-    width: 54px;
-    height: 54px;
+    width: 60px;
+    height: 60px;
   }
 
   .storySkip {
@@ -363,7 +334,7 @@
   position: relative;
   z-index: 2;
   margin-top: 10px;
-  font-family: "Baloo 2", sans-serif;
+  font-family: "Nunito", sans-serif;
   font-size: clamp(18px, 1.8vw, 28px);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.92);
