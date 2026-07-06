@@ -23,24 +23,46 @@ const SanskritVoiceRecorder = ({
   const [hasRecorded, setHasRecorded] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasHeardWord, setHasHeardWord] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [helperMessage, setHelperMessage] = useState('');
 
   const mediaRecorderRef = useRef(null);
   const timerRef = useRef(null);
   const audioRef = useRef(null);
   const streamRef = useRef(null);
   const practiceAudioRef = useRef(null);
+  const recordedAudioRef = useRef(null);
 
   const { safeClick, unlock, isLocked } = useSafeClick(300);
 
+  const clearRecordingTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  const revokeRecordedAudio = () => {
+    if (recordedAudioRef.current) {
+      URL.revokeObjectURL(recordedAudioRef.current);
+      recordedAudioRef.current = null;
+    }
+  };
+
   useEffect(() => {
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      clearRecordingTimer();
+      mediaRecorderRef.current = null;
       if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
       if (practiceAudioRef.current) {
         practiceAudioRef.current.pause();
         practiceAudioRef.current = null;
       }
-      if (recordedAudio) URL.revokeObjectURL(recordedAudio);
+      revokeRecordedAudio();
       unlock();
     };
   }, []);
@@ -49,6 +71,15 @@ const SanskritVoiceRecorder = ({
   useEffect(() => {
     if (show) stopAudio?.();
   }, [show, stopAudio]);
+
+  useEffect(() => {
+    recordedAudioRef.current = recordedAudio;
+  }, [recordedAudio]);
+
+  useEffect(() => {
+    if (!isRecording || recordingTime < maxRecordingTime) return;
+    stopRecording();
+  }, [isRecording, recordingTime, maxRecordingTime]);
 
   const getSyllablesForWord = (w) => {
     if (syllables && syllables.length > 0) {
@@ -70,6 +101,8 @@ const SanskritVoiceRecorder = ({
   };
 
   const playAudioSafe = async (src) => {
+    setErrorMessage('');
+
     if (practiceAudioRef.current) {
       practiceAudioRef.current.pause();
       practiceAudioRef.current.currentTime = 0;
@@ -97,12 +130,20 @@ const SanskritVoiceRecorder = ({
 
   const handleHearCompleteWord = async () => {
     const started = await playAudioSafe(`/audio/words/${word}.mp3`);
-    if (started) setHasHeardWord(true);
+    setHasHeardWord(true);
+    if (started) {
+      setHelperMessage('');
+      return;
+    }
+
+    setHelperMessage('The sound is taking a little nap. You can still try saying the word.');
   };
 
   const startRecording = async () => {
     safeClick(async () => {
       stopAudio?.();
+      setErrorMessage('');
+      setHelperMessage('');
 
       let stream = streamRef.current;
       if (!stream) {
@@ -110,56 +151,76 @@ const SanskritVoiceRecorder = ({
           stream = await navigator.mediaDevices.getUserMedia({ audio: true });
           streamRef.current = stream;
         } catch (err) {
+          setErrorMessage('Please ask a grown-up to allow the microphone, then try again.');
           console.warn('[SVR] Mic permission denied:', err?.name);
           return;
         }
       }
       if (!stream) return;
 
+      let recorder;
+      try {
+        const mimeType = MediaRecorder.isTypeSupported('audio/mp4')
+          ? 'audio/mp4'
+          : MediaRecorder.isTypeSupported('audio/webm')
+            ? 'audio/webm'
+            : '';
+        recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+      } catch (err) {
+        setErrorMessage('Recording is not ready on this device yet. Please try again.');
+        console.warn('[SVR] Could not create MediaRecorder:', err?.name || err);
+        return;
+      }
+
       setRecordingTime(0);
       setIsRecording(true);
       setHasRecorded(false);
+      clearRecordingTimer();
 
       timerRef.current = setInterval(() => {
-        setRecordingTime(t => {
-          if (t >= maxRecordingTime) stopRecording();
-          return t + 1;
-        });
+        setRecordingTime(t => t + 1);
       }, 1000);
 
-      const mimeType = MediaRecorder.isTypeSupported('audio/mp4')
-        ? 'audio/mp4'
-        : MediaRecorder.isTypeSupported('audio/webm')
-          ? 'audio/webm'
-          : '';
-      const rec = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
-      mediaRecorderRef.current = rec;
+      mediaRecorderRef.current = recorder;
       const chunks = [];
 
-      rec.ondataavailable = e => {
+      recorder.ondataavailable = e => {
         if (e.data && e.data.size > 0) chunks.push(e.data);
       };
-      rec.onstop = () => {
-        const blob = new Blob(chunks, { type: rec.mimeType || 'audio/webm' });
+      recorder.onstop = () => {
+        clearRecordingTimer();
+        const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
         const url = URL.createObjectURL(blob);
+        revokeRecordedAudio();
         setRecordedAudio(url);
         setHasRecorded(true);
+        mediaRecorderRef.current = null;
       };
 
-      rec.start();
+      recorder.start();
     });
   };
 
   const stopRecording = () => {
-    mediaRecorderRef.current?.stop();
-    clearInterval(timerRef.current);
+    if (mediaRecorderRef.current?.state === 'recording') {
+      mediaRecorderRef.current.stop();
+    }
+    clearRecordingTimer();
     setIsRecording(false);
   };
 
   const resetForRetry = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+    revokeRecordedAudio();
     setRecordedAudio(null);
     setHasRecorded(false);
     setIsPlaying(false);
+    setRecordingTime(0);
+    setErrorMessage('');
+    setHelperMessage('');
   };
 
   const handleComplete = () => {
@@ -197,6 +258,9 @@ const SanskritVoiceRecorder = ({
             : <>{prompt}: <span className="svr-word">{word.toUpperCase()}</span></>
           }
         </p>
+
+        {helperMessage && <p className="svr-helper-message">{helperMessage}</p>}
+        {errorMessage && <p className="svr-error-message">{errorMessage}</p>}
 
         {hasRecorded && !isRecording ? (
           <>
@@ -284,6 +348,9 @@ const SanskritVoiceRecorder = ({
                 >
                   <span className="svr-record-icon"></span>
                 </button>
+                <p className="svr-recording-time">
+                  {Math.max(maxRecordingTime - recordingTime, 0)}s left
+                </p>
               </div>
             )}
           </>

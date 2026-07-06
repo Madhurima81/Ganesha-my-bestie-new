@@ -1,8 +1,5 @@
 /* SanskritVoiceRecorder.css — Enhanced Zone Theme (iPad clamp() pass) */
 
-/* 1. Import Fonts (Baloo 2 for fun headers, Nunito for readable text) */
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap');
-
 :root {
   /* --- Palette --- */
   --svr-bg: rgba(60, 40, 20, 0.65); /* Darker overlay for focus */
@@ -50,7 +47,9 @@
 .svr-overlay {
   position: fixed;
   inset: 0;
+  min-height: 100dvh;
   background: var(--svr-bg);
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
@@ -67,6 +66,8 @@
   max-width: clamp(560px, 70vw, 880px);
 
   min-height: clamp(420px, 55vh, 520px);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
   padding: clamp(28px, 3.5vw, 48px) clamp(32px, 4vw, 56px);
   display: flex;
   flex-direction: column;
@@ -83,8 +84,8 @@
 
 .svr-close {
   position: absolute;
-  top: -14px;
-  right: -14px;
+  top: 14px;
+  right: 14px;
   background: #fffaf3;
   color: #8a6a55;
   border: 2px solid var(--svr-border);
@@ -156,6 +157,23 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+.svr-helper-message,
+.svr-error-message {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(15px, 1.3vw, 20px);
+  font-weight: 700;
+  text-align: center;
+  margin: 8px 0 0;
+}
+
+.svr-helper-message {
+  color: var(--svr-text-light);
+}
+
+.svr-error-message {
+  color: var(--svr-danger-dark);
 }
 
 /* --- Practice Box (Soft Fill) --- */
@@ -456,6 +474,14 @@
   display: none;
 }
 
+.svr-recording-time {
+  margin: 14px 0 0;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--svr-text-light);
+}
+
 @keyframes svr-recordPulse {
   0% {
     box-shadow: 0 0 0 0 rgba(77, 168, 157, 0.28), 0 8px 22px rgba(77, 168, 157, 0.24);
@@ -713,5 +739,18 @@
 .rec2-continue:active {
   border-bottom: 0px;
   transform: translateY(2px);
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .svr-overlay {
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+
+  .svr-card {
+    min-height: auto;
+    margin: 16px 0;
+    padding-top: 64px;
+  }
 }
 
