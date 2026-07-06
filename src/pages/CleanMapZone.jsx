@@ -5,6 +5,7 @@ import GameStateManager from '../lib/services/GameStateManager';
 import { GANESHA_POSE_ASSETS } from '../lib/config/ganeshaUsageSystem';
 // import ZonePreviewModal from './components/ZonePreviewModal'; // commented out — no preview modal
 import MapEditorFull from './MapEditorFull';
+import useAudioPreference from '../lib/hooks/useAudioPreference';
 
 const ZONES_DATA = [
   {
@@ -144,9 +145,10 @@ const isZoneUnlocked = (zoneId, allProgress) => {
   return true;
 };
 
-const playUnlockChime = (intensity = 'normal') => {
+const playUnlockChime = (intensity = 'normal', muted = false) => {
   try {
     if (typeof window === 'undefined') return;
+    if (muted) return;
     const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
     if (!AudioContextCtor) return;
 
@@ -999,6 +1001,7 @@ const ZONE_SCENES = {
 
 const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen, onParentCorner }) => {
   const [zoneProgress, setZoneProgress] = useState({});
+  const [progressLoaded, setProgressLoaded] = useState(false);
   const [isFirstTimeLoad, setIsFirstTimeLoad] = useState(false);
   const [mapDebugMode, setMapDebugMode] = useState(false);
   const [propItems, setPropItems] = useState(loadSavedProps);
@@ -1009,10 +1012,10 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   const [activeProfile, setActiveProfile] = useState(null);
   const [unlockingZones, setUnlockingZones] = useState({});
   const [mushikaPop, setMushikaPop] = useState(null); // { zone, state } | null
-  const [isMuted, setIsMuted] = useState(false);
   const [isGaneshaWalking, setIsGaneshaWalking] = useState(false);
   const [shakingZoneId, setShakingZoneId] = useState(null);
   const [pulsingLabelZoneId, setPulsingLabelZoneId] = useState(null);
+  const { isAudioOn, toggleAudio } = useAudioPreference();
   const unlockTimersRef = useRef({});
   const unlockStartTimersRef = useRef({});
   const voiceTimersRef = useRef([]);
@@ -1028,6 +1031,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   const prevGaneshaPosRef = useRef(null);
   const walkTimerRef = useRef(null);
   const parentHoldTimerRef = useRef(null);
+  const isMuted = !isAudioOn;
 
   useEffect(() => {
     try {
@@ -1186,7 +1190,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     e.stopPropagation();
     if (parentHoldTimerRef.current) clearTimeout(parentHoldTimerRef.current);
     parentHoldTimerRef.current = setTimeout(() => {
-      onParentCorner?.();
+      setMapDebugMode((prev) => !prev);
       parentHoldTimerRef.current = null;
     }, 900);
   };
@@ -1209,32 +1213,27 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     const fadeIn = () => {
       clearInterval(fadingRef.current);
       audio.volume = 0;
-      audio.play().catch(() => {}); // browser may block; resolved by interaction below
+      audio.play().catch(() => {});
       fadingRef.current = setInterval(() => {
         const next = Math.min(audio.volume + 0.025, TARGET_VOL);
         audio.volume = next;
         if (next >= TARGET_VOL) clearInterval(fadingRef.current);
-      }, 80); // ~1.1s fade-in
+      }, 80);
     };
 
-    // Try auto-play immediately
-    fadeIn();
+    if (!isMuted) fadeIn();
 
-    // Fallback: start on first user interaction if autoplay was blocked
     const onFirstInteraction = () => {
       if (audio.paused && !isMuted) fadeIn();
-      document.removeEventListener('click',      onFirstInteraction);
-      document.removeEventListener('touchstart', onFirstInteraction);
+      document.removeEventListener('pointerdown', onFirstInteraction);
     };
-    document.addEventListener('click',      onFirstInteraction);
-    document.addEventListener('touchstart', onFirstInteraction);
+    document.addEventListener('pointerdown', onFirstInteraction);
 
-    // Pause when tab is hidden, resume when visible
     const onVisibility = () => {
       if (document.visibilityState === 'hidden') {
         clearInterval(fadingRef.current);
         audio.pause();
-      } else if (!audio.dataset.muted) {
+      } else if (!isMuted) {
         fadeIn();
       }
     };
@@ -1243,41 +1242,25 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     return () => {
       clearInterval(fadingRef.current);
       audio.pause();
-      document.removeEventListener('click',            onFirstInteraction);
-      document.removeEventListener('touchstart',       onFirstInteraction);
+      document.removeEventListener('pointerdown', onFirstInteraction);
       document.removeEventListener('visibilitychange', onVisibility);
     };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const toggleMute = () => {
-    const audio = ambientRef.current;
-    if (!audio) return;
-    if (isMuted) {
-      delete audio.dataset.muted;
-      audio.volume = 0;
-      audio.play().catch(() => {});
-      // fade back in
-      clearInterval(fadingRef.current);
-      fadingRef.current = setInterval(() => {
-        const next = Math.min(audio.volume + 0.015, 0.06);
-        audio.volume = next;
-        if (next >= 0.06) clearInterval(fadingRef.current);
-      }, 80);
-      setIsMuted(false);
-    } else {
-      audio.dataset.muted = '1';
-      clearInterval(fadingRef.current);
-      audio.pause();
-      voiceTimersRef.current.forEach(clearTimeout);
-      voiceTimersRef.current = [];
-      if (typeof window !== 'undefined' && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-      }
-      setIsMuted(true);
-    }
-  };
+  }, [isMuted]);
 
   useEffect(() => {
+    const audio = ambientRef.current;
+    if (!audio || !isMuted) return;
+    clearInterval(fadingRef.current);
+    audio.pause();
+    voiceTimersRef.current.forEach(clearTimeout);
+    voiceTimersRef.current = [];
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+  }, [isMuted]);
+
+  useEffect(() => {
+    if (!progressLoaded) return;
     const nextStates = {};
     const newlyUnlockedZoneIds = [];
     const newlyCompletedZoneIds = [];
@@ -1294,15 +1277,12 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
           ([zoneId, p]) => zoneId === ZONE_IDS.SYMBOL || (p?.completedScenes || 0) === 0
         );
 
-      console.log('[Map] First load detected. Brand new journey:', isBrandNewJourney);
       isFirstTimeLoadRef.current = isBrandNewJourney;
       setIsFirstTimeLoad(isBrandNewJourney);
 
       if (isBrandNewJourney) {
         const introSessionKey = getFirstLoadIntroSessionKey();
         const spokenThisSession = sessionStorage.getItem(introSessionKey) === '1';
-        const hasSeenUnlockVo = hasSeenZoneUnlockVo(ZONE_IDS.SYMBOL);
-        console.log('[Map] First-time VO gate:', { spokenThisSession, hasSeenUnlockVo });
 
         // Play once per browser session on brand-new journey, even if stale localStorage flag exists.
         if (!spokenThisSession) {
@@ -1345,7 +1325,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         // 0ms: chime
         // 800ms: pulse/walk begins
         // 5000ms: pulse fades
-        playUnlockChime(unlockIntensity);
+        playUnlockChime(unlockIntensity, isMuted);
 
         unlockStartTimersRef.current[zoneId] = setTimeout(() => {
           setUnlockingZones(prev => ({ ...prev, [zoneId]: unlockIntensity }));
@@ -1395,14 +1375,14 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     speakMapVoEvents(voEvents);
 
     prevZoneStatesRef.current = nextStates;
-  }, [zoneProgress, isMuted]);
+  }, [zoneProgress, isMuted, progressLoaded]);
 
   const loadBasicProgress = () => {
     try {
       const profileId = localStorage.getItem('activeProfileId');
       const progressData = {};
       ZONES_DATA.forEach(zone => {
-        const sceneIds = zone.scenes.map(scene => scene.id);
+        const sceneIds = ZONE_SCENES[zone.id] || zone.scenes.map(scene => scene.id);
         let completedScenes = 0;
         let totalStars = 0;
         sceneIds.forEach(sceneId => {
@@ -1447,8 +1427,10 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         };
       });
       setZoneProgress(progressData);
+      setProgressLoaded(true);
     } catch (error) {
       console.error('Error loading progress:', error);
+      setProgressLoaded(true);
     }
   };
 
@@ -1597,13 +1579,13 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         ref={ambientRef}
         src="/audio/ambient/map%20ambient%20sound.wav"
         loop
-        preload="auto"
+        preload="metadata"
       />
 
       <button
         type="button"
         className={`map-sound-toggle ${isMuted ? 'muted' : ''}`}
-        onClick={toggleMute}
+        onClick={toggleAudio}
         aria-label={isMuted ? 'Turn sound on' : 'Turn sound off'}
         title={isMuted ? 'Sound off (tap to turn on)' : 'Sound on (tap to turn off)'}
       >
@@ -2004,21 +1986,6 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
           Time with Ganesha
         </button>
       )}
-
-      {/* Debug prop-editor toggle — bottom-left corner */}
-      <button
-        onClick={() => setMapDebugMode(v => !v)}
-        style={{
-          position: 'absolute', bottom: 10, left: 10, zIndex: 10000,
-          padding: '4px 10px', borderRadius: 20, border: '1px solid rgba(255,255,255,0.4)',
-          background: mapDebugMode ? '#ff3b9a' : 'rgba(0,0,0,0.45)',
-          color: '#fff', fontSize: 11, fontFamily: 'Nunito, sans-serif',
-          cursor: 'pointer', opacity: 0.7,
-        }}
-        title="Toggle map editor"
-      >
-        {mapDebugMode ? '✕ Editor' : '🌿 Edit Map'}
-      </button>
 
       {mapDebugMode && (
         <MapEditorFull

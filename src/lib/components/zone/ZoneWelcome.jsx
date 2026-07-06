@@ -145,19 +145,26 @@ const ZoneWelcome = ({
 
   // Add this useEffect to detect context:
   useEffect(() => {
-    // You can pass context through URL params or props
+    if (typeof window === 'undefined') return;
+
     const urlParams = new URLSearchParams(window.location.search);
     const context = urlParams.get('context');
     const fromScene = urlParams.get('fromScene');
     
     if (context === 'replay' && fromScene) {
-      setHighlightedScene(fromScene); // Highlight the scene they want to replay
-    } else if (context === 'continue') {
-      // Highlight next unlocked scene
-      const nextScene = getNextUnlockedScene();
-      setHighlightedScene(nextScene);
+      setHighlightedScene(fromScene);
+      return;
     }
-  }, []);
+
+    if (context === 'continue') {
+      if (Object.keys(sceneProgress).length > 0) {
+        setHighlightedScene(getNextUnlockedScene());
+      }
+      return;
+    }
+
+    setHighlightedScene(null);
+  }, [sceneProgress, zoneData?.id]);
 
   // Load scene progress for this zone
   useEffect(() => {
@@ -199,7 +206,9 @@ const speakZoneLine = (text) => {
   if (!text) return;
   if (typeof window === 'undefined') return;
   if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return;
-  if (GameStateManager?.isMuted?.()) return;
+  const audioPreference = localStorage.getItem('ganesha_audio_enabled');
+  const isAudioEnabled = audioPreference === null ? true : audioPreference === 'true';
+  if (!isAudioEnabled) return;
   window.speechSynthesis.cancel();
   const u = new window.SpeechSynthesisUtterance(text);
   u.rate = 1.02;
@@ -1064,43 +1073,6 @@ const handleReplayIntroStory = () => {
       <ProfileChip onNavigate={onNavigate} pulseOnce={profileChipPulse} />
       <div className="bg-layer"></div>
 
-      {/* 🔍 TEMPORARY DEBUG BUTTON */}
-<button 
-  onClick={() => {
-    console.log('🔍 MANUAL DEBUG - Scene Progress Check:');
-    console.log('zoneData?.scenes:', zoneData?.scenes);
-    console.log('sceneProgress:', sceneProgress);
-    console.log('Object.keys(sceneProgress):', Object.keys(sceneProgress || {}));
-    
-    if (zoneData?.scenes) {
-      zoneData.scenes.forEach(scene => {
-        const progress = sceneProgress[scene.id];
-        const status = getSceneStatus(scene);
-        
-        console.log(`${scene.id}:`, {
-          'Status': status.status,
-          'Stars': status.stars,
-          'Raw Progress': progress,
-          'Completed Flag': progress?.completed,
-          'Progress Percentage': progress?.progress?.percentage
-        });
-      });
-    }
-  }}
-  style={{
-    position: 'fixed',
-    top: '10px',
-    right: '10px',
-    background: 'orange',
-    color: 'white',
-    padding: '10px',
-    borderRadius: '5px',
-    zIndex: 9999
-  }}
->
-  🔍 DEBUG STATUS
-</button>
-
       <div className="zone-title-top zone-title">
         <ScreenHeader title={zoneData.name} glowColor="gold" />
         {isZoneComplete && (
@@ -1159,7 +1131,6 @@ const handleReplayIntroStory = () => {
               (status.status === 'completed' || status.status === 'in-progress' || sceneProgress[scene.id]?.completed === true);
             
             return (
-              <>
               <div
                 key={scene.id}
                 className={`zone-scene-card scene-card zone-card zone-${scene.order} ${status.status} ${
@@ -1318,8 +1289,6 @@ const handleReplayIntroStory = () => {
                   )}
                 </div>
               </div>
-
-              </>
             );
           })}
 
