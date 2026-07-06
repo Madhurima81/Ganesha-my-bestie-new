@@ -34,7 +34,9 @@
   justify-content: center;
   animation: modalFadeIn 0.4s ease-out;
   backdrop-filter: blur(8px);
-  overflow: hidden;
+  -webkit-backdrop-filter: blur(8px);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .game-modal-overlay::before {
@@ -59,7 +61,7 @@
   position: relative;
   width: 95%;
   max-width: 1700px;
-  max-height: 80vh;
+  min-height: min(80dvh, 900px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -101,7 +103,7 @@
   flex: 0 0 45%;
   max-width: 560px;
   min-height: auto;
-  max-height: min(70vh, 560px);
+  max-height: min(70dvh, 560px);
   background: url('../../../assets/cards/openingmodal.svg') no-repeat center / 100% 100%;
   filter: drop-shadow(0 10px 24px rgba(40, 20, 80, 0.12));
   aspect-ratio: 210 / 189;
@@ -222,28 +224,13 @@
   font-weight: 700;
   color: var(--modal-text-primary);
   letter-spacing: 0.25px;
-  opacity: 0;
-  transform: translateY(-2px) scale(0.98);
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  opacity: 0.9;
+  transform: translateY(0) scale(1);
   pointer-events: none;
   user-select: none;
   background: rgba(255, 255, 255, 0.68);
   border-radius: 999px;
   padding: 2px 8px;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .game-modal-icon-item:hover .game-modal-icon-label,
-  .game-modal-icon-item:focus-within .game-modal-icon-label {
-    opacity: 0.86;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.game-modal-icon-item:active .game-modal-icon-label {
-  opacity: 0.9;
-  transform: translateY(0) scale(1);
-  animation: labelTapPulse 0.35s ease-out;
 }
 
 /* --- Button --- */
@@ -267,89 +254,24 @@
 
 @keyframes ctaIdlePulse {
   0%, 100% {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+    filter: drop-shadow(0 0 0 rgba(255, 193, 7, 0));
   }
   50% {
-    transform: translateY(-1px);
+    transform: translateY(-3px) scale(1.02);
+    filter: drop-shadow(0 0 12px rgba(255, 193, 7, 0.32));
   }
 }
 
-.game-modal-button {
-  font-family: 'Baloo 2', system-ui, sans-serif;
-  background: var(--modal-btn-bg);
-  color: var(--modal-btn-text);
-  border: none;
-  min-height: 54px;
-  padding: 16px 28px;
-  font-size: 18px;
-  font-weight: 700;
+.game-modal-cta-hint {
+  margin: 10px 0 0;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--modal-text-primary);
+  background: rgba(255, 255, 255, 0.78);
   border-radius: 999px;
-  cursor: pointer;
-  transition:
-    background 0.2s ease,
-    transform 0.08s ease,
-    box-shadow 0.08s ease,
-    filter 0.08s ease;
-  will-change: background, transform;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  backface-visibility: hidden;
-  box-shadow:
-    0 4px 0 rgba(163, 114, 46, 0.55),
-    0 8px 18px rgba(229, 178, 91, 0.28);
-  text-shadow: 0 1px 2px rgba(118, 76, 22, 0.2);
-  text-transform: capitalize;
-  white-space: nowrap;
-  margin-top: 16px;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  user-select: none;
-  animation: gentleGlow 3.5s ease-in-out infinite;
-}
-
-.game-modal-button.cta-idle-prompt {
-  animation: gentleGlow 3.5s ease-in-out infinite;
-}
-
-.game-modal-button:hover {
-  filter: brightness(1.02);
-  background: var(--modal-btn-bg-hover, var(--modal-btn-bg));
-}
-
-/* Force zone-themed button even if older styles are injected elsewhere */
-.game-modal-card .game-modal-button {
-  background: var(--modal-btn-bg) !important;
-  color: var(--modal-btn-text) !important;
-  border: none !important;
-  box-shadow:
-    0 4px 0 rgba(163, 114, 46, 0.55),
-    0 8px 18px rgba(229, 178, 91, 0.28) !important;
-  text-shadow: 0 1px 2px rgba(118, 76, 22, 0.2);
-}
-
-.game-modal-card .game-modal-button:hover {
-  background: var(--modal-btn-bg-hover, var(--modal-btn-bg)) !important;
-  filter: brightness(1.02);
-}
-
-.game-modal-button:active {
-  transform: translateY(3px) scale(0.985);
-  box-shadow:
-    0 1px 0 rgba(163, 114, 46, 0.65),
-    0 3px 6px rgba(229, 178, 91, 0.24);
-  filter: brightness(0.98);
-  background: var(--modal-btn-bg) !important;
-  color: var(--modal-btn-text) !important;
-}
-
-.game-modal-card .game-modal-button:active {
-  background: var(--modal-btn-bg) !important;
-  color: var(--modal-btn-text) !important;
-  transform: translateY(3px) scale(0.985);
-  box-shadow:
-    0 1px 0 rgba(163, 114, 46, 0.65),
-    0 3px 6px rgba(229, 178, 91, 0.24) !important;
-  filter: brightness(0.98);
+  padding: 6px 12px;
 }
 
 /* --- Animations --- */
@@ -361,12 +283,6 @@
   to {
     opacity: 1;
   }
-}
-
-/* Keep for any legacy refs */
-@keyframes modalEntrance {
-  from { opacity: 0; transform: translateY(30px); }
-  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* Step 2 — Card soft rise (0.25 → 0.85s) */
@@ -409,38 +325,6 @@
   to   { opacity: 1; transform: scale(1); }
 }
 
-/* Continuous icon breathe loop (starts 1.8s) */
-@keyframes iconBreatheSoft {
-  0%, 100% { transform: scale(1); }
-  50%       { transform: scale(1.04); }
-}
-
-@keyframes hiddenGlow {
-  0%,100% {
-    opacity: 0.35;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: 0.7;
-    transform: scale(1.08);
-  }
-}
-
-@keyframes hiddenFloat {
-  0%,100% {
-    transform:
-      translateY(0px)
-      scale(0.9);
-  }
-
-  50% {
-    transform:
-      translateY(-5px)
-      scale(0.94);
-  }
-}
-
 @keyframes particlesFloat {
   from {
     transform: translateY(0px);
@@ -448,29 +332,6 @@
 
   to {
     transform: translateY(-80px);
-  }
-}
-
-@keyframes labelTapPulse {
-  0% {
-    transform: translateY(0) scale(0.95);
-  }
-
-  100% {
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes gentleGlow {
-  0%, 100% {
-    box-shadow:
-      0 4px 0 rgba(0,0,0,0.12),
-      0 8px 18px rgba(120, 90, 60, 0.18);
-  }
-  50% {
-    box-shadow:
-      0 4px 0 rgba(0,0,0,0.12),
-      0 10px 22px rgba(120, 90, 60, 0.24);
   }
 }
 
@@ -483,7 +344,7 @@
   .game-modal-content {
     flex-direction: column;
     height: auto;
-    min-height: 80vh;
+    min-height: 80dvh;
     padding: 20px;
     gap: 0;
   }
@@ -505,6 +366,7 @@
     width: 100%;
     z-index: 1;
     flex: 0 0 auto;
+    max-height: none;
   }
 
   .game-modal-title {
@@ -532,19 +394,16 @@
     font-size: 30px;
   }
 
-  .game-modal-button {
-    font-size: 20px;
-    min-height: 60px;
-    padding: 15px 40px;
+  .profile-cta-btn-unified.opening-modal-cta {
     width: 100%;
   }
 }
 
 /* MOBILE LANDSCAPE */
-@media (min-width: 568px) and (max-width: 1019px) and (orientation: landscape) {
+@media (min-width: 568px) and (max-width: 1023px) and (orientation: landscape) {
   .game-modal-content {
     width: 100%;
-    height: 95vh;
+    min-height: 95dvh;
     padding: 0 20px;
     gap: 20px;
   }
@@ -592,12 +451,6 @@
     font-size: 40px;
   }
 
-  .game-modal-button {
-    font-size: 20px;
-    min-height: 60px;
-    padding: 10px 40px;
-    margin-top: 10px;
-  }
 }
 
 /* iPAD & DESKTOP */
@@ -647,12 +500,6 @@
     height: 80px !important;
   }
 
-  .game-modal-button {
-    font-size: 19px;
-    min-height: 50px;
-    padding: 12px 40px;
-    margin-top: 8px;
-  }
 }
 
 /* iPAD LANDSCAPE - short height (Gen 6, Air, Pro 11 landscape) */
@@ -707,19 +554,4 @@
     height: 78px !important;
   }
 
-  .game-modal-button {
-    font-size: 18px;
-    min-height: 42px;
-    padding: 8px 34px;
-    margin-top: 6px;
-  }
-
-  .game-modal-card .game-modal-button {
-    min-height: 40px !important;
-    padding: 8px 34px !important;
-  }
-
-  .game-modal-card .game-modal-button:active {
-    transform: translateY(2px) scale(0.985);
-  }
 }
