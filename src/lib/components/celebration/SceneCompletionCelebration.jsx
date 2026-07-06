@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './SceneCompletionCelebration.css';
-import '../../../zones/symbol-mountain/shared/components/SymbolSidebar.css';
 import GameStateManager from "../../services/GameStateManager";
 import SanskritVoiceRecorder from '../audio/SanskritVoiceRecorder';
 import { applyCompletionScreenTheme } from "../../theme/CompletionScreenThemeAdapter";
@@ -41,6 +40,7 @@ const SceneCompletionCelebration = ({
   const [selectedSymbol, setSelectedSymbol] = useState(null); // for symbol popup
   const [selectedApp, setSelectedApp] = useState(null); // for app recorder popup
   const [isExiting, setIsExiting] = useState(false);
+  const symbolTimeoutsRef = useRef([]);
   const resolvedZoneId = zoneId || GameStateManager.currentZone || 'symbol-mountain';
   const isZoneFinalCompletionBadge =
     isFinalScene &&
@@ -66,7 +66,7 @@ const SceneCompletionCelebration = ({
   useEffect(() => {
     if (!show) return;
     applyCompletionScreenTheme(resolvedZoneId);
-  }, [show, zoneId]);
+  }, [show, resolvedZoneId]);
 
   useEffect(() => {
     if (selectedApp) {
@@ -82,15 +82,26 @@ const SceneCompletionCelebration = ({
 
   useEffect(() => {
     if (!show) {
+      symbolTimeoutsRef.current.forEach(clearTimeout);
+      symbolTimeoutsRef.current = [];
       setSymbolsInContainer([]);
       return;
     }
+
+    symbolTimeoutsRef.current.forEach(clearTimeout);
+    symbolTimeoutsRef.current = [];
     const uniqueSymbols = [...new Set(discoveredSymbols)];
     uniqueSymbols.forEach((symbol, index) => {
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         setSymbolsInContainer(prev => prev.includes(symbol) ? prev : [...prev, symbol]);
       }, 500 + (index * 400));
+      symbolTimeoutsRef.current.push(timeoutId);
     });
+
+    return () => {
+      symbolTimeoutsRef.current.forEach(clearTimeout);
+      symbolTimeoutsRef.current = [];
+    };
   }, [show, discoveredSymbols]);
 
   // Stamp temp session as completed when celebration shows.
@@ -116,24 +127,20 @@ const SceneCompletionCelebration = ({
     try {
       const saveData = {
         completed: true,
-        stars: completionData?.stars || starsEarned || 3,
+        stars: completionData?.stars ?? 3,
         ...(completionData || {}),
         phase: 'complete',
       };
       GameStateManager.saveGameState(resolvedZoneId, sceneId, saveData);
     } catch (e) {}
-  }, [show, sceneId, resolvedZoneId]);
+  }, [show, sceneId, resolvedZoneId, completionData]);
 
-const handleAction = (callback, skipComplete = false) => {
-  if (!skipComplete && onComplete && completionData) {
-    console.log('🎯 SceneCompletion handleAction called');
-    console.log('🎯 sceneId:', sceneId);
-    console.log('🎯 completionData:', completionData);
-    console.log('🎯 completionData.chantedVerses:', completionData.chantedVerses);
-    onComplete(sceneId, completionData);
-  }
-  callback?.();
-};
+  const handleAction = (callback, skipComplete = false) => {
+    if (!skipComplete && onComplete && completionData) {
+      onComplete(sceneId, completionData);
+    }
+    callback?.();
+  };
 
   const handleContinueWithAnimation = (callback) => {
     setIsExiting(true);
@@ -425,6 +432,7 @@ const handleAction = (callback, skipComplete = false) => {
           title="Practice Chanting"
           prompt={`Try saying ${selectedApp.toUpperCase()}`}
           onComplete={() => setSelectedApp(null)}
+          onSkip={() => setSelectedApp(null)}
         />
       )}
     </div>

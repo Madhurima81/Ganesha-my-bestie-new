@@ -1,13 +1,14 @@
 .inner-mandala-overlay {
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle, rgba(35,22,50,0.5) 30%, rgba(10,5,20,0.85) 100%);
+  background: radial-gradient(circle, rgba(35, 22, 50, 0.5) 30%, rgba(10, 5, 20, 0.85) 100%);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 5000;
+  padding: 20px;
   opacity: 0;
   transition: opacity 1.4s ease;
   cursor: pointer;
@@ -17,6 +18,10 @@
   opacity: 1;
 }
 
+.inner-mandala-overlay.is-interactive {
+  cursor: default;
+}
+
 .inner-mandala-inline {
   display: flex;
   align-items: center;
@@ -24,25 +29,35 @@
   width: 100%;
 }
 
-/* =========================================================
-   MANDALA BASE
-========================================================= */
 .inner-mandala,
 .ganesha-mandala {
-  width: 520px;
-  height: 520px;
+  width: min(520px, 90vmin);
+  height: min(520px, 90vmin);
   position: relative;
   margin: 0 auto;
   animation: mandalaFloat 5s ease-in-out infinite;
   transform: translateZ(0);
-  will-change: transform, filter;
+  will-change: transform;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
 
-.inner-mandala::before,
-.inner-mandala::after {
-  content: none;
+.inner-mandala::before {
+  content: "";
+  position: absolute;
+  inset: 7%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 220, 120, 0.24) 0%,
+    rgba(255, 220, 120, 0.1) 45%,
+    rgba(255, 220, 120, 0) 72%
+  );
+  opacity: 0.68;
+  filter: blur(18px);
+  animation: mandalaGlow 5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .inner-mandala svg {
@@ -53,6 +68,8 @@
   shape-rendering: geometricPrecision;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
+  position: relative;
+  z-index: 1;
 }
 
 .mandala-petal-group,
@@ -71,12 +88,9 @@
   background: transparent !important;
 }
 
-/* =========================================================
-   OUTER PETALS — outline by default, pastel fill when awakened
-========================================================= */
 .outer-petal {
-  fill: #F4F1FF;
-  stroke: #9A8EF0;
+  fill: #f4f1ff;
+  stroke: #9a8ef0;
   stroke-width: 0.045;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -86,41 +100,35 @@
 }
 
 .outer-petal.completed {
-  fill: #FFE6B8;
+  fill: #ffe6b8;
   opacity: 1;
 }
 
 .outer-petal.current-zone {
-  fill: #F7D88A;
+  fill: #f7d88a;
   opacity: 1;
 }
 
 .outer-petal.locked {
-  fill: #F4F1FF;
+  fill: #f4f1ff;
   opacity: 0.25;
 }
 
-/* =========================================================
-   OUTER RING CIRCLES
-========================================================= */
 .outer-ring {
-  fill: #F7F4FF;
-  stroke: #9A8EF0;
+  fill: #f7f4ff;
+  stroke: #9a8ef0;
   stroke-width: 0.045;
 }
 
 .outer-ring-inner {
-  fill: #F7F4FF;
-  stroke: #9A8EF0;
+  fill: #f7f4ff;
+  stroke: #9a8ef0;
   stroke-width: 0.04;
 }
 
-/* =========================================================
-   MIDDLE PETALS — outline default, gold when activated
-========================================================= */
 .middle-petal {
-  fill: #F8F5FF;
-  stroke: #9A8EF0;
+  fill: #f8f5ff;
+  stroke: #9a8ef0;
   stroke-width: 0.03;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -130,62 +138,46 @@
 
 .middle-petal.activated,
 .middle-petal.active {
-  fill: #FFE8C9;
+  fill: #ffe8c9;
 }
 
-.middle-petal-2.activated, .middle-petal-4.activated,
-.middle-petal-6.activated, .middle-petal-8.activated,
-.middle-petal-2.active, .middle-petal-4.active,
-.middle-petal-6.active, .middle-petal-8.active {
-  fill: #FFE8C9;
-}
-
-/* =========================================================
-   INNER RING CIRCLES
-========================================================= */
 .inner-ring-thin {
-  fill: #F6EDFF;
-  stroke: #9A8EF0;
+  fill: #f6edff;
+  stroke: #9a8ef0;
   stroke-width: 0.03;
 }
 
 .inner-ring {
-  fill: #F4DE9B;
-  stroke: #D9BC58;
+  fill: #f4de9b;
+  stroke: #d9bc58;
   stroke-width: 0.03;
 }
 
-/* =========================================================
-   INNER (DAISY) PETALS — soft pink lotus, alternating
-========================================================= */
 .inner-petal {
-  fill: #FFA8BC;
-  stroke: #9A8EF0;
+  fill: #ffa8bc;
+  stroke: #9a8ef0;
   stroke-width: 0.022;
   stroke-linecap: round;
   stroke-linejoin: round;
-  opacity: 0.85;
-  transition: fill 0.45s ease, opacity 0.35s ease;
+  opacity: 0.88;
 }
 
 .inner-petal-2,
 .inner-petal-4,
 .inner-petal-6,
 .inner-petal-8 {
-  fill: #FFD3DD;
+  fill: #ffd3dd;
 }
 
-/* =========================================================
-   CENTER AVATAR DISC + IMAGE SLOT
-========================================================= */
 .avatar-circle {
-  fill: #F4DE9B;
-  stroke: #D9BC58;
+  fill: #f4de9b;
+  stroke: #d9bc58;
   stroke-width: 0.035;
   filter: none;
 }
 
-.mandala-avatar-slot {
+.mandala-avatar-slot,
+.mandala-center-emblem {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -193,11 +185,15 @@
   width: 18%;
   height: 18%;
   border-radius: 50%;
-  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: none;
+  z-index: 2;
+}
+
+.mandala-avatar-slot {
+  overflow: hidden;
 }
 
 .mandala-avatar-slot img {
@@ -206,45 +202,94 @@
   object-fit: contain;
 }
 
-/* =========================================================
-   SYMBOL ICONS — pre-tinted PNGs, just fade in on awakening
-========================================================= */
-.petal-symbol {
-  opacity: 1;
+.mandala-center-emblem {
+  font-size: clamp(28px, 5.8vmin, 42px);
+  filter: drop-shadow(0 3px 8px rgba(160, 105, 12, 0.28));
 }
 
 .middle-petal-symbol {
   opacity: 1;
 }
 
-/* =========================================================
-   SUBTITLE
-========================================================= */
+.petal-hit-target {
+  fill: transparent;
+  stroke: transparent;
+  pointer-events: all;
+  cursor: pointer;
+}
+
 .mandala-subtitle {
   position: absolute;
   bottom: 12px;
   left: 50%;
   transform: translateX(-50%);
-  width: 85%;
+  width: min(88%, 320px);
   text-align: center;
   font-family: 'Nunito', sans-serif;
-  font-size: clamp(11px, 1.6vmin, 14px);
+  font-size: clamp(14px, 2.4vmin, 18px);
+  font-weight: 800;
+  line-height: 1.3;
   color: #f9ebcf;
   opacity: 0;
   animation: centerFade 2s ease forwards;
   animation-delay: 2.1s;
+  z-index: 2;
 }
 
 @keyframes centerFade {
-  to { opacity: 1; }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes mandalaFloat {
-  0%   { transform: translateY(0);      filter: drop-shadow(0 0 30px rgba(255,220,120,0.15)); }
-  50%  { transform: translateY(-1.5px); filter: drop-shadow(0 0 50px rgba(255,220,120,0.3));  }
-  100% { transform: translateY(0);      filter: drop-shadow(0 0 30px rgba(255,220,120,0.15)); }
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1.5px);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 
+@keyframes mandalaGlow {
+  0%,
+  100% {
+    opacity: 0.56;
+  }
+  50% {
+    opacity: 0.92;
+  }
+}
 
+@media (max-width: 480px) {
+  .inner-mandala-overlay {
+    padding: 12px;
+  }
 
+  .mandala-subtitle {
+    bottom: 10px;
+    width: min(90%, 280px);
+  }
+}
 
+@media (max-width: 380px) {
+  .inner-mandala,
+  .ganesha-mandala {
+    width: min(520px, 94vmin);
+    height: min(520px, 94vmin);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inner-mandala,
+  .ganesha-mandala,
+  .inner-mandala::before,
+  .mandala-subtitle {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition: none !important;
+  }
+}

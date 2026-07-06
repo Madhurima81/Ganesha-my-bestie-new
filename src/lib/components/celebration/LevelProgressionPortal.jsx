@@ -1,43 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
-const LevelProgressionPortal = ({ 
-  show = false, 
-  currentLevel = "Symbol Mountain", 
-  nextLevel = "Cave of Secrets",
-  starsEarned = 5,
-  totalStars = 5,
+const LevelProgressionPortal = ({
+  show = false,
+  currentLevel = 'Symbol Mountain',
+  nextLevel = 'Cave of Secrets',
   onContinue,
   onReplay,
   discoveredSymbols = ['lotus', 'trunk', 'golden'],
-  // NEW: Accept actual image paths
   symbolImages = {},
-  levelImages = {}
+  levelImages = {},
 }) => {
-  const [stage, setStage] = useState('hidden'); // hidden -> portal -> celebration -> choice
+  const [stage, setStage] = useState('hidden');
   const [portalParticles, setPortalParticles] = useState([]);
 
-  // Fallback emojis if no images provided
   const symbolEmojis = {
     lotus: '🪷',
-    trunk: '🐘', 
+    trunk: '🐘',
     golden: '⭐',
     om: '🕉️',
     temple: '🛕',
     garden: '🌺',
-    water: '💧'
+    water: '💧',
   };
 
   const levelEmojis = {
-    "Symbol Mountain": "🏔️",
-    "Cave of Secrets": "🌈",
-    "Obstacle Forest": "🌊", 
-    "Shloka River": "☁️",
-    "About Me Hut": "🌲",
-    "Story Treehouse": "🏜️",
-    "Festival Square": "❄️"
+    'Symbol Mountain': '🏔️',
+    'Cave of Secrets': '🌈',
+    'Obstacle Forest': '🌊',
+    'Shloka River': '☁️',
+    'About Me Hut': '🌲',
+    'Story Treehouse': '🏜️',
+    'Festival Square': '❄️',
   };
 
-  // Helper function to get symbol display (image or emoji)
   const getSymbolDisplay = (symbolKey) => {
     if (symbolImages[symbolKey]) {
       return <img src={symbolImages[symbolKey]} alt={symbolKey} className="symbol-image" />;
@@ -45,7 +40,6 @@ const LevelProgressionPortal = ({
     return symbolEmojis[symbolKey] || '✨';
   };
 
-  // Helper function to get level display (image or emoji)
   const getLevelDisplay = (levelName) => {
     if (levelImages[levelName]) {
       return <img src={levelImages[levelName]} alt={levelName} className="level-image" />;
@@ -59,8 +53,9 @@ const LevelProgressionPortal = ({
     radius: 50 + Math.random() * 100,
     speed: 0.02 + Math.random() * 0.03,
     size: 0.5 + Math.random() * 0.5,
-    symbol: Object.values(symbolEmojis)[Math.floor(Math.random() * Object.values(symbolEmojis).length)],
-    opacity: 0.6 + Math.random() * 0.4
+    symbol:
+      Object.values(symbolEmojis)[Math.floor(Math.random() * Object.values(symbolEmojis).length)],
+    opacity: 0.6 + Math.random() * 0.4,
   });
 
   useEffect(() => {
@@ -70,29 +65,23 @@ const LevelProgressionPortal = ({
       return;
     }
 
-    // Stage 1: Portal opens
     setStage('portal');
-    
-    const initialParticles = Array.from({ length: 20 }, (_, i) => createPortalParticle(i));
-    setPortalParticles(initialParticles);
+    setPortalParticles(Array.from({ length: 20 }, (_, i) => createPortalParticle(i)));
 
-    // Animate portal particles
     const particleAnimation = setInterval(() => {
-      setPortalParticles(current => 
-        current.map(particle => ({
+      setPortalParticles((current) =>
+        current.map((particle) => ({
           ...particle,
           angle: particle.angle + particle.speed,
-          radius: particle.radius + Math.sin(particle.angle * 4) * 2
+          radius: particle.radius + Math.sin(particle.angle * 4) * 2,
         }))
       );
     }, 50);
 
-    // Stage 2: Celebration appears
     const celebrationTimer = setTimeout(() => {
       setStage('celebration');
     }, 2000);
 
-    // Stage 3: Show choices
     const choiceTimer = setTimeout(() => {
       setStage('choice');
     }, 4000);
@@ -122,11 +111,9 @@ const LevelProgressionPortal = ({
 
   return (
     <div className={`level-progression-portal stage-${stage}`}>
-      {/* Portal Background */}
       <div className="portal-background">
         <div className="portal-overlay" />
-        
-        {/* Magical Portal Circle */}
+
         <div className="portal-ring">
           <div className="portal-inner">
             <div className="portal-core">
@@ -136,17 +123,16 @@ const LevelProgressionPortal = ({
               </div>
             </div>
           </div>
-          
-          {/* Rotating Symbol Particles */}
+
           <div className="portal-particles">
-            {portalParticles.map((particle, index) => (
+            {portalParticles.map((particle) => (
               <div
                 key={particle.id}
                 className="portal-particle"
                 style={{
                   transform: `rotate(${particle.angle}rad) translateX(${particle.radius}px)`,
                   fontSize: `${particle.size * 1.5}rem`,
-                  opacity: particle.opacity
+                  opacity: particle.opacity,
                 }}
               >
                 {particle.symbol}
@@ -156,7 +142,6 @@ const LevelProgressionPortal = ({
         </div>
       </div>
 
-      {/* Celebration Content */}
       {(stage === 'celebration' || stage === 'choice') && (
         <div className="celebration-content">
           <div className="achievement-card">
@@ -167,29 +152,14 @@ const LevelProgressionPortal = ({
                 <div className="level-text">{currentLevel}</div>
               </div>
             </div>
-            
-            <div className="achievement-details">
-              <div className="stars-earned">
-                <div className="star-display">
-                  {Array.from({ length: totalStars }).map((_, i) => (
-                    <span 
-                      key={i} 
-                      className={`star ${i < starsEarned ? 'earned' : 'empty'}`}
-                      style={{ animationDelay: `${i * 0.2}s` }}
-                    >
-                      ⭐
-                    </span>
-                  ))}
-                </div>
-                <div className="star-text">{starsEarned}/{totalStars} Stars Earned!</div>
-              </div>
 
+            <div className="achievement-details">
               <div className="symbols-discovered">
                 <h4>Symbols Mastered:</h4>
                 <div className="symbol-collection">
                   {discoveredSymbols.map((symbol, i) => (
-                    <div 
-                      key={symbol} 
+                    <div
+                      key={symbol}
                       className="discovered-symbol"
                       style={{ animationDelay: `${i * 0.3 + 1}s` }}
                     >
@@ -204,7 +174,6 @@ const LevelProgressionPortal = ({
         </div>
       )}
 
-      {/* Action Buttons */}
       {stage === 'choice' && (
         <div className="action-buttons">
           <button className="continue-btn" onClick={handleContinue}>
@@ -214,7 +183,7 @@ const LevelProgressionPortal = ({
               <span className="btn-emoji">{getLevelDisplay(nextLevel)}</span>
             </div>
           </button>
-          
+
           <button className="replay-btn" onClick={handleReplay}>
             <div className="btn-content">
               <span className="btn-icon">🔄</span>
@@ -271,7 +240,7 @@ const LevelProgressionPortal = ({
           left: 0;
           width: 100%;
           height: 100%;
-          background: 
+          background:
             radial-gradient(circle at 30% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
             radial-gradient(circle at 70% 80%, rgba(255, 20, 147, 0.1) 0%, transparent 50%);
           animation: portalShimmer 4s ease-in-out infinite;
@@ -292,7 +261,7 @@ const LevelProgressionPortal = ({
           border: 5px solid rgba(255, 215, 0, 0.8);
           border-radius: 50%;
           animation: portalRotate 8s linear infinite;
-          box-shadow: 
+          box-shadow:
             0 0 50px rgba(255, 215, 0, 0.6),
             inset 0 0 50px rgba(255, 215, 0, 0.3);
         }
@@ -334,7 +303,7 @@ const LevelProgressionPortal = ({
 
         .next-level-preview {
           text-align: center;
-          color: #4B0082;
+          color: #4b0082;
           animation: levelPreviewFloat 2s ease-in-out infinite;
         }
 
@@ -395,21 +364,21 @@ const LevelProgressionPortal = ({
 
         .achievement-card {
           background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 248, 220, 0.95));
-          border: 4px solid #FFD700;
+          border: 4px solid #ffd700;
           border-radius: 25px;
           padding: 2rem;
-          box-shadow: 
+          box-shadow:
             0 20px 40px rgba(0, 0, 0, 0.3),
             inset 0 0 20px rgba(255, 215, 0, 0.2);
           text-align: center;
           backdrop-filter: blur(10px);
           max-width: 500px;
-          max-height: 70vh; /* Prevent overflow */
-          overflow-y: auto; /* Allow scrolling if needed */
+          max-height: 70vh;
+          overflow-y: auto;
         }
 
         .card-header h2 {
-          color: #8B4513;
+          color: #8b4513;
           font-family: 'Comic Sans MS', cursive;
           font-size: 2rem;
           margin: 0 0 1rem 0;
@@ -422,7 +391,7 @@ const LevelProgressionPortal = ({
           justify-content: center;
           gap: 1rem;
           font-size: 1.5rem;
-          color: #4B0082;
+          color: #4b0082;
           font-weight: bold;
           margin-bottom: 1.5rem;
         }
@@ -437,51 +406,8 @@ const LevelProgressionPortal = ({
           font-size: 1.3rem;
         }
 
-        .stars-earned {
-          margin: 1.5rem 0;
-        }
-
-        .star-display {
-          display: flex;
-          justify-content: center;
-          gap: 0.5rem;
-          margin-bottom: 0.5rem;
-        }
-
-        .star {
-          font-size: 2rem;
-          animation: starPop 0.6s ease-out;
-          filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8));
-        }
-
-        .star.empty {
-          opacity: 0.3;
-          filter: none;
-        }
-
-        @keyframes starPop {
-          0% {
-            transform: scale(0) rotate(-180deg);
-            opacity: 0;
-          }
-          60% {
-            transform: scale(1.3) rotate(0deg);
-            opacity: 1;
-          }
-          100% {
-            transform: scale(1) rotate(0deg);
-            opacity: 1;
-          }
-        }
-
-        .star-text {
-          color: #8B4513;
-          font-size: 1.2rem;
-          font-weight: bold;
-        }
-
         .symbols-discovered h4 {
-          color: #4B0082;
+          color: #4b0082;
           margin: 1rem 0 0.5rem 0;
           font-size: 1.3rem;
         }
@@ -507,7 +433,7 @@ const LevelProgressionPortal = ({
         }
 
         .symbol-name {
-          color: #8B4513;
+          color: #8b4513;
           font-size: 0.9rem;
           font-weight: bold;
           text-transform: capitalize;
@@ -529,9 +455,9 @@ const LevelProgressionPortal = ({
           z-index: 10;
           display: flex;
           gap: 1.5rem;
-          margin-top: 1rem; /* Reduced from 2rem */
+          margin-top: 1rem;
           animation: buttonsSlideUp 1s ease-out 0.5s both;
-          padding-bottom: 1rem; /* Add bottom padding */
+          padding-bottom: 1rem;
         }
 
         @keyframes buttonsSlideUp {
@@ -558,23 +484,23 @@ const LevelProgressionPortal = ({
         }
 
         .continue-btn {
-          background: linear-gradient(135deg, #32CD32, #228B22);
+          background: linear-gradient(135deg, #32cd32, #228b22);
           color: white;
         }
 
         .continue-btn:hover {
-          background: linear-gradient(135deg, #228B22, #006400);
+          background: linear-gradient(135deg, #228b22, #006400);
           transform: translateY(-3px);
           box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
         }
 
         .replay-btn {
-          background: linear-gradient(135deg, #FF6347, #DC143C);
+          background: linear-gradient(135deg, #ff6347, #dc143c);
           color: white;
         }
 
         .replay-btn:hover {
-          background: linear-gradient(135deg, #DC143C, #B22222);
+          background: linear-gradient(135deg, #dc143c, #b22222);
           transform: translateY(-3px);
           box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
         }
@@ -589,7 +515,6 @@ const LevelProgressionPortal = ({
           font-size: 1.3rem;
         }
 
-        /* Image styles for symbols and levels */
         .symbol-image, .level-image {
           width: 40px;
           height: 40px;
@@ -617,48 +542,47 @@ const LevelProgressionPortal = ({
           flex: 1;
         }
 
-        /* Mobile responsiveness */
         @media (max-width: 768px) {
           .portal-ring {
             width: 250px;
             height: 250px;
           }
-          
+
           .level-emoji {
             font-size: 2.5rem;
           }
-          
+
           .level-name {
             font-size: 1rem;
           }
-          
+
           .achievement-card {
             max-width: 90vw;
             padding: 1.5rem;
           }
-          
+
           .card-header h2 {
             font-size: 1.5rem;
           }
-          
+
           .current-level {
             font-size: 1.2rem;
           }
-          
+
           .action-buttons {
             flex-direction: column;
             gap: 1rem;
           }
-          
+
           .continue-btn, .replay-btn {
             width: 100%;
             padding: 1rem;
           }
-          
+
           .symbol-collection {
             gap: 0.5rem;
           }
-          
+
           .discovered-symbol .symbol-icon {
             font-size: 2rem;
           }
@@ -669,7 +593,7 @@ const LevelProgressionPortal = ({
             width: 200px;
             height: 200px;
           }
-          
+
           .achievement-card {
             max-width: 85vw;
           }

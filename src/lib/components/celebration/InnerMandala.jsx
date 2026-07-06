@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import './InnerMandala.css';
+import { playCardRevealChime } from '../../services/AudioService';
 
 const OUTER_PETALS = [
   { id: 2, d: 'm 7.0192951,7.7258315 c 0,0 -0.099564,-1.1708758 0.6294426,-1.9182355 C 8.3777444,5.0602362 9.595618,5.3831538 9.595618,5.3831538 c 0,0 0.073838,1.2451513 -0.5963184,1.88783 C 8.329144,7.9136627 7.0192951,7.7258315 7.0192951,7.7258315 Z' },
@@ -23,45 +24,32 @@ const MIDDLE_PETALS = [
   { id: 7, d: 'm 6.5600725,7.9728284 c 0,0 -0.4391298,-0.5871717 -1.0802498,-0.6450013 C 4.8387024,7.269997 4.417851,7.9080009 4.417851,7.9080009 c 0,0 0.481574,0.6116053 1.0525889,0.6440344 0.5710146,0.03243 1.0896326,-0.5792069 1.0896326,-0.5792069 z' },
 ];
 
-// Petal-to-symbol mapping (matches existing symbolIconsByPetal)
-const PETAL_SYMBOL_KEYS = {
-  1: 'mooshika',
-  2: 'modak',
-  3: 'belly',
-  4: 'lotus',
-  5: 'trunk',
-  6: 'ear',
-  7: 'eye',
-  8: 'tusk',
-};
-
-// Center of each outer petal (in SVG viewBox units, radius=5 from mandala center)
-const SYMBOL_POSITIONS = {
-  1: { cx: 7.40, cy: 2.00 },   // top — Mooshika
-  2: { cx: 11.22, cy: 3.58 },  // upper-right — Modak
-  3: { cx: 12.80, cy: 7.40 },  // right — Belly
-  4: { cx: 11.22, cy: 11.22 }, // lower-right — Lotus
-  5: { cx: 7.40, cy: 12.80 },  // bottom — Trunk
-  6: { cx: 3.58, cy: 11.22 },  // lower-left — Ear
-  7: { cx: 2.00, cy: 7.40 },   // left — Eye
-  8: { cx: 3.58, cy: 3.58 },   // upper-left — Tusk
-};
+const INNER_PETALS = [
+  { id: 1, d: 'm 7.308,5.95 c 0,0 0.275,0.47 0.255,0.9 -0.02,0.43 -0.263,0.822 -0.263,0.822 0,0 -0.261,-0.43 -0.255,-0.852 C 7.051,6.399 7.308,5.95 7.308,5.95 Z' },
+  { id: 2, d: 'm 8.186,6.306 c 0,0 0.507,0.192 0.774,0.53 0.266,0.338 0.308,0.797 0.308,0.797 0,0 -0.466,0.048 -0.792,-0.245 C 8.151,7.095 8.186,6.306 8.186,6.306 Z' },
+  { id: 3, d: 'm 8.547,7.219 c 0,0 0.494,-0.215 0.918,-0.155 0.424,0.06 0.757,0.377 0.757,0.377 0,0 -0.33,0.332 -0.756,0.377 C 9.04,7.862 8.547,7.219 8.547,7.219 Z' },
+  { id: 4, d: 'm 8.196,8.131 c 0,0 0.477,-0.236 0.902,-0.193 0.425,0.043 0.77,0.347 0.77,0.347 0,0 -0.316,0.346 -0.74,0.408 C 8.703,8.755 8.196,8.131 8.196,8.131 Z' },
+  { id: 5, d: 'm 7.311,8.491 c 0,0 0.257,0.449 0.262,0.872 0.005,0.423 -0.248,0.853 -0.248,0.853 0,0 -0.243,-0.393 -0.263,-0.823 C 7.042,8.962 7.311,8.491 7.311,8.491 Z' },
+  { id: 6, d: 'm 6.429,8.131 c 0,0 -0.507,0.624 -0.932,0.562 -0.424,-0.062 -0.74,-0.408 -0.74,-0.408 0,0 0.344,-0.304 0.769,-0.347 C 5.952,7.895 6.429,8.131 6.429,8.131 Z' },
+  { id: 7, d: 'm 6.081,7.219 c 0,0 -0.493,0.643 -0.918,0.599 -0.425,-0.045 -0.756,-0.377 -0.756,-0.377 0,0 0.333,-0.317 0.757,-0.377 C 5.588,7.004 6.081,7.219 6.081,7.219 Z' },
+  { id: 8, d: 'm 6.431,6.306 c 0,0 0.035,0.789 -0.29,1.082 -0.326,0.293 -0.793,0.245 -0.793,0.245 0,0 0.042,-0.459 0.309,-0.797 C 5.924,6.498 6.431,6.306 6.431,6.306 Z' },
+];
 
 const MIDDLE_SYMBOL_POSITIONS = {
-  1: { cx: 7.40, cy: 3.80 },
+  1: { cx: 7.4, cy: 3.8 },
   2: { cx: 9.95, cy: 4.85 },
-  3: { cx: 11.00, cy: 7.40 },
+  3: { cx: 11.0, cy: 7.4 },
   4: { cx: 9.95, cy: 9.95 },
-  5: { cx: 7.40, cy: 11.00 },
+  5: { cx: 7.4, cy: 11.0 },
   6: { cx: 4.85, cy: 9.95 },
-  7: { cx: 3.80, cy: 7.40 },
+  7: { cx: 3.8, cy: 7.4 },
   8: { cx: 4.85, cy: 4.85 },
 };
 
-const SYMBOL_SIZE = 1.6; // SVG units
-const MIDDLE_SYMBOL_SIZE = 1.35; // SVG units
+const MIDDLE_SYMBOL_SIZE = 1.35;
 
-const isActive = (state) => ['awakened', 'energized', 'bloomed', 'activated', 'glowing'].includes(state);
+const isActive = (state) =>
+  ['awakened', 'energized', 'bloomed', 'activated', 'glowing'].includes(state);
 
 export default function InnerMandala({
   childName = 'Friend',
@@ -74,12 +62,12 @@ export default function InnerMandala({
   autoCloseMs = 5400,
   allowTapToSkip = true,
   onPetalClick,
-  symbolIcons = {},
   middleSymbolIcons = {},
   avatar = null,
 }) {
   const [mounted, setMounted] = useState(false);
   const closedRef = useRef(false);
+  const interactive = typeof onPetalClick === 'function';
 
   const handleDismiss = useCallback(() => {
     if (!onClose || closedRef.current) return;
@@ -87,106 +75,112 @@ export default function InnerMandala({
     onClose();
   }, [onClose]);
 
+  const handleOverlayClick = useCallback(
+    (e) => {
+      if (interactive) {
+        e.stopPropagation();
+        return;
+      }
+
+      if (showAsOverlay && allowTapToSkip) {
+        handleDismiss();
+      }
+    },
+    [allowTapToSkip, handleDismiss, interactive, showAsOverlay]
+  );
+
+  const handlePetalTap = useCallback(
+    (ring, petalId) => (e) => {
+      e.stopPropagation();
+      onPetalClick?.(ring, petalId);
+    },
+    [onPetalClick]
+  );
+
   useEffect(() => {
     requestAnimationFrame(() => setMounted(true));
   }, []);
 
   useEffect(() => {
-    if (!showAsOverlay || !onClose) return;
+    try {
+      playCardRevealChime(0.42);
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    if (!showAsOverlay || !onClose || interactive) return undefined;
     const timer = setTimeout(() => handleDismiss(), autoCloseMs);
     return () => clearTimeout(timer);
-  }, [showAsOverlay, onClose, autoCloseMs, handleDismiss]);
+  }, [autoCloseMs, handleDismiss, interactive, onClose, showAsOverlay]);
 
-  const interactive = typeof onPetalClick === 'function';
   const currentZoneSet = new Set(highlightPetals);
 
   return (
     <div
-      className={showAsOverlay ? `inner-mandala-overlay ${mounted ? 'is-mounted' : ''}` : 'inner-mandala-inline'}
-      onClick={showAsOverlay && allowTapToSkip ? handleDismiss : undefined}
+      className={
+        showAsOverlay
+          ? `inner-mandala-overlay ${mounted ? 'is-mounted' : ''} ${interactive ? 'is-interactive' : ''}`
+          : 'inner-mandala-inline'
+      }
+      onClick={handleOverlayClick}
     >
-      <div
-        className="inner-mandala ganesha-mandala"
-        onClick={showAsOverlay && allowTapToSkip ? handleDismiss : (e) => e.stopPropagation()}
-      >
-        <svg
-          viewBox="0 0 14.816666 14.816667"
-          width="920"
-          height="920"
-          role="img"
-          aria-label={`${childName}'s Inner Mandala`}
-        >
-          {/* OUTER PETALS — scaled out from center to form the 8-pointed star */}
-          <g
-            id="outer-petals"
-            transform="matrix(1.7729952,0,0,1.7729952,-4.660599,-6.79381)"
-          >
-            {OUTER_PETALS.map((petal) => (
-              (() => {
-                const active = isActive(petalStates[petal.id]);
-                const isCurrentZone = currentZoneSet.has(petal.id);
-                const stateClass = isCurrentZone ? 'current-zone' : (active ? 'completed' : 'locked');
-                return (
-                  <path
-                    key={`outer-${petal.id}`}
-                    id={`outer-petal-${petal.id}`}
-                    d={petal.d}
-                    className={`mandala-petal outer-petal outer-petal-${petal.id} ${stateClass}`}
-                    onClick={interactive ? (e) => { e.stopPropagation(); onPetalClick('outer', petal.id); } : undefined}
-                  />
-                );
-              })()
-            ))}
+      <div className="inner-mandala ganesha-mandala" onClick={(e) => e.stopPropagation()}>
+        <svg viewBox="0 0 14.816666 14.816667" role="img" aria-label={`${childName}'s Inner Mandala`}>
+          <g id="outer-petals" transform="matrix(1.7729952,0,0,1.7729952,-4.660599,-6.79381)">
+            {OUTER_PETALS.map((petal) => {
+              const active = isActive(petalStates[petal.id]);
+              const isCurrentZone = currentZoneSet.has(petal.id);
+              const stateClass = isCurrentZone ? 'current-zone' : active ? 'completed' : 'locked';
+
+              return (
+                <path
+                  key={`outer-${petal.id}`}
+                  id={`outer-petal-${petal.id}`}
+                  d={petal.d}
+                  className={`mandala-petal outer-petal outer-petal-${petal.id} ${stateClass}`}
+                  onClick={interactive ? handlePetalTap('outer', petal.id) : undefined}
+                />
+              );
+            })}
           </g>
 
-                    {/* SYMBOL ICONS � show only on awakened outer petals */}
-          {/*
-          {OUTER_PETALS.map((petal) => {
-            const awakened = isActive(petalStates[petal.id]);
-            const iconUrl = symbolIcons[petal.id] || symbolIcons[PETAL_SYMBOL_KEYS[petal.id]];
-            if (!awakened || !iconUrl) return null;
-            const pos = SYMBOL_POSITIONS[petal.id];
-            return (
-              <image
-                key={`symbol-${petal.id}`}
-                href={iconUrl}
-                x={pos.cx - SYMBOL_SIZE / 2}
-                y={pos.cy - SYMBOL_SIZE / 2}
-                width={SYMBOL_SIZE}
-                height={SYMBOL_SIZE}
-                className={`petal-symbol petal-symbol-${petal.id}`}
-                preserveAspectRatio="xMidYMid meet"
-                style={{ pointerEvents: 'none' }}
-              />
-            );
-          })}
-          */}
-{/* OUTER CIRCLES — the lavender disc behind middle petals */}
           <g transform="matrix(0.85006751,0,0,0.85006751,1.1059115,1.0748866)">
             <ellipse className="outer-ring" cx="7.3760633" cy="7.169137" rx="4.6459513" ry="4.5528336" />
             <ellipse className="outer-ring-inner" cx="7.3760633" cy="7.169137" rx="4.4658055" ry="4.3762975" />
           </g>
 
-          {/* MIDDLE PETALS — slightly smaller scale, outline only */}
-          <g
-            id="middle-petals"
-            transform="matrix(1.5998576,0,0,1.5998576,-3.4813658,-5.4485889)"
-          >
+          <g id="middle-petals" transform="matrix(1.5998576,0,0,1.5998576,-3.4813658,-5.4485889)">
             {MIDDLE_PETALS.map((petal) => (
               <path
                 key={`middle-${petal.id}`}
                 id={`middle-petal-${petal.id}`}
                 d={petal.d}
                 className={`mandala-petal middle-petal middle-petal-${petal.id} ${isActive(middlePetalStates[petal.id]) ? 'activated' : ''}`}
-                onClick={interactive ? (e) => { e.stopPropagation(); onPetalClick('middle', petal.id); } : undefined}
+                onClick={interactive ? handlePetalTap('middle', petal.id) : undefined}
               />
             ))}
           </g>
+
+          {interactive &&
+            MIDDLE_PETALS.map((petal) => {
+              const pos = MIDDLE_SYMBOL_POSITIONS[petal.id];
+              return (
+                <circle
+                  key={`middle-hit-${petal.id}`}
+                  className="petal-hit-target middle-hit-target"
+                  cx={pos.cx}
+                  cy={pos.cy}
+                  r="0.98"
+                  onClick={handlePetalTap('middle', petal.id)}
+                />
+              );
+            })}
 
           {MIDDLE_PETALS.map((petal) => {
             const iconUrl = middleSymbolIcons[petal.id];
             if (!iconUrl) return null;
             const pos = MIDDLE_SYMBOL_POSITIONS[petal.id];
+
             return (
               <image
                 key={`middle-symbol-${petal.id}`}
@@ -202,28 +196,33 @@ export default function InnerMandala({
             );
           })}
 
-          {/* INNER RING CIRCLES — small lavender disc behind daisy */}
           <g transform="matrix(0.83677622,0,0,0.83677622,1.1918113,1.1798836)">
             <ellipse className="inner-ring-thin" cx="7.3017011" cy="7.2286258" rx="1.4095987" ry="1.3878689" />
             <circle className="inner-ring" cx="7.3230777" cy="7.2215004" r="1.243724" />
             <circle className="avatar-circle" cx="7.3145399" cy="7.22227" r="0.81771392" />
           </g>
 
-          {/* INNER (DAISY) PETALS — scaled and offset to form the small flower */}
-
+          <g id="inner-petals" transform="matrix(1.289,0,0,1.289,-2.123,-2.093)">
+            {INNER_PETALS.map((petal) => (
+              <path
+                key={`inner-${petal.id}`}
+                d={petal.d}
+                className={`mandala-petal inner-petal inner-petal-${petal.id}`}
+              />
+            ))}
+          </g>
         </svg>
 
-        {/* {avatar && <div className="mandala-avatar-slot">{avatar}</div>} */}
+        {avatar ? (
+          <div className="mandala-avatar-slot">{avatar}</div>
+        ) : (
+          <div className="mandala-center-emblem" aria-hidden="true">
+            🪷
+          </div>
+        )}
 
         <div className="mandala-subtitle">{message}</div>
       </div>
     </div>
   );
 }
-
-
-
-
-
-
-

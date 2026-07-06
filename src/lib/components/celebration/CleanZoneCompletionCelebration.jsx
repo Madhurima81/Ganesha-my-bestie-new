@@ -8,8 +8,6 @@ const CleanZoneCompletionCelebration = ({
   show = false,
   zoneId = 'symbol-mountain',
   playerName = 'little explorer',
-  starsEarned = 8,
-  totalStars = 8,
   onComplete,
   onContinueExploring,
     onReplay,                    // ← ADD THIS LINE
