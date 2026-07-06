@@ -235,9 +235,21 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const activeProfile = GameStateManager.getCurrentProfile?.() || null;
   const profileDisplayName = (activeProfile?.name || sceneState.childFriendName || 'You').trim();
   const rawProfileAvatar = activeProfile?.avatar;
+  const profileEmojiToAnimal = {
+    '🐵': 'monkey',
+    '🦚': 'peacock',
+    '🐿️': 'squirrel',
+    '🐯': 'tiger',
+    'ðŸµ': 'monkey',
+    'ðŸ¦š': 'peacock',
+    'ðŸ¿ï¸': 'squirrel',
+    'ðŸ¯': 'tiger'
+  };
   const PROFILE_ANIMAL_IDS = ['monkey', 'peacock', 'squirrel', 'tiger'];
   const PROFILE_EMOJI_TO_ANIMAL = { '🐵': 'monkey', '🦚': 'peacock', '🐿️': 'squirrel', '🐯': 'tiger' };
-  const profileAnimalId = PROFILE_ANIMAL_IDS.includes(rawProfileAvatar) ? rawProfileAvatar : (PROFILE_EMOJI_TO_ANIMAL[rawProfileAvatar] || null);
+  const profileAnimalId = PROFILE_ANIMAL_IDS.includes(rawProfileAvatar)
+    ? rawProfileAvatar
+    : ((profileEmojiToAnimal[rawProfileAvatar] || PROFILE_EMOJI_TO_ANIMAL[rawProfileAvatar]) || null);
   const profileAvatarImage = profileAnimalId ? `/images/new-explorer-${profileAnimalId}.webp` : null;
   const profileAvatar = (typeof rawProfileAvatar === 'string' && rawProfileAvatar.trim().length <= 2)
     ? rawProfileAvatar
@@ -371,8 +383,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   useEffect(() => {
     window.addEventListener('beforeunload', hardStopSceneAudio);
+    window.addEventListener('pagehide', hardStopSceneAudio);
     return () => {
       window.removeEventListener('beforeunload', hardStopSceneAudio);
+      window.removeEventListener('pagehide', hardStopSceneAudio);
     };
   }, [hardStopSceneAudio]);
   // --- LOCAL UI STATE (Transient) ---
@@ -411,6 +425,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   // Reload Logic Refs
   const reloadHandledRef = useRef(false);
   const hasHydratedOnceRef = useRef(false);
+  const latestSceneStateRef = useRef(sceneState);
   const suppressCelebrationVoOnReloadRef = useRef(false);
   const suppressPhaseVoUntilReloadSettlesRef = useRef(false);
   const expectedReloadPhaseRef = useRef(null);
@@ -422,6 +437,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const childFoodToolsRef = useRef(null);
   const childActivityToolsRef = useRef(null);
 
+  useEffect(() => {
+    latestSceneStateRef.current = sceneState;
+  }, [sceneState]);
+
   const triggerDiscoveryFly = (item, options = {}) => {
     const { isChild = false, isModak = false, showNameBelow = false, durationMs = DISCOVERY_FLY_TOTAL_MS } = options;
     if (!item) return;
@@ -429,7 +448,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     setDiscoveryFly({
       key: `${Date.now()}-${Math.random()}`,
       image: item.image,
-      emoji: item.emoji,
+      emoji: sanitizeEmoji(item.emoji, item.id),
       name: item.name,
       isChild,
       isModak,
@@ -645,6 +664,38 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     { id: 'brown', name: 'Brown', image: brownImg, emoji: 'ðŸ¤Ž' },
   ];
 
+  const sanitizeEmoji = useCallback((emoji, fallbackKey = '') => {
+    const emojiMap = {
+      modak: '🥟',
+      ladoo: '🍪',
+      barfi: '🧁',
+      mouse: '🐭',
+      cow: '🐮',
+      peacock: '🦚',
+      pizza: '🍕',
+      burger: '🍔',
+      'ice-cream': '🍦',
+      dosa: '🧁',
+      noodles: '🍜',
+      fruit: '🍎',
+      rice: '🍚',
+      red: '❤️',
+      orange: '🧡',
+      yellow: '💛',
+      green: '💚',
+      blue: '💙',
+      purple: '💜',
+      pink: '💗',
+      brown: '🤎'
+    };
+
+    if (fallbackKey && emojiMap[fallbackKey]) {
+      return emojiMap[fallbackKey];
+    }
+
+    return emoji;
+  }, []);
+
   // --- INITIALIZATION ---
   const shuffleArray = (array) => {
     const shuffled = [...array];
@@ -656,7 +707,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   useEffect(() => {
-    if (sceneState.randomFoods.length === 0) {
+    if (!isReload && sceneState.randomFoods.length === 0) {
       sceneActions.updateState({
         randomFoods: shuffleArray(foods),
         randomFriends: shuffleArray(friends),
@@ -664,7 +715,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         randomActivities: shuffleArray(activities)
       });
     }
-  }, []);
+  }, [isReload, sceneActions, sceneState.randomFoods.length]);
 
   useEffect(() => {
     return () => {
@@ -731,8 +782,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       reloadHandledRef.current = true;
       const { gamePhase, currentModal } = sceneState;
-      suppressPhaseVoUntilReloadSettlesRef.current = true;
-      expectedReloadPhaseRef.current = gamePhase;
+      suppressPhaseVoUntilReloadSettlesRef.current = false;
+      expectedReloadPhaseRef.current = null;
 
       console.log("ðŸ”„ Reload detected. Phase:", gamePhase, "Modal:", currentModal);
 
@@ -769,6 +820,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       const childPhases = ['child-food-choice', 'child-color-choice', 'child-activity-choice', 'child-friend-input'];
 
       if (gamePhase === 'child-intro') {
+        suppressPhaseVoUntilReloadSettlesRef.current = true;
         expectedReloadPhaseRef.current = 'child-intro';
         clearAllTimeouts();
         interruptCurrentVoice();
@@ -792,6 +844,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       const restartPhase = ganeshaRestartPhaseMap[gamePhase];
       if (restartPhase) {
+        suppressPhaseVoUntilReloadSettlesRef.current = true;
         expectedReloadPhaseRef.current = restartPhase;
         // Reload rule: in any Ganesha phase (choice/hint/celebration), restart from phase entry.
         const wasCelebrationPhase = ['food-correct', 'color-correct', 'activity-correct', 'friend-correct'].includes(gamePhase);
@@ -857,6 +910,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       }
 
       if (childPhases.includes(gamePhase)) {
+        suppressPhaseVoUntilReloadSettlesRef.current = true;
         expectedReloadPhaseRef.current = gamePhase;
         // Reload rule for child phases:
         // restart same phase, replay entry VO, and rollback child discoveries for that phase.
@@ -1323,8 +1377,9 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           correctChoiceId: null
         });
         safeSetTimeout(() => {
+          const currentState = latestSceneStateRef.current || sceneState;
           sceneActions.updateState({
-            storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, { image: modakImg, name: 'Modak' })
+            storyDiscoveries: appendUniqueDiscovery(currentState.storyDiscoveries, { image: modakImg, name: 'Modak' })
           });
         }, DISCOVERY_CENTER_REACH_MS);
       }, 1000);
@@ -1353,8 +1408,9 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         gamePhase: 'color-correct'
       });
       safeSetTimeout(() => {
+        const currentState = latestSceneStateRef.current || sceneState;
         sceneActions.updateState({
-          storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, { image: yellowImg, name: 'Yellow' })
+          storyDiscoveries: appendUniqueDiscovery(currentState.storyDiscoveries, { image: yellowImg, name: 'Yellow' })
         });
       }, DISCOVERY_CENTER_REACH_MS);
     } else {
@@ -1382,8 +1438,9 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         gamePhase: 'activity-correct'
       });
       safeSetTimeout(() => {
+        const currentState = latestSceneStateRef.current || sceneState;
         sceneActions.updateState({
-          storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, { image: activity.image, name: activity.name })
+          storyDiscoveries: appendUniqueDiscovery(currentState.storyDiscoveries, { image: activity.image, name: activity.name })
         });
       }, DISCOVERY_CENTER_REACH_MS);
     } else {
@@ -1412,8 +1469,9 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         gamePhase: 'friend-correct'
       });
       safeSetTimeout(() => {
+        const currentState = latestSceneStateRef.current || sceneState;
         sceneActions.updateState({
-          storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, { image: mouseImg, name: 'Mooshika' })
+          storyDiscoveries: appendUniqueDiscovery(currentState.storyDiscoveries, { image: mouseImg, name: 'Mooshika' })
         });
       }, DISCOVERY_CENTER_REACH_MS);
     } else {
@@ -1486,15 +1544,16 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     playUiTap();
     setSelectedKidColorId(colorId);
     const selectedColor = kidColors.find(c => c.id === colorId);
+    const currentState = latestSceneStateRef.current || sceneState;
     speakOptionName(selectedColor?.name);
     sceneActions.updateState({
       childColor: selectedColor.image || selectedColor.color,
       childColorName: selectedColor.name,
-      childDiscoveries: [...sceneState.childDiscoveries, {
+      childDiscoveries: appendUniqueDiscovery(currentState.childDiscoveries, {
         image: selectedColor.image,
-        emoji: selectedColor.emoji,
+        emoji: sanitizeEmoji(selectedColor.emoji, selectedColor.id),
         name: selectedColor.name
-      }]
+      })
     });
     triggerMiniGesture('center', 1200);
     triggerSparkleFx('single', 1500);
@@ -1522,10 +1581,11 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     setSelectedKidActivityId(activityId);
     const selected = kidActivities.find(a => a.id === activityId);
     const discoveryImage = selected?.image;
+    const currentState = latestSceneStateRef.current || sceneState;
     speakOptionName(selected?.name);
     sceneActions.updateState({
       childActivityChoice: activityId,
-      childDiscoveries: [...sceneState.childDiscoveries, { image: discoveryImage, name: selected.name }]
+      childDiscoveries: appendUniqueDiscovery(currentState.childDiscoveries, { image: discoveryImage, name: selected.name })
     });
     triggerMiniGesture('center', 1200);
     triggerSparkleFx('single', 1500);
@@ -1547,10 +1607,11 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     playChime();
     setShowDrawingPad(false);
     setDrawingMode(null);
+    const currentState = latestSceneStateRef.current || sceneState;
     triggerDiscoveryFly({ image: data.image, name: 'Drawing' }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
     sceneActions.updateState({
       childActivityDrawing: data.image,
-      childDiscoveries: [...sceneState.childDiscoveries, { image: data.image, name: 'Drawing' }],
+      childDiscoveries: appendUniqueDiscovery(currentState.childDiscoveries, { image: data.image, name: 'Drawing' }),
       currentModal: null,
       draftData: null
     });
@@ -1948,7 +2009,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 {color.image ? (
                   <img src={color.image} alt={color.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 ) : (
-                  color.emoji
+                  sanitizeEmoji(color.emoji, color.id)
                 )}
               </button>
             ))}
@@ -2106,10 +2167,11 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             onSave={(name) => {
               interruptCurrentVoice();
               playChime();
+              const currentState = latestSceneStateRef.current || sceneState;
               sceneActions.updateState({
                 childFriendName: name,
                 childFriendLetters: name.split(''),
-                childDiscoveries: [...sceneState.childDiscoveries, { image: friendsImg, name }],
+                childDiscoveries: appendUniqueDiscovery(currentState.childDiscoveries, { image: friendsImg, name }),
                 friendNameDraft: ''
               });
               triggerMiniGesture('center', 1200);
@@ -2214,10 +2276,11 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             playChime();
             setShowTextInput(false);
             setTextInputMode(null);
+            const currentState = latestSceneStateRef.current || sceneState;
             triggerDiscoveryFly({ image: pencilImg, name: text }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
             sceneActions.updateState({
               childActivityText: text,
-              childDiscoveries: [...sceneState.childDiscoveries.slice(0, 2), { image: pencilImg, name: text }],
+              childDiscoveries: appendUniqueDiscovery(currentState.childDiscoveries.slice(0, 2), { image: pencilImg, name: text }),
               currentModal: null, // Clear modal
               draftData: null
             });
@@ -2389,7 +2452,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           starsEarned={sceneState.stars}
           totalStars={2}
           nextSceneName="Dream Big Together"
-          childName="super finder"
+          childName={profileDisplayName}
           isFinalScene={false}
           completionData={{
             completed: true,

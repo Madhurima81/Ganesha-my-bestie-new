@@ -9,6 +9,7 @@
   align-items: center;
   background: radial-gradient(ellipse at center, rgba(255, 244, 224, 0.9), rgba(255, 220, 180, 0.7));
   backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
 
 .aboutme-comparison-title {

@@ -434,6 +434,7 @@
   padding: 8px 20px;
   border-radius: 30px;
   backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 /* 3. The Big Hearts */
@@ -2232,6 +2233,7 @@
   background: rgba(255, 248, 234, 0.9);
   border: 1px solid rgba(116, 72, 49, 0.35);
   backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
   padding: 8px 16px;
   border-radius: 999px;
 
@@ -2496,6 +2498,7 @@
       rgba(255, 244, 224, 0.9),
       rgba(255, 220, 180, 0.7));
   backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   z-index: 50;
   overflow: hidden;
   padding: 28px 20px 18px;
@@ -3185,6 +3188,7 @@
   padding: 40px;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-radius: 40px;
   border: 2px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
@@ -4390,6 +4394,7 @@
   height: 100%;
   background: rgba(255, 245, 235, 0.6);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -4538,6 +4543,7 @@
   width: 100%;
   /*background: rgba(255, 255, 255, 0.95);*/
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   padding: 20px;
   display: flex;
   gap: 15px;
@@ -5251,7 +5257,7 @@
 
 
 /* --------------------------------------------------------------------
-   FAMILY TREE — iPad bug fixes (May 2026)
+   FAMILY TREE ï¿½ iPad bug fixes (May 2026)
    Paste at the BOTTOM of Familytreegame.css (replaces conflicting rules)
    -------------------------------------------------------------------- */
 
@@ -5264,7 +5270,7 @@
 .family-tree-end-game-btn {
   font-size: clamp(0.9rem, 1.5vw, 1.1rem) !important;
   padding: 10px 28px !important;
-  /* transform: translateY(52px) REMOVED — was causing double-tap bug */
+  /* transform: translateY(52px) REMOVED ï¿½ was causing double-tap bug */
 }
 
 .action-buttons {
@@ -5274,24 +5280,24 @@
 
 
 /* --- BUGS 1 & 2 FIX ------------------------------------------------
-   iPad landscape — lift everything up so:
-   • Continue button sits well above the bottom edge (img 1)
-   • Tree + placement cards don't touch the base on iPad Pro (img 2)
-   • Progress bar hugs the top, near tree (img 2)
+   iPad landscape ï¿½ lift everything up so:
+   ï¿½ Continue button sits well above the bottom edge (img 1)
+   ï¿½ Tree + placement cards don't touch the base on iPad Pro (img 2)
+   ï¿½ Progress bar hugs the top, near tree (img 2)
    ------------------------------------------------------------------- */
 @media (orientation: landscape) and (max-height: 900px) {
 
-  /* BUG 2 — lift tree + trays + progress bar */
+  /* BUG 2 ï¿½ lift tree + trays + progress bar */
   .family-tree-game {
     --scene-tree-top: 46% !important;            /* was 51% */
     --scene-choice-row-y-offset: -240px !important; /* lift trays up */
   }
 
   .family-tree-game .game-header-hud {
-    top: 12px !important;                        /* was 34px — closer to top */
+    top: 12px !important;                        /* was 34px ï¿½ closer to top */
   }
 
-  /* BUG 1 — push intro tree Continue button up off the bottom edge */
+  /* BUG 1 ï¿½ push intro tree Continue button up off the bottom edge */
   .family-tree-game .tree-done-btn {
     bottom: max(clamp(70px, 9vh, 110px), env(safe-area-inset-bottom)) !important;
     font-size: clamp(1rem, 2vh, 1.4rem) !important;

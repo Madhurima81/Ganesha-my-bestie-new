@@ -1813,7 +1813,8 @@ font-weight: 700;
   );
   
   /* Blurs the game room behind it slightly */
-  backdrop-filter: blur(4px); 
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   z-index: 50;
   
   display: flex;

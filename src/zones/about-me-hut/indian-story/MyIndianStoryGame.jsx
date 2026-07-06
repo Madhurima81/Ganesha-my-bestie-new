@@ -4,6 +4,7 @@ import '../../shared/components/OpeningModal.css';
 import SceneCompletionCelebration from '../../../lib/components/celebration/SceneCompletionCelebration';
 import AboutMeComparisonCard from '../components/AboutMeComparisonCard';
 import GameStateManager from '../../../lib/services/GameStateManager';
+import ProgressManager from '../../../lib/services/ProgressManager';
 import { useGaneshaVoice } from '../../../lib/hooks/useGaneshaVoice';
 import { useGameSounds } from '../../../lib/hooks/useGameSounds';
 import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
