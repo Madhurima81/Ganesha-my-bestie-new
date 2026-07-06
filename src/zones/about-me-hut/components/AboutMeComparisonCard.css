@@ -241,6 +241,7 @@
 @media (orientation: portrait) and (max-width: 1024px) {
   .aboutme-comparison-overlay {
     padding: 14px 16px 10px;
+    overflow-y: auto;
   }
   .aboutme-comparison-grid {
     transform: none;
@@ -353,7 +354,7 @@
   }
 }
 
-@media (orientation: landscape) and (max-height: 900px) {
+@media (orientation: landscape) and (max-height: 1024px) {
 
   .aboutme-comparison-overlay {
     overflow-y: auto;

@@ -2510,6 +2510,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             setTextInputMode(null);
           }}
           onBackToMap={() => {
+            playUiTap();
+            hardStopSceneAudio();
             if (onNavigate) {
               onNavigate('zone-welcome');
             } else if (onBack) {
@@ -2517,6 +2519,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             }
           }}
           onHome={() => {
+            playUiTap();
+            hardStopSceneAudio();
             if (onNavigate) {
               onNavigate('home');
             }
