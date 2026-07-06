@@ -202,7 +202,7 @@ const SymbolMountainSceneContent = ({
 }) => {
   if (!sceneState || !sceneActions) return <div className="loading">Loading...</div>;
 
-  if (!sceneState?.phase) sceneActions.updateState({ phase: PHASES.EYES_GAME });
+  const isDevBuild = process.env.NODE_ENV !== 'production';
 
   const { resetScene } = useSceneReset(sceneActions, 'symbol-mountain', 'symbol', getSceneResetConfig('symbol'));
   const completionModalContent = getCompletionModal(zoneId, sceneId);
@@ -301,27 +301,22 @@ const SymbolMountainSceneContent = ({
   const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
 
   // -- Pause-aware safeSetTimeout â€” pauses on tab hide, resumes after countdown
+  // onShow goes through a live ref (same pattern as NewModakSceneV7) so the
+  // callback never captures a stale sceneState/phase from the mount render.
+  const onTabReturnImplRef = useRef(null);
   const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({
     onHide: () => {},
-    onShow: () => {
-      setHintResetKey(k => k + 1); // restart hint cadence on tab return
-      setIdleHintLevel(0);
-      setShowIdleGestureHint(false);
-      idleVoGateRef.current = false;
-      lastIdleInteractionAtRef.current = Date.now();
-      if (sceneState?.welcomeShown) {
-        const replayKey = getPromptKeyForPhase();
-        if (replayKey) {
-          resetIdleBaseline();
-          speakScenePrompt(replayKey);
-        }
-      }
-    },
+    onShow: () => onTabReturnImplRef.current?.(),
     resumeDelay: RESUME_DELAY_MS,
   });
 
   const resumePopupTimeoutRef = useRef(null);
   const reloadHandledRef = useRef(false);
+
+  // Backfill missing phase for older saved state objects (effect, not render).
+  useEffect(() => {
+    if (!sceneState?.phase) sceneActions.updateState({ phase: PHASES.EYES_GAME });
+  }, [sceneState?.phase, sceneActions]);
   // const progressiveHintRef = useRef(null); // removed â€” ProgressiveHintSystem removed
 
 
@@ -344,7 +339,7 @@ const SymbolMountainSceneContent = ({
   const speakScenePrompt = useCallback((key, options = {}) => {
     if (!isAudioOn || !VOICE_LINES[key]) return;
     speak(VOICE_LINES[key], {
-      age: 11,
+      age: 7,
       style: 'child',
       moment: key === 'complete' ? 'celebration' : 'encouragement',
       onEnd: options?.onEnd
@@ -354,6 +349,22 @@ const SymbolMountainSceneContent = ({
     const replayKey = getPromptKeyForPhase();
     if (replayKey) speakScenePrompt(replayKey);
   }, [getPromptKeyForPhase, speakScenePrompt]);
+
+  // Reassigned every render so the tab-return handler always sees live state.
+  onTabReturnImplRef.current = () => {
+    setHintResetKey(k => k + 1); // restart hint cadence on tab return
+    setIdleHintLevel(0);
+    setShowIdleGestureHint(false);
+    idleVoGateRef.current = false;
+    lastIdleInteractionAtRef.current = Date.now();
+    if (sceneState?.welcomeShown) {
+      const replayKey = getPromptKeyForPhase();
+      if (replayKey) {
+        resetIdleBaseline();
+        speakScenePrompt(replayKey);
+      }
+    }
+  };
 
 
   useEffect(() => {
@@ -578,15 +589,15 @@ const SymbolMountainSceneContent = ({
     }
 
     if (sceneState.phase === PHASES.EYES_COMPLETE) {
-      setTimeout(() => setRevealConfig({ symbolId: 'eyes', symbolImage: symbolEyesColored, symbolName: 'Eyes', affirmation: 'I see clearly.', sidebarTarget: getSidebarTarget('eyes'), sayWithMeDelayMs: 3200 }), 500);
+      safeSetTimeout(() => setRevealConfig({ symbolId: 'eyes', symbolImage: symbolEyesColored, symbolName: 'Eyes', affirmation: 'I see clearly.', sidebarTarget: getSidebarTarget('eyes'), sayWithMeDelayMs: 3200 }), 500);
       return;
     }
     if (sceneState.phase === PHASES.EARS_COMPLETE) {
-      setTimeout(() => setRevealConfig({ symbolId: 'ear', symbolImage: symbolEarColored, symbolName: 'Ears', affirmation: 'I listen with care.', sidebarTarget: getSidebarTarget('ear'), sayWithMeDelayMs: 3200 }), 500);
+      safeSetTimeout(() => setRevealConfig({ symbolId: 'ear', symbolImage: symbolEarColored, symbolName: 'Ears', affirmation: 'I listen with care.', sidebarTarget: getSidebarTarget('ear'), sayWithMeDelayMs: 3200 }), 500);
       return;
     }
     if (sceneState.phase === PHASES.TUSK_COMPLETE) {
-      setTimeout(() => setRevealConfig({ symbolId: 'tusk', symbolImage: symbolTuskColored, symbolName: 'Tusk', affirmation: 'I finish what I start.', sidebarTarget: getSidebarTarget('tusk'), sayWithMeDelayMs: 3200 }), 500);
+      safeSetTimeout(() => setRevealConfig({ symbolId: 'tusk', symbolImage: symbolTuskColored, symbolName: 'Tusk', affirmation: 'I finish what I start.', sidebarTarget: getSidebarTarget('tusk'), sayWithMeDelayMs: 3200 }), 500);
       return;
     }
 
@@ -678,11 +689,13 @@ const SymbolMountainSceneContent = ({
 
   const handleEyesGameComplete = () => {
     playChime();
+    // Stay in EYES_COMPLETE until the reveal card is accepted —
+    // handleRevealComplete('eyes') advances to EARS_GAME and sets earsVisible.
+    // Advancing here meant a reload during the reveal skipped the eyes symbol forever.
     sceneActions.updateState({
       eyesGameComplete: true,
       showEyesTelescopeGame: false,
-      earsVisible: true,
-      phase: PHASES.EARS_GAME
+      phase: PHASES.EYES_COMPLETE
     });
     setShowSparkle('eyes-complete-final');
     triggerMiniGesture('center', 2000, MINI_VICTORY_ICON);
@@ -816,6 +829,7 @@ const SymbolMountainSceneContent = ({
               onReplay={replayCurrentVoice}
               disabled={!isAudioOn || !getPromptKeyForPhase()}
             />
+            {isDevBuild && (
             <button
               type="button"
               className="symbol-test-tusk-btn"
@@ -840,6 +854,7 @@ const SymbolMountainSceneContent = ({
             >
               Test Tusk
             </button>
+            )}
             <div className={`mountain-background ${tuskZoomActive ? 'tusk-zoom' : ''} ${tuskFadeOut ? 'tusk-fade-out' : ''}`} style={{ backgroundImage: `url(${mountainBackground})` }}>
               {!isCompletionView && !isFinalFireworksView && (
                 <>
@@ -868,7 +883,7 @@ const SymbolMountainSceneContent = ({
                       phase: PHASES.EYES_COMPLETE
                     });
                     // Keep all 4 discovered animals visible a bit longer before symbol reveal.
-                    setTimeout(() => handleEyesGameComplete(), 1800);
+                    safeSetTimeout(() => handleEyesGameComplete(), 1800);
                   }}
                 />
               )}
@@ -888,7 +903,7 @@ const SymbolMountainSceneContent = ({
                   }}
                   onGameComplete={() => {
                     // Keep matched animals visible briefly before transitioning to reveal.
-                    setTimeout(() => {
+                    safeSetTimeout(() => {
                       sceneActions.updateState({
                         earsGameComplete: true,
                         showEarsRhythmGame: false,
@@ -897,7 +912,7 @@ const SymbolMountainSceneContent = ({
                       playChime();
                       setShowSparkle('ears-complete-final');
                       triggerMiniGesture('center', 2000, MINI_VICTORY_ICON);
-                      setTimeout(() => {
+                      safeSetTimeout(() => {
                         setShowSparkle(null);
                         setRevealConfig({
                           symbolId: 'ear',
@@ -1112,6 +1127,8 @@ const SymbolMountainSceneContent = ({
                 onClose={() => {
                   setShowMandala(false);
                   setShowSceneCompletion(true);
+                  // Persist so the sticky-completion effect and reload restore work.
+                  sceneActions.updateState({ showingCompletionScreen: true, completed: true });
                 }}
               />
             )}

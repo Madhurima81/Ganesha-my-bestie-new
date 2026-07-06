@@ -377,7 +377,11 @@ const NewModakSceneMVPContent = ({
     return <div>Loading scene...</div>;
   }
 
-  if (!sceneState?.phase) sceneActions.updateState({ phase: PHASES.MOOSHIKA_SEARCH });
+  // Backfill missing phase for older saved state objects (effect, not render —
+  // calling updateState during render triggers React warnings/loops).
+  useEffect(() => {
+    if (!sceneState?.phase) sceneActions.updateState({ phase: PHASES.MOOSHIKA_SEARCH });
+  }, [sceneState?.phase, sceneActions]);
 
   // Backfill randomized modak slots for older saved state objects.
   useEffect(() => {
@@ -547,8 +551,9 @@ const NewModakSceneMVPContent = ({
   useEffect(() => {
     Analytics.sceneStarted(zoneId, sceneId);
     return () => {
-      // If scene unmounts without completing, count as abandoned
-      if (!sceneState?.completed) {
+      // Read live state via ref — the [] deps would otherwise freeze the
+      // initial sceneState and report every play (even completed) as abandoned.
+      if (!sceneStateRef.current?.completed) {
         Analytics.sceneAbandoned(zoneId, sceneId);
       }
     };
@@ -1017,7 +1022,7 @@ const NewModakSceneMVPContent = ({
     // Old system used showDiscoveryFlip1 � now we trigger setRevealConfig directly.
     // Short delay so Mooshika has time to render in her saved position first.
     if (sceneState.phase === PHASES.MOOSHIKA_FOUND) {
-      setTimeout(() => {
+      safeSetTimeout(() => {
         playRevealBloom();
         setRevealConfig({
           symbolId: 'mooshika',
@@ -1040,7 +1045,7 @@ const NewModakSceneMVPContent = ({
         progress: { percentage: 30 } // Reset progress bar visual
       });
       // Replay collect instruction VO on reload
-      setTimeout(() => {
+      safeSetTimeout(() => {
         resetIdleBaseline();
         modakIdleVoPlayedRef.current = false;
         playVoice('collectStart');
@@ -1051,7 +1056,7 @@ const NewModakSceneMVPContent = ({
 
     // 3b. REPLAY VO for modak collection phase on reload
     if (sceneState.phase === PHASES.MODAKS_UNLOCKED && sceneState.modaksUnlocked) {
-      setTimeout(() => {
+      safeSetTimeout(() => {
         resetIdleBaseline();
         modakIdleVoPlayedRef.current = false;
         playVoice('collectStart');
@@ -1064,7 +1069,7 @@ const NewModakSceneMVPContent = ({
     // All modaks collected but SymbolAutoReveal for modak not yet shown.
     // Old system used showDiscoveryFlip2 � now trigger setRevealConfig directly.
     if (sceneState.phase === PHASES.ALL_COLLECTED && !sceneState.rockVisible) {
-      setTimeout(() => {
+      safeSetTimeout(() => {
         playRevealBloom();
         setRevealConfig({
           symbolId: 'modak',
@@ -1088,7 +1093,7 @@ const NewModakSceneMVPContent = ({
         basketFull: true
       });
       // Replay feed instruction VO on reload
-      setTimeout(() => {
+      safeSetTimeout(() => {
         resetIdleBaseline();
         feedIdleVoPlayedRef.current = false;
         playVoice('feedGanesha');
@@ -1100,7 +1105,7 @@ const NewModakSceneMVPContent = ({
     // 5b. REPLAY VO for feeding phase on reload
     if (sceneState.phase === PHASES.ROCK_VISIBLE && sceneState.rockVisible) {
       hasShownDragHintRef.current = true; // Don't re-show drag hint on reload
-      setTimeout(() => {
+      safeSetTimeout(() => {
         resetIdleBaseline();
         feedIdleVoPlayedRef.current = false;
         playVoice('feedGanesha');
@@ -1114,7 +1119,7 @@ const NewModakSceneMVPContent = ({
     // Old system used showDiscoveryFlip3 � now trigger setRevealConfig directly.
     if (sceneState.phase === PHASES.ROCK_TRANSFORMED && !sceneState.completed) {
       hasShownDragHintRef.current = true; // Don't re-show drag hint on reload
-      setTimeout(() => {
+      safeSetTimeout(() => {
         playRevealBloom();
         setRevealConfig({
           symbolId: 'belly',
@@ -1127,14 +1132,15 @@ const NewModakSceneMVPContent = ({
     }
     // Defensive repair: stale save may mark completed during belly reveal phase.
     // Reset and restore belly card instead of treating scene as done.
-    if (sceneState.phase === PHASES.ROCK_TRANSFORMED && sceneState.completed) {
+    // (Skip when the completion screen was genuinely reached — that state is valid.)
+    if (sceneState.phase === PHASES.ROCK_TRANSFORMED && sceneState.completed && !sceneState.showingCompletionScreen) {
       hasShownDragHintRef.current = true;
       sceneActions.updateState({
         completed: false,
         showingCompletionScreen: false,
         phase: PHASES.ROCK_TRANSFORMED
       });
-      setTimeout(() => {
+      safeSetTimeout(() => {
         playRevealBloom();
         setRevealConfig({
           symbolId: 'belly',
@@ -1392,10 +1398,20 @@ const NewModakSceneMVPContent = ({
   // FINAL CELEBRATION SYNC: Show completion modal 1s after VO finishes
   // Fireworks duration is long enough to always cover the VO
   useEffect(() => {
-    if (fireworksFinished && sceneState.phase === PHASES.ROCK_TRANSFORMED) {
+    // Wait for BOTH fireworks and the sceneComplete VO — the mandala must not
+    // appear while Ganesha is still speaking the closing line.
+    if (fireworksFinished && sceneCompleteVOFinished && sceneState.phase === PHASES.ROCK_TRANSFORMED) {
       setShowMandala(true);
     }
-  }, [fireworksFinished, sceneState.phase]);
+  }, [fireworksFinished, sceneCompleteVOFinished, sceneState.phase]);
+
+  // Safety net: if the VO onEnd never fires (interrupted speech engine),
+  // release the mandala gate so the finale can't freeze.
+  useEffect(() => {
+    if (!fireworksFinished || sceneCompleteVOFinished) return;
+    const t = setTimeout(() => setSceneCompleteVOFinished(true), 10000);
+    return () => clearTimeout(t);
+  }, [fireworksFinished, sceneCompleteVOFinished]);
 
   // Keep completion UI sticky across tab switch/remount:
   // if scene state says completion screen is active, ensure local modal flag stays on.
@@ -1690,7 +1706,7 @@ const NewModakSceneMVPContent = ({
         progress: { percentage: 50, starsEarned: 4 }
       });
 
-      setTimeout(() => {
+      safeSetTimeout(() => {
         playDiscovery();
         sceneActions.updateState({
           basketFull: true,
@@ -1699,7 +1715,7 @@ const NewModakSceneMVPContent = ({
       }, 1000);
 
       // Clear sparkle before overlay
-      setTimeout(() => {
+      safeSetTimeout(() => {
         setShowSparkle(null);
       }, 4000);
 
@@ -1771,7 +1787,7 @@ const NewModakSceneMVPContent = ({
       // Pre-compute sidebar target NOW (while rock is still in DOM / before transform)
       const bellySidebarTarget = getSidebarTarget('belly');
 
-      setTimeout(() => {
+      safeSetTimeout(() => {
         playEmotionalGlow();
         setShowSparkle('belly-transform');
 
@@ -2510,6 +2526,12 @@ const NewModakSceneMVPContent = ({
                   setShowMandala(false);
                   playTransition();
                   setShowSceneCompletion(true);
+                  // Persist completion so reload restores this screen and
+                  // analytics' unmount check sees the scene as finished.
+                  sceneActions.updateState({
+                    completed: true,
+                    showingCompletionScreen: true
+                  });
                 }}
               />
             )}

@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './SymbolSidebar.css';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
+import { useGaneshaVoice } from '../../../../lib/hooks/useGaneshaVoice';
+import {
+  playCardRevealChime,
+  playUiTap,
+  playWrongTap,
+} from '../../../../lib/services/AudioService';
 import SymbolCardModal from './SymbolCardModal';
-// FIX 1: named import (was default import — was returning undefined)
-import { symbolCardContent } from './symbolCardContent';
 
-// Import gray and colored symbol icons
 import symbolBellyColored from '../images/icons/symbol-belly-new.png';
 import symbolEarColored from '../images/icons/symbol-ears-new.png';
 import symbolEyesColored from '../images/icons/symbol-eyes-new.png';
@@ -14,66 +17,6 @@ import symbolModakColored from '../images/icons/symbol-modak-new.png';
 import symbolMooshikaColored from '../images/icons/symbol-mooshika-new.png';
 import symbolTrunkColored from '../images/icons/symbol-trunk-new.png';
 import symbolTuskColored from '../images/icons/broken-tusk-symbol.png';
-
-// Symbol Information
-/*const symbolInfo = {
-  modak: {
-    title: "Modak — Ganesha's Sweet Treat!",
-    description: "A magical sweet that fills you with happy, joyful energy!",
-    colorIcon: symbolModakColored,
-    grayIcon: symbolModakGray,
-    popupImage: symbolModakColored,
-  },
-  mooshika: {
-    title: "Mooshika — Ganesha's Clever Friend!",
-    description: "A tiny mouse with a big heart! Mooshika helps Ganesha travel anywhere and reminds us to stay humble & smart.",
-    colorIcon: symbolMooshikaColored,
-    grayIcon: symbolMooshikaGray,
-    popupImage: symbolMooshikaColored,
-  },
-  belly: {
-    title: "Belly — Big Happy Tummy!",
-    description: "Ganesha's big belly holds all worries and turns them into calm. It reminds us to feel safe, relaxed and happy inside.",
-    colorIcon: symbolBellyColored,
-    grayIcon: symbolBellyGray,
-    popupImage: symbolBellyColored,
-  },
-  lotus: {
-    title: "Lotus — Pure & Peaceful Heart",
-    description: "The lotus grows clean even in mud! It teaches us to stay calm, kind, and good inside.",
-    colorIcon: symbolLotusColored,
-    grayIcon: symbolLotusGray,
-    popupImage: symbolLotusColored,
-  },
-  trunk: {
-    title: "Trunk — Strength with Flexibility",
-    description: "Ganesha's trunk is powerful yet gentle — showing us that real strength is soft, kind & adaptable.",
-    colorIcon: symbolTrunkColored,
-    grayIcon: symbolTrunkGray,
-    popupImage: symbolTrunkColored,
-  },
-  eyes: {
-    title: "Eyes — Divine Vision",
-    description: "Ganesha sees the good in everyone! His eyes remind us to look with love, curiosity & wonder.",
-    colorIcon: symbolEyesColored,
-    grayIcon: symbolEyesGray,
-    popupImage: symbolEyesColored,
-  },
-  ear: {
-    title: "Ears — Listen with Love",
-    description: "Big ears to hear prayers, stories & feelings! They teach us to listen carefully and understand others.",
-    colorIcon: symbolEarColored,
-    grayIcon: symbolEarGray,
-    popupImage: symbolEarColored,
-  },
-  tusk: {
-    title: "Tusks — Perfect Imperfection",
-    description: "One broken, one whole — reminding us that even with flaws, we are powerful, unique & complete!",
-    colorIcon: symbolTuskColored,
-    grayIcon: symbolTuskGray,
-    popupImage: symbolTuskColored,
-  },
-};*/
 
 const symbolInfo = {
   modak: { title: 'Modak', colorIcon: symbolModakColored },
@@ -86,11 +29,18 @@ const symbolInfo = {
   tusk: { title: 'Tusk', colorIcon: symbolTuskColored },
 };
 
-// Display order
 const symbolOrder = ['mooshika', 'modak', 'belly', 'lotus', 'trunk', 'eyes', 'ear', 'tusk'];
+const TAPPED_SYMBOLS_STORAGE_KEY = 'symbol-sidebar-tapped-symbols-v1';
 
-// SVG icons have internal transparent padding — use larger background-size
-const svgSymbols = ['mooshika', 'modak', 'belly'];
+const readTappedSymbols = () => {
+  if (typeof window === 'undefined') return {};
+  try {
+    const stored = window.localStorage.getItem(TAPPED_SYMBOLS_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : {};
+  } catch {
+    return {};
+  }
+};
 
 const SymbolSidebar = ({
   discoveredSymbols = {},
@@ -102,10 +52,10 @@ const SymbolSidebar = ({
   highlightSymbols = [],
   onCelebrate,
   zoneId = 'symbol-mountain',
-  // Flight animation system — controlled entirely by parent scene
-  animatingSymbol = null,   // symbolId currently blooming after flight
+  animatingSymbol = null,
 }) => {
   const theme = getZoneTheme(zoneId);
+  const { speak, stop: stopSpokenVoice } = useGaneshaVoice();
   const zoneThemeVars = {
     '--zone-accent-color': theme.accentColor,
     '--zone-glow-color': theme.glowColor,
@@ -113,29 +63,68 @@ const SymbolSidebar = ({
 
   const [showPopup, setShowPopup] = useState(false);
   const [selectedSymbol, setSelectedSymbol] = useState(null);
-  const [tappedSymbols, setTappedSymbols] = useState({});
+  const [tappedSymbols, setTappedSymbols] = useState(readTappedSymbols);
+  const [lockedFeedbackSymbol, setLockedFeedbackSymbol] = useState(null);
+  const lockedFeedbackTimerRef = useRef(null);
+  const centerModeVoicePlayedRef = useRef(false);
 
-  // In centerMode, only show discovered symbols
   const displaySymbols = centerMode
-    ? symbolOrder.filter(s => discoveredSymbols[s])
+    ? symbolOrder.filter((symbolId) => discoveredSymbols[symbolId])
     : symbolOrder;
 
-  // ── Icon class — pure visual, no timers ──────────────────────────────────
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(TAPPED_SYMBOLS_STORAGE_KEY, JSON.stringify(tappedSymbols));
+    } catch {}
+  }, [tappedSymbols]);
+
+  useEffect(() => () => {
+    if (lockedFeedbackTimerRef.current) {
+      clearTimeout(lockedFeedbackTimerRef.current);
+    }
+    stopSpokenVoice();
+  }, [stopSpokenVoice]);
+
+  useEffect(() => {
+    if (!centerMode || displaySymbols.length === 0 || centerModeVoicePlayedRef.current) return;
+    centerModeVoicePlayedRef.current = true;
+    speak('Tap the symbols to learn about them.', {
+      age: 6,
+      style: 'child',
+      moment: 'encouragement',
+    });
+  }, [centerMode, displaySymbols.length, speak]);
+
   const getIconClass = (symbolId) => {
-    if (animatingSymbol === symbolId)   return 'ganesha-icon animating';
-    if (discoveredSymbols[symbolId])    return 'ganesha-icon completed';
+    if (animatingSymbol === symbolId) return 'ganesha-icon animating';
+    if (discoveredSymbols[symbolId]) return 'ganesha-icon completed';
     return 'ganesha-icon locked';
   };
 
-  // ── Popup ────────────────────────────────────────────────────────────────
-  const handleSymbolClick = (symbolId) => {
-    if (discoveredSymbols[symbolId]) {
-      setTappedSymbols(prev => ({ ...prev, [symbolId]: true }));
-      setSelectedSymbol(symbolId);
-      setShowPopup(true);
-      onPopupOpen?.();
-      if (onSymbolClick) onSymbolClick(symbolId);
+  const triggerLockedFeedback = (symbolId) => {
+    playWrongTap();
+    setLockedFeedbackSymbol(symbolId);
+    if (lockedFeedbackTimerRef.current) {
+      clearTimeout(lockedFeedbackTimerRef.current);
     }
+    lockedFeedbackTimerRef.current = setTimeout(() => {
+      setLockedFeedbackSymbol(null);
+      lockedFeedbackTimerRef.current = null;
+    }, 380);
+  };
+
+  const handleSymbolClick = (symbolId) => {
+    if (!discoveredSymbols[symbolId]) {
+      triggerLockedFeedback(symbolId);
+      return;
+    }
+
+    playUiTap();
+    setTappedSymbols((prev) => ({ ...prev, [symbolId]: true }));
+    setSelectedSymbol(symbolId);
+    setShowPopup(true);
+    onPopupOpen?.();
+    onSymbolClick?.(symbolId);
   };
 
   const closePopup = () => {
@@ -144,7 +133,11 @@ const SymbolSidebar = ({
     onPopupClose?.();
   };
 
-  // ── CENTER MODE ───────────────────────────────────────────────────────────
+  const handleCelebrateClick = () => {
+    playCardRevealChime();
+    onCelebrate?.();
+  };
+
   if (centerMode) {
     return (
       <>
@@ -160,29 +153,40 @@ const SymbolSidebar = ({
                 const needsAttention = !isTapped;
 
                 return (
-                  <div
+                  <button
+                    type="button"
                     key={symbolId}
                     id={`sidebar-${symbolId}`}
-                    className={`symbol-discovery-icon ${isHighlighted ? 'symbol-discovery-pulse' : ''} ${isTapped ? 'symbol-discovery-tapped' : ''} ${needsAttention ? 'symbol-discovery-soft-glow' : ''}`}
+                    className={[
+                      'symbol-discovery-icon',
+                      isHighlighted ? 'symbol-discovery-pulse' : '',
+                      isTapped ? 'symbol-discovery-tapped' : '',
+                      needsAttention ? 'symbol-discovery-soft-glow' : '',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
                     onClick={() => handleSymbolClick(symbolId)}
+                    aria-label={symbol.title}
                   >
                     <img src={symbol.colorIcon} alt={symbol.title} />
-                  </div>
+                  </button>
                 );
               })}
             </div>
 
-            <button className="symbol-discovery-celebrate-btn" onClick={onCelebrate}>
-              🎉 Celebrate!
+            <button
+              type="button"
+              className="symbol-discovery-celebrate-btn"
+              onClick={handleCelebrateClick}
+            >
+              Celebrate!
             </button>
           </div>
         </div>
 
-        {/* FIX 2 + 3: conditional render + correct prop names (symbolId + iconSrc) */}
         {showPopup && selectedSymbol && (
           <SymbolCardModal
             symbolId={selectedSymbol}
-            iconSrc={symbolInfo[selectedSymbol]?.colorIcon}
             onClose={closePopup}
           />
         )}
@@ -190,7 +194,6 @@ const SymbolSidebar = ({
     );
   }
 
-  // ── SIDE RAIL MODE (default) ──────────────────────────────────────────────
   return (
     <>
       <div className={`ganesha-sidebar ${className}`} style={zoneThemeVars}>
@@ -200,28 +203,36 @@ const SymbolSidebar = ({
           const needsAttention = isDiscovered && !tappedSymbols[symbolId];
 
           return (
-            <div
+            <button
+              type="button"
               key={symbolId}
-              id={`sidebar-${symbolId}`}
-              className={`${getIconClass(symbolId)} ${needsAttention ? 'ganesha-icon-soft-glow' : ''}`}
+              className="ganesha-icon-hitarea"
               onClick={() => handleSymbolClick(symbolId)}
-              style={{
-                backgroundImage: `url(${symbol.colorIcon})`,
-                cursor: isDiscovered ? 'pointer' : 'not-allowed',
-                backgroundSize: svgSymbols.includes(symbolId) ? '130%' : undefined,
-              }}
+              aria-label={isDiscovered ? symbol.title : `${symbol.title} not yet discovered`}
               title={isDiscovered ? symbol.title : 'Symbol not yet discovered'}
             >
-            </div>
+              <div
+                id={`sidebar-${symbolId}`}
+                className={[
+                  getIconClass(symbolId),
+                  needsAttention ? 'ganesha-icon-soft-glow' : '',
+                  lockedFeedbackSymbol === symbolId ? 'ganesha-icon-locked-feedback' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+                style={{
+                  backgroundImage: `url(${symbol.colorIcon})`,
+                  cursor: isDiscovered ? 'pointer' : 'not-allowed',
+                }}
+              />
+            </button>
           );
         })}
       </div>
 
-      {/* FIX 2 + 3: conditional render + correct prop names (symbolId + iconSrc) */}
       {showPopup && selectedSymbol && (
         <SymbolCardModal
           symbolId={selectedSymbol}
-          iconSrc={symbolInfo[selectedSymbol]?.colorIcon}
           onClose={closePopup}
         />
       )}
@@ -230,4 +241,3 @@ const SymbolSidebar = ({
 };
 
 export default SymbolSidebar;
-

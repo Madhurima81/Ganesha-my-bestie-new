@@ -965,6 +965,7 @@
 .rhythm-sequence-display {
   font-family: 'Comic Sans MS', cursive;
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 2px solid rgba(255, 215, 0, 0.3);
 }
 

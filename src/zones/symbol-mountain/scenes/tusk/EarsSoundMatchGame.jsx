@@ -18,24 +18,33 @@ import frontRocksImg from './assets/images/trail-front.png';
 import { ANIMAL_SIZES } from './animalConfig';
 import { ANIMAL_POSITIONS_ARRAY } from './animalPositions';
 
-// Audio paths (add files as you get them — silently skips missing)
+// Animal sounds — imported through Vite so they are bundled and work in
+// production (the old '/src/...' string paths 404'd on Netlify, leaving the
+// sound-match game silent).
+import soundPeacock from './assets/audio/sound-peacock.webm';
+import soundMonkey from './assets/audio/sound-monkey.webm';
+import soundElephant from './assets/audio/sound-elephant.webm';
+import soundCow from './assets/audio/sound-cow.webm';
+
 const SOUND_PATHS = {
-  peacock: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/sound-peacock.webm',
-  monkey: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/sound-monkey.webm',
-  elephant: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/sound-elephant.webm',
-  cow: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/sound-cow.webm'
+  peacock: soundPeacock,
+  monkey: soundMonkey,
+  elephant: soundElephant,
+  cow: soundCow
 };
 
+// VO — recorded files do not exist yet; null paths make the Web Speech
+// fallback fire immediately instead of after a 404.
 const VO_PATHS = {
-  intro: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-ears-intro.webm',
-  peacock: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-peacock.webm',
-  monkey: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-monkey.webm',
-  elephant: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-elephant.webm',
-  cow: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-cow.webm',
-  hintPeacock: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-ears-hint-peacock.webm',
-  hintMonkey: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-ears-hint-monkey.webm',
-  hintElephant: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-ears-hint-elephant.webm',
-  hintCow: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-ears-hint-cow.webm'
+  intro: null,
+  peacock: null,
+  monkey: null,
+  elephant: null,
+  cow: null,
+  hintPeacock: null,
+  hintMonkey: null,
+  hintElephant: null,
+  hintCow: null
 };
 const VO_TEXTS = {
   intro: 'Now use your ears. Tap the animal making that sound.',
@@ -73,6 +82,11 @@ const IDLE_HINT_VO_BY_ANIMAL = {
   cow: VO_PATHS.hintCow
 };
 const POSITION_STORAGE_KEY = 'symbol_mountain_eyes_animal_positions_v2';
+
+// Debug position editor — only with ?debug in the URL, never for children in prod.
+const SHOW_EARS_DEBUG =
+  typeof window !== 'undefined' &&
+  new URLSearchParams(window.location.search).has('debug');
 
 // ─────────────────────────────────────────────
 // HELPERS
@@ -384,6 +398,7 @@ const EarsSoundMatchGame = ({
         dragTargetRef.current = null;
       }}
     >
+      {SHOW_EARS_DEBUG && (
       <div className="ears-edit-bar" onClick={(e) => e.stopPropagation()}>
         <button
           type="button"
@@ -428,6 +443,7 @@ const EarsSoundMatchGame = ({
           </>
         )}
       </div>
+      )}
 
       <img className="ears-sound-layer ears-sound-layer-back" src={bgBackImg} alt="" />
       <img className="ears-sound-layer ears-sound-layer-back-rocks" src={backRocksImg} alt="" />

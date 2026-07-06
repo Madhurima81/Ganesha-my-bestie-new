@@ -1,46 +1,36 @@
 /* SymbolSidebar.css */
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;700;800&display=swap');
 
-/* ── Flight Animation — rendered by parent scene ─────────────────────────── */
 .flying-symbol {
   position: fixed;
   z-index: 2000;
   pointer-events: none;
   will-change: transform;
-  transition: transform 0.9s cubic-bezier(0.4, 0.0, 0.2, 1);
+  transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Sidebar container */
 .ganesha-sidebar {
   position: fixed;
   right: 16px;
   top: 50%;
   transform: translateY(-50%);
-
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 12px;
-
+  gap: 10px;
   width: 72px;
-  padding: 16px 10px;
-
+  padding: 16px 6px;
   background: rgba(248, 242, 226, 0.92);
   border-radius: 42px;
-
   box-shadow:
     0 8px 20px rgba(80, 60, 30, 0.12),
     inset 0 0 0 1px rgba(255, 255, 255, 0.45);
-
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-
   z-index: 1000;
   overflow: visible;
 }
 
-/* faint dotted progress line */
 .ganesha-sidebar::before {
   content: "";
   position: absolute;
@@ -48,84 +38,71 @@
   bottom: 34px;
   left: 50%;
   transform: translateX(-50%);
-
   width: 16px;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 80' preserveAspectRatio='none'><path d='M8 0 Q2 10 8 20 T8 40 T8 60 T8 80' fill='none' stroke='rgba(213,195,150,0.55)' stroke-width='2' stroke-linecap='round' stroke-dasharray='1.2 8'/></svg>");
   background-size: 16px 80px;
   background-repeat: repeat-y;
   background-position: center;
-
   z-index: 0;
   pointer-events: none;
 }
 
-/* Individual icons */
+.ganesha-icon-hitarea {
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
 .ganesha-icon {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-
   background-color: #fffcf4;
   background-size: 72%;
   background-repeat: no-repeat;
   background-position: center;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
   position: relative;
-  z-index: 2;
-
   box-shadow:
     inset 0 0 0 1px rgba(230, 216, 188, 0.6),
     0 2px 7px rgba(90, 70, 35, 0.07);
-
   transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease,
-    opacity 0.25s ease,
-    filter 0.25s ease,
-    background-color 0.25s ease;
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    opacity 0.22s ease,
+    filter 0.22s ease,
+    background-color 0.22s ease;
 }
 
-/* Locked / undiscovered state */
+.ganesha-icon-hitarea:active .ganesha-icon,
+.ganesha-icon-hitarea:focus-visible .ganesha-icon {
+  transform: scale(1.06);
+}
+
+.ganesha-icon-hitarea:focus-visible {
+  outline: 3px solid rgba(255, 193, 7, 0.55);
+  outline-offset: 3px;
+  border-radius: 999px;
+}
+
 .ganesha-icon.locked,
 .ganesha-icon.undiscovered {
   opacity: 0.36;
   filter: grayscale(35%) brightness(0.98);
-
   box-shadow:
     inset 0 0 0 1px rgba(230, 216, 188, 0.28),
     0 1px 4px rgba(90, 70, 35, 0.04);
 }
 
-/* Active / discovered state */
-.ganesha-icon.active,
-.ganesha-icon.discovered {
-  opacity: 1;
-  background-color: #FFF9E8;
-  filter: none;
-
-  box-shadow:
-    inset 0 0 0 1px rgba(236, 205, 120, 0.9),
-    0 0 0 6px rgba(255, 236, 179, 0.38),
-    0 0 14px rgba(255, 214, 102, 0.26);
-
-  animation: activeBreathe 2.6s ease-in-out infinite;
-}
-
-@keyframes activeBreathe {
-  0%, 100% {
-    transform: scale(1.06);
-  }
-
-  50% {
-    transform: scale(1.1);
-  }
-}
-
-/* Animating when symbol flies in */
 .ganesha-icon.animating {
   animation: symbolBloom 0.9s ease-out forwards;
 }
@@ -154,107 +131,49 @@
   }
 }
 
-/* Completed state */
 .ganesha-icon.completed {
-  background-size: 72%;
-  background-position: center;
-  background-repeat: no-repeat;
   opacity: 0.88;
-
   box-shadow:
     inset 0 0 0 1px rgba(230, 216, 188, 0.5),
     0 2px 6px rgba(90, 70, 35, 0.07);
 }
 
-/* Optional soft glow class */
 .ganesha-icon.ganesha-icon-soft-glow {
   box-shadow:
     inset 0 0 0 1px rgba(236, 205, 120, 0.65),
     0 0 10px rgba(255, 215, 120, 0.18);
 }
 
-/* Star burst animation */
-@keyframes ganesha-star-burst {
-  0% { 
-    transform: scale(0.8);
-    opacity: 0.5;
-  }
-  50% { 
-    transform: scale(1.2);
-    opacity: 1;
-    filter: brightness(1.5) drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
-  }
-  100% { 
-    transform: scale(1);
-    opacity: 1;
-    filter: none;
-  }
+.ganesha-icon.ganesha-icon-locked-feedback {
+  animation: ganesha-locked-bump 0.38s ease;
 }
 
-.ganesha-star-burst-anim {
-  animation: ganesha-star-burst 0.8s ease-out forwards;
-}
-
-/* Tap indicator */
-.tap-indicator {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  background: var(--zone-accent-color, #FF8E53);
-  color: white;
-  font-family: 'Baloo 2', cursive;
-  font-size: 10px;
-  font-weight: 800;
-  padding: 3px 8px;
-  border-radius: 12px;
-  box-shadow:
-    0 3px 10px var(--zone-glow-color, rgba(255, 107, 107, 0.4)),
-    0 0 10px var(--zone-glow-color, rgba(255, 107, 107, 0.3));
-  animation: tap-pulse 1.5s ease-in-out infinite;
-  z-index: 10;
-  pointer-events: none;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-@keyframes tap-pulse {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow:
-      0 3px 10px var(--zone-glow-color, rgba(255, 107, 107, 0.4)),
-      0 0 10px var(--zone-glow-color, rgba(255, 107, 107, 0.25));
+@keyframes ganesha-locked-bump {
+  0%,
+  100% {
+    transform: translateX(0) scale(1);
+    filter: grayscale(35%) brightness(0.98);
   }
+
+  25% {
+    transform: translateX(-3px) scale(1.04);
+    filter: grayscale(15%) brightness(1.06);
+  }
+
   50% {
-    transform: scale(1.1);
-    box-shadow:
-      0 5px 15px var(--zone-glow-color, rgba(255, 107, 107, 0.6)),
-      0 0 16px var(--zone-glow-color, rgba(255, 107, 107, 0.4));
+    transform: translateX(3px) scale(1.04);
+    filter: grayscale(15%) brightness(1.06);
+  }
+
+  75% {
+    transform: translateX(-2px) scale(1.02);
+    filter: grayscale(20%) brightness(1.02);
   }
 }
-
-/* Animation Definitions */
-@keyframes ganesha-fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes ganesha-slideUp {
-  from {
-    opacity: 0;
-    transform: scale(0.8) translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-/* ── CENTER MODE ─────────────────────────────────────────────────────────── */
 
 .symbol-discovery-overlay {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  inset: 0;
   background: rgba(0, 0, 0, 0.65);
   backdrop-filter: blur(6px);
   display: flex;
@@ -265,13 +184,13 @@
 }
 
 .symbol-discovery-panel {
-  background: #FFF8E7;
+  background: #fff8e7;
   border-radius: 36px;
   padding: 64px 80px;
   max-width: 900px;
   width: 92%;
   text-align: center;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
   animation: ganesha-slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   border: 5px solid #fff;
 }
@@ -280,7 +199,7 @@
   font-family: 'Baloo 2', cursive;
   font-size: 38px;
   font-weight: 800;
-  color: #4E342E;
+  color: #4e342e;
   margin-bottom: 36px;
 }
 
@@ -296,11 +215,14 @@
   position: relative;
   width: 160px;
   height: 160px;
-  cursor: pointer;
+  border: 0;
   border-radius: 50%;
   padding: 16px;
   background: var(--zone-glow-color, rgba(255, 215, 0, 0.1));
-  transition: transform 0.2s ease;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .symbol-discovery-icon img {
@@ -309,14 +231,15 @@
   object-fit: contain;
 }
 
-/* SVG icons have internal transparent padding — scale up to fill the circle */
-.symbol-discovery-icon img[src$=".svg"] {
-  transform: scale(1.35);
-  transform-origin: center;
+.symbol-discovery-icon:hover,
+.symbol-discovery-icon:active,
+.symbol-discovery-icon:focus-visible {
+  transform: scale(1.08);
 }
 
-.symbol-discovery-icon:hover {
-  transform: scale(1.1);
+.symbol-discovery-icon:focus-visible {
+  outline: 4px solid rgba(255, 193, 7, 0.45);
+  outline-offset: 6px;
 }
 
 .symbol-discovery-icon.symbol-discovery-tapped {
@@ -332,21 +255,25 @@
 }
 
 @keyframes symbol-discovery-soft-glow {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(255, 215, 120, 0.10);
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 215, 120, 0.1);
     transform: scale(1);
   }
+
   50% {
-    box-shadow: 0 0 22px rgba(255, 215, 120, 0.20);
+    box-shadow: 0 0 22px rgba(255, 215, 120, 0.2);
     transform: scale(1.03);
   }
 }
 
 @keyframes symbol-discovery-pulse-anim {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     box-shadow: 0 0 0 0 var(--zone-glow-color, rgba(255, 193, 7, 0.5));
   }
+
   50% {
     transform: scale(1.08);
     box-shadow: 0 0 0 12px var(--zone-glow-color, rgba(255, 193, 7, 0));
@@ -362,7 +289,7 @@
 }
 
 .symbol-discovery-celebrate-btn {
-  background: var(--zone-accent-color, #FF8F00);
+  background: var(--zone-accent-color, #ff8f00);
   color: white;
   border: none;
   padding: 18px 60px;
@@ -371,59 +298,58 @@
   font-size: 28px;
   font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 6px 0 color-mix(in srgb, var(--zone-accent-color, #FF8F00) 70%, black);
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--zone-accent-color, #ff8f00) 70%, black);
   transition: all 0.2s ease;
 }
 
 .symbol-discovery-celebrate-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 0 color-mix(in srgb, var(--zone-accent-color, #FF8F00) 70%, black);
+  box-shadow: 0 8px 0 color-mix(in srgb, var(--zone-accent-color, #ff8f00) 70%, black);
 }
 
 .symbol-discovery-celebrate-btn:active {
   transform: translateY(3px);
-  box-shadow: 0 3px 0 color-mix(in srgb, var(--zone-accent-color, #FF8F00) 70%, black);
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--zone-accent-color, #ff8f00) 70%, black);
 }
 
-/* Tablet Responsive */
+@keyframes ganesha-fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ganesha-slideUp {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
 @media (max-width: 1024px) {
   .ganesha-sidebar {
     right: 12px;
     width: 66px;
-    padding: 14px 8px;
-    gap: 10px;
-  }
-
-  .ganesha-icon {
-    width: 44px;
-    height: 44px;
+    padding: 14px 3px;
+    gap: 8px;
   }
 }
 
-/* iPad landscape / tight screens */
 @media (min-width: 1024px) and (max-width: 1366px) and (max-height: 900px) and (orientation: landscape) {
   .ganesha-sidebar {
     right: 12px;
     width: 62px;
-    padding: 10px 7px;
-    gap: 8px;
+    padding: 10px 1px;
+    gap: 6px;
     border-radius: 36px;
   }
 
-  .ganesha-icon {
-    width: 42px !important;
-    height: 42px !important;
-    background-size: 72%;
-  }
-}
-
-/* Mobile Responsive */
-@media (max-width: 768px) {
-  .ganesha-sidebar {
-    right: 10px;
-    width: 64px;
-    padding: 14px 8px;
-    gap: 10px;
+  .ganesha-icon-hitarea {
+    width: 56px;
+    height: 56px;
   }
 
   .ganesha-icon {
@@ -432,13 +358,36 @@
   }
 }
 
-/* Small Mobile */
+@media (max-width: 768px) {
+  .ganesha-sidebar {
+    right: 10px;
+    width: 64px;
+    padding: 12px 2px;
+    gap: 8px;
+  }
+
+  .ganesha-icon-hitarea {
+    width: 56px;
+    height: 56px;
+  }
+
+  .ganesha-icon {
+    width: 42px;
+    height: 42px;
+  }
+}
+
 @media (max-width: 480px) {
   .ganesha-sidebar {
     right: 8px;
     width: 58px;
-    padding: 12px 7px;
-    gap: 8px;
+    padding: 10px 0;
+    gap: 6px;
+  }
+
+  .ganesha-icon-hitarea {
+    width: 52px;
+    height: 52px;
   }
 
   .ganesha-icon {
@@ -446,4 +395,3 @@
     height: 38px;
   }
 }
-

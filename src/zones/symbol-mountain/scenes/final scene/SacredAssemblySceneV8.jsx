@@ -1397,7 +1397,9 @@ const SacredAssemblyContent = ({
     if (sceneState.showingZoneCompletion || sceneState.celebrationActive) {
       setIsOrbsRunning(true);
       setShowSparkle('final-fireworks');
-      setTimeout(() => {
+      // Reloaded mid-celebration: the VO chain is not replayed, so open the gate.
+      setSceneCompleteVOFinished(true);
+      safeSetTimeout(() => {
         setShowZoneCompletion(true);
       }, 500);
     }
@@ -1406,8 +1408,13 @@ const SacredAssemblyContent = ({
     }
   }, [isReload]);
 
-  // FINAL CELEBRATION: Modal is now shown directly inside RotatingOrbsEffect onComplete
-  // (matches backup pattern). No race-prone useEffect needed.
+  // FINAL CELEBRATION: completion modal waits for BOTH the orbs and the finale
+  // VO to finish, so Ganesha's closing words are never cut off.
+  useEffect(() => {
+    if (fireworksFinished && sceneCompleteVOFinished && !showSceneCompletion) {
+      setShowSceneCompletion(true);
+    }
+  }, [fireworksFinished, sceneCompleteVOFinished, showSceneCompletion]);
 
   // RESUME � runs once on mount, handles returning mid-game
   useEffect(() => {
@@ -1428,7 +1435,7 @@ const SacredAssemblyContent = ({
     if (placed === 8 || sceneState.phase === 'complete') {
       // Do not show completion modal while final celebration is still active.
       if (celebrationInProgress) return;
-      setTimeout(() => setShowSceneCompletion(true), 500);
+      safeSetTimeout(() => setShowSceneCompletion(true), 500);
       return;
     }
 
@@ -1447,7 +1454,7 @@ const SacredAssemblyContent = ({
     // Round 0 with nothing placed = start-first-round useEffect handles it naturally.
     // Only explicitly jump to a round when we're genuinely mid-game.
     if (resumeRound > 0 || placed > 0) {
-      setTimeout(() => startNextRound(resumeRound), 700);
+      safeSetTimeout(() => startNextRound(resumeRound), 700);
     }
 
   }, []); // run once on mount; avoids repeated card/audio re-triggers
@@ -1513,9 +1520,9 @@ const SacredAssemblyContent = ({
 
     finalVoPlayedRef.current = false;
     playSceneVoice('finalYouFoundAll', () => {
-      setTimeout(() => {
+      safeSetTimeout(() => {
         playSceneVoice('finalNowComplete', () => {
-          setTimeout(() => {
+          safeSetTimeout(() => {
             playSceneVoice('finalAlwaysWithYou', () => {
               finalVoPlayedRef.current = true;
               setSceneCompleteVOFinished(true);
@@ -1524,6 +1531,10 @@ const SacredAssemblyContent = ({
         }, { replayOnReturn: false });
       }, 700);
     }, { replayOnReturn: false });
+
+    // Safety net: if a VO onEnd never fires (interrupted speech engine),
+    // release the completion-modal gate after a generous ceiling.
+    safeSetTimeout(() => setSceneCompleteVOFinished(true), 25000);
   };
 
   const handleSymbolPlacement = ({ id, zone, data }) => {
@@ -1914,7 +1925,7 @@ const SacredAssemblyContent = ({
                     tusk: symbolTuskColored
                   }}
                   ganeshaImage={ganeshaDivine}
-                  playerName={activeProfile.name}
+                  playerName={activeProfile?.name || 'Friend'}
                   showCentralGanesha={false}
                   showBuiltInFireworks={false}
                   onComplete={() => {
@@ -1948,8 +1959,9 @@ const SacredAssemblyContent = ({
                       SimpleSceneManager.clearCurrentScene();
                     }
 
-                    // Show completion modal AFTER fireworks/orbs finish (backup pattern)
-                    setShowSceneCompletion(true);
+                    // Signal orbs finished; the completion modal opens once the
+                    // finale VO has also finished (gating effect below).
+                    setFireworksFinished(true);
                   }}
                 />
               </>

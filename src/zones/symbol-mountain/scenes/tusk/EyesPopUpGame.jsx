@@ -17,13 +17,15 @@ import frontRocksImg from './assets/images/trail-front.png';
 import { ANIMAL_SIZES } from './animalConfig';
 import { ANIMAL_POSITIONS } from './animalPositions';
 
-// VO (add files as you get them â€” game will silently skip missing audio)
+// VO — recorded files do not exist yet. Paths are null so the Web Speech
+// fallback fires immediately (the old '/src/...' URLs 404'd in production
+// builds; when real files land, import them via Vite so they get bundled).
 const VO_PATHS = {
-  peacock: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-peacock.webm',
-  monkey: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-monkey.webm',
-  elephant: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-elephant.webm',
-  cow: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-cow.webm',
-  intro: '/src/zones/symbol-mountain/scenes/tusk/assets/audio/vo-eyes-intro.webm'
+  peacock: null,
+  monkey: null,
+  elephant: null,
+  cow: null,
+  intro: null
 };
 const VO_TEXTS = {
   intro: 'Look closely. Tap the animals when you see them.',
@@ -79,7 +81,10 @@ const POP_HIDDEN_MS = 900;         // gentle cooldown
 const IDLE_HINT_MS = 8000;         // glow an undiscovered animal after 8s
 const IDLE_ZONE_HINT_MS = 16000;   // glow hint zone after longer idle
 const IDLE_FULL_REVEAL_MS = 24000; // full reveal after long idle
-const SHOW_SPOT_DEBUG = true;
+// Debug spot editor — only with ?debug in the URL, never for children in prod.
+const SHOW_SPOT_DEBUG =
+  typeof window !== 'undefined' &&
+  new URLSearchParams(window.location.search).has('debug');
 const SPOT_STORAGE_KEY = 'symbol_mountain_eyes_hide_options_v5';
 const ANIMAL_POSITION_STORAGE_KEY = 'symbol_mountain_eyes_animal_positions_v2';
 const DEBUG_MODE_STORAGE_KEY = 'symbol_mountain_eyes_debug_mode_v2';
@@ -255,6 +260,7 @@ const EyesPopUpGame = ({
   className = ''
 }) => {
   const [debugMode, setDebugMode] = useState(() => {
+    if (!SHOW_SPOT_DEBUG) return false; // never resurrect debug mode from storage in play builds
     try {
       return localStorage.getItem(DEBUG_MODE_STORAGE_KEY) === 'true';
     } catch {

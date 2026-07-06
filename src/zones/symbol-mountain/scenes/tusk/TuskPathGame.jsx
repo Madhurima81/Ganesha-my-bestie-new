@@ -17,14 +17,22 @@ import blockageCleared from './assets/images/final obstacle.png';
 
 import tuskImg from '../../shared/images/icons/broken-tusk-symbol.png';
 
+// VO — recorded files do not exist yet (the old '/audio/...' paths 404'd).
+// Null paths make playAudio a silent no-op; the scene shell's voice guidance
+// ('tusk' / 'idleTusk' prompts) covers instruction until real files land.
 const VO_PATHS = {
-  intro: '/audio/vo-tusk-intro.webm',
-  elephantHint: '/audio/vo-tusk-elephant.webm',
-  monkeyHint: '/audio/vo-tusk-monkey.webm',
-  peacockHint: '/audio/vo-tusk-peacock.webm',
-  cowHint: '/audio/vo-tusk-cow.webm',
-  finale: '/audio/vo-tusk-finale.webm'
+  intro: null,
+  elephantHint: null,
+  monkeyHint: null,
+  peacockHint: null,
+  cowHint: null,
+  finale: null
 };
+
+// Debug layout editor — only with ?debug in the URL, never for children in prod.
+const SHOW_TUSK_DEBUG =
+  typeof window !== 'undefined' &&
+  new URLSearchParams(window.location.search).has('debug');
 
 const ANIMALS = [
   { id: 'elephant', name: 'Elephant', img: elephantImg },
@@ -91,8 +99,10 @@ const TuskPathGame = ({
   const [showIdleHint, setShowIdleHint] = useState(false);
   const [introShown, setIntroShown] = useState(false);
   const [showFinale, setShowFinale] = useState(false);
-  const [debugMode, setDebugMode] = useState(true);
-  const [showDebugPanel, setShowDebugPanel] = useState(true);
+  // CRITICAL: these defaulted to true, which shipped the game in editor mode —
+  // animal taps were ignored and children could not clear a single obstacle.
+  const [debugMode, setDebugMode] = useState(false);
+  const [showDebugPanel, setShowDebugPanel] = useState(false);
   const [selectedEditorItem, setSelectedEditorItem] = useState(() => ANIMALS[0]?.id || 'obstacle');
   const [editableAnimalPositions, setEditableAnimalPositions] = useState(() => {
     try {
@@ -283,7 +293,7 @@ const TuskPathGame = ({
       onPointerCancel={stopDrag}
       onPointerLeave={stopDrag}
     >
-      {!staticPreview && (
+      {SHOW_TUSK_DEBUG && !staticPreview && (
         <button
           type="button"
           className="tusk-debug-panel-toggle"
@@ -293,7 +303,7 @@ const TuskPathGame = ({
         </button>
       )}
 
-      {!staticPreview && showDebugPanel && (
+      {SHOW_TUSK_DEBUG && !staticPreview && showDebugPanel && (
         <div className="tusk-edit-bar">
           <div className="tusk-edit-help">
             Drag the real animals or obstacle on screen, then press Save.

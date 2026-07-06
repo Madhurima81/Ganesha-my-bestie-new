@@ -295,8 +295,6 @@ const PondSceneContent = ({
   zoneId,
   sceneId
 }) => {
-  if (!sceneState?.phase) sceneActions.updateState({ phase: 'initial' });
-
   const { showMessage, hideCoach, clearManualCloseTracking } = useGameCoach();
   const { resetScene } = useSceneReset(sceneActions, 'symbol-mountain', 'pond', getSceneResetConfig('pond'));
   const completionModalContent = getCompletionModal(zoneId, sceneId);
@@ -384,6 +382,18 @@ const PondSceneContent = ({
   // Resume popup timeout ref
   const resumePopupTimeoutRef = useRef(null);
 
+  // Backfill missing phase for older saved state objects (effect, not render).
+  useEffect(() => {
+    if (!sceneState?.phase) sceneActions.updateState({ phase: 'initial' });
+  }, [sceneState?.phase, sceneActions]);
+
+  // Live ref of sceneState so rAF hold callbacks never read a stale snapshot
+  // (two-finger simultaneous holds were losing blooms).
+  const sceneStateRef = useRef(sceneState);
+  useEffect(() => { sceneStateRef.current = sceneState; }, [sceneState]);
+  const pendingLotusStatesRef = useRef(null);
+  useEffect(() => { pendingLotusStatesRef.current = null; }, [sceneState?.lotusStates]);
+
   const progressiveHintRef = useRef(null);
   const reloadHandledRef = useRef(false);
   const activeDropsRef = useRef(new Set());
@@ -412,7 +422,7 @@ const PondSceneContent = ({
   const speakPondPrompt = useCallback((key) => {
     if (!isAudioOn || !VOICE_LINES[key]) return;
     speak(VOICE_LINES[key], {
-      age: 11,
+      age: 7,
       style: 'child',
       moment: key === 'complete' ? 'celebration' : 'encouragement'
     });
@@ -605,7 +615,9 @@ const PondSceneContent = ({
   // ==================== RELOAD / RESUME LOGIC ====================
   // Runs once on mount — same pattern as Modak (empty deps, no isReload check).
   useEffect(() => {
-    if (!isAudioOn) return;
+    // NOTE: no isAudioOn guard here — this effect repairs STATE (reveal cards,
+    // drag-drop seeding, completion screen), not just VO. Gating it on audio
+    // soft-locked the scene for muted players reloading mid-phase.
     if (!sceneState?.welcomeShown) return;
 
     // 1. RESET PARTIAL LOTUS BLOOMING
@@ -623,7 +635,7 @@ const PondSceneContent = ({
       }
       // All 3 bloomed but phase hasn't advanced to ALL_BLOOMED yet (rare mid-transition reload):
       if (bloomed === 3) {
-        setTimeout(() => {
+        safeSetTimeout(() => {
           playChime();
           setRevealConfig({
             symbolId: 'lotus',
@@ -639,7 +651,7 @@ const PondSceneContent = ({
     // 2. RESTORE LOTUS CARD FLIP
     // All 3 bloomed (ALL_BLOOMED phase) but card not yet shown / dismissed.
     if (sceneState.phase === PHASES.ALL_BLOOMED) {
-      setTimeout(() => {
+      safeSetTimeout(() => {
         playChime();
         setRevealConfig({
           symbolId: 'lotus',
@@ -655,7 +667,7 @@ const PondSceneContent = ({
     // Only restore trunk card after successful water trace (GOLDEN_BLOOM).
     // ELEPHANT_TRANSFORMED is now the active drag phase and should not auto-flip.
     if (sceneState.phase === PHASES.GOLDEN_BLOOM && !sceneState.completed) {
-      setTimeout(() => {
+      safeSetTimeout(() => {
         playChime();
         setRevealConfig({
           symbolId: 'trunk',
@@ -674,7 +686,7 @@ const PondSceneContent = ({
         showingCompletionScreen: false,
         phase: PHASES.GOLDEN_BLOOM
       });
-      setTimeout(() => {
+      safeSetTimeout(() => {
         playChime();
         setRevealConfig({
           symbolId: 'trunk',
@@ -700,7 +712,7 @@ const PondSceneContent = ({
       dropCompletedRef.current = false;
       petalAdvanceLockUntilRef.current = 0;
       // Seed on next tick so render condition sees a stable phase first.
-      setTimeout(() => {
+      safeSetTimeout(() => {
         setDropPosition({ x: DROP_START_POINT.x, y: DROP_START_POINT.y });
       }, 80);
       return;
@@ -708,7 +720,7 @@ const PondSceneContent = ({
 
     // 5. RESTORE COMPLETION SCREEN
     if (sceneState.phase === PHASES.COMPLETE && !sceneState.showingCompletionScreen) {
-      setTimeout(() => setShowSceneCompletion(true), 500);
+      safeSetTimeout(() => setShowSceneCompletion(true), 500);
       return;
     }
 
@@ -945,12 +957,16 @@ const PondSceneContent = ({
   // already bloomed.
 
   const completeLotusBloom = useCallback((index) => {
-    if (!sceneState || !sceneActions) return;
-    const lotusStates = [...(sceneState.lotusStates || [0, 0, 0])];
+    const liveState = sceneStateRef.current;
+    if (!liveState || !sceneActions) return;
+    // Read from the pending ref first: two holds completing before React
+    // re-renders must each see the other's bloom, or one gets overwritten.
+    const lotusStates = [...(pendingLotusStatesRef.current || liveState.lotusStates || [0, 0, 0])];
     if (lotusStates[index] === 1) return; // already bloomed
 
     playBloom();
     lotusStates[index] = 1;
+    pendingLotusStatesRef.current = lotusStates;
     setShowSparkle(`lotus-${index}`);
     setTimeout(() => setShowSparkle(null), 1500);
 
@@ -983,10 +999,10 @@ const PondSceneContent = ({
       sceneActions.updateState({
         lotusStates,
         phase: PHASES.SOME_BLOOMED,
-        progress: { ...sceneState.progress, percentage: 10 * bloomedCount }
+        progress: { ...liveState.progress, percentage: 10 * bloomedCount }
       });
     }
-  }, [sceneState, sceneActions, playBloom, playChime, triggerMiniGesture, safeSetTimeout]);
+  }, [sceneActions, playBloom, playChime, triggerMiniGesture, safeSetTimeout]);
 
   const handleLotusHoldStart = (index) => {
     rearmIdleHints();
@@ -1862,6 +1878,8 @@ const PondSceneContent = ({
                 onClose={() => {
                   setShowMandala(false);
                   setShowSceneCompletion(true);
+                  // Persist so the sticky-completion effect and reload restore work.
+                  sceneActions.updateState({ showingCompletionScreen: true });
                 }}
               />
             )}
