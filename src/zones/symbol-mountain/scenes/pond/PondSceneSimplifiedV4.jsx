@@ -27,7 +27,6 @@ import MessageManager from "../../../../lib/components/scenes/MessageManager";
 import { ClickableElement } from "../../../../lib/components/scenes/InteractionManager";
 import InteractionManager from "../../../../lib/components/scenes/InteractionManager";
 import GameStateManager from "../../../../lib/services/GameStateManager";
-import { useGameCoach } from '../../../../lib/components/coach/GameCoach';
 import ProgressManager from '../../../../lib/services/ProgressManager';
 import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
 
@@ -295,15 +294,15 @@ const PondSceneContent = ({
   zoneId,
   sceneId
 }) => {
-  const { showMessage, hideCoach, clearManualCloseTracking } = useGameCoach();
   const { resetScene } = useSceneReset(sceneActions, 'symbol-mountain', 'pond', getSceneResetConfig('pond'));
   const completionModalContent = getCompletionModal(zoneId, sceneId);
+  const activeProfile = GameStateManager.getActiveProfile();
+  const profileName = activeProfile?.name || 'Friend';
 
   const [showSparkle, setShowSparkle] = useState(null);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
   const [showMandala, setShowMandala] = useState(false);
   const [showCulturalCelebration, setShowCulturalCelebration] = useState(false);
-  const [showCenteredSymbol, setShowCenteredSymbol] = useState(null);
   const [showPowerModal, setShowPowerModal] = useState(false);
   const [showPowerMission, setShowPowerMission] = useState(false);
   const [isSymbolPopupOpen, setIsSymbolPopupOpen] = useState(false);
@@ -311,15 +310,12 @@ const PondSceneContent = ({
   const [currentMissionSymbol, setCurrentMissionSymbol] = useState(null);
 
   // Discovery overlay states
-  const [discoveryStep, setDiscoveryStep] = useState('hidden');
-  const [isDiscoveryFading, setIsDiscoveryFading] = useState(false);
-  const [discoveryItem, setDiscoveryItem] = useState(null);
 
   // Resume popup states
-  const [showResumePopup, setShowResumePopup] = useState(false);
-  const [resumeMessage, setResumeMessage] = useState('');
 
   // Discovery overlay states (kept to avoid undeclared-var errors; never set to true — SymbolAutoReveal handles discovery now)
+  const [showResumePopup, setShowResumePopup] = useState(false);
+  const [resumeMessage, setResumeMessage] = useState('');
   const [showDiscoveryFlip1, setShowDiscoveryFlip1] = useState(false); // eslint-disable-line no-unused-vars
   const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false); // eslint-disable-line no-unused-vars
   const [revealConfig, setRevealConfig] = useState(null);
@@ -429,6 +425,7 @@ const PondSceneContent = ({
   }, [isAudioOn, speak]);
   const getPromptKeyForPhase = useCallback(() => {
     if (!sceneState?.welcomeShown) return 'opening';
+    if (revealConfig?.symbolId === 'trunk' || showSparkle === 'final-fireworks') return null;
     if (sceneState?.phase === PHASES.COMPLETE) return 'complete';
     if (sceneState?.phase === PHASES.ELEPHANT_TRANSFORMED && !sceneState?.completed) return 'trunkRound';
     if (sceneState?.phase === PHASES.ELEPHANT_VISIBLE && !sceneState?.elephantTransformed) return 'elephant';
@@ -440,7 +437,9 @@ const PondSceneContent = ({
     sceneState?.elephantTransformed,
     sceneState?.elephantVisible,
     sceneState?.phase,
-    sceneState?.welcomeShown
+    sceneState?.welcomeShown,
+    revealConfig?.symbolId,
+    showSparkle
   ]);
   const replayCurrentVoice = useCallback(() => {
     const replayKey = getPromptKeyForPhase();
@@ -548,8 +547,6 @@ const PondSceneContent = ({
     ];
     const isHintPhase = hintPhases.includes(sceneState?.phase)
       && sceneState?.welcomeShown
-      && !showPowerModal
-      && !showPowerMission
       && !isSymbolPopupOpen
       && !revealConfig
       && !showSceneCompletion;
@@ -572,8 +569,6 @@ const PondSceneContent = ({
   }, [
     sceneState?.phase,
     sceneState?.welcomeShown,
-    showPowerModal,
-    showPowerMission,
     isSymbolPopupOpen,
     revealConfig,
     showSceneCompletion
@@ -605,8 +600,6 @@ const PondSceneContent = ({
   }, [
     sceneState?.phase,
     sceneState?.welcomeShown,
-    showPowerModal,
-    showPowerMission,
     revealConfig,
     showSceneCompletion,
     rearmIdleHints
@@ -922,6 +915,28 @@ const PondSceneContent = ({
     setShowSparkle('final-fireworks');
   };
 
+  const persistPondCompletion = useCallback(() => {
+    const profileId = localStorage.getItem('activeProfileId');
+    if (!profileId) return;
+
+    GameStateManager.saveGameState('symbol-mountain', 'pond', {
+      completed: true,
+      stars: 5,
+      symbols: { lotus: true, trunk: true },
+      phase: 'complete',
+      timestamp: Date.now()
+    });
+
+    ProgressManager.updateSceneCompletion(profileId, 'symbol-mountain', 'pond', {
+      completed: true,
+      stars: 5,
+      symbols: { lotus: true, trunk: true }
+    });
+
+    localStorage.removeItem(`temp_session_${profileId}_symbol-mountain_pond`);
+    SimpleSceneManager.clearCurrentScene();
+  }, []);
+
   const handleRevealComplete = (symbolId) => {
     setRevealConfig(null);
 
@@ -1007,10 +1022,6 @@ const PondSceneContent = ({
   const handleLotusHoldStart = (index) => {
     rearmIdleHints();
     if (progressiveHintRef.current?.hideHint) progressiveHintRef.current.hideHint();
-    if (showResumePopup) {
-      setShowResumePopup(false);
-      clearTimeout(resumePopupTimeoutRef.current);
-    }
     if (!sceneState || !sceneActions) return;
     if (!sceneState.welcomeShown) sceneActions.updateState({ welcomeShown: true });
 
@@ -1176,10 +1187,6 @@ const PondSceneContent = ({
   const handleElephantClick = () => {
     rearmIdleHints();
     if (progressiveHintRef.current?.hideHint) progressiveHintRef.current.hideHint();
-    if (showResumePopup) {
-      setShowResumePopup(false);
-      clearTimeout(resumePopupTimeoutRef.current);
-    }
     if (!sceneState || !sceneActions || sceneState.elephantTransformed) return;
     if (sceneState.phase !== PHASES.ELEPHANT_VISIBLE) return;
 
@@ -1428,26 +1435,12 @@ const PondSceneContent = ({
     const timer = setTimeout(() => {
       setShowSparkle(null);
       setFireworksFinished(true);
-
-      const profileId = localStorage.getItem('activeProfileId');
-      if (profileId) {
-        GameStateManager.saveGameState('symbol-mountain', 'pond', {
-          completed: true,
-          stars: 5,
-          symbols: { lotus: true, trunk: true },
-          phase: 'complete',
-          timestamp: Date.now()
-        });
-
-        localStorage.removeItem(`temp_session_${profileId}_symbol-mountain_pond`);
-        SimpleSceneManager.clearCurrentScene();
-      }
-
+      persistPondCompletion();
       setShowMandala(true);
     }, 4000);
 
     return () => clearTimeout(timer);
-  }, [showSparkle]);
+  }, [persistPondCompletion, showSparkle]);
 
   // Keep completion UI sticky across tab switch/remount.
   useEffect(() => {
@@ -1822,25 +1815,6 @@ const PondSceneContent = ({
               </div>
             )}
 
-            {/* New Overlay Block for SymbolPowerMission */}
-            {!isCompletionView && !isFinalFireworksView && showPowerMission && <div className="pond-power-overlay-block" />}
-
-            {/* Symbol Power Mission */}
-            {!isCompletionView && !isFinalFireworksView && (
-              <SymbolPowerMission
-                show={showPowerMission}
-                symbolKey={currentMissionSymbol}
-                beforeImage={missionImages[currentMissionSymbol]?.before}
-                afterImage={missionImages[currentMissionSymbol]?.after}
-                powerConfig={powerConfig[currentMissionSymbol]}
-                onComplete={handleMissionComplete}
-                onCancel={() => {
-                  setShowPowerMission(false);
-                  setShowPowerModal(true);
-                }}
-              />
-            )}
-
             {/* Fireworks (Modak-style) */}
             {!isCompletionView && (
               <FireworksCompletion
@@ -1858,7 +1832,7 @@ const PondSceneContent = ({
 
             {showMandala && (
               <InnerMandala
-                childName="Friend"
+                childName={profileName}
                 petalStates={{
                   1: 'awakened',
                   2: 'awakened',
@@ -1986,17 +1960,7 @@ const PondSceneContent = ({
                   resetScene();
                 }}
                 onContinue={() => {
-                  if (clearManualCloseTracking) clearManualCloseTracking();
-                  if (hideCoach) hideCoach();
-
-                  const profileId = localStorage.getItem('activeProfileId');
-                  if (profileId) {
-                    ProgressManager.updateSceneCompletion(profileId, 'symbol-mountain', 'pond', {
-                      completed: true,
-                      stars: 5,
-                      symbols: { lotus: true, trunk: true }
-                    });
-                  }
+                  persistPondCompletion();
 
                   setTimeout(() => {
                     SimpleSceneManager.setCurrentScene('symbol-mountain', 'temple', false, false);

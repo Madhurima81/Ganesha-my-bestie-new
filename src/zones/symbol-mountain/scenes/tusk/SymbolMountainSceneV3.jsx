@@ -29,6 +29,7 @@ import ProgressManager from '../../../../lib/services/ProgressManager';
 import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
 import CulturalCelebrationModal from '../../../../lib/components/progress/CulturalCelebrationModal';
 import CulturalProgressExtractor from '../../../../lib/services/CulturalProgressExtractor';
+import { Analytics } from '../../../../lib/services/analytics';
 
 import useSceneReset from '../../../../lib/hooks/useSceneReset';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
@@ -200,12 +201,13 @@ const SymbolMountainSceneContent = ({
   zoneId,
   sceneId
 }) => {
-  if (!sceneState || !sceneActions) return <div className="loading">Loading...</div>;
-
-  const isDevBuild = process.env.NODE_ENV !== 'production';
+  const sceneStateRef = useRef(sceneState);
+  sceneStateRef.current = sceneState;
 
   const { resetScene } = useSceneReset(sceneActions, 'symbol-mountain', 'symbol', getSceneResetConfig('symbol'));
   const completionModalContent = getCompletionModal(zoneId, sceneId);
+  const activeProfile = GameStateManager.getActiveProfile();
+  const profileName = activeProfile?.name || 'Friend';
 
   // Local UI states
   const [showSparkle, setShowSparkle] = useState(null);
@@ -317,6 +319,14 @@ const SymbolMountainSceneContent = ({
   useEffect(() => {
     if (!sceneState?.phase) sceneActions.updateState({ phase: PHASES.EYES_GAME });
   }, [sceneState?.phase, sceneActions]);
+  useEffect(() => {
+    Analytics.sceneStarted(zoneId, sceneId);
+    return () => {
+      if (!sceneStateRef.current?.completed) {
+        Analytics.sceneAbandoned(zoneId, sceneId);
+      }
+    };
+  }, [zoneId, sceneId]);
   // const progressiveHintRef = useRef(null); // removed â€” ProgressiveHintSystem removed
 
 
@@ -817,6 +827,7 @@ const SymbolMountainSceneContent = ({
   const isCompletionView = showSceneCompletion || sceneState?.showingCompletionScreen || showMandala;
   const isFinalFireworksView = showSparkle === 'final-fireworks';
   // GameLayout replaced with plain div â€” pause menu removed
+  if (!sceneState || !sceneActions) return <div className="loading">Loading...</div>;
   return (
     <div style={{ position: 'relative', width: '100%', height: 'var(--app-height, 100vh)', overflow: 'hidden' }}>
       <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
@@ -829,32 +840,6 @@ const SymbolMountainSceneContent = ({
               onReplay={replayCurrentVoice}
               disabled={!isAudioOn || !getPromptKeyForPhase()}
             />
-            {isDevBuild && (
-            <button
-              type="button"
-              className="symbol-test-tusk-btn"
-              onClick={() => {
-                setRevealConfig(null);
-                setTuskTestRunKey((k) => k + 1);
-                startTuskZoomTransition({
-                  welcomeShown: true,
-                  activeGame: 'tusk',
-                  currentFocus: 'tusk',
-                  showEyesTelescopeGame: false,
-                  showEarsRhythmGame: false,
-                  earsVisible: true,
-                  discoveredSymbols: {
-                    ...(sceneState.discoveredSymbols || {}),
-                    eyes: true,
-                    ears: true,
-                    ear: true
-                  }
-                });
-              }}
-            >
-              Test Tusk
-            </button>
-            )}
             <div className={`mountain-background ${tuskZoomActive ? 'tusk-zoom' : ''} ${tuskFadeOut ? 'tusk-fade-out' : ''}`} style={{ backgroundImage: `url(${mountainBackground})` }}>
               {!isCompletionView && !isFinalFireworksView && (
                 <>
@@ -868,6 +853,15 @@ const SymbolMountainSceneContent = ({
                   characterImg={ganeshaCharacter}
                   showButton={true}
                 />
+                {showIdleGestureHint && sceneState.phase === PHASES.TUSK_GAME && !sceneState.ganeshaComplete && (
+                  <div className="symbol-tusk-drag-pointer-overlay" aria-hidden="true">
+                    <img
+                      className="symbol-tusk-drag-pointer-hand"
+                      src="/images/ganesha-point.webp"
+                      alt=""
+                    />
+                  </div>
+                )}
               )}
 
 
@@ -875,6 +869,7 @@ const SymbolMountainSceneContent = ({
               {sceneState.showEyesTelescopeGame && !sceneState.discoveredSymbols?.eyes && (
                 <EyesPopUpGame
                   isActive={sceneState.showEyesTelescopeGame}
+                  isAudioOn={isAudioOn}
                   onGameComplete={({ assignedSpots } = {}) => {
                     sceneActions.updateState({
                       animalSpots: assignedSpots || sceneState.animalSpots || {},
@@ -892,6 +887,7 @@ const SymbolMountainSceneContent = ({
               {sceneState.showEarsRhythmGame && sceneState.phase === PHASES.EARS_GAME && !sceneState.discoveredSymbols?.ears && (
                 <EarsSoundMatchGame
                   isActive={sceneState.showEarsRhythmGame}
+                  isAudioOn={isAudioOn}
                   animalPositions={sceneState.animalSpots}
                   onAnimalPositionsChange={(positions) => {
                     sceneActions.updateState({
@@ -935,6 +931,7 @@ const SymbolMountainSceneContent = ({
                 <TuskPathGame
                   key={`tusk-${tuskTestRunKey}`}
                   isActive={sceneState.showTuskAssemblyGame}
+                  isAudioOn={isAudioOn}
                   animalPositions={sceneState.animalSpots}
                   obstaclePosition={sceneState.tuskObstaclePosition}
                   onAnimalPositionsChange={(positions) => {
@@ -1101,7 +1098,7 @@ const SymbolMountainSceneContent = ({
 
             {showMandala && (
               <InnerMandala
-                childName="Friend"
+                childName={profileName}
                 petalStates={{
                   1: 'awakened',
                   2: 'awakened',
@@ -1175,6 +1172,7 @@ const SymbolMountainSceneContent = ({
                       completed: true, stars: 9, symbols: { eyes: true, ears: true, tusk: true }
                     });
                   }
+                  Analytics.sceneCompleted(zoneId, sceneId, 9);
                   setTimeout(() => {
                     SimpleSceneManager.setCurrentScene('symbol-mountain', 'final-scene', false, false);
                     onNavigate?.('scene-complete-continue');
@@ -1190,8 +1188,3 @@ const SymbolMountainSceneContent = ({
 };
 
 export default SymbolMountainSceneV3;
-
-
-
-
-

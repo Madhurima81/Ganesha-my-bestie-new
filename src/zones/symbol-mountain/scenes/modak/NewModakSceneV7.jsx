@@ -69,7 +69,6 @@ import AudioToggle from '../../../../lib/components/ui/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import { useGaneshaVoice } from '../../../../lib/hooks/useGaneshaVoice';
-import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOverlay';
 
 // Images
 //import forestBackground from './assets/images/forest-background.webp';
@@ -437,7 +436,7 @@ const NewModakSceneMVPContent = ({
     onReturnHint,                  // called when child returns with no VO queued
   });
 
-  // Refs that point to pauseCelebrationTransition / resumeCelebrationTransition
+  // Pause-aware timeout hooks can call these refs on tab hide/show when needed.
   // (defined later in the component � assigned after their definitions below)
   const pauseCelebRef = useRef(null);
   const resumeCelebRef = useRef(null);
@@ -570,10 +569,6 @@ const NewModakSceneMVPContent = ({
   const [showMooshikaSpeech, setShowMooshikaSpeech] = useState(false);
   const [mooshikaSpeechMessage, setMooshikaSpeechMessage] = useState('');
 
-  const [showDiscoveryFlip1, setShowDiscoveryFlip1] = useState(false);
-  const [showDiscoveryFlip2, setShowDiscoveryFlip2] = useState(false);
-  const [showDiscoveryFlip3, setShowDiscoveryFlip3] = useState(false);
-  const [showSymbolDiscovery, setShowSymbolDiscovery] = useState(false);
   const [debugSlotsPreview, setDebugSlotsPreview] = useState(SHOW_ALL_MODAK_SLOTS_PREVIEW);
   const [debugSlotCenters, setDebugSlotCenters] = useState(SHOW_MODAK_SLOT_DEBUG);
   const [slotPositions, setSlotPositions] = useState(() => parseSavedModakSlots() || MODAK_POSITION_SLOTS);
@@ -663,12 +658,6 @@ const NewModakSceneMVPContent = ({
   // ?? Track symbol sidebar popup state for celebration pausing
   const [isSymbolPopupOpen, setIsSymbolPopupOpen] = useState(false);
   const symbolPopupSessionOpenRef = useRef(false);
-  const celebrationTimeoutRef = useRef(null);
-  const celebrationTimeRemainingRef = useRef(0);
-  const celebrationPauseTimeRef = useRef(0);
-  const celebrationTypeRef = useRef(null); // 'flip1', 'flip2', or 'flip3'
-  const celebrationRunIdRef = useRef(0);
-
   // Track if initial instruction has completed for each phase
   const [initialInstructionPlayed, setInitialInstructionPlayed] = useState({
     findMooshika: false,
@@ -679,9 +668,6 @@ const NewModakSceneMVPContent = ({
   const isCelebrationOrOverlayActive =
     showSceneCompletion ||
     isSymbolPopupOpen ||
-    showDiscoveryFlip1 ||
-    showDiscoveryFlip2 ||
-    showDiscoveryFlip3 ||
     !!revealConfig ||          // Block while SymbolAutoReveal is showing
     sceneState.phase === PHASES.ALL_COLLECTED || // Block during modak completion ? reveal transition
     sceneState.phase === PHASES.ROCK_TRANSFORMED; // Block during feeding completion ? reveal transition
@@ -823,26 +809,12 @@ const NewModakSceneMVPContent = ({
     symbolPopupSessionOpenRef.current = true;
 
     console.log('[symbol-popup] opened');
-    console.log('?? Celebration state:', {
-      hasTimeout: !!celebrationTimeoutRef.current,
-      type: celebrationTypeRef.current,
-      remaining: celebrationTimeRemainingRef.current
-    });
-
     setIsSymbolPopupOpen(true);
 
     // Same as pause: stop VOs and timers
     handlePauseCore();
     resetIdleBaseline();
 
-    // Pause pending celebration transition, if any.
-    if (pauseCelebrationTransition()) {
-      console.log(
-        `[symbol-popup] paused celebration type=${celebrationTypeRef.current} remaining=${celebrationTimeRemainingRef.current}ms`
-      );
-    } else {
-      console.log('[symbol-popup] no active celebration timer to pause');
-    }
   }, [handlePauseCore, resetIdleBaseline]);
 
   const handleSymbolPopupClose = useCallback(() => {
@@ -857,13 +829,6 @@ const NewModakSceneMVPContent = ({
     // Same as resume: replay initial instruction or silent resume
     resumePhaseAfterPause();
 
-    // Resume celebration timeout if it was paused.
-    if (celebrationTimeRemainingRef.current > 0 && celebrationTypeRef.current) {
-      console.log(
-        `[symbol-popup] resuming celebration type=${celebrationTypeRef.current} in=${celebrationTimeRemainingRef.current}ms`
-      );
-      resumeCelebrationTransition();
-    }
   }, [resetIdleBaseline, resumePhaseAfterPause]);
 
   // ========================================
@@ -871,129 +836,21 @@ const NewModakSceneMVPContent = ({
   // Listen = VO playing, no button
   // Ready = VO done, button visible
   // ========================================
-  const [appState, setAppState] = useState('listen'); // 'listen' | 'ready' | 'play'
-  const [openingButtonVisible] = useState(true);
-  const [discoveryButtonVisible, setDiscoveryButtonVisible] = useState(false);
-
-  // Configuration for the Overlay Text/Images
-  const discoveryConfig = {
-    mooshika: {
-      foundTitle: "You Found Mooshika!",
-      foundSubtitle: "He has something magical to share...",
-      powerName: "Divine Guidance",
-      image: symbolMooshikaColored
-    },
-    modak: {
-      foundTitle: "You Collected All Modaks!",
-      foundSubtitle: "A sweet reward appears...",
-      powerName: "Sweet Blessing",
-      image: symbolModakColored
-    },
-    belly: {
-      foundTitle: "Ganesha is Full!",
-      foundSubtitle: "His belly glows with cosmic energy...",
-      powerName: "Cosmic Container",
-      image: symbolBellyColored
-    }
-  };
-
   const activeProfile = GameStateManager.getActiveProfile();
   const profileName = activeProfile?.name || 'little explorer';
 
   // safeSetTimeout is provided by usePauseAwareTimeout � auto-pauses on tab hide
 
-  const clearCelebrationTimer = () => {
-    if (celebrationTimeoutRef.current) {
-      clearTimeout(celebrationTimeoutRef.current);
-      celebrationTimeoutRef.current = null;
-    }
-  };
-
-  const completeCelebrationTransition = (type) => {
-    if (type === 'flip1') setShowDiscoveryFlip1(true);
-    else if (type === 'flip2') setShowDiscoveryFlip2(true);
-    else if (type === 'flip3') setShowDiscoveryFlip3(true);
-
-    celebrationTimeoutRef.current = null;
-    celebrationTimeRemainingRef.current = 0;
-    celebrationPauseTimeRef.current = 0;
-    celebrationTypeRef.current = null;
-  };
-
-  const scheduleCelebrationTransition = (type, delayMs) => {
-    clearCelebrationTimer();
-    celebrationRunIdRef.current += 1;
-    const runId = celebrationRunIdRef.current;
-
-    celebrationTypeRef.current = type;
-    celebrationTimeRemainingRef.current = delayMs;
-    celebrationPauseTimeRef.current = Date.now();
-    console.log(`[celebration][${type}] start delay=${delayMs}ms runId=${runId}`);
-
-    celebrationTimeoutRef.current = setTimeout(() => {
-      if (runId !== celebrationRunIdRef.current) {
-        console.log(
-          `[celebration][${type}] stale-callback ignored callbackRunId=${runId} activeRunId=${celebrationRunIdRef.current}`
-        );
-        return;
-      }
-      console.log(`[celebration][${type}] complete -> show overlay runId=${runId}`);
-      completeCelebrationTransition(type);
-    }, delayMs);
-  };
-
-  const pauseCelebrationTransition = () => {
-    if (!celebrationTimeoutRef.current || !celebrationTypeRef.current) return false;
-
-    const type = celebrationTypeRef.current;
-    clearCelebrationTimer();
-    const elapsed = Date.now() - celebrationPauseTimeRef.current;
-    celebrationTimeRemainingRef.current = Math.max(
-      0,
-      celebrationTimeRemainingRef.current - elapsed
-    );
-    console.log(
-      `[celebration][${type}] pause elapsed=${elapsed}ms remaining=${celebrationTimeRemainingRef.current}ms`
-    );
-    return true;
-  };
-
-  const resumeCelebrationTransition = () => {
-    if (celebrationTimeRemainingRef.current <= 0 || !celebrationTypeRef.current) return false;
-
-    celebrationRunIdRef.current += 1;
-    const runId = celebrationRunIdRef.current;
-    const type = celebrationTypeRef.current;
-    const remaining = celebrationTimeRemainingRef.current;
-
-    celebrationPauseTimeRef.current = Date.now();
-    console.log(`[celebration][${type}] resume remaining=${remaining}ms runId=${runId}`);
-    celebrationTimeoutRef.current = setTimeout(() => {
-      if (runId !== celebrationRunIdRef.current) {
-        console.log(
-          `[celebration][${type}] stale-resume-callback ignored callbackRunId=${runId} activeRunId=${celebrationRunIdRef.current}`
-        );
-        return;
-      }
-      console.log(`[celebration][${type}] complete-after-resume -> show overlay runId=${runId}`);
-      completeCelebrationTransition(type);
-    }, remaining);
-    return true;
-  };
-
-  // Keep refs in sync so usePauseAwareTimeout can call them on tab hide/show
-  pauseCelebRef.current = pauseCelebrationTransition;
-  resumeCelebRef.current = resumeCelebrationTransition;
+  pauseCelebRef.current = null;
+  resumeCelebRef.current = null;
 
   useEffect(() => {
     return () => {
       clearAllTimeouts();
-      clearCelebrationTimer();
       if (miniGestureTimerRef.current) {
         clearTimeout(miniGestureTimerRef.current);
         miniGestureTimerRef.current = null;
       }
-      celebrationRunIdRef.current += 1;
       stopMusic();
       if (idleHintsEnabled) stopIdleTimer();
     };
@@ -1019,7 +876,7 @@ const NewModakSceneMVPContent = ({
 
     // 2. RESTORE MOOSHIKA CARD FLIP (Power Unlock 1)
     // Mooshika found but card flip (SymbolAutoReveal) not yet shown.
-    // Old system used showDiscoveryFlip1 � now we trigger setRevealConfig directly.
+    // Trigger the live SymbolAutoReveal flow directly on reload.
     // Short delay so Mooshika has time to render in her saved position first.
     if (sceneState.phase === PHASES.MOOSHIKA_FOUND) {
       safeSetTimeout(() => {
@@ -1067,7 +924,7 @@ const NewModakSceneMVPContent = ({
 
     // 4. RESTORE MODAK CARD FLIP (Power Unlock 2)
     // All modaks collected but SymbolAutoReveal for modak not yet shown.
-    // Old system used showDiscoveryFlip2 � now trigger setRevealConfig directly.
+    // Trigger the live SymbolAutoReveal flow directly on reload.
     if (sceneState.phase === PHASES.ALL_COLLECTED && !sceneState.rockVisible) {
       safeSetTimeout(() => {
         playRevealBloom();
@@ -1116,7 +973,7 @@ const NewModakSceneMVPContent = ({
 
     // 6. RESTORE BELLY CARD FLIP (Power Unlock 3)
     // Rock transformed but SymbolAutoReveal for belly not yet shown.
-    // Old system used showDiscoveryFlip3 � now trigger setRevealConfig directly.
+    // Trigger the live SymbolAutoReveal flow directly on reload.
     if (sceneState.phase === PHASES.ROCK_TRANSFORMED && !sceneState.completed) {
       hasShownDragHintRef.current = true; // Don't re-show drag hint on reload
       safeSetTimeout(() => {
@@ -1163,15 +1020,14 @@ const NewModakSceneMVPContent = ({
     if (sceneState.phase === PHASES.MOOSHIKA_SEARCH && !sceneState.welcomeShown) {
       if (!isAudioOn) return;
       // Small delay before starting welcome VO
-      const timer = setTimeout(() => {
+      const timer = safeSetTimeout(() => {
         // Button shows immediately from start
         playTransition();
-        setAppState('ready');
         playVoice('welcome');
       }, 800);
-      return () => clearTimeout(timer);
+      return timer;
     }
-  }, [sceneState.phase, sceneState.welcomeShown, isAudioOn]);
+  }, [sceneState.phase, sceneState.welcomeShown, isAudioOn, playTransition, playVoice, safeSetTimeout]);
 
   // ========================================
   // VOICE: Play instruction after game starts
@@ -1181,7 +1037,7 @@ const NewModakSceneMVPContent = ({
       // Start background music
       startMusic();
       // Play find mooshika instruction
-      setTimeout(() => {
+      const timer = safeSetTimeout(() => {
         resetIdleBaseline();
         phase1IdleVoPlayedRef.current = false;
         playVoice('findMooshika', () => {
@@ -1189,11 +1045,11 @@ const NewModakSceneMVPContent = ({
           setInitialInstructionPlayed(prev => ({ ...prev, findMooshika: true }));
         });
         setCurrentPhase('findMooshika');
-        setAppState('play');
         if (idleHintsEnabled) startIdleTimer();
       }, 500);
+      return timer;
     }
-  }, [sceneState.welcomeShown]);
+  }, [sceneState.welcomeShown, sceneState.phase, idleHintsEnabled, playVoice, resetIdleBaseline, safeSetTimeout, setCurrentPhase, startIdleTimer, startMusic]);
 
   // Update phase for idle hints AND restart idle timer
   useEffect(() => {
@@ -1330,71 +1186,6 @@ const NewModakSceneMVPContent = ({
   }, [idleHintLevel, sceneState?.phase, sceneState?.welcomeShown, idleHintsEnabled, isSymbolPopupOpen, playVoice]);
 
   // ========================================
-  // FIX: Handle Discovery Overlay Logic via useEffect
-  // ========================================
-
-  // 1. Handle Focus Power (Mooshika) Overlay
-  useEffect(() => {
-    if (showDiscoveryFlip1) {
-      setDiscoveryButtonVisible(false);
-      const timer = setTimeout(() => {
-        playVoice('focusPower', () => {
-          playRevealBloom();
-          setDiscoveryButtonVisible(true);
-        });
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [showDiscoveryFlip1]);
-
-  // 2. Handle Sharing Power (Modak) Overlay
-  useEffect(() => {
-    if (showDiscoveryFlip2) {
-      setDiscoveryButtonVisible(false);
-
-      const timer = setTimeout(() => {
-        playVoice('sharingPower', () => {
-          playRevealBloom();
-          setDiscoveryButtonVisible(true);
-        });
-      }, 500);
-
-      return () => clearTimeout(timer);
-    }
-  }, [showDiscoveryFlip2]);
-
-  // 3. Handle Gratitude Power (Belly) Overlay
-  useEffect(() => {
-    if (showDiscoveryFlip3) {
-      // Stop idle timer - scene is essentially complete
-      if (idleHintsEnabled) stopIdleTimer();
-      setDiscoveryButtonVisible(false);
-
-      const timer = setTimeout(() => {
-        playVoice('gratitudePower', () => {
-          playRevealBloom();
-          setDiscoveryButtonVisible(true);
-        });
-      }, 500);
-
-      return () => clearTimeout(timer);
-    }
-  }, [showDiscoveryFlip3]);
-
-  // Bridge useEffect (useSymbolCollection ? flip states) � superseded by SymbolAutoReveal
-  // useEffect(() => {
-  //   if (symbolCollectOverlay && currentOverlaySymbol) {
-  //     if (currentOverlaySymbol === 'mooshika') setShowDiscoveryFlip1(true);
-  //     else if (currentOverlaySymbol === 'modak') setShowDiscoveryFlip2(true);
-  //     else if (currentOverlaySymbol === 'belly') setShowDiscoveryFlip3(true);
-  //     closeSymbolOverlay();
-  //     setCurrentOverlaySymbol(null);
-  //   }
-  // }, [symbolCollectOverlay, currentOverlaySymbol]);
-
-  // Symbol discovery VO removed - not in the 8 active voice overs
-
-  // ========================================
   // FINAL CELEBRATION SYNC: Show completion modal 1s after VO finishes
   // Fireworks duration is long enough to always cover the VO
   useEffect(() => {
@@ -1516,8 +1307,8 @@ const NewModakSceneMVPContent = ({
         // Show drag hint while "bring the modaks to me" VO is playing (first time only)
         if (!hasShownDragHintRef.current) {
           hasShownDragHintRef.current = true;
-          setTimeout(() => setShowDragHint(true), 400);          // 400ms after VO starts
-          setTimeout(() => setShowDragHint(false), 4000);         // hide after 3.5s animation
+          safeSetTimeout(() => setShowDragHint(true), 400);         // 400ms after VO starts
+          safeSetTimeout(() => setShowDragHint(false), 4000);       // hide after 3.5s animation
         }
       }, 950);
 
@@ -1536,8 +1327,6 @@ const NewModakSceneMVPContent = ({
           discoveredSymbols: { ...sceneState.discoveredSymbols, belly: true }
         });
       }, 950);
-      // -- Phase: Symbol Discovery screen (showSymbolDiscovery) commented out --
-      // setShowSymbolDiscovery(true);
       // 950ms bloom settle + 1500ms hold in found state = 2450ms before fireworks
       safeSetTimeout(() => {
         triggerFireworks();
@@ -1657,7 +1446,7 @@ const NewModakSceneMVPContent = ({
         setWrongMoundIndex(null);
         wrongMoundShakeTimerRef.current = null;
       }, 350);
-      setTimeout(() => setShowSparkle(null), 1000);
+      safeSetTimeout(() => setShowSparkle(null), 1000);
       // Clear hint visuals immediately � glow + gesture stop on any interaction
       setShowIdleGestureHint(false);
     }
@@ -1682,7 +1471,7 @@ const NewModakSceneMVPContent = ({
 
     playPlace();
     setShowSparkle(`modak-${modakIndex}`);
-    setTimeout(() => setShowSparkle(null), 1000);
+    safeSetTimeout(() => setShowSparkle(null), 1000);
 
     const collectedCount = collectedModaks.length;
     if (collectedCount === 3) {
@@ -1819,18 +1608,13 @@ const NewModakSceneMVPContent = ({
 
       }, 900);
     } else {
-      setTimeout(() => setShowSparkle(null), 1500);
+      safeSetTimeout(() => setShowSparkle(null), 1500);
     }
   };
 
   const resetScene = () => {
     if (idleHintsEnabled) stopIdleTimer();
     setShowIdleGestureHint(false);
-    clearCelebrationTimer();
-    celebrationRunIdRef.current += 1;
-    celebrationTimeRemainingRef.current = 0;
-    celebrationPauseTimeRef.current = 0;
-    celebrationTypeRef.current = null;
 
     sceneActions.updateState({
       moundStates: [0, 0, 0, 0, 0],
@@ -1868,9 +1652,6 @@ const NewModakSceneMVPContent = ({
 
     setShowSparkle(null);
     setShowMooshikaSpeech(false);
-    setShowDiscoveryFlip1(false);
-    setShowDiscoveryFlip2(false);
-    setShowDiscoveryFlip3(false);
     setShowSceneCompletion(false);
     setShowMandala(false);
     setFireworksFinished(false);
@@ -1953,7 +1734,7 @@ const NewModakSceneMVPContent = ({
         <VOReplayButton
           getLine={() => lastVoRef.current}
           speak={replaySpeak}
-          disabled={!lastVoRef.current}
+          disabled={!isAudioOn || !lastVoRef.current}
         />
       )}
       {!isFinalTransitionView && MODAK_DEBUG_UI_ENABLED && (
@@ -2045,7 +1826,7 @@ const NewModakSceneMVPContent = ({
                     sceneActions.updateState({ welcomeShown: true });
                   }}
                   characterImg={ganeshaCharacter}
-                  showButton={openingButtonVisible}
+                  showButton={true}
                 />
               )}
 
@@ -2609,37 +2390,6 @@ const NewModakSceneMVPContent = ({
               />
             )}
 
-            {/* -- PowerUnlockOverlay instances � COMMENTED OUT (superseded by SymbolAutoReveal) --
-
-            {showDiscoveryFlip1 && (
-              <PowerUnlockOverlay title="Focus Power Unlocked!"
-                description={{ main: ["Sometimes our mind runs everywhere like a tiny mouse!", "But when it's time to learn or play, we can bring it back."], emphasis: "Say with me: I can focus!" }}
-                icon={symbolMooshikaColored} iconColor="#FF69B4"
-                buttonText="Let's Collect Modaks!" showButton={discoveryButtonVisible}
-                onComplete={() => { setShowDiscoveryFlip1(false); setDiscoveryButtonVisible(false); playVoice('collectStart', () => setInitialInstructionPlayed(prev => ({ ...prev, collectModaks: true }))); setShowSparkle('modaks-appearing'); setTimeout(() => { sceneActions.updateState({ phase: PHASES.MODAKS_UNLOCKED, modaksUnlocked: true, basketVisible: true, discoveredSymbols: { ...sceneState.discoveredSymbols, mooshika: true } }); setTimeout(() => setShowSparkle(null), 2000); }, 500); }}
-              />
-            )}
-
-            {showDiscoveryFlip2 && (
-              <PowerUnlockOverlay title="Sweet Reward Earned!"
-                description="You searched carefully and found all the modaks! Sweet rewards come when we try our best."
-                icon={symbolModakColored} iconColor="#FFD700"
-                buttonText="Let's Share Them" showButton={discoveryButtonVisible}
-                onComplete={() => { setShowDiscoveryFlip2(false); setDiscoveryButtonVisible(false); playVoice('feedGanesha', () => setInitialInstructionPlayed(prev => ({ ...prev, shareWithGanesha: true }))); sceneActions.updateState({ phase: PHASES.ROCK_VISIBLE, basketReady: true, rockVisible: true, discoveredSymbols: { ...sceneState.discoveredSymbols, modak: true } }); }}
-              />
-            )}
-
-            {showDiscoveryFlip3 && (
-              <PowerUnlockOverlay title="Sharing Power Unlocked!"
-                description={{ main: ["You chose to share your sweets with me.", "That shows a kind heart."], emphasis: "Say with me: I am kind!" }}
-                icon={symbolBellyColored} iconColor="#FF8C42"
-                buttonText="Discover Symbols!" showButton={discoveryButtonVisible}
-                onComplete={() => { setShowDiscoveryFlip3(false); setDiscoveryButtonVisible(false); sceneActions.updateState({ discoveredSymbols: { ...sceneState.discoveredSymbols, belly: true } }); setShowSymbolDiscovery(true); }}
-              />
-            )}
-
-            -- End PowerUnlockOverlay -- */}
-
             {!isCompletionView && !isFinalTransitionView && (
               <CulturalCelebrationModal
                 show={showCulturalCelebration}
@@ -2647,30 +2397,6 @@ const NewModakSceneMVPContent = ({
                 {...CulturalProgressExtractor.getCulturalProgressData()}
               />
             )}
-
-            {/* SYMBOL DISCOVERY MOMENT - center mode � COMMENTED OUT
-                 Fireworks now auto-trigger 350ms after sidebar bloom via handleRevealComplete.
-            {showSymbolDiscovery && (
-              <SymbolSidebar
-                centerMode={true}
-                discoveredSymbols={sceneState.discoveredSymbols || {}}
-                highlightSymbols={Object.keys(sceneState.discoveredSymbols || {})}
-                onPopupOpen={() => handlePauseCore()}
-                onPopupClose={() => resumePhaseAfterPause()}
-                onCelebrate={() => {
-                  setShowSymbolDiscovery(false);
-                  setSceneCompleteVOFinished(false);
-                  setFireworksFinished(false);
-                  playVoice('sceneComplete', () => {
-                    console.log('? Scene complete VO finished');
-                    setSceneCompleteVOFinished(true);
-                  });
-
-                  setShowSparkle('final-fireworks');
-                }}
-              />
-            )}
-            -- End Symbol Discovery screen -- */}
 
             {/* SIDE RAIL - hide during final fireworks and celebration popup */}
             {!isCompletionView && !isFinalTransitionView && sceneState.welcomeShown && !isFinalCelebrationActive && (
@@ -2695,6 +2421,3 @@ const NewModakSceneMVPContent = ({
 };
 
 export default NewModakSceneMVP;
-
-
-

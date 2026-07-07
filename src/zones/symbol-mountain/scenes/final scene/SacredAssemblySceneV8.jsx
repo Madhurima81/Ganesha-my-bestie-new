@@ -32,7 +32,6 @@ import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
 import CulturalCelebrationModal from '../../../../lib/components/progress/CulturalCelebrationModal';
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
 // import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
-import MagicalCardFlip from '../../../../lib/components/animation/MagicalCardFlip';
 import SymbolSidebar from '../../shared/components/SymbolSidebar';
 import OpeningModal from '../../../shared/components/OpeningModal';
 import GaneshaIllustration from './GaneshaIllustration';
@@ -220,13 +219,6 @@ const SACRED_SYMBOLS = [
 ];
 
 
-// DEBUG: Verify SACRED_SYMBOLS is correct
-console.log('?? SACRED_SYMBOLS check:', {
-  count: SACRED_SYMBOLS.length,
-  ids: SACRED_SYMBOLS.map(s => s.id),
-  hasDuplicates: SACRED_SYMBOLS.map(s => s.id).length !== new Set(SACRED_SYMBOLS.map(s => s.id)).size
-});
-
 // Individual styling for placed symbols
 const PLACED_SYMBOL_CONFIGS = {
   mooshika: { width: 'auto', height: '50px', transform: 'translate(8px, -48px) rotate(0deg) scaleX(-1)', borderRadius: '50%' },
@@ -312,12 +304,6 @@ const ZONE_SPARKLE_POSITIONS = BODY_PART_ZONES.reduce((acc, zone) => {
   };
   return acc;
 }, {});
-
-if (typeof window !== 'undefined') {
-  console.log('[ZONE DEBUG] Hint positions:', ZONE_HINT_POSITIONS);
-  console.log('[ZONE DEBUG] Sparkle positions:', ZONE_SPARKLE_POSITIONS);
-  console.log('[ZONE DEBUG] Source zones:', GANESHA_ZONES.map(z => ({ id: z.id, pos: z.position })));
-}
 
 // Ganesha transformation states
 const GANESHA_STATES = {
@@ -539,7 +525,6 @@ const SacredAssemblyContent = ({
 }) => {
   const isDevBuild = process.env.NODE_ENV !== 'production';
   const [showSparkle, setShowSparkle] = useState(null);
-  const [showMagicalCard, setShowMagicalCard] = useState(false);
   const [cardContent, setCardContent] = useState({});
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
   const [sceneCompleteVOFinished, setSceneCompleteVOFinished] = useState(false);
@@ -550,6 +535,9 @@ const SacredAssemblyContent = ({
   const [isOrbsRunning, setIsOrbsRunning] = useState(false);
   const [celebrationZoneId, setCelebrationZoneId] = useState(null);
   const [hideProgressBar, setHideProgressBar] = useState(false);
+  const [isPageVisible, setIsPageVisible] = useState(() =>
+    typeof document === 'undefined' ? true : !document.hidden
+  );
   const [showHintDebug, setShowHintDebug] = useState(false);
   const [selectedHintDebugZone, setSelectedHintDebugZone] = useState(null);
   const completionModalContent = getCompletionModal(zoneId, sceneId);
@@ -757,6 +745,17 @@ const SacredAssemblyContent = ({
     }
   }, [isAudioOn, replayVoiceForCurrentPhase]);
 
+  useEffect(() => {
+    if (typeof document === 'undefined') return undefined;
+
+    const handleVisibilityChange = () => {
+      setIsPageVisible(!document.hidden);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
+
   useAppVisibility(
     () => {
       stopGaneshaVoice();
@@ -782,33 +781,35 @@ const SacredAssemblyContent = ({
   // CARD PHASE TIMELINE � drives the card animation state machine
   useEffect(() => {
     if (!sceneState?.currentAssociationSymbol) return;
+    if (!isPageVisible) return;
     const currentRound = sceneState?.currentRound || 0;
     const cardVoKey = CARD_VO_MAP[sceneState.currentAssociationSymbol];
 
     if (cardPhase === 'appear') {
       playChime();
-      const t = setTimeout(() => setCardPhase('flipped'), 2200);
+      const t = safeSetTimeout(() => setCardPhase('flipped'), 2200);
       return () => clearTimeout(t);
     }
 
     if (cardPhase === 'flipped') {
       // No VO here � card is mid-flip, child can't read it yet
       playSparkle();
-      const t = setTimeout(() => setCardPhase('side'), 1100);
+      const t = safeSetTimeout(() => setCardPhase('side'), 1100);
       return () => clearTimeout(t);
     }
 
     if (cardPhase === 'side') {
       // No VO here � card is still sliding. VO fires in 'play' once card has landed.
       playUiTap();
-      const t = setTimeout(() => setCardPhase('play'), 600);
+      const t = safeSetTimeout(() => setCardPhase('play'), 600);
       return () => clearTimeout(t);
     }
-  }, [CARD_VO_MAP, cardPhase, playChime, playSceneVoice, playSparkle, playUiTap, sceneState?.currentAssociationSymbol, sceneState?.currentRound]);
+  }, [CARD_VO_MAP, cardPhase, isPageVisible, playChime, playSceneVoice, playSparkle, playUiTap, sceneState?.currentAssociationSymbol, sceneState?.currentRound]);
 
   // Play-phase VO sequence: card VO when card lands, then 3-level idle hint escalation
   useEffect(() => {
     if (cardPhase !== 'play') return;
+    if (!isPageVisible) return;
     const currentSymbol = SACRED_SYMBOLS.find(s => s.id === sceneState?.currentAssociationSymbol);
     if (!currentSymbol) return;
     const correctZone = currentSymbol.correctZone;
@@ -818,21 +819,21 @@ const SacredAssemblyContent = ({
     // Guard prevents double-play if effect re-runs while still in 'play'
     const roundIndex = sceneState?.currentRound ?? -1;
     const ENTRY_VO_DELAY_MS = 2500;
-    const cardVoTimer = setTimeout(() => {
+    const cardVoTimer = safeSetTimeout(() => {
       if (cardVoKey && cardVoPlayedForRoundRef.current !== roundIndex) {
         cardVoPlayedForRoundRef.current = roundIndex;
         playSceneVoice(cardVoKey, null, { replayOnReturn: false });
       }
     }, ENTRY_VO_DELAY_MS);
 
-    const hintLevel1Timer = setTimeout(() => {
+    const hintLevel1Timer = safeSetTimeout(() => {
       setZoneStates(prev => {
         if (prev[correctZone] === 'idle') return { ...prev, [correctZone]: 'hint' };
         return prev;
       });
     }, ENTRY_VO_DELAY_MS + 10000);
 
-    const hintLevel2Timer = setTimeout(() => {
+    const hintLevel2Timer = safeSetTimeout(() => {
       setZoneStates(prev => {
         if (prev[correctZone] === 'hint' || prev[correctZone] === 'idle') {
           return { ...prev, [correctZone]: 'hint-strong' };
@@ -848,7 +849,7 @@ const SacredAssemblyContent = ({
       }
     }, ENTRY_VO_DELAY_MS + 18000);
 
-    const hintLevel3Timer = setTimeout(() => {
+    const hintLevel3Timer = safeSetTimeout(() => {
       setZoneStates(prev => {
         if (prev[correctZone] === 'hint-strong' || prev[correctZone] === 'hint' || prev[correctZone] === 'idle') {
           return { ...prev, [correctZone]: 'hint-final' };
@@ -863,7 +864,7 @@ const SacredAssemblyContent = ({
       clearTimeout(hintLevel2Timer);
       clearTimeout(hintLevel3Timer);
     };
-  }, [cardPhase, HINT_VO_MAP, sceneState?.currentAssociationSymbol]);
+  }, [cardPhase, HINT_VO_MAP, isPageVisible, sceneState?.currentAssociationSymbol]);
 
   const safeSetTimeout = (callback, delay) => {
     const id = setTimeout(callback, delay);
@@ -888,7 +889,6 @@ const SacredAssemblyContent = ({
     }
 
     setShowSparkle(null);
-    setShowMagicalCard(false);
     setCardContent({});
     setShowSceneCompletion(false);
     setShowCulturalCelebration(false);
@@ -972,12 +972,13 @@ const SacredAssemblyContent = ({
     if (sceneState?.welcomeShown) return;           // modal not showing
     if (openingModalVoPlayedRef.current) return;    // already played this session
     if (!isAudioOn) return;
-    const t = setTimeout(() => {
+    if (!isPageVisible) return;
+    const t = safeSetTimeout(() => {
       const started = playSceneVoice('openingModalPrompt', null, { replayOnReturn: false });
       if (started) openingModalVoPlayedRef.current = true;
     }, 700); // wait for modal entrance animation to finish
     return () => clearTimeout(t);
-  }, [sceneState?.welcomeShown, isAudioOn, playSceneVoice]);
+  }, [isAudioOn, isPageVisible, playSceneVoice, sceneState?.welcomeShown]);
 
   const playSound = (type) => {
     // Simple sound effects (you can replace URLs later)
@@ -989,8 +990,8 @@ const SacredAssemblyContent = ({
     try {
       const audio = new Audio(sounds[type]);
       audio.volume = 0.5;
-      audio.play().catch(e => console.log("Audio play blocked", e));
-    } catch (e) { console.log("Audio error"); }
+      audio.play().catch(() => {});
+    } catch {}
   };
 
   const handleSymbolClick = (symbol) => {
@@ -1033,11 +1034,8 @@ const SacredAssemblyContent = ({
       sceneState?.welcomeShown &&
       (!sceneState?.symbolQueue || sceneState.symbolQueue.length === 0)) {
 
-      console.log('?? Initializing symbol queue...'); // DEBUG
-
       // Create array of all symbol IDs (should be exactly 8)
       const allSymbolIds = SACRED_SYMBOLS.map(s => s.id);
-      console.log('?? All symbol IDs:', allSymbolIds, 'Count:', allSymbolIds.length); // DEBUG
 
       // Fisher-Yates shuffle for better randomization
       const shuffledSymbols = [...allSymbolIds];
@@ -1045,16 +1043,6 @@ const SacredAssemblyContent = ({
         const j = Math.floor(Math.random() * (i + 1));
         [shuffledSymbols[i], shuffledSymbols[j]] = [shuffledSymbols[j], shuffledSymbols[i]];
       }
-
-      console.log('?? Symbol queue created:', shuffledSymbols); // DEBUG
-      console.log('? Queue length:', shuffledSymbols.length, 'Should be 8'); // DEBUG
-
-      // Verify no duplicates
-      const uniqueSymbols = [...new Set(shuffledSymbols)];
-      if (uniqueSymbols.length !== 8) {
-        console.error('? DUPLICATE SYMBOLS IN QUEUE!', shuffledSymbols); // DEBUG
-      }
-
       sceneActions.updateState({
         symbolQueue: shuffledSymbols,
         currentRound: 0
@@ -1095,26 +1083,6 @@ const SacredAssemblyContent = ({
     sceneState?.currentAssociationSymbol,
     sceneState?.showingAssociationCard,
     sceneState?.placedSymbols // <--- ADD THIS to the dependency array
-  ]);
-
-  // ADD THIS NEW useEffect AFTER the other useEffects (around line 470)
-  // This will help us see when state changes:
-
-  // DEBUG: Monitor association card state
-  useEffect(() => {
-    console.log('?? Association Card State Changed:', {
-      showingAssociationCard: sceneState?.showingAssociationCard,
-      currentAssociationSymbol: sceneState?.currentAssociationSymbol,
-      glowingZones: sceneState?.glowingZones,
-      currentRound: sceneState?.currentRound,
-      symbolQueue: sceneState?.symbolQueue
-    });
-  }, [
-    sceneState?.showingAssociationCard,
-    sceneState?.currentAssociationSymbol,
-    sceneState?.glowingZones,
-    sceneState?.currentRound,
-    sceneState?.symbolQueue
   ]);
 
   const startNextRound = (roundNumber = null) => {
@@ -1177,17 +1145,17 @@ const SacredAssemblyContent = ({
       playUiTap();
       // correct ? pop animation ? then permanently placed
       setZoneStates(prev => ({ ...prev, [zoneId]: 'correct' }));
-      setTimeout(() => {
+      safeSetTimeout(() => {
         setZoneStates(prev => ({ ...prev, [zoneId]: 'placed' }));
       }, 420);
       handleCorrectPlacement(currentSymbol);
     } else {
       playWrongTap();
       setGaneshaReaction('wrong');
-      setTimeout(() => setGaneshaReaction(''), 300);
+      safeSetTimeout(() => setGaneshaReaction(''), 300);
       // wrong ? wiggle ? snap back to idle
       setZoneStates(prev => ({ ...prev, [zoneId]: 'wrong' }));
-      setTimeout(() => {
+      safeSetTimeout(() => {
         setZoneStates(prev => (prev[zoneId] === 'wrong' ? { ...prev, [zoneId]: 'idle' } : prev));
       }, 320);
       handleWrongPlacement();
@@ -1287,7 +1255,7 @@ const SacredAssemblyContent = ({
     setCardPhase('feedback');
     setCelebrationZoneId(symbol.correctZone);
     playGlow();
-    setTimeout(() => playTwinkle(), 450);
+    safeSetTimeout(() => playTwinkle(), 450);
     setShowSparkle(`celebration-${symbol.id}`);
 
     // Phase 1: sparkle burst (0�1.2s)
@@ -1463,7 +1431,7 @@ const SacredAssemblyContent = ({
   useEffect(() => {
     const placedCount = Object.keys(sceneState?.placedSymbols || {}).length;
     if (placedCount >= 8 && !hideProgressBar) {
-      const t = setTimeout(() => setHideProgressBar(true), 1000);
+      const t = safeSetTimeout(() => setHideProgressBar(true), 1000);
       return () => clearTimeout(t);
     }
   }, [sceneState?.placedSymbols, hideProgressBar]);
@@ -1849,7 +1817,7 @@ const SacredAssemblyContent = ({
                       color={SACRED_COLOR_PALETTE.primary}
                       size={4}
                       duration={3000}
-                      fadeOut={false}
+                      fadeOut
                       area="contained"
                       key={`sparkle-${symbolId}`}
                     />
@@ -1982,7 +1950,6 @@ const SacredAssemblyContent = ({
             }} onClick={() => {
               clearAllTimeouts();
               setShowSparkle(null);
-              setShowMagicalCard(false);
               setShowSceneCompletion(false);
               setIsOrbsRunning(false);
               
@@ -2037,7 +2004,6 @@ const SacredAssemblyContent = ({
               if (confirm('Start this scene from the beginning? You will lose current progress.')) {
                 clearAllTimeouts();
                 setShowSparkle(null);
-                setShowMagicalCard(false);
                 setShowSceneCompletion(false);
                 setShowZoneCompletion(false);
                 setIsOrbsRunning(false);
@@ -2234,10 +2200,14 @@ const SacredAssemblyContent = ({
             hideGanesha={true}
 
             onExploreZones={() => {
+              clearAllTimeouts();
+              stopGaneshaVoice();
               setShowSceneCompletion(false);
               onNavigate?.('zones');
             }}
             onHome={() => {
+              clearAllTimeouts();
+              stopGaneshaVoice();
               setShowSceneCompletion(false);
               onNavigate?.('home');
             }}
@@ -2258,4 +2228,3 @@ const SacredAssemblyContent = ({
 };
 
 export default SacredAssemblyScene;
-

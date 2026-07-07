@@ -77,6 +77,7 @@ const clampPercent = (value) => Math.max(0, Math.min(100, value));
 
 const TuskPathGame = ({
   isActive = true,
+  isAudioOn = true,
   showObstacleOnly = false,
   animalPositions = null,
   obstaclePosition = null,
@@ -90,6 +91,11 @@ const TuskPathGame = ({
   const lastTapRef = useRef(Date.now());
   const idleTimerRef = useRef(null);
   const dragTargetRef = useRef(null);
+  const activeAudioRef = useRef(null);
+  const idleHintPlayedRef = useRef(false);
+  const wrongAnimalTimerRef = useRef(null);
+  const leaningTimerRef = useRef(null);
+  const layerAdvanceTimerRef = useRef(null);
 
   const [currentLayerIdx, setCurrentLayerIdx] = useState(0);
   const [peeling, setPeeling] = useState(false);
@@ -142,36 +148,59 @@ const TuskPathGame = ({
   const currentLayer = LAYERS[currentLayerIdx];
   const allCleared = currentLayerIdx >= LAYERS.length;
 
+  const stopGameAudio = useCallback(() => {
+    if (activeAudioRef.current) {
+      try {
+        activeAudioRef.current.pause();
+        activeAudioRef.current.currentTime = 0;
+      } catch {}
+      activeAudioRef.current = null;
+    }
+  }, []);
+
+  const playGameAudio = useCallback((src, volume = 0.9) => {
+    if (!isAudioOn) return null;
+    stopGameAudio();
+    const audio = playAudio(src, volume) || null;
+    activeAudioRef.current = audio;
+    return audio;
+  }, [isAudioOn, stopGameAudio]);
+
   useEffect(() => {
     if (!isActive || introShown) return;
     setIntroShown(true);
-    playAudio(VO_PATHS.intro);
-  }, [isActive, introShown]);
+    playGameAudio(VO_PATHS.intro);
+  }, [isActive, introShown, playGameAudio]);
 
   useEffect(() => {
     if (!isActive || showFinale || peeling || allCleared) return;
     const check = () => {
       if (Date.now() - lastTapRef.current >= IDLE_HINT_MS) {
         setShowIdleHint(true);
-        if (currentLayer?.hintVo) {
-          playAudio(currentLayer.hintVo);
-          lastTapRef.current = Date.now();
+        if (!idleHintPlayedRef.current && currentLayer?.hintVo) {
+          playGameAudio(currentLayer.hintVo);
+          idleHintPlayedRef.current = true;
         }
       }
     };
     idleTimerRef.current = setInterval(check, 1000);
     return () => clearInterval(idleTimerRef.current);
-  }, [isActive, showFinale, peeling, allCleared, currentLayer]);
+  }, [allCleared, currentLayer, isActive, peeling, playGameAudio, showFinale]);
 
   useEffect(() => {
     if (!allCleared) return;
     setShowFinale(true);
-    playAudio(VO_PATHS.finale);
+    playGameAudio(VO_PATHS.finale);
     const timeoutId = setTimeout(() => {
       onGameComplete?.({ layersCleared: LAYERS.length, totalCleared: 4 });
     }, 3800);
     return () => clearTimeout(timeoutId);
-  }, [allCleared, onGameComplete]);
+  }, [allCleared, onGameComplete, playGameAudio]);
+
+  useEffect(() => {
+    idleHintPlayedRef.current = false;
+    setShowIdleHint(false);
+  }, [currentLayerIdx, isActive]);
 
   useEffect(() => {
     if (debugMode || !animalPositions || typeof animalPositions !== 'object' || Array.isArray(animalPositions)) return;
@@ -207,21 +236,32 @@ const TuskPathGame = ({
 
     lastTapRef.current = Date.now();
     setShowIdleHint(false);
+    idleHintPlayedRef.current = false;
 
     if (animalId !== currentLayer.correctAnimal) {
       setWrongAnimal(animalId);
-      setTimeout(() => setWrongAnimal(null), 700);
+      if (wrongAnimalTimerRef.current) clearTimeout(wrongAnimalTimerRef.current);
+      wrongAnimalTimerRef.current = setTimeout(() => {
+        setWrongAnimal(null);
+        wrongAnimalTimerRef.current = null;
+      }, 700);
       return;
     }
 
     setFeedbackKey((value) => value + 1);
     setLeaningAnimal(animalId);
-    setTimeout(() => setLeaningAnimal(null), 500);
+    if (leaningTimerRef.current) clearTimeout(leaningTimerRef.current);
+    leaningTimerRef.current = setTimeout(() => {
+      setLeaningAnimal(null);
+      leaningTimerRef.current = null;
+    }, 500);
 
     setPeeling(true);
-    setTimeout(() => {
+    if (layerAdvanceTimerRef.current) clearTimeout(layerAdvanceTimerRef.current);
+    layerAdvanceTimerRef.current = setTimeout(() => {
       setPeeling(false);
       setCurrentLayerIdx((value) => value + 1);
+      layerAdvanceTimerRef.current = null;
     }, 900);
   }, [allCleared, currentLayer, debugMode, isActive, peeling, showFinale]);
 
@@ -266,6 +306,14 @@ const TuskPathGame = ({
   const stopDrag = useCallback(() => {
     dragTargetRef.current = null;
   }, []);
+
+  useEffect(() => () => {
+    stopGameAudio();
+    if (idleTimerRef.current) clearInterval(idleTimerRef.current);
+    if (wrongAnimalTimerRef.current) clearTimeout(wrongAnimalTimerRef.current);
+    if (leaningTimerRef.current) clearTimeout(leaningTimerRef.current);
+    if (layerAdvanceTimerRef.current) clearTimeout(layerAdvanceTimerRef.current);
+  }, [stopGameAudio]);
 
   if (hideElements || (!isActive && !showObstacleOnly)) return null;
 

@@ -255,6 +255,7 @@ const playAudio = (src, fallbackText = '') => {
 
 const EyesPopUpGame = ({
   isActive = true,
+  isAudioOn = true,
   onGameComplete,
   hideElements = false,
   className = ''
@@ -304,6 +305,8 @@ const EyesPopUpGame = ({
   const idleTimerRef = useRef(null);
   const lastTapTimeRef = useRef(Date.now());
   const dragTargetRef = useRef(null);
+  const activeAudioRef = useRef(null);
+  const shimmerTimerRef = useRef(null);
   const activeHideOptions = editableHideOptions[selectedAnimalId] || [];
   const selectedHideOption = activeHideOptions[selectedOptionIndex] || null;
   const exportPayload = JSON.stringify({
@@ -311,12 +314,33 @@ const EyesPopUpGame = ({
     animalPositions: editableAnimalPositions
   }, null, 2);
 
+  const stopGameAudio = useCallback(() => {
+    if (activeAudioRef.current) {
+      try {
+        activeAudioRef.current.pause();
+        activeAudioRef.current.currentTime = 0;
+      } catch {}
+      activeAudioRef.current = null;
+    }
+    if (typeof window !== 'undefined' && window.speechSynthesis?.cancel) {
+      window.speechSynthesis.cancel();
+    }
+  }, []);
+
+  const playGameAudio = useCallback((src, fallbackText = '') => {
+    if (!isAudioOn) return null;
+    stopGameAudio();
+    const nextAudio = playAudio(src, fallbackText) || null;
+    activeAudioRef.current = nextAudio;
+    return nextAudio;
+  }, [isAudioOn, stopGameAudio]);
+
   // Intro VO once on mount
   useEffect(() => {
     if (!isActive || introShown) return;
     setIntroShown(true);
-    playAudio(VO_PATHS.intro, VO_TEXTS.intro);
-  }, [isActive, introShown]);
+    playGameAudio(VO_PATHS.intro, VO_TEXTS.intro);
+  }, [isActive, introShown, playGameAudio]);
 
   // Pop cycle: pick an undiscovered animal, show it, hide it, repeat
   useEffect(() => {
@@ -423,10 +447,10 @@ const EyesPopUpGame = ({
 
     // play that animal's name VO
     const found = assignments.find(a => a.animal.id === animalId);
-    if (found) playAudio(found.animal.vo, VO_TEXTS[found.animal.id]);
+    if (found) playGameAudio(found.animal.vo, VO_TEXTS[found.animal.id]);
 
     setDiscovered(prev => new Set([...prev, animalId]));
-  }, [discovered, visibleAnimal, assignments, showFullReveal]);
+  }, [assignments, discovered, playGameAudio]);
 
   const handleSceneTap = useCallback((e) => {
     // wrong-tap shimmer where they tapped
@@ -444,7 +468,11 @@ const EyesPopUpGame = ({
     shimmer.style.left = `${x}px`;
     shimmer.style.top = `${y}px`;
     e.currentTarget.appendChild(shimmer);
-    setTimeout(() => shimmer.remove(), 600);
+    if (shimmerTimerRef.current) clearTimeout(shimmerTimerRef.current);
+    shimmerTimerRef.current = setTimeout(() => {
+      shimmer.remove();
+      shimmerTimerRef.current = null;
+    }, 600);
   }, []);
 
   useEffect(() => {
@@ -497,6 +525,11 @@ const EyesPopUpGame = ({
       };
     }));
   }, [debugMode, selectedAnimalId, selectedHideOption]);
+
+  useEffect(() => () => {
+    stopGameAudio();
+    if (shimmerTimerRef.current) clearTimeout(shimmerTimerRef.current);
+  }, [stopGameAudio]);
 
   if (hideElements || !isActive) return null;
 
@@ -826,6 +859,5 @@ const EyesPopUpGame = ({
 };
 
 export default EyesPopUpGame;
-
 
 

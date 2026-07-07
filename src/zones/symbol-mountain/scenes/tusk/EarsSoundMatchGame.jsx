@@ -141,6 +141,7 @@ const defaultPositionMap = arrayToPositionMap(ANIMAL_POSITIONS_ARRAY);
 
 const EarsSoundMatchGame = ({
   isActive = true,
+  isAudioOn = true,
   onGameComplete,
   animalPositions = null,
   onAnimalPositionsChange,
@@ -164,6 +165,9 @@ const EarsSoundMatchGame = ({
   const idleHintTimerRef = useRef(null);
   const lastInteractionAtRef = useRef(Date.now());
   const dragTargetRef = useRef(null);
+  const wrongResetTimerRef = useRef(null);
+  const roundAdvanceTimerRef = useRef(null);
+  const wrongReplayTimerRef = useRef(null);
   const [editableAnimalPositions, setEditableAnimalPositions] = useState(() => {
     try {
       const raw = localStorage.getItem(POSITION_STORAGE_KEY);
@@ -189,6 +193,27 @@ const EarsSoundMatchGame = ({
   const currentTargetId = roundOrder[currentRound];
   const currentTarget = ANIMALS.find(a => a.id === currentTargetId);
 
+  const stopCurrentAudio = useCallback(() => {
+    if (currentSoundRef.current) {
+      try {
+        currentSoundRef.current.pause();
+        currentSoundRef.current.currentTime = 0;
+      } catch {}
+      currentSoundRef.current = null;
+    }
+    if (typeof window !== 'undefined' && window.speechSynthesis?.cancel) {
+      window.speechSynthesis.cancel();
+    }
+  }, []);
+
+  const playGameAudio = useCallback((src, volume = 0.9, fallbackText = '') => {
+    if (!isAudioOn) return null;
+    stopCurrentAudio();
+    const audio = playAudio(src, volume, fallbackText) || null;
+    currentSoundRef.current = audio;
+    return audio;
+  }, [isAudioOn, stopCurrentAudio]);
+
   const savePositions = useCallback((positions) => {
     try {
       localStorage.setItem(POSITION_STORAGE_KEY, JSON.stringify(positions));
@@ -199,8 +224,8 @@ const EarsSoundMatchGame = ({
   const playIdleHintVo = useCallback((animalId) => {
     const src = IDLE_HINT_VO_BY_ANIMAL[animalId];
     if (!src) return;
-    playAudio(src, 0.95, VO_TEXTS[`hint${animalId.charAt(0).toUpperCase()}${animalId.slice(1)}`]);
-  }, []);
+    playGameAudio(src, 0.95, VO_TEXTS[`hint${animalId.charAt(0).toUpperCase()}${animalId.slice(1)}`]);
+  }, [playGameAudio]);
 
   const stopClueSpeech = useCallback(() => {
     // no-op: hints now use VO files, keeping this for existing call sites
@@ -226,8 +251,8 @@ const EarsSoundMatchGame = ({
   useEffect(() => {
     if (!isActive || introShown) return;
     setIntroShown(true);
-    playAudio(VO_PATHS.intro, 0.95, VO_TEXTS.intro);
-  }, [isActive, introShown]);
+    playGameAudio(VO_PATHS.intro, 0.95, VO_TEXTS.intro);
+  }, [isActive, introShown, playGameAudio]);
 
   // Play the target sound at the start of each round
   useEffect(() => {
@@ -242,7 +267,7 @@ const EarsSoundMatchGame = ({
     stopClueSpeech();
 
     playTimerRef.current = setTimeout(() => {
-      currentSoundRef.current = playAudio(currentTarget.sound, ANIMAL_SOUND_VOLUME);
+      currentSoundRef.current = playGameAudio(currentTarget.sound, ANIMAL_SOUND_VOLUME);
       setWaitingForTap(true);
       setShowReplay(true);
       lastInteractionAtRef.current = Date.now();
@@ -252,7 +277,7 @@ const EarsSoundMatchGame = ({
     return () => {
       if (playTimerRef.current) clearTimeout(playTimerRef.current);
     };
-  }, [isActive, currentRound, currentTarget, stopClueSpeech]);
+  }, [isActive, currentRound, currentTarget, playGameAudio, stopClueSpeech]);
 
   // Win condition
   useEffect(() => {
@@ -312,7 +337,11 @@ const EarsSoundMatchGame = ({
 
   useEffect(() => () => {
     stopClueSpeech();
-  }, [stopClueSpeech]);
+    stopCurrentAudio();
+    if (wrongResetTimerRef.current) clearTimeout(wrongResetTimerRef.current);
+    if (roundAdvanceTimerRef.current) clearTimeout(roundAdvanceTimerRef.current);
+    if (wrongReplayTimerRef.current) clearTimeout(wrongReplayTimerRef.current);
+  }, [stopClueSpeech, stopCurrentAudio]);
 
   useEffect(() => {
     if (debugMode) return;
@@ -333,8 +362,8 @@ const EarsSoundMatchGame = ({
     setHintAnimalIds([]);
     setIdleHintStage(0);
     stopClueSpeech();
-    currentSoundRef.current = playAudio(currentTarget.sound, ANIMAL_SOUND_VOLUME);
-  }, [currentTarget, waitingForTap, stopClueSpeech]);
+    currentSoundRef.current = playGameAudio(currentTarget.sound, ANIMAL_SOUND_VOLUME);
+  }, [currentTarget, waitingForTap, playGameAudio, stopClueSpeech]);
 
   const handleAnimalTap = useCallback((animalId, e) => {
     e?.stopPropagation();
@@ -349,21 +378,29 @@ const EarsSoundMatchGame = ({
       // Correct
       setWaitingForTap(false);
       setShowReplay(false);
-      playAudio(currentTarget.vo, 0.95, VO_TEXTS[currentTarget.id]);
+      playGameAudio(currentTarget.vo, 0.95, VO_TEXTS[currentTarget.id]);
       setMatched(prev => new Set([...prev, animalId]));
 
-      setTimeout(() => {
+      if (roundAdvanceTimerRef.current) clearTimeout(roundAdvanceTimerRef.current);
+      roundAdvanceTimerRef.current = setTimeout(() => {
         setCurrentRound(r => r + 1);
+        roundAdvanceTimerRef.current = null;
       }, 1400);
     } else {
       // Wrong — wobble + replay
       setWrongAnimal(animalId);
-      setTimeout(() => setWrongAnimal(null), WRONG_FEEDBACK_MS);
-      setTimeout(() => {
-        if (currentTarget) playAudio(currentTarget.sound, ANIMAL_SOUND_VOLUME);
+      if (wrongResetTimerRef.current) clearTimeout(wrongResetTimerRef.current);
+      wrongResetTimerRef.current = setTimeout(() => {
+        setWrongAnimal(null);
+        wrongResetTimerRef.current = null;
+      }, WRONG_FEEDBACK_MS);
+      if (wrongReplayTimerRef.current) clearTimeout(wrongReplayTimerRef.current);
+      wrongReplayTimerRef.current = setTimeout(() => {
+        if (currentTarget) currentSoundRef.current = playGameAudio(currentTarget.sound, ANIMAL_SOUND_VOLUME);
+        wrongReplayTimerRef.current = null;
       }, WRONG_FEEDBACK_MS + 200);
     }
-  }, [waitingForTap, matched, currentTargetId, currentTarget, stopClueSpeech]);
+  }, [waitingForTap, matched, currentTargetId, currentTarget, playGameAudio, stopClueSpeech]);
 
   const activeAnimalPositions = ANIMALS.map((animal) => ({
     id: animal.id,

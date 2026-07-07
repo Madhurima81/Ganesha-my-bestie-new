@@ -95,7 +95,8 @@
   border-radius: 40px; /* Slightly rounder corners */
   padding: 60px 80px; /* More breathing room on sides */
   max-width: 850px;   /* <--- KEY CHANGE: Was 600px. Makes it longer horizontally */
-  min-height: 400px;  /* <--- KEY CHANGE: Ensures it doesn't look squat */
+  min-height: min(400px, calc(var(--app-height, 100dvh) - 48px));
+  max-height: calc(var(--app-height, 100dvh) - 48px);
   width: 90%;
   text-align: center;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4); /* Deeper shadow for pop */
@@ -104,6 +105,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  overflow-y: auto;
   animation: modak-game-scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncier animation */
 }
 
