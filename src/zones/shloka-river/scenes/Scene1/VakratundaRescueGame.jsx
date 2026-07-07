@@ -41,6 +41,7 @@ export default function VakratundaRescueGame({
   isActive = false,
   hideElements = false,
   onMicroWin = () => {},
+  onStageChange = () => {},
   onPhaseComplete = () => {},
   onGameComplete = () => {},
   voiceGuidance = {},
@@ -89,9 +90,15 @@ export default function VakratundaRescueGame({
   }, [isPaused]);
 
   const after = useCallback((ms, fn) => {
-    const id = setTimeout(() => {
-      if (!isPausedRef.current) fn();
-    }, ms);
+    const runWhenReady = () => {
+      if (isPausedRef.current) {
+        const retryId = setTimeout(runWhenReady, 150);
+        timers.current.push(retryId);
+        return;
+      }
+      fn();
+    };
+    const id = setTimeout(runWhenReady, ms);
     timers.current.push(id);
   }, []);
 
@@ -108,16 +115,18 @@ export default function VakratundaRescueGame({
   const resetState = useCallback(() => {
     clearTimers();
     setPhase('intro');
+    onStageChange('intro');
     setSelectedMaterial(null);
     setFilled([false, false, false, false]);
     setHopIndex(-1);
     setFamilyBounce(false);
     setDragging(false);
     setDragPoint(null);
-  }, [clearTimers]);
+  }, [clearTimers, onStageChange]);
 
   const startHopping = useCallback(() => {
     setPhase('hopping');
+    onStageChange('hopping');
 
     POS.slots.forEach((_, i) => {
       after(HOP_DELAY_MS * (i + 1), () => {
@@ -128,6 +137,7 @@ export default function VakratundaRescueGame({
 
     after(HOP_DELAY_MS * (POS.slots.length + 1), () => {
       setPhase('reunion');
+      onStageChange('reunion');
       setHopIndex(POS.slots.length);
       setFamilyBounce(true);
       playSfx?.('frogReunion');
@@ -139,7 +149,7 @@ export default function VakratundaRescueGame({
       onGameComplete?.();
       onPhaseComplete?.();
     });
-  }, [after, onGameComplete, onPhaseComplete, playSceneLine, playSfx, playWord]);
+  }, [after, onGameComplete, onPhaseComplete, onStageChange, playSceneLine, playSfx, playWord]);
 
   useEffect(() => {
     if (!isActive) return;
@@ -147,13 +157,16 @@ export default function VakratundaRescueGame({
     resetState();
     after(700, () => playSceneLine?.('scene10_vak_intro'));
     after(4200, () => playSceneLine?.('scene10_vak_choose'));
-    after(4200, () => setPhase('choose'));
+    after(4200, () => {
+      setPhase('choose');
+      onStageChange('choose');
+    });
 
     return clearTimers;
     // `after` is intentionally stable and pause-aware via ref; re-running this
     // effect on recorder open would wipe in-progress play.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isActive]);
+  }, [isActive, onStageChange]);
 
   useEffect(() => {
     if (!dragging) return;
@@ -276,6 +289,7 @@ export default function VakratundaRescueGame({
             markInteraction();
             setSelectedMaterial(materialKey);
             setPhase('build');
+            onStageChange('build');
             playSfx?.('tap');
             playSceneLine?.('scene10_vak_drag');
           } : undefined}

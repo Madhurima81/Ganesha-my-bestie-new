@@ -13,6 +13,7 @@ import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
 import MessageManager from "../../../../lib/components/scenes/MessageManager";
 import InteractionManager from "../../../../lib/components/scenes/InteractionManager";
 import GameStateManager from "../../../../lib/services/GameStateManager";
+import ProgressManager from "../../../../lib/services/ProgressManager";
 import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
 import useSceneReset from '../../../../lib/hooks/useSceneReset';
 import { getSceneResetConfig } from '../../../../lib/config/SceneResetConfigs';
@@ -225,13 +226,14 @@ const VakratundaGroveContent = ({
   const [revealConfig, setRevealConfig] = useState(null);
 
   const [currentWord, setCurrentWord] = useState(null);
-  const { isAudioOn, toggleAudio, setAudioEnabled } = useAudioPreference();
+  const { isAudioOn, toggleAudio } = useAudioPreference();
   // Ref mirror — always in sync with isAudioOn state but readable synchronously
   // (used in effects/callbacks where React state batching can cause stale reads)
   const audioEnabledRef = useRef(isAudioOn);
   audioEnabledRef.current = isAudioOn;
 
   const [showTapSparkles, setShowTapSparkles] = useState(false);
+  const [vakratundaStage, setVakratundaStage] = useState('intro');
 
   // Pause Menu State — removed: replaced by home icon
   // const [showPauseMenu, setShowPauseMenu] = useState(false);
@@ -376,7 +378,7 @@ const VakratundaGroveContent = ({
       return;
     }
     if (sceneState.phase === PHASES.VAKRATUNDA_GAME) {
-      playGuidanceVoice('scene10_vak_drag');
+      playGuidanceVoice(vakratundaStage === 'build' ? 'scene10_vak_drag' : 'scene10_vak_choose');
       return;
     }
     if (sceneState.phase === PHASES.MAHAKAYA_GAME) {
@@ -386,7 +388,7 @@ const VakratundaGroveContent = ({
     if (showSceneCompletion) {
       playGuidanceVoice('sceneComplete');
     }
-  }, [isAudioOn, playGuidanceVoice, sceneState.phase, sceneState.welcomeShown, showSceneCompletion]);
+  }, [isAudioOn, playGuidanceVoice, sceneState.phase, sceneState.welcomeShown, showSceneCompletion, vakratundaStage]);
 
   const stopAllVoice = useCallback(() => {
     stopVoice();
@@ -798,35 +800,6 @@ const VakratundaGroveContent = ({
             />
             -- End PauseButton -- */}
 
-            {/* DEV TEST BUTTONS - Skip to word overlay */}
-            {sceneState.welcomeShown && !showPowerOverlay && !showCenteredWord && (
-              <div style={{
-                position: 'fixed', top: 10, right: 10, zIndex: 99999,
-                display: 'flex', gap: '6px', flexDirection: 'column'
-              }}>
-                <button
-                  onClick={() => handlePhaseComplete('vakratunda')}
-                  style={{
-                    padding: '6px 12px', fontSize: '11px', fontWeight: 'bold',
-                    background: '#4ECDC4', color: '#fff', border: 'none',
-                    borderRadius: '6px', cursor: 'pointer', opacity: 0.85
-                  }}
-                >
-                  ? Test Vakratunda Reveal
-                </button>
-                <button
-                  onClick={() => handlePhaseComplete('mahakaya')}
-                  style={{
-                    padding: '6px 12px', fontSize: '11px', fontWeight: 'bold',
-                    background: '#FF6B35', color: '#fff', border: 'none',
-                    borderRadius: '6px', cursor: 'pointer', opacity: 0.85
-                  }}
-                >
-                  ? Test Mahakaya Reveal
-                </button>
-              </div>
-            )}
-
             {/* -- Pause blur overlay — REMOVED (replaced by home icon) --
             {showPauseMenu && !isFinalCelebrationActive && (
               <div style={{
@@ -871,7 +844,8 @@ const VakratundaGroveContent = ({
             <VakratundaRescueGame
               isActive={sceneState.phase === PHASES.VAKRATUNDA_GAME}
               hideElements={showCenteredWord || showPowerOverlay || !!revealConfig}
-              onMicroWin={() => {}}
+              onMicroWin={handleElephantMicroWin}
+              onStageChange={setVakratundaStage}
               onPhaseComplete={() => handlePhaseComplete('vakratunda')}
               onGameComplete={() => {}}
               profileName={profileName}
@@ -894,7 +868,7 @@ const VakratundaGroveContent = ({
               isActive={sceneState.phase === PHASES.MAHAKAYA_GAME}
               hideElements={showCenteredWord || showPowerOverlay || !!revealConfig}
               powerGained={sceneState.learnedWords?.vakratunda}
-              onMicroWin={() => {}}
+              onMicroWin={handleElephantMicroWin}
               onPhaseComplete={() => handlePhaseComplete('mahakaya')}
               onGameComplete={() => {}}
               profileName={profileName}
@@ -1089,6 +1063,10 @@ const VakratundaGroveContent = ({
                           chantedVerses: sceneState.chantedVerses || {},
                           timestamp: Date.now()
                         });
+                        ProgressManager.updateSceneCompletion(profileId, zoneId, sceneId, {
+                          completed: true,
+                          stars: 5,
+                        });
                         localStorage.removeItem(`temp_session_${profileId}_${zoneId}_${sceneId}`);
                         SimpleSceneManager.clearCurrentScene();
                       } catch (error) {
@@ -1160,19 +1138,15 @@ const VakratundaGroveContent = ({
               }}
               onComplete={() => onNavigate?.('zone-welcome')}
               onReplay={() => {
-                // Block VO immediately via ref — resetScene() delays 100ms internally so
-                // the welcome VO effect fires after this event handler. Ref ensures it reads false.
-                audioEnabledRef.current = false;
-                setAudioEnabled(false);
-                setVoiceVolume(0); // mute any currently playing VO narration
-                stopAllVoice();    // stop it outright (safe — scene is resetting)
+                stopAllVoice();
                 // Reset all local UI state
                 setShowSceneCompletion(false);
                 setShowMandala(false);
                 setRevealConfig(null);
                 setShowSparkle(null);
                 setShowPowerOverlay(false);
-                setOpeningButtonVisible(true); // Show button straight away (audio is off = no VO to wait for)
+                setOpeningButtonVisible(true);
+                setVakratundaStage('intro');
                 resetScene();
               }}
               onContinue={() => {

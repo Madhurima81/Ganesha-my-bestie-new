@@ -97,6 +97,7 @@ export default function MahakayaRescueGame({
   const ropeStageRef = useRef('detached');
   const phaseRef = useRef('intro');
   const isPausedRef = useRef(isPaused);
+  const completionStartedRef = useRef(false);
   const timers = useRef([]);
   const slip = useRef(null);
   const stageRef = useRef(null);
@@ -114,9 +115,15 @@ export default function MahakayaRescueGame({
   });
 
   const after = useCallback((ms, fn) => {
-    const id = setTimeout(() => {
-      if (!isPausedRef.current) fn();
-    }, ms);
+    const runWhenReady = () => {
+      if (isPausedRef.current) {
+        const retryId = setTimeout(runWhenReady, 150);
+        timers.current.push(retryId);
+        return;
+      }
+      fn();
+    };
+    const id = setTimeout(runWhenReady, ms);
     timers.current.push(id);
   }, []);
 
@@ -141,6 +148,7 @@ export default function MahakayaRescueGame({
     lockedRef.current = 0;
     setDragging(null);
     draggingRef.current = null;
+    completionStartedRef.current = false;
     if (slip.current) {
       clearInterval(slip.current);
       slip.current = null;
@@ -233,6 +241,7 @@ export default function MahakayaRescueGame({
     if (draggingRef.current === 'knob') {
       setKnobPos({ l: lPct, t: tPct });
     } else if (draggingRef.current === 'pull') {
+      if (completionStartedRef.current) return;
       const topPct = POS.ropeAnchor.t + 10;
       const botPct = POS.pullBottom;
       const np = Math.max(0, Math.min(1, (tPct - topPct) / (botPct - topPct)));
@@ -246,6 +255,9 @@ export default function MahakayaRescueGame({
         onMicroWin?.();
       }
       if (np >= 1) {
+        completionStartedRef.current = true;
+        ropeStageRef.current = 'done';
+        setRopeStage('done');
         draggingRef.current = null;
         setDragging(null);
         after(400, () => { playSceneLine?.('scene10_maha_success'); });
