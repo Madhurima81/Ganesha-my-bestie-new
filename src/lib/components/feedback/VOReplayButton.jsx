@@ -15,9 +15,14 @@ import './VOReplayButton.css';
  *
  *   <VOReplayButton getLine={() => lastVoRef.current} speak={speak} />
  *
+ *   // or provide a scene-specific replay callback when replay needs
+ *   // phase-aware timing / voice config / side effects:
+ *   <VOReplayButton onReplay={replayCurrentVoice} />
+ *
  * Props:
  *   getLine  () => string | null   – returns the most recent VO line
  *   speak    function              – useGaneshaVoice().speak
+ *   onReplay function              – optional scene-owned replay handler
  *   position 'top-right' | 'top-left' (default 'top-right')
  *   disabled boolean               – hide when no VO has played yet
  */

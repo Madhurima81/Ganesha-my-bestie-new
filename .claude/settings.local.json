@@ -104,7 +104,9 @@
       "Bash(curl -s http://localhost:5174)",
       "Bash(xargs basename:*)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(node \"/c/Users/MADHUR~1/AppData/Local/Temp/claude/C--Users-Madhurima-Agarwal-ganesha-my-bestie/68b6ddd5-d83d-40ab-8a92-331ec9aed793/scratchpad/fix_mojibake.js\" src/zones/about-me-hut/indian-story/MyIndianStoryGame.jsx)",
+      "Bash(node \"/c/Users/MADHUR~1/AppData/Local/Temp/claude/C--Users-Madhurima-Agarwal-ganesha-my-bestie/68b6ddd5-d83d-40ab-8a92-331ec9aed793/scratchpad/fix_mojibake.js\" src/zones/about-me-hut/indian-story/MyIndianStoryGame.jsx --apply)"
     ]
   }
 }

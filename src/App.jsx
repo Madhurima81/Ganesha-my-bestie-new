@@ -104,7 +104,7 @@ const SCENE_MAPPING = {
 
 const GameStateManagerClass = GameStateManager.constructor;
 
-function MushikaLoader({ progress, ready, onDone }) {
+function MushikaLoader({ progress, ready }) {
   const TOTAL = 3;
   const [landed, setLanded] = useState(0);
   const [pos, setPos] = useState(0);
@@ -118,13 +118,7 @@ function MushikaLoader({ progress, ready, onDone }) {
 
   useEffect(() => {
     if (hopping.current) return;
-    if (pos >= target) {
-      if (landed >= TOTAL) {
-        const t = setTimeout(onDone, 450);
-        return () => clearTimeout(t);
-      }
-      return;
-    }
+    if (pos >= target) return;
 
     hopping.current = true;
     setHopState('pre-hop');
@@ -143,7 +137,7 @@ function MushikaLoader({ progress, ready, onDone }) {
       clearTimeout(t2);
       clearTimeout(t3);
     };
-  }, [pos, target, ready, landed, onDone]);
+  }, [pos, target, ready]);
 
   const [, force] = useState(0);
   useEffect(() => {
@@ -1230,13 +1224,7 @@ chants: result?.chants || result?.chantedVerses || {},
   }
 };
   
-  // Handle profile changes
-  const handleProfileChange = () => {
-    const activeProfile = GameStateManager.getCurrentProfile();
-    setCurrentProfile(activeProfile);
-    initializeApp();
-  };
-  
+
   // Apply scene-specific styles only when rendering scenes
   const applySceneStyles = () => {
     document.body.className = '';
@@ -1316,7 +1304,6 @@ chants: result?.chants || result?.chantedVerses || {},
     <MushikaLoader
       progress={loadingProgress}
       ready={isInitialized}
-      onDone={() => {}}
     />
   </div>
 )}
