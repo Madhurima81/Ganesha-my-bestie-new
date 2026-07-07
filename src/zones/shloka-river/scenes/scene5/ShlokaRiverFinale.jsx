@@ -226,6 +226,7 @@ const ShlokaRiverFinaleContent = ({
   const stageRef = useRef(null);
   const fullShlokaAudioRef = useRef(null);
   const fullShlokaPlaybackTokenRef = useRef(0);
+  const recapSequenceStartedRef = useRef(false);
   const hintTimersRef = useRef([]);
 
   const phase = sceneState.phase || PHASES.INITIAL;
@@ -233,9 +234,17 @@ const ShlokaRiverFinaleContent = ({
   const correctCount = correctSlots.size;
   const currentTargetWord = SHLOKA_WORDS[activeSlotIndex] || null;
   const trayWords = scrambledWords.length ? scrambledWords : SHLOKA_WORDS;
+  const fillCompletedBoard = useCallback(() => {
+    setSlots(SHLOKA_WORDS.map((word) => word.id));
+    setCorrectSlots(new Set(SHLOKA_WORDS.map((_, index) => index)));
+    setWrongSlots(new Set());
+    setActiveSlotIndex(SHLOKA_WORDS.length - 1);
+    setHintLevel(0);
+    setRippleSlot(null);
+  }, []);
 
   const clearHintTimers = useCallback(() => {
-    hintTimersRef.current.forEach((id) => window.clearTimeout(id));
+    hintTimersRef.current.forEach((cancel) => cancel?.());
     hintTimersRef.current = [];
   }, []);
 
@@ -266,8 +275,11 @@ const ShlokaRiverFinaleContent = ({
     toggleAudio();
   }, [isAudioOn, setVoiceVolume, stopAllVoice, toggleAudio]);
 
-  const playFullShloka = useCallback(() => {
-    if (!isAudioOn) return;
+  const playFullShloka = useCallback(({ onWordStart, onComplete } = {}) => {
+    if (!isAudioOn) {
+      onComplete?.();
+      return;
+    }
 
     fullShlokaPlaybackTokenRef.current += 1;
     const playbackToken = fullShlokaPlaybackTokenRef.current;
@@ -278,9 +290,11 @@ const ShlokaRiverFinaleContent = ({
       if (fullShlokaPlaybackTokenRef.current !== playbackToken) return;
       if (index >= FULL_SHLOKA_WORD_AUDIO.length) {
         fullShlokaAudioRef.current = null;
+        onComplete?.();
         return;
       }
 
+      onWordStart?.(index);
       const audio = new Audio(FULL_SHLOKA_WORD_AUDIO[index]);
       audio.volume = 0.95;
       audio.onended = () => playWordAtIndex(index + 1);
@@ -294,7 +308,8 @@ const ShlokaRiverFinaleContent = ({
 
   useEffect(() => {
     if (phase !== PHASES.INITIAL) return;
-    setOpeningButtonVisible(true);
+    recapSequenceStartedRef.current = false;
+    setOpeningButtonVisible(!isAudioOn);
     setScrambledWords(shuffle(SHLOKA_WORDS));
     setSlots(Array(8).fill(null));
     setWrongSlots(new Set());
@@ -305,28 +320,39 @@ const ShlokaRiverFinaleContent = ({
     setRecapIndex(-1);
     setAllComplete(false);
     setStartSailing(false);
-    playVoice?.('openingModalPrompt', undefined, { replayOnReturn: false });
-  }, [phase, playVoice]);
+    if (!isAudioOn) {
+      return undefined;
+    }
+
+    const revealButton = () => setOpeningButtonVisible(true);
+    const revealFallback = safeSetTimeout(revealButton, 9000);
+    playVoice?.('openingModalPrompt', () => {
+      revealFallback?.();
+      revealButton();
+    }, { replayOnReturn: false });
+
+    return () => revealFallback?.();
+  }, [isAudioOn, phase, playVoice, safeSetTimeout]);
 
   const scheduleHints = useCallback((slotIndex) => {
     clearHintTimers();
     if (phase !== PHASES.ARRANGE || slotIndex >= SHLOKA_WORDS.length) return;
 
     hintTimersRef.current = [
-      window.setTimeout(() => {
+      safeSetTimeout(() => {
         setHintLevel(1);
         playVoice?.('hintBoatL1', undefined, { replayOnReturn: false });
       }, 10000),
-      window.setTimeout(() => {
+      safeSetTimeout(() => {
         setHintLevel(2);
         playVoice?.('hintBoatL2', undefined, { replayOnReturn: false });
       }, 20000),
-      window.setTimeout(() => {
+      safeSetTimeout(() => {
         setHintLevel(3);
         playVoice?.('hintBoatL3', undefined, { replayOnReturn: false });
       }, 35000),
     ];
-  }, [clearHintTimers, phase, playVoice]);
+  }, [clearHintTimers, phase, playVoice, safeSetTimeout]);
 
   const markInteraction = useCallback(() => {
     setHintLevel(0);
@@ -349,35 +375,56 @@ const ShlokaRiverFinaleContent = ({
     playVoice?.('arrangeStart', undefined, { replayOnReturn: false });
   };
 
-  const handleTestScene2 = useCallback(() => {
-    clearHintTimers();
-    stopAllVoice();
-    setDraggingWord(null);
-    setDragPos(null);
-    setWrongSlots(new Set());
-    setRippleSlot(null);
-    setAllComplete(false);
-    setStartSailing(true);
-    setRecapIndex(0);
-    sceneActions.updateState({
-      phase: PHASES.RECAP,
-      welcomeShown: true,
-    });
-  }, [clearHintTimers, sceneActions, stopAllVoice]);
-
   const triggerSuccessFlow = useCallback(() => {
     setAllComplete(true);
     sceneActions.updateState({ phase: PHASES.SUCCESS });
+    let recapStarted = false;
+    const startRecap = () => {
+      if (recapStarted) return;
+      recapStarted = true;
+      setStartSailing(true);
+      sceneActions.updateState({ phase: PHASES.RECAP });
+      setRecapIndex(0);
+    };
+    // VO callbacks can fail to fire (missing file, iOS dropping events) — don't strand SUCCESS
+    safeSetTimeout(startRecap, 12000);
     playVoice?.('sceneComplete', () => {
       safeSetTimeout(() => {
-        playVoice?.('recapStart', () => {
-          setStartSailing(true);
-          sceneActions.updateState({ phase: PHASES.RECAP });
-          setRecapIndex(0);
-        }, { replayOnReturn: false });
+        playVoice?.('recapStart', startRecap, { replayOnReturn: false });
       }, 250);
     }, { replayOnReturn: false });
   }, [playVoice, safeSetTimeout, sceneActions]);
+
+  useEffect(() => {
+    if (phase === PHASES.SUCCESS) {
+      fillCompletedBoard();
+      setAllComplete(true);
+      setStartSailing(false);
+      setRecapIndex(-1);
+
+      if (correctSlots.size === SHLOKA_WORDS.length) {
+        return undefined;
+      }
+
+      const resumeRecap = safeSetTimeout(() => {
+        setStartSailing(true);
+        sceneActions.updateState({ phase: PHASES.RECAP });
+        setRecapIndex(0);
+      }, 3000);
+
+      return () => resumeRecap?.();
+    }
+
+    if (phase === PHASES.RECAP) {
+      fillCompletedBoard();
+      setAllComplete(true);
+      setStartSailing(true);
+      setRecapIndex((prev) => (prev < 0 ? 0 : prev));
+      return undefined;
+    }
+
+    return undefined;
+  }, [correctSlots.size, fillCompletedBoard, phase, safeSetTimeout, sceneActions]);
 
   const placeWord = useCallback((wordData, slotIdx) => {
     const isCorrect = SHLOKA_WORDS[slotIdx].id === wordData.id;
@@ -476,17 +523,40 @@ const ShlokaRiverFinaleContent = ({
   };
 
   useEffect(() => {
-    if (phase !== PHASES.RECAP || recapIndex < 0) return;
-    if (recapIndex >= SHLOKA_WORDS.length) {
+    if (phase !== PHASES.RECAP) {
+      recapSequenceStartedRef.current = false;
+      return undefined;
+    }
+
+    const goToFinale = () => {
       safeSetTimeout(() => {
         sceneActions.updateState({ phase: PHASES.FINALE });
       }, 1200);
-      return;
+    };
+
+    if (isAudioOn && !recapSequenceStartedRef.current) {
+      recapSequenceStartedRef.current = true;
+      playFullShloka({
+        onWordStart: (index) => setRecapIndex(index),
+        onComplete: () => {
+          setRecapIndex(SHLOKA_WORDS.length);
+          goToFinale();
+        },
+      });
+      return undefined;
     }
-    if (isAudioOn && recapIndex === 0) {
-      playFullShloka();
+
+    if (!isAudioOn && recapIndex >= 0) {
+      if (recapIndex >= SHLOKA_WORDS.length) {
+        goToFinale();
+        return undefined;
+      }
+
+      const advanceRecap = safeSetTimeout(() => setRecapIndex((prev) => prev + 1), 2000);
+      return () => advanceRecap?.();
     }
-    safeSetTimeout(() => setRecapIndex((prev) => prev + 1), 2000);
+
+    return undefined;
   }, [phase, recapIndex, isAudioOn, playFullShloka, safeSetTimeout, sceneActions]);
 
   useEffect(() => {
@@ -543,18 +613,12 @@ const ShlokaRiverFinaleContent = ({
           <ZoneBadgeButton zoneId="shloka-river" onBack={() => onNavigate?.('zone-welcome')} />
           <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
 
-          {phase !== PHASES.COMPLETE && (
-            <button className="srf-test-scene2-btn" onClick={handleTestScene2}>
-              Test Scene 2
-            </button>
-          )}
-
           {phase === PHASES.INITIAL && (
             <OpeningModal
               zoneId={zoneId}
               sceneId={sceneId}
               onStart={handleStartGame}
-              buttonVisible={openingButtonVisible}
+              showButton={openingButtonVisible}
             />
           )}
 

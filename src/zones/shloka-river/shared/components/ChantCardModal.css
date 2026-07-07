@@ -44,13 +44,13 @@
   position: absolute;
   top: 14px;
   right: 14px;
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
   border: 0;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.92);
   color: var(--chant-accent, #4A9B87);
-  font-size: 28px;
+  font-size: 34px;
   line-height: 1;
   cursor: pointer;
   box-shadow: 0 6px 18px rgba(70, 40, 10, 0.12);
