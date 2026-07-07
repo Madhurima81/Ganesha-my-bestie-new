@@ -1657,3 +1657,33 @@
   font-size: 15px !important;
 }
 
+.start-over-link {
+  margin-top: 6px !important;
+  font-size: 13px !important;
+  opacity: 0.75;
+}
+
+/* Sound on/off toggle — top-right, 60px touch target */
+.welcome-sound-toggle {
+  position: absolute;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  width: 60px;
+  height: 60px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  font-size: 26px;
+  cursor: pointer;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.welcome-sound-toggle:active {
+  transform: scale(0.92);
+}
+

@@ -30,6 +30,17 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
   const [popupData, setPopupData] = useState(null);
   const ambientRef = useRef(null);
   const fadeRef = useRef(null);
+  const [audioOn, setAudioOn] = useState(() => {
+    const v = localStorage.getItem('ganesha_audio_enabled');
+    return v === null ? true : v === 'true';
+  });
+
+  const toggleAudio = () => {
+    const next = !audioOn;
+    localStorage.setItem('ganesha_audio_enabled', String(next));
+    setAudioOn(next);
+    if (next) playUiTap(0.22);
+  };
 
   // Clean initialization
   useEffect(() => {
@@ -40,9 +51,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
     const audio = ambientRef.current;
     if (!audio) return;
 
-    const audioEnabled = localStorage.getItem('ganesha_audio_enabled');
-    const isAudioOn = audioEnabled === null ? true : audioEnabled === 'true';
-    if (!isAudioOn) {
+    if (!audioOn) {
       clearInterval(fadeRef.current);
       audio.pause();
       audio.currentTime = 0;
@@ -85,7 +94,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
       document.removeEventListener('pointerdown', onFirstInteraction);
       document.removeEventListener('visibilitychange', onVisibility);
     };
-  }, [currentProfile, showProfileSelector]);
+  }, [currentProfile, showProfileSelector, audioOn]);
   
   const initializeClean = () => {
     try {
@@ -321,7 +330,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
       }));
       
       const items = allSymbols.map(s => ({
-        id: s.id, name: s.displayName, image: s.image, description: s.description, audio: s.audio
+        id: s.id, name: s.displayName, image: s.image, description: s.description
       }));
 
       const directSymbolId = options?.directSymbolId;
@@ -656,6 +665,13 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
   
   return (
     <div className="clean-welcome-overlay page-transition">
+      <button
+        className="welcome-sound-toggle"
+        onClick={toggleAudio}
+        aria-label={audioOn ? 'Turn sound off' : 'Turn sound on'}
+      >
+        {audioOn ? '🔊' : '🔇'}
+      </button>
       <div className="clean-welcome-content clean-welcome-card">
         <span className="welcome-card-lotus" aria-hidden="true" />
         <ScreenHeader
@@ -718,6 +734,14 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
         <button className="bottom-switch-explorer switch-explorer-link" onClick={handleBackToProfiles}>
           Not {currentProfile.name}? Switch Explorer
         </button>
+        {hasProgress && (
+          <button
+            className="bottom-switch-explorer switch-explorer-link start-over-link"
+            onClick={() => { playUiTap(0.22); setShowNewGameConfirm(true); }}
+          >
+            Start Over
+          </button>
+        )}
       </div>
       
       {showNewGameConfirm && (
@@ -744,7 +768,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
       />
       <audio
         ref={ambientRef}
-        src="/audio/ambient/map%20ambient%20sound.wav"
+        src="/audio/ambient/map%20ambient%20sound.mp3"
         loop
         preload="metadata"
         style={{ display: 'none' }}

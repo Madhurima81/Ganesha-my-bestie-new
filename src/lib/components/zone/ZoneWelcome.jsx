@@ -126,7 +126,6 @@ const ZoneWelcome = ({
   // Tracks which scene whispers the child has heard — drives re-render to hide Ganesha
   const [heardWhispers, setHeardWhispers] = useState({});
   const [confetti, setConfetti] = useState([]);
-  const [activeCardPopSceneId, setActiveCardPopSceneId] = useState(null);
 
   console.log('🏔️ ZoneWelcome rendered for zone:', zoneData?.name);
 
@@ -184,12 +183,6 @@ const ZoneWelcome = ({
     return () => clearTimeout(timer);
   }, []);
 
-  // Add this line:
-
-const [welcomeMessageShown, setWelcomeMessageShown] = useState(false);
-
-// Import the session manager at the top
-
 // ── VO persistence — once-per-profile-per-zone ──
 const _voKey = (kind) => {
   const pid = localStorage.getItem('activeProfileId') || 'default';
@@ -246,7 +239,9 @@ useEffect(() => {
   ).length;
   const isZoneComplete = completedCount >= (zoneData?.scenes?.length || 0) && (zoneData?.scenes?.length || 0) > 0;
 
-  if (isZoneComplete && confetti.length === 0) {
+  // Celebrate zone completion only once per profile per zone
+  if (isZoneComplete && confetti.length === 0 && !hasHeardZoneVo('confetti')) {
+    markZoneVoHeard('confetti');
     // Generate 15-20 confetti pieces
     const confettiCount = Math.floor(Math.random() * 6) + 15;
     const newConfetti = Array.from({ length: confettiCount }, (_, i) => ({
@@ -818,14 +813,6 @@ const getPermanentCompletedCount = () => {
     };
   };
 
-  const triggerActiveCardGaneshaPop = (sceneId) => {
-    if (!sceneId || zoneWelcomeGaneshaState?.activeSceneId !== sceneId) return;
-    setActiveCardPopSceneId(sceneId);
-    window.setTimeout(() => {
-      setActiveCardPopSceneId((prev) => (prev === sceneId ? null : prev));
-    }, 800);
-  };
-
   // ✅ MVP: Only scene 1 is playable in each zone — scenes 2+ are "Coming Soon"
   const MVP_FIRST_SCENE_ONLY = false;
 
@@ -1143,8 +1130,6 @@ const handleReplayIntroStory = () => {
                   '--zone-color': getCardAccentColor()
                 }}
                 onClick={() => handleSceneClick(scene)}
-                onMouseEnter={() => triggerActiveCardGaneshaPop(scene.id)}
-                onTouchStart={() => triggerActiveCardGaneshaPop(scene.id)}
               >
                 {showButterfly && creature && (
                   <div
@@ -1237,7 +1222,6 @@ const handleReplayIntroStory = () => {
                           className="zone-welcome-cta zone-welcome-continue-btn btn-continue"
                           onClick={(e) => {
                             e.stopPropagation();
-                            triggerActiveCardGaneshaPop(scene.id);
                             handleSceneClick(scene, 'continue');
                           }}
                           label="Continue"
@@ -1249,7 +1233,6 @@ const handleReplayIntroStory = () => {
                           className="zone-welcome-cta zone-welcome-replay-btn"
                           onClick={(e) => {
                             e.stopPropagation();
-                            triggerActiveCardGaneshaPop(scene.id);
                             handleSceneClick(scene, 'replay');
                           }}
                           label="↻"
@@ -1264,8 +1247,6 @@ const handleReplayIntroStory = () => {
                         className={`zone-welcome-cta ${status.status}`.trim()}
                         onClick={(e) => {
                           e.stopPropagation();
-                              console.log('Button clicked!', scene.id); // ✨ DEBUG LOG
-                          triggerActiveCardGaneshaPop(scene.id);
                           handleSceneClick(scene);
                         }}
                         label={status.status === 'available' ? 'Start' : status.status === 'completed' ? '↻ Play Again' : 'Locked'}

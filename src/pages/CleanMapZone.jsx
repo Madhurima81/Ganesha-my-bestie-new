@@ -1827,7 +1827,10 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
             alt=""
             aria-hidden="true"
             className="zone-building-sign"
-            style={style}
+            style={{
+              ...style,
+              height: 'auto',
+            }}
           />
         );
       })}
