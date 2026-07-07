@@ -10,6 +10,7 @@ import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
 import MessageManager from "../../../../lib/components/scenes/MessageManager";
 import InteractionManager from "../../../../lib/components/scenes/InteractionManager";
 import GameStateManager from "../../../../lib/services/GameStateManager";
+import ProgressManager from '../../../../lib/services/ProgressManager';
 import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
 import useSceneReset from '../../../../lib/hooks/useSceneReset';
 import { getSceneResetConfig } from '../../../../lib/config/SceneResetConfigs';
@@ -170,8 +171,6 @@ const NirvighnamChantSimplified = ({
 const NirvighnamChantContent = ({
   sceneState, sceneActions, isReload, onComplete, onNavigate, zoneId, sceneId
 }) => {
-  if (!sceneState?.phase) sceneActions.updateState({ phase: PHASES.INITIAL });
-
   const { resetScene } = useSceneReset(sceneActions, zoneId, sceneId, getSceneResetConfig(sceneId));
   const completionModalContent = getCompletionModal(zoneId, sceneId);
   const { miniGesture, triggerMiniGesture } = useMiniGesture();
@@ -189,7 +188,7 @@ const NirvighnamChantContent = ({
   const [showAppDiscovery,     setShowAppDiscovery]     = useState(false);
   const [isRecorderOpen,       setIsRecorderOpen]       = useState(false);
 
-  const { isAudioOn, toggleAudio, setAudioEnabled } = useAudioPreference();
+  const { isAudioOn, toggleAudio } = useAudioPreference();
   const audioEnabledRef = useRef(isAudioOn);
   audioEnabledRef.current = isAudioOn;
 
@@ -216,6 +215,8 @@ const NirvighnamChantContent = ({
   const speechSynthRef = useRef(typeof window !== 'undefined' ? window.speechSynthesis : null);
   const nirvIntroPlayedRef = useRef(false);
   const kuruIntroPlayedRef = useRef(false);
+  const hintRef = useRef(null);
+  const revealTimeoutsRef = useRef([]);
 
   const stopWebSpeech = useCallback(() => {
     try { speechSynthRef.current?.cancel(); } catch {}
@@ -254,18 +255,6 @@ const NirvighnamChantContent = ({
       kurumedevaClaim:     'Asking for help is a superpower.',
       sceneComplete:       'The turtle reached her nest. The bridge is ready. Both powers are yours now.',
     };
-    map.welcome = "Let's help our river friends.";
-    map.scene12_nir_intro = 'The little turtle wants to reach her nest!';
-    map.scene12_nir_drag = 'Drag the obstacles away.';
-    map.nirv_hint = 'Drag the obstacle away.';
-    map.nirv_done = 'You cleared the path! The turtle reached her nest!';
-    map.nirv_meaning = 'Nirvighnam means removing obstacles.';
-    map.scene12_kuru_intro = 'The beaver needs help to cross the river!';
-    map.scene12_kuru_tap = 'Tap each friend to help build the bridge.';
-    map.kuru_hint = 'Tap the glowing friend.';
-    map.kuru_done = 'You asked for help! The bridge is ready!';
-    map.kuru_meaning = 'Kuru Me Deva means please help us.';
-    map.sceneComplete = 'The turtle reached her nest. The bridge is ready. Both powers are yours now.';
     if (map[key]) { speakWebSpeech(map[key], onEnded); return; }
     onEnded?.();
   }, [speakWebSpeech]);
@@ -282,6 +271,12 @@ const NirvighnamChantContent = ({
 
   const stopAllVoice = useCallback(() => { stopVoice(); stopWebSpeech(); }, [stopVoice, stopWebSpeech]);
 
+  useEffect(() => {
+    if (!sceneState?.phase) {
+      sceneActions.updateState({ phase: PHASES.INITIAL });
+    }
+  }, [sceneActions, sceneState?.phase]);
+
   // ── Pause/resume ───────────────────────────────────────────────────────────
   const pauseCelebRef = useRef(null);
   const onPauseHide = useCallback(() => pauseCelebRef.current?.(), []);
@@ -294,7 +289,11 @@ const NirvighnamChantContent = ({
   });
   const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
 
-  useEffect(() => () => clearAllTimeouts(), []);
+  useEffect(() => () => {
+    revealTimeoutsRef.current.forEach((cancel) => cancel?.());
+    revealTimeoutsRef.current = [];
+    clearAllTimeouts();
+  }, [clearAllTimeouts]);
   useEffect(() => () => stopWebSpeech(), [stopWebSpeech]);
 
   // ── SymbolAutoReveal VO ────────────────────────────────────────────────────
@@ -314,18 +313,20 @@ const NirvighnamChantContent = ({
     const appsNow = sceneState.unlockedApps;
 
     if (symbolId === 'nirvighnam') {
-      window.setTimeout(() => {
+      const timer = safeSetTimeout(() => {
         sceneActions.updateState({
           unlockedApps: { ...appsNow, nirvighnam: true },
           phase: PHASES.KURUMEDEVA_GAME,
           kurumedevaGameState: null,
         });
       }, 950);
+      revealTimeoutsRef.current.push(timer);
     } else if (symbolId === 'kurumedeva') {
-      window.setTimeout(() => {
+      const unlockTimer = safeSetTimeout(() => {
         sceneActions.updateState({ unlockedApps: { ...appsNow, kurumedeva: true } });
       }, 950);
-      window.setTimeout(() => handleAppDiscoveryCelebrate(), 1500);
+      const celebrateTimer = safeSetTimeout(() => handleAppDiscoveryCelebrate(), 1500);
+      revealTimeoutsRef.current.push(unlockTimer, celebrateTimer);
     }
   };
 
@@ -362,15 +363,18 @@ const NirvighnamChantContent = ({
         nirvIntroPlayedRef.current = true;
         playGuidanceVoice('scene12_nir_intro', () => {
           playGuidanceVoice('scene12_nir_drag', () => {
-            window.setTimeout(() => startIdleTimer(), 3500);
+            safeSetTimeout(() => startIdleTimer(), 3500);
           });
         });
         return;
       }
       startIdleTimer();
+      return;
     }
-    nirvIntroPlayedRef.current = false;
-  }, [isAudioOn, playGuidanceVoice, sceneState.phase, sceneState.welcomeShown, setCurrentPhase, startIdleTimer]);
+    if (sceneState.phase !== PHASES.NIRVIGHNAM_GAME) {
+      nirvIntroPlayedRef.current = false;
+    }
+  }, [isAudioOn, playGuidanceVoice, sceneState.phase, sceneState.welcomeShown, setCurrentPhase, startIdleTimer, safeSetTimeout]);
 
   useEffect(() => {
     if (sceneState.phase === PHASES.KURUMEDEVA_GAME) {
@@ -379,15 +383,18 @@ const NirvighnamChantContent = ({
         kuruIntroPlayedRef.current = true;
         playGuidanceVoice('scene12_kuru_intro', () => {
           playGuidanceVoice('scene12_kuru_tap', () => {
-            window.setTimeout(() => startIdleTimer(), 3500);
+            safeSetTimeout(() => startIdleTimer(), 3500);
           });
         });
         return;
       }
       startIdleTimer();
+      return;
     }
-    kuruIntroPlayedRef.current = false;
-  }, [isAudioOn, playGuidanceVoice, sceneState.phase, setCurrentPhase, startIdleTimer]);
+    if (sceneState.phase !== PHASES.KURUMEDEVA_GAME) {
+      kuruIntroPlayedRef.current = false;
+    }
+  }, [isAudioOn, playGuidanceVoice, sceneState.phase, setCurrentPhase, startIdleTimer, safeSetTimeout]);
 
   // ── Reload: clear mini-game states ────────────────────────────────────────
   useEffect(() => {
@@ -427,13 +434,11 @@ const NirvighnamChantContent = ({
       });
     };
 
-    if (isAudioOn) {
-      window.setTimeout(() => triggerReveal(), 400);
-    } else {
-      window.setTimeout(() => triggerReveal(), 1500);
-    }
+    const revealDelay = isAudioOn ? 400 : 1500;
+    const revealTimer = safeSetTimeout(() => triggerReveal(), revealDelay);
+    revealTimeoutsRef.current.push(revealTimer);
   }, [sceneState, sceneActions, zoneId, sceneId, isAudioOn, playChime, playGuidanceVoice,
-      stopIdleTimer, setCurrentPhase, triggerMiniGesture]);
+      stopIdleTimer, setCurrentPhase, triggerMiniGesture, safeSetTimeout]);
 
   const handleMicroWin = useCallback(() => {
     triggerMiniGesture('thumbsup', 'item', 1200);
@@ -482,6 +487,8 @@ const NirvighnamChantContent = ({
                 onGameComplete={() => {}}
                 voiceGuidance={{ playVoice: playGuidanceVoice, stopVoice: stopAllVoice }}
                 isPaused={isRecorderOpen}
+                savedGameState={sceneState.nirvighnamGameState}
+                onSaveGameState={(gameState) => handleSaveComponentState('nirvighnamGame', gameState)}
               />
 
               {/* ── KURUMEDEVA GAME — tap friends ── */}
@@ -493,6 +500,8 @@ const NirvighnamChantContent = ({
                 onGameComplete={() => {}}
                 voiceGuidance={{ playVoice: playGuidanceVoice, stopVoice: stopAllVoice }}
                 isPaused={isRecorderOpen}
+                savedGameState={sceneState.kurumedevaGameState}
+                onSaveGameState={(gameState) => handleSaveComponentState('kurumedevaGame', gameState)}
               />
 
               {showTapSparkles && (
@@ -571,6 +580,10 @@ const NirvighnamChantContent = ({
                             chantedVerses: sceneState.chantedVerses || {},
                             timestamp: Date.now()
                           });
+                          ProgressManager.updateSceneCompletion(profileId, zoneId, sceneId, {
+                            completed: true,
+                            stars: 5,
+                          });
                           localStorage.removeItem(`temp_session_${profileId}_${zoneId}_${sceneId}`);
                           SimpleSceneManager.clearCurrentScene();
                         } catch (e) { console.error('Error saving game state:', e); }
@@ -633,9 +646,6 @@ const NirvighnamChantContent = ({
               completionData={{ stars: 5, syllables: sceneState.learnedSyllables, words: sceneState.learnedWords, completed: true }}
               onComplete={() => onNavigate?.('zone-welcome')}
               onReplay={() => {
-                audioEnabledRef.current = false;
-                setAudioEnabled(false);
-                setVoiceVolume(0);
                 stopAllVoice();
                 setShowSceneCompletion(false);
                 setShowMandala(false);
@@ -649,7 +659,7 @@ const NirvighnamChantContent = ({
             />
 
             <ProgressiveHintSystem
-              ref={useRef(null)}
+              ref={hintRef}
               sceneId={sceneId}
               sceneState={sceneState}
               hintConfigs={[]}

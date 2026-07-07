@@ -107,8 +107,10 @@ export default function KurumedevaGame({
   onGameComplete = () => {},
   voiceGuidance = {},
   isPaused = false,
+  savedGameState = null,
+  onSaveGameState = null,
 }) {
-  const { playVoice: playSceneLine } = voiceGuidance;
+  const { playVoice: playSceneLine, stopVoice: stopSceneVoice } = voiceGuidance;
   const [friendStep, setFriendStep] = useState(0);
   const [bridgeStep, setBridgeStep] = useState(0);
   const [phase, setPhase] = useState('play');
@@ -144,6 +146,34 @@ export default function KurumedevaGame({
     onPhaseCompleteRef.current = onPhaseComplete;
     onGameCompleteRef.current = onGameComplete;
   }, [onPhaseComplete, onGameComplete]);
+
+  useEffect(() => {
+    if (!isActive || !savedGameState) return;
+    setFriendStep(savedGameState.friendStep || 0);
+    setBridgeStep(savedGameState.bridgeStep || 0);
+    setPhase(savedGameState.phase || 'play');
+    setBeaverPos(savedGameState.beaverPos || BEAVER_PATH[0]);
+    setLitCount(savedGameState.litCount || 0);
+    setTappedId(savedGameState.tappedId || null);
+    setFriendImgStates(savedGameState.friendImgStates || FRIENDS.map(() => 'carry'));
+    setObjectPhases(savedGameState.objectPhases || FRIENDS.map(() => 'idle'));
+    setFriendPositions(savedGameState.friendPositions || FRIENDS.map((friend) => ({ l: friend.l, t: friend.t })));
+  }, [isActive, savedGameState]);
+
+  useEffect(() => {
+    if (!isActive || !onSaveGameState) return;
+    onSaveGameState({
+      friendStep,
+      bridgeStep,
+      phase,
+      beaverPos,
+      litCount,
+      tappedId,
+      friendImgStates,
+      objectPhases,
+      friendPositions,
+    });
+  }, [isActive, onSaveGameState, friendStep, bridgeStep, phase, beaverPos, litCount, tappedId, friendImgStates, objectPhases, friendPositions]);
 
   phaseRef.current = phase;
 
@@ -205,6 +235,7 @@ export default function KurumedevaGame({
     if (isPaused || phaseRef.current !== 'play') return;
     if (friendIndex !== friendStep) return;
     if (friendImgStates[friendIndex] !== 'carry') return;
+    stopSceneVoice?.();
     markInteraction();
 
     const friend = FRIENDS[friendIndex];
@@ -253,7 +284,7 @@ export default function KurumedevaGame({
         });
       }
     });
-  }, [friendStep, friendImgStates, isPaused, markInteraction, moveFriendOffScreen, onMicroWin, safeAfter]);
+  }, [friendStep, friendImgStates, isPaused, markInteraction, moveFriendOffScreen, onMicroWin, safeAfter, stopSceneVoice]);
 
   const completeAfterSuccess = useCallback(() => {
     if (!successVoDoneRef.current || !crossingDoneRef.current || completionScheduledRef.current) return;
@@ -272,6 +303,13 @@ export default function KurumedevaGame({
       playSceneLine('kuru_done', () => {
         successVoDoneRef.current = true;
         completeAfterSuccess();
+      });
+      // iOS Safari can silently drop utterance onend/onerror — don't let completion hang on VO
+      safeAfter(8000, () => {
+        if (!successVoDoneRef.current) {
+          successVoDoneRef.current = true;
+          completeAfterSuccess();
+        }
       });
     } else {
       successVoDoneRef.current = true;
@@ -307,7 +345,7 @@ export default function KurumedevaGame({
           onSyllableLit={() => {}}
         />
 
-        {false && phase === 'play' && currentFriend && (
+        {phase === 'play' && currentFriend && (
           <p className="kuru-hint">
             {(hintLevel === 0 || hintLevel === 1) && 'Tap the glowing friend.'}
             {hintLevel === 2 && 'Each friend brings a bridge piece.'}
@@ -402,8 +440,8 @@ export default function KurumedevaGame({
                 ${isWaiting ? 'kuru-friend--waiting' : ''}
                 ${isHelped ? 'kuru-friend--helped' : ''}
                 ${isCrossing ? 'kuru-friend--crossing' : ''}
-                ${isCurrent && imgState === 'carry' && hintLevel >= 999 ? 'pulse' : ''}
-                ${isCurrent && imgState === 'carry' && hintLevel >= 999 ? 'hint-glow' : ''}
+                ${isCurrent && imgState === 'carry' && hintLevel >= 1 ? 'pulse' : ''}
+                ${isCurrent && imgState === 'carry' && hintLevel >= 2 ? 'hint-glow' : ''}
               `}
               style={{
                 left: `${pos.l + (index === 0 ? TURTLE_RIVER_SHIFT : 0)}%`,

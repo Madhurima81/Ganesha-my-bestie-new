@@ -36,8 +36,10 @@ export default function NirvighnamGame({
   onGameComplete = () => {},
   voiceGuidance = {},
   isPaused = false,
+  savedGameState = null,
+  onSaveGameState = null,
 }) {
-  const { playVoice: playSceneLine } = voiceGuidance;
+  const { playVoice: playSceneLine, stopVoice: stopSceneVoice } = voiceGuidance;
   const [phase, setPhase] = useState('play');
   const [cleared, setCleared] = useState([]); // array of cleared obstacle ids
   const [litCount, setLitCount] = useState(0);
@@ -76,6 +78,26 @@ export default function NirvighnamGame({
     onPhaseCompleteRef.current = onPhaseComplete;
     onGameCompleteRef.current = onGameComplete;
   }, [onPhaseComplete, onGameComplete]);
+
+  useEffect(() => {
+    if (!isActive || !savedGameState) return;
+    setPhase(savedGameState.phase || 'play');
+    setCleared(savedGameState.cleared || []);
+    setLitCount(savedGameState.litCount || 0);
+    setTurtlePos(savedGameState.turtlePos || TURTLE_START);
+    setIsSwimming(!!savedGameState.isSwimming);
+  }, [isActive, savedGameState]);
+
+  useEffect(() => {
+    if (!isActive || !onSaveGameState) return;
+    onSaveGameState({
+      phase,
+      cleared,
+      litCount,
+      turtlePos,
+      isSwimming,
+    });
+  }, [isActive, onSaveGameState, phase, cleared, litCount, turtlePos, isSwimming]);
 
   // Reset on deactivate
   useEffect(() => {
@@ -131,6 +153,8 @@ export default function NirvighnamGame({
     if (phaseRef.current !== 'play' || isPaused) return;
     if (cleared.some(c => c.id === obstacleId)) return;
     e.preventDefault();
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    stopSceneVoice?.();
     markInteraction();
     dragStartRef.current = {
       clientX: e.clientX,
@@ -139,7 +163,7 @@ export default function NirvighnamGame({
     };
     setDragging(obstacleId);
     setDragOffset({ x: 0, y: 0 });
-  }, [cleared, isPaused, markInteraction]);
+  }, [cleared, isPaused, markInteraction, stopSceneVoice]);
 
   // Move drag
   useEffect(() => {
@@ -167,6 +191,8 @@ export default function NirvighnamGame({
         const obstacleId = dragStartRef.current.obstacleId;
         const dir = dragOffset.x < 0 ? 'left' : 'right';
         setCleared(prev => [...prev, { id: obstacleId, dir }]);
+      } else {
+        setDragOffset({ x: 0, y: 0 });
       }
 
       setDragging(null);
@@ -207,6 +233,14 @@ export default function NirvighnamGame({
         successVoDoneRef.current = true;
         completeAfterSuccess();
       });
+      // iOS Safari can silently drop utterance onend/onerror — don't let completion hang on VO
+      const voFallback = window.setTimeout(() => {
+        if (!successVoDoneRef.current) {
+          successVoDoneRef.current = true;
+          completeAfterSuccess();
+        }
+      }, 8000);
+      timers.push(voFallback);
     } else {
       successVoDoneRef.current = true;
     }
@@ -246,7 +280,7 @@ export default function NirvighnamGame({
           onSyllableLit={() => {}}
         />
 
-        {false && phase === 'play' && (
+        {phase === 'play' && (
           <p className="nirv-hint">
             {(hintLevel === 0 || hintLevel === 1) && 'Drag the obstacle away.'}
             {hintLevel === 2 && 'Clear the next obstacle.'}
@@ -303,7 +337,7 @@ export default function NirvighnamGame({
           return (
             <div
               key={obs.id}
-              className={`nirv-layer nirv-obstacle ${isCleared ? `is-cleared-${clearData.dir}` : ''} ${isBeingDragged ? 'is-dragging' : ''} ${phase === 'play' && !isCleared ? 'is-tappable' : ''} ${phase === 'play' && !isCleared && obs.id === OBSTACLES[cleared.length]?.id && hintLevel >= 999 ? 'pulse' : ''} ${phase === 'play' && !isCleared && obs.id === OBSTACLES[cleared.length]?.id && hintLevel >= 999 ? 'hint-glow' : ''}`}
+              className={`nirv-layer nirv-obstacle ${isCleared ? `is-cleared-${clearData.dir}` : ''} ${isBeingDragged ? 'is-dragging' : ''} ${phase === 'play' && !isCleared ? 'is-tappable' : ''} ${phase === 'play' && !isCleared && obs.id === OBSTACLES[cleared.length]?.id && hintLevel >= 1 ? 'pulse' : ''} ${phase === 'play' && !isCleared && obs.id === OBSTACLES[cleared.length]?.id && hintLevel >= 2 ? 'hint-glow' : ''}`}
               style={{
                 left: `${obs.l + offsetX}%`,
                 top: `${obs.t + offsetY}%`,
