@@ -82,11 +82,26 @@ export default function SuryakotiGame({
     level3Delay: 22500,
   });
 
-  const initCanvas = useCallback(() => {
+  // preserve=true (resize/rotation mid-play): rebuild the overlay at the new
+  // geometry but keep cleared cells and game phase instead of restarting.
+  const initCanvas = useCallback((preserve = false) => {
     const cv = canvasRef.current;
     if (!cv) return;
     const rect = cv.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
+
+    if (preserve && completedRef.current) {
+      // Already cleared — keep the overlay gone, don't repaint darkness
+      cv.width = rect.width;
+      cv.height = rect.height;
+      cv.style.pointerEvents = 'none';
+      cv.getContext('2d')?.clearRect(0, 0, cv.width, cv.height);
+      return;
+    }
+
+    const prevCleared = preserve && gridRef.current.length
+      ? gridRef.current.map((cell) => cell.cleared)
+      : null;
 
     cv.width = rect.width;
     cv.height = rect.height;
@@ -158,37 +173,50 @@ export default function SuryakotiGame({
     ctx.globalCompositeOperation = 'destination-out';
 
     let total = 0;
+    let done = 0;
     const grid = [];
+    const scratchRadius = cv.width * SCRATCH_R;
     for (let gy = 0; gy < GRID; gy += 1) {
       for (let gx = 0; gx < GRID; gx += 1) {
         const px = szx - szr + gx * ((szr * 2) / GRID);
         const py = szy - szr + gy * ((szr * 2) / GRID);
         const inside = Math.hypot(px - szx, py - szy) < szr;
-        grid.push({ px, py, cleared: false, inside });
+        const cleared = Boolean(prevCleared?.[grid.length]) && inside;
+        grid.push({ px, py, cleared, inside });
         if (inside) total += 1;
+        if (cleared) {
+          done += 1;
+          // Re-punch previously cleared cells at the new geometry
+          ctx.beginPath();
+          ctx.arc(px, py, scratchRadius, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
     }
 
     gridRef.current = grid;
     totalRef.current = total;
-    doneRef.current = 0;
-    completedRef.current = false;
-    doneAnnouncedRef.current = false;
-    firstInteractionSentRef.current = false;
-    successVoDoneRef.current = false;
-    hopDoneRef.current = false;
-    completionScheduledRef.current = false;
+    doneRef.current = done;
+
+    if (!preserve) {
+      completedRef.current = false;
+      doneAnnouncedRef.current = false;
+      firstInteractionSentRef.current = false;
+      successVoDoneRef.current = false;
+      hopDoneRef.current = false;
+      completionScheduledRef.current = false;
+      setBunnyPos(POS.bunny);
+      setBunnyHopping(false);
+      setPhase('play');
+      setLitCount(0);
+    }
     setCanvasReady(true);
-    setBunnyPos(POS.bunny);
-    setBunnyHopping(false);
-    setPhase('play');
-    setLitCount(0);
   }, []);
 
   useEffect(() => {
     if (!isActive) return undefined;
-    const timer = window.setTimeout(initCanvas, 80);
-    const onResize = () => window.setTimeout(initCanvas, 0);
+    const timer = window.setTimeout(() => initCanvas(false), 80);
+    const onResize = () => window.setTimeout(() => initCanvas(true), 0);
     window.addEventListener('resize', onResize);
     return () => {
       window.clearTimeout(timer);
@@ -312,6 +340,14 @@ export default function SuryakotiGame({
         successVoDoneRef.current = true;
         completeAfterSuccess();
       });
+      // iOS Safari can silently drop utterance onend/onerror — don't let completion hang on VO
+      const voFallback = window.setTimeout(() => {
+        if (!successVoDoneRef.current) {
+          successVoDoneRef.current = true;
+          completeAfterSuccess();
+        }
+      }, 8000);
+      timers.push(voFallback);
     } else {
       successVoDoneRef.current = true;
     }

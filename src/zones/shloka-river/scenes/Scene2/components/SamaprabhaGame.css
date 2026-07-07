@@ -123,6 +123,19 @@
   animation: samaNextDotPulse 1.4s ease-in-out infinite;
 }
 
+/* Invisible extended hit area — visual dot stays small but the touch
+   target meets the ≥60px child UX rule */
+.sama-snap-dot.is-next::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 64px;
+  height: 64px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+
 .sama-snap-dot.is-lit {
   background: rgba(255,220,80,0.55);
   border-color: rgba(255,220,80,0.8);
@@ -140,6 +153,14 @@
   background: rgba(255,230,100,0.8);
   border-color: rgba(255,230,100,0.95);
   box-shadow: 0 0 18px rgba(255,211,90,0.7);
+}
+
+/* Escalated idle hint — stronger glow + bigger pulse on the next dot */
+.sama-snap-dot.is-next.is-hint {
+  background: rgba(255,230,100,0.55);
+  border-color: rgba(255,230,100,0.95);
+  box-shadow: 0 0 22px rgba(255,220,80,0.85);
+  animation-duration: 0.9s;
 }
 
 @keyframes samaNextDotPulse {
