@@ -309,12 +309,22 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const { speak, stop: stopSpokenVoice, isSpeaking } = useGaneshaVoice();
   const isSpeakingRef = useRef(false);
   const isAudioOnRef = useRef(isAudioOn);
+  const latestSceneStateRef = useRef(sceneState);
+  const wish1TapCountRef = useRef(sceneState?.wish1Taps || 0);
+  const wish1CompletionQueuedRef = useRef(false);
   useEffect(() => {
     isSpeakingRef.current = isSpeaking;
   }, [isSpeaking]);
   useEffect(() => {
     isAudioOnRef.current = isAudioOn;
   }, [isAudioOn]);
+  useEffect(() => {
+    latestSceneStateRef.current = sceneState;
+    wish1TapCountRef.current = sceneState?.wish1Taps || 0;
+    if (sceneState?.gamePhase !== 'wish1-active') {
+      wish1CompletionQueuedRef.current = false;
+    }
+  }, [sceneState]);
   useEffect(() => { startIdleTimer(); return () => stopIdleTimer(); }, [startIdleTimer, stopIdleTimer]);
   useEffect(() => { setCurrentPhase(sceneState?.gamePhase ?? null); }, [sceneState?.gamePhase, setCurrentPhase]);
   useEffect(() => {
@@ -474,8 +484,10 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   useEffect(() => {
     window.addEventListener('beforeunload', hardStopSceneAudio);
+    window.addEventListener('pagehide', hardStopSceneAudio);
     return () => {
       window.removeEventListener('beforeunload', hardStopSceneAudio);
+      window.removeEventListener('pagehide', hardStopSceneAudio);
     };
   }, [hardStopSceneAudio]);
 
@@ -617,7 +629,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     safeSetTimeout(() => {
       speakLine(`${cheer} ${completionLine}`, { moment: 'celebration' });
     }, startDelayMs);
-  }, [getCompletionCheer, safeSetTimeout]);
+  }, [getCompletionCheer, safeSetTimeout, speakLine]);
 
   // --- RELOAD DETECTION & RESTORATION ---
   // Runs once on mount. For each saved phase: reset any partial state,
@@ -688,13 +700,15 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       return;
     }
     if (gamePhase === 'wish2-intro') {
-      phaseVoiceRef.current.wish2Intro = true;
-      safeSetTimeout(() => { speakLine(VOICE_LINES.wish2Intro, { moment: 'story' }); }, 500);
+      phaseVoiceRef.current.wish2Active = true;
+      sceneActions.updateState({ gamePhase: 'wish2-active', wish2Taps: 0, bowlStates: [false, false, false], wish2PlateFoods: [null, null, null], wish2FoodPool: [...WISH2_FOOD_KEYS], wish2FinalMoment: false });
+      safeSetTimeout(() => { speakLine(VOICE_LINES.wish2Active, { moment: 'encouragement' }); }, 500);
       return;
     }
     if (gamePhase === 'wish3-intro') {
-      phaseVoiceRef.current.wish3Intro = true;
-      safeSetTimeout(() => { speakLine(VOICE_LINES.wish3Intro, { moment: 'story' }); }, 500);
+      phaseVoiceRef.current.wish3Active = true;
+      sceneActions.updateState({ gamePhase: 'wish3-active', wish3Taps: 0, parkStates: [false, false, false], wish3FinalMoment: false });
+      safeSetTimeout(() => { speakLine(VOICE_LINES.wish3Active, { moment: 'encouragement' }); }, 500);
       return;
     }
 
@@ -971,7 +985,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       ) {
         speakLine(line, { moment: 'encouragement' });
       }
-    }, 700);
+    }, 1500);
     return () => clearTimeout(retry);
   }, [isReload, returnHintNonce, isAudioOn, sceneState.gamePhase, sceneState.showingCompletionScreen, showDrawingPad, getResumeVoiceLine, getPhaseReminderLine]);
 
@@ -990,7 +1004,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       idleVoFlagsRef.current.wish1Level3 = false;
       return;
     }
-    if (!isAudioOn || sceneState.showingCompletionScreen || showDrawingPad) return;
+    if (sceneState.showingCompletionScreen || showDrawingPad) return;
 
     setWish1IdleLevel(0);
     idleVoFlagsRef.current.wish1Level2 = false;
@@ -1058,7 +1072,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       idleVoFlagsRef.current.childLevel3 = false;
       return;
     }
-    if (!isAudioOn || sceneState.showingCompletionScreen || showDrawingPad) return;
+    if (sceneState.showingCompletionScreen || showDrawingPad) return;
 
     const setLevel = isWish2 ? setWish2IdleLevel : isWish3 ? setWish3IdleLevel : setChildIdleLevel;
     const voL2Flag = isWish2 ? 'wish2Level2' : isWish3 ? 'wish3Level2' : 'childLevel2';
@@ -1132,17 +1146,21 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleWish1Tap = ({ fromBubble = false } = {}) => {
-    if (sceneState.wish1Taps >= 3) return;
+    if (wish1CompletionQueuedRef.current) return;
+    const currentTaps = wish1TapCountRef.current;
+    if (currentTaps >= 3) return;
     markInteraction();
     if (!fromBubble) {
       interruptCurrentVoice();
       playUiTap();
     }
     triggerMiniGesture('center', 1500);
-    const newTaps = sceneState.wish1Taps + 1;
+    const newTaps = currentTaps + 1;
+    wish1TapCountRef.current = newTaps;
     sceneActions.updateState({ wish1Taps: newTaps });
 
     if (newTaps >= 3) {
+      wish1CompletionQueuedRef.current = true;
       const discovery = { name: 'Kindness', image: kindnessHeaderIcon };
       safeSetTimeout(() => {
         triggerDiscoveryFly(discovery);
@@ -1158,8 +1176,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
         wish1FinalMoment: true
       });
       safeSetTimeout(() => {
+        const currentState = latestSceneStateRef.current || sceneState;
         sceneActions.updateState({
-          storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, discovery)
+          storyDiscoveries: appendUniqueDiscovery(currentState.storyDiscoveries, discovery)
         });
       }, (fromBubble ? WISH1_FINAL_ICON_DELAY_MS : DISCOVERY_FLY_START_DELAY_MS) + DISCOVERY_CENTER_REACH_MS);
       queueCompletionWithCheer(VOICE_LINES.wish1Complete, {
@@ -1200,18 +1219,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       }
       handleWish1Tap({ fromBubble: true });
     } else {
-      // Unkind action: shake, dim, play angry word, keep bubble
+      // Unkind action: shake, dim, and redirect gently without repeating the harmful word.
       setShakingBubbleId(bubble.id);
-
-      // Play angry word based on action type
-      const angryWords = {
-        angry: 'Angry',
-        fight: 'Fight',
-        hit: 'Hit',
-        teasing: 'Teasing'
-      };
-      const word = angryWords[bubble.actionKey] || 'No';
-      speakLine(word, { moment: 'encouragement' });
+      speakLine("Oh no, that's not kind. Look for a helping bubble.", { moment: 'encouragement' });
 
       // Remove shake class after 200ms (animation + dim duration)
       safeSetTimeout(() => {
@@ -1451,8 +1461,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
         wish2FinalMoment: true
       });
       safeSetTimeout(() => {
+        const currentState = latestSceneStateRef.current || sceneState;
         sceneActions.updateState({
-          storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, discovery)
+          storyDiscoveries: appendUniqueDiscovery(currentState.storyDiscoveries, discovery)
         });
       }, DISCOVERY_FLY_START_DELAY_MS + DISCOVERY_CENTER_REACH_MS);
       safeSetTimeout(() => {
@@ -1498,8 +1509,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
         wish3FinalMoment: true
       });
       safeSetTimeout(() => {
+        const currentState = latestSceneStateRef.current || sceneState;
         sceneActions.updateState({
-          storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, discovery)
+          storyDiscoveries: appendUniqueDiscovery(currentState.storyDiscoveries, discovery)
         });
       }, DISCOVERY_FLY_START_DELAY_MS + DISCOVERY_CENTER_REACH_MS);
       safeSetTimeout(() => { sceneActions.updateState({ gamePhase: 'all-wishes-complete', wish3FinalMoment: false }); }, 5600 + PHASE_BREATHER_MS);
@@ -1536,8 +1548,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
         wish3FinalMoment: true
       });
       safeSetTimeout(() => {
+        const currentState = latestSceneStateRef.current || sceneState;
         sceneActions.updateState({
-          storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, discovery)
+          storyDiscoveries: appendUniqueDiscovery(currentState.storyDiscoveries, discovery)
         });
       }, DISCOVERY_FLY_START_DELAY_MS + DISCOVERY_CENTER_REACH_MS);
       safeSetTimeout(() => {
@@ -2324,14 +2337,23 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             starsEarned={sceneState.stars}
             totalStars={3}
             nextSceneName="About Me Hut Complete"
-            childName="dream maker"
+            childName={profileDisplayName}
             isFinalScene={false}
             completionData={{
               completed: true,
               stars: sceneState.stars || 3
             }}
-            onContinue={() => { playUiTap(); if (onNavigate) onNavigate('my-indian-story'); else if (onComplete) onComplete(); }}
-            onExploreZones={() => { playUiTap(); if (onNavigate) onNavigate('zones'); }}
+            onContinue={() => {
+              playUiTap();
+              hardStopSceneAudio();
+              if (onNavigate) onNavigate('my-indian-story');
+              else if (onComplete) onComplete();
+            }}
+            onExploreZones={() => {
+              playUiTap();
+              hardStopSceneAudio();
+              if (onNavigate) onNavigate('zones');
+            }}
             onReplay={() => {
               playUiTap();
               hardStopSceneAudio();
@@ -2364,8 +2386,17 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 completed: false
               });
             }}
-            onBackToMap={() => { if (onNavigate) onNavigate('zone-welcome'); else if (onBack) onBack(); }}
-            onHome={() => { if (onNavigate) onNavigate('home'); }}
+            onBackToMap={() => {
+              playUiTap();
+              hardStopSceneAudio();
+              if (onNavigate) onNavigate('zone-welcome');
+              else if (onBack) onBack();
+            }}
+            onHome={() => {
+              playUiTap();
+              hardStopSceneAudio();
+              if (onNavigate) onNavigate('home');
+            }}
           />
         </div>
       )}

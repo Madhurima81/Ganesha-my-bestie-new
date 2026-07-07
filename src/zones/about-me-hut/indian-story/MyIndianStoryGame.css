@@ -1,7 +1,7 @@
 /* -----------------------------------------------
-   MY INDIAN STORY GAME — About Me Hut, Game 4
+   MY INDIAN STORY GAME â€” About Me Hut, Game 4
    About Me Hut palette: warm brown + coral
-   Fonts: Baloo 2 (headings) · Nunito (body)
+   Fonts: Baloo 2 (headings) Â· Nunito (body)
 ----------------------------------------------- */
 
 :root {
@@ -24,7 +24,7 @@
   overflow-x: hidden;
 }
 
-/* Background image — fixed behind all content */
+/* Background image â€” fixed behind all content */
 .mis-background {
   position: fixed;
   top: 0;
@@ -72,8 +72,8 @@
   opacity: 0;
   transition: opacity 0.2s;
 }
-/* Show hint on first render only — CSS approach */
-/* -- BACK BUTTON — handled by BackToMapButton component -- */
+/* Show hint on first render only â€” CSS approach */
+/* -- BACK BUTTON â€” handled by BackToMapButton component -- */
 
 /* -- PROGRESS DOTS -- */
 .mis-progress {
@@ -181,7 +181,7 @@
 }
 .mis-spot:active { transform: scale(0.9); }
 
-/* Hidden state — glowing ? button */
+/* Hidden state â€” glowing ? button */
 .mis-spot.hidden .mis-spot-question {
   width: 72px;
   height: 72px;
@@ -241,7 +241,7 @@
   margin-top: 2px;
 }
 
-/* Fact bubble — appears when spot tapped */
+/* Fact bubble â€” appears when spot tapped */
 .mis-spot-fact-bubble {
   background: #fff;
   border: 2px solid var(--hut-gold);
@@ -433,6 +433,12 @@
   transition: all 0.2s;
   min-height: 90px;
 }
+.mis-fest-guess-card {
+  width: clamp(115px, 25vw, 198px);
+  height: clamp(115px, 25vw, 198px);
+  min-height: 90px;
+  padding: 20px;
+}
 .mis-guess-btn:active { transform: scale(0.95); }
 .mis-guess-btn.ganesha-option {
   border-color: rgba(255,215,0,0.4);
@@ -510,7 +516,7 @@
   overflow: visible;
 }
 
-/* Season colour bands on arc — subtle backgrounds */
+/* Season colour bands on arc â€” subtle backgrounds */
 .mis-wheel-arc::before {
   content: '';
   position: absolute;
@@ -1154,8 +1160,45 @@
   line-height: 1.1;
 }
 
+.mis-india-map-wrap {
+  position: relative;
+  width: min(68vw, 520px);
+  aspect-ratio: 536 / 583;
+  margin: 0 auto;
+  overflow: visible;
+}
+
 @media (max-width: 900px) {
   .mis-region-pin-label {
     font-size: clamp(0.7rem, 1.5vw, 0.85rem);
+  }
+}
+
+@media (max-height: 700px) and (orientation: landscape) {
+  .mis-wrapper {
+    padding-bottom: 28px;
+  }
+
+  .mis-guess-grid {
+    gap: 10px;
+  }
+
+  .mis-guess-btn,
+  .mis-fest-guess-card {
+    min-height: 72px;
+    padding: 12px 8px !important;
+  }
+
+  .mis-fest-guess-card {
+    width: clamp(96px, 22vw, 198px) !important;
+    height: clamp(96px, 22vw, 198px) !important;
+  }
+
+  .mis-guess-emoji {
+    font-size: 30px;
+  }
+
+  .mis-guess-label {
+    font-size: 12px;
   }
 }

@@ -86,7 +86,7 @@ const STEPS = {
   COMPLETE: 'complete',
 };
 
-const STORAGE_KEY = 'gmb_indian_story';
+const STORAGE_KEY_BASE = 'gmb_indian_story';
 const RESUME_DELAY_MS = 3000;
 const OPENING_VO_VOLUME = 0.55;
 const STEP_VO_DEDUPE_MS = 5000;
@@ -98,6 +98,8 @@ const wasStepVoSpokenRecently = (key) => {
   RECENT_STEP_VO.set(key, now);
   return now - lastSpokenAt < STEP_VO_DEDUPE_MS;
 };
+
+const getStoryStorageKey = (profileId) => `${STORAGE_KEY_BASE}_${profileId || 'default'}`;
 const RESUMABLE_STEPS = new Set([
   STEPS.GANESHA_HOME,
   STEPS.CHILD_HOME,
@@ -122,29 +124,29 @@ const REGION_ICONS = {
 };
 
 const INDIA_REGIONS = [
-  { id: 'north',     label: 'North India',                   states: 'Punjab, Haryana, UP, Delhi',              emoji: '??', icon: northIcon,     color: '#7B9FD4', mapTop: '18%', mapLeft: '32%', ganeshaFact: 'In Varanasi, my name echoes across the ghats every morning! ??' },
-  { id: 'west',      label: 'West India',                    states: 'Maharashtra, Goa',                        emoji: '??', icon: westIcon,      color: '#FF9933', mapTop: '52%', mapLeft: '20%', ganeshaFact: 'Mumbai\'s Siddhivinayak temple is one of my most beloved homes! ??' },
-  { id: 'central',   label: 'Central India',                 states: 'MP, Chhattisgarh',                        emoji: '??', icon: centralIcon,   color: '#5BA85A', mapTop: '45%', mapLeft: '38%', ganeshaFact: 'The forests here are full of my mouse Mooshika\'s friends! ??' },
-  { id: 'east',      label: 'East India',                    states: 'West Bengal, Odisha, Jharkhand, Bihar',   emoji: '??', icon: eastIcon,      color: '#4A9BB5', mapTop: '48%', mapLeft: '62%', ganeshaFact: 'In Kolkata, Durga Puja celebrations are so grand � I always visit! ??' },
-  { id: 'northeast', label: 'Northeast India',               states: 'Assam, Meghalaya, Manipur, & more',       emoji: '??', icon: northEastIcon, color: '#B565A7', mapTop: '30%', mapLeft: '77%', ganeshaFact: 'The tea gardens here are magical � even I stop for a cup! ?' },
-  { id: 'south',     label: 'South India',                   states: 'Tamil Nadu, Kerala, Karnataka, Telangana', emoji: '??', icon: southIcon,     color: '#2E7D32', mapTop: '70%', mapLeft: '32%', ganeshaFact: 'In Tamil Nadu, I am called Pillaiyar � the noble child! ??' },
-  { id: 'kailash',   label: 'Mount Kailash! ???',            states: 'Where Amma & Appa live!',                  emoji: '???', icon: desertIcon,    color: '#5C6BC0', mapTop: '8%',  mapLeft: '42%', ganeshaFact: 'KAILASH?! That\'s where my Amma and Appa live! But where does YOUR family live on Earth?', isKailash: true },
-  { id: 'other',     label: 'Outside India',                 states: 'Outside India or multiple states',         emoji: '??', icon: null,           color: '#888', mapTop: '70%', mapLeft: '76%', ganeshaFact: 'Wherever your family is from, India lives in your heart! ??' },
+  { id: 'north',     label: 'North India',                   states: 'Punjab, Haryana, UP, Delhi',               emoji: '\u{1F3D4}\uFE0F', icon: northIcon,     color: '#7B9FD4', mapTop: '18%', mapLeft: '32%', ganeshaFact: 'In Varanasi, my name echoes across the ghats every morning! \u2728' },
+  { id: 'west',      label: 'West India',                    states: 'Maharashtra, Goa',                         emoji: '\u{1F30A}',       icon: westIcon,      color: '#FF9933', mapTop: '52%', mapLeft: '20%', ganeshaFact: 'Mumbai\'s Siddhivinayak temple is one of my most beloved homes! \u{1F64F}' },
+  { id: 'central',   label: 'Central India',                 states: 'MP, Chhattisgarh',                         emoji: '\u{1F333}',       icon: centralIcon,   color: '#5BA85A', mapTop: '45%', mapLeft: '38%', ganeshaFact: 'The forests here are full of my mouse Mooshika\'s friends! \u{1F42D}' },
+  { id: 'east',      label: 'East India',                    states: 'West Bengal, Odisha, Jharkhand, Bihar',   emoji: '🌅', icon: eastIcon,      color: '#4A9BB5', mapTop: '48%', mapLeft: '62%', ganeshaFact: 'In Kolkata, Durga Puja celebrations are so grand - I always visit! 🎊' },
+  { id: 'northeast', label: 'Northeast India',               states: 'Assam, Meghalaya, Manipur, & more',       emoji: '🍃', icon: northEastIcon, color: '#B565A7', mapTop: '30%', mapLeft: '77%', ganeshaFact: 'The tea gardens here are magical - even I stop for a cup! ☕' },
+  { id: 'south',     label: 'South India',                   states: 'Tamil Nadu, Kerala, Karnataka, Telangana', emoji: '🪷', icon: southIcon,     color: '#2E7D32', mapTop: '70%', mapLeft: '32%', ganeshaFact: 'In Tamil Nadu, I am called Pillaiyar - the noble child! ✨' },
+  { id: 'kailash',   label: 'Mount Kailash! 🏔️',            states: 'Where Amma & Appa live!',                  emoji: '🏔️', icon: desertIcon,    color: '#5C6BC0', mapTop: '8%',  mapLeft: '42%', ganeshaFact: 'KAILASH?! That\'s where my Amma and Appa live! But where does YOUR family live on Earth?', isKailash: true },
+  { id: 'other',     label: 'Outside India',                 states: 'Outside India or multiple states',         emoji: '🌍', icon: null,           color: '#888', mapTop: '70%', mapLeft: '76%', ganeshaFact: 'Wherever your family is from, India lives in your heart! 💖' },
 ];
 
 const LANGUAGES = [
   { id: 'hindi',      label: 'Hindi',      script: 'हिंदी',      icon: hindiLangIcon,      color: '#FF9933' },
-  { id: 'tamil',      label: 'Tamil',      script: 'தமிழ்',     icon: tamilLangIcon,      color: '#E91E63' },
-  { id: 'telugu',     label: 'Telugu',     script: 'తెలుగు',    icon: teluguLangIcon,     color: '#9C27B0' },
-  { id: 'marathi',    label: 'Marathi',    script: 'मराठी',     icon: marathiLangIcon,    color: '#FF5722' },
-  { id: 'gujarati',   label: 'Gujarati',   script: 'ગુજરાતી',   icon: gujaratiLangIcon,   color: '#FF9800' },
-  { id: 'bengali',    label: 'Bengali',    script: 'বাংলা',     icon: bengaliLangIcon,    color: '#2196F3' },
-  { id: 'kannada',    label: 'Kannada',    script: 'ಕನ್ನಡ',     icon: kannadaLangIcon,    color: '#4CAF50' },
-  { id: 'malayalam',  label: 'Malayalam',  script: 'മലയാളം',   icon: malayalamLangIcon,  color: '#00BCD4' },
-  { id: 'punjabi',    label: 'Punjabi',    script: 'ਪੰਜਾਬੀ',    icon: punjabiLangIcon,    color: '#8BC34A' },
-  { id: 'sanskrit',   label: 'Sanskrit',   script: 'संस्कृत',    icon: sanskritLangIcon,   color: '#FFD700' },
+  { id: 'tamil',      label: 'Tamil',      script: 'தமிழ்',      icon: tamilLangIcon,      color: '#E91E63' },
+  { id: 'telugu',     label: 'Telugu',     script: 'తెలుగు',     icon: teluguLangIcon,     color: '#9C27B0' },
+  { id: 'marathi',    label: 'Marathi',    script: 'मराठी',      icon: marathiLangIcon,    color: '#FF5722' },
+  { id: 'gujarati',   label: 'Gujarati',   script: 'ગુજરાતી',    icon: gujaratiLangIcon,   color: '#FF9800' },
+  { id: 'bengali',    label: 'Bengali',    script: 'বাংলা',      icon: bengaliLangIcon,    color: '#2196F3' },
+  { id: 'kannada',    label: 'Kannada',    script: 'ಕನ್ನಡ',      icon: kannadaLangIcon,    color: '#4CAF50' },
+  { id: 'malayalam',  label: 'Malayalam',  script: 'മലയാളം',     icon: malayalamLangIcon,  color: '#00BCD4' },
+  { id: 'punjabi',    label: 'Punjabi',    script: 'ਪੰਜਾਬੀ',      icon: punjabiLangIcon,    color: '#8BC34A' },
+  { id: 'sanskrit',   label: 'Sanskrit',   script: 'संस्कृत',     icon: sanskritLangIcon,   color: '#FFD700' },
   { id: 'english',    label: 'English',    script: 'English',    icon: englishLangIcon,    color: '#795548' },
-  { id: 'other',      label: 'Other',      script: '🌍',        icon: otherLangIcon,      color: '#9E9E9E' },
+  { id: 'other',      label: 'Other',      script: '🌍',         icon: otherLangIcon,      color: '#9E9E9E' },
 ];
 
 const FESTIVALS = [
@@ -162,7 +164,6 @@ const FESTIVALS = [
   { id: 'rakhi',         label: 'Raksha Bandhan',    emoji: '🎀', icon: rakhi_Icon,          season: 'summer', seasonLabel: 'Summer',  angle: 140, ganeshaReact: 'Raksha Bandhan! A celebration of love! 🎀', guessOption: false },
 ];
 
-// ─── LOOKUP MAPS (O(1) instead of O(n) .find()) ─────────────────────
 const FESTIVAL_MAP = Object.fromEntries(FESTIVALS.map(f => [f.id, f]));
 const LANGUAGE_MAP = Object.fromEntries(LANGUAGES.map(l => [l.id, l]));
 
@@ -209,9 +210,9 @@ const HEART_POSITIONS = [
 ];
 
 const GANESHA_SPOTS = [
-  { name: 'Varanasi Ghats', icon: varansiIcon, fact: 'In Varanasi, my name echoes across the ghats every morning! ??' },
-  { name: 'Mumbai Temple', icon: mumbaiIcon, fact: 'Siddhivinayak temple in Mumbai is one of my most beloved homes! ??' },
-  { name: 'Tamil Nadu Shrine', icon: tamilNaduIcon, fact: 'In Tamil Nadu, I am called Pillaiyar � the noble child! ??' },
+  { name: 'Varanasi Ghats', icon: varansiIcon, fact: 'In Varanasi, my name echoes across the ghats every morning! ✨' },
+  { name: 'Mumbai Temple', icon: mumbaiIcon, fact: 'Siddhivinayak temple in Mumbai is one of my most beloved homes! 🙏' },
+  { name: 'Tamil Nadu Shrine', icon: tamilNaduIcon, fact: 'In Tamil Nadu, I am called Pillaiyar - the noble child! ✨' },
 ];
 
 // Error Boundary
@@ -513,6 +514,8 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   };
 
   const activeProfile = GameStateManager.getCurrentProfile?.() || null;
+  const activeProfileId = activeProfile?.id || null;
+  const storyStorageKey = getStoryStorageKey(activeProfileId);
   const profileDisplayName = (activeProfile?.name || childName || 'Friend').trim();
   const rawProfileAvatar = activeProfile?.avatar;
   const PROFILE_ANIMAL_IDS = ['monkey', 'peacock', 'squirrel', 'tiger'];
@@ -770,7 +773,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   useEffect(() => {
     if (!isReload) return;
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(storyStorageKey);
       if (!raw) return;
       const saved = JSON.parse(raw);
       const savedStep = saved?.step;
@@ -791,14 +794,22 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       const shouldRestoreSavedStep = phase === STEPS.OPENING || savedOrder > currentOrder;
       if (!shouldRestoreSavedStep) return;
 
+      const restoredRegion = saved?.region ?? null;
+      const restoredLanguages = saved?.languages ?? [];
+      const restoredFestivals = saved?.festivals ?? [];
+
+      setSelectedRegion(restoredRegion);
+      setSelectedLanguages(restoredLanguages);
+      setSelectedFestivals(restoredFestivals);
+
       sceneActions.updateState({
         phase: savedStep,
-        selectedRegion: saved?.region ?? null,
-        selectedLanguages: saved?.languages ?? [],
-        selectedFestivals: saved?.festivals ?? [],
+        selectedRegion: restoredRegion,
+        selectedLanguages: restoredLanguages,
+        selectedFestivals: restoredFestivals,
       });
     } catch (e) {}
-  }, [isReload, phase, sceneActions]);
+  }, [isReload, phase, sceneActions, storyStorageKey]);
 
   // ── RELOAD: Restart each phase state; entry VO is handled by phase-entry effects ─────────
   useEffect(() => {
@@ -1145,7 +1156,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   // Save progress
   const saveProgress = (region, langs, fests, stepValue = phase) => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      localStorage.setItem(storyStorageKey, JSON.stringify({
         region: region ?? selectedRegion,
         languages: langs ?? selectedLanguages,
         festivals: fests ?? selectedFestivals,
@@ -1157,9 +1168,9 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
   const clearProgress = useCallback(() => {
     try {
-      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(storyStorageKey);
     } catch (e) {}
-  }, []);
+  }, [storyStorageKey]);
 
   // Persist phase and selections on reload
 useEffect(() => {
@@ -1360,6 +1371,7 @@ const discoverLocation = useCallback((index) => {
           onEnd: advanceToNextPhase,
           onError: advanceToNextPhase
         });
+        safeSetTimeout(advanceToNextPhase, 5000);
       } else {
         // Audio-off: keep same UX rhythm with a short pause before advancing.
         advanceToNextPhase();
@@ -1433,7 +1445,7 @@ const handleComplete = () => {
       <ResumeCountdown value={countdownValue} />
       <HomeButton onNavigate={onNavigate} />
       <ZoneBadgeButton zoneId="about-me-hut" onBack={() => onNavigate?.('zone-welcome')} />
-      <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
+      <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
       <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
       {/* Sparkles */}
       {sparkleState.type && (
@@ -1648,10 +1660,9 @@ const handleComplete = () => {
           {/* India Map Container */}
           <div style={{
             position: 'relative',
-            width: '536px',
-            height: '583px',
-            margin: '90px auto 0',
-            maxWidth: '90vw',
+            width: 'min(90vw, 536px)',
+            aspectRatio: '536 / 583',
+            margin: 'clamp(24px, 6vh, 90px) auto 0',
             overflow: 'visible',
           }}>
             {/* Map */}
@@ -1923,10 +1934,6 @@ const handleComplete = () => {
           <div
             className="mis-india-map-wrap"
             style={{
-            position: 'relative',
-            width: 'min(68vw, 520px)',
-            aspectRatio: '536 / 583',
-            margin: '0 auto',
             overflow: 'visible',
           }}
           >
@@ -2433,23 +2440,23 @@ const handleComplete = () => {
       {phase === STEPS.FESTIVALS_GANESHA && (
         <div style={{
           minHeight: 'var(--app-height, 100vh)',
-          paddingTop: '60px',
-          paddingBottom: '80px',
+          paddingTop: 'clamp(20px, 6vh, 60px)',
+          paddingBottom: 'clamp(24px, 8vh, 80px)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
         }}>
           {/* Festival Cards Container — Flexbox for proper centering */}
           <div style={{
-            marginTop: '160px',
-            marginBottom: '80px',
+            marginTop: 'clamp(24px, 15vh, 160px)',
+            marginBottom: 'clamp(24px, 8vh, 80px)',
           }}>
             {/* TOP ROW: 2 cards centered */}
             <div style={{
               display: 'flex',
               justifyContent: 'center',
-              gap: '48px',
-              marginBottom: '48px',
+              gap: 'clamp(16px, 4vw, 48px)',
+              marginBottom: 'clamp(16px, 4vw, 48px)',
               flexWrap: 'wrap',
             }}>
               <button
@@ -2463,9 +2470,6 @@ const handleComplete = () => {
                 }}
                 disabled={guessPhase === 'correct'}
                 style={{
-                  width: 'clamp(115px, 25vw, 198px)',
-                  height: 'clamp(115px, 25vw, 198px)',
-                  padding: '20px',
                   border: 'none',
                   backgroundColor: '#F8F1E2',
                   cursor: guessPhase === 'correct' ? 'not-allowed' : 'pointer',
@@ -2491,9 +2495,6 @@ const handleComplete = () => {
                 }}
                 disabled={guessPhase === 'correct'}
                 style={{
-                  width: 'clamp(115px, 25vw, 198px)',
-                  height: 'clamp(115px, 25vw, 198px)',
-                  padding: '20px',
                   border: 'none',
                   backgroundColor: '#F8F1E2',
                   cursor: guessPhase === 'correct' ? 'not-allowed' : 'pointer',
@@ -2514,7 +2515,7 @@ const handleComplete = () => {
             <div style={{
               display: 'flex',
               justifyContent: 'center',
-              gap: '48px',
+              gap: 'clamp(16px, 4vw, 48px)',
               flexWrap: 'wrap',
             }}>
               <button
@@ -2528,9 +2529,6 @@ const handleComplete = () => {
                 }}
                 disabled={guessPhase === 'correct'}
                 style={{
-                  width: 'clamp(115px, 25vw, 198px)',
-                  height: 'clamp(115px, 25vw, 198px)',
-                  padding: '20px',
                   border: 'none',
                   backgroundColor: '#F8F1E2',
                   cursor: guessPhase === 'correct' ? 'not-allowed' : 'pointer',
@@ -2556,9 +2554,6 @@ const handleComplete = () => {
                 }}
                 disabled={guessPhase === 'correct'}
                 style={{
-                  width: 'clamp(115px, 25vw, 198px)',
-                  height: 'clamp(115px, 25vw, 198px)',
-                  padding: '20px',
                   border: 'none',
                   backgroundColor: '#F8F1E2',
                   cursor: guessPhase === 'correct' ? 'not-allowed' : 'pointer',
@@ -2586,9 +2581,6 @@ const handleComplete = () => {
                 }}
                 disabled={guessPhase === 'correct'}
                 style={{
-                  width: 'clamp(115px, 25vw, 198px)',
-                  height: 'clamp(115px, 25vw, 198px)',
-                  padding: '20px',
                   border: 'none',
                   backgroundColor: '#F8F1E2',
                   cursor: guessPhase === 'correct' ? 'not-allowed' : 'pointer',
@@ -2959,4 +2951,3 @@ const handleComplete = () => {
     </div>
   );
 }
-

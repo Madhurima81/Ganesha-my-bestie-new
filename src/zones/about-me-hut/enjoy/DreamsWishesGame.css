@@ -2072,6 +2072,65 @@ font-weight: 700;
   .connector-text { writing-mode: horizontal-tb; letter-spacing: 2px; }
 }
 
+@media (orientation: landscape) and (max-height: 1024px) {
+  .friendship-overlay {
+    overflow-y: auto;
+    padding: clamp(10px, 1.8vh, 18px) 16px clamp(12px, 2vh, 18px);
+  }
+
+  .friendship-title {
+    font-size: clamp(24px, 2.8vh, 32px);
+    margin-bottom: 4px;
+  }
+
+  .friendship-subtitle {
+    font-size: clamp(13px, 1.7vh, 16px);
+    margin-bottom: clamp(8px, 1.4vh, 14px);
+    text-align: center;
+  }
+
+  .friendship-grid {
+    gap: clamp(12px, 1.8vw, 18px);
+    margin-top: 0;
+    margin-bottom: clamp(8px, 1.5vh, 14px);
+  }
+
+  .friend-column {
+    min-width: 300px;
+    padding: clamp(12px, 1.8vh, 18px) 14px;
+  }
+
+  .friend-item {
+    min-height: clamp(84px, 11vh, 112px);
+    padding: clamp(10px, 1.4vh, 14px) 10px;
+    gap: 6px;
+  }
+
+  .friend-item-img {
+    width: clamp(40px, 5vh, 54px);
+    height: clamp(40px, 5vh, 54px);
+  }
+
+  .friend-item-text {
+    font-size: clamp(13px, 1.6vh, 16px);
+  }
+
+  .dream-display-box {
+    min-height: clamp(150px, 20vh, 210px);
+  }
+
+  .primary-cta,
+  .friendship-continue-btn,
+  .friendship .continue-btn,
+  .friendship-overlay .continue-btn {
+    position: sticky;
+    bottom: 6px;
+    align-self: center;
+    margin-top: clamp(8px, 1.4vh, 12px);
+    margin-bottom: 4px;
+  }
+}
+
 /* ========================================= */
 /* UPDATED WISH CARDS (Like Image 2)         */
 /* ========================================= */
@@ -2730,7 +2789,6 @@ font-weight: 700;
     transform: translate(-50%, -50%) rotate(14deg) scale(0.8);
   }
 }
-
 
 
 

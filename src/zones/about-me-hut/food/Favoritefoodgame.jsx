@@ -239,11 +239,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     '🐵': 'monkey',
     '🦚': 'peacock',
     '🐿️': 'squirrel',
-    '🐯': 'tiger',
-    'ðŸµ': 'monkey',
-    'ðŸ¦š': 'peacock',
-    'ðŸ¿ï¸': 'squirrel',
-    'ðŸ¯': 'tiger'
+    '🐯': 'tiger'
   };
   const PROFILE_ANIMAL_IDS = ['monkey', 'peacock', 'squirrel', 'tiger'];
   const PROFILE_EMOJI_TO_ANIMAL = { '🐵': 'monkey', '🦚': 'peacock', '🐿️': 'squirrel', '🐯': 'tiger' };
@@ -255,7 +251,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     ? rawProfileAvatar
     : profileDisplayName.charAt(0).toUpperCase();
 
-  // â”€â”€ Resume Delay (shared across pause/resume logic) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Resume Delay (shared across pause/resume logic) ──────────────────────────
   const RESUME_DELAY_MS = 3000;
   const OPENING_VO_VOLUME = 0.55;
   const DISCOVERY_FLY_TOTAL_MS = 3200;
@@ -271,19 +267,19 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   const { isAudioOn, toggleAudio } = useAudioPreference();
 
-  // â”€â”€ Callbacks for pause/resume â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Callbacks for pause/resume ────────────────────────────────────────────────
   const onReturnHint = () => {
     // Optional: trigger visual hint on return (e.g., mini gesture, glow)
   };
 
-  // â”€â”€ T08/T09: visibility + idle timer infrastructure â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
   const { startIdleTimer, stopIdleTimer, setCurrentPhase, stopVoice, setVoiceVolume, startMusic, stopMusic, playVoice } = useVoiceGuidance(
     'about-me-hut', 'favorite-food', {
       enableMusic: true,
       musicVolume: 0.06,
       idleTimeout: 20,
-      resumeDelay: RESUME_DELAY_MS,  // â† Wait before replaying VO
-      onReturnHint                     // â† Called when child returns
+      resumeDelay: RESUME_DELAY_MS,  // ← Wait before replaying VO
+      onReturnHint                     // ← Called when child returns
     }
   );
   const { playUiTap, playWrongTap, playSparkle, playChime, playGlow, setGlobalVolume } = useGameSounds();
@@ -301,7 +297,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   // Modak V7 pattern: volume 0 keeps MP3 VO playing silently so it resumes mid-sentence on unmute
   useEffect(() => { setVoiceVolume(isAudioOn ? 1 : 0); }, [isAudioOn, setVoiceVolume]);
 
-  // Web Speech API TTS (useGaneshaVoice): pause/resume instead of cancel â€” keeps utterance alive
+  // Web Speech API TTS (useGaneshaVoice): pause/resume instead of cancel — keeps utterance alive
   useEffect(() => {
     if (!isAudioOn) {
       window.speechSynthesis?.pause();
@@ -328,7 +324,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   useEffect(() => () => stopMusic(), [stopMusic]);
 
-  // â”€â”€ Resume Countdown & Pause-Aware Timeout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Resume Countdown & Pause-Aware Timeout ──────────────────────────────────
   const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
 
   // Pause/Resume refs for celebration transition
@@ -448,7 +444,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     setDiscoveryFly({
       key: `${Date.now()}-${Math.random()}`,
       image: item.image,
-      emoji: sanitizeEmoji(item.emoji, item.id),
+      emoji: item.emoji,
       name: item.name,
       isChild,
       isModak,
@@ -589,15 +585,15 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   // --- CONSTANT DATA ---
   const foods = [
-    { id: 'modak', name: 'Modak', image: modakImg, emoji: 'ðŸ¥Ÿ', correct: true },
-    { id: 'ladoo', name: 'Ladoo', image: ladooImg, emoji: 'ðŸª', correct: false },
-    { id: 'barfi', name: 'Barfi', image: barfiImg, emoji: 'ðŸ¥ž', correct: false }
+    { id: 'modak', name: 'Modak', image: modakImg, emoji: '🥟', correct: true },
+    { id: 'ladoo', name: 'Ladoo', image: ladooImg, emoji: '🍪', correct: false },
+    { id: 'barfi', name: 'Barfi', image: barfiImg, emoji: '🥞', correct: false }
   ];
 
   const friends = [
-    { id: 'mouse', name: 'Mooshika', image: mouseImg, emoji: 'ðŸ­', correct: true },
-    { id: 'cow', name: 'Cow', image: cowImg, emoji: 'ðŸ®', correct: false },
-    { id: 'peacock', name: 'Peacock', image: peacockImg, emoji: 'ðŸ¦š', correct: false }
+    { id: 'mouse', name: 'Mooshika', image: mouseImg, emoji: '🐭', correct: true },
+    { id: 'cow', name: 'Cow', image: cowImg, emoji: '🐮', correct: false },
+    { id: 'peacock', name: 'Peacock', image: peacockImg, emoji: '🦚', correct: false }
   ];
 
   const colors = [
@@ -622,13 +618,13 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   }, []);
 
   const kidFoods = [
-    { id: 'pizza', name: 'Pizza', image: pizzaImg, emoji: 'ðŸ•' },
-    { id: 'burger', name: 'Burger', image: burgerImg, emoji: 'ðŸ”' },
-    { id: 'ice-cream', name: 'Ice Cream', image: icecreamImg, emoji: 'ðŸ¦' },
-    { id: 'dosa', name: 'Dosa', image: dosaImg, emoji: 'ðŸ¥ž' },
-    { id: 'noodles', name: 'Noodles', image: noodlesImg, emoji: 'ðŸœ' },
-    { id: 'fruit', name: 'Fruit', image: fruitImg, emoji: 'ðŸŽ' },
-    { id: 'rice', name: 'Rice', image: riceImg, emoji: 'ðŸš' }
+    { id: 'pizza', name: 'Pizza', image: pizzaImg, emoji: '🍕' },
+    { id: 'burger', name: 'Burger', image: burgerImg, emoji: '🍔' },
+    { id: 'ice-cream', name: 'Ice Cream', image: icecreamImg, emoji: '🍦' },
+    { id: 'dosa', name: 'Dosa', image: dosaImg, emoji: '🥞' },
+    { id: 'noodles', name: 'Noodles', image: noodlesImg, emoji: '🍜' },
+    { id: 'fruit', name: 'Fruit', image: fruitImg, emoji: '🍎' },
+    { id: 'rice', name: 'Rice', image: riceImg, emoji: '🍚' }
   ];
 
   const kidActivities = [
@@ -654,47 +650,15 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const kidColors = [
-    { id: 'red', name: 'Red', image: redImg, emoji: 'â¤ï¸' },
-    { id: 'orange', name: 'Orange', image: orangeImg, emoji: 'ðŸ§¡' },
-    { id: 'yellow', name: 'Yellow', image: yellowImg, emoji: 'ðŸ’›' },
-    { id: 'green', name: 'Green', image: greenImg, emoji: 'ðŸ’š' },
-    { id: 'blue', name: 'Blue', image: blueImg, emoji: 'ðŸ’™' },
-    { id: 'purple', name: 'Purple', image: purpleImg, emoji: 'ðŸ’œ' },
-    { id: 'pink', name: 'Pink', image: pinkImg, emoji: 'ðŸ’—' },
-    { id: 'brown', name: 'Brown', image: brownImg, emoji: 'ðŸ¤Ž' },
+    { id: 'red', name: 'Red', image: redImg, emoji: '❤️' },
+    { id: 'orange', name: 'Orange', image: orangeImg, emoji: '🧡' },
+    { id: 'yellow', name: 'Yellow', image: yellowImg, emoji: '💛' },
+    { id: 'green', name: 'Green', image: greenImg, emoji: '💚' },
+    { id: 'blue', name: 'Blue', image: blueImg, emoji: '💙' },
+    { id: 'purple', name: 'Purple', image: purpleImg, emoji: '💜' },
+    { id: 'pink', name: 'Pink', image: pinkImg, emoji: '💗' },
+    { id: 'brown', name: 'Brown', image: brownImg, emoji: '🤎' },
   ];
-
-  const sanitizeEmoji = useCallback((emoji, fallbackKey = '') => {
-    const emojiMap = {
-      modak: '🥟',
-      ladoo: '🍪',
-      barfi: '🧁',
-      mouse: '🐭',
-      cow: '🐮',
-      peacock: '🦚',
-      pizza: '🍕',
-      burger: '🍔',
-      'ice-cream': '🍦',
-      dosa: '🧁',
-      noodles: '🍜',
-      fruit: '🍎',
-      rice: '🍚',
-      red: '❤️',
-      orange: '🧡',
-      yellow: '💛',
-      green: '💚',
-      blue: '💙',
-      purple: '💜',
-      pink: '💗',
-      brown: '🤎'
-    };
-
-    if (fallbackKey && emojiMap[fallbackKey]) {
-      return emojiMap[fallbackKey];
-    }
-
-    return emoji;
-  }, []);
 
   // --- INITIALIZATION ---
   const shuffleArray = (array) => {
@@ -785,7 +749,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       suppressPhaseVoUntilReloadSettlesRef.current = false;
       expectedReloadPhaseRef.current = null;
 
-      console.log("ðŸ”„ Reload detected. Phase:", gamePhase, "Modal:", currentModal);
+      console.log("🔄 Reload detected. Phase:", gamePhase, "Modal:", currentModal);
 
       if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
       // --- 1. RESTORE MODALS (Drawing/Typing) ---
@@ -1252,7 +1216,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }
   }, [sceneState.showingCompletionScreen, isAudioOn]);
 
-  // â”€â”€ Idle Hint System (Scene 22 pattern: 10s wobble -> 18s glow+VO -> 26s stronger glow) â”€â”€
+  // ── Idle Hint System (Scene 22 pattern: 10s wobble -> 18s glow+VO -> 26s stronger glow) ──
   useEffect(() => {
     const ganeshaPhases = ['food-choice', 'color-choice', 'activity-choice', 'friend-choice'];
     const currentPhase = sceneState.gamePhase;
@@ -1551,7 +1515,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       childColorName: selectedColor.name,
       childDiscoveries: appendUniqueDiscovery(currentState.childDiscoveries, {
         image: selectedColor.image,
-        emoji: sanitizeEmoji(selectedColor.emoji, selectedColor.id),
+        emoji: selectedColor.emoji,
         name: selectedColor.name
       })
     });
@@ -1758,7 +1722,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <div className="correct-food">
             <img src={modakImg} alt="Modak" className="food-in-hand pop-in modak-special" />
           </div>
-          {/* <div className="success-message">Yes! Modak is my favorite! ðŸŽ‰</div> */}
+          {/* <div className="success-message">Yes! Modak is my favorite! 🎉</div> */}
         </div>
       )}
 
@@ -1801,7 +1765,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <div className="correct-food">
             <img src={yellowImg} alt="Yellow" className="food-in-hand pop-in" style={{ width: '180px', height: '180px' }} />
           </div>
-          {/* <div className="success-message">Yes! Orange is my favorite color! ðŸ§¡</div> */}
+          {/* <div className="success-message">Yes! Orange is my favorite color! 🧡</div> */}
         </div>
       )}
 
@@ -1844,7 +1808,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <div className="correct-food">
             <img src={kidActSingImg} alt="Dancing" className="food-in-hand pop-in" style={{ width: '180px', height: '180px' }} />
           </div>
-          {/* <div className="success-message">Yes! I love Dancing! ðŸ’ƒâœ¨</div> */}
+          {/* <div className="success-message">Yes! I love Dancing! 💃✨</div> */}
         </div>
       )}
 
@@ -1854,7 +1818,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
           <div className="friend-intro-box">
             <h2 className="friend-intro-text">Great! Now find my best friend!</h2>
-            <button className="friend-intro-btn" onClick={handleStartFriendChoice}>Find Friend! ðŸŒŸ</button>
+            <button className="friend-intro-btn" onClick={handleStartFriendChoice}>Find Friend! {'\u{1F31F}'}</button>
           </div>
         </div>
       )} */}
@@ -1899,7 +1863,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <div className="correct-food">
             <img src={mouseImg} alt="Mooshika" className="food-in-hand pop-in" style={{ width: '180px', height: '180px' }} />
           </div>
-          {/* <div className="success-message">Yes! Mooshika is my best friend! ðŸ­âœ¨</div> */}
+          {/* <div className="success-message">Yes! Mooshika is my best friend! 🐭✨</div> */}
         </div>
       )}
 
@@ -2009,7 +1973,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 {color.image ? (
                   <img src={color.image} alt={color.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 ) : (
-                  sanitizeEmoji(color.emoji, color.id)
+                  color.emoji
                 )}
               </button>
             ))}
