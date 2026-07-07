@@ -62,8 +62,10 @@ export default function SarvadaGame({
   onGameComplete = () => {},
   isPaused = false,
   voiceGuidance = {},
+  savedGameState = null,
+  onSaveGameState = null,
 }) {
-  const { playVoice: playSceneLine } = voiceGuidance;
+  const { playVoice: playSceneLine, stopVoice: stopSceneVoice } = voiceGuidance;
   const [phaseIndex, setPhaseIndex] = useState(0);
   const [bubbleState, setBubbleState] = useState('idle');
   const [showMemory, setShowMemory] = useState(false);
@@ -96,6 +98,32 @@ export default function SarvadaGame({
     timersRef.current.forEach(clearTimeout);
     timersRef.current = [];
   }, []);
+
+  useEffect(() => {
+    if (!isActive || !savedGameState) return;
+    setPhaseIndex(savedGameState.phaseIndex || 0);
+    setBubbleState(savedGameState.bubbleState || 'idle');
+    setShowMemory(!!savedGameState.showMemory);
+    setLitCount(savedGameState.litCount || 0);
+    setRevealedSyls(savedGameState.revealedSyls || []);
+    setGamePhase(savedGameState.gamePhase || 'intro');
+    setPrevBgSrc(savedGameState.prevBgSrc || null);
+    setPrevBgOpacity(savedGameState.prevBgOpacity ?? 1);
+  }, [isActive, savedGameState]);
+
+  useEffect(() => {
+    if (!isActive || !onSaveGameState) return;
+    onSaveGameState({
+      phaseIndex,
+      bubbleState,
+      showMemory,
+      litCount,
+      revealedSyls,
+      gamePhase,
+      prevBgSrc,
+      prevBgOpacity,
+    });
+  }, [isActive, onSaveGameState, phaseIndex, bubbleState, showMemory, litCount, revealedSyls, gamePhase, prevBgSrc, prevBgOpacity]);
 
   const startPhase = useCallback(() => {
     safeAfter(300, () => {
@@ -138,6 +166,7 @@ export default function SarvadaGame({
   const handleBubbleTap = useCallback(() => {
     if (isPaused || bubbleState !== 'pulsing') return;
 
+    stopSceneVoice?.();
     markInteraction();
     setBubbleState('expanding');
     safeAfter(300, () => {
@@ -203,6 +232,7 @@ export default function SarvadaGame({
     playSceneLine,
     safeAfter,
     startPhase,
+    stopSceneVoice,
   ]);
 
   if (!isActive) return null;

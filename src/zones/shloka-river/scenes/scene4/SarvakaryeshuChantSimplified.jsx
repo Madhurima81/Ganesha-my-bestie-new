@@ -7,6 +7,7 @@ import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
 import MessageManager from '../../../../lib/components/scenes/MessageManager';
 import InteractionManager from '../../../../lib/components/scenes/InteractionManager';
 import GameStateManager from '../../../../lib/services/GameStateManager';
+import ProgressManager from '../../../../lib/services/ProgressManager';
 import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
 import useSceneReset from '../../../../lib/hooks/useSceneReset';
 import { getSceneResetConfig } from '../../../../lib/config/SceneResetConfigs';
@@ -174,8 +175,10 @@ const SarvakaryeshuChantContent = ({
   const [savedRecordings, setSavedRecordings] = useState({});
   const [showAppDiscovery, setShowAppDiscovery] = useState(false);
   const [isRecorderOpen, setIsRecorderOpen] = useState(false);
+  const sarvakaryeshuGameStateRef = useRef(null);
+  const sarvadaGameStateRef = useRef(null);
 
-  const { isAudioOn, toggleAudio, setAudioEnabled } = useAudioPreference();
+  const { isAudioOn, toggleAudio } = useAudioPreference();
   const audioEnabledRef = useRef(isAudioOn);
   audioEnabledRef.current = isAudioOn;
 
@@ -246,6 +249,7 @@ const SarvakaryeshuChantContent = ({
       scene13_bike: "We both want the bike. Tap the best power.",
       scene13_grandma: "Grandma needs help with the bags. Tap the best power.",
       welcome: "Now let us use Ganesha’s powers to help!",
+      scene13_try_again: "That power could help too. Try another one.",
       scene13_success: "You chose the right power! You solved the problem!",
       scene13_meaning: "Sarva Karyeshu means in everything we do.",
       scene14_intro: "Morning, afternoon, and night. Ganesha is with us all day.",
@@ -270,11 +274,17 @@ const SarvakaryeshuChantContent = ({
       return;
     }
     if (sceneState.phase === PHASES.SARVAKARYESHU_GAME) {
-      playGuidanceVoice('scene13_puzzle');
+      const cardVoKey = sarvakaryeshuGameStateRef.current?.cardIndex != null
+        ? ['scene13_puzzle', 'scene13_sports', 'scene13_bike', 'scene13_grandma'][sarvakaryeshuGameStateRef.current.cardIndex]
+        : 'scene13_puzzle';
+      playGuidanceVoice(cardVoKey || 'scene13_puzzle');
       return;
     }
     if (sceneState.phase === PHASES.SARVADA_GAME) {
-      playGuidanceVoice('scene14_morning');
+      const bubbleVoKey = sarvadaGameStateRef.current?.phaseIndex != null
+        ? ['scene14_morning', 'scene14_afternoon', 'scene14_night'][sarvadaGameStateRef.current.phaseIndex]
+        : 'scene14_morning';
+      playGuidanceVoice(bubbleVoKey || 'scene14_morning');
       return;
     }
     if (showSceneCompletion) playGuidanceVoice('sceneComplete');
@@ -376,9 +386,13 @@ const SarvakaryeshuChantContent = ({
     sceneActions.updateState({
       learnedWords: { ...sceneState.learnedWords, [word]: true },
       chantedVerses: { ...sceneState.chantedVerses, [`${word}-chant`]: true },
+      phase: word === 'sarvakaryeshu' ? PHASES.SARVAKARYESHU_COMPLETE : PHASES.SARVADA_COMPLETE,
     });
 
+    let revealTriggered = false;
     const triggerReveal = () => {
+      if (revealTriggered) return;
+      revealTriggered = true;
       const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
       playChime();
       setRevealConfig({
@@ -388,12 +402,18 @@ const SarvakaryeshuChantContent = ({
         affirmation: discoveryData?.affirmation || powerConfig[word].affirmation,
         sidebarTarget: getSidebarTarget(word),
       });
+      sceneActions.updateState({
+        phase: word === 'sarvakaryeshu' ? PHASES.SARVAKARYESHU_POWER : PHASES.SARVADA_POWER,
+      });
     };
 
     if (isAudioOn) {
       const successKey = word === 'sarvakaryeshu' ? 'scene13_success' : 'scene14_success';
+      // iOS Safari can silently drop utterance onend/onerror — don't let the reveal hang on VO
+      const voFallback = window.setTimeout(() => triggerReveal(), 9000);
       window.setTimeout(() => {
         playGuidanceVoice(successKey, () => {
+          window.clearTimeout(voFallback);
           window.setTimeout(() => triggerReveal(), 250);
         });
       }, 250);
@@ -453,7 +473,12 @@ const SarvakaryeshuChantContent = ({
                   onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('sarvakaryeshu'), 0)}
                   onGameComplete={() => {}}
                   isPaused={isRecorderOpen}
-                  voiceGuidance={{ playVoice: playGuidanceVoice }}
+                  voiceGuidance={{ playVoice: playGuidanceVoice, stopVoice: stopAllVoice }}
+                  savedGameState={sceneState.sarvakaryeshuGameState}
+                  onSaveGameState={(gameState) => {
+                    sarvakaryeshuGameStateRef.current = gameState;
+                    sceneActions.updateState({ sarvakaryeshuGameState: gameState });
+                  }}
                 />
 
                 <SarvadaGame
@@ -463,7 +488,12 @@ const SarvakaryeshuChantContent = ({
                   onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('sarvada'), 0)}
                   onGameComplete={() => {}}
                   isPaused={isRecorderOpen}
-                  voiceGuidance={{ playVoice: playGuidanceVoice }}
+                  voiceGuidance={{ playVoice: playGuidanceVoice, stopVoice: stopAllVoice }}
+                  savedGameState={sceneState.sarvadaGameState}
+                  onSaveGameState={(gameState) => {
+                    sarvadaGameStateRef.current = gameState;
+                    sceneActions.updateState({ sarvadaGameState: gameState });
+                  }}
                 />
 
                 {showTapSparkles && (
@@ -549,6 +579,10 @@ const SarvakaryeshuChantContent = ({
                               chantedVerses: sceneState.chantedVerses || {},
                               timestamp: Date.now(),
                             });
+                            ProgressManager.updateSceneCompletion(profileId, zoneId, sceneId, {
+                              completed: true,
+                              stars: 5,
+                            });
                             localStorage.removeItem(`temp_session_${profileId}_${zoneId}_${sceneId}`);
                             SimpleSceneManager.clearCurrentScene();
                           } catch (error) {
@@ -589,7 +623,6 @@ const SarvakaryeshuChantContent = ({
                 sceneActions.updateState({
                   welcomeShown: true,
                   phase: PHASES.SARVAKARYESHU_GAME,
-                  _forceUpdate: Date.now(),
                 });
               }}
               characterImg={ganeshaHeadphones}
@@ -630,9 +663,6 @@ const SarvakaryeshuChantContent = ({
               }}
               onComplete={() => onNavigate?.('zone-welcome')}
               onReplay={() => {
-                audioEnabledRef.current = false;
-                setAudioEnabled(false);
-                setVoiceVolume(0);
                 stopAllVoice();
                 setShowSceneCompletion(false);
                 setShowMandala(false);

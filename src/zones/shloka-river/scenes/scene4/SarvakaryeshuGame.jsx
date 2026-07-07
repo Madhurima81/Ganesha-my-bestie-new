@@ -9,8 +9,8 @@ import puzzleBeforeImg from './assets/images/sarvakaryeshu/puzzle-before.png';
 import puzzleAfterImg from './assets/images/sarvakaryeshu/after-puzzle.png';
 import sportsBeforeImg from './assets/images/sarvakaryeshu/before-sports.png';
 import sportsAfterImg from './assets/images/sarvakaryeshu/after-sports.png';
-import bikeBeforeImg from './assets/images/sarvakaryeshu/after-ride.png';
-import bikeAfterImg from './assets/images/sarvakaryeshu/before-ride.png';
+import bikeBeforeImg from './assets/images/sarvakaryeshu/before-ride.png';
+import bikeAfterImg from './assets/images/sarvakaryeshu/after-ride.png';
 import grandmaBeforeImg from './assets/images/sarvakaryeshu/before-grandma.png';
 import grandmaAfterImg from './assets/images/sarvakaryeshu/after-grandma.png';
 import boatImg from './assets/images/boat.png';
@@ -88,8 +88,10 @@ export default function SarvakaryeshuGame({
   onGameComplete = () => {},
   isPaused = false,
   voiceGuidance = {},
+  savedGameState = null,
+  onSaveGameState = null,
 }) {
-  const { playVoice: playSceneLine } = voiceGuidance;
+  const { playVoice: playSceneLine, stopVoice: stopSceneVoice } = voiceGuidance;
   const [cardIndex, setCardIndex] = useState(0);
   const [picked, setPicked] = useState(null);
   const [isCorrect, setIsCorrect] = useState(null);
@@ -108,6 +110,36 @@ export default function SarvakaryeshuGame({
   const optionRefs = useRef({});
   const imageWrapRef = useRef(null);
   phaseRef.current = phase;
+
+  useEffect(() => {
+    if (!isActive || !savedGameState) return;
+    setCardIndex(savedGameState.cardIndex || 0);
+    setPicked(savedGameState.picked || null);
+    setIsCorrect(savedGameState.isCorrect ?? null);
+    setShowAfter(!!savedGameState.showAfter);
+    setLitCount(savedGameState.litCount || 0);
+    setPhase(savedGameState.phase || 'play');
+    setGuidanceMessage(savedGameState.guidanceMessage || '');
+    setGuidedPowerId(savedGameState.guidedPowerId || null);
+    setFlyingPower(savedGameState.flyingPower || null);
+    setImageHit(!!savedGameState.imageHit);
+  }, [isActive, savedGameState]);
+
+  useEffect(() => {
+    if (!isActive || !onSaveGameState) return;
+    onSaveGameState({
+      cardIndex,
+      picked,
+      isCorrect,
+      showAfter,
+      litCount,
+      phase,
+      guidanceMessage,
+      guidedPowerId,
+      flyingPower,
+      imageHit,
+    });
+  }, [isActive, onSaveGameState, cardIndex, picked, isCorrect, showAfter, litCount, phase, guidanceMessage, guidedPowerId, flyingPower, imageHit]);
 
   const { hintLevel, pulseTick, markInteraction } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play',
@@ -185,12 +217,14 @@ export default function SarvakaryeshuGame({
     const situation = SITUATIONS[cardIndex];
     const correct = powerId === situation.correct;
 
+    stopSceneVoice?.();
     setPicked(powerId);
     markInteraction();
 
     if (!correct) {
       setIsCorrect(null);
       setGuidanceMessage('That power could help too...');
+      playSceneLine?.('scene13_try_again');
       return;
     }
 
@@ -198,6 +232,7 @@ export default function SarvakaryeshuGame({
     setIsCorrect(true);
     setGuidanceMessage('');
     setGuidedPowerId(null);
+    playSceneLine?.('scene13_success');
 
     const optionRect = optionRefs.current[powerId]?.getBoundingClientRect?.();
     const imageRect = imageWrapRef.current?.getBoundingClientRect?.();
@@ -259,7 +294,7 @@ export default function SarvakaryeshuGame({
       setImageHit(false);
       resolvingRef.current = false;
     });
-  }, [cardIndex, isPaused, markInteraction, onGameComplete, onMicroWin, onPhaseComplete, safeAfter]);
+  }, [cardIndex, isPaused, markInteraction, onGameComplete, onMicroWin, onPhaseComplete, playSceneLine, safeAfter, stopSceneVoice]);
 
   if (!isActive) return null;
 
