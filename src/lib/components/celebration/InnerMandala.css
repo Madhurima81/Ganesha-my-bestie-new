@@ -154,19 +154,23 @@
 }
 
 .inner-petal {
-  fill: #ffa8bc;
+  fill: #e9e4f5;
   stroke: #9a8ef0;
   stroke-width: 0.022;
   stroke-linecap: round;
   stroke-linejoin: round;
-  opacity: 0.88;
+  opacity: 0.4;
+  transition: fill 0.35s ease, opacity 0.35s ease;
 }
 
-.inner-petal-2,
-.inner-petal-4,
-.inner-petal-6,
-.inner-petal-8 {
-  fill: #ffd3dd;
+.inner-petal.activated,
+.inner-petal.active {
+  fill: #ffd166;
+  opacity: 1;
+}
+
+.inner-petal.locked {
+  opacity: 0.42;
 }
 
 .avatar-circle {
@@ -176,8 +180,7 @@
   filter: none;
 }
 
-.mandala-avatar-slot,
-.mandala-center-emblem {
+.mandala-avatar-slot {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -190,9 +193,6 @@
   justify-content: center;
   pointer-events: none;
   z-index: 2;
-}
-
-.mandala-avatar-slot {
   overflow: hidden;
 }
 
@@ -200,11 +200,6 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-}
-
-.mandala-center-emblem {
-  font-size: clamp(28px, 5.8vmin, 42px);
-  filter: drop-shadow(0 3px 8px rgba(160, 105, 12, 0.28));
 }
 
 .middle-petal-symbol {

@@ -1,7 +1,6 @@
 // MainWelcomeScreen.jsx - PRODUCTION READY VERSION
 import React, { useState, useEffect, useRef } from 'react';
 import ProfilePillBtn from '../shared/ProfilePillBtn';
-import { getProfilePillBtnStyle } from '../../config/ZoneThemes';
 import { playUiTap } from '../../services/AudioService';
 import AudioToggle from '../ui/AudioToggle/AudioToggle';
 import useAudioPreference from '../../hooks/useAudioPreference';
@@ -137,7 +136,6 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
             disabled={isStarting}
             size="lg"
             fullWidth={false}
-            style={getProfilePillBtnStyle('symbol-mountain')}
           />
         </div>
       </div>

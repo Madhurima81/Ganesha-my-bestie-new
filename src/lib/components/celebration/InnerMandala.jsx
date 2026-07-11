@@ -24,16 +24,13 @@ const MIDDLE_PETALS = [
   { id: 7, d: 'm 6.5600725,7.9728284 c 0,0 -0.4391298,-0.5871717 -1.0802498,-0.6450013 C 4.8387024,7.269997 4.417851,7.9080009 4.417851,7.9080009 c 0,0 0.481574,0.6116053 1.0525889,0.6440344 0.5710146,0.03243 1.0896326,-0.5792069 1.0896326,-0.5792069 z' },
 ];
 
-const INNER_PETALS = [
-  { id: 1, d: 'm 7.308,5.95 c 0,0 0.275,0.47 0.255,0.9 -0.02,0.43 -0.263,0.822 -0.263,0.822 0,0 -0.261,-0.43 -0.255,-0.852 C 7.051,6.399 7.308,5.95 7.308,5.95 Z' },
-  { id: 2, d: 'm 8.186,6.306 c 0,0 0.507,0.192 0.774,0.53 0.266,0.338 0.308,0.797 0.308,0.797 0,0 -0.466,0.048 -0.792,-0.245 C 8.151,7.095 8.186,6.306 8.186,6.306 Z' },
-  { id: 3, d: 'm 8.547,7.219 c 0,0 0.494,-0.215 0.918,-0.155 0.424,0.06 0.757,0.377 0.757,0.377 0,0 -0.33,0.332 -0.756,0.377 C 9.04,7.862 8.547,7.219 8.547,7.219 Z' },
-  { id: 4, d: 'm 8.196,8.131 c 0,0 0.477,-0.236 0.902,-0.193 0.425,0.043 0.77,0.347 0.77,0.347 0,0 -0.316,0.346 -0.74,0.408 C 8.703,8.755 8.196,8.131 8.196,8.131 Z' },
-  { id: 5, d: 'm 7.311,8.491 c 0,0 0.257,0.449 0.262,0.872 0.005,0.423 -0.248,0.853 -0.248,0.853 0,0 -0.243,-0.393 -0.263,-0.823 C 7.042,8.962 7.311,8.491 7.311,8.491 Z' },
-  { id: 6, d: 'm 6.429,8.131 c 0,0 -0.507,0.624 -0.932,0.562 -0.424,-0.062 -0.74,-0.408 -0.74,-0.408 0,0 0.344,-0.304 0.769,-0.347 C 5.952,7.895 6.429,8.131 6.429,8.131 Z' },
-  { id: 7, d: 'm 6.081,7.219 c 0,0 -0.493,0.643 -0.918,0.599 -0.425,-0.045 -0.756,-0.377 -0.756,-0.377 0,0 0.333,-0.317 0.757,-0.377 C 5.588,7.004 6.081,7.219 6.081,7.219 Z' },
-  { id: 8, d: 'm 6.431,6.306 c 0,0 0.035,0.789 -0.29,1.082 -0.326,0.293 -0.793,0.245 -0.793,0.245 0,0 0.042,-0.459 0.309,-0.797 C 5.924,6.498 6.431,6.306 6.431,6.306 Z' },
-];
+// Single petal shape (pointing up), rotated by 45° increments for a perfectly
+// symmetric 8-petal daisy — previous hand-authored per-petal paths didn't
+// share a true center and rendered as an uneven, jagged center flower.
+const INNER_PETAL_SHAPE =
+  'M 0,-0.55 C 0.28,-0.75 0.3,-1.15 0,-1.45 C -0.3,-1.15 -0.28,-0.75 0,-0.55 Z';
+const INNER_PETAL_IDS = [1, 2, 3, 4, 5, 6, 7, 8];
+const INNER_PETAL_CENTER = { x: 7.394, y: 7.371 };
 
 const MIDDLE_SYMBOL_POSITIONS = {
   1: { cx: 7.4, cy: 3.8 },
@@ -53,8 +50,11 @@ const isActive = (state) =>
 
 export default function InnerMandala({
   childName = 'Friend',
-  petalStates = {},
+  petalStates = {}, // Legacy outer-ring state source
   middlePetalStates = {},
+  innerPetalStates = {}, // Legacy inner-ring state source
+  shlokaPetalStates = petalStates,
+  symbolPetalStates = innerPetalStates,
   highlightPetals = [],
   onClose,
   showAsOverlay = true,
@@ -128,7 +128,7 @@ export default function InnerMandala({
         <svg viewBox="0 0 14.816666 14.816667" role="img" aria-label={`${childName}'s Inner Mandala`}>
           <g id="outer-petals" transform="matrix(1.7729952,0,0,1.7729952,-4.660599,-6.79381)">
             {OUTER_PETALS.map((petal) => {
-              const active = isActive(petalStates[petal.id]);
+              const active = isActive(shlokaPetalStates[petal.id]);
               const isCurrentZone = currentZoneSet.has(petal.id);
               const stateClass = isCurrentZone ? 'current-zone' : active ? 'completed' : 'locked';
 
@@ -203,23 +203,25 @@ export default function InnerMandala({
           </g>
 
           <g id="inner-petals" transform="matrix(1.289,0,0,1.289,-2.123,-2.093)">
-            {INNER_PETALS.map((petal) => (
-              <path
-                key={`inner-${petal.id}`}
-                d={petal.d}
-                className={`mandala-petal inner-petal inner-petal-${petal.id}`}
-              />
-            ))}
+            <g transform={`translate(${INNER_PETAL_CENTER.x} ${INNER_PETAL_CENTER.y})`}>
+              {INNER_PETAL_IDS.map((id) => {
+                const active = isActive(symbolPetalStates[id]);
+                return (
+                  <path
+                    key={`inner-${id}`}
+                    id={`inner-petal-${id}`}
+                    d={INNER_PETAL_SHAPE}
+                    transform={`rotate(${(id - 1) * 45})`}
+                    className={`mandala-petal inner-petal inner-petal-${id} ${active ? 'activated' : 'locked'}`}
+                    onClick={interactive ? handlePetalTap('inner', id) : undefined}
+                  />
+                );
+              })}
+            </g>
           </g>
         </svg>
 
-        {avatar ? (
-          <div className="mandala-avatar-slot">{avatar}</div>
-        ) : (
-          <div className="mandala-center-emblem" aria-hidden="true">
-            🪷
-          </div>
-        )}
+        {avatar && <div className="mandala-avatar-slot">{avatar}</div>}
 
         <div className="mandala-subtitle">{message}</div>
       </div>
