@@ -361,9 +361,27 @@ const shlokaVerses = {
       if (gameProgress.zones && gameProgress.zones['shloka-river']) {
         const shlokaZone = gameProgress.zones['shloka-river'];
         if (shlokaZone.scenes) {
+          const WORD_TO_CHANT = {
+            vakratunda: 'vakratunda-chant', mahakaya: 'mahakaya-chant',
+            suryakoti: 'suryakoti-chant', samaprabha: 'samaprabha-chant',
+            nirvighnam: 'nirvighnam-chant', kurumedeva: 'kurumedeva-chant',
+            sarvakaryeshu: 'sarvakaryeshu-chant', sarvada: 'sarvada-chant',
+          };
+
           Object.entries(shlokaZone.scenes).forEach(([sceneId, scene]) => {
-            if (scene.completed && scene.chantedVerses) {
-              Object.entries(scene.chantedVerses).forEach(([verseId, chanted]) => {
+            if (!scene.completed) return;
+
+            // Fallback for old saves: infer chants from learned words
+            const verses = (scene.chantedVerses && Object.keys(scene.chantedVerses).length)
+              ? scene.chantedVerses
+              : Object.fromEntries(
+                  Object.entries(scene.words || scene.learnedWords || {})
+                    .filter(([w, v]) => v && WORD_TO_CHANT[w])
+                    .map(([w]) => [WORD_TO_CHANT[w], true])
+                );
+
+            if (verses) {
+              Object.entries(verses).forEach(([verseId, chanted]) => {
                 if (chanted && shlokaVerses[verseId] && 
                     !chants.find(c => c.verseId === verseId)) {
                   chants.push({

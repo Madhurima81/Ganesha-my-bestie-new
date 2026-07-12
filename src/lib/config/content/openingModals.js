@@ -11,7 +11,7 @@ export const OPENING_MODALS = {
       title: "Share the Modaks",
       description: "Mooshika is hiding nearby. Find him and share the sweet modaks.",
       icons: ['mooshika', 'modak', 'belly'],
-      buttonText: "Let's Listen",
+      buttonText: "Let's Begin",
       character: 'ganesha-happy'
     },
 
