@@ -121,11 +121,14 @@ const MAP_ZONE_COMPLETION_VO = {
 const DEBUG_UNLOCK_ALL_ZONES = false;
 const DEBUG_ALWAYS_OPEN_ZONE_WELCOME = false;
 
+const getZoneDefinition = (zoneId) => ZONES_DATA.find((zone) => zone.id === zoneId);
+
+const getZoneSceneIds = (zoneId) => getZoneDefinition(zoneId)?.scenes?.map((scene) => scene.id) || [];
+
 const getCompletedScenes = (allProgress, zoneId) => allProgress[zoneId]?.completedScenes || 0;
 
 const getTotalScenes = (zoneId) => {
-  const zone = ZONES_DATA.find(z => z.id === zoneId);
-  return zone?.scenes?.length || 0;
+  return getZoneSceneIds(zoneId).length;
 };
 
 const isZoneComplete = (allProgress, zoneId) => {
@@ -306,7 +309,7 @@ const ZONE_CREATURES = {
 // Lock position per lockable zone — placed on the map directly over the zone label
 const ZONE_LOCK_POS = {
   'shloka-river': { left: '68%', top: '46%' },
-  'about-me-hut': { left: '40%', top: '62%' },
+  'about-me-hut': { left: '31%', top: '61%' },
 };
 
 // Permanent decorative props placed via the Map Prop Editor.
@@ -990,15 +993,6 @@ const ZONE_FIRST_SCENES = {
   'about-me-hut':     'family-tree',
 };
 
-// Real scene IDs per zone — ZONES_DATA uses placeholder IDs so we need this separately
-const ZONE_SCENES = {
-  'symbol-mountain':  ['modak', 'pond', 'symbol', 'final-scene'],
-  'cave-of-secrets':  ['vakratunda-mahakaya', 'suryakoti-samaprabha', 'nirvighnam-kurumedeva', 'sarvakaryeshu-sarvada', 'mantra-assembly'],
-  'shloka-river':     ['vakratunda-grove', 'suryakoti-bank', 'nirvighnam-chant', 'sarvakaryeshu-chant', 'shloka-river-finale'],
-  'festival-square':  ['game1', 'game2', 'game3', 'game4'],
-  'about-me-hut':     ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story'],
-};
-
 const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen, onParentCorner }) => {
   const [zoneProgress, setZoneProgress] = useState({});
   const [progressLoaded, setProgressLoaded] = useState(false);
@@ -1382,7 +1376,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       const profileId = localStorage.getItem('activeProfileId');
       const progressData = {};
       ZONES_DATA.forEach(zone => {
-        const sceneIds = ZONE_SCENES[zone.id] || zone.scenes.map(scene => scene.id);
+        const sceneIds = getZoneSceneIds(zone.id);
         let completedScenes = 0;
         let totalStars = 0;
         sceneIds.forEach(sceneId => {
@@ -1444,7 +1438,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       ([zoneId, p]) => zoneId !== 'symbol-mountain' && (p.completedScenes || 0) > 0
     );
 
-    if (hasPlayedBeyondSM || smCompleted >= ZONE_SCENES['symbol-mountain'].length) {
+    if (hasPlayedBeyondSM || smCompleted >= getTotalScenes(ZONE_IDS.SYMBOL)) {
       // Returning user — all zones visible
       return { 'symbol-mountain': true, 'shloka-river': true, 'cave-of-secrets': true, 'festival-square': true, 'about-me-hut': true };
     }
@@ -1768,6 +1762,12 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
               onClick={() => handleZoneClick(zone, state)}
               aria-disabled={isDisabled}
             >
+              {(state === 'active' || state === 'in-progress') && (
+                <div
+                  className={`zone-glow ${zone.id === ZONE_IDS.HUT ? 'zone-glow--hut' : ''}`.trim()}
+                  aria-hidden="true"
+                />
+              )}
             </div>
 
             {/* Label */}
@@ -1799,7 +1799,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
               {/* Progress dots — only for unlocked zones */}
               {dotsVisible[zone.id] && zone.id !== ZONE_IDS.FESTIVAL && (
                 <div className="zone-progress">
-                  {(ZONE_SCENES[zone.id] || []).map((sceneId, i) => {
+                  {getZoneSceneIds(zone.id).map((sceneId, i) => {
                     const completed = i < (zoneProgress[zone.id]?.completedScenes || 0);
                     return <div key={sceneId} className={`zone-progress-dot${completed ? ' completed' : ''}`} />;
                   })}
@@ -1839,7 +1839,6 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       {Object.entries(ZONE_LOCK_POS).map(([zoneId, pos]) => {
         const zState = getZoneState(zoneId, zoneProgress);
         const isUnlocking = !!unlockingZones[zoneId];
-        const isUnlocked = zState === 'active' || zState === 'in-progress' || zState === 'completed';
         return (
           <React.Fragment key={`lock-${zoneId}`}>
             {/* Locked → wiggling lock */}
@@ -1856,11 +1855,6 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
                   className="zone-unlock-flash" style={pos} />
               </>
             )}
-            {/* Unlocked → open lock sits there */}
-            {isUnlocked && !isUnlocking && (
-              <img src="/images/map/unlock.png" alt="" aria-hidden="true"
-                className="zone-unlock-idle" style={pos} />
-            )}
           </React.Fragment>
         );
       })}
@@ -1869,7 +1863,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       {Object.entries(ZONE_CREATURES).map(([zoneId, creature]) => {
         const zState = getZoneState(zoneId, zoneProgress);
         const isUnlocking = !!unlockingZones[zoneId];
-        const show = zState === 'active' || zState === 'in-progress' || zState === 'completed' || isUnlocking;
+        const show = zState === 'active' || zState === 'in-progress' || isUnlocking;
         if (!show) return null;
         const overlayStyle = getOverlayStyle(ZONE_CREATURE_OVERLAY_IDS[zoneId]);
         return (
