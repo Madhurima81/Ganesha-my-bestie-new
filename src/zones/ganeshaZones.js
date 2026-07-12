@@ -2,6 +2,13 @@
 // Used by:
 //  - GaneshaIllustration.jsx (renders clickable hitboxes)
 //  - SacredAssemblySceneV8.jsx (renders hint glows, sparkles, flying-symbol targets)
+//
+// width/height are px at the .ganesha-assembly-container's native 920x1020 design
+// size — kept in px (not %) because SacredAssemblySceneV8's getZoneCenter() does
+// px arithmetic (calc() offsets, +40px sparkle padding) on these values. The
+// container itself scales visually via CSS transform:scale() (see
+// SacredAssemblyScene.css .ganesha-assembly-container-scale-wrap), which resizes
+// everything inside proportionally without needing these values to change.
 
 export const GANESHA_ZONES = [
   {

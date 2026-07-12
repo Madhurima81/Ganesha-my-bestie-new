@@ -365,7 +365,6 @@ const OpeningModal = ({
                 className={`reveal opening-modal-cta ${showIdleCtaHint ? 'cta-idle-prompt' : ''}`}
                 style={getProfilePillBtnStyle(zoneId)}
               />
-              {showIdleCtaHint && <p className="game-modal-cta-hint">{CTA_HINT_TEXT}</p>}
             </>
           )}
         </div>
