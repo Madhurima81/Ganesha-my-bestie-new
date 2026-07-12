@@ -1273,6 +1273,9 @@ const handleReplayIntroStory = () => {
             );
           })}
 
+          {/* "Meet Ganesha Again" replay-story card removed from the scene grid —
+              it collided with the zone-5 fallback position and overlapped the
+              Family Tree card. To be re-added elsewhere on this scene later.
           {zoneData.id === 'about-me-hut' && (
             <div
               key="about-me-replay-story"
@@ -1313,6 +1316,7 @@ const handleReplayIntroStory = () => {
               </div>
             </div>
           )}
+          */}
         </div>
       </div>
 

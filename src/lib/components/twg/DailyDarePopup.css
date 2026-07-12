@@ -1,8 +1,8 @@
 .dare-root--map {
-  position: absolute;
+  position: fixed;
   left: 0;
   right: 0;
-  bottom: 12px;
+  bottom: 0;
   height: auto;
   display: flex;
   justify-content: center;
@@ -10,6 +10,7 @@
   pointer-events: none;
   background: transparent;
   z-index: 3000;
+  padding: 0 12px calc(12px + env(safe-area-inset-bottom, 0px));
 }
 
 .dare-root--map::before {
@@ -17,7 +18,7 @@
 }
 
 .dare-panel {
-  width: min(92%, 460px);
+  width: min(100%, 460px);
   max-width: 460px;
   padding: 16px 18px;
   border-radius: 20px;

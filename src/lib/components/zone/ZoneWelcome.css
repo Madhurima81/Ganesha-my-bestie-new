@@ -488,25 +488,25 @@
 /* zone-1 — BOTTOM CENTER (Modak — active/unlocked) */
 .zone-1 {
   left: 50%;
-  top: 82%;
+  top: 72%;
 }
 
 /* zone-2 — MIDDLE LEFT (Sacred Pond) */
 .zone-2 {
   left: 26%;
-  top: 60%;
+  top: 52%;
 }
 
 /* zone-3 — MIDDLE RIGHT (Sacred Tusk) */
 .zone-3 {
   left: 74%;
-  top: 60%;
+  top: 52%;
 }
 
 /* zone-4 — TOP CENTER (Sacred Assembly) */
 .zone-4 {
   left: 50%;
-  top: 33%;
+  top: 32%;
 }
 
 /* 5-card fallback */
@@ -572,8 +572,8 @@
 
 .zone-scene-card {
   position: absolute;
-  width: clamp(210px, 19.5vw, 360px);
-  min-height: clamp(240px, 22vw, 410px);
+  width: clamp(210px, 26vmin, 340px);
+  min-height: clamp(240px, 30vmin, 380px);
   padding: 6px;
   display: flex;
   flex-direction: column;
