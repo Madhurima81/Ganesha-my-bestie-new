@@ -1081,16 +1081,10 @@ const VakratundaGroveContent = ({
             {showMandala && (
               <InnerMandala
                 childName={profileName}
-                petalStates={{}}
-                middlePetalStates={{
+                shlokaPetalStates={{
                   1: 'activated',
                   2: 'activated'
                 }}
-                middleSymbolIcons={{
-                  1: symbolVakratunda,
-                  2: symbolMahakaya
-                }}
-                innerPetalStates={{}}
                 highlightPetals={[2]}
                 message="These meanings are growing inside you"
                 onClose={() => {

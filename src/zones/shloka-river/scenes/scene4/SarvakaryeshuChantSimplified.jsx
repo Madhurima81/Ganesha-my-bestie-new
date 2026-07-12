@@ -598,10 +598,7 @@ const SarvakaryeshuChantContent = ({
                 {showMandala && (
                   <InnerMandala
                     childName={profileName}
-                    petalStates={{}}
-                    middlePetalStates={{ 1: 'activated', 2: 'activated', 3: 'activated', 4: 'activated', 5: 'activated', 6: 'activated', 7: 'activated', 8: 'activated' }}
-                    middleSymbolIcons={{ 1: symbolVakratunda, 2: symbolMahakaya, 3: symbolSuryakoti, 4: symbolSamaprabha, 5: symbolNirvighnam, 6: symbolKurumedeva, 7: symbolSarvakaryeshu, 8: symbolSarvada }}
-                    innerPetalStates={{}}
+                    shlokaPetalStates={{ 1: 'activated', 2: 'activated', 3: 'activated', 4: 'activated', 5: 'activated', 6: 'activated', 7: 'activated', 8: 'activated' }}
                     highlightPetals={[7]}
                     message="These meanings are growing inside you"
                     onClose={() => {

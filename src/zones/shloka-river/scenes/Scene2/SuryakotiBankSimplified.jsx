@@ -669,16 +669,10 @@ const SuryakotiBankContent = ({
                 {showMandala && (
                   <InnerMandala
                     childName={profileName}
-                    petalStates={{}}
-                    middlePetalStates={{
+                    shlokaPetalStates={{
                       1: 'activated', 2: 'activated',
                       3: 'activated', 4: 'activated',
                     }}
-                    middleSymbolIcons={{
-                      1: symbolVakratunda, 2: symbolMahakaya,
-                      3: symbolSuryakoti,  4: symbolSamaprabha,
-                    }}
-                    innerPetalStates={{}}
                     highlightPetals={[3]}
                     message="These meanings are growing inside you"
                     onClose={() => {

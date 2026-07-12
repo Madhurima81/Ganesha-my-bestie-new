@@ -113,8 +113,9 @@
   position: absolute !important;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-  width: 160px !important;
-  height: 160px !important;
+  /* clamp scales with viewport — matches .vakratunda-clicker-element sibling */
+  width: clamp(140px, 28vw, 320px) !important;
+  height: clamp(140px, 28vw, 320px) !important;
   z-index: 10;
   cursor: pointer;
   transition: transform 0.2s ease;
@@ -128,8 +129,9 @@
   position: absolute !important;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-  width: 160px !important;
-  height: 160px !important;
+  /* clamp scales with viewport — matches .vakratunda-central-synthesis sibling */
+  width: clamp(120px, 26vw, 310px) !important;
+  height: clamp(120px, 26vw, 310px) !important;
   z-index: 10;
   cursor: pointer;
   filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
@@ -592,8 +594,9 @@
 }
 
 .grove-mute-btn {
-  width: 48px;
-  height: 48px;
+  /* ≥60px touch target (child UX rule) */
+  width: clamp(60px, 5vw, 72px);
+  height: clamp(60px, 5vw, 72px);
   border: none;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.85);
@@ -755,7 +758,7 @@
   position: absolute;
   bottom: 0;
   left: 0; right: 0;
-  height: 60px;
+  height: clamp(48px, 7vh, 80px);
   background: #03A9F4;
   overflow: hidden;
   z-index: 5;

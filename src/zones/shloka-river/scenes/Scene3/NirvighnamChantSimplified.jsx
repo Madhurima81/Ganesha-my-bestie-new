@@ -597,10 +597,7 @@ const NirvighnamChantContent = ({
               {showMandala && (
                 <InnerMandala
                   childName={profileName}
-                  petalStates={{}}
-                  middlePetalStates={{ 1: 'activated', 2: 'activated', 3: 'activated', 4: 'activated', 5: 'activated', 6: 'activated' }}
-                  middleSymbolIcons={{ 1: symbolVakratunda, 2: symbolMahakaya, 3: symbolSuryakoti, 4: symbolSamaprabha, 5: symbolNirvighnam, 6: symbolKurumedeva }}
-                  innerPetalStates={{}}
+                  shlokaPetalStates={{ 1: 'activated', 2: 'activated', 3: 'activated', 4: 'activated', 5: 'activated', 6: 'activated' }}
                   highlightPetals={[5]}
                   message="These meanings are growing inside you"
                   onClose={() => { setShowMandala(false); setShowSceneCompletion(true); }}
