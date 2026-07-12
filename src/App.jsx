@@ -12,6 +12,7 @@ const TimeWithGaneshaHub = lazy(() => import('./lib/components/twg/TimeWithGanes
 const GaneshaEngineTest  = lazy(() => import('./lib/components/twg/GaneshaEngineTest'));
 const MainWelcomeScreen  = lazy(() => import('./lib/components/navigation/MainWelcomeScreen'));
 const GaneshaIntroStory  = lazy(() => import('./components/GaneshaIntroStory'));
+const ParentGate         = lazy(() => import('./lib/components/onboarding/ParentGate'));
 import { GANESHA_USAGE_SYSTEM } from './lib/config/ganeshaUsageSystem';
 
 const CleanGameWelcomeScreen = lazy(() => import('./lib/components/navigation/CleanGameWelcomeScreen'));
@@ -791,8 +792,8 @@ const initializeApp = async () => {
     try { window.speechSynthesis.speak(new SpeechSynthesisUtterance('')); } catch(e) {}
     restoreDefaultStyles();
 
-    // First-time users: go straight to profile creation, then map (skip dashboard)
-    setCurrentView('profile-create');
+    const existingConsent = localStorage.getItem('parentConsent');
+    setCurrentView(existingConsent ? 'profile-create' : 'parent-gate');
   };
   
   // Handle continuing from last save
@@ -1333,6 +1334,15 @@ chants: result?.chants || result?.chantedVerses || {},
         </div>
       )}
 
+      {currentView === 'parent-gate' && (
+        <div className="view-transition">
+          <ParentGate
+            onComplete={() => setCurrentView('profile-create')}
+            onBackToWelcome={() => setCurrentView('main-welcome')}
+          />
+        </div>
+      )}
+
       {currentView === 'parent-dashboard' && (
         <div className="view-transition">
           <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 'var(--app-height, 100vh)', backgroundColor: '#FAF6EE' }}>Loading...</div>}>
@@ -1633,7 +1643,7 @@ if (tempData.playAgainRequested) {
       )}
       
       {/* Fallback view */}
-      {!['loading', 'error', 'main-welcome', 'profile-welcome', 'profile-create', 'profile-selector', 'map', 'zone-welcome', 'scene', 'parent-dashboard', 'twg'].includes(currentView) && (
+      {!['loading', 'error', 'main-welcome', 'parent-gate', 'profile-welcome', 'profile-create', 'profile-selector', 'map', 'zone-welcome', 'scene', 'parent-dashboard', 'twg'].includes(currentView) && (
         <div className="unknown-view-error">
           <h2>Error: Unknown view state</h2>
           <p>Current view: {currentView}</p>

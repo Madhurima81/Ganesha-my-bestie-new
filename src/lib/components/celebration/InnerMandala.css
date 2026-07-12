@@ -66,31 +66,29 @@
   display: block;
   overflow: visible;
   shape-rendering: geometricPrecision;
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
   position: relative;
   z-index: 1;
 }
 
-.mandala-petal-group,
 .outer-petal,
-.middle-petal,
-.inner-petal {
+.middle-petal {
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
   outline: none !important;
 }
 
-.mandala-petal-group:focus,
 .outer-petal:focus,
-.outer-petal:active {
+.outer-petal:active,
+.middle-petal:focus,
+.middle-petal:active {
   outline: none !important;
   background: transparent !important;
 }
 
+/* ===== OUTER ring: shloka words ===== */
 .outer-petal {
   fill: #f4f1ff;
-  stroke: #9a8ef0;
+  stroke: #8f88e8; /* matches new SVG stroke */
   stroke-width: 0.045;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -100,50 +98,53 @@
 }
 
 .outer-petal.completed {
-  fill: #ffe6b8;
+  fill: #8fd6c7;
   opacity: 1;
 }
 
 .outer-petal.current-zone {
-  fill: #f7d88a;
+  fill: #b5e6db;
   opacity: 1;
 }
 
 .outer-petal.locked {
-  fill: #f4f1ff;
-  opacity: 0.25;
+  fill: #efeafa;
+  opacity: 0.85;
 }
 
-.outer-ring {
-  fill: #f7f4ff;
-  stroke: #9a8ef0;
-  stroke-width: 0.045;
-}
-
+.outer-ring,
 .outer-ring-inner {
   fill: #f7f4ff;
-  stroke: #9a8ef0;
-  stroke-width: 0.04;
+  stroke: #d2cbff; /* matches new SVG */
+  stroke-width: 0.05;
 }
 
+/* ===== MIDDLE ring: 8 symbols ===== */
 .middle-petal {
   fill: #f8f5ff;
-  stroke: #9a8ef0;
+  stroke: #8f88e8;
   stroke-width: 0.03;
   stroke-linecap: round;
   stroke-linejoin: round;
-  opacity: 1;
   transition: fill 0.45s ease, opacity 0.35s ease;
+  cursor: pointer;
+}
+
+.middle-petal.locked {
+  fill: #e9e4f5;
+  opacity: 0.4;
 }
 
 .middle-petal.activated,
 .middle-petal.active {
-  fill: #ffe8c9;
+  fill: #ffd166; /* gold - symbol found, light grows */
+  opacity: 1;
 }
 
+/* ===== Center ===== */
 .inner-ring-thin {
   fill: #f6edff;
-  stroke: #9a8ef0;
+  stroke: #b8b1ff; /* matches new SVG */
   stroke-width: 0.03;
 }
 
@@ -153,31 +154,10 @@
   stroke-width: 0.03;
 }
 
-.inner-petal {
-  fill: #e9e4f5;
-  stroke: #9a8ef0;
-  stroke-width: 0.022;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  opacity: 0.4;
-  transition: fill 0.35s ease, opacity 0.35s ease;
-}
-
-.inner-petal.activated,
-.inner-petal.active {
-  fill: #ffd166;
-  opacity: 1;
-}
-
-.inner-petal.locked {
-  opacity: 0.42;
-}
-
 .avatar-circle {
   fill: #f4de9b;
   stroke: #d9bc58;
   stroke-width: 0.035;
-  filter: none;
 }
 
 .mandala-avatar-slot {
@@ -202,17 +182,6 @@
   object-fit: contain;
 }
 
-.middle-petal-symbol {
-  opacity: 1;
-}
-
-.petal-hit-target {
-  fill: transparent;
-  stroke: transparent;
-  pointer-events: all;
-  cursor: pointer;
-}
-
 .mandala-subtitle {
   position: absolute;
   bottom: 12px;
@@ -231,6 +200,19 @@
   z-index: 2;
 }
 
+.mandala-hint {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(90%, 320px);
+  text-align: center;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(12px, 2vmin, 15px);
+  font-weight: 700;
+  color: #9a8ef0;
+}
+
 @keyframes centerFade {
   to {
     opacity: 1;
@@ -238,36 +220,19 @@
 }
 
 @keyframes mandalaFloat {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-1.5px);
-  }
-  100% {
-    transform: translateY(0);
-  }
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-1.5px); }
+  100% { transform: translateY(0); }
 }
 
 @keyframes mandalaGlow {
-  0%,
-  100% {
-    opacity: 0.56;
-  }
-  50% {
-    opacity: 0.92;
-  }
+  0%, 100% { opacity: 0.56; }
+  50% { opacity: 0.92; }
 }
 
 @media (max-width: 480px) {
-  .inner-mandala-overlay {
-    padding: 12px;
-  }
-
-  .mandala-subtitle {
-    bottom: 10px;
-    width: min(90%, 280px);
-  }
+  .inner-mandala-overlay { padding: 12px; }
+  .mandala-subtitle { bottom: 10px; width: min(90%, 280px); }
 }
 
 @media (max-width: 380px) {
